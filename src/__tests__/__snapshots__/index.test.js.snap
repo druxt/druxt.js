@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Druxt router get 1`] = `
+Object {
+  "entity": Object {
+    "bundle": "page",
+    "canonical": "http://contenta.druxt.localhost/welcome",
+    "id": "6",
+    "type": "node",
+    "uuid": "5fd39fb3-5d2f-4f9a-a50a-696df984a6db",
+  },
+  "isHomePath": true,
+  "jsonapi": Object {
+    "basePath": "/api",
+    "entryPoint": "http://contenta.druxt.localhost/api",
+    "individual": "http://contenta.druxt.localhost/api/pages/5fd39fb3-5d2f-4f9a-a50a-696df984a6db",
+    "pathPrefix": "api",
+    "resourceName": "pages",
+  },
+  "label": "Welcome to Contenta CMS!",
+  "meta": Object {
+    "deprecated": Object {
+      "jsonapi.pathPrefix": "This property has been deprecated and will be removed in the next version of Decoupled Router. Use basePath instead.",
+    },
+  },
+  "resolved": "http://contenta.druxt.localhost/welcome",
+}
+`;
