@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
-    "jsonapi-serializer": "^3.6.5"
+    "jsonapi-serializer": "^3.6.5",
+    "vue-drupal-entity": "^0.1.0"
   }
 }

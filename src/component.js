@@ -1,5 +1,5 @@
 import { mapState } from 'vuex'
-import DrupalEntity from '../../nuxt/components/DrupalEntity.vue'
+import { DrupalEntity } from 'vue-drupal-entity'
 
 export default {
   name: 'druxt-router',
