@@ -1,0 +1,55 @@
+{
+  "name": "druxt-router",
+  "version": "0.1.0",
+  "description": "Provides a Nuxt <-> Drupal router.",
+  "main": "src/module.js",
+  "scripts": {
+    "lint": "eslint src/*.js",
+    "start": "npm run dev",
+    "dev": "nodemon --exec 'npm run lint && npm run test'",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Realityloop/druxt_router.git"
+  },
+  "keywords": [
+    "drupal",
+    "druxt",
+    "nuxt",
+    "json-api",
+    "jsonapi",
+    "json api",
+    "router"
+  ],
+  "author": "Stuart Clark <stuart@realityloop.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Realityloop/druxt_router/issues"
+  },
+  "homepage": "https://github.com/Realityloop/druxt_router#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "jsonapi-serializer": "^3.6.5",
+    "vue-drupal-entity": "^0.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/node": "^7.7.4",
+    "@babel/plugin-transform-runtime": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/runtime": "^7.7.4",
+    "@nuxtjs/eslint-config": "^2.0.0",
+    "babel-eslint": "^10.0.3",
+    "core-js": "^2.6.10",
+    "eslint": "^6.7.1",
+    "get-port": "^5.0.0",
+    "jest": "^24.9.0",
+    "nodemon": "^2.0.1",
+    "nuxt-edge": "^2.11.0-26244009.75bb0884"
+  },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
+  }
+}
