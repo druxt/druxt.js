@@ -1,6 +1,6 @@
-import druxtRouter from '../../druxt-router/src'
+import DruxtRouter from 'druxt-router/src'
 
-const router = new druxtRouter('<%= options.baseUrl %>')
+const router = new DruxtRouter('<%= options.baseUrl %>')
 
 export default ({ app }, inject) => {
   inject('druxtRouter', () => router)

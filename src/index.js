@@ -4,18 +4,20 @@ import axios from 'axios'
 import { Deserializer } from 'jsonapi-serializer'
 
 class druxtRouter {
-  constructor(baseURL) {
+  constructor (baseURL) {
     // Check for URL.
-    if (!baseURL) throw new Error('The \'baseURL\' parameter is required.')
+    if (!baseURL) {
+      throw new Error('The \'baseURL\' parameter is required.')
+    }
 
     // Setup Axios.
     this.axios = axios.create({ baseURL })
 
-    // Setup JSON API Serializer
-    this.deserialize = (data) => new Deserializer().deserialize(data)
+    // Setup JSON API Serializer.
+    this.deserialize = data => new Deserializer().deserialize(data)
   }
 
-  async get(path) {
+  async get (path) {
     // Get router from API.
     // @TODO - Add validation/error handling.
     const urlRoute = `/router/translate-path?path=${path}`

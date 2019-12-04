@@ -4,7 +4,7 @@
   "description": "Provides a Nuxt <-> Drupal router.",
   "main": "src/module.js",
   "scripts": {
-    "lint": "eslint src/**/*.js",
+    "lint": "eslint src/*.js",
     "start": "npm run dev",
     "dev": "nodemon --exec 'npm run lint && npm run test && babel-node' src/index.js",
     "test": "jest"
@@ -22,7 +22,7 @@
     "json api",
     "router"
   ],
-  "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
+  "author": "Stuart Clark <stuart@realityloop.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Realityloop/druxt_router/issues"
@@ -34,6 +34,8 @@
     "@babel/plugin-transform-runtime": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
     "@babel/runtime": "^7.7.4",
+    "@nuxtjs/eslint-config": "^2.0.0",
+    "babel-eslint": "^10.0.3",
     "core-js": "^2.6.10",
     "eslint": "^6.7.1",
     "jest": "^24.9.0",

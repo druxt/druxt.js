@@ -8,9 +8,9 @@ export default {
     DrupalEntity
   },
 
-  head() {
+  head () {
     return {
-      title: this.route.label,
+      title: this.title,
       link: [
         {
           rel: 'canonical',
@@ -21,7 +21,7 @@ export default {
     }
   },
 
-  render(createElement) {
+  render (createElement) {
     return createElement('drupal-entity', {
       props: {
         entity: this.entity,
@@ -31,18 +31,23 @@ export default {
     }, JSON.stringify(this.route))
   },
 
-  async fetch({ store, route }) {
-    return await store.dispatch('druxtRouter/set', route.fullPath)
+  async fetch ({ store, route }) {
+    const result = await store.dispatch('druxtRouter/set', route.fullPath)
+    return result
   },
 
   computed: {
-    schema() {
+    schema () {
       if (
         typeof this.$drupalJSONAPIEntities()[this.route.entity.type][this.route.entity.bundle] === 'undefined' ||
         typeof this.$drupalJSONAPIEntities()[this.route.entity.type][this.route.entity.bundle].view.default === 'undefined') {
-        throw new Error(`Drupal JSON:API Entities Schema data missing for ${this.route.entity.type}--${this.route.entity.bundle}--view--defaultbundleRenderer.renderToStream`)
+        throw new TypeError(`Drupal JSON:API Entities Schema data missing for ${this.route.entity.type}--${this.route.entity.bundle}--view--defaultbundleRenderer.renderToStream`)
       }
       return this.$drupalJSONAPIEntities()[this.route.entity.type][this.route.entity.bundle].view.default
+    },
+
+    title () {
+      return this.route.label
     },
 
     ...mapState({

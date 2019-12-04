@@ -11,32 +11,33 @@ export default ({ store }) => {
     }),
 
     mutations: {
-      addEntity(state, { entity }) {
-        if (typeof entity.id === 'undefined') return
+      addEntity (state, { entity }) {
+        if (typeof entity.id === 'undefined') {
+          return
+        }
         state.entities[entity.id] = entity
       },
 
-      addRoute(state, { path, route }) {
+      addRoute (state, { path, route }) {
         state.routes[path] = route
       },
 
-      setEntity(state, entity) {
+      setEntity (state, entity) {
         state.entity = entity
       },
 
-      setRoute(state, path) {
+      setRoute (state, path) {
         state.route = state.routes[path]
       }
     },
 
     actions: {
-      async get({ commit }, path) {
+      async get ({ commit }, path) {
         try {
           const { entity, route } = await this.$druxtRouter().get(path)
           commit('addEntity', { entity })
           commit('addRoute', { path, route })
-        }
-        catch ({ response }) {
+        } catch ({ response }) {
           return this.app.context.error({
             statusCode: response.status,
             message: response.statusText
@@ -44,7 +45,7 @@ export default ({ store }) => {
         }
       },
 
-      async set({ commit, dispatch, state }, path) {
+      async set ({ commit, dispatch, state }, path) {
         await dispatch('get', path)
         commit('setRoute', path)
 
