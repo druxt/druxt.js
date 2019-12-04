@@ -1,20 +1,31 @@
 jest.setTimeout(60000)
 
-// import axios from 'axios'
 import { Nuxt, Builder } from 'nuxt-edge'
-import config from '../__fixtures__/nuxt.config'
-// import Vue from 'vue'
+import getPort from 'get-port'
 
-// import module from '../module'
+import config from '../__fixtures__/nuxt.config'
+
+let nuxt, port
 
 describe('Nuxt', () => {
-  test('Module', async () => {
-    const nuxt = new Nuxt(config)
+  beforeAll(async () => {
+    nuxt = new Nuxt(config)
     await nuxt.ready()
+    await new Builder(nuxt).build()
 
-    const builder = new Builder(nuxt)
-    await builder.build()
+    port = await getPort()
+    await nuxt.listen(port)
+  })
 
-    expect(1).toBe(2)
+  afterAll(async () => {
+    await nuxt.close()
+  })
+
+  test('Module', async () => {
+    const result = await nuxt.server.renderRoute('/')
+    expect(result.error).toEqual({
+      message: 'Not Found',
+      statusCode: 404
+    })
   })
 })

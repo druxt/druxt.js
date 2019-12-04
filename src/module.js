@@ -1,6 +1,11 @@
 import { resolve } from 'path'
 
-export default async function (options = {}) {
+export default function (moduleOptions = {}) {
+  const options = {
+    ...this.options['druxt-router'],
+    ...moduleOptions
+  }
+
   this.extendRoutes((routes, resolve) => {
     // Delete all existing routes.
     // @TODO - Make this more configurable.
@@ -9,10 +14,15 @@ export default async function (options = {}) {
     }
 
     // Add Druxt router custom wildcard route.
+    this.addTemplate({
+      src: resolve(__dirname, 'component.js'),
+      fileName: 'components/druxt-router.js',
+      options
+    })
     routes.push({
       name: 'druxt-router',
       path: '*',
-      component: resolve(__dirname, 'component.js'),
+      component: resolve(this.options.buildDir, 'components/druxt-router.js'),
       chunkName: 'druxt-router'
     })
   })
@@ -20,7 +30,7 @@ export default async function (options = {}) {
   // Add plugin.
   this.addPlugin({
     src: resolve(__dirname, 'plugin.js'),
-    fileName: 'druxtRouter.plugin.js',
+    fileName: 'druxt-router.js',
     options
   })
 
@@ -28,7 +38,7 @@ export default async function (options = {}) {
   // @TODO - Ensure Vuex store is available.
   this.addPlugin({
     src: resolve(__dirname, 'store.js'),
-    fileName: 'druxtRouter.store.js',
+    fileName: 'store/druxt-router.js',
     options
   })
 }
