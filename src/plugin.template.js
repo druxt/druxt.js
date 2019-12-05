@@ -58,6 +58,13 @@ class DruxtRouter {
 }
 
 export default (context, inject) => {
-  const router = new DruxtRouter('<%= options.baseUrl %>', { schema: <%= options.schema %> }, context)
+  const baseUrl = '<%= options.baseUrl %>'
+  const options = {}
+
+  <% if (typeof options.schema !== 'undefined') { %>
+  options.schema = <%= options.schema %>
+  <% } %>  
+
+  const router = new DruxtRouter(baseUrl, options, context)
   inject('druxtRouter', () => router)
 }
