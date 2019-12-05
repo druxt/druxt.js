@@ -31,19 +31,13 @@ export default {
     }, JSON.stringify(this.route))
   },
 
-  async fetch ({ store, route }) {
-    const result = await store.dispatch('druxtRouter/set', route.fullPath)
-    return result
+  fetch ({ store, route }) {
+    return store.dispatch('druxtRouter/set', route.fullPath)
   },
 
   computed: {
     schema () {
-      if (
-        typeof this.$drupalJSONAPIEntities()[this.route.entity.type][this.route.entity.bundle] === 'undefined' ||
-        typeof this.$drupalJSONAPIEntities()[this.route.entity.type][this.route.entity.bundle].view.default === 'undefined') {
-        throw new TypeError(`Drupal JSON:API Entities Schema data missing for ${this.route.entity.type}--${this.route.entity.bundle}--view--defaultbundleRenderer.renderToStream`)
-      }
-      return this.$drupalJSONAPIEntities()[this.route.entity.type][this.route.entity.bundle].view.default
+      return this.$druxtRouter().getEntitySchema(this.route.entity.type, this.route.entity.bundle)
     },
 
     title () {
