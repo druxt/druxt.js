@@ -29,7 +29,7 @@ export default function (moduleOptions = {}) {
 
   // Add plugin.
   this.addPlugin({
-    src: resolve(__dirname, 'plugin.js'),
+    src: resolve(__dirname, 'plugin.template.js'),
     fileName: 'druxt-router.js',
     options
   })
