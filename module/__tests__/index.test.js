@@ -23,6 +23,7 @@ describe('Nuxt', () => {
 
   test('Module', async () => {
     const result = await nuxt.server.renderRoute('/')
+
     expect(result.error).toEqual({
       message: 'Not Found',
       statusCode: 404

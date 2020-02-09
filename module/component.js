@@ -23,6 +23,7 @@ export default {
 
   render (createElement) {
     return createElement('drupal-entity', {
+      key: this.route.entity.uuid,
       props: {
         entity: this.entity,
         id: this.route.entity.uuid,
@@ -32,21 +33,18 @@ export default {
   },
 
   fetch ({ store, route }) {
-    return store.dispatch('druxtRouter/set', route.fullPath)
+    return store.dispatch('druxtRouter/getEntityByRouter', route.fullPath)
   },
 
   computed: {
-    schema () {
-      return this.$druxtRouter().getEntitySchema(this.route.entity.type, this.route.entity.bundle)
-    },
-
     title () {
       return this.route.label
     },
 
     ...mapState({
       entity: state => state.druxtRouter.entity,
-      route: state => state.druxtRouter.route
+      route: state => state.druxtRouter.route,
+      schema: state => state.druxtRouter.schema
     })
   }
 }

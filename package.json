@@ -2,9 +2,9 @@
   "name": "druxt-router",
   "version": "0.1.0",
   "description": "Provides a Nuxt <-> Drupal router.",
-  "main": "src/module.js",
+  "main": "src/index.js",
   "scripts": {
-    "lint": "eslint src/*.js",
+    "lint": "eslint module/*.js src/*.js",
     "start": "npm run dev",
     "dev": "nodemon --exec 'npm run lint && npm run test'",
     "test": "jest"
@@ -30,7 +30,6 @@
   "homepage": "https://github.com/Realityloop/druxt_router#readme",
   "dependencies": {
     "axios": "^0.19.0",
-    "jsonapi-serializer": "^3.6.5",
     "vue-drupal-entity": "^0.1.0"
   },
   "devDependencies": {
