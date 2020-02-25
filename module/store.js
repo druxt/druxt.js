@@ -8,7 +8,6 @@ export default ({ store }) => {
     namespaced: true,
 
     state: () => ({
-      entity: {},
       entities: {},
       route: {},
       routes: {},
@@ -27,11 +26,6 @@ export default ({ store }) => {
         state.routes[path] = route
       },
 
-      setEntity (state, { entity, schema = {} }) {
-        state.entity = entity
-        state.schema = schema
-      },
-
       setRoute (state, path) {
         state.route = state.routes[path]
       }
@@ -40,13 +34,14 @@ export default ({ store }) => {
     actions: {
       async getEntityByRouter ({ commit, dispatch, state }, path) {
         try {
-          const { entity, route, schema } = await this.$druxtRouter().get(path)
+          const { entity, route } = await this.$druxtRouter().get(path)
 
           commit('addRoute', { path, route })
           commit('setRoute', path)
 
           commit('addEntity', entity)
-          commit('setEntity', { entity, schema })
+
+          return entity
         } catch (err) {
           if (typeof err.response === 'undefined') {
             throw err

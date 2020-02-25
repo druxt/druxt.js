@@ -42,7 +42,6 @@ export default {
     },
 
     ...mapState({
-      entity: state => state.druxtRouter.entity,
       route: state => state.druxtRouter.route,
       schema: state => state.druxtRouter.schema
     })
