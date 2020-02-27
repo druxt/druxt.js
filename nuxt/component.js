@@ -1,6 +1,8 @@
 import { mapState } from 'vuex'
 import { DrupalEntity } from 'vue-drupal-entity'
 
+import DruxtRouterEntityMixin from './mixin'
+
 export default {
   name: 'druxt-router',
 
@@ -32,18 +34,11 @@ export default {
     }, JSON.stringify(this.route))
   },
 
+  mixins: [
+    DruxtRouterEntityMixin
+  ],
+
   fetch ({ store, route }) {
     return store.dispatch('druxtRouter/getEntityByRouter', route.fullPath)
-  },
-
-  computed: {
-    title () {
-      return this.route.label
-    },
-
-    ...mapState({
-      route: state => state.druxtRouter.route,
-      schema: state => state.druxtRouter.schema
-    })
   }
 }
