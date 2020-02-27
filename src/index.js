@@ -23,6 +23,11 @@ class DruxtRouter {
       this.schema = options.schema
     }
 
+    // Setup entity preprocess callback.
+    if (typeof options.preprocessEntity === 'function') {
+      this.preprocessEntity = options.preprocessEntity
+    }
+
     this.context = context
   }
 
@@ -54,9 +59,17 @@ class DruxtRouter {
     const { entityType, bundle } = this.convertResourceToEntityBundle(type)
 
     const url = `/api/${entityType}/${bundle}/${id}`
-    const resource = await this.axios.get(url)
+    const response = await this.axios.get(url)
 
-    return resource.data
+    const resource = { id, type, data: response.data }
+
+    // Process entity before it's stored.
+    if (this.preprocessEntity) {
+      resource._raw = resource.data
+      resource.data = await this.preprocessEntity(response)
+    }
+
+    return resource
   }
 
   /**
@@ -104,7 +117,7 @@ class DruxtRouter {
    * @param string mode
    */
   getSchemaByResource (resource, type = 'view', mode = 'default') {
-    const { entityType, bundle } = this.convertResourceToEntityBundle(resource.data.type)
+    const { entityType, bundle } = this.convertResourceToEntityBundle(resource.type)
     return this.getSchemaByEntity(entityType, bundle, type, mode)
   }
 
