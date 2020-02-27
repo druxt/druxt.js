@@ -14,10 +14,10 @@ export default {
       link: [
         {
           rel: 'canonical',
-          // @TODO - Replace base URL.
-          href: this.route.entity.canonical
+          href: this.canonical || this.route.entity.canonical
         }
-      ]
+      ],
+      meta: this.metatags || {}
     }
   },
 
@@ -27,6 +27,7 @@ export default {
     },
 
     ...mapState({
+      entity: state => state.druxtRouter.entities[state.druxtRouter.route.entity.uuid],
       route: state => state.druxtRouter.route
     })
   },

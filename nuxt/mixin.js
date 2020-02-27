@@ -43,7 +43,7 @@ export default {
     },
 
     ready () {
-      return !this.loading && this.entity
+      return !this.loading && !!this.entity
     },
 
     ...mapState({
