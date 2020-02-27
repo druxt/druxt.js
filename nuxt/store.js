@@ -1,3 +1,4 @@
+// @TODO - Add Vuex test coverage.
 export default ({ store }) => {
   if (typeof store === 'undefined') {
     throw new TypeError('Vuex store not found.')
@@ -17,6 +18,7 @@ export default ({ store }) => {
     mutations: {
       addEntity (state, entity) {
         if (typeof entity.id === 'undefined') {
+          // @TODO - Error?
           return
         }
         state.entities[entity.id] = entity

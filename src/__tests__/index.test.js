@@ -45,7 +45,7 @@ describe('DruxtRouter', () => {
   })
 
   test('getResource', async () => {
-    const entity = await router.getResource('node--article', '98f36405-e1c4-4d8a-a9f9-4d4f6d414e96')
+    const entity = await router.getResource({ type: 'node--article', id: '98f36405-e1c4-4d8a-a9f9-4d4f6d414e96' })
 
     expect(entity).toHaveProperty('type', 'node--article')
   })
@@ -69,12 +69,4 @@ describe('DruxtRouter', () => {
     result = await router.getRoute('/node/1')
     expect(result).toHaveProperty('isHomePath', false)
   })
-
-  test('getSchemaByEntity', () => {
-    const testRouter = new DruxtRouter(baseURL)
-    const result = testRouter.getSchemaByEntity('node', 'page')
-
-    expect(result).toStrictEqual({})
-  })
-
 })
