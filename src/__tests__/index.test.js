@@ -40,22 +40,22 @@ describe('DruxtRouter', () => {
     expect(result).toHaveProperty('entity')
     expect(result).toHaveProperty('route')
 
-    expect(result.entity.data).toHaveProperty('id', '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
-    expect(result.entity.data).toHaveProperty('type', 'node--page')
+    expect(result.entity).toHaveProperty('id', '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
+    expect(result.entity).toHaveProperty('type', 'node--page')
   })
 
   test('getResource', async () => {
     const entity = await router.getResource('node--article', '98f36405-e1c4-4d8a-a9f9-4d4f6d414e96')
 
-    expect(entity.data).toHaveProperty('type', 'node--article')
+    expect(entity).toHaveProperty('type', 'node--article')
   })
 
   test('getResourceByRoute', async () => {
     const route = mockRoutes['/']
     const entity = await router.getResourceByRoute(route)
 
-    expect(entity.data).toHaveProperty('id', '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
-    expect(entity.data).toHaveProperty('type', 'node--page')
+    expect(entity).toHaveProperty('id', '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
+    expect(entity).toHaveProperty('type', 'node--page')
   })
 
   test('getRoute', async () => {
