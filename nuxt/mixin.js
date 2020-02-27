@@ -1,13 +1,49 @@
 import { mapState } from 'vuex'
 
+/**
+ * @mixin
+ */
 export default {
-  computed: {
-    entity () {
-      return this.entities[this.route.entity.uuid]
+  /**
+   * Props.
+   */
+  props: {
+    /**
+     * The Drupal entity UUID.
+     */
+    uuid: {
+      type: String,
+      required: true
     },
 
-    title () {
-      return this.route.label
+    type: {
+      type: String,
+      required: true
+    }
+  },
+
+  created () {
+    if (typeof this.entities[this.uuid] !== 'undefined') {
+      return
+    }
+
+    this.loading = true
+    this.$store.dispatch('druxtRouter/getEntity', { id: this.uuid, type: this.type }).then((res) => {
+      this.loading = false
+    })
+  },
+
+  data: () => ({
+    loading: false
+  }),
+
+  computed: {
+    entity () {
+      return this.entities[this.uuid]
+    },
+
+    ready () {
+      return !this.loading && this.entity
     },
 
     ...mapState({
