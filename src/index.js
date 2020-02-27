@@ -43,10 +43,7 @@ class DruxtRouter {
     // @TODO - Add validation/error handling.
     const entity = await this.getResourceByRoute(route)
 
-    // Get entity schema.
-    const schema = this.getSchemaByResource(entity)
-
-    return { entity, route, schema }
+    return { entity, route }
   }
 
   /**
@@ -92,33 +89,6 @@ class DruxtRouter {
     const response = await this.axios.get(url)
 
     return response.data
-  }
-
-  /**
-   * Get Drupal schema for Drupal Entity / Bundle.
-   *
-   * @param string entityType
-   * @param string bundle
-   * @param string type
-   * @param string mode
-   */
-  getSchemaByEntity (entityType, bundle, type = 'view', mode = 'default') {
-    if (typeof this.schema === 'function') {
-      return this.schema(entityType, bundle, type, mode, this.context)
-    }
-    return {}
-  }
-
-  /**
-   * Get Drupal schema for JSON:API resource.
-   *
-   * @param string resource
-   * @param string type
-   * @param string mode
-   */
-  getSchemaByResource (resource, type = 'view', mode = 'default') {
-    const { entityType, bundle } = this.convertResourceToEntityBundle(resource.type)
-    return this.getSchemaByEntity(entityType, bundle, type, mode)
   }
 
   /**

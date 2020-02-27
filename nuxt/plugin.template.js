@@ -5,10 +5,6 @@ export default (context, inject) => {
   const baseUrl = '<%= options.baseUrl %>'
   const options = {}
 
-  <% if (typeof options.schema !== 'undefined') { %>
-  options.schema = <%= options.schema %>
-  <% } %>
-
   <% if (options.JSONAPIDeserializer) { %>
   options.preprocessEntity = async resource => {
     const results = await new Deserializer({}).deserialize({ data: [resource.data.data ]})

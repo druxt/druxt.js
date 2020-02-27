@@ -29,7 +29,6 @@ export default {
       props: {
         entity: this.entity,
         id: this.route.entity.uuid,
-        schema: this.schema
       }
     }, JSON.stringify(this.route))
   },
