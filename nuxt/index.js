@@ -13,23 +13,30 @@ export default function (moduleOptions = {}) {
       delete routes[index]
     }
 
+    // Only add router component if custom component is undefined.
+    // @TODO - Validate custom component.
+    // @TODO - Add test for custom component.
+    if (!options.component) {
+      options.component = resolve(this.options.buildDir, 'components/druxt-router.js')
+      this.addTemplate({
+        src: resolve(__dirname, 'component.js'),
+        fileName: 'components/druxt-router.js',
+        options
+      })
+    }
+
     // Add Druxt router custom wildcard route.
-    this.addTemplate({
-      src: resolve(__dirname, 'component.js'),
-      fileName: 'components/druxt-router.js',
-      options
-    })
     routes.push({
       name: 'druxt-router',
       path: '*',
-      component: resolve(this.options.buildDir, 'components/druxt-router.js'),
+      component: options.component,
       chunkName: 'druxt-router'
     })
   })
 
   // Add plugin.
   this.addPlugin({
-    src: resolve(__dirname, 'plugin.js'),
+    src: resolve(__dirname, 'plugin.template.js'),
     fileName: 'druxt-router.js',
     options
   })

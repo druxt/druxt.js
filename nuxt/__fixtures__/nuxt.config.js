@@ -8,10 +8,14 @@ module.exports = {
 
   modules: [
     {
-      handler: require('../module').default,
+      handler: require('../index').default,
       options: {
-        baseUrl: 'https://example.com'
+        baseUrl: 'https://example.com',
+        importPath: '../../../src/index'
       }
     }
   ],
+  build: {
+    transpile: ['..']
+  }
 }
