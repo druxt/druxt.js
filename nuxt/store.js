@@ -54,14 +54,14 @@ export default ({ store }) => {
         }
       },
 
-      async getEntityFromRelationship ({ commit, state }, query) {
+      async getEntity ({ commit, state }, query) {
         if (typeof state.entities[query.id] !== 'undefined') {
           return state.entities[query.id]
         }
 
-        const { entity } = await this.$druxtRouter().getEntityFromRelationship(query)
+        const entity = await this.$druxtRouter().getResource(query)
 
-        commit('addEntity', { entity })
+        commit('addEntity', entity)
 
         return entity
       }

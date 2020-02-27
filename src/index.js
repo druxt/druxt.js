@@ -52,7 +52,7 @@ class DruxtRouter {
    * @param string type
    * @param string id
    */
-  async getResource (type, id) {
+  async getResource ({ id, type }) {
     const { entityType, bundle } = this.convertResourceToEntityBundle(type)
 
     const url = `/api/${entityType}/${bundle}/${id}`
@@ -75,7 +75,7 @@ class DruxtRouter {
    * @param object route
    */
   getResourceByRoute (route) {
-    return this.getResource(route.jsonapi.resourceName, route.entity.uuid)
+    return this.getResource({ id: route.entity.uuid, type: route.jsonapi.resourceName })
   }
 
   /**
