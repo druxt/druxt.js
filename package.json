@@ -7,7 +7,11 @@
     "lint": "eslint nuxt/*.js src/*.js",
     "start": "npm run dev",
     "dev": "nodemon --exec 'npm run lint && npm run test'",
-    "test": "jest"
+    "test": "jest",
+    "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
+    "build:ssr": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
+    "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
+    "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
   },
   "repository": {
     "type": "git",
@@ -29,8 +33,7 @@
   },
   "homepage": "https://github.com/Realityloop/druxt_router#readme",
   "dependencies": {
-    "axios": "^0.19.0",
-    "vue-drupal-entity": "^0.1.0"
+    "axios": "^0.19.0"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
@@ -39,13 +42,21 @@
     "@babel/preset-env": "^7.7.4",
     "@babel/runtime": "^7.7.4",
     "@nuxtjs/eslint-config": "^2.0.0",
+    "@rollup/plugin-alias": "^3.0.1",
+    "@rollup/plugin-buble": "^0.21.1",
+    "@rollup/plugin-replace": "^2.3.1",
     "babel-eslint": "^10.0.3",
     "core-js": "^2.6.10",
+    "cross-env": "^7.0.0",
     "eslint": "^6.7.1",
     "get-port": "^5.0.0",
     "jest": "^24.9.0",
     "nodemon": "^2.0.1",
-    "nuxt-edge": "^2.11.0-26244009.75bb0884"
+    "nuxt-edge": "^2.11.0-26244009.75bb0884",
+    "rollup": "^1.32.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-terser": "^5.2.0",
+    "rollup-plugin-vue": "^5.1.6"
   },
   "jest": {
     "coverageDirectory": "./coverage/",

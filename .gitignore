@@ -1,3 +1,4 @@
+component/*.js
 coverage
 node_modules
 .nuxt

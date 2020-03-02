@@ -17,12 +17,6 @@ class DruxtRouter {
     // Setup Axios.
     this.axios = axios.create({ baseURL })
 
-    // Setup schema support.
-    this.schema = {}
-    if (typeof options.schema !== 'undefined') {
-      this.schema = options.schema
-    }
-
     // Setup entity preprocess callback.
     if (typeof options.preprocessEntity === 'function') {
       this.preprocessEntity = options.preprocessEntity
@@ -32,7 +26,7 @@ class DruxtRouter {
   }
 
   /**
-   * Returns Drupal entity, route and schema for given path.
+   * Returns Drupal entity and route for given path.
    *
    * @param string path
    */
