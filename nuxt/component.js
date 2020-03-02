@@ -1,12 +1,7 @@
 import { mapState } from 'vuex'
-import { DrupalEntity } from 'vue-drupal-entity'
 
 export default {
   name: 'druxt-router',
-
-  components: {
-    DrupalEntity
-  },
 
   head () {
     return {
@@ -33,9 +28,10 @@ export default {
   },
 
   render (createElement) {
-    return createElement('drupal-entity', {
+    return createElement('div', {
       key: this.route.entity.uuid,
       props: {
+        type: `${this.route.entity.type}--${this.route.entity.bundle}`,
         uuid: this.route.entity.uuid
       }
     }, JSON.stringify(this.route))
