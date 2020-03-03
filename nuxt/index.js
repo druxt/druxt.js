@@ -7,12 +7,6 @@ export default function (moduleOptions = {}) {
   }
 
   this.extendRoutes((routes, resolve) => {
-    // Delete all existing routes.
-    // @TODO - Make this more configurable.
-    for (const index in routes) {
-      delete routes[index]
-    }
-
     // Only add router component if custom component is undefined.
     // @TODO - Validate custom component.
     // @TODO - Add test for custom component.
