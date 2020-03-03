@@ -1,5 +1,5 @@
 {
   "main": "druxt-router.ssr.js",
-  "module": "druxt-router.es.js",
+  "module": "druxt-router.esm.js",
   "unpkg": "druxt-router.min.js"
 }
