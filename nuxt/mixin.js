@@ -1,9 +1,9 @@
-import { mapState } from 'vuex'
+const mapState = require('vuex').mapState
 
 /**
  * @mixin
  */
-export default {
+const DruxtRouterEntityMixin = {
   /**
    * Props.
    */
@@ -53,3 +53,6 @@ export default {
     })
   }
 }
+
+module.exports = DruxtRouterEntityMixin
+module.exports.meta = require('../package.json')

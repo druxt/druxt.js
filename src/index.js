@@ -1,4 +1,4 @@
-import axios from 'axios'
+const axios = require('axios')
 
 class DruxtRouter {
   /**
@@ -102,4 +102,5 @@ class DruxtRouter {
   }
 }
 
-export default DruxtRouter
+module.exports = DruxtRouter
+module.exports.meta = require('../package.json')
