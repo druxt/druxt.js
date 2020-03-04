@@ -29,7 +29,8 @@ const DruxtRouterEntityMixin = {
 
     this.loading = true
     this.$store.dispatch('druxtRouter/getEntity', { id: this.uuid, type: this.type }).then((res) => {
-      this.loading = false
+      // If component has `onDruxtRouterLoad` method, pass through allowing it to load additonal entities.
+      this.loading = typeof this.onDruxtRouterLoad === 'function' ? !!this.onDruxtRouterLoad(res) : false
     })
   },
 
