@@ -1,6 +1,6 @@
 import { mapState } from 'vuex'
 
-export default {
+const DruxtRouterComponent = {
   name: 'druxt-router',
 
   head () {
@@ -41,3 +41,5 @@ export default {
     return store.dispatch('druxtRouter/getEntityByRouter', route.fullPath)
   }
 }
+
+export { DruxtRouterComponent }

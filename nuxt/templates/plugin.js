@@ -1,4 +1,4 @@
-import DruxtRouter from '<%= options.importPath ? options.importPath : 'druxt-router' %>'
+import { DruxtRouter } from '<%= options.importPath ? options.importPath : 'druxt-router' %>'
 <% if (options.JSONAPIDeserializer) { %>import { Deserializer } from 'jsonapi-serializer'<% } %>
 
 export default (context, inject) => {

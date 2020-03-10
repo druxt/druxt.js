@@ -14,8 +14,5 @@ module.exports = {
         importPath: '../../../src/index'
       }
     }
-  ],
-  build: {
-    transpile: ['..']
-  }
+  ]
 }

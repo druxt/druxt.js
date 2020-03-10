@@ -1,5 +1,5 @@
 import axios from 'axios'
-import DruxtRouter from '..'
+import { DruxtRouter } from '..'
 
 import mockResources from '../__fixtures__/resources'
 import mockRoutes from '../__fixtures__/routes'
