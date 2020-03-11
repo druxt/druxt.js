@@ -1,3 +1,6 @@
+import DruxtRouterComponent from './component'
+
 export { DruxtRouter } from './router'
-export { DruxtRouterComponent } from './component'
 export { DruxtRouterEntityMixin } from './mixin'
+
+export { DruxtRouterComponent }

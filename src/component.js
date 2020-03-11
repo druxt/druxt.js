@@ -42,4 +42,4 @@ const DruxtRouterComponent = {
   }
 }
 
-export { DruxtRouterComponent }
+export default DruxtRouterComponent
