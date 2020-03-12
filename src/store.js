@@ -67,18 +67,6 @@ const DruxtRouterStore = ({ store }) => {
 
         return entity
       }
-
-      // async set ({ commit, dispatch, state }, path) {
-      //   await dispatch('get', path)
-      //   commit('setRoute', path)
-
-      //   if (typeof state.route !== 'undefined') {
-      //     const uuid = state.route.entity.uuid
-      //     if (typeof state.entities[uuid] !== 'undefined') {
-      //       commit('setEntity', state.entities[uuid])
-      //     }
-      //   }
-      // }
     }
   }
 
