@@ -6,6 +6,9 @@ import mockRoutes from '../__fixtures__/routes'
 
 const baseURL = 'https://example.com'
 
+const testArticle = { type: 'node--article', id: '98f36405-e1c4-4d8a-a9f9-4d4f6d414e96' }
+const testPage = { type: 'node--page', id: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9' }
+
 jest.mock('axios')
 axios.create.mockReturnValue({
   get: url => {
@@ -40,22 +43,22 @@ describe('DruxtRouter', () => {
     expect(result).toHaveProperty('entity')
     expect(result).toHaveProperty('route')
 
-    expect(result.entity).toHaveProperty('id', '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
-    expect(result.entity).toHaveProperty('type', 'node--page')
+    expect(result.entity).toHaveProperty('id', testPage.id)
+    expect(result.entity).toHaveProperty('type', testPage.type)
   })
 
   test('getResource', async () => {
-    const entity = await router.getResource({ type: 'node--article', id: '98f36405-e1c4-4d8a-a9f9-4d4f6d414e96' })
+    const entity = await router.getResource(testArticle)
 
-    expect(entity).toHaveProperty('type', 'node--article')
+    expect(entity).toHaveProperty('type', testArticle.type)
   })
 
   test('getResourceByRoute', async () => {
     const route = mockRoutes['/']
     const entity = await router.getResourceByRoute(route)
 
-    expect(entity).toHaveProperty('id', '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
-    expect(entity).toHaveProperty('type', 'node--page')
+    expect(entity).toHaveProperty('id', testPage.id)
+    expect(entity).toHaveProperty('type', testPage.type)
   })
 
   test('getRoute', async () => {
@@ -68,5 +71,11 @@ describe('DruxtRouter', () => {
     // Get the route of node/1.
     result = await router.getRoute('/node/1')
     expect(result).toHaveProperty('isHomePath', false)
+  })
+
+  test('preprocessEntity', async () => {
+    router.setOptions({ preprocessEntity: resp => resp })
+    const entity = await router.getResource(testArticle)
+    expect(entity).toHaveProperty('_raw')
   })
 })
