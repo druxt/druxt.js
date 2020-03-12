@@ -48,9 +48,7 @@ const DruxtRouterEntityMixin = {
     },
 
     ...vuex.mapState({
-      entities: state => state.druxtRouter.entities,
-      route: state => state.druxtRouter.route,
-      schema: state => state.druxtRouter.schema
+      entities: state => state.druxtRouter.entities
     })
   },
 

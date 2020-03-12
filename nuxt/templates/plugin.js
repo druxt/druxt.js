@@ -37,6 +37,6 @@ export default (context, inject) => {
   }
   <% } %>
 
-  const router = new DruxtRouter(baseUrl, options, context)
+  const router = new DruxtRouter(baseUrl, options)
   inject('druxtRouter', () => router)
 }

@@ -6,9 +6,8 @@ class DruxtRouter {
    *
    * @param string baseURL
    * @param object options
-   * @param object context
    */
-  constructor (baseURL, options = {}, context) {
+  constructor (baseURL, options = {}) {
     // Check for URL.
     if (!baseURL) {
       throw new Error('The \'baseURL\' parameter is required.')
@@ -17,12 +16,15 @@ class DruxtRouter {
     // Setup Axios.
     this.axios = axios.create({ baseURL })
 
+    // Setup options.
+    this.setOptions(options)
+  }
+
+  setOptions (options = {}) {
     // Setup entity preprocess callback.
     if (typeof options.preprocessEntity === 'function') {
       this.preprocessEntity = options.preprocessEntity
     }
-
-    this.context = context
   }
 
   /**
