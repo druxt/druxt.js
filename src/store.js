@@ -1,5 +1,5 @@
 // @TODO - Add Vuex test coverage.
-export default ({ store }) => {
+const DruxtRouterStore = ({ store }) => {
   if (typeof store === 'undefined') {
     throw new TypeError('Vuex store not found.')
   }
@@ -86,3 +86,5 @@ export default ({ store }) => {
     preserveState: Boolean(store.state[namespace])
   })
 }
+
+export { DruxtRouterStore }

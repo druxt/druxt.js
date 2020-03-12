@@ -38,7 +38,7 @@ export default function (moduleOptions = {}) {
   // Add Vuex plugin.
   // @TODO - Ensure Vuex store is available.
   this.addPlugin({
-    src: resolve(__dirname, 'store.js'),
+    src: resolve(__dirname, 'templates/store.js'),
     fileName: 'store/druxt-router.js',
     options
   })

@@ -1,8 +1,7 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouterComponent } from '..'
-import DruxtRouterStore from '../../nuxt/store'
+import { DruxtRouterComponent, DruxtRouterStore } from '..'
 
 import mockResources from '../__fixtures__/resources'
 import mockRoutes from '../__fixtures__/routes'
