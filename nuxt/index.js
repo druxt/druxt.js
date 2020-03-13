@@ -13,7 +13,7 @@ export default function (moduleOptions = {}) {
     if (!options.component) {
       options.component = resolve(this.options.buildDir, 'components/druxt-router.js')
       this.addTemplate({
-        src: resolve(__dirname, 'component.js'),
+        src: resolve(__dirname, '../src/component.js'),
         fileName: 'components/druxt-router.js',
         options
       })
@@ -30,7 +30,7 @@ export default function (moduleOptions = {}) {
 
   // Add plugin.
   this.addPlugin({
-    src: resolve(__dirname, 'plugin.template.js'),
+    src: resolve(__dirname, 'templates/plugin.js'),
     fileName: 'druxt-router.js',
     options
   })
@@ -38,7 +38,7 @@ export default function (moduleOptions = {}) {
   // Add Vuex plugin.
   // @TODO - Ensure Vuex store is available.
   this.addPlugin({
-    src: resolve(__dirname, 'store.js'),
+    src: resolve(__dirname, 'templates/store.js'),
     fileName: 'store/druxt-router.js',
     options
   })

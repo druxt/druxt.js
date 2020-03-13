@@ -1,5 +1,5 @@
 // @TODO - Add Vuex test coverage.
-export default ({ store }) => {
+const DruxtRouterStore = ({ store }) => {
   if (typeof store === 'undefined') {
     throw new TypeError('Vuex store not found.')
   }
@@ -11,8 +11,7 @@ export default ({ store }) => {
     state: () => ({
       entities: {},
       route: {},
-      routes: {},
-      schema: {}
+      routes: {}
     }),
 
     mutations: {
@@ -25,10 +24,20 @@ export default ({ store }) => {
       },
 
       addRoute (state, { path, route }) {
+        if (typeof path !== 'string' || typeof route === 'undefined') {
+          // @TODO - Error?
+          return
+        }
+
         state.routes[path] = route
       },
 
       setRoute (state, path) {
+        if (typeof path !== 'string' || typeof state.routes[path] === 'undefined') {
+          // @TODO - Error?
+          return
+        }
+
         state.route = state.routes[path]
       }
     },
@@ -67,18 +76,6 @@ export default ({ store }) => {
 
         return entity
       }
-
-      // async set ({ commit, dispatch, state }, path) {
-      //   await dispatch('get', path)
-      //   commit('setRoute', path)
-
-      //   if (typeof state.route !== 'undefined') {
-      //     const uuid = state.route.entity.uuid
-      //     if (typeof state.entities[uuid] !== 'undefined') {
-      //       commit('setEntity', state.entities[uuid])
-      //     }
-      //   }
-      // }
     }
   }
 
@@ -86,3 +83,5 @@ export default ({ store }) => {
     preserveState: Boolean(store.state[namespace])
   })
 }
+
+export { DruxtRouterStore }

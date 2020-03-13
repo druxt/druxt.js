@@ -11,11 +11,8 @@ module.exports = {
       handler: require('../index').default,
       options: {
         baseUrl: 'https://example.com',
-        importPath: '../../../src/index'
+        importPath: '../../..'
       }
     }
-  ],
-  build: {
-    transpile: ['..']
-  }
+  ]
 }
