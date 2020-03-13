@@ -13,7 +13,7 @@ export default function (moduleOptions = {}) {
     if (!options.component) {
       options.component = resolve(this.options.buildDir, 'components/druxt-router.js')
       this.addTemplate({
-        src: resolve(__dirname, '../src/component.js'),
+        src: resolve(__dirname, 'templates/component.js'),
         fileName: 'components/druxt-router.js',
         options
       })
