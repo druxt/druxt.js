@@ -90,4 +90,3 @@ describe('DruxtRouterStore', () => {
 
   // @TODO - Add tests for actions.
 })
-
