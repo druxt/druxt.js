@@ -1,4 +1,4 @@
-const mapState = require('vuex').mapState
+const vuex = require('vuex')
 
 /**
  * @mixin
@@ -28,7 +28,7 @@ const DruxtRouterEntityMixin = {
     }
 
     this.loading = true
-    this.$store.dispatch('druxtRouter/getEntity', { id: this.uuid, type: this.type }).then((res) => {
+    this.getEntity({ id: this.uuid, type: this.type }).then((res) => {
       // If component has `onDruxtRouterLoad` method, pass through allowing it to load additonal entities.
       this.loading = typeof this.onDruxtRouterLoad === 'function' ? !!this.onDruxtRouterLoad(res) : false
     })
@@ -47,13 +47,16 @@ const DruxtRouterEntityMixin = {
       return !this.loading && !!this.entity
     },
 
-    ...mapState({
-      entities: state => state.druxtRouter.entities,
-      route: state => state.druxtRouter.route,
-      schema: state => state.druxtRouter.schema
+    ...vuex.mapState({
+      entities: state => state.druxtRouter.entities
+    })
+  },
+
+  methods: {
+    ...vuex.mapActions({
+      getEntity: 'druxtRouter/getEntity'
     })
   }
 }
 
-module.exports = DruxtRouterEntityMixin
-module.exports.meta = require('../package.json')
+export { DruxtRouterEntityMixin }

@@ -1,5 +1,5 @@
-component/*.js
 coverage
+dist
 node_modules
 .nuxt
 .vscode

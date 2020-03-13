@@ -13,7 +13,7 @@ const argv = minimist(process.argv.slice(2));
 const projectRoot = path.resolve(__dirname, '..');
 
 const baseConfig = {
-  input: 'nuxt/component.js',
+  input: 'src/index.js',
   plugins: {
     preVue: [
       replace({
@@ -34,7 +34,7 @@ const baseConfig = {
       },
     },
     postVue: [
-      buble({ objectAssign: true }),
+      buble({ objectAssign: true, transforms: { asyncAwait: false } }),
     ],
   },
 };
@@ -58,7 +58,7 @@ if (!argv.format || argv.format === 'es') {
     ...baseConfig,
     external,
     output: {
-      file: 'component/druxt-router.esm.js',
+      file: 'dist/druxt-router.esm.js',
       format: 'esm',
       exports: 'named',
     },
@@ -77,7 +77,7 @@ if (!argv.format || argv.format === 'cjs') {
     external,
     output: {
       compact: true,
-      file: 'component/druxt-router.ssr.js',
+      file: 'dist/druxt-router.ssr.js',
       format: 'cjs',
       name: 'DruxtRouter',
       exports: 'named',
@@ -104,7 +104,7 @@ if (!argv.format || argv.format === 'iife') {
     external,
     output: {
       compact: true,
-      file: 'component/druxt-router.min.js',
+      file: 'dist/druxt-router.min.js',
       format: 'iife',
       name: 'DruxtRouter',
       exports: 'named',
