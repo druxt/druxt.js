@@ -25,10 +25,20 @@ const DruxtRouterStore = ({ store }) => {
       },
 
       addRoute (state, { path, route }) {
+        if (typeof path !== 'string' || typeof route === 'undefined') {
+          // @TODO - Error?
+          return
+        }
+
         state.routes[path] = route
       },
 
       setRoute (state, path) {
+        if (typeof path !== 'string' || typeof state.routes[path] === 'undefined') {
+          // @TODO - Error?
+          return
+        }
+
         state.route = state.routes[path]
       }
     },
