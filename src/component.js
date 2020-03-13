@@ -12,7 +12,7 @@ const DruxtRouterComponent = {
           href: this.canonical || this.route.entity.canonical
         }
       ],
-      meta: this.metatags || {}
+      meta: this.metatags || false
     }
   },
 
