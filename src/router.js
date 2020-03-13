@@ -82,9 +82,7 @@ class DruxtRouter {
    * @param string id
    */
   async getResource ({ id, type }) {
-    const { entityType, bundle } = this.convertResourceToEntityBundle(type)
-
-    const url = `/api/${entityType}/${bundle}/${id}`
+    const url = `/api/${type.replace('--', '/')}/${id}`
     const response = await this.axios.get(url)
 
     const resource = { id, type, data: response.data }
@@ -118,22 +116,6 @@ class DruxtRouter {
     const response = await this.axios.get(url)
 
     return response.data
-  }
-
-  /**
-   * Convert a JSON:API resource type to a Drupal Entity/Bundle.
-   *
-   * @todo Add support for JSON:API Extras.
-   *
-   * @param string type
-   */
-  convertResourceToEntityBundle (type) {
-    const parts = type.split('--')
-
-    return {
-      entityType: parts[0],
-      bundle: parts[1]
-    }
   }
 }
 
