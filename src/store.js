@@ -11,8 +11,7 @@ const DruxtRouterStore = ({ store }) => {
     state: () => ({
       entities: {},
       route: {},
-      routes: {},
-      schema: {}
+      routes: {}
     }),
 
     mutations: {

@@ -22,11 +22,7 @@ axios.create.mockReturnValue({
   }
 })
 
-const router = new DruxtRouter(baseURL, {
-  schema: () => {
-    return {}
-  }
-})
+const router = new DruxtRouter(baseURL, {})
 
 describe('DruxtRouter', () => {
   test('constructor', () => {
