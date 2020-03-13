@@ -1,10 +1,11 @@
 {
   "name": "druxt-router",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Provides a Nuxt <-> Drupal router.",
   "files": [
     "dist",
-    "nuxt"
+    "nuxt/index.js",
+    "nuxt/templates"
   ],
   "main": "dist/druxt-router.ssr.js",
   "module": "dist/druxt-router.esm.js",
