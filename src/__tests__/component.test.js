@@ -1,10 +1,9 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouterComponent, DruxtRouterStore } from '..'
+import { DruxtRouter, DruxtRouterComponent, DruxtRouterStore } from '..'
 
-import mockResources from '../__fixtures__/resources'
-import mockRoutes from '../__fixtures__/routes'
+jest.mock('../router')
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -13,17 +12,10 @@ localVue.use(Vuex)
 // Setup vuex store.
 const store = new Vuex.Store()
 DruxtRouterStore({ store })
-store.$druxtRouter = () => ({
-  get: async path => {
-    const route = mockRoutes[path]
-    const entity = mockResources[`/api/${route.entity.type}/${route.entity.bundle}/${route.entity.uuid}`]
-
-    return { entity, route }
-  }
-})
+store.$druxtRouter = () => new DruxtRouter('https://example.com')
 
 test('DruxtRouterComponent', async () => {
-  await store.dispatch('druxtRouter/getEntityByRouter', '/')
+  await store.dispatch('druxtRouter/get', '/')
 
   const wrapper = shallowMount(DruxtRouterComponent, { store, localVue })
 
