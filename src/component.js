@@ -23,6 +23,7 @@ const DruxtRouterComponent = {
 
     ...mapState({
       entity: state => state.druxtRouter.entities[state.druxtRouter.route.entity.uuid],
+      redirect: state => state.druxtRouter.redirect,
       route: state => state.druxtRouter.route
     })
   },
@@ -38,7 +39,7 @@ const DruxtRouterComponent = {
   },
 
   fetch ({ store, route }) {
-    return store.dispatch('druxtRouter/getEntityByRouter', route.fullPath)
+    return store.dispatch('druxtRouter/get', route.fullPath)
   }
 }
 
