@@ -65,6 +65,7 @@
     "eslint": "^6.7.1",
     "get-port": "^5.0.0",
     "jest": "^24.9.0",
+    "jest-mock-axios": "^3.2.0",
     "nodemon": "^2.0.1",
     "nuxt-edge": "^2.11.0-26244009.75bb0884",
     "rollup": "^1.32.0",
