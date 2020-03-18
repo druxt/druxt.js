@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Url from 'url-parse'
 
 class DruxtRouter {
   /**
@@ -35,11 +36,43 @@ class DruxtRouter {
   async get (path) {
     const route = await this.getRoute(path)
 
+    const redirect = this.getRedirect(path, route)
+
     // Get entity from API.
     // @TODO - Add validation/error handling.
     const entity = await this.getResourceByRoute(route)
 
-    return { entity, route }
+    return { entity, redirect, route }
+  }
+
+  /**
+   * @param object route
+   */
+  getRedirect (path, route) {
+    // Redirect to route provided redirect.
+    if (Array.isArray(route.redirect) && typeof route.redirect[0].to !== 'undefined') {
+      return route.redirect[0].to
+    }
+
+    // Redirect to root if route is home path but path isn't root.
+    if (route.isHomePath) {
+      if (path !== '/') {
+        return '/'
+      }
+
+      return false
+    }
+
+    // Redirect if path does not match resolved clean url path.
+    if (typeof route.resolved === 'string') {
+      const url = new Url(route.resolved)
+
+      if (path !== url.pathname) {
+        return url.pathname
+      }
+    }
+
+    return false
   }
 
   /**

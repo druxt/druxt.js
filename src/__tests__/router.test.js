@@ -43,6 +43,33 @@ describe('DruxtRouter', () => {
     expect(result.entity).toHaveProperty('type', testPage.type)
   })
 
+  test('getRedirect', () => {
+    let redirect
+
+    // Route provided redirect.
+    redirect = router.getRedirect(null, {
+      redirect: [{ to: '/' }]
+    })
+    expect(redirect).toBe('/')
+
+    // Root redirect.
+    redirect = router.getRedirect('/', {
+      isHomePath: true
+    })
+    expect(redirect).toBe(false)
+
+    redirect = router.getRedirect('/node/1', {
+      isHomePath: true
+    })
+    expect(redirect).toBe('/')
+
+    // Clean url redirect.
+    redirect = router.getRedirect('/node/2', {
+      resolved: 'https://example.com/clean-url'
+    })
+    expect(redirect).toBe('/clean-url')
+  })
+
   test('getResource', async () => {
     const entity = await router.getResource(testArticle)
 

@@ -43,6 +43,7 @@ const baseConfig = {
 // Refer to https://rollupjs.org/guide/en/#warning-treating-module-as-external-dependency
 const external = [
   'axios',
+  'url-parse',
   'vuex'
 ];
 
@@ -50,6 +51,7 @@ const external = [
 // Refer to https://rollupjs.org/guide/en#output-globals for details
 const globals = {
   axios: 'axios',
+  'url-parse': 'Url',
   vuex: 'vuex'
 };
 
