@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Url from 'url-parse'
 
 class DruxtRouter {
   /**
@@ -58,7 +59,14 @@ class DruxtRouter {
       return '/'
     }
 
-    // @TODO - Clean urls redirect.
+    // Redirect if path does not match resolved clean url path.
+    if (typeof route.resolved === 'string') {
+      const url = new Url(route.resolved)
+
+      if (path !== url.pathname) {
+        return url.pathname
+      }
+    }
 
     return false
   }
