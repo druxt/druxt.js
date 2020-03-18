@@ -1,7 +1,10 @@
 import { createLocalVue } from '@vue/test-utils'
+import mockAxios from 'jest-mock-axios'
 import Vuex from 'vuex'
 
-import { DruxtRouterStore } from '..'
+import { DruxtRouter, DruxtRouterStore } from '..'
+
+jest.mock('axios')
 
 import mockResources from '../__fixtures__/resources'
 import mockRoutes from '../__fixtures__/routes'
@@ -9,8 +12,6 @@ import mockRoutes from '../__fixtures__/routes'
 // Setup mock data.
 const mockArticle = mockResources['/api/node/article/98f36405-e1c4-4d8a-a9f9-4d4f6d414e96']
 const mockPage = mockResources['/api/node/page/4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9']
-
-
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -20,9 +21,13 @@ let store
 
 describe('DruxtRouterStore', () => {
   beforeEach(() => {
+    mockAxios.reset()
+
     // Setup vuex store.
     store = new Vuex.Store()
     DruxtRouterStore({ store })
+
+    store.$druxtRouter = () => new DruxtRouter('https://example.com')
   })
 
   test('init', () => {
@@ -88,5 +93,15 @@ describe('DruxtRouterStore', () => {
     expect(store.state.druxtRouter.route).toStrictEqual(mockRoutes['/node/1'])
   })
 
-  // @TODO - Add tests for actions.
+  test('get', async () => {
+    let { entity } = await store.dispatch('druxtRouter/get', '/')
+    expect(entity.data).toBe(mockPage)
+    expect(entity.id).toBe(mockPage.id)
+    expect(entity.type).toBe(mockPage.type)
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+
+    // Ensure additional requests to the same route don't trigger an additional request.
+    await store.dispatch('druxtRouter/get', '/')
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+  })
 })

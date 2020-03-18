@@ -10,6 +10,7 @@ const DruxtRouterStore = ({ store }) => {
 
     state: () => ({
       entities: {},
+      redirect: false,
       route: {},
       routes: {}
     }),
@@ -21,6 +22,10 @@ const DruxtRouterStore = ({ store }) => {
           return
         }
         state.entities[entity.id] = entity
+      },
+
+      setRedirect (state, redirect) {
+        state.redirect = redirect
       },
 
       addRoute (state, { path, route }) {
@@ -43,16 +48,34 @@ const DruxtRouterStore = ({ store }) => {
     },
 
     actions: {
-      async getEntityByRouter ({ commit, dispatch, state }, path) {
-        try {
-          const { entity, route } = await this.$druxtRouter().get(path)
+      async get ({ commit, state }, path) {
+        // Return cached data, if present.
+        // @TODO - Handle cache busting.
+        if (typeof state.routes[path] !== 'undefined' && typeof state.entities[state.routes[path].entity.uuid] !== 'undefined') {
+          const route = state.entities[state.routes[path].entity.uuid]
+          const redirect = this.$druxtRouter().getRedirect(path, route)
+          const entity = state.entities[state.routes[path].entity.uuid]
 
-          commit('addRoute', { path, route })
           commit('setRoute', path)
+          commit('setRedirect', redirect)
+
+          return { entity, redirect, route }
+        }
+
+        // Get data from router.
+        try {
+          const { entity, redirect, route } = await this.$druxtRouter().get(path)
+
+          commit('addRoute', { path, redirect, route })
+          commit('setRoute', path)
+
+          commit('setRedirect', redirect)
 
           commit('addEntity', entity)
 
-          return entity
+          return { entity, redirect, route }
+
+        // Handle errors.
         } catch (err) {
           if (typeof err.response === 'undefined') {
             throw err
