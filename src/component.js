@@ -38,8 +38,13 @@ const DruxtRouterComponent = {
     }, JSON.stringify(this.route))
   },
 
-  fetch ({ store, route }) {
-    return store.dispatch('druxtRouter/get', route.fullPath)
+  async fetch ({ store, redirect, route }) {
+    const result = await store.dispatch('druxtRouter/get', route.fullPath)
+
+    // Process redirect.
+    if (result.redirect) {
+      redirect(result.redirect)
+    }
   }
 }
 

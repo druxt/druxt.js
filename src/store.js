@@ -52,14 +52,14 @@ const DruxtRouterStore = ({ store }) => {
         // Return cached data, if present.
         // @TODO - Handle cache busting.
         if (typeof state.routes[path] !== 'undefined' && typeof state.entities[state.routes[path].entity.uuid] !== 'undefined') {
-          commit('setRoute', path)
-
           const route = state.entities[state.routes[path].entity.uuid]
           const redirect = this.$druxtRouter().getRedirect(path, route)
+          const entity = state.entities[state.routes[path].entity.uuid]
 
+          commit('setRoute', path)
           commit('setRedirect', redirect)
 
-          return state.entities[state.routes[path].entity.uuid]
+          return { entity, redirect, route }
         }
 
         // Get data from router.
@@ -73,7 +73,7 @@ const DruxtRouterStore = ({ store }) => {
 
           commit('addEntity', entity)
 
-          return entity
+          return { entity, redirect, route }
 
         // Handle errors.
         } catch (err) {
