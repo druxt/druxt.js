@@ -55,8 +55,12 @@ class DruxtRouter {
     }
 
     // Redirect to root if route is home path but path isn't root.
-    if (route.isHomePath && path !== '/') {
-      return '/'
+    if (route.isHomePath) {
+      if (path !== '/') {
+        return '/'
+      }
+
+      return false
     }
 
     // Redirect if path does not match resolved clean url path.
