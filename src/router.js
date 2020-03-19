@@ -15,7 +15,11 @@ class DruxtRouter {
     }
 
     // Setup Axios.
-    this.axios = axios.create({ baseURL })
+    let axiosSettings = { baseURL }
+    if (typeof options.axios === 'object') {
+      axiosSettings = Object.assign(axiosSettings, options.axios)
+    }
+    this.axios = axios.create(axiosSettings)
 
     // Setup options.
     this.setOptions(options)
