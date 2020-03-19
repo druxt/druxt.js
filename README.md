@@ -26,3 +26,12 @@ module.exports = {
 ```
 
 Ensure you have activated the [Nuxt Vuex store](https://nuxtjs.org/guide/vuex-store/).
+
+## Options
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
+| `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
+| `JSONAPIDeserializer` | `boolean` | No | `false` | Enable/Disable [JSON API Serializer](https://www.npmjs.com/package/jsonapi-serializer) parsing of Drupal entities. |
+
