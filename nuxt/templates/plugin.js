@@ -5,6 +5,11 @@ export default (context, inject) => {
   const baseUrl = '<%= options.baseUrl %>'
   const options = {}
 
+  <% if (typeof options.axios === 'object') { %>
+  // Axios settings.
+  options.axios = <%= JSON.stringify(options.axios) %>
+  <% } %>
+
   <% if (options.JSONAPIDeserializer) { %>
   // JSONAPIDeserialzer.
   options.preprocessEntity = async resource => {
