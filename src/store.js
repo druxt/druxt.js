@@ -48,6 +48,7 @@ const DruxtRouterStore = ({ store }) => {
     },
 
     actions: {
+      // @TODO - Change this to use the 'getRoute' and 'getEntity' actions.
       async get ({ commit, state }, path) {
         // Return cached data, if present.
         // @TODO - Handle cache busting.
@@ -98,6 +99,18 @@ const DruxtRouterStore = ({ store }) => {
         commit('addEntity', entity)
 
         return entity
+      },
+
+      async getRoute ({ commit, state }, path) {
+        if (typeof state.routes[path] !== 'undefined') {
+          return state.routes[path]
+        }
+
+        const route = await this.$druxtRouter().getRoute(path)
+
+        commit('addRoute', { path, route })
+
+        return route
       }
     }
   }
