@@ -94,7 +94,7 @@ describe('DruxtRouterStore', () => {
   })
 
   test('get', async () => {
-    let { entity } = await store.dispatch('druxtRouter/get', '/')
+    const { entity } = await store.dispatch('druxtRouter/get', '/')
     expect(entity.data).toBe(mockPage)
     expect(entity.id).toBe(mockPage.id)
     expect(entity.type).toBe(mockPage.type)
@@ -103,5 +103,15 @@ describe('DruxtRouterStore', () => {
     // Ensure additional requests to the same route don't trigger an additional request.
     await store.dispatch('druxtRouter/get', '/')
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
+  })
+
+  test('getRoute', async () => {
+    const route = await store.dispatch('druxtRouter/getRoute', '/')
+    expect(route).toBe(mockRoutes['/'])
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
+
+    // Ensure additional requests to the same route don't trigger an additional request.
+    await store.dispatch('druxtRouter/getRoute', '/')
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
   })
 })
