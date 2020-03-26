@@ -60,7 +60,7 @@ describe('DruxtBreadcrumb', () => {
 
     // Expect 1 item to be loading.
     expect(wrapper.vm.loading).toBe(1)
-    expect(wrapper.vm.crumbs).toBe(false)
+    expect(wrapper.vm.crumbs).toHaveLength(0)
 
     // Wait for loading to complete.
     await localVue.nextTick()
