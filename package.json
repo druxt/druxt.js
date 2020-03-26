@@ -1,6 +1,6 @@
 {
   "name": "druxt-breadcrumb",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Provides a Breadcrumb Vue component to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
@@ -23,7 +23,8 @@
   "module": "dist/druxt-breadcrumb.esm.js",
   "unpkg": "dist/druxt-breadcrumb.min.js",
   "files": [
-    "dist/*"
+    "dist",
+    "nuxt"
   ],
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",
