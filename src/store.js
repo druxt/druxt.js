@@ -98,6 +98,18 @@ const DruxtRouterStore = ({ store }) => {
         commit('addEntity', entity)
 
         return entity
+      },
+
+      async getRoute ({ commit, state }, path) {
+        if (state.routes[path]) {
+          return state.routes[path]
+        }
+
+        const route = await this.$druxtRouter().getRoute(path)
+
+        commit('addRoute', route)
+
+        return route
       }
     }
   }
