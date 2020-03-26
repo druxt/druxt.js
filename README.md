@@ -18,7 +18,7 @@ Add module to `nuxt.config.js`
 module.exports = {
   modules: [
     ...
-    ['druxt-router/nuxt', {
+    ['druxt-router', {
       baseUrl: 'https://example.com',
     }]
   ]
