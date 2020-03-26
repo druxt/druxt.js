@@ -53,7 +53,8 @@ export default {
 
   computed: {
     crumbs() {
-      if (!!this.loading) return false
+      if (!!this.loading) return []
+
       return Object.keys(this.items).sort((a, b) => a.length - b.length).map(key => {
         return this.items[key]
       })
@@ -72,6 +73,8 @@ export default {
   },
 
   render: function (createElement) {
+    if (this.crumbs.length === 0) return
+
     // @TODO - Make component configurable.
     return createElement(this.component, {
       props: {
