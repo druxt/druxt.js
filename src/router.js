@@ -117,7 +117,10 @@ class DruxtRouter {
   async getRoute (path) {
     // @TODO - Add validation/error handling.
     const url = `/router/translate-path?path=${path}`
-    const response = await this.axios.get(url)
+    const response = await this.axios.get(url, {
+      // Prevent invalid routes (404) from throwing validation errors.
+      validateStatus: status => status < 500
+    })
 
     return response.data
   }
