@@ -38,7 +38,10 @@ class DruxtRouter {
    * @param string path
    */
   async get (path) {
-    const route = await this.getRoute(path)
+    const { data: route, error: routeError } = await this.getRoute(path)
+    if (routeError) {
+      return { route, error: routeError }
+    }
 
     const redirect = this.getRedirect(path, route)
 
@@ -117,12 +120,23 @@ class DruxtRouter {
   async getRoute (path) {
     // @TODO - Add validation/error handling.
     const url = `/router/translate-path?path=${path}`
+
     const response = await this.axios.get(url, {
       // Prevent invalid routes (404) from throwing validation errors.
       validateStatus: status => status < 500
     })
+    const data = response.data
 
-    return response.data
+    // Process Axios error.
+    let error = false
+    if (!(response.status >= 200 && response.status < 300)) {
+      error = {
+        statusCode: response.status,
+        message: response.statusText
+      }
+    }
+
+    return { data, error }
   }
 }
 
