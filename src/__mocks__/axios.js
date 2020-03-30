@@ -14,7 +14,7 @@ mockAxios.get = jest.fn(url => {
     data = mockResources[url]
   }
 
-  return { data }
+  return { data, status: 200 }
 })
 
 export default mockAxios

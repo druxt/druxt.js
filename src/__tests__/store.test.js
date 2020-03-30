@@ -106,7 +106,7 @@ describe('DruxtRouterStore', () => {
   })
 
   test('getRoute', async () => {
-    const route = await store.dispatch('druxtRouter/getRoute', '/')
+    const { data: route } = await store.dispatch('druxtRouter/getRoute', '/')
     expect(route).toBe(mockRoutes['/'])
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
