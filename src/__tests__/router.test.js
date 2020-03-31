@@ -35,13 +35,18 @@ describe('DruxtRouter', () => {
   })
 
   test('get', async () => {
-    const result = await router.get('/')
+    // Test a successful request.
+    let result = await router.get('/')
 
     expect(result).toHaveProperty('entity')
     expect(result).toHaveProperty('route')
 
     expect(result.entity).toHaveProperty('id', testPage.id)
     expect(result.entity).toHaveProperty('type', testPage.type)
+
+    // Test a failed request.
+    result = await router.get('/error')
+    expect(result).toHaveProperty('error')
   })
 
   test('getRedirect', () => {
@@ -69,6 +74,10 @@ describe('DruxtRouter', () => {
       resolved: 'https://example.com/clean-url'
     })
     expect(redirect).toBe('/clean-url')
+
+    // No redirect.
+    redirect = router.getRedirect(null, {})
+    expect(redirect).toBe(false)
   })
 
   test('getResource', async () => {
@@ -95,6 +104,7 @@ describe('DruxtRouter', () => {
 
     // Get the route of node/1.
     route = await router.getRoute('/node/1')
+
     expect(route.data).toHaveProperty('isHomePath', false)
   })
 
