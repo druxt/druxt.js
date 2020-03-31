@@ -48,45 +48,23 @@ const DruxtRouterStore = ({ store }) => {
     },
 
     actions: {
-      // @TODO - Change this to use the 'getRoute' and 'getEntity' actions.
-      async get ({ commit, state }, path) {
-        // Return cached data, if present.
-        // @TODO - Handle cache busting.
-        if (typeof state.routes[path] !== 'undefined' && typeof state.entities[state.routes[path].entity.uuid] !== 'undefined') {
-          const route = state.entities[state.routes[path].entity.uuid]
-          const redirect = this.$druxtRouter().getRedirect(path, route)
-          const entity = state.entities[state.routes[path].entity.uuid]
+      async get ({ commit, dispatch, state }, path) {
+        // Get route by path from 'getRoute'.
+        const { data: route, error: routeError } = await dispatch('getRoute', path)
 
-          commit('setRoute', path)
-          commit('setRedirect', redirect)
-
-          return { entity, redirect, route }
+        // Handle route errors.
+        if (typeof routeError.statusCode !== 'undefined') {
+          return this.app.context.error(routeError)
         }
 
-        // Get data from router.
-        try {
-          const { entity, redirect, route } = await this.$druxtRouter().get(path)
+        commit('setRoute', path)
 
-          commit('addRoute', { path, redirect, route })
-          commit('setRoute', path)
+        const redirect = this.$druxtRouter().getRedirect(path, route)
+        commit('setRedirect', redirect)
 
-          commit('setRedirect', redirect)
+        const entity = await dispatch('getEntity', { id: route.entity.uuid, type: route.jsonapi.resourceName })
 
-          commit('addEntity', entity)
-
-          return { entity, redirect, route }
-
-        // Handle errors.
-        } catch (err) {
-          if (typeof err.response === 'undefined') {
-            throw err
-          }
-
-          return this.app.context.error({
-            statusCode: err.response.status,
-            message: err.response.statusText
-          })
-        }
+        return { entity, redirect, route }
       },
 
       async getEntity ({ commit, state }, query) {
