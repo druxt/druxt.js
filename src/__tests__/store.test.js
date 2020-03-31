@@ -25,6 +25,7 @@ describe('DruxtRouterStore', () => {
 
     // Setup vuex store.
     store = new Vuex.Store()
+    store.app = { context: { error: jest.fn() }}
     DruxtRouterStore({ store })
 
     store.$druxtRouter = () => new DruxtRouter('https://example.com')
@@ -103,10 +104,14 @@ describe('DruxtRouterStore', () => {
     // Ensure additional requests to the same route don't trigger an additional request.
     await store.dispatch('druxtRouter/get', '/')
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
+
+    // Test failed request.
+    await store.dispatch('druxtRouter/get', '/error')
+    expect(store.app.context.error).toHaveBeenCalledWith({ message: undefined, statusCode: 404 })
   })
 
   test('getRoute', async () => {
-    const route = await store.dispatch('druxtRouter/getRoute', '/')
+    const { data: route } = await store.dispatch('druxtRouter/getRoute', '/')
     expect(route).toBe(mockRoutes['/'])
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 

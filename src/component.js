@@ -22,20 +22,24 @@ const DruxtRouterComponent = {
     },
 
     ...mapState({
-      entity: state => state.druxtRouter.entities[state.druxtRouter.route.entity.uuid],
+      entity: state => state.druxtRouter.entities[state.druxtRouter.route.data.entity.uuid],
       redirect: state => state.druxtRouter.redirect,
-      route: state => state.druxtRouter.route
+      route: state => state.druxtRouter.route.data
     })
   },
 
   render (createElement) {
+    if (typeof this.entity === 'undefined') {
+      return
+    }
+
     return createElement('div', {
       key: this.route.entity.uuid,
       props: {
         type: `${this.route.jsonapi.resourceName}`,
         uuid: this.route.entity.uuid
       }
-    }, JSON.stringify(this.route))
+    }, JSON.stringify(this.entity.data))
   },
 
   async fetch ({ store, redirect, route }) {

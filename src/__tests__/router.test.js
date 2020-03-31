@@ -1,8 +1,6 @@
-import axios from 'axios'
 import { DruxtRouter } from '..'
 
 import mockAxios from 'jest-mock-axios'
-import mockResources from '../__fixtures__/resources'
 import mockRoutes from '../__fixtures__/routes'
 
 const baseURL = 'https://example.com'
@@ -37,13 +35,18 @@ describe('DruxtRouter', () => {
   })
 
   test('get', async () => {
-    const result = await router.get('/')
+    // Test a successful request.
+    let result = await router.get('/')
 
     expect(result).toHaveProperty('entity')
     expect(result).toHaveProperty('route')
 
     expect(result.entity).toHaveProperty('id', testPage.id)
     expect(result.entity).toHaveProperty('type', testPage.type)
+
+    // Test a failed request.
+    result = await router.get('/error')
+    expect(result).toHaveProperty('error')
   })
 
   test('getRedirect', () => {
@@ -71,6 +74,10 @@ describe('DruxtRouter', () => {
       resolved: 'https://example.com/clean-url'
     })
     expect(redirect).toBe('/clean-url')
+
+    // No redirect.
+    redirect = router.getRedirect(null, {})
+    expect(redirect).toBe(false)
   })
 
   test('getResource', async () => {
@@ -89,14 +96,16 @@ describe('DruxtRouter', () => {
 
   test('getRoute', async () => {
     // Get the route of the homepage.
-    let result = await router.getRoute('/')
-    expect(result).toHaveProperty('entity')
-    expect(result).toHaveProperty('isHomePath', true)
-    expect(result).toHaveProperty('jsonapi')
+    let route = await router.getRoute('/')
+
+    expect(route.data).toHaveProperty('entity')
+    expect(route.data).toHaveProperty('isHomePath', true)
+    expect(route.data).toHaveProperty('jsonapi')
 
     // Get the route of node/1.
-    result = await router.getRoute('/node/1')
-    expect(result).toHaveProperty('isHomePath', false)
+    route = await router.getRoute('/node/1')
+
+    expect(route.data).toHaveProperty('isHomePath', false)
   })
 
   test('preprocessEntity', async () => {
