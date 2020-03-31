@@ -27,7 +27,7 @@ const fetch = async fullPath => {
 describe('DruxtRouterComponent', () => {
   test('Homepage', async () => {
     await fetch('/')
-    expect(mockAxios.get).toHaveBeenCalledWith('/router/translate-path?path=/')
+    expect(mockAxios.get).toHaveBeenNthCalledWith(1, '/router/translate-path?path=/', expect.any(Object))
 
     const wrapper = shallowMount(DruxtRouterComponent, { store, localVue })
 
