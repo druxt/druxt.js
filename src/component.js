@@ -42,6 +42,9 @@ export default {
       // Reset items.
       this.items = {}
 
+      // If there is no route, stop here.
+      if (!this.route) return
+
       // Home crumb.
       // @TODO - Make this configurable.
       this.items['/'] = {
@@ -49,6 +52,7 @@ export default {
         text: 'Home'
       }
 
+      // If we are at the root of the site, stop here.
       if (this.$route.path === '/') return
 
       // Current route crumb.

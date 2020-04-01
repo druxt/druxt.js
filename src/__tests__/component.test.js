@@ -44,7 +44,7 @@ describe('DruxtBreadcrumb', () => {
     DruxtRouterStore({ store })
   })
 
-  test('root', () => {
+  test('root', async () => {
     const wrapper = mountComponent({ path: '/' })
 
     expect(wrapper.vm.route).toStrictEqual({
@@ -53,12 +53,20 @@ describe('DruxtBreadcrumb', () => {
 
     expect(Object.keys(wrapper.vm.routes)).toHaveLength(1)
     expect(Object.keys(wrapper.vm.items)).toHaveLength(1)
+
+    expect(wrapper.vm.loading).toBe(0)
+    expect(wrapper.vm.crumbs).toHaveLength(1)
+
+    // Wait for loading to complete.
+    await localVue.nextTick()
+
+    expect(wrapper.vm.loading).toBe(0)
     expect(wrapper.vm.crumbs).toHaveLength(1)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
   })
 
-  test('level 1', () => {
+  test('level 1', async () => {
     const wrapper = mountComponent({ path: '/level-1', routes: ['/', '/level-1'] })
 
     expect(wrapper.vm.route).toStrictEqual({
@@ -67,6 +75,14 @@ describe('DruxtBreadcrumb', () => {
 
     expect(Object.keys(wrapper.vm.routes)).toHaveLength(2)
     expect(Object.keys(wrapper.vm.items)).toHaveLength(2)
+
+    expect(wrapper.vm.loading).toBe(0)
+    expect(wrapper.vm.crumbs).toHaveLength(2)
+
+    // Wait for loading to complete.
+    await localVue.nextTick()
+
+    expect(wrapper.vm.loading).toBe(0)
     expect(wrapper.vm.crumbs).toHaveLength(2)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
@@ -82,7 +98,6 @@ describe('DruxtBreadcrumb', () => {
     expect(Object.keys(wrapper.vm.routes)).toHaveLength(3)
     expect(Object.keys(wrapper.vm.items)).toHaveLength(3)
 
-    // Expect 1 item to be loading.
     expect(wrapper.vm.loading).toBe(1)
     expect(wrapper.vm.crumbs).toHaveLength(0)
 
@@ -105,7 +120,6 @@ describe('DruxtBreadcrumb', () => {
     expect(Object.keys(wrapper.vm.routes)).toHaveLength(2)
     expect(Object.keys(wrapper.vm.items)).toHaveLength(3)
 
-    // Expect 1 item to be loading.
     expect(wrapper.vm.loading).toBe(1)
     expect(wrapper.vm.crumbs).toHaveLength(0)
 
@@ -118,6 +132,24 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(2)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+  })
+
+  test('404 route', async () => {
+    const wrapper = mountComponent({ path: '/level-1/level-2', routes: ['/'] })
+
+    expect(wrapper.vm.route).toBe(undefined)
+
+    expect(Object.keys(wrapper.vm.routes)).toHaveLength(1)
+    expect(Object.keys(wrapper.vm.items)).toHaveLength(0)
+
+    expect(wrapper.vm.loading).toBe(0)
+    expect(wrapper.vm.crumbs).toHaveLength(0)
+
+    // Wait for loading to complete.
+    await localVue.nextTick()
+
+    expect(wrapper.vm.loading).toBe(0)
+    expect(wrapper.vm.crumbs).toHaveLength(0)
   })
 
 })
