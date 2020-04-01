@@ -32,7 +32,7 @@ export default {
     },
 
     ...mapState({
-      route: state => state.druxtRouter.route,
+      route: state => state.druxtRouter.route.data,
       routes: state => state.druxtRouter.routes
     })
   },
@@ -64,9 +64,14 @@ export default {
         const to = '/' + paths.join('/')
         this.items[to] = {}
 
-        this.getRoute(to).then(res => {
+        this.getRoute(to).then(({ data, error }) => {
           this.loading--
-          this.items[to] = { to, text: res.label }
+
+          delete this.items[to]
+          if (data.label) {
+            this.items[to] = { to, text: data.label }
+          }
+
           this.$forceUpdate()
         })
 
