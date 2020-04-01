@@ -8,7 +8,7 @@ Provides a Breadcrumb Vue component to be used within a Druxt (DRUpal nuXT) proj
 
 ## Install
 
-`$ npm install druxt-router`
+`$ npm install druxt-breadcrumb`
 
 ## Usage
 
