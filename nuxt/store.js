@@ -1,3 +1,3 @@
-import { DruxtRouterStore } from '<%= options.importPath ? `${options.importPath}/..` : 'druxt-router' %>'
+import { DruxtRouterStore } from 'druxt-router'
 
 export default DruxtRouterStore
