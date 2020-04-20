@@ -7,6 +7,11 @@ export default {
     name: {
       type: String,
       default: 'main'
+    },
+
+    depth: {
+      type: Number,
+      default: 2
     }
   },
 
@@ -17,6 +22,10 @@ export default {
   },
 
   computed: {
+    items() {
+      return this.getMenuItems()
+    },
+
     ...mapGetters({
       getEntitiesByFilter: 'druxtMenu/getEntitiesByFilter'
     }),
@@ -28,35 +37,54 @@ export default {
   },
 
   methods: {
-    createMenuItems(createElement, entity = null, props = {}) {
-      let children = []
+    createMenuItems(createElement, items) {
+      const elements = []
 
-      let parent = null
-      if (entity) {
-        parent = 'menu_link_content:' + entity.id
+      for (const key in items) {
+        const item = items[key]
+
+        let component, children
+        let props = {
+          to: item.entity.attributes.url
+        }
+        if (item.children.length) {
+          component = 'b-nav-item-dropdown'
+          children = this.createMenuItems(createElement, item.children)
+          props.text = item.entity.attributes.title
+        }
+
+        else {
+          component = 'b-nav-item'
+          children = item.entity.attributes.title
+        }
+
+        elements.push(createElement(component, { props }, children))
       }
 
-      const entities = this.getEntitiesByFilter(key => this.entities[key].attributes.menu_name === this.name && this.entities[key].attributes.parent === parent)
+      return elements
+    },
 
-      for (const key in entities) {
-        const child = entities[key]
-        children.push(this.createMenuItems(createElement, child, { to: child.attributes.url }))
+    getMenuItems(entity = null, position = 0) {
+      const items = []
+      position += 1
+
+      if (position <= this.depth) {
+        let parent = null
+        if (entity) {
+          parent = 'menu_link_content:' + entity.id
+        }
+
+        const entities = this.getEntitiesByFilter(key => this.entities[key].attributes.menu_name === this.name && this.entities[key].attributes.parent === parent)
+
+        for (const key in entities) {
+          const entity = entities[key]
+          items.push({ entity, children: this.getMenuItems(entity, position)})
+        }
       }
 
-      // @TODO - Make components configurable.
-      let component = 'b-nav-item'
-      if (children.length && entity) {
-        component = 'b-nav-item-dropdown'
-        props.text = entity.attributes.title
-      }
-      else if (children.length && !entity) {
-        component = 'b-nav'
-      }
-      else if (entity) {
-        children = entity.attributes.title
-      }
+      position -= 1
 
-      return createElement(component, { props }, children)
+      return items
     },
 
     ...mapActions({
@@ -65,6 +93,15 @@ export default {
   },
 
   render: function (createElement) {
-    return this.createMenuItems(createElement)
+    const items = this.getMenuItems()
+    if (!items) return
+
+    return createElement('b-nav', this.createMenuItems(createElement, items))
+  },
+
+  watch: {
+    entities() {
+      this.$forceUpdate()
+    }
   }
 }
