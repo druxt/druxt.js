@@ -1,8 +1,16 @@
 import DruxtMenuPlugin from '..'
 
-const addPlugin = jest.fn()
+const mock = {
+  addPlugin: jest.fn(),
+  DruxtMenuPlugin
+}
 
-test('Nuxt Plugin', () => {
-  DruxtMenuPlugin.call({ addPlugin })
-  expect(addPlugin).toHaveBeenCalled()
+test('Nuxt module', () => {
+  expect(() => { mock.DruxtMenuPlugin() }).toThrow('Druxt settings missing.')
+
+  mock.options = {
+    druxt: {}
+  }
+  mock.DruxtMenuPlugin()
+  expect(mock.addPlugin).toHaveBeenCalled()
 })
