@@ -9,17 +9,19 @@ export { DruxtRouterStore } from './store'
 export { DruxtRouterComponent }
 
 export default function (moduleOptions = {}) {
-  const options = {
-    ...this.options['druxt-router'],
-    ...moduleOptions
+  // Use root level Druxt options.
+  if (typeof this.options === 'undefined' || !this.options.druxt) {
+    throw new TypeError('Druxt settings missing.')
   }
+  const options = this.options.druxt
+  options.router = options.router || {}
 
   this.extendRoutes((routes, resolve) => {
     // Only add router component if custom component is undefined.
     // @TODO - Validate custom component.
     // @TODO - Add test for custom component.
-    if (!options.component) {
-      options.component = resolve(this.options.buildDir, 'components/druxt-router.js')
+    if (!options.router.component) {
+      options.router.component = resolve(this.options.buildDir, 'components/druxt-router.js')
       this.addTemplate({
         src: resolve(__dirname, '../nuxt/component.js'),
         fileName: 'components/druxt-router.js',
@@ -31,7 +33,7 @@ export default function (moduleOptions = {}) {
     routes.push({
       name: 'druxt-router',
       path: '*',
-      component: options.component,
+      component: options.router.component,
       chunkName: 'druxt-router'
     })
   })

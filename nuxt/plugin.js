@@ -1,5 +1,5 @@
-import { DruxtRouter } from '<%= options.importPath ? options.importPath : 'druxt-router' %>'
-<% if (options.JSONAPIDeserializer) { %>import { Deserializer } from 'jsonapi-serializer'<% } %>
+import { DruxtRouter } from 'druxt-router'
+<% if (options.router.JSONAPIDeserializer) { %>import { Deserializer } from 'jsonapi-serializer'<% } %>
 
 export default (context, inject) => {
   const baseUrl = '<%= options.baseUrl %>'
@@ -10,10 +10,10 @@ export default (context, inject) => {
   options.axios = <%= JSON.stringify(options.axios) %>
   <% } %>
 
-  <% if (options.JSONAPIDeserializer) { %>
+  <% if (options.router.JSONAPIDeserializer) { %>
   // JSONAPIDeserialzer.
   options.preprocessEntity = async resource => {
-    const options = <%= JSON.stringify(options.JSONAPIDeserializer) %>
+    const options = <%= JSON.stringify(options.router.JSONAPIDeserializer) %>
 
     // Build map of relationships.
     for (const key in resource.data.data.relationships) {
