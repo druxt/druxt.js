@@ -8,11 +8,17 @@ module.exports = {
 
   modules: [
     {
-      handler: require('../index').default,
-      options: {
-        baseUrl: 'https://example.com',
-        importPath: '../../..'
-      }
+      handler: require('../index').default
     }
-  ]
+  ],
+
+  druxt: {
+    baseUrl: 'https://example.com'
+  },
+
+  build: {
+    extend (config) {
+      config.resolve.alias['druxt-router'] = '../../..'
+    }
+  }
 }

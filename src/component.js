@@ -22,7 +22,13 @@ const DruxtRouterComponent = {
     },
 
     ...mapState({
-      entity: state => state.druxtRouter.entities[state.druxtRouter.route.data.entity.uuid],
+      entity: (state) => {
+        if (!state.druxtRouter.route.data) {
+          return undefined
+        }
+
+        return state.druxtRouter.entities[state.druxtRouter.route.data.entity.uuid]
+      },
       redirect: state => state.druxtRouter.redirect,
       route: state => state.druxtRouter.route.data
     })
