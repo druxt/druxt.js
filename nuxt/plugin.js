@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { DruxtMenu, DruxtMenuComponent } from 'druxt-menu'
+import { DruxtMenu, DruxtMenuComponent, DruxtMenuItemComponent } from 'druxt-menu'
 
 Vue.use({
   install: function (Vue) {
@@ -8,6 +8,7 @@ Vue.use({
 
     // Register components.
     Vue.component('DruxtMenu', DruxtMenuComponent)
+    Vue.component('DruxtMenuItem', DruxtMenuItemComponent)
   }
 })
 

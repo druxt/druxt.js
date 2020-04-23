@@ -2,8 +2,11 @@ import { resolve } from 'path'
 
 export { DruxtMenu } from './menu.js'
 
-import DruxtMenuComponent from './component.js'
+import DruxtMenuComponent from './components/DruxtMenu.vue'
 export { DruxtMenuComponent }
+
+import DruxtMenuItemComponent from './components/DruxtMenuItem.vue'
+export { DruxtMenuItemComponent }
 
 export { DruxtMenuStore } from './store.js'
 
