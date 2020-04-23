@@ -4,16 +4,16 @@ import mockAxios from 'jest-mock-axios'
 
 import { DruxtRouterStore } from 'druxt-router'
 
-import { DruxtMenu, DruxtMenuComponent, DruxtMenuStore } from '../..'
+import { DruxtMenu, DruxtMenuComponent, DruxtMenuItemComponent, DruxtMenuStore } from '../..'
 
 jest.mock('axios')
 
 const baseURL = 'https://example.com'
-const stubs = ['b-nav', 'b-nav-item', 'b-nav-item-dropdown']
 
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
+localVue.component('druxt-menu-item', DruxtMenuItemComponent)
 
 let store
 
@@ -29,7 +29,7 @@ describe('DruxtMenu', () => {
   })
 
   test('default', async () => {
-    const wrapper = shallowMount(DruxtMenuComponent, { store, localVue, stubs })
+    const wrapper = shallowMount(DruxtMenuComponent, { store, localVue })
 
     // Wait for async Axios get requests.
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
@@ -37,17 +37,18 @@ describe('DruxtMenu', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     await localVue.nextTick()
 
+    // Expect 10 items from the store.
     expect(Object.keys(wrapper.vm.entities).length).toBe(10)
 
-    // @TODO - This is for code coverage, needs proper mocking and testing.
-    expect(wrapper.vm.route).toStrictEqual({})
+    // Expect 2 items at the root level.
+    expect(wrapper.vm.items.length).toBe(2)
   })
 
   test('depth', async () => {
     const propsData = {
       depth: 2
     }
-    const wrapper = shallowMount(DruxtMenuComponent, { propsData, store, localVue, stubs })
+    const wrapper = shallowMount(DruxtMenuComponent, { propsData, store, localVue })
 
     // Wait for async Axios get requests.
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
@@ -55,9 +56,10 @@ describe('DruxtMenu', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     await localVue.nextTick()
 
+    // Expect 10 items from the store.
     expect(Object.keys(wrapper.vm.entities).length).toBe(10)
 
-    // @TODO - This is for code coverage, needs proper mocking and testing.
-    expect(wrapper.vm.route).toStrictEqual({})
+    // Expect 2 items at the root level.
+    expect(wrapper.vm.items.length).toBe(2)
   })
 })
