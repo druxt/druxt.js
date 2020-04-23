@@ -6,8 +6,11 @@
     <druxt-menu-item
       v-for="item in getMenuItems()"
       :key="item.entity.id"
-      :children="item.children"
       :item="item"
+      :item-class="itemClass"
+      :item-component="itemComponent"
+      :parent-class="parentClass"
+      :parent-component="parentComponent"
     />
   </component>
 </template>
@@ -19,11 +22,6 @@ export default {
   name: 'DruxtMenu',
 
   props: {
-    name: {
-      type: String,
-      default: 'main'
-    },
-
     component: {
       type: String,
       default: 'ul'
@@ -32,6 +30,31 @@ export default {
     depth: {
       type: Number,
       default: 0,
+    },
+
+    itemClass: {
+      type: String,
+      default: ''
+    },
+
+    itemComponent: {
+      type: String,
+      default: 'li'
+    },
+
+    name: {
+      type: String,
+      default: 'main'
+    },
+
+    parentClass: {
+      type: String,
+      default: ''
+    },
+
+    parentComponent: {
+      type: String,
+      default: 'li'
     }
   },
 
