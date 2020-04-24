@@ -6,83 +6,76 @@ export default {
     item: {
       type: Object,
       required: true
+    }
+  },
+
+  computed: {
+    active() {
+      return this.menu.trail.includes(this.item.entity.attributes.url)
     },
 
-    itemClass: {
-      type: String,
-      default: ''
+    class() {
+      // @TODO - Inject active trail class as required.
+      return this.menu[`${this.template}Class`]
     },
 
-    itemComponent: {
-      type: String,
-      default: 'li'
+    template() {
+      return this.item.children.length ? 'parent' : 'item'
     },
 
-    parentClass: {
-      type: String,
-      default: ''
-    },
+    // The parent <DruxtMenu> component, if present.
+    menu() {
+      let menu = false
 
-    parentComponent: {
-      type: String,
-      default: 'li'
+      let item = this.$parent
+      while (item.$parent && !menu) {
+        if (item.$options.name === 'DruxtMenu') menu = item
+        if (item.$options.extends && item.$options.extends.name === 'DruxtMenu') menu = item
+
+        item = item.$parent
+      }
+
+      return menu
+    }
+  },
+
+  methods: {
+    templates: function(createElement) {
+      return {
+        // Default template for Item slot.
+        item: ({ entity }) => createElement(
+          this.menu.itemComponent,
+          { class: this.class },
+          [
+            createElement('nuxt-link', { props: { to: entity.attributes.url } }, entity.attributes.title)
+          ]
+        ),
+
+        // Default tempalte for Parent slot.
+        parent: ({ entity, children }) => {
+          const childElements = []
+
+          for (const key in children) {
+            childElements.push(createElement('druxt-menu-item', { props: { item: children[key] }}))
+          }
+
+          return createElement(this.menu.parentComponent,
+            { class: this.class },
+            [
+              createElement('druxt-menu-item', { props: { item: { children: [], entity } }}),
+              createElement(this.menu.parentWrapperComponent, { class: this.menu.parenWrapperClass }, childElements)
+            ]
+          )
+        },
+
+        ...this.menu.$scopedSlots
+      }
     }
   },
 
   render: function(createElement) {
-    const props = {
-      itemClass: this.itemClass,
-      itemComponent: this.itemComponent,
-      parentClass: this.parentClass,
-      parentComponent: this.parentComponent
-    }
-
-    let templates = {}
-
-    templates.item = ({ entity }) => createElement(
-      this.itemComponent,
-      { class: this.itemClass },
-      [
-        createElement('nuxt-link', {
-          props: { ...props, to: entity.attributes.url }
-        }, entity.attributes.title)
-      ]
-    )
-
-    templates.parent = ({ entity, children }) => {
-      const childElements = []
-
-      for (const key in children) {
-        childElements.push(createElement('druxt-menu-item', { props: { ...props, item: children[key] }}))
-      }
-
-      return createElement(this.parentComponent, [
-        createElement('druxt-menu-item', { props: { ...props, item: { children: [], entity } }}),
-        createElement('ul', childElements)
-      ])
-    }
-
-    // Find parent DruxtMenu component.
-    let menu = this.$parent
-    while (menu.$parent) {
-      if (menu.$options.name === 'DruxtMenu') break
-      if (menu.$options.extends && menu.$options.extends.name === 'DruxtMenu') break
-
-      menu = menu.$parent
-    }
-
-    templates = {
-      ...templates,
-      ...menu.$scopedSlots
-    }
-
-    // If item has children, render as parent template.
-    if (this.item.children.length) {
-      return templates.parent({ entity: this.item.entity, children: this.item.children })
-    }
-
-    // Else, render as child template.
-    return templates.item({ entity: this.item.entity })
+    if (!this.menu) return false
+    return this.templates(createElement)[this.template](this.item)
   }
 }
 </script>

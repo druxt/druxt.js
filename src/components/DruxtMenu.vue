@@ -7,10 +7,6 @@
       v-for="item in getMenuItems()"
       :key="item.entity.id"
       :item="item"
-      :item-class="itemClass"
-      :item-component="itemComponent"
-      :parent-class="parentClass"
-      :parent-component="parentComponent"
     />
   </component>
 </template>
@@ -55,12 +51,34 @@ export default {
     parentComponent: {
       type: String,
       default: 'li'
+    },
+
+    parentWrapperClass: {
+      type: String,
+      default: ''
+    },
+
+    parentWrapperComponent: {
+      type: String,
+      default: 'ul'
     }
   },
 
   computed: {
     items() {
       return this.getMenuItems()
+    },
+
+    trail() {
+      const paths = []
+      const parts = this.$route.path.substring(1).split('/')
+
+      for (const key in parts) {
+        const path = [key > 0 ? paths[key - 1] : '', parts[key]].join('/')
+        paths.push(path)
+      }
+
+      return paths
     },
 
     ...mapGetters({
