@@ -16,5 +16,5 @@ export default (context, inject) => {
   const baseUrl = '<%= options.baseUrl %>'
 
   const druxtMenu = new DruxtMenu(baseUrl)
-  inject('druxtMenu', () => druxtMenu)
+  inject('druxtMenu', druxtMenu)
 }

@@ -22,7 +22,7 @@ const DruxtMenuStore = ({ store }) => {
 
     actions: {
       async get ({ commit, dispatch }, name) {
-        const { entities } = await this.$druxtMenu().get(name)
+        const { entities } = await this.$druxtMenu.get(name)
 
         commit('addEntities', entities)
       }

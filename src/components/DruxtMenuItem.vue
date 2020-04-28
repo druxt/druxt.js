@@ -14,9 +14,12 @@ export default {
       return this.menu.trail.includes(this.item.entity.attributes.url)
     },
 
-    class() {
-      // @TODO - Inject active trail class as required.
-      return this.menu[`${this.template}Class`]
+    classes() {
+      const classes = [this.menu[`${this.template}Class`]]
+
+      if (this.active) classes.push('active-trail')
+
+      return classes.join(' ')
     },
 
     template() {
@@ -43,16 +46,16 @@ export default {
     templates: function(createElement) {
       return {
         // Default template for Item slot.
-        item: ({ entity }) => createElement(
+        item: ({ item: { entity } }) => createElement(
           this.menu.itemComponent,
-          { class: this.class },
+          { class: this.classes },
           [
             createElement('nuxt-link', { props: { to: entity.attributes.url } }, entity.attributes.title)
           ]
         ),
 
         // Default tempalte for Parent slot.
-        parent: ({ entity, children }) => {
+        parent: ({ item: { entity, children } }) => {
           const childElements = []
 
           for (const key in children) {
@@ -60,7 +63,7 @@ export default {
           }
 
           return createElement(this.menu.parentComponent,
-            { class: this.class },
+            { class: this.classes },
             [
               createElement('druxt-menu-item', { props: { item: { children: [], entity } }}),
               createElement(this.menu.parentWrapperComponent, { class: this.menu.parenWrapperClass }, childElements)
@@ -75,7 +78,7 @@ export default {
 
   render: function(createElement) {
     if (!this.menu) return false
-    return this.templates(createElement)[this.template](this.item)
+    return this.templates(createElement)[this.template](this)
   }
 }
 </script>
