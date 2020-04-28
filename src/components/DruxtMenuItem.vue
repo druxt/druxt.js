@@ -31,11 +31,11 @@ export default {
       let menu = false
 
       let item = this.$parent
-      while (item.$parent && !menu) {
+      while (item && !menu) {
         if (item.$options.name === 'DruxtMenu') menu = item
         if (item.$options.extends && item.$options.extends.name === 'DruxtMenu') menu = item
 
-        item = item.$parent
+        item = item.$parent ? item.$parent : false
       }
 
       return menu

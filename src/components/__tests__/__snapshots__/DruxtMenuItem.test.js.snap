@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DruxtMenuItem default 1`] = `
+"<li class=\\"\\">
+  <druxt-menu-item-stub item=\\"[object Object]\\"></druxt-menu-item-stub>
+  <ul>
+    <druxt-menu-item-stub item=\\"[object Object]\\"></druxt-menu-item-stub>
+  </ul>
+</li>"
+`;

@@ -1,4 +1,4 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
@@ -17,19 +17,23 @@ localVue.component('druxt-menu-item', DruxtMenuItemComponent)
 
 let store
 
+const mocks = { $route: { path: '/' } }
+const mountComponent = (options = {}) =>
+  shallowMount(DruxtMenuComponent, { ...options, store, localVue, mocks })
+
 describe('DruxtMenu', () => {
   beforeEach(() => {
     mockAxios.reset()
 
     // Setup vuex store.
     store = new Vuex.Store()
-    store.$druxtMenu = () => new DruxtMenu(baseURL, {})
+    store.$druxtMenu = new DruxtMenu(baseURL, {})
     DruxtMenuStore({ store })
     DruxtRouterStore({ store })
   })
 
   test('default', async () => {
-    const wrapper = shallowMount(DruxtMenuComponent, { store, localVue })
+    const wrapper = mountComponent()
 
     // Wait for async Axios get requests.
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
@@ -42,13 +46,17 @@ describe('DruxtMenu', () => {
 
     // Expect 2 items at the root level.
     expect(wrapper.vm.items.length).toBe(2)
+
+    // Expect trail.
+    expect(wrapper.vm.trail).toStrictEqual(['/'])
   })
 
   test('depth', async () => {
     const propsData = {
       depth: 2
     }
-    const wrapper = shallowMount(DruxtMenuComponent, { propsData, store, localVue })
+    const wrapper = mountComponent({ propsData })
+    // const wrapper = shallowMount(DruxtMenuComponent, { propsData, store, localVue })
 
     // Wait for async Axios get requests.
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
@@ -61,5 +69,8 @@ describe('DruxtMenu', () => {
 
     // Expect 2 items at the root level.
     expect(wrapper.vm.items.length).toBe(2)
+
+    // Expect trail.
+    expect(wrapper.vm.trail).toStrictEqual(['/'])
   })
 })
