@@ -28,7 +28,7 @@ class DruxtMenu {
     const query = {
       fields: {
         // @TODO - Add support for customizable resource name?
-        'menu_link_content--menu_link_content': 'menu_name,parent,status,title,url,weight'
+        'menu_link_content--menu_link_content': 'menu_name,link,parent,status,title,url,weight'
       },
       filter: {
         enabled: 1,
