@@ -1,3 +1,3 @@
-import { DruxtRouterComponent } from '<%= options.importPath ? `${options.importPath}/..` : 'druxt-router' %>'
+import { DruxtRouterComponent } from 'druxt-router'
 
 export default DruxtRouterComponent

@@ -1,11 +1,20 @@
 jest.setTimeout(60000)
 
+import func from '..'
+
 import { Nuxt, Builder } from 'nuxt-edge'
 import getPort from 'get-port'
 
 import config from '../__fixtures__/nuxt.config'
 
 let nuxt, port
+
+describe('Module', () => {
+  test('Init', () => {
+    const mock = { func }
+    expect(() => { mock.func() }).toThrow('Druxt settings missing.')
+  })
+})
 
 describe('Nuxt', () => {
   beforeAll(async () => {
