@@ -44,12 +44,68 @@ class Schema {
   }
 
   async form() {
-    // await this.getResources('entity_form_display--entity_form_display', { 'filter[drupal_internal__id]': this.displayId })
-    // await this.getResources('field_config--field_config', { 'filter[entity_type]': this.config.entityType, 'filter[bundle]': this.config.bundle })
-    // await this.getResources('field_storage_config--field_storage_config', { 'filter[entity_type]': this.config.entityType })
+    const entityFormDisplay = await this.getResources('entity_form_display--entity_form_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res) ? res[0] : res)
+    if (!entityFormDisplay) return false
 
-    // console.log(this.data)
-    return {}
+    const fieldConfig = await this.getResources('field_config--field_config', { 'filter[entity_type]': this.config.entityType, 'filter[bundle]': this.config.bundle })
+    if (!fieldConfig) return false
+
+    const fieldStorageConfig = await this.getResources('field_storage_config--field_storage_config', { 'filter[entity_type]': this.config.entityType })
+    if (!fieldStorageConfig) return false
+
+    for (const field in entityFormDisplay.attributes.content) {
+      const display = {
+        id: null,
+        type: null,
+        weight: null,
+        settings: {},
+        third_party_settings: {},
+
+        ...entityFormDisplay.attributes.content[field]
+      }
+
+      let config = { attributes: {}, ...fieldConfig.find(element => element.attributes.field_name === field) }
+      config = {
+        description: null,
+        required: false,
+        settings: {},
+
+        ...config.attributes
+      }
+
+      let storage = { attributes: {}, ...fieldStorageConfig.find(element => element.attributes.field_name === field) }
+      storage = {
+        cardinality: null,
+        settings: {},
+
+        ...storage.attributes
+      }
+
+      this.fields[field] = {
+        id: field,
+        description: config.description,
+        cardinality: storage.cardinality,
+        required: config.required,
+        type: display.type,
+        weight: display.weight,
+        settings: {
+          config: config.settings,
+          display: display.settings,
+          storage: storage.settings
+        },
+        thirdPartySettings: display.third_party_settings
+      }
+    }
+
+    this.schema = {
+      id: this.id,
+      resourceType: this.resourceType,
+      fields: Object.values(this.fields).sort((a, b) => a.weight - b.weight),
+      groups: [],
+      config: this.config
+    }
+
+    return this.schema
   }
 
   async view() {
@@ -71,13 +127,14 @@ class Schema {
         ...entityViewDisplay.attributes.content[field]
       }
 
-      const config = {
+      let config = { attributes: {}, ...fieldConfig.find(element => element.attributes.field_name === field) }
+      config = {
         description: null,
         label: null,
         required: false,
         settings: {},
 
-        ...fieldConfig.find(element => element.attributes.field_name === field)
+        ...config.attributes
       }
 
       this.fields[field] = {
