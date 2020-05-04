@@ -15,6 +15,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "title",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -32,6 +36,10 @@ Object {
         "cardinality": 1,
         "description": "",
         "id": "body",
+        "label": Object {
+          "position": null,
+          "text": "Body",
+        },
         "required": false,
         "settings": Object {
           "config": Object {
@@ -52,6 +60,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "langcode",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -68,6 +80,10 @@ Object {
         "cardinality": 1,
         "description": "",
         "id": "field_image",
+        "label": Object {
+          "position": null,
+          "text": "Image",
+        },
         "required": false,
         "settings": Object {
           "config": Object {
@@ -98,6 +114,10 @@ Object {
         "cardinality": -1,
         "description": "Enter a comma-separated list. For example: Amsterdam, Mexico City, \\"Cleveland, Ohio\\"",
         "id": "field_tags",
+        "label": Object {
+          "position": null,
+          "text": "Tags",
+        },
         "required": false,
         "settings": Object {
           "config": Object {
@@ -129,6 +149,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "uid",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -147,6 +171,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "created",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -161,6 +189,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "promote",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -177,6 +209,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "sticky",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -193,6 +229,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "path",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -207,6 +247,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "status",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -363,6 +407,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "title",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -380,6 +428,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "langcode",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -396,6 +448,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "uid",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -414,6 +470,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "created",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -428,6 +488,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "promote",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -444,6 +508,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "sticky",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -460,6 +528,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "path",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},
@@ -474,6 +546,10 @@ Object {
         "cardinality": 1,
         "description": "",
         "id": "body",
+        "label": Object {
+          "position": null,
+          "text": "Body",
+        },
         "required": false,
         "settings": Object {
           "config": Object {
@@ -494,6 +570,10 @@ Object {
         "cardinality": null,
         "description": null,
         "id": "status",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
         "required": false,
         "settings": Object {
           "config": Object {},

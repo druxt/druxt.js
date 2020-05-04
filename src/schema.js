@@ -56,6 +56,7 @@ class Schema {
     for (const field in entityFormDisplay.attributes.content) {
       const display = {
         id: null,
+        label: null,
         type: null,
         weight: null,
         settings: {},
@@ -67,6 +68,7 @@ class Schema {
       let config = { attributes: {}, ...fieldConfig.find(element => element.attributes.field_name === field) }
       config = {
         description: null,
+        label: null,
         required: false,
         settings: {},
 
@@ -84,6 +86,10 @@ class Schema {
       this.fields[field] = {
         id: field,
         description: config.description,
+        label: {
+          text: config.label,
+          position: display.label,
+        },
         cardinality: storage.cardinality,
         required: config.required,
         type: display.type,
