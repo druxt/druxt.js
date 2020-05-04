@@ -1,0 +1,1 @@
+<%= JSON.stringify(options.schema, null, 1) %>
