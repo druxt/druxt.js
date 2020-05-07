@@ -94,11 +94,12 @@ class DruxtSchema {
       const resources = await this.axios.get(this.index['jsonapi_resource_config--jsonapi_resource_config'].href)
       for (const resource of resources.data.data) {
         const internal = resource.attributes.drupal_internal__id.split('--')
-        // @TODO: Determine a use for resourceFields.
+
         const item = {
           resourceType: resource.attributes.resourceType,
           entityType: internal[0],
-          bundle: internal[1]
+          bundle: internal[1],
+          resourceFields: resource.attributes.resourceFields
         }
 
         const id = [item.entityType, item.bundle].join('--')

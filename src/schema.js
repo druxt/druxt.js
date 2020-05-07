@@ -1,5 +1,10 @@
 class Schema {
   constructor(config, { druxtSchema, data }) {
+    if (config.resourceFields) {
+      this.resourceFields = config.resourceFields
+      delete config.resourceFields
+    }
+
     this.config = {
       entityType: 'node',
       bundle: null,
@@ -98,8 +103,14 @@ class Schema {
         ...storage.attributes
       }
 
-      this.fields[field] = {
-        id: field,
+      // Allow field name substitution via the JSON API Resource config.
+      let fieldName = field
+      if (this.resourceFields && this.resourceFields[field] && this.resourceFields[field].publicName !== field) {
+        fieldName = this.resourceFields[field].publicName
+      }
+
+      this.fields[fieldName] = {
+        id: fieldName,
         description: config.description,
         label: {
           text: config.label,
@@ -158,8 +169,14 @@ class Schema {
         ...config.attributes
       }
 
-      this.fields[field] = {
-        id: field,
+      // Allow field name substitution via the JSON API Resource config.
+      let fieldName = field
+      if (this.resourceFields && this.resourceFields[field] && this.resourceFields[field].publicName !== field) {
+        fieldName = this.resourceFields[field].publicName
+      }
+
+      this.fields[fieldName] = {
+        id: fieldName,
         description: config.description,
         label: {
           text: config.label,
