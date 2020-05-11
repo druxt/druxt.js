@@ -84,6 +84,9 @@ describe('DruxtRouter', () => {
     const entity = await router.getResource(testArticle)
 
     expect(entity).toHaveProperty('type', testArticle.type)
+
+    const empty = await router.getResource()
+    expect(empty).toBe(false)
   })
 
   test('getResourceByRoute', async () => {
