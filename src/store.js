@@ -17,7 +17,7 @@ const DruxtRouterStore = ({ store }) => {
 
     mutations: {
       addEntity (state, entity) {
-        if (typeof entity.id === 'undefined') {
+        if (!entity || typeof entity.id === 'undefined') {
           // @TODO - Error?
           return
         }

@@ -14,7 +14,7 @@ mockAxios.get = jest.fn((url, options) => {
   }
 
   else if (typeof mockResources[url] !== 'undefined') {
-    data = mockResources[url]
+    data = { data: mockResources[url] }
     status = 200
   }
 

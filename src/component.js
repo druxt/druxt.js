@@ -42,7 +42,7 @@ const DruxtRouterComponent = {
     return createElement('div', {
       key: this.route.entity.uuid,
       props: {
-        type: `${this.route.jsonapi.resourceName}`,
+        type: this.route.jsonapi.resourceName,
         uuid: this.route.entity.uuid
       }
     }, JSON.stringify(this.entity.data))

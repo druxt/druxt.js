@@ -96,7 +96,7 @@ describe('DruxtRouterStore', () => {
 
   test('get', async () => {
     const { entity } = await store.dispatch('druxtRouter/get', '/')
-    expect(entity.data).toBe(mockPage)
+    expect(entity).toBe(mockPage)
     expect(entity.id).toBe(mockPage.id)
     expect(entity.type).toBe(mockPage.type)
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
