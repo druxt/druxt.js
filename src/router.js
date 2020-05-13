@@ -88,7 +88,12 @@ class DruxtRouter {
    * @param string type
    * @param string id
    */
-  async getResource ({ id, type }) {
+  async getResource (query = {}) {
+    const { id, type } = query
+    if (!id || !type) {
+      return false
+    }
+
     const url = `/api/${type.replace('--', '/')}/${id}`
     const response = await this.axios.get(url)
 

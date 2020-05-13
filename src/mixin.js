@@ -1,4 +1,4 @@
-const vuex = require('vuex')
+import { mapActions, mapState } from 'vuex'
 
 /**
  * @mixin
@@ -8,52 +8,52 @@ const DruxtRouterEntityMixin = {
    * Props.
    */
   props: {
+    mode: {
+      type: String,
+      default: 'default'
+    },
+
+    type: {
+      type: String,
+      required: true
+    },
+
     /**
      * The Drupal entity UUID.
      */
     uuid: {
       type: String,
       required: true
-    },
-
-    type: {
-      type: String,
-      required: true
     }
-  },
-
-  created () {
-    if (typeof this.entities[this.uuid] !== 'undefined') {
-      return
-    }
-
-    this.loading = true
-    this.getEntity({ id: this.uuid, type: this.type }).then((res) => {
-      // If component has `onDruxtRouterLoad` method, pass through allowing it to load additonal entities.
-      this.loading = typeof this.onDruxtRouterLoad === 'function' ? !!this.onDruxtRouterLoad(res) : false
-    })
   },
 
   data: () => ({
-    loading: false
+    entity: false,
+    loading: true
   }),
 
+  created () {
+    if (typeof this.entities[this.uuid] !== 'undefined') {
+      this.entity = this.entities[this.uuid]
+      return
+    }
+
+    if (!this.entity && this.uuid && this.type) {
+      this.getEntity({ id: this.uuid, type: this.type }).then((res) => {
+        this.entity = res
+        this.loading = false
+      })
+    }
+  },
+
   computed: {
-    entity () {
-      return this.entities[this.uuid]
-    },
-
-    ready () {
-      return !this.loading && !!this.entity
-    },
-
-    ...vuex.mapState({
+    ...mapState({
       entities: state => state.druxtRouter.entities
     })
   },
 
   methods: {
-    ...vuex.mapActions({
+    ...mapActions({
       getEntity: 'druxtRouter/getEntity'
     })
   }
