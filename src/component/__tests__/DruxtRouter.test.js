@@ -2,7 +2,7 @@ import mockAxios from 'jest-mock-axios'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouter, DruxtRouterComponent, DruxtRouterStore } from '..'
+import { DruxtRouter, DruxtRouterComponent, DruxtRouterStore } from '../..'
 
 jest.mock('axios')
 
@@ -11,7 +11,7 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 
 // Fetch callback for component.
-const fetch = async fullPath => {
+const fetch = (fullPath) => {
   return DruxtRouterComponent.fetch({
     store,
     redirect: () => {},
@@ -66,6 +66,7 @@ describe('DruxtRouterComponent', () => {
   test('Empty', () => {
     const wrapper = shallowMount(DruxtRouterComponent, { store, localVue })
     expect(wrapper.vm.entity).toBe(undefined)
+    expect(wrapper.vm.props).toBe(false)
     expect(wrapper.html()).toBe('')
   })
 })

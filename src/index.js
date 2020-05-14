@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 
-import DruxtRouterComponent from './component'
+import DruxtRouterComponent from './component/DruxtRouter.vue'
 
 export { DruxtRouter } from './router'
 export { DruxtRouterEntityMixin } from './mixin'
@@ -20,6 +20,7 @@ export default function (moduleOptions = {}) {
     // Only add router component if custom component is undefined.
     // @TODO - Validate custom component.
     // @TODO - Add test for custom component.
+    // @TODO - Document usage.
     if (!options.router.component) {
       options.router.component = resolve(this.options.buildDir, 'components/druxt-router.js')
       this.addTemplate({

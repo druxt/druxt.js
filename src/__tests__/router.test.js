@@ -1,7 +1,7 @@
-import { DruxtRouter } from '..'
-
 import mockAxios from 'jest-mock-axios'
 import mockRoutes from '../__fixtures__/routes'
+
+import { DruxtRouter } from '..'
 
 const baseURL = 'https://example.com'
 
@@ -19,7 +19,7 @@ describe('DruxtRouter', () => {
 
   test('constructor', () => {
     // Throw error if 'baseURL' not provided.
-    expect(() => { new DruxtRouter() }).toThrow('The \'baseURL\' parameter is required.')
+    expect(() => { return new DruxtRouter() }).toThrow('The \'baseURL\' parameter is required.')
 
     // Ensure class type.
     expect(new DruxtRouter(baseURL)).toBeInstanceOf(DruxtRouter)
@@ -27,9 +27,10 @@ describe('DruxtRouter', () => {
 
   test('axiosSettings', () => {
     const headers = { 'X-DruxtRouter': true }
-    new DruxtRouter(baseURL, {
+    const mockRouter = new DruxtRouter(baseURL, {
       axios: { headers }
     })
+    expect(mockRouter).toBeInstanceOf(DruxtRouter)
 
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL, headers })
   })
