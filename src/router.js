@@ -20,16 +20,6 @@ class DruxtRouter {
       axiosSettings = Object.assign(axiosSettings, options.axios)
     }
     this.axios = axios.create(axiosSettings)
-
-    // Setup options.
-    this.setOptions(options)
-  }
-
-  setOptions (options = {}) {
-    // Setup entity preprocess callback.
-    if (typeof options.preprocessEntity === 'function') {
-      this.preprocessEntity = options.preprocessEntity
-    }
   }
 
   /**
@@ -94,18 +84,11 @@ class DruxtRouter {
       return false
     }
 
+    // @TODO - Get URL from index.
     const url = `/api/${type.replace('--', '/')}/${id}`
-    const response = await this.axios.get(url)
+    const resource = await this.axios.get(url)
 
-    const resource = { id, type, data: response.data }
-
-    // Process entity before it's stored.
-    if (this.preprocessEntity) {
-      resource._raw = resource.data
-      resource.data = await this.preprocessEntity(response)
-    }
-
-    return resource
+    return resource.data.data
   }
 
   /**

@@ -22,10 +22,7 @@ module.exports = {
   ],
 
   druxt: {
-    baseUrl: 'https://example.com',
-    router: {
-      JSONAPIDeserializer: true
-    }
+    baseUrl: 'https://example.com'
   }
 }
 ```
@@ -42,12 +39,3 @@ These options are available to all Druxt modules.
 | --- | --- | --- | --- | --- |
 | `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
 | `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
-
-### Router specific options
-
-These options are specific to this module.
-
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `router.JSONAPIDeserializer` | `boolean` | No | `false` | Enable/Disable [JSON API Serializer](https://www.npmjs.com/package/jsonapi-serializer) parsing of Drupal entities. |
-

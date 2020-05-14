@@ -110,10 +110,4 @@ describe('DruxtRouter', () => {
 
     expect(route.data).toHaveProperty('isHomePath', false)
   })
-
-  test('preprocessEntity', async () => {
-    router.setOptions({ preprocessEntity: resp => resp })
-    const entity = await router.getResource(testArticle)
-    expect(entity).toHaveProperty('_raw')
-  })
 })
