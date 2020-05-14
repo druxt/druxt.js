@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 
-import DruxtRouterComponent from './component'
+import DruxtRouterComponent from './component/DruxtRouter.vue'
 
 export { DruxtRouter } from './router'
 export { DruxtRouterEntityMixin } from './mixin'
