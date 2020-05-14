@@ -66,6 +66,7 @@ describe('DruxtRouterComponent', () => {
   test('Empty', () => {
     const wrapper = shallowMount(DruxtRouterComponent, { store, localVue })
     expect(wrapper.vm.entity).toBe(undefined)
+    expect(wrapper.vm.props).toBe(false)
     expect(wrapper.html()).toBe('')
   })
 })
