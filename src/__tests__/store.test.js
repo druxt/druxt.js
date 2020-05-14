@@ -2,12 +2,12 @@ import { createLocalVue } from '@vue/test-utils'
 import mockAxios from 'jest-mock-axios'
 import Vuex from 'vuex'
 
+import mockResources from '../__fixtures__/resources'
+import mockRoutes from '../__fixtures__/routes'
+
 import { DruxtRouter, DruxtRouterStore } from '..'
 
 jest.mock('axios')
-
-import mockResources from '../__fixtures__/resources'
-import mockRoutes from '../__fixtures__/routes'
 
 // Setup mock data.
 const mockArticle = mockResources['/api/node/article/98f36405-e1c4-4d8a-a9f9-4d4f6d414e96']
@@ -25,7 +25,7 @@ describe('DruxtRouterStore', () => {
 
     // Setup vuex store.
     store = new Vuex.Store()
-    store.app = { context: { error: jest.fn() }}
+    store.app = { context: { error: jest.fn() } }
     DruxtRouterStore({ store })
 
     store.$druxtRouter = () => new DruxtRouter('https://example.com')

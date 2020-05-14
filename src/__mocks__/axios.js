@@ -6,14 +6,12 @@ import mockRoutes from '../__fixtures__/routes'
 mockAxios.get = jest.fn((url, options) => {
   let data = null
   let status = 404
-  let validateStatus = true
+  const validateStatus = true
 
   if (url.split('/')[1] === 'router' && mockRoutes[url.split('?path=')[1]]) {
     data = mockRoutes[url.split('?path=')[1]]
     status = 200
-  }
-
-  else if (typeof mockResources[url] !== 'undefined') {
+  } else if (typeof mockResources[url] !== 'undefined') {
     data = { data: mockResources[url] }
     status = 200
   }
