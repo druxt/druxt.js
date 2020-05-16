@@ -22,14 +22,17 @@ module.exports = {
   ],
 
   druxt: {
-    baseUrl: 'https://example.com'
+    baseUrl: 'https://example.com',
+    schema: {
+      filter: ['node--.*?--view']
+    }
   }
 }
 ```
 
 ## Options
 
-### Base Druxt options
+### Druxt options
 
 These options are available to all Druxt modules.
 
@@ -37,3 +40,11 @@ These options are available to all Druxt modules.
 | --- | --- | --- | --- | --- |
 | `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
 | `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
+
+### Druxt Schema options
+
+These options are specific to this module.
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `schema.filter` | `array` | No | `[]` | Array of regular expression rules to filter generated schemas. |
