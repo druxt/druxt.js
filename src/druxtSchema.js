@@ -22,6 +22,9 @@ class DruxtSchema {
       auth: {
         type: false
       },
+      schema: {
+        filter: [],
+      },
       ...options
     }
 
@@ -53,17 +56,21 @@ class DruxtSchema {
 
       for (const display of displays) {
         const resource = index[[display.attributes.targetEntityType, display.attributes.bundle].join('--')]
+
         const config = {
           entityType: display.attributes.targetEntityType,
           bundle: display.attributes.bundle,
           mode: display.attributes.mode,
           schemaType,
+          filter: this.options.schema.filter,
 
           ...resource
         }
 
         const schema = await this.getSchema(config, { data: display })
-        schemas[schema.id] = schema.schema
+        if (schema) {
+          schemas[schema.id] = schema.schema
+        }
       }
     }
 
@@ -146,6 +153,11 @@ class DruxtSchema {
    */
   async getSchema(config, options = {}) {
     const schema = new Schema(config, { druxtSchema: this, ...options })
+
+    if (!schema.isValid) {
+      return false
+    }
+
     await schema.generate()
     return schema
   }

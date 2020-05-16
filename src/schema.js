@@ -5,6 +5,7 @@ class Schema {
       bundle: null,
       mode: 'default',
       schemaType: 'view',
+      filter: [],
 
       ...config
     }
@@ -17,6 +18,20 @@ class Schema {
     // Build ID from entity and bundle types.
     if (!this.id && this.config.bundle) {
       this.id = [this.config.entityType, this.config.bundle, this.config.mode, this.config.schemaType].join('--')
+    }
+
+    // Filter required schemas.
+    this.isValid = true
+    if (this.config.filter.length > 0) {
+      this.isValid = false
+
+      for (const filter of this.config.filter) {
+        const match = this.id.match(filter)
+        if (match) {
+          this.isValid = true
+          break
+        }
+      }
     }
 
     this.displayId = [this.config.entityType, this.config.bundle, this.config.mode].join('.')
