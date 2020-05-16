@@ -42,4 +42,19 @@ describe('Schema', () => {
     expect(result.fields[0]).toHaveProperty('settings.display')
     expect(result.fields[0]).toHaveProperty('thirdPartySettings')
   })
+
+  test('filter', async () => {
+    const config = {
+      entityType: 'node',
+      bundle: 'page',
+      filter: ['node--page--default--view']
+    }
+
+    const nodePage = new Schema(config, { druxtSchema })
+    expect(nodePage).not.toBe(false)
+
+    config.filter = ['node--article--default--view']
+    const nodeArticle = new Schema(config, { druxtSchema })
+    expect(nodeArticle.isValid).toBe(false)
+  })
 })

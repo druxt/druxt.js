@@ -6,6 +6,7 @@ Object {
     "config": Object {
       "bundle": "article",
       "entityType": "node",
+      "filter": Array [],
       "mode": "default",
       "resourceType": "articles",
       "schemaType": "form",
@@ -272,6 +273,7 @@ Object {
     "config": Object {
       "bundle": "article",
       "entityType": "node",
+      "filter": Array [],
       "mode": "default",
       "resourceType": "articles",
       "schemaType": "view",
@@ -398,6 +400,7 @@ Object {
     "config": Object {
       "bundle": "page",
       "entityType": "node",
+      "filter": Array [],
       "mode": "default",
       "resourceType": "pages",
       "schemaType": "form",
@@ -595,6 +598,7 @@ Object {
     "config": Object {
       "bundle": "page",
       "entityType": "node",
+      "filter": Array [],
       "mode": "default",
       "resourceType": "pages",
       "schemaType": "view",
