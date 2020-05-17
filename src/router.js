@@ -18,8 +18,15 @@ class DruxtRouter {
     let axiosSettings = { baseURL }
     if (typeof options.axios === 'object') {
       axiosSettings = Object.assign(axiosSettings, options.axios)
+      delete options.axios
     }
     this.axios = axios.create(axiosSettings)
+
+    this.options = {
+      render: 'div',
+
+      ...options
+    }
   }
 
   /**
