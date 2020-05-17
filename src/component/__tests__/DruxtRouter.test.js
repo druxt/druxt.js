@@ -10,6 +10,10 @@ jest.mock('axios')
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
+const mocks = {
+  $druxtRouter: () => new DruxtRouter('https://example.com')
+}
+
 // Fetch callback for component.
 const fetch = (fullPath) => {
   return DruxtRouterComponent.fetch({
@@ -34,7 +38,7 @@ describe('DruxtRouterComponent', () => {
     expect(mockAxios.get).toHaveBeenNthCalledWith(1, '/router/translate-path?path=/', expect.any(Object))
 
     // Mount component.
-    const wrapper = shallowMount(DruxtRouterComponent, { store, localVue })
+    const wrapper = shallowMount(DruxtRouterComponent, { store, localVue, mocks })
     wrapper.vm.head = DruxtRouterComponent.head
 
     expect(wrapper.vm.title).toBe('Welcome to Contenta CMS!')
@@ -55,11 +59,16 @@ describe('DruxtRouterComponent', () => {
     expect(wrapper.vm.route).toHaveProperty('entity.type')
     expect(wrapper.vm.route).toHaveProperty('entity.bundle')
     expect(wrapper.vm.route).toHaveProperty('entity.canonical')
+
+    expect(wrapper.vm.props).toStrictEqual({
+      type: 'node--page',
+      uuid: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9'
+    })
   })
 
   test('Redirect', async () => {
     await fetch('/node/6')
-    const wrapper = shallowMount(DruxtRouterComponent, { store, localVue })
+    const wrapper = shallowMount(DruxtRouterComponent, { store, localVue, mocks })
     expect(wrapper.vm.redirect).toBe('/')
   })
 
