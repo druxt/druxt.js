@@ -4,6 +4,11 @@ export default (context, inject) => {
   const baseUrl = '<%= options.baseUrl %>'
   const options = {}
 
+  <% if (options.router && options.router.render) { %>
+  // Render component.
+  options.render = '<%= options.router.render %>'
+  <% } %>
+
   <% if (typeof options.axios === 'object') { %>
   // Axios settings.
   options.axios = <%= JSON.stringify(options.axios) %>
