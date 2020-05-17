@@ -129,18 +129,7 @@ class DruxtSchema {
 
     const res = await this.axios.get(url)
 
-    // Error handling: Required permissions.
-    if (res.data.meta && res.data.meta.omitted) {
-      const permissions = {}
-      delete res.data.meta.omitted.links.help
-      for (const link of Object.values(res.data.meta.omitted.links)) {
-        const match = link.meta.detail.match(/\'(.*?)\'/)
-        if (match[1]) {
-          permissions[match[1]] = true
-        }
-      }
-      throw new TypeError(`${res.data.meta.omitted.detail}\n\n Required permissions: ${Object.keys(permissions).join(', ')}.`)
-    }
+    this.checkPermissions(res)
 
     return res.data.data
   }
@@ -160,6 +149,23 @@ class DruxtSchema {
 
     await schema.generate()
     return schema
+  }
+
+  checkPermissions(res) {
+    // Error handling: Required permissions.
+    if (res.data.meta && res.data.meta.omitted) {
+      const permissions = {}
+
+      delete res.data.meta.omitted.links.help
+      for (const link of Object.values(res.data.meta.omitted.links)) {
+        const match = link.meta.detail.match(/\'(.*?)\'/)
+        if (match[1]) {
+          permissions[match[1]] = true
+        }
+      }
+
+      throw new TypeError(`${res.data.meta.omitted.detail}\n\n Required permissions: ${Object.keys(permissions).join(', ')}.`)
+    }
   }
 
   oauth2() {
