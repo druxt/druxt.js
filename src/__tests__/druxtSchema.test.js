@@ -43,6 +43,16 @@ describe('DruxtSchema', () => {
     expect(Object.values(resources)[0]).toHaveProperty('attributes')
   })
 
+  test('getSchema', async () => {
+    // Ensure we don't get a filtered schema.
+    const config = {
+      entityType: 'node',
+      bundle: 'page',
+      filter: ['node--article--default--view']
+    }
+    expect(await schema.getSchema(config)).toBe(false)
+  })
+
   test('getIndex', async () => {
     const index = await schema.getIndex()
     expect(Object.keys(index).length).toBe(12)
