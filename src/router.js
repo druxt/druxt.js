@@ -18,17 +18,14 @@ class DruxtRouter {
     let axiosSettings = { baseURL }
     if (typeof options.axios === 'object') {
       axiosSettings = Object.assign(axiosSettings, options.axios)
+      delete options.axios
     }
     this.axios = axios.create(axiosSettings)
 
-    // Setup options.
-    this.setOptions(options)
-  }
+    this.options = {
+      render: 'div',
 
-  setOptions (options = {}) {
-    // Setup entity preprocess callback.
-    if (typeof options.preprocessEntity === 'function') {
-      this.preprocessEntity = options.preprocessEntity
+      ...options
     }
   }
 
@@ -88,19 +85,17 @@ class DruxtRouter {
    * @param string type
    * @param string id
    */
-  async getResource ({ id, type }) {
-    const url = `/api/${type.replace('--', '/')}/${id}`
-    const response = await this.axios.get(url)
-
-    const resource = { id, type, data: response.data }
-
-    // Process entity before it's stored.
-    if (this.preprocessEntity) {
-      resource._raw = resource.data
-      resource.data = await this.preprocessEntity(response)
+  async getResource (query = {}) {
+    const { id, type } = query
+    if (!id || !type) {
+      return false
     }
 
-    return resource
+    // @TODO - Get URL from index.
+    const url = `/api/${type.replace('--', '/')}/${id}`
+    const resource = await this.axios.get(url)
+
+    return resource.data.data
   }
 
   /**
