@@ -3,6 +3,8 @@ import { resolve } from 'path'
 import { DruxtSchema } from './druxtSchema'
 export { DruxtSchema }
 
+export { DruxtSchemaMixin } from './mixin'
+
 export { DruxtSchemaStore } from './store'
 
 export default async function (moduleOptions = {}) {
