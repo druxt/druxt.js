@@ -3,6 +3,8 @@ import { resolve } from 'path'
 import { DruxtSchema } from './druxtSchema'
 export { DruxtSchema }
 
+export { DruxtSchemaMixin } from './mixin'
+
 export { DruxtSchemaStore } from './store'
 
 export default async function (moduleOptions = {}) {
@@ -24,9 +26,7 @@ export default async function (moduleOptions = {}) {
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/store.js'),
     fileName: 'store/druxt-schema.js',
-    options: {
-      schemas
-    }
+    options
   })
 
   // Generate schemas.
@@ -43,5 +43,4 @@ export default async function (moduleOptions = {}) {
       options: { schema }
     })
   }
-
 }

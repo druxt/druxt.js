@@ -22,6 +22,9 @@ class DruxtSchema {
       auth: {
         type: false
       },
+      schema: {
+        filter: [],
+      },
       ...options
     }
 
@@ -53,17 +56,21 @@ class DruxtSchema {
 
       for (const display of displays) {
         const resource = index[[display.attributes.targetEntityType, display.attributes.bundle].join('--')]
+
         const config = {
           entityType: display.attributes.targetEntityType,
           bundle: display.attributes.bundle,
           mode: display.attributes.mode,
           schemaType,
+          filter: this.options.schema.filter,
 
           ...resource
         }
 
         const schema = await this.getSchema(config, { data: display })
-        schemas[schema.id] = schema.schema
+        if (schema) {
+          schemas[schema.id] = schema.schema
+        }
       }
     }
 
@@ -122,18 +129,7 @@ class DruxtSchema {
 
     const res = await this.axios.get(url)
 
-    // Error handling: Required permissions.
-    if (res.data.meta && res.data.meta.omitted) {
-      const permissions = {}
-      delete res.data.meta.omitted.links.help
-      for (const link of Object.values(res.data.meta.omitted.links)) {
-        const match = link.meta.detail.match(/\'(.*?)\'/)
-        if (match[1]) {
-          permissions[match[1]] = true
-        }
-      }
-      throw new TypeError(`${res.data.meta.omitted.detail}\n\n Required permissions: ${Object.keys(permissions).join(', ')}.`)
-    }
+    this.checkPermissions(res)
 
     return res.data.data
   }
@@ -146,8 +142,30 @@ class DruxtSchema {
    */
   async getSchema(config, options = {}) {
     const schema = new Schema(config, { druxtSchema: this, ...options })
+
+    if (!schema.isValid) {
+      return false
+    }
+
     await schema.generate()
     return schema
+  }
+
+  checkPermissions(res) {
+    // Error handling: Required permissions.
+    if (res.data.meta && res.data.meta.omitted) {
+      const permissions = {}
+
+      delete res.data.meta.omitted.links.help
+      for (const link of Object.values(res.data.meta.omitted.links)) {
+        const match = link.meta.detail.match(/\'(.*?)\'/)
+        if (match[1]) {
+          permissions[match[1]] = true
+        }
+      }
+
+      throw new TypeError(`${res.data.meta.omitted.detail}\n\n Required permissions: ${Object.keys(permissions).join(', ')}.`)
+    }
   }
 
   oauth2() {
