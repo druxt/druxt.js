@@ -19,7 +19,7 @@ export default {
 
   computed: {
     component () {
-      return 'div'
+      return this.$druxtRouter().options.render
     },
 
     props () {
