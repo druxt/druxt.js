@@ -17,8 +17,6 @@
 </template>
 
 <script>
-import Vue from 'Vue'
-
 export default {
   name: 'DruxtField',
 
