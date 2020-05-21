@@ -1,13 +1,10 @@
 import { resolve } from 'path'
 
-import DruxtEntityComponent from './components/DruxtEntity.vue'
-export { DruxtEntityComponent }
+import * as DruxtEntityComponents from './components'
+export { DruxtEntityComponents }
 
 import { DruxtEntityMixin } from './mixins/entity.js'
 export { DruxtEntityMixin }
-
-import DruxtFieldComponent from './components/DruxtField.vue'
-export { DruxtFieldComponent }
 
 import { DruxtFieldMixin } from './mixins/field.js'
 export { DruxtFieldMixin }

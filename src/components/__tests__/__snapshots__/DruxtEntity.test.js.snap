@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DruxtEntityComponent pages 1`] = `
+exports[`Component - DruxtEntity pages 1`] = `
 "<druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\">
   <div>
     <!---->

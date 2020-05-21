@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import { DruxtEntityComponent, DruxtFieldComponent } from 'druxt-entity'
+
+import { DruxtEntityComponents } from 'druxt-entity'
 
 Vue.use({
   install: function (Vue) {
@@ -7,7 +8,8 @@ Vue.use({
     Vue._druxt_entity_installed = true
 
     // Register components.
-    Vue.component('DruxtEntity', DruxtEntityComponent)
-    Vue.component('DruxtField', DruxtFieldComponent)
+    for (const component in DruxtEntityComponents) {
+      Vue.component(component, DruxtEntityComponents[component])
+    }
   }
 })

@@ -4,14 +4,14 @@ import mockAxios from 'jest-mock-axios'
 
 import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
 import { DruxtSchemaStore } from 'druxt-schema'
-import { DruxtEntityComponent, DruxtFieldComponent } from '../..'
+import { DruxtEntity, DruxtField } from '..'
 
 const baseURL = 'https://example.com'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
-localVue.component('druxt-field', DruxtFieldComponent)
+localVue.component('druxt-field', DruxtField)
 
 const stubs = ['DruxtEntityNodePage', 'DruxtFieldString', 'DruxtFieldTextDefault']
 let store
@@ -22,10 +22,10 @@ const mountComponent = (entity, ) => {
     type: entity.type
   }
   store.commit('druxtRouter/addEntity', entity)
-  return mount(DruxtEntityComponent, { localVue, propsData, store, stubs })
+  return mount(DruxtEntity, { localVue, propsData, store, stubs })
 }
 
-describe('DruxtEntityComponent', () => {
+describe('Component - DruxtEntity', () => {
   beforeEach(() => {
     mockAxios.reset()
 
