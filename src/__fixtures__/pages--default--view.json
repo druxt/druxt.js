@@ -1,0 +1,67 @@
+{
+ "id": "pages--default--view",
+ "resourceType": "node--page",
+ "fields": [
+  {
+   "id": "title",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": "hidden"
+   },
+   "required": false,
+   "type": "string",
+   "weight": -5,
+   "settings": {
+    "config": {},
+    "display": {
+     "link_to_entity": false
+    }
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "body",
+   "description": "",
+   "label": {
+    "text": "Body",
+    "position": "hidden"
+   },
+   "required": false,
+   "type": "text_default",
+   "weight": 100,
+   "settings": {
+    "config": {
+     "display_summary": true
+    },
+    "display": []
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "links",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "required": false,
+   "type": null,
+   "weight": 101,
+   "settings": {
+    "config": {},
+    "display": {}
+   },
+   "thirdPartySettings": {}
+  }
+ ],
+ "groups": [],
+ "config": {
+  "entityType": "node",
+  "bundle": "page",
+  "mode": "default",
+  "schemaType": "view",
+  "filter": [],
+  "resourceType": "pages"
+ }
+}
