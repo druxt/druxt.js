@@ -16,8 +16,17 @@ localVue.use(Vuex)
 const stubs = ['nuxt-link']
 let store
 
-const mountComponent = (uuid, link = true, options) => {
-  const entity = require(`../../__fixtures__/${uuid}.json`).data
+const mountComponent = (link = true, options) => {
+  const entity = {
+    type: 'pages',
+    id: 'fe00c55d-0335-49d6-964e-a868c0c68f9c',
+    attributes: {
+      title: 'Welcome to Contenta CMS!',
+      path: {
+        alias: '/welcome'
+      }
+    }
+  }
   store.commit('druxtRouter/addEntity', entity)
 
   const propsData = {
@@ -42,20 +51,31 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
   })
 
   test('link', async () => {
-    const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c')
+    const wrapper = mountComponent()
 
     await localVue.nextTick()
 
     expect(wrapper.vm.entities.length).toBe(1)
     expect(wrapper.vm.component).toBe('nuxt-link')
+    expect(wrapper.vm.entities).toStrictEqual([{
+      props: {
+        to: '/welcome'
+      },
+      text: 'Welcome to Contenta CMS!'
+    }])
   })
 
   test('no link', async () => {
-    const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c', false)
+    const wrapper = mountComponent(false)
 
     await localVue.nextTick()
 
     expect(wrapper.vm.entities.length).toBe(1)
     expect(wrapper.vm.component).toBe('span')
+    expect(wrapper.vm.entities).toStrictEqual([{
+      props: false,
+      text: 'Welcome to Contenta CMS!'
+    }])
+
   })
 })
