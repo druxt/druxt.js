@@ -49,7 +49,7 @@ describe('Component - DruxtField', () => {
   test('pages - title', () => {
     const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c', 'title')
 
-    expect(wrapper.vm.items.length).toBe(1)
+    expect(wrapper.vm.props.items.length).toBe(1)
     expect(wrapper.vm.component).toBe('DruxtFieldString')
   })
 })

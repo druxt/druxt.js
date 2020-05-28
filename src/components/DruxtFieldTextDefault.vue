@@ -1,5 +1,7 @@
 <template>
-  <div v-html="value" />
+  <div>
+    <span v-for="(item, key) of items" :key="key" v-html="item.processed" />
+  </div>
 </template>
 
 <script>
@@ -8,28 +10,6 @@ import { DruxtFieldMixin } from '../mixins/field'
 export default {
   name: 'DruxtFieldTextDefault',
 
-  mixins: [DruxtFieldMixin],
-
-  props: {
-    format: {
-      type: String,
-      required: true
-    },
-
-    processed: {
-      type: String,
-      required: true
-    },
-
-    summary: {
-      type: String,
-      default: null
-    },
-
-    value: {
-      type: String,
-      required: true
-    }
-  }
+  mixins: [DruxtFieldMixin]
 }
 </script>

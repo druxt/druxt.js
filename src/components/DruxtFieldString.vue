@@ -1,5 +1,7 @@
 <template>
-  <span>{{ value }}</span>
+  <div>
+    <p v-for="(item, key) of items" :key="key">{{ item }}</p>
+  </div>
 </template>
 
 <script>
@@ -8,13 +10,6 @@ import { DruxtFieldMixin } from '../mixins/field'
 export default {
   name: 'DruxtFieldString',
 
-  mixins: [DruxtFieldMixin],
-
-  props: {
-    value: {
-      type: String,
-      required: true
-    }
-  }
+  mixins: [DruxtFieldMixin]
 }
 </script>
