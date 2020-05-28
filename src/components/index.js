@@ -10,6 +10,9 @@ export { DruxtFieldEntityReferenceEntityView }
 import DruxtFieldEntityReferenceLabel from './DruxtFieldEntityReferenceLabel.vue'
 export { DruxtFieldEntityReferenceLabel }
 
+import DruxtFieldNumberInteger from './DruxtFieldNumberInteger.vue'
+export { DruxtFieldNumberInteger }
+
 import DruxtFieldResponsiveImage from './DruxtFieldResponsiveImage.vue'
 export { DruxtFieldResponsiveImage }
 
