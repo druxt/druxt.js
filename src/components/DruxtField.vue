@@ -1,14 +1,12 @@
 <template>
-  <div v-if="items && schema">
+  <div v-if="props && schema">
+    <!-- Label -->
     <strong v-if="schema.label && schema.label.position === 'above' && schema.label.text">{{ schema.label.text }}:</strong>
 
-    <component
-      :is="component"
-      v-for="(item, key) of items"
-      :key="key"
-      v-bind="item"
-    />
+    <!-- Field component -->
+    <component :is="component" v-bind="props" />
 
+    <!-- Component error/debug message -->
     <div v-if="!component">
       <strong>Field component(s) missing: <code>{{ suggestions.join(', ') }}</code></strong>
       <pre>{{ items }}</pre>
@@ -61,42 +59,34 @@ export default {
         suggestions.push(prefix + type)
       }
 
-      if (this.relationship) {
-        suggestions.push('DruxtEntity')
-      }
-
       return suggestions
     },
 
-    items() {
-      const data = this.data
-      if (data === null) return false
+    props() {
+      if (this.data === null) return false
 
-      // If not relationship, return Array wrapped object of data.
-      // @TODO - Test with multi-cardinality fields.
-      if (!this.relationship && typeof data === 'object') {
-        return [{
-          ...data,
+      // Normalize data.
+      const data = Array.isArray(this.data) || this.relationship ? this.data : [this.data]
+
+      // If not relationship.
+      if (!this.relationship) {
+        return {
+          items: data,
           schema: this.schema
-        }]
+        }
       }
 
-      if (!this.relationship && typeof data !== 'object') {
-        return [{
-          value: data,
-          schema: this.schema
-        }]
-      }
-
-      // If relationship and data present, return transformed data.
-      if (this.relationship && data.data) {
+      // If relationship and data present.
+      else if (data.data) {
         const items = Array.isArray(data.data) ? data.data : [data.data]
-        return items.map(item => ({
-          type: item.type,
-          uuid: item.id,
-          mode: this.schema.settings.display.view_mode || 'default',
+        return {
+          items: items.map(item => ({
+            type: item.type,
+            uuid: item.id,
+            mode: this.schema.settings.display.view_mode || 'default',
+          })),
           schema: this.schema
-        }))
+        }
       }
 
       return false
