@@ -4,6 +4,9 @@ export { DruxtEntity }
 import DruxtField from './DruxtField.vue'
 export { DruxtField }
 
+import DruxtFieldEntityReferenceEntityView from './DruxtFieldEntityReferenceEntityView.vue'
+export { DruxtFieldEntityReferenceEntityView }
+
 import DruxtFieldEntityReferenceLabel from './DruxtFieldEntityReferenceLabel.vue'
 export { DruxtFieldEntityReferenceLabel }
 
