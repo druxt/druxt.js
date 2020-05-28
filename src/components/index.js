@@ -7,6 +7,9 @@ export { DruxtField }
 import DruxtFieldEntityReferenceLabel from './DruxtFieldEntityReferenceLabel.vue'
 export { DruxtFieldEntityReferenceLabel }
 
+import DruxtFieldResponsiveImage from './DruxtFieldResponsiveImage.vue'
+export { DruxtFieldResponsiveImage }
+
 import DruxtFieldString from './DruxtFieldString.vue'
 export { DruxtFieldString }
 
