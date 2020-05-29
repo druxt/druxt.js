@@ -1,11 +1,10 @@
 <template>
   <div>
-    <p
-      v-for="(item, key) of items"
-      :key="key"
-    >
-      {{ item }}
-    </p>
+    <druxt-entity
+      v-for="item of items"
+      :key="item.uuid"
+      v-bind="item"
+    />
   </div>
 </template>
 
@@ -13,7 +12,7 @@
 import { DruxtFieldMixin } from '../mixins/field'
 
 export default {
-  name: 'DruxtFieldString',
+  name: 'DruxtFieldEntityReferenceRevisionsEntityView',
 
   mixins: [DruxtFieldMixin]
 }

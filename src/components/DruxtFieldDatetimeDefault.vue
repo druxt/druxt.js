@@ -13,7 +13,7 @@
 import { DruxtFieldMixin } from '../mixins/field'
 
 export default {
-  name: 'DruxtFieldString',
+  name: 'DruxtFieldDatetimeDefault',
 
   mixins: [DruxtFieldMixin]
 }

@@ -4,12 +4,12 @@ exports[`Component - DruxtEntity pages 1`] = `
 "<druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\">
   <div>
     <!---->
-    <druxtfieldstring-stub value=\\"Welcome to Contenta CMS!\\" schema=\\"[object Object]\\"></druxtfieldstring-stub>
+    <druxtfieldstring-stub items=\\"Welcome to Contenta CMS!\\" schema=\\"[object Object]\\"></druxtfieldstring-stub>
     <!---->
   </div>
   <div>
     <!---->
-    <druxtfieldtextdefault-stub value=\\"<div class=&quot;card horizontal&quot;>
+    <druxtfieldtextdefault-stub items=\\"<div class=&quot;card horizontal&quot;>
     <div class=&quot;card-stacked&quot;>
         <div class=&quot;card-content&quot;><img class=&quot;right&quot; style=&quot;padding: 1.5rem;&quot;
                                        src=&quot;/profiles/contrib/contenta_jsonapi/modules/contenta_enhancements/logo.svg&quot;>
