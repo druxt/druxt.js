@@ -46,7 +46,7 @@ export default {
 
         if (this.component === 'nuxt-link') {
           this.entities[delta].props = {
-            to: res.attributes.path
+            to: res.attributes.path.alias
           }
         }
       })
