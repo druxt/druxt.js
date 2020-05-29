@@ -1,6 +1,10 @@
 <template>
   <div>
-    <span v-for="(item, key) of items" :key="key" v-html="item.processed" />
+    <span
+      v-for="(item, key) of items"
+      :key="key"
+      v-html="item.processed"
+    />
   </div>
 </template>
 

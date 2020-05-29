@@ -1,6 +1,11 @@
 <template>
   <div>
-    <p v-for="(item, key) of items" :key="key">{{ item }}</p>
+    <p
+      v-for="(item, key) of items"
+      :key="key"
+    >
+      {{ item }}
+    </p>
   </div>
 </template>
 

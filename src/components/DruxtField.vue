@@ -4,7 +4,10 @@
     <strong v-if="schema.label && schema.label.position === 'above' && schema.label.text">{{ schema.label.text }}:</strong>
 
     <!-- Field component -->
-    <component :is="component" v-bind="props" />
+    <component
+      :is="component"
+      v-bind="props"
+    />
 
     <!-- Component error/debug message -->
     <div v-if="!component">
