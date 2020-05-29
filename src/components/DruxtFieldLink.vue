@@ -40,7 +40,7 @@ export default {
 
         // Use <nuxt-link> for relative links.
         else {
-          links[key].component = 'nuixt-link'
+          links[key].component = 'nuxt-link'
           links[key].props.to = link.uri
         }
       }

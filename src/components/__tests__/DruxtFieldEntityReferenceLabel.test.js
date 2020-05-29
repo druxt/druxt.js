@@ -78,6 +78,5 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
       props: false,
       text: 'Welcome to Contenta CMS!'
     }])
-
   })
 })
