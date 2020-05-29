@@ -46,7 +46,7 @@ describe('Component - DruxtFieldLink', () => {
     expect(wrapper.vm.links[0].props).toHaveProperty('href')
   })
 
-  test('relative', async () => {
+  test('relative', () => {
     const wrapper = mountComponent({
       title: 'relative',
       uri: '/path'
