@@ -54,6 +54,7 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
     const wrapper = mountComponent()
 
     await localVue.nextTick()
+    await localVue.nextTick()
 
     expect(wrapper.vm.entities.length).toBe(1)
     expect(wrapper.vm.component).toBe('nuxt-link')
@@ -68,6 +69,7 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
   test('no link', async () => {
     const wrapper = mountComponent(false)
 
+    await localVue.nextTick()
     await localVue.nextTick()
 
     expect(wrapper.vm.entities.length).toBe(1)
