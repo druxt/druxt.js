@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
 import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
-import { DruxtFieldEntityReferenceLabel } from '..'
+import { DruxtFieldResponsiveImage } from '..'
 
 jest.mock('axios')
 
@@ -16,14 +16,13 @@ localVue.use(Vuex)
 const stubs = ['nuxt-link']
 let store
 
-const mountComponent = (link = true, options) => {
+const mountComponent = (options) => {
   const entity = {
     type: 'pages',
     id: 'fe00c55d-0335-49d6-964e-a868c0c68f9c',
     attributes: {
-      title: 'Welcome to Contenta CMS!',
-      path: {
-        alias: '/welcome'
+      uri: {
+        value: 'public://sites/default/image.jpg'
       }
     }
   }
@@ -34,13 +33,13 @@ const mountComponent = (link = true, options) => {
       type: entity.type,
       uuid: entity.id
     }],
-    schema: { settings: { display: { link } }}
+    schema: {}
   }
 
-  return shallowMount(DruxtFieldEntityReferenceLabel, { ...options, localVue, propsData, store, stubs })
+  return shallowMount(DruxtFieldResponsiveImage, { ...options, localVue, propsData, store, stubs })
 }
 
-describe('Component - DruxtFieldEntityReferenceLabel', () => {
+describe('Component - DruxtFieldResponsiveImage', () => {
   beforeEach(() => {
     mockAxios.reset()
 
@@ -50,33 +49,13 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
     DruxtRouterStore({ store })
   })
 
-  test('link', async () => {
+  test('default', async () => {
     const wrapper = mountComponent()
 
     await localVue.nextTick()
     await localVue.nextTick()
 
     expect(wrapper.vm.entities.length).toBe(1)
-    expect(wrapper.vm.component).toBe('nuxt-link')
-    expect(wrapper.vm.entities).toStrictEqual([{
-      props: {
-        to: '/welcome'
-      },
-      text: 'Welcome to Contenta CMS!'
-    }])
-  })
-
-  test('no link', async () => {
-    const wrapper = mountComponent(false)
-
-    await localVue.nextTick()
-    await localVue.nextTick()
-
-    expect(wrapper.vm.entities.length).toBe(1)
-    expect(wrapper.vm.component).toBe('span')
-    expect(wrapper.vm.entities).toStrictEqual([{
-      props: false,
-      text: 'Welcome to Contenta CMS!'
-    }])
+    expect(wrapper.html()).toMatchSnapshot()
   })
 })
