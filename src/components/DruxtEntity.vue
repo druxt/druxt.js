@@ -56,7 +56,7 @@ export default {
       const fields = {}
       for (const field of this.schema.fields) {
         // Filter out empty fields.
-        if (typeof data[field.id] === 'undefined' || !data[field.id] || (data[field.id].data && !data[field.id].data.length)) continue
+        if (typeof data[field.id] === 'undefined' || !data[field.id] || (Array.isArray(data[field.id].data) && !data[field.id].data.length)) continue
 
         fields[field.id] = {
           data: data[field.id],
