@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading === 0">
+  <div v-if="loading === 0 && typeof entities[0] !== 'undefined'">
     <component
       :is="component"
       v-for="(entity, key) of entities"
