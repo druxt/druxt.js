@@ -4,6 +4,9 @@ export { DruxtEntity }
 import DruxtField from './DruxtField.vue'
 export { DruxtField }
 
+import DruxtFieldBasicString from './DruxtFieldBasicString.vue'
+export { DruxtFieldBasicString }
+
 import DruxtFieldDatetimeDefault from './DruxtFieldDatetimeDefault.vue'
 export { DruxtFieldDatetimeDefault }
 
