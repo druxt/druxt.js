@@ -36,3 +36,6 @@ export { DruxtFieldString }
 
 import DruxtFieldTextDefault from './DruxtFieldTextDefault.vue'
 export { DruxtFieldTextDefault }
+
+import DruxtFieldTimestamp from './DruxtFieldTimestamp.vue'
+export { DruxtFieldTimestamp }
