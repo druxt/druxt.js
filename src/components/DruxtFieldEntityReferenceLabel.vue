@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading === 0 && typeof entities[0] !== 'undefined'">
+  <div v-if="loading === 0">
     <component
       :is="component"
       v-for="(entity, key) of entities"
@@ -22,15 +22,10 @@ export default {
   mixins: [DruxtFieldMixin],
 
   data: () => ({
+    component: 'span',
     entities: false,
     loading: false
   }),
-
-  computed: {
-    component() {
-      return this.schema.settings.display.link ? 'nuxt-link' : 'span'
-    },
-  },
 
   created() {
     this.loading = this.items.length
@@ -44,14 +39,15 @@ export default {
           text: res.attributes[Object.keys(res.attributes).find(e => ['name', 'title'].includes(e))]
         }
 
-        if (this.component === 'nuxt-link') {
+        if (this.schema.settings.display.link && res.attributes.path.alias) {
+          this.component = 'nuxt-link'
           this.entities[delta].props = {
             to: res.attributes.path.alias
           }
         }
-      })
 
-      this.loading--
+        this.loading--
+      })
     }
   },
 
