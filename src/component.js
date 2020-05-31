@@ -77,6 +77,9 @@ export default {
           }
 
           this.$forceUpdate()
+        }).catch(error => {
+          this.loading--
+          delete this.items[to]
         })
 
         paths.pop()
