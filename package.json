@@ -1,6 +1,6 @@
 {
   "name": "druxt-entity",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Provides an Entity render Vue component to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
