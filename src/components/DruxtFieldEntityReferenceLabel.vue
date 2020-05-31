@@ -27,6 +27,14 @@ export default {
     loading: false
   }),
 
+  watch: {
+    loading: function() {
+      if (this.loading === 0) {
+        this.$forceUpdate()
+      }
+    }
+  },
+
   created() {
     this.loading = this.items.length
     for (const delta in this.items) {
@@ -48,14 +56,6 @@ export default {
 
         this.loading--
       })
-    }
-  },
-
-  watch: {
-    loading: function() {
-      if (this.loading === 0) {
-        this.$forceUpdate()
-      }
     }
   },
 
