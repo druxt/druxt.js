@@ -4,9 +4,15 @@
       v-for="(item, key) of items"
       :key="key"
     >
-      <span v-if="schema.settings.display.prefix_suffix && schema.settings.config.prefix" class="prefix">{{  schema.settings.config.prefix }}</span>
+      <span
+        v-if="prefix"
+        class="prefix"
+      >{{ prefix }}</span>
       {{ item }}
-      <span v-if="schema.settings.display.prefix_suffix && schema.settings.config.suffix" class="suffix">{{  schema.settings.config.suffix }}</span>
+      <span
+        v-if="suffix"
+        class="suffix"
+      >{{ suffix }}</span>
     </span>
   </div>
 </template>
@@ -17,6 +23,20 @@ import { DruxtFieldMixin } from '../mixins/field'
 export default {
   name: 'DruxtFieldNumberInteger',
 
-  mixins: [DruxtFieldMixin]
+  mixins: [DruxtFieldMixin],
+
+  computed: {
+    prefix() {
+      if (!this.schema.settings.display.prefix_suffix || !this.schema.settings.config.prefix) return false
+
+      return this.schema.settings.config.prefix
+    },
+
+    suffix() {
+      if (!this.schema.settings.display.prefix_suffix || !this.schema.settings.config.suffix) return false
+
+      return this.schema.settings.config.suffix
+    }
+  }
 }
 </script>

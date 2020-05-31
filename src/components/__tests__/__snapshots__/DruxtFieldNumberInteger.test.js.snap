@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component - DruxtFieldNumberInteger default 1`] = `
+"<div><span><!---->
+    0
+    <!----></span><span><!---->
+    1
+    <!----></span><span><!---->
+    2
+    <!----></span></div>"
+`;
+
+exports[`Component - DruxtFieldNumberInteger prefix 1`] = `
+"<div><span><span class=\\"prefix\\">#</span>
+  0
+  <!----></span><span><span class=\\"prefix\\">#</span>
+  1
+  <!----></span><span><span class=\\"prefix\\">#</span>
+  2
+  <!----></span></div>"
+`;
+
+exports[`Component - DruxtFieldNumberInteger prefix_suffix 1`] = `
+"<div><span><span class=\\"prefix\\">AUD $</span>
+  0
+  <span class=\\"suffix\\">.00</span></span><span><span class=\\"prefix\\">AUD $</span>
+  1
+  <span class=\\"suffix\\">.00</span></span><span><span class=\\"prefix\\">AUD $</span>
+  2
+  <span class=\\"suffix\\">.00</span></span></div>"
+`;
+
+exports[`Component - DruxtFieldNumberInteger suffix 1`] = `
+"<div><span><!---->
+    0
+    <span class=\\"suffix\\"> item(s)</span></span><span><!---->
+    1
+    <span class=\\"suffix\\"> item(s)</span></span><span><!---->
+    2
+    <span class=\\"suffix\\"> item(s)</span></span></div>"
+`;
