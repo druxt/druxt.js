@@ -39,7 +39,10 @@ describe('DruxtBreadcrumb', () => {
     // Setup vuex stores.
     store = new Vuex.Store()
     store.$druxtRouter = jest.fn(() => ({
-      getRoute: async () => ({ data: {} })
+      getRoute: async (to) => {
+        if (to === '/error') throw new Error('Error')
+        return { data: {} }
+      }
     }))
     DruxtRouterStore({ store })
   })
@@ -150,6 +153,31 @@ describe('DruxtBreadcrumb', () => {
 
     expect(wrapper.vm.loading).toBe(0)
     expect(wrapper.vm.crumbs).toHaveLength(0)
+  })
+
+  test('error', async () => {
+    const wrapper = mountComponent({ path: '/error/level-2', routes: ['/', '/error/level-2'] })
+
+    expect(wrapper.vm.route).toStrictEqual({
+      label: '/error/level-2'
+    })
+
+    expect(Object.keys(wrapper.vm.routes)).toHaveLength(2)
+    expect(Object.keys(wrapper.vm.items)).toHaveLength(3)
+
+    expect(wrapper.vm.loading).toBe(1)
+    expect(wrapper.vm.crumbs).toHaveLength(0)
+
+    // Wait for loading to complete.
+    // @TODO - Figure out how to do this better.
+    await localVue.nextTick()
+    await localVue.nextTick()
+    await localVue.nextTick()
+
+    expect(wrapper.vm.loading).toBe(0)
+    expect(wrapper.vm.crumbs).toHaveLength(2)
+
+    expect(wrapper.vm.crumbs[0].to).toBe('/')
   })
 
 })
