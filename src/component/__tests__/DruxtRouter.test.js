@@ -52,8 +52,6 @@ describe('DruxtRouterComponent', () => {
       meta: false
     })
 
-    expect(wrapper.vm.entity).toHaveProperty('id', '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
-
     expect(wrapper.vm.route).toHaveProperty('label')
     expect(wrapper.vm.route).toHaveProperty('entity.uuid')
     expect(wrapper.vm.route).toHaveProperty('entity.type')
