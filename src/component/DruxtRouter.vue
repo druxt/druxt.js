@@ -1,5 +1,5 @@
 <template>
-  <component :is="component" v-if="entity" v-bind="props" />
+  <component :is="component" v-if="route" v-bind="props" />
 </template>
 
 <script>
@@ -23,7 +23,7 @@ export default {
     },
 
     props () {
-      if (!this.entity) {
+      if (!this.route) {
         return false
       }
 
@@ -38,13 +38,6 @@ export default {
     },
 
     ...mapState({
-      entity: (state) => {
-        if (!state.druxtRouter.route.data) {
-          return undefined
-        }
-
-        return state.druxtRouter.entities[state.druxtRouter.route.data.entity.uuid]
-      },
       redirect: state => state.druxtRouter.redirect,
       route: state => state.druxtRouter.route.data
     })
