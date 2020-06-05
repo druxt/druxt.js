@@ -39,11 +39,3 @@ These options are available to all Druxt modules.
 | --- | --- | --- | --- | --- |
 | `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
 | `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
-
-### Druxt Router options
-
-These options are specific to this module.
-
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `router.render` | `string` | No | `div` | Component to render entity routes. |
