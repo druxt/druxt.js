@@ -23,7 +23,18 @@ class DruxtRouter {
     this.axios = axios.create(axiosSettings)
 
     this.options = {
-      render: 'div',
+      types: [
+        {
+          type: 'entity',
+          canonical: route => route.entity.canonical,
+          component: 'druxt-entity',
+          property: 'entity',
+          props: route => ({
+            type: route.jsonapi.resourceName,
+            uuid: route.entity.uuid
+          })
+        }
+      ],
 
       ...options
     }
@@ -35,18 +46,14 @@ class DruxtRouter {
    * @param string path
    */
   async get (path) {
-    const { data: route, error: routeError } = await this.getRoute(path)
-    if (routeError) {
-      return { route, error: routeError }
+    const route = await this.getRoute(path)
+    if (route.error) {
+      return { route }
     }
 
     const redirect = this.getRedirect(path, route)
 
-    // Get entity from API.
-    // @TODO - Add validation/error handling.
-    const entity = await this.getResourceByRoute(route)
-
-    return { entity, redirect, route }
+    return { redirect, route }
   }
 
   /**
@@ -68,8 +75,8 @@ class DruxtRouter {
     }
 
     // Redirect if path does not match resolved clean url path.
-    if (typeof route.resolved === 'string') {
-      const url = new Url(route.resolved)
+    if (typeof route.canonical === 'string') {
+      const url = new Url(route.canonical)
 
       if (path !== url.pathname) {
         return url.pathname
@@ -120,18 +127,68 @@ class DruxtRouter {
       // Prevent invalid routes (404) from throwing validation errors.
       validateStatus: status => status < 500
     })
-    const data = response.data
+
+    const data = {
+      isHomePath: false,
+      jsonapi: {},
+      label: false,
+      redirect: false,
+
+      ...response.data
+    }
+
+    let route = {
+      error: false,
+      type: false,
+      canonical: false,
+      component: false,
+      isHomePath: data.isHomePath,
+      jsonapi: data.jsonapi,
+      label: data.label,
+      props: false,
+      redirect: data.redirect
+    }
+
+    // Determine route type by configuration.
+    // @TODO - Move type to Decoupled router.
+    // @SEE  - https://www.drupal.org/project/decoupled_router/issues/3146024
+    for (const key in this.options.types) {
+      const type = {
+        ...this.options.types[key]
+      }
+
+      if (typeof type.property !== 'string' || typeof data[type.property] === 'undefined') {
+        continue
+      }
+      delete type.property
+
+      // Construct canonical link.
+      if (typeof type.canonical === 'function') {
+        type.canonical = type.canonical(data)
+      }
+
+      // Construct props.
+      if (typeof type.props === 'function') {
+        type.props = type.props(data)
+      }
+
+      // Merge type
+      route = {
+        ...route,
+        ...type
+      }
+      break
+    }
 
     // Process Axios error.
-    let error = false
     if (!(response.status >= 200 && response.status < 300)) {
-      error = {
+      route.error = {
         statusCode: response.status,
         message: response.statusText
       }
     }
 
-    return { data, error }
+    return route
   }
 }
 

@@ -95,15 +95,16 @@ describe('DruxtRouterStore', () => {
   })
 
   test('get', async () => {
-    const { entity } = await store.dispatch('druxtRouter/get', '/')
-    expect(entity).toBe(mockPage)
-    expect(entity.id).toBe(mockPage.id)
-    expect(entity.type).toBe(mockPage.type)
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    const response = await store.dispatch('druxtRouter/get', '/')
+
+    expect(response).toHaveProperty('redirect', false)
+    expect(response).toHaveProperty('route')
+
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
     // Ensure additional requests to the same route don't trigger an additional request.
     await store.dispatch('druxtRouter/get', '/')
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
     // Test failed request.
     await store.dispatch('druxtRouter/get', '/error')
@@ -111,8 +112,18 @@ describe('DruxtRouterStore', () => {
   })
 
   test('getRoute', async () => {
-    const { data: route } = await store.dispatch('druxtRouter/getRoute', '/')
-    expect(route).toBe(mockRoutes['/'])
+    const route = await store.dispatch('druxtRouter/getRoute', '/')
+
+    expect(route).toHaveProperty('canonical')
+    expect(route).toHaveProperty('component')
+    expect(route).toHaveProperty('error')
+    expect(route).toHaveProperty('isHomePath')
+    expect(route).toHaveProperty('jsonapi')
+    expect(route).toHaveProperty('label')
+    expect(route).toHaveProperty('props')
+    expect(route).toHaveProperty('redirect')
+    expect(route).toHaveProperty('type')
+
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
     // Ensure additional requests to the same route don't trigger an additional request.
