@@ -1,5 +1,7 @@
 <template>
-  <component :is="component" v-if="route" v-bind="props" />
+  <div>
+    <component :is="component" v-if="route" v-bind="props" />
+  </div>
 </template>
 
 <script>
