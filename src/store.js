@@ -50,11 +50,11 @@ const DruxtRouterStore = ({ store }) => {
     actions: {
       async get ({ commit, dispatch, state }, path) {
         // Get route by path from 'getRoute'.
-        const { data: route, error: routeError } = await dispatch('getRoute', path)
+        const route = await dispatch('getRoute', path)
 
         // Handle route errors.
-        if (typeof routeError.statusCode !== 'undefined') {
-          return this.app.context.error(routeError)
+        if (route.error && typeof route.error.statusCode !== 'undefined') {
+          return this.app.context.error(route.error)
         }
 
         commit('setRoute', path)
@@ -62,11 +62,10 @@ const DruxtRouterStore = ({ store }) => {
         const redirect = this.$druxtRouter().getRedirect(path, route)
         commit('setRedirect', redirect)
 
-        const entity = await dispatch('getEntity', { id: route.entity.uuid, type: route.jsonapi.resourceName })
-
-        return { entity, redirect, route }
+        return { redirect, route }
       },
 
+      // @TODO - Move this into druxt-entity.
       async getEntity ({ commit, state }, query) {
         if (typeof state.entities[query.id] !== 'undefined') {
           return state.entities[query.id]

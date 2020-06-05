@@ -1,6 +1,6 @@
 {
   "name": "druxt-router",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "Provides a Nuxt <-> Drupal router.",
   "files": [
     "dist",
@@ -65,6 +65,7 @@
     "get-port": "^5.1.1",
     "jest": "^24.9.0",
     "jest-mock-axios": "^3.2.0",
+    "md5": "^2.2.1",
     "nodemon": "^2.0.3",
     "nuxt-edge": "^2.11.0-26277131.7af9ec8c",
     "rollup": "^1.32.1",

@@ -19,27 +19,20 @@ export default {
 
   computed: {
     component () {
-      return this.$druxtRouter().options.render
-    },
-
-    props () {
-      if (!this.route) {
-        return false
-      }
-
-      return {
-        type: this.route.jsonapi.resourceName,
-        uuid: this.route.entity.uuid
-      }
+      return this.route.component || false
     },
 
     title () {
-      return this.route.label
+      return this.route.label || false
+    },
+
+    props () {
+      return this.route.props || false
     },
 
     ...mapState({
       redirect: state => state.druxtRouter.redirect,
-      route: state => state.druxtRouter.route.data
+      route: state => state.druxtRouter.route
     })
   },
 
@@ -49,7 +42,7 @@ export default {
       link: [
         {
           rel: 'canonical',
-          href: this.canonical || this.route.entity.canonical
+          href: this.canonical || this.route.canonical
         }
       ],
       meta: this.metatags || false

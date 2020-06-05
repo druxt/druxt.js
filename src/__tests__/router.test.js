@@ -1,5 +1,4 @@
 import mockAxios from 'jest-mock-axios'
-import mockRoutes from '../__fixtures__/routes'
 
 import { DruxtRouter } from '..'
 
@@ -35,19 +34,29 @@ describe('DruxtRouter', () => {
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL, headers })
   })
 
-  test('get', async () => {
-    // Test a successful request.
-    let result = await router.get('/')
+  test('get - entity', async () => {
+    const { route } = await router.get('/')
 
-    expect(result).toHaveProperty('entity')
-    expect(result).toHaveProperty('route')
+    expect(route.component).toBe('druxt-entity')
+    expect(route.type).toBe('entity')
+    expect(route.props).toHaveProperty('type')
+    expect(route.props).toHaveProperty('uuid')
+  })
 
-    expect(result.entity).toHaveProperty('id', testPage.id)
-    expect(result.entity).toHaveProperty('type', testPage.type)
+  test('get - views', async () => {
+    const { route } = await router.get('/view')
 
-    // Test a failed request.
-    result = await router.get('/error')
-    expect(result).toHaveProperty('error')
+    expect(route.component).toBe('druxt-view')
+    expect(route.type).toBe('views')
+    expect(route.props).toHaveProperty('display')
+    expect(route.props).toHaveProperty('view')
+  })
+
+  test('get - error', async () => {
+    const { route } = await router.get('/error')
+
+    expect(route.error).toHaveProperty('message')
+    expect(route.error).toHaveProperty('statusCode', 404)
   })
 
   test('getRedirect', () => {
@@ -72,7 +81,7 @@ describe('DruxtRouter', () => {
 
     // Clean url redirect.
     redirect = router.getRedirect('/node/2', {
-      resolved: 'https://example.com/clean-url'
+      canonical: 'https://example.com/clean-url'
     })
     expect(redirect).toBe('/clean-url')
 
@@ -91,7 +100,7 @@ describe('DruxtRouter', () => {
   })
 
   test('getResourceByRoute', async () => {
-    const route = mockRoutes['/']
+    const route = require('../__fixtures__/data/0a01adaa07e9dfcc3c0cabc37339505a.json')
     const entity = await router.getResourceByRoute(route)
 
     expect(entity).toHaveProperty('id', testPage.id)
@@ -102,13 +111,19 @@ describe('DruxtRouter', () => {
     // Get the route of the homepage.
     let route = await router.getRoute('/')
 
-    expect(route.data).toHaveProperty('entity')
-    expect(route.data).toHaveProperty('isHomePath', true)
-    expect(route.data).toHaveProperty('jsonapi')
+    expect(route).toHaveProperty('canonical')
+    expect(route).toHaveProperty('component')
+    expect(route).toHaveProperty('error')
+    expect(route).toHaveProperty('isHomePath', true)
+    expect(route).toHaveProperty('jsonapi')
+    expect(route).toHaveProperty('label')
+    expect(route).toHaveProperty('props')
+    expect(route).toHaveProperty('redirect')
+    expect(route).toHaveProperty('type')
 
     // Get the route of node/1.
     route = await router.getRoute('/node/1')
 
-    expect(route.data).toHaveProperty('isHomePath', false)
+    expect(route).toHaveProperty('isHomePath', false)
   })
 })
