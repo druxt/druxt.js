@@ -39,15 +39,11 @@ describe('DruxtRouter', () => {
     // Test a successful request.
     let result = await router.get('/')
 
-    expect(result).toHaveProperty('entity')
     expect(result).toHaveProperty('route')
-
-    expect(result.entity).toHaveProperty('id', testPage.id)
-    expect(result.entity).toHaveProperty('type', testPage.type)
 
     // Test a failed request.
     result = await router.get('/error')
-    expect(result).toHaveProperty('error')
+    expect(result.route).toHaveProperty('error')
   })
 
   test('getRedirect', () => {
@@ -72,7 +68,7 @@ describe('DruxtRouter', () => {
 
     // Clean url redirect.
     redirect = router.getRedirect('/node/2', {
-      resolved: 'https://example.com/clean-url'
+      canonical: 'https://example.com/clean-url'
     })
     expect(redirect).toBe('/clean-url')
 
@@ -102,13 +98,19 @@ describe('DruxtRouter', () => {
     // Get the route of the homepage.
     let route = await router.getRoute('/')
 
-    expect(route.data).toHaveProperty('entity')
-    expect(route.data).toHaveProperty('isHomePath', true)
-    expect(route.data).toHaveProperty('jsonapi')
+    expect(route).toHaveProperty('canonical')
+    expect(route).toHaveProperty('component')
+    expect(route).toHaveProperty('error')
+    expect(route).toHaveProperty('isHomePath', true)
+    expect(route).toHaveProperty('jsonapi')
+    expect(route).toHaveProperty('label')
+    expect(route).toHaveProperty('props')
+    expect(route).toHaveProperty('redirect')
+    expect(route).toHaveProperty('type')
 
     // Get the route of node/1.
     route = await router.getRoute('/node/1')
 
-    expect(route.data).toHaveProperty('isHomePath', false)
+    expect(route).toHaveProperty('isHomePath', false)
   })
 })
