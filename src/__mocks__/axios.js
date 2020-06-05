@@ -1,20 +1,21 @@
+import fs from 'fs'
+import path from 'path'
+import md5 from 'md5'
 import mockAxios from 'jest-mock-axios'
-
-import mockResources from '../__fixtures__/resources'
-import mockRoutes from '../__fixtures__/routes'
 
 mockAxios.get = jest.fn((url, options) => {
   let data = null
   let status = 404
   const validateStatus = true
 
-  if (url.split('/')[1] === 'router' && mockRoutes[url.split('?path=')[1]]) {
-    data = mockRoutes[url.split('?path=')[1]]
-    status = 200
-  } else if (typeof mockResources[url] !== 'undefined') {
-    data = { data: mockResources[url] }
-    status = 200
+  const file = path.resolve('src/__fixtures__/data', md5(url) + '.json')
+
+  if (!fs.existsSync(file)) {
+    return { data, status, validateStatus }
   }
+
+  data = require(file)
+  status = 200
 
   if (options && options.validateStatus) {
     expect(options.validateStatus(status)).toBe(true)

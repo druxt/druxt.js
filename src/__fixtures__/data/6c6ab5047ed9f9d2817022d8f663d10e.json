@@ -1,0 +1,16 @@
+{
+  "resolved": "https://dev-druxt.pantheonsite.io/en/recipes",
+  "isHomePath": false,
+  "view": {
+    "view_id": "recipes",
+    "display_id": "page_1"
+  },
+  "label": "Recipes",
+  "jsonapi": {
+    "individual": false,
+    "resourceName": false,
+    "basePath": "/api",
+    "entryPoint": "https://dev-druxt.pantheonsite.io/en/api"
+  },
+  "jsonapi_views": "https://dev-druxt.pantheonsite.io/en/api/views/recipes/page_1"
+}

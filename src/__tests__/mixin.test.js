@@ -1,9 +1,7 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import mockResources from '../__fixtures__/resources'
-
-import { DruxtRouterEntityMixin, DruxtRouterStore } from '..'
+import { DruxtRouter, DruxtRouterEntityMixin, DruxtRouterStore } from '..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -21,9 +19,8 @@ describe('DruxtRouterEntityMixin', () => {
     // Setup vuex store.
     store = new Vuex.Store()
     DruxtRouterStore({ store })
-    store.$druxtRouter = () => ({
-      getResource: ({ id, type }) => mockResources[`/api/${type.replace('--', '/')}/${id}`]
-    })
+
+    store.$druxtRouter = () => new DruxtRouter('https://example.com')
   })
 
   test('default', async () => {
@@ -43,6 +40,7 @@ describe('DruxtRouterEntityMixin', () => {
       await localVue.nextTick()
     }
 
+    expect(wrapper.vm.loading).toBe(false)
     expect(wrapper.vm.entity).toHaveProperty('id', '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
   })
 
