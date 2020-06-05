@@ -25,11 +25,13 @@ const mountComponent = ({ path, routes }) => {
     store.commit('druxtRouter/addRoute', {
       path: route,
       route: {
-        data: { label: route }
+        label: route
       }
     })
   }
-  store.commit('druxtRouter/setRoute', path)
+  if (typeof store.state.druxtRouter.routes[path] !== 'undefined') {
+    store.commit('druxtRouter/setRoute', path)
+  }
 
   return shallowMount(DruxtBreadcrumb, { store, localVue, mocks })
 }
@@ -140,7 +142,7 @@ describe('DruxtBreadcrumb', () => {
   test('404 route', async () => {
     const wrapper = mountComponent({ path: '/level-1/level-2', routes: ['/'] })
 
-    expect(wrapper.vm.route).toBe(undefined)
+    expect(wrapper.vm.route).toStrictEqual({})
 
     expect(Object.keys(wrapper.vm.routes)).toHaveLength(1)
     expect(Object.keys(wrapper.vm.items)).toHaveLength(0)
