@@ -32,7 +32,7 @@ export default {
     },
 
     ...mapState({
-      route: state => state.druxtRouter.route.data,
+      route: state => state.druxtRouter.route,
       routes: state => state.druxtRouter.routes
     })
   },
@@ -43,7 +43,7 @@ export default {
       this.items = {}
 
       // If there is no route, stop here.
-      if (!this.route) return
+      if (!this.route || !Object.keys(this.route).length) return
 
       // Home crumb.
       // @TODO - Make this configurable.
@@ -68,12 +68,12 @@ export default {
         const to = '/' + paths.join('/')
         this.items[to] = {}
 
-        this.getRoute(to).then(({ data, error }) => {
+        this.getRoute(to).then((route) => {
           this.loading--
 
           delete this.items[to]
-          if (data.label) {
-            this.items[to] = { to, text: data.label }
+          if (route.label) {
+            this.items[to] = { to, text: route.label }
           }
 
           this.$forceUpdate()
