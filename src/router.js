@@ -33,6 +33,16 @@ class DruxtRouter {
             type: route.jsonapi.resourceName,
             uuid: route.entity.uuid
           })
+        },
+        {
+          type: 'views',
+          canonical: route => route.resolved,
+          component: 'druxt-view',
+          property: 'view',
+          props: route => ({
+            view: route.view.view_id,
+            display: route.view.display_id
+          })
         }
       ],
 
