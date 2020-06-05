@@ -65,6 +65,7 @@ const DruxtRouterStore = ({ store }) => {
         return { redirect, route }
       },
 
+      // @TODO - Move this into druxt-entity.
       async getEntity ({ commit, state }, query) {
         if (typeof state.entities[query.id] !== 'undefined') {
           return state.entities[query.id]

@@ -111,6 +111,14 @@ describe('DruxtRouterStore', () => {
     expect(store.app.context.error).toHaveBeenCalledWith({ message: undefined, statusCode: 404 })
   })
 
+  test('getEntity', async () => {
+    const entity = await store.dispatch('druxtRouter/getEntity', mockPage)
+
+    expect(entity).toHaveProperty('attributes')
+
+    await store.dispatch('druxtRouter/getEntity', mockPage)
+  })
+
   test('getRoute', async () => {
     const route = await store.dispatch('druxtRouter/getRoute', '/')
 
