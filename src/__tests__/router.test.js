@@ -1,5 +1,4 @@
 import mockAxios from 'jest-mock-axios'
-import mockRoutes from '../__fixtures__/routes'
 
 import { DruxtRouter } from '..'
 
@@ -35,15 +34,29 @@ describe('DruxtRouter', () => {
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL, headers })
   })
 
-  test('get', async () => {
-    // Test a successful request.
-    let result = await router.get('/')
+  test('get - entity', async () => {
+    const { route } = await router.get('/')
 
-    expect(result).toHaveProperty('route')
+    expect(route.component).toBe('druxt-entity')
+    expect(route.type).toBe('entity')
+    expect(route.props).toHaveProperty('type')
+    expect(route.props).toHaveProperty('uuid')
+  })
 
-    // Test a failed request.
-    result = await router.get('/error')
-    expect(result.route).toHaveProperty('error')
+  test('get - views', async () => {
+    const { route } = await router.get('/view')
+
+    expect(route.component).toBe('druxt-view')
+    expect(route.type).toBe('views')
+    expect(route.props).toHaveProperty('display')
+    expect(route.props).toHaveProperty('view')
+  })
+
+  test('get - error', async () => {
+    const { route } = await router.get('/error')
+
+    expect(route.error).toHaveProperty('message')
+    expect(route.error).toHaveProperty('statusCode', 404)
   })
 
   test('getRedirect', () => {
@@ -87,7 +100,7 @@ describe('DruxtRouter', () => {
   })
 
   test('getResourceByRoute', async () => {
-    const route = mockRoutes['/']
+    const route = require('../__fixtures__/data/0a01adaa07e9dfcc3c0cabc37339505a.json')
     const entity = await router.getResourceByRoute(route)
 
     expect(entity).toHaveProperty('id', testPage.id)
