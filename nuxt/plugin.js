@@ -4,6 +4,10 @@ export default (context, inject) => {
   const baseUrl = '<%= options.baseUrl %>'
   const options = {}
 
+  <% if (options.endpoint) { %>
+  options.endpoint = '<%= options.endpoint %>'
+  <% } %>
+
   <% if (options.router && options.router.render) { %>
   // Render component.
   options.render = '<%= options.router.render %>'
