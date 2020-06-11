@@ -20,6 +20,12 @@ class DruxtMenu {
       axiosSettings = Object.assign(axiosSettings, options.axios)
     }
     this.axios = axios.create(axiosSettings)
+
+    this.options = {
+      endpoint: '/jsonapi',
+
+      ...options
+    }
   }
 
   async get(menuName) {
@@ -37,7 +43,7 @@ class DruxtMenu {
     }
 
     // @TODO - Add support for customizable resource name.
-    let url = '/api/menu_link_content/menu_link_content?' + qs.stringify(query)
+    let url = `${this.options.endpoint}/menu_link_content/menu_link_content?${qs.stringify(query)}`
 
     let loading = true
     while (loading) {
