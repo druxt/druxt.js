@@ -13,14 +13,18 @@ const propsData = {
     entity: {
       attributes: {
         title: 'Parent',
-        url: '/parent'
+        link: {
+          uri: 'internal:/parent'
+        }
       }
     },
     children: [{
       entity: {
         attributes: {
           title: 'Child',
-          url: '/parent/child'
+          link: {
+            uri: 'entity:node/1'
+          }
         }
       },
       children: []
@@ -62,6 +66,10 @@ describe('DruxtMenuItem', () => {
     const wrapper = mountComponent()
     // Ensure we get sane default HTML.
     expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.vm.to).toStrictEqual({
+      path: '/parent',
+      type: 'internal'
+    })
   })
 
   test('unwrapped', () => {
