@@ -1,6 +1,6 @@
 {
   "name": "druxt-schema",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Provides a Drupal Entity schema Vuex store to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
