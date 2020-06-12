@@ -19,12 +19,14 @@ class DruxtSchema {
 
     this.options = {
       baseUrl: baseURL,
+      endpoint: '/jsonapi',
       auth: {
         type: false
       },
       schema: {
         filter: [],
       },
+
       ...options
     }
 
@@ -83,7 +85,7 @@ class DruxtSchema {
   async getIndex() {
     if (this.index) return this.index
 
-    const index = await this.axios.get('/api')
+    const index = await this.axios.get(this.options.endpoint)
 
     this.index = index.data.links
 

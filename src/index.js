@@ -1,3 +1,4 @@
+import consola from 'consola'
 import { resolve } from 'path'
 
 import { DruxtSchema } from './druxtSchema'
@@ -7,7 +8,7 @@ export { DruxtSchemaMixin } from './mixin'
 
 export { DruxtSchemaStore } from './store'
 
-export default async function (moduleOptions = {}) {
+export default function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
@@ -29,18 +30,22 @@ export default async function (moduleOptions = {}) {
     options
   })
 
-  // Generate schemas.
-  const druxtSchema = new DruxtSchema(options.baseUrl, options)
-  const { schemas } = await druxtSchema.get()
+  this.nuxt.hook('builder:prepared', async (nuxt, buildOptions) => {
+    // Generate schemas.
+    const druxtSchema = new DruxtSchema(options.baseUrl, options)
+    const { schemas } = await druxtSchema.get()
 
-  for (const name in schemas) {
-    const schema = schemas[name]
-    if (typeof schema === 'undefined') continue
+    for (const name in schemas) {
+      const schema = schemas[name]
+      if (typeof schema === 'undefined') continue
 
-    this.addTemplate({
-      src: resolve(__dirname, '../nuxt/schema.json'),
-      fileName: `schemas/${name}.json`,
-      options: { schema }
-    })
-  }
+      this.addTemplate({
+        src: resolve(__dirname, '../nuxt/schema.json'),
+        fileName: `schemas/${name}.json`,
+        options: { schema }
+      })
+    }
+
+    consola.success('Druxt schema generated')
+  })
 }

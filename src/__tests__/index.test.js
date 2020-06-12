@@ -5,6 +5,9 @@ jest.mock('../druxtSchema')
 const mock = {
   addPlugin: jest.fn(),
   addTemplate: jest.fn(),
+  nuxt: {
+    hook: jest.fn((hook, fn) => fn()),
+  },
   options: {},
   DruxtSchemaModule
 }
