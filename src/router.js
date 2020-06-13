@@ -41,8 +41,10 @@ class DruxtRouter {
           component: 'druxt-view',
           property: 'view',
           props: route => ({
-            view: route.view.view_id,
-            display: route.view.display_id
+            displayId: route.view.display_id,
+            type: route.jsonapi.resourceName,
+            uuid: route.view.uuid,
+            viewId: route.view.view_id
           })
         }
       ],
