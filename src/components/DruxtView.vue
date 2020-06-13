@@ -4,8 +4,15 @@
     v-if="view && results"
     v-bind="props"
   >
-    <template v-slot:header v-if="headers">
-      <span v-for="header of headers" :key="header.id" v-html="header.content.value" />
+    <template
+      v-if="headers"
+      v-slot:header
+    >
+      <span
+        v-for="header of headers"
+        :key="header.id"
+        v-html="header.content.value"
+      />
     </template>
 
     <druxt-entity
@@ -23,7 +30,7 @@ export default {
   name: 'DruxtView',
 
   props: {
-    display_id: {
+    displayId: {
       type: String,
       default: 'default',
     },
@@ -38,7 +45,7 @@ export default {
       required: true
     },
 
-    view_id: {
+    viewId: {
       type: String,
       required: true
     }
@@ -48,18 +55,6 @@ export default {
     results: false,
     view: false
   }),
-
-  created() {
-    const viewQuery = { type: this.type, id: this.uuid }
-    this.$druxtRouter().getResource(viewQuery).then(view => {
-      this.view = view
-    })
-
-    const resultsQuery = { type: `views--${this.view_id}`, id: this.display_id }
-    this.$druxtRouter().getResource(resultsQuery).then(results => {
-      this.results = results
-    })
-  },
 
   computed: {
     component() {
@@ -73,18 +68,18 @@ export default {
     },
 
     display() {
-      if (!this.view) return false
+      if (!this.view || !this.view.attributes) return false
 
       if (this.display_id === 'default') return this.view.attributes.display[this.display_id]
 
       return {
-        ...this.view.attributes.display[this.display_id],
+        ...this.view.attributes.display[this.displayId],
         ...this.view.attributes.display['default']
       }
     },
 
     headers() {
-      if (!this.view) return false
+      if (!this.display) return false
 
       return this.display.display_options.header
     },
@@ -109,14 +104,26 @@ export default {
 
       const prefix = 'DruxtView'
 
-      const viewId = this.view_id.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
-      const displayId = this.display_id.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
+      const viewId = this.viewId.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
+      const displayId = this.displayId.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
 
       suggestions.push(prefix + viewId + displayId)
       suggestions.push(prefix + viewId)
 
       return suggestions
     },
-  }
+  },
+
+  created() {
+    const viewQuery = { type: this.type, id: this.uuid }
+    this.$druxtRouter().getResource(viewQuery).then(view => {
+      this.view = view
+    })
+
+    const resultsQuery = { type: `views--${this.viewId}`, id: this.displayId }
+    this.$druxtRouter().getResource(resultsQuery).then(results => {
+      this.results = results
+    })
+  },
 }
 </script>

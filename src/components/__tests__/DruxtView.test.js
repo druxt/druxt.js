@@ -12,14 +12,15 @@ const mocks = {
     getResource: jest.fn().mockResolvedValue({})
   })
 }
-const stubs = ['druxt-entity']
+const stubs = ['DruxtEntity', 'DruxtViewFeaturedArticles']
 
 let store
 
 const mountComponent = () => {
   const propsData = {
-    display: 'page_1',
-    view: 'featured_articles'
+    displayId: 'page_1',
+    uuid: 'test',
+    viewId: 'featured_articles'
   }
   return mount(DruxtView, { localVue, mocks, propsData, stubs })
 }
@@ -33,7 +34,19 @@ describe('Component - DruxtView', () => {
   test('default', async () => {
     const wrapper = mountComponent()
 
-    expect(wrapper.vm).toHaveProperty('display')
-    expect(wrapper.vm).toHaveProperty('view')
+    expect(wrapper.vm).toHaveProperty('displayId')
+    expect(wrapper.vm).toHaveProperty('viewId')
+
+    expect(wrapper.vm.component).toBe('DruxtViewFeaturedArticles')
+    expect(wrapper.vm.headers).toBe(false)
+    expect(wrapper.vm.mode).toBe(false)
+
+    expect(wrapper.vm.props).toHaveProperty('view')
+    expect(wrapper.vm.props).toHaveProperty('results')
+
+    expect(wrapper.vm.suggestions).toStrictEqual([
+      'DruxtViewFeaturedArticlesPage1',
+      'DruxtViewFeaturedArticles'
+    ])
   })
 })
