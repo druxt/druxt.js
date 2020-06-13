@@ -3,6 +3,8 @@ import { resolve } from 'path'
 import * as DruxtEntityComponents from './components'
 export { DruxtEntityComponents }
 
+export * from './components'
+
 import { DruxtEntityMixin } from './mixins/entity.js'
 export { DruxtEntityMixin }
 
