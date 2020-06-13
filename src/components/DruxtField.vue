@@ -51,16 +51,21 @@ export default {
 
     suggestions() {
       const suggestions = []
+      if (!this.schema.type) return suggestions
 
       const prefix = 'DruxtField'
 
-      let type = ''
-      if (this.schema.type) {
-        type = this.schema.type.replace(/((\b|_)[a-z])/gi, (string) =>
-          string.toUpperCase().replace('_', '')
-        )
-        suggestions.push(prefix + type)
-      }
+      const transform = (string) => string.replace(/((\b|_)[a-z])/gi, (string) =>
+        string.toUpperCase().replace('_', '')
+      )
+
+      const type = transform(this.schema.type)
+      const id = transform(this.schema.id)
+
+      // e.g., DruxtFieldStringFieldText.
+      suggestions.push(prefix + type + id)
+      // e.g., DruxtFieldString.
+      suggestions.push(prefix + type)
 
       return suggestions
     },
