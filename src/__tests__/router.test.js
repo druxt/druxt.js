@@ -48,8 +48,10 @@ describe('DruxtRouter', () => {
 
     expect(route.component).toBe('druxt-view')
     expect(route.type).toBe('views')
-    expect(route.props).toHaveProperty('display')
-    expect(route.props).toHaveProperty('view')
+    expect(route.props).toHaveProperty('displayId')
+    expect(route.props).toHaveProperty('type')
+    expect(route.props).toHaveProperty('uuid')
+    expect(route.props).toHaveProperty('viewId')
   })
 
   test('get - error', async () => {
