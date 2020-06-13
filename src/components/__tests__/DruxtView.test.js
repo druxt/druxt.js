@@ -7,21 +7,48 @@ import { DruxtView } from '..'
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
+// @TODO - Mock axios and add fixtures.
 const mocks = {
-  $druxtRouter: () => ({
-    getResource: jest.fn().mockResolvedValue({})
-  })
+  $druxtRouter: () => {
+    return {
+      getResource: jest.fn().mockImplementation(query => {
+        const response = {}
+
+        switch (query.type) {
+          case 'view--view':
+            response.attributes = {
+              display: {
+                default: {
+                  display_options: {
+                    header: false,
+                    row: {
+                      options: {
+                        view_mode: 'default'
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            break
+        }
+
+        return Promise.resolve(response)
+      })
+    }
+  }
 }
-const stubs = ['druxt-entity']
 
 let store
 
-const mountComponent = () => {
+const mountComponent = (stubs = []) => {
   const propsData = {
-    display: 'page_1',
-    view: 'featured_articles'
+    displayId: 'page_1',
+    uuid: 'test',
+    viewId: 'featured_articles'
   }
-  return mount(DruxtView, { localVue, mocks, propsData, stubs })
+  stubs.push('DruxtEntity')
+  return mount(DruxtView, { localVue, mocks, propsData, store, stubs })
 }
 
 describe('Component - DruxtView', () => {
@@ -31,9 +58,31 @@ describe('Component - DruxtView', () => {
   })
 
   test('default', async () => {
-    const wrapper = mountComponent()
+    const wrapper = mountComponent(['DruxtViewFeaturedArticles'])
 
-    expect(wrapper.vm).toHaveProperty('display')
-    expect(wrapper.vm).toHaveProperty('view')
+    expect(wrapper.vm.headers).toBe(false)
+    expect(wrapper.vm.mode).toBe(false)
+
+    await localVue.nextTick()
+
+    expect(wrapper.vm.mode).toBe('default')
+
+    expect(wrapper.vm).toHaveProperty('displayId')
+    expect(wrapper.vm).toHaveProperty('viewId')
+
+    expect(wrapper.vm.component).toBe('DruxtViewFeaturedArticles')
+
+    expect(wrapper.vm.props).toHaveProperty('view')
+    expect(wrapper.vm.props).toHaveProperty('results')
+
+    expect(wrapper.vm.suggestions).toStrictEqual([
+      'DruxtViewFeaturedArticlesPage1',
+      'DruxtViewFeaturedArticles'
+    ])
+  })
+
+  test('component', async () => {
+    const wrapper = mountComponent()
+    expect(wrapper.vm.component).toBe('div')
   })
 })
