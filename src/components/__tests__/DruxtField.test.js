@@ -13,7 +13,6 @@ const baseURL = 'https://example.com'
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-const stubs = ['DruxtFieldString']
 let store
 
 const mountComponent = (uuid, field, options) => {
@@ -33,7 +32,7 @@ const mountComponent = (uuid, field, options) => {
     relationship: !!entity.relationships[field]
   }
 
-  return shallowMount(DruxtField, { ...options, localVue, propsData, store, stubs })
+  return shallowMount(DruxtField, { ...options, localVue, propsData, store })
 }
 
 describe('Component - DruxtField', () => {
@@ -47,9 +46,14 @@ describe('Component - DruxtField', () => {
   })
 
   test('pages - title', () => {
-    const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c', 'title')
+    const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c', 'title', { stubs: ['DruxtFieldString'] })
 
     expect(wrapper.vm.props.items.length).toBe(1)
     expect(wrapper.vm.component).toBe('DruxtFieldString')
+  })
+
+  test('component', () => {
+    const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c', 'title')
+    expect(wrapper.vm.component).toBe(false)
   })
 })
