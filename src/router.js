@@ -23,6 +23,7 @@ class DruxtRouter {
     this.axios = axios.create(axiosSettings)
 
     this.options = {
+      endpoint: '/jsonapi',
       types: [
         {
           type: 'entity',
@@ -109,7 +110,7 @@ class DruxtRouter {
     }
 
     // @TODO - Get URL from index.
-    const url = `/api/${type.replace('--', '/')}/${id}`
+    const url = `${this.options.endpoint}/${type.replace('--', '/')}/${id}`
     const resource = await this.axios.get(url)
 
     return resource.data.data
