@@ -57,7 +57,11 @@ describe('Component - DruxtEntity', () => {
     expect(wrapper.vm.schema).toHaveProperty('id')
     expect(wrapper.vm.schema).toHaveProperty('resourceType')
 
-    expect(wrapper.vm.suggestions).toStrictEqual(['DruxtEntityNodePage'])
+    expect(wrapper.vm.suggestions).toStrictEqual([
+      'DruxtEntityNodePageDefault',
+      'DruxtEntityNodePage',
+      'DruxtEntityDefault',
+    ])
     expect(wrapper.vm.component).toBe('DruxtEntityNodePage')
 
     expect(Object.keys(wrapper.vm.fields).length).toBe(2)

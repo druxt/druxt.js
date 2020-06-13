@@ -40,7 +40,14 @@ export default {
       const prefix = 'DruxtEntity'
 
       const type = this.schema.resourceType.split('--').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
+      const mode = this.schema.config.mode.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
+
+      // e.g. DruxtEntityNodePageDefault
+      suggestions.push(prefix + type + mode)
+      // e.g. DruxtEntityNodePage
       suggestions.push(prefix + type)
+      // e.g. DruxtEntityDefault
+      suggestions.push(prefix + mode)
 
       return suggestions
     },
