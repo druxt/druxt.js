@@ -16,7 +16,7 @@ localVue.component('druxt-field', DruxtField)
 const stubs = ['DruxtEntityNodePage', 'DruxtFieldString', 'DruxtFieldTextDefault']
 let store
 
-const mountComponent = (entity, ) => {
+const mountComponent = (entity) => {
   const propsData = {
     uuid: entity.id,
     type: entity.type
@@ -42,9 +42,10 @@ describe('Component - DruxtEntity', () => {
   })
 
   test('pages', async () => {
-    // @TODO - Use mock data to test with.
     const entity = require('../../__fixtures__/fe00c55d-0335-49d6-964e-a868c0c68f9c.json').data
     const wrapper = mountComponent(entity)
+
+    expect(wrapper.vm.component).toBe('div')
 
     await localVue.nextTick()
     await localVue.nextTick()
@@ -57,7 +58,11 @@ describe('Component - DruxtEntity', () => {
     expect(wrapper.vm.schema).toHaveProperty('id')
     expect(wrapper.vm.schema).toHaveProperty('resourceType')
 
-    expect(wrapper.vm.suggestions).toStrictEqual(['DruxtEntityNodePage'])
+    expect(wrapper.vm.suggestions).toStrictEqual([
+      'DruxtEntityNodePageDefault',
+      'DruxtEntityNodePage',
+      'DruxtEntityDefault',
+    ])
     expect(wrapper.vm.component).toBe('DruxtEntityNodePage')
 
     expect(Object.keys(wrapper.vm.fields).length).toBe(2)
