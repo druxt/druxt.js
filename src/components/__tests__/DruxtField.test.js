@@ -50,6 +50,7 @@ describe('Component - DruxtField', () => {
 
     expect(wrapper.vm.props.items.length).toBe(1)
     expect(wrapper.vm.component).toBe('DruxtFieldString')
+    expect(wrapper.vm.suggestions).toStrictEqual(['DruxtFieldStringTitle', 'DruxtFieldString'])
   })
 
   test('component', () => {
