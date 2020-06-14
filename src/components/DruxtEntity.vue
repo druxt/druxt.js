@@ -4,11 +4,15 @@
     v-if="entity && schema"
     v-bind="props"
   >
-    <druxt-field
-      v-for="(field, key) of fields"
-      :key="key"
-      v-bind="field"
-    />
+    <!-- Render fields in their own named slots --->
+    <template v-for="(field, key) of fields" v-slot:[field.schema.id]>
+      <druxt-field :key="key" v-bind="field" />
+    </template>
+
+    <!-- Render fields in the default slot --->
+    <template v-for="(field, key) of fields">
+      <druxt-field :key="key" v-bind="field" />
+    </template>
   </component>
 </template>
 
