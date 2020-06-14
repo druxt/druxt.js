@@ -28,13 +28,14 @@ class DruxtMenu {
     }
   }
 
+  // @TODO - Move to DruxtRouter::getResource.
   async get(menuName) {
     let entities = []
 
     const query = {
       fields: {
         // @TODO - Add support for customizable resource name?
-        'menu_link_content--menu_link_content': 'menu_name,link,parent,status,title,url,weight'
+        'menu_link_content--menu_link_content': 'description,link,menu_name,parent,title,weight'
       },
       filter: {
         enabled: 1,
