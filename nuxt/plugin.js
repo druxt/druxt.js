@@ -14,7 +14,12 @@ Vue.use({
 
 export default (context, inject) => {
   const baseUrl = '<%= options.baseUrl %>'
+  const options = {}
 
-  const druxtMenu = new DruxtMenu(baseUrl)
+  <% if (options.endpoint) { %>
+  options.endpoint = '<%= options.endpoint %>'
+  <% } %>
+
+  const druxtMenu = new DruxtMenu(baseUrl, options)
   inject('druxtMenu', druxtMenu)
 }

@@ -26,6 +26,14 @@ export default {
       return this.item.children.length ? 'parent' : 'item'
     },
 
+    to() {
+      const parts = this.item.entity.attributes.link.uri.split(':')
+      const type = parts[0]
+      const path = parts[1]
+
+      return { path, type }
+    },
+
     // The parent <DruxtMenu> component, if present.
     menu() {
       let menu = false
@@ -50,7 +58,7 @@ export default {
           this.menu.itemComponent,
           { class: this.classes },
           [
-            createElement('nuxt-link', { props: { to: entity.attributes.url } }, entity.attributes.title)
+            createElement('nuxt-link', { props: { to: this.to } }, entity.attributes.title)
           ]
         ),
 
