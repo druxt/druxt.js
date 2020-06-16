@@ -39,6 +39,11 @@ export default {
     schema: {
       type: Object,
       required: true
+    },
+
+    options: {
+      type: Object,
+      default: () => ({})
     }
   },
 
@@ -69,7 +74,8 @@ export default {
       if (!this.relationship) {
         return {
           items: data,
-          schema: this.schema
+          schema: this.schema,
+          ...this.options
         }
       }
 
@@ -82,7 +88,8 @@ export default {
             uuid: item.id,
             mode: this.schema.settings.display.view_mode || 'default',
           })),
-          schema: this.schema
+          schema: this.schema,
+          ...this.options
         }
       }
 

@@ -7,19 +7,19 @@
     <!-- Render fields in their own named slots --->
     <template
       v-for="(field, key) of fields"
-      v-slot:[field.schema.id]
+      v-slot:[field.schema.id]="options"
     >
       <druxt-field
         :key="key"
-        v-bind="field"
+        v-bind="{ ...field, options }"
       />
     </template>
 
     <!-- Render fields in the default slot --->
-    <template v-for="(field, key) of fields">
+    <template v-for="(field, key) of fields" v-bind="options">
       <druxt-field
         :key="key"
-        v-bind="field"
+        v-bind="{ ...field, options }"
       />
     </template>
   </component>
