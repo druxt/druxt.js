@@ -1,6 +1,6 @@
 {
   "name": "druxt-views",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Provides Drupal Views integration within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
