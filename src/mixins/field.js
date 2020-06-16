@@ -8,14 +8,13 @@ const DruxtFieldMixin = {
     schema: {
       type: Object,
       required: true
+    },
+
+    wrapperElement: {
+      type: String,
+      default: 'div'
     }
   },
-
-  computed: {
-    wrapperElement() {
-      return 'div'
-    }
-  }
 }
 
 export { DruxtFieldMixin }

@@ -5,13 +5,13 @@
   >
     <!-- Label: Above -->
     <div v-if="$slots['label-above']">
-      <slot name="label-above" />
+      <slot #label-above />
     </div>
 
     <!-- Label: Inline -->
     <slot
       v-if="$slots['label-inline']"
-      name="label-inline"
+      #label-inline
     />
 
     <!-- Items -->
