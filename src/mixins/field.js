@@ -9,6 +9,12 @@ const DruxtFieldMixin = {
       type: Object,
       required: true
     }
+  },
+
+  computed: {
+    wrapperElement() {
+      return 'div'
+    }
   }
 }
 

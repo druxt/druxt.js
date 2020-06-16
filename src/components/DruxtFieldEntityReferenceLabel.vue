@@ -1,5 +1,20 @@
 <template>
-  <div v-if="loading === 0">
+  <component
+    :is="wrapperElement"
+    v-if="loading === 0"
+  >
+    <!-- Label: Above -->
+    <div v-if="$slots['label-above']">
+      <slot name="label-above" />
+    </div>
+
+    <!-- Label: Inline -->
+    <slot
+      v-if="$slots['label-inline']"
+      name="label-inline"
+    />
+
+    <!-- Items -->
     <component
       :is="component"
       v-for="(entity, key) of entities"
@@ -8,7 +23,7 @@
     >
       {{ entity.text }}
     </component>
-  </div>
+  </component>
 </template>
 
 <script>

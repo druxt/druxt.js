@@ -1,20 +1,24 @@
 <template>
-  <div v-if="props && schema">
-    <!-- Label -->
-    <strong v-if="schema.label && schema.label.position === 'above' && schema.label.text">{{ schema.label.text }}:</strong>
+  <component
+    :is="component"
+    v-bind="props"
+  >
+    <!-- Label: Above -->
+    <template
+      v-if="label.position === 'above'"
+      v-slot:label-above
+    >
+      <strong>{{ label.text }}:</strong>
+    </template>
 
-    <!-- Field component -->
-    <component
-      :is="component"
-      v-bind="props"
-    />
-
-    <!-- Component error/debug message -->
-    <div v-if="!component">
-      <strong>Field component(s) missing: <code>{{ suggestions.join(', ') }}</code></strong>
-      <pre>{{ items }}</pre>
-    </div>
-  </div>
+    <!-- Label: Inline -->
+    <template
+      v-if="label.position === 'inline'"
+      v-slot:label-inline
+    >
+      <strong>{{ schema.label.text }}:</strong>
+    </template>
+  </component>
 </template>
 
 <script>
@@ -49,25 +53,10 @@ export default {
       return false
     },
 
-    suggestions() {
-      const suggestions = []
-      if (!this.schema.type) return suggestions
+    label() {
+      if (!this.schema.label || !this.schema.label.text) return { position: 'hidden' }
 
-      const prefix = 'DruxtField'
-
-      const transform = (string) => string.replace(/((\b|_)[a-z])/gi, (string) =>
-        string.toUpperCase().replace('_', '')
-      )
-
-      const type = transform(this.schema.type)
-      const id = transform(this.schema.id)
-
-      // e.g., DruxtFieldStringFieldText.
-      suggestions.push(prefix + type + id)
-      // e.g., DruxtFieldString.
-      suggestions.push(prefix + type)
-
-      return suggestions
+      return this.schema.label
     },
 
     props() {
@@ -98,6 +87,27 @@ export default {
       }
 
       return false
+    },
+
+    suggestions() {
+      const suggestions = []
+      if (!this.schema.type) return suggestions
+
+      const prefix = 'DruxtField'
+
+      const transform = (string) => string.replace(/((\b|_)[a-z])/gi, (string) =>
+        string.toUpperCase().replace('_', '')
+      )
+
+      const type = transform(this.schema.type)
+      const id = transform(this.schema.id)
+
+      // e.g., DruxtFieldStringFieldText.
+      suggestions.push(prefix + type + id)
+      // e.g., DruxtFieldString.
+      suggestions.push(prefix + type)
+
+      return suggestions
     }
   }
 }

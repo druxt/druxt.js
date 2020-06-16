@@ -1,5 +1,17 @@
 <template>
-  <div>
+  <component :is="wrapperElement">
+    <!-- Label: Above -->
+    <div v-if="$slots['label-above']">
+      <slot name="label-above" />
+    </div>
+
+    <!-- Label: Inline -->
+    <slot
+      v-if="$slots['label-inline']"
+      name="label-inline"
+    />
+
+    <!-- Items -->
     <component
       :is="link.component"
       v-for="(link, key) of links"
@@ -8,7 +20,7 @@
     >
       {{ link.title }}
     </component>
-  </div>
+  </component>
 </template>
 
 <script>

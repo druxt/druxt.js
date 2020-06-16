@@ -5,13 +5,22 @@
     v-bind="props"
   >
     <!-- Render fields in their own named slots --->
-    <template v-for="(field, key) of fields" v-slot:[field.schema.id]>
-      <druxt-field :key="key" v-bind="field" />
+    <template
+      v-for="(field, key) of fields"
+      v-slot:[field.schema.id]
+    >
+      <druxt-field
+        :key="key"
+        v-bind="field"
+      />
     </template>
 
     <!-- Render fields in the default slot --->
     <template v-for="(field, key) of fields">
-      <druxt-field :key="key" v-bind="field" />
+      <druxt-field
+        :key="key"
+        v-bind="field"
+      />
     </template>
   </component>
 </template>

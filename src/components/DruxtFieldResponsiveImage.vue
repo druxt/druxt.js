@@ -1,11 +1,26 @@
 <template>
-  <div v-if="entities && typeof entities[0] !== 'undefined'">
+  <component
+    :is="wrapperElement"
+    v-if="entities && typeof entities[0] !== 'undefined'"
+  >
+    <!-- Label: Above -->
+    <div v-if="$slots['label-above']">
+      <slot name="label-above" />
+    </div>
+
+    <!-- Label: Inline -->
+    <slot
+      v-if="$slots['label-inline']"
+      name="label-inline"
+    />
+
+    <!-- Items -->
     <img
       v-for="entity of entities"
       :key="entity.id"
       :src="entity.attributes.uri.value.replace('public://', '/sites/default/files/')"
     />
-  </div>
+  </component>
 </template>
 
 <script>
