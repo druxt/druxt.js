@@ -15,13 +15,18 @@
       />
     </template>
 
-    <druxt-entity
-      v-for="result of results"
-      :key="result.id"
-      :type="result.type"
-      :uuid="result.id"
-      :mode="mode"
-    />
+    <template v-slot:default="options">
+      <druxt-entity
+        v-for="result of results"
+        v-bind="{
+          type: result.type,
+          uuid: result.id,
+          mode,
+          ...options
+        }"
+        :key="result.id"
+      />
+    </template>
   </component>
 </template>
 
