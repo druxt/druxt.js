@@ -1,5 +1,8 @@
 <template>
-  <component :is="wrapper.component" v-bind="wrapper.props">
+  <component
+    :is="wrapper.component"
+    v-bind="wrapper.props"
+  >
     <!-- Label: Above -->
     <div v-if="$slots['label-above']">
       <slot #label-above />
