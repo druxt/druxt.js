@@ -1,5 +1,13 @@
 const DruxtFieldMixin = {
   props: {
+    inner: {
+      type: Object,
+      default: () => ({
+        component: 'div',
+        props: {}
+      })
+    },
+
     items: {
       type: Array,
       required: true
@@ -10,9 +18,12 @@ const DruxtFieldMixin = {
       required: true
     },
 
-    wrapperElement: {
-      type: String,
-      default: 'div'
+    wrapper: {
+      type: Object,
+      default: () => ({
+        component: 'div',
+        props: {}
+      })
     }
   },
 }

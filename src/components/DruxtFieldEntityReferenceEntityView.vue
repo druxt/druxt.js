@@ -1,5 +1,5 @@
 <template>
-  <component :is="wrapperElement">
+  <component :is="wrapper.component" v-bind="wrapper.props">
     <!-- Label: Above -->
     <div v-if="$slots['label-above']">
       <slot #label-above />
@@ -15,7 +15,7 @@
     <druxt-entity
       v-for="item of items"
       :key="item.uuid"
-      v-bind="item"
+      v-bind="{ ...item, wrapper: inner }"
     />
   </component>
 </template>
