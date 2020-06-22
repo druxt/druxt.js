@@ -1,19 +1,9 @@
-<template>
-  <div>
-    <druxt-entity
-      v-for="item of items"
-      :key="item.uuid"
-      v-bind="item"
-    />
-  </div>
-</template>
-
 <script>
-import { DruxtFieldMixin } from '../mixins/field'
+import DruxtFieldEntityReferenceEntityView from './DruxtFieldEntityReferenceEntityView.vue'
 
 export default {
   name: 'DruxtFieldEntityReferenceRevisionsEntityView',
 
-  mixins: [DruxtFieldMixin]
+  extends: DruxtFieldEntityReferenceEntityView,
 }
 </script>

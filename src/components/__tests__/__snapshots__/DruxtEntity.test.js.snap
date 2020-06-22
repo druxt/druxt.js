@@ -1,14 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Component - DruxtEntity pages 1`] = `
-"<druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\">
-  <div>
-    <!---->
+"<div>
+  <druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\">
     <druxtfieldstring-stub items=\\"Welcome to Contenta CMS!\\" schema=\\"[object Object]\\"></druxtfieldstring-stub>
-    <!---->
-  </div>
-  <div>
-    <!---->
     <druxtfieldtextdefault-stub items=\\"<div class=&quot;card horizontal&quot;>
     <div class=&quot;card-stacked&quot;>
         <div class=&quot;card-content&quot;><img class=&quot;right&quot; style=&quot;padding: 1.5rem;&quot;
@@ -120,7 +115,6 @@ exports[`Component - DruxtEntity pages 1`] = `
     </div>
 </div>
 \\" schema=\\"[object Object]\\"></druxtfieldtextdefault-stub>
-    <!---->
-  </div>
-</druxtentitynodepage-stub>"
+  </druxtentitynodepage-stub>
+</div>"
 `;

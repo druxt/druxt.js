@@ -1,18 +1,32 @@
 <template>
   <component
-    :is="component"
-    v-if="entity && schema"
-    v-bind="props"
+    :is="wrapper.component"
+    v-bind="wrapper.props"
   >
-    <!-- Render fields in their own named slots --->
-    <template v-for="(field, key) of fields" v-slot:[field.schema.id]>
-      <druxt-field :key="key" v-bind="field" />
-    </template>
+    <component
+      :is="component"
+      v-if="entity && schema"
+      v-bind="props"
+    >
+      <!-- Render fields in their own named slots --->
+      <template
+        v-for="(field, key) of fields"
+        v-slot:[field.schema.id]="options"
+      >
+        <druxt-field
+          :key="key"
+          v-bind="{ ...field, options }"
+        />
+      </template>
 
-    <!-- Render fields in the default slot --->
-    <template v-for="(field, key) of fields">
-      <druxt-field :key="key" v-bind="field" />
-    </template>
+      <!-- Render fields in the default slot --->
+      <template v-for="(field, key) of fields" v-bind="options">
+        <druxt-field
+          :key="key"
+          v-bind="{ ...field, options }"
+        />
+      </template>
+    </component>
   </component>
 </template>
 
@@ -26,6 +40,16 @@ export default {
 
   mixins: [DruxtRouterEntityMixin, DruxtSchemaMixin],
 
+  props: {
+    wrapper: {
+      type: Object,
+      default: () => ({
+        component: 'div',
+        props: {}
+      })
+    }
+  },
+
   computed: {
     component() {
       for (const suggestion of this.suggestions) {
@@ -35,25 +59,6 @@ export default {
       }
 
       return 'div'
-    },
-
-    suggestions() {
-      const suggestions = []
-      if (!this.schema) return suggestions
-
-      const prefix = 'DruxtEntity'
-
-      const type = this.schema.resourceType.split('--').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
-      const mode = this.schema.config.mode.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
-
-      // e.g. DruxtEntityNodePageDefault
-      suggestions.push(prefix + type + mode)
-      // e.g. DruxtEntityNodePage
-      suggestions.push(prefix + type)
-      // e.g. DruxtEntityDefault
-      suggestions.push(prefix + mode)
-
-      return suggestions
     },
 
     fields() {
@@ -87,6 +92,28 @@ export default {
         fields: this.fields,
         schema: this.schema
       }
+    },
+
+    suggestions() {
+      const suggestions = []
+      if (!this.schema) return suggestions
+
+      const prefix = 'DruxtEntity'
+
+      const transform = (string) => string.replace(/((\b|_|--)[a-z])/gi, (string) =>
+        string.toUpperCase().replace('_', '').replace('--', '')
+      )
+      const type = transform(this.schema.resourceType)
+      const mode = transform(this.schema.config.mode)
+
+      // e.g. DruxtEntityNodePageDefault
+      suggestions.push(prefix + type + mode)
+      // e.g. DruxtEntityNodePage
+      suggestions.push(prefix + type)
+      // e.g. DruxtEntityDefault
+      suggestions.push(prefix + mode)
+
+      return suggestions
     }
   }
 }

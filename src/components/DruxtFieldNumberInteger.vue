@@ -1,5 +1,20 @@
 <template>
-  <div>
+  <component
+    :is="wrapper.component"
+    v-bind="wrapper.props"
+  >
+    <!-- Label: Above -->
+    <div v-if="$slots['label-above']">
+      <slot #label-above />
+    </div>
+
+    <!-- Label: Inline -->
+    <slot
+      v-if="$slots['label-inline']"
+      #label-inline
+    />
+
+    <!-- Items -->
     <span
       v-for="(item, key) of items"
       :key="key"
@@ -14,7 +29,7 @@
         class="suffix"
       >{{ suffix }}</span>
     </span>
-  </div>
+  </component>
 </template>
 
 <script>
