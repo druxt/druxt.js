@@ -1,5 +1,8 @@
 <template>
-  <component :is="wrapper.component" v-bind="wrapper.props">
+  <component
+    :is="wrapper.component"
+    v-bind="wrapper.props"
+  >
     <component
       :is="component"
       v-if="entity && schema"
@@ -97,8 +100,11 @@ export default {
 
       const prefix = 'DruxtEntity'
 
-      const type = this.schema.resourceType.split('--').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
-      const mode = this.schema.config.mode.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
+      const transform = (string) => string.replace(/((\b|_|--)[a-z])/gi, (string) =>
+        string.toUpperCase().replace('_', '').replace('--', '')
+      )
+      const type = transform(this.schema.resourceType)
+      const mode = transform(this.schema.config.mode)
 
       // e.g. DruxtEntityNodePageDefault
       suggestions.push(prefix + type + mode)
