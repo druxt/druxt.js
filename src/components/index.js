@@ -19,6 +19,12 @@ export { DruxtFieldEntityReferenceLabel }
 import DruxtFieldEntityReferenceRevisionsEntityView from './DruxtFieldEntityReferenceRevisionsEntityView.vue'
 export { DruxtFieldEntityReferenceRevisionsEntityView }
 
+import DruxtFieldFileDefault from './DruxtFieldFileDefault.vue'
+export { DruxtFieldFileDefault }
+
+import DruxtFieldImage from './DruxtFieldImage.vue'
+export { DruxtFieldImage }
+
 import DruxtFieldLink from './DruxtFieldLink.vue'
 export { DruxtFieldLink }
 
