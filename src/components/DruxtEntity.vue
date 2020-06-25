@@ -72,7 +72,7 @@ export default {
       const fields = {}
       for (const field of this.schema.fields) {
         // Filter out empty fields.
-        if (typeof data[field.id] === 'undefined' || !data[field.id] || (Array.isArray(data[field.id].data) && !data[field.id].data.length)) continue
+        if (this.isEmpty(data[field.id])) continue
 
         fields[field.id] = {
           data: data[field.id],
@@ -114,6 +114,20 @@ export default {
       suggestions.push(prefix + mode)
 
       return suggestions
+    }
+  },
+
+  methods: {
+    isEmpty(value) {
+      if (typeof value === 'undefined') return true
+
+      if (!value) return true
+
+      if (Array.isArray(value.data) && !value.data.length) return true
+
+      if (typeof value.data !== 'undefined' && !value.data) return true
+
+      return false
     }
   }
 }
