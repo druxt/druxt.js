@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component - DruxtFieldFileDefault default 1`] = `
+"<div>
+  <!---->
+  <!---->
+  <nuxt-link-stub to=\\"/sites/default/files/test/file.ext\\">
+    file.ext
+  </nuxt-link-stub>
+</div>"
+`;
