@@ -5,6 +5,9 @@ export { DruxtEntityComponents }
 
 export * from './components'
 
+import { DruxtEntityComponentSuggestionMixin } from './mixins/componentSuggestion.js'
+export { DruxtEntityComponentSuggestionMixin }
+
 import { DruxtEntityMixin } from './mixins/entity.js'
 export { DruxtEntityMixin }
 
