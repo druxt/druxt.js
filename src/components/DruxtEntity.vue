@@ -11,19 +11,19 @@
       <!-- Render fields in their own named slots --->
       <template
         v-for="(field, key) of fields"
-        v-slot:[field.schema.id]="options"
+        v-slot:[field.schema.id]="{ context, options }"
       >
         <druxt-field
           :key="key"
-          v-bind="{ ...field, options }"
+          v-bind="{ ...field, context: { ..._self.context, ...context }, options }"
         />
       </template>
 
       <!-- Render fields in the default slot --->
-      <template v-for="(field, key) of fields" v-bind="options">
+      <template v-for="(field, key) of fields" v-bind="{ context, options }">
         <druxt-field
           :key="key"
-          v-bind="{ ...field, options }"
+          v-bind="{ ...field, context: { ..._self.context, ...context }, options }"
         />
       </template>
     </component>
@@ -35,12 +35,12 @@ import { DruxtRouterEntityMixin } from 'druxt-router'
 import { DruxtSchemaMixin } from 'druxt-schema'
 import { mapActions } from 'vuex'
 
-import { DruxtEntityComponentSuggestionMixin } from '../mixins/componentSuggestion'
+import { DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin } from '../mixins'
 
 export default {
   name: 'DruxtEntity',
 
-  mixins: [DruxtEntityComponentSuggestionMixin, DruxtRouterEntityMixin, DruxtSchemaMixin],
+  mixins: [DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin, DruxtRouterEntityMixin, DruxtSchemaMixin],
 
   props: {
     wrapper: {
