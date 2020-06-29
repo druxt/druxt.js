@@ -16,13 +16,28 @@ localVue.component('druxt-field', DruxtField)
 const stubs = ['DruxtEntityNodePage', 'DruxtFieldString', 'DruxtFieldTextDefault']
 let store
 
-const mountComponent = (entity) => {
+const mountComponent = (entity, options = {}) => {
+  const mocks = {
+    $druxtEntity: {
+      options: {
+        entity: {
+          suggestions: []
+        }
+      }
+    }
+  }
+  if (Array.isArray(options.suggestions)) {
+    mocks.$druxtEntity.options.entity.suggestions = options.suggestions
+  }
+
   const propsData = {
     uuid: entity.id,
     type: entity.type
   }
+
   store.commit('druxtRouter/addEntity', entity)
-  return mount(DruxtEntity, { localVue, propsData, store, stubs })
+
+  return mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
 }
 
 describe('Component - DruxtEntity', () => {
@@ -37,7 +52,9 @@ describe('Component - DruxtEntity', () => {
 
     DruxtSchemaStore({ store })
     store.$druxtSchema = {
-      import: schema => require(`../../__fixtures__/${schema}.json`)
+      import: schema => {
+        return require(`../../__fixtures__/${schema}.json`)
+      }
     }
   })
 
@@ -71,5 +88,7 @@ describe('Component - DruxtEntity', () => {
     expect(wrapper.vm.props).toHaveProperty('entity')
     expect(wrapper.vm.props).toHaveProperty('fields')
     expect(wrapper.vm.props).toHaveProperty('schema')
+
+    expect(wrapper.vm.tokenType).toBe('entity')
   })
 })
