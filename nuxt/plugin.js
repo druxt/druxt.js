@@ -13,3 +13,24 @@ Vue.use({
     }
   }
 })
+
+export default (context, inject) => {
+  const options = {
+    entity: {
+      suggestions: []
+    }
+  }
+
+  <% if (options.entity && Array.isArray(options.entity.suggestions) && options.entity.suggestions.length > 0) { %>
+    <% for (let suggestion of options.entity.suggestions) { %>
+      <% if (suggestion.type && suggestion.value) { %>
+  options.entity.suggestions.push({
+    type: '<%= suggestion.type %>',
+    value: <%= typeof suggestion.value === 'string' ? `'${suggestion.value}'` : suggestion.value %>
+  })
+      <% } %>
+    <% } %>
+  <% } %>
+
+  inject('druxtEntity', { options })
+}
