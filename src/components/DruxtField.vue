@@ -1,6 +1,7 @@
 <template>
   <component
     :is="component"
+    :context="context"
     v-bind="props"
   >
     <!-- Label: Above -->
@@ -22,8 +23,12 @@
 </template>
 
 <script>
+import { DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin } from '../mixins'
+
 export default {
   name: 'DruxtField',
+
+  mixins: [DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin],
 
   props: {
     data: {
@@ -48,16 +53,6 @@ export default {
   },
 
   computed: {
-    component() {
-      for (const suggestion of this.suggestions) {
-        if (typeof this.$options.components[suggestion] !== 'undefined') {
-          return suggestion
-        }
-      }
-
-      return false
-    },
-
     label() {
       if (!this.schema.label || !this.schema.label.text) return { position: 'hidden' }
 
@@ -96,26 +91,24 @@ export default {
       return false
     },
 
-    suggestions() {
-      const suggestions = []
-      if (!this.schema.type) return suggestions
+    suggestionDefaults() {
+      return [
+        // e.g. DruxtFieldStringFieldText.
+        { value: this.tokens.prefix + this.tokens.type + this.tokens.id },
+        // e.g. DruxtFieldString.
+        { value: this.tokens.prefix + this.tokens.type },
+      ]
+    },
 
-      const prefix = 'DruxtField'
+    tokens() {
+      return {
+        prefix: 'DruxtField',
+        id: this.suggest(this.schema.id),
+        type: this.suggest(this.schema.type),
+      }
+    },
 
-      const transform = (string) => string.replace(/((\b|_)[a-z])/gi, (string) =>
-        string.toUpperCase().replace('_', '')
-      )
-
-      const type = transform(this.schema.type)
-      const id = transform(this.schema.id)
-
-      // e.g., DruxtFieldStringFieldText.
-      suggestions.push(prefix + type + id)
-      // e.g., DruxtFieldString.
-      suggestions.push(prefix + type)
-
-      return suggestions
-    }
+    tokenType: () => 'field'
   }
 }
 </script>

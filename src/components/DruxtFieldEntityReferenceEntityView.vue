@@ -18,7 +18,7 @@
     <druxt-entity
       v-for="item of items"
       :key="item.uuid"
-      v-bind="{ ...item, wrapper: inner }"
+      v-bind="{ ...item, mode, wrapper: inner }"
     />
   </component>
 </template>
@@ -29,6 +29,12 @@ import { DruxtFieldMixin } from '../mixins/field'
 export default {
   name: 'DruxtFieldEntityReferenceEntityView',
 
-  mixins: [DruxtFieldMixin]
+  mixins: [DruxtFieldMixin],
+
+  computed: {
+    mode() {
+      return 'default'
+    }
+  }
 }
 </script>

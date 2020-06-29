@@ -15,7 +15,7 @@ localVue.use(Vuex)
 
 let store
 
-const mountComponent = (uuid, field, options) => {
+const mountComponent = (uuid, field, options = {}) => {
   const entity = require(`../../__fixtures__/${uuid}.json`).data
   const schema = require(`../../__fixtures__/${entity.type}--default--view.json`)
 
@@ -26,13 +26,26 @@ const mountComponent = (uuid, field, options) => {
     ...entity.relationships
   }
 
+  const mocks = {
+    $druxtEntity: {
+      options: {
+        entity: {
+          suggestions: []
+        }
+      }
+    }
+  }
+  if (Array.isArray(options.suggestions)) {
+    mocks.$druxtEntity.options.entity.suggestions = options.suggestions
+  }
+
   const propsData = {
     data: data[field],
     schema: fieldSchema,
     relationship: !!entity.relationships[field]
   }
 
-  return shallowMount(DruxtField, { ...options, localVue, propsData, store })
+  return shallowMount(DruxtField, { ...options, localVue, mocks, propsData, store })
 }
 
 describe('Component - DruxtField', () => {
@@ -51,10 +64,12 @@ describe('Component - DruxtField', () => {
     expect(wrapper.vm.props.items.length).toBe(1)
     expect(wrapper.vm.component).toBe('DruxtFieldString')
     expect(wrapper.vm.suggestions).toStrictEqual(['DruxtFieldStringTitle', 'DruxtFieldString'])
+
+    expect(wrapper.vm.tokenType).toBe('field')
   })
 
   test('component', () => {
     const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c', 'title')
-    expect(wrapper.vm.component).toBe(false)
+    expect(wrapper.vm.component).toBe('div')
   })
 })

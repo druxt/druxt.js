@@ -11,19 +11,19 @@
       <!-- Render fields in their own named slots --->
       <template
         v-for="(field, key) of fields"
-        v-slot:[field.schema.id]="options"
+        v-slot:[field.schema.id]="{ context, options }"
       >
         <druxt-field
           :key="key"
-          v-bind="{ ...field, options }"
+          v-bind="{ ...field, context: { ..._self.context, ...context }, options }"
         />
       </template>
 
       <!-- Render fields in the default slot --->
-      <template v-for="(field, key) of fields" v-bind="options">
+      <template v-for="(field, key) of fields" v-bind="{ context, options }">
         <druxt-field
           :key="key"
-          v-bind="{ ...field, options }"
+          v-bind="{ ...field, context: { ..._self.context, ...context }, options }"
         />
       </template>
     </component>
@@ -35,10 +35,12 @@ import { DruxtRouterEntityMixin } from 'druxt-router'
 import { DruxtSchemaMixin } from 'druxt-schema'
 import { mapActions } from 'vuex'
 
+import { DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin } from '../mixins'
+
 export default {
   name: 'DruxtEntity',
 
-  mixins: [DruxtRouterEntityMixin, DruxtSchemaMixin],
+  mixins: [DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin, DruxtRouterEntityMixin, DruxtSchemaMixin],
 
   props: {
     wrapper: {
@@ -51,16 +53,6 @@ export default {
   },
 
   computed: {
-    component() {
-      for (const suggestion of this.suggestions) {
-        if (typeof this.$options.components[suggestion] !== 'undefined') {
-          return suggestion
-        }
-      }
-
-      return 'div'
-    },
-
     fields() {
       if (!this.entity) return false
 
@@ -72,7 +64,7 @@ export default {
       const fields = {}
       for (const field of this.schema.fields) {
         // Filter out empty fields.
-        if (typeof data[field.id] === 'undefined' || !data[field.id] || (Array.isArray(data[field.id].data) && !data[field.id].data.length)) continue
+        if (this.isEmpty(data[field.id])) continue
 
         fields[field.id] = {
           data: data[field.id],
@@ -85,8 +77,6 @@ export default {
     },
 
     props() {
-      if (this.component === 'div') return false
-
       return {
         entity: this.entity,
         fields: this.fields,
@@ -94,26 +84,43 @@ export default {
       }
     },
 
-    suggestions() {
-      const suggestions = []
-      if (!this.schema) return suggestions
+    suggestionDefaults() {
+      if (!this.tokens) return []
 
-      const prefix = 'DruxtEntity'
+      return [
+        // e.g. DruxtEntityNodePageDefault
+        { value: this.tokens.prefix + this.tokens.type + this.tokens.mode },
+        // e.g. DruxtEntityNodePage
+        { value: this.tokens.prefix + this.tokens.type },
+        // e.g. DruxtEntityDefault
+        { value: this.tokens.prefix + this.tokens.mode }
+      ]
+    },
 
-      const transform = (string) => string.replace(/((\b|_|--)[a-z])/gi, (string) =>
-        string.toUpperCase().replace('_', '').replace('--', '')
-      )
-      const type = transform(this.schema.resourceType)
-      const mode = transform(this.schema.config.mode)
+    tokens() {
+      if (!this.schema) return false
 
-      // e.g. DruxtEntityNodePageDefault
-      suggestions.push(prefix + type + mode)
-      // e.g. DruxtEntityNodePage
-      suggestions.push(prefix + type)
-      // e.g. DruxtEntityDefault
-      suggestions.push(prefix + mode)
+      return {
+        prefix: 'DruxtEntity',
+        mode: this.suggest(this.schema.config.mode),
+        type: this.suggest(this.schema.resourceType),
+      }
+    },
 
-      return suggestions
+    tokenType: () => 'entity'
+  },
+
+  methods: {
+    isEmpty(value) {
+      if (typeof value === 'undefined') return true
+
+      if (!value) return true
+
+      if (Array.isArray(value.data) && !value.data.length) return true
+
+      if (typeof value.data !== 'undefined' && !value.data) return true
+
+      return false
     }
   }
 }

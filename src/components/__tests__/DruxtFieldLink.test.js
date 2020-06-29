@@ -38,7 +38,7 @@ describe('Component - DruxtFieldLink', () => {
   test('absolute', async () => {
     const wrapper = mountComponent({
       title: 'absolute',
-      uri: 'https://example.com'
+      uri: baseURL
     })
 
     expect(wrapper.vm.links.length).toBe(1)

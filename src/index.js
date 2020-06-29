@@ -4,12 +4,7 @@ import * as DruxtEntityComponents from './components'
 export { DruxtEntityComponents }
 
 export * from './components'
-
-import { DruxtEntityMixin } from './mixins/entity.js'
-export { DruxtEntityMixin }
-
-import { DruxtFieldMixin } from './mixins/field.js'
-export { DruxtFieldMixin }
+export * from './mixins'
 
 export default function (moduleOptions = {}) {
   // Use root level Druxt options.
