@@ -1,4 +1,8 @@
+import { DruxtEntityContextMixin } from './context'
+
 const DruxtEntityMixin = {
+  mixins: [DruxtEntityContextMixin],
+
   props: {
     entity: {
       type: Object,

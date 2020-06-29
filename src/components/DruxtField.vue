@@ -1,6 +1,7 @@
 <template>
   <component
     :is="component"
+    :context="context"
     v-bind="props"
   >
     <!-- Label: Above -->
@@ -22,12 +23,12 @@
 </template>
 
 <script>
-import { DruxtEntityComponentSuggestionMixin } from '../mixins/componentSuggestion'
+import { DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin } from '../mixins'
 
 export default {
   name: 'DruxtField',
 
-  mixins: [DruxtEntityComponentSuggestionMixin],
+  mixins: [DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin],
 
   props: {
     data: {
