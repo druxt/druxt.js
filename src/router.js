@@ -24,6 +24,7 @@ class DruxtRouter {
 
     this.options = {
       endpoint: '/jsonapi',
+      jsonapiResourceConfig: 'jsonapi_resource_config--jsonapi_resource_config',
       types: [
         {
           type: 'entity',
@@ -109,6 +110,28 @@ class DruxtRouter {
     const index = await this.axios.get(this.options.endpoint)
 
     this.index = index.data.links
+
+    // Use JSON API resource config to decorate the index.
+    if (this.index[this.options.jsonapiResourceConfig]) {
+      const resources = await this.axios.get(this.index[this.options.jsonapiResourceConfig].href)
+      for (const resourceType in resources.data.data) {
+        const resource = resources.data.data[resourceType]
+        const internal = resource.attributes.drupal_internal__id.split('--')
+
+        const item = {
+          resourceType: resource.attributes.resourceType,
+          entityType: internal[0],
+          bundle: internal[1],
+          resourceFields: resource.attributes.resourceFields
+        }
+
+        const id = [item.entityType, item.bundle].join('--')
+        this.index[id] = {
+          ...item,
+          ...this.index[id]
+        }
+      }
+    }
 
     if (resource) {
       return this.index[resource] ? this.index[resource] : false
