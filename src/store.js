@@ -78,6 +78,12 @@ const DruxtRouterStore = ({ store }) => {
         return entity
       },
 
+      async getResources ({ commit, state }, { resource, query }) {
+        const resources = await this.$druxtRouter().getResources(resource, query)
+
+        return resources
+      },
+
       async getRoute ({ commit, state }, path) {
         if (typeof state.routes[path] !== 'undefined') {
           return state.routes[path]
