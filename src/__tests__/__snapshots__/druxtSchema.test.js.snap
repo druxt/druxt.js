@@ -80,7 +80,7 @@ Object {
       Object {
         "cardinality": 1,
         "description": "",
-        "id": "field_image",
+        "id": "image",
         "label": Object {
           "position": null,
           "text": "Image",
@@ -114,7 +114,7 @@ Object {
       Object {
         "cardinality": -1,
         "description": "Enter a comma-separated list. For example: Amsterdam, Mexico City, \\"Cleveland, Ohio\\"",
-        "id": "field_tags",
+        "id": "tags",
         "label": Object {
           "position": null,
           "text": "Tags",
@@ -149,7 +149,7 @@ Object {
       Object {
         "cardinality": null,
         "description": null,
-        "id": "uid",
+        "id": "owner",
         "label": Object {
           "position": null,
           "text": null,
@@ -171,7 +171,7 @@ Object {
       Object {
         "cardinality": null,
         "description": null,
-        "id": "created",
+        "id": "createdAt",
         "label": Object {
           "position": null,
           "text": null,
@@ -189,7 +189,7 @@ Object {
       Object {
         "cardinality": null,
         "description": null,
-        "id": "promote",
+        "id": "isPromoted",
         "label": Object {
           "position": null,
           "text": null,
@@ -247,7 +247,7 @@ Object {
       Object {
         "cardinality": null,
         "description": null,
-        "id": "status",
+        "id": "isPublished",
         "label": Object {
           "position": null,
           "text": null,
@@ -299,7 +299,7 @@ Object {
       },
       Object {
         "description": "Enter a comma-separated list. For example: Amsterdam, Mexico City, \\"Cleveland, Ohio\\"",
-        "id": "field_tags",
+        "id": "tags",
         "label": Object {
           "position": "above",
           "text": "Tags",
@@ -328,7 +328,7 @@ Object {
       },
       Object {
         "description": "",
-        "id": "field_image",
+        "id": "image",
         "label": Object {
           "position": "hidden",
           "text": "Image",
@@ -450,7 +450,7 @@ Object {
       Object {
         "cardinality": null,
         "description": null,
-        "id": "uid",
+        "id": "owner",
         "label": Object {
           "position": null,
           "text": null,
@@ -472,7 +472,7 @@ Object {
       Object {
         "cardinality": null,
         "description": null,
-        "id": "created",
+        "id": "createdAt",
         "label": Object {
           "position": null,
           "text": null,
@@ -490,7 +490,7 @@ Object {
       Object {
         "cardinality": null,
         "description": null,
-        "id": "promote",
+        "id": "isPromoted",
         "label": Object {
           "position": null,
           "text": null,
@@ -572,7 +572,7 @@ Object {
       Object {
         "cardinality": null,
         "description": null,
-        "id": "status",
+        "id": "isPublished",
         "label": Object {
           "position": null,
           "text": null,
