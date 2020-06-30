@@ -202,12 +202,12 @@ class DruxtRouter {
    * @param {*} query
    */
   async getResources (resource, query = {}) {
-    const index = await this.getIndex()
-    if (!index[resource]) {
+    const { href } = await this.getIndex(resource)
+    if (!href) {
       return false
     }
 
-    let url = index[resource].href
+    let url = href
     if (Object.keys(query).length) {
       url = [url, stringify(query)].join('?')
     }
