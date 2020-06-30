@@ -152,6 +152,18 @@ describe('DruxtRouter', () => {
     expect(empty).toBe(false)
   })
 
+  test('getResource', async () => {
+    const resources = await router.getResources('node--page')
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page')
+    expect(resources.length).toBe(1)
+
+    await router.getResources('node--page', { 'filter[status]': 1 })
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page?filter%5Bstatus%5D=1')
+
+    const noResource = await router.getResources()
+    expect(noResource).toBe(false)
+  })
+
   test('getResourceByRoute', async () => {
     const route = require('../__fixtures__/data/0a01adaa07e9dfcc3c0cabc37339505a.json')
     const entity = await router.getResourceByRoute(route)
