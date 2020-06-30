@@ -24,6 +24,7 @@ class DruxtRouter {
 
     this.options = {
       endpoint: '/jsonapi',
+      jsonapiResourceConfig: 'jsonapi_resource_config--jsonapi_resource_config',
       types: [
         {
           type: 'entity',
@@ -51,6 +52,31 @@ class DruxtRouter {
 
       ...options
     }
+
+    this.index = null
+  }
+
+  /**
+   * Check response for permissions.
+   *
+   * @param {*} res
+   */
+  checkPermissions (res) {
+    // Error handling: Required permissions.
+    if (res.data.meta && res.data.meta.omitted) {
+      const permissions = {}
+
+      delete res.data.meta.omitted.links.help
+      for (const key in res.data.meta.omitted.links) {
+        const link = res.data.meta.omitted.links[key]
+        const match = link.meta.detail.match(/'(.*?)'/)
+        if (match[1]) {
+          permissions[match[1]] = true
+        }
+      }
+
+      throw new TypeError(`${res.data.meta.omitted.detail}\n\n Required permissions: ${Object.keys(permissions).join(', ')}.`)
+    }
   }
 
   /**
@@ -67,6 +93,50 @@ class DruxtRouter {
     const redirect = this.getRedirect(path, route)
 
     return { redirect, route }
+  }
+
+  /**
+   * Get index of all available resources.
+   */
+  async getIndex (resource) {
+    if (this.index && !resource) {
+      return this.index
+    }
+
+    if (this.index && resource) {
+      return this.index[resource] ? this.index[resource] : false
+    }
+
+    const index = await this.axios.get(this.options.endpoint)
+    this.index = index.data.links
+
+    // Use JSON API resource config to decorate the index.
+    if (this.index[this.options.jsonapiResourceConfig]) {
+      const resources = await this.axios.get(this.index[this.options.jsonapiResourceConfig].href)
+      for (const resourceType in resources.data.data) {
+        const resource = resources.data.data[resourceType]
+        const internal = resource.attributes.drupal_internal__id.split('--')
+
+        const item = {
+          resourceType: resource.attributes.resourceType,
+          entityType: internal[0],
+          bundle: internal[1],
+          resourceFields: resource.attributes.resourceFields
+        }
+
+        const id = [item.entityType, item.bundle].join('--')
+        this.index[id] = {
+          ...item,
+          ...this.index[id]
+        }
+      }
+    }
+
+    if (resource) {
+      return this.index[resource] ? this.index[resource] : false
+    }
+
+    return this.index
   }
 
   /**
@@ -111,8 +181,12 @@ class DruxtRouter {
       return false
     }
 
-    // @TODO - Get URL from index.
-    const url = `${this.options.endpoint}/${type.replace('--', '/')}/${id}`
+    let { href } = await this.getIndex(type)
+    if (!href) {
+      href = this.options.endpoint + '/' + type.replace('--', '/')
+    }
+
+    const url = `${href}/${id}`
     const resource = await this.axios.get(url)
 
     return resource.data.data

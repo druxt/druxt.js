@@ -11,6 +11,7 @@ mockAxios.get = jest.fn((url, options) => {
   const file = path.resolve('src/__fixtures__/data', md5(url) + '.json')
 
   if (!fs.existsSync(file)) {
+    data = { file, url }
     return { data, status, validateStatus }
   }
 
