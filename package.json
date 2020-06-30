@@ -1,6 +1,6 @@
 {
   "name": "druxt-schema",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Provides a Drupal Entity schema Vuex store to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
@@ -44,7 +44,6 @@
     ]
   },
   "dependencies": {
-    "axios": "^0.19.2",
     "consola": "^2.12.2",
     "simple-oauth2": "^3.4.0",
     "vuex": "^3.1.3"
@@ -59,7 +58,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "cross-env": "^6.0.3",
-    "druxt-router": "^0.7.0",
+    "druxt-router": "^0.13.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.1.0",

@@ -37,12 +37,6 @@ describe('DruxtSchema', () => {
     expect(schemas).toMatchSnapshot()
   })
 
-  test('getResources', async () => {
-    const resources = await schema.getResources('entity_view_display--entity_view_display')
-    expect(Object.keys(resources).length).toBe(2)
-    expect(Object.values(resources)[0]).toHaveProperty('attributes')
-  })
-
   test('getSchema', async () => {
     // Ensure we don't get a filtered schema.
     const config = {
@@ -51,12 +45,6 @@ describe('DruxtSchema', () => {
       filter: ['node--article--default--view']
     }
     expect(await schema.getSchema(config)).toBe(false)
-  })
-
-  test('getIndex', async () => {
-    const index = await schema.getIndex()
-    expect(Object.keys(index).length).toBe(12)
-    expect(Object.values(index)[0]).toHaveProperty('href')
   })
 
   test('oauth2', async () => {
