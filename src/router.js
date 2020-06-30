@@ -1,3 +1,4 @@
+import { stringify } from 'querystring'
 import axios from 'axios'
 import Url from 'url-parse'
 
@@ -190,6 +191,32 @@ class DruxtRouter {
     const resource = await this.axios.get(url)
 
     return resource.data.data
+  }
+
+  /**
+   * Get all resources based on resource and query.
+   *
+   * @todo Add pagination.
+   *
+   * @param {*} resource
+   * @param {*} query
+   */
+  async getResources (resource, query = {}) {
+    const index = await this.getIndex()
+    if (!index[resource]) {
+      return false
+    }
+
+    let url = index[resource].href
+    if (Object.keys(query).length) {
+      url = [url, stringify(query)].join('?')
+    }
+
+    const res = await this.axios.get(url)
+
+    this.checkPermissions(res)
+
+    return res.data.data
   }
 
   /**
