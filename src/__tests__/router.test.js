@@ -7,13 +7,14 @@ const baseURL = 'https://example.com'
 const testArticle = { type: 'node--article', id: '98f36405-e1c4-4d8a-a9f9-4d4f6d414e96' }
 const testPage = { type: 'node--page', id: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9' }
 
-jest.mock('axios')
+let router
 
-const router = new DruxtRouter(baseURL, {})
+jest.mock('axios')
 
 describe('DruxtRouter', () => {
   beforeEach(() => {
     mockAxios.reset()
+    router = new DruxtRouter(baseURL, {})
   })
 
   test('constructor', () => {
@@ -84,19 +85,28 @@ describe('DruxtRouter', () => {
 
   test('getIndex', async () => {
     const index = await router.getIndex()
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
 
     expect(Object.keys(index).length).toBe(53)
     expect(index[Object.keys(index)[0]]).toHaveProperty('href')
 
     const cachedIndex = await router.getIndex()
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+
     expect(Object.keys(cachedIndex).length).toBe(53)
   })
 
   test('getIndex - resource', async () => {
     const resourceIndex = await router.getIndex('node--page')
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
+
     expect(resourceIndex).toHaveProperty('href')
 
     const cachedResourceIndex = await router.getIndex('node--page')
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+
     expect(cachedResourceIndex).toHaveProperty('href')
   })
 
@@ -135,8 +145,8 @@ describe('DruxtRouter', () => {
     const entity = await router.getResource(testArticle)
     expect(entity).toHaveProperty('type', testArticle.type)
 
-    const missingIndex = await router.getResource({ id: 'test', type: 'missing' })
-    expect(missingIndex).toBe(false)
+    await router.getResource({ id: 'test', type: 'missing' })
+    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi/missing/test')
 
     const empty = await router.getResource()
     expect(empty).toBe(false)
