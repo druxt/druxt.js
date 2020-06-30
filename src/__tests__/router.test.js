@@ -34,6 +34,27 @@ describe('DruxtRouter', () => {
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL, headers })
   })
 
+  test('checkPermissions', () => {
+    const res = {
+      data: {
+        meta: {
+          omitted: {
+            detail: 'Some resources have been omitted because of insufficient authorization.',
+            links: {
+              help: null,
+              item: {
+                meta: {
+                  detail: 'The current user is not allowed to GET the selected resource. The \'administer node fields\' permission is required.'
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    expect(() => router.checkPermissions(res)).toThrow('Some resources have been omitted because of insufficient authorization.\n\n Required permissions: administer node fields.')
+  })
+
   test('get - entity', async () => {
     const { route } = await router.get('/')
 
@@ -59,6 +80,24 @@ describe('DruxtRouter', () => {
 
     expect(route.error).toHaveProperty('message')
     expect(route.error).toHaveProperty('statusCode', 404)
+  })
+
+  test('getIndex', async () => {
+    const index = await router.getIndex()
+
+    expect(Object.keys(index).length).toBe(53)
+    expect(index[Object.keys(index)[0]]).toHaveProperty('href')
+
+    const cachedIndex = await router.getIndex()
+    expect(Object.keys(cachedIndex).length).toBe(53)
+  })
+
+  test('getIndex - resource', async () => {
+    const resourceIndex = await router.getIndex('node--page')
+    expect(resourceIndex).toHaveProperty('href')
+
+    const cachedResourceIndex = await router.getIndex('node--page')
+    expect(cachedResourceIndex).toHaveProperty('href')
   })
 
   test('getRedirect', () => {
@@ -94,8 +133,10 @@ describe('DruxtRouter', () => {
 
   test('getResource', async () => {
     const entity = await router.getResource(testArticle)
-
     expect(entity).toHaveProperty('type', testArticle.type)
+
+    const missingIndex = await router.getResource({ id: 'test', type: 'missing' })
+    expect(missingIndex).toBe(false)
 
     const empty = await router.getResource()
     expect(empty).toBe(false)
