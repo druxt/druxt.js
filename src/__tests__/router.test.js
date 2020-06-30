@@ -7,13 +7,14 @@ const baseURL = 'https://example.com'
 const testArticle = { type: 'node--article', id: '98f36405-e1c4-4d8a-a9f9-4d4f6d414e96' }
 const testPage = { type: 'node--page', id: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9' }
 
-jest.mock('axios')
+let router
 
-const router = new DruxtRouter(baseURL, {})
+jest.mock('axios')
 
 describe('DruxtRouter', () => {
   beforeEach(() => {
     mockAxios.reset()
+    router = new DruxtRouter(baseURL, {})
   })
 
   test('constructor', () => {
@@ -32,6 +33,27 @@ describe('DruxtRouter', () => {
     expect(mockRouter).toBeInstanceOf(DruxtRouter)
 
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL, headers })
+  })
+
+  test('checkPermissions', () => {
+    const res = {
+      data: {
+        meta: {
+          omitted: {
+            detail: 'Some resources have been omitted because of insufficient authorization.',
+            links: {
+              help: null,
+              item: {
+                meta: {
+                  detail: 'The current user is not allowed to GET the selected resource. The \'administer node fields\' permission is required.'
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    expect(() => router.checkPermissions(res)).toThrow('Some resources have been omitted because of insufficient authorization.\n\n Required permissions: administer node fields.')
   })
 
   test('get - entity', async () => {
@@ -59,6 +81,33 @@ describe('DruxtRouter', () => {
 
     expect(route.error).toHaveProperty('message')
     expect(route.error).toHaveProperty('statusCode', 404)
+  })
+
+  test('getIndex', async () => {
+    const index = await router.getIndex()
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
+
+    expect(Object.keys(index).length).toBe(53)
+    expect(index[Object.keys(index)[0]]).toHaveProperty('href')
+
+    const cachedIndex = await router.getIndex()
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+
+    expect(Object.keys(cachedIndex).length).toBe(53)
+  })
+
+  test('getIndex - resource', async () => {
+    const resourceIndex = await router.getIndex('node--page')
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
+
+    expect(resourceIndex).toHaveProperty('href')
+
+    const cachedResourceIndex = await router.getIndex('node--page')
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+
+    expect(cachedResourceIndex).toHaveProperty('href')
   })
 
   test('getRedirect', () => {
@@ -94,11 +143,25 @@ describe('DruxtRouter', () => {
 
   test('getResource', async () => {
     const entity = await router.getResource(testArticle)
-
     expect(entity).toHaveProperty('type', testArticle.type)
+
+    await router.getResource({ id: 'test', type: 'missing' })
+    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi/missing/test')
 
     const empty = await router.getResource()
     expect(empty).toBe(false)
+  })
+
+  test('getResource', async () => {
+    const resources = await router.getResources('node--page')
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page')
+    expect(resources.length).toBe(1)
+
+    await router.getResources('node--page', { 'filter[status]': 1 })
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page?filter%5Bstatus%5D=1')
+
+    const noResource = await router.getResources()
+    expect(noResource).toBe(false)
   })
 
   test('getResourceByRoute', async () => {

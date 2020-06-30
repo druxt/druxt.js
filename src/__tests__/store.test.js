@@ -121,6 +121,11 @@ describe('DruxtRouterStore', () => {
     await store.dispatch('druxtRouter/getEntity', mockPage)
   })
 
+  test('getResources', async () => {
+    const resources = await store.dispatch('druxtRouter/getResources', { resource: 'node--page', query: {} })
+    expect(resources.length).toBe(1)
+  })
+
   test('getRoute', async () => {
     const route = await store.dispatch('druxtRouter/getRoute', '/')
 
