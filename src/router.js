@@ -51,6 +51,31 @@ class DruxtRouter {
 
       ...options
     }
+
+    this.index = null
+  }
+
+  /**
+   * Check response for permissions.
+   *
+   * @param {*} res
+   */
+  checkPermissions (res) {
+    // Error handling: Required permissions.
+    if (res.data.meta && res.data.meta.omitted) {
+      const permissions = {}
+
+      delete res.data.meta.omitted.links.help
+      for (const key in res.data.meta.omitted.links) {
+        const link = res.data.meta.omitted.links[key]
+        const match = link.meta.detail.match(/'(.*?)'/)
+        if (match[1]) {
+          permissions[match[1]] = true
+        }
+      }
+
+      throw new TypeError(`${res.data.meta.omitted.detail}\n\n Required permissions: ${Object.keys(permissions).join(', ')}.`)
+    }
   }
 
   /**
@@ -67,6 +92,29 @@ class DruxtRouter {
     const redirect = this.getRedirect(path, route)
 
     return { redirect, route }
+  }
+
+  /**
+   * Get index of all available resources.
+   */
+  async getIndex (resource) {
+    if (this.index && !resource) {
+      return this.index
+    }
+
+    if (this.index && resource) {
+      return this.index[resource] ? this.index[resource] : false
+    }
+
+    const index = await this.axios.get(this.options.endpoint)
+
+    this.index = index.data.links
+
+    if (resource) {
+      return this.index[resource] ? this.index[resource] : false
+    }
+
+    return this.index
   }
 
   /**
@@ -111,8 +159,12 @@ class DruxtRouter {
       return false
     }
 
-    // @TODO - Get URL from index.
-    const url = `${this.options.endpoint}/${type.replace('--', '/')}/${id}`
+    const resourceIndex = await this.getIndex(type)
+    if (!resourceIndex) {
+      return false
+    }
+
+    const url = `${resourceIndex.href}/${id}`
     const resource = await this.axios.get(url)
 
     return resource.data.data
