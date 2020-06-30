@@ -108,7 +108,6 @@ class DruxtRouter {
     }
 
     const index = await this.axios.get(this.options.endpoint)
-
     this.index = index.data.links
 
     // Use JSON API resource config to decorate the index.
@@ -182,12 +181,12 @@ class DruxtRouter {
       return false
     }
 
-    const resourceIndex = await this.getIndex(type)
-    if (!resourceIndex) {
-      return false
+    let { href } = await this.getIndex(type)
+    if (!href) {
+      href = this.options.endpoint + '/' + type.replace('--', '/')
     }
 
-    const url = `${resourceIndex.href}/${id}`
+    const url = `${href}/${id}`
     const resource = await this.axios.get(url)
 
     return resource.data.data
