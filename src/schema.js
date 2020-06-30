@@ -59,7 +59,7 @@ class Schema {
   async getResources(resource, query) {
     if (this.data[resource]) return this.data[resource]
 
-    this.data[resource] = await this.druxtSchema.getResources(resource, query)
+    this.data[resource] = await this.druxtSchema.druxtRouter.getResources(resource, query)
     return this.data[resource]
   }
 
