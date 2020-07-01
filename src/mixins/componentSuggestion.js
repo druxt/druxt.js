@@ -63,7 +63,7 @@ const DruxtEntityComponentSuggestionMixin = {
   },
 
   methods: {
-    suggest: (string) => string.replace(/((\b|[^a-z]+)[a-z])/gi, (match, p1, p2) => match.toUpperCase().replace(p2, ''))
+    suggest: (string) => string.replace(/((\b|[^a-zA-Z0-9]+)[a-zA-Z0-9])/gi, (match, p1, p2) => match.toUpperCase().replace(p2, ''))
   }
 }
 
