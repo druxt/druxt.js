@@ -68,5 +68,6 @@ describe('DruxtEntityComponentSuggestionMixin', () => {
     expect(wrapper.vm.suggest('field_name')).toBe('FieldName')
     expect(wrapper.vm.suggest('node--page')).toBe('NodePage')
     expect(wrapper.vm.suggest('node--page--field_name')).toBe('NodePageFieldName')
+    expect(wrapper.vm.suggest('views_block:recipe_collections-block')).toBe('ViewsBlockRecipeCollectionsBlock')
   })
 })
