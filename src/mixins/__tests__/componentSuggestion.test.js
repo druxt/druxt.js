@@ -68,5 +68,7 @@ describe('DruxtEntityComponentSuggestionMixin', () => {
     expect(wrapper.vm.suggest('field_name')).toBe('FieldName')
     expect(wrapper.vm.suggest('node--page')).toBe('NodePage')
     expect(wrapper.vm.suggest('node--page--field_name')).toBe('NodePageFieldName')
+    expect(wrapper.vm.suggest('views_block:recipe_collections-block')).toBe('ViewsBlockRecipeCollectionsBlock')
+    expect(wrapper.vm.suggest('block_content:924ab293-8f5f-45a1-9c7f-2423ae61a241')).toBe('BlockContent924ab2938f5f45a19c7f2423ae61a241')
   })
 })
