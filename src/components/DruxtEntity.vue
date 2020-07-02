@@ -20,7 +20,10 @@
       </template>
 
       <!-- Render fields in the default slot --->
-      <template v-for="(field, key) of fields" v-bind="{ context, options }">
+      <template
+        v-for="(field, key) of fields"
+        v-bind="{ context, options }"
+      >
         <druxt-field
           :key="key"
           v-bind="{ ...field, context: { ..._self.context, ...context }, options }"
