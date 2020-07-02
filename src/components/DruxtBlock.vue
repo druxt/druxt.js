@@ -1,5 +1,9 @@
 <template>
-  <component :is="component" v-if="entity" v-bind="props" />
+  <component
+    :is="component"
+    v-if="entity"
+    v-bind="props"
+  />
 </template>
 
 <script>
@@ -51,7 +55,7 @@ export default {
       }
     },
 
-    tokenType: () => 'block-region'
+    tokenType: () => 'block'
   }
 }
 </script>

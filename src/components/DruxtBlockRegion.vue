@@ -35,15 +35,6 @@ export default {
     blocks: []
   }),
 
-  created() {
-    const query = {
-      'filter[region]': this.name,
-      'filter[theme]': this.theme
-    }
-
-    this.getResources({ resource: 'block--block', query }).then(blocks => this.blocks = blocks)
-  },
-
   computed: {
     suggestionDefaults() {
       if (!this.tokens) return []
@@ -65,6 +56,16 @@ export default {
     },
 
     tokenType: () => 'block-region'
+  },
+
+  created() {
+    const query = {
+      'filter[region]': this.name,
+      'filter[theme]': this.theme,
+      'filter[status]': 1
+    }
+
+    this.getResources({ resource: 'block--block', query }).then(blocks => this.blocks = blocks)
   },
 
   methods: {
