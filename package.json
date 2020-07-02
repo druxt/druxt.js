@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "druxt-entity": "^0.5.0",
+    "druxt-entity": "^0.5.1",
     "druxt-router": "^0.13.0",
     "vuex": "^3.5.1"
   },
