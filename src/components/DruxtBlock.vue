@@ -30,29 +30,47 @@ export default {
     },
 
     suggestionDefaults() {
-      if (!this.tokens) return []
+      const defaults = []
+      if (!this.tokens) return defaults
 
-      return [
-        // e.g. DruxtBlockSystemMenuBlockMainHeaderUmami
-        { value: this.tokens.prefix + this.tokens.plugin + this.tokens.region + this.tokens.theme },
-        // e.g. DruxtBlockSystemMenuBlockMainHeader
-        { value: this.tokens.prefix + this.tokens.plugin + this.tokens.region },
-        // e.g. DruxtBlockSystemMenuBlockMainUmami
-        { value: this.tokens.prefix + this.tokens.plugin + this.tokens.theme },
-        // e.g. DruxtBlockSystemMenuBlockMain
-        { value: this.tokens.prefix + this.tokens.plugin },
-      ]
+      // e.g. DruxtBlockSystemMenuBlockMainHeaderUmami
+      defaults.push(this.tokens.prefix + this.tokens.plugin + this.tokens.pluginId + this.tokens.region + this.tokens.theme)
+      // e.g. DruxtBlockSystemMenuBlockHeaderUmami
+      defaults.push(this.tokens.prefix + this.tokens.plugin + this.tokens.region + this.tokens.theme)
+      // e.g. DruxtBlockSystemMenuBlockMainHeader
+      defaults.push(this.tokens.prefix + this.tokens.plugin + this.tokens.pluginId + this.tokens.region)
+      // e.g. DruxtBlockSystemMenuBlockHeader
+      defaults.push(this.tokens.prefix + this.tokens.plugin + this.tokens.region)
+      // e.g. DruxtBlockSystemMenuBlockMainUmami
+      defaults.push(this.tokens.prefix + this.tokens.plugin + this.tokens.pluginId + this.tokens.theme)
+      // e.g. DruxtBlockSystemMenuBlockUmami
+      defaults.push(this.tokens.prefix + this.tokens.plugin + this.tokens.theme)
+      // e.g. DruxtBlockSystemMenuBlockMain
+      defaults.push(this.tokens.prefix + this.tokens.plugin + this.tokens.pluginId)
+      // e.g. DruxtBlockSystemMenuBlock
+      defaults.push(this.tokens.prefix + this.tokens.plugin)
+
+      return defaults.filter((value, index, self) => self.indexOf(value) === index).map(item => ({ value: item }))
     },
 
     tokens() {
       if (!this.entity) return false
 
-      return {
+      const tokens = {
         prefix: 'DruxtBlock',
-        plugin: this.suggest(this.entity.attributes.plugin).replace(':', ''),
+        plugin: this.suggest(this.entity.attributes.plugin),
+        pluginId: '',
         region: this.suggest(this.entity.attributes.region),
-        theme: this.suggest(this.entity.attributes.theme)
+        theme: this.suggest(this.entity.attributes.theme),
       }
+
+      if (this.entity.attributes.plugin.includes(':')) {
+        const parts = this.entity.attributes.plugin.split(':')
+        tokens.plugin = this.suggest(parts[0])
+        tokens.pluginId = this.suggest(parts[1])
+      }
+
+      return tokens
     },
 
     tokenType: () => 'block'
