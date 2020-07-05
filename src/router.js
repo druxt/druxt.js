@@ -58,6 +58,32 @@ class DruxtRouter {
   }
 
   /**
+   * Build query URL.
+   *
+   * @param string url
+   * @param {*} query
+   */
+  buildQueryUrl (url, query) {
+    // If Query is string...
+    if (typeof query === 'string') {
+      return query.charAt(0) === '?' ? url + query : [url, query].join('?')
+    }
+
+    // If Query is object with 'getQueryString' function, (e.g., drupal-jsonapi-params)...
+    if (typeof query === 'object' && typeof query.getQueryString === 'function') {
+      return [url, query.getQueryString()].join('?')
+    }
+
+    // If query is object...
+    if (typeof query === 'object' && Object.keys(query).length) {
+      return [url, stringify(query)].join('?')
+    }
+
+    // Else...
+    return url
+  }
+
+  /**
    * Check response for permissions.
    *
    * @param {*} res
@@ -207,10 +233,7 @@ class DruxtRouter {
       return false
     }
 
-    let url = href
-    if (Object.keys(query).length) {
-      url = [url, stringify(query)].join('?')
-    }
+    const url = this.buildQueryUrl(href, query)
 
     const res = await this.axios.get(url)
 

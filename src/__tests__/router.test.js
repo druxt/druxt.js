@@ -35,6 +35,18 @@ describe('DruxtRouter', () => {
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL, headers })
   })
 
+  test('buildQueryUrl', () => {
+    expect(router.buildQueryUrl('url', 'query')).toBe('url?query')
+    expect(router.buildQueryUrl('url', '?query')).toBe('url?query')
+    expect(router.buildQueryUrl('url', { getQueryString: () => 'query' })).toBe('url?query')
+    expect(router.buildQueryUrl('url', { query: 'string' })).toBe('url?query=string')
+
+    expect(router.buildQueryUrl('url', {})).toBe('url')
+    expect(router.buildQueryUrl('url', [])).toBe('url')
+    expect(router.buildQueryUrl('url', Boolean)).toBe('url')
+    expect(router.buildQueryUrl('url')).toBe('url')
+  })
+
   test('checkPermissions', () => {
     const res = {
       data: {
