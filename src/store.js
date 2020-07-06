@@ -78,8 +78,8 @@ const DruxtRouterStore = ({ store }) => {
         return entity
       },
 
-      async getResources ({ commit, state }, { resource, query }) {
-        const resources = await this.$druxtRouter().getResources(resource, query)
+      async getResources ({ commit, state }, { resource, query, options }) {
+        const resources = await this.$druxtRouter().getResources(resource, query, options)
 
         return resources
       },

@@ -58,6 +58,21 @@ class DruxtRouter {
   }
 
   /**
+   * Add headers to the Axios instance.
+   *
+   * @param {*} headers
+   */
+  addHeaders (headers) {
+    if (typeof headers === 'undefined') {
+      return false
+    }
+
+    for (const name in headers) {
+      this.axios.defaults.headers.common[name] = headers[name]
+    }
+  }
+
+  /**
    * Build query URL.
    *
    * @param string url
@@ -227,13 +242,15 @@ class DruxtRouter {
    * @param {*} resource
    * @param {*} query
    */
-  async getResources (resource, query = {}) {
+  async getResources (resource, query, options = {}) {
     const { href } = await this.getIndex(resource)
     if (!href) {
       return false
     }
 
     const url = this.buildQueryUrl(href, query)
+
+    this.addHeaders(options.headers)
 
     const res = await this.axios.get(url)
 
