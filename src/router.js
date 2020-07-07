@@ -300,7 +300,8 @@ class DruxtRouter {
       jsonapi: data.jsonapi,
       label: data.label,
       props: false,
-      redirect: data.redirect
+      redirect: data.redirect,
+      resolvedPath: Url(data.resolved).pathname
     }
 
     // Determine route type by configuration.
