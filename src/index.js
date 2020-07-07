@@ -2,6 +2,7 @@ import { resolve } from 'path'
 
 import { DruxtView } from './components'
 export { DruxtView }
+export { DruxtViewsViewMixin } from './mixins/view'
 
 export default function (moduleOptions = {}) {
   // Use root level Druxt options.
