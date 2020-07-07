@@ -58,6 +58,47 @@ class DruxtRouter {
   }
 
   /**
+   * Add headers to the Axios instance.
+   *
+   * @param {*} headers
+   */
+  addHeaders (headers) {
+    if (typeof headers === 'undefined') {
+      return false
+    }
+
+    for (const name in headers) {
+      this.axios.defaults.headers.common[name] = headers[name]
+    }
+  }
+
+  /**
+   * Build query URL.
+   *
+   * @param string url
+   * @param {*} query
+   */
+  buildQueryUrl (url, query) {
+    // If Query is string...
+    if (typeof query === 'string') {
+      return query.charAt(0) === '?' ? url + query : [url, query].join('?')
+    }
+
+    // If Query is object with 'getQueryString' function, (e.g., drupal-jsonapi-params)...
+    if (typeof query === 'object' && typeof query.getQueryString === 'function') {
+      return [url, query.getQueryString()].join('?')
+    }
+
+    // If query is object...
+    if (typeof query === 'object' && Object.keys(query).length) {
+      return [url, stringify(query)].join('?')
+    }
+
+    // Else...
+    return url
+  }
+
+  /**
    * Check response for permissions.
    *
    * @param {*} res
@@ -201,16 +242,15 @@ class DruxtRouter {
    * @param {*} resource
    * @param {*} query
    */
-  async getResources (resource, query = {}) {
+  async getResources (resource, query, options = {}) {
     const { href } = await this.getIndex(resource)
     if (!href) {
       return false
     }
 
-    let url = href
-    if (Object.keys(query).length) {
-      url = [url, stringify(query)].join('?')
-    }
+    const url = this.buildQueryUrl(href, query)
+
+    this.addHeaders(options.headers)
 
     const res = await this.axios.get(url)
 
@@ -260,7 +300,8 @@ class DruxtRouter {
       jsonapi: data.jsonapi,
       label: data.label,
       props: false,
-      redirect: data.redirect
+      redirect: data.redirect,
+      resolvedPath: Url(data.resolved).pathname
     }
 
     // Determine route type by configuration.

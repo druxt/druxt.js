@@ -25,7 +25,7 @@ describe('DruxtRouter', () => {
     expect(new DruxtRouter(baseURL)).toBeInstanceOf(DruxtRouter)
   })
 
-  test('axiosSettings', () => {
+  test('constructor - axiosSettings', () => {
     const headers = { 'X-DruxtRouter': true }
     const mockRouter = new DruxtRouter(baseURL, {
       axios: { headers }
@@ -33,6 +33,25 @@ describe('DruxtRouter', () => {
     expect(mockRouter).toBeInstanceOf(DruxtRouter)
 
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL, headers })
+  })
+
+  test('addHeaders', () => {
+    expect(router.addHeaders()).toBe(false)
+
+    router.addHeaders({ 'X-DruxtRouter': true })
+    expect(router.axios.defaults.headers.common['X-DruxtRouter']).toBe(true)
+  })
+
+  test('buildQueryUrl', () => {
+    expect(router.buildQueryUrl('url', 'query')).toBe('url?query')
+    expect(router.buildQueryUrl('url', '?query')).toBe('url?query')
+    expect(router.buildQueryUrl('url', { getQueryString: () => 'query' })).toBe('url?query')
+    expect(router.buildQueryUrl('url', { query: 'string' })).toBe('url?query=string')
+
+    expect(router.buildQueryUrl('url', {})).toBe('url')
+    expect(router.buildQueryUrl('url', [])).toBe('url')
+    expect(router.buildQueryUrl('url', Boolean)).toBe('url')
+    expect(router.buildQueryUrl('url')).toBe('url')
   })
 
   test('checkPermissions', () => {
