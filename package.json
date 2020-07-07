@@ -42,8 +42,8 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "druxt-entity": "^0.2.2",
-    "druxt-router": "^0.10.1",
+    "druxt-entity": "^0.5.1",
+    "druxt-router": "^0.14.0",
     "vuex": "^3.1.3"
   },
   "devDependencies": {
@@ -56,6 +56,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "cross-env": "^6.0.3",
+    "druxt-blocks": "^0.2.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.1.0",
