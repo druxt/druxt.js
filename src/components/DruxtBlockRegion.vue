@@ -85,8 +85,27 @@ export default {
         .addFilter('region', this.name)
         .addFilter('status', '1')
         .addFilter('theme', this.theme)
+        .addGroup('visibility', 'OR')
+        .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
+
+      query.addGroup('pages', 'AND', 'visibility')
+        .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
+        .addFilter('visibility.request_path.negate', 0, '=', 'pages')
+
+      query.addGroup('front', 'AND', 'visibility')
+        .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
+        .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
+
+      // 'drupal-jsonapi-params' incorrectly assigns NULL operator conditions a value.
+      // We have to modify and stringify the query manually.
+      // @SEE - https://github.com/d34dman/drupal-jsonapi-params/issues/7
       const queryObject = query.getQueryObject()
+      delete queryObject.filter['visibility.request_path'].condition.value
       const querystring = stringify(queryObject)
+
+      const options = {
+        headers: { 'Druxt-Request-Path': this.$store.state.druxtRouter.route.resolvedPath }
+      }
 
       this.getResources({ resource: 'block--block', query: querystring }).then(blocks => {
         this.blocks = blocks
