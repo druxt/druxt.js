@@ -1,4 +1,4 @@
-# \Druxt blocks
+# Druxt blocks
 
 [![CircleCI](https://circleci.com/gh/Realityloop/druxt-blocks.svg?style=svg)](https://circleci.com/gh/Realityloop/druxt-blocks)
 [![Known Vulnerabilities](https://snyk.io/test/github/Realityloop/druxt-blocks/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Realityloop/druxt-blocks?targetFile=package.json)

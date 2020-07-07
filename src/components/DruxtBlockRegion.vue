@@ -1,5 +1,5 @@
 <template>
-  <component :is="component">
+  <component :is="component" v-if="blocks">
     <druxt-block
       v-for="block of blocks"
       :key="block.id"
@@ -10,7 +10,9 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { stringify } from 'qs'
+import { mapActions, mapState } from 'vuex'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
 import { DruxtEntityComponentSuggestionMixin } from 'druxt-entity'
 
@@ -32,7 +34,8 @@ export default {
   },
 
   data: () => ({
-    blocks: []
+    blocks: [],
+    loading: false
   }),
 
   computed: {
@@ -55,20 +58,42 @@ export default {
       }
     },
 
-    tokenType: () => 'block-region'
+    tokenType: () => 'block-region',
+
+    ...mapState('druxtRouter', {
+      route: state => state.route
+    })
+  },
+
+  watch: {
+    route() {
+      this.fetchBlocks()
+    }
   },
 
   created() {
-    const query = {
-      'filter[region]': this.name,
-      'filter[theme]': this.theme,
-      'filter[status]': 1
-    }
-
-    this.getResources({ resource: 'block--block', query }).then(blocks => this.blocks = blocks)
+    this.fetchBlocks()
   },
 
   methods: {
+    fetchBlocks() {
+      if (this.loading) return
+
+      this.loading = true
+      const query = new DrupalJsonApiParams()
+      query
+        .addFilter('region', this.name)
+        .addFilter('status', '1')
+        .addFilter('theme', this.theme)
+      const queryObject = query.getQueryObject()
+      const querystring = stringify(queryObject)
+
+      this.getResources({ resource: 'block--block', query: querystring }).then(blocks => {
+        this.blocks = blocks
+        this.loading = false
+      })
+    },
+
     ...mapActions({
       getResources: 'druxtRouter/getResources'
     })
