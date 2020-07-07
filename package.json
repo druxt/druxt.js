@@ -1,6 +1,6 @@
 {
   "name": "druxt-blocks",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Provides Drupal blocks and region components to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
@@ -43,8 +43,10 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "drupal-jsonapi-params": "^1.1.8",
     "druxt-entity": "^0.5.1",
-    "druxt-router": "^0.13.0",
+    "druxt-router": "^0.14.0",
+    "qs": "^6.9.4",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
