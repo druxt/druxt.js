@@ -37,6 +37,11 @@ describe('Component - DruxtBlockRegion', () => {
           namespaced: true,
           actions: {
             getResources: mocks.$druxtRouter().getResources
+          },
+          state: {
+            route: {
+              resolvedPath: '/'
+            }
           }
         }
       }
@@ -60,5 +65,12 @@ describe('Component - DruxtBlockRegion', () => {
     expect(wrapper.vm.tokens).toHaveProperty('theme')
 
     expect(wrapper.vm.tokenType).toBe('block-region')
+
+    const watch = {
+      ...DruxtBlockRegion.watch,
+      fetchBlocks: jest.fn()
+    }
+    watch.route()
+    expect(watch.fetchBlocks).toHaveBeenCalled()
   })
 })
