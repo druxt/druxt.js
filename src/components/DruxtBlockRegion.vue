@@ -1,5 +1,5 @@
 <template>
-  <component :is="component">
+  <component :is="component" v-if="blocks">
     <druxt-block
       v-for="block of blocks"
       :key="block.id"
@@ -10,7 +10,9 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { stringify } from 'qs'
+import { mapActions, mapState } from 'vuex'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
 import { DruxtEntityComponentSuggestionMixin } from 'druxt-entity'
 
@@ -32,7 +34,8 @@ export default {
   },
 
   data: () => ({
-    blocks: []
+    blocks: [],
+    loading: false
   }),
 
   computed: {
@@ -55,20 +58,61 @@ export default {
       }
     },
 
-    tokenType: () => 'block-region'
+    tokenType: () => 'block-region',
+
+    ...mapState('druxtRouter', {
+      route: state => state.route
+    })
+  },
+
+  watch: {
+    route() {
+      this.fetchBlocks()
+    }
   },
 
   created() {
-    const query = {
-      'filter[region]': this.name,
-      'filter[theme]': this.theme,
-      'filter[status]': 1
-    }
-
-    this.getResources({ resource: 'block--block', query }).then(blocks => this.blocks = blocks)
+    this.fetchBlocks()
   },
 
   methods: {
+    fetchBlocks() {
+      if (this.loading) return
+
+      this.loading = true
+      const query = new DrupalJsonApiParams()
+      query
+        .addFilter('region', this.name)
+        .addFilter('status', '1')
+        .addFilter('theme', this.theme)
+        .addGroup('visibility', 'OR')
+        .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
+
+      query.addGroup('pages', 'AND', 'visibility')
+        .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
+        .addFilter('visibility.request_path.negate', 0, '=', 'pages')
+
+      query.addGroup('front', 'AND', 'visibility')
+        .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
+        .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
+
+      // 'drupal-jsonapi-params' incorrectly assigns NULL operator conditions a value.
+      // We have to modify and stringify the query manually.
+      // @SEE - https://github.com/d34dman/drupal-jsonapi-params/issues/7
+      const queryObject = query.getQueryObject()
+      delete queryObject.filter['visibility.request_path'].condition.value
+      const querystring = stringify(queryObject)
+
+      const options = {
+        headers: { 'Druxt-Request-Path': this.$store.state.druxtRouter.route.resolvedPath }
+      }
+
+      this.getResources({ resource: 'block--block', query: querystring }).then(blocks => {
+        this.blocks = blocks
+        this.loading = false
+      })
+    },
+
     ...mapActions({
       getResources: 'druxtRouter/getResources'
     })
