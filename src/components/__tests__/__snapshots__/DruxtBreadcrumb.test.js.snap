@@ -2,8 +2,6 @@
 
 exports[`DruxtBreadcrumb 404 route 1`] = `""`;
 
-exports[`DruxtBreadcrumb error 1`] = `"<div items=\\"[object Object],[object Object]\\"></div>"`;
-
 exports[`DruxtBreadcrumb level 1 1`] = `"<div items=\\"[object Object],[object Object]\\"></div>"`;
 
 exports[`DruxtBreadcrumb level 2 1`] = `""`;
