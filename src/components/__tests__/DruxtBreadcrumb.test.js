@@ -69,6 +69,8 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(1)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('level 1', async () => {
@@ -91,6 +93,8 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(2)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('level 2', async () => {
@@ -113,6 +117,8 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(3)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('missing parent', async () => {
@@ -137,6 +143,8 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(2)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('404 route', async () => {
@@ -155,6 +163,8 @@ describe('DruxtBreadcrumb', () => {
 
     expect(wrapper.vm.loading).toBe(0)
     expect(wrapper.vm.crumbs).toHaveLength(0)
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('error', async () => {
@@ -180,6 +190,8 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(2)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
 })
