@@ -10,7 +10,7 @@ localVue.use(Vuex)
 
 let store
 
-const mountComponent = ({ path, routes, options }) => {
+const mountComponent = ({ path, routes, options, propsData }) => {
   // Setup mocks.
   const mocks = {
     $route: { path },
@@ -39,7 +39,7 @@ const mountComponent = ({ path, routes, options }) => {
     store.commit('druxtRouter/setRoute', path)
   }
 
-  return shallowMount(DruxtBreadcrumb, { store, localVue, mocks })
+  return shallowMount(DruxtBreadcrumb, { store, localVue, mocks, propsData })
 }
 
 describe('DruxtBreadcrumb', () => {
@@ -75,28 +75,6 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(1)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
-
-    expect(wrapper.html()).toMatchSnapshot()
-  })
-
-  test('root - no home', async () => {
-    const wrapper = mountComponent({ path: '/', options: { home: false } })
-
-    expect(wrapper.vm.route).toStrictEqual({
-      label: '/'
-    })
-
-    expect(Object.keys(wrapper.vm.routes)).toHaveLength(1)
-    expect(Object.keys(wrapper.vm.items)).toHaveLength(0)
-
-    expect(wrapper.vm.loading).toBe(0)
-    expect(wrapper.vm.crumbs).toHaveLength(0)
-
-    // Wait for loading to complete.
-    await localVue.nextTick()
-
-    expect(wrapper.vm.loading).toBe(0)
-    expect(wrapper.vm.crumbs).toHaveLength(0)
 
     expect(wrapper.html()).toMatchSnapshot()
   })
@@ -223,4 +201,42 @@ describe('DruxtBreadcrumb', () => {
     // expect(wrapper.html()).toMatchSnapshot()
   })
 
+  test('no home', async () => {
+    const wrapper = mountComponent({ path: '/', options: { home: false } })
+
+    expect(wrapper.vm.route).toStrictEqual({
+      label: '/'
+    })
+
+    expect(Object.keys(wrapper.vm.routes)).toHaveLength(1)
+    expect(Object.keys(wrapper.vm.items)).toHaveLength(0)
+
+    expect(wrapper.vm.loading).toBe(0)
+    expect(wrapper.vm.crumbs).toHaveLength(0)
+
+    // Wait for loading to complete.
+    await localVue.nextTick()
+
+    expect(wrapper.vm.loading).toBe(0)
+    expect(wrapper.vm.crumbs).toHaveLength(0)
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  test('settings', async () => {
+    let wrapper
+    wrapper = mountComponent({
+      options: { component: 'options' },
+      propsData: { component: 'propsData' }
+    })
+    expect(wrapper.vm.settings.component).toBe('propsData')
+
+    wrapper = mountComponent({
+      options: { component: 'options' },
+    })
+    expect(wrapper.vm.settings.component).toBe('options')
+
+    wrapper = mountComponent({})
+    expect(wrapper.vm.settings.component).toBe('div')
+  })
 })
