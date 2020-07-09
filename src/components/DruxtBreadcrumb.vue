@@ -1,5 +1,9 @@
 <template>
-  <component :is="component" v-if="crumbs.length" :items="crumbs" />
+  <component
+    :is="component"
+    v-if="crumbs.length"
+    :items="crumbs"
+  />
 </template>
 
 <script>
@@ -16,10 +20,6 @@ export default {
         return 'div'
       }
     }
-  },
-
-  created() {
-    this.getItems()
   },
 
   data: () => ({
@@ -40,6 +40,14 @@ export default {
       route: state => state.druxtRouter.route,
       routes: state => state.druxtRouter.routes
     })
+  },
+
+  watch: {
+    '$route': 'getItems'
+  },
+
+  created() {
+    this.getItems()
   },
 
   methods: {
@@ -94,10 +102,6 @@ export default {
     ...mapActions({
       getRoute: 'druxtRouter/getRoute'
     })
-  },
-
-  watch: {
-    '$route': 'getItems'
   }
 }
 </script>
