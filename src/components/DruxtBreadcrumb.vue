@@ -1,3 +1,12 @@
+<template>
+  <component
+    :is="settings.component"
+    v-if="crumbs.length"
+    :items="crumbs"
+  />
+</template>
+
+<script>
 import { mapActions, mapState } from 'vuex'
 
 export default {
@@ -6,15 +15,13 @@ export default {
   props: {
     component: {
       type: String,
-      default: function() {
-        // @TODO - Get default from site configuration.
-        return 'div'
-      }
-    }
-  },
+      default: 'div'
+    },
 
-  created() {
-    this.getItems()
+    home: {
+      type: Boolean,
+      default: true
+    }
   },
 
   data: () => ({
@@ -31,10 +38,41 @@ export default {
       })
     },
 
+    settings() {
+      const settings = {
+        component: null,
+        home: null
+      }
+
+      for (const setting in settings) {
+        if (typeof this.$options.propsData[setting] !== 'undefined') {
+          settings[setting] = this[setting]
+          continue
+        }
+
+        if (typeof this.$druxtBreadcrumb.options[setting] !== 'undefined') {
+          settings[setting] = this.$druxtBreadcrumb.options[setting]
+          continue
+        }
+
+        settings[setting] = this[setting]
+      }
+
+      return settings
+    },
+
     ...mapState({
       route: state => state.druxtRouter.route,
       routes: state => state.druxtRouter.routes
     })
+  },
+
+  watch: {
+    '$route': 'getItems'
+  },
+
+  created() {
+    this.getItems()
   },
 
   methods: {
@@ -46,10 +84,11 @@ export default {
       if (!this.route || !Object.keys(this.route).length) return
 
       // Home crumb.
-      // @TODO - Make this configurable.
-      this.items['/'] = {
-        to: '/',
-        text: 'Home'
+      if (this.settings.home) {
+        this.items['/'] = {
+          to: '/',
+          text: 'Home'
+        }
       }
 
       // If we are at the root of the site, stop here.
@@ -89,20 +128,6 @@ export default {
     ...mapActions({
       getRoute: 'druxtRouter/getRoute'
     })
-  },
-
-  watch: {
-    '$route': 'getItems'
-  },
-
-  render: function (createElement) {
-    if (this.crumbs.length === 0) return
-
-    // @TODO - Make component configurable.
-    return createElement(this.component, {
-      props: {
-        items: this.crumbs
-      }
-    })
   }
 }
+</script>

@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import { DruxtBreadcrumb } from 'druxt-breadcrumb'
+
+import { DruxtBreadcrumbComponents } from 'druxt-breadcrumb'
 
 Vue.use({
   install: function (Vue) {
@@ -7,6 +8,14 @@ Vue.use({
     Vue._druxt_breadcrumb_installed = true
 
     // Register components.
-    Vue.component('DruxtBreadcrumb', DruxtBreadcrumb)
+    for (const component in DruxtBreadcrumbComponents) {
+      Vue.component(component, DruxtBreadcrumbComponents[component])
+    }
   }
 })
+
+export default (context, inject) => {
+  const options = <%= JSON.stringify(options.breadcrumb) %>
+
+  inject('druxtBreadcrumb', { options })
+}

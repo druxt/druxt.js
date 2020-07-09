@@ -16,10 +16,38 @@ Add module to `nuxt.config.js`
 
 ```js
 module.exports = {
+  modules: [
     ...
-    'druxt-breadcrumb'
-  ]
+    'druxt-breadcrumb',
+    'druxt-entity'
+  ],
+
+
+  druxt: {
+    baseUrl: 'https://example.com',
+    breadcrumb: {
+      component: 'b-breadcrumb'
+    }
+  }
 }
 ```
 
-**Note:** Requires [Druxt router](https://github.com/Realityloop/druxt-router) to be installed and configured.
+## Options
+
+### Base Druxt options
+
+These options are available to all Druxt modules.
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
+| `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
+
+### Druxt Breadcrumb options
+
+These options are specific to this module.
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `breadcrumb.component` | `string` | No | `div` | The component to use to render the breadcrumb. E.g., `b-breadcrumb` |
+| `breadcrumb.home` | `boolean` | No | `true` | Show optional 'Home' crumb. |

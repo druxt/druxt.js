@@ -2,7 +2,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils'
 import { DruxtRouterStore } from 'druxt-router'
 import Vuex from 'vuex'
 
-import { DruxtBreadcrumb } from '..'
+import { DruxtBreadcrumb } from '../..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -10,10 +10,16 @@ localVue.use(Vuex)
 
 let store
 
-const mountComponent = ({ path, routes }) => {
+const mountComponent = ({ path, routes, options, propsData }) => {
   // Setup mocks.
   const mocks = {
-    $route: { path }
+    $route: { path },
+    $druxtBreadcrumb: {
+      options: {
+        home: true,
+        ...options
+      }
+    }
   }
 
   if (typeof routes === 'undefined') {
@@ -33,7 +39,7 @@ const mountComponent = ({ path, routes }) => {
     store.commit('druxtRouter/setRoute', path)
   }
 
-  return shallowMount(DruxtBreadcrumb, { store, localVue, mocks })
+  return shallowMount(DruxtBreadcrumb, { store, localVue, mocks, propsData })
 }
 
 describe('DruxtBreadcrumb', () => {
@@ -69,6 +75,8 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(1)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('level 1', async () => {
@@ -91,6 +99,8 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(2)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('level 2', async () => {
@@ -113,6 +123,8 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(3)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('missing parent', async () => {
@@ -137,6 +149,8 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(2)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('404 route', async () => {
@@ -155,6 +169,8 @@ describe('DruxtBreadcrumb', () => {
 
     expect(wrapper.vm.loading).toBe(0)
     expect(wrapper.vm.crumbs).toHaveLength(0)
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('error', async () => {
@@ -180,6 +196,47 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(2)
 
     expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    // @TODO - Inconsistent behaviour between local and CI. Investigate.
+    // expect(wrapper.html()).toMatchSnapshot()
   })
 
+  test('no home', async () => {
+    const wrapper = mountComponent({ path: '/', options: { home: false } })
+
+    expect(wrapper.vm.route).toStrictEqual({
+      label: '/'
+    })
+
+    expect(Object.keys(wrapper.vm.routes)).toHaveLength(1)
+    expect(Object.keys(wrapper.vm.items)).toHaveLength(0)
+
+    expect(wrapper.vm.loading).toBe(0)
+    expect(wrapper.vm.crumbs).toHaveLength(0)
+
+    // Wait for loading to complete.
+    await localVue.nextTick()
+
+    expect(wrapper.vm.loading).toBe(0)
+    expect(wrapper.vm.crumbs).toHaveLength(0)
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  test('settings', async () => {
+    let wrapper
+    wrapper = mountComponent({
+      options: { component: 'options' },
+      propsData: { component: 'propsData' }
+    })
+    expect(wrapper.vm.settings.component).toBe('propsData')
+
+    wrapper = mountComponent({
+      options: { component: 'options' },
+    })
+    expect(wrapper.vm.settings.component).toBe('options')
+
+    wrapper = mountComponent({})
+    expect(wrapper.vm.settings.component).toBe('div')
+  })
 })

@@ -10,7 +10,7 @@ import minimist from 'minimist';
 
 const argv = minimist(process.argv.slice(2));
 
-const projectRoot = path.resolve(__dirname, '..');
+const projectRoot = path.resolve(__dirname);
 
 const baseConfig = {
   input: 'src/index.js',
@@ -81,7 +81,7 @@ if (!argv.format || argv.format === 'cjs') {
       compact: true,
       file: 'dist/druxt-breadcrumb.ssr.js',
       format: 'cjs',
-      name: 'VueDrupalEntity',
+      name: 'DruxtBreadcrumb',
       exports: 'named',
       globals,
     },
@@ -108,7 +108,7 @@ if (!argv.format || argv.format === 'iife') {
       compact: true,
       file: 'dist/druxt-breadcrumb.min.js',
       format: 'iife',
-      name: 'VueDrupalEntity',
+      name: 'DruxtBreadcrumb',
       exports: 'named',
       globals,
     },

@@ -1,8 +1,16 @@
-import DruxtBreadcrumbPlugin from '..'
+import NuxtModule from '..'
 
-const addPlugin = jest.fn()
+const mock = {
+  addPlugin: jest.fn(),
+  NuxtModule
+}
 
-test('Nuxt Plugin', () => {
-  DruxtBreadcrumbPlugin.call({ addPlugin })
-  expect(addPlugin).toHaveBeenCalled()
+test('Nuxt module', () => {
+  expect(() => { mock.NuxtModule() }).toThrow('Druxt settings missing.')
+
+  mock.options = {
+    druxt: {}
+  }
+  mock.NuxtModule()
+  expect(mock.addPlugin).toHaveBeenCalled()
 })
