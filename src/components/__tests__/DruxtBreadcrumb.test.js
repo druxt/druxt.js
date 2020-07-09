@@ -2,7 +2,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils'
 import { DruxtRouterStore } from 'druxt-router'
 import Vuex from 'vuex'
 
-import { DruxtBreadcrumb } from '..'
+import { DruxtBreadcrumb } from '../..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

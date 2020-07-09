@@ -1,7 +1,9 @@
 import { resolve } from 'path'
 
-import DruxtBreadcrumb from './component.js'
-export { DruxtBreadcrumb }
+export * from './components'
+
+import * as DruxtBreadcrumbComponents from './components'
+export { DruxtBreadcrumbComponents }
 
 export default function (moduleOptions = {}) {
   // Add plugin.
