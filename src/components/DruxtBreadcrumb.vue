@@ -1,3 +1,12 @@
+<template>
+  <component
+    :is="component"
+    v-if="crumbs.length"
+    :items="crumbs"
+  />
+</template>
+
+<script>
 import { mapActions, mapState } from 'vuex'
 
 export default {
@@ -11,10 +20,6 @@ export default {
         return 'div'
       }
     }
-  },
-
-  created() {
-    this.getItems()
   },
 
   data: () => ({
@@ -35,6 +40,14 @@ export default {
       route: state => state.druxtRouter.route,
       routes: state => state.druxtRouter.routes
     })
+  },
+
+  watch: {
+    '$route': 'getItems'
+  },
+
+  created() {
+    this.getItems()
   },
 
   methods: {
@@ -89,20 +102,6 @@ export default {
     ...mapActions({
       getRoute: 'druxtRouter/getRoute'
     })
-  },
-
-  watch: {
-    '$route': 'getItems'
-  },
-
-  render: function (createElement) {
-    if (this.crumbs.length === 0) return
-
-    // @TODO - Make component configurable.
-    return createElement(this.component, {
-      props: {
-        items: this.crumbs
-      }
-    })
   }
 }
+</script>
