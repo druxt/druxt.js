@@ -19,6 +19,11 @@ export default {
         // @TODO - Get default from site configuration.
         return 'div'
       }
+    },
+
+    home: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -34,6 +39,18 @@ export default {
       return Object.keys(this.items).sort((a, b) => a.length - b.length).map(key => {
         return this.items[key]
       })
+    },
+
+    showHome() {
+      if (typeof this.$options.propsData.home !== 'undefined') {
+        return this.home
+      }
+
+      if (typeof this.$druxtBreadcrumb.options.home !== 'undefined') {
+        return this.$druxtBreadcrumb.options.home
+      }
+
+      return this.home
     },
 
     ...mapState({
@@ -59,10 +76,11 @@ export default {
       if (!this.route || !Object.keys(this.route).length) return
 
       // Home crumb.
-      // @TODO - Make this configurable.
-      this.items['/'] = {
-        to: '/',
-        text: 'Home'
+      if (this.showHome) {
+        this.items['/'] = {
+          to: '/',
+          text: 'Home'
+        }
       }
 
       // If we are at the root of the site, stop here.

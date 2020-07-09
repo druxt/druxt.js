@@ -10,3 +10,9 @@ Vue.use({
     Vue.component('DruxtBreadcrumb', DruxtBreadcrumb)
   }
 })
+
+export default (context, inject) => {
+  const options = <%= JSON.stringify(options.breadcrumb) %>
+
+  inject('druxtBreadcrumb', { options })
+}
