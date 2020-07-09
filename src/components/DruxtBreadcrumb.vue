@@ -1,3 +1,7 @@
+<template>
+  <component :is="component" v-if="crumbs.length" :items="crumbs" />
+</template>
+
 <script>
 import { mapActions, mapState } from 'vuex'
 
@@ -94,17 +98,6 @@ export default {
 
   watch: {
     '$route': 'getItems'
-  },
-
-  render: function (createElement) {
-    if (this.crumbs.length === 0) return
-
-    // @TODO - Make component configurable.
-    return createElement(this.component, {
-      props: {
-        items: this.crumbs
-      }
-    })
   }
 }
 </script>
