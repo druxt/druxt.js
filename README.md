@@ -26,7 +26,7 @@ module.exports = {
   druxt: {
     baseUrl: 'https://example.com',
     breadcrumb: {
-      home: false
+      component: 'b-breadcrumb'
     }
   }
 }
@@ -49,4 +49,5 @@ These options are specific to this module.
 
 | Option | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
+| `breadcrumb.component` | `string` | No | `div` | The component to use to render the breadcrumb. E.g., `b-breadcrumb` |
 | `breadcrumb.home` | `boolean` | No | `true` | Show optional 'Home' crumb. |

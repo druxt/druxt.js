@@ -1,6 +1,6 @@
 <template>
   <component
-    :is="component"
+    :is="settings.component"
     v-if="crumbs.length"
     :items="crumbs"
   />
@@ -15,10 +15,7 @@ export default {
   props: {
     component: {
       type: String,
-      default: function() {
-        // @TODO - Get default from site configuration.
-        return 'div'
-      }
+      default: 'div'
     },
 
     home: {
@@ -41,16 +38,27 @@ export default {
       })
     },
 
-    showHome() {
-      if (typeof this.$options.propsData.home !== 'undefined') {
-        return this.home
+    settings() {
+      const settings = {
+        component: null,
+        home: null
       }
 
-      if (typeof this.$druxtBreadcrumb.options.home !== 'undefined') {
-        return this.$druxtBreadcrumb.options.home
+      for (const setting in settings) {
+        if (typeof this.$options.propsData[setting] !== 'undefined') {
+          settings[setting] = this[setting]
+          continue
+        }
+
+        if (typeof this.$druxtBreadcrumb.options[setting] !== 'undefined') {
+          settings[setting] = this.$druxtBreadcrumb.options[setting]
+          continue
+        }
+
+        settings[setting] = this[setting]
       }
 
-      return this.home
+      return settings
     },
 
     ...mapState({
@@ -76,7 +84,7 @@ export default {
       if (!this.route || !Object.keys(this.route).length) return
 
       // Home crumb.
-      if (this.showHome) {
+      if (this.settings.home) {
         this.items['/'] = {
           to: '/',
           text: 'Home'
