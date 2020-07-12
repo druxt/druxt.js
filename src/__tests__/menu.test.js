@@ -25,8 +25,16 @@ describe('DruxtMenu', () => {
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL, headers })
   })
 
-  test('get', async () => {
-    const result = await menu.get('main')
-    // expect(result).toBe(1)
+  test('get - getMenuLinkContent', async () => {
+    const { entities } = await menu.get('main')
+
+    expect(entities.length).toBe(4)
+  })
+
+  test('get - getJsonApiMenuItems', async () => {
+    const jsonApiMenu = new DruxtMenu(baseURL, { menu: { jsonApiMenuItems: true } })
+    const { entities } = await jsonApiMenu.get('main')
+
+    expect(entities.length).toBe(3)
   })
 })
