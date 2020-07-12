@@ -243,20 +243,33 @@ class DruxtRouter {
    * @param {*} query
    */
   async getResources (resource, query, options = {}) {
+    let resources = []
+
     const { href } = await this.getIndex(resource)
     if (!href) {
       return false
     }
 
-    const url = this.buildQueryUrl(href, query)
+    let url = this.buildQueryUrl(href, query)
 
     this.addHeaders(options.headers)
 
-    const res = await this.axios.get(url)
+    let loading = true
+    while (loading) {
+      const res = await this.axios.get(url)
 
-    this.checkPermissions(res)
+      this.checkPermissions(res)
 
-    return res.data.data
+      resources = resources.concat(res.data.data)
+
+      if (options.all && res.data.links.next) {
+        url = res.data.links.next.href
+      } else {
+        loading = false
+      }
+    }
+
+    return resources
   }
 
   /**
