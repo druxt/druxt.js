@@ -20,6 +20,10 @@ export default (context, inject) => {
   options.endpoint = '<%= options.endpoint %>'
   <% } %>
 
+  <% if (options.menu) { %>
+  options.menu = <%= JSON.stringify(options.menu) %>
+  <% } %>
+
   const druxtMenu = new DruxtMenu(baseUrl, options)
   inject('druxtMenu', druxtMenu)
 }
