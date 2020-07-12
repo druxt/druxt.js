@@ -17,7 +17,10 @@ localVue.component('druxt-menu-item', DruxtMenuItemComponent)
 
 let store
 
-const mocks = { $route: { path: '/' } }
+const mocks = {
+  $route: { path: '/' }
+}
+
 const mountComponent = (options = {}) =>
   shallowMount(DruxtMenuComponent, { ...options, store, localVue, mocks })
 
@@ -38,14 +41,19 @@ describe('DruxtMenu', () => {
     // Wait for async Axios get requests.
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     await localVue.nextTick()
+    await localVue.nextTick()
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     await localVue.nextTick()
+    await localVue.nextTick()
 
-    // Expect 10 items from the store.
-    expect(Object.keys(wrapper.vm.entities).length).toBe(10)
+    // Expect 4 items from the store.
+    expect(Object.keys(wrapper.vm.entities).length).toBe(4)
 
-    // Expect 2 items at the root level.
-    expect(wrapper.vm.items.length).toBe(2)
+    // Expect 3 items at the root level.
+    expect(wrapper.vm.items.length).toBe(3)
+
+    // Expect the last item to have 1 child.
+    expect(wrapper.vm.items[2].children.length).toBe(1)
 
     // Expect trail.
     expect(wrapper.vm.trail).toStrictEqual(['/'])
@@ -59,23 +67,25 @@ describe('DruxtMenu', () => {
   })
 
   test('depth', async () => {
-    const propsData = {
-      depth: 2
-    }
+    const propsData = { depth: 1 }
     const wrapper = mountComponent({ propsData })
-    // const wrapper = shallowMount(DruxtMenuComponent, { propsData, store, localVue })
 
     // Wait for async Axios get requests.
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     await localVue.nextTick()
+    await localVue.nextTick()
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     await localVue.nextTick()
+    await localVue.nextTick()
 
-    // Expect 10 items from the store.
-    expect(Object.keys(wrapper.vm.entities).length).toBe(10)
+    // Expect 4 items from the store.
+    expect(Object.keys(wrapper.vm.entities).length).toBe(4)
 
-    // Expect 2 items at the root level.
-    expect(wrapper.vm.items.length).toBe(2)
+    // Expect 3 items at the root level.
+    expect(wrapper.vm.items.length).toBe(3)
+
+    // Expect the last item to have no children.
+    expect(wrapper.vm.items[2].children.length).toBe(0)
 
     // Expect trail.
     expect(wrapper.vm.trail).toStrictEqual(['/'])

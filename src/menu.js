@@ -1,5 +1,5 @@
-import axios from 'axios'
-import qs from 'qs'
+import { DruxtRouter } from 'druxt-router'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
 class DruxtMenu {
   /**
@@ -14,52 +14,19 @@ class DruxtMenu {
       throw new Error('The \'baseURL\' parameter is required.')
     }
 
-    // Setup Axios.
-    let axiosSettings = { baseURL }
-    if (typeof options.axios === 'object') {
-      axiosSettings = Object.assign(axiosSettings, options.axios)
-    }
-    this.axios = axios.create(axiosSettings)
-
-    this.options = {
-      endpoint: '/jsonapi',
-
-      ...options
-    }
+    // Setup Druxt Router.
+    this.druxtRouter = new DruxtRouter(baseURL, options)
   }
 
-  // @TODO - Move to DruxtRouter::getResource.
   async get(menuName) {
-    let entities = []
+    const resource = 'menu_link_content--menu_link_content'
 
-    const query = {
-      fields: {
-        // @TODO - Add support for customizable resource name?
-        'menu_link_content--menu_link_content': 'description,link,menu_name,parent,title,weight'
-      },
-      filter: {
-        enabled: 1,
-        menu_name: menuName
-      }
-    }
+    const query = new DrupalJsonApiParams()
+      .addFilter('enabled', '1')
+      .addFilter('menu_name', menuName)
+      .addFields(resource, ['description', 'link', 'menu_name', 'parent', 'title', 'weight'])
 
-    // @TODO - Add support for customizable resource name.
-    let url = `${this.options.endpoint}/menu_link_content/menu_link_content?${qs.stringify(query)}`
-
-    let loading = true
-    while (loading) {
-      const results = await this.axios.get(url)
-
-      entities = entities.concat(results.data.data)
-
-      if (results.data.links.next) {
-        url = results.data.links.next.href
-      }
-
-      else {
-        loading = false
-      }
-    }
+    const entities = await this.druxtRouter.getResources(resource, query, { all: true })
 
     return { entities }
   }

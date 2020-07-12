@@ -113,7 +113,9 @@ export default {
           parent = 'menu_link_content:' + entity.id
         }
 
-        const entities = this.getEntitiesByFilter(key => this.entities[key].attributes.menu_name === this.name && this.entities[key].attributes.parent === parent)
+        const entities = this.getEntitiesByFilter(key => {
+          return this.entities[key].attributes.menu_name === this.name && this.entities[key].attributes.parent === parent
+        })
 
         for (const key in entities) {
           const entity = entities[key]

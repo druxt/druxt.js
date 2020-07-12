@@ -1,42 +1,28 @@
+import fs from 'fs'
+import path from 'path'
+import md5 from 'md5'
 import mockAxios from 'jest-mock-axios'
-import qs from 'qs'
 
 mockAxios.get = jest.fn((url, options) => {
-  const urlParts = url.split('?')
-  const query = qs.parse(urlParts[1])
+  let data = null
+  let status = 404
+  const validateStatus = true
 
-  let offset = 0
-  const limit = 5
+  const file = path.resolve('src/__fixtures__/data', md5(url) + '.json')
 
-  const links = {}
-  if (!query.page) {
-    offset = limit
-    links.next = links.last = {
-      href: urlParts[0] + '?' + qs.stringify({
-        ...query,
-        'page[offset]': offset,
-        'page[limit]': limit
-      })
-    }
+  if (!fs.existsSync(file)) {
+    data = { file, url }
+    return { data, status, validateStatus }
   }
 
-  let data = []
-  for (let id = offset; id < offset + limit ; id++) {
-    let parent = `menu_link_content:${id - 1}`
-    if (id === offset) {
-      parent = null
-    }
+  data = require(file)
+  status = 200
 
-    data[id] = {
-      id,
-      attributes: {
-        menu_name: 'main',
-        parent
-      }
-    }
+  if (options && options.validateStatus) {
+    expect(options.validateStatus(status)).toBe(true)
   }
 
-  return { data: { data, links } }
+  return { data, status, validateStatus }
 })
 
 export default mockAxios
