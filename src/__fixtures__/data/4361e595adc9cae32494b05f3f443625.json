@@ -167,6 +167,9 @@
     "taxonomy_vocabulary--taxonomy_vocabulary":{
       "href":"\/jsonapi\/taxonomy_vocabulary\/taxonomy_vocabulary"
     },
+    "test--all":{
+      "href":"\/jsonapi\/test\/all"
+    },
     "tour--tour":{
       "href":"\/jsonapi\/tour\/tour"
     },
