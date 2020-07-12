@@ -107,13 +107,13 @@ describe('DruxtRouter', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
 
-    expect(Object.keys(index).length).toBe(53)
+    expect(Object.keys(index).length).toBe(54)
     expect(index[Object.keys(index)[0]]).toHaveProperty('href')
 
     const cachedIndex = await router.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
 
-    expect(Object.keys(cachedIndex).length).toBe(53)
+    expect(Object.keys(cachedIndex).length).toBe(54)
   })
 
   test('getIndex - resource', async () => {
@@ -171,7 +171,7 @@ describe('DruxtRouter', () => {
     expect(empty).toBe(false)
   })
 
-  test('getResource', async () => {
+  test('getResources', async () => {
     const resources = await router.getResources('node--page')
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page')
     expect(resources.length).toBe(1)
@@ -181,6 +181,9 @@ describe('DruxtRouter', () => {
 
     const noResource = await router.getResources()
     expect(noResource).toBe(false)
+
+    await router.getResources('test--all', null, { all: true })
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/test/all?next')
   })
 
   test('getResourceByRoute', async () => {

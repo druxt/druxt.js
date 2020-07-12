@@ -79,6 +79,10 @@ class DruxtRouter {
    * @param {*} query
    */
   buildQueryUrl (url, query) {
+    if (!query) {
+      return url
+    }
+
     // If Query is string...
     if (typeof query === 'string') {
       return query.charAt(0) === '?' ? url + query : [url, query].join('?')
@@ -262,7 +266,7 @@ class DruxtRouter {
 
       resources = resources.concat(res.data.data)
 
-      if (options.all && res.data.links.next) {
+      if (options.all && res.data && res.data.links && res.data.links.next) {
         url = res.data.links.next.href
       } else {
         loading = false
