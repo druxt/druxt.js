@@ -49,6 +49,13 @@ describe('DruxtMenu', () => {
 
     // Expect trail.
     expect(wrapper.vm.trail).toStrictEqual(['/'])
+
+    const watch = {
+      ...DruxtMenuComponent.watch,
+      $forceUpdate: jest.fn()
+    }
+    watch.entities()
+    expect(watch.$forceUpdate).toHaveBeenCalled()
   })
 
   test('depth', async () => {
