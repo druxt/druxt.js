@@ -1,0 +1,98 @@
+{
+  "name": "druxt",
+  "version": "0.1.0",
+  "description": "The Drupal powered Nuxt.js framework",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "keywords": [
+    "drupal",
+    "druxt",
+    "jsonapi",
+    "nuxt"
+  ],
+  "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
+  },
+  "homepage": "https://github.com/druxt/druxt.js/druxt#readme",
+  "main": "dist/druxt.ssr.js",
+  "module": "dist/druxt.esm.js",
+  "unpkg": "dist/druxt.min.js",
+  "files": [
+    "dist",
+    "nuxt"
+  ],
+  "scripts": {
+    "build": "cross-env NODE_ENV=production rollup -c",
+    "build:es": "cross-env NODE_ENV=production rollup -c --format es",
+    "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
+    "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
+    "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
+    "lint": "eslint --ext .js,.vue src",
+    "start": "npm run dev",
+    "test": "jest"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "dist/*"
+    ]
+  },
+  "dependencies": {
+    "consola": "^2.14.0",
+    "druxt-blocks": "^0.4.0",
+    "druxt-breadcrumb": "^0.5.0",
+    "druxt-entity": "^0.5.1",
+    "druxt-menu": "^0.3.0",
+    "druxt-router": "^0.15.0",
+    "druxt-schema": "^0.4.0",
+    "druxt-search": "^0.1.0",
+    "druxt-views": "^0.3.0",
+    "md5": "^2.2.1",
+    "vuex": "^3.5.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@rollup/plugin-alias": "^2.2.0",
+    "@rollup/plugin-buble": "^0.20.0",
+    "@rollup/plugin-replace": "^2.2.1",
+    "@vue/test-utils": "^1.0.0-beta.32",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.1.0",
+    "bootstrap-vue": "^2.15.0",
+    "cross-env": "^6.0.3",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "jest": "^25.1.0",
+    "jest-mock-axios": "^3.2.0",
+    "minimist": "^1.2.0",
+    "nodemon": "^2.0.2",
+    "rollup": "^1.26.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-terser": "^5.1.2",
+    "rollup-plugin-vue": "^5.1.6",
+    "vue": "^2.6.10",
+    "vue-jest": "^3.0.5",
+    "vue-template-compiler": "^2.6.11",
+    "vue-test-utils": "^1.0.0-beta.11"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      ".*\\.(vue)$": "vue-jest",
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+    }
+  }
+}
