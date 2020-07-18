@@ -12,7 +12,7 @@
 - Drupal path alias and redirect compatible router.
 - Entity / Field render system powered by Drupal display modes.
 - Block render system with support for regions and custom content blocks.
-- Views and View blocks.
+- Views and Views blocks.
 - On-demand JSON API resource engine with Vuex.
 - Breadrumbs, Menus, Search API and more.
 
@@ -37,6 +37,8 @@ module.exports = {
 }
 ```
 
+Ensure you have activated the [Nuxt Vuex store](https://nuxtjs.org/guide/vuex-store/).
+
 ## Options
 
 ### Base Druxt options
@@ -47,3 +49,4 @@ These options are available to all Druxt modules.
 | --- | --- | --- | --- | --- |
 | `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
 | `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
+| `endpoint` | `string` | No | `/jsonapi` | JSON:API Endpoint of the Drupal installation. |
