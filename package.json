@@ -41,7 +41,6 @@
     ]
   },
   "dependencies": {
-    "consola": "^2.14.0",
     "druxt-blocks": "^0.4.0",
     "druxt-breadcrumb": "^0.5.0",
     "druxt-entity": "^0.5.1",
