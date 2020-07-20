@@ -25,8 +25,5 @@ describe('Druxt.js', () => {
 
     // Expect 8 modules to be added.
     expect(mock.addModule).toHaveBeenCalledTimes(8)
-
-    // Expect the builder hook to be added.
-    expect(mock.nuxt.hook).toHaveBeenCalledTimes(1)
   })
 })
