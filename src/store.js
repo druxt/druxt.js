@@ -7,9 +7,7 @@
  */
 
 /**
- * Druxt Vuex store.
- *
- * @param {*} param0
+ * Register the Druxt Vuex store with the Nuxt.js.
  */
 const DruxtStore = ({ store }) => {
   if (typeof store === 'undefined') {
@@ -20,12 +18,25 @@ const DruxtStore = ({ store }) => {
   const module = {
     namespaced: true,
 
+    /**
+     * @name State
+     * @type {object}
+     * @property {object} settings
+     */
     state: () => ({
       settings: {}
     }),
 
+    /**
+     * @name Mutations
+     * @type {object}
+     */
     mutations: {},
 
+    /**
+     * @name Actions
+     * @type {object}
+     */
     actions: {}
   }
 

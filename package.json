@@ -33,7 +33,7 @@
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
     "docs:dev": "npm run jsdocs:build && vuepress dev docs",
     "docs:build": "jsdocs:build && vuepress build docs",
-    "jsdocs:build": "vuepress-jsdoc -s src -d docs -f api",
+    "jsdocs:build": "vuepress-jsdoc -s src -d docs -f api -c jsdoc.json",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
@@ -71,6 +71,7 @@
     "jest": "^25.1.0",
     "jest-junit": "^11.0.1",
     "jest-mock-axios": "^3.2.0",
+    "jsdoc-vuex-plugin": "^1.0.0",
     "minimist": "^1.2.0",
     "nodemon": "^2.0.2",
     "rollup": "^1.26.3",

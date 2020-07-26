@@ -11,9 +11,19 @@ export { Druxt } from './druxt.js'
 export { DruxtStore } from './store'
 
 /**
- * Adds Druxt modules to Nuxt.js application.
+ * Nuxt.js module function.
  *
- * @param {*} moduleOptions
+ * Adds the core Druxt modules to the Nuxt.js application:
+ * - [druxt-blocks](http://npmjs.com/package/druxt-blocks)
+ * - [druxt-breadcrumb](http://npmjs.com/package/druxt-breadcrumb)
+ * - [druxt-entity](http://npmjs.com/package/druxt-entity)
+ * - [druxt-menu](http://npmjs.com/package/druxt-menu)
+ * - [druxt-router](http://npmjs.com/package/druxt-router)
+ * - [druxt-schema](http://npmjs.com/package/druxt-schema)
+ * - [druxt-search](http://npmjs.com/package/druxt-search)
+ * - [druxt-views](http://npmjs.com/package/druxt-views)
+ *
+ * @param {object} moduleOptions - The Nuxt.js module options.
  */
 const DruxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
