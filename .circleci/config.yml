@@ -43,7 +43,7 @@ jobs:
           at: ~/repo
 
       - run:
-          name: Build with vupress
+          name: Build with vuepress
           command: npm run docs:build
 
       - store_artifacts:
@@ -57,11 +57,19 @@ jobs:
 
       - run:
           name: Run tests
-          command: npm test
+          command: npm test -- --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
 
       - run:
           name: Upload coverage report
           command: npx codecov
+  
+      - store_test_results:
+          path: ./reports/junit/
+
+      - store_artifacts:
+          path: ./reports/junit
 
   deploy:
     <<: *defaults
