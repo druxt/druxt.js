@@ -1,6 +1,6 @@
+const { sidebarTree } = require('../api/config');
+
 module.exports = {
-  title: 'Druxt.js',
-  description: 'Nuxt.js in the front, Drupal in the back.',
   head: [
     ['link', { rel: "apple-touch-icon", sizes: "57x57", href: "/apple-icon-57x57.png" } ],
     ['link', { rel: "apple-touch-icon", sizes: "60x60", href: "/apple-icon-60x60.png" } ],
@@ -20,6 +20,12 @@ module.exports = {
     ['meta', { name: "msapplication-TileImage", content: "/ms-icon-144x144.png" } ],
     ['meta', { name: "theme-color", content: "#ffffff" } ],
   ],
+  locales: {
+    '/': {
+      title: 'Druxt.js',
+      description: 'Nuxt.js in the front, Drupal in the back.',
+    }
+  },
   markdown: {
     lineNumbers: true
   },
@@ -27,20 +33,26 @@ module.exports = {
     docsDir: 'docs',
     editLinks: true,
     logo: '/logo.svg',
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Guide', link: '/guide/' },
-    ],
+    locales: {
+      '/': {
+        ariaLabel: 'Languages',
+        label: 'English',
+        nav: [
+          { text: 'Home', link: '/' },
+          { text: 'Guide', link: '/guide/getting-started' },
+          { text: 'API', link: '/api/' },
+        ],
+        selectText: 'Languages',
+        sidebar: Object.assign({
+          '/guide/': [{
+            title: 'Guide',
+            collapsable: false,
+            children: ['/guide/getting-started']
+          }]
+        }, sidebarTree('Introduction'))
+      },
+    },
     repo: 'druxt/druxtjs',
-    sidebar: [
-      {
-        title: 'Guide',
-        collapsable: false,
-        children: [
-          '/guide/getting-started',
-        ]
-      }
-    ],
     smoothScroll: true,
   }
 }

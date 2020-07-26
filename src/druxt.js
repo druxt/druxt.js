@@ -1,11 +1,23 @@
+/**
+ * @vuepress
+ * ---
+ * title: Druxt
+ * headline: The Druxt class
+ * ---
+ */
+
 import { DruxtRouter } from 'druxt-router'
 
+/**
+ * Druxt class.
+ */
 class Druxt {
+
   /**
-   * Constructor.
+   * Druxt constructor.
    *
-   * @param string baseURL
-   * @param object options
+   * @param {string} baseURL
+   * @param {object} options
    */
   constructor (baseURL, options = {}) {
     // Check for URL.
@@ -13,12 +25,23 @@ class Druxt {
       throw new Error('The \'baseURL\' parameter is required.')
     }
 
+    /**
+     * Druxt.js options.
+     *
+     * @type {object}
+     * @public
+     */
     this.options = {
       endpoint: 'jsonapi',
       ...options
     }
 
-    // Setup Druxt Router.
+    /**
+     * Druxt router instance.
+     *
+     * @type {DruxtRouter}
+     * @public
+     */
     this.druxtRouter = new DruxtRouter(baseURL, options)
   }
 }

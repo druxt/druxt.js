@@ -31,8 +31,9 @@
     "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
+    "docs:dev": "npm run jsdocs:build && vuepress dev docs",
+    "docs:build": "jsdocs:build && vuepress build docs",
+    "jsdocs:build": "vuepress-jsdoc -s src -d docs -f api",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
@@ -80,7 +81,8 @@
     "vue-jest": "^3.0.5",
     "vue-template-compiler": "^2.6.11",
     "vue-test-utils": "^1.0.0-beta.11",
-    "vuepress": "^1.5.2"
+    "vuepress": "^1.5.2",
+    "vuepress-jsdoc": "^3.0.0"
   },
   "engines": {
     "node": ">=8"

@@ -1,13 +1,25 @@
+/**
+ * @vuepress
+ * ---
+ * title: DruxtModule
+ * headline: The Nuxt.js module
+ * ---
+ */
+
 export { Druxt } from './druxt.js'
 
 export { DruxtStore } from './store'
 
-export default function (moduleOptions = {}) {
+/**
+ * Adds Druxt modules to Nuxt.js application.
+ *
+ * @param {*} moduleOptions
+ */
+const DruxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
   }
-  const options = this.options.druxt
 
   // Add Druxt modules.
   const modules = [
@@ -27,3 +39,5 @@ export default function (moduleOptions = {}) {
   // Enable the Vuex store.
   this.options.store = true
 }
+
+export default DruxtModule
