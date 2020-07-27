@@ -23,7 +23,7 @@ module.exports = {
   locales: {
     '/': {
       title: 'Druxt.js Router',
-      description: 'A Vuex powered JSON:API client for your Drupal backend.',
+      description: 'Simple decoupled Drupal routing for Nuxt.js',
     }
   },
   markdown: {
@@ -43,6 +43,7 @@ module.exports = {
         nav: [
           { text: 'Home', link: '/' },
           { text: 'Guide', link: '/guide/getting-started' },
+          { text: 'API', link: '/api/' },
         ],
         selectText: 'Languages',
         sidebar: Object.assign({

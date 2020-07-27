@@ -1,22 +1,45 @@
 /**
  * @vuepress
  * ---
- * title: Mixin
+ * title: DruxtRouterEntityMixin
  * ---
  */
 
 import { mapActions, mapState } from 'vuex'
 
 /**
+ * The DruxtRouterEntityMixin Vue.js mixin provides easy integration with the Druxt.js Router Vuex store, including on-demand loading of JSON:API resources.
+ *
+ * @example
+ * <template>
+ *   <div v-if="entity && !loading">
+ *     {{ entity }}
+ *   </div>
+ * </template>
+ *
+ * <script>
+ * // Import mixin.
+ * import { DruxtRouterEntityMixin } from 'druxt-router'
+ *
+ * export default {
+ *   // Set mixin.
+ *   mixins: [DruxtRouterEntityMixin]
+ * }
+ * </script>
+ *
  * @mixin
  */
 const DruxtRouterEntityMixin = {
   /**
-   * Vue properties.
+   * Vue.js Properties.
    */
   props: {
     /**
      * The Drupal display mode.
+     *
+     * @example
+     * "default"
+     *
      * @type {string}
      */
     mode: {
@@ -26,6 +49,10 @@ const DruxtRouterEntityMixin = {
 
     /**
      * The JSON:API resource type.
+     *
+     * @example
+     * "node--article"
+     *
      * @type {string}
      */
     type: {
@@ -35,6 +62,10 @@ const DruxtRouterEntityMixin = {
 
     /**
      * The Drupal entity UUID.
+     *
+     * @example
+     * "dfa359f9-0f45-4287-84a3-e5df323198dd"
+     *
      * @type {string}
      */
     uuid: {
@@ -43,20 +74,30 @@ const DruxtRouterEntityMixin = {
     }
   },
 
+  /**
+   * Vue.js Data object.
+   *
+   * Used for on-demand JSON:API resource loading.
+   *
+   * @property {object} entity - The Drupal entity JSON:API resource.
+   * @property {boolean} loading - The loading state.
+   */
   data: () => ({
     entity: false,
     loading: true
   }),
 
   /**
-   * Lazy load JSON:API resource using props.
+   * Loads the JSON:API resource via the Vuex store.
    */
   created () {
+    // Use resource from Vuex store if available.
     if (typeof this.entities[this.uuid] !== 'undefined') {
       this.entity = this.entities[this.uuid]
       return
     }
 
+    // Otherwise invoke getEntity() to retrieve it from Drupal.
     if (!this.entity && this.uuid && this.type) {
       this.getEntity({ id: this.uuid, type: this.type }).then((res) => {
         this.entity = res
@@ -65,12 +106,27 @@ const DruxtRouterEntityMixin = {
     }
   },
 
+  /**
+   * Vue.js Computed properties.
+   *
+   * - Maps Vuex `entities` state to `this->entities`.
+   *
+   * @property {object} entities - The mapped Druxt.js Router Vuex `entities` state.
+   * @see {@link store|src/store.js}
+   */
   computed: {
     ...mapState({
       entities: state => state.druxtRouter.entities
     })
   },
 
+  /**
+   * Vue.js Methods.
+   *
+   * - Maps Vuex `druxtRouter/getEntity` action to `this->getEntity()`.
+   *
+   * @see {@link store|src/store.js}
+   */
   methods: {
     ...mapActions({
       getEntity: 'druxtRouter/getEntity'

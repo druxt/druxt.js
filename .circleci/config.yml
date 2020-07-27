@@ -64,7 +64,7 @@ jobs:
       - run:
           name: Upload coverage report
           command: npx codecov
-  
+
       - store_test_results:
           path: ./reports/junit/
 

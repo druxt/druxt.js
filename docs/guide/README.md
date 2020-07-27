@@ -4,9 +4,7 @@ title: Introduction
 
 # Druxt.js Router
 
-The Druxt.js Router provides a [Vuex](https://vuex.vuejs.org) powered JSON:API client for your [Drupal](https://drupal.org) backend.
-
-It provides an out of the box
+The Druxt.js Router brings simple decoupled [Drupal](https://drupal.org) routing to your Nuxt.js application with the power of Drupal's JSON:API and [Vuex](https://vuex.vuejs.org).
 
 
 ## Features

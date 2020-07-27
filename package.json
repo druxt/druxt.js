@@ -1,7 +1,7 @@
 {
   "name": "druxt-router",
   "version": "0.15.0",
-  "description": "The Druxt.js Router provides a Vuex powered JSON:API client for your Drupal backend.",
+  "description": "Simple decoupled Drupal routing for Nuxt.js.",
   "files": [
     "dist",
     "nuxt"

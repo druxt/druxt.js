@@ -1,12 +1,12 @@
 /**
  * @vuepress
  * ---
- * title: Vuex store
+ * title: DruxtRouterStore
  * ---
  */
 
 /**
- * Register the Druxt Router Vuex store with the Nuxt.js.
+ * Registers the Druxt Router Vuex store with the Nuxt.js.
  */
 const DruxtRouterStore = ({ store }) => {
   if (typeof store === 'undefined') {

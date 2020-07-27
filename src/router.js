@@ -1,7 +1,7 @@
 /**
  * @vuepress
  * ---
- * title: DruxtRouter class
+ * title: DruxtRouter
  * ---
  */
 
@@ -9,6 +9,11 @@ import { stringify } from 'querystring'
 import axios from 'axios'
 import Url from 'url-parse'
 
+/**
+ * DruxtRouter class.
+ *
+ * Provides core Drupal JSON:API query functionality.
+ */
 class DruxtRouter {
   /**
    * DruxtRouter constructor.
@@ -21,10 +26,10 @@ class DruxtRouter {
    * const router = new DruxtRouter('https://example.com', {})
    *
    * @param {string} baseURL - The Drupal base URL.
-   * @param {object} options - Druxt Router options.
-   * @param {object} options.axios - Axios instance settings.
-   * @param {string} options.endpoint - The JSON:API endpoint (e.g, 'jsonapi').
-   * @param {array} options.types - Array of Druxt Router type definitions.
+   * @param {object} [options] - Druxt Router options.
+   * @param {object} [options.axios] - Axios instance settings.
+   * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
+   * @param {array} [options.types] - Array of Druxt Router type definitions.
    */
   constructor (baseURL, options = {}) {
     // Check for URL.
@@ -96,7 +101,7 @@ class DruxtRouter {
    * @example
    * router.addHeaders({ 'Authorization': `Basic ${token}` })
    *
-   * @param {object} headers
+   * @param {object} headers - An object containing HTTP headers.
    */
   addHeaders (headers) {
     if (typeof headers === 'undefined') {
@@ -117,7 +122,7 @@ class DruxtRouter {
    * const queryUrl = router.buildQueryUrl(resourceUrl, query)
    *
    * @param {string} url - The base query URL.
-   * @param {string|object|DrupalJsonApiParams} query - A correctly formatted JSON:API query string, object or [DrupalJsonApiParams](https://www.npmjs.com/package/drupal-jsonapi-params) object.
+   * @param {string|object} [query] - A correctly formatted JSON:API query string or object.
    *
    * @return {string} The URL with query string.
    */
@@ -150,7 +155,7 @@ class DruxtRouter {
    *
    * @todo - Move this to utils?
    *
-   * @param {object} res
+   * @param {object} res - Axios GET request response object.
    *
    * @private
    */
@@ -326,9 +331,9 @@ class DruxtRouter {
    * const resources = await router.getResources('node--article', query, { all: true })
    *
    * @param {string} resource - The JSON:API resource type.
-   * @param {string|object|DrupalJsonApiParams} query - A correctly formatted JSON:API query string, object or [DrupalJsonApiParams](https://www.npmjs.com/package/drupal-jsonapi-params) object.
-   * @param {object} options
-   * @param {boolean} options.all - Load all results.
+   * @param {string|object} query - A JSON:API query string or object.
+   * @param {object} [options]
+   * @param {boolean} [options.all=false] - Load all results.
    */
   async getResources (resource, query, options = {}) {
     let resources = []

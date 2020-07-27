@@ -1,12 +1,10 @@
-![Druxt.js](./docs/.vuepress/public/logo.svg)
-
 # Druxt.js Router
 
 [![CircleCI](https://circleci.com/gh/druxt/druxt-router.svg?style=svg)](https://circleci.com/gh/druxt/druxt-router)
 [![Known Vulnerabilities](https://snyk.io//test/github/druxt/druxt-router/badge.svg?targetFile=package.json)](https://snyk.io//test/github/druxt/druxt-router?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-router/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-router)
 
-The Druxt.js Router provides a [Vuex](https://vuex.vuejs.org) powered JSON:API client for your [Drupal](https://drupal.org) backend.
+Simple decoupled [Drupal](https://drupal.org) routing for your [Nuxt.js](https://nuxtjs.org) application.
 
 ## Druxt.js
 
