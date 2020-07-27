@@ -1,7 +1,7 @@
 {
   "name": "druxt-router",
   "version": "0.15.0",
-  "description": "Provides a Nuxt <-> Drupal router.",
+  "description": "The Druxt.js Router provides a Vuex powered JSON:API client for your Drupal backend.",
   "files": [
     "dist",
     "nuxt"
@@ -10,14 +10,17 @@
   "module": "dist/druxt-router.esm.js",
   "unpkg": "dist/druxt-router.min.js",
   "scripts": {
-    "lint": "eslint --ext .js,.vue src",
-    "start": "npm run dev",
-    "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "test": "jest",
     "build": "cross-env NODE_ENV=production rollup -c",
     "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
     "build:es": "cross-env NODE_ENV=production rollup -c --format es",
-    "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife"
+    "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
+    "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
+    "docs:dev": "npm run jsdocs:build && vuepress dev docs",
+    "docs:build": "npm run jsdocs:build && vuepress build docs",
+    "jsdocs:build": "vuepress-jsdoc -s src -d docs -f api -e __*,*.vue",
+    "lint": "eslint --ext .js,.vue src",
+    "start": "npm run dev",
+    "test": "jest"
   },
   "nodemonConfig": {
     "ignore": [
@@ -26,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Realityloop/druxt_router.git"
+    "url": "git+https://github.com/druxt/druxt_router.git"
   },
   "keywords": [
     "drupal",
@@ -40,9 +43,9 @@
   "author": "Stuart Clark <stuart@realityloop.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Realityloop/druxt_router/issues"
+    "url": "https://github.com/druxt/druxt_router/issues"
   },
-  "homepage": "https://github.com/Realityloop/druxt_router#readme",
+  "homepage": "https://github.com/druxt/druxt_router#readme",
   "dependencies": {
     "axios": "^0.19.2",
     "querystring": "^0.2.0",
@@ -66,9 +69,12 @@
     "get-port": "^5.1.1",
     "jest": "^24.9.0",
     "jest-mock-axios": "^3.2.0",
+    "jsdoc-vuex-plugin": "^1.0.0",
+    "markdown-it-task-lists": "^2.1.1",
     "md5": "^2.2.1",
     "nodemon": "^2.0.3",
     "nuxt-edge": "^2.11.0-26277131.7af9ec8c",
+    "require-directory": "^2.1.1",
     "rollup": "^1.32.1",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-terser": "^5.3.0",
@@ -76,7 +82,9 @@
     "vue": "^2.6.11",
     "vue-jest": "^3.0.5",
     "vue-server-renderer": "^2.6.11",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "vuepress": "^1.5.2",
+    "vuepress-jsdoc": "^3.0.0"
   },
   "jest": {
     "coverageDirectory": "./coverage/",

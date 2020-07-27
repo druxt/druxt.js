@@ -1,3 +1,10 @@
+/**
+ * @vuepress
+ * ---
+ * title: Mixin
+ * ---
+ */
+
 import { mapActions, mapState } from 'vuex'
 
 /**
@@ -5,14 +12,22 @@ import { mapActions, mapState } from 'vuex'
  */
 const DruxtRouterEntityMixin = {
   /**
-   * Props.
+   * Vue properties.
    */
   props: {
+    /**
+     * The Drupal display mode.
+     * @type {string}
+     */
     mode: {
       type: String,
       default: 'default'
     },
 
+    /**
+     * The JSON:API resource type.
+     * @type {string}
+     */
     type: {
       type: String,
       required: true
@@ -20,6 +35,7 @@ const DruxtRouterEntityMixin = {
 
     /**
      * The Drupal entity UUID.
+     * @type {string}
      */
     uuid: {
       type: String,
@@ -32,6 +48,9 @@ const DruxtRouterEntityMixin = {
     loading: true
   }),
 
+  /**
+   * Lazy load JSON:API resource using props.
+   */
   created () {
     if (typeof this.entities[this.uuid] !== 'undefined') {
       this.entity = this.entities[this.uuid]

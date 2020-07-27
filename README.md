@@ -1,10 +1,23 @@
-# Druxt router
+![Druxt.js](./docs/.vuepress/public/logo.svg)
 
-[![CircleCI](https://circleci.com/gh/Realityloop/druxt-router.svg?style=svg)](https://circleci.com/gh/Realityloop/druxt-router)
-[![Known Vulnerabilities](https://snyk.io//test/github/Realityloop/druxt-router/badge.svg?targetFile=package.json)](https://snyk.io//test/github/Realityloop/druxt-router?targetFile=package.json)
-[![codecov](https://codecov.io/gh/Realityloop/druxt-router/branch/develop/graph/badge.svg)](https://codecov.io/gh/Realityloop/druxt-router)
+# Druxt.js Router
 
-Druxt (DRUpal nuXT) is a Nuxt module that provides an easy connection between a Nuxt frontend and Drupal backend.
+[![CircleCI](https://circleci.com/gh/druxt/druxt-router.svg?style=svg)](https://circleci.com/gh/druxt/druxt-router)
+[![Known Vulnerabilities](https://snyk.io//test/github/druxt/druxt-router/badge.svg?targetFile=package.json)](https://snyk.io//test/github/druxt/druxt-router?targetFile=package.json)
+[![codecov](https://codecov.io/gh/druxt/druxt-router/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-router)
+
+The Druxt.js Router provides a [Vuex](https://vuex.vuejs.org) powered JSON:API client for your [Drupal](https://drupal.org) backend.
+
+## Druxt.js
+
+This module is part of the Druxt.js project, find out more at https://druxtjs.org.
+
+## Features
+
+- Nuxt.js module with out of the box page routing: `druxt-router`
+- Vuex store: `druxtRouter`
+- Vue component: `<druxt-router />`
+- Vue mixin: `DruxtRouterEntityMixin`
 
 ## Install
 
@@ -33,7 +46,7 @@ Ensure you have activated the [Nuxt Vuex store](https://nuxtjs.org/guide/vuex-st
 
 ### Base Druxt options
 
-These options are available to all Druxt modules.
+These options are available to all Druxt.js modules.
 
 | Option | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |

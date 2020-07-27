@@ -1,4 +1,5 @@
 coverage
+docs/api
 dist
 node_modules
 .nuxt

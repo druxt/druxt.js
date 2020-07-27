@@ -1,4 +1,13 @@
-// @TODO - Add Vuex test coverage.
+/**
+ * @vuepress
+ * ---
+ * title: Vuex store
+ * ---
+ */
+
+/**
+ * Register the Druxt Router Vuex store with the Nuxt.js.
+ */
 const DruxtRouterStore = ({ store }) => {
   if (typeof store === 'undefined') {
     throw new TypeError('Vuex store not found.')
@@ -8,6 +17,14 @@ const DruxtRouterStore = ({ store }) => {
   const module = {
     namespaced: true,
 
+    /**
+     * @name State
+     * @type {object}
+     * @property {object} entities
+     * @property {boolean|object} redirect
+     * @property {object} route
+     * @property {object} routes
+     */
     state: () => ({
       entities: {},
       redirect: false,

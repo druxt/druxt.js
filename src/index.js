@@ -1,6 +1,13 @@
+/**
+ * @vuepress
+ * ---
+ * title: Nuxt.js module
+ * ---
+ */
+
 import { resolve } from 'path'
 
-import DruxtRouterComponent from './component/DruxtRouter.vue'
+import DruxtRouterComponent from './components/DruxtRouter.vue'
 
 export { DruxtRouter } from './router'
 export { DruxtRouterEntityMixin } from './mixin'
@@ -8,7 +15,14 @@ export { DruxtRouterStore } from './store'
 
 export { DruxtRouterComponent }
 
-export default function (moduleOptions = {}) {
+/**
+ * Nuxt.js module function.
+ *
+ * - Extends the Vue router, adding the Druxt catch-all route.
+ * - Adds the Druxt router plugin.
+ * - Adds the Druxt router Vuex store.
+ */
+const DruxtRouterModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
@@ -54,3 +68,5 @@ export default function (moduleOptions = {}) {
     options
   })
 }
+
+export default DruxtRouterModule
