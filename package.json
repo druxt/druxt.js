@@ -32,7 +32,7 @@
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
     "docs:dev": "npm run jsdocs:build && vuepress dev docs",
-    "docs:build": "jsdocs:build && vuepress build docs",
+    "docs:build": "npm run jsdocs:build && vuepress build docs",
     "jsdocs:build": "vuepress-jsdoc -s src -d docs -f api -c jsdoc.json",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
