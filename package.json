@@ -1,0 +1,34 @@
+{
+  "name": "@druxt/docgen",
+  "version": "0.1.0",
+  "description": "Vuepress based documentation generator for Druxt.js docs.",
+  "main": "src/index.js",
+  "bin": {
+    "druxt-docgen": "bin/druxt-docgen.js"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt-docgen.git"
+  },
+  "keywords": [
+    "druxt",
+    "vuepress",
+    "jsdocs"
+  ],
+  "author": "Stuart Clark <stuart@realityloop.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt-docgen/issues"
+  },
+  "homepage": "https://github.com/druxt/druxt-docgen#readme",
+  "devDependencies": {
+    "dmd": "^5.0.2",
+    "globby": "^11.0.1",
+    "jest": "^26.1.0",
+    "jsdoc-to-markdown": "^6.0.1",
+    "vue-docgen-api": "^4.28.1"
+  }
+}
