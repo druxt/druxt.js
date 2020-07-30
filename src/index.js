@@ -12,7 +12,7 @@ const writeData = function(file, data) {
   const content = dmd(data, {
     'heading-depth': 1,
     partial: [
-      path.resolve('node_modules/@druxt/docgen/partials/sig-name.hbs')
+      path.resolve('node_modules/druxt-docgen/partials/sig-name.hbs')
     ],
     separators: true
   })
@@ -34,7 +34,7 @@ module.exports = function () {
     if (file.match(/\/__.*?__\//)) return
 
     const templateData = jsdoc2md.getTemplateDataSync({
-      configure: path.resolve('node_modules/@druxt/docgen/jsdoc.json'),
+      configure: path.resolve('node_modules/druxt-docgen/jsdoc.json'),
       files: file,
     })
 
