@@ -30,5 +30,9 @@
     "jest": "^26.1.0",
     "jsdoc-to-markdown": "^6.0.1",
     "vue-docgen-api": "^4.28.1"
+  },
+  "dependencies": {
+    "jsdoc-vuejs": "^3.0.8",
+    "jsdoc-vuex-plugin": "^1.0.0"
   }
 }
