@@ -1,5 +1,5 @@
 {
-  "name": "@druxt/docgen",
+  "name": "druxt-docgen",
   "version": "0.1.0",
   "description": "Vuepress based documentation generator for Druxt.js docs.",
   "main": "src/index.js",
