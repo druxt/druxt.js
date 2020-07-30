@@ -15,9 +15,8 @@
     "build:es": "cross-env NODE_ENV=production rollup -c --format es",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "docs:dev": "npm run jsdocs:build && vuepress dev docs",
-    "docs:build": "npm run jsdocs:build && vuepress build docs",
-    "jsdocs:build": "vuepress-jsdoc -s src -d docs -f api -e __*,*.vue",
+    "docs:dev": "druxt-docgen && vuepress dev docs",
+    "docs:build": "druxt-docgen && vuepress build docs",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
@@ -48,6 +47,7 @@
   "homepage": "https://github.com/druxt/druxt_router#readme",
   "dependencies": {
     "axios": "^0.19.2",
+    "druxt-docgen": "^0.1.1",
     "querystring": "^0.2.0",
     "url-parse": "^1.4.7"
   },
@@ -67,10 +67,10 @@
     "cross-env": "^7.0.2",
     "eslint": "^6.8.0",
     "get-port": "^5.1.1",
+    "globby": "^11.0.1",
     "jest": "^24.9.0",
     "jest-junit": "^11.1.0",
     "jest-mock-axios": "^3.2.0",
-    "jsdoc-vuex-plugin": "^1.0.0",
     "markdown-it-task-lists": "^2.1.1",
     "md5": "^2.2.1",
     "nodemon": "^2.0.3",
@@ -84,8 +84,7 @@
     "vue-jest": "^3.0.5",
     "vue-server-renderer": "^2.6.11",
     "vue-template-compiler": "^2.6.11",
-    "vuepress": "^1.5.2",
-    "vuepress-jsdoc": "^3.0.0"
+    "vuepress": "^1.5.2"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
