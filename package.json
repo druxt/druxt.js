@@ -1,6 +1,6 @@
 {
   "name": "druxt-docgen",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vuepress based documentation generator for Druxt.js docs.",
   "main": "src/index.js",
   "bin": {
@@ -25,14 +25,14 @@
   },
   "homepage": "https://github.com/druxt/druxt-docgen#readme",
   "devDependencies": {
-    "dmd": "^5.0.2",
-    "globby": "^11.0.1",
-    "jest": "^26.1.0",
-    "jsdoc-to-markdown": "^6.0.1",
-    "vue-docgen-api": "^4.28.1"
+    "jest": "^26.1.0"
   },
   "dependencies": {
+    "dmd": "^5.0.2",
+    "globby": "^11.0.1",
+    "jsdoc-to-markdown": "^6.0.1",
     "jsdoc-vuejs": "^3.0.8",
-    "jsdoc-vuex-plugin": "^1.0.0"
+    "jsdoc-vuex-plugin": "^1.0.0",
+    "vue-docgen-api": "^4.29.1"
   }
 }
