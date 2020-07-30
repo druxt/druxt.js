@@ -2,17 +2,17 @@ import { createLocalVue } from '@vue/test-utils'
 import mockAxios from 'jest-mock-axios'
 import Vuex from 'vuex'
 
-import { DruxtRouter, DruxtRouterStore } from '..'
+import { DruxtRouter, DruxtRouterStore } from '../..'
 
 jest.mock('axios')
 
 // Setup mock data.
-const mockArticle = require('../__fixtures__/data/02122578a662e4a6ee0ea39cced4465d.json').data
-const mockPage = require('../__fixtures__/data/297a5e0949afb381ae9f2a30190a9a53.json').data
+const mockArticle = require('../../__fixtures__/data/02122578a662e4a6ee0ea39cced4465d.json').data
+const mockPage = require('../../__fixtures__/data/297a5e0949afb381ae9f2a30190a9a53.json').data
 
 const mockRoutes = {
-  '/': require('../__fixtures__/data/0a01adaa07e9dfcc3c0cabc37339505a.json'),
-  '/node/1': require('../__fixtures__/data/90e675a6fec46ebeb2d60751ef30e650.json')
+  '/': require('../../__fixtures__/data/0a01adaa07e9dfcc3c0cabc37339505a.json'),
+  '/node/1': require('../../__fixtures__/data/90e675a6fec46ebeb2d60751ef30e650.json')
 }
 
 // Setup local vue instance.

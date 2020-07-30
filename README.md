@@ -8,7 +8,7 @@ Simple decoupled [Drupal](https://drupal.org) routing for your [Nuxt.js](https:/
 
 ## Druxt.js
 
-This module is part of the Druxt.js project, find out more at https://druxtjs.org.
+This module is part of the Druxt.js project, find out more at http://druxtjs.org.
 
 ## Features
 

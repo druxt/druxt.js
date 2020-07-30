@@ -259,7 +259,7 @@ class DruxtRouter {
    * @todo Move this to a DruxtRouterRedirect class.
    * @todo Remove the path parameter.
    *
-   * @param {sring} path - The route path.
+   * @param {string} path - The route path.
    * @param {object} route - Druxt route object.
    *
    * @returns {boolean|string} The redirect path or false.
@@ -334,6 +334,7 @@ class DruxtRouter {
    * @param {string|object} query - A JSON:API query string or object.
    * @param {object} [options]
    * @param {boolean} [options.all=false] - Load all results.
+   * @return {object[]} Array of resources.
    */
   async getResources (resource, query, options = {}) {
     let resources = []

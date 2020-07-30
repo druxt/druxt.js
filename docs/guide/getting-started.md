@@ -2,7 +2,7 @@
 
 ## Druxt.js
 
-This module is included in the core [Druxt.js](https://druxtjs.org) project, the below instructions are only required when installing this module standalone.
+This module is included in the core [Druxt.js](http://druxtjs.org) project, the below instructions are only required when installing this module standalone.
 
 ## Quickstart
 
@@ -30,4 +30,4 @@ This module is included in the core [Druxt.js](https://druxtjs.org) project, the
 
 ### Drupal Druxt.js module
 
-This module was designed for [Druxt.js](https://druxtjs.org) and work best with the the [Drupal Druxt.js module](https://www.drupal.org/project/druxt).
+This module was designed for [Druxt.js](http://druxtjs.org) and work best with the the [Drupal Druxt.js module](https://www.drupal.org/project/druxt).

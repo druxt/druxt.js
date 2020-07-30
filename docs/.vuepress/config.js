@@ -1,4 +1,6 @@
-const { sidebarTree } = require('../api/config');
+const path = require('path')
+const glob = require('globby')
+const cwd = path.join(__dirname, '..')
 
 module.exports = {
   head: [
@@ -40,22 +42,45 @@ module.exports = {
       '/': {
         ariaLabel: 'Languages',
         label: 'English',
+        lastUpdated: 'Last Updated',
         nav: [
           { text: 'Home', link: '/' },
           { text: 'Guide', link: '/guide/getting-started' },
           { text: 'API', link: '/api/' },
         ],
         selectText: 'Languages',
-        sidebar: Object.assign({
-          '/guide/': [{
-            title: 'Guide',
-            collapsable: false,
-            children: [
-              '/guide/',
-              '/guide/getting-started'
-            ]
-          }]
-        }, sidebarTree('Introduction'))
+        sidebar: {
+          '/': [
+            {
+              title: 'Guide',
+              collapsable: false,
+              children: [
+                '/guide/',
+                '/guide/getting-started'
+              ]
+            },
+            {
+              title: 'API Reference',
+              collapsable: false,
+              children: glob.sync('api/*.md', { cwd }).map((f) => { return '/' + f.replace('README', '').replace('.md', '') })
+            },
+            {
+              title: 'Components',
+              collapsable: false,
+              children: glob.sync('api/components/*.md', { cwd }).map((f) => { return '/' + f.replace('README', '').replace('.md', '') })
+            },
+            {
+              title: 'Mixins',
+              collapsable: false,
+              children: glob.sync('api/mixins/*.md', { cwd }).map((f) => { return '/' + f.replace('README', '').replace('.md', '') })
+            },
+            {
+              title: 'Vuex stores',
+              collapsable: false,
+              children: glob.sync('api/stores/*.md', { cwd }).map((f) => { return '/' + f.replace('README', '').replace('.md', '') })
+            },
+          ]
+        }
       },
     },
     repo: 'druxt/druxt-router',

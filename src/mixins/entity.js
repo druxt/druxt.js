@@ -10,6 +10,8 @@ import { mapActions, mapState } from 'vuex'
 /**
  * The DruxtRouterEntityMixin Vue.js mixin provides easy integration with the Druxt.js Router Vuex store, including on-demand loading of JSON:API resources.
  *
+ * @mixin
+ *
  * @example
  * <template>
  *   <div v-if="entity && !loading">
@@ -26,8 +28,6 @@ import { mapActions, mapState } from 'vuex'
  *   mixins: [DruxtRouterEntityMixin]
  * }
  * </script>
- *
- * @mixin
  */
 const DruxtRouterEntityMixin = {
   /**
@@ -37,10 +37,8 @@ const DruxtRouterEntityMixin = {
     /**
      * The Drupal display mode.
      *
-     * @example
-     * "default"
-     *
      * @type {string}
+     * @default default
      */
     mode: {
       type: String,
@@ -49,9 +47,6 @@ const DruxtRouterEntityMixin = {
 
     /**
      * The JSON:API resource type.
-     *
-     * @example
-     * "node--article"
      *
      * @type {string}
      */
@@ -62,9 +57,6 @@ const DruxtRouterEntityMixin = {
 
     /**
      * The Drupal entity UUID.
-     *
-     * @example
-     * "dfa359f9-0f45-4287-84a3-e5df323198dd"
      *
      * @type {string}
      */
