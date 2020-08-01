@@ -15,20 +15,21 @@
     />
 
     <!-- Items -->
-    <div
+    <p
       v-for="(item, key) of items"
       :key="key"
-      v-html="item"
-    />
+    >
+      {{ item }}
+    </p>
   </component>
 </template>
 
 <script>
-import { DruxtFieldMixin } from '../mixins/field'
+import { DruxtFieldMixin } from '../../mixins/field'
 
 export default {
-  name: 'DruxtFieldBasicString',
+  name: 'DruxtFieldTimestamp',
 
-  mixins: [DruxtFieldMixin],
+  mixins: [DruxtFieldMixin]
 }
 </script>
