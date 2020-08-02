@@ -10,6 +10,7 @@ const writeData = function(file, data) {
   if (!data) return
 
   const content = dmd(data, {
+    'example-lang': 'vue live',
     'heading-depth': 1,
     partial: [
       path.resolve('node_modules/druxt-docgen/partials/sig-name.hbs')
