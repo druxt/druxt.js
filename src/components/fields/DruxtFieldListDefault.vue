@@ -45,7 +45,7 @@ import { DruxtFieldMixin } from '../../mixins/field'
  *   }"
  * />
  *
- * @todo Add a better example to List Default field.
+ * @todo Add a multi-value example to List Default field.
  * @todo Make List Default list elements customisable.
  */
 export default {

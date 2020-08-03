@@ -5,13 +5,13 @@
   >
     <!-- Label: Above -->
     <div v-if="$slots['label-above']">
-      <slot #label-above />
+      <slot name="label-above" />
     </div>
 
     <!-- Label: Inline -->
     <slot
       v-if="$slots['label-inline']"
-      #label-inline
+      name="label-inline"
     />
 
     <!-- Items -->
@@ -27,9 +27,24 @@
 <script>
 import { DruxtFieldMixin } from '../../mixins/field'
 
+/**
+ * Timestamp field.
+ *
+ * _This component is intended to be rendered by the `<druxt-field />` component._
+ *
+ * @see {@link DruxtField}
+ *
+ * @todo Add an example to Timestamp field.
+ */
 export default {
   name: 'DruxtFieldTimestamp',
 
+  /**
+   * Vue.js Mixins.
+   *
+   * @see {@link ../mixins/field|DruxtFieldMixin}
+   * @see {@link https://vuejs.org/v2/guide/mixins.html}
+   */
   mixins: [DruxtFieldMixin]
 }
 </script>
