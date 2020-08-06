@@ -1,13 +1,35 @@
+/**
+ * @vuepress
+ * ---
+ * title: DruxtRouter
+ * ---
+ */
+
 import { stringify } from 'querystring'
 import axios from 'axios'
 import Url from 'url-parse'
 
+/**
+ * DruxtRouter class.
+ *
+ * Provides core Drupal JSON:API query functionality.
+ */
 class DruxtRouter {
   /**
-   * Constructor.
+   * DruxtRouter constructor.
    *
-   * @param string baseURL
-   * @param object options
+   * - Validates module options.
+   * - Sets up Axios instance.
+   * - Sets up options.
+   *
+   * @example @lang js
+   * const router = new DruxtRouter('https://example.com', {})
+   *
+   * @param {string} baseURL - The Drupal base URL.
+   * @param {object} [options] - Druxt Router options.
+   * @param {object} [options.axios] - Axios instance settings.
+   * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
+   * @param {array} [options.types] - Array of Druxt Router type definitions.
    */
   constructor (baseURL, options = {}) {
     // Check for URL.
@@ -21,8 +43,19 @@ class DruxtRouter {
       axiosSettings = Object.assign(axiosSettings, options.axios)
       delete options.axios
     }
+
+    /**
+     * Axios instance.
+     * @see {@link https://github.com/axios/axios#instance-methods}
+     * @type {object}
+     */
     this.axios = axios.create(axiosSettings)
 
+    /**
+     * Druxt router options.
+     * @type {object}
+     * @private
+     */
     this.options = {
       endpoint: '/jsonapi',
       jsonapiResourceConfig: 'jsonapi_resource_config--jsonapi_resource_config',
@@ -54,13 +87,21 @@ class DruxtRouter {
       ...options
     }
 
+    /**
+     * Drupal JSON:API index.
+     * @type {object}
+     * @private
+     */
     this.index = null
   }
 
   /**
    * Add headers to the Axios instance.
    *
-   * @param {*} headers
+   * @example @lang js
+   * router.addHeaders({ 'Authorization': `Basic ${token}` })
+   *
+   * @param {object} headers - An object containing HTTP headers.
    */
   addHeaders (headers) {
     if (typeof headers === 'undefined') {
@@ -75,8 +116,15 @@ class DruxtRouter {
   /**
    * Build query URL.
    *
-   * @param string url
-   * @param {*} query
+   * @example @lang js
+   * const query = new DrupalJsonApiParams()
+   * query.addFilter('status', '1')
+   * const queryUrl = router.buildQueryUrl(resourceUrl, query)
+   *
+   * @param {string} url - The base query URL.
+   * @param {string|object} [query] - A correctly formatted JSON:API query string or object.
+   *
+   * @return {string} The URL with query string.
    */
   buildQueryUrl (url, query) {
     if (!query) {
@@ -105,7 +153,11 @@ class DruxtRouter {
   /**
    * Check response for permissions.
    *
-   * @param {*} res
+   * @todo - Move this to utils?
+   *
+   * @param {object} res - Axios GET request response object.
+   *
+   * @private
    */
   checkPermissions (res) {
     // Error handling: Required permissions.
@@ -126,9 +178,14 @@ class DruxtRouter {
   }
 
   /**
-   * Returns Drupal entity and route for given path.
+   * Returns route and redirect data for a given path.
    *
-   * @param string path
+   * @example @lang js
+   * const { redirect, route } = await router.get('/node/1')
+   *
+   * @param {string} path - The route path.
+   *
+   * @returns {object} The route and redirect data.
    */
   async get (path) {
     const route = await this.getRoute(path)
@@ -142,7 +199,14 @@ class DruxtRouter {
   }
 
   /**
-   * Get index of all available resources.
+   * Get index of all available resources, or the optionally specified resource.
+   *
+   * @example @lang js
+   * const { href } = await router.getIndex('node--article')
+   *
+   * @param {string} resource - (Optional) A specific resource to query.
+   *
+   * @returns {object} The resource index object or the specified resource.
    */
   async getIndex (resource) {
     if (this.index && !resource) {
@@ -186,7 +250,19 @@ class DruxtRouter {
   }
 
   /**
-   * @param object route
+   * Get redirect data for a given route.
+   *
+   * @example @lang js
+   * const route = await router.getRoute(path)
+   * const redirect = router.getRedirect(path, route)
+   *
+   * @todo Move this to a DruxtRouterRedirect class.
+   * @todo Remove the path parameter.
+   *
+   * @param {string} path - The route path.
+   * @param {object} route - Druxt route object.
+   *
+   * @returns {boolean|string} The redirect path or false.
    */
   getRedirect (path, route) {
     // Redirect to route provided redirect.
@@ -218,8 +294,13 @@ class DruxtRouter {
   /**
    * Get a JSON:API resource by type and ID.
    *
-   * @param string type
-   * @param string id
+   * @example @lang js
+   * const data = await router.get({ type: 'node--article', id })
+   *
+   * @param {string} type - The JSON:API resource type.
+   * @param {string} id - The Drupal resource UUID.
+   *
+   * @returns {object} The JSON:API resource data.
    */
   async getResource (query = {}) {
     const { id, type } = query
@@ -239,12 +320,21 @@ class DruxtRouter {
   }
 
   /**
-   * Get all resources based on resource and query.
+   * Gets a collection of resources.
    *
-   * @todo Add pagination.
+   * @todo Add granular pagination.
    *
-   * @param {*} resource
-   * @param {*} query
+   * @example @lang js
+   * // Load all currently published Articles.
+   * const query = new DrupalJsonApiParams()
+   * query.addFilter('status', '1')
+   * const resources = await router.getResources('node--article', query, { all: true })
+   *
+   * @param {string} resource - The JSON:API resource type.
+   * @param {string|object} query - A JSON:API query string or object.
+   * @param {object} [options]
+   * @param {boolean} [options.all=false] - Load all results.
+   * @return {object[]} Array of resources.
    */
   async getResources (resource, query, options = {}) {
     let resources = []
@@ -279,7 +369,13 @@ class DruxtRouter {
   /**
    * Get a JSON:API resource by Drupal route.
    *
-   * @param object route
+   * @example @lang js
+   * const route = await router.getRoute('/')
+   * const data = await router.getResourceByRoute(route)
+   *
+   * @param {object} route - Druxt Router route object.
+   *
+   * @returns {object} The JSON:API resource data.
    */
   getResourceByRoute (route) {
     return this.getResource({ id: route.entity.uuid, type: route.jsonapi.resourceName })
@@ -288,7 +384,12 @@ class DruxtRouter {
   /**
    * Get routing data from Decoupled Router.
    *
-   * @param string path
+   * @example @lang js
+   * const route = await router.getRoute('/')
+   *
+   * @param {string} path - The route path.
+   *
+   * @returns {object} The route object.
    */
   async getRoute (path) {
     // @TODO - Add validation/error handling.
