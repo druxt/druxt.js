@@ -48,7 +48,7 @@ const DruxtRouterStore = ({ store }) => {
        * @mutator {object} addEntity=entities Adds specified Drupal entity JSON:API resource data to the Vuex state object.
        * @param {object} entity - The Drupal entity JSON:API resource data.
        *
-       * @example
+       * @example @lang js
        * this.$store.commit('druxtRouter/addEntity', entity)
        */
       addEntity (state, entity) {
@@ -64,7 +64,7 @@ const DruxtRouterStore = ({ store }) => {
        * @mutator {object} setRedirect=redirect Sets the active redirect.
        * @param {object} redirect - The Redirect object.
        *
-       * @example
+       * @example @lang js
        * this.$store.commit('druxtRouter/setRedirect', redirect)
        */
       setRedirect (state, redirect) {
@@ -78,7 +78,7 @@ const DruxtRouterStore = ({ store }) => {
        * @param {string} context.path - The route path.
        * @param {object} context.route - The route object.
        *
-       * @example
+       * @example @lang js
        * this.$store.commit('druxtRouter/addRoute', { path, route })
        */
       addRoute (state, { path, route }) {
@@ -95,7 +95,7 @@ const DruxtRouterStore = ({ store }) => {
        * @mutator {string} setRoute=route Sets the active route by path.
        * @param {string} path - The route path
        *
-       * @example
+       * @example @lang js
        * this.$store.commit('druxtRouter/setRoute', '/')
        */
       setRoute (state, path) {
@@ -124,7 +124,7 @@ const DruxtRouterStore = ({ store }) => {
        * @param {string} path The router path.
        * @return {object} The route and redirect information.
        *
-       * @example
+       * @example @lang js
        * const { redirect, route } = await this.$store.dispatch('druxtRouter/get', '/')
        */
       async get ({ commit, dispatch, state }, path) {
@@ -158,7 +158,7 @@ const DruxtRouterStore = ({ store }) => {
        * @param {object} query
        * @return {object} The Drupal entity JSON:API resource data.
        *
-       * @example
+       * @example @lang js
        * const entity = await this.$store.dispatch('druxtRouter/getEntity', { type: 'node--article', id })
        *
        * @todo Rename getEntity to getResource.
@@ -187,7 +187,7 @@ const DruxtRouterStore = ({ store }) => {
        * @param {boolean} [context.options.all=false] - Load all results.
        * @return {object[]} Array of Drupal JSON:API resource data.
        *
-       * @example
+       * @example @lang js
        * // Load all currently published Articles.
        * const query = new DrupalJsonApiParams()
        * query.addFilter('status', '1')
@@ -217,7 +217,7 @@ const DruxtRouterStore = ({ store }) => {
        * @param {string} path - The route path.
        * @return {object} The route object.
        *
-       * @example
+       * @example @lang js
        * const route = await this.$store.dispatch('druxtRouter/getRoute', '/')
        */
       async getRoute ({ commit, state }, path) {

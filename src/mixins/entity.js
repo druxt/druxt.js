@@ -12,7 +12,7 @@ import { mapActions, mapState } from 'vuex'
  *
  * @mixin
  *
- * @example
+ * @example @lang vue
  * <template>
  *   <div v-if="entity && !loading">
  *     {{ entity }}
