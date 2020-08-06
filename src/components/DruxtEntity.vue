@@ -1,14 +1,16 @@
 <template>
+  <!-- Render wrapper component and props. -->
   <component
     :is="wrapper.component"
     v-bind="wrapper.props"
   >
+    <!-- Render suggested component. -->
     <component
       :is="component"
       v-if="entity && schema"
       v-bind="props"
     >
-      <!-- Render fields in their own named slots --->
+      <!-- Render fields in their own named slots. --->
       <template
         v-for="(field, key) of fields"
         v-slot:[field.schema.id]="{ context, options }"
@@ -19,7 +21,7 @@
         />
       </template>
 
-      <!-- Render fields in the default slot --->
+      <!-- Render fields in the default slot. --->
       <template
         v-for="(field, key) of fields"
         v-bind="{ context, options }"
@@ -40,12 +42,49 @@ import { mapActions } from 'vuex'
 
 import { DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin } from '../mixins'
 
+/**
+ * The `<druxt-entity />` Vue.js component.
+ *
+ * - Loads a Drupal Entity JSON:API resource from the Druxt.js Router.
+ * - Loads the Druxt.js Schema for the Drupal display mode.
+ * - Renders Field data via the `<druxt-field />` component.
+ * - Supports Component Suggestion based theming with Vue.js Slots.
+ *
+ * @example @lang vue
+ * <!-- Render the specified Aritcle node with with Teaser display mode. -->
+ * <druxt-entity type="node--article" :uuid="uuid" :mode="teaser" />
+ *
+ * @see {@link DruxtField}
+ * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+ */
 export default {
   name: 'DruxtEntity',
 
-  mixins: [DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin, DruxtRouterEntityMixin, DruxtSchemaMixin],
+  /**
+   * Vue.js Mixins.
+   *
+   * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+   * @see {@link ../mixins/context|DruxtEntityContextMixin}
+   * @see {@link https://druxt.github.io/druxt-router/api/mixins/entity|DruxtRouterEntityMixin}
+   * @see DruxtSchemaMixin.
+   * @see {@link https://vuejs.org/v2/guide/mixins.html}
+   */
+  mixins: [DruxtEntityComponentSuggestionMixin, DruxtEntityContextMixin, DruxtRouterEntityMixin, DruxtSchemaMixin],
 
+  /**
+   * Vue.js Properties.
+   *
+   * @see {@link https://vuejs.org/v2/guide/components-props.html}
+   */
   props: {
+    /**
+     * Wrapper component.
+     *
+     * @type {object}
+     * @default { component: 'div', props: {} }
+     *
+     * @todo Move wrapper prop to new common Wrapper mixin.
+     */
     wrapper: {
       type: Object,
       default: () => ({
@@ -55,7 +94,15 @@ export default {
     }
   },
 
+  /**
+   * Vue.js Computed properties.
+   */
   computed: {
+    /**
+     * Renderable Entity fields based on Drupal view mode.
+     * @type {boolean|object[]}
+     * @default false
+     */
     fields() {
       if (!this.entity) return false
 
@@ -79,6 +126,13 @@ export default {
       return fields
     },
 
+    /**
+     * Properties to pass through to the resolved component suggestion.
+     *
+     * @type {object}
+     *
+     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+     */
     props() {
       return {
         entity: this.entity,
@@ -87,6 +141,26 @@ export default {
       }
     },
 
+    /**
+     * Default suggestions for the Component suggestion mixin.
+     *
+     * - **[Prefix][Type][Mode]**
+     * - **[Prefix][Type]**
+     * - **[Prefix][Mode]**
+     *
+     * @type {object[]}
+     *
+     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+     *
+     * @example @lang html
+     * <druxt-entity type="node--article" mode="teaser" :uuid="uuid" />
+     * <!--
+     * Suggestions to be rendered by the DruxtEntity component:
+     *   - DruxtEntityNodeArticleTeaser
+     *   - DruxtEntityNodeArticle
+     *   - DruxtEntityTeaser
+     * -->
+     */
     suggestionDefaults() {
       if (!this.tokens) return []
 
@@ -100,6 +174,17 @@ export default {
       ]
     },
 
+    /**
+     * Tokens for the Component suggestion mixin.
+     *
+     * - prefix
+     * - mode
+     * - type
+     *
+     * @type {boolean|object}
+     *
+     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+     */
     tokens() {
       if (!this.schema) return false
 
@@ -110,10 +195,24 @@ export default {
       }
     },
 
+    /**
+     * Token type for DruxtEntityComponentSuggestionMixin.
+     *
+     * @type {string}
+     * @default entity
+     *
+     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+     */
     tokenType: () => 'entity'
   },
 
   methods: {
+    /**
+     * Checks if an Entity field is empty.
+     *
+     * @param {*} value - Field value.
+     * @return {boolean}
+     */
     isEmpty(value) {
       if (typeof value === 'undefined') return true
 

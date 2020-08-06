@@ -6,13 +6,13 @@
   >
     <!-- Label: Above -->
     <div v-if="$slots['label-above']">
-      <slot #label-above />
+      <slot name="label-above" />
     </div>
 
     <!-- Label: Inline -->
     <slot
       v-if="$slots['label-inline']"
-      #label-inline
+      name="label-inline"
     />
 
     <!-- Items -->
@@ -29,10 +29,22 @@ import DruxtFieldFileDefault from './DruxtFieldFileDefault.vue'
 
 import { mapActions } from 'vuex'
 
+/**
+ * Image field.
+ *
+ * _This component is intended to be rendered by the `<druxt-field />` component._
+ *
+ * @see {@link DruxtField}
+ *
+ * @todo Add an example to Image field.
+ */
 export default {
   name: 'DruxtFieldImage',
 
+  /**
+   * @extends DruxtFieldFileDefault
+   * @see {@link DruxtFieldFileDefault}
+   */
   extends: DruxtFieldFileDefault,
 }
 </script>
-

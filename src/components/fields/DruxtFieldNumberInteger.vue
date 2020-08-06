@@ -5,13 +5,13 @@
   >
     <!-- Label: Above -->
     <div v-if="$slots['label-above']">
-      <slot #label-above />
+      <slot name="label-above" />
     </div>
 
     <!-- Label: Inline -->
     <slot
       v-if="$slots['label-inline']"
-      #label-inline
+      name="label-inline"
     />
 
     <!-- Items -->
@@ -33,13 +33,47 @@
 </template>
 
 <script>
-import { DruxtFieldMixin } from '../mixins/field'
+import { DruxtFieldMixin } from '../../mixins/field'
 
+/**
+ * Number Integer field.
+ *
+ * _This component is intended to be rendered by the `<druxt-field />` component._
+ *
+ * @see {@link DruxtField}
+ *
+ * @example
+ * <druxt-field
+ *   data="5"
+ *   :schema="{
+ *     id: 'field_preparation_time',
+ *     settings: {
+ *       config: {
+ *         prefix: '',
+ *         suffix: ' minutes'
+ *       },
+ *       display: {
+ *         prefix_suffix: true
+ *       }
+ *     },
+ *     type: 'number_integer'
+ *   }"
+ * />
+ */
 export default {
   name: 'DruxtFieldNumberInteger',
 
+  /**
+   * Vue.js Mixins.
+   *
+   * @see {@link ../mixins/field|DruxtFieldMixin}
+   * @see {@link https://vuejs.org/v2/guide/mixins.html}
+   */
   mixins: [DruxtFieldMixin],
 
+  /**
+   * Vue.js Computed properties.
+   */
   computed: {
     prefix() {
       if (!this.schema.settings.display.prefix_suffix || !this.schema.settings.config.prefix) return false
