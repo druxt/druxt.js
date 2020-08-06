@@ -1,4 +1,7 @@
-version: 2
+version: 2.1
+
+orbs:
+  gh-pages: sugarshin/gh-pages@0.0.6
 
 defaults: &defaults
   working_directory: ~/repo
@@ -36,7 +39,7 @@ jobs:
           paths:
             - .
 
-  docs:
+  build_docs:
     <<: *defaults
     steps:
       - attach_workspace:
@@ -48,6 +51,11 @@ jobs:
 
       - store_artifacts:
           path: ~/repo/docs/.vuepress/dist
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - .
 
   test:
     <<: *defaults
@@ -91,7 +99,7 @@ workflows:
   test_deploy:
     jobs:
       - build
-      - docs:
+      - build_docs:
           requires:
             - build
       - test:
@@ -101,6 +109,14 @@ workflows:
           requires:
             - build
             - test
+          filters:
+            branches:
+              only: master
+      - gh-pages/deploy:
+          build-dir: ../repo/docs/.vuepress/dist
+          requires:
+            - build_docs
+          ssh-fingerprints: "dc:be:f3:e1:b4:2a:08:22:d4:eb:7a:d7:77:04:f2:c8"
           filters:
             branches:
               only: master
