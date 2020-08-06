@@ -1,8 +1,8 @@
 # \<druxt-schema />
 
-[![CircleCI](https://circleci.com/gh/Realityloop/druxt-schema.svg?style=svg)](https://circleci.com/gh/Realityloop/druxt-schema)
-[![Known Vulnerabilities](https://snyk.io/test/github/Realityloop/druxt-schema/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Realityloop/druxt-schema?targetFile=package.json)
-[![codecov](https://codecov.io/gh/Realityloop/druxt-schema/branch/develop/graph/badge.svg)](https://codecov.io/gh/Realityloop/druxt-schema)
+[![CircleCI](https://circleci.com/gh/druxt/druxt-schema.svg?style=svg)](https://circleci.com/gh/druxt/druxt-schema)
+[![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-schema/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-schema?targetFile=package.json)
+[![codecov](https://codecov.io/gh/druxt/druxt-schema/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-schema)
 
 Provides a Drupal Entity schema Vuex store to be used within a Druxt (DRUpal nuXT) project.
 

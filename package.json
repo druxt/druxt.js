@@ -4,7 +4,7 @@
   "description": "Provides a Drupal Entity schema Vuex store to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Realityloop/druxt-schema"
+    "url": "git+https://github.com/druxt/druxt-schema"
   },
   "keywords": [
     "drupal",
@@ -18,9 +18,9 @@
   "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Realityloop/druxt-schema/issues"
+    "url": "https://github.com/druxt/druxt-schema/issues"
   },
-  "homepage": "https://github.com/Realityloop/druxt-schema#readme",
+  "homepage": "https://github.com/druxt/druxt-schema#readme",
   "main": "dist/druxt-schema.ssr.js",
   "module": "dist/druxt-schema.esm.js",
   "unpkg": "dist/druxt-schema.min.js",
