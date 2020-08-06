@@ -10,7 +10,7 @@ import { mapState } from 'vuex'
 /**
  * The DruxtRouter Vue.js component.
  *
- * @example
+ * @example @lang vue
  * <druxt-router />
  */
 export default {

@@ -18,7 +18,7 @@ import { resolve } from 'path'
  *
  * Options are set on the root level `druxt` Nuxt.js config object.
  *
- * @example
+ * @example @lang js
  * // `nuxt.config.js`
  * module.exports = {
  *   modules: [

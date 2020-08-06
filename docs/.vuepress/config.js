@@ -2,7 +2,51 @@ const path = require('path')
 const glob = require('globby')
 const cwd = path.join(__dirname, '..')
 
+const sidebar = [{
+  title: 'Guide',
+  collapsable: false,
+  children: [
+    '/guide/',
+    '/guide/getting-started'
+  ]
+}]
+
+const sections = [
+  {
+    title: 'API Reference',
+    path: 'api/*.md',
+  },
+  {
+    title: 'Components',
+    path: 'api/components/*.md',
+  },
+  {
+    title: 'Mixins',
+    path: 'api/mixins/*.md',
+  },
+  {
+    title: 'Vuex stores',
+    path: 'api/stores/*.md',
+  },
+]
+sections.map(section => {
+  const files = glob.sync(section.path, { cwd }).map((f) => { return '/' + f.replace('README', '').replace('.md', '') })
+  if (!files.length) return
+
+  sidebar.push({
+    title: section.title,
+    collapsable: false,
+    children: files
+  })
+})
+
+const components = glob.sync('src/components/**/*.vue').map(f => ({
+  name: f.split('/').pop().split('.').shift(),
+  path: path.resolve(f)
+}))
+
 module.exports = {
+  base: '/druxt-router/',
   head: [
     ['link', { rel: "apple-touch-icon", sizes: "57x57", href: "/apple-icon-57x57.png" } ],
     ['link', { rel: "apple-touch-icon", sizes: "60x60", href: "/apple-icon-60x60.png" } ],
@@ -34,6 +78,10 @@ module.exports = {
     },
     lineNumbers: true
   },
+  plugins: [
+    ['@vuepress/register-components', { components }],
+    ['live']
+  ],
   themeConfig: {
     docsDir: 'docs',
     editLinks: true,
@@ -50,36 +98,7 @@ module.exports = {
         ],
         selectText: 'Languages',
         sidebar: {
-          '/': [
-            {
-              title: 'Guide',
-              collapsable: false,
-              children: [
-                '/guide/',
-                '/guide/getting-started'
-              ]
-            },
-            {
-              title: 'API Reference',
-              collapsable: false,
-              children: glob.sync('api/*.md', { cwd }).map((f) => { return '/' + f.replace('README', '').replace('.md', '') })
-            },
-            {
-              title: 'Components',
-              collapsable: false,
-              children: glob.sync('api/components/*.md', { cwd }).map((f) => { return '/' + f.replace('README', '').replace('.md', '') })
-            },
-            {
-              title: 'Mixins',
-              collapsable: false,
-              children: glob.sync('api/mixins/*.md', { cwd }).map((f) => { return '/' + f.replace('README', '').replace('.md', '') })
-            },
-            {
-              title: 'Vuex stores',
-              collapsable: false,
-              children: glob.sync('api/stores/*.md', { cwd }).map((f) => { return '/' + f.replace('README', '').replace('.md', '') })
-            },
-          ]
+          '/': sidebar
         }
       },
     },

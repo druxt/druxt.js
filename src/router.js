@@ -22,7 +22,7 @@ class DruxtRouter {
    * - Sets up Axios instance.
    * - Sets up options.
    *
-   * @example
+   * @example @lang js
    * const router = new DruxtRouter('https://example.com', {})
    *
    * @param {string} baseURL - The Drupal base URL.
@@ -98,7 +98,7 @@ class DruxtRouter {
   /**
    * Add headers to the Axios instance.
    *
-   * @example
+   * @example @lang js
    * router.addHeaders({ 'Authorization': `Basic ${token}` })
    *
    * @param {object} headers - An object containing HTTP headers.
@@ -116,7 +116,7 @@ class DruxtRouter {
   /**
    * Build query URL.
    *
-   * @example
+   * @example @lang js
    * const query = new DrupalJsonApiParams()
    * query.addFilter('status', '1')
    * const queryUrl = router.buildQueryUrl(resourceUrl, query)
@@ -180,7 +180,7 @@ class DruxtRouter {
   /**
    * Returns route and redirect data for a given path.
    *
-   * @example
+   * @example @lang js
    * const { redirect, route } = await router.get('/node/1')
    *
    * @param {string} path - The route path.
@@ -201,7 +201,7 @@ class DruxtRouter {
   /**
    * Get index of all available resources, or the optionally specified resource.
    *
-   * @example
+   * @example @lang js
    * const { href } = await router.getIndex('node--article')
    *
    * @param {string} resource - (Optional) A specific resource to query.
@@ -252,7 +252,7 @@ class DruxtRouter {
   /**
    * Get redirect data for a given route.
    *
-   * @example
+   * @example @lang js
    * const route = await router.getRoute(path)
    * const redirect = router.getRedirect(path, route)
    *
@@ -294,7 +294,7 @@ class DruxtRouter {
   /**
    * Get a JSON:API resource by type and ID.
    *
-   * @example
+   * @example @lang js
    * const data = await router.get({ type: 'node--article', id })
    *
    * @param {string} type - The JSON:API resource type.
@@ -324,7 +324,7 @@ class DruxtRouter {
    *
    * @todo Add granular pagination.
    *
-   * @example
+   * @example @lang js
    * // Load all currently published Articles.
    * const query = new DrupalJsonApiParams()
    * query.addFilter('status', '1')
@@ -369,7 +369,7 @@ class DruxtRouter {
   /**
    * Get a JSON:API resource by Drupal route.
    *
-   * @example
+   * @example @lang js
    * const route = await router.getRoute('/')
    * const data = await router.getResourceByRoute(route)
    *
@@ -384,7 +384,7 @@ class DruxtRouter {
   /**
    * Get routing data from Decoupled Router.
    *
-   * @example
+   * @example @lang js
    * const route = await router.getRoute('/')
    *
    * @param {string} path - The route path.
