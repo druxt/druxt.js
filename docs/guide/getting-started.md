@@ -32,6 +32,7 @@ This module is included in the core [Druxt.js](http://druxtjs.org) project, the 
 - [Decoupled router](https://www.drupal.org/project/decoupled_router) Drupal module.
 
 ### Frontend
+- [Nuxt.js](https://nuxtjs.org) frontend.
 - [Druxt.js Router](https://druxt.github.io/druxt-router)
 - [Druxt.js Schema](https://druxt.github.io/druxt-schema)
 
