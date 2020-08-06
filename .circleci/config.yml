@@ -1,12 +1,15 @@
-version: 2
+version: 2.1
+
+orbs:
+  gh-pages: sugarshin/gh-pages@0.0.6
 
 defaults: &defaults
   working_directory: ~/repo
   docker:
-  - image: circleci/node:8.9.1
+  - image: circleci/node:12.18.3
 
 jobs:
-  test:
+  build:
     <<: *defaults
     steps:
       - checkout
@@ -25,13 +28,6 @@ jobs:
       - run:
           name: Build component
           command: npm run build
-      - run:
-          name: Run tests
-          command: npm test
-
-      - run:
-          name: Upload coverage report
-          command: npx codecov
 
       - save_cache:
           paths:
@@ -42,6 +38,46 @@ jobs:
           root: ~/repo
           paths:
             - .
+
+  build_docs:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Build with vuepress
+          command: npm run docs:build
+
+      - store_artifacts:
+          path: ~/repo/docs/.vuepress/dist
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - .
+
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Run tests
+          command: npm test -- --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+
+      - run:
+          name: Upload coverage report
+          command: npx codecov
+
+      - store_test_results:
+          path: ./reports/junit/
+
+      - store_artifacts:
+          path: ./reports/junit
 
   deploy:
     <<: *defaults
@@ -62,10 +98,27 @@ workflows:
 
   test_deploy:
     jobs:
-      - test
+      - build
+      - build_docs:
+          requires:
+            - build
+      - test:
+          requires:
+            - build
       - deploy:
           requires:
+            - build
             - test
           filters:
             branches:
               only: master
+      - gh-pages/deploy:
+          build-dir: ../repo/docs/.vuepress/dist
+          requires:
+            - build_docs
+          ssh-fingerprints: "8e:64:8e:49:46:73:26:30:d7:b6:2c:9b:61:d5:cd:4c"
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /^\d+\.\d+\.\d+$/
