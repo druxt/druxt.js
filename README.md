@@ -1,4 +1,4 @@
-# \<druxt-schema />
+# Druxt.js Schema
 
 [![CircleCI](https://circleci.com/gh/druxt/druxt-schema.svg?style=svg)](https://circleci.com/gh/druxt/druxt-schema)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-schema/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-schema?targetFile=package.json)

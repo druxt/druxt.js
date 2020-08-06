@@ -1,7 +1,7 @@
 {
   "name": "druxt-schema",
   "version": "0.4.0",
-  "description": "Provides a Drupal Entity schema Vuex store to be used within a Druxt (DRUpal nuXT) project.",
+  "description": "Entity Form and View mode schemas for Drupal driven frontends.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/druxt/druxt-schema"
@@ -34,6 +34,8 @@
     "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
+    "docs:dev": "druxt-docgen && vuepress dev docs",
+    "docs:build": "druxt-docgen && vuepress build docs",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
