@@ -1,8 +1,35 @@
 import consola from 'consola'
 import { resolve } from 'path'
 
-import { DruxtSchema } from './druxtSchema'
+import { DruxtSchema } from './schema'
 
+/**
+ * The Nuxt.js module function.
+ *
+ * - Adds the Schema plugin to Nuxt.js.
+ * - Adds the Schema Vuex store to Nuxt.js.
+ * - Builds the Schema data via the `builder:prepared` hook.
+ *
+ * The module function should not be used directly, but rather installed via yout Nuxt.js configuration file.
+ *
+ * Options are set on the root level `druxt` Nuxt.js config object.
+ *
+ * @example @lang js
+ * // `nuxt.config.js`
+ * module.exports = {
+ *   modules: [
+ *     'druxt-schema'
+ *   ],
+ *   druxt: {
+ *     baseUrl: 'https://example.com'
+ *   }
+ * }
+ *
+ * @todo Add module level options.
+ * @todo Document options.
+ *
+ * @param {object} moduleOptions - Nuxt.js module options object.
+ */
 const DruxtSchemaModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {

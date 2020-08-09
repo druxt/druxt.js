@@ -1,10 +1,9 @@
 import { DruxtSchemaModule } from './module'
 
-import { DruxtSchema } from './druxtSchema'
-export { DruxtSchema }
+export { DruxtSchema } from './schema'
 
 export { DruxtSchemaMixin } from './mixins/schema'
 
-export { DruxtSchemaStore } from './store'
+export { DruxtSchemaStore } from './stores/schema'
 
 export default DruxtSchemaModule

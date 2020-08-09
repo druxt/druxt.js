@@ -1,208 +1,179 @@
-class Schema {
-  constructor(config, { druxtSchema, data }) {
-    if (config.resourceFields) {
-      this.resourceFields = config.resourceFields
-      delete config.resourceFields
+import { DruxtRouter } from 'druxt-router'
+
+import { Schema } from './utils/schema'
+
+/**
+ * @typedef {object} SchemaConfiguration
+ * @see {@link ./typedefs/schema_configuration|SchemaConfiguration}
+ */
+
+/**
+ * The DruxtSchema class.
+ *
+ * Builds Druxt Schema objects using Drupal JSON:API Entity Form and View Display mode data.
+ */
+class DruxtSchema {
+  /**
+   * DruxtSchemaRouter constructor.
+   *
+   * - Validates module options.
+   * - Sets up options.
+   * - Sets up Druxt.js Router instance.
+   * - (Optional) Sets up oauth2 authentication.
+   *
+   * @example @lang js
+   * const schema = new DruxtSchema('https://example.com', {})
+   *
+   * @param {string} baseURL - The Drupal base URL.
+   * @param {object} [options] - Druxt Router options.
+   * @param {object} [options.axios] - Axios instance settings.
+   * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
+   *
+   * @todo Document DruxtSchema authentication options.
+   * @todo Document DruxtSchema filter options.
+   */
+  constructor(baseURL, options = {}) {
+    // Check for URL.
+    if (!baseURL) throw new Error('The \'baseURL\' parameter is required.')
+
+    this.options = {
+      auth: {
+        type: false
+      },
+      schema: {
+        filter: [],
+      },
+
+      ...options
     }
 
-    this.config = {
-      entityType: 'node',
-      bundle: null,
-      mode: 'default',
-      schemaType: 'view',
-      filter: [],
+    // Setup Druxt Router.
+    this.druxtRouter = new DruxtRouter(baseURL, this.options)
 
-      ...config
-    }
-
-    // Build ID from resource type.
-    if (!this.id && this.config.resourceType) {
-      this.id = [this.config.resourceType, this.config.mode, this.config.schemaType].join('--')
-    }
-
-    // Build ID from entity and bundle types.
-    if (!this.id && this.config.bundle) {
-      this.id = [this.config.entityType, this.config.bundle, this.config.mode, this.config.schemaType].join('--')
-    }
-
-    // Filter required schemas.
-    this.isValid = true
-    if (this.config.filter.length > 0) {
-      this.isValid = false
-
-      for (const filter of this.config.filter) {
-        const match = this.id.match(filter)
-        if (match) {
-          this.isValid = true
+    // Process authentication.
+    // @TODO - druxt-router
+    if (this.options.auth.type) {
+      switch (this.options.auth.type) {
+        case 'oauth2':
+          this.druxtRouter.axios.interceptors.request.use(this.oauth2())
           break
+      }
+    }
+  }
+
+  /**
+   * Gets all available schemas for Entitiy Views and Form modes.
+   *
+   * @returns {object} The JSON:API Resource index and processed schemas.
+   *
+   * @example @lang js
+   * const { schemas } = await schema.get()
+   *
+   * @todo Rename the `get()` method to `getAll()`.
+   */
+  async get() {
+    const index = await this.druxtRouter.getIndex()
+    const schemas = {}
+
+    for (const schemaType of ['view', 'form']) {
+      const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
+      const displays = await this.druxtRouter.getResources(resourceType)
+
+      for (const display of displays) {
+        const resource = index[[display.attributes.targetEntityType, display.attributes.bundle].join('--')]
+
+        const config = {
+          entityType: display.attributes.targetEntityType,
+          bundle: display.attributes.bundle,
+          mode: display.attributes.mode,
+          schemaType,
+          filter: this.options.schema.filter,
+
+          ...resource
+        }
+
+        const schema = await this.getSchema(config, { data: display })
+        if (schema) {
+          schemas[schema.id] = schema.schema
         }
       }
     }
 
-    this.displayId = [this.config.entityType, this.config.bundle, this.config.mode].join('.')
-    this.resourceType = [this.config.entityType, this.config.bundle].join('--')
-
-    this.data = {}
-    if (typeof data !== 'undefined') {
-      this.data[data.type] = data
-    }
-
-    this.fields = {}
-
-    this.druxtSchema = druxtSchema
+    return { index, schemas }
   }
 
-  async generate() {
-    return this[this.config.schemaType]()
+  /**
+   * Gets a matching schema as per the provided configuration.
+   *
+   * @param {SchemaConfiguration} config - The Schema configuration object.
+   * @param {string} config.entityType - The Drupal Entity type.
+   * @param {string} config.bundle - The Entity bundle.
+   * @param {object} [options] -
+   *
+   * @returns {Schema} The generated Schema.
+   *
+   * @example @lang js
+   * const config = {
+   *   entityType: 'node',
+   *   bundle: 'page'
+   * }
+   * const schema = await schema.getSchema(config)
+   *
+   * @see {@link ./typedefs/schema|Schema}
+   */
+  async getSchema(config, options = {}) {
+    const schema = new Schema(config, { druxtSchema: this, ...options })
+
+    if (!schema.isValid) {
+      return false
+    }
+
+    await schema.generate()
+    return schema
   }
 
-  async getResources(resource, query) {
-    if (this.data[resource]) return this.data[resource]
-
-    this.data[resource] = await this.druxtSchema.druxtRouter.getResources(resource, query)
-    return this.data[resource]
-  }
-
-  async form() {
-    const entityFormDisplay = await this.getResources('entity_form_display--entity_form_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res) ? res[0] : res)
-    if (!entityFormDisplay) return false
-
-    const fieldConfig = await this.getResources('field_config--field_config', { 'filter[entity_type]': this.config.entityType, 'filter[bundle]': this.config.bundle })
-    if (!fieldConfig) return false
-
-    const fieldStorageConfig = await this.getResources('field_storage_config--field_storage_config', { 'filter[entity_type]': this.config.entityType })
-    if (!fieldStorageConfig) return false
-
-    for (const field in entityFormDisplay.attributes.content) {
-      const display = {
-        id: null,
-        label: null,
-        type: null,
-        weight: null,
-        settings: {},
-        third_party_settings: {},
-
-        ...entityFormDisplay.attributes.content[field]
-      }
-
-      let config = { attributes: {}, ...fieldConfig.find(element => element.attributes.field_name === field) }
-      config = {
-        description: null,
-        label: null,
-        required: false,
-        settings: {},
-
-        ...config.attributes
-      }
-
-      let storage = { attributes: {}, ...fieldStorageConfig.find(element => element.attributes.field_name === field) }
-      storage = {
-        cardinality: null,
-        settings: {},
-
-        ...storage.attributes
-      }
-
-      // Allow field name substitution via the JSON API Resource config.
-      let fieldName = field
-      if (this.resourceFields && this.resourceFields[field] && this.resourceFields[field].publicName !== field) {
-        fieldName = this.resourceFields[field].publicName
-      }
-
-      this.fields[fieldName] = {
-        id: fieldName,
-        description: config.description,
-        label: {
-          text: config.label,
-          position: display.label,
+  /**
+   * Adds OAuth2 authentication via an Axios interceptor callback.
+   *
+   * @todo Move Authentication functionality to another module.
+   *
+   * @returns {Function} Axios interceptor callback.
+   *
+   * @private
+   */
+  oauth2() {
+    const credentials = this.options.auth.credentials
+    return async (request) => {
+      const config = {
+        auth: {
+          tokenHost: this.options.baseUrl
         },
-        cardinality: storage.cardinality,
-        required: config.required,
-        type: display.type,
-        weight: display.weight,
-        settings: {
-          config: config.settings,
-          display: display.settings,
-          storage: storage.settings
+        client: {
+          id: credentials.clientId,
+          secret: credentials.clientSecret
         },
-        thirdPartySettings: display.third_party_settings
+        token: {
+          username: credentials.username,
+          password: credentials.password
+        }
+      }
+
+      const oauth2 = require('simple-oauth2').create({
+        client: config.client,
+        auth: config.auth
+      })
+
+      try {
+        const token = await oauth2.ownerPassword.getToken(config.token)
+
+        request.headers['Authorization'] = [token.token_type, token.access_token].join(' ')
+
+        return request
+      } catch (err) {
+        throw new Error(`Access Token Error: ${err.message}`)
       }
     }
-
-    this.schema = {
-      id: this.id,
-      resourceType: this.resourceType,
-      fields: Object.values(this.fields).sort((a, b) => a.weight - b.weight),
-      groups: [],
-      config: this.config
-    }
-
-    return this.schema
-  }
-
-  async view() {
-    const entityViewDisplay = await this.getResources('entity_view_display--entity_view_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res) ? res[0] : res)
-    if (!entityViewDisplay) return false
-
-    const fieldConfig = await this.getResources('field_config--field_config', { 'filter[entity_type]': this.config.entityType, 'filter[bundle]': this.config.bundle })
-    if (!fieldConfig) return false
-
-    for (const field in entityViewDisplay.attributes.content) {
-      const display = {
-        id: null,
-        label: null,
-        type: null,
-        weight: null,
-        settings: {},
-        third_party_settings: {},
-
-        ...entityViewDisplay.attributes.content[field]
-      }
-
-      let config = { attributes: {}, ...fieldConfig.find(element => element.attributes.field_name === field) }
-      config = {
-        description: null,
-        label: null,
-        required: false,
-        settings: {},
-
-        ...config.attributes
-      }
-
-      // Allow field name substitution via the JSON API Resource config.
-      let fieldName = field
-      if (this.resourceFields && this.resourceFields[field] && this.resourceFields[field].publicName !== field) {
-        fieldName = this.resourceFields[field].publicName
-      }
-
-      this.fields[fieldName] = {
-        id: fieldName,
-        description: config.description,
-        label: {
-          text: config.label,
-          position: display.label,
-        },
-        required: config.required,
-        type: display.type,
-        weight: display.weight,
-        settings: {
-          config: config.settings,
-          display: display.settings
-        },
-        thirdPartySettings: display.third_party_settings
-      }
-    }
-
-    this.schema = {
-      id: this.id,
-      resourceType: this.resourceType,
-      fields: Object.values(this.fields).sort((a, b) => a.weight - b.weight),
-      groups: [],
-      config: this.config
-    }
-
-    return this.schema
   }
 }
 
-export { Schema }
+export { DruxtSchema }

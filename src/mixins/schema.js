@@ -1,28 +1,66 @@
 import { mapActions } from 'vuex'
 
 /**
+ * Lazy loads a schema into the Vuex State object.
+ *
  * @mixin
+ *
+ * @example @lang vue
+ * <script>
+ * // Import mixin.
+ * import { DruxtSchemaMixin } from 'druxt-schema'
+ *
+ * export default {
+ *   name: 'CustomComponent',
+ *
+ *   // Register mixin.
+ *   mixins: [DruxtSchemaMixin],
+ * }
+ * </script>
+ *
+ * @example @lang vue
+ * <!-- Render component with lazy loaded Default View mode Page schema. -->
+ * <CustomComponent type="node--page" mode="default" />
+ *
+ * @todo Add schemaType property to Mixin.
  */
 const DruxtSchemaMixin = {
   /**
-   * Props.
+   * Vue.js Properties.
    */
   props: {
+    /**
+     * The Drupal Display mode.
+     * @type {string}
+     * @default default
+     */
     mode: {
       type: String,
       default: 'default'
     },
 
+    /**
+     * The JSON:API Resource type.
+     * @type {string}
+     */
     type: {
       type: String,
       required: true
     }
   },
 
+  /**
+   * Vue.js Data object.
+   *
+   * @property {object} schema - The Drupal Schema data.
+   */
   data: () => ({
     schema: false
   }),
 
+  /**
+   * Loads the Schema from the Vuex store.
+   */
   created() {
     // Lazy load the schema.
     this.getSchema({ resourceType: this.type, mode: this.mode }).then(res => {
@@ -30,7 +68,16 @@ const DruxtSchemaMixin = {
     })
   },
 
+  /**
+   * Vue.js methods.
+   */
   methods: {
+    /**
+     * Maps `druxtSchema/get` Vuex action to `this.getSchema`.
+     *
+     * @name getSchema
+     * @method
+     */
     ...mapActions({
       getSchema: 'druxtSchema/get'
     })

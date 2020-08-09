@@ -32,6 +32,10 @@ const sections = [
     title: 'Vuex stores',
     path: 'api/stores',
   },
+  {
+    title: 'Type definitions',
+    path: 'api/typedefs'
+  }
 ]
 sections.map(section => {
   const files = glob.sync(section.path + '/*.md', { cwd }).map(file => '/' + file.replace('README', '').replace('.md', ''))
