@@ -3,21 +3,65 @@ const DruxtSchemaStore = ({ store }) => {
     throw new TypeError('Vuex store not found.')
   }
 
+  /**
+   * @namespace
+   */
   const namespace = 'druxtSchema'
+
+  /**
+   * The druxtSchema Vuex module.
+   *
+   * Provides a Vuex state object, mutations and actions for interacting with the Druxt Schemas.
+   *
+   * @name druxtSchema
+   * @module druxtSchema
+   */
   const module = {
     namespaced: true,
 
+    /**
+     * The Vuex State object.
+     *
+     * @name state
+     * @type {state}
+     */
     state: () => ({
       schemas: {}
     }),
 
+    /**
+     * Vuex Mutations.
+     */
     mutations: {
+      /**
+       * @name addSchema
+       * @mutator {object} addSchema=schemas
+       * @param {state} state - The Vuex State object.
+       * @param {object} data - Schema object and ID to be committed.
+       *
+       * @example @lang js
+       * this.$store.commit('druxtSchema/addSchema', { id, schema }})
+       */
       addSchema(state, { id, schema }) {
         state.schemas[id] = schema
       }
     },
 
+    /**
+     * Vuex Actions.
+     */
     actions: {
+      /**
+       * Get a schema.
+       *
+       * @name get
+       * @action get=schema
+       * @param {SchemaConfiguration} resource The requested resource schema configuration object.
+       * @returns {Schema} The Druxt Schema object.
+       *
+       * @example @lang js
+       * const schema = await this.$store.dispatch('druxtRouter/get', '/')
+       */
       async get({ state, commit }, resource = {}) {
         resource = {
           id: null,
@@ -61,3 +105,20 @@ const DruxtSchemaStore = ({ store }) => {
 }
 
 export { DruxtSchemaStore }
+
+/**
+ * The Vuex State object.
+ *
+ * @typedef {object} state
+ * @property {object} schemas - Druxt Schemas, keyed by Schema ID.
+ */
+
+/**
+ * @typedef {object} Schema
+ * @see {@link ../typedefs/schema|Schema}
+ */
+
+/**
+ * @typedef {object} SchemaConfiguration
+ * @see {@link ../typedefs/schemaConfiguration|SchemaConfiguration}
+ */

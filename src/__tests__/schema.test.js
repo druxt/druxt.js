@@ -1,90 +1,78 @@
-// import axios from 'axios'
 import { DruxtSchema } from '..'
-import { Schema } from '../schema'
 
 jest.mock('axios')
+jest.mock('simple-oauth2')
 
 const baseURL = 'https://example.com'
 const options = {}
 
-let druxtSchema
+let schema
 
-describe('Schema', () => {
-  beforeEach(async () => {
-    druxtSchema = new DruxtSchema(baseURL, options)
+describe('DruxtSchema', () => {
+  beforeEach(() => {
+    schema = new DruxtSchema(baseURL, options)
   })
 
-  test('generate:view', async () => {
-    const config = {
+  test('constructor', () => {
+    // Throw error if 'baseURL' not provided.
+    expect(() => { new DruxtSchema() }).toThrow('The \'baseURL\' parameter is required.')
+
+    // Ensure class type.
+    expect(new DruxtSchema(baseURL)).toBeInstanceOf(DruxtSchema)
+  })
+
+  test('get', async () => {
+    const { schemas } = await schema.get()
+
+    expect(Object.keys(schemas).length).toBe(4)
+
+    expect(Object.values(schemas)[0]).toHaveProperty('id')
+    expect(Object.values(schemas)[0]).toHaveProperty('resourceType')
+
+    expect(Object.values(schemas)[0].config).toHaveProperty('entityType')
+    expect(Object.values(schemas)[0].config).toHaveProperty('bundle')
+    expect(Object.values(schemas)[0].config).toHaveProperty('mode')
+    expect(Object.values(schemas)[0].config).toHaveProperty('schemaType')
+
+    expect(schemas).toMatchSnapshot()
+  })
+
+  test('getSchema', async () => {
+    let config = {
       entityType: 'node',
       bundle: 'page'
     }
 
-    const schema = new Schema(config, { druxtSchema })
-    const result = await schema.generate()
-
+    const result = await schema.getSchema(config)
+    expect(result).toHaveProperty('config')
+    expect(result).toHaveProperty('data')
+    expect(result).toHaveProperty('displayId')
+    expect(result).toHaveProperty('druxtSchema')
+    expect(result).toHaveProperty('fields')
     expect(result).toHaveProperty('id')
+    expect(result).toHaveProperty('isValid')
     expect(result).toHaveProperty('resourceType')
 
-    expect(result.config).toHaveProperty('entityType')
-    expect(result.config).toHaveProperty('bundle')
-    expect(result.config).toHaveProperty('mode')
-    expect(result.config).toHaveProperty('schemaType')
-
-    expect(result.fields[0]).toHaveProperty('id')
-    expect(result.fields[0]).toHaveProperty('description')
-    expect(result.fields[0]).toHaveProperty('label.text')
-    expect(result.fields[0]).toHaveProperty('label.position')
-    expect(result.fields[0]).toHaveProperty('required')
-    expect(result.fields[0]).toHaveProperty('type')
-    expect(result.fields[0]).toHaveProperty('weight')
-    expect(result.fields[0]).toHaveProperty('settings.config')
-    expect(result.fields[0]).toHaveProperty('settings.display')
-    expect(result.fields[0]).toHaveProperty('thirdPartySettings')
-  })
-
-  test('generate:form', async () => {
-    const config = {
-      entityType: 'node',
-      bundle: 'page',
-      schemaType: 'form'
-    }
-
-    const schema = new Schema(config, { druxtSchema })
-    const result = await schema.generate()
-
-    expect(result).toHaveProperty('id')
-    expect(result).toHaveProperty('resourceType')
-
-    expect(result.config).toHaveProperty('entityType')
-    expect(result.config).toHaveProperty('bundle')
-    expect(result.config).toHaveProperty('mode')
-    expect(result.config).toHaveProperty('schemaType')
-
-    expect(result.fields[0]).toHaveProperty('id')
-    expect(result.fields[0]).toHaveProperty('description')
-    expect(result.fields[0]).toHaveProperty('label.text')
-    expect(result.fields[0]).toHaveProperty('label.position')
-    expect(result.fields[0]).toHaveProperty('required')
-    expect(result.fields[0]).toHaveProperty('type')
-    expect(result.fields[0]).toHaveProperty('weight')
-    expect(result.fields[0]).toHaveProperty('settings.config')
-    expect(result.fields[0]).toHaveProperty('settings.display')
-    expect(result.fields[0]).toHaveProperty('thirdPartySettings')
-  })
-
-  test('filter', async () => {
-    const config = {
-      entityType: 'node',
-      bundle: 'page',
-      filter: ['node--page--default--view']
-    }
-
-    const nodePage = new Schema(config, { druxtSchema })
-    expect(nodePage).not.toBe(false)
-
+    // Ensure we don't get a filtered schema.
     config.filter = ['node--article--default--view']
-    const nodeArticle = new Schema(config, { druxtSchema })
-    expect(nodeArticle.isValid).toBe(false)
+    expect(await schema.getSchema(config)).toBe(false)
+  })
+
+  test('oauth2', async () => {
+    schema = new DruxtSchema(baseURL, {
+      auth: {
+        type: 'oauth2',
+        credentials: {
+          clientId: 'clientId',
+          clientSecret: 'clientSecret',
+          username: 'username',
+          password: 'password'
+        }
+      }
+    })
+
+    const callback = schema.oauth2()
+    const request = await callback({ headers: {} })
+    expect(request.headers).toHaveProperty('Authorization')
   })
 })
