@@ -39,14 +39,15 @@ const sections = [
 ]
 sections.map(section => {
   const files = glob.sync(section.path + '/*.md', { cwd }).map(file => '/' + file.replace('README', '').replace('.md', ''))
+
   if (!files.length) return
   files.sort()
 
   sidebar.push({
     title: section.title,
     collapsable: false,
-    path: '/' + section.path,
-    children: files
+    path: files.includes(`/${section.path}/index`) ? `/${section.path}` : false,
+    children: files.filter(value => value !== `/${section.path}/index`)
   })
 })
 
