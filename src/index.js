@@ -1,51 +1,70 @@
-import consola from 'consola'
-import { resolve } from 'path'
+import { DruxtSchemaModule } from './module'
 
-import { DruxtSchema } from './druxtSchema'
-export { DruxtSchema }
+/**
+ * The core module functionality.
+ *
+ * Provides methods for generating Druxt.js Schema files from the Drupal JSON:API.
+ *
+ * @type class
+ * @exports DruxtSchema
+ * @see {@link ./schema|DruxtSchema}
+ *
+ * @example @lang js
+ * import { DruxtSchema } from 'druxt-schema'
+ * const druxtSchema = new DruxtSchema('https://example.com', {})
+ */
+export { DruxtSchema } from './schema'
 
-export { DruxtSchemaMixin } from './mixin'
+/**
+ * Vue.js Mixin.
+ *
+ * Adds required props and methods for lazy-loaded Schema support to custom Vue.js components.
+ *
+ * @exports DruxtSchemaMixin
+ * @type {object}
+ * @see {@link ./mixins/schema|DruxtSchemaMixin}
+ *
+ * @example @lang vue
+ * <script>
+ * import { DruxtSchemaMixin } from 'druxt-schema'
+ *
+ * export default {
+ *   name: 'CustomComponent',
+ *   mixins: [DruxtSchemaMixin]
+ * }
+ * </script>
+ */
+export { DruxtSchemaMixin } from './mixins/schema'
 
-export { DruxtSchemaStore } from './store'
+/**
+ * The Vuex store module.
+ *
+ * Contains actions for interacting with and caching the generated Schema files.
+ *
+ * @exports DruxtSchemaStore
+ * @type {Function}
+ * @see {@link ./store/schema|DruxtSchemaStore}
+ */
+export { DruxtSchemaStore } from './stores/schema'
 
-export default function (moduleOptions = {}) {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-  const options = this.options.druxt
-
-  // Add plugin.
-  this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
-    fileName: 'druxt-schema.js',
-    options
-  })
-
-  // Add Vuex plugin.
-  // @TODO - Ensure Vuex store is available.
-  this.addPlugin({
-    src: resolve(__dirname, '../nuxt/store.js'),
-    fileName: 'store/druxt-schema.js',
-    options
-  })
-
-  this.nuxt.hook('builder:prepared', async (nuxt, buildOptions) => {
-    // Generate schemas.
-    const druxtSchema = new DruxtSchema(options.baseUrl, options)
-    const { schemas } = await druxtSchema.get()
-
-    for (const name in schemas) {
-      const schema = schemas[name]
-      if (typeof schema === 'undefined') continue
-
-      this.addTemplate({
-        src: resolve(__dirname, '../nuxt/schema.json'),
-        fileName: `schemas/${name}.json`,
-        options: { schema }
-      })
-    }
-
-    consola.success('Druxt schema generated')
-  })
-}
+/**
+ * The Nuxt.js module function.
+ *
+ * Installs the module functionality in a Nuxt.js frontend.
+ *
+ * @type {Function}
+ * @exports default
+ * @name DruxtSchemaModule
+ * @see {@link ./module|DruxtSchemaModule}
+ * 
+ * @example <caption>nuxt.config.js</caption> @lang js
+ * module.exports = {
+ *   modules: [
+ *     'druxt-schema'
+ *   ],
+ *   druxt: {
+ *     baseUrl: 'https://example.com'
+ *   }
+ * }
+ */
+export default DruxtSchemaModule
