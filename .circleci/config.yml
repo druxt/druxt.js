@@ -112,13 +112,13 @@ workflows:
           filters:
             branches:
               only: master
+            tags:
+              only: /^\d+\.\d+\.\d+$/
       - gh-pages/deploy:
           build-dir: ../repo/docs/.vuepress/dist
           requires:
             - build_docs
-          ssh-fingerprints: "8e:64:8e:49:46:73:26:30:d7:b6:2c:9b:61:d5:cd:4c"
+          ssh-fingerprints: "66:44:f4:ac:78:3b:8d:bc:02:49:d3:46:02:d2:74:47"
           filters:
             branches:
               only: master
-            tags:
-              only: /^\d+\.\d+\.\d+$/
