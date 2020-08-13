@@ -4,7 +4,7 @@
   "description": "Provides an Entity render Vue component to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Realityloop/druxt-entity"
+    "url": "git+https://github.com/druxt/druxt-entity"
   },
   "keywords": [
     "drupal",
@@ -18,9 +18,9 @@
   "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Realityloop/druxt-entity/issues"
+    "url": "https://github.com/druxt/druxt-entity/issues"
   },
-  "homepage": "https://github.com/Realityloop/druxt-entity#readme",
+  "homepage": "https://github.com/druxt/druxt-entity#readme",
   "main": "dist/druxt-entity.ssr.js",
   "module": "dist/druxt-entity.esm.js",
   "unpkg": "dist/druxt-entity.min.js",
