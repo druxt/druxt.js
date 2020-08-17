@@ -1,6 +1,4 @@
 coverage
 dist
-docs/api
-docs/.vuepress/public
 node_modules
 .vscode

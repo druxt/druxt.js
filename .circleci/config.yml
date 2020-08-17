@@ -112,8 +112,6 @@ workflows:
           filters:
             branches:
               only: master
-            tags:
-              only: /^\d+\.\d+\.\d+$/
       - gh-pages/deploy:
           build-dir: ../repo/docs/.vuepress/dist
           requires:
