@@ -3,97 +3,157 @@ const fs = require('fs')
 const globby = require('globby')
 const jsdoc2md = require('jsdoc-to-markdown')
 const mkdirp = require('mkdirp')
+const ncp = require('ncp').ncp
 const path = require('path')
 const vueDocs = require('vue-docgen-api')
+const { dev, build } = require('vuepress')
 
-const writeData = function(file, data) {
-  if (!data) return
+const siteConfig = require('./vuepress.config')
 
-  const content = dmd(data, {
-    'example-lang': 'vue live',
-    'heading-depth': 1,
-    partial: [
-      path.resolve('node_modules/druxt-docgen/partials/sig-name.hbs')
-    ],
-    separators: true
-  })
-  if (!content) return
+const cwd = path.join(__dirname, '..')
 
-  const destination = file.replace('src', 'docs/api').replace(/\.[^/.]+$/, '.md')
-  mkdirp.sync(path.dirname(destination))
+/**
+ * DruxtDocgen class.
+ */
+class DruxtDocgen {
+  /**
+   * Generate documentation for source JS and Vue files.
+   */
+  async generateDocs () {
+    // Copy public files.
+    await ncp(path.resolve(cwd, 'docs/.vuepress/public'), path.resolve('docs/.vuepress/public'))
 
-  // Build frontmatter.
-  const name = data[0].id.split(':').pop()
-  const frontmatter = `---\ntitle: ${name}\n---\n\n`
+    const files = await globby([
+      // Javascript.
+      'src/**/*.js',
+      // Vue.js.
+      'src/components/**/*.vue',
+      // Exclude tests and mocks.
+      '!**/__tests__/*',
+      '!**/__mocks__/*'
+    ])
 
-  fs.writeFileSync(destination, frontmatter + content)
-}
+    for (const file of files) {
+      // Get JSDoc template data from file.
+      const templateData = jsdoc2md.getTemplateDataSync({
+        configure: path.resolve(cwd + '/jsdoc.json'),
+        files: file,
+      })
 
-module.exports = function () {
-  globby.sync('src', { expandDirectories: { extensions: [ 'js', 'vue' ] } }).map(file => {
-    // Skip tests, fixtures and mocks.
-    if (file.match(/\/__.*?__\//)) return
+      // Process file based on extension.
+      if (file.match(/\.js$/)) {
+        await this.processJs(file, templateData)
+      }
+      else {
+        await this.processVue(file, templateData)
+      }
 
-    const templateData = jsdoc2md.getTemplateDataSync({
-      configure: path.resolve('node_modules/druxt-docgen/jsdoc.json'),
-      files: file,
+      this.writeData(file, templateData)
+    }
+  }
+
+  /**
+   * Process Javascript files.
+   */
+  async processJs (file, templateData) {
+    templateData.map(item => {
+      // Vuex state scope fix.
+      if (item.name === 'state' && item.scope === 'inner') {
+        delete item.scope
+      }
+
+      // Vuex mutations/@mutator tag suport.
+      if (item.mutators) {
+        item.description = item.mutators[0].description
+        item.kind = 'method'
+        item.scope = 'mutation'
+      }
     })
+  }
 
-    // Vue.js SFC documentation with vue-docgen-api.
-    if (file.match(/\.vue$/)) {
-      vueDocs.parse(file).then(data => {
-        templateData.map(item => {
-          const parts = item.id.split('.')
-          if (item.memberof === null && parts.length > 1) {
-            parts.pop()
-            item.memberof = parts.join('.')
-          }
+  /**
+   * Process Vue.js files.
+   */
+  async processVue (file, templateData) {
+    // Get data from vue-docgen-api.
+    const data = await vueDocs.parse(file)
 
-          // @vue-computed tag support.
-          if (item._vueComputed) {
-            // Strip out HTML table from description.
-            item.description = item.description.replace(/<\/p.*/ms, '')
+    templateData.map(item => {
+      const parts = item.id.split('.')
+      if (item.memberof === null && parts.length > 1) {
+        parts.pop()
+        item.memberof = parts.join('.')
+      }
 
-            // Add
-            item._vueComputed.map(property => {
-              templateData.push({
-                id: `module:${data.displayName}.computed.${property.name}`,
-                longname: `module:${data.displayName}.computed.${property.name}`,
-                kind: 'property',
-                scope: 'static',
-                memberof: `module:${data.displayName}.computed`,
+      // @vue-computed tag support.
+      if (item._vueComputed) {
+        // Strip out HTML table from description.
+        item.description = item.description.replace(/<\/p.*/ms, '')
 
-                ...property
-              })
-            })
-          }
+        item._vueComputed.map(property => {
+          templateData.push({
+            id: `module:${data.displayName}.computed.${property.name}`,
+            longname: `module:${data.displayName}.computed.${property.name}`,
+            kind: 'property',
+            scope: 'static',
+            memberof: `module:${data.displayName}.computed`,
 
-          // Vue.js Computed properties fixes.
-          if (parts[1] === 'computed' && parts.length === 2) {
-            item.kind = 'property'
-          }
+            ...property
+          })
         })
+      }
 
-        writeData(file, templateData)
-      })
+      // Vue.js Computed properties fixes.
+      if (parts[1] === 'computed' && parts.length === 2) {
+        item.kind = 'property'
+      }
+    })
+  }
+
+  /**
+   * Run Vuepress process.
+   */
+  runServer () {
+    const options = {
+      siteConfig,
+      sourceDir: 'docs',
+      theme: 'druxt'
     }
 
-    // JS files.
-    else {
-      templateData.map(item => {
-        // Vuex state scope fix.
-        if (item.name === 'state' && item.scope === 'inner') {
-          delete item.scope
-        }
-
-        // Vuex mutations/@mutator tag suport.
-        if (item.mutators) {
-          item.description = item.mutators[0].description
-          item.kind = 'method'
-          item.scope = 'mutation'
-        }
-      })
-      writeData(file, templateData)
+    if (process.argv.slice(2).pop() === 'build') {
+      return build(options)
     }
-  })
+    dev(options)
+  }
+
+  /**
+   * Write data to file system.
+   *
+   * @param {string} file - The file name.
+   * @param {*} data - The JSDoc / Vuedoc generated data.
+   */
+  writeData (file, templateData) {
+    if (!templateData) return
+
+    const content = dmd(templateData, {
+      'example-lang': 'vue live',
+      'heading-depth': 1,
+      partial: [
+        path.resolve(cwd, 'partials/sig-name.hbs')
+      ],
+      separators: true
+    })
+    if (!content) return
+
+    const destination = file.replace('src', 'docs/api').replace(/\.[^/.]+$/, '.md')
+    mkdirp.sync(path.dirname(destination))
+
+    // Build frontmatter.
+    const name = templateData[0].id.split(':').pop()
+    const frontmatter = `---\ntitle: ${name}\n---\n\n`
+
+    fs.writeFileSync(destination, frontmatter + content)
+  }
 }
+
+module.exports = DruxtDocgen
