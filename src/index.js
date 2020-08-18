@@ -29,9 +29,8 @@ class DruxtDocgen {
       'src/**/*.js',
       // Vue.js.
       'src/components/**/*.vue',
-      // Exclude tests and mocks.
-      '!**/__tests__/*',
-      '!**/__mocks__/*'
+      // Exclude fixtures, mocks and tests.
+      '!**/__*__/**/*',
     ])
 
     for (const file of files) {
