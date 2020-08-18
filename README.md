@@ -6,9 +6,9 @@
 
 Simple decoupled [Drupal](https://drupal.org) routing for your [Nuxt.js](https://nuxtjs.org) application.
 
-## Druxt.js
+## Links
 
-This module is part of the Druxt.js project, find out more at http://druxtjs.org.
+- Documentation: https://druxt.github.io/druxt-router/
 
 ## Features
 
