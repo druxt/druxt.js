@@ -21,6 +21,7 @@ class DruxtDocgen {
    */
   async generateDocs () {
     // Copy public files.
+    await mkdirp(path.resolve('docs/.vuepress/public'))
     await ncp(path.resolve(cwd, 'docs/.vuepress/public'), path.resolve('docs/.vuepress/public'))
 
     const files = await globby([
