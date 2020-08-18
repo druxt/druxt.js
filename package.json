@@ -1,6 +1,6 @@
 {
   "name": "druxt-docgen",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Vuepress based documentation generator for Druxt.js docs.",
   "main": "src/index.js",
   "bin": {
@@ -47,6 +47,6 @@
     "ncp": "^2.0.0",
     "vue-docgen-api": "^4.31.0",
     "vuepress": "^1.5.3",
-    "vuepress-theme-druxt": "^0.1.1"
+    "vuepress-theme-druxt": "^0.1.2"
   }
 }
