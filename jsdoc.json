@@ -1,0 +1,10 @@
+{
+  "plugins": [
+    "node_modules/jsdoc-vuejs",
+    "node_modules/jsdoc-vuex-plugin"
+  ],
+  "source": {
+    "includePattern": "\\.(vue|js)$",
+    "excludePattern": ".+\\__.*"
+  }
+}
