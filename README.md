@@ -6,6 +6,10 @@
 
 Provides Drupal blocks and region components to be used within a Druxt (DRUpal nuXT) project.
 
+## Links
+
+- Documentation: https://druxt.github.io/druxt-blocks/
+
 ## Install
 
 `$ npm install druxt-blocks`
