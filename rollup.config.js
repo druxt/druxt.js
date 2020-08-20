@@ -42,21 +42,21 @@ const baseConfig = {
 // ESM/UMD/IIFE shared settings: externals
 // Refer to https://rollupjs.org/guide/en/#warning-treating-module-as-external-dependency
 const external = [
+  'drupal-jsonapi-params',
   'druxt-entity',
   'druxt-router',
   'path',
-  'vuex',
-  'qs'
+  'vuex'
 ];
 
 // UMD/IIFE shared settings: output.globals
 // Refer to https://rollupjs.org/guide/en#output-globals for details
 const globals = {
+  'drupal-jsonapi-params': 'drupalJsonapiParams',
   'druxt-entity': 'druxtEntity',
   'druxt-router': 'druxtRouter',
   path: 'path',
-  vuex: 'vuex',
-  qs: 'qs'
+  vuex: 'vuex'
 };
 
 // Customize configs for individual targets
