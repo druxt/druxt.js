@@ -76,7 +76,7 @@
     "vue-jest": "^3.0.6",
     "vue-template-compiler": "^2.6.11",
     "vue-test-utils": "^1.0.0-beta.11",
-    "vuepress-theme-druxt": "^0.2.0",
+    "vuepress-theme-druxt": "^0.2.1",
     "vuex": "^3.5.1"
   },
   "engines": {
