@@ -4,7 +4,7 @@
   "description": "Provides Drupal Views integration within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Realityloop/druxt-views"
+    "url": "git+https://github.com/druxt/druxt-views"
   },
   "keywords": [
     "drupal",
@@ -15,9 +15,9 @@
   "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Realityloop/druxt-views/issues"
+    "url": "https://github.com/druxt/druxt-views/issues"
   },
-  "homepage": "https://github.com/Realityloop/druxt-views#readme",
+  "homepage": "https://github.com/druxt/druxt-views#readme",
   "main": "dist/druxt-views.ssr.js",
   "module": "dist/druxt-views.esm.js",
   "unpkg": "dist/druxt-views.min.js",
