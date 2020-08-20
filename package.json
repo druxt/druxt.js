@@ -1,6 +1,6 @@
 {
   "name": "druxt-blocks",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Provides Drupal blocks and region components to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
