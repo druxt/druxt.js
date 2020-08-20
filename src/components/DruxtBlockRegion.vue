@@ -1,5 +1,8 @@
 <template>
-  <component :is="component" v-if="blocks">
+  <component
+    :is="component"
+    v-if="blocks"
+  >
     <druxt-block
       v-for="block of blocks"
       :key="block.id"
@@ -16,29 +19,97 @@ import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
 import { DruxtEntityComponentSuggestionMixin } from 'druxt-entity'
 
+/**
+ * The `<druxt-block-region />` Vue.js component.
+ *
+ * - Loads all JSON:API Block resources for a region/theme via the Druxt.js Router module.
+ * - Uses the DruxtBlock component to render individual resources, ordered by weight.
+ * - Renders the data via the Component Suggestion system.
+ *
+ * @example
+ * <druxt-block-region
+ *   name="header"
+ *   theme="umami"
+ * />
+ */
 export default {
   name: 'DruxtBlockRegion',
 
+  /**
+   * Vue.js Mixins.
+   *
+   * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+   */
   mixins: [DruxtEntityComponentSuggestionMixin],
 
+  /**
+   * Vue.js Properties.
+   *
+   * @see {@link https://vuejs.org/v2/guide/components-props.html}
+   */
   props: {
+    /**
+     * Region name.
+     *
+     * @type {string}
+     * @default content
+     */
     name: {
       type: String,
       default: 'content'
     },
 
+    /**
+     * Drupal theme.
+     *
+     * @type {string}
+     */
     theme: {
       type: String,
       required: true
     },
   },
 
+  /**
+   * Vue.js Data object.
+   *
+   * Used for on-demand JSON:API resource loading.
+   *
+   * @property {objects[]} blocks - The Block JSON:API resources.
+   * @property {boolean} loading - Loading status.
+   */
   data: () => ({
     blocks: [],
     loading: false
   }),
 
+  /**
+   * Vue.js Computed properties.
+   *
+   * @vue-computed {object} route The current Route.
+   */
   computed: {
+    /**
+     * Default suggestions for the Component suggestion mixin.
+     *
+     * - **[Prefix][Region][Theme]**
+     * - **[Prefix][Region]**
+     *
+     * @type {object[]}
+     *
+     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     *
+     * @example @lang vue
+     * <druxt-block-region
+     *   name="header"
+     *   theme="umami"
+     * />
+     * <!--
+     * Suggestions to be rendered by the DruxtBlockRegion component:
+     *   - DruxtBlockRegionHeaderUmami
+     *   - DruxtBlockRegionHeader
+     * -->
+     */
     suggestionDefaults() {
       if (!this.tokens) return []
 
@@ -50,6 +121,17 @@ export default {
       ]
     },
 
+    /**
+     * Tokens for the Component suggestion mixin.
+     *
+     * - prefix
+     * - region
+     * - theme
+     *
+     * @type {boolean|object}
+     *
+     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     */
     tokens() {
       return {
         prefix: 'DruxtBlockRegion',
@@ -58,6 +140,14 @@ export default {
       }
     },
 
+    /**
+     * Token type for DruxtEntityComponentSuggestionMixin.
+     *
+     * @type {string}
+     * @default block-region
+     *
+     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     */
     tokenType: () => 'block-region',
 
     ...mapState('druxtRouter', {
@@ -71,11 +161,21 @@ export default {
     }
   },
 
+  /**
+   * Invokes the `fetchBlocks` method.
+   *
+   * @see {@link #module_DruxtBlockRegion.methods.fetchBlocks}
+   */
   created() {
     this.fetchBlocks()
   },
 
   methods: {
+    /**
+     * Fetch requested blocks from Druxt.js Router.
+     *
+     * @todo {@link https://github.com/druxt/druxt-blocks/issues/18|Remove DruxtBlocksRegion drupal-jsonapi-params workaround.}
+     */
     fetchBlocks() {
       if (this.loading) return
 
@@ -113,6 +213,9 @@ export default {
       })
     },
 
+    /**
+     * Maps `druxtRouter/getResources` Vuex action to `this.getResources`.
+     */
     ...mapActions({
       getResources: 'druxtRouter/getResources'
     })
