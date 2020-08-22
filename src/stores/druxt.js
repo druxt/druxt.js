@@ -15,7 +15,7 @@ const DruxtStore = ({ store }) => {
    *
    * @name druxt
    * @module druxt
-   * 
+   *
    * @todo Add Druxt.js common settings functionality to Vuex store.
    */
   const module = {
