@@ -23,4 +23,7 @@ export default function (moduleOptions = {}) {
   for (const key in modules) {
     this.addModule(modules[key])
   }
+
+  // Enable the Vuex store.
+  this.options.store = true
 }
