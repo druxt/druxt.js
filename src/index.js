@@ -1,53 +1,41 @@
-/**
- * @vuepress
- * ---
- * title: DruxtModule
- * headline: The Nuxt.js module
- * ---
- */
-
-export { Druxt } from './druxt.js'
-
-export { DruxtStore } from './store'
+import { DruxtModule } from './module'
 
 /**
- * Nuxt.js module function.
+ * The Nuxt.js module function.
  *
- * Adds the core Druxt modules to the Nuxt.js application:
- * - [druxt-blocks](http://npmjs.com/package/druxt-blocks)
- * - [druxt-breadcrumb](http://npmjs.com/package/druxt-breadcrumb)
- * - [druxt-entity](http://npmjs.com/package/druxt-entity)
- * - [druxt-menu](http://npmjs.com/package/druxt-menu)
- * - [druxt-router](http://npmjs.com/package/druxt-router)
- * - [druxt-schema](http://npmjs.com/package/druxt-schema)
- * - [druxt-search](http://npmjs.com/package/druxt-search)
- * - [druxt-views](http://npmjs.com/package/druxt-views)
+ * Sets up a Druxt.js frontend.
  *
- * @param {object} moduleOptions - The Nuxt.js module options.
+ * @type {Function}
+ * @exports default
+ * @name DruxtModule
+ * @see {@link ./module|DruxtModule}
+ *
+ * @example <caption>nuxt.config.js</caption> @lang js
+ * module.exports = {
+ *   modules: [
+ *     'druxt'
+ *   ],
+ *   druxt: {
+ *     baseUrl: 'https://example.com'
+ *   }
+ * }
  */
-const DruxtModule = function (moduleOptions = {}) {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-
-  // Add Druxt modules.
-  const modules = [
-    'druxt-blocks',
-    'druxt-breadcrumb',
-    'druxt-entity',
-    'druxt-menu',
-    'druxt-router',
-    'druxt-schema',
-    'druxt-search',
-    'druxt-views'
-  ]
-  for (const key in modules) {
-    this.addModule(modules[key])
-  }
-
-  // Enable the Vuex store.
-  this.options.store = true
-}
-
 export default DruxtModule
+
+/**
+ * The Druxt class.
+ *
+ * @exports Druxt
+ * @name Druxt
+ * @see {@link ./druxt|Druxt}
+ */
+export { Druxt } from './druxt'
+
+/**
+ * The Druxt.js Vuex store.
+ *
+ * @exports DruxtStore
+ * @name DruxtStore
+ * @see {@link ./stores/druxt|DruxtStore}
+ */
+export { DruxtStore } from './stores/druxt'

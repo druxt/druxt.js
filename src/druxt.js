@@ -1,11 +1,3 @@
-/**
- * @vuepress
- * ---
- * title: Druxt
- * headline: The Druxt class
- * ---
- */
-
 import { DruxtRouter } from 'druxt-router'
 
 /**
@@ -14,12 +6,10 @@ import { DruxtRouter } from 'druxt-router'
  * Core and common functionality for Druxt.js.
  */
 class Druxt {
-
   /**
    * Druxt constructor.
    *
-   *
-   * @example
+   * @example @lang js
    * const druxt = new Druxt('https://example.com', {})
    *
    * @param {string} baseURL - The base URL of the Drupal JSON:API backend.

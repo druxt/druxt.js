@@ -1,41 +1,44 @@
-/**
- * @vuepress
- * ---
- * title: DruxtStore
- * headline: The Vuex store
- * ---
- */
-
-/**
- * Register the Druxt Vuex store with the Nuxt.js.
- */
 const DruxtStore = ({ store }) => {
   if (typeof store === 'undefined') {
     throw new TypeError('Vuex store not found.')
   }
 
+  /**
+   * @namespace
+   */
   const namespace = 'druxt'
+
+  /**
+   * The druxt Vuex module.
+   *
+   * Provides a Vuex state object, mutations and actions for common Druxt.js functionality.
+   *
+   * @name druxt
+   * @module druxt
+   * 
+   * @todo Add Druxt.js common settings functionality to Vuex store.
+   */
   const module = {
     namespaced: true,
 
     /**
-     * @name State
+     * Vuex State object.
+     *
+     * @name state
      * @type {object}
-     * @property {object} settings
+     * @property {object} settings - Druxt.js settings.
      */
     state: () => ({
       settings: {}
     }),
 
     /**
-     * @name Mutations
-     * @type {object}
+     * Vuex Mutations.
      */
     mutations: {},
 
     /**
-     * @name Actions
-     * @type {object}
+     * Vuex Actions.
      */
     actions: {}
   }
