@@ -1,7 +1,7 @@
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtStore } from '..'
+import { DruxtStore } from '../..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
