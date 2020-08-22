@@ -37,8 +37,6 @@ module.exports = {
 }
 ```
 
-Ensure you have activated the [Nuxt Vuex store](https://nuxtjs.org/guide/vuex-store/).
-
 ## Options
 
 ### Base Druxt options

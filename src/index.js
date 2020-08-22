@@ -1,29 +1,41 @@
-export { Druxt } from './druxt.js'
+import { DruxtModule } from './module'
 
-export { DruxtStore } from './store'
+/**
+ * The Nuxt.js module function.
+ *
+ * Sets up a Druxt.js frontend.
+ *
+ * @type {Function}
+ * @exports default
+ * @name DruxtModule
+ * @see {@link ./module|DruxtModule}
+ *
+ * @example <caption>nuxt.config.js</caption> @lang js
+ * module.exports = {
+ *   modules: [
+ *     'druxt'
+ *   ],
+ *   druxt: {
+ *     baseUrl: 'https://example.com'
+ *   }
+ * }
+ */
+export default DruxtModule
 
-export default function (moduleOptions = {}) {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-  const options = this.options.druxt
+/**
+ * The Druxt class.
+ *
+ * @exports Druxt
+ * @name Druxt
+ * @see {@link ./druxt|Druxt}
+ */
+export { Druxt } from './druxt'
 
-  // Add Druxt modules.
-  const modules = [
-    'druxt-blocks',
-    'druxt-breadcrumb',
-    'druxt-entity',
-    'druxt-menu',
-    'druxt-router',
-    'druxt-schema',
-    'druxt-search',
-    'druxt-views'
-  ]
-  for (const key in modules) {
-    this.addModule(modules[key])
-  }
-
-  // Enable the Vuex store.
-  this.options.store = true
-}
+/**
+ * The Druxt.js Vuex store.
+ *
+ * @exports DruxtStore
+ * @name DruxtStore
+ * @see {@link ./stores/druxt|DruxtStore}
+ */
+export { DruxtStore } from './stores/druxt'

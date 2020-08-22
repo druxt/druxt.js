@@ -1,11 +1,20 @@
 import { DruxtRouter } from 'druxt-router'
 
+/**
+ * The Druxt class.
+ *
+ * Core and common functionality for Druxt.js.
+ */
 class Druxt {
   /**
-   * Constructor.
+   * Druxt constructor.
    *
-   * @param string baseURL
-   * @param object options
+   * @example @lang js
+   * const druxt = new Druxt('https://example.com', {})
+   *
+   * @param {string} baseURL - The base URL of the Drupal JSON:API backend.
+   * @param {object} options - Druxt.js options.
+   * @param {string} options.endpoint - The JSON:API endpoint (e.g, 'jsonapi').
    */
   constructor (baseURL, options = {}) {
     // Check for URL.
@@ -13,12 +22,23 @@ class Druxt {
       throw new Error('The \'baseURL\' parameter is required.')
     }
 
+    /**
+     * Druxt.js options.
+     *
+     * @type {object}
+     * @public
+     */
     this.options = {
       endpoint: 'jsonapi',
       ...options
     }
 
-    // Setup Druxt Router.
+    /**
+     * Druxt router instance.
+     *
+     * @type {DruxtRouter}
+     * @public
+     */
     this.druxtRouter = new DruxtRouter(baseURL, options)
   }
 }

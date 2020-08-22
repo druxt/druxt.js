@@ -1,0 +1,10 @@
+{
+  "infiniteLoopProtection": true,
+  "hardReloadOnChange": false,
+  "template": "vuepress",
+  "view": "browser",
+  "container": {
+    "port": 8081,
+    "startScript": "docs:dev"
+  }
+}
