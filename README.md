@@ -8,7 +8,8 @@ Simple decoupled [Drupal](https://drupal.org) routing for your [Nuxt.js](https:/
 
 ## Links
 
-- Documentation: https://druxt.github.io/druxt-router/
+- Druxt.js: https://druxtjs.org
+- Documentation: https://router.druxtjs.org
 
 ## Features
 
