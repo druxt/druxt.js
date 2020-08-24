@@ -10,6 +10,17 @@ export default {
 
   mixins: [DruxtBlocksBlockMixin],
 
+  async fetch() {
+    const query = {
+      'filter[drupal_internal__id]': this.viewId,
+      'fields[view--view]': 'id'
+    }
+
+    const router = this.$druxtRouter()
+    const results = await this.$druxtRouter().getResources('view--view', query)
+    this.uuid = results[0].id
+  },
+
   data: () => ({
     uuid: false
   }),
@@ -34,18 +45,6 @@ export default {
     viewId() {
       return this.settings.id.match(/views_block\:(.*?)-(.*)/)[1]
     },
-  },
-
-  created() {
-    const query = {
-      'filter[drupal_internal__id]': this.viewId,
-      'fields[view--view]': 'id'
-    }
-
-    const router = this.$druxtRouter()
-    this.$druxtRouter().getResources('view--view', query).then(results => {
-      this.uuid = results[0].id
-    })
   }
 }
 </script>

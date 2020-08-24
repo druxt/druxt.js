@@ -56,6 +56,14 @@ export default {
     }
   },
 
+  async fetch() {
+    const viewQuery = { type: this.type, id: this.uuid }
+    this.view = await this.$druxtRouter().getResource(viewQuery)
+
+    const resultsQuery = { type: `views--${this.viewId}`, id: this.displayId }
+    this.results = await this.$druxtRouter().getResource(resultsQuery)
+  },
+
   data: () => ({
     results: false,
     view: false
@@ -117,18 +125,6 @@ export default {
 
       return suggestions
     },
-  },
-
-  created() {
-    const viewQuery = { type: this.type, id: this.uuid }
-    this.$druxtRouter().getResource(viewQuery).then(view => {
-      this.view = view
-    })
-
-    const resultsQuery = { type: `views--${this.viewId}`, id: this.displayId }
-    this.$druxtRouter().getResource(resultsQuery).then(results => {
-      this.results = results
-    })
-  },
+  }
 }
 </script>
