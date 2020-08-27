@@ -2,8 +2,8 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
-import { DruxtSchemaStore } from 'druxt-schema'
+import { DruxtRouter, DruxtRouterEntityMixin, DruxtRouterStore } from 'druxt-router'
+import { DruxtSchemaStore, DruxtSchemaMixin } from 'druxt-schema'
 import { DruxtEntity, DruxtField } from '..'
 
 const baseURL = 'https://example.com'
@@ -37,7 +37,13 @@ const mountComponent = (entity, options = {}) => {
 
   store.commit('druxtRouter/addEntity', entity)
 
-  return mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
+  const wrapper = mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
+
+  // Add fetch methods.
+  wrapper.vm.$fetchDruxtEntity = DruxtRouterEntityMixin.fetch
+  wrapper.vm.$fetchDruxtSchema = DruxtSchemaMixin.fetch
+
+  return wrapper
 }
 
 describe('Component - DruxtEntity', () => {
@@ -64,8 +70,8 @@ describe('Component - DruxtEntity', () => {
 
     expect(wrapper.vm.component).toBe('div')
 
-    await localVue.nextTick()
-    await localVue.nextTick()
+    await wrapper.vm.$fetchDruxtEntity()
+    await wrapper.vm.$fetchDruxtSchema()
 
     expect(wrapper.html()).toMatchSnapshot()
 

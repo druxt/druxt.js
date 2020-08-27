@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
 import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
-import { DruxtFieldEntityReferenceEntityView } from '..'
+import { DruxtFieldResponsiveImage } from '../..'
 
 jest.mock('axios')
 
@@ -13,7 +13,7 @@ const baseURL = 'https://example.com'
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-const stubs = ['druxt-entity']
+const stubs = ['nuxt-link']
 let store
 
 const mountComponent = (options) => {
@@ -21,9 +21,8 @@ const mountComponent = (options) => {
     type: 'pages',
     id: 'fe00c55d-0335-49d6-964e-a868c0c68f9c',
     attributes: {
-      title: 'Welcome to Contenta CMS!',
-      path: {
-        alias: '/welcome'
+      uri: {
+        value: 'public://sites/default/image.jpg'
       }
     }
   }
@@ -37,10 +36,15 @@ const mountComponent = (options) => {
     schema: {}
   }
 
-  return shallowMount(DruxtFieldEntityReferenceEntityView, { ...options, localVue, propsData, store, stubs })
+  const wrapper = shallowMount(DruxtFieldResponsiveImage, { ...options, localVue, propsData, store, stubs })
+
+  // Add fetch method.
+  wrapper.vm.$fetch = DruxtFieldResponsiveImage.fetch
+
+  return wrapper
 }
 
-describe('Component - DruxtFieldEntityReferenceEntityView', () => {
+describe('Component - DruxtFieldResponsiveImage', () => {
   beforeEach(() => {
     mockAxios.reset()
 
@@ -53,10 +57,11 @@ describe('Component - DruxtFieldEntityReferenceEntityView', () => {
   test('default', async () => {
     const wrapper = mountComponent()
 
-    await localVue.nextTick()
-    await localVue.nextTick()
+    await wrapper.vm.$fetch()
+    await wrapper.vm.$forceUpdate()
 
-    expect(wrapper.vm.mode).toBe('default')
+    expect(wrapper.vm.entities.length).toBe(1)
+
     expect(wrapper.html()).toMatchSnapshot()
   })
 })
