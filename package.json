@@ -31,22 +31,22 @@
     "babel-eslint": "^10.1.0",
     "druxt-router": "^0.15.0",
     "eslint": "^7.7.0",
-    "jest": "^26.1.0",
+    "jest": "^26.4.2",
     "jest-junit": "^11.1.0",
     "nodemon": "^2.0.4",
-    "vue-template-compiler": "^2.6.11",
-    "vuepress-theme-druxt": "^0.2.1",
+    "vue-template-compiler": "^2.6.12",
     "vuex": "^3.5.1"
   },
   "dependencies": {
     "dmd": "^5.0.2",
     "globby": "^11.0.1",
     "jsdoc-to-markdown": "^6.0.1",
-    "jsdoc-vuejs": "^3.0.8",
+    "jsdoc-vuejs": "^3.0.9",
     "jsdoc-vuex-plugin": "^1.0.0",
     "markdown-it-task-lists": "^2.1.1",
     "ncp": "^2.0.0",
-    "vue-docgen-api": "^4.31.0",
-    "vuepress": "^1.5.3"
+    "vue-docgen-api": "^4.31.1",
+    "vuepress": "^1.5.4",
+    "vuepress-theme-druxt": "^0.2.1"
   }
 }
