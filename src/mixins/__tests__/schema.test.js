@@ -32,11 +32,10 @@ describe('DruxtSchemaRouterEntityMixin', () => {
       store,
       localVue
     })
-    expect(wrapper.vm.schema).toBe(false)
 
-    // Wait for async callbacks to finish.
-    await localVue.nextTick()
-    await localVue.nextTick()
+    // Bind and execute fetch() method.
+    wrapper.vm.$fetch = DruxtSchemaMixin.fetch
+    await wrapper.vm.$fetch()
 
     expect(wrapper.vm.schema).toStrictEqual({})
   })

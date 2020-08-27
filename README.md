@@ -6,6 +6,10 @@
 
 Provides a Drupal Entity schema Vuex store to be used within a Druxt (DRUpal nuXT) project.
 
+## Links
+
+- Documentation: https://druxt.github.io/druxt-schema/
+
 ## Install
 
 `$ npm install druxt-schema`
