@@ -47,8 +47,8 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "druxt-router": "^0.15.0",
-    "druxt-schema": "^0.4.0"
+    "druxt-router": "^0.16.0",
+    "druxt-schema": "^0.5.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.11.0",

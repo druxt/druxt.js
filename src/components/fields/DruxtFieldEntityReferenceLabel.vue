@@ -65,6 +65,35 @@ export default {
   mixins: [DruxtFieldMixin],
 
   /**
+   * Loads all referenced entities via `druxtRouter/getEntity`.
+   *
+   * @see {@link https://druxt.github.io/druxt-router/api/stores/router.html#module_druxtRouter..getEntity}
+   */
+  async fetch() {
+    this.loading = this.items.length
+    for (const delta in this.items) {
+      const item = this.items[delta]
+
+      const result = await this.getEntity({ id: item.uuid, type: item.type })
+      if (!this.entities) this.entities = []
+
+      this.entities[delta] = {
+        props: false,
+        text: result.attributes[Object.keys(result.attributes).find(e => ['name', 'title'].includes(e))]
+      }
+
+      if (this.schema.settings.display.link && result.attributes.path.alias) {
+        this.component = 'nuxt-link'
+        this.entities[delta].props = {
+          to: result.attributes.path.alias
+        }
+      }
+
+      this.loading--
+    }
+  },
+
+  /**
    * Vue.js Data object.
    *
    * Used for on-demand JSON:API resource loading.
@@ -92,35 +121,6 @@ export default {
       if (this.loading === 0) {
         this.$forceUpdate()
       }
-    }
-  },
-
-  /**
-   * Loads all referenced entities via `druxtRouter/getEntity`.
-   *
-   * @see {@link https://druxt.github.io/druxt-router/api/stores/router.html#module_druxtRouter..getEntity}
-   */
-  created() {
-    this.loading = this.items.length
-    for (const delta in this.items) {
-      const item = this.items[delta]
-      this.getEntity({ id: item.uuid, type: item.type }).then((res) => {
-        if (!this.entities) this.entities = []
-
-        this.entities[delta] = {
-          props: false,
-          text: res.attributes[Object.keys(res.attributes).find(e => ['name', 'title'].includes(e))]
-        }
-
-        if (this.schema.settings.display.link && res.attributes.path.alias) {
-          this.component = 'nuxt-link'
-          this.entities[delta].props = {
-            to: res.attributes.path.alias
-          }
-        }
-
-        this.loading--
-      })
     }
   },
 

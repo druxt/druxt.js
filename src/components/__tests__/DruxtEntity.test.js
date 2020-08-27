@@ -37,7 +37,12 @@ const mountComponent = (entity, options = {}) => {
 
   store.commit('druxtRouter/addEntity', entity)
 
-  return mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
+  const wrapper = mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
+
+  // Add fetch method.
+  wrapper.vm.$fetch = DruxtEntity.fetch
+
+  return wrapper
 }
 
 describe('Component - DruxtEntity', () => {
@@ -64,8 +69,7 @@ describe('Component - DruxtEntity', () => {
 
     expect(wrapper.vm.component).toBe('div')
 
-    await localVue.nextTick()
-    await localVue.nextTick()
+    await wrapper.vm.$fetch()
 
     expect(wrapper.html()).toMatchSnapshot()
 
