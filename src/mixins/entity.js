@@ -67,6 +67,23 @@ const DruxtRouterEntityMixin = {
   },
 
   /**
+   * Loads the JSON:API resource via the Vuex store.
+   */
+  async fetch () {
+    // Use resource from Vuex store if available.
+    if (typeof this.entities[this.uuid] !== 'undefined') {
+      this.entity = this.entities[this.uuid]
+      return
+    }
+
+    // Otherwise invoke getEntity() to retrieve it from Drupal.
+    if (!this.entity && this.uuid && this.type) {
+      this.entity = await this.getEntity({ id: this.uuid, type: this.type })
+      this.loading = false
+    }
+  },
+
+  /**
    * Vue.js Data object.
    *
    * Used for on-demand JSON:API resource loading.
@@ -78,25 +95,6 @@ const DruxtRouterEntityMixin = {
     entity: false,
     loading: true
   }),
-
-  /**
-   * Loads the JSON:API resource via the Vuex store.
-   */
-  created () {
-    // Use resource from Vuex store if available.
-    if (typeof this.entities[this.uuid] !== 'undefined') {
-      this.entity = this.entities[this.uuid]
-      return
-    }
-
-    // Otherwise invoke getEntity() to retrieve it from Drupal.
-    if (!this.entity && this.uuid && this.type) {
-      this.getEntity({ id: this.uuid, type: this.type }).then((res) => {
-        this.entity = res
-        this.loading = false
-      })
-    }
-  },
 
   /**
    * Vue.js Computed properties.

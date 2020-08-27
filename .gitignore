@@ -1,6 +1,6 @@
 coverage
+docs/.vuepress/public
 docs/api
-!docs/api/README.md
 dist
 node_modules
 .nuxt
