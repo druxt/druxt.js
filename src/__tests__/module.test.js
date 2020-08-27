@@ -1,12 +1,12 @@
 import DruxtSchemaModule from '..'
 
-jest.mock('../schema')
+jest.mock('../utils/schema')
 
 const mock = {
   addPlugin: jest.fn(),
   addTemplate: jest.fn(),
   nuxt: {
-    hook: jest.fn((hook, fn) => fn()),
+    hook: (hook, fn) => fn()
   },
   options: {},
   DruxtSchemaModule
