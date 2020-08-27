@@ -52,6 +52,18 @@ export default {
   mixins: [DruxtFieldMixin],
 
   /**
+   * Loads all referenced entities via `druxtRouter/getEntity`.
+   *
+   * @see {@link https://druxt.github.io/druxt-router/api/stores/router.html#module_druxtRouter..getEntity}
+   */
+  async fetch() {
+    for (const delta in this.items) {
+      const item = this.items[delta]
+      this.entities[delta] = await this.getEntity({ id: item.uuid, type: item.type })
+    }
+  },
+
+  /**
    * Vue.js Data object.
    *
    * Used for on-demand JSON:API resource loading.
@@ -61,21 +73,6 @@ export default {
   data: () => ({
     entities: []
   }),
-
-  /**
-   * Loads all referenced entities via `druxtRouter/getEntity`.
-   *
-   * @see {@link https://druxt.github.io/druxt-router/api/stores/router.html#module_druxtRouter..getEntity}
-   */
-  created() {
-    for (const delta in this.items) {
-      const item = this.items[delta]
-      this.getEntity({ id: item.uuid, type: item.type }).then((res) => {
-        this.entities[delta] = res
-        this.$forceUpdate()
-      })
-    }
-  },
 
   methods: {
     /**
@@ -87,4 +84,3 @@ export default {
   }
 }
 </script>
-

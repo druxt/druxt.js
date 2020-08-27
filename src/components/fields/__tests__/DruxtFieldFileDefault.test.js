@@ -34,7 +34,12 @@ const mountComponent = (link = {}, options) => {
     schema: {}
   }
 
-  return shallowMount(DruxtFieldFileDefault, { ...options, localVue, propsData, store, stubs })
+  const wrapper = shallowMount(DruxtFieldFileDefault, { ...options, localVue, propsData, store, stubs })
+
+  // Add fetch method.
+  wrapper.vm.$fetch = DruxtFieldFileDefault.fetch
+
+  return wrapper
 }
 
 describe('Component - DruxtFieldFileDefault', () => {
@@ -54,8 +59,10 @@ describe('Component - DruxtFieldFileDefault', () => {
     })
 
     expect(wrapper.vm.entities.length).toBe(0)
-    await localVue.nextTick()
-    await localVue.nextTick()
+
+    await wrapper.vm.$fetch()
+    await wrapper.vm.$forceUpdate()
+
     expect(wrapper.vm.entities.length).toBe(1)
 
     expect(wrapper.html()).toMatchSnapshot()

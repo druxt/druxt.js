@@ -72,6 +72,18 @@ export default {
   mixins: [DruxtEntityComponentSuggestionMixin, DruxtEntityContextMixin, DruxtRouterEntityMixin, DruxtSchemaMixin],
 
   /**
+   * Nuxt.js fetch method.
+   *
+   * Invokes DruxtRouterEntityMixin and DruxtSchemaMixin fetch methods.
+   *
+   * @see {@link https://nuxtjs.org/api/pages-fetch/}
+   */
+  async fetch() {
+    await DruxtRouterEntityMixin.fetch.call(this)
+    await DruxtSchemaMixin.fetch.call(this)
+  },
+
+  /**
    * Vue.js Properties.
    *
    * @see {@link https://vuejs.org/v2/guide/components-props.html}
