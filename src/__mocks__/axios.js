@@ -4,6 +4,10 @@ import md5 from 'md5'
 import mockAxios from 'jest-mock-axios'
 
 mockAxios.get = jest.fn((url, options) => {
+  if (url === '/jsonapi/missing/test') {
+    throw new Error('Error')
+  }
+
   let data = null
   let status = 404
   const validateStatus = true
