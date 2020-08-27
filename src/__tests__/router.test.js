@@ -164,8 +164,9 @@ describe('DruxtRouter', () => {
     const entity = await router.getResource(testArticle)
     expect(entity).toHaveProperty('type', testArticle.type)
 
-    await router.getResource({ id: 'test', type: 'missing' })
+    const error = await router.getResource({ id: 'test', type: 'missing' })
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi/missing/test')
+    expect(error).toBe(false)
 
     const empty = await router.getResource()
     expect(empty).toBe(false)

@@ -33,18 +33,14 @@ describe('DruxtRouterEntityMixin', () => {
       localVue
     })
 
-    expect(wrapper.vm.loading).toBe(true)
+    // Bind and execute fetch() method.
+    wrapper.vm.$fetch = DruxtRouterEntityMixin.fetch
+    await wrapper.vm.$fetch()
 
-    // Wait for async callbacks to finish.
-    for (let i = 0; i < 4; i++) {
-      await localVue.nextTick()
-    }
-
-    expect(wrapper.vm.loading).toBe(false)
     expect(wrapper.vm.entity).toHaveProperty('id', '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
   })
 
-  test('cache', () => {
+  test('cache', async () => {
     store.commit('druxtRouter/addEntity', {
       id: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9',
       cache: true
@@ -58,6 +54,10 @@ describe('DruxtRouterEntityMixin', () => {
       store,
       localVue
     })
+
+    // Bind and execute fetch() method.
+    wrapper.vm.$fetch = DruxtRouterEntityMixin.fetch
+    await wrapper.vm.$fetch()
 
     expect(wrapper.vm.entity.cache).toBe(true)
   })

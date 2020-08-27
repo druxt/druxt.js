@@ -314,9 +314,12 @@ class DruxtRouter {
     }
 
     const url = `${href}/${id}`
-    const resource = await this.axios.get(url)
-
-    return resource.data.data
+    try {
+      const resource = await this.axios.get(url)
+      return resource.data.data
+    } catch (e) {
+      return false
+    }
   }
 
   /**
