@@ -50,6 +50,13 @@ const DruxtSchemaMixin = {
   },
 
   /**
+   * Loads the Schema from the Vuex store.
+   */
+  async fetch() {
+    this.schema = await this.getSchema({ resourceType: this.type, mode: this.mode })
+  },
+
+  /**
    * Vue.js Data object.
    *
    * @property {object} schema - The Drupal Schema data.
@@ -57,16 +64,6 @@ const DruxtSchemaMixin = {
   data: () => ({
     schema: false
   }),
-
-  /**
-   * Loads the Schema from the Vuex store.
-   */
-  created() {
-    // Lazy load the schema.
-    this.getSchema({ resourceType: this.type, mode: this.mode }).then(res => {
-      this.schema = res
-    })
-  },
 
   /**
    * Vue.js methods.
