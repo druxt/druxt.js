@@ -8,8 +8,6 @@ const path = require('path')
 const vueDocs = require('vue-docgen-api')
 const { dev, build } = require('vuepress')
 
-const siteConfig = require('./vuepress.config')
-
 const cwd = path.join(__dirname, '..')
 
 /**
@@ -114,6 +112,8 @@ class DruxtDocgen {
    * Run Vuepress process.
    */
   runServer () {
+    const siteConfig = require('./vuepress.config')
+
     const options = {
       siteConfig,
       sourceDir: 'docs',
