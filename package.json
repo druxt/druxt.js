@@ -64,7 +64,7 @@
     "babel-eslint": "^10.1.0",
     "core-js": "^2.6.11",
     "cross-env": "^7.0.2",
-    "druxt-docgen": "^0.2.3",
+    "druxt-docgen": "^0.2.4",
     "eslint": "^6.8.0",
     "get-port": "^5.1.1",
     "gh-pages": "^3.1.0",
