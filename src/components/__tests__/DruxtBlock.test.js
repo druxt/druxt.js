@@ -2,7 +2,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
+import { DruxtRouter, DruxtRouterEntityMixin, DruxtRouterStore } from 'druxt-router'
 import { DruxtBlock } from '..'
 
 const baseURL = 'https://example.com'
@@ -45,6 +45,7 @@ describe('Component - DruxtBlock', () => {
 
   test('default', async () => {
     const wrapper = mountComponent(mockBlock)
+    await DruxtRouterEntityMixin.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.uuid).toBe('test-block')
     expect(wrapper.vm.type).toBe('block--block')
@@ -67,6 +68,7 @@ describe('Component - DruxtBlock', () => {
   test('pluginId', async () => {
     mockBlock.attributes.plugin = 'plugin:pluginId'
     const wrapper = mountComponent(mockBlock)
+    await DruxtRouterEntityMixin.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.suggestionDefaults.length).toBe(8)
 
