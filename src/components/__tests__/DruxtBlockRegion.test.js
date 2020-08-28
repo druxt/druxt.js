@@ -50,6 +50,7 @@ describe('Component - DruxtBlockRegion', () => {
 
   test('default', async () => {
     const wrapper = mountComponent()
+    await DruxtBlockRegion.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.name).toBe('content')
     expect(wrapper.vm.theme).toBe('test')
@@ -68,9 +69,9 @@ describe('Component - DruxtBlockRegion', () => {
 
     const watch = {
       ...DruxtBlockRegion.watch,
-      fetchBlocks: jest.fn()
+      $fetch: jest.fn()
     }
-    watch.route()
-    expect(watch.fetchBlocks).toHaveBeenCalled()
+    watch.$route()
+    expect(watch.$fetch).toHaveBeenCalled()
   })
 })

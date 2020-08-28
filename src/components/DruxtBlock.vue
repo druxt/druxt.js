@@ -1,9 +1,11 @@
 <template>
-  <component
-    :is="component"
-    v-if="entity"
-    v-bind="props"
-  />
+  <div>
+    <component
+      :is="component"
+      v-if="entity"
+      v-bind="props"
+    />
+  </div>
 </template>
 
 <script>
