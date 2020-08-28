@@ -1,8 +1,5 @@
 <template>
-  <component
-    :is="component"
-    v-if="blocks"
-  >
+  <component :is="component">
     <druxt-block
       v-for="block of blocks"
       :key="block.id"
@@ -70,16 +67,41 @@ export default {
   },
 
   /**
+   * Fetch requested blocks from Druxt.js Router.
+   */
+  async fetch() {
+    const query = new DrupalJsonApiParams()
+    query
+      .addFilter('region', this.name)
+      .addFilter('status', '1')
+      .addFilter('theme', this.theme)
+      .addGroup('visibility', 'OR')
+      .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
+
+    query.addGroup('pages', 'AND', 'visibility')
+      .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
+      .addFilter('visibility.request_path.negate', 0, '=', 'pages')
+
+    query.addGroup('front', 'AND', 'visibility')
+      .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
+      .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
+
+    const options = {
+      headers: { 'Druxt-Request-Path': this.$store.state.druxtRouter.route.resolvedPath }
+    }
+
+    this.blocks = await this.getResources({ resource: 'block--block', query })
+  },
+
+  /**
    * Vue.js Data object.
    *
    * Used for on-demand JSON:API resource loading.
    *
    * @property {objects[]} blocks - The Block JSON:API resources.
-   * @property {boolean} loading - Loading status.
    */
   data: () => ({
-    blocks: [],
-    loading: false
+    blocks: []
   }),
 
   /**
@@ -155,54 +177,12 @@ export default {
   },
 
   watch: {
-    route() {
-      this.fetchBlocks()
+    $route: function() {
+      this.$fetch()
     }
   },
 
-  /**
-   * Invokes the `fetchBlocks` method.
-   *
-   * @see {@link #module_DruxtBlockRegion.methods.fetchBlocks}
-   */
-  created() {
-    this.fetchBlocks()
-  },
-
   methods: {
-    /**
-     * Fetch requested blocks from Druxt.js Router.
-     */
-    fetchBlocks() {
-      if (this.loading) return
-
-      this.loading = true
-      const query = new DrupalJsonApiParams()
-      query
-        .addFilter('region', this.name)
-        .addFilter('status', '1')
-        .addFilter('theme', this.theme)
-        .addGroup('visibility', 'OR')
-        .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
-
-      query.addGroup('pages', 'AND', 'visibility')
-        .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
-        .addFilter('visibility.request_path.negate', 0, '=', 'pages')
-
-      query.addGroup('front', 'AND', 'visibility')
-        .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
-        .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
-
-      const options = {
-        headers: { 'Druxt-Request-Path': this.$store.state.druxtRouter.route.resolvedPath }
-      }
-
-      this.getResources({ resource: 'block--block', query }).then(blocks => {
-        this.blocks = blocks
-        this.loading = false
-      })
-    },
-
     /**
      * Maps `druxtRouter/getResources` Vuex action to `this.getResources`.
      */
