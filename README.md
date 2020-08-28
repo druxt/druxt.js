@@ -8,7 +8,8 @@ Provides a Drupal Entity schema Vuex store to be used within a Druxt (DRUpal nuX
 
 ## Links
 
-- Documentation: https://druxt.github.io/druxt-schema/
+- Druxt.js: https://druxtjs.org
+- Documentation: https://schema.druxtjs.org/
 
 ## Install
 
