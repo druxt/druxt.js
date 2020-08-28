@@ -1,6 +1,6 @@
 {
   "name": "druxt-schema",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Entity Form and View mode schemas for Drupal driven frontends.",
   "repository": {
     "type": "git",
@@ -46,6 +46,7 @@
     ]
   },
   "dependencies": {
+    "consola": "^2.15.0",
     "druxt-router": "^0.16.0",
     "simple-oauth2": "^3.4.0"
   },
@@ -58,7 +59,6 @@
     "@vue/test-utils": "^1.0.4",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
-    "consola": "^2.15.0",
     "cross-env": "^6.0.3",
     "drupal-jsonapi-params": "^1.1.10",
     "druxt-docgen": "^0.2.5",
