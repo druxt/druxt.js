@@ -165,6 +165,13 @@ export default {
      * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
      */
     tokenType: () => 'block'
+  },
+
+  created() {
+    // Workaround for Vuepress docs.
+    if (!this.$fetch && DruxtRouterEntityMixin.fetch) {
+      DruxtRouterEntityMixin.fetch.call(this)
+    }
   }
 }
 </script>
