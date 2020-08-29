@@ -6,6 +6,11 @@
 
 Provides an Entity render Vue component to be used within a Druxt (DRUpal nuXT) project.
 
+## Links
+
+- Druxt.js: https://druxtjs.org
+- Documentation: https://entity.druxtjs.org
+
 ## Install
 
 `$ npm install druxt-entity`

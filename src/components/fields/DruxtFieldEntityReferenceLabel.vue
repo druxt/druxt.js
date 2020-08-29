@@ -67,7 +67,7 @@ export default {
   /**
    * Loads all referenced entities via `druxtRouter/getEntity`.
    *
-   * @see {@link https://druxt.github.io/druxt-router/api/stores/router.html#module_druxtRouter..getEntity}
+   * @see {@link https://router.druxtjs.org/api/stores/router.html#module_druxtRouter..getEntity}
    */
   async fetch() {
     this.loading = this.items.length
