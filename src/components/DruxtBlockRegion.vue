@@ -34,7 +34,7 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+   * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
    */
   mixins: [DruxtEntityComponentSuggestionMixin],
 
@@ -98,7 +98,7 @@ export default {
      *
      * @type {object[]}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      *
      * @example @lang vue
      * <druxt-block-region
@@ -131,7 +131,7 @@ export default {
      *
      * @type {boolean|object}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      */
     tokens() {
       return {
@@ -147,7 +147,7 @@ export default {
      * @type {string}
      * @default block-region
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      */
     tokenType: () => 'block-region',
 

@@ -29,8 +29,8 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
-   * @see {@link https://druxt.github.io/druxt-router/api/mixins/entity|DruxtRouterEntityMixin}
+   * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+   * @see {@link https://router.druxtjs.org/api/mixins/entity.html|DruxtRouterEntityMixin}
    */
   mixins: [DruxtEntityComponentSuggestionMixin, DruxtRouterEntityMixin],
 
@@ -61,7 +61,7 @@ export default {
      *
      * @type {object}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
      */
     props() {
       return {
@@ -83,7 +83,7 @@ export default {
      *
      * @type {object[]}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      *
      * @example @lang vue
      * <druxt-block uuid="59104acd-88e1-43c3-bd5f-35800f206394" />
@@ -134,7 +134,7 @@ export default {
      *
      * @type {boolean|object}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      */
     tokens() {
       if (!this.entity) return false
@@ -162,7 +162,7 @@ export default {
      * @type {string}
      * @default block
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      */
     tokenType: () => 'block'
   },
