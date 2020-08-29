@@ -74,13 +74,10 @@ export default {
   /**
    * Nuxt.js fetch method.
    *
-   * Invokes DruxtRouterEntityMixin and DruxtSchemaMixin fetch methods.
-   *
    * @see {@link https://nuxtjs.org/api/pages-fetch/}
    */
   async fetch() {
-    await DruxtRouterEntityMixin.fetch.call(this)
-    await DruxtSchemaMixin.fetch.call(this)
+    await this.fetch()
   },
 
   /**
@@ -218,7 +215,22 @@ export default {
     tokenType: () => 'entity'
   },
 
+  created() {
+    // Workaround for Vuepress docs.
+    if (!this.entity || !this.schema) {
+      this.fetch()
+    }
+  },
+
   methods: {
+    /**
+     * Invokes DruxtRouterEntityMixin and DruxtSchemaMixin fetch methods.
+     */
+    async fetch() {
+      await DruxtRouterEntityMixin.fetch.call(this)
+      await DruxtSchemaMixin.fetch.call(this)
+    },
+
     /**
      * Checks if an Entity field is empty.
      *
