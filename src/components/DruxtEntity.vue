@@ -65,7 +65,7 @@ export default {
    *
    * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
    * @see {@link ../mixins/context|DruxtEntityContextMixin}
-   * @see {@link https://druxt.github.io/druxt-router/api/mixins/entity|DruxtRouterEntityMixin}
+   * @see {@link https://router.druxtjs.org/api/mixins/entity.html|DruxtRouterEntityMixin}
    * @see DruxtSchemaMixin.
    * @see {@link https://vuejs.org/v2/guide/mixins.html}
    */
