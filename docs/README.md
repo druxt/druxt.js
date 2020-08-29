@@ -12,4 +12,4 @@ actionLink: /guide/getting-started
 
 Druxt.js is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
 
-Find out more at [http://druxtjs.org](http://druxtjs.org)
+Find out more at [https://druxtjs.org](https://druxtjs.org)
