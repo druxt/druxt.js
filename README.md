@@ -8,7 +8,8 @@ Provides Drupal blocks and region components to be used within a Druxt (DRUpal n
 
 ## Links
 
-- Documentation: https://druxt.github.io/druxt-blocks/
+- Druxt.js: https://druxtjs.org
+- Documentation: https://blocks.druxtjs.org/
 
 ## Install
 

@@ -33,5 +33,5 @@ This module is included in the core [Druxt.js](http://druxtjs.org) project, the 
 
 ### Frontend
 - [Nuxt.js](https://nuxtjs.org) frontend.
-- [Druxt.js Entity](https://druxt.github.io/druxt-entity)
-- [Druxt.js Router](https://druxt.github.io/druxt-router)
+- [Druxt.js Entity](https://entity.druxtjs.org/)
+- [Druxt.js Router](https://router.druxtjs.org/)

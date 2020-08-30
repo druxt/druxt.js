@@ -1,8 +1,5 @@
 <template>
-  <component
-    :is="component"
-    v-if="blocks"
-  >
+  <component :is="component">
     <druxt-block
       v-for="block of blocks"
       :key="block.id"
@@ -37,7 +34,7 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+   * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
    */
   mixins: [DruxtEntityComponentSuggestionMixin],
 
@@ -70,16 +67,21 @@ export default {
   },
 
   /**
+   * Nuxt.js fetch method.
+   */
+  async fetch() {
+    await this.fetch()
+  },
+
+  /**
    * Vue.js Data object.
    *
    * Used for on-demand JSON:API resource loading.
    *
    * @property {objects[]} blocks - The Block JSON:API resources.
-   * @property {boolean} loading - Loading status.
    */
   data: () => ({
-    blocks: [],
-    loading: false
+    blocks: []
   }),
 
   /**
@@ -96,7 +98,7 @@ export default {
      *
      * @type {object[]}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      *
      * @example @lang vue
      * <druxt-block-region
@@ -129,7 +131,7 @@ export default {
      *
      * @type {boolean|object}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      */
     tokens() {
       return {
@@ -145,7 +147,7 @@ export default {
      * @type {string}
      * @default block-region
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      */
     tokenType: () => 'block-region',
 
@@ -154,29 +156,30 @@ export default {
     })
   },
 
+  /**
+   * Nuxt.js watch property.
+   */
   watch: {
-    route() {
-      this.fetchBlocks()
+    /**
+     * Updates blocks on Route change.
+     */
+    $route: function() {
+      this.fetch()
     }
   },
 
-  /**
-   * Invokes the `fetchBlocks` method.
-   *
-   * @see {@link #module_DruxtBlockRegion.methods.fetchBlocks}
-   */
   created() {
-    this.fetchBlocks()
+    // Workaround for Vuepress docs.
+    if (!this.blocks.length) {
+      this.fetch()
+    }
   },
 
   methods: {
     /**
      * Fetch requested blocks from Druxt.js Router.
      */
-    fetchBlocks() {
-      if (this.loading) return
-
-      this.loading = true
+    async fetch() {
       const query = new DrupalJsonApiParams()
       query
         .addFilter('region', this.name)
@@ -197,10 +200,7 @@ export default {
         headers: { 'Druxt-Request-Path': this.$store.state.druxtRouter.route.resolvedPath }
       }
 
-      this.getResources({ resource: 'block--block', query }).then(blocks => {
-        this.blocks = blocks
-        this.loading = false
-      })
+      this.blocks = await this.getResources({ resource: 'block--block', query })
     },
 
     /**
