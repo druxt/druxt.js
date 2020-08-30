@@ -47,6 +47,6 @@
     "ncp": "^2.0.0",
     "vue-docgen-api": "^4.31.1",
     "vuepress": "^1.5.4",
-    "vuepress-theme-druxt": "^0.2.1"
+    "vuepress-theme-druxt": "^0.3.0"
   }
 }
