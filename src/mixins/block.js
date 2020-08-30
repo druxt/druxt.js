@@ -19,7 +19,7 @@ import { DruxtEntityContextMixin } from 'druxt-entity'
  * }
  * </script>
  *
- * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+ * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
  */
 const DruxtBlocksBlockMixin = {
   /**

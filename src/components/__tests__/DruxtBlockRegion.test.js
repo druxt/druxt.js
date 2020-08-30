@@ -69,9 +69,9 @@ describe('Component - DruxtBlockRegion', () => {
 
     const watch = {
       ...DruxtBlockRegion.watch,
-      $fetch: jest.fn()
+      fetch: jest.fn()
     }
     watch.$route()
-    expect(watch.$fetch).toHaveBeenCalled()
+    expect(watch.fetch).toHaveBeenCalled()
   })
 })

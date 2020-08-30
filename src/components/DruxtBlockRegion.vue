@@ -34,7 +34,7 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+   * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
    */
   mixins: [DruxtEntityComponentSuggestionMixin],
 
@@ -67,30 +67,10 @@ export default {
   },
 
   /**
-   * Fetch requested blocks from Druxt.js Router.
+   * Nuxt.js fetch method.
    */
   async fetch() {
-    const query = new DrupalJsonApiParams()
-    query
-      .addFilter('region', this.name)
-      .addFilter('status', '1')
-      .addFilter('theme', this.theme)
-      .addGroup('visibility', 'OR')
-      .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
-
-    query.addGroup('pages', 'AND', 'visibility')
-      .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
-      .addFilter('visibility.request_path.negate', 0, '=', 'pages')
-
-    query.addGroup('front', 'AND', 'visibility')
-      .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
-      .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
-
-    const options = {
-      headers: { 'Druxt-Request-Path': this.$store.state.druxtRouter.route.resolvedPath }
-    }
-
-    this.blocks = await this.getResources({ resource: 'block--block', query })
+    await this.fetch()
   },
 
   /**
@@ -118,7 +98,7 @@ export default {
      *
      * @type {object[]}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      *
      * @example @lang vue
      * <druxt-block-region
@@ -151,7 +131,7 @@ export default {
      *
      * @type {boolean|object}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      */
     tokens() {
       return {
@@ -167,7 +147,7 @@ export default {
      * @type {string}
      * @default block-region
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
      */
     tokenType: () => 'block-region',
 
@@ -176,13 +156,53 @@ export default {
     })
   },
 
+  /**
+   * Nuxt.js watch property.
+   */
   watch: {
+    /**
+     * Updates blocks on Route change.
+     */
     $route: function() {
-      this.$fetch()
+      this.fetch()
+    }
+  },
+
+  created() {
+    // Workaround for Vuepress docs.
+    if (!this.blocks.length) {
+      this.fetch()
     }
   },
 
   methods: {
+    /**
+     * Fetch requested blocks from Druxt.js Router.
+     */
+    async fetch() {
+      const query = new DrupalJsonApiParams()
+      query
+        .addFilter('region', this.name)
+        .addFilter('status', '1')
+        .addFilter('theme', this.theme)
+        .addGroup('visibility', 'OR')
+        .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
+
+      query.addGroup('pages', 'AND', 'visibility')
+        .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
+        .addFilter('visibility.request_path.negate', 0, '=', 'pages')
+
+      query.addGroup('front', 'AND', 'visibility')
+        .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
+        .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
+
+      const options = {
+        headers: { 'Druxt-Request-Path': this.$store.state.druxtRouter.route.resolvedPath }
+      }
+
+      this.blocks = await this.getResources({ resource: 'block--block', query })
+    },
+
     /**
      * Maps `druxtRouter/getResources` Vuex action to `this.getResources`.
      */

@@ -46,7 +46,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "drupal-jsonapi-params": "^1.1.10",
-    "druxt-entity": "^0.6.0",
+    "druxt-entity": "^0.6.1",
     "druxt-router": "^0.16.0"
   },
   "devDependencies": {
@@ -59,7 +59,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "cross-env": "^6.0.3",
-    "druxt-docgen": "^0.2.5",
+    "druxt-docgen": "^0.2.6",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.1.0",
