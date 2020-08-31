@@ -1,12 +1,12 @@
-version: 2
+version: 2.1
 
 defaults: &defaults
   working_directory: ~/repo
   docker:
-  - image: circleci/node:8.9.1
+  - image: circleci/node:12.18.3
 
 jobs:
-  test:
+  build:
     <<: *defaults
     steps:
       - checkout
@@ -25,13 +25,6 @@ jobs:
       - run:
           name: Build component
           command: npm run build
-      - run:
-          name: Run tests
-          command: npm test
-
-      - run:
-          name: Upload coverage report
-          command: npx codecov
 
       - save_cache:
           paths:
@@ -42,6 +35,28 @@ jobs:
           root: ~/repo
           paths:
             - .
+
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Run tests
+          command: npm test -- --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+
+      - run:
+          name: Upload coverage report
+          command: npx codecov
+
+      - store_test_results:
+          path: ./reports/junit/
+
+      - store_artifacts:
+          path: ./reports/junit
 
   deploy:
     <<: *defaults
@@ -62,9 +77,13 @@ workflows:
 
   test_deploy:
     jobs:
-      - test
+      - build
+      - test:
+          requires:
+            - build
       - deploy:
           requires:
+            - build
             - test
           filters:
             branches:

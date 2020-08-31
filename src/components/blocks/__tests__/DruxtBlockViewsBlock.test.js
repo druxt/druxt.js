@@ -1,19 +1,13 @@
 import { createLocalVue, mount } from '@vue/test-utils'
+import Vuex from 'vuex'
 
 import { DruxtBlockViewsBlock } from '..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
-const stubs = ['druxt-view']
+localVue.use(Vuex)
 
-// @TODO - Mock axios and add fixtures.
-const mocks = {
-  $druxtRouter: () => ({
-    getResources: jest.fn().mockImplementation(() => Promise.resolve([{
-      id: 'uuid'
-    }]))
-  })
-}
+const stubs = ['druxt-view']
 
 const mockBlock = {
   id: 'test-block',
@@ -24,17 +18,32 @@ const mockBlock = {
   }
 }
 
+// Setup mock Vuex store.
+const store = new Vuex.Store({
+  modules: {
+    druxtRouter: {
+      namespaced: true,
+      actions: {
+        getResources: jest.fn().mockImplementation(() => Promise.resolve([{
+          id: 'uuid'
+        }]))
+      }
+    }
+  }
+})
+
 const mountComponent = (entity, options = {}) => {
   const propsData = { block: entity }
 
-  return mount(DruxtBlockViewsBlock, { localVue, mocks, propsData, stubs, ...options })
+  const wrapper = mount(DruxtBlockViewsBlock, { localVue, propsData, store, stubs, ...options })
+  wrapper.vm.$fetch = DruxtBlockViewsBlock.fetch
+  return wrapper
 }
 
 describe('Component - DruxtBlockViewsBlock', () => {
   test('default', async () => {
     const wrapper = mountComponent(mockBlock)
-
-    await localVue.nextTick()
+    await wrapper.vm.$fetch()
 
     expect(wrapper.vm.uuid).toBe('uuid')
 
