@@ -1,8 +1,12 @@
 <template>
-  <druxt-view v-if="props" v-bind="props" />
+  <div>
+    <druxt-view v-if="props" v-bind="props" />
+  </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 import { DruxtBlocksBlockMixin } from 'druxt-blocks'
 
 export default {
@@ -11,14 +15,7 @@ export default {
   mixins: [DruxtBlocksBlockMixin],
 
   async fetch() {
-    const query = {
-      'filter[drupal_internal__id]': this.viewId,
-      'fields[view--view]': 'id'
-    }
-
-    const router = this.$druxtRouter()
-    const results = await this.$druxtRouter().getResources('view--view', query)
-    this.uuid = results[0].id
+    await this.fetch()
   },
 
   data: () => ({
@@ -45,6 +42,31 @@ export default {
     viewId() {
       return this.settings.id.match(/views_block\:(.*?)-(.*)/)[1]
     },
+  },
+
+  created() {
+    if (!this.$fetch) {
+      this.fetch()
+    }
+  },
+
+  methods: {
+    async fetch() {
+      const query = {
+        'filter[drupal_internal__id]': this.viewId,
+        'fields[view--view]': 'id'
+      }
+
+      const results = await this.getResources('view--view', query)
+      this.uuid = results[0].id
+    },
+
+    /**
+     * Maps `druxtRouter/getResources` Vuex action to `this.getResources`.
+     */
+    ...mapActions({
+      getResources: 'druxtRouter/getResources'
+    })
   }
 }
 </script>

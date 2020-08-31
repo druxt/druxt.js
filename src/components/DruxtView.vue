@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'DruxtView',
 
@@ -57,11 +59,7 @@ export default {
   },
 
   async fetch() {
-    const viewQuery = { type: this.type, id: this.uuid }
-    this.view = await this.$druxtRouter().getResource(viewQuery)
-
-    const resultsQuery = { type: `views--${this.viewId}`, id: this.displayId }
-    this.results = await this.$druxtRouter().getResource(resultsQuery)
+    await this.fetch()
   },
 
   data: () => ({
@@ -125,6 +123,29 @@ export default {
 
       return suggestions
     },
+  },
+
+  created() {
+    if (!this.$fetch) {
+      this.fetch()
+    }
+  },
+
+  methods: {
+    async fetch() {
+      const viewQuery = { type: this.type, id: this.uuid }
+      this.view = await this.getResource(viewQuery)
+
+      const resultsQuery = { type: `views--${this.viewId}`, id: this.displayId }
+      this.results = await this.getResource(resultsQuery)
+    },
+
+    /**
+     * Maps `druxtRouter/getEntity` Vuex action to `this.getResource`.
+     */
+    ...mapActions({
+      getResource: 'druxtRouter/getEntity'
+    })
   }
 }
 </script>
