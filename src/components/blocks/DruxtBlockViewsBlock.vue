@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { mapActions } from 'vuex'
 import { DruxtBlocksBlockMixin } from 'druxt-blocks'
 
@@ -101,12 +102,12 @@ export default {
      * Fetch requested View from Druxt.js Router.
      */
     async fetch() {
-      const query = {
-        'filter[drupal_internal__id]': this.viewId,
-        'fields[view--view]': 'id'
-      }
+      const query = new DrupalJsonApiParams()
+      query
+        .addFilter('drupal_internal__id', this.viewId)
+        .addFields('view--view', ['id'])
 
-      const results = await this.getResources('view--view', query)
+      const results = await this.getResources({ resource: 'view--view', query })
       this.uuid = results[0].id
     },
 
