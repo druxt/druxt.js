@@ -24,6 +24,7 @@ const store = new Vuex.Store({
                     display_options: {
                       header: false,
                       row: {
+                        type: 'entity:node',
                         options: {
                           view_mode: 'default'
                         }

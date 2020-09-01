@@ -166,6 +166,8 @@ export default {
     mode() {
       if (!this.display) return false
 
+      if (!this.display.display_options.row.type.includes('entity:')) return false
+
       return this.display.display_options.row.options.view_mode
     },
 
