@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  gh-pages: sugarshin/gh-pages@0.0.6
+
 defaults: &defaults
   working_directory: ~/repo
   docker:
@@ -30,6 +33,24 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - .
+
+  build_docs:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Build with vuepress
+          command: npm run docs:build
+
+      - store_artifacts:
+          path: ~/repo/docs/.vuepress/dist
 
       - persist_to_workspace:
           root: ~/repo
@@ -78,6 +99,9 @@ workflows:
   test_deploy:
     jobs:
       - build
+      - build_docs:
+          requires:
+            - build
       - test:
           requires:
             - build
@@ -88,3 +112,13 @@ workflows:
           filters:
             branches:
               only: master
+      - gh-pages/deploy:
+          build-dir: ../repo/docs/.vuepress/dist
+          requires:
+            - build_docs
+          ssh-fingerprints: "d4:2c:b3:3d:ad:8b:2e:b5:dd:c9:11:35:ce:74:4a:cd"
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /^\d+\.\d+\.\d+$/

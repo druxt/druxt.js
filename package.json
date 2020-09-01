@@ -1,10 +1,10 @@
 {
   "name": "druxt-views",
   "version": "0.3.0",
-  "description": "Provides Drupal Views integration within a Druxt (DRUpal nuXT) project.",
+  "description": "Drupal Views Vue.js components for Nuxt.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Realityloop/druxt-views"
+    "url": "git+https://github.com/druxt/druxt-views"
   },
   "keywords": [
     "drupal",
@@ -15,9 +15,9 @@
   "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Realityloop/druxt-views/issues"
+    "url": "https://github.com/druxt/druxt-views/issues"
   },
-  "homepage": "https://github.com/Realityloop/druxt-views#readme",
+  "homepage": "https://github.com/druxt/druxt-views#readme",
   "main": "dist/druxt-views.ssr.js",
   "module": "dist/druxt-views.esm.js",
   "unpkg": "dist/druxt-views.min.js",
@@ -31,6 +31,8 @@
     "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
+    "docs:dev": "druxt-docgen dev",
+    "docs:build": "druxt-docgen build",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
@@ -42,14 +44,15 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "drupal-jsonapi-params": "^1.1.10",
     "druxt-blocks": "^0.5.0",
     "druxt-entity": "^0.6.1",
     "druxt-router": "^0.16.0",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.11.0",
-    "@babel/preset-env": "^7.11.0",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
     "@rollup/plugin-alias": "^2.2.0",
     "@rollup/plugin-buble": "^0.20.0",
     "@rollup/plugin-replace": "^2.3.3",
@@ -57,6 +60,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "cross-env": "^6.0.3",
+    "druxt-docgen": "^0.2.7",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.1.0",
@@ -71,7 +75,8 @@
     "vue": "^2.6.12",
     "vue-jest": "^3.0.6",
     "vue-template-compiler": "^2.6.12",
-    "vue-test-utils": "^1.0.0-beta.11"
+    "vue-test-utils": "^1.0.0-beta.11",
+    "vuepress-theme-druxt": "^0.3.2"
   },
   "engines": {
     "node": ">=8"

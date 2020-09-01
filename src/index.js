@@ -1,23 +1,34 @@
-import { resolve } from 'path'
-
+import { DruxtViewsModule } from './module'
 import * as DruxtViewsComponents from './components'
+
+/**
+ * The Nuxt.js module function.
+ *
+ * Installs the module functionality in a Nuxt.js frontend.
+ *
+ * @type {Function}
+ * @exports default
+ * @name DruxtViewsModule
+ * @see {@link ./module|DruxtViewsModule}
+ */
+export default DruxtViewsModule
+
+/**
+ * Vue.js components.
+ *
+ * @type {object}
+ * @exports DruxtViewsComponents
+ * @see {@link ./components/DruxtView|DruxtView}
+ * @see {@link ./components/blocks/DruxtBlockViewsBlock|DruxtBlockViewsBlock}
+ */
 export { DruxtViewsComponents }
-
-export { DruxtViewsViewMixin } from './mixins/view'
-
 export * from './components'
 
-export default function (moduleOptions = {}) {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-  const options = this.options.druxt
-
-  // Add plugin.
-  this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
-    fileName: 'druxt-views.js',
-    options
-  })
-}
+/**
+ * Vue.js Mixin.
+ *
+ * @type {object}
+ * @exports DruxtViewsViewMixin
+ * @see {@link ./mixins/view|DruxtViewsViewMixin}
+ */
+export { DruxtViewsViewMixin } from './mixins/view'
