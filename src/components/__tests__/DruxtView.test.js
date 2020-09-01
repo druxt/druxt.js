@@ -7,39 +7,41 @@ import { DruxtView } from '..'
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-// @TODO - Mock axios and add fixtures.
-const mocks = {
-  $druxtRouter: () => {
-    return {
-      getResource: jest.fn().mockImplementation(query => {
-        const response = {}
+// Setup mock Vuex store.
+const store = new Vuex.Store({
+  modules: {
+    druxtRouter: {
+      namespaced: true,
+      actions: {
+        getEntity: (ctx, query) => {
+          const response = {}
 
-        switch (query.type) {
-          case 'view--view':
-            response.attributes = {
-              display: {
-                default: {
-                  display_options: {
-                    header: false,
-                    row: {
-                      options: {
-                        view_mode: 'default'
+          switch (query.type) {
+            case 'view--view':
+              response.attributes = {
+                display: {
+                  default: {
+                    display_options: {
+                      header: false,
+                      row: {
+                        type: 'entity:node',
+                        options: {
+                          view_mode: 'default'
+                        }
                       }
                     }
                   }
                 }
               }
-            }
-            break
-        }
+              break
+          }
 
-        return Promise.resolve(response)
-      })
+          return Promise.resolve(response)
+        }
+      },
     }
   }
-}
-
-let store
+})
 
 const mountComponent = (stubs = []) => {
   const propsData = {
@@ -48,23 +50,17 @@ const mountComponent = (stubs = []) => {
     viewId: 'featured_articles'
   }
   stubs.push('DruxtEntity')
-  return mount(DruxtView, { localVue, mocks, propsData, store, stubs })
+  const wrapper = mount(DruxtView, { localVue, propsData, store, stubs })
+  wrapper.vm.$fetch = DruxtView.fetch
+  return wrapper
 }
 
 describe('Component - DruxtView', () => {
-  beforeEach(() => {
-    // Setup vuex store.
-    store = new Vuex.Store()
-  })
-
   test('default', async () => {
     const wrapper = mountComponent(['DruxtViewFeaturedArticles'])
+    await wrapper.vm.$fetch()
 
     expect(wrapper.vm.headers).toBe(false)
-    expect(wrapper.vm.mode).toBe(false)
-
-    await localVue.nextTick()
-
     expect(wrapper.vm.mode).toBe('default')
 
     expect(wrapper.vm).toHaveProperty('displayId')
