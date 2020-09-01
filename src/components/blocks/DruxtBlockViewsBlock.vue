@@ -16,7 +16,10 @@ import { DruxtBlocksBlockMixin } from 'druxt-blocks'
  *
  * - Renders a Views block component.
  *
- * @todo Add example.
+ * @example
+ * <druxt-block
+ *   uuid="43d613c6-ab66-453d-bce1-e1dfc990b4a1"
+ * />
  *
  * @see {@link https://blocks.druxtjs.org/api/components/DruxtBlock.html|DruxtBlock}
  */

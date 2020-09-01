@@ -7,6 +7,16 @@ actionLink: /guide/getting-started
 
 > The Druxt.js Views module adds [Drupal](https://drupal.org) Views support to your [Nuxt.js](https://nuxtjs.org) frontend.
 
+**Example:** Promoted Items View using the Block display.
+
+```vue
+<druxt-view
+  displayId="block_1"
+  uuid="6ee5e720-bbbf-4d79-b600-21ebc0d954c5"
+  viewId="promoted_items"
+/>
+```
+
 
 ## Druxt.js
 

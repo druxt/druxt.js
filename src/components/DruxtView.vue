@@ -4,10 +4,8 @@
     v-if="view && results"
     v-bind="props"
   >
-    <template
-      v-if="headers"
-      v-slot:header
-    >
+    <!-- Scoped slot: Header -->
+    <template v-slot:header>
       <span
         v-for="header of headers"
         :key="header.id"
@@ -15,7 +13,8 @@
       />
     </template>
 
-    <template v-slot:default="options">
+    <!-- Scoped slot: Results -->
+    <template v-slot:results="options">
       <druxt-entity
         v-for="result of results"
         v-bind="{
@@ -23,6 +22,26 @@
           uuid: result.id,
           mode,
           ...options
+        }"
+        :key="result.id"
+      />
+    </template>
+
+    <template>
+      <!-- Header -->
+      <span
+        v-for="header of headers"
+        :key="header.id"
+        v-html="header.content.value"
+      />
+
+      <!-- Results -->
+      <druxt-entity
+        v-for="result of results"
+        v-bind="{
+          type: result.type,
+          uuid: result.id,
+          mode
         }"
         :key="result.id"
       />
@@ -36,7 +55,12 @@ import { mapActions } from 'vuex'
 /**
  * The `<druxt-view />` Vue.js component.
  *
- * @todo Add example.
+ * @example
+ * <druxt-view
+ *   displayId="block_1"
+ *   uuid="6ee5e720-bbbf-4d79-b600-21ebc0d954c5"
+ *   viewId="promoted_items"
+ * />
  */
 export default {
   name: 'DruxtView',
@@ -106,7 +130,7 @@ export default {
    * @property {object} view - * The View JSON:API resource.
    */
   data: () => ({
-    results: false,
+    results: [],
     view: false
   }),
 
@@ -153,7 +177,7 @@ export default {
      * @type {@object}
      */
     headers() {
-      if (!this.display) return false
+      if (!this.display) return []
 
       return this.display.display_options.header
     },
