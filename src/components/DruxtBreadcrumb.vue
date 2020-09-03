@@ -1,43 +1,84 @@
 <template>
-  <component
-    :is="settings.component"
-    v-if="crumbs.length"
-    :items="crumbs"
-  />
+  <div v-if="crumbs.length > 0">
+    <component
+      :is="settings.component"
+      :items="crumbs"
+    />
+  </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
 
+/**
+ * The `<druxt-breadcrumb />` Vue.js component.
+ *
+ * @example @lang vue
+ * <druxt-breadcrumb />
+ */
 export default {
   name: 'DruxtBreadcrumb',
 
+  /**
+   * Vue.js Properties.
+   *
+   * @see {@link https://vuejs.org/v2/guide/components-props.html}
+   */
   props: {
+    /**
+     * The breadcrumb render component.
+     *
+     * @type {string}
+     * @default div
+     * @example @lang vue
+     * <druxt-breadcrumb component="b-breadcrumb" />
+     */
     component: {
       type: String,
       default: 'div'
     },
 
+    /**
+     * Show home crumb?
+     *
+     * @type {boolean}
+     * @default false
+     * @example @lang vue
+     * <druxt-breacrumb :home="false" />
+     */
     home: {
       type: Boolean,
       default: true
     }
   },
 
+  /**
+   * Nuxt.js fetch method.
+   */
+  async fetch() {
+    await this.fetch()
+  },
+
+  /**
+   * Vue.js Data object.
+   *
+   * @property {objects[]} crumbs - The Breadcrumbs.
+   */
+
   data: () => ({
-    loading: 0,
-    items: {},
+    crumbs: [],
   }),
 
+  /**
+   * Vue.js Computed properties.
+   *
+   * @vue-computed {object} route The current Route.
+   * @vue-computed {object} routes All available routes.
+   */
   computed: {
-    crumbs() {
-      if (!!this.loading) return []
-
-      return Object.keys(this.items).sort((a, b) => a.length - b.length).map(key => {
-        return this.items[key]
-      })
-    },
-
+    /**
+     * Merged component and global Druxt.js settings for Breadcrumb component.
+     */
     settings() {
       const settings = {
         component: null,
@@ -67,64 +108,81 @@ export default {
     })
   },
 
+  /**
+   * Nuxt.js watch property.
+   */
   watch: {
-    '$route': 'getItems'
+    /**
+     * Updates crumbs on Route change.
+     */
+    $route: async function() {
+      await this.fetch()
+    }
   },
 
   created() {
-    this.getItems()
+    // Workaround for Vuepress docs.
+    if (!this.$fetch) {
+      this.fetch()
+    }
   },
 
   methods: {
-    getItems() {
-      // Reset items.
-      this.items = {}
-
+    /**
+     * Fetch crumbs from Druxt.js Router.
+     */
+    async fetch() {
       // If there is no route, stop here.
       if (!this.route || !Object.keys(this.route).length) return
 
-      // Home crumb.
-      if (this.settings.home) {
-        this.items['/'] = {
-          to: '/',
-          text: 'Home'
-        }
-      }
-
-      // If we are at the root of the site, stop here.
-      if (this.$route.path === '/') return
+      // If we are at the root and don't want a home crumb, stop here.
+      if (this.$route.path === '/' && !this.settings.home) return
 
       // Current route crumb.
-      this.items[this.$route.path] = {
+      const crumbs = [{
         text: this.route.label
+      }]
+
+      // If we are at the root of the site, stop here.
+      if (this.$route.path === '/') {
+        this.crumbs = crumbs
+        return
       }
 
       // Add crumbs for route parents.
       const paths = this.$route.path.split('/').filter(String)
       paths.pop()
       while (paths.length > 0) {
-        this.loading++
         const to = '/' + paths.join('/')
-        this.items[to] = {}
 
-        this.getRoute(to).then((route) => {
-          this.loading--
+        let route
+        try {
+          route = await this.getRoute(to)
+        } catch(err) {
+          route = false
+        }
 
-          delete this.items[to]
-          if (route.label) {
-            this.items[to] = { to, text: route.label }
-          }
-
-          this.$forceUpdate()
-        }).catch(error => {
-          this.loading--
-          delete this.items[to]
-        })
+        if (route.label) {
+          crumbs.push({ to, text: route.label })
+        }
 
         paths.pop()
       }
+
+      // Home crumb.
+      if (this.settings.home) {
+        crumbs.push({
+          to: '/',
+          text: 'Home'
+        })
+      }
+
+      this.crumbs = crumbs.reverse()
     },
 
+    /**
+     * Maps `druxtRouter/getRoute` Vuex action to `this.getRoute`.
+     */
     ...mapActions({
       getRoute: 'druxtRouter/getRoute'
     })

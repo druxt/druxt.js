@@ -2,12 +2,34 @@
 
 exports[`DruxtBreadcrumb 404 route 1`] = `""`;
 
-exports[`DruxtBreadcrumb level 1 1`] = `"<div items=\\"[object Object],[object Object]\\"></div>"`;
+exports[`DruxtBreadcrumb error 1`] = `
+"<div>
+  <div items=\\"[object Object],[object Object]\\"></div>
+</div>"
+`;
 
-exports[`DruxtBreadcrumb level 2 1`] = `""`;
+exports[`DruxtBreadcrumb level 1 1`] = `
+"<div>
+  <div items=\\"[object Object],[object Object]\\"></div>
+</div>"
+`;
 
-exports[`DruxtBreadcrumb missing parent 1`] = `"<div items=\\"[object Object],[object Object]\\"></div>"`;
+exports[`DruxtBreadcrumb level 2 1`] = `
+"<div>
+  <div items=\\"[object Object],[object Object],[object Object]\\"></div>
+</div>"
+`;
+
+exports[`DruxtBreadcrumb missing parent 1`] = `
+"<div>
+  <div items=\\"[object Object],[object Object]\\"></div>
+</div>"
+`;
 
 exports[`DruxtBreadcrumb no home 1`] = `""`;
 
-exports[`DruxtBreadcrumb root 1`] = `"<div items=\\"[object Object]\\"></div>"`;
+exports[`DruxtBreadcrumb root 1`] = `
+"<div>
+  <div items=\\"[object Object]\\"></div>
+</div>"
+`;

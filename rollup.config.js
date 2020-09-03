@@ -42,6 +42,8 @@ const baseConfig = {
 // ESM/UMD/IIFE shared settings: externals
 // Refer to https://rollupjs.org/guide/en/#warning-treating-module-as-external-dependency
 const external = [
+  'druxt-blocks',
+  'druxt-router',
   'path',
   'vuex'
 ];
@@ -49,6 +51,8 @@ const external = [
 // UMD/IIFE shared settings: output.globals
 // Refer to https://rollupjs.org/guide/en#output-globals for details
 const globals = {
+  'druxt-blocks': 'druxtBlocks',
+  'druxt-router': 'druxtRouter',
   path: 'path',
   vuex: 'vuex'
 };
