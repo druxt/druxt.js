@@ -4,7 +4,7 @@
   "description": "Provides a Breadcrumb Vue component to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Realityloop/druxt-breadcrumb"
+    "url": "git+https://github.com/druxt/druxt-breadcrumb"
   },
   "keywords": [
     "breadcrumb",
@@ -16,9 +16,9 @@
   "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Realityloop/druxt-breadcrumb/issues"
+    "url": "https://github.com/druxt/druxt-breadcrumb/issues"
   },
-  "homepage": "https://github.com/Realityloop/druxt-breadcrumb#readme",
+  "homepage": "https://github.com/druxt/druxt-breadcrumb#readme",
   "main": "dist/druxt-breadcrumb.ssr.js",
   "module": "dist/druxt-breadcrumb.esm.js",
   "unpkg": "dist/druxt-breadcrumb.min.js",
