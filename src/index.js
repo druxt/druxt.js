@@ -1,28 +1,37 @@
-import { resolve } from 'path'
-
-export * from './components'
-
+import { DruxtBreadcrumbModule } from './module'
 import * as DruxtBreadcrumbComponents from './components'
+import { DruxtBreadcrumb, DruxtBlockSystemBreadcrumbBlock } from './components'
+
+/**
+ * The Nuxt.js module function.
+ *
+ * Installs the module functionality in a Nuxt.js frontend.
+ *
+ * @type {Function}
+ * @exports default
+ * @name DruxtBreadcrumbModule
+ * @see {@link ./module|DruxtBreadcrumbModule}
+ */
+export default DruxtBreadcrumbModule
+
+/**
+ * Druxt.js Breadcrumb Vue.js component.
+ *
+ * @type {object}
+ * @exports DruxtBreadcrumb
+ * @name DruxtBreadcrumb
+ * @see {@link ./components/DruxtBreadcrumb|DruxtBreadcrumb}
+ */
+export { DruxtBreadcrumb }
+
+/**
+ * DruxtBlockSystemBreadcrumbBlock component.
+ *
+ * @type {object}
+ * @exports DruxtBlockSystemBreadcrumbBlock
+ * @name DruxtBlockSystemBreadcrumbBlock
+ * @see {@link ./components/blocks/DruxtBlockSystemBreadcrumbBlock|DruxtBlockSystemBreadcrumbBlock}
+ */
+export { DruxtBlockSystemBreadcrumbBlock }
+
 export { DruxtBreadcrumbComponents }
-
-export default function (moduleOptions = {}) {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-  const options = this.options.druxt
-
-  options.breadcrumb = {
-    home: true,
-
-    ...options.breadcrumb
-  }
-
-  // Add plugin.
-  this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
-    fileName: 'druxt-breadcrumb.js',
-    options
-  })
-}
-
