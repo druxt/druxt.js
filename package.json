@@ -1,6 +1,6 @@
 {
   "name": "druxt-breadcrumb",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Provides a Breadcrumb Vue component to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
