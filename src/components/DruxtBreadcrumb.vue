@@ -1,9 +1,10 @@
 <template>
-  <component
-    :is="settings.component"
-    v-if="crumbs.length"
-    :items="crumbs"
-  />
+  <div v-if="crumbs.length > 0">
+    <component
+      :is="settings.component"
+      :items="crumbs"
+    />
+  </div>
 </template>
 
 <script>
@@ -25,54 +26,14 @@ export default {
   },
 
   async fetch() {
-    // Reset items.
-    this.items = {}
-
-    // If there is no route, stop here.
-    if (!this.route || !Object.keys(this.route).length) return
-
-    // Home crumb.
-    if (this.settings.home) {
-      this.items['/'] = {
-        to: '/',
-        text: 'Home'
-      }
-    }
-
-    // If we are at the root of the site, stop here.
-    if (this.$route.path === '/') return
-
-    // Current route crumb.
-    this.items[this.$route.path] = {
-      text: this.route.label
-    }
-
-    // Add crumbs for route parents.
-    const paths = this.$route.path.split('/').filter(String)
-    paths.pop()
-    while (paths.length > 0) {
-      const to = '/' + paths.join('/')
-
-      const route = await this.getRoute(to)
-      if (route.label) {
-        this.items[to] = { to, text: route.label }
-      }
-
-      paths.pop()
-    }
+    await this.fetch()
   },
 
   data: () => ({
-    items: {},
+    crumbs: [],
   }),
 
   computed: {
-    crumbs() {
-      return Object.keys(this.items).sort((a, b) => a.length - b.length).map(key => {
-        return this.items[key]
-      })
-    },
-
     settings() {
       const settings = {
         component: null,
@@ -102,10 +63,72 @@ export default {
     })
   },
 
+  created() {
+    if (!this.$fetch) {
+      this.fetch()
+    }
+  },
+
   methods: {
+    async fetch() {
+      // If there is no route, stop here.
+      if (!this.route || !Object.keys(this.route).length) return
+
+      // If we are at the root and don't want a home crumb, stop here.
+      if (this.$route.path === '/' && !this.settings.home) return
+
+      // Current route crumb.
+      const crumbs = [{
+        text: this.route.label
+      }]
+
+      // If we are at the root of the site, stop here.
+      if (this.$route.path === '/') {
+        this.crumbs = crumbs
+        return
+      }
+
+      // Add crumbs for route parents.
+      const paths = this.$route.path.split('/').filter(String)
+      // console.log(paths)
+      paths.pop()
+      while (paths.length > 0) {
+        const to = '/' + paths.join('/')
+
+        let route
+        try {
+          route = await this.getRoute(to)
+        } catch(err) {
+          route = false
+        }
+
+        if (route.label) {
+          crumbs.push({ to, text: route.label })
+        }
+
+        paths.pop()
+      }
+
+      // Home crumb.
+      if (this.settings.home) {
+        crumbs.push({
+          to: '/',
+          text: 'Home'
+        })
+      }
+
+      this.crumbs = crumbs.reverse()
+    },
+
     ...mapActions({
       getRoute: 'druxtRouter/getRoute'
     })
+  },
+
+  watch: {
+    $route: async function() {
+      await this.fetch()
+    }
   }
 }
 </script>
