@@ -62,6 +62,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.5.4",
+    "jest-junit": "^11.1.0",
     "minimist": "^1.2.0",
     "nodemon": "^2.0.4",
     "rollup": "^1.26.3",
