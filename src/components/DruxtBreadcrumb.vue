@@ -10,30 +10,75 @@
 <script>
 import { mapActions, mapState } from 'vuex'
 
+/**
+ * The `<druxt-breadcrumb />` Vue.js component.
+ *
+ * @example @lang vue
+ * <druxt-breadcrumb />
+ */
 export default {
   name: 'DruxtBreadcrumb',
 
+  /**
+   * Vue.js Properties.
+   *
+   * @see {@link https://vuejs.org/v2/guide/components-props.html}
+   */
   props: {
+    /**
+     * The breadcrumb render component.
+     *
+     * @type {string}
+     * @default div
+     * @example @lang vue
+     * <druxt-breadcrumb component="b-breadcrumb" />
+     */
     component: {
       type: String,
       default: 'div'
     },
 
+    /**
+     * Show home crumb?
+     *
+     * @type {boolean}
+     * @default false
+     * @example @lang vue
+     * <druxt-breacrumb :home="false" />
+     */
     home: {
       type: Boolean,
       default: true
     }
   },
 
+  /**
+   * Nuxt.js fetch method.
+   */
   async fetch() {
     await this.fetch()
   },
+
+  /**
+   * Vue.js Data object.
+   *
+   * @property {objects[]} crumbs - The Breadcrumbs.
+   */
 
   data: () => ({
     crumbs: [],
   }),
 
+  /**
+   * Vue.js Computed properties.
+   *
+   * @vue-computed {object} route The current Route.
+   * @vue-computed {object} routes All available routes.
+   */
   computed: {
+    /**
+     * Merged component and global Druxt.js settings for Breadcrumb component.
+     */
     settings() {
       const settings = {
         component: null,
@@ -63,13 +108,29 @@ export default {
     })
   },
 
+  /**
+   * Nuxt.js watch property.
+   */
+  watch: {
+    /**
+     * Updates crumbs on Route change.
+     */
+    $route: async function() {
+      await this.fetch()
+    }
+  },
+
   created() {
+    // Workaround for Vuepress docs.
     if (!this.$fetch) {
       this.fetch()
     }
   },
 
   methods: {
+    /**
+     * Fetch crumbs from Druxt.js Router.
+     */
     async fetch() {
       // If there is no route, stop here.
       if (!this.route || !Object.keys(this.route).length) return
@@ -90,7 +151,6 @@ export default {
 
       // Add crumbs for route parents.
       const paths = this.$route.path.split('/').filter(String)
-      // console.log(paths)
       paths.pop()
       while (paths.length > 0) {
         const to = '/' + paths.join('/')
@@ -120,15 +180,12 @@ export default {
       this.crumbs = crumbs.reverse()
     },
 
+    /**
+     * Maps `druxtRouter/getRoute` Vuex action to `this.getRoute`.
+     */
     ...mapActions({
       getRoute: 'druxtRouter/getRoute'
     })
-  },
-
-  watch: {
-    $route: async function() {
-      await this.fetch()
-    }
   }
 }
 </script>
