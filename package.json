@@ -32,6 +32,8 @@
     "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
+    "docs:dev": "druxt-docgen dev",
+    "docs:build": "druxt-docgen build",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
