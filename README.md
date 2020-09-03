@@ -1,8 +1,8 @@
 # \<druxt-menu />
 
-[![CircleCI](https://circleci.com/gh/Realityloop/druxt-menu.svg?style=svg)](https://circleci.com/gh/Realityloop/druxt-menu)
-[![Known Vulnerabilities](https://snyk.io/test/github/Realityloop/druxt-menu/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Realityloop/druxt-menu?targetFile=package.json)
-[![codecov](https://codecov.io/gh/Realityloop/druxt-menu/branch/develop/graph/badge.svg)](https://codecov.io/gh/Realityloop/druxt-menu)
+[![CircleCI](https://circleci.com/gh/druxt/druxt-menu.svg?style=svg)](https://circleci.com/gh/druxt/druxt-menu)
+[![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-menu/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-menu?targetFile=package.json)
+[![codecov](https://codecov.io/gh/druxt/druxt-menu/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-menu)
 
 Provides a Menu Vue component to be used within a Druxt (DRUpal nuXT) project.
 

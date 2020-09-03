@@ -4,7 +4,7 @@
   "description": "Provides a Menu Vue component to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Realityloop/druxt-menu"
+    "url": "git+https://github.com/druxt/druxt-menu"
   },
   "keywords": [
     "menu",
@@ -16,9 +16,9 @@
   "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Realityloop/druxt-menu/issues"
+    "url": "https://github.com/druxt/druxt-menu/issues"
   },
-  "homepage": "https://github.com/Realityloop/druxt-menu#readme",
+  "homepage": "https://github.com/druxt/druxt-menu#readme",
   "main": "dist/druxt-menu.ssr.js",
   "module": "dist/druxt-menu.esm.js",
   "unpkg": "dist/druxt-menu.min.js",
