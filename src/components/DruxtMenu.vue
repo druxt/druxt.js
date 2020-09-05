@@ -1,10 +1,10 @@
 <template>
   <component
     :is="component"
-    v-if="getMenuItems()"
+    v-if="items"
   >
     <druxt-menu-item
-      v-for="item in getMenuItems()"
+      v-for="item in items"
       :key="item.entity.id"
       :item="item"
     />
@@ -64,11 +64,25 @@ export default {
     }
   },
 
-  computed: {
-    items() {
-      return this.getMenuItems()
-    },
+  /**
+   * Nuxt.js fetch method.
+   */
+  async fetch() {
+    await this.fetch()
+  },
 
+  /**
+   * Vue.js Data object.
+   *
+   * Used for on-demand JSON:API resource loading.
+   *
+   * @property {objects[]} items - The Menu items JSON:API resources.
+   */
+  data: () => ({
+    items: [],
+  }),
+
+  computed: {
     trail() {
       const paths = []
       const parts = this.$route.path.substring(1).split('/')
@@ -97,12 +111,21 @@ export default {
   },
 
   created() {
-    this.getMenu(this.name).then(() => {
-      this.$forceUpdate()
-    })
+    // Workaround for Vuepress docs.
+    if (!this.$fetch) {
+      this.fetch()
+    }
   },
 
   methods: {
+    /**
+     * Fetch requested menu.
+     */
+    async fetch() {
+      await this.getMenu(this.name)
+      this.items = this.getMenuItems()
+    },
+
     getMenuItems(entity = null, position = 0) {
       const items = []
       position += 1
