@@ -1,11 +1,26 @@
 <template>
   <component :is="component">
-    <druxt-block
+    <!-- Render blocks in their own named slots. --->
+    <template
       v-for="block of blocks"
-      :key="block.id"
-      :uuid="block.id"
-      type="block--block"
-    />
+      v-slot:[block.attributes.drupal_internal__id]
+    >
+      <druxt-block
+        :key="block.id"
+        :uuid="block.id"
+        :type="block.type"
+      />
+    </template>
+
+    <!-- Render all blocks in the default slot. -->
+    <template>
+      <druxt-block
+        v-for="block of blocks"
+        :key="block.id"
+        :uuid="block.id"
+        :type="block.type"
+      />
+    </template>
   </component>
 </template>
 
@@ -27,6 +42,8 @@ import { DruxtEntityComponentSuggestionMixin } from 'druxt-entity'
  *   name="header"
  *   theme="umami"
  * />
+ *
+ * @todo {@link https://github.com/druxt/druxt-blocks/issues/25|Add documentation, tests and examples for slots.}
  */
 export default {
   name: 'DruxtBlockRegion',
