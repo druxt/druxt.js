@@ -1,19 +1,50 @@
 <script>
+/**
+ * The `<druxt-menu-item />` Vue.js component.
+ *
+ * _This component is intended to be rendered by the `<druxt-menu />` component._
+ *
+ * - Renders a menu item.
+ */
 export default {
   name: 'DruxtMenuItem',
 
+  /**
+   * Vue.js Properties.
+   *
+   * @see {@link https://vuejs.org/v2/guide/components-props.html}
+   */
   props: {
+    /**
+     * The menu item.
+     *
+     * @type {object}
+     * @required
+     */
     item: {
       type: Object,
       required: true
     }
   },
 
+  /**
+   * Vue.js Computed properties.
+   */
   computed: {
+    /**
+     * Current items Active state.
+     *
+     * @type {boolean}
+     */
     active() {
       return this.menu.trail.includes(this.item.entity.attributes.url)
     },
 
+    /**
+     * Class(es) for the menu item.
+     *
+     * @type {string}
+     */
     classes() {
       const classes = [this.menu[`${this.template}Class`]]
 
@@ -22,10 +53,20 @@ export default {
       return classes.join(' ')
     },
 
+    /**
+     * The menu item template type.
+     *
+     * @type {string}
+     */
     template() {
       return this.item.children.length ? 'parent' : 'item'
     },
 
+    /**
+     * The `to` attribute for the menu item.
+     *
+     * @type {object}
+     */
     to() {
       const parts = this.item.entity.attributes.link.uri.split(':')
       const type = parts[0]
@@ -34,7 +75,11 @@ export default {
       return { path, type }
     },
 
-    // The parent <DruxtMenu> component, if present.
+    /**
+     * The parent DruxtMenu component, if present.
+     *
+     * @type {@object}
+     */
     menu() {
       let menu = false
 
@@ -51,6 +96,9 @@ export default {
   },
 
   methods: {
+    /**
+     * The menu item template functions.
+     */
     templates: function(createElement) {
       return {
         // Default template for Item slot.
@@ -84,6 +132,9 @@ export default {
     }
   },
 
+  /**
+   * The Vue.js render function.
+   */
   render: function(createElement) {
     if (!this.menu) return false
     return this.templates(createElement)[this.template](this)

@@ -1,33 +1,50 @@
-import { resolve } from 'path'
+import { DruxtMenuModule } from './module'
+import * as DruxtMenuComponents from './components'
 
+/**
+ * The Nuxt.js module function.
+ *
+ * Installs the module functionality in a Nuxt.js frontend.
+ *
+ * @type {Function}
+ * @exports default
+ * @name DruxtMenuModule
+ * @see {@link ./module.html|DruxtMenuModule}
+ */
+export default DruxtMenuModule
+
+/**
+ * The DruxtMenu class.
+ *
+ * Core functionality for the DruxtMenu module.
+ *
+ * @type {class}
+ * @exports DruxtMenu
+ * @name DruxtMenu
+ * @see {@link ./menu.html|DruxtMenu}
+ */
 export { DruxtMenu } from './menu.js'
 
-import * as DruxtMenuComponents from './components'
+/**
+ * Vue.js components.
+ *
+ * @type {object}
+ * @exports DruxtMenuComponents
+ * @name DruxtMenuComponents
+ *
+ * @see {@link ./components/DruxtMenu.html|DruxtMenu}
+ * @see {@link ./components/DruxtMenuItem.html|DruxtMenuItem}
+ * @see {@link ./components/blocks/DruxtBlockSystemMenuBlock.html|DruxtBlockSystemMenuBlock}
+ */
 export { DruxtMenuComponents }
-
 export * from './components'
 
-export { DruxtMenuStore } from './store.js'
-
-export default function (moduleOptions = {}) {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-  const options = this.options.druxt
-
-  // Add plugin.
-  this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
-    fileName: 'druxt-menu.js',
-    options
-  })
-
-  // Add Vuex plugin.
-  // @TODO - Ensure Vuex store is available.
-  this.addPlugin({
-    src: resolve(__dirname, '../nuxt/store.js'),
-    fileName: 'store/druxt-menu.js',
-    options
-  })
-}
+/**
+ * The DruxtMenu vuex store.
+ *
+ * @type {object}
+ * @exports DruxtMenuStore
+ * @name DruxtMenuStore
+ * @see {@link ./stores/menu.html|DruxtMenuStore}
+ */
+export { DruxtMenuStore } from './stores/menu.js'
