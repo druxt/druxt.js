@@ -21,8 +21,11 @@ const mocks = {
   $route: { path: '/' }
 }
 
-const mountComponent = (options = {}) =>
-  shallowMount(DruxtMenuComponent, { ...options, store, localVue, mocks })
+const mountComponent = (options = {}) => {
+  const wrapper = shallowMount(DruxtMenuComponent, { ...options, store, localVue, mocks })
+  wrapper.vm.$fetch = DruxtMenuComponent.fetch
+  return wrapper
+}
 
 describe('DruxtMenu', () => {
   beforeEach(() => {
@@ -37,14 +40,7 @@ describe('DruxtMenu', () => {
 
   test('default', async () => {
     const wrapper = mountComponent()
-
-    // Wait for async Axios get requests.
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    await localVue.nextTick()
-    await localVue.nextTick()
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
-    await localVue.nextTick()
-    await localVue.nextTick()
+    await wrapper.vm.$fetch()
 
     // Expect 4 items from the store.
     expect(Object.keys(wrapper.vm.entities).length).toBe(4)
@@ -69,14 +65,7 @@ describe('DruxtMenu', () => {
   test('depth', async () => {
     const propsData = { depth: 1 }
     const wrapper = mountComponent({ propsData })
-
-    // Wait for async Axios get requests.
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    await localVue.nextTick()
-    await localVue.nextTick()
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
-    await localVue.nextTick()
-    await localVue.nextTick()
+    await wrapper.vm.$fetch()
 
     // Expect 4 items from the store.
     expect(Object.keys(wrapper.vm.entities).length).toBe(4)

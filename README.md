@@ -1,10 +1,15 @@
 # \<druxt-menu />
 
-[![CircleCI](https://circleci.com/gh/Realityloop/druxt-menu.svg?style=svg)](https://circleci.com/gh/Realityloop/druxt-menu)
-[![Known Vulnerabilities](https://snyk.io/test/github/Realityloop/druxt-menu/badge.svg?targetFile=package.json)](https://snyk.io/test/github/Realityloop/druxt-menu?targetFile=package.json)
-[![codecov](https://codecov.io/gh/Realityloop/druxt-menu/branch/develop/graph/badge.svg)](https://codecov.io/gh/Realityloop/druxt-menu)
+[![CircleCI](https://circleci.com/gh/druxt/druxt-menu.svg?style=svg)](https://circleci.com/gh/druxt/druxt-menu)
+[![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-menu/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-menu?targetFile=package.json)
+[![codecov](https://codecov.io/gh/druxt/druxt-menu/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-menu)
 
 Provides a Menu Vue component to be used within a Druxt (DRUpal nuXT) project.
+
+## Links
+
+- Druxt.js: https://druxtjs.org
+- Documentation: https://menu.druxtjs.org/
 
 ## Install
 
@@ -39,3 +44,11 @@ These options are available to all Druxt modules.
 | `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
 | `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
 | `endpoint` | `string` | No | `/jsonapi` | JSON:API Endpoint of the Drupal installation. |
+
+### Druxt Menu options
+
+These options are specific to this module.
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `menu.jsonApiMenuItems` | `boolean` | No | `false` | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. |

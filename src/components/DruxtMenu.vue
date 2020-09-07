@@ -1,10 +1,10 @@
 <template>
   <component
     :is="component"
-    v-if="getMenuItems()"
+    v-if="items"
   >
     <druxt-menu-item
-      v-for="item in getMenuItems()"
+      v-for="item in items"
       :key="item.entity.id"
       :item="item"
     />
@@ -14,61 +14,146 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex'
 
+/**
+ * The `<druxt-menu />` Vue.js component.
+ *
+ * - Fetchs the menu items via the Druxt.js Router.
+ * - Renders the data via the DruxtMenuItem component.
+ *
+ * @example @lang vue
+ * <druxt-menu name="main" />
+ */
 export default {
   name: 'DruxtMenu',
 
+  /**
+   * Vue.js Properties.
+   *
+   * @see {@link https://vuejs.org/v2/guide/components-props.html}
+   */
   props: {
+    /**
+     * Component or element to render the Menu.
+     *
+     * @type {string}
+     * @default ul
+     */
     component: {
       type: String,
       default: 'ul'
     },
 
+    /**
+     * The maximum depth of the menu.
+     *
+     * @type {integer}
+     * @default 0
+     */
     depth: {
       type: Number,
       default: 0,
     },
 
+    /**
+     * Class(es) to apply to the menu items.
+     *
+     * @type {string}
+     */
     itemClass: {
       type: String,
       default: ''
     },
 
+    /**
+     * Component or element to render the menu items.
+     *
+     * @type {string}
+     * @default li
+     */
     itemComponent: {
       type: String,
       default: 'li'
     },
 
+    /**
+     * The name of the menu to render.
+     *
+     * @type {string}
+     * @default main
+     */
     name: {
       type: String,
       default: 'main'
     },
 
+    /**
+     * Class(es) to apply to parent menu items.
+     *
+     * @type {string}
+     */
     parentClass: {
       type: String,
       default: ''
     },
 
+    /**
+     * Component or element to render parent menu items.
+     *
+     * @type {string}
+     * @default lit
+     */
     parentComponent: {
       type: String,
       default: 'li'
     },
 
+    /**
+     * Class(es) to apply to a wrapper around parent menu items.
+     *
+     * @type {string}
+     */
     parentWrapperClass: {
       type: String,
       default: ''
     },
 
+    /**
+     * Component or element to render a wrapper around parent menu items.
+     *
+     * @type {string}
+     * @default ul
+     */
     parentWrapperComponent: {
       type: String,
       default: 'ul'
     }
   },
 
-  computed: {
-    items() {
-      return this.getMenuItems()
-    },
+  /**
+   * Nuxt.js fetch method.
+   */
+  async fetch() {
+    await this.fetch()
+  },
 
+  /**
+   * Vue.js Data object.
+   *
+   * Used for on-demand JSON:API resource loading.
+   *
+   * @property {objects[]} items - The Menu items JSON:API resources.
+   */
+  data: () => ({
+    items: [],
+  }),
+
+  /**
+   * Vue.js Computed properties.
+   */
+  computed: {
+    /**
+     * The active route trail.
+     */
     trail() {
       const paths = []
       const parts = this.$route.path.substring(1).split('/')
@@ -90,19 +175,40 @@ export default {
     })
   },
 
+  /**
+   * Nuxt.js watch property.
+   */
   watch: {
+    /**
+     * Updates menu when available Entities change.
+     */
     entities() {
       this.$forceUpdate()
     }
   },
 
   created() {
-    this.getMenu(this.name).then(() => {
-      this.$forceUpdate()
-    })
+    // Workaround for Vuepress docs.
+    if (!this.$fetch) {
+      this.fetch()
+    }
   },
 
   methods: {
+    /**
+     * Fetch requested menu.
+     */
+    async fetch() {
+      await this.getMenu(this.name)
+      this.items = this.getMenuItems()
+    },
+
+    /**
+     * Recursively gets required menu items from the Vuex store.
+     *
+     * @param {object} [entity] - Current menu item entity.
+     * @param {integer} [position] - Current position in the menu tree,
+     */
     getMenuItems(entity = null, position = 0) {
       const items = []
       position += 1
@@ -128,6 +234,9 @@ export default {
       return items
     },
 
+    /**
+     * Maps `druxtMenu/get` Vuex action to `this.getMenu`.
+     */
     ...mapActions({
       getMenu: 'druxtMenu/get'
     })

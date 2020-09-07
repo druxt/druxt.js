@@ -1,13 +1,9 @@
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
-import mockAxios from 'jest-mock-axios'
 
-import { DruxtMenuStore } from '..'
+import { DruxtMenuStore } from '../..'
 
 jest.mock('axios')
-
-const baseURL = 'https://example.com'
-const stubs = ['b-nav', 'b-nav-item', 'b-nav-item-dropdown']
 
 // Setup local vue instance.
 const localVue = createLocalVue()

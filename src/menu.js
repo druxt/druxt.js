@@ -1,12 +1,23 @@
 import { DruxtRouter } from 'druxt-router'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
+/**
+ * DruxtMenu class.
+ *
+ * Provides methods for accessing Menu items from Drupal JSON:API.
+ */
 class DruxtMenu {
   /**
-   * Constructor.
+   * DruxtMenu constructor.
    *
-   * @param string baseURL
-   * @param object options
+   * - Validates module options.
+   * - Sets up a DruxtRouter instance.
+   *
+   * @example @lang js
+   * const druxtMenu = new DruxtMenu('https://example.com', {})
+   *
+   * @param {string} baseURL - The URL of the Drupal backend.
+   * @param {ModuleOptions} options - The module options.
    */
   constructor (baseURL, options = {}) {
     // Check for URL.
@@ -27,6 +38,14 @@ class DruxtMenu {
     this.druxtRouter = new DruxtRouter(baseURL, options)
   }
 
+  /**
+   * Gets the menu items JSON:API resources using the configured method.
+   *
+   * @example @lang js
+   * const menu = await druxtMenu.get('main')
+   *
+   * @param {string} menuName - The menu name.
+   */
   async get(menuName) {
     if (this.options.menu.jsonApiMenuItems) {
       return this.getJsonApiMenuItems(menuName)
@@ -35,6 +54,17 @@ class DruxtMenu {
     return this.getMenuLinkContent(menuName)
   }
 
+  /**
+   * Gets a menus 'menu_link_content' JSON:API resources.
+   *
+   * - This method can only retrieve user created menu items.
+   * - This is the default method for the `get()` method.
+   *
+   * @example @lang js
+   * const menu = await druxtMenu.getMenuLinkContent('menu')
+   *
+   * @param {string} menuName - The menu name.
+   */
   async getMenuLinkContent(menuName) {
     const resource = 'menu_link_content--menu_link_content'
     const fields = ['description', 'link', 'menu_name', 'parent', 'title', 'weight']
@@ -49,6 +79,16 @@ class DruxtMenu {
     return { entities }
   }
 
+  /**
+   * Gets menu items via the Drupal JSON:API Menu Items module.
+   *
+   * - This method gets all menu items, but requires the JSON:API Menu Items module.
+   * - This method is used by the `get()` method when the `jsonApiMenuItems` option is set.
+   *
+   * @see {@link https://www.drupal.org/project/jsonapi_menu_items|JSON:API Menu Items}
+   *
+   * @param {string} menuName - The menu name.
+   */
   async getJsonApiMenuItems(menuName) {
     const resource = `menu_items--${menuName}`
 
@@ -85,3 +125,11 @@ class DruxtMenu {
 }
 
 export { DruxtMenu }
+
+/**
+ * Module options.
+ *
+ * @typedef {object} ModuleOptions
+ *
+ * @see {@link ./typedefs/moduleOptions.html|ModuleOptions}
+ */
