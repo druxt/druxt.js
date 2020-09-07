@@ -116,7 +116,7 @@ workflows:
           build-dir: ../repo/docs/.vuepress/dist
           requires:
             - build_docs
-          ssh-fingerprints: "ac:47:9e:ca:e8:6d:bd:7c:d3:47:a5:4c:e6:01:68:1f"
+          ssh-fingerprints: "a6:55:f8:b0:d7:6c:06:8d:dc:7f:8b:96:c8:27:f3:bd"
           filters:
             branches:
               only: master
