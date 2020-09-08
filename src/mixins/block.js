@@ -1,7 +1,7 @@
 import { DruxtEntityContextMixin } from 'druxt-entity'
 
 /**
-* Provides Vue.js properties to render Drupal Block components.
+ * Provides Vue.js properties to render Drupal Block components.
  *
  * This Mixin is intended for use by `block` type Component Suggestions for
  * targetted theming of Drupal Blocks.
