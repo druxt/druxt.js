@@ -46,8 +46,10 @@
   "dependencies": {
     "axios": "^0.19.2",
     "drupal-jsonapi-params": "^1.1.10",
+    "druxt-common": "^0.1.0",
     "druxt-entity": "^0.6.1",
-    "druxt-router": "^0.16.0"
+    "druxt-router": "^0.16.0",
+    "vuex": "^3.5.1"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.11.5",
@@ -75,8 +77,7 @@
     "vue": "^2.6.12",
     "vue-jest": "^3.0.6",
     "vue-template-compiler": "^2.6.12",
-    "vue-test-utils": "^1.0.0-beta.11",
-    "vuex": "^3.5.1"
+    "vue-test-utils": "^1.0.0-beta.11"
   },
   "engines": {
     "node": ">=8"

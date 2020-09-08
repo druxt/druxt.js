@@ -1,14 +1,18 @@
 <template>
-  <div>
+  <component
+    :is="wrapper.component"
+    v-bind="wrapper.props"
+  >
     <component
       :is="component"
       v-if="entity"
       v-bind="props"
     />
-  </div>
+  </component>
 </template>
 
 <script>
+import { DruxtCommonComponentWrapperMixin } from 'druxt-common'
 import { DruxtEntityComponentSuggestionMixin } from 'druxt-entity'
 import { DruxtRouterEntityMixin } from 'druxt-router'
 
@@ -32,7 +36,7 @@ export default {
    * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
    * @see {@link https://router.druxtjs.org/api/mixins/entity.html|DruxtRouterEntityMixin}
    */
-  mixins: [DruxtEntityComponentSuggestionMixin, DruxtRouterEntityMixin],
+  mixins: [DruxtCommonComponentWrapperMixin, DruxtEntityComponentSuggestionMixin, DruxtRouterEntityMixin],
 
   /**
    * Vue.js Properties.
@@ -49,7 +53,7 @@ export default {
     type: {
       type: String,
       default: 'block--block'
-    }
+    },
   },
 
   /**
