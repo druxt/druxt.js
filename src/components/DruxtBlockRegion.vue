@@ -3,12 +3,13 @@
     <!-- Render blocks in their own named slots. --->
     <template
       v-for="block of blocks"
-      v-slot:[block.attributes.drupal_internal__id]
+      v-slot:[block.attributes.drupal_internal__id]="{ options }"
     >
       <druxt-block
         :key="block.id"
         :uuid="block.id"
         :type="block.type"
+        v-bind="options"
       />
     </template>
 
