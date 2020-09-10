@@ -19,8 +19,9 @@ const DruxtModule = function (moduleOptions = {}) {
     throw new TypeError('Druxt settings missing.')
   }
 
-  // Add Druxt modules.
+  // Add NuxtJS modules.
   const modules = [
+    '@nuxtjs/proxy',
     'druxt-blocks',
     'druxt-breadcrumb',
     'druxt-entity',
@@ -32,6 +33,12 @@ const DruxtModule = function (moduleOptions = {}) {
   ]
   for (const key in modules) {
     this.addModule(modules[key])
+  }
+
+  // Setup proxy for 'sites/default/files'.
+  // @todo {@link https://github.com/nuxt-community/proxy-module/issues/80|Suppress warning}
+  if (typeof this.options.proxy === 'undefined') {
+    this.options.proxy = [this.options.druxt.baseUrl + '/sites/default/files']
   }
 
   // Enable Vuex Store.
