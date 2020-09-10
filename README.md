@@ -15,6 +15,7 @@
 - Views and Views blocks.
 - On-demand JSON API resource engine with Vuex.
 - Breadrumbs, Menus, Search API and more.
+- Support for the NuxtJS proxy module.
 
 ## Install
 
