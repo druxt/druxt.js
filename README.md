@@ -29,7 +29,15 @@ Add module to `nuxt.config.js`
 module.exports = {
   modules: [
     ...
-    'druxt'
+    'druxt',
+    // Additional Druxt modules.
+    'druxt-blocks',
+    'druxt-breadcrumb',
+    'druxt-entity',
+    'druxt-menu',
+    'druxt-schema',
+    'druxt-search',
+    'druxt-views'
   ],
 
   druxt: {

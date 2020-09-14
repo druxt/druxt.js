@@ -22,14 +22,7 @@ const DruxtModule = function (moduleOptions = {}) {
   // Add NuxtJS modules.
   const modules = [
     '@nuxtjs/proxy',
-    'druxt-blocks',
-    'druxt-breadcrumb',
-    'druxt-entity',
-    'druxt-menu',
     'druxt-router',
-    'druxt-schema',
-    'druxt-search',
-    'druxt-views'
   ]
   for (const key in modules) {
     this.addModule(modules[key])
