@@ -19,6 +19,7 @@
         }
       },
       "attributes":{
+        "bundle": "menu_link_content",
         "title":"Home",
         "description":"Home",
         "menu_name":"main",
@@ -42,6 +43,7 @@
         }
       },
       "attributes":{
+        "bundle": "menu_link_content",
         "title":"Articles",
         "description":"Articles",
         "menu_name":"main",
@@ -65,6 +67,7 @@
         }
       },
       "attributes":{
+        "bundle": "menu_link_content",
         "title":"Recipes",
         "description":"Recipes",
         "menu_name":"main",
@@ -88,6 +91,7 @@
         }
       },
       "attributes":{
+        "bundle": "menu_link_content",
         "title":"Child",
         "description":"Child",
         "menu_name":"main",

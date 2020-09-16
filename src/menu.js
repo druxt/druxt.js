@@ -67,7 +67,7 @@ class DruxtMenu {
    */
   async getMenuLinkContent(menuName) {
     const resource = 'menu_link_content--menu_link_content'
-    const fields = ['description', 'link', 'menu_name', 'parent', 'title', 'weight']
+    const fields = ['bundle', 'description', 'link', 'menu_name', 'parent', 'title', 'weight']
 
     const query = new DrupalJsonApiParams()
       .addFilter('enabled', '1')
