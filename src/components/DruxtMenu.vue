@@ -216,7 +216,12 @@ export default {
       if (!this.depth || position <= this.depth) {
         let parent = null
         if (entity) {
-          parent = 'menu_link_content:' + entity.id
+          parent = entity.id
+
+          // Ensure that the parent is prefixed correctly if we're not using the JSON:API Menu Items module.
+          if (typeof entity.attributes.bundle !== 'undefined') {
+            parent = [entity.attributes.bundle, entity.id].join(':')
+          }
         }
 
         const entities = this.getEntitiesByFilter(key => {
