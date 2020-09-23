@@ -56,4 +56,16 @@ describe('Component - DruxtFieldLink', () => {
     expect(wrapper.vm.links[0].component).toBe('nuxt-link')
     expect(wrapper.vm.links[0].props).toHaveProperty('to')
   })
+
+  test('internal:', () => {
+    const wrapper = mountComponent({
+      title: 'internal',
+      uri: 'internal:/path'
+    })
+
+    expect(wrapper.vm.links.length).toBe(1)
+    expect(wrapper.vm.links[0].component).toBe('nuxt-link')
+    expect(wrapper.vm.links[0].props).toHaveProperty('to')
+    expect(wrapper.vm.links[0].props.to).toBe('/path')
+  })
 })
