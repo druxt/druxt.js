@@ -13,6 +13,18 @@
       />
     </template>
 
+    <!-- Scoped slot: Attachments before -->
+    <template v-if="attachments_before" v-slot:attachments_before>
+      <druxt-view
+        v-for="displayId of attachments_before"
+        :key="displayId"
+        :display-id="displayId"
+        :type="type"
+        :uuid="uuid"
+        :view-id="viewId"
+      />
+    </template>
+
     <!-- Scoped slot: Results -->
     <template v-slot:results="options">
       <druxt-entity
@@ -24,6 +36,18 @@
           ...options
         }"
         :key="result.id"
+      />
+    </template>
+
+    <!-- Scoped slot: Attachments after -->
+    <template v-if="attachments_after" v-slot:attachments_after>
+      <druxt-view
+        v-for="displayId of attachments_after"
+        :key="displayId"
+        :display-id="displayId"
+        :type="type"
+        :uuid="uuid"
+        :view-id="viewId"
       />
     </template>
 
@@ -138,6 +162,34 @@ export default {
    * Vue.js Computed properties.
    */
   computed: {
+    /**
+     * IDs of displays to be attached after the view.
+     *
+     * @type {string[]}
+     */
+    attachments_after() {
+      const displays = this.view.attributes.display
+      return Object.keys(displays).filter(key => {
+        return displays[key].display_plugin === 'attachment'
+          && displays[key].display_options.attachment_position === 'after'
+          && typeof displays[key].display_options.displays[this.displayId] !== 'undefined'
+        })
+    },
+
+    /**
+     * IDs of displays to be attached before the view.
+     *
+     * @type {string[]}
+     */
+    attachments_before() {
+      const displays = this.view.attributes.display
+      return Object.keys(displays).filter(key => {
+        return displays[key].display_plugin === 'attachment'
+          && displays[key].display_options.attachment_position === 'before'
+          && typeof displays[key].display_options.displays[this.displayId] !== 'undefined'
+        })
+    },
+
     /**
      * The render component.
      *
@@ -254,6 +306,16 @@ export default {
     ...mapActions({
       getResource: 'druxtRouter/getEntity'
     })
+  },
+
+  watch: {
+    async uuid() {
+      await this.fetch()
+    },
+
+    async displayId() {
+      await this.fetch()
+    }
   }
 }
 </script>
