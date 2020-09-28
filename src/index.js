@@ -1,14 +1,15 @@
-import { DruxtModule } from './module'
+import DruxtComponent from './components/Druxt.vue'
+import { DruxtNuxtModule } from './nuxtModule'
 
 /**
- * The Nuxt.js module function.
+ * The Nuxt module.
  *
- * Sets up a Druxt.js frontend.
+ * Installs DruxtJS functionality and configuration in your NuxtJS application.
  *
  * @type {Function}
  * @exports default
- * @name DruxtModule
- * @see {@link ./module|DruxtModule}
+ * @name DruxtNuxtModule
+ * @see {@link ./nuxtModule|DruxtNuxtModule}
  *
  * @example <caption>nuxt.config.js</caption> @lang js
  * module.exports = {
@@ -20,7 +21,31 @@ import { DruxtModule } from './module'
  *   }
  * }
  */
-export default DruxtModule
+export default DruxtNuxtModule
+
+/**
+ * The Druxt Vue.js component.
+ *
+ * @type {object}
+ * @exports DruxtComponent
+ * @name DruxtComponent
+ * @see {@link ./components/Druxt|Druxt}
+ * @example @lang js
+ * import Vue from 'vue'
+ * import { DruxtComponent } from 'druxt'
+ *
+ * Vue.component(DruxtComponent)
+ */
+export { DruxtComponent }
+
+/**
+ * Druxt Wrapper Mixin.
+ *
+ * @type {object}
+ * @exports DruxtWrapperMixin
+ * @see {@link ./mixins/wrapper|DruxtWrapperMixin}
+ */
+export { DruxtWrapperMixin } from './mixins/wrapper'
 
 /**
  * The Druxt class.

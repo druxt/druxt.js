@@ -1,18 +1,18 @@
-import { warn } from 'consola'
+import { resolve } from 'path'
 
 /**
  * Nuxt.js module function.
  *
  * @param {object} moduleOptions - The Nuxt.js module options.
  */
-const DruxtModule = function (moduleOptions = {}) {
+const DruxtNuxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
   }
 
-  warn('The out of the box, decoupled Drupal Site functionality is deprecated. Please see the `druxt-site` module.')
-  this.addModule('druxt-site')
+  // Enable Vuex Store.
+  this.options.store = true
 }
 
-export { DruxtModule }
+export { DruxtNuxtModule }
