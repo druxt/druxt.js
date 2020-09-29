@@ -11,6 +11,13 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
     throw new TypeError('Druxt settings missing.')
   }
 
+  // Add plugin.
+  this.addPlugin({
+    src: resolve(__dirname, '../nuxt/plugin.js'),
+    fileName: 'druxt.js',
+    options: this.options.druxt
+  })
+
   // Enable Vuex Store.
   this.options.store = true
 }
