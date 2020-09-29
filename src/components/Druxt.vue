@@ -138,7 +138,7 @@ export default {
 
     /**
      * Set a component.
-     * 
+     *
      * @param {string} type - The component type.
      * @param {string} component - The component name.
      * @param {object} propsData - The component propert data object.

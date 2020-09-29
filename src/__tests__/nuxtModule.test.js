@@ -1,17 +1,17 @@
-import DruxtModule from '..'
+import DruxtNuxtModule from '..'
 
 const mock = {
   addModule: jest.fn(),
   addPlugin: jest.fn(),
   addTemplate: jest.fn(),
-  DruxtModule
+  DruxtNuxtModule
 }
 
 jest.mock('druxt-schema')
 
 describe('Druxt.js', () => {
   test('Nuxt module', () => {
-    expect(() => { mock.DruxtModule() }).toThrow('Druxt settings missing.')
+    expect(() => { mock.DruxtNuxtModule() }).toThrow('Druxt settings missing.')
 
     mock.options = { druxt: {} }
     mock.nuxt = {
@@ -21,6 +21,6 @@ describe('Druxt.js', () => {
     }
 
     // Call Druxt module.
-    mock.DruxtModule()
+    mock.DruxtNuxtModule()
   })
 })
