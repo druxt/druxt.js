@@ -3,15 +3,19 @@ import { resolve } from 'path'
 /**
  * Nuxt.js module function.
  *
- * Adds the core Druxt modules to the Nuxt.js application:
- * - [druxt-blocks](http://npmjs.com/package/druxt-blocks)
- * - [druxt-breadcrumb](http://npmjs.com/package/druxt-breadcrumb)
- * - [druxt-entity](http://npmjs.com/package/druxt-entity)
- * - [druxt-menu](http://npmjs.com/package/druxt-menu)
- * - [druxt-router](http://npmjs.com/package/druxt-router)
- * - [druxt-schema](http://npmjs.com/package/druxt-schema)
- * - [druxt-search](http://npmjs.com/package/druxt-search)
- * - [druxt-views](http://npmjs.com/package/druxt-views)
+ * - Adds the DruxtSite component.
+ * - Adds the core modules for DruxtJS Site:
+ *   - [@nuxtjs/proxy](https://www.npmjs.com/package/@nuxtjs/proxy)
+ *   - [druxt-blocks](http://npmjs.com/package/druxt-blocks)
+ *   - [druxt-breadcrumb](http://npmjs.com/package/druxt-breadcrumb)
+ *   - [druxt-entity](http://npmjs.com/package/druxt-entity)
+ *   - [druxt-menu](http://npmjs.com/package/druxt-menu)
+ *   - [druxt-router](http://npmjs.com/package/druxt-router)
+ *   - [druxt-schema](http://npmjs.com/package/druxt-schema)
+ *   - [druxt-search](http://npmjs.com/package/druxt-search)
+ *   - [druxt-views](http://npmjs.com/package/druxt-views)
+ * - Adds default configuration for @nuxtjs/proxy.
+ * - Enables Vuex store.
  *
  * @param {object} moduleOptions - The Nuxt.js module options.
  */
@@ -31,7 +35,8 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
   // Add NuxtJS modules.
   const modules = [
     '@nuxtjs/proxy',
-    'druxt',
+    // @todo {@link https://github.com/druxt/druxt-site/issues/2|Uncomment after DruxtJS 0.3.0 is released.}
+    // 'druxt',
     'druxt-blocks',
     'druxt-breadcrumb',
     'druxt-entity',

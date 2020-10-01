@@ -12,8 +12,6 @@ describe('Druxt component', () => {
     const wrapper = mount(DruxtSite, { localVue })
 
     // Props.
-    expect(wrapper.vm.module).toBe(undefined)
-    expect(wrapper.vm.propsData).toStrictEqual(undefined)
     expect(wrapper.vm.wrapper.component).toBe(undefined)
   })
 })

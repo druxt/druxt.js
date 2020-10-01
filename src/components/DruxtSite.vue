@@ -5,19 +5,38 @@
 </template>
 
 <script>
-import { DruxtWrapperMixin } from 'druxt'
+// import { DruxtWrapperMixin } from 'druxt'
 
 /**
  * @example @lang vue
- * <druxt module="site" />
+ * <druxt-site :wrapper="{ component: 'MySiteWrapper' }" />
+ *
+ * @todo {@link https://github.com/druxt/druxt-site/issues/2|Add support for DruxtJS component theme system.}
  */
 export default {
   name: 'DruxtSite',
 
-  mixins: [DruxtWrapperMixin],
+  /**
+   * @todo {@link https://github.com/druxt/druxt-site/issues/2|Remove props in favour of Mixin.}
+   */
+  props: {
+    wrapper: {
+      type: Object,
+      default: () => ({
+        component: undefined,
+        propsData: {},
+      })
+    },
+  },
 
-  druxt: ({ vm }) => ({
-    componentOptions: [['default']]
-  })
+  /**
+   * @todo {@link https://github.com/druxt/druxt-site/issues/2|Uncomment the following lines.}
+
+   */
+  // mixins: [DruxtWrapperMixin],
+
+  // druxt: ({ vm }) => ({
+  //   componentOptions: [['default']]
+  // })
 }
 </script>
