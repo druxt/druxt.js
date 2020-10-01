@@ -112,11 +112,11 @@ workflows:
           filters:
             branches:
               only: main
-      # - gh-pages/deploy:
-      #     build-dir: ../repo/docs/.vuepress/dist
-      #     requires:
-      #       - build_docs
-      #     ssh-fingerprints: ""
-      #     filters:
-      #       branches:
-      #         only: main
+      - gh-pages/deploy:
+          build-dir: ../repo/docs/.vuepress/dist
+          requires:
+            - build_docs
+          ssh-fingerprints: "8c:17:a6:60:cd:85:86:94:10:d6:53:b2:07:18:e9:93"
+          filters:
+            branches:
+              only: main
