@@ -38,9 +38,8 @@ Druxt.js requires a Nuxt.js frontend and a Drupal JSON:API backend:
       modules: [
         'druxt'
       ],
-
       druxt: {
-        baseUrl: 'https://example.com'
+        baseUrl: 'https://demo-api.druxtjs.org'
       }
     }
     ```
