@@ -1,21 +1,13 @@
-# Druxt.js - The Drupal powered Nuxt framework.
+# DruxtJS; A bridge between framekworks.
 
 [![CircleCI](https://circleci.com/gh/druxt/druxt.js.svg?style=svg)](https://circleci.com/gh/druxt/druxt.js)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 
 
-> Druxt.js connects your Drupal backend to your Nuxt.js frontend through the power of Drupal's JSON API.
+> DruxtJS connects your Drupal backend to your NuxtJS frontend through the power of Drupal's JSON:API.
 
-## Features
 
-- Drupal path alias and redirect compatible router.
-- Entity / Field render system powered by Drupal display modes.
-- Block render system with support for regions and custom content blocks.
-- Views and Views blocks.
-- On-demand JSON API resource engine with Vuex.
-- Breadrumbs, Menus, Search API and more.
-- Support for the NuxtJS proxy module.
 
 ## Install
 
@@ -28,15 +20,17 @@ Add module to `nuxt.config.js`
 ```js
 module.exports = {
   modules: [
-    ...
     'druxt'
   ],
-
   druxt: {
-    baseUrl: 'https://example.com'
+    baseUrl: 'https://demo-api.druxtjs.org'
   }
 }
 ```
+
+## Decoupled Site
+
+For an out of the box, decoupled Drupal site, see the [DruxtJS Site module](http://site.druxtjs.org/).
 
 ## Options
 
