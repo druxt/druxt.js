@@ -1,5 +1,4 @@
-// const baseUrl = 'https://demo-api.druxtjs.org'
-const baseUrl = 'http://demo-api-druxtjs-org.docker.amazee.io'
+const baseUrl = 'https://demo-api.druxtjs.org'
 
 export default {
   build: {
