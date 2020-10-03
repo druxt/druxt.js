@@ -1,10 +1,11 @@
 <template>
   <div>
-    <component :is="component" v-if="route" v-bind="props" />
+    <druxt :module="module" :props-data="props" />
   </div>
 </template>
 
 <script>
+import { DruxtComponent } from 'druxt'
 import { mapState } from 'vuex'
 
 /**
@@ -15,6 +16,8 @@ import { mapState } from 'vuex'
  */
 export default {
   name: 'DruxtRouter',
+
+  components: { druxt: DruxtComponent },
 
   /**
    * Nuxt fetch method.
@@ -47,6 +50,10 @@ export default {
      */
     component () {
       return this.route.component || false
+    },
+
+    module () {
+      return this.component.startsWith('druxt-') ? this.component.substring(6) : false
     },
 
     /**
