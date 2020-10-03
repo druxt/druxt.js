@@ -1,5 +1,8 @@
 coverage
 docs/api
 dist
+examples/*/.nuxt
+examples/*/package-lock.json
+examples/*/node_modules
 node_modules
 .vscode
