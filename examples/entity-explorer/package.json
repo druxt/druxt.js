@@ -1,0 +1,19 @@
+{
+  "name": "example-druxt-entity",
+  "dependencies": {
+    "drupal-jsonapi-params": "^1.1.11",
+    "druxt": "latest",
+    "druxt-entity": "latest",
+    "druxt-schema": "latest",
+    "nuxt": "latest",
+    "vue-live": "^1.14.0"
+  },
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start"
+  },
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.11.2"
+  }
+}
