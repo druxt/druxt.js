@@ -2,7 +2,7 @@ const path = require('path')
 const glob = require('globby')
 const meta = require(path.resolve('./package.json'))
 
-const title = `Druxt.js ${meta.name.charAt(6).toUpperCase()}${meta.name.slice(7)}`
+const title = `DruxtJS ${meta.name.charAt(6).toUpperCase()}${meta.name.slice(7)}`
 
 const sidebar = [{
   title: 'Guide',
@@ -19,11 +19,11 @@ const sections = [
     path: 'api',
   },
   {
-    title: 'Druxt.js Blocks',
+    title: 'DruxtJS Blocks',
     path: 'api/components/blocks',
   },
   {
-    title: 'Druxt.js Fields',
+    title: 'DruxtJS Fields',
     path: 'api/components/fields',
   },
   {

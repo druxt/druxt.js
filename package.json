@@ -1,7 +1,7 @@
 {
   "name": "druxt-docgen",
   "version": "0.2.7",
-  "description": "Vuepress based documentation generator for Druxt.js docs.",
+  "description": "Vuepress based documentation generator for DruxtJS docs.",
   "main": "src/index.js",
   "bin": {
     "druxt-docgen": "bin/druxt-docgen.js"
