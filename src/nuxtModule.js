@@ -17,9 +17,6 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
     fileName: 'druxt.js',
     options: this.options.druxt
   })
-
-  // Enable Vuex Store.
-  this.options.store = true
 }
 
 export { DruxtNuxtModule }

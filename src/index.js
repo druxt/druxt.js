@@ -46,21 +46,3 @@ export { DruxtComponent }
  * @see {@link ./mixins/wrapper|DruxtWrapperMixin}
  */
 export { DruxtWrapperMixin } from './mixins/wrapper'
-
-/**
- * The Druxt class.
- *
- * @exports Druxt
- * @name Druxt
- * @see {@link ./druxt|Druxt}
- */
-export { Druxt } from './druxt'
-
-/**
- * The Druxt.js Vuex store.
- *
- * @exports DruxtStore
- * @name DruxtStore
- * @see {@link ./stores/druxt|DruxtStore}
- */
-export { DruxtStore } from './stores/druxt'
