@@ -25,12 +25,12 @@
   },
   "homepage": "https://github.com/druxt/druxt-docgen#readme",
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.11.0",
-    "@babel/preset-env": "^7.11.0",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.1.0",
     "druxt-router": "^0.15.0",
-    "eslint": "^7.7.0",
+    "eslint": "^7.10.0",
     "jest": "^26.4.2",
     "jest-junit": "^11.1.0",
     "nodemon": "^2.0.4",
@@ -45,8 +45,8 @@
     "jsdoc-vuex-plugin": "^1.0.0",
     "markdown-it-task-lists": "^2.1.1",
     "ncp": "^2.0.0",
-    "vue-docgen-api": "^4.31.1",
-    "vuepress": "^1.5.4",
-    "vuepress-theme-druxt": "^0.3.1"
+    "vue-docgen-api": "^4.32.4",
+    "vuepress": "^1.6.0",
+    "vuepress-theme-druxt": "^0.3.2"
   }
 }
