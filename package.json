@@ -1,7 +1,7 @@
 {
   "name": "druxt",
   "version": "0.2.1",
-  "description": "Nuxt.js in the front, Drupal in the back.",
+  "description": "A Bridge between frameworks, NuxtJS in the front, Drupal in the back.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/druxt/druxt.js"
@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/druxt/druxt.js/issues"
   },
-  "homepage": "https://github.com/druxt/druxt.js/druxt#readme",
+  "homepage": "https://druxtjs.org",
   "main": "dist/druxt.ssr.js",
   "module": "dist/druxt.esm.js",
   "unpkg": "dist/druxt.min.js",

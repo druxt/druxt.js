@@ -5,24 +5,43 @@ actionText: Get started
 actionLink: /guide/getting-started
 features:
 - title: Simplicity first
-  details: Druxt.js leverages the power of Drupals JSON:API to bring minimal config, component driven PWAs.
-- title: Nuxt.js in the front
-  details: Nuxt is based on a powerful modular architecture. You don't have to reinvent the wheel to get PWA benefits.
-- title: Drupal in the back
-  details: Leverage an API-first architecture, robust configuration management, and unparalleled extensibility to build the web of the future.
-footer: Copyright © 2019-present Realityloop
+  details: The Druxt component connects NuxtJS to your Drupal JSON:API.
+- title: Community built
+  details: Built by the community, for the community.
+- title: Decoupled Drupal sites
+  details: The Site module brings decoupled Vue.js theming system to Drupal.
 ---
 
-> Druxt.js connects your Drupal backend to your Nuxt.js frontend through the power of Drupal's JSON:API.
+> DruxtJS provides an easy connection to your Drupal JSON:API backend in your NuxtJS frontend application.
 
-Using Drupal's built in Entity display modes and Field formatter system, Druxt.js provides the out of the box experience you expect.
 
-## Features
+## The Druxt component
 
-- **Router** with path alias and redirect support for Entity and Views pages.
-- **Vuex** based, on-demand JSON:API resource loading.
-- **Entity / Field** render system powered by Drupal display modes.
-- **Block** region and **Content block** component rendering.
-- **Views** and **Views blocks** via the [Drupal JSON:API Views module](https://www.drupal.org/project/jsonapi_views).
-- **Search** via the [Drupal JSON:API Search module](https://www.drupal.org/project/jsonapi_search_api).
-- **Breadcrumb**, **Menu** and more.
+Druxt provides a Vue.js component to easily access Drupal's JSON:API data, with a simple Slot based theming system.
+
+```vue
+<Druxt :module="module" :props-data="propsData" :wrapper="wrapper" />
+```
+
+Get started with the [Guide](guide/) and [API Documentation](/api/components/Druxt.html).
+
+
+## Join the community
+
+DruxtJS is an open source project, built by the comunity for the community.
+
+Find support or get involved in building Druxt via our community channels:
+
+- [DruxtJS Discord server](https://discord.druxtjs.org)
+- #druxt Slack channel on [Drupal.org slack](https://drupal.org/slack)
+
+
+## Site Module / Drupal Umami Parity project
+
+The DruxtJS Site module provides minimal configuration, decoupled Drupal site functionality.
+
+Take a look at the [Umami Parity project demo](https://demo.druxtjs.org), or checkout source for the [NuxtJS frontend](https://github.com/druxt/demo.druxtjs.org) and the [Drupal 9 backend](https://github.com/druxt/demo-api.druxtjs.org).
+
+![Drupal Umami Parity demo](./images/umami.png)
+
+Get involved at the [Umami Parity project board](https://github.com/orgs/druxt/projects/6) or try out the [DruxtJS Site](https://site.druxtjs.org) module.
