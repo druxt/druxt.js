@@ -1,4 +1,4 @@
-import DruxtSchemaModule from '..'
+import DruxtSchemaNuxtModule from '..'
 
 jest.mock('../utils/schema')
 
@@ -9,12 +9,12 @@ const mock = {
     hook: (hook, fn) => fn()
   },
   options: {},
-  DruxtSchemaModule
+  DruxtSchemaNuxtModule
 }
 
 test('Nuxt module', async () => {
   try {
-    await mock.DruxtSchemaModule()
+    await mock.DruxtSchemaNuxtModule()
   }
   catch(err) {
     expect(err.message).toBe('Druxt settings missing.')
@@ -25,6 +25,6 @@ test('Nuxt module', async () => {
       baseUrl: 'https://example.com'
     }
   }
-  await mock.DruxtSchemaModule()
+  await mock.DruxtSchemaNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalled()
 })
