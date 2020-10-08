@@ -1,4 +1,4 @@
-import { DruxtSchemaModule } from './module'
+import { DruxtSchemaNuxtModule } from './nuxtModule'
 
 /**
  * The core module functionality.
@@ -54,9 +54,9 @@ export { DruxtSchemaStore } from './stores/schema'
  *
  * @type {Function}
  * @exports default
- * @name DruxtSchemaModule
- * @see {@link ./module|DruxtSchemaModule}
- * 
+ * @name DruxtSchemaNuxtModule
+ * @see {@link ./module|DruxtSchemaNuxtModule}
+ *
  * @example <caption>nuxt.config.js</caption> @lang js
  * module.exports = {
  *   modules: [
@@ -67,4 +67,4 @@ export { DruxtSchemaStore } from './stores/schema'
  *   }
  * }
  */
-export default DruxtSchemaModule
+export default DruxtSchemaNuxtModule

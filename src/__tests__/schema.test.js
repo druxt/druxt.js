@@ -1,7 +1,6 @@
 import { DruxtSchema } from '..'
 
 jest.mock('axios')
-jest.mock('simple-oauth2')
 
 const baseURL = 'https://example.com'
 const options = {}
@@ -56,23 +55,5 @@ describe('DruxtSchema', () => {
     // Ensure we don't get a filtered schema.
     config.filter = ['node--article--default--view']
     expect(await schema.getSchema(config)).toBe(false)
-  })
-
-  test('oauth2', async () => {
-    schema = new DruxtSchema(baseURL, {
-      auth: {
-        type: 'oauth2',
-        credentials: {
-          clientId: 'clientId',
-          clientSecret: 'clientSecret',
-          username: 'username',
-          password: 'password'
-        }
-      }
-    })
-
-    const callback = schema.oauth2()
-    const request = await callback({ headers: {} })
-    expect(request.headers).toHaveProperty('Authorization')
   })
 })
