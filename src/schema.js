@@ -49,16 +49,6 @@ class DruxtSchema {
 
     // Setup Druxt Router.
     this.druxtRouter = new DruxtRouter(baseURL, this.options)
-
-    // Process authentication.
-    // @TODO - druxt-router
-    if (this.options.auth.type) {
-      switch (this.options.auth.type) {
-        case 'oauth2':
-          this.druxtRouter.axios.interceptors.request.use(this.oauth2())
-          break
-      }
-    }
   }
 
   /**
@@ -130,49 +120,6 @@ class DruxtSchema {
 
     await schema.generate()
     return schema
-  }
-
-  /**
-   * Adds OAuth2 authentication via an Axios interceptor callback.
-   *
-   * @todo Move Authentication functionality to another module.
-   *
-   * @returns {Function} Axios interceptor callback.
-   *
-   * @private
-   */
-  oauth2() {
-    const credentials = this.options.auth.credentials
-    return async (request) => {
-      const config = {
-        auth: {
-          tokenHost: this.options.baseUrl
-        },
-        client: {
-          id: credentials.clientId,
-          secret: credentials.clientSecret
-        },
-        token: {
-          username: credentials.username,
-          password: credentials.password
-        }
-      }
-
-      const oauth2 = require('simple-oauth2').create({
-        client: config.client,
-        auth: config.auth
-      })
-
-      try {
-        const token = await oauth2.ownerPassword.getToken(config.token)
-
-        request.headers['Authorization'] = [token.token_type, token.access_token].join(' ')
-
-        return request
-      } catch (err) {
-        throw new Error(`Access Token Error: ${err.message}`)
-      }
-    }
   }
 }
 
