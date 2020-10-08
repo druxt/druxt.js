@@ -30,7 +30,7 @@ import { DruxtSchema } from './schema'
  *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
-const DruxtSchemaModule = function (moduleOptions = {}) {
+const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
@@ -72,4 +72,4 @@ const DruxtSchemaModule = function (moduleOptions = {}) {
   })
 }
 
-export { DruxtSchemaModule }
+export { DruxtSchemaNuxtModule }
