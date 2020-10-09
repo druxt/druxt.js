@@ -46,7 +46,7 @@ jobs:
           at: ~/repo
 
       - run:
-          name: Build with vuepress
+          name: Build with DruxtJS Docgen
           command: npm run docs:build
 
       - store_artifacts:
