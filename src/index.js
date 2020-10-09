@@ -117,7 +117,7 @@ class DruxtDocgen {
     const options = {
       siteConfig,
       sourceDir: 'docs',
-      theme: 'druxt'
+      theme: '@vuepress/theme-default'
     }
 
     if (process.argv.slice(2).pop() === 'build') {
