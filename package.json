@@ -1,10 +1,10 @@
 {
   "name": "druxt-site",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Out of the box decoupled Drupal Site module for DruxtJS.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/druxt/druxt-site.js"
+    "url": "git+https://github.com/druxt/druxt-site"
   },
   "keywords": [
     "drupal",
@@ -31,8 +31,8 @@
     "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "docs:dev": "druxt-docgen dev",
-    "docs:build": "druxt-docgen build",
+    "docs:dev": "npx druxt-docgen dev",
+    "docs:build": "npx druxt-docgen build",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
@@ -44,14 +44,14 @@
   },
   "dependencies": {
     "@nuxtjs/proxy": "^2.0.1",
-    "druxt-blocks": "^0.6.0",
+    "druxt-blocks": "^0.6.1",
     "druxt-breadcrumb": "^0.6.0",
-    "druxt-entity": "^0.6.1",
+    "druxt-entity": "^0.6.2",
     "druxt-menu": "^0.5.0",
     "druxt-router": "^0.16.0",
-    "druxt-schema": "^0.5.1",
+    "druxt-schema": "^0.6.0",
     "druxt-search": "^0.1.0",
-    "druxt-views": "^0.4.1",
+    "druxt-views": "^0.4.2",
     "md5": "^2.2.1",
     "vuex": "^3.5.1"
   },
@@ -66,7 +66,6 @@
     "babel-eslint": "^10.1.0",
     "bootstrap-vue": "^2.16.0",
     "cross-env": "^6.0.3",
-    "druxt-docgen": "^0.2.7",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.1.0",
@@ -81,8 +80,7 @@
     "vue": "^2.6.12",
     "vue-jest": "^3.0.5",
     "vue-template-compiler": "^2.6.12",
-    "vue-test-utils": "^1.0.0-beta.11",
-    "vuepress-theme-druxt": "^0.3.1"
+    "vue-test-utils": "^1.0.0-beta.11"
   },
   "engines": {
     "node": ">=8"
