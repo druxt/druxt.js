@@ -21,7 +21,7 @@ module.exports = {
     'druxt-site'
   ],
   druxt: {
-    baseUrl: 'https://demo.druxtjs.org'
+    baseUrl: 'https://demo-api.druxtjs.org'
   }
 }
 ```
