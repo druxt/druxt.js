@@ -112,7 +112,9 @@ export default {
         // Use <nuxt-link> for relative links.
         else {
           links[key].component = 'nuxt-link'
-          links[key].props.to = link.uri
+          // Remove 'internal:' prefix.
+          // @see - https://www.drupal.org/project/drupal/issues/3066751
+          links[key].props.to = link.uri.replace(/^internal:/, '')
         }
       }
 
