@@ -31,8 +31,8 @@
     "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "docs:dev": "druxt-docgen dev",
-    "docs:build": "druxt-docgen build",
+    "docs:dev": "npx druxt-docgen dev",
+    "docs:build": "npx druxt-docgen build",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
@@ -66,7 +66,6 @@
     "babel-eslint": "^10.1.0",
     "bootstrap-vue": "^2.16.0",
     "cross-env": "^6.0.3",
-    "druxt-docgen": "^0.2.7",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.1.0",
@@ -81,8 +80,7 @@
     "vue": "^2.6.12",
     "vue-jest": "^3.0.5",
     "vue-template-compiler": "^2.6.12",
-    "vue-test-utils": "^1.0.0-beta.11",
-    "vuepress-theme-druxt": "^0.3.1"
+    "vue-test-utils": "^1.0.0-beta.11"
   },
   "engines": {
     "node": ">=8"
