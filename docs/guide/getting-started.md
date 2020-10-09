@@ -40,7 +40,7 @@ DruxtJS requires a NuxtJS frontend and a Drupal JSON:API enabled backend:
       ],
 
       druxt: {
-        baseUrl: 'https://example.com'
+        baseUrl: 'https://demo-api.druxtjs.org'
       }
     }
     ```

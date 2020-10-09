@@ -10,7 +10,6 @@ features:
   details: Nuxt is based on a powerful modular architecture. You don't have to reinvent the wheel to get PWA benefits.
 - title: Drupal in the back
   details: Leverage an API-first architecture, robust configuration management, and unparalleled extensibility to build the web of the future.
-footer: Copyright © 2019-present Realityloop
 ---
 
 > DruxtJS Site gives you a simple, out of the box, decoupled Drupal site experience with the power of Vue and Nuxt.
