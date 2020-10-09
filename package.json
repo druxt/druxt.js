@@ -1,6 +1,6 @@
 {
   "name": "druxt-entity",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Drupal Display Mode powered Entity and Field Vue.js component system.",
   "repository": {
     "type": "git",
@@ -34,8 +34,8 @@
     "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "docs:dev": "druxt-docgen dev",
-    "docs:build": "druxt-docgen build",
+    "docs:dev": "npx druxt-docgen dev",
+    "docs:build": "npx druxt-docgen build",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
@@ -48,7 +48,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "druxt-router": "^0.16.0",
-    "druxt-schema": "^0.5.0"
+    "druxt-schema": "^0.6.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.11.5",
@@ -62,7 +62,6 @@
     "babel-eslint": "^10.1.0",
     "cross-env": "^6.0.3",
     "drupal-jsonapi-params": "^1.1.11",
-    "druxt-docgen": "^0.2.7",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.5.4",
