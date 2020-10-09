@@ -1,6 +1,6 @@
 {
   "name": "druxt-docgen",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "Vuepress based documentation generator for DruxtJS docs.",
   "main": "src/index.js",
   "bin": {
@@ -31,7 +31,7 @@
     "babel-eslint": "^10.1.0",
     "druxt-router": "^0.15.0",
     "eslint": "^7.10.0",
-    "jest": "^26.4.2",
+    "jest": "^26.5.2",
     "jest-junit": "^11.1.0",
     "nodemon": "^2.0.4",
     "vue-template-compiler": "^2.6.12",
@@ -46,7 +46,6 @@
     "markdown-it-task-lists": "^2.1.1",
     "ncp": "^2.0.0",
     "vue-docgen-api": "^4.32.4",
-    "vuepress": "^1.6.0",
-    "vuepress-theme-druxt": "^0.3.2"
+    "vuepress": "^1.6.0"
   }
 }
