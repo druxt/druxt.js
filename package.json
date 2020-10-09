@@ -4,7 +4,7 @@
   "description": "Out of the box decoupled Drupal Site module for DruxtJS.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/druxt/druxt-site.js"
+    "url": "git+https://github.com/druxt/druxt-site"
   },
   "keywords": [
     "drupal",
