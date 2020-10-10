@@ -27,6 +27,7 @@ const DruxtComponentMixin = {
   data: () => ({
     component: {
       is: 'DruxtWrapper',
+      options: [],
       propsData: {},
     }
   }),
@@ -62,12 +63,14 @@ const DruxtComponentMixin = {
       return
     }
 
-    const options = druxt.getComponents(this, moduleData.componentOptions)
-    if (!options.length) {
+    const options = druxt.getComponents(this, moduleData.componentOptions, true)
+    this.component.options = options.map(item => item.pascal)
+    const available = options.filter(item => item.global)
+    if (!available.length) {
       return
     }
 
-    this.component.is = options[0].pascal
+    this.component.is = available[0].pascal
     this.component.propsData = moduleData.propsData || {}
   },
 }

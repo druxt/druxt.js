@@ -28,6 +28,7 @@ describe('DruxtComponentMixin', () => {
   test('data', () => {
     expect(wrapper.vm.component).toStrictEqual({
       is: 'DruxtWrapper',
+      options: [],
       propsData: {}
     })
   })
@@ -38,6 +39,7 @@ describe('DruxtComponentMixin', () => {
     await DruxtComponentMixin.fetch.call(wrapper.vm)
     expect(wrapper.vm.component).toStrictEqual({
       is: 'DruxtWrapper',
+      options: [],
       propsData: {}
     })
 
@@ -46,6 +48,7 @@ describe('DruxtComponentMixin', () => {
     await DruxtComponentMixin.fetch.call(wrapper.vm)
     expect(wrapper.vm.component).toStrictEqual({
       is: 'DruxtWrapper',
+      options: ['Wrapper'],
       propsData: {}
     })
 
@@ -54,6 +57,7 @@ describe('DruxtComponentMixin', () => {
     await DruxtComponentMixin.fetch.call(wrapper.vm)
     expect(wrapper.vm.component).toStrictEqual({
       is: 'DruxtTestModuleWrapper',
+      options: ['DruxtTestModuleWrapper'],
       propsData: {}
     })
   })
