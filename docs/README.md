@@ -12,7 +12,7 @@ features:
   details: The Site module brings decoupled Vue.js theming system to Drupal.
 ---
 
-> DruxtJS provides an easy connection to your Drupal JSON:API backend in your NuxtJS frontend application.
+> DruxtJS provides an easy connection between a Drupal JSON:API backend and NuxtJS frontend application.
 
 
 ## The Druxt component

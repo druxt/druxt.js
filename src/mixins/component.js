@@ -79,12 +79,16 @@ export { DruxtComponentMixin }
 
 /**
  * @typedef {object} Component
- * @property {string} [is=DruxtWrapper] - The component name.
- * @property {object} [propsData={}] - The component propsData object.
+ * @property {string} is=DruxtWrapper - The rendered component name.
+ * @property {string[]} options - The possible component name options.
+ * @property {object} propsData - The component propsData object.
  *
  * @example @lang js
  * {
- *   is: 'DruxtTextModuleWrapper',
+ *   is: 'DruxtTestModuleWrapper',
+ *   options: [
+ *     'DruxtTestModuleWrapper',
+ *   ],
  *   propsData: {},
  * }
  */

@@ -6,7 +6,7 @@ Druxt.js requires a Nuxt.js frontend and a Drupal JSON:API backend:
 
 1. [Install Drupal](https://www.drupal.org/docs/installing-drupal)
 
-2. Download the Drupal [Druxt module](https://www.drupal.org/project/druxt):
+2. Download the [Druxt module](https://www.drupal.org/project/druxt):
 
     ```sh
     composer require drupal/druxt
@@ -18,14 +18,12 @@ Druxt.js requires a Nuxt.js frontend and a Drupal JSON:API backend:
 4. Add the "**access druxt resources**" permission to a user/role:
    ![Install the module](./images/permissions.png)
 
-5. Enable and configure **CORS** in the your sites `services.yml` file.
 
+## NuxtJS
 
-## Nuxt.js
+1. [Install Nuxt](https://nuxtjs.org/guide/installation/)
 
-1. [Install Nuxt.js](https://nuxtjs.org/guide/installation/)
-
-2. Install the Nuxt.js [Druxt module](http://npmjs.com/package/druxt):
+2. Install the [Druxt module](http://npmjs.com/package/druxt):
 
     ```sh
     npm i druxt
