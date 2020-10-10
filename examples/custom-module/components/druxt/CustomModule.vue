@@ -1,16 +1,16 @@
 <template>
-  <div>
-    <component :is="wrapper.component" v-bind="wrapper.propsData">
-      {{ $attrs.text }}
-    </component>
-  </div>
+  <component :is="component.is" v-bind="component.propsData">
+    {{ $attrs.text }}
+  </component>
 </template>
 
 <script>
-import { DruxtWrapperMixin } from 'druxt'
+import { DruxtComponentMixin } from 'druxt'
 
 export default {
-  mixins: [DruxtWrapperMixin],
+  name: 'DruxtCustomModule',
+
+  mixins: [DruxtComponentMixin],
 
   druxt: ({ vm }) => ({
     componentOptions: [['wrapper']],

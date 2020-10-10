@@ -1,3 +1,7 @@
 <template>
-  <Druxt module="custom-module" :props-data="{ text: 'Hello Custom Module' }" />
+  <Druxt
+    module="custom-module"
+    text="Hello Custom Module"
+    :wrapper="{ component: 'marquee' }"
+  />
 </template>
