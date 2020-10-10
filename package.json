@@ -1,7 +1,7 @@
 {
   "name": "druxt",
   "version": "0.2.1",
-  "description": "Nuxt.js in the front, Drupal in the back.",
+  "description": "A Bridge between frameworks, NuxtJS in the front, Drupal in the back.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/druxt/druxt.js"
@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/druxt/druxt.js/issues"
   },
-  "homepage": "https://github.com/druxt/druxt.js/druxt#readme",
+  "homepage": "https://druxtjs.org",
   "main": "dist/druxt.ssr.js",
   "module": "dist/druxt.esm.js",
   "unpkg": "dist/druxt.min.js",
@@ -31,8 +31,8 @@
     "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "docs:dev": "druxt-docgen dev",
-    "docs:build": "druxt-docgen build",
+    "docs:dev": "npx druxt-docgen dev",
+    "docs:build": "npx druxt-docgen build",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
@@ -43,9 +43,6 @@
     ]
   },
   "dependencies": {
-    "consola": "^2.15.0",
-    "druxt-router": "^0.16.0",
-    "druxt-site": "^0.1.0",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
@@ -59,12 +56,12 @@
     "babel-eslint": "^10.1.0",
     "bootstrap-vue": "^2.17.3",
     "cross-env": "^6.0.3",
-    "druxt-docgen": "^0.2.7",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.1.0",
     "jest-junit": "^11.1.0",
     "jest-mock-axios": "^3.2.0",
+    "md5": "^2.3.0",
     "minimist": "^1.2.0",
     "nodemon": "^2.0.2",
     "rollup": "^1.26.3",
@@ -74,8 +71,7 @@
     "vue": "^2.6.12",
     "vue-jest": "^3.0.7",
     "vue-template-compiler": "^2.6.12",
-    "vue-test-utils": "^1.0.0-beta.11",
-    "vuepress-theme-druxt": "^0.3.2"
+    "vue-test-utils": "^1.0.0-beta.11"
   },
   "engines": {
     "node": ">=8"
