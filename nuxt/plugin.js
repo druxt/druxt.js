@@ -1,13 +1,14 @@
-import { Druxt } from 'druxt'
+import Vue from 'vue'
+import { Druxt, DruxtWrapper } from 'druxt'
 
-export default (context, inject) => {
-  const baseUrl = '<%= options.baseUrl %>'
-  const options = {}
+// Install the Druxt Vue.js component.
+Vue.use({
+  install: function (Vue) {
+    if (Vue._druxt_installed) return
+    Vue._druxt_installed = true
 
-  <% if (options.endpoint) { %>
-  options.endpoint = '<%= options.endpoint %>'
-  <% } %>
-
-  const druxt = new Druxt(baseUrl, options)
-  inject('druxt', druxt)
-}
+    // Register components.
+    Vue.component(Druxt.name, Druxt)
+    Vue.component(DruxtWrapper.name, DruxtWrapper)
+  }
+})
