@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { DruxtComponent } from 'druxt'
+import { Druxt, DruxtWrapper } from 'druxt'
 
 // Install the Druxt Vue.js component.
 Vue.use({
@@ -7,7 +7,8 @@ Vue.use({
     if (Vue._druxt_installed) return
     Vue._druxt_installed = true
 
-    // Register component.
-    Vue.component(DruxtComponent.name, DruxtComponent)
+    // Register components.
+    Vue.component(Druxt.name, Druxt)
+    Vue.component(DruxtWrapper.name, DruxtWrapper)
   }
 })

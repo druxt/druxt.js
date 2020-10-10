@@ -1,11 +1,9 @@
 import { createLocalVue, mount } from '@vue/test-utils'
-import Vuex from 'vuex'
 
 import { Druxt } from '../..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
-localVue.use(Vuex)
 
 // Mock Druxt module.
 const DruxtTestModule = {

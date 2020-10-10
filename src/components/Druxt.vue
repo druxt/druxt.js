@@ -112,7 +112,7 @@ export default {
 
   methods: {
     /**
-     * Set module component.
+     * Sets the module component and propsData.
      */
     setModuleComponent() {
       const component = `Druxt${this.module.split('-').map(string => string.charAt(0).toUpperCase() + string.slice(1)).join('')}`

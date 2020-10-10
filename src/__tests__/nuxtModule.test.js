@@ -1,26 +1,35 @@
 import DruxtNuxtModule from '..'
 
-const mock = {
-  addModule: jest.fn(),
-  addPlugin: jest.fn(),
-  addTemplate: jest.fn(),
-  DruxtNuxtModule
+const options = {
+  baseUrl: 'https://demo-api.druxtjs.org'
 }
 
-jest.mock('druxt-schema')
+let mock
 
-describe('Druxt.js', () => {
-  test('Nuxt module', () => {
-    expect(() => { mock.DruxtNuxtModule() }).toThrow('Druxt settings missing.')
-
-    mock.options = { druxt: {} }
-    mock.nuxt = {
-      hook: jest.fn(async (hook, callback) => {
-        await callback.call(this)
-      })
+describe('DruxtJS Nuxt module', () => {
+  beforeEach(() => {
+    mock = {
+      addPlugin: jest.fn(),
+      DruxtNuxtModule
     }
+  })
+
+  test('Module options', () => {
+    // Call Druxt module with module options.
+    mock.DruxtNuxtModule(options)
+
+    // Expect addPlugin to have been called with options.
+    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
+  })
+
+  test('Root options', () => {
+    // Set root options.
+    mock.options = { druxt: options }
 
     // Call Druxt module.
     mock.DruxtNuxtModule()
+
+    // Expect addPlugin to have been called with options.
+    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
   })
 })
