@@ -1,4 +1,4 @@
-import { DruxtClass } from '..'
+import { DruxtClass, DruxtWrapper } from '..'
 
 /**
  * Vue.js Mixin to add Druxt component theming to a Druxt module.
@@ -21,6 +21,8 @@ import { DruxtClass } from '..'
  * </script>
  */
 const DruxtComponentMixin = {
+  components: { DruxtWrapper },
+
   /**
    * @property {Component} component - The wrapper component and propsData to be rendered.
    */
@@ -64,7 +66,7 @@ const DruxtComponentMixin = {
     }
 
     const options = druxt.getComponents(this, moduleData.componentOptions, true)
-    this.component.options = options.map(item => item.pascal)
+    this.component.options = [...new Set(options.map(item => item.pascal))]
     const available = options.filter(item => item.global)
     if (!available.length) {
       return
