@@ -25,7 +25,7 @@ describe('Component - DruxtBlockBlockContent', () => {
   test('default', async () => {
     const wrapper = mountComponent(mockBlock)
 
-    expect(wrapper.vm.props).toStrictEqual({
+    expect(wrapper.vm.propsData).toStrictEqual({
       type: 'plugin--plugin_id',
       uuid: 'uuid'
     })

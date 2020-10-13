@@ -38,7 +38,7 @@
 import { mapActions, mapState } from 'vuex'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
-import { DruxtComponentMixin } from 'druxt'
+import { Druxt, DruxtComponentMixin } from 'druxt'
 
 /**
  * The `<DruxtBlockRegion />` Vue.js component.
@@ -64,6 +64,8 @@ import { DruxtComponentMixin } from 'druxt'
  */
 export default {
   name: 'DruxtBlockRegion',
+
+  components: { Druxt },
 
   /**
    * Vue.js Mixins.
@@ -163,7 +165,7 @@ export default {
      * Updates blocks on Route change.
      */
     $route: function() {
-      this.fetch()
+      this.$fetch()
     }
   },
 

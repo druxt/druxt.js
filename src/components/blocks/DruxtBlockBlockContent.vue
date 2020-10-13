@@ -1,8 +1,9 @@
 <template>
-  <druxt-entity v-bind="props" />
+  <Druxt module="entity" :props-data="propsData" />
 </template>
 
 <script>
+import { Druxt } from 'druxt'
 import { DruxtBlocksBlockMixin } from '../../mixins/block'
 
 /**
@@ -22,6 +23,8 @@ import { DruxtBlocksBlockMixin } from '../../mixins/block'
 export default {
   name: 'DruxtBlockBlockContent',
 
+  components: { Druxt },
+
   /**
    * Vue.js Mixins.
    *
@@ -40,7 +43,7 @@ export default {
      *
      * @see {@link https://druxt.github.io/druxt-entity/api/components/DruxtEntity.html|DruxtEntity}
      */
-    props() {
+    propsData() {
       const parts = this.block.attributes.dependencies.content[0].split(':')
 
       return {
