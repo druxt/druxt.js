@@ -50,22 +50,18 @@ describe('Component - DruxtBlockRegion', () => {
 
   test('default', async () => {
     const wrapper = mountComponent()
-    await DruxtBlockRegion.fetch.call(wrapper.vm)
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.name).toBe('content')
     expect(wrapper.vm.theme).toBe('test')
 
-    expect(wrapper.vm.suggestionDefaults.length).toBe(2)
-    expect(wrapper.vm.suggestionDefaults[0].value).toBe('DruxtBlockRegionContentTest')
+    expect(wrapper.vm.component.options.length).toBe(2)
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtBlockRegionContentTest',
+      'DruxtBlockRegionContent'
+    ])
 
-    expect(wrapper.vm.suggestions.length).toBe(2)
-    expect(wrapper.vm.component).toBe('div')
-
-    expect(wrapper.vm.tokens).toHaveProperty('prefix')
-    expect(wrapper.vm.tokens).toHaveProperty('region')
-    expect(wrapper.vm.tokens).toHaveProperty('theme')
-
-    expect(wrapper.vm.tokenType).toBe('block-region')
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
 
     const watch = {
       ...DruxtBlockRegion.watch,
