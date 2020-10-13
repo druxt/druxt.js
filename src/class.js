@@ -23,6 +23,7 @@ class DruxtClass {
    */
   getComponents(vm, options, all = false, prefix) {
     const results = []
+    const unique = {}
 
     options
       // Filter out incorrectly typed items.
@@ -33,11 +34,9 @@ class DruxtClass {
         const variants = []
 
         item.map(string => {
-          const last = variants.length ? variants[variants.length - 1] : {}
-          const parts = last.parts ? last.parts.slice(0) : []
+          const parts = variants.length ? [...variants[0].parts] : []
           parts.push(string)
-
-          const clone = parts.slice(0)
+          const clone = [...parts]
 
           // Attach prefix as required.
           if (typeof prefix !== 'string' && (prefix !== false || typeof prefix === 'undefined') && ((vm || {}).$options || {}).name) {
@@ -65,7 +64,15 @@ class DruxtClass {
         })
 
         // Add variants to results.
-        variants.map(variant => results.push(variant))
+        variants.map(variant => {
+          // Ensure unique results.
+          if (unique[variant.pascal]) {
+            return
+          }
+          unique[variant.pascal] = true
+
+          results.push(variant)
+        })
       })
 
     // Return globally registered components or all.

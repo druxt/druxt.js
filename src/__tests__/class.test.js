@@ -6,7 +6,8 @@ import { DruxtClass } from '..'
 const localVue = createLocalVue()
 
 const componentOptions = [
-  ['wrapper', 'component']
+  ['one', 'two', 'three'],
+  ['one', 'three']
 ]
 
 // Mock Druxt module.
@@ -19,7 +20,7 @@ const DruxtTestModule = {
 }
 
 // Mock Druxt module wrapper.
-const DruxtTestModuleWrapper = { render: () => ({}) }
+const DruxtTestModuleOneTwoThree = { render: () => ({}) }
 
 let druxt
 let wrapper
@@ -29,7 +30,7 @@ describe('DruxtJS Class', () => {
     druxt = new DruxtClass()
 
     // Mount vm.
-    wrapper = mount(DruxtTestModule, { localVue, stubs: { DruxtTestModuleWrapper } })
+    wrapper = mount(DruxtTestModule, { localVue, stubs: { DruxtTestModuleOneTwoThree } })
     wrapper.vm.$options.druxt = DruxtTestModule.druxt
   })
 
@@ -39,17 +40,19 @@ describe('DruxtJS Class', () => {
     // Get global matches, expect no results.
     expect(druxt.getComponents(wrapper.vm, componentOptions).length).toBe(0)
 
-    // Get all matches, expect 2 results.
+    // Get all matches, expect 4 results.
     components = druxt.getComponents(wrapper.vm, componentOptions, true)
-    expect(components.length).toBe(2)
-    expect(components[0].pascal).toBe('WrapperComponent'),
-    expect(components[1].pascal).toBe('Wrapper'),
+    expect(components.length).toBe(4)
+    expect(components[0].pascal).toBe('OneTwoThree')
+    expect(components[1].pascal).toBe('OneTwo')
+    expect(components[2].pascal).toBe('One')
+    expect(components[3].pascal).toBe('OneThree')
 
-    // Get all matches with custom prefix, expect 2 results.
+    // Get all matches with custom prefix, expect 4 results.
     components = druxt.getComponents(wrapper.vm, componentOptions, true, 'custom-prefix')
-    expect(components.length).toBe(2)
+    expect(components.length).toBe(4)
     expect(components[0].prefix).toBe('custom-prefix')
-    expect(components[0].pascal).toBe('CustomPrefixWrapperComponent')
+    expect(components[0].pascal).toBe('CustomPrefixOneTwoThree')
 
     // Get global matches with module name prefix, expect 1 result.
     wrapper.vm.$options.name = 'DruxtTestModule'
@@ -57,9 +60,9 @@ describe('DruxtJS Class', () => {
     expect(components.length).toBe(1)
     expect(components[0]).toStrictEqual({
       global: true,
-      kebab: 'druxt-test-module-wrapper',
-      parts: ['wrapper'],
-      pascal: 'DruxtTestModuleWrapper',
+      kebab: 'druxt-test-module-one-two-three',
+      parts: ['one', 'two', 'three'],
+      pascal: 'DruxtTestModuleOneTwoThree',
       prefix: 'druxt-test-module'
     })
   })
@@ -70,7 +73,10 @@ describe('DruxtJS Class', () => {
 
     // Invoke with vm.
     expect(await druxt.getModuleData(wrapper.vm)).toStrictEqual({
-      componentOptions: [['wrapper', 'component']],
+      componentOptions: [
+        ['one', 'two', 'three'],
+        ['one', 'three']
+      ],
       propsData: {}
     })
 
