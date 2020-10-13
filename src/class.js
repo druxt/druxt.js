@@ -76,7 +76,9 @@ class DruxtClass {
       })
 
     // Return globally registered components or all.
-    return results.filter(option => option.global || !!all)
+    return results
+      .filter(option => option.global || !!all)
+      .sort((a, b) => b.parts.length - a.parts.length)
   }
 
   /**

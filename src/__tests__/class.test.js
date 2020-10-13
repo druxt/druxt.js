@@ -45,8 +45,8 @@ describe('DruxtJS Class', () => {
     expect(components.length).toBe(4)
     expect(components[0].pascal).toBe('OneTwoThree')
     expect(components[1].pascal).toBe('OneTwo')
-    expect(components[2].pascal).toBe('One')
-    expect(components[3].pascal).toBe('OneThree')
+    expect(components[2].pascal).toBe('OneThree')
+    expect(components[3].pascal).toBe('One')
 
     // Get all matches with custom prefix, expect 4 results.
     components = druxt.getComponents(wrapper.vm, componentOptions, true, 'custom-prefix')
