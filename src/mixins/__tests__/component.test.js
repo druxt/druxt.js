@@ -9,10 +9,7 @@ const localVue = createLocalVue()
 const DruxtTestModule = {
   mixins: [DruxtComponentMixin],
   druxt: () => ({
-    componentOptions: [
-      ['wrapper', 'component'],
-      ['wrapper'],
-    ],
+    componentOptions: [['wrapper']],
     propsData: {}
   }),
   render: () => ({}),
@@ -51,7 +48,7 @@ describe('DruxtComponentMixin', () => {
     await DruxtComponentMixin.fetch.call(wrapper.vm)
     expect(wrapper.vm.component).toStrictEqual({
       is: 'DruxtWrapper',
-      options: ['WrapperComponent', 'Wrapper'],
+      options: ['Wrapper'],
       propsData: {}
     })
 
@@ -60,7 +57,7 @@ describe('DruxtComponentMixin', () => {
     await DruxtComponentMixin.fetch.call(wrapper.vm)
     expect(wrapper.vm.component).toStrictEqual({
       is: 'DruxtTestModuleWrapper',
-      options: ['DruxtTestModuleWrapperComponent', 'DruxtTestModuleWrapper'],
+      options: ['DruxtTestModuleWrapper'],
       propsData: {}
     })
   })
