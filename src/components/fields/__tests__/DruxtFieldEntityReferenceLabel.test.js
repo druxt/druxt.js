@@ -29,6 +29,12 @@ const mountComponent = (link = true, options) => {
   }
   store.commit('druxtRouter/addEntity', entity)
 
+  const mocks = {
+    $fetchState: {
+      pending: false
+    }
+  }
+
   const propsData = {
     items: [{
       type: entity.type,
@@ -37,12 +43,7 @@ const mountComponent = (link = true, options) => {
     schema: { settings: { display: { link } }}
   }
 
-  const wrapper = shallowMount(DruxtFieldEntityReferenceLabel, { ...options, localVue, propsData, store, stubs })
-
-  // Add fetch method.
-  wrapper.vm.$fetch = DruxtFieldEntityReferenceLabel.fetch
-
-  return wrapper
+  return shallowMount(DruxtFieldEntityReferenceLabel, { ...options, localVue, mocks, propsData, store, stubs })
 }
 
 describe('Component - DruxtFieldEntityReferenceLabel', () => {
@@ -58,7 +59,7 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
   test('link', async () => {
     const wrapper = mountComponent()
 
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.entities.length).toBe(1)
     expect(wrapper.vm.component).toBe('nuxt-link')
@@ -73,7 +74,7 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
   test('no link', async () => {
     const wrapper = mountComponent(false)
 
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.entities.length).toBe(1)
     expect(wrapper.vm.component).toBe('span')

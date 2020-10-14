@@ -45,8 +45,8 @@ import { DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin } from '..
 /**
  * The `<druxt-entity />` Vue.js component.
  *
- * - Loads a Drupal Entity JSON:API resource from the Druxt.js Router.
- * - Loads the Druxt.js Schema for the Drupal display mode.
+ * - Loads a Drupal Entity JSON:API resource from the DruxtJS Router.
+ * - Loads the DruxtJS Schema for the Drupal display mode.
  * - Renders Field data via the `<druxt-field />` component.
  * - Supports Component Suggestion based theming with Vue.js Slots.
  *

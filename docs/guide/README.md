@@ -2,17 +2,17 @@
 title: Introduction
 ---
 
-# Druxt.js Entity
+# DruxtJS Entity
 
-The Druxt.js Entity module provides a Drupal **Display mode** powered Entity and Field **component system** for your Nuxt.js frontend.
+The DruxtJS Entity module provides a Drupal **Display mode** powered Entity and Field **component system** for your NuxtJS frontend.
 
 
 
 ## How it works?
 
-Upon installation, the module will automatically register the Druxt.js Entity and Field components, making them available to the Nuxt.js frontend.
+Upon installation, the module will automatically register the DruxtJS Entity and Field components, making them available to the Nuxt frontend.
 
-The components use data from a Drupal JSON:API backend, via the Druxt.js [Router](https://druxt.github.io/druxt-router) and [Schema](https://druxt.github.io/druxt-schema) modules, to render Entities and Fields powered by Drupal's Display Mode system.
+The components use data from a Drupal JSON:API backend, via the DruxtJS [Router](https://druxt.github.io/druxt-router) and [Schema](https://druxt.github.io/druxt-schema) modules, to render Entities and Fields powered by Drupal's Display Mode system.
 
 
 ## Entity component
@@ -21,10 +21,10 @@ The Entity component uses JSON:API resource and schema data to render the Entiti
 
 **Example**
 
-_Using the `<druxt-entity />` component to render a `node--article` resource with the `defualt` Display mode._
+_Using the `<DruxtEntity />` component to render a `node--article` resource with the `defualt` Display mode._
 
 ```vue
-<druxt-entity
+<DruxtEntity
   type="node--article"
   uuid="3b0cb75f-385b-446e-a4c6-a30208725ce1"
   mode="default"
@@ -36,16 +36,16 @@ See the [DruxtEntity API documention](/api/components/DruxtField) for more infor
 
 ## Field components
 
-The `<druxt-field />` component is used by the `<druxt-entity>` field to render the Field items of a Drupal Entity.
+The `<DruxtField />` component is used by the `<DruxtEntity>` field to render the Field items of a Drupal Entity.
 
 The component uses the JSON:API resources attribute data and schema information to determine the appropriate Field component to render the data.
 
 **Example**
 
-_Using the `<druxt-field />` component to render a `text_default` field._
+_Using the `<DruxtField />` component to render a `text_default` field._
 
-```vue live
-<druxt-field
+```vue
+<DruxtField
   :data="{
     format: 'basic_html',
     processed: '<p><strong>Umami Magazine &amp; Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.</p>',
