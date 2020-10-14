@@ -1,7 +1,7 @@
 <template>
   <component
     :is="wrapper.component"
-    v-if="loading === 0"
+    v-if="!$fetchState.pending"
     v-bind="wrapper.props"
   >
     <!-- Label: Above -->
@@ -70,7 +70,6 @@ export default {
    * @see {@link https://router.druxtjs.org/api/stores/router.html#module_druxtRouter..getEntity}
    */
   async fetch() {
-    this.loading = this.items.length
     for (const delta in this.items) {
       const item = this.items[delta]
 
@@ -88,8 +87,6 @@ export default {
           to: result.attributes.path.alias
         }
       }
-
-      this.loading--
     }
   },
 
@@ -107,22 +104,6 @@ export default {
     entities: false,
     loading: false
   }),
-
-  /**
-   * Vue.js Watchers.
-   *
-   * @see {@link https://vuejs.org/v2/guide/computed.html#Watchers}
-   */
-  watch: {
-    /**
-     * Triggers update once all referenced entities are loaded.
-     */
-    loading: function() {
-      if (this.loading === 0) {
-        this.$forceUpdate()
-      }
-    }
-  },
 
   methods: {
     /**

@@ -28,6 +28,12 @@ const mountComponent = (options) => {
   }
   store.commit('druxtRouter/addEntity', entity)
 
+  const mocks = {
+    $fetchState: {
+      pending: false
+    }
+  }
+
   const propsData = {
     items: [{
       type: entity.type,
@@ -36,12 +42,7 @@ const mountComponent = (options) => {
     schema: {}
   }
 
-  const wrapper = shallowMount(DruxtFieldResponsiveImage, { ...options, localVue, propsData, store, stubs })
-
-  // Add fetch method.
-  wrapper.vm.$fetch = DruxtFieldResponsiveImage.fetch
-
-  return wrapper
+  return shallowMount(DruxtFieldResponsiveImage, { ...options, localVue, mocks, propsData, store, stubs })
 }
 
 describe('Component - DruxtFieldResponsiveImage', () => {
@@ -56,8 +57,7 @@ describe('Component - DruxtFieldResponsiveImage', () => {
 
   test('default', async () => {
     const wrapper = mountComponent()
-
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
     await wrapper.vm.$forceUpdate()
 
     expect(wrapper.vm.entities.length).toBe(1)
