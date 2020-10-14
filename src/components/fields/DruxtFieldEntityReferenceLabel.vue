@@ -105,22 +105,6 @@ export default {
     loading: false
   }),
 
-  /**
-   * Vue.js Watchers.
-   *
-   * @see {@link https://vuejs.org/v2/guide/computed.html#Watchers}
-   */
-  watch: {
-    /**
-     * Triggers update once all referenced entities are loaded.
-     */
-    loading: function() {
-      if (this.loading === 0) {
-        this.$forceUpdate()
-      }
-    }
-  },
-
   methods: {
     /**
      * Maps `druxtRouter/getEntity` Vuex action to `this.getEntity`.
