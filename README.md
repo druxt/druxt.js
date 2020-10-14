@@ -1,15 +1,16 @@
-# \<druxt-entity />
+# DruxtJS Entity
 
 [![CircleCI](https://circleci.com/gh/druxt/druxt-entity.svg?style=svg)](https://circleci.com/gh/druxt/druxt-entity)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-entity/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-entity?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-entity/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-entity)
 
-Provides an Entity render Vue component to be used within a Druxt (DRUpal nuXT) project.
+> The DruxtJS Entity module provides a Drupal Display Mode powered Entity and Field component system for your NuxtJS frontend.
 
 ## Links
 
-- Druxt.js: https://druxtjs.org
+- DruxtJS: https://druxtjs.org
 - Documentation: https://entity.druxtjs.org
+- Community Discord server: https://discord.druxtjs.org
 
 ## Install
 
@@ -28,7 +29,7 @@ module.exports = {
   ],
 
   druxt: {
-    baseUrl: 'https://example.com',
+    baseUrl: 'https://demo-api.druxtjs.org',
     entity: {
       suggestions: []
     }

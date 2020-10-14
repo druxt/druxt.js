@@ -62,7 +62,7 @@ const DruxtEntityMixin = {
     },
 
     /**
-     * Druxt.js Schema object.
+     * DruxtJS Schema object.
      * @type {object}}
      */
     schema: {
