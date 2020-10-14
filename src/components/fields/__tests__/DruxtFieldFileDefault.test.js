@@ -29,17 +29,18 @@ const mountComponent = (link = {}, options) => {
   }
   store.commit('druxtRouter/addEntity', entity)
 
+  const mocks = {
+    $fetchState: {
+      pending: false
+    }
+  }
+
   const propsData = {
     items: [link],
     schema: {}
   }
 
-  const wrapper = shallowMount(DruxtFieldFileDefault, { ...options, localVue, propsData, store, stubs })
-
-  // Add fetch method.
-  wrapper.vm.$fetch = DruxtFieldFileDefault.fetch
-
-  return wrapper
+  return shallowMount(DruxtFieldFileDefault, { ...options, localVue, mocks, propsData, store, stubs })
 }
 
 describe('Component - DruxtFieldFileDefault', () => {
@@ -60,7 +61,7 @@ describe('Component - DruxtFieldFileDefault', () => {
 
     expect(wrapper.vm.entities.length).toBe(0)
 
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
     await wrapper.vm.$forceUpdate()
 
     expect(wrapper.vm.entities.length).toBe(1)
