@@ -139,7 +139,7 @@ const DruxtEntityComponentSuggestionMixin = {
 
     /**
      * Data to be used for calculating the component suggestions:
-     * - route: The Druxt.js Router route object.
+     * - route: The DruxtJS Router route object.
      * - tokens: `this.tokens`
      * - `...this.props`
      *

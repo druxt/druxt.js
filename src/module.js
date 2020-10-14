@@ -23,7 +23,7 @@ import { resolve } from 'path'
  * @todo Add module level options.
  * @todo Document options.
  *
- * @property {object} options.druxt - Druxt.js root level options.
+ * @property {object} options.druxt - DruxtJS root level options.
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  */
 const DruxtEntityModule = function (moduleOptions = {}) {

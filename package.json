@@ -1,6 +1,6 @@
 {
   "name": "druxt-entity",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Drupal Display Mode powered Entity and Field Vue.js component system.",
   "repository": {
     "type": "git",
