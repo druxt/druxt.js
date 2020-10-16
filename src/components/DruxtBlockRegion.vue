@@ -1,25 +1,34 @@
 <template>
-  <component :is="component">
+  <component
+    :is="component.is"
+    v-bind="component.propsData"
+  >
     <!-- Render blocks in their own named slots. --->
     <template
       v-for="block of blocks"
-      v-slot:[block.attributes.drupal_internal__id]="{ options }"
+      v-slot:[block.attributes.drupal_internal__id]="$attrs"
     >
-      <druxt-block
+      <Druxt
         :key="block.id"
-        :uuid="block.id"
-        :type="block.type"
-        v-bind="options"
+        module="block"
+        :props-data="{
+          uuid: block.id,
+          type: block.type
+        }"
+        v-bind="$attrs"
       />
     </template>
 
     <!-- Render all blocks in the default slot. -->
     <template>
-      <druxt-block
+      <Druxt
         v-for="block of blocks"
         :key="block.id"
-        :uuid="block.id"
-        :type="block.type"
+        module="block"
+        :props-data="{
+          uuid: block.id,
+          type: block.type
+        }"
       />
     </template>
   </component>
@@ -29,17 +38,24 @@
 import { mapActions, mapState } from 'vuex'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
-import { DruxtEntityComponentSuggestionMixin } from 'druxt-entity'
+import { Druxt, DruxtComponentMixin } from 'druxt'
 
 /**
- * The `<druxt-block-region />` Vue.js component.
+ * The `<DruxtBlockRegion />` Vue.js component.
  *
- * - Loads all JSON:API Block resources for a region/theme via the Druxt.js Router module.
+ * - Loads all JSON:API Block resources for a region/theme via the DruxtJS Router module.
  * - Uses the DruxtBlock component to render individual resources, ordered by weight.
- * - Renders the data via the Component Suggestion system.
+ * - Renders the data via the DruxtComponentMixin.
  *
  * @example
- * <druxt-block-region
+ * <DruxtBlockRegion
+ *   name="header"
+ *   theme="umami"
+ * />
+ *
+ * @example
+ * <Druxt
+ *   module="block-region"
  *   name="header"
  *   theme="umami"
  * />
@@ -49,12 +65,14 @@ import { DruxtEntityComponentSuggestionMixin } from 'druxt-entity'
 export default {
   name: 'DruxtBlockRegion',
 
+  components: { Druxt },
+
   /**
    * Vue.js Mixins.
    *
-   * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
+   * @see {@link https://druxtjs.org/api/mixins/component.html|DruxtComponentMixin}
    */
-  mixins: [DruxtEntityComponentSuggestionMixin],
+  mixins: [DruxtComponentMixin],
 
   /**
    * Vue.js Properties.
@@ -85,10 +103,32 @@ export default {
   },
 
   /**
-   * Nuxt.js fetch method.
+   * NuxtJS fetch method.
    */
   async fetch() {
-    await this.fetch()
+    const query = new DrupalJsonApiParams()
+    query
+      .addFilter('region', this.name)
+      .addFilter('status', '1')
+      .addFilter('theme', this.theme)
+      .addGroup('visibility', 'OR')
+      .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
+
+    query.addGroup('pages', 'AND', 'visibility')
+      .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
+      .addFilter('visibility.request_path.negate', 0, '=', 'pages')
+
+    query.addGroup('front', 'AND', 'visibility')
+      .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
+      .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
+
+    const options = {
+      headers: { 'Druxt-Request-Path': this.$store.state.druxtRouter.route.resolvedPath }
+    }
+
+    this.blocks = await this.getResources({ resource: 'block--block', query })
+
+    await DruxtComponentMixin.fetch.call(this)
   },
 
   /**
@@ -102,125 +142,34 @@ export default {
     blocks: []
   }),
 
+  druxt: ({ vm }) => ({
+    componentOptions: [[vm.name, vm.theme]]
+  }),
+
   /**
    * Vue.js Computed properties.
    *
    * @vue-computed {object} route The current Route.
    */
   computed: {
-    /**
-     * Default suggestions for the Component suggestion mixin.
-     *
-     * - **[Prefix][Region][Theme]**
-     * - **[Prefix][Region]**
-     *
-     * @type {object[]}
-     *
-     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
-     *
-     * @example @lang vue
-     * <druxt-block-region
-     *   name="header"
-     *   theme="umami"
-     * />
-     * <!--
-     * Suggestions to be rendered by the DruxtBlockRegion component:
-     *   - DruxtBlockRegionHeaderUmami
-     *   - DruxtBlockRegionHeader
-     * -->
-     */
-    suggestionDefaults() {
-      if (!this.tokens) return []
-
-      return [
-        // e.g. DruxtBlockRegionHeaderUmami
-        { value: this.tokens.prefix + this.tokens.region + this.tokens.theme },
-        // e.g. DruxtBlockRegionHeader
-        { value: this.tokens.prefix + this.tokens.region },
-      ]
-    },
-
-    /**
-     * Tokens for the Component suggestion mixin.
-     *
-     * - prefix
-     * - region
-     * - theme
-     *
-     * @type {boolean|object}
-     *
-     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
-     */
-    tokens() {
-      return {
-        prefix: 'DruxtBlockRegion',
-        region: this.suggest(this.name),
-        theme: this.suggest(this.theme)
-      }
-    },
-
-    /**
-     * Token type for DruxtEntityComponentSuggestionMixin.
-     *
-     * @type {string}
-     * @default block-region
-     *
-     * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html.html|DruxtEntityComponentSuggestionMixin}
-     */
-    tokenType: () => 'block-region',
-
     ...mapState('druxtRouter', {
       route: state => state.route
     })
   },
 
   /**
-   * Nuxt.js watch property.
+   * NuxtJS watch property.
    */
   watch: {
     /**
      * Updates blocks on Route change.
      */
     $route: function() {
-      this.fetch()
-    }
-  },
-
-  created() {
-    // Workaround for Vuepress docs.
-    if (!this.blocks.length) {
-      this.fetch()
+      this.$fetch()
     }
   },
 
   methods: {
-    /**
-     * Fetch requested blocks from Druxt.js Router.
-     */
-    async fetch() {
-      const query = new DrupalJsonApiParams()
-      query
-        .addFilter('region', this.name)
-        .addFilter('status', '1')
-        .addFilter('theme', this.theme)
-        .addGroup('visibility', 'OR')
-        .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
-
-      query.addGroup('pages', 'AND', 'visibility')
-        .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
-        .addFilter('visibility.request_path.negate', 0, '=', 'pages')
-
-      query.addGroup('front', 'AND', 'visibility')
-        .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
-        .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
-
-      const options = {
-        headers: { 'Druxt-Request-Path': this.$store.state.druxtRouter.route.resolvedPath }
-      }
-
-      this.blocks = await this.getResources({ resource: 'block--block', query })
-    },
-
     /**
      * Maps `druxtRouter/getResources` Vuex action to `this.getResources`.
      */

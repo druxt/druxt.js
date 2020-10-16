@@ -1,19 +1,23 @@
 <template>
-  <druxt-entity v-bind="props" />
+  <Druxt
+    module="entity"
+    :props-data="propsData"
+  />
 </template>
 
 <script>
+import { Druxt } from 'druxt'
 import { DruxtBlocksBlockMixin } from '../../mixins/block'
 
 /**
  * Block Content block.
  *
- * _This component is intended to be rendered by the `<druxt-block />` component._
+ * _This component is intended to be rendered by the `<DruxtBlock />` component._
  *
  * - Renders Block Content JSON:API resources via the DruxtEntity component.
  *
  * @example
- * <druxt-block
+ * <DruxtBlock
  *   uuid="baefa4d3-9517-4413-8b9e-975c8affb8ac"
  * />
  *
@@ -21,6 +25,8 @@ import { DruxtBlocksBlockMixin } from '../../mixins/block'
  */
 export default {
   name: 'DruxtBlockBlockContent',
+
+  components: { Druxt },
 
   /**
    * Vue.js Mixins.
@@ -34,13 +40,13 @@ export default {
    */
   computed: {
     /**
-     * Properties to pass through to the DruxtEntity component.
+     * Properties to pass through to Druxt for the Entity module.
      *
      * @type {object}
      *
      * @see {@link https://druxt.github.io/druxt-entity/api/components/DruxtEntity.html|DruxtEntity}
      */
-    props() {
+    propsData() {
       const parts = this.block.attributes.dependencies.content[0].split(':')
 
       return {

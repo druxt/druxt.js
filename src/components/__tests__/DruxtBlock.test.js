@@ -45,34 +45,26 @@ describe('Component - DruxtBlock', () => {
 
   test('default', async () => {
     const wrapper = mountComponent(mockBlock)
-    await DruxtRouterEntityMixin.fetch.call(wrapper.vm)
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.uuid).toBe('test-block')
     expect(wrapper.vm.type).toBe('block--block')
 
-    expect(wrapper.vm.suggestionDefaults.length).toBe(4)
-    expect(wrapper.vm.suggestionDefaults[0].value).toBe('DruxtBlockPluginRegionTheme')
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtBlockPluginRegionTheme',
+      'DruxtBlockPluginRegion',
+      'DruxtBlockPluginTheme',
+      'DruxtBlockPlugin',
+    ])
 
-    expect(wrapper.vm.suggestions.length).toBe(4)
-    expect(wrapper.vm.component).toBe('div')
-
-    expect(wrapper.vm.tokens).toHaveProperty('prefix')
-    expect(wrapper.vm.tokens).toHaveProperty('plugin')
-    expect(wrapper.vm.tokens).toHaveProperty('pluginId')
-    expect(wrapper.vm.tokens).toHaveProperty('region')
-    expect(wrapper.vm.tokens).toHaveProperty('theme')
-
-    expect(wrapper.vm.tokenType).toBe('block')
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
   })
 
   test('pluginId', async () => {
     mockBlock.attributes.plugin = 'plugin:pluginId'
     const wrapper = mountComponent(mockBlock)
-    await DruxtRouterEntityMixin.fetch.call(wrapper.vm)
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.vm.suggestionDefaults.length).toBe(8)
-
-    expect(wrapper.vm.tokens.plugin).toBe('Plugin')
-    expect(wrapper.vm.tokens.pluginId).toBe('PluginId')
+    expect(wrapper.vm.component.options.length).toBe(8)
   })
 })

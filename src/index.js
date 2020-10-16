@@ -1,8 +1,8 @@
-import { DruxtBlocksModule } from './module'
+import { DruxtBlocksNuxtModule } from './nuxtModule'
 import * as DruxtBlocksComponents from './components'
 
 /**
- * Druxt.js Blocks.
+ * DruxtJS Blocks.
  *
  * @type {object}
  * @exports DruxtBlocksComponents
@@ -23,14 +23,14 @@ export * from './components'
 export { DruxtBlocksBlockMixin } from './mixins/block'
 
 /**
- * The Nuxt.js module function.
+ * The NuxtJS module function.
  *
- * Installs the module functionality in a Nuxt.js frontend.
+ * Installs the module functionality in a NuxtJS frontend.
  *
  * @type {Function}
  * @exports default
  * @name DruxtBlocksModule
- * @see {@link ./module|DruxtBlocksModule}
+ * @see {@link ./nuxtModule|DruxtBlocksModule}
  *
  * @example <caption>nuxt.config.js</caption> @lang js
  * module.exports = {
@@ -38,8 +38,8 @@ export { DruxtBlocksBlockMixin } from './mixins/block'
  *     'druxt-blocks'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://example.com'
+ *     baseUrl: 'https://demo-api.druxtjs.org'
  *   }
  * }
  */
-export default DruxtBlocksModule
+export default DruxtBlocksNuxtModule

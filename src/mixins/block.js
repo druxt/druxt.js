@@ -1,5 +1,3 @@
-import { DruxtEntityContextMixin } from 'druxt-entity'
-
 /**
  * Provides Vue.js properties to render Drupal Block components.
  *
@@ -18,17 +16,8 @@ import { DruxtEntityContextMixin } from 'druxt-entity'
  *   mixins: [DruxtBlocksBlockMixin],
  * }
  * </script>
- *
- * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
  */
 const DruxtBlocksBlockMixin = {
-  /**
-   * Vue.js mixins.
-   * @see {@link https://druxt.github.io/druxt-entity/api/mixins/context|DruxtEntityContextMixin}
-   * @type {object[]}
-   */
-  mixins: [DruxtEntityContextMixin],
-
   /**
    * Vue.js Properties.
    */
