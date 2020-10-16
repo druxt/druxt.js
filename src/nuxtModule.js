@@ -35,8 +35,7 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
   // Add NuxtJS modules.
   const modules = [
     '@nuxtjs/proxy',
-    // @todo {@link https://github.com/druxt/druxt-site/issues/2|Uncomment after DruxtJS 0.3.0 is released.}
-    // 'druxt',
+    'druxt',
     'druxt-blocks',
     'druxt-breadcrumb',
     'druxt-entity',
@@ -54,6 +53,14 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
   // @todo {@link https://github.com/nuxt-community/proxy-module/issues/80|Suppress warning}
   if (typeof this.options.proxy === 'undefined') {
     this.options.proxy = [this.options.druxt.baseUrl + '/sites/default/files']
+  }
+
+  // Enable JSON:API Menu items by default.
+  if (typeof ((this.options.druxt || {}).menu || {}).jsonApiMenuItems === 'undefined') {
+    this.options.druxt.menu = {
+      ...this.options.druxt.menu,
+      ...{ jsonApiMenuItems: true }
+    }
   }
 
   // Enable Vuex Store.

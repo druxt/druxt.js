@@ -8,10 +8,12 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 
 describe('Druxt component', () => {
-  test('defaults', () => {
-    const wrapper = mount(DruxtSite, { localVue })
+  test('defaults', async () => {
+    const wrapper = mount(DruxtSite, { localVue, stubs: ['Nuxt'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    // Props.
-    expect(wrapper.vm.wrapper.component).toBe(undefined)
+    // Druxt Component mixin.
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
+    expect(wrapper.vm.component.options).toStrictEqual(['DruxtSiteDefault'])
   })
 })
