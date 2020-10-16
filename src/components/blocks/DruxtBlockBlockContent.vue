@@ -12,12 +12,12 @@ import { DruxtBlocksBlockMixin } from '../../mixins/block'
 /**
  * Block Content block.
  *
- * _This component is intended to be rendered by the `<druxt-block />` component._
+ * _This component is intended to be rendered by the `<DruxtBlock />` component._
  *
  * - Renders Block Content JSON:API resources via the DruxtEntity component.
  *
  * @example
- * <druxt-block
+ * <DruxtBlock
  *   uuid="baefa4d3-9517-4413-8b9e-975c8affb8ac"
  * />
  *

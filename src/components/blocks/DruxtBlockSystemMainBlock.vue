@@ -8,12 +8,12 @@ import { DruxtBlocksBlockMixin } from '../../mixins/block'
 /**
  * System Main block.
  *
- * _This component is intended to be rendered by the `<druxt-block />` component._
+ * _This component is intended to be rendered by the `<DruxtBlock />` component._
  *
  * - Renders the `<Nuxt />` component.
  *
  * @example
- * <druxt-block
+ * <DruxtBlock
  *   uuid="c8861445-0b31-4bb3-9fc3-0163e73cfe25"
  * />
  *

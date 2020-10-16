@@ -2,14 +2,14 @@
 title: Introduction
 ---
 
-# Druxt.js Blocks
+# DruxtJS Blocks
 
-The Druxt.js Blocks module adds [Drupal](https://drupal.org) Blocks, Content Blocks and Block Region Vue.js components to your [Nuxt.js](https://nuxtjs.org) frontend.
+The DruxtJS Blocks module adds [Drupal](https://drupal.org) Blocks, Content Blocks and Block Region Vue.js components to your [NuxtJS](https://nuxtjs.org) frontend.
 
 
 ## How it works?
 
-Upon installation the module installs a Nuxt.js plugin that registers the provided Vue.js components.
+Upon installation the module installs a NuxtJS plugin that registers the provided Vue.js components.
 
 
 ### Block Region component
@@ -24,7 +24,7 @@ See the [DruxtBlockRegion component API documentation](../api/components/DruxtBl
 _Header region blocks for Umami theme._
 
 ```vue live
-<druxt-block-region
+<DruxtBlockRegion
   name="header"
   theme="umami"
 />
@@ -33,7 +33,7 @@ _Header region blocks for Umami theme._
 
 ### Block component
 
-The Block component renders a single Drupal Block using the Druxt.js Router and Component suggestion system.
+The Block component renders a single Drupal Block using the DruxtJS Router and Component suggestion system.
 
 See the [DruxtBlock component API documentation](../api/components/DruxtBlock).
 
@@ -43,7 +43,7 @@ See the [DruxtBlock component API documentation](../api/components/DruxtBlock).
 _Block Content block rendered by UUID._
 
 ```vue live
-<druxt-block
+<DruxtBlock
   uuid="baefa4d3-9517-4413-8b9e-975c8affb8ac"
 />
 ```

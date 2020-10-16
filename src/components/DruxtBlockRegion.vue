@@ -43,7 +43,7 @@ import { Druxt, DruxtComponentMixin } from 'druxt'
 /**
  * The `<DruxtBlockRegion />` Vue.js component.
  *
- * - Loads all JSON:API Block resources for a region/theme via the Druxt.js Router module.
+ * - Loads all JSON:API Block resources for a region/theme via the DruxtJS Router module.
  * - Uses the DruxtBlock component to render individual resources, ordered by weight.
  * - Renders the data via the DruxtComponentMixin.
  *
@@ -103,7 +103,7 @@ export default {
   },
 
   /**
-   * Nuxt.js fetch method.
+   * NuxtJS fetch method.
    */
   async fetch() {
     const query = new DrupalJsonApiParams()
@@ -158,7 +158,7 @@ export default {
   },
 
   /**
-   * Nuxt.js watch property.
+   * NuxtJS watch property.
    */
   watch: {
     /**

@@ -8,8 +8,9 @@ Provides Drupal blocks and region components to be used within a Druxt (DRUpal n
 
 ## Links
 
-- Druxt.js: https://druxtjs.org
+- DruxtJS: https://druxtjs.org
 - Documentation: https://blocks.druxtjs.org/
+- Community Discord server: https://discord.druxtjs.org
 
 ## Install
 
@@ -22,13 +23,10 @@ Add module to `nuxt.config.js`
 ```js
 module.exports = {
   modules: [
-    ...
-    'druxt-blocks',
-    'druxt-router'
+    'druxt-blocks'
   ],
-
   druxt: {
-    baseUrl: 'https://example.com'
+    baseUrl: 'https://demo-api.druxtjs.org'
   }
 }
 ```

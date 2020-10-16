@@ -12,7 +12,7 @@ import { DruxtRouterEntityMixin } from 'druxt-router'
 /**
  * The `<DruxtBlock />` Vue.js component.
  *
- * - Loads the JSON:API Block resource from Drupal via the Druxt.js Router module.
+ * - Loads the JSON:API Block resource from Drupal via the DruxtJS Router module.
  * - Renders the data via the DruxtComponentMixin.
  *
  * @example
