@@ -1,13 +1,13 @@
 import { resolve } from 'path'
 
 /**
- * The Nuxt.js module function.
+ * The NuxtJS module function.
  *
- * - Adds the Vue.js components to the Nuxt.js frontend.
+ * - Adds the Vue.js components to the NuxtJS frontend.
  *
- * The module function should not be used directly, but rather installed via yout Nuxt.js configuration file.
+ * The module function should not be used directly, but rather installed via yout NuxtJS configuration file.
  *
- * Options are set on the root level `druxt` Nuxt.js config object.
+ * Options are set on the root level `druxt` NuxtJS config object.
  *
  * @example @lang js
  * // `nuxt.config.js`
@@ -16,13 +16,13 @@ import { resolve } from 'path'
  *     'druxt-blocks'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://example.com'
+ *     baseUrl: 'https://demi-api.druxtjs.org'
  *   }
  * }
  *
- * @param {object} moduleOptions - Nuxt.js module options object.
+ * @param {object} moduleOptions - NuxtJS module options object.
  */
-const DruxtBlocksModule = function (moduleOptions = {}) {
+const DruxtBlocksNuxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
@@ -37,4 +37,4 @@ const DruxtBlocksModule = function (moduleOptions = {}) {
   })
 }
 
-export { DruxtBlocksModule }
+export { DruxtBlocksNuxtModule }
