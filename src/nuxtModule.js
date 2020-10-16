@@ -56,6 +56,14 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
     this.options.proxy = [this.options.druxt.baseUrl + '/sites/default/files']
   }
 
+  // Enable JSON:API Menu items by default.
+  if (typeof ((this.options.druxt || {}).menu || {}).jsonApiMenuItems === 'undefined') {
+    this.options.druxt.menu = {
+      ...this.options.druxt.menu,
+      ...{ jsonApiMenuItems: true }
+    }
+  }
+
   // Enable Vuex Store.
   this.options.store = true
 }
