@@ -35,8 +35,7 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
   // Add NuxtJS modules.
   const modules = [
     '@nuxtjs/proxy',
-    // @todo {@link https://github.com/druxt/druxt-site/issues/2|Uncomment after DruxtJS 0.3.0 is released.}
-    // 'druxt',
+    'druxt',
     'druxt-blocks',
     'druxt-breadcrumb',
     'druxt-entity',

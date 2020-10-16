@@ -1,42 +1,26 @@
 <template>
-  <component :is="wrapper.component" v-bind="wrapper.propsData">
+  <component :is="component.is" v-bind="component.propsData">
     <Nuxt />
   </component>
 </template>
 
 <script>
-// import { DruxtWrapperMixin } from 'druxt'
+import { DruxtComponentMixin } from 'druxt'
 
 /**
  * @example @lang vue
- * <druxt-site :wrapper="{ component: 'MySiteWrapper' }" />
+ * <DruxtSite />
  *
- * @todo {@link https://github.com/druxt/druxt-site/issues/2|Add support for DruxtJS component theme system.}
+ * @example @lang vue
+ * <Druxt module="site" />
  */
 export default {
   name: 'DruxtSite',
 
-  /**
-   * @todo {@link https://github.com/druxt/druxt-site/issues/2|Remove props in favour of Mixin.}
-   */
-  props: {
-    wrapper: {
-      type: Object,
-      default: () => ({
-        component: undefined,
-        propsData: {},
-      })
-    },
-  },
+  mixins: [DruxtComponentMixin],
 
-  /**
-   * @todo {@link https://github.com/druxt/druxt-site/issues/2|Uncomment the following lines.}
-
-   */
-  // mixins: [DruxtWrapperMixin],
-
-  // druxt: ({ vm }) => ({
-  //   componentOptions: [['default']]
-  // })
+  druxt: ({ vm }) => ({
+    componentOptions: [['default']]
+  })
 }
 </script>
