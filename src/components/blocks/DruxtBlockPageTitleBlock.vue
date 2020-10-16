@@ -10,17 +10,17 @@ import { DruxtBlocksBlockMixin } from '../../mixins/block'
 /**
  * Page Title block.
  *
- * _This component is intended to be rendered by the `<druxt-block />` component._
+ * _This component is intended to be rendered by the `<DruxtBlock />` component._
  *
- * - Renders the Page title using the Druxt.js Router label data.
+ * - Renders the Page title using the DruxtJS Router label data.
  *
  * @example
- * <druxt-block
+ * <DruxtBlock
  *   uuid="59104acd-88e1-43c3-bd5f-35800f206394"
  * />
  *
  * @see {@link ../DruxtBlock|DruxtBlock}
- * @see {@link https://druxt.github.io/druxt-router|Druxt.js Router}
+ * @see {@link https://druxt.github.io/druxt-router|DruxtJS Router}
  */
 export default {
   name: 'DruxtBlockPageTitleBlock',

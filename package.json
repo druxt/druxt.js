@@ -1,6 +1,6 @@
 {
   "name": "druxt-blocks",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Provides Drupal blocks and region components to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
@@ -46,14 +46,13 @@
   "dependencies": {
     "axios": "^0.19.2",
     "drupal-jsonapi-params": "^1.1.11",
-    "druxt-common": "^0.1.0",
-    "druxt-entity": "^0.6.2",
+    "druxt": "^0.3.2",
     "druxt-router": "^0.16.0",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.11.5",
-    "@babel/preset-env": "^7.11.5",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
     "@rollup/plugin-alias": "^2.2.0",
     "@rollup/plugin-buble": "^0.20.0",
     "@rollup/plugin-replace": "^2.2.1",
@@ -68,7 +67,7 @@
     "jest-mock-axios": "^3.2.0",
     "md5": "^2.3.0",
     "minimist": "^1.2.0",
-    "nodemon": "^2.0.2",
+    "nodemon": "^2.0.5",
     "rollup": "^1.26.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-terser": "^5.3.1",
