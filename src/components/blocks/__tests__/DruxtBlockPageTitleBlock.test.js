@@ -6,7 +6,6 @@ import { DruxtBlockPageTitleBlock } from '..'
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
-const stubs = ['druxt-entity']
 
 let store
 
@@ -18,7 +17,7 @@ const mockBlock = {
 const mountComponent = (entity, options = {}) => {
   const propsData = { block: entity }
 
-  return mount(DruxtBlockPageTitleBlock, { localVue, propsData, store, stubs, ...options })
+  return mount(DruxtBlockPageTitleBlock, { localVue, propsData, store, ...options })
 }
 
 describe('Component - DruxtBlockPageTitleBlock', () => {

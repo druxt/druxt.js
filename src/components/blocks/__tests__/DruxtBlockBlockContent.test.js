@@ -4,7 +4,6 @@ import { DruxtBlockBlockContent } from '..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
-const stubs = ['druxt-entity']
 
 const mockBlock = {
   id: 'test-block',
@@ -18,7 +17,7 @@ const mockBlock = {
 const mountComponent = (entity, options = {}) => {
   const propsData = { block: entity }
 
-  return mount(DruxtBlockBlockContent, { localVue, propsData, stubs, ...options })
+  return mount(DruxtBlockBlockContent, { localVue, propsData, ...options })
 }
 
 describe('Component - DruxtBlockBlockContent', () => {

@@ -1,5 +1,8 @@
 <template>
-  <Druxt module="entity" :props-data="propsData" />
+  <Druxt
+    module="entity"
+    :props-data="propsData"
+  />
 </template>
 
 <script>
@@ -37,7 +40,7 @@ export default {
    */
   computed: {
     /**
-     * Properties to pass through to the DruxtEntity component.
+     * Properties to pass through to Druxt for the Entity module.
      *
      * @type {object}
      *
