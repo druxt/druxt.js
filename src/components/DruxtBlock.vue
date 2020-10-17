@@ -1,8 +1,13 @@
 <template>
-  <component
-    :is="component.is"
-    v-bind="component.propsData"
-  />
+  <div
+    v-if="!$fetchState.pending"
+    class="block"
+  >
+    <component
+      :is="component.is"
+      v-bind="component.propsData"
+    />
+  </div>
 </template>
 
 <script>
