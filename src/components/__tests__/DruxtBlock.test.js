@@ -2,7 +2,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouter, DruxtRouterEntityMixin, DruxtRouterStore } from 'druxt-router'
+import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
 import { DruxtBlock } from '..'
 
 const baseURL = 'https://example.com'
@@ -23,13 +23,17 @@ const mockBlock = {
 }
 
 const mountComponent = (entity, options = {}) => {
+  const mocks = {
+    $fetchState: { pending: false }
+  }
+
   const propsData = {
     uuid: entity.id
   }
 
   store.commit('druxtRouter/addEntity', entity)
 
-  return mount(DruxtBlock, { localVue, propsData, store, ...options })
+  return mount(DruxtBlock, { localVue, mocks, propsData, store, ...options })
 }
 
 describe('Component - DruxtBlock', () => {
