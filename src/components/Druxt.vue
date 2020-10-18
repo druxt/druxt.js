@@ -1,30 +1,3 @@
-<template>
-  <!-- Wrapped. -->
-  <component
-    :is="(wrapper || {}).component"
-    v-if="wrapper && wrapper.component"
-    v-bind="(wrapper || {}).propsData"
-  >
-    <component
-      :is="component.is"
-      v-bind="{
-        ...component.propsData,
-        ...$attrs
-      }"
-    />
-  </component>
-
-  <!-- Unwrapped. -->
-  <component
-    :is="component.is"
-    v-else
-    v-bind="{
-      ...component.propsData,
-      ...$attrs
-    }"
-  />
-</template>
-
 <script>
 /**
  * The Vue.js Druxt component.
@@ -46,6 +19,20 @@ export default {
    * Vue.js Props.
    */
   props: {
+    /**
+     * Inner element.
+     *
+     * @type {object}
+     * @default { component: 'div', propsData: {} }
+     */
+    inner: {
+      type: [Object, Boolean],
+      default: () => ({
+        component: 'div',
+        propsData: {},
+      })
+    },
+
     /**
      * The DruxtJS module to render.
      *
@@ -80,10 +67,10 @@ export default {
     },
 
     /**
-     * Wrapper theming system.
+     * Wrapper element.
      *
      * @type {object}
-     * @default { component: undefined, propsData: {} }
+     * @default { component: 'div', propsData: {} }
      */
     wrapper: {
       type: [Object, Boolean],
@@ -125,5 +112,21 @@ export default {
       this.component.propsData = this.propsData
     },
   },
+
+  render(h) {
+    const component = h(this.component.is, {
+      attrs: this.$attrs,
+      props: {
+        ...{ wrapper: this.inner },
+        ...this.component.propsData
+      }
+    })
+
+    if ((this.wrapper || {}).component) {
+      return h(this.wrapper.component, { props: this.wrapper.propsData }, [component])
+    }
+
+    return component
+  }
 }
 </script>
