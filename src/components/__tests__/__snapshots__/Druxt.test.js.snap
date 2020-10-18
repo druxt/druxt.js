@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Druxt component defaults 1`] = `
+"<div>
+  <druxttestmodule-stub></druxttestmodule-stub>
+</div>"
+`;
+
+exports[`Druxt component unwrapped 1`] = `"<druxttestmodule-stub></druxttestmodule-stub>"`;
+
+exports[`Druxt component wrapper 1`] = `"<span><druxttestmodule-stub></druxttestmodule-stub></span>"`;
