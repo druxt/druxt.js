@@ -1,15 +1,16 @@
-# \<druxt-views />
+# DruxtJS Views
 
 [![CircleCI](https://circleci.com/gh/druxt/druxt-views.svg?style=svg)](https://circleci.com/gh/druxt/druxt-views)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-views/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-views?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-views/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-views)
 
-The Druxt.js Views module adds [Drupal](https://drupal.org) Views support to your [Nuxt.js](https://nuxtjs.org) frontend.
+> The DruxtJS Views module adds [Drupal](https://drupal.org) Views support to your [Nuxt.js](https://nuxtjs.org) frontend.
 
 ## Links
 
-- Druxt.js: https://druxtjs.org
+- DruxtJS: https://druxtjs.org
 - Documentation: https://views.druxtjs.org
+- Community Discord server: https://discord.druxtjs.org
 
 ## Install
 
@@ -22,13 +23,10 @@ Add module to `nuxt.config.js`
 ```js
 module.exports = {
   modules: [
-    ...
-    'druxt-router',
     'druxt-views'
   ],
-
   druxt: {
-    baseUrl: 'https://example.com'
+    baseUrl: 'https://demo-api.druxtjs.org'
   }
 }
 ```

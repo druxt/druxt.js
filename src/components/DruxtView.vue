@@ -85,10 +85,10 @@ import { mapActions } from 'vuex'
 import { DruxtComponentMixin } from 'druxt'
 
 /**
- * The `<druxt-view />` Vue.js component.
+ * The `<DruxtView />` Vue.js component.
  *
  * @example
- * <druxt-view
+ * <DruxtView
  *   displayId="block_1"
  *   uuid="6ee5e720-bbbf-4d79-b600-21ebc0d954c5"
  *   viewId="promoted_items"

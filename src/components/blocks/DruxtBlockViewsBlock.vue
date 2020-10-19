@@ -12,12 +12,12 @@ import { DruxtBlocksBlockMixin } from 'druxt-blocks'
 /**
  * Views block.
  *
- * _This component is intended to be rendered by the `<druxt-block />` component._
+ * _This component is intended to be rendered by the `<DruxtBlock />` component._
  *
  * - Renders a Views block component.
  *
  * @example
- * <druxt-block
+ * <DruxtBlock
  *   uuid="43d613c6-ab66-453d-bce1-e1dfc990b4a1"
  * />
  *
@@ -37,7 +37,13 @@ export default {
    * Nuxt.js fetch method.
    */
   async fetch() {
-    await this.fetch()
+    const results = await this.getResources({
+      resource: 'view--view',
+      query: new DrupalJsonApiParams()
+        .addFilter('drupal_internal__id', this.viewId)
+        .addFields('view--view', ['id'])
+    })
+    this.uuid = results[0].id
   },
 
   /**
@@ -65,7 +71,7 @@ export default {
     },
 
     /**
-     * Properties to pass through to the `<druxt-views />` component.
+     * Properties to pass through to the `<DruxtViews />` component.
      *
      * @type {object}
      *
@@ -93,27 +99,7 @@ export default {
     },
   },
 
-  created() {
-    // Workaround for Vuepress docs.
-    if (!this.$fetch) {
-      this.fetch()
-    }
-  },
-
   methods: {
-    /**
-     * Fetch requested View from Druxt.js Router.
-     */
-    async fetch() {
-      const query = new DrupalJsonApiParams()
-      query
-        .addFilter('drupal_internal__id', this.viewId)
-        .addFields('view--view', ['id'])
-
-      const results = await this.getResources({ resource: 'view--view', query })
-      this.uuid = results[0].id
-    },
-
     /**
      * Maps `druxtRouter/getResources` Vuex action to `this.getResources`.
      */
