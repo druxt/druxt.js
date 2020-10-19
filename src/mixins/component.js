@@ -31,8 +31,18 @@ const DruxtComponentMixin = {
       is: 'DruxtWrapper',
       options: [],
       propsData: {},
-    }
+    },
   }),
+
+  props: {
+    wrapper: {
+      type: Object,
+      default: () => ({
+        component: 'div',
+        propsData: {},
+      })
+    }
+  },
 
   /**
    * The Nuxt Fetch hook.
