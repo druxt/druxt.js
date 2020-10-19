@@ -1,86 +1,94 @@
 <template>
   <component
-    :is="component"
-    v-if="view && results"
-    v-bind="props"
+    :is="wrapper.component"
+    v-if="!$fetchState.pending"
+    v-bind="wrapper.propsData"
   >
-    <!-- Scoped slot: Header -->
-    <template v-slot:header>
-      <span
-        v-for="header of headers"
-        :key="header.id"
-        v-html="header.content.value"
-      />
-    </template>
+    <component
+      :is="component.is"
+      v-bind="component.propsData"
+    >
+      <!-- Scoped slot: Header -->
+      <template v-slot:header>
+        <span
+          v-for="header of headers"
+          :key="header.id"
+          v-html="header.content.value"
+        />
+      </template>
 
-    <!-- Scoped slot: Attachments before -->
-    <template v-if="attachments_before" v-slot:attachments_before>
-      <druxt-view
-        v-for="displayId of attachments_before"
-        :key="displayId"
-        :display-id="displayId"
-        :type="type"
-        :uuid="uuid"
-        :view-id="viewId"
-      />
-    </template>
+      <!-- Scoped slot: Attachments before -->
+      <template v-if="attachments_before" v-slot:attachments_before="$attrs">
+        <DruxtView
+          v-for="displayId of attachments_before"
+          :key="displayId"
+          :display-id="displayId"
+          :type="type"
+          :uuid="uuid"
+          :view-id="viewId"
+          v-bind="$attrs"
+        />
+      </template>
 
-    <!-- Scoped slot: Results -->
-    <template v-slot:results="options">
-      <druxt-entity
-        v-for="result of results"
-        v-bind="{
-          type: result.type,
-          uuid: result.id,
-          mode,
-          ...options
-        }"
-        :key="result.id"
-      />
-    </template>
+      <!-- Scoped slot: Results -->
+      <template v-slot:results="options">
+        <DruxtEntity
+          v-for="result of results"
+          v-bind="{
+            type: result.type,
+            uuid: result.id,
+            mode,
+            ...options
+          }"
+          :key="result.id"
+        />
+      </template>
 
-    <!-- Scoped slot: Attachments after -->
-    <template v-if="attachments_after" v-slot:attachments_after>
-      <druxt-view
-        v-for="displayId of attachments_after"
-        :key="displayId"
-        :display-id="displayId"
-        :type="type"
-        :uuid="uuid"
-        :view-id="viewId"
-      />
-    </template>
+      <!-- Scoped slot: Attachments after -->
+      <template v-if="attachments_after" v-slot:attachments_after="$attrs">
+        <DruxtView
+          v-for="displayId of attachments_after"
+          :key="displayId"
+          :display-id="displayId"
+          :type="type"
+          :uuid="uuid"
+          :view-id="viewId"
+          v-bind="$attrs"
+        />
+      </template>
 
-    <template>
-      <!-- Header -->
-      <span
-        v-for="header of headers"
-        :key="header.id"
-        v-html="header.content.value"
-      />
+      <template>
+        <!-- Header -->
+        <span
+          v-for="header of headers"
+          :key="header.id"
+          v-html="header.content.value"
+        />
 
-      <!-- Results -->
-      <druxt-entity
-        v-for="result of results"
-        v-bind="{
-          type: result.type,
-          uuid: result.id,
-          mode
-        }"
-        :key="result.id"
-      />
-    </template>
+        <!-- Results -->
+        <DruxtEntity
+          v-for="result of results"
+          v-bind="{
+            type: result.type,
+            uuid: result.id,
+            mode
+          }"
+          :key="result.id"
+        />
+      </template>
+    </component>
   </component>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
+import { DruxtComponentMixin } from 'druxt'
 
 /**
- * The `<druxt-view />` Vue.js component.
+ * The `<DruxtView />` Vue.js component.
  *
  * @example
- * <druxt-view
+ * <DruxtView
  *   displayId="block_1"
  *   uuid="6ee5e720-bbbf-4d79-b600-21ebc0d954c5"
  *   viewId="promoted_items"
@@ -88,6 +96,8 @@ import { mapActions } from 'vuex'
  */
 export default {
   name: 'DruxtView',
+
+  mixins: [DruxtComponentMixin],
 
   /**
    * Vue.js Properties.
@@ -142,7 +152,17 @@ export default {
    * Nuxt.js fetch method.
    */
   async fetch() {
-    await this.fetch()
+    this.view = await this.getResource({
+      type: this.type,
+      id: this.uuid,
+    })
+
+    this.results = await this.getResource({
+      type: `views--${this.viewId}`,
+      id: this.displayId
+    })
+
+    await DruxtComponentMixin.fetch.call(this)
   },
 
   /**
@@ -191,23 +211,6 @@ export default {
     },
 
     /**
-     * The render component.
-     *
-     * @type {string}
-     *
-     * @todo {@link https://github.com/druxt/druxt-views/issues/16|Add DruxtEntityComponentSuggestionMixin}
-     */
-    component() {
-      for (const suggestion of this.suggestions) {
-        if (typeof this.$options.components[suggestion] !== 'undefined') {
-          return suggestion
-        }
-      }
-
-      return 'div'
-    },
-
-    /**
      * The View Display object.
      *
      * @type {object}
@@ -246,60 +249,9 @@ export default {
 
       return this.display.display_options.row.options.view_mode
     },
-
-    /**
-     * Properties to pass through to the resolved component suggestion.
-     *
-     * @type {object}
-     */
-    props() {
-      if (this.component === 'div') return false
-
-      return {
-        view: this.view,
-        results: this.results
-      }
-    },
-
-    /**
-     * Suggestions for render component.
-     *
-     * @type {object}
-     */
-    suggestions() {
-      const suggestions = []
-
-      const prefix = 'DruxtView'
-
-      const viewId = this.viewId.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
-      const displayId = this.displayId.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
-
-      suggestions.push(prefix + viewId + displayId)
-      suggestions.push(prefix + viewId)
-
-      return suggestions
-    },
-  },
-
-  created() {
-    // Workaround for Vuepress docs.
-    if (!this.$fetch) {
-      this.fetch()
-    }
   },
 
   methods: {
-    /**
-     * Fetch requested View and results from Druxt.js Router.
-     */
-    async fetch() {
-      const viewQuery = { type: this.type, id: this.uuid }
-      this.view = await this.getResource(viewQuery)
-
-      const resultsQuery = { type: `views--${this.viewId}`, id: this.displayId }
-      this.results = await this.getResource(resultsQuery)
-    },
-
     /**
      * Maps `druxtRouter/getEntity` Vuex action to `this.getResource`.
      */
@@ -308,13 +260,22 @@ export default {
     })
   },
 
+  druxt: ({ vm }) => ({
+    componentOptions: [[vm.viewId, vm.displayId]],
+
+    propsData: {
+      results: vm.results,
+      view: vm.view
+    }
+  }),
+
   watch: {
     async uuid() {
-      await this.fetch()
+      await this.$fetch()
     },
 
     async displayId() {
-      await this.fetch()
+      await this.$fetch()
     }
   }
 }
