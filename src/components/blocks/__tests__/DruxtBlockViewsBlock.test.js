@@ -33,21 +33,25 @@ const store = new Vuex.Store({
 })
 
 const mountComponent = (entity, options = {}) => {
+  const mocks = {
+    $fetchState: {
+      pending: true
+    }
+  }
+
   const propsData = { block: entity }
 
-  const wrapper = mount(DruxtBlockViewsBlock, { localVue, propsData, store, stubs, ...options })
-  wrapper.vm.$fetch = DruxtBlockViewsBlock.fetch
-  return wrapper
+  return mount(DruxtBlockViewsBlock, { localVue, mocks, propsData, store, stubs, ...options })
 }
 
 describe('Component - DruxtBlockViewsBlock', () => {
   test('default', async () => {
     const wrapper = mountComponent(mockBlock)
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.uuid).toBe('uuid')
 
-    expect(wrapper.vm.props).toStrictEqual({
+    expect(wrapper.vm.propsData).toStrictEqual({
       displayId: 'display_id',
       uuid: 'uuid',
       viewId: 'view_id'
