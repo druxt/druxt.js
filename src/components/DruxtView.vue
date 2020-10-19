@@ -150,11 +150,15 @@ export default {
    * Nuxt.js fetch method.
    */
   async fetch() {
-    const viewQuery = { type: this.type, id: this.uuid }
-    this.view = await this.getResource(viewQuery)
+    this.view = await this.getResource({
+      type: this.type,
+      id: this.uuid,
+    })
 
-    const resultsQuery = { type: `views--${this.viewId}`, id: this.displayId }
-    this.results = await this.getResource(resultsQuery)
+    this.results = await this.getResource({
+      type: `views--${this.viewId}`,
+      id: this.displayId
+    })
 
     await DruxtComponentMixin.fetch.call(this)
   },
@@ -265,11 +269,11 @@ export default {
 
   watch: {
     async uuid() {
-      await this.fetch()
+      await this.$fetch()
     },
 
     async displayId() {
-      await this.fetch()
+      await this.$fetch()
     }
   }
 }

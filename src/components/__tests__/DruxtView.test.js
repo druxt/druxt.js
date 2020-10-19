@@ -1,6 +1,7 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
+import { DruxtRouterStore } from 'druxt-router'
 import { DruxtView } from '..'
 
 // Setup local vue instance.
@@ -8,83 +9,54 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 
 // Setup mock Vuex store.
-const store = new Vuex.Store({
-  modules: {
-    druxtRouter: {
-      namespaced: true,
-      actions: {
-        getEntity: (ctx, query) => {
-          const response = {}
+let store
 
-          switch (query.type) {
-            case 'view--view':
-              response.attributes = {
-                display: {
-                  default: {
-                    display_options: {
-                      header: false,
-                      row: {
-                        type: 'entity:node',
-                        options: {
-                          view_mode: 'default'
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-              break
-          }
-
-          return Promise.resolve(response)
-        }
-      },
-    }
-  }
-})
-
-const mountComponent = (stubs = []) => {
+const mountComponent = (propsData) => {
   const mocks = {
     $fetchState: {
       pending: true
-    }
+    },
   }
 
-  const propsData = {
-    displayId: 'page_1',
-    uuid: 'test',
-    viewId: 'featured_articles'
-  }
+  const view = require(`../__fixtures__/${propsData.uuid}.json`).data
+  store.commit('druxtRouter/addEntity', view)
+  store.commit('druxtRouter/addEntity', { id: propsData.displayId })
 
-  stubs.push('DruxtEntity')
-
-  return mount(DruxtView, { localVue, mocks, propsData, store, stubs })
+  return mount(DruxtView, { localVue, mocks, propsData, store })
 }
 
 describe('Component - DruxtView', () => {
-  test('default', async () => {
-    const wrapper = mountComponent(['DruxtViewFeaturedArticles'])
+  beforeEach(() => {
+    store = new Vuex.Store()
+
+    DruxtRouterStore({ store })
+  })
+
+  test('featured_articles', async () => {
+    const wrapper = mountComponent({
+      displayId: 'page_1',
+      uuid: '382e41b6-6d8d-4b76-9ed1-ed28ed78199b',
+      viewId: 'featured_articles'
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.vm.headers).toBe(false)
-    expect(wrapper.vm.mode).toBe('default')
+    // Props.
+    expect(wrapper.vm.displayId).toBe('page_1')
+    expect(wrapper.vm.uuid).toBe('382e41b6-6d8d-4b76-9ed1-ed28ed78199b')
+    expect(wrapper.vm.viewId).toBe('featured_articles')
 
-    expect(wrapper.vm).toHaveProperty('displayId')
-    expect(wrapper.vm).toHaveProperty('viewId')
+    // Computed.
+    expect(wrapper.vm.attachments_after).toStrictEqual([])
+    expect(wrapper.vm.attachments_before).toStrictEqual([])
+    expect(wrapper.vm.headers).toStrictEqual([])
+    expect(wrapper.vm.mode).toBe('card')
 
-    expect(wrapper.vm.component.is).toBe('DruxtViewFeaturedArticles')
-
-    expect(wrapper.vm.component.propsData).toHaveProperty('view')
-    expect(wrapper.vm.component.propsData).toHaveProperty('results')
-
+    // DruxtComponentMixin.
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtViewFeaturedArticlesPage1',
       'DruxtViewFeaturedArticles'
     ])
-  })
-
-  test('component', async () => {
-    const wrapper = mountComponent()
-    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
+    expect(wrapper.vm.component.propsData).toStrictEqual({})
   })
 })
