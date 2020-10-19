@@ -44,21 +44,27 @@ const store = new Vuex.Store({
 })
 
 const mountComponent = (stubs = []) => {
+  const mocks = {
+    $fetchState: {
+      pending: true
+    }
+  }
+
   const propsData = {
     displayId: 'page_1',
     uuid: 'test',
     viewId: 'featured_articles'
   }
+
   stubs.push('DruxtEntity')
-  const wrapper = mount(DruxtView, { localVue, propsData, store, stubs })
-  wrapper.vm.$fetch = DruxtView.fetch
-  return wrapper
+
+  return mount(DruxtView, { localVue, mocks, propsData, store, stubs })
 }
 
 describe('Component - DruxtView', () => {
   test('default', async () => {
     const wrapper = mountComponent(['DruxtViewFeaturedArticles'])
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.headers).toBe(false)
     expect(wrapper.vm.mode).toBe('default')
@@ -66,12 +72,12 @@ describe('Component - DruxtView', () => {
     expect(wrapper.vm).toHaveProperty('displayId')
     expect(wrapper.vm).toHaveProperty('viewId')
 
-    expect(wrapper.vm.component).toBe('DruxtViewFeaturedArticles')
+    expect(wrapper.vm.component.is).toBe('DruxtViewFeaturedArticles')
 
-    expect(wrapper.vm.props).toHaveProperty('view')
-    expect(wrapper.vm.props).toHaveProperty('results')
+    expect(wrapper.vm.component.propsData).toHaveProperty('view')
+    expect(wrapper.vm.component.propsData).toHaveProperty('results')
 
-    expect(wrapper.vm.suggestions).toStrictEqual([
+    expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtViewFeaturedArticlesPage1',
       'DruxtViewFeaturedArticles'
     ])
@@ -79,6 +85,6 @@ describe('Component - DruxtView', () => {
 
   test('component', async () => {
     const wrapper = mountComponent()
-    expect(wrapper.vm.component).toBe('div')
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
   })
 })

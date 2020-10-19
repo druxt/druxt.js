@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <druxt-view v-if="props" v-bind="props" />
+  <div v-if="!$fetchState.pending">
+    <DruxtView v-bind="propsData" />
   </div>
 </template>
 
@@ -71,7 +71,7 @@ export default {
      *
      * @see {@link ../DruxtView|DruxtView}
      */
-    props() {
+    propsData() {
       if (!this.uuid) return false
 
       const parts = this.settings.id.match(/views_block\:(.*?)-(.*)/)
