@@ -16,7 +16,7 @@ import { resolve } from 'path'
  *     'druxt-views'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://example.com'
+ *     baseUrl: 'https://demo-api.druxtjs.org'
  *   }
  * }
  *
