@@ -18,20 +18,21 @@
       </template>
 
       <!-- Scoped slot: Attachments before -->
-      <template v-if="attachments_before" v-slot:attachments_before>
-        <druxt-view
+      <template v-if="attachments_before" v-slot:attachments_before="$attrs">
+        <DruxtView
           v-for="displayId of attachments_before"
           :key="displayId"
           :display-id="displayId"
           :type="type"
           :uuid="uuid"
           :view-id="viewId"
+          v-bind="$attrs"
         />
       </template>
 
       <!-- Scoped slot: Results -->
       <template v-slot:results="options">
-        <druxt-entity
+        <DruxtEntity
           v-for="result of results"
           v-bind="{
             type: result.type,
@@ -44,14 +45,15 @@
       </template>
 
       <!-- Scoped slot: Attachments after -->
-      <template v-if="attachments_after" v-slot:attachments_after>
-        <druxt-view
+      <template v-if="attachments_after" v-slot:attachments_after="$attrs">
+        <DruxtView
           v-for="displayId of attachments_after"
           :key="displayId"
           :display-id="displayId"
           :type="type"
           :uuid="uuid"
           :view-id="viewId"
+          v-bind="$attrs"
         />
       </template>
 
@@ -64,7 +66,7 @@
         />
 
         <!-- Results -->
-        <druxt-entity
+        <DruxtEntity
           v-for="result of results"
           v-bind="{
             type: result.type,
