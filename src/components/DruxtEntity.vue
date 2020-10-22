@@ -1,46 +1,8 @@
-<template>
-  <!-- Render wrapper component and props. -->
-  <component
-    :is="wrapper.component"
-    v-bind="wrapper.props"
-  >
-    <!-- Render suggested component. -->
-    <component
-      :is="component"
-      v-if="entity && schema"
-      v-bind="props"
-    >
-      <!-- Render fields in their own named slots. --->
-      <template
-        v-for="(field, key) of fields"
-        v-slot:[field.schema.id]="{ context, options }"
-      >
-        <druxt-field
-          :key="key"
-          v-bind="{ ...field, context: { ..._self.context, ...context }, options }"
-        />
-      </template>
-
-      <!-- Render fields in the default slot. --->
-      <template
-        v-for="(field, key) of fields"
-        v-bind="{ context, options }"
-      >
-        <druxt-field
-          :key="key"
-          v-bind="{ ...field, context: { ..._self.context, ...context }, options }"
-        />
-      </template>
-    </component>
-  </component>
-</template>
-
 <script>
+import { DruxtComponentMixin } from 'druxt'
 import { DruxtRouterEntityMixin } from 'druxt-router'
 import { DruxtSchemaMixin } from 'druxt-schema'
 import { mapActions } from 'vuex'
-
-import { DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin } from '../mixins'
 
 /**
  * The `<druxt-entity />` Vue.js component.
@@ -63,13 +25,11 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
-   * @see {@link ../mixins/context|DruxtEntityContextMixin}
    * @see {@link https://router.druxtjs.org/api/mixins/entity.html|DruxtRouterEntityMixin}
    * @see DruxtSchemaMixin.
    * @see {@link https://vuejs.org/v2/guide/mixins.html}
    */
-  mixins: [DruxtEntityComponentSuggestionMixin, DruxtEntityContextMixin, DruxtRouterEntityMixin, DruxtSchemaMixin],
+  mixins: [DruxtComponentMixin, DruxtRouterEntityMixin, DruxtSchemaMixin],
 
   /**
    * Nuxt.js fetch method.
@@ -77,43 +37,40 @@ export default {
    * @see {@link https://nuxtjs.org/api/pages-fetch/}
    */
   async fetch() {
-    await this.fetch()
+    // Fetch Entity resource.
+    await DruxtRouterEntityMixin.fetch.call(this)
+
+    // Fetch Schema.
+    await DruxtSchemaMixin.fetch.call(this)
+
+    // Generate fields list.
+    this.fields = this.getFields()
+
+    // Fetch Druxt theme component.
+    await DruxtComponentMixin.fetch.call(this)
   },
 
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
-  props: {
-    /**
-     * Wrapper component.
-     *
-     * @type {object}
-     * @default { component: 'div', props: {} }
-     *
-     * @todo Move wrapper prop to new common Wrapper mixin.
-     */
-    wrapper: {
-      type: Object,
-      default: () => ({
-        component: 'div',
-        props: {}
-      })
-    }
-  },
+  data: () => ({
+    fields: {}
+  }),
 
-  /**
-   * Vue.js Computed properties.
-   */
-  computed: {
-    /**
-     * Renderable Entity fields based on Drupal view mode.
-     * @type {boolean|object[]}
-     * @default false
-     */
-    fields() {
-      if (!this.entity) return false
+  druxt: ({ vm }) => ({
+    componentOptions: [
+      [vm.schema.resourceType, vm.schema.config.mode],
+      [vm.schema.resourceType],
+      [vm.schema.config.mode],
+    ],
+
+    propsData: {
+      entity: vm.entity,
+      fields: vm.fields,
+      schema: vm.schema
+    },
+  }),
+
+  methods: {
+    getFields() {
+      if (!this.entity || !this.schema) return false
 
       const data = {
         ...this.entity.attributes,
@@ -126,6 +83,7 @@ export default {
         if (this.isEmpty(data[field.id])) continue
 
         fields[field.id] = {
+          id: field.id,
           data: data[field.id],
           schema: field,
           relationship: !!this.entity.relationships[field.id]
@@ -133,102 +91,6 @@ export default {
       }
 
       return fields
-    },
-
-    /**
-     * Properties to pass through to the resolved component suggestion.
-     *
-     * @type {object}
-     *
-     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
-     */
-    props() {
-      return {
-        entity: this.entity,
-        fields: this.fields,
-        schema: this.schema
-      }
-    },
-
-    /**
-     * Default suggestions for the Component suggestion mixin.
-     *
-     * - **[Prefix][Type][Mode]**
-     * - **[Prefix][Type]**
-     * - **[Prefix][Mode]**
-     *
-     * @type {object[]}
-     *
-     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
-     *
-     * @example @lang html
-     * <druxt-entity type="node--article" mode="teaser" :uuid="uuid" />
-     * <!--
-     * Suggestions to be rendered by the DruxtEntity component:
-     *   - DruxtEntityNodeArticleTeaser
-     *   - DruxtEntityNodeArticle
-     *   - DruxtEntityTeaser
-     * -->
-     */
-    suggestionDefaults() {
-      if (!this.tokens) return []
-
-      return [
-        // e.g. DruxtEntityNodePageDefault
-        { value: this.tokens.prefix + this.tokens.type + this.tokens.mode },
-        // e.g. DruxtEntityNodePage
-        { value: this.tokens.prefix + this.tokens.type },
-        // e.g. DruxtEntityDefault
-        { value: this.tokens.prefix + this.tokens.mode }
-      ]
-    },
-
-    /**
-     * Tokens for the Component suggestion mixin.
-     *
-     * - prefix
-     * - mode
-     * - type
-     *
-     * @type {boolean|object}
-     *
-     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
-     */
-    tokens() {
-      if (!this.schema) return false
-
-      return {
-        prefix: 'DruxtEntity',
-        mode: this.suggest(this.schema.config.mode),
-        type: this.suggest(this.schema.resourceType),
-      }
-    },
-
-    /**
-     * Token type for DruxtEntityComponentSuggestionMixin.
-     *
-     * @type {string}
-     * @default entity
-     *
-     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
-     */
-    tokenType: () => 'entity'
-  },
-
-  created() {
-    // Workaround for Vuepress docs.
-    if (!this.entity || !this.schema) {
-      this.fetch()
-    }
-  },
-
-  methods: {
-    /**
-     * Invokes DruxtRouterEntityMixin and DruxtSchemaMixin fetch methods.
-     */
-    async fetch() {
-      await DruxtRouterEntityMixin.fetch.call(this)
-      await DruxtSchemaMixin.fetch.call(this)
     },
 
     /**
@@ -248,6 +110,36 @@ export default {
 
       return false
     }
+  },
+
+  render(h) {
+    const wrapperData = {
+      class: this.wrapper.class || undefined,
+      style: this.wrapper.style || undefined,
+      props: this.wrapper.propsData,
+    }
+
+    // Return only wrapper if fetch state is still pending.
+    if (this.$fetchState.pending) {
+      return h(this.wrapper.component, wrapperData)
+    }
+
+    // Build scoped slots for each field.
+    const scopedSlots = {}
+    Object.entries(this.fields).map(([id, field]) => {
+      scopedSlots[id] = attrs => h('DruxtField', { attrs, props: field })
+    })
+
+    // Build default slot.
+    scopedSlots.default = attrs => Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
+
+    // Return wrapped component.
+    return h(this.wrapper.component, wrapperData, [
+      h(this.component.is, {
+        props: this.component.propsData,
+        scopedSlots,
+      })
+    ])
   }
 }
 </script>

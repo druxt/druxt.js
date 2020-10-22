@@ -15,7 +15,7 @@
     />
 
     <!-- Items -->
-    <druxt-entity
+    <DruxtEntity
       v-for="item of items"
       :key="item.uuid"
       v-bind="{ ...item, mode, wrapper: inner }"
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import DruxtEntity from '../../components/DruxtEntity.vue'
 import { DruxtFieldMixin } from '../../mixins/field'
 
 /**
@@ -58,6 +59,8 @@ import { DruxtFieldMixin } from '../../mixins/field'
  */
 export default {
   name: 'DruxtFieldEntityReferenceEntityView',
+
+  components: { DruxtEntity },
 
   /**
    * Vue.js Mixins.

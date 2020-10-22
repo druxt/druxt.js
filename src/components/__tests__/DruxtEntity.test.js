@@ -11,23 +11,16 @@ const baseURL = 'https://example.com'
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
-localVue.component('druxt-field', DruxtField)
+localVue.component('DruxtField', DruxtField)
 
-const stubs = ['DruxtEntityNodePage', 'DruxtFieldString', 'DruxtFieldTextDefault']
+const stubs = ['DruxtEntityNodePage']
 let store
 
-const mountComponent = (entity, options = {}) => {
+const mountComponent = entity => {
   const mocks = {
-    $druxtEntity: {
-      options: {
-        entity: {
-          suggestions: []
-        }
-      }
+    $fetchState: {
+      pending: false
     }
-  }
-  if (Array.isArray(options.suggestions)) {
-    mocks.$druxtEntity.options.entity.suggestions = options.suggestions
   }
 
   const propsData = {
@@ -37,12 +30,7 @@ const mountComponent = (entity, options = {}) => {
 
   store.commit('druxtRouter/addEntity', entity)
 
-  const wrapper = mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
-
-  // Add fetch method.
-  wrapper.vm.$fetch = DruxtEntity.fetch
-
-  return wrapper
+  return mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
 }
 
 describe('Component - DruxtEntity', () => {
@@ -66,10 +54,7 @@ describe('Component - DruxtEntity', () => {
   test('pages', async () => {
     const entity = require('../../__fixtures__/fe00c55d-0335-49d6-964e-a868c0c68f9c.json').data
     const wrapper = mountComponent(entity)
-
-    expect(wrapper.vm.component).toBe('div')
-
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.html()).toMatchSnapshot()
 
@@ -79,20 +64,18 @@ describe('Component - DruxtEntity', () => {
     expect(wrapper.vm.schema).toHaveProperty('id')
     expect(wrapper.vm.schema).toHaveProperty('resourceType')
 
-    expect(wrapper.vm.suggestions).toStrictEqual([
+    expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtEntityNodePageDefault',
       'DruxtEntityNodePage',
       'DruxtEntityDefault',
     ])
-    expect(wrapper.vm.component).toBe('DruxtEntityNodePage')
+    expect(wrapper.vm.component.is).toBe('DruxtEntityNodePage')
 
     expect(Object.keys(wrapper.vm.fields).length).toBe(2)
     expect(Object.values(wrapper.vm.fields)[0].schema.id).toBe('title')
 
-    expect(wrapper.vm.props).toHaveProperty('entity')
-    expect(wrapper.vm.props).toHaveProperty('fields')
-    expect(wrapper.vm.props).toHaveProperty('schema')
-
-    expect(wrapper.vm.tokenType).toBe('entity')
+    expect(wrapper.vm.component.propsData).toHaveProperty('entity')
+    expect(wrapper.vm.component.propsData).toHaveProperty('fields')
+    expect(wrapper.vm.component.propsData).toHaveProperty('schema')
   })
 })

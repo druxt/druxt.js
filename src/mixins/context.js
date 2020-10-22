@@ -5,6 +5,7 @@
  * components.
  *
  * @mixin
+ * @deprecated
  *
  * @example @lang vue
  * <!-- Parent component -->
