@@ -81,7 +81,7 @@ export default {
         text: result.attributes[Object.keys(result.attributes).find(e => ['name', 'title'].includes(e))]
       }
 
-      if (this.schema.settings.display.link && result.attributes.path.alias) {
+      if (((this.schema.settings || {}).display || {}).link && result.attributes.path.alias) {
         this.component = 'nuxt-link'
         this.entities[delta].props = {
           to: result.attributes.path.alias
