@@ -1,36 +1,38 @@
 <template>
   <component
-    :is="component.is"
-    v-bind="component.propsData"
+    :is="wrapper.component"
+    v-bind="wrapper.propsData"
+    v-bind:class="wrapper.class"
+    v-bind:style="wrapper.style"
   >
-    <!-- Render blocks in their own named slots. --->
-    <template
-      v-for="block of blocks"
-      v-slot:[block.attributes.drupal_internal__id]="$attrs"
+    <component
+      :is="component.is"
+      v-bind="component.propsData"
     >
-      <Druxt
-        :key="block.id"
-        module="block"
-        :props-data="{
-          uuid: block.id,
-          type: block.type
-        }"
-        v-bind="$attrs"
-      />
-    </template>
-
-    <!-- Render all blocks in the default slot. -->
-    <template>
-      <Druxt
+      <!-- Render blocks in their own named slots. --->
+      <template
         v-for="block of blocks"
-        :key="block.id"
-        module="block"
-        :props-data="{
-          uuid: block.id,
-          type: block.type
-        }"
-      />
-    </template>
+        v-slot:[block.attributes.drupal_internal__id]="$attrs"
+      >
+        <DruxtBlock
+          :key="block.id"
+          :type="block.type"
+          :uuid="block.id"
+          v-bind="$attrs"
+        />
+      </template>
+
+      <!-- Render all blocks in the default slot. -->
+      <template v-slot="$attrs">
+        <DruxtBlock
+          v-for="block of blocks"
+          :key="block.id"
+          :type="block.type"
+          :uuid="block.id"
+          v-bind="$attrs"
+        />
+      </template>
+    </component>
   </component>
 </template>
 
