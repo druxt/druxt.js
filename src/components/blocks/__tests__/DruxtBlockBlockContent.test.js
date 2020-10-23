@@ -17,7 +17,7 @@ const mockBlock = {
 const mountComponent = (entity, options = {}) => {
   const propsData = { block: entity }
 
-  return mount(DruxtBlockBlockContent, { localVue, propsData, ...options })
+  return mount(DruxtBlockBlockContent, { localVue, propsData, stubs: ['DruxtEntity'], ...options })
 }
 
 describe('Component - DruxtBlockBlockContent', () => {
