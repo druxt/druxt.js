@@ -6,6 +6,7 @@
  * - Component specific suggestions in the relevant Vue.js file.
  *
  * @mixin
+ * @deprecated
  *
  * @example @lang js
  * // nuxt.config.js
