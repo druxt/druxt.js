@@ -2,6 +2,8 @@
   <component
     :is="wrapper.component"
     v-bind="wrapper.propsData"
+    v-bind:class="wrapper.class"
+    v-bind:style="wrapper.style"
   >
     <component
       :is="component.is"
