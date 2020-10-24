@@ -1,33 +1,43 @@
 <template>
-  <!-- Render wrapper component and props. -->
   <component
-    :is="component"
-    :context="context"
-    v-bind="props"
+    :is="wrapper.component"
+    v-if="!$fetchState.pending"
+    class="field"
+    :class="wrapper.class"
+    :style="wrapper.style"
+    v-bind="wrapper.propsData"
   >
-    <!-- Label: Above -->
-    <template
-      v-if="label.position === 'above'"
-      v-slot:label-above
+    <component
+      :is="component.is"
+      v-bind="{
+        ...component.propsData,
+        ...$attrs
+      }"
     >
-      <strong>{{ label.text }}:</strong>
-    </template>
+      <!-- Label: Above -->
+      <template
+        v-if="label.position === 'above'"
+        v-slot:label-above
+      >
+        <strong>{{ label.text }}:</strong>
+      </template>
 
-    <!-- Label: Inline -->
-    <template
-      v-if="label.position === 'inline'"
-      v-slot:label-inline
-    >
-      <strong>{{ schema.label.text }}:</strong>
-    </template>
+      <!-- Label: Inline -->
+      <template
+        v-if="label.position === 'inline'"
+        v-slot:label-inline
+      >
+        <strong>{{ schema.label.text }}:</strong>
+      </template>
+    </component>
   </component>
 </template>
 
 <script>
-import { DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin } from '../mixins'
+import { DruxtComponentMixin } from 'druxt'
 
 /**
- * The `<druxt-field />` Vue.js component.
+ * The `<DruxtField />` Vue.js component.
  *
  * - Renders the provided Field data.
  * - Supports Component Suggestion based theming with Vue.js Slots.
@@ -51,11 +61,9 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
-   * @see {@link ../mixins/context|DruxtEntityContextMixin}
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
+   * @see {@link https://druxtjs.org/api/mixins/component.html|DruxtComponentMixin}
    */
-  mixins: [DruxtEntityContextMixin, DruxtEntityComponentSuggestionMixin],
+  mixins: [DruxtComponentMixin],
 
   /**
    * Vue.js Properties.
@@ -129,7 +137,7 @@ export default {
      *
      * @todo Add test coverage with relationship data.
      */
-    props() {
+    items() {
       if (this.data === null) return false
 
       // Normalize data.
@@ -137,85 +145,30 @@ export default {
 
       // If not relationship.
       if (!this.relationship) {
-        return {
-          items: data,
-          schema: this.schema,
-          ...this.options
-        }
+        return data
       }
 
       // If relationship and data present.
       else if (data.data) {
         const items = Array.isArray(data.data) ? data.data : [data.data]
-        return {
-          items: items.map(item => ({
-            type: item.type,
-            uuid: item.id,
-            mode: this.schema.settings.display.view_mode || 'default',
-          })),
-          schema: this.schema,
-          ...this.options
-        }
+        return items.map(item => ({
+          type: item.type,
+          uuid: item.id,
+          mode: ((this.schema.settings || {}).display || {}).view_mode || 'default'
+        }))
       }
 
       return false
     },
+  },
 
-    /**
-     * Default suggestions for the Component suggestion mixin.
-     *
-     * - **[Prefix][Type][Id]**
-     * - **[Prefix][Type]**
-     *
-     * @type {object[]}
-     *
-     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
-     *
-     * @example @lang html
-     * <druxt-field :data="data" :schema="{ id: 'field_text', type: 'string' }" />
-     * <!--
-     * Suggestions to be rendered by the DruxtEntity component:
-     *   - DruxtFieldStringFieldText
-     *   - DruxtFieldString
-     * -->
-     */
-    suggestionDefaults() {
-      return [
-        // e.g. DruxtFieldStringFieldText.
-        { value: this.tokens.prefix + this.tokens.type + this.tokens.id },
-        // e.g. DruxtFieldString.
-        { value: this.tokens.prefix + this.tokens.type },
-      ]
-    },
+  druxt: ({ vm }) => ({
+    componentOptions: [[vm.schema.type, vm.schema.id]],
 
-    /**
-     * Tokens for the Component suggestion mixin.
-     *
-     * - prefix
-     * - id
-     * - type
-     *
-     * @type {object}
-     *
-     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
-     */
-    tokens() {
-      return {
-        prefix: 'DruxtField',
-        id: this.suggest(this.schema.id),
-        type: this.suggest(this.schema.type),
-      }
-    },
-
-    /**
-     * Token type for DruxtEntityComponentSuggestionMixin.
-     *
-     * @type {string}
-     * @default field
-     *
-     * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
-     */
-    tokenType: () => 'field'
-  }
+    propsData: {
+      items: vm.items,
+      schema: vm.schema
+    }
+  })
 }
 </script>

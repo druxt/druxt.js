@@ -27,16 +27,9 @@ const mountComponent = (uuid, field, options = {}) => {
   }
 
   const mocks = {
-    $druxtEntity: {
-      options: {
-        entity: {
-          suggestions: []
-        }
-      }
+    $fetchState: {
+      pending: false
     }
-  }
-  if (Array.isArray(options.suggestions)) {
-    mocks.$druxtEntity.options.entity.suggestions = options.suggestions
   }
 
   const propsData = {
@@ -58,18 +51,20 @@ describe('Component - DruxtField', () => {
     DruxtRouterStore({ store })
   })
 
-  test('pages - title', () => {
+  test('pages - title', async () => {
     const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c', 'title', { stubs: ['DruxtFieldString'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.vm.props.items.length).toBe(1)
-    expect(wrapper.vm.component).toBe('DruxtFieldString')
-    expect(wrapper.vm.suggestions).toStrictEqual(['DruxtFieldStringTitle', 'DruxtFieldString'])
-
-    expect(wrapper.vm.tokenType).toBe('field')
+    expect(wrapper.vm.component.is).toBe('DruxtFieldString')
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtFieldStringTitle',
+      'DruxtFieldString'
+    ])
+    expect(wrapper.vm.component.propsData.items.length).toBe(1)
   })
 
   test('component', () => {
     const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c', 'title')
-    expect(wrapper.vm.component).toBe('div')
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
   })
 })
