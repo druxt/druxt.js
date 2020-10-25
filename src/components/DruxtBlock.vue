@@ -3,16 +3,13 @@
     :is="wrapper.component"
     v-if="!$fetchState.pending"
     class="block"
+    :class="wrapper.class"
+    :style="wrapper.style"
     v-bind="wrapper.propsData"
-    v-bind:class="wrapper.class"
-    v-bind:style="wrapper.style"
   >
     <component
       :is="component.is"
-      v-bind="{
-        ...component.propsData,
-        ...$attrs
-      }"
+      v-bind="component.propsData"
     />
   </component>
 </template>
