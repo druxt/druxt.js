@@ -30,9 +30,6 @@ module.exports = {
 
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org',
-    entity: {
-      suggestions: []
-    }
   }
 }
 ```
