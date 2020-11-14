@@ -8,11 +8,14 @@
       :is="component.is"
       v-bind="component.propsData"
     >
-      <DruxtMenuItem
-        v-for="item in items"
-        :key="item.entity.id"
-        :item="item"
-      />
+      <template #default="$attrs">
+        <DruxtMenuItem
+          v-for="item in items"
+          :key="item.entity.id"
+          :item="item"
+          v-bind="$attrs"
+        />
+      </template>
     </component>
   </component>
 </template>
