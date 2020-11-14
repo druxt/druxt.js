@@ -1,4 +1,4 @@
-import DruxtRouterModule from '..'
+import DruxtRouterNuxtModule from '..'
 
 const mock = {
   addPlugin: jest.fn(),
@@ -9,15 +9,15 @@ const mock = {
 
     func(routes, resolve)
   }),
-  DruxtRouterModule
+  DruxtRouterNuxtModule
 }
 
 test('Nuxt module', () => {
-  expect(() => { mock.DruxtRouterModule() }).toThrow('Druxt settings missing.')
+  expect(() => { mock.DruxtRouterNuxtModule() }).toThrow('Druxt settings missing.')
 
   mock.options = {
     druxt: {}
   }
-  mock.DruxtRouterModule()
+  mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalled()
 })

@@ -8,15 +8,15 @@
 import { resolve } from 'path'
 
 /**
- * The Nuxt.js module function.
+ * The NuxtJS module function.
  *
  * - Extends the Vue router, adding the Druxt wildcard route.
  * - Adds the Druxt router plugin.
  * - Adds the Druxt router Vuex store.
  *
- * The module function should not be used directly, but rather installed via yout Nuxt.js configuration file.
+ * The module function should not be used directly, but rather installed via your Nuxt configuration file.
  *
- * Options are set on the root level `druxt` Nuxt.js config object.
+ * Options are set on the root level `druxt` Nuxt config object.
  *
  * @example @lang js
  * // `nuxt.config.js`
@@ -25,17 +25,17 @@ import { resolve } from 'path'
  *     'druxt-router'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://example.com'
+ *     baseUrl: 'https://demi-api.druxtjs.org'
  *   }
  * }
  *
  * @todo [Add module level options]{@link https://github.com/druxt/druxt-router/issues/53}
  *
- * @property {object} options.druxt - Druxt.js root level options.
+ * @property {object} options.druxt - Druxt root level options.
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  * @property {string} options.druxt.router.component - File to custom Router component.
  */
-const DruxtRouterModule = function (moduleOptions = {}) {
+const DruxtRouterNuxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
@@ -82,4 +82,4 @@ const DruxtRouterModule = function (moduleOptions = {}) {
   })
 }
 
-export { DruxtRouterModule }
+export { DruxtRouterNuxtModule }
