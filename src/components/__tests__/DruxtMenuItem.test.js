@@ -6,7 +6,7 @@ import { DruxtMenu, DruxtMenuComponent, DruxtMenuItemComponent, DruxtMenuStore }
 
 jest.mock('axios')
 
-const baseURL = 'https://example.com'
+const baseURL = 'https://demo-api.druxtjs.org'
 
 const propsData = {
   item: {

@@ -1,10 +1,6 @@
 # Getting started
 
-## Druxt.js
-
-Druxt.js is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
-
-This module is included in the core [Druxt.js](https://druxtjs.org) project, the below instructions are only required if installing this module standalone.
+DruxtJS requires a NuxtJS frontend and a Drupal JSON:API backend:
 
 ## Quickstart
 
@@ -20,7 +16,7 @@ This module is included in the core [Druxt.js](https://druxtjs.org) project, the
         'druxt-menu'
       ],
       druxt: {
-        baseUrl: 'https://example.com'
+        baseUrl: 'https://demo-api.druxtjs.org'
       }
     }
     ```
@@ -29,8 +25,12 @@ This module is included in the core [Druxt.js](https://druxtjs.org) project, the
 
 ### Backend
 - [Drupal](https://drupal.org) JSON:API backend.
-- [Druxt.js](https://www.drupal.org/project/druxt) Drupal module.
+- [DruxtJS](https://www.drupal.org/project/druxt) Drupal module.
 
 ### Frontend
-- [Nuxt.js](https://nuxtjs.org) frontend.
-- [Druxt.js Router](https://router.druxtjs.org) module.
+- [NuxtJS](https://nuxtjs.org) frontend.
+- [DruxtJS Router](https://router.druxtjs.org) module.
+
+### Drupal DruxtJS module
+
+This module was designed for [DruxtJS](https://druxtjs.org) and works best with the [Drupal DruxtJS module](https://www.drupal.org/project/druxt).

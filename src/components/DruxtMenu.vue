@@ -1,6 +1,13 @@
 <template>
-  <component v-if="!$fetchState.pending" :is="wrapper.component" v-bind="wrapper.propsData">
-    <component :is="component.is" v-bind="component.propsData">
+  <component
+    :is="wrapper.component"
+    v-if="!$fetchState.pending"
+    v-bind="wrapper.propsData"
+  >
+    <component
+      :is="component.is"
+      v-bind="component.propsData"
+    >
       <DruxtMenuItem
         v-for="item in items"
         :key="item.entity.id"
@@ -15,13 +22,13 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 import { DruxtComponentMixin } from 'druxt'
 
 /**
- * The `<druxt-menu />` Vue.js component.
+ * The `<DruxtMenu />` Vue.js component.
  *
- * - Fetchs the menu items via the Druxt.js Router.
+ * - Fetchs the menu items via the DruxtJS Router.
  * - Renders the data via the DruxtMenuItem component.
  *
  * @example @lang vue
- * <druxt-menu name="main" />
+ * <DruxtMenu name="main" />
  */
 export default {
   name: 'DruxtMenu',

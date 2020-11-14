@@ -4,7 +4,7 @@ import { DruxtBlockSystemMenuBlock } from '..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
-const stubs = ['druxt-menu']
+const stubs = ['DruxtMenu']
 
 // @TODO - Mock axios and add fixtures.
 const mocks = {

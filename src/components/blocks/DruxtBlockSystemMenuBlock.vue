@@ -1,5 +1,5 @@
 <template>
-  <druxt-menu :name="name" />
+  <DruxtMenu :name="name" />
 </template>
 
 <script>
@@ -8,12 +8,12 @@ import { DruxtBlocksBlockMixin } from 'druxt-blocks'
 /**
  * Menu block.
  *
- * _This component is intended to be rendered by the `<druxt-block />` component._
+ * _This component is intended to be rendered by the `<DruxtBlock />` component._
  *
  * - Renders a Menu block component.
  *
  * @example @lang vue
- * <druxt-block
+ * <DruxtBlock
  *   uuid="d4efd803-94af-4742-bc94-ea4360085b74"
  * />
  *
