@@ -25,7 +25,7 @@ import { resolve } from 'path'
  *     'druxt-router'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://example.com'
+ *     baseUrl: 'https://demi-api.druxtjs.org'
  *   }
  * }
  *
