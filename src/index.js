@@ -1,4 +1,4 @@
-import { DruxtRouterModule } from './module'
+import { DruxtRouterNuxtModule } from './nuxtModule'
 import DruxtRouterComponent from './components/DruxtRouter.vue'
 
 export { DruxtRouter } from './router'
@@ -7,4 +7,4 @@ export { DruxtRouterStore } from './stores/router'
 
 export { DruxtRouterComponent }
 
-export default DruxtRouterModule
+export default DruxtRouterNuxtModule
