@@ -1,13 +1,13 @@
 import { resolve } from 'path'
 
 /**
- * The Nuxt.js module function.
+ * The NuxtJS module function.
  *
- * - Adds the Vue.js components to the Nuxt.js frontend.
+ * - Adds the Vue.js components to the Nuxt application.
  *
- * The module function should not be used directly, but rather installed via yout Nuxt.js configuration file.
+ * The module function should not be used directly, but rather installed via your Nuxt configuration file.
  *
- * Options are set on the root level `druxt` Nuxt.js config object.
+ * Options are set on the root level `druxt` Nuxt config object.
  *
  * @example @lang js
  * // `nuxt.config.js`
@@ -20,7 +20,7 @@ import { resolve } from 'path'
  *   }
  * }
  *
- * @param {object} moduleOptions - Nuxt.js module options object.
+ * @param {object} moduleOptions - Nuxt module options object.
  */
 const DruxtViewsModule = function (moduleOptions = {}) {
   // Use root level Druxt options.

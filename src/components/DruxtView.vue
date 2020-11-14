@@ -149,7 +149,7 @@ export default {
   },
 
   /**
-   * Nuxt.js fetch method.
+   * Nuxt fetch method.
    */
   async fetch() {
     this.view = await this.getResource({

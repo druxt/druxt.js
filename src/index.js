@@ -2,9 +2,9 @@ import { DruxtViewsModule } from './module'
 import * as DruxtViewsComponents from './components'
 
 /**
- * The Nuxt.js module function.
+ * The NuxtJS module function.
  *
- * Installs the module functionality in a Nuxt.js frontend.
+ * Installs the module functionality in a Nuxt application.
  *
  * @type {Function}
  * @exports default
