@@ -34,7 +34,7 @@ export default {
   mixins: [DruxtBlocksBlockMixin],
 
   /**
-   * Nuxt.js fetch method.
+   * Nuxt fetch method.
    */
   async fetch() {
     const results = await this.getResources({
