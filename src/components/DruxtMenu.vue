@@ -1,30 +1,49 @@
 <template>
   <component
-    :is="component"
-    v-if="items"
+    :is="wrapper.component"
+    v-if="!$fetchState.pending"
+    v-bind="wrapper.propsData"
   >
-    <druxt-menu-item
-      v-for="item in items"
-      :key="item.entity.id"
-      :item="item"
-    />
+    <component
+      :is="component.is"
+      v-bind="component.propsData"
+    >
+      <template #default="$attrs">
+        <DruxtMenuItem
+          v-for="item in items"
+          :key="item.entity.id"
+          :item="item"
+          v-bind="$attrs"
+        />
+      </template>
+    </component>
   </component>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex'
+import { DruxtComponentMixin } from 'druxt'
 
 /**
- * The `<druxt-menu />` Vue.js component.
+ * The `<DruxtMenu />` Vue.js component.
  *
- * - Fetchs the menu items via the Druxt.js Router.
+ * - Fetchs the menu items via the DruxtJS Router.
  * - Renders the data via the DruxtMenuItem component.
  *
  * @example @lang vue
- * <druxt-menu name="main" />
+ * <DruxtMenu name="main" />
  */
 export default {
   name: 'DruxtMenu',
+
+  mixins: [DruxtComponentMixin],
+
+  druxt: ({ vm }) => ({
+    componentOptions: [[vm.name]],
+    propsData: {
+      items: vm.items
+    }
+  }),
 
   /**
    * Vue.js Properties.
@@ -32,17 +51,6 @@ export default {
    * @see {@link https://vuejs.org/v2/guide/components-props.html}
    */
   props: {
-    /**
-     * Component or element to render the Menu.
-     *
-     * @type {string}
-     * @default ul
-     */
-    component: {
-      type: String,
-      default: 'ul'
-    },
-
     /**
      * The maximum depth of the menu.
      *
@@ -133,7 +141,11 @@ export default {
    * Nuxt.js fetch method.
    */
   async fetch() {
-    await this.fetch()
+    await this.getMenu(this.name)
+    this.items = this.getMenuItems()
+
+    // Fetch theme component.
+    await DruxtComponentMixin.fetch.call(this)
   },
 
   /**
@@ -187,22 +199,7 @@ export default {
     }
   },
 
-  created() {
-    // Workaround for Vuepress docs.
-    if (!this.$fetch) {
-      this.fetch()
-    }
-  },
-
   methods: {
-    /**
-     * Fetch requested menu.
-     */
-    async fetch() {
-      await this.getMenu(this.name)
-      this.items = this.getMenuItems()
-    },
-
     /**
      * Recursively gets required menu items from the Vuex store.
      *

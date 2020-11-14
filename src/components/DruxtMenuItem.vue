@@ -1,8 +1,8 @@
 <script>
 /**
- * The `<druxt-menu-item />` Vue.js component.
+ * The `<DruxtMenuItem />` Vue.js component.
  *
- * _This component is intended to be rendered by the `<druxt-menu />` component._
+ * _This component is intended to be rendered by the `<DruxtMenu />` component._
  *
  * - Renders a menu item.
  */

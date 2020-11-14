@@ -5,17 +5,17 @@ actionText: Get started
 actionLink: /guide/getting-started
 ---
 
-> The Druxt.js Menu module adds support for [Drupal](https://drupal.org) Menus to your [Nuxt.js](https://nuxtjs.org) frontend.
+> The DruxtJS Menu module adds support for [Drupal](https://drupal.org) Menus to your [Nuxt.js](https://nuxtjs.org) frontend.
 
 **Example:**
 
 ```vue
-<druxt-menu />
+<DruxtMenu />
 ```
 
 
-## Druxt.js
+## DruxtJS
 
-Druxt.js is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
+DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [NuxtJS](https://nuxtjs.org) frontend.
 
-Find out more at [http://druxtjs.org](http://druxtjs.org)
+Find out more at [https://druxtjs.org](https://druxtjs.org)
