@@ -18,13 +18,12 @@ localVue.component('druxt-menu-item', DruxtMenuItemComponent)
 let store
 
 const mocks = {
-  $route: { path: '/' }
+  $route: { path: '/' },
+  $fetchState: { pending: true }
 }
 
 const mountComponent = (options = {}) => {
-  const wrapper = shallowMount(DruxtMenuComponent, { ...options, store, localVue, mocks })
-  wrapper.vm.$fetch = DruxtMenuComponent.fetch
-  return wrapper
+  return shallowMount(DruxtMenuComponent, { ...options, store, localVue, mocks })
 }
 
 describe('DruxtMenu', () => {
@@ -40,7 +39,7 @@ describe('DruxtMenu', () => {
 
   test('default', async () => {
     const wrapper = mountComponent()
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Expect 4 items from the store.
     expect(Object.keys(wrapper.vm.entities).length).toBe(4)
@@ -65,7 +64,7 @@ describe('DruxtMenu', () => {
   test('depth', async () => {
     const propsData = { depth: 1 }
     const wrapper = mountComponent({ propsData })
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Expect 4 items from the store.
     expect(Object.keys(wrapper.vm.entities).length).toBe(4)
