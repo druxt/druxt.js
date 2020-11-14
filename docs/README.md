@@ -7,22 +7,43 @@ actionLink: /guide/getting-started
 
 > The DruxtJS Blocks module adds [Drupal](https://drupal.org) Blocks, Content Blocks and Block Region Vue.js components to your [NuxtJS](https://nuxtjs.org) frontend.
 
-**Example:** Header region for Umami theme.
 
-```vue live
-<DruxtBlockRegion
-  name="header"
-  theme="umami"
-/>
+## The DruxtBlock component
+
+Druxt Blocks provides a Vue.js component to render a specified Block.
+
+```vue
+<DruxtBlock :uuid="name" :mode="displayMode" />
 ```
 
-**Example:** Block Content block rendered by UUID.
+Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtBlock.html).
 
-```vue live
-<DruxtBlock
-  uuid="baefa4d3-9517-4413-8b9e-975c8affb8ac"
-/>
+
+
+## The DruxtBlockRegion component
+
+Druxt Blocks provides a Vue.js component to render all Blocks in a specified Drupal Region, for a specified theme.
+
+```vue
+<DruxtBlockRegion :name="name" :theme="theme" />
 ```
+
+Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtBlockRegion.html).
+
+
+### Druxt component
+
+The DruxtBlock and DruxtBlockRegion components are compatible with the DruxtJS component theming system:
+
+```vue
+<Druxt module="block" :props-data="{ uuid, mode }" :wrapper="wrapper" />
+```
+```vue
+<Druxt module="block-region" :props-data="{ name, theme }" :wrapper="wrapper" />
+```
+
+See the [Druxt component documentation](https://druxtjs.org/guide/#the-druxt-component) for more information.
+
 
 ## DruxtJS
 

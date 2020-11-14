@@ -25,7 +25,7 @@ export { DruxtBlocksBlockMixin } from './mixins/block'
 /**
  * The NuxtJS module function.
  *
- * Installs the module functionality in a NuxtJS frontend.
+ * Installs the module functionality in a Nuxt application.
  *
  * @type {Function}
  * @exports default
