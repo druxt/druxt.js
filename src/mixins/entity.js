@@ -8,7 +8,7 @@
 import { mapActions, mapState } from 'vuex'
 
 /**
- * The DruxtRouterEntityMixin Vue.js mixin provides easy integration with the Druxt.js Router Vuex store, including on-demand loading of JSON:API resources.
+ * The DruxtRouterEntityMixin Vue.js mixin provides easy integration with the DruxtJS Router Vuex store, including on-demand loading of JSON:API resources.
  *
  * @mixin
  *
@@ -101,7 +101,7 @@ const DruxtRouterEntityMixin = {
    *
    * - Maps Vuex `entities` state to `this->entities`.
    *
-   * @property {object} entities - The mapped Druxt.js Router Vuex `entities` state.
+   * @property {object} entities - The mapped Druxt Router Vuex `entities` state.
    * @see {@link store|src/store.js}
    */
   computed: {

@@ -1,21 +1,22 @@
-# Druxt.js Router
+# DruxtJS Router
 
 [![CircleCI](https://circleci.com/gh/druxt/druxt-router.svg?style=svg)](https://circleci.com/gh/druxt/druxt-router)
 [![Known Vulnerabilities](https://snyk.io//test/github/druxt/druxt-router/badge.svg?targetFile=package.json)](https://snyk.io//test/github/druxt/druxt-router?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-router/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-router)
 
-Simple decoupled [Drupal](https://drupal.org) routing for your [Nuxt.js](https://nuxtjs.org) application.
+> Simple decoupled [Drupal](https://drupal.org) routing for your [NuxtJS](https://nuxtjs.org) application.
 
 ## Links
 
-- Druxt.js: https://druxtjs.org
+- DruxtJS: https://druxtjs.org
 - Documentation: https://router.druxtjs.org
+- Community Discord server: https://discord.druxtjs.org
 
 ## Features
 
-- Nuxt.js module with out of the box page routing: `druxt-router`
+- NuxtJS module with out of the box page routing: `druxt-router`
 - Vuex store: `druxtRouter`
-- Vue component: `<druxt-router />`
+- Vue component: `<DruxtRouter />`
 - Vue mixin: `DruxtRouterEntityMixin`
 
 ## Install
@@ -34,7 +35,7 @@ module.exports = {
   ],
 
   druxt: {
-    baseUrl: 'https://example.com'
+    baseUrl: 'https://demo-api.druxtjs.org'
   }
 }
 ```
@@ -45,7 +46,7 @@ Ensure you have activated the [Nuxt Vuex store](https://nuxtjs.org/guide/vuex-st
 
 ### Base Druxt options
 
-These options are available to all Druxt.js modules.
+These options are available to all DruxtJS modules.
 
 | Option | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |

@@ -11,13 +11,13 @@ import { mapState } from 'vuex'
  * The DruxtRouter Vue.js component.
  *
  * @example @lang vue
- * <druxt-router />
+ * <DruxtRouter />
  */
 export default {
   name: 'DruxtRouter',
 
   /**
-   * Nuxt.js fetch method.
+   * Nuxt fetch method.
    *
    * - Loads the route and redirect information from the Vuex store.
    * - Resolves redirects.
@@ -74,7 +74,7 @@ export default {
   },
 
   /**
-   * Nuxt.js head method.
+   * Nuxt head method.
    *
    * - Sets the page title.
    * - Sets the canonical link.

@@ -1,7 +1,7 @@
 {
   "name": "druxt-router",
   "version": "0.16.1",
-  "description": "Simple decoupled Drupal routing for Nuxt.js.",
+  "description": "Simple decoupled Drupal routing for Nuxt.",
   "files": [
     "dist",
     "nuxt"
@@ -15,8 +15,8 @@
     "build:es": "cross-env NODE_ENV=production rollup -c --format es",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "docs:dev": "druxt-docgen dev",
-    "docs:build": "druxt-docgen build",
+    "docs:dev": "npx druxt-docgen",
+    "docs:build": "npx druxt-docgen build",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
@@ -64,7 +64,7 @@
     "babel-eslint": "^10.1.0",
     "core-js": "^2.6.11",
     "cross-env": "^7.0.2",
-    "druxt-docgen": "^0.2.8",
+    "druxt-docgen": "^0.3.0",
     "eslint": "^6.8.0",
     "get-port": "^5.1.1",
     "gh-pages": "^3.1.0",
