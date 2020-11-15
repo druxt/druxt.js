@@ -1,5 +1,5 @@
 <template>
-  <druxt-breadcrumb />
+  <DruxtBreadcrumb />
 </template>
 
 <script>

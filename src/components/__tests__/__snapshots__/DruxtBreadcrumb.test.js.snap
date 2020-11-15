@@ -1,35 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DruxtBreadcrumb 404 route 1`] = `""`;
-
-exports[`DruxtBreadcrumb error 1`] = `
+exports[`DruxtBreadcrumb 404 route 1`] = `
 "<div>
-  <div items=\\"[object Object],[object Object]\\"></div>
+  <druxtwrapper-stub></druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb level 1 1`] = `
 "<div>
-  <div items=\\"[object Object],[object Object]\\"></div>
+  <druxtwrapper-stub></druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb level 2 1`] = `
 "<div>
-  <div items=\\"[object Object],[object Object],[object Object]\\"></div>
+  <druxtwrapper-stub></druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb missing parent 1`] = `
 "<div>
-  <div items=\\"[object Object],[object Object]\\"></div>
+  <druxtwrapper-stub></druxtwrapper-stub>
 </div>"
 `;
 
-exports[`DruxtBreadcrumb no home 1`] = `""`;
+exports[`DruxtBreadcrumb no home 1`] = `
+"<div>
+  <druxtwrapper-stub></druxtwrapper-stub>
+</div>"
+`;
 
 exports[`DruxtBreadcrumb root 1`] = `
 "<div>
-  <div items=\\"[object Object]\\"></div>
+  <druxtwrapper-stub></druxtwrapper-stub>
 </div>"
 `;
