@@ -7,11 +7,27 @@ actionLink: /guide/getting-started
 
 > The DruxtJS Menu module adds support for [Drupal](https://drupal.org) Menus to your [Nuxt.js](https://nuxtjs.org) frontend.
 
-**Example:**
+
+## The DruxtMenu component
+
+Druxt Menu provides a Vue.js component to render a Drupal Menu.
 
 ```vue
-<DruxtMenu />
+<DruxtMenu :name="menuName" />
 ```
+
+Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtMenu.html).
+
+
+### Druxt component
+
+The DruxtEntity component is compatible with the DruxtJS component theming system:
+
+```vue
+<Druxt module="menu" :props-data="{ name }" :wrapper="wrapper">
+```
+
+See the [Druxt component documentation](https://druxtjs.org/guide/#the-druxt-component) for more information.
 
 
 ## DruxtJS

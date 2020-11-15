@@ -1,6 +1,6 @@
 {
   "name": "druxt-menu",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Provides a Menu Vue component to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
@@ -46,8 +46,8 @@
   "dependencies": {
     "drupal-jsonapi-params": "^1.1.12",
     "druxt": "^0.3.3",
-    "druxt-blocks": "^0.7.3",
-    "druxt-router": "^0.16.0",
+    "druxt-blocks": "^0.7.4",
+    "druxt-router": "^0.16.1",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
@@ -60,7 +60,6 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "cross-env": "^6.0.3",
-    "druxt-docgen": "^0.2.8",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.5.4",
