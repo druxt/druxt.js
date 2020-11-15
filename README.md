@@ -27,10 +27,7 @@ module.exports = {
   ],
 
   druxt: {
-    baseUrl: 'https://example.com',
-    breadcrumb: {
-      component: 'b-breadcrumb'
-    }
+    baseUrl: 'https://demo-api.druxtjs.org',
   }
 }
 ```
@@ -45,12 +42,3 @@ These options are available to all Druxt modules.
 | --- | --- | --- | --- | --- |
 | `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
 | `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
-
-### Druxt Breadcrumb options
-
-These options are specific to this module.
-
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `breadcrumb.component` | `string` | No | `div` | The component to use to render the breadcrumb. E.g., `b-breadcrumb` |
-| `breadcrumb.home` | `boolean` | No | `true` | Show optional 'Home' crumb. |

@@ -1,23 +1,36 @@
 <template>
-  <div v-if="crumbs.length > 0">
+  <component
+    :is="wrapper.component"
+    v-if="!$fetchState.pending"
+    :class="wrapper.class"
+    :style="wrapper.style"
+    v-bind="wrapper.propsData"
+  >
     <component
-      :is="settings.component"
-      :items="crumbs"
-    />
-  </div>
+      :is="component.is"
+      v-bind="component.propsData"
+    >
+      <template #default>
+        {{ crumbs }}
+      </template>
+    </component>
+  </component>
 </template>
 
 <script>
+import { DruxtComponentMixin } from 'druxt'
 import { mapActions, mapState } from 'vuex'
 
 /**
- * The `<druxt-breadcrumb />` Vue.js component.
+ * The `<DruxtBreadcrumb />` Vue.js component.
  *
  * @example @lang vue
- * <druxt-breadcrumb />
+ * <DruxtBreadcrumb />
  */
 export default {
   name: 'DruxtBreadcrumb',
+
+  mixins: [DruxtComponentMixin],
 
   /**
    * Vue.js Properties.
@@ -25,19 +38,6 @@ export default {
    * @see {@link https://vuejs.org/v2/guide/components-props.html}
    */
   props: {
-    /**
-     * The breadcrumb render component.
-     *
-     * @type {string}
-     * @default div
-     * @example @lang vue
-     * <DruxtBeadcrumb component="b-breadcrumb" />
-     */
-    component: {
-      type: String,
-      default: 'div'
-    },
-
     /**
      * Show home crumb?
      *
@@ -56,7 +56,10 @@ export default {
    * Nuxt.js fetch method.
    */
   async fetch() {
-    await this.fetch()
+    await this.fetchCrumbs()
+
+    // Fetch theme component.
+    await DruxtComponentMixin.fetch.call(this)
   },
 
   /**
@@ -76,32 +79,6 @@ export default {
    * @vue-computed {object} routes All available routes.
    */
   computed: {
-    /**
-     * Merged component and global Druxt.js settings for Breadcrumb component.
-     */
-    settings() {
-      const settings = {
-        component: null,
-        home: null
-      }
-
-      for (const setting in settings) {
-        if (typeof this.$options.propsData[setting] !== 'undefined') {
-          settings[setting] = this[setting]
-          continue
-        }
-
-        if (typeof this.$druxtBreadcrumb.options[setting] !== 'undefined') {
-          settings[setting] = this.$druxtBreadcrumb.options[setting]
-          continue
-        }
-
-        settings[setting] = this[setting]
-      }
-
-      return settings
-    },
-
     ...mapState({
       route: state => state.druxtRouter.route,
       routes: state => state.druxtRouter.routes
@@ -116,27 +93,17 @@ export default {
      * Updates crumbs on Route change.
      */
     $route: async function() {
-      await this.fetch()
-    }
-  },
-
-  created() {
-    // Workaround for Vuepress docs.
-    if (!this.$fetch) {
-      this.fetch()
+      await this.$fetch()
     }
   },
 
   methods: {
-    /**
-     * Fetch crumbs from Druxt.js Router.
-     */
-    async fetch() {
+    async fetchCrumbs() {
       // If there is no route, stop here.
       if (!this.route || !Object.keys(this.route).length) return
 
       // If we are at the root and don't want a home crumb, stop here.
-      if (this.$route.path === '/' && !this.settings.home) return
+      if (this.$route.path === '/' && !this.home) return
 
       // Current route crumb.
       const crumbs = [{
@@ -170,7 +137,7 @@ export default {
       }
 
       // Home crumb.
-      if (this.settings.home) {
+      if (this.home) {
         crumbs.push({
           to: '/',
           text: 'Home'
@@ -186,6 +153,16 @@ export default {
     ...mapActions({
       getRoute: 'druxtRouter/getRoute'
     })
-  }
+  },
+
+  /**
+   * Druxt module function.
+   */
+  druxt: ({ vm }) => ({
+    componentOptions: [['default']],
+    propsData: {
+      crumbs: vm.crumbs
+    }
+  }),
 }
 </script>

@@ -35,3 +35,12 @@ export { DruxtBreadcrumb }
 export { DruxtBlockSystemBreadcrumbBlock }
 
 export { DruxtBreadcrumbComponents }
+
+/**
+ * Vue.js Mixin.
+ *
+ * @type {object}
+ * @exports DruxtBreadcrumbMixin
+ * @see {@link ./mixins/breadcrumb|DruxtBreadcrumbMixin}
+ */
+export { DruxtBreadcrumbMixin } from './mixins/breadcrumb'
