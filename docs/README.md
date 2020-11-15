@@ -19,6 +19,17 @@ Druxt Breadcrumb provides a Vue.js component to render a Drupal Breadcrumb.
 Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtBreadcrumb.html).
 
 
+### Druxt component
+
+The DruxtBreadcrumb component is compatible with the DruxtJS component theming system:
+
+```vue
+<Druxt module="breadcrumb" :props-data="propsData" :wrapper="wrapper">
+```
+
+See the [Druxt component documentation](https://druxtjs.org/guide/#the-druxt-component) for more information.
+
+
 ## DruxtJS
 
 DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [NuxtJS](https://nuxtjs.org) frontend.
