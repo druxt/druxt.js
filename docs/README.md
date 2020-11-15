@@ -5,16 +5,22 @@ actionText: Get started
 actionLink: /guide/getting-started
 ---
 
-> The Druxt.js Breadcrumb module adds a [Drupal](https://drupal.org) Breadcrumbs Vue.js components to your [Nuxt.js](https://nuxtjs.org) frontend.
+> The DruxtJS Breadcrumb module adds a [Drupal](https://drupal.org) Breadcrumbs Vue.js components to your [NuxtJS](https://nuxtjs.org) frontend.
 
-**Example:**
+
+## The DruxtBreadcrumb component
+
+Druxt Breadcrumb provides a Vue.js component to render a Drupal Breadcrumb.
 
 ```vue
-<druxt-breadcrumb />
+<DruxtBreadcrumb />
 ```
 
-## Druxt.js
+Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtBreadcrumb.html).
 
-Druxt.js is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
 
-Find out more at [http://druxtjs.org](http://druxtjs.org)
+## DruxtJS
+
+DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [NuxtJS](https://nuxtjs.org) frontend.
+
+Find out more at [https://druxtjs.org](https://druxtjs.org)

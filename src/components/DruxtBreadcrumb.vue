@@ -31,7 +31,7 @@ export default {
      * @type {string}
      * @default div
      * @example @lang vue
-     * <druxt-breadcrumb component="b-breadcrumb" />
+     * <DruxtBeadcrumb component="b-breadcrumb" />
      */
     component: {
       type: String,
@@ -44,7 +44,7 @@ export default {
      * @type {boolean}
      * @default false
      * @example @lang vue
-     * <druxt-breacrumb :home="false" />
+     * <DruxtBreacrumb :home="false" />
      */
     home: {
       type: Boolean,
