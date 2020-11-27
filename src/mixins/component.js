@@ -71,6 +71,8 @@ const DruxtComponentMixin = {
     const druxt = new DruxtClass()
     const moduleData = await druxt.getModuleData(this)
 
+    this.component.propsData = moduleData.propsData || {}
+
     if (!moduleData.componentOptions) {
       return
     }
@@ -83,7 +85,6 @@ const DruxtComponentMixin = {
     }
 
     this.component.is = available[0].pascal
-    this.component.propsData = moduleData.propsData || {}
   },
 }
 
