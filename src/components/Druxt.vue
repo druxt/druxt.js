@@ -115,10 +115,10 @@ export default {
 
   render(h) {
     const component = h(this.component.is, {
-      attrs: this.$attrs,
       props: {
         ...{ wrapper: this.inner },
-        ...this.component.propsData
+        ...this.component.propsData,
+        ...this.$attrs
       }
     })
 
