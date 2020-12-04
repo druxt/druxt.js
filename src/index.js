@@ -55,7 +55,7 @@ export { DruxtRouter } from './router'
 export { DruxtRouterComponent }
 
 /**
- * Vue.js Mixin.
+ * Router Entity Vue.js Mixin.
  *
  * @type {object}
  * @exports DruxtRouterEntityMixin
@@ -72,6 +72,24 @@ export { DruxtRouterComponent }
  * </script>
  */
 export { DruxtRouterEntityMixin } from './mixins/entity'
+
+/**
+ * Router Wrapper Vue.js Mixin.
+ *
+ * @type {object}
+ * @exports DruxtRouterMixin
+ * @name DruxtRouterMixin
+ * @see {@link ./mixins/router|DruxtRouterMixin}
+ *
+ * @example
+ * <script>
+ * import { DruxtRouterMixin } from 'druxt-router'
+ *
+ * export default {
+ *   mixins: [DruxtRouterMixin]
+ * }
+ * </script>
+ */
 export { DruxtRouterMixin } from './mixins/router'
 
 /**
