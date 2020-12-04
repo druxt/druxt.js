@@ -17,7 +17,7 @@
 
 <script>
 import { DruxtComponentMixin } from 'druxt'
-import { mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 /**
  * The DruxtRouter Vue.js component.
@@ -30,32 +30,14 @@ export default {
 
   mixins: [DruxtComponentMixin],
 
-  /**
-   * Nuxt fetch method.
-   *
-   * - Loads the route and redirect information from the Vuex store.
-   * - Resolves redirects.
-   *
-   * @see {@link https://nuxtjs.org/api/pages-fetch/}
-   */
-  async fetch () {
-    const { route, redirect } = await this.get(this.$route.fullPath)
-    this.route = route
-    this.redirect = redirect
+  async middleware ({ store, redirect, route }) {
+    const result = await store.dispatch('druxtRouter/get', route.fullPath)
 
     // Process redirect.
-    if (redirect) {
-      this.$redirect(redirect)
+    if (result.redirect) {
+      redirect(result.redirect)
     }
-
-    // Fetch theme component.
-    await DruxtComponentMixin.fetch.call(this)
   },
-
-  data: () => ({
-    route: {},
-    redirect: {}
-  }),
 
   /**
    * Vue.js Computed properties.
@@ -84,12 +66,11 @@ export default {
      */
     props () {
       return this.route.props || false
-    }
-  },
+    },
 
-  methods: {
-    ...mapActions({
-      get: 'druxtRouter/get'
+    ...mapState({
+      redirect: state => state.druxtRouter.redirect,
+      route: state => state.druxtRouter.route
     })
   },
 

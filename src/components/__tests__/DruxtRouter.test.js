@@ -45,6 +45,7 @@ describe('DruxtRouterComponent', () => {
   test('Homepage', async () => {
     // Mount component.
     const wrapper = mountComponent('/')
+    await DruxtRouterComponent.middleware({ store: wrapper.vm.$store, route: wrapper.vm.$route })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(mockAxios.get).toHaveBeenNthCalledWith(1, '/router/translate-path?path=/', expect.any(Object))
@@ -85,9 +86,11 @@ describe('DruxtRouterComponent', () => {
   test('Redirect', async () => {
     // Mount component.
     const wrapper = mountComponent('/node/6')
+    const redirect = jest.fn()
+    await DruxtRouterComponent.middleware({ store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.vm.$redirect).toBeCalledWith('/')
+    expect(redirect).toBeCalledWith('/')
     expect(wrapper.vm.redirect).toBe('/')
   })
 
