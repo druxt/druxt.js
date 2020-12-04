@@ -72,6 +72,7 @@ export { DruxtRouterComponent }
  * </script>
  */
 export { DruxtRouterEntityMixin } from './mixins/entity'
+export { DruxtRouterMixin } from './mixins/router'
 
 /**
  * Vuex store module.

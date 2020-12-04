@@ -462,6 +462,7 @@ class DruxtRouter {
         statusCode: response.status,
         message: response.statusText
       }
+      route.component = 'error'
     }
 
     return route

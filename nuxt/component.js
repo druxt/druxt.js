@@ -1,3 +1,5 @@
 import { DruxtRouterComponent } from 'druxt-router'
 
-export default DruxtRouterComponent
+export default {
+  extends: DruxtRouterComponent
+}

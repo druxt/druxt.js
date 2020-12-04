@@ -1,12 +1,23 @@
 <template>
-  <div>
-    <druxt :module="module" :props-data="props" />
-  </div>
+  <component
+    :is="wrapper.component"
+    v-if="!$fetchState.pending"
+    :class="wrapper.class"
+    :style="wrapper.style"
+    v-bind="wrapper.propsData"
+  >
+    <component
+      :is="component.is"
+      v-bind="component.propsData"
+    >
+      {{ route }}
+    </component>
+  </component>
 </template>
 
 <script>
-import { DruxtComponent } from 'druxt'
-import { mapState } from 'vuex'
+import { DruxtComponentMixin } from 'druxt'
+import { mapActions } from 'vuex'
 
 /**
  * The DruxtRouter Vue.js component.
@@ -17,7 +28,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'DruxtRouter',
 
-  components: { druxt: DruxtComponent },
+  mixins: [DruxtComponentMixin],
 
   /**
    * Nuxt fetch method.
@@ -27,14 +38,24 @@ export default {
    *
    * @see {@link https://nuxtjs.org/api/pages-fetch/}
    */
-  async fetch ({ store, redirect, route }) {
-    const result = await store.dispatch('druxtRouter/get', route.fullPath)
+  async fetch () {
+    const { route, redirect } = await this.get(this.$route.fullpath)
+    this.route = route
+    this.redirect = redirect
 
     // Process redirect.
-    if (result.redirect) {
-      redirect(result.redirect)
+    if (redirect) {
+      this.$redirect(redirect)
     }
+
+    // Fetch theme component.
+    await DruxtComponentMixin.fetch.call(this)
   },
+
+  data: () => ({
+    route: {},
+    redirect: {}
+  }),
 
   /**
    * Vue.js Computed properties.
@@ -43,17 +64,8 @@ export default {
    * @vue-computed {object} route The current Route.
    */
   computed: {
-    /**
-     * Route component.
-     * @type {boolean|string}
-     * @default false
-     */
-    component () {
-      return this.route.component || false
-    },
-
     module () {
-      return this.component.startsWith('druxt-') ? this.component.substring(6) : false
+      return (this.route || {}).component && this.route.component.startsWith('druxt-') ? this.route.component.substring(6) : false
     },
 
     /**
@@ -72,11 +84,12 @@ export default {
      */
     props () {
       return this.route.props || false
-    },
+    }
+  },
 
-    ...mapState({
-      redirect: state => state.druxtRouter.redirect,
-      route: state => state.druxtRouter.route
+  methods: {
+    ...mapActions({
+      get: 'druxtRouter/get'
     })
   },
 
@@ -100,6 +113,17 @@ export default {
       ],
       meta: this.metatags || false
     }
-  }
+  },
+
+  druxt: ({ vm }) => ({
+    componentOptions: [
+      // @TODO - Add Path options.
+      [vm.module ? vm.module : 'error', vm.route.isHomePath ? 'front' : 'not-front'],
+      ['default']
+    ],
+    propsData: {
+      route: vm.route
+    }
+  })
 }
 </script>
