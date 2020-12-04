@@ -47,6 +47,7 @@
   "homepage": "https://github.com/druxt/druxt_router#readme",
   "dependencies": {
     "axios": "^0.21.0",
+    "druxt": "^0.3.3",
     "querystring": "^0.2.0",
     "url-parse": "^1.4.7"
   },

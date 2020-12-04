@@ -2,7 +2,7 @@ import mockAxios from 'jest-mock-axios'
 
 import { DruxtRouter } from '..'
 
-const baseURL = 'https://example.com'
+const baseURL = 'https://demo-api.druxtjs.org'
 
 const testArticle = { type: 'node--article', id: '98f36405-e1c4-4d8a-a9f9-4d4f6d414e96' }
 const testPage = { type: 'node--page', id: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9' }

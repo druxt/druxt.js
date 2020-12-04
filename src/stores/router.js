@@ -132,7 +132,7 @@ const DruxtRouterStore = ({ store }) => {
         const route = await dispatch('getRoute', path)
 
         // Handle route errors.
-        if (route.error && typeof route.error.statusCode !== 'undefined') {
+        if (route.error && typeof route.error.statusCode !== 'undefined' && ((this.app || {}).context || {}).error) {
           return this.app.context.error(route.error)
         }
 
