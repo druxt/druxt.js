@@ -39,7 +39,7 @@ export default {
    * @see {@link https://nuxtjs.org/api/pages-fetch/}
    */
   async fetch () {
-    const { route, redirect } = await this.get(this.$route.fullpath)
+    const { route, redirect } = await this.get(this.$route.fullPath)
     this.route = route
     this.redirect = redirect
 

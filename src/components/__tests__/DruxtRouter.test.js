@@ -14,13 +14,13 @@ const stubs = ['DruxtEntity']
 
 let store
 
-const mountComponent = (fullpath) => {
+const mountComponent = (fullPath) => {
   const mocks = {
     $fetchState: {
       pending: true
     },
     $redirect: jest.fn(),
-    $route: { fullpath },
+    $route: { fullPath },
     app: {
       context: {
         error: jest.fn()
