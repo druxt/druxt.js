@@ -1,10 +1,22 @@
 <template>
-  <div>
-    <component :is="component" v-if="route" v-bind="props" />
-  </div>
+  <component
+    :is="wrapper.component"
+    v-if="!$fetchState.pending"
+    :class="wrapper.class"
+    :style="wrapper.style"
+    v-bind="wrapper.propsData"
+  >
+    <component
+      :is="component.is"
+      v-bind="component.propsData"
+    >
+      {{ route }}
+    </component>
+  </component>
 </template>
 
 <script>
+import { DruxtComponentMixin } from 'druxt'
 import { mapState } from 'vuex'
 
 /**
@@ -16,15 +28,9 @@ import { mapState } from 'vuex'
 export default {
   name: 'DruxtRouter',
 
-  /**
-   * Nuxt fetch method.
-   *
-   * - Loads the route and redirect information from the Vuex store.
-   * - Resolves redirects.
-   *
-   * @see {@link https://nuxtjs.org/api/pages-fetch/}
-   */
-  async fetch ({ store, redirect, route }) {
+  mixins: [DruxtComponentMixin],
+
+  async middleware ({ store, redirect, route }) {
     const result = await store.dispatch('druxtRouter/get', route.fullPath)
 
     // Process redirect.
@@ -40,13 +46,8 @@ export default {
    * @vue-computed {object} route The current Route.
    */
   computed: {
-    /**
-     * Route component.
-     * @type {boolean|string}
-     * @default false
-     */
-    component () {
-      return this.route.component || false
+    module () {
+      return (this.route || {}).component && this.route.component.startsWith('druxt-') ? this.route.component.substring(6) : false
     },
 
     /**
@@ -93,6 +94,17 @@ export default {
       ],
       meta: this.metatags || false
     }
-  }
+  },
+
+  druxt: ({ vm }) => ({
+    componentOptions: [
+      // @TODO - Add Path options.
+      [vm.module ? vm.module : 'error', vm.route.isHomePath ? 'front' : 'not-front'],
+      ['default']
+    ],
+    propsData: {
+      route: vm.route
+    }
+  })
 }
 </script>

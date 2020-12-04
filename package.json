@@ -1,6 +1,6 @@
 {
   "name": "druxt-router",
-  "version": "0.16.1",
+  "version": "0.17.0",
   "description": "Simple decoupled Drupal routing for Nuxt.",
   "files": [
     "dist",
@@ -47,6 +47,7 @@
   "homepage": "https://github.com/druxt/druxt_router#readme",
   "dependencies": {
     "axios": "^0.21.0",
+    "druxt": "^0.3.3",
     "querystring": "^0.2.0",
     "url-parse": "^1.4.7"
   },

@@ -1,10 +1,3 @@
-/**
- * @vuepress
- * ---
- * title: DruxtRouterEntityMixin
- * ---
- */
-
 import { mapActions, mapState } from 'vuex'
 
 /**
@@ -14,17 +7,15 @@ import { mapActions, mapState } from 'vuex'
  *
  * @example @lang vue
  * <template>
- *   <div v-if="entity && !loading">
+ *   <div v-if="!$fetchState.pending">
  *     {{ entity }}
  *   </div>
  * </template>
  *
  * <script>
- * // Import mixin.
  * import { DruxtRouterEntityMixin } from 'druxt-router'
  *
  * export default {
- *   // Set mixin.
  *   mixins: [DruxtRouterEntityMixin]
  * }
  * </script>
