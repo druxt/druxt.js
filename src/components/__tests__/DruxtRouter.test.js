@@ -83,6 +83,20 @@ describe('DruxtRouterComponent', () => {
     expect(wrapper.vm.route).toHaveProperty('redirect', false)
   })
 
+  test('Page', async () => {
+    // Mount component.
+    const wrapper = mountComponent('/node/1')
+    const redirect = jest.fn()
+    await DruxtRouterComponent.middleware({ store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtRouterEntityNotFront',
+      'DruxtRouterEntity',
+      'DruxtRouterDefault'
+    ])
+  })
+
   test('Redirect', async () => {
     // Mount component.
     const wrapper = mountComponent('/node/6')
