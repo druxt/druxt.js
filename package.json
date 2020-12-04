@@ -1,6 +1,6 @@
 {
   "name": "druxt-router",
-  "version": "0.16.1",
+  "version": "0.17.0",
   "description": "Simple decoupled Drupal routing for Nuxt.",
   "files": [
     "dist",
