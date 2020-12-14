@@ -75,12 +75,12 @@ export default {
    */
   computed: {
     /**
-     * Display mode for referenced entity .
+     * Display mode for referenced entity.
      * @type {string}
      * @default default
      */
     mode() {
-      return 'default'
+      return ((this.schema.settings || {}).display || {}).view_mode || 'default'
     }
   }
 }
