@@ -1,21 +1,3 @@
-<template>
-  <component
-    :is="component.is"
-    v-bind="component.propsData"
-  >
-    <template
-      v-for="region of regions"
-      #[region]
-    >
-      <DruxtBlockRegion
-        :key="region"
-        :name="region"
-        :theme="theme"
-      />
-    </template>
-  </component>
-</template>
-
 <script>
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtComponentMixin } from 'druxt'
@@ -23,10 +5,10 @@ import { mapActions } from 'vuex'
 
 /**
  * @example @lang vue
- * <DruxtSite />
+ * <DruxtSite :theme="theme" />
  *
  * @example @lang vue
- * <Druxt module="site" />
+ * <Druxt module="site" :theme="theme" />
  */
 export default {
   name: 'DruxtSite',
@@ -41,6 +23,7 @@ export default {
   },
 
   async fetch() {
+    // Fetch all available regions.
     const resourceType = 'block--block'
     const regions = await this.getResources({
       resource: resourceType,
@@ -50,6 +33,7 @@ export default {
     }).then((resources) => resources.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
     this.regions = regions
 
+    // Invoke DruxtComponent mixin.
     await DruxtComponentMixin.fetch.call(this)
   },
 
@@ -59,6 +43,42 @@ export default {
 
   methods: {
     ...mapActions({ getResources: 'druxtRouter/getResources' }),
+  },
+
+  render(h) {
+    const wrapperData = {
+      class: this.wrapper.class || undefined,
+      style: this.wrapper.style || undefined,
+      props: this.wrapper.propsData,
+    }
+
+    // Return only wrapper if fetch state is still pending.
+    if (this.$fetchState.pending) {
+      return h(this.wrapper.component, wrapperData)
+    }
+
+    // Build scoped slots for each region.
+    const scopedSlots = {}
+    Object.entries(this.regions).map(([index, region]) => {
+      scopedSlots[region] = attrs => h('DruxtBlockRegion', {
+        attrs,
+        props: {
+          name: region,
+          theme: this.theme
+        }
+      })
+    })
+
+    // Build default slot.
+    scopedSlots.default = attrs => Object.entries(this.regions).map(([index, region]) => scopedSlots[region](attrs))
+
+    // Return wrapped component.
+    return h(this.wrapper.component, wrapperData, [
+      h(this.component.is, {
+        props: this.component.propsData,
+        scopedSlots,
+      })
+    ])
   },
 
   druxt: ({ vm }) => ({
