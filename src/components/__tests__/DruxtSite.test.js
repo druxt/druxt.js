@@ -14,9 +14,9 @@ localVue.use(Vuex)
 
 let store
 
-const mountComponent = () => {
+const mountComponent = (pending) => {
   const mocks = {
-    $fetchState: { pending: false }
+    $fetchState: { pending }
   }
   const propsData = { theme: 'umami' }
   const stubs = ['DruxtBlockRegion']
@@ -33,7 +33,7 @@ describe('DruxtSite component', () => {
   })
 
   test('defaults', async () => {
-    const wrapper = mountComponent()
+    const wrapper = mountComponent(false)
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.theme).toBe('umami')
@@ -54,5 +54,13 @@ describe('DruxtSite component', () => {
     // Druxt Component mixin.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual(['DruxtSiteUmami', 'DruxtSiteDefault'])
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  test('pending', async () => {
+    const wrapper = mountComponent(true)
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 })
