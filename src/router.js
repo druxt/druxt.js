@@ -168,12 +168,14 @@ class DruxtRouter {
       for (const key in res.data.meta.omitted.links) {
         const link = res.data.meta.omitted.links[key]
         const match = link.meta.detail.match(/'(.*?)'/)
-        if (match[1]) {
+        if (match && match[1]) {
           permissions[match[1]] = true
         }
       }
 
-      throw new TypeError(`${res.data.meta.omitted.detail}\n\n Required permissions: ${Object.keys(permissions).join(', ')}.`)
+      if (Object.keys(permissions).length) {
+        throw new TypeError(`${res.data.meta.omitted.detail}\n\n Required permissions: ${Object.keys(permissions).join(', ')}.`)
+      }
     }
   }
 
