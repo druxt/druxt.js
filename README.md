@@ -5,7 +5,13 @@
 [![codecov](https://codecov.io/gh/druxt/druxt-site/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-site)
 
 
-> The DruxtJS Site module provides an out of the box, decoupled Drupal site with minimal setup and configuration.
+> The DruxtJS Site module provides an out of the box, decoupled Drupal site experience with minimal setup and configuration.
+
+## Links
+
+- DruxtJS: https://druxtjs.org
+- Documentation: https://site.druxtjs.org
+- Community Discord server: https://discord.druxtjs.org
 
 ## Install
 
@@ -13,7 +19,7 @@
 
 ## Usage
 
-Add module to `nuxt.config.js`
+1. Add module to `nuxt.config.js`
 
 ```js
 module.exports = {
@@ -24,6 +30,14 @@ module.exports = {
     baseUrl: 'https://demo-api.druxtjs.org'
   }
 }
+```
+
+2. Add the `DruxtSite` component to your layout:
+
+```vue
+<template>
+  <DruxtSite :theme="theme" >
+</template>
 ```
 
 ## Options
