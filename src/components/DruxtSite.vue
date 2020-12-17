@@ -4,24 +4,62 @@ import { DruxtComponentMixin } from 'druxt'
 import { mapActions } from 'vuex'
 
 /**
- * @example @lang vue
- * <DruxtSite :theme="theme" />
+ * The `<DruxtSite />` Vue.js component.
+ *
+ * - Loads available Block regions for the specified theme.
+ * - Renders Block regions via the `<DruxtBlockRegion />` component.
+ * - Supports the Druxt slot based themeing system.
  *
  * @example @lang vue
- * <Druxt module="site" :theme="theme" />
+ * <template>
+ *   <DruxtSite theme="umami" />
+ * </template>
+ *
+ * @example <caption>DruxtSite**Umami**.vue</caption> @lang vue
+ * <template>
+ *   <div>
+ *     <slot name="header" />
+ *     <slot name="content" />
+ *     <slot name="footer" />
+ *   </div>
+ * </template>
+ *
+ * @see {@link https://blocks.druxtjs.org/api/components/DruxtBlockRegion|DruxtBlockRegion}
  */
 export default {
   name: 'DruxtSite',
 
+  /**
+   * Vue.js Mixins.
+   *
+   * @see {@link https://druxtjs.org/api/mixins/component|DruxtComponentMixin}
+   */
   mixins: [DruxtComponentMixin],
 
+  /**
+   * Vue.js Properties.
+   */
   props: {
+    /**
+     * Drupal theme ID.
+     *
+     * Used to filter the available regions from the Drupal Blocks JSON:API
+     * resources.
+     *
+     * @type {string}
+     */
     theme: {
       type: String,
       required: true
     }
   },
 
+  /**
+   * Nuxt.js fetch method.
+   *
+   * Fetches theme filtered region names from the Block JSON:API resources to be
+   * used to render the `<DruxtBlockRegion />`'s.
+   */
   async fetch() {
     // Fetch all available regions.
     const resourceType = 'block--block'
@@ -37,6 +75,9 @@ export default {
     await DruxtComponentMixin.fetch.call(this)
   },
 
+  /**
+   * @property {string[]} regions - An array of unique region names.
+   */
   data: () => ({
     regions: []
   }),

@@ -2,7 +2,7 @@ import DruxtSite from './components/DruxtSite.vue'
 import { DruxtSiteNuxtModule } from './nuxtModule'
 
 /**
- * The Nuxt module.
+ * The Nuxt.js module functions.
  *
  * Installs and configures all DruxtJS Site modules.
  *
@@ -17,7 +17,7 @@ import { DruxtSiteNuxtModule } from './nuxtModule'
  *     'druxt-site'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://example.com'
+ *     baseUrl: 'https://demo-api.druxtjs.org'
  *   }
  * }
  */
@@ -26,14 +26,24 @@ export default DruxtSiteNuxtModule
 /**
  * The DruxtSite Vue.js component.
  *
+ * Renders all available block regions and content based on Drupals
+ * configuration and routing information.
+ *
  * @type {object}
  * @exports DruxtSite
  * @name DruxtSite
  * @see {@link ./components/DruxtSite|DruxtSite}
- * @example @lang js
- * import Vue from 'vue'
- * import { DruxtSite } from 'druxt'
+ * @example @lang vue
+ * <template>
+ *   <DruxtSite theme="umami" />
+ * </template>
  *
- * Vue.component(DruxtSite)
+ * <script>
+ *   import { DruxtSite } from 'druxt-site'
+ *
+ *   export default {
+ *     components: { DruxtSite }
+ *   }
+ * </script>
  */
 export { DruxtSite }
