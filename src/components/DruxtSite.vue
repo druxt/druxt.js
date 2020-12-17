@@ -85,7 +85,8 @@ export default {
     componentOptions: [[vm.theme], ['default']],
 
     propsData: {
-      theme: vm.theme
+      theme: vm.theme,
+      regions: vm.regions
     }
   })
 }
