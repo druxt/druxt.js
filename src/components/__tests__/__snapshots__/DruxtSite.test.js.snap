@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DruxtSite component defaults 1`] = `
+"<div>
+  <div>
+    <druxtblockregion-stub></druxtblockregion-stub>
+    <druxtblockregion-stub></druxtblockregion-stub>
+    <druxtblockregion-stub></druxtblockregion-stub>
+    <druxtblockregion-stub></druxtblockregion-stub>
+    <druxtblockregion-stub></druxtblockregion-stub>
+    <druxtblockregion-stub></druxtblockregion-stub>
+    <druxtblockregion-stub></druxtblockregion-stub>
+    <druxtblockregion-stub></druxtblockregion-stub>
+    <druxtblockregion-stub></druxtblockregion-stub>
+    <druxtblockregion-stub></druxtblockregion-stub>
+    <druxtblockregion-stub></druxtblockregion-stub>
+  </div>
+</div>"
+`;
+
+exports[`DruxtSite component pending 1`] = `"<div></div>"`;

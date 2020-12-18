@@ -1,0 +1,28 @@
+{
+  "jsonapi":{
+    "version":"1.0",
+    "meta":{
+      "links":{
+        "self":{
+          "href":"http:\/\/jsonapi.org\/format\/1.0\/"
+        }
+      }
+    }
+  },
+  "data":[],
+  "meta":{
+    "links":{
+      "me":{
+        "meta":{
+          "id":"450378ec-da61-4022-aaea-fdf317240910"
+        },
+        "href":"\/jsonapi\/user\/user\/450378ec-da61-4022-aaea-fdf317240910"
+      }
+    }
+  },
+  "links":{
+    "block--block":{
+      "href":"\/jsonapi\/block\/block"
+    }
+  }
+}
