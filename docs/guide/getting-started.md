@@ -44,3 +44,11 @@ DruxtJS requires a NuxtJS frontend and a Drupal JSON:API enabled backend:
       }
     }
     ```
+
+4. Add the `DruxtSite` component to your page or layout:
+
+    ```vue
+    <template>
+      <DruxtSite :theme="theme" />
+    </tempalte>
+    ```

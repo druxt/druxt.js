@@ -16,6 +16,28 @@ features:
 
 Using Drupal's built in Entity display modes and Field formatter system, Views, Blocks and more, DruxtJS Site provides the out of the box experience you expect.
 
+## The DruxtSite component
+
+Druxt Site provides a Vue.js component to render a Drupal Site.
+
+```vue
+<DruxtSite :theme="theme" />
+```
+
+Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtSite.html).
+
+
+### Druxt component
+
+The DruxtSite component is compatible with the DruxtJS component theming system:
+
+```vue
+<Druxt module="site" :theme="theme" :wrapper="wrapper">
+```
+
+See the [Druxt component documentation](https://druxtjs.org/guide/#the-druxt-component) for more information.
+
+
 ## Features
 
 - **Router** with path alias and redirect support for Entity and Views pages.

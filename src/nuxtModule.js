@@ -1,23 +1,14 @@
 import { resolve } from 'path'
 
 /**
- * Nuxt.js module function.
+ * Nuxt module function to install Druxt Site.
  *
  * - Adds the DruxtSite component.
- * - Adds the core modules for DruxtJS Site:
- *   - [@nuxtjs/proxy](https://www.npmjs.com/package/@nuxtjs/proxy)
- *   - [druxt-blocks](http://npmjs.com/package/druxt-blocks)
- *   - [druxt-breadcrumb](http://npmjs.com/package/druxt-breadcrumb)
- *   - [druxt-entity](http://npmjs.com/package/druxt-entity)
- *   - [druxt-menu](http://npmjs.com/package/druxt-menu)
- *   - [druxt-router](http://npmjs.com/package/druxt-router)
- *   - [druxt-schema](http://npmjs.com/package/druxt-schema)
- *   - [druxt-search](http://npmjs.com/package/druxt-search)
- *   - [druxt-views](http://npmjs.com/package/druxt-views)
+ * - Adds the core modules for DruxtJS Site.
  * - Adds default configuration for @nuxtjs/proxy.
  * - Enables Vuex store.
  *
- * @param {object} moduleOptions - The Nuxt.js module options.
+ * @param {ModuleOptions} moduleOptions - The Nuxt.js module options.
  */
 const DruxtSiteNuxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
@@ -68,3 +59,10 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
 }
 
 export { DruxtSiteNuxtModule }
+
+/**
+ * Module options object.
+ *
+ * @typedef {object} ModuleOptions
+ * @see {@link ./typedefs/moduleOptions|ModuleOptions}
+ */
