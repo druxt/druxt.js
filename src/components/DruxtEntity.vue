@@ -136,6 +136,7 @@ export default {
     // Return wrapped component.
     return h(this.wrapper.component, wrapperData, [
       h(this.component.is, {
+        attrs: this.$attrs,
         props: this.component.propsData,
         scopedSlots,
       })
