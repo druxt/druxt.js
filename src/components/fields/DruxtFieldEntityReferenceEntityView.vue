@@ -18,7 +18,7 @@
     <DruxtEntity
       v-for="item of items"
       :key="item.uuid"
-      v-bind="{ ...item, mode, wrapper: inner }"
+      v-bind="{ ...item, ...props }"
     />
   </component>
 </template>
@@ -75,12 +75,24 @@ export default {
    */
   computed: {
     /**
-     * Display mode for referenced entity .
+     * Display mode for referenced entity.
      * @type {string}
      * @default default
      */
     mode() {
-      return 'default'
+      return ((this.schema.settings || {}).display || {}).view_mode || 'default'
+    },
+
+    /**
+     * Properties to bind to DruxtEntity component.
+     * @type {object}
+     */
+    props() {
+      return {
+        mode: this.mode,
+        wrapper: this.inner,
+        ...this.$attrs
+      }
     }
   }
 }
