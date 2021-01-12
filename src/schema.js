@@ -67,7 +67,7 @@ class DruxtSchema {
 
     for (const schemaType of ['view', 'form']) {
       const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
-      const displays = await this.druxtRouter.getResources(resourceType)
+      const displays = await this.druxtRouter.getResources(resourceType, {}, { all: true })
 
       for (const display of displays) {
         const resource = index[[display.attributes.targetEntityType, display.attributes.bundle].join('--')]
