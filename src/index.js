@@ -28,6 +28,15 @@ export { DruxtMenuComponents }
 export * from './components'
 
 /**
+ * Vue.js Mixin.
+ *
+ * @type {object}
+ * @exports DruxtMenuMixin
+ * @see {@link ./mixins/menu|DruxtMenuMixin}
+ */
+export { DruxtMenuMixin } from './mixins/menu'
+
+/**
  * The DruxtMenu vuex store.
  *
  * @type {object}
