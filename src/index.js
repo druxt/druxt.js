@@ -1,17 +1,5 @@
-import { DruxtMenuModule } from './module'
+import { DruxtMenuNuxtModule } from './nuxtModule'
 import * as DruxtMenuComponents from './components'
-
-/**
- * The NuxtJS module function.
- *
- * Installs the module functionality in a Nuxt application.
- *
- * @type {Function}
- * @exports default
- * @name DruxtMenuModule
- * @see {@link ./module.html|DruxtMenuModule}
- */
-export default DruxtMenuModule
 
 /**
  * The DruxtMenu class.
@@ -48,3 +36,15 @@ export * from './components'
  * @see {@link ./stores/menu.html|DruxtMenuStore}
  */
 export { DruxtMenuStore } from './stores/menu.js'
+
+/**
+ * The NuxtJS module function.
+ *
+ * Installs the module functionality in a Nuxt application.
+ *
+ * @type {Function}
+ * @exports default
+ * @name DruxtMenuNuxtModule
+ * @see {@link ./nuxtModule.html|DruxtMenuNuxtModule}
+ */
+export default DruxtMenuNuxtModule

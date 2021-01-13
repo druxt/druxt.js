@@ -23,7 +23,7 @@ import { resolve } from 'path'
  *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
-const DruxtMenuModule = function (moduleOptions = {}) {
+const DruxtMenuNuxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
@@ -37,8 +37,10 @@ const DruxtMenuModule = function (moduleOptions = {}) {
     options
   })
 
+  // Enable Vuex Store.
+  this.options.store = true
+
   // Add Vuex plugin.
-  // @TODO - Ensure Vuex store is available.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/store.js'),
     fileName: 'store/druxt-menu.js',
@@ -46,4 +48,4 @@ const DruxtMenuModule = function (moduleOptions = {}) {
   })
 }
 
-export { DruxtMenuModule }
+export { DruxtMenuNuxtModule }
