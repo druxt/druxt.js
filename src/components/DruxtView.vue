@@ -247,7 +247,7 @@ export default {
 
       if (!this.display.display_options.row.type.includes('entity:')) return false
 
-      return this.display.display_options.row.options.view_mode
+      return (this.display.display_options.row.options || {}).view_mode || 'default'
     },
   },
 
