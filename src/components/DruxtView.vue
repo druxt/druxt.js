@@ -81,6 +81,7 @@
 </template>
 
 <script>
+import merge from 'deepmerge'
 import { mapActions } from 'vuex'
 import { DruxtComponentMixin } from 'druxt'
 
@@ -216,14 +217,14 @@ export default {
      * @type {object}
      */
     display() {
-      if (!this.view || !this.view.attributes) return false
+      if (!((this.view || {}).attributes || {}).display) return false
 
       if (this.display_id === 'default') return this.view.attributes.display[this.display_id]
 
-      return {
-        ...this.view.attributes.display[this.displayId],
-        ...this.view.attributes.display['default']
-      }
+      return merge(
+        this.view.attributes.display['default'],
+        this.view.attributes.display[this.displayId]
+      )
     },
 
     /**
@@ -264,6 +265,7 @@ export default {
     componentOptions: [[vm.viewId, vm.displayId]],
 
     propsData: {
+      display: vm.display,
       results: vm.results,
       view: vm.view
     }

@@ -34,7 +34,17 @@ const DruxtViewsViewMixin = {
    */
   props: {
     /**
-     * The View results JSON:API resources.
+     * The View display object.
+     *
+     * @type {object}
+     */
+    display: {
+      type: Object,
+      require: true,
+    },
+
+    /**
+     * The JSON:API Views results.
      *
      * @type {object[]}
      */
@@ -44,7 +54,7 @@ const DruxtViewsViewMixin = {
     },
 
     /**
-     * The View JSON:API resource.
+     * The JSON:API View resource.
      *
      * @type {object}
      */
