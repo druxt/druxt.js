@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 
-import { DruxtComponentMixin } from '../..'
+import { DruxtClass, DruxtComponentMixin } from '../..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -22,7 +22,13 @@ let wrapper
 
 describe('DruxtComponentMixin', () => {
   beforeEach(() => {
-    wrapper = mount(DruxtTestModule, { localVue, stubs: { DruxtTestModuleWrapper } })
+    wrapper = mount(DruxtTestModule, {
+      localVue,
+      stubs: { DruxtTestModuleWrapper },
+      mocks: {
+        $druxt: new DruxtClass('https://demo-api.druxtjs.org')
+      }
+    })
   })
 
   test('data', () => {
