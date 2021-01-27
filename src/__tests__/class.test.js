@@ -200,9 +200,9 @@ describe('DruxtJS Class', () => {
   })
 
   test('getCollection', async () => {
-    const resources = await druxt.getCollection('node--page')
+    const collection = await druxt.getCollection('node--page')
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page')
-    expect(resources.length).toBe(1)
+    expect(collection.data.length).toBe(1)
 
     await druxt.getCollection('node--page', { 'filter[status]': 1 })
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page?filter%5Bstatus%5D=1')

@@ -146,7 +146,7 @@ class DruxtClass {
    * @param {object} options
    */
   async getCollection(resourceType, query, options = {}) {
-    let resources = []
+    let collection = null
 
     const { href } = await this.getIndex(resourceType)
     if (!href) {
@@ -165,7 +165,12 @@ class DruxtClass {
 
       this.checkPermissions(res)
 
-      resources = resources.concat(res.data)
+      if (!collection) {
+        collection = res.data
+      }
+      else {
+        collection.data = collection.data.concat(res.data)
+      }
 
       if (options.all && res.data && res.data.links && res.data.links.next) {
         url = res.data.links.next.href
@@ -174,7 +179,7 @@ class DruxtClass {
       }
     }
 
-    return resources
+    return collection
   }
 
   /**
