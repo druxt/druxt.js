@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Druxt, DruxtClass, DruxtWrapper } from 'druxt'
+import { Druxt, DruxtClient, DruxtWrapper } from 'druxt'
 
 // Install the Druxt Vue.js component.
 Vue.use({
@@ -26,6 +26,6 @@ export default (context, inject) => {
   options.axios = <%= JSON.stringify(options.axios) %>
   <% } %>
 
-  const druxt = new DruxtClass(baseUrl, options)
+  const druxt = new DruxtClient(baseUrl, options)
   inject('druxt', druxt)
 }

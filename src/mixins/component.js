@@ -67,7 +67,9 @@ const DruxtComponentMixin = {
    * </script>
    */
   async fetch() {
-    const moduleData = await this.$druxt.getModuleData(this)
+    // @todo - check for this.$druxt plugin.
+    const druxt = new DruxtClass()
+    const moduleData = await druxt.getModuleData(this)
 
     this.component.propsData = moduleData.propsData || {}
 
@@ -75,7 +77,7 @@ const DruxtComponentMixin = {
       return
     }
 
-    const options = this.$druxt.getComponents(this, moduleData.componentOptions, true)
+    const options = druxt.getComponents(this, moduleData.componentOptions, true)
     this.component.options = options.map(item => item.pascal)
     const available = options.filter(item => item.global)
     if (!available.length) {
