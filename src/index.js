@@ -91,6 +91,16 @@ export { DruxtComponentMixin } from './mixins/component'
 export default DruxtNuxtModule
 
 /**
+ * Vuex store module.
+ *
+ * @type {object}
+ * @exports DruxtStore
+ * @name DruxtStore
+ * @see {@link ./stores/druxt|DruxtStore}
+ */
+export { DruxtStore } from './stores/druxt'
+
+/**
  * The default Druxt module wrapper Vue.js component.
  *
  * @type {object}
