@@ -168,7 +168,7 @@ class DruxtClient {
       if (!collection) {
         collection = res.data
       }
-      else {
+      else if (collection.data) {
         collection.data = collection.data.concat(res.data)
       }
 
