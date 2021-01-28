@@ -72,16 +72,24 @@ describe('DruxtJS Class', () => {
   })
 
   test('getCollection', async () => {
+    // Get a collection of 'node--page' resources.
     const collection = await druxt.getCollection('node--page')
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page')
     expect(collection.data.length).toBe(1)
 
+    // Get a filtered collection of 'node--page' resources.
     await druxt.getCollection('node--page', { 'filter[status]': 1 })
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page?filter%5Bstatus%5D=1')
 
+    // Get a collection with headers set.
+    await druxt.getCollection('node--page', {}, { headers: { 'X-Druxt': true }})
+    expect(druxt.axios.defaults.headers.common['X-Druxt']).toBe(true)
+
+    // Get collection of nothing.
     const noResource = await druxt.getCollection()
     expect(noResource).toBe(false)
 
+    // Get all of the 'test--all' resources.
     await druxt.getCollection('test--all', null, { all: true })
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/test/all?next')
   })
