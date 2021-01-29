@@ -189,6 +189,8 @@ export default {
      * @type {string[]}
      */
     attachments_after() {
+      if (!((this.view || {}).attributes || {}).display) return false
+
       const displays = this.view.attributes.display
       return Object.keys(displays).filter(key => {
         return displays[key].display_plugin === 'attachment'
@@ -203,6 +205,8 @@ export default {
      * @type {string[]}
      */
     attachments_before() {
+      if (!((this.view || {}).attributes || {}).display) return false
+
       const displays = this.view.attributes.display
       return Object.keys(displays).filter(key => {
         return displays[key].display_plugin === 'attachment'
