@@ -34,6 +34,16 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
     fileName: 'druxt.js',
     options
   })
+
+  // Add Vuex plugin.
+  this.addPlugin({
+    src: resolve(__dirname, '../nuxt/store.js'),
+    fileName: 'store/druxt.js',
+    options
+  })
+
+  // Enable Vuex Store.
+  this.options.store = true
 }
 
 export { DruxtNuxtModule }

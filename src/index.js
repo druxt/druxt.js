@@ -46,6 +46,21 @@ export { Druxt }
  */
 export { DruxtClass } from './class'
 
+
+/**
+ * DruxtJS JSON:API client.
+ *
+ * @type {class}
+ * @exports DruxtClient
+ * @name DruxtClient
+ * @see {@link ./class|DruxtClient}
+ *
+ * @example @lang js
+ * import { DruxtClient } from 'druxt'
+ * const druxt = new DruxtClient('https://demo-api.druxtjs.org')
+ */
+export { DruxtClient } from './client'
+
 /**
  * Vue.js Mixin to add support for the Wrapper system to a Druxt module.
  *
@@ -89,6 +104,16 @@ export { DruxtComponentMixin } from './mixins/component'
  * }
  */
 export default DruxtNuxtModule
+
+/**
+ * Vuex store module.
+ *
+ * @type {object}
+ * @exports DruxtStore
+ * @name DruxtStore
+ * @see {@link ./stores/druxt|DruxtStore}
+ */
+export { DruxtStore } from './stores/druxt'
 
 /**
  * The default Druxt module wrapper Vue.js component.
