@@ -42,19 +42,23 @@ const baseConfig = {
 // ESM/UMD/IIFE shared settings: externals
 // Refer to https://rollupjs.org/guide/en/#warning-treating-module-as-external-dependency
 const external = [
+  'axios',
   'consola',
   'druxt-router',
   'druxt-schema',
   'path',
+  'querystring'
 ];
 
 // UMD/IIFE shared settings: output.globals
 // Refer to https://rollupjs.org/guide/en#output-globals for details
 const globals = {
+  axios: 'axios',
   consola: 'consola',
   'druxt-router': 'druxtRouter',
   'druxt-schema': 'druxtSchema',
   path: 'path',
+  querystring: 'querystring'
 };
 
 // Customize configs for individual targets

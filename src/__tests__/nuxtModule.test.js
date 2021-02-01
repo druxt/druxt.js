@@ -10,13 +10,14 @@ describe('DruxtJS Nuxt module', () => {
   beforeEach(() => {
     mock = {
       addPlugin: jest.fn(),
+      options: {},
       DruxtNuxtModule
     }
   })
 
   test('Module options', () => {
     // Call Druxt module with module options.
-    mock.DruxtNuxtModule(options)
+    DruxtNuxtModule.call(mock, options)
 
     // Expect addPlugin to have been called with options.
     expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
@@ -24,10 +25,10 @@ describe('DruxtJS Nuxt module', () => {
 
   test('Root options', () => {
     // Set root options.
-    mock.options = { druxt: options }
+    mock.options.druxt = options
 
     // Call Druxt module.
-    mock.DruxtNuxtModule()
+    DruxtNuxtModule.call(mock)
 
     // Expect addPlugin to have been called with options.
     expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))

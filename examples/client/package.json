@@ -1,0 +1,7 @@
+{
+  "name": "example-druxt-client",
+  "main": "index.js",
+  "dependencies": {
+    "druxt": "latest"
+  }
+}

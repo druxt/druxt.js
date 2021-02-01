@@ -14,6 +14,22 @@ features:
 
 > DruxtJS provides an easy connection between a Drupal JSON:API backend and NuxtJS frontend application.
 
+## DruxtClient
+
+The DruxtClient is the communication layer between Nuxt and the Drupal JSON:API.
+
+**Example:**
+```js
+const { DruxtClient } = require('druxt')
+
+const druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+druxt.getCollection('node--page').then((res) => {
+  ...
+})
+```
+
+Get started with the [Guide](guide/) and [API Documentation](/api/client).
 
 ## The Druxt component
 
