@@ -1,6 +1,6 @@
 {
   "name": "druxt-docgen",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Vuepress based documentation generator for DruxtJS docs.",
   "main": "src/index.js",
   "bin": {
@@ -25,27 +25,28 @@
   },
   "homepage": "https://github.com/druxt/druxt-docgen#readme",
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.11.5",
-    "@babel/preset-env": "^7.11.5",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.1.0",
-    "druxt-router": "^0.15.0",
-    "eslint": "^7.10.0",
-    "jest": "^26.5.2",
+    "druxt-router": "^0.17.2",
+    "eslint": "^7.19.0",
+    "jest": "^26.6.3",
     "jest-junit": "^11.1.0",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.7",
     "vue-template-compiler": "^2.6.12",
-    "vuex": "^3.5.1"
+    "vuex": "^3.6.2"
   },
   "dependencies": {
     "dmd": "^5.0.2",
-    "globby": "^11.0.1",
+    "globby": "^11.0.2",
     "jsdoc-to-markdown": "^6.0.1",
     "jsdoc-vuejs": "^3.0.9",
     "jsdoc-vuex-plugin": "^1.0.0",
     "markdown-it-task-lists": "^2.1.1",
     "ncp": "^2.0.0",
-    "vue-docgen-api": "^4.32.4",
-    "vuepress": "^1.6.0"
+    "vue-docgen-api": "^4.35.0",
+    "vuepress": "^1.8.0",
+    "yargs": "^16.2.0"
   }
 }
