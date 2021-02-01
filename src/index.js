@@ -14,6 +14,10 @@ const cwd = path.join(__dirname, '..')
  * DruxtDocgen class.
  */
 class DruxtDocgen {
+  constructor (config = null) {
+    this.config = config ? path.join(process.cwd(), config) : './vuepress.config'
+  }
+
   /**
    * Generate documentation for source JS and Vue files.
    */
@@ -112,7 +116,7 @@ class DruxtDocgen {
    * Run Vuepress process.
    */
   runServer () {
-    const siteConfig = require('./vuepress.config')
+    const siteConfig = require(this.config)
 
     const options = {
       siteConfig,
