@@ -141,45 +141,53 @@ class DruxtClient {
   /**
    * Get a collection of resources from the JSON:API server.
    *
-   * @param {string} resourceType
-   * @param {*} query
-   * @param {object} options
+   * @param {string} type - The JSON:API Resource type.
+   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   *
+   * @returns {JsonApiCollection} The JSON:API collection response.
+   *
+   * @example @lang js
+   * const collection = await this.$druxt.getCollection('node--recipe')
    */
-  async getCollection(resourceType, query, options = {}) {
-    let collection = null
-
-    const { href } = await this.getIndex(resourceType)
+  async getCollection(type, query) {
+    const { href } = await this.getIndex(type)
     if (!href) {
       return false
     }
 
-    let url = this.buildQueryUrl(href, query)
+    const url = this.buildQueryUrl(href, query)
 
-    if (options.headers) {
-      this.addHeaders(options.headers)
+    const res = await this.axios.get(url)
+
+    this.checkPermissions(res)
+
+    return res.data
+  }
+
+  /**
+   * Get all resources of a collection.
+   *
+   * @param {string} type - The JSON:API Resource type.
+   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   *
+   * @returns {JsonApiCollection[]} An array of JSON:API collections.
+   *
+   * @example @lang js
+   * const collections = await this.$druxt.getCollectionAll('node--recipe', 'fields[node--recipe]=title')
+   */
+  async getCollectionAll(type, query) {
+    const collections = []
+
+    let res = await this.getCollection(type, query)
+    collections.push(res)
+
+    while (((res.links || {}).next || {}).href) {
+      query = res.links.next.href.split('?')[1]
+      res = await this.getCollection(type, query)
+      collections.push(res)
     }
 
-    let loading = true
-    while (loading) {
-      const res = await this.axios.get(url)
-
-      this.checkPermissions(res)
-
-      if (!collection) {
-        collection = res.data
-      }
-      else if (collection.data) {
-        collection.data = collection.data.concat(res.data)
-      }
-
-      if (options.all && res.data && res.data.links && res.data.links.next) {
-        url = res.data.links.next.href
-      } else {
-        loading = false
-      }
-    }
-
-    return collection
+    return collections
   }
 
   /**
@@ -266,3 +274,47 @@ class DruxtClient {
 }
 
 export { DruxtClient }
+
+/**
+ * @typedef {string|object} DruxtClientQuery
+ *
+ * A correctly formatted JSON:API query string or object.
+ *
+ * @example
+ * page[limit]=5&page[offset]=5
+ *
+ * @example @lang js
+ * new DrupalJsonApiParams().addPageLimit(5)
+ *
+ * @see {@link https://www.npmjs.com/package/drupal-jsonapi-params}
+ */
+
+/**
+ * @typedef {object} JsonApiCollection
+ *
+ * JSON:API Collection of resources.
+ *
+ * @param {object} jsonapi
+ * @param {object[]} data
+ * @param {object} links
+ *
+ * @example @lang js
+ * {
+ *   jsonapi: {
+ *     version: '1.0',
+ *     meta: {},
+ *   },
+ *   data: [
+ *     {
+ *       type: 'node--recipe',
+ *       id: 'bd3b424d-7a7c-48fd-b9db-7c9a721986af',
+ *       ...
+ *     },
+ *     ...
+ *   ],
+ *   links: {
+ *     self: {
+ *       href: 'https://demo-api.druxtjs.org/jsonapi/node/recipe'
+ *     }
+ *   }
+ * }

@@ -88,9 +88,11 @@ describe('DruxtJS Class', () => {
     // Get collection of nothing.
     const noResource = await druxt.getCollection()
     expect(noResource).toBe(false)
+  })
 
+  test('getCollectionAll', async () => {
     // Get all of the 'test--all' resources.
-    await druxt.getCollection('test--all', null, { all: true })
+    await druxt.getCollectionAll('test--all')
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/test/all?next')
   })
 
