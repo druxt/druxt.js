@@ -6,20 +6,18 @@ import { stringify } from 'querystring'
  */
 class DruxtClient {
   /**
-   * DruxtClass constructor.
+   * DruxtClient constructor.
    *
    * - Validates module options.
    * - Sets up Axios instance.
    * - Sets up options.
    *
    * @example @lang js
-   * const DruxtClass = require('druxt').DruxtClass
-   * const druxt = new DruxtClass('https://example.com', {})
+   * const DruxtClient = require('druxt').DruxtCllient
+   * const druxt = new DruxtClient('https://demo-api.druxtjs.org', {})
    *
    * @param {string} baseUrl - The Drupal base URL.
-   * @param {object} [options] - Druxt Router options.
-   * @param {object} [options.axios] - Axios instance settings.
-   * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
+   * @param {DruxtClientOptions} [options] - The DruxtClient options object.
    */
   constructor(baseUrl, options = {}) {
     // Check for URL.
@@ -35,7 +33,8 @@ class DruxtClient {
     }
 
     /**
-     * Axios instance.
+     * The Axios instance.
+     *
      * @see {@link https://github.com/axios/axios#instance-methods}
      * @type {object}
      */
@@ -81,7 +80,7 @@ class DruxtClient {
    * const queryUrl = this.$druxt.buildQueryUrl(resourceUrl, query)
    *
    * @param {string} url - The base query URL.
-   * @param {string|object} [query] - A correctly formatted JSON:API query string or object.
+   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    *
    * @return {string} The URL with query string.
    */
@@ -275,6 +274,27 @@ class DruxtClient {
 
 export { DruxtClient }
 
+ /**
+  * DruxtClient options object.
+  *
+  * @typedef {object} DruxtClientOptions
+  *
+  * @param {object} [axios] - Axios instance settings.
+  * @param {string} [endpoint=jsonapi] - The JSON:API endpoint.
+  * @param {string} [jsonapiResourceConfig=jsonapi_resource_config--jsonapi_resource_config] -
+  *   The JSON:API resource config type, used for [JSON:API Extras](https://www.drupal.org/project/jsonapi_extras) support.
+  *
+  * @see {@link https://github.com/axios/axios#request-config}
+  *
+  * @example @lang js
+  * {
+  *   axios: {
+  *     headers: { 'X-Custom-Header': true },
+  *   },
+  *   endpoint: 'api',
+  * }
+  */
+
 /**
  * @typedef {string|object} DruxtClientQuery
  *
@@ -318,3 +338,4 @@ export { DruxtClient }
  *     }
  *   }
  * }
+ */

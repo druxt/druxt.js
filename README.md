@@ -18,8 +18,28 @@
 
 `$ npm install druxt`
 
-
 ## Usage
+
+### DruxtClient
+
+The DruxtClient is the communication layer between Nuxt and the Drupal JSON:API.
+
+**Example:**
+```js
+const { DruxtClient } = require('druxt')
+
+const druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+druxt.getCollection('node--page').then((res) => {
+  ...
+})
+```
+
+Get started with the [Guide](https://druxtjs.org/guide/) and [API Documentation](https://druxtjs.org/api/client).
+
+### Nuxt Module / Plugin
+
+The Nuxt module adds the Vue components, Vuex store and DruxtClient plugin to your Nuxt application.
 
 Add module to `nuxt.config.js`
 
@@ -34,6 +54,24 @@ module.exports = {
 }
 ```
 
+The `$druxt` plugin gives your Nuxt application access to the `DruxtClient`.
+
+**Example:**
+
+```vue
+<script>
+export default {
+  data: () => ({ page: null }),
+
+  async fetch() {
+    this.page = await this.$druxt.getResource({
+      type: 'node--page',
+      id: 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd',
+    })
+  },
+}
+</script>
+```
 
 ### The Druxt component
 
