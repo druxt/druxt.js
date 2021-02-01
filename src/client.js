@@ -245,15 +245,15 @@ class DruxtClient {
    * Get a JSON:API resource by type and ID.
    *
    * @example @lang js
-   * const data = await this.$druxt.getResource({ type: 'node--article', id })
+   * const data = await this.$druxt.getResource('node--article', id)
    *
-   * @param {string} type - The JSON:API resource type.
+   * @param {string} type - The JSON:API Resource type.
    * @param {string} id - The Drupal resource UUID.
+   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    *
    * @returns {object} The JSON:API resource data.
    */
-  async getResource(query = {}) {
-    const { id, type } = query
+  async getResource(type, id, query) {
     if (!id || !type) {
       return false
     }
@@ -263,7 +263,7 @@ class DruxtClient {
       href = this.options.endpoint + '/' + type.replace('--', '/')
     }
 
-    const url = `${href}/${id}`
+    const url = this.buildQueryUrl(`${href}/${id}`, query)
     try {
       const resource = await this.axios.get(url)
       return resource.data

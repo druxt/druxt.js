@@ -97,7 +97,7 @@ const DruxtStore = ({ store }) => {
           return state.resources[query.type][query.id]
         }
 
-        const resource = await this.$druxt.getResource(query)
+        const resource = await this.$druxt.getResource(query.type, query.id)
 
         commit('addResource', resource)
 

@@ -124,10 +124,10 @@ describe('DruxtJS Class', () => {
   })
 
   test('getResource', async () => {
-    const entity = await druxt.getResource(testArticle)
+    const entity = await druxt.getResource(testArticle.type, testArticle.id)
     expect(entity.data).toHaveProperty('type', testArticle.type)
 
-    const error = await druxt.getResource({ id: 'test', type: 'missing' })
+    const error = await druxt.getResource('missing', 'test')
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi/missing/test')
     expect(error).toBe(false)
 
