@@ -1,6 +1,6 @@
 <template>
   <component :is="component.is" v-bind="component.propsData">
-    {{ $attrs.text }}
+    {{ text }}
   </component>
 </template>
 
@@ -11,6 +11,13 @@ export default {
   name: 'DruxtCustomModule',
 
   mixins: [DruxtComponentMixin],
+
+  props: {
+    text: {
+      type: String,
+      default: ''
+    }
+  },
 
   druxt: ({ vm }) => ({
     componentOptions: [['wrapper']],
