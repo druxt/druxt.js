@@ -143,7 +143,7 @@ class DruxtClient {
    * @param {string} type - The JSON:API Resource type.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    *
-   * @returns {JsonApiCollection} The JSON:API collection response.
+   * @returns {object} The JSON:API collection response.
    *
    * @example @lang js
    * const collection = await this.$druxt.getCollection('node--recipe')
@@ -169,7 +169,7 @@ class DruxtClient {
    * @param {string} type - The JSON:API Resource type.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    *
-   * @returns {JsonApiCollection[]} An array of JSON:API collections.
+   * @returns {object[]} An array of JSON:API collections.
    *
    * @example @lang js
    * const collections = await this.$druxt.getCollectionAll('node--recipe', 'fields[node--recipe]=title')
@@ -307,35 +307,4 @@ export { DruxtClient }
  * new DrupalJsonApiParams().addPageLimit(5)
  *
  * @see {@link https://www.npmjs.com/package/drupal-jsonapi-params}
- */
-
-/**
- * @typedef {object} JsonApiCollection
- *
- * JSON:API Collection of resources.
- *
- * @param {object} jsonapi
- * @param {object[]} data
- * @param {object} links
- *
- * @example @lang js
- * {
- *   jsonapi: {
- *     version: '1.0',
- *     meta: {},
- *   },
- *   data: [
- *     {
- *       type: 'node--recipe',
- *       id: 'bd3b424d-7a7c-48fd-b9db-7c9a721986af',
- *       ...
- *     },
- *     ...
- *   ],
- *   links: {
- *     self: {
- *       href: 'https://demo-api.druxtjs.org/jsonapi/node/recipe'
- *     }
- *   }
- * }
  */

@@ -41,13 +41,11 @@ describe('DruxtStore', () => {
     expect(store.state.druxt.resources).toStrictEqual({})
 
     // Ensure that good data is committed to state.
-    store.commit('druxt/addResource', mockPage)
-    expect(store.state.druxt.resources[mockPage.data.type][mockPage.data.id]).toBe(mockPage)
-    expect(Object.keys(store.state.druxt.resources[mockPage.data.type])).toHaveLength(1)
+    store.commit('druxt/addResource', { resource: mockPage, hash: 'test' })
+    expect(store.state.druxt.resources[mockPage.data.type][mockPage.data.id]['test']).toBe(mockPage)
 
-    store.commit('druxt/addResource', mockArticle)
-    expect(store.state.druxt.resources[mockArticle.data.type][mockArticle.data.id]).toBe(mockArticle)
-    expect(Object.keys(store.state.druxt.resources[mockArticle.data.type])).toHaveLength(1)
+    store.commit('druxt/addResource', { resource: mockArticle, hash: 'test' })
+    expect(store.state.druxt.resources[mockArticle.data.type][mockArticle.data.id]['test']).toBe(mockArticle)
   })
 
   test('getResource', async () => {
@@ -62,11 +60,11 @@ describe('DruxtStore', () => {
   })
 
   test('getCollection', async () => {
-    const collection = await store.dispatch('druxt/getCollection', { resourceType: 'node--page', query: {} })
+    const collection = await store.dispatch('druxt/getCollection', { type: 'node--page', query: {} })
     expect(collection.data.length).toBe(1)
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
 
-    await store.dispatch('druxt/getCollection', { resourceType: 'node--page', query: {} })
+    await store.dispatch('druxt/getCollection', { type: 'node--page', query: {} })
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
   })
 })
