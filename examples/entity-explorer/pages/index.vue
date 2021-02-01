@@ -37,7 +37,7 @@
             <v-select
               v-model="resource"
               :hint="`UUID: ${resource.id}`"
-              :items="resources"
+              :items="resources.data"
               item-text="attributes.title"
               persistent-hint
               return-object
@@ -45,7 +45,7 @@
 
             <v-select
               v-model="display"
-              :items="displays"
+              :items="displays.data"
               item-text="attributes.mode"
               item-value="attributes.mode"
             />
@@ -76,26 +76,21 @@ export default {
   }),
 
   async fetch() {
-    const resourcesQuery = new DrupalJsonApiParams()
-    resourcesQuery
-      .addFilter('status', '1')
-      .addFields(this.resourceType, ['id', 'title'])
-
-    this.resources = await this.getResources({
-      resource: this.resourceType,
-      query: resourcesQuery
+    this.resources = await this.getCollection({
+      type: this.resourceType,
+      query: new DrupalJsonApiParams()
+        .addFilter('status', '1')
+        .addFields(this.resourceType, ['id', 'title'])
     })
-    this.resource = this.resources[0]
+    this.resource = this.resources.data[0]
 
     const parts = this.resourceType.split('--')
-    const displaysQuery = new DrupalJsonApiParams()
-    displaysQuery
-      .addFilter('targetEntityType', parts[0])
-      .addFilter('bundle', parts[1])
-      .addFields('entity_view_display--entity_view_display', ['mode'])
-    this.displays = await this.getResources({
-      resource: 'entity_view_display--entity_view_display',
-      query: displaysQuery
+    this.displays = await this.getCollection({
+      type: 'entity_view_display--entity_view_display',
+      query: new DrupalJsonApiParams()
+        .addFilter('targetEntityType', parts[0])
+        .addFilter('bundle', parts[1])
+        .addFields('entity_view_display--entity_view_display', ['mode'])
     })
   },
 
@@ -113,7 +108,7 @@ export default {
   },
 
   methods: {
-    ...mapActions({ getResources: 'druxtRouter/getResources' })
+    ...mapActions({ getCollection: 'druxt/getCollection' })
   }
 }
 </script>
