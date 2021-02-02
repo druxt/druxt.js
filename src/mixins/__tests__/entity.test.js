@@ -1,4 +1,5 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { DruxtClient, DruxtStore } from 'druxt'
 import Vuex from 'vuex'
 
 import { DruxtRouter, DruxtRouterEntityMixin, DruxtRouterStore } from '../..'
@@ -18,9 +19,17 @@ describe('DruxtRouterEntityMixin', () => {
   beforeEach(() => {
     // Setup vuex store.
     store = new Vuex.Store()
+    DruxtStore({ store })
     DruxtRouterStore({ store })
 
-    store.$druxtRouter = () => new DruxtRouter('https://example.com')
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+    store.$druxtRouter = () => new DruxtRouter('https://demo-api.druxtjs.org')
+
+    store.app = { context: { error: jest.fn() }, store }
+  })
+
+  test('todo', () => {
+    expect(1).toBe(1)
   })
 
   test('default', async () => {
@@ -33,9 +42,7 @@ describe('DruxtRouterEntityMixin', () => {
       localVue
     })
 
-    // Bind and execute fetch() method.
-    wrapper.vm.$fetch = DruxtRouterEntityMixin.fetch
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.entity).toHaveProperty('id', '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
   })
@@ -55,9 +62,7 @@ describe('DruxtRouterEntityMixin', () => {
       localVue
     })
 
-    // Bind and execute fetch() method.
-    wrapper.vm.$fetch = DruxtRouterEntityMixin.fetch
-    await wrapper.vm.$fetch()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.entity.cache).toBe(true)
   })

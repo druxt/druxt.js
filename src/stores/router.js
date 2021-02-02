@@ -44,6 +44,8 @@ const DruxtRouterStore = ({ store }) => {
      */
     mutations: {
       /**
+       * @deprecated
+       *
        * @name addEntity
        * @mutator {object} addEntity=entities Adds specified Drupal entity JSON:API resource data to the Vuex state object.
        * @param {object} entity - The Drupal entity JSON:API resource data.
@@ -153,6 +155,8 @@ const DruxtRouterStore = ({ store }) => {
        * - Caches result in the Vuex store.
        * - Returns cached result from Vuex store when available.
        *
+       * @deprecated
+       *
        * @name getEntity
        * @action getEntity=entities
        * @param {object} query
@@ -168,15 +172,17 @@ const DruxtRouterStore = ({ store }) => {
           return state.entities[query.id]
         }
 
-        const entity = await this.$druxtRouter().getResource(query)
+        const entity = await this.app.store.dispatch('druxt/getResource', query)
 
-        commit('addEntity', entity)
+        commit('addEntity', entity.data)
 
-        return entity
+        return entity.data
       },
 
       /**
        * Get multiple resources.
+       *
+       * @deprecated
        *
        * @name getResources
        * @action getResources
@@ -196,13 +202,10 @@ const DruxtRouterStore = ({ store }) => {
        *   query,
        *   options: { all: true }
        * })
-       *
-       * @todo Add Vuex store caching for getResources.
        */
-      async getResources ({ commit, state }, { resource, query, options }) {
-        const resources = await this.$druxtRouter().getResources(resource, query, options)
-
-        return resources
+      async getResources (app, { resource, query, options }) {
+        const collection = await this.app.store.dispatch('druxt/getCollection', { type: resource, query })
+        return collection.data || false
       },
 
       /**

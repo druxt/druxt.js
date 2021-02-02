@@ -5,8 +5,7 @@
  * ---
  */
 
-import { stringify } from 'querystring'
-import axios from 'axios'
+import { DruxtClient } from 'druxt'
 import Url from 'url-parse'
 
 /**
@@ -31,34 +30,13 @@ class DruxtRouter {
    * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
    * @param {array} [options.types] - Array of Druxt Router type definitions.
    */
-  constructor (baseURL, options = {}) {
-    // Check for URL.
-    if (!baseURL) {
-      throw new Error('The \'baseURL\' parameter is required.')
-    }
-
-    // Setup Axios.
-    let axiosSettings = { baseURL }
-    if (typeof options.axios === 'object') {
-      axiosSettings = Object.assign(axiosSettings, options.axios)
-      delete options.axios
-    }
-
-    /**
-     * Axios instance.
-     * @see {@link https://github.com/axios/axios#instance-methods}
-     * @type {object}
-     */
-    this.axios = axios.create(axiosSettings)
-
+  constructor (baseUrl, options = {}) {
     /**
      * Druxt router options.
      * @type {object}
      * @private
      */
     this.options = {
-      endpoint: '/jsonapi',
-      jsonapiResourceConfig: 'jsonapi_resource_config--jsonapi_resource_config',
       types: [
         {
           type: 'entity',
@@ -88,15 +66,18 @@ class DruxtRouter {
     }
 
     /**
-     * Drupal JSON:API index.
-     * @type {object}
-     * @private
+     * Druxt class.
+     * @type {DruxtClient}
      */
-    this.index = null
+    this.druxt = new DruxtClient(baseUrl, this.options)
+
+    this.axios = this.druxt.axios
   }
 
   /**
    * Add headers to the Axios instance.
+   *
+   * @deprecated
    *
    * @example @lang js
    * router.addHeaders({ 'Authorization': `Basic ${token}` })
@@ -108,13 +89,13 @@ class DruxtRouter {
       return false
     }
 
-    for (const name in headers) {
-      this.axios.defaults.headers.common[name] = headers[name]
-    }
+    this.druxt.addHeaders(headers)
   }
 
   /**
    * Build query URL.
+   *
+   * @deprecated
    *
    * @example @lang js
    * const query = new DrupalJsonApiParams()
@@ -127,56 +108,20 @@ class DruxtRouter {
    * @return {string} The URL with query string.
    */
   buildQueryUrl (url, query) {
-    if (!query) {
-      return url
-    }
-
-    // If Query is string...
-    if (typeof query === 'string') {
-      return query.charAt(0) === '?' ? url + query : [url, query].join('?')
-    }
-
-    // If Query is object with 'getQueryString' function, (e.g., drupal-jsonapi-params)...
-    if (typeof query === 'object' && typeof query.getQueryString === 'function') {
-      return [url, query.getQueryString()].join('?')
-    }
-
-    // If query is object...
-    if (typeof query === 'object' && Object.keys(query).length) {
-      return [url, stringify(query)].join('?')
-    }
-
-    // Else...
-    return url
+    return this.druxt.buildQueryUrl(url, query)
   }
 
   /**
    * Check response for permissions.
    *
-   * @todo - Move this to utils?
+   * @deprecated
    *
    * @param {object} res - Axios GET request response object.
    *
    * @private
    */
   checkPermissions (res) {
-    // Error handling: Required permissions.
-    if (res.data.meta && res.data.meta.omitted) {
-      const permissions = {}
-
-      delete res.data.meta.omitted.links.help
-      for (const key in res.data.meta.omitted.links) {
-        const link = res.data.meta.omitted.links[key]
-        const match = link.meta.detail.match(/'(.*?)'/)
-        if (match && match[1]) {
-          permissions[match[1]] = true
-        }
-      }
-
-      if (Object.keys(permissions).length) {
-        throw new TypeError(`${res.data.meta.omitted.detail}\n\n Required permissions: ${Object.keys(permissions).join(', ')}.`)
-      }
-    }
+    return this.druxt.checkPermissions(res)
   }
 
   /**
@@ -203,6 +148,8 @@ class DruxtRouter {
   /**
    * Get index of all available resources, or the optionally specified resource.
    *
+   * @deprecated
+   *
    * @example @lang js
    * const { href } = await router.getIndex('node--article')
    *
@@ -211,43 +158,7 @@ class DruxtRouter {
    * @returns {object} The resource index object or the specified resource.
    */
   async getIndex (resource) {
-    if (this.index && !resource) {
-      return this.index
-    }
-
-    if (this.index && resource) {
-      return this.index[resource] ? this.index[resource] : false
-    }
-
-    const index = await this.axios.get(this.options.endpoint)
-    this.index = index.data.links
-
-    // Use JSON API resource config to decorate the index.
-    if (this.index[this.options.jsonapiResourceConfig]) {
-      const resources = await this.axios.get(this.index[this.options.jsonapiResourceConfig].href)
-      for (const resourceType in resources.data.data) {
-        const resource = resources.data.data[resourceType]
-        const internal = resource.attributes.drupal_internal__id.split('--')
-
-        const item = {
-          resourceType: resource.attributes.resourceType,
-          entityType: internal[0],
-          bundle: internal[1],
-          resourceFields: resource.attributes.resourceFields
-        }
-
-        const id = [item.entityType, item.bundle].join('--')
-        this.index[id] = {
-          ...item,
-          ...this.index[id]
-        }
-      }
-    }
-
-    if (resource) {
-      return this.index[resource] ? this.index[resource] : false
-    }
-
+    this.index = await this.druxt.getIndex(resource)
     return this.index
   }
 
@@ -298,6 +209,8 @@ class DruxtRouter {
   /**
    * Get a JSON:API resource by type and ID.
    *
+   * @deprecated
+   *
    * @example @lang js
    * const data = await router.get({ type: 'node--article', id })
    *
@@ -307,27 +220,14 @@ class DruxtRouter {
    * @returns {object} The JSON:API resource data.
    */
   async getResource (query = {}) {
-    const { id, type } = query
-    if (!id || !type) {
-      return false
-    }
-
-    let { href } = await this.getIndex(type)
-    if (!href) {
-      href = this.options.endpoint + '/' + type.replace('--', '/')
-    }
-
-    const url = `${href}/${id}`
-    try {
-      const resource = await this.axios.get(url)
-      return resource.data.data
-    } catch (e) {
-      return false
-    }
+    const resource = await this.druxt.getResource(query.type, query.id)
+    return resource.data || false
   }
 
   /**
    * Gets a collection of resources.
+   *
+   * @deprecated
    *
    * @todo Add granular pagination.
    *
@@ -344,33 +244,14 @@ class DruxtRouter {
    * @return {object[]} Array of resources.
    */
   async getResources (resource, query, options = {}) {
-    let resources = []
-
-    const { href } = await this.getIndex(resource)
-    if (!href) {
-      return false
+    let resources = { data: [] }
+    if (options.all) {
+      const collections = await this.druxt.getCollectionAll(resource, query)
+      collections.map((collection) => { (collection.data || []).map((resource) => { resources.data.push(resource) }) })
+    } else {
+      resources = await this.druxt.getCollection(resource, query)
     }
-
-    let url = this.buildQueryUrl(href, query)
-
-    this.addHeaders(options.headers)
-
-    let loading = true
-    while (loading) {
-      const res = await this.axios.get(url)
-
-      this.checkPermissions(res)
-
-      resources = resources.concat(res.data.data)
-
-      if (options.all && res.data && res.data.links && res.data.links.next) {
-        url = res.data.links.next.href
-      } else {
-        loading = false
-      }
-    }
-
-    return resources
+    return resources.data || false
   }
 
   /**
@@ -384,8 +265,9 @@ class DruxtRouter {
    *
    * @returns {object} The JSON:API resource data.
    */
-  getResourceByRoute (route) {
-    return this.getResource({ id: route.entity.uuid, type: route.jsonapi.resourceName })
+  async getResourceByRoute (route) {
+    const resource = await this.druxt.getResource(route.jsonapi.resourceName, route.entity.uuid)
+    return resource.data || false
   }
 
   /**
@@ -402,7 +284,7 @@ class DruxtRouter {
     // @TODO - Add validation/error handling.
     const url = `/router/translate-path?path=${path}`
 
-    const response = await this.axios.get(url, {
+    const response = await this.druxt.axios.get(url, {
       // Prevent invalid routes (404) from throwing validation errors.
       validateStatus: status => status < 500
     })
