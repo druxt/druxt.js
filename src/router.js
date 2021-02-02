@@ -266,15 +266,17 @@ class DruxtRouter {
    *
    * @returns {boolean|string} The redirect path or false.
    */
-  getRedirect (path, route) {
+  getRedirect (path, route = {}) {
     // Redirect to route provided redirect.
-    if (Array.isArray(route.redirect) && typeof route.redirect[0].to !== 'undefined') {
+    if (((route.redirect || [])[0] || {}).to) {
       return route.redirect[0].to
     }
 
+    const url = Url(path)
+
     // Redirect to root if route is home path but path isn't root.
     if (route.isHomePath) {
-      if (path !== '/') {
+      if (url.pathname !== '/') {
         return '/'
       }
 
@@ -283,10 +285,10 @@ class DruxtRouter {
 
     // Redirect if path does not match resolved clean url path.
     if (typeof route.canonical === 'string') {
-      const url = new Url(route.canonical)
+      const canonicalUrl = new Url(route.canonical)
 
-      if (path !== url.pathname) {
-        return url.pathname
+      if (url.pathname !== canonicalUrl.pathname) {
+        return canonicalUrl.pathname
       }
     }
 
