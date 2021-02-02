@@ -158,6 +158,17 @@ describe('DruxtRouter', () => {
     // No redirect.
     redirect = router.getRedirect(null, {})
     expect(redirect).toBe(false)
+
+    // Querystring.
+    redirect = router.getRedirect('/?querystring', {
+      isHomePath: true
+    })
+    expect(redirect).toBe(false)
+
+    redirect = router.getRedirect('/clean-url?querystring', {
+      canonical: 'https://example.com/clean-url'
+    })
+    expect(redirect).toBe(false)
   })
 
   test('getResource', async () => {
