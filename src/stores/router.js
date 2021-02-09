@@ -16,7 +16,7 @@ const DruxtRouterStore = ({ store }) => {
    * @name druxtRouter
    * @module druxtRouter
    *
-   * @todo Replace 'entit(y|ies)' with 'resource(s)'
+   * @todo Change namespace to `druxt/router`.
    */
   const module = {
     namespaced: true,
@@ -45,6 +45,7 @@ const DruxtRouterStore = ({ store }) => {
     mutations: {
       /**
        * @deprecated
+       * @see {@link https://druxtjs.org/api/stores/druxt}
        *
        * @name addEntity
        * @mutator {object} addEntity=entities Adds specified Drupal entity JSON:API resource data to the Vuex state object.
@@ -54,6 +55,7 @@ const DruxtRouterStore = ({ store }) => {
        * this.$store.commit('druxtRouter/addEntity', entity)
        */
       addEntity (state, entity) {
+        console.warn('[druxt-router] `druxtRouter/addEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.')
         if (!entity || typeof entity.id === 'undefined') {
           // @TODO - Error?
           return
@@ -156,6 +158,7 @@ const DruxtRouterStore = ({ store }) => {
        * - Returns cached result from Vuex store when available.
        *
        * @deprecated
+       * @see {@link https://druxtjs.org/api/stores/druxt}
        *
        * @name getEntity
        * @action getEntity=entities
@@ -168,6 +171,7 @@ const DruxtRouterStore = ({ store }) => {
        * @todo Rename getEntity to getResource.
        */
       async getEntity ({ commit, state }, query) {
+        console.warn('[druxt-router] `druxtRouter/getEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.')
         if (typeof state.entities[query.id] !== 'undefined') {
           return state.entities[query.id]
         }
@@ -183,6 +187,7 @@ const DruxtRouterStore = ({ store }) => {
        * Get multiple resources.
        *
        * @deprecated
+       * @see {@link https://druxtjs.org/api/stores/druxt}
        *
        * @name getResources
        * @action getResources
@@ -204,6 +209,7 @@ const DruxtRouterStore = ({ store }) => {
        * })
        */
       async getResources (app, { resource, query, options }) {
+        console.warn('[druxt-router] `druxtRouter/getResources` is deprecated. See http://druxtjs.org/api/stores/druxt.')
         const collection = await this.app.store.dispatch('druxt/getCollection', { type: resource, query })
         return collection.data || false
       },

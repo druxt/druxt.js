@@ -46,7 +46,7 @@
   },
   "homepage": "https://github.com/druxt/druxt_router#readme",
   "dependencies": {
-    "druxt": "^0.4.0",
+    "druxt": "^0.4.1",
     "url-parse": "^1.4.7",
     "vuex": "^3.6.0"
   },

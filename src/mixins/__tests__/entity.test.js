@@ -2,7 +2,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils'
 import { DruxtClient, DruxtStore } from 'druxt'
 import Vuex from 'vuex'
 
-import { DruxtRouter, DruxtRouterEntityMixin, DruxtRouterStore } from '../..'
+import { DruxtRouterEntityMixin } from '../..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -19,17 +19,11 @@ describe('DruxtRouterEntityMixin', () => {
   beforeEach(() => {
     // Setup vuex store.
     store = new Vuex.Store()
-    DruxtStore({ store })
-    DruxtRouterStore({ store })
 
+    DruxtStore({ store })
     store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
-    store.$druxtRouter = () => new DruxtRouter('https://demo-api.druxtjs.org')
 
     store.app = { context: { error: jest.fn() }, store }
-  })
-
-  test('todo', () => {
-    expect(1).toBe(1)
   })
 
   test('default', async () => {
@@ -48,9 +42,15 @@ describe('DruxtRouterEntityMixin', () => {
   })
 
   test('cache', async () => {
-    store.commit('druxtRouter/addEntity', {
-      id: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9',
-      cache: true
+    store.commit('druxt/addResource', {
+      resource: {
+        data: {
+          id: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9',
+          type: 'node--page',
+          cache: true
+        }
+      },
+      hash: '_default'
     })
 
     const wrapper = shallowMount(testComponent, {

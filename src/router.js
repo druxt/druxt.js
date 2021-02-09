@@ -66,8 +66,10 @@ class DruxtRouter {
     }
 
     /**
-     * Druxt class.
+     * Instance of the Druxt Client.
+     *
      * @type {DruxtClient}
+     * @see {@link http://druxtjs.org/api/client}
      */
     this.druxt = new DruxtClient(baseUrl, this.options)
 
@@ -78,9 +80,10 @@ class DruxtRouter {
    * Add headers to the Axios instance.
    *
    * @deprecated
+   * @see {@link https://druxtjs.org/api/client}
    *
    * @example @lang js
-   * router.addHeaders({ 'Authorization': `Basic ${token}` })
+   * router.druxt.addHeaders({ 'Authorization': `Basic ${token}` })
    *
    * @param {object} headers - An object containing HTTP headers.
    */
@@ -96,11 +99,12 @@ class DruxtRouter {
    * Build query URL.
    *
    * @deprecated
+   * @see {@link https://druxtjs.org/api/client}
    *
    * @example @lang js
    * const query = new DrupalJsonApiParams()
    * query.addFilter('status', '1')
-   * const queryUrl = router.buildQueryUrl(resourceUrl, query)
+   * const queryUrl = router.druxt.buildQueryUrl(resourceUrl, query)
    *
    * @param {string} url - The base query URL.
    * @param {string|object} [query] - A correctly formatted JSON:API query string or object.
@@ -115,6 +119,7 @@ class DruxtRouter {
    * Check response for permissions.
    *
    * @deprecated
+   * @see {@link https://druxtjs.org/api/client}
    *
    * @param {object} res - Axios GET request response object.
    *
@@ -149,9 +154,10 @@ class DruxtRouter {
    * Get index of all available resources, or the optionally specified resource.
    *
    * @deprecated
+   * @see {@link https://druxtjs.org/api/client}
    *
    * @example @lang js
-   * const { href } = await router.getIndex('node--article')
+   * const { href } = await router.druxt.getIndex('node--article')
    *
    * @param {string} resource - (Optional) A specific resource to query.
    *
@@ -210,9 +216,10 @@ class DruxtRouter {
    * Get a JSON:API resource by type and ID.
    *
    * @deprecated
+   * @see {@link https://druxtjs.org/api/client}
    *
    * @example @lang js
-   * const data = await router.get({ type: 'node--article', id })
+   * const data = await router.druxt.getResource('node--article', id)
    *
    * @param {string} type - The JSON:API resource type.
    * @param {string} id - The Drupal resource UUID.
@@ -228,6 +235,7 @@ class DruxtRouter {
    * Gets a collection of resources.
    *
    * @deprecated
+   * @see {@link https://druxtjs.org/api/client}
    *
    * @todo Add granular pagination.
    *
@@ -235,7 +243,7 @@ class DruxtRouter {
    * // Load all currently published Articles.
    * const query = new DrupalJsonApiParams()
    * query.addFilter('status', '1')
-   * const resources = await router.getResources('node--article', query, { all: true })
+   * const resources = await router.druxt.getCollection('node--article', query)
    *
    * @param {string} resource - The JSON:API resource type.
    * @param {string|object} query - A JSON:API query string or object.
