@@ -67,9 +67,10 @@ const DruxtRouterEntityMixin = {
       return
     }
 
-    // Otherwise invoke getEntity() to retrieve it from Drupal.
+    // Otherwise invoke getResource() to retrieve it from Drupal.
     if (!this.entity && this.uuid && this.type) {
-      this.entity = await this.getEntity({ id: this.uuid, type: this.type })
+      const resource = await this.getResource({ id: this.uuid, type: this.type })
+      this.entity = resource.data
       this.loading = false
     }
   },
@@ -97,7 +98,7 @@ const DruxtRouterEntityMixin = {
    */
   computed: {
     ...mapState({
-      entities: state => state.druxtRouter.entities
+      entities: state => state.druxt.resources
     })
   },
 
@@ -105,12 +106,14 @@ const DruxtRouterEntityMixin = {
    * Vue.js Methods.
    *
    * - Maps Vuex `druxtRouter/getEntity` action to `this->getEntity()`.
+   * - Maps Vuex `druxt/getResource` action to `this->getResource()`.
    *
    * @see {@link store|src/store.js}
    */
   methods: {
     ...mapActions({
-      getEntity: 'druxtRouter/getEntity'
+      getEntity: 'druxtRouter/getEntity',
+      getResource: 'druxt/getResource'
     })
   }
 }
