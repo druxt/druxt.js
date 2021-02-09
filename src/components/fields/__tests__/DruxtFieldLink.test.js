@@ -2,7 +2,6 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
 import { DruxtFieldLink } from '..'
 
 jest.mock('axios')
@@ -14,7 +13,6 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 
 const stubs = ['nuxt-link']
-let store
 
 const mountComponent = (link = {}, options) => {
   const propsData = {
@@ -22,17 +20,12 @@ const mountComponent = (link = {}, options) => {
     schema: {}
   }
 
-  return shallowMount(DruxtFieldLink, { ...options, localVue, propsData, store, stubs })
+  return shallowMount(DruxtFieldLink, { ...options, localVue, propsData, stubs })
 }
 
 describe('Component - DruxtFieldLink', () => {
   beforeEach(() => {
     mockAxios.reset()
-
-    // Setup vuex store.
-    store = new Vuex.Store()
-    store.$druxtRouter = new DruxtRouter(baseURL, {})
-    DruxtRouterStore({ store })
   })
 
   test('absolute', async () => {
