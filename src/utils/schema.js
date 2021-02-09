@@ -64,12 +64,12 @@ class Schema {
   async getResources(resource, query) {
     if (this.data[resource]) return this.data[resource]
 
-    this.data[resource] = await this.druxtSchema.druxtRouter.getResources(resource, query)
+    this.data[resource] = await this.druxtSchema.druxt.getCollection(resource, query)
     return this.data[resource]
   }
 
   async form() {
-    const entityFormDisplay = await this.getResources('entity_form_display--entity_form_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res) ? res[0] : res)
+    const entityFormDisplay = await this.getResources('entity_form_display--entity_form_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res.data) ? res.data[0] : res)
     if (!entityFormDisplay) return false
 
     const fieldConfig = await this.getResources('field_config--field_config', { 'filter[entity_type]': this.config.entityType, 'filter[bundle]': this.config.bundle })
@@ -90,7 +90,7 @@ class Schema {
         ...entityFormDisplay.attributes.content[field]
       }
 
-      let config = { attributes: {}, ...fieldConfig.find(element => element.attributes.field_name === field) }
+      let config = { attributes: {}, ...fieldConfig.data.find(element => element.attributes.field_name === field) }
       config = {
         description: null,
         label: null,
@@ -100,7 +100,7 @@ class Schema {
         ...config.attributes
       }
 
-      let storage = { attributes: {}, ...fieldStorageConfig.find(element => element.attributes.field_name === field) }
+      let storage = { attributes: {}, ...fieldStorageConfig.data.find(element => element.attributes.field_name === field) }
       storage = {
         cardinality: null,
         settings: {},
@@ -146,7 +146,7 @@ class Schema {
   }
 
   async view() {
-    const entityViewDisplay = await this.getResources('entity_view_display--entity_view_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res) ? res[0] : res)
+    const entityViewDisplay = await this.getResources('entity_view_display--entity_view_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res.data) ? res.data[0] : res)
     if (!entityViewDisplay) return false
 
     const fieldConfig = await this.getResources('field_config--field_config', { 'filter[entity_type]': this.config.entityType, 'filter[bundle]': this.config.bundle })
@@ -164,7 +164,7 @@ class Schema {
         ...entityViewDisplay.attributes.content[field]
       }
 
-      let config = { attributes: {}, ...fieldConfig.find(element => element.attributes.field_name === field) }
+      let config = { attributes: {}, ...fieldConfig.data.find(element => element.attributes.field_name === field) }
       config = {
         description: null,
         label: null,

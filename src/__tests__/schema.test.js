@@ -2,22 +2,22 @@ import { DruxtSchema } from '..'
 
 jest.mock('axios')
 
-const baseURL = 'https://example.com'
+const baseUrl = 'https://demo-api.druxtjs.org'
 const options = {}
 
 let schema
 
 describe('DruxtSchema', () => {
   beforeEach(() => {
-    schema = new DruxtSchema(baseURL, options)
+    schema = new DruxtSchema(baseUrl, options)
   })
 
   test('constructor', () => {
     // Throw error if 'baseURL' not provided.
-    expect(() => { new DruxtSchema() }).toThrow('The \'baseURL\' parameter is required.')
+    expect(() => { new DruxtSchema() }).toThrow('The \'baseUrl\' parameter is required.')
 
     // Ensure class type.
-    expect(new DruxtSchema(baseURL)).toBeInstanceOf(DruxtSchema)
+    expect(new DruxtSchema(baseUrl)).toBeInstanceOf(DruxtSchema)
   })
 
   test('get', async () => {

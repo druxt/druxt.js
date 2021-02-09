@@ -1,4 +1,4 @@
-import { DruxtRouter } from 'druxt-router'
+import { DruxtClient } from 'druxt'
 
 import { Schema } from './utils/schema'
 
@@ -24,7 +24,7 @@ class DruxtSchema {
    * @example @lang js
    * const schema = new DruxtSchema('https://example.com', {})
    *
-   * @param {string} baseURL - The Drupal base URL.
+   * @param {string} baseUrl - The Drupal base URL.
    * @param {object} [options] - Druxt Router options.
    * @param {object} [options.axios] - Axios instance settings.
    * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
@@ -32,9 +32,9 @@ class DruxtSchema {
    * @todo Document DruxtSchema authentication options.
    * @todo Document DruxtSchema filter options.
    */
-  constructor(baseURL, options = {}) {
+  constructor(baseUrl, options = {}) {
     // Check for URL.
-    if (!baseURL) throw new Error('The \'baseURL\' parameter is required.')
+    if (!baseUrl) throw new Error('The \'baseUrl\' parameter is required.')
 
     this.options = {
       auth: {
@@ -47,8 +47,13 @@ class DruxtSchema {
       ...options
     }
 
-    // Setup Druxt Router.
-    this.druxtRouter = new DruxtRouter(baseURL, this.options)
+    /**
+     * Instance of the Druxt Client.
+     *
+     * @type {DruxtClient}
+     * @see {@link http://druxtjs.org/api/client}
+     */
+    this.druxt = new DruxtClient(baseUrl, this.options)
   }
 
   /**
@@ -62,29 +67,31 @@ class DruxtSchema {
    * @todo Rename the `get()` method to `getAll()`.
    */
   async get() {
-    const index = await this.druxtRouter.getIndex()
+    const index = await this.druxt.getIndex()
     const schemas = {}
 
     for (const schemaType of ['view', 'form']) {
       const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
-      const displays = await this.druxtRouter.getResources(resourceType, {}, { all: true })
+      const displays = await this.druxt.getCollectionAll(resourceType)
 
-      for (const display of displays) {
-        const resource = index[[display.attributes.targetEntityType, display.attributes.bundle].join('--')]
+      for (const collection of displays) {
+        for (const display of collection.data) {
+          const resource = index[[display.attributes.targetEntityType, display.attributes.bundle].join('--')]
 
-        const config = {
-          entityType: display.attributes.targetEntityType,
-          bundle: display.attributes.bundle,
-          mode: display.attributes.mode,
-          schemaType,
-          filter: this.options.schema.filter,
+          const config = {
+            entityType: display.attributes.targetEntityType,
+            bundle: display.attributes.bundle,
+            mode: display.attributes.mode,
+            schemaType,
+            filter: this.options.schema.filter,
 
-          ...resource
-        }
+            ...resource
+          }
 
-        const schema = await this.getSchema(config, { data: display })
-        if (schema) {
-          schemas[schema.id] = schema.schema
+          const schema = await this.getSchema(config, { data: display })
+          if (schema) {
+            schemas[schema.id] = schema.schema
+          }
         }
       }
     }
