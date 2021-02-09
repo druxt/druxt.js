@@ -46,6 +46,7 @@ const external = [
   'consola',
   'druxt-router',
   'druxt-schema',
+  'md5',
   'path',
   'querystring'
 ];
@@ -57,6 +58,7 @@ const globals = {
   consola: 'consola',
   'druxt-router': 'druxtRouter',
   'druxt-schema': 'druxtSchema',
+  md5: 'md5',
   path: 'path',
   querystring: 'querystring'
 };
