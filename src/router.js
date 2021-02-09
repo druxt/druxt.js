@@ -88,6 +88,7 @@ class DruxtRouter {
    * @param {object} headers - An object containing HTTP headers.
    */
   addHeaders (headers) {
+    console.warn('[druxt-router] `addHeaders` is deprecated. See http://druxtjs.org/api/client.')
     if (typeof headers === 'undefined') {
       return false
     }
@@ -112,6 +113,7 @@ class DruxtRouter {
    * @return {string} The URL with query string.
    */
   buildQueryUrl (url, query) {
+    console.warn('[druxt-router] `buildQueryUrl` is deprecated. See http://druxtjs.org/api/client.')
     return this.druxt.buildQueryUrl(url, query)
   }
 
@@ -126,6 +128,7 @@ class DruxtRouter {
    * @private
    */
   checkPermissions (res) {
+    console.warn('[druxt-router] `checkPermissions` is deprecated. See http://druxtjs.org/api/client.')
     return this.druxt.checkPermissions(res)
   }
 
@@ -164,6 +167,7 @@ class DruxtRouter {
    * @returns {object} The resource index object or the specified resource.
    */
   async getIndex (resource) {
+    console.warn('[druxt-router] `getIndex` is deprecated. See http://druxtjs.org/api/client.')
     this.index = await this.druxt.getIndex(resource)
     return this.index
   }
@@ -227,6 +231,7 @@ class DruxtRouter {
    * @returns {object} The JSON:API resource data.
    */
   async getResource (query = {}) {
+    console.warn('[druxt-router] `getResource` is deprecated. See http://druxtjs.org/api/client.')
     const resource = await this.druxt.getResource(query.type, query.id)
     return resource.data || false
   }
@@ -252,6 +257,7 @@ class DruxtRouter {
    * @return {object[]} Array of resources.
    */
   async getResources (resource, query, options = {}) {
+    console.warn('[druxt-router] `getResources` is deprecated. See http://druxtjs.org/api/client.')
     let resources = { data: [] }
     if (options.all) {
       const collections = await this.druxt.getCollectionAll(resource, query)
