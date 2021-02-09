@@ -1,6 +1,6 @@
 {
   "name": "druxt-schema",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "description": "Entity Form and View mode schemas for Drupal driven frontends.",
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "consola": "^2.15.0",
-    "druxt-router": "^0.16.1"
+    "druxt": "^0.4.1"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.12.10",
