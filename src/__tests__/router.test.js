@@ -19,12 +19,13 @@ describe('DruxtRouter', () => {
 
   test('constructor', () => {
     // Throw error if 'baseURL' not provided.
-    expect(() => { return new DruxtRouter() }).toThrow('The \'baseURL\' parameter is required.')
+    expect(() => { return new DruxtRouter() }).toThrow('The \'baseUrl\' parameter is required.')
 
     // Ensure class type.
     expect(new DruxtRouter(baseURL)).toBeInstanceOf(DruxtRouter)
   })
 
+  // @deprecated
   test('constructor - axiosSettings', () => {
     const headers = { 'X-DruxtRouter': true }
     const mockRouter = new DruxtRouter(baseURL, {
@@ -35,6 +36,7 @@ describe('DruxtRouter', () => {
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL, headers })
   })
 
+  // @deprecated
   test('addHeaders', () => {
     expect(router.addHeaders()).toBe(false)
 
@@ -42,6 +44,7 @@ describe('DruxtRouter', () => {
     expect(router.axios.defaults.headers.common['X-DruxtRouter']).toBe(true)
   })
 
+  // @deprecated
   test('buildQueryUrl', () => {
     expect(router.buildQueryUrl('url', 'query')).toBe('url?query')
     expect(router.buildQueryUrl('url', '?query')).toBe('url?query')
@@ -54,6 +57,7 @@ describe('DruxtRouter', () => {
     expect(router.buildQueryUrl('url')).toBe('url')
   })
 
+  // @deprecated
   test('checkPermissions', () => {
     const res = {
       data: {
@@ -102,6 +106,7 @@ describe('DruxtRouter', () => {
     expect(route.error).toHaveProperty('statusCode', 404)
   })
 
+  // @deprecated
   test('getIndex', async () => {
     const index = await router.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
@@ -116,6 +121,7 @@ describe('DruxtRouter', () => {
     expect(Object.keys(cachedIndex).length).toBe(54)
   })
 
+  // @deprecated
   test('getIndex - resource', async () => {
     const resourceIndex = await router.getIndex('node--page')
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
@@ -171,6 +177,7 @@ describe('DruxtRouter', () => {
     expect(redirect).toBe(false)
   })
 
+  // @deprecated
   test('getResource', async () => {
     const entity = await router.getResource(testArticle)
     expect(entity).toHaveProperty('type', testArticle.type)
@@ -183,6 +190,7 @@ describe('DruxtRouter', () => {
     expect(empty).toBe(false)
   })
 
+  // @deprecated
   test('getResources', async () => {
     const resources = await router.getResources('node--page')
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page')
