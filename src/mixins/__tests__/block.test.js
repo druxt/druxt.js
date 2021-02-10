@@ -1,8 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
-
 import { DruxtBlocksBlockMixin } from '../..'
 
 const baseURL = 'https://example.com'
@@ -11,8 +9,6 @@ const baseURL = 'https://example.com'
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-let store
-
 const component = {
   name: 'DruxtBlockTest',
   mixins: [DruxtBlocksBlockMixin],
@@ -20,13 +16,6 @@ const component = {
 }
 
 describe('DruxtBlocksBlockMixin', () => {
-  beforeEach(() => {
-    // Setup vuex store.
-    store = new Vuex.Store()
-    store.$druxtRouter = new DruxtRouter(baseURL, {})
-    DruxtRouterStore({ store })
-  })
-
   test('defaults', () => {
     const propsData = {
       block: {
@@ -35,7 +24,7 @@ describe('DruxtBlocksBlockMixin', () => {
         }
       }
     }
-    const wrapper = mount(component, { localVue, propsData, store })
+    const wrapper = mount(component, { localVue, propsData })
 
     expect(wrapper.vm.settings).toStrictEqual({})
   })
