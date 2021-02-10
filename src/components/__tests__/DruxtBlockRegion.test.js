@@ -1,10 +1,12 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
+import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
+import { DruxtClient, DruxtStore } from 'druxt'
 import { DruxtBlockRegion } from '..'
 
-const baseURL = 'https://example.com'
+jest.mock('axios')
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -18,12 +20,12 @@ const mocks = {
 let store
 
 const mountComponent = (name = null, options = {}) => {
-  const propsData = { theme: 'test' }
+  const propsData = { theme: 'umami' }
   if (name) {
     propsData.name = name
   }
 
-  return mount(DruxtBlockRegion, { localVue, mocks, propsData, store, ...options })
+  return shallowMount(DruxtBlockRegion, { localVue, mocks, propsData, store, ...options })
 }
 
 describe('Component - DruxtBlockRegion', () => {
@@ -31,21 +33,15 @@ describe('Component - DruxtBlockRegion', () => {
     mockAxios.reset()
 
     // Setup vuex store.
-    store = new Vuex.Store({
-      modules: {
-        druxtRouter: {
-          namespaced: true,
-          actions: {
-            getResources: mocks.$druxtRouter().getResources
-          },
-          state: {
-            route: {
-              resolvedPath: '/'
-            }
-          }
-        }
-      }
-    })
+    store = new Vuex.Store()
+
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+    DruxtRouterStore({ store })
+    store.$druxtRouter = () => new DruxtRouter('https://demo-api.druxtjs.org')
+
+    store.app = { context: { error: jest.fn() }, store }
   })
 
   test('default', async () => {
@@ -53,11 +49,11 @@ describe('Component - DruxtBlockRegion', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.name).toBe('content')
-    expect(wrapper.vm.theme).toBe('test')
+    expect(wrapper.vm.theme).toBe('umami')
 
     expect(wrapper.vm.component.options.length).toBe(2)
     expect(wrapper.vm.component.options).toStrictEqual([
-      'DruxtBlockRegionContentTest',
+      'DruxtBlockRegionContentUmami',
       'DruxtBlockRegionContent'
     ])
 
