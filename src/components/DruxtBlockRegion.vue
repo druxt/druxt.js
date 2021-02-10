@@ -124,11 +124,8 @@ export default {
       .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
       .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
 
-    const options = {
-      headers: { 'Druxt-Request-Path': this.$store.state.druxtRouter.route.resolvedPath }
-    }
-
-    this.blocks = await this.getResources({ resource: 'block--block', query })
+    const collection = await this.getCollection({ type: 'block--block', query })
+    this.blocks = collection.data
 
     await DruxtComponentMixin.fetch.call(this)
   },
@@ -173,10 +170,10 @@ export default {
 
   methods: {
     /**
-     * Maps `druxtRouter/getResources` Vuex action to `this.getResources`.
+     * Maps `druxt/getCollection` Vuex action to `this.getCollection`.
      */
     ...mapActions({
-      getResources: 'druxtRouter/getResources'
+      getCollection: 'druxt/getCollection'
     })
   }
 }

@@ -2,10 +2,8 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
+import { DruxtClient, DruxtStore } from 'druxt'
 import { DruxtBlock } from '..'
-
-const baseURL = 'https://example.com'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -15,6 +13,7 @@ let store
 
 const mockBlock = {
   id: 'test-block',
+  type: 'block--block',
   attributes: {
     plugin: 'plugin',
     region: 'region',
@@ -31,7 +30,7 @@ const mountComponent = (entity, options = {}) => {
     uuid: entity.id
   }
 
-  store.commit('druxtRouter/addEntity', entity)
+  store.commit('druxt/addResource', { resource: { data: entity }, hash: '_default' })
 
   return mount(DruxtBlock, { localVue, mocks, propsData, store, ...options })
 }
@@ -43,8 +42,10 @@ describe('Component - DruxtBlock', () => {
     // Setup vuex store.
     store = new Vuex.Store()
 
-    DruxtRouterStore({ store })
-    store.$druxtRouter = new DruxtRouter(baseURL, {})
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+    store.app = { context: { error: jest.fn() }, store }
   })
 
   test('default', async () => {
