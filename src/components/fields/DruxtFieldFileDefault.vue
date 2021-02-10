@@ -52,14 +52,13 @@ export default {
   mixins: [DruxtFieldMixin],
 
   /**
-   * Loads all referenced entities via `druxtRouter/getEntity`.
-   *
-   * @see {@link https://router.druxtjs.org/api/stores/router.html#module_druxtRouter..getEntity}
+   * Loads all referenced entities via `druxt/getResource`.
    */
   async fetch() {
     for (const delta in this.items) {
       const item = this.items[delta]
-      this.entities[delta] = await this.getEntity({ id: item.uuid, type: item.type })
+      const resource = await this.getResource({ id: item.uuid, type: item.type })
+      this.entities[delta] = resource.data
     }
   },
 
@@ -76,10 +75,10 @@ export default {
 
   methods: {
     /**
-     * Maps `druxtRouter/getEntity` Vuex action to `this.getEntity`.
+     * Maps `druxt/getResource` Vuex action to `this.getResource`.
      */
     ...mapActions({
-      getEntity: 'druxtRouter/getEntity'
+      getResource: 'druxt/getResource'
     })
   }
 }

@@ -2,7 +2,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
+import { DruxtClient, DruxtStore } from 'druxt'
 import { DruxtSchemaStore } from 'druxt-schema'
 import { DruxtEntity, DruxtField } from '..'
 
@@ -16,7 +16,7 @@ localVue.component('DruxtField', DruxtField)
 const stubs = ['DruxtEntityNodePage']
 let store
 
-const mountComponent = entity => {
+const mountComponent = resource => {
   const mocks = {
     $fetchState: {
       pending: false
@@ -24,11 +24,11 @@ const mountComponent = entity => {
   }
 
   const propsData = {
-    uuid: entity.id,
-    type: entity.type
+    uuid: resource.data.id,
+    type: resource.data.type
   }
 
-  store.commit('druxtRouter/addEntity', entity)
+  store.commit('druxt/addResource', { resource, hash: '_default' })
 
   return mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
 }
@@ -40,8 +40,8 @@ describe('Component - DruxtEntity', () => {
     // Setup vuex store.
     store = new Vuex.Store()
 
-    DruxtRouterStore({ store })
-    store.$druxtRouter = new DruxtRouter(baseURL, {})
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
 
     DruxtSchemaStore({ store })
     store.$druxtSchema = {
@@ -49,11 +49,13 @@ describe('Component - DruxtEntity', () => {
         return require(`../../__fixtures__/${schema}.json`)
       }
     }
+
+    store.app = { context: { error: jest.fn() }, store }
   })
 
   test('pages', async () => {
-    const entity = require('../../__fixtures__/fe00c55d-0335-49d6-964e-a868c0c68f9c.json').data
-    const wrapper = mountComponent(entity)
+    const resource = require('../../__fixtures__/fe00c55d-0335-49d6-964e-a868c0c68f9c.json')
+    const wrapper = mountComponent(resource)
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.html()).toMatchSnapshot()

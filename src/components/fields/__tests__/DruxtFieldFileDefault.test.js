@@ -2,12 +2,10 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
+import { DruxtClient, DruxtStore } from 'druxt'
 import { DruxtFieldFileDefault } from '..'
 
 jest.mock('axios')
-
-const baseURL = 'https://example.com'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -27,7 +25,7 @@ const mountComponent = (link = {}, options) => {
       }
     }
   }
-  store.commit('druxtRouter/addEntity', entity)
+  store.commit('druxt/addResource', { resource: { data: entity }, hash: '_default' })
 
   const mocks = {
     $fetchState: {
@@ -49,8 +47,11 @@ describe('Component - DruxtFieldFileDefault', () => {
 
     // Setup vuex store.
     store = new Vuex.Store()
-    store.$druxtRouter = new DruxtRouter(baseURL, {})
-    DruxtRouterStore({ store })
+
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+    store.app = { context: { error: jest.fn() }, store }
   })
 
   test('default', async () => {
