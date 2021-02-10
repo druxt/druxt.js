@@ -65,26 +65,24 @@ export default {
   mixins: [DruxtFieldMixin],
 
   /**
-   * Loads all referenced entities via `druxtRouter/getEntity`.
-   *
-   * @see {@link https://router.druxtjs.org/api/stores/router.html#module_druxtRouter..getEntity}
+   * Loads all referenced entities via `druxt/getResource`.
    */
   async fetch() {
     for (const delta in this.items) {
       const item = this.items[delta]
 
-      const result = await this.getEntity({ id: item.uuid, type: item.type })
+      const result = await this.getResource({ id: item.uuid, type: item.type })
       if (!this.entities) this.entities = []
 
       this.entities[delta] = {
         props: false,
-        text: result.attributes[Object.keys(result.attributes).find(e => ['name', 'title'].includes(e))]
+        text: result.data.attributes[Object.keys(result.data.attributes).find(e => ['name', 'title'].includes(e))]
       }
 
-      if (((this.schema.settings || {}).display || {}).link && result.attributes.path.alias) {
+      if (((this.schema.settings || {}).display || {}).link && result.data.attributes.path.alias) {
         this.component = 'nuxt-link'
         this.entities[delta].props = {
-          to: result.attributes.path.alias
+          to: result.data.attributes.path.alias
         }
       }
     }
@@ -107,10 +105,10 @@ export default {
 
   methods: {
     /**
-     * Maps `druxtRouter/getEntity` Vuex action to `this.getEntity`.
+     * Maps `druxt/getResource` Vuex action to `this.getResource`.
      */
     ...mapActions({
-      getEntity: 'druxtRouter/getEntity'
+      getResource: 'druxt/getResource'
     })
   }
 }
