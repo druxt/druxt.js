@@ -2,7 +2,8 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
+import { DruxtClient, DruxtStore } from 'druxt'
+// import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
 import { DruxtField } from '..'
 
 jest.mock('axios')
@@ -47,8 +48,11 @@ describe('Component - DruxtField', () => {
 
     // Setup vuex store.
     store = new Vuex.Store()
-    store.$druxtRouter = new DruxtRouter(baseURL, {})
-    DruxtRouterStore({ store })
+
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+    store.app = { context: { error: jest.fn() }, store }
   })
 
   test('pages - title', async () => {

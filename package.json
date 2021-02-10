@@ -1,6 +1,6 @@
 {
   "name": "druxt-entity",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Drupal Display Mode powered Entity and Field Vue.js component system.",
   "repository": {
     "type": "git",
@@ -47,9 +47,9 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "druxt": "^0.3.3",
-    "druxt-router": "^0.17.1",
-    "druxt-schema": "^0.6.0"
+    "druxt": "^0.4.1",
+    "druxt-router": "^0.18.0",
+    "druxt-schema": "^0.7.0"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.12.10",
@@ -70,6 +70,7 @@
     "jest-mock-axios": "^3.2.0",
     "minimist": "^1.2.0",
     "nodemon": "^2.0.7",
+    "postcss": "^8.2.5",
     "rollup": "^1.26.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-terser": "^5.3.1",
