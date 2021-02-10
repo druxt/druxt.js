@@ -24,8 +24,9 @@ Add module to `nuxt.config.js`
 module.exports = {
   modules: [
     ...
+    'druxt',
     'druxt-entity',
-    'druxt-router'
+    'druxt-schema'
   ],
 
   druxt: {
