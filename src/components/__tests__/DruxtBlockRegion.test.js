@@ -12,11 +12,6 @@ jest.mock('axios')
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-const mocks = {
-  $druxtRouter: () => ({
-    getResources: jest.fn().mockImplementation(query => Promise.resolve({}))
-  })
-}
 let store
 
 const mountComponent = (name = null, options = {}) => {
@@ -25,7 +20,7 @@ const mountComponent = (name = null, options = {}) => {
     propsData.name = name
   }
 
-  return shallowMount(DruxtBlockRegion, { localVue, mocks, propsData, store, ...options })
+  return shallowMount(DruxtBlockRegion, { localVue, propsData, store, ...options })
 }
 
 describe('Component - DruxtBlockRegion', () => {
