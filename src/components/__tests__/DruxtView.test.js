@@ -2,7 +2,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from 'druxt'
-import { DruxtView } from '..'
+import { DruxtViewsStore, DruxtView } from '../..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -16,6 +16,9 @@ const mountComponent = (propsData) => {
     $fetchState: {
       pending: true
     },
+    $route: {
+      query: {}
+    }
   }
 
   return mount(DruxtView, { localVue, mocks, propsData, store })
@@ -27,6 +30,8 @@ describe('Component - DruxtView', () => {
 
     DruxtStore({ store })
     store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+    DruxtViewsStore({ store })
 
     store.app = { context: { error: jest.fn() }, store }
   })

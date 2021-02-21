@@ -1,5 +1,6 @@
 import { DruxtViewsNuxtModule } from './nuxtModule'
 import * as DruxtViewsComponents from './components'
+import * as DruxtViewsMixins from './mixins'
 
 /**
  * The NuxtJS module function.
@@ -25,13 +26,16 @@ export { DruxtViewsComponents }
 export * from './components'
 
 /**
- * Vue.js Mixin.
+ * Vue.js mixins.
  *
  * @type {object}
- * @exports DruxtViewsViewMixin
+ * @exports DruxtViewsMixins
+ * @see {@link ./mixins|DruxtViewsMixins}
+ * @see {@link ./mixins/pager|DruxtViewsPagerMixin}
  * @see {@link ./mixins/view|DruxtViewsViewMixin}
  */
-export { DruxtViewsViewMixin } from './mixins/view'
+export { DruxtViewsMixins }
+export * from './mixins'
 
 /**
  * Vuex store module.
@@ -41,4 +45,4 @@ export { DruxtViewsViewMixin } from './mixins/view'
  * @name DruxtViewsStore
  * @see {@link ./stores/views|DruxtViewsStore}
  */
-export {DruxtViewsStore } from './stores/views'
+export { DruxtViewsStore } from './stores/views'

@@ -1,25 +1,18 @@
 import { DruxtEntityContextMixin } from 'druxt-entity'
 
 /**
- * Provides Vue.js properties to render Drupal Views components.
- *
- * This Mixin is intended for use by `view` type Component Suggestions for
- * targetted theming of Drupal Views.
+ * Provides Vue.js properties for DruxtView slot themable components.
  *
  * @mixin
  *
  * @example @lang vue
  * <script>
- * // Import mixin.
  * import { DruxtViewsViewMixin } from 'druxt-views'
  *
  * export default {
- *   // Register mixin.
  *   mixins: [DruxtViewsViewMixin],
  * }
  * </script>
- *
- * @see {@link https://entity.druxtjs.org/api/mixins/componentSuggestion.html|DruxtEntityComponentSuggestionMixin}
  */
 const DruxtViewsViewMixin = {
   /**
@@ -34,11 +27,41 @@ const DruxtViewsViewMixin = {
    */
   props: {
     /**
+     * The JSON:API Views results total count.
+     *
+     * @type {integer}
+     */
+    count: {
+      type: Number,
+      require: true,
+    },
+
+    /**
      * The View display object.
      *
      * @type {object}
      */
     display: {
+      type: Object,
+      require: true,
+    },
+
+    /**
+     * The Entity display mode.
+     *
+     * @type {boolean|string}
+     */
+    mode: {
+      type: [Boolean, String],
+      default: 'default'
+    },
+
+    /**
+     * The View pager settings.
+     *
+     * @type {object}
+     */
+    pager: {
       type: Object,
       require: true,
     },
@@ -54,6 +77,18 @@ const DruxtViewsViewMixin = {
     },
 
     /**
+     * The DruxtView model value.
+     *
+     * @type {object}
+     */
+    value: {
+      type: Object,
+      default: () => ({
+        page: null,
+      })
+    },
+
+    /**
      * The JSON:API View resource.
      *
      * @type {object}
@@ -62,6 +97,23 @@ const DruxtViewsViewMixin = {
       type: Object,
       require: true,
     },
+  },
+
+  /**
+   * Vue.js Data object.
+   *
+   * @property {object} model - The DruxtView model.
+   */
+  data() {
+    return {
+      model: this.value
+    }
+  },
+
+  watch: {
+    model() {
+      this.$emit('input', this.model)
+    }
   }
 }
 
