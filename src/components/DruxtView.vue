@@ -153,15 +153,17 @@ export default {
    * Nuxt fetch method.
    */
   async fetch() {
-    this.view = await this.getResource({
+    const view = await this.getResource({
       type: this.type,
       id: this.uuid,
     })
+    this.view = view.data
 
-    this.results = await this.getResource({
+    const results = await this.getResource({
       type: `views--${this.viewId}`,
       id: this.displayId
     })
+    this.results = results.data
 
     await DruxtComponentMixin.fetch.call(this)
   },
@@ -258,10 +260,10 @@ export default {
 
   methods: {
     /**
-     * Maps `druxtRouter/getEntity` Vuex action to `this.getResource`.
+     * Maps `ddruxt/getResource` Vuex action to `this.getResource`.
      */
     ...mapActions({
-      getResource: 'druxtRouter/getEntity'
+      getResource: 'druxt/getResource'
     })
   },
 

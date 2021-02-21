@@ -1,7 +1,7 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouterStore } from 'druxt-router'
+import { DruxtClient, DruxtStore } from 'druxt'
 import { DruxtView } from '..'
 
 // Setup local vue instance.
@@ -19,8 +19,16 @@ const mountComponent = (propsData) => {
   }
 
   const view = require(`../__fixtures__/${propsData.uuid}.json`).data
-  store.commit('druxtRouter/addEntity', view)
-  store.commit('druxtRouter/addEntity', { id: propsData.displayId })
+  store.commit('druxt/addResource', { resource: { data: view }, hash: '_default' })
+  store.commit('druxt/addResource', {
+    resource: {
+      data: {
+        id: propsData.displayId,
+        type: 'node--page',
+      }
+    },
+    hash: '_default'
+  })
 
   return mount(DruxtView, { localVue, mocks, propsData, store })
 }
@@ -29,7 +37,10 @@ describe('Component - DruxtView', () => {
   beforeEach(() => {
     store = new Vuex.Store()
 
-    DruxtRouterStore({ store })
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+    store.app = { context: { error: jest.fn() }, store }
   })
 
   test('featured_articles', async () => {
@@ -57,6 +68,5 @@ describe('Component - DruxtView', () => {
       'DruxtViewFeaturedArticlesPage1',
       'DruxtViewFeaturedArticles'
     ])
-    expect(wrapper.vm.component.propsData).toStrictEqual({})
   })
 })
