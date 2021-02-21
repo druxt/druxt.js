@@ -18,18 +18,6 @@ const mountComponent = (propsData) => {
     },
   }
 
-  const view = require(`../__fixtures__/${propsData.uuid}.json`).data
-  store.commit('druxt/addResource', { resource: { data: view }, hash: '_default' })
-  store.commit('druxt/addResource', {
-    resource: {
-      data: {
-        id: propsData.displayId,
-        type: 'node--page',
-      }
-    },
-    hash: '_default'
-  })
-
   return mount(DruxtView, { localVue, mocks, propsData, store })
 }
 
@@ -46,14 +34,14 @@ describe('Component - DruxtView', () => {
   test('featured_articles', async () => {
     const wrapper = mountComponent({
       displayId: 'page_1',
-      uuid: '382e41b6-6d8d-4b76-9ed1-ed28ed78199b',
+      uuid: 'ab193308-95ab-489d-b662-f7305380c41e',
       viewId: 'featured_articles'
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Props.
     expect(wrapper.vm.displayId).toBe('page_1')
-    expect(wrapper.vm.uuid).toBe('382e41b6-6d8d-4b76-9ed1-ed28ed78199b')
+    expect(wrapper.vm.uuid).toBe('ab193308-95ab-489d-b662-f7305380c41e')
     expect(wrapper.vm.viewId).toBe('featured_articles')
 
     // Computed.

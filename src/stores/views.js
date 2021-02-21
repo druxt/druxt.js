@@ -46,6 +46,8 @@ const DruxtViewsStore = ({ store }) => {
        * this.$store.commit('druxt/views/addResults', { results, viewId, displayId, hash })
        */
       addResults (state, { results, viewId, displayId, hash }) {
+        if (!results || !viewId || !displayId || !hash) return
+
         if (!state.results[viewId]) state.results[viewId] = {}
         if (!state.results[viewId][displayId]) state.results[viewId][displayId] = {}
         state.results[viewId][displayId][hash] = results
