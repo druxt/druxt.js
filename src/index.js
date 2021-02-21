@@ -21,6 +21,7 @@ export default DruxtViewsNuxtModule
  * @exports DruxtViewsComponents
  * @see {@link ./components/DruxtView|DruxtView}
  * @see {@link ./components/DruxtViewsPager|DruxtViewsPager}
+ * @see {@link ./components/DruxtViewsSorts|DruxtViewsSorts}
  * @see {@link ./components/blocks/DruxtBlockViewsBlock|DruxtBlockViewsBlock}
  */
 export { DruxtViewsComponents }
@@ -33,6 +34,7 @@ export * from './components'
  * @exports DruxtViewsMixins
  * @see {@link ./mixins|DruxtViewsMixins}
  * @see {@link ./mixins/pager|DruxtViewsPagerMixin}
+ * @see {@link ./mixins/sorts|DruxtViewsSortsMixin}
  * @see {@link ./mixins/view|DruxtViewsViewMixin}
  */
 export { DruxtViewsMixins }

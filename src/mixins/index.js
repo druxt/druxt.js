@@ -8,6 +8,15 @@
 export { DruxtViewsPagerMixin } from './pager'
 
 /**
+ * Vue.js mixin for DruxtViewSorts slot themable components
+ *
+ * @type {object}
+ * @exports DruxtViewsSortsMixin
+ * @see {@link ./sorts|DruxtViewsSortsMixin}
+ */
+export { DruxtViewsSortsMixin } from './sorts'
+
+/**
  * Vue.js mixin for DruxtView slot themable components
  *
  * @type {object}
