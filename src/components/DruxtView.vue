@@ -1,7 +1,7 @@
 <template>
   <component
     :is="wrapper.component"
-    v-if="!$fetchState.pending && this.view"
+    v-if="!$fetchState.pending && view"
     v-bind="wrapper.propsData"
   >
     <component

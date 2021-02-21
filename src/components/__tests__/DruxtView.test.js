@@ -13,6 +13,7 @@ let store
 
 const mountComponent = (propsData) => {
   const mocks = {
+    $fetch: jest.fn(),
     $fetchState: {
       pending: true
     },
@@ -24,7 +25,7 @@ const mountComponent = (propsData) => {
   return mount(DruxtView, { localVue, mocks, propsData, store })
 }
 
-describe('Component - DruxtView', () => {
+describe('DruxtView', () => {
   beforeEach(() => {
     store = new Vuex.Store()
 
@@ -61,5 +62,15 @@ describe('Component - DruxtView', () => {
       'DruxtViewFeaturedArticlesPage1',
       'DruxtViewFeaturedArticles'
     ])
+
+    // Pagination.
+    wrapper.vm.model.page = 1
+    expect(wrapper.vm.query).toStrictEqual({ page: 1 })
+    expect(wrapper.vm.showPager).toBe(true)
+
+    wrapper.vm.$route.query = {}
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toStrictEqual({ page: null })
+    expect(wrapper.vm.query).toStrictEqual({})
   })
 })

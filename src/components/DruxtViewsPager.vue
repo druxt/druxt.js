@@ -57,7 +57,7 @@ export default {
      */
     count: {
       type: [Boolean, Number],
-      required: true,
+      default: false,
     },
 
     /**
@@ -67,7 +67,7 @@ export default {
      */
     options: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
 
     /**
@@ -77,7 +77,7 @@ export default {
      */
     resource: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
 
     /**
@@ -87,7 +87,7 @@ export default {
      */
     type: {
       type: String,
-      required: true,
+      default: 'none',
     },
 
     /**
@@ -115,7 +115,9 @@ export default {
 
   methods: {
     getQuery(link) {
-      return Object.fromEntries(new URLSearchParams(link.href.split('?')[1]))
+      const query = Object.fromEntries(new URLSearchParams(link.href.split('?')[1]))
+      if (typeof query.page === 'string') query.page = parseInt(query.page)
+      return query
     },
 
     getRoute(link) {

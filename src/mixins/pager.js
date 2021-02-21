@@ -23,8 +23,8 @@ const DruxtViewsPagerMixin = {
      * @type {integer}
      */
     count: {
-      type: Number,
-      require: true,
+      type: [Boolean, Number],
+      default: false,
     },
 
     /**
@@ -34,7 +34,7 @@ const DruxtViewsPagerMixin = {
      */
     options: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
 
     /**
@@ -44,7 +44,7 @@ const DruxtViewsPagerMixin = {
      */
     resource: {
       type: Object,
-      require: true,
+      default: () => ({}),
     },
 
     /**
@@ -54,7 +54,7 @@ const DruxtViewsPagerMixin = {
      */
     type: {
       type: String,
-      required: true,
+      default: 'none',
     },
 
     /**
@@ -64,7 +64,7 @@ const DruxtViewsPagerMixin = {
      */
     value: {
       type: Number,
-      default: undefined,
+      default: 0,
     },
   },
 
