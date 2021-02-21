@@ -58,7 +58,7 @@ const DruxtViewsPagerMixin = {
     },
 
     /**
-     * The DruxtView pager model value.
+     * The DruxtViewPager model value.
      *
      * @type {integer}
      */
@@ -71,7 +71,7 @@ const DruxtViewsPagerMixin = {
   /**
    * Vue.js Data object.
    *
-   * @property {object} model - The DruxtView pager model.
+   * @property {object} model - The DruxtViewPager model.
    */
   data() {
     return {

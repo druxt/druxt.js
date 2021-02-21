@@ -91,7 +91,7 @@ export default {
     },
 
     /**
-     * The Model value.
+     * The DruxtViewPager model value.
      *
      * @type {integer}
      */

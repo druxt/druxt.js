@@ -38,7 +38,8 @@ describe('DruxtViewsPager', () => {
   })
 
   test('Component', async () => {
-    const wrapper = mountComponent({})
+    const wrapper = mountComponent({ type: 'test' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     const link = { href: '?page=1' }
     expect(wrapper.vm.getQuery(link)).toStrictEqual({ page: 1 })
@@ -52,5 +53,12 @@ describe('DruxtViewsPager', () => {
     wrapper.vm.setPage(link)
     await localVue.nextTick()
     expect(wrapper.emitted().input).toStrictEqual([[1]])
+
+    // DruxtComponentMixin.
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtViewsPagerTest',
+      'DruxtViewsPagerDefault'
+    ])
   })
 })

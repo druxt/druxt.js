@@ -20,6 +20,7 @@ export default DruxtViewsNuxtModule
  * @type {object}
  * @exports DruxtViewsComponents
  * @see {@link ./components/DruxtView|DruxtView}
+ * @see {@link ./components/DruxtViewsPager|DruxtViewsPager}
  * @see {@link ./components/blocks/DruxtBlockViewsBlock|DruxtBlockViewsBlock}
  */
 export { DruxtViewsComponents }
