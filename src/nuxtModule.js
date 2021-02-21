@@ -22,7 +22,7 @@ import { resolve } from 'path'
  *
  * @param {object} moduleOptions - Nuxt module options object.
  */
-const DruxtViewsModule = function (moduleOptions = {}) {
+const DruxtViewsNuxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
@@ -35,6 +35,16 @@ const DruxtViewsModule = function (moduleOptions = {}) {
     fileName: 'druxt-views.js',
     options
   })
+
+  // Add Vuex plugin.
+  this.addPlugin({
+    src: resolve(__dirname, '../nuxt/store.js'),
+    fileName: 'store/druxt-views.js',
+    options
+  })
+
+  // Enable Vuex Store.
+  this.options.store = true
 }
 
-export { DruxtViewsModule }
+export { DruxtViewsNuxtModule }

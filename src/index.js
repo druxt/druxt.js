@@ -1,4 +1,4 @@
-import { DruxtViewsModule } from './module'
+import { DruxtViewsNuxtModule } from './nuxtModule'
 import * as DruxtViewsComponents from './components'
 
 /**
@@ -8,10 +8,10 @@ import * as DruxtViewsComponents from './components'
  *
  * @type {Function}
  * @exports default
- * @name DruxtViewsModule
- * @see {@link ./module|DruxtViewsModule}
+ * @name DruxtViewsNuxtModule
+ * @see {@link ./module|DruxtViewsNuxtModule}
  */
-export default DruxtViewsModule
+export default DruxtViewsNuxtModule
 
 /**
  * Vue.js components.
@@ -32,3 +32,13 @@ export * from './components'
  * @see {@link ./mixins/view|DruxtViewsViewMixin}
  */
 export { DruxtViewsViewMixin } from './mixins/view'
+
+/**
+ * Vuex store module.
+ *
+ * @type {object}
+ * @exports DruxtViewsStore
+ * @name DruxtViewsStore
+ * @see {@link ./stores/views|DruxtViewsStore}
+ */
+export {DruxtViewsStore } from './stores/views'
