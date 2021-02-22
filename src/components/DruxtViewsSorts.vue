@@ -16,7 +16,10 @@
             v-for="sort of sorts"
             :key="sort.id"
           >
-            <nuxt-link :to="sortBy(sort)">
+            <nuxt-link
+              :to="sortBy(sort)"
+              @click.native="model = sort.id"
+            >
               {{ sort.expose.label }}
             </nuxt-link>
           </li>
