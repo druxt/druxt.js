@@ -1,4 +1,22 @@
 /**
+ * Vue.js mixin for DruxtViewsFilter slot themable components.
+ *
+ * @type {object}
+ * @exports DruxtViewsFilterMixin
+ * @see {@link ./filter|DruxtViewsFilterMixin}
+ */
+export { DruxtViewsFilterMixin } from './filter'
+
+/**
+ * Vue.js mixin for DruxtViewsFilters slot themable components.
+ *
+ * @type {object}
+ * @exports DruxtViewsFiltersMixin
+ * @see {@link ./filters|DruxtViewsFiltersMixin}
+ */
+export { DruxtViewsFiltersMixin } from './filters'
+
+/**
  * Vue.js mixin for DruxtViewsPager slot themable components.
  *
  * @type {object}
