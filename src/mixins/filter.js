@@ -33,7 +33,7 @@ const DruxtViewsFilterMixin = {
      * @type {*}
      */
     value: {
-      type: [Array, Number, String],
+      type: [Array, Boolean, Number, String],
       default: undefined,
     },
   },

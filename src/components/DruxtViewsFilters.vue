@@ -65,10 +65,13 @@ export default {
   },
 
   watch: {
-    model() {
-      // Only emit 'input' if using the default 'DruxtWrapper' component.
-      if (this.component.is === 'DruxtWrapper') {
-        this.$emit('input', this.model)
+    model: {
+      deep: true,
+      handler() {
+        // Only emit 'input' if using the default 'DruxtWrapper' component.
+        if (this.component.is === 'DruxtWrapper') {
+          this.$emit('input', this.model)
+        }
       }
     }
   },
@@ -92,7 +95,6 @@ export default {
 
     // Build scoped slots for each filter.
     const scopedSlots = {}
-    const _this = this
 
     this.filters.map((filter) => {
       scopedSlots[filter.expose.identifier] = attrs => h('DruxtViewsFilter', {
@@ -102,7 +104,9 @@ export default {
           value: this.model[filter.expose.identifier]
         },
         on: {
-          input: (value) => _this.model[filter.expose.identifier] = value
+          input: (value) => {
+            this.model = { ...this.model, [filter.expose.identifier]: value }
+          }
         }
       })
     })
