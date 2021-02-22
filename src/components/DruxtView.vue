@@ -18,6 +18,18 @@
         />
       </template>
 
+      <!-- Scoped slot: Exposed sorts -->
+      <template
+        v-if="showSorts"
+        #sorts="$attrs"
+      >
+        <DruxtViewsSorts
+          v-model="model.sort"
+          :sorts="sorts"
+          v-bind="{ ...display.display_options.exposed_form, ...$attrs }"
+        />
+      </template>
+
       <!-- Scoped slot: Attachments before -->
       <template
         v-if="attachments_before"
@@ -81,6 +93,14 @@
           v-for="header of headers"
           :key="header.id"
           v-html="header.content.value"
+        />
+
+        <!-- Exposed sorts -->
+        <DruxtViewsSorts
+          v-if="showSorts"
+          v-model="model.sort"
+          :sorts="sorts"
+          v-bind="display.display_options.exposed_form"
         />
 
         <!-- Results -->
@@ -209,6 +229,7 @@ export default {
     return {
       model: {
         page: parseInt(model.page) || null,
+        sort: model.sort || null,
       },
       resource: null,
       view: false
@@ -317,6 +338,11 @@ export default {
         query.page = this.model.page
       }
 
+      // Exposed sorts.
+      if (this.model.sort) {
+        query['views-sort[sort_by]'] = this.model.sort
+      }
+
       return query
     },
 
@@ -337,6 +363,24 @@ export default {
     showPager() {
       return this.pager.type && this.pager.type !== 'none'
     },
+
+    /**
+     * Whether Exposed sorts are available and should be displayed.
+     *
+     * @type {boolean}
+     */
+    showSorts() {
+      return !!(((((this.display || {}).display_options || {}).exposed_form || {}).options || {}).expose_sort_order && this.sorts.length)
+    },
+
+    /**
+     * Exposed sorts.
+     *
+     * @type {object[]}
+     */
+    sorts() {
+      return Object.values(((this.display || {}).display_options || {}).sorts || {}).filter(sort => sort.exposed)
+    }
   },
 
   watch: {
@@ -344,6 +388,7 @@ export default {
       if (!Object.entries(to).length) {
         this.model = {
           page: null,
+          sort: null,
         }
         await this.$fetch
       }

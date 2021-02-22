@@ -19,6 +19,16 @@ import DruxtViewsPager from './DruxtViewsPager.vue'
 export { DruxtViewsPager }
 
 /**
+ * The `<DruxtViewsSorts />` Vue.js component.
+ *
+ * @type {object}
+ * @exports DruxtViewsSorts
+ * @see {@link ./DruxtViewsSorts|DruxtViewsSorts}
+ */
+import DruxtViewsSorts from './DruxtViewsSorts.vue'
+export { DruxtViewsSorts }
+
+/**
  * The `<DruxtRouterView />` Vue.js component.
  *
  * @type {object}
