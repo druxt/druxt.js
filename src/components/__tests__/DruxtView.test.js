@@ -1,8 +1,8 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouterStore } from 'druxt-router'
-import { DruxtView } from '..'
+import { DruxtClient, DruxtStore } from 'druxt'
+import { DruxtViewsStore, DruxtView } from '../..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -13,36 +13,41 @@ let store
 
 const mountComponent = (propsData) => {
   const mocks = {
+    $fetch: jest.fn(),
     $fetchState: {
       pending: true
     },
+    $route: {
+      query: {}
+    }
   }
-
-  const view = require(`../__fixtures__/${propsData.uuid}.json`).data
-  store.commit('druxtRouter/addEntity', view)
-  store.commit('druxtRouter/addEntity', { id: propsData.displayId })
 
   return mount(DruxtView, { localVue, mocks, propsData, store })
 }
 
-describe('Component - DruxtView', () => {
+describe('DruxtView', () => {
   beforeEach(() => {
     store = new Vuex.Store()
 
-    DruxtRouterStore({ store })
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+    DruxtViewsStore({ store })
+
+    store.app = { context: { error: jest.fn() }, store }
   })
 
   test('featured_articles', async () => {
     const wrapper = mountComponent({
       displayId: 'page_1',
-      uuid: '382e41b6-6d8d-4b76-9ed1-ed28ed78199b',
+      uuid: 'ab193308-95ab-489d-b662-f7305380c41e',
       viewId: 'featured_articles'
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Props.
     expect(wrapper.vm.displayId).toBe('page_1')
-    expect(wrapper.vm.uuid).toBe('382e41b6-6d8d-4b76-9ed1-ed28ed78199b')
+    expect(wrapper.vm.uuid).toBe('ab193308-95ab-489d-b662-f7305380c41e')
     expect(wrapper.vm.viewId).toBe('featured_articles')
 
     // Computed.
@@ -57,6 +62,24 @@ describe('Component - DruxtView', () => {
       'DruxtViewFeaturedArticlesPage1',
       'DruxtViewFeaturedArticles'
     ])
-    expect(wrapper.vm.component.propsData).toStrictEqual({})
+
+    // Pagination.
+    wrapper.vm.model.page = 1
+    expect(wrapper.vm.query).toStrictEqual({ page: 1 })
+    expect(wrapper.vm.showPager).toBe(true)
+
+    wrapper.vm.$route.query = {}
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toStrictEqual({
+      filter: null,
+      page: null,
+      sort: null
+    })
+    expect(wrapper.vm.query).toStrictEqual({})
+
+    // Sorting.
+    wrapper.vm.model.sort = 'test'
+    expect(wrapper.vm.query).toStrictEqual({ 'views-sort[sort_by]': 'test' })
+    expect(wrapper.vm.showSorts).toBe(false)
   })
 })

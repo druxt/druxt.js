@@ -4,17 +4,17 @@
     "meta":{
       "links":{
         "self":{
-          "href":"http://jsonapi.org/format/1.0/"
+          "href":"http:\/\/jsonapi.org\/format\/1.0\/"
         }
       }
     }
   },
   "data":{
     "type":"view--view",
-    "id":"382e41b6-6d8d-4b76-9ed1-ed28ed78199b",
+    "id":"ab193308-95ab-489d-b662-f7305380c41e",
     "links":{
       "self":{
-        "href":"https://demo-api.druxtjs.org/en/jsonapi/view/view/382e41b6-6d8d-4b76-9ed1-ed28ed78199b"
+        "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/view\/view\/ab193308-95ab-489d-b662-f7305380c41e"
       }
     },
     "attributes":{
@@ -98,8 +98,8 @@
                   "offset_label":"Offset"
                 },
                 "tags":{
-                  "previous":"‹‹",
-                  "next":"››"
+                  "previous":"\u2039\u2039",
+                  "next":"\u203a\u203a"
                 }
               }
             },
@@ -370,7 +370,7 @@
   },
   "links":{
     "self":{
-      "href":"https://demo-api.druxtjs.org/en/jsonapi/view/view/382e41b6-6d8d-4b76-9ed1-ed28ed78199b"
+      "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/view\/view\/ab193308-95ab-489d-b662-f7305380c41e"
     }
   }
 }

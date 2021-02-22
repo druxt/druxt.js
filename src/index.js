@@ -1,5 +1,6 @@
-import { DruxtViewsModule } from './module'
+import { DruxtViewsNuxtModule } from './nuxtModule'
 import * as DruxtViewsComponents from './components'
+import * as DruxtViewsMixins from './mixins'
 
 /**
  * The NuxtJS module function.
@@ -8,10 +9,10 @@ import * as DruxtViewsComponents from './components'
  *
  * @type {Function}
  * @exports default
- * @name DruxtViewsModule
- * @see {@link ./module|DruxtViewsModule}
+ * @name DruxtViewsNuxtModule
+ * @see {@link ./module|DruxtViewsNuxtModule}
  */
-export default DruxtViewsModule
+export default DruxtViewsNuxtModule
 
 /**
  * Vue.js components.
@@ -19,16 +20,36 @@ export default DruxtViewsModule
  * @type {object}
  * @exports DruxtViewsComponents
  * @see {@link ./components/DruxtView|DruxtView}
+ * @see {@link ./components/DruxtViewsFilter|DruxtViewsFilter}
+ * @see {@link ./components/DruxtViewsFilters|DruxtViewsFilters}
+ * @see {@link ./components/DruxtViewsPager|DruxtViewsPager}
+ * @see {@link ./components/DruxtViewsSorts|DruxtViewsSorts}
  * @see {@link ./components/blocks/DruxtBlockViewsBlock|DruxtBlockViewsBlock}
  */
 export { DruxtViewsComponents }
 export * from './components'
 
 /**
- * Vue.js Mixin.
+ * Vue.js mixins.
  *
  * @type {object}
- * @exports DruxtViewsViewMixin
+ * @exports DruxtViewsMixins
+ * @see {@link ./mixins|DruxtViewsMixins}
+ * @see {@link ./mixins/filter|DruxtViewsFilterMixin}
+ * @see {@link ./mixins/filters|DruxtViewsFiltersMixin}
+ * @see {@link ./mixins/pager|DruxtViewsPagerMixin}
+ * @see {@link ./mixins/sorts|DruxtViewsSortsMixin}
  * @see {@link ./mixins/view|DruxtViewsViewMixin}
  */
-export { DruxtViewsViewMixin } from './mixins/view'
+export { DruxtViewsMixins }
+export * from './mixins'
+
+/**
+ * Vuex store module.
+ *
+ * @type {object}
+ * @exports DruxtViewsStore
+ * @name DruxtViewsStore
+ * @see {@link ./stores/views|DruxtViewsStore}
+ */
+export { DruxtViewsStore } from './stores/views'

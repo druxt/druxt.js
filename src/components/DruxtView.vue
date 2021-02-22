@@ -1,11 +1,12 @@
 <template>
   <component
     :is="wrapper.component"
-    v-if="!$fetchState.pending"
+    v-if="!$fetchState.pending && view"
     v-bind="wrapper.propsData"
   >
     <component
       :is="component.is"
+      v-model="model"
       v-bind="component.propsData"
     >
       <!-- Scoped slot: Header -->
@@ -17,12 +18,40 @@
         />
       </template>
 
+      <!-- Scoped slot: Exposed filters -->
+      <template
+        v-if="filters"
+        #filters="$attrs"
+      >
+        <DruxtViewsFilters
+          v-model="model.filter"
+          :filters="filters"
+          v-bind="{ ...display.display_options.exposed_form, ...$attrs }"
+          @input="onFiltersUpdate"
+        />
+      </template>
+
+      <!-- Scoped slot: Exposed sorts -->
+      <template
+        v-if="showSorts"
+        #sorts="$attrs"
+      >
+        <DruxtViewsSorts
+          v-model="model.sort"
+          :sorts="sorts"
+          v-bind="{ ...display.display_options.exposed_form, ...$attrs }"
+        />
+      </template>
+
       <!-- Scoped slot: Attachments before -->
-      <template v-if="attachments_before" v-slot:attachments_before="$attrs">
+      <template
+        v-if="attachments_before"
+        v-slot:attachments_before="$attrs"
+      >
         <DruxtView
-          v-for="displayId of attachments_before"
-          :key="displayId"
-          :display-id="displayId"
+          v-for="attachmentDisplayId of attachments_before"
+          :key="attachmentDisplayId"
+          :display-id="attachmentDisplayId"
           :type="type"
           :uuid="uuid"
           :view-id="viewId"
@@ -34,22 +63,36 @@
       <template v-slot:results="options">
         <DruxtEntity
           v-for="result of results"
+          :key="result.id"
           v-bind="{
             type: result.type,
             uuid: result.id,
             mode,
             ...options
           }"
-          :key="result.id"
+        />
+      </template>
+
+      <!-- Scoped slot: Pager -->
+      <template
+        v-if="showPager"
+        #pager="$attrs"
+      >
+        <DruxtViewsPager
+          v-model="model.page"
+          v-bind="{ count, ...pager, resource, ...$attrs }"
         />
       </template>
 
       <!-- Scoped slot: Attachments after -->
-      <template v-if="attachments_after" v-slot:attachments_after="$attrs">
+      <template
+        v-if="attachments_after"
+        v-slot:attachments_after="$attrs"
+      >
         <DruxtView
-          v-for="displayId of attachments_after"
-          :key="displayId"
-          :display-id="displayId"
+          v-for="attachmentDisplayId of attachments_after"
+          :key="attachmentDisplayId"
+          :display-id="attachmentDisplayId"
           :type="type"
           :uuid="uuid"
           :view-id="viewId"
@@ -65,15 +108,38 @@
           v-html="header.content.value"
         />
 
+        <!-- Exposed filters -->
+        <DruxtViewsFilters
+          v-model="model.filter"
+          :filters="filters"
+          v-bind="display.display_options.exposed_form"
+          @input="onFiltersUpdate"
+        />
+
+        <!-- Exposed sorts -->
+        <DruxtViewsSorts
+          v-if="showSorts"
+          v-model="model.sort"
+          :sorts="sorts"
+          v-bind="display.display_options.exposed_form"
+        />
+
         <!-- Results -->
         <DruxtEntity
           v-for="result of results"
+          :key="result.id"
           v-bind="{
             type: result.type,
             uuid: result.id,
             mode
           }"
-          :key="result.id"
+        />
+
+        <!-- Pager -->
+        <DruxtViewsPager
+          v-if="showPager"
+          v-model="model.page"
+          v-bind="{ count, ...pager, resource }"
         />
       </template>
     </component>
@@ -82,8 +148,9 @@
 
 <script>
 import merge from 'deepmerge'
-import { mapActions } from 'vuex'
 import { DruxtComponentMixin } from 'druxt'
+import { parse, stringify } from 'qs'
+import { mapActions } from 'vuex'
 
 /**
  * The `<DruxtView />` Vue.js component.
@@ -153,14 +220,17 @@ export default {
    * Nuxt fetch method.
    */
   async fetch() {
-    this.view = await this.getResource({
-      type: this.type,
-      id: this.uuid,
-    })
+    if (!this.view) {
+      this.view = await this.getResource({
+        type: this.type,
+        id: this.uuid,
+      })
+    }
 
-    this.results = await this.getResource({
-      type: `views--${this.viewId}`,
-      id: this.displayId
+    this.resource = await this.getResults({
+      viewId: this.viewId,
+      displayId: this.displayId,
+      query: stringify(this.query)
     })
 
     await DruxtComponentMixin.fetch.call(this)
@@ -171,13 +241,22 @@ export default {
    *
    * Used for on-demand JSON:API resource loading.
    *
-   * @property {object[]} results - The View results JSON:API resources.
-   * @property {object} view - * The View JSON:API resource.
+   * @property {object} view - The View JSON:API resource.
    */
-  data: () => ({
-    results: [],
-    view: false
-  }),
+  data() {
+    // Stringify and parse the query object to fix nested objects.
+    const model = parse(stringify(this.$route.query))
+
+    return {
+      model: {
+        filter: model.filter || {},
+        page: parseInt(model.page) || null,
+        sort: model.sort || null,
+      },
+      resource: null,
+      view: false
+    }
+  },
 
   /**
    * Vue.js Computed properties.
@@ -189,9 +268,9 @@ export default {
      * @type {string[]}
      */
     attachments_after() {
-      if (!((this.view || {}).attributes || {}).display) return false
+      if (!((((this.view || {}).data || {}).attributes || {}).display)) return false
 
-      const displays = this.view.attributes.display
+      const displays = this.view.data.attributes.display
       return Object.keys(displays).filter(key => {
         return displays[key].display_plugin === 'attachment'
           && displays[key].display_options.attachment_position === 'after'
@@ -205,9 +284,9 @@ export default {
      * @type {string[]}
      */
     attachments_before() {
-      if (!((this.view || {}).attributes || {}).display) return false
+      if (!((((this.view || {}).data || {}).attributes || {}).display)) return false
 
-      const displays = this.view.attributes.display
+      const displays = this.view.data.attributes.display
       return Object.keys(displays).filter(key => {
         return displays[key].display_plugin === 'attachment'
           && displays[key].display_options.attachment_position === 'before'
@@ -216,19 +295,37 @@ export default {
     },
 
     /**
+     * The total item count.
+     *
+     * @type {integer}
+     */
+    count() {
+      return parseInt(((this.resource || {}).meta || {}).count) || 0
+    },
+
+    /**
      * The View Display object.
      *
      * @type {object}
      */
     display() {
-      if (!((this.view || {}).attributes || {}).display) return false
+      if (!(((this.view || {}).data || {}).attributes || {}).display) return false
 
-      if (this.display_id === 'default') return this.view.attributes.display[this.display_id]
+      if (this.display_id === 'default') return this.view.data.attributes.display[this.display_id]
 
       return merge(
-        this.view.attributes.display['default'],
-        this.view.attributes.display[this.displayId]
+        this.view.data.attributes.display['default'],
+        this.view.data.attributes.display[this.displayId]
       )
+    },
+
+    /**
+     * Exposed filters.
+     *
+     * @type {object[]}
+     */
+    filters() {
+      return Object.values(((this.display || {}).display_options || {}).filters || {}).filter(filter => filter.exposed)
     },
 
     /**
@@ -254,14 +351,114 @@ export default {
 
       return (this.display.display_options.row.options || {}).view_mode || 'default'
     },
+
+    /**
+     * The displays pager settings.
+     *
+     * @type {object}
+     */
+    pager() {
+      return ((this.display || {}).display_options || {}).pager || false
+    },
+
+    query() {
+      const query = {}
+
+      // Pagination.
+      if (this.model.page) {
+        query.page = this.model.page
+      }
+
+      // Exposed filters.
+      if (Object.entries(this.model.filter || {}).length) {
+        query['views-filter'] = this.model.filter
+      }
+
+      // Exposed sorts.
+      if (this.model.sort) {
+        query['views-sort[sort_by]'] = this.model.sort
+      }
+
+      return query
+    },
+
+    /**
+     * The JSON:API Views results.
+     *
+     * @type {object}
+     */
+    results() {
+      return (this.resource || {}).data || []
+    },
+
+    /**
+     * Whether a pager should be shown.
+     *
+     * @type {boolean}
+     */
+    showPager() {
+      return this.pager.type && this.pager.type !== 'none'
+    },
+
+    /**
+     * Whether Exposed sorts are available and should be displayed.
+     *
+     * @type {boolean}
+     */
+    showSorts() {
+      return !!(((((this.display || {}).display_options || {}).exposed_form || {}).options || {}).expose_sort_order && this.sorts.length)
+    },
+
+    /**
+     * Exposed sorts.
+     *
+     * @type {object[]}
+     */
+    sorts() {
+      return Object.values(((this.display || {}).display_options || {}).sorts || {}).filter(sort => sort.exposed)
+    }
+  },
+
+  watch: {
+    async '$route.query'(to, from) {
+      if (!Object.entries(to).length) {
+        this.model = {
+          filter: null,
+          page: null,
+          sort: null,
+        }
+        await this.$fetch
+      }
+    },
+
+    async displayId() {
+      await this.$fetch()
+    },
+
+    async query(to, from) {
+      await this.$fetch()
+    },
+
+    async uuid() {
+      await this.$fetch()
+    },
   },
 
   methods: {
     /**
-     * Maps `druxtRouter/getEntity` Vuex action to `this.getResource`.
+     * Filters update event handler.
+     */
+    onFiltersUpdate() {
+      this.model.page = null
+      this.model.sort = null
+    },
+
+    /**
+     * Maps Vuex action to methods.
      */
     ...mapActions({
-      getResource: 'druxtRouter/getEntity'
+      getResource: 'druxt/getResource',
+      getResults: 'druxt/views/getResults'
     })
   },
 
@@ -269,20 +466,13 @@ export default {
     componentOptions: [[vm.viewId, vm.displayId]],
 
     propsData: {
+      count: vm.count,
       display: vm.display,
+      mode: vm.mode,
+      pager: vm.pager,
       results: vm.results,
       view: vm.view
     }
-  }),
-
-  watch: {
-    async uuid() {
-      await this.$fetch()
-    },
-
-    async displayId() {
-      await this.$fetch()
-    }
-  }
+  })
 }
 </script>
