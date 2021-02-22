@@ -1,7 +1,7 @@
 {
   "name": "druxt-views",
-  "version": "0.6.2",
-  "description": "Drupal Views Vue.js components for Nuxt.js",
+  "version": "0.7.0",
+  "description": "Drupal Views Vue.js components for NuxtJS",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/druxt/druxt-views"
