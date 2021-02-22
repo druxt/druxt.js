@@ -70,7 +70,11 @@ describe('DruxtView', () => {
 
     wrapper.vm.$route.query = {}
     await localVue.nextTick()
-    expect(wrapper.vm.model).toStrictEqual({ page: null, sort: null })
+    expect(wrapper.vm.model).toStrictEqual({
+      filter: null,
+      page: null,
+      sort: null
+    })
     expect(wrapper.vm.query).toStrictEqual({})
 
     // Sorting.

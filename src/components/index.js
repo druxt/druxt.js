@@ -9,6 +9,26 @@ import DruxtView from './DruxtView.vue'
 export { DruxtView }
 
 /**
+ * The `<DruxtViewsFilter />` Vue.js component.
+ *
+ * @type {object}
+ * @exports DruxtViewsFilter
+ * @see {@link ./DruxtViewsFilter|DruxtViewsFilter}
+ */
+import DruxtViewsFilter from './DruxtViewsFilter.vue'
+export { DruxtViewsFilter }
+
+/**
+ * The `<DruxtViewsFilters />` Vue.js component.
+ *
+ * @type {object}
+ * @exports DruxtViewsFilters
+ * @see {@link ./DruxtViewsFilters|DruxtViewsFilters}
+ */
+import DruxtViewsFilters from './DruxtViewsFilters.vue'
+export { DruxtViewsFilters }
+
+/**
  * The `<DruxtViewsPager />` Vue.js component.
  *
  * @type {object}

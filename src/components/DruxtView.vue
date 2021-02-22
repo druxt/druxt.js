@@ -18,6 +18,19 @@
         />
       </template>
 
+      <!-- Scoped slot: Exposed filters -->
+      <template
+        v-if="filters"
+        #filters="$attrs"
+      >
+        <DruxtViewsFilters
+          v-model="model.filter"
+          :filters="filters"
+          v-bind="{ ...display.display_options.exposed_form, ...$attrs }"
+          @input="onFiltersUpdate"
+        />
+      </template>
+
       <!-- Scoped slot: Exposed sorts -->
       <template
         v-if="showSorts"
@@ -93,6 +106,14 @@
           v-for="header of headers"
           :key="header.id"
           v-html="header.content.value"
+        />
+
+        <!-- Exposed filters -->
+        <DruxtViewsFilters
+          v-model="model.filter"
+          :filters="filters"
+          v-bind="display.display_options.exposed_form"
+          @input="onFiltersUpdate"
         />
 
         <!-- Exposed sorts -->
@@ -228,6 +249,7 @@ export default {
 
     return {
       model: {
+        filter: model.filter || {},
         page: parseInt(model.page) || null,
         sort: model.sort || null,
       },
@@ -298,6 +320,15 @@ export default {
     },
 
     /**
+     * Exposed filters.
+     *
+     * @type {object[]}
+     */
+    filters() {
+      return Object.values(((this.display || {}).display_options || {}).filters || {}).filter(filter => filter.exposed)
+    },
+
+    /**
      * The View Headers data.
      *
      * @type {@object}
@@ -336,6 +367,11 @@ export default {
       // Pagination.
       if (this.model.page) {
         query.page = this.model.page
+      }
+
+      // Exposed filters.
+      if (Object.entries(this.model.filter || {}).length) {
+        query['views-filter'] = this.model.filter
       }
 
       // Exposed sorts.
@@ -387,6 +423,7 @@ export default {
     async '$route.query'(to, from) {
       if (!Object.entries(to).length) {
         this.model = {
+          filter: null,
           page: null,
           sort: null,
         }
@@ -408,6 +445,14 @@ export default {
   },
 
   methods: {
+    /**
+     * Filters update event handler.
+     */
+    onFiltersUpdate() {
+      this.model.page = null
+      this.model.sort = null
+    },
+
     /**
      * Maps Vuex action to methods.
      */
