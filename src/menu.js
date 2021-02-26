@@ -1,4 +1,4 @@
-import { DruxtRouter } from 'druxt-router'
+import { DruxtClient } from 'druxt'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
 /**
@@ -16,26 +16,24 @@ class DruxtMenu {
    * @example @lang js
    * const druxtMenu = new DruxtMenu('https://example.com', {})
    *
-   * @param {string} baseURL - The URL of the Drupal backend.
+   * @param {string} baseUrl - The URL of the Drupal backend.
    * @param {ModuleOptions} options - The module options.
    */
-  constructor (baseURL, options = {}) {
+  constructor (baseUrl, options = {}) {
     // Check for URL.
-    if (!baseURL) {
-      throw new Error('The \'baseURL\' parameter is required.')
+    if (!baseUrl) {
+      throw new Error('The \'baseUrl\' parameter is required.')
     }
 
     this.options = {
-      endpoint: '/jsonapi',
       menu: {
         jsonApiMenuItems: false
       },
-
       ...options
     }
 
     // Setup Druxt Router.
-    this.druxtRouter = new DruxtRouter(baseURL, options)
+    this.druxt = new DruxtClient(baseUrl, options)
   }
 
   /**
@@ -74,7 +72,13 @@ class DruxtMenu {
       .addFilter('menu_name', menuName)
       .addFields(resource, fields)
 
-    const entities = await this.druxtRouter.getResources(resource, query, { all: true })
+    const entities = []
+    const collections = await this.druxt.getCollectionAll(resource, query)
+    for (const collection of collections) {
+      for (const entity of collection.data) {
+        entities.push(entity)
+      }
+    }
 
     return { entities }
   }
@@ -93,32 +97,33 @@ class DruxtMenu {
     const resource = `menu_items--${menuName}`
 
     // Add the JSON API Menu items resource to the index.
-    await this.druxtRouter.getIndex()
-    this.druxtRouter.index[resource] = { href: `${this.options.endpoint}/menu_items/${menuName}` }
+    await this.druxt.getIndex()
+    this.druxt.index[resource] = { href: `${this.druxt.options.endpoint}/menu_items/${menuName}` }
 
     const query = new DrupalJsonApiParams()
       .addFilter('enabled', '1')
       .addFilter('menu_name', menuName)
 
-    const resources = await this.druxtRouter.getResources(resource, query, { all: true })
-
-    const entities = resources.map(resource => {
-      const entity = {
-        id: resource.id,
-        attributes: {
-          description: resource.attributes.description,
-          link: {
-            uri: `internal:${resource.attributes.url}`
+    const entities = []
+    const collections = await this.druxt.getCollectionAll(resource, query)
+    for (const collection of collections) {
+      for (const resource of collection.data) {
+        entities.push({
+          id: resource.id,
+          attributes: {
+            description: resource.attributes.description,
+            link: {
+              uri: `internal:${resource.attributes.url}`
+            },
+            menu_name: menuName,
+            parent: resource.attributes.parent.length ? resource.attributes.parent : null,
+            title: resource.attributes.title,
+            weight: resource.attributes.weight,
           },
-          menu_name: menuName,
-          parent: resource.attributes.parent.length ? resource.attributes.parent : null,
-          title: resource.attributes.title,
-          weight: resource.attributes.weight,
-        },
-        resource
+          resource
+        })
       }
-      return entity
-    })
+    }
 
     return { entities }
   }
