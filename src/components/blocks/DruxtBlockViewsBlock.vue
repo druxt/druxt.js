@@ -37,13 +37,13 @@ export default {
    * Nuxt fetch method.
    */
   async fetch() {
-    const results = await this.getResources({
-      resource: 'view--view',
+    const results = await this.getCollection({
+      type: 'view--view',
       query: new DrupalJsonApiParams()
         .addFilter('drupal_internal__id', this.viewId)
         .addFields('view--view', ['id'])
     })
-    this.uuid = results[0].id
+    this.uuid = results.data[0].id
   },
 
   /**
@@ -101,10 +101,10 @@ export default {
 
   methods: {
     /**
-     * Maps `druxtRouter/getResources` Vuex action to `this.getResources`.
+     * Maps Vuex action to methods.
      */
     ...mapActions({
-      getResources: 'druxtRouter/getResources'
+      getCollection: 'druxt/getCollection',
     })
   }
 }
