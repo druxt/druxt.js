@@ -1,11 +1,16 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
+import { DruxtClient, DruxtStore } from 'druxt'
+
 import { DruxtBlockViewsBlock } from '..'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
+
+// Setup mock Vuex store.
+let store
 
 const stubs = ['druxt-view']
 
@@ -13,24 +18,10 @@ const mockBlock = {
   id: 'test-block',
   attributes: {
     settings: {
-      id: 'views_block:view_id-display_id'
+      id: 'views_block:featured_articles-block_1'
     }
   }
 }
-
-// Setup mock Vuex store.
-const store = new Vuex.Store({
-  modules: {
-    druxtRouter: {
-      namespaced: true,
-      actions: {
-        getResources: jest.fn().mockImplementation(() => Promise.resolve([{
-          id: 'uuid'
-        }]))
-      }
-    }
-  }
-})
 
 const mountComponent = (entity, options = {}) => {
   const mocks = {
@@ -45,16 +36,25 @@ const mountComponent = (entity, options = {}) => {
 }
 
 describe('Component - DruxtBlockViewsBlock', () => {
+  beforeEach(() => {
+    store = new Vuex.Store()
+
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+    store.app = { context: { error: jest.fn() }, store }
+  })
+
   test('default', async () => {
     const wrapper = mountComponent(mockBlock)
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.vm.uuid).toBe('uuid')
+    expect(wrapper.vm.uuid).toBe('ab193308-95ab-489d-b662-f7305380c41e')
 
     expect(wrapper.vm.propsData).toStrictEqual({
-      displayId: 'display_id',
-      uuid: 'uuid',
-      viewId: 'view_id'
+      displayId: 'block_1',
+      uuid: 'ab193308-95ab-489d-b662-f7305380c41e',
+      viewId: 'featured_articles'
     })
   })
 })
