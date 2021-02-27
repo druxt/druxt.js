@@ -1,12 +1,10 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
+import { DruxtClient, DruxtStore } from 'druxt'
 import { DruxtSite } from '../..'
 
 jest.mock('axios')
-
-const baseURL = 'https://demo-api.druxtjs.org'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -28,8 +26,11 @@ describe('DruxtSite component', () => {
   beforeEach(() => {
     // Setup vuex store.
     store = new Vuex.Store()
-    DruxtRouterStore({ store })
-    store.$druxtRouter = () => new DruxtRouter(baseURL, {})
+
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+    store.app = { context: { error: jest.fn() }, store }
   })
 
   test('defaults', async () => {

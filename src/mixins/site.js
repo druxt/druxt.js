@@ -45,7 +45,7 @@ const DruxtSiteMixin = {
      */
     regions: {
       type: Array,
-      default: []
+      default: () => ([])
     }
   },
 }
