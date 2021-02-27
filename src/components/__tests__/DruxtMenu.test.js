@@ -2,13 +2,13 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouterStore } from 'druxt-router'
+import { DruxtStore } from 'druxt'
 
 import { DruxtMenu, DruxtMenuComponent, DruxtMenuItemComponent, DruxtMenuStore } from '../..'
 
 jest.mock('axios')
 
-const baseURL = 'https://example.com'
+const baseUrl = 'https://demo-api.druxtjs.org'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -32,9 +32,9 @@ describe('DruxtMenu', () => {
 
     // Setup vuex store.
     store = new Vuex.Store()
-    store.$druxtMenu = new DruxtMenu(baseURL, {})
+    store.$druxtMenu = new DruxtMenu(baseUrl, {})
     DruxtMenuStore({ store })
-    DruxtRouterStore({ store })
+    DruxtStore({ store })
   })
 
   test('default', async () => {
