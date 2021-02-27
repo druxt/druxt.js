@@ -27,7 +27,7 @@ import { DruxtComponentMixin } from 'druxt'
 /**
  * The `<DruxtMenu />` Vue.js component.
  *
- * - Fetchs the menu items via the DruxtJS Router.
+ * - Fetchs the menu items via the DruxtClient.
  * - Renders the data via the DruxtMenuItem component.
  *
  * @example @lang vue

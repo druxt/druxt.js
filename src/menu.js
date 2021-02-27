@@ -32,7 +32,12 @@ class DruxtMenu {
       ...options
     }
 
-    // Setup Druxt Router.
+    /**
+     * Instance of the Druxt Client.
+     *
+     * @type {DruxtClient}
+     * @see {@link http://druxtjs.org/api/client}
+     */
     this.druxt = new DruxtClient(baseUrl, options)
   }
 

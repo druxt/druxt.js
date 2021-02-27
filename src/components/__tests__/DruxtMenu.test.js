@@ -2,7 +2,6 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-// import { DruxtRouterStore } from 'druxt-router'
 import { DruxtStore } from 'druxt'
 
 import { DruxtMenu, DruxtMenuComponent, DruxtMenuItemComponent, DruxtMenuStore } from '../..'
