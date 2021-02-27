@@ -2,36 +2,36 @@
 
 exports[`DruxtBreadcrumb 404 route 1`] = `
 "<div>
-  <druxtwrapper-stub></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"\\"></druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb level 1 1`] = `
 "<div>
-  <druxtwrapper-stub></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object],[object Object]\\"></druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb level 2 1`] = `
 "<div>
-  <druxtwrapper-stub></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object],[object Object],[object Object]\\"></druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb missing parent 1`] = `
 "<div>
-  <druxtwrapper-stub></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object],[object Object]\\"></druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb no home 1`] = `
 "<div>
-  <druxtwrapper-stub></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"\\"></druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb root 1`] = `
 "<div>
-  <druxtwrapper-stub></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object]\\"></druxtwrapper-stub>
 </div>"
 `;
