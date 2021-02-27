@@ -1,6 +1,6 @@
 {
   "name": "druxt-site",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Out of the box decoupled Drupal Site module for DruxtJS.",
   "repository": {
     "type": "git",
