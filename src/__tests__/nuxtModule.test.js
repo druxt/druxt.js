@@ -23,7 +23,7 @@ describe('DruxtJS Site module', () => {
     // Call DruxtSite module.
     mock.DruxtSiteModule()
 
-    // Expect 10 modules to be added.
-    expect(mock.addModule).toHaveBeenCalledTimes(10)
+    // Expect 9 modules to be added.
+    expect(mock.addModule).toHaveBeenCalledTimes(9)
   })
 })

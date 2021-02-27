@@ -33,7 +33,6 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
     'druxt-menu',
     'druxt-router',
     'druxt-schema',
-    'druxt-search',
     'druxt-views'
   ]
   for (const key in modules) {

@@ -45,5 +45,4 @@ See the [Druxt component documentation](https://druxtjs.org/guide/#the-druxt-com
 - **Entity / Field** render system powered by Drupal display modes.
 - **Block** region and **Content block** component rendering.
 - **Views** and **Views blocks** via the [Drupal JSON:API Views module](https://www.drupal.org/project/jsonapi_views).
-- **Search** via the [Drupal JSON:API Search module](https://www.drupal.org/project/jsonapi_search_api).
 - **Breadcrumb**, **Menus** and more.
