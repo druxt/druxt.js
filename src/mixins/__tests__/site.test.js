@@ -1,11 +1,9 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
+import { DruxtClient, DruxtStore } from 'druxt'
 
 import { DruxtSiteMixin } from '../..'
-
-const baseURL = 'https://demo-api.druxtjs.org'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -23,8 +21,9 @@ describe('DruxtSiteMixin', () => {
   beforeEach(() => {
     // Setup vuex store.
     store = new Vuex.Store()
-    store.$druxtRouter = new DruxtRouter(baseURL, {})
-    DruxtRouterStore({ store })
+
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org', {})
   })
 
   test('defaults', () => {

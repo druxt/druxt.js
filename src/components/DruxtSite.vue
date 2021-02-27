@@ -62,13 +62,13 @@ export default {
    */
   async fetch() {
     // Fetch all available regions.
-    const resourceType = 'block--block'
-    const regions = await this.getResources({
-      resource: resourceType,
+    const type = 'block--block'
+    const regions = await this.getCollection({
+      type,
       query: new DrupalJsonApiParams()
         .addFilter('theme', this.theme)
-        .addFields(resourceType, ['region']),
-    }).then((resources) => resources.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
+        .addFields(type, ['region']),
+    }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
     this.regions = regions
 
     // Invoke DruxtComponent mixin.
@@ -83,7 +83,7 @@ export default {
   }),
 
   methods: {
-    ...mapActions({ getResources: 'druxtRouter/getResources' }),
+    ...mapActions({ getCollection: 'druxt/getCollection' }),
   },
 
   render(h) {
