@@ -6,7 +6,7 @@ import { DruxtMenu, DruxtMenuComponent, DruxtMenuItemComponent, DruxtMenuStore }
 
 jest.mock('axios')
 
-const baseURL = 'https://demo-api.druxtjs.org'
+const baseUrl = 'https://demo-api.druxtjs.org'
 
 const propsData = {
   item: {
@@ -57,7 +57,7 @@ describe('DruxtMenuItem', () => {
   beforeEach(() => {
     // Setup vuex store.
     store = new Vuex.Store()
-    store.$druxtMenu = new DruxtMenu(baseURL, {})
+    store.$druxtMenu = new DruxtMenu(baseUrl, {})
     DruxtMenuStore({ store })
     config.mocks.$store = store
   })
