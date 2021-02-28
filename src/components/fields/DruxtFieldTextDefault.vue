@@ -15,11 +15,13 @@
     />
 
     <!-- Items -->
+    <!-- eslint-disable vue/no-v-html -->
     <span
       v-for="(item, key) of items"
       :key="key"
-      v-html="item.processed"
+      v-html="format(item)"
     />
+    <!-- eslint-enable vue/no-v-html -->
   </component>
 </template>
 
@@ -41,7 +43,7 @@ import { DruxtFieldMixin } from '../../mixins/field'
  *     value: '<strong>Umami Magazine & Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.'
  *   }"
  *   :schema="{
- *     id: 'field_disclaimer',
+ *     id: 'body',
  *     type: 'text_default'
  *   }"
  * />
@@ -55,6 +57,17 @@ export default {
    * @see {@link ../mixins/field|DruxtFieldMixin}
    * @see {@link https://vuejs.org/v2/guide/mixins.html}
    */
-  mixins: [DruxtFieldMixin]
+  mixins: [DruxtFieldMixin],
+
+  methods: {
+    /**
+     * Formats the item output.
+     *
+     * @param {object} item - The field item.
+     *
+     * @return {string}
+     */
+    format: (item) => item.processed
+  }
 }
 </script>
