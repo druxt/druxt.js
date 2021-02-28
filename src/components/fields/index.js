@@ -40,5 +40,8 @@ export { DruxtFieldTextDefault }
 import DruxtFieldTextSummaryOrTrimmed from './DruxtFieldTextSummaryOrTrimmed.vue'
 export { DruxtFieldTextSummaryOrTrimmed }
 
+import DruxtFieldTextTrimmed from './DruxtFieldTextTrimmed.vue'
+export { DruxtFieldTextTrimmed }
+
 import DruxtFieldTimestamp from './DruxtFieldTimestamp.vue'
 export { DruxtFieldTimestamp }

@@ -2,7 +2,7 @@
 import DruxtFieldTextDefault from './DruxtFieldTextDefault.vue'
 
 /**
- * Text Summary or Trimmed field.
+ * Text Trimmed field.
  *
  * _This component is intended to be rendered by the `<druxt-field />` component._
  *
@@ -17,7 +17,7 @@ import DruxtFieldTextDefault from './DruxtFieldTextDefault.vue'
  *   }"
  *   :schema="{
  *     id: 'body',
- *     type: 'text_summary_or_trimmed',
+ *     type: 'text_trimmed',
  *     settings: {
  *       display: {
  *         trim_length: 600,
@@ -27,7 +27,7 @@ import DruxtFieldTextDefault from './DruxtFieldTextDefault.vue'
  * />
  */
 export default {
-  name: 'DruxtFieldTextSummaryOrTrimmed',
+  name: 'DruxtFieldTextTrimmed',
 
   extends: DruxtFieldTextDefault,
 
@@ -56,9 +56,7 @@ export default {
      * @return {string}
      */
     format(item) {
-      return item.summary
-        ? item.summary
-        : item.value.slice(0, this.trimLength)
+      return item.value.slice(0, this.trimLength)
     }
   }
 }
