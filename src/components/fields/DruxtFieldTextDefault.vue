@@ -15,11 +15,13 @@
     />
 
     <!-- Items -->
+    <!-- eslint-disable vue/no-v-html -->
     <span
       v-for="(item, key) of items"
       :key="key"
       v-html="format(item)"
     />
+    <!-- eslint-enable vue/no-v-html -->
   </component>
 </template>
 
