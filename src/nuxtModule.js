@@ -72,4 +72,6 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
   })
 }
 
+DruxtSchemaNuxtModule.meta = require('../package.json')
+
 export { DruxtSchemaNuxtModule }
