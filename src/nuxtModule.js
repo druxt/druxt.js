@@ -56,4 +56,6 @@ const DruxtEntityNuxtModule = function (moduleOptions = {}) {
   })
 }
 
+DruxtEntityNuxtModule.meta = require('../package.json')
+
 export { DruxtEntityNuxtModule }
