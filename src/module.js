@@ -1,13 +1,16 @@
 import { resolve } from 'path'
+import DruxtEntityStorybook from './nuxtStorybook'
 
 /**
- * The Nuxt.js module function.
+ * The NuxtJS module function.
  *
- * - Adds the Nuxt.js plugin.
+ * - Adds dependant modules.
+ * - Adds Nuxt plugin.
+ * - Adds Nuxt Storybook integration.
  *
- * The module function should not be used directly, but rather installed via yout Nuxt.js configuration file.
+ * The module function should not be used directly, but rather installed via your Nuxt configuration file.
  *
- * Options are set on the root level `druxt` Nuxt.js config object.
+ * Options are set on the root level `druxt` Nuxt config object.
  *
  * @example @lang js
  * // `nuxt.config.js`
@@ -16,7 +19,7 @@ import { resolve } from 'path'
  *     'druxt-entity'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://example.com'
+ *     baseUrl: 'https://demo-api.druxtjs.org'
  *   }
  * }
  *
@@ -27,17 +30,29 @@ import { resolve } from 'path'
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  */
 const DruxtEntityModule = function (moduleOptions = {}) {
+  const { options } = this
+
   // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
+  if (typeof options === 'undefined' || !options.druxt) {
     throw new TypeError('Druxt settings missing.')
   }
-  const options = this.options.druxt
+
+  // Add dependant modules.
+  const modules = ['druxt', 'druxt-schema'].filter((module) => !options.modules.includes(module))
+  for (const module of modules) {
+    this.addModule(module)
+  }
 
   // Add plugin.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/plugin.js'),
     fileName: 'druxt-entity.js',
-    options
+    options: options.druxt
+  })
+
+  // Nuxt Storybook.
+  this.nuxt.hook('storybook:config', async ({ stories }) => {
+    await DruxtEntityStorybook.call(this, { stories })
   })
 }
 
