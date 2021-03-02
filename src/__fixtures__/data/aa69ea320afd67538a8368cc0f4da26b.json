@@ -1,0 +1,28 @@
+{
+  "jsonapi":{
+    "version":"1.0",
+    "meta":{
+      "links":{
+        "self":{
+          "href":"http:\/\/jsonapi.org\/format\/1.0\/"
+        }
+      }
+    }
+  },
+  "data":[
+    {
+      "type":"node--page",
+      "id":"f09d8d5f-4998-4811-8fd1-05647f1c85d9",
+      "links":{
+        "self":{
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/f09d8d5f-4998-4811-8fd1-05647f1c85d9?resourceVersion=id%3A36"
+        }
+      }
+    }
+  ],
+  "links":{
+    "self":{
+      "href":"https:\/\/demo-api.druxtjs.org\/jsonapi\/node\/page?fields%5Bnode--page%5D=id\u0026filter%5Bstatus%5D=1"
+    }
+  }
+}

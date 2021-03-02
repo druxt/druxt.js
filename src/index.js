@@ -1,4 +1,4 @@
-import { DruxtEntityModule } from './module'
+import { DruxtEntityNuxtModule } from './nuxtModule'
 import * as DruxtEntityComponents from './components'
 
 /**
@@ -21,7 +21,7 @@ import * as DruxtEntityComponents from './components'
  *   }
  * }
  */
-export default DruxtEntityModule
+export default DruxtEntityNuxtModule
 
 /**
  * Vue.js components.
