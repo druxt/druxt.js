@@ -38,7 +38,7 @@ export default async function ({ stories }) {
   // Write Entity stories.
   for (const entityType of Object.keys(entities)) {
     for (const bundle of Object.keys(entities[entityType])) {
-      const modes = entities[entityType][bundle]
+      const modes = Array.from(new Set(entities[entityType][bundle]))
 
       // Ensure 'Default' is the first item.
       modes.sort((a) => (a === 'default' ? -1 : 0))
