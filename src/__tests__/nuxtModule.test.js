@@ -1,16 +1,23 @@
 import DruxtViewsNuxtModule from '..'
 
+jest.mock('../nuxtStorybook')
+
 const mock = {
+  addModule: jest.fn(),
   addPlugin: jest.fn(),
-  DruxtViewsNuxtModule
+  nuxt: {
+    hook: async (hook, fn) => await fn({})
+  },
+  options: {
+    druxt: {},
+    modules: [],
+  },
 }
 
 test('Nuxt module', () => {
-  expect(() => { mock.DruxtViewsNuxtModule() }).toThrow('Druxt settings missing.')
+  expect(() => { DruxtViewsNuxtModule.call({}) }).toThrow('Druxt settings missing.')
 
-  mock.options = {
-    druxt: {}
-  }
-  mock.DruxtViewsNuxtModule()
+  DruxtViewsNuxtModule.call(mock)
+  expect(mock.addModule).toHaveBeenCalledTimes(3)
   expect(mock.addPlugin).toHaveBeenCalledTimes(2)
 })
