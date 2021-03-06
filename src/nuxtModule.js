@@ -1,4 +1,5 @@
 import { resolve } from 'path'
+import DruxtViewsStorybook from './nuxtStorybook'
 
 /**
  * The NuxtJS module function.
@@ -23,28 +24,40 @@ import { resolve } from 'path'
  * @param {object} moduleOptions - Nuxt module options object.
  */
 const DruxtViewsNuxtModule = function (moduleOptions = {}) {
+  const { options } = this
+
   // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
+  if (typeof this.options === 'undefined' || !options.druxt) {
     throw new TypeError('Druxt settings missing.')
   }
-  const options = this.options.druxt
+
+  // Add dependant modules.
+  const modules = ['druxt', 'druxt-entity', 'druxt-schema'].filter((module) => !options.modules.includes(module))
+  for (const module of modules) {
+    this.addModule(module)
+  }
 
   // Add plugin.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/plugin.js'),
     fileName: 'druxt-views.js',
-    options
+    options: options.druxt
   })
 
   // Add Vuex plugin.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/store.js'),
     fileName: 'store/druxt-views.js',
-    options
+    options: options.druxt
   })
 
   // Enable Vuex Store.
-  this.options.store = true
+  options.store = true
+
+  // Nuxt Storybook.
+  this.nuxt.hook('storybook:config', async ({ stories }) => {
+    await DruxtViewsStorybook.call(this, { stories })
+  })
 }
 
 export { DruxtViewsNuxtModule }
