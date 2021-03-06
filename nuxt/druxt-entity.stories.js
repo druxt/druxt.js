@@ -6,7 +6,7 @@ export default {
   argTypes: {
     mode: {
       control: null,
-      description: 'The Drupal display mode.',
+      description: 'The Entity display mode.',
       table: {
         defaultValue: { summary: 'default' },
       },
@@ -18,9 +18,9 @@ export default {
     uuid: {
       control: {
         type: 'select',
-        options: <%= JSON.stringify(options.uuids) %>,
+        options: [<%= options.uuids.map((s) => `'${s}'`).join(', ') %>],
       },
-      description: 'The Drupal entity UUID.',
+      description: 'The Entity UUID.',
       type: { required: true },
     }
   },
@@ -41,4 +41,12 @@ export const <%= mode.charAt(0).toUpperCase() + mode.slice(1) %> = Template.bind
   uuid: '<%= options.uuids[0] %>',
 }
 <%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.storyName = '<%= mode %>'
+<%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.parameters = {
+  docs: {
+    source: {
+      code: '<DruxtEntity\n  mode="<%= mode %>"\n  type="<%= options.type %>"\n  uuid="<%= options.uuids[0] %>"\n/>'
+    }
+  }
+}
+
 <% } %>
