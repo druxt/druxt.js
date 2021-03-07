@@ -1,14 +1,16 @@
 import { resolve } from 'path'
+import DruxtMenuStorybook from './nuxtStorybook'
 
 /**
- * The Nuxt.js module function.
+ * The NuxtJS module function.
  *
- * - Adds the Vue.js components to the Nuxt.js frontend.
- * - Adds the Vuex store to the Nuxt.js frontend.
+ * - Adds Nuxt plugin.
+ * - Adds Vuex store.
+ * - Adds Nuxt Storybook integration.
  *
- * The module function should not be used directly, but rather installed via yout Nuxt.js configuration file.
+ * The module function should not be used directly, but rather installed via your Nuxt configuration file.
  *
- * Options are set on the root level `druxt` Nuxt.js config object.
+ * Options are set on the root level `druxt` Nuxt config object.
  *
  * @example @lang js
  * // `nuxt.config.js`
@@ -17,11 +19,11 @@ import { resolve } from 'path'
  *     'druxt-menu'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://example.com'
+ *     baseUrl: 'https://demo-api.druxtjs.org'
  *   }
  * }
  *
- * @param {object} moduleOptions - Nuxt.js module options object.
+ * @param {object} moduleOptions - Module options object.
  */
 const DruxtMenuNuxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
@@ -45,6 +47,11 @@ const DruxtMenuNuxtModule = function (moduleOptions = {}) {
     src: resolve(__dirname, '../nuxt/store.js'),
     fileName: 'store/druxt-menu.js',
     options
+  })
+
+  // Nuxt Storybook.
+  this.nuxt.hook('storybook:config', async ({ stories }) => {
+    await DruxtMenuStorybook.call(this, { stories })
   })
 }
 
