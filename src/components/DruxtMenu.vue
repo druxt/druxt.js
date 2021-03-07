@@ -108,7 +108,7 @@ export default {
      * Component or element to render parent menu items.
      *
      * @type {string}
-     * @default lit
+     * @default li
      */
     parentComponent: {
       type: String,
