@@ -24,7 +24,8 @@
   "unpkg": "dist/druxt-menu.min.js",
   "files": [
     "dist",
-    "nuxt"
+    "nuxt",
+    "src/components/**/*.vue"
   ],
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",

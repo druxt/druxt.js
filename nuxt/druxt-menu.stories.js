@@ -1,16 +1,23 @@
-import { DruxtMenu } from 'druxt-menu'
+import { default as DruxtMenu } from 'druxt-menu/src/components/DruxtMenu.vue'
 
 export default {
   title: '<%= options.title %>',
   component: DruxtMenu,
   argTypes: {
-    name: {
-      control: null,
-      description: 'The Menu name.',
-      table: {
-        defaultValue: { summary: 'main' },
-      },
-    },
+    name: { control: null },
+    depth: {
+      control: {
+        type: 'number',
+        min: 0
+      }
+    }
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: '<%= options.description || " " %>'
+      }
+    }
   }
 }
 
@@ -27,9 +34,6 @@ Default.args = {
 }
 Default.parameters = {
   docs: {
-    description: {
-      component: '<%= options.description %>'
-    },
     source: {
       code: '<DruxtMenu name="<%= options.name %>" />'
     }
