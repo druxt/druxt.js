@@ -1,6 +1,5 @@
-import { config, createLocalVue, shallowMount,  } from '@vue/test-utils'
+import { config, createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
-import mockAxios from 'jest-mock-axios'
 
 import { DruxtMenu, DruxtMenuComponent, DruxtMenuItemComponent, DruxtMenuStore } from '../..'
 
@@ -47,6 +46,7 @@ const mountComponent = options => {
     localVue,
     propsData,
     parentComponent: DruxtMenuComponent,
+    stubs,
     ...options
   })
 }
