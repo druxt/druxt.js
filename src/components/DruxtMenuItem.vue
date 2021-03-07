@@ -110,7 +110,7 @@ export default {
           ]
         ),
 
-        // Default tempalte for Parent slot.
+        // Default template for Parent slot.
         parent: ({ item: { entity, children } }) => {
           const childElements = []
 
@@ -121,7 +121,7 @@ export default {
           return createElement(this.menu.parentComponent,
             { class: this.classes },
             [
-              createElement('druxt-menu-item', { props: { item: { children: [], entity } }}),
+              createElement('nuxt-link', { props: { to: this.to } }, entity.attributes.title),
               createElement(this.menu.parentWrapperComponent, { class: this.menu.parenWrapperClass }, childElements)
             ]
           )
