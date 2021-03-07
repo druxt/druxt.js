@@ -2,7 +2,7 @@
 
 exports[`DruxtMenuItem default 1`] = `
 "<li class=\\"\\">
-  <nuxt-link>Parent</nuxt-link>
+  <nuxt-link-stub>Parent</nuxt-link-stub>
   <ul>
     <druxt-menu-item-stub item=\\"[object Object]\\"></druxt-menu-item-stub>
   </ul>
