@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 
 
-> DruxtJS provides an easy connection between a Drupal JSON:API backend and NuxtJS frontend application.
+> DruxtJS provides an easy connection between a Drupal JSON:API backend and Nuxt.js frontend application.
 
 
 ## Links

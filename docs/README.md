@@ -5,14 +5,14 @@ actionText: Get started
 actionLink: /guide/getting-started
 features:
 - title: Simplicity first
-  details: The Druxt component connects NuxtJS to your Drupal JSON:API.
+  details: The Druxt component connects Nuxt.js to your Drupal JSON:API.
 - title: Community built
   details: Built by the community, for the community.
 - title: Decoupled Drupal sites
   details: The Site module brings decoupled Vue.js theming system to Drupal.
 ---
 
-> DruxtJS provides an easy connection between a Drupal JSON:API backend and NuxtJS frontend application.
+> DruxtJS provides an easy connection between a Drupal JSON:API backend and Nuxt.js frontend application.
 
 ## DruxtClient
 
@@ -56,7 +56,7 @@ Find support or get involved in building Druxt via our community channels:
 
 The DruxtJS Site module provides minimal configuration, decoupled Drupal site functionality.
 
-Take a look at the [Umami Parity project demo](https://demo.druxtjs.org), or checkout source for the [NuxtJS frontend](https://github.com/druxt/demo.druxtjs.org) and the [Drupal 9 backend](https://github.com/druxt/demo-api.druxtjs.org).
+Take a look at the [Umami Parity project demo](https://demo.druxtjs.org), or checkout source for the [Nuxt.js frontend](https://github.com/druxt/demo.druxtjs.org) and the [Drupal 9 backend](https://github.com/druxt/demo-api.druxtjs.org).
 
 ![Drupal Umami Parity demo](./images/umami.png)
 

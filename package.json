@@ -1,18 +1,28 @@
 {
   "name": "druxt",
   "version": "0.4.2",
-  "description": "A Bridge between frameworks, NuxtJS in the front, Drupal in the back.",
+  "description": "A Bridge between frameworks, Nuxt.js in the front, Drupal in the back.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/druxt/druxt.js"
   },
   "keywords": [
+    "cms",
+    "decoupled",
     "drupal",
     "druxt",
+    "headless",
     "jsonapi",
-    "nuxt"
+    "json:api",
+    "nuxt",
+    "module",
+    "vue"
   ],
-  "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/druxt/druxt.js/issues"

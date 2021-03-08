@@ -1,6 +1,6 @@
 # Introduction
 
-DruxtJS provides an easy connection to your Drupal JSON:API backend in your NuxtJS frontend application.
+DruxtJS provides an easy connection to your Drupal JSON:API backend in your Nuxt.js frontend application.
 
 
 ## DruxtClient
