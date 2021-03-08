@@ -4,7 +4,7 @@ title: Introduction
 
 # DruxtJS Entity
 
-The DruxtJS Entity module provides a Drupal **Display mode** powered Entity and Field **component system** for your NuxtJS frontend.
+The DruxtJS Entity module provides a Drupal **Display mode** powered Entity and Field **component system** for your Nuxt.js frontend.
 
 
 

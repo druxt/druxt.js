@@ -4,7 +4,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-entity/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-entity?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-entity/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-entity)
 
-> The DruxtJS Entity module provides a Drupal Display Mode powered Entity and Field component system for your NuxtJS frontend.
+> The DruxtJS Entity module provides a Drupal Display Mode powered Entity and Field component system for your Nuxt.js frontend.
 
 ## Links
 

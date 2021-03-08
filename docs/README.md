@@ -5,7 +5,7 @@ actionText: Get started
 actionLink: /guide/getting-started
 ---
 
-> The DruxtJS Entity module provides a Drupal Display Mode powered Entity and Field component system for your NuxtJS application.
+> The DruxtJS Entity module provides a Drupal Display Mode powered Entity and Field component system for your Nuxt.js application.
 
 
 ## The DruxtEntity component
@@ -32,6 +32,6 @@ See the [Druxt component documentation](https://druxtjs.org/guide/#the-druxt-com
 
 ## DruxtJS
 
-DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [NuxtJS](https://nuxtjs.org) frontend.
+DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
 
 Find out more at [https://druxtjs.org](https://druxtjs.org)
