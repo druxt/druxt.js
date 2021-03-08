@@ -1,4 +1,4 @@
-import { DruxtView } from 'druxt-views'
+import { default as DruxtView } from 'druxt-views/src/components/DruxtView.vue'
 
 export default {
   title: '<%= options.title %>',
@@ -9,16 +9,13 @@ export default {
         type: 'select',
         options: [<%= options.displays.map(({ id }) => `'${id}'`).join(', ') %>]
       },
-      description: 'The View display ID.',
-      table: {
-        defaultValue: { summary: 'default' },
-      },
     },
-    uuid: {
-      description: 'The View entity UUID.',
-    },
-    viewId: {
-      description: 'The View ID.'
+  },
+  parameters: {
+    docs: {
+      description: {
+        component: '<%= options.description || " " %>'
+      }
     }
   }
 }
