@@ -1,6 +1,6 @@
 {
   "name": "druxt-views",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Drupal Views Vue.js components for Nuxt.js",
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
   "files": [
     "dist",
     "nuxt",
-    "src/componens/**/*.vue"
+    "src/components/**/*.vue"
   ],
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",
