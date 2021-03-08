@@ -20,6 +20,8 @@
       },
       "attributes":{
         "drupal_internal__id":"frontpage",
+        "label":"Frontpage",
+        "description":"All content promoted to the front page.",
         "display":{
           "default":{
             "display_options":{
@@ -515,6 +517,8 @@
       },
       "attributes":{
         "drupal_internal__id":"media",
+        "label":"Media",
+        "description":"Find and manage media.",
         "display":{
           "default":{
             "display_plugin":"default",
@@ -1562,7 +1566,7 @@
   ],
   "links":{
     "self":{
-      "href":"https:\/\/demo-api.druxtjs.org\/jsonapi\/view\/view?fields%5Bview--view%5D=display%2Cdrupal_internal__id\u0026filter%5Bstatus%5D=1"
+      "href":"https:\/\/demo-api.druxtjs.org\/jsonapi\/view\/view?fields%5Bview--view%5D=display%2Cdescription%2Cdrupal_internal__id%2Clabel\u0026filter%5Bstatus%5D=1"
     }
   }
 }

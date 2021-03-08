@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import DruxtViewsStorybook from './nuxtStorybook'
 
 /**
- * The NuxtJS module function.
+ * The Nuxt.js module function.
  *
  * - Adds the Vue.js components to the Nuxt application.
  *
