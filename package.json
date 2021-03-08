@@ -1,23 +1,34 @@
 {
   "name": "druxt-views",
   "version": "0.8.0",
-  "description": "Drupal Views Vue.js components for NuxtJS",
+  "description": "Drupal Views Vue.js components for Nuxt.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/druxt/druxt-views"
   },
   "keywords": [
+    "cms",
+    "decoupled",
     "drupal",
     "druxt",
-    "views",
-    "nuxt"
+    "headless",
+    "jsonapi",
+    "json:api",
+    "nuxt",
+    "module",
+    "vue",
+    "views"
   ],
-  "author": "Stuart Clark <stuart@realityloop.com>",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/druxt/druxt-views/issues"
   },
-  "homepage": "https://github.com/druxt/druxt-views#readme",
+  "homepage": "https://views.druxtjs.org",
   "main": "dist/druxt-views.ssr.js",
   "module": "dist/druxt-views.esm.js",
   "unpkg": "dist/druxt-views.min.js",

@@ -5,7 +5,7 @@ actionText: Get started
 actionLink: /guide/getting-started
 ---
 
-> The DruxtJS Views module adds [Drupal](https://drupal.org) Views support to your [NuxtJS](https://nuxtjs.org) application.
+> The DruxtJS Views module adds [Drupal](https://drupal.org) Views support to your [Nuxt.js](https://nuxtjs.org) application.
 
 
 ## The DruxtView component

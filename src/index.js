@@ -3,7 +3,7 @@ import * as DruxtViewsComponents from './components'
 import * as DruxtViewsMixins from './mixins'
 
 /**
- * The NuxtJS module function.
+ * The Nuxt.js module function.
  *
  * Installs the module functionality in a Nuxt application.
  *
