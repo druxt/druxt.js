@@ -124,6 +124,18 @@
           v-bind="display.display_options.exposed_form"
         />
 
+        <!-- Attachments before -->
+        <div v-if="attachments_before">
+          <DruxtView
+            v-for="attachmentDisplayId of attachments_before"
+            :key="attachmentDisplayId"
+            :display-id="attachmentDisplayId"
+            :type="type"
+            :uuid="uuid"
+            :view-id="viewId"
+          />
+        </div>
+
         <!-- Results -->
         <DruxtEntity
           v-for="result of results"
@@ -134,6 +146,18 @@
             mode
           }"
         />
+
+        <!-- Attachments after -->
+        <div v-if="attachments_after">
+          <DruxtView
+            v-for="attachmentDisplayId of attachments_after"
+            :key="attachmentDisplayId"
+            :display-id="attachmentDisplayId"
+            :type="type"
+            :uuid="uuid"
+            :view-id="viewId"
+          />
+        </div>
 
         <!-- Pager -->
         <DruxtViewsPager
