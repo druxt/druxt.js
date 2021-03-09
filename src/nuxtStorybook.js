@@ -34,7 +34,9 @@ export default async function ({ stories }) {
           return options.display_options.row.type.startsWith('entity:')
         })
 
-      views[drupal_internal__id] = { description, displays, uuid: view.id, label }
+      if (displays.length) {
+        views[drupal_internal__id] = { description, displays, uuid: view.id, label }
+      }
     }
   }
 
