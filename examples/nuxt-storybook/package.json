@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "@nuxtjs/storybook": "latest",
-    "druxt-views": "file:../../druxt-views-0.7.2.tgz",
+    "druxt-views": "latest",
     "nuxt-edge": "latest"
   }
 }
