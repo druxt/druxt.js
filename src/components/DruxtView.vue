@@ -216,6 +216,18 @@ export default {
     query() {
       const query = {}
 
+      // Check all filters for 'bundle' plugin with bundle data, and use if
+      // found to return only the UUID field.
+      const filters = ((this.display || {}).display_options || {}).filters || []
+      Object.values(filters).map((filter) => {
+        if (filter.plugin_id === 'bundle' && filter.value) {
+          Object.keys(filter.value).map((bundle) => {
+            const resourceType = `${filter.entity_type}--${bundle}`
+            query[`fields[${resourceType}]`] = 'uuid'
+          })
+        }
+      })
+
       // Pagination.
       if (this.model.page) {
         query.page = this.model.page
