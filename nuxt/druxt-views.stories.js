@@ -1,7 +1,7 @@
 import { default as DruxtView } from 'druxt-views/src/components/DruxtView.vue'
 
 export default {
-  title: '<%= options.title %>',
+  title: <%= devalue(options.title) %>,
   component: DruxtView,
   argTypes: {
     displayId: {
@@ -14,7 +14,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: '<%= options.description || " " %>'
+        component: <%= options.description ? devalue(options.description) : '" "' %>
       }
     }
   }
