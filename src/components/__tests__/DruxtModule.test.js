@@ -5,9 +5,18 @@ import { DruxtModule } from '../..'
 // Setup local vue instance.
 const localVue = createLocalVue()
 
+let mocks
+
 describe('DruxtModule component', () => {
+  beforeEach(() => {
+    mocks = {
+      $createElement: jest.fn(),
+      $fetchState: { pending: false },
+    }
+  })
+
   test('defaults', async () => {
-    const mocks = { $fetchState: { pending: true } }
+    mocks.$fetchState.pending = true
     const wrapper = mount(DruxtModule, { localVue, mocks })
     await DruxtModule.fetch.call(wrapper.vm)
 
@@ -17,11 +26,18 @@ describe('DruxtModule component', () => {
     // Methods.
     expect(wrapper.vm.getModuleComponents()).toStrictEqual([])
     expect(wrapper.vm.getModulePropsData()).toStrictEqual({})
-    expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
-    expect(await wrapper.vm.getWrapperData(wrapper.vm.component.is)).toStrictEqual({
-      druxt: {},
-      props: {},
-    })
+
+    const scopedSlots = wrapper.vm.getScopedSlots()
+    expect(Object.keys(scopedSlots)).toStrictEqual(['default'])
+    expect(typeof scopedSlots.default()).toBe('object')
+
+    expect(await wrapper.vm.getWrapperData(wrapper.vm.component.is)).toStrictEqual({ druxt: {}, props: {} })
+
+    const mock = {
+      _init: jest.fn(),
+      $options: { components: { test: jest.fn(() => ({ druxt: {}, props: {} })) }
+    }}
+    expect(await DruxtModule.methods.getWrapperData.call(mock, 'test')).toStrictEqual({ druxt: {}, props: {} })
 
     // HTML snapshot.
     expect(wrapper.html()).toMatchSnapshot()
@@ -37,7 +53,6 @@ describe('DruxtModule component', () => {
       }
     }
 
-    const mocks = { $fetchState: { pending: false } }
     const wrapper = mount(CustomModule, { localVue, mocks, stubs: ['DruxtWrapper'] })
     await DruxtModule.fetch.call(wrapper.vm)
 
@@ -53,10 +68,7 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.getModuleComponents()).toStrictEqual([])
     expect(wrapper.vm.getModulePropsData()).toStrictEqual({ foo: 'bar' })
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
-    expect(await wrapper.vm.getWrapperData(wrapper.vm.component.is)).toStrictEqual({
-      druxt: {},
-      props: {},
-    })
+    expect(await wrapper.vm.getWrapperData(wrapper.vm.component.is)).toStrictEqual({ druxt: {}, props: {} })
 
     // HTML snapshot.
     expect(wrapper.html()).toMatchSnapshot()
@@ -78,7 +90,6 @@ describe('DruxtModule component', () => {
       }
     }
 
-    const mocks = { $fetchState: { pending: false } }
     const wrapper = mount(CustomModule, { localVue, mocks, stubs: ['DruxtWrapper'] })
     await DruxtModule.fetch.call(wrapper.vm)
 

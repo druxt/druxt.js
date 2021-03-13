@@ -148,7 +148,7 @@ export default {
      */
     getScopedSlots() {
       return {
-        default: () => this.$createElement('div', [this.component.propsData])
+        default: () => this.$createElement('div', [JSON.stringify(this.component.propsData)])
       }
     },
 
