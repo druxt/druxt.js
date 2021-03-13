@@ -1,26 +1,9 @@
 import { DruxtClass, DruxtWrapper } from '..'
 
 /**
- * Vue.js Mixin to add Druxt component theming to a Druxt module.
- *
  * @name DruxtComponentMixin
- * @see {@link /guide/#component-theme-system|Wrapper theme system}
- *
  * @deprecated
- *
- * @example @lang vue <caption>CustomDruxtModule.vue</caption>
- * <template>
- *   <component :is="component.is" v-bind="component.propsData">
- *     <!-- -->
- *   </component>
- * </template>
- *
- * <script>
- * import { DruxtComponentMixin } from 'druxt'
- * export default {
- *   mixins: [DruxtComponentMixin]
- * }
- * </script>
+ * @private
  */
 const DruxtComponentMixin = {
   components: { DruxtWrapper },
@@ -93,19 +76,3 @@ const DruxtComponentMixin = {
 }
 
 export { DruxtComponentMixin }
-
-/**
- * @typedef {object} Component
- * @property {string} is=DruxtWrapper - The rendered component name.
- * @property {string[]} options - The possible component name options.
- * @property {object} propsData - The component propsData object.
- *
- * @example @lang js
- * {
- *   is: 'DruxtTestModuleWrapper',
- *   options: [
- *     'DruxtTestModuleWrapper',
- *   ],
- *   propsData: {},
- * }
- */

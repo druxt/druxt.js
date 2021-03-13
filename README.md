@@ -20,19 +20,18 @@
 
 ## Usage
 
-### DruxtClient
+### Drupal JSON:API client
 
-The DruxtClient is the communication layer between Nuxt and the Drupal JSON:API.
+Two methods of communication with the Drupal JSON:API are provided by Druxt, a framework agnostic [**DruxtClient**](https://druxtjs.org/api/client) and the [**DruxtStore**](https://druxtjs.org/api/stores/druxt) Vuex module, which adds an additional cache layer.
 
 **Example:**
 ```js
 const { DruxtClient } = require('druxt')
-
-const druxt = new DruxtClient('https://demo-api.druxtjs.org')
-
-druxt.getCollection('node--page').then((res) => {
-  ...
-})
+new DruxtClient('https://demo-api.druxtjs.org')
+  .getCollection('node--page')
+  .then((res) => {
+    // Do the thing!
+  })
 ```
 
 Get started with the [Guide](https://druxtjs.org/guide/) and [API Documentation](https://druxtjs.org/api/client).
@@ -45,9 +44,7 @@ Add module to `nuxt.config.js`
 
 ```js
 module.exports = {
-  modules: [
-    'druxt'
-  ],
+  modules: ['druxt'],
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org'
   }
@@ -61,39 +58,35 @@ The `$druxt` plugin gives your Nuxt application access to the `DruxtClient`.
 ```vue
 <script>
 export default {
-  data: () => ({ page: null }),
-
   async fetch() {
     this.page = await this.$druxt.getResource({
       type: 'node--page',
       id: 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd',
     })
   },
+  data: () => ({ page: null }),
 }
 </script>
 ```
 
-### The Druxt component
+## Themable modules
 
-Druxt provides a Vue.js component to easily access Drupal's JSON:API data, with a simple Slot based theming system.
+Druxt uses a Module and slot-based Wrapper component system, making it easy to render and theme Drupal data.
 
-```vue
-<Druxt :module="module" :props-data="propsData" :wrapper="wrapper" />
-```
-
-Get started with the [Guide](https://druxtjs.org/guide/) and [API Documentation](https://druxtjs.org/api/components/Druxt.html).
+Find more details in the [Guide](https://druxtjs.org/guide/)
 
 
-## Join the community
+## Community support
 
-DruxtJS is an open source project, built by the comunity for the community.
+Druxt is an open source project, built by the comunity for the community.
 
-Find support or get involved in building Druxt via our community channels:
-
+Find support or get involved in building Druxt via the community channels:
 - [DruxtJS Discord server](https://discord.druxtjs.org)
-- #druxt Slack channel on [Drupal.org slack](https://drupal.org/slack)
+- **#druxt** Slack channel on [Drupal.org slack](https://drupal.org/slack)
 
 
-## Decoupled sites
+## Fully decoupled Drupal sites
 
-The [DruxtJS Site module](http://site.druxtjs.org/) provides minimal configuration, decoupled Drupal site functionality.
+The [**DruxtSite**](https://site.druxtjs.org) module provides minimal configuration, decoupled Drupal site functionality.
+
+Try out the [Umami demo](https://demo.druxtjs.org), or checkout the source for the [Nuxt.js frontend](https://github.com/druxt/demo.druxtjs.org) and the [Drupal 9 backend](https://github.com/druxt/demo-api.druxtjs.org).

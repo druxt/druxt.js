@@ -10,11 +10,14 @@ import { pascalCase, splitByCase } from 'scule'
  * @example @lang js
  * import { DruxtModule } from 'druxt'
  * export default {
- *   name: 'MyDruxtModule',
+ *   name: 'DruxtTestModule',
  *   extends: DruxtModule,
  *   druxt: {
  *     componentOptions: () => ([['wrapper']]),
- *     propsData: (ctx) => ({ prop: ctx.prop }),
+ *     propsData: (ctx) => ({
+ *       bar: ctx.bar,
+ *       foo: ctx.foo,
+ *     }),
  *   }
  * }
  */
@@ -42,14 +45,17 @@ export default {
    * @example @lang js <caption>Manually invoking DruxtModule.fetch().</caption>
    * import { DruxtModule } from 'druxt'
    * export default {
-   *   name: 'MyDruxtModule',
+   *   name: 'DruxtTestModule',
    *   extends: DruxtModule,
-   *   async fetch {
+   *   async fetch() {
    *     await DruxtModule.fetch.call(this)
    *   }
    *   druxt: {
    *     componentOptions: () => ([['wrapper']]),
-   *     propsData: (ctx) => ({ prop: ctx.prop }),
+   *     propsData: (ctx) => ({
+   *       bar: ctx.bar,
+   *       foo: ctx.foo,
+   *     }),
    *   }
    * }
    */
@@ -77,7 +83,7 @@ export default {
   },
 
   /**
-   * @property {object} component - The wrapper component and propsData to be rendered.
+   * @property {ComponentData} component - The wrapper component and propsData to be rendered.
    */
   data: () => ({
     component: {
@@ -94,7 +100,7 @@ export default {
     /**
      * Get list of module wrapper components.
      *
-     * @return {object[]}
+     * @returns {Components}
      */
     getModuleComponents() {
       if (!(this.$options.druxt || {}).componentOptions) {
@@ -138,7 +144,13 @@ export default {
     },
 
     /**
-     * Get module propsData.
+     * Get module propsData via modules `druxt.propsData()` callback.
+     *
+     * @example @lang js
+     * {
+     *   bar: 'foo',
+     *   foo: 'bar',
+     * }
      *
      * @return {object}
      */
@@ -169,6 +181,17 @@ export default {
     /**
      * Get default scoped slots.
      *
+     * Default output is a `JSON.stringify`'d result of the modules propsData.
+     *
+     * This method should be overridden in a Druxt modules.
+     *
+     * @example js
+     * getScopedSlots() {
+     *   return {
+     *     default: () => this.$createElement('div', ['Hello world'])
+     *   }
+     * }
+     *
      * @return {object}
      */
     getScopedSlots() {
@@ -178,11 +201,11 @@ export default {
     },
 
     /**
-     * Get wrapper component.
+     * Get wrapper component data.
      *
      * @param {string} component - The Wrapper component name.
      *
-     * @return {object}
+     * @return {WrapperData}
      */
     async getWrapperData(component) {
       let wrapperData = { druxt: {}, props: {} }
@@ -229,4 +252,60 @@ export default {
     ])
   }
 }
+
+/**
+ * @typedef {object[]} Components
+ * @property {boolean} global - Component global registration state.
+ * @property {string} name - The component name.
+ * @property {string[]} parts - The component naming parts.
+ *
+ * @example @lang js
+ * [{
+ *   global: true,
+ *   pascal: 'DruxtTestModuleWrapper',
+ *   parts: ['Wrapper'],
+ * }]
+ */
+
+/**
+ * @typedef {object} ComponentData
+ * @property {object} $attrs - propsData not registered by the Wrapper component.
+ * @property {string} is=DruxtWrapper - The Wrapper component name.
+ * @property {string[]} options - The Wrapper component options.
+ * @property {object} props - propsData registered by the Wrapper component.
+ * @property {object} propsData - The component propsData object.
+ * @property {object} settings - Druxt settings object provided by the Wrapper component.
+ *
+ * @example @lang js
+ * {
+ *   $attrs: { bar: 'foo' },
+ *   is: 'DruxtTestModuleWrapper',
+ *   options: [
+ *     'DruxtTestModuleWrapper',
+ *   ],
+ *   props: { foo: 'bar' },
+ *   propsData: {
+ *     bar: 'foo',
+ *     foo: 'bar',
+ *   },
+ *   settings: { fooBar: true },
+ * }
+ */
+
+/**
+ * @typedef {object} WrapperData
+ * @property {object} druxt - Druxt settings object for use by Druxt module.
+ * @property {object} props - Registered props oject.
+ *
+ * @example @lang js
+ * {
+ *   druxt: { fooBar: true },
+ *   props: {
+ *     foo: {
+ *       type: String,
+ *       default: '',
+ *     }
+ *   }
+ * }
+ */
 </script>

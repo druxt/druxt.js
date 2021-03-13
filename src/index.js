@@ -120,10 +120,7 @@ export { DruxtWrapper }
  * @see {@link ./class|DruxtClass}
  *
  * @deprecated
- *
- * @example @lang js
- * import { DruxtClass } from 'druxt'
- * const druxt = new DruxtClass()
+ * @private
  */
 export { DruxtClass } from './class'
 
@@ -134,5 +131,6 @@ export { DruxtClass } from './class'
  * @exports DruxtComponentMixin
  *
  * @deprecated
+ * @private
  */
 export { DruxtComponentMixin } from './mixins/component'
