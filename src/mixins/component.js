@@ -6,6 +6,8 @@ import { DruxtClass, DruxtWrapper } from '..'
  * @name DruxtComponentMixin
  * @see {@link /guide/#component-theme-system|Wrapper theme system}
  *
+ * @deprecated
+ *
  * @example @lang vue <caption>CustomDruxtModule.vue</caption>
  * <template>
  *   <component :is="component.is" v-bind="component.propsData">
@@ -67,6 +69,8 @@ const DruxtComponentMixin = {
    * </script>
    */
   async fetch() {
+    console.warn('DruxtComponentMixin is deprecated in favour of DruxtModule.')
+
     // @todo - check for this.$druxt plugin.
     const druxt = new DruxtClass()
     const moduleData = await druxt.getModuleData(this)

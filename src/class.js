@@ -1,5 +1,7 @@
 /**
  * Druxt utility class.
+ *
+ * @deprecated
  */
 class DruxtClass {
   /**

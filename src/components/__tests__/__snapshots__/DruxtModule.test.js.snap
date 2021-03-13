@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DruxtModule component custom module - no wrapper 1`] = `
+"<div>
+  <druxtwrapper-stub></druxtwrapper-stub>
+</div>"
+`;
+
+exports[`DruxtModule component custom module - wrapper 1`] = `
+"<div>
+  <!---->
+</div>"
+`;
+
+exports[`DruxtModule component defaults 1`] = `"<div></div>"`;
