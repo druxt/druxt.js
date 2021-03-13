@@ -5,6 +5,8 @@ import { pascalCase, splitByCase } from 'scule'
 /**
  * The DruxtModule base Vue.js component.
  *
+ * Extend this component to build a Druxt module.
+ *
  * @example @lang js
  * import { DruxtModule } from 'druxt'
  * export default {
@@ -58,7 +60,7 @@ export default {
 
     // Build wrapper component object.
     const options = this.getModuleComponents()
-    const component = {
+    let component = {
       is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
       options: options.map(o => o.name) || [],
     }
@@ -67,9 +69,8 @@ export default {
     const wrapperData = await this.getWrapperData(component.is)
     component.settings = wrapperData.druxt || {}
 
-    // Process propsData.
-    const propsData = this.getModulePropsData()
-    component.propsData = propsData
+    // Build wrapper component propsData.
+    component = { ...component, ...this.getModulePropsData(wrapperData.props) }
 
     // Set component data.
     this.component = component
@@ -79,7 +80,14 @@ export default {
    * @property {object} component - The wrapper component and propsData to be rendered.
    */
   data: () => ({
-    component: {},
+    component: {
+      $attrs: {},
+      is: 'DruxtWrapper',
+      options: [],
+      props: {},
+      propsData: {},
+      settings: {},
+    },
   }),
 
   methods: {
@@ -134,11 +142,28 @@ export default {
      *
      * @return {object}
      */
-    getModulePropsData() {
+    getModulePropsData(wrapperProps = {}) {
       if (!(this.$options.druxt || {}).propsData) {
         return {}
       }
-      return this.$options.druxt.propsData.call(this, this)
+
+      const propsData = this.$options.druxt.propsData.call(this, this)
+
+      // Props.
+      const props = {}
+      const propsKeys = Object.keys(wrapperProps).filter(i => Object.keys(propsData).includes(i))
+      for (const key of propsKeys) {
+        props[key] = propsData[key]
+      }
+
+      // $attrs.
+      const $attrs = { ...this.$attrs }
+      const $attrsKeys = Object.keys(propsData).filter(i => !Object.keys(wrapperProps).includes(i))
+      for (const key of $attrsKeys) {
+        $attrs[key] = propsData[key]
+      }
+
+      return { $attrs, props, propsData }
     },
 
     /**
@@ -175,8 +200,10 @@ export default {
         wrapperData = (await this.$options.components[component]())
       }
 
-      const { druxt, props } = wrapperData
-      return { druxt, props }
+      return {
+        druxt: wrapperData.druxt || {},
+        props: wrapperData.props || {},
+      }
     }
   },
 
@@ -195,8 +222,8 @@ export default {
     // Return wrapped component.
     return h(this.wrapper.component, wrapperData, [
       h(this.component.is, {
-        attrs: this.$attrs,
-        props: this.component.propsData,
+        attrs: this.component.$attrs,
+        props: this.component.props,
         scopedSlots: this.getScopedSlots(),
       })
     ])

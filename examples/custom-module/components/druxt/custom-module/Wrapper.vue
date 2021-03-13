@@ -6,8 +6,6 @@
 
 <script>
 export default {
-  props: ['text'],
-
   druxt: {
     foo: 'bar'
   },

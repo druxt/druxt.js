@@ -21,17 +21,25 @@ describe('DruxtModule component', () => {
     await DruxtModule.fetch.call(wrapper.vm)
 
     // Data.
-    expect(wrapper.vm.component).toStrictEqual({})
+    expect(wrapper.vm.component).toStrictEqual({
+      $attrs: {},
+      is: 'DruxtWrapper',
+      options: [],
+      props: {},
+      propsData: {},
+      settings: {},
+    })
 
     // Methods.
+    const wrapperData = await wrapper.vm.getWrapperData(wrapper.vm.component.is)
+    expect(wrapperData).toStrictEqual({ druxt: {}, props: {} })
+
     expect(wrapper.vm.getModuleComponents()).toStrictEqual([])
-    expect(wrapper.vm.getModulePropsData()).toStrictEqual({})
+    expect(wrapper.vm.getModulePropsData(wrapperData.props)).toStrictEqual({})
 
     const scopedSlots = wrapper.vm.getScopedSlots()
     expect(Object.keys(scopedSlots)).toStrictEqual(['default'])
     expect(typeof scopedSlots.default()).toBe('object')
-
-    expect(await wrapper.vm.getWrapperData(wrapper.vm.component.is)).toStrictEqual({ druxt: {}, props: {} })
 
     const mock = {
       _init: jest.fn(),
@@ -58,17 +66,25 @@ describe('DruxtModule component', () => {
 
     // Data.
     expect(wrapper.vm.component).toStrictEqual({
+      $attrs: { foo: 'bar' },
       is: 'DruxtWrapper',
       options: [],
+      props: {},
       propsData: { foo: 'bar' },
       settings: {},
     })
 
     // Methods.
-    expect(wrapper.vm.getModuleComponents()).toStrictEqual([])
-    expect(wrapper.vm.getModulePropsData()).toStrictEqual({ foo: 'bar' })
+    const wrapperData = await wrapper.vm.getWrapperData(wrapper.vm.component.is)
+    expect(wrapperData).toStrictEqual({ druxt: {}, props: {} })
+
+    expect(wrapper.vm.getModuleComponents(wrapperData.props)).toStrictEqual([])
+    expect(wrapper.vm.getModulePropsData()).toStrictEqual({
+      $attrs: { foo: 'bar' },
+      props: {},
+      propsData: { foo: 'bar' },
+    })
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
-    expect(await wrapper.vm.getWrapperData(wrapper.vm.component.is)).toStrictEqual({ druxt: {}, props: {} })
 
     // HTML snapshot.
     expect(wrapper.html()).toMatchSnapshot()
@@ -95,24 +111,30 @@ describe('DruxtModule component', () => {
 
     // Data.
     expect(wrapper.vm.component).toStrictEqual({
+      $attrs: {},
       is: 'CustomModuleWrapper',
       options: ['CustomModuleWrapper'],
+      props: { foo: 'bar' },
       propsData: { foo: 'bar' },
       settings: { foo: 'bar' },
     })
 
     // Methods.
+    const wrapperData = await wrapper.vm.getWrapperData(wrapper.vm.component.is)
+    expect(wrapperData.druxt).toStrictEqual({ foo: 'bar' })
+    expect(Object.keys(wrapperData.props)).toStrictEqual(['foo'])
+
     expect(wrapper.vm.getModuleComponents()).toStrictEqual([{
       global: true,
       name: 'CustomModuleWrapper',
       parts: ['Wrapper']
     }])
-    expect(wrapper.vm.getModulePropsData()).toStrictEqual({ foo: 'bar' })
+    expect(wrapper.vm.getModulePropsData(wrapperData.props)).toStrictEqual({
+      $attrs: {},
+      props: { foo: 'bar' },
+      propsData: { foo: 'bar' },
+    })
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
-
-    const wrapperData = await wrapper.vm.getWrapperData(wrapper.vm.component.is)
-    expect(wrapperData.druxt).toStrictEqual({ foo: 'bar' })
-    expect(Object.keys(wrapperData.props)).toStrictEqual(['foo'])
 
     // HTML snapshot.
     expect(wrapper.html()).toMatchSnapshot()
