@@ -1,6 +1,7 @@
 <script>
-import { DruxtWrapper } from '..'
 import { pascalCase, splitByCase } from 'scule'
+import Vue from 'vue'
+import { DruxtWrapper } from '..'
 
 /**
  * The DruxtModule base Vue.js component.
@@ -214,18 +215,19 @@ export default {
       }
 
       // Get data from resolved component.
-      if ((this.$options.components[component].options || {}).druxt) {
+      if (this.$options.components[component].options) {
         wrapperData = this.$options.components[component].options
       }
 
       // Get data from unresolved component.
       else if (typeof this.$options.components[component] === 'function' && this._init) {
-        wrapperData = (await this.$options.components[component]())
+        wrapperData = (await this.$options.components[component].call(this)) || {}
       }
 
+      const options = Vue.util.mergeOptions({}, wrapperData)
       return {
-        druxt: wrapperData.druxt || {},
-        props: wrapperData.props || {},
+        druxt: options.druxt || {},
+        props: options.props || {},
       }
     }
   },
