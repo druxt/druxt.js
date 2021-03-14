@@ -1,5 +1,8 @@
 /**
  * Druxt utility class.
+ *
+ * @deprecated
+ * @private
  */
 class DruxtClass {
   /**
@@ -102,33 +105,3 @@ class DruxtClass {
 }
 
 export { DruxtClass }
-
-/**
- * @typedef {object} ModuleData
- * @property {Array.<string[]>} componentOptions - An array of arrays of strings for component naming.
- * @property {object} propsData - Property data to bind to the wrapper component.
- *
- * @example @lang js
- * {
- *   componentOptions: [['wrapper', 'component']],
- *   propsData: {},
- * }
- */
-
- /**
-  * @typedef {object[]} WrapperComponents
-  * @property {boolean} global - Component global registration state.
-  * @property {string} kebab - The component name in kebab case.
-  * @property {string[]} parts - The component naming parts.
-  * @property {string} pascal - The component name in pascal case.
-  * @property {string} prefix - The component name prefix.
-  *
-  * @example @lang js
-  * [{
-  *   global: true,
-  *   kebab: 'druxt-test-module-wrapper',
-  *   parts: ['wrapper'],
-  *   pascal: 'DruxtTestModuleWrapper',
-  *   prefix: 'druxt-test-module',
-  * }]
-  */

@@ -1,16 +1,10 @@
-<template>
-  <component :is="component.is" v-bind="component.propsData">
-    {{ text }}
-  </component>
-</template>
-
 <script>
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 
 export default {
   name: 'DruxtCustomModule',
 
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   props: {
     text: {
@@ -19,8 +13,9 @@ export default {
     }
   },
 
-  druxt: ({ vm }) => ({
-    componentOptions: [['wrapper']],
-  }),
+  druxt: {
+    componentOptions: () => ([['wrapper']]),
+    propsData: ({ text }) => ({ text })
+  },
 }
 </script>
