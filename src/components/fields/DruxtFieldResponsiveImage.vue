@@ -32,12 +32,12 @@ import { mapActions } from 'vuex'
 /**
  * Responsive Image field.
  *
- * _This component is intended to be rendered by the `<druxt-field />` component._
+ * _This component is intended to be rendered by the `<DruxtField />` component._
  *
  * @see {@link DruxtField}
  *
  * @example @lang vue
- * <druxt-field
+ * <DruxtField
  *   :data="{
  *     data: {
  *       id: '5724adfc-0659-41ac-a186-56c527aefdf4',

@@ -32,7 +32,7 @@ import { mapActions } from 'vuex'
 /**
  * Image field.
  *
- * _This component is intended to be rendered by the `<druxt-field />` component._
+ * _This component is intended to be rendered by the `<DruxtField />` component._
  *
  * @see {@link DruxtField}
  *

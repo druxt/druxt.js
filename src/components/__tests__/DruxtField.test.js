@@ -3,12 +3,9 @@ import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
 import { DruxtClient, DruxtStore } from 'druxt'
-// import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
 import { DruxtField } from '..'
 
 jest.mock('axios')
-
-const baseURL = 'https://example.com'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -16,9 +13,9 @@ localVue.use(Vuex)
 
 let store
 
-const mountComponent = (uuid, field, options = {}) => {
-  const entity = require(`../../__fixtures__/${uuid}.json`).data
-  const schema = require(`../../__fixtures__/${entity.type}--default--view.json`)
+const mountComponent = (field, options = {}) => {
+  const entity = require('../../__fixtures__/data/382eec1563f0514319a9de3a48cb658b.json').data
+  const schema = require('../../__fixtures__/schemas/node--page--default--view.json')
 
   const fieldSchema = schema.fields.find(element => element.id === field)
 
@@ -42,7 +39,7 @@ const mountComponent = (uuid, field, options = {}) => {
   return shallowMount(DruxtField, { ...options, localVue, mocks, propsData, store })
 }
 
-describe('Component - DruxtField', () => {
+describe('DruxtField', () => {
   beforeEach(() => {
     mockAxios.reset()
 
@@ -55,20 +52,20 @@ describe('Component - DruxtField', () => {
     store.app = { context: { error: jest.fn() }, store }
   })
 
-  test('pages - title', async () => {
-    const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c', 'title', { stubs: ['DruxtFieldString'] })
-    await wrapper.vm.$options.fetch.call(wrapper.vm)
-
-    expect(wrapper.vm.component.is).toBe('DruxtFieldString')
-    expect(wrapper.vm.component.options).toStrictEqual([
-      'DruxtFieldStringTitle',
-      'DruxtFieldString'
-    ])
-    expect(wrapper.vm.component.propsData.items.length).toBe(1)
+  test('default', () => {
+    const wrapper = mountComponent('body')
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
   })
 
-  test('component', () => {
-    const wrapper = mountComponent('fe00c55d-0335-49d6-964e-a868c0c68f9c', 'title')
-    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
+  test('body', async () => {
+    const wrapper = mountComponent('body', { stubs: ['DruxtFieldTextDefault'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.component.is).toBe('DruxtFieldTextDefault')
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtFieldTextDefaultBody',
+      'DruxtFieldTextDefault'
+    ])
+    expect(wrapper.vm.component.propsData.items.length).toBe(1)
   })
 })
