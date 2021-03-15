@@ -1,80 +1,120 @@
 <script>
-import { DruxtComponentMixin } from 'druxt'
-import { DruxtRouterEntityMixin } from 'druxt-router'
-import { DruxtSchemaMixin } from 'druxt-schema'
+import merge from 'deepmerge'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
+import { DruxtModule } from 'druxt'
 import { mapActions } from 'vuex'
 
 /**
- * The `<druxt-entity />` Vue.js component.
+ * The `<DruxtEntity />` Vue.js component.
  *
  * - Loads a Drupal Entity JSON:API resource from the DruxtJS Router.
  * - Loads the DruxtJS Schema for the Drupal display mode.
- * - Renders Field data via the `<druxt-field />` component.
+ * - Renders Field data via the `<DruxtField />` component.
  * - Supports Component Suggestion based theming with Vue.js Slots.
  *
  * @example @lang vue
  * <!-- Render the specified Aritcle node with with Teaser display mode. -->
- * <druxt-entity type="node--article" :uuid="uuid" :mode="teaser" />
- *
- * @see {@link DruxtField}
- * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
+ * <DruxtEntity type="node--article" :uuid="uuid" :mode="teaser" />
  */
 export default {
   name: 'DruxtEntity',
 
+  extends: DruxtModule,
+
   /**
-   * Vue.js Mixins.
-   *
-   * @see {@link https://router.druxtjs.org/api/mixins/entity.html|DruxtRouterEntityMixin}
-   * @see DruxtSchemaMixin.
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
+   * Vue.js Properties.
    */
-  mixins: [DruxtComponentMixin, DruxtRouterEntityMixin, DruxtSchemaMixin],
+  props: {
+    /**
+     * The Drupal display mode.
+     *
+     * @type {string}
+     * @default default
+     */
+    mode: {
+      type: String,
+      default: 'default'
+    },
+
+    /**
+     * The JSON:API resource type.
+     *
+     * @type {string}
+     */
+    type: {
+      type: String,
+      required: true
+    },
+
+    /**
+     * The Drupal entity UUID.
+     *
+     * @type {string}
+     */
+    uuid: {
+      type: String,
+      required: true
+    },
+  },
 
   /**
    * Nuxt.js fetch method.
-   *
-   * @see {@link https://nuxtjs.org/api/pages-fetch/}
    */
   async fetch() {
-    // Fetch Entity resource.
-    await DruxtRouterEntityMixin.fetch.call(this)
-
     // Fetch Schema.
-    await DruxtSchemaMixin.fetch.call(this)
+    this.schema = await this.getSchema({ resourceType: this.type, mode: this.mode })
+
+    // Build wrapper component object.
+    const options = this.getModuleComponents()
+    let component = {
+      is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
+      options: options.map(o => o.name) || [],
+    }
+
+    // Get wrapper component data to merge with module settings.
+    const wrapperData = await this.getWrapperData(component.is)
+    component.settings = merge((this.$druxtEntity || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
+
+    // Fetch Entity resource.
+    const query = this.getQuery(component.settings)
+    this.entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
 
     // Generate fields list.
     this.fields = this.getFields()
 
-    // Fetch Druxt theme component.
-    await DruxtComponentMixin.fetch.call(this)
+    // Build wrapper component propsData.
+    component = { ...component, ...this.getModulePropsData(wrapperData.props) }
+
+    // Set component data.
+    this.component = component
   },
 
   data: () => ({
     fields: {}
   }),
 
-  druxt: ({ vm }) => ({
-    componentOptions: [
-      [vm.schema.resourceType, vm.schema.config.mode],
-      [vm.schema.resourceType],
-      [vm.schema.config.mode],
-    ],
+  druxt: {
+    componentOptions: ({ schema }) => ([
+      [schema.resourceType, schema.config.mode],
+      [schema.resourceType],
+      [schema.config.mode],
+    ]),
 
-    propsData: {
-      entity: vm.entity,
-      fields: vm.fields,
-      schema: vm.schema
-    },
-  }),
+    propsData: ({ entity, fields, schema }) => ({ entity, fields, schema }),
+  },
 
   methods: {
+    /**
+     * Get Entity fields per Schema.
+     *
+     * @return {object}
+     */
     getFields() {
       if (!this.entity || !this.schema) return false
 
       const data = {
-        ...this.entity.attributes,
-        ...this.entity.relationships
+        ...(this.entity.attributes || {}),
+        ...(this.entity.relationships || {})
       }
 
       const fields = {}
@@ -86,11 +126,50 @@ export default {
           id: field.id,
           data: data[field.id],
           schema: field,
-          relationship: !!this.entity.relationships[field.id]
+          relationship: !!(this.entity.relationships || {})[field.id]
         }
       }
 
       return fields
+    },
+
+    /**
+     * Get Entity query object.
+     *
+     * @param {object} settings - The merged module and component settings object.
+     *
+     * @return {object}
+     */
+    getQuery(settings) {
+      const query = new DrupalJsonApiParams()
+
+      // Build fields list.
+      const fields = (settings.query || {}).schema
+        ? [...this.schema.fields.map((o) => o.id), ...((settings.query || {}).fields || [])]
+        : ((settings.query || {}).fields || [])
+      if (fields.length) {
+        query.addFields(this.type, fields)
+        return query
+      }
+      return false
+    },
+
+    /**
+     * Get scoped slots for each Entity field.
+     *
+     * @return {object}
+     */
+    getScopedSlots() {
+      // Build scoped slots for each field.
+      const scopedSlots = {}
+      Object.entries(this.fields).map(([id, field]) => {
+        scopedSlots[id] = attrs => this.$createElement('DruxtField', { attrs, props: field })
+      })
+
+      // Build default slot.
+      scopedSlots.default = attrs => Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
+
+      return scopedSlots
     },
 
     /**
@@ -109,38 +188,15 @@ export default {
       if (typeof value.data !== 'undefined' && !value.data) return true
 
       return false
-    }
-  },
+    },
 
-  render(h) {
-    const wrapperData = {
-      class: this.wrapper.class || undefined,
-      style: this.wrapper.style || undefined,
-      props: this.wrapper.propsData,
-    }
-
-    // Return only wrapper if fetch state is still pending.
-    if (this.$fetchState.pending) {
-      return h(this.wrapper.component, wrapperData)
-    }
-
-    // Build scoped slots for each field.
-    const scopedSlots = {}
-    Object.entries(this.fields).map(([id, field]) => {
-      scopedSlots[id] = attrs => h('DruxtField', { attrs, props: field })
+    /**
+     * Maps Vuex action to methods.
+     */
+    ...mapActions({
+      getResource: 'druxt/getResource',
+      getSchema: 'druxtSchema/get'
     })
-
-    // Build default slot.
-    scopedSlots.default = attrs => Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
-
-    // Return wrapped component.
-    return h(this.wrapper.component, wrapperData, [
-      h(this.component.is, {
-        attrs: this.$attrs,
-        props: this.component.propsData,
-        scopedSlots,
-      })
-    ])
-  }
+  },
 }
 </script>
