@@ -13,13 +13,13 @@ const component = {
 
 describe('DruxtEntityMixin', () => {
   test('classes', () => {
-    const entity = require('../../__fixtures__/fe00c55d-0335-49d6-964e-a868c0c68f9c.json').data
-    const schema = require('../../__fixtures__/pages--default--view.json')
+    const entity = require('../../__fixtures__/data/382eec1563f0514319a9de3a48cb658b.json').data
+    const schema = require('../../__fixtures__/schemas/node--page--default--view.json')
 
     const propsData = { entity, fields: {}, schema }
 
     const wrapper = mount(component, { localVue, propsData })
 
-    expect(wrapper.vm.classes).toBe('pages--default--view node--page node page default view')
+    expect(wrapper.vm.classes).toBe('node--page--default--view node--page node page default view')
   })
 })

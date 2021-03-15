@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 
 /**
  * The `<DruxtField />` Vue.js component.
@@ -43,7 +43,7 @@ import { DruxtComponentMixin } from 'druxt'
  * - Supports Component Suggestion based theming with Vue.js Slots.
  *
  * @example
- * <druxt-field
+ * <DruxtField
  *   data="A wholesome pasta bake is the ultimate comfort food. This delicious bake is super quick to prepare and an ideal midweek meal for all the family."
  *   :schema="{
  *     id: 'field_summary',
@@ -63,7 +63,7 @@ export default {
    *
    * @see {@link https://druxtjs.org/api/mixins/component.html|DruxtComponentMixin}
    */
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -162,13 +162,9 @@ export default {
     },
   },
 
-  druxt: ({ vm }) => ({
-    componentOptions: [[vm.schema.type, vm.schema.id]],
-
-    propsData: {
-      items: vm.items,
-      schema: vm.schema
-    }
-  })
+  druxt: {
+    componentOptions: ({ schema }) => ([[schema.type, schema.id]]),
+    propsData: ({ items, schema }) => ({ items, schema }),
+  }
 }
 </script>

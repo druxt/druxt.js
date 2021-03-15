@@ -35,12 +35,12 @@ import { DruxtFieldMixin } from '../../mixins/field'
  * - Uses `<nuxt-link :to />` for internal links.
  * - Uses `<a :href />` for external links.
  *
- * _This component is intended to be rendered by the `<druxt-field />` component._
+ * _This component is intended to be rendered by the `<DruxtField />` component._
  *
  * @see {@link DruxtField}
  *
  * @example
- * <druxt-field
+ * <DruxtField
  *   :data="{
  *     title: 'Find out more',
  *     uri: 'internal:/about-umami'

@@ -7,6 +7,7 @@
  *
  * @mixin
  * @deprecated
+ * @private
  *
  * @example @lang js
  * // nuxt.config.js

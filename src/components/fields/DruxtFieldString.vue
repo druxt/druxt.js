@@ -30,12 +30,12 @@ import { DruxtFieldMixin } from '../../mixins/field'
 /**
  * String field.
  *
- * _This component is intended to be rendered by the `<druxt-field />` component._
+ * _This component is intended to be rendered by the `<DruxtField />` component._
  *
  * @see {@link DruxtField}
  *
  * @example
- * <druxt-field
+ * <DruxtField
  *   data="Super easy vegetarian pasta bake"
  *   :schema="{
  *     id: 'field_title',

@@ -23,19 +23,28 @@ Add module to `nuxt.config.js`
 ```js
 module.exports = {
   modules: [
-    ...
-    'druxt',
     'druxt-entity',
-    'druxt-schema'
   ],
-
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org',
+    entity: {
+      schema: true,
+      fields: ['path', 'title']
+    }
   }
 }
 ```
 
 ## Options
+
+### Druxt Entity options
+
+These options are specific to this module.
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entity.query.fields` | `string[]` | No | `[]` | An array of fields to filter all Entity JSON:API queries. |
+| `entity.query.schema` | `boolean` | No | `false` | Whether to automatically filter fields based on Display schema. |
 
 ### Base Druxt options
 
