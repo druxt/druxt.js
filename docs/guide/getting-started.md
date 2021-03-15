@@ -13,9 +13,7 @@ DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API backend:
     ```js
     module.exports = {
       modules: [
-        'druxt',
         'druxt-entity',
-        'druxt-schema'
       ],
       druxt: {
         baseUrl: 'https://demo-api.druxtjs.org'

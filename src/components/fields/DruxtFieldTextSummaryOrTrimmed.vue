@@ -4,12 +4,12 @@ import DruxtFieldTextDefault from './DruxtFieldTextDefault.vue'
 /**
  * Text Summary or Trimmed field.
  *
- * _This component is intended to be rendered by the `<druxt-field />` component._
+ * _This component is intended to be rendered by the `<DruxtField />` component._
  *
  * @see {@link DruxtField}
  *
  * @example
- * <druxt-field
+ * <DruxtField
  *   :data="{
  *     format: 'basic_html',
  *     processed: '<p><strong>Umami Magazine &amp; Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.</p>',

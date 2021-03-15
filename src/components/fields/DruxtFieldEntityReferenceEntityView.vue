@@ -32,13 +32,13 @@ import { DruxtFieldMixin } from '../../mixins/field'
  *
  * - Renders the reference entity with the `<druxt-entity />` component.
  *
- * _This component is intended to be rendered by the `<druxt-field />` component._
+ * _This component is intended to be rendered by the `<DruxtField />` component._
  *
  * @see {@link DruxtEntity}
  * @see {@link DruxtField}
  *
  * @example @lang vue
- * <druxt-field
+ * <DruxtField
  *   :data="{
  *     data: {
  *       id: '88d46b5c-07c8-4d80-8f4d-e45ff2639d56',

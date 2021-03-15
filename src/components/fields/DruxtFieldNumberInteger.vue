@@ -38,12 +38,12 @@ import { DruxtFieldMixin } from '../../mixins/field'
 /**
  * Number Integer field.
  *
- * _This component is intended to be rendered by the `<druxt-field />` component._
+ * _This component is intended to be rendered by the `<DruxtField />` component._
  *
  * @see {@link DruxtField}
  *
  * @example
- * <druxt-field
+ * <DruxtField
  *   data="5"
  *   :schema="{
  *     id: 'field_preparation_time',

@@ -90,7 +90,9 @@ export default {
   },
 
   data: () => ({
-    fields: {}
+    entity: {},
+    fields: {},
+    schema: {},
   }),
 
   druxt: {
