@@ -4,7 +4,7 @@ title: Introduction
 
 # DruxtJS Entity
 
-The DruxtJS Entity module provides a Drupal **Display mode** powered Entity and Field **component system** for your NuxtJS frontend.
+The DruxtJS Entity module provides a Drupal **Display mode** powered Entity and Field **component system** for your Nuxt.js frontend.
 
 
 
@@ -65,10 +65,39 @@ _Using the `<DruxtField />` component to render a `text_default` field._
 See the [DruxtField API documention](/api/components/DruxtField) for more information.
 
 
-## Custom component suggestions
+## Theming
 
-Both the Entity and Field components use a **Component Suggestion** system to allow for custom components to be used.
+Both the Entity and Field components use the DruxtModule slot based Wrapper theme system.
 
 This allows for Entity Type component wrappers, custom Field components and more.
 
-See the [DruxtEntityComponentSuggestionMixin API documentation](../api/mixins/componentSuggestion) for more information.
+See the [Wrapper theme system](https://druxtjs.org/guide/#wrapper-theme-system) guide for more information.
+
+
+## Reducing Entity data
+
+The default behaviour of the Entity module is to retrieve all available fields from the JSON:API.
+
+This behaviour is configurable using the modules `query` option, allowing for both manually filtered `fields`, automatically filtered fields using the Display mode `schema`, and a combination of the two as required.
+
+The default behaviour can be set via `nuxt.config.js`:
+```js
+druxt: {
+  entity: {
+    query: {
+      fields: ['path', 'title'],
+      schema: true,
+    },
+  },
+}
+```
+
+Alternatively, the behaviour can be set directly on an Entity Wrapper component:
+```js
+druxt: {
+  query: {
+    fields: ['title'],
+    schema: false,
+  }
+}
+```

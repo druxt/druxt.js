@@ -4,7 +4,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-entity/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-entity?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-entity/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-entity)
 
-> The DruxtJS Entity module provides a Drupal Display Mode powered Entity and Field component system for your NuxtJS frontend.
+> The DruxtJS Entity module provides a Drupal Display Mode powered Entity and Field component system for your Nuxt.js frontend.
 
 ## Links
 
@@ -23,19 +23,28 @@ Add module to `nuxt.config.js`
 ```js
 module.exports = {
   modules: [
-    ...
-    'druxt',
     'druxt-entity',
-    'druxt-schema'
   ],
-
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org',
+    entity: {
+      schema: true,
+      fields: ['path', 'title']
+    }
   }
 }
 ```
 
 ## Options
+
+### Druxt Entity options
+
+These options are specific to this module.
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `entity.query.fields` | `string[]` | No | `[]` | An array of fields to filter all Entity JSON:API queries. |
+| `entity.query.schema` | `boolean` | No | `false` | Whether to automatically filter fields based on Display schema. |
 
 ### Base Druxt options
 

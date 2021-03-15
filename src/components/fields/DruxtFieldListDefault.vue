@@ -32,12 +32,12 @@ import { DruxtFieldMixin } from '../../mixins/field'
 /**
  * List Default field.
  *
- * _This component is intended to be rendered by the `<druxt-field />` component._
+ * _This component is intended to be rendered by the `<DruxtField />` component._
  *
  * @see {@link DruxtField}
  *
  * @example
- * <druxt-field
+ * <DruxtField
  *   data="easy"
  *   :schema="{
  *     id: 'field_difficulty',

@@ -29,12 +29,12 @@ import { DruxtFieldMixin } from '../../mixins/field'
 /**
  * Basic String field.
  *
- * _This component is intended to be rendered by the `<druxt-field />` component._
+ * _This component is intended to be rendered by the `<DruxtField />` component._
  *
  * @see {@link DruxtField}
  *
  * @example
- * <druxt-field
+ * <DruxtField
  *   data="A wholesome pasta bake is the ultimate comfort food. This delicious bake is super quick to prepare and an ideal midweek meal for all the family."
  *   :schema="{
  *     id: 'field_summary',

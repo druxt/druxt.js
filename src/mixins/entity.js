@@ -11,8 +11,8 @@ import { DruxtEntityContextMixin } from './context'
  * @example @lang vue
  * <template>
  *   <div :classes="classes">
- *     <!-- Render a `druxt-field` component for all renderable fields. -->
- *     <druxt-field
+ *     <!-- Render a `DruxtField` component for all renderable fields. -->
+ *     <DruxtField
  *       v-for="(field, key) of fields"
  *       :key="key"
  *       :v-bind="field"

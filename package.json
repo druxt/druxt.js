@@ -1,21 +1,30 @@
 {
   "name": "druxt-entity",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "description": "Drupal Display Mode powered Entity and Field Vue.js component system.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/druxt/druxt-entity"
   },
   "keywords": [
+    "cms",
+    "decoupled",
     "drupal",
     "druxt",
     "entity",
     "entities",
     "field",
     "fields",
-    "nuxt"
+    "headless",
+    "nuxt",
+    "module",
+    "vue"
   ],
-  "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/druxt/druxt-entity/issues"
@@ -34,8 +43,8 @@
     "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
     "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "docs:dev": "npx druxt-docgen dev",
-    "docs:build": "npx druxt-docgen build",
+    "docs:dev": "npx druxt-docgen -c vuepress.config dev",
+    "docs:build": "npx druxt-docgen -c vuepress.config build",
     "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
@@ -47,7 +56,8 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "druxt": "^0.4.1",
+    "deepmerge": "^4.2.2",
+    "druxt": "^0.5.0",
     "druxt-router": "^0.18.0",
     "druxt-schema": "^0.7.0"
   },
@@ -63,6 +73,7 @@
     "babel-eslint": "^10.1.0",
     "cross-env": "^6.0.3",
     "drupal-jsonapi-params": "^1.1.12",
+    "druxt-docgen": "^0.4.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.5.4",

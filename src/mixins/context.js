@@ -1,11 +1,12 @@
 /**
  * Provides a context passthrough mechanism for Vue.js components.
  *
- * Context persists through all `<druxt-entity>` and `<druxt-field>`
+ * Context persists through all `<druxt-entity>` and `<DruxtField>`
  * components.
  *
  * @mixin
  * @deprecated
+ * @private
  *
  * @example @lang vue
  * <!-- Parent component -->

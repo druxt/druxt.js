@@ -6,8 +6,6 @@ import { DruxtClient, DruxtStore } from 'druxt'
 import { DruxtSchemaStore } from 'druxt-schema'
 import { DruxtEntity, DruxtField } from '..'
 
-const baseURL = 'https://example.com'
-
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -16,24 +14,20 @@ localVue.component('DruxtField', DruxtField)
 const stubs = ['DruxtEntityNodePage']
 let store
 
-const mountComponent = resource => {
+const mountComponent = (propsData) => {
   const mocks = {
+    $druxtEntity: {
+      options: {},
+    },
     $fetchState: {
       pending: false
     }
   }
 
-  const propsData = {
-    uuid: resource.data.id,
-    type: resource.data.type
-  }
-
-  store.commit('druxt/addResource', { resource, hash: '_default' })
-
   return mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
 }
 
-describe('Component - DruxtEntity', () => {
+describe('DruxtEntity', () => {
   beforeEach(() => {
     mockAxios.reset()
 
@@ -45,39 +39,79 @@ describe('Component - DruxtEntity', () => {
 
     DruxtSchemaStore({ store })
     store.$druxtSchema = {
-      import: schema => {
-        return require(`../../__fixtures__/${schema}.json`)
+      import: (schema) => {
+        return require(`../../__fixtures__/schemas/${schema}.json`)
       }
     }
 
     store.app = { context: { error: jest.fn() }, store }
   })
 
-  test('pages', async () => {
-    const resource = require('../../__fixtures__/fe00c55d-0335-49d6-964e-a868c0c68f9c.json')
-    const wrapper = mountComponent(resource)
+  test('node--page', async () => {
+    const wrapper = mountComponent({ uuid: '772b174a-796f-4301-a04d-b935a7304fba', type: 'node--page' })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.html()).toMatchSnapshot()
+    // Props.
+    expect(wrapper.vm.mode).toBe('default')
+    expect(wrapper.vm.type).toBe('node--page')
+    expect(wrapper.vm.uuid).toBe('772b174a-796f-4301-a04d-b935a7304fba')
 
-    expect(wrapper.vm.schema).toHaveProperty('config')
-    expect(wrapper.vm.schema).toHaveProperty('fields')
-    expect(wrapper.vm.schema).toHaveProperty('groups')
-    expect(wrapper.vm.schema).toHaveProperty('id')
-    expect(wrapper.vm.schema).toHaveProperty('resourceType')
-
+    // Data.
+    expect(Object.keys(wrapper.vm.component.$attrs)).toStrictEqual([
+      'entity', 'fields', 'schema'
+    ])
+    expect(wrapper.vm.component.is).toBe('DruxtEntityNodePage')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtEntityNodePageDefault',
       'DruxtEntityNodePage',
       'DruxtEntityDefault',
     ])
-    expect(wrapper.vm.component.is).toBe('DruxtEntityNodePage')
+    expect(wrapper.vm.component.props).toStrictEqual({})
+    expect(Object.keys(wrapper.vm.component.propsData)).toStrictEqual([
+      'entity', 'fields', 'schema'
+    ])
 
-    expect(Object.keys(wrapper.vm.fields).length).toBe(2)
-    expect(Object.values(wrapper.vm.fields)[0].schema.id).toBe('title')
+    expect(Object.keys(wrapper.vm.entity)).toStrictEqual(['type', 'id', 'links', 'attributes', 'relationships'])
+    expect(Object.keys(wrapper.vm.fields)).toStrictEqual(['body'])
+    expect(Object.keys(wrapper.vm.schema)).toStrictEqual([
+      'id', 'resourceType', 'fields', 'groups', 'config'
+    ])
 
-    expect(wrapper.vm.component.propsData).toHaveProperty('entity')
-    expect(wrapper.vm.component.propsData).toHaveProperty('fields')
-    expect(wrapper.vm.component.propsData).toHaveProperty('schema')
+    // Methods.
+    expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toBe(false)
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  test('node--page - filtered', async () => {
+    localVue.component('DruxtEntityNodePageDefault', {
+      props: ['entity', 'fields', 'schema'],
+      druxt: {
+        query: {
+          fields: ['title'],
+          schema: true,
+        },
+      },
+      render(h) {
+        return h('div', [JSON.stringify(this.entity)])
+      }
+    })
+
+    const wrapper = mountComponent({ uuid: '772b174a-796f-4301-a04d-b935a7304fba', type: 'node--page' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Data.
+    expect(wrapper.vm.component.$attrs).toStrictEqual({})
+    expect(wrapper.vm.component.is).toBe('DruxtEntityNodePageDefault')
+    expect(Object.keys(wrapper.vm.component.props)).toStrictEqual([
+      'schema', 'fields', 'entity'
+    ])
+
+    expect(Object.keys(wrapper.vm.entity)).toStrictEqual(['type', 'id', 'links', 'attributes'])
+
+    // Methods.
+    expect(wrapper.vm.getQuery(wrapper.vm.component.settings).data.fields['node--page']).toBe('body,links,content_moderation_control,title')
+
+    expect(wrapper.html()).toMatchSnapshot()
   })
 })

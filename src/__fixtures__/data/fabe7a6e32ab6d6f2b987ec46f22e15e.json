@@ -1,0 +1,35 @@
+{
+  "jsonapi":{
+    "version":"1.0",
+    "meta":{
+      "links":{
+        "self":{
+          "href":"http:\/\/jsonapi.org\/format\/1.0\/"
+        }
+      }
+    }
+  },
+  "data":{
+    "type":"node--page",
+    "id":"772b174a-796f-4301-a04d-b935a7304fba",
+    "links":{
+      "self":{
+        "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/772b174a-796f-4301-a04d-b935a7304fba?resourceVersion=id%3A36"
+      }
+    },
+    "attributes":{
+      "body":{
+        "value":"\u003Cp\u003EUmami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided \u0027out of the box\u0027.\u003C\/p\u003E\u003Cp\u003EFor more information visit \u003Ca href=\u0027https:\/\/www.drupal.org\/docs\/8\/umami-drupal-8-demonstration-installation-profile\u0027\u003Ehttps:\/\/www.drupal.org\/docs\/8\/umami-drupal-8-demonstration-installation-profile\u003C\/a\u003E.\u003C\/p\u003E",
+        "format":"basic_html",
+        "processed":"\u003Cp\u003EUmami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided \u0027out of the box\u0027.\u003C\/p\u003E\n\u003Cp\u003EFor more information visit \u003Ca href=\u0022https:\/\/www.drupal.org\/docs\/8\/umami-drupal-8-demonstration-installation-profile\u0022\u003Ehttps:\/\/www.drupal.org\/docs\/8\/umami-drupal-8-demonstration-installation-profile\u003C\/a\u003E.\u003C\/p\u003E\n",
+        "summary":null
+      },
+      "title":"About Umami"
+    }
+  },
+  "links":{
+    "self":{
+      "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/772b174a-796f-4301-a04d-b935a7304fba?fields%5Bnode--page%5D=body%2Clinks%2Ccontent_moderation_control%2Ctitle"
+    }
+  }
+}
