@@ -1,4 +1,5 @@
 import md5 from 'md5'
+import Vue from 'vue'
 
 const DruxtStore = ({ store }) => {
   if (typeof store === 'undefined') {
@@ -48,8 +49,8 @@ const DruxtStore = ({ store }) => {
        * this.$store.commit('druxt/addCollection', { collection, type, hash })
        */
       addCollection (state, { collection, type, hash }) {
-        if (!state.collections[type]) state.collections[type] = {}
-        state.collections[type][hash] = collection
+        if (!state.collections[type]) Vue.set(state.collections, type, {})
+        Vue.set(state.collections[type], hash, collection)
       },
 
       /**
@@ -67,9 +68,9 @@ const DruxtStore = ({ store }) => {
           return
         }
 
-        if (!state.resources[type]) state.resources[type] = {}
-        if (!state.resources[type][id]) state.resources[type][id] = {}
-        state.resources[type][id][hash] = resource
+        if (!state.resources[type]) Vue.set(state.resources, type, {})
+        if (!state.resources[type][id]) Vue.set(state.resources[type], id, {})
+        Vue.set(state.resources[type][id], hash, resource)
       },
     },
 
