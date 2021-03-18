@@ -1,178 +1,6 @@
-<template>
-  <component
-    :is="wrapper.component"
-    v-if="!$fetchState.pending && view && resource"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      v-model="model"
-      v-bind="component.propsData"
-    >
-      <!-- Scoped slot: Header -->
-      <template v-slot:header>
-        <span
-          v-for="header of headers"
-          :key="header.id"
-          v-html="header.content.value"
-        />
-      </template>
-
-      <!-- Scoped slot: Exposed filters -->
-      <template
-        v-if="filters"
-        #filters="$attrs"
-      >
-        <DruxtViewsFilters
-          v-model="model.filter"
-          :filters="filters"
-          v-bind="{ ...display.display_options.exposed_form, ...$attrs }"
-          @input="onFiltersUpdate"
-        />
-      </template>
-
-      <!-- Scoped slot: Exposed sorts -->
-      <template
-        v-if="showSorts"
-        #sorts="$attrs"
-      >
-        <DruxtViewsSorts
-          v-model="model.sort"
-          :sorts="sorts"
-          v-bind="{ ...display.display_options.exposed_form, ...$attrs }"
-        />
-      </template>
-
-      <!-- Scoped slot: Attachments before -->
-      <template
-        v-if="attachments_before"
-        v-slot:attachments_before="$attrs"
-      >
-        <DruxtView
-          v-for="attachmentDisplayId of attachments_before"
-          :key="attachmentDisplayId"
-          :display-id="attachmentDisplayId"
-          :type="type"
-          :uuid="uuid"
-          :view-id="viewId"
-          v-bind="$attrs"
-        />
-      </template>
-
-      <!-- Scoped slot: Results -->
-      <template v-slot:results="options">
-        <DruxtEntity
-          v-for="result of results"
-          :key="result.id"
-          v-bind="{
-            type: result.type,
-            uuid: result.id,
-            mode,
-            ...options
-          }"
-        />
-      </template>
-
-      <!-- Scoped slot: Pager -->
-      <template
-        v-if="showPager"
-        #pager="$attrs"
-      >
-        <DruxtViewsPager
-          v-model="model.page"
-          v-bind="{ count, ...pager, resource, ...$attrs }"
-        />
-      </template>
-
-      <!-- Scoped slot: Attachments after -->
-      <template
-        v-if="attachments_after"
-        v-slot:attachments_after="$attrs"
-      >
-        <DruxtView
-          v-for="attachmentDisplayId of attachments_after"
-          :key="attachmentDisplayId"
-          :display-id="attachmentDisplayId"
-          :type="type"
-          :uuid="uuid"
-          :view-id="viewId"
-          v-bind="$attrs"
-        />
-      </template>
-
-      <template>
-        <!-- Header -->
-        <span
-          v-for="header of headers"
-          :key="header.id"
-          v-html="header.content.value"
-        />
-
-        <!-- Exposed filters -->
-        <DruxtViewsFilters
-          v-model="model.filter"
-          :filters="filters"
-          v-bind="display.display_options.exposed_form"
-          @input="onFiltersUpdate"
-        />
-
-        <!-- Exposed sorts -->
-        <DruxtViewsSorts
-          v-if="showSorts"
-          v-model="model.sort"
-          :sorts="sorts"
-          v-bind="display.display_options.exposed_form"
-        />
-
-        <!-- Attachments before -->
-        <div v-if="attachments_before">
-          <DruxtView
-            v-for="attachmentDisplayId of attachments_before"
-            :key="attachmentDisplayId"
-            :display-id="attachmentDisplayId"
-            :type="type"
-            :uuid="uuid"
-            :view-id="viewId"
-          />
-        </div>
-
-        <!-- Results -->
-        <DruxtEntity
-          v-for="result of results"
-          :key="result.id"
-          v-bind="{
-            type: result.type,
-            uuid: result.id,
-            mode
-          }"
-        />
-
-        <!-- Attachments after -->
-        <div v-if="attachments_after">
-          <DruxtView
-            v-for="attachmentDisplayId of attachments_after"
-            :key="attachmentDisplayId"
-            :display-id="attachmentDisplayId"
-            :type="type"
-            :uuid="uuid"
-            :view-id="viewId"
-          />
-        </div>
-
-        <!-- Pager -->
-        <DruxtViewsPager
-          v-if="showPager"
-          v-model="model.page"
-          v-bind="{ count, ...pager, resource }"
-        />
-      </template>
-    </component>
-  </component>
-</template>
-
 <script>
 import merge from 'deepmerge'
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 import { parse, stringify } from 'qs'
 import { mapActions } from 'vuex'
 
@@ -189,7 +17,7 @@ import { mapActions } from 'vuex'
 export default {
   name: 'DruxtView',
 
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -257,7 +85,7 @@ export default {
       query: stringify(this.query)
     })
 
-    await DruxtComponentMixin.fetch.call(this)
+    await DruxtModule.fetch.call(this)
   },
 
   /**
@@ -469,6 +297,114 @@ export default {
   },
 
   methods: {
+    getScopedSlots() {
+      // Build scoped slots.
+      const scopedSlots = {}
+
+      // Headers.
+      scopedSlots.header = () => Object.entries(this.headers).map(([key, header]) => this.$createElement('span', {
+        domProps: { innerHTML: (header.content || {}).value }, key
+      }))
+
+      // Exposed filters.
+      if (this.filters.length) {
+        scopedSlots.filters = (attrs) => this.$createElement('DruxtViewsFilters', {
+          attrs: { ...attrs },
+          on: {
+            input: (value) => {
+              this.model.filter = value
+            }
+          },
+          props: {
+            filters: this.filters,
+            value: this.model.filter,
+            ...this.display.display_options.exposed_form
+          },
+        })
+      }
+
+      // Exposed sorts.
+      if (this.showSorts) {
+        scopedSlots.sorts = (attrs) => this.$createElement('DruxtViewsSorts', {
+          attrs: { ...attrs },
+          on: {
+            input: (value) => {
+              this.model.sort = value
+            }
+          },
+          props: {
+            sorts: this.sorts,
+            value: this.model.sort,
+            ...this.display.display_options.exposed_form
+          }
+        })
+      }
+
+      // Attachments before.
+      if (this.attachments_before) {
+        scopedSlots.attachments_before = (attrs) => this.attachments_before.map((displayId) => this.$createElement('DruxtView', {
+          attrs: { ...attrs },
+          key: displayId,
+          props: {
+            displayId,
+            type: this.type,
+            uuid: this.uuid,
+            viewId: this.viewId,
+          },
+        }))
+      }
+
+      // Results.
+      scopedSlots.results = (attrs) => this.results.map((result) => this.$createElement('DruxtEntity', {
+        attrs: { ...attrs },
+        key: result.id,
+        props: {
+          mode: this.mode,
+          type: result.type,
+          uuid: result.id
+        }
+      }))
+
+      // Pager.
+      if (this.showPager) {
+        scopedSlots.pager = (attrs) => this.$createElement('DruxtViewsPager', {
+          attrs: { ...attrs },
+          on: {
+            input: (value) => {
+              this.model.page = value
+            }
+          },
+          props: {
+            count: this.count,
+            resource: this.resource,
+            value: this.model.page,
+            ...this.pager,
+          }
+        })
+      }
+
+      // Attachments after.
+      if (this.attachments_after) {
+        scopedSlots.attachments_after = (attrs) => this.attachments_after.map((displayId) => this.$createElement('DruxtView', {
+          attrs: { ...attrs },
+          key: displayId,
+          props: {
+            displayId,
+            type: this.type,
+            uuid: this.uuid,
+            viewId: this.viewId,
+          },
+        }))
+      }
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => Object.keys(scopedSlots)
+        .filter((key) => !['default', '_normalized'].includes(key))
+        .map((key) => scopedSlots[key](attrs))
+
+      return scopedSlots
+    },
+
     /**
      * Filters update event handler.
      */
@@ -486,17 +422,17 @@ export default {
     })
   },
 
-  druxt: ({ vm }) => ({
-    componentOptions: [[vm.viewId, vm.displayId]],
+  druxt: {
+    componentOptions: (vm) => ([[vm.viewId, vm.displayId]]),
 
-    propsData: {
+    propsData: (vm) => ({
       count: vm.count,
       display: vm.display,
       mode: vm.mode,
       pager: vm.pager,
       results: vm.results,
       view: vm.view
-    }
-  })
+    }),
+  }
 }
 </script>

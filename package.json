@@ -58,7 +58,7 @@
     "axios": "^0.21.1",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "^0.4.1",
+    "druxt": "^0.5.1",
     "druxt-blocks": "^0.8.0",
     "druxt-entity": "^0.10.0",
     "druxt-router": "^0.18.0",
