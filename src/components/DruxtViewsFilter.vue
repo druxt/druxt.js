@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 
 /**
  * The `<DruxtViewsFilter />` Vue.js component.
@@ -23,7 +23,7 @@ import { DruxtComponentMixin } from 'druxt'
 export default {
   name: 'DruxtViewsFilter',
 
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -64,16 +64,14 @@ export default {
     }
   },
 
-  druxt: ({ vm }) => ({
-    componentOptions: [
-      [vm.filter.id],
-      [vm.filter.plugin_id, vm.filter.id],
+  druxt: {
+    componentOptions: ({ filter }) => ([
+      [filter.id],
+      [filter.plugin_id, filter.id],
       ['default']
-    ],
+    ]),
 
-    propsData: {
-      filter: vm.filter
-    }
-  }),
+    propsData: ({ filter }) => ({ filter })
+  },
 }
 </script>
