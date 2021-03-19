@@ -77,7 +77,8 @@ describe('DruxtView', () => {
       filter: { test: 1 },
       sort: 'test'
     }
-    expect(wrapper.vm.query).toStrictEqual({
+    expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({
+      'fields[node--article]': 'uuid',
       page: 1,
       'views-filter': { test: 1 },
       'views-sort[sort_by]': 'test',
@@ -92,7 +93,7 @@ describe('DruxtView', () => {
       page: null,
       sort: null
     })
-    expect(wrapper.vm.query).toStrictEqual({})
+    expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({ 'fields[node--article]': 'uuid' })
 
     // Watches.
     expect(mocks.$fetch).toHaveBeenCalledTimes(1)

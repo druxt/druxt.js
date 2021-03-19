@@ -72,20 +72,41 @@ export default {
    * Nuxt fetch method.
    */
   async fetch() {
+    let component = { ...this.component }
+
+    // Fetch View.
     if (!this.view) {
       this.view = await this.getResource({
         type: this.type,
         id: this.uuid,
       })
+
+      // Build wrapper component object.
+      const options = this.getModuleComponents()
+      component = {
+        is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
+        options: options.map(o => o.name) || [],
+      }
     }
 
+    // Get wrapper component data to merge with module settings.
+    const wrapperData = await this.getWrapperData(component.is)
+    // component.settings = merge((this.$druxtView || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
+    component.settings = wrapperData.druxt
+
+    // Fetch JSON:API Views resource.
+    const query = this.getQuery(component.settings)
     this.resource = await this.getResults({
       viewId: this.viewId,
       displayId: this.displayId,
-      query: stringify(this.query)
+      query: stringify(query)
     })
 
-    await DruxtModule.fetch.call(this)
+    // Build wrapper component propsData.
+    component = { ...component, ...this.getModulePropsData(wrapperData.props) }
+
+    // Set component data.
+    this.component = component
   },
 
   /**
@@ -213,39 +234,6 @@ export default {
       return ((this.display || {}).display_options || {}).pager || false
     },
 
-    query() {
-      const query = {}
-
-      // Check all filters for 'bundle' plugin with bundle data, and use if
-      // found to return only the UUID field.
-      const filters = ((this.display || {}).display_options || {}).filters || []
-      Object.values(filters).map((filter) => {
-        if (filter.plugin_id === 'bundle' && filter.value) {
-          Object.keys(filter.value).map((bundle) => {
-            const resourceType = `${filter.entity_type}--${bundle}`
-            query[`fields[${resourceType}]`] = 'uuid'
-          })
-        }
-      })
-
-      // Pagination.
-      if (this.model.page) {
-        query.page = this.model.page
-      }
-
-      // Exposed filters.
-      if (Object.entries(this.model.filter || {}).length) {
-        query['views-filter'] = this.model.filter
-      }
-
-      // Exposed sorts.
-      if (this.model.sort) {
-        query['views-sort[sort_by]'] = this.model.sort
-      }
-
-      return query
-    },
-
     /**
      * The JSON:API Views results.
      *
@@ -291,7 +279,6 @@ export default {
           page: null,
           sort: null,
         }
-        await this.$fetch
       }
     },
 
@@ -306,6 +293,13 @@ export default {
     async uuid() {
       await this.$fetch()
     },
+
+    model: {
+      deep: true,
+      async handler() {
+        await this.$fetch()
+      }
+    }
   },
 
   methods: {
@@ -415,6 +409,54 @@ export default {
         .map((key) => scopedSlots[key](attrs))
 
       return scopedSlots
+    },
+
+    /**
+     * Get JSON:API Views query object.
+     *
+     * @param {object} settings - The merged module and component settings object.
+     *
+     * @return {object}
+     */
+    getQuery(settings) {
+      const query = {}
+      const resourceTypes = []
+
+      // Check all filters for 'bundle' plugin with bundle data, and use if
+      // found to return only the UUID field.
+      const filters = ((this.display || {}).display_options || {}).filters || []
+      Object.values(filters).map((filter) => {
+        if (filter.plugin_id === 'bundle' && filter.value) {
+          Object.keys(filter.value).map((bundle) => {
+            const resourceType = `${filter.entity_type}--${bundle}`
+            resourceTypes.push(resourceType)
+            query[`fields[${resourceType}]`] = 'uuid'
+          })
+        }
+      })
+
+      if ((settings.query || {}).fields) {
+        for (const resourceType of resourceTypes) {
+          query[`fields[${resourceType}]`] = [query[`fields[${resourceType}]`], ...settings.query.fields].join(',')
+        }
+      }
+
+      // Pagination.
+      if (this.model.page) {
+        query.page = this.model.page
+      }
+
+      // Exposed filters.
+      if (Object.entries(this.model.filter || {}).length) {
+        query['views-filter'] = this.model.filter
+      }
+
+      // Exposed sorts.
+      if (this.model.sort) {
+        query['views-sort[sort_by]'] = this.model.sort
+      }
+
+      return query
     },
 
     /**
