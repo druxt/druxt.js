@@ -418,7 +418,7 @@ export default {
      *
      * @return {object}
      */
-    getQuery(settings) {
+    getQuery(settings = {}) {
       const query = {}
       const resourceTypes = []
 

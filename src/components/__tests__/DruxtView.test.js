@@ -86,6 +86,10 @@ describe('DruxtView', () => {
     expect(wrapper.vm.showPager).toBe(true)
     expect(wrapper.vm.showSorts).toBe(false)
 
+    wrapper.vm.onFiltersUpdate()
+    expect(wrapper.vm.model.page).toBe(null)
+    expect(wrapper.vm.model.sort).toBe(null)
+
     wrapper.vm.$route.query = {}
     await localVue.nextTick()
     expect(wrapper.vm.model).toStrictEqual({
@@ -139,5 +143,21 @@ describe('DruxtView', () => {
     expect(mockSlots.header).toBeCalledWith({ foo: 'bar' })
     expect(mockSlots.filters).toBeCalledWith({ foo: 'bar' })
     expect(mockSlots.results).toBeCalledWith({ foo: 'bar' })
+  })
+
+  test('getQuery', async () => {
+    const mock = { model: {} }
+    expect(DruxtView.methods.getQuery.call(mock)).toStrictEqual({})
+
+    mock.display = { display_options: { filters: [{
+      entity_type: 'node',
+      plugin_id: 'bundle',
+      value: { page: 'page' }
+    }] } }
+    expect(DruxtView.methods.getQuery.call(mock)).toStrictEqual({ 'fields[node--page]': 'uuid' })
+
+    expect(DruxtView.methods.getQuery.call(mock, { query: { fields: ['title'] }})).toStrictEqual({
+      'fields[node--page]': 'uuid,title'
+    })
   })
 })
