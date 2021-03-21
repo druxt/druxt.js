@@ -91,8 +91,7 @@ export default {
 
     // Get wrapper component data to merge with module settings.
     const wrapperData = await this.getWrapperData(component.is)
-    // component.settings = merge((this.$druxtView || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
-    component.settings = wrapperData.druxt
+    component.settings = merge((this.$druxtViews || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
 
     // Fetch JSON:API Views resource.
     const query = this.getQuery(component.settings)
@@ -420,24 +419,25 @@ export default {
      */
     getQuery(settings = {}) {
       const query = {}
-      const resourceTypes = []
+      const resourceTypes = (settings.query || {}).resourceTypes || []
 
       // Check all filters for 'bundle' plugin with bundle data, and use if
-      // found to return only the UUID field.
-      const filters = ((this.display || {}).display_options || {}).filters || []
-      Object.values(filters).map((filter) => {
-        if (filter.plugin_id === 'bundle' && filter.value) {
-          Object.keys(filter.value).map((bundle) => {
-            const resourceType = `${filter.entity_type}--${bundle}`
-            resourceTypes.push(resourceType)
-            query[`fields[${resourceType}]`] = 'uuid'
-          })
-        }
-      })
+      // found build resourceTypes array.
+      if ((settings.query || {}).bundleFilter === true) {
+        const filters = ((this.display || {}).display_options || {}).filters || []
+        Object.values(filters).map((filter) => {
+          if (filter.plugin_id === 'bundle' && filter.value) {
+            Object.keys(filter.value).map((bundle) => {
+              resourceTypes.push(`${filter.entity_type}--${bundle}`)
+            })
+          }
+        })
+      }
 
-      if ((settings.query || {}).fields) {
+      // Filter fields.
+      if ((resourceTypes || []).length) {
         for (const resourceType of resourceTypes) {
-          query[`fields[${resourceType}]`] = [query[`fields[${resourceType}]`], ...settings.query.fields].join(',')
+          query[`fields[${resourceType}]`] = ['uuid', ...(settings.query || {}).fields || []].join(',')
         }
       }
 
