@@ -1,14 +1,8 @@
 # Getting started
 
-## DruxtJS
+## Quickstart - Nuxt.js
 
-DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
-
-This module is included in the core [DruxtJS](https://druxtjs.org) project, the below instructions are only required if installing this module standalone.
-
-## Quickstart
-
-1. Install the NPM module:
+1. Install the DruxtViews module:
     ```sh
     npm i druxt-views
     ```
@@ -20,19 +14,31 @@ This module is included in the core [DruxtJS](https://druxtjs.org) project, the 
         'druxt-views'
       ],
       druxt: {
-        baseUrl: 'https://demo-api.druxtjs.org'
-      }
+        baseUrl: 'https://demo-api.druxtjs.org',
+      },
     }
+    ```
+
+### Storybook integration
+
+The DruxtViews module provides zero-config, auto-generated Storybook integration for your Drupal Views.
+
+1. Install the **@nuxtjs/storybook** module:
+    ```sh
+    npm i -D @nuxtjs/storybook
+    ```
+
+2. Run storybook:
+    ```sh
+    npx nuxt storybook
     ```
 
 ## Requirements
 
 ### Backend
 - [Drupal](https://drupal.org) JSON:API backend.
-- [DruxtJS](https://www.drupal.org/project/druxt) Drupal module.
 - [JSON:API Views](https://www.drupal.org/project/jsonapi_views) Drupal module.
+- (recommended) [DruxtJS](https://www.drupal.org/project/druxt) Drupal module.
 
 ### Frontend
-- [Nuxt.js](https://nuxtjs.org) frontend.
-- [DruxtJS Entity](https://entity.druxtjs.org)
-- [DruxtJS Router](https://router.druxtjs.org)
+- (optional) [Nuxt Storybook](https://storybook.nuxtjs.org/) module.
