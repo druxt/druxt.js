@@ -1,6 +1,6 @@
 {
   "name": "druxt-views",
-  "version": "0.8.3",
+  "version": "0.9.0",
   "description": "Drupal Views Vue.js components for Nuxt.js",
   "repository": {
     "type": "git",
@@ -9,6 +9,7 @@
   "keywords": [
     "cms",
     "decoupled",
+    "blocks",
     "drupal",
     "druxt",
     "headless",
@@ -16,6 +17,8 @@
     "json:api",
     "nuxt",
     "module",
+    "router",
+    "storybook",
     "vue",
     "views"
   ],
@@ -60,7 +63,7 @@
     "drupal-jsonapi-params": "^1.1.12",
     "druxt": "^0.5.1",
     "druxt-blocks": "^0.8.0",
-    "druxt-entity": "^0.10.0",
+    "druxt-entity": "^0.12.0",
     "druxt-router": "^0.18.0",
     "vuex": "^3.6.0"
   },
