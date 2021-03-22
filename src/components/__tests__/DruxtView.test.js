@@ -77,13 +77,17 @@ describe('DruxtView', () => {
       filter: { test: 1 },
       sort: 'test'
     }
-    expect(wrapper.vm.query).toStrictEqual({
+    expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({
       page: 1,
       'views-filter': { test: 1 },
       'views-sort[sort_by]': 'test',
     })
     expect(wrapper.vm.showPager).toBe(true)
     expect(wrapper.vm.showSorts).toBe(false)
+
+    wrapper.vm.onFiltersUpdate()
+    expect(wrapper.vm.model.page).toBe(null)
+    expect(wrapper.vm.model.sort).toBe(null)
 
     wrapper.vm.$route.query = {}
     await localVue.nextTick()
@@ -92,7 +96,7 @@ describe('DruxtView', () => {
       page: null,
       sort: null
     })
-    expect(wrapper.vm.query).toStrictEqual({})
+    expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({})
 
     // Watches.
     expect(mocks.$fetch).toHaveBeenCalledTimes(1)
@@ -138,5 +142,26 @@ describe('DruxtView', () => {
     expect(mockSlots.header).toBeCalledWith({ foo: 'bar' })
     expect(mockSlots.filters).toBeCalledWith({ foo: 'bar' })
     expect(mockSlots.results).toBeCalledWith({ foo: 'bar' })
+  })
+
+  test('getQuery', async () => {
+    const mock = { model: {} }
+    expect(DruxtView.methods.getQuery.call(mock)).toStrictEqual({})
+
+    mock.display = { display_options: { filters: [{
+      entity_type: 'node',
+      plugin_id: 'bundle',
+      value: { page: 'page' }
+    }] } }
+    expect(DruxtView.methods.getQuery.call(mock)).toStrictEqual({})
+
+    // Druxt query settings.
+    const settings = { query: { fields: ['title'] }}
+    expect(DruxtView.methods.getQuery.call(mock, settings)).toStrictEqual({})
+
+    settings.query.bundleFilter = true
+    expect(DruxtView.methods.getQuery.call(mock, settings)).toStrictEqual({
+      'fields[node--page]': 'uuid,title'
+    })
   })
 })
