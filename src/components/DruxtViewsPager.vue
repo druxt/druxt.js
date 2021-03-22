@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 
 /**
  * The `<DruxtViewsPager />` Vue.js component.
@@ -42,7 +42,7 @@ import { DruxtComponentMixin } from 'druxt'
 export default {
   name: 'DruxtViewsPager',
 
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -131,15 +131,15 @@ export default {
     }
   },
 
-  druxt: ({ vm }) => ({
-    componentOptions: [[vm.type], ['default']],
+  druxt: {
+    componentOptions: ({ type }) => ([[type], ['default']]),
 
-    propsData: {
+    propsData: (vm) => ({
       count: parseInt(vm.count),
       options: vm.options,
       resource: vm.resource,
       type: vm.type,
-    }
-  })
+    })
+  }
 }
 </script>

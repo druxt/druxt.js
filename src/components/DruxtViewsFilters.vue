@@ -1,5 +1,5 @@
 <script>
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 
 /**
  * The `<DruxtViewsFilters />` Vue.js component.
@@ -9,7 +9,7 @@ import { DruxtComponentMixin } from 'druxt'
 export default {
   name: 'DruxtViewsFilters',
 
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -76,15 +76,11 @@ export default {
     }
   },
 
-  druxt: ({ vm }) => ({
-    componentOptions: [[vm.type], ['default']],
+  druxt: {
+    componentOptions: ({ type }) => ([[type], ['default']]),
 
-    propsData: {
-      options: vm.options,
-      filters: vm.filters,
-      type: vm.type,
-    }
-  }),
+    propsData: ({ options, filters, type }) => ({ options, filters, type })
+  },
 
   render(h) {
     const wrapperData = {

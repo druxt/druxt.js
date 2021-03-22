@@ -19,15 +19,43 @@ Druxt Views provides a Vue.js component to render a Drupal View.
 Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtView.html).
 
 
-### Druxt component
+### Druxt module/wrapper
 
-The DruxtEntity component is compatible with the DruxtJS component theming system:
+The DruxtView component is compatible with the DruxtJS component theming system.
 
+
+_**Example:** DruxtEntityView**ViewId**.vue_
 ```vue
-<Druxt module="view" :props-data="{ displayId, uuid, viewId }" :wrapper="wrapper">
+<template>
+  <div v-if="slot">
+    <slot />
+  </div>
+
+  <div v-else-if="slots">
+    <slot name="header" />
+    <slot name="results" />
+    <slot name="pager" />
+  </div>
+
+  <div v-else>
+    <DruxtEntity v-for="result of $attrs.results" :key="result.id" v-bind="props(result)" />
+  </div>
+</template>
+
+<script>
+export default {
+  druxt: {
+    ...
+    query: {
+      bundleFilter: true,
+      fields: ['title'],
+    }
+  }
+}
+</script>
 ```
 
-See the [Druxt component documentation](https://druxtjs.org/guide/#the-druxt-component) for more information.
+See the [documentation](https://druxtjs.org/guide/#wrapper-theme-system) for more information.
 
 
 ## DruxtJS

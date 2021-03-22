@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 
 /**
  * The `<DruxtViewsSorts />` Vue.js component.
@@ -45,7 +45,7 @@ import { DruxtComponentMixin } from 'druxt'
 export default {
   name: 'DruxtViewsSorts',
 
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -112,14 +112,10 @@ export default {
     },
   },
 
-  druxt: ({ vm }) => ({
-    componentOptions: [[vm.type], ['default']],
+  druxt: {
+    componentOptions: ({ type }) => ([[type], ['default']]),
 
-    propsData: {
-      options: vm.options,
-      sorts: vm.sorts,
-      type: vm.type,
-    }
-  })
+    propsData: ({ options, sorts, type }) => ({ options, sorts, type })
+  }
 }
 </script>

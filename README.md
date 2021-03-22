@@ -4,7 +4,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-views/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-views?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-views/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-views)
 
-> The DruxtJS Views module adds [Drupal](https://drupal.org) Views support to your [Nuxt.js](https://nuxtjs.org) frontend.
+> The DruxtViews module adds [Drupal](https://drupal.org) Views support to your [Nuxt.js](https://nuxtjs.org) frontend.
 
 ## Links
 
@@ -26,12 +26,26 @@ module.exports = {
     'druxt-views'
   ],
   druxt: {
-    baseUrl: 'https://demo-api.druxtjs.org'
-  }
+    baseUrl: 'https://demo-api.druxtjs.org',
+    views: {
+      bundleFilter: true,
+      fields: ['title'],
+    },
+  },
 }
 ```
 
 ## Options
+
+### Druxt Views options
+
+These options are specific to this module.
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `views.query.bundleFilter` | `boolean` | No | `false` | Whether to automatically detect Resource types to filter, based on the View `bundle` filter. |
+| `views.query.fields` | `string[]` | No | `[]` | An array of fields to filter from the JSON:API Views Resource types. |
+| `views.query.resourceTypes` | `string[]` | No | `[]` | An array of Resource types to be used by the Fields filter. |
 
 ### Base Druxt options
 

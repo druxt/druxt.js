@@ -1,5 +1,6 @@
 export default {
-  modules: ['druxt-views'],
+  components: true,
+  modules: ['druxt-views', '~/modules/nuxt-storybook-proxy'],
   druxt: { baseUrl: 'https://demo-api.druxtjs.org' },
-  storybook: {}
+  proxy: { '/sites/default/files': 'https://demo-api.druxtjs.org' },
 }

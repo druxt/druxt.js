@@ -1,183 +1,19 @@
-<template>
-  <component
-    :is="wrapper.component"
-    v-if="!$fetchState.pending && view && resource"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      v-model="model"
-      v-bind="component.propsData"
-    >
-      <!-- Scoped slot: Header -->
-      <template v-slot:header>
-        <span
-          v-for="header of headers"
-          :key="header.id"
-          v-html="header.content.value"
-        />
-      </template>
-
-      <!-- Scoped slot: Exposed filters -->
-      <template
-        v-if="filters"
-        #filters="$attrs"
-      >
-        <DruxtViewsFilters
-          v-model="model.filter"
-          :filters="filters"
-          v-bind="{ ...display.display_options.exposed_form, ...$attrs }"
-          @input="onFiltersUpdate"
-        />
-      </template>
-
-      <!-- Scoped slot: Exposed sorts -->
-      <template
-        v-if="showSorts"
-        #sorts="$attrs"
-      >
-        <DruxtViewsSorts
-          v-model="model.sort"
-          :sorts="sorts"
-          v-bind="{ ...display.display_options.exposed_form, ...$attrs }"
-        />
-      </template>
-
-      <!-- Scoped slot: Attachments before -->
-      <template
-        v-if="attachments_before"
-        v-slot:attachments_before="$attrs"
-      >
-        <DruxtView
-          v-for="attachmentDisplayId of attachments_before"
-          :key="attachmentDisplayId"
-          :display-id="attachmentDisplayId"
-          :type="type"
-          :uuid="uuid"
-          :view-id="viewId"
-          v-bind="$attrs"
-        />
-      </template>
-
-      <!-- Scoped slot: Results -->
-      <template v-slot:results="options">
-        <DruxtEntity
-          v-for="result of results"
-          :key="result.id"
-          v-bind="{
-            type: result.type,
-            uuid: result.id,
-            mode,
-            ...options
-          }"
-        />
-      </template>
-
-      <!-- Scoped slot: Pager -->
-      <template
-        v-if="showPager"
-        #pager="$attrs"
-      >
-        <DruxtViewsPager
-          v-model="model.page"
-          v-bind="{ count, ...pager, resource, ...$attrs }"
-        />
-      </template>
-
-      <!-- Scoped slot: Attachments after -->
-      <template
-        v-if="attachments_after"
-        v-slot:attachments_after="$attrs"
-      >
-        <DruxtView
-          v-for="attachmentDisplayId of attachments_after"
-          :key="attachmentDisplayId"
-          :display-id="attachmentDisplayId"
-          :type="type"
-          :uuid="uuid"
-          :view-id="viewId"
-          v-bind="$attrs"
-        />
-      </template>
-
-      <template>
-        <!-- Header -->
-        <span
-          v-for="header of headers"
-          :key="header.id"
-          v-html="header.content.value"
-        />
-
-        <!-- Exposed filters -->
-        <DruxtViewsFilters
-          v-model="model.filter"
-          :filters="filters"
-          v-bind="display.display_options.exposed_form"
-          @input="onFiltersUpdate"
-        />
-
-        <!-- Exposed sorts -->
-        <DruxtViewsSorts
-          v-if="showSorts"
-          v-model="model.sort"
-          :sorts="sorts"
-          v-bind="display.display_options.exposed_form"
-        />
-
-        <!-- Attachments before -->
-        <div v-if="attachments_before">
-          <DruxtView
-            v-for="attachmentDisplayId of attachments_before"
-            :key="attachmentDisplayId"
-            :display-id="attachmentDisplayId"
-            :type="type"
-            :uuid="uuid"
-            :view-id="viewId"
-          />
-        </div>
-
-        <!-- Results -->
-        <DruxtEntity
-          v-for="result of results"
-          :key="result.id"
-          v-bind="{
-            type: result.type,
-            uuid: result.id,
-            mode
-          }"
-        />
-
-        <!-- Attachments after -->
-        <div v-if="attachments_after">
-          <DruxtView
-            v-for="attachmentDisplayId of attachments_after"
-            :key="attachmentDisplayId"
-            :display-id="attachmentDisplayId"
-            :type="type"
-            :uuid="uuid"
-            :view-id="viewId"
-          />
-        </div>
-
-        <!-- Pager -->
-        <DruxtViewsPager
-          v-if="showPager"
-          v-model="model.page"
-          v-bind="{ count, ...pager, resource }"
-        />
-      </template>
-    </component>
-  </component>
-</template>
-
 <script>
 import merge from 'deepmerge'
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 import { parse, stringify } from 'qs'
 import { mapActions } from 'vuex'
 
 /**
  * The `<DruxtView />` Vue.js component.
+ *
+ * Adds support for [Drupal Views](https://www.drupal.org/docs/8/core/modules/views)
+ * using the [JSON:API Views module](https://www.drupal.org/project/jsonapi_views).
+ *
+ * Features:
+ * - Exposed filter, sorts and pagination
+ * - Scoped slots
+ * - Query settings
  *
  * @example
  * <DruxtView
@@ -189,7 +25,7 @@ import { mapActions } from 'vuex'
 export default {
   name: 'DruxtView',
 
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -244,20 +80,40 @@ export default {
    * Nuxt fetch method.
    */
   async fetch() {
+    let component = { ...this.component }
+
+    // Fetch View.
     if (!this.view) {
       this.view = await this.getResource({
         type: this.type,
         id: this.uuid,
       })
+
+      // Build wrapper component object.
+      const options = this.getModuleComponents()
+      component = {
+        is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
+        options: options.map(o => o.name) || [],
+      }
     }
 
+    // Get wrapper component data to merge with module settings.
+    const wrapperData = await this.getWrapperData(component.is)
+    component.settings = merge((this.$druxtViews || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
+
+    // Fetch JSON:API Views resource.
+    const query = this.getQuery(component.settings)
     this.resource = await this.getResults({
       viewId: this.viewId,
       displayId: this.displayId,
-      query: stringify(this.query)
+      query: stringify(query)
     })
 
-    await DruxtComponentMixin.fetch.call(this)
+    // Build wrapper component propsData.
+    component = { ...component, ...this.getModulePropsData(wrapperData.props) }
+
+    // Set component data.
+    this.component = component
   },
 
   /**
@@ -265,6 +121,8 @@ export default {
    *
    * Used for on-demand JSON:API resource loading.
    *
+   * @property {object} model - The model object.
+   * @property {object} resource - The JSON:API Views resource.
    * @property {object} view - The View JSON:API resource.
    */
   data() {
@@ -385,31 +243,10 @@ export default {
       return ((this.display || {}).display_options || {}).pager || false
     },
 
-    query() {
-      const query = {}
-
-      // Pagination.
-      if (this.model.page) {
-        query.page = this.model.page
-      }
-
-      // Exposed filters.
-      if (Object.entries(this.model.filter || {}).length) {
-        query['views-filter'] = this.model.filter
-      }
-
-      // Exposed sorts.
-      if (this.model.sort) {
-        query['views-sort[sort_by]'] = this.model.sort
-      }
-
-      return query
-    },
-
     /**
      * The JSON:API Views results.
      *
-     * @type {object}
+     * @type {object[]}
      */
     results() {
       return (this.resource || {}).data || []
@@ -451,7 +288,6 @@ export default {
           page: null,
           sort: null,
         }
-        await this.$fetch
       }
     },
 
@@ -466,9 +302,196 @@ export default {
     async uuid() {
       await this.$fetch()
     },
+
+    model: {
+      deep: true,
+      async handler() {
+        await this.$fetch()
+      }
+    }
   },
 
   methods: {
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * - header
+     * - filters
+     * - sorts
+     * - attachments_before
+     * - results
+     * - pager
+     * - attachments_after
+     * - default (all of the above)
+     *
+     * @example <caption>DruxtEntityView**ViewId**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot name="header" />
+     *     <slot name="results" />
+     *     <slot name="pager" />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    getScopedSlots() {
+      // Build scoped slots.
+      const scopedSlots = {}
+
+      // Headers.
+      scopedSlots.header = () => Object.entries(this.headers).map(([key, header]) => this.$createElement('span', {
+        domProps: { innerHTML: (header.content || {}).value }, key
+      }))
+
+      // Exposed filters.
+      if (this.filters.length) {
+        scopedSlots.filters = (attrs) => this.$createElement('DruxtViewsFilters', {
+          attrs: { ...attrs },
+          on: {
+            input: (value) => {
+              this.model.filter = value
+            }
+          },
+          props: {
+            filters: this.filters,
+            value: this.model.filter,
+            ...this.display.display_options.exposed_form
+          },
+        })
+      }
+
+      // Exposed sorts.
+      if (this.showSorts) {
+        scopedSlots.sorts = (attrs) => this.$createElement('DruxtViewsSorts', {
+          attrs: { ...attrs },
+          on: {
+            input: (value) => {
+              this.model.sort = value
+            }
+          },
+          props: {
+            sorts: this.sorts,
+            value: this.model.sort,
+            ...this.display.display_options.exposed_form
+          }
+        })
+      }
+
+      // Attachments before.
+      if (this.attachments_before) {
+        scopedSlots.attachments_before = (attrs) => this.attachments_before.map((displayId) => this.$createElement('DruxtView', {
+          attrs: { ...attrs },
+          key: displayId,
+          props: {
+            displayId,
+            type: this.type,
+            uuid: this.uuid,
+            viewId: this.viewId,
+          },
+        }))
+      }
+
+      // Results.
+      scopedSlots.results = (attrs) => this.results.map((result) => this.$createElement('DruxtEntity', {
+        attrs: { ...attrs },
+        key: result.id,
+        props: {
+          mode: this.mode,
+          type: result.type,
+          uuid: result.id
+        }
+      }))
+
+      // Pager.
+      if (this.showPager) {
+        scopedSlots.pager = (attrs) => this.$createElement('DruxtViewsPager', {
+          attrs: { ...attrs },
+          on: {
+            input: (value) => {
+              this.model.page = value
+            }
+          },
+          props: {
+            count: this.count,
+            resource: this.resource,
+            value: this.model.page,
+            ...this.pager,
+          }
+        })
+      }
+
+      // Attachments after.
+      if (this.attachments_after) {
+        scopedSlots.attachments_after = (attrs) => this.attachments_after.map((displayId) => this.$createElement('DruxtView', {
+          attrs: { ...attrs },
+          key: displayId,
+          props: {
+            displayId,
+            type: this.type,
+            uuid: this.uuid,
+            viewId: this.viewId,
+          },
+        }))
+      }
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => Object.keys(scopedSlots)
+        .filter((key) => !['default', '_normalized'].includes(key))
+        .map((key) => scopedSlots[key](attrs))
+
+      return scopedSlots
+    },
+
+    /**
+     * Builds the query for the JSON:API request.
+     *
+     * @param {ModuleSettings} settings - The merged module and component settings object.
+     *
+     * @return {Query}
+     */
+    getQuery(settings = {}) {
+      const query = {}
+      const resourceTypes = (settings.query || {}).resourceTypes || []
+
+      // Check all filters for 'bundle' plugin with bundle data, and use if
+      // found build resourceTypes array.
+      if ((settings.query || {}).bundleFilter === true) {
+        const filters = ((this.display || {}).display_options || {}).filters || []
+        Object.values(filters).map((filter) => {
+          if (filter.plugin_id === 'bundle' && filter.value) {
+            Object.keys(filter.value).map((bundle) => {
+              resourceTypes.push(`${filter.entity_type}--${bundle}`)
+            })
+          }
+        })
+      }
+
+      // Filter fields.
+      if ((resourceTypes || []).length) {
+        for (const resourceType of resourceTypes) {
+          query[`fields[${resourceType}]`] = ['uuid', ...(settings.query || {}).fields || []].join(',')
+        }
+      }
+
+      // Pagination.
+      if (this.model.page) {
+        query.page = this.model.page
+      }
+
+      // Exposed filters.
+      if (Object.entries(this.model.filter || {}).length) {
+        query['views-filter'] = this.model.filter
+      }
+
+      // Exposed sorts.
+      if (this.model.sort) {
+        query['views-sort[sort_by]'] = this.model.sort
+      }
+
+      return query
+    },
+
     /**
      * Filters update event handler.
      */
@@ -486,17 +509,139 @@ export default {
     })
   },
 
-  druxt: ({ vm }) => ({
-    componentOptions: [[vm.viewId, vm.displayId]],
+  /**
+   * Druxt module configuration.
+   */
+  druxt: {
+    /**
+     * Provides the available component naming options for the Druxt Wrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {ComponentOptions}
+     */
+    componentOptions: (vm) => ([[vm.viewId, vm.displayId]]),
 
-    propsData: {
+    /**
+     * Provides propsData for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {PropsData}
+     */
+    propsData: (vm) => ({
       count: vm.count,
       display: vm.display,
       mode: vm.mode,
       pager: vm.pager,
       results: vm.results,
       view: vm.view
-    }
-  })
+    }),
+  }
 }
+
+/**
+ * Provides the available component naming options for the Druxt Wrapper.
+ *
+ * @typedef {array[]} ComponentOptions
+ *
+ * @example @lang js
+ * [
+ *   'DruxtView[ViewId][DisplayId]',
+ *   'DruxtView[ViewId]'
+ * ]
+ *
+ * @example <caption>featured_articles (default)</caption> @lang js
+ * [
+ *   'DruxtViewFeaturedArticlesDefault',
+ *   'DruxtViewFeaturedArticles'
+ * ]
+ */
+
+/**
+ * Provides settings for the View module, via the `nuxt.config.js` `druxt.views`
+ * or the Wrapper component `druxt` object.
+ *
+ * @typedef {object} ModuleSettings
+ * @param {boolean} bundleFilter - Whether to automatically detect Resource types to filter, based on the View `bundle` filter.
+ * @param {string[]} fields - An array of fields to filter from the JSON:API Views Resource types.
+ * @param {string[]} resourceTypes - An array of Resource types to be used by the Fields filter.
+ *
+ * @example @lang js
+ * {
+ *   bundleFilter: false,
+ *   fields: [],
+ *   resourceTypes: []
+ * }
+ *
+ * @example @lang vue
+ * <script>
+ * export default {
+ *   druxt: {
+ *     query: {
+ *       bundleFilter: false,
+ *       fields: ['title']
+ *       resourceTypes: ['node--article'],
+ *     },
+ *   }
+ * }
+ */
+
+/**
+ * Provides propsData for the DruxtWrapper.
+ *
+ * @typedef {object} PropsData
+ * @param {integer} count - The total item count.
+ * @param {object} display - The View Display object.
+ * @param {string} mode - The View mode for the results entities.
+ * @param {object} pager - The displays pager settings.
+ * @param {object[]} results - The JSON:API Views results.
+ * @param {object} view - The View JSON:API resource.
+ *
+ * @example @lang js
+ * {
+ *   count: 8,
+ *   display: {},
+ *   mode: 'card',
+ *   pager: {
+ *     options: {},
+ *     type: 'mini',
+ *   },
+ *   results: [],
+ *   view: {},
+ * }
+ */
+
+/**
+ * Provides scoped slots for use in the Wrapper component.
+ *
+ * @typedef {object} ScopedSlots
+ * @param {function} header - The View header.
+ * @param {function} filters - The Exposed filters.
+ * @param {function} sorts - The Exposed sorts.
+ * @param {function} attachments_before - Views attached before current display.
+ * @param {function} results - The results.
+ * @param {function} pager - The View pager.
+ * @param {function} attachments_after - Views attached after current display.
+ * @param {function} default - All of the above.
+ *
+ * @example @lang js
+ * {
+ *   header: () => {},
+ *   filters: () => {},
+ *   sorts: () => {},
+ *   attachments_before: () => {},
+ *   results: () => {},
+ *   pager: () => {},
+ *   attachments_after: () => {},
+ *   default: () => {},
+ * }
+ *
+ * @example <caption>DruxtEntityView**ViewId**.vue</caption> @lang vue
+ * <template>
+ *   <div>
+ *     <slot name="header" />
+ *     <slot name="results" />
+ *     <slot name="pager" />
+ *   </div>
+ * </template>
+ */
 </script>

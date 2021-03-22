@@ -42,20 +42,30 @@ const baseConfig = {
 // ESM/UMD/IIFE shared settings: externals
 // Refer to https://rollupjs.org/guide/en/#warning-treating-module-as-external-dependency
 const external = [
+  'deepmerge',
+  'drupal-jsonapi-params',
+  'druxt',
   'druxt-blocks',
   'druxt-entity',
   'druxt-router',
+  'md5',
   'path',
+  'qs',
   'vuex'
 ];
 
 // UMD/IIFE shared settings: output.globals
 // Refer to https://rollupjs.org/guide/en#output-globals for details
 const globals = {
+  deepmerge: 'merge',
+  'drupal-jsonapi-params': 'drupalJsonapiParams',
+  druxt: 'druxt',
   'druxt-blocks': 'druxtBlocks',
   'druxt-entity': 'druxtEntity',
   'druxt-router': 'druxtRouter',
+  md5: 'md5',
   path: 'path',
+  qs: 'qs',
   vuex: 'vuex'
 };
 
@@ -87,7 +97,7 @@ if (!argv.format || argv.format === 'cjs') {
       compact: true,
       file: 'dist/druxt-views.ssr.js',
       format: 'cjs',
-      name: 'VueDrupalEntity',
+      name: 'DruxtViews',
       exports: 'named',
       globals,
     },
@@ -114,7 +124,7 @@ if (!argv.format || argv.format === 'iife') {
       compact: true,
       file: 'dist/druxt-views.min.js',
       format: 'iife',
-      name: 'VueDrupalEntity',
+      name: 'DruxtViews',
       exports: 'named',
       globals,
     },
