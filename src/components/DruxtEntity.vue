@@ -127,7 +127,10 @@ export default {
         fields[field.id] = {
           id: field.id,
           data: data[field.id],
-          schema: field,
+          schema: {
+            config: this.schema.config,
+            ...field,
+          },
           relationship: !!(this.entity.relationships || {})[field.id]
         }
       }

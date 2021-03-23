@@ -163,7 +163,10 @@ export default {
   },
 
   druxt: {
-    componentOptions: ({ schema }) => ([[schema.type, schema.id]]),
+    componentOptions: ({ schema }) => ([
+      [schema.type || '', schema.id, (schema.config || {}).schemaType],
+      [schema.type || '', (schema.config || {}).schemaType],
+    ]),
     propsData: ({ items, schema }) => ({ items, schema }),
   }
 }
