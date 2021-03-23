@@ -1,6 +1,9 @@
 import DruxtEntity from './DruxtEntity.vue'
 export { DruxtEntity }
 
+import DruxtEntityForm from './DruxtEntityForm.vue'
+export { DruxtEntityForm }
+
 import DruxtField from './DruxtField.vue'
 export { DruxtField }
 
