@@ -49,6 +49,7 @@ Object {
           "display": Object {
             "placeholder": "",
             "rows": 9,
+            "show_summary": false,
             "summary_rows": 3,
           },
           "storage": Array [],
@@ -78,40 +79,6 @@ Object {
         "weight": 2,
       },
       Object {
-        "cardinality": 1,
-        "description": "",
-        "id": "image",
-        "label": Object {
-          "position": null,
-          "text": "Image",
-        },
-        "required": false,
-        "settings": Object {
-          "config": Object {
-            "handler": "default:media",
-            "handler_settings": Object {
-              "auto_create": false,
-              "auto_create_bundle": "",
-              "sort": Object {
-                "field": "_none",
-              },
-              "target_bundles": Object {
-                "image": "image",
-              },
-            },
-          },
-          "display": Object {
-            "media_types": Array [],
-          },
-          "storage": Object {
-            "target_type": "media",
-          },
-        },
-        "thirdPartySettings": Array [],
-        "type": "media_library_widget",
-        "weight": 3,
-      },
-      Object {
         "cardinality": -1,
         "description": "Enter a comma-separated list. For example: Amsterdam, Mexico City, \\"Cleveland, Ohio\\"",
         "id": "tags",
@@ -134,6 +101,7 @@ Object {
             },
           },
           "display": Object {
+            "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
@@ -144,7 +112,27 @@ Object {
         },
         "thirdPartySettings": Array [],
         "type": "entity_reference_autocomplete_tags",
-        "weight": 4,
+        "weight": 3,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "field_media_image",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "media_types": Array [],
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "media_library_widget",
+        "weight": 5,
       },
       Object {
         "cardinality": null,
@@ -158,6 +146,7 @@ Object {
         "settings": Object {
           "config": Object {},
           "display": Object {
+            "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
@@ -166,7 +155,7 @@ Object {
         },
         "thirdPartySettings": Array [],
         "type": "entity_reference_autocomplete",
-        "weight": 5,
+        "weight": 6,
       },
       Object {
         "cardinality": null,
@@ -184,7 +173,7 @@ Object {
         },
         "thirdPartySettings": Array [],
         "type": "datetime_timestamp",
-        "weight": 6,
+        "weight": 7,
       },
       Object {
         "cardinality": null,
@@ -204,7 +193,7 @@ Object {
         },
         "thirdPartySettings": Array [],
         "type": "boolean_checkbox",
-        "weight": 7,
+        "weight": 8,
       },
       Object {
         "cardinality": null,
@@ -224,7 +213,7 @@ Object {
         },
         "thirdPartySettings": Array [],
         "type": "boolean_checkbox",
-        "weight": 8,
+        "weight": 9,
       },
       Object {
         "cardinality": null,
@@ -242,7 +231,7 @@ Object {
         },
         "thirdPartySettings": Array [],
         "type": "path",
-        "weight": 9,
+        "weight": 10,
       },
       Object {
         "cardinality": null,
@@ -262,7 +251,43 @@ Object {
         },
         "thirdPartySettings": Array [],
         "type": "boolean_checkbox",
-        "weight": 10,
+        "weight": 11,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "moderation_state",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Array [],
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "moderation_state_default",
+        "weight": 12,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "translation",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Array [],
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": null,
+        "weight": 13,
       },
     ],
     "groups": Array [],
@@ -279,24 +304,6 @@ Object {
       "schemaType": "view",
     },
     "fields": Array [
-      Object {
-        "description": null,
-        "id": "title",
-        "label": Object {
-          "position": "hidden",
-          "text": null,
-        },
-        "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
-            "link_to_entity": false,
-          },
-        },
-        "thirdPartySettings": Array [],
-        "type": "string",
-        "weight": -5,
-      },
       Object {
         "description": "Enter a comma-separated list. For example: Amsterdam, Mexico City, \\"Cleveland, Ohio\\"",
         "id": "tags",
@@ -327,35 +334,23 @@ Object {
         "weight": 0,
       },
       Object {
-        "description": "",
-        "id": "image",
+        "description": null,
+        "id": "field_media_image",
         "label": Object {
           "position": "hidden",
-          "text": "Image",
+          "text": null,
         },
         "required": false,
         "settings": Object {
-          "config": Object {
-            "handler": "default:media",
-            "handler_settings": Object {
-              "auto_create": false,
-              "auto_create_bundle": "",
-              "sort": Object {
-                "field": "_none",
-              },
-              "target_bundles": Object {
-                "image": "image",
-              },
-            },
-          },
+          "config": Object {},
           "display": Object {
-            "image_link": "",
-            "responsive_image_style": "3_2_image",
+            "link": false,
+            "view_mode": "responsive_3x2",
           },
         },
         "thirdPartySettings": Array [],
-        "type": "responsive_image",
-        "weight": 1,
+        "type": "entity_reference_entity_view",
+        "weight": 2,
       },
       Object {
         "description": "",
@@ -373,7 +368,7 @@ Object {
         },
         "thirdPartySettings": Array [],
         "type": "text_default",
-        "weight": 2,
+        "weight": 3,
       },
       Object {
         "description": null,
@@ -389,7 +384,7 @@ Object {
         },
         "thirdPartySettings": Array [],
         "type": null,
-        "weight": 3,
+        "weight": 4,
       },
     ],
     "groups": Array [],
