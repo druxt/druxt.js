@@ -1,6 +1,6 @@
 {
   "name": "druxt-schema",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Entity Form and View mode schemas for Drupal driven frontends.",
   "repository": {
     "type": "git",
@@ -15,7 +15,11 @@
     "fields",
     "nuxt"
   ],
-  "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/druxt/druxt-schema/issues"

@@ -6,25 +6,19 @@ const mock = {
   addPlugin: jest.fn(),
   addTemplate: jest.fn(),
   nuxt: {
-    hook: (hook, fn) => fn()
+    hook: async (hook, fn) => await fn()
   },
-  options: {},
+  options: {
+    druxt: {
+      baseUrl: 'https://demo-api.druxtjs.org',
+    },
+  },
   DruxtSchemaNuxtModule
 }
 
 test('Nuxt module', async () => {
-  try {
-    await mock.DruxtSchemaNuxtModule()
-  }
-  catch(err) {
-    expect(err.message).toBe('Druxt settings missing.')
-  }
+  expect(() => { DruxtSchemaNuxtModule.call({}) }).toThrow('Druxt settings missing.')
 
-  mock.options = {
-    druxt: {
-      baseUrl: 'https://example.com'
-    }
-  }
-  await mock.DruxtSchemaNuxtModule()
+  DruxtSchemaNuxtModule.call(mock)
   expect(mock.addPlugin).toHaveBeenCalled()
 })

@@ -1,3 +1,4 @@
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
 
 import { Schema } from './utils/schema'
@@ -68,33 +69,33 @@ class DruxtSchema {
    */
   async get() {
     const index = await this.druxt.getIndex()
-    const schemas = {}
 
-    for (const schemaType of ['view', 'form']) {
-      const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
-      const displays = await this.druxt.getCollectionAll(resourceType)
+    const displays = (await Promise.all([
+      ...['view', 'form'].map(async (schemaType) => {
+        const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
+        return (await this.druxt.getCollectionAll(
+          resourceType,
+          new DrupalJsonApiParams()
+            .addFields(resourceType, [
+              'targetEntityType',
+              'bundle',
+              'mode',
+            ])
+            .addFilter('status', 1)
+        )).map((collection) => collection.data.map((data) => ({
+          entityType: data.attributes.targetEntityType,
+          bundle: data.attributes.bundle,
+          mode: data.attributes.mode,
+          schemaType,
+          filter: this.options.schema.filter,
+          ...index[[data.attributes.targetEntityType, data.attributes.bundle].join('--')]
+        })))
+      })
+    ])).flat(2)
 
-      for (const collection of displays) {
-        for (const display of collection.data) {
-          const resource = index[[display.attributes.targetEntityType, display.attributes.bundle].join('--')]
-
-          const config = {
-            entityType: display.attributes.targetEntityType,
-            bundle: display.attributes.bundle,
-            mode: display.attributes.mode,
-            schemaType,
-            filter: this.options.schema.filter,
-
-            ...resource
-          }
-
-          const schema = await this.getSchema(config, { data: display })
-          if (schema) {
-            schemas[schema.id] = schema.schema
-          }
-        }
-      }
-    }
+    const schemas = Object.fromEntries((await Promise.all([
+      ...displays.map((config) => this.getSchema(config))
+    ])).map((schema) => ([schema.id, schema.schema])))
 
     return { index, schemas }
   }
