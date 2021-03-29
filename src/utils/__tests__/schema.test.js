@@ -73,7 +73,7 @@ describe('Schema', () => {
     expect(result.fields[0]).toHaveProperty('thirdPartySettings')
   })
 
-  test('filter', async () => {
+  test('filter', () => {
     const config = {
       entityType: 'node',
       bundle: 'page',
@@ -86,5 +86,16 @@ describe('Schema', () => {
     config.filter = ['node--article--default--view']
     const nodeArticle = new Schema(config, { druxtSchema })
     expect(nodeArticle.isValid).toBe(false)
+  })
+
+  test('data', () => {
+    const config = {
+      entityType: 'node',
+      bundle: 'page',
+      filter: ['node--page--default--view'],
+    }
+
+    const schema = new Schema(config, { druxtSchema, data: { type: 'node--page' } })
+    expect(schema.data).toStrictEqual({ 'node--page': { type: 'node--page' }})
   })
 })
