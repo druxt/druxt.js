@@ -9,10 +9,13 @@
   >
     <component
       :is="component.is"
+      v-if="component.is !== 'DruxtField'"
+      v-model="model"
       v-bind="{
         ...component.propsData,
         ...$attrs
       }"
+      @input="onInput"
     >
       <!-- Label: Above -->
       <template
@@ -29,6 +32,8 @@
       >
         <strong>{{ schema.label.text }}:</strong>
       </template>
+
+      <div>Missing Field: <code>{{ schema.type }}</code></div>
     </component>
   </component>
 </template>
@@ -74,6 +79,9 @@ export default {
     /**
      * The Field data.
      *
+     * @deprecated
+     * @private
+     * 
      * @type {(array|boolean|number|object|string)}
      */
     data: {
@@ -110,8 +118,20 @@ export default {
     options: {
       type: Object,
       default: () => ({})
-    }
+    },
+
+    /**
+     * The Field value.
+     */
+    value: {
+      type: [Array, Boolean, Number, String, Object],
+      default: undefined,
+    },
   },
+
+  data: ({ value }) => ({
+    model: value,
+  }),
 
   /**
    * Vue.js Computed properties.
@@ -124,7 +144,7 @@ export default {
      * @default { position: 'hidden' }
      */
     label() {
-      if (!this.schema.label || !this.schema.label.text) return { position: 'hidden' }
+      if (!((this.schema || {}).label || {}).text) return { position: 'hidden' }
 
       return this.schema.label
     },
@@ -132,16 +152,18 @@ export default {
     /**
      * Component properties to pass through to the Field's suggested component.
      *
+     * @deprecated
+     * 
      * @type {boolean|object}
      * @default false
      *
      * @todo Add test coverage with relationship data.
      */
     items() {
-      if (this.data === null) return false
+      if (this.value === null) return false
 
       // Normalize data.
-      const data = Array.isArray(this.data) || this.relationship ? this.data : [this.data]
+      const data = Array.isArray(this.value) || this.relationship ? [...this.value] : [typeof this.value === 'object' ? { ...this.value } : this.value]
 
       // If not relationship.
       if (!this.relationship) {
@@ -149,12 +171,13 @@ export default {
       }
 
       // If relationship and data present.
-      else if (data.data) {
-        const items = Array.isArray(data.data) ? data.data : [data.data]
+      else if (Array.isArray(data) || data.data) {
+        const items = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [data.data]
         return items.map(item => ({
-          type: item.type,
-          uuid: item.id,
-          mode: ((this.schema.settings || {}).display || {}).view_mode || 'default'
+          type: item.type || (item.data || {}).type,
+          uuid: item.id || (item.data || {}).id,
+          mode: ((this.schema.settings || {}).display || {}).view_mode || 'default',
+          item
         }))
       }
 
@@ -162,10 +185,18 @@ export default {
     },
   },
 
+  methods: {
+    onInput(value) {
+      this.model = value
+      this.$emit('input', value)
+    }
+  },
+
   druxt: {
     componentOptions: ({ schema }) => ([
       [schema.type || '', schema.id, (schema.config || {}).schemaType],
       [schema.type || '', (schema.config || {}).schemaType],
+      ['Default'],
     ]),
     propsData: ({ items, schema }) => ({ items, schema }),
   }

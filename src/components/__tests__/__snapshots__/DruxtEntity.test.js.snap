@@ -8,6 +8,6 @@ exports[`DruxtEntity node--page - filtered 1`] = `
 
 exports[`DruxtEntity node--page 1`] = `
 "<div>
-  <druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\"></druxtentitynodepage-stub>
+  <druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"></druxtentitynodepage-stub>
 </div>"
 `;

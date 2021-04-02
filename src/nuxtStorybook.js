@@ -62,8 +62,8 @@ export default async function ({ stories }) {
 
   // Build Entity Stories.
   const entityStories = entityTypes.map(({ entity, bundles }) => bundles.map((bundle) => {
-    const viewDisplays = view.filter((o) => o.attributes.targetEntityType === entity && o.attributes.bundle === bundle).map((o) => o.attributes.mode).sort((a) => (a === 'default' ? -1 : 0))
-    const formDisplays = form.filter((o) => o.attributes.targetEntityType === entity && o.attributes.bundle === bundle).map((o) => o.attributes.mode).sort((a) => (a === 'default' ? -1 : 0))
+    const viewDisplays = Array.from(new Set(view.filter((o) => o.attributes.targetEntityType === entity && o.attributes.bundle === bundle).map((o) => o.attributes.mode).sort((a) => (a === 'default' ? -1 : 0))))
+    const formDisplays = Array.from(new Set(form.filter((o) => o.attributes.targetEntityType === entity && o.attributes.bundle === bundle).map((o) => o.attributes.mode).sort((a) => (a === 'default' ? -1 : 0))))
 
     const resourceType = `${entity}--${bundle}`
     

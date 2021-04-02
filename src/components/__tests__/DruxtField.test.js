@@ -32,7 +32,10 @@ const mountComponent = (field, options = {}) => {
 
   const propsData = {
     data: data[field],
-    schema: fieldSchema,
+    schema: {
+      config: schema.config,
+      ...fieldSchema,
+    },
     relationship: !!entity.relationships[field]
   }
 
@@ -58,13 +61,21 @@ describe('DruxtField', () => {
   })
 
   test('body', async () => {
-    const wrapper = mountComponent('body', { stubs: ['DruxtFieldTextDefault'] })
+    localVue.component('DruxtFieldTextDefault', {
+      render(h) {
+        return h('slot')
+      }
+    })
+    const wrapper = mountComponent('body')
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.component.is).toBe('DruxtFieldTextDefault')
     expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtFieldTextDefaultBodyView',
       'DruxtFieldTextDefaultBody',
-      'DruxtFieldTextDefault'
+      'DruxtFieldTextDefaultView',
+      'DruxtFieldTextDefault',
+      'DruxtFieldDefault',
     ])
     expect(wrapper.vm.component.propsData.items.length).toBe(1)
   })

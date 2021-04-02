@@ -68,8 +68,20 @@ const DruxtEntityMixin = {
     schema: {
       type: Object,
       required: true,
-    }
+    },
+
+    /**
+     * The Field value.
+     */
+     value: {
+      type: [Array, Boolean, Number, String, Object],
+      default: undefined,
+    },
   },
+
+  data: ({ value }) => ({
+    model: value,
+  }),
 
   /**
    * Vue.js Computed properties.

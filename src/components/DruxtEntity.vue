@@ -52,8 +52,18 @@ export default {
      * @type {string}
      */
     uuid: {
+      type: [Boolean, String],
+      default: false
+    },
+
+    /**
+     * The Drupal display schema type, 'view' or 'form'.
+     * 
+     * @type {string}
+     */
+    schemaType: {
       type: String,
-      required: true
+      default: undefined,
     },
   },
 
@@ -62,7 +72,11 @@ export default {
    */
   async fetch() {
     // Fetch Schema.
-    this.schema = await this.getSchema({ resourceType: this.type, mode: this.mode })
+    this.schema = await this.getSchema({
+      resourceType: this.type,
+      mode: this.mode,
+      schemaType: this.schemaType || 'view',
+    })
 
     // Build wrapper component object.
     const options = this.getModuleComponents()
@@ -76,8 +90,12 @@ export default {
     component.settings = merge((this.$druxtEntity || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
 
     // Fetch Entity resource.
-    const query = this.getQuery(component.settings)
-    this.entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
+    if (this.uuid) {
+      const query = this.getQuery(component.settings)
+      // @todo - Don't set data, mapState to vuex.
+      this.entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
+      this.model = JSON.parse(JSON.stringify(this.entity))
+    }
 
     // Generate fields list.
     this.fields = this.getFields()
@@ -89,21 +107,17 @@ export default {
     this.component = component
   },
 
-  data: () => ({
+  data: ({ type, value }) => ({
     entity: {},
     fields: {},
+    model: {
+      attributes: {},
+      relationships: {},
+      type,
+      ...value,
+    },
     schema: {},
   }),
-
-  druxt: {
-    componentOptions: ({ schema }) => ([
-      [schema.resourceType, schema.config.mode],
-      [schema.resourceType],
-      [schema.config.mode],
-    ]),
-
-    propsData: ({ entity, fields, schema }) => ({ entity, fields, schema }),
-  },
 
   methods: {
     /**
@@ -112,7 +126,7 @@ export default {
      * @return {object}
      */
     getFields() {
-      if (!this.entity || !this.schema) return false
+      if (!this.schema) return false
 
       const data = {
         ...(this.entity.attributes || {}),
@@ -121,17 +135,16 @@ export default {
 
       const fields = {}
       for (const field of this.schema.fields) {
-        // Filter out empty fields.
-        if (this.isEmpty(data[field.id])) continue
-
         fields[field.id] = {
           id: field.id,
+          // @todo - Remove deprecated 'data'.
           data: data[field.id],
+          relationship: !!((this.entity || {}).relationships || {})[field.id],
           schema: {
             config: this.schema.config,
             ...field,
           },
-          relationship: !!(this.entity.relationships || {})[field.id]
+          value: data[field.id],
         }
       }
 
@@ -168,11 +181,22 @@ export default {
       // Build scoped slots for each field.
       const scopedSlots = {}
       Object.entries(this.fields).map(([id, field]) => {
-        scopedSlots[id] = attrs => this.$createElement('DruxtField', { attrs, props: field })
+        scopedSlots[id] = (attrs) => this.$createElement('DruxtField', {
+          attrs,
+          key: id,
+          props: field,
+          on: {
+            input: (value) => {
+              this.model.attributes[id] = value
+              this.$emit('input', this.model)
+            }
+          },
+          ref: id,
+        })
       })
 
       // Build default slot.
-      scopedSlots.default = attrs => Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
+      scopedSlots.default = (attrs) => Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
 
       return scopedSlots
     },
@@ -180,6 +204,9 @@ export default {
     /**
      * Checks if an Entity field is empty.
      *
+     * @deprecated
+     * @private
+     * 
      * @param {*} value - Field value.
      * @return {boolean}
      */
@@ -202,6 +229,16 @@ export default {
       getResource: 'druxt/getResource',
       getSchema: 'druxtSchema/get'
     })
+  },
+
+  druxt: {
+    componentOptions: ({ schema }) => ([
+      [schema.resourceType, schema.config.mode],
+      [schema.resourceType],
+      [schema.config.mode],
+    ]),
+
+    propsData: ({ entity, fields, model, schema }) => ({ entity, fields, schema, value: model }),
   },
 }
 </script>

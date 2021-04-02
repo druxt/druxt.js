@@ -6,29 +6,30 @@ import { DruxtClient, DruxtStore } from 'druxt'
 import { DruxtSchemaStore } from 'druxt-schema'
 import { DruxtEntity, DruxtField } from '..'
 
-// Setup local vue instance.
-const localVue = createLocalVue()
-localVue.use(Vuex)
-localVue.component('DruxtField', DruxtField)
+let localVue
 
 const stubs = ['DruxtEntityNodePage']
 let store
 
-const mountComponent = (propsData) => {
-  const mocks = {
-    $druxtEntity: {
-      options: {},
-    },
-    $fetchState: {
-      pending: false
-    }
+const mocks = {
+  $druxtEntity: {
+    options: {},
+  },
+  $fetchState: {
+    pending: false
   }
+}
 
+const mountComponent = (propsData) => {
   return mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
 }
 
 describe('DruxtEntity', () => {
   beforeEach(() => {
+    localVue = createLocalVue()
+    localVue.use(Vuex)
+    localVue.component('DruxtField', DruxtField)
+
     mockAxios.reset()
 
     // Setup vuex store.
@@ -58,7 +59,7 @@ describe('DruxtEntity', () => {
 
     // Data.
     expect(Object.keys(wrapper.vm.component.$attrs)).toStrictEqual([
-      'entity', 'fields', 'schema'
+      'entity', 'fields', 'schema', 'value'
     ])
     expect(wrapper.vm.component.is).toBe('DruxtEntityNodePage')
     expect(wrapper.vm.component.options).toStrictEqual([
@@ -68,11 +69,11 @@ describe('DruxtEntity', () => {
     ])
     expect(wrapper.vm.component.props).toStrictEqual({})
     expect(Object.keys(wrapper.vm.component.propsData)).toStrictEqual([
-      'entity', 'fields', 'schema'
+      'entity', 'fields', 'schema', 'value',
     ])
 
     expect(Object.keys(wrapper.vm.entity)).toStrictEqual(['type', 'id', 'links', 'attributes', 'relationships'])
-    expect(Object.keys(wrapper.vm.fields)).toStrictEqual(['body'])
+    expect(Object.keys(wrapper.vm.fields)).toStrictEqual(['body', 'links', 'content_moderation_control'])
     expect(Object.keys(wrapper.vm.schema)).toStrictEqual([
       'id', 'resourceType', 'fields', 'groups', 'config'
     ])
@@ -85,7 +86,7 @@ describe('DruxtEntity', () => {
 
   test('node--page - filtered', async () => {
     localVue.component('DruxtEntityNodePageDefault', {
-      props: ['entity', 'fields', 'schema'],
+      props: ['entity', 'fields', 'schema', 'value'],
       druxt: {
         query: {
           fields: ['title'],
@@ -104,7 +105,7 @@ describe('DruxtEntity', () => {
     expect(wrapper.vm.component.$attrs).toStrictEqual({})
     expect(wrapper.vm.component.is).toBe('DruxtEntityNodePageDefault')
     expect(Object.keys(wrapper.vm.component.props)).toStrictEqual([
-      'schema', 'fields', 'entity'
+      'value', 'schema', 'fields', 'entity'
     ])
 
     expect(Object.keys(wrapper.vm.entity)).toStrictEqual(['type', 'id', 'links', 'attributes'])
@@ -113,5 +114,23 @@ describe('DruxtEntity', () => {
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings).data.fields['node--page']).toBe('body,links,content_moderation_control,title')
 
     expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  test('model', async () => {
+    const propsData = { uuid: '772b174a-796f-4301-a04d-b935a7304fba', type: 'node--page' }
+    const wrapper = mount(DruxtEntity, { localVue, mocks, propsData, store })
+
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    wrapper.vm.$refs.body.$emit('input', 'test')
+    expect(wrapper.vm.model.attributes.body).toBe('test')
+  })
+
+  test('deprecated', () => {
+    expect(DruxtEntity.methods.isEmpty()).toBe(true)
+    expect(DruxtEntity.methods.isEmpty(false)).toBe(true)
+    expect(DruxtEntity.methods.isEmpty({ data: [] })).toBe(true)
+    expect(DruxtEntity.methods.isEmpty({ data: false })).toBe(true)
+    expect(DruxtEntity.methods.isEmpty({ data: [{}] })).toBe(false)
   })
 })
