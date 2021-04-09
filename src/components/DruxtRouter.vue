@@ -88,6 +88,7 @@ export default {
       title: this.title,
       link: [
         {
+          hid: 'canonical',
           rel: 'canonical',
           href: this.canonical || this.route.canonical
         }
