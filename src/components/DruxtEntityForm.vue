@@ -58,6 +58,7 @@ export default {
 
     onReset() {
       this.model = JSON.parse(JSON.stringify(this.entity)),
+      this.response = undefined
       this.$emit('reset')
     },
 
@@ -86,12 +87,15 @@ export default {
         )
 
         // Update the Vuex store.
-        const { type, id } = this.response.data.data
-        Object.keys(this.$store.state.druxt.resources[type][id]).map((hash) =>
-          this.$store.commit('druxt/addResource', { resource: this.response.data, hash })
+        const resource = this.response.data.data
+        const { type, id } = resource
+        Object.keys((this.$store.state.druxt.resources[type] || {})[id] || {}).map((hash) =>
+          this.$store.commit('druxt/addResource', { resource, hash })
         )
+        this.$emit('submit', resource)
       } catch (e) {
-        this.response = (e.response || {}).data || e
+        this.response = (e.response || {}).data || e.message
+        this.$emit('error', this.response)
       }
       this.submitting = false
     },
