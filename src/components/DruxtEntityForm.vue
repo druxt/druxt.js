@@ -1,6 +1,5 @@
 <script>
 import { DruxtEntity } from '..'
-import merge from 'deepmerge'
 
 export default {
   name: 'DruxtEntityForm',
@@ -8,92 +7,94 @@ export default {
   extends: DruxtEntity,
 
   props: {
-    uuid: {
+    schemaType: {
       type: String,
-      default: '',
+      default: 'form',
     },
   },
 
   data: () => ({
-    entity: {},
-    fields: {},
-    model: {},
-    schema: {},
+    response: undefined,
+    submitting: false,
   }),
 
-  async fetch() {
-    // Fetch Schema.
-    this.schema = await this.getSchema({
-      resourceType: this.type,
-      mode: this.mode,
-      schemaType: 'form',
-    })
-
-    // Build wrapper component object.
-    const options = this.getModuleComponents()
-    let component = {
-      is:
-        ((options.filter((o) => o.global) || [])[0] || {}).name ||
-        'DruxtWrapper',
-      options: options.map((o) => o.name) || [],
-    }
-
-    // Get wrapper component data to merge with module settings.
-    const wrapperData = await this.getWrapperData(component.is)
-    component.settings = merge(
-      (this.$druxtEntity || {}).options || {},
-      wrapperData.druxt || {},
-      { arrayMerge: (dest, src) => src }
-    )
-
-    // Fetch Entity resource.
-    if (this.uuid) {
-      const query = this.getQuery(component.settings)
-      this.entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
-    }
-
-    // Generate fields list.
-    this.fields = this.getFields()
-
-    // Build wrapper component propsData.
-    component = { ...component, ...this.getModulePropsData(wrapperData.props) }
-
-    // Set component data.
-    this.component = component
+  computed: {
+    errors: ({ response }) => (response || {}).errors,
   },
 
   methods: {
     /**
-     * Get Entity fields per Schema.
+     * Get scoped slots for each Entity field.
      *
      * @return {object}
      */
-    getFields() {
-      const data = {
-        ...((this.entity || {}).attributes || {}),
-        ...((this.entity || {}).relationships || {})
-      }
+    getScopedSlots() {
+      // Use DruxtEntity to build the Field based slots.
+      const scopedSlots = DruxtEntity.methods.getScopedSlots.call(this)
 
-      const fields = {}
-      for (const field of this.schema.fields) {
-        fields[field.id] = {
-          id: field.id,
-          data: data[field.id] || {},
-          schema: {
-            config: this.schema.config,
-            ...field,
+      scopedSlots.buttons = (attrs) => this.$createElement(
+        'DruxtEntityFormButtons',
+        {
+          attrs,
+          on: {
+            reset: this.onReset,
+            submit: this.onSubmit,
           },
-          relationship: !!((this.entity || {}).relationships || {})[field.id]
-        }
+          props: {
+            schema: this.schema || {},
+          },
+          ref: 'buttons',
+        },
+      )
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => [
+        ...Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs)),
+        scopedSlots.buttons(attrs)
+      ]
+
+      return scopedSlots
+    },
+
+    onReset() {
+      this.model = JSON.parse(JSON.stringify(this.entity)),
+      this.$emit('reset')
+    },
+
+    async onSubmit() {
+      if (this.submitting) return false
+      this.submitting = true
+
+      let url = this.schema.config.href
+      let method = 'post'
+      if (this.entity.id) {
+        // @todo - Reduce size of payload by only sending changed data.
+        url = [url, this.entity.id].join('/')
+        method = 'patch'
       }
 
-      return fields
-    },
-  },
+      // Try to send data to backend, and catch any resulting errors.
+      try {
+        this.response = await this.$druxt.axios[method](
+          url,
+          { data: this.model },
+          {
+            headers: {
+              'Content-Type': 'application/vnd.api+json',
+            },
+          }
+        )
 
-  druxt: {
-    componentOptions: ({ mode, type }) => [[type, mode], [mode]],
-    propsData: ({ mode, type, uuid }) => ({ mode, type, uuid }),
+        // Update the Vuex store.
+        const { type, id } = this.response.data.data
+        Object.keys(this.$store.state.druxt.resources[type][id]).map((hash) =>
+          this.$store.commit('druxt/addResource', { resource: this.response.data, hash })
+        )
+      } catch (e) {
+        this.response = (e.response || {}).data || e
+      }
+      this.submitting = false
+    },
   },
 }
 </script>

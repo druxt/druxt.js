@@ -13,8 +13,10 @@
       v-model="model"
       v-bind="{
         ...component.propsData,
+        errors: this.errors,
         ...$attrs
       }"
+      ref="component"
       @input="onInput"
     >
       <!-- Label: Above -->
@@ -90,6 +92,16 @@ export default {
     },
 
     /**
+     * JSON:API errors.
+     *
+     * @type {array}
+     */
+    errors: {
+      type: Array,
+      default: () => [],
+    },
+
+    /**
      * Field relationship status.
      *
      * @type {boolean}
@@ -160,28 +172,18 @@ export default {
      * @todo Add test coverage with relationship data.
      */
     items() {
-      if (this.value === null) return false
+      if (typeof this.model === 'undefined' || this.model === null) return []
 
-      // Normalize data.
-      const data = Array.isArray(this.value) || this.relationship ? [...this.value] : [typeof this.value === 'object' ? { ...this.value } : this.value]
-
-      // If not relationship.
-      if (!this.relationship) {
-        return data
-      }
-
-      // If relationship and data present.
-      else if (Array.isArray(data) || data.data) {
-        const items = Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [data.data]
-        return items.map(item => ({
+      if (this.relationship) {
+        const items = Array.isArray(this.model.data) ? [...this.model.data] : [{ ...this.model.data }]
+        return items.map((item) => ({
           type: item.type || (item.data || {}).type,
           uuid: item.id || (item.data || {}).id,
           mode: ((this.schema.settings || {}).display || {}).view_mode || 'default',
-          item
         }))
       }
 
-      return false
+      return Array.isArray(this.model) ? [...this.model] : [this.model]
     },
   },
 
@@ -189,16 +191,26 @@ export default {
     onInput(value) {
       this.model = value
       this.$emit('input', value)
-    }
+    },
+  },
+
+  watch: {
+    /**
+     * Updates the model whenever the value is directly changed.
+     */
+    value() {
+      this.model = this.value
+    },
   },
 
   druxt: {
     componentOptions: ({ schema }) => ([
       [schema.type || '', schema.id, (schema.config || {}).schemaType],
       [schema.type || '', (schema.config || {}).schemaType],
-      ['Default'],
+      ['default', (schema.config || {}).schemaType],
     ]),
-    propsData: ({ items, schema }) => ({ items, schema }),
+
+    propsData: ({ errors, items, relationship, schema }) => ({ errors, items, relationship, schema }),
   }
 }
 </script>

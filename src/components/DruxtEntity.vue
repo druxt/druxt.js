@@ -94,11 +94,8 @@ export default {
       const query = this.getQuery(component.settings)
       // @todo - Don't set data, mapState to vuex.
       this.entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
-      this.model = JSON.parse(JSON.stringify(this.entity))
+      this.model = JSON.parse(JSON.stringify(this.entity || {}))
     }
-
-    // Generate fields list.
-    this.fields = this.getFields()
 
     // Build wrapper component propsData.
     component = { ...component, ...this.getModulePropsData(wrapperData.props) }
@@ -108,38 +105,47 @@ export default {
   },
 
   data: ({ type, value }) => ({
-    entity: {},
-    fields: {},
+    entity: {
+      attributes: {},
+      relationships: {},
+      type,
+      ...value,
+    },
     model: {
       attributes: {},
       relationships: {},
       type,
       ...value,
     },
-    schema: {},
+    schema: null,
   }),
 
-  methods: {
+  computed: {
     /**
      * Get Entity fields per Schema.
      *
      * @return {object}
      */
-    getFields() {
+    fields() {
       if (!this.schema) return false
 
       const data = {
-        ...(this.entity.attributes || {}),
-        ...(this.entity.relationships || {})
+        ...(this.model.attributes || {}),
+        ...(this.model.relationships || {})
       }
 
       const fields = {}
       for (const field of this.schema.fields) {
+        // Filter out empty fields if not using the Form schema type.
+        // @todo - Make this configurable?
+        if (this.schemaType !== 'form' && this.isEmpty(data[field.id])) continue
+
         fields[field.id] = {
           id: field.id,
           // @todo - Remove deprecated 'data'.
           data: data[field.id],
-          relationship: !!((this.entity || {}).relationships || {})[field.id],
+          errors: (this.errors || []).filter((o) => ((o.source || {}).pointer || '').startsWith(`/data/attributes/${field.id}`)),
+          relationship: !!((field.settings || {}).storage || {}).target_type || !!(this.model.relationships || {})[field.id],
           schema: {
             config: this.schema.config,
             ...field,
@@ -150,7 +156,9 @@ export default {
 
       return fields
     },
+  },
 
+  methods: {
     /**
      * Get Entity query object.
      *
@@ -187,7 +195,8 @@ export default {
           props: field,
           on: {
             input: (value) => {
-              this.model.attributes[id] = value
+              const type = !field.relationship ? 'attributes' : 'relationships'
+              this.model[type][id] = value
               this.$emit('input', this.model)
             }
           },
@@ -233,8 +242,7 @@ export default {
 
   druxt: {
     componentOptions: ({ schema }) => ([
-      [schema.resourceType, schema.config.mode],
-      [schema.resourceType],
+      [schema.resourceType, schema.config.mode, schema.config.schemaType],
       [schema.config.mode],
     ]),
 

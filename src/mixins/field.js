@@ -50,6 +50,16 @@ const DruxtFieldMixin = {
    */
   props: {
     /**
+     * JSON:API errors.
+     *
+     * @type {array}
+     */
+    errors: {
+      type: Array,
+      default: () => [],
+    },
+
+    /**
      * Inner wrapper component and props.
      * @type {object}
      * @default { component: 'div', props: {} }
@@ -68,8 +78,18 @@ const DruxtFieldMixin = {
      * @type {array}
      */
     items: {
-      type: Array,
+      type: [Array, Boolean],
       required: true
+    },
+
+    /**
+     * Field relationship status.
+     *
+     * @type {boolean}
+     */
+     relationship: {
+      type: Boolean,
+      default: false
     },
 
     /**
