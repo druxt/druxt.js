@@ -13,9 +13,9 @@ localVue.use(Vuex)
 
 let store
 
-const mountComponent = (field, options = {}) => {
-  const entity = require('../../__fixtures__/get/382eec1563f0514319a9de3a48cb658b.json').data
-  const schema = require('../../__fixtures__/schemas/node--page--default--view.json')
+const mountComponent = async ({ field, bundle, uuid, mode = 'default', options = {} }) => {
+  const entity = (await store.$druxt.getResource(`node--${bundle}`, uuid)).data
+  const schema = require(`../../__fixtures__/schemas/node--${bundle}--${mode}--view.json`)
 
   const fieldSchema = schema.fields.find(element => element.id === field)
 
@@ -56,20 +56,36 @@ describe('DruxtField', () => {
     store.app = { context: { error: jest.fn() }, store }
   })
 
-  test('default', () => {
-    const wrapper = mountComponent('body')
+  test('default', async () => {
+    const wrapper = await mountComponent({
+      bundle: 'page',
+      field: 'body',
+      uuid: '772b174a-796f-4301-a04d-b935a7304fba',
+    })
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
+
+    // Test v-model emit.
+    wrapper.vm.onInput('test')
+    expect(wrapper.vm.model).toBe('test')
+    expect(wrapper.emitted().input).toStrictEqual([['test']])
   })
 
   test('body', async () => {
+    // Register custom wrapper component.
     localVue.component('DruxtFieldTextDefault', {
       render(h) {
         return h('slot')
       }
     })
-    const wrapper = mountComponent('body')
+
+    const wrapper = await mountComponent({
+      bundle: 'page',
+      field: 'body',
+      uuid: '772b174a-796f-4301-a04d-b935a7304fba',
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
+    // Component.
     expect(wrapper.vm.component.is).toBe('DruxtFieldTextDefault')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtFieldTextDefaultBodyView',
@@ -77,6 +93,28 @@ describe('DruxtField', () => {
       'DruxtFieldTextDefaultView',
       'DruxtFieldDefaultView',
       'DruxtFieldTextDefault',
+      'DruxtFieldDefault',
+    ])
+    expect(wrapper.vm.component.propsData.items.length).toBe(1)
+  })
+
+  test('relationship', async () => {
+    const wrapper = await mountComponent({
+      bundle: 'article',
+      field: 'field_media_image',
+      mode: 'card',
+      uuid: 'ab0c49a4-1e0f-4f02-81da-a7b53f69be9f',
+    })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Component.
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtFieldEntityReferenceEntityViewFieldMediaImageView',
+      'DruxtFieldEntityReferenceEntityViewFieldMediaImage',
+      'DruxtFieldEntityReferenceEntityViewView',
+      'DruxtFieldDefaultView',
+      'DruxtFieldEntityReferenceEntityView',
       'DruxtFieldDefault',
     ])
     expect(wrapper.vm.component.propsData.items.length).toBe(1)
