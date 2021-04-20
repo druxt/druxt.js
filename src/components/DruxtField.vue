@@ -10,13 +10,13 @@
     <component
       :is="component.is"
       v-if="component.is !== 'DruxtField'"
+      ref="component"
       v-model="model"
       v-bind="{
         ...component.propsData,
-        errors: this.errors,
+        errors,
         ...$attrs
       }"
-      ref="component"
       @input="onInput"
     >
       <!-- Label: Above -->
@@ -187,19 +187,19 @@ export default {
     },
   },
 
-  methods: {
-    onInput(value) {
-      this.model = value
-      this.$emit('input', value)
-    },
-  },
-
   watch: {
     /**
      * Updates the model whenever the value is directly changed.
      */
     value() {
       this.model = this.value
+    },
+  },
+
+  methods: {
+    onInput(value) {
+      this.model = value
+      this.$emit('input', value)
     },
   },
 

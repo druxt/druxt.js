@@ -13,7 +13,7 @@ const component = {
 
 describe('DruxtEntityMixin', () => {
   test('classes', () => {
-    const entity = require('../../__fixtures__/data/382eec1563f0514319a9de3a48cb658b.json').data
+    const entity = require('../../__fixtures__/get/382eec1563f0514319a9de3a48cb658b.json').data
     const schema = require('../../__fixtures__/schemas/node--page--default--view.json')
 
     const propsData = { entity, fields: {}, schema }

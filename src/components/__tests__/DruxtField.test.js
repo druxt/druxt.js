@@ -14,7 +14,7 @@ localVue.use(Vuex)
 let store
 
 const mountComponent = (field, options = {}) => {
-  const entity = require('../../__fixtures__/data/382eec1563f0514319a9de3a48cb658b.json').data
+  const entity = require('../../__fixtures__/get/382eec1563f0514319a9de3a48cb658b.json').data
   const schema = require('../../__fixtures__/schemas/node--page--default--view.json')
 
   const fieldSchema = schema.fields.find(element => element.id === field)
@@ -36,6 +36,7 @@ const mountComponent = (field, options = {}) => {
       config: schema.config,
       ...fieldSchema,
     },
+    value: data[field],
     relationship: !!entity.relationships[field]
   }
 
@@ -74,6 +75,7 @@ describe('DruxtField', () => {
       'DruxtFieldTextDefaultBodyView',
       'DruxtFieldTextDefaultBody',
       'DruxtFieldTextDefaultView',
+      'DruxtFieldDefaultView',
       'DruxtFieldTextDefault',
       'DruxtFieldDefault',
     ])

@@ -63,6 +63,7 @@ describe('DruxtEntity', () => {
     ])
     expect(wrapper.vm.component.is).toBe('DruxtEntityNodePage')
     expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtEntityNodePageDefaultView',
       'DruxtEntityNodePageDefault',
       'DruxtEntityNodePage',
       'DruxtEntityDefault',
@@ -73,7 +74,7 @@ describe('DruxtEntity', () => {
     ])
 
     expect(Object.keys(wrapper.vm.entity)).toStrictEqual(['type', 'id', 'links', 'attributes', 'relationships'])
-    expect(Object.keys(wrapper.vm.fields)).toStrictEqual(['body', 'links', 'content_moderation_control'])
+    expect(Object.keys(wrapper.vm.fields)).toStrictEqual(['body'])
     expect(Object.keys(wrapper.vm.schema)).toStrictEqual([
       'id', 'resourceType', 'fields', 'groups', 'config'
     ])
