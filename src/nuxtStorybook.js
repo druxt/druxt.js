@@ -54,7 +54,7 @@ export default async function ({ stories }) {
       catch(e) {
         return {
           resourceType: `${entity}--${bundle}`,
-          entites: [],
+          entities: [],
         }
       }
     })).flat()
@@ -62,28 +62,29 @@ export default async function ({ stories }) {
 
   // Build Entity Stories.
   const entityStories = entityTypes.map(({ entity, bundles }) => bundles.map((bundle) => {
-    const viewDisplays = Array.from(new Set(view.filter((o) => o.attributes.targetEntityType === entity && o.attributes.bundle === bundle).map((o) => o.attributes.mode).sort((a) => (a === 'default' ? -1 : 0))))
-    const formDisplays = Array.from(new Set(form.filter((o) => o.attributes.targetEntityType === entity && o.attributes.bundle === bundle).map((o) => o.attributes.mode).sort((a) => (a === 'default' ? -1 : 0))))
+    return Object.entries({ view, form }).map(([type, schemas]) => {
+      const displays = Array.from(new Set(schemas.filter((o) => o.attributes.targetEntityType === entity && o.attributes.bundle === bundle).map((o) => o.attributes.mode).sort((a) => (a === 'default' ? -1 : 0))))
+      if (!displays) {
+        return false
+      }
 
-    const resourceType = `${entity}--${bundle}`
-    
-    const title = titleFn(['Druxt Entity', entity, bundle])
+      const resourceType = `${entity}--${bundle}`
+      const component = type === 'view' ? 'druxt-entity' : 'druxt-entity-form'
 
-    addTemplate({
-      src: resolve(__dirname, '../nuxt/druxt-entity.stories.js'),
-      fileName: `stories/druxt-entity.${resourceType}.stories.js`,
-      options: {
-        druxt: options.druxt,
-        entities: entities.find((o) => o.resourceType === resourceType).entities,
-        formDisplays,
-        resourceType,
-        title,
-        viewDisplays
-      },
+      addTemplate({
+        src: resolve(__dirname, `../nuxt/${component}.stories.js`),
+        fileName: `stories/${component}.${resourceType}.stories.js`,
+        options: {
+          displays,
+          entities: entities.find((o) => o.resourceType === resourceType).entities,
+          resourceType,
+          title: titleFn(['Druxt Entity', entity, bundle, `${type} displays`]),
+        },
+      })
+  
+      return resolve(options.buildDir, `./stories/${component}.${resourceType}.stories.js`)
     })
-
-    return resolve(options.buildDir, `./stories/druxt-entity.${resourceType}.stories.js`)
-  })).flat()
+  })).flat(2)
 
   stories.push.apply(stories, entityStories)
 }
