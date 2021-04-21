@@ -4,12 +4,9 @@ import { DruxtClient } from 'druxt'
 
 // @todo - Use component naming convention for title.
 const titleFn = (parts) =>
-parts
-  .map(
-    (part) =>
-      part.charAt(0).toUpperCase() + part.slice(1).replace(/_/g, ' ')
-  )
-  .join('/')
+  parts.map((part) =>
+    part.charAt(0).toUpperCase() + part.slice(1).replace(/_/g, ' ')
+  ).join('/')
 
 export default async function ({ stories }) {
   const { addTemplate, options } = this

@@ -39,18 +39,22 @@ export default {
 }
 
 const Template = (args, ctx) => {
-  args.type = '<%= options.resourceType %>'
-  args.uuid = args.uuid || <%= devalue(((options.entities || [])[0] || {}).id || false) %>
   return {
     props: Object.keys(args),
     template: '<DruxtEntityForm v-bind="$props" v-on="$props" />',
   }
 }
 
-//<% for (mode of options.displays) { %>
+<% for (mode of options.displays) { %>
+// Display: <%= mode %>.
 export const <%= mode.charAt(0).toUpperCase() + mode.slice(1) %> = Template.bind({})
 <%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.storyName = '<%= mode %>'
-<%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.args = { mode: '<%= mode %>' }
+<%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.args = {
+  mode: '<%= mode %>',
+  schemaType: 'form',
+  type: '<%= options.resourceType %>',
+  uuid: <%= devalue(((options.entities || [])[0] || {}).id || false) %>,
+}
 <%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.parameters = {
   docs: {
     source: {
@@ -58,4 +62,5 @@ export const <%= mode.charAt(0).toUpperCase() + mode.slice(1) %> = Template.bind
     }
   }
 }
-//<% } %>
+
+<% } %>
