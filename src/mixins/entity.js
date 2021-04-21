@@ -71,10 +71,10 @@ const DruxtEntityMixin = {
     },
 
     /**
-     * The Field value.
+     * The Entity value.
      */
      value: {
-      type: [Array, Boolean, Number, String, Object],
+      type: Object,
       default: undefined,
     },
   },

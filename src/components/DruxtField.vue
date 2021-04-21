@@ -9,7 +9,6 @@
   >
     <component
       :is="component.is"
-      v-if="component.is !== 'DruxtField'"
       ref="component"
       v-model="model"
       v-bind="{
@@ -205,8 +204,8 @@ export default {
 
   druxt: {
     componentOptions: ({ schema }) => ([
-      [schema.type || '', schema.id, (schema.config || {}).schemaType],
-      [schema.type || '', (schema.config || {}).schemaType],
+      [schema.type || 'undefined', schema.id, (schema.config || {}).schemaType],
+      [schema.type || 'undefined', (schema.config || {}).schemaType],
       ['default', (schema.config || {}).schemaType],
     ]),
 

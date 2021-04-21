@@ -102,6 +102,14 @@ const DruxtFieldMixin = {
     },
 
     /**
+     * The Field value.
+     */
+     value: {
+      type: [Array, Boolean, Number, String, Object],
+      default: undefined,
+    },
+
+    /**
      * Outer wrapper component and props.
      * @type {object}
      * @default { component: 'div', props: {} }
@@ -115,6 +123,10 @@ const DruxtFieldMixin = {
       })
     }
   },
+
+  data: ({ value }) => ({
+    model: value,
+  }),
 }
 
 export { DruxtFieldMixin }

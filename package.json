@@ -35,7 +35,9 @@
   "unpkg": "dist/druxt-entity.min.js",
   "files": [
     "dist",
-    "nuxt"
+    "nuxt",
+    "src/components/DruxtEntity.vue",
+    "src/components/DruxtEntityForm.vue"
   ],
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",

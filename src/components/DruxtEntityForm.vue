@@ -1,5 +1,5 @@
 <script>
-import { DruxtEntity } from '..'
+import { default as DruxtEntity } from './DruxtEntity.vue'
 
 export default {
   name: 'DruxtEntityForm',
