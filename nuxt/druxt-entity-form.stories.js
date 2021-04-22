@@ -1,20 +1,23 @@
-import { default as DruxtEntity } from 'druxt-entity/src/components/DruxtEntity'
+import { default as DruxtEntityForm } from 'druxt-entity/src/components/DruxtEntityForm'
 
 export default {
   title: '<%= options.title %>',
-  component: DruxtEntity,
+  component: DruxtEntityForm,
   argTypes: {
+    error: {
+      action: 'error',
+    },
     input: {
       action: 'input',
     },
+    submit: {
+      action: 'submit',
+    },
+    reset: {
+      action: 'reset',
+    },
     mode: {
       control: false,
-    },
-    schemaType: {
-      control: {
-        type: 'select',
-        options: ['view', 'form'],
-      },
     },
     type: {
       control: false,
@@ -29,16 +32,16 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'The DruxtEntity component renders Drupal content entities via the "View" displays provided by Drupal.'
-      },
-    },
-  },
+        component: 'The DruxtEntityForm component renders Drupal content entities via the "Form" displays provided by Drupal.'
+      }
+    }
+  }
 }
 
-const Template = (args, { argTypes }) => {
+const Template = (args, ctx) => {
   return {
-    props: Object.keys(argTypes),
-    template: '<DruxtEntity v-bind="$props" v-on="$props" />',
+    props: Object.keys(args),
+    template: '<DruxtEntityForm v-bind="$props" v-on="$props" />',
   }
 }
 
@@ -48,14 +51,14 @@ export const <%= mode.charAt(0).toUpperCase() + mode.slice(1) %> = Template.bind
 <%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.storyName = '<%= mode %>'
 <%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.args = {
   mode: '<%= mode %>',
-  schemaType: 'view',
+  schemaType: 'form',
   type: '<%= options.resourceType %>',
   uuid: <%= devalue(((options.entities || [])[0] || {}).id || false) %>,
 }
 <%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.parameters = {
   docs: {
     source: {
-      code: '<DruxtEntity\n  mode="<%= mode %>"\n  type="<%= options.resourceType %>"\n  uuid=""\n/>'
+      code: '<DruxtEntityForm\n  mode="<%= mode %>"\n  type="<%= options.resourceType %>"\n  uuid=""\n/>'
     }
   }
 }
