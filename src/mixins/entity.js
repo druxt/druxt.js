@@ -1,36 +1,18 @@
 import { DruxtEntityContextMixin } from './context'
 
 /**
- * Provides Vue.js properties to render a Drupal Entity JSON:API resource component.
- *
- * This Mixin is intended for use by `entity` type Component Suggestions for
- * targetted theming of Drupal Entity JSON:API resources.
+ * Provides Vue.js properties to render a DruxtEntity or DruxtEntityForm Wrapper component.
  *
  * @mixin
  *
  * @example @lang vue
- * <template>
- *   <div :classes="classes">
- *     <!-- Render a `DruxtField` component for all renderable fields. -->
- *     <DruxtField
- *       v-for="(field, key) of fields"
- *       :key="key"
- *       :v-bind="field"
- *     />
- *   </div>
- * </template>
- *
-* <script>
- * // Import mixin.
+ * <script>
  * import { DruxtEntityMixin } from 'druxt-entity'
  *
  * export default {
- *   // Register mixin.
  *   mixins: [DruxtEntityMixin],
  * }
  * </script>
- *
- * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
  */
 const DruxtEntityMixin = {
   /**

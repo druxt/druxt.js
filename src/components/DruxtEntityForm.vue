@@ -1,30 +1,78 @@
 <script>
 import { default as DruxtEntity } from './DruxtEntity.vue'
 
+/**
+ * The `<DruxtEntityForm />` component uses Drupal's Form displays modes for
+ * content creation and editing.
+ * 
+ * Features:
+ * - Extends DruxtEntity component
+ * - Form submission and error handling
+ * - Scoped slots
+ * 
+ * @example @lang vue
+ * <DruxtEntityForm
+ *   :type="resourceType"
+ *   :uuid="uuid"
+ *   mode="displayMode"
+ *   v-on:error="onError()"
+ *   v-on:reset="onReset()"
+ *   v-on:submit="onSubmit()"
+ * />
+ * 
+ * @extends DruxtEntity
+ * @see {@link ./DruxtEntity|DruxtEntity}
+ */
 export default {
   name: 'DruxtEntityForm',
 
+  /**
+   * @see {@link ./DruxtEntity|DruxtEntity}
+   */
   extends: DruxtEntity,
 
+  /**
+   * Vue.js Properties.
+   */
   props: {
+    /**
+     * Drupal display schema type, 'view' or 'form'.
+     * 
+     * @type {('view'|'form')}
+     * @default form
+     */
     schemaType: {
       type: String,
       default: 'form',
     },
   },
 
+  /**
+   * Vue.js Data object.
+   *
+   * @property {object} response - The form submission response data.
+   * @property {boolean} submitting - Whether the form is currently being submitted.
+   */
   data: () => ({
     response: undefined,
     submitting: false,
   }),
 
+  /**
+   * Vue.js Computed properties.
+   */
   computed: {
+    /**
+     * An array of errors if present in the form submission response data.
+     * 
+     * @return {object[]}
+     */
     errors: ({ response }) => (response || {}).errors,
   },
 
   methods: {
     /**
-     * Get scoped slots for each Entity field.
+     * Adds a `buttons` slot to the DruxtEntity scope slots. 
      *
      * @return {object}
      */
@@ -56,12 +104,24 @@ export default {
       return scopedSlots
     },
 
+    /**
+     * Reset event handler:
+     * - Sets `model` back to `entity` value.
+     * - Unsets `response` data.
+     * - Emits `reset`.
+     */
     onReset() {
       this.model = JSON.parse(JSON.stringify(this.entity)),
       this.response = undefined
       this.$emit('reset')
     },
 
+    /**
+     * Submit event handler:
+     * - Sends data to backend via POST or PATCH.
+     * - Catches errors.
+     * - Emits `submit` or `error` event.
+     */
     async onSubmit() {
       if (this.submitting) return false
       this.submitting = true

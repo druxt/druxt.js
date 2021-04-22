@@ -1,16 +1,46 @@
-import DruxtEntity from './DruxtEntity.vue'
-export { DruxtEntity }
+/**
+ * The `<DruxtEntity />` Vue.js component.
+ * 
+ * @type {object}
+ * @exports DruxtEntity
+ * @see {@link ./DruxtEntity|DruxtEntity}
+ */
+export { default as DruxtEntity } from './DruxtEntity.vue'
 
-import DruxtEntityForm from './DruxtEntityForm.vue'
-export { DruxtEntityForm }
+/**
+ * The `<DruxtEntityForm />` Vue.js component.
+ * 
+ * @type {object}
+ * @exports DruxtEntityForm
+ * @see {@link ./DruxtEntityForm|DruxtEntityForm}
+ */
+export { default as DruxtEntityForm } from './DruxtEntityForm.vue'
 
-import DruxtEntityFormButtons from './DruxtEntityFormButtons.vue'
-export { DruxtEntityFormButtons }
+/**
+ * The `<DruxtEntityFormButtons />` Vue.js component.
+ * 
+ * @type {object}
+ * @exports DruxtEntityFormButtons
+ * @see {@link ./DruxtEntityFormButtons|DruxtEntityFormButtons}
+ */
+export { default as DruxtEntityFormButtons } from './DruxtEntityFormButtons.vue'
 
-import DruxtField from './DruxtField.vue'
-export { DruxtField }
+/**
+ * The `<DruxtField />` Vue.js component.
+ * 
+ * @type {object}
+ * @exports DruxtField
+ * @see {@link ./DruxtField|DruxtField}
+ */
+export { default as DruxtField } from './DruxtField.vue'
 
-import DruxtRouterEntity from './DruxtRouterEntity.vue'
-export { DruxtRouterEntity }
+/**
+ * The `<DruxtRouterEntity />` Vue.js component.
+ * 
+ * @type {object}
+ * @exports DruxtRouterEntity
+ * @see {@link ./DruxtRouterEntity|DruxtRouterEntity}
+ */
+export { default as DruxtRouterEntity } from './DruxtRouterEntity.vue'
 
 export * from './fields'

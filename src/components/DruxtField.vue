@@ -79,9 +79,6 @@ export default {
   props: {
     /**
      * The Field data.
-     *
-     * @deprecated
-     * @private
      * 
      * @type {(array|boolean|number|object|string)}
      */
@@ -133,6 +130,9 @@ export default {
 
     /**
      * The Field value.
+     * 
+     * @type {(array|boolean|number|object|string)}
+     * @model
      */
     value: {
       type: [Array, Boolean, Number, String, Object],
@@ -162,13 +162,9 @@ export default {
 
     /**
      * Component properties to pass through to the Field's suggested component.
-     *
-     * @deprecated
      * 
      * @type {boolean|object}
      * @default false
-     *
-     * @todo Add test coverage with relationship data.
      */
     items() {
       if (typeof this.model === 'undefined' || this.model === null) return []
@@ -196,6 +192,11 @@ export default {
   },
 
   methods: {
+    /**
+     * Input event handler, emits `input`.
+     * 
+     * @params {(array|boolean|number|object|string)} value - The Field value.
+     */
     onInput(value) {
       this.model = value
       this.$emit('input', value)

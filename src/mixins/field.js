@@ -1,39 +1,18 @@
 import { DruxtEntityContextMixin } from './context'
 
 /**
- * Provides Vue.js properties to render Drupal Field components.
- *
- * This Mixin is intended for use by `field` type Component Suggestions for
- * targetted theming of Drupal Fields.
+ * Provides Vue.js properties to render a DruxtField Wrapper component.
  *
  * @mixin
  *
  * @example @lang vue
- * <template>
- *   <component
- *     :is="wrapper.component"
- *     v-bind="wrapper.props"
- *   >
- *     <div v-for="(item, key) of items" :key="key">
- *       {{ item }}
- *     </div>
- *   </component>
- * </template>
- *
  * <script>
- * // Import mixin.
  * import { DruxtFieldMixin } from 'druxt-entity'
  *
  * export default {
- *   name: 'DruxtFieldCustom',
- *
- *   // Register mixin.
  *   mixins: [DruxtFieldMixin]
  * }
  * </script>
- *
- * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
- * @see {@link https://vuejs.org/v2/guide/mixins.html}
  */
 const DruxtFieldMixin = {
   /**
