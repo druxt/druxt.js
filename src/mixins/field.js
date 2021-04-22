@@ -1,39 +1,18 @@
 import { DruxtEntityContextMixin } from './context'
 
 /**
- * Provides Vue.js properties to render Drupal Field components.
- *
- * This Mixin is intended for use by `field` type Component Suggestions for
- * targetted theming of Drupal Fields.
+ * Provides Vue.js properties to render a DruxtField Wrapper component.
  *
  * @mixin
  *
  * @example @lang vue
- * <template>
- *   <component
- *     :is="wrapper.component"
- *     v-bind="wrapper.props"
- *   >
- *     <div v-for="(item, key) of items" :key="key">
- *       {{ item }}
- *     </div>
- *   </component>
- * </template>
- *
  * <script>
- * // Import mixin.
  * import { DruxtFieldMixin } from 'druxt-entity'
  *
  * export default {
- *   name: 'DruxtFieldCustom',
- *
- *   // Register mixin.
  *   mixins: [DruxtFieldMixin]
  * }
  * </script>
- *
- * @see {@link ../mixins/componentSuggestion|DruxtEntityComponentSuggestionMixin}
- * @see {@link https://vuejs.org/v2/guide/mixins.html}
  */
 const DruxtFieldMixin = {
   /**
@@ -49,6 +28,16 @@ const DruxtFieldMixin = {
    * Vue.js Properties.
    */
   props: {
+    /**
+     * JSON:API errors.
+     *
+     * @type {array}
+     */
+    errors: {
+      type: Array,
+      default: () => [],
+    },
+
     /**
      * Inner wrapper component and props.
      * @type {object}
@@ -68,8 +57,18 @@ const DruxtFieldMixin = {
      * @type {array}
      */
     items: {
-      type: Array,
+      type: [Array, Boolean],
       required: true
+    },
+
+    /**
+     * Field relationship status.
+     *
+     * @type {boolean}
+     */
+     relationship: {
+      type: Boolean,
+      default: false
     },
 
     /**
@@ -79,6 +78,14 @@ const DruxtFieldMixin = {
     schema: {
       type: Object,
       required: true
+    },
+
+    /**
+     * The Field value.
+     */
+     value: {
+      type: [Array, Boolean, Number, String, Object],
+      default: undefined,
     },
 
     /**
@@ -95,6 +102,10 @@ const DruxtFieldMixin = {
       })
     }
   },
+
+  data: ({ value }) => ({
+    model: value,
+  }),
 }
 
 export { DruxtFieldMixin }

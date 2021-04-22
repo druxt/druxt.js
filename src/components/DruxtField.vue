@@ -9,10 +9,14 @@
   >
     <component
       :is="component.is"
+      ref="component"
+      v-model="model"
       v-bind="{
         ...component.propsData,
+        errors,
         ...$attrs
       }"
+      @input="onInput"
     >
       <!-- Label: Above -->
       <template
@@ -29,6 +33,8 @@
       >
         <strong>{{ schema.label.text }}:</strong>
       </template>
+
+      <div>Missing Field: <code>{{ schema.type }}</code></div>
     </component>
   </component>
 </template>
@@ -73,12 +79,22 @@ export default {
   props: {
     /**
      * The Field data.
-     *
+     * 
      * @type {(array|boolean|number|object|string)}
      */
     data: {
       type: [Array, Boolean, Number, Object, String],
       default: null,
+    },
+
+    /**
+     * JSON:API errors.
+     *
+     * @type {array}
+     */
+    errors: {
+      type: Array,
+      default: () => [],
     },
 
     /**
@@ -110,8 +126,23 @@ export default {
     options: {
       type: Object,
       default: () => ({})
-    }
+    },
+
+    /**
+     * The Field value.
+     * 
+     * @type {(array|boolean|number|object|string)}
+     * @model
+     */
+    value: {
+      type: [Array, Boolean, Number, String, Object],
+      default: undefined,
+    },
   },
+
+  data: ({ value }) => ({
+    model: value,
+  }),
 
   /**
    * Vue.js Computed properties.
@@ -124,47 +155,62 @@ export default {
      * @default { position: 'hidden' }
      */
     label() {
-      if (!this.schema.label || !this.schema.label.text) return { position: 'hidden' }
+      if (!((this.schema || {}).label || {}).text) return { position: 'hidden' }
 
       return this.schema.label
     },
 
     /**
      * Component properties to pass through to the Field's suggested component.
-     *
+     * 
      * @type {boolean|object}
      * @default false
-     *
-     * @todo Add test coverage with relationship data.
      */
     items() {
-      if (this.data === null) return false
+      if (typeof this.model === 'undefined' || this.model === null) return []
 
-      // Normalize data.
-      const data = Array.isArray(this.data) || this.relationship ? this.data : [this.data]
-
-      // If not relationship.
-      if (!this.relationship) {
-        return data
-      }
-
-      // If relationship and data present.
-      else if (data.data) {
-        const items = Array.isArray(data.data) ? data.data : [data.data]
-        return items.map(item => ({
-          type: item.type,
-          uuid: item.id,
-          mode: ((this.schema.settings || {}).display || {}).view_mode || 'default'
+      if (this.relationship) {
+        const items = Array.isArray(this.model.data) ? [...this.model.data] : [{ ...this.model.data }]
+        return items.map((item) => ({
+          type: item.type || (item.data || {}).type,
+          uuid: item.id || (item.data || {}).id,
+          mode: ((this.schema.settings || {}).display || {}).view_mode || 'default',
         }))
       }
 
-      return false
+      return Array.isArray(this.model) ? [...this.model] : [this.model]
+    },
+  },
+
+  watch: {
+    /**
+     * Updates the model whenever the value is directly changed.
+     */
+    value() {
+      this.model = this.value
+    },
+  },
+
+  methods: {
+    /**
+     * Input event handler, emits `input`.
+     * 
+     * @params {(array|boolean|number|object|string)} value - The Field value.
+     */
+    onInput(value) {
+      this.model = value
+      this.$emit('input', value)
     },
   },
 
   druxt: {
-    componentOptions: ({ schema }) => ([[schema.type, schema.id]]),
-    propsData: ({ items, schema }) => ({ items, schema }),
+    componentOptions: ({ schema }) => ([
+      [schema.type || 'undefined', schema.id, (schema.config || {}).schemaType],
+      [schema.type || 'undefined', (schema.config || {}).schemaType],
+      ['default', (schema.config || {}).schemaType],
+    ]),
+
+    propsData: ({ errors, items, relationship, schema }) => ({ errors, items, relationship, schema }),
   }
 }
 </script>
