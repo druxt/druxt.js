@@ -5,29 +5,33 @@ actionText: Get started
 actionLink: /guide/getting-started
 ---
 
-> The DruxtJS Entity module provides a Drupal Display Mode powered Entity and Field component system for your Nuxt.js application.
+> The DruxtEntity module provides a [Drupal](https://drupal.org) Display Mode powered Entity, Form and Field component system for your [Nuxt.js](https://nuxtjs.org) application.
 
 
-## The DruxtEntity component
+### DruxtEntity
 
-Druxt Entity provides a Vue.js component to render a Drupal Entity.
+The DruxtEntity component renders content entities using Drupal's View display modes.
 
 ```vue
 <DruxtEntity :type="resourceType" :uuid="uuid" mode="displayMode" />
 ```
 
+![Example DruxtEntity component](./images/druxt-entity.png)
+
 Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtEntity.html).
 
 
-### Druxt component
+### DruxtEntityForm
 
-The DruxtEntity component is compatible with the DruxtJS component theming system:
+The DruxtEntityForm component uses Drupal's Form displays modes for content creation and editing.
 
 ```vue
-<Druxt module="entity" :props-data="{ type, uuid, mode }" :wrapper="wrapper">
+<DruxtEntityForm :type="resourceType" mode="displayMode" />
 ```
 
-See the [Druxt component documentation](https://druxtjs.org/guide/#the-druxt-component) for more information.
+![Example DruxtEntityForm component](./images/druxt-entity-form.png)
+
+Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtEntityForm.html).
 
 
 ## DruxtJS

@@ -1,7 +1,7 @@
 {
   "name": "druxt-entity",
   "version": "0.12.0",
-  "description": "Drupal Display Mode powered Entity and Field Vue.js component system.",
+  "description": "Drupal Display Mode powered Entity, Form and Field Vue.js component system.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/druxt/druxt-entity"
@@ -35,7 +35,9 @@
   "unpkg": "dist/druxt-entity.min.js",
   "files": [
     "dist",
-    "nuxt"
+    "nuxt",
+    "src/components/DruxtEntity.vue",
+    "src/components/DruxtEntityForm.vue"
   ],
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",

@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import DruxtEntityStorybook from './nuxtStorybook'
 
 /**
- * Nuxt module function to install Druxt Entity.
+ * The Nuxt.js module function.
  *
  * - Adds dependant modules.
  * - Adds Nuxt plugin.

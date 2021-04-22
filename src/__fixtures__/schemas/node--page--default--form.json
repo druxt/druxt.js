@@ -1,0 +1,237 @@
+{
+ "id": "node--page--default--form",
+ "resourceType": "node--page",
+ "fields": [
+  {
+   "id": "title",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "cardinality": null,
+   "required": false,
+   "type": "string_textfield",
+   "weight": 0,
+   "settings": {
+    "config": {},
+    "display": {
+     "size": 60,
+     "placeholder": ""
+    },
+    "storage": {}
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "uid",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "cardinality": null,
+   "required": false,
+   "type": "entity_reference_autocomplete",
+   "weight": 1,
+   "settings": {
+    "config": {},
+    "display": {
+     "match_operator": "CONTAINS",
+     "match_limit": 10,
+     "size": 60,
+     "placeholder": ""
+    },
+    "storage": {}
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "created",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "cardinality": null,
+   "required": false,
+   "type": "datetime_timestamp",
+   "weight": 2,
+   "settings": {
+    "config": {},
+    "display": [],
+    "storage": {}
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "langcode",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "cardinality": null,
+   "required": false,
+   "type": "language_select",
+   "weight": 2,
+   "settings": {
+    "config": {},
+    "display": {
+     "include_locked": true
+    },
+    "storage": {}
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "promote",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "cardinality": null,
+   "required": false,
+   "type": "boolean_checkbox",
+   "weight": 3,
+   "settings": {
+    "config": {},
+    "display": {
+     "display_label": true
+    },
+    "storage": {}
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "sticky",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "cardinality": null,
+   "required": false,
+   "type": "boolean_checkbox",
+   "weight": 4,
+   "settings": {
+    "config": {},
+    "display": {
+     "display_label": true
+    },
+    "storage": {}
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "path",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "cardinality": null,
+   "required": false,
+   "type": "path",
+   "weight": 5,
+   "settings": {
+    "config": {},
+    "display": [],
+    "storage": {}
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "body",
+   "description": "",
+   "label": {
+    "text": "Body",
+    "position": null
+   },
+   "cardinality": 1,
+   "required": false,
+   "type": "text_textarea_with_summary",
+   "weight": 6,
+   "settings": {
+    "config": {
+     "display_summary": true,
+     "required_summary": false
+    },
+    "display": {
+     "rows": 9,
+     "summary_rows": 3,
+     "placeholder": "",
+     "show_summary": false
+    },
+    "storage": []
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "status",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "cardinality": null,
+   "required": false,
+   "type": "boolean_checkbox",
+   "weight": 7,
+   "settings": {
+    "config": {},
+    "display": {
+     "display_label": true
+    },
+    "storage": {}
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "moderation_state",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "cardinality": null,
+   "required": false,
+   "type": "moderation_state_default",
+   "weight": 8,
+   "settings": {
+    "config": {},
+    "display": [],
+    "storage": {}
+   },
+   "thirdPartySettings": []
+  },
+  {
+   "id": "translation",
+   "description": null,
+   "label": {
+    "text": null,
+    "position": null
+   },
+   "cardinality": null,
+   "required": false,
+   "type": null,
+   "weight": 10,
+   "settings": {
+    "config": {},
+    "display": [],
+    "storage": {}
+   },
+   "thirdPartySettings": []
+  }
+ ],
+ "groups": [],
+ "config": {
+  "entityType": "node",
+  "bundle": "page",
+  "mode": "default",
+  "schemaType": "form",
+  "filter": [],
+  "href": "https://nginx.develop.demo-api-druxtjs-org.au2.amazee.io/en/jsonapi/node/page"
+ }
+}
