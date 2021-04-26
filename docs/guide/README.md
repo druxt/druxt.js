@@ -91,7 +91,7 @@ See the [Druxt Wrapper theming documentation](https://druxtjs.org/guide/#wrapper
 Adds Views Page support via the [DruxtRouter module](https://router.druxtjs.org) and the [Decoupled Router module](https://www.drupal.org/project/decoupled_router).
 
 
-## Blocks suppor
+## Blocks support
 
 Adds Views Blocks support via the [DruxtBlocks module](https://blocks.druxtjs.org) and the `<DruxtBlockRegion />` component
 
