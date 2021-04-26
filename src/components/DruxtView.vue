@@ -29,8 +29,6 @@ export default {
 
   /**
    * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
    */
   props: {
     /**
@@ -324,7 +322,7 @@ export default {
      * - attachments_after
      * - default (all of the above)
      *
-     * @example <caption>DruxtEntityView**ViewId**.vue</caption> @lang vue
+     * @example <caption>DruxtView**ViewId**.vue</caption> @lang vue
      * <template>
      *   <div>
      *     <slot name="header" />
@@ -635,7 +633,7 @@ export default {
  *   default: () => {},
  * }
  *
- * @example <caption>DruxtEntityView**ViewId**.vue</caption> @lang vue
+ * @example <caption>DruxtView**ViewId**.vue</caption> @lang vue
  * <template>
  *   <div>
  *     <slot name="header" />
