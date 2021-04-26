@@ -227,9 +227,9 @@ export default {
      * @type {string}
      */
     mode() {
-      if (!this.display) return false
+      if (!this.display) return 'default'
 
-      if (!this.display.display_options.row.type.includes('entity:')) return false
+      if (!this.display.display_options.row.type.includes('entity:')) return 'default'
 
       return (this.display.display_options.row.options || {}).view_mode || 'default'
     },
