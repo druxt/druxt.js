@@ -41,7 +41,7 @@
   ],
   "links":{
     "self":{
-      "href":"https:\/\/demo-api.druxtjs.org\/jsonapi\/entity_form_display\/entity_form_display?fields%5Bentity_form_display--entity_form_display%5D=targetEntityType%2Cbundle%2Cmode\u0026filter%5Bstatus%5D=true"
+      "href":"https:\/\/demo-api.druxtjs.org\/jsonapi\/entity_form_display\/entity_form_display?fields%5Bentity_form_display--entity_form_display%5D=targetEntityType%2Cbundle%2Cmode&filter%5Bstatus%5D%5Bcondition%5D%5Bpath%5D=status&filter%5Bstatus%5D%5Bcondition%5D%5Bvalue%5D%5B0%5D=1&filter%5Bstatus%5D%5Bcondition%5D%5Bvalue%5D%5B1%5D=true&filter%5Bstatus%5D%5Bcondition%5D%5Boperator%5D=IN"
     }
   }
 }
