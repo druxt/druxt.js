@@ -81,7 +81,7 @@ class DruxtSchema {
               'bundle',
               'mode',
             ])
-            .addFilter('status', 1)
+            .addFilter('status', true)
         )).map((collection) => collection.data.map((data) => ({
           entityType: data.attributes.targetEntityType,
           bundle: data.attributes.bundle,
