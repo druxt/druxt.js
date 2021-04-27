@@ -32,7 +32,7 @@ class Schema {
 
     // Filter required schemas.
     this.isValid = true
-    if (this.config.filter.length > 0) {
+    if ((this.config.filter || []).length > 0) {
       this.isValid = false
 
       for (const filter of this.config.filter) {
