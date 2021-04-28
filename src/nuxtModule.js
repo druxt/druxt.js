@@ -8,7 +8,7 @@
 import { resolve } from 'path'
 
 /**
- * The NuxtJS module function.
+ * The Nuxt.js module function.
  *
  * - Extends the Vue router, adding the Druxt wildcard route.
  * - Adds the Druxt router plugin.

@@ -2,7 +2,7 @@ import { DruxtRouterNuxtModule } from './nuxtModule'
 import DruxtRouterComponent from './components/DruxtRouter.vue'
 
 /**
- * The NuxtJS module function.
+ * The Nuxt.js module function.
  *
  * Installs the module functionality in a Nuxt application.
  *

@@ -4,7 +4,7 @@ title: Introduction
 
 # DruxtJS Router
 
-The Druxt Router module uses the Drupal [Decoupled Router](https://www.drupal.org/project/decoupled_router) module to provide a simple Drupal powered router to your NuxtJS frontend.
+The Druxt Router module uses the Drupal [Decoupled Router](https://www.drupal.org/project/decoupled_router) module to provide a simple Drupal powered router to your Nuxt.js frontend.
 
 
 ## How it works?

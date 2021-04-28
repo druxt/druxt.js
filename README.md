@@ -4,7 +4,7 @@
 [![Known Vulnerabilities](https://snyk.io//test/github/druxt/druxt-router/badge.svg?targetFile=package.json)](https://snyk.io//test/github/druxt/druxt-router?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-router/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-router)
 
-> Simple decoupled [Drupal](https://drupal.org) routing for your [NuxtJS](https://nuxtjs.org) application.
+> Simple decoupled [Drupal](https://drupal.org) routing for your [Nuxt.js](https://nuxtjs.org) application.
 
 ## Links
 
@@ -14,7 +14,7 @@
 
 ## Features
 
-- NuxtJS module with out of the box page routing: `druxt-router`
+- Nuxt.js module with out of the box page routing: `druxt-router`
 - Vuex store: `druxtRouter`
 - Vue component: `<DruxtRouter />`
 - Vue mixin: `DruxtRouterEntityMixin`
