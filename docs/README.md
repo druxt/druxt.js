@@ -5,7 +5,7 @@ actionText: Get started
 actionLink: /guide/getting-started
 ---
 
-> The DruxtJS Router provides a wilcard route, with it's [Vuex](https://vuex.vuejs.org) powered JSON:API client, to bring simple decoupled [Drupal](https://drupal.org) routing to your [NuxtJS](https://nuxtjs.org) progressive web apps.
+> The DruxtJS Router provides a wilcard route, with it's [Vuex](https://vuex.vuejs.org) powered JSON:API client, to bring simple decoupled [Drupal](https://drupal.org) routing to your [Nuxt.js](https://nuxtjs.org) progressive web apps.
 
 
 ```vue
@@ -14,6 +14,6 @@ actionLink: /guide/getting-started
 
 ## DruxtJS
 
-DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [NuxtJS](https://nuxtjs.org) frontend.
+DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
 
 Find out more at [https://druxtjs.org](https://druxtjs.org)
