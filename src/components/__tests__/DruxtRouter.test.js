@@ -60,8 +60,7 @@ describe('DruxtRouterComponent', () => {
         hid: 'canonical',
         href: 'http://contenta.druxt.localhost/welcome',
         rel: 'canonical'
-      }],
-      meta: false
+      }]
     })
 
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
@@ -117,5 +116,25 @@ describe('DruxtRouterComponent', () => {
     expect(wrapper.vm.props).toBe(false)
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([])
+  })
+
+  test('Metatags', () => {
+    const mock = {
+      route: { canonical: undefined },
+      metatags: [{
+        name: 'test'
+      }]
+    }
+    expect(DruxtRouterComponent.head.call(mock)).toStrictEqual({
+      link: [{
+        hid: 'canonical',
+        href: undefined,
+        rel: 'canonical'
+      }],
+      meta: [{
+        name: 'test'
+      }],
+      title: undefined
+    })
   })
 })

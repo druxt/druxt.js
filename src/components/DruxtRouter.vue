@@ -84,7 +84,7 @@ export default {
    * @todo Improve metatag support.
    */
   head () {
-    return {
+    const head = {
       title: this.title,
       link: [
         {
@@ -92,9 +92,14 @@ export default {
           rel: 'canonical',
           href: this.canonical || this.route.canonical
         }
-      ],
-      meta: this.metatags || false
+      ]
     }
+
+    if (this.metatags) {
+      head.meta = this.metatags
+    }
+
+    return head
   },
 
   druxt: ({ vm }) => ({
