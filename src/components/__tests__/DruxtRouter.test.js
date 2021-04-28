@@ -57,6 +57,7 @@ describe('DruxtRouterComponent', () => {
     expect(wrapper.vm.head()).toStrictEqual({
       title: 'Welcome to Contenta CMS!',
       link: [{
+        hid: 'canonical',
         href: 'http://contenta.druxt.localhost/welcome',
         rel: 'canonical'
       }],
