@@ -1,22 +1,5 @@
-<template>
-  <component
-    :is="wrapper.component"
-    v-if="!$fetchState.pending"
-    :class="wrapper.class"
-    :style="wrapper.style"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      v-bind="component.propsData"
-    >
-      {{ route }}
-    </component>
-  </component>
-</template>
-
 <script>
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 import { mapState } from 'vuex'
 
 /**
@@ -28,7 +11,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'DruxtRouter',
 
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   async middleware ({ store, redirect, route }) {
     const result = await store.dispatch('druxtRouter/get', route.fullPath)
@@ -46,27 +29,22 @@ export default {
    * @vue-computed {object} route The current Route.
    */
   computed: {
-    module () {
-      return (this.route || {}).component && this.route.component.startsWith('druxt-') ? this.route.component.substring(6) : false
-    },
+    module: ({ route }) =>
+      (route || {}).component && route.component.startsWith('druxt-') ? route.component.substring(6) : false,
 
     /**
      * Route title.
      * @type {boolean|string}
      * @default false
      */
-    title () {
-      return this.route.label || false
-    },
+    title: ({ route }) => route.label || false,
 
     /**
      * Route component property data.
      * @type {object|string}
      * @default false
      */
-    props () {
-      return this.route.props || false
-    },
+    props: ({ route }) => route.props || false,
 
     ...mapState({
       redirect: state => state.druxtRouter.redirect,
@@ -80,7 +58,6 @@ export default {
    * - Sets the page title.
    * - Sets the canonical link.
    *
-   * @see {@link https://nuxtjs.org/api/pages-head/}
    * @todo Improve metatag support.
    */
   head () {
@@ -102,15 +79,14 @@ export default {
     return head
   },
 
-  druxt: ({ vm }) => ({
-    componentOptions: [
+  druxt: {
+    componentOptions: ({ module, route }) => [
       // @TODO - Add Path options.
-      [vm.module ? vm.module : 'error', vm.route.isHomePath ? 'front' : 'not-front'],
+      [module || 'error', route.isHomePath ? 'front' : 'not-front'],
       ['default']
     ],
-    propsData: {
-      route: vm.route
-    }
-  })
+
+    propsData: ({ route }) => ({ route })
+  }
 }
 </script>

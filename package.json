@@ -39,14 +39,18 @@
     "json api",
     "router"
   ],
-  "author": "Stuart Clark <stuart@realityloop.com>",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/druxt/druxt_router/issues"
   },
   "homepage": "https://github.com/druxt/druxt_router#readme",
   "dependencies": {
-    "druxt": "^0.4.1",
+    "druxt": "^0.5.1",
     "url-parse": "^1.4.7",
     "vuex": "^3.6.0"
   },
