@@ -35,6 +35,10 @@ describe('Component - DruxtBlockRegion', () => {
 
     DruxtRouterStore({ store })
     store.$druxtRouter = () => new DruxtRouter('https://demo-api.druxtjs.org')
+    store.state.druxtRouter.route = {
+      isHomePath: true,
+      resolvedPath: '/en/node',
+    }
 
     store.app = { context: { error: jest.fn() }, store }
   })
@@ -54,11 +58,31 @@ describe('Component - DruxtBlockRegion', () => {
 
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
 
+    expect(wrapper.vm.blocks.length).toBe(1)
+
     const watch = {
       ...DruxtBlockRegion.watch,
       $fetch: jest.fn()
     }
     watch.$route()
     expect(watch.$fetch).toHaveBeenCalled()
+  })
+
+  test('sort', async () => {
+    const wrapper = mountComponent('banner_top')
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.name).toBe('banner_top')
+    expect(wrapper.vm.theme).toBe('umami')
+
+    expect(wrapper.vm.component.options.length).toBe(2)
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtBlockRegionBannerTopUmami',
+      'DruxtBlockRegionBannerTop'
+    ])
+
+    expect(wrapper.vm.blocks.length).toBe(2)
+
+    expect(wrapper.vm.blocks[0].attributes.weight < wrapper.vm.blocks[1].attributes.weight).toBeTruthy()
   })
 })

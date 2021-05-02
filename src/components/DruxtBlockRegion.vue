@@ -115,6 +115,7 @@ export default {
       .addFilter('theme', this.theme)
       .addGroup('visibility', 'OR')
       .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
+      .addSort('weight')
 
     query.addGroup('pages', 'AND', 'visibility')
       .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
