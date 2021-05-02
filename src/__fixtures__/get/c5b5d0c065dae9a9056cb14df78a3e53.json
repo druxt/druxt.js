@@ -1,0 +1,55 @@
+{
+  "jsonapi":{
+    "version":"1.0",
+    "meta":{
+      "links":{
+        "self":{
+          "href":"http:\/\/jsonapi.org\/format\/1.0\/"
+        }
+      }
+    }
+  },
+  "data":[
+    {
+      "type":"block--block",
+      "id":"d0c424db-9c53-41bd-bec9-6047088f7fd0",
+      "links":{
+        "self":{
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/block\/block\/d0c424db-9c53-41bd-bec9-6047088f7fd0"
+        }
+      },
+      "attributes":{
+        "region":"content",
+        "langcode":"en",
+        "status":true,
+        "dependencies":{
+          "module":[
+            "system"
+          ],
+          "theme":[
+            "umami"
+          ]
+        },
+        "drupal_internal__id":"umami_content",
+        "theme":"umami",
+        "weight":-7,
+        "provider":null,
+        "plugin":"system_main_block",
+        "settings":{
+          "id":"system_main_block",
+          "label":"Main page content",
+          "provider":"system",
+          "label_display":"0"
+        },
+        "visibility":[
+          
+        ]
+      }
+    }
+  ],
+  "links":{
+    "self":{
+      "href":"https:\/\/demo-api.druxtjs.org\/jsonapi\/block\/block?filter%5B9%5D%5Bcondition%5D%5Bpath%5D=visibility.request_path.pages\u0026filter%5B9%5D%5Bcondition%5D%5Bvalue%5D=%3Cfront%3E\u0026filter%5B9%5D%5Bcondition%5D%5Boperator%5D=CONTAINS\u0026filter%5B9%5D%5Bcondition%5D%5BmemberOf%5D=front\u0026filter%5B10%5D%5Bcondition%5D%5Bpath%5D=visibility.request_path.negate\u0026filter%5B10%5D%5Bcondition%5D%5Bvalue%5D=0\u0026filter%5B10%5D%5Bcondition%5D%5BmemberOf%5D=front\u0026filter%5Bregion%5D=content\u0026filter%5Bstatus%5D=1\u0026filter%5Btheme%5D=umami\u0026filter%5Bvisibility%5D%5Bgroup%5D%5Bconjunction%5D=OR\u0026filter%5Bvisibility.request_path%5D%5Bcondition%5D%5Bpath%5D=visibility.request_path\u0026filter%5Bvisibility.request_path%5D%5Bcondition%5D%5Boperator%5D=IS%20NULL\u0026filter%5Bvisibility.request_path%5D%5Bcondition%5D%5BmemberOf%5D=visibility\u0026filter%5Bpages%5D%5Bgroup%5D%5Bconjunction%5D=AND\u0026filter%5Bpages%5D%5Bgroup%5D%5BmemberOf%5D=visibility\u0026filter%5Bvisibility.request_path.pages%5D%5Bcondition%5D%5Bpath%5D=visibility.request_path.pages\u0026filter%5Bvisibility.request_path.pages%5D%5Bcondition%5D%5Bvalue%5D=\/en\/node\u0026filter%5Bvisibility.request_path.pages%5D%5Bcondition%5D%5Boperator%5D=CONTAINS\u0026filter%5Bvisibility.request_path.pages%5D%5Bcondition%5D%5BmemberOf%5D=pages\u0026filter%5Bvisibility.request_path.negate%5D%5Bcondition%5D%5Bpath%5D=visibility.request_path.negate\u0026filter%5Bvisibility.request_path.negate%5D%5Bcondition%5D%5Bvalue%5D=0\u0026filter%5Bvisibility.request_path.negate%5D%5Bcondition%5D%5BmemberOf%5D=pages\u0026filter%5Bfront%5D%5Bgroup%5D%5Bconjunction%5D=AND\u0026filter%5Bfront%5D%5Bgroup%5D%5BmemberOf%5D=visibility\u0026sort=weight"
+    }
+  }
+}
