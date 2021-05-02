@@ -23,7 +23,7 @@ export * from './components'
 export { DruxtBlocksBlockMixin } from './mixins/block'
 
 /**
- * The NuxtJS module function.
+ * The Nuxt.js module function.
  *
  * Installs the module functionality in a Nuxt application.
  *

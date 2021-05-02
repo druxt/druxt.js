@@ -5,7 +5,7 @@ actionText: Get started
 actionLink: /guide/getting-started
 ---
 
-> The DruxtJS Blocks module adds [Drupal](https://drupal.org) Blocks, Content Blocks and Block Region Vue.js components to your [NuxtJS](https://nuxtjs.org) frontend.
+> The DruxtJS Blocks module adds [Drupal](https://drupal.org) Blocks, Content Blocks and Block Region Vue.js components to your [Nuxt.js](https://nuxtjs.org) frontend.
 
 
 ## The DruxtBlock component
@@ -47,6 +47,6 @@ See the [Druxt component documentation](https://druxtjs.org/guide/#the-druxt-com
 
 ## DruxtJS
 
-DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [NuxtJS](https://nuxtjs.org) frontend.
+DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
 
 Find out more at [http://druxtjs.org](http://druxtjs.org)

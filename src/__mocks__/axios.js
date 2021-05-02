@@ -3,30 +3,27 @@ import path from 'path'
 import md5 from 'md5'
 import mockAxios from 'jest-mock-axios'
 
-mockAxios.get = jest.fn((url, options) => {
-  if (url === '/jsonapi/missing/test') {
-    throw new Error('Error')
-  }
-
-  let data = null
-  let status = 404
-  const validateStatus = true
-
-  const file = path.resolve('src/__fixtures__/data', md5(url) + '.json')
-
+const mockData = (url, file) => {
   if (!fs.existsSync(file)) {
-    data = { file, url }
-    return { data, status, validateStatus }
+    console.warn(`Missing mock data: ${file} ${url}`)
+    return { data: { file, url }, status: 404 }
   }
 
-  data = require(file)
-  status = 200
+  const data = require(file)
 
-  if (options && options.validateStatus) {
-    expect(options.validateStatus(status)).toBe(true)
+  // Throw error if error data is present.
+  if (data.errors) {
+    const error = new Error
+    error.response = { data }
+    throw error
   }
 
-  return { data, status, validateStatus }
-})
+  return { data, status: 200 }
+}
+
+// Mock 'get' requests.
+mockAxios.get = jest.fn((url, options) => 
+  mockData(url, path.resolve('src/__fixtures__/get', md5(url) + '.json'))
+)
 
 export default mockAxios

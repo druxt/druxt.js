@@ -1,6 +1,6 @@
 {
   "name": "druxt-blocks",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Provides Drupal blocks and region components to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
@@ -13,7 +13,11 @@
     "druxt",
     "nuxt"
   ],
-  "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/druxt/druxt-blocks/issues"
