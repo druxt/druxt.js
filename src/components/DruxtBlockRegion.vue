@@ -105,7 +105,7 @@ export default {
   },
 
   /**
-   * NuxtJS fetch method.
+   * Nuxt.js fetch method.
    */
   async fetch() {
     const query = new DrupalJsonApiParams()
@@ -157,7 +157,7 @@ export default {
   },
 
   /**
-   * NuxtJS watch property.
+   * Nuxt.js watch property.
    */
   watch: {
     /**

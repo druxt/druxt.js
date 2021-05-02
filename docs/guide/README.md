@@ -4,12 +4,12 @@ title: Introduction
 
 # DruxtJS Blocks
 
-The DruxtJS Blocks module adds [Drupal](https://drupal.org) Blocks, Content Blocks and Block Region Vue.js components to your [NuxtJS](https://nuxtjs.org) frontend.
+The DruxtJS Blocks module adds [Drupal](https://drupal.org) Blocks, Content Blocks and Block Region Vue.js components to your [Nuxt.js](https://nuxtjs.org) frontend.
 
 
 ## How it works?
 
-Upon installation the module installs a NuxtJS plugin that registers the provided Vue.js components.
+Upon installation the module installs a Nuxt.js plugin that registers the provided Vue.js components.
 
 
 ### Block Region component
