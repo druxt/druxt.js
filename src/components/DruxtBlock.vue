@@ -1,22 +1,6 @@
-<template>
-  <component
-    :is="wrapper.component"
-    v-if="!$fetchState.pending"
-    class="block"
-    :class="wrapper.class"
-    :style="wrapper.style"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      v-bind="component.propsData"
-    />
-  </component>
-</template>
-
 <script>
-import { DruxtComponentMixin } from 'druxt'
-import { DruxtRouterEntityMixin } from 'druxt-router'
+import { DruxtModule } from 'druxt'
+import { mapActions } from 'vuex'
 
 /**
  * The `<DruxtBlock />` Vue.js component.
@@ -32,13 +16,7 @@ import { DruxtRouterEntityMixin } from 'druxt-router'
 export default {
   name: 'DruxtBlock',
 
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link https://druxtjs.org/api/mixins/component.html|DruxtComponentMixin}
-   * @see {@link https://router.druxtjs.org/api/mixins/entity.html|DruxtRouterEntityMixin}
-   */
-  mixins: [DruxtComponentMixin, DruxtRouterEntityMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -47,54 +25,67 @@ export default {
    */
   props: {
     /**
-     * JSON:API Resource type.
+     * Entity UUID.
      *
      * @type {string}
-     * @default block--block
      */
-    type: {
+    uuid: {
       type: String,
-      default: 'block--block'
+      required: true,
     },
   },
 
-  async fetch() {
-    // Fetch Block entity.
-    await DruxtRouterEntityMixin.fetch.call(this)
+  data: () => ({
+    resource: {},
+  }),
 
-    // Fetch theme component.
-    await DruxtComponentMixin.fetch.call(this)
+  async fetch() {
+    this.resource = await this.getResource({
+      type: 'block--block',
+      id: this.uuid,
+    })
+    
+    await DruxtModule.fetch.call(this)
+  },
+
+  computed: {
+    block: ({ resource }) => (resource || {}).data,
+  },
+
+  methods: {
+    /**
+     * Maps Vuex action to methods.
+     */
+    ...mapActions({
+      getResource: 'druxt/getResource',
+    })
   },
 
   /**
    * Druxt module function.
    */
-  druxt: ({ vm }) => {
-    // Get Plugin and Plugin ID data.
-    let plugin = vm.entity.attributes.plugin
-    let pluginId
-    if (plugin.includes(':')) {
-      const pluginParts = plugin.split(':')
-      plugin = pluginParts[0]
-      pluginId = pluginParts[1]
-    }
-
-    // Construct component options.
-    const componentOptions = []
-    if (pluginId) {
-      componentOptions.push([plugin, pluginId, vm.entity.attributes.region, vm.entity.attributes.theme])
-      componentOptions.push([plugin, pluginId, vm.entity.attributes.theme])
-    }
-    componentOptions.push([plugin, vm.entity.attributes.region, vm.entity.attributes.theme])
-    componentOptions.push([plugin, vm.entity.attributes.theme])
-
-    // Return Druxt module data.
-    return {
-      componentOptions,
-      propsData: {
-        block: vm.entity
+  druxt: {
+    componentOptions: ({ block }) => {
+      // Get Plugin and Plugin ID data.
+      let plugin = block.attributes.plugin
+      let pluginId = null
+      if (plugin.includes(':')) {
+        [plugin, pluginId] = plugin.split(':')
       }
-    }
+
+      // Construct component options.
+      const componentOptions = []
+      if (pluginId) {
+        componentOptions.push([plugin, pluginId, block.attributes.region, block.attributes.theme])
+        componentOptions.push([plugin, pluginId, block.attributes.theme])
+      }
+      componentOptions.push([plugin, block.attributes.region, block.attributes.theme])
+      componentOptions.push([plugin, block.attributes.theme])
+      componentOptions.push(['default'])
+      return componentOptions
+    },
+
+    propsData: ({ block }) => ({ block }),
   },
 }
 </script>

@@ -1,46 +1,7 @@
-<template>
-  <component
-    :is="wrapper.component"
-    :class="wrapper.class"
-    :style="wrapper.style"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      v-bind="component.propsData"
-    >
-      <!-- Render blocks in their own named slots. --->
-      <template
-        v-for="block of blocks"
-        v-slot:[block.attributes.drupal_internal__id]="$attrs"
-      >
-        <DruxtBlock
-          :key="block.id"
-          :type="block.type"
-          :uuid="block.id"
-          v-bind="$attrs"
-        />
-      </template>
-
-      <!-- Render all blocks in the default slot. -->
-      <template v-slot="$attrs">
-        <DruxtBlock
-          v-for="block of blocks"
-          :key="block.id"
-          :type="block.type"
-          :uuid="block.id"
-          v-bind="$attrs"
-        />
-      </template>
-    </component>
-  </component>
-</template>
-
 <script>
-import { mapActions, mapState } from 'vuex'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-
-import { Druxt, DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
+import { mapActions, mapState } from 'vuex'
 
 /**
  * The `<DruxtBlockRegion />` Vue.js component.
@@ -67,14 +28,7 @@ import { Druxt, DruxtComponentMixin } from 'druxt'
 export default {
   name: 'DruxtBlockRegion',
 
-  components: { Druxt },
-
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link https://druxtjs.org/api/mixins/component.html|DruxtComponentMixin}
-   */
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -108,27 +62,19 @@ export default {
    * Nuxt.js fetch method.
    */
   async fetch() {
+    // @todo - Add ability to alter query via DruxtModule settings.
     const query = new DrupalJsonApiParams()
     query
       .addFilter('region', this.name)
       .addFilter('status', '1')
       .addFilter('theme', this.theme)
-      .addGroup('visibility', 'OR')
-      .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
       .addSort('weight')
-
-    query.addGroup('pages', 'AND', 'visibility')
-      .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
-      .addFilter('visibility.request_path.negate', 0, '=', 'pages')
-
-    query.addGroup('front', 'AND', 'visibility')
-      .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
-      .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
+      .addFields('block--block', ['drupal_internal__id', 'visibility'])
 
     const collection = await this.getCollection({ type: 'block--block', query })
     this.blocks = collection.data
 
-    await DruxtComponentMixin.fetch.call(this)
+    await DruxtModule.fetch.call(this)
   },
 
   /**
@@ -142,10 +88,6 @@ export default {
     blocks: []
   }),
 
-  druxt: ({ vm }) => ({
-    componentOptions: [[vm.name, vm.theme]]
-  }),
-
   /**
    * Vue.js Computed properties.
    *
@@ -157,25 +99,65 @@ export default {
     })
   },
 
-  /**
-   * Nuxt.js watch property.
-   */
-  watch: {
-    /**
-     * Updates blocks on Route change.
-     */
-    $route: function() {
-      this.$fetch()
-    }
-  },
-
   methods: {
+    getScopedSlots() {
+      // Build scoped slots for each block.
+      const scopedSlots = {}
+      this.blocks.map((block) => {
+        scopedSlots[block.attributes.drupal_internal__id] = (attrs) => this.$createElement('DruxtBlock', {
+          attrs,
+          key: block.attributes.drupal_internal__id,
+          props: {
+            uuid: block.id,
+          },
+          ref: block.attributes.drupal_internal__id,
+        })
+      })
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => this.blocks.map((block) => 
+        this.isVisible(block)
+          ? scopedSlots[block.attributes.drupal_internal__id](attrs)
+          : false
+      )
+
+      return scopedSlots
+    },
+
+    isVisible(block) {
+      // Request path visibility conditions.
+      if ((block.attributes.visibility || {}).request_path) {
+        let visible = false
+        const { negate } = block.attributes.visibility.request_path
+        const pages = block.attributes.visibility.request_path.pages.split(/\r?\n/).filter(i => i)
+
+        if (pages.includes('<front>') && (this.route.isHomePath || (!this.route.isHomePath && negate))) {
+          visible = true
+        }
+
+        if (pages.includes(this.route.resolvedPath) || (!pages.includes(this.route.resolvedPath) && negate)) {
+          visible = true
+        }
+
+        return visible
+      }
+
+      // Default to true.
+      // @todo Add support for other visibility plugins.
+      return true
+    },
+
     /**
      * Maps `druxt/getCollection` Vuex action to `this.getCollection`.
      */
     ...mapActions({
       getCollection: 'druxt/getCollection'
     })
-  }
+  },
+
+  druxt: {
+    componentOptions: ({ name, theme }) => [[name, theme], ['default']],
+    propsData: ({ name, theme }) => ({ name, theme }),
+  },
 }
 </script>
