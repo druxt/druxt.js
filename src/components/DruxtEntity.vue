@@ -70,6 +70,17 @@ export default {
       type: String,
       default: undefined,
     },
+
+    /**
+     * The Entity value.
+     * 
+     * @type {object}
+     * @model
+     */
+    value: {
+      type: Object,
+      default: undefined,
+    },
   },
 
   /**
@@ -95,7 +106,7 @@ export default {
     component.settings = merge((this.$druxtEntity || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
 
     // Fetch Entity resource.
-    if (this.uuid) {
+    if (this.uuid && !this.value) {
       const query = this.getQuery(component.settings)
       // @todo - Don't set data, mapState to vuex.
       this.entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
