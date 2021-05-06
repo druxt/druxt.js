@@ -52,6 +52,8 @@ describe('DruxtEntity', () => {
     const wrapper = mountComponent({ uuid: '772b174a-796f-4301-a04d-b935a7304fba', type: 'node--page' })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+
     // Props.
     expect(wrapper.vm.mode).toBe('default')
     expect(wrapper.vm.type).toBe('node--page')
@@ -117,7 +119,34 @@ describe('DruxtEntity', () => {
     expect(wrapper.html()).toMatchSnapshot()
   })
 
-  test('model', async () => {
+  test('v-model - entity', async () => {
+    const model = { attributes: {}, relationships: {}, type: 'node--page' }
+    const Component = {
+      template: "<DruxtEntity v-model='model' :type='model.type' ref='component' />",
+      components: { DruxtEntity },
+      data: () => ({ model }),
+    }
+    const wrapper = mount(Component, { localVue, mocks, store })
+    expect(wrapper.vm.$refs.component.entity).toStrictEqual(model)
+    expect(wrapper.vm.$refs.component.type).toStrictEqual(model.type)
+    expect(wrapper.vm.$refs.component.value).toStrictEqual(model)
+
+    expect(mockAxios.get).toHaveBeenCalledTimes(0)
+    
+    const mockData = {
+      ...model,
+      attributes: {
+        body: {
+          value: 'Test'
+        }
+      }
+    }
+
+    wrapper.vm.$refs.component.$emit('input', mockData)
+    expect(wrapper.vm.model).toStrictEqual(mockData)
+  })
+
+  test('v-model - fields', async () => {
     const propsData = { uuid: '772b174a-796f-4301-a04d-b935a7304fba', type: 'node--page' }
     const wrapper = mount(DruxtEntity, { localVue, mocks, propsData, store })
 
