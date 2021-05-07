@@ -1,28 +1,6 @@
-<template>
-  <component
-    :is="wrapper.component"
-    v-if="!$fetchState.pending"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      v-bind="component.propsData"
-    >
-      <template #default="$attrs">
-        <DruxtMenuItem
-          v-for="item in items"
-          :key="item.entity.id"
-          :item="item"
-          v-bind="$attrs"
-        />
-      </template>
-    </component>
-  </component>
-</template>
-
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex'
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 
 /**
  * The `<DruxtMenu />` Vue.js component.
@@ -36,14 +14,7 @@ import { DruxtComponentMixin } from 'druxt'
 export default {
   name: 'DruxtMenu',
 
-  mixins: [DruxtComponentMixin],
-
-  druxt: ({ vm }) => ({
-    componentOptions: [[vm.name]],
-    propsData: {
-      items: vm.items
-    }
-  }),
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -145,7 +116,7 @@ export default {
     this.items = this.getMenuItems()
 
     // Fetch theme component.
-    await DruxtComponentMixin.fetch.call(this)
+    await DruxtModule.fetch.call(this)
   },
 
   /**
@@ -237,11 +208,109 @@ export default {
     },
 
     /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * Adds a `default` slot that will render the menu tree using the
+     * DruxtMenuItem component.
+     * 
+     * @example <caption>DruxtMenu**Name**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    getScopedSlots() {
+      return {
+        default: (attrs) => this.items.map((item) => this.$createElement('DruxtMenuItem', {
+          attrs,
+          key: item.entity.id,
+          props: {
+            item,
+          },
+        })),
+        ...this.$scopedSlots,
+      }
+    },
+
+    /**
      * Maps `druxtMenu/get` Vuex action to `this.getMenu`.
      */
     ...mapActions({
       getMenu: 'druxtMenu/get'
     })
-  }
+  },
+
+  /**
+   * Druxt module configuration.
+   */
+  druxt: {
+    /**
+     * Provides the available component naming options for the Druxt Wrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {ComponentOptions}
+     */
+    componentOptions: ({ name }) => [[name], ['default']],
+
+    /**
+     * Provides propsData for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {PropsData}
+     */
+    propsData: ({ items }) => ({ items }),
+  },
 }
+
+/**
+ * Provides the available naming options for the Wrapper component.
+ *
+ * @typedef {array[]} ComponentOptions
+ *
+ * @example @lang js
+ * [
+ *   'DruxtMenu[Name]',
+ *   'DruxtMenuDefault',
+ * ]
+ *
+ * @example <caption>Main menu (default)</caption> @lang js
+ * [
+ *   'DruxtMenuMain',
+ *   'DruxtMenuDefault',
+ * ]
+ */
+
+/**
+ * Provides propsData for use in the Wrapper component.
+ *
+ * @typedef {object} PropsData
+ * @param {object[]} items - The Menu items structured data.
+ *
+ * @example @lang js
+ * {
+ *   items: [
+ *     {
+ *       children: [],
+ *       entity: {},
+ *     },
+ *   ],
+ * }
+ */
+
+/**
+ * Provides scoped slots for use in the Wrapper component.
+ *
+ * @typedef {object} ScopedSlots
+ * @param {function} default - All menu items using the DruxtMenuItem component
+ *
+ * @example <caption>DruxtMenu**Name**.vue</caption> @lang vue
+ * <template>
+ *   <div>
+ *     <slot />
+ *   </div>
+ * </template>
+ */
 </script>
