@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import DruxtMenuStorybook from './nuxtStorybook'
 
 /**
- * The NuxtJS module function.
+ * The Nuxt.js module function.
  *
  * - Adds Nuxt plugin.
  * - Adds Vuex store.

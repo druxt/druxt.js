@@ -47,7 +47,7 @@ export { DruxtMenuMixin } from './mixins/menu'
 export { DruxtMenuStore } from './stores/menu.js'
 
 /**
- * The NuxtJS module function.
+ * The Nuxt.js module function.
  *
  * Installs the module functionality in a Nuxt application.
  *

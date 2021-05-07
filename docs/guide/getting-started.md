@@ -1,6 +1,6 @@
 # Getting started
 
-DruxtJS requires a NuxtJS frontend and a Drupal JSON:API backend:
+DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API backend:
 
 ## Quickstart
 
@@ -28,7 +28,7 @@ DruxtJS requires a NuxtJS frontend and a Drupal JSON:API backend:
 - [DruxtJS](https://www.drupal.org/project/druxt) Drupal module.
 
 ### Frontend
-- [NuxtJS](https://nuxtjs.org) frontend.
+- [Nuxt.js](https://nuxtjs.org) frontend.
 - [DruxtJS Router](https://router.druxtjs.org) module.
 
 ### Drupal DruxtJS module
