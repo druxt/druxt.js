@@ -42,19 +42,50 @@ class DruxtMenu {
   }
 
   /**
+   * Builds the JSON:API query.
+   * 
+   * @param {string} resource - The JSON:API resource type.
+   * @param {string} menuName  - The menu name.
+   * @param {string[]} requiredFields - An array of required fields for the menu resource.
+   * @param {object} settings - Drux menu query settings.
+   *
+   * @returns {DrupalJsonApiParams}
+   */
+  buildQuery(resource, menuName, requiredFields, settings) {
+    const query = new DrupalJsonApiParams()
+      .addFilter('enabled', '1')
+      .addFilter('menu_name', menuName)
+
+    // Filter fields based on settings.
+    let fields = []
+    if ((settings || {}).requiredOnly) {
+      fields = [...requiredFields]
+    }
+    if (Array.isArray((settings || {}).fields)) {
+      fields = [...settings.fields, ...requiredFields]
+    }
+    if (fields.length) {
+      query.addFields(resource, fields)
+    }
+
+    return query
+  }
+
+  /**
    * Gets the menu items JSON:API resources using the configured method.
    *
    * @example @lang js
    * const menu = await druxtMenu.get('main')
    *
    * @param {string} menuName - The menu name.
+   * @param {object} settings - The Druxt Menu query settings object.
    */
-  async get(menuName) {
+  async get(menuName, settings) {
     if (this.options.menu.jsonApiMenuItems) {
-      return this.getJsonApiMenuItems(menuName)
+      return this.getJsonApiMenuItems(menuName, settings)
     }
 
-    return this.getMenuLinkContent(menuName)
+    return this.getMenuLinkContent(menuName, settings)
   }
 
   /**
@@ -67,15 +98,14 @@ class DruxtMenu {
    * const menu = await druxtMenu.getMenuLinkContent('menu')
    *
    * @param {string} menuName - The menu name.
+   * @param {object} settings - The Druxt Menu query settings object.
    */
-  async getMenuLinkContent(menuName) {
+  async getMenuLinkContent(menuName, settings) {
     const resource = 'menu_link_content--menu_link_content'
-    const fields = ['bundle', 'description', 'link', 'menu_name', 'parent', 'title', 'weight']
+    const requiredFields = ['bundle', 'link', 'menu_name', 'parent', 'title', 'weight']
 
-    const query = new DrupalJsonApiParams()
-      .addFilter('enabled', '1')
-      .addFilter('menu_name', menuName)
-      .addFields(resource, fields)
+    // Build query.
+    const query = this.buildQuery(resource, menuName, requiredFields, settings)
 
     const entities = []
     const collections = await this.druxt.getCollectionAll(resource, query)
@@ -97,35 +127,44 @@ class DruxtMenu {
    * @see {@link https://www.drupal.org/project/jsonapi_menu_items|JSON:API Menu Items}
    *
    * @param {string} menuName - The menu name.
+   * @param {object} settings - The Druxt Menu query settings object.
    */
-  async getJsonApiMenuItems(menuName) {
-    const resource = `menu_items--${menuName}`
+  async getJsonApiMenuItems(menuName, settings) {
+    const menuItemsResource = `menu_items--${menuName}`
+    const resource = 'menu_link_content--menu_link_content'
+    const requiredFields = ['menu_name', 'parent', 'title', 'url', 'weight']
 
     // Add the JSON API Menu items resource to the index.
     await this.druxt.getIndex()
-    this.druxt.index[resource] = { href: `${this.druxt.options.endpoint}/menu_items/${menuName}` }
+    this.druxt.index[menuItemsResource] = { href: `${this.druxt.options.endpoint}/menu_items/${menuName}` }
 
-    const query = new DrupalJsonApiParams()
-      .addFilter('enabled', '1')
-      .addFilter('menu_name', menuName)
+    // Build query.
+    const query = this.buildQuery(resource, menuName, requiredFields, settings)
+
+    // Apply filters.
+    if ((settings || {}).max_depth) {
+      query.addFilter('max_depth', parseInt(settings.max_depth))
+    }
+    if ((settings || {}).min_depth) {
+      query.addFilter('min_depth', parseInt(settings.min_depth))
+    }
+    if ((settings || {}).parent) {
+      query.addFilter('parent', settings.parent)
+    }
 
     const entities = []
-    const collections = await this.druxt.getCollectionAll(resource, query)
+    const collections = await this.druxt.getCollectionAll(menuItemsResource, query)
     for (const collection of collections) {
-      for (const resource of collection.data) {
-        entities.push({
-          id: resource.id,
+      for (const entity of collection.data) {
+        entities.push({ 
+          ...entity,
           attributes: {
-            description: resource.attributes.description,
+            ...entity.attributes,
             link: {
-              uri: `internal:${resource.attributes.url}`
+              uri: `internal:${entity.attributes.url}`,
             },
-            menu_name: menuName,
-            parent: resource.attributes.parent.length ? resource.attributes.parent : null,
-            title: resource.attributes.title,
-            weight: resource.attributes.weight,
-          },
-          resource
+            parent: entity.attributes.parent || null,
+          }
         })
       }
     }

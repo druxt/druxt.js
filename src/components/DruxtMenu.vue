@@ -1,6 +1,7 @@
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex'
+import merge from 'deepmerge'
 import { DruxtModule } from 'druxt'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 /**
  * The `<DruxtMenu />` Vue.js component.
@@ -55,6 +56,27 @@ export default {
     },
 
     /**
+     * The maximum depth of the menu tree.
+     * 
+     * @type {integer}
+     */
+    maxDepth: {
+      type: Number,
+      default: null,
+    },
+
+    /**
+     * The minimum depth of the menu tree.
+     * 
+     * @type {Integer}
+     * @default 0
+     */
+    minDepth: {
+      type: Number,
+      default: 0,
+    },
+
+    /**
      * The name of the menu to render.
      *
      * @type {string}
@@ -63,6 +85,16 @@ export default {
     name: {
       type: String,
       default: 'main'
+    },
+
+    /**
+     * The menu parent ID.
+     * 
+     * @type String
+     */
+    parentId: {
+      type: String,
+      default: null,
     },
 
     /**
@@ -112,11 +144,35 @@ export default {
    * Nuxt.js fetch method.
    */
   async fetch() {
-    await this.getMenu(this.name)
+    // Build wrapper component object.
+    const options = this.getModuleComponents()
+    let component = {
+      is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
+      options: options.map(o => o.name) || [],
+    }
+
+    // Get wrapper component data to merge with module settings.
+    const wrapperData = await this.getWrapperData(component.is)
+    component.settings = merge(((this.$druxtMenu || {}).options || {}).menu || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
+
+    const settings = {
+      ...(component.settings || {}).query,
+      max_depth: this.maxDepth || this.depth,
+      min_depth: this.minDepth,
+      parent: this.parentId,
+    }
+
+    await this.getMenu({
+      name: this.name,
+      settings,
+    })
     this.items = this.getMenuItems()
 
-    // Fetch theme component.
-    await DruxtModule.fetch.call(this)
+    // Build wrapper component propsData.
+    component = { ...component, ...this.getModulePropsData(wrapperData.props) }
+
+    // Set component data.
+    this.component = component
   },
 
   /**
@@ -182,7 +238,7 @@ export default {
       position += 1
 
       if (!this.depth || position <= this.depth) {
-        let parent = null
+        let parent = this.parentId || null
         if (entity) {
           parent = entity.id
 
@@ -192,7 +248,7 @@ export default {
           }
         }
 
-        const entities = this.getEntitiesByFilter(key => {
+        const entities = this.getEntitiesByFilter((key) => {
           return this.entities[key].attributes.menu_name === this.name && this.entities[key].attributes.parent === parent
         })
 

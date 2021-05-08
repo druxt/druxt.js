@@ -7,7 +7,7 @@ jest.mock('axios')
 const baseUrl = 'https://demo-api.druxtjs.org'
 const menu = new DruxtMenu(baseUrl, {})
 
-describe('DruxtMenu', () => {
+describe('DruxtMenu class', () => {
   test('constructor', () => {
     // Throw error if 'baseUrl' not provided.
     expect(() => { new DruxtMenu() }).toThrow('The \'baseUrl\' parameter is required.')
@@ -16,13 +16,17 @@ describe('DruxtMenu', () => {
     expect(new DruxtMenu(baseUrl)).toBeInstanceOf(DruxtMenu)
   })
 
-  test('axiosSettings', () => {
-    const headers = { 'X-DruxtRouter': true }
-    new DruxtMenu(baseUrl, {
-      axios: { headers }
-    })
+  test('buildQuery', () => {
+    const resource = 'menu_link_content--menu_link_content'
 
-    expect(mockAxios.create).toHaveBeenCalledWith({ baseURL: baseUrl, headers })
+    expect(menu.buildQuery(resource, 'main', []).getQueryString())
+      .toBe('filter%5Benabled%5D=1&filter%5Bmenu_name%5D=main')
+
+    expect(menu.buildQuery(resource, 'main', ['id'], { requiredOnly: true }).getQueryString())
+      .toBe('filter%5Benabled%5D=1&filter%5Bmenu_name%5D=main&fields%5Bmenu_link_content--menu_link_content%5D=id')
+
+    expect(menu.buildQuery(resource, 'main', ['id'], { fields: ['title'] }).getQueryString())
+      .toBe('filter%5Benabled%5D=1&filter%5Bmenu_name%5D=main&fields%5Bmenu_link_content--menu_link_content%5D=title%2Cid')
   })
 
   test('get - getMenuLinkContent', async () => {
@@ -33,8 +37,7 @@ describe('DruxtMenu', () => {
 
   test('get - getJsonApiMenuItems', async () => {
     const jsonApiMenu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
-    const { entities } = await jsonApiMenu.get('main')
 
-    expect(entities.length).toBe(3)
+    expect((await jsonApiMenu.get('main')).entities.length).toBe(3)
   })
 })
