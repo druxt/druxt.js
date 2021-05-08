@@ -39,5 +39,12 @@ describe('DruxtMenu class', () => {
     const jsonApiMenu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
 
     expect((await jsonApiMenu.get('main')).entities.length).toBe(3)
+
+    const settings = {
+      max_depth: 3,
+      min_depth: 2,
+      parent: 'taxonomy_menu.menu_link:taxonomy_menu.menu_link.catalog.31',
+    }
+    expect((await jsonApiMenu.get('catalog', settings)).entities.length).toBe(3)
   })
 })

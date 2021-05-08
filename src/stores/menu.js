@@ -70,7 +70,7 @@ const DruxtMenuStore = ({ store }) => {
         const { name, settings } = typeof context === 'object'
           ? context
           : { name: context }
-        const { entities } = await this.$druxtMenu.get(name, settings)
+        const { entities } = (await this.$druxtMenu.get(name, settings)) || {}
 
         commit('addEntities', entities)
       }
