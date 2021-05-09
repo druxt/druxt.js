@@ -4,10 +4,13 @@ import { DruxtModule } from 'druxt'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
 /**
- * The `<DruxtMenu />` Vue.js component.
+ * The `<DruxtMenu />` Vue.js component fetches Menu Items using the Drupal
+ * JSON:API, rendering the data via the `<DruxtMenuItem />` component and
+ * the user defined render templates.
  *
- * - Fetchs the menu items via the DruxtClient.
- * - Renders the data via the DruxtMenuItem component.
+ * Features:
+ * - Scoped slots
+ * - Query settings
  *
  * @example @lang vue
  * <DruxtMenu name="main" />
@@ -19,12 +22,13 @@ export default {
 
   /**
    * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
    */
   props: {
     /**
-     * The maximum depth of the menu.
+     * The depth of the menu items to render.
+     * 
+     * @example @lang vue
+     * <DruxtMenu :depth="1" />
      *
      * @type {integer}
      * @default 0
@@ -56,7 +60,10 @@ export default {
     },
 
     /**
-     * The maximum depth of the menu tree.
+     * The maximum depth of the menu tree data to load.
+     * 
+     * @example @lang vue
+     * <DruxtMenu :max-depth="4" />
      * 
      * @type {integer}
      */
@@ -68,6 +75,9 @@ export default {
     /**
      * The minimum depth of the menu tree.
      * 
+     * @example @lang vue
+     * <DruxtMenu :min-depth="2" />
+     * 
      * @type {Integer}
      * @default 0
      */
@@ -77,8 +87,11 @@ export default {
     },
 
     /**
-     * The name of the menu to render.
+     * The name of the menu to load and render.
      *
+     * @example @lang vue
+     * <DruxtMenu name="main" />
+     * 
      * @type {string}
      * @default main
      */
@@ -88,8 +101,11 @@ export default {
     },
 
     /**
-     * The menu parent ID.
+     * The menu parent ID to use as the root of the menu.
      * 
+     * @example @lang vue
+     * <DruxtMenu parent-id="views_view:views.recipes.page_1" />
+     *
      * @type String
      */
     parentId: {
@@ -142,6 +158,9 @@ export default {
 
   /**
    * Nuxt.js fetch method.
+   * 
+   * Builds and executes the JSON:API query, loading the menu items into the
+   * druxtMenu Vuex store.
    */
   async fetch() {
     // Build wrapper component object.
@@ -178,9 +197,7 @@ export default {
   /**
    * Vue.js Data object.
    *
-   * Used for on-demand JSON:API resource loading.
-   *
-   * @property {objects[]} items - The Menu items JSON:API resources.
+   * @property {objects[]} items - The processed Menu items.
    */
   data: () => ({
     items: [],
@@ -337,6 +354,32 @@ export default {
  *   'DruxtMenuMain',
  *   'DruxtMenuDefault',
  * ]
+ */
+
+/**
+ * Provides settings for the Menu module, via the `nuxt.config.js` `druxt.menu`
+ * or the Wrapper component `druxt` object.
+ *
+ * @typedef {object} ModuleSettings
+ * @param {string[]} fields - An array of fields to filter all JSON:API Menu queries.
+ * @param {boolean} requiredOnly - Whether to automatically filter to module defined minimum required fields.
+ *
+ * @example @lang js
+ * {
+ *   fields: [],
+ *   requiredOnly: true,
+ * }
+ *
+ * @example @lang vue
+ * <script>
+ * export default {
+ *   druxt: {
+ *     query: {
+ *       fields: ['description', 'options']
+ *       requiredOnly: false,
+ *     },
+ *   }
+ * }
  */
 
 /**

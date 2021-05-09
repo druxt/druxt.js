@@ -4,7 +4,7 @@ import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 /**
  * DruxtMenu class.
  *
- * Provides methods for accessing Menu items from Drupal JSON:API.
+ * Provides methods for accessing Menu items from the Drupal JSON:API.
  */
 class DruxtMenu {
   /**
@@ -44,10 +44,12 @@ class DruxtMenu {
   /**
    * Builds the JSON:API query.
    * 
+   * @private
+   * 
    * @param {string} resource - The JSON:API resource type.
    * @param {string} menuName  - The menu name.
    * @param {string[]} requiredFields - An array of required fields for the menu resource.
-   * @param {object} settings - Drux menu query settings.
+   * @param {object} settings - Druxt menu query settings.
    *
    * @returns {DrupalJsonApiParams}
    */
@@ -126,6 +128,14 @@ class DruxtMenu {
    *
    * @see {@link https://www.drupal.org/project/jsonapi_menu_items|JSON:API Menu Items}
    *
+   * @example @lang js
+   * const menu = await druxtMenu.getJsonApiMenuItems(
+   *   'menu',
+   *   {
+   *     requiredOnly: true,
+   *   }
+   * )
+   * 
    * @param {string} menuName - The menu name.
    * @param {object} settings - The Druxt Menu query settings object.
    */

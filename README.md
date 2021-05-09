@@ -52,7 +52,7 @@ These options are specific to this module.
 | Option | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `menu.jsonApiMenuItems` | `boolean` | No | `false` | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. |
-| `menu.query.fields` | `string[]` | No | `false` | An array of fields to filter all JSON:API Menu queries.
+| `menu.query.fields` | `string[]` | No | `false` | An array of fields to filter all JSON:API Menu queries. |
 | `menu.query.requiredOnly` | `boolean` | No | `false` | Whether to automatically filter to module defined minimum required fields. |
 
 ### Base Druxt options
