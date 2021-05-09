@@ -61,13 +61,16 @@ const DruxtMenuStore = ({ store }) => {
        * @name get
        * @action get=entities
        * @param {object} app - The Nuxt app context.
-       * @param {string} name - The Menu name.
+       * @param {string|object} context - The Menu name or context object.
        *
        * @example @lang js
-       * await this.$store.dispatch('druxtMenu/get', 'main')
+       * await this.$store.dispatch('druxtMenu/get', { name: 'main' })
        */
-      async get ({ commit }, name) {
-        const { entities } = await this.$druxtMenu.get(name)
+      async get ({ commit }, context) {
+        const { name, settings } = typeof context === 'object'
+          ? context
+          : { name: context }
+        const { entities } = (await this.$druxtMenu.get(name, settings)) || {}
 
         commit('addEntities', entities)
       }
