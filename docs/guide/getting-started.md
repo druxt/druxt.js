@@ -1,8 +1,6 @@
 # Getting started
 
-DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API backend:
-
-## Quickstart
+## Quickstart - Nuxt.js
 
 1. Install the NPM module:
     ```sh
@@ -17,8 +15,22 @@ DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API backend:
       ],
       druxt: {
         baseUrl: 'https://demo-api.druxtjs.org'
-      }
+      },
     }
+    ```
+
+### Storybook integration
+
+The DruxtMenu module provides zero-config, auto-generated Storybook integration for your Drupal Menus.
+
+1. Install the **@nuxtjs/storybook** module:
+    ```sh
+    npm i -D @nuxtjs/storybook
+    ```
+
+2. Run storybook:
+    ```sh
+    npx nuxt storybook
     ```
 
 ## Requirements
@@ -28,9 +40,4 @@ DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API backend:
 - [DruxtJS](https://www.drupal.org/project/druxt) Drupal module.
 
 ### Frontend
-- [Nuxt.js](https://nuxtjs.org) frontend.
-- [DruxtJS Router](https://router.druxtjs.org) module.
-
-### Drupal DruxtJS module
-
-This module was designed for [DruxtJS](https://druxtjs.org) and works best with the [Drupal DruxtJS module](https://www.drupal.org/project/druxt).
+- (optional) [Nuxt Storybook](https://storybook.nuxtjs.org/) module.
