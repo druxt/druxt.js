@@ -87,4 +87,13 @@ describe('DruxtMenu', () => {
     // Expect trail.
     expect(wrapper.vm.trail).toStrictEqual(['/'])
   })
+
+  test('default slot', async () => {
+    const scopedSlots = { default: jest.fn() }
+    const wrapper = mountComponent({ scopedSlots })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    wrapper.vm.getScopedSlots().default()
+    expect(scopedSlots.default).toHaveBeenCalledWith({ items: wrapper.vm.items, parentId: wrapper.vm.parentId })
+  })
 })
