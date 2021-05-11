@@ -106,7 +106,7 @@ export default {
      * @example @lang vue
      * <DruxtMenu parent-id="views_view:views.recipes.page_1" />
      *
-     * @type String
+     * @type {string}
      */
     parentId: {
       type: String,
@@ -342,7 +342,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ items }) => ({ items }),
+    propsData: ({ items, parentId }) => ({ items, parentId }),
   },
 }
 
