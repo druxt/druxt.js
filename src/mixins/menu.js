@@ -25,6 +25,16 @@ const DruxtMenuMixin = {
     items: {
       type: Array,
       required: true
+    },
+
+    /**
+     * The menu parent ID to use as the root of the menu.
+     * 
+     * @type {string}
+     */
+    parentId: {
+      type: String,
+      default: null,
     }
   },
 }
