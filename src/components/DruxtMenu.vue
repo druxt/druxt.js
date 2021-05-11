@@ -106,7 +106,7 @@ export default {
      * @example @lang vue
      * <DruxtMenu parent-id="views_view:views.recipes.page_1" />
      *
-     * @type String
+     * @type {string}
      */
     parentId: {
       type: String,
@@ -296,6 +296,15 @@ export default {
      * @return {ScopedSlots} The Scoped slots object.
      */
     getScopedSlots() {
+      if (this.$scopedSlots.default) {
+        return {
+          default: (attrs) => this.$scopedSlots.default({
+            ...this.$options.druxt.propsData(this),
+            ...attrs
+          })
+        }
+      }
+
       return {
         default: (attrs) => this.items.map((item) => this.$createElement('DruxtMenuItem', {
           attrs,
@@ -304,7 +313,6 @@ export default {
             item,
           },
         })),
-        ...this.$scopedSlots,
       }
     },
 
@@ -334,7 +342,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ items }) => ({ items }),
+    propsData: ({ items, parentId }) => ({ items, parentId }),
   },
 }
 
