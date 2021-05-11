@@ -296,6 +296,15 @@ export default {
      * @return {ScopedSlots} The Scoped slots object.
      */
     getScopedSlots() {
+      if (this.$scopedSlots.default) {
+        return {
+          default: (attrs) => this.$scopedSlots.default({
+            ...this.$options.druxt.propsData(this),
+            ...attrs
+          })
+        }
+      }
+
       return {
         default: (attrs) => this.items.map((item) => this.$createElement('DruxtMenuItem', {
           attrs,
@@ -304,7 +313,6 @@ export default {
             item,
           },
         })),
-        ...this.$scopedSlots,
       }
     },
 
