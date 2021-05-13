@@ -53,7 +53,7 @@
     ]
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "@nuxtjs/axios": "^5.13.1",
     "md5": "^2.3.0",
     "querystring": "^0.2.0",
     "scule": "^0.1.1",
