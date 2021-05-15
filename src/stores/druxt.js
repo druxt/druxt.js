@@ -213,10 +213,13 @@ const DruxtStore = ({ store }) => {
           return resource
         }
 
+        const isFull = typeof (queryObject.fields || {})[type] !== 'string'
+        const isPartial = !isFull
+        const flag = isFull ? '_druxt_full' : '_druxt_partial'
+
         // Determine if we have all the requested field data.
-        const flag = (queryObject.fields || {})[type] ? '_druxt_partial' : '_druxt_full'
-        let fields = (queryObject.fields || {})[type] || true
-        if (typeof fields === 'string') {
+        let fields = isFull ? true : (queryObject.fields || {})[type]
+        if (isPartial && fields) {
           const queryFields = fields.split(',')
           const resourceFields = [
             ...Object.keys(((resource || {}).data || {}).attributes || {}),
