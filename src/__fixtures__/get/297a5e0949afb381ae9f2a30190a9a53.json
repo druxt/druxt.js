@@ -77,5 +77,10 @@
         "href":"http:\/\/contenta.druxt.localhost\/api\/node\/page\/4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9?resourceVersion=id%3A6"
       }
     }
+  },
+  "links":{
+    "self":{
+      "href":"http:\/\/contenta.druxt.localhost\/api\/node\/page\/4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9"
+    }
   }
 }

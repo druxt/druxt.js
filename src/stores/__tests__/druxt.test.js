@@ -7,8 +7,8 @@ import { DruxtClient, DruxtStore } from '../..'
 jest.mock('axios')
 
 // Setup mock data.
-const mockArticle = require('../../__fixtures__/data/02122578a662e4a6ee0ea39cced4465d.json')
-const mockPage = require('../../__fixtures__/data/297a5e0949afb381ae9f2a30190a9a53.json')
+const mockArticle = require('../../__fixtures__/get/02122578a662e4a6ee0ea39cced4465d.json')
+const mockPage = require('../../__fixtures__/get/297a5e0949afb381ae9f2a30190a9a53.json')
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -41,11 +41,17 @@ describe('DruxtStore', () => {
     expect(store.state.druxt.resources).toStrictEqual({})
 
     // Ensure that good data is committed to state.
-    store.commit('druxt/addResource', { resource: mockPage, hash: 'test' })
-    expect(store.state.druxt.resources[mockPage.data.type][mockPage.data.id]['test']).toBe(mockPage)
+    store.commit('druxt/addResource', { resource: mockPage })
+    expect(store.state.druxt.resources[mockPage.data.type][mockPage.data.id]).toStrictEqual(mockPage)
 
-    store.commit('druxt/addResource', { resource: mockArticle, hash: 'test' })
-    expect(store.state.druxt.resources[mockArticle.data.type][mockArticle.data.id]['test']).toBe(mockArticle)
+    store.commit('druxt/addResource', { resource: mockArticle })
+    expect(store.state.druxt.resources[mockArticle.data.type][mockArticle.data.id]).toStrictEqual(mockArticle)
+
+    // Test deprecated hash argument.
+    const spy = jest.spyOn(console, 'warn').mockImplementation()
+    store.commit('druxt/addResource', { resource: mockArticle, hash: 'deprecated' })
+    expect(console.warn).toHaveBeenCalledWith('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/guide/deprecations');
+    spy.mockRestore()
   })
 
   test('getResource', async () => {
@@ -54,6 +60,7 @@ describe('DruxtStore', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
 
     expect(resource.data).toHaveProperty('attributes')
+    expect(resource._druxt_full).toBeTruthy()
 
     await store.dispatch('druxt/getResource', mockPage.data)
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
