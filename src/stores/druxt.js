@@ -165,14 +165,14 @@ const DruxtStore = ({ store }) => {
 
         // Add data to the resource store.
         for (const resource of (collection || {}).data || []) {
-          const flag = (queryObject.fields || {})[resource.type] ? '_druxt_partial' : '_druxt_full'
+          const flag = typeof (queryObject.fields || {})[resource.type] === 'string' ? '_druxt_partial' : '_druxt_full'
           commit('addResource', { resource: { [flag]: Date.now(), data: resource } })
         }
 
         // Add included data to resource store.
         if (Array.isArray(collection.included)) {
           for (const resource of collection.included) {
-            const flag = (queryObject.fields || {})[resource.type] ? '_druxt_partial' : '_druxt_full'
+            const flag = typeof (queryObject.fields || {})[resource.type] === 'string' ? '_druxt_partial' : '_druxt_full'
             commit('addResource', { resource: { [flag]: Date.now(), data: resource } })
           }
         }
