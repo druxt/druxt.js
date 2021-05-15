@@ -95,8 +95,8 @@ class DruxtClient {
     }
 
     // If Query is object with 'getQueryString' function, (e.g., drupal-jsonapi-params)...
-    if (typeof query === 'object' && typeof query.getQueryString === 'function') {
-      return [url, query.getQueryString()].join('?')
+    if (typeof query === 'object' && typeof query.getQueryString === 'function' && (query = query.getQueryString())) {
+      return [url, query].join('?')
     }
 
     // If query is object...
