@@ -289,7 +289,7 @@ const DruxtStore = ({ store }) => {
         }
 
         // Build resource to be returned.
-        const result = { ...state.resources[type][id] }
+        const result = { ...(state.resources[type] || {})[id] }
 
         // Merge included resources into resource.
         if (queryObject.include && ((resource || {}).included || (storedResource || {}).included)) {
