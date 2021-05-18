@@ -218,11 +218,11 @@ const DruxtStore = ({ store }) => {
 
         // Ensure that includes are in the fields filter.
         if (queryObject.include && typeof (queryObject.fields || {})[type] === 'string') {
-          const fields = queryObject.fields[type].split(',')
-          const includes = queryObject.include.split(',').filter((s) => !s.includes('.'))
+          const fields = queryObject.fields[type].split(',').filter((s) => s)
+          const includes = queryObject.include.split(',').filter((s) => s && !s.includes('.'))
           queryObject.fields[type] = Array.from(
             new Set([...fields, ...includes])
-          ).filter((s) => typeof s === 'string').join(',')
+          ).filter((s) => s).join(',')
         }
 
         // Hydrate included data based on the include query.

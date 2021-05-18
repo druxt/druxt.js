@@ -110,31 +110,52 @@ describe('DruxtStore', () => {
   })
 
   test('getResource - includes', async () => {
+    // Assert that:
+    // - Resource store is empty.
+    // - No get requests have been executed.
+    expect(store.state.druxt.resources).toStrictEqual({})
     expect(mockAxios.get).toHaveBeenCalledTimes(0)
-    let resource = await store.dispatch('druxt/getResource', {
-      ...mockResourcePage.data,
-      query: new DrupalJsonApiParams().addInclude('uid')
-    })
-    expect(mockAxios.get).toHaveBeenCalledTimes(3)
 
-    const expected = {
-      _druxt_full: expect.anything(),
-      ...mockResourcePage,
-      included: [expect.any(Object)],
+    // Get filtered resource with includes.
+    const request = {
+      type: 'node--recipe',
+      id: '9cd5cfab-fe24-4773-88e1-56123bcbc9bc',
+      query: new DrupalJsonApiParams()
+        .addInclude(['field_media_image', 'field_media_image.field_media_image'])
+        .addFields('node--recipe', [])
+        // @todo This field should be automatically included.
+        .addFields('media--image', ['field_media_image'])
+        .addFields('file--file', ['uri'])
     }
-    expect(resource).toStrictEqual(expected)
+    let resource = await store.dispatch('druxt/getResource', request)
+
+    // Assert that:
+    // - Only 3 get requests are executed.
+    // - Returned expected data with `_druxt_partial` flag.
+    // - Included resources are stored.
+    const expected = require('../../__fixtures__/get/1c595b87cd1bc58a1e5e51fe41aa1c95.json')
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(resource).toStrictEqual({
+      _druxt_partial: expect.anything(),
+      ...expected
+    })
     expect(Object.keys(store.state.druxt.resources)).toStrictEqual([
-      'node--page', 'user--user'
+      'node--recipe',
+      'media--image',
+      'file--file'
     ])
-    expect(resource._druxt_full).toBeTruthy()
 
     // Get same resource with include to test re-hydration.
-    resource = await store.dispatch('druxt/getResource', {
-      ...mockResourcePage.data,
-      query: new DrupalJsonApiParams().addInclude('uid')
-    })
+    resource = await store.dispatch('druxt/getResource', request)
+
+    // Assert that:
+    // - No additional get requests are executed.
+    // - Rehydrated resource gives the same results.
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
-    expect(resource).toStrictEqual(expected)
+    expect(resource).toStrictEqual({
+      _druxt_partial: expect.anything(),
+      ...expected
+    })
   })
 
   test('getCollection', async () => {
