@@ -9,9 +9,31 @@ const getDrupalJsonApiParams = (query) => {
     return apiParams
   }
 
-  return typeof query === 'object'
+  typeof query === 'object'
     ? apiParams.initializeWithQueryObject(typeof query.getQueryObject === 'function' ? query.getQueryObject() : query)
     : apiParams.initializeWithQueryString(query)
+  return apiParams
+}
+
+const dehydrateResources = ({ commit, queryObject, resources }) => {
+  return resources.map((data) => {
+    // Generate a query link for included resources.
+    // This is used to determine if the resource is a partial.
+    const link = decodeURI(((data.links || {}).self || {}).href || '')
+    const href = typeof (queryObject.fields || {})[data.type] === 'string'
+      ? [link.split('?')[0], `fields[${data.type}]=${queryObject.fields[data.type]}`].join('?')
+      : link
+
+    // Commit the included resource.
+    commit('druxt/addResource', {
+      resource: {
+        data,
+        links: { self: { href } },
+      }
+    })
+
+    return { id: data.id, type: data.type }
+  })
 }
 
 const DruxtStore = ({ store }) => {
@@ -64,19 +86,22 @@ const DruxtStore = ({ store }) => {
       addCollection (state, { collection, type, hash }) {
         if (!state.collections[type]) Vue.set(state.collections, type, {})
 
-        collection = {
-          ...collection,
-          // Dehydrate resources.
-          data: collection.data.map((o) => ({ id: o.id, type: o.type })),
-        }
+        // Parse the query.
+        const link = decodeURI((((collection || {}).links || {}).self || {}).href || '')
+        const query = link.split('?')[1] || ''
+        const queryObject = getDrupalJsonApiParams(query).getQueryObject()
 
-        // Dehydrate includesd resources.
+        // Store and dehydrate collection resources.
+        collection.data = dehydrateResources({ commit: this.commit, queryObject, resources: collection.data })
+
+        // Extract and store included resources.
         if (collection.included) {
-          collection.included.map((o) => ({ id: o.id, type: o.type }))
+          collection.included = dehydrateResources({ commit: this.commit, queryObject, resources: collection.included })
+          delete collection.included
         }
 
         // Recursively merge new collection data into stored collection.
-        collection = merge(state.collections[type][hash] || {}, collection)
+        collection = merge(state.collections[type][hash] || {}, collection, { arrayMerge: (dst, src) => src })
 
         Vue.set(state.collections[type], hash, collection)
       },
@@ -100,16 +125,26 @@ const DruxtStore = ({ store }) => {
           return
         }
 
+        // Parse the query.
+        const link = decodeURI((((resource || {}).links || {}).self || {}).href || '')
+        const query = link.split('?')[1] || ''
+        const queryObject = getDrupalJsonApiParams(query).getQueryObject()
+
+        // Add cache flag to resource.
+        const flag = typeof (queryObject.fields || {})[((resource || {}).data || {}).type] === 'string' ? '_druxt_partial' : '_druxt_full'
+        resource[flag] = Date.now()
+
         // Ensure Resource type array is reactive.
         if (!state.resources[type]) Vue.set(state.resources, type, {})
         
-        // Dehydrate included data.
+        // Extract and store included data.
         if (resource.included) {
-          resource.included.map((o) => ({ id: o.id, type: o.type }))
+          dehydrateResources({ commit: this.commit, queryObject, resources: resource.included })
+          delete resource.included
         }
 
         // Recursively merge new resource data into stored resource.
-        resource = merge(state.resources[type][id] || {}, resource)
+        resource = merge(state.resources[type][id] || {}, resource, { arrayMerge: (dst, src) => src })
 
         Vue.set(state.resources[type], id, resource)
       },
@@ -140,42 +175,19 @@ const DruxtStore = ({ store }) => {
         const hash = query ? md5(JSON.stringify({ ...queryObject, fields: {}, include: [] })) : '_default'
 
         // If collection hash exists, re-hydrate and return the data.
-        let collection
         if ((state.collections[type] || {})[hash]) {
-          collection =  {
+          return {
             ...state.collections[type][hash],
             // Hydrate resource data.
             data: state.collections[type][hash].data.map((o) => (state.resources[o.type][o.id] || {}).data)
           }
-
-          // Hydrate included resources.
-          // @todo only provide requested includes.
-          if (collection.included) {
-            collection.included = collection.included.map((o) => (state.resources[o.type][o.id] || {}).data)
-          }
-
-          return collection
         }
 
         // Get the collection using the DruxtClient instance.
-        collection = await this.$druxt.getCollection(type, query)
+        const collection = await this.$druxt.getCollection(type, query)
 
         // Store the collection in the DruxtStore.
-        commit('addCollection', { collection, type, hash })
-
-        // Add data to the resource store.
-        for (const resource of (collection || {}).data || []) {
-          const flag = typeof (queryObject.fields || {})[resource.type] === 'string' ? '_druxt_partial' : '_druxt_full'
-          commit('addResource', { resource: { [flag]: Date.now(), data: resource } })
-        }
-
-        // Add included data to resource store.
-        if (Array.isArray(collection.included)) {
-          for (const resource of collection.included) {
-            const flag = typeof (queryObject.fields || {})[resource.type] === 'string' ? '_druxt_partial' : '_druxt_full'
-            commit('addResource', { resource: { [flag]: Date.now(), data: resource } })
-          }
-        }
+        commit('addCollection', { collection: { ...collection }, type, hash })
 
         return collection
       },
@@ -195,35 +207,72 @@ const DruxtStore = ({ store }) => {
        * @example @lang js
        * const resource = await this.$store.dispatch('druxt/getResource', { type: 'node--article', id })
        */
-      async getResource ({ commit, state }, { type, id, query }) {
+      async getResource ({ commit, dispatch, state }, { type, id, query }) {
         // Get the resource from the store if it's avaialble.
-        let resource = (state.resources[type] || {})[id] ? { ...state.resources[type][id] } : null
+        const storedResource = (state.resources[type] || {})[id] ?
+          { ...state.resources[type][id] }
+          : null
 
         // Parse the query.
         const queryObject = getDrupalJsonApiParams(query).getQueryObject()
 
-        // Hydrate included resources.
-        // @todo only provide requested includes.
-        if (queryObject.include && (resource || {}).included) {
-          resource.included = resource.included.map((o) => (state.resources[o.type][o.id] || {}).data)
+        // Ensure that includes are in the fields filter.
+        if (queryObject.include && typeof (queryObject.fields || {})[type] === 'string') {
+          const fields = queryObject.fields[type].split(',')
+          const includes = queryObject.include.split(',').filter((s) => !s.includes('.'))
+          queryObject.fields[type] = Array.from(
+            new Set([...fields, ...includes])
+          ).filter((s) => typeof s === 'string').join(',')
+        }
+
+        // Hydrate included data based on the include query.
+        let included = []
+        if (queryObject.include && storedResource) {
+          // Request included resources from druxt/getResource.
+          const resources =
+            await Promise.all(queryObject.include.split(',')
+              .filter((s) => Object.keys((storedResource.data.relationships || {})).includes(s))
+              .map((key) => {
+                let { data } = storedResource.data.relationships[key]
+                data = Array.isArray(data) ? data : [data]
+
+                // Get any sub-includes, e.g., `media,media.image` becomes `image`.
+                const include = queryObject.include.split(',')
+                  .filter((s) => s.startsWith(`${key}.`))
+                  .map((s) => s.slice(key.length + 1))
+                  .join(',')
+
+                return data.filter((o) => typeof o === 'object' && o).map((o) => {
+                  return dispatch('getResource', {
+                    type: o.type,
+                    id: o.id,
+                    query: { ...queryObject, include },
+                  })
+                })
+              })
+              .flat()
+            )
+
+          // Merge all nested, included resources.
+          for (const include of resources) {
+            included = [...included, include.data, ...include.included || []]
+          }
+          storedResource.included = included
         }
 
         // Return if we have the full resource.
-        if ((resource || {})._druxt_full) {
-          return resource
+        if ((storedResource || {})._druxt_full) {
+          return storedResource
         }
-
         const isFull = typeof (queryObject.fields || {})[type] !== 'string'
-        const isPartial = !isFull
-        const flag = isFull ? '_druxt_full' : '_druxt_partial'
 
         // Determine if we have all the requested field data.
         let fields = isFull ? true : (queryObject.fields || {})[type]
-        if (isPartial && fields) {
+        if (storedResource && !isFull && fields) {
           const queryFields = fields.split(',')
           const resourceFields = [
-            ...Object.keys(((resource || {}).data || {}).attributes || {}),
-            ...Object.keys(((resource || {}).data || {}).relationships || {}),
+            ...Object.keys(((storedResource || {}).data || {}).attributes || {}),
+            ...Object.keys(((storedResource || {}).data || {}).relationships || {}),
           ]
           const missingFields = queryFields.filter((key) => !resourceFields.includes(key))
           fields = !!missingFields.length
@@ -233,22 +282,26 @@ const DruxtStore = ({ store }) => {
         }
 
         // Request the resource from the DruxtClient if required.
-        if (!resource || fields) {
+        let resource
+        if (!storedResource || fields) {
           resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject))
-          resource[flag] = Date.now()
-          commit('addResource', { resource })
+          commit('addResource', { resource: { ...resource } })
         }
 
-        // Add included data to resource store.
-        if (Array.isArray(resource.included)) {
-          for (const include of resource.included) {
-            const flag = (queryObject.fields || {})[include.type] ? '_druxt_partial' : '_druxt_full'
-            commit('addResource', { resource: { [flag]: Date.now(), data: include } })
-          }
+        // Build resource to be returned.
+        const result = { ...state.resources[type][id] }
+
+        // Merge included resources into resource.
+        if (queryObject.include && ((resource || {}).included || (storedResource || {}).included)) {
+          included = [
+            ...(resource || {}).included || [],
+            ...(storedResource || {}).included || [],
+          ]
+          result.included = Array.from(new Set(included.filter((o) => (o || {}).id).map((o) => o.id)))
+            .map((id) => included.find((o) => o.id === id))
         }
 
-        // Return stored resource.
-        return (state.resources[type] || {})[id] || false
+        return result
       },
     }
   }
