@@ -1,6 +1,6 @@
 {
   "name": "druxt",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "A Bridge between frameworks, Nuxt.js in the front, Drupal in the back.",
   "repository": {
     "type": "git",
@@ -54,6 +54,8 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "deepmerge": "^4.2.2",
+    "drupal-jsonapi-params": "^1.1.12",
     "md5": "^2.3.0",
     "querystring": "^0.2.0",
     "scule": "^0.1.1",
