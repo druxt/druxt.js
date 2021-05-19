@@ -6,6 +6,7 @@ const sidebar = config.themeConfig.locales['/'].sidebar['/']
 for (const i in sidebar) {
   if (sidebar[i].title === 'Guide') {
     sidebar[i].children.push('/guide/client')
+    sidebar[i].children.push('/guide/deprecations')
   }
 }
 

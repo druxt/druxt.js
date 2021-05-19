@@ -116,7 +116,7 @@ const DruxtStore = ({ store }) => {
        */
       addResource (state, { resource, hash }) {
         if (hash) {
-          console.warn('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/guide/deprecations')
+          console.warn('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/guide/deprecations.html#druxtstore-addresource-hash')
         }
 
         const { id, type } = (resource || {}).data || {}
@@ -340,7 +340,6 @@ export { DruxtStore }
  * @typedef {object} addResourceContext
  *
  * @param {object} resource - The JSON:API resource.
- * @param {string} hash - An md5 hash of the query string.
  *
  * @example @lang js
  * {
@@ -349,7 +348,6 @@ export { DruxtStore }
  *     data: {},
  *     links: {}
  *   },
- *   hash: '_default'
  * }
  */
 
