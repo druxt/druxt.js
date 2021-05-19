@@ -93,20 +93,109 @@ describe('DruxtStore', () => {
     // Test deprecated hash argument.
     const spy = jest.spyOn(console, 'warn').mockImplementation()
     store.commit('druxt/addResource', { resource: mockResourceArticle, hash: 'deprecated' })
-    expect(console.warn).toHaveBeenCalledWith('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/guide/deprecations');
+    expect(console.warn).toHaveBeenCalledWith('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/guide/deprecations.html#druxtstore-addresource-hash');
     spy.mockRestore()
   })
 
   test('getResource', async () => {
+    // Assert that:
+    // - Resource store is empty.
+    // - No get requests have been executed.
+    expect(store.state.druxt.resources).toStrictEqual({})
     expect(mockAxios.get).toHaveBeenCalledTimes(0)
+    
+    // Get full resource
     const resource = await store.dispatch('druxt/getResource', mockResourcePage.data)
-    expect(mockAxios.get).toHaveBeenCalledTimes(3)
 
-    expect(resource.data).toStrictEqual(mockResourcePage.data)
-    expect(resource._druxt_full).toBeTruthy()
-
-    await store.dispatch('druxt/getResource', mockResourcePage.data)
+    // Assert that:
+    // - The request url is correct.
+    // - Only 3 get requests are executed.
+    // - Returned expected data with `_druxt_full` flag.
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/page/4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9')
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    const expected = {
+      _druxt_full: expect.anything(),
+      ...mockResourcePage
+    }
+    expect(resource).toStrictEqual(expected)
+
+    // Assert that:
+    // - No additional get requests are executed.
+    // - Rehydrated resource gives the same results.
+    const storedResource = await store.dispatch('druxt/getResource', mockResourcePage.data)
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(storedResource).toStrictEqual(resource)
+    expect(storedResource).toStrictEqual(expected)
+  })
+
+  test('getResource - filter', async () => {
+    // Assert that:
+    // - Resource store is empty.
+    // - No get requests have been executed.
+    expect(store.state.druxt.resources).toStrictEqual({})
+    expect(mockAxios.get).toHaveBeenCalledTimes(0)
+
+    // Get resource with no fields.
+    const request = {
+      type: 'node--recipe',
+      id: '9cd5cfab-fe24-4773-88e1-56123bcbc9bc',
+      query: new DrupalJsonApiParams()
+        .addFields('node--recipe', [])
+    }
+
+    // Assert that:
+    // - The request url is correct.
+    // - Only 3 get requests are executed.
+    // - Returned expected data with `_druxt_partial` flag.
+    // - There's no attributes or relationships.
+    const resource = await store.dispatch('druxt/getResource', request)
+    const expectedData = require('../../__fixtures__/get/425ca060a864b971bc78aa3182257323.json')
+    const expected = {
+      _druxt_partial: expect.anything(),
+      ...expectedData
+    }
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc?fields%5Bnode--recipe%5D=')
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(resource).toStrictEqual(expected)
+    expect(resource.data.attributes).toBe(undefined)
+    expect(resource.data.relationships).toBe(undefined)
+
+    // Get the same resource but with a single field.
+    const partialResource = await store.dispatch('druxt/getResource', {
+      ...request,
+      query: new DrupalJsonApiParams()
+        .addFields('node--recipe', ['title'])
+    })
+
+    // Assert that:
+    // - The request url is correct.
+    // - One additional get request executed for missing field data.
+    // - The additional data is present.
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc?fields%5Bnode--recipe%5D=title')
+    expect(mockAxios.get).toHaveBeenCalledTimes(4)
+    expect(Object.keys(partialResource.data.attributes)).toStrictEqual(['title'])
+
+    // Get the same resource but with a missing and existing field.
+    const mixedResource = await store.dispatch('druxt/getResource', {
+      ...request,
+      query: new DrupalJsonApiParams()
+        .addFields('node--recipe', ['title', 'path'])
+    })
+
+    // Assert that:
+    // - The request url is correct.
+    // - One additional get request executed for only the missing field.
+    // - All required data is present.
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc?fields%5Bnode--recipe%5D=path')
+    expect(mockAxios.get).toHaveBeenCalledTimes(5)
+    expect(Object.keys(mixedResource.data.attributes)).toStrictEqual(['title', 'path'])
+
+    // Get the initial request again.
+    await store.dispatch('druxt/getResource', request)
+
+    // Assert that:
+    // - No additional get requests were made.
+    expect(mockAxios.get).toHaveBeenCalledTimes(5)
   })
 
   test('getResource - includes', async () => {
@@ -127,13 +216,15 @@ describe('DruxtStore', () => {
         .addFields('media--image', ['field_media_image'])
         .addFields('file--file', ['uri'])
     }
-    let resource = await store.dispatch('druxt/getResource', request)
+    const resource = await store.dispatch('druxt/getResource', request)
 
     // Assert that:
+    // - The request url is correct.
     // - Only 3 get requests are executed.
     // - Returned expected data with `_druxt_partial` flag.
     // - Included resources are stored.
     const expected = require('../../__fixtures__/get/1c595b87cd1bc58a1e5e51fe41aa1c95.json')
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc?include=field_media_image%2Cfield_media_image.field_media_image&fields%5Bnode--recipe%5D=field_media_image&fields%5Bmedia--image%5D=field_media_image&fields%5Bfile--file%5D=uri')
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
     expect(resource).toStrictEqual({
       _druxt_partial: expect.anything(),
@@ -146,13 +237,13 @@ describe('DruxtStore', () => {
     ])
 
     // Get same resource with include to test re-hydration.
-    resource = await store.dispatch('druxt/getResource', request)
+    const storedResource = await store.dispatch('druxt/getResource', request)
 
     // Assert that:
     // - No additional get requests are executed.
     // - Rehydrated resource gives the same results.
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
-    expect(resource).toStrictEqual({
+    expect(storedResource).toStrictEqual({
       _druxt_partial: expect.anything(),
       ...expected
     })
