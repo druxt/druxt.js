@@ -86,23 +86,21 @@ class DruxtSchema {
         .map((collection) =>
           collection.data
             .filter((data) => data.attributes.status)
-            .map((data) => {
-              return {
-                entityType: data.attributes.targetEntityType,
-                bundle: data.attributes.bundle,
-                mode: data.attributes.mode,
-                schemaType,
-                filter: this.options.schema.filter,
-                ...index[[data.attributes.targetEntityType, data.attributes.bundle].join('--')]
-              }
-            }))
+            .map((data) => ({
+              entityType: data.attributes.targetEntityType,
+              bundle: data.attributes.bundle,
+              mode: data.attributes.mode,
+              schemaType,
+              filter: this.options.schema.filter,
+              ...index[[data.attributes.targetEntityType, data.attributes.bundle].join('--')]
+            })))
       })
     ])).flat(2)
 
     const schemas = Object.fromEntries(
       (await Promise.all(displays.map((config) => this.getSchema(config))))
-      .filter((o) => o)
-      .map((schema) => ([schema.id, schema.schema]))
+        .filter((o) => o)
+        .map((schema) => ([schema.id, schema.schema]))
     )
 
     return { index, schemas }
