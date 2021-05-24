@@ -73,19 +73,10 @@ class DruxtSchema {
     const displays = (await Promise.all([
       ...['view', 'form'].map(async (schemaType) => {
         const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
-        return (await this.druxt.getCollectionAll(
-          resourceType,
-          new DrupalJsonApiParams()
-            .addFields(resourceType, [
-              'targetEntityType',
-              'bundle',
-              'mode',
-              'status',
-            ])
-        ))
-        .map((collection) =>
+        return (await this.druxt.getCollectionAll(resourceType))
+        .map((collection) => 
           collection.data
-            .filter((data) => data.attributes.status)
+            .filter((data) => !!data.attributes.status)
             .map((data) => ({
               entityType: data.attributes.targetEntityType,
               bundle: data.attributes.bundle,
