@@ -23,7 +23,7 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
     options: this.options.druxt
   })
 
-  // Add NuxtJS modules.
+  // Add Nuxt.js modules.
   const modules = [
     '@nuxtjs/proxy',
     'druxt',
