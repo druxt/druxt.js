@@ -12,7 +12,11 @@
     "jsonapi",
     "nuxt"
   ],
-  "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/druxt/druxt-site/issues"
@@ -44,11 +48,11 @@
   },
   "dependencies": {
     "@nuxtjs/proxy": "^2.1.0",
-    "druxt": "^0.4.1",
+    "druxt": "^0.6.0",
     "druxt-blocks": "^0.8.0",
     "druxt-breadcrumb": "^0.7.1",
-    "druxt-entity": "^0.10.0",
-    "druxt-menu": "^0.8.0",
+    "druxt-entity": "^0.14.0",
+    "druxt-menu": "^0.10.1",
     "druxt-router": "^0.18.0",
     "druxt-schema": "^0.7.0",
     "druxt-views": "^0.7.0",
