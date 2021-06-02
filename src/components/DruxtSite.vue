@@ -136,8 +136,7 @@ export default {
       }
 
       // Build default slot.
-      scopedSlots.default = (attrs) => Object.entries(this.regions)
-        .map((region) => (scopedSlots[region] || (() => {}))(attrs))
+      scopedSlots.default = (attrs) => this.regions.map((region) => (scopedSlots[region] || (() => {}))(attrs))
       if (this.$scopedSlots.default) {
         scopedSlots.default = (attrs) => this.$scopedSlots.default({
           ...this.$options.druxt.propsData(this),
