@@ -100,6 +100,7 @@ export default {
      */
     props: ({ regions, theme }) =>
       Object.fromEntries(regions.map((region) => [region, {
+        key: region,
         name: region,
         theme,
       }])),
