@@ -3,6 +3,7 @@
 [![CircleCI](https://circleci.com/gh/druxt/druxt-site.svg?style=svg)](https://circleci.com/gh/druxt/druxt-site)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-site/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-site?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-site/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-site)
+[![npm](https://badgen.net/npm/v/druxt-site)](https://www.npmjs.com/package/druxt-site)
 
 
 > The DruxtJS Site module provides an out of the box, decoupled Drupal site experience with minimal setup and configuration.
@@ -36,7 +37,7 @@ module.exports = {
 
 ```vue
 <template>
-  <DruxtSite :theme="theme" >
+  <DruxtSite :theme="theme" />
 </template>
 ```
 
