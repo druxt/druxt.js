@@ -1,21 +1,34 @@
 <script>
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 import { mapActions } from 'vuex'
 
 /**
- * The `<DruxtSite />` Vue.js component.
+ * The `<DruxtSite />` Vue.js component renders all available Block regions
+ * based on the specified theme.
  *
- * - Loads available Block regions for the specified theme.
- * - Renders Block regions via the `<DruxtBlockRegion />` component.
- * - Supports the Druxt slot based themeing system.
+ * Features:
+ * - Scoped slots
  *
  * @example @lang vue
  * <template>
  *   <DruxtSite theme="umami" />
  * </template>
  *
- * @example <caption>DruxtSite**Umami**.vue</caption> @lang vue
+  * @example <caption>Default slot override</caption> @lang vue
+ * <template>
+ *   <DruxtSite theme="umami">
+ *     <template #default="{ props, regions, theme }">
+ *       <DruxtBlockRegion
+ *         v-for="region of regions"
+ *         :key="region"
+ *         v-bind="props[region]"
+ *       />
+ *     </template>
+ *   </DruxtSite>
+ * </template>
+ *
+ * @example <caption>Wrapper component</caption> @lang vue
  * <template>
  *   <div>
  *     <slot name="header" />
@@ -29,12 +42,7 @@ import { mapActions } from 'vuex'
 export default {
   name: 'DruxtSite',
 
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link https://druxtjs.org/api/mixins/component|DruxtComponentMixin}
-   */
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -55,6 +63,13 @@ export default {
   },
 
   /**
+   * @property {string[]} regions - An array of unique region names.
+   */
+  data: () => ({
+    regions: [],
+  }),
+
+  /**
    * Nuxt.js fetch method.
    *
    * Fetches theme filtered region names from the Block JSON:API resources to be
@@ -63,72 +78,152 @@ export default {
   async fetch() {
     // Fetch all available regions.
     const type = 'block--block'
-    const regions = await this.getCollection({
+    this.regions = await this.getCollection({
       type,
       query: new DrupalJsonApiParams()
         .addFilter('theme', this.theme)
         .addFields(type, ['region']),
     }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
-    this.regions = regions
 
-    // Invoke DruxtComponent mixin.
-    await DruxtComponentMixin.fetch.call(this)
+    // Call DruxtModule fetch hook.
+    await DruxtModule.fetch.call(this)
   },
 
   /**
-   * @property {string[]} regions - An array of unique region names.
+   * Vue.js Computed properties.
    */
-  data: () => ({
-    regions: []
-  }),
+  computed: {
+    /**
+     * DruxtBlockRegion propsData for regions.
+     * 
+     * @return {object}
+     */
+    props: ({ regions, theme }) =>
+      Object.fromEntries(regions.map((region) => [region, {
+        name: region,
+        theme,
+      }])),
+  },
 
   methods: {
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * A scoped slot is provided for each block region available, as per the
+     * specified theme.
+     * 
+     * Additionally, the `default` slot will render all regions. 
+     *
+     * @example <caption>DruxtSite**Theme**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot name="content" />
+     *     <slot :name="region_name" />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    getScopedSlots() {
+      // Build scoped slots for each field.
+      const scopedSlots = {
+        ...Object.fromEntries(this.regions.map((region) => [region, (attrs) => this.$createElement('DruxtBlockRegion', {
+          attrs,
+          key: region,
+          props: this.props[region],
+        })]))
+      }
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => Object.entries(this.regions)
+        .map((region) => (scopedSlots[region] || (() => {}))(attrs))
+      if (this.$scopedSlots.default) {
+        scopedSlots.default = (attrs) => this.$scopedSlots.default({
+          ...this.$options.druxt.propsData(this),
+          ...attrs
+        })
+      }
+
+      return scopedSlots
+    },
+
     ...mapActions({ getCollection: 'druxt/getCollection' }),
   },
 
-  render(h) {
-    const wrapperData = {
-      class: this.wrapper.class || undefined,
-      style: this.wrapper.style || undefined,
-      props: this.wrapper.propsData,
-    }
+  /**
+   * Druxt module configuration.
+   */
+  druxt: {
+    /**
+     * Provides the available component naming options for the Druxt Wrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {ComponentOptions}
+     */
+    componentOptions: ({ theme }) => [[theme], ['default']],
 
-    // Return only wrapper if fetch state is still pending.
-    if (this.$fetchState.pending) {
-      return h(this.wrapper.component, wrapperData)
-    }
-
-    // Build scoped slots for each region.
-    const scopedSlots = {}
-    Object.entries(this.regions).map(([index, region]) => {
-      scopedSlots[region] = attrs => h('DruxtBlockRegion', {
-        attrs,
-        props: {
-          name: region,
-          theme: this.theme
-        }
-      })
-    })
-
-    // Build default slot.
-    scopedSlots.default = attrs => Object.entries(this.regions).map(([index, region]) => scopedSlots[region](attrs))
-
-    // Return wrapped component.
-    return h(this.wrapper.component, wrapperData, [
-      h(this.component.is, {
-        props: this.component.propsData,
-        scopedSlots,
-      })
-    ])
-  },
-
-  druxt: ({ vm }) => ({
-    componentOptions: [[vm.theme], ['default']],
-
-    propsData: {
-      theme: vm.theme,
-      regions: vm.regions
-    }
-  })
+    /**
+     * Provides propsData for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {PropsData}
+     */
+    propsData: ({ props, regions, theme }) => ({ props, regions, theme }),
+  }
 }
+
+/**
+ * Provides the available naming options for the Wrapper component.
+ *
+ * @typedef {array[]} ComponentOptions
+ *
+ * @example @lang js
+ * [
+ *   'DruxtSite[Theme]',
+ *   'DruxtSiteDefault',
+ * ]
+ *
+ * @example <caption>Umami</caption> @lang js
+ * [
+ *   'DruxtSiteUmami',
+ * ]
+ */
+
+/**
+ * Provides propsData for use in the Wrapper component.
+ *
+ * @typedef {object} PropsData
+ * @param {object} props - DruxtBlockRegion propsData for regions.
+ * @param {string[]} regions - An array of unique region names.
+ * @param {string} theme - Drupal theme ID.
+ *
+ * @example @lang js
+ * {
+ *   props: {
+ *     content: {
+ *       name: 'content',
+ *       theme: 'umami',
+ *     },
+ *     ...
+ *   },
+ *   regions: ['breadcrumbs', 'header', 'content', ...],
+ *   theme: 'umami',
+ * }
+ */
+
+/**
+ * Provides scoped slots for use in the Wrapper component.
+ *
+ * @typedef {object} ScopedSlots
+ * @param {function} * - Slot per region.
+ * @param {function} default - All regions.
+ *
+ * @example <caption>DruxtSite**Theme**.vue</caption> @lang vue
+ * <template>
+ *   <div>
+ *     <slot name="content" />
+ *     <slot :name="region_name" />
+ *   </div>
+ * </template>
+ */
 </script>

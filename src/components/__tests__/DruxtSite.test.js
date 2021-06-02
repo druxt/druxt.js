@@ -12,14 +12,14 @@ localVue.use(Vuex)
 
 let store
 
-const mountComponent = (pending) => {
+const mountComponent = (pending, options ) => {
   const mocks = {
     $fetchState: { pending }
   }
   const propsData = { theme: 'umami' }
   const stubs = ['DruxtBlockRegion']
 
-  return mount(DruxtSite, { localVue, mocks, propsData, store, stubs })
+  return mount(DruxtSite, { localVue, mocks, propsData, store, stubs, ...options })
 }
 
 describe('DruxtSite component', () => {
@@ -63,5 +63,18 @@ describe('DruxtSite component', () => {
     const wrapper = mountComponent(true)
 
     expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  test('default slot', async () => {
+    const scopedSlots = { default: jest.fn() }
+    const wrapper = mountComponent(false, { scopedSlots })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    wrapper.vm.getScopedSlots().default()
+    expect(scopedSlots.default).toHaveBeenCalledWith({
+      props: wrapper.vm.props,
+      regions: wrapper.vm.regions,
+      theme: wrapper.vm.theme
+    })
   })
 })

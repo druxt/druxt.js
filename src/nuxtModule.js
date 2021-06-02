@@ -57,6 +57,8 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
   this.options.store = true
 }
 
+DruxtSiteNuxtModule.meta = require('../package.json')
+
 export { DruxtSiteNuxtModule }
 
 /**
