@@ -1,5 +1,5 @@
 /**
- * Provides Vue.js properties to render Drupal Site components.
+ * Provides Vue.js properties for DrupalSite Wrapper components.
  *
  * @mixin
  *
@@ -9,8 +9,7 @@
  *     <DruxtBlockRegion
  *       v-for="region of regions"
  *       :key="region"
- *       :name="region"
- *       :theme="theme"
+ *       v-bind="props[region]"
  *     />
  *   </div>
  * </template>
@@ -29,6 +28,26 @@ const DruxtSiteMixin = {
    */
   props: {
     /**
+     * DruxtBlockRegion propsData for regions.
+     * 
+     * @return {object}
+     */
+    props: {
+      type: Object,
+      default: () => ({}),
+    },
+
+    /**
+     * The Block region names.
+     *
+     * @type {string[]},
+     */
+     regions: {
+      type: Array,
+      default: () => ([])
+    },
+
+    /**
      * The Drupal theme ID.
      *
      * @type {string}
@@ -37,16 +56,6 @@ const DruxtSiteMixin = {
       type: String,
       required: true,
     },
-
-    /**
-     * The Block region names.
-     *
-     * @type {string[]},
-     */
-    regions: {
-      type: Array,
-      default: () => ([])
-    }
   },
 }
 

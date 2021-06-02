@@ -2,58 +2,141 @@
 title: Introduction
 ---
 
-# DruxtJS Site
+# DruxtSite
 
 The DruxtJS Site module provides a simple out of the box, decoupled Drupal site experience.
 
 
-## How it works
-
-The Druxt Site module provides a Nuxt module and a Vue.js component, which when installed will communicate with a Drupal JSON:API backend to determine what Blocks and what Drupal content to render.
-
 ## Features
 
-The following modules are installed and configured by the Site module:
+- [Nuxt module](#nuxt-module)
+- [Router](#router)
+- [Blocks and regions](#blocks-and-regions)
+- [Entities and fields](#entities-and-fields)
+- [Views](#views)
+- [Menus](#menus)
 
-### [druxt](http://druxtjs.org)
+## Nuxt module
 
-  The Druxt module is the core component and theming system for DruxtJS.
-  - Adds `Druxt` component.
+The DruxtSite module provides a Vue.js component and a Nuxt module, among other things.
 
-### [druxt-blocks](https://blocks.druxtjs.org/)
+The Nuxt module installs all required components and dependencies.
 
-  The Block module adds support to render Blocks, Regions of Blocks and custom content blocks.
-  - Adds the `DruxtBlock`, `DruxtBlockRegion` and `DruxtBlockContent` components.
+```js
+module.exports = {
+  modules: ['druxt-site'],
+  druxt: { baseUrl: 'https://demo-api.druxtjs.org' },
+}
+```
 
-### [druxt-breadcrumb](https://breadcrumb.druxtjs.org/)
+See [Getting started](/guide/getting-started) and the [API documentation](/api) for more details.
 
-  The Breadcrumb module uses hierarchical path data from the Druxt Router module to render a themable breadcrumb.
-  - Adds the `DruxtBreadcrumb` component.
 
-### [druxt-entity](https://entity.druxtjs.org/)
+## Router
 
-  The Entity module uses the Druxt Schema module data to render Entities and Fields in Nuxt using Drupals Display mode and formatter system.
-  - Adds the `DruxtEntity` and `DruxtField` components.
-  - Adds entity support to DruxtRouter.
-  - Adds a collection of Field components.
+The DruxtRouter module communicates with the Drupal [Decoupled Router](https://www.drupal.org/project/decoupled_router) module and serves the requested resource components.
 
-### [druxt-menu](https://menu.druxtjs.org/)
+### Aliases and redirects
 
-  The Menu module adds support for full Drupal menus via the Drupal [JSON:API Menu items](https://www.drupal.org/project/jsonapi_menu_items) module.
-  - Adds the `DruxtMenu` component.
+### Node and content entity routes
 
-### [druxt-router](https://router.druxtjs.org/)
+### View pages
 
-  The Router module communicates with the Drupal [Decoupled Router](https://www.drupal.org/project/decoupled_router) module to determine what Druxt component to render the route data.
-  - Adds the `DruxtRouter` component.
-  - Adds a wildcard DruxtRouter page to the Nuxt router system.
+See [router.druxtjs.org](https://router.druxtjs.org) for more details.
 
-### [druxt-schema](https://schema.druxtjs.org/)
 
-  The Schema module builds View and Form schemas for the required Entity Display modes to be used by the Entity module.
+## Blocks and regions
 
-### [druxt-views](https://views.druxtjs.org/)
+The DruxtBlock module adds the ability to render Drupal Blocks and all blocks within a given Block region.
 
-  The Views module communicates with the Drupal [JSON:API Views](https://www.drupal.org/project/jsonapi_views) module to provide Drupal Views support.
-  - Adds the `DruxtView` component.
-  - Adds view support to DruxtRouter.
+### Automatic blocks by route visibility
+
+Block regions and visible blocks are rendered automatically when using the **DruxtSite** component.
+
+Block placement is managed in the Drupal backend, in the relevant **theme**.
+
+```vue
+<DruxtSite :theme="theme" />
+```
+
+### Block component
+
+```vue
+<DruxtBlock :uuid="uuid" />
+```
+
+### Block region component
+
+```vue
+<DruxtBlockRegion :name="region" :theme="theme" />
+```
+
+See [blocks.druxtjs.org](https://blocks.druxtjs.org) for more details.
+
+
+## Entities and fields
+
+The DruxtEntity module uses the Drupals Display mode and formatter configuration  to render Entities, Entity forms and fields.
+
+### Content display with Entity component
+
+```vue
+<DruxtEntity :type="resourceType" :uuid="uuid" mode="displayMode" />
+```
+
+![Example DruxtEntity component](../images/druxt-entity.png)
+
+### Content editing with Entity form component
+
+```vue
+<DruxtEntityForm :type="resourceType" :uuid="uuid" mode="displayMode" />
+```
+
+![Example DruxtEntityForm component](../images/druxt-entity-form.png)
+
+See [entity.druxtjs.org](https://entity.druxtjs.org) for more details.
+
+
+## Views
+
+The DruxtViews adds support for Drupal Views via the [JSON:API Views](https://www.drupal.org/project/jsonapi_views).
+
+### View component
+
+```vue
+<DruxtView :displayId="displayId" :uuid="uuid" :viewId="viewId" />
+```
+
+### View pages and blocks
+
+Support for View pages is added via the DruxtRouter module, and blocks via the DruxtBlocks module.
+
+### Filters, Sorts and pagination
+
+Views support exposed filters and sorting, as well as pagination, with configuration provided via the Drupal backend.
+
+See [views.druxtjs.org](https://views.druxtjs.org) for more details.
+
+
+## Menus
+
+The DruxtMenu module adds support for full Drupal menus via the Drupal [JSON:API Menu items](https://www.drupal.org/project/jsonapi_menu_items) module.
+
+### Menu component
+
+```vue
+<DruxtMenu :name="name" :max-depth="2" />
+```
+
+See [menu.druxtjs.org](https://menu.druxtjs.org) for more details.
+
+
+## Breadcrumb
+
+The DruxtBreadcrumb module uses hierarchical path data from the DruxtRouter module to render a themable breadcrumb.
+
+```vue
+<DruxtBreadcrumb />
+```
+
+See [breadcrumb.druxtjs.org](https://breadcrumb.druxtjs.org) for more details.

@@ -23,7 +23,7 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
     options: this.options.druxt
   })
 
-  // Add NuxtJS modules.
+  // Add Nuxt.js modules.
   const modules = [
     '@nuxtjs/proxy',
     'druxt',
@@ -56,6 +56,8 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
   // Enable Vuex Store.
   this.options.store = true
 }
+
+DruxtSiteNuxtModule.meta = require('../package.json')
 
 export { DruxtSiteNuxtModule }
 

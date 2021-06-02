@@ -1,6 +1,6 @@
 # Getting started
 
-DruxtJS requires a NuxtJS frontend and a Drupal JSON:API enabled backend:
+DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API enabled backend:
 
 ## Drupal
 
@@ -13,17 +13,17 @@ DruxtJS requires a NuxtJS frontend and a Drupal JSON:API enabled backend:
     ```
 
 3. Install the module:
-   ![Install the module](./images/install.png)
+   ![Install the module](../images/install.png)
 
 4. Add the "**access druxt resources**" permission to a user/role:
-   ![Install the module](./images/permissions.png)
+   ![Install the module](../images/permissions.png)
 
 5. Enable and configure **CORS** in the your sites `services.yml` file.
 
 
 ## Nuxt
 
-1. [Install NuxtJS](https://nuxtjs.org/guide/installation/)
+1. [Install Nuxt.js](https://nuxtjs.org/guide/installation/)
 
 2. Install the [DruxtJS Site module](http://npmjs.com/package/druxt-site):
 
