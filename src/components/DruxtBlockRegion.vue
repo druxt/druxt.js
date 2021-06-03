@@ -63,15 +63,16 @@ export default {
    */
   async fetch() {
     // @todo - Add ability to alter query via DruxtModule settings.
+    const type = 'block--block'
     const query = new DrupalJsonApiParams()
     query
       .addFilter('region', this.name)
       .addFilter('status', '1')
       .addFilter('theme', this.theme)
       .addSort('weight')
-      .addFields('block--block', ['drupal_internal__id', 'visibility'])
+      .addFields(type, ['drupal_internal__id', 'visibility', 'weight'])
 
-    const collection = await this.getCollection({ type: 'block--block', query })
+    const collection = await this.getCollection({ type, query })
     this.blocks = collection.data
 
     await DruxtModule.fetch.call(this)
@@ -104,14 +105,17 @@ export default {
       // Build scoped slots for each block.
       const scopedSlots = {}
       this.blocks.map((block) => {
-        scopedSlots[block.attributes.drupal_internal__id] = (attrs) => this.$createElement('DruxtBlock', {
-          attrs,
-          key: block.attributes.drupal_internal__id,
-          props: {
-            uuid: block.id,
-          },
-          ref: block.attributes.drupal_internal__id,
-        })
+        scopedSlots[block.attributes.drupal_internal__id] = (attrs) => {
+          delete attrs['data-fetch-key']
+          return this.$createElement('DruxtBlock', {
+            attrs,
+            key: block.attributes.drupal_internal__id,
+            props: {
+              uuid: block.id,
+            },
+            ref: block.attributes.drupal_internal__id,
+          })
+        }
       })
 
       // Build default slot.
@@ -120,6 +124,12 @@ export default {
           ? scopedSlots[block.attributes.drupal_internal__id](attrs)
           : false
       )
+      if (this.$scopedSlots.default) {
+        scopedSlots.default = (attrs) => this.$scopedSlots.default({
+          ...this.$options.druxt.propsData(this),
+          ...attrs
+        })
+      }
 
       return scopedSlots
     },
@@ -157,7 +167,7 @@ export default {
 
   druxt: {
     componentOptions: ({ name, theme }) => [[name, theme], ['default']],
-    propsData: ({ name, theme }) => ({ name, theme }),
+    propsData: ({ blocks, name, theme }) => ({ blocks, name, theme }),
   },
 }
 </script>

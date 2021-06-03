@@ -11,26 +11,22 @@ localVue.use(Vuex)
 
 let store
 
-const mockBlock = {
-  id: 'test-block',
-  type: 'block--block',
-  attributes: {
-    plugin: 'plugin',
-    region: 'region',
-    theme: 'theme'
-  }
-}
-
-const mountComponent = (entity, options = {}) => {
+const mountComponent = (propsData, options = {}) => {
   const mocks = {
-    $fetchState: { pending: false }
+    $druxtBlocks: {
+      options: {
+        query: {
+          fields: [],
+        },
+      },
+    },
+    $fetchState: { pending: false },
+    $nuxt: {
+      context: {
+        isDev: false,
+      }
+    }
   }
-
-  const propsData = {
-    uuid: entity.id
-  }
-
-  store.commit('druxt/addResource', { resource: { data: entity }, hash: '_default' })
 
   return mount(DruxtBlock, { localVue, mocks, propsData, store, ...options })
 }
@@ -48,28 +44,39 @@ describe('Component - DruxtBlock', () => {
     store.app = { context: { error: jest.fn() }, store }
   })
 
-  test('default', async () => {
-    const wrapper = mountComponent(mockBlock)
+  test('uuid', async () => {
+    const wrapper = mountComponent({ uuid: '9d3d3a23-69f5-4c2d-9a00-287492a52987' })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.vm.uuid).toBe('test-block')
-    expect(wrapper.vm.type).toBe('block--block')
+    expect(wrapper.vm.uuid).toBe('9d3d3a23-69f5-4c2d-9a00-287492a52987')
 
     expect(wrapper.vm.component.options).toStrictEqual([
-      'DruxtBlockPluginRegionTheme',
-      'DruxtBlockPluginRegion',
-      'DruxtBlockPluginTheme',
-      'DruxtBlockPlugin',
+      'DruxtBlockSystemBrandingBlockHeaderUmami',
+      'DruxtBlockSystemBrandingBlockHeader',
+      'DruxtBlockSystemBrandingBlockUmami',
+      'DruxtBlockSystemBrandingBlock',
+      'DruxtBlockDefault',
     ])
 
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
   })
 
-  test('pluginId', async () => {
-    mockBlock.attributes.plugin = 'plugin:pluginId'
-    const wrapper = mountComponent(mockBlock)
+  test('uuid - pluginId', async () => {
+    const wrapper = mountComponent({ uuid: '06251689-406e-4dc4-aab1-5fcf0e5f9ecb' })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.vm.component.options.length).toBe(8)
+    expect(wrapper.vm.component.options.length).toBe(9)
+
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtBlockBlockContent9aadf4a1Ded64017A10dA5e043396edfBannerTopUmami',
+      'DruxtBlockBlockContent9aadf4a1Ded64017A10dA5e043396edfBannerTop',
+      'DruxtBlockBlockContent9aadf4a1Ded64017A10dA5e043396edfUmami',
+      'DruxtBlockBlockContentBannerTopUmami',
+      'DruxtBlockBlockContent9aadf4a1Ded64017A10dA5e043396edf',
+      'DruxtBlockBlockContentBannerTop',
+      'DruxtBlockBlockContentUmami',
+      'DruxtBlockBlockContent',
+      'DruxtBlockDefault',
+    ])
   })
 })

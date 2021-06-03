@@ -20,7 +20,11 @@ const mountComponent = (name = null, options = {}) => {
     propsData.name = name
   }
 
-  return shallowMount(DruxtBlockRegion, { localVue, propsData, store, ...options })
+  const mocks = {
+    $fetchState: { pending: true },
+  }
+
+  return shallowMount(DruxtBlockRegion, { localVue, mocks, propsData, store, ...options })
 }
 
 describe('Component - DruxtBlockRegion', () => {
@@ -50,22 +54,16 @@ describe('Component - DruxtBlockRegion', () => {
     expect(wrapper.vm.name).toBe('content')
     expect(wrapper.vm.theme).toBe('umami')
 
-    expect(wrapper.vm.component.options.length).toBe(2)
+    expect(wrapper.vm.component.options.length).toBe(3)
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtBlockRegionContentUmami',
-      'DruxtBlockRegionContent'
+      'DruxtBlockRegionContent',
+      'DruxtBlockRegionDefault',
     ])
 
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
 
     expect(wrapper.vm.blocks.length).toBe(1)
-
-    const watch = {
-      ...DruxtBlockRegion.watch,
-      $fetch: jest.fn()
-    }
-    watch.$route()
-    expect(watch.$fetch).toHaveBeenCalled()
   })
 
   test('sort', async () => {
@@ -75,13 +73,14 @@ describe('Component - DruxtBlockRegion', () => {
     expect(wrapper.vm.name).toBe('banner_top')
     expect(wrapper.vm.theme).toBe('umami')
 
-    expect(wrapper.vm.component.options.length).toBe(2)
+    expect(wrapper.vm.component.options.length).toBe(3)
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtBlockRegionBannerTopUmami',
-      'DruxtBlockRegionBannerTop'
+      'DruxtBlockRegionBannerTop',
+      'DruxtBlockRegionDefault',
     ])
 
-    expect(wrapper.vm.blocks.length).toBe(2)
+    expect(wrapper.vm.blocks.length).toBe(3)
 
     expect(wrapper.vm.blocks[0].attributes.weight < wrapper.vm.blocks[1].attributes.weight).toBeTruthy()
   })
