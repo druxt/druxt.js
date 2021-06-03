@@ -1,5 +1,7 @@
 <template>
-  <DruxtMenu :name="name" />
+  <div>
+    <DruxtMenu :name="name" />
+  </div>
 </template>
 
 <script>
