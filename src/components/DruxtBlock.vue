@@ -99,12 +99,10 @@ export default {
         })
       // Provide debug data if Nuxt is running in dev mode.
       } else if (this.$nuxt.context.isDev)  {
-        scopedSlots.default = (attrs) => h('div', [
-          h('details', [
-            h('summary', [`[DruxtBlock] Missing wrapper component for '${((this.block || {}).attributes || {}).drupal_internal__id}'`]),
-            h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-            h('label', ['Block settings:', h('pre', [JSON.stringify(((this.block || {}).attributes || {}).settings)])])
-          ])
+        scopedSlots.default = (attrs) => h('details', [
+          h('summary', [`[DruxtBlock] Missing wrapper component for '${((this.block || {}).attributes || {}).drupal_internal__id}'`]),
+          h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+          h('label', ['Block settings:', h('pre', [JSON.stringify(((this.block || {}).attributes || {}).settings)])])
         ])
       }
 

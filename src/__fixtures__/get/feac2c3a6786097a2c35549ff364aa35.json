@@ -1,0 +1,42 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "block--block",
+      "id": "9d3d3a23-69f5-4c2d-9a00-287492a52987",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/9d3d3a23-69f5-4c2d-9a00-287492a52987"
+        }
+      },
+      "attributes": {
+        "region": "header",
+        "theme": "umami",
+        "plugin": "system_branding_block",
+        "settings": {
+          "id": "system_branding_block",
+          "label": "Site branding",
+          "provider": "system",
+          "label_display": "0",
+          "use_site_logo": true,
+          "use_site_name": false,
+          "use_site_slogan": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/jsonapi/block/block?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme&filter%5Bdrupal_internal__id%5D=umami_branding"
+    }
+  }
+}

@@ -106,7 +106,7 @@ export default {
       const scopedSlots = {}
       this.blocks.map((block) => {
         scopedSlots[block.attributes.drupal_internal__id] = (attrs) => {
-          delete attrs['data-fetch-key']
+          delete (attrs || {})['data-fetch-key']
           return this.$createElement('DruxtBlock', {
             attrs,
             key: block.attributes.drupal_internal__id,
@@ -119,11 +119,11 @@ export default {
       })
 
       // Build default slot.
-      scopedSlots.default = (attrs) => this.blocks.map((block) => 
+      scopedSlots.default = (attrs) => this.$createElement('div', this.blocks.map((block) => 
         this.isVisible(block)
           ? scopedSlots[block.attributes.drupal_internal__id](attrs)
           : false
-      )
+      ))
       if (this.$scopedSlots.default) {
         scopedSlots.default = (attrs) => this.$scopedSlots.default({
           ...this.$options.druxt.propsData(this),
