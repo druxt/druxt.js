@@ -3,6 +3,7 @@
 [![CircleCI](https://circleci.com/gh/druxt/druxt-blocks.svg?style=svg)](https://circleci.com/gh/druxt/druxt-blocks)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-blocks/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-blocks?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-blocks/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-blocks)
+[![npm](https://badgen.net/npm/v/druxt-blocks)](https://www.npmjs.com/package/druxt-blocks)
 
 > Provides Drupal Blocks and Region components to be used within a Druxt (DRUpal nuXT) project.
 
@@ -26,12 +27,25 @@ module.exports = {
     'druxt-blocks'
   ],
   druxt: {
-    baseUrl: 'https://demo-api.druxtjs.org'
-  }
+    baseUrl: 'https://demo-api.druxtjs.org',
+    blocks: {
+      query: {
+        fields: [],
+      },
+    },
+  },
 }
 ```
 
 ## Options
+
+### DruxtBlock options
+
+These options are specific to this module.
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `block.query.fields` | `string[]` | No | `[]` | An array of fields to filter all Block JSON:API queries. |
 
 ### Base Druxt options
 

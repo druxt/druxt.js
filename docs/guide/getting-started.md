@@ -1,12 +1,6 @@
 # Getting started
 
-## DruxtJS
-
-DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
-
-This module is included in the core [DruxtJS](http://druxtjs.org) project, the below instructions are only required if installing this module standalone.
-
-## Quickstart
+## Quickstart - Nuxt.js
 
 1. Install the NPM module:
     ```sh
@@ -21,7 +15,7 @@ This module is included in the core [DruxtJS](http://druxtjs.org) project, the b
       ],
       druxt: {
         baseUrl: 'https://demo-api.druxtjs.org'
-      }
+      },
     }
     ```
 
@@ -33,5 +27,3 @@ This module is included in the core [DruxtJS](http://druxtjs.org) project, the b
 
 ### Frontend
 - [Nuxt.js](https://nuxtjs.org) frontend.
-- [DruxtJS Entity](https://entity.druxtjs.org/)
-- [DruxtJS Router](https://router.druxtjs.org/)

@@ -5,48 +5,40 @@ actionText: Get started
 actionLink: /guide/getting-started
 ---
 
-> The DruxtJS Blocks module adds [Drupal](https://drupal.org) Blocks, Content Blocks and Block Region Vue.js components to your [Nuxt.js](https://nuxtjs.org) frontend.
+> The DruxtBlocks module adds [Drupal](https://drupal.org) Blocks, Content Blocks and Block Region Vue.js components to your [Nuxt.js](https://nuxtjs.org) application.
 
 
-## The DruxtBlock component
+### DruxtBlock
 
-Druxt Blocks provides a Vue.js component to render a specified Block.
+The DruxtBlock component renders a Drupal JSON:API Block resource by ID or UUID.
 
 ```vue
-<DruxtBlock :uuid="name" :mode="displayMode" />
+<DruxtBlock :id="drupal_internal__id" />
+```
+
+```vue
+<DruxtBlock :uuid="uuid" />
 ```
 
 Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtBlock.html).
 
 
 
-## The DruxtBlockRegion component
+### DruxtBlockRegion
 
-Druxt Blocks provides a Vue.js component to render all Blocks in a specified Drupal Region, for a specified theme.
+The DruxtBlockRegion component renders all visible blocks for the specified theme region.
 
 ```vue
 <DruxtBlockRegion :name="name" :theme="theme" />
 ```
 
+![Example DruxtBlockRegion component](./images/druxt-block-region.png)
+
 Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtBlockRegion.html).
-
-
-### Druxt component
-
-The DruxtBlock and DruxtBlockRegion components are compatible with the DruxtJS component theming system:
-
-```vue
-<Druxt module="block" :props-data="{ uuid, mode }" :wrapper="wrapper" />
-```
-```vue
-<Druxt module="block-region" :props-data="{ name, theme }" :wrapper="wrapper" />
-```
-
-See the [Druxt component documentation](https://druxtjs.org/guide/#the-druxt-component) for more information.
 
 
 ## DruxtJS
 
-DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
+DruxtJS is a framework to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) application.
 
-Find out more at [http://druxtjs.org](http://druxtjs.org)
+Find out more at [https://druxtjs.org](https://druxtjs.org)
