@@ -1,92 +1,33 @@
-<template>
-  <component
-    :is="wrapper.component"
-    :class="wrapper.class"
-    :style="wrapper.style"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      v-bind="component.propsData"
-    >
-      <!-- Render blocks in their own named slots. --->
-      <template
-        v-for="block of blocks"
-        v-slot:[block.attributes.drupal_internal__id]="$attrs"
-      >
-        <DruxtBlock
-          :key="block.id"
-          :type="block.type"
-          :uuid="block.id"
-          v-bind="$attrs"
-        />
-      </template>
-
-      <!-- Render all blocks in the default slot. -->
-      <template v-slot="$attrs">
-        <DruxtBlock
-          v-for="block of blocks"
-          :key="block.id"
-          :type="block.type"
-          :uuid="block.id"
-          v-bind="$attrs"
-        />
-      </template>
-    </component>
-  </component>
-</template>
-
 <script>
-import { mapActions, mapState } from 'vuex'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-
-import { Druxt, DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
+import { mapActions, mapState } from 'vuex'
 
 /**
- * The `<DruxtBlockRegion />` Vue.js component.
+ * The `<DruxtBlockRegion />` enders all visible blocks for the specified theme
+ * region.
  *
- * - Loads all JSON:API Block resources for a region/theme via the DruxtJS Router module.
- * - Uses the DruxtBlock component to render individual resources, ordered by weight.
- * - Renders the data via the DruxtComponentMixin.
- *
- * @example
+ * @example @lang vue
  * <DruxtBlockRegion
  *   name="header"
  *   theme="umami"
  * />
- *
- * @example
- * <Druxt
- *   module="block-region"
- *   name="header"
- *   theme="umami"
- * />
- *
- * @todo {@link https://github.com/druxt/druxt-blocks/issues/25|Add documentation, tests and examples for slots.}
  */
 export default {
   name: 'DruxtBlockRegion',
 
-  components: { Druxt },
+  extends: DruxtModule,
 
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link https://druxtjs.org/api/mixins/component.html|DruxtComponentMixin}
-   */
-  mixins: [DruxtComponentMixin],
-
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
+  /** */
   props: {
     /**
-     * Region name.
+     * The Block regions machine name.
      *
      * @type {string}
      * @default content
+     * 
+     * @example @lang vue
+     * <DruxtBlockRegion name="header" :theme="theme" />
      */
     name: {
       type: String,
@@ -94,9 +35,13 @@ export default {
     },
 
     /**
-     * Drupal theme.
+     * A Drupal theme machine name.
      *
      * @type {string}
+     * @required
+     *
+     * @example @lang vue
+     * <DruxtBlockRegion theme="umami" />
      */
     theme: {
       type: String,
@@ -105,51 +50,35 @@ export default {
   },
 
   /**
-   * Nuxt.js fetch method.
+   * The Nuxt Fetch hook.
+   * 
+   * Fetches all blocks by region and theme.
    */
   async fetch() {
+    const type = 'block--block'
     const query = new DrupalJsonApiParams()
     query
       .addFilter('region', this.name)
       .addFilter('status', '1')
       .addFilter('theme', this.theme)
-      .addGroup('visibility', 'OR')
-      .addFilter('visibility.request_path', null, 'IS NULL', 'visibility')
       .addSort('weight')
+      .addFields(type, ['drupal_internal__id', 'visibility', 'weight'])
 
-    query.addGroup('pages', 'AND', 'visibility')
-      .addFilter('visibility.request_path.pages', this.route.resolvedPath, 'CONTAINS', 'pages')
-      .addFilter('visibility.request_path.negate', 0, '=', 'pages')
-
-    query.addGroup('front', 'AND', 'visibility')
-      .addFilter('visibility.request_path.pages', '<front>', 'CONTAINS', 'front')
-      .addFilter('visibility.request_path.negate', this.route.isHomePath ? 0 : 1, '=', 'front')
-
-    const collection = await this.getCollection({ type: 'block--block', query })
+    const collection = await this.getCollection({ type, query })
     this.blocks = collection.data
 
-    await DruxtComponentMixin.fetch.call(this)
+    await DruxtModule.fetch.call(this)
   },
 
   /**
-   * Vue.js Data object.
-   *
-   * Used for on-demand JSON:API resource loading.
-   *
    * @property {objects[]} blocks - The Block JSON:API resources.
    */
   data: () => ({
     blocks: []
   }),
 
-  druxt: ({ vm }) => ({
-    componentOptions: [[vm.name, vm.theme]]
-  }),
-
   /**
-   * Vue.js Computed properties.
-   *
-   * @vue-computed {object} route The current Route.
+   * @vue-computed {object} route The current Route from the [DruxtRouter vuex store](https://router.druxtjs.org/api/stores/router.html).
    */
   computed: {
     ...mapState('druxtRouter', {
@@ -157,25 +86,181 @@ export default {
     })
   },
 
-  /**
-   * Nuxt.js watch property.
-   */
-  watch: {
-    /**
-     * Updates blocks on Route change.
-     */
-    $route: function() {
-      this.$fetch()
-    }
-  },
-
   methods: {
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * A scoped slot is provided for each block in the region, regardless of
+     * visibility.
+     * 
+     * The `default` slot will render all blocks, filtered by route visibility.
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     *
+     * @example <caption>DruxtBlockRegion**Name**.vue</caption> @lang vue
+     * <template>
+     *   <div v-if="default">
+     *     <slot />
+     *   </div>
+     * 
+     *   <div v-else>
+     *     <slot name="umami_branding" />
+     *   </div>
+     * </template>
+     */
+    getScopedSlots() {
+      // Build scoped slots for each block.
+      const scopedSlots = {}
+      this.blocks.map((block) => {
+        scopedSlots[block.attributes.drupal_internal__id] = (attrs) => {
+          delete (attrs || {})['data-fetch-key']
+          return this.$createElement('DruxtBlock', {
+            attrs,
+            key: block.attributes.drupal_internal__id,
+            props: {
+              uuid: block.id,
+            },
+            ref: block.attributes.drupal_internal__id,
+          })
+        }
+      })
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => this.$createElement('div', this.blocks.map((block) => 
+        this.isVisible(block)
+          ? scopedSlots[block.attributes.drupal_internal__id](attrs)
+          : false
+      ))
+      if (this.$scopedSlots.default) {
+        scopedSlots.default = (attrs) => this.$scopedSlots.default({
+          ...this.$options.druxt.propsData(this),
+          ...attrs
+        })
+      }
+
+      return scopedSlots
+    },
+
+    /**
+     * Checks if a given block shoud be visible.
+     * 
+     * Uses Request Path visibility details if available with the DruxtRouter.
+     * 
+     * @param {object} block - The Block entity object.
+     * 
+     * @return {boolean}
+     */
+    isVisible(block) {
+      // Request path visibility conditions.
+      if ((block.attributes.visibility || {}).request_path) {
+        let visible = false
+        const { negate } = block.attributes.visibility.request_path
+        const pages = block.attributes.visibility.request_path.pages.split(/\r?\n/).filter(i => i)
+
+        if (pages.includes('<front>') && (this.route.isHomePath || (!this.route.isHomePath && negate))) {
+          visible = true
+        }
+
+        if (pages.includes(this.route.resolvedPath) || (!pages.includes(this.route.resolvedPath) && negate)) {
+          visible = true
+        }
+
+        return visible
+      }
+
+      // Default to true.
+      // @todo Add support for other visibility plugins.
+      return true
+    },
+
     /**
      * Maps `druxt/getCollection` Vuex action to `this.getCollection`.
      */
     ...mapActions({
       getCollection: 'druxt/getCollection'
     })
-  }
+  },
+
+  /**
+   * DruxtModule configuration.
+   */
+  druxt: {
+    /**
+     * Provides the available component naming options for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {ComponentOptions}
+     */
+    componentOptions: ({ name, theme }) => [[name, theme], ['default']],
+
+    /**
+     * Provides propsData for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {PropsData}
+     */
+    propsData: ({ blocks, name, theme }) => ({ blocks, name, theme }),
+  },
 }
+
+/**
+ * Provides the available naming options for the Wrapper component.
+ *
+ * @typedef {array[]} ComponentOptions
+ *
+ * @example @lang js
+ * [
+ *   'DruxtBlockRegion[Name][Theme]',
+ *   'DruxtBlockRegion[Name]',
+ *   'DruxtBlockRegion[Default]',
+ * ]
+ *
+ * @example <caption>Banner top - Umami</caption> @lang js
+ * [
+ *   'DruxtBlockRegionBannerTopUmami',
+ *   'DruxtBlockRegionBannerTop',
+ *   'DruxtBlockRegionDefault',
+ * ]
+ */
+
+/**
+ * Provides propsData for use in the Wrapper component.
+ *
+ * @typedef {object} PropsData
+ * @param {object[]} blocks - The Block JSON:API resources.
+ * @param {string} name - The Block regions machine name.
+ * @param {string} theme - A Drupal theme machine name.
+ *
+ * @example @lang js
+ * {
+ *   blocks: [{
+ *     attributes: {},
+ *     id: '59104acd-88e1-43c3-bd5f-35800f206394',
+ *     links: {},
+ *     relationships: {},
+ *     type: 'block--block',
+ *   }],
+ *   name: 'banner_top,
+ *   theme: 'umami',
+ * }
+ */
+
+/**
+ * Provides scoped slots for use in the Wrapper component.
+ *
+ * @typedef {object} ScopedSlots
+ * @param {function} [drupal_internal__id] - Slot per block.
+ * @param {function} default - All blocks, filtered by route visibility.
+ *
+ * @example <caption>DruxtBlockRegion**Name**.vue</caption> @lang vue
+ * <template>
+ *   <div v-if="default">
+ *     <slot />
+ *   </div>
+ * 
+ *   <div v-else>
+ *     <slot name="umami_branding" />
+ *   </div>
+ * </template>
+ */
 </script>

@@ -1,10 +1,14 @@
 <template>
   <div>
-    <DruxtEntity v-bind="propsData" />
+    <DruxtEntity
+      v-if="!$fetchState.pending"
+      v-bind="propsData"
+    />
   </div>
 </template>
 
 <script>
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtBlocksBlockMixin } from '../../mixins/block'
 
 /**
@@ -31,6 +35,14 @@ export default {
    */
   mixins: [DruxtBlocksBlockMixin],
 
+  async fetch() {
+    await this.$store.dispatch('druxt/getResource', {
+      type: this.block.type,
+      id: this.block.id,
+      query: new DrupalJsonApiParams().addFields(this.block.type, ['dependencies']),
+    })
+  },
+
   /**
    * Vue.js Computed properties.
    */
@@ -42,14 +54,20 @@ export default {
      *
      * @see {@link https://druxt.github.io/druxt-entity/api/components/DruxtEntity.html|DruxtEntity}
      */
-    propsData() {
-      const parts = this.block.attributes.dependencies.content[0].split(':')
+    propsData: ({ $fetchState, $store, block }) => {
+      if ($fetchState.pending) return false
+
+      const resource = $store.state.druxt.resources[block.type][block.id]
+      if (!resource.data.attributes.dependencies) return false
+
+      const parts = resource.data.attributes.dependencies.content[0].split(':')
 
       return {
+        key: resource.data.attributes.dependencies.content[0],
         type: `${parts[0]}--${parts[1]}`,
         uuid: parts[2]
       }
-    }
-  }
+    },
+  },
 }
 </script>
