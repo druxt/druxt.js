@@ -4,43 +4,30 @@ import { DruxtModule } from 'druxt'
 import { mapActions, mapState } from 'vuex'
 
 /**
- * The `<DruxtBlockRegion />` Vue.js component.
+ * The `<DruxtBlockRegion />` enders all visible blocks for the specified theme
+ * region.
  *
- * - Loads all JSON:API Block resources for a region/theme via the DruxtJS Router module.
- * - Uses the DruxtBlock component to render individual resources, ordered by weight.
- * - Renders the data via the DruxtComponentMixin.
- *
- * @example
+ * @example @lang vue
  * <DruxtBlockRegion
  *   name="header"
  *   theme="umami"
  * />
- *
- * @example
- * <Druxt
- *   module="block-region"
- *   name="header"
- *   theme="umami"
- * />
- *
- * @todo {@link https://github.com/druxt/druxt-blocks/issues/25|Add documentation, tests and examples for slots.}
  */
 export default {
   name: 'DruxtBlockRegion',
 
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
+  /** */
   props: {
     /**
-     * Region name.
+     * The Block regions machine name.
      *
      * @type {string}
      * @default content
+     * 
+     * @example @lang vue
+     * <DruxtBlockRegion name="header" :theme="theme" />
      */
     name: {
       type: String,
@@ -48,9 +35,13 @@ export default {
     },
 
     /**
-     * Drupal theme.
+     * A Drupal theme machine name.
      *
      * @type {string}
+     * @required
+     *
+     * @example @lang vue
+     * <DruxtBlockRegion theme="umami" />
      */
     theme: {
       type: String,
@@ -59,10 +50,11 @@ export default {
   },
 
   /**
-   * Nuxt.js fetch method.
+   * The Nuxt Fetch hook.
+   * 
+   * Fetches all blocks by region and theme.
    */
   async fetch() {
-    // @todo - Add ability to alter query via DruxtModule settings.
     const type = 'block--block'
     const query = new DrupalJsonApiParams()
     query
@@ -79,10 +71,6 @@ export default {
   },
 
   /**
-   * Vue.js Data object.
-   *
-   * Used for on-demand JSON:API resource loading.
-   *
    * @property {objects[]} blocks - The Block JSON:API resources.
    */
   data: () => ({
@@ -90,9 +78,7 @@ export default {
   }),
 
   /**
-   * Vue.js Computed properties.
-   *
-   * @vue-computed {object} route The current Route.
+   * @vue-computed {object} route The current Route from the [DruxtRouter vuex store](https://router.druxtjs.org/api/stores/router.html).
    */
   computed: {
     ...mapState('druxtRouter', {
@@ -101,6 +87,27 @@ export default {
   },
 
   methods: {
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * A scoped slot is provided for each block in the region, regardless of
+     * visibility.
+     * 
+     * The `default` slot will render all blocks, filtered by route visibility.
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     *
+     * @example <caption>DruxtBlockRegion**Name**.vue</caption> @lang vue
+     * <template>
+     *   <div v-if="default">
+     *     <slot />
+     *   </div>
+     * 
+     *   <div v-else>
+     *     <slot name="umami_branding" />
+     *   </div>
+     * </template>
+     */
     getScopedSlots() {
       // Build scoped slots for each block.
       const scopedSlots = {}
@@ -134,6 +141,15 @@ export default {
       return scopedSlots
     },
 
+    /**
+     * Checks if a given block shoud be visible.
+     * 
+     * Uses Request Path visibility details if available with the DruxtRouter.
+     * 
+     * @param {object} block - The Block entity object.
+     * 
+     * @return {boolean}
+     */
     isVisible(block) {
       // Request path visibility conditions.
       if ((block.attributes.visibility || {}).request_path) {
@@ -165,9 +181,86 @@ export default {
     })
   },
 
+  /**
+   * DruxtModule configuration.
+   */
   druxt: {
+    /**
+     * Provides the available component naming options for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {ComponentOptions}
+     */
     componentOptions: ({ name, theme }) => [[name, theme], ['default']],
+
+    /**
+     * Provides propsData for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {PropsData}
+     */
     propsData: ({ blocks, name, theme }) => ({ blocks, name, theme }),
   },
 }
+
+/**
+ * Provides the available naming options for the Wrapper component.
+ *
+ * @typedef {array[]} ComponentOptions
+ *
+ * @example @lang js
+ * [
+ *   'DruxtBlockRegion[Name][Theme]',
+ *   'DruxtBlockRegion[Name]',
+ *   'DruxtBlockRegion[Default]',
+ * ]
+ *
+ * @example <caption>Banner top - Umami</caption> @lang js
+ * [
+ *   'DruxtBlockRegionBannerTopUmami',
+ *   'DruxtBlockRegionBannerTop',
+ *   'DruxtBlockRegionDefault',
+ * ]
+ */
+
+/**
+ * Provides propsData for use in the Wrapper component.
+ *
+ * @typedef {object} PropsData
+ * @param {object[]} blocks - The Block JSON:API resources.
+ * @param {string} name - The Block regions machine name.
+ * @param {string} theme - A Drupal theme machine name.
+ *
+ * @example @lang js
+ * {
+ *   blocks: [{
+ *     attributes: {},
+ *     id: '59104acd-88e1-43c3-bd5f-35800f206394',
+ *     links: {},
+ *     relationships: {},
+ *     type: 'block--block',
+ *   }],
+ *   name: 'banner_top,
+ *   theme: 'umami',
+ * }
+ */
+
+/**
+ * Provides scoped slots for use in the Wrapper component.
+ *
+ * @typedef {object} ScopedSlots
+ * @param {function} [drupal_internal__id] - Slot per block.
+ * @param {function} default - All blocks, filtered by route visibility.
+ *
+ * @example <caption>DruxtBlockRegion**Name**.vue</caption> @lang vue
+ * <template>
+ *   <div v-if="default">
+ *     <slot />
+ *   </div>
+ * 
+ *   <div v-else>
+ *     <slot name="umami_branding" />
+ *   </div>
+ * </template>
+ */
 </script>
