@@ -20,7 +20,11 @@ const mountComponent = (name = null, options = {}) => {
     propsData.name = name
   }
 
-  return shallowMount(DruxtBlockRegion, { localVue, propsData, store, ...options })
+  const mocks = {
+    $fetchState: { pending: true },
+  }
+
+  return shallowMount(DruxtBlockRegion, { localVue, mocks, propsData, store, ...options })
 }
 
 describe('Component - DruxtBlockRegion', () => {
@@ -47,42 +51,88 @@ describe('Component - DruxtBlockRegion', () => {
     const wrapper = mountComponent()
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
+    // Props.
     expect(wrapper.vm.name).toBe('content')
     expect(wrapper.vm.theme).toBe('umami')
 
-    expect(wrapper.vm.component.options.length).toBe(2)
-    expect(wrapper.vm.component.options).toStrictEqual([
-      'DruxtBlockRegionContentUmami',
-      'DruxtBlockRegionContent'
-    ])
-
-    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
-
+    // Data
     expect(wrapper.vm.blocks.length).toBe(1)
 
-    const watch = {
-      ...DruxtBlockRegion.watch,
-      $fetch: jest.fn()
-    }
-    watch.$route()
-    expect(watch.$fetch).toHaveBeenCalled()
+    // Vuex
+    expect(wrapper.vm.route).toStrictEqual({
+      isHomePath: true,
+      resolvedPath: '/en/node',
+    })
+
+    // Methods.
+    expect(wrapper.vm.isVisible(wrapper.vm.blocks[0])).toBe(true)
+
+    // DruxtModule.
+    expect(wrapper.vm.component.options.length).toBe(3)
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtBlockRegionContentUmami',
+      'DruxtBlockRegionContent',
+      'DruxtBlockRegionDefault',
+    ])
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
+
+    // Default slot.
+    const slot = wrapper.vm.getScopedSlots().default()
+    expect(slot.tag).toBe('div')
   })
 
   test('sort', async () => {
     const wrapper = mountComponent('banner_top')
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
+    // Props.
     expect(wrapper.vm.name).toBe('banner_top')
     expect(wrapper.vm.theme).toBe('umami')
 
-    expect(wrapper.vm.component.options.length).toBe(2)
+    // Data
+    expect(wrapper.vm.blocks.length).toBe(3)
+
+    // Vuex
+    expect(wrapper.vm.route).toStrictEqual({
+      isHomePath: true,
+      resolvedPath: '/en/node',
+    })
+
+    // Methods.
+    expect(wrapper.vm.isVisible(wrapper.vm.blocks[0])).toBe(false)
+    expect(wrapper.vm.isVisible(wrapper.vm.blocks[1])).toBe(true)
+    expect(wrapper.vm.isVisible(wrapper.vm.blocks[2])).toBe(true)
+
+    store.state.druxtRouter.route = {
+      isHomePath: false,
+      resolvedPath: '/recipes',
+    }
+    expect(wrapper.vm.isVisible(wrapper.vm.blocks[0])).toBe(true)
+    expect(wrapper.vm.isVisible(wrapper.vm.blocks[1])).toBe(false)
+    expect(wrapper.vm.isVisible(wrapper.vm.blocks[2])).toBe(false)
+
+    // DruxtModule.
+    expect(wrapper.vm.component.options.length).toBe(3)
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtBlockRegionBannerTopUmami',
-      'DruxtBlockRegionBannerTop'
+      'DruxtBlockRegionBannerTop',
+      'DruxtBlockRegionDefault',
     ])
 
-    expect(wrapper.vm.blocks.length).toBe(2)
-
+    // Assert that the results are corectly sorted.
     expect(wrapper.vm.blocks[0].attributes.weight < wrapper.vm.blocks[1].attributes.weight).toBeTruthy()
+  })
+
+  test('custom default slot', async () => {
+    const scopedSlots = { default: jest.fn() }
+    const wrapper = mountComponent(null, { scopedSlots })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    wrapper.vm.getScopedSlots().default()
+    expect(scopedSlots.default).toHaveBeenCalledWith({
+      blocks: wrapper.vm.blocks,
+      name: 'content',
+      theme: 'umami',
+    })
   })
 })

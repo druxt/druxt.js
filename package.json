@@ -1,6 +1,6 @@
 {
   "name": "druxt-blocks",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Provides Drupal blocks and region components to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
@@ -28,7 +28,8 @@
   "unpkg": "dist/druxt-blocks.min.js",
   "files": [
     "dist",
-    "nuxt"
+    "nuxt",
+    "src/components/*.vue"
   ],
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",
@@ -50,8 +51,8 @@
   "dependencies": {
     "axios": "^0.21.1",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "^0.4.1",
-    "druxt-entity": "^0.10.0",
+    "druxt": "^0.6.0",
+    "druxt-entity": "^0.14.0",
     "druxt-router": "^0.18.0",
     "vuex": "^3.6.0"
   },

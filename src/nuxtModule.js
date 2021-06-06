@@ -1,4 +1,5 @@
 import { resolve } from 'path'
+import DruxtBlocksStorybook from './nuxtStorybook'
 
 /**
  * The Nuxt.js module function.
@@ -23,17 +24,29 @@ import { resolve } from 'path'
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
 const DruxtBlocksNuxtModule = function (moduleOptions = {}) {
+  const { options } = this
+
   // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
+  if (typeof options === 'undefined' || !options.druxt) {
     throw new TypeError('Druxt settings missing.')
   }
-  const options = this.options.druxt
+
+  // Add dependant modules.
+  const modules = ['druxt'].filter((module) => !(options.modules || []).includes(module))
+  for (const module of modules) {
+    this.addModule(module)
+  }
 
   // Add plugin.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/plugin.js'),
     fileName: 'druxt-blocks.js',
-    options
+    options: options.druxt,
+  })
+
+  // Nuxt Storybook.
+  this.nuxt.hook('storybook:config', async ({ stories }) => {
+    await DruxtBlocksStorybook.call(this, { stories })
   })
 }
 
