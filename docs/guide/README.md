@@ -14,6 +14,7 @@ The DruxtBlocks module adds Drupal Blocks, Block Region and Custom content Block
 - [DruxtBlockRegion component](#druxtblockregion-component)
 - [Druxt Module wrapper theming support](#theming)
 - [Druxt Module settings](#module-settings)
+- [Auto-generated Nuxt Storybook integration](#storybook)
 
 
 ## Nuxt module
@@ -87,3 +88,12 @@ druxt: {
   },
 }
 ```
+
+
+## Storybook
+
+DruxtBlocks provides zero-config, auto generated Storybook integration with a live data connnection to your Druxt backend.
+
+![DruxtBlocks Storybook integration](../images/druxt-block-storybook.png)
+
+See [Gettings started](/guide/getting-started) for more information.

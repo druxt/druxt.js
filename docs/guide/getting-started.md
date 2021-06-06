@@ -19,6 +19,20 @@
     }
     ```
 
+### Storybook integration
+
+The DruxtBlocks module provides zero-config, auto-generated Storybook integration for your Drupal Blocks and regions.
+
+1. Install the **@nuxtjs/storybook** module:
+    ```sh
+    npm i -D @nuxtjs/storybook
+    ```
+
+2. Run storybook:
+    ```sh
+    npx nuxt storybook
+    ```
+
 ## Requirements
 
 ### Backend
@@ -27,3 +41,4 @@
 
 ### Frontend
 - [Nuxt.js](https://nuxtjs.org) frontend.
+- (optional) [Nuxt Storybook](https://storybook.nuxtjs.org/) module.

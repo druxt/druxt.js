@@ -28,7 +28,8 @@
   "unpkg": "dist/druxt-blocks.min.js",
   "files": [
     "dist",
-    "nuxt"
+    "nuxt",
+    "src/components/*.vue"
   ],
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c",

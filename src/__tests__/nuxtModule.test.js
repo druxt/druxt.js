@@ -1,7 +1,13 @@
 import DruxtBlocksNuxtModule from '..'
 
+jest.mock('../nuxtStorybook')
+
 const mock = {
+  addModule: jest.fn(),
   addPlugin: jest.fn(),
+  nuxt: {
+    hook: (hook, fn) => fn({})
+  },
   DruxtBlocksNuxtModule
 }
 
