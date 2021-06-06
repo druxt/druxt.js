@@ -1,24 +1,5 @@
-<template>
-  <component
-    :is="wrapper.component"
-    v-if="!$fetchState.pending"
-    :class="wrapper.class"
-    :style="wrapper.style"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      v-bind="component.propsData"
-    >
-      <template #default>
-        {{ crumbs }}
-      </template>
-    </component>
-  </component>
-</template>
-
 <script>
-import { DruxtComponentMixin } from 'druxt'
+import { DruxtModule } from 'druxt'
 import { mapActions, mapState } from 'vuex'
 
 /**
@@ -30,7 +11,7 @@ import { mapActions, mapState } from 'vuex'
 export default {
   name: 'DruxtBreadcrumb',
 
-  mixins: [DruxtComponentMixin],
+  extends: DruxtModule,
 
   /**
    * Vue.js Properties.
@@ -57,14 +38,10 @@ export default {
    */
   async fetch() {
     await this.fetchCrumbs()
-
-    // Fetch theme component.
-    await DruxtComponentMixin.fetch.call(this)
+    await DruxtModule.fetch.call(this)
   },
 
   /**
-   * Vue.js Data object.
-   *
    * @property {objects[]} crumbs - The Breadcrumbs.
    */
 
@@ -106,9 +83,10 @@ export default {
       if (this.$route.path === '/' && !this.home) return
 
       // Current route crumb.
-      const crumbs = [{
-        text: this.route.label
-      }]
+      const crumbs = []
+      if (this.route.label) {
+        crumbs.push({ text: this.route.label })
+      }
 
       // If we are at the root of the site, stop here.
       if (this.$route.path === '/') {
@@ -148,6 +126,35 @@ export default {
     },
 
     /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * The `default` slot renders crumbs as as list of NuxtLink's.
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    getScopedSlots() {
+      // Build scoped slots for each field.
+      const scopedSlots = {}
+
+      // Build default slot.
+      scopedSlots.default = () => this.$createElement('ul', this.crumbs.map((crumb) =>
+        this.$createElement('li', [
+          crumb.to
+            ? this.$createElement('NuxtLink', { props: { to: crumb.to }}, [crumb.text])
+            : crumb.text
+        ])
+      ))
+      if (this.$scopedSlots.default) {
+        scopedSlots.default = (attrs) => this.$scopedSlots.default({
+          ...this.$options.druxt.propsData(this),
+          ...attrs
+        })
+      }
+
+      return scopedSlots
+    },
+
+    /**
      * Maps `druxtRouter/getRoute` Vuex action to `this.getRoute`.
      */
     ...mapActions({
@@ -158,11 +165,9 @@ export default {
   /**
    * Druxt module function.
    */
-  druxt: ({ vm }) => ({
-    componentOptions: [['default']],
-    propsData: {
-      crumbs: vm.crumbs
-    }
-  }),
+  druxt: {
+    componentOptions: ({}) => [['default']],
+    propsData: ({ crumbs }) => ({ crumbs })
+  },
 }
 </script>

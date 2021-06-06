@@ -10,7 +10,7 @@ localVue.use(Vuex)
 
 let store
 
-const mountComponent = ({ path, routes, propsData }) => {
+const mountComponent = ({ path, routes, propsData, options }) => {
   // Setup mocks.
   const mocks = {
     $route: { path },
@@ -34,7 +34,7 @@ const mountComponent = ({ path, routes, propsData }) => {
     store.commit('druxtRouter/setRoute', path)
   }
 
-  return shallowMount(DruxtBreadcrumb, { store, localVue, mocks, propsData })
+  return shallowMount(DruxtBreadcrumb, { store, localVue, mocks, propsData, ...options })
 }
 
 describe('DruxtBreadcrumb', () => {
@@ -63,6 +63,11 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs[0].text).toBe('/')
 
     expect(wrapper.html()).toMatchSnapshot()
+
+    // Default slot.
+    const slot = wrapper.vm.getScopedSlots().default()
+    expect(slot.tag).toBe('ul')
+    expect(slot.children[0].tag).toBe('li')
   })
 
   test('level 1', async () => {
@@ -139,5 +144,18 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(0)
 
     expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  test('custom default slot', async () => {
+    const scopedSlots = { default: jest.fn() }
+    const wrapper = mountComponent({ path: '/', options: { scopedSlots } })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    wrapper.vm.getScopedSlots().default.call()
+    expect(scopedSlots.default).toHaveBeenCalledWith({
+      crumbs: [{
+        text: '/',
+      }],
+    })
   })
 })
