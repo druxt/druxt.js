@@ -1,8 +1,6 @@
 # Getting started
 
-DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API backend:
-
-## Quickstart
+## Quickstart - Nuxt.js
 
 1. Install the NPM module:
     ```sh
@@ -13,11 +11,11 @@ DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API backend:
     ```js
     module.exports = {
       modules: [
-        'druxt-breadcrumb'
+        'druxt-breadcrumb',
       ],
       druxt: {
-        baseUrl: 'https://demo-api.druxtjs.org'
-      }
+        baseUrl: 'https://demo-api.druxtjs.org',
+      },
     }
     ```
 
@@ -25,11 +23,7 @@ DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API backend:
 
 ### Backend
 - [Drupal](https://drupal.org) JSON:API backend.
+- [DruxtJS](https://www.drupal.org/project/druxt) Drupal module.
 
 ### Frontend
 - [Nuxt.js](https://nuxtjs.org) frontend.
-- [DruxtJS Router](https://router.druxtjs.org/)
-
-### Drupal DruxtJS module
-
-This module was designed for [DruxtJS](https://druxtjs.org) and works best with the [Drupal DruxtJS module](https://www.drupal.org/project/druxt).
