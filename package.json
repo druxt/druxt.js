@@ -1,6 +1,6 @@
 {
   "name": "druxt-breadcrumb",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "Provides a Breadcrumb Vue component to be used within a Druxt (DRUpal nuXT) project.",
   "repository": {
     "type": "git",
@@ -13,7 +13,11 @@
     "druxt",
     "nuxt"
   ],
-  "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/druxt/druxt-breadcrumb/issues"
@@ -44,8 +48,8 @@
     ]
   },
   "dependencies": {
-    "druxt": "^0.4.1",
-    "druxt-blocks": "^0.8.0",
+    "druxt": "^0.6.0",
+    "druxt-blocks": "^0.9.0",
     "druxt-router": "^0.18.0",
     "vuex": "^3.6.0"
   },
