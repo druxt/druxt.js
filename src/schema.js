@@ -73,7 +73,8 @@ class DruxtSchema {
     const displays = (await Promise.all([
       ...['view', 'form'].map(async (schemaType) => {
         const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
-        return (await this.druxt.getCollectionAll(resourceType))
+        const query = new DrupalJsonApiParams().addSort('drupal_internal__id')
+        return (await this.druxt.getCollectionAll(resourceType, query))
         .map((collection) => 
           collection.data
             .filter((data) => !!data.attributes.status)
