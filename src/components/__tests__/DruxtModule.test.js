@@ -51,6 +51,29 @@ describe('DruxtModule component', () => {
     expect(wrapper.html()).toMatchSnapshot()
   })
 
+  test('defaults - v-model', async () => {
+    const Component = {
+      template: "<DruxtModule v-model='model' ref='module' />",
+      components: { DruxtModule },
+      data: () => ({ model: null })
+    }
+    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtWrapper'] })
+
+    // Default state.
+    expect(wrapper.vm.model).toStrictEqual(null)
+    expect(wrapper.vm.$refs.module.component.props.value).toStrictEqual(undefined)
+    expect(wrapper.vm.$refs.module.model).toStrictEqual(null)
+    expect(wrapper.vm.$refs.module.value).toStrictEqual(null)
+
+    // Change model value.
+    await wrapper.setData({ model: { test: true }})
+
+    expect(wrapper.vm.model).toStrictEqual({ test: true })
+    expect(wrapper.vm.$refs.module.component.props.value).toStrictEqual({ test: true })
+    expect(wrapper.vm.$refs.module.model).toStrictEqual({ test: true })
+    expect(wrapper.vm.$refs.module.value).toStrictEqual({ test: true })
+  })
+
   test('custom module - no wrapper', async () => {
     const CustomModule = {
       name: 'CustomModule',
@@ -135,6 +158,14 @@ describe('DruxtModule component', () => {
       propsData: { foo: 'bar' },
     })
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
+
+    // v-model
+    expect(wrapper.vm.model).toBe(null)
+    await wrapper.setData({ model: { test: 'true' } })
+    expect(wrapper.vm.model).toStrictEqual({ test: 'true' })
+
+    wrapper.vm.$refs.component.$emit('input', { test: false })
+    expect(wrapper.vm.model).toStrictEqual({ test: false })
 
     // HTML snapshot.
     expect(wrapper.html()).toMatchSnapshot()

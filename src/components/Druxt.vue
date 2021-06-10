@@ -67,6 +67,17 @@ export default {
     },
 
     /**
+     * The module value.
+     *
+     * @type {(Array|Boolean|Date|Number|Object|String)}
+     * @model
+     */
+    value: {
+      type: [Array, Boolean, Date, Number, Object, String],
+      default: null,
+    },
+
+    /**
      * Wrapper element.
      *
      * @type {object}
@@ -84,13 +95,15 @@ export default {
   /**
    * Vue.js Data object.
    *
-   * @property {objects} components - The module and wrapper components settins.
+   * @property {objects} components - The module and wrapper components settinsg.
+   * @property {object} model - The model object.
    */
-  data: () => ({
+  data: ({ value }) => ({
     component: {
       is: undefined,
       propsData: {},
     },
+    model: value,
   }),
 
   created() {
@@ -113,13 +126,29 @@ export default {
     },
   },
 
+  watch: {
+    model() {
+      if (this.value !== this.model) {
+        this.$emit('input', this.model)
+      }
+    },
+
+    value() {
+      if (this.value !== this.model) {
+        this.model = this.value
+      }
+    }
+  },
+
   render(h) {
     const component = h(this.component.is, {
       props: {
         ...{ wrapper: this.inner },
         ...this.component.propsData,
-        ...this.$attrs
-      }
+        ...this.$attrs,
+        value: this.model,
+      },
+      ref: 'module',
     })
 
     if ((this.wrapper || {}).component) {
