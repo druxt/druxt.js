@@ -1,19 +1,8 @@
-import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import merge from 'deepmerge'
 import md5 from 'md5'
 import Vue from 'vue'
 
-const getDrupalJsonApiParams = (query) => {
-  const apiParams = new DrupalJsonApiParams()
-  if (!query) {
-    return apiParams
-  }
-
-  typeof query === 'object'
-    ? apiParams.initializeWithQueryObject(typeof query.getQueryObject === 'function' ? query.getQueryObject() : query)
-    : apiParams.initializeWithQueryString(query)
-  return apiParams
-}
+import { getDrupalJsonApiParams } from '../utils/getDrupalJsonApiParams'
 
 const dehydrateResources = ({ commit, queryObject, resources }) => {
   return resources.map((data) => {
@@ -215,6 +204,9 @@ const DruxtStore = ({ store }) => {
 
         // Parse the query.
         const queryObject = getDrupalJsonApiParams(query).getQueryObject()
+        queryObject.include = Array.isArray(queryObject.include)
+          ? queryObject.include.join(',')
+          : queryObject.include
 
         // Ensure that includes are in the fields filter.
         if (queryObject.include && typeof (queryObject.fields || {})[type] === 'string') {

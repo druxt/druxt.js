@@ -247,6 +247,10 @@ describe('DruxtStore', () => {
       _druxt_partial: expect.anything(),
       ...expected
     })
+
+    // Ensure no data normalization issues.
+    request.query = new DrupalJsonApiParams().addInclude([])
+    await store.dispatch('druxt/getResource', request)
   })
 
   test('getCollection', async () => {
