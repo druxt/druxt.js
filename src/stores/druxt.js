@@ -204,6 +204,9 @@ const DruxtStore = ({ store }) => {
 
         // Parse the query.
         const queryObject = getDrupalJsonApiParams(query).getQueryObject()
+        queryObject.include = Array.isArray(queryObject.include)
+          ? queryObject.include.join(',')
+          : queryObject.include
 
         // Ensure that includes are in the fields filter.
         if (queryObject.include && typeof (queryObject.fields || {})[type] === 'string') {
