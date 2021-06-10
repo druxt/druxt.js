@@ -6,16 +6,17 @@ export default {
 
   extends: DruxtModule,
 
-  props: {
-    text: {
-      type: String,
-      default: ''
+  methods: {
+    getScopedSlots() {
+      return {
+        default: (attrs) => this.$createElement('div', { attrs }, [this.model]),
+      }
     }
   },
 
   druxt: {
     componentOptions: () => ([['wrapper']]),
-    propsData: ({ text }) => ({ text })
+    propsData: ({ model }) => ({ value: model })
   },
 }
 </script>
