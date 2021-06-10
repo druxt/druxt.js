@@ -26,13 +26,24 @@ export default {
   components: { DruxtWrapper },
 
   props: {
+    /**
+     * The module value.
+     *
+     * @type {(Array|Boolean|Date|Number|Object|String)}
+     * @model
+     */
+    value: {
+      type: [Array, Boolean, Date, Number, Object, String],
+      default: null,
+    },
+
     wrapper: {
       type: Object,
       default: () => ({
         component: 'div',
         propsData: {},
       })
-    }
+    },
   },
 
   /**
@@ -85,8 +96,9 @@ export default {
 
   /**
    * @property {ComponentData} component - The wrapper component and propsData to be rendered.
+   * @property {object} model - The model object.
    */
-  data: () => ({
+  data: ({ value }) => ({
     component: {
       $attrs: {},
       is: 'DruxtWrapper',
@@ -95,6 +107,7 @@ export default {
       propsData: {},
       settings: {},
     },
+    model: value,
   }),
 
   methods: {
@@ -171,6 +184,7 @@ export default {
 
       // $attrs.
       const $attrs = { ...this.$attrs }
+      delete $attrs['data-fetch-key']
       const $attrsKeys = Object.keys(propsData).filter(i => !Object.keys(wrapperProps).includes(i))
       for (const key of $attrsKeys) {
         $attrs[key] = propsData[key]
@@ -232,7 +246,24 @@ export default {
     }
   },
 
+  watch: {
+    model() {
+      if (this.component.props.value !== this.model) {
+        this.component.props.value = this.model
+        this.$emit('input', this.model)
+      }
+    },
+
+    value() {
+      if (this.value !== this.model) {
+        this.model = this.value
+      }
+    }
+  },
+
   render(h) {
+    const self = this
+
     const wrapperData = {
       class: this.wrapper.class || undefined,
       style: this.wrapper.style || undefined,
@@ -248,7 +279,13 @@ export default {
     return h(this.wrapper.component, wrapperData, [
       h(this.component.is, {
         attrs: this.component.$attrs,
+        on: {
+          input(value) {
+            self.model = value
+          }
+        },
         props: this.component.props,
+        ref: 'component',
         scopedSlots: this.getScopedSlots(),
       })
     ])
