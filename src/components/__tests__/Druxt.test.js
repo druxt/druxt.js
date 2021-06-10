@@ -27,6 +27,34 @@ describe('Druxt component', () => {
     expect(wrapper.html()).toMatchSnapshot()
   })
 
+  test('defaults - v-model', async () => {
+    const Component = {
+      template: "<Druxt v-model='model' ref='druxt' module='test-module' />",
+      components: { Druxt },
+      data: () => ({ model: null })
+    }
+    const wrapper = mount(Component, { localVue, stubs: ['DruxtTestModule'] })
+
+    // Default state.
+    expect(wrapper.vm.model).toStrictEqual(null)
+    expect(wrapper.vm.$refs.druxt.model).toStrictEqual(null)
+    expect(wrapper.vm.$refs.druxt.value).toStrictEqual(null)
+
+    // Change model value.
+    await wrapper.setData({ model: { test: true }})
+
+    expect(wrapper.vm.model).toStrictEqual({ test: true })
+    expect(wrapper.vm.$refs.druxt.model).toStrictEqual({ test: true })
+    expect(wrapper.vm.$refs.druxt.value).toStrictEqual({ test: true })
+
+    // Change Druxt component model value.
+    wrapper.vm.$refs.druxt.model = { test: false }
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toStrictEqual({ test: false })
+    expect(wrapper.vm.$refs.druxt.model).toStrictEqual({ test: false })
+    expect(wrapper.vm.$refs.druxt.value).toStrictEqual({ test: false })
+  })
+
   test('missing module', async () => {
     const wrapper = mountWrapper({ module: 'test-missing-module' })
     expect(wrapper.vm.component.is).toBe(undefined)
