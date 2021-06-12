@@ -70,6 +70,11 @@ export default {
     await DruxtModule.fetch.call(this)
   },
 
+  fetchKey(getCounter) {
+    const parts = ['DruxtBlockRegion', this.name].filter((o) => o)
+    return [...parts, getCounter(parts.join(':'))].join(':')
+  },
+
   /**
    * @property {objects[]} blocks - The Block JSON:API resources.
    */

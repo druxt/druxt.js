@@ -51,6 +51,9 @@ describe('Component - DruxtBlockRegion', () => {
     const wrapper = mountComponent()
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
+    // Fetch key.
+    expect(DruxtBlockRegion.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtBlockRegion:content:0')
+
     // Props.
     expect(wrapper.vm.name).toBe('content')
     expect(wrapper.vm.theme).toBe('umami')
@@ -84,6 +87,9 @@ describe('Component - DruxtBlockRegion', () => {
   test('sort', async () => {
     const wrapper = mountComponent('banner_top')
     await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Fetch key.
+    expect(DruxtBlockRegion.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtBlockRegion:banner_top:0')
 
     // Props.
     expect(wrapper.vm.name).toBe('banner_top')
@@ -127,6 +133,9 @@ describe('Component - DruxtBlockRegion', () => {
     const scopedSlots = { default: jest.fn() }
     const wrapper = mountComponent(null, { scopedSlots })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Fetch key.
+    expect(DruxtBlockRegion.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtBlockRegion:content:0')
 
     wrapper.vm.getScopedSlots().default()
     expect(scopedSlots.default).toHaveBeenCalledWith({
