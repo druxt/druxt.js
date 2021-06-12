@@ -20,6 +20,11 @@ export default {
 
   extends: DruxtModule,
 
+  fetchKey (getCounter) {
+    const parts = ['DruxtMenu', this.name, this.parentId].filter((o) => o)
+    return [...parts, getCounter(parts.join(':'))].join(':')
+  },
+
   /**
    * Vue.js Properties.
    */
