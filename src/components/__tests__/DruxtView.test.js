@@ -44,6 +44,9 @@ describe('DruxtView', () => {
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
+    // Fetch key.
+    expect(DruxtView.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtView:featured_articles:page_1:0')
+
     // Props.
     expect(wrapper.vm.displayId).toBe('page_1')
     expect(wrapper.vm.uuid).toBe('ab193308-95ab-489d-b662-f7305380c41e')
@@ -115,6 +118,9 @@ describe('DruxtView', () => {
       viewId: 'recipes'
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Fetch key.
+    expect(DruxtView.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtView:recipes:embed_1:0')
 
     // Scoped slots.
     const scopedSlots = wrapper.vm.getScopedSlots.call(mocks)
