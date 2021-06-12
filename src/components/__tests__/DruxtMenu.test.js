@@ -41,6 +41,9 @@ describe('DruxtMenu', () => {
     const wrapper = mountComponent()
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
+    // Fetch key.
+    expect(DruxtMenuComponent.fetchKey.call(wrapper.vm, jest.fn(() => 1))).toBe('DruxtMenu:main:1')
+
     // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
