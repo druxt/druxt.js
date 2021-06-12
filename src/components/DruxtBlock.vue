@@ -84,6 +84,11 @@ export default {
     await DruxtModule.fetch.call(this)
   },
 
+  fetchKey(getCounter) {
+    const parts = ['DruxtBlock', this.uuid || this.id].filter((o) => o)
+    return [...parts, getCounter(parts.join(':'))].join(':')
+  },
+
   /**
    * @property {object} resource - The JSON:API resource object.
    */
