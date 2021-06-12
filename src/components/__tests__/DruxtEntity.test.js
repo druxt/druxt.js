@@ -52,6 +52,9 @@ describe('DruxtEntity', () => {
     const wrapper = mountComponent({ uuid: '772b174a-796f-4301-a04d-b935a7304fba', type: 'node--page' })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
+    // Fetch key.
+    expect(DruxtEntity.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtEntity:node--page:772b174a-796f-4301-a04d-b935a7304fba:default:0')
+    
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
 
     // Props.

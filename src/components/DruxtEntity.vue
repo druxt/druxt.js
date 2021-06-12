@@ -120,6 +120,11 @@ export default {
     this.component = component
   },
 
+  fetchKey(getCounter) {
+    const parts = ['DruxtEntity', this.type, this.uuid, this.mode, this.schemaType].filter((o) => o)
+    return [...parts, getCounter(parts.join(':'))].join(':')
+  },
+
   /**
    * Vue.js Data object.
    *
