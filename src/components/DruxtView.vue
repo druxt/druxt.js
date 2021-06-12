@@ -114,6 +114,11 @@ export default {
     this.component = component
   },
 
+  fetchKey(getCounter) {
+    const parts = ['DruxtView', this.viewId, this.displayId].filter((o) => o)
+    return [...parts, getCounter(parts.join(':'))].join(':')
+  },
+
   /**
    * Vue.js Data object.
    *
