@@ -140,6 +140,12 @@ export default {
     },
   },
 
+  fetchKey(getCounter) {
+    const parent = (this.$parent || {}).entity || {}
+    const parts = ['DruxtField', parent.type, parent.id, this.schema.id].filter((o) => o)
+    return [...parts, getCounter(parts.join(':'))].join(':')
+  },
+
   data: ({ value }) => ({
     model: value,
   }),
