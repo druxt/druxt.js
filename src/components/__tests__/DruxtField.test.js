@@ -85,6 +85,9 @@ describe('DruxtField', () => {
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
+    // Fetch key.
+    expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:body:0')
+
     // Component.
     expect(wrapper.vm.component.is).toBe('DruxtFieldTextDefault')
     expect(wrapper.vm.component.options).toStrictEqual([
@@ -106,6 +109,9 @@ describe('DruxtField', () => {
       uuid: 'ab0c49a4-1e0f-4f02-81da-a7b53f69be9f',
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Fetch key.
+    expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:field_media_image:0')
 
     // Component.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
