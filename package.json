@@ -1,6 +1,6 @@
 {
   "name": "druxt-entity",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "Drupal Display Mode powered Entity, Form and Field Vue.js component system.",
   "repository": {
     "type": "git",
@@ -59,9 +59,9 @@
   "dependencies": {
     "axios": "^0.21.1",
     "deepmerge": "^4.2.2",
-    "druxt": "^0.5.0",
-    "druxt-router": "^0.18.0",
-    "druxt-schema": "^0.7.0"
+    "druxt": "^0.6.1",
+    "druxt-router": "^0.18.1",
+    "druxt-schema": "^0.7.7"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.12.10",
