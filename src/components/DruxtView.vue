@@ -306,12 +306,27 @@ export default {
       await this.$fetch()
     },
 
-    model: {
+    'model.filter': {
       deep: true,
-      async handler() {
+      async handler(to, from) {
+        if (!Object.entries(to).length && !Object.entries(from).length) {
+          return
+        }
+        await this.$fetch()
+      },
+    },
+
+    async 'model.page'(to, from) {
+      if (to !== from) {
         await this.$fetch()
       }
-    }
+    },
+
+    async 'model.sort'(to, from) {
+      if (to !== from) {
+        await this.$fetch()
+      }
+    },
   },
 
   methods: {
