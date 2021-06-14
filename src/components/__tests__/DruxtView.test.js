@@ -109,6 +109,12 @@ describe('DruxtView', () => {
     expect(mocks.$fetch).toHaveBeenCalledTimes(2)
     await wrapper.vm.$options.watch.uuid.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(3)
+    wrapper.vm.model.page = 1
+    await localVue.nextTick()
+    expect(mocks.$fetch).toHaveBeenCalledTimes(4)
+    wrapper.vm.model.sort = 'nid'
+    await localVue.nextTick()
+    expect(mocks.$fetch).toHaveBeenCalledTimes(5)
   })
 
   test('recipes--embed', async () => {
