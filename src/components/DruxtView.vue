@@ -287,7 +287,7 @@ export default {
     async '$route.query'(to, from) {
       if (!Object.entries(to).length) {
         this.model = {
-          filter: null,
+          filter: {},
           page: null,
           sort: null,
         }

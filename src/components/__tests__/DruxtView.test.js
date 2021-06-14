@@ -95,20 +95,20 @@ describe('DruxtView', () => {
     wrapper.vm.$route.query = {}
     await localVue.nextTick()
     expect(wrapper.vm.model).toStrictEqual({
-      filter: null,
+      filter: {},
       page: null,
       sort: null
     })
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({})
 
     // Watches.
-    expect(mocks.$fetch).toHaveBeenCalledTimes(1)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(0)
     await wrapper.vm.$options.watch.displayId.call(mocks)
-    expect(mocks.$fetch).toHaveBeenCalledTimes(2)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(1)
     await wrapper.vm.$options.watch.query.call(mocks)
-    expect(mocks.$fetch).toHaveBeenCalledTimes(3)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(2)
     await wrapper.vm.$options.watch.uuid.call(mocks)
-    expect(mocks.$fetch).toHaveBeenCalledTimes(4)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(3)
   })
 
   test('recipes--embed', async () => {
