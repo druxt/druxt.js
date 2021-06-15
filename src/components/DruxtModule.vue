@@ -278,7 +278,7 @@ export default {
     // Return wrapped component.
     return h(this.wrapper.component, wrapperData, [
       h(this.component.is, {
-        attrs: this.component.$attrs,
+        attrs: { ...this.component.$attrs, ...this.$attrs },
         on: {
           input(value) {
             self.model = value
