@@ -22,7 +22,8 @@ const mocks = {
   }
 }
 
-const mountComponent = (propsData) => mount(DruxtView, { localVue, mocks, propsData, store })
+const stubs = ['DruxtEntity']
+const mountComponent = (propsData) => mount(DruxtView, { localVue, mocks, propsData, store, stubs })
 
 describe('DruxtView', () => {
   beforeEach(() => {
@@ -59,12 +60,7 @@ describe('DruxtView', () => {
     expect(wrapper.vm.headers).toStrictEqual([])
     expect(wrapper.vm.mode).toBe('card')
 
-    // DruxtModule.
-    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
-    expect(wrapper.vm.component.options).toStrictEqual([
-      'DruxtViewFeaturedArticlesPage1',
-      'DruxtViewFeaturedArticles'
-    ])
+    // Slots.
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual([
       'header',
       'attachments_before',
@@ -72,6 +68,33 @@ describe('DruxtView', () => {
       'pager',
       'attachments_after',
       'default'
+    ])
+
+    const slotsMock = {
+      $createElement: jest.fn(),
+      display: wrapper.vm.display,
+      filters: wrapper.vm.filters,
+      results: wrapper.vm.results,
+    }
+    expect(DruxtView.methods.getScopedSlots.call(slotsMock).results({}).length).toBe(8)
+    expect(slotsMock.$createElement).toHaveBeenCalledTimes(8)
+    expect(slotsMock.$createElement).toHaveBeenCalledWith('DruxtEntity', expect.any(Object))
+
+    // Test empty results.
+    slotsMock.display.display_options.empty = [{
+      content: '<p>No content</p>',
+      plugin_id: 'text_custom',
+    }]
+    slotsMock.results = []
+    expect(DruxtView.methods.getScopedSlots.call(slotsMock).results({}).length).toBe(1)
+    expect(slotsMock.$createElement).toHaveBeenCalledTimes(9)
+    expect(slotsMock.$createElement).toHaveBeenCalledWith('div', expect.any(Object))
+
+    // DruxtModule.
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtViewFeaturedArticlesPage1',
+      'DruxtViewFeaturedArticles'
     ])
 
     // Query.

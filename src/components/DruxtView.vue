@@ -646,7 +646,7 @@ export default {
  * @param {function} filters - The Exposed filters.
  * @param {function} sorts - The Exposed sorts.
  * @param {function} attachments_before - Views attached before current display.
- * @param {function} results - The results.
+ * @param {function} results - The results as DruxtEntity components, or empty results output.
  * @param {function} pager - The View pager.
  * @param {function} attachments_after - Views attached after current display.
  * @param {function} default - All of the above.
