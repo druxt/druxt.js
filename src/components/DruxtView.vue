@@ -411,15 +411,25 @@ export default {
       }
 
       // Results.
-      scopedSlots.results = (attrs) => this.results.map((result) => this.$createElement('DruxtEntity', {
-        attrs: { ...attrs },
-        key: result.id,
-        props: {
-          mode: this.mode,
-          type: result.type,
-          uuid: result.id
+      scopedSlots.results = (attrs) => {
+        if (!this.results.length) {
+          return Object.values(this.display.display_options.empty)
+            .filter((o) => o.plugin_id === 'text_custom')
+            .map((empty) => {
+              return this.$createElement('div', { domProps: { innerHTML: empty.content } })
+            })
         }
-      }))
+
+        return this.results.map((result) => this.$createElement('DruxtEntity', {
+          attrs: { ...attrs },
+          key: result.id,
+          props: {
+            mode: this.mode,
+            type: result.type,
+            uuid: result.id
+          }
+        }))
+      }
 
       // Pager.
       if (this.showPager) {
@@ -636,7 +646,7 @@ export default {
  * @param {function} filters - The Exposed filters.
  * @param {function} sorts - The Exposed sorts.
  * @param {function} attachments_before - Views attached before current display.
- * @param {function} results - The results.
+ * @param {function} results - The results as DruxtEntity components, or empty results output.
  * @param {function} pager - The View pager.
  * @param {function} attachments_after - Views attached after current display.
  * @param {function} default - All of the above.
