@@ -10,7 +10,7 @@ const localVue = createLocalVue()
 describe('Component - DruxtFieldTextDefault', () => {
   test('default', async () => {
     const propsData = {
-      items: [{ processed: 'DruxtFieldTextDefault' }],
+      value: [{ processed: 'DruxtFieldTextDefault' }],
       schema: {}
     }
     const wrapper = shallowMount(DruxtFieldTextDefault, { localVue, propsData })

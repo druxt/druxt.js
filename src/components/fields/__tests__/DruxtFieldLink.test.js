@@ -16,7 +16,7 @@ const stubs = ['nuxt-link']
 
 const mountComponent = (link = {}, options) => {
   const propsData = {
-    items: [link],
+    value: [link],
     schema: {}
   }
 
