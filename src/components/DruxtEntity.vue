@@ -145,7 +145,7 @@ export default {
       const fields = {}
       for (const field of schema.fields) {
         const relationship = !!((field.settings || {}).storage || {}).target_type || !!(model.relationships || {})[field.id]
-        const value = relationship ? model.relationships[field.id] : model.attributes[field.id]
+        const value = relationship ? ((model || {}).relationships || {})[field.id] : ((model || {}).attributes || {})[field.id]
 
         // Filter out empty fields if not using the Form schema type.
         // @todo - Make this configurable?
