@@ -26,9 +26,7 @@ export default {
 
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   */
+  /** */
   props: {
     /**
      * Drupal display mode.
@@ -70,17 +68,6 @@ export default {
       type: String,
       default: undefined,
     },
-
-    /**
-     * The Entity value.
-     * 
-     * @type {object}
-     * @model
-     */
-    value: {
-      type: Object,
-      default: undefined,
-    },
   },
 
   /**
@@ -108,9 +95,8 @@ export default {
     // Fetch Entity resource.
     if (this.uuid && !this.value) {
       const query = this.getQuery(component.settings)
-      // @todo - Don't set data, mapState to vuex.
-      this.entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
-      this.model = JSON.parse(JSON.stringify(this.entity || {}))
+      const entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
+      this.model = JSON.parse(JSON.stringify(entity || {}))
     }
 
     // Build wrapper component propsData.
@@ -126,19 +112,10 @@ export default {
   },
 
   /**
-   * Vue.js Data object.
-   *
-   * @property {object} entity - The Entity object.
    * @property {object} model - The model object.
    * @property {object} schema - The DruxtSchema object.
    */
   data: ({ type, value }) => ({
-    entity: {
-      attributes: {},
-      relationships: {},
-      type,
-      ...value,
-    },
     model: {
       attributes: {},
       relationships: {},
@@ -148,40 +125,43 @@ export default {
     schema: null,
   }),
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
+    /**
+     * The Entity object.
+     *
+     * @return {object}.
+     */
+    entity: ({ model }) => ({ ...model }),
+
     /**
      * Entity fields based on Display mode.
      *
      * @return {object}
      */
-    fields() {
-      if (!this.schema) return false
-
-      const data = {
-        ...(this.model.attributes || {}),
-        ...(this.model.relationships || {})
-      }
+    fields: ({ errors, isEmpty, model, schema, schemaType }) => {
+      if (!schema) return false
 
       const fields = {}
-      for (const field of this.schema.fields) {
+      for (const field of schema.fields) {
+        const relationship = !!((field.settings || {}).storage || {}).target_type || !!(model.relationships || {})[field.id]
+        const value = relationship ? ((model || {}).relationships || {})[field.id] : ((model || {}).attributes || {})[field.id]
+
         // Filter out empty fields if not using the Form schema type.
         // @todo - Make this configurable?
-        if (this.schemaType !== 'form' && this.isEmpty(data[field.id])) continue
+        if (schemaType !== 'form' && isEmpty(value)) continue
 
         fields[field.id] = {
           id: field.id,
           // @todo - Remove deprecated 'data'.
-          data: data[field.id],
-          errors: (this.errors || []).filter((o) => ((o.source || {}).pointer || '').startsWith(`/data/attributes/${field.id}`)),
-          relationship: !!((field.settings || {}).storage || {}).target_type || !!(this.model.relationships || {})[field.id],
+          data: value,
+          errors: (errors || []).filter((o) => ((o.source || {}).pointer || '').startsWith(`/data/attributes/${field.id}`)),
+          relationship,
           schema: {
-            config: this.schema.config,
+            config: schema.config,
             ...field,
           },
-          value: data[field.id],
+          value,
         }
       }
 
@@ -302,7 +282,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ entity, fields, model, schema }) => ({ entity, fields, schema, value: model }),
+    propsData: ({ fields, model, schema }) => ({ entity: model, fields, schema, value: model }),
   },
 }
 

@@ -25,7 +25,7 @@ const mountComponent = (link = {}, options) => {
       }
     }
   }
-  store.commit('druxt/addResource', { resource: { data: entity }, hash: '_default' })
+  store.commit('druxt/addResource', { resource: { data: entity }})
 
   const mocks = {
     $fetchState: {
@@ -34,7 +34,7 @@ const mountComponent = (link = {}, options) => {
   }
 
   const propsData = {
-    items: [link],
+    value: [link],
     schema: {}
   }
 

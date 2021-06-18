@@ -15,18 +15,11 @@ import { DruxtEntityContextMixin } from './context'
  * </script>
  */
 const DruxtFieldMixin = {
-  /**
-   * Vue.js mixins.
-   * @see {@link context|DruxtEntityContextMixin}
-   * @type {object[]}
-   */
   mixins: [
     DruxtEntityContextMixin
   ],
 
-  /**
-   * Vue.js Properties.
-   */
+  /** */
   props: {
     /**
      * JSON:API errors.
@@ -50,15 +43,6 @@ const DruxtFieldMixin = {
         component: 'div',
         props: {}
       })
-    },
-
-    /**
-     * Field items.
-     * @type {array}
-     */
-    items: {
-      type: [Array, Boolean],
-      required: true
     },
 
     /**
@@ -100,12 +84,52 @@ const DruxtFieldMixin = {
         component: 'div',
         props: {}
       })
-    }
+    },
   },
 
+  /**
+   * @property {object} model - The model object.
+   */
   data: ({ value }) => ({
     model: value,
   }),
+
+  /** */
+  computed: {
+    /**
+     * 
+     * @type {boolean|object}
+     * @default false
+     */
+    items: ({ model, relationship, schema }) => {
+      if (typeof model === 'undefined' || model === null) return []
+
+      if (relationship) {
+        const items = Array.isArray(model.data) ? [...model.data] : [{ ...model.data }]
+        return items.map((item) => ({
+          type: item.type || (item.data || {}).type,
+          uuid: item.id || (item.data || {}).id,
+          mode: ((schema.settings || {}).display || {}).view_mode || 'default',
+        }))
+      }
+
+      return Array.isArray(model) ? [...model] : [model]
+    }
+  },
+
+  watch: {
+    model() {
+      if (this.model !== this.value) {
+        this.$emit('input', this.model)
+      }
+    },
+
+    value() {
+      if (this.model !== this.value) {
+        this.model = this.value
+      }
+    }
+  }
 }
 
 export { DruxtFieldMixin }
