@@ -161,6 +161,19 @@ describe('DruxtEntity', () => {
     expect(wrapper.vm.model.attributes.body).toBe('test')
   })
 
+  test('watch - props $fetch', async () => {
+    const $fetch = jest.fn()
+    expect($fetch).toHaveBeenCalledTimes(0)
+    DruxtEntity.watch.mode.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(1)
+    DruxtEntity.watch.schemaType.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(2)
+    DruxtEntity.watch.type.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(3)
+    DruxtEntity.watch.uuid.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(4)
+  })
+
   test('deprecated', () => {
     expect(DruxtEntity.methods.isEmpty()).toBe(true)
     expect(DruxtEntity.methods.isEmpty(false)).toBe(true)

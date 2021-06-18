@@ -169,6 +169,24 @@ export default {
     },
   },
 
+  watch: {
+    mode() {
+      this.$fetch()
+    },
+
+    schemaType() {
+      this.$fetch()
+    },
+
+    type() {
+      this.$fetch()
+    },
+
+    uuid() {
+      this.$fetch()
+    },
+  },
+
   methods: {
     /**
      * Builds the query for the JSON:API request.
