@@ -8,7 +8,10 @@ export default {
       action: 'input',
     },
     mode: {
-      control: false,
+      control: {
+        type: 'select',
+        options: [<%= (options.displays || []).map((s) => `'${s}'`).join(', ') %>],
+      },
     },
     schemaType: {
       control: {
@@ -16,13 +19,19 @@ export default {
         options: ['view', 'form'],
       },
     },
-    type: {
-      control: false,
-    },
+    type: {},
     uuid: {
       control: {
         type: 'select',
         options: [<%= (options.entities || []).map((o) => `'${o.id}'`).join(', ') %>],
+      },
+    },
+    value: {
+      control: {
+        type: 'object',
+      },
+      table: {
+        category: 'props',
       },
     },
   },
