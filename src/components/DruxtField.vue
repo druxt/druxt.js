@@ -64,29 +64,10 @@ import { DruxtModule } from 'druxt'
 export default {
   name: 'DruxtField',
 
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link https://druxtjs.org/api/mixins/component.html|DruxtComponentMixin}
-   */
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
+  /** */
   props: {
-    /**
-     * The Field data.
-     * 
-     * @type {(array|boolean|number|object|string)}
-     */
-    data: {
-      type: [Array, Boolean, Number, Object, String],
-      default: null,
-    },
-
     /**
      * JSON:API errors.
      *
@@ -150,42 +131,24 @@ export default {
     model: value,
   }),
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
+    /**
+     * The Field data.
+     * 
+     * @type {(array|boolean|number|object|string)}
+     */
+    data: ({ model }) => model,
+
     /**
      * The Field label display settings.
      *
      * @type {object}
      * @default { position: 'hidden' }
      */
-    label() {
-      if (!((this.schema || {}).label || {}).text) return { position: 'hidden' }
-
-      return this.schema.label
-    },
-
-    /**
-     * Component properties to pass through to the Field's suggested component.
-     * 
-     * @type {boolean|object}
-     * @default false
-     */
-    items() {
-      if (typeof this.model === 'undefined' || this.model === null) return []
-
-      if (this.relationship) {
-        const items = Array.isArray(this.model.data) ? [...this.model.data] : [{ ...this.model.data }]
-        return items.map((item) => ({
-          type: item.type || (item.data || {}).type,
-          uuid: item.id || (item.data || {}).id,
-          mode: ((this.schema.settings || {}).display || {}).view_mode || 'default',
-        }))
-      }
-
-      return Array.isArray(this.model) ? [...this.model] : [this.model]
-    },
+    label: ({ schema }) => !((schema || {}).label || {}).text
+      ? { position: 'hidden' }
+      : schema.label,
   },
 
   watch: {
@@ -216,7 +179,7 @@ export default {
       ['default', (schema.config || {}).schemaType],
     ]),
 
-    propsData: ({ errors, items, relationship, schema }) => ({ errors, items, relationship, schema }),
+    propsData: ({ errors, model, relationship, schema }) => ({ errors, relationship, schema, value: model }),
   }
 }
 </script>

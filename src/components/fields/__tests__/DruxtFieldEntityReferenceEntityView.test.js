@@ -27,10 +27,10 @@ const mountComponent = (options) => {
       }
     }
   }
-  store.commit('druxt/addResource', { resource: { data: entity }, hash: '_default' })
+  store.commit('druxt/addResource', { resource: { data: entity }})
 
   const propsData = {
-    items: [{
+    value: [{
       type: entity.type,
       uuid: entity.id
     }],

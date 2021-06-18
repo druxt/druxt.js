@@ -72,6 +72,8 @@ export default {
       const item = this.items[delta]
 
       const result = await this.getResource({ id: item.uuid, type: item.type })
+      if (!(result || {}).data) return
+
       if (!this.entities) this.entities = []
 
       this.entities[delta] = {

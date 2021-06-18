@@ -9,7 +9,7 @@ const localVue = createLocalVue()
 
 const mountComponent = (item, trimLength) => {
   return shallowMount(DruxtFieldTextTrimmed, { localVue, propsData: {
-    items: [item],
+    value: [item],
     schema: {
       settings: {
         display: {

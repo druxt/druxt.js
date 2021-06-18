@@ -15,15 +15,9 @@ import { DruxtEntityContextMixin } from './context'
  * </script>
  */
 const DruxtEntityMixin = {
-  /**
-   * Vue.js mixins.
-   * @see {@link context|DruxtEntityContextMixin}
-   */
   mixins: [DruxtEntityContextMixin],
 
-  /**
-   * Vue.js Properties.
-   */
+  /** */
   props: {
     /**
      * The Drupal Entity JSON:API resource data.
@@ -61,30 +55,27 @@ const DruxtEntityMixin = {
     },
   },
 
+  /**
+   * @property {object} model - The model object.
+   */
   data: ({ value }) => ({
     model: value,
   }),
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
     /**
      * Array of CSS classes.
      * @type {string[]}
      */
-    classes() {
-      const classes = []
-
-      classes.push(this.schema.id)
-      classes.push(this.schema.resourceType)
-      classes.push(this.schema.config.entityType)
-      classes.push(this.schema.config.bundle)
-      classes.push(this.schema.config.mode)
-      classes.push(this.schema.config.schemaType)
-
-      return classes.join(' ')
-    }
+    classes: ({ schema }) => [
+      schema.id,
+      schema.resourceType,
+      schema.config.entityType,
+      schema.config.bundle,
+      schema.config.mode,
+      schema.config.schemaType,
+    ].join(' '),
   }
 }
 

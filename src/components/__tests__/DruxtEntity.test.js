@@ -73,7 +73,9 @@ describe('DruxtEntity', () => {
       'DruxtEntityNodePage',
       'DruxtEntityDefault',
     ])
-    expect(wrapper.vm.component.props).toStrictEqual({})
+    expect(wrapper.vm.component.props).toStrictEqual({
+      value: expect.any(Object)
+    })
     expect(Object.keys(wrapper.vm.component.propsData)).toStrictEqual([
       'entity', 'fields', 'schema', 'value',
     ])
@@ -157,6 +159,19 @@ describe('DruxtEntity', () => {
 
     wrapper.vm.$refs.body.$emit('input', 'test')
     expect(wrapper.vm.model.attributes.body).toBe('test')
+  })
+
+  test('watch - props $fetch', async () => {
+    const $fetch = jest.fn()
+    expect($fetch).toHaveBeenCalledTimes(0)
+    DruxtEntity.watch.mode.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(1)
+    DruxtEntity.watch.schemaType.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(2)
+    DruxtEntity.watch.type.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(3)
+    DruxtEntity.watch.uuid.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(4)
   })
 
   test('deprecated', () => {

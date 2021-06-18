@@ -88,7 +88,10 @@ describe('DruxtField', () => {
     // Fetch key.
     expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:body:0')
 
-    // Component.
+    // Computed props
+    expect(wrapper.vm.data).toStrictEqual(wrapper.vm.model)
+
+    // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtFieldTextDefault')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtFieldTextDefaultBodyView',
@@ -98,7 +101,7 @@ describe('DruxtField', () => {
       'DruxtFieldTextDefault',
       'DruxtFieldDefault',
     ])
-    expect(wrapper.vm.component.propsData.items.length).toBe(1)
+    expect(Object.keys(wrapper.vm.value)).toStrictEqual(['value', 'format', 'processed', 'summary'])
   })
 
   test('relationship', async () => {
@@ -113,7 +116,10 @@ describe('DruxtField', () => {
     // Fetch key.
     expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:field_media_image:0')
 
-    // Component.
+    // Computed props
+    expect(wrapper.vm.data).toStrictEqual(wrapper.vm.model)
+
+    // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtFieldEntityReferenceEntityViewFieldMediaImageView',
@@ -123,6 +129,6 @@ describe('DruxtField', () => {
       'DruxtFieldEntityReferenceEntityView',
       'DruxtFieldDefault',
     ])
-    expect(wrapper.vm.component.propsData.items.length).toBe(1)
+    expect(Object.keys(wrapper.vm.value)).toStrictEqual(['data', 'links'])
   })
 })

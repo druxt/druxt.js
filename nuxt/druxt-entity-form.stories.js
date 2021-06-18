@@ -17,15 +17,30 @@ export default {
       action: 'reset',
     },
     mode: {
-      control: false,
+      control: {
+        type: 'select',
+        options: [<%= (options.displays || []).map((s) => `'${s}'`).join(', ') %>],
+      },
     },
-    type: {
-      control: false,
+    schemaType: {
+      control: {
+        type: 'select',
+        options: ['view', 'form'],
+      },
     },
+    type: {},
     uuid: {
       control: {
         type: 'select',
         options: [<%= (options.entities || []).map((o) => `'${o.id}'`).join(', ') %>],
+      },
+    },
+    value: {
+      control: {
+        type: 'object',
+      },
+      table: {
+        category: 'props',
       },
     },
   },
