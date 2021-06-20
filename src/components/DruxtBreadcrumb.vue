@@ -37,17 +37,11 @@ export default {
    * Nuxt.js fetch method.
    */
   async fetch() {
-    await this.fetchCrumbs()
+    if (!this.value) {
+      await this.fetchCrumbs()
+    }
     await DruxtModule.fetch.call(this)
   },
-
-  /**
-   * @property {objects[]} crumbs - The Breadcrumbs.
-   */
-
-  data: () => ({
-    crumbs: [],
-  }),
 
   /**
    * Vue.js Computed properties.
@@ -56,6 +50,8 @@ export default {
    * @vue-computed {object} routes All available routes.
    */
   computed: {
+    crumbs: ({ model }) => model,
+    
     ...mapState({
       route: state => state.druxtRouter.route,
       routes: state => state.druxtRouter.routes
@@ -122,36 +118,7 @@ export default {
         })
       }
 
-      this.crumbs = crumbs.reverse()
-    },
-
-    /**
-     * Provides the scoped slots object for the Module render function.
-     *
-     * The `default` slot renders crumbs as as list of NuxtLink's.
-     *
-     * @return {ScopedSlots} The Scoped slots object.
-     */
-    getScopedSlots() {
-      // Build scoped slots for each field.
-      const scopedSlots = {}
-
-      // Build default slot.
-      scopedSlots.default = () => this.$createElement('ul', this.crumbs.map((crumb) =>
-        this.$createElement('li', [
-          crumb.to
-            ? this.$createElement('NuxtLink', { props: { to: crumb.to }}, [crumb.text])
-            : crumb.text
-        ])
-      ))
-      if (this.$scopedSlots.default) {
-        scopedSlots.default = (attrs) => this.$scopedSlots.default({
-          ...this.$options.druxt.propsData(this),
-          ...attrs
-        })
-      }
-
-      return scopedSlots
+      this.model = crumbs.reverse()
     },
 
     /**
@@ -167,7 +134,31 @@ export default {
    */
   druxt: {
     componentOptions: ({}) => [['default']],
-    propsData: ({ crumbs }) => ({ crumbs })
+
+    propsData: ({ crumbs, model }) => ({ crumbs, value: model }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * The `default` slot renders crumbs as as list of NuxtLink's.
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots() {
+      // Build scoped slots for each field.
+      const scopedSlots = {}
+
+      // Build default slot.
+      scopedSlots.default = () => this.$createElement('ul', this.crumbs.map((crumb) =>
+        this.$createElement('li', [
+          crumb.to
+            ? this.$createElement('NuxtLink', { props: { to: crumb.to }}, [crumb.text])
+            : crumb.text
+        ])
+      ))
+
+      return scopedSlots
+    },
   },
 }
 </script>
