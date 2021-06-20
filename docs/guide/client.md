@@ -1,3 +1,7 @@
+---
+title: JSON:API Client
+---
+
 # DruxtClient
 
 The DruxtClient is the communication layer between Nuxt and the Drupal JSON:API.
