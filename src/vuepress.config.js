@@ -118,7 +118,7 @@ module.exports = {
         lastUpdated: 'Last Updated',
         nav: [
           { text: 'Home', link: '/' },
-          { text: 'Guide', link: '/guide/getting-started' },
+          { text: 'Guide', link: '/guide/' },
           { text: 'API', link: '/api/' },
         ],
         selectText: 'Languages',
