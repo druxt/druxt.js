@@ -25,6 +25,7 @@ import { DruxtWrapper } from '..'
 export default {
   components: { DruxtWrapper },
 
+  /** */
   props: {
     /**
      * The module value.
@@ -47,8 +48,6 @@ export default {
   },
 
   /**
-   * The Nuxt Fetch hook.
-   *
    * Loads the Druxt module data and applies a wrapper component as required.
    *
    * **Important:** If your component has an existing `fetch` method, you must manually invoke
@@ -114,6 +113,7 @@ export default {
     model: value,
   }),
 
+  /** */
   methods: {
     /**
      * Get list of module wrapper components.
@@ -198,18 +198,9 @@ export default {
     },
 
     /**
-     * Get default scoped slots.
-     *
-     * Default output is a `JSON.stringify`'d result of the modules propsData.
-     *
-     * This method should be overridden in a Druxt modules.
-     *
-     * @example js
-     * getScopedSlots() {
-     *   return {
-     *     default: () => this.$createElement('div', ['Hello world'])
-     *   }
-     * }
+     * Gets a Druxt modules scoped slots, and if there's no default slots,
+     * provides a develop mode debug default or passes through to a 
+     * default template.
      *
      * @return {object}
      */
