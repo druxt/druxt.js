@@ -210,49 +210,6 @@ export default {
     },
 
     /**
-     * Provides the scoped slots object for the Module render function.
-     *
-     * A scoped slot is provided for each field being rendered, as per the
-     * current display mode.
-     * 
-     * Additionally, the `default` slot will render all fields as per the
-     *
-     * @example <caption>DruxtEntity**ResourceType**.vue</caption> @lang vue
-     * <template>
-     *   <div>
-     *     <slot name="content" />
-     *     <slot :name="field_name" />
-     *   </div>
-     * </template>
-     *
-     * @return {ScopedSlots} The Scoped slots object.
-     */
-    getScopedSlots() {
-      // Build scoped slots for each field.
-      const scopedSlots = {}
-      Object.entries(this.fields).map(([id, field]) => {
-        scopedSlots[id] = (attrs) => this.$createElement('DruxtField', {
-          attrs,
-          key: id,
-          props: field,
-          on: {
-            input: (value) => {
-              const type = !field.relationship ? 'attributes' : 'relationships'
-              this.model[type][id] = value
-              this.$emit('input', this.model)
-            }
-          },
-          ref: id,
-        })
-      })
-
-      // Build default slot.
-      scopedSlots.default = (attrs) => Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
-
-      return scopedSlots
-    },
-
-    /**
      * Checks if an Entity field is empty.
      *
      * @param {*} value - Field value.
@@ -301,6 +258,50 @@ export default {
      * @returns {PropsData}
      */
     propsData: ({ fields, model, schema }) => ({ entity: model, fields, schema, value: model }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * A scoped slot is provided for each field being rendered, as per the
+     * current display mode.
+     * 
+     * Additionally, the `default` slot will render all fields as per the
+     *
+     * @example <caption>DruxtEntity**ResourceType**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot name="content" />
+     *     <slot :name="field_name" />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots(h) {
+      const scopedSlots = {}
+
+      // Build scoped slots for each field.
+      Object.entries(this.fields).map(([id, field]) => {
+        scopedSlots[id] = (attrs) => h('DruxtField', {
+          attrs,
+          key: id,
+          props: field,
+          on: {
+            input: (value) => {
+              const type = !field.relationship ? 'attributes' : 'relationships'
+              this.model[type][id] = value
+              this.$emit('input', this.model)
+            }
+          },
+          ref: id,
+        })
+      })
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
+
+      return scopedSlots
+    },
   },
 }
 
