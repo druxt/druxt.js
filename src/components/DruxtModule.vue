@@ -215,14 +215,14 @@ export default {
      */
     getScopedSlots() {
       const h = this.$createElement
-      const scopedSlots = typeof this.$options.druxt.slots === 'function'
+      const scopedSlots = typeof (this.$options.druxt || {}).slots === 'function'
         ? this.$options.druxt.slots.call(this, h)
         : {}
 
       // Pass through default scoped slot if provided.
-      if (this.$scopedSlots.default) {
+      if (typeof this.$scopedSlots.default === 'function') {
         scopedSlots.default = (attrs) => this.$scopedSlots.default({
-          ...this.$options.druxt.propsData(this),
+          ...((this.$options.druxt || {}).propsData || (() => {}))(this),
           ...attrs
         })
       }
