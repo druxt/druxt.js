@@ -83,6 +83,9 @@ export default {
       options: options.map(o => o.name) || [],
     }
 
+    // Get scoped slots.
+    component.slots = Object.keys(this.getScopedSlots())
+
     // Get wrapper data.
     const wrapperData = await this.getWrapperData(component.is)
     component.settings = wrapperData.druxt || {}
@@ -106,6 +109,7 @@ export default {
       props: {},
       propsData: {},
       settings: {},
+      slots: [],
     },
     model: value,
   }),
@@ -210,9 +214,30 @@ export default {
      * @return {object}
      */
     getScopedSlots() {
-      return {
-        default: () => this.$createElement('div', [JSON.stringify(this.component.propsData)])
+      const h = this.$createElement
+      const scopedSlots = typeof this.$options.druxt.slots === 'function'
+        ? this.$options.druxt.slots.call(this, h)
+        : {}
+
+      // Pass through default scoped slot if provided.
+      if (this.$scopedSlots.default) {
+        scopedSlots.default = (attrs) => this.$scopedSlots.default({
+          ...this.$options.druxt.propsData(this),
+          ...attrs
+        })
       }
+
+      // Provide debug data if Nuxt is running in dev mode.
+      if (!scopedSlots.default && this.$nuxt.context.isDev)  {
+        scopedSlots.default = () => h('details', [
+          h('summary', [`[${this.$options._componentTag}] Missing default slot.`]),
+          h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+          h('br'),
+          h('label', ['propsData:', h('pre', [h('code', [JSON.stringify(this.component.propsData, null, '\t')])])])
+        ])
+      }
+
+      return scopedSlots
     },
 
     /**
