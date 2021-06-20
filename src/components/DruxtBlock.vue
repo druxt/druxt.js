@@ -108,41 +108,6 @@ export default {
 
   methods: {
     /**
-     * Provides the scoped slots object for the Module render function.
-     *
-     * A default slot is provided with debug information if Nuxt is in
-     * development mode.
-     *
-     * @return {ScopedSlots} The Scoped slots object.
-     */
-    getScopedSlots() {
-      // Build scoped slots for each block.
-      const scopedSlots = {}
-      const h = this.$createElement
-
-      // Build default slot.
-      // Default to nothing, as there's not enough information to build a
-      // one-size-fits-all Drupal block.
-      scopedSlots.default = () => null
-      // Pass through default scoped slot if provided.
-      if (this.$scopedSlots.default) {
-        scopedSlots.default = (attrs) => this.$scopedSlots.default({
-          ...this.$options.druxt.propsData(this),
-          ...attrs
-        })
-      // Provide debug data if Nuxt is running in dev mode.
-      } else if (this.$nuxt.context.isDev)  {
-        scopedSlots.default = (attrs) => h('details', [
-          h('summary', [`[DruxtBlock] Missing wrapper component for '${((this.block || {}).attributes || {}).drupal_internal__id}'`]),
-          h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-          h('label', ['Block settings:', h('pre', [JSON.stringify(((this.block || {}).attributes || {}).settings)])])
-        ])
-      }
-
-      return scopedSlots
-    },
-
-    /**
      * Maps Vuex action to methods.
      */
     ...mapActions({
@@ -188,6 +153,41 @@ export default {
      * @returns {PropsData}
      */
     propsData: ({ block }) => ({ block }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * A default slot is provided with debug information if Nuxt is in
+     * development mode.
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots(h) {
+      const scopedSlots = {}
+
+      // Provide debug data if Nuxt is running in dev mode.
+      if (this.$nuxt.context.isDev)  {
+        scopedSlots.default = (attrs) => h(
+          'details',
+          {
+            style: {
+              border: '2px dashed lightgrey',
+              margin: '0.5em 0',
+              padding: '1em',
+            },
+          },
+          [
+            h('summary', [`[DruxtBlock] Missing wrapper component for '${((this.block || {}).attributes || {}).drupal_internal__id}'`]),
+            h('br'),
+            h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+            h('br'),
+            h('label', ['Block settings:', h('pre', [JSON.stringify(((this.block || {}).attributes || {}).settings, null, '\t')])])
+          ]
+        )
+      }
+
+      return scopedSlots
+    },
   },
 }
 
