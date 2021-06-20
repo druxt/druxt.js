@@ -1,6 +1,37 @@
-# Introduction
+---
+title: Introduction
+---
+
+# DruxtJS
 
 DruxtJS provides an easy connection to your Drupal JSON:API backend in your Nuxt.js frontend application.
+
+
+## Features
+
+- [Nuxt module](#nuxt-module)
+- [JSON:API Client](#drupal-json-api-client)
+  - [DruxtClient](#druxtclient)
+  - [DruxtStore](#druxtstore)
+- [Druxt components](#druxt-components)
+  - [Modules](#modules)
+  - [Theming](#theming)
+
+
+## Nuxt module
+
+The Druxt module provides Vue.js components, a JSON:API Client, a Vuex store and a Nuxt module, among other things.
+
+The Nuxt module installs all required components and dependencies, however most components can be used individually in any Node project.
+
+```js
+module.exports = {
+  modules: ['druxt'],
+  druxt: { baseUrl: 'https://demo-api.druxtjs.org' },
+}
+```
+
+See [Getting started](/guide/getting-started) and the [API documentation](/api) for more details.
 
 
 ## Drupal JSON:API client
@@ -44,18 +75,9 @@ export default {
 
 The DruxtStore is installed via the Nuxt module, see [getting started](/guide/getting-started).
 
-## The Druxt component
+## Druxt components
 
-Druxt provides a Vue.js component to easily access Drupal's JSON:API data, with a simple Slot based theming system.
-
-```vue
-<Druxt
-  :module="module"
-  :props-data="propsData"
-  :wrapper="wrapper"
-/>
-```
-
+Druxt provides a Vue.js component system for easy access Drupal's JSON:API data, with a simple Slot based theming system.
 
 ### Modules
 
@@ -80,57 +102,11 @@ _**Example:** Using the [DruxtEntity module](https://entity.druxtjs.org) to rend
 <DruxtEntity mode="teaser" type="node--article" :uuid="uuid">
 ```
 
-
-### Wrapper theme system
-
-Druxt modules use a slot-based Wrapper component system and a `wrapper` property to allow for simple, targetted theming of the Drupal data.
+See the [Druxt module list](/guide/modules.html) for more information.
 
 
-#### Wrapper property
+### Theming
 
-The `wrapper` property controls the element that wraps the Druxt module component.
+Druxt modules use a slot-based Wrapper component system to provide rich defaults while still allowing full control over all theming and functionality.
 
-_**Example:** Render an Entity inside a `b-col` component._
-
-```vue
-<Druxt
-  module="entity"
-  :props-data="propsData"
-  :wrapper="{ component: 'b-col' }"
-/>
-```
-
-The `wrapper` property defaults to a `div` element if not provided.
-
-
-#### Wrapper component system
-
-The Wrapper component system uses data provided to the Druxt module to determine a list of possible component names.
-
-The first option that matches a registered Vue.js component will be used to render the modules scoped slots.
-
-Component options can be seen on the `component.options` property of the Druxt module component.
-
-If there are no matching component names, a default `DruxtWrapper` component will be used instead.
-
-See the [DruxtModule API documentation](/api/components/DruxtModule).
-
-_**Example:** Theming an Article Entity._
-
-```vue
-<Druxt
-  module="entity"
-  :props-data="{ type: 'node--article', uuid }"
-/>
-```
-
-_**Wrapper component:** components/druxt/entity/node/article/Default.vue_
-```vue
-<template>
-  <div>
-    <h1>{{ $attrs.entity.attributes.title }}</h1>
-
-    <slot />
-  </div>
-</template>
-```
+See the [theming guide](/guide/theming.html) for more details.
