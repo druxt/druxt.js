@@ -170,6 +170,9 @@ export default {
       options: options.map(o => o.name) || [],
     }
 
+    // Get scoped slots.
+    component.slots = Object.keys(this.getScopedSlots())
+
     // Get wrapper component data to merge with module settings.
     const wrapperData = await this.getWrapperData(component.is)
     component.settings = merge(((this.$druxtMenu || {}).options || {}).menu || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
@@ -286,42 +289,6 @@ export default {
     },
 
     /**
-     * Provides the scoped slots object for the Module render function.
-     *
-     * Adds a `default` slot that will render the menu tree using the
-     * DruxtMenuItem component.
-     * 
-     * @example <caption>DruxtMenu**Name**.vue</caption> @lang vue
-     * <template>
-     *   <div>
-     *     <slot />
-     *   </div>
-     * </template>
-     *
-     * @return {ScopedSlots} The Scoped slots object.
-     */
-    getScopedSlots() {
-      if (this.$scopedSlots.default) {
-        return {
-          default: (attrs) => this.$scopedSlots.default({
-            ...this.$options.druxt.propsData(this),
-            ...attrs
-          })
-        }
-      }
-
-      return {
-        default: (attrs) => this.items.map((item) => this.$createElement('DruxtMenuItem', {
-          attrs,
-          key: item.entity.id,
-          props: {
-            item,
-          },
-        })),
-      }
-    },
-
-    /**
      * Maps `druxtMenu/get` Vuex action to `this.getMenu`.
      */
     ...mapActions({
@@ -348,6 +315,33 @@ export default {
      * @returns {PropsData}
      */
     propsData: ({ items, parentId }) => ({ items, parentId }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * Adds a `default` slot that will render the menu tree using the
+     * DruxtMenuItem component.
+     * 
+     * @example <caption>DruxtMenu**Name**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots() {
+      return {
+        default: (attrs) => this.items.map((item) => this.$createElement('DruxtMenuItem', {
+          attrs,
+          key: item.entity.id,
+          props: {
+            item,
+          },
+        })),
+      }
+    },
   },
 }
 
