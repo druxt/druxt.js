@@ -18,6 +18,11 @@ const mountComponent = (propsData) => {
     $fetchState: {
       pending: true
     },
+    $nuxt: {
+      context: {
+        isDev: false,
+      },
+    },
     $route: {
       query: {}
     }
