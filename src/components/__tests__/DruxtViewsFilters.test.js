@@ -57,7 +57,7 @@ describe('DruxtViewsFilters', () => {
     // Ensure model change to emit input.
     wrapper.vm.model = { test: 1 }
     await localVue.nextTick()
-    expect(wrapper.emitted().input).toStrictEqual([[{ test: 1 }]])
+    expect(wrapper.emitted().input[0]).toStrictEqual([{ test: 1 }])
 
     // DruxtComponentMixin.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')

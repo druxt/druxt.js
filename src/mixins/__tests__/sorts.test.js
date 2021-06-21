@@ -19,5 +19,5 @@ test('DruxtViewsSortsMixin', async () => {
   expect(wrapper.vm.model).toStrictEqual('title')
 
   await wrapper.vm.$nextTick()
-  expect(wrapper.emitted().input).toStrictEqual([['title']])
+  expect(wrapper.emitted().input[0]).toStrictEqual(['title'])
 })

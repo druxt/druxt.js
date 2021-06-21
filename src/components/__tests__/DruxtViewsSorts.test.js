@@ -55,7 +55,7 @@ describe('DruxtViewsSorts', () => {
     // Ensure model change to emit input.
     wrapper.vm.model = 'title'
     await localVue.nextTick()
-    expect(wrapper.emitted().input).toStrictEqual([['title']])
+    expect(wrapper.emitted().input[0]).toStrictEqual(['title'])
 
     // DruxtComponentMixin.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')

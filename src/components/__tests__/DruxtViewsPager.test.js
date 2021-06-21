@@ -57,7 +57,7 @@ describe('DruxtViewsPager', () => {
     // Ensure model change to emit input.
     wrapper.vm.setPage(link)
     await localVue.nextTick()
-    expect(wrapper.emitted().input).toStrictEqual([[1]])
+    expect(wrapper.emitted().input[0]).toStrictEqual([1])
 
     // DruxtComponentMixin.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
