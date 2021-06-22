@@ -54,12 +54,23 @@ describe('DruxtViewsFilters', () => {
     const wrapper = mountComponent({ filters: [filter] })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    // Ensure model change to emit input.
-    wrapper.vm.model = { test: 1 }
-    await localVue.nextTick()
-    expect(wrapper.emitted().input[0]).toStrictEqual([{ test: 1 }])
+    // Slots.
+    const slots = wrapper.vm.getScopedSlots()
+    expect(Object.keys(slots)).toStrictEqual([
+      'test',
+      'default',
+    ])
+    expect(Object.entries(slots.default.call(wrapper.vm)).length).toBe(1)
+    expect(wrapper.vm.model).toStrictEqual({})
+    slots.test.call(wrapper.vm).componentOptions.listeners.input(1)
+    expect(wrapper.vm.model).toStrictEqual({ test: 1 })
 
-    // DruxtComponentMixin.
+    // Ensure model change to emit input.
+    wrapper.vm.model = { test: 2 }
+    await localVue.nextTick()
+    expect(wrapper.emitted().input[0]).toStrictEqual([{ test: 2 }])
+
+    // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtViewsFiltersBasic',
@@ -105,25 +116,5 @@ describe('DruxtViewsFilters', () => {
     expect(wrapper.vm.$refs.module.value).toStrictEqual({ test: true })
     expect(wrapper.vm.$refs.module.model).toStrictEqual({ test: true })
     expect(Component.methods.onInput).toHaveBeenCalledWith({ test: true })
-
-    // Set data but don't change data.
-    // await wrapper.setData({ model: wrapper.vm.$refs.module.model })
-    expect(wrapper.vm.$refs.module.$options.watch.model.handler.call(
-      { component: { is: 'DruxtWrapper' }, mode: { test: 2 } },
-      { test: 2 },
-      { test: 2 }
-    )).toBe()
-    expect(Component.methods.onInput).not.toHaveBeenCalledWith({ test: 2 })
-
-    // Change wrapper.
-    expect(wrapper.vm.$refs.module.$options.watch.model.handler.call(
-      { component: { is: 'NotDruxtWrapper' }, mode: { test: 3 } },
-      { test: 3 },
-      { test: 3 }
-    )).toBe()
-    expect(Component.methods.onInput).not.toHaveBeenCalledWith({ test: 3 })
-    // wrapper.vm.$refs.module.component.is = 'NotDruxtWrapper'
-    // await wrapper.setData({ model: { test: 2 }})
-    // expect(Component.methods.onInput).not.toHaveBeenCalledWith({ test: 2 })
   })
 })

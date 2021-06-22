@@ -467,10 +467,11 @@ export default {
               this.model.filter = value
             }
           },
+          ref: 'filters',
           props: {
             filters: this.filters,
             value: this.model.filter,
-            ...this.display.display_options.exposed_form
+            ...(((this.display || {}).display_options || {}).exposed_form || {})
           },
         })
       }
@@ -484,10 +485,11 @@ export default {
               this.model.sort = value
             }
           },
+          ref: 'sorts',
           props: {
             sorts: this.sorts,
             value: this.model.sort,
-            ...this.display.display_options.exposed_form
+            ...(((this.display || {}).display_options || {}).exposed_form || {})
           }
         })
       }
@@ -497,6 +499,7 @@ export default {
         scopedSlots.attachments_before = (attrs) => this.attachments_before.map((displayId) => h('DruxtView', {
           attrs: { ...attrs },
           key: displayId,
+          ref: 'attachements_before',
           props: {
             displayId,
             type: this.type,
@@ -536,6 +539,7 @@ export default {
               this.model.page = value
             }
           },
+          ref: 'pager',
           props: {
             count: this.count,
             resource: this.resource,
@@ -550,6 +554,7 @@ export default {
         scopedSlots.attachments_after = (attrs) => this.attachments_after.map((displayId) => h('DruxtView', {
           attrs: { ...attrs },
           key: displayId,
+          ref: 'attachements_after',
           props: {
             displayId,
             type: this.type,

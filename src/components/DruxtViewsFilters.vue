@@ -11,11 +11,7 @@ export default {
 
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
+  /** */
   props: {
     /**
      * The Exposed Filter objects.
@@ -58,91 +54,38 @@ export default {
     },
   },
 
-  data: ({ value }) => ({
-    model: { ...value }
-  }),
-
-  watch: {
-    model: {
-      deep: true,
-      handler(to, from) {
-        // Only emit 'input' if using the default 'DruxtWrapper' component.
-        if (this.component.is !== 'DruxtWrapper') {
-          return
-        }
-
-        // Only act if data has changed.
-        if (Object.entries(to).length === Object.entries(from).length) {
-          const match = Object.entries(to).filter(([key, value]) => from[key] !== value)
-          if (!match.length) {
-            return
-          }
-        }
-
-        this.$emit('input', this.model)
-      }
-    },
-
-    value: {
-      deep: true,
-      handler() {
-        this.component.props.value = this.value
-        this.model = this.value
-      }
-    }
-  },
-
   druxt: {
     componentOptions: ({ type }) => ([[type], ['default']]),
 
-    propsData: ({ options, filters, type }) => ({ options, filters, type })
+    propsData: ({ options, filters, model, type }) => ({ options, filters, type, value: model }),
+
+    slots(h) {
+      const scopedSlots = {}
+
+      // Build scoped slots for each filter.
+      this.filters.map((filter) => {
+        scopedSlots[filter.expose.identifier] = (attrs) => h('DruxtViewsFilter', {
+          attrs: { ...attrs, ...this.$attrs },
+          props: {
+            filter,
+            value: this.model[filter.expose.identifier]
+          },
+          ref: filter.expose.identifier,
+          on: {
+            input: (value) => {
+              this.model = { ...this.model, [filter.expose.identifier]: value }
+            }
+          }
+        })
+      })
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => this.filters.map(
+        (filter) => scopedSlots[filter.expose.identifier](attrs)
+      )
+
+      return scopedSlots
+    },
   },
-
-  render(h) {
-    const wrapperData = {
-      class: this.wrapper.class || undefined,
-      style: this.wrapper.style || undefined,
-      props: this.wrapper.propsData,
-    }
-
-    // Build scoped slots for each filter.
-    const scopedSlots = {}
-
-    this.filters.map((filter) => {
-      scopedSlots[filter.expose.identifier] = attrs => h('DruxtViewsFilter', {
-        attrs: { ...attrs, ...this.$attrs },
-        props: {
-          filter,
-          value: this.model[filter.expose.identifier]
-        },
-        on: {
-          input: (value) => {
-            this.model = { ...this.model, [filter.expose.identifier]: value }
-          }
-        }
-      })
-    })
-
-    // Build default slot.
-    scopedSlots.default = attrs => this.filters.map((filter) => scopedSlots[filter.expose.identifier](attrs))
-
-    // Return wrapped component.
-    return h(this.wrapper.component, wrapperData, [
-      h(this.component.is, {
-        attrs: this.$attrs,
-        props: {
-          ...this.component.propsData,
-          value: this.model
-        },
-        scopedSlots,
-        on: {
-          input: value => {
-            this.model = value
-            this.$emit('input', this.model)
-          }
-        }
-      })
-    ])
-  }
 }
 </script>
