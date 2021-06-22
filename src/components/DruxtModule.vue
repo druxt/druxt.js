@@ -276,7 +276,11 @@ export default {
     model() {
       if (this.component.props.value !== this.model) {
         this.component.props.value = this.model
-        this.$emit('input', this.model)
+       
+        // Only emit 'input' if using the default 'DruxtWrapper' component.
+        if (this.component.is === 'DruxtWrapper') {
+          this.$emit('input', this.model)
+        }
       }
     },
 
@@ -308,6 +312,7 @@ export default {
         on: {
           input(value) {
             self.model = value
+            self.$emit('input', value)
           }
         },
         props: this.component.props,
