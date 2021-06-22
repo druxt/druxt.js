@@ -95,6 +95,9 @@ export default {
       }
     }
 
+    // Get scoped slots.
+    component.slots = Object.keys(this.getScopedSlots())
+
     // Get wrapper component data to merge with module settings.
     const wrapperData = await this.getWrapperData(component.is)
     component.settings = merge((this.$druxtViews || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
@@ -331,147 +334,6 @@ export default {
 
   methods: {
     /**
-     * Provides the scoped slots object for the Module render function.
-     *
-     * - header
-     * - filters
-     * - sorts
-     * - attachments_before
-     * - results
-     * - pager
-     * - attachments_after
-     * - default (all of the above)
-     *
-     * @example <caption>DruxtView**ViewId**.vue</caption> @lang vue
-     * <template>
-     *   <div>
-     *     <slot name="header" />
-     *     <slot name="results" />
-     *     <slot name="pager" />
-     *   </div>
-     * </template>
-     *
-     * @return {ScopedSlots} The Scoped slots object.
-     */
-    getScopedSlots() {
-      // Build scoped slots.
-      const scopedSlots = {}
-
-      // Headers.
-      scopedSlots.header = () => Object.entries(this.headers).map(([key, header]) => this.$createElement('span', {
-        domProps: { innerHTML: (header.content || {}).value }, key
-      }))
-
-      // Exposed filters.
-      if (this.filters.length) {
-        scopedSlots.filters = (attrs) => this.$createElement('DruxtViewsFilters', {
-          attrs: { ...attrs },
-          on: {
-            input: (value) => {
-              this.model.filter = value
-            }
-          },
-          props: {
-            filters: this.filters,
-            value: this.model.filter,
-            ...this.display.display_options.exposed_form
-          },
-        })
-      }
-
-      // Exposed sorts.
-      if (this.showSorts) {
-        scopedSlots.sorts = (attrs) => this.$createElement('DruxtViewsSorts', {
-          attrs: { ...attrs },
-          on: {
-            input: (value) => {
-              this.model.sort = value
-            }
-          },
-          props: {
-            sorts: this.sorts,
-            value: this.model.sort,
-            ...this.display.display_options.exposed_form
-          }
-        })
-      }
-
-      // Attachments before.
-      if (this.attachments_before) {
-        scopedSlots.attachments_before = (attrs) => this.attachments_before.map((displayId) => this.$createElement('DruxtView', {
-          attrs: { ...attrs },
-          key: displayId,
-          props: {
-            displayId,
-            type: this.type,
-            uuid: this.uuid,
-            viewId: this.viewId,
-          },
-        }))
-      }
-
-      // Results.
-      scopedSlots.results = (attrs) => {
-        if (!this.results.length) {
-          return Object.values(this.display.display_options.empty)
-            .filter((o) => o.plugin_id === 'text_custom')
-            .map((empty) => {
-              return this.$createElement('div', { domProps: { innerHTML: empty.content } })
-            })
-        }
-
-        return this.results.map((result) => this.$createElement('DruxtEntity', {
-          attrs: { ...attrs },
-          key: result.id,
-          props: {
-            mode: this.mode,
-            type: result.type,
-            uuid: result.id
-          }
-        }))
-      }
-
-      // Pager.
-      if (this.showPager) {
-        scopedSlots.pager = (attrs) => this.$createElement('DruxtViewsPager', {
-          attrs: { ...attrs },
-          on: {
-            input: (value) => {
-              this.model.page = value
-            }
-          },
-          props: {
-            count: this.count,
-            resource: this.resource,
-            value: this.model.page,
-            ...this.pager,
-          }
-        })
-      }
-
-      // Attachments after.
-      if (this.attachments_after) {
-        scopedSlots.attachments_after = (attrs) => this.attachments_after.map((displayId) => this.$createElement('DruxtView', {
-          attrs: { ...attrs },
-          key: displayId,
-          props: {
-            displayId,
-            type: this.type,
-            uuid: this.uuid,
-            viewId: this.viewId,
-          },
-        }))
-      }
-
-      // Build default slot.
-      scopedSlots.default = (attrs) => Object.keys(scopedSlots)
-        .filter((key) => !['default', '_normalized'].includes(key))
-        .map((key) => scopedSlots[key](attrs))
-
-      return scopedSlots
-    },
-
-    /**
      * Builds the query for the JSON:API request.
      *
      * @param {ModuleSettings} settings - The merged module and component settings object.
@@ -563,6 +425,147 @@ export default {
       results: vm.results,
       view: vm.view
     }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * - header
+     * - filters
+     * - sorts
+     * - attachments_before
+     * - results
+     * - pager
+     * - attachments_after
+     * - default (all of the above)
+     *
+     * @example <caption>DruxtView**ViewId**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot name="header" />
+     *     <slot name="results" />
+     *     <slot name="pager" />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots(h) {
+      // Build scoped slots.
+      const scopedSlots = {}
+
+      // Headers.
+      scopedSlots.header = () => Object.entries(this.headers).map(([key, header]) => h('span', {
+        domProps: { innerHTML: (header.content || {}).value }, key
+      }))
+
+      // Exposed filters.
+      if (this.filters.length) {
+        scopedSlots.filters = (attrs) => h('DruxtViewsFilters', {
+          attrs: { ...attrs },
+          on: {
+            input: (value) => {
+              this.model.filter = value
+            }
+          },
+          props: {
+            filters: this.filters,
+            value: this.model.filter,
+            ...this.display.display_options.exposed_form
+          },
+        })
+      }
+
+      // Exposed sorts.
+      if (this.showSorts) {
+        scopedSlots.sorts = (attrs) => h('DruxtViewsSorts', {
+          attrs: { ...attrs },
+          on: {
+            input: (value) => {
+              this.model.sort = value
+            }
+          },
+          props: {
+            sorts: this.sorts,
+            value: this.model.sort,
+            ...this.display.display_options.exposed_form
+          }
+        })
+      }
+
+      // Attachments before.
+      if (this.attachments_before) {
+        scopedSlots.attachments_before = (attrs) => this.attachments_before.map((displayId) => h('DruxtView', {
+          attrs: { ...attrs },
+          key: displayId,
+          props: {
+            displayId,
+            type: this.type,
+            uuid: this.uuid,
+            viewId: this.viewId,
+          },
+        }))
+      }
+
+      // Results.
+      scopedSlots.results = (attrs) => {
+        if (!this.results.length) {
+          return Object.values(this.display.display_options.empty)
+            .filter((o) => o.plugin_id === 'text_custom')
+            .map((empty) => {
+              return h('div', { domProps: { innerHTML: empty.content } })
+            })
+        }
+
+        return this.results.map((result) => h('DruxtEntity', {
+          attrs: { ...attrs },
+          key: result.id,
+          props: {
+            mode: this.mode,
+            type: result.type,
+            uuid: result.id
+          }
+        }))
+      }
+
+      // Pager.
+      if (this.showPager) {
+        scopedSlots.pager = (attrs) => h('DruxtViewsPager', {
+          attrs: { ...attrs },
+          on: {
+            input: (value) => {
+              this.model.page = value
+            }
+          },
+          props: {
+            count: this.count,
+            resource: this.resource,
+            value: this.model.page,
+            ...this.pager,
+          }
+        })
+      }
+
+      // Attachments after.
+      if (this.attachments_after) {
+        scopedSlots.attachments_after = (attrs) => this.attachments_after.map((displayId) => h('DruxtView', {
+          attrs: { ...attrs },
+          key: displayId,
+          props: {
+            displayId,
+            type: this.type,
+            uuid: this.uuid,
+            viewId: this.viewId,
+          },
+        }))
+      }
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => Object.keys(scopedSlots)
+        .filter((key) => !['default', '_normalized'].includes(key))
+        .map((key) => scopedSlots[key](attrs))
+
+      return scopedSlots
+    },
   }
 }
 

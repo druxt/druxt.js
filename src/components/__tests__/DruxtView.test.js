@@ -70,15 +70,16 @@ describe('DruxtView', () => {
       'default'
     ])
 
+    const h = jest.fn()
     const slotsMock = {
-      $createElement: jest.fn(),
+      $createElement: h,
       display: wrapper.vm.display,
       filters: wrapper.vm.filters,
       results: wrapper.vm.results,
     }
-    expect(DruxtView.methods.getScopedSlots.call(slotsMock).results({}).length).toBe(8)
-    expect(slotsMock.$createElement).toHaveBeenCalledTimes(8)
-    expect(slotsMock.$createElement).toHaveBeenCalledWith('DruxtEntity', expect.any(Object))
+    expect(DruxtView.druxt.slots.call(slotsMock, h).results({}).length).toBe(8)
+    expect(h).toHaveBeenCalledTimes(8)
+    expect(h).toHaveBeenCalledWith('DruxtEntity', expect.any(Object))
 
     // Test empty results.
     slotsMock.display.display_options.empty = [{
@@ -86,9 +87,9 @@ describe('DruxtView', () => {
       plugin_id: 'text_custom',
     }]
     slotsMock.results = []
-    expect(DruxtView.methods.getScopedSlots.call(slotsMock).results({}).length).toBe(1)
-    expect(slotsMock.$createElement).toHaveBeenCalledTimes(9)
-    expect(slotsMock.$createElement).toHaveBeenCalledWith('div', expect.any(Object))
+    expect(DruxtView.druxt.slots.call(slotsMock, h).results({}).length).toBe(1)
+    expect(h).toHaveBeenCalledTimes(9)
+    expect(h).toHaveBeenCalledWith('div', expect.any(Object))
 
     // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
@@ -126,11 +127,11 @@ describe('DruxtView', () => {
 
     // Watches.
     expect(mocks.$fetch).toHaveBeenCalledTimes(0)
-    await wrapper.vm.$options.watch.displayId.call(mocks)
+    await DruxtView.watch.displayId.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(1)
-    await wrapper.vm.$options.watch.query.call(mocks)
+    await DruxtView.watch.query.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(2)
-    await wrapper.vm.$options.watch.uuid.call(mocks)
+    await DruxtView.watch.uuid.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(3)
     wrapper.vm.model.page = 1
     await localVue.nextTick()
@@ -164,12 +165,13 @@ describe('DruxtView', () => {
       'default'
     ])
 
-    const mockSlots = DruxtView.methods.getScopedSlots.call({
-      $createElement: jest.fn(),
+    const h = jest.fn()
+    const mockSlots = DruxtView.druxt.slots.call({
+      $createElement: h,
       headers: wrapper.vm.headers,
       filters: wrapper.vm.filters,
       results: wrapper.vm.results,
-    })
+    }, h)
     for (const key of Object.keys(mockSlots).filter((key) => key !== 'default')) {
       mockSlots[key] = jest.fn()
     }

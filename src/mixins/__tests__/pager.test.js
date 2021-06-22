@@ -19,5 +19,5 @@ test('DruxtViewsPagerMixin', async () => {
   expect(wrapper.vm.model).toStrictEqual(1)
 
   await wrapper.vm.$nextTick()
-  expect(wrapper.emitted().input).toStrictEqual([[1]])
+  expect(wrapper.emitted().input[0]).toStrictEqual([1])
 })
