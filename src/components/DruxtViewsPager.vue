@@ -1,36 +1,3 @@
-<template>
-  <component
-    :is="wrapper.component"
-    v-if="!$fetchState.pending"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      v-model="model"
-      v-bind="component.propsData"
-    >
-      <ul>
-        <li v-if="resource.links.prev">
-          <nuxt-link
-            :to="getRoute(resource.links.prev)"
-            @click.native="setPage(resource.links.prev)"
-          >
-            {{ options.tags.previous }}
-          </nuxt-link>
-        </li>
-        <li v-if="resource.links.next">
-          <nuxt-link
-            :to="getRoute(resource.links.next)"
-            @click.native="setPage(resource.links.next)"
-          >
-            {{ options.tags.next }}
-          </nuxt-link>
-        </li>
-      </ul>
-    </component>
-  </component>
-</template>
-
 <script>
 import { DruxtModule } from 'druxt'
 
@@ -44,11 +11,7 @@ export default {
 
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
+  /** */
   props: {
     /**
      * The JSON:API Views results total count.
@@ -101,12 +64,6 @@ export default {
     }
   },
 
-  data() {
-    return {
-      model: this.value
-    }
-  },
-
   watch: {
     model(to, from) {
       if (to !== from) {
@@ -141,7 +98,35 @@ export default {
       options: vm.options,
       resource: vm.resource,
       type: vm.type,
-    })
+    }),
+
+    slots(h) {
+      const self = this
+      return {
+        default: () => h('ul', [
+          ((this.resource || {}).links || {}).prev && h('li', [
+            h('NuxtLink', {
+              nativeOn: {
+                click() {
+                  self.setPage(self.resource.links.prev)
+                },
+              },
+              props: { to: this.getRoute(this.resource.links.prev) },
+            }, [this.options.tags.previous]),
+          ]),
+          ((this.resource || {}).links || {}).next && h('li', [
+            h('NuxtLink', {
+              nativeOn: {
+                click() {
+                  self.setPage(self.resource.links.next)
+                },
+              },
+              props: { to: this.getRoute(this.resource.links.next) },
+            }, [this.options.tags.next]),
+          ]),
+        ])
+      }
+    }
   }
 }
 </script>

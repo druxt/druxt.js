@@ -25,11 +25,7 @@ export default {
 
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
+  /** */
   props: {
     /**
      * The Exposed Filter objects.
@@ -40,22 +36,6 @@ export default {
       type: Object,
       required: true,
     },
-
-    /**
-     * The DruxtViewFilter model value.
-     *
-     * @type {*}
-     */
-    value: {
-      type: [Array, Number, String],
-      default: undefined,
-    },
-  },
-
-  data() {
-    return {
-      model: this.value,
-    }
   },
 
   watch: {

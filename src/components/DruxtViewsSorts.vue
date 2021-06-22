@@ -1,34 +1,3 @@
-<template>
-  <component
-    :is="wrapper.component"
-    v-if="!$fetchState.pending"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      v-model="model"
-      v-bind="component.propsData"
-    >
-      <div>
-        <strong>{{ options.exposed_sorts_label }}</strong>
-        <ul>
-          <li
-            v-for="sort of sorts"
-            :key="sort.id"
-          >
-            <nuxt-link
-              :to="sortBy(sort)"
-              @click.native="model = sort.id"
-            >
-              {{ sort.expose.label }}
-            </nuxt-link>
-          </li>
-        </ul>
-      </div>
-    </component>
-  </component>
-</template>
-
 <script>
 import { DruxtModule } from 'druxt'
 
@@ -47,11 +16,7 @@ export default {
 
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
+  /** */
   props: {
     /**
      * The Exposed form options.
@@ -82,22 +47,6 @@ export default {
       type: String,
       default: 'basic',
     },
-
-    /**
-     * The DruxtViewSorts model value.
-     *
-     * @type {string}
-     */
-    value: {
-      type: String,
-      default: undefined,
-    },
-  },
-
-  data() {
-    return {
-      model: this.value
-    }
   },
 
   watch: {
@@ -117,7 +66,26 @@ export default {
   druxt: {
     componentOptions: ({ type }) => ([[type], ['default']]),
 
-    propsData: ({ options, sorts, type }) => ({ options, sorts, type })
+    propsData: ({ options, sorts, type }) => ({ options, sorts, type }),
+
+    slots(h) {
+      const self = this
+      return {
+        default: () => h('div', [
+          h('strong', [this.options.exposed_sorts_label]),
+          h('ul', this.sorts.map((sort) => h('li', [
+            h('NuxtLink', {
+              nativeOn: {
+                click() {
+                  self.model = sort.id
+                },
+              },
+              props: { to: this.sortBy(sort) },
+            }, [sort.expose.label])
+          ])))
+        ]),
+      }
+    }
   }
 }
 </script>
