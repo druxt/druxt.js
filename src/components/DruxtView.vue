@@ -1,5 +1,6 @@
 <script>
 import merge from 'deepmerge'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtModule } from 'druxt'
 import { parse, stringify } from 'qs'
 import { mapActions } from 'vuex'
@@ -50,7 +51,7 @@ export default {
      */
     type: {
       type: String,
-      default: 'view--view'
+      default: 'view--view',
     },
 
     /**
@@ -60,7 +61,7 @@ export default {
      */
     uuid: {
       type: String,
-      required: true
+      default: null,
     },
 
     /**
@@ -70,7 +71,7 @@ export default {
      */
     viewId: {
       type: String,
-      required: true
+      default: null,
     }
   },
 
@@ -81,11 +82,16 @@ export default {
     let component = { ...this.component }
 
     // Fetch View.
-    if (!this.view) {
-      this.view = await this.getResource({
-        type: this.type,
-        id: this.uuid,
-      })
+    if (!this.view && (this.uuid || this.viewId)) {
+      if (this.uuid) {
+        this.view = await this.getResource({
+          type: this.type,
+          id: this.uuid,
+        })
+      } else {
+        const collection = await this.getCollection({ type: this.type, query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId) })
+        this.view = { data: collection.data[0] }
+      }
 
       // Build wrapper component object.
       const options = this.getModuleComponents()
@@ -103,12 +109,15 @@ export default {
     component.settings = merge((this.$druxtViews || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
 
     // Fetch JSON:API Views resource.
-    const query = this.getQuery(component.settings)
-    this.resource = await this.getResults({
-      viewId: this.viewId,
-      displayId: this.displayId,
-      query: stringify(query)
-    })
+    const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
+    if (viewId) {
+      const query = this.getQuery(component.settings)
+      this.resource = await this.getResults({
+        viewId,
+        displayId: this.displayId,
+        query: stringify(query)
+      })
+    }
 
     // Build wrapper component propsData.
     component = { ...component, ...this.getModulePropsData(wrapperData.props) }
@@ -118,15 +127,11 @@ export default {
   },
 
   fetchKey(getCounter) {
-    const parts = ['DruxtView', this.viewId, this.displayId].filter((o) => o)
+    const parts = ['DruxtView', this.viewId || this.uuid, this.displayId].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
   },
 
   /**
-   * Vue.js Data object.
-   *
-   * Used for on-demand JSON:API resource loading.
-   *
    * @property {object} model - The model object.
    * @property {object} resource - The JSON:API Views resource.
    * @property {object} view - The View JSON:API resource.
@@ -394,6 +399,7 @@ export default {
      * Maps Vuex action to methods.
      */
     ...mapActions({
+      getCollection: 'druxt/getCollection',
       getResource: 'druxt/getResource',
       getResults: 'druxt/views/getResults'
     })
@@ -409,7 +415,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: (vm) => ([[vm.viewId, vm.displayId]]),
+    componentOptions: ({ displayId, uuid, viewId }) => ([[viewId || uuid, displayId]]),
 
     /**
      * Provides propsData for the DruxtWrapper.
