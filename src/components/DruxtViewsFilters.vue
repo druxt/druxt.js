@@ -58,20 +58,36 @@ export default {
     },
   },
 
-  data() {
-    return {
-      model: { ...this.value }
-    }
-  },
+  data: ({ value }) => ({
+    model: { ...value }
+  }),
 
   watch: {
     model: {
       deep: true,
-      handler() {
+      handler(to, from) {
         // Only emit 'input' if using the default 'DruxtWrapper' component.
-        if (this.component.is === 'DruxtWrapper') {
-          this.$emit('input', this.model)
+        if (this.component.is !== 'DruxtWrapper') {
+          return
         }
+
+        // Only act if data has changed.
+        if (Object.entries(to).length === Object.entries(from).length) {
+          const match = Object.entries(to).filter(([key, value]) => from[key] !== value)
+          if (!match.length) {
+            return
+          }
+        }
+
+        this.$emit('input', this.model)
+      }
+    },
+
+    value: {
+      deep: true,
+      handler() {
+        this.component.props.value = this.value
+        this.model = this.value
       }
     }
   },
