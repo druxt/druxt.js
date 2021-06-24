@@ -1,6 +1,6 @@
 {
   "name": "druxt-views",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Drupal Views Vue.js components for Nuxt.js",
   "repository": {
     "type": "git",
@@ -62,8 +62,8 @@
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.1.12",
     "druxt": "^0.8.1",
-    "druxt-blocks": "^0.9.1",
-    "druxt-entity": "^0.14.1",
+    "druxt-blocks": "^0.9.2",
+    "druxt-entity": "^0.15.0",
     "druxt-router": "^0.18.1",
     "vuex": "^3.6.0"
   },
