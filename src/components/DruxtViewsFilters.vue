@@ -54,11 +54,40 @@ export default {
     },
   },
 
+  /** DruxtModule settings */
   druxt: {
+    /**
+     * Provides the available component naming options for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {ComponentOptions}
+     */
     componentOptions: ({ type }) => ([[type], ['default']]),
 
+    /**
+     * Provides propsData for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {PropsData}
+     */
     propsData: ({ options, filters, model, type }) => ({ options, filters, type, value: model }),
 
+    /**
+     * Provides the scoped slots object for the Module render function.
+     * 
+     * A scoped slot is provided for each filter.
+     * 
+     * The `default` slot will render all filters.
+     *
+     * @example <caption>DruxtViewsFilters**Type**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot name="nid" />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
     slots(h) {
       const scopedSlots = {}
 
@@ -88,4 +117,69 @@ export default {
     },
   },
 }
+
+/**
+ * Provides the available component naming options for the Druxt Wrapper.
+ *
+ * @typedef {array[]} ComponentOptions
+ *
+ * @example @lang js
+ * [
+ *   'DruxtViewsFilters[Type]',
+ *   'DruxtViewsFilters[Default]'
+ * ]
+ *
+ * @example @lang js
+ * [
+ *   'DruxtViewsFiltersBasic',
+ *   'DruxtViewsFiltersDefault'
+ * ]
+ */
+
+/**
+ * Provides propsData for the DruxtWrapper.
+ *
+ * @typedef {object} PropsData
+ * @param {object[]} filters - The Exposed Filter objects.
+ * @param {object} options - The Exposed form options.
+ * @param {string} type - The Exposed form type.
+ * @param {object} value - The DruxtViewFilters model value.
+ *
+ * @example @lang js
+ * {
+ *   filters: [{
+ *     admin_label: '',
+ *     expose: {},
+ *     exposed: true,
+ *     ...
+ *   }],
+ *   options: {
+ *     expose_sort_order: true,
+ *     exposed_sorts_label: 'Sort by',
+ *     reset_button: false,
+ *     ...
+ *   },
+ *   type: 'basic',
+ *   value: undefined,
+ * }
+ */
+
+/**
+ * Provides scoped slots for use in the Wrapper component.
+ *
+ * @typedef {object} ScopedSlots
+ * @param {function} [filter.expose.identifier] - Slot per filter.
+ * @param {function} default - All filters.
+ *
+ * @example <caption>DruxtViewsFilters**Type**.vue</caption> @lang vue
+ * <template>
+ *   <div v-if="default">
+ *     <slot />
+ *   </div>
+ * 
+ *   <div v-else>
+ *     <slot name="type" />
+ *   </div>
+ * </template>
+ */
 </script>
