@@ -50,8 +50,10 @@ const DruxtViewsFilterMixin = {
   },
 
   watch: {
-    model() {
-      this.$emit('input', this.model)
+    model(to, from) {
+      if (to !== from) {
+        this.$emit('input', this.model)
+      }
     }
   }
 }

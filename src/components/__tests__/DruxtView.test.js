@@ -201,4 +201,43 @@ describe('DruxtView', () => {
       'fields[node--page]': 'uuid,title'
     })
   })
+
+  test('v-model', () => {
+    const h = jest.fn((tag, options, children) => {
+      options.on.input.call(mock, options.attrs.mock)
+    })
+    const mock = {
+      filters: [{
+        id: 'test',
+        plugin_id: 'test',
+        expose: {
+          identifier: 'test',
+        },
+      }],
+      model: {
+        filter: {},
+        page: null,
+        sort: null,
+      },
+      results: [],
+      showPager: true,
+      showSorts: true,
+    }
+    const slots = DruxtView.druxt.slots.call(mock, h)
+
+    // Filters
+    expect(mock.model.filter).toStrictEqual({})
+    slots.filters({ mock: { test: 1 } })
+    expect(mock.model.filter).toStrictEqual({ test: 1 })
+
+    // Sorts
+    expect(mock.model.sort).toStrictEqual(null)
+    slots.sorts({ mock: 'test' })
+    expect(mock.model.sort).toStrictEqual('test')
+
+    // Pager
+    expect(mock.model.page).toStrictEqual(null)
+    slots.pager({ mock: 1 })
+    expect(mock.model.page).toStrictEqual(1)
+  })
 })
