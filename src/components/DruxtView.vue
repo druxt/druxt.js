@@ -306,14 +306,6 @@ export default {
       await this.$fetch()
     },
 
-    async query(to, from) {
-      await this.$fetch()
-    },
-
-    async uuid() {
-      await this.$fetch()
-    },
-
     'model.filter': {
       deep: true,
       async handler(to, from) {
@@ -334,6 +326,18 @@ export default {
       if (to !== from) {
         await this.$fetch()
       }
+    },
+
+    async query(to, from) {
+      await this.$fetch()
+    },
+
+    async uuid() {
+      await this.$fetch()
+    },
+
+    async viewId() {
+      await this.$fetch()
     },
   },
 

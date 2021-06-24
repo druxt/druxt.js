@@ -128,16 +128,18 @@ describe('DruxtView', () => {
     expect(mocks.$fetch).toHaveBeenCalledTimes(0)
     await DruxtView.watch.displayId.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(1)
-    await DruxtView.watch.query.call(mocks)
-    expect(mocks.$fetch).toHaveBeenCalledTimes(2)
-    await DruxtView.watch.uuid.call(mocks)
-    expect(mocks.$fetch).toHaveBeenCalledTimes(3)
     wrapper.vm.model.page = 1
     await localVue.nextTick()
-    expect(mocks.$fetch).toHaveBeenCalledTimes(4)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(2)
     wrapper.vm.model.sort = 'nid'
     await localVue.nextTick()
+    expect(mocks.$fetch).toHaveBeenCalledTimes(3)
+    await DruxtView.watch.query.call(mocks)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(4)
+    await DruxtView.watch.uuid.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(5)
+    await DruxtView.watch.viewId.call(mocks)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(6)
   })
 
   test('recipes--embed', async () => {
