@@ -40,7 +40,6 @@ describe('DruxtView', () => {
   test('featured_articles', async () => {
     const wrapper = mountComponent({
       displayId: 'page_1',
-      uuid: 'ab193308-95ab-489d-b662-f7305380c41e',
       viewId: 'featured_articles'
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -50,7 +49,7 @@ describe('DruxtView', () => {
 
     // Props.
     expect(wrapper.vm.displayId).toBe('page_1')
-    expect(wrapper.vm.uuid).toBe('ab193308-95ab-489d-b662-f7305380c41e')
+    expect(wrapper.vm.uuid).toBe(null)
     expect(wrapper.vm.viewId).toBe('featured_articles')
 
     // Computed.
@@ -145,12 +144,11 @@ describe('DruxtView', () => {
     const wrapper = mountComponent({
       displayId: 'embed_1',
       uuid: 'f6c38097-d534-4bfb-87d9-09526fe44e9c',
-      viewId: 'recipes'
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtView.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtView:recipes:embed_1:0')
+    expect(DruxtView.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtView:f6c38097-d534-4bfb-87d9-09526fe44e9c:embed_1:0')
 
     // Scoped slots.
     const scopedSlots = wrapper.vm.getScopedSlots.call(mocks)
