@@ -11,11 +11,7 @@ export default {
 
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
+  /** */
   props: {
     /**
      * The Exposed Filter objects.
@@ -58,75 +54,132 @@ export default {
     },
   },
 
-  data() {
-    return {
-      model: { ...this.value }
-    }
-  },
-
-  watch: {
-    model: {
-      deep: true,
-      handler() {
-        // Only emit 'input' if using the default 'DruxtWrapper' component.
-        if (this.component.is === 'DruxtWrapper') {
-          this.$emit('input', this.model)
-        }
-      }
-    }
-  },
-
+  /** DruxtModule settings */
   druxt: {
+    /**
+     * Provides the available component naming options for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {ComponentOptions}
+     */
     componentOptions: ({ type }) => ([[type], ['default']]),
 
-    propsData: ({ options, filters, type }) => ({ options, filters, type })
+    /**
+     * Provides propsData for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {PropsData}
+     */
+    propsData: ({ options, filters, model, type }) => ({ options, filters, type, value: model }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     * 
+     * A scoped slot is provided for each filter.
+     * 
+     * The `default` slot will render all filters.
+     *
+     * @example <caption>DruxtViewsFilters**Type**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot name="nid" />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots(h) {
+      const scopedSlots = {}
+
+      // Build scoped slots for each filter.
+      this.filters.map((filter) => {
+        scopedSlots[filter.expose.identifier] = (attrs) => h('DruxtViewsFilter', {
+          attrs: { ...attrs, ...this.$attrs },
+          props: {
+            filter,
+            value: this.model[filter.expose.identifier]
+          },
+          ref: filter.expose.identifier,
+          on: {
+            input: (value) => {
+              this.model = { ...this.model, [filter.expose.identifier]: value }
+            }
+          }
+        })
+      })
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => this.filters.map(
+        (filter) => scopedSlots[filter.expose.identifier](attrs)
+      )
+
+      return scopedSlots
+    },
   },
-
-  render(h) {
-    const wrapperData = {
-      class: this.wrapper.class || undefined,
-      style: this.wrapper.style || undefined,
-      props: this.wrapper.propsData,
-    }
-
-    // Build scoped slots for each filter.
-    const scopedSlots = {}
-
-    this.filters.map((filter) => {
-      scopedSlots[filter.expose.identifier] = attrs => h('DruxtViewsFilter', {
-        attrs: { ...attrs, ...this.$attrs },
-        props: {
-          filter,
-          value: this.model[filter.expose.identifier]
-        },
-        on: {
-          input: (value) => {
-            this.model = { ...this.model, [filter.expose.identifier]: value }
-          }
-        }
-      })
-    })
-
-    // Build default slot.
-    scopedSlots.default = attrs => this.filters.map((filter) => scopedSlots[filter.expose.identifier](attrs))
-
-    // Return wrapped component.
-    return h(this.wrapper.component, wrapperData, [
-      h(this.component.is, {
-        attrs: this.$attrs,
-        props: {
-          ...this.component.propsData,
-          value: this.model
-        },
-        scopedSlots,
-        on: {
-          input: value => {
-            this.model = value
-            this.$emit('input', this.model)
-          }
-        }
-      })
-    ])
-  }
 }
+
+/**
+ * Provides the available component naming options for the Druxt Wrapper.
+ *
+ * @typedef {array[]} ComponentOptions
+ *
+ * @example @lang js
+ * [
+ *   'DruxtViewsFilters[Type]',
+ *   'DruxtViewsFilters[Default]'
+ * ]
+ *
+ * @example @lang js
+ * [
+ *   'DruxtViewsFiltersBasic',
+ *   'DruxtViewsFiltersDefault'
+ * ]
+ */
+
+/**
+ * Provides propsData for the DruxtWrapper.
+ *
+ * @typedef {object} PropsData
+ * @param {object[]} filters - The Exposed Filter objects.
+ * @param {object} options - The Exposed form options.
+ * @param {string} type - The Exposed form type.
+ * @param {object} value - The DruxtViewFilters model value.
+ *
+ * @example @lang js
+ * {
+ *   filters: [{
+ *     admin_label: '',
+ *     expose: {},
+ *     exposed: true,
+ *     ...
+ *   }],
+ *   options: {
+ *     expose_sort_order: true,
+ *     exposed_sorts_label: 'Sort by',
+ *     reset_button: false,
+ *     ...
+ *   },
+ *   type: 'basic',
+ *   value: undefined,
+ * }
+ */
+
+/**
+ * Provides scoped slots for use in the Wrapper component.
+ *
+ * @typedef {object} ScopedSlots
+ * @param {function} [filter.expose.identifier] - Slot per filter.
+ * @param {function} default - All filters.
+ *
+ * @example <caption>DruxtViewsFilters**Type**.vue</caption> @lang vue
+ * <template>
+ *   <div v-if="default">
+ *     <slot />
+ *   </div>
+ * 
+ *   <div v-else>
+ *     <slot name="type" />
+ *   </div>
+ * </template>
+ */
 </script>

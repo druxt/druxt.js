@@ -17,7 +17,7 @@
 
 `$ npm install druxt-views`
 
-## Usage
+### Nuxt.js
 
 Add module to `nuxt.config.js`
 
@@ -35,6 +35,38 @@ module.exports = {
   },
 }
 ```
+
+## Usage
+
+### DruxtView component
+
+The DruxtView component uses the [JSON:API Views module](https://drupal.org/project/jsonapi_views) to render a Decoupled Drupal View.
+
+```vue
+<DruxtView view-id="frontpage" />
+```
+
+The View can be themed by providing a default scoped slot:
+```vue
+<DruxtView view-id="frontpage">
+  <template #default="{ results }">
+    {{ results }}
+  </template>
+</DruxtView>
+```
+
+The component also provides a DruxtWrapper component for theming:
+```vue
+<template>
+  <div>
+    <slot name="sorts" />
+    <slot name="results" />
+    <slot name="pager" />
+  <div>
+</template>
+```
+
+See the [DruxtViews API documentation](https://views.druxtjs.org/api/components/DruxtViews.html) for more information.
 
 ## Options
 

@@ -17,6 +17,11 @@ const mountComponent = (propsData) => {
     $fetchState: {
       pending: true
     },
+    $nuxt: {
+      context: {
+        isDev: false,
+      },
+    },
     $route: {
       query: {}
     }
@@ -41,6 +46,14 @@ describe('DruxtViewsPager', () => {
     const wrapper = mountComponent({ type: 'test' })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
+    // Props
+    expect(wrapper.vm.count).toBe(false)
+    expect(wrapper.vm.options).toStrictEqual({})
+    expect(wrapper.vm.resource).toStrictEqual({})
+    expect(wrapper.vm.type).toBe('test')
+    expect(wrapper.vm.value).toBe(0)
+
+    // Methods.
     const link = { href: '?page=1' }
     expect(wrapper.vm.getQuery(link)).toStrictEqual({ page: 1 })
     expect(wrapper.vm.getRoute(link)).toStrictEqual({
@@ -49,12 +62,25 @@ describe('DruxtViewsPager', () => {
       }
     })
 
+    // Slots.
+    await wrapper.setProps({
+      options: { tags: { next: 'Next', previous: 'Previous' } },
+      resource: { links: { next: link, prev: { href: '?page=-1' } } }
+    })
+    const defaultSlot = wrapper.vm.getScopedSlots().default.call(wrapper.vm)
+    expect(defaultSlot.tag).toBe('ul')
+    expect(wrapper.vm.model).toBe(0)
+    defaultSlot.children[0].children[0].data.nativeOn.click()
+    expect(wrapper.vm.model).toBe(-1)
+    defaultSlot.children[1].children[0].data.nativeOn.click()
+    expect(wrapper.vm.model).toBe(1)
+
     // Ensure model change to emit input.
     wrapper.vm.setPage(link)
     await localVue.nextTick()
-    expect(wrapper.emitted().input).toStrictEqual([[1]])
+    expect(wrapper.emitted().input[0]).toStrictEqual([1])
 
-    // DruxtComponentMixin.
+    // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtViewsPagerTest',

@@ -17,6 +17,11 @@ const mountComponent = (propsData) => {
     $fetchState: {
       pending: true
     },
+    $nuxt: {
+      context: {
+        isDev: false,
+      },
+    },
     $route: {
       query: {}
     }
@@ -51,7 +56,7 @@ describe('DruxtViewsFilter', () => {
     // Ensure model change to emit input.
     wrapper.vm.model = 1
     await localVue.nextTick()
-    expect(wrapper.emitted().input).toStrictEqual([[1]])
+    expect(wrapper.emitted().input[0]).toStrictEqual([1])
 
     // DruxtComponentMixin.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')

@@ -40,7 +40,6 @@ describe('DruxtView', () => {
   test('featured_articles', async () => {
     const wrapper = mountComponent({
       displayId: 'page_1',
-      uuid: 'ab193308-95ab-489d-b662-f7305380c41e',
       viewId: 'featured_articles'
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -50,7 +49,7 @@ describe('DruxtView', () => {
 
     // Props.
     expect(wrapper.vm.displayId).toBe('page_1')
-    expect(wrapper.vm.uuid).toBe('ab193308-95ab-489d-b662-f7305380c41e')
+    expect(wrapper.vm.uuid).toBe(null)
     expect(wrapper.vm.viewId).toBe('featured_articles')
 
     // Computed.
@@ -70,15 +69,16 @@ describe('DruxtView', () => {
       'default'
     ])
 
+    const h = jest.fn()
     const slotsMock = {
-      $createElement: jest.fn(),
+      $createElement: h,
       display: wrapper.vm.display,
       filters: wrapper.vm.filters,
       results: wrapper.vm.results,
     }
-    expect(DruxtView.methods.getScopedSlots.call(slotsMock).results({}).length).toBe(8)
-    expect(slotsMock.$createElement).toHaveBeenCalledTimes(8)
-    expect(slotsMock.$createElement).toHaveBeenCalledWith('DruxtEntity', expect.any(Object))
+    expect(DruxtView.druxt.slots.call(slotsMock, h).results({}).length).toBe(8)
+    expect(h).toHaveBeenCalledTimes(8)
+    expect(h).toHaveBeenCalledWith('DruxtEntity', expect.any(Object))
 
     // Test empty results.
     slotsMock.display.display_options.empty = [{
@@ -86,9 +86,9 @@ describe('DruxtView', () => {
       plugin_id: 'text_custom',
     }]
     slotsMock.results = []
-    expect(DruxtView.methods.getScopedSlots.call(slotsMock).results({}).length).toBe(1)
-    expect(slotsMock.$createElement).toHaveBeenCalledTimes(9)
-    expect(slotsMock.$createElement).toHaveBeenCalledWith('div', expect.any(Object))
+    expect(DruxtView.druxt.slots.call(slotsMock, h).results({}).length).toBe(1)
+    expect(h).toHaveBeenCalledTimes(9)
+    expect(h).toHaveBeenCalledWith('div', expect.any(Object))
 
     // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
@@ -126,30 +126,31 @@ describe('DruxtView', () => {
 
     // Watches.
     expect(mocks.$fetch).toHaveBeenCalledTimes(0)
-    await wrapper.vm.$options.watch.displayId.call(mocks)
+    await DruxtView.watch.displayId.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(1)
-    await wrapper.vm.$options.watch.query.call(mocks)
-    expect(mocks.$fetch).toHaveBeenCalledTimes(2)
-    await wrapper.vm.$options.watch.uuid.call(mocks)
-    expect(mocks.$fetch).toHaveBeenCalledTimes(3)
     wrapper.vm.model.page = 1
     await localVue.nextTick()
-    expect(mocks.$fetch).toHaveBeenCalledTimes(4)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(2)
     wrapper.vm.model.sort = 'nid'
     await localVue.nextTick()
+    expect(mocks.$fetch).toHaveBeenCalledTimes(3)
+    await DruxtView.watch.query.call(mocks)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(4)
+    await DruxtView.watch.uuid.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(5)
+    await DruxtView.watch.viewId.call(mocks)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(6)
   })
 
   test('recipes--embed', async () => {
     const wrapper = mountComponent({
       displayId: 'embed_1',
       uuid: 'f6c38097-d534-4bfb-87d9-09526fe44e9c',
-      viewId: 'recipes'
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtView.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtView:recipes:embed_1:0')
+    expect(DruxtView.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtView:f6c38097-d534-4bfb-87d9-09526fe44e9c:embed_1:0')
 
     // Scoped slots.
     const scopedSlots = wrapper.vm.getScopedSlots.call(mocks)
@@ -164,12 +165,13 @@ describe('DruxtView', () => {
       'default'
     ])
 
-    const mockSlots = DruxtView.methods.getScopedSlots.call({
-      $createElement: jest.fn(),
+    const h = jest.fn()
+    const mockSlots = DruxtView.druxt.slots.call({
+      $createElement: h,
       headers: wrapper.vm.headers,
       filters: wrapper.vm.filters,
       results: wrapper.vm.results,
-    })
+    }, h)
     for (const key of Object.keys(mockSlots).filter((key) => key !== 'default')) {
       mockSlots[key] = jest.fn()
     }
@@ -198,5 +200,44 @@ describe('DruxtView', () => {
     expect(DruxtView.methods.getQuery.call(mock, settings)).toStrictEqual({
       'fields[node--page]': 'uuid,title'
     })
+  })
+
+  test('v-model', () => {
+    const h = jest.fn((tag, options, children) => {
+      options.on.input.call(mock, options.attrs.mock)
+    })
+    const mock = {
+      filters: [{
+        id: 'test',
+        plugin_id: 'test',
+        expose: {
+          identifier: 'test',
+        },
+      }],
+      model: {
+        filter: {},
+        page: null,
+        sort: null,
+      },
+      results: [],
+      showPager: true,
+      showSorts: true,
+    }
+    const slots = DruxtView.druxt.slots.call(mock, h)
+
+    // Filters
+    expect(mock.model.filter).toStrictEqual({})
+    slots.filters({ mock: { test: 1 } })
+    expect(mock.model.filter).toStrictEqual({ test: 1 })
+
+    // Sorts
+    expect(mock.model.sort).toStrictEqual(null)
+    slots.sorts({ mock: 'test' })
+    expect(mock.model.sort).toStrictEqual('test')
+
+    // Pager
+    expect(mock.model.page).toStrictEqual(null)
+    slots.pager({ mock: 1 })
+    expect(mock.model.page).toStrictEqual(1)
   })
 })

@@ -29,14 +29,13 @@ const Template = (args, { argTypes }) => ({
 export const <%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %> = Template.bind({})
 <%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %>.args = {
   displayId: '<%= display.id %>',
-  uuid: '<%= options.uuid %>',
   viewId: '<%= options.viewId %>',
 }
 <%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %>.storyName = '<%= display.display_title %>'
 <%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %>.parameters = {
   docs: {
     source: {
-      code: '<DruxtView\n  display-id="<%= display.id %>"\n  uuid="<%= options.uuid %>"\n  view-id="<%= options.viewId %>"\n/>'
+      code: '<DruxtView display-id="<%= display.id %>" view-id="<%= options.viewId %>" />'
     }
   }
 }
