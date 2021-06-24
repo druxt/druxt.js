@@ -1,5 +1,6 @@
 <script>
 import merge from 'deepmerge'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtModule } from 'druxt'
 import { parse, stringify } from 'qs'
 import { mapActions } from 'vuex'
@@ -17,9 +18,8 @@ import { mapActions } from 'vuex'
  *
  * @example
  * <DruxtView
- *   displayId="block_1"
- *   uuid="6ee5e720-bbbf-4d79-b600-21ebc0d954c5"
- *   viewId="promoted_items"
+ *   display-id="block_1"
+ *   view-id="promoted_items"
  * />
  */
 export default {
@@ -36,6 +36,9 @@ export default {
      *
      * @type {string}
      * @default default
+     * 
+     * @example
+     * <DruxtView display-id="page_1" view-id="frontpage" />
      */
     displayId: {
       type: String,
@@ -50,42 +53,51 @@ export default {
      */
     type: {
       type: String,
-      default: 'view--view'
+      default: 'view--view',
     },
 
     /**
      * The View UUID.
      *
      * @type {string}
+     * 
+     * @example
+     * <DruxtView uuid="f6c38097-d534-4bfb-87d9-09526fe44e9c" />
      */
     uuid: {
       type: String,
-      required: true
+      default: null,
     },
 
     /**
      * The View ID.
      *
      * @type {string}
+     * 
+     * @example
+     * <DruxtView view-id="frontpage" />
      */
     viewId: {
       type: String,
-      required: true
+      default: null,
     }
   },
 
-  /**
-   * Nuxt fetch method.
-   */
+  /** */
   async fetch() {
     let component = { ...this.component }
 
     // Fetch View.
-    if (!this.view) {
-      this.view = await this.getResource({
-        type: this.type,
-        id: this.uuid,
-      })
+    if (!this.view && (this.uuid || this.viewId)) {
+      if (this.uuid) {
+        this.view = await this.getResource({
+          type: this.type,
+          id: this.uuid,
+        })
+      } else {
+        const collection = await this.getCollection({ type: this.type, query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId) })
+        this.view = { data: collection.data[0] }
+      }
 
       // Build wrapper component object.
       const options = this.getModuleComponents()
@@ -103,12 +115,15 @@ export default {
     component.settings = merge((this.$druxtViews || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
 
     // Fetch JSON:API Views resource.
-    const query = this.getQuery(component.settings)
-    this.resource = await this.getResults({
-      viewId: this.viewId,
-      displayId: this.displayId,
-      query: stringify(query)
-    })
+    const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
+    if (viewId) {
+      const query = this.getQuery(component.settings)
+      this.resource = await this.getResults({
+        viewId,
+        displayId: this.displayId,
+        query: stringify(query)
+      })
+    }
 
     // Build wrapper component propsData.
     component = { ...component, ...this.getModulePropsData(wrapperData.props) }
@@ -118,15 +133,11 @@ export default {
   },
 
   fetchKey(getCounter) {
-    const parts = ['DruxtView', this.viewId, this.displayId].filter((o) => o)
+    const parts = ['DruxtView', this.viewId || this.uuid, this.displayId].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
   },
 
   /**
-   * Vue.js Data object.
-   *
-   * Used for on-demand JSON:API resource loading.
-   *
    * @property {object} model - The model object.
    * @property {object} resource - The JSON:API Views resource.
    * @property {object} view - The View JSON:API resource.
@@ -146,9 +157,7 @@ export default {
     }
   },
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
     /**
      * IDs of displays to be attached after the view.
@@ -301,14 +310,6 @@ export default {
       await this.$fetch()
     },
 
-    async query(to, from) {
-      await this.$fetch()
-    },
-
-    async uuid() {
-      await this.$fetch()
-    },
-
     'model.filter': {
       deep: true,
       async handler(to, from) {
@@ -329,6 +330,18 @@ export default {
       if (to !== from) {
         await this.$fetch()
       }
+    },
+
+    async query(to, from) {
+      await this.$fetch()
+    },
+
+    async uuid() {
+      await this.$fetch()
+    },
+
+    async viewId() {
+      await this.$fetch()
     },
   },
 
@@ -394,14 +407,13 @@ export default {
      * Maps Vuex action to methods.
      */
     ...mapActions({
+      getCollection: 'druxt/getCollection',
       getResource: 'druxt/getResource',
       getResults: 'druxt/views/getResults'
     })
   },
 
-  /**
-   * Druxt module configuration.
-   */
+  /** DruxtModule settings */
   druxt: {
     /**
      * Provides the available component naming options for the Druxt Wrapper.
@@ -409,7 +421,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: (vm) => ([[vm.viewId, vm.displayId]]),
+    componentOptions: ({ displayId, uuid, viewId }) => ([[viewId || uuid, displayId]]),
 
     /**
      * Provides propsData for the DruxtWrapper.
