@@ -2,21 +2,19 @@
 title: Introduction
 ---
 
-# DruxtJS Views
+# DruxtViews
 
 The DruxtViews module adds Drupal Views support to your [Nuxt.js](https://nuxtjs.org) frontend.
 
 
 ## Features
 
-- Nuxt module
-- DruxtView component
-- DruxtRouter support
-- DruxtBlock support
-- Druxt Module wrapper theming support
-- Druxt Module settings
-- Scoped slots
-- Auto-generated Nuxt Storybook integration
+- [Nuxt module](#nuxt-module)
+- [DruxtView component](#druxtview-component)
+- [DruxtRouter support](#router-support)
+- [DruxtBlock support](#blocks-support)
+- [DruxtWrapper theming system](#druxwrapper-themeing)
+- [Auto-generated Nuxt Storybook integration](#storybook)
 
 
 ## Nuxt module
@@ -37,53 +35,22 @@ See [Getting started](/guide/getting-started) and the [API documentation](/api) 
 
 ## DruxtView component
 
-The `DruxtView` component fetches the View and View result JSON:API resources and renders the output using the [DruxtJS Entity](https://entity.druxtjs.org) component.
+The `DruxtView` component fetches the View and View result JSON:API resources and renders the output using the [DruxtEntity](https://entity.druxtjs.org) component.
 
 ```vue
-<DruxtView :displayId="displayId" :uuid="uuid" :viewId="viewId" />
+<DruxtView :displayId="displayId" :viewId="viewId" />
 ```
+
+![Example DruxtView component](../images/druxt-views-page.png)
 
 See the [DruxtView component API documentation](../api/components/DruxtView.html).
 
 
-## Module wrapper theming
+## DruxtWrapper theming
 
-All DruxtView module components support the DruxtModule/Wrapper theming system.
+Druxt modules use a slot-based Wrapper component system to provide rich defaults while still allowing full control over all theming and functionality.
 
-Ir provides scoped slots as well as $attrs/props for slotless wrappers.
-
-_**Example:** DruxtEntityView**ViewId**.vue_
-```vue
-<template>
-  <div v-if="slot">
-    <slot />
-  </div>
-
-  <div v-else-if="slots">
-    <slot name="header" />
-    <slot name="results" />
-    <slot name="pager" />
-  </div>
-
-  <div v-else>
-    <DruxtEntity v-for="result of $attrs.results" :key="result.id" v-bind="props(result)" />
-  </div>
-</template>
-
-<script>
-export default {
-  druxt: {
-    ...
-    query: {
-      bundleFilter: true,
-      fields: ['title'],
-    }
-  }
-}
-</script>
-```
-
-See the [Druxt Wrapper theming documentation](https://druxtjs.org/guide/#wrapper-theme-system) for more information.
+See the [theming guide](https://druxtjs.org/guide/theming.html) for more details.
 
 
 ## Router support

@@ -8,54 +8,17 @@ actionLink: /guide/getting-started
 > The DruxtViews module adds [Drupal](https://drupal.org) Views support to your [Nuxt.js](https://nuxtjs.org) application.
 
 
-## The DruxtView component
+### DruxtView
 
-Druxt Views provides a Vue.js component to render a Drupal View.
+The DruxtView component uses the [JSON:API Views module](https://drupal.org/project/jsonapi_views) to render a Decoupled Drupal View.
 
 ```vue
-<DruxtView :display-id="displayId" :uuid="uuid" :view-id="viewId" />
+<DruxtView :display-id="displayId" :view-id="viewId" />
 ```
+
+![Example DruxtView page component](./images/druxt-views-page.png)
 
 Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtView.html).
-
-
-### Druxt module/wrapper
-
-The DruxtView component is compatible with the DruxtJS component theming system.
-
-
-_**Example:** DruxtEntityView**ViewId**.vue_
-```vue
-<template>
-  <div v-if="slot">
-    <slot />
-  </div>
-
-  <div v-else-if="slots">
-    <slot name="header" />
-    <slot name="results" />
-    <slot name="pager" />
-  </div>
-
-  <div v-else>
-    <DruxtEntity v-for="result of $attrs.results" :key="result.id" v-bind="props(result)" />
-  </div>
-</template>
-
-<script>
-export default {
-  druxt: {
-    ...
-    query: {
-      bundleFilter: true,
-      fields: ['title'],
-    }
-  }
-}
-</script>
-```
-
-See the [documentation](https://druxtjs.org/guide/#wrapper-theme-system) for more information.
 
 
 ## DruxtJS

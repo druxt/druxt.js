@@ -18,9 +18,8 @@ import { mapActions } from 'vuex'
  *
  * @example
  * <DruxtView
- *   displayId="block_1"
- *   uuid="6ee5e720-bbbf-4d79-b600-21ebc0d954c5"
- *   viewId="promoted_items"
+ *   display-id="block_1"
+ *   view-id="promoted_items"
  * />
  */
 export default {
@@ -37,6 +36,9 @@ export default {
      *
      * @type {string}
      * @default default
+     * 
+     * @example
+     * <DruxtView display-id="page_1" view-id="frontpage" />
      */
     displayId: {
       type: String,
@@ -58,6 +60,9 @@ export default {
      * The View UUID.
      *
      * @type {string}
+     * 
+     * @example
+     * <DruxtView uuid="f6c38097-d534-4bfb-87d9-09526fe44e9c" />
      */
     uuid: {
       type: String,
@@ -68,6 +73,9 @@ export default {
      * The View ID.
      *
      * @type {string}
+     * 
+     * @example
+     * <DruxtView view-id="frontpage" />
      */
     viewId: {
       type: String,
@@ -75,9 +83,7 @@ export default {
     }
   },
 
-  /**
-   * Nuxt fetch method.
-   */
+  /** */
   async fetch() {
     let component = { ...this.component }
 
@@ -151,9 +157,7 @@ export default {
     }
   },
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
     /**
      * IDs of displays to be attached after the view.
@@ -409,9 +413,7 @@ export default {
     })
   },
 
-  /**
-   * Druxt module configuration.
-   */
+  /** DruxtModule settings */
   druxt: {
     /**
      * Provides the available component naming options for the Druxt Wrapper.
