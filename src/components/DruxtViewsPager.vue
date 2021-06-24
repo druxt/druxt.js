@@ -104,25 +104,28 @@ export default {
       const self = this
       return {
         default: () => h('ul', [
-          ((this.resource || {}).links || {}).prev && h('li', [
+          // Next.
+          ((self.resource || {}).links || {}).prev && h('li', [
             h('NuxtLink', {
               nativeOn: {
                 click() {
                   self.setPage(self.resource.links.prev)
                 },
               },
-              props: { to: this.getRoute(this.resource.links.prev) },
-            }, [this.options.tags.previous]),
+              props: { to: self.getRoute(self.resource.links.prev) },
+            }, [self.options.tags.previous]),
           ]),
-          ((this.resource || {}).links || {}).next && h('li', [
+
+          // Previous.
+          ((self.resource || {}).links || {}).next && h('li', [
             h('NuxtLink', {
               nativeOn: {
                 click() {
                   self.setPage(self.resource.links.next)
                 },
               },
-              props: { to: this.getRoute(this.resource.links.next) },
-            }, [this.options.tags.next]),
+              props: { to: self.getRoute(self.resource.links.next) },
+            }, [self.options.tags.next]),
           ]),
         ])
       }
