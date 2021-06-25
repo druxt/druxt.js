@@ -59,7 +59,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "deepmerge": "^4.2.2",
-    "druxt": "^0.8.0",
+    "druxt": "^0.8.1",
     "druxt-router": "^0.18.1",
     "druxt-schema": "^0.7.7"
   },

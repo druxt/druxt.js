@@ -17,7 +17,12 @@ const mocks = {
   },
   $fetchState: {
     pending: false
-  }
+  },
+  $nuxt: {
+    context: {
+      isDev: false,
+    },
+  },
 }
 
 const mountComponent = (propsData) => {

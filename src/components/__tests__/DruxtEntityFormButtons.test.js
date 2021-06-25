@@ -56,6 +56,7 @@ describe('DruxtEntityFormButtons', () => {
         'DruxtEntityFormButtonsDefault',
       ],
       settings: {},
+      slots: ['submit', 'reset', 'default'],
     })
   })
 })

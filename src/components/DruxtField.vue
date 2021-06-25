@@ -1,44 +1,3 @@
-<template>
-  <component
-    :is="wrapper.component"
-    v-if="!$fetchState.pending"
-    class="field"
-    :class="wrapper.class"
-    :style="wrapper.style"
-    v-bind="wrapper.propsData"
-  >
-    <component
-      :is="component.is"
-      ref="component"
-      v-model="model"
-      v-bind="{
-        ...component.propsData,
-        errors,
-        ...$attrs
-      }"
-      @input="onInput"
-    >
-      <!-- Label: Above -->
-      <template
-        v-if="label.position === 'above'"
-        v-slot:label-above
-      >
-        <strong>{{ label.text }}:</strong>
-      </template>
-
-      <!-- Label: Inline -->
-      <template
-        v-if="label.position === 'inline'"
-        v-slot:label-inline
-      >
-        <strong>{{ schema.label.text }}:</strong>
-      </template>
-
-      <div>Missing Field: <code>{{ schema.type }}</code></div>
-    </component>
-  </component>
-</template>
-
 <script>
 import { DruxtModule } from 'druxt'
 
@@ -152,23 +111,9 @@ export default {
   },
 
   watch: {
-    /**
-     * Updates the model whenever the value is directly changed.
-     */
-    value() {
-      this.model = this.value
-    },
-  },
-
-  methods: {
-    /**
-     * Input event handler, emits `input`.
-     * 
-     * @params {(array|boolean|number|object|string)} value - The Field value.
-     */
-    onInput(value) {
-      this.model = value
-      this.$emit('input', value)
+    errors() {
+      this.component.props.errors = this.errors
+      this.component.propsData.errors = this.errors
     },
   },
 
@@ -180,6 +125,45 @@ export default {
     ]),
 
     propsData: ({ errors, model, relationship, schema }) => ({ errors, relationship, schema, value: model }),
-  }
+
+    slots(h) {
+      const scopedSlots = {}
+
+      // Label(s).
+      scopedSlots.label = (attrs) => h('strong', { attrs }, [`${this.schema.label.text}:`])
+      if (this.label.position === 'above') {
+        scopedSlots['label-above'] = scopedSlots.label
+      }
+      if (this.label.position === 'inline') {
+        scopedSlots['label-inline'] = scopedSlots.label
+      }
+
+      // Provide debug data if Nuxt is running in dev mode.
+      if (this.$nuxt.context.isDev)  {
+        scopedSlots.default = (attrs) => h(
+          'details',
+          {
+            attrs,
+            style: {
+              border: '2px dashed lightgrey',
+              margin: '0.5em 0',
+              padding: '1em',
+            },
+          },
+          [
+            h('summary', [`[DruxtField] Missing wrapper component for '${this.schema.id} (${this.schema.type}')`]),
+            h('br'),
+            h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+            h('br'),
+            h('label', ['Data:', h('pre', [JSON.stringify(this.model, null, '\t')])]),
+            h('br'),
+            h('label', ['Schema:', h('pre', [JSON.stringify(this.schema, null, '\t')])])
+          ]
+        )
+      }
+
+      return scopedSlots
+    },
+  },
 }
 </script>
