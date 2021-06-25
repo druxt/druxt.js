@@ -5,13 +5,13 @@
     v-bind="wrapper.props"
   >
     <!-- Label: Above -->
-    <div v-if="$slots['label-above']">
+    <div v-if="$scopedSlots['label-above']">
       <slot name="label-above" />
     </div>
 
     <!-- Label: Inline -->
     <slot
-      v-if="$slots['label-inline']"
+      v-if="$scopedSlots['label-inline']"
       name="label-inline"
     />
 
