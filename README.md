@@ -1,15 +1,9 @@
-<div style="width: 50%; margin: 0 auto 2em; text-align: center;">
-
-![](https://druxtjs.org/logo.svg)
-
 # DruxtEntity
 
 [![npm](https://badgen.net/npm/v/druxt-entity)](https://www.npmjs.com/package/druxt-entity)
 [![CircleCI](https://circleci.com/gh/druxt/druxt-entity.svg?style=svg)](https://circleci.com/gh/druxt/druxt-entity)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-entity/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-entity?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-entity/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-entity)
-
-</div>
 
 
 > The DruxtEntity module provides a Drupal Display Mode powered Entity, Form and Field component system for your Nuxt.js application.
