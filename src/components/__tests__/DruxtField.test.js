@@ -13,6 +13,17 @@ localVue.use(Vuex)
 
 let store
 
+const mocks = {
+  $fetchState: {
+    pending: false
+  },
+  $nuxt: {
+    context: {
+      isDev: false,
+    }
+  },
+}
+
 const mountComponent = async ({ field, bundle, uuid, mode = 'default', options = {} }) => {
   const entity = (await store.$druxt.getResource(`node--${bundle}`, uuid)).data
   const schema = require(`../../__fixtures__/schemas/node--${bundle}--${mode}--view.json`)
@@ -22,12 +33,6 @@ const mountComponent = async ({ field, bundle, uuid, mode = 'default', options =
   const data = {
     ...entity.attributes,
     ...entity.relationships
-  }
-
-  const mocks = {
-    $fetchState: {
-      pending: false
-    }
   }
 
   const propsData = {
@@ -62,12 +67,60 @@ describe('DruxtField', () => {
       field: 'body',
       uuid: '772b174a-796f-4301-a04d-b935a7304fba',
     })
-    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
 
-    // Test v-model emit.
-    wrapper.vm.onInput('test')
-    expect(wrapper.vm.model).toBe('test')
-    expect(wrapper.emitted().input).toStrictEqual([['test']])
+    // Props.
+    expect(wrapper.vm.errors).toStrictEqual([])
+    expect(wrapper.vm.relationship).toBe(false)
+    expect(wrapper.vm.schema).toStrictEqual(expect.any(Object))
+    expect(wrapper.vm.options).toStrictEqual({})
+    expect(wrapper.vm.value).toStrictEqual(expect.any(Object))
+
+    // Fetch key.
+    expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:body:0')
+
+    // Data.
+    expect(wrapper.vm.model).toStrictEqual(wrapper.vm.value)
+
+    // Computed.
+    expect(wrapper.vm.data).toStrictEqual(wrapper.vm.value)
+    expect(wrapper.vm.lebl).toStrictEqual(undefined)
+
+    // DruxtModule
+    expect(wrapper.vm.component).toStrictEqual({
+      $attrs: {},
+      is: 'DruxtWrapper',
+      options: [],
+      props: {},
+      propsData: {},
+      settings: {},
+      slots: [],
+    })
+
+    // Slots.
+    expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['label'])
+
+    const h = jest.fn()
+    const slotsMock = {
+      ...mocks,
+      component: {
+        options: ['DruxtFieldTest'],
+      },
+      label: {
+        position: 'above'
+      },
+      schema: {
+        label: {
+          text: 'Label',
+        },
+      },
+    }
+    expect(Object.keys(DruxtField.druxt.slots.call(slotsMock, h))).toStrictEqual(['label', 'label-above'])
+    
+    slotsMock.label.position = 'inline'
+    slotsMock.$nuxt.context.isDev = true
+    const slots = DruxtField.druxt.slots.call(slotsMock, h)
+    expect(Object.keys(slots)).toStrictEqual(['label', 'label-inline', 'default'])
+    slots.default({})
   })
 
   test('body', async () => {

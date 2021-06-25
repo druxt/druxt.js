@@ -72,39 +72,6 @@ export default {
 
   methods: {
     /**
-     * Adds a `buttons` slot to the DruxtEntity scope slots. 
-     *
-     * @return {object}
-     */
-    getScopedSlots() {
-      // Use DruxtEntity to build the Field based slots.
-      const scopedSlots = DruxtEntity.methods.getScopedSlots.call(this)
-
-      scopedSlots.buttons = (attrs) => this.$createElement(
-        'DruxtEntityFormButtons',
-        {
-          attrs,
-          on: {
-            reset: this.onReset,
-            submit: this.onSubmit,
-          },
-          props: {
-            schema: this.schema || {},
-          },
-          ref: 'buttons',
-        },
-      )
-
-      // Build default slot.
-      scopedSlots.default = (attrs) => [
-        ...Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs)),
-        scopedSlots.buttons(attrs)
-      ]
-
-      return scopedSlots
-    },
-
-    /**
      * Reset event handler:
      * - Sets `model` back to `entity` value.
      * - Unsets `response` data.
@@ -156,6 +123,43 @@ export default {
         this.$emit('error', this.response)
       }
       this.submitting = false
+    },
+  },
+
+  druxt: {
+    ...DruxtEntity.druxt,
+
+    /**
+     * Adds a `buttons` slot to the DruxtEntity scope slots. 
+     *
+     * @return {object}
+     */
+    slots(h) {
+      // Use DruxtEntity to build the Field based slots.
+      const scopedSlots = DruxtEntity.druxt.slots.call(this, h)
+
+      scopedSlots.buttons = (attrs) => h(
+        'DruxtEntityFormButtons',
+        {
+          attrs,
+          on: {
+            reset: this.onReset,
+            submit: this.onSubmit,
+          },
+          props: {
+            schema: this.schema || {},
+          },
+          ref: 'buttons',
+        },
+      )
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => [
+        ...Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs)),
+        scopedSlots.buttons(attrs)
+      ]
+
+      return scopedSlots
     },
   },
 }

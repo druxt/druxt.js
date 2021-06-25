@@ -13,8 +13,8 @@ The DruxtJS Entity module provides a Drupal **Display mode** powered Entity, For
 - [DruxtEntity component](#druxtentity-component)
 - [DruxtEntityForm component](#druxtentityform-component)
 - [DruxtField component](#druxtfield-component)
-- [Druxt Module wrapper theming support](#theming)
-- [Druxt Module settings](#module-settings)
+- [DruxtWrapper theming system](#druxtwrapper-theming)
+- [DruxtModule settings](#module-settings)
 - [DruxtRouter support](#router-support)
 - [Auto-generated Nuxt Storybook integration](#storybook)
 
@@ -101,13 +101,11 @@ _Using the `<DruxtField />` component to render a `text_default` field._
 See the [DruxtField API documention](/api/components/DruxtField.html) for more information.
 
 
-## Theming
+## DruxtWrapper theming
 
-Both the Entity and Field components use the DruxtModule slot based Wrapper theme system.
+Druxt modules use a slot-based Wrapper component system to provide rich defaults while still allowing full control over all theming and functionality.
 
-This allows for Entity Type component wrappers, custom Field components and more.
-
-See the [Wrapper theme system](https://druxtjs.org/guide/#wrapper-theme-system) guide for more information.
+See the [theming guide](https://druxtjs.org/guide/theming.html) for more details.
 
 
 ## Module settings
