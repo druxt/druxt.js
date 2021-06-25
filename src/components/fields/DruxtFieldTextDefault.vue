@@ -30,23 +30,7 @@ import { DruxtFieldMixin } from '../../mixins/field'
 
 /**
  * Text Default field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @example
- * <DruxtField
- *   :data="{
- *     format: 'basic_html',
- *     processed: '<p><strong>Umami Magazine &amp; Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.</p>',
- *     value: '<strong>Umami Magazine & Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.'
- *   }"
- *   :schema="{
- *     id: 'body',
- *     type: 'text_default'
- *   }"
- * />
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldTextDefault',

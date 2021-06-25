@@ -29,29 +29,10 @@ import { DruxtFieldMixin } from '../../mixins/field'
 
 /**
  * String field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @example
- * <DruxtField
- *   data="Super easy vegetarian pasta bake"
- *   :schema="{
- *     id: 'field_title',
- *     type: 'string'
- *   }"
- * />
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldString',
-
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link ../mixins/field|DruxtFieldMixin}
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
-   */
-  mixins: [DruxtFieldMixin]
+  mixins: [DruxtFieldMixin],
 }
 </script>

@@ -3,37 +3,14 @@ import DruxtFieldTextDefault from './DruxtFieldTextDefault.vue'
 
 /**
  * Text Trimmed field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @example
- * <DruxtField
- *   :data="{
- *     format: 'basic_html',
- *     processed: '<p><strong>Umami Magazine &amp; Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.</p>',
- *     value: '<strong>Umami Magazine & Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.'
- *   }"
- *   :schema="{
- *     id: 'body',
- *     type: 'text_trimmed',
- *     settings: {
- *       display: {
- *         trim_length: 600,
- *       },
- *     },
- *   }"
- * />
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldTextTrimmed',
 
   extends: DruxtFieldTextDefault,
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
     /**
      * Trim length.

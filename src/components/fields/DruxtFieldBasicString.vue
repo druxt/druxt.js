@@ -28,29 +28,10 @@ import { DruxtFieldMixin } from '../../mixins/field'
 
 /**
  * Basic String field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @example
- * <DruxtField
- *   data="A wholesome pasta bake is the ultimate comfort food. This delicious bake is super quick to prepare and an ideal midweek meal for all the family."
- *   :schema="{
- *     id: 'field_summary',
- *     type: 'basic_string'
- *   }"
- * />
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldBasicString',
-
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link ../mixins/field|DruxtFieldMixin}
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
-   */
   mixins: [DruxtFieldMixin],
 }
 </script>

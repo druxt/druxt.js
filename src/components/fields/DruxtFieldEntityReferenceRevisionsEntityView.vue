@@ -3,22 +3,10 @@ import DruxtFieldEntityReferenceEntityView from './DruxtFieldEntityReferenceEnti
 
 /**
  * Entity Reference Revisions Entity View field.
- *
- * - Extends the `DruxtFieldEntityReferenceRevisionsEntityView` component.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @todo Add an example to Entity Reference Revisions Entity View field.
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldEntityReferenceRevisionsEntityView',
-
-  /**
-   * @extends DruxtFieldEntityReferenceEntityView
-   * @see {@link DruxtFieldEntityReferenceEntityView}
-   */
   extends: DruxtFieldEntityReferenceEntityView,
 }
 </script>

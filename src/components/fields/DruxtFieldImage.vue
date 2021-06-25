@@ -31,20 +31,10 @@ import { mapActions } from 'vuex'
 
 /**
  * Image field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @todo Add an example to Image field.
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldImage',
-
-  /**
-   * @extends DruxtFieldFileDefault
-   * @see {@link DruxtFieldFileDefault}
-   */
   extends: DruxtFieldFileDefault,
 }
 </script>

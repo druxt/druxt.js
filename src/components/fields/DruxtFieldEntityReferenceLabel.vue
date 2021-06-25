@@ -34,39 +34,13 @@ import { mapActions } from 'vuex'
 
 /**
  * Entity Reference Label field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @example @lang vue
- * <DruxtField
- *   :data="{
- *     data: [{
- *       id: 'e2608d8f-093b-46df-be4c-913ee650f5c7',
- *       type: 'taxonomy_term--recipe_category'
- *     }]
- *   }"
- *   :schema="{
- *     id: 'field_recipe_category',
- *     type: 'entity_reference_label'
- *   }"
- * />
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldEntityReferenceLabel',
 
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link ../mixins/field|DruxtFieldMixin}
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
-   */
   mixins: [DruxtFieldMixin],
 
-  /**
-   * Loads all referenced entities via `druxt/getResource`.
-   */
   async fetch() {
     for (const delta in this.items) {
       const item = this.items[delta]
@@ -91,10 +65,6 @@ export default {
   },
 
   /**
-   * Vue.js Data object.
-   *
-   * Used for on-demand JSON:API resource loading.
-   *
    * @property {string} component=span - The component used to wrap the field items.
    * @property {boolean|object} entities
    * @property {boolean} loading - Loading status.
