@@ -102,15 +102,29 @@ export default {
      */
     data: ({ model }) => model,
 
+    isMultiple: ({ schema }) => (schema.cardinality || 1) !== 1,
+
+    isBoolean: ({ schema }) => ['boolean_checkbox'].includes(schema.type),
+    isDateTime: ({ schema }) => ['datetime_timestamp'].includes(schema.type),
+    isImage: ({ schema }) => ['image', 'image_image', 'responsive_image'].includes(schema.type),
+    isLink: ({ schema }) => ['link'].includes(schema.type),
+    isNumber: ({ schema }) => ['number', 'number_integer'].includes(schema.type),
+    isSelect: ({ schema }) => ['options_select'].includes(schema.type),
+    isTextArea: ({ schema }) => (schema.type || '').startsWith('text_textarea'),
+    isTextField: ({ schema }) => ['string_textfield'].includes(schema.type),
+
     /**
      * The Field label display settings.
      *
      * @type {object}
      * @default { position: 'hidden' }
      */
-    label: ({ schema }) => !((schema || {}).label || {}).text
-      ? { position: 'hidden' }
-      : schema.label,
+    label: ({ schema }) =>
+      schema.config.schemaType === 'form'
+        ? { ...schema.label, text: (schema.label || {}).text || schema.id[0].toUpperCase() + schema.id.substring(1) }
+        : ((schema || {}).label || {}).text
+        ? schema.label
+        : { position: 'hidden' },
   },
 
   watch: {
@@ -163,38 +177,237 @@ export default {
      */
     slots(h) {
       const scopedSlots = {}
+      const { schemaType } = this.schema.config
+      const self = this
 
       // Label(s).
-      scopedSlots.label = (attrs) => h('strong', { attrs }, [`${this.schema.label.text}:`])
-      if (this.label.position === 'above') {
-        scopedSlots['label-above'] = scopedSlots.label
-      }
-      if (this.label.position === 'inline') {
-        scopedSlots['label-inline'] = scopedSlots.label
+      if ((this.label || {}).text) {
+        scopedSlots.label = (attrs) => h('strong', { attrs }, [`${this.label.text}:`])
+        if (this.label.position && this.label.position !== 'hidden') {
+          scopedSlots[`label-${this.label.position}`] = scopedSlots.label
+        }
       }
 
-      // Provide debug data if Nuxt is running in dev mode.
-      if (this.$nuxt.context.isDev)  {
-        scopedSlots.default = (attrs) => h(
-          'details',
-          {
-            attrs,
-            style: {
-              border: '2px dashed lightgrey',
-              margin: '0.5em 0',
-              padding: '1em',
-            },
-          },
-          [
-            h('summary', [`[DruxtField] Missing wrapper component for '${this.schema.id} (${this.schema.type}')`]),
-            h('br'),
-            h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-            h('br'),
-            h('label', ['Data:', h('pre', [JSON.stringify(this.model, null, '\t')])]),
-            h('br'),
-            h('label', ['Schema:', h('pre', [JSON.stringify(this.schema, null, '\t')])])
-          ]
-        )
+      const items = (this.model || {}).data
+        ? Array.isArray(this.model.data) ? this.model.data : [this.model.data]
+        : Array.isArray(this.model) ? this.model : [this.model]
+
+      // Render a slot for each field delta.
+      for (const delta in items) {
+        const item = items[delta]
+        scopedSlots[`field-${delta}`] = (attrs) => {
+          if (!item && this.relationship) {
+            return h('div', ['Error'])
+          }
+
+          // Boolean: Form.
+          if (this.isBoolean && schemaType === 'form') {
+            return h('input', {
+              attrs,
+              domProps: {
+                checked: item,
+                type: 'checkbox',
+              },
+              on: {
+                input(e) {
+                  self.isMultiple
+                    ? self.model[delta] = e.target.checked
+                    : self.model = e.target.checked
+                }
+              }
+            })
+          }
+
+          // Date/Time: Form.
+          if (this.isDateTime && schemaType === 'form') {
+            return h('input', {
+              attrs,
+              domProps: {
+                placeholder: this.schema.settings.display.placeholder,
+                type: 'datetime-local',
+                value: item.split('+')[0],
+              },
+              on: {
+                input(e) {
+                  const value = [e.target.value, item.split('+')[1]].join('+')
+                  self.isMultiple
+                    ? self.model[delta] = value
+                    : self.model = value
+                }
+              }
+            })
+          }
+
+          // Image: View
+          if (this.isImage && schemaType === 'view') {
+            return h('DruxtEntity', {
+              attrs,
+              props: { type: item.type, uuid: item.id },
+              scopedSlots: { default: ({ entity }) => h('img', { domProps: { src: process.env.BASE_URL + entity.attributes.uri.url } }) }
+            })
+          }
+
+          // Image: Form.
+          if (this.isImage && schemaType === 'form') {
+            if (!(item || {}).id) {
+              return h('input', {
+                attrs,
+                domProps: {
+                  ...this.props,
+                  type: 'file',
+                },
+              })
+            }
+            return [
+              h('DruxtEntity', {
+                attrs,
+                props: { type: item.type, uuid: item.id },
+                scopedSlots: { default: ({ entity }) => h('img', { domProps: { src: process.env.BASE_URL + entity.attributes.uri.url } }) }
+              }),
+              h('button', {
+                on: {
+                  click() {
+                    self.isMultiple
+                      ? self.model.data[delta] = {}
+                      : self.model.data = {}
+                  }
+                }
+              }, ['Remove'])  
+            ]
+          }
+
+          // Link: View.
+          if (this.isLink && schemaType === 'view') {
+            const links = Array.isArray(this.model) ? this.model : [this.model]
+            return links.map((link) => {
+              if (/^(?:[a-z]+:)?\/\//i.test(link.uri)) {
+                return h('a', { attrs }, [link.title])
+              }
+              return h('NuxtLink', { attrs, props: { to: link.uri.replace('internal:', '') } }, [link.title])
+            })
+          }
+
+          // Number: Form.
+          if (this.isNumber && schemaType === 'form') {
+            return h('input', {
+              attrs,
+              domProps: {
+                placeholder: this.schema.settings.display.placeholder,
+                type: 'number',
+                value: item,
+              },
+              on: {
+                input(e) {
+                  const value = parseInt(e.target.value)
+                  self.isMultiple ? self.model[delta] = value : self.model = value
+                }
+              }
+            })
+          }
+
+          // Select field: Form.
+          if (this.isSelect && schemaType === 'form') {
+            let options = { item }
+            if (this.schema.settings.storage.allowed_values) {
+              options = this.schema.settings.storage.allowed_values
+            }
+
+            return h('select', {
+              attrs,
+              domProps: {
+                value: item,
+              },
+              on: {
+                input(e) {
+                  const value = e.target.value
+                  self.isMultiple ? self.model[delta] = value : self.model = value
+                }
+              }
+            }, Object.entries(options).map(([value, label]) => h('option',  { domProps: { value } }, [label])))
+          }
+
+          // Text field: Form.
+          if (this.isTextField && schemaType === 'form') {
+            return h('input', {
+              attrs,
+              domProps: {
+                placeholder: this.schema.settings.display.placeholder,
+                size: this.schema.settings.display.size,
+                value: item,
+              },
+              on: {
+                input(e) {
+                  const value = e.target.value
+                  self.isMultiple ? self.model[delta] = value : self.model = value
+                }
+              }
+            })
+          }
+
+          // Relationship: fields render the relevant DruxtEntity component.
+          if (this.relationship && item.id) {
+            const component = schemaType === 'view' ? 'DruxtEntity' : 'DruxtEntityForm'
+            return h(component, { attrs, props: { type: item.type, uuid: item.id } })
+          }
+
+          // Fallback: View: Return data if data is a basic native.
+          if (['number', 'string'].includes(typeof item) && schemaType === 'view') {
+            return h('div', { attrs, domProps: { innerHTML: item } })
+          }
+
+          // Fallback: View: Return `.processed` or `.value` if present.
+          if (((item || {}).processed || (item || {}).value) && schemaType === 'view') {
+            return h('div', { attrs, domProps: { innerHTML: item.processed || item.value } })
+          }
+
+          // Fallback: Form: Other fields render a textarea.
+          if (schemaType === 'form') {
+            return h('div', [h('textarea', {
+              attrs,
+              domProps: {
+                ...this.props,
+                value: typeof item === 'object'
+                  ? JSON.stringify(item, null, "  ")
+                  : item
+              },
+            })])
+          } 
+
+          // Fallback: Provide debug data if Nuxt is running in dev mode.
+          if (this.$nuxt.context.isDev) {
+            return h('details',
+              {
+                attrs,
+                style: {
+                  border: '2px dashed lightgrey',
+                  margin: '0.5em 0',
+                  padding: '1em',
+                },
+              },
+              [
+                h('summary', [`[DruxtField] Missing wrapper component for '${this.schema.id} (${this.schema.type}')`]),
+                h('br'),
+                h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+                h('br'),
+                h('label', ['Data:', h('pre', [JSON.stringify(item, null, '\t')])]),
+                h('br'),
+                h('label', ['Schema:', h('pre', [JSON.stringify(this.schema, null, '\t')])])
+              ]
+            )
+          }
+        }
+      }
+
+      // Default slot to add label to field as required.
+      scopedSlots.default = (attrs) => {
+        const fields = items.map((item, delta) => scopedSlots[`field-${delta}`](attrs))
+        if (schemaType === 'form' && scopedSlots.label) {
+          return h('label', [scopedSlots.label(attrs), h('br'), fields])
+        }
+        else if (this.label.position && scopedSlots[`label-${this.label.position}`]) {
+          return [scopedSlots[`label-${this.label.position}`](attrs), fields]
+        }
+        return [fields]
       }
 
       return scopedSlots
