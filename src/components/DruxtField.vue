@@ -183,7 +183,7 @@ export default {
       // Label(s).
       if ((this.label || {}).text) {
         scopedSlots.label = (attrs) => h('strong', { attrs }, [`${this.label.text}:`])
-        if (this.label.position && this.label.position !== 'hidden') {
+        if (this.label.position && ['above', 'inline'].includes(this.label.position)) {
           scopedSlots[`label-${this.label.position}`] = scopedSlots.label
         }
       }
@@ -194,33 +194,30 @@ export default {
 
       // Render a slot for each field delta.
       for (const delta in items) {
+        const setModel = (value, fallback = undefined) => {
+          value = value || fallback
+          self.isMultiple ? self.model[delta] = value : self.model = value
+        }
+
         const item = items[delta]
         scopedSlots[`field-${delta}`] = (attrs) => {
-          if (!item && this.relationship) {
-            return h('div', ['Error'])
-          }
-
           // Boolean: Form.
           if (this.isBoolean && schemaType === 'form') {
-            return h('input', {
+            return h('div', [h('input', {
               attrs,
               domProps: {
                 checked: item,
                 type: 'checkbox',
               },
               on: {
-                input(e) {
-                  self.isMultiple
-                    ? self.model[delta] = e.target.checked
-                    : self.model = e.target.checked
-                }
+                input(e) { setModel(e.target.checked, false) }
               }
-            })
+            })])
           }
 
           // Date/Time: Form.
           if (this.isDateTime && schemaType === 'form') {
-            return h('input', {
+            return h('div', [h('input', {
               attrs,
               domProps: {
                 placeholder: this.schema.settings.display.placeholder,
@@ -230,12 +227,10 @@ export default {
               on: {
                 input(e) {
                   const value = [e.target.value, item.split('+')[1]].join('+')
-                  self.isMultiple
-                    ? self.model[delta] = value
-                    : self.model = value
+                  setModel(value)
                 }
               }
-            })
+            })])
           }
 
           // Image: View
@@ -243,7 +238,7 @@ export default {
             return h('DruxtEntity', {
               attrs,
               props: { type: item.type, uuid: item.id },
-              scopedSlots: { default: ({ entity }) => h('img', { domProps: { src: process.env.BASE_URL + entity.attributes.uri.url } }) }
+              scopedSlots: { default: ({ entity }) => h('img', { domProps: { src: entity.attributes.uri.url } }) }
             })
           }
 
@@ -262,7 +257,7 @@ export default {
               h('DruxtEntity', {
                 attrs,
                 props: { type: item.type, uuid: item.id },
-                scopedSlots: { default: ({ entity }) => h('img', { domProps: { src: process.env.BASE_URL + entity.attributes.uri.url } }) }
+                scopedSlots: { default: ({ entity }) => h('img', { domProps: { src: entity.attributes.uri.url } }) }
               }),
               h('button', {
                 on: {
@@ -289,7 +284,7 @@ export default {
 
           // Number: Form.
           if (this.isNumber && schemaType === 'form') {
-            return h('input', {
+            return h('div', [h('input', {
               attrs,
               domProps: {
                 placeholder: this.schema.settings.display.placeholder,
@@ -299,10 +294,10 @@ export default {
               on: {
                 input(e) {
                   const value = parseInt(e.target.value)
-                  self.isMultiple ? self.model[delta] = value : self.model = value
+                  setModel(value)
                 }
               }
-            })
+            })])
           }
 
           // Select field: Form.
@@ -312,7 +307,7 @@ export default {
               options = this.schema.settings.storage.allowed_values
             }
 
-            return h('select', {
+            return h('div', [h('select', {
               attrs,
               domProps: {
                 value: item,
@@ -320,15 +315,15 @@ export default {
               on: {
                 input(e) {
                   const value = e.target.value
-                  self.isMultiple ? self.model[delta] = value : self.model = value
+                  setModel(value)
                 }
               }
-            }, Object.entries(options).map(([value, label]) => h('option',  { domProps: { value } }, [label])))
+            }, Object.entries(options).map(([value, label]) => h('option',  { domProps: { value } }, [label])))])
           }
 
           // Text field: Form.
           if (this.isTextField && schemaType === 'form') {
-            return h('input', {
+            return h('div', [h('input', {
               attrs,
               domProps: {
                 placeholder: this.schema.settings.display.placeholder,
@@ -338,10 +333,14 @@ export default {
               on: {
                 input(e) {
                   const value = e.target.value
-                  self.isMultiple ? self.model[delta] = value : self.model = value
+                  setModel(value)
                 }
               }
-            })
+            })])
+          }
+
+          if (this.relationship && item.id && schemaType === 'form') {
+            return h('details', [h('DruxtEntityForm', { attrs, props: { type: item.type, uuid: item.id } })])
           }
 
           // Relationship: fields render the relevant DruxtEntity component.
@@ -365,11 +364,21 @@ export default {
             return h('div', [h('textarea', {
               attrs,
               domProps: {
-                ...this.props,
+                placeholder: this.schema.settings.display.placeholder,
+                rows: this.schema.settings.display.rows,
                 value: typeof item === 'object'
                   ? JSON.stringify(item, null, "  ")
                   : item
               },
+              on: {
+                input(e) {
+                  let value = e.target.value
+                  try {
+                    value = JSON.parse(e.target.value)
+                  } catch(err) {}
+                  setModel(value)
+                }
+              }
             })])
           } 
 
@@ -402,7 +411,18 @@ export default {
       scopedSlots.default = (attrs) => {
         const fields = items.map((item, delta) => scopedSlots[`field-${delta}`](attrs))
         if (schemaType === 'form' && scopedSlots.label) {
-          return h('label', [scopedSlots.label(attrs), h('br'), fields])
+          return h('label', [
+            scopedSlots.label(attrs),
+            h('br'),
+            fields,
+            this.isMultiple && h('button', {
+              on: {
+                click() {
+                  self.relationship ? self.model.data.push({}) : self.model.push(undefined)
+                } 
+              },
+            }, ['Add another item']),
+          ])
         }
         else if (this.label.position && scopedSlots[`label-${this.label.position}`]) {
           return [scopedSlots[`label-${this.label.position}`](attrs), fields]
