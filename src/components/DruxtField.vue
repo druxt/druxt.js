@@ -102,16 +102,13 @@ export default {
      */
     data: ({ model }) => model,
 
-    isMultiple: ({ schema }) => (schema.cardinality || 1) !== 1,
-
     isBoolean: ({ schema }) => ['boolean_checkbox'].includes(schema.type),
     isDateTime: ({ schema }) => ['datetime_timestamp'].includes(schema.type),
+    isFile: ({ schema }) => ['file_default', 'file_generic'].includes(schema.type),
     isImage: ({ schema }) => ['image', 'image_image', 'responsive_image'].includes(schema.type),
     isLink: ({ schema }) => ['link'].includes(schema.type),
-    isNumber: ({ schema }) => ['number', 'number_integer'].includes(schema.type),
-    isSelect: ({ schema }) => ['options_select'].includes(schema.type),
-    isTextArea: ({ schema }) => (schema.type || '').startsWith('text_textarea'),
-    isTextField: ({ schema }) => ['string_textfield'].includes(schema.type),
+    isMultiple: ({ schema }) => (schema.cardinality || 1) !== 1,
+    isTextField: ({ schema }) => ['number_integer', 'string_textfield'].includes(schema.type),
 
     /**
      * The Field label display settings.
@@ -196,7 +193,13 @@ export default {
       for (const delta in items) {
         const setModel = (value, fallback = undefined) => {
           value = value || fallback
-          self.isMultiple ? self.model[delta] = value : self.model = value
+          self.relationship
+            ? self.isMultiple
+              ? self.model.data[delta] = value
+              : self.model.data = value
+            : self.isMultiple
+              ? self.model[delta] = value
+              : self.model = value
         }
 
         const item = items[delta]
@@ -222,15 +225,29 @@ export default {
               domProps: {
                 placeholder: this.schema.settings.display.placeholder,
                 type: 'datetime-local',
-                value: item.split('+')[0],
+                value: (item || '').split('+')[0],
               },
               on: {
                 input(e) {
-                  const value = [e.target.value, item.split('+')[1]].join('+')
+                  const value = [e.target.value, (item || '').split('+')[1]].filter((s) => s).join('+')
                   setModel(value)
                 }
               }
             })])
+          }
+
+          // File: View.
+          if (this.isFile && schemaType === 'view') {
+            return h('DruxtEntity', {
+              attrs,
+              props: { type: item.type, uuid: item.id },
+              scopedSlots: { default: ({ entity }) => h('a', {
+                domProps: {
+                  href: entity.attributes.uri.url,
+                  target: '_blank',
+                },
+              }, [entity.attributes.filename]) }
+            })
           }
 
           // Image: View
@@ -242,83 +259,11 @@ export default {
             })
           }
 
-          // Image: Form.
-          if (this.isImage && schemaType === 'form') {
-            if (!(item || {}).id) {
-              return h('input', {
-                attrs,
-                domProps: {
-                  ...this.props,
-                  type: 'file',
-                },
-              })
-            }
-            return [
-              h('DruxtEntity', {
-                attrs,
-                props: { type: item.type, uuid: item.id },
-                scopedSlots: { default: ({ entity }) => h('img', { domProps: { src: entity.attributes.uri.url } }) }
-              }),
-              h('button', {
-                on: {
-                  click() {
-                    self.isMultiple
-                      ? self.model.data[delta] = {}
-                      : self.model.data = {}
-                  }
-                }
-              }, ['Remove'])  
-            ]
-          }
-
           // Link: View.
           if (this.isLink && schemaType === 'view') {
-            const links = Array.isArray(this.model) ? this.model : [this.model]
-            return links.map((link) => {
-              if (/^(?:[a-z]+:)?\/\//i.test(link.uri)) {
-                return h('a', { attrs }, [link.title])
-              }
-              return h('NuxtLink', { attrs, props: { to: link.uri.replace('internal:', '') } }, [link.title])
-            })
-          }
-
-          // Number: Form.
-          if (this.isNumber && schemaType === 'form') {
-            return h('div', [h('input', {
-              attrs,
-              domProps: {
-                placeholder: this.schema.settings.display.placeholder,
-                type: 'number',
-                value: item,
-              },
-              on: {
-                input(e) {
-                  const value = parseInt(e.target.value)
-                  setModel(value)
-                }
-              }
-            })])
-          }
-
-          // Select field: Form.
-          if (this.isSelect && schemaType === 'form') {
-            let options = { item }
-            if (this.schema.settings.storage.allowed_values) {
-              options = this.schema.settings.storage.allowed_values
-            }
-
-            return h('div', [h('select', {
-              attrs,
-              domProps: {
-                value: item,
-              },
-              on: {
-                input(e) {
-                  const value = e.target.value
-                  setModel(value)
-                }
-              }
-            }, Object.entries(options).map(([value, label]) => h('option',  { domProps: { value } }, [label])))])
+            return /^(?:[a-z]+:)?\/\//i.test(item.uri)
+              ? h('a', { attrs, domProps: { href: item.uri, target: '_blank' } }, [item.title])
+              : h('NuxtLink', { attrs, props: { to: item.uri.replace('internal:', '') } }, [item.title])
           }
 
           // Text field: Form.
@@ -332,31 +277,47 @@ export default {
               },
               on: {
                 input(e) {
-                  const value = e.target.value
-                  setModel(value)
+                  setModel(e.target.value)
                 }
               }
             })])
           }
 
-          if (this.relationship && item.id && schemaType === 'form') {
-            return h('details', [h('DruxtEntityForm', { attrs, props: { type: item.type, uuid: item.id } })])
+          // Relationship: View.
+          if (this.relationship && (item || {}).id && schemaType === 'view') {
+            return h('DruxtEntity', {
+              attrs,
+              props: {
+                mode: this.schema.settings.display.view_mode || 'default',
+                type: item.type,
+                uuid: item.id,
+              },
+            })
           }
 
-          // Relationship: fields render the relevant DruxtEntity component.
-          if (this.relationship && item.id) {
-            const component = schemaType === 'view' ? 'DruxtEntity' : 'DruxtEntityForm'
-            return h(component, { attrs, props: { type: item.type, uuid: item.id } })
+          // Relationship: Form.
+          if (this.relationship && (item || {}).id && schemaType === 'form') {
+            return h('details', [h('DruxtEntityForm', {
+              attrs,
+              props: {
+                mode: this.schema.settings.display.view_mode || 'default',
+                type: item.type,
+                uuid: item.id,
+              },
+            })])
           }
 
-          // Fallback: View: Return data if data is a basic native.
-          if (['number', 'string'].includes(typeof item) && schemaType === 'view') {
-            return h('div', { attrs, domProps: { innerHTML: item } })
-          }
+          // Fallback: View.
+          if (schemaType === 'view') {
+            // Return data if data is a basic native.
+            if (['number', 'string'].includes(typeof item)) {
+              return h('div', { attrs, domProps: { innerHTML: item } })
+            }
 
-          // Fallback: View: Return `.processed` or `.value` if present.
-          if (((item || {}).processed || (item || {}).value) && schemaType === 'view') {
-            return h('div', { attrs, domProps: { innerHTML: item.processed || item.value } })
+            // Return `.processed` or `.value` if present.
+            if (((item || {}).processed || (item || {}).value)) {
+              return h('div', { attrs, domProps: { innerHTML: item.processed || item.value } })
+            }
           }
 
           // Fallback: Form: Other fields render a textarea.
@@ -414,14 +375,7 @@ export default {
           return h('label', [
             scopedSlots.label(attrs),
             h('br'),
-            fields,
-            this.isMultiple && h('button', {
-              on: {
-                click() {
-                  self.relationship ? self.model.data.push({}) : self.model.push(undefined)
-                } 
-              },
-            }, ['Add another item']),
+            fields
           ])
         }
         else if (this.label.position && scopedSlots[`label-${this.label.position}`]) {
