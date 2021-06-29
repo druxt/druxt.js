@@ -174,7 +174,7 @@ export default {
      */
     slots(h) {
       const scopedSlots = {}
-      const { schemaType } = this.schema.config
+      const { schemaType } = ((this.schema || {}).config || {})
       const self = this
 
       // Label(s).

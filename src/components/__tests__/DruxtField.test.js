@@ -97,7 +97,11 @@ describe('DruxtField', () => {
     })
 
     // Slots.
-    expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['label'])
+    expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual([
+      'label',
+      'field-0',
+      'default',
+    ])
 
     const h = jest.fn()
     const slotsMock = {
@@ -106,7 +110,8 @@ describe('DruxtField', () => {
         options: ['DruxtFieldTest'],
       },
       label: {
-        position: 'above'
+        position: 'above',
+        text: 'Label',
       },
       schema: {
         label: {
@@ -114,12 +119,22 @@ describe('DruxtField', () => {
         },
       },
     }
-    expect(Object.keys(DruxtField.druxt.slots.call(slotsMock, h))).toStrictEqual(['label', 'label-above'])
+    expect(Object.keys(DruxtField.druxt.slots.call(slotsMock, h))).toStrictEqual([
+      'label',
+      'label-above',
+      'field-0',
+      'default',
+    ])
     
     slotsMock.label.position = 'inline'
     slotsMock.$nuxt.context.isDev = true
     const slots = DruxtField.druxt.slots.call(slotsMock, h)
-    expect(Object.keys(slots)).toStrictEqual(['label', 'label-inline', 'default'])
+    expect(Object.keys(slots)).toStrictEqual([
+      'label',
+      'label-inline',
+      'field-0',
+      'default'
+    ])
     slots.default({})
   })
 
