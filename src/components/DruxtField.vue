@@ -102,13 +102,54 @@ export default {
      */
     data: ({ model }) => model,
 
+    /**
+     * Field is Boolean?
+     * 
+     * @type {boolean}
+     */
     isBoolean: ({ schema }) => ['boolean_checkbox'].includes(schema.type),
+
+    /**
+     * Field is DateTime?
+     * 
+     * @type {boolean}
+     */
     isDateTime: ({ schema }) => ['datetime_timestamp'].includes(schema.type),
+
+    /**
+     * Field is File?
+     * 
+     * @type {boolean}
+     */
     isFile: ({ schema }) => ['file_default', 'file_generic'].includes(schema.type),
+
+    /**
+     * Field is Image?
+     * 
+     * @type {boolean}
+     */
     isImage: ({ schema }) => ['image', 'image_image', 'responsive_image'].includes(schema.type),
+
+    /**
+     * Field is Link?
+     * 
+     * @type {boolean}
+     */
     isLink: ({ schema }) => ['link'].includes(schema.type),
+
+    /**
+     * Field is multi-cardinality.
+     * 
+     * @type {boolean}
+     */
     isMultiple: ({ schema }) => (schema.cardinality || 1) !== 1,
-    isTextField: ({ schema }) => ['number_integer', 'string_textfield'].includes(schema.type),
+
+    /**
+     * Field is Text?
+     * 
+     * @type {boolean}
+     */
+    isText: ({ schema }) => ['number_integer', 'string_textfield'].includes(schema.type),
 
     /**
      * The Field label display settings.
@@ -243,7 +284,7 @@ export default {
               props: { type: item.type, uuid: item.id },
               scopedSlots: { default: ({ entity }) => h('a', {
                 domProps: {
-                  href: entity.attributes.uri.url,
+                  href: (entity.attributes.uri || {}).url,
                   target: '_blank',
                 },
               }, [entity.attributes.filename]) }
@@ -255,19 +296,24 @@ export default {
             return h('DruxtEntity', {
               attrs,
               props: { type: item.type, uuid: item.id },
-              scopedSlots: { default: ({ entity }) => h('img', { domProps: { src: entity.attributes.uri.url } }) }
+              scopedSlots: { default: ({ entity }) => h('img', {
+                domProps: {
+                  src: (entity.attributes.uri || {}).url
+                }
+              })}
             })
           }
 
           // Link: View.
           if (this.isLink && schemaType === 'view') {
+            if (!(item || {}).uri) return
             return /^(?:[a-z]+:)?\/\//i.test(item.uri)
               ? h('a', { attrs, domProps: { href: item.uri, target: '_blank' } }, [item.title])
               : h('NuxtLink', { attrs, props: { to: item.uri.replace('internal:', '') } }, [item.title])
           }
 
-          // Text field: Form.
-          if (this.isTextField && schemaType === 'form') {
+          // Text: Form.
+          if (this.isText && schemaType === 'form') {
             return h('div', [h('input', {
               attrs,
               domProps: {
@@ -359,9 +405,9 @@ export default {
                 h('br'),
                 h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
                 h('br'),
-                h('label', ['Data:', h('pre', [JSON.stringify(item, null, '\t')])]),
+                h('label', ['Data:', h('pre', [JSON.stringify(item, null, '  ')])]),
                 h('br'),
-                h('label', ['Schema:', h('pre', [JSON.stringify(this.schema, null, '\t')])])
+                h('label', ['Schema:', h('pre', [JSON.stringify(this.schema, null, '  ')])])
               ]
             )
           }
