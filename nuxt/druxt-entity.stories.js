@@ -64,7 +64,7 @@ export const <%= mode.charAt(0).toUpperCase() + mode.slice(1) %> = Template.bind
 <%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.parameters = {
   docs: {
     source: {
-      code: '<DruxtEntity\n  mode="<%= mode %>"\n  type="<%= options.resourceType %>"\n  uuid=""\n/>'
+      code: '<DruxtEntity\n  mode="<%= mode %>"\n  type="<%= options.resourceType %>"\n  uuid=<%= devalue(((options.entities || [])[0] || {}).id || false) %>\n/>'
     }
   }
 }

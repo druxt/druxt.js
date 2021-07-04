@@ -250,7 +250,6 @@ export default {
      * @returns {ComponentOptions}
      */
     componentOptions: ({ mode, schema, schemaType, type }) => ([
-      // [(schema || {}).resourceType || type, ((schema || {}).config || {}).mode || mode, ((schema || {}).config || {}).schemaType || schemaType],
       [(schema || {}).resourceType || type, ((schema || {}).config || {}).mode || mode, ((schema || {}).config || {}).schemaType || schemaType || 'view'],
       [((schema || {}).config || {}).mode || mode],
     ]),
