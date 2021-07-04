@@ -15,11 +15,13 @@
     />
 
     <!-- Items -->
+    <!-- eslint-disable vue/no-v-html -->
     <div
       v-for="(item, key) of items"
       :key="key"
       v-html="item"
     />
+    <!-- eslint-enable vue/no-v-html -->
   </component>
 </template>
 
@@ -28,29 +30,13 @@ import { DruxtFieldMixin } from '../../mixins/field'
 
 /**
  * Basic String field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @example
- * <DruxtField
- *   data="A wholesome pasta bake is the ultimate comfort food. This delicious bake is super quick to prepare and an ideal midweek meal for all the family."
- *   :schema="{
- *     id: 'field_summary',
- *     type: 'basic_string'
- *   }"
- * />
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldBasicString',
-
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link ../mixins/field|DruxtFieldMixin}
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
-   */
   mixins: [DruxtFieldMixin],
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 }
 </script>

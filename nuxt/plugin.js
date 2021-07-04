@@ -7,8 +7,14 @@ Vue.use({
     if (Vue._druxt_entity_installed) return
     Vue._druxt_entity_installed = true
 
+    // Tree shake field components.
+    const fields = <%= (((options.entity || {}).components || {}).fields === false ? false : true) %>
+
     // Register components.
     for (const component in DruxtEntityComponents) {
+      if (!fields && component.startsWith('DruxtField') && component !== 'DruxtField') {
+        continue
+      }
       Vue.component(component, DruxtEntityComponents[component])
     }
   }

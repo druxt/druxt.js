@@ -31,42 +31,14 @@ import { DruxtFieldMixin } from '../../mixins/field'
 
 /**
  * Link field.
- *
- * - Uses `<nuxt-link :to />` for internal links.
- * - Uses `<a :href />` for external links.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @example
- * <DruxtField
- *   :data="{
- *     title: 'Find out more',
- *     uri: 'internal:/about-umami'
- *   }"
- *   :schema="{
- *     id: 'field_content_link',
- *     type: 'link'
- *   }"
- * />
- *
- * @todo Fix issue with `internal:` links.
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldLink',
 
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link ../mixins/field|DruxtFieldMixin}
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
-   */
   mixins: [DruxtFieldMixin],
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
     /**
      * Array of Link components and properties.
@@ -120,6 +92,10 @@ export default {
 
       return links
     }
+  },
+
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
   },
 }
 </script>

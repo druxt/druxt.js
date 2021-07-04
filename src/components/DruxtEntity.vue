@@ -75,11 +75,13 @@ export default {
    */
   async fetch() {
     // Fetch Schema.
-    this.schema = await this.getSchema({
-      resourceType: this.type,
-      mode: this.mode,
-      schemaType: this.schemaType || 'view',
-    })
+    try {
+      this.schema = await this.getSchema({
+        resourceType: this.type,
+        mode: this.mode,
+        schemaType: this.schemaType || 'view',
+      })
+    } catch(e) {}
 
     // Build wrapper component object.
     const options = this.getModuleComponents()
@@ -98,6 +100,9 @@ export default {
       const entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
       this.model = JSON.parse(JSON.stringify(entity || {}))
     }
+
+    // Get scoped slots.
+    component.slots = Object.keys(this.getScopedSlots())
 
     // Build wrapper component propsData.
     component = { ...component, ...this.getModulePropsData(wrapperData.props) }
@@ -200,7 +205,7 @@ export default {
 
       // Build fields list.
       const fields = (settings.query || {}).schema
-        ? [...this.schema.fields.map((o) => o.id), ...((settings.query || {}).fields || [])]
+        ? [...((this.schema || {}).fields || []).map((o) => o.id), ...((settings.query || {}).fields || [])]
         : ((settings.query || {}).fields || [])
       if (fields.length) {
         query.addFields(this.type, fields)
@@ -236,9 +241,7 @@ export default {
     })
   },
 
-  /**
-   * Druxt module configuration.
-   */
+  /** DruxtModule settings */
   druxt: {
     /**
      * Provides the available component naming options for the Druxt Wrapper.
@@ -246,9 +249,10 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ schema }) => ([
-      [schema.resourceType, schema.config.mode, schema.config.schemaType],
-      [schema.config.mode],
+    componentOptions: ({ mode, schema, schemaType, type }) => ([
+      // [(schema || {}).resourceType || type, ((schema || {}).config || {}).mode || mode, ((schema || {}).config || {}).schemaType || schemaType],
+      [(schema || {}).resourceType || type, ((schema || {}).config || {}).mode || mode, ((schema || {}).config || {}).schemaType || schemaType || 'view'],
+      [((schema || {}).config || {}).mode || mode],
     ]),
 
     /**
@@ -279,6 +283,29 @@ export default {
      */
     slots(h) {
       const scopedSlots = {}
+
+      if (!this.schema) {
+        if (this.$nuxt.context.isDev) {
+          scopedSlots.default = (attrs) => h('details',
+            {
+              attrs,
+              style: {
+                border: '2px dashed lightgrey',
+                margin: '0.5em 0',
+                padding: '1em',
+              },
+            },
+            [
+              h('summary', [`[DruxtEntity] Missing schema for '${this.type}--${this.mode}'`]),
+              h('br'),
+              h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+              h('br'),
+              h('label', ['Entity:', h('pre', [JSON.stringify(this.entity, null, '  ')])]),
+            ]
+          )
+        }
+        return scopedSlots
+      }
 
       // Build scoped slots for each field.
       Object.entries(this.fields).map(([id, field]) => {

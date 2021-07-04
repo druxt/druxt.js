@@ -31,32 +31,13 @@ import { DruxtFieldMixin } from '../../mixins/field'
 
 /**
  * List Default field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @example
- * <DruxtField
- *   data="easy"
- *   :schema="{
- *     id: 'field_difficulty',
- *     type: 'list_default'
- *   }"
- * />
- *
- * @todo Add a multi-value example to List Default field.
- * @todo Make List Default list elements customisable.
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldListDefault',
-
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link ../mixins/field|DruxtFieldMixin}
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
-   */
-  mixins: [DruxtFieldMixin]
+  mixins: [DruxtFieldMixin],
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 }
 </script>
