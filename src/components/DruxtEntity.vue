@@ -249,9 +249,10 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ schema }) => schema && ([
-      [schema.resourceType, schema.config.mode, schema.config.schemaType],
-      [schema.config.mode],
+    componentOptions: ({ mode, schema, schemaType, type }) => ([
+      // [(schema || {}).resourceType || type, ((schema || {}).config || {}).mode || mode, ((schema || {}).config || {}).schemaType || schemaType],
+      [(schema || {}).resourceType || type, ((schema || {}).config || {}).mode || mode, ((schema || {}).config || {}).schemaType || schemaType || 'view'],
+      [((schema || {}).config || {}).mode || mode],
     ]),
 
     /**
@@ -296,6 +297,8 @@ export default {
             },
             [
               h('summary', [`[DruxtEntity] Missing schema for '${this.type}--${this.mode}'`]),
+              h('br'),
+              h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
               h('br'),
               h('label', ['Entity:', h('pre', [JSON.stringify(this.entity, null, '  ')])]),
             ]

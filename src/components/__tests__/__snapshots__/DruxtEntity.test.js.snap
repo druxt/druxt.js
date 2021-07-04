@@ -4,7 +4,12 @@ exports[`DruxtEntity missing schema 1`] = `
 "<div>
   <div entity=\\"[object Object]\\" value=\\"[object Object]\\">
     <details style=\\"border: 2px dashed lightgrey; margin: 0.5em 0px; padding: 1em;\\">
-      <summary>[DruxtEntity] Missing schema for 'file--file--default'</summary><br><label>Entity:<pre>{
+      <summary>[DruxtEntity] Missing schema for 'file--file--default'</summary><br><label>Component options:<ul>
+          <li>DruxtEntityFileFileDefaultView</li>
+          <li>DruxtEntityFileFileDefault</li>
+          <li>DruxtEntityFileFile</li>
+          <li>DruxtEntityDefault</li>
+        </ul></label><br><label>Entity:<pre>{
   \\"type\\": \\"file--file\\",
   \\"id\\": \\"7adbf02c-6e41-40ae-9124-8b4781f9c160\\",
   \\"links\\": {
