@@ -93,5 +93,9 @@ export default {
       return links
     }
   },
+
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 }
 </script>

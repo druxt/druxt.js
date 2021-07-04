@@ -20,7 +20,7 @@
       v-for="entity of entities"
       :key="entity.id"
       :src="entity.attributes.uri.value.replace('public://', '/sites/default/files/')"
-    />
+    >
   </component>
 </template>
 
@@ -36,5 +36,8 @@ import { mapActions } from 'vuex'
 export default {
   name: 'DruxtFieldImage',
   extends: DruxtFieldFileDefault,
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 }
 </script>

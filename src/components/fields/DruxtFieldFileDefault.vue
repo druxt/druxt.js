@@ -55,6 +55,10 @@ export default {
     entities: []
   }),
 
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
+
   methods: {
     /**
      * Maps `druxt/getResource` Vuex action to `this.getResource`.

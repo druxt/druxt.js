@@ -33,6 +33,9 @@ import { DruxtFieldMixin } from '../../mixins/field'
  */
 export default {
   name: 'DruxtFieldTimestamp',
-  mixins: [DruxtFieldMixin]
+  mixins: [DruxtFieldMixin],
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 }
 </script>

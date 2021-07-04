@@ -8,5 +8,8 @@ import DruxtFieldEntityReferenceEntityView from './DruxtFieldEntityReferenceEnti
 export default {
   name: 'DruxtFieldEntityReferenceRevisionsEntityView',
   extends: DruxtFieldEntityReferenceEntityView,
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 }
 </script>

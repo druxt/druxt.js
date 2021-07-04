@@ -15,11 +15,13 @@
     />
 
     <!-- Items -->
+    <!-- eslint-disable vue/no-v-html -->
     <div
       v-for="(item, key) of items"
       :key="key"
       v-html="item"
     />
+    <!-- eslint-enable vue/no-v-html -->
   </component>
 </template>
 
@@ -33,5 +35,8 @@ import { DruxtFieldMixin } from '../../mixins/field'
 export default {
   name: 'DruxtFieldBasicString',
   mixins: [DruxtFieldMixin],
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 }
 </script>
