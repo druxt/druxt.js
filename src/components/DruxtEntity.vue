@@ -241,9 +241,7 @@ export default {
     })
   },
 
-  /**
-   * Druxt module configuration.
-   */
+  /** DruxtModule settings */
   druxt: {
     /**
      * Provides the available component naming options for the Druxt Wrapper.

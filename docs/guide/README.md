@@ -2,9 +2,9 @@
 title: Introduction
 ---
 
-# DruxtJS Entity
+# DruxtEntity
 
-The DruxtJS Entity module provides a Drupal **Display mode** powered Entity, Form and Field **component system** for your Nuxt.js frontend.
+The DruxtEntity module provides a Drupal **Display mode** powered Entity, Form and Field **component system** for your Nuxt.js application.
 
 
 ## Features
@@ -76,17 +76,14 @@ The `DruxtField` component is used by the `DruxtEntity` and `DruxtEntityForm` co
 
 The component uses the JSON:API resources attribute data and schema information to determine the appropriate Field component to render the data.
 
+It provides support for basic View and Form fields, and can be extended using the Druxt's Slot and Wrapper theming system.
+
 **Example**
 
 _Using the `<DruxtField />` component to render a `text_default` field._
 
 ```vue
 <DruxtField
-  :data="{
-    format: 'basic_html',
-    processed: '<p><strong>Umami Magazine &amp; Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.</p>',
-    value: '<strong>Umami Magazine & Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.'
-  }"
   :schema="{
     id: 'field_disclaimer',
     label: {
@@ -94,6 +91,11 @@ _Using the `<DruxtField />` component to render a `text_default` field._
       text: 'Disclaimer'
     },
     type: 'text_default'
+  }"
+  :value="{
+    format: 'basic_html',
+    processed: '<p><strong>Umami Magazine &amp; Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.</p>',
+    value: '<strong>Umami Magazine & Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.'
   }"
 />
 ```

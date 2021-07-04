@@ -5,9 +5,12 @@ import { DruxtModule } from 'druxt'
  * The `<DruxtField />` component renders an Entity Field for the DruxtEntity
  * and DruxtEntityForm components.
  * 
+ * Features:
+ * - Default fields
+ * - Scoped slots
+ * 
  * @example
  * <DruxtField
- *   data="A wholesome pasta bake is the ultimate comfort food. This delicious bake is super quick to prepare and an ideal midweek meal for all the family."
  *   :schema="{
  *     id: 'field_summary',
  *     label: {
@@ -16,6 +19,7 @@ import { DruxtModule } from 'druxt'
  *     },
  *     type: 'basic_string'
  *   }"
+ *   value="A wholesome pasta bake is the ultimate comfort food. This delicious bake is super quick to prepare and an ideal midweek meal for all the family."
  * />
  */
 export default {
@@ -36,9 +40,10 @@ export default {
     },
 
     /**
-     * Field relationship status.
+     * `true` if this field is a JSON:API relationship.
      *
      * @type {boolean}
+     * @default false
      */
     relationship: {
       type: Boolean,
@@ -46,7 +51,7 @@ export default {
     },
 
     /**
-     * Drupal Field schema information.
+     * Drupal Field schema object.
      *
      * @type {object}
      */
@@ -56,12 +61,7 @@ export default {
     },
 
     /**
-     * Field options.
-     * 
-     * @todo deprecate this?
-     *
-     * @type {object}
-     * @default {}
+     * @deprecated
      */
     options: {
       type: Object,
@@ -197,6 +197,11 @@ export default {
     /**
      * Provides the scoped slots object for the Module render function.
      *
+     * A scoped slot per field item is provided, with support for:
+     * - File, Image, Link, Number, Text and other View fields.
+     * - Boolean, Date/Time, Text and other Form fields.
+     * - Entitiy references.
+     * 
      * A scoped slot is provided for the label, as well as label-above and
      * label-inline depending on the field schema.
      * 
@@ -207,7 +212,7 @@ export default {
      * <template>
      *   <div>
      *     <slot name="label" />
-     *     {{ $attrs.value }}
+     *     <slot name="field-0" />
      *   </div>
      * </template>
      *
@@ -443,7 +448,7 @@ export default {
  * @example @lang js
  * [
  *   'DruxtField[Type][Id][SchemaType]',
- *   'DruxtField[Type][Id]
+ *   'DruxtField[Type][Id]',
  *   'DruxtField[Type][SchemaType]',
  *   'DruxtField[Default][SchemaType]',
  *   'DruxtField[Type]',
@@ -499,9 +504,10 @@ export default {
  * Provides scoped slots for use in the Wrapper component.
  *
  * @typedef {object} ScopedSlots
+ * @param {function} field-# - A slot per field item, e.g. `field-0`.
  * @param {function} label - The field label.
  * @param {function} label-above - The field label, if label position is 'above'.
  * @param {function} label-inline - The field label, if label position is 'inline'.
- * @param {function} default - Debug information if Nuxt is in development mode.
+ * @param {function} default - The appropriate label and fields.
  */
 </script>
