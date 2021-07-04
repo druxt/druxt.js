@@ -5,13 +5,13 @@
     v-bind="wrapper.props"
   >
     <!-- Label: Above -->
-    <div v-if="$slots['label-above']">
+    <div v-if="$scopedSlots['label-above']">
       <slot name="label-above" />
     </div>
 
     <!-- Label: Inline -->
     <slot
-      v-if="$slots['label-inline']"
+      v-if="$scopedSlots['label-inline']"
       name="label-inline"
     />
 
@@ -20,7 +20,7 @@
       v-for="entity of entities"
       :key="entity.id"
       :src="entity.attributes.uri.value.replace('public://', '/sites/default/files/')"
-    />
+    >
   </component>
 </template>
 
@@ -31,20 +31,13 @@ import { mapActions } from 'vuex'
 
 /**
  * Image field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @todo Add an example to Image field.
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldImage',
-
-  /**
-   * @extends DruxtFieldFileDefault
-   * @see {@link DruxtFieldFileDefault}
-   */
   extends: DruxtFieldFileDefault,
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 }
 </script>

@@ -75,11 +75,13 @@ export default {
    */
   async fetch() {
     // Fetch Schema.
-    this.schema = await this.getSchema({
-      resourceType: this.type,
-      mode: this.mode,
-      schemaType: this.schemaType || 'view',
-    })
+    try {
+      this.schema = await this.getSchema({
+        resourceType: this.type,
+        mode: this.mode,
+        schemaType: this.schemaType || 'view',
+      })
+    } catch(e) {}
 
     // Build wrapper component object.
     const options = this.getModuleComponents()
@@ -98,6 +100,9 @@ export default {
       const entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
       this.model = JSON.parse(JSON.stringify(entity || {}))
     }
+
+    // Get scoped slots.
+    component.slots = Object.keys(this.getScopedSlots())
 
     // Build wrapper component propsData.
     component = { ...component, ...this.getModulePropsData(wrapperData.props) }
@@ -200,56 +205,13 @@ export default {
 
       // Build fields list.
       const fields = (settings.query || {}).schema
-        ? [...this.schema.fields.map((o) => o.id), ...((settings.query || {}).fields || [])]
+        ? [...((this.schema || {}).fields || []).map((o) => o.id), ...((settings.query || {}).fields || [])]
         : ((settings.query || {}).fields || [])
       if (fields.length) {
         query.addFields(this.type, fields)
         return query
       }
       return false
-    },
-
-    /**
-     * Provides the scoped slots object for the Module render function.
-     *
-     * A scoped slot is provided for each field being rendered, as per the
-     * current display mode.
-     * 
-     * Additionally, the `default` slot will render all fields as per the
-     *
-     * @example <caption>DruxtEntity**ResourceType**.vue</caption> @lang vue
-     * <template>
-     *   <div>
-     *     <slot name="content" />
-     *     <slot :name="field_name" />
-     *   </div>
-     * </template>
-     *
-     * @return {ScopedSlots} The Scoped slots object.
-     */
-    getScopedSlots() {
-      // Build scoped slots for each field.
-      const scopedSlots = {}
-      Object.entries(this.fields).map(([id, field]) => {
-        scopedSlots[id] = (attrs) => this.$createElement('DruxtField', {
-          attrs,
-          key: id,
-          props: field,
-          on: {
-            input: (value) => {
-              const type = !field.relationship ? 'attributes' : 'relationships'
-              this.model[type][id] = value
-              this.$emit('input', this.model)
-            }
-          },
-          ref: id,
-        })
-      })
-
-      // Build default slot.
-      scopedSlots.default = (attrs) => Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
-
-      return scopedSlots
     },
 
     /**
@@ -279,9 +241,7 @@ export default {
     })
   },
 
-  /**
-   * Druxt module configuration.
-   */
+  /** DruxtModule settings */
   druxt: {
     /**
      * Provides the available component naming options for the Druxt Wrapper.
@@ -289,9 +249,9 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ schema }) => ([
-      [schema.resourceType, schema.config.mode, schema.config.schemaType],
-      [schema.config.mode],
+    componentOptions: ({ mode, schema, schemaType, type }) => ([
+      [(schema || {}).resourceType || type, ((schema || {}).config || {}).mode || mode, ((schema || {}).config || {}).schemaType || schemaType || 'view'],
+      [((schema || {}).config || {}).mode || mode],
     ]),
 
     /**
@@ -301,6 +261,73 @@ export default {
      * @returns {PropsData}
      */
     propsData: ({ fields, model, schema }) => ({ entity: model, fields, schema, value: model }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * A scoped slot is provided for each field being rendered, as per the
+     * current display mode.
+     * 
+     * Additionally, the `default` slot will render all fields as per the
+     *
+     * @example <caption>DruxtEntity**ResourceType**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot name="content" />
+     *     <slot :name="field_name" />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots(h) {
+      const scopedSlots = {}
+
+      if (!this.schema) {
+        if (this.$nuxt.context.isDev) {
+          scopedSlots.default = (attrs) => h('details',
+            {
+              attrs,
+              style: {
+                border: '2px dashed lightgrey',
+                margin: '0.5em 0',
+                padding: '1em',
+              },
+            },
+            [
+              h('summary', [`[DruxtEntity] Missing schema for '${this.type}--${this.mode}'`]),
+              h('br'),
+              h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+              h('br'),
+              h('label', ['Entity:', h('pre', [JSON.stringify(this.entity, null, '  ')])]),
+            ]
+          )
+        }
+        return scopedSlots
+      }
+
+      // Build scoped slots for each field.
+      Object.entries(this.fields).map(([id, field]) => {
+        scopedSlots[id] = (attrs) => h('DruxtField', {
+          attrs,
+          key: id,
+          props: field,
+          on: {
+            input: (value) => {
+              const type = !field.relationship ? 'attributes' : 'relationships'
+              this.model[type][id] = value
+              this.$emit('input', this.model)
+            }
+          },
+          ref: id,
+        })
+      })
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
+
+      return scopedSlots
+    },
   },
 }
 

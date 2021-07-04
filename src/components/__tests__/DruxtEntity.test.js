@@ -17,7 +17,12 @@ const mocks = {
   },
   $fetchState: {
     pending: false
-  }
+  },
+  $nuxt: {
+    context: {
+      isDev: false,
+    },
+  },
 }
 
 const mountComponent = (propsData) => {
@@ -172,6 +177,15 @@ describe('DruxtEntity', () => {
     expect($fetch).toHaveBeenCalledTimes(3)
     DruxtEntity.watch.uuid.call({ $fetch })
     expect($fetch).toHaveBeenCalledTimes(4)
+  })
+
+  test('missing schema', async () => {
+    mocks.$nuxt.context.isDev = true
+    const wrapper = mountComponent({ uuid: '7adbf02c-6e41-40ae-9124-8b4781f9c160', type: 'file--file' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.schema).toBe(null)
+    expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('deprecated', () => {

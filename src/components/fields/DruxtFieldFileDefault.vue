@@ -5,13 +5,13 @@
     v-bind="wrapper.props"
   >
     <!-- Label: Above -->
-    <div v-if="$slots['label-above']">
+    <div v-if="$scopedSlots['label-above']">
       <slot name="label-above" />
     </div>
 
     <!-- Label: Inline -->
     <slot
-      v-if="$slots['label-inline']"
+      v-if="$scopedSlots['label-inline']"
       name="label-inline"
     />
 
@@ -33,27 +33,13 @@ import { mapActions } from 'vuex'
 
 /**
  * File Default field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @todo Add an example to File Default field.
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldFileDefault',
 
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link ../mixins/field|DruxtFieldMixin}
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
-   */
   mixins: [DruxtFieldMixin],
 
-  /**
-   * Loads all referenced entities via `druxt/getResource`.
-   */
   async fetch() {
     for (const delta in this.items) {
       const item = this.items[delta]
@@ -63,15 +49,15 @@ export default {
   },
 
   /**
-   * Vue.js Data object.
-   *
-   * Used for on-demand JSON:API resource loading.
-   *
    * @property {object[]} entities
    */
   data: () => ({
     entities: []
   }),
+
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 
   methods: {
     /**

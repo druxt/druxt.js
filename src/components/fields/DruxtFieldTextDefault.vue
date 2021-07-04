@@ -4,13 +4,13 @@
     v-bind="wrapper.props"
   >
     <!-- Label: Above -->
-    <div v-if="$slots['label-above']">
+    <div v-if="$scopedSlots['label-above']">
       <slot name="label-above" />
     </div>
 
     <!-- Label: Inline -->
     <slot
-      v-if="$slots['label-inline']"
+      v-if="$scopedSlots['label-inline']"
       name="label-inline"
     />
 
@@ -30,34 +30,16 @@ import { DruxtFieldMixin } from '../../mixins/field'
 
 /**
  * Text Default field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @example
- * <DruxtField
- *   :data="{
- *     format: 'basic_html',
- *     processed: '<p><strong>Umami Magazine &amp; Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.</p>',
- *     value: '<strong>Umami Magazine & Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.'
- *   }"
- *   :schema="{
- *     id: 'body',
- *     type: 'text_default'
- *   }"
- * />
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldTextDefault',
 
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link ../mixins/field|DruxtFieldMixin}
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
-   */
   mixins: [DruxtFieldMixin],
+
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 
   methods: {
     /**

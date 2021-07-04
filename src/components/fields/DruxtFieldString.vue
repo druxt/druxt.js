@@ -4,13 +4,13 @@
     v-bind="wrapper.props"
   >
     <!-- Label: Above -->
-    <div v-if="$slots['label-above']">
+    <div v-if="$scopedSlots['label-above']">
       <slot name="label-above" />
     </div>
 
     <!-- Label: Inline -->
     <slot
-      v-if="$slots['label-inline']"
+      v-if="$scopedSlots['label-inline']"
       name="label-inline"
     />
 
@@ -29,29 +29,13 @@ import { DruxtFieldMixin } from '../../mixins/field'
 
 /**
  * String field.
- *
- * _This component is intended to be rendered by the `<DruxtField />` component._
- *
- * @see {@link DruxtField}
- *
- * @example
- * <DruxtField
- *   data="Super easy vegetarian pasta bake"
- *   :schema="{
- *     id: 'field_title',
- *     type: 'string'
- *   }"
- * />
+ * @deprecated
  */
 export default {
   name: 'DruxtFieldString',
-
-  /**
-   * Vue.js Mixins.
-   *
-   * @see {@link ../mixins/field|DruxtFieldMixin}
-   * @see {@link https://vuejs.org/v2/guide/mixins.html}
-   */
-  mixins: [DruxtFieldMixin]
+  mixins: [DruxtFieldMixin],
+  mounted() {
+    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+  },
 }
 </script>

@@ -13,7 +13,7 @@ actionLink: /guide/getting-started
 The DruxtEntity component renders content entities using Drupal's View display modes.
 
 ```vue
-<DruxtEntity :type="resourceType" :uuid="uuid" mode="displayMode" />
+<DruxtEntity :type="resourceType" :uuid="uuid" :mode="displayMode" />
 ```
 
 ![Example DruxtEntity component](./images/druxt-entity.png)
@@ -26,7 +26,7 @@ Get started with the [Guide](guide/) and [API Documentation](/api/components/Dru
 The DruxtEntityForm component uses Drupal's Form displays modes for content creation and editing.
 
 ```vue
-<DruxtEntityForm :type="resourceType" mode="displayMode" />
+<DruxtEntityForm :type="resourceType" :mode="displayMode" />
 ```
 
 ![Example DruxtEntityForm component](./images/druxt-entity-form.png)
@@ -36,6 +36,6 @@ Get started with the [Guide](guide/) and [API Documentation](/api/components/Dru
 
 ## DruxtJS
 
-DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
+DruxtJS is a framework to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) application.
 
 Find out more at [https://druxtjs.org](https://druxtjs.org)

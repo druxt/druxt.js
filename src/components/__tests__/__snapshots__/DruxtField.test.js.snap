@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DruxtField boolean - form 1`] = `
+"<div data=\\"true\\">
+  <div data=\\"true\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"true\\"><label><strong>Status:</strong><br>
+      <div><input type=\\"checkbox\\"></div></label></div>
+</div>"
+`;
+
+exports[`DruxtField datetime - form 1`] = `
+"<div data=\\"2021-03-14T22:05:30+00:00\\">
+  <div data=\\"2021-03-14T22:05:30+00:00\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"2021-03-14T22:05:30+00:00\\"><label><strong>Created:</strong><br>
+      <div><input type=\\"datetime-local\\"></div></label></div>
+</div>"
+`;
+
+exports[`DruxtField fallback - form 1`] = `
+"<div data=\\"[object Object]\\">
+  <div data=\\"[object Object]\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"><label><strong>Path:</strong><br>
+      <div><textarea></textarea></div></label></div>
+</div>"
+`;
+
+exports[`DruxtField file - view 1`] = `
+"<div data=\\"[object Object]\\">
+  <div data=\\"[object Object]\\" errors=\\"\\" relationship=\\"true\\" schema=\\"[object Object]\\" value=\\"[object Object]\\">
+    <div>
+      <div entity=\\"[object Object]\\" value=\\"[object Object]\\"><a target=\\"_blank\\" href=\\"/sites/default/files/vegan-chocolate-nut-brownies.jpg\\">vegan-chocolate-nut-brownies.jpg</a></div>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`DruxtField image - view 1`] = `
+"<div data=\\"[object Object]\\">
+  <div data=\\"[object Object]\\" errors=\\"\\" relationship=\\"true\\" schema=\\"[object Object]\\" value=\\"[object Object]\\">
+    <div>
+      <div entity=\\"[object Object]\\" value=\\"[object Object]\\"><img src=\\"/sites/default/files/vegan-chocolate-nut-brownies.jpg\\"></div>
+    </div>
+  </div>
+</div>"
+`;
+
+exports[`DruxtField link - view 1`] = `
+"<div data=\\"[object Object]\\">
+  <div data=\\"[object Object]\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"><a href=\\"https://druxtjs.org\\" target=\\"_blank\\">DruxtJS</a></div>
+</div>"
+`;
+
+exports[`DruxtField text - form 1`] = `
+"<div data=\\"About Umami\\">
+  <div data=\\"About Umami\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"About Umami\\"><label><strong>Title:</strong><br>
+      <div><input></div></label></div>
+</div>"
+`;

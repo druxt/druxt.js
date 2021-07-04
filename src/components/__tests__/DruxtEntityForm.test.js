@@ -18,11 +18,16 @@ const mocks = {
   },
   $fetchState: {
     pending: false
-  }
+  },
+  $nuxt: {
+    context: {
+      isDev: false,
+    },
+  },
 }
 
 const mountComponent = async (propsData) => {
-  const wrapper = mount(DruxtEntityForm, { localVue, mocks, propsData, store })
+  const wrapper = mount(DruxtEntityForm, { localVue, mocks, propsData, store, stubs: ['DruxtEntityForm'] })
   await wrapper.vm.$options.fetch.call(wrapper.vm)
   return wrapper
 }
@@ -31,8 +36,8 @@ describe('DruxtEntityForm', () => {
   beforeEach(() => {
     localVue = createLocalVue()
     localVue.use(Vuex)
-    localVue.component('DruxtField', DruxtField)
     localVue.component('DruxtEntityFormButtons', DruxtEntityFormButtons)
+    localVue.component('DruxtField', DruxtField)
 
     mockAxios.reset()
 

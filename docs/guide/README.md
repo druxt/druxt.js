@@ -2,9 +2,9 @@
 title: Introduction
 ---
 
-# DruxtJS Entity
+# DruxtEntity
 
-The DruxtJS Entity module provides a Drupal **Display mode** powered Entity, Form and Field **component system** for your Nuxt.js frontend.
+The DruxtEntity module provides a Drupal **Display mode** powered Entity, Form and Field **component system** for your Nuxt.js application.
 
 
 ## Features
@@ -13,8 +13,8 @@ The DruxtJS Entity module provides a Drupal **Display mode** powered Entity, For
 - [DruxtEntity component](#druxtentity-component)
 - [DruxtEntityForm component](#druxtentityform-component)
 - [DruxtField component](#druxtfield-component)
-- [Druxt Module wrapper theming support](#theming)
-- [Druxt Module settings](#module-settings)
+- [DruxtWrapper theming system](#druxtwrapper-theming)
+- [DruxtModule settings](#module-settings)
 - [DruxtRouter support](#router-support)
 - [Auto-generated Nuxt Storybook integration](#storybook)
 
@@ -76,17 +76,14 @@ The `DruxtField` component is used by the `DruxtEntity` and `DruxtEntityForm` co
 
 The component uses the JSON:API resources attribute data and schema information to determine the appropriate Field component to render the data.
 
+It provides support for basic View and Form fields, and can be extended using the Druxt's Slot and Wrapper theming system.
+
 **Example**
 
 _Using the `<DruxtField />` component to render a `text_default` field._
 
 ```vue
 <DruxtField
-  :data="{
-    format: 'basic_html',
-    processed: '<p><strong>Umami Magazine &amp; Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.</p>',
-    value: '<strong>Umami Magazine & Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.'
-  }"
   :schema="{
     id: 'field_disclaimer',
     label: {
@@ -95,19 +92,22 @@ _Using the `<DruxtField />` component to render a `text_default` field._
     },
     type: 'text_default'
   }"
+  :value="{
+    format: 'basic_html',
+    processed: '<p><strong>Umami Magazine &amp; Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.</p>',
+    value: '<strong>Umami Magazine & Umami Publications</strong> is a fictional magazine and publisher for illustrative purposes only.'
+  }"
 />
 ```
 
 See the [DruxtField API documention](/api/components/DruxtField.html) for more information.
 
 
-## Theming
+## DruxtWrapper theming
 
-Both the Entity and Field components use the DruxtModule slot based Wrapper theme system.
+Druxt modules use a slot-based Wrapper component system to provide rich defaults while still allowing full control over all theming and functionality.
 
-This allows for Entity Type component wrappers, custom Field components and more.
-
-See the [Wrapper theme system](https://druxtjs.org/guide/#wrapper-theme-system) guide for more information.
+See the [theming guide](https://druxtjs.org/guide/theming.html) for more details.
 
 
 ## Module settings
