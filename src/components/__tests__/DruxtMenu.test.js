@@ -97,6 +97,10 @@ describe('DruxtMenu', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     wrapper.vm.getScopedSlots().default()
-    expect(scopedSlots.default).toHaveBeenCalledWith({ items: wrapper.vm.items, parentId: wrapper.vm.parentId })
+    expect(scopedSlots.default).toHaveBeenCalledWith({
+      items: wrapper.vm.model,
+      parentId: wrapper.vm.parentId,
+      value: wrapper.vm.model,
+    })
   })
 })
