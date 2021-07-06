@@ -1,6 +1,6 @@
 {
   "name": "druxt",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "A Bridge between frameworks, Nuxt.js in the front, Drupal in the back.",
   "repository": {
     "type": "git",
