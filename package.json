@@ -47,8 +47,8 @@
   "dependencies": {
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "^0.8.0",
-    "druxt-blocks": "^0.8.0",
+    "druxt": "^0.8.3",
+    "druxt-blocks": "^0.10.0",
     "vuex": "^3.6.0"
   },
   "devDependencies": {
@@ -61,6 +61,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "cross-env": "^6.0.3",
+    "druxt-docgen": "^0.4.1",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.5.4",
