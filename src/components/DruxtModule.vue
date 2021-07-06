@@ -187,7 +187,7 @@ export default {
       }
 
       // $attrs.
-      const $attrs = { ...this.$attrs }
+      const $attrs = this.$attrs
       delete $attrs['data-fetch-key']
       const $attrsKeys = Object.keys(propsData).filter(i => !Object.keys(wrapperProps).includes(i))
       for (const key of $attrsKeys) {
@@ -306,9 +306,11 @@ export default {
     }
 
     // Return wrapped component.
+    const attrs = { ...this.component.$attrs, ...this.$attrs }
+    delete attrs['data-fetch-key']
     return h(this.wrapper.component, wrapperData, [
       h(this.component.is, {
-        attrs: { ...this.component.$attrs, ...this.$attrs },
+        attrs,
         on: {
           input(value) {
             self.model = value
