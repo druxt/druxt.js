@@ -11,7 +11,7 @@ The Druxt Breadcrumb module adds a [Drupal](https://drupal.org) Breadcrumbs Vue.
 
 - [Nuxt module](#nuxt-module)
 - [DruxtBreadcrumb component](#druxtbreadcrumb-component)
-- [Slot and wrapper theming](#theming)
+- [Theming](#druxtwrapper-theming)
 
 
 ## Nuxt module
@@ -42,7 +42,10 @@ The DruxtBreadcrumb component uses the Vue Router and DruxtRouter to build a lis
 
 See the [DruxtBreadcrumb component API documentation](/api/components/DruxtBreadcrumb).
 
-## Theming
+
+## DruxtWrapper theming
+
+Druxt modules use a slot-based Wrapper component system to provide rich defaults while still allowing full control over all theming and functionality.
 
 The crumbs can be themed by providing a default scoped slot:
 ```vue
@@ -63,4 +66,4 @@ The DruxtBreadcrumb also provide a DruxtWrapper component for theming:
 </template>
 ```
 
-See the [Wrapper theme system](https://druxtjs.org/guide/#wrapper-theme-system) guide for more information.
+See the [theming guide](https://druxtjs.org/guide/theming.html) for more details.

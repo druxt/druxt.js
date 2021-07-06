@@ -8,7 +8,7 @@ actionLink: /guide/getting-started
 > The DruxtJS Breadcrumb module adds a [Drupal](https://drupal.org) Breadcrumbs Vue.js components to your [Nuxt.js](https://nuxtjs.org) application.
 
 
-## The DruxtBreadcrumb component
+## DruxtBreadcrumb
 
 The DruxtBreadcrumb component uses the Vue Router and DruxtRouter to build a list of crumbs.
 
