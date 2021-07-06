@@ -117,7 +117,7 @@ describe('DruxtBreadcrumb', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({})
-    expect(wrapper.vm.crumbs).toHaveLength(0)
+    expect(wrapper.vm.crumbs).toBe(null)
 
     expect(wrapper.html()).toMatchSnapshot()
   })
@@ -141,7 +141,7 @@ describe('DruxtBreadcrumb', () => {
     const wrapper = mountComponent({ path: '/', propsData: { home: false } })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.vm.crumbs).toHaveLength(0)
+    expect(wrapper.vm.crumbs).toBe(null)
 
     expect(wrapper.html()).toMatchSnapshot()
   })
@@ -154,6 +154,9 @@ describe('DruxtBreadcrumb', () => {
     wrapper.vm.getScopedSlots().default.call()
     expect(scopedSlots.default).toHaveBeenCalledWith({
       crumbs: [{
+        text: '/',
+      }],
+      value: [{
         text: '/',
       }],
     })

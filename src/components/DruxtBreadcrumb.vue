@@ -3,7 +3,8 @@ import { DruxtModule } from 'druxt'
 import { mapActions, mapState } from 'vuex'
 
 /**
- * The `<DruxtBreadcrumb />` Vue.js component.
+ * The `<DruxtBreadcrumb />` component uses the DruxtRouter module to build a
+ * path based breadcrumb.
  *
  * @example @lang vue
  * <DruxtBreadcrumb />
@@ -13,17 +14,13 @@ export default {
 
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
+  /** */
   props: {
     /**
      * Show home crumb?
      *
      * @type {boolean}
-     * @default false
+     * @default true
      * @example @lang vue
      * <DruxtBreacrumb :home="false" />
      */
@@ -34,37 +31,31 @@ export default {
   },
 
   /**
-   * Nuxt.js fetch method.
+   * The Nuxt Fetch hook.
+   *
+   * Fetches the breadcrumbs.
    */
   async fetch() {
-    await this.fetchCrumbs()
+    if (!this.value) {
+      await this.fetchCrumbs()
+    }
     await DruxtModule.fetch.call(this)
   },
 
-  /**
-   * @property {objects[]} crumbs - The Breadcrumbs.
-   */
-
-  data: () => ({
-    crumbs: [],
-  }),
-
-  /**
-   * Vue.js Computed properties.
-   *
-   * @vue-computed {object} route The current Route.
-   * @vue-computed {object} routes All available routes.
-   */
+  /** */
   computed: {
+    /**
+     * @property {objects[]} crumbs - The Breadcrumbs.
+     */
+    crumbs: ({ model }) => model,
+
     ...mapState({
       route: state => state.druxtRouter.route,
       routes: state => state.druxtRouter.routes
     })
   },
 
-  /**
-   * Nuxt.js watch property.
-   */
+  /** */
   watch: {
     /**
      * Updates crumbs on Route change.
@@ -75,6 +66,9 @@ export default {
   },
 
   methods: {
+    /**
+     * Fetch Crumbs
+     */
     async fetchCrumbs() {
       // If there is no route, stop here.
       if (!this.route || !Object.keys(this.route).length) return
@@ -90,7 +84,7 @@ export default {
 
       // If we are at the root of the site, stop here.
       if (this.$route.path === '/') {
-        this.crumbs = crumbs
+        this.model = crumbs
         return
       }
 
@@ -122,17 +116,43 @@ export default {
         })
       }
 
-      this.crumbs = crumbs.reverse()
+      this.model = crumbs.reverse()
     },
+
+    /**
+     * Maps `druxtRouter/getRoute` Vuex action to `this.getRoute`.
+     */
+    ...mapActions({
+      getRoute: 'druxtRouter/getRoute'
+    })
+  },
+
+  /** DruxtModule settings */
+  druxt: {
+    /**
+     * Provides the available component naming options for the Druxt Wrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {ComponentOptions}
+     */
+    componentOptions: ({}) => [['default']],
+
+    /**
+     * Provides propsData for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {PropsData}
+     */
+    propsData: ({ model }) => ({ crumbs: model, value: model }),
 
     /**
      * Provides the scoped slots object for the Module render function.
      *
-     * The `default` slot renders crumbs as as list of NuxtLink's.
+     * The `default` slot renders crumbs as a list of NuxtLink's.
      *
      * @return {ScopedSlots} The Scoped slots object.
      */
-    getScopedSlots() {
+    slots() {
       // Build scoped slots for each field.
       const scopedSlots = {}
 
@@ -144,30 +164,59 @@ export default {
             : crumb.text
         ])
       ))
-      if (this.$scopedSlots.default) {
-        scopedSlots.default = (attrs) => this.$scopedSlots.default({
-          ...this.$options.druxt.propsData(this),
-          ...attrs
-        })
-      }
 
       return scopedSlots
     },
-
-    /**
-     * Maps `druxtRouter/getRoute` Vuex action to `this.getRoute`.
-     */
-    ...mapActions({
-      getRoute: 'druxtRouter/getRoute'
-    })
-  },
-
-  /**
-   * Druxt module function.
-   */
-  druxt: {
-    componentOptions: ({}) => [['default']],
-    propsData: ({ crumbs }) => ({ crumbs })
   },
 }
+
+/**
+ * Provides the available naming options for the Wrapper component.
+ *
+ * @typedef {array[]} ComponentOptions
+ *
+ * @example @lang js
+ * [
+ *   'DruxtBreadcrumb[Default]',
+ * ]
+ *
+ * @example @lang js
+ * [
+ *   'DruxtBreadcrumbDefault',
+ * ]
+ */
+
+/**
+ * Provides propsData for use in the Wrapper component.
+ *
+ * @typedef {object} PropsData
+ * @param {objects[]} crumbs - The Breadcrumbs.
+ * @param {objects[]} value - The Breadcrumbs value.
+ *
+ * @example @lang js
+ * {
+ *   crumbs: [{
+ *     text: 'Home',
+ *     to: '/',
+ *   }],
+ *   value: [{
+ *     text: 'Home',
+ *     to: '/',
+ *   }],
+ * }
+ */
+
+/**
+ * Provides scoped slots for use in the Wrapper component.
+ *
+ * @typedef {object} ScopedSlots
+ * @param {function} default - Crumbs as a list of NuxtLink's.
+ *
+ * @example <caption>DruxtBreadcrumb**Default**.vue</caption> @lang vue
+ * <template>
+ *   <div>
+ *     <slot />
+ *   </div>
+ * </template>
+ */
 </script>
