@@ -48,9 +48,9 @@
     ]
   },
   "dependencies": {
-    "druxt": "^0.8.0",
-    "druxt-blocks": "^0.9.0",
-    "druxt-router": "^0.18.0",
+    "druxt": "^0.8.2",
+    "druxt-blocks": "^0.10.0",
+    "druxt-router": "^0.18.1",
     "vuex": "^3.6.0"
   },
   "devDependencies": {
