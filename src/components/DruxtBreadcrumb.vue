@@ -86,7 +86,7 @@ export default {
 
       // If we are at the root of the site, stop here.
       if (this.$route.path === '/') {
-        this.crumbs = crumbs
+        this.model = crumbs
         return
       }
 
@@ -135,7 +135,7 @@ export default {
   druxt: {
     componentOptions: ({}) => [['default']],
 
-    propsData: ({ crumbs, model }) => ({ crumbs, value: model }),
+    propsData: ({ model }) => ({ crumbs: model, value: model }),
 
     /**
      * Provides the scoped slots object for the Module render function.
