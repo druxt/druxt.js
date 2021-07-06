@@ -181,7 +181,7 @@ export default {
             h('br'),
             h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
             h('br'),
-            h('label', ['Block settings:', h('pre', [JSON.stringify(((this.block || {}).attributes || {}).settings, null, '\t')])])
+            h('label', ['Block settings:', h('pre', [JSON.stringify(((this.block || {}).attributes || {}).settings, null, '  ')])])
           ]
         )
       }
