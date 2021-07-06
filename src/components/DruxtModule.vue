@@ -187,7 +187,7 @@ export default {
       }
 
       // $attrs.
-      const $attrs = this.$attrs
+      const $attrs = { ...this.$attrs }
       delete $attrs['data-fetch-key']
       const $attrsKeys = Object.keys(propsData).filter(i => !Object.keys(wrapperProps).includes(i))
       for (const key of $attrsKeys) {
