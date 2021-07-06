@@ -12,7 +12,7 @@ The DruxtBlocks module adds Drupal Blocks, Block Region and Custom content Block
 - [Nuxt module](#nuxt-module)
 - [DruxtBlock component](#druxtblock-component)
 - [DruxtBlockRegion component](#druxtblockregion-component)
-- [Druxt Module wrapper theming support](#theming)
+- [Druxt Module wrapper theming support](#druxtwrapper-theming)
 - [Druxt Module settings](#module-settings)
 - [Auto-generated Nuxt Storybook integration](#storybook)
 
@@ -61,13 +61,11 @@ The Block Region component renders all Drupal blocks in a specified region, with
 See the [DruxtBlockRegion component API documentation](../api/components/DruxtBlockRegion).
 
 
-## Theming
+## DruxtWrapper theming
 
-Both the Entity and Field components use the DruxtModule slot based Wrapper theme system.
+Druxt modules use a slot-based Wrapper component system to provide rich defaults while still allowing full control over all theming and functionality.
 
-This allows for Entity Type component wrappers, custom Field components and more.
-
-See the [Wrapper theme system](https://druxtjs.org/guide/#wrapper-theme-system) guide for more information.
+See the [theming guide](https://druxtjs.org/guide/theming.html) for more details.
 
 
 ## Module settings

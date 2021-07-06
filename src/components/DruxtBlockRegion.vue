@@ -93,60 +93,6 @@ export default {
 
   methods: {
     /**
-     * Provides the scoped slots object for the Module render function.
-     *
-     * A scoped slot is provided for each block in the region, regardless of
-     * visibility.
-     * 
-     * The `default` slot will render all blocks, filtered by route visibility.
-     *
-     * @return {ScopedSlots} The Scoped slots object.
-     *
-     * @example <caption>DruxtBlockRegion**Name**.vue</caption> @lang vue
-     * <template>
-     *   <div v-if="default">
-     *     <slot />
-     *   </div>
-     * 
-     *   <div v-else>
-     *     <slot name="umami_branding" />
-     *   </div>
-     * </template>
-     */
-    getScopedSlots() {
-      // Build scoped slots for each block.
-      const scopedSlots = {}
-      this.blocks.map((block) => {
-        scopedSlots[block.attributes.drupal_internal__id] = (attrs) => {
-          delete (attrs || {})['data-fetch-key']
-          return this.$createElement('DruxtBlock', {
-            attrs,
-            key: block.attributes.drupal_internal__id,
-            props: {
-              uuid: block.id,
-            },
-            ref: block.attributes.drupal_internal__id,
-          })
-        }
-      })
-
-      // Build default slot.
-      scopedSlots.default = (attrs) => this.$createElement('div', this.blocks.map((block) => 
-        this.isVisible(block)
-          ? scopedSlots[block.attributes.drupal_internal__id](attrs)
-          : false
-      ))
-      if (this.$scopedSlots.default) {
-        scopedSlots.default = (attrs) => this.$scopedSlots.default({
-          ...this.$options.druxt.propsData(this),
-          ...attrs
-        })
-      }
-
-      return scopedSlots
-    },
-
-    /**
      * Checks if a given block shoud be visible.
      * 
      * Uses Request Path visibility details if available with the DruxtRouter.
@@ -205,6 +151,54 @@ export default {
      * @returns {PropsData}
      */
     propsData: ({ blocks, name, theme }) => ({ blocks, name, theme }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * A scoped slot is provided for each block in the region, regardless of
+     * visibility.
+     * 
+     * The `default` slot will render all blocks, filtered by route visibility.
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     *
+     * @example <caption>DruxtBlockRegion**Name**.vue</caption> @lang vue
+     * <template>
+     *   <div v-if="default">
+     *     <slot />
+     *   </div>
+     * 
+     *   <div v-else>
+     *     <slot name="umami_branding" />
+     *   </div>
+     * </template>
+     */
+    slots(h) {
+      // Build scoped slots for each block.
+      const scopedSlots = {}
+      this.blocks.map((block) => {
+        scopedSlots[block.attributes.drupal_internal__id] = (attrs) => {
+          delete (attrs || {})['data-fetch-key']
+          return h('DruxtBlock', {
+            attrs,
+            key: block.attributes.drupal_internal__id,
+            props: {
+              uuid: block.id,
+            },
+            ref: block.attributes.drupal_internal__id,
+          })
+        }
+      })
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => h('div', this.blocks.map((block) => 
+        this.isVisible(block)
+          ? scopedSlots[block.attributes.drupal_internal__id](attrs)
+          : false
+      ))
+
+      return scopedSlots
+    },
   },
 }
 
