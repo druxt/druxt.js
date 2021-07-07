@@ -63,13 +63,6 @@ export default {
   },
 
   /**
-   * @property {string[]} regions - An array of unique region names.
-   */
-  data: () => ({
-    regions: [],
-  }),
-
-  /**
    * Nuxt.js fetch method.
    *
    * Fetches theme filtered region names from the Block JSON:API resources to be
@@ -77,13 +70,15 @@ export default {
    */
   async fetch() {
     // Fetch all available regions.
-    const type = 'block--block'
-    this.regions = await this.getCollection({
-      type,
-      query: new DrupalJsonApiParams()
-        .addFilter('theme', this.theme)
-        .addFields(type, ['region']),
-    }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
+    if (!this.value) {
+      const type = 'block--block'
+      this.value = await this.getCollection({
+        type,
+        query: new DrupalJsonApiParams()
+          .addFilter('theme', this.theme)
+          .addFields(type, ['region']),
+      }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
+    }
 
     // Call DruxtModule fetch hook.
     await DruxtModule.fetch.call(this)
@@ -104,6 +99,12 @@ export default {
         name: region,
         theme,
       }])),
+
+    /**
+     * An array of unique region names.
+     * @return {string[]}
+     */
+    regions: ({ model, value }) => model || value || [],
   },
 
   methods: {
