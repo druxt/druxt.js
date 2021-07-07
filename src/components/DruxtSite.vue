@@ -63,13 +63,6 @@ export default {
   },
 
   /**
-   * @property {string[]} regions - An array of unique region names.
-   */
-  data: () => ({
-    regions: [],
-  }),
-
-  /**
    * Nuxt.js fetch method.
    *
    * Fetches theme filtered region names from the Block JSON:API resources to be
@@ -77,13 +70,15 @@ export default {
    */
   async fetch() {
     // Fetch all available regions.
-    const type = 'block--block'
-    this.regions = await this.getCollection({
-      type,
-      query: new DrupalJsonApiParams()
-        .addFilter('theme', this.theme)
-        .addFields(type, ['region']),
-    }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
+    if (!this.value) {
+      const type = 'block--block'
+      this.model = await this.getCollection({
+        type,
+        query: new DrupalJsonApiParams()
+          .addFilter('theme', this.theme)
+          .addFields(type, ['region']),
+      }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
+    }
 
     // Call DruxtModule fetch hook.
     await DruxtModule.fetch.call(this)
@@ -104,49 +99,15 @@ export default {
         name: region,
         theme,
       }])),
+
+    /**
+     * An array of unique region names.
+     * @return {string[]}
+     */
+    regions: ({ model, value }) => model || value || [],
   },
 
   methods: {
-    /**
-     * Provides the scoped slots object for the Module render function.
-     *
-     * A scoped slot is provided for each block region available, as per the
-     * specified theme.
-     * 
-     * Additionally, the `default` slot will render all regions. 
-     *
-     * @example <caption>DruxtSite**Theme**.vue</caption> @lang vue
-     * <template>
-     *   <div>
-     *     <slot name="content" />
-     *     <slot :name="region_name" />
-     *   </div>
-     * </template>
-     *
-     * @return {ScopedSlots} The Scoped slots object.
-     */
-    getScopedSlots() {
-      // Build scoped slots for each field.
-      const scopedSlots = {
-        ...Object.fromEntries(this.regions.map((region) => [region, (attrs) => this.$createElement('DruxtBlockRegion', {
-          attrs,
-          key: region,
-          props: this.props[region],
-        })]))
-      }
-
-      // Build default slot.
-      scopedSlots.default = (attrs) => this.regions.map((region) => (scopedSlots[region] || (() => {}))(attrs))
-      if (this.$scopedSlots.default) {
-        scopedSlots.default = (attrs) => this.$scopedSlots.default({
-          ...this.$options.druxt.propsData(this),
-          ...attrs
-        })
-      }
-
-      return scopedSlots
-    },
-
     ...mapActions({ getCollection: 'druxt/getCollection' }),
   },
 
@@ -169,6 +130,40 @@ export default {
      * @returns {PropsData}
      */
     propsData: ({ props, regions, theme }) => ({ props, regions, theme }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * A scoped slot is provided for each block region available, as per the
+     * specified theme.
+     * 
+     * Additionally, the `default` slot will render all regions. 
+     *
+     * @example <caption>DruxtSite**Theme**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot name="content" />
+     *     <slot :name="region_name" />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots() {
+      // Build scoped slots for each region.
+      const scopedSlots = {
+        ...Object.fromEntries(this.regions.map((region) => [region, (attrs) => this.$createElement('DruxtBlockRegion', {
+          attrs,
+          key: region,
+          props: this.props[region],
+        })]))
+      }
+
+      // Build default slot.
+      scopedSlots.default = (attrs) => this.regions.map((region) => (scopedSlots[region] || (() => {}))(attrs))
+
+      return scopedSlots
+    },
   }
 }
 

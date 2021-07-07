@@ -12,7 +12,7 @@ localVue.use(Vuex)
 
 let store
 
-const mountComponent = (pending, options ) => {
+const mountComponent = (pending, options) => {
   const mocks = {
     $fetchState: { pending }
   }
