@@ -72,7 +72,7 @@ export default {
     // Fetch all available regions.
     if (!this.value) {
       const type = 'block--block'
-      this.value = await this.getCollection({
+      this.model = await this.getCollection({
         type,
         query: new DrupalJsonApiParams()
           .addFilter('theme', this.theme)
