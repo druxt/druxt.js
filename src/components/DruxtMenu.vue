@@ -20,9 +20,7 @@ export default {
 
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   */
+  /** */
   props: {
     /**
      * The depth of the menu items to render.
@@ -170,6 +168,9 @@ export default {
       options: options.map(o => o.name) || [],
     }
 
+    // Get scoped slots.
+    component.slots = Object.keys(this.getScopedSlots())
+
     // Get wrapper component data to merge with module settings.
     const wrapperData = await this.getWrapperData(component.is)
     component.settings = merge(((this.$druxtMenu || {}).options || {}).menu || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
@@ -181,11 +182,13 @@ export default {
       parent: this.parentId,
     }
 
-    await this.getMenu({
-      name: this.name,
-      settings,
-    })
-    this.items = this.getMenuItems()
+    if (!this.value) {
+      await this.getMenu({
+        name: this.name,
+        settings,
+      })
+      this.model = this.getMenuItems()
+    }
 
     // Build wrapper component propsData.
     component = { ...component, ...this.getModulePropsData(wrapperData.props) }
@@ -199,25 +202,24 @@ export default {
     return [...parts, getCounter(parts.join(':'))].join(':')
   },
 
-  /**
-   * Vue.js Data object.
-   *
-   * @property {objects[]} items - The processed Menu items.
-   */
-  data: () => ({
-    items: [],
-  }),
-
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
     /**
-     * The active route trail.
+     * The processed Menu items.
+     * 
+     * @type {objects[]}
+     * @deprecated
      */
-    trail() {
+    items: ({ model }) => model,
+
+    /**
+     * The active route trail.
+     * 
+     * @type {string[]}
+     */
+    trail: ({ $route }) => {
       const paths = []
-      const parts = this.$route.path.substring(1).split('/')
+      const parts = $route.path.substring(1).split('/')
 
       for (const key in parts) {
         const path = [key > 0 ? paths[key - 1] : '', parts[key]].join('/')
@@ -236,9 +238,7 @@ export default {
     })
   },
 
-  /**
-   * Nuxt.js watch property.
-   */
+  /** */
   watch: {
     /**
      * Updates menu when available Entities change.
@@ -286,42 +286,6 @@ export default {
     },
 
     /**
-     * Provides the scoped slots object for the Module render function.
-     *
-     * Adds a `default` slot that will render the menu tree using the
-     * DruxtMenuItem component.
-     * 
-     * @example <caption>DruxtMenu**Name**.vue</caption> @lang vue
-     * <template>
-     *   <div>
-     *     <slot />
-     *   </div>
-     * </template>
-     *
-     * @return {ScopedSlots} The Scoped slots object.
-     */
-    getScopedSlots() {
-      if (this.$scopedSlots.default) {
-        return {
-          default: (attrs) => this.$scopedSlots.default({
-            ...this.$options.druxt.propsData(this),
-            ...attrs
-          })
-        }
-      }
-
-      return {
-        default: (attrs) => this.items.map((item) => this.$createElement('DruxtMenuItem', {
-          attrs,
-          key: item.entity.id,
-          props: {
-            item,
-          },
-        })),
-      }
-    },
-
-    /**
      * Maps `druxtMenu/get` Vuex action to `this.getMenu`.
      */
     ...mapActions({
@@ -329,9 +293,7 @@ export default {
     })
   },
 
-  /**
-   * Druxt module configuration.
-   */
+  /** DruxtModule settings. */
   druxt: {
     /**
      * Provides the available component naming options for the Druxt Wrapper.
@@ -347,7 +309,34 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ items, parentId }) => ({ items, parentId }),
+    propsData: ({ model, parentId }) => ({ items: model, parentId, value: model }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * Adds a `default` slot that will render the menu tree using the
+     * DruxtMenuItem component.
+     * 
+     * @example <caption>DruxtMenu**Name**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot />
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots() {
+      return {
+        default: (attrs) => this.items.map((item) => this.$createElement('DruxtMenuItem', {
+          attrs,
+          key: item.entity.id,
+          props: {
+            item,
+          },
+        })),
+      }
+    },
   },
 }
 
@@ -400,10 +389,17 @@ export default {
  *
  * @typedef {object} PropsData
  * @param {object[]} items - The Menu items structured data.
+ * @param {object[]} value - The Menu items structured data.
  *
  * @example @lang js
  * {
  *   items: [
+ *     {
+ *       children: [],
+ *       entity: {},
+ *     },
+ *   ],
+ *   value: [
  *     {
  *       children: [],
  *       entity: {},

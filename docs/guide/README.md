@@ -13,8 +13,8 @@ The DruxtMenu module adds a Vue.js Menu component system for your Decoupled Drup
 - [DruxtMenu component](#druxtmenu-component)
 - [DruxtMenuItems component](#druxtmenuitems-component)
 - [Drupal Menu blocks support](#menu-blocks)
-- [Druxt Module wrapper theming support](#theming)
-- [Druxt Module settings](#module-settings)
+- [DruxtWrapper theming system](#druxtwrapper-theming)
+- [DruxtModule settings](#module-settings)
 - [Auto-generated Nuxt Storybook integration](#storybook)
 
 
@@ -61,13 +61,11 @@ Support for Drupal Menu blocks is provided by the `DruxtBlockSystemMenuBlock` wh
 See the [DruxtBlockSystemMenuBlock component API documentation](../api/components/blocks/DruxtBlockSystemMenuBlock.html).
 
 
-## Theming
+## DruxtWrapper theming
 
-The DruxtMenu component uses the DruxtModule slot based Wrapper theme system.
+Druxt modules use a slot-based Wrapper component system to provide rich defaults while still allowing full control over all theming and functionality.
 
-This allows for Menu component wrappers, and full control over the output of the menu data.
-
-See the [Wrapper theme system](https://druxtjs.org/guide/#wrapper-theme-system) guide for more information.
+See the [theming guide](https://druxtjs.org/guide/theming.html) for more details.
 
 
 ## Module settings
