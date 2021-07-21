@@ -11,7 +11,7 @@
   "scripts": {
     "build": "yarn clean && siroc build",
     "clean": "rimraf packages/*/dist || true",
-    "lint": "eslint --ext .js,.vue packages/*"
+    "lint": "eslint --ext .js,.vue packages/*/src"
   },
   "devDependencies": {
     "eslint": "^7.31.0",
