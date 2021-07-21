@@ -5954,12 +5954,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-views@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "druxt-views@npm:0.11.0"
+"druxt-views@^0.11.0, druxt-views@workspace:packages/views":
+  version: 0.0.0-use.local
+  resolution: "druxt-views@workspace:packages/views"
   dependencies:
     axios: ^0.21.1
-    codecov: ^3.8.2
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^1.1.12
     druxt: ^0.8.1
@@ -5967,9 +5966,8 @@ __metadata:
     druxt-entity: ^0.15.0
     druxt-router: ^0.18.1
     vuex: ^3.6.0
-  checksum: 5d5a07c561185fbf1f0d064145d00b65260b43fe44912ed2662a1da45f7d3c766743b6cb1a119d0b01806eac5d5f2d2972ac79b4526ff0e28401fcda0e49a269
-  languageName: node
-  linkType: hard
+  languageName: unknown
+  linkType: soft
 
 "druxt.js@workspace:.":
   version: 0.0.0-use.local
