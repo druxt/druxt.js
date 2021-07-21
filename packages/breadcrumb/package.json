@@ -2,10 +2,6 @@
   "name": "druxt-breadcrumb",
   "version": "0.9.0",
   "description": "Provides a Breadcrumb Vue component to be used within a Druxt (DRUpal nuXT) project.",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/druxt/druxt-breadcrumb"
-  },
   "keywords": [
     "breadcrumb",
     "breadcrumbs",
@@ -13,19 +9,23 @@
     "druxt",
     "nuxt"
   ],
+  "homepage": "https://github.com/druxt/druxt-breadcrumb#readme",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt-breadcrumb/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt-breadcrumb"
+  },
+  "license": "MIT",
   "author": {
     "name": "Stuart Clark",
     "email": "stuart@realityloop.com",
     "url": "https://realityloop.com"
   },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/druxt/druxt-breadcrumb/issues"
-  },
-  "homepage": "https://github.com/druxt/druxt-breadcrumb#readme",
   "main": "dist/druxt-breadcrumb.ssr.js",
-  "module": "dist/druxt-breadcrumb.esm.js",
   "unpkg": "dist/druxt-breadcrumb.min.js",
+  "module": "dist/druxt-breadcrumb.esm.js",
   "files": [
     "dist",
     "nuxt"
@@ -38,7 +38,6 @@
     "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
     "docs:dev": "npx druxt-docgen dev",
     "docs:build": "npx druxt-docgen build",
-    "lint": "eslint --ext .js,.vue src",
     "start": "npm run dev",
     "test": "jest"
   },
@@ -47,44 +46,9 @@
       "dist/*"
     ]
   },
-  "dependencies": {
-    "druxt": "^0.8.2",
-    "druxt-blocks": "^0.10.0",
-    "druxt-router": "^0.18.1",
-    "vuex": "^3.6.0"
-  },
-  "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "@rollup/plugin-alias": "^2.2.0",
-    "@rollup/plugin-buble": "^0.20.0",
-    "@rollup/plugin-replace": "^2.3.4",
-    "@vue/test-utils": "^1.1.2",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^10.1.0",
-    "cross-env": "^6.0.3",
-    "druxt-docgen": "^0.4.1",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "jest": "^25.5.4",
-    "jest-junit": "^11.1.0",
-    "minimist": "^1.2.0",
-    "nodemon": "^2.0.7",
-    "rollup": "^1.26.3",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-vue": "^5.1.9",
-    "vue": "^2.6.12",
-    "vue-jest": "^3.0.7",
-    "vue-template-compiler": "^2.6.12",
-    "vue-test-utils": "^1.0.0-beta.11"
-  },
-  "engines": {
-    "node": ">=8"
-  },
   "jest": {
-    "coverageDirectory": "./coverage/",
     "collectCoverage": true,
+    "coverageDirectory": "./coverage/",
     "moduleFileExtensions": [
       "js",
       "json",
@@ -94,5 +58,14 @@
       ".*\\.(vue)$": "vue-jest",
       "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
     }
+  },
+  "dependencies": {
+    "druxt": "^0.8.2",
+    "druxt-blocks": "^0.10.0",
+    "druxt-router": "^0.18.1",
+    "vuex": "^3.6.0"
+  },
+  "engines": {
+    "node": ">=8"
   }
 }
