@@ -1,0 +1,11 @@
+{
+  "name": "druxt.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
