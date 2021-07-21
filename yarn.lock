@@ -4436,7 +4436,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"codecov@npm:^3.8.1, codecov@npm:^3.8.2":
+"codecov@npm:^3.8.1":
   version: 3.8.3
   resolution: "codecov@npm:3.8.3"
   dependencies:
@@ -5866,16 +5866,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-schema@npm:^0.7.7":
-  version: 0.7.7
-  resolution: "druxt-schema@npm:0.7.7"
+"druxt-schema@^0.7.7, druxt-schema@workspace:packages/schema":
+  version: 0.0.0-use.local
+  resolution: "druxt-schema@workspace:packages/schema"
   dependencies:
-    codecov: ^3.8.2
     consola: ^2.15.0
     druxt: ^0.4.1
-  checksum: 0a179a9e81c9d8d12d85c9dbc843338fb5ad9071f6944faf2ba25a502167dea1864e52f35944d62a0efefda6a39bb775214fddc3beba63fed5532eab61dea78f
-  languageName: node
-  linkType: hard
+  languageName: unknown
+  linkType: soft
 
 "druxt.js@workspace:.":
   version: 0.0.0-use.local
