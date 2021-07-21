@@ -2,10 +2,6 @@
   "name": "druxt",
   "version": "0.8.3",
   "description": "A Bridge between frameworks, Nuxt.js in the front, Drupal in the back.",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/druxt/druxt.js"
-  },
   "keywords": [
     "cms",
     "decoupled",
@@ -18,19 +14,23 @@
     "module",
     "vue"
   ],
+  "homepage": "https://druxtjs.org",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "license": "MIT",
   "author": {
     "name": "Stuart Clark",
     "email": "stuart@realityloop.com",
     "url": "https://realityloop.com"
   },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/druxt/druxt.js/issues"
-  },
-  "homepage": "https://druxtjs.org",
   "main": "dist/druxt.ssr.js",
-  "module": "dist/druxt.esm.js",
   "unpkg": "dist/druxt.min.js",
+  "module": "dist/druxt.esm.js",
   "files": [
     "dist",
     "nuxt"
@@ -51,6 +51,19 @@
     "ignore": [
       "dist/*"
     ]
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageDirectory": "./coverage/",
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      ".*\\.(vue)$": "vue-jest",
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+    }
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -73,8 +86,6 @@
     "bootstrap-vue": "^2.21.2",
     "cross-env": "^6.0.3",
     "druxt-docgen": "^0.4.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.1.0",
     "jest-junit": "^11.1.0",
     "jest-mock-axios": "^3.2.0",
@@ -91,18 +102,5 @@
   },
   "engines": {
     "node": ">=8"
-  },
-  "jest": {
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true,
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "vue"
-    ],
-    "transform": {
-      ".*\\.(vue)$": "vue-jest",
-      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
-    }
   }
 }

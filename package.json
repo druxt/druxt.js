@@ -7,5 +7,12 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "lint": "eslint --ext .js,.vue packages/*"
+  },
+  "devDependencies": {
+    "eslint": "^7.31.0",
+    "eslint-plugin-nuxt": "^2.0.0"
+  }
 }
