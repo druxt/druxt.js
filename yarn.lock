@@ -5856,17 +5856,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-router@npm:^0.18.1":
-  version: 0.18.1
-  resolution: "druxt-router@npm:0.18.1"
+"druxt-router@^0.18.1, druxt-router@workspace:packages/router":
+  version: 0.0.0-use.local
+  resolution: "druxt-router@workspace:packages/router"
   dependencies:
-    codecov: ^3.8.1
-    druxt: ^0.4.1
+    druxt: ^0.5.1
     url-parse: ^1.4.7
     vuex: ^3.6.0
-  checksum: 2e8780e174f3ad8e26b42eea4f5aea6638080ba4dd8c78ef0f1389bda458aeb0be528c096fbced7af39b7fde8cbfb382db94f385ee2a712b13c8c79451d21a61
-  languageName: node
-  linkType: hard
+  languageName: unknown
+  linkType: soft
 
 "druxt-schema@npm:^0.7.7":
   version: 0.7.7
@@ -5938,6 +5936,20 @@ __metadata:
     querystring: ^0.2.0
     vuex: ^3.6.0
   checksum: 14959a29fd36b8a7dfeeeaf777390b3a36940f0d40061b875ecd54a4315db5a048562bb0884f6970b5e3d06b5bea5c7486e766ca6da5b6f29c97ad5c9e3d2e92
+  languageName: node
+  linkType: hard
+
+"druxt@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "druxt@npm:0.5.1"
+  dependencies:
+    axios: ^0.21.1
+    codecov: ^3.8.1
+    md5: ^2.3.0
+    querystring: ^0.2.0
+    scule: ^0.1.1
+    vuex: ^3.6.0
+  checksum: 7e130da772c98c0555f70900d6978ee19f6f231a0518a6bf08ce91678dc2fd5726f9ba7f486a0c711ff2220b8db154b55b4779e5d1c04e18f19c1ae28fa2ad5b
   languageName: node
   linkType: hard
 
