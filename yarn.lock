@@ -5833,18 +5833,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"druxt-entity@npm:^0.16.0":
-  version: 0.16.0
-  resolution: "druxt-entity@npm:0.16.0"
+"druxt-entity@^0.16.0, druxt-entity@workspace:packages/entity":
+  version: 0.0.0-use.local
+  resolution: "druxt-entity@workspace:packages/entity"
   dependencies:
-    codecov: ^3.8.2
     deepmerge: ^4.2.2
     druxt: ^0.8.1
     druxt-router: ^0.18.1
     druxt-schema: ^0.7.7
-  checksum: f203a398d99c2db0bb527956d4e9470257065a53cee45114faed005376d69e5d0fb59693d8180975811798604fed990f2938a138e378e7cc899c9519e323be83
-  languageName: node
-  linkType: hard
+  languageName: unknown
+  linkType: soft
 
 "druxt-router@npm:^0.18.1":
   version: 0.18.1
