@@ -1,0 +1,11 @@
+{
+  "name": "example-druxt-menu-nuxt-storybook",
+  "scripts": {
+    "serve": "nuxt storybook"
+  },
+  "dependencies": {
+    "@nuxtjs/storybook": "latest",
+    "druxt-menu": "latest",
+    "nuxt-edge": "latest"
+  }
+}
