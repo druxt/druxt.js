@@ -1,0 +1,33 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "block--block",
+      "id": "d0c424db-9c53-41bd-bec9-6047088f7fd0",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/d0c424db-9c53-41bd-bec9-6047088f7fd0"
+        }
+      },
+      "attributes": {
+        "drupal_internal__id": "umami_content",
+        "weight": -7,
+        "visibility": []
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/jsonapi/block/block?fields%5Bblock--block%5D=drupal_internal__id%2Cvisibility%2Cweight&filter%5Bregion%5D=content&filter%5Bstatus%5D=1&filter%5Btheme%5D=umami&sort=weight"
+    }
+  }
+}

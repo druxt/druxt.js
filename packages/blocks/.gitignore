@@ -1,0 +1,6 @@
+coverage
+docs/.vuepress/public
+docs/api
+dist
+node_modules
+.vscode
