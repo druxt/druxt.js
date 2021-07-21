@@ -9,10 +9,14 @@
     "packages/*"
   ],
   "scripts": {
-    "lint": "eslint --ext .js,.vue packages/*"
+    "build": "yarn clean && siroc build",
+    "clean": "rimraf packages/*/dist || true",
+    "lint": "eslint --ext .js,.vue packages/*",
   },
   "devDependencies": {
     "eslint": "^7.31.0",
-    "eslint-plugin-nuxt": "^2.0.0"
+    "eslint-plugin-nuxt": "^2.0.0",
+    "rimraf": "^3.0.2",
+    "siroc": "^0.14.0"
   }
 }
