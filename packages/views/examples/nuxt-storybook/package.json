@@ -1,0 +1,12 @@
+{
+  "name": "example-druxt-entity-views-storybook",
+  "scripts": {
+    "serve": "nuxt storybook"
+  },
+  "dependencies": {
+    "@nuxtjs/proxy": "^2.1.0",
+    "@nuxtjs/storybook": "latest",
+    "druxt-views": "latest",
+    "nuxt-edge": "latest"
+  }
+}
