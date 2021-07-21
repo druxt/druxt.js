@@ -1,0 +1,660 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DruxtSchema get 1`] = `
+Object {
+  "articles--default--form": Object {
+    "config": Object {
+      "bundle": "article",
+      "entityType": "node",
+      "filter": Array [],
+      "mode": "default",
+      "resourceType": "articles",
+      "schemaType": "form",
+    },
+    "fields": Array [
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "title",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "placeholder": "",
+            "size": 60,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "string_textfield",
+        "weight": 0,
+      },
+      Object {
+        "cardinality": 1,
+        "description": "",
+        "id": "body",
+        "label": Object {
+          "position": null,
+          "text": "Body",
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {
+            "display_summary": true,
+          },
+          "display": Object {
+            "placeholder": "",
+            "rows": 9,
+            "show_summary": false,
+            "summary_rows": 3,
+          },
+          "storage": Array [],
+        },
+        "thirdPartySettings": Array [],
+        "type": "text_textarea_with_summary",
+        "weight": 1,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "langcode",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "include_locked": true,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "language_select",
+        "weight": 2,
+      },
+      Object {
+        "cardinality": -1,
+        "description": "Enter a comma-separated list. For example: Amsterdam, Mexico City, \\"Cleveland, Ohio\\"",
+        "id": "tags",
+        "label": Object {
+          "position": null,
+          "text": "Tags",
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {
+            "handler": "default:taxonomy_term",
+            "handler_settings": Object {
+              "auto_create": true,
+              "sort": Object {
+                "field": "_none",
+              },
+              "target_bundles": Object {
+                "tags": "tags",
+              },
+            },
+          },
+          "display": Object {
+            "match_limit": 10,
+            "match_operator": "CONTAINS",
+            "placeholder": "",
+            "size": 60,
+          },
+          "storage": Object {
+            "target_type": "taxonomy_term",
+          },
+        },
+        "thirdPartySettings": Array [],
+        "type": "entity_reference_autocomplete_tags",
+        "weight": 3,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "field_media_image",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "media_types": Array [],
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "media_library_widget",
+        "weight": 5,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "owner",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "match_limit": 10,
+            "match_operator": "CONTAINS",
+            "placeholder": "",
+            "size": 60,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "entity_reference_autocomplete",
+        "weight": 6,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "createdAt",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Array [],
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "datetime_timestamp",
+        "weight": 7,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "isPromoted",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "display_label": true,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "boolean_checkbox",
+        "weight": 8,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "sticky",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "display_label": true,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "boolean_checkbox",
+        "weight": 9,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "path",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Array [],
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "path",
+        "weight": 10,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "isPublished",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "display_label": true,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "boolean_checkbox",
+        "weight": 11,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "moderation_state",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Array [],
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "moderation_state_default",
+        "weight": 12,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "translation",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Array [],
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": null,
+        "weight": 13,
+      },
+    ],
+    "groups": Array [],
+    "id": "articles--default--form",
+    "resourceType": "node--article",
+  },
+  "articles--default--view": Object {
+    "config": Object {
+      "bundle": "article",
+      "entityType": "node",
+      "filter": Array [],
+      "mode": "default",
+      "resourceType": "articles",
+      "schemaType": "view",
+    },
+    "fields": Array [
+      Object {
+        "description": "Enter a comma-separated list. For example: Amsterdam, Mexico City, \\"Cleveland, Ohio\\"",
+        "id": "tags",
+        "label": Object {
+          "position": "above",
+          "text": "Tags",
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {
+            "handler": "default:taxonomy_term",
+            "handler_settings": Object {
+              "auto_create": true,
+              "sort": Object {
+                "field": "_none",
+              },
+              "target_bundles": Object {
+                "tags": "tags",
+              },
+            },
+          },
+          "display": Object {
+            "link": true,
+          },
+        },
+        "thirdPartySettings": Array [],
+        "type": "entity_reference_label",
+        "weight": 0,
+      },
+      Object {
+        "description": null,
+        "id": "field_media_image",
+        "label": Object {
+          "position": "hidden",
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "link": false,
+            "view_mode": "responsive_3x2",
+          },
+        },
+        "thirdPartySettings": Array [],
+        "type": "entity_reference_entity_view",
+        "weight": 2,
+      },
+      Object {
+        "description": "",
+        "id": "body",
+        "label": Object {
+          "position": "hidden",
+          "text": "Body",
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {
+            "display_summary": true,
+          },
+          "display": Array [],
+        },
+        "thirdPartySettings": Array [],
+        "type": "text_default",
+        "weight": 3,
+      },
+      Object {
+        "description": null,
+        "id": "links",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Array [],
+        },
+        "thirdPartySettings": Array [],
+        "type": null,
+        "weight": 4,
+      },
+    ],
+    "groups": Array [],
+    "id": "articles--default--view",
+    "resourceType": "node--article",
+  },
+  "pages--default--form": Object {
+    "config": Object {
+      "bundle": "page",
+      "entityType": "node",
+      "filter": Array [],
+      "mode": "default",
+      "resourceType": "pages",
+      "schemaType": "form",
+    },
+    "fields": Array [
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "title",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "placeholder": "",
+            "size": 60,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "string_textfield",
+        "weight": -5,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "langcode",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "include_locked": true,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "language_select",
+        "weight": 2,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "owner",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "match_operator": "CONTAINS",
+            "placeholder": "",
+            "size": 60,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "entity_reference_autocomplete",
+        "weight": 5,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "createdAt",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Array [],
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "datetime_timestamp",
+        "weight": 10,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "isPromoted",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "display_label": true,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "boolean_checkbox",
+        "weight": 15,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "sticky",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "display_label": true,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "boolean_checkbox",
+        "weight": 16,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "path",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Array [],
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "path",
+        "weight": 30,
+      },
+      Object {
+        "cardinality": 1,
+        "description": "",
+        "id": "body",
+        "label": Object {
+          "position": null,
+          "text": "Body",
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {
+            "display_summary": true,
+          },
+          "display": Object {
+            "placeholder": "",
+            "rows": 9,
+            "summary_rows": 3,
+          },
+          "storage": Array [],
+        },
+        "thirdPartySettings": Array [],
+        "type": "text_textarea_with_summary",
+        "weight": 31,
+      },
+      Object {
+        "cardinality": null,
+        "description": null,
+        "id": "isPublished",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "display_label": true,
+          },
+          "storage": Object {},
+        },
+        "thirdPartySettings": Array [],
+        "type": "boolean_checkbox",
+        "weight": 120,
+      },
+    ],
+    "groups": Array [],
+    "id": "pages--default--form",
+    "resourceType": "node--page",
+  },
+  "pages--default--view": Object {
+    "config": Object {
+      "bundle": "page",
+      "entityType": "node",
+      "filter": Array [],
+      "mode": "default",
+      "resourceType": "pages",
+      "schemaType": "view",
+    },
+    "fields": Array [
+      Object {
+        "description": null,
+        "id": "title",
+        "label": Object {
+          "position": "hidden",
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {
+            "link_to_entity": false,
+          },
+        },
+        "thirdPartySettings": Array [],
+        "type": "string",
+        "weight": -5,
+      },
+      Object {
+        "description": "",
+        "id": "body",
+        "label": Object {
+          "position": "hidden",
+          "text": "Body",
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {
+            "display_summary": true,
+          },
+          "display": Array [],
+        },
+        "thirdPartySettings": Array [],
+        "type": "text_default",
+        "weight": 100,
+      },
+      Object {
+        "description": null,
+        "id": "links",
+        "label": Object {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": Object {
+          "config": Object {},
+          "display": Object {},
+        },
+        "thirdPartySettings": Object {},
+        "type": null,
+        "weight": 101,
+      },
+    ],
+    "groups": Array [],
+    "id": "pages--default--view",
+    "resourceType": "node--page",
+  },
+}
+`;
