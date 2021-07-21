@@ -1,0 +1,115 @@
+{
+  "jsonapi":{
+    "version":"1.0",
+    "meta":{
+      "links":{
+        "self":{
+          "href":"http:\/\/jsonapi.org\/format\/1.0\/"
+        }
+      }
+    }
+  },
+  "data":[
+    {
+      "type":"node--article",
+      "id":"b7ec61fa-6ca4-48a5-b593-d341e03447e8",
+      "links":{
+        "self":{
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/article\/b7ec61fa-6ca4-48a5-b593-d341e03447e8?resourceVersion=id%3A20"
+        }
+      },
+      "attributes":{
+        "title":"Give it a go and grow your own herbs"
+      }
+    },
+    {
+      "type":"node--article",
+      "id":"bb05c9bf-4b75-4a87-9366-e7d0578ec27d",
+      "links":{
+        "self":{
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/article\/bb05c9bf-4b75-4a87-9366-e7d0578ec27d?resourceVersion=id%3A22"
+        }
+      },
+      "attributes":{
+        "title":"Dairy-free and delicious milk chocolate"
+      }
+    },
+    {
+      "type":"node--article",
+      "id":"488278b0-9448-4893-a808-4b0648a461e0",
+      "links":{
+        "self":{
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/article\/488278b0-9448-4893-a808-4b0648a461e0?resourceVersion=id%3A24"
+        }
+      },
+      "attributes":{
+        "title":"The real deal for supermarket savvy shopping"
+      }
+    },
+    {
+      "type":"node--article",
+      "id":"df884119-9634-42b7-a8a6-7e0b3f456a84",
+      "links":{
+        "self":{
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/article\/df884119-9634-42b7-a8a6-7e0b3f456a84?resourceVersion=id%3A26"
+        }
+      },
+      "attributes":{
+        "title":"The Umami guide to our favorite mushrooms"
+      }
+    },
+    {
+      "type":"node--article",
+      "id":"9eb722d5-ce32-4452-ac66-b320d6ef3a10",
+      "links":{
+        "self":{
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/article\/9eb722d5-ce32-4452-ac66-b320d6ef3a10?resourceVersion=id%3A28"
+        }
+      },
+      "attributes":{
+        "title":"Let\u0027s hear it for carrots"
+      }
+    },
+    {
+      "type":"node--article",
+      "id":"5bbe2fca-0555-4f61-a20f-86a49d701b78",
+      "links":{
+        "self":{
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/article\/5bbe2fca-0555-4f61-a20f-86a49d701b78?resourceVersion=id%3A30"
+        }
+      },
+      "attributes":{
+        "title":"Baking mishaps - our troubleshooting tips"
+      }
+    },
+    {
+      "type":"node--article",
+      "id":"20c01c6e-f5ad-474d-b717-1e08da68fbc4",
+      "links":{
+        "self":{
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/article\/20c01c6e-f5ad-474d-b717-1e08da68fbc4?resourceVersion=id%3A32"
+        }
+      },
+      "attributes":{
+        "title":"Skip the spirits with delicious mocktails"
+      }
+    },
+    {
+      "type":"node--article",
+      "id":"0b43e4b9-adea-4983-bb8c-228e8e952b2a",
+      "links":{
+        "self":{
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/article\/0b43e4b9-adea-4983-bb8c-228e8e952b2a?resourceVersion=id%3A34"
+        }
+      },
+      "attributes":{
+        "title":"Give your oatmeal the ultimate makeover"
+      }
+    }
+  ],
+  "links":{
+    "self":{
+      "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/article?fields%5Bnode--article%5D=id%2Ctitle%2Cname%2Cinfo\u0026filter%5Bstatus%5D=1"
+    }
+  }
+}
