@@ -1,6 +1,6 @@
-const path = require('path')
+import path from 'path'
 
-module.exports = {
+export default {
   srcDir: __dirname,
   rootDir: path.resolve(__dirname),
   buildDir: path.resolve(__dirname, '.nuxt'),
