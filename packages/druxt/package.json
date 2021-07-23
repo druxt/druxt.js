@@ -48,7 +48,10 @@
     "drupal-jsonapi-params": "^1.2.1",
     "md5": "^2.3.0",
     "querystring": "^0.2.0",
-    "scule": "^0.1.1",
+    "scule": "^0.1.1"
+  },
+  "peerDependencies": {
+    "vue": "^2.6.14",
     "vuex": "^3.6.0"
   }
 }

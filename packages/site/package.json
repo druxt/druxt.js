@@ -30,7 +30,9 @@
     "druxt-router": "^0.18.1",
     "druxt-schema": "^0.7.7",
     "druxt-views": "^0.11.0",
-    "md5": "^2.2.1",
+    "md5": "^2.2.1"
+  },
+  "peerDependencies": {
     "vuex": "^3.6.0"
   }
 }

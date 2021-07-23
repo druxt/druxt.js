@@ -32,7 +32,9 @@
   "dependencies": {
     "druxt": "^0.8.2",
     "druxt-blocks": "^0.10.0",
-    "druxt-router": "^0.18.1",
+    "druxt-router": "^0.18.1"
+  },
+  "peerDependencies": {
     "vuex": "^3.6.0"
   }
 }

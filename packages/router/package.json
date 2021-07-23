@@ -33,7 +33,9 @@
   ],
   "dependencies": {
     "druxt": "^0.5.1",
-    "url-parse": "^1.4.7",
+    "url-parse": "^1.4.7"
+  },
+  "peerDependencies": {
     "vuex": "^3.6.0"
   }
 }

@@ -29,7 +29,9 @@
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.1.12",
     "druxt": "^0.8.3",
-    "druxt-blocks": "^0.10.0",
+    "druxt-blocks": "^0.10.0"
+  },
+  "peerDependencies": {
     "vuex": "^3.6.0"
   }
 }

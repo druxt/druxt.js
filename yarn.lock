@@ -773,7 +773,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"drupal-jsonapi-params@npm:^1.1.12, drupal-jsonapi-params@npm:^1.2.0, drupal-jsonapi-params@npm:^1.2.1":
+"drupal-jsonapi-params@npm:^1.1.12, drupal-jsonapi-params@npm:^1.2.0, drupal-jsonapi-params@npm:^1.2.1, drupal-jsonapi-params@npm:^1.2.2":
   version: 1.2.2
   resolution: "drupal-jsonapi-params@npm:1.2.2"
   dependencies:
@@ -791,6 +791,7 @@ __metadata:
     druxt: ^0.8.2
     druxt-entity: ^0.16.0
     druxt-router: ^0.18.1
+  peerDependencies:
     vuex: ^3.6.0
   languageName: unknown
   linkType: soft
@@ -817,6 +818,7 @@ __metadata:
     druxt: ^0.8.2
     druxt-blocks: ^0.10.0
     druxt-router: ^0.18.1
+  peerDependencies:
     vuex: ^3.6.0
   languageName: unknown
   linkType: soft
@@ -826,6 +828,7 @@ __metadata:
   resolution: "druxt-entity@workspace:packages/entity"
   dependencies:
     deepmerge: ^4.2.2
+    drupal-jsonapi-params: ^1.2.2
     druxt: ^0.8.1
     druxt-router: ^0.18.1
     druxt-schema: ^0.7.7
@@ -868,6 +871,7 @@ __metadata:
     drupal-jsonapi-params: ^1.1.12
     druxt: ^0.8.3
     druxt-blocks: ^0.10.0
+  peerDependencies:
     vuex: ^3.6.0
   languageName: unknown
   linkType: soft
@@ -878,6 +882,7 @@ __metadata:
   dependencies:
     druxt: ^0.5.1
     url-parse: ^1.4.7
+  peerDependencies:
     vuex: ^3.6.0
   languageName: unknown
   linkType: soft
@@ -887,7 +892,10 @@ __metadata:
   resolution: "druxt-schema@workspace:packages/schema"
   dependencies:
     consola: ^2.15.0
+    drupal-jsonapi-params: ^1.2.2
     druxt: ^0.4.1
+  peerDependencies:
+    vuex: ^3.6.0
   languageName: unknown
   linkType: soft
 
@@ -905,6 +913,7 @@ __metadata:
     druxt-schema: ^0.7.7
     druxt-views: ^0.11.0
     md5: ^2.2.1
+  peerDependencies:
     vuex: ^3.6.0
   languageName: unknown
   linkType: soft
@@ -920,6 +929,8 @@ __metadata:
     druxt-blocks: ^0.9.2
     druxt-entity: ^0.15.0
     druxt-router: ^0.18.1
+    md5: ^2.3.0
+  peerDependencies:
     vuex: ^3.6.0
   languageName: unknown
   linkType: soft
@@ -945,6 +956,8 @@ __metadata:
     md5: ^2.3.0
     querystring: ^0.2.0
     scule: ^0.1.1
+  peerDependencies:
+    vue: ^2.6.14
     vuex: ^3.6.0
   languageName: unknown
   linkType: soft

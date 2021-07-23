@@ -33,6 +33,10 @@
   ],
   "dependencies": {
     "consola": "^2.15.0",
+    "drupal-jsonapi-params": "^1.2.2",
     "druxt": "^0.4.1"
+  },
+  "peerDependencies": {
+    "vuex": "^3.6.0"
   }
 }
