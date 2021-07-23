@@ -9,57 +9,26 @@
     "druxt",
     "nuxt"
   ],
-  "homepage": "https://github.com/druxt/druxt-blocks#readme",
-  "bugs": {
-    "url": "https://github.com/druxt/druxt-blocks/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/druxt/druxt-blocks"
-  },
   "license": "MIT",
   "author": {
     "name": "Stuart Clark",
     "email": "stuart@realityloop.com",
     "url": "https://realityloop.com"
   },
+  "exports": {
+    ".": {
+      "require": "./dist/druxt-blocks.ssr.js",
+      "import": "./dist/druxt-blocks.esm.js"
+    },
+    "./components/*": "./dist/components/*",
+    "./mixins/*": "./dist/mixins/*"
+  },
   "main": "dist/druxt-blocks.ssr.js",
-  "unpkg": "dist/druxt-blocks.min.js",
   "module": "dist/druxt-blocks.esm.js",
   "files": [
     "dist",
-    "nuxt",
-    "src/components/*.vue"
+    "nuxt"
   ],
-  "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c",
-    "build:es": "cross-env NODE_ENV=production rollup -c --format es",
-    "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
-    "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
-    "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "docs:dev": "npx druxt-docgen dev",
-    "docs:build": "npx druxt-docgen build",
-    "start": "npm run dev",
-    "test": "jest"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "dist/*"
-    ]
-  },
-  "jest": {
-    "collectCoverage": true,
-    "coverageDirectory": "./coverage/",
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "vue"
-    ],
-    "transform": {
-      ".*\\.(vue)$": "vue-jest",
-      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
-    }
-  },
   "dependencies": {
     "axios": "^0.21.1",
     "drupal-jsonapi-params": "^1.1.12",
@@ -67,8 +36,5 @@
     "druxt-entity": "^0.16.0",
     "druxt-router": "^0.18.1",
     "vuex": "^3.6.0"
-  },
-  "engines": {
-    "node": ">=8"
   }
 }

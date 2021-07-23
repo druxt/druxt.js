@@ -1,8 +1,3 @@
-import DruxtBlockBlockContent from './DruxtBlockBlockContent.vue'
-export { DruxtBlockBlockContent }
-
-import DruxtBlockPageTitleBlock from './DruxtBlockPageTitleBlock.vue'
-export { DruxtBlockPageTitleBlock }
-
-import DruxtBlockSystemMainBlock from './DruxtBlockSystemMainBlock.vue'
-export { DruxtBlockSystemMainBlock }
+export { default as DruxtBlockBlockContent } from './DruxtBlockBlockContent.vue'
+export { default as DruxtBlockPageTitleBlock } from './DruxtBlockPageTitleBlock.vue'
+export { default as DruxtBlockSystemMainBlock } from './DruxtBlockSystemMainBlock.vue'

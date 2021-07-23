@@ -16,65 +16,30 @@
     "module",
     "vue"
   ],
-  "homepage": "https://github.com/druxt/druxt-entity#readme",
-  "bugs": {
-    "url": "https://github.com/druxt/druxt-entity/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/druxt/druxt-entity"
-  },
   "license": "MIT",
   "author": {
     "name": "Stuart Clark",
     "email": "stuart@realityloop.com",
     "url": "https://realityloop.com"
   },
+  "exports": {
+    ".": {
+      "require": "./dist/druxt-entity.ssr.js",
+      "import": "./dist/druxt-entity.esm.js"
+    },
+    "./components/*": "./dist/components/*",
+    "./mixins/*": "./dist/mixins/*"
+  },
   "main": "dist/druxt-entity.ssr.js",
-  "unpkg": "dist/druxt-entity.min.js",
   "module": "dist/druxt-entity.esm.js",
   "files": [
     "dist",
-    "nuxt",
-    "src/components/DruxtEntity.vue",
-    "src/components/DruxtEntityForm.vue"
+    "nuxt"
   ],
-  "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c",
-    "build:es": "cross-env NODE_ENV=production rollup -c --format es",
-    "build:ssr": "cross-env NODE_ENV=production rollup -c --format cjs",
-    "build:unpkg": "cross-env NODE_ENV=production rollup -c --format iife",
-    "dev": "nodemon --ext js,vue --exec 'npm run lint && npm run build && npm run test'",
-    "docs:dev": "npx druxt-docgen -c vuepress.config dev",
-    "docs:build": "npx druxt-docgen -c vuepress.config build",
-    "start": "npm run dev",
-    "test": "jest"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "dist/*"
-    ]
-  },
-  "jest": {
-    "collectCoverage": true,
-    "coverageDirectory": "./coverage/",
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "vue"
-    ],
-    "transform": {
-      ".*\\.(vue)$": "vue-jest",
-      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
-    }
-  },
   "dependencies": {
     "deepmerge": "^4.2.2",
     "druxt": "^0.8.1",
     "druxt-router": "^0.18.1",
     "druxt-schema": "^0.7.7"
-  },
-  "engines": {
-    "node": ">=8"
   }
 }

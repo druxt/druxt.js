@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import { DruxtMenu, DruxtMenuComponents } from 'druxt-menu'
+import { DruxtMenu } from 'druxt-menu'
+import { DruxtMenuComponents } from 'druxt-menu/dist/components'
 
 Vue.use({
   install: function (Vue) {

@@ -1,26 +1,4 @@
 import { DruxtBlocksNuxtModule } from './nuxtModule'
-import * as DruxtBlocksComponents from './components'
-
-/**
- * DruxtJS Blocks.
- *
- * @type {object}
- * @exports DruxtBlocksComponents
- * @see {@link ./components/blocks/DruxtBlockBlockContent|DruxtBlockBlockContent}
- * @see {@link ./components/blocks/DruxtBlockPageTitleBlock|DruxtBlockPageTitleBlock}
- * @see {@link ./components/blocks/DruxtBlockSystemMainBlock|DruxtBlockSystemMainBlock}
- */
-export { DruxtBlocksComponents }
-export * from './components'
-
-/**
- * Vue.js Mixin.
- *
- * @type {object}
- * @exports DruxtBlocksBlockMixin
- * @see {@link ./mixins/block|DruxtBlocksBlockMixin}
- */
-export { DruxtBlocksBlockMixin } from './mixins/block'
 
 /**
  * The Nuxt.js module function.

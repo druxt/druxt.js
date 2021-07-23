@@ -1,7 +1,3 @@
-import DruxtBlock from './DruxtBlock.vue'
-export { DruxtBlock }
-
-import DruxtBlockRegion from './DruxtBlockRegion.vue'
-export { DruxtBlockRegion }
-
-export * from './blocks'
+export { default as DruxtBlock } from './DruxtBlock.vue'
+export { default as DruxtBlockRegion } from './DruxtBlockRegion.vue'
+export * as DruxtBlocksComponents from './blocks'

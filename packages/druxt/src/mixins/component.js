@@ -1,4 +1,5 @@
-import { DruxtClass, DruxtWrapper } from '..'
+import { DruxtClass } from 'druxt'
+import DruxtWrapper from 'druxt/dist/components/DruxtWrapper.vue'
 
 /**
  * @name DruxtComponentMixin

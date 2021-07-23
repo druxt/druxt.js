@@ -1,6 +1,4 @@
 import { DruxtBreadcrumbModule } from './module'
-import * as DruxtBreadcrumbComponents from './components'
-import { DruxtBreadcrumb, DruxtBlockSystemBreadcrumbBlock } from './components'
 
 /**
  * The Nuxt.js module function.
@@ -13,34 +11,3 @@ import { DruxtBreadcrumb, DruxtBlockSystemBreadcrumbBlock } from './components'
  * @see {@link ./module|DruxtBreadcrumbModule}
  */
 export default DruxtBreadcrumbModule
-
-/**
- * Druxt.js Breadcrumb Vue.js component.
- *
- * @type {object}
- * @exports DruxtBreadcrumb
- * @name DruxtBreadcrumb
- * @see {@link ./components/DruxtBreadcrumb|DruxtBreadcrumb}
- */
-export { DruxtBreadcrumb }
-
-/**
- * DruxtBlockSystemBreadcrumbBlock component.
- *
- * @type {object}
- * @exports DruxtBlockSystemBreadcrumbBlock
- * @name DruxtBlockSystemBreadcrumbBlock
- * @see {@link ./components/blocks/DruxtBlockSystemBreadcrumbBlock|DruxtBlockSystemBreadcrumbBlock}
- */
-export { DruxtBlockSystemBreadcrumbBlock }
-
-export { DruxtBreadcrumbComponents }
-
-/**
- * Vue.js Mixin.
- *
- * @type {object}
- * @exports DruxtBreadcrumbMixin
- * @see {@link ./mixins/breadcrumb|DruxtBreadcrumbMixin}
- */
-export { DruxtBreadcrumbMixin } from './mixins/breadcrumb'

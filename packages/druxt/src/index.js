@@ -1,36 +1,4 @@
-import Druxt from './components/Druxt.vue'
-import DruxtWrapper from './components/DruxtWrapper.vue'
-
 import { DruxtNuxtModule } from './nuxtModule'
-
-/**
- * The Vue.js Druxt component.
- *
- * @type {object}
- * @exports Druxt
- * @name Druxt
- * @see {@link ./components/Druxt|API documentation}
- * @see {@link /guide/#the-druxt-component|Guide}
- *
- * @example @lang js <caption>Register globally</caption>
- * import Vue from 'vue'
- * import { Druxt } from 'druxt'
- *
- * Vue.component(Druxt)
- *
- * @example @lang vue <caption>Register locally</caption>
- * <template>
- *   <Druxt :module="module" />
- * </template>
- *
- * <script>
- * import { Druxt } from 'druxt'
- * export default {
- *   components: { Druxt }
- * }
- * </script>
- */
-export { Druxt }
 
 /**
  * DruxtJS JSON:API client.
@@ -45,29 +13,6 @@ export { Druxt }
  * const druxt = new DruxtClient('https://demo-api.druxtjs.org')
  */
 export { DruxtClient } from './client'
-
-/**
- * The DruxtModule base Vue.js component.
- *
- * @type {object}
- * @exports DruxtModule
- * @name DruxtModule
- * @see {@link ./components/DruxtModule|API documentation}
- *
- * @example @lang vue
- * <script>
- * import { DruxtModule } from 'druxt'
- * export default {
- *   name: 'MyDruxtModule',
- *   extends: DruxtModule,
- *   druxt: {
- *     componentOptions: () => ([['wrapper']]),
- *     propsData: (ctx) => ({ prop: ctx.prop }),
- *   }
- * }
- * </script>
- */
-export { default as DruxtModule } from './components/DruxtModule.vue'
 
 /**
  * Nuxt module function to install Druxt.
@@ -100,18 +45,6 @@ export default DruxtNuxtModule
 export { DruxtStore } from './stores/druxt'
 
 /**
- * The default Druxt module wrapper Vue.js component.
- *
- * @type {object}
- * @exports DruxtWrapper
- * @name DruxtWrapper
- * @see {@link ./components/DruxtWrapper|API documentation}
- * @see {@link /guide/#the-druxt-component|Guide}
- * @private
- */
-export { DruxtWrapper }
-
-/**
  * DruxtJS utility class.
  *
  * @type {class}
@@ -123,14 +56,3 @@ export { DruxtWrapper }
  * @private
  */
 export { DruxtClass } from './class'
-
-/**
- * Vue.js Mixin to add support for the Wrapper system to a Druxt module.
- *
- * @type {object}
- * @exports DruxtComponentMixin
- *
- * @deprecated
- * @private
- */
-export { DruxtComponentMixin } from './mixins/component'

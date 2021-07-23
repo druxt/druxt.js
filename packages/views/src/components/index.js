@@ -5,8 +5,7 @@
  * @exports DruxtView
  * @see {@link ./DruxtView|DruxtView}
  */
-import DruxtView from './DruxtView.vue'
-export { DruxtView }
+export { default as DruxtView } from './DruxtView.vue'
 
 /**
  * The `<DruxtViewsFilter />` Vue.js component.
@@ -15,8 +14,7 @@ export { DruxtView }
  * @exports DruxtViewsFilter
  * @see {@link ./DruxtViewsFilter|DruxtViewsFilter}
  */
-import DruxtViewsFilter from './DruxtViewsFilter.vue'
-export { DruxtViewsFilter }
+export { default as DruxtViewsFilter } from './DruxtViewsFilter.vue'
 
 /**
  * The `<DruxtViewsFilters />` Vue.js component.
@@ -25,8 +23,7 @@ export { DruxtViewsFilter }
  * @exports DruxtViewsFilters
  * @see {@link ./DruxtViewsFilters|DruxtViewsFilters}
  */
-import DruxtViewsFilters from './DruxtViewsFilters.vue'
-export { DruxtViewsFilters }
+export { default as DruxtViewsFilters} from './DruxtViewsFilters.vue'
 
 /**
  * The `<DruxtViewsPager />` Vue.js component.
@@ -35,8 +32,7 @@ export { DruxtViewsFilters }
  * @exports DruxtViewsPager
  * @see {@link ./DruxtViewsPager|DruxtViewsPager}
  */
-import DruxtViewsPager from './DruxtViewsPager.vue'
-export { DruxtViewsPager }
+export { default as DruxtViewsPager } from './DruxtViewsPager.vue'
 
 /**
  * The `<DruxtViewsSorts />` Vue.js component.
@@ -45,8 +41,7 @@ export { DruxtViewsPager }
  * @exports DruxtViewsSorts
  * @see {@link ./DruxtViewsSorts|DruxtViewsSorts}
  */
-import DruxtViewsSorts from './DruxtViewsSorts.vue'
-export { DruxtViewsSorts }
+export { default as DruxtViewsSorts } from './DruxtViewsSorts.vue'
 
 /**
  * The `<DruxtRouterView />` Vue.js component.
@@ -55,7 +50,6 @@ export { DruxtViewsSorts }
  * @exports DruxtRouterView
  * @see {@link ./DruxtRouterView|DruxtRouterView}
  */
-import DruxtRouterView from './DruxtRouterView.vue'
-export { DruxtRouterView }
+export { default as DruxtRouterView} from './DruxtRouterView.vue'
 
 export * from './blocks'

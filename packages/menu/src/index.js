@@ -1,5 +1,4 @@
 import { DruxtMenuNuxtModule } from './nuxtModule'
-import * as DruxtMenuComponents from './components'
 
 /**
  * The DruxtMenu class.
@@ -12,29 +11,6 @@ import * as DruxtMenuComponents from './components'
  * @see {@link ./menu.html|DruxtMenu}
  */
 export { DruxtMenu } from './menu.js'
-
-/**
- * Vue.js components.
- *
- * @type {object}
- * @exports DruxtMenuComponents
- * @name DruxtMenuComponents
- *
- * @see {@link ./components/DruxtMenu.html|DruxtMenu}
- * @see {@link ./components/DruxtMenuItem.html|DruxtMenuItem}
- * @see {@link ./components/blocks/DruxtBlockSystemMenuBlock.html|DruxtBlockSystemMenuBlock}
- */
-export { DruxtMenuComponents }
-export * from './components'
-
-/**
- * Vue.js Mixin.
- *
- * @type {object}
- * @exports DruxtMenuMixin
- * @see {@link ./mixins/menu|DruxtMenuMixin}
- */
-export { DruxtMenuMixin } from './mixins/menu'
 
 /**
  * The DruxtMenu vuex store.

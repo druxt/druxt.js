@@ -1,5 +1,4 @@
 import { DruxtRouterNuxtModule } from './nuxtModule'
-import DruxtRouterComponent from './components/DruxtRouter.vue'
 
 /**
  * The Nuxt.js module function.
@@ -34,63 +33,6 @@ export default DruxtRouterNuxtModule
  * @see {@link ./router.html|DruxtRouter}
  */
 export { DruxtRouter } from './router'
-
-/**
- * Vue.js component.
- *
- * @type {object}
- * @exports DruxtRouterComponent
- * @name DruxtRouterComponent
- * @see {@link ./components/DruxtRouter.html|DruxtRouterComponent}
- *
- * @example
- * <script>
- * import { DruxtRouterComponent } from 'druxt-router'
- *
- * export default {
- *   components: { DruxtRouterComponent }
- * }
- * </script>
- */
-export { DruxtRouterComponent }
-
-/**
- * Router Entity Vue.js Mixin.
- *
- * @type {object}
- * @exports DruxtRouterEntityMixin
- * @name DruxtRouterEntityMixin
- * @see {@link ./mixins/entity|DruxtRouterEntityMixin}
- *
- * @example
- * <script>
- * import { DruxtRouterEntityMixin } from 'druxt-router'
- *
- * export default {
- *   mixins: [DruxtRouterEntityMixin]
- * }
- * </script>
- */
-export { DruxtRouterEntityMixin } from './mixins/entity'
-
-/**
- * Router Wrapper Vue.js Mixin.
- *
- * @type {object}
- * @exports DruxtRouterMixin
- * @name DruxtRouterMixin
- * @see {@link ./mixins/router|DruxtRouterMixin}
- *
- * @example
- * <script>
- * import { DruxtRouterMixin } from 'druxt-router'
- *
- * export default {
- *   mixins: [DruxtRouterMixin]
- * }
- * </script>
- */
-export { DruxtRouterMixin } from './mixins/router'
 
 /**
  * Vuex store module.
