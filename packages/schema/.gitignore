@@ -1,6 +1,0 @@
-coverage
-docs/api
-docs/.vuepress
-dist
-node_modules
-.vscode
