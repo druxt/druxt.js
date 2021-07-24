@@ -32,10 +32,11 @@
     "nuxt"
   ],
   "dependencies": {
-    "druxt": "^0.5.1",
+    "druxt": "workspace:*",
     "url-parse": "^1.4.7"
   },
-  "peerDependencies": {
-    "vuex": "^3.6.0"
+  "optionalDependencies": {
+    "vue": "^2.6.14",
+    "vuex": "^3.6.2"
   }
 }

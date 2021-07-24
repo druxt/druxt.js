@@ -32,11 +32,12 @@
   "dependencies": {
     "axios": "^0.21.1",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "^0.8.2",
-    "druxt-entity": "^0.16.0",
-    "druxt-router": "^0.18.1"
+    "druxt": "workspace:*",
+    "druxt-entity": "workspace:*",
+    "druxt-router": "workspace:*"
   },
-  "peerDependencies": {
-    "vuex": "^3.6.0"
+  "optionalDependencies": {
+    "vue": "^2.6.14",
+    "vuex": "^3.6.2"
   }
 }

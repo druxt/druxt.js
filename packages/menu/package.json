@@ -28,10 +28,11 @@
   "dependencies": {
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "^0.8.3",
-    "druxt-blocks": "^0.10.0"
+    "druxt": "workspace:*",
+    "druxt-blocks": "workspace:*"
   },
-  "peerDependencies": {
-    "vuex": "^3.6.0"
+  "optionalDependencies": {
+    "vue": "^2.6.14",
+    "vuex": "^3.6.2"
   }
 }

@@ -50,8 +50,8 @@
     "querystring": "^0.2.0",
     "scule": "^0.1.1"
   },
-  "peerDependencies": {
+  "optionalDependencies": {
     "vue": "^2.6.14",
-    "vuex": "^3.6.0"
+    "vuex": "^3.6.2"
   }
 }
