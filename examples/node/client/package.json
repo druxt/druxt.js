@@ -1,0 +1,10 @@
+{
+  "name": "druxt-example-node-client",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "druxt": "link:../../../packages/druxt"
+  }
+}
