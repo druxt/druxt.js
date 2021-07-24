@@ -1,9 +1,7 @@
 tasks:
-  - name: Install depedencies
-    init: yarn install
-
-  - name: Build modules
-    command: yarn build
+  - init: |
+      yarn install
+      yarn build
 
 ports:
   - port: 3000
