@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-import * as DruxtBreadcrumbComponents from 'druxt-breadcrumb/dist/components'
+import * as DruxtBreadcrumbComponents from 'druxt-breadcrumb/dist/components/index.mjs'
 
 Vue.use({
   install: function (Vue) {

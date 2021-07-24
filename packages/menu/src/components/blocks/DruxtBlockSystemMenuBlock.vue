@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { DruxtBlocksBlockMixin } from 'druxt-blocks'
+import { DruxtBlocksBlockMixin } from 'druxt-blocks/dist/mixins/index.mjs'
 
 /**
  * Menu block.

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { DruxtClient } from 'druxt'
-import { Druxt, DruxtWrapper } from 'druxt/dist/components'
+import { Druxt, DruxtWrapper } from 'druxt/dist/components/index.mjs'
 
 // Install the Druxt Vue.js component.
 Vue.use({

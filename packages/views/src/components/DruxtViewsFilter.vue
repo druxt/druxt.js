@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { DruxtModule } from 'druxt'
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
 /**
  * The `<DruxtViewsFilter />` Vue.js component.

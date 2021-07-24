@@ -1,6 +1,6 @@
 <script>
 import merge from 'deepmerge'
-import { DruxtModule } from 'druxt'
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
 /**

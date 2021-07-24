@@ -1,7 +1,7 @@
 <script>
 import merge from 'deepmerge'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-import { DruxtModule } from 'druxt'
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions } from 'vuex'
 
 /**

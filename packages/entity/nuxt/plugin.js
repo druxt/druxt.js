@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-import { DruxtEntityComponents } from 'druxt-entity/dist/components'
+import * as DruxtEntityComponents from 'druxt-entity/dist/components/index.mjs'
 
 Vue.use({
   install: function (Vue) {

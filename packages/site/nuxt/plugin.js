@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { DruxtSite } from 'druxt-site/dist/components'
+import { DruxtSite } from 'druxt-site/dist/components/index.mjs'
 
 // Install the DruxtSite Vue.js component.
 Vue.use({

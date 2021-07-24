@@ -4,7 +4,7 @@
  * @type {object}
  * @exports Druxt
  * @name Druxt
- * @see {@link ./components/Druxt|API documentation}
+ * @see {@link ./Druxt|API documentation}
  * @see {@link /guide/#the-druxt-component|Guide}
  *
  * @example @lang js <caption>Register globally</caption>
@@ -25,7 +25,7 @@
  * }
  * </script>
  */
- export { default as Druxt } from './components/Druxt.vue'
+ export { default as Druxt } from './Druxt.vue'
 
  /**
  * The DruxtModule base Vue.js component.
@@ -33,11 +33,11 @@
  * @type {object}
  * @exports DruxtModule
  * @name DruxtModule
- * @see {@link ./components/DruxtModule|API documentation}
+ * @see {@link ./DruxtModule|API documentation}
  *
  * @example @lang vue
  * <script>
- * import { DruxtModule } from 'druxt'
+ * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * export default {
  *   name: 'MyDruxtModule',
  *   extends: DruxtModule,
@@ -48,7 +48,7 @@
  * }
  * </script>
  */
-export { default as DruxtModule } from './components/DruxtModule.vue'
+export { default as DruxtModule } from './DruxtModule.vue'
 
 /**
  * The default Druxt module wrapper Vue.js component.
@@ -56,8 +56,8 @@ export { default as DruxtModule } from './components/DruxtModule.vue'
  * @type {object}
  * @exports DruxtWrapper
  * @name DruxtWrapper
- * @see {@link ./components/DruxtWrapper|API documentation}
+ * @see {@link ./DruxtWrapper|API documentation}
  * @see {@link /guide/#the-druxt-component|Guide}
  * @private
  */
- export { default as DruxtWrapper } from './components/DruxtWrapper.vue'
+ export { default as DruxtWrapper } from './DruxtWrapper.vue'

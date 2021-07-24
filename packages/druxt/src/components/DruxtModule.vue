@@ -1,7 +1,8 @@
 <script>
 import { pascalCase, splitByCase } from 'scule'
 import Vue from 'vue'
-import { DruxtWrapper } from '..'
+
+import DruxtWrapper from './DruxtWrapper.vue'
 
 /**
  * The DruxtModule base Vue.js component.
@@ -9,7 +10,7 @@ import { DruxtWrapper } from '..'
  * Extend this component to build a Druxt module.
  *
  * @example @lang js
- * import { DruxtModule } from 'druxt'
+ * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * export default {
  *   name: 'DruxtTestModule',
  *   extends: DruxtModule,
@@ -54,7 +55,7 @@ export default {
    * the `DruxtModule.fetch()` hook.
    *
    * @example @lang js <caption>Manually invoking DruxtModule.fetch().</caption>
-   * import { DruxtModule } from 'druxt'
+   * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
    * export default {
    *   name: 'DruxtTestModule',
    *   extends: DruxtModule,

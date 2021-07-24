@@ -1,5 +1,5 @@
 <script>
-import { DruxtModule } from 'druxt'
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
 /**
  * The `<DruxtViewsFilters />` Vue.js component.

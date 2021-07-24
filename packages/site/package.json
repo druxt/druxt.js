@@ -12,7 +12,8 @@
     ".": {
       "require": "./dist/druxt-site.ssr.js",
       "import": "./dist/druxt-site.esm.js"
-    }
+    },
+    "./components/*": "./dist/components/*"
   },
   "main": "dist/druxt-site.ssr.js",
   "module": "dist/druxt-site.esm.js",

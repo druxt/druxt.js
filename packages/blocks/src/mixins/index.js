@@ -1,0 +1,1 @@
+export { DruxtBlocksBlockMixin } from './block'

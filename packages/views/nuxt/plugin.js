@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-import { DruxtView, DruxtViewsComponents } from 'druxt-views'
+import * as DruxtViewsComponents from 'druxt-views/dist/components/index.mjs'
 
 Vue.use({
   install: function (Vue) {
@@ -11,7 +11,7 @@ Vue.use({
     for (const component in DruxtViewsComponents) {
       Vue.component(component, DruxtViewsComponents[component])
     }
-    Vue.component('druxt-views', DruxtView)
+    Vue.component('druxt-views', DruxtViewsComponents.DruxtView)
   }
 })
 

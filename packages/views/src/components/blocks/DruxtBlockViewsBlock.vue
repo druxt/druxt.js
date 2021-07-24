@@ -7,7 +7,7 @@
 <script>
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { mapActions } from 'vuex'
-import { DruxtBlocksBlockMixin } from 'druxt-blocks'
+import { DruxtBlocksBlockMixin } from 'druxt-blocks/dist/mixins/index.mjs'
 
 /**
  * Views block.

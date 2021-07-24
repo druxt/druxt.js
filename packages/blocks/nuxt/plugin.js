@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-import { DruxtBlocksComponents } from 'druxt-blocks/dist/components'
+import * as DruxtBlocksComponents from 'druxt-blocks/dist/components/index.mjs'
 
 Vue.use({
   install: function (Vue) {
