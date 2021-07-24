@@ -1,5 +1,13 @@
 tasks:
-  - init: yarn install
+  - name: Install depedencies
+    init: yarn install
+
+  - name: Build modules
+    command: yarn build
+
+ports:
+  - port: 3000
+    onOpen: open-browser
 
 vscode:
   extensions:
