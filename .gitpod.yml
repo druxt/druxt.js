@@ -1,7 +1,7 @@
 tasks:
-  - init: |
-      yarn install
-      yarn build
+  - name: workspace
+    init: yarn install
+    command: yarn build
 
 ports:
   - port: 3000

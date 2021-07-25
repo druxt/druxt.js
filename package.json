@@ -11,12 +11,25 @@
   "scripts": {
     "build": "yarn clean && siroc build",
     "clean": "rimraf packages/*/dist || true",
-    "lint": "eslint --ext .js,.vue packages/*/src"
+    "dev": "siroc dev",
+    "lint": "eslint --ext .js,.vue packages/*/src",
+    "test": "jest"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/preset-env": "^7.14.8",
+    "@vue/test-utils": "^1.2.2",
+    "babel-core": "^7.0.0-bridge",
+    "esbuild": "^0.12.15",
+    "esbuild-jest": "^0.5.0",
     "eslint": "^7.31.0",
     "eslint-plugin-nuxt": "^2.0.0",
+    "jest": "^27.0.6",
+    "jest-mock-axios": "^4.4.0",
     "rimraf": "^3.0.2",
-    "siroc": "^0.14.0"
+    "siroc": "^0.14.0",
+    "vue": "^2.6.14",
+    "vue-jest": "^3.0.7",
+    "vue-template-compiler": "^2.6.14"
   }
 }
