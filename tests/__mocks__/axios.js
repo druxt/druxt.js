@@ -1,5 +1,4 @@
 import fs from 'fs'
-import path from 'path'
 import md5 from 'md5'
 import mockAxios from 'jest-mock-axios'
 
@@ -26,17 +25,17 @@ mockAxios.get = jest.fn((url, options) => {
   if (url === '/jsonapi/missing/test') {
     throw new Error('Error')
   }
-  return mockData(url, path.resolve('src/__fixtures__/get', md5(url) + '.json'))
+  return mockData(url, '../__fixtures__/get', md5(url) + '.json')
 })
 
 // Mock 'patch' requests.
 mockAxios.patch = jest.fn((url, data, options) => 
-  mockData(url, path.resolve('src/__fixtures__/patch', md5(url), md5(JSON.stringify(data)) + '.json'))
+  mockData(url, '../__fixtures__/patch', md5(url), md5(JSON.stringify(data)) + '.json')
 )
 
 // Mock 'post' requests.
 mockAxios.post = jest.fn((url, data, options) => 
-  mockData(url, path.resolve('src/__fixtures__/post', md5(url), md5(JSON.stringify(data)) + '.json'))
+  mockData(url, '../__fixtures__/post', md5(url), md5(JSON.stringify(data)) + '.json')
 )
 
 export default mockAxios
