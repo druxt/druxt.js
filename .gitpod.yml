@@ -28,7 +28,7 @@ tasks:
       cd examples/nuxt/druxt-site && yarn
     command: |
       gp sync-await ddev
-      yarn dev
+      cd examples/nuxt/druxt-site && BASE_URL=$(gp url 8080) yarn dev
 
 # VScode xdebug extension
 vscode:
@@ -38,10 +38,13 @@ vscode:
     - felixfbecker.php-debug
 
 ports:
+  # Nuxt/Druxt
   - port: 3000
     onOpen: open-browser
-  # Direct-connect ddev-webserver port that is the main port
+    visibility: public
+  # Drupal
   - port: 8080
+    visibility: public
   # Currently un-notified and unsupported mailhog http port
   - port: 8025
     onOpen: ignore
