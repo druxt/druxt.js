@@ -1,5 +1,5 @@
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-import { getDrupalJsonApiParams } from '../getDrupalJsonApiParams'
+import { getDrupalJsonApiParams } from '../../src/utils/getDrupalJsonApiParams'
 
 test('getDrupalJsonApiParams', () => {
   // Defaults.

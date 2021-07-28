@@ -1,0 +1,90 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": {
+    "type": "node--recipe",
+    "id": "9cd5cfab-fe24-4773-88e1-56123bcbc9bc",
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc?resourceVersion=id%3A2"
+      }
+    },
+    "relationships": {
+      "field_media_image": {
+        "data": {
+          "type": "media--image",
+          "id": "2b58328e-e524-48f7-a7e9-2e5226a3d8c0"
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc/field_media_image?resourceVersion=id%3A2"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc/relationships/field_media_image?resourceVersion=id%3A2"
+          }
+        }
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "media--image",
+      "id": "2b58328e-e524-48f7-a7e9-2e5226a3d8c0",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0?resourceVersion=id%3A1"
+        }
+      },
+      "relationships": {
+        "field_media_image": {
+          "data": {
+            "type": "file--file",
+            "id": "ce9ac5ad-df17-402c-b11c-ed40239b2d25",
+            "meta": {
+              "alt": "A delicious deep layered Mediterranean quiche with basil garnish",
+              "title": null,
+              "width": 768,
+              "height": 511
+            }
+          },
+          "links": {
+            "related": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/field_media_image?resourceVersion=id%3A1"
+            },
+            "self": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/relationships/field_media_image?resourceVersion=id%3A1"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "file--file",
+      "id": "ce9ac5ad-df17-402c-b11c-ed40239b2d25",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/ce9ac5ad-df17-402c-b11c-ed40239b2d25"
+        }
+      },
+      "attributes": {
+        "uri": {
+          "value": "public://mediterranean-quiche-umami.jpg",
+          "url": "/sites/default/files/mediterranean-quiche-umami.jpg"
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc?fields%5Bnode--recipe%5D=field_media_image&fields%5Bmedia--image%5D=field_media_image&fields%5Bfile--file%5D=uri&include=field_media_image%2Cfield_media_image.field_media_image"
+    }
+  }
+}

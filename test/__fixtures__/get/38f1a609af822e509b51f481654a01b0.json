@@ -1,0 +1,137 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": {
+    "type": "node--article",
+    "id": "e4ced3c1-e14b-48f1-8c0a-c909e808de68",
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68?resourceVersion=id%3A20"
+      }
+    },
+    "attributes": {
+      "title": "Give it a go and grow your own herbs",
+      "path": {
+        "alias": "/articles/give-it-a-go-and-grow-your-own-herbs",
+        "pid": 85,
+        "langcode": "en"
+      },
+      "body": {
+        "value": "<p>There's nothing like having your own supply of fresh herbs, readily available and close at hand to use while cooking. Whether you have a large garden or a small kitchen window sill, there's always enough room for something home grown.</p>\n<h2>Outdoors</h2>\n<h3>Mint</h3>\n<p>Mint is a great plant to grow as it's hardy and can grow in almost any soil. Mint can grow wild, so keep it contained in a pot or it might spread and take over your whole garden.</p>\n<h3>Sage</h3>\n<p>Like mint, sage is another prolific growing plant and will take over your garden if you let it. Highly aromatic, the sage plant can be planted in a pot or flower bed in well drained soil. The best way to store the herb is to sun dry the leaves and store in a cool, dark cupboard in a sealed container.</p>\n<h3>Rosemary</h3>\n<p>Rosemary plants grow into lovely shrubs. Easily grown from cuttings, rosemary plants do not like freezing temperatures so keep pots or planted bushes near the home to shelter them from the cold. It grows well in pots as it likes dry soil, but can survive well in the ground too. If pruning rosemary to encourage it into a better shape, save the branches and hang them upside down to preserve the flavor and use in food.</p>\n<h2>Indoors</h2>\n<h3>Basil</h3>\n<p>Perfect in sunny spot on a kitchen window sill. Basil is an annual plant, so will die off in the autumn, so it's a good idea to harvest it in the summer if you have an abundance and dry it. Picked basil stays fresh longer if it is placed in water (like fresh flowers). A great way to store basil is to make it into pesto!</p>\n<h3>Chives</h3>\n<p>A versatile herb, chives can grow well indoors. Ensure the plant is watered well, and gets plenty of light. Remember to regularly trim the chives. This prevents the flowers from developing and encourages new growth.</p>\n<h3>Coriander (Cilantro)</h3>\n<p>Coriander can grow indoors, but unlike the other herbs, it doesn't like full sun. If you have a south facing kitchen window, this isn't the place for it. Although not as thirsty as basil, coriander doesn't like dry soil so don't forget to water it! Cut coriander is best stored in the fridge.</p>\n",
+        "format": "basic_html",
+        "processed": "<p>There's nothing like having your own supply of fresh herbs, readily available and close at hand to use while cooking. Whether you have a large garden or a small kitchen window sill, there's always enough room for something home grown.</p>\n<h2>Outdoors</h2>\n<h3>Mint</h3>\n<p>Mint is a great plant to grow as it's hardy and can grow in almost any soil. Mint can grow wild, so keep it contained in a pot or it might spread and take over your whole garden.</p>\n<h3>Sage</h3>\n<p>Like mint, sage is another prolific growing plant and will take over your garden if you let it. Highly aromatic, the sage plant can be planted in a pot or flower bed in well drained soil. The best way to store the herb is to sun dry the leaves and store in a cool, dark cupboard in a sealed container.</p>\n<h3>Rosemary</h3>\n<p>Rosemary plants grow into lovely shrubs. Easily grown from cuttings, rosemary plants do not like freezing temperatures so keep pots or planted bushes near the home to shelter them from the cold. It grows well in pots as it likes dry soil, but can survive well in the ground too. If pruning rosemary to encourage it into a better shape, save the branches and hang them upside down to preserve the flavor and use in food.</p>\n<h2>Indoors</h2>\n<h3>Basil</h3>\n<p>Perfect in sunny spot on a kitchen window sill. Basil is an annual plant, so will die off in the autumn, so it's a good idea to harvest it in the summer if you have an abundance and dry it. Picked basil stays fresh longer if it is placed in water (like fresh flowers). A great way to store basil is to make it into pesto!</p>\n<h3>Chives</h3>\n<p>A versatile herb, chives can grow well indoors. Ensure the plant is watered well, and gets plenty of light. Remember to regularly trim the chives. This prevents the flowers from developing and encourages new growth.</p>\n<h3>Coriander (Cilantro)</h3>\n<p>Coriander can grow indoors, but unlike the other herbs, it doesn't like full sun. If you have a south facing kitchen window, this isn't the place for it. Although not as thirsty as basil, coriander doesn't like dry soil so don't forget to water it! Cut coriander is best stored in the fridge.</p>\n",
+        "summary": null
+      },
+      "drupal_internal__nid": 10,
+      "drupal_internal__vid": 20,
+      "langcode": "en",
+      "revision_timestamp": "2021-05-01T06:24:09+00:00",
+      "revision_log": null,
+      "status": true,
+      "created": "2021-05-01T06:24:09+00:00",
+      "changed": "2021-05-01T06:24:09+00:00",
+      "promote": true,
+      "sticky": false,
+      "default_langcode": true,
+      "revision_translation_affected": null,
+      "moderation_state": "published",
+      "content_translation_source": "und",
+      "content_translation_outdated": false
+    },
+    "relationships": {
+      "field_media_image": {
+        "data": {
+          "type": "media--image",
+          "id": "201869c2-0cc4-405a-b596-93f488a48316"
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/field_media_image?resourceVersion=id%3A20"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/relationships/field_media_image?resourceVersion=id%3A20"
+          }
+        }
+      },
+      "field_tags": {
+        "data": [
+          {
+            "type": "taxonomy_term--tags",
+            "id": "0bfb6ee0-d20d-4102-861c-5ef3dd344b88"
+          },
+          {
+            "type": "taxonomy_term--tags",
+            "id": "fdac6c06-87e9-4c88-a78d-0b443f790e7d"
+          },
+          {
+            "type": "taxonomy_term--tags",
+            "id": "ec168c24-ceae-44e9-a3b6-474fbf72efef"
+          }
+        ],
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/field_tags?resourceVersion=id%3A20"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/relationships/field_tags?resourceVersion=id%3A20"
+          }
+        }
+      },
+      "node_type": {
+        "data": {
+          "type": "node_type--node_type",
+          "id": "56a8d0e9-6ed8-4b21-83a3-ef8968f6959b"
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/node_type?resourceVersion=id%3A20"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/relationships/node_type?resourceVersion=id%3A20"
+          }
+        }
+      },
+      "revision_uid": {
+        "data": {
+          "type": "user--user",
+          "id": "eb07118c-6ac1-4ff5-88a7-b77c92303745"
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/revision_uid?resourceVersion=id%3A20"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/relationships/revision_uid?resourceVersion=id%3A20"
+          }
+        }
+      },
+      "uid": {
+        "data": {
+          "type": "user--user",
+          "id": "eb07118c-6ac1-4ff5-88a7-b77c92303745"
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/uid?resourceVersion=id%3A20"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/relationships/uid?resourceVersion=id%3A20"
+          }
+        }
+      }
+    }
+  },
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68"
+    }
+  }
+}

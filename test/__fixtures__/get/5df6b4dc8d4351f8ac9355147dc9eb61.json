@@ -1,0 +1,31 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "node--recipe",
+      "id": "9cd5cfab-fe24-4773-88e1-56123bcbc9bc",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc?resourceVersion=id%3A2"
+        }
+      }
+    }
+  ],
+  "links": {
+    "next": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe?page%5Boffset%5D=1&page%5Blimit%5D=1&fields%5Bnode--recipe%5D="
+    },
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe?fields%5Bnode--recipe%5D=&page%5Blimit%5D=1"
+    }
+  }
+}
