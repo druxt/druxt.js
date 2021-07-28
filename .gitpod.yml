@@ -18,17 +18,17 @@ tasks:
       .gitpod/setup-drupal.sh
     command: |
       .gitpod/setup-ddev.sh
-      cd examples/drupal/drupal-9 && ddev start
+      cd $GITPOD_REPO_ROOT/examples/drupal/drupal-9 && ddev start
       gp sync-done ddev
 
   - name: druxt-site
     init: |
       # druxt-site installation
       gp sync-await bundle
-      cd examples/nuxt/druxt-site && yarn
+      cd $GITPOD_REPO_ROOT/examples/nuxt/druxt-site && yarn
     command: |
       gp sync-await ddev
-      cd examples/nuxt/druxt-site && BASE_URL=$(gp url 8080) yarn dev
+      cd $GITPOD_REPO_ROOT/examples/nuxt/druxt-site && BASE_URL=$(gp url 8080) yarn dev
 
 # VScode xdebug extension
 vscode:
