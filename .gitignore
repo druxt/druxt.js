@@ -21,7 +21,9 @@ dist
 coverage
 
 # VSCode
-.vscode
+.vscode/*
+# VSCode Xdebug settings
+!.vscode/launch.json
 
 # Intellij idea
 *.iml
