@@ -40,7 +40,6 @@ vscode:
 ports:
   # Nuxt/Druxt
   - port: 3000
-    onOpen: open-browser
     visibility: public
   # Drupal
   - port: 8080
