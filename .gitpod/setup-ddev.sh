@@ -7,7 +7,7 @@ fi
 
 set -eu -o pipefail
 
-DDEV_DIR="${GITPOD_REPO_ROOT}/examples/drupal/.ddev"
+DDEV_DIR="${GITPOD_REPO_ROOT}/examples/drupal/drupal-9/.ddev"
 mkdir -p "$DDEV_DIR"
 
 cat <<CONFIGEND > "${DDEV_DIR}"/config.yaml

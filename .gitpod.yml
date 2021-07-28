@@ -4,16 +4,31 @@ image:
 # ddev and composer are running as part of the prebuild
 # when starting a workspace all docker images are ready
 tasks:
-  - init: |
+  - name: druxt.js
+    init: |
       # druxt installation
       yarn install
       yarn build
+      gp sync-done bundle
+
+  - name: drupal-9
+    init: |
       # drupal installation
       .gitpod/download-ddev-images.sh
       .gitpod/setup-drupal.sh
     command: |
       .gitpod/setup-ddev.sh
-      cd examples/drupal && ddev start
+      cd examples/drupal/drupal-9 && ddev start
+      gp sync-done ddev
+
+  - name: druxt-site
+    init: |
+      # druxt-site installation
+      gp sync-await bundle
+      cd examples/nuxt/druxt-site && yarn
+    command: |
+      gp sync-await ddev
+      yarn dev
 
 # VScode xdebug extension
 vscode:
@@ -25,9 +40,6 @@ vscode:
 ports:
   - port: 3000
     onOpen: open-browser
-  # Used by projector
-  - port: 6942
-    onOpen: ignore
   # Direct-connect ddev-webserver port that is the main port
   - port: 8080
   # Currently un-notified and unsupported mailhog http port

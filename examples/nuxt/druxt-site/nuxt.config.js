@@ -1,6 +1,7 @@
 export default {
   target: 'static',
+  generate: { routes: ['/'] },
   modules: ['druxt-site'],
-  druxt: { baseUrl: 'https://demo-api.druxtjs.org' },
-  proxy: ['https://demo-api.druxtjs.org/sites/default/files']
+  druxt: { baseUrl: 'http://localhost:8080' },
+  proxy: ['http://localhost:8080/sites/default/files']
 }
