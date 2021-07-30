@@ -1,4 +1,4 @@
-import NuxtModule from '..'
+import NuxtModule from '../src'
 
 const mock = {
   addPlugin: jest.fn(),
