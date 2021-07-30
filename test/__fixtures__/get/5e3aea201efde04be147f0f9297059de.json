@@ -34,7 +34,7 @@
   },
   "links": {
     "self": {
-      "href": "https://demo-api.druxtjs.org/jsonapi/block/block/06251689-406e-4dc4-aab1-5fcf0e5f9ecb?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme"
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/06251689-406e-4dc4-aab1-5fcf0e5f9ecb?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme"
     }
   }
 }

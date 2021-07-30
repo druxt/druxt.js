@@ -1,4 +1,4 @@
-import DruxtBlocksStorybook from '../nuxtStorybook'
+import DruxtBlocksStorybook from '../src/nuxtStorybook'
 
 jest.mock('axios')
 
@@ -15,5 +15,5 @@ const mock = {
 test('Nuxt Storybook', async () => {
   const stories = []
   await DruxtBlocksStorybook.call(mock, { stories })
-  expect(stories.length).toBe(29)
+  expect(stories.length).toBe(71)
 })

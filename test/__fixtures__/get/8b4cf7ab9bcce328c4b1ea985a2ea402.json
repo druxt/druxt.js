@@ -27,7 +27,7 @@
   ],
   "links": {
     "self": {
-      "href": "https://demo-api.druxtjs.org/jsonapi/block/block?fields%5Bblock--block%5D=drupal_internal__id%2Cvisibility%2Cweight&filter%5Bregion%5D=content&filter%5Bstatus%5D=1&filter%5Btheme%5D=umami&sort=weight"
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block?fields%5Bblock--block%5D=drupal_internal__id%2Cvisibility%2Cweight&filter%5Bregion%5D=content&filter%5Bstatus%5D=1&filter%5Btheme%5D=umami&sort=weight"
     }
   }
 }

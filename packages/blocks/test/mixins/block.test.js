@@ -1,9 +1,7 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtBlocksBlockMixin } from '../..'
-
-const baseURL = 'https://example.com'
+import { DruxtBlocksBlockMixin } from '../../src/mixins/block'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

@@ -1,9 +1,10 @@
+import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
 import { DruxtClient, DruxtStore } from 'druxt'
-import { DruxtBlock } from '..'
+import DruxtBlock from '../../src/components/DruxtBlock.vue'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

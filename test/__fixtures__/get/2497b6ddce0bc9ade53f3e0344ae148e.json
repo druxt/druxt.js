@@ -36,7 +36,7 @@
   ],
   "links": {
     "self": {
-      "href": "https://demo-api.druxtjs.org/jsonapi/block/block?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme&filter%5Bdrupal_internal__id%5D=umami_branding"
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme&filter%5Bdrupal_internal__id%5D=umami_branding"
     }
   }
 }

@@ -1,10 +1,10 @@
-import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
+import 'regenerator-runtime/runtime'
 import mockAxios from 'jest-mock-axios'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from 'druxt'
-import { DruxtBlockBlockContent } from '..'
+import DruxtBlockBlockContent from '../../../src/components/blocks/DruxtBlockBlockContent.vue'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -39,7 +39,7 @@ describe('Component - DruxtBlockBlockContent', () => {
   })
 
   test('default', async () => {
-    const block = await require('../../../__fixtures__/get/e2dbd96a0e597d4d7eb584a94716e8cf.json')
+    const block = await require('../../../../../test/__fixtures__/get/5e3aea201efde04be147f0f9297059de.json')
     store.commit('druxt/addResource', { resource: block })
 
     const wrapper = mountComponent(block.data)

@@ -1,10 +1,11 @@
+import 'regenerator-runtime/runtime'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
 import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
 import { DruxtClient, DruxtStore } from 'druxt'
-import { DruxtBlockRegion } from '..'
+import DruxtBlockRegion from '../../src/components/DruxtBlockRegion.vue'
 
 jest.mock('axios')
 
