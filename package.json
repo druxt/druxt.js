@@ -26,6 +26,7 @@
     "eslint-plugin-nuxt": "^2.0.0",
     "jest": "^27.0.6",
     "jest-mock-axios": "^4.4.0",
+    "regenerator-runtime": "^0.13.9",
     "rimraf": "^3.0.2",
     "siroc": "^0.14.0",
     "vue": "^2.6.14",
