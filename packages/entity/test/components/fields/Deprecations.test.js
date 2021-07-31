@@ -1,11 +1,11 @@
-import * as DruxtFieldComponents from '..'
+import * as DruxtFieldComponents from '../../../src/components/fields'
 
 global.console = {
   warn: jest.fn()
 }
 
 describe('DruxtFieldComponents - Deprecations', () => {
-  for (const component of Object.keys(DruxtFieldComponents)) {
+  for (const component of Object.keys(DruxtFieldComponents.default)) {
     test(component, async () => {
       DruxtFieldComponents[component].mounted.call({
         $options: {

@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtFieldNumberInteger } from '..'
+import DruxtFieldNumberInteger from '../../../src/components/fields/DruxtFieldNumberInteger.vue'
 
 jest.mock('axios')
 

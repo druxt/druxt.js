@@ -1,10 +1,13 @@
+import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
 import { DruxtClient, DruxtStore } from 'druxt'
 import { DruxtSchemaStore } from 'druxt-schema'
-import { DruxtEntity, DruxtField } from '..'
+
+import DruxtEntity from '../../src/components/DruxtEntity.vue'
+import DruxtField from '../../src/components/DruxtEntity.vue'
 
 jest.mock('axios')
 

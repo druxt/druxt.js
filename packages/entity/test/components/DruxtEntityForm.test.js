@@ -6,6 +6,10 @@ import { DruxtClient, DruxtStore } from 'druxt'
 import { DruxtSchemaStore } from 'druxt-schema'
 import { DruxtEntityForm, DruxtEntityFormButtons, DruxtField } from '..'
 
+import DruxtEntityForm from '../../src/components/DruxtEntityForm.vue'
+import DruxtEntityFormButtons from '../../src/components/DruxtEntityFormButtons.vue'
+import DruxtField from '../../src/components/DruxtEntity.vue'
+
 let localVue
 let store
 

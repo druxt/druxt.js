@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
 import { DruxtSchemaStore } from 'druxt-schema'
-import { DruxtEntityFormButtons } from '..'
+import DruxtEntityFormButtons from '../../src/components/DruxtEntityFormButtons.vue'
 
 let localVue
 

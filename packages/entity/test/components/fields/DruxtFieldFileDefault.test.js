@@ -1,9 +1,10 @@
+import 'regenerator-runtime/runtime'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtClient, DruxtStore } from 'druxt'
-import { DruxtFieldResponsiveImage } from '../..'
+import { DruxtClient, DruxtStore } from '../../../../druxt/src'
+import DruxtFieldFileDefault from '../../../src/components/fields/DruxtFieldFileDefault.vue'
 
 jest.mock('axios')
 
@@ -14,13 +15,14 @@ localVue.use(Vuex)
 const stubs = ['nuxt-link']
 let store
 
-const mountComponent = (options) => {
+const mountComponent = (link = {}, options) => {
   const entity = {
-    type: 'pages',
-    id: 'fe00c55d-0335-49d6-964e-a868c0c68f9c',
+    type: 'file',
+    id: '8500bf6b-75d4-41b6-8385-f5c6eb6906d5',
     attributes: {
+      filename: 'file.ext',
       uri: {
-        value: 'public://sites/default/image.jpg'
+        value: 'public://test/file.ext'
       }
     }
   }
@@ -33,17 +35,14 @@ const mountComponent = (options) => {
   }
 
   const propsData = {
-    value: [{
-      type: entity.type,
-      uuid: entity.id
-    }],
+    value: [link],
     schema: {}
   }
 
-  return shallowMount(DruxtFieldResponsiveImage, { ...options, localVue, mocks, propsData, store, stubs })
+  return shallowMount(DruxtFieldFileDefault, { ...options, localVue, mocks, propsData, store, stubs })
 }
 
-describe('Component - DruxtFieldResponsiveImage', () => {
+describe('Component - DruxtFieldFileDefault', () => {
   beforeEach(() => {
     mockAxios.reset()
 
@@ -57,7 +56,13 @@ describe('Component - DruxtFieldResponsiveImage', () => {
   })
 
   test('default', async () => {
-    const wrapper = mountComponent()
+    const wrapper = mountComponent({
+      type: 'file',
+      uuid: '8500bf6b-75d4-41b6-8385-f5c6eb6906d5'
+    })
+
+    expect(wrapper.vm.entities.length).toBe(0)
+
     await wrapper.vm.$options.fetch.call(wrapper.vm)
     await wrapper.vm.$forceUpdate()
 

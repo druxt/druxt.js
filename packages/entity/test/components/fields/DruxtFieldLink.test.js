@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtFieldLink } from '..'
+import DruxtFieldLink from '../../../src/components/fields/DruxtFieldLink.vue'
 
 jest.mock('axios')
 

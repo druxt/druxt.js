@@ -1,6 +1,7 @@
+import 'regenerator-runtime/runtime'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 
-import { DruxtFieldTextTrimmed } from '..'
+import DruxtFieldTextTrimmed from '../../../src/components/fields/DruxtFieldTextTrimmed.vue'
 
 jest.mock('axios')
 

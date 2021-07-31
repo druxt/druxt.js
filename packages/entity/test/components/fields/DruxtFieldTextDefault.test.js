@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 
-import { DruxtFieldTextDefault } from '..'
+import DruxtFieldTextDefault from '../../../src/components/fields/DruxtFieldTextDefault.vue'
 
 jest.mock('axios')
 

@@ -15,7 +15,9 @@ const mockData = async (url, file) => {
     try {
       data = (await axiosClient.get(url)).data
       await fs.writeFileSync(file, JSON.stringify(data, null, '  '))
-    } catch (err) {}
+    } catch (err) {
+      console.log(err)
+    }
     mockAxios.reset()
   }
 
