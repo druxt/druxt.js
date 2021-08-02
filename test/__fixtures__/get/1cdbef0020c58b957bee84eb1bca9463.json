@@ -1,0 +1,127 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": {
+    "type": "media--image",
+    "id": "2b58328e-e524-48f7-a7e9-2e5226a3d8c0",
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0?resourceVersion=id%3A1"
+      }
+    },
+    "attributes": {
+      "drupal_internal__mid": 1,
+      "drupal_internal__vid": 1,
+      "langcode": "en",
+      "revision_created": "2021-05-01T06:24:09+00:00",
+      "revision_log_message": null,
+      "status": true,
+      "name": "Deep mediterranean quiche",
+      "created": "2021-05-01T06:24:09+00:00",
+      "changed": "2021-05-01T06:24:09+00:00",
+      "default_langcode": true,
+      "revision_translation_affected": true,
+      "path": {
+        "alias": null,
+        "pid": null,
+        "langcode": "en"
+      },
+      "content_translation_source": "und",
+      "content_translation_outdated": false
+    },
+    "relationships": {
+      "field_media_image": {
+        "data": {
+          "type": "file--file",
+          "id": "ce9ac5ad-df17-402c-b11c-ed40239b2d25",
+          "meta": {
+            "alt": "A delicious deep layered Mediterranean quiche with basil garnish",
+            "title": null,
+            "width": 768,
+            "height": 511
+          }
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/field_media_image?resourceVersion=id%3A1"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/relationships/field_media_image?resourceVersion=id%3A1"
+          }
+        }
+      },
+      "bundle": {
+        "data": {
+          "type": "media_type--media_type",
+          "id": "93c226a8-6e72-4caf-aae5-493066ef4f94"
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/bundle?resourceVersion=id%3A1"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/relationships/bundle?resourceVersion=id%3A1"
+          }
+        }
+      },
+      "revision_user": {
+        "data": null,
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/revision_user?resourceVersion=id%3A1"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/relationships/revision_user?resourceVersion=id%3A1"
+          }
+        }
+      },
+      "uid": {
+        "data": {
+          "type": "user--user",
+          "id": "f9e06c84-0999-4123-b1f1-b46b18590be4"
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/uid?resourceVersion=id%3A1"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/relationships/uid?resourceVersion=id%3A1"
+          }
+        }
+      },
+      "thumbnail": {
+        "data": {
+          "type": "file--file",
+          "id": "ce9ac5ad-df17-402c-b11c-ed40239b2d25",
+          "meta": {
+            "alt": "A delicious deep layered Mediterranean quiche with basil garnish",
+            "title": null,
+            "width": 768,
+            "height": 511
+          }
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/thumbnail?resourceVersion=id%3A1"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0/relationships/thumbnail?resourceVersion=id%3A1"
+          }
+        }
+      }
+    }
+  },
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0"
+    }
+  }
+}

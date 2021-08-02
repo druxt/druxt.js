@@ -1,6 +1,8 @@
 import { createLocalVue, mount } from '@vue/test-utils'
+import { getMockResource } from 'druxt-test-utils'
 
-import { DruxtField, DruxtFieldMixin } from '../..'
+import DruxtField from '../../src/components/DruxtField.vue'
+import { DruxtFieldMixin } from '../../src/mixins/field'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -13,8 +15,8 @@ const component = {
 
 describe('DruxtFieldMixin', () => {
   test('items - field', async () => {
-    const entity = require('../../__fixtures__/get/382eec1563f0514319a9de3a48cb658b.json').data
-    const schema = require('../../__fixtures__/schemas/node--page--default--view.json')
+    const entity = (await getMockResource('node--page')).data
+    const schema = require('../../../../test/__fixtures__/schemas/node--page--default--view.json')
 
     const propsData = {
       schema: {
@@ -28,9 +30,9 @@ describe('DruxtFieldMixin', () => {
     expect(wrapper.vm.items.length).toBe(1)
   })
 
-  test('items - relationship', () => {
-    const entity = require('../../__fixtures__/get/38d459170c4d710b41a248d8ee474e49.json').data
-    const schema = require('../../__fixtures__/schemas/node--article--card--view.json')
+  test('items - relationship', async () => {
+    const entity = (await getMockResource('node--article')).data
+    const schema = require('../../../../test/__fixtures__/schemas/node--article--card--view.json')
 
     const propsData = {
       relationship: true,
@@ -49,8 +51,8 @@ describe('DruxtFieldMixin', () => {
   })
 
   test('v-model', async () => {
-    const entity = require('../../__fixtures__/get/382eec1563f0514319a9de3a48cb658b.json').data
-    const schema = require('../../__fixtures__/schemas/node--page--default--view.json')
+    const entity = (await getMockResource('node--page')).data
+    const schema = require('../../../../test/__fixtures__/schemas/node--page--default--view.json')
 
     const propsData = {
       schema: {

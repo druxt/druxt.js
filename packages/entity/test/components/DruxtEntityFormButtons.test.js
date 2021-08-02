@@ -1,3 +1,4 @@
+import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
@@ -34,7 +35,7 @@ describe('DruxtEntityFormButtons', () => {
     DruxtSchemaStore({ store })
     store.$druxtSchema = {
       import: (schema) => {
-        return require(`../../__fixtures__/schemas/${schema}.json`)
+        return require(`../../../../test/__fixtures__/schemas/${schema}.json`)
       }
     }
 

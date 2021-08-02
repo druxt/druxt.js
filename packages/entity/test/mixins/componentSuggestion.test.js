@@ -3,9 +3,9 @@ import Vuex from 'vuex'
 
 import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
 
-import { DruxtEntityComponentSuggestionMixin } from '../..'
+import { DruxtEntityComponentSuggestionMixin } from '../../src/mixins/componentSuggestion'
 
-const baseURL = 'https://example.com'
+const baseURL = 'https://demo-api.druxtjs.org'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

@@ -50,12 +50,6 @@ exports[`DruxtEntity missing schema 1`] = `
 </div>"
 `;
 
-exports[`DruxtEntity node--page - filtered 1`] = `
-"<div>
-  <div>{\\"type\\":\\"node--page\\",\\"id\\":\\"772b174a-796f-4301-a04d-b935a7304fba\\",\\"links\\":{\\"self\\":{\\"href\\":\\"https://demo-api.druxtjs.org/en/jsonapi/node/page/772b174a-796f-4301-a04d-b935a7304fba?resourceVersion=id%3A36\\"}},\\"attributes\\":{\\"body\\":{\\"value\\":\\"&lt;p&gt;Umami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided 'out of the box'.&lt;/p&gt;&lt;p&gt;For more information visit &lt;a href='https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile'&gt;https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile&lt;/a&gt;.&lt;/p&gt;\\",\\"format\\":\\"basic_html\\",\\"processed\\":\\"&lt;p&gt;Umami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided 'out of the box'.&lt;/p&gt;\\\\n&lt;p&gt;For more information visit &lt;a href=\\\\\\"https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile\\\\\\"&gt;https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile&lt;/a&gt;.&lt;/p&gt;\\\\n\\",\\"summary\\":null},\\"title\\":\\"About Umami\\"}}</div>
-</div>"
-`;
-
 exports[`DruxtEntity node--page 1`] = `
 "<div>
   <druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"></druxtentitynodepage-stub>
