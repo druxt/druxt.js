@@ -36,55 +36,54 @@ vscode:
     - dbaeumer.vscode-eslint
     - octref.vetur
     - felixfbecker.php-debug
-
     - gruntfuggly.todo-tree
 
 ports:
   # Nuxt/Druxt
   - port: 3000
     visibility: public
-# Drupal
+  # Drupal
   - port: 8080
     visibility: public
-# Currently un-notified and unsupported mailhog http port
+  # Currently un-notified and unsupported mailhog http port
   - port: 8025
     onOpen: ignore
-# Currently un-notified and unsupported mailhog https port
+  # Currently un-notified and unsupported mailhog https port
   - port: 8026
     onOpen: ignore
-# Currently un-notified and unsupported phpmyadmin http port
+  # Currently un-notified and unsupported phpmyadmin http port
   - port: 8036
     onOpen: ignore
-# Currently un-notified and unsupported phpmyadmin https port
+  # Currently un-notified and unsupported phpmyadmin https port
   - port: 8037
     onOpen: ignore
-# router http port that we're ignoring.
+  # router http port that we're ignoring.
   - port: 8888
     onOpen: ignore
-# router https port that we're ignoring.
+  # router https port that we're ignoring.
   - port: 8889
     onOpen: ignore
-# xdebug port
+  # xdebug port
   - port: 9000
     onOpen: ignore
-# projector port
+  # projector port
   - port: 9999
 
 github:
   prebuilds:
     # enable for the master/default branch (defaults to true)
     master: true
-# enable for all branches in this repo (defaults to false)
+    # enable for all branches in this repo (defaults to false)
     branches: true
-# enable for pull requests coming from this repo (defaults to true)
+    # enable for pull requests coming from this repo (defaults to true)
     pullRequests: true
-# enable for pull requests coming from forks (defaults to false)
+    # enable for pull requests coming from forks (defaults to false)
     pullRequestsFromForks: true
-# add a check to pull requests (defaults to true)
+    # add a check to pull requests (defaults to true)
     addCheck: true
-# add a "Review in Gitpod" button as a comment to pull requests (defaults to false)
+    # add a "Review in Gitpod" button as a comment to pull requests (defaults to false)
     addComment: false
-# add a "Review in Gitpod" button to the pull request's description (defaults to false)
+    # add a "Review in Gitpod" button to the pull request's description (defaults to false)
     addBadge: true
-# add a label once the prebuild is ready to pull requests (defaults to false)
+    # add a label once the prebuild is ready to pull requests (defaults to false)
     addLabel: true

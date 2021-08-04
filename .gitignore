@@ -20,9 +20,6 @@ dist
 # Coverage reports
 coverage
 
-# VSCode Xdebug settings
-!.vscode/launch.json
-
 # Intellij idea
 *.iml
 .idea
