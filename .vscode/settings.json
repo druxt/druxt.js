@@ -1,0 +1,37 @@
+{
+    "todo-tree.highlights.customHighlight": {
+        "BUG": {
+            "icon": "bug"
+        },
+        "FIXME": {
+            "icon": "flame"
+        }
+    },
+    "todo-tree.regex.regex": "(//|#|<!--|/\\*|^\\s*\\*)\\s*($TAGS)",
+    "todo-tree.tree.showScanModeButton": false,
+    "todo-tree.filtering.excludeGlobs": [
+        "**/vendor/**",
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/bower_components/**",
+        "**/build/**",
+        "**/.vscode/**",
+        "**/.github/**",
+        "**/_output/**",
+        "**/*.min.*",
+        "**/*.map"
+    ],
+    "todo-tree.general.tags": [
+        "BUG",
+        "HACK",
+        "FIXME",
+        "TODO",
+        "XXX",
+        "@todo",
+        "@TODO"
+    ],
+    "todo-tree.general.statusBar": "total",
+    "todo-tree.highlights.useColourScheme": true,
+    "todo-tree.tree.buttons.export": true,
+    "todo-tree.tree.flat": true
+}
