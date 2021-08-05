@@ -1,4 +1,4 @@
-import DruxtViewsNuxtModule from '..'
+import DruxtViewsNuxtModule from '../src'
 
 jest.mock('../nuxtStorybook')
 

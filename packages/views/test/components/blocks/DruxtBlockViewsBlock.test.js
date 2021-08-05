@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from 'druxt'
 
-import { DruxtBlockViewsBlock } from '..'
+import { DruxtBlockViewsBlock } from '../../../src/components/blocks'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
