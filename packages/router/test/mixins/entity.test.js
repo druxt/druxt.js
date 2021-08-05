@@ -2,7 +2,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils'
 import { DruxtClient, DruxtStore } from 'druxt'
 import Vuex from 'vuex'
 
-import { DruxtRouterEntityMixin } from '../..'
+import { DruxtRouterEntityMixin } from '../../src'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

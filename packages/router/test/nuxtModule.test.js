@@ -1,4 +1,4 @@
-import DruxtRouterNuxtModule from '..'
+import DruxtRouterNuxtModule from '../src'
 
 const mock = {
   addPlugin: jest.fn(),

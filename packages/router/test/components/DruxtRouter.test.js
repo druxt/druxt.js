@@ -2,7 +2,7 @@ import mockAxios from 'jest-mock-axios'
 import { mount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouter, DruxtRouterComponent, DruxtRouterStore } from '../..'
+import { DruxtRouter, DruxtRouterComponent, DruxtRouterStore } from '../../src'
 
 jest.mock('axios')
 

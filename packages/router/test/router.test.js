@@ -1,6 +1,6 @@
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouter } from '..'
+import { DruxtRouter } from '../src'
 
 const baseURL = 'https://demo-api.druxtjs.org'
 
@@ -207,7 +207,7 @@ describe('DruxtRouter', () => {
   })
 
   test('getResourceByRoute', async () => {
-    const route = require('../__fixtures__/data/0a01adaa07e9dfcc3c0cabc37339505a.json')
+    const route = require('../src/__fixtures__/data/0a01adaa07e9dfcc3c0cabc37339505a.json')
     const entity = await router.getResourceByRoute(route)
 
     expect(entity).toHaveProperty('id', testPage.id)

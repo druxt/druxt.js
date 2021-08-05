@@ -3,7 +3,7 @@ import { DruxtClient, DruxtStore } from 'druxt'
 import mockAxios from 'jest-mock-axios'
 import Vuex from 'vuex'
 
-import { DruxtRouter, DruxtRouterStore } from '../..'
+import { DruxtRouter, DruxtRouterStore } from '../../src'
 
 jest.mock('axios')
 
