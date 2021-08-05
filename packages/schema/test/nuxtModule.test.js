@@ -1,4 +1,4 @@
-import DruxtSchemaNuxtModule from '..'
+import DruxtSchemaNuxtModule from '../src'
 
 jest.mock('../schema')
 

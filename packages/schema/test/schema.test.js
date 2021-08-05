@@ -1,4 +1,4 @@
-import { DruxtSchema } from '..'
+import { DruxtSchema } from '../src'
 
 jest.mock('axios')
 
