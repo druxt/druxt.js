@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from 'druxt'
 
-import { DruxtSiteMixin } from '../..'
+import { DruxtSiteMixin } from '../../src'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

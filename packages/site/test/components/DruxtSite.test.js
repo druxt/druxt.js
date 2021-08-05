@@ -2,7 +2,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from 'druxt'
-import { DruxtSite } from '../..'
+import { DruxtSite } from '../../src'
 
 jest.mock('axios')
 

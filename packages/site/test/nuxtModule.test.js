@@ -1,4 +1,4 @@
-import DruxtSiteModule from '..'
+import DruxtSiteModule from '../src'
 
 const mock = {
   addModule: jest.fn(),
