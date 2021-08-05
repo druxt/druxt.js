@@ -326,9 +326,9 @@ export default {
      *
      * @return {ScopedSlots} The Scoped slots object.
      */
-    slots() {
+    slots(h) {
       return {
-        default: (attrs) => this.items.map((item) => this.$createElement('DruxtMenuItem', {
+        default: (attrs) => this.items.map((item) => h('DruxtMenuItem', {
           attrs,
           key: item.entity.id,
           props: {

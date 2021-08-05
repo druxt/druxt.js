@@ -1,4 +1,4 @@
-import DruxtMenuStorybook from '../nuxtStorybook'
+import DruxtMenuStorybook from '../src/nuxtStorybook'
 
 jest.mock('axios')
 

@@ -1,7 +1,9 @@
 import { config, createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtMenu, DruxtMenuComponent, DruxtMenuItemComponent, DruxtMenuStore } from '../..'
+import { DruxtMenu, DruxtMenuStore } from '../..'
+import DruxtMenuComponent from '../../src/components/DruxtMenu.vue'
+import DruxtMenuItemComponent from '../../src/components/DruxtMenuItem.vue'
 
 jest.mock('axios')
 
