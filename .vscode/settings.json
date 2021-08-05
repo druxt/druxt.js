@@ -33,5 +33,7 @@
     "todo-tree.general.statusBar": "total",
     "todo-tree.highlights.useColourScheme": true,
     "todo-tree.tree.buttons.export": true,
-    "todo-tree.tree.flat": true
+    "todo-tree.tree.flat": true,
+    "terminal.integrated.lineHeight": 1.2,
+    "terminal.integrated.letterSpacing": 2
 }
