@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 
-import { DruxtViewsPagerMixin } from '../..'
+import { DruxtViewsPagerMixin } from '../../src/mixins/pager'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

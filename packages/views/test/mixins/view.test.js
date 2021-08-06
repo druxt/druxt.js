@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 
-import { DruxtViewsViewMixin } from '../../src'
+import { DruxtViewsViewMixin } from '../../src/mixins/view'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

@@ -1,8 +1,10 @@
+import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from 'druxt'
-import { DruxtViewsStore, DruxtViewsPager } from '../..'
+import { DruxtViewsStore } from '../../src'
+import DruxtViewsPager from '../../src/components/DruxtViewsPager.vue'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

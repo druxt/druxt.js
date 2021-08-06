@@ -1,8 +1,10 @@
+import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from 'druxt'
-import { DruxtViewsStore, DruxtView } from '../../src'
+import { DruxtViewsStore } from '../../src'
+import DruxtView from '../../src/components/DruxtView.vue'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
