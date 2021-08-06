@@ -1,0 +1,162 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "bac0d39b-a572-4c97-8684-6a0aff7fbffa",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/bac0d39b-a572-4c97-8684-6a0aff7fbffa"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.footer_promo_block",
+            "field.storage.block_content.field_content_link"
+          ],
+          "module": [
+            "link"
+          ]
+        },
+        "drupal_internal__id": "block_content.footer_promo_block.field_content_link",
+        "field_name": "field_content_link",
+        "entity_type": "block_content",
+        "bundle": "footer_promo_block",
+        "label": "Find out more link",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "link_type": 17,
+          "title": 2
+        },
+        "field_type": "link"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "f6d540f1-0509-441d-9f81-c78e39016b66",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/f6d540f1-0509-441d-9f81-c78e39016b66"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.footer_promo_block",
+            "field.storage.block_content.field_media_image",
+            "media.type.image"
+          ]
+        },
+        "drupal_internal__id": "block_content.footer_promo_block.field_media_image",
+        "field_name": "field_media_image",
+        "entity_type": "block_content",
+        "bundle": "footer_promo_block",
+        "label": "Media Image",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:media",
+          "handler_settings": {
+            "target_bundles": {
+              "image": "image"
+            },
+            "sort": {
+              "field": "_none"
+            },
+            "auto_create": true,
+            "auto_create_bundle": ""
+          }
+        },
+        "field_type": "entity_reference"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "2cab55db-8a42-49dc-aa8d-fa05e6025f67",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/2cab55db-8a42-49dc-aa8d-fa05e6025f67"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.footer_promo_block",
+            "field.storage.block_content.field_summary"
+          ]
+        },
+        "drupal_internal__id": "block_content.footer_promo_block.field_summary",
+        "field_name": "field_summary",
+        "entity_type": "block_content",
+        "bundle": "footer_promo_block",
+        "label": "Promo text",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "string_long"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "1aee4cc8-fe8b-43e6-86a6-e3e8f92eae7e",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/1aee4cc8-fe8b-43e6-86a6-e3e8f92eae7e"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.footer_promo_block",
+            "field.storage.block_content.field_title"
+          ]
+        },
+        "drupal_internal__id": "block_content.footer_promo_block.field_title",
+        "field_name": "field_title",
+        "entity_type": "block_content",
+        "bundle": "footer_promo_block",
+        "label": "Promo title",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "string"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=block_content&filter%5Bbundle%5D=footer_promo_block"
+    }
+  }
+}

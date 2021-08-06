@@ -23,7 +23,7 @@ describe('DruxtSchema', () => {
   test('get', async () => {
     const { schemas } = await schema.get()
 
-    expect(Object.keys(schemas).length).toBe(4)
+    expect(Object.keys(schemas).length).toBe(46)
 
     expect(Object.values(schemas)[0]).toHaveProperty('id')
     expect(Object.values(schemas)[0]).toHaveProperty('resourceType')

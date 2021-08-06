@@ -1,0 +1,56 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "d0a9a86a-1a0f-4a69-957a-969d57461971",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/d0a9a86a-1a0f-4a69-957a-969d57461971"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.basic",
+            "field.storage.block_content.body"
+          ],
+          "module": [
+            "text"
+          ]
+        },
+        "drupal_internal__id": "block_content.basic.body",
+        "field_name": "body",
+        "entity_type": "block_content",
+        "bundle": "basic",
+        "label": "Body",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "display_summary": false,
+          "required_summary": false
+        },
+        "field_type": "text_with_summary"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=block_content&filter%5Bbundle%5D=basic"
+    }
+  }
+}
