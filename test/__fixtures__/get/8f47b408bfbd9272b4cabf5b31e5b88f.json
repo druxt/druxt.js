@@ -1,0 +1,96 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "c7ce2e6f-165a-4f01-be79-0664f8fd18a6",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display/c7ce2e6f-165a-4f01-be79-0664f8fd18a6"
+        }
+      },
+      "attributes": {
+        "targetEntityType": "node",
+        "bundle": "article",
+        "mode": "full",
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.full",
+            "field.field.node.article.body",
+            "field.field.node.article.field_media_image",
+            "field.field.node.article.field_tags",
+            "node.type.article"
+          ],
+          "module": [
+            "text",
+            "user"
+          ]
+        },
+        "drupal_internal__id": "node.article.full",
+        "content": {
+          "body": {
+            "type": "text_default",
+            "weight": 3,
+            "region": "content",
+            "settings": [],
+            "third_party_settings": [],
+            "label": "hidden"
+          },
+          "content_moderation_control": {
+            "weight": 5,
+            "region": "content",
+            "settings": [],
+            "third_party_settings": []
+          },
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "weight": 2,
+            "region": "content",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "responsive_3x2",
+              "link": false
+            },
+            "third_party_settings": []
+          },
+          "field_tags": {
+            "type": "entity_reference_label",
+            "weight": 0,
+            "region": "content",
+            "label": "inline",
+            "settings": {
+              "link": true
+            },
+            "third_party_settings": []
+          },
+          "links": {
+            "weight": 4,
+            "region": "content",
+            "settings": [],
+            "third_party_settings": []
+          }
+        },
+        "hidden": {
+          "langcode": true,
+          "search_api_excerpt": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=node.article.full"
+    }
+  }
+}

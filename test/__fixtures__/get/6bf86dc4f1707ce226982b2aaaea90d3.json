@@ -1,0 +1,242 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "5c0a24dc-8a33-4987-b366-daf0bb193023",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/5c0a24dc-8a33-4987-b366-daf0bb193023"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": [
+            "block_content",
+            "text"
+          ]
+        },
+        "drupal_internal__id": "block_content.body",
+        "field_name": "body",
+        "entity_type": "block_content",
+        "field_storage_config_type": "text_with_summary",
+        "settings": [],
+        "module": "text",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": true,
+        "custom_storage": false
+      }
+    },
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "10d8ad58-465e-469b-9143-c192b6c6896c",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/10d8ad58-465e-469b-9143-c192b6c6896c"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": [
+            "block_content",
+            "link"
+          ]
+        },
+        "drupal_internal__id": "block_content.field_content_link",
+        "field_name": "field_content_link",
+        "entity_type": "block_content",
+        "field_storage_config_type": "link",
+        "settings": [],
+        "module": "link",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    },
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "4fb6e144-ed05-41e7-9c98-11a6f7d08bc3",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/4fb6e144-ed05-41e7-9c98-11a6f7d08bc3"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": [
+            "block_content",
+            "text"
+          ]
+        },
+        "drupal_internal__id": "block_content.field_copyright",
+        "field_name": "field_copyright",
+        "entity_type": "block_content",
+        "field_storage_config_type": "text_long",
+        "settings": [],
+        "module": "text",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    },
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "4462f2b5-25a0-4517-a91a-43e39e2e46e2",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/4462f2b5-25a0-4517-a91a-43e39e2e46e2"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": [
+            "block_content",
+            "text"
+          ]
+        },
+        "drupal_internal__id": "block_content.field_disclaimer",
+        "field_name": "field_disclaimer",
+        "entity_type": "block_content",
+        "field_storage_config_type": "text_long",
+        "settings": [],
+        "module": "text",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    },
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "6ecc9f59-915e-4d1a-9c9a-f196ecafd211",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/6ecc9f59-915e-4d1a-9c9a-f196ecafd211"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": [
+            "block_content",
+            "media"
+          ]
+        },
+        "drupal_internal__id": "block_content.field_media_image",
+        "field_name": "field_media_image",
+        "entity_type": "block_content",
+        "field_storage_config_type": "entity_reference",
+        "settings": {
+          "target_type": "media"
+        },
+        "module": "core",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    },
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "f8403dea-ecef-4600-8b7b-9a3b7e3f0f4e",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/f8403dea-ecef-4600-8b7b-9a3b7e3f0f4e"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": [
+            "block_content"
+          ]
+        },
+        "drupal_internal__id": "block_content.field_summary",
+        "field_name": "field_summary",
+        "entity_type": "block_content",
+        "field_storage_config_type": "string_long",
+        "settings": {
+          "case_sensitive": false
+        },
+        "module": "core",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    },
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "58b28c5e-bcee-4fde-8345-ef39a9b3a03a",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/58b28c5e-bcee-4fde-8345-ef39a9b3a03a"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": [
+            "block_content"
+          ]
+        },
+        "drupal_internal__id": "block_content.field_title",
+        "field_name": "field_title",
+        "entity_type": "block_content",
+        "field_storage_config_type": "string",
+        "settings": {
+          "max_length": 255,
+          "is_ascii": false,
+          "case_sensitive": false
+        },
+        "module": "core",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config?filter%5Bentity_type%5D=block_content"
+    }
+  }
+}

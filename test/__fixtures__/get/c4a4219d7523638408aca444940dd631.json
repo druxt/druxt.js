@@ -1,0 +1,97 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "55efc62c-05fb-4a0f-8666-31161d84f4e2",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display/55efc62c-05fb-4a0f-8666-31161d84f4e2"
+        }
+      },
+      "attributes": {
+        "targetEntityType": "block_content",
+        "bundle": "footer_promo_block",
+        "mode": "default",
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.footer_promo_block",
+            "field.field.block_content.footer_promo_block.field_content_link",
+            "field.field.block_content.footer_promo_block.field_media_image",
+            "field.field.block_content.footer_promo_block.field_summary",
+            "field.field.block_content.footer_promo_block.field_title"
+          ],
+          "module": [
+            "link"
+          ]
+        },
+        "drupal_internal__id": "block_content.footer_promo_block.default",
+        "content": {
+          "field_content_link": {
+            "weight": 4,
+            "label": "hidden",
+            "settings": {
+              "trim_length": 80,
+              "url_only": false,
+              "url_plain": false,
+              "rel": "",
+              "target": ""
+            },
+            "third_party_settings": [],
+            "type": "link",
+            "region": "content"
+          },
+          "field_media_image": {
+            "weight": 1,
+            "label": "hidden",
+            "settings": {
+              "view_mode": "medium_8_7",
+              "link": false
+            },
+            "third_party_settings": [],
+            "type": "entity_reference_entity_view",
+            "region": "content"
+          },
+          "field_summary": {
+            "weight": 3,
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "type": "basic_string",
+            "region": "content"
+          },
+          "field_title": {
+            "weight": 2,
+            "label": "hidden",
+            "settings": {
+              "link_to_entity": false
+            },
+            "third_party_settings": [],
+            "type": "string",
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true,
+          "search_api_excerpt": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=block_content.footer_promo_block.default"
+    }
+  }
+}

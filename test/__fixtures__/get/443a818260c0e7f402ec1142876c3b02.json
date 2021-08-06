@@ -1,0 +1,68 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "68cb12cd-e8d8-4f23-b16f-e1b397baf39c",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display/68cb12cd-e8d8-4f23-b16f-e1b397baf39c"
+        }
+      },
+      "attributes": {
+        "targetEntityType": "node",
+        "bundle": "page",
+        "mode": "teaser",
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.teaser",
+            "field.field.node.page.body",
+            "node.type.page"
+          ],
+          "module": [
+            "text",
+            "user"
+          ]
+        },
+        "drupal_internal__id": "node.page.teaser",
+        "content": {
+          "body": {
+            "label": "hidden",
+            "type": "text_summary_or_trimmed",
+            "weight": 100,
+            "region": "content",
+            "settings": {
+              "trim_length": 600
+            },
+            "third_party_settings": []
+          },
+          "links": {
+            "weight": 101,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "content_moderation_control": true,
+          "langcode": true,
+          "search_api_excerpt": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=node.page.teaser"
+    }
+  }
+}
