@@ -96,7 +96,7 @@ export default {
       let url = this.schema.config.href
       let method = 'post'
       if (this.entity.id) {
-        // @todo - Reduce size of payload by only sending changed data.
+        // TODO: Reduce size of payload by only sending changed data.
         url = [url, this.entity.id].join('/')
         method = 'patch'
       }

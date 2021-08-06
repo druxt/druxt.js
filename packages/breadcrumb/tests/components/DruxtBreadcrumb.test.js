@@ -134,7 +134,7 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.vm.crumbs).toHaveLength(2)
     expect(wrapper.vm.crumbs[0].to).toBe('/')
 
-    // @TODO - Inconsistent behaviour between local and CI. Investigate.
+    // TODO: Inconsistent behaviour between local and CI. Investigate.
     // expect(wrapper.html()).toMatchSnapshot()
   })
 

@@ -40,7 +40,7 @@ const DruxtSiteNuxtModule = function (moduleOptions = {}) {
   }
 
   // Setup proxy for 'sites/default/files'.
-  // @todo {@link https://github.com/nuxt-community/proxy-module/issues/80|Suppress warning}
+  // TODO: {@link https://github.com/nuxt-community/proxy-module/issues/80|Suppress warning}
   if (typeof this.options.proxy === 'undefined') {
     this.options.proxy = [this.options.druxt.baseUrl + '/sites/default/files']
   }

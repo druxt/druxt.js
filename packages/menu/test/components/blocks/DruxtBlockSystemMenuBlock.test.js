@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 
-// @todo - investigate and fix tests.
+// TODO: nvestigate and fix DruxtBlockSystemMenuBlock tests.
 // import DruxtBlockSystemMenuBlock from '../../../src/components/blocks/DruxtBlockSystemMenuBlock.vue'
 const DruxtBlockSystemMenuBlock = { render() {} }
 
@@ -8,7 +8,7 @@ const DruxtBlockSystemMenuBlock = { render() {} }
 const localVue = createLocalVue()
 const stubs = ['DruxtMenu']
 
-// @TODO - Mock axios and add fixtures.
+// TODO: Mock axios and add fixtures.
 const mocks = {
   $druxtRouter: () => ({
     getResources: jest.fn().mockImplementation(() => Promise.resolve([{
@@ -38,7 +38,7 @@ describe('Component - DruxtBlockSystemMenuBlock', () => {
 
     await localVue.nextTick()
 
-    // @todo - investigate and fix tests.
+    // TODO: investigate and fix DruxtBlockSystemMenuBlock tests.
     // expect(wrapper.vm.name).toBe('main')
   })
 })

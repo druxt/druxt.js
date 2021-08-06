@@ -228,7 +228,7 @@ describe('DruxtStore', () => {
       query: new DrupalJsonApiParams()
         .addInclude(['field_media_image', 'field_media_image.field_media_image'])
         .addFields('node--recipe', [])
-        // @todo This field should be automatically included.
+        // TODO: Automatically include media fields.
         .addFields('media--image', ['field_media_image'])
         .addFields('file--file', ['uri'])
     }

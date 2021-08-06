@@ -33,7 +33,7 @@
  * }
  * </script>
  *
- * @todo Move DruxtEntityContextMixin to a common module.
+ * TODO: Move DruxtEntityContextMixin to a common module.
  */
 const DruxtEntityContextMixin = {
   /**

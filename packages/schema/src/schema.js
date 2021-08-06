@@ -30,8 +30,8 @@ class DruxtSchema {
    * @param {object} [options.axios] - Axios instance settings.
    * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
    *
-   * @todo Document DruxtSchema authentication options.
-   * @todo Document DruxtSchema filter options.
+   * TODO: Document DruxtSchema authentication options.
+   * TODO: Document DruxtSchema filter options.
    */
   constructor(baseUrl, options = {}) {
     // Check for URL.
@@ -65,7 +65,7 @@ class DruxtSchema {
    * @example @lang js
    * const { schemas } = await schema.get()
    *
-   * @todo Rename the `get()` method to `getAll()`.
+   * TODO: Rename the `get()` method to `getAll()`.
    */
   async get() {
     const index = await this.druxt.getIndex()

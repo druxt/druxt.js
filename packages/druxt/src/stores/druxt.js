@@ -110,7 +110,7 @@ const DruxtStore = ({ store }) => {
 
         const { id, type } = (resource || {}).data || {}
         if (!id || !type) {
-          // @TODO - Error?
+          // TODO: Return something if Error?
           return
         }
 

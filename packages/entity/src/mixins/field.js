@@ -35,7 +35,7 @@ const DruxtFieldMixin = {
      * Inner wrapper component and props.
      * @type {object}
      * @default { component: 'div', props: {} }
-     * @todo Move inner prop to new common Wrapper mixin.
+     * TODO: Move inner prop to new common Wrapper mixin.
      */
     inner: {
       type: Object,
@@ -76,7 +76,7 @@ const DruxtFieldMixin = {
      * Outer wrapper component and props.
      * @type {object}
      * @default { component: 'div', props: {} }
-     * @todo Move wrapper prop to new common Wrapper mixin.
+     * TODO: Move wrapper prop to new common Wrapper mixin.
      */
     wrapper: {
       type: Object,

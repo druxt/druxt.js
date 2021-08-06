@@ -179,8 +179,8 @@ class DruxtRouter {
    * const route = await router.getRoute(path)
    * const redirect = router.getRedirect(path, route)
    *
-   * @todo Move this to a DruxtRouterRedirect class.
-   * @todo Remove the path parameter.
+   * TODO: Move getRedirect() to a DruxtRouterRedirect class.
+   * TODO: Remove the path parameter.
    *
    * @param {string} path - The route path.
    * @param {object} route - Druxt route object.
@@ -242,7 +242,7 @@ class DruxtRouter {
    * @deprecated
    * @see {@link https://druxtjs.org/api/client}
    *
-   * @todo Add granular pagination.
+   * TODO: Add granular pagination.
    *
    * @example @lang js
    * // Load all currently published Articles.
@@ -295,7 +295,7 @@ class DruxtRouter {
    * @returns {object} The route object.
    */
   async getRoute (path) {
-    // @TODO - Add validation/error handling.
+    // TODO: Add validation/error handling to getRoute.
     const url = `/router/translate-path?path=${path}`
 
     const response = await this.druxt.axios.get(url, {
@@ -326,7 +326,7 @@ class DruxtRouter {
     }
 
     // Determine route type by configuration.
-    // @TODO - Move type to Decoupled router.
+    // TODO: Move type to Decoupled router.
     // @SEE  - https://www.drupal.org/project/decoupled_router/issues/3146024
     for (const key in this.options.types) {
       const type = {

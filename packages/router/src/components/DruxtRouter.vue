@@ -58,7 +58,7 @@ export default {
    * - Sets the page title.
    * - Sets the canonical link.
    *
-   * @todo Improve metatag support.
+   * TODO: Improve DruxtRouter metatag support.
    */
   head () {
     const head = {
@@ -81,7 +81,7 @@ export default {
 
   druxt: {
     componentOptions: ({ module, route }) => [
-      // @TODO - Add Path options.
+      // TODO: Add Path options.
       [module || 'error', route.isHomePath ? 'front' : 'not-front'],
       ['default']
     ],

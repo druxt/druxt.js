@@ -25,8 +25,8 @@ import { DruxtSchema } from './schema'
  *   }
  * }
  *
- * @todo Add module level options.
- * @todo Document options.
+ * TODO: Add module level options.
+ * TODO: Document options.
  *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
@@ -45,7 +45,7 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
   })
 
   // Add Vuex plugin.
-  // @TODO - Ensure Vuex store is available.
+  // TODO: Ensure Vuex store is available.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/store.js'),
     fileName: 'store/druxt-schema.js',

@@ -56,7 +56,7 @@
  * }
  * </script>
  *
- * @todo Move DruxtEntityComponentSuggestionMixin to a common module.
+ * TODO: Move DruxtEntityComponentSuggestionMixin to a common module.
  */
 const DruxtEntityComponentSuggestionMixin = {
   /**

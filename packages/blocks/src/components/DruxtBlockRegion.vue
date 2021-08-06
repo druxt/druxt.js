@@ -120,7 +120,7 @@ export default {
       }
 
       // Default to true.
-      // @todo Add support for other visibility plugins.
+      // TODO: Add support for other visibility plugins to isVisible(block).
       return true
     },
 

@@ -54,7 +54,7 @@ describe('DruxtMenu', () => {
       'DruxtMenuDefault'
     ])
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
-    // @todo - investigate and fix tests.
+    // TODO: investigate and fix DruxtMenu tests.
     // expect(wrapper.vm.model).toBe(1)
     // expect(wrapper.vm.getScopedSlots().default()).toBe(1)
     // expect(wrapper.vm.getScopedSlots().default()[0].tag).toBe('DruxtMenuItem')
@@ -84,7 +84,7 @@ describe('DruxtMenu', () => {
     const wrapper = mountComponent({ propsData })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    // @todo - investigate and fix tests.
+    // TODO: investigate and fix DruxtMenu tests.
     // Expect 4 items from the store.
     // expect(Object.keys(wrapper.vm.entities).length).toBe(4)
 

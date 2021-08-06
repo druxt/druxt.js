@@ -22,7 +22,7 @@ import { mapActions } from 'vuex'
  * <!-- Render component with lazy loaded Default View mode Page schema. -->
  * <CustomComponent type="node--page" mode="default" />
  *
- * @todo Add schemaType property to Mixin.
+ * TODO: Add schemaType property to Mixin.
  */
 const DruxtSchemaMixin = {
   /**

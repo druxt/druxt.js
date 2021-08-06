@@ -29,7 +29,7 @@ import { resolve } from 'path'
  *   }
  * }
  *
- * @todo [Add module level options]{@link https://github.com/druxt/druxt-router/issues/53}
+ * TODO: [Add module level options]{@link https://github.com/druxt/druxt-router/issues/53}
  *
  * @property {object} options.druxt - Druxt root level options.
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
@@ -45,9 +45,9 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
 
   this.extendRoutes((routes, resolve) => {
     // Only add router component if custom component is undefined.
-    // @TODO - Validate custom component.
-    // @TODO - Add test for custom component.
-    // @TODO - Document usage.
+    // TODO: Validate custom component.
+    // TODO: Add test for custom component.
+    // TODO: Document usage.
     if (!options.router.component) {
       options.router.component = resolve(this.options.buildDir, 'components/druxt-router.js')
       this.addTemplate({
@@ -74,7 +74,7 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
   })
 
   // Add Vuex plugin.
-  // @TODO - Ensure Vuex store is available.
+  // TODO: Ensure Vuex store is available.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/store.js'),
     fileName: 'store/druxt-router.js',

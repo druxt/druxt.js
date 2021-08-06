@@ -153,12 +153,12 @@ export default {
         const value = relationship ? ((model || {}).relationships || {})[field.id] : ((model || {}).attributes || {})[field.id]
 
         // Filter out empty fields if not using the Form schema type.
-        // @todo - Make this configurable?
+        // TODO: Make filtering of fields configurable?
         if (schemaType !== 'form' && isEmpty(value)) continue
 
         fields[field.id] = {
           id: field.id,
-          // @todo - Remove deprecated 'data'.
+          // TODO: Remove deprecated 'data'.
           data: value,
           errors: (errors || []).filter((o) => ((o.source || {}).pointer || '').startsWith(`/data/attributes/${field.id}`)),
           relationship,

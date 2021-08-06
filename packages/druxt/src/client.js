@@ -111,7 +111,7 @@ class DruxtClient {
   /**
    * Check response for permissions.
    *
-   * @todo - Move this to utils?
+   * TODO: Move this permissions response check to utils?
    *
    * @param {object} res - Axios GET request response object.
    *

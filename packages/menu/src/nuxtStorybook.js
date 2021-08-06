@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
 
-// @todo - Use component naming convention for title.
+// TODO: Use component naming convention for title.
 const titleFn = (parts) =>
 parts
   .map(

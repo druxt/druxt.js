@@ -16,7 +16,7 @@ const DruxtRouterStore = ({ store }) => {
    * @name druxtRouter
    * @module druxtRouter
    *
-   * @todo Change namespace to `druxt/router`.
+   * TODO: Change namespace to `druxt/router`.
    */
   const module = {
     namespaced: true,
@@ -57,7 +57,7 @@ const DruxtRouterStore = ({ store }) => {
       addEntity (state, entity) {
         console.warn('[druxt-router] `druxtRouter/addEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.')
         if (!entity || typeof entity.id === 'undefined') {
-          // @TODO - Error?
+          // TODO: Return something if Error?
           return
         }
         state.entities[entity.id] = entity
@@ -87,7 +87,7 @@ const DruxtRouterStore = ({ store }) => {
        */
       addRoute (state, { path, route }) {
         if (typeof path !== 'string' || typeof route === 'undefined') {
-          // @TODO - Error?
+          // TODO: Return something if Error?
           return
         }
 
@@ -104,7 +104,7 @@ const DruxtRouterStore = ({ store }) => {
        */
       setRoute (state, path) {
         if (typeof path !== 'string' || typeof state.routes[path] === 'undefined') {
-          // @TODO - Error?
+          // TODO: Return something if Error?
           return
         }
 
@@ -168,7 +168,7 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * const entity = await this.$store.dispatch('druxtRouter/getEntity', { type: 'node--article', id })
        *
-       * @todo Rename getEntity to getResource.
+       * TODO: Rename getEntity to getResource.
        */
       async getEntity ({ commit, state }, query) {
         console.warn('[druxt-router] `druxtRouter/getEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.')

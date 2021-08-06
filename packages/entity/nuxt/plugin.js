@@ -23,7 +23,7 @@ Vue.use({
 export default (context, inject) => {
   const options = {
     query: {
-      // @todo Set default to true in 1.0.0.
+      // TODO: Set default to true in 1.0.0.
       schema: <%= (((options.entity || {}).query || {}).schema || false) %>,
       fields: [<%= (((options.entity || {}).query || {}).fields || []).map((s) => `"${s}"`).join(', ') %>],
     }

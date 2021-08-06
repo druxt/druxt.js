@@ -55,7 +55,7 @@ const DruxtComponentMixin = {
   async fetch() {
     console.warn('DruxtComponentMixin is deprecated in favour of DruxtModule.')
 
-    // @todo - check for this.$druxt plugin.
+    // TODO: check for this.$druxt plugin.
     const druxt = new DruxtClass()
     const moduleData = await druxt.getModuleData(this)
 
