@@ -1,9 +1,8 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtClient, DruxtStore } from 'druxt'
-
-import { DruxtSiteMixin } from '../../src'
+import { DruxtClient, DruxtStore } from '../../../druxt/src'
+import { DruxtSiteMixin } from '../../src/mixins/site'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
