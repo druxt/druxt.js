@@ -66,9 +66,10 @@ jobs:
 
       - run:
           name: Run tests
-          command: yarn test --reporters=jest-junit
+          command: yarn test --reporters=jest-junit --runInBand
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+            NODE_OPTIONS: --max_old_space_size=8192
 
       - run:
           name: Upload coverage report
