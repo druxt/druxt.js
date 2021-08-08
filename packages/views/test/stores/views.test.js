@@ -61,10 +61,8 @@ describe('DruxtViewsStore', () => {
     expect(results).toHaveProperty('links')
 
     // Ensure additional requests to the same route don't trigger an additional request.
-    // @todo - investigate and fix test.
-    // expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
     await store.dispatch('druxt/views/getResults', query)
-    // @todo - investigate and fix test.
-    // expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
   })
 })

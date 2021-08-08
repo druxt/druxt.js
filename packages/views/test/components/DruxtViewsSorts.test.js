@@ -2,7 +2,7 @@ import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtClient, DruxtStore } from 'druxt'
+import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import { DruxtViewsStore } from '../../src'
 import DruxtViewsSorts from '../../src/components/DruxtViewsSorts.vue'
 

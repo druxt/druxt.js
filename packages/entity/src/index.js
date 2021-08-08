@@ -11,3 +11,14 @@ import { DruxtEntityNuxtModule } from './nuxtModule'
  * @see {@link ./nuxtModule|DruxtEntityNuxtModule}
  */
 export default DruxtEntityNuxtModule
+
+/**
+ * Vue.js mixins.
+ *
+ * @type {object}
+ * @exports DruxtEntityMixins
+ * @see {@link ./mixins|DruxtEntityMixins}
+ * @see {@link ./mixins/entity|DruxtEntityMixin}
+ * @see {@link ./mixins/field|DruxtFieldMixin}
+ */
+ export * from './mixins'

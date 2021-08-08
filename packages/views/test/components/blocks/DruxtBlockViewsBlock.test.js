@@ -1,8 +1,10 @@
+import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import Vuex from 'vuex'
 
-import { DruxtClient, DruxtStore } from 'druxt'
-
+import { getMockResource } from '../../../../test-utils/src'
+import { DruxtClient, DruxtStore } from '../../../../druxt/src'
 import { DruxtBlockViewsBlock } from '../../../src/components/blocks'
 
 // Setup local vue instance.
@@ -13,15 +15,6 @@ localVue.use(Vuex)
 let store
 
 const stubs = ['druxt-view']
-
-const mockBlock = {
-  id: 'test-block',
-  attributes: {
-    settings: {
-      id: 'views_block:featured_articles-block_1'
-    }
-  }
-}
 
 const mountComponent = (entity, options = {}) => {
   const mocks = {
@@ -46,15 +39,20 @@ describe('Component - DruxtBlockViewsBlock', () => {
   })
 
   test('default', async () => {
-    const wrapper = mountComponent(mockBlock)
+    const blockQuery = new DrupalJsonApiParams().addFilter('drupal_internal__id', 'views_block__promoted_items_block_1')
+    const mockBlock = await getMockResource('block--block', blockQuery)
+    const viewQuery = new DrupalJsonApiParams().addFilter('drupal_internal__id', 'promoted_items')
+    const mockView = await getMockResource('view--view', viewQuery)
+
+    const wrapper = mountComponent(mockBlock.data)
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.vm.uuid).toBe('ab193308-95ab-489d-b662-f7305380c41e')
+    expect(wrapper.vm.uuid).toBe(mockView.data.id)
 
     expect(wrapper.vm.propsData).toStrictEqual({
       displayId: 'block_1',
-      uuid: 'ab193308-95ab-489d-b662-f7305380c41e',
-      viewId: 'featured_articles'
+      uuid: mockView.data.id,
+      viewId: 'promoted_items'
     })
   })
 })

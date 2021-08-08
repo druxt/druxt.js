@@ -21,3 +21,18 @@ export default DruxtViewsNuxtModule
  * @see {@link ./stores/views|DruxtViewsStore}
  */
 export { DruxtViewsStore } from './stores/views'
+
+/**
+ * Vue.js mixins.
+ *
+ * @type {object}
+ * @exports DruxtViewsMixins
+ * @see {@link ./mixins|DruxtViewsMixins}
+ * @see {@link ./mixins/filter|DruxtViewsFilterMixin}
+ * @see {@link ./mixins/filters|DruxtViewsFiltersMixin}
+ * @see {@link ./mixins/pager|DruxtViewsPagerMixin}
+ * @see {@link ./mixins/sorts|DruxtViewsSortsMixin}
+ * @see {@link ./mixins/view|DruxtViewsViewMixin}
+ */
+ export * from './mixins'
+ 
