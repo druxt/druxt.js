@@ -2,7 +2,7 @@ import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
-import { getMockResource } from 'druxt-test-utils'
+import { getMockResource } from '../../../test-utils/src'
 
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import { DruxtSchemaStore } from '../../../schema/src'
@@ -65,7 +65,7 @@ describe('DruxtEntity', () => {
     // Fetch key.
     expect(DruxtEntity.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe(`DruxtEntity:node--page:${mockPage.data.id}:default:0`)
     
-    // expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
 
     // Props.
     expect(wrapper.vm.mode).toBe('default')
@@ -188,6 +188,7 @@ describe('DruxtEntity', () => {
 
   test('missing schema', async () => {
     mocks.$nuxt.context.isDev = true
+    // TODO : Update test to use { getMockResource } from 'druxt-test-utils'?
     const wrapper = mountComponent({ uuid: '7adbf02c-6e41-40ae-9124-8b4781f9c160', type: 'file--file' })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 

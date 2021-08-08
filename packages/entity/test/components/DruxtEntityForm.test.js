@@ -2,7 +2,7 @@ import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
-import { getMockResource } from 'druxt-test-utils'
+import { getMockResource } from '../../../test-utils/src'
 
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import { DruxtSchemaStore } from '../../../schema/src'
@@ -78,6 +78,7 @@ describe('DruxtEntityForm', () => {
 
     // Submit.
     await wrapper.find('button#submit').trigger('click')
+    // TODO : Fix DruxtEntityForm tests.
     // expect(wrapper.emitted().error).toBeFalsy()
     // expect(wrapper.emitted().submit).toBeTruthy()
     // expect(wrapper.vm.response.data.data.id).toBe('8e8d340a-04af-461a-ac63-12415d33e936')
@@ -110,6 +111,7 @@ describe('DruxtEntityForm', () => {
     expect(wrapper.emitted().error).toBeTruthy()
     expect(wrapper.emitted().submit).toBeFalsy()
     expect(wrapper.vm.entity.id).toBe(undefined)
+    // TODO : Fix DruxtEntityForm tests.
     // expect(wrapper.vm.errors.length).toBe(1)
     // expect(wrapper.vm.$refs.title.errors.length).toBe(1)
 
@@ -138,6 +140,7 @@ describe('DruxtEntityForm', () => {
     // Submit.
     await wrapper.find('button#submit').trigger('click')
     expect(wrapper.emitted().error).toBeFalsy()
+    // TODO : Fix DruxtEntityForm tests.
     // expect(wrapper.emitted().submit).toBeTruthy()
     // expect(wrapper.vm.response.data.data.id).toBe(uuid)
     expect(wrapper.vm.errors).toBe(undefined)

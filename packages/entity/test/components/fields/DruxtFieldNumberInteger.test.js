@@ -6,7 +6,6 @@ import DruxtFieldNumberInteger from '../../../src/components/fields/DruxtFieldNu
 
 jest.mock('axios')
 
-
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
