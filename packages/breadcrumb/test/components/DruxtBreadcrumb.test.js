@@ -1,8 +1,8 @@
 import 'regenerator-runtime/runtime'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
-import { DruxtRouterStore } from 'druxt-router'
 import Vuex from 'vuex'
 
+import { DruxtRouterStore } from '../../../router/src'
 import DruxtBreadcrumb from '../../src/components/DruxtBreadcrumb.vue'
 
 // Setup local vue instance.
