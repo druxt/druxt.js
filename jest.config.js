@@ -3,6 +3,7 @@ module.exports = {
   coverageDirectory: './coverage/',
   coveragePathIgnorePatterns: ['/dist/'],
   moduleFileExtensions: ['js', 'json', 'vue'],
+  modulePathIgnorePatterns: ['/examples/'],
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['/examples/'],
   transform: {
