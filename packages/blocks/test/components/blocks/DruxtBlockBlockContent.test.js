@@ -1,10 +1,12 @@
 import 'regenerator-runtime/runtime'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import mockAxios from 'jest-mock-axios'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtClient, DruxtStore } from 'druxt'
+import { DruxtClient, DruxtStore } from '../../../../druxt/src'
 import DruxtBlockBlockContent from '../../../src/components/blocks/DruxtBlockBlockContent.vue'
+import { getMockResource } from '../../../../test-utils/src'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -39,16 +41,17 @@ describe('Component - DruxtBlockBlockContent', () => {
   })
 
   test('default', async () => {
-    const block = await require('../../../../../test/__fixtures__/get/5e3aea201efde04be147f0f9297059de.json')
-    store.commit('druxt/addResource', { resource: block })
+    const query = new DrupalJsonApiParams().addFilter('settings.provider', 'block_content')
+    const mockBlock = await getMockResource('block--block', query)
+    store.commit('druxt/addResource', { resource: mockBlock })
 
-    const wrapper = mountComponent(block.data)
+    const wrapper = mountComponent(mockBlock.data)
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.propsData).toStrictEqual({
-      key: 'block_content:banner_block:9aadf4a1-ded6-4017-a10d-a5e043396edf',
-      type: 'block_content--banner_block',
-      uuid: '9aadf4a1-ded6-4017-a10d-a5e043396edf'
+      key: expect.any(String),
+      type: expect.any(String),
+      uuid: expect.any(String),
     })
   })
 })

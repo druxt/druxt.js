@@ -3,8 +3,9 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
-import { DruxtClient, DruxtStore } from 'druxt'
+import { DruxtRouterStore } from '../../../router/src'
+import DruxtRouter from '../../../router/src/components/DruxtRouter.vue'
+import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import DruxtBlockRegion from '../../src/components/DruxtBlockRegion.vue'
 
 jest.mock('axios')

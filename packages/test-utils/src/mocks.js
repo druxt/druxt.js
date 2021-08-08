@@ -11,7 +11,7 @@ export const getMockCollection = async (resourceType, query) => {
 }
 
 export const getMockResource = async (resourceType, query) => {
-  const collection = await getMockCollection(resourceType, new DrupalJsonApiParams().addFields(resourceType, []).addPageLimit(1))
+  const collection = await getMockCollection(resourceType, new DrupalJsonApiParams().initialize(query).addFields(resourceType, []).addPageLimit(1))
   const resource = await druxt.getResource(resourceType, collection.data[0].id, query)
   mockAxios.reset()
   return resource

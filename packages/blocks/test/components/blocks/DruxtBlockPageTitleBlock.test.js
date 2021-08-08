@@ -1,7 +1,8 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
+import { DruxtRouterStore } from '../../../../router/src'
+import DruxtRouter from '../../../../router/src/components/DruxtRouter.vue'
 import DruxtBlockPageTitleBlock from '../../../src/components/blocks/DruxtBlockPageTitleBlock.vue'
 
 jest.mock('axios')

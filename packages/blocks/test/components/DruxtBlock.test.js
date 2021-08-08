@@ -3,8 +3,9 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
-import { DruxtClient, DruxtStore } from 'druxt'
+import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import DruxtBlock from '../../src/components/DruxtBlock.vue'
+import { getMockResource } from '../../../test-utils/src'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -46,24 +47,18 @@ describe('Component - DruxtBlock', () => {
   })
 
   test('uuid', async () => {
-    const wrapper = mountComponent({ uuid: '9d3d3a23-69f5-4c2d-9a00-287492a52987' })
+    const mockPage = await getMockResource('block--block')
+    const wrapper = mountComponent({ uuid: mockPage.data.id })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtBlock.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtBlock:9d3d3a23-69f5-4c2d-9a00-287492a52987:0')
+    expect(DruxtBlock.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe(`DruxtBlock:${mockPage.data.id}:0`)
 
     // Props
     expect(wrapper.vm.id).toBe(null)
-    expect(wrapper.vm.uuid).toBe('9d3d3a23-69f5-4c2d-9a00-287492a52987')
+    expect(wrapper.vm.uuid).toBe(mockPage.data.id)
 
     // DruxtModule
-    expect(wrapper.vm.component.options).toStrictEqual([
-      'DruxtBlockSystemBrandingBlockHeaderUmami',
-      'DruxtBlockSystemBrandingBlockHeader',
-      'DruxtBlockSystemBrandingBlockUmami',
-      'DruxtBlockSystemBrandingBlock',
-      'DruxtBlockDefault',
-    ])
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
 
     // Default slot.
@@ -71,6 +66,7 @@ describe('Component - DruxtBlock', () => {
   })
 
   test('uuid - pluginId', async () => {
+    // TODO : Update test to use getMockResource instead of a hardcoded UUID.
     const wrapper = mountComponent({ uuid: '06251689-406e-4dc4-aab1-5fcf0e5f9ecb' })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
