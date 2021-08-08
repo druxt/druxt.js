@@ -6,7 +6,7 @@ orbs:
 defaults: &defaults
   working_directory: ~/repo
   docker:
-  - image: circleci/node:12.18.3
+  - image: circleci/node:15.14
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
 
       - run:
           name: Install Codecov
-          command: npm install codecov
+          command: yarn add codecov
 
       - restore_cache:
           keys:
@@ -24,10 +24,10 @@ jobs:
           # fallback to using the latest cache if no exact match is found.
           - v1-dependencies-
 
-      - run: npm install
+      - run: yarn install
       - run:
           name: Build component
-          command: npm run build
+          command: yarn && yarn build
 
       - save_cache:
           paths:
@@ -39,23 +39,24 @@ jobs:
           paths:
             - .
 
-  build_docs:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/repo
+  # TODO - Fix CI Docs build.
+  # build_docs:
+  #   <<: *defaults
+  #   steps:
+  #     - attach_workspace:
+  #         at: ~/repo
 
-      - run:
-          name: Build with DruxtJS Docgen
-          command: npm run docs:build
+  #     - run:
+  #         name: Build with DruxtJS Docgen
+  #         command: npm run docs:build
 
-      - store_artifacts:
-          path: ~/repo/docs/.vuepress/dist
+  #     - store_artifacts:
+  #         path: ~/repo/docs/.vuepress/dist
 
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - .
+  #     - persist_to_workspace:
+  #         root: ~/repo
+  #         paths:
+  #           - .
 
   test:
     <<: *defaults
@@ -65,13 +66,13 @@ jobs:
 
       - run:
           name: Run tests
-          command: npm test -- --reporters=jest-junit
+          command: yarn test --reporters=jest-junit
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
 
       - run:
           name: Upload coverage report
-          command: npx codecov
+          command: yarn dlx codecov
 
       - store_test_results:
           path: ./reports/junit/
@@ -79,19 +80,20 @@ jobs:
       - store_artifacts:
           path: ./reports/junit
 
-  deploy:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/repo
+  # TODO - Fix CI deploy
+  # deploy:
+  #   <<: *defaults
+  #   steps:
+  #     - attach_workspace:
+  #         at: ~/repo
 
-      - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+  #     - run:
+  #         name: Authenticate with registry
+  #         command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
 
-      - run:
-          name: Publish package
-          command: npm publish
+  #     - run:
+  #         name: Publish package
+  #         command: npm publish
 
 workflows:
   version: 2
@@ -99,24 +101,24 @@ workflows:
   test_deploy:
     jobs:
       - build
-      - build_docs:
-          requires:
-            - build
+      # - build_docs:
+      #     requires:
+      #       - build
       - test:
           requires:
             - build
-      - deploy:
-          requires:
-            - build
-            - test
-          filters:
-            branches:
-              only: master
-      - gh-pages/deploy:
-          build-dir: ../repo/docs/.vuepress/dist
-          requires:
-            - build_docs
-          ssh-fingerprints: "c9:f9:e5:7d:4f:b2:5e:1e:f1:9a:5e:eb:47:91:10:b8"
-          filters:
-            branches:
-              only: master
+      # - deploy:
+      #     requires:
+      #       - build
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: master
+      # - gh-pages/deploy:
+      #     build-dir: ../repo/docs/.vuepress/dist
+      #     requires:
+      #       - build_docs
+      #     ssh-fingerprints: "c9:f9:e5:7d:4f:b2:5e:1e:f1:9a:5e:eb:47:91:10:b8"
+      #     filters:
+      #       branches:
+      #         only: master
