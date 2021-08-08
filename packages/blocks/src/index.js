@@ -21,3 +21,12 @@ import { DruxtBlocksNuxtModule } from './nuxtModule'
  * }
  */
 export default DruxtBlocksNuxtModule
+
+/**
+ * Vue.js Mixin.
+ *
+ * @type {object}
+ * @exports DruxtBlocksBlockMixin
+ * @see {@link ./mixins/block|DruxtBlocksBlockMixin}
+ */
+ export { DruxtBlocksBlockMixin } from './mixins/block'

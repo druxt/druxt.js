@@ -9,7 +9,7 @@
  * @example @lang vue
  * <script>
  * // Import mixin.
- * import { DruxtBlocksBlockMixin } from 'druxt-blocks/dist/mixins/block.mjs'
+ * import { DruxtBlocksBlockMixin } from 'druxt-blocks'
  *
  * export default {
  *   // Register mixin.

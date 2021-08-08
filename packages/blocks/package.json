@@ -20,8 +20,7 @@
       "require": "./dist/druxt-blocks.ssr.js",
       "import": "./dist/druxt-blocks.esm.js"
     },
-    "./components/*": "./dist/components/*",
-    "./mixins/*": "./dist/mixins/*"
+    "./components/*": "./dist/components/*"
   },
   "main": "dist/druxt-blocks.ssr.js",
   "module": "dist/druxt-blocks.esm.js",

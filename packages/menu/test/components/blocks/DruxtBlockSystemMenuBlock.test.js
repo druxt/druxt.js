@@ -1,8 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 
-// @todo - investigate and fix tests.
-// import DruxtBlockSystemMenuBlock from '../../../src/components/blocks/DruxtBlockSystemMenuBlock.vue'
-const DruxtBlockSystemMenuBlock = { render() {} }
+import DruxtBlockSystemMenuBlock from '../../../src/components/blocks/DruxtBlockSystemMenuBlock.vue'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -38,7 +36,6 @@ describe('Component - DruxtBlockSystemMenuBlock', () => {
 
     await localVue.nextTick()
 
-    // @todo - investigate and fix tests.
-    // expect(wrapper.vm.name).toBe('main')
+    expect(wrapper.vm.name).toBe('main')
   })
 })
