@@ -1,11 +1,10 @@
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { getMockResource } from 'druxt-test-utils'
 import mockAxios from 'jest-mock-axios'
 
 import { DruxtClient } from '../src/client'
 
 const baseUrl = 'https://demo-api.druxtjs.org'
-
-// const testArticle = { type: 'node--article', id: '98f36405-e1c4-4d8a-a9f9-4d4f6d414e96' }
 
 jest.mock('axios')
 
@@ -90,35 +89,36 @@ describe('DruxtClient', () => {
     expect(noResource).toBe(false)
   })
 
-  // test('getCollectionAll', async () => {
-  //   // Get all of the 'test--all' resources.
-  //   await druxt.getCollectionAll('test--all')
-  //   expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/test/all?next')
-  // })
+  test('getCollectionAll', async () => {
+    // Get all of the 'test--all' resources.
+    const query = new DrupalJsonApiParams().addFields('node--recipe', []).addPageLimit(5)
+    await druxt.getCollectionAll('node--recipe', query)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`)
+  })
 
   test('getIndex', async () => {
     const index = await druxt.getIndex()
-    // expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
 
     expect(Object.keys(index).length).toBe(64)
     expect(index[Object.keys(index)[0]]).toHaveProperty('href')
 
     const cachedIndex = await druxt.getIndex()
-    // expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
     expect(Object.keys(cachedIndex).length).toBe(64)
   })
 
   test('getIndex - resource', async () => {
     const resourceIndex = await druxt.getIndex('node--page')
-    // expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
 
     expect(resourceIndex).toHaveProperty('href')
 
     const cachedResourceIndex = await druxt.getIndex('node--page')
-    // expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
     expect(cachedResourceIndex).toHaveProperty('href')
   })
@@ -129,10 +129,10 @@ describe('DruxtClient', () => {
     expect(entity.data).toHaveProperty('type', mockArticle.data.type)
 
     const error = await druxt.getResource('missing', 'test')
-    // expect(mockAxios.get).toHaveBeenCalledWith(baseUrl + '/en/jsonapi/missing/test')
-    // expect(error).toBe(false)
+    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi/missing/test')
+    expect(error).toBe(false)
 
-    // const empty = await druxt.getResource()
-    // expect(empty).toBe(false)
+    const empty = await druxt.getResource()
+    expect(empty).toBe(false)
   })
 })

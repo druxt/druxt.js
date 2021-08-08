@@ -40,32 +40,32 @@ describe('DruxtComponentMixin', () => {
     })
   })
 
-//   test('fetch', async () => {
-//     // No componentOptions, expect default values.
-//     wrapper.vm.$options.druxt = () => ({})
-//     await DruxtComponentMixin.fetch.call(wrapper.vm)
-//     expect(wrapper.vm.component).toStrictEqual({
-//       is: 'DruxtWrapper',
-//       options: [],
-//       propsData: {}
-//     })
+  test('fetch', async () => {
+    // No componentOptions, expect default values.
+    wrapper.vm.$options.druxt = () => ({})
+    await DruxtComponentMixin.fetch.call(wrapper.vm)
+    expect(wrapper.vm.component).toStrictEqual({
+      is: 'DruxtWrapper',
+      options: [],
+      propsData: {}
+    })
 
-//     // No matching global component, expect default values.
-//     wrapper.vm.$options.druxt = DruxtTestModule.druxt
-//     await DruxtComponentMixin.fetch.call(wrapper.vm)
-//     expect(wrapper.vm.component).toStrictEqual({
-//       is: 'DruxtWrapper',
-//       options: ['Wrapper'],
-//       propsData: {}
-//     })
+    // No matching global component, expect default values.
+    wrapper.vm.$options.druxt = DruxtTestModule.druxt
+    await DruxtComponentMixin.fetch.call(wrapper.vm)
+    expect(wrapper.vm.component).toStrictEqual({
+      is: 'DruxtWrapper',
+      options: ['Wrapper'],
+      propsData: {}
+    })
 
-//     // Expect matching global component.
-//     wrapper.vm.$options.name = 'DruxtTestModule'
-//     await DruxtComponentMixin.fetch.call(wrapper.vm)
-//     expect(wrapper.vm.component).toStrictEqual({
-//       is: 'DruxtTestModuleWrapper',
-//       options: ['DruxtTestModuleWrapper'],
-//       propsData: {}
-//     })
-//   })
+    // Expect matching global component.
+    wrapper.vm.$options.name = 'DruxtTestModule'
+    await DruxtComponentMixin.fetch.call(wrapper.vm)
+    expect(wrapper.vm.component).toStrictEqual({
+      is: 'DruxtTestModuleWrapper',
+      options: ['DruxtTestModuleWrapper'],
+      propsData: {}
+    })
+  })
 })

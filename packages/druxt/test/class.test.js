@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 
-import { DruxtClass } from '..'
+import { DruxtClass } from '../src/class'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
