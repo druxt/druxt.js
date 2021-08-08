@@ -1,0 +1,24 @@
+{
+  "resolved": "https://demo-api.druxtjs.org/en/about-umami",
+  "isHomePath": false,
+  "entity": {
+    "canonical": "https://demo-api.druxtjs.org/en/about-umami",
+    "type": "node",
+    "bundle": "page",
+    "id": "18",
+    "uuid": "790d38f6-5e98-464e-acad-e28ec291a241"
+  },
+  "label": "About Umami",
+  "jsonapi": {
+    "individual": "https://demo-api.druxtjs.org/en/jsonapi/node/page/790d38f6-5e98-464e-acad-e28ec291a241",
+    "resourceName": "node--page",
+    "pathPrefix": "jsonapi",
+    "basePath": "/jsonapi",
+    "entryPoint": "https://demo-api.druxtjs.org/en/jsonapi"
+  },
+  "meta": {
+    "deprecated": {
+      "jsonapi.pathPrefix": "This property has been deprecated and will be removed in the next version of Decoupled Router. Use basePath instead."
+    }
+  }
+}

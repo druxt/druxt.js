@@ -5,6 +5,7 @@ module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.(js)$': 'esbuild-jest',
+    '^.+\\.(mjs)$': 'esbuild-jest',
     '^.+\\.(vue)$': 'vue-jest'
   }
 }

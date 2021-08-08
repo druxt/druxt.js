@@ -1,8 +1,11 @@
+import 'regenerator-runtime/runtime'
 import mockAxios from 'jest-mock-axios'
 import { mount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtRouter, DruxtRouterComponent, DruxtRouterStore } from '../../src'
+import { DruxtRouter, DruxtRouterStore } from '../../src'
+import DruxtRouterComponent from '../../src/components/DruxtRouter.vue'
+import { baseUrl } from '../../../test-utils/src'
 
 jest.mock('axios')
 
@@ -18,6 +21,11 @@ const mountComponent = (fullPath) => {
   const mocks = {
     $fetchState: {
       pending: true
+    },
+    $nuxt: {
+      context: {
+        isDev: false,
+      },
     },
     $redirect: jest.fn(),
     $route: { fullPath },
@@ -39,7 +47,7 @@ describe('DruxtRouterComponent', () => {
     store = new Vuex.Store()
 
     DruxtRouterStore({ store })
-    store.$druxtRouter = () => new DruxtRouter('https://demo-api.druxjs.org')
+    store.$druxtRouter = () => new DruxtRouter(baseUrl)
   })
 
   test('Homepage', async () => {
@@ -52,31 +60,25 @@ describe('DruxtRouterComponent', () => {
 
     wrapper.vm.head = DruxtRouterComponent.head
 
-    expect(wrapper.vm.title).toBe('Welcome to Contenta CMS!')
+    expect(wrapper.vm.title).toBe('Home')
 
     expect(wrapper.vm.head()).toStrictEqual({
-      title: 'Welcome to Contenta CMS!',
+      title: expect.any(String),
       link: [{
         hid: 'canonical',
-        href: 'http://contenta.druxt.localhost/welcome',
+        href: `${baseUrl}/en/node`,
         rel: 'canonical'
       }]
     })
 
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
-      'DruxtRouterEntityFront',
-      'DruxtRouterEntity',
+      'DruxtRouterViewFront',
+      'DruxtRouterView',
       'DruxtRouterDefault'
     ])
 
-    expect(wrapper.vm.title).toBe('Welcome to Contenta CMS!')
-    expect(wrapper.vm.props).toStrictEqual({
-      type: 'node--page',
-      uuid: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9'
-    })
-
-    expect(wrapper.vm.route).toHaveProperty('type', 'entity')
+    expect(wrapper.vm.route).toHaveProperty('type')
     expect(wrapper.vm.route).toHaveProperty('label')
     expect(wrapper.vm.route).toHaveProperty('canonical')
     expect(wrapper.vm.route).toHaveProperty('isHomePath', true)
@@ -99,7 +101,7 @@ describe('DruxtRouterComponent', () => {
 
   test('Redirect', async () => {
     // Mount component.
-    const wrapper = mountComponent('/node/6')
+    const wrapper = mountComponent('/en/node')
     const redirect = jest.fn()
     await DruxtRouterComponent.middleware({ store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
     await wrapper.vm.$options.fetch.call(wrapper.vm)

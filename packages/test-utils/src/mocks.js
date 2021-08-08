@@ -2,7 +2,9 @@ import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
 import mockAxios from 'jest-mock-axios'
 
-const druxt = new DruxtClient('https://demo-api.druxtjs.org')
+export const baseUrl = 'https://demo-api.druxtjs.org'
+
+const druxt = new DruxtClient(baseUrl)
 
 export const getMockCollection = async (resourceType, query) => {
   const collection = await druxt.getCollection(resourceType, query)
@@ -15,4 +17,10 @@ export const getMockResource = async (resourceType, query) => {
   const resource = await druxt.getResource(resourceType, collection.data[0].id, query)
   mockAxios.reset()
   return resource
+}
+
+export const getMockRoute = async (path) => {
+  const route = await druxt.axios.get(`/router/translate-path?path=${path}`)
+  mockAxios.reset()
+  return route
 }

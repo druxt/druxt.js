@@ -1,10 +1,9 @@
-import { expect } from '@jest/globals'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
-import { getMockResource } from 'druxt-test-utils'
 import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
-import DruxtRouterEntityMixin from '../../src/mixins/entity'
+import { DruxtRouterEntityMixin } from '../../src'
+import { baseUrl, getMockResource } from '../../../test-utils/src'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -23,7 +22,7 @@ describe('DruxtRouterEntityMixin', () => {
     store = new Vuex.Store()
 
     DruxtStore({ store })
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+    store.$druxt = new DruxtClient(baseUrl)
 
     store.app = { context: { error: jest.fn() }, store }
   })
@@ -39,10 +38,9 @@ describe('DruxtRouterEntityMixin', () => {
       localVue
     })
 
-    // @todo - investigate and fix tests.
-    // await wrapper.vm.$options.fetch.call(wrapper.vm)
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    // expect(wrapper.vm.entity).toHaveProperty('id', mockPage.data.id)
+    expect(wrapper.vm.entity).toHaveProperty('id', mockPage.data.id)
   })
 
   test('cache', async () => {
@@ -65,9 +63,8 @@ describe('DruxtRouterEntityMixin', () => {
       localVue
     })
 
-    // @todo - investigate and fix tests.
-    // await wrapper.vm.$options.fetch.call(wrapper.vm)
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    // expect(wrapper.vm.entity.cache).toBe(true)
+    expect(wrapper.vm.entity.cache).toBe(true)
   })
 })

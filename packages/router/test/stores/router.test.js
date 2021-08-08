@@ -1,20 +1,12 @@
 import { createLocalVue } from '@vue/test-utils'
-import { DruxtClient, DruxtStore } from 'druxt'
 import mockAxios from 'jest-mock-axios'
 import Vuex from 'vuex'
 
+import { DruxtClient, DruxtStore } from '../../../druxt/src'
+import { baseUrl, getMockResource, getMockRoute } from '../../../test-utils/src'
 import { DruxtRouter, DruxtRouterStore } from '../../src'
 
 jest.mock('axios')
-
-// Setup mock data.
-const mockArticle = require('../../__fixtures__/data/02122578a662e4a6ee0ea39cced4465d.json').data
-const mockPage = require('../../__fixtures__/data/297a5e0949afb381ae9f2a30190a9a53.json').data
-
-const mockRoutes = {
-  '/': require('../../__fixtures__/data/0a01adaa07e9dfcc3c0cabc37339505a.json'),
-  '/node/1': require('../../__fixtures__/data/90e675a6fec46ebeb2d60751ef30e650.json')
-}
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -31,8 +23,8 @@ describe('DruxtRouterStore', () => {
     DruxtStore({ store })
     DruxtRouterStore({ store })
 
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
-    store.$druxtRouter = () => new DruxtRouter('https://demo-api.druxtjs.org')
+    store.$druxt = new DruxtClient(baseUrl)
+    store.$druxtRouter = () => new DruxtRouter(baseUrl)
 
     store.app = { context: { error: jest.fn() }, store }
   })
@@ -41,7 +33,10 @@ describe('DruxtRouterStore', () => {
     expect(() => { DruxtRouterStore({}) }).toThrow('Vuex store not found.')
   })
 
-  test('addEntity', () => {
+  test('addEntity', async () => {
+    const mockPage = await getMockResource('node--page')
+    const mockRecipe = await getMockResource('node--recipe')
+
     // Ensure that the entities state is empty.
     expect(store.state.druxtRouter.entities).toStrictEqual({})
 
@@ -50,16 +45,18 @@ describe('DruxtRouterStore', () => {
     expect(store.state.druxtRouter.entities).toStrictEqual({})
 
     // Ensure that good data is committed to state.
-    store.commit('druxtRouter/addEntity', mockPage)
-    expect(store.state.druxtRouter.entities[mockPage.id]).toBe(mockPage)
+    store.commit('druxtRouter/addEntity', mockPage.data)
+    expect(store.state.druxtRouter.entities[mockPage.data.id]).toBe(mockPage.data)
     expect(Object.keys(store.state.druxtRouter.entities)).toHaveLength(1)
 
-    store.commit('druxtRouter/addEntity', mockArticle)
-    expect(store.state.druxtRouter.entities[mockArticle.id]).toBe(mockArticle)
+    store.commit('druxtRouter/addEntity', mockRecipe.data)
+    expect(store.state.druxtRouter.entities[mockRecipe.data.id]).toBe(mockRecipe.data)
     expect(Object.keys(store.state.druxtRouter.entities)).toHaveLength(2)
   })
 
-  test('addRoute', () => {
+  test('addRoute', async () => {
+    const mockRoute = await getMockRoute('/')
+
     // Ensure that the routes state is empty.
     expect(store.state.druxtRouter.routes).toStrictEqual({})
 
@@ -68,16 +65,21 @@ describe('DruxtRouterStore', () => {
     expect(store.state.druxtRouter.routes).toStrictEqual({})
 
     // Ensure that good data is committed to state.
-    store.commit('druxtRouter/addRoute', { path: '/', route: mockRoutes['/'] })
-    expect(store.state.druxtRouter.routes['/']).toBe(mockRoutes['/'])
+    store.commit('druxtRouter/addRoute', { path: '/', route: mockRoute })
+    expect(store.state.druxtRouter.routes['/']).toBe(mockRoute)
     expect(Object.keys(store.state.druxtRouter.routes)).toHaveLength(1)
 
-    store.commit('druxtRouter/addRoute', { path: '/', route: mockRoutes['/'] })
-    expect(store.state.druxtRouter.routes['/']).toBe(mockRoutes['/'])
+    store.commit('druxtRouter/addRoute', { path: '/', route: mockRoute })
+    expect(store.state.druxtRouter.routes['/']).toBe(mockRoute)
     expect(Object.keys(store.state.druxtRouter.routes)).toHaveLength(1)
   })
 
-  test('setRoute', () => {
+  test('setRoute', async () => {
+    const mockRoutes = await Promise.all([
+      await getMockRoute('/'),
+      await getMockRoute('/node/1'),
+    ])
+
     // Ensure that the routes and state are empty.
     expect(store.state.druxtRouter.routes).toStrictEqual({})
     expect(store.state.druxtRouter.route).toStrictEqual({})
@@ -91,13 +93,13 @@ describe('DruxtRouterStore', () => {
     expect(store.state.druxtRouter.route).toStrictEqual({})
 
     // Ensure that good data is committed to state.
-    store.commit('druxtRouter/addRoute', { path: '/', route: mockRoutes['/'] })
+    store.commit('druxtRouter/addRoute', { path: '/', route: mockRoutes[0] })
     store.commit('druxtRouter/setRoute', '/')
-    expect(store.state.druxtRouter.route).toStrictEqual(mockRoutes['/'])
+    expect(store.state.druxtRouter.route).toStrictEqual(mockRoutes[0])
 
-    store.commit('druxtRouter/addRoute', { path: '/node/1', route: mockRoutes['/node/1'] })
+    store.commit('druxtRouter/addRoute', { path: '/node/1', route: mockRoutes[1] })
     store.commit('druxtRouter/setRoute', '/node/1')
-    expect(store.state.druxtRouter.route).toStrictEqual(mockRoutes['/node/1'])
+    expect(store.state.druxtRouter.route).toStrictEqual(mockRoutes[1])
   })
 
   test('get', async () => {
@@ -118,11 +120,13 @@ describe('DruxtRouterStore', () => {
   })
 
   test('getEntity', async () => {
-    const entity = await store.dispatch('druxtRouter/getEntity', mockPage)
+    const mockPage = await getMockResource('node--page')
+
+    const entity = await store.dispatch('druxtRouter/getEntity', mockPage.data)
 
     expect(entity).toHaveProperty('attributes')
 
-    await store.dispatch('druxtRouter/getEntity', mockPage)
+    await store.dispatch('druxtRouter/getEntity', mockPage.data)
   })
 
   test('getResources', async () => {

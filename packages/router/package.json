@@ -22,8 +22,7 @@
       "require": "./dist/druxt-router.ssr.js",
       "import": "./dist/druxt-router.esm.js"
     },
-    "./components/*": "./dist/components/*",
-    "./mixins/*": "./dist/mixins/*"
+    "./components/*": "./dist/components/*"
   },
   "main": "dist/druxt-router.ssr.js",
   "module": "dist/druxt-router.esm.js",
