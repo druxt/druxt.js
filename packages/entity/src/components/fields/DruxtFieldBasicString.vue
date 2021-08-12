@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { DruxtFieldMixin } from '../../mixins/field'
+import { DruxtFieldMixin } from 'druxt-entity'
 
 /**
  * Basic String field.

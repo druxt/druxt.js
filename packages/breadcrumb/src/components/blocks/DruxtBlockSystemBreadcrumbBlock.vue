@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { DruxtBlocksBlockMixin } from 'druxt-blocks/dist/mixins/index.mjs'
+import { DruxtBlocksBlockMixin } from 'druxt-blocks'
 
 /**
  * System Breadcrumb block.

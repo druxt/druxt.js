@@ -9,7 +9,7 @@
 
 <script>
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-import { DruxtBlocksBlockMixin } from '../../mixins/block'
+import { DruxtBlocksBlockMixin } from 'druxt-blocks'
 
 /**
  * Block Content block.

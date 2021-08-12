@@ -25,7 +25,7 @@
 
 <script>
 import DruxtEntity from '../../components/DruxtEntity.vue'
-import { DruxtFieldMixin } from '../../mixins/field'
+import { DruxtFieldMixin } from 'druxt-entity'
 
 /**
  * Entity Reference Entity View field.

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { DruxtBlocksBlockMixin } from '../../mixins/block'
+import { DruxtBlocksBlockMixin } from 'druxt-blocks'
 
 /**
  * System Main block.

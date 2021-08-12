@@ -5,7 +5,7 @@
 <script>
 import { mapState } from 'vuex'
 
-import { DruxtBlocksBlockMixin } from '../../mixins/block'
+import { DruxtBlocksBlockMixin } from 'druxt-blocks'
 
 /**
  * Page Title block.
