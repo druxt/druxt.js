@@ -1,7 +1,7 @@
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtMenuStore } from '../..'
+import { DruxtMenuStore } from '../../src'
 
 jest.mock('axios')
 
@@ -31,6 +31,6 @@ describe('DruxtStore', () => {
 
     await store.dispatch('druxtMenu/get', { name: 'main', settings: { test: true }})
     expect(store.$druxtMenu.get).toHaveBeenCalledWith('main', { test: true })
-    // store.dispatch('druxtMenu/get', 'name')
+    store.dispatch('druxtMenu/get', 'name')
   })
 })

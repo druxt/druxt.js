@@ -30,7 +30,7 @@ describe('DruxtMenu class', () => {
   test('get - getMenuLinkContent', async () => {
     const { entities } = await menu.get('main')
 
-    // @todo - investigate and fix tests.
+    // TODO - Add mock test data, Umami Profile has none.
     // expect(entities.length).toBe(4)
   })
 
@@ -39,7 +39,7 @@ describe('DruxtMenu class', () => {
 
     expect((await jsonApiMenu.get('main')).entities.length).toBe(3)
 
-    // @todo - investigate and fix tests.
+    // TODO - Add mock test data, Umami Profile doesn't have deep enough menu items.
     // const settings = {
     //   max_depth: 3,
     //   min_depth: 2,
