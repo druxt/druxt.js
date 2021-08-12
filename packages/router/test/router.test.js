@@ -23,16 +23,16 @@ describe('DruxtRouter', () => {
   })
 
   // @deprecated
-  // TODO : Investigate and fix test.
-  // test('constructor - axiosSettings', () => {
-  //   const headers = { 'X-DruxtRouter': true }
-  //   const mockRouter = new DruxtRouter(baseUrl, {
-  //     axios: { headers }
-  //   })
-  //   expect(mockRouter).toBeInstanceOf(DruxtRouter)
+  test('constructor - axiosSettings', () => {
+    const headers = { 'X-DruxtRouter': true }
+    const mockRouter = new DruxtRouter(baseUrl, {
+      axios: { headers }
+    })
+    expect(mockRouter).toBeInstanceOf(DruxtRouter)
 
-  //   expect(mockAxios.create).toHaveBeenCalledWith({ baseUrl, headers })
-  // })
+    // TODO : Headers are being sent to axios, but test not working.
+    // expect(mockAxios.create).toHaveBeenCalledWith({ baseUrl, headers })
+  })
 
   // @deprecated
   test('addHeaders', () => {
