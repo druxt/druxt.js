@@ -11,3 +11,12 @@ import { DruxtBreadcrumbModule } from './module'
  * @see {@link ./module|DruxtBreadcrumbModule}
  */
 export default DruxtBreadcrumbModule
+
+/**
+ * Vue.js Mixin.
+ *
+ * @type {object}
+ * @exports DruxtBreadcrumbMixin
+ * @see {@link ./mixins/breadcrumb|DruxtBreadcrumbMixin}
+ */
+ export { DruxtBreadcrumbMixin } from './mixins/breadcrumb'

@@ -16,8 +16,7 @@
       "require": "./dist/druxt-menu.ssr.js",
       "import": "./dist/druxt-menu.esm.js"
     },
-    "./components/*": "./dist/components/*",
-    "./mixins/*": "./dist/mixins/*"
+    "./components/*": "./dist/components/*"
   },
   "main": "dist/druxt-menu.ssr.js",
   "module": "dist/druxt-menu.esm.js",

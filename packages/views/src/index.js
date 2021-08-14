@@ -34,5 +34,4 @@ export { DruxtViewsStore } from './stores/views'
  * @see {@link ./mixins/sorts|DruxtViewsSortsMixin}
  * @see {@link ./mixins/view|DruxtViewsViewMixin}
  */
- export * from './mixins'
- 
+export * from './mixins'

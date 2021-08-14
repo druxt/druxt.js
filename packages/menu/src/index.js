@@ -33,3 +33,12 @@ export { DruxtMenuStore } from './stores/menu.js'
  * @see {@link ./nuxtModule.html|DruxtMenuNuxtModule}
  */
 export default DruxtMenuNuxtModule
+
+/**
+ * Vue.js Mixin.
+ *
+ * @type {object}
+ * @exports DruxtMenuMixin
+ * @see {@link ./mixins/menu|DruxtMenuMixin}
+ */
+export { DruxtMenuMixin } from './mixins/menu'

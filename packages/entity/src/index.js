@@ -21,4 +21,4 @@ export default DruxtEntityNuxtModule
  * @see {@link ./mixins/entity|DruxtEntityMixin}
  * @see {@link ./mixins/field|DruxtFieldMixin}
  */
- export * from './mixins'
+export * from './mixins'

@@ -22,8 +22,7 @@
       "require": "./dist/druxt-schema.ssr.js",
       "import": "./dist/druxt-schema.esm.js"
     },
-    "./components/*": "./dist/components/*",
-    "./mixins/*": "./dist/mixins/*"
+    "./components/*": "./dist/components/*"
   },
   "main": "dist/druxt-schema.ssr.js",
   "module": "dist/druxt-schema.esm.js",

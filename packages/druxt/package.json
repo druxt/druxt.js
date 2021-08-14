@@ -33,8 +33,7 @@
       "require": "./dist/druxt.ssr.js",
       "import": "./dist/druxt.esm.js"
     },
-    "./components/*": "./dist/components/*",
-    "./mixins/*": "./dist/mixins/*"
+    "./components/*": "./dist/components/*"
   },
   "main": "dist/druxt.ssr.js",
   "module": "dist/druxt.esm.js",
