@@ -1,0 +1,31 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "media--image",
+      "id": "2b58328e-e524-48f7-a7e9-2e5226a3d8c0",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/2b58328e-e524-48f7-a7e9-2e5226a3d8c0?resourceVersion=id%3A1"
+        }
+      }
+    }
+  ],
+  "links": {
+    "next": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image?page%5Boffset%5D=1&page%5Blimit%5D=1&fields%5Bmedia--image%5D="
+    },
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image?fields%5Bmedia--image%5D=&page%5Blimit%5D=1"
+    }
+  }
+}

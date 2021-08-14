@@ -1,0 +1,215 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "c79d1e09-8d83-484b-a2b5-8f06d0c12348",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/c79d1e09-8d83-484b-a2b5-8f06d0c12348"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": [
+            "file",
+            "media"
+          ]
+        },
+        "drupal_internal__id": "media.field_media_audio_file",
+        "field_name": "field_media_audio_file",
+        "entity_type": "media",
+        "field_storage_config_type": "file",
+        "settings": {
+          "target_type": "file",
+          "display_field": false,
+          "display_default": false,
+          "uri_scheme": "public"
+        },
+        "module": "file",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    },
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "e20335bb-7d07-4b94-870f-c62cba408837",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/e20335bb-7d07-4b94-870f-c62cba408837"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "enforced": {
+            "module": [
+              "media"
+            ]
+          },
+          "module": [
+            "file",
+            "media"
+          ]
+        },
+        "drupal_internal__id": "media.field_media_document",
+        "field_name": "field_media_document",
+        "entity_type": "media",
+        "field_storage_config_type": "file",
+        "settings": {
+          "uri_scheme": "public",
+          "target_type": "file",
+          "display_field": false,
+          "display_default": false
+        },
+        "module": "file",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    },
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "eeffc29d-ee2e-4c5f-b9da-9f8be5894513",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/eeffc29d-ee2e-4c5f-b9da-9f8be5894513"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "enforced": {
+            "module": [
+              "media"
+            ]
+          },
+          "module": [
+            "file",
+            "image",
+            "media"
+          ]
+        },
+        "drupal_internal__id": "media.field_media_image",
+        "field_name": "field_media_image",
+        "entity_type": "media",
+        "field_storage_config_type": "image",
+        "settings": {
+          "default_image": {
+            "uuid": null,
+            "alt": "",
+            "title": "",
+            "width": null,
+            "height": null
+          },
+          "target_type": "file",
+          "display_field": false,
+          "display_default": false,
+          "uri_scheme": "public"
+        },
+        "module": "image",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    },
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "72cc7a42-5079-48cf-a51c-e5f9f591df74",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/72cc7a42-5079-48cf-a51c-e5f9f591df74"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": [
+            "media"
+          ]
+        },
+        "drupal_internal__id": "media.field_media_oembed_video",
+        "field_name": "field_media_oembed_video",
+        "entity_type": "media",
+        "field_storage_config_type": "string",
+        "settings": {
+          "max_length": 255,
+          "is_ascii": false,
+          "case_sensitive": false
+        },
+        "module": "core",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    },
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "8f3d9700-2499-4e7e-8969-5b2132f107f9",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config/8f3d9700-2499-4e7e-8969-5b2132f107f9"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": [
+            "file",
+            "media"
+          ]
+        },
+        "drupal_internal__id": "media.field_media_video_file",
+        "field_name": "field_media_video_file",
+        "entity_type": "media",
+        "field_storage_config_type": "file",
+        "settings": {
+          "target_type": "file",
+          "display_field": false,
+          "display_default": false,
+          "uri_scheme": "public"
+        },
+        "module": "file",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": [],
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_storage_config/field_storage_config?filter%5Bentity_type%5D=media"
+    }
+  }
+}

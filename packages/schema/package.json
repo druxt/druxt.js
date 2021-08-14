@@ -1,0 +1,42 @@
+{
+  "name": "druxt-schema",
+  "version": "0.7.7",
+  "description": "Entity Form and View mode schemas for Drupal driven frontends.",
+  "keywords": [
+    "drupal",
+    "druxt",
+    "schema",
+    "entities",
+    "field",
+    "fields",
+    "nuxt"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/druxt-schema.ssr.js",
+      "import": "./dist/druxt-schema.esm.js"
+    },
+    "./components/*": "./dist/components/*"
+  },
+  "main": "dist/druxt-schema.ssr.js",
+  "module": "dist/druxt-schema.esm.js",
+  "files": [
+    "dist",
+    "nuxt"
+  ],
+  "dependencies": {
+    "consola": "^2.15.0",
+    "drupal-jsonapi-params": "^1.2.2",
+    "druxt": "workspace:*"
+  },
+  "optionalDependencies": {
+    "vue": "^2.6.14",
+    "vuex": "^3.6.2"
+  }
+}

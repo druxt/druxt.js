@@ -1,0 +1,23 @@
+{
+  "resolved": "https://demo-api.druxtjs.org/en/node",
+  "isHomePath": true,
+  "view": {
+    "uuid": "8aa4201b-be14-4d76-a3aa-9830cf50e8be",
+    "view_id": "frontpage",
+    "display_id": "page_1"
+  },
+  "label": "Home",
+  "jsonapi": {
+    "individual": "https://demo-api.druxtjs.org/en/jsonapi/view/view/8aa4201b-be14-4d76-a3aa-9830cf50e8be",
+    "resourceName": "view--view",
+    "pathPrefix": "jsonapi",
+    "basePath": "/jsonapi",
+    "entryPoint": "https://demo-api.druxtjs.org/en/jsonapi"
+  },
+  "meta": {
+    "deprecated": {
+      "jsonapi.pathPrefix": "This property has been deprecated and will be removed in the next version of Decoupled Router. Use basePath instead."
+    }
+  },
+  "jsonapi_views": "https://demo-api.druxtjs.org/en/jsonapi/views/frontpage/page_1"
+}

@@ -1,0 +1,65 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "70020cbd-f32e-4d8a-b9a3-bde1ec617f29",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display/70020cbd-f32e-4d8a-b9a3-bde1ec617f29"
+        }
+      },
+      "attributes": {
+        "targetEntityType": "user",
+        "bundle": "user",
+        "mode": "compact",
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.user.compact",
+            "field.field.user.user.user_picture",
+            "image.style.thumbnail"
+          ],
+          "module": [
+            "image",
+            "user"
+          ]
+        },
+        "drupal_internal__id": "user.user.compact",
+        "content": {
+          "user_picture": {
+            "type": "image",
+            "weight": 0,
+            "region": "content",
+            "settings": {
+              "image_style": "thumbnail",
+              "image_link": "content"
+            },
+            "third_party_settings": [],
+            "label": "hidden"
+          }
+        },
+        "hidden": {
+          "langcode": true,
+          "member_for": true,
+          "search_api_excerpt": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=user.user.compact"
+    }
+  }
+}

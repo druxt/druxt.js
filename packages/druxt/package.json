@@ -1,0 +1,57 @@
+{
+  "name": "druxt",
+  "version": "0.8.3",
+  "description": "A Bridge between frameworks, Nuxt.js in the front, Drupal in the back.",
+  "keywords": [
+    "cms",
+    "decoupled",
+    "drupal",
+    "druxt",
+    "headless",
+    "jsonapi",
+    "json:api",
+    "nuxt",
+    "module",
+    "vue"
+  ],
+  "homepage": "https://druxtjs.org",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/druxt.ssr.js",
+      "import": "./dist/druxt.esm.js"
+    },
+    "./components/*": "./dist/components/*"
+  },
+  "main": "dist/druxt.ssr.js",
+  "module": "dist/druxt.esm.js",
+  "files": [
+    "dist",
+    "nuxt"
+  ],
+  "dependencies": {
+    "axios": "^0.21.1",
+    "deepmerge": "^4.2.2",
+    "drupal-jsonapi-params": "^1.2.1",
+    "md5": "^2.3.0",
+    "querystring": "^0.2.0",
+    "scule": "^0.1.1"
+  },
+  "optionalDependencies": {
+    "core-js": "^3.16.1",
+    "vue": "^2.6.14",
+    "vuex": "^3.6.2"
+  }
+}

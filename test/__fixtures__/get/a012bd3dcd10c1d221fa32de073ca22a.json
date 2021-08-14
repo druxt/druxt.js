@@ -1,0 +1,106 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_form_display--entity_form_display",
+      "id": "6b6755d6-6a9a-4427-817a-ab27e2f3e207",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/6b6755d6-6a9a-4427-817a-ab27e2f3e207"
+        }
+      },
+      "attributes": {
+        "targetEntityType": "media",
+        "bundle": "remote_video",
+        "mode": "default",
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.field.media.remote_video.field_media_oembed_video",
+            "media.type.remote_video"
+          ],
+          "module": [
+            "media",
+            "path"
+          ]
+        },
+        "drupal_internal__id": "media.remote_video.default",
+        "content": {
+          "created": {
+            "type": "datetime_timestamp",
+            "weight": 10,
+            "region": "content",
+            "settings": [],
+            "third_party_settings": []
+          },
+          "field_media_oembed_video": {
+            "type": "oembed_textfield",
+            "weight": 0,
+            "settings": {
+              "size": 60,
+              "placeholder": ""
+            },
+            "third_party_settings": [],
+            "region": "content"
+          },
+          "langcode": {
+            "type": "language_select",
+            "weight": 2,
+            "region": "content",
+            "settings": {
+              "include_locked": true
+            },
+            "third_party_settings": []
+          },
+          "path": {
+            "type": "path",
+            "weight": 30,
+            "region": "content",
+            "settings": [],
+            "third_party_settings": []
+          },
+          "status": {
+            "type": "boolean_checkbox",
+            "settings": {
+              "display_label": true
+            },
+            "weight": 100,
+            "region": "content",
+            "third_party_settings": []
+          },
+          "uid": {
+            "type": "entity_reference_autocomplete",
+            "weight": 4,
+            "settings": {
+              "match_operator": "CONTAINS",
+              "match_limit": 10,
+              "size": 60,
+              "placeholder": ""
+            },
+            "region": "content",
+            "third_party_settings": []
+          }
+        },
+        "hidden": {
+          "moderation_state": true,
+          "name": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display?filter%5Bdrupal_internal__id%5D=media.remote_video.default"
+    }
+  }
+}

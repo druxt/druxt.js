@@ -1,0 +1,127 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": {
+    "type": "media--image",
+    "id": "d88c1df9-ba80-4293-9bd1-c7232b326a2d",
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d?resourceVersion=id%3A2"
+      }
+    },
+    "attributes": {
+      "drupal_internal__mid": 2,
+      "drupal_internal__vid": 2,
+      "langcode": "en",
+      "revision_created": "2021-05-01T06:24:09+00:00",
+      "revision_log_message": null,
+      "status": true,
+      "name": "Vegan chocolate and nut brownies",
+      "created": "2021-05-01T06:24:09+00:00",
+      "changed": "2021-05-01T06:24:09+00:00",
+      "default_langcode": true,
+      "revision_translation_affected": true,
+      "path": {
+        "alias": null,
+        "pid": null,
+        "langcode": "en"
+      },
+      "content_translation_source": "und",
+      "content_translation_outdated": false
+    },
+    "relationships": {
+      "field_media_image": {
+        "data": {
+          "type": "file--file",
+          "id": "7adbf02c-6e41-40ae-9124-8b4781f9c160",
+          "meta": {
+            "alt": "A stack of chocolate and pecan brownies, sprinkled with pecan crumbs and crushed walnut, fresh out of the oven",
+            "title": null,
+            "width": 770,
+            "height": 512
+          }
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d/field_media_image?resourceVersion=id%3A2"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d/relationships/field_media_image?resourceVersion=id%3A2"
+          }
+        }
+      },
+      "bundle": {
+        "data": {
+          "type": "media_type--media_type",
+          "id": "93c226a8-6e72-4caf-aae5-493066ef4f94"
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d/bundle?resourceVersion=id%3A2"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d/relationships/bundle?resourceVersion=id%3A2"
+          }
+        }
+      },
+      "revision_user": {
+        "data": null,
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d/revision_user?resourceVersion=id%3A2"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d/relationships/revision_user?resourceVersion=id%3A2"
+          }
+        }
+      },
+      "uid": {
+        "data": {
+          "type": "user--user",
+          "id": "f9e06c84-0999-4123-b1f1-b46b18590be4"
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d/uid?resourceVersion=id%3A2"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d/relationships/uid?resourceVersion=id%3A2"
+          }
+        }
+      },
+      "thumbnail": {
+        "data": {
+          "type": "file--file",
+          "id": "7adbf02c-6e41-40ae-9124-8b4781f9c160",
+          "meta": {
+            "alt": "A stack of chocolate and pecan brownies, sprinkled with pecan crumbs and crushed walnut, fresh out of the oven",
+            "title": null,
+            "width": 770,
+            "height": 512
+          }
+        },
+        "links": {
+          "related": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d/thumbnail?resourceVersion=id%3A2"
+          },
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d/relationships/thumbnail?resourceVersion=id%3A2"
+          }
+        }
+      }
+    }
+  },
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d88c1df9-ba80-4293-9bd1-c7232b326a2d"
+    }
+  }
+}

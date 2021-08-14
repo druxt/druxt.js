@@ -1,0 +1,432 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "02d19b0b-ccb4-4684-af81-bfdb4ae3ea43",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/02d19b0b-ccb4-4684-af81-bfdb4ae3ea43"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_cooking_time",
+            "node.type.recipe"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.field_cooking_time",
+        "field_name": "field_cooking_time",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Cooking time",
+        "description": "",
+        "required": false,
+        "translatable": false,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "min": 0,
+          "max": null,
+          "prefix": "",
+          "suffix": " minutes"
+        },
+        "field_type": "integer"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "5b44743d-aeaa-43d7-80cc-0b422454882c",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/5b44743d-aeaa-43d7-80cc-0b422454882c"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_difficulty",
+            "node.type.recipe"
+          ],
+          "module": [
+            "options"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.field_difficulty",
+        "field_name": "field_difficulty",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Difficulty",
+        "description": "",
+        "required": true,
+        "translatable": false,
+        "default_value": [
+          {
+            "value": "medium"
+          }
+        ],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "list_string"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "7eca65cf-3a7d-454e-8267-ff13549bb083",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/7eca65cf-3a7d-454e-8267-ff13549bb083"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_ingredients",
+            "node.type.recipe"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.field_ingredients",
+        "field_name": "field_ingredients",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Ingredients",
+        "description": "List the ingredients required for this recipe, one per item.",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "string"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "76f738b3-f3c3-409b-a444-1ee905e85465",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/76f738b3-f3c3-409b-a444-1ee905e85465"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_media_image",
+            "media.type.image",
+            "node.type.recipe"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.field_media_image",
+        "field_name": "field_media_image",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Media Image",
+        "description": "",
+        "required": true,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:media",
+          "handler_settings": {
+            "target_bundles": {
+              "image": "image"
+            },
+            "sort": {
+              "field": "_none"
+            },
+            "auto_create": true,
+            "auto_create_bundle": ""
+          }
+        },
+        "field_type": "entity_reference"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "1bc1183d-9703-42dc-ba97-087c4ee05d92",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/1bc1183d-9703-42dc-ba97-087c4ee05d92"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_number_of_servings",
+            "node.type.recipe"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.field_number_of_servings",
+        "field_name": "field_number_of_servings",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Number of servings",
+        "description": "",
+        "required": true,
+        "translatable": false,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "min": 0,
+          "max": null,
+          "prefix": "",
+          "suffix": ""
+        },
+        "field_type": "integer"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "74f47457-9f4f-4b6e-87ce-c73702897eee",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/74f47457-9f4f-4b6e-87ce-c73702897eee"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_preparation_time",
+            "node.type.recipe"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.field_preparation_time",
+        "field_name": "field_preparation_time",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Preparation time",
+        "description": "",
+        "required": true,
+        "translatable": false,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "min": 0,
+          "max": null,
+          "prefix": "",
+          "suffix": " minutes"
+        },
+        "field_type": "integer"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "cfabdfa1-eaaa-42ec-923a-5824a67f10bc",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/cfabdfa1-eaaa-42ec-923a-5824a67f10bc"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_recipe_category",
+            "node.type.recipe",
+            "taxonomy.vocabulary.recipe_category"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.field_recipe_category",
+        "field_name": "field_recipe_category",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Recipe category",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:taxonomy_term",
+          "handler_settings": {
+            "target_bundles": {
+              "recipe_category": "recipe_category"
+            },
+            "sort": {
+              "field": "name",
+              "direction": "asc"
+            },
+            "auto_create": false,
+            "auto_create_bundle": ""
+          }
+        },
+        "field_type": "entity_reference"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "ca6d8eef-74a4-4079-89ef-2799e76d3dc2",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/ca6d8eef-74a4-4079-89ef-2799e76d3dc2"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_recipe_instruction",
+            "node.type.recipe"
+          ],
+          "module": [
+            "text"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.field_recipe_instruction",
+        "field_name": "field_recipe_instruction",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Recipe instruction",
+        "description": "",
+        "required": true,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "text_long"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "3f88f7c5-5db9-4c2b-a7a2-e10f7203c069",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/3f88f7c5-5db9-4c2b-a7a2-e10f7203c069"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_summary",
+            "node.type.recipe"
+          ],
+          "module": [
+            "text"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.field_summary",
+        "field_name": "field_summary",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Summary",
+        "description": "Provide a short overview of this recipe.",
+        "required": true,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "text_long"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "5b99522d-dd96-4fea-8d00-7c2ef350078a",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/5b99522d-dd96-4fea-8d00-7c2ef350078a"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_tags",
+            "node.type.recipe",
+            "taxonomy.vocabulary.tags"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.field_tags",
+        "field_name": "field_tags",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Tags",
+        "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:taxonomy_term",
+          "handler_settings": {
+            "target_bundles": {
+              "tags": "tags"
+            },
+            "sort": {
+              "field": "name",
+              "direction": "asc"
+            },
+            "auto_create": true,
+            "auto_create_bundle": ""
+          }
+        },
+        "field_type": "entity_reference"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "68865073-5931-41eb-b524-7f168aea9981",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/68865073-5931-41eb-b524-7f168aea9981"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.layout_builder__layout",
+            "node.type.recipe"
+          ],
+          "module": [
+            "layout_builder"
+          ]
+        },
+        "drupal_internal__id": "node.recipe.layout_builder__layout",
+        "field_name": "layout_builder__layout",
+        "entity_type": "node",
+        "bundle": "recipe",
+        "label": "Layout",
+        "description": "",
+        "required": false,
+        "translatable": false,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "layout_section"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=node&filter%5Bbundle%5D=recipe"
+    }
+  }
+}

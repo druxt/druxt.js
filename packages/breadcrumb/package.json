@@ -1,0 +1,40 @@
+{
+  "name": "druxt-breadcrumb",
+  "version": "0.9.0",
+  "description": "Provides a Breadcrumb Vue component to be used within a Druxt (DRUpal nuXT) project.",
+  "keywords": [
+    "breadcrumb",
+    "breadcrumbs",
+    "drupal",
+    "druxt",
+    "nuxt"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/druxt-breadcrumb.ssr.js",
+      "import": "./dist/druxt-breadcrumb.esm.js"
+    },
+    "./components/*": "./dist/components/*"
+  },
+  "main": "dist/druxt-breadcrumb.ssr.js",
+  "module": "dist/druxt-breadcrumb.esm.js",
+  "files": [
+    "dist",
+    "nuxt"
+  ],
+  "dependencies": {
+    "druxt": "workspace:*",
+    "druxt-blocks": "workspace:*",
+    "druxt-router": "workspace:*"
+  },
+  "optionalDependencies": {
+    "vue": "^2.6.14",
+    "vuex": "^3.6.2"
+  }
+}

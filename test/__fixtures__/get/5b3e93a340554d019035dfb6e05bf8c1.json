@@ -1,0 +1,50 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "6fcca985-374d-4f3f-a58e-330f13f9da1d",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/6fcca985-374d-4f3f-a58e-330f13f9da1d"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.media.field_media_oembed_video",
+            "media.type.remote_video"
+          ]
+        },
+        "drupal_internal__id": "media.remote_video.field_media_oembed_video",
+        "field_name": "field_media_oembed_video",
+        "entity_type": "media",
+        "bundle": "remote_video",
+        "label": "Video URL",
+        "description": "",
+        "required": true,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "string"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=remote_video"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "druxt-example-nuxt-custom-module",
+  "dependencies": {
+    "druxt": "link:../../../packages/druxt",
+    "nuxt-edge": "latest"
+  },
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start"
+  }
+}

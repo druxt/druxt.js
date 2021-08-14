@@ -1,0 +1,82 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "block--block",
+      "id": "5d4d62e0-6eba-4a1b-bfb5-618e50c87856",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/5d4d62e0-6eba-4a1b-bfb5-618e50c87856"
+        }
+      },
+      "attributes": {
+        "drupal_internal__id": "umami_banner_recipes",
+        "weight": -8,
+        "visibility": {
+          "request_path": {
+            "id": "request_path",
+            "pages": "/recipes\r\n",
+            "negate": false,
+            "context_mapping": []
+          }
+        }
+      }
+    },
+    {
+      "type": "block--block",
+      "id": "06251689-406e-4dc4-aab1-5fcf0e5f9ecb",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/06251689-406e-4dc4-aab1-5fcf0e5f9ecb"
+        }
+      },
+      "attributes": {
+        "drupal_internal__id": "umami_banner_home",
+        "weight": -7,
+        "visibility": {
+          "request_path": {
+            "id": "request_path",
+            "pages": "<front>",
+            "negate": false,
+            "context_mapping": []
+          }
+        }
+      }
+    },
+    {
+      "type": "block--block",
+      "id": "54e8025c-abaf-4183-8c37-f083d1b15d4f",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/54e8025c-abaf-4183-8c37-f083d1b15d4f"
+        }
+      },
+      "attributes": {
+        "drupal_internal__id": "views_block__promoted_items_block_1",
+        "weight": -6,
+        "visibility": {
+          "request_path": {
+            "id": "request_path",
+            "pages": "<front>",
+            "negate": false,
+            "context_mapping": []
+          }
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block?fields%5Bblock--block%5D=drupal_internal__id%2Cvisibility%2Cweight&filter%5Bregion%5D=banner_top&filter%5Bstatus%5D=1&filter%5Btheme%5D=umami&sort=weight"
+    }
+  }
+}

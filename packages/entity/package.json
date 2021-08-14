@@ -1,0 +1,45 @@
+{
+  "name": "druxt-entity",
+  "version": "0.16.0",
+  "description": "Drupal Display Mode powered Entity, Form and Field Vue.js component system.",
+  "keywords": [
+    "cms",
+    "decoupled",
+    "drupal",
+    "druxt",
+    "entity",
+    "entities",
+    "field",
+    "fields",
+    "headless",
+    "nuxt",
+    "module",
+    "vue"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/druxt-entity.ssr.js",
+      "import": "./dist/druxt-entity.esm.js"
+    },
+    "./components/*": "./dist/components/*"
+  },
+  "main": "dist/druxt-entity.ssr.js",
+  "module": "dist/druxt-entity.esm.js",
+  "files": [
+    "dist",
+    "nuxt"
+  ],
+  "dependencies": {
+    "deepmerge": "^4.2.2",
+    "drupal-jsonapi-params": "^1.2.2",
+    "druxt": "workspace:*",
+    "druxt-router": "workspace:*",
+    "druxt-schema": "workspace:*"
+  }
+}

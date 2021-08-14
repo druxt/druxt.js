@@ -1,0 +1,1 @@
+export { DruxtMenuMixin } from './menu'

@@ -1,0 +1,54 @@
+{
+  "name": "druxt-views",
+  "version": "0.11.0",
+  "description": "Drupal Views Vue.js components for Nuxt.js",
+  "keywords": [
+    "cms",
+    "decoupled",
+    "blocks",
+    "drupal",
+    "druxt",
+    "headless",
+    "jsonapi",
+    "json:api",
+    "nuxt",
+    "module",
+    "router",
+    "storybook",
+    "vue",
+    "views"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Stuart Clark",
+    "email": "stuart@realityloop.com",
+    "url": "https://realityloop.com"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/druxt-views.ssr.js",
+      "import": "./dist/druxt-views.esm.js"
+    },
+    "./components/*": "./dist/components/*"
+  },
+  "main": "dist/druxt-views.ssr.js",
+  "module": "dist/druxt-views.esm.js",
+  "files": [
+    "dist",
+    "nuxt"
+  ],
+  "dependencies": {
+    "axios": "^0.21.1",
+    "deepmerge": "^4.2.2",
+    "drupal-jsonapi-params": "^1.1.12",
+    "druxt": "workspace:*",
+    "druxt-blocks": "workspace:*",
+    "druxt-entity": "workspace:*",
+    "druxt-router": "workspace:*",
+    "md5": "^2.3.0"
+  },
+  "optionalDependencies": {
+    "vue": "^2.6.14",
+    "vuex": "^3.6.2"
+  }
+}

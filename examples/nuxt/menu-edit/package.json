@@ -1,0 +1,18 @@
+{
+  "name": "druxt-example-nuxe-medi-edit",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "bootstrap": "latest",
+    "bootstrap-vue": "latest",
+    "druxt-menu": "link:../../../packages/menu",
+    "nuxt-edge": "latest",
+    "vue-json-pretty": "latest",
+    "vuedraggable": "latest"
+  }
+}

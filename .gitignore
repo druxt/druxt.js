@@ -1,5 +1,47 @@
-coverage
-docs/api
-dist
+# Dependencies
 node_modules
-.vscode
+
+# Yarn 2
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
+# Only keep yarn.lock in the root
+package-lock.json
+*/**/yarn.lock
+
+# Dist folders
+dist
+
+# Coverage reports
+coverage
+
+# Intellij idea
+*.iml
+.idea
+
+# OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+CHANGELOG.md

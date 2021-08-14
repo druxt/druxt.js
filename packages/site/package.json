@@ -1,0 +1,40 @@
+{
+  "name": "druxt-site",
+  "version": "0.6.0",
+  "description": "Out of the box decoupled Drupal Site module for DruxtJS.",
+  "keywords": [
+    "drupal",
+    "druxt",
+    "jsonapi",
+    "nuxt"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/druxt-site.ssr.js",
+      "import": "./dist/druxt-site.esm.js"
+    },
+    "./components/*": "./dist/components/*"
+  },
+  "main": "dist/druxt-site.ssr.js",
+  "module": "dist/druxt-site.esm.js",
+  "files": [
+    "dist",
+    "nuxt"
+  ],
+  "dependencies": {
+    "@nuxtjs/proxy": "^2.1.0",
+    "druxt": "workspace:*",
+    "druxt-blocks": "workspace:*",
+    "druxt-breadcrumb": "workspace:*",
+    "druxt-entity": "workspace:*",
+    "druxt-menu": "workspace:*",
+    "druxt-router": "workspace:*",
+    "druxt-schema": "workspace:*",
+    "druxt-views": "workspace:*",
+    "md5": "^2.2.1"
+  },
+  "optionalDependencies": {
+    "vue": "^2.6.14",
+    "vuex": "^3.6.2"
+  }
+}
