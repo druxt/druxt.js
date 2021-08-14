@@ -50,6 +50,7 @@
     "scule": "^0.1.1"
   },
   "optionalDependencies": {
+    "core-js": "^3.16.1",
     "vue": "^2.6.14",
     "vuex": "^3.6.2"
   }

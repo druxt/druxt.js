@@ -2998,6 +2998,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"core-js@npm:^3.16.1":
+  version: 3.16.1
+  resolution: "core-js@npm:3.16.1"
+  checksum: 7924fa2a7f00e3a33bbe92fe42ba59fbbe7e01557a59824d000976300be3ba224cca20161f61654b3861ea80d244d6adfee6ed3ae6d6d9931210a37510fb7c9b
+  languageName: node
+  linkType: hard
+
 "core-util-is@npm:~1.0.0":
   version: 1.0.2
   resolution: "core-util-is@npm:1.0.2"
@@ -3469,6 +3476,7 @@ __metadata:
   resolution: "druxt@workspace:packages/druxt"
   dependencies:
     axios: ^0.21.1
+    core-js: ^3.16.1
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^1.2.1
     md5: ^2.3.0
@@ -3477,6 +3485,8 @@ __metadata:
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
+    core-js:
+      optional: true
     vue:
       optional: true
     vuex:
