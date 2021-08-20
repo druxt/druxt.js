@@ -10,7 +10,10 @@
   ],
   "scripts": {
     "build": "yarn clean && siroc build",
-    "clean": "rimraf packages/*/dist || true",
+    "build:docs": "./packages/docgen/bin/druxt-docgen.js",
+    "clean": "yarn clean:dist && yarn clean:docs",
+    "clean:docs": "rimraf docs/content/api || true",
+    "clean:dist": "rimraf packages/*/dist || true",
     "dev": "siroc dev",
     "lint": "eslint --ext .js,.vue packages/*/src",
     "lint:commit": "commitlint",

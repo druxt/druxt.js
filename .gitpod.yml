@@ -9,6 +9,7 @@ tasks:
       # druxt installation
       yarn install
       yarn build
+      yarn build:docs
       gp sync-done bundle
 
   - name: drupal-9
