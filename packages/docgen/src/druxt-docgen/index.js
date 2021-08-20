@@ -1,7 +1,7 @@
-#!/usr/bin/env node
+import consola from 'consola'
+import yargs from 'yargs'
 
-const yargs = require('yargs')
-const DruxtDocgen = require('..')
+import { DruxtDocgen } from '..'
 
 const argv = yargs
   .option('config', {
@@ -15,12 +15,12 @@ const argv = yargs
 
 const druxtDocgen = new DruxtDocgen(argv.config || null)
 
-const main = async function () {
+async function main() {
   // Generate documentation.
   await druxtDocgen.generateDocs()
-
-  // Run Vuepress server.
-  druxtDocgen.runServer()
 }
 
-main()
+main().catch((error) => {
+  consola.error(error)
+  process.exit(1)
+})

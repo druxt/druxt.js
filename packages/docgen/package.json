@@ -2,40 +2,14 @@
   "name": "druxt-docgen",
   "version": "0.4.1",
   "description": "Vuepress based documentation generator for DruxtJS docs.",
-  "main": "src/index.js",
-  "bin": {
-    "druxt-docgen": "bin/druxt-docgen.js"
-  },
-  "scripts": {
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/druxt/druxt-docgen.git"
-  },
   "keywords": [
     "druxt",
     "vuepress",
     "jsdocs"
   ],
-  "author": "Stuart Clark <stuart@realityloop.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/druxt/druxt-docgen/issues"
-  },
-  "homepage": "https://github.com/druxt/druxt-docgen#readme",
-  "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^10.1.0",
-    "druxt-router": "^0.17.2",
-    "eslint": "^7.19.0",
-    "jest": "^26.6.3",
-    "jest-junit": "^11.1.0",
-    "nodemon": "^2.0.7",
-    "vue-template-compiler": "^2.6.12",
-    "vuex": "^3.6.2"
+  "bin": {
+    "cli": "bin/druxt-docgen.js"
   },
   "dependencies": {
     "dmd": "^5.0.2",
@@ -46,7 +20,6 @@
     "markdown-it-task-lists": "^2.1.1",
     "ncp": "^2.0.0",
     "vue-docgen-api": "^4.35.0",
-    "vuepress": "^1.8.0",
     "yargs": "^16.2.0"
   }
 }

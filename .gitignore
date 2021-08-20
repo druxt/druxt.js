@@ -15,7 +15,9 @@ package-lock.json
 */**/yarn.lock
 
 # Dist folders
+bin
 dist
+docs/content/api
 
 # Coverage reports
 coverage

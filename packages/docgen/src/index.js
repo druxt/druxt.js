@@ -1,12 +1,11 @@
-const dmd = require('dmd')
-const fs = require('fs')
-const globby = require('globby')
-const jsdoc2md = require('jsdoc-to-markdown')
-const mkdirp = require('mkdirp')
-const ncp = require('ncp').ncp
-const path = require('path')
-const vueDocs = require('vue-docgen-api')
-const { dev, build } = require('vuepress')
+import consola from 'consola'
+import dmd from 'dmd'
+import fs from 'fs'
+import globby from 'globby'
+import jsdoc2md from 'jsdoc-to-markdown'
+import mkdirp from 'mkdirp'
+import path from 'path'
+import vueDocs from 'vue-docgen-api'
 
 const cwd = path.join(__dirname, '..')
 
@@ -14,34 +13,28 @@ const cwd = path.join(__dirname, '..')
  * DruxtDocgen class.
  */
 class DruxtDocgen {
-  constructor (config = null) {
-    this.config = config ? path.join(process.cwd(), config) : './vuepress.config'
-  }
-
   /**
    * Generate documentation for source JS and Vue files.
    */
   async generateDocs () {
-    // Copy public files.
-    await mkdirp(path.resolve('docs/.vuepress/public'))
-    await ncp(path.resolve(cwd, 'docs/.vuepress/public'), path.resolve('docs/.vuepress/public'))
+    consola.info('Generating docs')
 
     const files = await globby([
       // Javascript.
-      'src/**/*.js',
+      'packages/**/src/**/*.js',
       // Vue.js.
-      'src/components/**/*.vue',
+      'packages/**/src/components/**/*.vue',
       // Exclude fixtures, mocks and tests.
       '!**/__*__/**/*',
     ])
-
+  
     for (const file of files) {
       // Get JSDoc template data from file.
       const templateData = jsdoc2md.getTemplateDataSync({
-        configure: path.resolve(cwd + '/jsdoc.json'),
+        configure: path.resolve(__dirname, '../jsdoc.json'),
         files: file,
       })
-
+  
       // Process file based on extension.
       if (file.match(/\.js$/)) {
         await this.processJs(file, templateData)
@@ -49,7 +42,7 @@ class DruxtDocgen {
       else {
         await this.processVue(file, templateData)
       }
-
+  
       this.writeData(file, templateData)
     }
   }
@@ -113,24 +106,6 @@ class DruxtDocgen {
   }
 
   /**
-   * Run Vuepress process.
-   */
-  runServer () {
-    const siteConfig = require(this.config)
-
-    const options = {
-      siteConfig,
-      sourceDir: 'docs',
-      theme: '@vuepress/theme-default'
-    }
-
-    if (process.argv.slice(2).pop() === 'build') {
-      return build(options)
-    }
-    dev(options)
-  }
-
-  /**
    * Write data to file system.
    *
    * @param {string} file - The file name.
@@ -149,7 +124,7 @@ class DruxtDocgen {
     })
     if (!content) return
 
-    const destination = file.replace('src', 'docs/api').replace(/\.[^/.]+$/, '.md')
+    const destination = 'docs/content/api/' + file.replace('src/', '').replace(/\.[^/.]+$/, '.md')
     mkdirp.sync(path.dirname(destination))
 
     // Build frontmatter.
@@ -160,4 +135,4 @@ class DruxtDocgen {
   }
 }
 
-module.exports = DruxtDocgen
+export { DruxtDocgen }
