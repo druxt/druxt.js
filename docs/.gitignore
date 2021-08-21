@@ -39,6 +39,7 @@ node_modules/
 jspm_packages/
 
 # Yarn 2
+!yarn.lock
 .yarn/*
 !.yarn/patches
 !.yarn/releases
