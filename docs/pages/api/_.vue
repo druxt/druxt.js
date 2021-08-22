@@ -1,5 +1,5 @@
 <template>
-  <NuxtContent :document="document" />
+  <NuxtContent class="container mx-auto" :document="document" />
 </template>
 
 <script>
