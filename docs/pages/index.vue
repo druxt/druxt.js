@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="bg-gray-100 border-b text-center">
-      <div class="container mx-auto py-15">
+      <div class="container mx-auto py-20">
         <AppLogo class="w-1/4 mx-auto" />
         <h1 class="text-6xl my-10" v-text="title" />
         <h2 class="text-3xl my-5" v-text="slogan" />
@@ -9,40 +9,22 @@
       </div>
     </div>
 
-    <div class="container flex flex-col lg:flex-row mx-auto my-10">
+    <div class="container flex flex-col lg:flex-row mx-auto my-20">
       <div
         v-for="(block, index) of blocks"
         :key="index"
-        class="flex-1 h-32 card"
+        class="flex-1 card p-2"
       >
         <h4 class="text-2xl mb-3" v-text="block.title" />
         <p class="text-lg" v-text="block.content" />
       </div>
     </div>
 
-    <div class="bg-neutral p-4 text-neutral-content">
-      <blockquote class="container mx-auto text-2xl" v-text="quote" />
+    <div class="bg-gray-200 p-15 text-center">
+      <blockquote class="container font-bold mx-auto text-2xl" v-text="quote" />
     </div>
 
-    <div>
-      <h3>Title</h3>
-      <p>Text</p>
-    </div>
-
-    <div>
-      <h3>Title</h3>
-      <p>Text</p>
-    </div>
-
-    <div>
-      <h3>Title</h3>
-      <p>Text</p>
-    </div>
-
-    <div>
-      <h3>Title</h3>
-      <p>Text</p>
-    </div>
+    <div />
   </div>
 </template>
 
@@ -69,7 +51,7 @@ export default {
       },
     ],
     quote:
-      "DruxtJS provides an easy connection between a Drupal JSON:API backend and Nuxt.js frontend application.",
+      "Druxt makes an easy connection between a Drupal and Nuxt",
   }),
 };
 </script>

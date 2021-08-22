@@ -5,5 +5,16 @@ export default () => ({
   }, {
     title: 'API',
     path: '/api',
-  }]
+  }],
+  modules: [
+    'druxt',
+    'breadcrumb',
+    'blocks',
+    'entity',
+    'menu',
+    'router',
+    'schema',
+    'site',
+    'views'
+  ]
 })
