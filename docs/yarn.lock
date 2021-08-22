@@ -4424,6 +4424,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"daisyui@npm:^1.13.0":
+  version: 1.13.0
+  resolution: "daisyui@npm:1.13.0"
+  checksum: 4781aa946ea1828d9da839d6c9e6dab87d2039d81b76e41347c4ff6f2b2d4372a4f4e25b53ed147339d14e04cbdab16f3ae1eeb56f2465d4b83f68c5c55c8591
+  languageName: node
+  linkType: hard
+
 "de-indent@npm:^1.0.2":
   version: 1.0.2
   resolution: "de-indent@npm:1.0.2"
@@ -4732,8 +4739,10 @@ __metadata:
   dependencies:
     "@nuxt/content": ^1.14.0
     core-js: ^3.15.1
+    daisyui: ^1.13.0
     nuxt: ^2.15.7
     nuxt-windicss: ^1.1.1
+    postcss: ^8.3.6
   languageName: unknown
   linkType: soft
 
@@ -9532,6 +9541,17 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"postcss@npm:^8.3.6":
+  version: 8.3.6
+  resolution: "postcss@npm:8.3.6"
+  dependencies:
+    colorette: ^1.2.2
+    nanoid: ^3.1.23
+    source-map-js: ^0.6.2
+  checksum: ff55b91bea21f42c2a94d77fd05c3f66dd15889c68506cf1dbb9cdee8c3b9e9d0e219bcbc6e61a107bd63e3cac0670176486e2a5794c106a4e1b9babceb79317
+  languageName: node
+  linkType: hard
+
 "prepend-http@npm:^1.0.0":
   version: 1.0.4
   resolution: "prepend-http@npm:1.0.4"
@@ -10710,6 +10730,13 @@ fsevents@~2.3.2:
   version: 2.0.1
   resolution: "source-list-map@npm:2.0.1"
   checksum: 806efc6f75e7cd31e4815e7a3aaf75a45c704871ea4075cb2eb49882c6fca28998f44fc5ac91adb6de03b2882ee6fb02f951fdc85e6a22b338c32bfe19557938
+  languageName: node
+  linkType: hard
+
+"source-map-js@npm:^0.6.2":
+  version: 0.6.2
+  resolution: "source-map-js@npm:0.6.2"
+  checksum: 9c8151a29e00fd8d3ba87709fdf9a9ce48313d653f4a29a39b4ae53d346ac79e005de624796ff42eff55cbaf26d2e87f4466001ca87831d400d818c5cf146a0e
   languageName: node
   linkType: hard
 
