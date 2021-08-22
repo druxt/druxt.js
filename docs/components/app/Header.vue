@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full navbar">
+  <div class="w-full navbar bg-neutral text-neutral-content">
     <div class="flex-none">
       <label for="sidebar" class="btn btn-square btn-ghost">
         <svg
@@ -17,7 +17,7 @@
         </svg>
       </label>
     </div>
-    <AppLogo class="flex-none h-8 mr-3" />
+    <!-- <AppLogo class="flex-none h-8 mr-3" /> -->
     <div class="flex-1 px-2 mx-2">
       <span class="text-lg font-bold">{{ title }}</span>
     </div>
