@@ -1,10 +1,15 @@
-const { transform } = require('windicss/helpers')
-
 module.exports = {
+  purge: [],
+  darkMode: false, // or 'media' or 'class'
+  theme: {
+    extend: {},
+  },
+  variants: {
+    extend: {},
+  },
   plugins: [
-    transform('daisyui'),
+    require('daisyui'),
   ],
-
   daisyui: {
     themes: [
       {

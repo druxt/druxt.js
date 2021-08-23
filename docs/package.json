@@ -10,12 +10,11 @@
   },
   "dependencies": {
     "@nuxt/content": "^1.14.0",
-    "core-js": "^3.15.1",
-    "daisyui": "^1.13.0",
-    "nuxt": "^2.15.7"
+    "core-js": "^3.16.2",
+    "daisyui": "^1.13.2",
+    "nuxt": "^2.15.8"
   },
   "devDependencies": {
-    "nuxt-windicss": "^1.1.1",
-    "postcss": "^8.3.6"
+    "@nuxtjs/tailwindcss": "^4.2.1"
   }
 }
