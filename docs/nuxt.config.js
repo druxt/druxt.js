@@ -46,4 +46,8 @@ export default {
   build: {},
 
   telemetry: true,
+
+  router: {
+    middleware: 'recent',
+  }
 }
