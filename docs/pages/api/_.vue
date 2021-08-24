@@ -1,31 +1,60 @@
 <template>
-  <div class="container mx-auto my-20">
-    <NuxtContent v-if="document" :document="document" />
+  <div>
+    <!-- TODO: Add link to GitHub -->
+    <div class="card shadow bg-white mb-10">
+      <div class="card-body">
+        <span class="mb-3 text-lg font-mono">{{ dir }}</span>
+        <h2 class="mb-5 text-3xl">{{ title }}</h2>
 
-    <div v-else>
-      <div v-for="item of response" :key="item.path">
-        <NuxtLink :to="item.path" v-text="item.slug" />
+        <div>
+          <!-- TODO: Link to module page? -->
+          <div v-if="module" class="badge badge-primary">{{ module }}</div>
+          <!-- TODO: Add file type badge; Component, Mixin, etc -->
+        </div>
       </div>
     </div>
+
+    <NuxtContent
+      v-if="document"
+      class="
+        prose prose-green prose-sm
+        sm:prose sm:prose-green
+        lg:prose-lg
+        xl:prose-xl
+      "
+      :document="document"
+    />
   </div>
 </template>
 
 <script>
 export default {
-  async asyncData({ $content, params, error }) {
+  name: "AppApiDocument",
+
+  async asyncData({ $content, error, params, store, route }) {
     let response;
     try {
-      response = await $content("api/", params.pathMatch || "index").fetch();
+      const path =
+        params.pathMatch + (params.pathMatch.endsWith("/") ? "index" : "");
+      response = await $content("api/", path).fetch();
+      if (Array.isArray(response)) {
+        response = await $content("api/", params.pathMatch + "/index").fetch();
+      }
     } catch (e) {
       return error({ message: "Document not found" });
     }
 
-    return { response };
+    store.commit("addRecent", { text: response.title, to: route.path });
+
+    return { document: response };
   },
 
   computed: {
-    document: ({ response }) =>
-      !Array.isArray(response) ? response : undefined,
+    module: ({ document }) => document.dir.split("/packages/")[1],
+
+    dir: ({ document }) => document.dir.replace("/api/", "/src/"),
+
+    title: ({ document }) => document.title,
   },
 };
 </script>

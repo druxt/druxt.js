@@ -1,5 +1,9 @@
 module.exports = {
-  purge: [],
+  mode: 'jit',
+  purge: [
+    './components/**/*.{js,jsx,ts,tsx,vue}',
+    './pages/**/*.{js,jsx,ts,tsx,vue}',
+  ],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {},
@@ -9,17 +13,18 @@ module.exports = {
   },
   plugins: [
     require('daisyui'),
+    require('@tailwindcss/typography'),
   ],
   daisyui: {
     themes: [
       {
         druxt: {
-          'primary': '#3498DB',           /* Primary color */
-          'primary-focus': '#2F495E',     /* Primary color - focused */
+          'primary': '#53b0eb',           /* Primary color */
+          'primary-focus': '#0678be',     /* Primary color - focused */
           'primary-content': '#ffffff',   /* Foreground content color to use on primary color */
 
-          'secondary': '#108775',         /* Secondary color */
-          'secondary-focus': '#2F495E',   /* Secondary color - focused */
+          'secondary': '#41b883',         /* Secondary color */
+          'secondary-focus': '#3b8070',   /* Secondary color - focused */
           'secondary-content': '#ffffff', /* Foreground content color to use on secondary color */
 
           'accent': '#37cdbe',            /* Accent color */
