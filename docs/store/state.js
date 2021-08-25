@@ -1,11 +1,28 @@
 export default () => ({
   // Main menu items.
   menu: [{
-    title: 'Home',
-    path: '/',
-  }, {
-    title: 'API documentation',
-    path: '/api',
+    component: "NuxtLink",
+    text: "Home",
+    props: { to: "/" },
+  },
+  {
+    component: "NuxtLink",
+    text: "API",
+    props: { to: "/api" },
+  },
+  {
+    component: "NuxtLink",
+    text: "Guide",
+    props: { to: "/guide" },
+  },
+  {
+    component: "a",
+    text: "GitHub",
+    // TODO: Add external icon.
+    props: {
+      href: "https://github.com/druxt/druxt.js",
+      target: "_blank",
+    },
   }],
 
   // Package list.

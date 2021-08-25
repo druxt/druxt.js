@@ -1,3 +1,7 @@
+---
+title: Getting started
+---
+
 # Getting started
 
 DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API backend:

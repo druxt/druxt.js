@@ -52,7 +52,7 @@ new DruxtClient('https://demo-api.druxtjs.org')
   })
 ```
 
-Get started with the [Guide](/guide/client) and [API Documentation](/api/client).
+Get started with the [Guide](/guide/client) and [API Documentation](/api/packages/druxt/client).
 
 ### DruxtStore
 
@@ -102,11 +102,11 @@ _**Example:** Using the [DruxtEntity module](https://entity.druxtjs.org) to rend
 <DruxtEntity mode="teaser" type="node--article" :uuid="uuid">
 ```
 
-See the [Druxt module list](/guide/modules.html) for more information.
+See the [Druxt module list](/guide/modules) for more information.
 
 
 ### Theming
 
 Druxt modules use a slot-based Wrapper component system to provide rich defaults while still allowing full control over all theming and functionality.
 
-See the [theming guide](/guide/theming.html) for more details.
+See the [theming guide](/guide/theming) for more details.
