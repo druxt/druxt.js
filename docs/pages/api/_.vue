@@ -38,8 +38,8 @@ export default {
   async asyncData({ $content, error, params, store, route }) {
     let response;
     try {
-      const path =
-        params.pathMatch + (params.pathMatch.endsWith("/") ? "index" : "");
+      let path = params.pathMatch || "README";
+      if (path.endsWith("/")) path += "index";
       response = await $content("api/", path).fetch();
       if (Array.isArray(response)) {
         response = await $content("api/", params.pathMatch + "/index").fetch();
