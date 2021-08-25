@@ -1,16 +1,25 @@
 <template>
-  <div>
-    <AppHeader class="absolute z-50 h-20" title="DruxtJS" />
+  <div class="flex flex-col h-screen">
+    <AppHeader class="inset-x-0 top-0 z-50 w-full sticky" title="DruxtJS" />
 
     <div
-      class="shadow bg-base-200 drawer h-screen pt-20"
+      class="shadow bg-base-200 drawer flex-grow"
       :class="{ 'drawer-mobile': $route.path !== '/' }"
     >
       <input id="sidebar" type="checkbox" class="drawer-toggle" />
 
-      <div class="flex flex-col drawer-content">
+      <main
+        class="
+          flex-grow
+          block
+          overflow-x-hidden
+          bg-base-100
+          text-base-content
+          drawer-content
+        "
+      >
         <Nuxt />
-      </div>
+      </main>
 
       <div class="drawer-side">
         <label for="sidebar" class="drawer-overlay"></label>

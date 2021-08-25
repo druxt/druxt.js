@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full navbar bg-neutral text-neutral-content">
+  <div class="w-full navbar">
     <div class="flex-none" :class="{ 'lg:hidden': $route.path !== '/' }">
       <label for="sidebar" class="btn btn-square btn-ghost">
         <svg
@@ -17,9 +17,10 @@
         </svg>
       </label>
     </div>
-    <div class="flex-1 px-2 mx-2">
-      <span class="text-lg font-bold">{{ title }}</span>
-    </div>
+    <NuxtLink class="flex-1 px-2 mx-2 flex" tag="div" to="/">
+      <AppLogo class="mr-1 w-10" />
+      <span class="block text-2xl mt-2.5">{{ title }}</span>
+    </NuxtLink>
     <div class="flex-none hidden lg:block">
       <AppMenu class="horizontal" />
     </div>
