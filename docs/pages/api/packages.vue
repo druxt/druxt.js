@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h2 class="text-2xl border-b mb-10">Modules</h2>
+    <h2 class="text-2xl border-b mb-10">Packages</h2>
 
     <ul class="menu">
       <li
-        v-for="module of $store.state.modules"
-        :key="module"
+        v-for="item of $store.state.packages"
+        :key="item"
       >
-        <NuxtLink :to="`/api/packages/${module}/`" v-text="module" />
+        <NuxtLink :to="`/api/packages/${item}/`" v-text="item" />
       </li>
     </ul>
   </div>
