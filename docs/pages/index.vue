@@ -1,14 +1,16 @@
 <template>
   <div>
+    <!-- Hero -->
     <div class="bg-gray-100 border-b text-center">
       <div class="container mx-auto py-20">
         <AppLogo class="w-1/4 mx-auto" />
         <h1 class="text-6xl my-10" v-text="title" />
         <h2 class="text-3xl my-5" v-text="slogan" />
-        <button class="btn btn-primary btn-lg">Get started</button>
+        <NuxtLink class="btn btn-primary btn-lg" tag="button" to="/guide/getting-started">Get started</NuxtLink>
       </div>
     </div>
 
+    <!-- Features / blocks -->
     <div class="container flex flex-col lg:flex-row mx-auto my-20">
       <div
         v-for="(block, index) of blocks"
@@ -20,7 +22,8 @@
       </div>
     </div>
 
-    <div class="bg-gray-200 p-15 text-center">
+    <!-- Quote -->
+    <div class="bg-gray-200 p-10 text-center">
       <blockquote class="container font-bold mx-auto text-2xl" v-text="quote" />
     </div>
 
