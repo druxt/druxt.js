@@ -21,16 +21,7 @@
       <span class="text-lg font-bold">{{ title }}</span>
     </div>
     <div class="flex-none hidden lg:block">
-      <ul class="horizontal menu">
-        <li v-for="(link, key) of links" :key="key">
-          <component
-            :is="link.component"
-            class="rounded-btn"
-            v-bind="link.props"
-            v-text="link.text"
-          />
-        </li>
-      </ul>
+      <AppMenu class="horizontal" />
     </div>
   </div>
 </template>
@@ -43,30 +34,5 @@ export default {
       required: true,
     },
   },
-
-  data: () => ({
-    links: [
-      {
-        component: "NuxtLink",
-        text: "Home",
-        props: { to: "/" },
-      },
-      {
-        component: "NuxtLink",
-        text: "API",
-        props: { to: "/api" },
-      },
-      // TODO: Add guide.
-      // TODO: Add external icon.
-      {
-        component: "a",
-        text: "GitHub",
-        props: {
-          href: "https://github.com/druxt/druxt.js",
-          target: "_blank",
-        },
-      },
-    ],
-  }),
 };
 </script>

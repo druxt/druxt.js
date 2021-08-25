@@ -25,8 +25,8 @@
       <li>
         <NuxtLink class="rounded-btn" to="/api/packages">Packages</NuxtLink>
         <!-- <ul class="menu">
-          <li v-for="module of $store.state.modules" :key="module">
-            <NuxtLink class="rounded-btn" :to="`/api/packages/${module}`" v-text="module" />
+          <li v-for="item of $store.state.packages" :key="item">
+            <NuxtLink class="rounded-btn" :to="`/api/packages/${item}/`" v-text="item" />
           </li>
         </ul> -->
       </li>

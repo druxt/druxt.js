@@ -8,9 +8,9 @@ export default () => ({
     path: '/api',
   }],
 
-  // Module list.
+  // Package list.
   // TODO: get this data programatically.
-  modules: [
+  packages: [
     'druxt',
     'breadcrumb',
     'blocks',

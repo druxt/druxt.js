@@ -3,7 +3,11 @@
     <!-- TODO: Add link to GitHub -->
     <div class="card shadow bg-white mb-10">
       <div class="card-body">
-        <span class="mb-3 text-lg font-mono">{{ dir }}</span>
+        <div class="text-sm breadcrumbs">
+          <ul>
+            <li v-for="dir of dirs" :key="dir" v-text="dir" />
+          </ul>
+        </div>
         <h2 class="mb-5 text-3xl">{{ title }}</h2>
 
         <div>
@@ -50,9 +54,9 @@ export default {
   },
 
   computed: {
-    module: ({ document }) => document.dir.split("/packages/")[1],
+    module: ({ document }) => document.dir.split("/")[3],
 
-    dir: ({ document }) => document.dir.replace("/api/", "/src/"),
+    dirs: ({ document }) => document.dir.replace("/api/", "src/").split("/"),
 
     title: ({ document }) => document.title,
   },
