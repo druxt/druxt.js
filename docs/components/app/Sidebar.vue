@@ -23,7 +23,9 @@
         <span>API documents</span>
       </li>
       <li>
-        <NuxtLink class="rounded-btn" to="/api/packages">Packages</NuxtLink>
+        <NuxtLink class="rounded-btn" :to="{ path: '/api', hash: '#packages' }"
+          >Packages</NuxtLink
+        >
         <!-- <ul class="menu">
           <li v-for="item of $store.state.packages" :key="item">
             <NuxtLink class="rounded-btn" :to="`/api/packages/${item}/`" v-text="item" />
