@@ -1,12 +1,26 @@
 <template>
   <div>
     <!-- Hero -->
-    <div class="bg-gray-100 border-b text-center">
-      <div class="container mx-auto py-20">
-        <AppLogo class="w-1/4 mx-auto" />
-        <h1 class="text-6xl my-10" v-text="title" />
-        <h2 class="text-3xl my-5" v-text="slogan" />
-        <NuxtLink class="btn btn-primary btn-lg" tag="button" to="/guide/getting-started">Get started</NuxtLink>
+    <div class="hero min-h-screen bg-base-200">
+      <div class="text-center hero-content">
+        <div class="max-w-md">
+          <AppLogo class="w-1/2 mb-5 mx-auto" />
+          <h1 class="mb-5 text-5xl font-bold" v-text="title" />
+          <p class="mb-5" v-text="slogan" />
+          <NuxtLink
+            class="btn btn-primary"
+            tag="button"
+            to="/guide/getting-started"
+            >Get started</NuxtLink
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Quote -->
+    <div class="bg-gray-200 p-10">
+      <div class="prose prose-lg mx-auto">
+        <blockquote v-text="quote" />
       </div>
     </div>
 
@@ -21,13 +35,6 @@
         <p class="text-lg" v-text="block.content" />
       </div>
     </div>
-
-    <!-- Quote -->
-    <div class="bg-gray-200 p-10 text-center">
-      <blockquote class="container font-bold mx-auto text-2xl" v-text="quote" />
-    </div>
-
-    <div />
   </div>
 </template>
 
@@ -53,8 +60,7 @@ export default {
           "The Site module brings decoupled Vue.js theming system to Drupal.",
       },
     ],
-    quote:
-      "Druxt makes an easy connection between a Drupal and Nuxt",
+    quote: "DruxtJS provides an easy connection between a Drupal JSON:API backend and Nuxt.js frontend application",
   }),
 };
 </script>
