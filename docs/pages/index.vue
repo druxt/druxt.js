@@ -19,8 +19,8 @@
 
     <!-- Quote -->
     <div class="bg-gray-200 p-10">
-      <div class="prose prose-lg mx-auto">
-        <blockquote v-text="quote" />
+      <div class="container mx-auto text-center">
+        <blockquote class="text-2xl" v-text="quote" />
       </div>
     </div>
 

@@ -19,7 +19,7 @@ export default {
   name: "AppGuideDocument",
 
   async asyncData({ $content, error, params, store, route }) {
-    const path = params.pathMatch || "README"
+    const path = params.pathMatch || "README";
     let response;
     try {
       response = await $content("guide/", params.pathMatch || "README").fetch();
@@ -30,6 +30,12 @@ export default {
     store.commit("addRecent", { text: response.title, to: route.path });
 
     return { document: response, path };
+  },
+
+  head() {
+    return {
+      title: this.document.title,
+    };
   },
 };
 </script>
