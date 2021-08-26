@@ -53,6 +53,12 @@ export default {
     return { document: response };
   },
 
+  head() {
+    return {
+      title: this.document.title,
+    };
+  },
+
   computed: {
     module: ({ document }) => document.dir.split("/")[3],
 
