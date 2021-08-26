@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full navbar">
+  <div class="w-full navbar bg-white">
     <div class="flex-none" :class="{ 'lg:hidden': $route.path !== '/' }">
       <label for="sidebar" class="btn btn-square btn-ghost">
         <svg

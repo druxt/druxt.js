@@ -3,12 +3,7 @@
     <!-- TODO: Add breadcrumb / path -->
     <NuxtContent
       v-if="document"
-      class="
-        prose prose-green prose-sm
-        sm:prose sm:prose-green
-        lg:prose-lg
-        xl:prose-xl
-      "
+      class="prose prose-sm sm:prose lg:prose-lg xl:prose-xl"
       :document="document"
     />
   </div>
