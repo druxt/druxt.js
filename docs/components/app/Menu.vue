@@ -8,7 +8,11 @@
         v-bind="item.props"
         v-text="item.text"
       />
-      <ul v-if="children && item.children" class="menu">
+      <ul
+        v-if="children && item.children"
+        v-show="$route.path.startsWith(item.props.to)"
+        class="menu"
+      >
         <li v-for="(child, childKey) of item.children" :key="childKey">
           <component
             :is="child.component"

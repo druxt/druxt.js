@@ -1,31 +1,22 @@
 <template>
   <div>
     <!-- TODO: Add link to GitHub -->
-    <div class="card shadow bg-white mb-10">
-      <div class="card-body">
-        <div class="text-sm breadcrumbs">
-          <ul>
-            <li v-for="dir of dirs" :key="dir" v-text="dir" />
-          </ul>
-        </div>
-        <h2 class="mb-5 text-3xl">{{ title }}</h2>
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li v-for="dir of dirs" :key="dir" v-text="dir" />
+      </ul>
+    </div>
+    <h2 class="mb-5 text-3xl">{{ title }}</h2>
 
-        <div>
-          <!-- TODO: Link to module page? -->
-          <div v-if="module" class="badge badge-primary">{{ module }}</div>
-          <!-- TODO: Add file type badge; Component, Mixin, etc -->
-        </div>
-      </div>
+    <div>
+      <!-- TODO: Link to module page? -->
+      <div v-if="module" class="badge badge-primary">{{ module }}</div>
+      <!-- TODO: Add file type badge; Component, Mixin, etc -->
     </div>
 
     <NuxtContent
       v-if="document"
-      class="
-        prose prose-green prose-sm
-        sm:prose sm:prose-green
-        lg:prose-lg
-        xl:prose-xl
-      "
+      class="prose prose-sm sm:prose lg:prose-lg xl:prose-xl"
       :document="document"
     />
   </div>
