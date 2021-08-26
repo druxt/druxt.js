@@ -1,4 +1,9 @@
 export default {
+  addMenuChildren(state, { children, parent }) {
+    const index = state.menu.findIndex((o) => o.props.to === parent)
+    state.menu[index].children = children
+  },
+
   // TODO: add ability to pin items
   // TODO: add support for page titles
   addRecent(state, link) {

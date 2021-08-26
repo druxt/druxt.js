@@ -4,16 +4,19 @@ export default () => ({
     component: "NuxtLink",
     text: "Home",
     props: { to: "/" },
+    children: [],
   },
   {
     component: "NuxtLink",
     text: "API",
     props: { to: "/api" },
+    children: [],
   },
   {
     component: "NuxtLink",
     text: "Guide",
     props: { to: "/guide" },
+    children: [],
   },
   {
     component: "a",
@@ -23,6 +26,7 @@ export default () => ({
       href: "https://github.com/druxt/druxt.js",
       target: "_blank",
     },
+    children: [],
   }],
 
   // Package list.
