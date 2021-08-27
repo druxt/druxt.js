@@ -11,6 +11,7 @@
   "scripts": {
     "build": "yarn clean && siroc build",
     "build:docs": "./packages/docgen/bin/druxt-docgen.js",
+    "changeset": "changeset",
     "clean": "yarn clean:dist && yarn clean:docs",
     "clean:docs": "rimraf docs/content/api || true",
     "clean:dist": "rimraf packages/*/dist || true",
@@ -18,11 +19,13 @@
     "lint": "eslint --ext .js,.vue packages/*/src",
     "lint:commit": "commitlint",
     "postinstall": "husky install",
-    "test": "jest"
+    "test": "jest",
+    "version": "changeset version"
   },
   "devDependencies": {
     "@babel/core": "^7.14.8",
     "@babel/preset-env": "^7.14.8",
+    "@changesets/cli": "^2.16.0",
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
     "@vue/test-utils": "^1.2.2",
