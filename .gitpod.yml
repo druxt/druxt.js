@@ -5,6 +5,7 @@ image:
 # when starting a workspace all docker images are ready
 tasks:
   - name: druxt.js
+    before: git pull -f origin master:master
     init: |
       # druxt installation
       yarn install
