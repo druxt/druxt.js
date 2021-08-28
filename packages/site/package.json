@@ -1,7 +1,7 @@
 {
   "name": "druxt-site",
   "version": "0.6.0",
-  "description": "Out of the box decoupled Drupal Site module for DruxtJS.",
+  "description": "Out of the box Decoupled Drupal sites with Druxt.",
   "keywords": [
     "drupal",
     "druxt",

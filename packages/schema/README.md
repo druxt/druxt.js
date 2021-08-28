@@ -5,7 +5,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-schema/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-schema?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-schema/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-schema)
 
-Provides a Drupal Entity schema Vuex store to be used within a Druxt (DRUpal nuXT) project.
+> Drupal Content Entity schema generator for Druxt with support for View and Form displays.
 
 ## Links
 

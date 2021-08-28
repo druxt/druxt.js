@@ -1,7 +1,7 @@
 {
   "name": "druxt-schema",
   "version": "0.7.7",
-  "description": "Entity Form and View mode schemas for Drupal driven frontends.",
+  "description": "Drupal Content Entity schema generator for Druxt with support for View and Form displays.",
   "keywords": [
     "drupal",
     "druxt",

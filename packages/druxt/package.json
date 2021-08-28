@@ -1,7 +1,7 @@
 {
   "name": "druxt",
   "version": "0.8.3",
-  "description": "A Bridge between frameworks, Nuxt.js in the front, Drupal in the back.",
+  "description": "The Fully Decoupled Drupal Framework for Nuxt.js.",
   "keywords": [
     "cms",
     "decoupled",

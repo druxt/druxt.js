@@ -5,7 +5,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-breadcrumb/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-breadcrumb?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-breadcrumb/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-breadcrumb)
 
-> Provides a Breadcrumb Vue.js component to be used within a Druxt (DRUpal nuXT) project.
+> Decoupled Router based Breadcrumb Druxt component.
 
 
 ## Links

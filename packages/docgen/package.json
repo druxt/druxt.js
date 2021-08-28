@@ -1,7 +1,8 @@
 {
   "name": "druxt-docgen",
   "version": "0.4.1",
-  "description": "Vuepress based documentation generator for DruxtJS docs.",
+  "private": true,
+  "description": "API Doc generation tool for Druxt modules.",
   "keywords": [
     "druxt",
     "vuepress",
