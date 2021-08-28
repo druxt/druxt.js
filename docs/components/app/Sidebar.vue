@@ -6,7 +6,13 @@
         <span>Recent documents</span>
       </li>
       <li v-for="(item, key) of $store.state.recent" :key="key">
-        <NuxtLink class="rounded-btn" :to="item.to" v-text="item.text" />
+        <NuxtLink class="rounded-btn" :to="item.to">
+          <component
+            :is="`app-icon-${item.to.slice(1).split('/')[0]}`"
+            class="inline-block w-5 h-5 mr-2 stroke-current text-gray-400"
+          />
+          {{ item.text }}
+        </NuxtLink>
       </li>
     </ul>
 

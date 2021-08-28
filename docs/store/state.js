@@ -3,45 +3,34 @@ export default () => ({
   menu: [{
     component: "NuxtLink",
     text: "Home",
+    icon: "home",
     props: { to: "/" },
     children: [],
   },
   {
     component: "NuxtLink",
     text: "API",
+    icon: "api",
     props: { to: "/api" },
     children: [],
   },
   {
     component: "NuxtLink",
     text: "Guide",
+    icon: "guide",
     props: { to: "/guide" },
     children: [],
   },
   {
     component: "a",
     text: "GitHub",
-    // TODO: Add external icon.
+    icon: "external",
     props: {
       href: "https://github.com/druxt/druxt.js",
       target: "_blank",
     },
     children: [],
   }],
-
-  // Package list.
-  // TODO: get this data programatically.
-  packages: [
-    'druxt',
-    'breadcrumb',
-    'blocks',
-    'entity',
-    'menu',
-    'router',
-    'schema',
-    'site',
-    'views'
-  ],
 
   // Recently opened documents.
   recent: [],

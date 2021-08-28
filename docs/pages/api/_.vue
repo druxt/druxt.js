@@ -3,7 +3,10 @@
     <!-- TODO: Add link to GitHub -->
     <div class="text-sm breadcrumbs">
       <ul>
-        <li v-for="dir of dirs" :key="dir" v-text="dir" />
+        <li v-for="({ text, path }, index) of dirs" :key="index">
+          <NuxtLink v-if="path" :to="path" v-text="text" />
+          <span v-else v-text="text" />
+        </li>
       </ul>
     </div>
     <h2 class="mb-5 text-3xl">{{ title }}</h2>
@@ -53,7 +56,22 @@ export default {
   computed: {
     module: ({ document }) => document.dir.split("/")[3],
 
-    dirs: ({ document }) => document.dir.replace("/api/", "src/").split("/"),
+    dirs: ({ document }) => {
+      const dirs = document.dir.replace("/api/", "src/").split("/");
+      return dirs.map((dir, index) => {
+        let path;
+        if (index === 1) path = "/api";
+        if (index > 1)
+          path = dirs
+            .slice(0, index + 1)
+            .join("/")
+            .replace("src/", "/api/");
+        return {
+          path,
+          text: dir,
+        };
+      });
+    },
 
     title: ({ document }) => document.title,
   },
