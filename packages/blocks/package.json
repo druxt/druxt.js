@@ -1,7 +1,7 @@
 {
   "name": "druxt-blocks",
   "version": "0.10.0",
-  "description": "Provides Drupal blocks and region components to be used within a Druxt (DRUpal nuXT) project.",
+  "description": "Drupal Block and Block Region Druxt components.",
   "keywords": [
     "block",
     "blocks",

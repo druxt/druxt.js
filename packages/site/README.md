@@ -6,7 +6,7 @@
 [![npm](https://badgen.net/npm/v/druxt-site)](https://www.npmjs.com/package/druxt-site)
 
 
-> The DruxtJS Site module provides an out of the box, decoupled Drupal site experience with minimal setup and configuration.
+> Out of the box Decoupled Drupal sites with Druxt.
 
 ## Links
 

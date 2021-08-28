@@ -1,7 +1,7 @@
 {
   "name": "druxt-router",
   "version": "0.18.1",
-  "description": "Simple decoupled Drupal routing for Nuxt.",
+  "description": "Drupal router for Nuxt, powered by the Drupal Decoupled Router module.",
   "keywords": [
     "drupal",
     "druxt",

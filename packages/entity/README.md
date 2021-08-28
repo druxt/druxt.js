@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/druxt/druxt-entity/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-entity)
 
 
-> The DruxtEntity module provides a Drupal Display Mode powered Entity, Form and Field component system for your Nuxt.js application.
+> Drupal Display Mode powered Entity, Form and Field Druxt components.
 
 
 ## Links

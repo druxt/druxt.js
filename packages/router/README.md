@@ -4,7 +4,7 @@
 [![Known Vulnerabilities](https://snyk.io//test/github/druxt/druxt-router/badge.svg?targetFile=package.json)](https://snyk.io//test/github/druxt/druxt-router?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-router/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-router)
 
-> Simple decoupled [Drupal](https://drupal.org) routing for your [Nuxt.js](https://nuxtjs.org) application.
+> Drupal router for Nuxt, powered by the Drupal Decoupled Router module.
 
 ## Links
 

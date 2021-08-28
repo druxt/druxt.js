@@ -1,7 +1,7 @@
 {
   "name": "druxt-menu",
   "version": "0.11.0",
-  "description": "Provides a Menu Vue component to be used within a Druxt (DRUpal nuXT) project.",
+  "description": "Drupal Menu and Menu item Druxt components, with support for the JSON:API Menu Items module.",
   "keywords": [
     "menu",
     "menus",

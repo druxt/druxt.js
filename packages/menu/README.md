@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/druxt/druxt-menu/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-menu)
 
 
-> Decoupled Drupal Menus Vue.js component system.
+> Drupal Menu and Menu item Druxt components, with support for the JSON:API Menu Items module.
 
 
 ## Links

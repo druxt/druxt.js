@@ -5,7 +5,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-blocks/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-blocks?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-blocks/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-blocks)
 
-> Provides Drupal Blocks and Region components to be used within a Druxt (DRUpal nuXT) project.
+> Drupal Block and Block Region Druxt components.
 
 ## Links
 
