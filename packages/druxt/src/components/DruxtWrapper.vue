@@ -6,10 +6,7 @@
 
 <script>
 /**
- * The default Druxt module wrapper Vue.js component.
- *
- * This component is used by the Druxt component if an appropriate component can not be found
- * for the specified module.
+ * Placeholder component for the Druxt Wrapper themeing system.
  *
  * @private
  */

@@ -2,13 +2,8 @@
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
 /**
- * The `<DruxtField />` component renders an Entity Field for the DruxtEntity
- * and DruxtEntityForm components.
- * 
- * Features:
- * - Default fields
- * - Scoped slots
- * 
+ * Renders a Drupal Field using Drupals by field type and formatter settings.
+ *
  * @example
  * <DruxtField
  *   :schema="{
@@ -70,7 +65,7 @@ export default {
 
     /**
      * The Field value.
-     * 
+     *
      * @type {(array|boolean|number|object|string)}
      * @model
      */
@@ -97,56 +92,56 @@ export default {
   computed: {
     /**
      * The Field data.
-     * 
+     *
      * @type {(array|boolean|number|object|string)}
      */
     data: ({ model }) => model,
 
     /**
      * Field is Boolean?
-     * 
+     *
      * @type {boolean}
      */
     isBoolean: ({ schema }) => ['boolean_checkbox'].includes(schema.type),
 
     /**
      * Field is DateTime?
-     * 
+     *
      * @type {boolean}
      */
     isDateTime: ({ schema }) => ['datetime_timestamp'].includes(schema.type),
 
     /**
      * Field is File?
-     * 
+     *
      * @type {boolean}
      */
     isFile: ({ schema }) => ['file_default', 'file_generic'].includes(schema.type),
 
     /**
      * Field is Image?
-     * 
+     *
      * @type {boolean}
      */
     isImage: ({ schema }) => ['image', 'image_image', 'responsive_image'].includes(schema.type),
 
     /**
      * Field is Link?
-     * 
+     *
      * @type {boolean}
      */
     isLink: ({ schema }) => ['link'].includes(schema.type),
 
     /**
      * Field is multi-cardinality.
-     * 
+     *
      * @type {boolean}
      */
     isMultiple: ({ schema }) => (schema.cardinality || 1) !== 1,
 
     /**
      * Field is Text?
-     * 
+     *
      * @type {boolean}
      */
     isText: ({ schema }) => ['number_integer', 'string_textfield'].includes(schema.type),
@@ -201,10 +196,10 @@ export default {
      * - File, Image, Link, Number, Text and other View fields.
      * - Boolean, Date/Time, Text and other Form fields.
      * - Entitiy references.
-     * 
+     *
      * A scoped slot is provided for the label, as well as label-above and
      * label-inline depending on the field schema.
-     * 
+     *
      * A default slot is provided with debug information if Nuxt is in
      * development mode.
      *
@@ -392,7 +387,7 @@ export default {
                 }
               }
             })])
-          } 
+          }
 
           // Fallback: Provide debug data if Nuxt is running in dev mode.
           if (this.$nuxt.context.isDev) {

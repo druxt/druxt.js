@@ -1,6 +1,6 @@
 <script>
 /**
- * The Vue.js Druxt component.
+ * Utility component for rendering Druxt modules.
  *
  * @example @lang vue
  * <Druxt

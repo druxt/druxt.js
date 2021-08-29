@@ -4,11 +4,7 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions } from 'vuex'
 
 /**
- * The `<DruxtSite />` Vue.js component renders all available Block regions
- * based on the specified theme.
- *
- * Features:
- * - Scoped slots
+ * Renders all available block regions based on the specified theme.
  *
  * @example @lang vue
  * <template>
@@ -90,7 +86,7 @@ export default {
   computed: {
     /**
      * DruxtBlockRegion propsData for regions.
-     * 
+     *
      * @return {object}
      */
     props: ({ regions, theme }) =>
@@ -136,8 +132,8 @@ export default {
      *
      * A scoped slot is provided for each block region available, as per the
      * specified theme.
-     * 
-     * Additionally, the `default` slot will render all regions. 
+     *
+     * Additionally, the `default` slot will render all regions.
      *
      * @example <caption>DruxtSite**Theme**.vue</caption> @lang vue
      * <template>

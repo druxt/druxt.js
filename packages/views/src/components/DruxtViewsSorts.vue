@@ -2,7 +2,7 @@
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
 /**
- * The `<DruxtViewsSorts />` Vue.js component.
+ * Used by the DruxtView component to render a Druxt Wrapper themeable sort.
  *
  * @example
  * <DruxtViewsSorts
@@ -60,7 +60,7 @@ export default {
   methods: {
     /**
      * Returns a merged Route object with the provided sort.
-     * 
+     *
      * @param {string} sort - The sort ID.
      * @returns {object}
      */
@@ -89,7 +89,7 @@ export default {
 
     /**
      * Provides the scoped slots object for the Module render function.
-     * 
+     *
      * The `default` slot will render a list of sorts.
      *
      * @return {ScopedSlots} The Scoped slots object.
@@ -141,7 +141,7 @@ export default {
  * @param {object[]} sorts - The Exposed Sort objects.
  * @param {string} type - The Exposed form type.
  * @param {integer} value - The DruxtViewSorts model value.
- * 
+ *
  * @example @lang js
  * {
  *   options: {

@@ -2,9 +2,8 @@
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
 /**
- * The `<DruxtViewsFilters />` Vue.js component.
- *
- * Renders slot themable Exposed Views filters.
+ * Used by the DruxtView component to render a collection of Druxt Wrapper
+ * themeable filters.
  */
 export default {
   name: 'DruxtViewsFilters',
@@ -74,9 +73,9 @@ export default {
 
     /**
      * Provides the scoped slots object for the Module render function.
-     * 
+     *
      * A scoped slot is provided for each filter.
-     * 
+     *
      * The `default` slot will render all filters.
      *
      * @example <caption>DruxtViewsFilters**Type**.vue</caption> @lang vue
@@ -176,7 +175,7 @@ export default {
  *   <div v-if="default">
  *     <slot />
  *   </div>
- * 
+ *
  *   <div v-else>
  *     <slot name="type" />
  *   </div>

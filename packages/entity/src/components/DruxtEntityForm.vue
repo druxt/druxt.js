@@ -2,14 +2,8 @@
 import { default as DruxtEntity } from './DruxtEntity.vue'
 
 /**
- * The `<DruxtEntityForm />` component uses Drupal's Form displays modes for
- * content creation and editing.
- * 
- * Features:
- * - Extends DruxtEntity component
- * - Form submission and error handling
- * - Scoped slots
- * 
+ * Renders a Drupal Content Entity form with submission and validation support.
+ *
  * @example @lang vue
  * <DruxtEntityForm
  *   :type="resourceType"
@@ -19,7 +13,7 @@ import { default as DruxtEntity } from './DruxtEntity.vue'
  *   v-on:reset="onReset()"
  *   v-on:submit="onSubmit()"
  * />
- * 
+ *
  * @extends DruxtEntity
  * @see {@link ./DruxtEntity|DruxtEntity}
  */
@@ -37,7 +31,7 @@ export default {
   props: {
     /**
      * Drupal display schema type, 'view' or 'form'.
-     * 
+     *
      * @type {('view'|'form')}
      * @default form
      */
@@ -64,7 +58,7 @@ export default {
   computed: {
     /**
      * An array of errors if present in the form submission response data.
-     * 
+     *
      * @return {object[]}
      */
     errors: ({ response }) => (response || {}).errors,
@@ -130,7 +124,7 @@ export default {
     ...DruxtEntity.druxt,
 
     /**
-     * Adds a `buttons` slot to the DruxtEntity scope slots. 
+     * Adds a `buttons` slot to the DruxtEntity scope slots.
      *
      * @return {object}
      */
