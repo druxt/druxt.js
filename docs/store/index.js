@@ -15,7 +15,7 @@ export const actions = {
       const guideChildren = guideIndex.map((o) => ({
         component: "NuxtLink",
         text: o.title,
-        props: { to: o.path },
+        props: { to: o.path.replace("/README", "") },
       }));
       commit("addMenuChildren", { children: guideChildren, parent: "/guide" });
     } catch (err) {
