@@ -6,15 +6,10 @@ import { parse, stringify } from 'qs'
 import { mapActions } from 'vuex'
 
 /**
- * The `<DruxtView />` Vue.js component.
+ * Renders a Drupal View using DruxtEntity components, using data provided by
+ * the Drupal JSON:API Views module.
  *
- * Adds support for [Drupal Views](https://www.drupal.org/docs/8/core/modules/views)
- * using the [JSON:API Views module](https://www.drupal.org/project/jsonapi_views).
- *
- * Features:
- * - Exposed filter, sorts and pagination
- * - Scoped slots
- * - Query settings
+ * Supports filtering, pagination and sorting.
  *
  * @example
  * <DruxtView
@@ -36,7 +31,7 @@ export default {
      *
      * @type {string}
      * @default default
-     * 
+     *
      * @example
      * <DruxtView display-id="page_1" view-id="frontpage" />
      */
@@ -60,7 +55,7 @@ export default {
      * The View UUID.
      *
      * @type {string}
-     * 
+     *
      * @example
      * <DruxtView uuid="f6c38097-d534-4bfb-87d9-09526fe44e9c" />
      */
@@ -73,7 +68,7 @@ export default {
      * The View ID.
      *
      * @type {string}
-     * 
+     *
      * @example
      * <DruxtView view-id="frontpage" />
      */

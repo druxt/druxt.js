@@ -3,7 +3,8 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapState } from 'vuex'
 
 /**
- * The DruxtRouter Vue.js component.
+ * Renders a Druxt module router component based on the resolved route provided
+ * by the Drupal Decoupled Router module.
  *
  * @example @lang vue
  * <DruxtRouter />

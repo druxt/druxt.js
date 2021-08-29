@@ -2,9 +2,7 @@
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
 /**
- * The `<DruxtViewsPager />` Vue.js component.
- *
- * Renders a slot themable Views pager component.
+ * Used by the DruxtView component to render a Druxt Wrapper themeable pager.
  */
 export default {
   name: 'DruxtViewsPager',
@@ -76,7 +74,7 @@ export default {
   methods: {
     /**
      * Get the query object from provided link.
-     * 
+     *
      * @param {string} link - A url with querystring.
      * @returns {object}
      */
@@ -99,7 +97,7 @@ export default {
 
     /**
      * Set the model from provided link.
-     * 
+     *
      * @param {string} link - A url with querystring.
      */
     setPage(link) {
@@ -134,7 +132,7 @@ export default {
 
     /**
      * Provides the scoped slots object for the Module render function.
-     * 
+     *
      * The `default` slot will render basic pagination based on the JSON:API links.
      *
      * @return {ScopedSlots} The Scoped slots object.
@@ -199,7 +197,7 @@ export default {
  * @param {object} resource - The JSON:API Views results resource.
  * @param {string} type - The Pager type.
  * @param {integer} value - The DruxtViewPager model value.
- * 
+ *
  * @example @lang js
  * {
  *   count: 20,

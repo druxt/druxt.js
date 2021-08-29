@@ -5,9 +5,7 @@ import Vue from 'vue'
 import DruxtWrapper from './DruxtWrapper.vue'
 
 /**
- * The DruxtModule base Vue.js component.
- *
- * Extend this component to build a Druxt module.
+ * Base component for core and custom Druxt modules.
  *
  * @example @lang js
  * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
@@ -200,7 +198,7 @@ export default {
 
     /**
      * Gets a Druxt modules scoped slots, and if there's no default slots,
-     * provides a develop mode debug default or passes through to a 
+     * provides a develop mode debug default or passes through to a
      * default template.
      *
      * @return {object}
@@ -277,7 +275,7 @@ export default {
     model() {
       if (this.component.props.value !== this.model) {
         this.component.props.value = this.model
-       
+
         // Only emit 'input' if using the default 'DruxtWrapper' component.
         if (this.component.is === 'DruxtWrapper') {
           this.$emit('input', this.model)

@@ -1,10 +1,7 @@
 <script>
 /**
- * The `<DruxtMenuItem />` Vue.js component.
- *
- * _This component is intended to be rendered by the `<DruxtMenu />` component._
- *
- * - Renders a menu item.
+ * Used by the DruxtMenu component to render individual Druxt Wrapper themeable
+ * menu items.
  */
 export default {
   name: 'DruxtMenuItem',

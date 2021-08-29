@@ -1,6 +1,10 @@
 <script>
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
+/**
+ * Used by the DruxtEntityForm component to render Druxt Wrapper themeable
+ * buttons.
+ */
 export default {
   name: 'DruxtEntityFormButtons',
 
@@ -26,11 +30,11 @@ export default {
      */
     getScopedSlots() {
       const buttons = ['submit', 'reset']
-      
+
       const scopedSlots = Object.fromEntries(buttons.map((button) => [
         button,
         (attrs) => this.$createElement(
-          'button', 
+          'button',
           {
             attrs,
             domProps: {

@@ -5,14 +5,11 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions } from 'vuex'
 
 /**
- * The `<DruxtEntity />` component fetches the Entity JSON:API resource and
- * schema data to render the Entities fields based on the Drupal Display
- * Mode configuration.
- * 
- * Features:
- * - Display mode based field system
- * - Scoped slots
- * - Query settings
+ * Renders a Drupal Content Entity by JSON:API resource type, UUID, view
+ * mode and schema type.
+ *
+ * Fields are rendered as Druxt Field components, based on the Drupal display
+ * mode configuration.
  *
  * @example @lang vue
  * <DruxtEntity
@@ -61,7 +58,7 @@ export default {
 
     /**
      * Drupal display schema type, 'view' or 'form'.
-     * 
+     *
      * @type {('view'|'form')}
      */
     schemaType: {
@@ -267,7 +264,7 @@ export default {
      *
      * A scoped slot is provided for each field being rendered, as per the
      * current display mode.
-     * 
+     *
      * Additionally, the `default` slot will render all fields as per the
      *
      * @example <caption>DruxtEntity**ResourceType**.vue</caption> @lang vue

@@ -16,9 +16,8 @@
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
 /**
- * The `<DruxtViewsFilter />` Vue.js component.
- *
- * Renders a slot themable Exposed Views filter.
+ * Used by the DruxtView component to render individual Druxt Wrapper themeable
+ * filter components.
  */
 export default {
   name: 'DruxtViewsFilter',
@@ -97,7 +96,7 @@ export default {
  * @typedef {object} PropsData
  * @param {object} filter - The Exposed Filter objects.
  * @param {*} value - The DruxtViewFilter model value.
- * 
+ *
  * @example @lang js
  * {
  *   filter: {

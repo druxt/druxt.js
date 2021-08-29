@@ -4,8 +4,7 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions } from 'vuex'
 
 /**
- * The `<DruxtBlock />` component renders a Drupal JSON:API Resource block by
- * ID or UUID.
+ * Renders a Drupal Block by UUID or Drupal's internal ID.
  *
  * @example @lang vue
  * <DruxtBlock id="umami_branding" />
@@ -24,9 +23,9 @@ export default {
   props: {
     /**
      * The Blocks internal ID.
-     * 
+     *
      * @type string
-     * 
+     *
      * @example @lang vue
      * <DruxtBlock id="umami_branding" />
      */
@@ -39,7 +38,7 @@ export default {
      * The Block Entity UUID.
      *
      * @type {string}
-     * 
+     *
      * @example @lang vue
      * <DruxtBlock uuid="59104acd-88e1-43c3-bd5f-35800f206394" />
      */
@@ -80,7 +79,7 @@ export default {
       const collection = await this.getCollection({ type, query })
       this.resource = { data: collection.data[0] }
     }
-    
+
     await DruxtModule.fetch.call(this)
   },
 

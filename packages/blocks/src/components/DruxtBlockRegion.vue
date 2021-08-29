@@ -4,8 +4,9 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions, mapState } from 'vuex'
 
 /**
- * The `<DruxtBlockRegion />` enders all visible blocks for the specified theme
- * region.
+ * Renders all visible blocks by theme and region name.
+ *
+ * Additional, non-visible blocks are available as slots and props data.
  *
  * @example @lang vue
  * <DruxtBlockRegion
@@ -25,7 +26,7 @@ export default {
      *
      * @type {string}
      * @default content
-     * 
+     *
      * @example @lang vue
      * <DruxtBlockRegion name="header" :theme="theme" />
      */
@@ -51,7 +52,7 @@ export default {
 
   /**
    * The Nuxt Fetch hook.
-   * 
+   *
    * Fetches all blocks by region and theme.
    */
   async fetch() {
@@ -94,11 +95,11 @@ export default {
   methods: {
     /**
      * Checks if a given block shoud be visible.
-     * 
+     *
      * Uses Request Path visibility details if available with the DruxtRouter.
-     * 
+     *
      * @param {object} block - The Block entity object.
-     * 
+     *
      * @return {boolean}
      */
     isVisible(block) {
@@ -157,7 +158,7 @@ export default {
      *
      * A scoped slot is provided for each block in the region, regardless of
      * visibility.
-     * 
+     *
      * The `default` slot will render all blocks, filtered by route visibility.
      *
      * @return {ScopedSlots} The Scoped slots object.
@@ -167,7 +168,7 @@ export default {
      *   <div v-if="default">
      *     <slot />
      *   </div>
-     * 
+     *
      *   <div v-else>
      *     <slot name="umami_branding" />
      *   </div>
@@ -191,7 +192,7 @@ export default {
       })
 
       // Build default slot.
-      scopedSlots.default = (attrs) => h('div', this.blocks.map((block) => 
+      scopedSlots.default = (attrs) => h('div', this.blocks.map((block) =>
         this.isVisible(block)
           ? scopedSlots[block.attributes.drupal_internal__id](attrs)
           : false
@@ -256,7 +257,7 @@ export default {
  *   <div v-if="default">
  *     <slot />
  *   </div>
- * 
+ *
  *   <div v-else>
  *     <slot name="umami_branding" />
  *   </div>

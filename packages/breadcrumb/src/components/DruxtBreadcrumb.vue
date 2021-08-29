@@ -3,8 +3,7 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions, mapState } from 'vuex'
 
 /**
- * The `<DruxtBreadcrumb />` component uses the DruxtRouter module to build a
- * path based breadcrumb.
+ * Renders a list of breacrumbs based on the active route.
  *
  * @example @lang vue
  * <DruxtBreadcrumb />

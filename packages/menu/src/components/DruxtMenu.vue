@@ -4,13 +4,8 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
 /**
- * The `<DruxtMenu />` Vue.js component fetches Menu Items using the Drupal
- * JSON:API, rendering the data via the `<DruxtMenuItem />` component and
- * the user defined render templates.
- *
- * Features:
- * - Scoped slots
- * - Query settings
+ * Renders a Drupal menu using either the default Drupal content menus, or the
+ * full menu via the JSON:API Menu Items module.
  *
  * @example @lang vue
  * <DruxtMenu name="main" />
@@ -24,7 +19,7 @@ export default {
   props: {
     /**
      * The depth of the menu items to render.
-     * 
+     *
      * @example @lang vue
      * <DruxtMenu :depth="1" />
      *
@@ -59,10 +54,10 @@ export default {
 
     /**
      * The maximum depth of the menu tree data to load.
-     * 
+     *
      * @example @lang vue
      * <DruxtMenu :max-depth="4" />
-     * 
+     *
      * @type {integer}
      */
     maxDepth: {
@@ -72,10 +67,10 @@ export default {
 
     /**
      * The minimum depth of the menu tree.
-     * 
+     *
      * @example @lang vue
      * <DruxtMenu :min-depth="2" />
-     * 
+     *
      * @type {Integer}
      * @default 0
      */
@@ -89,7 +84,7 @@ export default {
      *
      * @example @lang vue
      * <DruxtMenu name="main" />
-     * 
+     *
      * @type {string}
      * @default main
      */
@@ -100,7 +95,7 @@ export default {
 
     /**
      * The menu parent ID to use as the root of the menu.
-     * 
+     *
      * @example @lang vue
      * <DruxtMenu parent-id="views_view:views.recipes.page_1" />
      *
@@ -156,7 +151,7 @@ export default {
 
   /**
    * Nuxt.js fetch method.
-   * 
+   *
    * Builds and executes the JSON:API query, loading the menu items into the
    * druxtMenu Vuex store.
    */
@@ -206,7 +201,7 @@ export default {
   computed: {
     /**
      * The processed Menu items.
-     * 
+     *
      * @type {objects[]}
      * @deprecated
      */
@@ -214,7 +209,7 @@ export default {
 
     /**
      * The active route trail.
-     * 
+     *
      * @type {string[]}
      */
     trail: ({ $route }) => {
@@ -316,7 +311,7 @@ export default {
      *
      * Adds a `default` slot that will render the menu tree using the
      * DruxtMenuItem component.
-     * 
+     *
      * @example <caption>DruxtMenu**Name**.vue</caption> @lang vue
      * <template>
      *   <div>
