@@ -30,6 +30,16 @@ export default () => ({
       target: "_blank",
     },
     children: [],
+  },
+  {
+    component: "a",
+    text: "Discord",
+    icon: "external",
+    props: {
+      href: "https://discord.druxtjs.org",
+      target: "_blank",
+    },
+    children: [],
   }],
 
   // Recently opened documents.
