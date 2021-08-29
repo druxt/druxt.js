@@ -6,7 +6,12 @@
       class="shadow bg-base-200 drawer flex-grow"
       :class="{ 'drawer-mobile': $route.path !== '/' }"
     >
-      <input id="sidebar" type="checkbox" class="drawer-toggle" />
+      <input
+        id="sidebar"
+        type="checkbox"
+        class="drawer-toggle"
+        v-model="sidebar"
+      />
 
       <main
         class="
@@ -28,3 +33,17 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data: () => ({
+    sidebar: false,
+  }),
+
+  watch: {
+    $route() {
+      this.sidebar = false
+    }
+  }
+}
+</script>
