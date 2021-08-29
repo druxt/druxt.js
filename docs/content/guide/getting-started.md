@@ -17,10 +17,10 @@ DruxtJS requires a Nuxt.js frontend and a Drupal JSON:API backend:
     ```
 
 3. Install the module:
-   ![Install the module](./images/drupal-install.png)
+   ![Install the module](/images/drupal-install.png)
 
 4. Add the "**access druxt resources**" permission to a user/role:
-   ![Install the module](./images/drupal-permissions.png)
+   ![Druxt 'access druxt resources' permission](/images/drupal-permissions.png)
 
 
 ## Nuxt.js

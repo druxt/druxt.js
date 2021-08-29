@@ -28,7 +28,7 @@ The DruxtBlock module adds the ability to render Drupal Blocks and all blocks wi
 <DruxtBlockRegion :name="region" :theme="theme" />
 ```
 
-![Example DruxtBlockRegion component](./images/druxt-block-region.png)
+![Example DruxtBlockRegion component](/images/druxt-block-region.png)
 
 See [blocks.druxtjs.org](https://blocks.druxtjs.org) for more details.
 
@@ -52,13 +52,13 @@ The DruxtEntity module uses the Drupals Display mode and formatter configuration
 <DruxtEntity :type="resourceType" :uuid="uuid" mode="displayMode" />
 ```
 
-![Example DruxtEntity component](./images/druxt-entity.png)
+![Example DruxtEntity component](/images/druxt-entity.png)
 
 ```vue
 <DruxtEntityForm :type="resourceType" :uuid="uuid" mode="displayMode" />
 ```
 
-![Example DruxtEntityForm component](./images/druxt-entity-form.png)
+![Example DruxtEntityForm component](/images/druxt-entity-form.png)
 
 See [entity.druxtjs.org](https://entity.druxtjs.org) for more details.
 
@@ -96,7 +96,7 @@ The DruxtJS Site module provides a simple out of the box, decoupled Drupal site 
 <DruxtSite :theme="theme" />
 ```
 
-![Example DruxtSite](./images/druxt-site-umami.png)
+![Example DruxtSite](/images/druxt-site-umami.png)
 
 See [site.druxtjs.org](https://site.druxtjs.org) for more details.
 

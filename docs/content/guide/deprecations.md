@@ -1,3 +1,9 @@
+---
+title: Deprecation notes
+---
+
+TODO: Move to API documentation
+
 # Deprecations
 
 
