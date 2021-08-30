@@ -1,20 +1,10 @@
 ---
-home: true
-heroImage: ./logo.svg
-actionText: Get started
-actionLink: /guide/getting-started
-features:
-- title: Simplicity first
-  details: Using minimal configuration, DruxtJS Site uses Drupal's JSON:API data to drive a Vue.js powered decoupled site.
-- title: Nuxt.js in the front
-  details: Nuxt is based on a powerful modular architecture. You don't have to reinvent the wheel to get PWA benefits.
-- title: Drupal in the back
-  details: Leverage an API-first architecture, robust configuration management, and unparalleled extensibility to build the web of the future.
+title: Site
 ---
 
-> DruxtJS Site gives you a simple, out of the box, decoupled Drupal site experience with the power of Vue and Nuxt.
+> Out of the box Decoupled Drupal sites with Druxt.
 
-Using Drupal's built in Entity display modes and Field formatter system, Views, Blocks and more, DruxtJS Site provides the out of the box experience you expect.
+Using Drupal's built in Entity display modes and Field formatter system, Views, Blocks and more, the Druxt Site module provides the out of the box experience you expect.
 
 
 ## Features
@@ -27,14 +17,16 @@ Using Drupal's built in Entity display modes and Field formatter system, Views, 
 - **Breadcrumb**, **Menus** and more.
 
 
-## DruxtSite
+## Components
 
-The DruxtSite component renders a Drupal site using Block regions for the specified theme.
+### \<DruxtSite /\>
+
+Renders all available block regions based on the specified theme.
 
 ```vue
 <DruxtSite :theme="theme" />
 ```
 
-![Drupal Umami Parity demo](./images/umami.png)
+![Drupal Umami Parity demo](/images/umami.png)
 
-Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtSite.html).
+Get started with the [Guide](/guide/site) and [API Documentation](/api/packages/site/components/DruxtSite).

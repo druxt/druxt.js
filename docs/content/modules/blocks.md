@@ -1,16 +1,14 @@
 ---
-home: true
-heroImage: ./logo.svg
-actionText: Get started
-actionLink: /guide/getting-started
+title: Blocks
 ---
 
-> The DruxtBlocks module adds [Drupal](https://drupal.org) Blocks, Content Blocks and Block Region Vue.js components to your [Nuxt.js](https://nuxtjs.org) application.
+> Drupal Block and Block Region Druxt components.
 
+## Components
 
-### DruxtBlock
+### \<DruxtBlock /\>
 
-The DruxtBlock component renders a Drupal JSON:API Block resource by ID or UUID.
+Renders a Drupal Block by UUID or Drupal's internal ID.
 
 ```vue
 <DruxtBlock :id="drupal_internal__id" />
@@ -20,25 +18,20 @@ The DruxtBlock component renders a Drupal JSON:API Block resource by ID or UUID.
 <DruxtBlock :uuid="uuid" />
 ```
 
-Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtBlock.html).
+Get started with the [Guide](/guide/blocks) and [API Documentation](/api/packages/blocks/components/DruxtBlock).
 
 
 
-### DruxtBlockRegion
+### \<DruxtBlockRegion /\>
 
-The DruxtBlockRegion component renders all visible blocks for the specified theme region.
+Renders all visible blocks by theme and region name.
+
+Additional, non-visible blocks are available as slots and props data.
 
 ```vue
 <DruxtBlockRegion :name="name" :theme="theme" />
 ```
 
-![Example DruxtBlockRegion component](./images/druxt-block-region.png)
+![Example DruxtBlockRegion component](/images/druxt-block-region.png)
 
-Get started with the [Guide](guide/) and [API Documentation](/api/components/DruxtBlockRegion.html).
-
-
-## DruxtJS
-
-DruxtJS is a framework to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) application.
-
-Find out more at [https://druxtjs.org](https://druxtjs.org)
+Get started with the [Guide](/guide/blocks) and [API Documentation](/api/packages/blocks/components/DruxtBlockRegion).

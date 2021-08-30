@@ -1,19 +1,17 @@
 ---
-home: true
-heroImage: ./logo.svg
-actionText: Get started
-actionLink: /guide/getting-started
+title: Router
 ---
 
-> The DruxtJS Router provides a wilcard route, with it's [Vuex](https://vuex.vuejs.org) powered JSON:API client, to bring simple decoupled [Drupal](https://drupal.org) routing to your [Nuxt.js](https://nuxtjs.org) progressive web apps.
+> Drupal router for Nuxt, powered by the Drupal Decoupled Router module.
 
+##  Components
+
+### \<DruxtRouter /\>
+
+Renders a Druxt module router component based on the resolved route provided by the Drupal Decoupled Router module.
 
 ```vue
 <DruxtRouter />
 ```
 
-## DruxtJS
-
-DruxtJS is a suite of modules to connect a [Drupal](https://drupal.org) JSON:API backend to a [Nuxt.js](https://nuxtjs.org) frontend.
-
-Find out more at [https://druxtjs.org](https://druxtjs.org)
+Get started with the [Guide](/guide/router) and [API Documentation](/api/packages/router/components/DruxtRouter).
