@@ -9,9 +9,9 @@ export default () => ({
   },
   {
     component: "NuxtLink",
-    text: "API",
-    icon: "api",
-    props: { to: "/api" },
+    text: "Modules",
+    icon: "modules",
+    props: { to: "/modules" },
     children: [],
   },
   {
@@ -19,6 +19,13 @@ export default () => ({
     text: "Guide",
     icon: "guide",
     props: { to: "/guide" },
+    children: [],
+  },
+  {
+    component: "NuxtLink",
+    text: "API",
+    icon: "api",
+    props: { to: "/api" },
     children: [],
   },
   {
