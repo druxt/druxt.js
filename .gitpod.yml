@@ -4,16 +4,7 @@ image:
 # ddev and composer are running as part of the prebuild
 # when starting a workspace all docker images are ready
 tasks:
-  - name: druxt.js
-    before: git pull -f origin master:master
-    init: |
-      # druxt installation
-      yarn install
-      yarn build
-      yarn build:docs
-      gp sync-done bundle
-
-  - name: drupal-9
+  - name: ddev/drupal
     init: |
       # drupal installation
       .gitpod/download-ddev-images.sh
@@ -23,14 +14,22 @@ tasks:
       cd $GITPOD_REPO_ROOT/examples/drupal/drupal-9 && ddev start
       gp sync-done ddev
 
-  - name: druxt-site
+  - name: druxt/docs
     init: |
-      # druxt-site installation
-      gp sync-await bundle
-      cd $GITPOD_REPO_ROOT/examples/nuxt/druxt-site && yarn
+      # druxt/docs installation
+      gp sync-await build
+      cd $GITPOD_REPO_ROOT/docs && yarn
     command: |
       gp sync-await ddev
-      cd $GITPOD_REPO_ROOT/examples/nuxt/druxt-site && BASE_URL=$(gp url 8080) yarn dev
+      cd $GITPOD_REPO_ROOT/docs && BASE_URL=$(gp url 8080) yarn dev
+
+  - name: druxt.js
+    init: |
+      # druxt installation
+      yarn install
+      yarn build
+      yarn build:docs
+      gp sync-done build
 
 # VScode xdebug extension
 vscode:

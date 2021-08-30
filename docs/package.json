@@ -1,0 +1,22 @@
+{
+  "name": "druxtjs-org",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxt/content": "^1.14.0",
+    "@tailwindcss/typography": "^0.4.1",
+    "core-js": "^3.16.2",
+    "daisyui": "^1.13.2",
+    "nuxt": "^2.15.8"
+  },
+  "devDependencies": {
+    "@nuxtjs/google-analytics": "^2.4.0",
+    "@nuxtjs/tailwindcss": "^4.2.1"
+  }
+}
