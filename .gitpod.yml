@@ -24,6 +24,7 @@ tasks:
       cd $GITPOD_REPO_ROOT/docs && BASE_URL=$(gp url 8080) yarn dev
 
   - name: druxt.js
+    before: git pull -f origin master:master
     init: |
       # druxt installation
       yarn install
