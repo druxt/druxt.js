@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  gh-pages: sugarshin/gh-pages@0.0.6
-
 defaults: &defaults
   working_directory: ~/repo
   docker:
@@ -38,25 +35,6 @@ jobs:
           root: ~/repo
           paths:
             - .
-
-  # TODO - Fix CI Docs build.
-  # build_docs:
-  #   <<: *defaults
-  #   steps:
-  #     - attach_workspace:
-  #         at: ~/repo
-
-  #     - run:
-  #         name: Build with DruxtJS Docgen
-  #         command: npm run docs:build
-
-  #     - store_artifacts:
-  #         path: ~/repo/docs/.vuepress/dist
-
-  #     - persist_to_workspace:
-  #         root: ~/repo
-  #         paths:
-  #           - .
 
   test:
     <<: *defaults
@@ -102,9 +80,6 @@ workflows:
   test_deploy:
     jobs:
       - build
-      # - build_docs:
-      #     requires:
-      #       - build
       - test:
           requires:
             - build
@@ -112,14 +87,6 @@ workflows:
       #     requires:
       #       - build
       #       - test
-      #     filters:
-      #       branches:
-      #         only: master
-      # - gh-pages/deploy:
-      #     build-dir: ../repo/docs/.vuepress/dist
-      #     requires:
-      #       - build_docs
-      #     ssh-fingerprints: "c9:f9:e5:7d:4f:b2:5e:1e:f1:9a:5e:eb:47:91:10:b8"
       #     filters:
       #       branches:
       #         only: master
