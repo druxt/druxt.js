@@ -10,8 +10,8 @@ x-environment:
 services:
   app:
     build:
-      context: ./docs
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./docs/Dockerfile
     labels:
       lagoon.type: node
     ports:
