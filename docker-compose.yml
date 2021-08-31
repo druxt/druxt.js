@@ -1,0 +1,18 @@
+version: '2.3'
+
+x-lagoon-project:
+  &lagoon-project druxtjs-org
+
+x-environment:
+  &default-environment
+    LAGOON_PROJECT: *lagoon-project
+
+services:
+  app:
+    build:
+      context: ./docs
+      dockerfile: Dockerfile
+    labels:
+      lagoon.type: node
+    ports:
+      - "3000:3000"
