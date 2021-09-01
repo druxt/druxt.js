@@ -10,7 +10,7 @@
     />
 
     <div
-      v-for="module of modules"
+      v-for="module of $store.state.modules"
       :key="module.title"
       class="card mb-5 shadow-lg hover:shadow-2xl"
     >

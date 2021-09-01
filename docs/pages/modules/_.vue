@@ -20,13 +20,14 @@ export default {
   name: "AppGuideDocument",
 
   async asyncData({ $content, error, params, store, route }) {
-    const path = params.pathMatch || "README";
+    const path = params.pathMatch
+      ? params.pathMatch.includes("/")
+        ? params.pathMatch
+        : params.pathMatch + "/README"
+      : "README";
     let response;
     try {
-      response = await $content(
-        "modules/",
-        params.pathMatch || "README"
-      ).fetch();
+      response = await $content("modules/", path).fetch();
     } catch (e) {
       return error({ message: "Document not found" });
     }

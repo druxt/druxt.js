@@ -49,6 +49,9 @@ export default () => ({
     children: [],
   }],
 
+  // Druxt modules.
+  modules: [],
+
   // Recently opened documents.
   recent: [],
 })
