@@ -85,7 +85,7 @@ Druxt has a growing list of modules, providing access to different Drupal powere
 
 A module can be invoked either by setting the `module` and `props-data` properties of the `<Druxt />` component, or by using the module's component directly.
 
-_**Example:** Using the [DruxtEntity module](https://entity.druxtjs.org) to render a 'node--article' resource._
+_**Example:** Using the [DruxtEntity module](/modules/entity) to render a 'node--article' resource._
 
 ```vue
 <Druxt
@@ -102,7 +102,7 @@ _**Example:** Using the [DruxtEntity module](https://entity.druxtjs.org) to rend
 <DruxtEntity mode="teaser" type="node--article" :uuid="uuid">
 ```
 
-See the [Druxt module list](/guide/modules) for more information.
+See the [Druxt module list](/modules) for more information.
 
 
 ### Theming
