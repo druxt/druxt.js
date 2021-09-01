@@ -1,8 +1,7 @@
 ---
 title: Menu
+description: Drupal Menu and Menu item Druxt components, with support for the JSON:API Menu Items module.
 ---
-
-> Drupal Menu and Menu item Druxt components, with support for the JSON:API Menu Items module.
 
 ## Components
 

@@ -1,8 +1,7 @@
 ---
 title: Views
+description: Drupal Views components for Druxt with support for filters, pagination and sorting.
 ---
-
-> Drupal Views components for Druxt with support for filters, pagination and sorting.
 
 ## Components
 

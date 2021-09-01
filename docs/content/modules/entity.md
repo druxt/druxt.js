@@ -1,8 +1,7 @@
 ---
 title: Entity
+description: Drupal Display Mode powered Entity, Form and Field Druxt components.
 ---
-
-> Drupal Display Mode powered Entity, Form and Field Druxt components.
 
 ## Components
 

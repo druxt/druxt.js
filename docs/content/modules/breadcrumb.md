@@ -1,8 +1,7 @@
 ---
 title: Breadcrumb
+description: Decoupled Router based Breadcrumb Druxt component.
 ---
-
-> Decoupled Router based Breadcrumb Druxt component.
 
 ## Components
 

@@ -1,8 +1,7 @@
 ---
 title: Site
+description: Out of the box Decoupled Drupal sites with Druxt.
 ---
-
-> Out of the box Decoupled Drupal sites with Druxt.
 
 Using Drupal's built in Entity display modes and Field formatter system, Views, Blocks and more, the Druxt Site module provides the out of the box experience you expect.
 

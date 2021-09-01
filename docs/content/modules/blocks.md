@@ -1,8 +1,7 @@
 ---
 title: Blocks
+description: Drupal Block and Block Region Druxt components.
 ---
-
-> Drupal Block and Block Region Druxt components.
 
 ## Components
 

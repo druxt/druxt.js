@@ -1,8 +1,7 @@
 ---
 title: Router
+description: Drupal router for Nuxt, powered by the Drupal Decoupled Router module.
 ---
-
-> Drupal router for Nuxt, powered by the Drupal Decoupled Router module.
 
 ##  Components
 

@@ -2,4 +2,6 @@
 title: Druxt modules
 ---
 
-Druxt modules bridge the gap between Drupal and Nuxt, making it easy to add additional decoupled elements to your site or application.
+Druxt is built on two frameworks, Drupal and Nuxt, both with their own modules which can be used alongside Druxt modules.
+
+Druxt modules provide specific solutions for decoupled integration by bridging the gap between your Drupal and Nuxt applications.
