@@ -18,13 +18,13 @@
         <h2 class="card-title" v-text="module.title" />
         <p v-text="module.description" />
         <div class="card-actions">
-          <NuxtLink class="btn btn-secondary" tag="button" :to="module.path">
+          <NuxtLink class="btn btn-secondary" tag="button" :to="module.dir">
             <AppIconModules class="h-5 w-5 mr-1" /> Get Started
           </NuxtLink>
           <NuxtLink
             class="btn btn-ghost"
             tag="button"
-            :to="`/api/packages/${module.slug}`"
+            :to="`/api/packages/${module.dir.split('/')[2]}`"
           >
             <AppIconApi class="h-5 w-5 mr-1" /> API documentation
           </NuxtLink>
@@ -39,24 +39,5 @@ import Default from "./_.vue";
 
 export default {
   extends: Default,
-
-  async asyncData(ctx) {
-    const { $content, error } = ctx;
-    let response;
-    try {
-      response = await $content("modules")
-        .where({ slug: { $ne: "README" } })
-        .only(["description", "path", "slug", "title"])
-        .sortBy("title")
-        .fetch();
-    } catch (e) {
-      return error({ message: "Document not found" });
-    }
-
-    return {
-      ...(await Default.asyncData(ctx)),
-      modules: response,
-    };
-  },
 };
 </script>
