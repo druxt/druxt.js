@@ -4,109 +4,43 @@ title: Introduction
 
 # DruxtJS
 
-DruxtJS provides an easy connection to your Drupal JSON:API backend in your Nuxt.js frontend application.
+## The Fully Decoupled Drupal Framework
 
+### What is Druxt?
 
-## Features
+Druxt is a framework for building Fully Decoupled Drupal and Nuxt.js applications and sites. It allows you to leverage the content modelling and management power of Drupal, and build elegant user experiences with Nuxt.js.
 
-- [Nuxt module](#nuxt-module)
-- [JSON:API Client](#drupal-json-api-client)
-  - [DruxtClient](#druxtclient)
-  - [DruxtStore](#druxtstore)
-- [Druxt components](#druxt-components)
-  - [Modules](#modules)
-  - [Theming](#theming)
+> TL;DR: Druxt = DRUpal + nUXT.
 
+* * *
 
-## Nuxt module
+## Getting started
 
-The Druxt module provides Vue.js components, a JSON:API Client, a Vuex store and a Nuxt module, among other things.
+### Make Druxt work for you:
 
-The Nuxt module installs all required components and dependencies, however most components can be used individually in any Node project.
+- If you want to build a fully decoupled Drupal site, see [Getting started with DruxtSite](/modules/site/getting-started).
+- If you want to build a Nuxt application with Druxt modules, see [Getting started with Druxt](/guide/geting-started).
+- If you want to use Druxt internals in your Node application, check out the [API Documentation](/api).
+- If you want to get started contributing to the Druxt.js, refer to the [Contributor guide]().
 
-```js
-module.exports = {
-  modules: ['druxt'],
-  druxt: { baseUrl: 'https://demo-api.druxtjs.org' },
-}
-```
+* * *
 
-See [Getting started](/guide/getting-started) and the [API documentation](/api) for more details.
+## Modules
 
+Druxt is built on two frameworks, Drupal and Nuxt.js, both with their own modules which can be used alongside Druxt modules.
 
-## Drupal JSON:API client
+Druxt modules provide Nuxt modules, plugins, components and more to bridge the gap and make Decoupled development easier.
 
-Two methods of communication with the Drupal JSON:API are provided by Druxt, the **DruxtClient** and the **DruxtStore**.
+- For Druxt modules, see the [Druxt modules list](/modules).
+- For Drupal modules, see the [Drupal modules list](https://www.drupal.org/project/project_module).
+- For Nuxt modules, see the [Nuxt modules list](https://modules.nuxtjs.org/).
 
-### DruxtClient
+* * *
 
-The **DruxtClient** is a framework agnostic class, allowing access to Drupal's JSON:API resources and collections in your Node.js application.
+## Theming Druxt components
 
-**Example:** _Retrieve a collection of Page Node resources._
-```js
-const { DruxtClient } = require('druxt')
-new DruxtClient('https://demo-api.druxtjs.org')
-  .getCollection('node--page')
-  .then((res) => {
-    // Do the thing!
-  })
-```
+> Druxt is like a Vue.js theme layer for Drupal.
 
-Get started with the [Guide](/guide/client) and [API Documentation](/api/packages/druxt/client).
+Druxt components can be themed using **Wrapper components** alongside Vue.js **slots**, **$attrs** and **props**.
 
-### DruxtStore
-
-The **DruxtStore** is a Vuex module that provides the **DruxtClient** with a caching layer, only requesting data from Drupal where it's not already available in the store.
-
-**Example:** _Retrieve a Page Node resources._
-```vue
-<script>
-export default {
-  async fetch() {
-    this.resource = await this.$store.dispatch('druxt/getResource', {
-      type: 'node--page',
-      id: 'f09d8d5f-4998-4811-8fd1-05647f1c85d9'
-    })
-  },
-  data: () => ({ resource: null })
-}
-</script>
-```
-
-The DruxtStore is installed via the Nuxt module, see [getting started](/guide/getting-started).
-
-## Druxt components
-
-Druxt provides a Vue.js component system for easy access Drupal's JSON:API data, with a simple Slot based theming system.
-
-### Modules
-
-Druxt has a growing list of modules, providing access to different Drupal powered functionality.
-
-A module can be invoked either by setting the `module` and `props-data` properties of the `<Druxt />` component, or by using the module's component directly.
-
-_**Example:** Using the [DruxtEntity module](/modules/entity) to render a 'node--article' resource._
-
-```vue
-<Druxt
-  module="entity"
-  :props-data="{
-    mode: 'teaser',
-    type: 'node--article',
-    uuid
-  }"
-/>
-```
-
-```vue
-<DruxtEntity mode="teaser" type="node--article" :uuid="uuid">
-```
-
-See the [Druxt module list](/modules) for more information.
-
-
-### Theming
-
-Druxt modules use a slot-based Wrapper component system to provide rich defaults while still allowing full control over all theming and functionality.
-
-See the [theming guide](/guide/theming) for more details.
+* For more details, see the [Theming guide](/guide/theming).
