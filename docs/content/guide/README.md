@@ -19,9 +19,8 @@ Druxt is a framework for building Fully Decoupled Drupal and Nuxt.js application
 ### Make Druxt work for you:
 
 - If you want to build a fully decoupled Drupal site, see [Getting started with DruxtSite](/modules/site/getting-started).
-- If you want to build a Nuxt application with Druxt modules, see [Getting started with Druxt](/guide/geting-started).
+- If you want to build a Nuxt application with Druxt modules, see [Getting started with Druxt](/guide/getting-started).
 - If you want to use Druxt internals in your Node application, check out the [API Documentation](/api).
-- If you want to get started contributing to the Druxt.js, refer to the [Contributor guide]().
 
 * * *
 
