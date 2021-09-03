@@ -5,6 +5,7 @@ description: Drupal Block and Block Region Druxt components.
 
 ![Example DruxtBlockRegion component](/images/druxt-block-region.png)
 
+
 ## Features
 
 - Vue.js components:

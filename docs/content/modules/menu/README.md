@@ -41,7 +41,7 @@ Renders a Drupal menu using either the default Drupal content menus, or the full
 <DruxtMenu name="main" :depth="1" />
 ```
 
-- For more details, refer to the [DruxtBlockRegion API documentation](/api/packages/menu/components/DruxtMenu).
+- For more details, refer to the [DruxtMenu API documentation](/api/packages/menu/components/DruxtMenu).
 
 * * *
 
