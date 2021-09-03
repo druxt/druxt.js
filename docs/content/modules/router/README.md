@@ -1,0 +1,44 @@
+---
+title: Router
+description: Drupal router for Nuxt, powered by the Drupal Decoupled Router module.
+---
+
+## Features
+
+- Vue.js components:
+  - **DruxtRouter**: Renders a Druxt component for the resolved Decoupled route
+- Route providers:
+  - **Content entity** routes resolve **DruxtEntity** components
+  - **Drupal Views** page routes resolve **DruxtView** components
+
+* * *
+
+## Installation
+
+1. Download the module:
+   ```sh
+   npm i druxt-router
+   ```
+
+2. Add the module to `nuxt.config.js`:
+   ```js
+   export default {
+     modules: ['druxt-router'],
+   }
+   ```
+
+* * *
+
+##  Vue.js components
+
+### DruxtRouter
+
+Renders a Druxt module router component based on the resolved route provided by the Drupal Decoupled Router module.
+
+```vue
+<DruxtRouter />
+```
+
+- For more details, refer to the [DruxtBlock API documentation](/api/packages/router/components/DruxtRouter).
+
+* * *

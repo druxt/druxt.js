@@ -18,5 +18,15 @@ export default {
 
     // Return only the last 5 items.
     state.recent = recent.filter((o, index) => index < 5)
+  },
+
+  /**
+   * Set the Druxt modules list.
+   *
+   * @param {Object} state
+   * @param {Array} modules
+   */
+  setModules(state, modules) {
+    state.modules = modules
   }
 }

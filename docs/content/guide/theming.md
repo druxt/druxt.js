@@ -22,7 +22,7 @@ Component options can be seen on the `component.options` property of the Druxt m
 
 If there are no matching component names, a default `DruxtWrapper` component will be used to render the default output of the module.
 
-See the [DruxtModule API documentation](/api/components/DruxtModule).
+See the [DruxtModule API documentation](/api/packages/druxt/components/DruxtModule).
 
 
 ```vue
