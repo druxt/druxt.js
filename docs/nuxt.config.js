@@ -33,6 +33,7 @@ export default {
     ['@nuxtjs/google-analytics', {
       id: 'UA-172677199-1'
     }],
+    '@nuxtjs/pwa',
     '@nuxtjs/tailwindcss',
   ],
 
