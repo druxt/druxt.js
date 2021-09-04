@@ -5016,6 +5016,7 @@ __metadata:
     core-js: ^3.16.2
     daisyui: ^1.13.2
     nuxt: ^2.15.8
+    nuxt-social-meta: ^1.0.0
   languageName: unknown
   linkType: soft
 
@@ -8734,6 +8735,13 @@ fsevents@~2.3.2:
   version: 1.0.1
   resolution: "number-is-nan@npm:1.0.1"
   checksum: 13656bc9aa771b96cef209ffca31c31a03b507ca6862ba7c3f638a283560620d723d52e626d57892c7fff475f4c36ac07f0600f14544692ff595abff214b9ffb
+  languageName: node
+  linkType: hard
+
+"nuxt-social-meta@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "nuxt-social-meta@npm:1.0.0"
+  checksum: 9f83582e670a9ca2fe8bb15812503ace109660901c3af1e3ccb3d706b6d4ec5edf763236fec2c0c9c5a3fdde8ee828b76820dd2bde7d2ce3466557174d5f94ec
   languageName: node
   linkType: hard
 
