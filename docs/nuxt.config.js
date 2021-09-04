@@ -4,7 +4,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'DruxtJS',
+    titleTemplate: '%s - DruxtJS',
     htmlAttrs: {
       lang: 'en'
     },
@@ -33,6 +33,7 @@ export default {
     ['@nuxtjs/google-analytics', {
       id: 'UA-172677199-1'
     }],
+    '@nuxtjs/pwa',
     '@nuxtjs/tailwindcss',
   ],
 
@@ -40,6 +41,18 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/content
     '@nuxt/content',
+    ['nuxt-social-meta', {
+      title: 'DruxtJS - The Fully Deocupled Drupal Framework',
+      site_name: 'DruxtJS',
+      description: 'Druxt is a framework for building Fully Decoupled Drupal and Nuxt.js applications and sites.',
+      img: 'https://druxtjs.org/og-druxt.png',
+      img_size: {
+        width: '1200',
+        height: '630',
+      },
+      twitter: '@DruxtJS',
+      twitter_card: 'summary_large_image',
+    }],
   ],
 
   // Content module configuration: https://go.nuxtjs.dev/config-content

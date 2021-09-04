@@ -35,6 +35,10 @@
 
 <script>
 export default {
+  head: {
+    titleTemplate: "DruxtJS",
+  },
+
   data: () => ({
     title: "DruxtJS",
     slogan: "The Fully Decoupled Drupal Framework",

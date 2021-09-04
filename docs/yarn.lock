@@ -1793,6 +1793,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nuxtjs/pwa@npm:^3.3.5":
+  version: 3.3.5
+  resolution: "@nuxtjs/pwa@npm:3.3.5"
+  dependencies:
+    clone-deep: ^4.0.1
+    defu: ^3.2.2
+    execa: ^5.0.0
+    fs-extra: ^9.1.0
+    hasha: ^5.2.2
+    jimp-compact: ^0.16.1
+    lodash.template: ^4.5.0
+    serve-static: ^1.14.1
+    workbox-cdn: ^5.1.4
+  checksum: c4c10f7cd9fce521510239d3eb64f7087b490170bfb8895f2446c5bf145bc288c9bd9b968665463d235f49232fe270941e005945e9df622b68c0d9a434e3bf8a
+  languageName: node
+  linkType: hard
+
 "@nuxtjs/tailwindcss@npm:^4.2.1":
   version: 4.2.1
   resolution: "@nuxtjs/tailwindcss@npm:4.2.1"
@@ -3860,6 +3877,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clone-deep@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "clone-deep@npm:4.0.1"
+  dependencies:
+    is-plain-object: ^2.0.4
+    kind-of: ^6.0.2
+    shallow-clone: ^3.0.0
+  checksum: 770f912fe4e6f21873c8e8fbb1e99134db3b93da32df271d00589ea4a29dbe83a9808a322c93f3bcaf8584b8b4fa6fc269fc8032efbaa6728e0c9886c74467d2
+  languageName: node
+  linkType: hard
+
 "co@npm:^4.6.0":
   version: 4.6.0
   resolution: "co@npm:4.6.0"
@@ -4982,11 +5010,13 @@ __metadata:
   dependencies:
     "@nuxt/content": ^1.14.0
     "@nuxtjs/google-analytics": ^2.4.0
+    "@nuxtjs/pwa": ^3.3.5
     "@nuxtjs/tailwindcss": ^4.2.1
     "@tailwindcss/typography": ^0.4.1
     core-js: ^3.16.2
     daisyui: ^1.13.2
     nuxt: ^2.15.8
+    nuxt-social-meta: ^1.0.0
   languageName: unknown
   linkType: soft
 
@@ -7190,6 +7220,13 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"jimp-compact@npm:^0.16.1":
+  version: 0.16.1
+  resolution: "jimp-compact@npm:0.16.1"
+  checksum: 5a1c62d70881b31f79ea65fecfe03617be0eb56139bc451f37e8972365c99ac3b52c5176c446ff27144c98ab664a99107ae08d347044e94e1de637f165b41a57
+  languageName: node
+  linkType: hard
+
 "jiti@npm:^1.9.2":
   version: 1.11.0
   resolution: "jiti@npm:1.11.0"
@@ -8698,6 +8735,13 @@ fsevents@~2.3.2:
   version: 1.0.1
   resolution: "number-is-nan@npm:1.0.1"
   checksum: 13656bc9aa771b96cef209ffca31c31a03b507ca6862ba7c3f638a283560620d723d52e626d57892c7fff475f4c36ac07f0600f14544692ff595abff214b9ffb
+  languageName: node
+  linkType: hard
+
+"nuxt-social-meta@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "nuxt-social-meta@npm:1.0.0"
+  checksum: 9f83582e670a9ca2fe8bb15812503ace109660901c3af1e3ccb3d706b6d4ec5edf763236fec2c0c9c5a3fdde8ee828b76820dd2bde7d2ce3466557174d5f94ec
   languageName: node
   linkType: hard
 
@@ -11383,6 +11427,15 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"shallow-clone@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "shallow-clone@npm:3.0.1"
+  dependencies:
+    kind-of: ^6.0.2
+  checksum: 39b3dd9630a774aba288a680e7d2901f5c0eae7b8387fc5c8ea559918b29b3da144b7bdb990d7ccd9e11be05508ac9e459ce51d01fd65e583282f6ffafcba2e7
+  languageName: node
+  linkType: hard
+
 "shebang-command@npm:^2.0.0":
   version: 2.0.0
   resolution: "shebang-command@npm:2.0.0"
@@ -13137,6 +13190,13 @@ fsevents@~2.3.2:
   dependencies:
     string-width: ^4.0.0
   checksum: 03db6c9d0af9329c37d74378ff1d91972b12553c7d72a6f4e8525fe61563fa7adb0b9d6e8d546b7e059688712ea874edd5ded475999abdeedf708de9849310e0
+  languageName: node
+  linkType: hard
+
+"workbox-cdn@npm:^5.1.4":
+  version: 5.1.4
+  resolution: "workbox-cdn@npm:5.1.4"
+  checksum: dab9192f0e28d281978e548c08f2292656aada80d58ece7cbaaa4c07be49be699b88ed47fc25d77fca864d6f96d6093dc56ad68f80b76c6a8452e0de9f9fd652
   languageName: node
   linkType: hard
 
