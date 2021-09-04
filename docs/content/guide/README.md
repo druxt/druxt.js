@@ -1,5 +1,6 @@
 ---
 title: Introduction
+weight: -10
 ---
 
 # DruxtJS

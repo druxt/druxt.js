@@ -1,5 +1,6 @@
 ---
 title: Theming
+weight: -6
 ---
 
 # Theming

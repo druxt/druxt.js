@@ -1,5 +1,6 @@
 ---
 title: Getting started
+weight: -9
 ---
 
 # Getting started
