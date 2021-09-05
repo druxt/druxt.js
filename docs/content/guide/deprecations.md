@@ -1,5 +1,6 @@
 ---
 title: Deprecation notes
+weight: 10
 ---
 
 TODO: Move to API documentation

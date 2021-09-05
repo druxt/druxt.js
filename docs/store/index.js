@@ -23,7 +23,10 @@ export const actions = {
       commit("addMenuChildren", { children: moduleChildren, parent: "/modules" });
 
       // Add Guide menu children to the vuex store.
-      const guideIndex = await $content("guide").only(["path", "title"]).fetch();
+      const guideIndex = await $content("guide")
+        .sortBy("weight")
+        .only(["path", "title", "weight"])
+        .fetch();
       const guideChildren = guideIndex.map((o) => ({
         component: "NuxtLink",
         text: o.title,
