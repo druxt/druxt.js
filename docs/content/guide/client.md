@@ -1,5 +1,6 @@
 ---
 title: JSON:API Client
+weight: 5
 ---
 
 # DruxtClient
