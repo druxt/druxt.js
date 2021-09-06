@@ -2,7 +2,7 @@ import axios from 'axios'
 import { stringify } from 'querystring'
 
 /**
- * Druxt JSON:API client.
+ * The Druxt JSON:API client.
  */
 class DruxtClient {
   /**
