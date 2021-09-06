@@ -22,11 +22,18 @@
             <AppIconModules class="h-5 w-5 mr-1" /> Get Started
           </NuxtLink>
           <NuxtLink
-            class="btn btn-ghost"
+            class="btn btn-primary"
             tag="button"
             :to="`/api/packages/${module.dir.split('/')[2]}`"
           >
             <AppIconApi class="h-5 w-5 mr-1" /> API documentation
+          </NuxtLink>
+          <NuxtLink
+            class="btn btn-ghost"
+            tag="button"
+            :to="`${module.dir}/release-notes`"
+          >
+            <AppIconApi class="h-5 w-5 mr-1" /> Release notes
           </NuxtLink>
         </div>
       </div>

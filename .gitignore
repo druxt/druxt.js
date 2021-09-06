@@ -18,6 +18,8 @@ package-lock.json
 bin
 dist
 docs/content/api
+docs/content/release-notes.md
+docs/content/modules/*/release-notes.md
 
 # Coverage reports
 coverage
