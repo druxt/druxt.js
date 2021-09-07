@@ -31,7 +31,7 @@
           <NuxtLink
             class="btn btn-ghost"
             tag="button"
-            :to="`${module.dir}/release-notes`"
+            :to="`/api/packages/${module.dir.split('/')[2]}/CHANGELOG`"
           >
             <AppIconApi class="h-5 w-5 mr-1" /> Release notes
           </NuxtLink>
