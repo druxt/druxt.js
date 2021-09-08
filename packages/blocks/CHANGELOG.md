@@ -3,7 +3,8 @@
 ## 0.10.0
 ### Minor Changes
 
-- Added support for default template based theming
+- Added support for default template injection
+  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080)
 
 ## 0.9.2
 ### Patch Changes
@@ -62,25 +63,57 @@
 ## 0.7.0
 ### Minor Changes
 
+- Added DruxtWrapper support to Block and BlockRegion components
+- Removed support for DruxtCommonWrapper (deprecated)
+
 ## 0.6.1
 ### Patch Changes
+
+- Updated dependencies
 
 ## 0.6.0
 ### Minor Changes
 
+- Added scoped slots per block to BlockRegion component
+
+  _**Example:** DruxtBlockRegion wrapper component with scoped slots_
+
+  ```vue
+  <template>
+    <div>
+      <slot :name="block_id" />
+    </div>
+  </template>
+  ```
+
+- Added support for DruxtCommonWrapper
+
 ## 0.5.0
 ### Minor Changes
+
+- Refactored to use Nuxt fetch hook instead of AsyncData
+- Updated dependencies
 
 ## 0.4.1
 ### Patch Changes
 
+- Updated dependencies
+
 ## 0.4.0
 ### Minor Changes
+
+- Added default Page Title block
 
 ## 0.3.0
 ### Minor Changes
 
+- Added watch to update DruxtBlockRegion data on route change
+
 ## 0.2.0
 ### Minor Changes
 
+- Added default Block Content entity block
+
 ## 0.1.0
+### Initial release
+
