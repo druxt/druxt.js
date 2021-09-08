@@ -56,9 +56,15 @@ class DruxtDocgen {
     const changelogs = await globby('packages/**/CHANGELOG.md')
     for (const file of changelogs) {
       const module = file.split('/')[1]
-      // TODO: Append frontmatter to moved file
       const destination = `${this.destination}/api/packages/${module}/CHANGELOG.md`
-      await ncp(file, destination)
+      const options = {
+        transform: (read, write) => {
+          // Append frontmatter
+          write.write("---\ntitle: Release notes\n---\n\n")
+          read.pipe(write)
+        }
+      }
+      await ncp(file, destination, options, () => {})
     }
   }
 
