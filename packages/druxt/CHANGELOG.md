@@ -18,7 +18,7 @@
 ## 0.8.0
 ### Minor Changes
 
-- Add support for default template injection to DruxtModule
+- Added support for default template injection to DruxtModule
   
   _**Example:** Default template injection with DruxtEntity and DruxtMenu components_
 

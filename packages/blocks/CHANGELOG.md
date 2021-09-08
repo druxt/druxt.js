@@ -91,7 +91,7 @@
 ## 0.5.0
 ### Minor Changes
 
-- Refactored to use Nuxt fetch hook instead of AsyncData
+- Refactored to use Nuxt fetch hook
 - Updated dependencies
 
 ## 0.4.1
