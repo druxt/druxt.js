@@ -182,7 +182,7 @@ Thanks to [d34dman](https://github.com/d34dman)
 ## 0.3.0
 ### Minor Changes
 
-- Moved Site functionality to the [DruxtSite module](/modules/sites)
+- Moved Site functionality to the [DruxtSite module](/modules/site)
 - Added Druxt component and mixin
 - Added available component options data
 - Removed unused Class and Store
