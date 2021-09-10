@@ -276,6 +276,35 @@ class DruxtClient {
   }
 
   /**
+   * Get the related resources from a specified JSON:API resource.
+   *
+   * @param {string} type - The JSON:API Resource type.
+   * @param {string} id - The Drupal resource UUID.
+   * @param {string} related - The relationship name.
+   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   *
+   * @returns {object} The related JSON:API resource(s).
+   */
+  async getRelated(type, id, related, query) {
+    if (!id || !type || !related) {
+      return false
+    }
+
+    let { href } = await this.getIndex(type)
+    if (!href) {
+      href = this.options.endpoint + '/' + type.replace('--', '/')
+    }
+
+    const url = this.buildQueryUrl(`${href}/${id}/${related}`, query)
+    try {
+      const related = await this.axios.get(url)
+      return related.data
+    } catch (e) {
+      return false
+    }
+  }
+
+  /**
    * Get a JSON:API resource by type and ID.
    *
    * @example @lang js

@@ -169,6 +169,14 @@ describe('DruxtClient', () => {
     expect(cachedResourceIndex).toHaveProperty('href')
   })
 
+  test('getRelated', async () => {
+    const mockArticle = await getMockResource('node--article')
+
+    const { type, id } = mockArticle.data
+    const related = await druxt.getRelated(type, id, 'field_media_image')
+    expect(related.data).toHaveProperty('type')
+  })
+
   test('getResource', async () => {
     const mockArticle = await getMockResource('node--article')
     const entity = await druxt.getResource(mockArticle.data.type, mockArticle.data.id)
