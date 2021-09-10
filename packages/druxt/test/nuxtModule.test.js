@@ -9,6 +9,7 @@ let mock
 describe('DruxtJS Nuxt module', () => {
   beforeEach(() => {
     mock = {
+      addModule: jest.fn(),
       addPlugin: jest.fn(),
       nuxt: {
         hook: jest.fn((hook, fn) => {
@@ -19,7 +20,9 @@ describe('DruxtJS Nuxt module', () => {
           return fn(arg[hook])
         }),
       },
-      options: {},
+      options: {
+        buildDir: 'build',
+      },
       DruxtNuxtModule
     }
   })
@@ -41,5 +44,20 @@ describe('DruxtJS Nuxt module', () => {
 
     // Expect addPlugin to have been called with options.
     expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
+  })
+
+  test('@nuxtjs/axios module', () => {
+    mock.options.extendPlugins = jest.fn((o) => o)
+
+    DruxtNuxtModule.call(mock)
+
+    // Expect addModule to have been called to install @nuxtjs/axios.
+    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/axios')
+
+    // Expect the Axios plugin to be the first in the list.
+    const mockPlugins = [{ src: 'test' }, { src: 'build/axios.js' }]
+    expect(typeof mock.options.extendPlugins).toBe('function')
+    mock.options.extendPlugins(mockPlugins)
+    expect(mockPlugins.shift()).toStrictEqual({ src: 'build/axios.js' })
   })
 })

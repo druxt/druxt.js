@@ -42,7 +42,7 @@
     "nuxt"
   ],
   "dependencies": {
-    "axios": "^0.21.1",
+    "@nuxtjs/axios": "^5.13.6",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.2.1",
     "md5": "^2.3.0",
