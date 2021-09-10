@@ -133,7 +133,8 @@ export default {
      * A scoped slot is provided for each block region available, as per the
      * specified theme.
      *
-     * Additionally, the `default` slot will render all regions.
+     * Additionally, the `default` slot will render all regions, or the Nuxt
+     * component when no block region data is available.
      *
      * @example <caption>DruxtSite**Theme**.vue</caption> @lang vue
      * <template>
@@ -146,6 +147,11 @@ export default {
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots() {
+      // If no regions, return Nuxt component.
+      if (!this.regions.length) {
+        return { default: () => this.$createElement('Nuxt') }
+      }
+
       // Build scoped slots for each region.
       const scopedSlots = {
         ...Object.fromEntries(this.regions.map((region) => [region, (attrs) => this.$createElement('DruxtBlockRegion', {
