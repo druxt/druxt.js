@@ -146,6 +146,11 @@ export default {
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots() {
+      // If no regions, return Nuxt component.
+      if (!this.regions.length) {
+        return { default: () => this.$createElement('Nuxt') }
+      }
+
       // Build scoped slots for each region.
       const scopedSlots = {
         ...Object.fromEntries(this.regions.map((region) => [region, (attrs) => this.$createElement('DruxtBlockRegion', {
