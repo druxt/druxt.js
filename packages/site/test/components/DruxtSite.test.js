@@ -52,6 +52,7 @@ describe('DruxtSite component', () => {
       'page_title',
       'content_bottom'
     ])
+    expect(Object.keys(wrapper.vm.$refs)).toStrictEqual(['component', ...wrapper.vm.regions])
 
     // Druxt Component mixin.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')

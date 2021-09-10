@@ -158,6 +158,7 @@ export default {
           attrs,
           key: region,
           props: this.props[region],
+          ref: region,
         })]))
       }
 
