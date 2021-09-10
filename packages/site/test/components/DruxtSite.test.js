@@ -18,7 +18,7 @@ const mountComponent = (pending, options) => {
     $fetchState: { pending }
   }
   const propsData = { theme: 'umami' }
-  const stubs = ['DruxtBlockRegion']
+  const stubs = ['DruxtBlockRegion', 'Nuxt']
 
   return mount(DruxtSite, { localVue, mocks, propsData, store, stubs, ...options })
 }
@@ -77,5 +77,11 @@ describe('DruxtSite component', () => {
       regions: wrapper.vm.regions,
       theme: wrapper.vm.theme
     })
+  })
+
+  test('no blocks', async () => {
+    const wrapper = mountComponent(false)
+    expect(wrapper.vm.regions.length).toBe(0)
+    expect(wrapper.vm.getScopedSlots().default().componentOptions.tag).toBe('Nuxt')
   })
 })
