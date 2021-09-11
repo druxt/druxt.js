@@ -4,7 +4,7 @@ module.exports = {
     maxSize: '50kb',
   }],
   ci: {
-    repoBranchBase: 'main',
+    repoBranchBase: process.env.CI_PULL_REQUEST ? 'develop' : 'main',
     trackBranches: ['main', 'develop'],
   }
 }
