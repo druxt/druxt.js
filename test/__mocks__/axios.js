@@ -48,12 +48,12 @@ mockAxios.get = jest.fn((url, options) => {
 })
 
 // Mock 'patch' requests.
-mockAxios.patch = jest.fn((url, data, options) => 
+mockAxios.patch = jest.fn((url, data, options) =>
   mockData(url, path.resolve('./test/__fixtures__/patch', md5(url), md5(JSON.stringify(data)) + '.json'))
 )
 
 // Mock 'post' requests.
-mockAxios.post = jest.fn((url, data, options) => 
+mockAxios.post = jest.fn((url, data, options) =>
   mockData(url, pathe.resolve('./test/__fixtures__/post', md5(url), md5(JSON.stringify(data)) + '.json'))
 )
 

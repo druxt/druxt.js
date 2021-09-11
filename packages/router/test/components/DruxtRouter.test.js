@@ -1,6 +1,7 @@
 import 'regenerator-runtime/runtime'
-import mockAxios from 'jest-mock-axios'
 import { mount, createLocalVue } from '@vue/test-utils'
+import axios from 'axios'
+import mockAxios from 'jest-mock-axios'
 import Vuex from 'vuex'
 
 import { DruxtRouter, DruxtRouterStore } from '../../src'
@@ -47,7 +48,7 @@ describe('DruxtRouterComponent', () => {
     store = new Vuex.Store()
 
     DruxtRouterStore({ store })
-    store.$druxtRouter = () => new DruxtRouter(baseUrl)
+    store.$druxtRouter = () => new DruxtRouter(baseUrl, { axios })
   })
 
   test('Homepage', async () => {

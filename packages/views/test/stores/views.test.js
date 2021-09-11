@@ -1,4 +1,5 @@
 import { createLocalVue } from '@vue/test-utils'
+import axios from 'axios'
 import { DruxtClient, DruxtStore } from 'druxt'
 import mockAxios from 'jest-mock-axios'
 import Vuex from 'vuex'
@@ -26,7 +27,7 @@ describe('DruxtViewsStore', () => {
     DruxtStore({ store })
     DruxtViewsStore({ store })
 
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org', { axios })
 
     store.app = { context: { error: jest.fn() }, store }
   })

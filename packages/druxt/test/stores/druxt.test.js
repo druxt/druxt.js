@@ -1,4 +1,5 @@
 import { createLocalVue } from '@vue/test-utils'
+import axios from 'axios'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { getMockCollection, getMockResource } from 'druxt-test-utils'
 import mockAxios from 'jest-mock-axios'
@@ -25,7 +26,7 @@ describe('DruxtStore', () => {
     store.app = { context: { error: jest.fn() } }
     DruxtStore({ store })
 
-    store.$druxt = new DruxtClient(baseUrl)
+    store.$druxt = new DruxtClient(baseUrl, { axios })
   })
 
   test('init', () => {
