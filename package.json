@@ -11,6 +11,7 @@
   "scripts": {
     "build": "yarn clean && siroc build",
     "build:docs": "./packages/docgen/bin/druxt-docgen.js",
+    "bundlewatch": "bundlewatch --max-size 50kb ./packages/**/dist/*.js",
     "changeset": "changeset",
     "clean": "yarn clean:dist && yarn clean:docs",
     "clean:docs": "rimraf docs/content/api || true",
@@ -30,6 +31,7 @@
     "@commitlint/config-conventional": "^13.1.0",
     "@vue/test-utils": "^1.2.2",
     "babel-core": "^7.0.0-bridge",
+    "bundlewatch": "^0.3.2",
     "esbuild": "^0.12.15",
     "esbuild-jest": "^0.5.0",
     "eslint": "^7.31.0",
