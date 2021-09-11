@@ -53,6 +53,10 @@ jobs:
           name: Upload coverage report
           command: yarn dlx codecov
 
+      - run:
+          name: Bundlewatch
+          command: yarn bundlewatch
+
       - store_test_results:
           path: ./reports/junit/
 
