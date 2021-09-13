@@ -2458,7 +2458,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/test-utils@npm:^1.2.2":
+"@vue/test-utils@npm:1.2.2":
   version: 1.2.2
   resolution: "@vue/test-utils@npm:1.2.2"
   dependencies:
@@ -4600,7 +4600,7 @@ __metadata:
     "@changesets/cli": 2.16.0
     "@commitlint/cli": 13.1.0
     "@commitlint/config-conventional": 13.1.0
-    "@vue/test-utils": ^1.2.2
+    "@vue/test-utils": 1.2.2
     babel-core: 7.0.0-bridge.0
     bundlewatch: 0.3.2
     esbuild: 0.12.15
@@ -4614,9 +4614,9 @@ __metadata:
     regenerator-runtime: 0.13.9
     rimraf: 3.0.2
     siroc: 0.14.0
-    vue: ^2.6.14
-    vue-jest: ^3.0.7
-    vue-template-compiler: ^2.6.14
+    vue: 2.6.14
+    vue-jest: 3.0.7
+    vue-template-compiler: 2.6.14
   languageName: unknown
   linkType: soft
 
@@ -10947,7 +10947,7 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"vue-jest@npm:^3.0.7":
+"vue-jest@npm:3.0.7":
   version: 3.0.7
   resolution: "vue-jest@npm:3.0.7"
   dependencies:
@@ -10970,7 +10970,7 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"vue-template-compiler@npm:^2.6.14":
+"vue-template-compiler@npm:2.6.14, vue-template-compiler@npm:^2.6.14":
   version: 2.6.14
   resolution: "vue-template-compiler@npm:2.6.14"
   dependencies:
@@ -10987,7 +10987,7 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"vue@npm:^2.6.14":
+"vue@npm:2.6.14, vue@npm:^2.6.14":
   version: 2.6.14
   resolution: "vue@npm:2.6.14"
   checksum: 23524a1bdca094d62cb3491a46317eed75184b5d61d28fa846ea5d2b241c1cc7084fc67ee259d47a50a6d0bbc33ecaceb7bb52bff81312fe7da07263f3419942
