@@ -1,6 +1,6 @@
 {
   "name": "druxt-menu",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Drupal Menu and Menu item Druxt components, with support for the JSON:API Menu Items module.",
   "keywords": [
     "menu",

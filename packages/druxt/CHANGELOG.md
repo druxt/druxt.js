@@ -1,25 +1,44 @@
 # druxt
 
+## 0.9.0
+
+### Minor Changes
+
+- 21170fb: Moved Vue components out of bundle
+
+  ⚠ Potential breaking change
+
+  _**Note:** This only effects custom Druxt modules and implementations._
+
+  ```diff
+  -import { DruxtModule } from 'druxt'
+  +import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+  ```
+
 ## 0.8.3
+
 ### Patch Changes
 
 - Fixed issue with attrs passthrough
 
 ## 0.8.2
+
 ### Patch Changes
 
 - Fixed bug with fetchKey and attrs passthrough
 
 ## 0.8.1
+
 ### Patch Changes
 
 - Fixed DruxtModule emit behavior
 
 ## 0.8.0
+
 ### Minor Changes
 
 - Added support for default template injection to DruxtModule
-  
+
   _**Example:** Default template injection with DruxtEntity and DruxtMenu components_
 
   ```vue
@@ -36,6 +55,7 @@
   ```
 
 ## 0.7.1
+
 ### Patch Changes
 
 - Fixed issue with attrs passthrough
@@ -44,6 +64,7 @@
 Thanks to [d34dman](https://github.com/d34dman)
 
 ## 0.7.0
+
 ### Minor Changes
 
 - Added support for v-model to DruxtModule
@@ -56,14 +77,15 @@ Thanks to [d34dman](https://github.com/d34dman)
     v-model="{
       attributes: {
         title: 'My Entity',
-        field_name: 'Value',
+        field_name: 'Value'
       },
-      relationships: {},
+      relationships: {}
     }"
   />
   ```
 
 ## 0.6.1
+
 ### Patch Changes
 
 - Fixed issue with normalizaton of include/sort data
@@ -71,6 +93,7 @@ Thanks to [d34dman](https://github.com/d34dman)
 - Updated dependencies
 
 ## 0.6.0
+
 ### Minor Changes
 
 - Refactored DruxtStore
@@ -79,41 +102,46 @@ Thanks to [d34dman](https://github.com/d34dman)
 - Fixed issue with DruxtStore reactivity
 
 ## 0.5.1
+
 ### Patch Changes
 
 - Fixed issue with getWrapperData
 - Fixed issue with DruxtStore reactivity
 
 ## 0.5.0
+
 ### Minor Changes
 
 - Added DruxtModule component
 
   ```vue
   <script>
-  import { DruxtModule } from 'druxt'
+  import { DruxtModule } from "druxt";
   export default {
-    name: 'MyCustomDruxtModule',
-    extends: DruxtModule,
-  }
+    name: "MyCustomDruxtModule",
+    extends: DruxtModule
+  };
   </script>
   ```
 
   - For more details, refer to the [DruxtModule API documentation](/api/packages/druxt/components/DruxtModule)
 
-- Added $attrs/props splitting
+- Added \$attrs/props splitting
 
 ## 0.4.2
+
 ### Patch Changes
 
 - Added metadata to Nuxt module
 
 ## 0.4.1
+
 ### Patch Changes
 
 - Fixed dependency issues
 
 ## 0.4.0
+
 ### Minor Changes
 
 - Added DruxtClient
@@ -138,48 +166,53 @@ Thanks to [d34dman](https://github.com/d34dman)
   <script>
   export default {
     data: () => ({
-      resource: null,
+      resource: null
     }),
 
     async fetch() {
-      const resource = await this.$store.dispatch('druxt/getResource', {
-        type: 'node--article',
+      const resource = await this.$store.dispatch("druxt/getResource", {
+        type: "node--article",
         id: uuid,
         query
-      })
-      this.resource = resource
+      });
+      this.resource = resource;
     }
-  }
+  };
   </script>
   ```
 
   - For more details, refer to the [DruxtStore API documentation](/api/packages/druxt/stores/druxt)
 
-- Added $druxt plugin wrapper for DruxtClient
+- Added \$druxt plugin wrapper for DruxtClient
 
 ## 0.3.4
+
 ### Patch Changes
 
 - Updated dependencies
 
 ## 0.3.3
+
 ### Patch Changes
 
 - Added Inner prop to DruxtComponentMixin
 
 ## 0.3.2
+
 ### Patch Changes
 
 - Added sorting of component options
 - Fixed issue with component options
 
 ## 0.3.1
+
 ### Patch Changes
 
 - Added DruxtWrapper to DruxtComponentMixin
 - Added unique filter to component options
 
 ## 0.3.0
+
 ### Minor Changes
 
 - Moved Site functionality to the [DruxtSite module](/modules/site)
@@ -188,26 +221,31 @@ Thanks to [d34dman](https://github.com/d34dman)
 - Removed unused Class and Store
 
 ## 0.2.1
+
 ### Patch Changes
 
 - Added @nuxtjs/proxy and default configuration
 - Updated dependencies for no-JS support
 
 ## 0.2.0
+
 ### Minor Changes
 
 - Updated dependencies for no-JS support
 
 ## 0.1.2
+
 ### Patch Changes
 
 - Fixed Vuex store installation
 - Updated dependencies
 
 ## 0.1.1
+
 ### Patch Changes
 
 - Removed schema generation workaround
 
 ## 0.1.0
+
 ### Initial release

@@ -1,6 +1,6 @@
 {
   "name": "druxt-entity",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "Drupal Display Mode powered Entity, Form and Field Druxt components.",
   "keywords": [
     "cms",
