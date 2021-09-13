@@ -1448,7 +1448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/content@npm:^1.14.0":
+"@nuxt/content@npm:1.14.0":
   version: 1.14.0
   resolution: "@nuxt/content@npm:1.14.0"
   dependencies:
@@ -1784,7 +1784,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxtjs/google-analytics@npm:^2.4.0":
+"@nuxtjs/google-analytics@npm:2.4.0":
   version: 2.4.0
   resolution: "@nuxtjs/google-analytics@npm:2.4.0"
   dependencies:
@@ -1793,7 +1793,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxtjs/pwa@npm:^3.3.5":
+"@nuxtjs/pwa@npm:3.3.5":
   version: 3.3.5
   resolution: "@nuxtjs/pwa@npm:3.3.5"
   dependencies:
@@ -1810,7 +1810,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxtjs/tailwindcss@npm:^4.2.1":
+"@nuxtjs/tailwindcss@npm:4.2.1":
   version: 4.2.1
   resolution: "@nuxtjs/tailwindcss@npm:4.2.1"
   dependencies:
@@ -1848,7 +1848,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/typography@npm:^0.4.1":
+"@tailwindcss/typography@npm:0.4.1":
   version: 0.4.1
   resolution: "@tailwindcss/typography@npm:0.4.1"
   dependencies:
@@ -4200,17 +4200,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"core-js@npm:3.16.2":
+  version: 3.16.2
+  resolution: "core-js@npm:3.16.2"
+  checksum: f48b988ab6d144aad1a7c09a73174946f797ec050b4566dee9bf0227560296cdd0f714b37f0ee065303eccf0e7fb8115ccca52ab3e80db12e0dcc20a88219483
+  languageName: node
+  linkType: hard
+
 "core-js@npm:^2.6.5":
   version: 2.6.12
   resolution: "core-js@npm:2.6.12"
   checksum: 44fa9934a85f8c78d61e0c8b7b22436330471ffe59ec5076fe7f324d6e8cf7f824b14b1c81ca73608b13bdb0fef035bd820989bf059767ad6fa13123bb8bd016
-  languageName: node
-  linkType: hard
-
-"core-js@npm:^3.16.2":
-  version: 3.16.2
-  resolution: "core-js@npm:3.16.2"
-  checksum: f48b988ab6d144aad1a7c09a73174946f797ec050b4566dee9bf0227560296cdd0f714b37f0ee065303eccf0e7fb8115ccca52ab3e80db12e0dcc20a88219483
   languageName: node
   linkType: hard
 
@@ -4636,7 +4636,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"daisyui@npm:^1.13.2":
+"daisyui@npm:1.13.2":
   version: 1.13.2
   resolution: "daisyui@npm:1.13.2"
   checksum: d94a60d8df28a4b3c038a4aa654f5161e98764c0cbea7d1d6dee1b9c1e0ab86e26514dd6fa6b1f57215bde23bcd46d4c20d6937e6e09df65caf08467291e843a
@@ -5008,15 +5008,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxtjs-org@workspace:."
   dependencies:
-    "@nuxt/content": ^1.14.0
-    "@nuxtjs/google-analytics": ^2.4.0
-    "@nuxtjs/pwa": ^3.3.5
-    "@nuxtjs/tailwindcss": ^4.2.1
-    "@tailwindcss/typography": ^0.4.1
-    core-js: ^3.16.2
-    daisyui: ^1.13.2
+    "@nuxt/content": 1.14.0
+    "@nuxtjs/google-analytics": 2.4.0
+    "@nuxtjs/pwa": 3.3.5
+    "@nuxtjs/tailwindcss": 4.2.1
+    "@tailwindcss/typography": 0.4.1
+    core-js: 3.16.2
+    daisyui: 1.13.2
     nuxt: ^2.15.8
-    nuxt-social-meta: ^1.0.0
+    nuxt-social-meta: 1.0.0
   languageName: unknown
   linkType: soft
 
@@ -8738,7 +8738,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"nuxt-social-meta@npm:^1.0.0":
+"nuxt-social-meta@npm:1.0.0":
   version: 1.0.0
   resolution: "nuxt-social-meta@npm:1.0.0"
   checksum: 9f83582e670a9ca2fe8bb15812503ace109660901c3af1e3ccb3d706b6d4ec5edf763236fec2c0c9c5a3fdde8ee828b76820dd2bde7d2ce3466557174d5f94ec

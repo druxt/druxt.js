@@ -17,8 +17,8 @@
   "main": "dist/druxt-test-utils.ssr.js",
   "module": "dist/druxt-test-utils.esm.js",
   "dependencies": {
-    "drupal-jsonapi-params": "^1.2.2",
-    "jest-mock-axios": "^4.4.0"
+    "drupal-jsonapi-params": "1.2.2",
+    "jest-mock-axios": "4.4.0"
   },
   "peerDependencies": {
     "druxt": "*"
