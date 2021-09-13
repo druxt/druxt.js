@@ -15,12 +15,7 @@ Moved Vue components out of bundle
 
 _**Note:** This only effects custom Druxt modules and implementations._
 
-Update:
-```js
-import { DruxtModule } from 'druxt'
-```
-
-To:
-```js
-import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+```diff
+-import { DruxtModule } from 'druxt'
++import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 ```
