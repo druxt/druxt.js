@@ -32,7 +32,7 @@
     "@vue/test-utils": "1.2.2",
     "babel-core": "7.0.0-bridge.0",
     "bundlewatch": "0.3.2",
-    "esbuild": "0.12.15",
+    "esbuild": "0.12.27",
     "esbuild-jest": "0.5.0",
     "eslint": "7.31.0",
     "eslint-plugin-nuxt": "2.0.0",

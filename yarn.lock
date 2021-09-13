@@ -4603,7 +4603,7 @@ __metadata:
     "@vue/test-utils": 1.2.2
     babel-core: 7.0.0-bridge.0
     bundlewatch: 0.3.2
-    esbuild: 0.12.15
+    esbuild: 0.12.27
     esbuild-jest: 0.5.0
     eslint: 7.31.0
     eslint-plugin-nuxt: 2.0.0
@@ -4773,7 +4773,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:0.12.15, esbuild@npm:^0.12.15, esbuild@npm:^0.12.9":
+"esbuild@npm:0.12.27":
+  version: 0.12.27
+  resolution: "esbuild@npm:0.12.27"
+  bin:
+    esbuild: bin/esbuild
+  checksum: b40a7098a51d9d74c50a5912477079ecbd96c211d00cbabde3cb4560609b383265c7bbb0f7e350cfc40ed0e13996be25405d14f560eeaad48105cb7c753e24f8
+  languageName: node
+  linkType: hard
+
+"esbuild@npm:^0.12.15, esbuild@npm:^0.12.9":
   version: 0.12.15
   resolution: "esbuild@npm:0.12.15"
   bin:
