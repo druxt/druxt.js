@@ -4789,7 +4789,7 @@ __metadata:
     jsdoc-vuex-plugin: 1.0.0
     markdown-it-task-lists: 2.1.1
     ncp: 2.0.0
-    vue-docgen-api: 4.41.1
+    vue-docgen-api: 4.41.2
     yargs: 16.2.0
   bin:
     cli: bin/druxt-docgen.js
@@ -11241,9 +11241,9 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"vue-docgen-api@npm:4.41.1":
-  version: 4.41.1
-  resolution: "vue-docgen-api@npm:4.41.1"
+"vue-docgen-api@npm:4.41.2":
+  version: 4.41.2
+  resolution: "vue-docgen-api@npm:4.41.2"
   dependencies:
     "@babel/parser": ^7.13.12
     "@babel/types": ^7.13.12
@@ -11255,8 +11255,8 @@ typescript@^4.3.5:
     pug: ^3.0.2
     recast: 0.20.5
     ts-map: ^1.0.3
-    vue-inbrowser-compiler-utils: ^4.41.0
-  checksum: c6b7b7aac957fc732e72d6e54b1e95e9bd19ce945ad9522b1e0dab3293e2472a4673588102701b93b495ed907368cb02544c207c831050ddf31a40f7b4293011
+    vue-inbrowser-compiler-utils: ^4.41.2
+  checksum: c8e647f130f376495fbedfa7a9bde3566fb04b327462f1ff007daec27a75fae54e89da4e353f035cdc15eb447da619d1efad62207c2a5f5aa2c01558e7a344b5
   languageName: node
   linkType: hard
 
@@ -11277,12 +11277,12 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"vue-inbrowser-compiler-utils@npm:^4.41.0":
-  version: 4.41.0
-  resolution: "vue-inbrowser-compiler-utils@npm:4.41.0"
+"vue-inbrowser-compiler-utils@npm:^4.41.2":
+  version: 4.41.2
+  resolution: "vue-inbrowser-compiler-utils@npm:4.41.2"
   dependencies:
     camelcase: ^5.3.1
-  checksum: 9cf23e1325380903a7d2e84d38f78d5fe81b1de358868610f38f8facb2e0114299d4fc9ccdeda71e0e9d5edc9ccb7c74b35e25ac013468b4c91b0848e69ee821
+  checksum: 08764994efa5a0e96567baeb6610f4656a29ca42da440153d0baebc65afe90f0c06125dd48ae980751ff7d735d9639a25b8031cb6076cd0634fab0f5be24766f
   languageName: node
   linkType: hard
 
