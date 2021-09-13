@@ -4955,7 +4955,7 @@ __metadata:
     drupal-jsonapi-params: ^1.2.1
     md5: ^2.3.0
     querystring: ^0.2.0
-    scule: ^0.1.1
+    scule: ^0.2.0
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -9924,10 +9924,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scule@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "scule@npm:0.1.1"
-  checksum: 723a2ec96e03d76a7137875a9af884805abf8bebdab228ba99a5c55dfc5bb297386867e9a7ed9fd13be1947e7eaf0353589bf1aa593e75b260824b7221f0f116
+"scule@npm:^0.2.0":
+  version: 0.2.1
+  resolution: "scule@npm:0.2.1"
+  checksum: d9731b4c3560ce6983d23cc594395b718bc3c08ea3da930a9cd2bd3feb137ad3295521bcbc50baa82dc05d8521a7a41d6b78d2723e5195c053d93359f5808706
   languageName: node
   linkType: hard
 

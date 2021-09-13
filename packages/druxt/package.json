@@ -47,7 +47,7 @@
     "drupal-jsonapi-params": "^1.2.1",
     "md5": "^2.3.0",
     "querystring": "^0.2.0",
-    "scule": "^0.1.1"
+    "scule": "^0.2.0"
   },
   "optionalDependencies": {
     "core-js": "^3.16.1",
