@@ -4608,7 +4608,7 @@ __metadata:
     eslint: 7.31.0
     eslint-plugin-nuxt: 2.0.0
     husky: 7.0.1
-    jest: ^27.0.6
+    jest: 27.0.6
     jest-junit: 12.2.0
     jest-mock-axios: 4.4.0
     regenerator-runtime: 0.13.9
@@ -7089,7 +7089,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^27.0.6":
+"jest@npm:27.0.6":
   version: 27.0.6
   resolution: "jest@npm:27.0.6"
   dependencies:
