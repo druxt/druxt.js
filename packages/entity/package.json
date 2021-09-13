@@ -41,5 +41,8 @@
     "druxt": "workspace:*",
     "druxt-router": "workspace:*",
     "druxt-schema": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

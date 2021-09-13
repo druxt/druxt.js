@@ -53,5 +53,8 @@
     "core-js": "^3.16.1",
     "vue": "^2.6.14",
     "vuex": "^3.6.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
