@@ -16,7 +16,7 @@
     "dmd": "6.0.0",
     "globby": "11.0.4",
     "jsdoc-to-markdown": "7.0.1",
-    "jsdoc-vuejs": "3.0.9",
+    "jsdoc-vuejs": "4.0.0",
     "jsdoc-vuex-plugin": "1.0.0",
     "markdown-it-task-lists": "2.1.1",
     "ncp": "2.0.0",
