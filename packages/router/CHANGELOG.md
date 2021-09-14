@@ -1,5 +1,11 @@
 # druxt-router
 
+## 0.19.1
+
+### Patch Changes
+
+- c4616df: Fixed dependencies
+
 ## 0.19.0
 
 ### Minor Changes

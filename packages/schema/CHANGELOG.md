@@ -1,5 +1,11 @@
 # druxt-schema
 
+## 0.7.9
+
+### Patch Changes
+
+- c4616df: Fixed dependencies
+
 ## 0.7.8
 
 ### Patch Changes

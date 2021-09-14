@@ -1,5 +1,19 @@
 # druxt-site
 
+## 0.7.1
+
+### Patch Changes
+
+- c4616df: Fixed dependencies
+- Updated dependencies [c4616df]
+  - druxt-blocks@0.11.1
+  - druxt-breadcrumb@0.10.1
+  - druxt-entity@0.17.1
+  - druxt-menu@0.12.1
+  - druxt-router@0.19.1
+  - druxt-schema@0.7.9
+  - druxt-views@0.12.1
+
 ## 0.7.0
 
 ### Minor Changes

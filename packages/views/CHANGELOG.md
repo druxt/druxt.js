@@ -1,5 +1,15 @@
 # druxt-views
 
+## 0.12.1
+
+### Patch Changes
+
+- c4616df: Fixed dependencies
+- Updated dependencies [c4616df]
+  - druxt-blocks@0.11.1
+  - druxt-entity@0.17.1
+  - druxt-router@0.19.1
+
 ## 0.12.0
 
 ### Minor Changes

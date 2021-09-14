@@ -1,5 +1,13 @@
 # druxt-menu
 
+## 0.12.1
+
+### Patch Changes
+
+- c4616df: Fixed dependencies
+- Updated dependencies [c4616df]
+  - druxt-blocks@0.11.1
+
 ## 0.12.0
 
 ### Minor Changes

@@ -1,5 +1,14 @@
 # druxt-entity
 
+## 0.17.1
+
+### Patch Changes
+
+- c4616df: Fixed dependencies
+- Updated dependencies [c4616df]
+  - druxt-router@0.19.1
+  - druxt-schema@0.7.9
+
 ## 0.17.0
 
 ### Minor Changes

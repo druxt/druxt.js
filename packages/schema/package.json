@@ -1,6 +1,6 @@
 {
   "name": "druxt-schema",
-  "version": "0.7.8",
+  "version": "0.7.9",
   "description": "Drupal Content Entity schema generator for Druxt with support for View and Form displays.",
   "keywords": [
     "drupal",
