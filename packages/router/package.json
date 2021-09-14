@@ -31,7 +31,7 @@
     "nuxt"
   ],
   "dependencies": {
-    "druxt": "workspace:*",
+    "druxt": "^0.9.0",
     "url-parse": "^1.4.7"
   },
   "optionalDependencies": {

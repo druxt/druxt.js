@@ -27,8 +27,8 @@
   "dependencies": {
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "workspace:*",
-    "druxt-blocks": "workspace:*"
+    "druxt": "^0.9.0",
+    "druxt-blocks": "^0.11.0"
   },
   "optionalDependencies": {
     "vue": "^2.6.14",
