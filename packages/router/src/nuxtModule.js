@@ -28,7 +28,7 @@ import { resolve } from 'path'
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  * @property {string} options.druxt.router.component - File to custom Router component.
  */
-const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
+const DruxtRouterNuxtModule = function (moduleOptions = {}) {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
