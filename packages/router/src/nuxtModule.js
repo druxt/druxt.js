@@ -36,6 +36,7 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
 
   const options = this.options.druxt
   options.router = {
+    ignorePages: false,
     wildcardRoute: true,
     ...options.router
   }
@@ -53,6 +54,13 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
       src: resolve(__dirname, '../nuxt/router.js'),
       fileName: 'router.js'
     })
+
+    // Disable parsing `pages/`
+    if (options.router.ignorePages) {
+      this.nuxt.hook('build:before', () =>
+        this.nuxt.options.build.createRoutes = () => []
+      )
+    }
   }
 
   // Enable Vuex Store.
