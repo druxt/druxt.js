@@ -35,6 +35,7 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
   }
   const options = this.options.druxt
   options.router = {
+    pages: true,
     wildcard: true,
     ...options.router
   }
@@ -55,6 +56,13 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
         chunkName: 'druxt-router'
       })
     })
+  }
+
+  // Ignore page routes.
+  if (options.router.wildcard && !options.router.pages) {
+    this.nuxt.hook('build:before', () =>
+      this.nuxt.options.build.createRoutes = () => []
+    )
   }
 
   // Add plugin.

@@ -50,6 +50,7 @@ These options are specific to this module.
 
 | Option | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
+| `router.pages` | `boolean` | No | `true` | Whether to parse the Nuxt `pages/` directory. |
 | `router.wildcard` | `boolean` | No | `true` | Whether to install the wildcard route. |
 
 ### Base Druxt options

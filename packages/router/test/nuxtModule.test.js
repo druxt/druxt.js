@@ -9,6 +9,10 @@ const mock = {
 
     func(routes, resolve)
   }),
+  nuxt: {
+    hook: jest.fn((hook, callback) => callback()),
+    options: { build: {} }
+  },
   DruxtRouterNuxtModule
 }
 
@@ -19,11 +23,21 @@ test('Nuxt module', () => {
     druxt: {}
   }
   mock.DruxtRouterNuxtModule()
-  expect(mock.addPlugin).toHaveBeenCalled()
+  expect(mock.addPlugin).toHaveBeenCalledTimes(2)
+  expect(mock.addTemplate).toHaveBeenCalledTimes(1)
   jest.clearAllMocks()
 
   mock.options.druxt.router = { wildcard: false }
   mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalledTimes(2)
+  expect(mock.addTemplate).toHaveBeenCalledTimes(0)
+  jest.clearAllMocks()
+
+  mock.options.druxt.router = { pages: false }
+  mock.DruxtRouterNuxtModule()
+  expect(mock.addPlugin).toHaveBeenCalledTimes(2)
+  expect(mock.addTemplate).toHaveBeenCalledTimes(1)
+  expect(mock.nuxt.hook).toHaveBeenCalledTimes(1)
+  expect(mock.nuxt.options.build.createRoutes()).toStrictEqual([])
   jest.clearAllMocks()
 })
