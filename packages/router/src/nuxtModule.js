@@ -34,30 +34,28 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
     throw new TypeError('Druxt settings missing.')
   }
   const options = this.options.druxt
-  options.router = options.router || {}
+  options.router = {
+    wildcard: true,
+    ...options.router
+  }
 
-  this.extendRoutes((routes, resolve) => {
-    // Only add router component if custom component is undefined.
-    // @TODO - Validate custom component.
-    // @TODO - Add test for custom component.
-    // @TODO - Document usage.
-    if (!options.router.component) {
-      options.router.component = resolve(this.options.buildDir, 'components/druxt-router.js')
-      this.addTemplate({
-        src: resolve(__dirname, '../nuxt/component.js'),
-        fileName: 'components/druxt-router.js',
-        options
-      })
-    }
-
-    // Add Druxt router custom wildcard route.
-    routes.push({
-      name: 'druxt-router',
-      path: '*',
-      component: options.router.component,
-      chunkName: 'druxt-router'
+  // Add Druxt router custom wildcard route.
+  if (options.router.wildcard) {
+    this.addTemplate({
+      src: resolve(__dirname, '../nuxt/component.js'),
+      fileName: 'components/druxt-router.js',
+      options
     })
-  })
+
+    this.extendRoutes((routes, resolve) => {
+      routes.push({
+        name: 'druxt-router',
+        path: '*',
+        component: resolve(this.options.buildDir, 'components/druxt-router.js'),
+        chunkName: 'druxt-router'
+      })
+    })
+  }
 
   // Add plugin.
   this.addPlugin({
