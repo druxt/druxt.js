@@ -4,6 +4,9 @@ export default {
   generate: { routes: ['/'] },
   telemetry: true,
   modules: ['druxt-site'],
-  druxt: { baseUrl },
+  druxt: {
+    baseUrl,
+    router: { ignorePages: true },
+  },
   proxy: [baseUrl + '/sites/default/files']
 }
