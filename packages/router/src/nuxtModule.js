@@ -1,10 +1,3 @@
-/**
- * @vuepress
- * ---
- * title: DruxtRouterModule
- * ---
- */
-
 import { resolve } from 'path'
 
 /**
@@ -73,8 +66,10 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
     options
   })
 
+  // Enable Vuex Store.
+  this.options.store = true
+
   // Add Vuex plugin.
-  // @TODO - Ensure Vuex store is available.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/store.js'),
     fileName: 'store/druxt-router.js',
