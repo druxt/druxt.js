@@ -29,12 +29,19 @@ description: Drupal router for Nuxt, powered by the Drupal Decoupled Router modu
 
 ### Options
 
-`druxt.router.wildcard`
+- `druxt.router.pages`
 
-Type: `boolean`  
-Default: `true`
+  Type: `boolean`  
+  Default: `true`
 
-Controls whether the wildcard route should be installed into the Nuxt/Vue router.
+  Controls whether the Nuxt `pages/` directory is used to generate routes.
+
+- `druxt.router.wildcard`
+
+  Type: `boolean`  
+  Default: `true`
+
+  Controls whether the wildcard route should be installed into the Nuxt/Vue router.
 
 * * *
 
