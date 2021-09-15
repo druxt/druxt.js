@@ -44,6 +44,14 @@ Ensure you have activated the [Nuxt Vuex store](https://nuxtjs.org/guide/vuex-st
 
 ## Options
 
+### Druxt Router options
+
+These options are specific to this module.
+
+| Option | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `router.wildcard` | `boolean` | No | `true` | Whether to install the wildcard route. |
+
 ### Base Druxt options
 
 These options are available to all DruxtJS modules.

@@ -27,6 +27,15 @@ description: Drupal router for Nuxt, powered by the Drupal Decoupled Router modu
    }
    ```
 
+### Options
+
+`druxt.router.wildcard`
+
+Type: `boolean`  
+Default: `true`
+
+Controls whether the wildcard route should be installed into the Nuxt/Vue router.
+
 * * *
 
 ##  Vue.js components
