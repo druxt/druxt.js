@@ -20,4 +20,10 @@ test('Nuxt module', () => {
   }
   mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalled()
+  jest.clearAllMocks()
+
+  mock.options.druxt.router = { wildcard: false }
+  mock.DruxtRouterNuxtModule()
+  expect(mock.addPlugin).toHaveBeenCalledTimes(2)
+  jest.clearAllMocks()
 })
