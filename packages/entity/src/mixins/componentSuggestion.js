@@ -94,9 +94,10 @@ const DruxtEntityComponentSuggestionMixin = {
       const suggestions = []
 
       for (const rule of this.suggestionRules) {
+        let result = false
         switch (typeof rule.value) {
           case 'function':
-            const result = rule.value(this.tokenContext)
+            result = rule.value(this.tokenContext)
             if (result) {
               suggestions.push(result)
             }

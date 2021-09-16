@@ -41,6 +41,17 @@ export default {
 
   mixins: [DruxtFieldMixin],
 
+  /**
+   * @property {string} component=span - The component used to wrap the field items.
+   * @property {boolean|object} entities
+   * @property {boolean} loading - Loading status.
+   */
+  data: () => ({
+    component: 'span',
+    entities: false,
+    loading: false
+  }),
+
   async fetch() {
     for (const delta in this.items) {
       const item = this.items[delta]
@@ -63,17 +74,6 @@ export default {
       }
     }
   },
-
-  /**
-   * @property {string} component=span - The component used to wrap the field items.
-   * @property {boolean|object} entities
-   * @property {boolean} loading - Loading status.
-   */
-  data: () => ({
-    component: 'span',
-    entities: false,
-    loading: false
-  }),
 
   mounted() {
     console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)

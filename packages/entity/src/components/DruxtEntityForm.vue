@@ -109,7 +109,6 @@ export default {
 
         // Update the Vuex store.
         const resource = this.response.data.data
-        const { type, id } = resource
         this.$store.commit('druxt/addResource', { resource })
         this.$emit('submit', resource)
       } catch (e) {

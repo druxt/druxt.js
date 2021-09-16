@@ -49,6 +49,13 @@ export default {
   },
 
   /**
+   * @property {object} resource - The JSON:API resource object.
+   */
+  data: () => ({
+    resource: {},
+  }),
+
+  /**
    * The Nuxt Fetch hook.
    *
    * Fetches the Block JSON:API resource by either UUID or ID.
@@ -87,13 +94,6 @@ export default {
     const parts = ['DruxtBlock', this.uuid || this.id].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
   },
-
-  /**
-   * @property {object} resource - The JSON:API resource object.
-   */
-  data: () => ({
-    resource: {},
-  }),
 
   /** */
   computed: {
@@ -166,7 +166,7 @@ export default {
 
       // Provide debug data if Nuxt is running in dev mode.
       if (this.$nuxt.context.isDev)  {
-        scopedSlots.default = (attrs) => h(
+        scopedSlots.default = () => h(
           'details',
           {
             style: {

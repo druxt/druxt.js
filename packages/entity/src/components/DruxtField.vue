@@ -382,7 +382,9 @@ export default {
                   let value = e.target.value
                   try {
                     value = JSON.parse(e.target.value)
-                  } catch(err) {}
+                  } catch(err) {
+                    // TODO: Handle error
+                  }
                   setModel(value)
                 }
               }

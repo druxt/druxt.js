@@ -134,7 +134,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({}) => [['default']],
+    componentOptions: () => [['default']],
 
     /**
      * Provides propsData for the DruxtWrapper.

@@ -78,6 +78,26 @@ export default {
     }
   },
 
+  /**
+   * @property {object} model - The model object.
+   * @property {object} resource - The JSON:API Views resource.
+   * @property {object} view - The View JSON:API resource.
+   */
+  data() {
+    // Stringify and parse the query object to fix nested objects.
+    const model = parse(stringify(this.$route.query))
+
+    return {
+      model: {
+        filter: model.filter || {},
+        page: parseInt(model.page) || null,
+        sort: model.sort || null,
+      },
+      resource: null,
+      view: false
+    }
+  },
+
   /** */
   async fetch() {
     let component = { ...this.component }
@@ -130,26 +150,6 @@ export default {
   fetchKey(getCounter) {
     const parts = ['DruxtView', this.viewId || this.uuid, this.displayId].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
-  },
-
-  /**
-   * @property {object} model - The model object.
-   * @property {object} resource - The JSON:API Views resource.
-   * @property {object} view - The View JSON:API resource.
-   */
-  data() {
-    // Stringify and parse the query object to fix nested objects.
-    const model = parse(stringify(this.$route.query))
-
-    return {
-      model: {
-        filter: model.filter || {},
-        page: parseInt(model.page) || null,
-        sort: model.sort || null,
-      },
-      resource: null,
-      view: false
-    }
   },
 
   /** */
@@ -291,7 +291,7 @@ export default {
   },
 
   watch: {
-    async '$route.query'(to, from) {
+    async '$route.query'(to) {
       if (!Object.entries(to).length) {
         this.model = {
           filter: {},
@@ -327,7 +327,7 @@ export default {
       }
     },
 
-    async query(to, from) {
+    async query() {
       await this.$fetch()
     },
 

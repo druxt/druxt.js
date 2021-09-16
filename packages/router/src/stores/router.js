@@ -131,7 +131,7 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * const { redirect, route } = await this.$store.dispatch('druxtRouter/get', '/')
        */
-      async get ({ commit, dispatch, state }, path) {
+      async get ({ commit, dispatch }, path) {
         // Get route by path from 'getRoute'.
         const route = await dispatch('getRoute', path)
 
@@ -208,7 +208,7 @@ const DruxtRouterStore = ({ store }) => {
        *   options: { all: true }
        * })
        */
-      async getResources (app, { resource, query, options }) {
+      async getResources (app, { resource, query }) {
         console.warn('[druxt-router] `druxtRouter/getResources` is deprecated. See http://druxtjs.org/api/stores/druxt.')
         const collection = await this.app.store.dispatch('druxt/getCollection', { type: resource, query })
         return collection.data || false

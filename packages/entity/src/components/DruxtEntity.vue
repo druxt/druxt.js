@@ -68,6 +68,20 @@ export default {
   },
 
   /**
+   * @property {object} model - The model object.
+   * @property {object} schema - The DruxtSchema object.
+   */
+  data: ({ type, value }) => ({
+    model: {
+      attributes: {},
+      relationships: {},
+      type,
+      ...value,
+    },
+    schema: null,
+  }),
+
+  /**
    * Nuxt.js fetch method.
    */
   async fetch() {
@@ -78,7 +92,9 @@ export default {
         mode: this.mode,
         schemaType: this.schemaType || 'view',
       })
-    } catch(e) {}
+    } catch(e) {
+      // TODO: Handle error
+    }
 
     // Build wrapper component object.
     const options = this.getModuleComponents()
@@ -112,20 +128,6 @@ export default {
     const parts = ['DruxtEntity', this.type, this.uuid, this.mode, this.schemaType].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
   },
-
-  /**
-   * @property {object} model - The model object.
-   * @property {object} schema - The DruxtSchema object.
-   */
-  data: ({ type, value }) => ({
-    model: {
-      attributes: {},
-      relationships: {},
-      type,
-      ...value,
-    },
-    schema: null,
-  }),
 
   /** */
   computed: {

@@ -10,7 +10,7 @@ import { resolve } from 'path'
  *
  * @param {ModuleOptions} moduleOptions - The Nuxt.js module options.
  */
-const DruxtSiteNuxtModule = function (moduleOptions = {}) {
+const DruxtSiteNuxtModule = function () {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')

@@ -34,6 +34,17 @@ export default {
   mixins: [DruxtBlocksBlockMixin],
 
   /**
+   * Vue.js Data object.
+   *
+   * Used for on-demand JSON:API resource loading.
+   *
+   * @property {(string|boolean)} uuid - The Views JSON:API resource UUID.
+   */
+  data: () => ({
+    uuid: false
+  }),
+
+  /**
    * Nuxt fetch method.
    */
   async fetch() {
@@ -47,17 +58,6 @@ export default {
   },
 
   /**
-   * Vue.js Data object.
-   *
-   * Used for on-demand JSON:API resource loading.
-   *
-   * @property {(string|boolean)} uuid - The Views JSON:API resource UUID.
-   */
-  data: () => ({
-    uuid: false
-  }),
-
-  /**
    * Vue.js Computed properties.
    */
   computed: {
@@ -67,7 +67,7 @@ export default {
      * @type {string}
      */
     displayId() {
-      return this.settings.id.match(/views_block\:(.*?)-(.*)/)[2]
+      return this.settings.id.match(/views_block:(.*?)-(.*)/)[2]
     },
 
     /**
@@ -79,8 +79,6 @@ export default {
      */
     propsData() {
       if (!this.uuid) return false
-
-      const parts = this.settings.id.match(/views_block\:(.*?)-(.*)/)
 
       return {
         displayId: this.displayId,
@@ -95,7 +93,7 @@ export default {
      * @type {string}
      */
     viewId() {
-      return this.settings.id.match(/views_block\:(.*?)-(.*)/)[1]
+      return this.settings.id.match(/views_block:(.*?)-(.*)/)[1]
     },
   },
 
