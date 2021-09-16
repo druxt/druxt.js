@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { join, resolve } from 'path'
 import DruxtEntityStorybook from './nuxtStorybook'
 
 /**
@@ -30,24 +30,42 @@ import DruxtEntityStorybook from './nuxtStorybook'
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  */
 const DruxtEntityNuxtModule = function () {
-  const { options } = this
-
   // Use root level Druxt options.
-  if (typeof options === 'undefined' || !options.druxt) {
+  if (!(this.options || {}).druxt) {
     throw new TypeError('Druxt settings missing.')
   }
 
+  const options = this.options.druxt
+  options.entity = {
+    ...options.entity,
+    components: {
+      fields: true,
+      ...(options.entity || {}).components
+    }
+  }
+
   // Add dependant modules.
-  const modules = ['druxt', 'druxt-schema'].filter((module) => !options.modules.includes(module))
+  const modules = ['druxt', 'druxt-schema'].filter((module) => !this.options.modules.includes(module))
   for (const module of modules) {
     this.addModule(module)
   }
+
+  // Register components directories.
+  this.nuxt.hook('components:dirs', dirs => {
+    dirs.push({
+      path: join(__dirname, 'components'),
+      ignore: ['fields']
+    })
+    if (options.entity.components.fields) {
+      dirs.push({ path: join(__dirname, 'components/fields') })
+    }
+  })
 
   // Add plugin.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/plugin.js'),
     fileName: 'druxt-entity.js',
-    options: options.druxt
+    options
   })
 
   // Nuxt Storybook.

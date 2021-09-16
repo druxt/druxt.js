@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { join, resolve } from 'path'
 import DruxtViewsStorybook from './nuxtStorybook'
 
 /**
@@ -30,6 +30,12 @@ const DruxtViewsNuxtModule = function () {
   if (typeof this.options === 'undefined' || !options.druxt) {
     throw new TypeError('Druxt settings missing.')
   }
+
+  // Register components directories.
+  this.nuxt.hook('components:dirs', dirs => {
+    dirs.push({ path: join(__dirname, 'components') })
+    dirs.push({ path: join(__dirname, 'components/blocks') })
+  })
 
   // Add dependant modules.
   const modules = ['druxt', 'druxt-entity', 'druxt-schema'].filter((module) => !options.modules.includes(module))

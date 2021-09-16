@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { join, resolve } from 'path'
 import DruxtBlocksStorybook from './nuxtStorybook'
 
 /**
@@ -36,6 +36,12 @@ const DruxtBlocksNuxtModule = function () {
   for (const module of modules) {
     this.addModule(module)
   }
+
+  // Register components directories.
+  this.nuxt.hook('components:dirs', dirs => {
+    dirs.push({ path: join(__dirname, 'components') })
+    dirs.push({ path: join(__dirname, 'components/blocks') })
+  })
 
   // Add plugin.
   this.addPlugin({

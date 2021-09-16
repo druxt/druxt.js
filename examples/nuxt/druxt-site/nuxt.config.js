@@ -3,9 +3,11 @@ export default {
   target: 'static',
   generate: { routes: ['/'] },
   telemetry: true,
+  components: true,
   modules: ['druxt-site'],
   druxt: {
     baseUrl,
+    entity: { components: { fields: false } },
     router: { pages: false }
   },
   proxy: [baseUrl + '/sites/default/files']

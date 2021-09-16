@@ -40,7 +40,7 @@ const DruxtRouterNuxtModule = function () {
     ...options.router
   }
 
-  // Register components directory.
+  // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
     dirs.push({ path: join(__dirname, 'components') })
   })
