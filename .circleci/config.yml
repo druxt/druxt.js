@@ -43,6 +43,12 @@ jobs:
           at: ~/repo
 
       - run:
+          name: Run lint
+          command: yarn lint --format ./node_modules/eslint-junit/index.js
+          environment:
+            ESLINT_JUNIT_OUTPUT: ./reports/junit/eslint.xml
+
+      - run:
           name: Run tests
           command: yarn test --reporters=jest-junit --runInBand
           environment:
