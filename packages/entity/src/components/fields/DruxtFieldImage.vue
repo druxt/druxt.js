@@ -27,8 +27,6 @@
 <script>
 import DruxtFieldFileDefault from './DruxtFieldFileDefault.vue'
 
-import { mapActions } from 'vuex'
-
 /**
  * Image field.
  * @deprecated

@@ -24,6 +24,33 @@ export default {
   },
 
   /**
+   * Nuxt head method.
+   *
+   * - Sets the page title.
+   * - Sets the canonical link.
+   *
+   * @todo Improve metatag support.
+   */
+  head () {
+    const head = {
+      title: this.title,
+      link: [
+        {
+          hid: 'canonical',
+          rel: 'canonical',
+          href: this.canonical || this.route.canonical
+        }
+      ]
+    }
+
+    if (this.metatags) {
+      head.meta = this.metatags
+    }
+
+    return head
+  },
+
+  /**
    * Vue.js Computed properties.
    *
    * @vue-computed {object} redirect The current Redirect, if applicable.
@@ -51,33 +78,6 @@ export default {
       redirect: state => state.druxtRouter.redirect,
       route: state => state.druxtRouter.route
     })
-  },
-
-  /**
-   * Nuxt head method.
-   *
-   * - Sets the page title.
-   * - Sets the canonical link.
-   *
-   * @todo Improve metatag support.
-   */
-  head () {
-    const head = {
-      title: this.title,
-      link: [
-        {
-          hid: 'canonical',
-          rel: 'canonical',
-          href: this.canonical || this.route.canonical
-        }
-      ]
-    }
-
-    if (this.metatags) {
-      head.meta = this.metatags
-    }
-
-    return head
   },
 
   druxt: {

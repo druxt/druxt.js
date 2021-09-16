@@ -106,6 +106,20 @@ export default {
     model: value,
   }),
 
+  watch: {
+    model() {
+      if (this.value !== this.model) {
+        this.$emit('input', this.model)
+      }
+    },
+
+    value() {
+      if (this.value !== this.model) {
+        this.model = this.value
+      }
+    }
+  },
+
   created() {
     this.setModuleComponent()
   },
@@ -124,20 +138,6 @@ export default {
       this.component.is = component
       this.component.propsData = this.propsData
     },
-  },
-
-  watch: {
-    model() {
-      if (this.value !== this.model) {
-        this.$emit('input', this.model)
-      }
-    },
-
-    value() {
-      if (this.value !== this.model) {
-        this.model = this.value
-      }
-    }
   },
 
   render(h) {

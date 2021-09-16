@@ -21,7 +21,7 @@ import { resolve } from 'path'
  *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
-const DruxtBreadcrumbModule = function (moduleOptions = {}) {
+const DruxtBreadcrumbModule = function () {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')

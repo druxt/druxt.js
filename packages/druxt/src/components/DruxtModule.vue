@@ -47,6 +47,23 @@ export default {
   },
 
   /**
+   * @property {ComponentData} component - The wrapper component and propsData to be rendered.
+   * @property {object} model - The model object.
+   */
+  data: ({ value }) => ({
+    component: {
+      $attrs: {},
+      is: 'DruxtWrapper',
+      options: [],
+      props: {},
+      propsData: {},
+      settings: {},
+      slots: [],
+    },
+    model: value,
+  }),
+
+  /**
    * Loads the Druxt module data and applies a wrapper component as required.
    *
    * **Important:** If your component has an existing `fetch` method, you must manually invoke
@@ -95,22 +112,24 @@ export default {
     this.component = component
   },
 
-  /**
-   * @property {ComponentData} component - The wrapper component and propsData to be rendered.
-   * @property {object} model - The model object.
-   */
-  data: ({ value }) => ({
-    component: {
-      $attrs: {},
-      is: 'DruxtWrapper',
-      options: [],
-      props: {},
-      propsData: {},
-      settings: {},
-      slots: [],
+  watch: {
+    model() {
+      if (this.component.props.value !== this.model) {
+        this.component.props.value = this.model
+
+        // Only emit 'input' if using the default 'DruxtWrapper' component.
+        if (this.component.is === 'DruxtWrapper') {
+          this.$emit('input', this.model)
+        }
+      }
     },
-    model: value,
-  }),
+
+    value() {
+      if (this.value !== this.model) {
+        this.model = this.value
+      }
+    }
+  },
 
   /** */
   methods: {
@@ -267,25 +286,6 @@ export default {
       return {
         druxt: options.druxt || {},
         props: options.props || {},
-      }
-    }
-  },
-
-  watch: {
-    model() {
-      if (this.component.props.value !== this.model) {
-        this.component.props.value = this.model
-
-        // Only emit 'input' if using the default 'DruxtWrapper' component.
-        if (this.component.is === 'DruxtWrapper') {
-          this.$emit('input', this.model)
-        }
-      }
-    },
-
-    value() {
-      if (this.value !== this.model) {
-        this.model = this.value
       }
     }
   },

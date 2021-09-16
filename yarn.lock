@@ -4749,15 +4749,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"druxt-blocks@^0.11.0, druxt-blocks@workspace:packages/blocks":
+"druxt-blocks@^0.11.1, druxt-blocks@workspace:packages/blocks":
   version: 0.0.0-use.local
   resolution: "druxt-blocks@workspace:packages/blocks"
   dependencies:
     axios: ^0.21.1
     drupal-jsonapi-params: ^1.1.12
     druxt: ^0.9.0
-    druxt-entity: ^0.17.0
-    druxt-router: ^0.19.0
+    druxt-entity: ^0.17.1
+    druxt-router: ^0.19.1
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -4768,13 +4768,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-breadcrumb@^0.10.0, druxt-breadcrumb@workspace:packages/breadcrumb":
+"druxt-breadcrumb@^0.10.1, druxt-breadcrumb@workspace:packages/breadcrumb":
   version: 0.0.0-use.local
   resolution: "druxt-breadcrumb@workspace:packages/breadcrumb"
   dependencies:
     druxt: ^0.9.0
-    druxt-blocks: ^0.11.0
-    druxt-router: ^0.19.0
+    druxt-blocks: ^0.11.1
+    druxt-router: ^0.19.1
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -4803,26 +4803,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-entity@^0.17.0, druxt-entity@workspace:packages/entity":
+"druxt-entity@^0.17.1, druxt-entity@workspace:packages/entity":
   version: 0.0.0-use.local
   resolution: "druxt-entity@workspace:packages/entity"
   dependencies:
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^1.2.2
     druxt: ^0.9.0
-    druxt-router: ^0.19.0
-    druxt-schema: ^0.7.8
+    druxt-router: ^0.19.1
+    druxt-schema: ^0.7.9
   languageName: unknown
   linkType: soft
 
-"druxt-menu@^0.12.0, druxt-menu@workspace:packages/menu":
+"druxt-menu@^0.12.1, druxt-menu@workspace:packages/menu":
   version: 0.0.0-use.local
   resolution: "druxt-menu@workspace:packages/menu"
   dependencies:
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^1.1.12
     druxt: ^0.9.0
-    druxt-blocks: ^0.11.0
+    druxt-blocks: ^0.11.1
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -4833,7 +4833,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-router@^0.19.0, druxt-router@workspace:packages/router":
+"druxt-router@^0.19.1, druxt-router@workspace:packages/router":
   version: 0.0.0-use.local
   resolution: "druxt-router@workspace:packages/router"
   dependencies:
@@ -4849,7 +4849,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-schema@^0.7.8, druxt-schema@workspace:packages/schema":
+"druxt-schema@^0.7.9, druxt-schema@workspace:packages/schema":
   version: 0.0.0-use.local
   resolution: "druxt-schema@workspace:packages/schema"
   dependencies:
@@ -4872,13 +4872,13 @@ __metadata:
   dependencies:
     "@nuxtjs/proxy": ^2.1.0
     druxt: ^0.9.0
-    druxt-blocks: ^0.11.0
-    druxt-breadcrumb: ^0.10.0
-    druxt-entity: ^0.17.0
-    druxt-menu: ^0.12.0
-    druxt-router: ^0.19.0
-    druxt-schema: ^0.7.8
-    druxt-views: ^0.12.0
+    druxt-blocks: ^0.11.1
+    druxt-breadcrumb: ^0.10.1
+    druxt-entity: ^0.17.1
+    druxt-menu: ^0.12.1
+    druxt-router: ^0.19.1
+    druxt-schema: ^0.7.9
+    druxt-views: ^0.12.1
     md5: ^2.2.1
     vue: ^2.6.14
     vuex: ^3.6.2
@@ -4901,7 +4901,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-views@^0.12.0, druxt-views@workspace:packages/views":
+"druxt-views@^0.12.1, druxt-views@workspace:packages/views":
   version: 0.0.0-use.local
   resolution: "druxt-views@workspace:packages/views"
   dependencies:
@@ -4909,9 +4909,9 @@ __metadata:
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^1.1.12
     druxt: ^0.9.0
-    druxt-blocks: ^0.11.0
-    druxt-entity: ^0.17.0
-    druxt-router: ^0.19.0
+    druxt-blocks: ^0.11.1
+    druxt-entity: ^0.17.1
+    druxt-router: ^0.19.1
     md5: ^2.3.0
     vue: ^2.6.14
     vuex: ^3.6.2
@@ -4938,7 +4938,9 @@ __metadata:
     esbuild: 0.12.15
     esbuild-jest: 0.5.0
     eslint: 7.32.0
+    eslint-junit: ^1.0.1
     eslint-plugin-nuxt: 2.0.0
+    eslint-plugin-vue: ^7.17.0
     husky: 7.0.2
     jest: 27.2.0
     jest-junit: 12.2.0
@@ -5168,6 +5170,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-junit@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "eslint-junit@npm:1.0.1"
+  dependencies:
+    mkdirp: ^0.5.1
+    strip-ansi: ^4.0.0
+    xml: ^1.0.1
+  checksum: eaf41788d490a6aabc8c9c75780897a84d184de367a22a77ab7f4cf564eba824d9797d0e31a473c20a4a0aeb568db7007d60abb07f99d6f8d4b88fbf9e35ebd8
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-nuxt@npm:2.0.0":
   version: 2.0.0
   resolution: "eslint-plugin-nuxt@npm:2.0.0"
@@ -5190,6 +5203,20 @@ __metadata:
   peerDependencies:
     eslint: ^6.2.0 || ^7.0.0
   checksum: 57d5a1ce046f44a992c45828e6f59dd6b2accd035da5620378aebdbd476b158fc8a699574cb9b29e1f73ab958525e3ca554560de04bc51f04bba36b9c302c8de
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-vue@npm:^7.17.0":
+  version: 7.17.0
+  resolution: "eslint-plugin-vue@npm:7.17.0"
+  dependencies:
+    eslint-utils: ^2.1.0
+    natural-compare: ^1.4.0
+    semver: ^6.3.0
+    vue-eslint-parser: ^7.10.0
+  peerDependencies:
+    eslint: ^6.2.0 || ^7.0.0 || ^8.0.0-0
+  checksum: 2d94b6d7b605b21ee3e4139d63fef1ed5ddf6144fba947f15a31b4fdcfb0a3765201b3869d7ffe60635ad53da43b93ed70ae5b5f50b046153400cc7c0446a76f
   languageName: node
   linkType: hard
 
@@ -8410,6 +8437,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mkdirp@npm:^0.5.1":
+  version: 0.5.5
+  resolution: "mkdirp@npm:0.5.5"
+  dependencies:
+    minimist: ^1.2.5
+  bin:
+    mkdirp: bin/cmd.js
+  checksum: 3bce20ea525f9477befe458ab85284b0b66c8dc3812f94155af07c827175948cdd8114852ac6c6d82009b13c1048c37f6d98743eb019651ee25c39acc8aabe7d
+  languageName: node
+  linkType: hard
+
 "mkdirp@npm:^1.0.3, mkdirp@npm:^1.0.4":
   version: 1.0.4
   resolution: "mkdirp@npm:1.0.4"
@@ -11274,6 +11312,23 @@ typescript@^4.3.5:
   peerDependencies:
     eslint: ">=5.0.0"
   checksum: 3dab05c992c23a99bbcc90882c278d4b18832997294b1948c09a865db92736b908aaab3eb1c766ac22a6344ea80407fbc4f1c38e25708755d74762ce45a8d13d
+  languageName: node
+  linkType: hard
+
+"vue-eslint-parser@npm:^7.10.0":
+  version: 7.11.0
+  resolution: "vue-eslint-parser@npm:7.11.0"
+  dependencies:
+    debug: ^4.1.1
+    eslint-scope: ^5.1.1
+    eslint-visitor-keys: ^1.1.0
+    espree: ^6.2.1
+    esquery: ^1.4.0
+    lodash: ^4.17.21
+    semver: ^6.3.0
+  peerDependencies:
+    eslint: ">=5.0.0"
+  checksum: 16d8bd31dacd9e5d3cd0fc82354c0cfdb42ee3d2e0c3aeda385b82aa48a59a440de3dc18521ea6535f4b00a54eb248d49a6ea2323fbae0d3c1afa0a00c63fe6c
   languageName: node
   linkType: hard
 

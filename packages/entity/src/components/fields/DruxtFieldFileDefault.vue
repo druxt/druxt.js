@@ -40,6 +40,13 @@ export default {
 
   mixins: [DruxtFieldMixin],
 
+  /**
+   * @property {object[]} entities
+   */
+  data: () => ({
+    entities: []
+  }),
+
   async fetch() {
     for (const delta in this.items) {
       const item = this.items[delta]
@@ -47,13 +54,6 @@ export default {
       this.entities[delta] = resource.data
     }
   },
-
-  /**
-   * @property {object[]} entities
-   */
-  data: () => ({
-    entities: []
-  }),
 
   mounted() {
     console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)

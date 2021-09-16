@@ -30,7 +30,7 @@ import { DruxtSchema } from './schema'
  *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
-const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
+const DruxtSchemaNuxtModule = function () {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
@@ -52,7 +52,7 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
     options
   })
 
-  this.nuxt.hook('builder:prepared', async (nuxt, buildOptions) => {
+  this.nuxt.hook('builder:prepared', async () => {
     // Generate schemas.
     const druxtSchema = new DruxtSchema(options.baseUrl, options)
     const { schemas } = await druxtSchema.get()

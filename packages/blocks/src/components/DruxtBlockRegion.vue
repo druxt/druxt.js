@@ -51,6 +51,13 @@ export default {
   },
 
   /**
+   * @property {objects[]} blocks - The Block JSON:API resources.
+   */
+  data: () => ({
+    blocks: []
+  }),
+
+  /**
    * The Nuxt Fetch hook.
    *
    * Fetches all blocks by region and theme.
@@ -75,13 +82,6 @@ export default {
     const parts = ['DruxtBlockRegion', this.name].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
   },
-
-  /**
-   * @property {objects[]} blocks - The Block JSON:API resources.
-   */
-  data: () => ({
-    blocks: []
-  }),
 
   /**
    * @vue-computed {object} route The current Route from the [DruxtRouter vuex store](https://router.druxtjs.org/api/stores/router.html).

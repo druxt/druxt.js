@@ -23,7 +23,7 @@ import DruxtViewsStorybook from './nuxtStorybook'
  *
  * @param {object} moduleOptions - Nuxt module options object.
  */
-const DruxtViewsNuxtModule = function (moduleOptions = {}) {
+const DruxtViewsNuxtModule = function () {
   const { options } = this
 
   // Use root level Druxt options.

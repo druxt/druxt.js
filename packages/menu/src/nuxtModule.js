@@ -25,7 +25,7 @@ import DruxtMenuStorybook from './nuxtStorybook'
  *
  * @param {object} moduleOptions - Module options object.
  */
-const DruxtMenuNuxtModule = function (moduleOptions = {}) {
+const DruxtMenuNuxtModule = function () {
   // Use root level Druxt options.
   if (typeof this.options === 'undefined' || !this.options.druxt) {
     throw new TypeError('Druxt settings missing.')
