@@ -1,4 +1,4 @@
-import DruxtNuxtModule from '..'
+import { DruxtNuxtModule } from '../src/nuxtModule'
 
 const options = {
   baseUrl: 'https://demo-api.druxtjs.org'
@@ -10,6 +10,15 @@ describe('DruxtJS Nuxt module', () => {
   beforeEach(() => {
     mock = {
       addPlugin: jest.fn(),
+      nuxt: {
+        hook: jest.fn((hook, fn) => {
+          const arg = {
+            'components:dirs': [],
+            'storybook:config': {}
+          }
+          return fn(arg[hook])
+        }),
+      },
       options: {},
       DruxtNuxtModule
     }

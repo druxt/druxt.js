@@ -110,13 +110,14 @@ describe('DruxtStore', () => {
 
   test('getResource', async () => {
     const mockPage = await getMockResource('node--page')
+    mockAxios.reset()
 
     // Assert that:
     // - Resource store is empty.
     // - No get requests have been executed.
     expect(store.state.druxt.resources).toStrictEqual({})
     expect(mockAxios.get).toHaveBeenCalledTimes(0)
-    
+
     // Get full resource
     const resource = await store.dispatch('druxt/getResource', mockPage.data)
 
@@ -143,6 +144,7 @@ describe('DruxtStore', () => {
 
   test('getResource - filter', async () => {
     const mockRecipe = await getMockResource('node--recipe', new DrupalJsonApiParams().addFields('node--recipe', []))
+    mockAxios.reset()
 
     // Assert that:
     // - Resource store is empty.
@@ -214,6 +216,7 @@ describe('DruxtStore', () => {
 
   test('getResource - includes', async () => {
     const mockResource = await getMockResource('node--recipe')
+    mockAxios.reset()
 
     // Assert that:
     // - Resource store is empty.
