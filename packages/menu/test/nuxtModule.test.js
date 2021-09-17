@@ -1,11 +1,17 @@
-import DruxtMenuNuxtModule from '../src'
+import { DruxtMenuNuxtModule } from '../src/nuxtModule'
 
 jest.mock('../src/nuxtStorybook')
 
 const mock = {
   addPlugin: jest.fn(),
   nuxt: {
-    hook: async (hook, fn) => await fn({})
+    hook: jest.fn((hook, fn) => {
+      const arg = {
+        'components:dirs': [],
+        'storybook:config': {}
+      }
+      return fn(arg[hook])
+    }),
   },
   options: {
     druxt: {}

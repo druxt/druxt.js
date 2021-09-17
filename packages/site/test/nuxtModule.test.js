@@ -1,27 +1,31 @@
-import DruxtSiteModule from '../src'
+import { DruxtSiteNuxtModule } from '../src/nuxtModule'
 
 const mock = {
   addModule: jest.fn(),
   addPlugin: jest.fn(),
   addTemplate: jest.fn(),
-  DruxtSiteModule
+  nuxt: {
+    hook: jest.fn((hook, fn) => {
+      const arg = {
+        'components:dirs': [],
+        'storybook:config': {}
+      }
+      return fn(arg[hook])
+    }),
+  },
+  DruxtSiteNuxtModule
 }
 
 jest.mock('druxt-schema')
 
 describe('DruxtJS Site module', () => {
   test('Nuxt module', () => {
-    expect(() => { mock.DruxtSiteModule() }).toThrow('Druxt settings missing.')
+    expect(() => { mock.DruxtSiteNuxtModule() }).toThrow('Druxt settings missing.')
 
     mock.options = { druxt: {} }
-    mock.nuxt = {
-      hook: jest.fn(async (hook, callback) => {
-        await callback.call(this)
-      })
-    }
 
     // Call DruxtSite module.
-    mock.DruxtSiteModule()
+    mock.DruxtSiteNuxtModule()
 
     // Expect 9 modules to be added.
     expect(mock.addModule).toHaveBeenCalledTimes(9)
