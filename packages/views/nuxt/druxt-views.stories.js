@@ -1,4 +1,4 @@
-import { default as DruxtView } from 'druxt-views/src/components/DruxtView.vue'
+import DruxtView from 'druxt-views/dist/components/DruxtView.vue'
 
 export default {
   title: <%= devalue(options.title) %>,

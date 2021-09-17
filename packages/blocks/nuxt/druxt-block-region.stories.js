@@ -1,4 +1,4 @@
-import { default as DruxtBlockRegion } from 'druxt-blocks/src/components/DruxtBlockRegion.vue'
+import DruxtBlockRegion from 'druxt-blocks/dist/components/DruxtBlockRegion.vue'
 
 export default {
   title: '<%= options.title %>',

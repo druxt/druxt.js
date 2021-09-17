@@ -1,4 +1,4 @@
-import { default as DruxtBlock } from 'druxt-blocks/src/components/DruxtBlock.vue'
+import DruxtBlock from 'druxt-blocks/dist/components/DruxtBlock.vue'
 
 export default {
   title: '<%= options.title %>',

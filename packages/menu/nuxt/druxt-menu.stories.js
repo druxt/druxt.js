@@ -1,4 +1,4 @@
-import { default as DruxtMenu } from 'druxt-menu/src/components/DruxtMenu.vue'
+import DruxtMenu from 'druxt-menu/dist/components/DruxtMenu.vue'
 
 export default {
   title: '<%= options.title %>',

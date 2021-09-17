@@ -1,4 +1,4 @@
-import { default as DruxtEntityForm } from 'druxt-entity/src/components/DruxtEntityForm'
+import DruxtEntityForm from 'druxt-entity/dist/components/DruxtEntityForm.vue'
 
 export default {
   title: '<%= options.title %>',

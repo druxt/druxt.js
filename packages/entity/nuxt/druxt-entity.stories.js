@@ -1,4 +1,4 @@
-import { default as DruxtEntity } from 'druxt-entity/src/components/DruxtEntity'
+import DruxtEntity from 'druxt-entity/dist/components/DruxtEntity.vue'
 
 export default {
   title: '<%= options.title %>',
