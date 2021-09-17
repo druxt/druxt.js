@@ -1,6 +1,4 @@
-import { DruxtMenuNuxtModule } from '../src/nuxtModule'
-
-jest.mock('../src/nuxtStorybook')
+import { DruxtBreadcrumbModule } from '../src/nuxtModule'
 
 const mock = {
   addPlugin: jest.fn(),
@@ -13,15 +11,15 @@ const mock = {
       return fn(arg[hook])
     }),
   },
-  options: {
-    druxt: {}
-  }
+  DruxtBreadcrumbModule
 }
 
 test('Nuxt module', () => {
-  expect(() => { DruxtMenuNuxtModule.call({}) }).toThrow('Druxt settings missing.')
+  expect(() => { mock.DruxtBreadcrumbModule() }).toThrow('Druxt settings missing.')
 
-  DruxtMenuNuxtModule.call(mock)
+  mock.options = {
+    druxt: {}
+  }
+  mock.DruxtBreadcrumbModule()
   expect(mock.addPlugin).toHaveBeenCalled()
 })
-

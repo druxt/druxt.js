@@ -5,7 +5,7 @@ import Vuex from 'vuex'
 
 import { getMockResource } from '../../../../test-utils/src'
 import { DruxtClient, DruxtStore } from '../../../../druxt/src'
-import { DruxtBlockViewsBlock } from '../../../src/components/blocks'
+import DruxtBlockViewsBlock from '../../../src/components/blocks/DruxtBlockViewsBlock.vue'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { join } from 'path'
 
 /**
  * Nuxt module function to install Druxt Site.
@@ -16,11 +16,9 @@ const DruxtSiteNuxtModule = function () {
     throw new TypeError('Druxt settings missing.')
   }
 
-  // Add plugin.
-  this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
-    fileName: 'druxt-site.js',
-    options: this.options.druxt
+  // Register components directories.
+  this.nuxt.hook('components:dirs', dirs => {
+    dirs.push({ path: join(__dirname, 'components') })
   })
 
   // Add Nuxt.js modules.

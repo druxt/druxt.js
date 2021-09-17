@@ -1,4 +1,4 @@
-import { DruxtBreadcrumbModule } from './module'
+import { DruxtBreadcrumbModule } from './nuxtModule'
 
 /**
  * The Nuxt.js module function.

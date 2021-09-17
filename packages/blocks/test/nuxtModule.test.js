@@ -6,7 +6,13 @@ const mock = {
   addModule: jest.fn(),
   addPlugin: jest.fn(),
   nuxt: {
-    hook: (hook, fn) => fn({})
+    hook: jest.fn((hook, fn) => {
+      const arg = {
+        'components:dirs': [],
+        'storybook:config': {}
+      }
+      return fn(arg[hook])
+    }),
   },
   DruxtBlocksNuxtModule
 }

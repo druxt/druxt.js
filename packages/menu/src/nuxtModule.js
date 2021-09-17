@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { join, resolve } from 'path'
 import DruxtMenuStorybook from './nuxtStorybook'
 
 /**
@@ -31,6 +31,12 @@ const DruxtMenuNuxtModule = function () {
     throw new TypeError('Druxt settings missing.')
   }
   const options = this.options.druxt
+
+  // Register components directories.
+  this.nuxt.hook('components:dirs', dirs => {
+    dirs.push({ path: join(__dirname, 'components') })
+    dirs.push({ path: join(__dirname, 'components/blocks') })
+  })
 
   // Add plugin.
   this.addPlugin({

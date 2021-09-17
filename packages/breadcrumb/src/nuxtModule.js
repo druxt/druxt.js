@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { join, resolve } from 'path'
 
 /**
  * The Nuxt.js module function.
@@ -30,9 +30,14 @@ const DruxtBreadcrumbModule = function () {
 
   options.breadcrumb = {
     home: true,
-
     ...options.breadcrumb
   }
+
+  // Register components directories.
+  this.nuxt.hook('components:dirs', dirs => {
+    dirs.push({ path: join(__dirname, 'components') })
+    dirs.push({ path: join(__dirname, 'components/blocks') })
+  })
 
   // Add plugin.
   this.addPlugin({

@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { join, resolve } from 'path'
 
 /**
  * Nuxt module function to install Druxt.
@@ -27,6 +27,11 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
     ...moduleOptions,
     ...(this.options || {}).druxt
   }
+
+  // Register components directories.
+  this.nuxt.hook('components:dirs', dirs => {
+    dirs.push({ path: join(__dirname, 'components') })
+  })
 
   // Add plugin.
   this.addPlugin({

@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { join, resolve } from 'path'
 
 /**
  * The Nuxt.js module function.
@@ -39,6 +39,11 @@ const DruxtRouterNuxtModule = function () {
     wildcard: true,
     ...options.router
   }
+
+  // Register components directories.
+  this.nuxt.hook('components:dirs', dirs => {
+    dirs.push({ path: join(__dirname, 'components') })
+  })
 
   // Add Druxt router custom wildcard route.
   if (options.router.wildcard) {
