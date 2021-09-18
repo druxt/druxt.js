@@ -11,7 +11,7 @@ import DruxtField from '../../src/components/DruxtField.vue'
 
 let localVue
 
-const stubs = ['DruxtEntityNodePage']
+const stubs = ['DruxtDebug', 'DruxtEntityNodePage']
 let store
 
 const mocks = {
@@ -64,7 +64,7 @@ describe('DruxtEntity', () => {
 
     // Fetch key.
     expect(DruxtEntity.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe(`DruxtEntity:node--page:${mockPage.data.id}:default:0`)
-    
+
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
 
     // Props.
@@ -147,7 +147,7 @@ describe('DruxtEntity', () => {
     expect(wrapper.vm.$refs.component.value).toStrictEqual(model)
 
     expect(mockAxios.get).toHaveBeenCalledTimes(0)
-    
+
     const mockData = {
       ...model,
       attributes: {
@@ -196,11 +196,11 @@ describe('DruxtEntity', () => {
     expect(wrapper.html()).toMatchSnapshot()
   })
 
-  test('deprecated', () => {
-    expect(DruxtEntity.methods.isEmpty()).toBe(true)
-    expect(DruxtEntity.methods.isEmpty(false)).toBe(true)
-    expect(DruxtEntity.methods.isEmpty({ data: [] })).toBe(true)
-    expect(DruxtEntity.methods.isEmpty({ data: false })).toBe(true)
-    expect(DruxtEntity.methods.isEmpty({ data: [{}] })).toBe(false)
-  })
+  // test('deprecated', () => {
+  //   expect(DruxtEntity.methods.isEmpty()).toBe(true)
+  //   expect(DruxtEntity.methods.isEmpty(false)).toBe(true)
+  //   expect(DruxtEntity.methods.isEmpty({ data: [] })).toBe(true)
+  //   expect(DruxtEntity.methods.isEmpty({ data: false })).toBe(true)
+  //   expect(DruxtEntity.methods.isEmpty({ data: [{}] })).toBe(false)
+  // })
 })

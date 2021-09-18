@@ -164,26 +164,14 @@ export default {
     slots(h) {
       const scopedSlots = {}
 
-      // Provide debug data if Nuxt is running in dev mode.
-      if (this.$nuxt.context.isDev)  {
-        scopedSlots.default = () => h(
-          'details',
-          {
-            style: {
-              border: '2px dashed lightgrey',
-              margin: '0.5em 0',
-              padding: '1em',
-            },
-          },
-          [
-            h('summary', [`[DruxtBlock] Missing wrapper component for '${((this.block || {}).attributes || {}).drupal_internal__id}'`]),
-            h('br'),
-            h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-            h('br'),
-            h('label', ['Block settings:', h('pre', [JSON.stringify(((this.block || {}).attributes || {}).settings, null, '  ')])])
-          ]
-        )
-      }
+      // Debug data.
+      scopedSlots.debug = () => h('DruxtDebug',
+        { props: { summary: `Missing wrapper component for '${((this.block || {}).attributes || {}).drupal_internal__id}'`} },
+        [
+          h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+          h('label', ['Block settings:', h('pre', [JSON.stringify(((this.block || {}).attributes || {}).settings, null, '  ')])])
+        ]
+      )
 
       return scopedSlots
     },

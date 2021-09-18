@@ -1,6 +1,7 @@
 <script>
 import merge from 'deepmerge'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
+import DruxtDebug from 'druxt/dist/components/DruxtDebug.vue'
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions } from 'vuex'
 
@@ -20,6 +21,8 @@ import { mapActions } from 'vuex'
  */
 export default {
   name: 'DruxtEntity',
+
+  components: { DruxtDebug },
 
   extends: DruxtModule,
 
@@ -283,25 +286,13 @@ export default {
       const scopedSlots = {}
 
       if (!this.schema) {
-        if (this.$nuxt.context.isDev) {
-          scopedSlots.default = (attrs) => h('details',
-            {
-              attrs,
-              style: {
-                border: '2px dashed lightgrey',
-                margin: '0.5em 0',
-                padding: '1em',
-              },
-            },
-            [
-              h('summary', [`[DruxtEntity] Missing schema for '${this.type}--${this.mode}'`]),
-              h('br'),
-              h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-              h('br'),
-              h('label', ['Entity:', h('pre', [JSON.stringify(this.entity, null, '  ')])]),
-            ]
-          )
-        }
+        scopedSlots.debug = () => h('DruxtDebug',
+          { props: { summary: `Missing schema for '${this.type}--${this.mode}'`} },
+          [
+            h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+            h('label', ['Entity:', h('pre', [JSON.stringify(this.entity, null, '  ')])]),
+          ]
+        )
         return scopedSlots
       }
 
