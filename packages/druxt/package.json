@@ -42,12 +42,15 @@
     "nuxt"
   ],
   "dependencies": {
-    "@nuxtjs/axios": "^5.13.6",
+    "axios": "^0.21.4",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.2.1",
     "md5": "^2.3.0",
     "querystring": "^0.2.0",
     "scule": "^0.2.0"
+  },
+  "peerDependencies": {
+    "@nuxtjs/axios": "^5.13.6"
   },
   "optionalDependencies": {
     "core-js": "^3.16.1",
