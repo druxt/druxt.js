@@ -238,22 +238,17 @@ export default {
 
       // Provide debug data if Nuxt is running in dev mode.
       if (!scopedSlots.default && this.$nuxt.context.isDev)  {
-        scopedSlots.default = () => h(
-          'details',
-          {
-            style: {
-              border: '2px dashed lightgrey',
-              margin: '0.5em 0',
-              padding: '1em',
-            },
-          },
-          [
-            h('summary', [`[${this.$options._componentTag}] Missing default slot.`]),
-            h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-            h('br'),
-            h('label', ['propsData:', h('pre', [h('code', [JSON.stringify(this.component.propsData, null, '\t')])])])
-          ]
-        )
+        if (!scopedSlots.debug) {
+          scopedSlots.debug = () => h(
+            'DruxtDebug',
+            { props: { summary: 'Missing default slot' } },
+            [
+              h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+              h('label', ['propsData:', h('pre', [h('code', [JSON.stringify(this.component.propsData, null, '  ')])])])
+            ]
+          )
+        }
+        scopedSlots.default = scopedSlots.debug
       }
 
       return scopedSlots

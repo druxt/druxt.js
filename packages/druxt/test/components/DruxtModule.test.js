@@ -183,7 +183,7 @@ describe('DruxtModule component', () => {
 
   test('dev mode slot', async () => {
     mocks.$nuxt.context.isDev = true
-    const wrapper = mount(DruxtModule, { localVue, mocks })
+    const wrapper = mount(DruxtModule, { localVue, mocks, stubs: ['DruxtDebug'] })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Default slot.
@@ -192,7 +192,7 @@ describe('DruxtModule component', () => {
       options: ['Test'],
     } })
     const slot = wrapper.vm.getScopedSlots().default.call(wrapper.vm)
-    expect(slot.tag).toBe('details')
+    expect(slot.tag.endsWith('DruxtDebug')).toBe(true)
   })
 
   test('custom default slot', async () => {

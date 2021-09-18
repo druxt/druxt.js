@@ -391,24 +391,13 @@ export default {
             })])
           }
 
-          // Fallback: Provide debug data if Nuxt is running in dev mode.
+          // Fallback: Provide debug data.
           if (this.$nuxt.context.isDev) {
-            return h('details',
-              {
-                attrs,
-                style: {
-                  border: '2px dashed lightgrey',
-                  margin: '0.5em 0',
-                  padding: '1em',
-                },
-              },
+            return h('DruxtDebug',
+              { props: { summary: `Missing wrapper component for '${this.schema.id} (${this.schema.type}')`} },
               [
-                h('summary', [`[DruxtField] Missing wrapper component for '${this.schema.id} (${this.schema.type}')`]),
-                h('br'),
                 h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-                h('br'),
                 h('label', ['Data:', h('pre', [JSON.stringify(item, null, '  ')])]),
-                h('br'),
                 h('label', ['Schema:', h('pre', [JSON.stringify(this.schema, null, '  ')])])
               ]
             )

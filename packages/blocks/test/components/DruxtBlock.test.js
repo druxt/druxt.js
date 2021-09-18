@@ -30,7 +30,7 @@ const mountComponent = (propsData = {}, options = {}, mocks = {}) => {
     },
     ...mocks
   }
-  return mount(DruxtBlock, { localVue, mocks, propsData, store, ...options })
+  return mount(DruxtBlock, { localVue, mocks, propsData, store, stubs: ['DruxtDebug'], ...options })
 }
 
 describe('Component - DruxtBlock', () => {
@@ -128,7 +128,7 @@ describe('Component - DruxtBlock', () => {
 
     // Default slot.
     const slot = wrapper.vm.getScopedSlots().default()
-    expect(slot.tag).toBe('details')
+    expect(slot.tag.endsWith('DruxtDebug')).toBe(true)
   })
 
   test('custom default slot', async () => {
