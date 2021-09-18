@@ -1,3 +1,4 @@
+import chalk from 'chalk'
 import { join, resolve } from 'path'
 
 /**
@@ -24,6 +25,7 @@ import { join, resolve } from 'path'
  */
 const DruxtNuxtModule = function (moduleOptions = {}) {
   const options = {
+    endpoint: '/jsonapi',
     ...moduleOptions,
     ...(this.options || {}).druxt
   }
@@ -49,6 +51,9 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
 
   // Enable Vuex Store.
   this.options.store = true
+
+  // Add CLI badge.
+  this.options.cli.badgeMessages.push(`${chalk.bold('Druxt API:')} ${chalk.blue.underline(options.baseUrl + options.endpoint)}`)
 }
 
 DruxtNuxtModule.meta = require('../package.json')

@@ -1,7 +1,8 @@
 import { DruxtNuxtModule } from '../src/nuxtModule'
 
 const options = {
-  baseUrl: 'https://demo-api.druxtjs.org'
+  baseUrl: 'https://demo-api.druxtjs.org',
+  endpoint: '/jsonapi',
 }
 
 let mock
@@ -19,7 +20,11 @@ describe('DruxtJS Nuxt module', () => {
           return fn(arg[hook])
         }),
       },
-      options: {},
+      options: {
+        cli: {
+          badgeMessages: [],
+        }
+      },
       DruxtNuxtModule
     }
   })
