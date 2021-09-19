@@ -1,6 +1,6 @@
 {
   "name": "druxt-site",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Out of the box Decoupled Drupal sites with Druxt.",
   "keywords": [
     "drupal",
@@ -23,14 +23,14 @@
   ],
   "dependencies": {
     "@nuxtjs/proxy": "^2.1.0",
-    "druxt": "^0.9.0",
-    "druxt-blocks": "^0.11.1",
-    "druxt-breadcrumb": "^0.10.1",
-    "druxt-entity": "^0.17.1",
-    "druxt-menu": "^0.12.1",
-    "druxt-router": "^0.19.1",
-    "druxt-schema": "^0.7.9",
-    "druxt-views": "^0.12.1",
+    "druxt": "^0.10.0",
+    "druxt-blocks": "^0.12.0",
+    "druxt-breadcrumb": "^0.11.0",
+    "druxt-entity": "^0.18.0",
+    "druxt-menu": "^0.13.0",
+    "druxt-router": "^0.20.0",
+    "druxt-schema": "^0.7.10",
+    "druxt-views": "^0.13.0",
     "md5": "^2.2.1"
   },
   "optionalDependencies": {

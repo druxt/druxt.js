@@ -1,5 +1,18 @@
 # druxt-breadcrumb
 
+## 0.11.0
+
+### Minor Changes
+
+- 715e5ef: Updated component registration method to use the Nuxt `components:dirs` hook
+
+### Patch Changes
+
+- Updated dependencies [1ab762c]
+  - druxt-router@0.20.0
+  - druxt-blocks@0.12.0
+  - druxt@0.10.0
+
 ## 0.10.1
 
 ### Patch Changes

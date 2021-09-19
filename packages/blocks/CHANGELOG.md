@@ -1,5 +1,20 @@
 # druxt-blocks
 
+## 0.12.0
+
+### Minor Changes
+
+- 715e5ef: Updated component registration method to use the Nuxt `components:dirs` hook
+- 2b8c3f3: Updated to use DruxtDebug component
+
+### Patch Changes
+
+- 49454cb: Fixed path to components in Storybook
+- Updated dependencies [1ab762c]
+  - druxt-router@0.20.0
+  - druxt@0.10.0
+  - druxt-entity@0.18.0
+
 ## 0.11.1
 
 ### Patch Changes

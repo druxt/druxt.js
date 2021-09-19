@@ -1,5 +1,13 @@
 # druxt
 
+## 0.10.0
+
+### Minor Changes
+
+- 715e5ef: Updated component registration method to use the Nuxt `components:dirs` hook
+- 2b8c3f3: Added DruxtDebug component
+- 317184e: Added Druxt API URL to Nuxt CLI badge
+
 ## 0.9.0
 
 ### Minor Changes

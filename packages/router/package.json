@@ -1,6 +1,6 @@
 {
   "name": "druxt-router",
-  "version": "0.19.1",
+  "version": "0.20.0",
   "description": "Drupal router for Nuxt, powered by the Drupal Decoupled Router module.",
   "keywords": [
     "drupal",
@@ -31,7 +31,7 @@
     "nuxt"
   ],
   "dependencies": {
-    "druxt": "^0.9.0",
+    "druxt": "^0.10.0",
     "url-parse": "^1.4.7"
   },
   "optionalDependencies": {

@@ -1,6 +1,14 @@
 # druxt-test-utils
 
-## 1.0.0
+## 0.2.0
+
+### Patch Changes
+
+- Updated dependencies [715e5ef]
+  - druxt@0.10.0
+
+## 0.1.0
+
 ### Patch Changes
 
 - Updated dependencies [21170fb]

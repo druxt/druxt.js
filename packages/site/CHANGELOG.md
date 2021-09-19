@@ -1,5 +1,23 @@
 # druxt-site
 
+## 0.8.0
+
+### Minor Changes
+
+- 715e5ef: Updated component registration method to use the Nuxt `components:dirs` hook
+
+### Patch Changes
+
+- Updated dependencies [1ab762c]
+  - druxt-router@0.20.0
+  - druxt-blocks@0.12.0
+  - druxt-breadcrumb@0.11.0
+  - druxt@0.10.0
+  - druxt-entity@0.18.0
+  - druxt-menu@0.13.0
+  - druxt-views@0.13.0
+  - druxt-schema@0.7.10
+
 ## 0.7.1
 
 ### Patch Changes

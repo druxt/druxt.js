@@ -1,5 +1,19 @@
 # druxt-router
 
+## 0.20.0
+
+### Minor Changes
+
+- 1ab762c: Enabled Nuxt Vuex store by default
+- ecefef5: Added option to disable wildcard route
+- 715e5ef: Updated component registration method to use the Nuxt `components:dirs` hook
+- cbc66cd: Added option to disable `pages/` routes
+
+### Patch Changes
+
+- Updated dependencies [715e5ef]
+  - druxt@0.10.0
+
 ## 0.19.1
 
 ### Patch Changes
