@@ -38,7 +38,7 @@ export default {
         {
           hid: 'canonical',
           rel: 'canonical',
-          href: this.canonical || this.route.canonical
+          href: this.route.canonical
         }
       ]
     }
@@ -57,9 +57,6 @@ export default {
    * @vue-computed {object} route The current Route.
    */
   computed: {
-    module: ({ route }) =>
-      (route || {}).component && route.component.startsWith('druxt-') ? route.component.substring(6) : false,
-
     /**
      * Route title.
      * @type {boolean|string}
@@ -80,14 +77,18 @@ export default {
     })
   },
 
-  druxt: {
-    componentOptions: ({ module, route }) => [
-      // @TODO - Add Path options.
-      [module || 'error', route.isHomePath ? 'front' : 'not-front'],
-      ['default']
-    ],
-
-    propsData: ({ route }) => ({ route })
+  render(h) {
+    return h('div', [
+      h('DruxtRoute', {
+        props: {
+          path: this.$route.fullPath,
+          value: {
+            redirect: this.redirect,
+            route: this.route,
+          }
+        }
+      }
+    )])
   }
 }
 </script>
