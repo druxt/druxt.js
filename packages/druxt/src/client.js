@@ -29,7 +29,6 @@ class DruxtClient {
     let axiosSettings = { baseURL: baseUrl }
     if (typeof options.axios === 'object') {
       axiosSettings = Object.assign(axiosSettings, options.axios)
-      delete options.axios
     }
 
     /**
