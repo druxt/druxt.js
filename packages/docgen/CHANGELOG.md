@@ -1,6 +1,13 @@
 # druxt-docgen
 
+## 0.5.1
+
+### Patch Changes
+
+- b82938e: Fixed incorrectly generated results
+
 ## 0.5.0
+
 ### Minor Changes
 
 - 604def9: feat(#157): generate packages list

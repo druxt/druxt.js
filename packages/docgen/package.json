@@ -1,6 +1,6 @@
 {
   "name": "druxt-docgen",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "API Doc generation tool for Druxt modules.",
   "keywords": [
