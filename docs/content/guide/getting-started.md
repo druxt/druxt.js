@@ -88,6 +88,7 @@ import { DruxtClient } from 'druxt'
 const client = new DruxtClient('https://demo-api.druxtjs.org')
 ```
 
+- For further information, read the [JSON:API Client guide](/guide/client).
 - For more details, see the [DruxtClient API documentation](/api/packages/druxt/client).
 
 * * *
