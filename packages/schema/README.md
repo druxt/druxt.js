@@ -10,7 +10,8 @@
 ## Links
 
 - Druxt.js: https://druxtjs.org
-- Documentation: https://schema.druxtjs.org/
+- Documentation: https://druxtjs.org/modules/schema
+- Community Discord server: https://discord.druxtjs.org
 
 ## Install
 

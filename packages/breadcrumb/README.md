@@ -7,18 +7,15 @@
 
 > Decoupled Router based Breadcrumb Druxt component.
 
-
 ## Links
 
 - DruxtJS: https://druxtjs.org
-- Documentation: https://breadcrumb.druxtjs.org
+- Documentation: https://druxtjs.org/modules/breadcrumb
 - Community Discord server: https://discord.druxtjs.org
-
 
 ## Install
 
 `$ npm install druxt-breadcrumb`
-
 
 ### Nuxt.js
 
@@ -32,7 +29,6 @@ module.exports = {
   },
 }
 ```
-
 
 ## Usage
 
@@ -63,8 +59,7 @@ The DruxtBreadcrumb also provide a DruxtWrapper component for theming:
 </template>
 ```
 
-See the [DruxtBreadcrumb API documentation](https://breadcrumb.druxtjs.org/api/components/DruxtBreadcrumb.html) for more information.
-
+See the [DruxtBreadcrumb API documentation](https://druxtjs.org/api/packages/breadcrumb/components/DruxtBreadcrumb) for more information.
 
 ## Options
 

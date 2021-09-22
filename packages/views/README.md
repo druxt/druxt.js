@@ -10,7 +10,7 @@
 ## Links
 
 - DruxtJS: https://druxtjs.org
-- Documentation: https://views.druxtjs.org
+- Documentation: https://druxtjs.org/modules/views
 - Community Discord server: https://discord.druxtjs.org
 
 ## Install
@@ -66,7 +66,7 @@ The component also provides a DruxtWrapper component for theming:
 </template>
 ```
 
-See the [DruxtViews API documentation](https://views.druxtjs.org/api/components/DruxtViews.html) for more information.
+See the [DruxtViews API documentation](https://druxtjs.org/api/packages/views/components/DruxtView) for more information.
 
 ## Options
 
