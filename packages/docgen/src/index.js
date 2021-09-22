@@ -66,6 +66,9 @@ class DruxtDocgen {
       }
       await ncp(file, destination, options, () => {})
     }
+
+    // Contributing guide.
+    await ncp('CONTRIBUTING.md', `${this.destination}/guide/CONTRIBUTING.md`)
   }
 
   /**
