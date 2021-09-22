@@ -10,7 +10,7 @@
 ## Links
 
 - DruxtJS: https://druxtjs.org
-- Documentation: https://blocks.druxtjs.org/
+- Documentation: https://druxtjs.org/modules/blocks
 - Community Discord server: https://discord.druxtjs.org
 
 
@@ -51,7 +51,7 @@ The DruxtBlock component renders a Drupal JSON:API Block resource by ID or UUID.
 <DruxtBlock :uuid="uuid" />
 ```
 
-See the [DruxtBlock API Documentation](https://blocks.druxtjs.org/api/components/DruxtBlock.html) for more information.
+See the [DruxtBlock API Documentation](https://druxtjs.org/api/packages/blocks/components/DruxtBlock) for more information.
 
 
 ### DruxtBlockRegion
@@ -62,9 +62,9 @@ The DruxtBlockRegion component renders all visible blocks for the specified them
 <DruxtBlockRegion :name="name" :theme="theme" />
 ```
 
-![Example DruxtBlockRegion component](https://raw.githubusercontent.com/druxt/druxt-blocks/HEAD/docs/images/druxt-block-region.png)
+![Example DruxtBlockRegion component](https://druxtjs.org/images/druxt-block-region.png)
 
-See the [DruxtBlockRegion API Documentation](https://blocks.druxtjs.org/api/components/DruxtBlockRegion.html) for more information.
+See the [DruxtBlockRegion API Documentation](https://druxtjs.org/api/packages/blocks/components/DruxtBlockRegion) for more information.
 
 
 ### Theming
@@ -81,7 +81,7 @@ Both components can be themed by providing a default template:
 
 The module also provides Wrapper components with scoped slots for theming.
 
-See the [Druxt Theming guide](https://druxtjs.org/guide/theming.html) for more information.
+See the [Druxt Theming guide](https://druxtjs.org/guide/theming) for more information.
 
 
 ## Options

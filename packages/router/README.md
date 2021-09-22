@@ -9,7 +9,7 @@
 ## Links
 
 - DruxtJS: https://druxtjs.org
-- Documentation: https://router.druxtjs.org
+- Documentation: https://druxtjs.org/modules/router
 - Community Discord server: https://discord.druxtjs.org
 
 ## Features

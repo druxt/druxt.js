@@ -5,21 +5,18 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-entity/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-entity?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-entity/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-entity)
 
-
 > Drupal Display Mode powered Entity, Form and Field Druxt components.
-
 
 ## Links
 
 - DruxtJS: https://druxtjs.org
-- Documentation: https://entity.druxtjs.org
+- Documentation: https://druxtjs.org/modules/entity
 - Community Discord server: https://discord.druxtjs.org
 
 
 ## Install
 
 `$ npm install druxt-entity`
-
 
 ### Nuxt.js
 
@@ -43,7 +40,6 @@ module.exports = {
 }
 ```
 
-
 ## Usage
 
 ### DruxtEntity component
@@ -54,10 +50,9 @@ The DruxtEntity component renders content entities using Drupal's View display m
 <DruxtEntity :type="resourceType" :uuid="uuid" :mode="displayMode" />
 ```
 
-![Example DruxtEntity component](https://raw.githubusercontent.com/druxt/druxt-entity/HEAD/docs/images/druxt-entity.png)
+![Example DruxtEntity component](https://druxtjs.org/images/druxt-entity.png)
 
-See the [DruxtEntity API Documentation](https://entity.druxtjs.org/api/components/DruxtEntity.html) for more information.
-
+See the [DruxtEntity API Documentation](https://druxtjs.org/api/packages/entity/components/DruxtEntity) for more information.
 
 ### DruxtEntityForm component
 
@@ -67,10 +62,9 @@ The DruxtEntityForm component uses Drupal's Form displays modes for content crea
 <DruxtEntityForm :type="resourceType" :mode="displayMode" />
 ```
 
-![Example DruxtEntityForm component](https://raw.githubusercontent.com/druxt/druxt-entity/HEAD/docs/images/druxt-entity-form.png)
+![Example DruxtEntityForm component](https://druxtjs.org/images/druxt-entity-form.png)
 
-See the [DruxtEntityForm API Documentation](https://entity.druxtjs.org/api/components/DruxtEntity.html) for more information.
-
+See the [DruxtEntityForm API Documentation](https://druxtjs.org/api/packages/entity/components/DruxtEntityForm) for more information.
 
 ### Theming
 
@@ -93,8 +87,7 @@ The module also provides Wrapper components with scoped slots for theming:
 </template>
 ```
 
-See the [Druxt Theming guide](https://druxtjs.org/guide/theming.html) for more information.
-
+See the [Druxt Theming guide](https://druxtjs.org/guide/theming) for more information.
 
 ## Options
 
@@ -107,7 +100,6 @@ These options are specific to this module.
 | `entity.components.fields` | `boolean` | No | `true` | Whether to import deprecated default Field components. |
 | `entity.query.fields` | `string[]` | No | `[]` | An array of fields to filter all Entity JSON:API queries. |
 | `entity.query.schema` | `boolean` | No | `false` | Whether to automatically filter fields based on Display schema. |
-
 
 ### Base Druxt options
 
