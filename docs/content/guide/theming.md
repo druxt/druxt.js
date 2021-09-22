@@ -5,26 +5,27 @@ weight: -6
 
 # Theming
 
-Druxt modules use a slot-based Wrapper component system to provide rich defaults while still allowing full control over all theming and functionality.
+Druxt components can be themed using two primary methods:
+- [Druxt wrapper components](#druxtwrapper)
+- [Default template injection](#default-template)
 
-- [DruxtWrapper](#druxtwrapper)
-- [Default template](#default-template)
-
+* * *
 
 ## DruxtWrapper
 
-Druxt modules use a DruxtWrapper component system to render a Vue component with fetched data, slots, props and $attrs to be used for theming.
+Druxt modules use a DruxtWrapper component system to render a Vue component with the available data, slots, props and $attrs to be used for theming.
 
-The specific component the rendered is determined by building a list of available component options, using props and data provided to the module, and using the first registered option.
+The specific component rendered is determined by list of available component options, made from properties and data provided by the module, and using the first registered option.
 
 e.g., A DruxtEntity component might render a `DruxtEntityNodeArticleDefault.vue` wrapper component.
 
-Component options can be seen on the `component.options` property of the Druxt module component.
+![Example DruxtWrapper in Vue dev tools](/images/theming-druxt-wrapper.png)
+
+Component options can be seen via the `component.options` data of the relevant Druxt module component.
 
 If there are no matching component names, a default `DruxtWrapper` component will be used to render the default output of the module.
 
-See the [DruxtModule API documentation](/api/packages/druxt/components/DruxtModule).
-
+- For more details, see the [DruxtModule API documentation](/api/packages/druxt/components/DruxtModule).
 
 ```vue
 <Druxt
@@ -44,6 +45,7 @@ See the [DruxtModule API documentation](/api/packages/druxt/components/DruxtModu
 </template>
 ```
 
+* * *
 
 ## Default template
 

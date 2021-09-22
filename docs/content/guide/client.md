@@ -29,7 +29,7 @@ const druxt = new DruxtClient('https://demo-api.druxtjs.org', {
 })
 ```
 
-See the [API documentation](/api/client) for more details.
+See the [API documentation](/api/packages/druxt/client) for more details.
 
 ## Getting a resource
 
