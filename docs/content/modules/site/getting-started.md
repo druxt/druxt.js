@@ -2,11 +2,9 @@
 title: Getting started with DruxtSite
 ---
 
-> Druxt is a Fully Decoupled Drupal framework.
+> DruxtSite gives you an out-of-the-box Drupal site experience with a Nuxt.js frontend.
 
-The DruxtSite module gives you an out-of-the-box Drupal site experience with a Nuxt.js frontend.
-
-Think of the DruxtSite module as a distribution of Drupal, Nuxt and Druxt to provide Vue.js theme layer for Drupal.
+Think of the DruxtSite module as a distribution of Drupal, Nuxt and Druxt to provide a Vue.js theme layer for Drupal.
 
 * * *
 
@@ -23,7 +21,7 @@ Try out a pre-installed, pre-configured DruxtSite install with GitPod.
 
 All Druxt sites need both Drupal (backend) and Nuxt (frontend) to be installed.
 
-Each codebase can live in it's own directory within a single repository, or exist in seperate repositories.
+Each codebase can live in its own directory within a single repository, or exist in seperate repositories.
 
 * For an example of a single repository, see the [Quickstart DruxtSite repository](https://github.com/druxt/quickstart-druxt-site).
 * For an example of individual repositories, see:
@@ -46,13 +44,11 @@ Each codebase can live in it's own directory within a single repository, or exis
    ![Install the module](/images/drupal-install.png)
 
 4. Add the "**access druxt resources**" permission to a user/role:
-   ![Install the module](/images/drupal-permissions.png)
-
-5. Enable and configure **CORS** in the your sites `services.yml` file.
+   ![Druxt 'access druxt resources' permission](/images/drupal-permissions.png)
 
 * * *
 
-## Nuxt
+### Nuxt
 
 1. [Install Nuxt](https://nuxtjs.org/guide/installation/)
 
@@ -69,7 +65,7 @@ Each codebase can live in it's own directory within a single repository, or exis
 3. Add the module and configuration to `nuxt.config.js`:
 
     ```js
-    module.exports = {
+    export default {
       modules: [
         'druxt-site'
       ],
@@ -87,5 +83,6 @@ Each codebase can live in it's own directory within a single repository, or exis
     ```vue
     <template>
       <DruxtSite :theme="theme" />
-    </tempalte>
+    </template>
     ```
+5. Start Nuxt: `npm run dev`
