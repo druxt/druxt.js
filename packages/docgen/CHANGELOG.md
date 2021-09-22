@@ -1,5 +1,11 @@
 # druxt-docgen
 
+## 0.6.0
+
+### Minor Changes
+
+- 9741e11: feat: copy select static files into docs
+
 ## 0.5.1
 
 ### Patch Changes
