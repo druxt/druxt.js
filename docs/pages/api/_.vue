@@ -9,7 +9,7 @@
         </li>
       </ul>
     </div>
-    <h2 class="mb-5 text-3xl">{{ title }}</h2>
+    <!-- <h2 class="mb-5 text-3xl">{{ title }}</h2> -->
 
     <div>
       <!-- TODO: Link to module page? -->

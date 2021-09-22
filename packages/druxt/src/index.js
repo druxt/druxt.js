@@ -1,4 +1,7 @@
-import { DruxtNuxtModule } from './nuxtModule'
+/**
+ * The core Druxt.js module.
+ * @module Druxt
+ */
 
 /**
  * The JSON:API client used by the Druxt Nuxt plugin and DruxtStore.
@@ -31,6 +34,7 @@ export { DruxtClient } from './client'
  *   }
  * }
  */
+import { DruxtNuxtModule } from './nuxtModule'
 export default DruxtNuxtModule
 
 /**
