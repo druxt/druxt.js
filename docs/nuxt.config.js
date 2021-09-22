@@ -42,7 +42,7 @@ export default {
     // https://go.nuxtjs.dev/content
     '@nuxt/content',
     ['nuxt-social-meta', {
-      title: 'DruxtJS - The Fully Deocupled Drupal Framework',
+      title: 'DruxtJS - The Fully Decoupled Drupal Framework',
       site_name: 'DruxtJS',
       description: 'Druxt is a framework for building Fully Decoupled Drupal and Nuxt.js applications and sites.',
       img: 'https://druxtjs.org/og-druxt.png',
