@@ -1,5 +1,16 @@
 {
   "extends": [
     "config:base"
+  ],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "groupName": "eslint",
+      "matchPackagePatterns": ["eslint"]
+    },
+    {
+      "groupName": "jest",
+      "matchPackagePatterns": ["jest"]
+    }
   ]
 }
