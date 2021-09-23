@@ -29,8 +29,12 @@ Druxt is a framework for building Fully Decoupled Drupal and Nuxt.js application
 
 Druxt is built on two frameworks, Drupal and Nuxt.js, both with their own modules which can be used alongside Druxt modules.
 
-Druxt modules provide Nuxt modules, plugins, components and more to bridge the gap and make Decoupled development easier.
+Druxt modules provide the following, and more, to bridge the gap and make decoupled development easier:
+- Nuxt modules
+- Nuxt plugins
+- Vue components
 
+Finding modules:
 - For Druxt modules, see the [Druxt modules list](/modules).
 - For Drupal modules, see the [Drupal modules list](https://www.drupal.org/project/project_module).
 - For Nuxt modules, see the [Nuxt modules list](https://modules.nuxtjs.org/).

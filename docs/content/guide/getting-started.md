@@ -3,7 +3,7 @@ title: Getting started with Druxt.js
 weight: -9
 ---
 
-### Getting started with Druxt.js
+# Getting started with Druxt.js
 
 > Druxt is a Fully Decoupled Drupal framework.
 

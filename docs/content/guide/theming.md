@@ -6,7 +6,7 @@ weight: -6
 # Theming
 
 Druxt components can be themed using two primary methods:
-- [Druxt wrapper components](#druxtwrapper)
+- [DruxtWrapper components](#druxtwrapper)
 - [Default template injection](#default-template)
 
 * * *
@@ -51,7 +51,7 @@ If there are no matching component names, a default `DruxtWrapper` component wil
 
 Most Druxt modules can have the default template overridden, allowing for full control of the default slot rendering.
 
-The available data provided to the template scope is deteremined by the relevant module.
+The available data provided to the template scope is determined by the relevant module.
 
 ```vue
 <DruxtEntity>
