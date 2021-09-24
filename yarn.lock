@@ -6384,7 +6384,7 @@ __metadata:
     jest-junit: 12.2.0
     jest-mock-axios: 4.4.0
     regenerator-runtime: 0.13.9
-    renovate: ^27.18.1
+    renovate: 27.18.1
     rimraf: 3.0.2
     siroc: 0.14.0
     vue: 2.6.14
@@ -12092,7 +12092,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"renovate@npm:^27.18.1":
+"renovate@npm:27.18.1":
   version: 27.18.1
   resolution: "renovate@npm:27.18.1"
   dependencies:
