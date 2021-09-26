@@ -16,6 +16,10 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
   const options = {
     baseUrl: moduleOptions.baseUrl,
     ...(this.options || {}).druxt || {},
+    menu: {
+      jsonApiMenuItems: true,
+      ...((this.options || {}).druxt || {}).menu,
+    },
     site: {
       layout: true,
       ...((this.options || {}).druxt || {}).site,
@@ -28,23 +32,9 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
     dirs.push({ path: join(__dirname, 'components') })
   })
 
-  // Enable JSON:API Menu items by default.
-  if (typeof ((this.options.druxt || {}).menu || {}).jsonApiMenuItems === 'undefined') {
-    this.options.druxt.menu = {
-      ...this.options.druxt.menu,
-      ...{ jsonApiMenuItems: true }
-    }
-  }
-
-  // Setup proxy for 'sites/default/files'.
-  if (typeof this.options.proxy === 'undefined') {
-    this.options.proxy = [this.options.druxt.baseUrl + '/sites/default/files']
-  }
-
-  // Add Nuxt.js modules.
-  const modules = [
-    '@nuxtjs/proxy',
-    'druxt',
+  // Add Druxt modules.
+  this.addModule(['druxt', options])
+  const druxtModules = [
     'druxt-blocks',
     'druxt-breadcrumb',
     'druxt-entity',
@@ -53,9 +43,15 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
     'druxt-schema',
     'druxt-views'
   ]
-  for (const key in modules) {
-    this.addModule(modules[key])
+  for (const module of druxtModules) {
+    this.addModule([module, { baseUrl: options.baseUrl, ...options[module.split('-')[1]] || {}}])
   }
+
+  // Setup proxy for 'sites/default/files'.
+  if (typeof this.options.proxy === 'undefined') {
+    this.options.proxy = [options.baseUrl + '/sites/default/files']
+  }
+  this.addModule('@nuxtjs/proxy')
 
   // Enable Vuex Store.
   this.options.store = true
