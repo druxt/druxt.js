@@ -28,16 +28,17 @@ import { join, resolve } from 'path'
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  * @property {string} options.druxt.router.component - File to custom Router component.
  */
-const DruxtRouterNuxtModule = function () {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-  const options = this.options.druxt
-  options.router = {
-    pages: true,
-    wildcard: true,
-    ...options.router
+const DruxtRouterNuxtModule = function (moduleOptions) {
+  // Set default options.
+  const options = {
+    baseUrl: moduleOptions.baseUrl,
+    ...(this.options || {}).druxt || {},
+    router: {
+      pages: true,
+      wildcard: true,
+      ...((this.options || {}).druxt || {}).router,
+      ...moduleOptions,
+    }
   }
 
   // Register components directories.

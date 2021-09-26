@@ -11,11 +11,6 @@ import { join } from 'path'
  * @param {ModuleOptions} moduleOptions - The Nuxt.js module options.
  */
 const DruxtSiteNuxtModule = function () {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
     dirs.push({ path: join(__dirname, 'components') })
