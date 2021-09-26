@@ -22,8 +22,6 @@ import { join, resolve } from 'path'
  *   }
  * }
  *
- * @todo [Add module level options]{@link https://github.com/druxt/druxt-router/issues/53}
- *
  * @property {object} options.druxt - Druxt root level options.
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  * @property {string} options.druxt.router.component - File to custom Router component.

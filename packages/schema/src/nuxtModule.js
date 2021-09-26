@@ -47,8 +47,10 @@ const DruxtSchemaNuxtModule = function (moduleOptions) {
     options
   })
 
+  // Enable Vuex Store.
+  this.options.store = true
+
   // Add Vuex plugin.
-  // @TODO - Ensure Vuex store is available.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/store.js'),
     fileName: 'store/druxt-schema.js',
