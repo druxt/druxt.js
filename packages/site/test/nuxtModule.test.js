@@ -1,6 +1,7 @@
 import { DruxtSiteNuxtModule } from '../src/nuxtModule'
 
 const mock = {
+  addLayout: jest.fn(),
   addModule: jest.fn(),
   addPlugin: jest.fn(),
   addTemplate: jest.fn(),
@@ -19,11 +20,15 @@ const mock = {
 jest.mock('druxt-schema')
 
 describe('DruxtJS Site module', () => {
-  test('Nuxt module', () => {
-    mock.options = { druxt: {} }
+  test('Nuxt module', async () => {
+    mock.options = {
+      dir: { layouts: 'layouts' },
+      druxt: {},
+      srcDir: __dirname,
+    }
 
     // Call DruxtSite module.
-    mock.DruxtSiteNuxtModule()
+    await mock.DruxtSiteNuxtModule()
 
     // Expect 9 modules to be added.
     expect(mock.addModule).toHaveBeenCalledTimes(9)
