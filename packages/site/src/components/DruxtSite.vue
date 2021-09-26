@@ -54,9 +54,13 @@ export default {
      */
     theme: {
       type: String,
-      required: true
+      default: undefined,
     }
   },
+
+  data: ({ $druxt }) => ({
+    defaultTheme: ($druxt.settings.site || {}).theme,
+  }),
 
   /**
    * Nuxt.js fetch method.
@@ -65,13 +69,25 @@ export default {
    * used to render the `<DruxtBlockRegion />`'s.
    */
   async fetch() {
+    const type = 'block--block'
+
+    // If no default theme is provided, get the first available valid theme.
+    if (!this.defaultTheme) {
+      this.defaultTheme = await this.getCollection({
+        type,
+        query: new DrupalJsonApiParams()
+          .addFields(type, ['theme'])
+          .addFilter('plugin', 'system_main_block')
+          .addPageLimit(1)
+      }).then((resources) => resources.data[0].attributes.theme)
+    }
+
     // Fetch all available regions.
     if (!this.value) {
-      const type = 'block--block'
       this.model = await this.getCollection({
         type,
         query: new DrupalJsonApiParams()
-          .addFilter('theme', this.theme)
+          .addFilter('theme', this.theme || this.defaultTheme)
           .addFields(type, ['region']),
       }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
     }
@@ -89,11 +105,11 @@ export default {
      *
      * @return {object}
      */
-    props: ({ regions, theme }) =>
+    props: ({ defaultTheme, regions, theme }) =>
       Object.fromEntries(regions.map((region) => [region, {
         key: region,
         name: region,
-        theme,
+        theme: theme || defaultTheme,
       }])),
 
     /**
@@ -117,7 +133,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ theme }) => [[theme], ['default']],
+    componentOptions: ({ defaultTheme, theme }) => [[theme || defaultTheme], ['default']],
 
     /**
      * Provides propsData for the DruxtWrapper.
@@ -125,7 +141,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ props, regions, theme }) => ({ props, regions, theme }),
+    propsData: ({ defaultTheme, props, regions, theme }) => ({ props, regions, theme: theme || defaultTheme }),
 
     /**
      * Provides the scoped slots object for the Module render function.
