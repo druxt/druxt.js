@@ -108,7 +108,7 @@ export default {
 
     // Get wrapper component data to merge with module settings.
     const wrapperData = await this.getWrapperData(component.is)
-    component.settings = merge((this.$druxtEntity || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
+    component.settings = merge(this.$druxt.settings.entity || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
 
     // Fetch Entity resource.
     if (this.uuid && !this.value) {
