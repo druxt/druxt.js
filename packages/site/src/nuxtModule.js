@@ -1,4 +1,5 @@
-import { join } from 'path'
+import { existsSync } from 'fs'
+import { join, resolve } from 'path'
 
 /**
  * Nuxt module function to install Druxt Site.
@@ -10,7 +11,18 @@ import { join } from 'path'
  *
  * @param {ModuleOptions} moduleOptions - The Nuxt.js module options.
  */
-const DruxtSiteNuxtModule = function () {
+const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
+  // Set default options.
+  const options = {
+    baseUrl: moduleOptions.baseUrl,
+    ...(this.options || {}).druxt || {},
+    site: {
+      layout: true,
+      ...((this.options || {}).druxt || {}).site,
+      ...moduleOptions,
+    },
+  }
+
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
     dirs.push({ path: join(__dirname, 'components') })
@@ -47,6 +59,11 @@ const DruxtSiteNuxtModule = function () {
 
   // Enable Vuex Store.
   this.options.store = true
+
+  // Add default layout.
+  if (!(await existsSync(resolve(this.options.srcDir, this.options.dir.layouts))) && options.site.layout) {
+    this.addLayout(resolve(__dirname, './layouts/default.vue'), 'default')
+  }
 }
 
 DruxtSiteNuxtModule.meta = require('../package.json')
