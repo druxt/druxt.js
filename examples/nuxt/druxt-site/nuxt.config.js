@@ -10,5 +10,4 @@ export default {
     entity: { components: { fields: false } },
     router: { pages: false }
   },
-  proxy: [baseUrl + '/sites/default/files']
 }

@@ -127,7 +127,7 @@ export default {
 
     // Get wrapper component data to merge with module settings.
     const wrapperData = await this.getWrapperData(component.is)
-    component.settings = merge((this.$druxtViews || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
+    component.settings = merge(this.$druxt.settings.views, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
 
     // Fetch JSON:API Views resource.
     const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id

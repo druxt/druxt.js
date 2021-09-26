@@ -23,12 +23,16 @@ import DruxtViewsStorybook from './nuxtStorybook'
  *
  * @param {object} moduleOptions - Nuxt module options object.
  */
-const DruxtViewsNuxtModule = function () {
-  const { options } = this
-
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !options.druxt) {
-    throw new TypeError('Druxt settings missing.')
+const DruxtViewsNuxtModule = function (moduleOptions = {}) {
+  // Set default options.
+  const options = {
+    baseUrl: moduleOptions.baseUrl,
+    ...(this.options || {}).druxt || {},
+    views: {
+      query: {},
+      ...((this.options || {}).druxt || {}).views,
+      ...moduleOptions,
+    }
   }
 
   // Register components directories.
@@ -38,17 +42,11 @@ const DruxtViewsNuxtModule = function () {
   })
 
   // Add dependant modules.
-  const modules = ['druxt', 'druxt-entity', 'druxt-schema'].filter((module) => !options.modules.includes(module))
+  this.addModule(['druxt', options])
+  const modules = ['druxt-entity', 'druxt-schema']
   for (const module of modules) {
-    this.addModule(module)
+    this.addModule([module, { baseUrl: options.baseUrl }])
   }
-
-  // Add plugin.
-  this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
-    fileName: 'druxt-views.js',
-    options: options.druxt
-  })
 
   // Add Vuex plugin.
   this.addPlugin({

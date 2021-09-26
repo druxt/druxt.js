@@ -19,6 +19,9 @@ localVue.use(Vuex)
 let store
 
 const mocks = {
+  $druxt: {
+    settings: {},
+  },
   $fetchState: {
     pending: false
   },
@@ -30,7 +33,7 @@ const mocks = {
 }
 
 const mountComponent = async ({ data, entity, field, mode = 'default', options = {}, uuid, schema }) => {
-  data = data || { ...entity.attributes, ...entity.relationships }  
+  data = data || { ...entity.attributes, ...entity.relationships }
 
   if (!schema) {
     schema = require(`../../../../test/__fixtures__/schemas/${entity.type}--${mode}--view.json`)
@@ -249,7 +252,7 @@ describe('DruxtField', () => {
     expect(input.element.value).toBe('2021-05-01T06:24:09.000')
     input.element.value = '2021-07-03T16:20'
     input.trigger('input')
-    expect(wrapper.vm.model).toBe('2021-07-03T16:20+00:00') 
+    expect(wrapper.vm.model).toBe('2021-07-03T16:20+00:00')
   })
 
   test('file - view', async () => {

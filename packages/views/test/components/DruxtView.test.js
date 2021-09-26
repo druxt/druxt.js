@@ -15,6 +15,9 @@ let store
 
 const mocks = {
   $createElement: jest.fn(),
+  $druxt: {
+    settings: {}
+  },
   $fetch: jest.fn(),
   $fetchState: {
     pending: true

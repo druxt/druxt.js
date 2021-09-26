@@ -25,12 +25,16 @@ import DruxtMenuStorybook from './nuxtStorybook'
  *
  * @param {object} moduleOptions - Module options object.
  */
-const DruxtMenuNuxtModule = function () {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
+const DruxtMenuNuxtModule = function (moduleOptions = {}) {
+  // Set default options.
+  const options = {
+    baseUrl: moduleOptions.baseUrl,
+    ...(this.options || {}).druxt || {},
+    menu: {
+      ...((this.options || {}).druxt || {}).menu,
+      ...moduleOptions,
+    }
   }
-  const options = this.options.druxt
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {

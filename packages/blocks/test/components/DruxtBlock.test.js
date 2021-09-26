@@ -15,12 +15,14 @@ let store
 
 const mountComponent = (propsData = {}, options = {}, mocks = {}) => {
   mocks = {
-    $druxtBlocks: {
-      options: {
-        query: {
-          fields: [],
-        },
-      },
+    $druxt: {
+      settings: {
+        blocks: {
+          query: {
+            fields: []
+          }
+        }
+      }
     },
     $fetchState: { pending: false },
     $nuxt: {

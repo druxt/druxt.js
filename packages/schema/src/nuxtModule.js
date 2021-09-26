@@ -25,17 +25,20 @@ import { DruxtSchema } from './schema'
  *   }
  * }
  *
- * @todo Add module level options.
  * @todo Document options.
  *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
-const DruxtSchemaNuxtModule = function () {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
+const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
+  // Set default options.
+  const options = {
+    baseUrl: moduleOptions.baseUrl,
+    ...(this.options || {}).druxt || {},
+    schema: {
+      ...((this.options || {}).druxt || {}).schema || {},
+      ...moduleOptions,
+    }
   }
-  const options = this.options.druxt
 
   // Add plugin.
   this.addPlugin({
@@ -44,8 +47,10 @@ const DruxtSchemaNuxtModule = function () {
     options
   })
 
+  // Enable Vuex Store.
+  this.options.store = true
+
   // Add Vuex plugin.
-  // @TODO - Ensure Vuex store is available.
   this.addPlugin({
     src: resolve(__dirname, '../nuxt/store.js'),
     fileName: 'store/druxt-schema.js',

@@ -1,18 +1,9 @@
 import { DruxtClient } from 'druxt'
 
 export default (context, inject) => {
-  const baseUrl = '<%= options.baseUrl %>'
-  const options = {}
+  const options = <%= devalue(options) %>
 
-  <% if (options.endpoint) { %>
-  options.endpoint = '<%= options.endpoint %>'
-  <% } %>
-
-  <% if (typeof options.axios === 'object') { %>
-  // Axios settings.
-  options.axios = <%= JSON.stringify(options.axios) %>
-  <% } %>
-
-  const druxt = new DruxtClient(baseUrl, options)
+  const druxt = new DruxtClient(options.baseUrl, options)
+  druxt.settings = options
   inject('druxt', druxt)
 }

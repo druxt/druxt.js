@@ -11,15 +11,23 @@ import { join } from 'path'
  * @param {ModuleOptions} moduleOptions - The Nuxt.js module options.
  */
 const DruxtSiteNuxtModule = function () {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
     dirs.push({ path: join(__dirname, 'components') })
   })
+
+  // Enable JSON:API Menu items by default.
+  if (typeof ((this.options.druxt || {}).menu || {}).jsonApiMenuItems === 'undefined') {
+    this.options.druxt.menu = {
+      ...this.options.druxt.menu,
+      ...{ jsonApiMenuItems: true }
+    }
+  }
+
+  // Setup proxy for 'sites/default/files'.
+  if (typeof this.options.proxy === 'undefined') {
+    this.options.proxy = [this.options.druxt.baseUrl + '/sites/default/files']
+  }
 
   // Add Nuxt.js modules.
   const modules = [
@@ -35,20 +43,6 @@ const DruxtSiteNuxtModule = function () {
   ]
   for (const key in modules) {
     this.addModule(modules[key])
-  }
-
-  // Setup proxy for 'sites/default/files'.
-  // @todo {@link https://github.com/nuxt-community/proxy-module/issues/80|Suppress warning}
-  if (typeof this.options.proxy === 'undefined') {
-    this.options.proxy = [this.options.druxt.baseUrl + '/sites/default/files']
-  }
-
-  // Enable JSON:API Menu items by default.
-  if (typeof ((this.options.druxt || {}).menu || {}).jsonApiMenuItems === 'undefined') {
-    this.options.druxt.menu = {
-      ...this.options.druxt.menu,
-      ...{ jsonApiMenuItems: true }
-    }
   }
 
   // Enable Vuex Store.
