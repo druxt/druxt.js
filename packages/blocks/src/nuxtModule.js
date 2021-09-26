@@ -1,4 +1,4 @@
-import { join, resolve } from 'path'
+import { join } from 'path'
 import DruxtBlocksStorybook from './nuxtStorybook'
 
 /**
@@ -17,37 +17,31 @@ import DruxtBlocksStorybook from './nuxtStorybook'
  *     'druxt-blocks'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://demi-api.druxtjs.org'
+ *     baseUrl: 'https://demo-api.druxtjs.org'
  *   }
  * }
  *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
-const DruxtBlocksNuxtModule = function () {
-  const { options } = this
-
-  // Use root level Druxt options.
-  if (typeof options === 'undefined' || !options.druxt) {
-    throw new TypeError('Druxt settings missing.')
+const DruxtBlocksNuxtModule = function (moduleOptions) {
+  // Set default options.
+  const options = {
+    baseUrl: moduleOptions.baseUrl,
+    ...(this.options || {}).druxt || {},
+    blocks: {
+      query: {},
+      ...((this.options || {}).druxt || {}).site,
+      ...moduleOptions,
+    }
   }
 
-  // Add dependant modules.
-  const modules = ['druxt'].filter((module) => !(options.modules || []).includes(module))
-  for (const module of modules) {
-    this.addModule(module)
-  }
+  // Add Druxt module.
+  this.addModule(['druxt', options])
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
     dirs.push({ path: join(__dirname, 'components') })
     dirs.push({ path: join(__dirname, 'components/blocks') })
-  })
-
-  // Add plugin.
-  this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
-    fileName: 'druxt-blocks.js',
-    options: options.druxt,
   })
 
   // Nuxt Storybook.
