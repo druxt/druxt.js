@@ -25,8 +25,7 @@
   "main": "dist/druxt-breadcrumb.ssr.js",
   "module": "dist/druxt-breadcrumb.esm.js",
   "files": [
-    "dist",
-    "nuxt"
+    "dist"
   ],
   "dependencies": {
     "druxt": "^0.10.0",

@@ -1,4 +1,4 @@
-import { join, resolve } from 'path'
+import { join } from 'path'
 
 /**
  * The Nuxt.js module function.
@@ -22,28 +22,10 @@ import { join, resolve } from 'path'
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
 const DruxtBreadcrumbModule = function () {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-  const options = this.options.druxt
-
-  options.breadcrumb = {
-    home: true,
-    ...options.breadcrumb
-  }
-
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
     dirs.push({ path: join(__dirname, 'components') })
     dirs.push({ path: join(__dirname, 'components/blocks') })
-  })
-
-  // Add plugin.
-  this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
-    fileName: 'druxt-breadcrumb.js',
-    options
   })
 }
 
