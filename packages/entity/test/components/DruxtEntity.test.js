@@ -15,8 +15,8 @@ const stubs = ['DruxtDebug', 'DruxtEntityNodePage']
 let store
 
 const mocks = {
-  $druxtEntity: {
-    options: {},
+  $druxt: {
+    settings: {},
   },
   $fetchState: {
     pending: false

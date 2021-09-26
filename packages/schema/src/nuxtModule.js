@@ -29,7 +29,7 @@ import { DruxtSchema } from './schema'
  *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
-const DruxtSchemaNuxtModule = function (moduleOptions) {
+const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,

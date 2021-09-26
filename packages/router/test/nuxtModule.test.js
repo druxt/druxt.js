@@ -23,8 +23,6 @@ const mock = {
 }
 
 test('Nuxt module', () => {
-  expect(() => { mock.DruxtRouterNuxtModule() }).toThrow('Druxt settings missing.')
-
   mock.options = {
     druxt: {}
   }

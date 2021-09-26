@@ -25,7 +25,7 @@ import DruxtMenuStorybook from './nuxtStorybook'
  *
  * @param {object} moduleOptions - Module options object.
  */
-const DruxtMenuNuxtModule = function (moduleOptions) {
+const DruxtMenuNuxtModule = function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,

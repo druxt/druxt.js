@@ -28,7 +28,7 @@ import DruxtEntityStorybook from './nuxtStorybook'
  * @property {object} options.druxt - DruxtJS root level options.
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  */
-const DruxtEntityNuxtModule = function (moduleOptions) {
+const DruxtEntityNuxtModule = function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,

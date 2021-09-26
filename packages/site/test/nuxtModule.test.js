@@ -20,8 +20,6 @@ jest.mock('druxt-schema')
 
 describe('DruxtJS Site module', () => {
   test('Nuxt module', () => {
-    expect(() => { mock.DruxtSiteNuxtModule() }).toThrow('Druxt settings missing.')
-
     mock.options = { druxt: {} }
 
     // Call DruxtSite module.

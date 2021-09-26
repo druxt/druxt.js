@@ -1,7 +1,6 @@
 import { DruxtBreadcrumbModule } from '../src/nuxtModule'
 
 const mock = {
-  addPlugin: jest.fn(),
   nuxt: {
     hook: jest.fn((hook, fn) => {
       const arg = {
@@ -15,11 +14,8 @@ const mock = {
 }
 
 test('Nuxt module', () => {
-  expect(() => { mock.DruxtBreadcrumbModule() }).toThrow('Druxt settings missing.')
-
   mock.options = {
     druxt: {}
   }
   mock.DruxtBreadcrumbModule()
-  expect(mock.addPlugin).toHaveBeenCalled()
 })

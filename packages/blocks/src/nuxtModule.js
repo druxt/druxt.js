@@ -23,7 +23,7 @@ import DruxtBlocksStorybook from './nuxtStorybook'
  *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
-const DruxtBlocksNuxtModule = function (moduleOptions) {
+const DruxtBlocksNuxtModule = function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
