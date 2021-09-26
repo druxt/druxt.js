@@ -16,6 +16,19 @@ const DruxtSiteNuxtModule = function () {
     dirs.push({ path: join(__dirname, 'components') })
   })
 
+  // Enable JSON:API Menu items by default.
+  if (typeof ((this.options.druxt || {}).menu || {}).jsonApiMenuItems === 'undefined') {
+    this.options.druxt.menu = {
+      ...this.options.druxt.menu,
+      ...{ jsonApiMenuItems: true }
+    }
+  }
+
+  // Setup proxy for 'sites/default/files'.
+  if (typeof this.options.proxy === 'undefined') {
+    this.options.proxy = [this.options.druxt.baseUrl + '/sites/default/files']
+  }
+
   // Add Nuxt.js modules.
   const modules = [
     '@nuxtjs/proxy',
@@ -30,20 +43,6 @@ const DruxtSiteNuxtModule = function () {
   ]
   for (const key in modules) {
     this.addModule(modules[key])
-  }
-
-  // Setup proxy for 'sites/default/files'.
-  // @todo {@link https://github.com/nuxt-community/proxy-module/issues/80|Suppress warning}
-  if (typeof this.options.proxy === 'undefined') {
-    this.options.proxy = [this.options.druxt.baseUrl + '/sites/default/files']
-  }
-
-  // Enable JSON:API Menu items by default.
-  if (typeof ((this.options.druxt || {}).menu || {}).jsonApiMenuItems === 'undefined') {
-    this.options.druxt.menu = {
-      ...this.options.druxt.menu,
-      ...{ jsonApiMenuItems: true }
-    }
   }
 
   // Enable Vuex Store.
