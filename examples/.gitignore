@@ -1,3 +1,4 @@
 .nuxt
+.nuxt-storybook
 .yarn
 !yarn.lock
