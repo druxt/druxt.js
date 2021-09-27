@@ -40,11 +40,11 @@ export default async function ({ stories }) {
         fileName: `stories/druxt-block-region.${theme}.${region}.stories.js`,
         options: {
           region,
-          title: titleFn(['Druxt Blocks', theme, region]),
+          title: titleFn(['Druxt', 'Blocks', theme, region]),
           theme,
         }
       })
-  
+
       return resolve(options.buildDir, `./stories/druxt-block-region.${theme}.${region}.stories.js`)
     })
   }).flat()

@@ -28,7 +28,7 @@ export default async function ({ stories }) {
       const name = menu.attributes.drupal_internal__id
       const { description, label } = menu.attributes
 
-      const title = titleFn(['Druxt Menu', label])
+      const title = titleFn(['Druxt', 'Menu', label])
       addTemplate({
         src: resolve(__dirname, '../nuxt/druxt-menu.stories.js'),
         fileName: `stories/druxt-menu.${name}.stories.js`,

@@ -74,7 +74,7 @@ export default async function ({ stories }) {
           displays,
           entities: entities.find((o) => o.resourceType === resourceType).entities,
           resourceType,
-          title: titleFn(['Druxt Entity', entity, bundle, `${type} displays`]),
+          title: titleFn(['Druxt', 'Entity', entity, bundle, `${type} displays`]),
         },
       })
 
