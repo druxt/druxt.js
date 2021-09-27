@@ -22,7 +22,7 @@ export default async function ({ stories }) {
       fileName: `stories/druxt-block.${block.attributes.drupal_internal__id}.stories.js`,
       options: {
         block,
-        title: titleFn(['Druxt Blocks', block.attributes.theme, block.attributes.region, block.attributes.drupal_internal__id])
+        title: titleFn(['Druxt', 'Blocks', block.attributes.theme, block.attributes.region, block.attributes.drupal_internal__id])
       }
     })
 
