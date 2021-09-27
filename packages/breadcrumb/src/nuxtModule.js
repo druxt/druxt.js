@@ -27,6 +27,11 @@ const DruxtBreadcrumbModule = function () {
     dirs.push({ path: join(__dirname, 'components') })
     dirs.push({ path: join(__dirname, 'components/blocks') })
   })
+
+  // Nuxt Storybook.
+  this.nuxt.hook('storybook:config', ({ stories }) => {
+    stories.push('druxt-breadcrumb/dist/components/*.stories.mjs')
+  })
 }
 
 export { DruxtBreadcrumbModule }

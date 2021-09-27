@@ -50,7 +50,7 @@ const DruxtViewsNuxtModule = function (moduleOptions = {}) {
 
   // Add Vuex plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/store.js'),
+    src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt-views.js',
     options: options.druxt
   })
@@ -60,6 +60,7 @@ const DruxtViewsNuxtModule = function (moduleOptions = {}) {
 
   // Nuxt Storybook.
   this.nuxt.hook('storybook:config', async ({ stories }) => {
+    stories.push('druxt-views/dist/components/*.stories.mjs')
     await DruxtViewsStorybook.call(this, { stories })
   })
 }

@@ -44,7 +44,7 @@ const DruxtMenuNuxtModule = function (moduleOptions = {}) {
 
   // Add plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
+    src: resolve(__dirname, '../templates/plugin.js'),
     fileName: 'druxt-menu.js',
     options
   })
@@ -54,13 +54,14 @@ const DruxtMenuNuxtModule = function (moduleOptions = {}) {
 
   // Add Vuex plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/store.js'),
+    src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt-menu.js',
     options
   })
 
   // Nuxt Storybook.
   this.nuxt.hook('storybook:config', async ({ stories }) => {
+    stories.push('druxt-menu/dist/components/*.stories.mjs')
     await DruxtMenuStorybook.call(this, { stories })
   })
 }

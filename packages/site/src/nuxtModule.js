@@ -1,5 +1,6 @@
 import { existsSync } from 'fs'
 import { join, resolve } from 'path'
+import DruxtSiteStorybook from './nuxtStorybook'
 
 /**
  * Nuxt module function to install Druxt Site.
@@ -60,6 +61,12 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
   if (!(await existsSync(resolve(this.options.srcDir, this.options.dir.layouts))) && options.site.layout) {
     this.addLayout(resolve(__dirname, './layouts/default.vue'), 'default')
   }
+
+  // Nuxt Storybook.
+  this.nuxt.hook('storybook:config', async ({ stories }) => {
+    stories.push('druxt-site/dist/components/*.stories.mjs')
+    await DruxtSiteStorybook.call(this, { options, stories })
+  })
 }
 
 DruxtSiteNuxtModule.meta = require('../package.json')

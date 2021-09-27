@@ -20,10 +20,11 @@
   "module": "dist/druxt-site.esm.js",
   "files": [
     "dist",
-    "nuxt"
+    "templates"
   ],
   "dependencies": {
     "@nuxtjs/proxy": "^2.1.0",
+    "drupal-jsonapi-params": "^1.2.2",
     "druxt": "^0.10.0",
     "druxt-blocks": "^0.12.0",
     "druxt-breadcrumb": "^0.11.0",

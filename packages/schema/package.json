@@ -28,7 +28,7 @@
   "module": "dist/druxt-schema.esm.js",
   "files": [
     "dist",
-    "nuxt"
+    "templates"
   ],
   "dependencies": {
     "consola": "^2.15.0",

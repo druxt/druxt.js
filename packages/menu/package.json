@@ -22,7 +22,7 @@
   "module": "dist/druxt-menu.esm.js",
   "files": [
     "dist",
-    "nuxt"
+    "templates"
   ],
   "dependencies": {
     "deepmerge": "^4.2.2",

@@ -28,7 +28,7 @@
   "module": "dist/druxt-router.esm.js",
   "files": [
     "dist",
-    "nuxt"
+    "templates"
   ],
   "dependencies": {
     "druxt": "^0.10.0",

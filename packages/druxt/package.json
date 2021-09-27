@@ -39,7 +39,7 @@
   "module": "dist/druxt.esm.js",
   "files": [
     "dist",
-    "nuxt"
+    "templates"
   ],
   "dependencies": {
     "axios": "^0.21.1",

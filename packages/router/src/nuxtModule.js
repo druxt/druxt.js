@@ -47,7 +47,7 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
   // Add Druxt router custom wildcard route.
   if (options.router.wildcard) {
     this.addTemplate({
-      src: resolve(__dirname, '../nuxt/component.js'),
+      src: resolve(__dirname, '../templates/component.js'),
       fileName: 'components/druxt-router.js',
       options
     })
@@ -71,7 +71,7 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
 
   // Add plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
+    src: resolve(__dirname, '../templates/plugin.js'),
     fileName: 'druxt-router.js',
     options
   })
@@ -81,7 +81,7 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
 
   // Add Vuex plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/store.js'),
+    src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt-router.js',
     options
   })
