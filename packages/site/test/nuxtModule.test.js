@@ -1,5 +1,7 @@
 import { DruxtSiteNuxtModule } from '../src/nuxtModule'
 
+jest.mock('../src/nuxtStorybook')
+
 const mock = {
   addLayout: jest.fn(),
   addModule: jest.fn(),
@@ -9,7 +11,7 @@ const mock = {
     hook: jest.fn((hook, fn) => {
       const arg = {
         'components:dirs': [],
-        'storybook:config': {}
+        'storybook:config': { stories: [] }
       }
       return fn(arg[hook])
     }),
@@ -20,7 +22,7 @@ const mock = {
 jest.mock('druxt-schema')
 
 describe('DruxtJS Site module', () => {
-  test('Nuxt module', async () => {
+  test('Nuxt module', () => {
     mock.options = {
       dir: { layouts: 'layouts' },
       druxt: {},
@@ -28,7 +30,7 @@ describe('DruxtJS Site module', () => {
     }
 
     // Call DruxtSite module.
-    await mock.DruxtSiteNuxtModule()
+    mock.DruxtSiteNuxtModule()
 
     // Expect 9 modules to be added.
     expect(mock.addModule).toHaveBeenCalledTimes(9)

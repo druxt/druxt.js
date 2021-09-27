@@ -15,7 +15,7 @@ describe('DruxtJS Nuxt module', () => {
         hook: jest.fn((hook, fn) => {
           const arg = {
             'components:dirs': [],
-            'storybook:config': {}
+            'storybook:config': { stories: [] }
           }
           return fn(arg[hook])
         }),
