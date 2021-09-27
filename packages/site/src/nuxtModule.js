@@ -60,6 +60,11 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
   if (!(await existsSync(resolve(this.options.srcDir, this.options.dir.layouts))) && options.site.layout) {
     this.addLayout(resolve(__dirname, './layouts/default.vue'), 'default')
   }
+
+  // Nuxt Storybook.
+  this.nuxt.hook('storybook:config', ({ stories }) => {
+    stories.push('druxt-site/dist/components/*.stories.mjs')
+  })
 }
 
 DruxtSiteNuxtModule.meta = require('../package.json')
