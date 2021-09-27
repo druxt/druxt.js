@@ -40,7 +40,6 @@ export default async function ({ stories }) {
         return {
           resourceType: `${entity}--${bundle}`,
           entities: (await druxt.getCollection(`${entity}--${bundle}`, new DrupalJsonApiParams()
-            .addFilter('status', 1)
             .addFields(`${entity}--${bundle}`, ['id', 'title', 'name', 'info'])
           )).data.map((o) => ({
             id: o.id,
@@ -78,7 +77,7 @@ export default async function ({ stories }) {
           title: titleFn(['Druxt Entity', entity, bundle, `${type} displays`]),
         },
       })
-  
+
       return resolve(options.buildDir, `./stories/${component}.${resourceType}.stories.js`)
     })
   })).flat(2)
