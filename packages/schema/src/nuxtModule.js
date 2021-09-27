@@ -42,7 +42,7 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
 
   // Add plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
+    src: resolve(__dirname, '../templates/plugin.js'),
     fileName: 'druxt-schema.js',
     options
   })
@@ -52,7 +52,7 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
 
   // Add Vuex plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/store.js'),
+    src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt-schema.js',
     options
   })
@@ -67,7 +67,7 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
       if (typeof schema === 'undefined') continue
 
       this.addTemplate({
-        src: resolve(__dirname, '../nuxt/schema.json'),
+        src: resolve(__dirname, '../templates/schema.json'),
         fileName: `schemas/${name}.json`,
         options: { schema }
       })

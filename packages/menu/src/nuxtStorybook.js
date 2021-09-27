@@ -30,7 +30,7 @@ export default async function ({ stories }) {
 
       const title = titleFn(['Druxt', 'Menu', label])
       addTemplate({
-        src: resolve(__dirname, '../nuxt/druxt-menu.stories.js'),
+        src: resolve(__dirname, '../templates/druxt-menu.stories.js'),
         fileName: `stories/druxt-menu.${name}.stories.js`,
         options: { description, label, name, title },
       })

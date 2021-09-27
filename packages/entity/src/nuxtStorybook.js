@@ -68,7 +68,7 @@ export default async function ({ stories }) {
       const component = type === 'view' ? 'druxt-entity' : 'druxt-entity-form'
 
       addTemplate({
-        src: resolve(__dirname, `../nuxt/${component}.stories.js`),
+        src: resolve(__dirname, `../templates/${component}.stories.js`),
         fileName: `stories/${component}.${resourceType}.stories.js`,
         options: {
           displays,

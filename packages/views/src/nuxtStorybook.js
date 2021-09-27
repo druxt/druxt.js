@@ -50,7 +50,7 @@ export default async function ({ stories }) {
     const title = ['Druxt', 'Views', label].join('/')
 
     addTemplate({
-      src: resolve(__dirname, '../nuxt/druxt-views.stories.js'),
+      src: resolve(__dirname, '../templates/druxt-views.stories.js'),
       fileName: `stories/druxt-views.${viewId}.stories.js`,
       options: { description, displays, title, uuid, viewId },
     })
