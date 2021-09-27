@@ -1,5 +1,6 @@
 import { existsSync } from 'fs'
 import { join, resolve } from 'path'
+import DruxtSiteStorybook from './nuxtStorybook'
 
 /**
  * Nuxt module function to install Druxt Site.
@@ -62,8 +63,9 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
   }
 
   // Nuxt Storybook.
-  this.nuxt.hook('storybook:config', ({ stories }) => {
+  this.nuxt.hook('storybook:config', async ({ stories }) => {
     stories.push('druxt-site/dist/components/*.stories.mjs')
+    await DruxtSiteStorybook.call(this, { options, stories })
   })
 }
 
