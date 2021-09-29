@@ -38,7 +38,8 @@
   "module": "dist/druxt-views.esm.js",
   "files": [
     "dist",
-    "nuxt"
+    "nuxt",
+    "templates"
   ],
   "dependencies": {
     "axios": "^0.21.1",
