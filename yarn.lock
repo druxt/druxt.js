@@ -6187,15 +6187,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"druxt-blocks@^0.12.0, druxt-blocks@workspace:packages/blocks":
+"druxt-blocks@^0.13.0, druxt-blocks@workspace:packages/blocks":
   version: 0.0.0-use.local
   resolution: "druxt-blocks@workspace:packages/blocks"
   dependencies:
     axios: ^0.21.1
     drupal-jsonapi-params: ^1.1.12
-    druxt: ^0.10.0
-    druxt-entity: ^0.18.0
-    druxt-router: ^0.20.0
+    druxt: ^0.11.0
+    druxt-entity: ^0.19.0
+    druxt-router: ^0.21.0
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -6206,13 +6206,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-breadcrumb@^0.11.0, druxt-breadcrumb@workspace:packages/breadcrumb":
+"druxt-breadcrumb@^0.12.0, druxt-breadcrumb@workspace:packages/breadcrumb":
   version: 0.0.0-use.local
   resolution: "druxt-breadcrumb@workspace:packages/breadcrumb"
   dependencies:
-    druxt: ^0.10.0
-    druxt-blocks: ^0.12.0
-    druxt-router: ^0.20.0
+    druxt: ^0.11.0
+    druxt-blocks: ^0.13.0
+    druxt-router: ^0.21.0
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -6241,26 +6241,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-entity@^0.18.0, druxt-entity@workspace:packages/entity":
+"druxt-entity@^0.19.0, druxt-entity@workspace:packages/entity":
   version: 0.0.0-use.local
   resolution: "druxt-entity@workspace:packages/entity"
   dependencies:
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^1.2.2
-    druxt: ^0.10.0
-    druxt-router: ^0.20.0
-    druxt-schema: ^0.7.10
+    druxt: ^0.11.0
+    druxt-router: ^0.21.0
+    druxt-schema: ^0.8.0
   languageName: unknown
   linkType: soft
 
-"druxt-menu@^0.13.0, druxt-menu@workspace:packages/menu":
+"druxt-menu@^0.14.0, druxt-menu@workspace:packages/menu":
   version: 0.0.0-use.local
   resolution: "druxt-menu@workspace:packages/menu"
   dependencies:
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^1.1.12
-    druxt: ^0.10.0
-    druxt-blocks: ^0.12.0
+    druxt: ^0.11.0
+    druxt-blocks: ^0.13.0
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -6271,11 +6271,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-router@^0.20.0, druxt-router@workspace:packages/router":
+"druxt-router@^0.21.0, druxt-router@workspace:packages/router":
   version: 0.0.0-use.local
   resolution: "druxt-router@workspace:packages/router"
   dependencies:
-    druxt: ^0.10.0
+    druxt: ^0.11.0
     url-parse: ^1.4.7
     vue: ^2.6.14
     vuex: ^3.6.2
@@ -6287,13 +6287,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-schema@^0.7.10, druxt-schema@workspace:packages/schema":
+"druxt-schema@^0.8.0, druxt-schema@workspace:packages/schema":
   version: 0.0.0-use.local
   resolution: "druxt-schema@workspace:packages/schema"
   dependencies:
     consola: ^2.15.0
     drupal-jsonapi-params: ^1.2.2
-    druxt: ^0.10.0
+    druxt: ^0.11.0
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -6310,14 +6310,14 @@ __metadata:
   dependencies:
     "@nuxtjs/proxy": ^2.1.0
     drupal-jsonapi-params: ^1.2.2
-    druxt: ^0.10.0
-    druxt-blocks: ^0.12.0
-    druxt-breadcrumb: ^0.11.0
-    druxt-entity: ^0.18.0
-    druxt-menu: ^0.13.0
-    druxt-router: ^0.20.0
-    druxt-schema: ^0.7.10
-    druxt-views: ^0.13.0
+    druxt: ^0.11.0
+    druxt-blocks: ^0.13.0
+    druxt-breadcrumb: ^0.12.0
+    druxt-entity: ^0.19.0
+    druxt-menu: ^0.14.0
+    druxt-router: ^0.21.0
+    druxt-schema: ^0.8.0
+    druxt-views: ^0.14.0
     md5: ^2.2.1
     vue: ^2.6.14
     vuex: ^3.6.2
@@ -6340,17 +6340,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-views@^0.13.0, druxt-views@workspace:packages/views":
+"druxt-views@^0.14.0, druxt-views@workspace:packages/views":
   version: 0.0.0-use.local
   resolution: "druxt-views@workspace:packages/views"
   dependencies:
     axios: ^0.21.1
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^1.1.12
-    druxt: ^0.10.0
-    druxt-blocks: ^0.12.0
-    druxt-entity: ^0.18.0
-    druxt-router: ^0.20.0
+    druxt: ^0.11.0
+    druxt-blocks: ^0.13.0
+    druxt-entity: ^0.19.0
+    druxt-router: ^0.21.0
     md5: ^2.3.0
     vue: ^2.6.14
     vuex: ^3.6.2
@@ -6394,7 +6394,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt@^0.10.0, druxt@workspace:packages/druxt":
+"druxt@^0.11.0, druxt@workspace:packages/druxt":
   version: 0.0.0-use.local
   resolution: "druxt@workspace:packages/druxt"
   dependencies:

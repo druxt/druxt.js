@@ -1,5 +1,20 @@
 # druxt-breadcrumb
 
+## 0.12.0
+
+### Minor Changes
+
+- 8d28c18: Updated storybook integration
+
+### Patch Changes
+
+- 9a1d720: Fixed error when no crumbs are present
+- dae345e: Removed unused `$druxtBreadcrumb` plugin
+- Updated dependencies [9d905e8]
+  - druxt-router@0.21.0
+  - druxt-blocks@0.13.0
+  - druxt@0.11.0
+
 ## 0.11.0
 
 ### Minor Changes

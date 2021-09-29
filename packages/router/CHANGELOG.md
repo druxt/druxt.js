@@ -1,5 +1,26 @@
 # druxt-router
 
+## 0.21.0
+
+### Minor Changes
+
+- 9d905e8: Set router `pages` option default based on presence of `pages/` directory.
+- 9d905e8: Moved Nuxt module to `druxt-router/nuxt`
+
+  ⚠ Potential breaking change
+
+  ```diff
+  -modules: ['druxt-router']
+  +modules: ['druxt-router/nuxt']
+  ```
+
+- dae345e: Added module level options
+
+### Patch Changes
+
+- Updated dependencies [dae345e]
+  - druxt@0.11.0
+
 ## 0.20.0
 
 ### Minor Changes
