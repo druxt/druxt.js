@@ -1,5 +1,22 @@
 # druxt-views
 
+## 0.14.0
+
+### Minor Changes
+
+- dae345e: Moved `$druxtViews` plugin settings to `$druxt.settings.views`
+- dae345e: Added module level options
+- 8d28c18: Updated storybook integration
+
+### Patch Changes
+
+- 4da7fd3: Fixed errors when no props provided to component
+- Updated dependencies [9d905e8]
+  - druxt-router@0.21.0
+  - druxt-blocks@0.13.0
+  - druxt-entity@0.19.0
+  - druxt@0.11.0
+
 ## 0.13.0
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # druxt
 
+## 0.11.0
+
+### Minor Changes
+
+- dae345e: Added Druxt modules settings to `$druxt.settings`
+
+### Patch Changes
+
+- 75ff8a9: Fixed issue with Axios settings and Storybook
+
 ## 0.10.0
 
 ### Minor Changes
