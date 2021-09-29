@@ -23,7 +23,7 @@ description: Drupal router for Nuxt, powered by the Drupal Decoupled Router modu
 2. Add the module to `nuxt.config.js`:
    ```js
    export default {
-     modules: ['druxt-router'],
+     modules: ['druxt-router/nuxt'],
    }
    ```
 
@@ -32,9 +32,9 @@ description: Drupal router for Nuxt, powered by the Drupal Decoupled Router modu
 - `druxt.router.pages`
 
   Type: `boolean`  
-  Default: `true`
+  Default: `true` if **pages/** directory exists, else `false`
 
-  Controls whether the Nuxt `pages/` directory is used to generate routes.
+  Controls whether the Nuxt **pages/** directory is used to generate routes.
 
 - `druxt.router.wildcard`
 

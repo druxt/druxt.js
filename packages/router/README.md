@@ -29,18 +29,12 @@ Add module to `nuxt.config.js`
 
 ```js
 module.exports = {
-  modules: [
-    ...
-    'druxt-router'
-  ],
-
+  modules: ['druxt-router/nuxt'],
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org'
   }
 }
 ```
-
-Ensure you have activated the [Nuxt Vuex store](https://nuxtjs.org/guide/vuex-store/).
 
 ## Options
 
