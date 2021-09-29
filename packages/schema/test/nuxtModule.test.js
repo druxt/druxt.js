@@ -17,8 +17,6 @@ const mock = {
 }
 
 test('Nuxt module', async () => {
-  expect(() => { DruxtSchemaNuxtModule.call({}) }).toThrow('Druxt settings missing.')
-
   DruxtSchemaNuxtModule.call(mock)
   expect(mock.addPlugin).toHaveBeenCalled()
 })

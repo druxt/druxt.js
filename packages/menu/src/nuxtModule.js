@@ -25,12 +25,16 @@ import DruxtMenuStorybook from './nuxtStorybook'
  *
  * @param {object} moduleOptions - Module options object.
  */
-const DruxtMenuNuxtModule = function () {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
+const DruxtMenuNuxtModule = function (moduleOptions = {}) {
+  // Set default options.
+  const options = {
+    baseUrl: moduleOptions.baseUrl,
+    ...(this.options || {}).druxt || {},
+    menu: {
+      ...((this.options || {}).druxt || {}).menu,
+      ...moduleOptions,
+    }
   }
-  const options = this.options.druxt
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
@@ -40,7 +44,7 @@ const DruxtMenuNuxtModule = function () {
 
   // Add plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
+    src: resolve(__dirname, '../templates/plugin.js'),
     fileName: 'druxt-menu.js',
     options
   })
@@ -50,15 +54,18 @@ const DruxtMenuNuxtModule = function () {
 
   // Add Vuex plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/store.js'),
+    src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt-menu.js',
     options
   })
 
   // Nuxt Storybook.
   this.nuxt.hook('storybook:config', async ({ stories }) => {
+    stories.push('druxt-menu/dist/components/*.stories.mjs')
     await DruxtMenuStorybook.call(this, { stories })
   })
 }
+
+DruxtMenuNuxtModule.meta = require('../package.json')
 
 export { DruxtMenuNuxtModule }

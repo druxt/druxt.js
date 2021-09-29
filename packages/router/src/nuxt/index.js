@@ -1,3 +1,4 @@
+import { existsSync } from 'fs'
 import { join, resolve } from 'path'
 
 /**
@@ -14,41 +15,38 @@ import { join, resolve } from 'path'
  * @example @lang js
  * // `nuxt.config.js`
  * module.exports = {
- *   modules: [
- *     'druxt-router'
- *   ],
+ *   buildModules: ['druxt-router/nuxt'],
  *   druxt: {
  *     baseUrl: 'https://demi-api.druxtjs.org'
  *   }
  * }
  *
- * @todo [Add module level options]{@link https://github.com/druxt/druxt-router/issues/53}
- *
  * @property {object} options.druxt - Druxt root level options.
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  * @property {string} options.druxt.router.component - File to custom Router component.
  */
-const DruxtRouterNuxtModule = function () {
-  // Use root level Druxt options.
-  if (typeof this.options === 'undefined' || !this.options.druxt) {
-    throw new TypeError('Druxt settings missing.')
-  }
-  const options = this.options.druxt
-  options.router = {
-    pages: true,
-    wildcard: true,
-    ...options.router
+const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
+  // Set default options.
+  const options = {
+    baseUrl: moduleOptions.baseUrl,
+    ...(this.options || {}).druxt || {},
+    router: {
+      pages: (await existsSync(resolve(this.options.srcDir, this.options.dir.pages))),
+      wildcard: true,
+      ...((this.options || {}).druxt || {}).router,
+      ...moduleOptions,
+    }
   }
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
-    dirs.push({ path: join(__dirname, 'components') })
+    dirs.push({ path: join(__dirname, '../dist/components') })
   })
 
   // Add Druxt router custom wildcard route.
   if (options.router.wildcard) {
     this.addTemplate({
-      src: resolve(__dirname, '../nuxt/component.js'),
+      src: resolve(__dirname, '../templates/component.js'),
       fileName: 'components/druxt-router.js',
       options
     })
@@ -72,7 +70,7 @@ const DruxtRouterNuxtModule = function () {
 
   // Add plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
+    src: resolve(__dirname, '../templates/plugin.js'),
     fileName: 'druxt-router.js',
     options
   })
@@ -82,10 +80,12 @@ const DruxtRouterNuxtModule = function () {
 
   // Add Vuex plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/store.js'),
+    src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt-router.js',
     options
   })
 }
 
-export { DruxtRouterNuxtModule }
+DruxtRouterNuxtModule.meta = require('../package.json')
+
+export default DruxtRouterNuxtModule

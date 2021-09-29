@@ -1,20 +1,33 @@
 {
   "name": "druxt-blocks",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Drupal Block and Block Region Druxt components.",
   "keywords": [
     "block",
     "blocks",
+    "cms",
+    "decoupled",
     "drupal",
     "druxt",
-    "nuxt"
+    "druxtjs",
+    "headless",
+    "jsonapi",
+    "json:api",
+    "nuxt",
+    "nuxtjs",
+    "module",
+    "storybook",
+    "vue"
   ],
-  "license": "MIT",
-  "author": {
-    "name": "Stuart Clark",
-    "email": "stuart@realityloop.com",
-    "url": "https://realityloop.com"
+  "homepage": "https://druxtjs.org",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "license": "MIT",
   "exports": {
     ".": {
       "require": "./dist/druxt-blocks.ssr.js",
@@ -26,14 +39,14 @@
   "module": "dist/druxt-blocks.esm.js",
   "files": [
     "dist",
-    "nuxt"
+    "templates"
   ],
   "dependencies": {
     "axios": "^0.21.1",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "^0.10.0",
-    "druxt-entity": "^0.18.0",
-    "druxt-router": "^0.20.0"
+    "druxt": "^0.11.0",
+    "druxt-entity": "^0.19.0",
+    "druxt-router": "^0.21.0"
   },
   "optionalDependencies": {
     "vue": "^2.6.14",

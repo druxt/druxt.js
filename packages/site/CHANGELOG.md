@@ -1,5 +1,26 @@
 # druxt-site
 
+## 0.9.0
+
+### Minor Changes
+
+- 8d28c18: Updated storybook integration
+- 97d24d5: Added default theme option and fallback to DruxtSite component
+- 97d24d5: Added default layout
+
+### Patch Changes
+
+- dae345e: Fixed default @nuxtjs/proxy settings
+- Updated dependencies [9d905e8]
+  - druxt-router@0.21.0
+  - druxt-views@0.14.0
+  - druxt-breadcrumb@0.12.0
+  - druxt-blocks@0.13.0
+  - druxt-entity@0.19.0
+  - druxt-menu@0.14.0
+  - druxt-schema@0.8.0
+  - druxt@0.11.0
+
 ## 0.8.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "druxt",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "The Fully Decoupled Drupal Framework for Nuxt.js.",
   "keywords": [
     "cms",
@@ -23,11 +23,6 @@
     "url": "git+https://github.com/druxt/druxt.js"
   },
   "license": "MIT",
-  "author": {
-    "name": "Stuart Clark",
-    "email": "stuart@realityloop.com",
-    "url": "https://realityloop.com"
-  },
   "exports": {
     ".": {
       "require": "./dist/druxt.ssr.js",
@@ -39,7 +34,7 @@
   "module": "dist/druxt.esm.js",
   "files": [
     "dist",
-    "nuxt"
+    "templates"
   ],
   "dependencies": {
     "axios": "^0.21.1",

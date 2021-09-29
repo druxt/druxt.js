@@ -1,5 +1,16 @@
 # druxt-schema
 
+## 0.8.0
+
+### Minor Changes
+
+- dae345e: Added module level options
+
+### Patch Changes
+
+- Updated dependencies [dae345e]
+  - druxt@0.11.0
+
 ## 0.7.10
 
 ### Patch Changes

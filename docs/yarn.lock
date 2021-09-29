@@ -4200,10 +4200,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:3.17.3":
-  version: 3.17.3
-  resolution: "core-js@npm:3.17.3"
-  checksum: cdc61f068533469e15745e4644cc205916248b5b49d07840ed8e26a52e4aa557499e3d70e42a76dbc5e921f87d2db4365d9d3a5b8babbd351c3fd9e981d74fab
+"core-js@npm:3.18.0":
+  version: 3.18.0
+  resolution: "core-js@npm:3.18.0"
+  checksum: 192c345eb0c8b9d582ebed798cf124e00cd8241303c3c801987563f8ebb8cb991e2ff91494c258752014c29d5515070d2c0a862687401c7d7e1e2f96f8980d42
   languageName: node
   linkType: hard
 
@@ -4636,10 +4636,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"daisyui@npm:1.14.0":
-  version: 1.14.0
-  resolution: "daisyui@npm:1.14.0"
-  checksum: 22262b6a3ba8e3b98120532538c1d9771c3bfd7f7defe371d6a8c932aaebf8dfe8f364458fe0b1598c8f197ad4e2b4a1cf6b80d75d68f675736e3fba576e3f51
+"daisyui@npm:1.14.1":
+  version: 1.14.1
+  resolution: "daisyui@npm:1.14.1"
+  checksum: edd50c288d3642df553881f8b38687df191f4e37e1412d72cdc7a11654ea6d6266d3b845ce3eef6668280b46db9b2b1ca9b55bfc7637e21bd6226ff2d7609588
   languageName: node
   linkType: hard
 
@@ -5013,8 +5013,8 @@ __metadata:
     "@nuxtjs/pwa": 3.3.5
     "@nuxtjs/tailwindcss": 4.2.1
     "@tailwindcss/typography": 0.4.1
-    core-js: 3.17.3
-    daisyui: 1.14.0
+    core-js: 3.18.0
+    daisyui: 1.14.1
     nuxt: 2.15.8
     nuxt-social-meta: 1.0.0
   languageName: unknown

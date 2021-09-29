@@ -18,11 +18,11 @@ export default async function ({ stories }) {
   // DruxtBlock.
   const blockStories = blocks.map((block) => {
     addTemplate({
-      src: resolve(__dirname, `../nuxt/druxt-block.stories.js`),
+      src: resolve(__dirname, `../templates/druxt-block.stories.js`),
       fileName: `stories/druxt-block.${block.attributes.drupal_internal__id}.stories.js`,
       options: {
         block,
-        title: titleFn(['Druxt Blocks', block.attributes.theme, block.attributes.region, block.attributes.drupal_internal__id])
+        title: titleFn(['Druxt', 'Blocks', block.attributes.theme, block.attributes.region, block.attributes.drupal_internal__id])
       }
     })
 
@@ -36,15 +36,15 @@ export default async function ({ stories }) {
     const regions = Array.from(new Set(blocks.filter((o) => o.attributes.theme === theme).map((o) => o.attributes.region)))
     return regions.map((region) => {
       addTemplate({
-        src: resolve(__dirname, `../nuxt/druxt-block-region.stories.js`),
+        src: resolve(__dirname, `../templates/druxt-block-region.stories.js`),
         fileName: `stories/druxt-block-region.${theme}.${region}.stories.js`,
         options: {
           region,
-          title: titleFn(['Druxt Blocks', theme, region]),
+          title: titleFn(['Druxt', 'Blocks', theme, region]),
           theme,
         }
       })
-  
+
       return resolve(options.buildDir, `./stories/druxt-block-region.${theme}.${region}.stories.js`)
     })
   }).flat()

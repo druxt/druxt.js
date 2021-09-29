@@ -64,9 +64,11 @@ export default {
     // Build query.
     const type = 'block--block'
     const query = new DrupalJsonApiParams()
-    if (Array.isArray((((this.$druxtBlocks || {}).options || {}).query || {}).fields)) {
+
+    const fields = ((this.$druxt.settings.blocks || {}).query || {}).fields
+    if (Array.isArray(fields)) {
       query.addFields(type, [
-        ...this.$druxtBlocks.options.query.fields,
+        ...fields,
         'plugin',
         'region',
         'settings',

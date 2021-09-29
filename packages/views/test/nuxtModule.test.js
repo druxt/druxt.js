@@ -9,7 +9,7 @@ const mock = {
     hook: jest.fn((hook, fn) => {
       const arg = {
         'components:dirs': [],
-        'storybook:config': {}
+        'storybook:config': { stories: [] }
       }
       return fn(arg[hook])
     }),
@@ -21,9 +21,7 @@ const mock = {
 }
 
 test('Nuxt module', () => {
-  expect(() => { DruxtViewsNuxtModule.call({}) }).toThrow('Druxt settings missing.')
-
   DruxtViewsNuxtModule.call(mock)
   expect(mock.addModule).toHaveBeenCalledTimes(3)
-  expect(mock.addPlugin).toHaveBeenCalledTimes(2)
+  expect(mock.addPlugin).toHaveBeenCalledTimes(1)
 })

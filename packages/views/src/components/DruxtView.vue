@@ -127,7 +127,7 @@ export default {
 
     // Get wrapper component data to merge with module settings.
     const wrapperData = await this.getWrapperData(component.is)
-    component.settings = merge((this.$druxtViews || {}).options || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
+    component.settings = merge(this.$druxt.settings.views, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
 
     // Fetch JSON:API Views resource.
     const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
@@ -201,7 +201,7 @@ export default {
      * @type {object}
      */
     display() {
-      if (!(((this.view || {}).data || {}).attributes || {}).display) return false
+      if (!(((this.view || {}).data || {}).attributes || {}).display) return {}
 
       if (this.display_id === 'default') return this.view.data.attributes.display[this.display_id]
 
@@ -228,7 +228,7 @@ export default {
     headers() {
       if (!this.display) return []
 
-      return this.display.display_options.header
+      return (this.display.display_options || {}).header || []
     },
 
     /**
@@ -237,7 +237,7 @@ export default {
      * @type {string}
      */
     mode() {
-      if (!this.display) return 'default'
+      if (!this.display || !this.display.display_options) return 'default'
 
       if (!this.display.display_options.row.type.includes('entity:')) return 'default'
 
@@ -519,7 +519,7 @@ export default {
       // Results.
       scopedSlots.results = (attrs) => {
         if (!this.results.length) {
-          return Object.values(this.display.display_options.empty)
+          return Object.values(((this.display || {}).display_options || {}).empty || {})
             .filter((o) => o.plugin_id === 'text_custom')
             .map((empty) => {
               return h('div', { domProps: { innerHTML: empty.content } })

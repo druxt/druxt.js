@@ -1,4 +1,4 @@
-import { DruxtRouterNuxtModule } from '../src/nuxtModule'
+import DruxtRouterNuxtModule from '../../nuxt'
 
 const mock = {
   addPlugin: jest.fn(),
@@ -13,7 +13,7 @@ const mock = {
     hook: jest.fn((hook, fn) => {
       const arg = {
         'components:dirs': [],
-        'storybook:config': {}
+        'storybook:config': { stories: [] }
       }
       return fn(arg[hook])
     }),
@@ -22,27 +22,29 @@ const mock = {
   DruxtRouterNuxtModule
 }
 
-test('Nuxt module', () => {
-  expect(() => { mock.DruxtRouterNuxtModule() }).toThrow('Druxt settings missing.')
-
+test('Nuxt module', async () => {
   mock.options = {
-    druxt: {}
+    druxt: {},
+    srcDir: __dirname,
+    dir: { pages: 'pages' }
   }
-  mock.DruxtRouterNuxtModule()
+
+  mock.options.druxt.router = { pages: true }
+  await mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalledTimes(2)
   expect(mock.addTemplate).toHaveBeenCalledTimes(1)
   expect(mock.nuxt.hook).toHaveBeenCalledTimes(1)
   jest.clearAllMocks()
 
   mock.options.druxt.router = { wildcard: false }
-  mock.DruxtRouterNuxtModule()
+  await mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalledTimes(2)
   expect(mock.addTemplate).toHaveBeenCalledTimes(0)
   expect(mock.nuxt.hook).toHaveBeenCalledTimes(1)
   jest.clearAllMocks()
 
   mock.options.druxt.router = { pages: false }
-  mock.DruxtRouterNuxtModule()
+  await mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalledTimes(2)
   expect(mock.addTemplate).toHaveBeenCalledTimes(1)
   expect(mock.nuxt.hook).toHaveBeenCalledTimes(2)

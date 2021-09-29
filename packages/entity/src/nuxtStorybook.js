@@ -40,7 +40,6 @@ export default async function ({ stories }) {
         return {
           resourceType: `${entity}--${bundle}`,
           entities: (await druxt.getCollection(`${entity}--${bundle}`, new DrupalJsonApiParams()
-            .addFilter('status', 1)
             .addFields(`${entity}--${bundle}`, ['id', 'title', 'name', 'info'])
           )).data.map((o) => ({
             id: o.id,
@@ -69,16 +68,16 @@ export default async function ({ stories }) {
       const component = type === 'view' ? 'druxt-entity' : 'druxt-entity-form'
 
       addTemplate({
-        src: resolve(__dirname, `../nuxt/${component}.stories.js`),
+        src: resolve(__dirname, `../templates/${component}.stories.js`),
         fileName: `stories/${component}.${resourceType}.stories.js`,
         options: {
           displays,
           entities: entities.find((o) => o.resourceType === resourceType).entities,
           resourceType,
-          title: titleFn(['Druxt Entity', entity, bundle, `${type} displays`]),
+          title: titleFn(['Druxt', 'Entity', entity, bundle, `${type} displays`]),
         },
       })
-  
+
       return resolve(options.buildDir, `./stories/${component}.${resourceType}.stories.js`)
     })
   })).flat(2)

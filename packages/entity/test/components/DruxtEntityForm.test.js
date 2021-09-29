@@ -15,12 +15,10 @@ let localVue
 let store
 
 const $druxt = new DruxtClient('https://demo-api.druxtjs.org')
+$druxt.settings = {}
 
 const mocks = {
   $druxt,
-  $druxtEntity: {
-    options: {},
-  },
   $fetchState: {
     pending: false
   },

@@ -1,0 +1,34 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "block--block",
+      "id": "a5e29a4e-cf00-4b84-b311-66e3b1e5e705",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/a5e29a4e-cf00-4b84-b311-66e3b1e5e705"
+        }
+      },
+      "attributes": {
+        "theme": "claro"
+      }
+    }
+  ],
+  "links": {
+    "next": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block?filter%5Bplugin%5D=system_main_block&page%5Boffset%5D=1&page%5Blimit%5D=1&fields%5Bblock--block%5D=theme"
+    },
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block?fields%5Bblock--block%5D=theme&filter%5Bplugin%5D=system_main_block&page%5Blimit%5D=1"
+    }
+  }
+}

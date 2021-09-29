@@ -8,7 +8,7 @@ export default {
   druxt: {
     baseUrl,
     entity: { components: { fields: false } },
-    router: { pages: false }
+    router: { pages: false },
+    site: { theme: 'umami' }
   },
-  proxy: [baseUrl + '/sites/default/files']
 }

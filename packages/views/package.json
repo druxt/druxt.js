@@ -1,29 +1,32 @@
 {
   "name": "druxt-views",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Drupal Views components for Druxt with support for filters, pagination and sorting.",
   "keywords": [
     "cms",
     "decoupled",
-    "blocks",
     "drupal",
     "druxt",
+    "druxtjs",
     "headless",
     "jsonapi",
     "json:api",
     "nuxt",
+    "nuxtjs",
     "module",
-    "router",
     "storybook",
     "vue",
     "views"
   ],
-  "license": "MIT",
-  "author": {
-    "name": "Stuart Clark",
-    "email": "stuart@realityloop.com",
-    "url": "https://realityloop.com"
+  "homepage": "https://druxtjs.org",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "license": "MIT",
   "exports": {
     ".": {
       "require": "./dist/druxt-views.ssr.js",
@@ -41,10 +44,10 @@
     "axios": "^0.21.1",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "^0.10.0",
-    "druxt-blocks": "^0.12.0",
-    "druxt-entity": "^0.18.0",
-    "druxt-router": "^0.20.0",
+    "druxt": "^0.11.0",
+    "druxt-blocks": "^0.13.0",
+    "druxt-entity": "^0.19.0",
+    "druxt-router": "^0.21.0",
     "md5": "^2.3.0"
   },
   "optionalDependencies": {

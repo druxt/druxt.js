@@ -1,36 +1,57 @@
 {
   "name": "druxt-site",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Out of the box Decoupled Drupal sites with Druxt.",
   "keywords": [
+    "cms",
+    "decoupled",
     "drupal",
     "druxt",
+    "druxtjs",
+    "headless",
     "jsonapi",
-    "nuxt"
+    "json:api",
+    "nuxt",
+    "nuxtjs",
+    "module",
+    "storybook",
+    "site",
+    "vue"
   ],
+  "homepage": "https://druxtjs.org",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "license": "MIT",
   "exports": {
     ".": {
       "require": "./dist/druxt-site.ssr.js",
       "import": "./dist/druxt-site.esm.js"
     },
-    "./components/*": "./dist/components/*"
+    "./components/*": "./dist/components/*",
+    "./layouts/*": "./dist/layouts/*"
   },
   "main": "dist/druxt-site.ssr.js",
   "module": "dist/druxt-site.esm.js",
   "files": [
     "dist",
-    "nuxt"
+    "templates"
   ],
   "dependencies": {
     "@nuxtjs/proxy": "^2.1.0",
-    "druxt": "^0.10.0",
-    "druxt-blocks": "^0.12.0",
-    "druxt-breadcrumb": "^0.11.0",
-    "druxt-entity": "^0.18.0",
-    "druxt-menu": "^0.13.0",
-    "druxt-router": "^0.20.0",
-    "druxt-schema": "^0.7.10",
-    "druxt-views": "^0.13.0",
+    "drupal-jsonapi-params": "^1.2.2",
+    "druxt": "^0.11.0",
+    "druxt-blocks": "^0.13.0",
+    "druxt-breadcrumb": "^0.12.0",
+    "druxt-entity": "^0.19.0",
+    "druxt-menu": "^0.14.0",
+    "druxt-router": "^0.21.0",
+    "druxt-schema": "^0.8.0",
+    "druxt-views": "^0.14.0",
     "md5": "^2.2.1"
   },
   "optionalDependencies": {

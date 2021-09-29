@@ -1,6 +1,9 @@
 import { DruxtSiteNuxtModule } from '../src/nuxtModule'
 
+jest.mock('../src/nuxtStorybook')
+
 const mock = {
+  addLayout: jest.fn(),
   addModule: jest.fn(),
   addPlugin: jest.fn(),
   addTemplate: jest.fn(),
@@ -8,7 +11,7 @@ const mock = {
     hook: jest.fn((hook, fn) => {
       const arg = {
         'components:dirs': [],
-        'storybook:config': {}
+        'storybook:config': { stories: [] }
       }
       return fn(arg[hook])
     }),
@@ -20,9 +23,11 @@ jest.mock('druxt-schema')
 
 describe('DruxtJS Site module', () => {
   test('Nuxt module', () => {
-    expect(() => { mock.DruxtSiteNuxtModule() }).toThrow('Druxt settings missing.')
-
-    mock.options = { druxt: {} }
+    mock.options = {
+      dir: { layouts: 'layouts' },
+      druxt: {},
+      srcDir: __dirname,
+    }
 
     // Call DruxtSite module.
     mock.DruxtSiteNuxtModule()

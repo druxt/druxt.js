@@ -33,6 +33,22 @@ Using Drupal's built in Entity display modes and Field formatter system, Views, 
    }
    ```
 
+### Options
+
+- `druxt.site.layout`
+
+  Type: `boolean`  
+  Default: `true`
+
+  Adds a default layout if no default layout has been provided.
+
+- `druxt.router.theme`
+
+  Type: `string`  
+
+  Sets the default theme to be used by the DruxtSite component. Theme can be overridden by the `theme` property on the component.  
+  If no value is provided, a fallback value will be determined from the JSON:API.
+
 * * *
 
 ## Vue.js components

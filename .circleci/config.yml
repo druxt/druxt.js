@@ -49,6 +49,10 @@ jobs:
             ESLINT_JUNIT_OUTPUT: ./reports/junit/eslint.xml
 
       - run:
+          name: Renovate config validator
+          command: yarn lint:renovate
+
+      - run:
           name: Run tests
           command: yarn test --reporters=jest-junit --runInBand
           environment:

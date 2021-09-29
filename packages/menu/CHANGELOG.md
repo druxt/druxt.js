@@ -1,5 +1,18 @@
 # druxt-menu
 
+## 0.14.0
+
+### Minor Changes
+
+- dae345e: Added module level options
+- 8d28c18: Updated storybook integration
+
+### Patch Changes
+
+- Updated dependencies [dae345e]
+  - druxt-blocks@0.13.0
+  - druxt@0.11.0
+
 ## 0.13.0
 
 ### Minor Changes

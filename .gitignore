@@ -17,6 +17,7 @@ package-lock.json
 # Dist folders
 bin
 dist
+packages/*/nuxt
 
 # Coverage reports
 coverage

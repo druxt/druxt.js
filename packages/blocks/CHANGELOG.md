@@ -1,5 +1,20 @@
 # druxt-blocks
 
+## 0.13.0
+
+### Minor Changes
+
+- dae345e: Moved `$druxtBlocks` plugin settings to `$druxt.settings.blocks`
+- dae345e: Added module level options
+- 8d28c18: Updated storybook integration
+
+### Patch Changes
+
+- Updated dependencies [9d905e8]
+  - druxt-router@0.21.0
+  - druxt-entity@0.19.0
+  - druxt@0.11.0
+
 ## 0.12.0
 
 ### Minor Changes

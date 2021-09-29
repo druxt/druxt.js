@@ -37,14 +37,14 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
 
   // Add plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/plugin.js'),
+    src: resolve(__dirname, '../templates/plugin.js'),
     fileName: 'druxt.js',
     options
   })
 
   // Add Vuex plugin.
   this.addPlugin({
-    src: resolve(__dirname, '../nuxt/store.js'),
+    src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt.js',
     options
   })

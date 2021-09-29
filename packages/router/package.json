@@ -1,37 +1,48 @@
 {
   "name": "druxt-router",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "Drupal router for Nuxt, powered by the Drupal Decoupled Router module.",
   "keywords": [
+    "cms",
+    "decoupled",
     "drupal",
     "druxt",
-    "nuxt",
-    "json-api",
+    "druxtjs",
+    "headless",
     "jsonapi",
-    "json api",
-    "router"
+    "json:api",
+    "nuxt",
+    "nuxtjs",
+    "module",
+    "router",
+    "vue"
   ],
-  "license": "MIT",
-  "author": {
-    "name": "Stuart Clark",
-    "email": "stuart@realityloop.com",
-    "url": "https://realityloop.com"
+  "homepage": "https://druxtjs.org",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "license": "MIT",
   "exports": {
     ".": {
       "require": "./dist/druxt-router.ssr.js",
       "import": "./dist/druxt-router.esm.js"
     },
-    "./components/*": "./dist/components/*"
+    "./components/*": "./dist/components/*",
+    "./nuxt": "./nuxt/index.js"
   },
   "main": "dist/druxt-router.ssr.js",
   "module": "dist/druxt-router.esm.js",
   "files": [
     "dist",
-    "nuxt"
+    "nuxt",
+    "templates"
   ],
   "dependencies": {
-    "druxt": "^0.10.0",
+    "druxt": "^0.11.0",
     "url-parse": "^1.4.7"
   },
   "optionalDependencies": {

@@ -1,5 +1,20 @@
 # druxt-entity
 
+## 0.19.0
+
+### Minor Changes
+
+- dae345e: Added module level options
+- 8d28c18: Updated storybook integration
+- dae345e: Moved `$druxtEntity` plugin settings to `$druxt.settings.entity`
+
+### Patch Changes
+
+- Updated dependencies [9d905e8]
+  - druxt-router@0.21.0
+  - druxt-schema@0.8.0
+  - druxt@0.11.0
+
 ## 0.18.0
 
 ### Minor Changes
