@@ -3,11 +3,30 @@
   "version": "0.8.0",
   "description": "Out of the box Decoupled Drupal sites with Druxt.",
   "keywords": [
+    "cms",
+    "decoupled",
     "drupal",
     "druxt",
+    "druxtjs",
+    "headless",
     "jsonapi",
-    "nuxt"
+    "json:api",
+    "nuxt",
+    "nuxtjs",
+    "module",
+    "storybook",
+    "site",
+    "vue"
   ],
+  "homepage": "https://druxtjs.org",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "license": "MIT",
   "exports": {
     ".": {
       "require": "./dist/druxt-site.ssr.js",

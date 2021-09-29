@@ -5,25 +5,28 @@
   "keywords": [
     "cms",
     "decoupled",
-    "blocks",
     "drupal",
     "druxt",
+    "druxtjs",
     "headless",
     "jsonapi",
     "json:api",
     "nuxt",
+    "nuxtjs",
     "module",
-    "router",
     "storybook",
     "vue",
     "views"
   ],
-  "license": "MIT",
-  "author": {
-    "name": "Stuart Clark",
-    "email": "stuart@realityloop.com",
-    "url": "https://realityloop.com"
+  "homepage": "https://druxtjs.org",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "license": "MIT",
   "exports": {
     ".": {
       "require": "./dist/druxt-views.ssr.js",

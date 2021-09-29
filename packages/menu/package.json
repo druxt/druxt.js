@@ -3,14 +3,31 @@
   "version": "0.13.0",
   "description": "Drupal Menu and Menu item Druxt components, with support for the JSON:API Menu Items module.",
   "keywords": [
-    "menu",
-    "menus",
+    "cms",
+    "decoupled",
     "drupal",
     "druxt",
-    "nuxt"
+    "druxtjs",
+    "headless",
+    "jsonapi",
+    "json:api",
+    "menu",
+    "menus",
+    "nuxt",
+    "nuxtjs",
+    "module",
+    "storybook",
+    "vue"
   ],
+  "homepage": "https://druxtjs.org",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
   "license": "MIT",
-  "author": "Stuart Clark <stuart@realityloop.com> (realityloop.com)",
   "exports": {
     ".": {
       "require": "./dist/druxt-menu.ssr.js",
