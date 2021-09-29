@@ -3,20 +3,28 @@
   "version": "0.7.10",
   "description": "Drupal Content Entity schema generator for Druxt with support for View and Form displays.",
   "keywords": [
+    "cms",
+    "decoupled",
     "drupal",
     "druxt",
-    "schema",
-    "entities",
-    "field",
-    "fields",
-    "nuxt"
+    "druxtjs",
+    "headless",
+    "jsonapi",
+    "json:api",
+    "nuxt",
+    "nuxtjs",
+    "module",
+    "schema"
   ],
-  "license": "MIT",
-  "author": {
-    "name": "Stuart Clark",
-    "email": "stuart@realityloop.com",
-    "url": "https://realityloop.com"
+  "homepage": "https://druxtjs.org",
+  "bugs": {
+    "url": "https://github.com/druxt/druxt.js/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js"
+  },
+  "license": "MIT",
   "exports": {
     ".": {
       "require": "./dist/druxt-schema.ssr.js",
