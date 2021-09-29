@@ -156,7 +156,7 @@ export default {
       const scopedSlots = {}
 
       // Build default slot.
-      scopedSlots.default = () => this.$createElement('ul', this.crumbs.map((crumb) =>
+      scopedSlots.default = () => this.$createElement('ul', (this.crumbs || []).map((crumb) =>
         this.$createElement('li', [
           crumb.to
             ? this.$createElement('NuxtLink', { props: { to: crumb.to }}, [crumb.text])
