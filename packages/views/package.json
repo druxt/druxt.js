@@ -1,6 +1,6 @@
 {
   "name": "druxt-views",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "Drupal Views components for Druxt with support for filters, pagination and sorting.",
   "keywords": [
     "cms",
