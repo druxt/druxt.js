@@ -51,4 +51,6 @@ const DruxtBlocksNuxtModule = function (moduleOptions = {}) {
   })
 }
 
+DruxtBlocksNuxtModule.meta = require('../package.json')
+
 export { DruxtBlocksNuxtModule }

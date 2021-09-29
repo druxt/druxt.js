@@ -87,4 +87,6 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
   })
 }
 
+DruxtRouterNuxtModule.meta = require('../package.json')
+
 export { DruxtRouterNuxtModule }

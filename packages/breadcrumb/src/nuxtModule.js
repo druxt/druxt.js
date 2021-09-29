@@ -34,4 +34,6 @@ const DruxtBreadcrumbModule = function () {
   })
 }
 
+DruxtBreadcrumbModule.meta = require('../package.json')
+
 export { DruxtBreadcrumbModule }

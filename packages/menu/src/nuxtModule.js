@@ -66,4 +66,6 @@ const DruxtMenuNuxtModule = function (moduleOptions = {}) {
   })
 }
 
+DruxtMenuNuxtModule.meta = require('../package.json')
+
 export { DruxtMenuNuxtModule }
