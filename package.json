@@ -15,7 +15,7 @@
     "changeset": "changeset",
     "clean": "yarn clean:dist && yarn clean:docs",
     "clean:docs": "rimraf docs/content/api || true",
-    "clean:dist": "rimraf packages/*/dist || true",
+    "clean:dist": "rimraf packages/*/dist packages/*/nuxt || true",
     "dev": "siroc dev",
     "lint": "eslint --ext .js,.vue packages/*/src",
     "lint:commit": "commitlint",

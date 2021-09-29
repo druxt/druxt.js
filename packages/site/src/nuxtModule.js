@@ -40,7 +40,7 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
     'druxt-breadcrumb',
     'druxt-entity',
     'druxt-menu',
-    'druxt-router',
+    'druxt-router/nuxt',
     'druxt-schema',
     'druxt-views'
   ]

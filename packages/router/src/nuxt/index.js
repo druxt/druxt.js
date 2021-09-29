@@ -1,3 +1,4 @@
+import { existsSync } from 'fs'
 import { join, resolve } from 'path'
 
 /**
@@ -14,9 +15,7 @@ import { join, resolve } from 'path'
  * @example @lang js
  * // `nuxt.config.js`
  * module.exports = {
- *   modules: [
- *     'druxt-router'
- *   ],
+ *   buildModules: ['druxt-router/nuxt'],
  *   druxt: {
  *     baseUrl: 'https://demi-api.druxtjs.org'
  *   }
@@ -26,13 +25,13 @@ import { join, resolve } from 'path'
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  * @property {string} options.druxt.router.component - File to custom Router component.
  */
-const DruxtRouterNuxtModule = function (moduleOptions = {}) {
+const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
     ...(this.options || {}).druxt || {},
     router: {
-      pages: true,
+      pages: (await existsSync(resolve(this.options.srcDir, this.options.dir.pages))),
       wildcard: true,
       ...((this.options || {}).druxt || {}).router,
       ...moduleOptions,
@@ -41,7 +40,7 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
-    dirs.push({ path: join(__dirname, 'components') })
+    dirs.push({ path: join(__dirname, '../dist/components') })
   })
 
   // Add Druxt router custom wildcard route.
@@ -89,4 +88,4 @@ const DruxtRouterNuxtModule = function (moduleOptions = {}) {
 
 DruxtRouterNuxtModule.meta = require('../package.json')
 
-export { DruxtRouterNuxtModule }
+export default DruxtRouterNuxtModule
