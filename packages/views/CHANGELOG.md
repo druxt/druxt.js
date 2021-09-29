@@ -1,5 +1,11 @@
 # druxt-views
 
+## 0.14.1
+
+### Patch Changes
+
+- b9e5839: Fixed missing templates in package
+
 ## 0.14.0
 
 ### Minor Changes
