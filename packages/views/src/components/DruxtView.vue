@@ -31,6 +31,9 @@ export default {
      *
      * @type {array}
      * @default []
+     *
+     * @example
+     * <DruxtView :arguments="[1, 2, 3]" display-id="block_1" view-id="articles_aside" />
      */
     arguments: {
       type: Array,
