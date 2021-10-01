@@ -27,6 +27,17 @@ export default {
    */
   props: {
     /**
+     * Views contextual filters.
+     *
+     * @type {array}
+     * @default []
+     */
+    arguments: {
+      type: Array,
+      default: () => [],
+    },
+
+    /**
      * The View Display ID.
      *
      * @type {string}
@@ -375,6 +386,13 @@ export default {
       // Pagination.
       if (this.model.page) {
         query.page = this.model.page
+      }
+
+      // Contextual filters.
+      if (this.arguments.length) {
+        for (const index in this.arguments) {
+          query[`views-argument[${index}]`] = this.arguments[index]
+        }
       }
 
       // Exposed filters.
