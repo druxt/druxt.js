@@ -16,3 +16,9 @@ services:
       lagoon.type: node
     ports:
       - "3000:3000"
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx.Dockerfile
+    labels:
+      lagoon.type: nginx

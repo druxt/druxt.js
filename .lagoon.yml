@@ -9,6 +9,7 @@ environments:
       - app:
         - druxtjs.org
         - www.druxtjs.org
+      - nginx:
         - blocks.druxtjs.org
         - breadcrumb.druxtjs.org
         - entity.druxtjs.org
