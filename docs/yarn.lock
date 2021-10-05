@@ -4200,10 +4200,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:3.18.0":
-  version: 3.18.0
-  resolution: "core-js@npm:3.18.0"
-  checksum: 192c345eb0c8b9d582ebed798cf124e00cd8241303c3c801987563f8ebb8cb991e2ff91494c258752014c29d5515070d2c0a862687401c7d7e1e2f96f8980d42
+"core-js@npm:3.18.2":
+  version: 3.18.2
+  resolution: "core-js@npm:3.18.2"
+  checksum: 4a09d170d8135a1f1c458f6aef786ba18bfb81fa6dab106561dd5379b9d175400ed012c2a30eee921b6e5bd53842ce32fb02ffd57d2984e157de622d9439dc5c
   languageName: node
   linkType: hard
 
@@ -5013,7 +5013,7 @@ __metadata:
     "@nuxtjs/pwa": 3.3.5
     "@nuxtjs/tailwindcss": 4.2.1
     "@tailwindcss/typography": 0.4.1
-    core-js: 3.18.0
+    core-js: 3.18.2
     daisyui: 1.14.1
     nuxt: 2.15.8
     nuxt-social-meta: 1.0.0
