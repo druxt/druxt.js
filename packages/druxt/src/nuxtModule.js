@@ -52,6 +52,9 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
   // Enable Vuex Store.
   this.options.store = true
 
+  // Enable components auto-discovery by default.
+  this.options.components = this.options.components ?? true
+
   // Add CLI badge.
   this.options.cli.badgeMessages.push(`${chalk.bold('Druxt API:')} ${chalk.blue.underline(options.baseUrl + options.endpoint)}`)
 }

@@ -48,19 +48,14 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
     this.addModule([module, { baseUrl: options.baseUrl, ...options[module.split('-')[1]] || {}}])
   }
 
-  // Setup proxy for 'sites/default/files'.
-  if (typeof this.options.proxy === 'undefined') {
-    this.options.proxy = [options.baseUrl + '/sites/default/files']
-  }
-  this.addModule('@nuxtjs/proxy')
-
-  // Enable Vuex Store.
-  this.options.store = true
-
   // Add default layout.
   if (!(await existsSync(resolve(this.options.srcDir, this.options.dir.layouts))) && options.site.layout) {
     this.addLayout(resolve(__dirname, './layouts/default.vue'), 'default')
   }
+
+  // Setup proxy for 'sites/default/files'.
+  this.options.proxy = this.options.proxy ?? [options.baseUrl + '/sites/default/files']
+  this.addModule('@nuxtjs/proxy')
 
   // Nuxt Storybook.
   this.nuxt.hook('storybook:config', async ({ stories }) => {

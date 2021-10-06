@@ -22,7 +22,7 @@ const mock = {
 jest.mock('druxt-schema')
 
 describe('DruxtJS Site module', () => {
-  test('Nuxt module', () => {
+  test('Nuxt module', async () => {
     mock.options = {
       dir: { layouts: 'layouts' },
       druxt: {},
@@ -30,7 +30,7 @@ describe('DruxtJS Site module', () => {
     }
 
     // Call DruxtSite module.
-    mock.DruxtSiteNuxtModule()
+    await mock.DruxtSiteNuxtModule()
 
     // Expect 9 modules to be added.
     expect(mock.addModule).toHaveBeenCalledTimes(9)

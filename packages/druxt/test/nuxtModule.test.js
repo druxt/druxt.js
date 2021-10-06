@@ -47,4 +47,19 @@ describe('DruxtJS Nuxt module', () => {
     // Expect addPlugin to have been called with options.
     expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
   })
+
+  test('Default options', () => {
+    // Expect:
+    // - Components enabled.
+    // - Vuex store enabled.
+    DruxtNuxtModule.call(mock)
+    expect(mock.options.components).toBe(true)
+    expect(mock.options.store).toBe(true)
+
+    // Expect:
+    // - Components disbaled.
+    mock.options.components = false
+    DruxtNuxtModule.call(mock)
+    expect(mock.options.components).toBe(false)
+  })
 })
