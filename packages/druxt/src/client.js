@@ -144,6 +144,10 @@ class DruxtClient {
    * @returns {object} The response data
    */
   async createResource(resource) {
+    if (resource.id) {
+      return this.updateResource(resource)
+    }
+
     const { href } = await this.getIndex(resource.type)
     if (!href) {
       return false
@@ -299,6 +303,38 @@ class DruxtClient {
     } catch (e) {
       return false
     }
+  }
+
+  /**
+   * Update a JSON:API resource.
+   *
+   * @param {object} resource - The JSON:API resource object
+   *
+   * @returns {object} The response data
+   */
+   async updateResource(resource) {
+    const { href } = await this.getIndex(resource.type)
+    if (!href) {
+      return false
+    }
+    const url = [href, resource.id].join('/')
+
+    let response
+    try {
+      response = await this.axios.patch(
+        url,
+        { data: resource },
+        {
+          headers: {
+            'Content-Type': 'application/vnd.api+json'
+          }
+        }
+      )
+    } catch (err) {
+      response = (err.response || {}).data || err.message
+    }
+
+    return response
   }
 }
 
