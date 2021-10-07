@@ -5,6 +5,11 @@
   "labels": ["dependencies"],
   "packageRules": [
     {
+      "groupName": "examples",
+      "matchPaths": ["examples/**"],
+      "extends": [":semanticCommitTypeAll(chore)"]
+    },
+    {
       "groupName": "eslint",
       "matchPackagePatterns": ["eslint"]
     },
