@@ -4272,6 +4272,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"auth-header@npm:1.0.0":
+  version: 1.0.0
+  resolution: "auth-header@npm:1.0.0"
+  checksum: f956433955afffd15c2d6a7fcd0e986db963e151c1b2fcf1efbdc03cd4fcb916df6b33bc761e26bfc2b94e3c6cef8f5d1711c682923c54b8dcaba35c49f524a8
+  languageName: node
+  linkType: hard
+
 "axios@npm:^0.21.1":
   version: 0.21.1
   resolution: "axios@npm:0.21.1"
@@ -6459,7 +6466,7 @@ __metadata:
     jest-junit: 12.3.0
     jest-mock-axios: 4.4.0
     regenerator-runtime: 0.13.9
-    renovate: 27.18.1
+    renovate: 27.31.0
     rimraf: 3.0.2
     siroc: 0.14.0
     vue: 2.6.14
@@ -7833,12 +7840,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"handy-redis@npm:2.2.2":
-  version: 2.2.2
-  resolution: "handy-redis@npm:2.2.2"
+"handy-redis@npm:2.3.1":
+  version: 2.3.1
+  resolution: "handy-redis@npm:2.3.1"
   dependencies:
     "@types/redis": ^2.8.30
-  checksum: dcca55cef4a77c48ffcf7135d639f6e5fd168d83aacf02cd3589c0e07805f8bfa77a9248018523eefa79e149e55a8025a3fcf29996b9c059861c297cf9bb7479
+  checksum: 490892245f187746cd05efbad5181a4b4f24f6b16546feab2c518cbf6e47cf98fccd84e62937f8c83d46254a0266b3fcbf529e2208c85867d7742fc43713b0e3
   languageName: node
   linkType: hard
 
@@ -12188,9 +12195,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"renovate@npm:27.18.1":
-  version: 27.18.1
-  resolution: "renovate@npm:27.18.1"
+"renovate@npm:27.31.0":
+  version: 27.31.0
+  resolution: "renovate@npm:27.31.0"
   dependencies:
     "@aws-sdk/client-ecr": 3.25.0
     "@breejs/later": 4.0.2
@@ -12200,6 +12207,7 @@ __metadata:
     "@sindresorhus/is": 4.2.0
     "@yarnpkg/core": 2.4.0
     "@yarnpkg/parsers": 2.4.0
+    auth-header: 1.0.0
     azure-devops-node-api: 11.0.1
     bunyan: 1.8.15
     cacache: 15.3.0
@@ -12226,7 +12234,7 @@ __metadata:
     global-agent: 2.2.0
     got: 11.8.2
     handlebars: 4.7.7
-    handy-redis: 2.2.2
+    handy-redis: 2.3.1
     hasha: 5.2.2
     ignore: 5.1.8
     ini: 2.0.0
@@ -12257,13 +12265,12 @@ __metadata:
     semver-utils: 1.1.4
     shlex: 2.1.0
     shortid: 2.2.16
-    simple-git: 2.45.1
+    simple-git: 2.46.0
     slugify: 1.6.0
     traverse: 0.6.6
     upath: 2.0.1
     url-join: 4.0.1
     validate-npm-package-name: 3.0.0
-    www-authenticate: 0.6.2
     xmldoc: 1.1.2
   dependenciesMeta:
     re2:
@@ -12271,7 +12278,7 @@ __metadata:
   bin:
     renovate: dist/renovate.js
     renovate-config-validator: dist/config-validator.js
-  checksum: b34498a03fbfd467dd6420b88eddd21972488f43974000d022ae7d2ad074d021663804b25f507ca95830bde4977a358820260424bb5b763951cf4973f8cf22f1
+  checksum: 5b098db8777e1fdeb55fea676a4424b2ae99c2e5be9ff8522b95cf015bc795c42e7d04d50b5f95545d671dea442f0aa6b43a05745c9abbb59534eb5035bd0ebb
   languageName: node
   linkType: hard
 
@@ -12759,14 +12766,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"simple-git@npm:2.45.1":
-  version: 2.45.1
-  resolution: "simple-git@npm:2.45.1"
+"simple-git@npm:2.46.0":
+  version: 2.46.0
+  resolution: "simple-git@npm:2.46.0"
   dependencies:
     "@kwsites/file-exists": ^1.1.1
     "@kwsites/promise-deferred": ^1.1.1
     debug: ^4.3.1
-  checksum: 9ab6c1ca8f62d8646c5f2e7de856a21e0ac8a68e5ba040999446949af92e64323f52c2b91fc0d8d98a120d997fd892fa66b000b34ce21dc762ab28d00e9de4c8
+  checksum: 46a60a80c9d733718f6352e66024b065ba5a2f6e58eec3747bcb8b01166146dd94af5be5e315ef74e5a53f57bf95ea5cea4324fcfe62ae2f937f0ee72aaaa64b
   languageName: node
   linkType: hard
 
@@ -14566,13 +14573,6 @@ typescript@^4.3.5:
     utf-8-validate:
       optional: true
   checksum: 423dc0d859fa74020f5555140905b862470a60ea1567bb9ad55a087263d7718b9c94f69678be1cee9868925c570f1e6fc79d09f90c39057bc63fa2edbb2c547b
-  languageName: node
-  linkType: hard
-
-"www-authenticate@npm:0.6.2":
-  version: 0.6.2
-  resolution: "www-authenticate@npm:0.6.2"
-  checksum: 981130d018ea289e9ce342bb93a18f2df6ec6c6ba94b2f2ed7812665e33e3e041eade8312256217c590ed8a7b9c18c8a7ff03de106c10850b097be25bc027651
   languageName: node
   linkType: hard
 
