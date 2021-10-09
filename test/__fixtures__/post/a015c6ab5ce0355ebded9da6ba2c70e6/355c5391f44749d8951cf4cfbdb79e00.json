@@ -1,0 +1,43 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "contact_message--feedback",
+      "id": "2af1c1ac-061e-429f-89de-f7758d896003",
+      "attributes": {
+        "langcode": "en",
+        "name": null,
+        "mail": null,
+        "subject": "Subject",
+        "message": "Test",
+        "copy": null
+      },
+      "relationships": {
+        "contact_form": {
+          "data": {
+            "type": "contact_form--contact_form",
+            "id": "82d49e61-2c56-4dce-8fdb-2f78a4f02584"
+          }
+        },
+        "recipient": {
+          "data": null
+        }
+      }
+    },
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/contact_message/feedback"
+      }
+    }
+  },
+  "status": 200
+}

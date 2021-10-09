@@ -1,0 +1,32 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "errors": [
+      {
+        "title": "Unprocessable Entity",
+        "status": "422",
+        "detail": "subject: This value should not be null.",
+        "source": {
+          "pointer": "/data/attributes/subject"
+        }
+      },
+      {
+        "title": "Unprocessable Entity",
+        "status": "422",
+        "detail": "message: This value should not be null.",
+        "source": {
+          "pointer": "/data/attributes/message"
+        }
+      }
+    ]
+  }
+}

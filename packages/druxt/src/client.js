@@ -246,6 +246,7 @@ class DruxtClient {
     this.index = index.data.links
 
     // Use JSON API resource config to decorate the index.
+    // @TODO - Add test coverage
     if (this.index[this.options.jsonapiResourceConfig]) {
       const resources = await this.axios.get(this.index[this.options.jsonapiResourceConfig].href)
       for (const resourceType in resources.data.data) {

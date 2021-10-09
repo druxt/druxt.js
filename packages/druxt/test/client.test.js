@@ -70,6 +70,52 @@ describe('DruxtClient', () => {
     expect(() => druxt.checkPermissions(res)).toThrow('Some resources have been omitted because of insufficient authorization.\n\n Required permissions: administer node fields.')
   })
 
+  test('createResource', async () => {
+    let response
+    const headers = {
+      'Content-Type': 'application/vnd.api+json'
+    }
+
+    // Expect invalid resource to return false.
+    expect((await druxt.createResource({}))).toBe(false)
+
+    // Create a Feedback Contact message resource without require data.
+    const data = { type: 'contact_message--feedback' }
+    response = await druxt.createResource(data)
+    expect(mockAxios.post).toHaveBeenCalledWith(
+      `${baseUrl}/en/jsonapi/contact_message/feedback`,
+      { data },
+      { headers }
+    )
+    expect(response.errors.length).toBe(2)
+    mockAxios.reset()
+
+    // Create resource with required data.
+    data.attributes = {
+      subject: 'Subject',
+      message: 'Test'
+    }
+    response = await druxt.createResource(data)
+    expect(mockAxios.post).toHaveBeenCalledWith(
+      `${baseUrl}/en/jsonapi/contact_message/feedback`,
+      { data },
+      { headers }
+    )
+    expect(response.errors).toBe(undefined)
+    expect(response.status).toBe(200)
+    expect(response.data.data.attributes.subject).toBe(data.attributes.subject)
+    expect(response.data.data.attributes.message).toBe(data.attributes.message)
+    mockAxios.reset()
+
+    // Update resource.
+    await druxt.createResource(response.data.data)
+    expect(mockAxios.patch).toHaveBeenCalledWith(
+      `${baseUrl}/en/jsonapi/contact_message/feedback/${response.data.data.id}`,
+      { data: response.data.data },
+      { headers }
+    )
+  })
+
   test('getCollection', async () => {
     // Get a collection of 'node--page' resources.
     const collection = await druxt.getCollection('node--page')
@@ -134,5 +180,9 @@ describe('DruxtClient', () => {
 
     const empty = await druxt.getResource()
     expect(empty).toBe(false)
+  })
+
+  test('updateResource', async () => {
+    expect((await druxt.updateResource({}))).toBe(false)
   })
 })
