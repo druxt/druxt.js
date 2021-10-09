@@ -54,7 +54,7 @@ mockAxios.patch = jest.fn((url, data, options) =>
 
 // Mock 'post' requests.
 mockAxios.post = jest.fn((url, data, options) =>
-  mockData(url, pathe.resolve('./test/__fixtures__/post', md5(url), md5(JSON.stringify(data)) + '.json'))
+  mockData(url, path.resolve('./test/__fixtures__/post', md5(url), md5(JSON.stringify(data)) + '.json'))
 )
 
 export default mockAxios

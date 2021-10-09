@@ -76,12 +76,12 @@ describe('DruxtEntityForm', () => {
 
     // Submit.
     await wrapper.find('button#submit').trigger('click')
-    // TODO : Fix DruxtEntityForm tests.
-    // expect(wrapper.emitted().error).toBeFalsy()
-    // expect(wrapper.emitted().submit).toBeTruthy()
-    // expect(wrapper.vm.response.data.data.id).toBe('8e8d340a-04af-461a-ac63-12415d33e936')
-    // expect(wrapper.vm.errors).toBe(undefined)
-    // expect(wrapper.vm.$refs.title.errors.length).toBe(0)
+    await localVue.nextTick()
+    expect(wrapper.emitted().error).toBeFalsy()
+    expect(wrapper.emitted().submit).toBeTruthy()
+    expect(wrapper.vm.response.data.data.id).toBe('8e8d340a-04af-461a-ac63-12415d33e936')
+    expect(wrapper.vm.errors).toBe(undefined)
+    expect(wrapper.vm.$refs.title.errors.length).toBe(0)
 
     // Reset button.
     wrapper.find('button#reset').trigger('click')
@@ -106,12 +106,13 @@ describe('DruxtEntityForm', () => {
 
     // Submit.
     await wrapper.find('button#submit').trigger('click')
+    await localVue.nextTick()
+    await localVue.nextTick()
     expect(wrapper.emitted().error).toBeTruthy()
     expect(wrapper.emitted().submit).toBeFalsy()
     expect(wrapper.vm.entity.id).toBe(undefined)
-    // TODO : Fix DruxtEntityForm tests.
-    // expect(wrapper.vm.errors.length).toBe(1)
-    // expect(wrapper.vm.$refs.title.errors.length).toBe(1)
+    expect(wrapper.vm.errors.length).toBe(1)
+    expect(wrapper.vm.$refs.title.errors.length).toBe(1)
 
     // Reset button.
     wrapper.find('button#reset').trigger('click')
@@ -137,9 +138,9 @@ describe('DruxtEntityForm', () => {
 
     // Submit.
     await wrapper.find('button#submit').trigger('click')
+    await localVue.nextTick()
     expect(wrapper.emitted().error).toBeFalsy()
-    // TODO : Fix DruxtEntityForm tests.
-    // expect(wrapper.emitted().submit).toBeTruthy()
+    expect(wrapper.emitted().submit).toBeTruthy()
     // expect(wrapper.vm.response.data.data.id).toBe(uuid)
     expect(wrapper.vm.errors).toBe(undefined)
     expect(wrapper.vm.$refs.title.errors.length).toBe(0)
