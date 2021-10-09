@@ -1,24 +1,54 @@
 {
-  "resolved": "https://demo-api.druxtjs.org/en/about-umami",
-  "isHomePath": false,
-  "entity": {
-    "canonical": "https://demo-api.druxtjs.org/en/about-umami",
-    "type": "node",
-    "bundle": "page",
-    "id": "18",
-    "uuid": "790d38f6-5e98-464e-acad-e28ec291a241"
-  },
-  "label": "About Umami",
-  "jsonapi": {
-    "individual": "https://demo-api.druxtjs.org/en/jsonapi/node/page/790d38f6-5e98-464e-acad-e28ec291a241",
-    "resourceName": "node--page",
-    "pathPrefix": "jsonapi",
-    "basePath": "/jsonapi",
-    "entryPoint": "https://demo-api.druxtjs.org/en/jsonapi"
-  },
-  "meta": {
-    "deprecated": {
-      "jsonapi.pathPrefix": "This property has been deprecated and will be removed in the next version of Decoupled Router. Use basePath instead."
+  "data": {
+    "resolved": "https://demo-api.druxtjs.org/en/about-umami",
+    "isHomePath": false,
+    "entity": {
+      "canonical": "https://demo-api.druxtjs.org/en/about-umami",
+      "type": "node",
+      "bundle": "page",
+      "id": "18",
+      "uuid": "790d38f6-5e98-464e-acad-e28ec291a241"
+    },
+    "label": "About Umami",
+    "jsonapi": {
+      "individual": "https://demo-api.druxtjs.org/en/jsonapi/node/page/790d38f6-5e98-464e-acad-e28ec291a241",
+      "resourceName": "node--page",
+      "pathPrefix": "jsonapi",
+      "basePath": "/jsonapi",
+      "entryPoint": "https://demo-api.druxtjs.org/en/jsonapi"
+    },
+    "meta": {
+      "deprecated": {
+        "jsonapi.pathPrefix": "This property has been deprecated and will be removed in the next version of Decoupled Router. Use basePath instead."
+      }
     }
-  }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "/router/translate-path?path=/node/18",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

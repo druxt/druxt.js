@@ -1,60 +1,90 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "field_config--field_config",
+        "id": "98883120-aa50-4c7d-b025-5a1e0ff7ad0d",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/98883120-aa50-4c7d-b025-5a1e0ff7ad0d"
+          }
+        },
+        "attributes": {
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "field.storage.media.field_media_video_file",
+              "media.type.video"
+            ],
+            "module": [
+              "file"
+            ]
+          },
+          "drupal_internal__id": "media.video.field_media_video_file",
+          "field_name": "field_media_video_file",
+          "entity_type": "media",
+          "bundle": "video",
+          "label": "Video file",
+          "description": "",
+          "required": true,
+          "translatable": true,
+          "default_value": [],
+          "default_value_callback": "",
+          "settings": {
+            "file_extensions": "mp4",
+            "file_directory": "[date:custom:Y]-[date:custom:m]",
+            "max_filesize": "",
+            "description_field": false,
+            "handler": "default:file",
+            "handler_settings": []
+          },
+          "field_type": "file"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=video"
       }
     }
   },
-  "data": [
-    {
-      "type": "field_config--field_config",
-      "id": "98883120-aa50-4c7d-b025-5a1e0ff7ad0d",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/98883120-aa50-4c7d-b025-5a1e0ff7ad0d"
-        }
-      },
-      "attributes": {
-        "langcode": "en",
-        "status": true,
-        "dependencies": {
-          "config": [
-            "field.storage.media.field_media_video_file",
-            "media.type.video"
-          ],
-          "module": [
-            "file"
-          ]
-        },
-        "drupal_internal__id": "media.video.field_media_video_file",
-        "field_name": "field_media_video_file",
-        "entity_type": "media",
-        "bundle": "video",
-        "label": "Video file",
-        "description": "",
-        "required": true,
-        "translatable": true,
-        "default_value": [],
-        "default_value_callback": "",
-        "settings": {
-          "file_extensions": "mp4",
-          "file_directory": "[date:custom:Y]-[date:custom:m]",
-          "max_filesize": "",
-          "description_field": false,
-          "handler": "default:file",
-          "handler_settings": []
-        },
-        "field_type": "file"
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=video"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=video",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

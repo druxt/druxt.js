@@ -1,37 +1,67 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
       }
-    }
-  },
-  "data": {
-    "type": "block--block",
-    "id": "b73a1b20-a9a3-4f93-a93f-e59723e6db33",
-    "links": {
-      "self": {
-        "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/b73a1b20-a9a3-4f93-a93f-e59723e6db33"
+    },
+    "data": {
+      "type": "block--block",
+      "id": "b73a1b20-a9a3-4f93-a93f-e59723e6db33",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/b73a1b20-a9a3-4f93-a93f-e59723e6db33"
+        }
+      },
+      "attributes": {
+        "theme": "claro",
+        "region": "breadcrumb",
+        "plugin": "system_breadcrumb_block",
+        "settings": {
+          "id": "system_breadcrumb_block",
+          "label": "Breadcrumbs",
+          "provider": "system",
+          "label_display": "0"
+        }
       }
     },
-    "attributes": {
-      "theme": "claro",
-      "region": "breadcrumb",
-      "plugin": "system_breadcrumb_block",
-      "settings": {
-        "id": "system_breadcrumb_block",
-        "label": "Breadcrumbs",
-        "provider": "system",
-        "label_display": "0"
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/b73a1b20-a9a3-4f93-a93f-e59723e6db33?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme"
       }
     }
   },
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/b73a1b20-a9a3-4f93-a93f-e59723e6db33?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/block/block/b73a1b20-a9a3-4f93-a93f-e59723e6db33?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

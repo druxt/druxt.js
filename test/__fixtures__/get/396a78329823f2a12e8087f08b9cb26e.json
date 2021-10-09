@@ -1,56 +1,86 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "field_config--field_config",
+        "id": "d3d670e3-79bf-49be-b1e8-608f6a8a890e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/d3d670e3-79bf-49be-b1e8-608f6a8a890e"
+          }
+        },
+        "attributes": {
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "field.storage.node.body",
+              "node.type.page"
+            ],
+            "module": [
+              "text"
+            ]
+          },
+          "drupal_internal__id": "node.page.body",
+          "field_name": "body",
+          "entity_type": "node",
+          "bundle": "page",
+          "label": "Body",
+          "description": "",
+          "required": false,
+          "translatable": true,
+          "default_value": [],
+          "default_value_callback": "",
+          "settings": {
+            "display_summary": true,
+            "required_summary": false
+          },
+          "field_type": "text_with_summary"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=node&filter%5Bbundle%5D=page"
       }
     }
   },
-  "data": [
-    {
-      "type": "field_config--field_config",
-      "id": "d3d670e3-79bf-49be-b1e8-608f6a8a890e",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/d3d670e3-79bf-49be-b1e8-608f6a8a890e"
-        }
-      },
-      "attributes": {
-        "langcode": "en",
-        "status": true,
-        "dependencies": {
-          "config": [
-            "field.storage.node.body",
-            "node.type.page"
-          ],
-          "module": [
-            "text"
-          ]
-        },
-        "drupal_internal__id": "node.page.body",
-        "field_name": "body",
-        "entity_type": "node",
-        "bundle": "page",
-        "label": "Body",
-        "description": "",
-        "required": false,
-        "translatable": true,
-        "default_value": [],
-        "default_value_callback": "",
-        "settings": {
-          "display_summary": true,
-          "required_summary": false
-        },
-        "field_type": "text_with_summary"
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=node&filter%5Bbundle%5D=page"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=node&filter%5Bbundle%5D=page",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

@@ -1,69 +1,99 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "entity_view_display--entity_view_display",
+        "id": "0ea7a1df-f171-4be2-9f16-54bc2d93f4a4",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display/0ea7a1df-f171-4be2-9f16-54bc2d93f4a4"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "node",
+          "bundle": "article",
+          "mode": "card_common_alt",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "core.entity_view_mode.node.card_common_alt",
+              "field.field.node.article.body",
+              "field.field.node.article.field_media_image",
+              "field.field.node.article.field_tags",
+              "node.type.article"
+            ],
+            "module": [
+              "user"
+            ]
+          },
+          "drupal_internal__id": "node.article.card_common_alt",
+          "content": {
+            "field_media_image": {
+              "type": "entity_reference_entity_view",
+              "weight": 1,
+              "region": "content",
+              "label": "hidden",
+              "settings": {
+                "view_mode": "responsive_3x2",
+                "link": false
+              },
+              "third_party_settings": []
+            }
+          },
+          "hidden": {
+            "body": true,
+            "content_moderation_control": true,
+            "field_tags": true,
+            "langcode": true,
+            "links": true,
+            "search_api_excerpt": true
+          }
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=node.article.card_common_alt"
       }
     }
   },
-  "data": [
-    {
-      "type": "entity_view_display--entity_view_display",
-      "id": "0ea7a1df-f171-4be2-9f16-54bc2d93f4a4",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display/0ea7a1df-f171-4be2-9f16-54bc2d93f4a4"
-        }
-      },
-      "attributes": {
-        "targetEntityType": "node",
-        "bundle": "article",
-        "mode": "card_common_alt",
-        "langcode": "en",
-        "status": true,
-        "dependencies": {
-          "config": [
-            "core.entity_view_mode.node.card_common_alt",
-            "field.field.node.article.body",
-            "field.field.node.article.field_media_image",
-            "field.field.node.article.field_tags",
-            "node.type.article"
-          ],
-          "module": [
-            "user"
-          ]
-        },
-        "drupal_internal__id": "node.article.card_common_alt",
-        "content": {
-          "field_media_image": {
-            "type": "entity_reference_entity_view",
-            "weight": 1,
-            "region": "content",
-            "label": "hidden",
-            "settings": {
-              "view_mode": "responsive_3x2",
-              "link": false
-            },
-            "third_party_settings": []
-          }
-        },
-        "hidden": {
-          "body": true,
-          "content_moderation_control": true,
-          "field_tags": true,
-          "langcode": true,
-          "links": true,
-          "search_api_excerpt": true
-        }
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=node.article.card_common_alt"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=node.article.card_common_alt",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

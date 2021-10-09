@@ -1,71 +1,101 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "entity_view_display--entity_view_display",
+        "id": "047f971f-0176-426c-bd87-51bd1f6c6633",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display/047f971f-0176-426c-bd87-51bd1f6c6633"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "media",
+          "bundle": "video",
+          "mode": "default",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "field.field.media.video.field_media_video_file",
+              "media.type.video"
+            ],
+            "module": [
+              "file"
+            ]
+          },
+          "drupal_internal__id": "media.video.default",
+          "content": {
+            "field_media_video_file": {
+              "type": "file_video",
+              "weight": 0,
+              "label": "visually_hidden",
+              "settings": {
+                "muted": false,
+                "width": 640,
+                "height": 480,
+                "controls": true,
+                "autoplay": false,
+                "loop": false,
+                "multiple_file_display_type": "tags"
+              },
+              "third_party_settings": [],
+              "region": "content"
+            }
+          },
+          "hidden": {
+            "created": true,
+            "langcode": true,
+            "name": true,
+            "thumbnail": true,
+            "uid": true,
+            "search_api_excerpt": true
+          }
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=media.video.default"
       }
     }
   },
-  "data": [
-    {
-      "type": "entity_view_display--entity_view_display",
-      "id": "047f971f-0176-426c-bd87-51bd1f6c6633",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display/047f971f-0176-426c-bd87-51bd1f6c6633"
-        }
-      },
-      "attributes": {
-        "targetEntityType": "media",
-        "bundle": "video",
-        "mode": "default",
-        "langcode": "en",
-        "status": true,
-        "dependencies": {
-          "config": [
-            "field.field.media.video.field_media_video_file",
-            "media.type.video"
-          ],
-          "module": [
-            "file"
-          ]
-        },
-        "drupal_internal__id": "media.video.default",
-        "content": {
-          "field_media_video_file": {
-            "type": "file_video",
-            "weight": 0,
-            "label": "visually_hidden",
-            "settings": {
-              "muted": false,
-              "width": 640,
-              "height": 480,
-              "controls": true,
-              "autoplay": false,
-              "loop": false,
-              "multiple_file_display_type": "tags"
-            },
-            "third_party_settings": [],
-            "region": "content"
-          }
-        },
-        "hidden": {
-          "created": true,
-          "langcode": true,
-          "name": true,
-          "thumbnail": true,
-          "uid": true,
-          "search_api_excerpt": true
-        }
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=media.video.default"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=media.video.default",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

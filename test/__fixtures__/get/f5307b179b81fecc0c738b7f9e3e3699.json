@@ -1,72 +1,102 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "field_config--field_config",
+        "id": "3c5ce7cf-ecec-4815-a961-8e6361b28713",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/3c5ce7cf-ecec-4815-a961-8e6361b28713"
+          }
+        },
+        "attributes": {
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "field.storage.user.user_picture"
+            ],
+            "module": [
+              "image",
+              "user"
+            ]
+          },
+          "drupal_internal__id": "user.user.user_picture",
+          "field_name": "user_picture",
+          "entity_type": "user",
+          "bundle": "user",
+          "label": "Picture",
+          "description": "Your virtual face or picture.",
+          "required": false,
+          "translatable": true,
+          "default_value": [],
+          "default_value_callback": "",
+          "settings": {
+            "file_extensions": "png gif jpg jpeg",
+            "file_directory": "pictures/[date:custom:Y]-[date:custom:m]",
+            "max_filesize": "",
+            "alt_field": false,
+            "title_field": false,
+            "max_resolution": "",
+            "min_resolution": "",
+            "default_image": {
+              "uuid": null,
+              "alt": "",
+              "title": "",
+              "width": null,
+              "height": null
+            },
+            "alt_field_required": false,
+            "title_field_required": false,
+            "handler": "default:file",
+            "handler_settings": []
+          },
+          "field_type": "image"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=user&filter%5Bbundle%5D=user"
       }
     }
   },
-  "data": [
-    {
-      "type": "field_config--field_config",
-      "id": "3c5ce7cf-ecec-4815-a961-8e6361b28713",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/3c5ce7cf-ecec-4815-a961-8e6361b28713"
-        }
-      },
-      "attributes": {
-        "langcode": "en",
-        "status": true,
-        "dependencies": {
-          "config": [
-            "field.storage.user.user_picture"
-          ],
-          "module": [
-            "image",
-            "user"
-          ]
-        },
-        "drupal_internal__id": "user.user.user_picture",
-        "field_name": "user_picture",
-        "entity_type": "user",
-        "bundle": "user",
-        "label": "Picture",
-        "description": "Your virtual face or picture.",
-        "required": false,
-        "translatable": true,
-        "default_value": [],
-        "default_value_callback": "",
-        "settings": {
-          "file_extensions": "png gif jpg jpeg",
-          "file_directory": "pictures/[date:custom:Y]-[date:custom:m]",
-          "max_filesize": "",
-          "alt_field": false,
-          "title_field": false,
-          "max_resolution": "",
-          "min_resolution": "",
-          "default_image": {
-            "uuid": null,
-            "alt": "",
-            "title": "",
-            "width": null,
-            "height": null
-          },
-          "alt_field_required": false,
-          "title_field_required": false,
-          "handler": "default:file",
-          "handler_settings": []
-        },
-        "field_type": "image"
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=user&filter%5Bbundle%5D=user"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=user&filter%5Bbundle%5D=user",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

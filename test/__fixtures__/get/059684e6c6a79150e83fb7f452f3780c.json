@@ -1,89 +1,119 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "menu--menu",
+        "id": "f36cabe1-2401-4914-a19e-cc7e2ef38a75",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu/f36cabe1-2401-4914-a19e-cc7e2ef38a75"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "account",
+          "label": "User account menu",
+          "description": "Links related to the active user account"
+        }
+      },
+      {
+        "type": "menu--menu",
+        "id": "dfb2a3e9-e4a7-466b-aeff-f9e9feab0763",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu/dfb2a3e9-e4a7-466b-aeff-f9e9feab0763"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "admin",
+          "label": "Administration",
+          "description": "Administrative task links"
+        }
+      },
+      {
+        "type": "menu--menu",
+        "id": "25965cb1-27c3-4bb1-9d2a-91efebdb6a7e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu/25965cb1-27c3-4bb1-9d2a-91efebdb6a7e"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "footer",
+          "label": "Footer",
+          "description": "Site information links"
+        }
+      },
+      {
+        "type": "menu--menu",
+        "id": "563876c7-f498-47e1-9dac-b1cae56f1928",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu/563876c7-f498-47e1-9dac-b1cae56f1928"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "main",
+          "label": "Main navigation",
+          "description": "Site section links"
+        }
+      },
+      {
+        "type": "menu--menu",
+        "id": "28c5ee4a-a059-40d7-b437-4933b331428e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu/28c5ee4a-a059-40d7-b437-4933b331428e"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "tools",
+          "label": "Tools",
+          "description": "User tool links, often added by modules"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu?fields%5Bmenu--menu%5D=description%2Cdrupal_internal__id%2Clabel&filter%5Bstatus%5D=1"
       }
     }
   },
-  "data": [
-    {
-      "type": "menu--menu",
-      "id": "f36cabe1-2401-4914-a19e-cc7e2ef38a75",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu/f36cabe1-2401-4914-a19e-cc7e2ef38a75"
-        }
-      },
-      "attributes": {
-        "drupal_internal__id": "account",
-        "label": "User account menu",
-        "description": "Links related to the active user account"
-      }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu?filter%5Bstatus%5D=1&fields%5Bmenu--menu%5D=description%2Cdrupal_internal__id%2Clabel",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
     },
-    {
-      "type": "menu--menu",
-      "id": "dfb2a3e9-e4a7-466b-aeff-f9e9feab0763",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu/dfb2a3e9-e4a7-466b-aeff-f9e9feab0763"
-        }
-      },
-      "attributes": {
-        "drupal_internal__id": "admin",
-        "label": "Administration",
-        "description": "Administrative task links"
-      }
-    },
-    {
-      "type": "menu--menu",
-      "id": "25965cb1-27c3-4bb1-9d2a-91efebdb6a7e",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu/25965cb1-27c3-4bb1-9d2a-91efebdb6a7e"
-        }
-      },
-      "attributes": {
-        "drupal_internal__id": "footer",
-        "label": "Footer",
-        "description": "Site information links"
-      }
-    },
-    {
-      "type": "menu--menu",
-      "id": "563876c7-f498-47e1-9dac-b1cae56f1928",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu/563876c7-f498-47e1-9dac-b1cae56f1928"
-        }
-      },
-      "attributes": {
-        "drupal_internal__id": "main",
-        "label": "Main navigation",
-        "description": "Site section links"
-      }
-    },
-    {
-      "type": "menu--menu",
-      "id": "28c5ee4a-a059-40d7-b437-4933b331428e",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu/28c5ee4a-a059-40d7-b437-4933b331428e"
-        }
-      },
-      "attributes": {
-        "drupal_internal__id": "tools",
-        "label": "Tools",
-        "description": "User tool links, often added by modules"
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/menu/menu?fields%5Bmenu--menu%5D=description%2Cdrupal_internal__id%2Clabel&filter%5Bstatus%5D=1"
-    }
-  }
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

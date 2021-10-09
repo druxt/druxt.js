@@ -1,31 +1,61 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "node--article",
+        "id": "e4ced3c1-e14b-48f1-8c0a-c909e808de68",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68?resourceVersion=id%3A20"
+          }
+        }
+      }
+    ],
+    "links": {
+      "next": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article?page%5Boffset%5D=1&page%5Blimit%5D=1&fields%5Bnode--article%5D="
+      },
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article?fields%5Bnode--article%5D=&page%5Blimit%5D=1"
       }
     }
   },
-  "data": [
-    {
-      "type": "node--article",
-      "id": "e4ced3c1-e14b-48f1-8c0a-c909e808de68",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68?resourceVersion=id%3A20"
-        }
-      }
-    }
-  ],
-  "links": {
-    "next": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article?page%5Boffset%5D=1&page%5Blimit%5D=1&fields%5Bnode--article%5D="
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/node/article?page%5Blimit%5D=1&fields%5Bnode--article%5D=",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
     },
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article?fields%5Bnode--article%5D=&page%5Blimit%5D=1"
-    }
-  }
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

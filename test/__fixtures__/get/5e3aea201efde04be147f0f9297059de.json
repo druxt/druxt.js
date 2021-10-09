@@ -1,40 +1,70 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
       }
-    }
-  },
-  "data": {
-    "type": "block--block",
-    "id": "06251689-406e-4dc4-aab1-5fcf0e5f9ecb",
-    "links": {
-      "self": {
-        "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/06251689-406e-4dc4-aab1-5fcf0e5f9ecb"
+    },
+    "data": {
+      "type": "block--block",
+      "id": "06251689-406e-4dc4-aab1-5fcf0e5f9ecb",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/06251689-406e-4dc4-aab1-5fcf0e5f9ecb"
+        }
+      },
+      "attributes": {
+        "theme": "umami",
+        "region": "banner_top",
+        "plugin": "block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf",
+        "settings": {
+          "id": "block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf",
+          "label": "Umami Home Banner",
+          "provider": "block_content",
+          "label_display": "0",
+          "status": true,
+          "info": "",
+          "view_mode": "full"
+        }
       }
     },
-    "attributes": {
-      "theme": "umami",
-      "region": "banner_top",
-      "plugin": "block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf",
-      "settings": {
-        "id": "block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf",
-        "label": "Umami Home Banner",
-        "provider": "block_content",
-        "label_display": "0",
-        "status": true,
-        "info": "",
-        "view_mode": "full"
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/06251689-406e-4dc4-aab1-5fcf0e5f9ecb?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme"
       }
     }
   },
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/06251689-406e-4dc4-aab1-5fcf0e5f9ecb?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/block/block/06251689-406e-4dc4-aab1-5fcf0e5f9ecb?fields%5Bblock--block%5D=plugin%2Cregion%2Csettings%2Ctheme",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }
