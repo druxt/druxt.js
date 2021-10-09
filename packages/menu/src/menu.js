@@ -43,9 +43,9 @@ class DruxtMenu {
 
   /**
    * Builds the JSON:API query.
-   * 
+   *
    * @private
-   * 
+   *
    * @param {string} resource - The JSON:API resource type.
    * @param {string} menuName  - The menu name.
    * @param {string[]} requiredFields - An array of required fields for the menu resource.
@@ -135,7 +135,7 @@ class DruxtMenu {
    *     requiredOnly: true,
    *   }
    * )
-   * 
+   *
    * @param {string} menuName - The menu name.
    * @param {object} settings - The Druxt Menu query settings object.
    */
@@ -163,10 +163,16 @@ class DruxtMenu {
     }
 
     const entities = []
-    const collections = await this.druxt.getCollectionAll(menuItemsResource, query)
+    let collections = []
+    try {
+      collections = await this.druxt.getCollectionAll(menuItemsResource, query)
+    } catch(e) {
+      console.log("ASDASDOOO")
+      return { entities }
+    }
     for (const collection of collections) {
       for (const entity of collection.data) {
-        entities.push({ 
+        entities.push({
           ...entity,
           attributes: {
             ...entity.attributes,
