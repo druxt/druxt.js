@@ -1,65 +1,95 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "field_config--field_config",
+        "id": "51dbbff5-8f85-46a2-8f24-86ff5be66d50",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/51dbbff5-8f85-46a2-8f24-86ff5be66d50"
+          }
+        },
+        "attributes": {
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "field.storage.media.field_media_document",
+              "media.type.document"
+            ],
+            "enforced": {
+              "module": [
+                "media"
+              ]
+            },
+            "module": [
+              "file"
+            ]
+          },
+          "drupal_internal__id": "media.document.field_media_document",
+          "field_name": "field_media_document",
+          "entity_type": "media",
+          "bundle": "document",
+          "label": "Document",
+          "description": "",
+          "required": true,
+          "translatable": true,
+          "default_value": [],
+          "default_value_callback": "",
+          "settings": {
+            "file_directory": "[date:custom:Y]-[date:custom:m]",
+            "file_extensions": "txt rtf doc docx ppt pptx xls xlsx pdf odf odg odp ods odt fodt fods fodp fodg key numbers pages",
+            "max_filesize": "",
+            "handler": "default:file",
+            "handler_settings": [],
+            "description_field": false
+          },
+          "field_type": "file"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=document"
       }
     }
   },
-  "data": [
-    {
-      "type": "field_config--field_config",
-      "id": "51dbbff5-8f85-46a2-8f24-86ff5be66d50",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/51dbbff5-8f85-46a2-8f24-86ff5be66d50"
-        }
-      },
-      "attributes": {
-        "langcode": "en",
-        "status": true,
-        "dependencies": {
-          "config": [
-            "field.storage.media.field_media_document",
-            "media.type.document"
-          ],
-          "enforced": {
-            "module": [
-              "media"
-            ]
-          },
-          "module": [
-            "file"
-          ]
-        },
-        "drupal_internal__id": "media.document.field_media_document",
-        "field_name": "field_media_document",
-        "entity_type": "media",
-        "bundle": "document",
-        "label": "Document",
-        "description": "",
-        "required": true,
-        "translatable": true,
-        "default_value": [],
-        "default_value_callback": "",
-        "settings": {
-          "file_directory": "[date:custom:Y]-[date:custom:m]",
-          "file_extensions": "txt rtf doc docx ppt pptx xls xlsx pdf odf odg odp ods odt fodt fods fodp fodg key numbers pages",
-          "max_filesize": "",
-          "handler": "default:file",
-          "handler_settings": [],
-          "description_field": false
-        },
-        "field_type": "file"
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=document"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=document",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

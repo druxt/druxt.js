@@ -1,77 +1,107 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "field_config--field_config",
+        "id": "2e49d258-1e91-4884-9632-5f41b20d04a2",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/2e49d258-1e91-4884-9632-5f41b20d04a2"
+          }
+        },
+        "attributes": {
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "field.storage.media.field_media_image",
+              "media.type.image"
+            ],
+            "enforced": {
+              "module": [
+                "media"
+              ]
+            },
+            "module": [
+              "image"
+            ]
+          },
+          "drupal_internal__id": "media.image.field_media_image",
+          "field_name": "field_media_image",
+          "entity_type": "media",
+          "bundle": "image",
+          "label": "Image",
+          "description": "",
+          "required": true,
+          "translatable": true,
+          "default_value": [],
+          "default_value_callback": "",
+          "settings": {
+            "alt_field": true,
+            "alt_field_required": true,
+            "title_field": false,
+            "title_field_required": false,
+            "max_resolution": "",
+            "min_resolution": "",
+            "default_image": {
+              "uuid": null,
+              "alt": "",
+              "title": "",
+              "width": null,
+              "height": null
+            },
+            "file_directory": "[date:custom:Y]-[date:custom:m]",
+            "file_extensions": "png gif jpg jpeg",
+            "max_filesize": "",
+            "handler": "default:file",
+            "handler_settings": []
+          },
+          "field_type": "image"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=image"
       }
     }
   },
-  "data": [
-    {
-      "type": "field_config--field_config",
-      "id": "2e49d258-1e91-4884-9632-5f41b20d04a2",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config/2e49d258-1e91-4884-9632-5f41b20d04a2"
-        }
-      },
-      "attributes": {
-        "langcode": "en",
-        "status": true,
-        "dependencies": {
-          "config": [
-            "field.storage.media.field_media_image",
-            "media.type.image"
-          ],
-          "enforced": {
-            "module": [
-              "media"
-            ]
-          },
-          "module": [
-            "image"
-          ]
-        },
-        "drupal_internal__id": "media.image.field_media_image",
-        "field_name": "field_media_image",
-        "entity_type": "media",
-        "bundle": "image",
-        "label": "Image",
-        "description": "",
-        "required": true,
-        "translatable": true,
-        "default_value": [],
-        "default_value_callback": "",
-        "settings": {
-          "alt_field": true,
-          "alt_field_required": true,
-          "title_field": false,
-          "title_field_required": false,
-          "max_resolution": "",
-          "min_resolution": "",
-          "default_image": {
-            "uuid": null,
-            "alt": "",
-            "title": "",
-            "width": null,
-            "height": null
-          },
-          "file_directory": "[date:custom:Y]-[date:custom:m]",
-          "file_extensions": "png gif jpg jpeg",
-          "max_filesize": "",
-          "handler": "default:file",
-          "handler_settings": []
-        },
-        "field_type": "image"
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=image"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=image",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

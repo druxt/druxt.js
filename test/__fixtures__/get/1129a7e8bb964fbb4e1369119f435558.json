@@ -1,23 +1,53 @@
 {
-  "resolved": "https://demo-api.druxtjs.org/en/node",
-  "isHomePath": true,
-  "view": {
-    "uuid": "8aa4201b-be14-4d76-a3aa-9830cf50e8be",
-    "view_id": "frontpage",
-    "display_id": "page_1"
+  "data": {
+    "resolved": "https://demo-api.druxtjs.org/en/node",
+    "isHomePath": true,
+    "view": {
+      "uuid": "8aa4201b-be14-4d76-a3aa-9830cf50e8be",
+      "view_id": "frontpage",
+      "display_id": "page_1"
+    },
+    "label": "Home",
+    "jsonapi": {
+      "individual": "https://demo-api.druxtjs.org/en/jsonapi/view/view/8aa4201b-be14-4d76-a3aa-9830cf50e8be",
+      "resourceName": "view--view",
+      "pathPrefix": "jsonapi",
+      "basePath": "/jsonapi",
+      "entryPoint": "https://demo-api.druxtjs.org/en/jsonapi"
+    },
+    "meta": {
+      "deprecated": {
+        "jsonapi.pathPrefix": "This property has been deprecated and will be removed in the next version of Decoupled Router. Use basePath instead."
+      }
+    },
+    "jsonapi_views": "https://demo-api.druxtjs.org/en/jsonapi/views/frontpage/page_1"
   },
-  "label": "Home",
-  "jsonapi": {
-    "individual": "https://demo-api.druxtjs.org/en/jsonapi/view/view/8aa4201b-be14-4d76-a3aa-9830cf50e8be",
-    "resourceName": "view--view",
-    "pathPrefix": "jsonapi",
-    "basePath": "/jsonapi",
-    "entryPoint": "https://demo-api.druxtjs.org/en/jsonapi"
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
   },
-  "meta": {
-    "deprecated": {
-      "jsonapi.pathPrefix": "This property has been deprecated and will be removed in the next version of Decoupled Router. Use basePath instead."
-    }
+  "config": {
+    "url": "/router/translate-path?path=/en/node",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
   },
-  "jsonapi_views": "https://demo-api.druxtjs.org/en/jsonapi/views/frontpage/page_1"
+  "request": {}
 }

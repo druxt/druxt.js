@@ -1,93 +1,123 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "entity_view_display--entity_view_display",
+        "id": "e66846fb-60c8-4bbc-a0e2-077f61ecbe2d",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display/e66846fb-60c8-4bbc-a0e2-077f61ecbe2d"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "node",
+          "bundle": "recipe",
+          "mode": "card",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "core.entity_view_mode.node.card",
+              "field.field.node.recipe.field_cooking_time",
+              "field.field.node.recipe.field_difficulty",
+              "field.field.node.recipe.field_ingredients",
+              "field.field.node.recipe.field_media_image",
+              "field.field.node.recipe.field_number_of_servings",
+              "field.field.node.recipe.field_preparation_time",
+              "field.field.node.recipe.field_recipe_category",
+              "field.field.node.recipe.field_recipe_instruction",
+              "field.field.node.recipe.field_summary",
+              "field.field.node.recipe.field_tags",
+              "field.field.node.recipe.layout_builder__layout",
+              "node.type.recipe"
+            ],
+            "module": [
+              "options",
+              "user"
+            ]
+          },
+          "drupal_internal__id": "node.recipe.card",
+          "content": {
+            "field_difficulty": {
+              "weight": 0,
+              "label": "inline",
+              "settings": [],
+              "third_party_settings": [],
+              "type": "list_default",
+              "region": "content"
+            },
+            "field_media_image": {
+              "type": "entity_reference_entity_view",
+              "weight": 2,
+              "region": "content",
+              "label": "hidden",
+              "settings": {
+                "view_mode": "responsive_3x2",
+                "link": false
+              },
+              "third_party_settings": []
+            }
+          },
+          "hidden": {
+            "content_moderation_control": true,
+            "field_cooking_time": true,
+            "field_ingredients": true,
+            "field_number_of_servings": true,
+            "field_preparation_time": true,
+            "field_recipe_category": true,
+            "field_recipe_instruction": true,
+            "field_summary": true,
+            "field_tags": true,
+            "langcode": true,
+            "layout_builder__layout": true,
+            "links": true,
+            "search_api_excerpt": true
+          }
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=node.recipe.card"
       }
     }
   },
-  "data": [
-    {
-      "type": "entity_view_display--entity_view_display",
-      "id": "e66846fb-60c8-4bbc-a0e2-077f61ecbe2d",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display/e66846fb-60c8-4bbc-a0e2-077f61ecbe2d"
-        }
-      },
-      "attributes": {
-        "targetEntityType": "node",
-        "bundle": "recipe",
-        "mode": "card",
-        "langcode": "en",
-        "status": true,
-        "dependencies": {
-          "config": [
-            "core.entity_view_mode.node.card",
-            "field.field.node.recipe.field_cooking_time",
-            "field.field.node.recipe.field_difficulty",
-            "field.field.node.recipe.field_ingredients",
-            "field.field.node.recipe.field_media_image",
-            "field.field.node.recipe.field_number_of_servings",
-            "field.field.node.recipe.field_preparation_time",
-            "field.field.node.recipe.field_recipe_category",
-            "field.field.node.recipe.field_recipe_instruction",
-            "field.field.node.recipe.field_summary",
-            "field.field.node.recipe.field_tags",
-            "field.field.node.recipe.layout_builder__layout",
-            "node.type.recipe"
-          ],
-          "module": [
-            "options",
-            "user"
-          ]
-        },
-        "drupal_internal__id": "node.recipe.card",
-        "content": {
-          "field_difficulty": {
-            "weight": 0,
-            "label": "inline",
-            "settings": [],
-            "third_party_settings": [],
-            "type": "list_default",
-            "region": "content"
-          },
-          "field_media_image": {
-            "type": "entity_reference_entity_view",
-            "weight": 2,
-            "region": "content",
-            "label": "hidden",
-            "settings": {
-              "view_mode": "responsive_3x2",
-              "link": false
-            },
-            "third_party_settings": []
-          }
-        },
-        "hidden": {
-          "content_moderation_control": true,
-          "field_cooking_time": true,
-          "field_ingredients": true,
-          "field_number_of_servings": true,
-          "field_preparation_time": true,
-          "field_recipe_category": true,
-          "field_recipe_instruction": true,
-          "field_summary": true,
-          "field_tags": true,
-          "langcode": true,
-          "layout_builder__layout": true,
-          "links": true,
-          "search_api_excerpt": true
-        }
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=node.recipe.card"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=node.recipe.card",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }
