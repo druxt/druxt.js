@@ -1,5 +1,34 @@
 # druxt
 
+## 0.12.0
+
+### Minor Changes
+
+- 897dcbc: Added createResource method to DruxtClient
+
+  ```js
+  this.$druxt.createResource({ type, attributes: {}, relationships: {} });
+  ```
+
+- 897dcbc: Added updateResource method to DruxtClient
+
+  ```js
+  await this.$druxt.updateResource({
+    type,
+    id,
+    attributes: {},
+    relationships: {}
+  });
+  ```
+
+- 4504a2f: Added getRelated() method
+
+  ```js
+  await this.$druxt.getRelated(type, id, related);
+  ```
+
+- e3e634c: Enabled Components auto-discovery by default
+
 ## 0.11.0
 
 ### Minor Changes

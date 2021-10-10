@@ -1,5 +1,27 @@
 # druxt-views
 
+## 0.15.0
+
+### Minor Changes
+
+- c769243: Added support for Contextual filters (arguments)
+
+  ```vue
+  <DruxtView
+    :arguments="[1, 2, 3]"
+    displayid="block_1"
+    view-id="articles_aside"
+  />
+  ```
+
+### Patch Changes
+
+- Updated dependencies [4504a2f]
+  - druxt@0.12.0
+  - druxt-router@0.22.0
+  - druxt-entity@0.20.0
+  - druxt-blocks@0.13.1
+
 ## 0.14.1
 
 ### Patch Changes
