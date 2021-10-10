@@ -31,7 +31,7 @@ const mockData = async (request, file) => {
   response = response ? response : require(file)
 
   // Throw error if error data is present.
-  if (response.data.errors || (!(response.status >= 200 && response.status < 300) && request.validateStatus && !request.validateStatus(response.status))) {
+  if (response.data.errors || (!(response.status >= 200 && response.status < 300) && (!(request.options || {}).validateStatus || !(request.options || {}).validateStatus(response.status)))) {
     const error = new Error()
     error.response = response
     throw error
@@ -47,7 +47,7 @@ mockAxios.get = jest.fn((url, options) => {
   }
 
   const file = path.resolve('./test/__fixtures__/get', md5(url) + '.json')
-  const request = { method: 'get', url }
+  const request = { method: 'get', url, options }
   return mockData(request, file)
 })
 

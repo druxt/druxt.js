@@ -235,5 +235,12 @@ describe('DruxtRouter', () => {
     route = await router.getRoute('/node/1')
 
     expect(route).toHaveProperty('isHomePath', false)
+
+    try {
+      await router.getRoute('/error')
+    } catch(err) {
+      expect(err.response.status).toBe(404)
+      expect(err.response.data.message).toBe('Unable to resolve path /error.')
+    }
   })
 })
