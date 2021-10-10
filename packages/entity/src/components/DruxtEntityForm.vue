@@ -87,34 +87,23 @@ export default {
       if (this.submitting) return false
       this.submitting = true
 
-      let url = this.schema.config.href
-      let method = 'post'
-      if (this.entity.id) {
-        // @todo - Reduce size of payload by only sending changed data.
-        url = [url, this.entity.id].join('/')
-        method = 'patch'
+      let method = 'createResource'
+      if (this.model.id) {
+        method = 'updateResource'
       }
+      this.response = await this.$druxt[method](this.model)
 
-      // Try to send data to backend, and catch any resulting errors.
-      try {
-        this.response = await this.$druxt.axios[method](
-          url,
-          { data: this.model },
-          {
-            headers: {
-              'Content-Type': 'application/vnd.api+json',
-            },
-          }
-        )
-
-        // Update the Vuex store.
+      // Handle the response
+      if (!this.response.errors) {
         const resource = this.response.data.data
+        // Update the Vuex store.
         this.$store.commit('druxt/addResource', { resource })
         this.$emit('submit', resource)
-      } catch (e) {
-        this.response = (e.response || {}).data || e.message
+      }
+      else {
         this.$emit('error', this.response)
       }
+
       this.submitting = false
     },
   },

@@ -137,6 +137,41 @@ class DruxtClient {
   }
 
   /**
+   * Create a JSON:API resource.
+   *
+   * @param {object} resource - The JSON:API resource object
+   *
+   * @returns {object} The response data
+   */
+  async createResource(resource) {
+    if (resource.id) {
+      return this.updateResource(resource)
+    }
+
+    const { href } = await this.getIndex(resource.type)
+    if (!href) {
+      return false
+    }
+
+    let response
+    try {
+      response = await this.axios.post(
+        href,
+        { data: resource },
+        {
+          headers: {
+            'Content-Type': 'application/vnd.api+json'
+          }
+        }
+      )
+    } catch (err) {
+      response = (err.response || {}).data || err.message
+    }
+
+    return response
+  }
+
+  /**
    * Get a collection of resources from the JSON:API server.
    *
    * @param {string} type - The JSON:API Resource type.
@@ -211,6 +246,7 @@ class DruxtClient {
     this.index = index.data.links
 
     // Use JSON API resource config to decorate the index.
+    // @TODO - Add test coverage
     if (this.index[this.options.jsonapiResourceConfig]) {
       const resources = await this.axios.get(this.index[this.options.jsonapiResourceConfig].href)
       for (const resourceType in resources.data.data) {
@@ -268,6 +304,38 @@ class DruxtClient {
     } catch (e) {
       return false
     }
+  }
+
+  /**
+   * Update a JSON:API resource.
+   *
+   * @param {object} resource - The JSON:API resource object
+   *
+   * @returns {object} The response data
+   */
+   async updateResource(resource) {
+    const { href } = await this.getIndex(resource.type)
+    if (!href) {
+      return false
+    }
+    const url = [href, resource.id].join('/')
+
+    let response
+    try {
+      response = await this.axios.patch(
+        url,
+        { data: resource },
+        {
+          headers: {
+            'Content-Type': 'application/vnd.api+json'
+          }
+        }
+      )
+    } catch (err) {
+      response = (err.response || {}).data || err.message
+    }
+
+    return response
   }
 }
 
