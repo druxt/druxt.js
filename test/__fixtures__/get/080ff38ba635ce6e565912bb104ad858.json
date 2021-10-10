@@ -1,0 +1,157 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "media--image",
+      "id": "201869c2-0cc4-405a-b596-93f488a48316",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316?resourceVersion=id%3A10"
+        }
+      },
+      "attributes": {
+        "drupal_internal__mid": 10,
+        "drupal_internal__vid": 10,
+        "langcode": "en",
+        "revision_created": "2021-05-01T06:24:09+00:00",
+        "revision_log_message": null,
+        "status": true,
+        "name": "Home Grown Herbs",
+        "created": "2021-05-01T06:24:09+00:00",
+        "changed": "2021-05-01T06:24:09+00:00",
+        "default_langcode": true,
+        "revision_translation_affected": true,
+        "path": {
+          "alias": null,
+          "pid": null,
+          "langcode": "en"
+        },
+        "content_translation_source": "und",
+        "content_translation_outdated": false
+      },
+      "relationships": {
+        "field_media_image": {
+          "data": {
+            "type": "file--file",
+            "id": "515d2bee-d29a-4bcb-a4ac-70b2c4faa5e3",
+            "meta": {
+              "alt": "Fresh cut herbs including mint, parsley, thyme and dill",
+              "title": null,
+              "width": 768,
+              "height": 512
+            }
+          },
+          "links": {
+            "related": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316/field_media_image?resourceVersion=id%3A10"
+            },
+            "self": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316/relationships/field_media_image?resourceVersion=id%3A10"
+            }
+          }
+        },
+        "bundle": {
+          "data": {
+            "type": "media_type--media_type",
+            "id": "93c226a8-6e72-4caf-aae5-493066ef4f94"
+          },
+          "links": {
+            "related": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316/bundle?resourceVersion=id%3A10"
+            },
+            "self": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316/relationships/bundle?resourceVersion=id%3A10"
+            }
+          }
+        },
+        "revision_user": {
+          "data": null,
+          "links": {
+            "related": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316/revision_user?resourceVersion=id%3A10"
+            },
+            "self": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316/relationships/revision_user?resourceVersion=id%3A10"
+            }
+          }
+        },
+        "uid": {
+          "data": {
+            "type": "user--user",
+            "id": "f9e06c84-0999-4123-b1f1-b46b18590be4"
+          },
+          "links": {
+            "related": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316/uid?resourceVersion=id%3A10"
+            },
+            "self": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316/relationships/uid?resourceVersion=id%3A10"
+            }
+          }
+        },
+        "thumbnail": {
+          "data": {
+            "type": "file--file",
+            "id": "515d2bee-d29a-4bcb-a4ac-70b2c4faa5e3",
+            "meta": {
+              "alt": "Fresh cut herbs including mint, parsley, thyme and dill",
+              "title": null,
+              "width": 768,
+              "height": 512
+            }
+          },
+          "links": {
+            "related": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316/thumbnail?resourceVersion=id%3A10"
+            },
+            "self": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/201869c2-0cc4-405a-b596-93f488a48316/relationships/thumbnail?resourceVersion=id%3A10"
+            }
+          }
+        }
+      }
+    },
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/field_media_image"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/node/article/e4ced3c1-e14b-48f1-8c0a-c909e808de68/field_media_image",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
+}

@@ -169,6 +169,23 @@ describe('DruxtClient', () => {
     expect(cachedResourceIndex).toHaveProperty('href')
   })
 
+  test('getRelated', async () => {
+    expect((await druxt.getRelated())).toBe(false)
+
+    const mockArticle = await getMockResource('node--article')
+
+    const { type, id } = mockArticle.data
+    const related = await druxt.getRelated(type, id, 'field_media_image')
+    expect(mockAxios.get).toHaveBeenCalledWith(`${baseUrl}/en/jsonapi/node/article/${id}/field_media_image`)
+    expect(related.data).toHaveProperty('type')
+
+    try {
+      await druxt.getRelated('node--fake', id, 'field_media_image')
+    } catch(err) {
+      expect(mockAxios.get).toHaveBeenCalledWith(`/jsonapi/node/fake/${id}/field_media_image`)
+    }
+  })
+
   test('getResource', async () => {
     const mockArticle = await getMockResource('node--article')
     const entity = await druxt.getResource(mockArticle.data.type, mockArticle.data.id)
