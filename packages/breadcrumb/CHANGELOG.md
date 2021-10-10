@@ -1,5 +1,14 @@
 # druxt-breadcrumb
 
+## 0.12.1
+
+### Patch Changes
+
+- Updated dependencies [4504a2f]
+  - druxt@0.12.0
+  - druxt-router@0.22.0
+  - druxt-blocks@0.13.1
+
 ## 0.12.0
 
 ### Minor Changes

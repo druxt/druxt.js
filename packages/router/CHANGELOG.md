@@ -1,5 +1,16 @@
 # druxt-router
 
+## 0.22.0
+
+### Minor Changes
+
+- c7b267a: Throw Error on router errors
+
+### Patch Changes
+
+- Updated dependencies [4504a2f]
+  - druxt@0.12.0
+
 ## 0.21.0
 
 ### Minor Changes
