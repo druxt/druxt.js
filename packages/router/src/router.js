@@ -144,10 +144,6 @@ class DruxtRouter {
    */
   async get (path) {
     const route = await this.getRoute(path)
-    if (route.error) {
-      return { route }
-    }
-
     const redirect = this.getRedirect(path, route)
 
     return { redirect, route }
@@ -358,11 +354,9 @@ class DruxtRouter {
 
     // Process Axios error.
     if (!(response.status >= 200 && response.status < 300)) {
-      route.error = {
-        statusCode: response.status,
-        message: response.statusText
-      }
-      route.component = 'error'
+      const error = new Error
+      error.response = response
+      throw error
     }
 
     return route

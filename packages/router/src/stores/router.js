@@ -234,7 +234,12 @@ const DruxtRouterStore = ({ store }) => {
           return state.routes[path]
         }
 
-        const route = await this.$druxtRouter().getRoute(path)
+        let route
+        try {
+          route = await this.$druxtRouter().getRoute(path)
+        } catch (err) {
+          route = { error: { statusCode: err.response.status, message: err.response.data.message } }
+        }
 
         commit('addRoute', { path, route })
 

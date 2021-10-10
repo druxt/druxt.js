@@ -31,8 +31,8 @@ const mockData = async (request, file) => {
   response = response ? response : require(file)
 
   // Throw error if error data is present.
-  if (response.data.errors) {
-    const error = new Error
+  if (response.data.errors || (!(response.status >= 200 && response.status < 300) && request.validateStatus && !request.validateStatus(response.status))) {
+    const error = new Error()
     error.response = response
     throw error
   }
