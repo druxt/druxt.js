@@ -28,16 +28,18 @@ describe('DruxtMenu class', () => {
   })
 
   test('get - getMenuLinkContent', async () => {
-    const { entities } = await menu.get('main')
-
     // TODO - Add mock test data, Umami Profile has none.
-    // expect(entities.length).toBe(4)
+    expect((await menu.get('main')).entities.length).toBe(0)
   })
 
   test('get - getJsonApiMenuItems', async () => {
     const jsonApiMenu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
 
+    // Ensure main menu returns three items.
     expect((await jsonApiMenu.get('main')).entities.length).toBe(3)
+
+    // Ensure non-existant menu return no items.
+    expect((await jsonApiMenu.get('error')).entities.length).toBe(0)
 
     // TODO - Add mock test data, Umami Profile doesn't have deep enough menu items.
     // const settings = {

@@ -21,6 +21,6 @@
     "markdown-it-task-lists": "2.1.1",
     "ncp": "2.0.0",
     "vue-docgen-api": "4.41.2",
-    "yargs": "17.2.0"
+    "yargs": "17.2.1"
   }
 }

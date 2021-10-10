@@ -1,53 +1,83 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
       }
-    }
-  },
-  "data": {
-    "type": "file--file",
-    "id": "ce9ac5ad-df17-402c-b11c-ed40239b2d25",
+    },
+    "data": {
+      "type": "file--file",
+      "id": "ce9ac5ad-df17-402c-b11c-ed40239b2d25",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/ce9ac5ad-df17-402c-b11c-ed40239b2d25"
+        }
+      },
+      "attributes": {
+        "drupal_internal__fid": 1,
+        "langcode": "en",
+        "filename": "mediterranean-quiche-umami.jpg",
+        "uri": {
+          "value": "public://mediterranean-quiche-umami.jpg",
+          "url": "/sites/default/files/mediterranean-quiche-umami.jpg"
+        },
+        "filemime": "image/jpeg",
+        "filesize": 70160,
+        "status": true,
+        "created": "2021-05-01T06:24:09+00:00",
+        "changed": "2021-05-01T06:24:09+00:00"
+      },
+      "relationships": {
+        "uid": {
+          "data": null,
+          "links": {
+            "related": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/ce9ac5ad-df17-402c-b11c-ed40239b2d25/uid"
+            },
+            "self": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/ce9ac5ad-df17-402c-b11c-ed40239b2d25/relationships/uid"
+            }
+          }
+        }
+      }
+    },
     "links": {
       "self": {
         "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/ce9ac5ad-df17-402c-b11c-ed40239b2d25"
       }
-    },
-    "attributes": {
-      "drupal_internal__fid": 1,
-      "langcode": "en",
-      "filename": "mediterranean-quiche-umami.jpg",
-      "uri": {
-        "value": "public://mediterranean-quiche-umami.jpg",
-        "url": "/sites/default/files/mediterranean-quiche-umami.jpg"
-      },
-      "filemime": "image/jpeg",
-      "filesize": 70160,
-      "status": true,
-      "created": "2021-05-01T06:24:09+00:00",
-      "changed": "2021-05-01T06:24:09+00:00"
-    },
-    "relationships": {
-      "uid": {
-        "data": null,
-        "links": {
-          "related": {
-            "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/ce9ac5ad-df17-402c-b11c-ed40239b2d25/uid"
-          },
-          "self": {
-            "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/ce9ac5ad-df17-402c-b11c-ed40239b2d25/relationships/uid"
-          }
-        }
-      }
     }
   },
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/ce9ac5ad-df17-402c-b11c-ed40239b2d25"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/file/file/ce9ac5ad-df17-402c-b11c-ed40239b2d25",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

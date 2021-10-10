@@ -116,7 +116,7 @@ describe('DruxtRouterStore', () => {
 
     // Test failed request.
     await store.dispatch('druxtRouter/get', '/error')
-    expect(store.app.context.error).toHaveBeenCalledWith({ message: undefined, statusCode: 404 })
+    expect(store.app.context.error).toHaveBeenCalledWith({ message: 'Unable to resolve path /error.', statusCode: 404 })
   })
 
   test('getEntity', async () => {

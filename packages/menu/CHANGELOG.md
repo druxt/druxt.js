@@ -1,5 +1,14 @@
 # druxt-menu
 
+## 0.14.1
+
+### Patch Changes
+
+- ee15810: Fixed bug when menu endpoint fails
+- Updated dependencies [4504a2f]
+  - druxt@0.12.0
+  - druxt-blocks@0.13.1
+
 ## 0.14.0
 
 ### Minor Changes

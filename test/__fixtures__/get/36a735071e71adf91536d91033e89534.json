@@ -1,252 +1,282 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
-        }
-      }
-    }
-  },
-  "data": [
-    {
-      "type": "block--block",
-      "id": "bb5f4a26-65f8-4d04-8e94-2a14957c3680",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/bb5f4a26-65f8-4d04-8e94-2a14957c3680"
-        }
-      },
-      "attributes": {
-        "region": "breadcrumbs"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "a1fc3bff-52b6-4956-b392-4aec05898655",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/a1fc3bff-52b6-4956-b392-4aec05898655"
-        }
-      },
-      "attributes": {
-        "region": "highlighted"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "fbf44132-80ad-4ce7-b42b-e4ad8982ca72",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/fbf44132-80ad-4ce7-b42b-e4ad8982ca72"
-        }
-      },
-      "attributes": {
-        "region": "pre_header"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "f643206e-d87d-4579-9246-687cfd8bbe26",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/f643206e-d87d-4579-9246-687cfd8bbe26"
-        }
-      },
-      "attributes": {
-        "region": "pre_header"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "06251689-406e-4dc4-aab1-5fcf0e5f9ecb",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/06251689-406e-4dc4-aab1-5fcf0e5f9ecb"
-        }
-      },
-      "attributes": {
-        "region": "banner_top"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "5d4d62e0-6eba-4a1b-bfb5-618e50c87856",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/5d4d62e0-6eba-4a1b-bfb5-618e50c87856"
-        }
-      },
-      "attributes": {
-        "region": "banner_top"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "9d3d3a23-69f5-4c2d-9a00-287492a52987",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/9d3d3a23-69f5-4c2d-9a00-287492a52987"
-        }
-      },
-      "attributes": {
-        "region": "header"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "d0c424db-9c53-41bd-bec9-6047088f7fd0",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/d0c424db-9c53-41bd-bec9-6047088f7fd0"
-        }
-      },
-      "attributes": {
-        "region": "content"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "69474f8b-3977-45ac-a689-125397eb8342",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/69474f8b-3977-45ac-a689-125397eb8342"
-        }
-      },
-      "attributes": {
-        "region": "bottom"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "24fa7857-5959-4621-a3f6-18866689bd39",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/24fa7857-5959-4621-a3f6-18866689bd39"
-        }
-      },
-      "attributes": {
-        "region": "footer"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "88a47371-c3ac-4beb-b07e-8a9d1ab45c45",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/88a47371-c3ac-4beb-b07e-8a9d1ab45c45"
-        }
-      },
-      "attributes": {
-        "region": "footer"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "76311a61-7d44-406c-8f54-568eff33b07b",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/76311a61-7d44-406c-8f54-568eff33b07b"
-        }
-      },
-      "attributes": {
-        "region": "tabs"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "deabf8f9-2ec4-4873-86d6-be1754e4f71d",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/deabf8f9-2ec4-4873-86d6-be1754e4f71d"
-        }
-      },
-      "attributes": {
-        "region": "header"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "6e3f039c-c0f1-45bc-87f7-efc57be9ae71",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/6e3f039c-c0f1-45bc-87f7-efc57be9ae71"
-        }
-      },
-      "attributes": {
-        "region": "highlighted"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "6c4d359b-d960-43b6-9418-8639adfcb909",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/6c4d359b-d960-43b6-9418-8639adfcb909"
-        }
-      },
-      "attributes": {
-        "region": "page_title"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "b36bef31-01d0-4479-a72e-bea08fe2594a",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/b36bef31-01d0-4479-a72e-bea08fe2594a"
-        }
-      },
-      "attributes": {
-        "region": "pre_header"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "54e8025c-abaf-4183-8c37-f083d1b15d4f",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/54e8025c-abaf-4183-8c37-f083d1b15d4f"
-        }
-      },
-      "attributes": {
-        "region": "banner_top"
-      }
-    },
-    {
-      "type": "block--block",
-      "id": "797ba5e0-b7c7-464a-ab96-dea49f9e5d57",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/797ba5e0-b7c7-464a-ab96-dea49f9e5d57"
-        }
-      },
-      "attributes": {
-        "region": "content_bottom"
-      }
-    }
-  ],
-  "meta": {
-    "omitted": {
-      "detail": "Some resources have been omitted because of insufficient authorization.",
-      "links": {
-        "help": {
-          "href": "https://www.drupal.org/docs/8/modules/json-api/filtering#filters-access-control"
-        },
-        "item--tlJSfak": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/74b40244-4b00-482b-bc08-eb64fdb84b26",
-          "meta": {
-            "rel": "item",
-            "detail": "The current user is not allowed to GET the selected resource."
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
           }
         }
       }
+    },
+    "data": [
+      {
+        "type": "block--block",
+        "id": "bb5f4a26-65f8-4d04-8e94-2a14957c3680",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/bb5f4a26-65f8-4d04-8e94-2a14957c3680"
+          }
+        },
+        "attributes": {
+          "region": "breadcrumbs"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "a1fc3bff-52b6-4956-b392-4aec05898655",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/a1fc3bff-52b6-4956-b392-4aec05898655"
+          }
+        },
+        "attributes": {
+          "region": "highlighted"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "fbf44132-80ad-4ce7-b42b-e4ad8982ca72",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/fbf44132-80ad-4ce7-b42b-e4ad8982ca72"
+          }
+        },
+        "attributes": {
+          "region": "pre_header"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "f643206e-d87d-4579-9246-687cfd8bbe26",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/f643206e-d87d-4579-9246-687cfd8bbe26"
+          }
+        },
+        "attributes": {
+          "region": "pre_header"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "06251689-406e-4dc4-aab1-5fcf0e5f9ecb",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/06251689-406e-4dc4-aab1-5fcf0e5f9ecb"
+          }
+        },
+        "attributes": {
+          "region": "banner_top"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "5d4d62e0-6eba-4a1b-bfb5-618e50c87856",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/5d4d62e0-6eba-4a1b-bfb5-618e50c87856"
+          }
+        },
+        "attributes": {
+          "region": "banner_top"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "9d3d3a23-69f5-4c2d-9a00-287492a52987",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/9d3d3a23-69f5-4c2d-9a00-287492a52987"
+          }
+        },
+        "attributes": {
+          "region": "header"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "d0c424db-9c53-41bd-bec9-6047088f7fd0",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/d0c424db-9c53-41bd-bec9-6047088f7fd0"
+          }
+        },
+        "attributes": {
+          "region": "content"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "69474f8b-3977-45ac-a689-125397eb8342",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/69474f8b-3977-45ac-a689-125397eb8342"
+          }
+        },
+        "attributes": {
+          "region": "bottom"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "24fa7857-5959-4621-a3f6-18866689bd39",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/24fa7857-5959-4621-a3f6-18866689bd39"
+          }
+        },
+        "attributes": {
+          "region": "footer"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "88a47371-c3ac-4beb-b07e-8a9d1ab45c45",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/88a47371-c3ac-4beb-b07e-8a9d1ab45c45"
+          }
+        },
+        "attributes": {
+          "region": "footer"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "76311a61-7d44-406c-8f54-568eff33b07b",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/76311a61-7d44-406c-8f54-568eff33b07b"
+          }
+        },
+        "attributes": {
+          "region": "tabs"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "deabf8f9-2ec4-4873-86d6-be1754e4f71d",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/deabf8f9-2ec4-4873-86d6-be1754e4f71d"
+          }
+        },
+        "attributes": {
+          "region": "header"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "6e3f039c-c0f1-45bc-87f7-efc57be9ae71",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/6e3f039c-c0f1-45bc-87f7-efc57be9ae71"
+          }
+        },
+        "attributes": {
+          "region": "highlighted"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "6c4d359b-d960-43b6-9418-8639adfcb909",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/6c4d359b-d960-43b6-9418-8639adfcb909"
+          }
+        },
+        "attributes": {
+          "region": "page_title"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "b36bef31-01d0-4479-a72e-bea08fe2594a",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/b36bef31-01d0-4479-a72e-bea08fe2594a"
+          }
+        },
+        "attributes": {
+          "region": "pre_header"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "54e8025c-abaf-4183-8c37-f083d1b15d4f",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/54e8025c-abaf-4183-8c37-f083d1b15d4f"
+          }
+        },
+        "attributes": {
+          "region": "banner_top"
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "797ba5e0-b7c7-464a-ab96-dea49f9e5d57",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/797ba5e0-b7c7-464a-ab96-dea49f9e5d57"
+          }
+        },
+        "attributes": {
+          "region": "content_bottom"
+        }
+      }
+    ],
+    "meta": {
+      "omitted": {
+        "detail": "Some resources have been omitted because of insufficient authorization.",
+        "links": {
+          "help": {
+            "href": "https://www.drupal.org/docs/8/modules/json-api/filtering#filters-access-control"
+          },
+          "item--tlJSfak": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/74b40244-4b00-482b-bc08-eb64fdb84b26",
+            "meta": {
+              "rel": "item",
+              "detail": "The current user is not allowed to GET the selected resource."
+            }
+          }
+        }
+      }
+    },
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block?fields%5Bblock--block%5D=region&filter%5Btheme%5D=umami"
+      }
     }
   },
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block?fields%5Bblock--block%5D=region&filter%5Btheme%5D=umami"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/block/block?filter%5Btheme%5D=umami&fields%5Bblock--block%5D=region",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

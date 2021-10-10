@@ -4,19 +4,20 @@ import md5 from 'md5'
 import path from 'path'
 import mockAxios from 'jest-mock-axios'
 
-const mockData = async (url, file) => {
-  let data
+const mockData = async (request, file) => {
+  let response
 
   // If the file isn't present, try to get it.
   if (!fs.existsSync(file)) {
     const axiosClient = axios.create({
       baseURL: 'https://demo-api.druxtjs.org'
     })
+    console.log(`Attempting to create mock: ${file}`)
     try {
-      data = (await axiosClient.get(url)).data
-      await fs.writeFileSync(file, JSON.stringify(data, null, '  '))
+      response = await axiosClient(request)
+      await fs.writeFileSync(file, JSON.stringify(response, null, '  '))
     } catch (err) {
-      console.log(err)
+      await fs.writeFileSync(file, JSON.stringify(err.response, null, '  '))
     }
     mockAxios.reset()
   }
@@ -27,16 +28,16 @@ const mockData = async (url, file) => {
     return { data: { file, url }, status: 404 }
   }
 
-  data = data ? data : require(file)
+  response = response ? response : require(file)
 
   // Throw error if error data is present.
-  if (data.errors) {
-    const error = new Error
-    error.response = { data }
+  if (response.data.errors || (!(response.status >= 200 && response.status < 300) && (!(request.options || {}).validateStatus || !(request.options || {}).validateStatus(response.status)))) {
+    const error = new Error()
+    error.response = response
     throw error
   }
 
-  return { data, status: 200 }
+  return response
 }
 
 // Mock 'get' requests.
@@ -44,17 +45,24 @@ mockAxios.get = jest.fn((url, options) => {
   if (url === '/jsonapi/missing/test') {
     throw new Error('Error')
   }
-  return mockData(url, path.resolve('./test/__fixtures__/get', md5(url) + '.json'))
+
+  const file = path.resolve('./test/__fixtures__/get', md5(url) + '.json')
+  const request = { method: 'get', url, options }
+  return mockData(request, file)
 })
 
 // Mock 'patch' requests.
-mockAxios.patch = jest.fn((url, data, options) => 
-  mockData(url, path.resolve('./test/__fixtures__/patch', md5(url), md5(JSON.stringify(data)) + '.json'))
-)
+mockAxios.patch = jest.fn((url, data, options) => {
+  const file = path.resolve('./test/__fixtures__/patch', md5(url), md5(JSON.stringify(data)) + '.json')
+  const request = { data, method: 'patch', options, url }
+  return mockData(request, file)
+})
 
 // Mock 'post' requests.
-mockAxios.post = jest.fn((url, data, options) => 
-  mockData(url, pathe.resolve('./test/__fixtures__/post', md5(url), md5(JSON.stringify(data)) + '.json'))
-)
+mockAxios.post = jest.fn((url, data, options) => {
+  const file = path.resolve('./test/__fixtures__/post', md5(url), md5(JSON.stringify(data)) + '.json')
+  const request = { data, method: 'post', options, url }
+  return mockData(request, file)
+})
 
 export default mockAxios

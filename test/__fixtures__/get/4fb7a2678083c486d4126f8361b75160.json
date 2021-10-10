@@ -1,105 +1,135 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "7b620f9b-58a7-497d-a724-d5c46772c20b",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/7b620f9b-58a7-497d-a724-d5c46772c20b"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "media",
+          "bundle": "audio",
+          "mode": "default",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "field.field.media.audio.field_media_audio_file",
+              "media.type.audio"
+            ],
+            "module": [
+              "file",
+              "path"
+            ]
+          },
+          "drupal_internal__id": "media.audio.default",
+          "content": {
+            "created": {
+              "type": "datetime_timestamp",
+              "weight": 10,
+              "region": "content",
+              "settings": [],
+              "third_party_settings": []
+            },
+            "field_media_audio_file": {
+              "weight": 0,
+              "settings": {
+                "progress_indicator": "throbber"
+              },
+              "third_party_settings": [],
+              "type": "file_generic",
+              "region": "content"
+            },
+            "langcode": {
+              "type": "language_select",
+              "weight": 2,
+              "region": "content",
+              "settings": {
+                "include_locked": true
+              },
+              "third_party_settings": []
+            },
+            "path": {
+              "type": "path",
+              "weight": 30,
+              "region": "content",
+              "settings": [],
+              "third_party_settings": []
+            },
+            "status": {
+              "type": "boolean_checkbox",
+              "settings": {
+                "display_label": true
+              },
+              "weight": 100,
+              "region": "content",
+              "third_party_settings": []
+            },
+            "uid": {
+              "type": "entity_reference_autocomplete",
+              "weight": 5,
+              "settings": {
+                "match_operator": "CONTAINS",
+                "match_limit": 10,
+                "size": 60,
+                "placeholder": ""
+              },
+              "region": "content",
+              "third_party_settings": []
+            }
+          },
+          "hidden": {
+            "moderation_state": true,
+            "name": true
+          }
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display?filter%5Bdrupal_internal__id%5D=media.audio.default"
       }
     }
   },
-  "data": [
-    {
-      "type": "entity_form_display--entity_form_display",
-      "id": "7b620f9b-58a7-497d-a724-d5c46772c20b",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/7b620f9b-58a7-497d-a724-d5c46772c20b"
-        }
-      },
-      "attributes": {
-        "targetEntityType": "media",
-        "bundle": "audio",
-        "mode": "default",
-        "langcode": "en",
-        "status": true,
-        "dependencies": {
-          "config": [
-            "field.field.media.audio.field_media_audio_file",
-            "media.type.audio"
-          ],
-          "module": [
-            "file",
-            "path"
-          ]
-        },
-        "drupal_internal__id": "media.audio.default",
-        "content": {
-          "created": {
-            "type": "datetime_timestamp",
-            "weight": 10,
-            "region": "content",
-            "settings": [],
-            "third_party_settings": []
-          },
-          "field_media_audio_file": {
-            "weight": 0,
-            "settings": {
-              "progress_indicator": "throbber"
-            },
-            "third_party_settings": [],
-            "type": "file_generic",
-            "region": "content"
-          },
-          "langcode": {
-            "type": "language_select",
-            "weight": 2,
-            "region": "content",
-            "settings": {
-              "include_locked": true
-            },
-            "third_party_settings": []
-          },
-          "path": {
-            "type": "path",
-            "weight": 30,
-            "region": "content",
-            "settings": [],
-            "third_party_settings": []
-          },
-          "status": {
-            "type": "boolean_checkbox",
-            "settings": {
-              "display_label": true
-            },
-            "weight": 100,
-            "region": "content",
-            "third_party_settings": []
-          },
-          "uid": {
-            "type": "entity_reference_autocomplete",
-            "weight": 5,
-            "settings": {
-              "match_operator": "CONTAINS",
-              "match_limit": 10,
-              "size": 60,
-              "placeholder": ""
-            },
-            "region": "content",
-            "third_party_settings": []
-          }
-        },
-        "hidden": {
-          "moderation_state": true,
-          "name": true
-        }
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display?filter%5Bdrupal_internal__id%5D=media.audio.default"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display?filter%5Bdrupal_internal__id%5D=media.audio.default",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

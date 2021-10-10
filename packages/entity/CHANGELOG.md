@@ -1,5 +1,18 @@
 # druxt-entity
 
+## 0.20.0
+
+### Minor Changes
+
+- 897dcbc: Updated DruxtEntityForm to use new DruxtClient methods
+
+### Patch Changes
+
+- Updated dependencies [4504a2f]
+  - druxt@0.12.0
+  - druxt-router@0.22.0
+  - druxt-schema@0.8.1
+
 ## 0.19.0
 
 ### Minor Changes

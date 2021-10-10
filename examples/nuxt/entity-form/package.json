@@ -1,0 +1,12 @@
+{
+  "name": "entity-form",
+  "private": true,
+  "packageManager": "yarn@3.0.0",
+  "scripts": {
+    "dev": "nuxt"
+  },
+  "dependencies": {
+    "druxt-site": "link:../../../packages/druxt-entity",
+    "nuxt": "latest"
+  }
+}

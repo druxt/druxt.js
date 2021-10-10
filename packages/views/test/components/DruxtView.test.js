@@ -103,6 +103,7 @@ describe('DruxtView', () => {
     ])
 
     // Query.
+    await wrapper.setProps({ arguments: [1, 2, 3] })
     wrapper.vm.model = {
       page: 1,
       filter: { test: 1 },
@@ -110,6 +111,9 @@ describe('DruxtView', () => {
     }
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({
       page: 1,
+      'views-argument[0]': 1,
+      'views-argument[1]': 2,
+      'views-argument[2]': 3,
       'views-filter': { test: 1 },
       'views-sort[sort_by]': 'test',
     })
@@ -121,7 +125,9 @@ describe('DruxtView', () => {
     expect(wrapper.vm.model.sort).toBe(null)
 
     wrapper.vm.$route.query = {}
+    await wrapper.setProps({ arguments: [] })
     await localVue.nextTick()
+
     expect(wrapper.vm.model).toStrictEqual({
       filter: {},
       page: null,
@@ -188,7 +194,7 @@ describe('DruxtView', () => {
   // })
 
   test('getQuery', async () => {
-    const mock = { model: {} }
+    const mock = { arguments: [], model: {} }
     expect(DruxtView.methods.getQuery.call(mock)).toStrictEqual({})
 
     mock.display = { display_options: { filters: [{

@@ -98,10 +98,12 @@ describe('DruxtRouter', () => {
   })
 
   test('get - error', async () => {
-    const { route } = await router.get('/error')
-
-    expect(route.error).toHaveProperty('message')
-    expect(route.error).toHaveProperty('statusCode', 404)
+    try {
+      await router.get('/error')
+    } catch(err) {
+      expect(err.response.status).toBe(404)
+      expect(err.response.data.message).toBe('Unable to resolve path /error.')
+    }
   })
 
   // @deprecated
@@ -233,5 +235,12 @@ describe('DruxtRouter', () => {
     route = await router.getRoute('/node/1')
 
     expect(route).toHaveProperty('isHomePath', false)
+
+    try {
+      await router.getRoute('/error')
+    } catch(err) {
+      expect(err.response.status).toBe(404)
+      expect(err.response.data.message).toBe('Unable to resolve path /error.')
+    }
   })
 })

@@ -1,93 +1,123 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
+      }
+    },
+    "data": [
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "fd739524-28b2-45b3-b94b-304bdf424270",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/fd739524-28b2-45b3-b94b-304bdf424270"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "contact_message",
+          "bundle": "feedback",
+          "mode": "default",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "contact.form.feedback"
+            ]
+          },
+          "drupal_internal__id": "contact_message.feedback.default",
+          "content": {
+            "copy": {
+              "weight": 4,
+              "region": "content",
+              "settings": [],
+              "third_party_settings": []
+            },
+            "langcode": {
+              "type": "language_select",
+              "weight": 2,
+              "region": "content",
+              "settings": {
+                "include_locked": true
+              },
+              "third_party_settings": []
+            },
+            "mail": {
+              "weight": 1,
+              "region": "content",
+              "settings": [],
+              "third_party_settings": []
+            },
+            "message": {
+              "type": "string_textarea",
+              "weight": 3,
+              "settings": {
+                "rows": 12,
+                "placeholder": ""
+              },
+              "region": "content",
+              "third_party_settings": []
+            },
+            "name": {
+              "weight": 0,
+              "region": "content",
+              "settings": [],
+              "third_party_settings": []
+            },
+            "subject": {
+              "type": "string_textfield",
+              "weight": 2,
+              "region": "content",
+              "settings": {
+                "size": 60,
+                "placeholder": ""
+              },
+              "third_party_settings": []
+            }
+          },
+          "hidden": {
+            "preview": true
+          }
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display?filter%5Bdrupal_internal__id%5D=contact_message.feedback.default"
       }
     }
   },
-  "data": [
-    {
-      "type": "entity_form_display--entity_form_display",
-      "id": "fd739524-28b2-45b3-b94b-304bdf424270",
-      "links": {
-        "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/fd739524-28b2-45b3-b94b-304bdf424270"
-        }
-      },
-      "attributes": {
-        "targetEntityType": "contact_message",
-        "bundle": "feedback",
-        "mode": "default",
-        "langcode": "en",
-        "status": true,
-        "dependencies": {
-          "config": [
-            "contact.form.feedback"
-          ]
-        },
-        "drupal_internal__id": "contact_message.feedback.default",
-        "content": {
-          "copy": {
-            "weight": 4,
-            "region": "content",
-            "settings": [],
-            "third_party_settings": []
-          },
-          "langcode": {
-            "type": "language_select",
-            "weight": 2,
-            "region": "content",
-            "settings": {
-              "include_locked": true
-            },
-            "third_party_settings": []
-          },
-          "mail": {
-            "weight": 1,
-            "region": "content",
-            "settings": [],
-            "third_party_settings": []
-          },
-          "message": {
-            "type": "string_textarea",
-            "weight": 3,
-            "settings": {
-              "rows": 12,
-              "placeholder": ""
-            },
-            "region": "content",
-            "third_party_settings": []
-          },
-          "name": {
-            "weight": 0,
-            "region": "content",
-            "settings": [],
-            "third_party_settings": []
-          },
-          "subject": {
-            "type": "string_textfield",
-            "weight": 2,
-            "region": "content",
-            "settings": {
-              "size": 60,
-              "placeholder": ""
-            },
-            "third_party_settings": []
-          }
-        },
-        "hidden": {
-          "preview": true
-        }
-      }
-    }
-  ],
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display?filter%5Bdrupal_internal__id%5D=contact_message.feedback.default"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display?filter%5Bdrupal_internal__id%5D=contact_message.feedback.default",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }

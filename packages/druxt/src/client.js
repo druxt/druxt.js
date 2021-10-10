@@ -137,6 +137,44 @@ class DruxtClient {
   }
 
   /**
+   * Create a JSON:API resource.
+   *
+   * @example @lang js
+   * await this.$druxt.createResource({ type: 'node--page', attributes: {}, relationships: {} })
+   *
+   * @param {object} resource - The JSON:API resource object
+   *
+   * @returns {object} The response data
+   */
+  async createResource(resource) {
+    if (resource.id) {
+      return this.updateResource(resource)
+    }
+
+    const { href } = await this.getIndex(resource.type)
+    if (!href) {
+      return false
+    }
+
+    let response
+    try {
+      response = await this.axios.post(
+        href,
+        { data: resource },
+        {
+          headers: {
+            'Content-Type': 'application/vnd.api+json'
+          }
+        }
+      )
+    } catch (err) {
+      response = (err.response || {}).data || err.message
+    }
+
+    return response
+  }
+
+  /**
    * Get a collection of resources from the JSON:API server.
    *
    * @param {string} type - The JSON:API Resource type.
@@ -211,6 +249,7 @@ class DruxtClient {
     this.index = index.data.links
 
     // Use JSON API resource config to decorate the index.
+    // @TODO - Add test coverage
     if (this.index[this.options.jsonapiResourceConfig]) {
       const resources = await this.axios.get(this.index[this.options.jsonapiResourceConfig].href)
       for (const resourceType in resources.data.data) {
@@ -237,6 +276,38 @@ class DruxtClient {
     }
 
     return this.index
+  }
+
+  /**
+   * Get the related resources from a specified JSON:API resource.
+   *
+   * @example @lang js
+   * const related = this.$druxt.getRelated('node--page', id, 'uid')
+   *
+   * @param {string} type - The JSON:API Resource type.
+   * @param {string} id - The Drupal resource UUID.
+   * @param {string} related - The relationship name.
+   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   *
+   * @returns {object} The related JSON:API resource(s).
+   */
+  async getRelated(type, id, related, query) {
+    if (!id || !type || !related) {
+      return false
+    }
+
+    let { href } = await this.getIndex(type)
+    if (!href) {
+      href = this.options.endpoint + '/' + type.replace('--', '/')
+    }
+
+    const url = this.buildQueryUrl(`${href}/${id}/${related}`, query)
+    try {
+      const related = await this.axios.get(url)
+      return related.data
+    } catch (e) {
+      return false
+    }
   }
 
   /**
@@ -268,6 +339,41 @@ class DruxtClient {
     } catch (e) {
       return false
     }
+  }
+
+  /**
+   * Update a JSON:API resource.
+   *
+   * @example @lang js
+   * await this.$druxt.updateResource({ type: 'node--page', id, attributes: {}, relationships: {} })
+   *
+   * @param {object} resource - The JSON:API resource object
+   *
+   * @returns {object} The response data
+   */
+   async updateResource(resource) {
+    const { href } = await this.getIndex(resource.type)
+    if (!href) {
+      return false
+    }
+    const url = [href, resource.id].join('/')
+
+    let response
+    try {
+      response = await this.axios.patch(
+        url,
+        { data: resource },
+        {
+          headers: {
+            'Content-Type': 'application/vnd.api+json'
+          }
+        }
+      )
+    } catch (err) {
+      response = (err.response || {}).data || err.message
+    }
+
+    return response
   }
 }
 

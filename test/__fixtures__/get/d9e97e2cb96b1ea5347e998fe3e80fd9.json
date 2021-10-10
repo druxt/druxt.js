@@ -1,64 +1,94 @@
 {
-  "jsonapi": {
-    "version": "1.0",
-    "meta": {
-      "links": {
-        "self": {
-          "href": "http://jsonapi.org/format/1.0/"
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
         }
       }
-    }
-  },
-  "data": {
-    "type": "block--block",
-    "id": "54e8025c-abaf-4183-8c37-f083d1b15d4f",
+    },
+    "data": {
+      "type": "block--block",
+      "id": "54e8025c-abaf-4183-8c37-f083d1b15d4f",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/54e8025c-abaf-4183-8c37-f083d1b15d4f"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "views.view.promoted_items"
+          ],
+          "module": [
+            "system",
+            "views"
+          ],
+          "theme": [
+            "umami"
+          ]
+        },
+        "drupal_internal__id": "views_block__promoted_items_block_1",
+        "theme": "umami",
+        "region": "banner_top",
+        "weight": -6,
+        "provider": null,
+        "plugin": "views_block:promoted_items-block_1",
+        "settings": {
+          "id": "views_block:promoted_items-block_1",
+          "label": "",
+          "provider": "views",
+          "label_display": "0",
+          "views_label": "",
+          "items_per_page": "none"
+        },
+        "visibility": {
+          "request_path": {
+            "id": "request_path",
+            "pages": "<front>",
+            "negate": false,
+            "context_mapping": []
+          }
+        }
+      }
+    },
     "links": {
       "self": {
         "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/54e8025c-abaf-4183-8c37-f083d1b15d4f"
       }
-    },
-    "attributes": {
-      "langcode": "en",
-      "status": true,
-      "dependencies": {
-        "config": [
-          "views.view.promoted_items"
-        ],
-        "module": [
-          "system",
-          "views"
-        ],
-        "theme": [
-          "umami"
-        ]
-      },
-      "drupal_internal__id": "views_block__promoted_items_block_1",
-      "theme": "umami",
-      "region": "banner_top",
-      "weight": -6,
-      "provider": null,
-      "plugin": "views_block:promoted_items-block_1",
-      "settings": {
-        "id": "views_block:promoted_items-block_1",
-        "label": "",
-        "provider": "views",
-        "label_display": "0",
-        "views_label": "",
-        "items_per_page": "none"
-      },
-      "visibility": {
-        "request_path": {
-          "id": "request_path",
-          "pages": "<front>",
-          "negate": false,
-          "context_mapping": []
-        }
-      }
     }
   },
-  "links": {
-    "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/54e8025c-abaf-4183-8c37-f083d1b15d4f"
-    }
-  }
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/block/block/54e8025c-abaf-4183-8c37-f083d1b15d4f?filter%5Bdrupal_internal__id%5D=views_block__promoted_items_block_1",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
 }
