@@ -2,7 +2,7 @@
 "druxt-views": minor
 ---
 
-Added support for Contetual filters (arguments)
+Added support for Contextual filters (arguments)
 
 ```vue
 <DruxtView
