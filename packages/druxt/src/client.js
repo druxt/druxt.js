@@ -139,6 +139,9 @@ class DruxtClient {
   /**
    * Create a JSON:API resource.
    *
+   * @example @lang js
+   * await this.$druxt.createResource({ type: 'node--page', attributes: {}, relationships: {} })
+   *
    * @param {object} resource - The JSON:API resource object
    *
    * @returns {object} The response data
@@ -308,6 +311,9 @@ class DruxtClient {
 
   /**
    * Update a JSON:API resource.
+   *
+   * @example @lang js
+   * await this.$druxt.updateResource({ type: 'node--page', id, attributes: {}, relationships: {} })
    *
    * @param {object} resource - The JSON:API resource object
    *
