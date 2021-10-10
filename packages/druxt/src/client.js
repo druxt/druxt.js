@@ -278,6 +278,9 @@ class DruxtClient {
   /**
    * Get the related resources from a specified JSON:API resource.
    *
+   * @example @lang js
+   * const related = this.$druxt.getRelated('node--page', id, 'uid')
+   *
    * @param {string} type - The JSON:API Resource type.
    * @param {string} id - The Drupal resource UUID.
    * @param {string} related - The relationship name.
