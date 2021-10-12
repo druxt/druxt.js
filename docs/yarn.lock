@@ -4636,10 +4636,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"daisyui@npm:1.14.1":
-  version: 1.14.1
-  resolution: "daisyui@npm:1.14.1"
-  checksum: edd50c288d3642df553881f8b38687df191f4e37e1412d72cdc7a11654ea6d6266d3b845ce3eef6668280b46db9b2b1ca9b55bfc7637e21bd6226ff2d7609588
+"daisyui@npm:1.14.4":
+  version: 1.14.4
+  resolution: "daisyui@npm:1.14.4"
+  checksum: dc257d2d0a2ab9f39a51527cc77d17bdcb2df0f1f72ba4ee503417972dc16357e8d0e1f07e968e06a2aefa02fe192ceb3dc323df7a2123c414e8bfbcd3250189
   languageName: node
   linkType: hard
 
@@ -5014,7 +5014,7 @@ __metadata:
     "@nuxtjs/tailwindcss": 4.2.1
     "@tailwindcss/typography": 0.4.1
     core-js: 3.18.2
-    daisyui: 1.14.1
+    daisyui: 1.14.4
     nuxt: 2.15.8
     nuxt-social-meta: 1.0.0
   languageName: unknown
