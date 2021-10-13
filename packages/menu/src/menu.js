@@ -167,7 +167,6 @@ class DruxtMenu {
     try {
       collections = await this.druxt.getCollectionAll(menuItemsResource, query)
     } catch(e) {
-      console.log("ASDASDOOO")
       return { entities }
     }
     for (const collection of collections) {
