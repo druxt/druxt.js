@@ -1,5 +1,11 @@
 # druxt-menu
 
+## 0.14.2
+
+### Patch Changes
+
+- 631598d: Removed debug code
+
 ## 0.14.1
 
 ### Patch Changes
