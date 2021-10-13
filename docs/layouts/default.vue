@@ -14,6 +14,7 @@
       />
 
       <main
+        ref="main"
         class="
           flex-grow
           block
@@ -42,7 +43,11 @@ export default {
 
   watch: {
     $route() {
+      // Close the sidebar.
       this.sidebar = false
+
+      // Scroll to the top of the main div.
+      this.$refs.main.scrollTop = 0
     }
   }
 }
