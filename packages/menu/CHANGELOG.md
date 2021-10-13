@@ -1,6 +1,6 @@
 # druxt-menu
 
-## 0.14.2
+## 0.14.3
 
 ### Patch Changes
 
