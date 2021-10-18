@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="hero min-h-screen bg-base-200">
+    <div class="hero min-h-full bg-base-200">
       <div class="text-center hero-content">
         <div class="max-w-md">
           <AppLogo class="w-1/2 mb-5 mx-auto" />

@@ -25,6 +25,10 @@
         "
       >
         <Nuxt />
+
+        <AppBlog class="bg-secondary-content" />
+
+        <AppFooter />
       </main>
 
       <div class="drawer-side">
@@ -32,6 +36,7 @@
         <AppSidebar />
       </div>
     </div>
+
   </div>
 </template>
 
