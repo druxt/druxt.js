@@ -2,22 +2,21 @@ image:
   file: .gitpod/Dockerfile
 
 tasks:
-  - name: druxtjs.org
+  - before: git pull -f origin main:main
     init: |
-      # druxt/docs installation
-      gp sync-await build
-      cd $GITPOD_REPO_ROOT/docs && yarn
-    command: |
-      cd $GITPOD_REPO_ROOT/docs && BASE_URL=$(gp url 8080) yarn dev
+      # DDev prebuild tasks
+      .gitpod/scripts/ddev-download.sh
+      .gitpod/scripts/ddev-setup.sh
 
-  - name: druxt.js
-    before: git pull -f origin main:main
-    init: |
-      # druxt installation
+      # druxt.js build install and build
       yarn install
       yarn build
-      yarn build:docs
-      gp sync-done build
+
+      # druxtjs.org install
+      cd $GITPOD_REPO_ROOT/docs && yarn
+      cd $GITPOD_REPO_ROOT && yarn build:docs
+    command: |
+      echo "\n# Welcome to the DruxtJS Gitpod development environment"
 
 # VScode xdebug extension
 vscode:
