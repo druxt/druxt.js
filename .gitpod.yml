@@ -16,7 +16,7 @@ tasks:
       cd $GITPOD_REPO_ROOT/docs && yarn
       cd $GITPOD_REPO_ROOT && yarn build:docs
     command: |
-      echo "\n# Welcome to the DruxtJS Gitpod development environment"
+      cat .gipod/WELCOME.md
 
 # VScode xdebug extension
 vscode:
