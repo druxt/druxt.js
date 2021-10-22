@@ -6,7 +6,7 @@ tasks:
     init: |
       # DDev prebuild tasks
       .gitpod/scripts/ddev-download.sh
-      .gitpod/scripts/ddev-setup.sh
+      .gitpod/scripts/drupal-setup.sh
 
       # druxt.js build install and build
       yarn install
@@ -16,7 +16,8 @@ tasks:
       cd $GITPOD_REPO_ROOT/docs && yarn
       cd $GITPOD_REPO_ROOT && yarn build:docs
     command: |
-      cat .gipod/WELCOME.md
+      .gitpod/scripts/ddev-setup.sh && clear
+      cat .gitpod/WELCOME.md
 
 # VScode xdebug extension
 vscode:

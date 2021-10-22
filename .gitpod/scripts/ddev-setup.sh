@@ -35,4 +35,4 @@ services:
 COMPOSEEND
 
 # Misc housekeeping before start
-ddev config global --instrumentation-opt-in=true --router-bind-all-interfaces=true
+ddev config global --instrumentation-opt-in=true --omit-containers=ddev-router

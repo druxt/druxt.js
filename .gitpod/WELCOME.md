@@ -1,3 +1,11 @@
+
+██████╗ ██████╗ ██╗   ██╗██╗  ██╗████████╗     ██╗███████╗
+██╔══██╗██╔══██╗██║   ██║╚██╗██╔╝╚══██╔══╝     ██║██╔════╝
+██║  ██║██████╔╝██║   ██║ ╚███╔╝    ██║        ██║███████╗
+██║  ██║██╔══██╗██║   ██║ ██╔██╗    ██║   ██   ██║╚════██║
+██████╔╝██║  ██║╚██████╔╝██╔╝ ██╗   ██║██╗╚█████╔╝███████║
+╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝╚═╝ ╚════╝ ╚══════╝
+
 # Welcome to the DruxtJS Gitpod development environment
 
 To get started you can do one of the following tasks:
@@ -7,3 +15,4 @@ To get started you can do one of the following tasks:
 - Start the DruxtJS.org website: `cd docs && yarn dev`
 
 Happy contributing.
+
