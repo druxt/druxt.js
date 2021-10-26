@@ -7,7 +7,7 @@ import { DruxtSchemaNuxtModule } from './nuxtModule'
  *
  * @type class
  * @exports DruxtSchema
- * @see {@link ./schema|DruxtSchema}
+ * @see {@link /api/packages/schema/schema|DruxtSchema}
  *
  * @example @lang js
  * import { DruxtSchema } from 'druxt-schema'
@@ -22,14 +22,12 @@ export { DruxtSchema } from './schema'
  *
  * @exports DruxtSchemaMixin
  * @type {object}
- * @see {@link ./mixins/schema|DruxtSchemaMixin}
+ * @see {@link /api/packages/schema/mixins/schema|DruxtSchemaMixin}
  *
  * @example @lang vue
  * <script>
  * import { DruxtSchemaMixin } from 'druxt-schema'
- *
  * export default {
- *   name: 'CustomComponent',
  *   mixins: [DruxtSchemaMixin]
  * }
  * </script>
@@ -43,7 +41,7 @@ export { DruxtSchemaMixin } from './mixins/schema'
  *
  * @exports DruxtSchemaStore
  * @type {Function}
- * @see {@link ./store/schema|DruxtSchemaStore}
+ * @see {@link /api/packages/schema/store/schema|DruxtSchemaStore}
  */
 export { DruxtSchemaStore } from './stores/schema'
 
