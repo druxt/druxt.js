@@ -55,43 +55,6 @@ export default {
     resource: {},
   }),
 
-  /**
-   * The Nuxt Fetch hook.
-   *
-   * Fetches the Block JSON:API resource by either UUID or ID.
-   */
-  async fetch() {
-    // Build query.
-    const type = 'block--block'
-    const query = new DrupalJsonApiParams()
-
-    const fields = ((this.$druxt.settings.blocks || {}).query || {}).fields
-    if (Array.isArray(fields)) {
-      query.addFields(type, [
-        ...fields,
-        'plugin',
-        'region',
-        'settings',
-        'theme',
-      ])
-    }
-
-    // Fetch Block by UUID.
-    if (this.uuid) {
-      const id = this.uuid
-      this.resource = await this.getResource({ type, id, query })
-    }
-
-    // Fetch Block by Drupal internal ID.
-    else if (this.id) {
-      query.addFilter('drupal_internal__id', this.id)
-      const collection = await this.getCollection({ type, query })
-      this.resource = { data: collection.data[0] }
-    }
-
-    await DruxtModule.fetch.call(this)
-  },
-
   fetchKey(getCounter) {
     const parts = ['DruxtBlock', this.uuid || this.id].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
@@ -145,6 +108,39 @@ export default {
       componentOptions.push([plugin, block.attributes.theme])
       componentOptions.push(['default'])
       return componentOptions
+    },
+
+    /**
+     * Fetches the Block JSON:API resource by either UUID or ID.
+     */
+    async fetchConfig() {
+      // Build query.
+      const type = 'block--block'
+      const query = new DrupalJsonApiParams()
+
+      const fields = ((this.$druxt.settings.blocks || {}).query || {}).fields
+      if (Array.isArray(fields)) {
+        query.addFields(type, [
+          ...fields,
+          'plugin',
+          'region',
+          'settings',
+          'theme',
+        ])
+      }
+
+      // Fetch Block by UUID.
+      if (this.uuid) {
+        const id = this.uuid
+        this.resource = await this.getResource({ type, id, query })
+      }
+
+      // Fetch Block by Drupal internal ID.
+      else if (this.id) {
+        query.addFilter('drupal_internal__id', this.id)
+        const collection = await this.getCollection({ type, query })
+        this.resource = { data: collection.data[0] }
+      }
     },
 
     /**

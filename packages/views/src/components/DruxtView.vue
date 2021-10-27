@@ -112,55 +112,6 @@ export default {
     }
   },
 
-  /** */
-  async fetch() {
-    let component = { ...this.component }
-
-    // Fetch View.
-    if (!this.view && (this.uuid || this.viewId)) {
-      if (this.uuid) {
-        this.view = await this.getResource({
-          type: this.type,
-          id: this.uuid,
-        })
-      } else {
-        const collection = await this.getCollection({ type: this.type, query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId) })
-        this.view = { data: collection.data[0] }
-      }
-
-      // Build wrapper component object.
-      const options = this.getModuleComponents()
-      component = {
-        is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
-        options: options.map(o => o.name) || [],
-      }
-    }
-
-    // Get scoped slots.
-    component.slots = Object.keys(this.getScopedSlots())
-
-    // Get wrapper component data to merge with module settings.
-    const wrapperData = await this.getWrapperData(component.is)
-    component.settings = merge(this.$druxt.settings.views, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
-
-    // Fetch JSON:API Views resource.
-    const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
-    if (viewId) {
-      const query = this.getQuery(component.settings)
-      this.resource = await this.getResults({
-        viewId,
-        displayId: this.displayId,
-        query: stringify(query)
-      })
-    }
-
-    // Build wrapper component propsData.
-    component = { ...component, ...this.getModulePropsData(wrapperData.props) }
-
-    // Set component data.
-    this.component = component
-  },
-
   fetchKey(getCounter) {
     const parts = ['DruxtView', this.viewId || this.uuid, this.displayId].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
@@ -440,6 +391,38 @@ export default {
     componentOptions: ({ displayId, uuid, viewId }) => ([[viewId || uuid, displayId]]),
 
     /**
+     * Fetch View configuration resource.
+     */
+    async fetchConfig() {
+      if (!this.view && (this.uuid || this.viewId)) {
+        if (this.uuid) {
+          this.view = await this.getResource({
+            type: this.type,
+            id: this.uuid,
+          })
+        } else {
+          const collection = await this.getCollection({ type: this.type, query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId) })
+          this.view = { data: collection.data[0] }
+        }
+      }
+    },
+
+    /**
+     * Fetch JSON:API Views results.
+     */
+    async fetchData(settings) {
+      const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
+      if (viewId) {
+        const query = this.getQuery(settings)
+        this.resource = await this.getResults({
+          viewId,
+          displayId: this.displayId,
+          query: stringify(query)
+        })
+      }
+    },
+
+    /**
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
@@ -453,6 +436,16 @@ export default {
       results: vm.results,
       view: vm.view
     }),
+
+    /**
+     * Component settings.
+     */
+    settings: ({ $druxt }, wrapperSettings) => {
+      const settings = merge($druxt.settings.views || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
+      return {
+        query: settings.query || {},
+      }
+    },
 
     /**
      * Provides the scoped slots object for the Module render function.

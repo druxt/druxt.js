@@ -91,6 +91,11 @@ export default {
       return false
     }
 
+    // Fetch configuration.
+    if ((this.$options.druxt || {}).fetchConfig) {
+      await this.$options.druxt.fetchConfig.call(this)
+    }
+
     // Build wrapper component object.
     const options = this.getModuleComponents()
     let component = {
@@ -98,12 +103,22 @@ export default {
       options: options.map(o => o.name) || [],
     }
 
-    // Get scoped slots.
-    component.slots = Object.keys(this.getScopedSlots())
-
     // Get wrapper data.
     const wrapperData = await this.getWrapperData(component.is)
+
+    // Build module settings.
     component.settings = wrapperData.druxt || {}
+    if ((this.$options.druxt || {}).settings) {
+      component.settings = this.$options.druxt.settings(this, component.settings)
+    }
+
+    // Fetch resource.
+    if ((this.$options.druxt || {}).fetchData) {
+      await this.$options.druxt.fetchData.call(this, component.settings)
+    }
+
+    // Get scoped slots.
+    component.slots = Object.keys(this.getScopedSlots())
 
     // Build wrapper component propsData.
     component = { ...component, ...this.getModulePropsData(wrapperData.props) }

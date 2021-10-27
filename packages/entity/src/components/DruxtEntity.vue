@@ -84,49 +84,6 @@ export default {
     schema: null,
   }),
 
-  /**
-   * Nuxt.js fetch method.
-   */
-  async fetch() {
-    // Fetch Schema.
-    try {
-      this.schema = await this.getSchema({
-        resourceType: this.type,
-        mode: this.mode,
-        schemaType: this.schemaType || 'view',
-      })
-    } catch(e) {
-      // TODO: Handle error
-    }
-
-    // Build wrapper component object.
-    const options = this.getModuleComponents()
-    let component = {
-      is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
-      options: options.map(o => o.name) || [],
-    }
-
-    // Get wrapper component data to merge with module settings.
-    const wrapperData = await this.getWrapperData(component.is)
-    component.settings = merge(this.$druxt.settings.entity || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
-
-    // Fetch Entity resource.
-    if (this.uuid && !this.value) {
-      const query = this.getQuery(component.settings)
-      const entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
-      this.model = JSON.parse(JSON.stringify(entity || {}))
-    }
-
-    // Get scoped slots.
-    component.slots = Object.keys(this.getScopedSlots())
-
-    // Build wrapper component propsData.
-    component = { ...component, ...this.getModulePropsData(wrapperData.props) }
-
-    // Set component data.
-    this.component = component
-  },
-
   fetchKey(getCounter) {
     const parts = ['DruxtEntity', this.type, this.uuid, this.mode, this.schemaType].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
@@ -257,12 +214,48 @@ export default {
     ]),
 
     /**
+     * Fetch Schema.
+     */
+    async fetchConfig() {
+      try {
+        this.schema = await this.getSchema({
+          resourceType: this.type,
+          mode: this.mode,
+          schemaType: this.schemaType || 'view',
+        })
+      } catch(e) {
+        // TODO: Handle error
+      }
+    },
+
+    /**
+     * Fetch Entity resource.
+     */
+    async fetchData(settings) {
+      if (this.uuid && !this.value) {
+        const query = this.getQuery(settings)
+        const entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
+        this.model = JSON.parse(JSON.stringify(entity || {}))
+      }
+    },
+
+    /**
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
     propsData: ({ fields, model, schema }) => ({ entity: model, fields, schema, value: model }),
+
+    /**
+     * Component settings.
+     */
+    settings: ({ $druxt }, wrapperSettings) => {
+      const settings = merge($druxt.settings.entity || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
+      return {
+        query: settings.query || {},
+      }
+    },
 
     /**
      * Provides the scoped slots object for the Module render function.
