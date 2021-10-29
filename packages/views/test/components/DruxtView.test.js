@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import { DruxtViewsStore } from '../../src'
 import DruxtView from '../../src/components/DruxtView.vue'
+import { getMockResource } from '../../../test-utils/src'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -151,6 +152,17 @@ describe('DruxtView', () => {
     expect(mocks.$fetch).toHaveBeenCalledTimes(5)
     await DruxtView.watch.viewId.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(6)
+  })
+
+  test('fetch by uuid', async () => {
+    const mockView = await getMockResource('view--view')
+    const wrapper = mountComponent({
+      uuid: mockView.data.id,
+    })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Fetch key.
+    expect(DruxtView.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe(`DruxtView:${mockView.data.id}:default:0`)
   })
 
   // TODO : Fix test for filters / attachments, etc.

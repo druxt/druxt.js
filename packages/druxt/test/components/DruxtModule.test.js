@@ -133,7 +133,10 @@ describe('DruxtModule component', () => {
       extends: DruxtModule,
       druxt: {
         componentOptions: () => ([['wrapper']]),
+        async fetchConfig() {},
+        async fetchData(settings) {},
         propsData: () => ({ foo: 'bar' }),
+        settings: ({}, settings) => ({ ...settings, custom: true }),
         slots: (h) => ({ default: () => h('div', ['test'] )}),
       }
     }
@@ -148,7 +151,7 @@ describe('DruxtModule component', () => {
       options: ['CustomModuleWrapper'],
       props: { foo: 'bar' },
       propsData: { foo: 'bar' },
-      settings: { foo: 'bar' },
+      settings: { foo: 'bar', custom: true },
       slots: ['default'],
     })
 
