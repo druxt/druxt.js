@@ -57,27 +57,6 @@ export default {
     blocks: []
   }),
 
-  /**
-   * The Nuxt Fetch hook.
-   *
-   * Fetches all blocks by region and theme.
-   */
-  async fetch() {
-    const type = 'block--block'
-    const query = new DrupalJsonApiParams()
-    query
-      .addFilter('region', this.name)
-      .addFilter('status', '1')
-      .addFilter('theme', this.theme)
-      .addSort('weight')
-      .addFields(type, ['drupal_internal__id', 'visibility', 'weight'])
-
-    const collection = await this.getCollection({ type, query })
-    this.blocks = collection.data
-
-    await DruxtModule.fetch.call(this)
-  },
-
   fetchKey(getCounter) {
     const parts = ['DruxtBlockRegion', this.name].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
@@ -144,6 +123,23 @@ export default {
      * @returns {ComponentOptions}
      */
     componentOptions: ({ name, theme }) => [[name, theme], ['default']],
+
+    /**
+     * Fetches all blocks by region and theme.
+     */
+    async fetchConfig() {
+      const type = 'block--block'
+      const query = new DrupalJsonApiParams()
+      query
+        .addFilter('region', this.name)
+        .addFilter('status', '1')
+        .addFilter('theme', this.theme)
+        .addSort('weight')
+        .addFields(type, ['drupal_internal__id', 'visibility', 'weight'])
+
+      const collection = await this.getCollection({ type, query })
+      this.blocks = collection.data
+    },
 
     /**
      * Provides propsData for the DruxtWrapper.

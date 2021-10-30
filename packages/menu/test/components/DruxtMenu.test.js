@@ -21,6 +21,7 @@ localVue.component('druxt-menu-item', DruxtMenuItemComponent)
 let store
 
 const mocks = {
+  $druxt: { settings: {} },
   $route: { path: '/' },
   $fetchState: { pending: true }
 }

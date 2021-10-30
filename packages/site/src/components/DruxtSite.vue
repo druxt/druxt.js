@@ -63,40 +63,6 @@ export default {
   }),
 
   /**
-   * Nuxt.js fetch method.
-   *
-   * Fetches theme filtered region names from the Block JSON:API resources to be
-   * used to render the `<DruxtBlockRegion />`'s.
-   */
-  async fetch() {
-    const type = 'block--block'
-
-    // If no default theme is provided, get the first available valid theme.
-    if (!this.defaultTheme) {
-      this.defaultTheme = await this.getCollection({
-        type,
-        query: new DrupalJsonApiParams()
-          .addFields(type, ['theme'])
-          .addFilter('plugin', 'system_main_block')
-          .addPageLimit(1)
-      }).then((resources) => resources.data[0].attributes.theme)
-    }
-
-    // Fetch all available regions.
-    if (!this.value) {
-      this.model = await this.getCollection({
-        type,
-        query: new DrupalJsonApiParams()
-          .addFilter('theme', this.theme || this.defaultTheme)
-          .addFields(type, ['region']),
-      }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
-    }
-
-    // Call DruxtModule fetch hook.
-    await DruxtModule.fetch.call(this)
-  },
-
-  /**
    * Vue.js Computed properties.
    */
   computed: {
@@ -134,6 +100,35 @@ export default {
      * @returns {ComponentOptions}
      */
     componentOptions: ({ defaultTheme, theme }) => [[theme || defaultTheme], ['default']],
+
+    /**
+     * Fetches theme filtered region names from the Block JSON:API resources to
+     * be used to render the `<DruxtBlockRegion />`'s.
+     */
+    async fetchConfig() {
+      const type = 'block--block'
+
+      // If no default theme is provided, get the first available valid theme.
+      if (!this.defaultTheme) {
+        this.defaultTheme = await this.getCollection({
+          type,
+          query: new DrupalJsonApiParams()
+            .addFields(type, ['theme'])
+            .addFilter('plugin', 'system_main_block')
+            .addPageLimit(1)
+        }).then((resources) => resources.data[0].attributes.theme)
+      }
+
+      // Fetch all available regions.
+      if (!this.value) {
+        this.model = await this.getCollection({
+          type,
+          query: new DrupalJsonApiParams()
+            .addFilter('theme', this.theme || this.defaultTheme)
+            .addFields(type, ['region']),
+        }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
+      }
+    },
 
     /**
      * Provides propsData for the DruxtWrapper.
