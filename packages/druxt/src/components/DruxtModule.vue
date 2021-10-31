@@ -190,25 +190,31 @@ export default {
 
       // Build list of available components.
       let components = []
-      for (const set of options.filter(set => Array.isArray(set))) {
-        const variants = []
-        components = [...components, ...set.map(item => {
-          // Build array of name parts.
-          const parts = variants.length ? [...variants[0].parts] : []
-          parts.push(pascalCase(splitByCase(item)))
+      const buildComponents = (prefix) => {
+        for (const set of options.filter(set => Array.isArray(set))) {
+          const variants = []
+          components = [...components, ...set.map(item => {
+            // Build array of name parts.
+            const parts = variants.length ? [...variants[0].parts] : []
+            parts.push(pascalCase(splitByCase(item)))
 
-          // Convert parts into a pascalCase component name.
-          const name = pascalCase([this.$options.name, ...parts])
+            // Convert parts into a pascalCase component name.
+            const name = pascalCase([prefix, this.$options.name, ...parts])
 
-          // Check if component is globally registered.
-          const global = !!this.$options.components[name]
+            // Check if component is globally registered.
+            const global = !!this.$options.components[name]
 
-          // Store set variant data to be used in next set item.
-          variants.unshift({ global, name, parts })
+            // Store set variant data to be used in next set item.
+            variants.unshift({ global, name, parts })
 
-          return { global, name, parts }
-        })]
+            return { global, name, parts }
+          })]
+        }
       }
+      // Build components with theme prefix.
+      if (this.$druxt.settings.theme) buildComponents(this.$druxt.settings.theme)
+      // Build default components.
+      buildComponents()
 
       // Filter unique components.
       const unique = components.filter(((s) => (o) => !s.has(o.name) && s.add(o.name))(new Set))
