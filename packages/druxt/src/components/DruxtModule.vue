@@ -37,12 +37,25 @@ export default {
       default: null,
     },
 
+    /**
+     * The wrapper component configuration.
+     *
+     * Used to set the wrapper component, class, style and propsData.
+     *
+     * @example
+     * <DruxtModule
+     *   :wrapper="{
+     *     component: 'MyWrapper',
+     *     class: 'wrapper',
+     *     propsData: { foo: 'bar' }
+     *   }"
+     * />
+     *
+     * @type {(Boolean|Object)}
+     */
     wrapper: {
-      type: Object,
-      default: () => ({
-        component: 'div',
-        propsData: {},
-      })
+      type: [Boolean, Object],
+      default: () => undefined
     },
   },
 
@@ -97,7 +110,17 @@ export default {
     }
 
     // Build wrapper component object.
-    const options = this.getModuleComponents()
+    let options = []
+    const hasDefaultTemplate = !!(this.$vnode.data.scopedSlots || {}).default
+    // Load wrapper components if:
+    if (
+      // No default template and wrapper isn't false OR
+      (!hasDefaultTemplate && this.wrapper !== false) ||
+      // Default tempalte and wrapper is set
+      (hasDefaultTemplate && this.wrapper)
+    ) {
+      options = this.getModuleComponents()
+    }
     let component = {
       is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
       options: options.map(o => o.name) || [],
@@ -154,12 +177,14 @@ export default {
      * @returns {Components}
      */
     getModuleComponents() {
+      // Ensure that the Druxt module component has `druxt.componentOptions`.
       if (!(this.$options.druxt || {}).componentOptions) {
         return []
       }
-
       const options = this.$options.druxt.componentOptions.call(this, this)
-      if (!options || !options.length) {
+
+      // Ensure that there available component options are returned.
+      if (!(options || []).length) {
         return []
       }
 
@@ -304,20 +329,27 @@ export default {
     const self = this
 
     const wrapperData = {
-      class: this.wrapper.class || undefined,
-      style: this.wrapper.style || undefined,
-      props: this.wrapper.propsData,
+      class: (this.wrapper || {}).class || undefined,
+      style: (this.wrapper || {}).style || undefined,
+      props: (this.wrapper || {}).propsData || undefined,
     }
 
     // Return only wrapper if fetch state is still pending.
     if (this.$fetchState.pending) {
-      return h(this.wrapper.component, wrapperData)
+      return h((this.wrapper || {}).component || 'div', wrapperData)
     }
 
-    // Return wrapped component.
+    // Prepare attributes.
     const attrs = { ...this.component.$attrs, ...this.$attrs }
     delete attrs['data-fetch-key']
-    return h(this.wrapper.component, wrapperData, [
+
+    // Unwrap default template based component if required.
+    if ((this.$scopedSlots.default && !this.wrapper) || this.wrapper === false) {
+      this.component.is = 'DruxtWrapper'
+    }
+
+    // Return component.
+    return h((this.wrapper || {}).component || 'div', wrapperData, [
       h(this.component.is, {
         attrs,
         on: {
