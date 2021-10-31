@@ -49,6 +49,22 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
     options
   })
 
+  // Modify the order of plugins.
+  const callback = this.options.extendPlugins
+  const pluginSrc = join(this.options.buildDir, 'druxt.js')
+  this.options.extendPlugins = (plugins) => {
+    // Make the $druxt plugin the first plugin to load.
+    const index = plugins.findIndex((o) => o.src === pluginSrc)
+    const druxtPlugin = plugins[index]
+    plugins.splice(index)
+    plugins.unshift(druxtPlugin)
+
+    if (callback) {
+      return callback(plugins)
+    }
+    return plugins
+  }
+
   // Enable Vuex Store.
   this.options.store = true
 
