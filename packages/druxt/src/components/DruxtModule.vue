@@ -110,7 +110,17 @@ export default {
     }
 
     // Build wrapper component object.
-    const options = this.getModuleComponents()
+    let options = []
+    const hasDefaultTemplate = !!(this.$vnode.data.scopedSlots || {}).default
+    // Load wrapper components if:
+    if (
+      // No default template and wrapper isn't false OR
+      (!hasDefaultTemplate && this.wrapper !== false) ||
+      // Default tempalte and wrapper is set
+      (hasDefaultTemplate && this.wrapper)
+    ) {
+      options = this.getModuleComponents()
+    }
     let component = {
       is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
       options: options.map(o => o.name) || [],
@@ -334,7 +344,7 @@ export default {
     delete attrs['data-fetch-key']
 
     // Unwrap default template based component if required.
-    if (this.$scopedSlots.default && !this.wrapper) {
+    if ((this.$scopedSlots.default && !this.wrapper) || this.wrapper === false) {
       this.component.is = 'DruxtWrapper'
     }
 

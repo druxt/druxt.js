@@ -1,6 +1,7 @@
 <template>
   <div>
-    This is a DruxtWrapper: DruxtEntityNodePage.vue
+    <h3>This is a theme component: DruxtEntityNodePage.vue</h3>
+    <slot />
   </div>
 </template>
 

@@ -13,6 +13,7 @@ describe('DruxtModule component', () => {
     mocks = {
       $createElement: jest.fn(),
       $fetchState: { pending: false },
+      $options: { druxt: {} },
       $nuxt: {
         context: {
           isDev: false,
@@ -199,11 +200,19 @@ describe('DruxtModule component', () => {
   })
 
   test('custom default slot', async () => {
+    const customModule = {
+      extends: DruxtModule,
+      druxt: {}
+    }
+
     const scopedSlots = { default: jest.fn() }
-    const wrapper = mount(DruxtModule, { localVue, mocks, scopedSlots })
+    const wrapper = mount(customModule, { localVue, mocks, scopedSlots })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     wrapper.vm.getScopedSlots().default.call(wrapper.vm)
     expect(scopedSlots.default).toHaveBeenCalled()
+
+    await wrapper.setProps({ wrapper: true })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
   })
 })
