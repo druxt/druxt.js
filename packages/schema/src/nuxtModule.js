@@ -35,6 +35,7 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
     baseUrl: moduleOptions.baseUrl,
     ...(this.options || {}).druxt || {},
     schema: {
+      build: true,
       ...((this.options || {}).druxt || {}).schema || {},
       ...moduleOptions,
     }
@@ -47,9 +48,6 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
     options
   })
 
-  // Enable Vuex Store.
-  this.options.store = true
-
   // Add Vuex plugin.
   this.addPlugin({
     src: resolve(__dirname, '../templates/store.js'),
@@ -57,24 +55,26 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
     options
   })
 
-  this.nuxt.hook('builder:prepared', async () => {
-    // Generate schemas.
-    const druxtSchema = new DruxtSchema(options.baseUrl, options)
-    const { schemas } = await druxtSchema.get()
+  if (options.schema.build) {
+    this.nuxt.hook('builder:prepared', async () => {
+      // Generate schemas.
+      const druxtSchema = new DruxtSchema(options.baseUrl, options)
+      const { schemas } = await druxtSchema.get()
 
-    for (const name in schemas) {
-      const schema = schemas[name]
-      if (typeof schema === 'undefined') continue
+      for (const name in schemas) {
+        const schema = schemas[name]
+        if (typeof schema === 'undefined') continue
 
-      this.addTemplate({
-        src: resolve(__dirname, '../templates/schema.json'),
-        fileName: `schemas/${name}.json`,
-        options: { schema }
-      })
-    }
+        this.addTemplate({
+          src: resolve(__dirname, '../templates/schema.json'),
+          fileName: `schemas/${name}.json`,
+          options: { schema }
+        })
+      }
 
-    consola.success('Druxt schema generated')
-  })
+      consola.success('Druxt schema generated')
+    })
+  }
 }
 
 DruxtSchemaNuxtModule.meta = require('../package.json')

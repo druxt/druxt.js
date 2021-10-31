@@ -62,13 +62,14 @@ const DruxtSchemaStore = ({ store }) => {
        * @example @lang js
        * const schema = await this.$store.dispatch('druxtRouter/get', '/')
        */
-      async get({ state, commit }, resource = {}) {
+      async get(context, resource = {}) {
+        const { state, commit } = context
         resource = {
-          id: null,
-          resourceType: null,
-          entityType: 'node',
-          bundle: null,
-          mode: 'default',
+          id: undefined,
+          resourceType: undefined,
+          entityType: undefined,
+          bundle: undefined,
+          mode: undefined,
           schemaType: 'view',
 
           ...resource
@@ -90,8 +91,25 @@ const DruxtSchemaStore = ({ store }) => {
 
         // Only load if we don't have this schema in the store.
         if (!state.schemas[resource.id]) {
-          const schema = await this.$druxtSchema.import(resource.id)
-          commit('addSchema', { id: resource.id, schema })
+          let schema = false
+          // Get schema from filesystem if build mode enabled.
+          if ((this.$druxt.settings.schema || {}).build || typeof (this.$druxt.settings.schema || {}).build == 'undefined') {
+            schema = await this.$druxtSchema.import(resource.id)
+            if (schema) {
+              commit('addSchema', { id: resource.id, schema })
+            }
+          }
+
+          // Else, get schema from the JSON:API.
+          if (this.$druxt.settings.schema.build === false || !schema) {
+            if (!resource.entityType && resource.resourceType) {
+              const [entityType, bundle] = resource.resourceType.split('--')
+              resource.entityType = entityType
+              resource.bundle = bundle
+            }
+            const { schema } = await this.$druxtSchema.getSchema(resource)
+            commit('addSchema', { id: resource.id, schema })
+          }
         }
 
         return state.schemas[resource.id]

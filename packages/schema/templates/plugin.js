@@ -1,21 +1,15 @@
-/**
- * Nuxt.js plugin for Druxt.js Schema.
- */
-const DruxtSchemaPlugin = {
-  /**
-   * Import a generated Druxt.js Schema by ID.
-   *
-   * @param {string} id - The Druxt.js Schema ID.
-   * @returns {Schema} The generated Druxt.js Schema object.
-   *
-   * @example @lang js
-   * const schema = await this.$druxtSchema.import('node--page--default--view')
-   */
-  import: async id => import(`./schemas/${id}.json`).then(m => m.default || m)
-}
+import { DruxtSchema } from 'druxt-schema'
 
-export default (context, inject) => {
-  inject('druxtSchema', DruxtSchemaPlugin)
+export default ({ $druxt }, inject) => {
+  const schema = new DruxtSchema($druxt.settings.baseUrl)
+  schema.import = async id => {
+    try {
+      return import(`./schemas/${id}.json`).then(m => m.default || m)
+    } catch(e) {
+      return false
+    }
+  }
+  inject('druxtSchema', schema)
 }
 
 /**
