@@ -1,0 +1,129 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "node--page",
+      "id": "7397cca5-44f4-4676-a93f-576bb72c692b",
+      "links": {
+        "self": {
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b?resourceVersion=id%3A36"
+        }
+      },
+      "attributes": {
+        "drupal_internal__nid": 18,
+        "drupal_internal__vid": 36,
+        "langcode": "en",
+        "revision_timestamp": "2021-10-25T00:48:44+00:00",
+        "revision_log": null,
+        "status": true,
+        "title": "About Umami",
+        "created": "2021-10-25T00:48:44+00:00",
+        "changed": "2021-10-25T00:48:44+00:00",
+        "promote": false,
+        "sticky": false,
+        "default_langcode": true,
+        "revision_translation_affected": null,
+        "moderation_state": "published",
+        "path": {
+          "alias": "/about-umami",
+          "pid": 101,
+          "langcode": "en"
+        },
+        "content_translation_source": "und",
+        "content_translation_outdated": false,
+        "body": {
+          "value": "<p>Umami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided 'out of the box'.</p><p>For more information visit <a href='https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile'>https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile</a>.</p>",
+          "format": "basic_html",
+          "processed": "<p>Umami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided 'out of the box'.</p>\n<p>For more information visit <a href=\"https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile\">https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile</a>.</p>\n",
+          "summary": null
+        }
+      },
+      "relationships": {
+        "node_type": {
+          "data": {
+            "type": "node_type--node_type",
+            "id": "4d1acf78-f274-42b8-aca0-6d9734c64ac2"
+          },
+          "links": {
+            "related": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b/node_type?resourceVersion=id%3A36"
+            },
+            "self": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b/relationships/node_type?resourceVersion=id%3A36"
+            }
+          }
+        },
+        "revision_uid": {
+          "data": {
+            "type": "user--user",
+            "id": "2be17e1d-3f7c-4b57-b557-19a4a40e4074"
+          },
+          "links": {
+            "related": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b/revision_uid?resourceVersion=id%3A36"
+            },
+            "self": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b/relationships/revision_uid?resourceVersion=id%3A36"
+            }
+          }
+        },
+        "uid": {
+          "data": {
+            "type": "user--user",
+            "id": "2be17e1d-3f7c-4b57-b557-19a4a40e4074"
+          },
+          "links": {
+            "related": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b/uid?resourceVersion=id%3A36"
+            },
+            "self": {
+              "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b/relationships/uid?resourceVersion=id%3A36"
+            }
+          }
+        }
+      }
+    },
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
+}
