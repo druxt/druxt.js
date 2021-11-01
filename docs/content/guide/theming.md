@@ -6,24 +6,24 @@ weight: -6
 # Theming
 
 Druxt components can be themed using two primary methods:
-- [Druxt wrapper components](#druxtwrapper)
+- [Druxt theme components](#druxttheme)
 - [Default template injection](#default-template)
 
 * * *
 
-## DruxtWrapper
+## DruxtTheme
 
-Druxt modules use a DruxtWrapper component system to render a Vue component with the available data, slots, props and $attrs to be used for theming.
+Druxt uses a component system to render a Vue component with the available data, slots, props and $attrs to be used for theming.
 
 The specific component rendered is determined by list of available component options, made from properties and data provided by the module, and using the first registered option.
 
-e.g., A DruxtEntity component might render a `DruxtEntityNodeArticleDefault.vue` wrapper component.
+e.g., A DruxtEntity component might render a `DruxtEntityNodeArticleDefault.vue` theme component.
 
-![Example DruxtWrapper in Vue dev tools](/images/theming-druxt-wrapper.png)
+![Example DruxtTheme in Vue dev tools](/images/theming-druxt-wrapper.png)
 
 Component options can be seen via the `component.options` data of the relevant Druxt module component.
 
-If there are no matching component names, a default `DruxtWrapper` component will be used to render the default output of the module.
+If there are no matching component names, a default `DruxtTheme` component will be used to render the default output of the module.
 
 - For more details, see the [DruxtModule API documentation](/api/packages/druxt/components/DruxtModule).
 
@@ -63,7 +63,7 @@ The available data provided to the template scope is determined by the relevant 
 </DruxtEntity>
 ```
 
-By default, a component using the default template will not be wrapped by a DruxtWrapper component. It is possible to enable the DruxtWrapper system by setting the `wrapper` property to `true`:
+By default, a component using the default template will not be wrapped by a DruxtTheme component. It is possible to enable the wrapper system by setting the `wrapper` property to `true`:
 
 ```vue
 <DruxtBlock v-bind="props" :wrapper="true">
