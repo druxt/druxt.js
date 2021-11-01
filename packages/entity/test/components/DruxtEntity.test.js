@@ -94,9 +94,6 @@ describe('DruxtEntity', () => {
       'id', 'resourceType', 'fields', 'groups', 'config'
     ])
 
-    // Methods.
-    expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toBe(false)
-
     expect(wrapper.html()).toMatchSnapshot()
   })
 
@@ -132,8 +129,45 @@ describe('DruxtEntity', () => {
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings).data.fields['node--page']).toBe('body,links,content_moderation_control,title')
   })
 
+  test('node--page - include', async () => {
+    const mockPage = await getMockResource('node--page')
+
+    localVue.component('DruxtEntityNodePageDefault', {
+      props: ['entity', 'fields', 'schema', 'value'],
+      druxt: {
+        query: {
+          fields: [['title'], ['user--user', ['display_name']]],
+          include: ['uid'],
+          schema: true,
+        },
+      },
+      render(h) {
+        return h('div', [JSON.stringify(this.entity)])
+      }
+    })
+
+    const wrapper = mountComponent({ uuid: mockPage.data.id, type: 'node--page' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Data.
+    expect(wrapper.vm.component.$attrs).toStrictEqual({})
+    expect(wrapper.vm.component.is).toBe('DruxtEntityNodePageDefault')
+    expect(Object.keys(wrapper.vm.component.props)).toStrictEqual([
+      'value', 'schema', 'fields', 'entity'
+    ])
+
+    expect(Object.keys(wrapper.vm.entity)).toStrictEqual(['type', 'id', 'links', 'attributes', 'relationships', 'included'])
+    expect(Object.keys(wrapper.vm.entity.included[0])).toStrictEqual([
+      'type', 'id', 'links', 'attributes'
+    ])
+
+    // Methods.
+    expect(wrapper.vm.getQuery(wrapper.vm.component.settings).data.fields['node--page']).toBe('body,links,content_moderation_control,title')
+  })
+
+
   test('v-model - entity', async () => {
-    const model = { attributes: {}, relationships: {}, type: 'node--page' }
+    const model = { attributes: {}, included: undefined, relationships: {}, type: 'node--page' }
     const Component = {
       template: "<DruxtEntity v-model='model' :type='model.type' ref='component' />",
       components: { DruxtEntity },

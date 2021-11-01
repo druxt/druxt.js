@@ -78,6 +78,7 @@ export default {
     model: {
       attributes: {},
       relationships: {},
+      included: undefined,
       type,
       ...value,
     },
@@ -161,16 +162,44 @@ export default {
      */
     getQuery(settings) {
       const query = new DrupalJsonApiParams()
+      const querySettings = settings.query || {}
 
-      // Build fields list.
-      const fields = (settings.query || {}).schema
-        ? [...((this.schema || {}).fields || []).map((o) => o.id), ...((settings.query || {}).fields || [])]
-        : ((settings.query || {}).fields || [])
-      if (fields.length) {
-        query.addFields(this.type, fields)
-        return query
+      // Add includes.
+      if (querySettings.include && Array.isArray(querySettings.include)) {
+        query.addInclude(querySettings.include)
       }
-      return false
+
+      let rootFields = []
+      if (querySettings.fields && Array.isArray(querySettings.fields)) {
+        // If the first item is a string, this is a root level filter array.
+        if (typeof querySettings.fields[0] === 'string') {
+          rootFields = querySettings.fields
+        // Otherwise this is an array structure field map.
+        } else if (Array.isArray(querySettings.fields[0])) {
+          rootFields = querySettings.fields.find((a) => typeof [...a].pop() === 'string') || []
+
+          // Apply included field mapping.
+          const fieldMaps = querySettings.fields.filter(
+            (a) => a.length == 2 && typeof a[0] === 'string' && Array.isArray(a[1])
+          )
+          for (const fieldMap of fieldMaps) {
+            query.addFields(fieldMap[0], fieldMap[1])
+          }
+        }
+      }
+
+      // If Schema mode, generate list including schema fields and explicitly
+      // defined fields.
+      if (querySettings.schema) {
+        rootFields = [...((this.schema || {}).fields || []).map((o) => o.id), ...rootFields]
+      }
+
+      // Apply root fields filter.
+      if (rootFields.length) {
+        query.addFields(this.type, rootFields)
+      }
+
+      return query
     },
 
     /**
@@ -234,7 +263,9 @@ export default {
     async fetchData(settings) {
       if (this.uuid && !this.value) {
         const query = this.getQuery(settings)
-        const entity = (await this.getResource({ type: this.type, id: this.uuid, query })).data
+        const resource = await this.getResource({ type: this.type, id: this.uuid, query })
+        const entity = resource.data || {}
+        entity.included = resource.included
         this.model = JSON.parse(JSON.stringify(entity || {}))
       }
     },
@@ -341,12 +372,14 @@ export default {
  * or the Wrapper component `druxt` object.
  *
  * @typedef {object} ModuleSettings
- * @param {string[]} fields - An array of fields to filter from the JSON:API Resource.
+ * @param {(string[]|array[])} fields - An array or arrays of fields to filter from the JSON:API Resources.
+ * @param {string[]} include - An array of relationships to include alongside the JSON:API Resource.
  * @param {boolean} schema - Whether to automatically detect fields to filter, per the Display mode.
  *
  * @example @lang js
  * {
  *   fields: [],
+ *   include: [],
  *   schema: false,
  * }
  *
@@ -355,7 +388,8 @@ export default {
  * export default {
  *   druxt: {
  *     query: {
- *       fields: ['title']
+ *       fields: [['title'], ['user--user', ['display_name']]],
+ *       include: ['uid']
  *       schema: true,
  *     },
  *   }
