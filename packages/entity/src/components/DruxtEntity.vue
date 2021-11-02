@@ -40,6 +40,31 @@ export default {
     },
 
     /**
+     * Query settings for including resources and filtering fields.
+     *
+     * @type {object}
+     * @default { fields: [], included: [], schema: undefined }
+     */
+    query: {
+      type: Object,
+      default: () => ({
+        fields: [],
+        included: [],
+        schema: undefined,
+      }),
+    },
+
+    /**
+     * Drupal display schema type, 'view' or 'form'.
+     *
+     * @type {('view'|'form')}
+     */
+    schemaType: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * JSON:API resource type.
      *
      * @type {string}
@@ -57,16 +82,6 @@ export default {
     uuid: {
       type: [Boolean, String],
       default: false
-    },
-
-    /**
-     * Drupal display schema type, 'view' or 'form'.
-     *
-     * @type {('view'|'form')}
-     */
-    schemaType: {
-      type: String,
-      default: undefined,
     },
   },
 
@@ -162,7 +177,7 @@ export default {
      */
     getQuery(settings) {
       const query = new DrupalJsonApiParams()
-      const querySettings = settings.query || {}
+      const querySettings = merge(this.query, settings.query, { arrayMerge: (dest, src) => src }) || {}
 
       // Add includes.
       if (querySettings.include && Array.isArray(querySettings.include)) {
@@ -172,11 +187,11 @@ export default {
       let rootFields = []
       if (querySettings.fields && Array.isArray(querySettings.fields)) {
         // If the first item is a string, this is a root level filter array.
-        if (typeof querySettings.fields[0] === 'string') {
+        if (querySettings.fields.length === 0 || typeof querySettings.fields[0] === 'string' || typeof querySettings.fields[0] === 'undefined') {
           rootFields = querySettings.fields
         // Otherwise this is an array structure field map.
         } else if (Array.isArray(querySettings.fields[0])) {
-          rootFields = querySettings.fields.find((a) => typeof [...a].pop() === 'string') || []
+          rootFields = querySettings.fields.find((a) => a.length === 0 || typeof [...a].pop() === 'string' || typeof [...a].pop() === 'undefined') || []
 
           // Apply included field mapping.
           const fieldMaps = querySettings.fields.filter(
