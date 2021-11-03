@@ -34,6 +34,7 @@
     <h2>Defaults</h2>
     <p>By default the DruxtEntity will not filter the Entity resource.</p>
     <p>The default behaviour can be configured in <code>nuxt.config.js</code></p>
+    <p>This should print out all the unfiltered Page data.</p>
     <pre><code>&lt;DruxtEntity :type="type" :uuid="uuid" /&gt;</code></pre>
     <details>
       <summary>Output</summary>
@@ -48,6 +49,7 @@
 
     <h2>Schema filtering via Theme component</h2>
     <p>This example is using the query settings on a Theme component to filter just the schema fields.</p>
+    <p>This should print out only properties and relationships requested by the Article default schema.</p>
     <p><code>@see components/druxt/entity/node/Article.vue</code></p>
     <pre><code>export default {
   druxt: {
@@ -69,6 +71,7 @@
 
     <h2>Field filtering via Theme component</h2>
     <p>This example is using the query settings on a Theme component to filter specific fields from the Entity resource.</p>
+    <p>This should print out just the requested fields of the Recipe entity.</p>
     <p><code>@see components/druxt/entity/node/Recipe.vue</code></p>
     <pre><code>export default {
   druxt: {
@@ -91,6 +94,7 @@
     <h2>Including related resources with filtering via Theme component</h2>
     <p>This example is using the query settings on a Theme component to include related resources.</p>
     <p>It's also possible to filter the related resources by using the an array of arrays compoatible with the JSON:API Params <a href="https://www.npmjs.com/package/drupal-jsonapi-params#addfields">addFields</a> method.</p>
+    <p>This should show the Recipe fields, including already requested fields, and the filtered relationship data.</p>
     <p><code>@see components/druxt/entity/node/RecipeTeaser.vue</code></p>
     <pre><code>export default {
   druxt: {
@@ -116,12 +120,15 @@
 
     <h2>Query settings as a property</h2>
     <p>This example applies the query settings as a property of the DruxtEntity component.</p>
+    <p>This should show the already requested Page data with the filtered author entity included.</p>
     <pre><code>&lt;DruxtEntity
   :type="type"
   :uuid="uuid"
-  :query="{
-    fields: [['user--user', ['display_name']]],
-    include: ['uid'],
+  :settings="{
+    query: {
+      fields: [['user--user', ['display_name']]],
+      include: ['uid'],
+    }
   }"
 /&gt;</code></pre>
     <details>
@@ -129,9 +136,11 @@
       <DruxtEntity
         type="node--page"
         :uuid="uuids['node--page']"
-        :query="{
-          fields: [['user--user', ['display_name']]],
-          include: ['uid'],
+        :settings="{
+          query: {
+            fields: [['user--user', ['display_name']]],
+            include: ['uid'],
+          }
         }">
         <template #default="{ entity }">
           <pre><code>{{ JSON.stringify(entity, null,  '  ') }}</code></pre>

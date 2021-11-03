@@ -10,7 +10,7 @@ description: Drupal Display Mode powered Entity, Form and Field Druxt components
 - Vue.js components:
   - **DruxtEntity**: Render a Drupal Content Entity by UUID
   - **DruxtEntityForm**: Render a Drupal Content Entity form
-- **Druxt settings**: Filter JSON:API fields
+- **Druxt settings**: Include and filter resource fields
 - **Druxt Router** integration
 - **@nuxtjs/Storybook** integration
 
@@ -72,36 +72,58 @@ Renders a Drupal Content Entity form with submission and validation support.
 
 ## Settings
 
-### Reducing Entity data
+### Entity queries
 
-The default behaviour of the Entity module is to retrieve all available fields from the JSON:API.
+Entity queries settings can be provided to include related resources and filter the returned fields.
 
-This behaviour is configurable using the modules `query` option, allowing for both manually filtered `fields`, automatically filtered fields using the Display mode `schema`, and a combination of the two as required.
+- **fields**: An array of strings, or array of arrays formatted for the Drupal JSON:API Params addFields method, used to filter the returned resources fields.
+- **include**: An array of relationship id's to include in the returned resources.
+- **schema**: Boolean, if `true` fields will be populated by the Drupal Display schema information.
+
+_Example: Wrapper component with Query settings:_
+```vue
+<script>
+export default {
+  druxt: {
+    query: {
+      fields: ['title', 'path'],
+      schema: true,
+    }
+  }
+}
+</script>
+```
+
+_Example: DruxtEntity with settings property:_
+
+```vue
+<template>
+  <DruxtEntity
+    :settings="{
+      query: {
+        include: ['field_media_image', 'field_media_image.field_media_image'],
+        fields: [
+          ['file--file', ['uri']],
+          ['media--image', []],
+        ]
+      }
+    }"
+    type="node--recipe"
+    :uuid="uuid"
+  />
+</template>
+```
 
 The default behaviour can be set via `nuxt.config.js`:
 ```js
 druxt: {
   entity: {
     query: {
-      fields: ['path', 'title'],
-      schema: true,
+      fields: ['path', 'title'], // Apply filter to all Entity queries.
+      schema: true, // Filter by display mode field settings.
     },
   },
 }
-```
-
-Alternatively, the behaviour can be set directly on an Entity Wrapper component:
-```vue
-<script>
-export default {
-  druxt: {
-    query: {
-      fields: ['title'],
-      schema: false,
-    }
-  }
-}
-</script>
 ```
 
 * * *

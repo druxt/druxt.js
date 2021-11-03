@@ -40,18 +40,14 @@ export default {
     },
 
     /**
-     * Query settings for including resources and filtering fields.
+     * Module settings object.
      *
-     * @type {object}
-     * @default { fields: [], included: [], schema: undefined }
+     * @type {ModuleSettings}
+     * @default {}
      */
-    query: {
+    settings: {
       type: Object,
-      default: () => ({
-        fields: [],
-        included: [],
-        schema: undefined,
-      }),
+      default: () => ({}),
     },
 
     /**
@@ -177,24 +173,23 @@ export default {
      */
     getQuery(settings) {
       const query = new DrupalJsonApiParams()
-      const querySettings = merge(this.query, settings.query, { arrayMerge: (dest, src) => src }) || {}
 
       // Add includes.
-      if (querySettings.include && Array.isArray(querySettings.include)) {
-        query.addInclude(querySettings.include)
+      if (settings.query.include && Array.isArray(settings.query.include)) {
+        query.addInclude(settings.query.include)
       }
 
       let rootFields = []
-      if (querySettings.fields && Array.isArray(querySettings.fields)) {
+      if (settings.query.fields && Array.isArray(settings.query.fields)) {
         // If the first item is a string, this is a root level filter array.
-        if (querySettings.fields.length === 0 || typeof querySettings.fields[0] === 'string' || typeof querySettings.fields[0] === 'undefined') {
-          rootFields = querySettings.fields
+        if (settings.query.fields.length === 0 || typeof settings.query.fields[0] === 'string' || typeof settings.query.fields[0] === 'undefined') {
+          rootFields = settings.query.fields
         // Otherwise this is an array structure field map.
-        } else if (Array.isArray(querySettings.fields[0])) {
-          rootFields = querySettings.fields.find((a) => a.length === 0 || typeof [...a].pop() === 'string' || typeof [...a].pop() === 'undefined') || []
+        } else if (Array.isArray(settings.query.fields[0])) {
+          rootFields = settings.query.fields.find((a) => a.length === 0 || typeof [...a].pop() === 'string' || typeof [...a].pop() === 'undefined') || []
 
           // Apply included field mapping.
-          const fieldMaps = querySettings.fields.filter(
+          const fieldMaps = settings.query.fields.filter(
             (a) => a.length == 2 && typeof a[0] === 'string' && Array.isArray(a[1])
           )
           for (const fieldMap of fieldMaps) {
@@ -205,7 +200,7 @@ export default {
 
       // If Schema mode, generate list including schema fields and explicitly
       // defined fields.
-      if (querySettings.schema) {
+      if (settings.query.schema) {
         rootFields = [...((this.schema || {}).fields || []).map((o) => o.id), ...rootFields]
       }
 
@@ -296,10 +291,15 @@ export default {
     /**
      * Component settings.
      */
-    settings: ({ $druxt }, wrapperSettings) => {
-      const settings = merge($druxt.settings.entity || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
+    settings: ({ $druxt, settings }, wrapperSettings) => {
+      // Start with the `nuxt.config.js` `druxt.settings.entity` settings and
+      // merge the Wrapper component settings on top.
+      let mergedSettings = merge($druxt.settings.entity || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
+      // Merge the DruxtEntity component `settings` property on top.
+      mergedSettings = merge(mergedSettings || {}, settings, { arrayMerge: (dest, src) => src })
+      // Currently only returning the query settings.
       return {
-        query: settings.query || {},
+        query: mergedSettings.query || {},
       }
     },
 
@@ -383,22 +383,17 @@ export default {
  */
 
 /**
- * Provides settings for the Entity module, via the `nuxt.config.js` `druxt.entity`
- * or the Wrapper component `druxt` object.
+ * Provides settings for the Entity module, via the `nuxt.config.js` `druxt.entity`,
+ * the Wrapper component `druxt` object or the DruxtEntity component `settings`
+ * property.
  *
  * @typedef {object} ModuleSettings
- * @param {(string[]|array[])} fields - An array or arrays of fields to filter from the JSON:API Resources.
- * @param {string[]} include - An array of relationships to include alongside the JSON:API Resource.
- * @param {boolean} schema - Whether to automatically detect fields to filter, per the Display mode.
+ * @param {object} query - Entity Query settings:
+ * @param {(string[]|array[])} query.fields - An array or arrays of fields to filter from the JSON:API Resources.
+ * @param {string[]} query.include - An array of relationships to include alongside the JSON:API Resource.
+ * @param {boolean} query.schema - Whether to automatically detect fields to filter, per the Display mode.
  *
- * @example @lang js
- * {
- *   fields: [],
- *   include: [],
- *   schema: false,
- * }
- *
- * @example @lang vue
+ * @example <caption>DruxtEntity Wrapper component</caption> @lang vue
  * <script>
  * export default {
  *   druxt: {
@@ -409,10 +404,25 @@ export default {
  *     },
  *   }
  * }
+ *
+ * @example <caption>DruxtEntity component with settings</caption> @lang vue
+ * <template>
+ *   <DruxtEntity
+ *     type="node--article"
+ *     :uuid="uuid"
+ *     :settings="{
+ *       query: {
+ *         fields: [['title'], ['user--user', ['display_name']]],
+ *         include: ['uid']
+ *         schema: true,
+ *       }
+ *     }"
+ *   />
+ * </template>
  */
 
 /**
- * Provides propsData for use in the Wrapper component.
+ * Provides property data for use in the Wrapper component.
  *
  * @typedef {object} PropsData
  * @param {object} entity - The Drupal Entity JSON:API resource data.

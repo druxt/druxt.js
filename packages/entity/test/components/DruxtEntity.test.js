@@ -56,7 +56,7 @@ describe('DruxtEntity', () => {
     store.app = { context: { error: jest.fn() }, store }
   })
 
-  test('node--page', async () => {
+  test('component defaults', async () => {
     const mockPage = await getMockResource('node--page')
 
     const wrapper = mountComponent({ uuid: mockPage.data.id, type: 'node--page' })
@@ -97,7 +97,7 @@ describe('DruxtEntity', () => {
     expect(wrapper.html()).toMatchSnapshot()
   })
 
-  test('node--page - filtered', async () => {
+  test('wrapper component - filtered', async () => {
     const mockPage = await getMockResource('node--page')
 
     localVue.component('DruxtEntityNodePageDefault', {
@@ -129,7 +129,7 @@ describe('DruxtEntity', () => {
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings).data.fields['node--page']).toBe('body,links,content_moderation_control,title')
   })
 
-  test('node--page - include', async () => {
+  test('wrapper component - includes', async () => {
     const mockPage = await getMockResource('node--page')
 
     localVue.component('DruxtEntityNodePageDefault', {
@@ -165,6 +165,19 @@ describe('DruxtEntity', () => {
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings).data.fields['node--page']).toBe('body,links,content_moderation_control,title')
   })
 
+  test('component - query settings', async () => {
+    const mockPage = await getMockResource('node--page')
+
+    const settings = {
+      query: {
+        fields: [['user--user', ['display_name']]],
+        include: ['uid']
+      }
+    }
+    const wrapper = mountComponent({ uuid: mockPage.data.id, type: 'node--page', settings })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    expect(Object.keys(wrapper.vm.entity.included[0].attributes)).toStrictEqual(['display_name'])
+  })
 
   test('v-model - entity', async () => {
     const model = { attributes: {}, included: undefined, relationships: {}, type: 'node--page' }
