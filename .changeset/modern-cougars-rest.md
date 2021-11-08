@@ -2,7 +2,7 @@
 "druxt": minor
 ---
 
-Add ability to proxy the API
+Added ability to proxy the API
 
 ```js
 export default {

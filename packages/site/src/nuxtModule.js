@@ -21,12 +21,18 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
       jsonApiMenuItems: true,
       ...((this.options || {}).druxt || {}).menu,
     },
+    proxy: {
+      api: false,
+      files: true,
+      ...((this.options || {}).druxt || {}).proxy,
+    },
     site: {
       layout: true,
       ...((this.options || {}).druxt || {}).site,
       ...moduleOptions,
     },
   }
+  this.options.druxt = options
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
@@ -34,8 +40,8 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
   })
 
   // Add Druxt modules.
-  this.addModule(['druxt', options])
   const druxtModules = [
+    'druxt',
     'druxt-blocks',
     'druxt-breadcrumb',
     'druxt-entity',
@@ -45,17 +51,13 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
     'druxt-views'
   ]
   for (const module of druxtModules) {
-    this.addModule([module, { baseUrl: options.baseUrl, ...options[module.split('-')[1]] || {}}])
+    this.addModule(module)
   }
 
   // Add default layout.
   if (!(await existsSync(resolve(this.options.srcDir, this.options.dir.layouts))) && options.site.layout) {
     this.addLayout(resolve(__dirname, './layouts/default.vue'), 'default')
   }
-
-  // Setup proxy for 'sites/default/files'.
-  this.options.proxy = this.options.proxy ?? [options.baseUrl + '/sites/default/files']
-  this.addModule('@nuxtjs/proxy')
 
   // Nuxt Storybook.
   this.nuxt.hook('storybook:config', async ({ stories }) => {
