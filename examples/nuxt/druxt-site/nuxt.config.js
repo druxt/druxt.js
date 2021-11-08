@@ -3,6 +3,7 @@ export default {
   target: 'static',
   generate: { routes: ['/'] },
   telemetry: true,
+  buildModules: ['@nuxt/postcss8'],
   modules: ['druxt-site'],
   druxt: {
     baseUrl,
