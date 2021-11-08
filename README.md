@@ -27,6 +27,7 @@
 - Drupal JSON:API Client with Vuex caching.
 - Modular Vue.js component library system.
 - Slot and Wrapper theming system.
+- API and File proxy.
 
 Learn more at https://druxtjs.org
 
