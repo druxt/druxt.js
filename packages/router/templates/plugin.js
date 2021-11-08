@@ -8,6 +8,14 @@ export default (context, inject) => {
   options.endpoint = '<%= options.endpoint %>'
   <% } %>
 
+  <% if ((options.proxy || {}).api) { %>
+  if (process.client) {
+    options.proxy = {
+      api: <%= options.proxy.api %>
+    }
+  }
+  <% } %>
+
   <% if (options.router && options.router.render) { %>
   // Render component.
   options.render = '<%= options.router.render %>'
