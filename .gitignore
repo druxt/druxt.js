@@ -19,6 +19,9 @@ bin
 dist
 packages/*/nuxt
 
+# Build files
+packages/*/package.tgz
+
 # Coverage reports
 coverage
 
