@@ -1,0 +1,245 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "a5b7be4c-c81f-4a14-9b73-7d517f64e9ad",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/a5b7be4c-c81f-4a14-9b73-7d517f64e9ad"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "block_content",
+          "bundle": "banner_block",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "3d058f23-0fe1-4f28-af54-be6501154d80",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/3d058f23-0fe1-4f28-af54-be6501154d80"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "block_content",
+          "bundle": "basic",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "f5b10f8c-9c9a-4c68-b55a-194315c56d7f",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/f5b10f8c-9c9a-4c68-b55a-194315c56d7f"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "block_content",
+          "bundle": "disclaimer_block",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "60a33ca2-dbee-4aeb-8e23-4a38582cf903",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/60a33ca2-dbee-4aeb-8e23-4a38582cf903"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "block_content",
+          "bundle": "footer_promo_block",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "db1aee3b-a846-408a-af0a-eea084fc06df",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/db1aee3b-a846-408a-af0a-eea084fc06df"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "contact_message",
+          "bundle": "feedback",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "37b6dfa8-bd62-4142-ae4e-16bdbd71e480",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/37b6dfa8-bd62-4142-ae4e-16bdbd71e480"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "media",
+          "bundle": "audio",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "fbab14ab-7450-4ecf-939d-f13f255ecc4b",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/fbab14ab-7450-4ecf-939d-f13f255ecc4b"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "media",
+          "bundle": "document",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "4c151d2e-2ac6-477c-b0e4-119dc68b1f85",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/4c151d2e-2ac6-477c-b0e4-119dc68b1f85"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "media",
+          "bundle": "image",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "7158c4c3-b00f-434e-a3c0-4f55c0701198",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/7158c4c3-b00f-434e-a3c0-4f55c0701198"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "media",
+          "bundle": "remote_video",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "e35217de-9340-460f-a2e9-9c204afb8a4f",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/e35217de-9340-460f-a2e9-9c204afb8a4f"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "media",
+          "bundle": "video",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "35e98872-8544-4a5d-997c-4639a8c748ee",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/35e98872-8544-4a5d-997c-4639a8c748ee"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "node",
+          "bundle": "article",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "41500b4d-3df1-4775-8575-d7b5b6b9b9b2",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/41500b4d-3df1-4775-8575-d7b5b6b9b9b2"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "node",
+          "bundle": "page",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "1850d94c-6436-4a94-8331-b73f0a0a13f1",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/1850d94c-6436-4a94-8331-b73f0a0a13f1"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "node",
+          "bundle": "recipe",
+          "mode": "default"
+        }
+      },
+      {
+        "type": "entity_form_display--entity_form_display",
+        "id": "ac928807-5e41-46fa-ac99-ae9fbe6d21b9",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display/ac928807-5e41-46fa-ac99-ae9fbe6d21b9"
+          }
+        },
+        "attributes": {
+          "targetEntityType": "user",
+          "bundle": "user",
+          "mode": "default"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/entity_form_display/entity_form_display?fields%5Bentity_form_display--entity_form_display%5D=bundle%2Cmode%2CtargetEntityType&filter%5Bstatus%5D=1"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "/en/jsonapi/entity_form_display/entity_form_display?filter%5Bstatus%5D=1&fields%5Bentity_form_display--entity_form_display%5D=bundle%2Cmode%2CtargetEntityType",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
+}

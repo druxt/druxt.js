@@ -1,0 +1,121 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "user--user",
+        "id": "3c086581-648b-441d-960c-ad01f89e29a8",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user/3c086581-648b-441d-960c-ad01f89e29a8"
+          }
+        }
+      },
+      {
+        "type": "user--user",
+        "id": "28f7e35c-e1d7-429f-812a-fd340ae434d5",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user/28f7e35c-e1d7-429f-812a-fd340ae434d5"
+          }
+        }
+      },
+      {
+        "type": "user--user",
+        "id": "2c8990b6-3ec9-4e31-abb3-ef3e23d0cba7",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user/2c8990b6-3ec9-4e31-abb3-ef3e23d0cba7"
+          }
+        }
+      },
+      {
+        "type": "user--user",
+        "id": "1a50d656-c12c-4e91-8bd1-ffaf0f97a634",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user/1a50d656-c12c-4e91-8bd1-ffaf0f97a634"
+          }
+        }
+      },
+      {
+        "type": "user--user",
+        "id": "f15c1fce-d901-489c-bc84-715616caf33f",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user/f15c1fce-d901-489c-bc84-715616caf33f"
+          }
+        }
+      },
+      {
+        "type": "user--user",
+        "id": "7d61ccfc-45c4-4f09-9d43-e49db7d015c9",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user/7d61ccfc-45c4-4f09-9d43-e49db7d015c9"
+          }
+        }
+      },
+      {
+        "type": "user--user",
+        "id": "dae9791b-8f3f-400e-ac9e-c6611658b20b",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user/dae9791b-8f3f-400e-ac9e-c6611658b20b"
+          }
+        }
+      },
+      {
+        "type": "user--user",
+        "id": "2be17e1d-3f7c-4b57-b557-19a4a40e4074",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user/2be17e1d-3f7c-4b57-b557-19a4a40e4074"
+          }
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user?fields%5Buser--user%5D=id%2Ctitle%2Cname%2Cinfo"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "/en/jsonapi/user/user?fields%5Buser--user%5D=id%2Ctitle%2Cname%2Cinfo",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
+}
