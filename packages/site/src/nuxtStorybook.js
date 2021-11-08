@@ -10,7 +10,7 @@ const titleFn = (parts) =>
 export default async function ({ options, stories }) {
   const { addTemplate } = this
 
-  const druxt = new DruxtClient(options.baseUrl, options)
+  const druxt = new DruxtClient(options.baseUrl, { ...options, proxy: { api: false } })
 
   const type = 'block--block'
   const query = new DrupalJsonApiParams().addFields(type, ['theme'])

@@ -6,7 +6,7 @@ import { resolve } from 'path'
 export default async function ({ stories }) {
   const { addTemplate, options } = this
 
-  const druxt = new DruxtClient(options.druxt.baseUrl, options.druxt)
+  const druxt = new DruxtClient(options.druxt.baseUrl, { ...options.druxt, proxy: { api: false } })
 
   const resourceType = 'view--view'
   const query = new DrupalJsonApiParams()
