@@ -1,8 +1,8 @@
 <template>
   <component
-    :is="wrapper.component"
+    :is="(wrapper || {}).component || 'div'"
     v-if="!$fetchState.pending"
-    v-bind="wrapper.propsData"
+    v-bind="(wrapper || {}).propsData"
   >
     <component
       :is="component.is"
