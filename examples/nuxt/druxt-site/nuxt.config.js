@@ -7,6 +7,13 @@ export default {
   druxt: {
     baseUrl,
     entity: { components: { fields: false } },
-    site: { theme: 'umami' }
+    proxy: { api: true },
+    site: {
+      // layout: false,
+      theme: 'umami'
+    }
   },
+  proxy: {
+    '/en/jsonapi': baseUrl
+  }
 }
