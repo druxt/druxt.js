@@ -16,6 +16,7 @@ Using Drupal's built in Entity display modes and Field formatter system, Views, 
 - **Block** region and **Content block** component rendering.
 - **Views** and **Views blocks** via the [Drupal JSON:API Views module](https://www.drupal.org/project/jsonapi_views).
 - **Breadcrumb**, **Menus** and more.
+- **File Proxy** enabled by default, and support for API proxying.
 
 * * *
 

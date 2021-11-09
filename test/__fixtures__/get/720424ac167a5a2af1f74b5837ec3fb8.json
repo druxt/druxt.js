@@ -1,0 +1,1583 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "block--block",
+        "id": "8e8fb297-5e50-48da-bd3c-587a5dd57003",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/8e8fb297-5e50-48da-bd3c-587a5dd57003"
+          }
+        },
+        "attributes": {
+          "region": "breadcrumb",
+          "drupal_internal__id": "claro_breadcrumbs",
+          "weight": 0,
+          "visibility": [],
+          "theme": "claro",
+          "plugin": "system_breadcrumb_block",
+          "settings": {
+            "id": "system_breadcrumb_block",
+            "label": "Breadcrumbs",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "claro"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "1faaa326-3f41-4522-9589-456f88412728",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/1faaa326-3f41-4522-9589-456f88412728"
+          }
+        },
+        "attributes": {
+          "theme": "claro",
+          "drupal_internal__id": "claro_content",
+          "weight": 0,
+          "visibility": [],
+          "region": "content",
+          "plugin": "system_main_block",
+          "settings": {
+            "id": "system_main_block",
+            "label": "Main page content",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "claro"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "8275fc62-ce4e-4ff2-9724-51bf4b2e841e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/8275fc62-ce4e-4ff2-9724-51bf4b2e841e"
+          }
+        },
+        "attributes": {
+          "region": "help",
+          "drupal_internal__id": "claro_help",
+          "weight": 0,
+          "visibility": [],
+          "theme": "claro",
+          "plugin": "help_block",
+          "settings": {
+            "id": "help_block",
+            "label": "Help",
+            "provider": "help",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "help"
+            ],
+            "theme": [
+              "claro"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "ec63d045-d726-4775-9214-b7da8ff9746c",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/ec63d045-d726-4775-9214-b7da8ff9746c"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "claro_local_actions",
+          "weight": -10,
+          "visibility": [],
+          "theme": "claro",
+          "region": "content",
+          "plugin": "local_actions_block",
+          "settings": {
+            "id": "local_actions_block",
+            "label": "Primary admin actions",
+            "provider": "core",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "claro"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "117cd01e-daeb-47b8-b341-48e3810dfd99",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/117cd01e-daeb-47b8-b341-48e3810dfd99"
+          }
+        },
+        "attributes": {
+          "region": "highlighted",
+          "drupal_internal__id": "claro_messages",
+          "weight": 0,
+          "visibility": [],
+          "theme": "claro",
+          "plugin": "system_messages_block",
+          "settings": {
+            "id": "system_messages_block",
+            "label": "Status messages",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "claro"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "1f20011a-b340-4f3c-bcd5-c1563274b5b9",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/1f20011a-b340-4f3c-bcd5-c1563274b5b9"
+          }
+        },
+        "attributes": {
+          "region": "header",
+          "drupal_internal__id": "claro_page_title",
+          "weight": -30,
+          "visibility": [],
+          "theme": "claro",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "claro"
+            ]
+          },
+          "provider": null,
+          "plugin": "page_title_block",
+          "settings": {
+            "id": "page_title_block",
+            "label": "Page title",
+            "provider": "core",
+            "label_display": "0"
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "e2cd6576-0dff-4fba-8c4c-668e95037a07",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/e2cd6576-0dff-4fba-8c4c-668e95037a07"
+          }
+        },
+        "attributes": {
+          "region": "header",
+          "drupal_internal__id": "claro_primary_local_tasks",
+          "weight": 0,
+          "visibility": [],
+          "theme": "claro",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "claro"
+            ]
+          },
+          "provider": null,
+          "plugin": "local_tasks_block",
+          "settings": {
+            "id": "local_tasks_block",
+            "label": "Primary tabs",
+            "provider": "core",
+            "label_display": "0",
+            "primary": true,
+            "secondary": false
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "0064ba76-9fb2-48e3-84b3-91401be54989",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/0064ba76-9fb2-48e3-84b3-91401be54989"
+          }
+        },
+        "attributes": {
+          "region": "pre_content",
+          "drupal_internal__id": "claro_secondary_local_tasks",
+          "weight": 0,
+          "visibility": [],
+          "theme": "claro",
+          "plugin": "local_tasks_block",
+          "settings": {
+            "id": "local_tasks_block",
+            "label": "Secondary tabs",
+            "provider": "core",
+            "label_display": "0",
+            "primary": false,
+            "secondary": true
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "claro"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "b08b3f19-1ca6-4758-9d0a-9cc2e1c2e577",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/b08b3f19-1ca6-4758-9d0a-9cc2e1c2e577"
+          }
+        },
+        "attributes": {
+          "region": "breadcrumb",
+          "drupal_internal__id": "gin_breadcrumbs",
+          "weight": 0,
+          "visibility": [],
+          "theme": "gin",
+          "plugin": "system_breadcrumb_block",
+          "settings": {
+            "id": "system_breadcrumb_block",
+            "label": "Breadcrumbs",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "gin"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "aa2dd3ad-ac05-44d8-81e1-c575d3fcd91b",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/aa2dd3ad-ac05-44d8-81e1-c575d3fcd91b"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "gin_content",
+          "weight": 0,
+          "visibility": [],
+          "theme": "gin",
+          "region": "content",
+          "plugin": "system_main_block",
+          "settings": {
+            "id": "system_main_block",
+            "label": "Main page content",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "gin"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "c7c1f62f-11cf-4539-a491-d7bf35062494",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/c7c1f62f-11cf-4539-a491-d7bf35062494"
+          }
+        },
+        "attributes": {
+          "region": "help",
+          "drupal_internal__id": "gin_help",
+          "weight": 0,
+          "visibility": [],
+          "theme": "gin",
+          "plugin": "help_block",
+          "settings": {
+            "id": "help_block",
+            "label": "Help",
+            "provider": "help",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "help"
+            ],
+            "theme": [
+              "gin"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "6ffb7e4a-5647-4d21-baa4-a2ca4b39b8f1",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/6ffb7e4a-5647-4d21-baa4-a2ca4b39b8f1"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "gin_local_actions",
+          "weight": -10,
+          "visibility": [],
+          "theme": "gin",
+          "region": "content",
+          "plugin": "local_actions_block",
+          "settings": {
+            "id": "local_actions_block",
+            "label": "Primary admin actions",
+            "provider": "core",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "gin"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "78c668b9-dafc-426f-aa85-f3727916b10d",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/78c668b9-dafc-426f-aa85-f3727916b10d"
+          }
+        },
+        "attributes": {
+          "region": "highlighted",
+          "drupal_internal__id": "gin_messages",
+          "weight": 0,
+          "visibility": [],
+          "theme": "gin",
+          "plugin": "system_messages_block",
+          "settings": {
+            "id": "system_messages_block",
+            "label": "Status messages",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "gin"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "eb2651fc-4b03-4353-8303-6101c955ce54",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/eb2651fc-4b03-4353-8303-6101c955ce54"
+          }
+        },
+        "attributes": {
+          "region": "header",
+          "drupal_internal__id": "gin_page_title",
+          "weight": -30,
+          "visibility": [],
+          "theme": "gin",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "gin"
+            ]
+          },
+          "provider": null,
+          "plugin": "page_title_block",
+          "settings": {
+            "id": "page_title_block",
+            "label": "Page title",
+            "provider": "core",
+            "label_display": "0"
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "604a7da0-5cc9-4c46-886b-403961f3db91",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/604a7da0-5cc9-4c46-886b-403961f3db91"
+          }
+        },
+        "attributes": {
+          "region": "header",
+          "drupal_internal__id": "gin_primary_local_tasks",
+          "weight": 0,
+          "visibility": [],
+          "theme": "gin",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "gin"
+            ]
+          },
+          "provider": null,
+          "plugin": "local_tasks_block",
+          "settings": {
+            "id": "local_tasks_block",
+            "label": "Primary tabs",
+            "provider": "core",
+            "label_display": "0",
+            "primary": true,
+            "secondary": false
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "4d253d4f-e54a-49e0-9bcc-1e06c0cd073d",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/4d253d4f-e54a-49e0-9bcc-1e06c0cd073d"
+          }
+        },
+        "attributes": {
+          "region": "pre_content",
+          "drupal_internal__id": "gin_secondary_local_tasks",
+          "weight": 0,
+          "visibility": [],
+          "theme": "gin",
+          "plugin": "local_tasks_block",
+          "settings": {
+            "id": "local_tasks_block",
+            "label": "Secondary tabs",
+            "provider": "core",
+            "label_display": "0",
+            "primary": false,
+            "secondary": true
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "gin"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "608f9fb8-7c2d-4a92-afb8-d58b3d82a938",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/608f9fb8-7c2d-4a92-afb8-d58b3d82a938"
+          }
+        },
+        "attributes": {
+          "theme": "seven",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "seven"
+            ]
+          },
+          "drupal_internal__id": "seven_breadcrumbs",
+          "region": "breadcrumb",
+          "weight": 0,
+          "provider": null,
+          "plugin": "system_breadcrumb_block",
+          "settings": {
+            "id": "system_breadcrumb_block",
+            "label": "Breadcrumbs",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "visibility": []
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "25a60cb4-4569-4b4c-bd26-284f26da4f8e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/25a60cb4-4569-4b4c-bd26-284f26da4f8e"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "seven_content",
+          "weight": 0,
+          "visibility": [],
+          "theme": "seven",
+          "region": "content",
+          "plugin": "system_main_block",
+          "settings": {
+            "id": "system_main_block",
+            "label": "Main page content",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "seven"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "8c7c9671-c574-4598-9e2e-ca71dac91994",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/8c7c9671-c574-4598-9e2e-ca71dac91994"
+          }
+        },
+        "attributes": {
+          "theme": "seven",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "help"
+            ],
+            "theme": [
+              "seven"
+            ]
+          },
+          "drupal_internal__id": "seven_help",
+          "region": "help",
+          "weight": 0,
+          "provider": null,
+          "plugin": "help_block",
+          "settings": {
+            "id": "help_block",
+            "label": "Help",
+            "provider": "help",
+            "label_display": "0"
+          },
+          "visibility": []
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "02e11597-0d20-4238-8997-3afe2329fa0e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/02e11597-0d20-4238-8997-3afe2329fa0e"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "seven_local_actions",
+          "weight": -10,
+          "visibility": [],
+          "theme": "seven",
+          "region": "content",
+          "plugin": "local_actions_block",
+          "settings": {
+            "id": "local_actions_block",
+            "label": "Primary admin actions",
+            "provider": "core",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "seven"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "e7b2be6b-c581-4043-8098-2dbff615961a",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/e7b2be6b-c581-4043-8098-2dbff615961a"
+          }
+        },
+        "attributes": {
+          "theme": "seven",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "seven"
+            ]
+          },
+          "drupal_internal__id": "seven_messages",
+          "region": "highlighted",
+          "weight": 0,
+          "provider": null,
+          "plugin": "system_messages_block",
+          "settings": {
+            "id": "system_messages_block",
+            "label": "Status messages",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "visibility": []
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "52f49d4f-2d3d-4126-a628-762401c8547f",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/52f49d4f-2d3d-4126-a628-762401c8547f"
+          }
+        },
+        "attributes": {
+          "theme": "seven",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "seven"
+            ]
+          },
+          "drupal_internal__id": "seven_page_title",
+          "region": "header",
+          "weight": -30,
+          "provider": null,
+          "plugin": "page_title_block",
+          "settings": {
+            "id": "page_title_block",
+            "label": "Page title",
+            "provider": "core",
+            "label_display": "0"
+          },
+          "visibility": []
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "c6eee532-8698-47b2-b57b-6603cb6d4397",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/c6eee532-8698-47b2-b57b-6603cb6d4397"
+          }
+        },
+        "attributes": {
+          "theme": "seven",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "seven"
+            ]
+          },
+          "drupal_internal__id": "seven_primary_local_tasks",
+          "region": "header",
+          "weight": 0,
+          "provider": null,
+          "plugin": "local_tasks_block",
+          "settings": {
+            "id": "local_tasks_block",
+            "label": "Primary tabs",
+            "provider": "core",
+            "label_display": "0",
+            "primary": true,
+            "secondary": false
+          },
+          "visibility": []
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "265ce398-ee69-447f-b589-6de279498d48",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/265ce398-ee69-447f-b589-6de279498d48"
+          }
+        },
+        "attributes": {
+          "theme": "seven",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "seven"
+            ]
+          },
+          "drupal_internal__id": "seven_secondary_local_tasks",
+          "region": "pre_content",
+          "weight": 0,
+          "provider": null,
+          "plugin": "local_tasks_block",
+          "settings": {
+            "id": "local_tasks_block",
+            "label": "Secondary tabs",
+            "provider": "core",
+            "label_display": "0",
+            "primary": false,
+            "secondary": true
+          },
+          "visibility": []
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "99d4bcf0-a6ac-4664-a2a5-cf8f8fc845d0",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/99d4bcf0-a6ac-4664-a2a5-cf8f8fc845d0"
+          }
+        },
+        "attributes": {
+          "region": "pre_header",
+          "drupal_internal__id": "umami_account_menu",
+          "weight": 2,
+          "visibility": [],
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "system.menu.account"
+            ],
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "theme": "umami",
+          "provider": null,
+          "plugin": "system_menu_block:account",
+          "settings": {
+            "id": "system_menu_block:account",
+            "label": "User account menu",
+            "provider": "system",
+            "label_display": "0",
+            "level": 1,
+            "depth": 1,
+            "expand_all_items": false
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "70bf5283-94ac-411f-b25b-20ce9fcd3c84",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/70bf5283-94ac-411f-b25b-20ce9fcd3c84"
+          }
+        },
+        "attributes": {
+          "region": "banner_top",
+          "drupal_internal__id": "umami_banner_home",
+          "weight": -7,
+          "visibility": {
+            "request_path": {
+              "id": "request_path",
+              "pages": "<front>",
+              "negate": false,
+              "context_mapping": []
+            }
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "content": [
+              "block_content:banner_block:9aadf4a1-ded6-4017-a10d-a5e043396edf"
+            ],
+            "enforced": {
+              "module": [
+                "demo_umami_content"
+              ]
+            },
+            "module": [
+              "block_content",
+              "system"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "theme": "umami",
+          "provider": null,
+          "plugin": "block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf",
+          "settings": {
+            "id": "block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf",
+            "label": "Umami Home Banner",
+            "provider": "block_content",
+            "label_display": "0",
+            "status": true,
+            "info": "",
+            "view_mode": "full"
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "0a1df5ac-e81d-440f-939c-1b54124c3350",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/0a1df5ac-e81d-440f-939c-1b54124c3350"
+          }
+        },
+        "attributes": {
+          "region": "banner_top",
+          "drupal_internal__id": "umami_banner_recipes",
+          "weight": -8,
+          "visibility": {
+            "request_path": {
+              "id": "request_path",
+              "pages": "/recipes\r\n",
+              "negate": false,
+              "context_mapping": []
+            }
+          },
+          "theme": "umami",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "content": [
+              "block_content:banner_block:4c7d58a3-a45d-412d-9068-259c57e40541"
+            ],
+            "enforced": {
+              "module": [
+                "demo_umami_content"
+              ]
+            },
+            "module": [
+              "block_content",
+              "system"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "provider": null,
+          "plugin": "block_content:4c7d58a3-a45d-412d-9068-259c57e40541",
+          "settings": {
+            "id": "block_content:4c7d58a3-a45d-412d-9068-259c57e40541",
+            "label": "Umami Recipes Banner",
+            "provider": "block_content",
+            "label_display": "0",
+            "status": true,
+            "info": "",
+            "view_mode": "full"
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "489d5873-2f82-44eb-9b41-cc87f073d909",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/489d5873-2f82-44eb-9b41-cc87f073d909"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "umami_branding",
+          "weight": -7,
+          "visibility": [],
+          "theme": "umami",
+          "region": "header",
+          "plugin": "system_branding_block",
+          "settings": {
+            "id": "system_branding_block",
+            "label": "Site branding",
+            "provider": "system",
+            "label_display": "0",
+            "use_site_logo": true,
+            "use_site_name": false,
+            "use_site_slogan": true
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "5ccc1e00-0877-4bcf-a549-6b0a238dc4f4",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/5ccc1e00-0877-4bcf-a549-6b0a238dc4f4"
+          }
+        },
+        "attributes": {
+          "region": "breadcrumbs",
+          "drupal_internal__id": "umami_breadcrumbs",
+          "weight": 0,
+          "visibility": {
+            "request_path": {
+              "id": "request_path",
+              "pages": "<front>",
+              "negate": true,
+              "context_mapping": []
+            }
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "theme": "umami",
+          "provider": null,
+          "plugin": "system_breadcrumb_block",
+          "settings": {
+            "id": "system_breadcrumb_block",
+            "label": "Breadcrumbs",
+            "provider": "system",
+            "label_display": "0"
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "6c528388-f40e-4b41-9ea4-e8b52c84b3e5",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/6c528388-f40e-4b41-9ea4-e8b52c84b3e5"
+          }
+        },
+        "attributes": {
+          "region": "content",
+          "drupal_internal__id": "umami_content",
+          "weight": -7,
+          "visibility": [],
+          "theme": "umami",
+          "plugin": "system_main_block",
+          "settings": {
+            "id": "system_main_block",
+            "label": "Main page content",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "a95af243-dec1-4094-a1f7-2a3dc51a93eb",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/a95af243-dec1-4094-a1f7-2a3dc51a93eb"
+          }
+        },
+        "attributes": {
+          "region": "bottom",
+          "drupal_internal__id": "umami_disclaimer",
+          "weight": 10,
+          "visibility": [],
+          "theme": "umami",
+          "plugin": "block_content:9b4dcd67-99f3-48d0-93c9-2c46648b29de",
+          "settings": {
+            "id": "block_content:9b4dcd67-99f3-48d0-93c9-2c46648b29de",
+            "label": "Umami disclaimer",
+            "provider": "block_content",
+            "label_display": "0",
+            "status": true,
+            "info": "",
+            "view_mode": "full"
+          },
+          "dependencies": {
+            "content": [
+              "block_content:disclaimer_block:9b4dcd67-99f3-48d0-93c9-2c46648b29de"
+            ],
+            "enforced": {
+              "module": [
+                "demo_umami_content"
+              ]
+            },
+            "module": [
+              "block_content"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "langcode": "en",
+          "status": true,
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "25a12a18-487e-4cdd-ae1b-2ede64ed9c89",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/25a12a18-487e-4cdd-ae1b-2ede64ed9c89"
+          }
+        },
+        "attributes": {
+          "region": "footer",
+          "drupal_internal__id": "umami_footer",
+          "weight": 0,
+          "visibility": [],
+          "theme": "umami",
+          "plugin": "system_menu_block:footer",
+          "settings": {
+            "id": "system_menu_block:footer",
+            "label": "Tell us what you think",
+            "provider": "system",
+            "label_display": "1",
+            "level": 1,
+            "depth": 0,
+            "expand_all_items": false
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "system.menu.footer"
+            ],
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "2a92608c-b8da-46c7-8804-1d6b0c07e54e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/2a92608c-b8da-46c7-8804-1d6b0c07e54e"
+          }
+        },
+        "attributes": {
+          "region": "footer",
+          "drupal_internal__id": "umami_footer_promo",
+          "weight": -1,
+          "visibility": [],
+          "theme": "umami",
+          "plugin": "block_content:924ab293-8f5f-45a1-9c7f-2423ae61a241",
+          "settings": {
+            "id": "block_content:924ab293-8f5f-45a1-9c7f-2423ae61a241",
+            "label": "Umami footer promo",
+            "provider": "block_content",
+            "label_display": "0",
+            "status": true,
+            "info": "",
+            "view_mode": "full"
+          },
+          "dependencies": {
+            "content": [
+              "block_content:footer_promo_block:924ab293-8f5f-45a1-9c7f-2423ae61a241"
+            ],
+            "enforced": {
+              "module": [
+                "demo_umami_content"
+              ]
+            },
+            "module": [
+              "block_content"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "langcode": "en",
+          "status": true,
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "3fae7cc5-4e4b-4381-8763-c42b1c789f1c",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/3fae7cc5-4e4b-4381-8763-c42b1c789f1c"
+          }
+        },
+        "attributes": {
+          "region": "highlighted",
+          "drupal_internal__id": "umami_help",
+          "weight": 0,
+          "visibility": [],
+          "theme": "umami",
+          "plugin": "help_block",
+          "settings": {
+            "id": "help_block",
+            "label": "Help",
+            "provider": "help",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "help"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "691be8da-edfd-40cd-9e27-df0398fe9a6a",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/691be8da-edfd-40cd-9e27-df0398fe9a6a"
+          }
+        },
+        "attributes": {
+          "region": "pre_header",
+          "drupal_internal__id": "umami_languageswitcher",
+          "weight": 0,
+          "visibility": [],
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "language"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "theme": "umami",
+          "provider": null,
+          "plugin": "language_block:language_interface",
+          "settings": {
+            "id": "language_block:language_interface",
+            "label": "Language switcher",
+            "provider": "language",
+            "label_display": "0"
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "c22cc224-8e02-4bb5-81b4-2ba1f99fe3c0",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/c22cc224-8e02-4bb5-81b4-2ba1f99fe3c0"
+          }
+        },
+        "attributes": {
+          "region": "tabs",
+          "drupal_internal__id": "umami_local_tasks",
+          "weight": -7,
+          "visibility": [],
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "theme": [
+              "umami"
+            ]
+          },
+          "theme": "umami",
+          "provider": null,
+          "plugin": "local_tasks_block",
+          "settings": {
+            "id": "local_tasks_block",
+            "label": "Tabs",
+            "provider": "core",
+            "label_display": "0",
+            "primary": true,
+            "secondary": true
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "fe36ab5e-43ba-4869-9970-7f2bb2a857e3",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/fe36ab5e-43ba-4869-9970-7f2bb2a857e3"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "umami_main_menu",
+          "weight": -6,
+          "visibility": [],
+          "region": "header",
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "system.menu.main"
+            ],
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "theme": "umami",
+          "provider": null,
+          "plugin": "system_menu_block:main",
+          "settings": {
+            "id": "system_menu_block:main",
+            "label": "Main navigation",
+            "provider": "system",
+            "label_display": "0",
+            "level": 1,
+            "depth": 1,
+            "expand_all_items": false
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "5fd43214-9ba0-4901-b2e5-c8d8015cdc0f",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/5fd43214-9ba0-4901-b2e5-c8d8015cdc0f"
+          }
+        },
+        "attributes": {
+          "region": "highlighted",
+          "drupal_internal__id": "umami_messages",
+          "weight": -8,
+          "visibility": [],
+          "theme": "umami",
+          "plugin": "system_messages_block",
+          "settings": {
+            "id": "system_messages_block",
+            "label": "Status messages",
+            "provider": "system",
+            "label_display": "0"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "provider": null
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "fa8327ba-3ad3-49ea-a249-a85e70842934",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/fa8327ba-3ad3-49ea-a249-a85e70842934"
+          }
+        },
+        "attributes": {
+          "region": "page_title",
+          "drupal_internal__id": "umami_page_title",
+          "weight": -7,
+          "visibility": {
+            "request_path": {
+              "id": "request_path",
+              "pages": "<front>",
+              "negate": true,
+              "context_mapping": []
+            }
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "system"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "theme": "umami",
+          "provider": null,
+          "plugin": "page_title_block",
+          "settings": {
+            "id": "page_title_block",
+            "label": "Page title",
+            "provider": "core",
+            "label_display": "0"
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "d9bc2682-5610-4065-baf2-4dd473296233",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/d9bc2682-5610-4065-baf2-4dd473296233"
+          }
+        },
+        "attributes": {
+          "region": "pre_header",
+          "drupal_internal__id": "umami_search",
+          "weight": 1,
+          "visibility": [],
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "module": [
+              "search"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "theme": "umami",
+          "provider": null,
+          "plugin": "search_form_block",
+          "settings": {
+            "id": "search_form_block",
+            "label": "Search",
+            "provider": "search",
+            "label_display": "visible",
+            "page_id": "node_search"
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "63d2b9a8-97ff-4114-b1c9-150f320f6786",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/63d2b9a8-97ff-4114-b1c9-150f320f6786"
+          }
+        },
+        "attributes": {
+          "region": "banner_top",
+          "drupal_internal__id": "umami_views_block__promoted_items_block_1",
+          "weight": -6,
+          "visibility": {
+            "request_path": {
+              "id": "request_path",
+              "pages": "<front>",
+              "negate": false,
+              "context_mapping": []
+            }
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "views.view.promoted_items"
+            ],
+            "module": [
+              "system",
+              "views"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "theme": "umami",
+          "provider": null,
+          "plugin": "views_block:promoted_items-block_1",
+          "settings": {
+            "id": "views_block:promoted_items-block_1",
+            "label": "",
+            "provider": "views",
+            "label_display": "0",
+            "views_label": "",
+            "items_per_page": "none"
+          }
+        }
+      },
+      {
+        "type": "block--block",
+        "id": "37a8a70e-92c9-40c9-84f2-4a326c190b56",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/37a8a70e-92c9-40c9-84f2-4a326c190b56"
+          }
+        },
+        "attributes": {
+          "region": "content_bottom",
+          "drupal_internal__id": "umami_views_block__recipe_collections_block",
+          "weight": 0,
+          "visibility": [],
+          "theme": "umami",
+          "plugin": "views_block:recipe_collections-block",
+          "settings": {
+            "id": "views_block:recipe_collections-block",
+            "label": "",
+            "provider": "views",
+            "label_display": "visible",
+            "views_label": "",
+            "items_per_page": "none"
+          },
+          "langcode": "en",
+          "status": true,
+          "dependencies": {
+            "config": [
+              "views.view.recipe_collections"
+            ],
+            "module": [
+              "views"
+            ],
+            "theme": [
+              "umami"
+            ]
+          },
+          "provider": null
+        }
+      }
+    ],
+    "meta": {
+      "omitted": {
+        "detail": "Some resources have been omitted because of insufficient authorization.",
+        "links": {
+          "help": {
+            "href": "https://www.drupal.org/docs/8/modules/json-api/filtering#filters-access-control"
+          },
+          "item--9HAbvyn": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/50ec6e50-b5f7-4f86-b550-3a27069024ad",
+            "meta": {
+              "rel": "item",
+              "detail": "The current user is not allowed to GET the selected resource."
+            }
+          }
+        }
+      }
+    },
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block?filter%5Bstatus%5D=true"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "/en/jsonapi/block/block?filter%5Bstatus%5D=true",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
+}

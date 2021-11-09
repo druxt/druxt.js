@@ -59,7 +59,11 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
 
   this.nuxt.hook('builder:prepared', async () => {
     // Generate schemas.
-    const druxtSchema = new DruxtSchema(options.baseUrl, options)
+    const druxtSchema = new DruxtSchema(options.baseUrl, {
+      ...options,
+      // Disable API Proxy, as Proxies aren't available at build.
+      proxy: { ...options.proxy || {}, api: false },
+    })
     const { schemas } = await druxtSchema.get()
 
     for (const name in schemas) {

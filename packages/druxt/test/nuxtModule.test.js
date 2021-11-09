@@ -10,6 +10,7 @@ let mock
 describe('DruxtJS Nuxt module', () => {
   beforeEach(() => {
     mock = {
+      addModule: jest.fn(),
       addPlugin: jest.fn(),
       nuxt: {
         hook: jest.fn((hook, fn) => {
@@ -61,5 +62,86 @@ describe('DruxtJS Nuxt module', () => {
     mock.options.components = false
     DruxtNuxtModule.call(mock)
     expect(mock.options.components).toBe(false)
+  })
+
+  test('API Proxy', () => {
+    // Enable API Proxy.
+    mock.options.druxt = {
+      ...options,
+      proxy: {
+        api: true,
+      }
+    }
+    DruxtNuxtModule.call(mock)
+
+    // Ensure Nuxt proxy is enabled.
+    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
+    // Ensure proxies are set.
+    expect(mock.options.proxy).toStrictEqual({
+      [options.endpoint]: options.baseUrl,
+      '/router/translate-path': options.baseUrl
+    })
+  })
+
+  test('File Proxy', () => {
+    // Enable File proxy.
+    mock.options.druxt = {
+      ...options,
+      proxy: {
+        files: true,
+      }
+    }
+    DruxtNuxtModule.call(mock)
+
+    expect(mock.options.proxy).toStrictEqual({
+      '/sites/default/files': options.baseUrl
+    })
+
+    // Use custom files directory.
+    delete mock.options.proxy
+    mock.options.druxt.proxy.files = 'druxtjs.org'
+    DruxtNuxtModule.call(mock)
+
+    expect(mock.options.proxy).toStrictEqual({
+      '/sites/druxtjs.org/files': options.baseUrl
+    })
+  })
+
+  test('Proxy - merge options', () => {
+    // Enable API Proxy.
+    mock.options.druxt = {
+      ...options,
+      proxy: {
+        api: true,
+      }
+    }
+
+    // Set array proxy settings.
+    mock.options.proxy = [`${options.baseUrl}/array-test`]
+
+    DruxtNuxtModule.call(mock)
+
+    // Ensure Nuxt proxy is enabled.
+    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
+    // Ensure proxies are set.
+    expect(mock.options.proxy).toStrictEqual([
+      `${options.baseUrl}${options.endpoint}`,
+      `${options.baseUrl}/router/translate-path`,
+      `${options.baseUrl}/array-test`,
+    ])
+
+    // Set object proxy settings.
+    mock.options.proxy = { '/object-test': options.baseUrl }
+
+    DruxtNuxtModule.call(mock)
+
+    // Ensure Nuxt proxy is enabled.
+    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
+    // Ensure proxies are set.
+    expect(mock.options.proxy).toStrictEqual({
+      [options.endpoint]: options.baseUrl,
+      '/object-test': options.baseUrl,
+      '/router/translate-path': options.baseUrl
+    })
   })
 })

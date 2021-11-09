@@ -6395,7 +6395,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-site@workspace:packages/site"
   dependencies:
-    "@nuxtjs/proxy": ^2.1.0
     drupal-jsonapi-params: ^1.2.2
     druxt: ^0.12.0
     druxt-blocks: ^0.13.1
@@ -6485,6 +6484,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt@workspace:packages/druxt"
   dependencies:
+    "@nuxtjs/proxy": ^2.1.0
     axios: ^0.21.1
     chalk: ^4.1.2
     core-js: ^3.16.1
@@ -7380,7 +7380,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.10.0":
+"follow-redirects@npm:^1.0.0":
+  version: 1.14.5
+  resolution: "follow-redirects@npm:1.14.5"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: f004a76b2ee3a849772c2816e30928253bf47537b0f00184d89f4966413add96a228a4d96ca8c702bc045a683c52c2ba41545c915cc1a5e33bf8fd9d07b59aee
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.10.0":
   version: 1.14.1
   resolution: "follow-redirects@npm:1.14.1"
   peerDependenciesMeta:

@@ -11,6 +11,8 @@
     "nuxt": "latest"
   },
   "devDependencies": {
-    "@nuxtjs/storybook": "latest"
+    "@nuxt/postcss8": "latest",
+    "@nuxtjs/storybook": "latest",
+    "postcss": "latest"
   }
 }

@@ -11,7 +11,7 @@ const titleFn = (parts) =>
 export default async function ({ stories }) {
   const { addTemplate, options } = this
 
-  const druxt = new DruxtClient(options.druxt.baseUrl, options.druxt)
+  const druxt = new DruxtClient(options.druxt.baseUrl, { ...options.druxt, proxy: { api: false } })
 
   // Fetch and process schemas.
   const [view, form] = (await Promise.all(['view', 'form'].map(async (type) =>
