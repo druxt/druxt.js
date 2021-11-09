@@ -7,11 +7,11 @@
       "type": "node",
       "bundle": "page",
       "id": "18",
-      "uuid": "790d38f6-5e98-464e-acad-e28ec291a241"
+      "uuid": "7397cca5-44f4-4676-a93f-576bb72c692b"
     },
     "label": "About Umami",
     "jsonapi": {
-      "individual": "https://demo-api.druxtjs.org/en/jsonapi/node/page/790d38f6-5e98-464e-acad-e28ec291a241",
+      "individual": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b",
       "resourceName": "node--page",
       "pathPrefix": "jsonapi",
       "basePath": "/jsonapi",

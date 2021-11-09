@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DruxtEntity component defaults 1`] = `
+"<div>
+  <druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"></druxtentitynodepage-stub>
+</div>"
+`;
+
 exports[`DruxtEntity missing schema 1`] = `
 "<div>
   <div entity=\\"[object Object]\\" value=\\"[object Object]\\">
@@ -45,11 +51,5 @@ exports[`DruxtEntity missing schema 1`] = `
   }
 }</pre></label></druxtdebug-stub>
   </div>
-</div>"
-`;
-
-exports[`DruxtEntity node--page 1`] = `
-"<div>
-  <druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"></druxtentitynodepage-stub>
 </div>"
 `;

@@ -249,7 +249,7 @@ describe('DruxtField', () => {
     // Input.
     const input = wrapper.find('input[type="datetime-local"]')
     expect(input.exists()).toBe(true)
-    expect(input.element.value).toBe('2021-05-01T06:24:09.000')
+    expect(input.element.value).toBe('2021-10-25T00:48:44.000')
     input.element.value = '2021-07-03T16:20'
     input.trigger('input')
     expect(wrapper.vm.model).toBe('2021-07-03T16:20+00:00')
