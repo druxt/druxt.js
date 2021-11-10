@@ -1,5 +1,45 @@
 # druxt
 
+## 0.13.0
+
+### Minor Changes
+
+- 77ab204: Added ability to proxy the API
+
+  ```js
+  export default {
+    druxt: {
+      proxy: {
+        api: true
+      }
+    }
+  };
+  ```
+
+  Creates two proxy entries:
+
+  - The JSON:API: `${ENDPOINT}` -> `${BASEURL}${ENDPOINT}`
+  - The Decoupled Router:`/router/translate-path` -> `${BASEURL}/router/translate-path`
+
+- 77ab204: Added ability to proxy the Drupal file system
+
+  ```js
+  export default {
+    druxt: {
+      proxy: {
+        files: "default"
+      }
+    }
+  };
+  ```
+
+  Creates a proxy entry:
+
+  - `/sites/${PATH}/files` -> `${BASEURL}/site/${PATH}/files`
+
+- c4457e1: Changed template injected module components to not use a DruxtWrapper component by default.
+- e7b1533: Refactored DruxtModule fetch hooks
+
 ## 0.12.0
 
 ### Minor Changes

@@ -1,5 +1,46 @@
 # druxt-entity
 
+## 0.21.0
+
+### Minor Changes
+
+- 025315a: Added **include** option and the ability to filter related resources.
+
+  ```js
+  export default {
+    druxt: {
+      query: {
+        include: ["field_media_image", "field_media_image.field_media_image"],
+        fields: [
+          ["file--file", ["uri"]],
+          ["media--image", []]
+        ]
+      }
+    }
+  };
+  ```
+
+- 025315a: Added **settings** property to the DruxtEntity and DruxtEntityForm components.
+
+  ```vue
+  <template>
+    <DruxtEntity
+      :settings="{ query: { include: ['uid'] } }"
+      type="node--page"
+      :uuid="uuid"
+    />
+  </template>
+  ```
+
+- e7b1533: Refactored DruxtModule fetch hooks
+
+### Patch Changes
+
+- Updated dependencies [77ab204]
+  - druxt-schema@0.9.0
+  - druxt@0.13.0
+  - druxt-router@0.23.0
+
 ## 0.20.0
 
 ### Minor Changes
