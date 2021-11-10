@@ -51,10 +51,10 @@ If there are no matching component names, a default `DruxtWrapper` component wil
 
 Most Druxt modules can have the default template overridden, allowing for full control of the default slot rendering.
 
-The available data provided to the template scope is deteremined by the relevant module.
+The available data provided to the template scope is determined by the relevant module.
 
 ```vue
-<DruxtEntity>
+<DruxtEntity v-bind="props">
   <template #default="{ entity }">
     <div>
       <h1>{{ entity.attributes.title }}</h1>
@@ -62,3 +62,13 @@ The available data provided to the template scope is deteremined by the relevant
   </template>
 </DruxtEntity>
 ```
+
+By default, a component using the default template will not be wrapped by a DruxtWrapper component. It is possible to enable the DruxtWrapper system by setting the `wrapper` property to `true`:
+
+```vue
+<DruxtBlock v-bind="props" :wrapper="true">
+  <template #default="{ block }">
+    // This will be wrapped by a DruxtBlock Wrapper component.
+  </template>
+</DruxtBlock>
+````

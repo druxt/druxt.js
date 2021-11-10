@@ -10,7 +10,7 @@ const titleFn = (parts) =>
 export default async function ({ stories }) {
   const { addTemplate, options } = this
 
-  const druxt = new DruxtClient(options.druxt.baseUrl, options.druxt)
+  const druxt = new DruxtClient(options.druxt.baseUrl, { ...options.druxt, proxy: { api: false } })
 
   const query = new DrupalJsonApiParams().addFilter('status', true)
   const blocks = (await druxt.getCollectionAll('block--block', query)).map((collection) => collection.data).flat()

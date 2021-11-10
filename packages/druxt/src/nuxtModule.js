@@ -27,7 +27,50 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
   const options = {
     endpoint: '/jsonapi',
     ...moduleOptions,
-    ...(this.options || {}).druxt
+    ...(this.options || {}).druxt,
+  }
+
+  // Nuxt proxy integration.
+  if (options.proxy) {
+    const proxies = {}
+
+    // Enable proxying of the API endpoint.
+    // This is primarily used to avoid CORS errors.
+    if ((options.proxy || {}).api) {
+      // Main API Endpoint.
+      proxies[options.endpoint] = options.baseUrl
+      // Decoupled Router Endpoint.
+      proxies['/router/translate-path'] = options.baseUrl
+    }
+
+    // Enable proxying of the Drupal site files.
+    if ((options.proxy || {}).files) {
+      const filesPath = typeof options.proxy.files === 'string' ? options.proxy.files : 'default'
+      proxies[`/sites/${filesPath}/files`] = options.baseUrl
+    }
+
+    // If there are existing proxy settings, merge in the appropriate format.
+    if (this.options.proxy) {
+      if (Array.isArray(this.options.proxy)) {
+        this.options.proxy = [
+          ...Object.keys(proxies).map((path) => `${options.baseUrl}${path}`),
+          ...this.options.proxy
+        ]
+      }
+      else {
+        this.options.proxy = {
+          ...proxies,
+          ...this.options.proxy
+        }
+      }
+    }
+    // Otherwise just set the the required proxies.
+    else {
+      this.options.proxy = proxies
+    }
+
+    // Enable the Proxy module.
+    this.addModule('@nuxtjs/proxy')
   }
 
   // Register components directories.
@@ -68,4 +111,21 @@ export { DruxtNuxtModule }
  *
  * @typedef {object} ModuleOptions
  * @property {string} baseUrl - The Base URL of the Drupal JSON:API backend.
+ * @property {string} [endpoint=/jsonapi] - The JSON:API endpoint path.
+ * @property {object} [proxy] - Proxy settings object.
+ * @property {boolean} [proxy.api] - Proxy the JSON:API.
+ * @property {(boolean|string)} [proxy.files] - Proxy Drupal's site files directory. Provide String to specify multi-site path.
+ *
+ * @example @lang js
+ * export default {
+ *   modules: ['druxt'],
+ *   druxt: {
+ *     baseUrl: 'https://demo-api.druxtjs.org',
+ *     endpoint: '/jsonapi',
+ *     proxy: {
+ *       api: true,
+ *       files: 'default'
+ *     }
+ *   }
+ * }
  */

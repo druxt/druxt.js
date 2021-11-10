@@ -1,0 +1,1012 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "node--article",
+        "id": "644ab00c-cdd0-4ea6-87de-3a71a4451b5e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e?resourceVersion=id%3A20"
+          }
+        },
+        "attributes": {
+          "title": "Give it a go and grow your own herbs",
+          "path": {
+            "alias": "/articles/give-it-a-go-and-grow-your-own-herbs",
+            "pid": 85,
+            "langcode": "en"
+          },
+          "drupal_internal__nid": 10,
+          "body": {
+            "value": "<p>There's nothing like having your own supply of fresh herbs, readily available and close at hand to use while cooking. Whether you have a large garden or a small kitchen window sill, there's always enough room for something home grown.</p>\n<h2>Outdoors</h2>\n<h3>Mint</h3>\n<p>Mint is a great plant to grow as it's hardy and can grow in almost any soil. Mint can grow wild, so keep it contained in a pot or it might spread and take over your whole garden.</p>\n<h3>Sage</h3>\n<p>Like mint, sage is another prolific growing plant and will take over your garden if you let it. Highly aromatic, the sage plant can be planted in a pot or flower bed in well drained soil. The best way to store the herb is to sun dry the leaves and store in a cool, dark cupboard in a sealed container.</p>\n<h3>Rosemary</h3>\n<p>Rosemary plants grow into lovely shrubs. Easily grown from cuttings, rosemary plants do not like freezing temperatures so keep pots or planted bushes near the home to shelter them from the cold. It grows well in pots as it likes dry soil, but can survive well in the ground too. If pruning rosemary to encourage it into a better shape, save the branches and hang them upside down to preserve the flavor and use in food.</p>\n<h2>Indoors</h2>\n<h3>Basil</h3>\n<p>Perfect in sunny spot on a kitchen window sill. Basil is an annual plant, so will die off in the autumn, so it's a good idea to harvest it in the summer if you have an abundance and dry it. Picked basil stays fresh longer if it is placed in water (like fresh flowers). A great way to store basil is to make it into pesto!</p>\n<h3>Chives</h3>\n<p>A versatile herb, chives can grow well indoors. Ensure the plant is watered well, and gets plenty of light. Remember to regularly trim the chives. This prevents the flowers from developing and encourages new growth.</p>\n<h3>Coriander (Cilantro)</h3>\n<p>Coriander can grow indoors, but unlike the other herbs, it doesn't like full sun. If you have a south facing kitchen window, this isn't the place for it. Although not as thirsty as basil, coriander doesn't like dry soil so don't forget to water it! Cut coriander is best stored in the fridge.</p>\n",
+            "format": "basic_html",
+            "processed": "<p>There's nothing like having your own supply of fresh herbs, readily available and close at hand to use while cooking. Whether you have a large garden or a small kitchen window sill, there's always enough room for something home grown.</p>\n<h2>Outdoors</h2>\n<h3>Mint</h3>\n<p>Mint is a great plant to grow as it's hardy and can grow in almost any soil. Mint can grow wild, so keep it contained in a pot or it might spread and take over your whole garden.</p>\n<h3>Sage</h3>\n<p>Like mint, sage is another prolific growing plant and will take over your garden if you let it. Highly aromatic, the sage plant can be planted in a pot or flower bed in well drained soil. The best way to store the herb is to sun dry the leaves and store in a cool, dark cupboard in a sealed container.</p>\n<h3>Rosemary</h3>\n<p>Rosemary plants grow into lovely shrubs. Easily grown from cuttings, rosemary plants do not like freezing temperatures so keep pots or planted bushes near the home to shelter them from the cold. It grows well in pots as it likes dry soil, but can survive well in the ground too. If pruning rosemary to encourage it into a better shape, save the branches and hang them upside down to preserve the flavor and use in food.</p>\n<h2>Indoors</h2>\n<h3>Basil</h3>\n<p>Perfect in sunny spot on a kitchen window sill. Basil is an annual plant, so will die off in the autumn, so it's a good idea to harvest it in the summer if you have an abundance and dry it. Picked basil stays fresh longer if it is placed in water (like fresh flowers). A great way to store basil is to make it into pesto!</p>\n<h3>Chives</h3>\n<p>A versatile herb, chives can grow well indoors. Ensure the plant is watered well, and gets plenty of light. Remember to regularly trim the chives. This prevents the flowers from developing and encourages new growth.</p>\n<h3>Coriander (Cilantro)</h3>\n<p>Coriander can grow indoors, but unlike the other herbs, it doesn't like full sun. If you have a south facing kitchen window, this isn't the place for it. Although not as thirsty as basil, coriander doesn't like dry soil so don't forget to water it! Cut coriander is best stored in the fridge.</p>\n",
+            "summary": null
+          },
+          "langcode": "en",
+          "status": true,
+          "created": "2021-10-25T00:48:44+00:00",
+          "promote": true,
+          "sticky": false,
+          "moderation_state": "published",
+          "drupal_internal__vid": 20,
+          "revision_timestamp": "2021-10-25T00:48:44+00:00",
+          "revision_log": null,
+          "changed": "2021-10-25T00:48:44+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": null,
+          "content_translation_source": "und",
+          "content_translation_outdated": false
+        },
+        "relationships": {
+          "field_media_image": {
+            "data": {
+              "type": "media--image",
+              "id": "bccee620-7777-4a57-b92a-7a2081923050"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e/field_media_image?resourceVersion=id%3A20"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e/relationships/field_media_image?resourceVersion=id%3A20"
+              }
+            }
+          },
+          "field_tags": {
+            "data": [
+              {
+                "type": "taxonomy_term--tags",
+                "id": "0973075e-bca9-43c9-abf6-c019d9699320"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "d0645072-907b-40d5-bcf0-4d3c9303758d"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "79f0ed42-2d3e-4aa2-9fc9-412c678d2c45"
+              }
+            ],
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e/field_tags?resourceVersion=id%3A20"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e/relationships/field_tags?resourceVersion=id%3A20"
+              }
+            }
+          },
+          "uid": {
+            "data": {
+              "type": "user--user",
+              "id": "7d61ccfc-45c4-4f09-9d43-e49db7d015c9"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e/uid?resourceVersion=id%3A20"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e/relationships/uid?resourceVersion=id%3A20"
+              }
+            }
+          },
+          "node_type": {
+            "data": {
+              "type": "node_type--node_type",
+              "id": "a76a2798-ce41-4a03-8799-7ba67d1717fc"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e/node_type?resourceVersion=id%3A20"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e/relationships/node_type?resourceVersion=id%3A20"
+              }
+            }
+          },
+          "revision_uid": {
+            "data": {
+              "type": "user--user",
+              "id": "7d61ccfc-45c4-4f09-9d43-e49db7d015c9"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e/revision_uid?resourceVersion=id%3A20"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/644ab00c-cdd0-4ea6-87de-3a71a4451b5e/relationships/revision_uid?resourceVersion=id%3A20"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "ff34108f-dba0-4f50-ab2d-9c202350951f",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f?resourceVersion=id%3A22"
+          }
+        },
+        "attributes": {
+          "title": "Dairy-free and delicious milk chocolate",
+          "path": {
+            "alias": "/articles/dairy-free-and-delicious-milk-chocolate",
+            "pid": 87,
+            "langcode": "en"
+          },
+          "drupal_internal__nid": 11,
+          "body": {
+            "value": "<p>The calendar is full of excuses for chocolate-lovers to indulge, from religious festivals to birthdays - and even World Chocolate Day on the 7th July. But for those who are vegan, or on dairy-free diets, there is no need to miss out, because there are plenty of delicious vegan chocolate varieties on offer.</p>\n<p>Dairy-free milk chocolate is made in largely the same way as regular chocolate, until the point when the milk is added. Cacao beans are roasted for a couple of hours until they develop a rich flavor. The outer shells are removed, and the interior nibs are ground to make a paste that can be mixed with cocoa butter to produce the desired percentage of chocolate. Flavorings, sugar and milk are added in different quantities to get the type of chocolate being produced. The chocolate is grainy at this point and needs to be mashed until it is smooth - this can take days! Finally, it is tempered through a process of heating and cooling until it is ready to eat.</p>\n<p>So, how do vegan chocolatiers get that creamy milk flavor and texture into their products?</p>\n<h2>Rice milk</h2>\n<p>The flavor of rice milk perfectly complements the cocoa beans and it was one of the first dairy milk alternatives to be used to create vegan milk chocolate. Rice milk is made from rice powder and is sometimes combined with hazelnut milk to create the correct texture and taste that is ideal for producing all kinds of chocolate bars.</p>\n<h2>Coconut milk</h2>\n<p>Coconut milk has to be the perfect ingredient for adding creaminess into a chocolate bar. With high fat levels, a sweet, but not overpowering taste and the correct consistency, coconut milk is a great choice for vegan milk chocolate. Chocolate made in this way will melt wonderfully for drizzling or dipping, and the coconut milk adds a slight tropical flavor that works well with other fruit flavors and nuts.</p>\n<h2>Soy milk</h2>\n<p>Soy has long been the mainstay of vegan and vegetarian diets, as it is rich in protein and is available in a wide variety of textures suitable for all kinds of dishes. Soy milk is widely available and is a great alternative to dairy milk in chocolate. It isn&rsquo;t as rich in fat as some vegan milks, but does have a neutral taste that makes it easy to combine with almost any other flavor.</p>\n<h2>Nut milks</h2>\n<p>Milks made from almonds and hazelnuts are easy to find on supermarket shelves, and are perfect for chocolate production. Like soy milk, they can be quite low in fat and therefore a little less creamy, but they have that nutty taste that goes so well with chocolate of all kinds.</p>\n<p>Many manufacturers will use a combination of the above milks to create the perfect consistency for their product. Using this milk mixture they are able to produce all kinds of milk chocolates, including white chocolate.</p>\n",
+            "format": "basic_html",
+            "processed": "<p>The calendar is full of excuses for chocolate-lovers to indulge, from religious festivals to birthdays - and even World Chocolate Day on the 7th July. But for those who are vegan, or on dairy-free diets, there is no need to miss out, because there are plenty of delicious vegan chocolate varieties on offer.</p>\n<p>Dairy-free milk chocolate is made in largely the same way as regular chocolate, until the point when the milk is added. Cacao beans are roasted for a couple of hours until they develop a rich flavor. The outer shells are removed, and the interior nibs are ground to make a paste that can be mixed with cocoa butter to produce the desired percentage of chocolate. Flavorings, sugar and milk are added in different quantities to get the type of chocolate being produced. The chocolate is grainy at this point and needs to be mashed until it is smooth - this can take days! Finally, it is tempered through a process of heating and cooling until it is ready to eat.</p>\n<p>So, how do vegan chocolatiers get that creamy milk flavor and texture into their products?</p>\n<h2>Rice milk</h2>\n<p>The flavor of rice milk perfectly complements the cocoa beans and it was one of the first dairy milk alternatives to be used to create vegan milk chocolate. Rice milk is made from rice powder and is sometimes combined with hazelnut milk to create the correct texture and taste that is ideal for producing all kinds of chocolate bars.</p>\n<h2>Coconut milk</h2>\n<p>Coconut milk has to be the perfect ingredient for adding creaminess into a chocolate bar. With high fat levels, a sweet, but not overpowering taste and the correct consistency, coconut milk is a great choice for vegan milk chocolate. Chocolate made in this way will melt wonderfully for drizzling or dipping, and the coconut milk adds a slight tropical flavor that works well with other fruit flavors and nuts.</p>\n<h2>Soy milk</h2>\n<p>Soy has long been the mainstay of vegan and vegetarian diets, as it is rich in protein and is available in a wide variety of textures suitable for all kinds of dishes. Soy milk is widely available and is a great alternative to dairy milk in chocolate. It isn’t as rich in fat as some vegan milks, but does have a neutral taste that makes it easy to combine with almost any other flavor.</p>\n<h2>Nut milks</h2>\n<p>Milks made from almonds and hazelnuts are easy to find on supermarket shelves, and are perfect for chocolate production. Like soy milk, they can be quite low in fat and therefore a little less creamy, but they have that nutty taste that goes so well with chocolate of all kinds.</p>\n<p>Many manufacturers will use a combination of the above milks to create the perfect consistency for their product. Using this milk mixture they are able to produce all kinds of milk chocolates, including white chocolate.</p>\n",
+            "summary": null
+          },
+          "langcode": "en",
+          "status": true,
+          "created": "2021-10-25T00:48:44+00:00",
+          "promote": true,
+          "sticky": false,
+          "moderation_state": "published",
+          "drupal_internal__vid": 22,
+          "revision_timestamp": "2021-10-25T00:48:44+00:00",
+          "revision_log": null,
+          "changed": "2021-10-25T00:48:44+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": null,
+          "content_translation_source": "und",
+          "content_translation_outdated": false
+        },
+        "relationships": {
+          "field_media_image": {
+            "data": {
+              "type": "media--image",
+              "id": "57958d2a-d56d-420b-b96b-5156ec8be706"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f/field_media_image?resourceVersion=id%3A22"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f/relationships/field_media_image?resourceVersion=id%3A22"
+              }
+            }
+          },
+          "field_tags": {
+            "data": [
+              {
+                "type": "taxonomy_term--tags",
+                "id": "2ab40f41-6412-4c17-86e6-3e186affc5a1"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "176fe4f9-90b3-4239-b61d-0ae72bf82c7b"
+              }
+            ],
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f/field_tags?resourceVersion=id%3A22"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f/relationships/field_tags?resourceVersion=id%3A22"
+              }
+            }
+          },
+          "uid": {
+            "data": {
+              "type": "user--user",
+              "id": "f15c1fce-d901-489c-bc84-715616caf33f"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f/uid?resourceVersion=id%3A22"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f/relationships/uid?resourceVersion=id%3A22"
+              }
+            }
+          },
+          "node_type": {
+            "data": {
+              "type": "node_type--node_type",
+              "id": "a76a2798-ce41-4a03-8799-7ba67d1717fc"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f/node_type?resourceVersion=id%3A22"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f/relationships/node_type?resourceVersion=id%3A22"
+              }
+            }
+          },
+          "revision_uid": {
+            "data": {
+              "type": "user--user",
+              "id": "f15c1fce-d901-489c-bc84-715616caf33f"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f/revision_uid?resourceVersion=id%3A22"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/ff34108f-dba0-4f50-ab2d-9c202350951f/relationships/revision_uid?resourceVersion=id%3A22"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "120ea01e-2788-4009-807a-17d6051f2d5e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e?resourceVersion=id%3A24"
+          }
+        },
+        "attributes": {
+          "title": "The real deal for supermarket savvy shopping",
+          "path": {
+            "alias": "/articles/the-real-deal-for-supermarket-savvy-shopping",
+            "pid": 89,
+            "langcode": "en"
+          },
+          "drupal_internal__nid": 12,
+          "body": {
+            "value": "<p>This may not surprise you - but your supermarket is a hot bed of marketing mayhem, designed to improve their profit and to encourage the consumer to spend more than they intended. The tricks that all supermarkets employ are sometimes sensible ploys that any retailer should do to improve sales - but some may be more subtle and less obvious than you might think.</p>\n<p>With consumer awareness articles and documentaries frequently picking up on this topic, it's likely the case that retailers find it harder to get away with the more obvious ploys. We are becoming ever more savvy consumers and there's probably not a great deal that gets past us. But here's a few retail tricks to keep in mind when you are rushing around the weekly supermarket stock-up.</p>\n<h2>Lost essentials</h2>\n<p>The layout of your supermarket may make sense to you when you have shopped there for a while. But for newcomers trying to find essentials, it may make very little sense at all. Some supermarkets have noted that people come to their store to buy milk, bread, or eggs and that by hiding these essentials in the far reaches of the store, they encourage the newcomer to wander the aisles - picking up other items as they go.</p>\n<p>Sure, this can be great for nudging the memory on essentials you might otherwise forget, but for saving the pennies it's tough to stick to grabbing only the things you came for and the supermarkets know it!</p>\n<blockquote>\nOur tip: Make your shopping list before leaving the house, checking what you need and sticking to that list. You could be amazed by what you'll save over time.\n</blockquote>\n<h2>Nonsensical multibuys</h2>\n<p>Buy one, get one free; two for &pound;2 and meal deals. They all seem like a great deal. But in some cases these are loss leaders that are positioned to encourage you to take up the deal and buy other stuff while you are there. In other cases, deals for multi-buy or discounts on specific pack sizes might seem like a bargain, until you compare the pricing like-for-like on similar brands or with pack sizes for the same brand. These deals can mean you end up paying less but is it less for something you don't really need and in some cases you can end up paying more for the item. Remember, the supermarkets know you are often in a hurry and might not have the time to take in the full picture.</p>\n<blockquote>\n<p>Our tip: Don't be rushed, take the time to read the small print. The large print will draw you in but if you read the label small print, you should find the price per 100 grams or per ounce/litre and you'll be surprised how often the headline deals are actually more expensive than just buying a different package type or size of the product.</p>\n</blockquote>\n<h2>Understanding our shopping habits</h2>\n<p>The cheapest products in a supermarket are almost always positioned on the bottom of the shelving where you'll need to bend over to pick it up. You also may not be able to easily read the price ticket. Most people will shop on the middle rows because it is easier and often quicker. These are where the highest profit items are kept and they are the ones the supermarkets want you to buy.</p>\n<p>The layout, the music, the colors, and the product types are all decided based on principles laid down by industry experts on people - psychologists and behavioral experts who know how we think. And so the savvy shopper will certainly be able to take advantage of great deals in their weekly shop, but it takes a little time and effort just to be more aware of what we are being encouraged to reach for in the aisles.</p>\n",
+            "format": "basic_html",
+            "processed": "<p>This may not surprise you - but your supermarket is a hot bed of marketing mayhem, designed to improve their profit and to encourage the consumer to spend more than they intended. The tricks that all supermarkets employ are sometimes sensible ploys that any retailer should do to improve sales - but some may be more subtle and less obvious than you might think.</p>\n<p>With consumer awareness articles and documentaries frequently picking up on this topic, it's likely the case that retailers find it harder to get away with the more obvious ploys. We are becoming ever more savvy consumers and there's probably not a great deal that gets past us. But here's a few retail tricks to keep in mind when you are rushing around the weekly supermarket stock-up.</p>\n<h2>Lost essentials</h2>\n<p>The layout of your supermarket may make sense to you when you have shopped there for a while. But for newcomers trying to find essentials, it may make very little sense at all. Some supermarkets have noted that people come to their store to buy milk, bread, or eggs and that by hiding these essentials in the far reaches of the store, they encourage the newcomer to wander the aisles - picking up other items as they go.</p>\n<p>Sure, this can be great for nudging the memory on essentials you might otherwise forget, but for saving the pennies it's tough to stick to grabbing only the things you came for and the supermarkets know it!</p>\n<blockquote><p>\nOur tip: Make your shopping list before leaving the house, checking what you need and sticking to that list. You could be amazed by what you'll save over time.\n</p></blockquote>\n<h2>Nonsensical multibuys</h2>\n<p>Buy one, get one free; two for £2 and meal deals. They all seem like a great deal. But in some cases these are loss leaders that are positioned to encourage you to take up the deal and buy other stuff while you are there. In other cases, deals for multi-buy or discounts on specific pack sizes might seem like a bargain, until you compare the pricing like-for-like on similar brands or with pack sizes for the same brand. These deals can mean you end up paying less but is it less for something you don't really need and in some cases you can end up paying more for the item. Remember, the supermarkets know you are often in a hurry and might not have the time to take in the full picture.</p>\n<blockquote><p>Our tip: Don't be rushed, take the time to read the small print. The large print will draw you in but if you read the label small print, you should find the price per 100 grams or per ounce/litre and you'll be surprised how often the headline deals are actually more expensive than just buying a different package type or size of the product.</p>\n</blockquote>\n<h2>Understanding our shopping habits</h2>\n<p>The cheapest products in a supermarket are almost always positioned on the bottom of the shelving where you'll need to bend over to pick it up. You also may not be able to easily read the price ticket. Most people will shop on the middle rows because it is easier and often quicker. These are where the highest profit items are kept and they are the ones the supermarkets want you to buy.</p>\n<p>The layout, the music, the colors, and the product types are all decided based on principles laid down by industry experts on people - psychologists and behavioral experts who know how we think. And so the savvy shopper will certainly be able to take advantage of great deals in their weekly shop, but it takes a little time and effort just to be more aware of what we are being encouraged to reach for in the aisles.</p>\n",
+            "summary": null
+          },
+          "langcode": "en",
+          "status": true,
+          "created": "2021-10-25T00:48:44+00:00",
+          "promote": true,
+          "sticky": false,
+          "moderation_state": "published",
+          "drupal_internal__vid": 24,
+          "revision_timestamp": "2021-10-25T00:48:44+00:00",
+          "revision_log": null,
+          "changed": "2021-10-25T00:48:44+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": null,
+          "content_translation_source": "und",
+          "content_translation_outdated": false
+        },
+        "relationships": {
+          "field_media_image": {
+            "data": {
+              "type": "media--image",
+              "id": "88f2dcf2-94bb-40c6-ad0e-160629504375"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e/field_media_image?resourceVersion=id%3A24"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e/relationships/field_media_image?resourceVersion=id%3A24"
+              }
+            }
+          },
+          "field_tags": {
+            "data": [
+              {
+                "type": "taxonomy_term--tags",
+                "id": "a304fc2e-e322-4a51-b811-5587efa1ad1a"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "25f8beef-07af-4db3-9cf3-5970fb58a54b"
+              }
+            ],
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e/field_tags?resourceVersion=id%3A24"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e/relationships/field_tags?resourceVersion=id%3A24"
+              }
+            }
+          },
+          "uid": {
+            "data": {
+              "type": "user--user",
+              "id": "dae9791b-8f3f-400e-ac9e-c6611658b20b"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e/uid?resourceVersion=id%3A24"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e/relationships/uid?resourceVersion=id%3A24"
+              }
+            }
+          },
+          "node_type": {
+            "data": {
+              "type": "node_type--node_type",
+              "id": "a76a2798-ce41-4a03-8799-7ba67d1717fc"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e/node_type?resourceVersion=id%3A24"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e/relationships/node_type?resourceVersion=id%3A24"
+              }
+            }
+          },
+          "revision_uid": {
+            "data": {
+              "type": "user--user",
+              "id": "dae9791b-8f3f-400e-ac9e-c6611658b20b"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e/revision_uid?resourceVersion=id%3A24"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/120ea01e-2788-4009-807a-17d6051f2d5e/relationships/revision_uid?resourceVersion=id%3A24"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "0f0e3918-c6d7-405f-be31-7d7b56646374",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374?resourceVersion=id%3A26"
+          }
+        },
+        "attributes": {
+          "title": "The Umami guide to our favorite mushrooms",
+          "path": {
+            "alias": "/articles/the-umami-guide-to-our-favourite-mushrooms",
+            "pid": 91,
+            "langcode": "en"
+          },
+          "drupal_internal__nid": 13,
+          "body": {
+            "value": "<p>We think mushrooms are one of the most enjoyable ingredients to cook with. There are plenty of edible varieties to try, each with their own distinctive shape, size, and taste. And with curious names such as chanterelle, the gypsy, horn of plenty, or hen of the woods, who wouldn't want to know more about cooking with the mighty mushroom?</p>\n<p>One of the best things about mushrooms is their versatility. They can be fried, roasted, grilled, steamed, or even cooked in the microwave. And they can be served as the main ingredient for a dish, or simply added as part of the mix. This makes mushrooms an ideal choice for creating absolutely delicious vegetarian dishes.</p>\n<p>So let's take a look at some of our favorite types of mushroom. You might not have tried cooking with them before but don't let that put you off. With their delicious, distinctive flavors you can easily transform soups, starters, sauces and create amazing pasta, or stir-fry dishes.</p>\n<p>Try the lovely <strong>shiitake</strong>. Used in Asian cooking, these can be purchased dried and rehydrated for a strong, deep flavor. Or buy fresh and add to soups and stir-fries. Not only does this mushroom have an intense flavor, it looks lovely too. The deep brown and smooth shapes will provide texture to your meal. In their dried form and rehydrated, these are the perfect addition for a deep and flavorful stock for a risotto.</p>\n<p>The gorgeous sunny <strong>chanterelle</strong> with its yellow flesh has a fruity flavor - but it is worth mentioning that there are many lookalikes out there and care should be taken to ensure you're eating the right ones. These look great in an omelette or an Asian soup to complement the yellow tones.</p>\n<p>The brown <strong>morel</strong> offers a meaty and distinctive flavor and you'll probably love how extraordinary they look in a meal. The morel is a more popular mushroom during the spring, when their availability is high.</p>\n<p>For delicacy try the <strong>enoki</strong> with its tiny white heads that grow in a bunch. These can even be eaten raw in salads. Finally, you can choose the popular <strong>oyster</strong> mushroom. They are named thus because they look nothing like a mushroom and resemble the innards of an oyster and their sweet flavor is delicious.</p>\n",
+            "format": "basic_html",
+            "processed": "<p>We think mushrooms are one of the most enjoyable ingredients to cook with. There are plenty of edible varieties to try, each with their own distinctive shape, size, and taste. And with curious names such as chanterelle, the gypsy, horn of plenty, or hen of the woods, who wouldn't want to know more about cooking with the mighty mushroom?</p>\n<p>One of the best things about mushrooms is their versatility. They can be fried, roasted, grilled, steamed, or even cooked in the microwave. And they can be served as the main ingredient for a dish, or simply added as part of the mix. This makes mushrooms an ideal choice for creating absolutely delicious vegetarian dishes.</p>\n<p>So let's take a look at some of our favorite types of mushroom. You might not have tried cooking with them before but don't let that put you off. With their delicious, distinctive flavors you can easily transform soups, starters, sauces and create amazing pasta, or stir-fry dishes.</p>\n<p>Try the lovely <strong>shiitake</strong>. Used in Asian cooking, these can be purchased dried and rehydrated for a strong, deep flavor. Or buy fresh and add to soups and stir-fries. Not only does this mushroom have an intense flavor, it looks lovely too. The deep brown and smooth shapes will provide texture to your meal. In their dried form and rehydrated, these are the perfect addition for a deep and flavorful stock for a risotto.</p>\n<p>The gorgeous sunny <strong>chanterelle</strong> with its yellow flesh has a fruity flavor - but it is worth mentioning that there are many lookalikes out there and care should be taken to ensure you're eating the right ones. These look great in an omelette or an Asian soup to complement the yellow tones.</p>\n<p>The brown <strong>morel</strong> offers a meaty and distinctive flavor and you'll probably love how extraordinary they look in a meal. The morel is a more popular mushroom during the spring, when their availability is high.</p>\n<p>For delicacy try the <strong>enoki</strong> with its tiny white heads that grow in a bunch. These can even be eaten raw in salads. Finally, you can choose the popular <strong>oyster</strong> mushroom. They are named thus because they look nothing like a mushroom and resemble the innards of an oyster and their sweet flavor is delicious.</p>\n",
+            "summary": null
+          },
+          "langcode": "en",
+          "status": true,
+          "created": "2021-10-25T00:48:44+00:00",
+          "promote": true,
+          "sticky": false,
+          "moderation_state": "published",
+          "drupal_internal__vid": 26,
+          "revision_timestamp": "2021-10-25T00:48:44+00:00",
+          "revision_log": null,
+          "changed": "2021-10-25T00:48:44+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": null,
+          "content_translation_source": "und",
+          "content_translation_outdated": false
+        },
+        "relationships": {
+          "field_media_image": {
+            "data": {
+              "type": "media--image",
+              "id": "fc46c4a2-a78b-4b5f-a950-c31522da4595"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374/field_media_image?resourceVersion=id%3A26"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374/relationships/field_media_image?resourceVersion=id%3A26"
+              }
+            }
+          },
+          "field_tags": {
+            "data": [
+              {
+                "type": "taxonomy_term--tags",
+                "id": "48a5ce00-7268-46f7-aef3-eaba77185f02"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "78b2511c-e3cf-4759-b798-5c874b9831a8"
+              }
+            ],
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374/field_tags?resourceVersion=id%3A26"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374/relationships/field_tags?resourceVersion=id%3A26"
+              }
+            }
+          },
+          "uid": {
+            "data": {
+              "type": "user--user",
+              "id": "f15c1fce-d901-489c-bc84-715616caf33f"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374/uid?resourceVersion=id%3A26"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374/relationships/uid?resourceVersion=id%3A26"
+              }
+            }
+          },
+          "node_type": {
+            "data": {
+              "type": "node_type--node_type",
+              "id": "a76a2798-ce41-4a03-8799-7ba67d1717fc"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374/node_type?resourceVersion=id%3A26"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374/relationships/node_type?resourceVersion=id%3A26"
+              }
+            }
+          },
+          "revision_uid": {
+            "data": {
+              "type": "user--user",
+              "id": "f15c1fce-d901-489c-bc84-715616caf33f"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374/revision_uid?resourceVersion=id%3A26"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/0f0e3918-c6d7-405f-be31-7d7b56646374/relationships/revision_uid?resourceVersion=id%3A26"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "793359ac-da36-4d88-8e35-f54ace2c777d",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d?resourceVersion=id%3A28"
+          }
+        },
+        "attributes": {
+          "title": "Let's hear it for carrots",
+          "path": {
+            "alias": "/articles/lets-hear-it-for-carrots",
+            "pid": 93,
+            "langcode": "en"
+          },
+          "drupal_internal__nid": 14,
+          "body": {
+            "value": "<p>Let's hear it for the humble carrot! This sweet and healthy &lsquo;everyday&rsquo; veg packs it all in. Great flavor, fantastic color, and if you're one for believing the old story, they can even help you to see better in the dark.</p>\n<p>Who doesn't love cooking with this super versatile root veg? We roast them, boil them, blend them into soups, and grate them into salads. The humble carrot has to be one of our favorite veg choices and it's been grown for thousands of years. But back then you were more likely to find a purple, red, yellow or white carrot and not the orange one we are all so familiar with today.</p>\n<h2>So what happened? When did orange become the preferred color?</h2>\n<p>It was the Dutch during the 17th century who cultivated and made popular the orange variety, most likely because of its brilliant color and higher levels of beta carotene. And it has also been suggested that they were cultivated in tribute to William of Orange, who led the struggle during the Dutch battle for independence.</p>\n<p>For whatever reason, the orange variety has stuck but look out for the &lsquo;heritage&rsquo; varieties at farmers markets and grocers, their mix of purple, yellow, orange and white are especially appealing to cook with and look absolutely great served as a side dish.</p>\n<h2>Nutrition</h2>\n<p>Carrots are rich in beta carotene which your body converts into vitamin A. It's often tricky to know whether cooking vegetables will enhance or reduce their nutritious value and unfortunately there's no simple rule. But in the case of carrots, nutrition is enhanced by consuming them cooked. In fact, it only takes 100 grams of carrots to get more than your daily value of vitamin A.</p>\n<h2>Get them at their best</h2>\n<p>Young carrots, harvested when they are small have an especially sweet flavor and they are absolutely delicious. To cook them you can skip the peeling, give them a good wash and pop them in the steamer for just a few minutes. Carrots will taste the best when they are fresh, so make sure they are firm and bright in color when buying.</p>\n<h2>And that thing about carrots helping you see more in the dark?</h2>\n<p>Of course it's a myth. During World War II the UK Ministry of Food promoted carrots as a super healthy veggie that would improve your ability to see during the blackouts and as an explanation for the successful night missions of UK fighter pilots. In reality, the only truth in the connection between carrots and improved eye sight is that vitamin A does indeed help to maintain vision.</p>\n",
+            "format": "basic_html",
+            "processed": "<p>Let's hear it for the humble carrot! This sweet and healthy ‘everyday’ veg packs it all in. Great flavor, fantastic color, and if you're one for believing the old story, they can even help you to see better in the dark.</p>\n<p>Who doesn't love cooking with this super versatile root veg? We roast them, boil them, blend them into soups, and grate them into salads. The humble carrot has to be one of our favorite veg choices and it's been grown for thousands of years. But back then you were more likely to find a purple, red, yellow or white carrot and not the orange one we are all so familiar with today.</p>\n<h2>So what happened? When did orange become the preferred color?</h2>\n<p>It was the Dutch during the 17th century who cultivated and made popular the orange variety, most likely because of its brilliant color and higher levels of beta carotene. And it has also been suggested that they were cultivated in tribute to William of Orange, who led the struggle during the Dutch battle for independence.</p>\n<p>For whatever reason, the orange variety has stuck but look out for the ‘heritage’ varieties at farmers markets and grocers, their mix of purple, yellow, orange and white are especially appealing to cook with and look absolutely great served as a side dish.</p>\n<h2>Nutrition</h2>\n<p>Carrots are rich in beta carotene which your body converts into vitamin A. It's often tricky to know whether cooking vegetables will enhance or reduce their nutritious value and unfortunately there's no simple rule. But in the case of carrots, nutrition is enhanced by consuming them cooked. In fact, it only takes 100 grams of carrots to get more than your daily value of vitamin A.</p>\n<h2>Get them at their best</h2>\n<p>Young carrots, harvested when they are small have an especially sweet flavor and they are absolutely delicious. To cook them you can skip the peeling, give them a good wash and pop them in the steamer for just a few minutes. Carrots will taste the best when they are fresh, so make sure they are firm and bright in color when buying.</p>\n<h2>And that thing about carrots helping you see more in the dark?</h2>\n<p>Of course it's a myth. During World War II the UK Ministry of Food promoted carrots as a super healthy veggie that would improve your ability to see during the blackouts and as an explanation for the successful night missions of UK fighter pilots. In reality, the only truth in the connection between carrots and improved eye sight is that vitamin A does indeed help to maintain vision.</p>\n",
+            "summary": null
+          },
+          "langcode": "en",
+          "status": true,
+          "created": "2021-10-25T00:48:44+00:00",
+          "promote": true,
+          "sticky": false,
+          "moderation_state": "published",
+          "drupal_internal__vid": 28,
+          "revision_timestamp": "2021-10-25T00:48:44+00:00",
+          "revision_log": null,
+          "changed": "2021-10-25T00:48:44+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": null,
+          "content_translation_source": "und",
+          "content_translation_outdated": false
+        },
+        "relationships": {
+          "field_media_image": {
+            "data": {
+              "type": "media--image",
+              "id": "4ed65a36-c65f-48fd-87dd-53d58767e375"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d/field_media_image?resourceVersion=id%3A28"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d/relationships/field_media_image?resourceVersion=id%3A28"
+              }
+            }
+          },
+          "field_tags": {
+            "data": [
+              {
+                "type": "taxonomy_term--tags",
+                "id": "655215f1-7188-4acd-b015-0fc72f1f6258"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "78b2511c-e3cf-4759-b798-5c874b9831a8"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "e2efb10d-3bae-45af-8514-36e3652a2214"
+              }
+            ],
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d/field_tags?resourceVersion=id%3A28"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d/relationships/field_tags?resourceVersion=id%3A28"
+              }
+            }
+          },
+          "uid": {
+            "data": {
+              "type": "user--user",
+              "id": "f15c1fce-d901-489c-bc84-715616caf33f"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d/uid?resourceVersion=id%3A28"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d/relationships/uid?resourceVersion=id%3A28"
+              }
+            }
+          },
+          "node_type": {
+            "data": {
+              "type": "node_type--node_type",
+              "id": "a76a2798-ce41-4a03-8799-7ba67d1717fc"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d/node_type?resourceVersion=id%3A28"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d/relationships/node_type?resourceVersion=id%3A28"
+              }
+            }
+          },
+          "revision_uid": {
+            "data": {
+              "type": "user--user",
+              "id": "f15c1fce-d901-489c-bc84-715616caf33f"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d/revision_uid?resourceVersion=id%3A28"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/793359ac-da36-4d88-8e35-f54ace2c777d/relationships/revision_uid?resourceVersion=id%3A28"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "bbe82ab7-810a-4b6a-afe6-5cf5fb329628",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628?resourceVersion=id%3A30"
+          }
+        },
+        "attributes": {
+          "title": "Baking mishaps - our troubleshooting tips",
+          "path": {
+            "alias": "/articles/baking-mishaps-our-troubleshooting-tips",
+            "pid": 95,
+            "langcode": "en"
+          },
+          "drupal_internal__nid": 15,
+          "body": {
+            "value": "<p>You follow the recipe, you weigh all your ingredients, you use the right oven temperature and you take your time and yet still, your baking comes out with a soggy bottom, fails to rise or just tastes plain horrible. We have come up with a list of the most frustrating baking problems and the techniques you can use to try and avoid them.</p>\n<h2>Your cake failed to rise</h2>\n<p>Don't under any circumstances open the oven door in the middle of the cooking time. The heat will come whooshing out, destroying the chemical reaction taking place inside your cake. Your raising agent needs the heat to become activated and you might kill it off.</p>\n<h2>Your cake is chewy and tough</h2>\n<p>If your light sponge is the consistency of a spare tire, you might have over-mixed your batter. Keep the lightness inside your cake mixture by carefully and gently folding in the ingredients and only to the point they are just mixed. If you over-fold, the gluten in the flour will start to come out and you'll be making bread instead of cake.</p>\n<h2>Your cookies burned</h2>\n<p>A great trick is to use light colored bakeware, rather than black. It is less likely to absorb the heat and transfer it to the bottom of your biscuits. Using baking paper will also help with this. Also, using too much sugar can result in your cookies browning too much and giving them a caramelized look.</p>\n<h2>Split top to your cake or bread</h2>\n<p>Your oven is very likely too hot. If you suspect your oven doesn't keep to the right temperature, invest in a thermometer and check it regularly throughout the cooking. With bread, over-mixing the dough can result in a cracked or split top.</p>\n<h2>The dreaded soggy bottom</h2>\n<p>As mentioned above, the color of your pan is important. In this case, a dark pan will increase the heat at the bottom and give you that crisp underneath that you want. If you are using a flaky pastry, you really need to blind bake it. Putting your pie towards the bottom of the oven will increase the heat reaching that part.</p>\n<h2>Your pastry has shrunk</h2>\n<p>You simply tried to make it stretch too far. When rolling, don't try to make it too thin or too big and when draping over your pan, allow it to settle on its own without stretching it to fit. Or just add more pastry - everyone loves pastry anyway!</p>\n",
+            "format": "basic_html",
+            "processed": "<p>You follow the recipe, you weigh all your ingredients, you use the right oven temperature and you take your time and yet still, your baking comes out with a soggy bottom, fails to rise or just tastes plain horrible. We have come up with a list of the most frustrating baking problems and the techniques you can use to try and avoid them.</p>\n<h2>Your cake failed to rise</h2>\n<p>Don't under any circumstances open the oven door in the middle of the cooking time. The heat will come whooshing out, destroying the chemical reaction taking place inside your cake. Your raising agent needs the heat to become activated and you might kill it off.</p>\n<h2>Your cake is chewy and tough</h2>\n<p>If your light sponge is the consistency of a spare tire, you might have over-mixed your batter. Keep the lightness inside your cake mixture by carefully and gently folding in the ingredients and only to the point they are just mixed. If you over-fold, the gluten in the flour will start to come out and you'll be making bread instead of cake.</p>\n<h2>Your cookies burned</h2>\n<p>A great trick is to use light colored bakeware, rather than black. It is less likely to absorb the heat and transfer it to the bottom of your biscuits. Using baking paper will also help with this. Also, using too much sugar can result in your cookies browning too much and giving them a caramelized look.</p>\n<h2>Split top to your cake or bread</h2>\n<p>Your oven is very likely too hot. If you suspect your oven doesn't keep to the right temperature, invest in a thermometer and check it regularly throughout the cooking. With bread, over-mixing the dough can result in a cracked or split top.</p>\n<h2>The dreaded soggy bottom</h2>\n<p>As mentioned above, the color of your pan is important. In this case, a dark pan will increase the heat at the bottom and give you that crisp underneath that you want. If you are using a flaky pastry, you really need to blind bake it. Putting your pie towards the bottom of the oven will increase the heat reaching that part.</p>\n<h2>Your pastry has shrunk</h2>\n<p>You simply tried to make it stretch too far. When rolling, don't try to make it too thin or too big and when draping over your pan, allow it to settle on its own without stretching it to fit. Or just add more pastry - everyone loves pastry anyway!</p>\n",
+            "summary": null
+          },
+          "langcode": "en",
+          "status": true,
+          "created": "2021-10-25T00:48:44+00:00",
+          "promote": true,
+          "sticky": false,
+          "moderation_state": "published",
+          "drupal_internal__vid": 30,
+          "revision_timestamp": "2021-10-25T00:48:44+00:00",
+          "revision_log": null,
+          "changed": "2021-10-25T00:48:44+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": null,
+          "content_translation_source": "und",
+          "content_translation_outdated": false
+        },
+        "relationships": {
+          "field_media_image": {
+            "data": {
+              "type": "media--image",
+              "id": "e4669b11-fbff-4828-bfc9-5dc5d49668fe"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628/field_media_image?resourceVersion=id%3A30"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628/relationships/field_media_image?resourceVersion=id%3A30"
+              }
+            }
+          },
+          "field_tags": {
+            "data": [
+              {
+                "type": "taxonomy_term--tags",
+                "id": "3853e15d-a1e2-4c34-b474-34af6486e71f"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "0f1751fe-a684-4e15-ba09-3d051c24437d"
+              }
+            ],
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628/field_tags?resourceVersion=id%3A30"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628/relationships/field_tags?resourceVersion=id%3A30"
+              }
+            }
+          },
+          "uid": {
+            "data": {
+              "type": "user--user",
+              "id": "f15c1fce-d901-489c-bc84-715616caf33f"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628/uid?resourceVersion=id%3A30"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628/relationships/uid?resourceVersion=id%3A30"
+              }
+            }
+          },
+          "node_type": {
+            "data": {
+              "type": "node_type--node_type",
+              "id": "a76a2798-ce41-4a03-8799-7ba67d1717fc"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628/node_type?resourceVersion=id%3A30"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628/relationships/node_type?resourceVersion=id%3A30"
+              }
+            }
+          },
+          "revision_uid": {
+            "data": {
+              "type": "user--user",
+              "id": "f15c1fce-d901-489c-bc84-715616caf33f"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628/revision_uid?resourceVersion=id%3A30"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/bbe82ab7-810a-4b6a-afe6-5cf5fb329628/relationships/revision_uid?resourceVersion=id%3A30"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "38c53e32-8551-4d53-85d0-ab74c1cb66e8",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8?resourceVersion=id%3A32"
+          }
+        },
+        "attributes": {
+          "title": "Skip the spirits with delicious mocktails",
+          "path": {
+            "alias": "/articles/skip-the-spirits-with-delicious-mocktails",
+            "pid": 97,
+            "langcode": "en"
+          },
+          "drupal_internal__nid": 16,
+          "body": {
+            "value": "<p>Having a cocktail party? Then why not serve up something just as special for those who don't drink alcohol but do want to join in on all the fun? After all, what cocktail party is complete without those incredible looking glasses of mixed fruits, bright colors and of course, the little umbrellas? Do your bit for the environment by ditching the plastic straws and get hold of some great looking alternatives made out of glass, metal, or even bamboo. Don't forget the classic cocktail glasses and cool tumblers to really bring these recipes to life.\n</p>\n<p>\nSo, grab the cocktail mixer, skip the spirits, and shake up these deliciously refreshing mocktails that won't leave you or your guests, short on flavor or style.\n</p>\n<h2>Mango-licious</h2>\n<p>This delicious drink has a sophisticated taste that is ideal for adults and the color is perfect for a late summer BBQ.</p>\n<h3>Instructions:</h3>\n<p>Give a few slices of cucumber and a little honey a good shake in a cocktail shaker. Add a spirit measure of mango puree and the juice of one lime. Add some ice and shake for all you're worth. Using a strainer, pour into a fancy glass and top with ginger beer. A few slices of lime and you're ready to go.</p>\n<h2>Mocky Mojito</h2>\n<p>There's nothing quite like a Mojito on a warm day and this version is ideal for a relaxing end of the day moment of bliss in the garden.</p>\n<h3>Instructions:</h3>\n<p>Muddle sugar, a squeeze of lime, and mint leaves in a tall glass, then add a few chunks of ice, top with the juice of a blood orange (for the sunset effect), and add a splash of soda water. Add a few sprigs of mint for an authentic look.</p>\n<h2>Sinless Strawberry Martini</h2>\n<p>Strawberries add a beautiful rich red to this mocktail, while the ginger gives it a little kick. Serve in a proper martini glass, but maybe avoid the olives.</p>\n<h3>Instructions:</h3>\n<p>Muddle a strawberry with a dash a ginger beer and some sugar syrup in a cocktail shaker. Add a capful of elderflower cordial and a few mint leaves. Throw in a slice of orange and lemon and shake with ice. Strain into your glass and enjoy the sweet strawberry flavor.</p>\n<h2>Coconut Queen</h2>\n<p>Crazy about coconuts? Then you'll love the refreshing taste of this coconut based mocktail. The flavors give a hint of the tropical, while the look is grown-up sophistication.</p>\n<h3>Instructions:</h3>\n<p>Add sliced cucumbers, the juice of a lime or two, and some mint leaves to a pitcher of coconut water and leave to chill and infuse for a few hours in the fridge. You can also add some sugar if you fancy this sweeter. Serve poured into glasses full of ice with sliced cucumber and mint leaves. Simple and beautiful.</p>\n",
+            "format": "basic_html",
+            "processed": "<p>Having a cocktail party? Then why not serve up something just as special for those who don't drink alcohol but do want to join in on all the fun? After all, what cocktail party is complete without those incredible looking glasses of mixed fruits, bright colors and of course, the little umbrellas? Do your bit for the environment by ditching the plastic straws and get hold of some great looking alternatives made out of glass, metal, or even bamboo. Don't forget the classic cocktail glasses and cool tumblers to really bring these recipes to life.\n</p>\n<p>\nSo, grab the cocktail mixer, skip the spirits, and shake up these deliciously refreshing mocktails that won't leave you or your guests, short on flavor or style.\n</p>\n<h2>Mango-licious</h2>\n<p>This delicious drink has a sophisticated taste that is ideal for adults and the color is perfect for a late summer BBQ.</p>\n<h3>Instructions:</h3>\n<p>Give a few slices of cucumber and a little honey a good shake in a cocktail shaker. Add a spirit measure of mango puree and the juice of one lime. Add some ice and shake for all you're worth. Using a strainer, pour into a fancy glass and top with ginger beer. A few slices of lime and you're ready to go.</p>\n<h2>Mocky Mojito</h2>\n<p>There's nothing quite like a Mojito on a warm day and this version is ideal for a relaxing end of the day moment of bliss in the garden.</p>\n<h3>Instructions:</h3>\n<p>Muddle sugar, a squeeze of lime, and mint leaves in a tall glass, then add a few chunks of ice, top with the juice of a blood orange (for the sunset effect), and add a splash of soda water. Add a few sprigs of mint for an authentic look.</p>\n<h2>Sinless Strawberry Martini</h2>\n<p>Strawberries add a beautiful rich red to this mocktail, while the ginger gives it a little kick. Serve in a proper martini glass, but maybe avoid the olives.</p>\n<h3>Instructions:</h3>\n<p>Muddle a strawberry with a dash a ginger beer and some sugar syrup in a cocktail shaker. Add a capful of elderflower cordial and a few mint leaves. Throw in a slice of orange and lemon and shake with ice. Strain into your glass and enjoy the sweet strawberry flavor.</p>\n<h2>Coconut Queen</h2>\n<p>Crazy about coconuts? Then you'll love the refreshing taste of this coconut based mocktail. The flavors give a hint of the tropical, while the look is grown-up sophistication.</p>\n<h3>Instructions:</h3>\n<p>Add sliced cucumbers, the juice of a lime or two, and some mint leaves to a pitcher of coconut water and leave to chill and infuse for a few hours in the fridge. You can also add some sugar if you fancy this sweeter. Serve poured into glasses full of ice with sliced cucumber and mint leaves. Simple and beautiful.</p>\n",
+            "summary": null
+          },
+          "langcode": "en",
+          "status": true,
+          "created": "2021-10-25T00:48:44+00:00",
+          "promote": true,
+          "sticky": false,
+          "moderation_state": "published",
+          "drupal_internal__vid": 32,
+          "revision_timestamp": "2021-10-25T00:48:44+00:00",
+          "revision_log": null,
+          "changed": "2021-10-25T00:48:44+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": null,
+          "content_translation_source": "und",
+          "content_translation_outdated": false
+        },
+        "relationships": {
+          "field_media_image": {
+            "data": {
+              "type": "media--image",
+              "id": "d62756e7-68e0-4d6e-8a7d-f94505c18225"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8/field_media_image?resourceVersion=id%3A32"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8/relationships/field_media_image?resourceVersion=id%3A32"
+              }
+            }
+          },
+          "field_tags": {
+            "data": [
+              {
+                "type": "taxonomy_term--tags",
+                "id": "c6cbc1be-3bb3-4550-b168-262e108da081"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "94768ba7-8c08-4eaf-8a44-f6e6adb555b9"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "feb42dd6-5432-4aa8-b9ff-7830024307f2"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "385d29cd-617c-4c97-9865-3c45489888c8"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "d76559fe-d229-4219-9a63-2798412546e0"
+              }
+            ],
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8/field_tags?resourceVersion=id%3A32"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8/relationships/field_tags?resourceVersion=id%3A32"
+              }
+            }
+          },
+          "uid": {
+            "data": {
+              "type": "user--user",
+              "id": "dae9791b-8f3f-400e-ac9e-c6611658b20b"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8/uid?resourceVersion=id%3A32"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8/relationships/uid?resourceVersion=id%3A32"
+              }
+            }
+          },
+          "node_type": {
+            "data": {
+              "type": "node_type--node_type",
+              "id": "a76a2798-ce41-4a03-8799-7ba67d1717fc"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8/node_type?resourceVersion=id%3A32"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8/relationships/node_type?resourceVersion=id%3A32"
+              }
+            }
+          },
+          "revision_uid": {
+            "data": {
+              "type": "user--user",
+              "id": "dae9791b-8f3f-400e-ac9e-c6611658b20b"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8/revision_uid?resourceVersion=id%3A32"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/38c53e32-8551-4d53-85d0-ab74c1cb66e8/relationships/revision_uid?resourceVersion=id%3A32"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "5e4c0bb9-f2f6-4224-b07f-ad773d7620e2",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2?resourceVersion=id%3A34"
+          }
+        },
+        "attributes": {
+          "title": "Give your oatmeal the ultimate makeover",
+          "path": {
+            "alias": "/articles/give-your-oatmeal-the-ultimate-makeover",
+            "pid": 99,
+            "langcode": "en"
+          },
+          "drupal_internal__nid": 17,
+          "body": {
+            "value": "<p>\nIt is vegan, gluten-free, low in fat, high in fiber, and can even lower cholesterol - but oatmeal is boring, right? Well, before you write off that boring jar of oats, you might want to take inspiration from our topping ideas that will take your oatmeal from bland to creatively delicious in just a few minutes.\n</p>\n\n<p>\nCall it oatmeal, porridge, hot cereal, or just plain oats, it is loved the world over; but recently, the humble oat is getting a funky makeover. Long gone are the days of stodgy breakfast bowls of thick gloop, because oats are getting served up as a delicious meal that can suit any time of the day. Trendy build-your-own oatmeal bars are popping up, and they are providing the ultimate oatmeal experience. Diners can choose their oats to be made with milk or water and then go to town with their choice of favorite toppings - sweet, savory, or even spicy.\n</p>\n\n<p>\nIt sounds great, doesn’t it? So before you close the cupboard door on that bland-looking jar of oats, we think you should try some of these scrumptious topping ideas to inspire your very own oatmeal makeover.\n</p>\n\n\n<h2>Soaked dried fruit</h2>\n\n<p>\nSometimes plain dried fruit can be a bit chewy and harsh when combined with creamy oats. But if you simply soak your dried fruit in orange juice overnight, they develop a tang, and they swell up, making them softer and even more delicious. Plus the splash of color can really brighten your day.\n</p>\n\n\n<h2>Porridge crème brûlée</h2>\n\n<p>\nSo simple - but why has no one thought of it before? Put your cooked oatmeal into a ramekin, sprinkle with sugar, and pop under the grill. The sugar will harden, giving you the delight of cracking through the surface and scooping out the creamy deliciousness beneath. If you are really professional, you can use a blow torch.\n</p>\n\n<h2>Super seeds</h2>\n\n<p>\nFor a more savory meal option, cook your oats with water, a little salt, and sprinkle with toasted seeds. You can choose any that you enjoy, but pumpkin seeds, sesame, linseed, and sunflower seeds are especially good. Some supermarkets also sell seed blends to make the job even easier.\n</p>\n\n<h2>Deconstructed carrot cake</h2>\n\n<p>\nCook your oats with grated carrots and a little sugar, then top with a sprinkle of cinnamon, chopped walnuts, and a dollop of sweetened cream cheese. If you don’t love this, there’s something wrong with your taste buds.\n</p>\n\n<h2>Dark chocolate</h2>\n\n<p>\nThis low-sugar delight will meet all of those chocolate cravings and is the perfect dessert. Add a spoonful of cocoa to your oatmeal as it cooks, then top with a few squares of dark chocolate. As it melts, simply swirl into the bowl as artfully as you can. If you are really decadent, a squirt of whipped cream will add further delights.\n</p>\n",
+            "format": "basic_html",
+            "processed": "<p>\nIt is vegan, gluten-free, low in fat, high in fiber, and can even lower cholesterol - but oatmeal is boring, right? Well, before you write off that boring jar of oats, you might want to take inspiration from our topping ideas that will take your oatmeal from bland to creatively delicious in just a few minutes.\n</p>\n<p>\nCall it oatmeal, porridge, hot cereal, or just plain oats, it is loved the world over; but recently, the humble oat is getting a funky makeover. Long gone are the days of stodgy breakfast bowls of thick gloop, because oats are getting served up as a delicious meal that can suit any time of the day. Trendy build-your-own oatmeal bars are popping up, and they are providing the ultimate oatmeal experience. Diners can choose their oats to be made with milk or water and then go to town with their choice of favorite toppings - sweet, savory, or even spicy.\n</p>\n<p>\nIt sounds great, doesn’t it? So before you close the cupboard door on that bland-looking jar of oats, we think you should try some of these scrumptious topping ideas to inspire your very own oatmeal makeover.\n</p>\n<h2>Soaked dried fruit</h2>\n<p>\nSometimes plain dried fruit can be a bit chewy and harsh when combined with creamy oats. But if you simply soak your dried fruit in orange juice overnight, they develop a tang, and they swell up, making them softer and even more delicious. Plus the splash of color can really brighten your day.\n</p>\n<h2>Porridge crème brûlée</h2>\n<p>\nSo simple - but why has no one thought of it before? Put your cooked oatmeal into a ramekin, sprinkle with sugar, and pop under the grill. The sugar will harden, giving you the delight of cracking through the surface and scooping out the creamy deliciousness beneath. If you are really professional, you can use a blow torch.\n</p>\n<h2>Super seeds</h2>\n<p>\nFor a more savory meal option, cook your oats with water, a little salt, and sprinkle with toasted seeds. You can choose any that you enjoy, but pumpkin seeds, sesame, linseed, and sunflower seeds are especially good. Some supermarkets also sell seed blends to make the job even easier.\n</p>\n<h2>Deconstructed carrot cake</h2>\n<p>\nCook your oats with grated carrots and a little sugar, then top with a sprinkle of cinnamon, chopped walnuts, and a dollop of sweetened cream cheese. If you don’t love this, there’s something wrong with your taste buds.\n</p>\n<h2>Dark chocolate</h2>\n<p>\nThis low-sugar delight will meet all of those chocolate cravings and is the perfect dessert. Add a spoonful of cocoa to your oatmeal as it cooks, then top with a few squares of dark chocolate. As it melts, simply swirl into the bowl as artfully as you can. If you are really decadent, a squirt of whipped cream will add further delights.\n</p>\n",
+            "summary": null
+          },
+          "langcode": "en",
+          "status": true,
+          "created": "2021-10-25T00:48:44+00:00",
+          "promote": true,
+          "sticky": false,
+          "moderation_state": "published",
+          "drupal_internal__vid": 34,
+          "revision_timestamp": "2021-10-25T00:48:44+00:00",
+          "revision_log": null,
+          "changed": "2021-10-25T00:48:44+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": null,
+          "content_translation_source": "und",
+          "content_translation_outdated": false
+        },
+        "relationships": {
+          "field_media_image": {
+            "data": {
+              "type": "media--image",
+              "id": "aa60ba3f-011c-41bb-bac8-38b042de2980"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2/field_media_image?resourceVersion=id%3A34"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2/relationships/field_media_image?resourceVersion=id%3A34"
+              }
+            }
+          },
+          "field_tags": {
+            "data": [
+              {
+                "type": "taxonomy_term--tags",
+                "id": "2ab40f41-6412-4c17-86e6-3e186affc5a1"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "78b2511c-e3cf-4759-b798-5c874b9831a8"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "9daa9b5c-f2d2-431e-ad87-632e0eea30ab"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "adca7cd9-c714-42d3-b741-991698587be2"
+              },
+              {
+                "type": "taxonomy_term--tags",
+                "id": "f577c4f8-e591-4d06-8a91-37938bbb8758"
+              }
+            ],
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2/field_tags?resourceVersion=id%3A34"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2/relationships/field_tags?resourceVersion=id%3A34"
+              }
+            }
+          },
+          "uid": {
+            "data": {
+              "type": "user--user",
+              "id": "f15c1fce-d901-489c-bc84-715616caf33f"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2/uid?resourceVersion=id%3A34"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2/relationships/uid?resourceVersion=id%3A34"
+              }
+            }
+          },
+          "node_type": {
+            "data": {
+              "type": "node_type--node_type",
+              "id": "a76a2798-ce41-4a03-8799-7ba67d1717fc"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2/node_type?resourceVersion=id%3A34"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2/relationships/node_type?resourceVersion=id%3A34"
+              }
+            }
+          },
+          "revision_uid": {
+            "data": {
+              "type": "user--user",
+              "id": "f15c1fce-d901-489c-bc84-715616caf33f"
+            },
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2/revision_uid?resourceVersion=id%3A34"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/5e4c0bb9-f2f6-4224-b07f-ad773d7620e2/relationships/revision_uid?resourceVersion=id%3A34"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "meta": {
+      "count": 8
+    },
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/jsonapi/views/featured_articles/default"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "/jsonapi/views/featured_articles/default",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
+}

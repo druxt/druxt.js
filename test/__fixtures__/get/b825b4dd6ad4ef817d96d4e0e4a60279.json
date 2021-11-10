@@ -12,10 +12,10 @@
     },
     "data": {
       "type": "node--page",
-      "id": "790d38f6-5e98-464e-acad-e28ec291a241",
+      "id": "7397cca5-44f4-4676-a93f-576bb72c692b",
       "links": {
         "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/790d38f6-5e98-464e-acad-e28ec291a241?resourceVersion=id%3A36"
+          "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b?resourceVersion=id%3A36"
         }
       },
       "attributes": {
@@ -30,7 +30,7 @@
     },
     "links": {
       "self": {
-        "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/790d38f6-5e98-464e-acad-e28ec291a241?fields%5Bnode--page%5D=body%2Clinks%2Ccontent_moderation_control%2Ctitle"
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b?fields%5Bnode--page%5D=body%2Clinks%2Ccontent_moderation_control%2Ctitle"
       }
     }
   },
@@ -43,7 +43,7 @@
     "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
   },
   "config": {
-    "url": "https://demo-api.druxtjs.org/en/jsonapi/node/page/790d38f6-5e98-464e-acad-e28ec291a241?fields%5Bnode--page%5D=body%2Clinks%2Ccontent_moderation_control%2Ctitle",
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/node/page/7397cca5-44f4-4676-a93f-576bb72c692b?fields%5Bnode--page%5D=body%2Clinks%2Ccontent_moderation_control%2Ctitle",
     "method": "get",
     "headers": {
       "Accept": "application/json, text/plain, */*"

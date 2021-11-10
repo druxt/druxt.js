@@ -1,5 +1,16 @@
 # druxt-router
 
+## 0.23.0
+
+### Minor Changes
+
+- 77ab204: Added support for API Proxy
+
+### Patch Changes
+
+- Updated dependencies [77ab204]
+  - druxt@0.13.0
+
 ## 0.22.0
 
 ### Minor Changes

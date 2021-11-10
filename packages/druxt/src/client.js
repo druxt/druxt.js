@@ -26,7 +26,10 @@ class DruxtClient {
     }
 
     // Setup Axios.
-    let axiosSettings = { baseURL: baseUrl }
+    let axiosSettings = {}
+    if (baseUrl && !(options.proxy || {}).api) {
+      axiosSettings.baseURL = baseUrl
+    }
     if (typeof options.axios === 'object') {
       axiosSettings = Object.assign(axiosSettings, options.axios)
     }
@@ -245,13 +248,19 @@ class DruxtClient {
       return this.index[resource] ? this.index[resource] : false
     }
 
-    const index = await this.axios.get(this.options.endpoint)
-    this.index = index.data.links
+    let index = ((await this.axios.get(this.options.endpoint) || {}).data || {}).links
+
+    // Remove Base URL from the resource URL.
+    const baseUrl = this.options.baseUrl
+    index = Object.fromEntries(Object.entries(index).map(([key, value]) => {
+      value.href = value.href.replace(baseUrl, '')
+      return [key, value]
+    }))
 
     // Use JSON API resource config to decorate the index.
     // @TODO - Add test coverage
-    if (this.index[this.options.jsonapiResourceConfig]) {
-      const resources = await this.axios.get(this.index[this.options.jsonapiResourceConfig].href)
+    if (index[this.options.jsonapiResourceConfig]) {
+      const resources = await this.axios.get(index[this.options.jsonapiResourceConfig].href)
       for (const resourceType in resources.data.data) {
         const resource = resources.data.data[resourceType]
         const internal = resource.attributes.drupal_internal__id.split('--')
@@ -264,15 +273,19 @@ class DruxtClient {
         }
 
         const id = [item.entityType, item.bundle].join('--')
-        this.index[id] = {
+        index[id] = {
           ...item,
-          ...this.index[id]
+          ...index[id]
         }
       }
     }
 
+    // Set index.
+    this.index = index
+
     if (resource) {
-      return this.index[resource] ? this.index[resource] : false
+      const response = this.index[resource] ? this.index[resource] : false
+      return response
     }
 
     return this.index

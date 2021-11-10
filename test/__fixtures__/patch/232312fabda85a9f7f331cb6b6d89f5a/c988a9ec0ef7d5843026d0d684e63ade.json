@@ -12,10 +12,10 @@
     },
     "data":{
       "type":"node--page",
-      "id":"772b174a-796f-4301-a04d-b935a7304fba",
+      "id":"7397cca5-44f4-4676-a93f-576bb72c692b",
       "links":{
         "self":{
-          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/772b174a-796f-4301-a04d-b935a7304fba?resourceVersion=id%3A43"
+          "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/7397cca5-44f4-4676-a93f-576bb72c692b?resourceVersion=id%3A43"
         }
       },
       "attributes":{
@@ -55,10 +55,10 @@
           },
           "links":{
             "related":{
-              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/772b174a-796f-4301-a04d-b935a7304fba\/node_type?resourceVersion=id%3A43"
+              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/7397cca5-44f4-4676-a93f-576bb72c692b\/node_type?resourceVersion=id%3A43"
             },
             "self":{
-              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/772b174a-796f-4301-a04d-b935a7304fba\/relationships\/node_type?resourceVersion=id%3A43"
+              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/7397cca5-44f4-4676-a93f-576bb72c692b\/relationships\/node_type?resourceVersion=id%3A43"
             }
           }
         },
@@ -69,10 +69,10 @@
           },
           "links":{
             "related":{
-              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/772b174a-796f-4301-a04d-b935a7304fba\/revision_uid?resourceVersion=id%3A43"
+              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/7397cca5-44f4-4676-a93f-576bb72c692b\/revision_uid?resourceVersion=id%3A43"
             },
             "self":{
-              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/772b174a-796f-4301-a04d-b935a7304fba\/relationships\/revision_uid?resourceVersion=id%3A43"
+              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/7397cca5-44f4-4676-a93f-576bb72c692b\/relationships\/revision_uid?resourceVersion=id%3A43"
             }
           }
         },
@@ -83,10 +83,10 @@
           },
           "links":{
             "related":{
-              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/772b174a-796f-4301-a04d-b935a7304fba\/uid?resourceVersion=id%3A43"
+              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/7397cca5-44f4-4676-a93f-576bb72c692b\/uid?resourceVersion=id%3A43"
             },
             "self":{
-              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/772b174a-796f-4301-a04d-b935a7304fba\/relationships\/uid?resourceVersion=id%3A43"
+              "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/7397cca5-44f4-4676-a93f-576bb72c692b\/relationships\/uid?resourceVersion=id%3A43"
             }
           }
         }
@@ -94,7 +94,7 @@
     },
     "links":{
       "self":{
-        "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/772b174a-796f-4301-a04d-b935a7304fba"
+        "href":"https:\/\/demo-api.druxtjs.org\/en\/jsonapi\/node\/page\/7397cca5-44f4-4676-a93f-576bb72c692b"
       }
     }
   },

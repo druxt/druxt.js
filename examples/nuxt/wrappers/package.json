@@ -1,0 +1,11 @@
+{
+  "name": "wrappers",
+  "scripts": {
+    "dev": "nuxt dev"
+  },
+  "packageManager": "yarn@3.0.0",
+  "dependencies": {
+    "druxt-entity": "link:../../../packages/druxt-entity",
+    "nuxt": "latest"
+  }
+}

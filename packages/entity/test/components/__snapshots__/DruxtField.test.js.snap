@@ -8,8 +8,8 @@ exports[`DruxtField boolean - form 1`] = `
 `;
 
 exports[`DruxtField datetime - form 1`] = `
-"<div data=\\"2021-05-01T06:24:09+00:00\\">
-  <div data=\\"2021-05-01T06:24:09+00:00\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"2021-05-01T06:24:09+00:00\\"><label><strong>Created:</strong><br>
+"<div data=\\"2021-10-25T00:48:44+00:00\\">
+  <div data=\\"2021-10-25T00:48:44+00:00\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"2021-10-25T00:48:44+00:00\\"><label><strong>Created:</strong><br>
       <div><input type=\\"datetime-local\\"></div></label></div>
 </div>"
 `;

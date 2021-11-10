@@ -1,0 +1,289 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "media--image",
+        "id": "4525dc72-1e74-492d-acd4-09ac81448aff",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/4525dc72-1e74-492d-acd4-09ac81448aff?resourceVersion=id%3A1"
+          }
+        },
+        "attributes": {
+          "name": "Deep mediterranean quiche"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "ac066001-0062-4b13-a4e2-04d03af18551",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/ac066001-0062-4b13-a4e2-04d03af18551?resourceVersion=id%3A2"
+          }
+        },
+        "attributes": {
+          "name": "Vegan chocolate and nut brownies"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "ea37d704-59bc-4af8-8d69-c6b8ebb7c96f",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/ea37d704-59bc-4af8-8d69-c6b8ebb7c96f?resourceVersion=id%3A3"
+          }
+        },
+        "attributes": {
+          "name": "Super easy vegetarian pasta bake"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "d2027ba6-68a3-48dd-a7b2-76de8821cd8d",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d2027ba6-68a3-48dd-a7b2-76de8821cd8d?resourceVersion=id%3A4"
+          }
+        },
+        "attributes": {
+          "name": "Watercress soup"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "3777bd00-f723-4c40-98c7-f2c025aba743",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/3777bd00-f723-4c40-98c7-f2c025aba743?resourceVersion=id%3A5"
+          }
+        },
+        "attributes": {
+          "name": "Victoria sponge cake"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "49a605b3-662f-49d9-883d-a3ee5daa3759",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/49a605b3-662f-49d9-883d-a3ee5daa3759?resourceVersion=id%3A6"
+          }
+        },
+        "attributes": {
+          "name": "Gluten free pizza"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "711c4175-f26c-4d7a-ba9d-c35435fa1563",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/711c4175-f26c-4d7a-ba9d-c35435fa1563?resourceVersion=id%3A7"
+          }
+        },
+        "attributes": {
+          "name": "Thai green curry"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "06413165-61e0-41df-982a-cdbb4e0625ee",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/06413165-61e0-41df-982a-cdbb4e0625ee?resourceVersion=id%3A8"
+          }
+        },
+        "attributes": {
+          "name": "Crema catalana"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "c2b6faa3-3f45-49f1-8c2e-8235b35c257f",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/c2b6faa3-3f45-49f1-8c2e-8235b35c257f?resourceVersion=id%3A9"
+          }
+        },
+        "attributes": {
+          "name": "Fiery chili sauce"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "bccee620-7777-4a57-b92a-7a2081923050",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/bccee620-7777-4a57-b92a-7a2081923050?resourceVersion=id%3A10"
+          }
+        },
+        "attributes": {
+          "name": "Home Grown Herbs"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "57958d2a-d56d-420b-b96b-5156ec8be706",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/57958d2a-d56d-420b-b96b-5156ec8be706?resourceVersion=id%3A11"
+          }
+        },
+        "attributes": {
+          "name": "Vegan Chocolate"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "88f2dcf2-94bb-40c6-ad0e-160629504375",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/88f2dcf2-94bb-40c6-ad0e-160629504375?resourceVersion=id%3A12"
+          }
+        },
+        "attributes": {
+          "name": "Supermarket Savvy Umami"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "fc46c4a2-a78b-4b5f-a950-c31522da4595",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/fc46c4a2-a78b-4b5f-a950-c31522da4595?resourceVersion=id%3A13"
+          }
+        },
+        "attributes": {
+          "name": "Mushrooms Umami"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "4ed65a36-c65f-48fd-87dd-53d58767e375",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/4ed65a36-c65f-48fd-87dd-53d58767e375?resourceVersion=id%3A14"
+          }
+        },
+        "attributes": {
+          "name": "Heritage Carrots"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "e4669b11-fbff-4828-bfc9-5dc5d49668fe",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/e4669b11-fbff-4828-bfc9-5dc5d49668fe?resourceVersion=id%3A15"
+          }
+        },
+        "attributes": {
+          "name": "Chocolate Brownie Umami"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "d62756e7-68e0-4d6e-8a7d-f94505c18225",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/d62756e7-68e0-4d6e-8a7d-f94505c18225?resourceVersion=id%3A16"
+          }
+        },
+        "attributes": {
+          "name": "Mojito Mocktail"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "aa60ba3f-011c-41bb-bac8-38b042de2980",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/aa60ba3f-011c-41bb-bac8-38b042de2980?resourceVersion=id%3A17"
+          }
+        },
+        "attributes": {
+          "name": "Oatmeal Fruit Syrop Topping"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "640b2e32-038f-4ab3-b0d8-5fd4374eb991",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/640b2e32-038f-4ab3-b0d8-5fd4374eb991?resourceVersion=id%3A18"
+          }
+        },
+        "attributes": {
+          "name": "Mouth watering vegetarian pasta bake with rich tomato sauce and cheese toppings"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "fec954f5-7fd8-403a-a43f-eb02472f9982",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/fec954f5-7fd8-403a-a43f-eb02472f9982?resourceVersion=id%3A19"
+          }
+        },
+        "attributes": {
+          "name": "3 issue bundle of the Umami food magazine"
+        }
+      },
+      {
+        "type": "media--image",
+        "id": "f0de6391-b9e6-4fe7-b7d5-211efa58dee1",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image/f0de6391-b9e6-4fe7-b7d5-211efa58dee1?resourceVersion=id%3A20"
+          }
+        },
+        "attributes": {
+          "name": "(Hero) Vegan chocolate and nut brownies"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image?fields%5Bmedia--image%5D=id%2Ctitle%2Cname%2Cinfo"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "url": "/en/jsonapi/media/image?fields%5Bmedia--image%5D=id%2Ctitle%2Cname%2Cinfo",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1
+  },
+  "request": {}
+}

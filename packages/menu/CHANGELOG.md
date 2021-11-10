@@ -1,5 +1,17 @@
 # druxt-menu
 
+## 0.15.0
+
+### Minor Changes
+
+- e7b1533: Refactored DruxtModule fetch hooks
+
+### Patch Changes
+
+- Updated dependencies [77ab204]
+  - druxt-blocks@0.14.0
+  - druxt@0.13.0
+
 ## 0.14.3
 
 ### Patch Changes

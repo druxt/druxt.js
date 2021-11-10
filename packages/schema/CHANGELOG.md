@@ -1,5 +1,17 @@
 # druxt-schema
 
+## 0.9.0
+
+### Minor Changes
+
+- 77ab204: Disabled API Proxy when generating schema files
+
+### Patch Changes
+
+- d12dfb5: Added missing schemaType prop to DruxtSchemaMixin
+- Updated dependencies [77ab204]
+  - druxt@0.13.0
+
 ## 0.8.1
 
 ### Patch Changes

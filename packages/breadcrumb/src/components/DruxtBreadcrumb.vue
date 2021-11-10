@@ -29,18 +29,6 @@ export default {
     }
   },
 
-  /**
-   * The Nuxt Fetch hook.
-   *
-   * Fetches the breadcrumbs.
-   */
-  async fetch() {
-    if (!this.value) {
-      await this.fetchCrumbs()
-    }
-    await DruxtModule.fetch.call(this)
-  },
-
   /** */
   computed: {
     /**
@@ -135,6 +123,15 @@ export default {
      * @returns {ComponentOptions}
      */
     componentOptions: () => [['default']],
+
+    /**
+     * Fetches the breadcrumbs.
+     */
+    async fetchConfig() {
+      if (!this.value) {
+        await this.fetchCrumbs()
+      }
+    },
 
     /**
      * Provides propsData for the DruxtWrapper.

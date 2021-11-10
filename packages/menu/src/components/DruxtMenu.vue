@@ -149,49 +149,6 @@ export default {
     }
   },
 
-  /**
-   * Nuxt.js fetch method.
-   *
-   * Builds and executes the JSON:API query, loading the menu items into the
-   * druxtMenu Vuex store.
-   */
-  async fetch() {
-    // Build wrapper component object.
-    const options = this.getModuleComponents()
-    let component = {
-      is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
-      options: options.map(o => o.name) || [],
-    }
-
-    // Get scoped slots.
-    component.slots = Object.keys(this.getScopedSlots())
-
-    // Get wrapper component data to merge with module settings.
-    const wrapperData = await this.getWrapperData(component.is)
-    component.settings = merge(((this.$druxtMenu || {}).options || {}).menu || {}, wrapperData.druxt || {}, { arrayMerge: (dest, src) => src })
-
-    const settings = {
-      ...(component.settings || {}).query,
-      max_depth: this.maxDepth || this.depth,
-      min_depth: this.minDepth,
-      parent: this.parentId,
-    }
-
-    if (!this.value) {
-      await this.getMenu({
-        name: this.name,
-        settings,
-      })
-      this.model = this.getMenuItems()
-    }
-
-    // Build wrapper component propsData.
-    component = { ...component, ...this.getModulePropsData(wrapperData.props) }
-
-    // Set component data.
-    this.component = component
-  },
-
   fetchKey(getCounter) {
     const parts = ['DruxtMenu', this.name, this.parentId].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
@@ -299,12 +256,38 @@ export default {
     componentOptions: ({ name }) => [[name], ['default']],
 
     /**
+     * Builds and executes the JSON:API query, loading the menu items into the
+     * druxtMenu Vuex store.
+     */
+    async fetchData(settings) {
+      if (!this.value) {
+        await this.getMenu({ name: this.name, settings: settings.query })
+        this.model = this.getMenuItems()
+      }
+    },
+
+    /**
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
     propsData: ({ model, parentId }) => ({ items: model, parentId, value: model }),
+
+    /**
+     * Component settings.
+     */
+    settings: ({ $druxt, depth, maxDepth, minDepth, parentId }, wrapperSettings) => {
+      const settings = merge($druxt.settings.menu || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
+      return {
+        query: {
+          ...(settings.query || {}),
+          max_depth: maxDepth || depth,
+          min_depth: minDepth,
+          parent: parentId,
+        }
+      }
+    },
 
     /**
      * Provides the scoped slots object for the Module render function.

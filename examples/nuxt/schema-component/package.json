@@ -1,0 +1,11 @@
+{
+  "name": "schema-component",
+  "scripts": {
+    "dev": "nuxt dev"
+  },
+  "packageManager": "yarn@3.0.0",
+  "dependencies": {
+    "druxt-schmea": "link:../../../packages/druxt-schema",
+    "nuxt": "latest"
+  }
+}

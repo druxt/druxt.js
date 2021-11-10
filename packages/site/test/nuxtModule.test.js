@@ -33,6 +33,6 @@ describe('DruxtJS Site module', () => {
     await mock.DruxtSiteNuxtModule()
 
     // Expect 9 modules to be added.
-    expect(mock.addModule).toHaveBeenCalledTimes(9)
+    expect(mock.addModule).toHaveBeenCalledTimes(8)
   })
 })

@@ -1,5 +1,24 @@
 # druxt-site
 
+## 0.10.0
+
+### Minor Changes
+
+- 77ab204: Replaced File Proxy with Druxt proxy
+- e7b1533: Refactored DruxtModule fetch hooks
+
+### Patch Changes
+
+- Updated dependencies [025315a]
+  - druxt-entity@0.21.0
+  - druxt-views@0.16.0
+  - druxt-schema@0.9.0
+  - druxt-blocks@0.14.0
+  - druxt-breadcrumb@0.13.0
+  - druxt@0.13.0
+  - druxt-menu@0.15.0
+  - druxt-router@0.23.0
+
 ## 0.9.1
 
 ### Patch Changes
