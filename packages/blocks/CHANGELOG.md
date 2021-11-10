@@ -1,5 +1,18 @@
 # druxt-blocks
 
+## 0.14.0
+
+### Minor Changes
+
+- e7b1533: Refactored DruxtModule fetch hooks
+
+### Patch Changes
+
+- Updated dependencies [025315a]
+  - druxt-entity@0.21.0
+  - druxt@0.13.0
+  - druxt-router@0.23.0
+
 ## 0.13.1
 
 ### Patch Changes
