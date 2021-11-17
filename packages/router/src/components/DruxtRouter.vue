@@ -14,7 +14,11 @@ export default {
 
   extends: DruxtModule,
 
-  async middleware ({ store, redirect, route }) {
+  async middleware ({ isDev, isStatic, redirect, route, store, ssrContext }) {
+    if (isStatic && !ssrContext && !isDev) {
+      return
+    }
+
     const result = await store.dispatch('druxtRouter/get', route.fullPath)
 
     // Process redirect.
