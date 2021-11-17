@@ -1,5 +1,11 @@
 # druxt-entity
 
+## 0.21.1
+
+### Patch Changes
+
+- 6ade3a2: Fixed Vuex mutation error
+
 ## 0.21.0
 
 ### Minor Changes
