@@ -274,7 +274,7 @@ export default {
       if (this.uuid && !this.value) {
         const query = this.getQuery(settings)
         const resource = await this.getResource({ type: this.type, id: this.uuid, query })
-        const entity = resource.data || {}
+        const entity = { ...(resource.data || {}) }
         entity.included = resource.included
         this.model = JSON.parse(JSON.stringify(entity || {}))
       }
