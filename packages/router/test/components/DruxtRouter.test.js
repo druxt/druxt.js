@@ -19,6 +19,11 @@ let store
 
 const mountComponent = (fullPath) => {
   const mocks = {
+    $druxt: {
+      settings: {
+        router: {}
+      }
+    },
     $fetchState: {
       pending: true
     },
@@ -53,7 +58,7 @@ describe('DruxtRouterComponent', () => {
   test('Homepage', async () => {
     // Mount component.
     const wrapper = mountComponent('/')
-    await DruxtRouterComponent.middleware({ store: wrapper.vm.$store, route: wrapper.vm.$route })
+    await DruxtRouterComponent.middleware({ $druxt: wrapper.vm.$druxt, store: wrapper.vm.$store, route: wrapper.vm.$route })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(mockAxios.get).toHaveBeenNthCalledWith(1, '/router/translate-path?path=/', expect.any(Object))
@@ -89,7 +94,7 @@ describe('DruxtRouterComponent', () => {
     // Mount component.
     const wrapper = mountComponent('/node/1')
     const redirect = jest.fn()
-    await DruxtRouterComponent.middleware({ store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
+    await DruxtRouterComponent.middleware({ $druxt: wrapper.vm.$druxt, store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.component.options).toStrictEqual([
@@ -99,15 +104,14 @@ describe('DruxtRouterComponent', () => {
     ])
   })
 
-  test('Redirect', async () => {
+  test('Middleware - Redirect', async () => {
     // Mount component.
     const wrapper = mountComponent('/en/node')
     const redirect = jest.fn()
-    await DruxtRouterComponent.middleware({ store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
+    await DruxtRouterComponent.middleware({ $druxt: wrapper.vm.$druxt, store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(redirect).toBeCalledWith('/')
-    expect(wrapper.vm.redirect).toBe('/')
   })
 
   test('Empty', () => {
