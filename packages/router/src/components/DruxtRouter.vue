@@ -9,7 +9,7 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  *
  * If no Path is specified, the Vue router path will be used by default.
  *
- * For instance, using the `/node/1` route would result in a DruxtEntity
+ * For instance, using the `/node/1` route would result in a DruxtRouter
  * component for the content in Drupal with the Node ID of 1.
  *
  * @example <caption>Render using the Vue router path</caption> @lang vue
@@ -24,7 +24,7 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * @example <caption>Render via a template</caption> @lang vue
  * <DruxtRouter>
  *   <template #default="{ route }">
- *     <DruxtEntity v-bind="route.props" />
+ *     <DruxtRouter v-bind="route.props" />
  *   </template>
  * </DruxtRouter>
  */
@@ -33,6 +33,21 @@ export default {
 
   extends: DruxtModule,
 
+  /**
+   * Nuxt middleware; gets and sets the current route, and processes redirects.
+   *
+   * This can be disabled by setting the `druxt.router.middleware` option to
+   * `false` in `nuxt.config.js`
+   *
+   * @example @lang js
+   * export default {
+   *   druxt: {
+   *     router: {
+   *       middleware: false
+   *     }
+   *   }
+   * }
+   */
   async middleware ({ $druxt, redirect, route, store }) {
     // Ensure Router middleware is enabled.
     if (typeof ($druxt.settings.router || {}).middleware !== 'undefined' && !$druxt.settings.router.middleware) {
@@ -79,6 +94,9 @@ export default {
     }
   },
 
+  /**
+   * @property {object} model - The model object.
+   */
   data: ({ value }) => ({
     model: value,
   }),
@@ -152,13 +170,23 @@ export default {
     }
   },
 
+  /** DruxtModule settings */
   druxt: {
+    /**
+     * Provides the available component naming options for the Druxt Wrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {ComponentOptions}
+     */
     componentOptions: ({ module, route }) => [
       // @TODO - Add Path options.
       [module || 'error', route.isHomePath ? 'front' : 'not-front'],
       ['default']
     ],
 
+    /**
+     * Fetch the decoupled route.
+     */
     async fetchConfig() {
       // Use the v-model value if provided.
       if (this.value) {
@@ -172,10 +200,61 @@ export default {
       this.model = route
     },
 
+    /**
+     * Provides propsData for the DruxtWrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @returns {PropsData}
+     */
     propsData: ({ $route, path, model }) => ({
       path: path || $route.fullPath,
       route: model
     })
   }
 }
+
+/**
+ * Provides the available naming options for the Wrapper component.
+ *
+ * @typedef {array[]} ComponentOptions
+ *
+ * @example @lang js
+ * [
+ *   'DruxtRouter[Module][IsFront?]',
+ *   'DruxtRouterDefault',
+ * ]
+ *
+ * @example <caption>Entity route</caption> @lang js
+ * [
+ *   'DruxtRouterEntityFront',
+ *   'DruxtRouterEntity',
+ *   'DruxtRouterDefault',
+ *   '',
+ * ]
+ */
+
+/**
+ * Provides property data for use in the Wrapper component.
+ *
+ * @typedef {object} PropsData
+ * @param {string} path - The route path.
+ * @param {object} route - The Decoupled Router object.
+ *
+ * @example @lang js
+ * {
+ *   path: '/',
+ *   route: {
+ *     canonical: 'https://demo-api.druxtjs.org/en/node',
+ *     component: 'druxt-view',
+ *     error: false,
+ *     isHomePath: true,
+ *     jsonapi: {},
+ *     label: 'Home',
+ *     props: {},
+ *     redirect: false,
+ *     resolvedPath: '/en/node',
+ *     type: 'views',
+ *   }
+ * }
+ */
 </script>
