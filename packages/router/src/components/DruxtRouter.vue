@@ -1,24 +1,45 @@
 <script>
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
-import { mapState } from 'vuex'
 
 /**
- * Renders a Druxt module router component based on the resolved route provided
- * by the Drupal Decoupled Router module.
+ * The DruxtRouter component renders a Drupal decoupled route, or path, using
+ * the appropriate Druxt component.
  *
- * @example @lang vue
+ * `<DruxtRouter path="/" />`
+ *
+ * If no Path is specified, the Vue router path will be used by default.
+ *
+ * For instance, using the `/node/1` route would result in a DruxtEntity
+ * component for the content in Drupal with the Node ID of 1.
+ *
+ * @example <caption>Render using the Vue router path</caption> @lang vue
  * <DruxtRouter />
+ *
+ * @example <caption>Render a specified path</caption> @lang vue
+ * <DruxtRouter path="/node/1" />
+ *
+ * @example <caption>Render the result of the model, bypasses Drupal backend</caption> @lang vue
+ * <DruxtRouter v-model="route" />
+ *
+ * @example <caption>Render via a template</caption> @lang vue
+ * <DruxtRouter>
+ *   <template #default="{ route }">
+ *     <DruxtEntity v-bind="route.props" />
+ *   </template>
+ * </DruxtRouter>
  */
 export default {
   name: 'DruxtRouter',
 
   extends: DruxtModule,
 
-  async middleware ({ isDev, isStatic, redirect, route, store, ssrContext }) {
-    if (isStatic && !ssrContext && !isDev) {
+  async middleware ({ $druxt, redirect, route, store }) {
+    // Ensure Router middleware is enabled.
+    if (typeof ($druxt.settings.router || {}).middleware !== 'undefined' && !$druxt.settings.router.middleware) {
       return
     }
 
+    // Get and set the current route and redirect information.
     const result = await store.dispatch('druxtRouter/get', route.fullPath)
 
     // Process redirect.
@@ -26,6 +47,41 @@ export default {
       redirect(result.redirect)
     }
   },
+
+  /** */
+  props: {
+    /**
+     * The Decoupled router path.
+     *
+     * If not set, the Vue router value will be used instead.
+     *
+     * @type {string}
+     *
+     * @example @lang vue
+     * <DruxtRouter path="/node/1" />
+     */
+    path: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
+     * The Router object, used to determine the resolved route component.
+     *
+     * Setting this value will bypass the JSON:API.
+     *
+     * @type {object}
+     * @model
+     */
+    value: {
+      type: Object,
+      default: () => undefined
+    }
+  },
+
+  data: ({ value }) => ({
+    model: value,
+  }),
 
   /**
    * Nuxt head method.
@@ -42,7 +98,7 @@ export default {
         {
           hid: 'canonical',
           rel: 'canonical',
-          href: this.canonical || this.route.canonical
+          href: this.canonical || (this.route || {}).canonical
         }
       ]
     }
@@ -54,34 +110,46 @@ export default {
     return head
   },
 
-  /**
-   * Vue.js Computed properties.
-   *
-   * @vue-computed {object} redirect The current Redirect, if applicable.
-   * @vue-computed {object} route The current Route.
-   */
+  /** */
   computed: {
+    /**
+     * The route module.
+     *
+     * @type {string}
+     */
     module: ({ route }) =>
       (route || {}).component && route.component.startsWith('druxt-') ? route.component.substring(6) : false,
+
+    /**
+     * The route object.
+     *
+     * @type {object}
+     */
+    route: ({ model }) => model,
 
     /**
      * Route title.
      * @type {boolean|string}
      * @default false
      */
-    title: ({ route }) => route.label || false,
+    title: ({ route }) => (route || {}).label || false,
 
     /**
      * Route component property data.
      * @type {object|string}
      * @default false
      */
-    props: ({ route }) => route.props || false,
+    props: ({ route }) => (route || {}).props || false,
+  },
 
-    ...mapState({
-      redirect: state => state.druxtRouter.redirect,
-      route: state => state.druxtRouter.route
-    })
+  /** */
+  watch: {
+    /**
+     * Re-fetch on update to Path prop.
+     */
+    async path() {
+      await this.$fetch()
+    }
   },
 
   druxt: {
@@ -91,7 +159,23 @@ export default {
       ['default']
     ],
 
-    propsData: ({ route }) => ({ route })
+    async fetchConfig() {
+      // Use the v-model value if provided.
+      if (this.value) {
+        return
+      }
+
+      // Use either the path prop or the Vue router full path to query the
+      // decoupled router.
+      const path = this.path || this.$route.fullPath
+      const route = await this.$store.dispatch('druxtRouter/getRoute', path)
+      this.model = route
+    },
+
+    propsData: ({ $route, path, model }) => ({
+      path: path || $route.fullPath,
+      route: model
+    })
   }
 }
 </script>
