@@ -29,6 +29,13 @@ description: Drupal router for Nuxt, powered by the Drupal Decoupled Router modu
 
 ### Options
 
+- `druxt.router.middleware`
+
+  Type: `boolean`  
+  Default: `true`
+
+  Controls whether to execute the Route page middleware and process redirects.
+
 - `druxt.router.pages`
 
   Type: `boolean`  
@@ -52,8 +59,10 @@ description: Drupal router for Nuxt, powered by the Drupal Decoupled Router modu
 Renders a Druxt module router component based on the resolved route provided by the Drupal Decoupled Router module.
 
 ```vue
-<DruxtRouter />
+<DruxtRouter path="/" />
 ```
+
+If no Path is provided, the component will default to the Vue router fullpath.
 
 - For more details, refer to the [DruxtBlock API documentation](/api/packages/router/components/DruxtRouter).
 

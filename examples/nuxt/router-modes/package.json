@@ -1,0 +1,13 @@
+{
+  "name": "router-modes",
+  "packageManager": "yarn@3.0.0",
+  "scripts": {
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "start": "nuxt start"
+  },
+  "dependencies": {
+    "druxt-site": "link:../../../packages/druxt-site",
+    "nuxt": "latest"
+  }
+}

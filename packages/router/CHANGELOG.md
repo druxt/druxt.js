@@ -1,5 +1,31 @@
 # druxt-router
 
+## 0.24.0
+
+### Minor Changes
+
+- 9161b38: Added Storybook integration for the DruxtRouter component.
+- 9161b38: Added ability to render a specific route using the Path property.
+
+  ```jsx
+  <DruxtRouter path="/node/1" />
+  ```
+
+- 9161b38: Added fetch hook to DruxtRouter component.
+- 9161b38: Added option to disable the DruxtRouter page middleware.
+
+  ```js
+  export default {
+    druxt: {
+      router: {
+        middleware: false
+      }
+    }
+  };
+  ```
+
+  Note: This is experimental and your results may vary.
+
 ## 0.23.0
 
 ### Minor Changes
