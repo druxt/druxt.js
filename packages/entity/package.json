@@ -1,6 +1,6 @@
 {
   "name": "druxt-entity",
-  "version": "0.21.1",
+  "version": "0.21.2",
   "description": "Drupal Display Mode powered Entity, Form and Field Druxt components.",
   "keywords": [
     "cms",
@@ -47,7 +47,7 @@
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.2.2",
     "druxt": "^0.13.0",
-    "druxt-router": "^0.23.0",
+    "druxt-router": "^0.24.0",
     "druxt-schema": "^0.9.0"
   },
   "publishConfig": {
