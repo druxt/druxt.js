@@ -193,11 +193,20 @@ export default {
         return
       }
 
-      // Use either the path prop or the Vue router full path to query the
-      // decoupled router.
+      // Get the route from the Drupal decoupled router module via the
+      // druxtRouter store.
+      // Use the Path prop or the Vue Router as the route to lookup.
       const path = this.path || this.$route.fullPath
       const route = await this.$store.dispatch('druxtRouter/getRoute', path)
       this.model = route
+
+      // If this the path is the active Vue route, set the active route in the
+      // druxtRouter store for other modules to use.
+      // This is also done when via the middleware if in use.
+      const setActiveRoute = path === this.$route.fullPath
+      if (setActiveRoute) {
+        this.$store.commit('druxtRouter/setRoute', path)
+      }
     },
 
     /**
