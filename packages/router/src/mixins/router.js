@@ -24,6 +24,16 @@ const DruxtRouterMixin = {
    */
   props: {
     /**
+     * The Decoupled router path.
+     *
+     * @type {string}
+     */
+     path: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * The Decoupled router object.
      *
      * @type {object}

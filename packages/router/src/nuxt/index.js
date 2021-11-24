@@ -84,6 +84,11 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
     fileName: 'store/druxt-router.js',
     options
   })
+
+  // Nuxt Storybook.
+  this.nuxt.hook('storybook:config', async ({ stories }) => {
+    stories.push('druxt-router/dist/components/*.stories.mjs')
+  })
 }
 
 DruxtRouterNuxtModule.meta = require('../package.json')

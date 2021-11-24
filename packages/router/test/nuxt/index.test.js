@@ -33,21 +33,21 @@ test('Nuxt module', async () => {
   await mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalledTimes(2)
   expect(mock.addTemplate).toHaveBeenCalledTimes(1)
-  expect(mock.nuxt.hook).toHaveBeenCalledTimes(1)
+  expect(mock.nuxt.hook).toHaveBeenCalledTimes(2)
   jest.clearAllMocks()
 
   mock.options.druxt.router = { wildcard: false }
   await mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalledTimes(2)
   expect(mock.addTemplate).toHaveBeenCalledTimes(0)
-  expect(mock.nuxt.hook).toHaveBeenCalledTimes(1)
+  expect(mock.nuxt.hook).toHaveBeenCalledTimes(2)
   jest.clearAllMocks()
 
   mock.options.druxt.router = { pages: false }
   await mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalledTimes(2)
   expect(mock.addTemplate).toHaveBeenCalledTimes(1)
-  expect(mock.nuxt.hook).toHaveBeenCalledTimes(2)
+  expect(mock.nuxt.hook).toHaveBeenCalledTimes(3)
   expect(mock.nuxt.options.build.createRoutes()).toStrictEqual([])
   jest.clearAllMocks()
 })
