@@ -12,7 +12,10 @@
 
 <script>
 /**
- * Debug component for use by Druxt modules.
+ * Renders Debug data only when Nuxt is in development mode.
+ *
+ * @example @lang vue
+ * <DruxtDebug :json="entity" />
  */
 export default {
   /** */
