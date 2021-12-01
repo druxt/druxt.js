@@ -417,6 +417,7 @@ export { DruxtClient }
   * @typedef {object} DruxtClientOptions
   *
   * @param {object} [axios] - Axios instance settings.
+  * @param {boolean} [debug=false] - Enable Debug mode for verbose console log messages.
   * @param {string} [endpoint=jsonapi] - The JSON:API endpoint.
   * @param {string} [jsonapiResourceConfig=jsonapi_resource_config--jsonapi_resource_config] -
   *   The JSON:API resource config type, used for [JSON:API Extras](https://www.drupal.org/project/jsonapi_extras) support.
@@ -425,9 +426,14 @@ export { DruxtClient }
   *
   * @example @lang js
   * {
+  *   // Axios instance settings.
   *   axios: {
+  *     // Set axios headers.
   *     headers: { 'X-Custom-Header': true },
   *   },
+  *   // Enable debug console log messages.
+  *   debug: true,
+  *   // JSON:API endpoint.
   *   endpoint: 'api',
   * }
   */
