@@ -30,6 +30,14 @@ describe('DruxtClient', () => {
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL: baseUrl, headers })
   })
 
+  test('debug', () => {
+    const druxt = new DruxtClient(baseUrl, { debug: true })
+    expect(druxt.axios.interceptors.request.use).toHaveBeenCalled()
+
+    // @todo - mock axios doesn't apply interceptors to mock requests, so this
+    // is currently untestable.
+  })
+
   test('addHeaders', () => {
     expect(druxt.addHeaders()).toBe(false)
 
