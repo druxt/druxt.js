@@ -1,6 +1,9 @@
 <template>
   <details v-if="$nuxt.context.isDev">
     <summary v-text="title" />
+    <pre v-if="json"><!--
+      --><code>{{ JSON.stringify(json, null, '  ') }}</code><!--
+    --></pre>
     <slot />
   </details>
 
@@ -15,9 +18,23 @@ export default {
   /** */
   props: {
     /**
-     * Text to display in summary.
+     * JSON data to format for readability.
+     *
+     * @type {*}
+     * @example @lang vue
+     * <DruxtDebug :json="{ data: [{ one: true, two: false }] }" />
+     */
+    json: {
+      type: [Array, Boolean, Object, Number, String],
+      default: undefined
+    },
+
+    /**
+     * Text to use for debug summary.
      *
      * @type {string}
+     * @example @lang vue
+     * <DruxtDebug summary="Foo bar" />
      */
     summary: {
       type: String,
