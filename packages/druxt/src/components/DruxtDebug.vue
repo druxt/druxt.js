@@ -21,7 +21,7 @@ export default {
      */
     summary: {
       type: String,
-      required: true,
+      default: 'Debug',
     },
   },
 
@@ -42,7 +42,9 @@ export default {
      *
      * @return {string}
      */
-    title: ({ module, summary }) => `[${module.$options._componentTag}] ${summary}`,
+    title: ({ module, summary }) => module.$options._componentTag
+      ? `[${module.$options._componentTag}] ${summary}`
+      : summary,
   },
 };
 </script>
