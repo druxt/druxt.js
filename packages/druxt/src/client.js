@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
+import consola from 'consola'
 
 /**
  * The Druxt JSON:API client.
@@ -20,6 +21,11 @@ class DruxtClient {
    * @param {DruxtClientOptions} [options] - The DruxtClient options object.
    */
   constructor(baseUrl, options = {}) {
+    // Consola logger.
+    this.log = consola.create({ defaults: {
+      tag: 'DruxtClient'
+    }})
+
     // Check for URL.
     if (!baseUrl) {
       throw new Error('The \'baseUrl\' parameter is required.')
@@ -41,6 +47,19 @@ class DruxtClient {
      * @type {object}
      */
     this.axios = axios.create(axiosSettings)
+
+    // If Debug mode is enabled, add an Axios interceptor to log out all
+    // requests and errors.
+    if (options.debug) {
+      const log = this.log
+      this.axios.interceptors.request.use((config) => {
+        log.info(config.url)
+        return config
+      }, (error) => {
+        log.error(error)
+        return Promise.reject(error)
+      })
+    }
 
     /**
      * Druxt base options.
