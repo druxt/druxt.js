@@ -4196,7 +4196,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"array-back@npm:^6.1.1":
+"array-back@npm:^6.1.1, array-back@npm:^6.2.0":
   version: 6.2.0
   resolution: "array-back@npm:6.2.0"
   checksum: b0c45e885d0924636c2f067d65d0ab341773756e59830771da33277ff0dfee8c50eb2158a3c9d0bf5f16f96474ccfa056ae07bb6b842727a0b7e84a095622ed4
@@ -6347,7 +6347,7 @@ __metadata:
   dependencies:
     dmd: 6.0.0
     globby: 11.0.4
-    jsdoc-to-markdown: 7.0.1
+    jsdoc-to-markdown: 7.1.0
     jsdoc-vuejs: 3.0.9
     jsdoc-vuex-plugin: 1.0.0
     markdown-it-task-lists: 2.1.1
@@ -9463,24 +9463,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdoc-api@npm:^7.0.0":
-  version: 7.0.1
-  resolution: "jsdoc-api@npm:7.0.1"
+"jsdoc-api@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "jsdoc-api@npm:7.1.0"
   dependencies:
-    array-back: ^5.0.0
+    array-back: ^6.2.0
     cache-point: ^2.0.0
     collect-all: ^1.0.4
     file-set: ^4.0.2
     fs-then-native: ^2.0.0
-    jsdoc: ^3.6.6
+    jsdoc: ^3.6.7
     object-to-spawn-args: ^2.0.1
     temp-path: ^1.0.0
-    walk-back: ^5.0.0
-  checksum: b5312b45d33c46df278abe452b39586eb569f3b811b6ad96feae583c1c7cac8d28ec1932e34f08c76569edfc4811d9341e096661e755dbcb2fa4c76c9e61f992
+    walk-back: ^5.1.0
+  checksum: d7a243924bb829660dcc07a38caa0e8e3a6d6cc45f0231bffd87cfef38fb37d840d892ca9fae55d63a87d471fcf42fc8d9c052180e7856c66356bfc2c0fbb6d9
   languageName: node
   linkType: hard
 
-"jsdoc-parse@npm:^6.0.0":
+"jsdoc-parse@npm:^6.0.1":
   version: 6.0.1
   resolution: "jsdoc-parse@npm:6.0.1"
   dependencies:
@@ -9494,20 +9494,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdoc-to-markdown@npm:7.0.1":
-  version: 7.0.1
-  resolution: "jsdoc-to-markdown@npm:7.0.1"
+"jsdoc-to-markdown@npm:7.1.0":
+  version: 7.1.0
+  resolution: "jsdoc-to-markdown@npm:7.1.0"
   dependencies:
-    array-back: ^5.0.0
+    array-back: ^6.2.0
     command-line-tool: ^0.8.0
     config-master: ^3.1.0
     dmd: ^6.0.0
-    jsdoc-api: ^7.0.0
-    jsdoc-parse: ^6.0.0
-    walk-back: ^5.0.0
+    jsdoc-api: ^7.1.0
+    jsdoc-parse: ^6.0.1
+    walk-back: ^5.1.0
   bin:
     jsdoc2md: bin/cli.js
-  checksum: b69631be4810d16cbe13a0bca0854e12886a99777a71f97588b15e66a22262d880826e138d204ad339dd454f114316ce1246f35cb5b6c2e99ce7dd9116b8a1fa
+  checksum: 20291b4b21b51ff3d8ebc2f1d0159e6e311b6f376ff95fec5519bef71605dd275f4d1dd2a052394528e9a364c6fb6b354acfe02d275151038f77c694ca49c005
   languageName: node
   linkType: hard
 
@@ -9532,7 +9532,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdoc@npm:^3.5.5, jsdoc@npm:^3.6.6":
+"jsdoc@npm:^3.5.5, jsdoc@npm:^3.6.7":
   version: 3.6.7
   resolution: "jsdoc@npm:3.6.7"
   dependencies:
@@ -14457,7 +14457,7 @@ typescript@^4.4.3:
   languageName: node
   linkType: hard
 
-"walk-back@npm:^5.0.0":
+"walk-back@npm:^5.0.0, walk-back@npm:^5.1.0":
   version: 5.1.0
   resolution: "walk-back@npm:5.1.0"
   checksum: b0e9acdac22dcd281d24fb857af52f39ca4e8f3b18921106b676b0baa96fb7f97c55630d9df0814207a194e6a75f175d8c8282648914458fd949eae901b276f5
