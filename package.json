@@ -43,7 +43,7 @@
     "eslint-plugin-vue": "7.18.0",
     "husky": "7.0.2",
     "jest": "27.4.3",
-    "jest-junit": "12.3.0",
+    "jest-junit": "13.0.0",
     "jest-mock-axios": "4.4.1",
     "regenerator-runtime": "0.13.9",
     "renovate": "27.31.0",
