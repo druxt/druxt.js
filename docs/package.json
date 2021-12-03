@@ -10,7 +10,7 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
-    "@nuxt/content": "1.14.0",
+    "@nuxt/content": "1.15.1",
     "@tailwindcss/typography": "0.4.1",
     "core-js": "3.19.2",
     "daisyui": "1.16.2",

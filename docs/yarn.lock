@@ -1448,9 +1448,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/content@npm:1.14.0":
-  version: 1.14.0
-  resolution: "@nuxt/content@npm:1.14.0"
+"@nuxt/content@npm:1.15.1":
+  version: 1.15.1
+  resolution: "@nuxt/content@npm:1.15.1"
   dependencies:
     "@lokidb/full-text-search": ^2.1.0
     "@lokidb/loki": ^2.1.0
@@ -1470,6 +1470,7 @@ __metadata:
     hookable: ^4.4.1
     html-tags: ^3.1.0
     js-yaml: 4.0.0
+    json5: ^2.2.0
     mdast-util-to-hast: ^10.2.0
     mkdirp: ^1.0.4
     node-req: ^2.1.2
@@ -1492,7 +1493,7 @@ __metadata:
     unist-builder: ^2.0.3
     ws: ^7.4.3
     xml2js: ^0.4.23
-  checksum: c76ae929479f71b4d36e6b91726779f9fe129142d0fdc8b165838372063d4a64aa21bf35b33e50bdb1c94addbfb5bcc009f335bea704f241dddbfc54b31b650a
+  checksum: 3d7e1af85dce5af0e5e041634029b20c1fc0223cdecdf6029322d6da2f81118539fe57802e721ba4e414e13788777e895a83329795acf6fd0352e19addc33dff
   languageName: node
   linkType: hard
 
@@ -5008,7 +5009,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxtjs-org@workspace:."
   dependencies:
-    "@nuxt/content": 1.14.0
+    "@nuxt/content": 1.15.1
     "@nuxtjs/google-analytics": 2.4.0
     "@nuxtjs/pwa": 3.3.5
     "@nuxtjs/tailwindcss": 4.2.1
@@ -7316,7 +7317,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"json5@npm:^2.1.2":
+"json5@npm:^2.1.2, json5@npm:^2.2.0":
   version: 2.2.0
   resolution: "json5@npm:2.2.0"
   dependencies:
