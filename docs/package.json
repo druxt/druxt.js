@@ -7,7 +7,8 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate"
+    "generate": "nuxt generate",
+    "storybook": "nuxt storybook"
   },
   "dependencies": {
     "@nuxt/content": "1.15.1",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@nuxtjs/google-analytics": "2.4.0",
     "@nuxtjs/pwa": "3.3.5",
+    "@nuxtjs/storybook": "^4.2.0",
     "@nuxtjs/tailwindcss": "4.2.1"
   }
 }
