@@ -1,6 +1,9 @@
 <template>
   <details v-if="$nuxt.context.isDev">
     <summary v-text="title" />
+    <pre v-if="json"><!--
+      --><code>{{ JSON.stringify(json, null, '  ') }}</code><!--
+    --></pre>
     <slot />
   </details>
 
@@ -9,19 +12,36 @@
 
 <script>
 /**
- * Debug component for use by Druxt modules.
+ * Renders Debug data only when Nuxt is in development mode.
+ *
+ * @example @lang vue
+ * <DruxtDebug :json="entity" />
  */
 export default {
   /** */
   props: {
     /**
-     * Text to display in summary.
+     * JSON data to format for readability.
+     *
+     * @type {*}
+     * @example @lang vue
+     * <DruxtDebug :json="{ data: [{ one: true, two: false }] }" />
+     */
+    json: {
+      type: [Array, Boolean, Object, Number, String],
+      default: undefined
+    },
+
+    /**
+     * Text to use for debug summary.
      *
      * @type {string}
+     * @example @lang vue
+     * <DruxtDebug summary="Foo bar" />
      */
     summary: {
       type: String,
-      required: true,
+      default: 'Debug',
     },
   },
 
@@ -42,7 +62,9 @@ export default {
      *
      * @return {string}
      */
-    title: ({ module, summary }) => `[${module.$options._componentTag}] ${summary}`,
+    title: ({ module, summary }) => module.$options._componentTag
+      ? `[${module.$options._componentTag}] ${summary}`
+      : summary,
   },
 };
 </script>

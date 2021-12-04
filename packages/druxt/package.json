@@ -1,6 +1,6 @@
 {
   "name": "druxt",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "The Fully Decoupled Drupal Framework for Nuxt.js.",
   "keywords": [
     "cms",
@@ -45,6 +45,9 @@
     "md5": "^2.3.0",
     "querystring": "^0.2.0",
     "scule": "^0.2.0"
+  },
+  "peerDependencies": {
+    "consola": "*"
   },
   "optionalDependencies": {
     "core-js": "^3.16.1",

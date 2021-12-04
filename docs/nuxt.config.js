@@ -62,4 +62,12 @@ export default {
   build: {},
 
   telemetry: true,
+
+  storybook: {
+    stories: [
+      '~/components/**/*.stories.js',
+      '~/layouts/**/*.stories.js',
+      '~/pages/**/*.stories.js',
+    ]
+  }
 }

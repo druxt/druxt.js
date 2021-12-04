@@ -15,12 +15,12 @@
   "dependencies": {
     "dmd": "6.0.0",
     "globby": "11.0.4",
-    "jsdoc-to-markdown": "7.0.1",
+    "jsdoc-to-markdown": "7.1.0",
     "jsdoc-vuejs": "3.0.9",
     "jsdoc-vuex-plugin": "1.0.0",
     "markdown-it-task-lists": "2.1.1",
     "ncp": "2.0.0",
-    "vue-docgen-api": "4.41.2",
-    "yargs": "17.2.1"
+    "vue-docgen-api": "4.43.0",
+    "yargs": "17.3.0"
   }
 }
