@@ -1,5 +1,29 @@
 # druxt
 
+## 0.14.0
+
+### Minor Changes
+
+- 85fff42: Added debug mode and Axios request logging.
+
+  ```
+  export default {
+    druxt: {
+      // Enable debug log messages.
+      debug: true,
+    }
+  }
+  ```
+
+- 39e2e2e: Added ability to render readable JSON with the DruxtDebug component
+
+  ```jsx
+  <DruxtDebug :json="{ data: [{ one: true, two: false }] }" />
+  ```
+
+- 9c33d82: Made summary prop optional on DruxtDebug component
+- 45bc0b9: Added Druxt version to Nuxt badge
+
 ## 0.13.0
 
 ### Minor Changes
