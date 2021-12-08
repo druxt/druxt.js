@@ -1,4 +1,5 @@
-import { DruxtViewsNuxtModule } from './nuxtModule'
+import { DruxtViewsNuxtModule } from './nuxt'
+DruxtViewsNuxtModule.meta = require('../package.json')
 
 /**
  * The Nuxt.js module function.
@@ -8,7 +9,7 @@ import { DruxtViewsNuxtModule } from './nuxtModule'
  * @type {Function}
  * @exports default
  * @name DruxtViewsNuxtModule
- * @see {@link ./module|DruxtViewsNuxtModule}
+ * @see {@link ./nuxt|DruxtViewsNuxtModule}
  */
 export default DruxtViewsNuxtModule
 

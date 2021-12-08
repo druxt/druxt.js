@@ -1,5 +1,5 @@
 import { join, resolve } from 'path'
-import DruxtViewsStorybook from './nuxtStorybook'
+import DruxtViewsStorybook from './storybook'
 
 /**
  * The Nuxt.js module function.
@@ -64,7 +64,5 @@ const DruxtViewsNuxtModule = function (moduleOptions = {}) {
     await DruxtViewsStorybook.call(this, { stories })
   })
 }
-
-DruxtViewsNuxtModule.meta = require('../package.json')
 
 export { DruxtViewsNuxtModule }
