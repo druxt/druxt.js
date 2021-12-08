@@ -1,4 +1,5 @@
 import { DruxtViewsNuxtModule } from './nuxt'
+DruxtViewsNuxtModule.meta = require('../package.json')
 
 /**
  * The Nuxt.js module function.

@@ -38,7 +38,6 @@
   "module": "dist/druxt-views.esm.js",
   "files": [
     "dist",
-    "nuxt",
     "templates"
   ],
   "dependencies": {

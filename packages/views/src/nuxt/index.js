@@ -65,6 +65,4 @@ const DruxtViewsNuxtModule = function (moduleOptions = {}) {
   })
 }
 
-DruxtViewsNuxtModule.meta = require('../../package.json')
-
 export { DruxtViewsNuxtModule }
