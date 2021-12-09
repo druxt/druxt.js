@@ -1,17 +1,3 @@
-<template>
-  <component
-    :is="(wrapper || {}).component || 'div'"
-    v-if="!$fetchState.pending"
-    v-bind="(wrapper || {}).propsData"
-  >
-    <component
-      :is="component.is"
-      v-model="model"
-      v-bind="component.propsData"
-    />
-  </component>
-</template>
-
 <script>
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
@@ -35,14 +21,6 @@ export default {
       type: Object,
       required: true,
     },
-  },
-
-  watch: {
-    model(to, from) {
-      if (to !== from) {
-        this.$emit('input', this.model)
-      }
-    }
   },
 
   /** DruxtModule settings */
