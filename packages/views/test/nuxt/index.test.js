@@ -1,6 +1,6 @@
-import { DruxtViewsNuxtModule } from '../src/nuxtModule'
+import { DruxtViewsNuxtModule } from '../../src/nuxt'
 
-jest.mock('../src/nuxtStorybook')
+jest.mock('../../src/nuxt/storybook')
 
 const mock = {
   addModule: jest.fn(),

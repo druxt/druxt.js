@@ -1,5 +1,14 @@
 # druxt-blocks
 
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies [2ae1d6d]
+  - druxt@0.15.0
+  - druxt-entity@0.21.4
+  - druxt-router@0.24.2
+
 ## 0.14.2
 
 ### Patch Changes
