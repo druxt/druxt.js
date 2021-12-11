@@ -1,5 +1,12 @@
 # druxt-schema
 
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies [2ae1d6d]
+  - druxt@0.15.0
+
 ## 0.9.1
 
 ### Patch Changes
