@@ -1,5 +1,23 @@
 # druxt-views
 
+## 0.17.0
+
+### Minor Changes
+
+- 7709ece: Fixed DruxtViewsFilter render method
+
+  ⚠ Potential breaking change
+
+  _**Note:** This may change the markup of a Druxt View filter component._
+
+### Patch Changes
+
+- Updated dependencies [2ae1d6d]
+  - druxt@0.15.0
+  - druxt-blocks@0.14.3
+  - druxt-entity@0.21.4
+  - druxt-router@0.24.2
+
 ## 0.16.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # druxt
 
+## 0.15.0
+
+### Minor Changes
+
+- 2ae1d6d: Reduced Fetch based UI flicker in the DruxtModule
+
 ## 0.14.0
 
 ### Minor Changes
