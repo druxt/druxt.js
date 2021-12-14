@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import { join, resolve } from 'path'
-import meta from '../package.json'
+import meta from '../../package.json'
 
 /**
  * Nuxt module function to install Druxt.
@@ -103,8 +103,6 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
   this.options.cli.badgeMessages.push(`${chalk.blue.bold('Druxt')} @ v${meta.version}`)
   this.options.cli.badgeMessages.push(`${chalk.bold('API:')} ${chalk.blue.underline(options.baseUrl + options.endpoint)}`)
 }
-
-DruxtNuxtModule.meta = meta
 
 export { DruxtNuxtModule }
 

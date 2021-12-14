@@ -1,4 +1,4 @@
-import { DruxtNuxtModule } from '../src/nuxtModule'
+import DruxtNuxtModule from '../../src'
 
 const options = {
   baseUrl: 'https://demo-api.druxtjs.org',

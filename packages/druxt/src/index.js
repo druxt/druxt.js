@@ -1,4 +1,5 @@
-import { DruxtNuxtModule } from './nuxtModule'
+import { DruxtNuxtModule } from './nuxt'
+DruxtNuxtModule.meta = require('../package.json')
 
 /**
  * The JSON:API client used by the Druxt Nuxt plugin and DruxtStore.
