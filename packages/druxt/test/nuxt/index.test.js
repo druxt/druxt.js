@@ -64,6 +64,24 @@ describe('DruxtJS Nuxt module', () => {
     expect(mock.options.components).toBe(false)
   })
 
+  test('Plugin order', () => {
+    mock.options.buildDir = '.nuxt'
+
+    // Expect:
+    // - extendPlugins to be a function.
+    DruxtNuxtModule.call(mock)
+    expect(typeof mock.options.extendPlugins).toBe('function')
+
+    // Expect:
+    // - The plugins should have the $druxt plugin first.
+    const plugins = [
+      { src: `${mock.options.buildDir}/foobar.js` },
+      { src: `${mock.options.buildDir}/druxt.js` }
+    ]
+    let sorted = mock.options.extendPlugins(plugins)
+    expect(sorted[0].src).toBe(`${mock.options.buildDir}/druxt.js`)
+  })
+
   test('API Proxy', () => {
     // Enable API Proxy.
     mock.options.druxt = {
