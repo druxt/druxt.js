@@ -24,6 +24,7 @@ describe('DruxtJS Nuxt module', () => {
       options: {
         cli: {
           badgeMessages: [],
+          buildDir: 'build',
         }
       },
       DruxtNuxtModule
@@ -65,8 +66,6 @@ describe('DruxtJS Nuxt module', () => {
   })
 
   test('Plugin order', () => {
-    mock.options.buildDir = '.nuxt'
-
     // Expect:
     // - extendPlugins to be a function.
     DruxtNuxtModule.call(mock)
@@ -82,6 +81,15 @@ describe('DruxtJS Nuxt module', () => {
     let sorted = mock.options.extendPlugins(plugins)
     expect(sorted[0].src).toBe(`${mock.options.buildDir}/axios.js`)
     expect(sorted[1].src).toBe(`${mock.options.buildDir}/druxt.js`)
+  })
+
+  test('@nuxtjs/axios module', () => {
+    mock.options.extendPlugins = jest.fn((o) => o)
+
+    DruxtNuxtModule.call(mock)
+
+    // Expect addModule to have been called to install @nuxtjs/axios.
+    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/axios')
   })
 
   test('API Proxy', () => {

@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import mockAxios from 'jest-mock-axios'
 
@@ -11,7 +12,7 @@ jest.mock('axios')
 describe('DruxtRouter', () => {
   beforeEach(() => {
     mockAxios.reset()
-    router = new DruxtRouter(baseUrl, {})
+    router = new DruxtRouter(baseUrl, { axios })
   })
 
   test('constructor', () => {

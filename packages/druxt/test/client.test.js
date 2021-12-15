@@ -28,6 +28,12 @@ describe('DruxtClient', () => {
     const headers = { 'X-Druxt': true }
     expect(new DruxtClient(baseUrl, { axios: { headers } })).toBeInstanceOf(DruxtClient)
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL: baseUrl, headers })
+
+    // Instantiate client with custom axios instance.
+    const axios = jest.fn()
+    const client = new DruxtClient(baseUrl, { axios })
+    expect(client).toBeInstanceOf(DruxtClient)
+    expect(client.axios).toStrictEqual(axios)
   })
 
   test('debug', () => {
