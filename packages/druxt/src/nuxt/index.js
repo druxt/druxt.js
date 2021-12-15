@@ -74,6 +74,15 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
     this.addModule('@nuxtjs/proxy')
   }
 
+  // Install the @nuxtjs/axios module.
+  this.options.axios = {
+    baseURL: options.baseUrl,
+    proxy: !!this.options.proxy,
+    ...this.options.axios
+  }
+  console.log('OPTIONS', this.options.axios)
+  this.addModule('@nuxtjs/axios')
+
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
     dirs.push({ path: join(__dirname, 'components') })
@@ -86,19 +95,24 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
     options
   })
 
-  // Make the $druxt plugin the first to load.
+  // Make the $axios and $druxt plugins the first to load.
   const extendPlugins = this.options.extendPlugins
   this.options.extendPlugins = (plugins) => {
     // Run the user defined extendPlugins function if defined.
     plugins = typeof extendPlugins === 'function' ? extendPlugins(plugins) : plugins
 
-    // Find the $druxt plugin.
-    const index = plugins.findIndex(({ src }) => src === `${this.options.buildDir}/druxt.js`)
-    const plugin = plugins[index]
+    // Extract the $axios plugin.
+    const axiosIndex = plugins.findIndex(({ src }) => src === `${this.options.buildDir}/axios.js`)
+    const axiosPlugin = plugins[axiosIndex]
+    plugins.splice(axiosIndex, 1)
 
-    // Move the $druxt plugin to first place.
-    plugins.splice(index, 1)
-    plugins.unshift(plugin)
+    // Extract the $druxt plugin.
+    const druxtIndex = plugins.findIndex(({ src }) => src === `${this.options.buildDir}/druxt.js`)
+    const druxtPlugin = plugins[druxtIndex]
+    plugins.splice(druxtIndex, 1)
+
+    // Re-add the plugins.
+    plugins = [axiosPlugin, druxtPlugin, ...plugins]
 
     return plugins
   }
