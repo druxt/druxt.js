@@ -80,7 +80,6 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
     proxy: !!this.options.proxy,
     ...this.options.axios
   }
-  console.log('OPTIONS', this.options.axios)
   this.addModule('@nuxtjs/axios')
 
   // Register components directories.

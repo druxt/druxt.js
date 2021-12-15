@@ -76,10 +76,12 @@ describe('DruxtJS Nuxt module', () => {
     // - The plugins should have the $druxt plugin first.
     const plugins = [
       { src: `${mock.options.buildDir}/foobar.js` },
-      { src: `${mock.options.buildDir}/druxt.js` }
+      { src: `${mock.options.buildDir}/druxt.js` },
+      { src: `${mock.options.buildDir}/axios.js` }
     ]
     let sorted = mock.options.extendPlugins(plugins)
-    expect(sorted[0].src).toBe(`${mock.options.buildDir}/druxt.js`)
+    expect(sorted[0].src).toBe(`${mock.options.buildDir}/axios.js`)
+    expect(sorted[1].src).toBe(`${mock.options.buildDir}/druxt.js`)
   })
 
   test('API Proxy', () => {
