@@ -42,10 +42,6 @@ const mockData = async (request, file) => {
 
 // Mock 'get' requests.
 mockAxios.get = jest.fn((url, options) => {
-  if (url === '/jsonapi/missing/test') {
-    throw new Error('Error')
-  }
-
   const file = path.resolve('./test/__fixtures__/get', md5(url) + '.json')
   const request = { method: 'get', url, options }
   return mockData(request, file)

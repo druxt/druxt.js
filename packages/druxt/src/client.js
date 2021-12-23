@@ -210,19 +210,19 @@ class DruxtClient {
    * @param {object} err - The error object
    */
   error(err, { url }) {
-    const title = [err.response.status, err.response.statusText].filter((s) => s).join(': ')
-    const meta = { url }
+    const title = [(err.response || {}).status, (err.response || {}).statusText].filter((s) => s).join(': ')
+    const meta = { url: [this.options.baseUrl, url].join('') }
 
     // Build message.
     let message = [title]
 
-    // Add meta infromation.
+    // Add meta information.
     if (Object.values(meta).filter((o) => o)) {
-      message.push(Object.entries(meta).filter(([, v]) => v).map(([key, value]) => `${key}: ${value}`).join('\n'))
+      message.push(Object.entries(meta).filter(([, v]) => v).map(([key, value]) => `${key.toUpperCase()}: ${value}`).join('\n'))
     }
 
     // Add main error details.
-    if ((((err.response.data || {}).errors || [])[0] || {}).detail) {
+    if (((((err.response || {}).data || {}).errors || [])[0] || {}).detail) {
       message.push(err.response.data.errors[0].detail)
     }
 
@@ -239,7 +239,7 @@ class DruxtClient {
    *
    * @returns {object} The Axios response.
    */
-  async get(url, options = {}) {
+  async get(url, options) {
     try {
       const res = await this.axios.get(url, options)
 

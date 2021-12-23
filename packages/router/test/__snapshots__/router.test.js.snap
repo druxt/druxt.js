@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DruxtRouter checkPermissions 1`] = `
+Object {
+  "detail": "Required permissions:
+ - administer node fields",
+}
+`;

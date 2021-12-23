@@ -74,7 +74,11 @@ describe('DruxtRouter', () => {
         }
       }
     }
-    expect(() => router.checkPermissions(res)).toThrow('Some resources have been omitted because of insufficient authorization.\n\n Required permissions: administer node fields.')
+    try {
+      router.checkPermissions(res)
+    } catch(err) {
+      expect(err.response.data.errors[0]).toMatchSnapshot()
+    }
   })
 
   test('get - entity', async () => {
@@ -110,7 +114,7 @@ describe('DruxtRouter', () => {
   test('getIndex', async () => {
     const index = await router.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi', undefined)
 
     expect(Object.keys(index).length).toBe(64)
     expect(index[Object.keys(index)[0]]).toHaveProperty('href')
@@ -125,7 +129,7 @@ describe('DruxtRouter', () => {
   test('getIndex - resource', async () => {
     const resourceIndex = await router.getIndex('node--page')
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi', undefined)
 
     expect(resourceIndex).toHaveProperty('href')
 
@@ -183,9 +187,13 @@ describe('DruxtRouter', () => {
     const entity = await router.getResource({ type: mockPage.data.type, id: mockPage.data.id })
     expect(entity).toHaveProperty('type', mockPage.data.type)
 
-    const error = await router.getResource({ id: 'test', type: 'missing' })
-    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi/missing/test')
-    expect(error).toBe(false)
+    try {
+      await router.getResource({ id: 'test', type: 'missing' })
+    } catch(err) {
+      expect(err.response.status).toBe(404)
+      expect(err.response.statusText).toBe('Not Found')
+    }
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/missing/test', undefined)
 
     const empty = await router.getResource()
     expect(empty).toBe(false)
@@ -194,18 +202,18 @@ describe('DruxtRouter', () => {
   // @deprecated
   test('getResources', async () => {
     const resources = await router.getResources('node--page')
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page`, undefined)
     expect(resources.length).toBe(1)
 
     await router.getResources('node--page', { 'filter[status]': 1 })
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page?filter%5Bstatus%5D=1`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page?filter%5Bstatus%5D=1`, undefined)
 
     const noResource = await router.getResources()
     expect(noResource).toBe(false)
 
     const query = new DrupalJsonApiParams().addFields('node--recipe', []).addPageLimit(5)
     await router.getResources('node--recipe', query, { all: true })
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`, undefined)
   })
 
   test('getResourceByRoute', async () => {

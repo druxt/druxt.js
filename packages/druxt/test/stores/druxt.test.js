@@ -125,7 +125,7 @@ describe('DruxtStore', () => {
     // - The request url is correct.
     // - Only 3 get requests are executed.
     // - Returned expected data with `_druxt_full` flag.
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page/${mockPage.data.id}`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page/${mockPage.data.id}`, undefined)
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     const expected = {
       _druxt_full: expect.anything(),
@@ -170,7 +170,7 @@ describe('DruxtStore', () => {
       _druxt_partial: expect.anything(),
       ...mockRecipe
     }
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe/${mockRecipe.data.id}?fields%5Bnode--recipe%5D=`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe/${mockRecipe.data.id}?fields%5Bnode--recipe%5D=`, undefined)
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     expect(resource).toStrictEqual(expected)
     expect(resource.data.attributes).toBe(undefined)
@@ -187,7 +187,7 @@ describe('DruxtStore', () => {
     // - The request url is correct.
     // - One additional get request executed for missing field data.
     // - The additional data is present.
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe/${mockRecipe.data.id}?fields%5Bnode--recipe%5D=title`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe/${mockRecipe.data.id}?fields%5Bnode--recipe%5D=title`, undefined)
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
     expect(Object.keys(partialResource.data.attributes)).toStrictEqual(['title'])
 
@@ -202,7 +202,7 @@ describe('DruxtStore', () => {
     // - The request url is correct.
     // - One additional get request executed for only the missing field.
     // - All required data is present.
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe/${mockRecipe.data.id}?fields%5Bnode--recipe%5D=path`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe/${mockRecipe.data.id}?fields%5Bnode--recipe%5D=path`, undefined)
     expect(mockAxios.get).toHaveBeenCalledTimes(4)
     expect(Object.keys(mixedResource.data.attributes)).toStrictEqual(['title', 'path'])
 
@@ -242,7 +242,7 @@ describe('DruxtStore', () => {
     // - Only 3 get requests are executed.
     // - Returned expected data with `_druxt_partial` flag.
     // - Included resources are stored.
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe/${mockResource.data.id}?include=field_media_image%2Cfield_media_image.field_media_image&fields%5Bnode--recipe%5D=field_media_image&fields%5Bmedia--image%5D=field_media_image&fields%5Bfile--file%5D=uri`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe/${mockResource.data.id}?include=field_media_image%2Cfield_media_image.field_media_image&fields%5Bnode--recipe%5D=field_media_image&fields%5Bmedia--image%5D=field_media_image&fields%5Bfile--file%5D=uri`, undefined)
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     expect(resource).toStrictEqual({
       _druxt_partial: expect.anything(),
