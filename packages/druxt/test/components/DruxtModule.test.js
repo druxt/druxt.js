@@ -81,6 +81,37 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.$refs.module.value).toStrictEqual({ test: true })
   })
 
+  test('error', async () => {
+    const CustomModule = {
+      name: 'CustomModule',
+      extends: DruxtModule,
+    }
+
+    const wrapper = mount(CustomModule, {localVue, mocks, stubs: ['DruxtWrapper'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
+
+    // Simulate error.
+    const err = {
+      response: {
+        status: '500',
+        statusText: 'Test error',
+        data: {
+          errors: [{
+            details: 'Test error'
+          }]
+        }
+      }
+    }
+    wrapper.vm.error(err)
+
+    // Expect the component to be DruxtDebug.
+    expect(wrapper.vm.component.is).toBe('DruxtDebug')
+    // Expect the component props to match snapshot.
+    expect(wrapper.vm.component.props).toMatchSnapshot()
+  })
+
   test('custom module - no wrapper', async () => {
     const CustomModule = {
       name: 'CustomModule',

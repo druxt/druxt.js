@@ -13,3 +13,14 @@ exports[`DruxtModule component custom module - wrapper 1`] = `
 `;
 
 exports[`DruxtModule component defaults 1`] = `"<div></div>"`;
+
+exports[`DruxtModule component error 1`] = `
+Object {
+  "json": Array [
+    Object {
+      "details": "Test error",
+    },
+  ],
+  "summary": "500: Test error",
+}
+`;

@@ -6,3 +6,44 @@ Object {
  - administer node fields",
 }
 `;
+
+exports[`DruxtRouter getRoute 1`] = `
+Object {
+  "config": Object {
+    "baseURL": "https://8080-magenta-koi-31w8trra.ws-us25.gitpod.io",
+    "headers": Object {
+      "Accept": "application/json, text/plain, */*",
+    },
+    "maxBodyLength": -1,
+    "maxContentLength": -1,
+    "method": "get",
+    "options": Object {},
+    "timeout": 0,
+    "transformRequest": Array [
+      null,
+    ],
+    "transformResponse": Array [
+      null,
+    ],
+    "url": "/router/translate-path?path=/broken-router",
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+  },
+  "data": Object {
+    "errors": Array [
+      Object {
+        "detail": "Please ensure the Decoupled Router module is installed and configured correctly.",
+      },
+    ],
+  },
+  "headers": Object {
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "content-type": "text/html; charset=UTF-8",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT",
+  },
+  "request": Object {},
+  "status": 404,
+  "statusText": "Not Found",
+}
+`;

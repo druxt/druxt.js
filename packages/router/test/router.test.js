@@ -241,14 +241,23 @@ describe('DruxtRouter', () => {
 
     // Get the route of node/1.
     route = await router.getRoute('/node/1')
-
     expect(route).toHaveProperty('isHomePath', false)
 
+    // Get 404 error.
     try {
       await router.getRoute('/error')
     } catch(err) {
       expect(err.response.status).toBe(404)
       expect(err.response.data.message).toBe('Unable to resolve path /error.')
+    }
+
+    // Test against a backend without the Decoupled Router installed.
+    // Note: Test data has was created against a modified backend.
+    const brokenRouter = new DruxtRouter('https://example.com', {})
+    try {
+      await brokenRouter.getRoute('/broken-router')
+    } catch(err) {
+      expect(err.response).toMatchSnapshot()
     }
   })
 })
