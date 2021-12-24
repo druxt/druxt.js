@@ -208,6 +208,8 @@ class DruxtClient {
    * Throw a formatted error.
    *
    * @param {object} err - The error object
+   *
+   * @throws {Error} A formatted error.
    */
   error(err, { url }) {
     const title = [(err.response || {}).status, (err.response || {}).statusText].filter((s) => s).join(': ')
@@ -232,7 +234,7 @@ class DruxtClient {
   }
 
   /**
-   * Execute an Axios GET request, with support for
+   * Execute an Axios GET request, with permission checking and error handling.
    *
    * @param {string} url - The URL to GET.
    * @param {object} options - An Axios options object.
