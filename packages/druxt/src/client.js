@@ -343,8 +343,13 @@ class DruxtClient {
     // Use JSON API resource config to decorate the index.
     // @TODO - Add test coverage
     if (index[this.options.jsonapiResourceConfig]) {
-      const resources = await this.get(index[this.options.jsonapiResourceConfig].href)
-      for (const resourceType in resources.data.data) {
+      let resources = []
+      try {
+        resources = (await this.get(index[this.options.jsonapiResourceConfig].href)).data.data
+      } catch(err) {
+        this.log.warn(err.message)
+      }
+      for (const resourceType in resources) {
         const resource = resources.data.data[resourceType]
         const internal = resource.attributes.drupal_internal__id.split('--')
 
