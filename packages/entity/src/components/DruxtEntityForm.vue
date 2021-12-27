@@ -91,16 +91,15 @@ export default {
       if (this.model.id) {
         method = 'updateResource'
       }
-      this.response = await this.$druxt[method](this.model)
 
-      // Handle the response
-      if (!this.response.errors) {
+      try {
+        this.response = await this.$druxt[method](this.model)
         const resource = this.response.data.data
         // Update the Vuex store.
         this.$store.commit('druxt/addResource', { resource })
         this.$emit('submit', resource)
-      }
-      else {
+      } catch (err) {
+        this.response = err.response.data
         this.$emit('error', this.response)
       }
 

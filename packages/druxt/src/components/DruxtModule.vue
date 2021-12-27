@@ -106,7 +106,11 @@ export default {
 
     // Fetch configuration.
     if ((this.$options.druxt || {}).fetchConfig) {
-      await this.$options.druxt.fetchConfig.call(this)
+      try {
+        await this.$options.druxt.fetchConfig.call(this)
+      } catch(err) {
+        return this.error(err)
+      }
     }
 
     // Build wrapper component object.
@@ -137,7 +141,11 @@ export default {
 
     // Fetch resource.
     if ((this.$options.druxt || {}).fetchData) {
-      await this.$options.druxt.fetchData.call(this, component.settings)
+      try {
+        await this.$options.druxt.fetchData.call(this, component.settings)
+      } catch(err) {
+        return this.error(err)
+      }
     }
 
     // Get scoped slots.
@@ -152,7 +160,7 @@ export default {
 
   watch: {
     model() {
-      if (this.component.props.value !== this.model) {
+      if (this.component.props && this.component.props.value !== this.model) {
         this.component.props.value = this.model
 
         // Only emit 'input' if using the default 'DruxtWrapper' component.
@@ -171,6 +179,19 @@ export default {
 
   /** */
   methods: {
+    /**
+     * Sets the component to render a DruxtDebug error message.
+     */
+    error(err) {
+      this.component = {
+        is: 'DruxtDebug',
+        props: {
+          json: (err.response.data || {}).errors,
+          summary: [err.response.status, err.response.statusText].filter((s) => s).join(': ')
+        }
+      }
+    },
+
     /**
      * Get list of module wrapper components.
      *

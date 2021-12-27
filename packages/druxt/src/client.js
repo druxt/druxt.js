@@ -52,6 +52,7 @@ class DruxtClient {
     // requests and errors.
     if (options.debug) {
       const log = this.log
+      // @TODO - Add test coverage.
       this.axios.interceptors.request.use((config) => {
         log.info(config.url)
         return config
@@ -153,7 +154,15 @@ class DruxtClient {
       }
 
       if (Object.keys(permissions).length) {
-        throw new TypeError(`${res.data.meta.omitted.detail}\n\n Required permissions: ${Object.keys(permissions).join(', ')}.`)
+        const err = {
+          response: {
+            statusText: res.data.meta.omitted.detail,
+            data: {
+              errors: [{ detail: `Required permissions:\n - ${Object.keys(permissions).join('\n - ')}` }]
+            }
+          }
+        }
+        throw err
       }
     }
   }
@@ -190,10 +199,61 @@ class DruxtClient {
         }
       )
     } catch (err) {
-      response = (err.response || {}).data || err.message
+      this.error(err, { url: href })
     }
 
     return response
+  }
+
+  /**
+   * Throw a formatted error.
+   *
+   * @param {object} err - The error object
+   *
+   * @throws {Error} A formatted error.
+   */
+  error(err, { url }) {
+    const title = [(err.response || {}).status, (err.response || {}).statusText].filter((s) => s).join(': ')
+    const meta = { url: [this.options.baseUrl, url].join('') }
+
+    // Build message.
+    let message = [title]
+
+    // Add meta information.
+    if (Object.values(meta).filter((o) => o)) {
+      message.push(Object.entries(meta).filter(([, v]) => v).map(([key, value]) => `${key.toUpperCase()}: ${value}`).join('\n'))
+    }
+
+    // Add main error details.
+    if (((((err.response || {}).data || {}).errors || [])[0] || {}).detail) {
+      message.push(err.response.data.errors[0].detail)
+    }
+
+    const error = Error(message.join('\n\n'))
+    error.response = err.response
+    throw error
+  }
+
+  /**
+   * Execute an Axios GET request, with permission checking and error handling.
+   *
+   * @param {string} url - The URL to GET.
+   * @param {object} options - An Axios options object.
+   *
+   * @returns {object} The Axios response.
+   */
+  async get(url, options) {
+    try {
+      const res = await this.axios.get(url, options)
+
+      // Check that the response hasn't omitted data due to missing permissions.
+      this.checkPermissions(res)
+
+      return res
+    } catch(err) {
+      // Throw formatted error.
+      this.error(err, { url })
+    }
   }
 
   /**
@@ -215,11 +275,8 @@ class DruxtClient {
 
     const url = this.buildQueryUrl(href, query)
 
-    const res = await this.axios.get(url)
-
-    this.checkPermissions(res)
-
-    return res.data
+    const { data } = await this.get(url)
+    return data
   }
 
   /**
@@ -267,7 +324,15 @@ class DruxtClient {
       return this.index[resource] ? this.index[resource] : false
     }
 
-    let index = ((await this.axios.get(this.options.endpoint) || {}).data || {}).links
+    const url = this.options.endpoint
+    const { data } = await this.get(url)
+    let index = data.links
+
+    // Throw error if index is invalid.
+    if (typeof index !== 'object') {
+      const err = { response: { statusText: 'Invalid JSON:API endpoint' }}
+      this.error(err, { url })
+    }
 
     // Remove Base URL from the resource URL.
     const baseUrl = this.options.baseUrl
@@ -276,11 +341,19 @@ class DruxtClient {
       return [key, value]
     }))
 
-    // Use JSON API resource config to decorate the index.
-    // @TODO - Add test coverage
+    // Use JSON:API resource config to decorate the index.
+    // @TODO - Add test coverage.
     if (index[this.options.jsonapiResourceConfig]) {
-      const resources = await this.axios.get(index[this.options.jsonapiResourceConfig].href)
-      for (const resourceType in resources.data.data) {
+      let resources = []
+
+      // Get JSON:API resource config if permissions setup correctly.
+      try {
+        resources = (await this.get(index[this.options.jsonapiResourceConfig].href)).data.data
+      } catch(err) {
+        this.log.warn(err.message)
+      }
+
+      for (const resourceType in resources) {
         const resource = resources.data.data[resourceType]
         const internal = resource.attributes.drupal_internal__id.split('--')
 
@@ -334,12 +407,8 @@ class DruxtClient {
     }
 
     const url = this.buildQueryUrl(`${href}/${id}/${related}`, query)
-    try {
-      const related = await this.axios.get(url)
-      return related.data
-    } catch (e) {
-      return false
-    }
+    const { data } = await this.get(url)
+    return data
   }
 
   /**
@@ -360,17 +429,14 @@ class DruxtClient {
     }
 
     let { href } = await this.getIndex(type)
+    // @TODO - Add test coverage.
     if (!href) {
       href = this.options.endpoint + '/' + type.replace('--', '/')
     }
 
     const url = this.buildQueryUrl(`${href}/${id}`, query)
-    try {
-      const resource = await this.axios.get(url)
-      return resource.data
-    } catch (e) {
-      return false
-    }
+    const { data } = await this.get(url)
+    return data
   }
 
   /**
@@ -402,9 +468,10 @@ class DruxtClient {
         }
       )
     } catch (err) {
-      response = (err.response || {}).data || err.message
+      this.error(err)
     }
 
+    // @TODO - Add test coverage.
     return response
   }
 }
