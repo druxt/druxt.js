@@ -213,7 +213,10 @@ class DruxtClient {
    * @throws {Error} A formatted error.
    */
   error(err, { url }) {
-    const title = [(err.response || {}).status, (err.response || {}).statusText].filter((s) => s).join(': ')
+    const title = [
+      (err.response || {}).status,
+      (err.response || {}).statusText || err.message
+    ].filter((s) => s).join(': ')
     const meta = { url: [this.options.baseUrl, url].join('') }
 
     // Build message.
@@ -354,7 +357,7 @@ class DruxtClient {
       }
 
       for (const resourceType in resources) {
-        const resource = resources.data.data[resourceType]
+        const resource = resources[resourceType]
         const internal = resource.attributes.drupal_internal__id.split('--')
 
         const item = {
