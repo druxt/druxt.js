@@ -52,6 +52,7 @@ class DruxtClient {
     // requests and errors.
     if (options.debug) {
       const log = this.log
+      // @TODO - Add test coverage.
       this.axios.interceptors.request.use((config) => {
         log.info(config.url)
         return config
@@ -340,15 +341,18 @@ class DruxtClient {
       return [key, value]
     }))
 
-    // Use JSON API resource config to decorate the index.
-    // @TODO - Add test coverage
+    // Use JSON:API resource config to decorate the index.
+    // @TODO - Add test coverage.
     if (index[this.options.jsonapiResourceConfig]) {
       let resources = []
+
+      // Get JSON:API resource config if permissions setup correctly.
       try {
         resources = (await this.get(index[this.options.jsonapiResourceConfig].href)).data.data
       } catch(err) {
         this.log.warn(err.message)
       }
+
       for (const resourceType in resources) {
         const resource = resources.data.data[resourceType]
         const internal = resource.attributes.drupal_internal__id.split('--')
@@ -425,6 +429,7 @@ class DruxtClient {
     }
 
     let { href } = await this.getIndex(type)
+    // @TODO - Add test coverage.
     if (!href) {
       href = this.options.endpoint + '/' + type.replace('--', '/')
     }
@@ -466,6 +471,7 @@ class DruxtClient {
       this.error(err)
     }
 
+    // @TODO - Add test coverage.
     return response
   }
 }

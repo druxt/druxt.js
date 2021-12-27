@@ -18,6 +18,12 @@ Object {
 }
 `;
 
+exports[`DruxtClient getIndex 1`] = `
+Object {
+  "statusText": "Invalid JSON:API endpoint",
+}
+`;
+
 exports[`DruxtClient getResource 1`] = `
 Object {
   "detail": "The \\"entity\\" parameter was not converted for the path \\"/jsonapi/node/article/{entity}\\" (route name: \\"jsonapi.node--article.individual\\")",

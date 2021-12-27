@@ -174,6 +174,15 @@ describe('DruxtClient', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
     expect(Object.keys(cachedIndex).length).toBe(64)
+
+    // Simulate broken index.
+    delete druxt.index
+    druxt.get = () => ({ data: {} })
+    try {
+      await druxt.getIndex()
+    } catch(err) {
+      expect(err.response).toMatchSnapshot()
+    }
   })
 
   test('getIndex - resource', async () => {
