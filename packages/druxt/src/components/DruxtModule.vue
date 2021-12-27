@@ -186,8 +186,8 @@ export default {
       this.component = {
         is: 'DruxtDebug',
         props: {
-          json: (err.response.data || {}).errors,
-          summary: [err.response.status, err.response.statusText].filter((s) => s).join(': ')
+          json: ((err.response || {}).data || {}).errors,
+          summary: [(err.response || {}).status, (err.response || {}).statusText || err.message].filter((s) => s).join(': ')
         }
       }
     },
