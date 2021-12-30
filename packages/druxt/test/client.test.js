@@ -136,6 +136,51 @@ describe('DruxtClient', () => {
     }
   })
 
+  test('error', () => {
+    let mockErr
+    const url = [baseUrl, 'test/error'].join('/')
+
+    // Test basic error.
+    mockErr = new Error('Test error')
+    try {
+      druxt.error(mockErr)
+    } catch(err) {
+      expect(err.message).toMatchSnapshot()
+    }
+
+    // Test Axios error.
+    mockErr = {
+      response: {
+        config: { url },
+        status: '500',
+        statusText: 'Test error'
+      }
+    }
+    try {
+      druxt.error(mockErr)
+    } catch(err) {
+      expect(err.message).toMatchSnapshot()
+    }
+
+    // Test error with URL context and details.
+    mockErr = {
+      response: {
+        status: '500',
+        statusText: 'Test error',
+        data: {
+          errors: [{
+            detail: 'Test error details.'
+          }]
+        }
+      }
+    }
+    try {
+      druxt.error(mockErr, { url })
+    } catch(err) {
+      expect(err.message).toMatchSnapshot()
+    }
+  })
+
   test('getCollection', async () => {
     // Get a collection of 'node--page' resources.
     const collection = await druxt.getCollection('node--page')

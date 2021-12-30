@@ -18,6 +18,22 @@ Object {
 }
 `;
 
+exports[`DruxtClient error 1`] = `"Test error"`;
+
+exports[`DruxtClient error 2`] = `
+"500: Test error
+
+URL: https://demo-api.druxtjs.org/test/error"
+`;
+
+exports[`DruxtClient error 3`] = `
+"500: Test error
+
+URL: https://demo-api.druxtjs.org/test/error
+
+Test error details."
+`;
+
 exports[`DruxtClient getIndex 1`] = `
 Object {
   "statusText": "Invalid JSON:API endpoint",

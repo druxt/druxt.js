@@ -228,7 +228,7 @@ class DruxtClient {
     let message = [title]
 
     // Add meta information.
-    if (Object.values(meta).filter((o) => o)) {
+    if (Object.values(meta).filter((o) => o).length) {
       message.push(Object.entries(meta).filter(([, v]) => v).map(([key, value]) => `${key.toUpperCase()}: ${value}`).join('\n'))
     }
 
