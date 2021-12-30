@@ -144,7 +144,8 @@ export default {
       try {
         await this.$options.druxt.fetchData.call(this, component.settings)
       } catch(err) {
-        return this.error(err)
+        this.component = component
+        this.error(err)
       }
     }
 
@@ -182,12 +183,27 @@ export default {
     /**
      * Sets the component to render a DruxtDebug error message.
      */
-    error(err) {
+    async error(err) {
+      // Build error details.
+      const { url } = err.druxt || {}
+      const title = (err.response || {}).statusText || (((err.response.data || {}).errors || [])[0] || {}).title
+      const summary = (err.response || {}).status
+        ? [(err.response || {}).status, title].filter((s) => s).join(': ')
+        : err.message
+
+      // Wait for component to be set.
+      await this.$nextTick()
+
+      // Set the component to a Debug component with error details.
       this.component = {
+        ...this.component,
         is: 'DruxtDebug',
         props: {
-          json: ((err.response || {}).data || {}).errors,
-          summary: [(err.response || {}).status, (err.response || {}).statusText || err.message].filter((s) => s).join(': ')
+          json: {
+            url,
+            errors: ((err.response || {}).data || {}).errors
+          },
+          summary
         }
       }
     },

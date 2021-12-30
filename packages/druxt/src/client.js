@@ -213,7 +213,11 @@ class DruxtClient {
    * @throws {Error} A formatted error.
    */
   error(err, context = {}) {
-    const { url } = context
+    let { url } = context
+    if (!url && ((err.response || {}).config || {}).url) {
+      url = err.response.config.url
+    }
+
     const title = [
       (err.response || {}).status,
       (err.response || {}).statusText || err.message
@@ -235,6 +239,7 @@ class DruxtClient {
 
     const error = Error(message.join('\n\n'))
     error.response = err.response
+    error.druxt = context
     throw error
   }
 
@@ -379,11 +384,7 @@ class DruxtClient {
     // Set index.
     this.index = index
 
-    if (resource && !(this.index[resource] || {}).href) {
-      this.error(new Error(`JSON:API resource endpoint for '${resource}' not found.`))
-    }
-
-    return resource ? this.index[resource] : this.index
+    return resource ? this.index[resource] || false : this.index
   }
 
   /**
@@ -437,7 +438,7 @@ class DruxtClient {
       href = this.options.endpoint + '/' + type.replace('--', '/')
     }
 
-    const url = this.buildQueryUrl(`${href}/${id}`, query)
+    const url = this.buildQueryUrl([href, id].join('/'), query)
     const { data } = await this.get(url)
     return data
   }
