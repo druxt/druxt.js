@@ -109,13 +109,13 @@ export default {
       try {
         await this.$options.druxt.fetchConfig.call(this)
       } catch(err) {
-        return this.error(err)
+        this.error(err)
       }
     }
 
     // Build wrapper component object.
     let options = []
-    const hasDefaultTemplate = !!(this.$vnode.data.scopedSlots || {}).default
+    const hasDefaultTemplate = !!(((this.$vnode || {}).data || {}).scopedSlots || {}).default
     // Load wrapper components if:
     if (
       // No default template and wrapper isn't false OR
@@ -186,7 +186,7 @@ export default {
     async error(err) {
       // Build error details.
       const { url } = err.druxt || {}
-      const title = (err.response || {}).statusText || (((err.response.data || {}).errors || [])[0] || {}).title
+      const title = (err.response || {}).statusText || ((((err.response || {}).data || {}).errors || [])[0] || {}).title
       const summary = (err.response || {}).status
         ? [(err.response || {}).status, title].filter((s) => s).join(': ')
         : err.message

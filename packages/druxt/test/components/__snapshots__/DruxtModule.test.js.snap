@@ -27,3 +27,23 @@ Object {
   "summary": "500: Test error",
 }
 `;
+
+exports[`DruxtModule component error 2`] = `
+Object {
+  "json": Object {
+    "errors": undefined,
+    "url": undefined,
+  },
+  "summary": "Fetch config error",
+}
+`;
+
+exports[`DruxtModule component error 3`] = `
+Object {
+  "json": Object {
+    "errors": undefined,
+    "url": undefined,
+  },
+  "summary": "Fetch data error",
+}
+`;
