@@ -107,7 +107,6 @@ describe('DruxtModule component', () => {
     wrapper.vm.error(err)
 
     // Expect the component to be DruxtDebug.
-    await localVue.nextTick()
     expect(wrapper.vm.component.is).toBe('DruxtDebug')
     // Expect the component props to match snapshot.
     expect(wrapper.vm.component.props).toMatchSnapshot()
@@ -129,7 +128,6 @@ describe('DruxtModule component', () => {
     }
     wrapper = mount(CustomModule, {localVue, mocks, stubs: ['DruxtDebug'] })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
-    await localVue.nextTick()
     // Expect the component to be DruxtDebug.
     expect(wrapper.vm.component.is).toBe('DruxtDebug')
     // Expect the component props to match snapshot.
