@@ -1,5 +1,18 @@
 # druxt-entity
 
+## 0.22.0
+
+### Minor Changes
+
+- 7b749bd: Updated DruxtEntityForm error handling.
+
+### Patch Changes
+
+- Updated dependencies [7b749bd]
+  - druxt@0.16.0
+  - druxt-router@0.25.0
+  - druxt-schema@0.9.3
+
 ## 0.21.4
 
 ### Patch Changes

@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DruxtClient checkPermissions 1`] = `
+Object {
+  "detail": "Required permissions:
+ - administer node fields",
+}
+`;
+
+exports[`DruxtClient createResource 1`] = `
+Object {
+  "detail": "subject: This value should not be null.",
+  "source": Object {
+    "pointer": "/data/attributes/subject",
+  },
+  "status": "422",
+  "title": "Unprocessable Entity",
+}
+`;
+
+exports[`DruxtClient error 1`] = `"Test error"`;
+
+exports[`DruxtClient error 2`] = `
+"500: Test error
+
+URL: https://demo-api.druxtjs.org/test/error"
+`;
+
+exports[`DruxtClient error 3`] = `
+"500: Test error
+
+URL: https://demo-api.druxtjs.org/test/error
+
+Test error details."
+`;
+
+exports[`DruxtClient getIndex 1`] = `
+Object {
+  "statusText": "Invalid JSON:API endpoint",
+}
+`;
+
+exports[`DruxtClient getResource 1`] = `
+Object {
+  "detail": "The \\"entity\\" parameter was not converted for the path \\"/jsonapi/node/article/{entity}\\" (route name: \\"jsonapi.node--article.individual\\")",
+  "links": Object {
+    "info": Object {
+      "href": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5",
+    },
+    "via": Object {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/missing",
+    },
+  },
+  "status": "404",
+  "title": "Not Found",
+}
+`;

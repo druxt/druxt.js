@@ -5,7 +5,7 @@ import Vue from 'vue'
 import { getDrupalJsonApiParams } from '../utils/getDrupalJsonApiParams'
 
 const dehydrateResources = ({ commit, queryObject, resources }) => {
-  return resources.map((data) => {
+  return (resources || []).map((data) => {
     // Generate a query link for included resources.
     // This is used to determine if the resource is a partial.
     const link = decodeURI(((data.links || {}).self || {}).href || '')
@@ -125,7 +125,7 @@ const DruxtStore = ({ store }) => {
 
         // Ensure Resource type array is reactive.
         if (!state.resources[type]) Vue.set(state.resources, type, {})
-        
+
         // Extract and store included data.
         if (resource.included) {
           dehydrateResources({ commit: this.commit, queryObject, resources: resource.included })

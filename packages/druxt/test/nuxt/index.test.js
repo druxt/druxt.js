@@ -1,4 +1,4 @@
-import { DruxtNuxtModule } from '../src/nuxtModule'
+import DruxtNuxtModule from '../../src'
 
 const options = {
   baseUrl: 'https://demo-api.druxtjs.org',
@@ -62,6 +62,24 @@ describe('DruxtJS Nuxt module', () => {
     mock.options.components = false
     DruxtNuxtModule.call(mock)
     expect(mock.options.components).toBe(false)
+  })
+
+  test('Plugin order', () => {
+    mock.options.buildDir = '.nuxt'
+
+    // Expect:
+    // - extendPlugins to be a function.
+    DruxtNuxtModule.call(mock)
+    expect(typeof mock.options.extendPlugins).toBe('function')
+
+    // Expect:
+    // - The plugins should have the $druxt plugin first.
+    const plugins = [
+      { src: `${mock.options.buildDir}/foobar.js` },
+      { src: `${mock.options.buildDir}/druxt.js` }
+    ]
+    let sorted = mock.options.extendPlugins(plugins)
+    expect(sorted[0].src).toBe(`${mock.options.buildDir}/druxt.js`)
   })
 
   test('API Proxy', () => {

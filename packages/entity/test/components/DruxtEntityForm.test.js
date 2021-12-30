@@ -77,6 +77,7 @@ describe('DruxtEntityForm', () => {
     // Submit.
     await wrapper.find('button#submit').trigger('click')
     await localVue.nextTick()
+    await localVue.nextTick()
     expect(wrapper.emitted().error).toBeFalsy()
     expect(wrapper.emitted().submit).toBeTruthy()
     expect(wrapper.vm.response.data.data.id).toBe('8e8d340a-04af-461a-ac63-12415d33e936')

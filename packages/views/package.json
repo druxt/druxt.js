@@ -1,6 +1,6 @@
 {
   "name": "druxt-views",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "description": "Drupal Views components for Druxt with support for filters, pagination and sorting.",
   "keywords": [
     "cms",
@@ -44,10 +44,10 @@
     "axios": "^0.21.1",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "^0.15.0",
-    "druxt-blocks": "^0.14.3",
-    "druxt-entity": "^0.21.4",
-    "druxt-router": "^0.24.2",
+    "druxt": "^0.16.0",
+    "druxt-blocks": "^0.14.4",
+    "druxt-entity": "^0.22.0",
+    "druxt-router": "^0.25.0",
     "md5": "^2.3.0"
   },
   "optionalDependencies": {

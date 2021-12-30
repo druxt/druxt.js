@@ -1,5 +1,16 @@
 # druxt-router
 
+## 0.25.0
+
+### Minor Changes
+
+- 7b749bd: Added improved error handling.
+
+### Patch Changes
+
+- Updated dependencies [7b749bd]
+  - druxt@0.16.0
+
 ## 0.24.2
 
 ### Patch Changes

@@ -13,3 +13,37 @@ exports[`DruxtModule component custom module - wrapper 1`] = `
 `;
 
 exports[`DruxtModule component defaults 1`] = `"<div></div>"`;
+
+exports[`DruxtModule component error 1`] = `
+Object {
+  "json": Object {
+    "errors": Array [
+      Object {
+        "details": "Test error",
+      },
+    ],
+    "url": undefined,
+  },
+  "summary": "500: Test error",
+}
+`;
+
+exports[`DruxtModule component error 2`] = `
+Object {
+  "json": Object {
+    "errors": undefined,
+    "url": undefined,
+  },
+  "summary": "Fetch config error",
+}
+`;
+
+exports[`DruxtModule component error 3`] = `
+Object {
+  "json": Object {
+    "errors": undefined,
+    "url": undefined,
+  },
+  "summary": "Fetch data error",
+}
+`;

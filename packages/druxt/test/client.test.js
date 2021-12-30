@@ -75,7 +75,12 @@ describe('DruxtClient', () => {
         }
       }
     }
-    expect(() => druxt.checkPermissions(res)).toThrow('Some resources have been omitted because of insufficient authorization.\n\n Required permissions: administer node fields.')
+
+    try {
+      druxt.checkPermissions(res)
+    } catch(err) {
+      expect(err.response.data.errors[0]).toMatchSnapshot()
+    }
   })
 
   test('createResource', async () => {
@@ -89,13 +94,17 @@ describe('DruxtClient', () => {
 
     // Create a Feedback Contact message resource without require data.
     const data = { type: 'contact_message--feedback' }
-    response = await druxt.createResource(data)
+    try {
+      await druxt.createResource(data)
+    } catch(err) {
+      expect(err.response.data.errors[0]).toMatchSnapshot()
+      expect(err.response.data.errors.length).toBe(2)
+    }
     expect(mockAxios.post).toHaveBeenCalledWith(
       `${baseUrl}/en/jsonapi/contact_message/feedback`,
       { data },
       { headers }
     )
-    expect(response.errors.length).toBe(2)
     mockAxios.reset()
 
     // Create resource with required data.
@@ -116,23 +125,71 @@ describe('DruxtClient', () => {
     mockAxios.reset()
 
     // Update resource.
-    await druxt.createResource(response.data.data)
-    expect(mockAxios.patch).toHaveBeenCalledWith(
-      `${baseUrl}/en/jsonapi/contact_message/feedback/${response.data.data.id}`,
-      { data: response.data.data },
-      { headers }
-    )
+    try {
+      await druxt.createResource(response.data.data)
+    } catch(err) {
+      expect(mockAxios.patch).toHaveBeenCalledWith(
+        `${baseUrl}/en/jsonapi/contact_message/feedback/${response.data.data.id}`,
+        { data: response.data.data },
+        { headers }
+      )
+    }
+  })
+
+  test('error', () => {
+    let mockErr
+    const url = [baseUrl, 'test/error'].join('/')
+
+    // Test basic error.
+    mockErr = new Error('Test error')
+    try {
+      druxt.error(mockErr)
+    } catch(err) {
+      expect(err.message).toMatchSnapshot()
+    }
+
+    // Test Axios error.
+    mockErr = {
+      response: {
+        config: { url },
+        status: '500',
+        statusText: 'Test error'
+      }
+    }
+    try {
+      druxt.error(mockErr)
+    } catch(err) {
+      expect(err.message).toMatchSnapshot()
+    }
+
+    // Test error with URL context and details.
+    mockErr = {
+      response: {
+        status: '500',
+        statusText: 'Test error',
+        data: {
+          errors: [{
+            detail: 'Test error details.'
+          }]
+        }
+      }
+    }
+    try {
+      druxt.error(mockErr, { url })
+    } catch(err) {
+      expect(err.message).toMatchSnapshot()
+    }
   })
 
   test('getCollection', async () => {
     // Get a collection of 'node--page' resources.
     const collection = await druxt.getCollection('node--page')
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page`, undefined)
     expect(collection.data.length).toBe(1)
 
     // Get a filtered collection of 'node--page' resources.
     await druxt.getCollection('node--page', { 'filter[status]': 1 })
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page?filter%5Bstatus%5D=1`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page?filter%5Bstatus%5D=1`, undefined)
 
     // Get a collection with headers set.
     await druxt.getCollection('node--page', {}, { headers: { 'X-Druxt': true }})
@@ -147,13 +204,13 @@ describe('DruxtClient', () => {
     // Get all of the 'test--all' resources.
     const query = new DrupalJsonApiParams().addFields('node--recipe', []).addPageLimit(5)
     await druxt.getCollectionAll('node--recipe', query)
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`, undefined)
   })
 
   test('getIndex', async () => {
     const index = await druxt.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
+    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi', undefined)
 
     expect(Object.keys(index).length).toBe(64)
     expect(index[Object.keys(index)[0]]).toHaveProperty('href')
@@ -162,12 +219,21 @@ describe('DruxtClient', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
     expect(Object.keys(cachedIndex).length).toBe(64)
+
+    // Simulate broken index.
+    delete druxt.index
+    druxt.get = () => ({ data: {} })
+    try {
+      await druxt.getIndex()
+    } catch(err) {
+      expect(err.response).toMatchSnapshot()
+    }
   })
 
   test('getIndex - resource', async () => {
     const resourceIndex = await druxt.getIndex('node--page')
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi')
+    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi', undefined)
 
     expect(resourceIndex).toHaveProperty('href')
 
@@ -184,13 +250,13 @@ describe('DruxtClient', () => {
 
     const { type, id } = mockArticle.data
     const related = await druxt.getRelated(type, id, 'field_media_image')
-    expect(mockAxios.get).toHaveBeenCalledWith(`${baseUrl}/en/jsonapi/node/article/${id}/field_media_image`)
+    expect(mockAxios.get).toHaveBeenCalledWith(`${baseUrl}/en/jsonapi/node/article/${id}/field_media_image`, undefined)
     expect(related.data).toHaveProperty('type')
 
     try {
       await druxt.getRelated('node--fake', id, 'field_media_image')
     } catch(err) {
-      expect(mockAxios.get).toHaveBeenCalledWith(`/jsonapi/node/fake/${id}/field_media_image`)
+      expect(mockAxios.get).toHaveBeenCalledWith(`/jsonapi/node/fake/${id}/field_media_image`, undefined)
     }
   })
 
@@ -199,9 +265,12 @@ describe('DruxtClient', () => {
     const entity = await druxt.getResource(mockArticle.data.type, mockArticle.data.id)
     expect(entity.data).toHaveProperty('type', mockArticle.data.type)
 
-    const error = await druxt.getResource('missing', 'test')
-    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi/missing/test')
-    expect(error).toBe(false)
+    try {
+      await druxt.getResource('node--article', 'missing')
+    } catch(err) {
+      expect(err.response.data.errors[0]).toMatchSnapshot()
+    }
+    expect(mockAxios.get).toHaveBeenCalledWith(`${baseUrl}/en/jsonapi/node/article/missing`, undefined)
 
     const empty = await druxt.getResource()
     expect(empty).toBe(false)

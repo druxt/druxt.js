@@ -294,7 +294,7 @@ class DruxtRouter {
     // @TODO - Add validation/error handling.
     const url = `/router/translate-path?path=${path}`
 
-    const response = await this.druxt.axios.get(url, {
+    const response = await this.druxt.get(url, {
       // Prevent invalid routes (404) from throwing validation errors.
       validateStatus: status => status < 500
     })
@@ -354,9 +354,22 @@ class DruxtRouter {
 
     // Process Axios error.
     if (!(response.status >= 200 && response.status < 300)) {
-      const error = new Error
-      error.response = response
-      throw error
+      // Handle 404 errors.
+      if (response.status === 404) {
+        // Is the Decoupled Router installed?
+        if (typeof response.data !== 'object') {
+          response.data = { errors: [{
+            detail: 'Please ensure the Decoupled Router module is installed and configured correctly.'
+          }]}
+        }
+        // Has the Decoupled Router provided an error message?
+        else if (response.data.message || response.data.details) {
+          response.data.errors = [{ detail: [response.data.message, response.data.details].filter((s) => s).join('\n') }]
+        }
+      }
+
+      // Throw error.
+      this.druxt.error({ response }, { url })
     }
 
     return route

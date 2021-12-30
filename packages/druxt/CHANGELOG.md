@@ -1,5 +1,12 @@
 # druxt
 
+## 0.16.0
+
+### Minor Changes
+
+- dc226c2: Made the \$druxt plugin first to be available to all Druxt module plugins.
+- 7b749bd: Added improved error handling.
+
 ## 0.15.0
 
 ### Minor Changes
