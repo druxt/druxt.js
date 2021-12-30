@@ -64,7 +64,7 @@ describe('DruxtModule component', () => {
       components: { DruxtModule },
       data: () => ({ model: null })
     }
-    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtWrapper'] })
+    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtDebug'] })
 
     // Default state.
     expect(wrapper.vm.model).toStrictEqual(null)
@@ -107,6 +107,7 @@ describe('DruxtModule component', () => {
     wrapper.vm.error(err)
 
     // Expect the component to be DruxtDebug.
+    await localVue.nextTick()
     expect(wrapper.vm.component.is).toBe('DruxtDebug')
     // Expect the component props to match snapshot.
     expect(wrapper.vm.component.props).toMatchSnapshot()
