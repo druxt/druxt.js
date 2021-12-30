@@ -115,7 +115,7 @@ export default {
 
     // Build wrapper component object.
     let options = []
-    const hasDefaultTemplate = !!(this.$vnode.data.scopedSlots || {}).default
+    const hasDefaultTemplate = !!(((this.$vnode || {}).data || {}).scopedSlots || {}).default
     // Load wrapper components if:
     if (
       // No default template and wrapper isn't false OR
@@ -144,7 +144,7 @@ export default {
       try {
         await this.$options.druxt.fetchData.call(this, component.settings)
       } catch(err) {
-        return this.error(err)
+        return this.error(err, { component })
       }
     }
 
@@ -182,12 +182,24 @@ export default {
     /**
      * Sets the component to render a DruxtDebug error message.
      */
-    error(err) {
+    error(err, context = {}) {
+      // Build error details.
+      const { url } = err.druxt || {}
+      const title = (err.response || {}).statusText || ((((err.response || {}).data || {}).errors || [])[0] || {}).title
+      const summary = (err.response || {}).status
+        ? [(err.response || {}).status, title].filter((s) => s).join(': ')
+        : err.message
+
+      // Set the component to a Debug component with error details.
       this.component = {
+        ...context.component || {},
         is: 'DruxtDebug',
         props: {
-          json: (err.response.data || {}).errors,
-          summary: [err.response.status, err.response.statusText].filter((s) => s).join(': ')
+          json: {
+            url,
+            errors: ((err.response || {}).data || {}).errors
+          },
+          summary
         }
       }
     },

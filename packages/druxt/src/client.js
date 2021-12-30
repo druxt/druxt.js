@@ -212,15 +212,23 @@ class DruxtClient {
    *
    * @throws {Error} A formatted error.
    */
-  error(err, { url }) {
-    const title = [(err.response || {}).status, (err.response || {}).statusText].filter((s) => s).join(': ')
-    const meta = { url: [this.options.baseUrl, url].join('') }
+  error(err, context = {}) {
+    let { url } = context
+    if (!url && ((err.response || {}).config || {}).url) {
+      url = err.response.config.url
+    }
+
+    const title = [
+      (err.response || {}).status,
+      (err.response || {}).statusText || err.message
+    ].filter((s) => s).join(': ')
+    const meta = { url: url && [this.options.baseUrl, url].join('') }
 
     // Build message.
     let message = [title]
 
     // Add meta information.
-    if (Object.values(meta).filter((o) => o)) {
+    if (Object.values(meta).filter((o) => o).length) {
       message.push(Object.entries(meta).filter(([, v]) => v).map(([key, value]) => `${key.toUpperCase()}: ${value}`).join('\n'))
     }
 
@@ -231,6 +239,7 @@ class DruxtClient {
 
     const error = Error(message.join('\n\n'))
     error.response = err.response
+    error.druxt = context
     throw error
   }
 
@@ -354,7 +363,7 @@ class DruxtClient {
       }
 
       for (const resourceType in resources) {
-        const resource = resources.data.data[resourceType]
+        const resource = resources[resourceType]
         const internal = resource.attributes.drupal_internal__id.split('--')
 
         const item = {
@@ -375,12 +384,7 @@ class DruxtClient {
     // Set index.
     this.index = index
 
-    if (resource) {
-      const response = this.index[resource] ? this.index[resource] : false
-      return response
-    }
-
-    return this.index
+    return resource ? this.index[resource] || false : this.index
   }
 
   /**
@@ -434,7 +438,7 @@ class DruxtClient {
       href = this.options.endpoint + '/' + type.replace('--', '/')
     }
 
-    const url = this.buildQueryUrl(`${href}/${id}`, query)
+    const url = this.buildQueryUrl([href, id].join('/'), query)
     const { data } = await this.get(url)
     return data
   }
