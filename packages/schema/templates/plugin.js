@@ -18,7 +18,7 @@ const DruxtSchemaPlugin = {
         const parts = id.split('--')
 
         // Error if there's no default view mode.
-        if (parts[parts.length - 2] === 'default') return err
+        if (parts[parts.length - 2] === 'default') throw err
 
         // Fallback to the default view mode.
         parts[parts.length - 2] = 'default'
