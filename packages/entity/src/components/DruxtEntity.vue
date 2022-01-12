@@ -384,17 +384,23 @@ export default {
  * @example @lang js
  * [
  *   'DruxtEntity[ResourceType][DisplayMode][SchemaType]',
+ *   'DruxtEntity[EntityType][DisplayMode][SchemaType]',
  *   'DruxtEntity[ResourceType][DisplayMode]',
+ *   'DruxtEntity[EntityType][DisplayMode]',
  *   'DruxtEntity[ResourceType]',
+ *   'DruxtEntity[EntityType]',
  *   'DruxtEntity[DisplayMode]',
  * ]
  *
  * @example <caption>Article Node (default)</caption> @lang js
  * [
  *   'DruxtEntityNodeArticleDefaultView',
+ *   'DruxtEntityNodeDefaultView',
  *   'DruxtEntityNodeArticleDefault',
- *   'DruxtEntityNodeArticle',
  *   'DruxtEntityNodeDefault',
+ *   'DruxtEntityNodeArticle',
+ *   'DruxtEntityNode',
+ *   'DruxtEntityDefault',
  * ]
  */
 
