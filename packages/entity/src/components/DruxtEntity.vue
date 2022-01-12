@@ -119,7 +119,7 @@ export default {
       if (!schema) return false
 
       const fields = {}
-      for (const field of schema.fields) {
+      for (const field of schema.fields || []) {
         const relationship = !!((field.settings || {}).storage || {}).target_type || !!(model.relationships || {})[field.id]
         const value = relationship ? ((model || {}).relationships || {})[field.id] : ((model || {}).attributes || {})[field.id]
 
