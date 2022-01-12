@@ -248,8 +248,24 @@ export default {
      * @returns {ComponentOptions}
      */
     componentOptions: ({ mode, schema, schemaType, type }) => ([
-      [(schema || {}).resourceType || type, ((schema || {}).config || {}).mode || mode, ((schema || {}).config || {}).schemaType || schemaType || 'view'],
-      [((schema || {}).config || {}).mode || mode],
+      // DruxtEntity[ResourceType][ViewMode][SchemaType]
+      [
+        (schema || {}).resourceType || type,
+        ((schema || {}).config || {}).mode || mode,
+        ((schema || {}).config || {}).schemaType || schemaType || 'view'
+      ],
+
+      // DruxtEntity[EntityType][ViewMode][SchemaType]
+      [
+        ((schema || {}).resourceType || type).split('--').shift(),
+        ((schema || {}).config || {}).mode || mode,
+        ((schema || {}).config || {}).schemaType || schemaType || 'view'
+      ],
+
+      // DruxtEntity[ViewMode]
+      [
+        ((schema || {}).config || {}).mode || mode,
+      ],
     ]),
 
     /**

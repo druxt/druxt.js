@@ -1,6 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DruxtEntity component defaults 1`] = `
+Array [
+  "DruxtEntityNodePageDefaultView",
+  "DruxtEntityNodeDefaultView",
+  "DruxtEntityNodePageDefault",
+  "DruxtEntityNodeDefault",
+  "DruxtEntityNodePage",
+  "DruxtEntityNode",
+  "DruxtEntityDefault",
+]
+`;
+
+exports[`DruxtEntity component defaults 2`] = `
 "<div>
   <druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"></druxtentitynodepage-stub>
 </div>"
@@ -11,8 +23,11 @@ exports[`DruxtEntity missing schema 1`] = `
   <div entity=\\"[object Object]\\" value=\\"[object Object]\\">
     <druxtdebug-stub summary=\\"Missing schema for 'file--file--default'\\"><label>Component options:<ul>
           <li>DruxtEntityFileFileDefaultView</li>
+          <li>DruxtEntityFileDefaultView</li>
           <li>DruxtEntityFileFileDefault</li>
+          <li>DruxtEntityFileDefault</li>
           <li>DruxtEntityFileFile</li>
+          <li>DruxtEntityFile</li>
           <li>DruxtEntityDefault</li>
         </ul></label><label>Entity:<pre>{
   \\"type\\": \\"file--file\\",
