@@ -77,12 +77,7 @@ describe('DruxtEntity', () => {
       'entity', 'fields', 'schema', 'value'
     ])
     expect(wrapper.vm.component.is).toBe('DruxtEntityNodePage')
-    expect(wrapper.vm.component.options).toStrictEqual([
-      'DruxtEntityNodePageDefaultView',
-      'DruxtEntityNodePageDefault',
-      'DruxtEntityNodePage',
-      'DruxtEntityDefault',
-    ])
+    expect(wrapper.vm.component.options).toMatchSnapshot()
     expect(wrapper.vm.component.props).toStrictEqual({})
     expect(Object.keys(wrapper.vm.component.propsData)).toStrictEqual([
       'entity', 'fields', 'schema', 'value',

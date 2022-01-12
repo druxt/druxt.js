@@ -1,5 +1,13 @@
 # druxt-views
 
+## 0.17.2
+
+### Patch Changes
+
+- Updated dependencies [60ee4e8]
+  - druxt-entity@0.23.0
+  - druxt-blocks@0.14.5
+
 ## 0.17.1
 
 ### Patch Changes

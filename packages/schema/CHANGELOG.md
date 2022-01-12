@@ -1,5 +1,11 @@
 # druxt-schema
 
+## 0.10.0
+
+### Minor Changes
+
+- 87ec487: Add fallback to 'default' if schema view mode is missing.
+
 ## 0.9.3
 
 ### Patch Changes

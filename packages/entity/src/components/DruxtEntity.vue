@@ -119,7 +119,7 @@ export default {
       if (!schema) return false
 
       const fields = {}
-      for (const field of schema.fields) {
+      for (const field of schema.fields || []) {
         const relationship = !!((field.settings || {}).storage || {}).target_type || !!(model.relationships || {})[field.id]
         const value = relationship ? ((model || {}).relationships || {})[field.id] : ((model || {}).attributes || {})[field.id]
 
@@ -248,8 +248,24 @@ export default {
      * @returns {ComponentOptions}
      */
     componentOptions: ({ mode, schema, schemaType, type }) => ([
-      [(schema || {}).resourceType || type, ((schema || {}).config || {}).mode || mode, ((schema || {}).config || {}).schemaType || schemaType || 'view'],
-      [((schema || {}).config || {}).mode || mode],
+      // DruxtEntity[ResourceType][ViewMode][SchemaType]
+      [
+        (schema || {}).resourceType || type,
+        ((schema || {}).config || {}).mode || mode,
+        ((schema || {}).config || {}).schemaType || schemaType || 'view'
+      ],
+
+      // DruxtEntity[EntityType][ViewMode][SchemaType]
+      [
+        ((schema || {}).resourceType || type).split('--').shift(),
+        ((schema || {}).config || {}).mode || mode,
+        ((schema || {}).config || {}).schemaType || schemaType || 'view'
+      ],
+
+      // DruxtEntity[ViewMode]
+      [
+        ((schema || {}).config || {}).mode || mode,
+      ],
     ]),
 
     /**
@@ -368,17 +384,23 @@ export default {
  * @example @lang js
  * [
  *   'DruxtEntity[ResourceType][DisplayMode][SchemaType]',
+ *   'DruxtEntity[EntityType][DisplayMode][SchemaType]',
  *   'DruxtEntity[ResourceType][DisplayMode]',
+ *   'DruxtEntity[EntityType][DisplayMode]',
  *   'DruxtEntity[ResourceType]',
+ *   'DruxtEntity[EntityType]',
  *   'DruxtEntity[DisplayMode]',
  * ]
  *
  * @example <caption>Article Node (default)</caption> @lang js
  * [
  *   'DruxtEntityNodeArticleDefaultView',
+ *   'DruxtEntityNodeDefaultView',
  *   'DruxtEntityNodeArticleDefault',
- *   'DruxtEntityNodeArticle',
  *   'DruxtEntityNodeDefault',
+ *   'DruxtEntityNodeArticle',
+ *   'DruxtEntityNode',
+ *   'DruxtEntityDefault',
  * ]
  */
 

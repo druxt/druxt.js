@@ -1,5 +1,29 @@
 # druxt-entity
 
+## 0.23.0
+
+### Minor Changes
+
+- 87ec487: Updated DruxtRouterEntity to use Full view mode.
+
+  ⚠ Potential breaking change
+
+  _**Note:** This may effect the rendered template if the Full view mode is configured in Drupal._
+
+  ```diff
+  -components/DruxtEntityNodePageDefault.vue
+  +components/DruxtEntityNodePageFull.vue
+  -components/druxt/entity/node/page/Default.vue
+  +components/druxt/entity/node/page/Full.vue
+  ```
+
+- 60ee4e8: Added DruxtEntity[EntityType][viewmode][SchemaType] component options.
+
+### Patch Changes
+
+- Updated dependencies [87ec487]
+  - druxt-schema@0.10.0
+
 ## 0.22.0
 
 ### Minor Changes
