@@ -91,6 +91,8 @@ export default {
      * @returns {ComponentOptions}
      */
     componentOptions: ({ block }) => {
+      if (!block) return []
+
       // Get Plugin and Plugin ID data.
       let plugin = block.attributes.plugin || ''
       let pluginId = null
