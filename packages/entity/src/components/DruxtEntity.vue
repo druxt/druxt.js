@@ -257,7 +257,7 @@ export default {
 
       // DruxtEntity[EntityType][ViewMode][SchemaType]
       [
-        ((schema || {}).resourceType || type).split('--').shift(),
+        (((schema || {}).resourceType || type) || '').split('--').shift(),
         ((schema || {}).config || {}).mode || mode,
         ((schema || {}).config || {}).schemaType || schemaType || 'view'
       ],

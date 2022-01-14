@@ -225,7 +225,7 @@ export default {
       let components = []
       for (const set of options.filter(set => Array.isArray(set))) {
         const variants = []
-        components = [...components, ...set.map(item => {
+        components = [...components, ...set.filter((o) => o).map(item => {
           // Build array of name parts.
           const parts = variants.length ? [...variants[0].parts] : []
           parts.push(pascalCase(splitByCase(item)))
