@@ -5,9 +5,9 @@ export default {
   component: DruxtView,
   argTypes: {
     displayId: {
+      options: [<%= options.displays.map(({ id }) => `'${id}'`).join(', ') %>],
       control: {
         type: 'select',
-        options: [<%= options.displays.map(({ id }) => `'${id}'`).join(', ') %>]
       },
     },
   },

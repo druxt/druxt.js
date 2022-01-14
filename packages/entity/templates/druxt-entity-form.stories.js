@@ -17,22 +17,22 @@ export default {
       action: 'reset',
     },
     mode: {
+      options: [<%= (options.displays || []).map((s) => `'${s}'`).join(', ') %>],
       control: {
         type: 'select',
-        options: [<%= (options.displays || []).map((s) => `'${s}'`).join(', ') %>],
       },
     },
     schemaType: {
+      options: ['view', 'form'],
       control: {
         type: 'select',
-        options: ['view', 'form'],
       },
     },
     type: {},
     uuid: {
+      options: [<%= (options.entities || []).map((o) => `'${o.id}'`).join(', ') %>],
       control: {
         type: 'select',
-        options: [<%= (options.entities || []).map((o) => `'${o.id}'`).join(', ') %>],
       },
     },
     value: {
