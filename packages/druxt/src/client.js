@@ -280,8 +280,8 @@ class DruxtClient {
    * @example @lang js
    * const collection = await this.$druxt.getCollection('node--recipe')
    */
-  async getCollection(type, query) {
-    const { href } = await this.getIndex(type)
+  async getCollection(type, query, prefix) {
+    const { href } = await this.getIndex(type, prefix)
     if (!href) {
       return false
     }
@@ -325,10 +325,11 @@ class DruxtClient {
    * const { href } = await this.$druxt.getIndex('node--article')
    *
    * @param {string} resource - (Optional) A specific resource to query.
+   * @param {string} prefix - (Optional) The endpoint prefix.
    *
    * @returns {object} The resource index object or the specified resource.
    */
-  async getIndex(resource) {
+  async getIndex(resource, prefix = '') {
     if (this.index && !resource) {
       return this.index
     }
@@ -338,7 +339,7 @@ class DruxtClient {
     }
 
     const url = this.options.endpoint
-    const { data } = await this.get(url)
+    const { data } = await this.get(prefix + url)
     let index = data.links
 
     // Throw error if index is invalid.
@@ -431,12 +432,12 @@ class DruxtClient {
    *
    * @returns {object} The JSON:API resource data.
    */
-  async getResource(type, id, query) {
+  async getResource(type, id, query, prefix) {
     if (!id || !type) {
       return false
     }
 
-    let { href } = await this.getIndex(type)
+    let { href } = await this.getIndex(type, prefix)
     // @TODO - Add test coverage.
     if (!href) {
       href = this.options.endpoint + '/' + type.replace('--', '/')

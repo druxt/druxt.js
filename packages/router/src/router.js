@@ -183,20 +183,18 @@ class DruxtRouter {
    *
    * @returns {boolean|string} The redirect path or false.
    */
-  getRedirect (path, route = {}) {
+  getRedirect (path, route = {}, langcode = null) {
     // Redirect to route provided redirect.
     if (((route.redirect || [])[0] || {}).to) {
       return route.redirect[0].to
     }
-
-    const url = Url(path)
+    const url = Url('/' + path)
 
     // Redirect to root if route is home path but path isn't root.
     if (route.isHomePath) {
       if (url.pathname !== '/') {
-        return '/'
+        return langcode ? `/${langcode}/` : '/'
       }
-
       return false
     }
 
@@ -204,7 +202,9 @@ class DruxtRouter {
     if (typeof route.canonical === 'string') {
       const canonicalUrl = new Url(route.canonical)
 
-      if (url.pathname !== canonicalUrl.pathname) {
+      if (langcode && `/${langcode + url.pathname}` !== canonicalUrl.pathname) {
+        return canonicalUrl.pathname
+      } else if (!langcode && url.pathname !== canonicalUrl.pathname) {
         return canonicalUrl.pathname
       }
     }
@@ -276,7 +276,7 @@ class DruxtRouter {
    * @returns {object} The JSON:API resource data.
    */
   async getResourceByRoute (route) {
-    const resource = await this.druxt.getResource(route.jsonapi.resourceName, route.entity.uuid)
+    const resource = await this.druxt.getResource(route.jsonapi.resourceName, route.entity.uuid, route.prefix)
     return resource.data || false
   }
 
@@ -290,9 +290,10 @@ class DruxtRouter {
    *
    * @returns {object} The route object.
    */
-  async getRoute (path) {
+  async getRoute (path, langcode) {
+    const prefix = langcode ? langcode + '/' : ''
     // @TODO - Add validation/error handling.
-    const url = `/router/translate-path?path=${path}`
+    const url = `/router/translate-path?path=${prefix + path}`
 
     const response = await this.druxt.get(url, {
       // Prevent invalid routes (404) from throwing validation errors.
@@ -318,7 +319,10 @@ class DruxtRouter {
       label: data.label,
       props: false,
       redirect: data.redirect,
-      resolvedPath: Url(data.resolved).pathname
+      resolvedPath: Url(data.resolved).pathname,
+      prefix: langcode,
+      entity: data.entity
+
     }
 
     // Determine route type by configuration.

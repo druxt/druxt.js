@@ -158,7 +158,10 @@ const DruxtStore = ({ store }) => {
        *   query: new DrupalJsonApiParams().addFilter('status', '1'),
        * })
        */
-      async getCollection ({ commit, state }, { type, query }) {
+      async getCollection ({ commit, state, rootState }, { type, query }) {
+        // Get the route prefix from the druxt-router store.
+        const prefix = rootState.druxtRouter.route.prefix
+
         // Generate a hash using query data excluding the 'fields' and 'include' data.
         const queryObject = getDrupalJsonApiParams(query).getQueryObject()
         const hash = query ? md5(JSON.stringify({ ...queryObject, fields: {}, include: [] })) : '_default'
@@ -173,7 +176,7 @@ const DruxtStore = ({ store }) => {
         }
 
         // Get the collection using the DruxtClient instance.
-        const collection = await this.$druxt.getCollection(type, query)
+        const collection = await this.$druxt.getCollection(type, query, prefix)
 
         // Store the collection in the DruxtStore.
         commit('addCollection', { collection: { ...collection }, type, hash })
@@ -196,7 +199,10 @@ const DruxtStore = ({ store }) => {
        * @example @lang js
        * const resource = await this.$store.dispatch('druxt/getResource', { type: 'node--article', id })
        */
-      async getResource ({ commit, dispatch, state }, { type, id, query }) {
+      async getResource ({ commit, dispatch, state, rootState }, { type, id, query }) {
+        // Get the route prefix from the druxt-router store.
+        const prefix = rootState.druxtRouter.route.prefix
+
         // Get the resource from the store if it's avaialble.
         const storedResource = (state.resources[type] || {})[id] ?
           { ...state.resources[type][id] }
@@ -276,7 +282,7 @@ const DruxtStore = ({ store }) => {
         // Request the resource from the DruxtClient if required.
         let resource
         if (!storedResource || fields) {
-          resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject))
+          resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
           commit('addResource', { resource: { ...resource } })
         }
 
