@@ -41,7 +41,7 @@
     "templates"
   ],
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.25.0",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.1.12",
     "druxt": "^0.16.0",

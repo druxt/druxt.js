@@ -4319,6 +4319,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.25.0":
+  version: 0.25.0
+  resolution: "axios@npm:0.25.0"
+  dependencies:
+    follow-redirects: ^1.14.7
+  checksum: 2a8a3787c05f2a0c9c3878f49782357e2a9f38945b93018fb0c4fd788171c43dceefbb577988628e09fea53952744d1ecebde234b561f1e703aa43e0a598a3ad
+  languageName: node
+  linkType: hard
+
 "azure-devops-node-api@npm:11.0.1":
   version: 11.0.1
   resolution: "azure-devops-node-api@npm:11.0.1"
@@ -6309,7 +6318,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-blocks@workspace:packages/blocks"
   dependencies:
-    axios: ^0.21.1
+    axios: ^0.25.0
     drupal-jsonapi-params: ^1.1.12
     druxt: ^0.16.0
     druxt-entity: ^0.23.0
@@ -6461,7 +6470,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-views@workspace:packages/views"
   dependencies:
-    axios: ^0.21.1
+    axios: ^0.25.0
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^1.1.12
     druxt: ^0.16.0
@@ -6516,7 +6525,7 @@ __metadata:
   resolution: "druxt@workspace:packages/druxt"
   dependencies:
     "@nuxtjs/proxy": ^2.1.0
-    axios: ^0.21.1
+    axios: ^0.25.0
     chalk: ^4.1.2
     core-js: ^3.16.1
     deepmerge: ^4.2.2
@@ -7430,6 +7439,16 @@ __metadata:
     debug:
       optional: true
   checksum: 7381a55bdc6951c5c1ab73a8da99d9fa4c0496ce72dba92cd2ac2babe0e3ebde9b81c5bca889498ad95984bc773d713284ca2bb17f1b1e1416e5f6531e39a488
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.14.7":
+  version: 1.14.7
+  resolution: "follow-redirects@npm:1.14.7"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: f6d03e5e30877431065bca0d1b2e3db93949eb799d368a5c07ea8a4b71205f0349a3f8f0191bf13a07c93885522834dca1dc8e527dc99a772c6911fba24edc5f
   languageName: node
   linkType: hard
 
