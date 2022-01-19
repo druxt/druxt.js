@@ -317,12 +317,11 @@ class DruxtRouter {
       isHomePath: data.isHomePath,
       jsonapi: data.jsonapi,
       label: data.label,
+      prefix: langcode,
       props: false,
       redirect: data.redirect,
       resolvedPath: Url(data.resolved).pathname,
-      prefix: langcode,
       entity: data.entity
-
     }
 
     // Determine route type by configuration.

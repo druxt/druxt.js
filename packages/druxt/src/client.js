@@ -338,8 +338,8 @@ class DruxtClient {
       return this.index[resource] ? this.index[resource] : false
     }
 
-    const url = this.options.endpoint
-    const { data } = await this.get(prefix + url)
+    const url = prefix + this.options.endpoint
+    const { data } = await this.get(url)
     let index = data.links
 
     // Throw error if index is invalid.
@@ -405,12 +405,12 @@ class DruxtClient {
    *
    * @returns {object} The related JSON:API resource(s).
    */
-  async getRelated(type, id, related, query) {
+  async getRelated(type, id, related, query, prefix = '') {
     if (!id || !type || !related) {
       return false
     }
 
-    let { href } = await this.getIndex(type)
+    let { href } = await this.getIndex(type, prefix)
     if (!href) {
       href = this.options.endpoint + '/' + type.replace('--', '/')
     }

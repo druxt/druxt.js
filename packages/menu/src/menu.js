@@ -82,7 +82,7 @@ class DruxtMenu {
    * @param {string} menuName - The menu name.
    * @param {object} settings - The Druxt Menu query settings object.
    */
-  async get(menuName, settings, prefix) {
+  async get(menuName, settings, prefix = '') {
     if (this.options.menu.jsonApiMenuItems) {
       return this.getJsonApiMenuItems(menuName, settings, prefix)
     }
@@ -102,7 +102,7 @@ class DruxtMenu {
    * @param {string} menuName - The menu name.
    * @param {object} settings - The Druxt Menu query settings object.
    */
-  async getMenuLinkContent(menuName, settings) {
+  async getMenuLinkContent(menuName, settings, prefix) {
     const resource = 'menu_link_content--menu_link_content'
     const requiredFields = ['bundle', 'link', 'menu_name', 'parent', 'title', 'weight']
 
