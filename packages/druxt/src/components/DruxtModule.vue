@@ -5,7 +5,28 @@ import Vue from 'vue'
 import DruxtWrapper from './DruxtWrapper.vue'
 
 /**
- * Base component for core and custom Druxt modules.
+ * The DruxtModule component is the core component to be extended by core and
+ * custom modules.
+ *
+ * ```
+ * import DruxtModule from 'druxt/dist/components/DruxtModule.vue
+ * export default {
+ *   extends: DruxtModule
+ * }
+ * ```
+ *
+ * The component provides access to the Druxt Wrapper theming and fetch system
+ * via the druxt settings object.
+ *
+ * ```
+ * druxt: {
+ *   async fetchConfig() {},
+ *   async fetchData() {},
+ *   componentOptions: (context) => ([[context.value, 'default']]),
+ *   propsData: (context) => ({ value: context.value }),
+ *   slots(h) {}
+ * }
+ * ```
  *
  * @example @lang js
  * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
