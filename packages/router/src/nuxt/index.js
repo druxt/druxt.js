@@ -51,7 +51,7 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
       options
     })
 
-    this.extendRoutes((routes, resolve) => {
+    this.extendRoutes((routes) => {
       if (this.nuxt.options.i18n && this.nuxt.options.i18n.locales) {
         this.nuxt.options.i18n.locales.forEach((locale) => {
           routes.push({
