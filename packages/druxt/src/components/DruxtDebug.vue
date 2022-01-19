@@ -4,6 +4,7 @@
     <pre v-if="json"><!--
       --><code>{{ JSON.stringify(json, null, '  ') }}</code><!--
     --></pre>
+    <!-- @slot Debug content -->
     <slot />
   </details>
 
@@ -12,7 +13,15 @@
 
 <script>
 /**
- * Renders Debug data only when Nuxt is in development mode.
+ * The DruxtDebug component can be used to render debug information that is
+ * visible only when Nuxt is run in development mode.
+ *
+ * `<DruxtDebug>Debug information</DruxtDebug>`
+ *
+ * You can render your debug information through the default slot, or via the
+ * **json** prop to format your data, or a combination of the two.
+ *
+ * `<DruxtDebug :json="entity" />`
  *
  * @example @lang vue
  * <DruxtDebug :json="entity" />
