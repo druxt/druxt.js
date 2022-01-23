@@ -1,0 +1,126 @@
+import { Canvas, Meta, Story } from '@storybook/addon-docs'
+
+<Meta title="Druxt/DruxtModule" />
+
+# DruxtModule
+
+The DruxtModule component is the core component to be extended by core and
+custom modules.
+
+```js
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+export default {
+  extends: DruxtModule
+}
+```
+
+---
+
+## Fetch config
+
+All modules have a two part fetch system available to them; **fetchConfig** and
+**fetchData**.
+
+```js
+async fetchConfig() {
+  // Load configuration data here.
+  this.config = await this.getResource({...})
+},
+```
+
+Fetch config is used to load information from Drupal to determine the default
+behaviour of that component, as well as to determine the available component
+
+---
+
+## Component options
+
+The Druxt Wrapper system looks for available Vue components using a specific
+naming convention, determined by the Druxt module **componentOptions**.
+
+This allows for targetted theming of components based on the props or
+configuration data.
+
+```js
+componentOptions: (context) => ([[context.attributes.foo, 'default']]),
+```
+
+---
+
+## Fetch data
+
+After the Component options are determined, the first available component is
+determined, and any exported Druxt settings are loaded and used to fetch the
+main module data.
+
+```js
+async fetchData(settings) {
+  // Load data using the settings determine based on the configuration data.
+  this.resource = await this.getResource({
+    type: this.config.attributes.foo,
+    id: this.id,
+    query: this.getQuery(settings)
+  })
+},
+```
+
+---
+
+## Props data
+
+The **propsData** callback returns the props data for the render Wrapper
+component, making props data available to the frontend developer.
+
+```js
+propsData: (context) => ({ foo: context.config.attributes.foo })
+```
+
+---
+
+## Slots
+
+The **slots** method builds the slots that are made available to the Wrapper
+component. It is expected to return an object of scoped slot functions.
+
+```
+slots(h) {
+  return {
+    default: () => h('div', ['Hello world']),
+  }
+}
+```
+
+---
+
+### Custom module boilerplate
+
+Paste this into a Vue component as a starting point for a custom or contrib
+Druxt module.
+
+```vue
+<script>
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+export default {
+  name: 'MyModule',
+  extends: DruxtModule
+  druxt: {
+    async fetchConfig() {
+      // Load configuration data here.
+    },
+    async fetchData(settings) {
+      // Load data using the settings determine based on the configuration data.
+    },
+    // Build nested arrays of component options based on the context.
+    componentOptions: (context) => ([['default']]),
+    // Map props data from the context.
+    propsData: (context) => ({ ...context }),
+    // Build slots render arrays.
+    slots(h) {
+      return {
+        default: () => h('div', ['Hello world'])
+      }
+    }
+  }
+}
+</script>
+```
