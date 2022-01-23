@@ -5,4 +5,4 @@
 "druxt-views": patch
 ---
 
-Fixed errors in storybook
+Fixed errors in storybook.

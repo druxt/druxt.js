@@ -2,4 +2,4 @@
 "druxt": minor
 ---
 
-feat(#249): add DruxtDebug story
+Added DruxtDebug story to storybook.

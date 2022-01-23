@@ -2,4 +2,4 @@
 "druxt": minor
 ---
 
-Added storybook README
+Added README story to storybook.
