@@ -318,6 +318,18 @@ export default {
      */
     getScopedSlots() {
       const h = this.$createElement
+
+      // Get an array of unmet required props.
+      const required = Object.entries(this.$options.props)
+        .filter(([k, o]) => o.required && !this[k])
+        .map(([k]) => k)
+      // Return debug error if any missing props are found.
+      if (required.length) {
+        return {
+          default: () => h('DruxtDebug', { props: { summary: `Missing required props: ${required.join(', ')}.` } })
+        }
+      }
+
       const scopedSlots = typeof (this.$options.druxt || {}).slots === 'function'
         ? this.$options.druxt.slots.call(this, h)
         : {}
