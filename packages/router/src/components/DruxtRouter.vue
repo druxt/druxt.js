@@ -98,6 +98,9 @@ export default {
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({
+    debug: {
+      path: undefined,
+    },
     model: value,
   }),
 
@@ -196,7 +199,7 @@ export default {
       // Get the route from the Drupal decoupled router module via the
       // druxtRouter store.
       // Use the Path prop or the Vue Router as the route to lookup.
-      const path = this.path || this.$route.fullPath
+      const path = this.debug.path || this.path || this.$route.fullPath
       const route = await this.$store.dispatch('druxtRouter/getRoute', path)
       this.model = route
 
@@ -218,7 +221,49 @@ export default {
     propsData: ({ $route, path, model }) => ({
       path: path || $route.fullPath,
       route: model
-    })
+    }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * - **debug**: A Debug component with a Path override field.
+     * - **default**: Default error handling.
+     *
+     * @example <caption>DruxtRouter**Module**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot name="debug" />
+     *     {{ route.props }}
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots(h) {
+      const scopedSlots = {}
+
+      // Debug widget to set path.
+      const self = this
+      scopedSlots.debug = () => h(
+        'DruxtDebug',
+        { props: { json: this.model } },
+        [
+          h('input', { on: { input: (e) => self.debug.path = e.target.value} }),
+          h('button', { on: { click: () => self.$fetch() } }, ['Set path'])
+        ]
+      )
+
+      // Provide defualt error message.
+      if (this.model.error) {
+        scopedSlots.default = () => h('div', [
+          scopedSlots.debug(),
+          h('h1', [`Error ${this.model.error.statusCode}`]),
+          h('p', [this.model.error.message]),
+        ])
+      }
+
+      return scopedSlots
+    }
   }
 }
 
@@ -265,5 +310,21 @@ export default {
  *     type: 'views',
  *   }
  * }
+ */
+
+/**
+ * Provides scoped slots for use in the Wrapper component.
+ *
+ * @typedef {object} ScopedSlots
+ * @param {function} debug - A Debug component with a Path override field.
+ * @param {function} default - Default error handling.
+ *
+ * @example <caption>DruxtRouter**Module**.vue</caption> @lang vue
+ * <template>
+ *   <div>
+ *     <slot name="debug" />
+ *     {{ route.props }}
+ *   </div>
+ * </template>
  */
 </script>
