@@ -123,6 +123,7 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
   // Nuxt Storybook.
   this.nuxt.hook('storybook:config', async ({ stories }) => {
     stories.push('druxt/stories/*.stories.mdx')
+    stories.push('druxt/dist/components/*.stories.mdx')
     stories.push('druxt/dist/components/*.stories.mjs')
   })
 }
