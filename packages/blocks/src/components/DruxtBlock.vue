@@ -4,7 +4,16 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions } from 'vuex'
 
 /**
- * Renders a Drupal Block by UUID or Drupal's internal ID.
+ * The DruxtBlock component is used to render a Drupal Block by UUID or Drupal's
+ * internal ID.
+ *
+ * `<DruxtBlock id="umami_branding" />`
+ *
+ * `<DruxtBlock uuid="59104acd-88e1-43c3-bd5f-35800f206394" />`
+ *
+ * While the DruxtBlock component can't automatically render every Drupal block,
+ * it does provide the Block settings to a targetted Druxt wrapper component for
+ * manual theming.
  *
  * @example @lang vue
  * <DruxtBlock id="umami_branding" />
@@ -175,13 +184,29 @@ export default {
       const scopedSlots = {}
 
       // Debug data.
-      scopedSlots.debug = () => h('DruxtDebug',
-        { props: { summary: `Missing wrapper component for '${((this.block || {}).attributes || {}).drupal_internal__id}'`} },
-        [
-          h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-          h('label', ['Block settings:', h('pre', [JSON.stringify(((this.block || {}).attributes || {}).settings, null, '  ')])])
+      /* @slot Debug information */
+      scopedSlots.default = () => {
+        let summary = `Placeholder for the '${((this.block || {}).attributes || {}).drupal_internal__id}' block.`
+        let description = [
+          h('p', 'DruxtBlocks knows that a block can be rendered, and has information provided by Drupal, but not enough to automatically determine the behaviour of the block.'),
+          h('p', 'To render this block manually, create a Nuxt component with one of the following component options.'),
         ]
-      )
+
+        // Ensure an ID or UUID.
+        if (!this.id && !this.uuid) {
+          summary = "Missing required 'id' or 'uuid' prop."
+          description = [h('p', "The DruxtBlock component requires either the 'id' or 'uuid' prop to be set.")]
+        }
+
+        return h('DruxtDebug',
+          { props: { summary } },
+          [
+            h('div', description),
+            !!this.component.options.length && h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
+            ((this.block || {}).attributes || {}).settings && h('label', ['Block settings:', h('pre', [JSON.stringify(this.block.attributes.settings, null, '  ')])])
+          ]
+        )
+      }
 
       return scopedSlots
     },
