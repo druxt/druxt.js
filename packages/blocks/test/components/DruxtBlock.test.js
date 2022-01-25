@@ -64,7 +64,7 @@ describe('Component - DruxtBlock', () => {
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
 
     // Default slot.
-    expect(wrapper.vm.getScopedSlots().default).toBe(undefined)
+    expect(wrapper.vm.getScopedSlots().default).toStrictEqual(expect.any(Function))
   })
 
   test('uuid - pluginId', async () => {
