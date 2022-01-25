@@ -139,6 +139,33 @@ describe('DruxtRouterComponent', () => {
     expect(wrapper.vm.component.options).toStrictEqual([])
   })
 
+  test('Error', async () => {
+    const wrapper = mountComponent({}, '/error')
+    wrapper.vm.$fetch = wrapper.vm.$options.fetch
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    const mock = {
+      ...wrapper.vm,
+      $createElement: jest.fn()
+    }
+    const slots = wrapper.vm.$options.druxt.slots.call(mock, mock.$createElement)
+    slots.default()
+    expect(mock.$createElement).toBeCalledWith(
+      'DruxtDebug',
+      {
+        props: {
+          json: {
+            error: {
+              message: 'Unable to resolve path /error.',
+              statusCode: 404
+            }
+          }
+        }
+      },
+      expect.any(Array)
+    )
+  })
+
   test('Metatags', () => {
     const mock = {
       route: { canonical: undefined },

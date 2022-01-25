@@ -134,6 +134,29 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.component.props).toMatchSnapshot()
   })
 
+  test('error - required props', () => {
+    const mock = {
+      $createElement: jest.fn(),
+      $options: {
+        props: {
+          test: {
+            type: Boolean,
+            required: true
+          }
+        }
+      },
+      $nuxt: {
+        context: {}
+      },
+      $scopedSlots: {},
+    }
+    DruxtModule.methods.getScopedSlots.call(mock).default()
+    expect(mock.$createElement).toHaveBeenCalledWith(
+      'DruxtDebug',
+      { props: { summary: 'Missing required props: test.' } }
+    )
+  })
+
   test('custom module - no wrapper', async () => {
     const CustomModule = {
       name: 'CustomModule',
