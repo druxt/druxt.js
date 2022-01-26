@@ -242,21 +242,9 @@ export default {
     slots(h) {
       const scopedSlots = {}
 
-      // Debug widget to set path.
-      const self = this
-      scopedSlots.debug = () => h(
-        'DruxtDebug',
-        { props: { json: this.model } },
-        [
-          h('input', { on: { input: (e) => self.debug.path = e.target.value} }),
-          h('button', { on: { click: () => self.$fetch() } }, ['Set path'])
-        ]
-      )
-
       // Provide defualt error message.
       if (this.model.error) {
         scopedSlots.default = () => h('div', [
-          scopedSlots.debug(),
           h('h1', [`Error ${this.model.error.statusCode}`]),
           h('p', [this.model.error.message]),
         ])
