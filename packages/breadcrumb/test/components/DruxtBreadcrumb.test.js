@@ -186,4 +186,18 @@ describe('DruxtBreadcrumb', () => {
       }],
     })
   })
+
+  test('watch - props $fetch', async () => {
+    const $fetch = jest.fn()
+    expect($fetch).toHaveBeenCalledTimes(0)
+
+    DruxtBreadcrumb.watch.$route.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(1)
+
+    DruxtBreadcrumb.watch.home.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(2)
+
+    DruxtBreadcrumb.watch.path.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(3)
+  })
 })

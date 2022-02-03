@@ -68,6 +68,14 @@ export default {
      */
     $route: async function() {
       await this.$fetch()
+    },
+
+    home() {
+      this.$fetch()
+    },
+
+    path() {
+      this.$fetch()
     }
   },
 
