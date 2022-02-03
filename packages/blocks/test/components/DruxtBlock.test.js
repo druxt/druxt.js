@@ -146,4 +146,15 @@ describe('Component - DruxtBlock', () => {
       block: wrapper.vm.block,
     })
   })
+
+  test('watch - props $fetch', async () => {
+    const $fetch = jest.fn()
+    expect($fetch).toHaveBeenCalledTimes(0)
+
+    DruxtBlock.watch.id.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(1)
+
+    DruxtBlock.watch.uuid.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(2)
+  })
 })
