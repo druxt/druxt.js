@@ -89,12 +89,33 @@ describe('DruxtBreadcrumb', () => {
   })
 
   test('level 2', async () => {
-    const wrapper = mountComponent({ path: '/level-1/level-2', routes: ['/', '/level-1', '/level-1/level-2'] })
+    const wrapper = mountComponent({
+      path: '/level-1/level-2',
+      routes: ['/', '/level-1', '/level-1/level-2']
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({
       label: '/level-1/level-2'
     })
+
+    expect(wrapper.vm.crumbs).toHaveLength(3)
+    expect(wrapper.vm.crumbs[0].to).toBe('/')
+
+    expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  test('manual path', async () => {
+    const wrapper = mountComponent({
+      path: undefined,
+      propsData: {
+        path: '/level-1/level-2',
+      },
+      routes: ['/', '/level-1', '/level-1/level-2']
+    })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.route).toStrictEqual({})
 
     expect(wrapper.vm.crumbs).toHaveLength(3)
     expect(wrapper.vm.crumbs[0].to).toBe('/')

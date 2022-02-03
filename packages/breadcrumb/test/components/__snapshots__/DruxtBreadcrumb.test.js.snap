@@ -18,6 +18,12 @@ exports[`DruxtBreadcrumb level 2 1`] = `
 </div>"
 `;
 
+exports[`DruxtBreadcrumb manual path 1`] = `
+"<div>
+  <druxtwrapper-stub crumbs=\\"[object Object],[object Object],[object Object]\\" value=\\"[object Object],[object Object],[object Object]\\"></druxtwrapper-stub>
+</div>"
+`;
+
 exports[`DruxtBreadcrumb missing parent 1`] = `
 "<div>
   <druxtwrapper-stub crumbs=\\"[object Object],[object Object]\\" value=\\"[object Object],[object Object]\\"></druxtwrapper-stub>
