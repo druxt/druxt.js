@@ -2,11 +2,11 @@ image:
   file: .gitpod/Dockerfile
 
 tasks:
-  - before: git pull -f origin main:main
+  - before: git pull -f origin main:main || true
     init: |
       # DDev prebuild tasks
       .gitpod/scripts/ddev-download.sh
-      .gitpod/scripts/drupal-setup.sh
+      .gitpod/scripts/ddev-setup.sh
 
       # druxt.js build install and build
       yarn install
@@ -16,7 +16,6 @@ tasks:
       cd $GITPOD_REPO_ROOT/docs && yarn
       cd $GITPOD_REPO_ROOT && yarn build:docs
     command: |
-      .gitpod/scripts/ddev-setup.sh && clear
       cat .gitpod/WELCOME.md
 
 # VScode xdebug extension
