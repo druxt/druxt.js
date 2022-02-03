@@ -16,7 +16,6 @@ tasks:
       cd $GITPOD_REPO_ROOT/docs && yarn
       cd $GITPOD_REPO_ROOT && yarn build:docs
     command: |
-      .gitpod/scripts/ddev-setup.sh && clear
       cat .gitpod/WELCOME.md
 
 # VScode xdebug extension
