@@ -1,34 +1,29 @@
 import DruxtBlock from 'druxt-blocks/dist/components/DruxtBlock.vue'
 
 export default {
-  title: '<%= options.title %>',
+  title: 'Druxt/Blocks/DruxtBlock',
   component: DruxtBlock,
-  parameters: {
-    docs: {
-      description: {
-        component: ' '
-      },
+  argTypes: {
+    id: {
+      options: [<%= (options.blocks || []).map((o) => `'${o.attributes.drupal_internal__id}'`).join(', ') %>],
+      control: {
+        type: 'select'
+      }
     },
-  },
-}
-
-const Template = (args, { argTypes }) => {
-  return {
-    props: Object.keys(argTypes),
-    template: '<DruxtBlock v-bind="$props" v-on="$props" />',
-  }
-}
-
-export const Default = Template.bind({})
-Default.args = {
-  id: '<%= options.block.attributes.drupal_internal__id %>',
-  uuid: '<%= options.block.id %>',
-}
-Default.storyName = 'DruxtBlock'
-Default.parameters = {
-  docs: {
-    source: {
-      code: '<DruxtBlock id="<%= options.block.attributes.drupal_internal__id %>" />'
+    uuid: {
+      options: [<%= (options.blocks || []).map((o) => `'${o.id}'`).join(', ') %>],
+      control: {
+        type: 'select'
+      }
     }
   }
 }
+
+const Template = (args, { argTypes }) => ({
+  components: { DruxtBlock },
+  props: Object.keys(argTypes),
+  template: `<DruxtBlock v-bind="$props" />`
+})
+
+export const Default = Template.bind({})
+Default.storyName = 'DruxtBlock'

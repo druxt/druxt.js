@@ -4,9 +4,11 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions, mapState } from 'vuex'
 
 /**
- * Renders all visible blocks by theme and region name.
+ * The DruxtBlockRegion component renders visible blocks based on region and
+ * theme.
  *
- * Additional, non-visible blocks are available as slots and props data.
+ * All blocks, including those not visible, are provided as slots for the Druxt
+ * Wrapper component.
  *
  * @example @lang vue
  * <DruxtBlockRegion

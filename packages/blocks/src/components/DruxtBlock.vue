@@ -7,10 +7,6 @@ import { mapActions } from 'vuex'
  * The DruxtBlock component is used to render a Drupal Block by UUID or Drupal's
  * internal ID.
  *
- * `<DruxtBlock id="umami_branding" />`
- *
- * `<DruxtBlock uuid="59104acd-88e1-43c3-bd5f-35800f206394" />`
- *
  * While the DruxtBlock component can't automatically render every Drupal block,
  * it does provide the Block settings to a targetted Druxt wrapper component for
  * manual theming.
@@ -45,6 +41,8 @@ export default {
 
     /**
      * The Block Entity UUID.
+     *
+     * If used, the **id** prop will be ignored.
      *
      * @type {string}
      *
