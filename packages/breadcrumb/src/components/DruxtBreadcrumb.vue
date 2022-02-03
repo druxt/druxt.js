@@ -8,6 +8,9 @@ import { mapActions, mapState } from 'vuex'
  *
  * @example @lang vue
  * <DruxtBreadcrumb />
+ *
+ * @example @lang vue
+ * <DruxtBreadcrumb path="/node/1" />
  */
 export default {
   name: 'DruxtBreadcrumb',
