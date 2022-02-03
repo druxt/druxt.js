@@ -8,7 +8,7 @@ import { DruxtBlocksNuxtModule } from './nuxtModule'
  * @type {Function}
  * @exports default
  * @name DruxtBlocksModule
- * @see {@link ./nuxtModule|DruxtBlocksModule}
+ * @see {@link /api/packages/blocks/nuxtModule|DruxtBlocksModule}
  *
  * @example <caption>nuxt.config.js</caption> @lang js
  * module.exports = {
@@ -23,10 +23,32 @@ import { DruxtBlocksNuxtModule } from './nuxtModule'
 export default DruxtBlocksNuxtModule
 
 /**
- * Vue.js Mixin.
+ * The DruxtBlocksBlockMixin adds props and computed props to your DruxtBlock
+ * wrapper component.
  *
  * @type {object}
  * @exports DruxtBlocksBlockMixin
- * @see {@link ./mixins/block|DruxtBlocksBlockMixin}
+ * @see {@link /api/packages/blocks/mixins/block|DruxtBlocksBlockMixin}
+ *
+ * @example @lang js
+ * import { DruxtBlocksBlockMixin } from 'druxt-blocks'
+ * export default {
+ *   mixins: [DruxtBlocksBlockMixin]
+ * }
  */
  export { DruxtBlocksBlockMixin } from './mixins/block'
+
+/**
+ * The DruxtBlocksRegionMixin adds props to your DruxtBlock wrapper component.
+ *
+ * @type {object}
+ * @exports DruxtBlocksRegionMixin
+ * @see {@link /api/packages/blocks/mixins/region|DruxtBlocksRegionMixin}
+ *
+ * @example @lang js
+ * import { DruxtBlocksRegionMixin } from 'druxt-blocks'
+ * export default {
+ *   mixins: [DruxtBlocksRegionMixin]
+ * }
+ */
+export { DruxtBlocksRegionMixin } from './mixins/region'

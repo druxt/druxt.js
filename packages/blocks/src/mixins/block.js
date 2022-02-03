@@ -1,26 +1,24 @@
 /**
- * Provides Vue.js properties to render Drupal Block components.
- *
- * This Mixin is intended for use by `block` type Component Suggestions for
- * targetted theming of Drupal Blocks.
+ * Provides props and computed values for use with a DruxtBlock Wrapper
+ * component.
  *
  * @mixin
  *
  * @example @lang vue
+ * <template>
+ *   <DruxtDebug :json="block" />
+ * </template>
+ *
  * <script>
- * // Import mixin.
  * import { DruxtBlocksBlockMixin } from 'druxt-blocks'
  *
  * export default {
- *   // Register mixin.
  *   mixins: [DruxtBlocksBlockMixin],
  * }
  * </script>
  */
 const DruxtBlocksBlockMixin = {
-  /**
-   * Vue.js Properties.
-   */
+  /** */
   props: {
     /**
      * The Block JSON:API resource.
@@ -33,9 +31,7 @@ const DruxtBlocksBlockMixin = {
     },
   },
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
     /**
      * Block settings.
