@@ -146,4 +146,15 @@ describe('Component - DruxtBlockRegion', () => {
       theme: 'umami',
     })
   })
+
+  test('watch - props $fetch', async () => {
+    const $fetch = jest.fn()
+    expect($fetch).toHaveBeenCalledTimes(0)
+
+    DruxtBlockRegion.watch.name.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(1)
+
+    DruxtBlockRegion.watch.theme.call({ $fetch })
+    expect($fetch).toHaveBeenCalledTimes(2)
+  })
 })
