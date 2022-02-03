@@ -11,11 +11,30 @@ import { mapActions } from 'vuex'
  * it does provide the Block settings to a targetted Druxt wrapper component for
  * manual theming.
  *
- * @example @lang vue
+ * @example <caption>Render a block using **id**</caption> @lang vue
  * <DruxtBlock id="umami_branding" />
  *
- * @example @lang vue
+ * @example <caption>Render a block using **uuid**</caption> @lang vue
  * <DruxtBlock uuid="59104acd-88e1-43c3-bd5f-35800f206394" />
+ *
+ * @example <caption>Druxt Wrapper component boilerplate</caption> @lang vue
+ * <template>
+ *   <DruxtDebug :json="block" />
+ * </template>
+ *
+ * <script>
+ * import { DruxtBlocksBlockMixin } from 'druxt-blocks'
+ * export default {
+ *   mixins: [DruxtBlocksBlockMixin]
+ * }
+ *
+ * @example <caption>Druxt Block with tempalte injection</caption> @lang vue
+ * <DruxtBlock id="umami_branding">
+ *   <template #default="{ block }">
+ *     <!-- Do whatever you want here -->
+ *     <DruxtDebug :json="block" />
+ *   </template>
+ * </DruxtBlock>
  */
 export default {
   name: 'DruxtBlock',
