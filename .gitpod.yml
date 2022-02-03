@@ -7,7 +7,6 @@ tasks:
       # DDev prebuild tasks
       .gitpod/scripts/ddev-download.sh
       .gitpod/scripts/ddev-setup.sh
-      .gitpod/scripts/drupal-setup.sh
 
       # druxt.js build install and build
       yarn install
