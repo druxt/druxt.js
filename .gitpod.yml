@@ -2,7 +2,7 @@ image:
   file: .gitpod/Dockerfile
 
 tasks:
-  - before: git pull -f origin main:main
+  - before: git pull -f origin main:main || true
     init: |
       # DDev prebuild tasks
       .gitpod/scripts/ddev-download.sh
