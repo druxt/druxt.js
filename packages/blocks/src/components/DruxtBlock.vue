@@ -70,6 +70,16 @@ export default {
     block: ({ resource }) => (resource || {}).data,
   },
 
+  watch: {
+    id() {
+      this.$fetch()
+    },
+
+    uuid() {
+      this.$fetch()
+    }
+  },
+
   methods: {
     /**
      * Maps Vuex action to methods.
