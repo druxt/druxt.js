@@ -17,7 +17,7 @@ import { mapActions } from 'vuex'
  * @example <caption>Render a block using **uuid**</caption> @lang vue
  * <DruxtBlock uuid="59104acd-88e1-43c3-bd5f-35800f206394" />
  *
- * @example <caption>Druxt Wrapper component boilerplate</caption> @lang vue
+ * @example <caption>DruxtBlock Wrapper component boilerplate</caption> @lang vue
  * <template>
  *   <DruxtDebug :json="block" />
  * </template>
@@ -28,7 +28,7 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtBlocksBlockMixin]
  * }
  *
- * @example <caption>Druxt Block with tempalte injection</caption> @lang vue
+ * @example <caption>DruxtBlock with template injection</caption> @lang vue
  * <DruxtBlock id="umami_branding">
  *   <template #default="{ block }">
  *     <!-- Do whatever you want here -->

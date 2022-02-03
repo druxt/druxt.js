@@ -11,9 +11,8 @@
  *
  * <script>
  * import { DruxtBlocksRegionMixin } from 'druxt-blocks'
- *
  * export default {
- *   mixins: [DruxtBlocksRegionMixin],
+ *   mixins: [DruxtBlocksRegionMixin]
  * }
  * </script>
  */

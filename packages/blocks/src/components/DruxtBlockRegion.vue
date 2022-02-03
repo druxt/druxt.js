@@ -11,10 +11,26 @@ import { mapActions, mapState } from 'vuex'
  * Wrapper component.
  *
  * @example @lang vue
- * <DruxtBlockRegion
- *   name="header"
- *   theme="umami"
- * />
+ * <DruxtBlockRegion name="header" theme="umami" />
+ *
+ * @example <caption>DruxtBlockRegion Wrapper component boilerplate</caption> @lang vue
+ * <template>
+ *   <DruxtDebug :json="blocks" />
+ * </template>
+ *
+ * <script>
+ * import { DruxtBlocksRegionMixin } from 'druxt-blocks'
+ * export default {
+ *   mixins: [DruxtBlocksRegionMixin]
+ * }
+ *
+ * @example <caption>DruxtBlockRegion with template injection</caption> @lang vue
+ * <DruxtBlock id="umami_branding">
+ *   <template #default="{ block }">
+ *     <!-- Do whatever you want here -->
+ *     <DruxtDebug :json="block" />
+ *   </template>
+ * </DruxtBlock>
  */
 export default {
   name: 'DruxtBlockRegion',

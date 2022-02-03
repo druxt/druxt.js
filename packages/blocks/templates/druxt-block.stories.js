@@ -53,7 +53,7 @@ export const Wrapper = (args, { argTypes }) => ({
 })
 Wrapper.parameters = {
   docs: {
-    storyDescription: 'The DruxtBlock component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately name component, using the relevant component, with the following boilerplate:\n\n```jsx\n' + code + '\n```',
+    storyDescription: 'The DruxtBlock component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' + code + '\n```',
     source: { code }
   }
 }
@@ -62,7 +62,7 @@ Wrapper.parameters = {
 code = `<DruxtBlock id="">
   <template #default="{ block }">
     <!-- Do whatever you want here -->
-    <DruxtDebug :json="block" />
+    <DruxtDebug :json="block" open />
   </template>
 </DruxtBlock>`
 export const TemplateInjection = (args, { argTypes }) => ({
