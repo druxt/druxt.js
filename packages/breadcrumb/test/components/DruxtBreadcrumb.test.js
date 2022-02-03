@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 
 import { DruxtRouterStore } from '../../../router/src'
 import DruxtBreadcrumb from '../../src/components/DruxtBreadcrumb.vue'
+import DruxtDebug from '../../../druxt/src/components/DruxtDebug.vue'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -35,7 +36,9 @@ const mountComponent = ({ path, routes, propsData, options }) => {
     store.commit('druxtRouter/setRoute', path)
   }
 
-  return shallowMount(DruxtBreadcrumb, { store, localVue, mocks, propsData, ...options })
+  const components = { DruxtDebug }
+
+  return shallowMount(DruxtBreadcrumb, { components, store, localVue, mocks, propsData, ...options })
 }
 
 describe('DruxtBreadcrumb', () => {

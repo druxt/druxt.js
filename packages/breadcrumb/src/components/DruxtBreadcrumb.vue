@@ -3,7 +3,8 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions, mapState } from 'vuex'
 
 /**
- * Renders a list of breacrumbs based on the active route.
+ * The DruxtBreadcrumb component renders a list of breadcrumbs based on the
+ * active route.
  *
  * @example @lang vue
  * <DruxtBreadcrumb />
@@ -26,6 +27,21 @@ export default {
     home: {
       type: Boolean,
       default: true
+    },
+
+    /**
+     * The Decoupled router path.
+     *
+     * If not set, the Vue router value will be used instead.
+     *
+     * @type {string}
+     *
+     * @example @lang vue
+     * <DruxtBreacrumb path="/node/1" />
+     */
+    path: {
+      type: String,
+      default: ''
     }
   },
 
@@ -57,26 +73,34 @@ export default {
      * Fetch Crumbs
      */
     async fetchCrumbs() {
-      // If there is no route, stop here.
-      if (!this.route || !Object.keys(this.route).length) return
+      const path = this.path || this.$route.path
+      let route = this.route
+      if (this.path && path !== this.$route.path) {
+        route = await this.getRoute(path)
+      }
+
+      // If there is no route, throw an error.
+      if (!route || !Object.keys(route).length) {
+        throw new Error('No route data available.')
+      }
 
       // If we are at the root and don't want a home crumb, stop here.
-      if (this.$route.path === '/' && !this.home) return
+      if (path === '/' && !this.home) return
 
       // Current route crumb.
       const crumbs = []
-      if (this.route.label) {
-        crumbs.push({ text: this.route.label })
+      if (route.label) {
+        crumbs.push({ text: route.label })
       }
 
       // If we are at the root of the site, stop here.
-      if (this.$route.path === '/') {
+      if (path === '/') {
         this.model = crumbs
         return
       }
 
       // Add crumbs for route parents.
-      const paths = this.$route.path.split('/').filter(String)
+      const paths = path.split('/').filter(String)
       paths.pop()
       while (paths.length > 0) {
         const to = '/' + paths.join('/')
