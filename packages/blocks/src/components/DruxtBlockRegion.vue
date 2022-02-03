@@ -71,6 +71,16 @@ export default {
     })
   },
 
+  watch: {
+    name() {
+      this.$fetch()
+    },
+
+    theme() {
+      this.$fetch()
+    }
+  },
+
   methods: {
     /**
      * Checks if a given block shoud be visible.
