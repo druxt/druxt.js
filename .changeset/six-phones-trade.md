@@ -2,4 +2,4 @@
 "druxt-blocks": minor
 ---
 
-Improved DruxtBlock and DruxtBlockRegion storybook stories.
+feat(#249): Improved DruxtBlock and DruxtBlockRegion storybook stories.
