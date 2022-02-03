@@ -2,7 +2,7 @@
 
 exports[`DruxtBreadcrumb 404 route 1`] = `
 "<div>
-  <druxtwrapper-stub></druxtwrapper-stub>
+  <druxtdebug-stub json=\\"[object Object]\\" summary=\\"No route data available.\\"></druxtdebug-stub>
 </div>"
 `;
 
@@ -13,6 +13,12 @@ exports[`DruxtBreadcrumb level 1 1`] = `
 `;
 
 exports[`DruxtBreadcrumb level 2 1`] = `
+"<div>
+  <druxtwrapper-stub crumbs=\\"[object Object],[object Object],[object Object]\\" value=\\"[object Object],[object Object],[object Object]\\"></druxtwrapper-stub>
+</div>"
+`;
+
+exports[`DruxtBreadcrumb manual path 1`] = `
 "<div>
   <druxtwrapper-stub crumbs=\\"[object Object],[object Object],[object Object]\\" value=\\"[object Object],[object Object],[object Object]\\"></druxtwrapper-stub>
 </div>"
