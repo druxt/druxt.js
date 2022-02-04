@@ -2,4 +2,4 @@
 "druxt": minor
 ---
 
-Added DruxtModule story to storybook.
+feat(#249): Added DruxtModule story to storybook.

@@ -28,7 +28,7 @@ export default async function ({ stories }) {
   // DruxtBlock instance stories.
   blocks.forEach((block) => {
     addTemplate({
-      src: resolve(__dirname, `../templates/druxt-block-instance.stories.js`),
+      src: resolve(__dirname, `../templates/druxt-block.instance.stories.js`),
       fileName: `stories/druxt-block.${block.attributes.drupal_internal__id}.stories.js`,
       options: {
         block,
@@ -52,7 +52,7 @@ export default async function ({ stories }) {
     const regions = Array.from(new Set(blocks.filter((o) => o.attributes.theme === theme).map((o) => o.attributes.region)))
     regions.forEach((region) => {
       addTemplate({
-        src: resolve(__dirname, `../templates/druxt-block-region-instance.stories.js`),
+        src: resolve(__dirname, `../templates/druxt-block-region.instance.stories.js`),
         fileName: `stories/druxt-block-region.${theme}.${region}.stories.js`,
         options: {
           region,
