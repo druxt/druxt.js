@@ -19,7 +19,6 @@ import { mapActions } from 'vuex'
  *   mode="teaser"
  * />
  *
- *
  * @example <caption>DruxtEntity Wrapper component boilerplate</caption> @lang vue
  * <template>
  *   <DruxtDebug :json="entity" />
@@ -289,7 +288,7 @@ export default {
     ]),
 
     /**
-     * Fetch Schema.
+     * Fetches the Druxt schema object.
      */
     async fetchConfig() {
       try {
@@ -304,9 +303,15 @@ export default {
     },
 
     /**
-     * Fetch Entity resource.
+     * Fetches the content entity JSON:API resource.
      */
     async fetchData(settings) {
+      if (!this.type) return
+
+      if ((this.schemaType || 'view') === 'view' && !this.uuid && !this.value) {
+        throw new Error('Missing required props: uuid.')
+      }
+
       if (this.uuid && !this.value) {
         const query = this.getQuery(settings)
         const resource = await this.getResource({ type: this.type, id: this.uuid, query })
