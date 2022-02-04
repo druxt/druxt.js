@@ -1,81 +1,76 @@
 import DruxtEntityForm from 'druxt-entity/dist/components/DruxtEntityForm.vue'
 
 export default {
-  title: '<%= options.title %>',
+  title: 'Druxt/Entity/DruxtEntityForm',
   component: DruxtEntityForm,
   argTypes: {
-    error: {
-      action: 'error',
-    },
-    input: {
-      action: 'input',
-    },
-    submit: {
-      action: 'submit',
-    },
-    reset: {
-      action: 'reset',
-    },
-    mode: {
-      options: [<%= (options.displays || []).map((s) => `'${s}'`).join(', ') %>],
+    type: {
+      options: [<%= (options.entityTypes || []).map(({ entity, bundles }) => bundles.map((bundle) => `'${entity}--${bundle}'`)).join(', ') %>],
       control: {
-        type: 'select',
-      },
+        type: 'select'
+      }
     },
     schemaType: {
-      options: ['view', 'form'],
-      control: {
-        type: 'select',
-      },
-    },
-    type: {},
-    uuid: {
-      options: [<%= (options.entities || []).map((o) => `'${o.id}'`).join(', ') %>],
-      control: {
-        type: 'select',
-      },
-    },
-    value: {
-      control: {
-        type: 'object',
-      },
       table: {
-        category: 'props',
-      },
-    },
-  },
-  parameters: {
-    docs: {
-      description: {
-        component: 'The DruxtEntityForm component renders Drupal content entities via the "Form" displays provided by Drupal.'
+        disable: true
       }
     }
   }
 }
 
-const Template = (args, ctx) => {
-  return {
-    props: Object.keys(args),
-    template: '<DruxtEntityForm v-bind="$props" v-on="$props" />',
-  }
-}
+export const Default = (args, { argTypes }) => ({
+  components: { DruxtEntityForm },
+  props: Object.keys(argTypes),
+  template: `<DruxtEntityForm v-bind="$props" />`
+})
 
-<% for (mode of options.displays) { %>
-// Display: <%= mode %>.
-export const <%= mode.charAt(0).toUpperCase() + mode.slice(1) %> = Template.bind({})
-<%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.storyName = '<%= mode %>'
-<%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.args = {
-  mode: '<%= mode %>',
-  schemaType: 'form',
-  type: '<%= options.resourceType %>',
-  uuid: <%= devalue(((options.entities || [])[0] || {}).id || false) %>,
+let code
+
+// Wrapper story.
+code = `<template>
+  <DruxtDebug :json="entity" />
+</template>
+
+<script>
+import { DruxtEntityMixin } from 'druxt-entity'
+export default {
+  mixins: [DruxtEntityMixin]
 }
-<%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.parameters = {
+</script>`
+export const Wrapper = (args, { argTypes }) => ({
+  components: { DruxtEntityForm },
+  props: Object.keys(argTypes),
+  template: `<DruxtEntityForm v-bind="$props" ref="module">
+  <template #default>
+    Component options:
+    <ul>
+      <li v-for="option of $refs.module.getModuleComponents()" :key="option.name">{{ option.name }}</li>
+    </ul>
+  </template>
+</DruxtEntityForm>`
+})
+Wrapper.parameters = {
   docs: {
-    source: {
-      code: '<DruxtEntityForm\n  mode="<%= mode %>"\n  type="<%= options.resourceType %>"\n  uuid=<%= devalue(((options.entities || [])[0] || {}).id || false) %>\n/>'
-    }
+    storyDescription: 'The DruxtEntityForm component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' + code + '\n```',
+    source: { code }
   }
 }
 
-<% } %>
+// Template injection story.
+code = `<DruxtEntityForm type="" uuid="">
+  <template #default="{ entity }">
+    <!-- Do whatever you want here -->
+    <DruxtDebug :json="entity" open />
+  </template>
+</DruxtEntityForm>`
+export const TemplateInjection = (args, { argTypes }) => ({
+  components: { DruxtEntityForm },
+  props: Object.keys(argTypes),
+  template: code.replace('type="" uuid=""', 'v-bind="$props"')
+})
+TemplateInjection.parameters = {
+  docs: {
+    storyDescription: 'The DruxtEntityForm component can be themed by injecting the default template into the compomnent.\n\n```jsx\n' + code + '\n```',
+    source: { code }
+  }
+}

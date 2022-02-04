@@ -6,10 +6,10 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions } from 'vuex'
 
 /**
- * Renders a Drupal Content Entity by JSON:API resource type, UUID, view
- * mode and schema type.
- *
- * Fields are rendered as Druxt Field components, based on the Drupal display
+ * The DruxtEntity component renders a Drupal Content Entity by JSON:API
+ * resource type, UUID, view mode and schema type.
+*
+ * Fields are rendered as DruxtField components, based on the Drupal display
  * mode configuration.
  *
  * @example @lang vue
@@ -18,6 +18,26 @@ import { mapActions } from 'vuex'
  *   :uuid="uuid"
  *   mode="teaser"
  * />
+ *
+ *
+ * @example <caption>DruxtEntity Wrapper component boilerplate</caption> @lang vue
+ * <template>
+ *   <DruxtDebug :json="entity" />
+ * </template>
+ *
+ * <script>
+ * import { DruxtEntityMixin } from 'druxt-entity'
+ * export default {
+ *   mixins: [DruxtEntityMixin]
+ * }
+ *
+ * @example <caption>DruxtEntity with template injection</caption> @lang vue
+ * <DruxtEntity type="" uuid="">
+ *   <template #default="{ entity }">
+ *     <!-- Do whatever you want here -->
+ *     <DruxtDebug :json="entity" />
+ *   </template>
+ * </DruxtEntity>
  */
 export default {
   name: 'DruxtEntity',
