@@ -16,15 +16,11 @@
  * The DruxtDebug component can be used to render debug information that is
  * visible only when Nuxt is run in development mode.
  *
- * `<DruxtDebug>Debug information</DruxtDebug>`
- *
  * You can render your debug information through the default slot, or via the
  * **json** prop to format your data, or a combination of the two.
  *
- * `<DruxtDebug :json="entity">Debug information</DruxtDebug>`
- *
  * @example @lang vue
- * <DruxtDebug :json="entity" />
+ * <DruxtDebug :json="entity">Debug information</DruxtDebug>
  */
 export default {
   /** */

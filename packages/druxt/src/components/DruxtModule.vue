@@ -5,28 +5,11 @@ import Vue from 'vue'
 import DruxtWrapper from './DruxtWrapper.vue'
 
 /**
- * The DruxtModule component is the core component to be extended by core and
- * custom modules.
- *
- * ```
- * import DruxtModule from 'druxt/dist/components/DruxtModule.vue
- * export default {
- *   extends: DruxtModule
- * }
- * ```
+ * The DruxtModule component is used to make a Druxt module, simply import and
+ * extend the component to get started.
  *
  * The component provides access to the Druxt Wrapper theming and fetch system
  * via the druxt settings object.
- *
- * ```
- * druxt: {
- *   async fetchConfig() {},
- *   async fetchData() {},
- *   componentOptions: (context) => ([[context.value, 'default']]),
- *   propsData: (context) => ({ value: context.value }),
- *   slots(h) {}
- * }
- * ```
  *
  * @example @lang js
  * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
@@ -34,11 +17,18 @@ import DruxtWrapper from './DruxtWrapper.vue'
  *   name: 'DruxtTestModule',
  *   extends: DruxtModule,
  *   druxt: {
- *     componentOptions: () => ([['wrapper']]),
- *     propsData: (ctx) => ({
- *       bar: ctx.bar,
- *       foo: ctx.foo,
+ *     async fetchConfig() {},
+ *     async fetchData(settings) {},
+ *     componentOptions: (context) => ([[context.foo, context.bar, 'default']]),
+ *     propsData: (context) => ({
+ *       foo: context.foo,
+ *       bar: context.bar,
  *     }),
+ *     slots(h) {
+ *       return {
+ *         default: (attrs) => h('DruxtDebug', ['Hello world'])
+ *       }
+ *     }
  *   }
  * }
  */

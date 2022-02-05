@@ -22,10 +22,27 @@ Json.args = {
     links: {},
     attributes: {},
     relationships: {},
-  }
+  },
+  open: true,
+}
+Json.parameters = {
+  docs: {
+    storyDescription: 'The **json** prop takes any data and runs it through a basic JSON formatter for improved readability.',
+    source: {
+      code: '<DruxtDebug :json="entity" open>Debug information</DruxtDebug>'
+    },
+  },
 }
 
 export const Summary = Template.bind({})
 Summary.args = {
   summary: 'A brief debug message'
+}
+Summary.parameters = {
+  docs: {
+    storyDescription: 'The **summary** prop can be used to provide a quick explanation of the debug component.',
+    source: {
+      code: `<DruxtDebug summary="${Summary.args.sumary}">Debug information</DruxtDebug>`
+    },
+  },
 }
