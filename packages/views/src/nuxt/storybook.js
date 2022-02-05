@@ -28,14 +28,13 @@ export default async function ({ stories }) {
           : merge(display.default, item)
 
         const extenders = options.display_options.display_extenders
-        if (!Array.isArray(extenders) && !(extenders.jsonapi_views || {}).enabled) {
-          return false
-        }
+        const enabled = !(!Array.isArray(extenders) && !(extenders.jsonapi_views || {}).enabled)
 
-        return options.display_options.row.type.startsWith('entity:')
+        return enabled ? options.display_options.row.type.startsWith('entity:') : false
       })
 
     if (displays.length) {
+      console.log(123)
       views[drupal_internal__id] = {
         description,
         displays,

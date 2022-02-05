@@ -1,5 +1,5 @@
 import 'regenerator-runtime/runtime'
-import { createLocalVue, mount } from '@vue/test-utils'
+import { createLocalVue, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
@@ -23,13 +23,18 @@ const mocks = {
   $fetchState: {
     pending: true
   },
+  $nuxt: {
+    context: {
+      isDev: false,
+    }
+  },
   $route: {
     query: {}
   }
 }
 
-const stubs = ['DruxtEntity']
-const mountComponent = (propsData) => mount(DruxtView, { localVue, mocks, propsData, store, stubs })
+const stubs = ['DruxtDebug', 'DruxtEntity']
+const mountComponent = (propsData) => shallowMount(DruxtView, { localVue, mocks, propsData, store, stubs })
 
 describe('DruxtView', () => {
   beforeEach(() => {
@@ -81,6 +86,7 @@ describe('DruxtView', () => {
       display: wrapper.vm.display,
       filters: wrapper.vm.filters,
       results: wrapper.vm.results,
+      viewId: wrapper.vm.viewId,
     }
     expect(DruxtView.druxt.slots.call(slotsMock, h).results({}).length).toBe(8)
     expect(h).toHaveBeenCalledTimes(8)
@@ -246,6 +252,7 @@ describe('DruxtView', () => {
       results: [],
       showPager: true,
       showSorts: true,
+      viewId: 'test'
     }
     const slots = DruxtView.druxt.slots.call(mock, h)
 
@@ -263,5 +270,27 @@ describe('DruxtView', () => {
     expect(mock.model.page).toStrictEqual(null)
     slots.pager({ mock: 1 })
     expect(mock.model.page).toStrictEqual(1)
+  })
+
+  test('error - missing required props', async () => {
+    const wrapper = mountComponent({})
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    const h = jest.fn()
+    const slotsMock = {
+      $createElement: h,
+      display: wrapper.vm.display,
+      filters: wrapper.vm.filters,
+      results: wrapper.vm.results,
+      viewId: wrapper.vm.viewId,
+    }
+    const slots = DruxtView.druxt.slots.call(slotsMock, h)
+    expect(Object.entries(slots).length).toBe(1)
+    slots.default()
+    expect(h).toHaveBeenCalledWith(
+      'DruxtDebug',
+      expect.any(Object),
+      expect.any(Array)
+    )
   })
 })

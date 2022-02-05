@@ -77,25 +77,24 @@ export default async function ({ stories }) {
   entityTypes.forEach(({ entity, bundles }) => bundles.map((bundle) => {
     Object.entries({ view, form }).forEach(([type, schemas]) => {
       const displays = Array.from(new Set(schemas.filter((o) => o.attributes.targetEntityType === entity && o.attributes.bundle === bundle).map((o) => o.attributes.mode).sort((a) => (a === 'default' ? -1 : 0))))
-      if (!displays) {
-        return false
+
+      if (displays) {
+        const resourceType = `${entity}--${bundle}`
+        const component = type === 'view' ? 'druxt-entity' : 'druxt-entity-form'
+
+        addTemplate({
+          src: resolve(__dirname, `../templates/${component}.instance.stories.js`),
+          fileName: `stories/${component}.${resourceType}.stories.js`,
+          options: {
+            displays,
+            entities: entities.find((o) => o.resourceType === resourceType).entities,
+            resourceType,
+            title: titleFn(['Druxt', 'Entity', entity, bundle, `${type} displays`]),
+          },
+        })
+
+        stories.push(resolve(options.buildDir, `./stories/${component}.${resourceType}.stories.js`))
       }
-
-      const resourceType = `${entity}--${bundle}`
-      const component = type === 'view' ? 'druxt-entity' : 'druxt-entity-form'
-
-      addTemplate({
-        src: resolve(__dirname, `../templates/${component}.instance.stories.js`),
-        fileName: `stories/${component}.${resourceType}.stories.js`,
-        options: {
-          displays,
-          entities: entities.find((o) => o.resourceType === resourceType).entities,
-          resourceType,
-          title: titleFn(['Druxt', 'Entity', entity, bundle, `${type} displays`]),
-        },
-      })
-
-      stories.push(resolve(options.buildDir, `./stories/${component}.${resourceType}.stories.js`))
     })
   }))
 }
