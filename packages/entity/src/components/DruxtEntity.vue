@@ -8,7 +8,7 @@ import { mapActions } from 'vuex'
 /**
  * The DruxtEntity component renders a Drupal Content Entity by JSON:API
  * resource type, UUID, view mode and schema type.
-*
+ *
  * Fields are rendered as DruxtField components, based on the Drupal display
  * mode configuration.
  *
