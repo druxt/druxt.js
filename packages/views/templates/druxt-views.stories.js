@@ -1,42 +1,82 @@
 import DruxtView from 'druxt-views/dist/components/DruxtView.vue'
 
 export default {
-  title: <%= devalue(options.title) %>,
+  title: 'Druxt/Views/DruxtView',
   component: DruxtView,
   argTypes: {
-    displayId: {
-      options: [<%= options.displays.map(({ id }) => `'${id}'`).join(', ') %>],
+    uuid: {
+      options: [<%= (Object.values(options.views) || []).map((o) => `'${o.uuid}'`).join(', ') %>],
       control: {
         type: 'select',
+        labels: Object.fromEntries([<%= (Object.values(options.views) || []).map((o) => `['${o.uuid}', "${o.label} (${o.uuid})"]`).join(', ') %>])
       },
     },
-  },
-  parameters: {
-    docs: {
-      description: {
-        component: <%= options.description ? devalue(options.description) : '" "' %>
-      }
+    viewId: {
+      options: [<%= (Object.keys(options.views) || []).map((s) => `'${s}'`).join(', ') %>],
+      control: {
+        type: 'select',
+        labels: Object.fromEntries([<%= (Object.values(options.views) || []).map((o) => `['${o.viewId}', "${o.label} (${o.viewId})"]`).join(', ') %>])
+      },
     }
   }
 }
 
 const Template = (args, { argTypes }) => ({
-  props: Object.keys(args),
-  template: '<DruxtView v-bind="$props" v-on="$props" />',
+  components: { DruxtView },
+  props: Object.keys(argTypes),
+  template: `<DruxtView v-bind="$props" />`
 })
 
-<% for (display of options.displays) { %>
-export const <%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %> = Template.bind({})
-<%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %>.args = {
-  displayId: '<%= display.id %>',
-  viewId: '<%= options.viewId %>',
+export const Default = Template.bind({})
+Default.storyName = 'DruxtView'
+
+let code
+
+// Wrapper story.
+code = `<template>
+  <DruxtDebug :json="results" />
+</template>
+
+<script>
+import { DruxtViewsViewMixin } from 'druxt-views'
+export default {
+  mixins: [DruxtViewsViewMixin]
 }
-<%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %>.storyName = '<%= display.display_title %>'
-<%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %>.parameters = {
+</script>`
+export const Wrapper = (args, { argTypes }) => ({
+  components: { DruxtView },
+  props: Object.keys(argTypes),
+  template: `<DruxtView v-bind="$props" ref="module">
+  <template #default>
+    Component options:
+    <ul>
+      <li v-for="option of $refs.module.getModuleComponents()" :key="option.name">{{ option.name }}</li>
+    </ul>
+  </template>
+</DruxtView>`
+})
+Wrapper.parameters = {
   docs: {
-    source: {
-      code: '<DruxtView display-id="<%= display.id %>" view-id="<%= options.viewId %>" />'
-    }
+    storyDescription: 'The DruxtView component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' + code + '\n```',
+    source: { code }
   }
 }
-<% } %>
+
+// Template injection story.
+code = `<DruxtView viewId="">
+  <template #default="{ results }">
+    <!-- Do whatever you want here -->
+    <DruxtDebug :json="results" open />
+  </template>
+</DruxtView>`
+export const TemplateInjection = (args, { argTypes }) => ({
+  components: { DruxtView },
+  props: Object.keys(argTypes),
+  template: code.replace('viewId=""', 'v-bind="$props"')
+})
+TemplateInjection.parameters = {
+  docs: {
+    storyDescription: 'The DruxtView component can be themed by injecting the default template into the compomnent.\n\n```jsx\n' + code + '\n```',
+    source: { code }
+  }
+}

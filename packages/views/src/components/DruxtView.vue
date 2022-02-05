@@ -6,16 +6,40 @@ import { parse, stringify } from 'qs'
 import { mapActions } from 'vuex'
 
 /**
- * Renders a Drupal View using DruxtEntity components, using data provided by
- * the Drupal JSON:API Views module.
+ * The DruxtView component renders Drupal Views using configuration and
+ * results provided by the Drupal View and the JSON:API Views module.
  *
- * Supports filtering, pagination and sorting.
+ * The component renders slots for  the View's headers, footers, entity results,
+ * exposed sorts and filters, and supports contextual filters.
  *
- * @example
+ * @example @lang vue
+ * <DruxtView display-id="block_1" view-id="promoted_items" />
+ *
+ * @example <caption>View with contextual filter</caption> @lang vue
  * <DruxtView
+ *   :arguments="[entity.attributes.drupal_internal__nid]"
  *   display-id="block_1"
- *   view-id="promoted_items"
+ *   view-id="articles_aside"
  * />
+ *
+ * @example <caption>DruxtView Wrapper component boilerplate</caption> @lang vue
+ * <template>
+ *   <DruxtDebug :json="results" />
+ * </template>
+ *
+ * <script>
+ * import { DruxtViewsViewMixin } from 'druxt-views'
+ * export default {
+ *   mixins: [DruxtViewsViewMixin]
+ * }
+ *
+ * @example <caption>DruxtView with template injection</caption> @lang vue
+ * <DruxtView>
+ *   <template #default="{ results }">
+ *     <!-- Do whatever you want here -->
+ *     <DruxtDebug :json="results" />
+ *   </template>
+ * </DruxtView>
  */
 export default {
   name: 'DruxtView',
@@ -473,6 +497,17 @@ export default {
     slots(h) {
       // Build scoped slots.
       const scopedSlots = {}
+
+      // Ensure an ID or UUID.
+      if (!this.viewId && !this.uuid) {
+        return {
+          default: () => h(
+            'DruxtDebug',
+            { props: { summary: "Missing required 'uuid' or 'viewId' prop.", }},
+            [h('p', "The DruxtView component requires either the 'uuid' or 'viewId' prop to be set.")]
+          )
+        }
+      }
 
       // Headers.
       scopedSlots.header = () => Object.entries(this.headers).map(([key, header]) => h('span', {

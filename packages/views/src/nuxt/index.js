@@ -60,7 +60,6 @@ const DruxtViewsNuxtModule = function (moduleOptions = {}) {
 
   // Nuxt Storybook.
   this.nuxt.hook('storybook:config', async ({ stories }) => {
-    stories.push('druxt-views/dist/components/*.stories.mjs')
     await DruxtViewsStorybook.call(this, { stories })
   })
 }
