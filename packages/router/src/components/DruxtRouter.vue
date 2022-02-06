@@ -5,12 +5,9 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * The DruxtRouter component renders a Drupal decoupled route, or path, using
  * the appropriate Druxt component.
  *
- * `<DruxtRouter path="/" />`
+ * For instance, using the path `/node/1` would render a DruxtEntity component.
  *
- * If no Path is specified, the Vue router path will be used by default.
- *
- * For instance, using the `/node/1` route would result in a DruxtRouter
- * component for the content in Drupal with the Node ID of 1.
+ * The Vue router path will be used if not path is defined.
  *
  * @example <caption>Render using the Vue router path</caption> @lang vue
  * <DruxtRouter />
@@ -21,10 +18,22 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * @example <caption>Render the result of the model, bypasses Drupal backend</caption> @lang vue
  * <DruxtRouter v-model="route" />
  *
- * @example <caption>Render via a template</caption> @lang vue
+ * @example <caption>DruxtRouter Wrapper component boilerplate</caption> @lang vue
+ * <template>
+ *   <DruxtDebug :json="route" />
+ * </template>
+ *
+ * <script>
+ * import { DruxtRouterMixin } from 'druxt-router'
+ * export default {
+ *   mixins: [DruxtRouterMixin]
+ * }
+ *
+ * @example <caption>DruxtRouter with template injection</caption> @lang vue
  * <DruxtRouter>
  *   <template #default="{ route }">
- *     <DruxtRouter v-bind="route.props" />
+ *     <!-- Do whatever you want here -->
+ *     <DruxtDebug :json="route" open />
  *   </template>
  * </DruxtRouter>
  */
