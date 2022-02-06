@@ -10,11 +10,14 @@ export default {
         type: 'select',
       },
     },
+    type: { table: { disable: true }},
+    viewId: { table: { disable: true }},
+    uuid: { table: { disable: true }},
   },
   parameters: {
     docs: {
       description: {
-        component: <%= options.description ? devalue(options.description) : '" "' %>
+        component: <%= options.description ? devalue(options.description) : `"Renders the **${options.label}** view."` %> + '\n\n```jsx\n\n<DruxtView view-id="<%= options.viewId %>" />\n```'
       }
     }
   }

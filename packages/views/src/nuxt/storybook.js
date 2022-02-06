@@ -34,7 +34,6 @@ export default async function ({ stories }) {
       })
 
     if (displays.length) {
-      console.log(123)
       views[drupal_internal__id] = {
         description,
         displays,
@@ -65,7 +64,7 @@ export default async function ({ stories }) {
     addTemplate({
       src: resolve(__dirname, '../templates/druxt-views.instance.stories.js'),
       fileName: `stories/druxt-views.${viewId}.stories.js`,
-      options: { description, displays, title, uuid, viewId },
+      options: { description, displays, label, title, uuid, viewId },
     })
   }
 
