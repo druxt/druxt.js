@@ -1,5 +1,20 @@
 # druxt-views
 
+## 0.18.0
+
+### Minor Changes
+
+- b79701c: feat(#249): Improved DruxtView storybook stories and documentation.
+
+### Patch Changes
+
+- d7e92b2: feat(#249): Fixed errors in storybook.
+- Updated dependencies [b79701c]
+  - druxt-router@0.26.0
+  - druxt-blocks@0.15.0
+  - druxt@0.17.0
+  - druxt-entity@0.24.0
+
 ## 0.17.2
 
 ### Patch Changes

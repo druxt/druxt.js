@@ -1,6 +1,6 @@
 {
   "name": "druxt-schema",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Drupal Content Entity schema generator for Druxt with support for View and Form displays.",
   "keywords": [
     "cms",
@@ -41,7 +41,7 @@
   "dependencies": {
     "consola": "^2.15.0",
     "drupal-jsonapi-params": "^1.2.2",
-    "druxt": "^0.16.0"
+    "druxt": "^0.17.0"
   },
   "optionalDependencies": {
     "vue": "^2.6.14",

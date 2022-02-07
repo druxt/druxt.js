@@ -1,5 +1,12 @@
 # druxt-test-utils
 
+## 0.2.7
+
+### Patch Changes
+
+- Updated dependencies [b79701c]
+  - druxt@0.17.0
+
 ## 0.2.6
 
 ### Patch Changes

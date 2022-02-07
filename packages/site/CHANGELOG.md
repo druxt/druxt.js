@@ -1,5 +1,23 @@
 # druxt-site
 
+## 0.11.0
+
+### Minor Changes
+
+- b79701c: feat(#249): Improved DruxtSite storybook stories and documentation.
+
+### Patch Changes
+
+- Updated dependencies [b79701c]
+  - druxt-router@0.26.0
+  - druxt-blocks@0.15.0
+  - druxt@0.17.0
+  - druxt-views@0.18.0
+  - druxt-menu@0.16.0
+  - druxt-entity@0.24.0
+  - druxt-breadcrumb@0.14.0
+  - druxt-schema@0.10.1
+
 ## 0.10.5
 
 ### Patch Changes

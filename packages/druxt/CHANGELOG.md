@@ -1,5 +1,18 @@
 # druxt
 
+## 0.17.0
+
+### Minor Changes
+
+- b79701c: feat(#249): Added README story to storybook.
+- b79701c: Added required props error to DruxtModule components.
+- b79701c: feat(#249): Added DruxtModule story to storybook.
+- b79701c: feat(#249): Added DruxtDebug story to storybook.
+
+### Patch Changes
+
+- d7e92b2: feat(#249): Fixed errors in storybook.
+
 ## 0.16.0
 
 ### Minor Changes

@@ -1,5 +1,25 @@
 # druxt-breadcrumb
 
+## 0.14.0
+
+### Minor Changes
+
+- b79701c: feat(#249): Improved DruxtBreadcrumb storybook stories and documentation.
+- 0436de4: feat(#433): Added path prop to DruxtBreadcrumb component.
+
+  ```vue
+  <DruxtBreadcrumb path="/node/1" />
+  ```
+
+- e2b8500: feat(#429): Added watch for `home` and `path` to the DruxtBreadcrumb component.
+
+### Patch Changes
+
+- Updated dependencies [b79701c]
+  - druxt-router@0.26.0
+  - druxt-blocks@0.15.0
+  - druxt@0.17.0
+
 ## 0.13.4
 
 ### Patch Changes

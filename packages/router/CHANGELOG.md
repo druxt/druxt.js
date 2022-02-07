@@ -1,5 +1,17 @@
 # druxt-router
 
+## 0.26.0
+
+### Minor Changes
+
+- b79701c: Added debug and default slots to the DruxtRouter component.
+- b79701c: feat(#249): Improved DruxtRouter storybook stories and documentation.
+
+### Patch Changes
+
+- Updated dependencies [b79701c]
+  - druxt@0.17.0
+
 ## 0.25.0
 
 ### Minor Changes

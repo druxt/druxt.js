@@ -1,5 +1,17 @@
 # druxt-menu
 
+## 0.16.0
+
+### Minor Changes
+
+- b79701c: feat(#249): Improved DruxtMenu storybook stories and documentation.
+
+### Patch Changes
+
+- Updated dependencies [b79701c]
+  - druxt-blocks@0.15.0
+  - druxt@0.17.0
+
 ## 0.15.3
 
 ### Patch Changes

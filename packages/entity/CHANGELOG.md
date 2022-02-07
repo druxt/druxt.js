@@ -1,5 +1,19 @@
 # druxt-entity
 
+## 0.24.0
+
+### Minor Changes
+
+- b79701c: feat(#249): Improved DruxtEntity and DruxtEntityForm storybook stories and documentation.
+
+### Patch Changes
+
+- d7e92b2: feat(#249): Fixed errors in storybook.
+- Updated dependencies [b79701c]
+  - druxt-router@0.26.0
+  - druxt@0.17.0
+  - druxt-schema@0.10.1
+
 ## 0.23.0
 
 ### Minor Changes

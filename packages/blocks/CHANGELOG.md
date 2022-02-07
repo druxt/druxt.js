@@ -1,5 +1,38 @@
 # druxt-blocks
 
+## 0.15.0
+
+### Minor Changes
+
+- b79701c: Added detailed debug information for the DruxtBlock component.
+- 1db9584: feat(#429): Added watch for `id` and `uuid` to the DruxtBlock component.
+- b79701c: feat(#249): Improved DruxtBlock and DruxtBlockRegion storybook stories and documentation.
+- 6d763ce: feat(#112): Added DruxtBlocksRegionMixin
+
+  ```js
+  import { DruxtBlocksRegionMixin } from "druxt-blocks";
+  export default {
+    mixins: [DruxtBlocksRegionMixin]
+  };
+  ```
+
+- 34d8397: feat(#429): Added watch for `name` and `theme` to the DruxtBlockRegion component.
+
+### Patch Changes
+
+- d7e92b2: feat(#249): Fixed errors in storybook.
+- Updated dependencies [b79701c]
+- Updated dependencies [b79701c]
+- Updated dependencies [b79701c]
+- Updated dependencies [b79701c]
+- Updated dependencies [b79701c]
+- Updated dependencies [d7e92b2]
+- Updated dependencies [b79701c]
+- Updated dependencies [b79701c]
+  - druxt-router@0.26.0
+  - druxt@0.17.0
+  - druxt-entity@0.24.0
+
 ## 0.14.5
 
 ### Patch Changes
