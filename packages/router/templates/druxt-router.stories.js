@@ -13,7 +13,6 @@ export const Default = (args, { argTypes }) => ({
 })
 Default.args = { path: '/' }
 
-
 let code
 
 // Wrapper story.
