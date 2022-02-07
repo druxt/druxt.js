@@ -4,11 +4,30 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
 /**
- * Renders a Drupal menu using either the default Drupal content menus, or the
- * full menu via the JSON:API Menu Items module.
+ * The DruxtMenu component renders a Drupal menu using either the default
+ * Drupal content menus, or the full menu via the JSON:API Menu Items module.
  *
  * @example @lang vue
  * <DruxtMenu name="main" />
+ *
+ * @example <caption>DruxtMenu Wrapper component boilerplate</caption> @lang vue
+ * <template>
+ *   <DruxtDebug :json="items" />
+ * </template>
+ *
+ * <script>
+ * import { DruxtMenuMixin } from 'druxt-menu'
+ * export default {
+ *   mixins: [DruxtMenuMixin]
+ * }
+ *
+ * @example <caption>DruxtMenu with template injection</caption> @lang vue
+ * <DruxtMenu>
+ *   <template #default="{ items }">
+ *     <!-- Do whatever you want here -->
+ *     <DruxtDebug :json="items" />
+ *   </template>
+ * </DruxtMenu>
  */
 export default {
   name: 'DruxtMenu',
@@ -23,7 +42,7 @@ export default {
      * @example @lang vue
      * <DruxtMenu :depth="1" />
      *
-     * @type {integer}
+     * @type {number}
      * @default 0
      */
     depth: {
@@ -58,7 +77,7 @@ export default {
      * @example @lang vue
      * <DruxtMenu :max-depth="4" />
      *
-     * @type {integer}
+     * @type {number}
      */
     maxDepth: {
       type: Number,
@@ -71,7 +90,7 @@ export default {
      * @example @lang vue
      * <DruxtMenu :min-depth="2" />
      *
-     * @type {Integer}
+     * @type {number}
      * @default 0
      */
     minDepth: {
@@ -205,7 +224,7 @@ export default {
      * Recursively gets required menu items from the Vuex store.
      *
      * @param {object} [entity] - Current menu item entity.
-     * @param {integer} [position] - Current position in the menu tree,
+     * @param {number} [position] - Current position in the menu tree,
      */
     getMenuItems(entity = null, position = 0) {
       const items = []

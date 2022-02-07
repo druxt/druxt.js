@@ -14,31 +14,35 @@ parts
 export default async function ({ stories }) {
   const { addTemplate, options } = this
 
+  // Setup DruxtClient instance.
   const druxt = new DruxtClient(options.druxt.baseUrl, { ...options.druxt, proxy: { api: false } })
 
+  // Get all required data.
   const resourceType = 'menu--menu'
   const query = new DrupalJsonApiParams()
     .addFilter('status', 1)
     .addFields(resourceType, ['description', 'drupal_internal__id', 'label'])
-  const collections = await druxt.getCollectionAll(resourceType, query)
+  const menus = (await druxt.getCollectionAll(resourceType, query)).map((collection) => collection.data).flat()
 
-  // Write Menu stories.
-  for (const collection of collections) {
-    for (const menu of collection.data) {
-      const name = menu.attributes.drupal_internal__id
-      const { description, label } = menu.attributes
+  // DruxtMenu story.
+  addTemplate({
+    src: resolve(__dirname, `../templates/druxt-menu.stories.js`),
+    fileName: `stories/druxt-menu.stories.js`,
+    options: { menus }
+  })
+  stories.push(resolve(options.buildDir, './stories/druxt-menu.stories.js'))
 
-      const title = titleFn(['Druxt', 'Menu', label])
-      addTemplate({
-        src: resolve(__dirname, '../templates/druxt-menu.stories.js'),
-        fileName: `stories/druxt-menu.${name}.stories.js`,
-        options: { description, label, name, title },
-      })
-    }
-  }
+  // DruxtMenu instance stories.
+  menus.forEach((menu) => {
+    const name = menu.attributes.drupal_internal__id
+    const { description, label } = menu.attributes
 
-  // Add stories.
-  stories.push(
-    resolve(options.buildDir, './stories/druxt-menu.*.stories.js')
-  )
+    const title = titleFn(['Druxt', 'Menu', label])
+    addTemplate({
+      src: resolve(__dirname, '../templates/druxt-menu.instance.stories.js'),
+      fileName: `stories/druxt-menu.${name}.stories.js`,
+      options: { description, label, name, title },
+    })
+  })
+  stories.push(resolve(options.buildDir, './stories/druxt-menu.*.stories.js'))
 }

@@ -5,12 +5,9 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * The DruxtRouter component renders a Drupal decoupled route, or path, using
  * the appropriate Druxt component.
  *
- * `<DruxtRouter path="/" />`
+ * For instance, using the path `/node/1` would render a DruxtEntity component.
  *
- * If no Path is specified, the Vue router path will be used by default.
- *
- * For instance, using the `/node/1` route would result in a DruxtRouter
- * component for the content in Drupal with the Node ID of 1.
+ * The Vue router path will be used if not path is defined.
  *
  * @example <caption>Render using the Vue router path</caption> @lang vue
  * <DruxtRouter />
@@ -21,10 +18,22 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * @example <caption>Render the result of the model, bypasses Drupal backend</caption> @lang vue
  * <DruxtRouter v-model="route" />
  *
- * @example <caption>Render via a template</caption> @lang vue
+ * @example <caption>DruxtRouter Wrapper component boilerplate</caption> @lang vue
+ * <template>
+ *   <DruxtDebug :json="route" />
+ * </template>
+ *
+ * <script>
+ * import { DruxtRouterMixin } from 'druxt-router'
+ * export default {
+ *   mixins: [DruxtRouterMixin]
+ * }
+ *
+ * @example <caption>DruxtRouter with template injection</caption> @lang vue
  * <DruxtRouter>
  *   <template #default="{ route }">
- *     <DruxtRouter v-bind="route.props" />
+ *     <!-- Do whatever you want here -->
+ *     <DruxtDebug :json="route" open />
  *   </template>
  * </DruxtRouter>
  */
@@ -98,6 +107,9 @@ export default {
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({
+    debug: {
+      path: undefined,
+    },
     model: value,
   }),
 
@@ -196,7 +208,7 @@ export default {
       // Get the route from the Drupal decoupled router module via the
       // druxtRouter store.
       // Use the Path prop or the Vue Router as the route to lookup.
-      const path = this.path || this.$route.fullPath
+      const path = this.debug.path || this.path || this.$route.fullPath
       const route = await this.$store.dispatch('druxtRouter/getRoute', path)
       this.model = route
 
@@ -218,7 +230,37 @@ export default {
     propsData: ({ $route, path, model }) => ({
       path: path || $route.fullPath,
       route: model
-    })
+    }),
+
+    /**
+     * Provides the scoped slots object for the Module render function.
+     *
+     * - **debug**: A Debug component with a Path override field.
+     * - **default**: Default error handling.
+     *
+     * @example <caption>DruxtRouter**Module**.vue</caption> @lang vue
+     * <template>
+     *   <div>
+     *     <slot name="debug" />
+     *     {{ route.props }}
+     *   </div>
+     * </template>
+     *
+     * @return {ScopedSlots} The Scoped slots object.
+     */
+    slots(h) {
+      const scopedSlots = {}
+
+      // Provide defualt error message.
+      if (this.model.error) {
+        scopedSlots.default = () => h('div', [
+          h('h1', [`Error ${this.model.error.statusCode}`]),
+          h('p', [this.model.error.message]),
+        ])
+      }
+
+      return scopedSlots
+    }
   }
 }
 
@@ -265,5 +307,21 @@ export default {
  *     type: 'views',
  *   }
  * }
+ */
+
+/**
+ * Provides scoped slots for use in the Wrapper component.
+ *
+ * @typedef {object} ScopedSlots
+ * @param {function} debug - A Debug component with a Path override field.
+ * @param {function} default - Default error handling.
+ *
+ * @example <caption>DruxtRouter**Module**.vue</caption> @lang vue
+ * <template>
+ *   <div>
+ *     <slot name="debug" />
+ *     {{ route.props }}
+ *   </div>
+ * </template>
  */
 </script>

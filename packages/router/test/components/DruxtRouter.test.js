@@ -39,11 +39,11 @@ const mocks = {
   }
 }
 
-const mountComponent = (propsData, fullPath) => {
+const mountComponent = (propsData, fullPath, options = {}) => {
   if (fullPath) {
     mocks.$route = { fullPath }
   }
-  return mount(DruxtRouterComponent, { localVue, mocks, propsData, store, stubs })
+  return mount(DruxtRouterComponent, { localVue, mocks, propsData, store, stubs, ...options })
 }
 
 describe('DruxtRouterComponent', () => {
@@ -137,6 +137,41 @@ describe('DruxtRouterComponent', () => {
     expect(wrapper.vm.props).toBe(false)
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([])
+  })
+
+  test('Slots', async () => {
+    mocks.$nuxt.context.isDev = true
+
+    // Mock wrapper component.
+    const DruxtRouterError = {
+      name: 'DruxtRouterError',
+      render(h) {
+        return h('div', [this.$scopedSlots.default()])
+      }
+    }
+
+    // Simulate error.
+    const wrapper = mountComponent({}, '/error', {
+      components: { DruxtRouterError }
+    })
+    wrapper.vm.$fetch = wrapper.vm.$options.fetch
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Assert markup is a match for snapshot.
+    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.vm.component.slots.length).toBe(1)
+
+    // Build mocked slots.
+    const mock = {
+      ...wrapper.vm,
+      $createElement: jest.fn()
+    }
+    const mockedSlots = wrapper.vm.$options.druxt.slots.call(mock, mock.$createElement)
+
+    // Assert default slot.
+    mockedSlots.default()
+    expect(mock.$createElement).toBeCalledWith('h1', ['Error 404'])
+    expect(mock.$createElement).toBeCalledWith('p', ['Unable to resolve path /error.'])
   })
 
   test('Metatags', () => {

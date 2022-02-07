@@ -4,15 +4,33 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions, mapState } from 'vuex'
 
 /**
- * Renders all visible blocks by theme and region name.
+ * The DruxtBlockRegion component renders visible blocks based on region and
+ * theme.
  *
- * Additional, non-visible blocks are available as slots and props data.
+ * All blocks, including those not visible, are provided as slots for the Druxt
+ * Wrapper component.
  *
  * @example @lang vue
- * <DruxtBlockRegion
- *   name="header"
- *   theme="umami"
- * />
+ * <DruxtBlockRegion name="header" theme="umami" />
+ *
+ * @example <caption>DruxtBlockRegion Wrapper component boilerplate</caption> @lang vue
+ * <template>
+ *   <DruxtDebug :json="blocks" />
+ * </template>
+ *
+ * <script>
+ * import { DruxtBlocksRegionMixin } from 'druxt-blocks'
+ * export default {
+ *   mixins: [DruxtBlocksRegionMixin]
+ * }
+ *
+ * @example <caption>DruxtBlockRegion with template injection</caption> @lang vue
+ * <DruxtBlock id="umami_branding">
+ *   <template #default="{ block }">
+ *     <!-- Do whatever you want here -->
+ *     <DruxtDebug :json="block" />
+ *   </template>
+ * </DruxtBlock>
  */
 export default {
   name: 'DruxtBlockRegion',

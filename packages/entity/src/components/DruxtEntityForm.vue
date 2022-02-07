@@ -2,17 +2,40 @@
 import { default as DruxtEntity } from './DruxtEntity.vue'
 
 /**
- * Renders a Drupal Content Entity form with submission and validation support.
+ * The DruxtEntityForm component renders a Drupal Content Entity edit form by
+ * JSON:API resource type, UUID, view mode and schema type.
+ *
+ * Fields are rendered as DruxtField components, based on the Drupal display
+ * mode configuration.
  *
  * @example @lang vue
  * <DruxtEntityForm
  *   :type="resourceType"
  *   :uuid="uuid"
- *   mode="displayMode"
+ *   :mode="displayMode"
  *   v-on:error="onError()"
  *   v-on:reset="onReset()"
  *   v-on:submit="onSubmit()"
  * />
+ *
+ * @example <caption>DruxtEntityForm Wrapper component boilerplate</caption> @lang vue
+ * <template>
+ *   <DruxtDebug :json="entity" />
+ * </template>
+ *
+ * <script>
+ * import { DruxtEntityMixin } from 'druxt-entity'
+ * export default {
+ *   mixins: [DruxtEntityMixin]
+ * }
+ *
+ * @example <caption>DruxtEntityForm with template injection</caption> @lang vue
+ * <DruxtEntityForm type="">
+ *   <template #default="{ entity }">
+ *     <!-- Do whatever you want here -->
+ *     <DruxtDebug :json="entity" />
+ *   </template>
+ * </DruxtEntity>
  *
  * @extends DruxtEntity
  * @see {@link ./DruxtEntity|DruxtEntity}

@@ -119,6 +119,13 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
   // Add CLI badge.
   this.options.cli.badgeMessages.push(`${chalk.blue.bold('Druxt')} @ v${meta.version}`)
   this.options.cli.badgeMessages.push(`${chalk.bold('API:')} ${chalk.blue.underline(options.baseUrl + options.endpoint)}`)
+
+  // Nuxt Storybook.
+  this.nuxt.hook('storybook:config', async ({ stories }) => {
+    stories.push('druxt/stories/*.stories.mdx')
+    stories.push('druxt/dist/components/*.stories.mdx')
+    stories.push('druxt/dist/components/*.stories.mjs')
+  })
 }
 
 export { DruxtNuxtModule }

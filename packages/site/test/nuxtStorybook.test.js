@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import DruxtEntityStorybook from '../src/nuxtStorybook'
 
 jest.mock('axios')
@@ -15,5 +16,6 @@ const mock = {
 test('Nuxt Storybook', async () => {
   const stories = []
   await DruxtEntityStorybook.call(mock, { options: mock.options.druxt, stories })
-  expect(stories.length).toBe(4)
+  expect(stories.map((s) => s.replace(resolve(''), ''))).toMatchSnapshot()
+  expect(stories.length).toBe(2)
 })

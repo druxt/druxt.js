@@ -4,27 +4,20 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions } from 'vuex'
 
 /**
- * Renders all available block regions based on the specified theme.
+ * The DruxtSite component renders all available Drupal block regions and
+ * content, based on the specified theme.
+ *
+ * While Drupal provides placement configuration for blocks, it does not provide
+ * any information on where each region should be placed.
+ *
+ * All regions are provided as scoped slots for the Druxt Wrapper component.
  *
  * @example @lang vue
  * <template>
  *   <DruxtSite theme="umami" />
  * </template>
  *
-  * @example <caption>Default slot override</caption> @lang vue
- * <template>
- *   <DruxtSite theme="umami">
- *     <template #default="{ props, regions, theme }">
- *       <DruxtBlockRegion
- *         v-for="region of regions"
- *         :key="region"
- *         v-bind="props[region]"
- *       />
- *     </template>
- *   </DruxtSite>
- * </template>
- *
- * @example <caption>Wrapper component</caption> @lang vue
+ * @example <caption>DruxtSite Wrapper component boilerplate</caption> @lang vue
  * <template>
  *   <div>
  *     <slot name="header" />
@@ -33,16 +26,32 @@ import { mapActions } from 'vuex'
  *   </div>
  * </template>
  *
- * @see {@link https://blocks.druxtjs.org/api/components/DruxtBlockRegion|DruxtBlockRegion}
+ * <script>
+ * import { DruxtSiteMixin } from 'druxt-site'
+ * export default {
+ *   mixins: [DruxtSiteMixin]
+ * }
+ *
+ * @example <caption>DruxtSite with template injection</caption> @lang vue
+ * <DruxtSite>
+ *   <template #default="{ props, regions, theme }">
+ *     <!-- Do whatever you want here -->
+ *     <DruxtBlockRegion
+ *       v-for="region of regions"
+ *       :key="region"
+ *       v-bind="props[region]"
+ *     />
+ *   </template>
+ * </DruxtSite>
+ *
+ * @see {@link /api/packages/blocks/components/DruxtBlockRegion|DruxtBlockRegion}
  */
 export default {
   name: 'DruxtSite',
 
   extends: DruxtModule,
 
-  /**
-   * Vue.js Properties.
-   */
+  /** */
   props: {
     /**
      * Drupal theme ID.
@@ -62,9 +71,7 @@ export default {
     defaultTheme: ($druxt.settings.site || {}).theme,
   }),
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
     /**
      * DruxtBlockRegion propsData for regions.
@@ -157,15 +164,15 @@ export default {
      *
      * @return {ScopedSlots} The Scoped slots object.
      */
-    slots() {
+    slots(h) {
       // If no regions, return Nuxt component.
       if (!this.regions.length) {
-        return { default: () => this.$createElement('Nuxt') }
+        return { default: () => h('Nuxt') }
       }
 
       // Build scoped slots for each region.
       const scopedSlots = {
-        ...Object.fromEntries(this.regions.map((region) => [region, (attrs) => this.$createElement('DruxtBlockRegion', {
+        ...Object.fromEntries(this.regions.map((region) => [region, (attrs) => h('DruxtBlockRegion', {
           attrs,
           key: region,
           props: this.props[region],

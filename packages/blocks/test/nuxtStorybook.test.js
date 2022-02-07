@@ -15,5 +15,5 @@ const mock = {
 test('Nuxt Storybook', async () => {
   const stories = []
   await DruxtBlocksStorybook.call(mock, { stories })
-  expect(stories.length).toBe(71)
+  expect(stories.length).toBe(4)
 })

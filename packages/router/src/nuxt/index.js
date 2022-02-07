@@ -87,7 +87,12 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
 
   // Nuxt Storybook.
   this.nuxt.hook('storybook:config', async ({ stories }) => {
-    stories.push('druxt-router/dist/components/*.stories.mjs')
+    this.addTemplate({
+      src: resolve(__dirname, '../templates/druxt-router.stories.js'),
+      fileName: 'stories/druxt-router.stories.js',
+      options: {}
+    })
+    stories.push(resolve(this.options.buildDir, './stories/druxt-router.stories.js'))
   })
 }
 

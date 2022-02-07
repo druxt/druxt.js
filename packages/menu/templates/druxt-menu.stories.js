@@ -1,41 +1,72 @@
 import DruxtMenu from 'druxt-menu/dist/components/DruxtMenu.vue'
 
 export default {
-  title: '<%= options.title %>',
+  title: 'Druxt/Menu/DruxtMenu',
   component: DruxtMenu,
   argTypes: {
-    name: { control: null },
-    depth: {
+    name: {
+      options: [<%= (options.menus || []).map((menu) => `'${menu.attributes.drupal_internal__id}'`).join(', ') %>],
       control: {
-        type: 'number',
-        min: 0
+        type: 'select',
+        labels: Object.fromEntries([<%= (options.menus || []).map((o) => `['${o.attributes.drupal_internal__id}', "${o.attributes.label}"]`).join(', ') %>])
       }
-    }
-  },
-  parameters: {
-    docs: {
-      description: {
-        component: '<%= options.description || " " %>'
-      }
-    }
+    },
   }
 }
 
-const Template = (args, { argTypes }) => {
-  return {
-    props: Object.keys(args),
-    template: '<DruxtMenu v-bind="$props" v-on="$props" />',
-  }
-}
+export const Default = (args, { argTypes }) => ({
+  components: { DruxtMenu },
+  props: Object.keys(argTypes),
+  template: `<DruxtMenu v-bind="$props" />`
+})
 
-export const Default = Template.bind({})
-Default.args = {
-  name: '<%= options.name %>',
+let code
+
+// Wrapper story.
+code = `<template>
+  <DruxtDebug :json="items" />
+</template>
+
+<script>
+import { DruxtMenuMixin } from 'druxt-menu'
+export default {
+  mixins: [DruxtMenuMixin]
 }
-Default.parameters = {
+</script>`
+export const Wrapper = (args, { argTypes }) => ({
+  components: { DruxtMenu },
+  props: Object.keys(argTypes),
+  template: `<DruxtMenu v-bind="$props" ref="module">
+  <template #default>
+    Component options:
+    <ul>
+      <li v-for="option of $refs.module.getModuleComponents()" :key="option.name">{{ option.name }}</li>
+    </ul>
+  </template>
+</DruxtMenu>`
+})
+Wrapper.parameters = {
   docs: {
-    source: {
-      code: '<DruxtMenu name="<%= options.name %>" />'
-    }
+    storyDescription: 'The DruxtMenu component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' + code + '\n```',
+    source: { code }
+  }
+}
+
+// Template injection story.
+code = `<DruxtMenu name="">
+  <template #default="{ items }">
+    <!-- Do whatever you want here -->
+    <DruxtDebug :json="items" open />
+  </template>
+</DruxtMenu>`
+export const TemplateInjection = (args, { argTypes }) => ({
+  components: { DruxtMenu },
+  props: Object.keys(argTypes),
+  template: code.replace('name=""', 'v-bind="$props"')
+})
+TemplateInjection.parameters = {
+  docs: {
+    storyDescription: 'The DruxtMenu component can be themed by injecting the default template into the compomnent.\n\n```jsx\n' + code + '\n```',
+    source: { code }
   }
 }

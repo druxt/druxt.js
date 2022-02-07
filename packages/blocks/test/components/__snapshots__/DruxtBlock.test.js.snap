@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component - DruxtBlock error - missing required props 1`] = `
+"<div>
+  <div>
+    <druxtdebug-stub>
+      <div>
+        <p>The DruxtBlock component requires either the 'id' or 'uuid' prop to be set.</p>
+      </div>
+    </druxtdebug-stub>
+  </div>
+</div>"
+`;

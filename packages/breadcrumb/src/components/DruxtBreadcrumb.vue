@@ -11,6 +11,25 @@ import { mapActions, mapState } from 'vuex'
  *
  * @example @lang vue
  * <DruxtBreadcrumb path="/node/1" />
+ *
+ * @example <caption>DruxtBreadcrumb Wrapper component boilerplate</caption> @lang vue
+ * <template>
+ *   <DruxtDebug :json="crumbs" />
+ * </template>
+ *
+ * <script>
+ * import { DruxtBreadcrumbMixin } from 'druxt-breadcrumb'
+ * export default {
+ *   mixins: [DruxtBreadcrumbMixin]
+ * }
+ *
+ * @example <caption>DruxtBreadcrumb with template injection</caption> @lang vue
+ * <DruxtBreadcrumb>
+ *   <template #default="{ crumbs }">
+ *     <!-- Do whatever you want here -->
+ *     <DruxtDebug :json="crumbs" />
+ *   </template>
+ * </DruxtBreadcrumb>
  */
 export default {
   name: 'DruxtBreadcrumb',

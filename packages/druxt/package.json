@@ -34,6 +34,7 @@
   "module": "dist/druxt.esm.js",
   "files": [
     "dist",
+    "stories",
     "templates"
   ],
   "dependencies": {
@@ -45,6 +46,9 @@
     "md5": "^2.3.0",
     "querystring": "^0.2.0",
     "scule": "^0.2.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-docs": "^6.4.13"
   },
   "peerDependencies": {
     "consola": "*"

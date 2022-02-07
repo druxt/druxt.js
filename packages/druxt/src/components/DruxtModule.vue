@@ -5,7 +5,11 @@ import Vue from 'vue'
 import DruxtWrapper from './DruxtWrapper.vue'
 
 /**
- * Base component for core and custom Druxt modules.
+ * The DruxtModule component is used to make a Druxt module, simply import and
+ * extend the component to get started.
+ *
+ * The component provides access to the Druxt Wrapper theming and fetch system
+ * via the druxt settings object.
  *
  * @example @lang js
  * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
@@ -13,11 +17,18 @@ import DruxtWrapper from './DruxtWrapper.vue'
  *   name: 'DruxtTestModule',
  *   extends: DruxtModule,
  *   druxt: {
- *     componentOptions: () => ([['wrapper']]),
- *     propsData: (ctx) => ({
- *       bar: ctx.bar,
- *       foo: ctx.foo,
+ *     async fetchConfig() {},
+ *     async fetchData(settings) {},
+ *     componentOptions: (context) => ([[context.foo, context.bar, 'default']]),
+ *     propsData: (context) => ({
+ *       foo: context.foo,
+ *       bar: context.bar,
  *     }),
+ *     slots(h) {
+ *       return {
+ *         default: (attrs) => h('DruxtDebug', ['Hello world'])
+ *       }
+ *     }
  *   }
  * }
  */
@@ -297,6 +308,18 @@ export default {
      */
     getScopedSlots() {
       const h = this.$createElement
+
+      // Get an array of unmet required props.
+      const required = Object.entries(this.$options.props)
+        .filter(([k, o]) => o.required && !this[k])
+        .map(([k]) => k)
+      // Return debug error if any missing props are found.
+      if (required.length) {
+        return {
+          default: () => h('DruxtDebug', { props: { summary: `Missing required props: ${required.join(', ')}.` } })
+        }
+      }
+
       const scopedSlots = typeof (this.$options.druxt || {}).slots === 'function'
         ? this.$options.druxt.slots.call(this, h)
         : {}

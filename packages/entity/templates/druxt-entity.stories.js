@@ -1,77 +1,77 @@
 import DruxtEntity from 'druxt-entity/dist/components/DruxtEntity.vue'
 
 export default {
-  title: '<%= options.title %>',
+  title: 'Druxt/Entity/DruxtEntity',
   component: DruxtEntity,
   argTypes: {
-    input: {
-      action: 'input',
-    },
-    mode: {
-      options: [<%= (options.displays || []).map((s) => `'${s}'`).join(', ') %>],
+    type: {
+      options: [<%= (options.entityTypes || []).map(({ entity, bundles }) => bundles.map((bundle) => `'${entity}--${bundle}'`)).join(', ') %>],
       control: {
-        type: 'select',
-      },
-    },
-    settings: {
-      control: {
-        type: 'object',
-      },
+        type: 'select'
+      }
     },
     schemaType: {
       options: ['view', 'form'],
       control: {
-        type: 'select',
-      },
-    },
-    type: {},
-    uuid: {
-      options: [<%= (options.entities || []).map((o) => `'${o.id}'`).join(', ') %>],
-      control: {
-        type: 'select',
-      },
-    },
-    value: {
-      control: {
-        type: 'object',
-      },
-      table: {
-        category: 'props',
-      },
-    },
-  },
-  parameters: {
-    docs: {
-      description: {
-        component: 'The DruxtEntity component renders Drupal content entities via the "View" displays provided by Drupal.'
-      },
-    },
-  },
-}
-
-const Template = (args) => {
-  return {
-    props: Object.keys(args),
-    template: '<DruxtEntity v-bind="$props" v-on="$props" />',
-  }
-}
-
-<% for (mode of options.displays) { %>
-// Display: <%= mode %>.
-export const <%= mode.charAt(0).toUpperCase() + mode.slice(1) %> = Template.bind({})
-<%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.storyName = '<%= mode %>'
-<%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.args = {
-  mode: '<%= mode %>',
-  schemaType: 'view',
-  type: '<%= options.resourceType %>',
-  uuid: <%= devalue(((options.entities || [])[0] || {}).id || false) %>,
-}
-<%= mode.charAt(0).toUpperCase() + mode.slice(1) %>.parameters = {
-  docs: {
-    source: {
-      code: '<DruxtEntity\n  mode="<%= mode %>"\n  type="<%= options.resourceType %>"\n  uuid=<%= devalue(((options.entities || [])[0] || {}).id || false) %>\n/>'
+        type: 'select'
+      }
     }
   }
 }
 
-<% } %>
+export const Default = (args, { argTypes }) => ({
+  components: { DruxtEntity },
+  props: Object.keys(argTypes),
+  template: `<DruxtEntity v-bind="$props" />`
+})
+
+let code
+
+// Wrapper story.
+code = `<template>
+  <DruxtDebug :json="entity" />
+</template>
+
+<script>
+import { DruxtEntityMixin } from 'druxt-entity'
+export default {
+  mixins: [DruxtEntityMixin]
+}
+</script>`
+export const Wrapper = (args, { argTypes }) => ({
+  components: { DruxtEntity },
+  props: Object.keys(argTypes),
+  template: `<DruxtEntity v-bind="$props" ref="module">
+  <template #default>
+    Component options:
+    <ul>
+      <li v-for="option of $refs.module.getModuleComponents()" :key="option.name">{{ option.name }}</li>
+    </ul>
+  </template>
+</DruxtEntity>`
+})
+Wrapper.parameters = {
+  docs: {
+    storyDescription: 'The DruxtEntity component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' + code + '\n```',
+    source: { code }
+  }
+}
+
+// Template injection story.
+code = `<DruxtEntity type="" uuid="">
+  <template #default="{ entity }">
+    <!-- Do whatever you want here -->
+    <DruxtDebug :json="entity" open />
+  </template>
+</DruxtEntity>`
+export const TemplateInjection = (args, { argTypes }) => ({
+  components: { DruxtEntity },
+  props: Object.keys(argTypes),
+  template: code.replace('type="" uuid=""', 'v-bind="$props"')
+})
+TemplateInjection.parameters = {
+  docs: {
+    storyDescription: 'The DruxtEntity component can be themed by injecting the default template into the compomnent.\n\n```jsx\n' + code + '\n```',
+    source: { code }
+  }
+}
