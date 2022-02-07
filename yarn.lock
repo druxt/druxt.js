@@ -10486,7 +10486,7 @@ __metadata:
     jest-junit: 13.0.0
     jest-mock-axios: 4.4.1
     regenerator-runtime: 0.13.9
-    renovate: 27.31.0
+    renovate: 27.31.10
     rimraf: 3.0.2
     siroc: 0.14.0
     vue: 2.6.14
@@ -18845,9 +18845,9 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"renovate@npm:27.31.0":
-  version: 27.31.0
-  resolution: "renovate@npm:27.31.0"
+"renovate@npm:27.31.10":
+  version: 27.31.10
+  resolution: "renovate@npm:27.31.10"
   dependencies:
     "@aws-sdk/client-ecr": 3.25.0
     "@breejs/later": 4.0.2
@@ -18928,7 +18928,7 @@ fsevents@^1.2.7:
   bin:
     renovate: dist/renovate.js
     renovate-config-validator: dist/config-validator.js
-  checksum: 5b098db8777e1fdeb55fea676a4424b2ae99c2e5be9ff8522b95cf015bc795c42e7d04d50b5f95545d671dea442f0aa6b43a05745c9abbb59534eb5035bd0ebb
+  checksum: f5223fc0e9ee49b247be81f3ffbcbfe67688d228d66170041fcf7944566d52c8ab0f12ddc2528173c60291b4d78c4f326fd6e35603bf11a740c4212997de8e10
   languageName: node
   linkType: hard
 
