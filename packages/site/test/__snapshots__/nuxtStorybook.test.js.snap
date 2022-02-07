@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Nuxt Storybook 1`] = `
+Array [
+  "/workspace/druxt.js/stories/druxt-site.stories.js",
+  "/workspace/druxt.js/stories/druxt-site.*.stories.js",
+]
+`;
