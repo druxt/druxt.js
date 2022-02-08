@@ -36,7 +36,7 @@ export default {
       options: [<%= (options.entities || []).map((o) => `'${o.id}'`).join(', ') %>],
       control: {
         type: 'select',
-        labels: Object.fromEntries([<%= (options.entities || []).map((o) => `['${o.id}', "${o.title} (${o.id})"]`).join(', ') %>])
+        labels: Object.fromEntries([<%= (options.entities || []).map((o) => `['${o.id}', '${o.title.replace(/\'/g, "\\'")} (${o.id})']`).join(', ') %>])
       },
     },
     value: {
