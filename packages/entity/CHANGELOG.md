@@ -1,5 +1,11 @@
 # druxt-entity
 
+## 0.24.1
+
+### Patch Changes
+
+- d65eb40: fix(#438): fixed DruxtEntity and DruxtEntityForm stories.
+
 ## 0.24.0
 
 ### Minor Changes
