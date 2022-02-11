@@ -4873,7 +4873,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-docs@npm:^6.4.13":
+"@storybook/addon-docs@npm:6.4.13":
   version: 6.4.13
   resolution: "@storybook/addon-docs@npm:6.4.13"
   dependencies:
@@ -10500,7 +10500,7 @@ __metadata:
   resolution: "druxt@workspace:packages/druxt"
   dependencies:
     "@nuxtjs/proxy": ^2.1.0
-    "@storybook/addon-docs": ^6.4.13
+    "@storybook/addon-docs": 6.4.13
     axios: ^0.21.1
     chalk: ^4.1.2
     core-js: ^3.16.1
