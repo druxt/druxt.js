@@ -23,7 +23,7 @@
     "lint:renovate": "renovate-config-validator",
     "package": "siroc run yarn pack --workspaces",
     "postinstall": "husky install",
-    "test": "jest",
+    "test": "NODE_OPTIONS=--unhandled-rejections=warn jest",
     "version": "changeset version"
   },
   "devDependencies": {
