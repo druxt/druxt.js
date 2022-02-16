@@ -1,13 +1,12 @@
 {
   "extends": [
-    "config:base"
+    "@nuxtjs"
   ],
   "labels": ["dependencies"],
   "packageRules": [
     {
       "groupName": "examples",
-      "matchPaths": ["examples/**"],
-      "extends": [":semanticCommitTypeAll(chore)"]
+      "matchPaths": ["examples/**"]
     },
     {
       "groupName": "eslint",
