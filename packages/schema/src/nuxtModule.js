@@ -57,14 +57,19 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
     options
   })
 
+  // Generate schemas.
   this.nuxt.hook('builder:prepared', async () => {
-    // Generate schemas.
     const druxtSchema = new DruxtSchema(options.baseUrl, {
       ...options,
       // Disable API Proxy, as Proxies aren't available at build.
       proxy: { ...options.proxy || {}, api: false },
     })
     const { schemas } = await druxtSchema.get()
+
+    // Throw error if no schema files generated.
+    if (!Object.entries(schemas).length) {
+      throw new Error('No Druxt Schema files generated.\n Have you created any content types yet?')
+    }
 
     for (const name in schemas) {
       const schema = schemas[name]
@@ -77,7 +82,7 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
       })
     }
 
-    consola.success('Druxt schema generated')
+    consola.success('Druxt schema files generated')
   })
 }
 
