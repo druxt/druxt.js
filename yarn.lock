@@ -7419,15 +7419,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.26.0":
-  version: 0.26.0
-  resolution: "axios@npm:0.26.0"
-  dependencies:
-    follow-redirects: ^1.14.8
-  checksum: d7a8b898f4157bedeb2e06c03b16133b91b354c041205bea732ce58b7a21f373d22057b0eea0d482838145ce6ff482b359750d9bcb8dd19d45e3928e3c65c280
-  languageName: node
-  linkType: hard
-
 "azure-devops-node-api@npm:11.0.1":
   version: 11.0.1
   resolution: "azure-devops-node-api@npm:11.0.1"
@@ -10637,7 +10628,6 @@ __metadata:
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/proxy": ^2.1.0
     "@storybook/addon-docs": ^6.4.13
-    axios: ^0.26.0
     chalk: ^4.1.2
     core-js: ^3.16.1
     deepmerge: ^4.2.2
@@ -10648,6 +10638,7 @@ __metadata:
     vue: ^2.6.14
     vuex: ^3.6.2
   peerDependencies:
+    axios: "*"
     consola: "*"
   dependenciesMeta:
     core-js:
@@ -11929,16 +11920,6 @@ __metadata:
     debug:
       optional: true
   checksum: 7381a55bdc6951c5c1ab73a8da99d9fa4c0496ce72dba92cd2ac2babe0e3ebde9b81c5bca889498ad95984bc773d713284ca2bb17f1b1e1416e5f6531e39a488
-  languageName: node
-  linkType: hard
-
-"follow-redirects@npm:^1.14.8":
-  version: 1.14.8
-  resolution: "follow-redirects@npm:1.14.8"
-  peerDependenciesMeta:
-    debug:
-      optional: true
-  checksum: 40c67899c2e3149a27e8b6498a338ff27f39fe138fde8d7f0756cb44b073ba0bfec3d52af28f20c5bdd67263d564d0d8d7b5efefd431de95c18c42f7b4aef457
   languageName: node
   linkType: hard
 
