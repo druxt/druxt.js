@@ -10,5 +10,6 @@ module.exports = {
     '^.+\\.(js)$': 'esbuild-jest',
     '^.+\\.(mjs)$': 'esbuild-jest',
     '^.+\\.(vue)$': 'vue-jest'
-  }
+  },
+  transformIgnorePatterns: ['/node_modules/(?!(druxt))']
 }
