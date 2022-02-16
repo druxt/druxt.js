@@ -10332,7 +10332,7 @@ __metadata:
     dmd: 6.0.0
     globby: 11.0.4
     jsdoc-to-markdown: 7.1.0
-    jsdoc-vuejs: 3.0.9
+    jsdoc-vuejs: 4.0.0
     jsdoc-vuex-plugin: 1.0.0
     markdown-it-task-lists: 2.1.1
     ncp: 2.0.0
@@ -14723,15 +14723,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jsdoc-vuejs@npm:3.0.9":
-  version: 3.0.9
-  resolution: "jsdoc-vuejs@npm:3.0.9"
+"jsdoc-vuejs@npm:4.0.0":
+  version: 4.0.0
+  resolution: "jsdoc-vuejs@npm:4.0.0"
   dependencies:
     ejs: ^3.0.1
   peerDependencies:
+    "@vue/compiler-sfc": ">= 3.0.0"
     jsdoc: ">=3.0.0"
-    vue-template-compiler: ">= 2.0.0"
-  checksum: 7a6038715cf67f73a0bd38ccb9ae6efe6ddb9820f02ca56ed88426b60589c3275476a2c840d7a0016e89e06990370e00e73b500b0cf6968d88507fe09a3c0261
+  checksum: e2b009f951630b3e587409a77e961bbee02638b9f7fb11542713cb806e5d857d4d1413f30d974e08a8834d73cd3a4677ca7fc54091d5c60343ef914bb96a658e
   languageName: node
   linkType: hard
 
