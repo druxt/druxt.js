@@ -27,8 +27,8 @@
     "version": "changeset version"
   },
   "devDependencies": {
-    "@babel/core": "7.15.8",
-    "@babel/preset-env": "7.15.8",
+    "@babel/core": "7.17.4",
+    "@babel/preset-env": "7.16.11",
     "@changesets/cli": "2.18.1",
     "@commitlint/cli": "15.0.0",
     "@commitlint/config-conventional": "15.0.0",
