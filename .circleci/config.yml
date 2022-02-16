@@ -57,7 +57,7 @@ jobs:
           command: yarn test --reporters=jest-junit --runInBand
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
-            NODE_OPTIONS: --max_old_space_size=8192
+            NODE_OPTIONS: --max_old_space_size=8192 --unhandled-rejections=warn
 
       - run:
           name: Upload coverage report
