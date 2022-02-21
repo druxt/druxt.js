@@ -75,12 +75,14 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
   }
 
   // Install the @nuxtjs/axios module.
-  this.options.axios = {
-    baseURL: options.baseUrl,
-    proxy: !!this.options.proxy,
-    ...this.options.axios
+  if (!options.axios) {
+    this.options.axios = {
+      baseURL: options.baseUrl,
+      proxy: !!this.options.proxy,
+      ...this.options.axios
+    }
+    this.addModule('@nuxtjs/axios')
   }
-  this.addModule('@nuxtjs/axios')
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
