@@ -19,12 +19,15 @@
   - https://umami-storybook.druxtjs.org
 - Quickstart repositories:
   - https://github.com/druxt/quickstart-druxt-site
+  - https://github.com/druxt/quickstart-druxt-site-tome
+  - https://github.com/druxt/quickstart-druxt-serverless
 
 
 ## Features
 
 - Fully Decoupled Drupal, with [Nuxt.js](https://github.com/nuxt/nuxt.js#features) in the frontend.
 - Drupal JSON:API Client with Vuex caching.
+  - Support for [nuxt/axios](https://axios.nuxtjs.org/) and [nuxt/auth](https://auth.nuxtjs.org/).
 - Modular Vue.js component library system.
 - Slot and Wrapper theming system.
 - API and File proxy.
@@ -32,7 +35,7 @@
 Learn more at https://druxtjs.org
 
 
-## Modules
+## Core modules
 
 - `druxt-blocks` - Decoupled Blocks and Regions
 - `druxt-breadcrumb` - Router based Breadcrumbs
@@ -46,14 +49,21 @@ Learn more at https://druxtjs.org
 
 ## Support
 
-Druxt is an open source project, built by the comunity for the community.
-
 Find support or get involved in building Druxt via the community channels:
+
 - [DruxtJS Discord server](https://discord.druxtjs.org)
 - **#druxt** Slack channel on [Drupal.org slack](https://drupal.org/slack)
 
 
 ## Contributing
+
+Druxt is an open source project, built by the comunity for the community.
+
+See the [Contributing guide](./CONTRIBUTING.md) for details on how to #get-involved.
+
+### Cloud development
+
+This repository is setup for development in the cloud using [gitpod.io](https://gitpod.io), to get started, click the link below, or navigate to: https://gitpod.io/#https://github.com/druxt/druxt.js
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/druxt/druxt.js)
 
