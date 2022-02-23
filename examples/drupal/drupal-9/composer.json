@@ -16,11 +16,14 @@
     ],
     "require": {
         "composer/installers": "^1.9",
+        "drupal-tome/tome_drush": "dev-master",
         "drupal/core-composer-scaffold": "^9.3",
         "drupal/core-project-message": "^9.3",
         "drupal/core-recommended": "^9.3",
         "drupal/druxt": "^1.0",
-        "drush/drush": "^10.5"
+        "drupal/simple_oauth": "^5.2",
+        "drupal/tome": "^1.5",
+        "drush/drush": "^11.0"
     },
     "require-dev": {
         "drupal/core-dev": "^9.3"
