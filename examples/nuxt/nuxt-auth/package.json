@@ -1,0 +1,13 @@
+{
+  "name": "example-nuxt-auth",
+  "dependencies": {
+    "@nuxtjs/auth-next": "latest",
+    "druxt": "link:../../../packages/druxt",
+    "nuxt": "latest"
+  },
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start"
+  }
+}
