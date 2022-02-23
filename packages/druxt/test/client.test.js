@@ -28,14 +28,31 @@ describe('DruxtClient', () => {
     const headers = { 'X-Druxt': true }
     expect(new DruxtClient(baseUrl, { axios: { headers } })).toBeInstanceOf(DruxtClient)
     expect(mockAxios.create).toHaveBeenCalledWith({ baseURL: baseUrl, headers })
+
+    // Instantiate client with custom axios instance.
+    const axios = jest.fn()
+    const client = new DruxtClient(baseUrl, { axios })
+    expect(client).toBeInstanceOf(DruxtClient)
+    expect(client.axios).toStrictEqual(axios)
   })
 
   test('debug', () => {
-    const druxt = new DruxtClient(baseUrl, { debug: true })
-    expect(druxt.axios.interceptors.request.use).toHaveBeenCalled()
+    const axios = jest.fn()
+    axios.interceptors = {
+      request: {
+        use: jest.fn((callback, err) => {
+          if (typeof callback === 'function') {
+            callback({ url: 'test' })
+          }
+          if (typeof err === 'function') {
+            err(new Error('test'))
+          }
+        })
+      }
+    }
 
-    // @todo - mock axios doesn't apply interceptors to mock requests, so this
-    // is currently untestable.
+    const druxt = new DruxtClient(baseUrl, { debug: true, axios })
+    expect(druxt.axios.interceptors.request.use).toHaveBeenCalled()
   })
 
   test('addHeaders', () => {

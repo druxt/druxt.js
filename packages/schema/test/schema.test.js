@@ -1,9 +1,11 @@
+import axios from 'axios'
+
 import { DruxtSchema } from '../src'
 
 jest.mock('axios')
 
 const baseUrl = 'https://demo-api.druxtjs.org'
-const options = {}
+const options = { axios }
 
 let schema
 

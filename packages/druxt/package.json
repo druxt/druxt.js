@@ -38,8 +38,8 @@
     "templates"
   ],
   "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/proxy": "^2.1.0",
-    "axios": "^0.21.1",
     "chalk": "^4.1.2",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.2.1",
@@ -51,6 +51,7 @@
     "@storybook/addon-docs": "^6.4.13"
   },
   "peerDependencies": {
+    "axios": "*",
     "consola": "*"
   },
   "optionalDependencies": {
