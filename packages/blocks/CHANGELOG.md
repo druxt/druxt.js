@@ -1,5 +1,14 @@
 # druxt-blocks
 
+## 0.15.1
+
+### Patch Changes
+
+- Updated dependencies [e3d5238]
+  - druxt@0.18.0
+  - druxt-entity@0.24.2
+  - druxt-router@0.26.1
+
 ## 0.15.0
 
 ### Minor Changes
@@ -21,13 +30,6 @@
 ### Patch Changes
 
 - d7e92b2: feat(#249): Fixed errors in storybook.
-- Updated dependencies [b79701c]
-- Updated dependencies [b79701c]
-- Updated dependencies [b79701c]
-- Updated dependencies [b79701c]
-- Updated dependencies [b79701c]
-- Updated dependencies [d7e92b2]
-- Updated dependencies [b79701c]
 - Updated dependencies [b79701c]
   - druxt-router@0.26.0
   - druxt@0.17.0

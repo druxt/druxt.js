@@ -1,5 +1,13 @@
 # druxt-schema
 
+## 0.10.2
+
+### Patch Changes
+
+- de8fc92: Added error if no schema files are generated.
+- Updated dependencies [e3d5238]
+  - druxt@0.18.0
+
 ## 0.10.1
 
 ### Patch Changes

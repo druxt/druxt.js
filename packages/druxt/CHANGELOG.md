@@ -1,5 +1,11 @@
 # druxt
 
+## 0.18.0
+
+### Minor Changes
+
+- e3d5238: Added support for the @nuxtjs/axios module.
+
 ## 0.17.0
 
 ### Minor Changes

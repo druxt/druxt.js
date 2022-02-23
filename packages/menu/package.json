@@ -1,6 +1,6 @@
 {
   "name": "druxt-menu",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "description": "Drupal Menu and Menu item Druxt components, with support for the JSON:API Menu Items module.",
   "keywords": [
     "cms",
@@ -44,8 +44,8 @@
   "dependencies": {
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "^0.17.0",
-    "druxt-blocks": "^0.15.0"
+    "druxt": "^0.18.0",
+    "druxt-blocks": "^0.15.1"
   },
   "optionalDependencies": {
     "vue": "^2.6.14",

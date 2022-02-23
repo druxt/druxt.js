@@ -1,6 +1,6 @@
 {
   "name": "druxt-blocks",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "description": "Drupal Block and Block Region Druxt components.",
   "keywords": [
     "block",
@@ -44,9 +44,9 @@
   "dependencies": {
     "axios": "^0.21.1",
     "drupal-jsonapi-params": "^1.1.12",
-    "druxt": "^0.17.0",
-    "druxt-entity": "^0.24.0",
-    "druxt-router": "^0.26.0"
+    "druxt": "^0.18.0",
+    "druxt-entity": "^0.24.2",
+    "druxt-router": "^0.26.1"
   },
   "optionalDependencies": {
     "vue": "^2.6.14",

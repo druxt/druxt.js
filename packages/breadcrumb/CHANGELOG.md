@@ -1,5 +1,14 @@
 # druxt-breadcrumb
 
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies [e3d5238]
+  - druxt@0.18.0
+  - druxt-blocks@0.15.1
+  - druxt-router@0.26.1
+
 ## 0.14.0
 
 ### Minor Changes

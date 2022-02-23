@@ -1,5 +1,15 @@
 # druxt-views
 
+## 0.18.1
+
+### Patch Changes
+
+- Updated dependencies [e3d5238]
+  - druxt@0.18.0
+  - druxt-blocks@0.15.1
+  - druxt-entity@0.24.2
+  - druxt-router@0.26.1
+
 ## 0.18.0
 
 ### Minor Changes
