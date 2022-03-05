@@ -97,14 +97,16 @@ export default {
      * The menu item template functions.
      */
     templates: function(createElement) {
+      const link = (entity) => entity.attributes.route.name
+        ? createElement('nuxt-link', { props: { to: this.to } }, entity.attributes.title)
+        : createElement('a', { domProps: { href: entity.attributes.url }}, entity.attributes.title)
+
       return {
         // Default template for Item slot.
         item: ({ item: { entity } }) => createElement(
           this.menu.itemComponent,
           { class: this.classes },
-          [
-            createElement('nuxt-link', { props: { to: this.to } }, entity.attributes.title)
-          ]
+          [link(entity)]
         ),
 
         // Default template for Parent slot.
@@ -118,7 +120,7 @@ export default {
           return createElement(this.menu.parentComponent,
             { class: this.classes },
             [
-              createElement('nuxt-link', { props: { to: this.to } }, entity.attributes.title),
+              link(entity),
               createElement(this.menu.parentWrapperComponent, { class: this.menu.parenWrapperClass }, childElements)
             ]
           )

@@ -14,22 +14,32 @@ const propsData = {
     entity: {
       attributes: {
         title: 'Parent',
-        link: {
-          uri: 'internal:/parent'
-        }
+        link: { uri: 'internal:/parent' },
+        route: { name: 'test' }
       }
     },
-    children: [{
-      entity: {
-        attributes: {
-          title: 'Child',
-          link: {
-            uri: 'entity:node/1'
+    children: [
+      {
+        entity: {
+          attributes: {
+            title: 'Child - Internal',
+            link: { uri: 'entity:node/1' },
+            route: { name: 'test-child' }
           }
-        }
+        },
+        children: []
       },
-      children: []
-    }]
+      {
+        entity: {
+          attributes: {
+            title: 'Child - External',
+            link: { uri: 'entity:https://druxtjs.org' },
+            route: { name: '' }
+          }
+        },
+        children: []
+      },
+    ]
   }
 }
 
