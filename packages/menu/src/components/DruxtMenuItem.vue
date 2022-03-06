@@ -6,11 +6,7 @@
 export default {
   name: 'DruxtMenuItem',
 
-  /**
-   * Vue.js Properties.
-   *
-   * @see {@link https://vuejs.org/v2/guide/components-props.html}
-   */
+  /** */
   props: {
     /**
      * The menu item.
@@ -24,52 +20,26 @@ export default {
     }
   },
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
     /**
      * Current items Active state.
      *
      * @type {boolean}
      */
-    active() {
-      return this.menu.trail.includes(this.item.entity.attributes.url)
-    },
+    active: ({ item, menu }) => menu.trail.includes(item.entity.attributes.url),
 
     /**
      * Class(es) for the menu item.
      *
      * @type {string}
      */
-    classes() {
-      const classes = [this.menu[`${this.template}Class`]]
+    classes: ({ active, menu, template }) => {
+      const classes = [menu[`${template}Class`]]
 
-      if (this.active) classes.push('active-trail')
+      if (active) classes.push('active-trail')
 
       return classes.join(' ')
-    },
-
-    /**
-     * The menu item template type.
-     *
-     * @type {string}
-     */
-    template() {
-      return this.item.children.length ? 'parent' : 'item'
-    },
-
-    /**
-     * The `to` attribute for the menu item.
-     *
-     * @type {object}
-     */
-    to() {
-      const parts = this.item.entity.attributes.link.uri.split(':')
-      const type = parts[0]
-      const path = parts[1]
-
-      return { path, type }
     },
 
     /**
@@ -77,10 +47,10 @@ export default {
      *
      * @type {@object}
      */
-    menu() {
+    menu: ({ $parent }) => {
       let menu = false
 
-      let item = this.$parent
+      let item = $parent
       while (item && !menu) {
         if (item.$options.name === 'DruxtMenu') menu = item
         if (item.$options.extends && item.$options.extends.name === 'DruxtMenu') menu = item
@@ -89,22 +59,58 @@ export default {
       }
 
       return menu
-    }
+    },
+
+    /**
+     * The menu item template type.
+     *
+     * @type {string}
+     */
+    template: ({ item }) => (item.children || []).length ? 'parent' : 'item',
+
+    /**
+     * The `to` attribute for the menu item.
+     *
+     * @type {object}
+     */
+    to: ({ item }) =>
+      ((item.entity.attributes.link || {}).uri || '').startsWith('internal:')
+      && (!item.entity.attributes.route || item.entity.attributes.route.name)
+        ? { path: item.entity.attributes.link.uri.split(':')[1] }
+        : false
   },
 
   methods: {
     /**
+     * Returns a menu link components.
+     */
+    getLink(h, entity = {}) {
+      if (!entity.attributes) return false
+
+      // Render external links.
+      if (!this.to) {
+        return h('a',
+          { domProps: { href: entity.attributes.url || (entity.attributes.link || {}).uri }},
+          entity.attributes.title
+        )
+      }
+
+      // Render internal links.
+      return h('nuxt-link',
+        { props: { to: this.to } },
+        entity.attributes.title
+      )
+    },
+
+    /**
      * The menu item template functions.
      */
-    templates: function(createElement) {
+    templates(h) {
       return {
         // Default template for Item slot.
-        item: ({ item: { entity } }) => createElement(
-          this.menu.itemComponent,
+        item: ({ item: { entity } }) => h(this.menu.itemComponent,
           { class: this.classes },
-          [
-            createElement('nuxt-link', { props: { to: this.to } }, entity.attributes.title)
-          ]
+          [this.getLink(h, entity)]
         ),
 
         // Default template for Parent slot.
@@ -112,14 +118,17 @@ export default {
           const childElements = []
 
           for (const key in children) {
-            childElements.push(createElement('druxt-menu-item', { props: { item: children[key] }}))
+            childElements.push(h('druxt-menu-item', { props: { item: children[key] }}))
           }
 
-          return createElement(this.menu.parentComponent,
+          return h(this.menu.parentComponent,
             { class: this.classes },
             [
-              createElement('nuxt-link', { props: { to: this.to } }, entity.attributes.title),
-              createElement(this.menu.parentWrapperComponent, { class: this.menu.parenWrapperClass }, childElements)
+              this.getLink(h, entity),
+              h(this.menu.parentWrapperComponent,
+                { class: this.menu.parenWrapperClass },
+                childElements
+              )
             ]
           )
         },
@@ -132,9 +141,9 @@ export default {
   /**
    * The Vue.js render function.
    */
-  render: function(createElement) {
+  render(h) {
     if (!this.menu) return false
-    return this.templates(createElement)[this.template](this)
+    return this.templates(h)[this.template](this)
   }
 }
 </script>

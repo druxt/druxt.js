@@ -14,22 +14,32 @@ const propsData = {
     entity: {
       attributes: {
         title: 'Parent',
-        link: {
-          uri: 'internal:/parent'
-        }
+        link: { uri: 'internal:/parent' },
+        route: { name: 'test' }
       }
     },
-    children: [{
-      entity: {
-        attributes: {
-          title: 'Child',
-          link: {
-            uri: 'entity:node/1'
+    children: [
+      {
+        entity: {
+          attributes: {
+            title: 'Child - Internal',
+            link: { uri: 'entity:node/1' },
+            route: { name: 'test-child' }
           }
-        }
+        },
+        children: []
       },
-      children: []
-    }]
+      {
+        entity: {
+          attributes: {
+            title: 'Child - External',
+            link: { uri: 'entity:https://druxtjs.org' },
+            route: { name: '' }
+          }
+        },
+        children: []
+      },
+    ]
   }
 }
 
@@ -68,15 +78,32 @@ describe('DruxtMenuItem', () => {
     const wrapper = mountComponent()
     // Ensure we get sane default HTML.
     expect(wrapper.html()).toMatchSnapshot()
-    expect(wrapper.vm.to).toStrictEqual({
-      path: '/parent',
-      type: 'internal'
-    })
+    expect(wrapper.vm.to).toStrictEqual({ path: '/parent' })
   })
 
   test('unwrapped', () => {
     const wrapper = mountComponent({ parentComponent: null })
     // Ensure unwrapped instance of `<druxt-menu-item />` doesn't render.
     expect(wrapper.html()).toBe('')
+  })
+
+  test('external', () => {
+    const wrapper = mountComponent({
+      propsData: {
+        item: {
+          entity: {
+            attributes: {
+              title: 'External',
+              url: 'https://druxtjs.org',
+              route: { name: '' }
+            }
+          }
+        }
+      }
+    })
+
+    // Ensure we get sane default HTML.
+    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.vm.to).toStrictEqual(false)
   })
 })

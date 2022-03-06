@@ -5,6 +5,9 @@ exports[`DruxtMenuItem default 1`] = `
   <nuxt-link-stub>Parent</nuxt-link-stub>
   <ul>
     <druxt-menu-item-stub item=\\"[object Object]\\"></druxt-menu-item-stub>
+    <druxt-menu-item-stub item=\\"[object Object]\\"></druxt-menu-item-stub>
   </ul>
 </li>"
 `;
+
+exports[`DruxtMenuItem external 1`] = `"<li class=\\"\\"><a href=\\"https://druxtjs.org\\">External</a></li>"`;
