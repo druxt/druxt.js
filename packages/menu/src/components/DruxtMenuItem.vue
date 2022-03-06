@@ -66,16 +66,18 @@ export default {
      *
      * @type {string}
      */
-    template: ({ item }) => item.children.length ? 'parent' : 'item',
+    template: ({ item }) => (item.children || []).length ? 'parent' : 'item',
 
     /**
      * The `to` attribute for the menu item.
      *
      * @type {object}
      */
-    to: ({ item }) => item.entity.attributes.link.uri.startsWith('internal:') && (!item.entity.attributes.route || item.entity.attributes.route.name)
-      ? { path: item.entity.attributes.link.uri.split(':')[1] }
-      : false
+    to: ({ item }) =>
+      ((item.entity.attributes.link || {}).uri || '').startsWith('internal:')
+      && (!item.entity.attributes.route || item.entity.attributes.route.name)
+        ? { path: item.entity.attributes.link.uri.split(':')[1] }
+        : false
   },
 
   methods: {

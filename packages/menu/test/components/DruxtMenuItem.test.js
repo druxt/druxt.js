@@ -86,4 +86,24 @@ describe('DruxtMenuItem', () => {
     // Ensure unwrapped instance of `<druxt-menu-item />` doesn't render.
     expect(wrapper.html()).toBe('')
   })
+
+  test('external', () => {
+    const wrapper = mountComponent({
+      propsData: {
+        item: {
+          entity: {
+            attributes: {
+              title: 'External',
+              url: 'https://druxtjs.org',
+              route: { name: '' }
+            }
+          }
+        }
+      }
+    })
+
+    // Ensure we get sane default HTML.
+    expect(wrapper.html()).toMatchSnapshot()
+    expect(wrapper.vm.to).toStrictEqual(false)
+  })
 })
