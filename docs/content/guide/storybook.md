@@ -20,7 +20,7 @@ weight: -5
 1. Install the [Nuxt Storybook module](https://storybook.nuxtjs.org).
 
    ```sh
-   npm i @nuxtjs/storybook
+   npm i -D @nuxtjs/storybook @storybook/addon-docs
    ```
 
 2. Run Storybook:
