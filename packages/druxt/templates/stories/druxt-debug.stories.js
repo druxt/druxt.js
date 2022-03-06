@@ -1,4 +1,4 @@
-import DruxtDebug from './DruxtDebug.vue'
+import DruxtDebug from 'druxt/dist/components/DruxtDebug.vue'
 
 export default {
   title: 'Druxt/DruxtDebug',
