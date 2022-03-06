@@ -78,10 +78,7 @@ describe('DruxtMenuItem', () => {
     const wrapper = mountComponent()
     // Ensure we get sane default HTML.
     expect(wrapper.html()).toMatchSnapshot()
-    expect(wrapper.vm.to).toStrictEqual({
-      path: '/parent',
-      type: 'internal'
-    })
+    expect(wrapper.vm.to).toStrictEqual({ path: '/parent' })
   })
 
   test('unwrapped', () => {

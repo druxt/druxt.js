@@ -1,4 +1,4 @@
-const baseUrl = process.env.BASE_URL || 'https://demo-api.druxtjs.org'
+const baseUrl = process.env.BASE_URL || 'http://drupal-9.ddev.site'
 export default {
   target: 'static',
   generate: { routes: ['/'] },
@@ -24,6 +24,12 @@ export default {
       },
     },
 
+    // DruxtMenu module settings; https://druxtjs.org/modules/menu
+    menu: {
+      // Disable JSON:API Menu Items support. Enabled by the DruxtSite module.
+      //jsonApiMenuItems: false
+    },
+
     // Druxt proxy settings.
     proxy: {
       // Proxy the JSON:API request via the Nuxt proxy to prevent CORS issues.
@@ -32,15 +38,6 @@ export default {
       // Proxy the Drupal files system, using `sites/default/files` by default.
       // Disable the proxy, or set a specific site to proxy.
       // files: 'domain.tld'
-    },
-
-    // DruxtSite module settings; https://druxtjs.org/modules/site
-    site: {
-      // Disable the DruxtSite default layout.
-      // layout: false,
-
-      // Set the backend theme for DruxtBlock layouts.
-      theme: 'umami'
     },
 
     // DruxtRouter module settings; https://druxtjs.org/modules/router
@@ -55,6 +52,15 @@ export default {
       // DruxtSite module. This allows more fine grained control over your
       // routing.
       // wildcard: false
+    },
+
+    // DruxtSite module settings; https://druxtjs.org/modules/site
+    site: {
+      // Disable the DruxtSite default layout.
+      // layout: false,
+
+      // Set the backend theme for DruxtBlock layouts.
+      theme: 'umami'
     },
 
     // DruxtViews module settings; https://druxtjs.org/modules/views
