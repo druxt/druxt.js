@@ -1,4 +1,4 @@
-const baseUrl = process.env.BASE_URL || 'http://drupal-9.ddev.site'
+const baseUrl = process.env.BASE_URL || 'https://demo-api.druxtjs.org'
 export default {
   target: 'static',
   generate: { routes: ['/'] },
