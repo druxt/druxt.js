@@ -18,9 +18,10 @@ jobs:
           - v1-dependencies-
 
       - run: yarn install
+      - run: node node_modules/esbuild/install.js
       - run:
           name: Build component
-          command: yarn && yarn build
+          command: yarn build
 
       - save_cache:
           paths:
