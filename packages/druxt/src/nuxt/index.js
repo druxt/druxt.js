@@ -78,7 +78,7 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
   if (!options.axios) {
     this.options.axios = {
       baseURL: options.baseUrl,
-      proxy: !!this.options.proxy,
+      proxy: !!(options.proxy || {}).api,
       ...this.options.axios
     }
     this.addModule('@nuxtjs/axios')
