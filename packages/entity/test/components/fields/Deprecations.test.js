@@ -5,7 +5,7 @@ global.console = {
 }
 
 describe('DruxtFieldComponents - Deprecations', () => {
-  for (const component of Object.keys(DruxtFieldComponents.default)) {
+  for (const component of Object.keys(DruxtFieldComponents).filter((s) => s !== 'default')) {
     test(component, async () => {
       DruxtFieldComponents[component].mounted.call({
         $options: {
@@ -13,6 +13,6 @@ describe('DruxtFieldComponents - Deprecations', () => {
         },
       })
       expect(console.warn).toBeCalledWith(`[druxt-entity] The ${component} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
-    })  
+    })
   }
 })
