@@ -46,7 +46,7 @@
     "jest-junit": "13.0.0",
     "jest-mock-axios": "4.5.0",
     "regenerator-runtime": "0.13.9",
-    "renovate": "27.31.0",
+    "renovate": "32.0.2",
     "rimraf": "3.0.2",
     "siroc": "0.14.0",
     "vue": "2.6.14",
