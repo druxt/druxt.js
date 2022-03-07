@@ -3,17 +3,13 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/repo
   docker:
-  - image: circleci/node:15.14
+  - image: cimg/node:16.14
 
 jobs:
   build:
     <<: *defaults
     steps:
       - checkout
-
-      - run:
-          name: Install Codecov
-          command: yarn add codecov
 
       - restore_cache:
           keys:
@@ -22,9 +18,10 @@ jobs:
           - v1-dependencies-
 
       - run: yarn install
+      - run: node node_modules/esbuild/install.js
       - run:
           name: Build component
-          command: yarn && yarn build
+          command: yarn build
 
       - save_cache:
           paths:
@@ -41,6 +38,10 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
+
+      - run:
+          name: Install Codecov
+          command: yarn add codecov
 
       - run:
           name: Run lint
