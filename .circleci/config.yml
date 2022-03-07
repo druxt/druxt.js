@@ -3,7 +3,7 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/repo
   docker:
-  - image: cimg/node:16.14
+  - image: cimg/node:17.6
 
 jobs:
   build:
