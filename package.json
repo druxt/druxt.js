@@ -45,7 +45,6 @@
     "jest": "27.5.1",
     "jest-junit": "13.0.0",
     "jest-mock-axios": "4.5.0",
-    "node-gyp": "^9.0.0",
     "regenerator-runtime": "0.13.9",
     "renovate": "27.31.0",
     "rimraf": "3.0.2",
