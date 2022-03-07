@@ -16,5 +16,9 @@
       "groupName": "jest",
       "matchPackagePatterns": ["jest"]
     }
+  ],
+  "ignoreDeps": [
+    "@nuxtjs/storybook",
+    "renovate"
   ]
 }
