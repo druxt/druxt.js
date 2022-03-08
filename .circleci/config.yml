@@ -21,10 +21,17 @@ jobs:
           # fallback to using the latest cache if no exact match is found.
           - v1-dependencies-
 
-      - run: yarn install
       - run:
-          name: Build component
-          command: yarn && yarn build
+          name: Install
+          command: yarn install
+
+      - run:
+          name: Build
+          command: yarn build
+
+      - run:
+          name: Build docs
+          command: yarn build:docs
 
       - save_cache:
           paths:
