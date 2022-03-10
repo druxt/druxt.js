@@ -195,5 +195,5 @@ export { DruxtMenu }
  *
  * @typedef {object} ModuleOptions
  *
- * @see {@link ./typedefs/moduleOptions.html|ModuleOptions}
+ * @see {@link ./typedefs/moduleOptions|ModuleOptions}
  */

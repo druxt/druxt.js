@@ -8,7 +8,7 @@ import { DruxtMenuNuxtModule } from './nuxtModule'
  * @type {class}
  * @exports DruxtMenu
  * @name DruxtMenu
- * @see {@link ./menu.html|DruxtMenu}
+ * @see {@link ./menu|DruxtMenu}
  */
 export { DruxtMenu } from './menu.js'
 
@@ -18,7 +18,7 @@ export { DruxtMenu } from './menu.js'
  * @type {object}
  * @exports DruxtMenuStore
  * @name DruxtMenuStore
- * @see {@link ./stores/menu.html|DruxtMenuStore}
+ * @see {@link ./stores/menu|DruxtMenuStore}
  */
 export { DruxtMenuStore } from './stores/menu.js'
 
@@ -30,7 +30,7 @@ export { DruxtMenuStore } from './stores/menu.js'
  * @type {Function}
  * @exports default
  * @name DruxtMenuNuxtModule
- * @see {@link ./nuxtModule.html|DruxtMenuNuxtModule}
+ * @see {@link ./nuxtModule|DruxtMenuNuxtModule}
  */
 export default DruxtMenuNuxtModule
 

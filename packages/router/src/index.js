@@ -6,7 +6,7 @@
  * @type {class}
  * @exports DruxtRouter
  * @name DruxtRouter
- * @see {@link ./router.html|DruxtRouter}
+ * @see {@link ./router|DruxtRouter}
  */
 export { DruxtRouter } from './router'
 
