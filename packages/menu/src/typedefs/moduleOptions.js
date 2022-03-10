@@ -17,5 +17,5 @@
    * DruxtMenu options.
    *
    * @typedef {object} MenuOptions
-   * @see {@link ./menuOptions.html|MenuOptions}
+   * @see {@link ./menuOptions|MenuOptions}
    */

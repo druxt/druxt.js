@@ -52,7 +52,7 @@ export default {
      *
      * @type {object}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/components/DruxtEntity.html|DruxtEntity}
+     * @see {@link https://druxt.github.io/druxt-entity/api/components/DruxtEntity|DruxtEntity}
      */
     propsData: ({ $fetchState, $store, block }) => {
       if ($fetchState.pending) return false

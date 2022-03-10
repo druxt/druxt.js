@@ -4,7 +4,7 @@
  * @type {object}
  * @exports DruxtRouterComponent
  * @name DruxtRouterComponent
- * @see {@link ./components/DruxtRouter.html|DruxtRouterComponent}
+ * @see {@link ./components/DruxtRouter|DruxtRouterComponent}
  *
  * @example
  * <script>

@@ -17,7 +17,7 @@ import { DruxtBlocksBlockMixin } from 'druxt-blocks'
  *   uuid="59121e44-e21b-4f53-b009-5225cd630145"
  * />
  *
- * @see {@link https://blocks.druxtjs.org/api/components/DruxtBlock.html|DruxtBlock}
+ * @see {@link https://blocks.druxtjs.org/api/components/DruxtBlock|DruxtBlock}
  * @see {@link ../DruxtBreadcrumb|DruxtBreadcrumb}
  */
 export default {
@@ -26,7 +26,7 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link https://blocks.druxtjs.org/api/mixins/block.html|DruxtBlocksBlockMixin}
+   * @see {@link https://blocks.druxtjs.org/api/mixins/block|DruxtBlocksBlockMixin}
    */
   mixins: [DruxtBlocksBlockMixin],
 }
