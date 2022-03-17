@@ -10984,7 +10984,7 @@ __metadata:
   dependencies:
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^1.1.12
-    druxt: ^0.18.0
+    druxt: ^0.18.1
     druxt-blocks: ^0.15.1
     vue: ^2.6.14
     vuex: ^3.6.2
@@ -11118,7 +11118,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt@^0.18.0, druxt@workspace:packages/druxt":
+"druxt@^0.18.0, druxt@^0.18.1, druxt@workspace:packages/druxt":
   version: 0.0.0-use.local
   resolution: "druxt@workspace:packages/druxt"
   dependencies:

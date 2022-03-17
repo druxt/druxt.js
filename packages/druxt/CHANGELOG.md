@@ -1,5 +1,11 @@
 # druxt
 
+## 0.18.1
+
+### Patch Changes
+
+- 80164a1: Fixed Axios proxy being incorrectly enabled.
+
 ## 0.18.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # druxt-menu
 
+## 0.16.2
+
+### Patch Changes
+
+- 35f439e: Fixed external menu links.
+- Updated dependencies [80164a1]
+  - druxt@0.18.1
+
 ## 0.16.1
 
 ### Patch Changes
