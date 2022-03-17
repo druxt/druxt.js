@@ -40,7 +40,7 @@
   ],
   "dependencies": {
     "consola": "^2.15.0",
-    "drupal-jsonapi-params": "^1.2.2",
+    "drupal-jsonapi-params": "^2.0.0",
     "druxt": "^0.18.0"
   },
   "optionalDependencies": {
