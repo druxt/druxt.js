@@ -16,7 +16,7 @@
 - Demo - Umami Food Magazine:
   - https://demo.druxtjs.org
   - https://druxt-umami.netlify.app
-  - https://umami-storybook.druxtjs.org
+  - https://storybook.demo.druxtjs.org
 - Quickstart repositories:
   - https://github.com/druxt/quickstart-druxt-site
   - https://github.com/druxt/quickstart-druxt-site-tome
