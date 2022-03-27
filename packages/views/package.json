@@ -43,7 +43,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "deepmerge": "^4.2.2",
-    "drupal-jsonapi-params": "^1.1.12",
+    "drupal-jsonapi-params": "^2.0.0",
     "druxt": "^0.18.0",
     "druxt-blocks": "^0.15.1",
     "druxt-entity": "^0.24.2",
