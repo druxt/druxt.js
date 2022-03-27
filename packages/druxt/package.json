@@ -42,7 +42,7 @@
     "@nuxtjs/proxy": "^2.1.0",
     "chalk": "^4.1.2",
     "deepmerge": "^4.2.2",
-    "drupal-jsonapi-params": "^1.2.1",
+    "drupal-jsonapi-params": "^2.0.0",
     "md5": "^2.3.0",
     "querystring": "^0.2.0",
     "scule": "^0.2.0"

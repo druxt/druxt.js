@@ -42,7 +42,7 @@
     "templates"
   ],
   "dependencies": {
-    "drupal-jsonapi-params": "^1.2.2",
+    "drupal-jsonapi-params": "^2.0.0",
     "druxt": "^0.18.0",
     "druxt-blocks": "^0.15.1",
     "druxt-breadcrumb": "^0.14.1",
