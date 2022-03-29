@@ -431,6 +431,7 @@ class DruxtClient {
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    *
    * @returns {object} The JSON:API resource data.
+   * @todo update method to take a context object instead of 4 parameters.
    */
   async getResource(type, id, query, prefix) {
     if (!id || !type) {
