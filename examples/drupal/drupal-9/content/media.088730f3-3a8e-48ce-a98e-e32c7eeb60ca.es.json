@@ -1,0 +1,102 @@
+{
+    "uuid": [
+        {
+            "value": "088730f3-3a8e-48ce-a98e-e32c7eeb60ca"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "image",
+            "target_type": "media_type",
+            "target_uuid": "6f3759f1-6f05-4a20-a84d-0440dafda29b"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "9037d975-34ff-4020-b8ff-18cf8715361a"
+        }
+    ],
+    "name": [
+        {
+            "value": "Quiche mediterr\u00e1neo profundo"
+        }
+    ],
+    "thumbnail": [
+        {
+            "alt": "Un delicioso quiche mediterr\u00e1neo de capas profundas con guarnici\u00f3n de albahaca.",
+            "title": null,
+            "width": 768,
+            "height": 511,
+            "target_type": "file",
+            "target_uuid": "89d1d0bc-3ef6-43be-ae13-59ed6a513bcc"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": null,
+            "pid": null,
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_media_image": [
+        {
+            "alt": "Un delicioso quiche mediterr\u00e1neo de capas profundas con guarnici\u00f3n de albahaca.",
+            "title": null,
+            "width": 768,
+            "height": 511,
+            "target_type": "file",
+            "target_uuid": "84e4fa6d-8d2a-49ea-aed2-3e63df234ffe"
+        }
+    ]
+}

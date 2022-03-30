@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "6ce1aa81-1815-4eaa-91d3-bb44be316f4b"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/2"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/baked"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

@@ -1,0 +1,196 @@
+{
+    "uuid": [
+        {
+            "value": "73fdeef3-1ebb-4d86-9360-dcf121623eb3"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "40612a31-09cd-4bea-86ad-d909456db85a"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "title": [
+        {
+            "value": "Quiche mediterr\u00e1neo profundo"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/quiche-mediterr\u00e1neo-profundo",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 30
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "medium"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "Para la masa:"
+        },
+        {
+            "value": "280g harina normal"
+        },
+        {
+            "value": "140g mantequilla"
+        },
+        {
+            "value": "Agua fr\u00eda"
+        },
+        {
+            "value": "Para el relleno:"
+        },
+        {
+            "value": "1 cebolla"
+        },
+        {
+            "value": "2 dientes ajo"
+        },
+        {
+            "value": "Medio calabaci\u00f3n"
+        },
+        {
+            "value": "450ml leche de soja"
+        },
+        {
+            "value": "500g queso parmesano"
+        },
+        {
+            "value": "2 huevos"
+        },
+        {
+            "value": "200g tomate deshidratado"
+        },
+        {
+            "value": "100g queso feta"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "088730f3-3a8e-48ce-a98e-e32c7eeb60ca"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 8
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 40
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e2d23036-1dbc-4a30-805f-a2d8566e2418"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>Precaliente el horno a 200\u00b0C. Empezando por la pasteler\u00eda; Frote la harina y la mantequilla en un taz\u00f3n hasta que se desmoronen como migas de pan. Agregue el agua, poco a poco, hasta que forme una masa.<\/li>\n  <li>Extiende la masa sobre una tabla enharinada y extiende suavemente sobre tu molde. Coloque en la nevera durante 20 minutos antes de hornear a ciegas durante otros 10.<\/li>\n  <li>Mientras la masa se est\u00e1 enfriando, corte y cocine suavemente las cebollas, el ajo y el calabac\u00edn.<\/li>\n  <li>En un taz\u00f3n grande, agregue la leche de soya, la mitad del queso parmesano y los huevos. Mezclar suavemente.<\/li>\n  <li>Una vez que la masa est\u00e9 cocida, esparza las cebollas, el ajo y los tomates secos sobre la base y vierta la mezcla de los huevos. Espolvoree el queso parmesano restante y coloque cuidadosamente el feta sobre la parte superior. Hornear durante 30 minutos o hasta que est\u00e9n doradas.<\/li>\n<\/ol>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Un quiche de inspiraci\u00f3n italiana con tomates secos y calabac\u00edn. Una comida ligera perfecta para un d\u00eda de verano.",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "bc9973e2-d3a6-460d-9e82-8046f8721af7"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "ad57e4c0-09fc-41bf-a91d-937f0df28dd7"
+        }
+    ]
+}

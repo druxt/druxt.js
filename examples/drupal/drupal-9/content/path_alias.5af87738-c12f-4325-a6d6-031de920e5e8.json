@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "5af87738-c12f-4325-a6d6-031de920e5e8"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/31"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipe-category\/main-courses"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

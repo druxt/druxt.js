@@ -1,0 +1,50 @@
+{
+    "uuid": [
+        {
+            "value": "b0bdb6d9-2247-4eea-b199-21cfc05ac81f"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "uid": [],
+    "filename": [
+        {
+            "value": "crema-catalana-umami.jpg"
+        }
+    ],
+    "uri": [
+        {
+            "value": "public:\/\/crema-catalana-umami.jpg"
+        }
+    ],
+    "filemime": [
+        {
+            "value": "image\/jpeg"
+        }
+    ],
+    "filesize": [
+        {
+            "value": 62307
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ]
+}

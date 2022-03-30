@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "ceadaa78-33de-471e-9727-77cc2901039b"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/31"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipe-category\/platos-principales"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

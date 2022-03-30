@@ -1,0 +1,171 @@
+{
+    "uuid": [
+        {
+            "value": "1afe9bfe-1dca-406b-8ed9-565f6b653c12"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "40612a31-09cd-4bea-86ad-d909456db85a"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "title": [
+        {
+            "value": "Thai green curry"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/thai-green-curry",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 15
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "medium"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "400g coconut milk"
+        },
+        {
+            "value": " 400g chicken or tofu"
+        },
+        {
+            "value": " 1 tbsp Thai green curry paste"
+        },
+        {
+            "value": " 1 garlic clove"
+        },
+        {
+            "value": " 2 tsp fish sauce"
+        },
+        {
+            "value": " 400g mushrooms"
+        },
+        {
+            "value": " 200g green beans"
+        },
+        {
+            "value": " Fresh coriander leaves"
+        },
+        {
+            "value": " Jasmine rice"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "f55c08a6-93f6-4c8d-b200-19c887966036"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 4
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 10
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e2d23036-1dbc-4a30-805f-a2d8566e2418"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>In a large wok, brown the chicken until golden, then turn the heat down and gently cook the garlic. Add the chopped green beans and stir.<\/li>\n  <li>Add the coconut milk, green curry paste and fish sauce. Mix well and slowly simmer.<\/li>\n  <li>Add the chopped mushrooms and simmer until the chicken (or tofu) is cooked.<\/li>\n  <li>Serve with jasmine rice and a sprinkle of coriander.<\/li>\n<\/ol>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "A quick and easy version of the classic Thai green curry. Perfect for a midweek meal!",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": []
+}
