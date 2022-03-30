@@ -1,0 +1,26 @@
+label: Traducción
+tips:
+  locale-overview:
+    label: 'Traducción de la interfaz de usuario'
+    body: 'Esta página le permite traducir la interfaz de usuario o modificar traducciones existentes. Si ha instalado su sitio web inicialmente en inglés, primero debe añadir otro idioma en la <a href="[site:url]admin/config/regional/language">página de Idiomas</a>, para poder usar esta página.'
+  locale-language:
+    label: 'Translation language'
+    body: 'Seleccione el idioma que quiere traducir.'
+  locale-search:
+    label: Buscar
+    body: 'Escriba la palabra o frase específica que desea traducir, también puede escribir sólo una parte de una palabra.'
+  locale-filter:
+    label: 'Filtrar la búsqueda'
+    body: 'Puedes buscar cadenas no traducidas si quieres traducir algo que aún no está traducido. Si desea modificar una traducción existente, es posible que sólo desee buscar cadenas traducidas.'
+  locale-submit:
+    label: 'Aplique sus criterios de búsqueda'
+    body: 'Para aplicar sus criterios de búsqueda, haga clic en el botón <em>Filtrar</em>.'
+  locale-translate:
+    label: Traducir
+    body: 'Puede escribir su propia traducción en los campos de texto de la columna derecha. Trate de averiguar en qué contexto se utilizará el texto para traducirlo de la manera adecuada.'
+  locale-validate:
+    label: 'Validar la traducción'
+    body: 'Cuando haya terminado sus traducciones, haga clic en el botón <em>Guardar traducciones </em>. Debe guardar sus traducciones, cada vez antes de cambiar la página o hacer una nueva búsqueda.'
+  locale-continue:
+    label: Continuando
+    body: 'Las traducciones que usted haya hecho aquí se utilizarán en la interfaz de usuario de su sitio web. Si quiere utilizarlas en otro sitio o modificarlas en un editor de traducciones externo, puede <a href="[site:url]admin/config/regional/translate/export">exportarlas</a> a un archivo .po e <a href="[site:url]admin/config/regional/translate/import">importarlas</a> después.'

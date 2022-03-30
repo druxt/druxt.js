@@ -1,0 +1,36 @@
+uuid: da1485e0-6123-4371-ac16-e85b080c531d
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.card_common_alt
+    - field.field.node.article.body
+    - field.field.node.article.field_media_image
+    - field.field.node.article.field_tags
+    - field.field.node.article.layout_builder__layout
+    - node.type.article
+  module:
+    - user
+_core:
+  default_config_hash: nbwld-a_5QouyJm-jc1P6TfErstPGVCdx1fM4jhm530
+id: node.article.card_common_alt
+targetEntityType: node
+bundle: article
+mode: card_common_alt
+content:
+  field_media_image:
+    type: entity_reference_entity_view
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      view_mode: responsive_3x2
+      link: false
+    third_party_settings: {  }
+hidden:
+  body: true
+  content_moderation_control: true
+  field_tags: true
+  langcode: true
+  layout_builder__layout: true
+  links: true

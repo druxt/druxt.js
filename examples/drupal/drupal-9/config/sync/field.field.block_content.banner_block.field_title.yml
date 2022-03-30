@@ -1,0 +1,21 @@
+uuid: 626cc735-a105-4cd0-bf45-b250aa206139
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.banner_block
+    - field.storage.block_content.field_title
+_core:
+  default_config_hash: VbPP7mN9cLyZP-APFL19iM8Dg7x9gEeCzzx6MpyZmqo
+id: block_content.banner_block.field_title
+field_name: field_title
+entity_type: block_content
+bundle: banner_block
+label: Title
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

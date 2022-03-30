@@ -1,0 +1,11 @@
+third_party_settings:
+  layout_builder:
+    sections:
+      1:
+        components:
+          cc87463d-bb75-4eca-a2d0-42f0b643f8a7:
+            configuration:
+              label: 'Imagen del contenido multimedia'
+          69d8bce1-28ae-4287-a05b-a2166679f867:
+            configuration:
+              label: 'Imagen del contenido multimedia'

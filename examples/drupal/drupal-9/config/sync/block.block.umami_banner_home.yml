@@ -1,0 +1,36 @@
+uuid: 525945cb-beef-4c1d-8497-0e6d22ef7e72
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:banner_block:9aadf4a1-ded6-4017-a10d-a5e043396edf'
+  enforced:
+    module:
+      - demo_umami_content
+  module:
+    - block_content
+    - system
+  theme:
+    - umami
+_core:
+  default_config_hash: m2WrGTi7hPXFl-gU-O8ErVAma5g7Tc6hFsNaRXz14W8
+id: umami_banner_home
+theme: umami
+region: banner_top
+weight: -7
+provider: null
+plugin: 'block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf'
+settings:
+  id: 'block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf'
+  label: 'Umami Home Banner'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: false
+    context_mapping: {  }
