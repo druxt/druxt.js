@@ -1,0 +1,76 @@
+label: Usuarios
+description: 'Encuentre y gestione a las personas que interactúan con su sitio.'
+display:
+  default:
+    display_title: 'Por defecto'
+    display_options:
+      exposed_form:
+        options:
+          submit_button: Filtro
+          reset_button_label: Restablecer
+          exposed_sorts_label: 'Ordenar por'
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      pager:
+        options:
+          tags:
+            previous: '‹ Anterior'
+            next: 'Siguiente >'
+            first: '« Primero'
+            last: 'Último »'
+          expose:
+            items_per_page_label: 'Elementos por página'
+            items_per_page_options_all_label: '- Todo -'
+            offset_label: Desplazamiento
+      fields:
+        user_bulk_form:
+          label: 'Actualización masiva'
+        name:
+          label: 'Nombre de usuario'
+        status:
+          label: Estado
+          settings:
+            format_custom_true: Activo
+            format_custom_false: Bloqueado
+        roles_target_id:
+          label: Roles
+        created:
+          label: 'Miembro desde hace'
+        access:
+          label: 'Último acceso'
+        operations:
+          label: Operaciones
+        mail:
+          separator: ', '
+      filters:
+        combine:
+          expose:
+            label: 'Nombre o correo electrónico contiene'
+        status:
+          group_info:
+            label: Estado
+            group_items:
+              1:
+                title: Activo
+              2:
+                title: Bloqueado
+        roles_target_id:
+          expose:
+            label: Rol
+        permission:
+          expose:
+            label: Permiso
+      title: Usuarios
+      empty:
+        area_text_custom:
+          content: 'No people available.'
+      use_more_text: más
+  page_1:
+    display_title: Página
+    display_options:
+      menu:
+        title: Listado
+        description: 'Encuentre y gestione a las personas que interactúan con su sitio.'
+      tab_options:
+        title: Usuarios
+        description: 'Gestionar cuentas, roles y permisos de usuarios.'

@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "a87e3873-27fb-4abf-a0e2-360fa11915a7"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/4"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/desayuno"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

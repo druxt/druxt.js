@@ -1,0 +1,18 @@
+uuid: 4cdb137f-57a7-4fbb-95e3-57e7978026c0
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.recipe_category
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: true
+_core:
+  default_config_hash: rSI5WTsW2S6K9n3i6_Ul-auHIO5onTjPknfThX3ON-U
+id: taxonomy_term.recipe_category
+target_entity_type_id: taxonomy_term
+target_bundle: recipe_category
+default_langcode: site_default
+language_alterable: true

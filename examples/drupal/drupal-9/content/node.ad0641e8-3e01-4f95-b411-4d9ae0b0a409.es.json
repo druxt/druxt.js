@@ -1,0 +1,194 @@
+{
+    "uuid": [
+        {
+            "value": "ad0641e8-3e01-4f95-b411-4d9ae0b0a409"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "40612a31-09cd-4bea-86ad-d909456db85a"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "title": [
+        {
+            "value": "Pasta vegetariana al horno s\u00faper f\u00e1cil"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/pasta-vegetariana-horno-super-facil",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 20
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "easy"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "400g pasta de trigo integral"
+        },
+        {
+            "value": " 1 cebolla"
+        },
+        {
+            "value": " 2 dientes de ajo"
+        },
+        {
+            "value": " 1 paquete de salchichas vegetarianas"
+        },
+        {
+            "value": " 400g tomates picados"
+        },
+        {
+            "value": " 50g rodajas de tomates secados al sol"
+        },
+        {
+            "value": " 1 pizca de az\u00facar"
+        },
+        {
+            "value": " 45g pesto rojo"
+        },
+        {
+            "value": " 50g queso cheddar"
+        },
+        {
+            "value": " Albahaca o hierbas mixtas"
+        },
+        {
+            "value": " 100g queso mozzarella"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "bd9f96d0-99eb-4dcb-985b-6ae54fbad59f"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 4
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 5
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e2d23036-1dbc-4a30-805f-a2d8566e2418"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>En una sart\u00e9n grande, hervir la pasta en abundante agua hasta que est\u00e9 cocida.<\/li>\n  <li>Mientras se cocina la pasta, pica la cebolla y fr\u00edela suavemente con el ajo en un poco de aceite hasta que est\u00e9 suave y la cebolla se vea clara.<\/li>\n  <li>A\u00f1adir las salchichas vegetarianas. Una vez dorado, retirar y picar en trozos grandes.<\/li>\n  <li>Pon las salchichas en la sart\u00e9n y agrega los tomates, el az\u00facar, el pesto y los tomates secos. Sazone al gusto. Cocine a fuego lento hasta que la mayor parte del agua de los tomates picados se haya ido.<\/li>\n  <li>Escurrir la pasta y agregar a la sart\u00e9n con las salchichas y los tomates. Agregue la mitad del queso cheddar y transfierelo a un plato poco profundo. Espolvoree con el resto del queso cheddar y salpique la mozzarella en rodajas por encima.<\/li>\n  <li>Asar durante 10 minutos o hasta que el queso se derrita y comience a dorarse. Servir con hojas de albahaca.<\/li>\n<\/ol>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Una pasta al horno es la comida m\u00e1s f\u00e1cil y saludable. Este delicioso plato es s\u00faper r\u00e1pido de preparar y una comida ideal entre semana para toda la familia.",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "b40404f7-ca13-44d8-8e61-7fad9554115f"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "9345f3da-0060-4630-855d-4d9060ee13ea"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "adee04da-b884-4a78-9448-170d7cb31139"
+        }
+    ]
+}

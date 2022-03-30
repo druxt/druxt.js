@@ -1,0 +1,32 @@
+uuid: 7e0048ee-4820-41cd-ae26-a2714714da48
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+_core:
+  default_config_hash: NzDITo8HbCh5A96P0ldukJ2zqRbIJ4odEp1P6o4ZTJ8
+id: node.field_difficulty
+field_name: field_difficulty
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: easy
+      label: Easy
+    -
+      value: medium
+      label: Medium
+    -
+      value: hard
+      label: Hard
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

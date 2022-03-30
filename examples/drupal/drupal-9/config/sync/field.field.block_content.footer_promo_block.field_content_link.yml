@@ -1,0 +1,25 @@
+uuid: 144a1324-e23b-4605-b940-0d8d96284ea3
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.footer_promo_block
+    - field.storage.block_content.field_content_link
+  module:
+    - link
+_core:
+  default_config_hash: WwnoEc6GOtgWuG9lpfyBl7wVO8X1YPGgJ6xCMlRzgtw
+id: block_content.footer_promo_block.field_content_link
+field_name: field_content_link
+entity_type: block_content
+bundle: footer_promo_block
+label: 'Find out more link'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 2
+field_type: link

@@ -1,0 +1,124 @@
+{
+    "uuid": [
+        {
+            "value": "080da820-a606-4b3c-8b94-7320c7e14717"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "article",
+            "target_type": "node_type",
+            "target_uuid": "9d724571-3320-4af6-b623-626d001260fd"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a80fc6ed-2669-4a56-88bf-1c9590437115"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a80fc6ed-2669-4a56-88bf-1c9590437115"
+        }
+    ],
+    "title": [
+        {
+            "value": "Give it a go and grow your own herbs"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/articles\/give-it-a-go-and-grow-your-own-herbs",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "body": [
+        {
+            "value": "<p>There's nothing like having your own supply of fresh herbs, readily available and close at hand to use while cooking. Whether you have a large garden or a small kitchen window sill, there's always enough room for something home grown.<\/p>\n<h2>Outdoors<\/h2>\n<h3>Mint<\/h3>\n<p>Mint is a great plant to grow as it's hardy and can grow in almost any soil. Mint can grow wild, so keep it contained in a pot or it might spread and take over your whole garden.<\/p>\n<h3>Sage<\/h3>\n<p>Like mint, sage is another prolific growing plant and will take over your garden if you let it. Highly aromatic, the sage plant can be planted in a pot or flower bed in well drained soil. The best way to store the herb is to sun dry the leaves and store in a cool, dark cupboard in a sealed container.<\/p>\n<h3>Rosemary<\/h3>\n<p>Rosemary plants grow into lovely shrubs. Easily grown from cuttings, rosemary plants do not like freezing temperatures so keep pots or planted bushes near the home to shelter them from the cold. It grows well in pots as it likes dry soil, but can survive well in the ground too. If pruning rosemary to encourage it into a better shape, save the branches and hang them upside down to preserve the flavor and use in food.<\/p>\n<h2>Indoors<\/h2>\n<h3>Basil<\/h3>\n<p>Perfect in sunny spot on a kitchen window sill. Basil is an annual plant, so will die off in the autumn, so it's a good idea to harvest it in the summer if you have an abundance and dry it. Picked basil stays fresh longer if it is placed in water (like fresh flowers). A great way to store basil is to make it into pesto!<\/p>\n<h3>Chives<\/h3>\n<p>A versatile herb, chives can grow well indoors. Ensure the plant is watered well, and gets plenty of light. Remember to regularly trim the chives. This prevents the flowers from developing and encourages new growth.<\/p>\n<h3>Coriander (Cilantro)<\/h3>\n<p>Coriander can grow indoors, but unlike the other herbs, it doesn't like full sun. If you have a south facing kitchen window, this isn't the place for it. Although not as thirsty as basil, coriander doesn't like dry soil so don't forget to water it! Cut coriander is best stored in the fridge.<\/p>\n",
+            "format": "basic_html",
+            "summary": null
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "4dbdbbb7-f241-4290-b0e9-c0b9d39a21a0"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "623c006d-3572-4e7d-b820-4b4dfe62a83a"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "3d1e54ab-d8fc-46d7-bb30-07ff4251bf3b"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "9f5aa551-d617-46d2-9bca-7597ad575754"
+        }
+    ]
+}

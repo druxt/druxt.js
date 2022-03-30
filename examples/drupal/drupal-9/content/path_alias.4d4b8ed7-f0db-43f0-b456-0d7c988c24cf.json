@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "4d4b8ed7-f0db-43f0-b456-0d7c988c24cf"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/41a7bd6b-11bc-48fe-84c4-faf35929cac5"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/articles\/baking-mishaps-our-troubleshooting-tips"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

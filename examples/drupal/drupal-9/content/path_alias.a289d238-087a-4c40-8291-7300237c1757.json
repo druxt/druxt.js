@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "a289d238-087a-4c40-8291-7300237c1757"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/2"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/horneado"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

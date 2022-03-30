@@ -1,0 +1,79 @@
+label: Multimedia
+description: 'Buscar y administrar medios.'
+display:
+  default:
+    display_title: 'Por defecto'
+    display_options:
+      exposed_form:
+        options:
+          submit_button: Filtro
+          reset_button_label: Restablecer
+          exposed_sorts_label: 'Ordenar por'
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      pager:
+        options:
+          expose:
+            items_per_page_label: 'Elementos por página'
+            items_per_page_options_all_label: '- Todo -'
+            offset_label: Desplazamiento
+          tags:
+            previous: '‹ Anterior'
+            next: 'Siguiente >'
+            first: '« Primero'
+            last: 'Último »'
+      fields:
+        media_bulk_form:
+          action_title: Acción
+        thumbnail__target_id:
+          label: Miniatura
+          separator: ', '
+        name:
+          label: 'Nombre del elemento multimedia'
+          separator: ', '
+        bundle:
+          label: Tipo
+          separator: ', '
+        uid:
+          label: Autor
+          separator: ', '
+        status:
+          label: Estado
+          settings:
+            format_custom_true: Publicado
+            format_custom_false: 'Sin publicar'
+          separator: ', '
+        changed:
+          label: Actualizado
+          separator: ', '
+        operations:
+          label: Operaciones
+      filters:
+        name:
+          expose:
+            label: 'Nombre del elemento multimedia'
+        bundle:
+          expose:
+            label: Tipo
+        status:
+          expose:
+            label: Verdad
+          group_info:
+            label: 'Estado de publicación'
+            group_items:
+              1:
+                title: Publicado
+              2:
+                title: 'Sin publicar'
+        langcode:
+          expose:
+            label: Idioma
+      title: Multimedia
+      empty:
+        area_text_custom:
+          content: 'No hay medios disponibles.'
+  media_page_list:
+    display_title: Multimedia
+    display_options:
+      menu:
+        title: Multimedia

@@ -1,0 +1,120 @@
+{
+    "uuid": [
+        {
+            "value": "d3353b60-d117-49d2-9ad2-dcb5bfe866eb"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "article",
+            "target_type": "node_type",
+            "target_uuid": "9d724571-3320-4af6-b623-626d001260fd"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "title": [
+        {
+            "value": "Dairy-free and delicious milk chocolate"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/articles\/dairy-free-and-delicious-milk-chocolate",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "body": [
+        {
+            "value": "<p>The calendar is full of excuses for chocolate-lovers to indulge, from religious festivals to birthdays - and even World Chocolate Day on the 7th July. But for those who are vegan, or on dairy-free diets, there is no need to miss out, because there are plenty of delicious vegan chocolate varieties on offer.<\/p>\n<p>Dairy-free milk chocolate is made in largely the same way as regular chocolate, until the point when the milk is added. Cacao beans are roasted for a couple of hours until they develop a rich flavor. The outer shells are removed, and the interior nibs are ground to make a paste that can be mixed with cocoa butter to produce the desired percentage of chocolate. Flavorings, sugar and milk are added in different quantities to get the type of chocolate being produced. The chocolate is grainy at this point and needs to be mashed until it is smooth - this can take days! Finally, it is tempered through a process of heating and cooling until it is ready to eat.<\/p>\n<p>So, how do vegan chocolatiers get that creamy milk flavor and texture into their products?<\/p>\n<h2>Rice milk<\/h2>\n<p>The flavor of rice milk perfectly complements the cocoa beans and it was one of the first dairy milk alternatives to be used to create vegan milk chocolate. Rice milk is made from rice powder and is sometimes combined with hazelnut milk to create the correct texture and taste that is ideal for producing all kinds of chocolate bars.<\/p>\n<h2>Coconut milk<\/h2>\n<p>Coconut milk has to be the perfect ingredient for adding creaminess into a chocolate bar. With high fat levels, a sweet, but not overpowering taste and the correct consistency, coconut milk is a great choice for vegan milk chocolate. Chocolate made in this way will melt wonderfully for drizzling or dipping, and the coconut milk adds a slight tropical flavor that works well with other fruit flavors and nuts.<\/p>\n<h2>Soy milk<\/h2>\n<p>Soy has long been the mainstay of vegan and vegetarian diets, as it is rich in protein and is available in a wide variety of textures suitable for all kinds of dishes. Soy milk is widely available and is a great alternative to dairy milk in chocolate. It isn&rsquo;t as rich in fat as some vegan milks, but does have a neutral taste that makes it easy to combine with almost any other flavor.<\/p>\n<h2>Nut milks<\/h2>\n<p>Milks made from almonds and hazelnuts are easy to find on supermarket shelves, and are perfect for chocolate production. Like soy milk, they can be quite low in fat and therefore a little less creamy, but they have that nutty taste that goes so well with chocolate of all kinds.<\/p>\n<p>Many manufacturers will use a combination of the above milks to create the perfect consistency for their product. Using this milk mixture they are able to produce all kinds of milk chocolates, including white chocolate.<\/p>\n",
+            "format": "basic_html",
+            "summary": null
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "161012e7-5c50-4b93-8bb7-27a3a4208e02"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "d6d2529a-907f-4d10-94b3-7b5176aa867f"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "f7433390-b586-4e30-954e-0874066a8cd6"
+        }
+    ]
+}

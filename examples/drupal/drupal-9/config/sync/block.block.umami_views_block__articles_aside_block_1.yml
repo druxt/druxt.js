@@ -1,0 +1,34 @@
+uuid: 4b1f66db-bbc9-4f53-8b0c-8d4db2b9a717
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.articles_aside
+  module:
+    - node
+    - views
+  theme:
+    - umami
+_core:
+  default_config_hash: a239TSh-hqB-54RMGEiHeO_LYQIcAdYCsrrjU3XqTvY
+id: umami_views_block__articles_aside_block_1
+theme: umami
+region: sidebar
+weight: -7
+provider: null
+plugin: 'views_block:articles_aside-block_1'
+settings:
+  id: 'views_block:articles_aside-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      article: article
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'

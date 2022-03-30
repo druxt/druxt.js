@@ -1,10 +1,6 @@
+const baseUrl = process.env.GITPOD_WORKSPACE_ID
+  ? `https://8080-${process.env.GITPOD_WORKSPACE_ID}.${process.env.GITPOD_WORKSPACE_CLUSTER_HOST}`
+  : process.env.BASE_URL || 'http://drupal-9.ddev.site'
 export default {
-  modules: [['druxt', { baseUrl: 'https://demo-api.druxtjs.org' }]],
-  components: [
-    {
-      path: '~/components/druxt',
-      prefix: 'druxt',
-      global: true
-    }
-  ]
+  modules: [['druxt', { baseUrl }]],
 }

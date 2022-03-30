@@ -1,0 +1,124 @@
+{
+    "uuid": [
+        {
+            "value": "41a7bd6b-11bc-48fe-84c4-faf35929cac5"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "article",
+            "target_type": "node_type",
+            "target_uuid": "9d724571-3320-4af6-b623-626d001260fd"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "title": [
+        {
+            "value": "Percances al hornear - nuestros consejos para solucionar los problemas"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/articles\/percances-al-hornear-nuestros-consejos-para-solucionar-problemas",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "body": [
+        {
+            "value": "<p>Sigues la receta, pesas todos tus ingredientes, usas la temperatura correcta del horno y te tomas tu tiempo y a\u00fan as\u00ed, tu horneado sale con un fondo empapado, no se eleva o simplemente tiene un sabor horrible. Hemos creado una lista de los problemas de horneado m\u00e1s frustrantes y las t\u00e9cnicas que puedes utilizar para tratar de evitarlos.<\/p>\n<h2>Tu pastel no subi\u00f3<\/h2>\n<p>Bajo ninguna circunstancia abras la puerta del horno en medio del tiempo de cocci\u00f3n. El calor saldr\u00e1, destruyendo la reacci\u00f3n qu\u00edmica que tiene lugar dentro de tu pastel. Tu agente elevador necesita el calor para activarse y podr\u00edas matarlo.<\/p>\n<h2>Tu pastel es chicloso y correoso<\/h2>\n<p>Si tu esponja ligero tiene la consistencia de un neum\u00e1tico de repuesto, es posible que hayas mezclado demasiado la masa. Mant\u00e9n la ligereza dentro de la mezcla del bizcocho a\u00f1adiendo cuidadosa y suavemente los ingredientes y s\u00f3lo hasta el punto en que se mezclen. Si se bate demasiado, el gluten de la harina comenzar\u00e1 a salir y estar\u00e1s haciendo pan en lugar de pastel.<\/p>\n<h2>Tus galletas se quemaron<\/h2>\n<p>Un gran truco es usar utensilios para hornear de colores claros, en lugar de negros. Es menos probable que absorba el calor y lo transfiera a la parte inferior de tus galletas. Usar papel para hornear tambi\u00e9n ayudar\u00e1 con esto. Adem\u00e1s, usar demasiada az\u00facar puede provocar que tus galletas se oscurezcan demasiado y les d\u00e9 un aspecto caramelizado<\/p>\n<h2>Parte superior de tu pastel o pan partida<\/h2>\n<p>Es muy probable que tu horno est\u00e9 demasiado caliente. Si sospechas que tu horno no mantiene la temperatura correcta, invierte en un term\u00f3metro y rev\u00edsalo regularmente durante la cocci\u00f3n. Con el pan, mezclar la masa demasiado puede resultar en una parte superior agrietada o partida.<\/p>\n<h2>El temido fondo empapado<\/h2>\n<p>Como se mencion\u00f3 anteriormente, el color de tu sart\u00e9n es importante. En este caso, una sart\u00e9n oscura aumentar\u00e1 el calor en la parte inferior y le dar\u00e1 a esa parte inferior el crujiente que deseas. Si est\u00e1s usando hojaldre, realmente necesitas pre-hornearlo. Poner tu pastel hacia la parte inferior del horno aumentar\u00e1 el calor que llega a esa parte.<\/p>\n<h2>Tu pastel se ha encogido<\/h2>\n<p>Simplemente intentaste hacer que se estirara demasiado. Al laminar, no intentes hacerla demasiado delgada o demasiado grande y al colocarla sobre la sart\u00e9n, permite que se asiente por s\u00ed sola sin estirarla para que encaje. O simplemente a\u00f1ade m\u00e1s masa - \u00a1a todo el mundo le encantan los pasteles de todos modos!<\/p>\n",
+            "format": "basic_html",
+            "summary": null
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "bf362248-e9cc-4ecc-b0bd-ad98391a698f"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "7df1cf7d-12b3-43a7-baf8-2e3b306a25b0"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "5edd73a8-15ad-49bc-b028-f0bb04415ce9"
+        }
+    ]
+}

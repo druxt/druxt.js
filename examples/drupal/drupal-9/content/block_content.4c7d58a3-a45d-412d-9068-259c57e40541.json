@@ -1,0 +1,103 @@
+{
+    "uuid": [
+        {
+            "value": "4c7d58a3-a45d-412d-9068-259c57e40541"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "banner_block",
+            "target_type": "block_content_type",
+            "target_uuid": "4af6586f-2ccf-47b0-a9ec-ab63ed2c7ed9"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "info": [
+        {
+            "value": "Umami Recipes Banner"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "reusable": [
+        {
+            "value": true
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "content_translation_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "9037d975-34ff-4020-b8ff-18cf8715361a"
+        }
+    ],
+    "content_translation_created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "field_content_link": [
+        {
+            "uri": "internal:\/en\/recipes\/vegan-chocolate-and-nut-brownies",
+            "title": "View recipe",
+            "options": []
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "6754f234-5ad6-4914-a8f2-2573fa541490"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "These sumptuous brownies should be gooey on the inside and crisp on the outside. A perfect indulgence!"
+        }
+    ],
+    "field_title": [
+        {
+            "value": "Vegan chocolate and nut brownies"
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "08b330b1-f741-429e-b58e-86e1d1c0d8e1"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/444d06fc-f4bc-435e-9892-d7e719957ecc"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipes\/bizcochos-veganos-de-chocolate-y-nueces"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+uuid: 22c04020-fd02-479c-8bb7-f5fd8534dbcc
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.banner_block
+    - field.storage.block_content.field_content_link
+  module:
+    - link
+_core:
+  default_config_hash: ylkaRE7Ts74VVypsJXijqCCg13lYX4XigGlA2Q5W_3A
+id: block_content.banner_block.field_content_link
+field_name: field_content_link
+entity_type: block_content
+bundle: banner_block
+label: 'Content Link'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 2
+field_type: link

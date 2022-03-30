@@ -1,0 +1,128 @@
+{
+    "uuid": [
+        {
+            "value": "080da820-a606-4b3c-8b94-7320c7e14717"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "article",
+            "target_type": "node_type",
+            "target_uuid": "9d724571-3320-4af6-b623-626d001260fd"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a80fc6ed-2669-4a56-88bf-1c9590437115"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a80fc6ed-2669-4a56-88bf-1c9590437115"
+        }
+    ],
+    "title": [
+        {
+            "value": "Prueba y cultiva tus propias hierbas"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/articles\/prueba-y-cultiva-tus-propias-hierbas",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "body": [
+        {
+            "value": "<p>No hay nada como tener tu propio suministro de hierbas frescas a mano y listas para ser usadas mientras cocinas. Tanto si tienes un gran jard\u00edn como un peque\u00f1o alf\u00e9izar en la cocina, siempre hay espacio suficiente para un cultivo casero.<\/p>\n<h2>Exteriores<\/h2>\n<h3>Menta<\/h3>\n<p>La menta es una gran planta para cultivo casero ya que es resistente y pr\u00e1cticamente crece en cualquier tipo de tierra. La menta es un cultivo que puede descontrolarse, as\u00ed que mantenla cercada en una maceta o podr\u00eda extenderse por todo tu jard\u00edn.<\/p>\n<h3>Salvia<\/h3>\n<p>Al igual que la menta, la salvia es otra planta que crece de forma descontrolada y puede hacerse con tu jard\u00edn si la dejas. Altamente arom\u00e1tica, la planta de la salvia se puede plantar en una maceta o en un lecho de flores con tierra seca. La mejor forma de almacenar las hierbas es secarlas al sol y guardarlas dentro de un recipiente cerrado en un armario fresco y oscuro.<\/p>\n<h3>Romero<\/h3>\n<p>La planta del romero crece en forma de hermosos arbustos. Se puede cultivar f\u00e1cilmente a partir de esquejes. No aguanta las temperaturas muy fr\u00edas as\u00ed que hay que plantarla cerca de la casa para protegerlas del fr\u00edo. Crece bien en maceta ya que le gusta el suelo seco, pero puede sobrevivir tambi\u00e9n sin problema en el suelo. Si vas a podar el romero para mejorar su forma, guarda las ramas y cu\u00e9lgalas boca abajo para preservar su sabor y usarlas en tus platos.<\/p>\n<h2>Interiores<\/h2>\n<h3>Albahaca<\/h3>\n<p>Perfecta para un lugar al sol en el alf\u00e9izar de la ventana de la cocina. La albahaca es una planta anual, as\u00ed que morir\u00e1 en oto\u00f1o por lo que es una buena idea recogerla en verano y secarla. Una vez cortada, la albahaca se mantiene fresca m\u00e1s tiempo si se pone en agua (como se hace con las flores frescas). Otra buena manera de almacenar la albahaca es hacer pesto con ella.<\/p>\n<h3>Cebollino<\/h3>\n<p>El cebollino es una hierba vers\u00e1til, que crece sin problema en interiores. Asegurate de que la planta se riega bien y recibe mucha luz. Recuerda recortar regularmente la planta para prevenir que salgan flores y la planta crezca m\u00e1s.<\/p>\n<h3>Cilantro<\/h3>\n<p>El cilantro puede crecer en interiores, pero a diferencia de otras hierbas, no soporta la luz directa del sol. Si tienes una ventana en la cocina orientada al sur no es un buen lugar para colocarla. Aunque no necesita tanta agua como la albahaca, al cilantro no le gusta la tierra seca as\u00ed que acu\u00e9rdate de regarla. El cilantro cortado se almacena mejor en el frigor\u00edfico.<\/p>\n",
+            "format": "basic_html",
+            "summary": null
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "4dbdbbb7-f241-4290-b0e9-c0b9d39a21a0"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "623c006d-3572-4e7d-b820-4b4dfe62a83a"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "3d1e54ab-d8fc-46d7-bb30-07ff4251bf3b"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "9f5aa551-d617-46d2-9bca-7597ad575754"
+        }
+    ]
+}

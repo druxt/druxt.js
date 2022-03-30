@@ -1,0 +1,27 @@
+uuid: da5048cb-a03f-4c70-9e3e-f3d18ae1db05
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - umami
+_core:
+  default_config_hash: FsutfLN9jY7GHeIslGljFqxA8uofY0gHU3o7w4UFygI
+id: umami_page_title
+theme: umami
+region: page_title
+weight: -7
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  provider: core
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '<front>'
+    negate: true
+    context_mapping: {  }
