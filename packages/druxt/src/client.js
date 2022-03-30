@@ -303,15 +303,15 @@ class DruxtClient {
    * @example @lang js
    * const collections = await this.$druxt.getCollectionAll('node--recipe', 'fields[node--recipe]=title')
    */
-  async getCollectionAll(type, query) {
+  async getCollectionAll(type, query, prefix) {
     const collections = []
 
-    let res = await this.getCollection(type, query)
+    let res = await this.getCollection(type, query, prefix)
     collections.push(res)
 
     while (((res.links || {}).next || {}).href) {
       query = res.links.next.href.split('?')[1]
-      res = await this.getCollection(type, query)
+      res = await this.getCollection(type, query, prefix)
       collections.push(res)
     }
 
