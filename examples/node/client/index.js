@@ -1,8 +1,13 @@
 const { DruxtClient } = require('druxt')
-const druxt = new DruxtClient('https://demo-api.druxtjs.org')
+
+const baseUrl = process.env.GITPOD_WORKSPACE_ID
+  ? `https://8080-${process.env.GITPOD_WORKSPACE_ID}.${process.env.GITPOD_WORKSPACE_CLUSTER_HOST}`
+  : process.env.BASE_URL || 'http://drupal-9.ddev.site'
+
+const druxt = new DruxtClient(baseUrl)
 
 // Get a page.
-druxt.getResource('node--page', 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd', 'fields[node--page]=title').then((resource) => {
+druxt.getResource('node--page', 'cd44fe14-86ae-4853-8e22-7b1b73cd98f5', 'fields[node--page]=title').then((resource) => {
   console.log('getResource', resource)
 })
 
