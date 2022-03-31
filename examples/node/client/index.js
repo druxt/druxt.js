@@ -6,6 +6,16 @@ const baseUrl = process.env.GITPOD_WORKSPACE_ID
 
 const druxt = new DruxtClient(baseUrl)
 
+// Get index.
+druxt.getIndex().then(index => {
+  console.log('getIndex', index)
+})
+
+// Get spanish index.
+druxt.getIndex(undefined, 'es').then(index => {
+  console.log('getIndex', index)
+})
+
 // Get a page.
 druxt.getResource('node--page', 'cd44fe14-86ae-4853-8e22-7b1b73cd98f5', 'fields[node--page]=title').then((resource) => {
   console.log('getResource', resource)
@@ -14,6 +24,16 @@ druxt.getResource('node--page', 'cd44fe14-86ae-4853-8e22-7b1b73cd98f5', 'fields[
 // Get page in spanish.
 druxt.getResource('node--page', 'cd44fe14-86ae-4853-8e22-7b1b73cd98f5', 'fields[node--page]=title', 'es').then((resource) => {
   console.log('getResource', resource)
+})
+
+// Get related uid.
+druxt.getRelated('node--page', 'cd44fe14-86ae-4853-8e22-7b1b73cd98f5', 'uid').then((resource) => {
+  console.log('getRelated', resource)
+})
+
+// Get related uid in spanish.
+druxt.getRelated('node--page', 'cd44fe14-86ae-4853-8e22-7b1b73cd98f5', 'uid', undefined, 'es').then((resource) => {
+  console.log('getRelated', resource)
 })
 
 // Get a collection of recipes.
