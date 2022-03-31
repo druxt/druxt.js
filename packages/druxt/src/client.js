@@ -77,6 +77,12 @@ class DruxtClient {
 
       ...options
     }
+
+    /**
+     * JSON:API Index.
+     * @type {object}
+     */
+    this.index = {}
   }
 
   /**
@@ -178,15 +184,16 @@ class DruxtClient {
    * await this.$druxt.createResource({ type: 'node--page', attributes: {}, relationships: {} })
    *
    * @param {object} resource - The JSON:API resource object
+   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The response data
    */
-  async createResource(resource) {
+  async createResource(resource, prefix = '') {
     if (resource.id) {
-      return this.updateResource(resource)
+      return this.updateResource(resource, prefix)
     }
 
-    const { href } = await this.getIndex(resource.type)
+    const { href } = await this.getIndex(resource.type, prefix)
     if (!href) {
       return false
     }
@@ -274,6 +281,7 @@ class DruxtClient {
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The JSON:API collection response.
    *
@@ -297,6 +305,7 @@ class DruxtClient {
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object[]} An array of JSON:API collections.
    *
@@ -325,17 +334,17 @@ class DruxtClient {
    * const { href } = await this.$druxt.getIndex('node--article')
    *
    * @param {string} resource - (Optional) A specific resource to query.
-   * @param {string} prefix - (Optional) The endpoint prefix.
+   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The resource index object or the specified resource.
    */
   async getIndex(resource, prefix = '') {
-    if (this.index && !resource) {
-      return this.index
+    if ((this.index || {})[prefix] && !resource) {
+      return this.index[prefix]
     }
 
-    if (this.index && resource) {
-      return this.index[resource] ? this.index[resource] : false
+    if ((this.index || {})[prefix] && resource) {
+      return this.index[prefix][resource] ? this.index[prefix][resource] : false
     }
 
     const url = prefix + this.options.endpoint
@@ -387,9 +396,9 @@ class DruxtClient {
     }
 
     // Set index.
-    this.index = index
+    this.index[prefix] = index
 
-    return resource ? this.index[resource] || false : this.index
+    return resource ? this.index[prefix][resource] || false : this.index[prefix]
   }
 
   /**
@@ -402,6 +411,7 @@ class DruxtClient {
    * @param {string} id - The Drupal resource UUID.
    * @param {string} related - The relationship name.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The related JSON:API resource(s).
    */
@@ -429,6 +439,7 @@ class DruxtClient {
    * @param {string} type - The JSON:API Resource type.
    * @param {string} id - The Drupal resource UUID.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The JSON:API resource data.
    * @todo update method to take a context object instead of 4 parameters.
@@ -456,11 +467,12 @@ class DruxtClient {
    * await this.$druxt.updateResource({ type: 'node--page', id, attributes: {}, relationships: {} })
    *
    * @param {object} resource - The JSON:API resource object
+   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The response data
    */
-   async updateResource(resource) {
-    const { href } = await this.getIndex(resource.type)
+   async updateResource(resource, prefix) {
+    const { href } = await this.getIndex(resource.type, prefix)
     if (!href) {
       return false
     }
