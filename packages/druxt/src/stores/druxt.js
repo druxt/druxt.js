@@ -103,7 +103,7 @@ const DruxtStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxt/addResource', { resource })
        */
-      addResource (state, { resource, hash }) {
+      addResource (state, { prefix, resource, hash }) {
         if (hash) {
           console.warn('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/guide/deprecations.html#druxtstore-addresource-hash')
         }
@@ -125,6 +125,7 @@ const DruxtStore = ({ store }) => {
 
         // Ensure Resource type array is reactive.
         if (!state.resources[type]) Vue.set(state.resources, type, {})
+        if (!state.resources[type][id]) Vue.set(state.resources[type], id, {})
 
         // Extract and store included data.
         if (resource.included) {
@@ -133,9 +134,9 @@ const DruxtStore = ({ store }) => {
         }
 
         // Recursively merge new resource data into stored resource.
-        resource = merge(state.resources[type][id] || {}, resource, { arrayMerge: (dst, src) => src })
+        resource = merge(state.resources[type][id][prefix] || {}, resource, { arrayMerge: (dst, src) => src })
 
-        Vue.set(state.resources[type], id, resource)
+        Vue.set(state.resources[type][id], prefix, resource)
       },
     },
 
@@ -199,10 +200,7 @@ const DruxtStore = ({ store }) => {
        * @example @lang js
        * const resource = await this.$store.dispatch('druxt/getResource', { type: 'node--article', id })
        */
-      async getResource ({ commit, dispatch, state, rootState }, { type, id, query }) {
-        // Get the route prefix from the druxt-router store.
-        const prefix = rootState.druxtRouter.route.prefix
-
+      async getResource ({ commit, dispatch, state }, { type, id, query, prefix }) {
         // Get the resource from the store if it's avaialble.
         const storedResource = (state.resources[type] || {})[id] ?
           { ...state.resources[type][id] }
@@ -283,11 +281,11 @@ const DruxtStore = ({ store }) => {
         let resource
         if (!storedResource || fields) {
           resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
-          commit('addResource', { resource: { ...resource } })
+          commit('addResource', { prefix, resource: { ...resource } })
         }
 
         // Build resource to be returned.
-        const result = { ...(state.resources[type] || {})[id] }
+        const result = { ...((state.resources[type] || {})[id] || {})[prefix] }
 
         // Merge included resources into resource.
         if (queryObject.include && ((resource || {}).included || (storedResource || {}).included)) {
