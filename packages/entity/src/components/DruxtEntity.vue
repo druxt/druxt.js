@@ -48,6 +48,14 @@ export default {
   /** */
   props: {
     /**
+     * The entity langcode.
+     */
+    langcode: {
+      type: String,
+      default: undefined
+    },
+
+    /**
      * Drupal display mode.
      *
      * @type {string}
@@ -134,7 +142,7 @@ export default {
      *
      * @return {object}
      */
-    fields: ({ errors, isEmpty, model, schema, schemaType }) => {
+    fields: ({ errors, isEmpty, langcode, model, schema, schemaType }) => {
       if (!schema) return false
 
       const fields = {}
@@ -151,6 +159,7 @@ export default {
           // @todo - Remove deprecated 'data'.
           data: value,
           errors: (errors || []).filter((o) => ((o.source || {}).pointer || '').startsWith(`/data/attributes/${field.id}`)),
+          langcode,
           relationship,
           schema: {
             config: schema.config,
@@ -314,7 +323,7 @@ export default {
 
       if (this.uuid && !this.value) {
         const query = this.getQuery(settings)
-        const resource = await this.getResource({ type: this.type, id: this.uuid, query })
+        const resource = await this.getResource({ type: this.type, id: this.uuid, query, prefix: this.langcode })
         const entity = { ...(resource.data || {}) }
         entity.included = resource.included
         this.model = JSON.parse(JSON.stringify(entity || {}))
