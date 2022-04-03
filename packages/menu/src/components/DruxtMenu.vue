@@ -325,7 +325,7 @@ export default {
      */
     slots(h) {
       return {
-        default: (attrs) => this.items.map((item) => h('DruxtMenuItem', {
+        default: (attrs) => (this.items || []).map((item) => h('DruxtMenuItem', {
           attrs,
           key: item.entity.id,
           props: {

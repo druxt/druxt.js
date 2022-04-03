@@ -1,7 +1,7 @@
 <template>
   <div>
     <DruxtEntity
-      v-if="!$fetchState.pending"
+      v-if="!$fetchState.pending && propsData"
       v-bind="propsData"
     />
   </div>
@@ -57,13 +57,13 @@ export default {
     propsData: ({ $fetchState, $store, block }) => {
       if ($fetchState.pending) return false
 
-      const resource = $store.state.druxt.resources[block.type][block.id]
-      if (!resource.data.attributes.dependencies) return false
+      const { data } = $store.state.druxt.resources[block.type][block.id]
+      if (!((data || {}).attributes || {}).dependencies) return false
 
-      const parts = resource.data.attributes.dependencies.content[0].split(':')
+      const parts = data.attributes.dependencies.content[0].split(':')
 
       return {
-        key: resource.data.attributes.dependencies.content[0],
+        key: data.attributes.dependencies.content[0],
         type: `${parts[0]}--${parts[1]}`,
         uuid: parts[2]
       }
