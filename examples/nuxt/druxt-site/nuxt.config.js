@@ -80,6 +80,7 @@ export default {
    * Nuxt proxy module.
    */
   proxy: {
-    '/en/jsonapi': baseUrl
+    '/en/jsonapi': baseUrl,
+    '/es/jsonapi': baseUrl
   }
 }
