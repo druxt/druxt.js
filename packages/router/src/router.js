@@ -44,6 +44,7 @@ class DruxtRouter {
           component: 'druxt-entity',
           property: 'entity',
           props: route => ({
+            langcode: route.entity.langcode,
             type: route.jsonapi.resourceName,
             uuid: route.entity.uuid
           })
@@ -142,7 +143,7 @@ class DruxtRouter {
    *
    * @returns {object} The route and redirect data.
    */
-  async get (path) {
+  async get (path = '') {
     const route = await this.getRoute(path)
     const redirect = this.getRedirect(path, route)
 
@@ -183,7 +184,7 @@ class DruxtRouter {
    *
    * @returns {boolean|string} The redirect path or false.
    */
-  getRedirect (path, route = {}, langcode = null) {
+  getRedirect (path = '', route = {}, langcode = null) {
     // Redirect to route provided redirect.
     if (((route.redirect || [])[0] || {}).to) {
       return route.redirect[0].to
@@ -290,10 +291,9 @@ class DruxtRouter {
    *
    * @returns {object} The route object.
    */
-  async getRoute (path, langcode) {
-    const prefix = langcode ? langcode + '/' : ''
+  async getRoute (path = '/') {
     // @TODO - Add validation/error handling.
-    const url = `/router/translate-path?path=${prefix + path}`
+    const url = `/router/translate-path?path=${path}`
 
     const response = await this.druxt.get(url, {
       // Prevent invalid routes (404) from throwing validation errors.
@@ -317,7 +317,6 @@ class DruxtRouter {
       isHomePath: data.isHomePath,
       jsonapi: data.jsonapi,
       label: data.label,
-      prefix: langcode,
       props: false,
       redirect: data.redirect,
       resolvedPath: Url(data.resolved).pathname,

@@ -57,7 +57,7 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
           routes.push({
             name: `druxt-router___${locale.code}`,
             path: `/${locale.code}/*`,
-            component: options.router.component,
+            component: resolve(this.options.buildDir, 'components/druxt-router.js'),
             chunkName: 'druxt-router',
             meta: { langcode: locale.code }
           })
@@ -65,7 +65,7 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
         routes.push({
           name: 'druxt-router',
           path: '/*',
-          component: options.router.component,
+          component: resolve(this.options.buildDir, 'components/druxt-router.js'),
           chunkName: 'druxt-router'
         })
       } else {
@@ -73,7 +73,7 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
         routes.push({
           name: 'druxt-router',
           path: '*',
-          component: options.router.component,
+          component: resolve(this.options.buildDir, 'components/druxt-router.js'),
           chunkName: 'druxt-router'
         })
       }

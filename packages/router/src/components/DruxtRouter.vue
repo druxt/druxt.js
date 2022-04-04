@@ -64,10 +64,7 @@ export default {
     }
 
     // Get and set the current route and redirect information.
-    const result = await store.dispatch('druxtRouter/get', {
-      path: route.params.pathMatch,
-      langcode: route.meta[0].langcode
-    })
+    const result = await store.dispatch('druxtRouter/get', route.fullPath)
 
     // Process redirect.
     if (result.redirect) {

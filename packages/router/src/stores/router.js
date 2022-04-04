@@ -131,9 +131,9 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * const { redirect, route } = await this.$store.dispatch('druxtRouter/get', '/')
        */
-      async get ({ commit, dispatch }, { path, langcode }) {
+      async get ({ commit, dispatch }, path) {
         // Get route by path from 'getRoute'.
-        const route = await dispatch('getRoute', { path, langcode })
+        const route = await dispatch('getRoute', path)
 
         // Handle route errors.
         if (route.error && typeof route.error.statusCode !== 'undefined' && ((this.app || {}).context || {}).error) {
@@ -141,10 +141,10 @@ const DruxtRouterStore = ({ store }) => {
         }
 
         // Set active route.
-        commit('setRoute', { path, langcode })
+        commit('setRoute', path)
 
         // Set active redirect.
-        const redirect = this.$druxtRouter().getRedirect(path, route, langcode)
+        const redirect = this.$druxtRouter().getRedirect(path, route)
         commit('setRedirect', redirect)
 
         return { redirect, route }
@@ -229,19 +229,19 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * const route = await this.$store.dispatch('druxtRouter/getRoute', '/')
        */
-      async getRoute ({ commit, state }, { path, langcode }) {
-        if (typeof state.routes[path + langcode] !== 'undefined') {
-          return state.routes[path + langcode]
+      async getRoute ({ commit, state }, path) {
+        if (typeof state.routes[path] !== 'undefined') {
+          return state.routes[path]
         }
 
         let route
         try {
-          route = await this.$druxtRouter().getRoute(path, langcode)
+          route = await this.$druxtRouter().getRoute(path)
         } catch (err) {
           route = { error: { statusCode: err.response.status, message: err.response.data.message } }
         }
 
-        commit('addRoute', { path, route, langcode })
+        commit('addRoute', { path, route })
 
         return route
       }
