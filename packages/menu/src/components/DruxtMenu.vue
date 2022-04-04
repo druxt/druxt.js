@@ -72,6 +72,14 @@ export default {
     },
 
     /**
+     * The entity langcode.
+     */
+    langcode: {
+      type: String,
+      default: undefined
+    },
+
+    /**
      * The maximum depth of the menu tree data to load.
      *
      * @example @lang vue
@@ -216,6 +224,12 @@ export default {
      */
     entities() {
       this.$forceUpdate()
+    },
+
+    async langcode() {
+      this.value = undefined
+      this.model = undefined
+      await this.$fetch()
     }
   },
 
@@ -241,8 +255,11 @@ export default {
           }
         }
 
-        const entities = this.getEntitiesByFilter((key) => {
-          return this.entities[key].attributes.menu_name === this.name && this.entities[key].attributes.parent === parent
+        const entities = this.getEntitiesByFilter({
+          filter: (key) => {
+            return this.entities[this.langcode][key].attributes.menu_name === this.name && this.entities[this.langcode][key].attributes.parent === parent
+          },
+          prefix: this.langcode
         })
 
         for (const key in entities) {
@@ -280,7 +297,11 @@ export default {
      */
     async fetchData(settings) {
       if (!this.value) {
-        await this.getMenu({ name: this.name, settings: settings.query })
+        await this.getMenu({
+          name: this.name,
+          settings: settings.query,
+          prefix: this.langcode
+        })
         this.model = this.getMenuItems()
       }
     },
