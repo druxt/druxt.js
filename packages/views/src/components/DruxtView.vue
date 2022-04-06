@@ -79,6 +79,14 @@ export default {
     },
 
     /**
+     * The view langcode.
+     */
+    langcode: {
+      type: String,
+      default: undefined
+    },
+
+    /**
      * JSON:API Resource type.
      *
      * @type {string}
@@ -294,6 +302,10 @@ export default {
       await this.$fetch()
     },
 
+    async langcode() {
+      await this.$fetch()
+    },
+
     'model.filter': {
       deep: true,
       async handler(to, from) {
@@ -425,11 +437,16 @@ export default {
       if (!this.view && (this.uuid || this.viewId)) {
         if (this.uuid) {
           this.view = await this.getResource({
+            prefix: this.langcode,
             type: this.type,
             id: this.uuid,
           })
         } else {
-          const collection = await this.getCollection({ type: this.type, query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId) })
+          const collection = await this.getCollection({
+            prefix: this.langcode,
+            type: this.type,
+            query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId)
+          })
           this.view = { data: collection.data[0] }
         }
       }
@@ -443,9 +460,10 @@ export default {
       if (viewId) {
         const query = this.getQuery(settings)
         this.resource = await this.getResults({
-          viewId,
           displayId: this.displayId,
-          query: stringify(query)
+          prefix: this.langcode,
+          query: stringify(query),
+          viewId
         })
       }
     },
@@ -562,6 +580,7 @@ export default {
           ref: 'attachements_before',
           props: {
             displayId,
+            langcode: this.langcode,
             type: this.type,
             uuid: this.uuid,
             viewId: this.viewId,
@@ -583,6 +602,7 @@ export default {
           attrs: { ...attrs },
           key: result.id,
           props: {
+            langcode: this.langcode,
             mode: this.mode,
             type: result.type,
             uuid: result.id
@@ -617,6 +637,7 @@ export default {
           ref: 'attachements_after',
           props: {
             displayId,
+            langcode: this.langcode,
             type: this.type,
             uuid: this.uuid,
             viewId: this.viewId,

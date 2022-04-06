@@ -56,6 +56,7 @@ class DruxtRouter {
           property: 'view',
           props: route => ({
             displayId: route.view.display_id,
+            langcode: route.view.langcode || undefined,
             type: route.jsonapi.resourceName,
             uuid: route.view.uuid,
             viewId: route.view.view_id
