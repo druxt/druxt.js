@@ -87,7 +87,7 @@ const DruxtViewsStore = ({ store }) => {
 
         const results = await this.$druxt.getResource(`views--${viewId}`, displayId, query, prefix)
 
-        commit('addResults', { results, viewId, displayId, hash })
+        commit('addResults', { results, viewId, displayId, prefix, hash })
 
         return results
       }
