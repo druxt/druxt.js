@@ -72,8 +72,9 @@ const DruxtStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxt/addCollection', { collection, type, hash })
        */
-      addCollection (state, { collection, type, hash }) {
+      addCollection (state, { collection, type, hash, prefix }) {
         if (!state.collections[type]) Vue.set(state.collections, type, {})
+        if (!state.collections[type][hash]) Vue.set(state.collections[type], hash, {})
 
         // Parse the query.
         const link = decodeURI((((collection || {}).links || {}).self || {}).href || '')
@@ -90,9 +91,9 @@ const DruxtStore = ({ store }) => {
         }
 
         // Recursively merge new collection data into stored collection.
-        collection = merge(state.collections[type][hash] || {}, collection, { arrayMerge: (dst, src) => src })
+        collection = merge(state.collections[type][hash][prefix] || {}, collection, { arrayMerge: (dst, src) => src })
 
-        Vue.set(state.collections[type], hash, collection)
+        Vue.set(state.collections[type][hash], prefix, collection)
       },
 
       /**
@@ -159,20 +160,17 @@ const DruxtStore = ({ store }) => {
        *   query: new DrupalJsonApiParams().addFilter('status', '1'),
        * })
        */
-      async getCollection ({ commit, state, rootState }, { type, query }) {
-        // Get the route prefix from the druxt-router store.
-        const prefix = rootState.druxtRouter.route.prefix
-
+      async getCollection ({ commit, state }, { type, query, prefix }) {
         // Generate a hash using query data excluding the 'fields' and 'include' data.
         const queryObject = getDrupalJsonApiParams(query).getQueryObject()
         const hash = query ? md5(JSON.stringify({ ...queryObject, fields: {}, include: [] })) : '_default'
 
         // If collection hash exists, re-hydrate and return the data.
-        if ((state.collections[type] || {})[hash]) {
+        if (((state.collections[type] || {})[hash] || {})[prefix]) {
           return {
-            ...state.collections[type][hash],
+            ...state.collections[type][hash][prefix],
             // Hydrate resource data.
-            data: state.collections[type][hash].data.map((o) => (state.resources[o.type][o.id] || {}).data)
+            data: state.collections[type][hash][prefix].data.map((o) => ((state.resources[o.type][o.id] || {})[prefix] || {}).data)
           }
         }
 
@@ -180,7 +178,7 @@ const DruxtStore = ({ store }) => {
         const collection = await this.$druxt.getCollection(type, query, prefix)
 
         // Store the collection in the DruxtStore.
-        commit('addCollection', { collection: { ...collection }, type, hash })
+        commit('addCollection', { collection: { ...collection }, type, hash, prefix })
 
         return collection
       },
