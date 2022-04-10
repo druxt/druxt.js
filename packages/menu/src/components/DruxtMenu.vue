@@ -219,6 +219,13 @@ export default {
 
   /** */
   watch: {
+    async $route(to, from) {
+      if (this.langcode) return
+      if ((to.meta || {}).langcode !== (from.meta || {}).langcode) {
+        await this.$fetch()
+      }
+    },
+
     /**
      * Updates menu when available Entities change.
      */
@@ -227,8 +234,6 @@ export default {
     },
 
     async langcode() {
-      this.value = undefined
-      this.model = undefined
       await this.$fetch()
     }
   },
@@ -241,6 +246,7 @@ export default {
      * @param {number} [position] - Current position in the menu tree,
      */
     getMenuItems(entity = null, position = 0) {
+      const langcode = this.langcode || (this.$route.meta || {}).langcode
       const items = []
       position += 1
 
@@ -257,9 +263,9 @@ export default {
 
         const entities = this.getEntitiesByFilter({
           filter: (key) => {
-            return this.entities[this.langcode][key].attributes.menu_name === this.name && this.entities[this.langcode][key].attributes.parent === parent
+            return this.entities[langcode][key].attributes.menu_name === this.name && this.entities[langcode][key].attributes.parent === parent
           },
-          prefix: this.langcode
+          prefix: langcode
         })
 
         for (const key in entities) {
@@ -300,7 +306,7 @@ export default {
         await this.getMenu({
           name: this.name,
           settings: settings.query,
-          prefix: this.langcode
+          prefix: this.langcode || (this.$route.meta || {}).langcode
         })
         this.model = this.getMenuItems()
       }
