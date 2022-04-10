@@ -1,5 +1,7 @@
 import { existsSync } from 'fs'
 import { join, resolve } from 'path'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
+import { DruxtClient } from 'druxt'
 
 /**
  * The Nuxt.js module function.
@@ -43,6 +45,14 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
     dirs.push({ path: join(__dirname, '../dist/components') })
   })
 
+  const druxt = new DruxtClient(options.baseUrl, options)
+  const resourceType = 'configurable_language--configurable_language'
+  const query = new DrupalJsonApiParams().addFields(resourceType, ['drupal_internal__id'])
+  const languages = (await druxt.getCollectionAll(resourceType, query) || [])
+    .map((o) => o.data)
+    .flat()
+    .filter((o) => !['und', 'zxx'].includes(o.attributes.drupal_internal__id))
+
   // Add Druxt router custom wildcard route.
   if (options.router.wildcard) {
     this.addTemplate({
@@ -55,8 +65,8 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
       if (this.nuxt.options.i18n && this.nuxt.options.i18n.locales) {
         this.nuxt.options.i18n.locales.forEach((locale) => {
           routes.push({
-            name: `druxt-router___${locale.code}`,
-            path: `/${locale.code}/*`,
+            name: `druxt-router__${locale.code}`,
+            path: `/${locale.code}*`,
             component: resolve(this.options.buildDir, 'components/druxt-router.js'),
             chunkName: 'druxt-router',
             meta: { langcode: locale.code }
@@ -64,11 +74,20 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
         })
         routes.push({
           name: 'druxt-router',
-          path: '/*',
+          path: '*',
           component: resolve(this.options.buildDir, 'components/druxt-router.js'),
           chunkName: 'druxt-router'
         })
       } else {
+        languages.forEach((o) => {
+          routes.push({
+            name: `druxt-router__${o.attributes.drupal_internal__id}`,
+            path: `/${o.attributes.drupal_internal__id}*`,
+            component: resolve(this.options.buildDir, 'components/druxt-router.js'),
+            chunkName: 'druxt-router',
+            meta: { langcode: o.attributes.drupal_internal__id }
+          })
+        })
         // Add Druxt router custom wildcard route.
         routes.push({
           name: 'druxt-router',
