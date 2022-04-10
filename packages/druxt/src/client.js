@@ -338,7 +338,7 @@ class DruxtClient {
    *
    * @returns {object} The resource index object or the specified resource.
    */
-  async getIndex(resource, prefix = '') {
+  async getIndex(resource, prefix) {
     if ((this.index || {})[prefix] && !resource) {
       return this.index[prefix]
     }
@@ -347,7 +347,7 @@ class DruxtClient {
       return this.index[prefix][resource] ? this.index[prefix][resource] : false
     }
 
-    const url = prefix + this.options.endpoint
+    const url = [prefix, this.options.endpoint].join('')
     const { data } = await this.get(url)
     let index = data.links
 
