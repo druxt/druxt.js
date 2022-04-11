@@ -4,7 +4,7 @@ import Vue from 'vue'
 
 import { getDrupalJsonApiParams } from '../utils/getDrupalJsonApiParams'
 
-const dehydrateResources = ({ commit, queryObject, resources }) => {
+const dehydrateResources = ({ commit, queryObject, resources, prefix }) => {
   return (resources || []).map((data) => {
     // Generate a query link for included resources.
     // This is used to determine if the resource is a partial.
@@ -15,10 +15,11 @@ const dehydrateResources = ({ commit, queryObject, resources }) => {
 
     // Commit the included resource.
     commit('druxt/addResource', {
+      prefix,
       resource: {
         data,
         links: { self: { href } },
-      }
+      },
     })
 
     return { id: data.id, type: data.type }
@@ -82,11 +83,11 @@ const DruxtStore = ({ store }) => {
         const queryObject = getDrupalJsonApiParams(query).getQueryObject()
 
         // Store and dehydrate collection resources.
-        collection.data = dehydrateResources({ commit: this.commit, queryObject, resources: collection.data })
+        collection.data = dehydrateResources({ commit: this.commit, prefix, queryObject, resources: collection.data })
 
         // Extract and store included resources.
         if (collection.included) {
-          collection.included = dehydrateResources({ commit: this.commit, queryObject, resources: collection.included })
+          collection.included = dehydrateResources({ commit: this.commit, prefix, queryObject, resources: collection.included })
           delete collection.included
         }
 
@@ -130,7 +131,7 @@ const DruxtStore = ({ store }) => {
 
         // Extract and store included data.
         if (resource.included) {
-          dehydrateResources({ commit: this.commit, queryObject, resources: resource.included })
+          dehydrateResources({ commit: this.commit, prefix, queryObject, resources: resource.included })
           delete resource.included
         }
 
