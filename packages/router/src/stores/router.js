@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 const DruxtRouterStore = ({ store }) => {
   if (typeof store === 'undefined') {
     throw new TypeError('Vuex store not found.')
@@ -85,13 +87,13 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxtRouter/addRoute', { path, route })
        */
-      addRoute (state, { path, route, langcode }) {
+      addRoute (state, { path, route }) {
         if (typeof path !== 'string' || typeof route === 'undefined') {
           // @TODO - Error?
           return
         }
 
-        state.routes[path + langcode] = route
+        Vue.set(state.routes, path, route)
       },
 
       /**
@@ -102,13 +104,13 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxtRouter/setRoute', '/')
        */
-      setRoute (state, { path, langcode }) {
-        if (typeof path !== 'string' || typeof state.routes[path] + langcode === 'undefined') {
+      setRoute (state, path) {
+        if (typeof path !== 'string' || typeof state.routes[path] === 'undefined') {
           // @TODO - Error?
           return
         }
 
-        state.route = state.routes[path + langcode]
+        state.route = state.routes[path]
       }
     },
 

@@ -174,6 +174,13 @@ export default {
 
   /** */
   watch: {
+    $route() {
+      const path = this.$route.fullPath
+      if (this.$store.state.druxtRouter.routes[path] && this.$store.state.druxtRouter.route !== this.$store.state.druxtRouter.routes[path]) {
+        this.$store.commit('druxtRouter/setRoute', path)
+      }
+    },
+
     /**
      * Re-fetch on update to Path prop.
      */
