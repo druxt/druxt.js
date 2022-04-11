@@ -63,7 +63,7 @@ export default {
      */
     path: {
       type: String,
-      default: ''
+      default: undefined
     }
   },
 
@@ -105,7 +105,7 @@ export default {
     async fetchCrumbs() {
       const path = this.path || this.$route.path
       let route = this.route
-      if (this.path && path !== this.$route.path) {
+      if (path && path !== route.path) {
         route = await this.getRoute(path)
       }
 
