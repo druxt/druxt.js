@@ -1,6 +1,6 @@
 {
   "name": "druxt-test-utils",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "private": true,
   "description": "Test utilities for Druxt development.",
   "keywords": [

@@ -10912,14 +10912,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"druxt-blocks@^0.15.1, druxt-blocks@workspace:packages/blocks":
+"druxt-blocks@^0.15.1, druxt-blocks@^0.15.2, druxt-blocks@workspace:packages/blocks":
   version: 0.0.0-use.local
   resolution: "druxt-blocks@workspace:packages/blocks"
   dependencies:
     axios: ^0.21.1
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.18.0
-    druxt-entity: ^0.24.2
+    druxt: ^0.18.2
+    druxt-entity: ^0.24.3
     druxt-router: ^0.26.1
     vue: ^2.6.14
     vuex: ^3.6.2
@@ -10966,26 +10966,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-entity@^0.24.2, druxt-entity@workspace:packages/entity":
+"druxt-entity@^0.24.3, druxt-entity@workspace:packages/entity":
   version: 0.0.0-use.local
   resolution: "druxt-entity@workspace:packages/entity"
   dependencies:
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.18.0
+    druxt: ^0.18.2
     druxt-router: ^0.26.1
-    druxt-schema: ^0.10.2
+    druxt-schema: ^0.10.3
   languageName: unknown
   linkType: soft
 
-"druxt-menu@^0.16.1, druxt-menu@workspace:packages/menu":
+"druxt-menu@^0.16.3, druxt-menu@workspace:packages/menu":
   version: 0.0.0-use.local
   resolution: "druxt-menu@workspace:packages/menu"
   dependencies:
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.18.1
-    druxt-blocks: ^0.15.1
+    druxt: ^0.18.2
+    druxt-blocks: ^0.15.2
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -11012,13 +11012,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-schema@^0.10.2, druxt-schema@workspace:packages/schema":
+"druxt-schema@^0.10.3, druxt-schema@workspace:packages/schema":
   version: 0.0.0-use.local
   resolution: "druxt-schema@workspace:packages/schema"
   dependencies:
     consola: ^2.15.0
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.18.0
+    druxt: ^0.18.2
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -11034,14 +11034,14 @@ __metadata:
   resolution: "druxt-site@workspace:packages/site"
   dependencies:
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.18.0
-    druxt-blocks: ^0.15.1
+    druxt: ^0.18.2
+    druxt-blocks: ^0.15.2
     druxt-breadcrumb: ^0.14.1
-    druxt-entity: ^0.24.2
-    druxt-menu: ^0.16.1
+    druxt-entity: ^0.24.3
+    druxt-menu: ^0.16.3
     druxt-router: ^0.26.1
-    druxt-schema: ^0.10.2
-    druxt-views: ^0.18.1
+    druxt-schema: ^0.10.3
+    druxt-views: ^0.18.2
     md5: ^2.2.1
     vue: ^2.6.14
     vuex: ^3.6.2
@@ -11064,16 +11064,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-views@^0.18.1, druxt-views@workspace:packages/views":
+"druxt-views@^0.18.2, druxt-views@workspace:packages/views":
   version: 0.0.0-use.local
   resolution: "druxt-views@workspace:packages/views"
   dependencies:
     axios: ^0.21.1
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.18.0
-    druxt-blocks: ^0.15.1
-    druxt-entity: ^0.24.2
+    druxt: ^0.18.2
+    druxt-blocks: ^0.15.2
+    druxt-entity: ^0.24.3
     druxt-router: ^0.26.1
     md5: ^2.3.0
     vue: ^2.6.14
@@ -11118,7 +11118,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt@^0.18.0, druxt@^0.18.1, druxt@workspace:packages/druxt":
+"druxt@^0.18.0, druxt@^0.18.2, druxt@workspace:packages/druxt":
   version: 0.0.0-use.local
   resolution: "druxt@workspace:packages/druxt"
   dependencies:

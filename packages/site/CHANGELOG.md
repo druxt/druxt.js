@@ -1,5 +1,19 @@
 # druxt-site
 
+## 0.11.2
+
+### Patch Changes
+
+- 540afca: Updated drupal-jsonapi-params to 2.0.0
+- Updated dependencies [c6d7c83]
+- Updated dependencies [540afca]
+  - druxt-views@0.18.2
+  - druxt-blocks@0.15.2
+  - druxt@0.18.2
+  - druxt-entity@0.24.3
+  - druxt-menu@0.16.3
+  - druxt-schema@0.10.3
+
 ## 0.11.1
 
 ### Patch Changes

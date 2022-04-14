@@ -1,6 +1,6 @@
 {
   "name": "druxt-site",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "description": "Out of the box Decoupled Drupal sites with Druxt.",
   "keywords": [
     "cms",
@@ -43,14 +43,14 @@
   ],
   "dependencies": {
     "drupal-jsonapi-params": "^2.0.0",
-    "druxt": "^0.18.0",
-    "druxt-blocks": "^0.15.1",
+    "druxt": "^0.18.2",
+    "druxt-blocks": "^0.15.2",
     "druxt-breadcrumb": "^0.14.1",
-    "druxt-entity": "^0.24.2",
-    "druxt-menu": "^0.16.1",
+    "druxt-entity": "^0.24.3",
+    "druxt-menu": "^0.16.3",
     "druxt-router": "^0.26.1",
-    "druxt-schema": "^0.10.2",
-    "druxt-views": "^0.18.1",
+    "druxt-schema": "^0.10.3",
+    "druxt-views": "^0.18.2",
     "md5": "^2.2.1"
   },
   "optionalDependencies": {

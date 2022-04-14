@@ -1,5 +1,14 @@
 # druxt-entity
 
+## 0.24.3
+
+### Patch Changes
+
+- 540afca: Updated drupal-jsonapi-params to 2.0.0
+- Updated dependencies [540afca]
+  - druxt@0.18.2
+  - druxt-schema@0.10.3
+
 ## 0.24.2
 
 ### Patch Changes
