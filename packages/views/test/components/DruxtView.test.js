@@ -104,10 +104,7 @@ describe('DruxtView', () => {
 
     // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
-    expect(wrapper.vm.component.options).toStrictEqual([
-      'DruxtViewFeaturedArticlesPage1',
-      'DruxtViewFeaturedArticles'
-    ])
+    expect(wrapper.vm.component.options).toMatchSnapshot()
 
     // Query.
     await wrapper.setProps({ arguments: [1, 2, 3] })
