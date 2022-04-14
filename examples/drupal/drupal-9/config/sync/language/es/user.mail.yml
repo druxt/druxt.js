@@ -1,3 +1,5 @@
+cancel_confirm:
+  subject: 'Solicitud de cancelación de cuenta para [user:display-name] en [site:name]'
 password_reset:
   body: "[user:display-name],\r\n\r\nUna petición para reestablecer la contraseña de su cuenta ha sido realizada en [site:name].\r\n\r\nAhora puede iniciar sesión haciendo clic en este enlace o copiándolo y pegándolo en su navegador:\r\n\r\n[user:one-time-login-url]\r\n\r\nEste enlace solo puede ser usado una vez para iniciar sesión y le llevará a una página donde puede establecer su contraseña. Caduca después de un día y nada ocurrirá si no se usa.\r\n\r\n--  El equipo de [site:name]"
   subject: 'Reemplazo de información de inicio de sesión para [user:display-name] en [site:name]'
