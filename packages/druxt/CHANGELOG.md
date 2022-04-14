@@ -1,5 +1,11 @@
 # druxt
 
+## 0.18.2
+
+### Patch Changes
+
+- 540afca: Updated drupal-jsonapi-params to 2.0.0
+
 ## 0.18.1
 
 ### Patch Changes

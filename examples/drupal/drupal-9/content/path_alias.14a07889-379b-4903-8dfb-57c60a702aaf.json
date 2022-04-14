@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "14a07889-379b-4903-8dfb-57c60a702aaf"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/27"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/vegan"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

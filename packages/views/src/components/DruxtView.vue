@@ -412,7 +412,11 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ displayId, uuid, viewId }) => ([[viewId || uuid, displayId]]),
+    componentOptions: ({ displayId, uuid, view, viewId }) => ([
+      [viewId || ((view.data || {}).attributes || {}).drupal_internal__id, displayId],
+      [uuid || (view.data || {}).id, displayId],
+      [displayId]
+    ]),
 
     /**
      * Fetch View configuration resource.
@@ -638,13 +642,19 @@ export default {
  * @example @lang js
  * [
  *   'DruxtView[ViewId][DisplayId]',
- *   'DruxtView[ViewId]'
+ *   'DruxtView[ViewId]',
+ *   'DruxtView[UUID][DisplayId]',
+ *   'DruxtView[UUID]',
+ *   'DruxtView[DisplayId]',
  * ]
  *
  * @example <caption>featured_articles (default)</caption> @lang js
  * [
  *   'DruxtViewFeaturedArticlesDefault',
- *   'DruxtViewFeaturedArticles'
+ *   'DruxtViewFeaturedArticles',
+ *   'DruxtView16f5d68e5bae4d7aa61c6b2bc3b6d3b6Default',
+ *   'DruxtView16f5d68e5bae4d7aa61c6b2bc3b6d3b6',
+ *   'DruxtViewDefault',
  * ]
  */
 

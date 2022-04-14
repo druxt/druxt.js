@@ -1,0 +1,102 @@
+{
+    "uuid": [
+        {
+            "value": "bd9f96d0-99eb-4dcb-985b-6ae54fbad59f"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "image",
+            "target_type": "media_type",
+            "target_uuid": "6f3759f1-6f05-4a20-a84d-0440dafda29b"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "9037d975-34ff-4020-b8ff-18cf8715361a"
+        }
+    ],
+    "name": [
+        {
+            "value": "Pasta vegetariana al horno s\u00faper f\u00e1cil"
+        }
+    ],
+    "thumbnail": [
+        {
+            "alt": "Plato de pasta con salchichas vegetarianas y cubierto con queso mozzarella y albahaca",
+            "title": null,
+            "width": 768,
+            "height": 511,
+            "target_type": "file",
+            "target_uuid": "37e618f4-aa62-4e91-9458-e9dd122d2695"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": null,
+            "pid": null,
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_media_image": [
+        {
+            "alt": "Plato de pasta con salchichas vegetarianas y cubierto con queso mozzarella y albahaca",
+            "title": null,
+            "width": 768,
+            "height": 511,
+            "target_type": "file",
+            "target_uuid": "bb8a4072-a24e-4fc9-b637-579be1a732fc"
+        }
+    ]
+}

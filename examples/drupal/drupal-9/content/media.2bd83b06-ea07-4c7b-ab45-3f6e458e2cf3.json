@@ -1,0 +1,102 @@
+{
+    "uuid": [
+        {
+            "value": "2bd83b06-ea07-4c7b-ab45-3f6e458e2cf3"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "image",
+            "target_type": "media_type",
+            "target_uuid": "6f3759f1-6f05-4a20-a84d-0440dafda29b"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "9037d975-34ff-4020-b8ff-18cf8715361a"
+        }
+    ],
+    "name": [
+        {
+            "value": "Mojito Mocktail"
+        }
+    ],
+    "thumbnail": [
+        {
+            "alt": "Fresh mojito mocktail with garnish of mint leaves, ice, and sliced lime",
+            "title": null,
+            "width": 768,
+            "height": 512,
+            "target_type": "file",
+            "target_uuid": "db8c602d-667a-4f6a-9ad8-354a8e0a7c5c"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": null,
+            "pid": null,
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_media_image": [
+        {
+            "alt": "Fresh mojito mocktail with garnish of mint leaves, ice, and sliced lime",
+            "title": null,
+            "width": 768,
+            "height": 512,
+            "target_type": "file",
+            "target_uuid": "db8c602d-667a-4f6a-9ad8-354a8e0a7c5c"
+        }
+    ]
+}

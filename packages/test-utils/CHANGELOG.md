@@ -1,5 +1,13 @@
 # druxt-test-utils
 
+## 0.2.10
+
+### Patch Changes
+
+- 540afca: Updated drupal-jsonapi-params to 2.0.0
+- Updated dependencies [540afca]
+  - druxt@0.18.2
+
 ## 0.2.9
 
 ### Patch Changes

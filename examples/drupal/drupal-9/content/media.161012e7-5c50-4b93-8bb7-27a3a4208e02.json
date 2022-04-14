@@ -1,0 +1,102 @@
+{
+    "uuid": [
+        {
+            "value": "161012e7-5c50-4b93-8bb7-27a3a4208e02"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "image",
+            "target_type": "media_type",
+            "target_uuid": "6f3759f1-6f05-4a20-a84d-0440dafda29b"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "9037d975-34ff-4020-b8ff-18cf8715361a"
+        }
+    ],
+    "name": [
+        {
+            "value": "Vegan Chocolate"
+        }
+    ],
+    "thumbnail": [
+        {
+            "alt": "A delicious bar of dairy-free milk chocolate, broken into pieces",
+            "title": null,
+            "width": 768,
+            "height": 511,
+            "target_type": "file",
+            "target_uuid": "fb710b9a-47e2-474a-98e0-0af50146f8fb"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": null,
+            "pid": null,
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_media_image": [
+        {
+            "alt": "A delicious bar of dairy-free milk chocolate, broken into pieces",
+            "title": null,
+            "width": 768,
+            "height": 511,
+            "target_type": "file",
+            "target_uuid": "fb710b9a-47e2-474a-98e0-0af50146f8fb"
+        }
+    ]
+}

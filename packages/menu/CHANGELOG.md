@@ -1,5 +1,14 @@
 # druxt-menu
 
+## 0.16.3
+
+### Patch Changes
+
+- 540afca: Updated drupal-jsonapi-params to 2.0.0
+- Updated dependencies [540afca]
+  - druxt-blocks@0.15.2
+  - druxt@0.18.2
+
 ## 0.16.2
 
 ### Patch Changes

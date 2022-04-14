@@ -1,0 +1,128 @@
+{
+    "uuid": [
+        {
+            "value": "e4743aeb-d923-4987-87a8-1f43bcf6d1cc"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "article",
+            "target_type": "node_type",
+            "target_uuid": "9d724571-3320-4af6-b623-626d001260fd"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "title": [
+        {
+            "value": "Un aplauso para las zanahorias"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/articles\/un-aplauso-para-las-zanahorias",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "body": [
+        {
+            "value": "<p>\u00a1Un aplauso por la humilde zanahoria! Estas verduras \u00abdiarias\u00bb, dulces y saludables tienen todo lo que necesitas. Tienen un gran sabor, un color fant\u00e1stico y, si eres uno de los que creen en la historia antigua, incluso pueden ayudarte a ver mejor en la oscuridad.<\/p>\n<p>\u00bfA qui\u00e9n no le gusta cocinar con esta ra\u00edz super vers\u00e1til? Las asamos, las hervimos, las trituramos en sopas y las rallamos en ensaladas. La humilde zanahoria tiene que ser una de nuestras opciones favoritas de verduras y se ha cultivado durante miles de a\u00f1os. Pero en ese entonces era m\u00e1s probable que encontraras una zanahoria morada, roja, amarilla o blanca y no la naranja con la que hoy estamos tan familiarizados.<\/p>\n<h2>\u00bfEntonces qu\u00e9 pas\u00f3? \u00bfCu\u00e1ndo el naranja se convirti\u00f3 en el color preferido?<\/h2>\n<p>Fueron los holandeses durante el siglo XVII quienes cultivaron e hicieron popular la variedad naranja, probablemente debido a su color brillante y niveles m\u00e1s altos de betacaroteno. Tambi\u00e9n se ha sugerido que fueron cultivadas en homenaje a William de Orange, quien dirigi\u00f3 la lucha durante la batalla holandesa por la independencia.<\/p>\n<p>Por la raz\u00f3n que sea, la versi\u00f3n naranja se ha convertido en la variedad dominante, pero busque variedades &lsquo;tradicionales&rsquo; en los mercados de agricultores y en las tiendas de abarrotes, su mezcla de p\u00farpura, amarillo, naranja y blanco son especialmente atractivas para cocinar y se ven muy bien como guarnici\u00f3n.<\/p>\n<h2>Nutrici\u00f3n<\/h2>\n<p>Zanahorias son ricas en betacaroteno que su cuerpo convierte en vitamina A. A menudo es dif\u00edcil saber si cocinar verduras aumentar\u00e1 o reducir\u00e1 su valor nutritivo y, lamentablemente, no hay una regla simple. Pero en el caso de las zanahorias, la nutrici\u00f3n se potencia al consumirlas cocidas. De hecho, solo se necesitan 100 gramos de zanahorias para obtener m\u00e1s que su valor diario de vitamina A.<\/p>\n<h2>Cons\u00edgalas en su mejor momento<\/h2>\n<p>Las zanahorias j\u00f3venes, cosechadas cuando son peque\u00f1as, tienen un sabor especialmente dulce y son absolutamente deliciosas. Para cocinarlos, puede saltearlos y simplemente lavarlos y cocerlos al vapor durante unos minutos. Las zanahorias sabr\u00e1n mejor cuando est\u00e1n frescas, as\u00ed que aseg\u00farese de que sean firmes y de colores brillantes cuando las compre.<\/p>\n<h2>\u00bfY eso de las zanahorias que te ayudan a ver mejor en la oscuridad?<\/h2>\n<p>Por supuesto que es un mito. Durante la Segunda Guerra Mundial, el Ministerio de Alimentos del Reino Unido promocion\u00f3 las zanahorias como un vegetal s\u00faper saludable que mejorar\u00eda su capacidad para ver durante los apagones y como una explicaci\u00f3n para las misiones nocturnas exitosas de los pilotos de caza del Reino Unido. En realidad, la \u00fanica verdad en la conexi\u00f3n entre las zanahorias y la vista mejorada de los ojos es que la vitamina A s\u00ed ayuda a mantener la visi\u00f3n.<\/p>\n",
+            "format": "basic_html",
+            "summary": null
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "25782aa3-7a4e-4cc7-b73f-2e4504a7cb8c"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "486977c0-c967-4ee9-8141-47a9ffe7a466"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "b40404f7-ca13-44d8-8e61-7fad9554115f"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "5119017c-536b-4eae-bb27-36bc007a69ff"
+        }
+    ]
+}

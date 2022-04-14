@@ -1,0 +1,187 @@
+{
+    "uuid": [
+        {
+            "value": "29bbb8b9-f15c-430f-91ed-35079bb9f193"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "40612a31-09cd-4bea-86ad-d909456db85a"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "8757c97f-7c55-4367-9237-72eb7eba10cd"
+        }
+    ],
+    "title": [
+        {
+            "value": "Pizza sin gluten"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/pizza-sin-gluten",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 15
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "medium"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "400g de harina sin gluten"
+        },
+        {
+            "value": " 125ml de agua caliente"
+        },
+        {
+            "value": " 125ml de Leche"
+        },
+        {
+            "value": " 1 de bolsita levadura"
+        },
+        {
+            "value": " 12g de az\u00facar"
+        },
+        {
+            "value": " 6g de Sal"
+        },
+        {
+            "value": " 32g de aceite de oliva"
+        },
+        {
+            "value": " 75g de tomate triturado"
+        },
+        {
+            "value": " 1 diente de ajo"
+        },
+        {
+            "value": " Albahaca fresca"
+        },
+        {
+            "value": " 200g de mozzarella"
+        },
+        {
+            "value": " 100g de r\u00facula"
+        },
+        {
+            "value": " 5 lonchas de jam\u00f3n de Parma"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "a85c4b5f-c1e2-44ff-b316-28f6b4cb030d"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 4
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 15
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e2d23036-1dbc-4a30-805f-a2d8566e2418"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>Precaliente el horno a 425 \u00b0 F \/ 220 \u00b0 C. Mezcle un poco de la leche y el agua en un jarra. Agregue la levadura y el az\u00facar y ap\u00e1rtalos.<\/li>\n  <li>Mezcle la harina, la sal y el aceite en un bol. Agregue lentamente el l\u00edquido de la jarra y forme una masa.<\/li>\n  <li>Rompa la masa por la mitad y dele forma de dos bases de pizza. Deje reposar durante unos 15 minutos, mientras hace la cobertura.<\/li>\n  <li>Extienda el tomate triturado sobre las bases de pizza, corte la albahaca y la r\u00facula y espolvoree sobre el tomate. Distribuya sobre la masa el jam\u00f3n de Parma picado y agregue rebanadas gruesas de mozzarella por toda la pizza.<\/li>\n  <li>Hornee en la rejilla superior (con una bandeja debajo) de 10 a 12 minutos o hasta que la mozzarella est\u00e9 burbujeando. Sazone con sal y pimienta y sirva.<\/li>\n<\/ol>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Una vistosa y simple pizza sin gluten, con deliciosa mozzarella y jam\u00f3n de Parma. Puede convertirse f\u00e1cilmente en vegetariana si quitamos el jam\u00f3n.",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": []
+}

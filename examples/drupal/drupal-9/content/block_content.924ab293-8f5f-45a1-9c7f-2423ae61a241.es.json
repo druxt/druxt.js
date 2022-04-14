@@ -1,0 +1,103 @@
+{
+    "uuid": [
+        {
+            "value": "924ab293-8f5f-45a1-9c7f-2423ae61a241"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "footer_promo_block",
+            "target_type": "block_content_type",
+            "target_uuid": "b7694f07-5129-473e-9fbe-82eae8de8feb"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "info": [
+        {
+            "value": "Umami Pie de Pagina Promocional"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "reusable": [
+        {
+            "value": true
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "content_translation_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "9037d975-34ff-4020-b8ff-18cf8715361a"
+        }
+    ],
+    "content_translation_created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "field_content_link": [
+        {
+            "uri": "internal:\/acerca-de-umami",
+            "title": "M\u00e1s informaci\u00f3n",
+            "options": []
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "2fde0a99-a8d8-4066-b212-535b6e080548"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Trucos y consejos. Art\u00edculos exclusivos de la revista, recetas y una variedad de razones para conseguir tu copia hoy."
+        }
+    ],
+    "field_title": [
+        {
+            "value": "Revista de Comida Umami"
+        }
+    ]
+}

@@ -1,12 +1,12 @@
 {
-    "name": "drupal/recommended-project",
-    "description": "Project template for Drupal 9 projects with a relocated document root",
+    "name": "druxt/drupal-9-example",
+    "description": "Example Drupal 9 backend for use in the Druxt examples.",
     "type": "project",
     "license": "GPL-2.0-or-later",
-    "homepage": "https://www.drupal.org/project/drupal",
+    "homepage": "https://druxtjs.org",
     "support": {
-        "docs": "https://www.drupal.org/docs/user_guide/en/index.html",
-        "chat": "https://www.drupal.org/node/314178"
+        "docs": "https://druxtjs.org",
+        "chat": "https://discord.druxtjs.org"
     },
     "repositories": [
         {
@@ -16,11 +16,13 @@
     ],
     "require": {
         "composer/installers": "^1.9",
+        "drupal-tome/tome_drush": "dev-master",
         "drupal/core-composer-scaffold": "^9.3",
         "drupal/core-project-message": "^9.3",
         "drupal/core-recommended": "^9.3",
         "drupal/druxt": "^1.0",
-        "drush/drush": "^10.5"
+        "drupal/tome": "^1.6",
+        "drush/drush": "^11.0"
     },
     "require-dev": {
         "drupal/core-dev": "^9.3"

@@ -1,0 +1,132 @@
+{
+    "uuid": [
+        {
+            "value": "3afcd1a8-315a-4147-aafd-0efa6e389f04"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "article",
+            "target_type": "node_type",
+            "target_uuid": "9d724571-3320-4af6-b623-626d001260fd"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "b8245fe3-b0e8-4300-89e9-733dc6c4a52b"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "b8245fe3-b0e8-4300-89e9-733dc6c4a52b"
+        }
+    ],
+    "title": [
+        {
+            "value": "Skip the spirits with delicious mocktails"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-03-29T23:42:56+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/articles\/skip-the-spirits-with-delicious-mocktails",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "body": [
+        {
+            "value": "<p>Having a cocktail party? Then why not serve up something just as special for those who don't drink alcohol but do want to join in on all the fun? After all, what cocktail party is complete without those incredible looking glasses of mixed fruits, bright colors and of course, the little umbrellas? Do your bit for the environment by ditching the plastic straws and get hold of some great looking alternatives made out of glass, metal, or even bamboo. Don't forget the classic cocktail glasses and cool tumblers to really bring these recipes to life.\n<\/p>\n<p>\nSo, grab the cocktail mixer, skip the spirits, and shake up these deliciously refreshing mocktails that won't leave you or your guests, short on flavor or style.\n<\/p>\n<h2>Mango-licious<\/h2>\n<p>This delicious drink has a sophisticated taste that is ideal for adults and the color is perfect for a late summer BBQ.<\/p>\n<h3>Instructions:<\/h3>\n<p>Give a few slices of cucumber and a little honey a good shake in a cocktail shaker. Add a spirit measure of mango puree and the juice of one lime. Add some ice and shake for all you're worth. Using a strainer, pour into a fancy glass and top with ginger beer. A few slices of lime and you're ready to go.<\/p>\n<h2>Mocky Mojito<\/h2>\n<p>There's nothing quite like a Mojito on a warm day and this version is ideal for a relaxing end of the day moment of bliss in the garden.<\/p>\n<h3>Instructions:<\/h3>\n<p>Muddle sugar, a squeeze of lime, and mint leaves in a tall glass, then add a few chunks of ice, top with the juice of a blood orange (for the sunset effect), and add a splash of soda water. Add a few sprigs of mint for an authentic look.<\/p>\n<h2>Sinless Strawberry Martini<\/h2>\n<p>Strawberries add a beautiful rich red to this mocktail, while the ginger gives it a little kick. Serve in a proper martini glass, but maybe avoid the olives.<\/p>\n<h3>Instructions:<\/h3>\n<p>Muddle a strawberry with a dash a ginger beer and some sugar syrup in a cocktail shaker. Add a capful of elderflower cordial and a few mint leaves. Throw in a slice of orange and lemon and shake with ice. Strain into your glass and enjoy the sweet strawberry flavor.<\/p>\n<h2>Coconut Queen<\/h2>\n<p>Crazy about coconuts? Then you'll love the refreshing taste of this coconut based mocktail. The flavors give a hint of the tropical, while the look is grown-up sophistication.<\/p>\n<h3>Instructions:<\/h3>\n<p>Add sliced cucumbers, the juice of a lime or two, and some mint leaves to a pitcher of coconut water and leave to chill and infuse for a few hours in the fridge. You can also add some sugar if you fancy this sweeter. Serve poured into glasses full of ice with sliced cucumber and mint leaves. Simple and beautiful.<\/p>\n",
+            "format": "basic_html",
+            "summary": null
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "2bd83b06-ea07-4c7b-ab45-3f6e458e2cf3"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "f2f66bd1-fcab-489c-8720-4f46807ba7f2"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "45aa29a1-2918-4fb8-a8ec-90432fe41000"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "396439ab-e351-4cc4-88ce-d35445bd02e5"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "17cb4f95-e5af-45d6-9153-883949bd0897"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "3ab8f126-ae70-4274-92d9-28dbaf1d24ce"
+        }
+    ]
+}
