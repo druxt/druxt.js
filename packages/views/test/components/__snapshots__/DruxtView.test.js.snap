@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DruxtView featured_articles 1`] = `
+Array [
+  "DruxtViewFeaturedArticlesPage1",
+  "DruxtViewA4cd303b354943f99868886099717e50Page1",
+  "DruxtViewFeaturedArticles",
+  "DruxtViewA4cd303b354943f99868886099717e50",
+  "DruxtViewPage1",
+]
+`;
