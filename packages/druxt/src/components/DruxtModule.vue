@@ -38,6 +38,14 @@ export default {
   /** */
   props: {
     /**
+     * The resource langcode.
+     */
+    langcode: {
+      type: String,
+      default: undefined
+    },
+
+    /**
      * The module value.
      *
      * @type {(Array|Boolean|Date|Number|Object|String)}
@@ -169,7 +177,17 @@ export default {
     this.component = component
   },
 
+  computed: {
+    lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode
+  },
+
   watch: {
+    lang(to, from) {
+      if (to !== from) {
+        this.$fetch()
+      }
+    },
+
     model() {
       if (this.component.props && this.component.props.value !== this.model) {
         this.component.props.value = this.model
@@ -279,7 +297,10 @@ export default {
         return {}
       }
 
-      const propsData = this.$options.druxt.propsData.call(this, this)
+      const propsData = {
+        langcode: this.lang,
+        ...this.$options.druxt.propsData.call(this, this)
+      }
 
       // Props.
       const props = {}
