@@ -254,6 +254,10 @@ export default {
       let components = []
       for (const set of options.filter(set => Array.isArray(set))) {
         const variants = []
+
+        // Add langcode suffix to all sets.
+        set.push(this.lang)
+
         components = [...components, ...set.filter((o) => o).map(item => {
           // Build array of name parts.
           const parts = variants.length ? [...variants[0].parts] : []
