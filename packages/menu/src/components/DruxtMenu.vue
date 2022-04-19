@@ -72,14 +72,6 @@ export default {
     },
 
     /**
-     * The entity langcode.
-     */
-    langcode: {
-      type: String,
-      default: undefined
-    },
-
-    /**
      * The maximum depth of the menu tree data to load.
      *
      * @example @lang vue
@@ -219,13 +211,6 @@ export default {
 
   /** */
   watch: {
-    async $route(to, from) {
-      if (this.langcode) return
-      if ((to.meta || {}).langcode !== (from.meta || {}).langcode) {
-        await this.$fetch()
-      }
-    },
-
     /**
      * Updates menu when available Entities change.
      */
@@ -246,7 +231,6 @@ export default {
      * @param {number} [position] - Current position in the menu tree,
      */
     getMenuItems(entity = null, position = 0) {
-      const langcode = this.langcode || (this.$route.meta || {}).langcode
       const items = []
       position += 1
 
@@ -263,9 +247,9 @@ export default {
 
         const entities = this.getEntitiesByFilter({
           filter: (key) => {
-            return this.entities[langcode][key].attributes.menu_name === this.name && this.entities[langcode][key].attributes.parent === parent
+            return this.entities[this.lang][key].attributes.menu_name === this.name && this.entities[this.lang][key].attributes.parent === parent
           },
-          prefix: langcode
+          prefix: this.lang
         })
 
         for (const key in entities) {
@@ -306,7 +290,7 @@ export default {
         await this.getMenu({
           name: this.name,
           settings: settings.query,
-          prefix: this.langcode || (this.$route.meta || {}).langcode
+          prefix: this.lang
         })
         this.model = this.getMenuItems()
       }
@@ -357,6 +341,7 @@ export default {
           key: item.entity.id,
           props: {
             item,
+            langcode: this.lang
           },
         })),
       }

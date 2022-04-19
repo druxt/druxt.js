@@ -35,14 +35,6 @@ export default {
     },
 
     /**
-     * The entity langcode.
-     */
-    langcode: {
-      type: String,
-      default: undefined
-    },
-
-    /**
      * `true` if this field is a JSON:API relationship.
      *
      * @type {boolean}
@@ -289,7 +281,11 @@ export default {
           if (this.isFile && schemaType === 'view') {
             return h('DruxtEntity', {
               attrs,
-              props: { type: item.type, uuid: item.id, langcode: this.langcode },
+              props: {
+                langcode: this.lang,
+                type: item.type,
+                uuid: item.id
+              },
               scopedSlots: { default: ({ entity }) => h('a', {
                 domProps: {
                   href: (entity.attributes.uri || {}).url,
@@ -303,7 +299,11 @@ export default {
           if (this.isImage && schemaType === 'view') {
             return h('DruxtEntity', {
               attrs,
-              props: { type: item.type, uuid: item.id, langcode: this.langcode },
+              props: {
+                langcode: this.lang,
+                type: item.type,
+                uuid: item.id
+              },
               scopedSlots: { default: ({ entity }) => h('img', {
                 domProps: {
                   src: (entity.attributes.uri || {}).url
@@ -342,7 +342,7 @@ export default {
             return h('DruxtEntity', {
               attrs,
               props: {
-                langcode: this.langcode,
+                langcode: this.lang,
                 mode: this.schema.settings.display.view_mode || 'default',
                 type: item.type,
                 uuid: item.id,
@@ -355,7 +355,7 @@ export default {
             return h('details', [h('DruxtEntityForm', {
               attrs,
               props: {
-                langcode: this.langcode,
+                langcode: this.lang,
                 mode: this.schema.settings.display.view_mode || 'default',
                 type: item.type,
                 uuid: item.id,

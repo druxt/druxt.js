@@ -79,14 +79,6 @@ export default {
     },
 
     /**
-     * The view langcode.
-     */
-    langcode: {
-      type: String,
-      default: undefined
-    },
-
-    /**
      * JSON:API Resource type.
      *
      * @type {string}
@@ -302,10 +294,6 @@ export default {
       await this.$fetch()
     },
 
-    async langcode() {
-      await this.$fetch()
-    },
-
     'model.filter': {
       deep: true,
       async handler(to, from) {
@@ -437,13 +425,13 @@ export default {
       if (!this.view && (this.uuid || this.viewId)) {
         if (this.uuid) {
           this.view = await this.getResource({
-            prefix: this.langcode,
+            prefix: this.lang,
             type: this.type,
             id: this.uuid,
           })
         } else {
           const collection = await this.getCollection({
-            prefix: this.langcode,
+            prefix: this.lang,
             type: this.type,
             query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId)
           })
@@ -461,7 +449,7 @@ export default {
         const query = this.getQuery(settings)
         this.resource = await this.getResults({
           displayId: this.displayId,
-          prefix: this.langcode,
+          prefix: this.lang,
           query: stringify(query),
           viewId
         })
@@ -580,7 +568,7 @@ export default {
           ref: 'attachements_before',
           props: {
             displayId,
-            langcode: this.langcode,
+            langcode: this.lang,
             type: this.type,
             uuid: this.uuid,
             viewId: this.viewId,
@@ -602,7 +590,7 @@ export default {
           attrs: { ...attrs },
           key: result.id,
           props: {
-            langcode: this.langcode,
+            langcode: this.lang,
             mode: this.mode,
             type: result.type,
             uuid: result.id
@@ -637,7 +625,7 @@ export default {
           ref: 'attachements_after',
           props: {
             displayId,
-            langcode: this.langcode,
+            langcode: this.lang,
             type: this.type,
             uuid: this.uuid,
             viewId: this.viewId,
