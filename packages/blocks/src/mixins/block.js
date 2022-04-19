@@ -29,6 +29,16 @@ const DruxtBlocksBlockMixin = {
       type: Object,
       require: true,
     },
+
+    /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    }
   },
 
   /** */
