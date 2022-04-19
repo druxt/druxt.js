@@ -37,6 +37,7 @@ export default {
 
   async fetch() {
     await this.$store.dispatch('druxt/getResource', {
+      prefix: this.langcode,
       type: this.block.type,
       id: this.block.id,
       query: new DrupalJsonApiParams().addFields(this.block.type, ['dependencies']),
@@ -64,6 +65,7 @@ export default {
 
       return {
         key: data.attributes.dependencies.content[0],
+        langcode: this.langcode,
         type: `${parts[0]}--${parts[1]}`,
         uuid: parts[2]
       }

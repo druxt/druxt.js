@@ -170,13 +170,22 @@ export default {
       // Fetch Block by UUID.
       if (this.uuid) {
         const id = this.uuid
-        this.resource = await this.getResource({ type, id, query })
+        this.resource = await this.getResource({
+          id,
+          prefix: this.lang,
+          type,
+          query
+        })
       }
 
       // Fetch Block by Drupal internal ID.
       else if (this.id) {
         query.addFilter('drupal_internal__id', this.id)
-        const collection = await this.getCollection({ type, query })
+        const collection = await this.getCollection({
+          prefix: this.lang,
+          type,
+          query
+        })
         this.resource = { data: collection.data[0] }
       }
     },

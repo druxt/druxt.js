@@ -165,7 +165,11 @@ export default {
         .addSort('weight')
         .addFields(type, ['drupal_internal__id', 'visibility', 'weight'])
 
-      const collection = await this.getCollection({ type, query })
+      const collection = await this.getCollection({
+        prefix: this.lang,
+        type,
+        query
+      })
       this.blocks = collection.data
     },
 
@@ -208,6 +212,7 @@ export default {
             attrs,
             key: block.attributes.drupal_internal__id,
             props: {
+              langcode: this.langcode,
               uuid: block.id,
             },
             ref: block.attributes.drupal_internal__id,
