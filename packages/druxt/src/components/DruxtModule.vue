@@ -416,7 +416,7 @@ export default {
     }
 
     // Return only wrapper if fetch state is still pending.
-    if (this.$fetchState.pending && this.component.is === 'DruxtWrapper') {
+    if (this.model === undefined && this.$fetchState.pending && this.component.is === 'DruxtWrapper') {
       return h((this.wrapper || {}).component || 'div', wrapperData)
     }
 
