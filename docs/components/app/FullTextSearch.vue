@@ -6,7 +6,10 @@
       @keydown.up="decrement"
       @keydown.enter="go"
     >
-      <label for="search" class="sr-only">Search</label>
+      <label
+        for="search"
+        class="sr-only"
+      >Search</label>
       <div class="relative">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <IconSearch class="h-5 w-5 text-gray-500" />
@@ -22,7 +25,7 @@
           autocomplete="off"
           @focus="onFocus"
           @blur="onBlur"
-        />
+        >
       </div>
     </div>
     <ul
@@ -31,7 +34,12 @@
       :class="{ 'rounded-t-none': focus && (searching || results.length) }"
       style="margin-top: 37px;"
     >
-      <li v-if="searching && !results.length" class="px-4 py-2">Searching...</li>
+      <li
+        v-if="searching && !results.length"
+        class="px-4 py-2"
+      >
+        Searching...
+      </li>
       <li
         v-for="(result, index) of results"
         :key="result.slug"
@@ -46,8 +54,14 @@
           }"
           @click="focus = false"
         >
-          <span v-if="result.category" class="font-bold">{{ result.category }}</span>
-          <IconChevronRight v-if="result.category" class="w-3 h-3 mx-1" />
+          <span
+            v-if="result.category"
+            class="font-bold"
+          >{{ result.category }}</span>
+          <IconChevronRight
+            v-if="result.category"
+            class="w-3 h-3 mx-1"
+          />
           {{ result.title }}
         </NuxtLink>
       </li>
