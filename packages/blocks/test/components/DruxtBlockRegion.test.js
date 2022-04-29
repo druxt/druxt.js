@@ -24,6 +24,7 @@ const mountComponent = (name = null, options = {}) => {
 
   const mocks = {
     $fetchState: { pending: true },
+    $route: { meta: {} }
   }
 
   return shallowMount(DruxtBlockRegion, { localVue, mocks, propsData, store, ...options })

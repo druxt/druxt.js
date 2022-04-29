@@ -30,6 +30,7 @@ const mountComponent = (propsData = {}, options = {}, mocks = {}) => {
         isDev: false,
       }
     },
+    $route: { meta: {} },
     ...mocks
   }
   return mount(DruxtBlock, { localVue, mocks, propsData, store, stubs: ['DruxtDebug'], ...options })

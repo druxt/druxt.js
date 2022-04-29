@@ -22,6 +22,7 @@ const mountComponent = (entity, options = {}) => {
       pending: false,
     },
     $store: store,
+    $route: { meta: {} }
   }
 
   return mount(DruxtBlockBlockContent, { localVue, mocks, propsData, stubs: ['DruxtEntity'], ...options })
@@ -48,10 +49,8 @@ describe('Component - DruxtBlockBlockContent', () => {
     const wrapper = mountComponent(mockBlock.data)
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(wrapper.vm.propsData).toStrictEqual({
-      key: expect.any(String),
-      type: expect.any(String),
-      uuid: expect.any(String),
-    })
+    expect(Object.keys(wrapper.vm.propsData)).toStrictEqual([
+      'key', 'langcode', 'type', 'uuid',
+    ])
   })
 })

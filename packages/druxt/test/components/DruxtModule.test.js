@@ -19,6 +19,7 @@ describe('DruxtModule component', () => {
           isDev: false,
         },
       },
+      $route: { meta: {} }
     }
   })
 
@@ -173,11 +174,11 @@ describe('DruxtModule component', () => {
 
     // Data.
     expect(wrapper.vm.component).toStrictEqual({
-      $attrs: { foo: 'bar' },
+      $attrs: { foo: 'bar', langcode: undefined },
       is: 'DruxtWrapper',
       options: [],
       props: {},
-      propsData: { foo: 'bar' },
+      propsData: { foo: 'bar', langcode: undefined },
       settings: {},
       slots: ['default'],
     })
@@ -188,9 +189,9 @@ describe('DruxtModule component', () => {
 
     expect(wrapper.vm.getModuleComponents(wrapperData.props)).toStrictEqual([])
     expect(wrapper.vm.getModulePropsData()).toStrictEqual({
-      $attrs: { foo: 'bar' },
+      $attrs: { foo: 'bar', langcode: undefined },
       props: {},
-      propsData: { foo: 'bar' },
+      propsData: { foo: 'bar', langcode: undefined },
     })
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
 
@@ -223,11 +224,11 @@ describe('DruxtModule component', () => {
 
     // Data.
     expect(wrapper.vm.component).toStrictEqual({
-      $attrs: {},
+      $attrs: { langcode: undefined },
       is: 'CustomModuleWrapper',
       options: ['CustomModuleWrapper'],
       props: { foo: 'bar' },
-      propsData: { foo: 'bar' },
+      propsData: { foo: 'bar', langcode: undefined },
       settings: { foo: 'bar', custom: true },
       slots: ['default'],
     })
@@ -243,9 +244,9 @@ describe('DruxtModule component', () => {
       parts: ['Wrapper']
     }])
     expect(wrapper.vm.getModulePropsData(wrapperData.props)).toStrictEqual({
-      $attrs: {},
+      $attrs: { langcode: undefined },
       props: { foo: 'bar' },
-      propsData: { foo: 'bar' },
+      propsData: { foo: 'bar', langcode: undefined },
     })
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
 

@@ -13,7 +13,8 @@ let store
 const mocks = {
   $fetchState: {
     pending: false
-  }
+  },
+  $route: { meta: {} }
 }
 
 const mountComponent = async (propsData) => {

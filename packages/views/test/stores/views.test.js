@@ -48,7 +48,7 @@ describe('DruxtViewsStore', () => {
     const results = await store.$druxt.getResource(`views--${viewId}`, displayId)
 
     store.commit('druxt/views/addResults', { results, viewId, displayId, hash: '_default' })
-    expect(store.state['druxt/views'].results[viewId][displayId]._default).toBe(results)
+    expect(store.state['druxt/views'].results[viewId][displayId][undefined]._default).toBe(results)
     expect(Object.keys(store.state['druxt/views'].results)).toHaveLength(1)
   })
 
