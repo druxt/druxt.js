@@ -55,17 +55,17 @@ export default {
      *
      * @see {@link https://druxt.github.io/druxt-entity/api/components/DruxtEntity|DruxtEntity}
      */
-    propsData: ({ $fetchState, $store, block }) => {
+    propsData: ({ $fetchState, $store, block, langcode }) => {
       if ($fetchState.pending) return false
 
-      const { data } = $store.state.druxt.resources[block.type][block.id]
+      const { data } = $store.state.druxt.resources[block.type][block.id][langcode]
       if (!((data || {}).attributes || {}).dependencies) return false
 
       const parts = data.attributes.dependencies.content[0].split(':')
 
       return {
         key: data.attributes.dependencies.content[0],
-        langcode: this.langcode,
+        langcode,
         type: `${parts[0]}--${parts[1]}`,
         uuid: parts[2]
       }

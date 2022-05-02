@@ -201,8 +201,8 @@ const DruxtStore = ({ store }) => {
        */
       async getResource ({ commit, dispatch, state }, { type, id, query, prefix }) {
         // Get the resource from the store if it's avaialble.
-        const storedResource = (state.resources[type] || {})[id] ?
-          { ...state.resources[type][id] }
+        const storedResource = ((state.resources[type] || {})[id] || {})[prefix] ?
+          { ...state.resources[type][id][prefix] }
           : null
 
         // Parse the query.
