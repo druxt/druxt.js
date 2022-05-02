@@ -415,8 +415,9 @@ export default {
       props: (this.wrapper || {}).propsData || undefined,
     }
 
-    // Return only wrapper if fetch state is still pending.
-    if (this.model === undefined && this.$fetchState.pending && this.component.is === 'DruxtWrapper') {
+    // Return only wrapper if fetch state is still pending and Druxt hasn't set
+    // the available component options.
+    if (this.$fetchState.pending && !this.component.options.length) {
       return h((this.wrapper || {}).component || 'div', wrapperData)
     }
 
