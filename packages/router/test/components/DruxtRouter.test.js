@@ -4,6 +4,7 @@ import mockAxios from 'jest-mock-axios'
 import { mount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
+// import { DruxtDebug } from '../../../druxt/src/components/DruxtDebug.vue'
 import { DruxtRouter, DruxtRouterStore } from '../../src'
 import DruxtRouterComponent from '../../src/components/DruxtRouter.vue'
 import { baseUrl } from '../../../test-utils/src'
@@ -14,7 +15,7 @@ jest.mock('axios')
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-const stubs = ['DruxtEntity']
+const stubs = ['DruxtDebug', 'DruxtEntity']
 
 let store
 const mocks = {
