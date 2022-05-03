@@ -142,7 +142,10 @@ describe('DruxtBreadcrumb', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({})
-    expect(wrapper.vm.crumbs).toBe(null)
+    expect(wrapper.vm.crumbs).toStrictEqual([{
+      text: 'Home',
+      to: '/'
+    }])
 
     expect(wrapper.html()).toMatchSnapshot()
   })
