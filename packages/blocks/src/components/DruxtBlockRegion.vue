@@ -120,7 +120,9 @@ export default {
           visible = true
         }
 
-        if (pages.includes(this.route.resolvedPath) || (!pages.includes(this.route.resolvedPath) && negate)) {
+        // Remove langcode prefix from the resolved path before comparing.
+        const resolvedPath = (this.route.resolvedPath || '').replace(new RegExp(`^/${this.lang}`), '')
+        if (pages.includes(resolvedPath) || (!pages.includes(resolvedPath) && negate)) {
           visible = true
         }
 
