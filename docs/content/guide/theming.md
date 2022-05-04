@@ -6,7 +6,7 @@ weight: -6
 # Theming
 
 Druxt components can be themed using two primary methods:
-- [Druxt wrapper components](#druxtwrapper)
+- [DruxtWrapper components](#druxtwrapper)
 - [Default template injection](#default-template)
 
 * * *

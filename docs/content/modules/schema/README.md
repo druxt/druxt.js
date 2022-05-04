@@ -3,7 +3,7 @@ title: Schema
 description: Drupal Content Entity schema generator for Druxt with support for View and Form displays.
 ---
 
-The Schema module uses the Drupal's Display mode configuration JSON:API data to build a Vuex Schema store.
+The Schema module uses Display mode configuration from Drupal's JSON:API data to build a Vuex Schema store.
 
 ## Features
 
