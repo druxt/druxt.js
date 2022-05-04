@@ -23,6 +23,6 @@
     "@nuxtjs/google-analytics": "2.4.0",
     "@nuxtjs/pwa": "3.3.5",
     "@nuxtjs/storybook": "4.2.0",
-    "@nuxtjs/tailwindcss": "4.2.1"
+    "@nuxtjs/tailwindcss": "5.0.4"
   }
 }
