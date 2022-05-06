@@ -47,7 +47,8 @@ class DruxtClient {
     else {
       this.axios = axios.create({
         ...options.axios || {},
-        baseURL: baseUrl,
+        // Set baseURL if proxy is not enabled.
+        baseURL: baseUrl && !(options.proxy || {}).api ? baseUrl : undefined
       })
     }
 

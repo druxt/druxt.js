@@ -1,0 +1,4 @@
+networks:
+  default:
+    driver_opts:
+      com.docker.network.driver.mtu: 1440
