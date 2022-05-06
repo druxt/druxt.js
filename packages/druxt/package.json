@@ -40,7 +40,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/proxy": "^2.1.0",
-    "chalk": "^4.1.2",
+    "chalk": "^5.0.1",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^2.0.0",
     "md5": "^2.3.0",
