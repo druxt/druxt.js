@@ -1,6 +1,6 @@
 {
   "name": "druxt",
-  "version": "0.18.2",
+  "version": "0.18.3",
   "description": "The Fully Decoupled Drupal Framework for Nuxt.js.",
   "keywords": [
     "cms",

@@ -1,5 +1,11 @@
 # druxt
 
+## 0.18.3
+
+### Patch Changes
+
+- e6cf1fc: Fixed proxy when using deprecated Axios options.
+
 ## 0.18.2
 
 ### Patch Changes
