@@ -28,7 +28,7 @@ import DruxtEntityStorybook from './nuxtStorybook'
  * @property {object} options.druxt - DruxtJS root level options.
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  */
-const DruxtEntityNuxtModule = function (moduleOptions = {}) {
+const DruxtEntityNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
@@ -46,8 +46,8 @@ const DruxtEntityNuxtModule = function (moduleOptions = {}) {
   }
 
   // Add dependant modules.
-  this.addModule(['druxt', options])
-  this.addModule(['druxt-schema', { baseUrl: options.baseUrl }])
+  await this.addModule(['druxt', options])
+  await this.addModule(['druxt-schema', { baseUrl: options.baseUrl }])
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {

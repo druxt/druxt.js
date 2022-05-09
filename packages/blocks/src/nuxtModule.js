@@ -23,7 +23,7 @@ import DruxtBlocksStorybook from './nuxtStorybook'
  *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
-const DruxtBlocksNuxtModule = function (moduleOptions = {}) {
+const DruxtBlocksNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
@@ -36,7 +36,7 @@ const DruxtBlocksNuxtModule = function (moduleOptions = {}) {
   }
 
   // Add Druxt module.
-  this.addModule(['druxt', options])
+  await this.addModule(['druxt', options])
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {

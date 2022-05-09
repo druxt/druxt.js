@@ -1,5 +1,7 @@
 import chalk from 'chalk'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { join, resolve } from 'path'
+import { DruxtClient } from '../client'
 import meta from '../../package.json'
 
 /**
@@ -24,12 +26,13 @@ import meta from '../../package.json'
  *   }
  * }
  */
-const DruxtNuxtModule = function (moduleOptions = {}) {
+const DruxtNuxtModule = async function (moduleOptions = {}) {
   const options = {
     endpoint: '/jsonapi',
     ...moduleOptions,
     ...(this.options || {}).druxt,
   }
+  const druxt = new DruxtClient(options.baseUrl, options)
 
   // Nuxt proxy integration.
   if (options.proxy) {
@@ -40,6 +43,19 @@ const DruxtNuxtModule = function (moduleOptions = {}) {
     if ((options.proxy || {}).api) {
       // Main API Endpoint.
       proxies[options.endpoint] = options.baseUrl
+
+      // Langcode prefixed API endpoints.
+      const resourceType = 'configurable_language--configurable_language'
+      const query = new DrupalJsonApiParams().addFields(resourceType, ['drupal_internal__id'])
+      const languages = (await druxt.getCollectionAll(resourceType, query) || [])
+        .map((o) => o.data)
+        .flat()
+        .filter((o) => !['und', 'zxx'].includes(o.attributes.drupal_internal__id))
+        .map((o) => o.attributes.drupal_internal__id)
+      for (const langcode of languages) {
+        proxies[`/${langcode}${options.endpoint}`] = options.baseUrl
+      }
+
       // Decoupled Router Endpoint.
       proxies['/router/translate-path'] = options.baseUrl
     }
