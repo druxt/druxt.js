@@ -11013,6 +11013,8 @@ __metadata:
     url-parse: ^1.5.9
     vue: ^2.6.14
     vuex: ^3.6.2
+  peerDependencies:
+    drupal-jsonapi-params: "*"
   dependenciesMeta:
     vue:
       optional: true
