@@ -182,11 +182,12 @@ class DruxtRouter {
    *
    * @param {string} path - The route path.
    * @param {object} route - Druxt route object.
-   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {boolean|string} The redirect path or false.
    */
-  getRedirect (path, route = {}, prefix = undefined) {
+  getRedirect (path, route = {}) {
+    const prefix = (route.props || {}).langcode || ''
+
     // Redirect to route provided redirect.
     if (((route.redirect || [])[0] || {}).to) {
       return route.redirect[0].to
@@ -195,8 +196,9 @@ class DruxtRouter {
 
     // Redirect to root if route is home path but path isn't root.
     if (route.isHomePath) {
-      if (url.pathname !== '/') {
-        return prefix ? `/${prefix}/` : '/'
+      const homePath = prefix ? `/${prefix}` : '/'
+      if (!(url.pathname === homePath || url.pathname === `${homePath}/`)) {
+        return homePath
       }
       return false
     }
@@ -205,9 +207,7 @@ class DruxtRouter {
     if (typeof route.canonical === 'string') {
       const canonicalUrl = new Url(route.canonical)
 
-      if (prefix && `/${prefix + url.pathname}` !== canonicalUrl.pathname) {
-        return canonicalUrl.pathname
-      } else if (!prefix && url.pathname !== canonicalUrl.pathname) {
+      if (url.pathname !== canonicalUrl.pathname) {
         return canonicalUrl.pathname
       }
     }

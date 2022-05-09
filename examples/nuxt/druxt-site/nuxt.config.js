@@ -48,7 +48,7 @@ export default {
       // requests and server side redirects. Doing this allows Full Static
       // builds without the need of a live Drupal backend. The Route is still
       // is retrieved by the fetch hook instead.
-      middleware: false
+      // middleware: false
 
       // Disable the wildcard router, which is enabled by default in the
       // DruxtSite module. This allows more fine grained control over your
