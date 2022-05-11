@@ -25,10 +25,19 @@ const mountComponent = ({ path, routes, propsData, options }) => {
 
   // Add mock route to store.
   for (const route of routes) {
+    let path = route
+    let label = route
+    let isHomePath = path === '/'
+    if (typeof route === 'object') {
+      path = route.path
+      label = route.label || path
+      isHomePath = route.isHomePath || undefined
+    }
     store.commit('druxtRouter/addRoute', {
-      path: route,
+      path,
       route: {
-        label: route
+        label,
+        isHomePath
       }
     })
   }
@@ -59,6 +68,7 @@ describe('DruxtBreadcrumb', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({
+      isHomePath: true,
       label: '/'
     })
     expect(Object.keys(wrapper.vm.routes)).toHaveLength(1)
@@ -79,6 +89,7 @@ describe('DruxtBreadcrumb', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({
+      isHomePath: false,
       label: '/level-1'
     })
 
@@ -96,6 +107,7 @@ describe('DruxtBreadcrumb', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({
+      isHomePath: false,
       label: '/level-1/level-2'
     })
 
@@ -128,6 +140,7 @@ describe('DruxtBreadcrumb', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({
+      isHomePath: false,
       label: '/level-1/level-2'
     })
 
@@ -150,11 +163,27 @@ describe('DruxtBreadcrumb', () => {
     expect(wrapper.html()).toMatchSnapshot()
   })
 
+  test('multilingual home', async () => {
+    const wrapper = mountComponent({ path: '/en/level-1', routes: ['/', {
+      label: 'Home',
+      path: '/en',
+      isHomePath: true
+    }] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.route).toStrictEqual({})
+    expect(wrapper.vm.crumbs).toStrictEqual([{
+      text: 'Home',
+      to: '/en'
+    }])
+  })
+
   test('error', async () => {
     const wrapper = mountComponent({ path: '/error/level-2', routes: ['/', '/error/level-2'] })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({
+      isHomePath: false,
       label: '/error/level-2'
     })
 

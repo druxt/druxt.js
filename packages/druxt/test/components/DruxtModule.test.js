@@ -82,6 +82,23 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.$refs.module.value).toStrictEqual({ test: true })
   })
 
+  test('watch - lang', async () => {
+    // Setup component.
+    const wrapper = mount(DruxtModule, { localVue, mocks })
+    wrapper.vm.$fetch = jest.fn()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Ensure defeaults.
+    expect(wrapper.vm.lang).toBe(undefined)
+
+    // Uppdate langcode.
+    await wrapper.setProps({ langcode: 'en' })
+
+    // Ensure fetch is called and computed prop is updated.
+    expect(wrapper.vm.$fetch).toHaveBeenCalled()
+    expect(wrapper.vm.lang).toBe('en')
+  })
+
   test('error', async () => {
     const CustomModule = {
       name: 'CustomModule',

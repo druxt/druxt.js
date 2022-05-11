@@ -42,11 +42,12 @@ describe('DruxtMenu class', () => {
     expect((await jsonApiMenu.get('error')).entities.length).toBe(0)
 
     // TODO - Add mock test data, Umami Profile doesn't have deep enough menu items.
-    // const settings = {
-    //   max_depth: 3,
-    //   min_depth: 2,
-    //   parent: 'taxonomy_menu.menu_link:taxonomy_menu.menu_link.catalog.31',
-    // }
+    const settings = {
+      max_depth: 3,
+      min_depth: 2,
+      parent: 'taxonomy_menu.menu_link:taxonomy_menu.menu_link.catalog.31',
+    }
+    await jsonApiMenu.get('catalog', settings)
     // expect((await jsonApiMenu.get('catalog', settings)).entities.length).toBe(3)
   })
 })

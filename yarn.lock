@@ -11012,6 +11012,7 @@ __metadata:
     druxt: ^0.18.0
     url-parse: ^1.5.9
     vue: ^2.6.14
+    vue-router: ^3.0.0
     vuex: ^3.6.2
   peerDependencies:
     drupal-jsonapi-params: "*"
@@ -22668,6 +22669,13 @@ typescript@^4.4.3:
     vue: ^2.x
     vue-template-compiler: ^2.x
   checksum: f08a228c345b28d314cf6cf40420eedff988f6274a6a3ad9525776644b4116f7bbc9aa34c04d5ee9c32a4440d919c7b6c5628ed20f543ba9c585bf221e7f4050
+  languageName: node
+  linkType: hard
+
+"vue-router@npm:^3.0.0":
+  version: 3.5.3
+  resolution: "vue-router@npm:3.5.3"
+  checksum: 7b2cc0d41ff2a8ec3da45761f29e14d0998119f47e4887f54e17eb534f7b4823acb778302891b0aa3a10c62ae8ba999393d7891cc08d36f02ea87aa268e2a36c
   languageName: node
   linkType: hard
 

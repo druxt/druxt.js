@@ -2,6 +2,7 @@ import 'regenerator-runtime/runtime'
 import axios from 'axios'
 import mockAxios from 'jest-mock-axios'
 import { mount, createLocalVue } from '@vue/test-utils'
+import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 
 // import { DruxtDebug } from '../../../druxt/src/components/DruxtDebug.vue'
@@ -13,6 +14,7 @@ jest.mock('axios')
 
 // Setup local vue instance.
 const localVue = createLocalVue()
+localVue.use(VueRouter)
 localVue.use(Vuex)
 
 const stubs = ['DruxtDebug', 'DruxtEntity']
@@ -33,7 +35,6 @@ const mocks = {
     },
   },
   $redirect: jest.fn(),
-  $route: {},
   app: {
     context: {
       error: jest.fn()
@@ -42,10 +43,11 @@ const mocks = {
 }
 
 const mountComponent = (propsData, fullPath, options = {}) => {
+  const router = new VueRouter()
   if (fullPath) {
-    mocks.$route = { fullPath }
+    router.push({ path: fullPath })
   }
-  return mount(DruxtRouterComponent, { localVue, mocks, propsData, store, stubs, ...options })
+  return mount(DruxtRouterComponent, { localVue, mocks, propsData, router, store, stubs, ...options })
 }
 
 describe('DruxtRouterComponent', () => {
@@ -242,4 +244,23 @@ describe('DruxtRouterComponent', () => {
     expect(wrapper.vm.path).toBe('/node/1')
     expect(wrapper.vm.route.resolvedPath).toBe('/en/recipes/deep-mediterranean-quiche')
   })
+
+  test('Watch - $route', async () => {
+    // Setup component.
+    const wrapper = mountComponent({}, '/')
+    wrapper.vm.$fetch = wrapper.vm.$options.fetch
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Assert default state.
+    expect(mockAxios.get).toHaveBeenNthCalledWith(1, '/router/translate-path?path=/', expect.any(Object))
+
+    // Change to mock route.
+    wrapper.vm.$store.state.druxtRouter.routes['/test'] = { test: true }
+    wrapper.vm.$router.push('/test')
+
+    // Assert the route has been updated.
+    await localVue.nextTick()
+    expect(wrapper.vm.$store.state.druxtRouter.route).toStrictEqual({ test: true })
+  })
+
 })

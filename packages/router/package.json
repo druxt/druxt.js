@@ -54,5 +54,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "vue-router": "^3.0.0"
   }
 }

@@ -217,10 +217,6 @@ export default {
     entities() {
       this.$forceUpdate()
     },
-
-    async langcode() {
-      await this.$fetch()
-    }
   },
 
   methods: {
