@@ -32,7 +32,12 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     ...moduleOptions,
     ...(this.options || {}).druxt,
   }
-  const druxt = new DruxtClient(options.baseUrl, options)
+
+  const druxt = new DruxtClient(options.baseUrl, {
+    ...options,
+    // Disable API Proxy, as Proxies aren't available at build.
+    proxy: { ...options.proxy || {}, api: false },
+  })
 
   // Nuxt proxy integration.
   if (options.proxy) {

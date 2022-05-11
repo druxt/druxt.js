@@ -62,7 +62,11 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
     })
 
     // Fetch languages.
-    const druxt = new DruxtClient(options.baseUrl, options)
+    const druxt = new DruxtClient(options.baseUrl, {
+      ...options,
+      // Disable API Proxy, as Proxies aren't available at build.
+      proxy: { ...options.proxy || {}, api: false },
+    })
     const resourceType = 'configurable_language--configurable_language'
     const query = new DrupalJsonApiParams().addFields(resourceType, ['drupal_internal__id'])
     const languages = (await druxt.getCollectionAll(resourceType, query) || [])
