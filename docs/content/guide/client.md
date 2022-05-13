@@ -33,7 +33,7 @@ See the [API documentation](/api/packages/druxt/client) for more details.
 
 ## Getting a resource
 
-The `getResource` method requires the resource `type` and `id`, and has an optional `query` parameter.
+The `getResource` method requires the resource `type` and `id`, and has an optional `query` and `prefix` parameter.
 
 _Get a page._
 ```js
@@ -53,9 +53,21 @@ druxt.getResource(
 })
 ```
 
+_Get a translated page.__
+```js
+druxt.getResource(
+  'node--page',
+  'd8dfd355-7f2f-4fc3-a149-288e4e293bdd'
+  undefined,
+  'es'
+).then(resource => {
+  // Do the thing.
+})
+```
+
 ## Getting a collection of resources
 
-The `getCollection` method requires the resource type, and has an optional `query` parameter.
+The `getCollection` method requires the resource type, and has an optional `query` and `prefix` parameter.
 
 _Get a collection of recipes._
 ```js
@@ -67,6 +79,18 @@ druxt.getCollection('node--recipe').then(collection => {
 _Get the first 5 recipes._
 ```js
 druxt.getCollection('node--recipe', 'page[limit]=5').then(collection => {
+  // Do the thing.
+})
+```
+
+
+_Get the first 5 recipes in spanish._
+```js
+druxt.getCollection(
+  'node--recipe',
+  'page[limit]=5',
+  'es'
+).then(collection => {
   // Do the thing.
 })
 ```
