@@ -53,7 +53,7 @@ druxt.getResource(
 })
 ```
 
-_Get a translated page.__
+_Get a translated page._
 ```js
 druxt.getResource(
   'node--page',

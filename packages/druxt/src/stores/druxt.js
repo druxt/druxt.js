@@ -316,6 +316,7 @@ export { DruxtStore }
  * @param {object} collection - A collection of JSON:API resources.
  * @param {string} type - The JSON:API collection resource type.
  * @param {string} hash - An md5 hash of the query string.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  *
  * @example @lang js
  * {
@@ -325,7 +326,8 @@ export { DruxtStore }
  *     links: {}
  *   },
  *   type: 'node--page',
- *   hash: '_default'
+ *   hash: '_default',
+ *   prefix: 'en'
  * }
  */
 
@@ -334,10 +336,12 @@ export { DruxtStore }
  *
  * @typedef {object} addResourceContext
  *
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  * @param {object} resource - The JSON:API resource.
  *
  * @example @lang js
  * {
+ *   prefix: 'en',
  *   resource: {
  *     jsonapi: {},
  *     data: {},
@@ -353,6 +357,7 @@ export { DruxtStore }
  *
  * @param {string} type - The JSON:API collection resource type.
  * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  *
  * @example @lang js
  * {
@@ -369,11 +374,13 @@ export { DruxtStore }
  * @param {string} type - The JSON:API Resource type.
  * @param {string} id - The Drupal resource UUID.
  * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  *
  * @example @lang js
  * {
  *   type: 'node--page',
- *   id: 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd'
+ *   id: 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd',
+ *   prefix: 'en'
  * }
  */
 

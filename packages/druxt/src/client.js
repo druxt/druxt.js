@@ -181,10 +181,17 @@ class DruxtClient {
    * Create a JSON:API resource.
    *
    * @example @lang js
-   * await this.$druxt.createResource({ type: 'node--page', attributes: {}, relationships: {} })
+   * await this.$druxt.createResource(
+   *   {
+   *     type: 'node--page',
+   *     attributes: {},
+   *     relationships: {}
+   *   },
+   *   'en'
+   * )
    *
    * @param {object} resource - The JSON:API resource object
-   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The response data
    */
@@ -281,12 +288,16 @@ class DruxtClient {
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
-   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The JSON:API collection response.
    *
    * @example @lang js
-   * const collection = await this.$druxt.getCollection('node--recipe')
+   * const collection = await this.$druxt.getCollection(
+   *   'node--recipe',
+   *   undefined,
+   *   'en'
+   * )
    */
   async getCollection(type, query, prefix) {
     const { href } = await this.getIndex(type, prefix)
@@ -305,12 +316,16 @@ class DruxtClient {
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
-   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object[]} An array of JSON:API collections.
    *
    * @example @lang js
-   * const collections = await this.$druxt.getCollectionAll('node--recipe', 'fields[node--recipe]=title')
+   * const collections = await this.$druxt.getCollectionAll(
+   *   'node--recipe',
+   *   'fields[node--recipe]=title',
+   *   'en'
+   * )
    */
   async getCollectionAll(type, query, prefix) {
     const collections = []
@@ -331,10 +346,10 @@ class DruxtClient {
    * Get index of all available resources, or the optionally specified resource.
    *
    * @example @lang js
-   * const { href } = await this.$druxt.getIndex('node--article')
+   * const { href } = await this.$druxt.getIndex('node--article', 'en')
    *
-   * @param {string} resource - (Optional) A specific resource to query.
-   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {string} [resource] - (Optional) A specific resource to query.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The resource index object or the specified resource.
    */
@@ -405,13 +420,18 @@ class DruxtClient {
    * Get the related resources from a specified JSON:API resource.
    *
    * @example @lang js
-   * const related = this.$druxt.getRelated('node--page', id, 'uid')
+   * const related = this.$druxt.getRelated(
+   *   'node--page',
+   *   id, 'uid',
+   *   undefined,
+   *   'en'
+   * )
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {string} id - The Drupal resource UUID.
    * @param {string} related - The relationship name.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
-   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The related JSON:API resource(s).
    */
@@ -434,12 +454,17 @@ class DruxtClient {
    * Get a JSON:API resource by type and ID.
    *
    * @example @lang js
-   * const data = await this.$druxt.getResource('node--article', id)
+   * const data = await this.$druxt.getResource(
+   *   'node--article',
+   *   id,
+   *   undefined,
+   *   'en'
+   * )
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {string} id - The Drupal resource UUID.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
-   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The JSON:API resource data.
    * @todo update method to take a context object instead of 4 parameters.
@@ -464,10 +489,18 @@ class DruxtClient {
    * Update a JSON:API resource.
    *
    * @example @lang js
-   * await this.$druxt.updateResource({ type: 'node--page', id, attributes: {}, relationships: {} })
+   * await this.$druxt.updateResource(
+   *   {
+   *     type: 'node--page',
+   *     id,
+   *     attributes: {},
+   *     relationships: {}
+   *   },
+   *   'en'
+   * )
    *
    * @param {object} resource - The JSON:API resource object
-   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The response data
    */
