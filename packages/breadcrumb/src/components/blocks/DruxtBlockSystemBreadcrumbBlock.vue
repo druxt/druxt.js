@@ -1,5 +1,5 @@
 <template>
-  <DruxtBreadcrumb langcode="langcode" />
+  <DruxtBreadcrumb :langcode="langcode" />
 </template>
 
 <script>
