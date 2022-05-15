@@ -54,16 +54,25 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtViewsFilter[FilterId][Langcode]',
  *   'DruxtViewsFilter[FilterId]',
+ *   'DruxtViewsFilter[PluginId][FilterId][Langcode]',
  *   'DruxtViewsFilter[PluginId][FilterId]',
+ *   'DruxtViewsFilter[PluginId][Langcode]',
+ *   'DruxtViewsFilter[PluginId]',
+ *   'DruxtViewsFilter[Default][Langcode]'
  *   'DruxtViewsFilter[Default]'
  * ]
  *
  * @example @lang js
  * [
+ *   'DruxtViewsFilterTaxonomyIndexTidTypeTargetIdEn',
  *   'DruxtViewsFilterTaxonomyIndexTidTypeTargetId',
+ *   'DruxtViewsFilterTypeTargetIdEn',
  *   'DruxtViewsFilterTypeTargetId',
+ *   'DruxtViewsFilterTaxonomyIndexTidEn',
  *   'DruxtViewsFilterTaxonomyIndexTid',
+ *   'DruxtViewsFilterDefaultEn',
  *   'DruxtViewsFilterDefault',
  * ]
  */

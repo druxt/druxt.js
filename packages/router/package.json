@@ -45,6 +45,9 @@
     "druxt": "^0.18.0",
     "url-parse": "^1.5.9"
   },
+  "devDependencies": {
+    "vue-router": "^3.0.0"
+  },
   "peerDependencies": {
     "drupal-jsonapi-params": "*"
   },
@@ -54,8 +57,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "vue-router": "^3.0.0"
   }
 }

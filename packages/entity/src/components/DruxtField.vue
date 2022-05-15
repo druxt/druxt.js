@@ -443,21 +443,33 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtField[Type][Id][SchemaType][Langcode]',
  *   'DruxtField[Type][Id][SchemaType]',
+ *   'DruxtField[Type][Id][Langcode]',
  *   'DruxtField[Type][Id]',
+ *   'DruxtField[Type][SchemaType][Langcode]',
  *   'DruxtField[Type][SchemaType]',
+ *   'DruxtField[Default][SchemaType][Langcode]',
  *   'DruxtField[Default][SchemaType]',
+ *   'DruxtField[Type][Langcode]',
  *   'DruxtField[Type]',
+ *   'DruxtField[Default][Langcode]',
  *   'DruxtField[Default]',
  * ]
  *
  * @example <caption>Media field</caption> @lang js
  * [
+ *   'DruxtFieldEntityReferenceEntityViewFieldMediaImageViewEn',
  *   'DruxtFieldEntityReferenceEntityViewFieldMediaImageView',
+ *   'DruxtFieldEntityReferenceEntityViewFieldMediaImageEn',
  *   'DruxtFieldEntityReferenceEntityViewFieldMediaImage',
+ *   'DruxtFieldEntityReferenceEntityViewViewEn',
  *   'DruxtFieldEntityReferenceEntityViewView',
+ *   'DruxtFieldDefaultViewEn',
  *   'DruxtFieldDefaultView',
+ *   'DruxtFieldEntityReferenceEntityViewEn',
  *   'DruxtFieldEntityReferenceEntityView',
+ *   'DruxtFieldDefaultEn',
  *   'DruxtFieldDefault',
  * ]
  */

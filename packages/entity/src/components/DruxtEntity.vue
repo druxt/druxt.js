@@ -414,23 +414,37 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtEntity[ResourceType][DisplayMode][SchemaType][Langcode]',
  *   'DruxtEntity[ResourceType][DisplayMode][SchemaType]',
+ *   'DruxtEntity[EntityType][DisplayMode][SchemaType][Langcode]',
  *   'DruxtEntity[EntityType][DisplayMode][SchemaType]',
+ *   'DruxtEntity[ResourceType][DisplayMode][Langcode]',
  *   'DruxtEntity[ResourceType][DisplayMode]',
+ *   'DruxtEntity[EntityType][DisplayMode][Langcode]',
  *   'DruxtEntity[EntityType][DisplayMode]',
+ *   'DruxtEntity[ResourceType][Langcode]',
  *   'DruxtEntity[ResourceType]',
+ *   'DruxtEntity[EntityType][Langcode]',
  *   'DruxtEntity[EntityType]',
+ *   'DruxtEntity[DisplayMode][Langcode]',
  *   'DruxtEntity[DisplayMode]',
  * ]
  *
  * @example <caption>Article Node (default)</caption> @lang js
  * [
+ *   'DruxtEntityNodeArticleDefaultViewEn',
  *   'DruxtEntityNodeArticleDefaultView',
+ *   'DruxtEntityNodeDefaultViewEn',
  *   'DruxtEntityNodeDefaultView',
+ *   'DruxtEntityNodeArticleDefaultEn',
  *   'DruxtEntityNodeArticleDefault',
+ *   'DruxtEntityNodeDefaultEn',
  *   'DruxtEntityNodeDefault',
+ *   'DruxtEntityNodeArticleEn',
  *   'DruxtEntityNodeArticle',
+ *   'DruxtEntityNodeEn',
  *   'DruxtEntityNode',
+ *   'DruxtEntityDefaultEn',
  *   'DruxtEntityDefault',
  * ]
  */

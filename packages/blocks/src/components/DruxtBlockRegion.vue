@@ -241,15 +241,21 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtBlockRegion[Name][Theme][Langcode]',
  *   'DruxtBlockRegion[Name][Theme]',
+ *   'DruxtBlockRegion[Name][Langcode]',
  *   'DruxtBlockRegion[Name]',
+ *   'DruxtBlockRegion[Default][Langcode]',
  *   'DruxtBlockRegion[Default]',
  * ]
  *
  * @example <caption>Banner top - Umami</caption> @lang js
  * [
+ *   'DruxtBlockRegionBannerTopUmamiEn',
  *   'DruxtBlockRegionBannerTopUmami',
+ *   'DruxtBlockRegionBannerTopEn',
  *   'DruxtBlockRegionBannerTop',
+ *   'DruxtBlockRegionDefaultEn',
  *   'DruxtBlockRegionDefault',
  * ]
  */

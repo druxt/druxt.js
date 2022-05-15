@@ -650,19 +650,29 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtView[ViewId][DisplayId][Langcode]',
  *   'DruxtView[ViewId][DisplayId]',
+ *   'DruxtView[ViewId][Langcode]',
  *   'DruxtView[ViewId]',
+ *   'DruxtView[UUID][DisplayId][Langcode]',
  *   'DruxtView[UUID][DisplayId]',
+ *   'DruxtView[UUID][Langcode]',
  *   'DruxtView[UUID]',
+ *   'DruxtView[DisplayId][Langcode]',
  *   'DruxtView[DisplayId]',
  * ]
  *
  * @example <caption>featured_articles (default)</caption> @lang js
  * [
+ *   'DruxtViewFeaturedArticlesDefaultEn',
  *   'DruxtViewFeaturedArticlesDefault',
+ *   'DruxtViewFeaturedArticlesEn',
  *   'DruxtViewFeaturedArticles',
+ *   'DruxtView16f5d68e5bae4d7aa61c6b2bc3b6d3b6DefaultEn',
  *   'DruxtView16f5d68e5bae4d7aa61c6b2bc3b6d3b6Default',
+ *   'DruxtView16f5d68e5bae4d7aa61c6b2bc3b6d3b6En',
  *   'DruxtView16f5d68e5bae4d7aa61c6b2bc3b6d3b6',
+ *   'DruxtViewDefaultEn',
  *   'DruxtViewDefault',
  * ]
  */

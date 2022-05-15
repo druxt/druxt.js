@@ -352,13 +352,17 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtMenu[Name][Langcode]',
  *   'DruxtMenu[Name]',
- *   'DruxtMenuDefault',
+ *   'DruxtMenu[Default][Langcode]',
+ *   'DruxtMenu[Default]',
  * ]
  *
  * @example <caption>Main menu (default)</caption> @lang js
  * [
+ *   'DruxtMenuMainEn',
  *   'DruxtMenuMain',
+ *   'DruxtMenuDefaultEn',
  *   'DruxtMenuDefault',
  * ]
  */

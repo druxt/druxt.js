@@ -246,19 +246,29 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtBlock[Plugin][PluginId][Region][Theme][Langcode]',
  *   'DruxtBlock[Plugin][PluginId][Region][Theme]',
+ *   'DruxtBlock[Plugin][PluginId][Theme][Langcode]',
  *   'DruxtBlock[Plugin][PluginId][Theme]',
+ *   'DruxtBlock[Plugin][Region][Theme][Langcode]',
  *   'DruxtBlock[Plugin][Region][Theme]',
+ *   'DruxtBlock[Plugin][Theme][Langcode]',
  *   'DruxtBlock[Plugin][Theme]',
+ *   'DruxtBlock[Default][Langcode]',
  *   'DruxtBlock[Default]',
  * ]
  *
  * @example <caption>Umami Branding block</caption> @lang js
  * [
+ *   'DruxtBlockSystemBrandingBlockHeaderUmamiEn',
  *   'DruxtBlockSystemBrandingBlockHeaderUmami',
+ *   'DruxtBlockSystemBrandingBlockHeaderEn',
  *   'DruxtBlockSystemBrandingBlockHeader',
+ *   'DruxtBlockSystemBrandingBlockUmamiEn',
  *   'DruxtBlockSystemBrandingBlockUmami',
+ *   'DruxtBlockSystemBrandingBlockEn',
  *   'DruxtBlockSystemBrandingBlock',
+ *   'DruxtBlockDefaultEn',
  *   'DruxtBlockDefault',
  * ]
  */

@@ -278,16 +278,22 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtRouter[Module][IsFront?][Langcode]',
  *   'DruxtRouter[Module][IsFront?]',
- *   'DruxtRouterDefault',
+ *   'DruxtRouter[Module][Langcode]',
+ *   'DruxtRouter[Module]',
+ *   'DruxtRouter[Default][Langcode]',
+ *   'DruxtRouter[Default]',
  * ]
  *
  * @example <caption>Entity route</caption> @lang js
  * [
+ *   'DruxtRouterEntityFrontEn',
  *   'DruxtRouterEntityFront',
+ *   'DruxtRouterEntityEn',
  *   'DruxtRouterEntity',
- *   'DruxtRouterDefault',
- *   '',
+ *   'DruxtRouterDefaultEn',
+ *   'DruxtRouterDefault'
  * ]
  */
 

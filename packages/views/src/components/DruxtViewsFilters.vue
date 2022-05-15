@@ -124,13 +124,17 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtViewsFilters[Type][Langcode]',
  *   'DruxtViewsFilters[Type]',
+ *   'DruxtViewsFilters[Default][Langcode]'
  *   'DruxtViewsFilters[Default]'
  * ]
  *
  * @example @lang js
  * [
+ *   'DruxtViewsFiltersBasicEn',
  *   'DruxtViewsFiltersBasic',
+ *   'DruxtViewsFiltersDefaultEn'
  *   'DruxtViewsFiltersDefault'
  * ]
  */

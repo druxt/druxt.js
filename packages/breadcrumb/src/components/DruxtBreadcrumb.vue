@@ -233,11 +233,13 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtBreadcrumb[Default][Langcode]',
  *   'DruxtBreadcrumb[Default]',
  * ]
  *
  * @example @lang js
  * [
+ *   'DruxtBreadcrumbDefaultEn',
  *   'DruxtBreadcrumbDefault',
  * ]
  */
