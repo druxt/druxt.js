@@ -279,6 +279,47 @@ describe('DruxtModule component', () => {
     expect(wrapper.html()).toMatchSnapshot()
   })
 
+  test('component options', async () => {
+    const CustomModule = {
+      name: 'CustomModule',
+      extends: DruxtModule,
+      druxt: {
+        componentOptions: () => ([['foo', 'bar'], ['foo', 'bar', 'baz']]),
+        async fetchConfig() {},
+        async fetchData(settings) {},
+        propsData: () => ({ foo: 'bar' }),
+        settings: ({}, settings) => ({ ...settings, custom: true }),
+        slots: (h) => ({ default: () => h('div', ['test'] )}),
+      }
+    }
+
+    const wrapper = mount(CustomModule, {
+      localVue,
+      mocks,
+      // propsData: { langcode: 'en' },
+      stubs: ['DruxtWrapper']
+    })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'CustomModuleFooBarBaz',
+      'CustomModuleFooBar',
+      'CustomModuleFoo',
+    ])
+
+    wrapper.vm.$fetch = wrapper.vm.$options.fetch
+    await wrapper.setProps({ langcode: 'en' })
+    await localVue.nextTick()
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'CustomModuleFooBarBazEn',
+      'CustomModuleFooBarEn',
+      'CustomModuleFooBarBaz',
+      'CustomModuleFooEn',
+      'CustomModuleFooBar',
+      'CustomModuleFoo',
+    ])
+  })
+
   test('dev mode slot', async () => {
     mocks.$nuxt.context.isDev = true
     const wrapper = mount(DruxtModule, { localVue, mocks, stubs: ['DruxtDebug'] })

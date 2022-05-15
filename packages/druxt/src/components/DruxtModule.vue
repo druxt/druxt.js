@@ -256,9 +256,10 @@ export default {
         const variants = []
 
         // Add langcode suffix to all sets.
-        set.push(this.lang)
+        // console.log('SET', set)
+        // set.push(this.lang)
 
-        components = [...components, ...set.filter((o) => o).map(item => {
+        for (const item of set.filter((o) => o)) {
           // Build array of name parts.
           const parts = variants.length ? [...variants[0].parts] : []
           parts.push(pascalCase(splitByCase(item)))
@@ -266,14 +267,26 @@ export default {
           // Convert parts into a pascalCase component name.
           const name = pascalCase([this.$options.name, ...parts])
 
-          // Check if component is globally registered.
-          const global = !!this.$options.components[name]
-
           // Store set variant data to be used in next set item.
           variants.unshift({ global, name, parts })
 
-          return { global, name, parts }
-        })]
+          // Add langcode suffixed component option.
+          if (this.lang) {
+            const langcodeName = pascalCase([this.$options.name, ...parts, this.lang])
+            components.push({
+              global: !!this.$options.components[langcodeName],
+              name: langcodeName,
+              parts: [...parts, this.lang]
+            })
+          }
+
+          // And component option.
+          components.push({
+            global: !!this.$options.components[name],
+            name,
+            parts
+          })
+        }
       }
 
       // Filter unique components.
