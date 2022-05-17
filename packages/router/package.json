@@ -43,10 +43,10 @@
   ],
   "dependencies": {
     "druxt": "^0.18.0",
-    "url-parse": "^1.5.9"
+    "url-parse": "^1.5.10"
   },
   "devDependencies": {
-    "vue-router": "^3.0.0"
+    "vue-router": "^3.5.4"
   },
   "peerDependencies": {
     "drupal-jsonapi-params": "*"

@@ -13,14 +13,14 @@
     "cli": "bin/druxt-docgen.js"
   },
   "dependencies": {
-    "dmd": "6.0.0",
-    "globby": "11.0.4",
-    "jsdoc-to-markdown": "7.1.0",
+    "dmd": "6.1.0",
+    "globby": "11.1.0",
+    "jsdoc-to-markdown": "7.1.1",
     "jsdoc-vuejs": "3.0.9",
     "jsdoc-vuex-plugin": "1.0.0",
     "markdown-it-task-lists": "2.1.1",
     "ncp": "2.0.0",
-    "vue-docgen-api": "4.43.0",
-    "yargs": "17.3.0"
+    "vue-docgen-api": "4.46.0",
+    "yargs": "17.5.1"
   }
 }

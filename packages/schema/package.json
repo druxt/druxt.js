@@ -39,7 +39,7 @@
     "templates"
   ],
   "dependencies": {
-    "consola": "^2.15.0",
+    "consola": "^2.15.3",
     "drupal-jsonapi-params": "^2.0.0",
     "druxt": "^0.18.2"
   },
