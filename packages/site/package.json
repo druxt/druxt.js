@@ -51,7 +51,7 @@
     "druxt-router": "^0.26.1",
     "druxt-schema": "^0.10.3",
     "druxt-views": "^0.18.2",
-    "md5": "^2.2.1"
+    "md5": "^2.3.0"
   },
   "optionalDependencies": {
     "vue": "^2.6.14",
