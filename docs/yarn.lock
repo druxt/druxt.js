@@ -4698,16 +4698,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/typography@npm:0.5.2":
-  version: 0.5.2
-  resolution: "@tailwindcss/typography@npm:0.5.2"
+"@tailwindcss/typography@npm:^0.4":
+  version: 0.4.1
+  resolution: "@tailwindcss/typography@npm:0.4.1"
   dependencies:
     lodash.castarray: ^4.4.0
     lodash.isplainobject: ^4.0.6
     lodash.merge: ^4.6.2
+    lodash.uniq: ^4.5.0
   peerDependencies:
-    tailwindcss: "*"
-  checksum: f6c27e32c9b48b0e906561d1e9dd3eec8fd5efc9792fd691269ceaa9d30d35bc715023215ec83ff8e5475c38af69e164d577672d935813b70e04b1c820b2ea8e
+    tailwindcss: ">=2.0.0"
+  checksum: d234509964f59389d00ccc0529b033a5aa670a93149a48520cd2088d102b894cc746146052ea844a926bbea4b16904f5f6b2874399511bf78d55631bdb88ac68
   languageName: node
   linkType: hard
 
@@ -9075,7 +9076,7 @@ __metadata:
     "@nuxtjs/pwa": 3.3.5
     "@nuxtjs/storybook": 4.2.0
     "@nuxtjs/tailwindcss": 4.2.1
-    "@tailwindcss/typography": 0.5.2
+    "@tailwindcss/typography": ^0.4
     core-js: 3.22.5
     daisyui: 1.25.4
     nuxt: 2.15.8
