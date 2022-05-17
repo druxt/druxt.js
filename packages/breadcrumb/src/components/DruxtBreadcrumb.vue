@@ -63,7 +63,7 @@ export default {
      */
     path: {
       type: String,
-      default: ''
+      default: undefined
     }
   },
 
@@ -105,7 +105,7 @@ export default {
     async fetchCrumbs() {
       const path = this.path || this.$route.path
       let route = this.route
-      if (this.path && path !== this.$route.path) {
+      if (path && path !== route.path) {
         route = await this.getRoute(path)
       }
 
@@ -115,7 +115,7 @@ export default {
       }
 
       // If we are at the root and don't want a home crumb, stop here.
-      if (path === '/' && !this.home) return
+      if ((path === '/' || route.isHomePath) && !this.home) return
 
       // Current route crumb.
       const crumbs = []
@@ -124,12 +124,13 @@ export default {
       }
 
       // If we are at the root of the site, stop here.
-      if (path === '/') {
+      if (path === '/' || route.isHomePath) {
         this.model = crumbs
         return
       }
 
       // Add crumbs for route parents.
+      let addHome = true
       const paths = path.split('/').filter(String)
       paths.pop()
       while (paths.length > 0) {
@@ -146,11 +147,16 @@ export default {
           crumbs.push({ to, text: route.label })
         }
 
+        // If this route is the home path, prevent a duplicate home item.
+        if (route.isHomePath) {
+          addHome = false
+        }
+
         paths.pop()
       }
 
-      // Home crumb.
-      if (this.home) {
+      // Add Home item.
+      if (this.home && addHome) {
         crumbs.push({
           to: '/',
           text: 'Home'
@@ -227,11 +233,13 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtBreadcrumb[Default][Langcode]',
  *   'DruxtBreadcrumb[Default]',
  * ]
  *
  * @example @lang js
  * [
+ *   'DruxtBreadcrumbDefaultEn',
  *   'DruxtBreadcrumbDefault',
  * ]
  */

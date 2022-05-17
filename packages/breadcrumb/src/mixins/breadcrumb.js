@@ -26,6 +26,16 @@ const DruxtBreadcrumbMixin = {
       type: Array,
       require: true,
     },
+
+    /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    }
   },
 }
 

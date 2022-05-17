@@ -177,13 +177,17 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtViewsPager[Type][Langcode]',
  *   'DruxtViewsPager[Type]',
+ *   'DruxtViewsPager[Default][Langcode]',
  *   'DruxtViewsPager[Default]'
  * ]
  *
  * @example @lang js
  * [
+ *   'DruxtViewsPagerFullEn',
  *   'DruxtViewsPagerFull',
+ *   'DruxtViewsPagerDefaultEn',
  *   'DruxtViewsPagerDefault'
  * ]
  */

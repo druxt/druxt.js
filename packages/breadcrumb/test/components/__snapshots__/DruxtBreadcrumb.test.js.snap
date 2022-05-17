@@ -2,7 +2,7 @@
 
 exports[`DruxtBreadcrumb 404 route 1`] = `
 "<div>
-  <druxtdebug-stub json=\\"[object Object]\\" summary=\\"No route data available.\\"></druxtdebug-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object]\\" value=\\"[object Object]\\"></druxtwrapper-stub>
 </div>"
 `;
 

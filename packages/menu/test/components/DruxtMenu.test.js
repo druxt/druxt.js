@@ -7,7 +7,6 @@ import { DruxtStore } from '../../../druxt/src'
 import { DruxtMenu, DruxtMenuStore } from '../../src'
 import DruxtMenuComponent from '../../src/components/DruxtMenu.vue'
 import DruxtMenuItemComponent from '../../src/components/DruxtMenuItem.vue'
-import { expect } from '@jest/globals'
 
 jest.mock('axios')
 
@@ -55,6 +54,7 @@ describe('DruxtMenu', () => {
       'DruxtMenuDefault'
     ])
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
+
     // TODO - Add mock test data, Umami Profile has none.
     // expect(wrapper.vm.model).toBe(1)
     // expect(wrapper.vm.getScopedSlots().default()).toBe(1)
@@ -109,6 +109,30 @@ describe('DruxtMenu', () => {
       items: wrapper.vm.model,
       parentId: wrapper.vm.parentId,
       value: wrapper.vm.model,
+    })
+  })
+
+  test('getEntitysByFilter', async() => {
+    const mock = {
+      entities: {
+        undefined: {
+          test: {
+            attributes: {
+              menu_name: 'test',
+              parent: null
+            }
+          }
+        }
+      },
+      getEntitiesByFilter: jest.fn(({ filter, prefix }) => {
+        expect(filter('test')).toBe(true)
+      }),
+      name: 'test'
+    }
+    DruxtMenuComponent.methods.getMenuItems.call(mock)
+    expect(mock.getEntitiesByFilter).toHaveBeenLastCalledWith({
+      filter: expect.any(Function),
+      prefix: undefined
     })
   })
 })

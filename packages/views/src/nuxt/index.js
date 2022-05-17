@@ -23,7 +23,7 @@ import DruxtViewsStorybook from './storybook'
  *
  * @param {object} moduleOptions - Nuxt module options object.
  */
-const DruxtViewsNuxtModule = function (moduleOptions = {}) {
+const DruxtViewsNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
@@ -42,10 +42,10 @@ const DruxtViewsNuxtModule = function (moduleOptions = {}) {
   })
 
   // Add dependant modules.
-  this.addModule(['druxt', options])
+  await this.addModule(['druxt', options])
   const modules = ['druxt-entity', 'druxt-schema']
   for (const module of modules) {
-    this.addModule([module, { baseUrl: options.baseUrl }])
+    await this.addModule([module, { baseUrl: options.baseUrl }])
   }
 
   // Add Vuex plugin.

@@ -77,6 +77,12 @@ class DruxtClient {
 
       ...options
     }
+
+    /**
+     * JSON:API Index.
+     * @type {object}
+     */
+    this.index = {}
   }
 
   /**
@@ -175,18 +181,26 @@ class DruxtClient {
    * Create a JSON:API resource.
    *
    * @example @lang js
-   * await this.$druxt.createResource({ type: 'node--page', attributes: {}, relationships: {} })
+   * await this.$druxt.createResource(
+   *   {
+   *     type: 'node--page',
+   *     attributes: {},
+   *     relationships: {}
+   *   },
+   *   'en'
+   * )
    *
    * @param {object} resource - The JSON:API resource object
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The response data
    */
-  async createResource(resource) {
+  async createResource(resource, prefix = '') {
     if (resource.id) {
-      return this.updateResource(resource)
+      return this.updateResource(resource, prefix)
     }
 
-    const { href } = await this.getIndex(resource.type)
+    const { href } = await this.getIndex(resource.type, prefix)
     if (!href) {
       return false
     }
@@ -274,14 +288,19 @@ class DruxtClient {
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The JSON:API collection response.
    *
    * @example @lang js
-   * const collection = await this.$druxt.getCollection('node--recipe')
+   * const collection = await this.$druxt.getCollection(
+   *   'node--recipe',
+   *   undefined,
+   *   'en'
+   * )
    */
-  async getCollection(type, query) {
-    const { href } = await this.getIndex(type)
+  async getCollection(type, query, prefix) {
+    const { href } = await this.getIndex(type, prefix)
     if (!href) {
       return false
     }
@@ -297,21 +316,26 @@ class DruxtClient {
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object[]} An array of JSON:API collections.
    *
    * @example @lang js
-   * const collections = await this.$druxt.getCollectionAll('node--recipe', 'fields[node--recipe]=title')
+   * const collections = await this.$druxt.getCollectionAll(
+   *   'node--recipe',
+   *   'fields[node--recipe]=title',
+   *   'en'
+   * )
    */
-  async getCollectionAll(type, query) {
+  async getCollectionAll(type, query, prefix) {
     const collections = []
 
-    let res = await this.getCollection(type, query)
+    let res = await this.getCollection(type, query, prefix)
     collections.push(res)
 
     while (((res.links || {}).next || {}).href) {
       query = res.links.next.href.split('?')[1]
-      res = await this.getCollection(type, query)
+      res = await this.getCollection(type, query, prefix)
       collections.push(res)
     }
 
@@ -322,22 +346,23 @@ class DruxtClient {
    * Get index of all available resources, or the optionally specified resource.
    *
    * @example @lang js
-   * const { href } = await this.$druxt.getIndex('node--article')
+   * const { href } = await this.$druxt.getIndex('node--article', 'en')
    *
-   * @param {string} resource - (Optional) A specific resource to query.
+   * @param {string} [resource] - (Optional) A specific resource to query.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The resource index object or the specified resource.
    */
-  async getIndex(resource) {
-    if (this.index && !resource) {
-      return this.index
+  async getIndex(resource, prefix) {
+    if ((this.index || {})[prefix] && !resource) {
+      return this.index[prefix]
     }
 
-    if (this.index && resource) {
-      return this.index[resource] ? this.index[resource] : false
+    if ((this.index || {})[prefix] && resource) {
+      return this.index[prefix][resource] ? this.index[prefix][resource] : false
     }
 
-    const url = this.options.endpoint
+    const url = [prefix, this.options.endpoint].join('')
     const { data } = await this.get(url)
     let index = data.links
 
@@ -386,30 +411,36 @@ class DruxtClient {
     }
 
     // Set index.
-    this.index = index
+    this.index[prefix] = index
 
-    return resource ? this.index[resource] || false : this.index
+    return resource ? this.index[prefix][resource] || false : this.index[prefix]
   }
 
   /**
    * Get the related resources from a specified JSON:API resource.
    *
    * @example @lang js
-   * const related = this.$druxt.getRelated('node--page', id, 'uid')
+   * const related = this.$druxt.getRelated(
+   *   'node--page',
+   *   id, 'uid',
+   *   undefined,
+   *   'en'
+   * )
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {string} id - The Drupal resource UUID.
    * @param {string} related - The relationship name.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The related JSON:API resource(s).
    */
-  async getRelated(type, id, related, query) {
+  async getRelated(type, id, related, query, prefix = '') {
     if (!id || !type || !related) {
       return false
     }
 
-    let { href } = await this.getIndex(type)
+    let { href } = await this.getIndex(type, prefix)
     if (!href) {
       href = this.options.endpoint + '/' + type.replace('--', '/')
     }
@@ -423,20 +454,27 @@ class DruxtClient {
    * Get a JSON:API resource by type and ID.
    *
    * @example @lang js
-   * const data = await this.$druxt.getResource('node--article', id)
+   * const data = await this.$druxt.getResource(
+   *   'node--article',
+   *   id,
+   *   undefined,
+   *   'en'
+   * )
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {string} id - The Drupal resource UUID.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The JSON:API resource data.
+   * @todo update method to take a context object instead of 4 parameters.
    */
-  async getResource(type, id, query) {
+  async getResource(type, id, query, prefix) {
     if (!id || !type) {
       return false
     }
 
-    let { href } = await this.getIndex(type)
+    let { href } = await this.getIndex(type, prefix)
     // @TODO - Add test coverage.
     if (!href) {
       href = this.options.endpoint + '/' + type.replace('--', '/')
@@ -451,14 +489,23 @@ class DruxtClient {
    * Update a JSON:API resource.
    *
    * @example @lang js
-   * await this.$druxt.updateResource({ type: 'node--page', id, attributes: {}, relationships: {} })
+   * await this.$druxt.updateResource(
+   *   {
+   *     type: 'node--page',
+   *     id,
+   *     attributes: {},
+   *     relationships: {}
+   *   },
+   *   'en'
+   * )
    *
    * @param {object} resource - The JSON:API resource object
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
    * @returns {object} The response data
    */
-   async updateResource(resource) {
-    const { href } = await this.getIndex(resource.type)
+   async updateResource(resource, prefix) {
+    const { href } = await this.getIndex(resource.type, prefix)
     if (!href) {
       return false
     }

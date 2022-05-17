@@ -27,8 +27,6 @@ export default {
   name: 'DruxtBlockViewsBlock',
 
   /**
-   * Vue.js Mixins.
-   *
    * @see {@link https://blocks.druxtjs.org/api/mixins/block|DruxtBlocksBlockMixin}
    */
   mixins: [DruxtBlocksBlockMixin],
@@ -49,17 +47,16 @@ export default {
    */
   async fetch() {
     const results = await this.getCollection({
-      type: 'view--view',
+      prefix: this.langcode,
       query: new DrupalJsonApiParams()
         .addFilter('drupal_internal__id', this.viewId)
-        .addFields('view--view', ['id'])
+        .addFields('view--view', ['id']),
+      type: 'view--view',
     })
     this.uuid = results.data[0].id
   },
 
-  /**
-   * Vue.js Computed properties.
-   */
+  /** */
   computed: {
     /**
      * The View Display ID.
@@ -82,6 +79,7 @@ export default {
 
       return {
         displayId: this.displayId,
+        langcode: this.langcode,
         uuid: this.uuid,
         viewId: this.viewId
       }

@@ -38,6 +38,14 @@ export default {
   /** */
   props: {
     /**
+     * The resource langcode.
+     */
+    langcode: {
+      type: String,
+      default: undefined
+    },
+
+    /**
      * The module value.
      *
      * @type {(Array|Boolean|Date|Number|Object|String)}
@@ -169,7 +177,17 @@ export default {
     this.component = component
   },
 
+  computed: {
+    lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode
+  },
+
   watch: {
+    lang(to, from) {
+      if (to !== from) {
+        this.$fetch()
+      }
+    },
+
     model() {
       if (this.component.props && this.component.props.value !== this.model) {
         this.component.props.value = this.model
@@ -236,7 +254,12 @@ export default {
       let components = []
       for (const set of options.filter(set => Array.isArray(set))) {
         const variants = []
-        components = [...components, ...set.filter((o) => o).map(item => {
+
+        // Add langcode suffix to all sets.
+        // console.log('SET', set)
+        // set.push(this.lang)
+
+        for (const item of set.filter((o) => o)) {
           // Build array of name parts.
           const parts = variants.length ? [...variants[0].parts] : []
           parts.push(pascalCase(splitByCase(item)))
@@ -244,14 +267,26 @@ export default {
           // Convert parts into a pascalCase component name.
           const name = pascalCase([this.$options.name, ...parts])
 
-          // Check if component is globally registered.
-          const global = !!this.$options.components[name]
-
           // Store set variant data to be used in next set item.
           variants.unshift({ global, name, parts })
 
-          return { global, name, parts }
-        })]
+          // Add langcode suffixed component option.
+          if (this.lang) {
+            const langcodeName = pascalCase([this.$options.name, ...parts, this.lang])
+            components.push({
+              global: !!this.$options.components[langcodeName],
+              name: langcodeName,
+              parts: [...parts, this.lang]
+            })
+          }
+
+          // And component option.
+          components.push({
+            global: !!this.$options.components[name],
+            name,
+            parts
+          })
+        }
       }
 
       // Filter unique components.
@@ -279,7 +314,10 @@ export default {
         return {}
       }
 
-      const propsData = this.$options.druxt.propsData.call(this, this)
+      const propsData = {
+        langcode: this.lang,
+        ...this.$options.druxt.propsData.call(this, this)
+      }
 
       // Props.
       const props = {}
@@ -390,8 +428,9 @@ export default {
       props: (this.wrapper || {}).propsData || undefined,
     }
 
-    // Return only wrapper if fetch state is still pending.
-    if (this.$fetchState.pending && this.component.is === 'DruxtWrapper') {
+    // Return only wrapper if fetch state is still pending and Druxt hasn't set
+    // the available component options.
+    if (this.$fetchState.pending && !this.component.options.length) {
       return h((this.wrapper || {}).component || 'div', wrapperData)
     }
 

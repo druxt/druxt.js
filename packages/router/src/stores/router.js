@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 const DruxtRouterStore = ({ store }) => {
   if (typeof store === 'undefined') {
     throw new TypeError('Vuex store not found.')
@@ -91,7 +93,7 @@ const DruxtRouterStore = ({ store }) => {
           return
         }
 
-        state.routes[path] = route
+        Vue.set(state.routes, path, route)
       },
 
       /**

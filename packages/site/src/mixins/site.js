@@ -28,8 +28,18 @@ const DruxtSiteMixin = {
    */
   props: {
     /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * DruxtBlockRegion propsData for regions.
-     * 
+     *
      * @return {object}
      */
     props: {

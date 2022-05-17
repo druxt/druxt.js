@@ -1,6 +1,9 @@
 <template>
   <div>
-    <DruxtMenu :name="name" />
+    <DruxtMenu
+      :langcode="langcode"
+      :name="name"
+    />
   </div>
 </template>
 

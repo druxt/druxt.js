@@ -19,7 +19,11 @@ tasks:
       cd $GITPOD_REPO_ROOT/docs && yarn
       cd $GITPOD_REPO_ROOT && yarn build:docs
     command: |
-      cat .gitpod/WELCOME.md
+      # Start Drupal
+      cd $GITPOD_REPO_ROOT/examples/drupal/drupal-9 && ddev start -y && ddev drush uli
+
+      # Display welcome message
+      cd $GITPOD_REPO_ROOT && cat .gitpod/WELCOME.md
 
 # VScode xdebug extension
 vscode:

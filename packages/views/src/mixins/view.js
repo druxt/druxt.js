@@ -47,6 +47,16 @@ const DruxtViewsViewMixin = {
     },
 
     /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * The Entity display mode.
      *
      * @type {boolean|string}

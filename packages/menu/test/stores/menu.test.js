@@ -27,10 +27,10 @@ describe('DruxtStore', () => {
 
   test('get', async () => {
     await store.dispatch('druxtMenu/get', 'main')
-    expect(store.$druxtMenu.get).toHaveBeenCalledWith('main', undefined)
+    expect(store.$druxtMenu.get).toHaveBeenCalledWith('main', undefined, undefined)
 
     await store.dispatch('druxtMenu/get', { name: 'main', settings: { test: true }})
-    expect(store.$druxtMenu.get).toHaveBeenCalledWith('main', { test: true })
+    expect(store.$druxtMenu.get).toHaveBeenCalledWith('main', { test: true }, undefined)
     store.dispatch('druxtMenu/get', 'name')
   })
 })

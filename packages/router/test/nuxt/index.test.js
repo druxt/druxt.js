@@ -26,7 +26,7 @@ test('Nuxt module', async () => {
   mock.options = {
     buildDir: '',
     dir: { pages: 'pages' },
-    druxt: {},
+    druxt: { baseUrl: 'https://demo-api.druxtjs.org' },
     srcDir: __dirname,
   }
 

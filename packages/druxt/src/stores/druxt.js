@@ -4,7 +4,7 @@ import Vue from 'vue'
 
 import { getDrupalJsonApiParams } from '../utils/getDrupalJsonApiParams'
 
-const dehydrateResources = ({ commit, queryObject, resources }) => {
+const dehydrateResources = ({ commit, queryObject, resources, prefix }) => {
   return (resources || []).map((data) => {
     // Generate a query link for included resources.
     // This is used to determine if the resource is a partial.
@@ -15,10 +15,11 @@ const dehydrateResources = ({ commit, queryObject, resources }) => {
 
     // Commit the included resource.
     commit('druxt/addResource', {
+      prefix,
       resource: {
         data,
         links: { self: { href } },
-      }
+      },
     })
 
     return { id: data.id, type: data.type }
@@ -72,8 +73,9 @@ const DruxtStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxt/addCollection', { collection, type, hash })
        */
-      addCollection (state, { collection, type, hash }) {
+      addCollection (state, { collection, type, hash, prefix }) {
         if (!state.collections[type]) Vue.set(state.collections, type, {})
+        if (!state.collections[type][hash]) Vue.set(state.collections[type], hash, {})
 
         // Parse the query.
         const link = decodeURI((((collection || {}).links || {}).self || {}).href || '')
@@ -81,18 +83,18 @@ const DruxtStore = ({ store }) => {
         const queryObject = getDrupalJsonApiParams(query).getQueryObject()
 
         // Store and dehydrate collection resources.
-        collection.data = dehydrateResources({ commit: this.commit, queryObject, resources: collection.data })
+        collection.data = dehydrateResources({ commit: this.commit, prefix, queryObject, resources: collection.data })
 
         // Extract and store included resources.
         if (collection.included) {
-          collection.included = dehydrateResources({ commit: this.commit, queryObject, resources: collection.included })
+          collection.included = dehydrateResources({ commit: this.commit, prefix, queryObject, resources: collection.included })
           delete collection.included
         }
 
         // Recursively merge new collection data into stored collection.
-        collection = merge(state.collections[type][hash] || {}, collection, { arrayMerge: (dst, src) => src })
+        collection = merge(state.collections[type][hash][prefix] || {}, collection, { arrayMerge: (dst, src) => src })
 
-        Vue.set(state.collections[type], hash, collection)
+        Vue.set(state.collections[type][hash], prefix, collection)
       },
 
       /**
@@ -103,7 +105,7 @@ const DruxtStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxt/addResource', { resource })
        */
-      addResource (state, { resource, hash }) {
+      addResource (state, { prefix, resource, hash }) {
         if (hash) {
           console.warn('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/guide/deprecations.html#druxtstore-addresource-hash')
         }
@@ -125,17 +127,18 @@ const DruxtStore = ({ store }) => {
 
         // Ensure Resource type array is reactive.
         if (!state.resources[type]) Vue.set(state.resources, type, {})
+        if (!state.resources[type][id]) Vue.set(state.resources[type], id, {})
 
         // Extract and store included data.
         if (resource.included) {
-          dehydrateResources({ commit: this.commit, queryObject, resources: resource.included })
+          dehydrateResources({ commit: this.commit, prefix, queryObject, resources: resource.included })
           delete resource.included
         }
 
         // Recursively merge new resource data into stored resource.
-        resource = merge(state.resources[type][id] || {}, resource, { arrayMerge: (dst, src) => src })
+        resource = merge(state.resources[type][id][prefix] || {}, resource, { arrayMerge: (dst, src) => src })
 
-        Vue.set(state.resources[type], id, resource)
+        Vue.set(state.resources[type][id], prefix, resource)
       },
     },
 
@@ -158,25 +161,25 @@ const DruxtStore = ({ store }) => {
        *   query: new DrupalJsonApiParams().addFilter('status', '1'),
        * })
        */
-      async getCollection ({ commit, state }, { type, query }) {
+      async getCollection ({ commit, state }, { type, query, prefix }) {
         // Generate a hash using query data excluding the 'fields' and 'include' data.
         const queryObject = getDrupalJsonApiParams(query).getQueryObject()
         const hash = query ? md5(JSON.stringify({ ...queryObject, fields: {}, include: [] })) : '_default'
 
         // If collection hash exists, re-hydrate and return the data.
-        if ((state.collections[type] || {})[hash]) {
+        if (((state.collections[type] || {})[hash] || {})[prefix]) {
           return {
-            ...state.collections[type][hash],
+            ...state.collections[type][hash][prefix],
             // Hydrate resource data.
-            data: state.collections[type][hash].data.map((o) => (state.resources[o.type][o.id] || {}).data)
+            data: state.collections[type][hash][prefix].data.map((o) => ((state.resources[o.type][o.id] || {})[prefix] || {}).data)
           }
         }
 
         // Get the collection using the DruxtClient instance.
-        const collection = await this.$druxt.getCollection(type, query)
+        const collection = await this.$druxt.getCollection(type, query, prefix)
 
         // Store the collection in the DruxtStore.
-        commit('addCollection', { collection: { ...collection }, type, hash })
+        commit('addCollection', { collection: { ...collection }, type, hash, prefix })
 
         return collection
       },
@@ -196,10 +199,10 @@ const DruxtStore = ({ store }) => {
        * @example @lang js
        * const resource = await this.$store.dispatch('druxt/getResource', { type: 'node--article', id })
        */
-      async getResource ({ commit, dispatch, state }, { type, id, query }) {
+      async getResource ({ commit, dispatch, state }, { type, id, query, prefix }) {
         // Get the resource from the store if it's avaialble.
-        const storedResource = (state.resources[type] || {})[id] ?
-          { ...state.resources[type][id] }
+        const storedResource = ((state.resources[type] || {})[id] || {})[prefix] ?
+          { ...state.resources[type][id][prefix] }
           : null
 
         // Parse the query.
@@ -276,12 +279,12 @@ const DruxtStore = ({ store }) => {
         // Request the resource from the DruxtClient if required.
         let resource
         if (!storedResource || fields) {
-          resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject))
-          commit('addResource', { resource: { ...resource } })
+          resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
+          commit('addResource', { prefix, resource: { ...resource } })
         }
 
         // Build resource to be returned.
-        const result = { ...(state.resources[type] || {})[id] }
+        const result = { ...((state.resources[type] || {})[id] || {})[prefix] }
 
         // Merge included resources into resource.
         if (queryObject.include && ((resource || {}).included || (storedResource || {}).included)) {
@@ -313,6 +316,7 @@ export { DruxtStore }
  * @param {object} collection - A collection of JSON:API resources.
  * @param {string} type - The JSON:API collection resource type.
  * @param {string} hash - An md5 hash of the query string.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  *
  * @example @lang js
  * {
@@ -322,7 +326,8 @@ export { DruxtStore }
  *     links: {}
  *   },
  *   type: 'node--page',
- *   hash: '_default'
+ *   hash: '_default',
+ *   prefix: 'en'
  * }
  */
 
@@ -331,10 +336,12 @@ export { DruxtStore }
  *
  * @typedef {object} addResourceContext
  *
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  * @param {object} resource - The JSON:API resource.
  *
  * @example @lang js
  * {
+ *   prefix: 'en',
  *   resource: {
  *     jsonapi: {},
  *     data: {},
@@ -350,6 +357,7 @@ export { DruxtStore }
  *
  * @param {string} type - The JSON:API collection resource type.
  * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  *
  * @example @lang js
  * {
@@ -366,11 +374,13 @@ export { DruxtStore }
  * @param {string} type - The JSON:API Resource type.
  * @param {string} id - The Drupal resource UUID.
  * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  *
  * @example @lang js
  * {
  *   type: 'node--page',
- *   id: 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd'
+ *   id: 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd',
+ *   prefix: 'en'
  * }
  */
 

@@ -38,6 +38,16 @@ const DruxtEntityMixin = {
     },
 
     /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * DruxtJS Schema object.
      * @type {object}}
      */

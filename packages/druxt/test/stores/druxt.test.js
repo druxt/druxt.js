@@ -58,12 +58,12 @@ describe('DruxtStore', () => {
     })
 
     // Expect the collection be stored with dehydrated resources.
-    expect(store.state.druxt.collections['node--page']._default.data[0]).toStrictEqual(
+    expect(store.state.druxt.collections['node--page']._default[undefined].data[0]).toStrictEqual(
       expect.objectContaining({ id, type: 'node--page' })
     )
 
     // Expect the collection be stored without included data.
-    expect(store.state.druxt.collections['node--page']._default.included).toBeFalsy()
+    expect(store.state.druxt.collections['node--page']._default[undefined].included).toBeFalsy()
   })
 
   test('addResource', async () => {
@@ -84,14 +84,14 @@ describe('DruxtStore', () => {
         included: [mockArticle.data],
       }
     })
-    expect(store.state.druxt.resources[mockPage.data.type][mockPage.data.id])
+    expect(store.state.druxt.resources[mockPage.data.type][mockPage.data.id][undefined])
       .toStrictEqual({
         _druxt_full: expect.anything(),
         ...mockPage,
       })
     const expected = { ...mockArticle }
     delete expected.jsonapi
-    expect(store.state.druxt.resources[mockArticle.data.type][mockArticle.data.id])
+    expect(store.state.druxt.resources[mockArticle.data.type][mockArticle.data.id][undefined])
       .toStrictEqual({
         _druxt_full: expect.anything(),
         ...expected,
@@ -124,7 +124,9 @@ describe('DruxtStore', () => {
 
     // Assert that:
     // - The request url is correct.
-    // - Only 3 get requests are executed.
+    // - Only 2 get requests are executed.
+    //   - Index
+    //   - Resource
     // - Returned expected data with `_druxt_full` flag.
     expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page/${mockPage.data.id}`, undefined)
     expect(mockAxios.get).toHaveBeenCalledTimes(2)

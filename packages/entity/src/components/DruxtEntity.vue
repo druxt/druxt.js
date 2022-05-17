@@ -134,7 +134,7 @@ export default {
      *
      * @return {object}
      */
-    fields: ({ errors, isEmpty, model, schema, schemaType }) => {
+    fields: ({ errors, isEmpty, lang, model, schema, schemaType }) => {
       if (!schema) return false
 
       const fields = {}
@@ -151,6 +151,7 @@ export default {
           // @todo - Remove deprecated 'data'.
           data: value,
           errors: (errors || []).filter((o) => ((o.source || {}).pointer || '').startsWith(`/data/attributes/${field.id}`)),
+          langcode: lang,
           relationship,
           schema: {
             config: schema.config,
@@ -314,7 +315,12 @@ export default {
 
       if (this.uuid && !this.value) {
         const query = this.getQuery(settings)
-        const resource = await this.getResource({ type: this.type, id: this.uuid, query })
+        const resource = await this.getResource({
+          id: this.uuid,
+          prefix: this.lang,
+          type: this.type,
+          query
+        })
         const entity = { ...(resource.data || {}) }
         entity.included = resource.included
         this.model = JSON.parse(JSON.stringify(entity || {}))
@@ -408,23 +414,37 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtEntity[ResourceType][DisplayMode][SchemaType][Langcode]',
  *   'DruxtEntity[ResourceType][DisplayMode][SchemaType]',
+ *   'DruxtEntity[EntityType][DisplayMode][SchemaType][Langcode]',
  *   'DruxtEntity[EntityType][DisplayMode][SchemaType]',
+ *   'DruxtEntity[ResourceType][DisplayMode][Langcode]',
  *   'DruxtEntity[ResourceType][DisplayMode]',
+ *   'DruxtEntity[EntityType][DisplayMode][Langcode]',
  *   'DruxtEntity[EntityType][DisplayMode]',
+ *   'DruxtEntity[ResourceType][Langcode]',
  *   'DruxtEntity[ResourceType]',
+ *   'DruxtEntity[EntityType][Langcode]',
  *   'DruxtEntity[EntityType]',
+ *   'DruxtEntity[DisplayMode][Langcode]',
  *   'DruxtEntity[DisplayMode]',
  * ]
  *
  * @example <caption>Article Node (default)</caption> @lang js
  * [
+ *   'DruxtEntityNodeArticleDefaultViewEn',
  *   'DruxtEntityNodeArticleDefaultView',
+ *   'DruxtEntityNodeDefaultViewEn',
  *   'DruxtEntityNodeDefaultView',
+ *   'DruxtEntityNodeArticleDefaultEn',
  *   'DruxtEntityNodeArticleDefault',
+ *   'DruxtEntityNodeDefaultEn',
  *   'DruxtEntityNodeDefault',
+ *   'DruxtEntityNodeArticleEn',
  *   'DruxtEntityNodeArticle',
+ *   'DruxtEntityNodeEn',
  *   'DruxtEntityNode',
+ *   'DruxtEntityDefaultEn',
  *   'DruxtEntityDefault',
  * ]
  */

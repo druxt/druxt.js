@@ -31,6 +31,16 @@
     },
 
     /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+       type: String,
+       default: undefined,
+    },
+
+    /**
      * The Block regions machine name.
      *
      * @type {string}

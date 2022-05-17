@@ -24,6 +24,16 @@ const DruxtRouterMixin = {
    */
   props: {
     /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * The Decoupled router path.
      *
      * @type {string}
