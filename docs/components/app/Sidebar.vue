@@ -1,5 +1,8 @@
 <template>
   <div class="px-1 pt-20 overflow-y-auto w-80 bg-base-100">
+    <!-- Search -->
+    <AppSearch class="mb-5" />
+
     <!-- Recent documents -->
     <ul v-if="$store.state.recent.length" class="mb-5 menu">
       <li slot="title" class="menu-title">
