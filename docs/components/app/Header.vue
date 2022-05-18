@@ -1,6 +1,7 @@
 <template>
   <div class="w-full navbar bg-white">
     <div class="flex-none" :class="{ 'lg:hidden': $route.path !== '/' }">
+      <!-- Sidebar menu -->
       <label for="sidebar" class="btn btn-square btn-ghost">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -17,12 +18,16 @@
         </svg>
       </label>
     </div>
+
+    <!-- Logo / home link -->
     <NuxtLink class="flex-1 px-2 mx-2 flex" tag="div" to="/">
       <AppLogo class="mr-1 w-10" />
       <span class="block text-2xl mt-2.5">{{ title }}</span>
     </NuxtLink>
+
+    <!-- Main menu -->
     <div class="flex-none hidden lg:block">
-      <AppMenu class="horizontal" />
+      <AppMenu class="horizontal" :home="false" />
     </div>
   </div>
 </template>
