@@ -81,7 +81,7 @@ export default {
 
       // Search all available data.
       for (const type of ['api', 'guide', 'modules']) {
-        const results = await this.$content(type)
+        const results = await this.$content(type, { deep: true })
           .search(this.model)
           .limit(3)
           .fetch()
