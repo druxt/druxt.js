@@ -26,8 +26,8 @@
 
       <!-- Module pages -->
       <template v-if="results.modules.length">
-        <li v-for="item of results.modules" :key="item.path">
-          <NuxtLink class="rounded-btn" to="/">
+        <li v-for="item of results.modules" :key="item.id">
+          <NuxtLink class="rounded-btn" :to="item.path">
             <AppIconModules class="inline-block w-5 h-5 mr-2 stroke-current text-gray-400" />
             {{ item.title }}
           </NuxtLink>
