@@ -1,5 +1,20 @@
 # druxt-breadcrumb
 
+## 0.15.0
+
+### Minor Changes
+
+- be21952: Added langcode to component mixins.
+- be21952: Added multilingual support to Breadcrumb Block component.
+- be21952: Removed duplicate Home crumb when using a multilingual backend.
+
+### Patch Changes
+
+- Updated dependencies [be21952]
+  - druxt@0.19.0
+  - druxt-router@0.27.0
+  - druxt-blocks@0.16.0
+
 ## 0.14.1
 
 ### Patch Changes

@@ -1,5 +1,29 @@
 # druxt-entity
 
+## 0.25.0
+
+### Minor Changes
+
+- be21952: Added **langcode** prop to DruxtEntity and DruxtField components for multilingual support.
+
+  example:
+  ```jsx
+  <DruxtEntity
+    type="node--recipe"
+    uuid="16268720-a0fa-4243-8bdc-491d8857eb26"
+    langcode="es"
+  />
+  ```
+
+- be21952: Added langcode to component mixins.
+
+### Patch Changes
+
+- Updated dependencies [be21952]
+  - druxt@0.19.0
+  - druxt-router@0.27.0
+  - druxt-schema@0.10.4
+
 ## 0.24.3
 
 ### Patch Changes

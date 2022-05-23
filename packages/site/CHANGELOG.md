@@ -1,5 +1,24 @@
 # druxt-site
 
+## 0.12.0
+
+### Minor Changes
+
+- be21952: Added out of the box multilingual support.
+- be21952: Added langcode to component mixins.
+
+### Patch Changes
+
+- Updated dependencies [be21952]
+  - druxt@0.19.0
+  - druxt-router@0.27.0
+  - druxt-blocks@0.16.0
+  - druxt-menu@0.17.0
+  - druxt-entity@0.25.0
+  - druxt-breadcrumb@0.15.0
+  - druxt-views@0.19.0
+  - druxt-schema@0.10.4
+
 ## 0.11.2
 
 ### Patch Changes

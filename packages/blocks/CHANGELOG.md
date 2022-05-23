@@ -1,5 +1,30 @@
 # druxt-blocks
 
+## 0.16.0
+
+### Minor Changes
+
+- be21952: Added multilingual support to the DruxtBlock and DruxtBlockRegion component.
+
+  example:
+  ```jsx
+  <DruxtBlockRegion
+    name="header"
+    theme="umami"
+    langcode="es"
+  />
+  ```
+
+- be21952: Add support for multilingual paths in DruxtBlockRegion.
+- be21952: Added langcode to component mixins.
+
+### Patch Changes
+
+- Updated dependencies [be21952]
+  - druxt@0.19.0
+  - druxt-router@0.27.0
+  - druxt-entity@0.25.0
+
 ## 0.15.2
 
 ### Patch Changes
