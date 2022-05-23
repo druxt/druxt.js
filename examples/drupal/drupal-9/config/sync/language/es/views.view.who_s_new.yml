@@ -4,13 +4,14 @@ display:
   default:
     display_title: 'Por defecto'
     display_options:
+      title: 'Quién es nuevo'
       exposed_form:
         options:
           submit_button: Aplicar
           reset_button_label: Restablecer
+          exposed_sorts_label: 'Ordenar por'
           sort_asc_label: Asc
           sort_desc_label: Desc
-      title: 'Quién es nuevo'
   block_1:
     display_title: 'Quién es nuevo'
     display_options:
