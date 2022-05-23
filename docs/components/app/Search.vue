@@ -6,42 +6,35 @@
     <li>
       <div class="form-control">
         <input
+          v-model="model"
           type="text"
           placeholder=""
           class="input input-bordered"
-          v-model="model"
-        />
+        >
       </div>
     </li>
+
+    <!-- Results -->
     <template v-if="isResults">
-      <!-- Guide pages -->
-      <template v-if="results.guide.length">
-        <li v-for="item of results.guide" :key="item.id">
-          <NuxtLink class="rounded-btn" :to="item.path">
-            <AppIconGuide class="inline-block w-5 h-5 mr-2 stroke-current text-gray-400" />
-            {{ item.title }}
-          </NuxtLink>
-        </li>
-      </template>
-
-      <!-- Module pages -->
-      <template v-if="results.modules.length">
-        <li v-for="item of results.modules" :key="item.id">
-          <NuxtLink class="rounded-btn" :to="item.path">
-            <AppIconModules class="inline-block w-5 h-5 mr-2 stroke-current text-gray-400" />
-            {{ item.title }}
-          </NuxtLink>
-        </li>
-      </template>
-
-      <!-- API pages -->
-      <template v-if="results.api.length">
-        <li v-for="item of results.api" :key="item.id">
-          <NuxtLink class="rounded-btn" :to="item.path">
-            <AppIconApi class="inline-block w-5 h-5 mr-2 stroke-current text-gray-400" />
-            {{ item.title }}
-          </NuxtLink>
-        </li>
+      <template v-for="type of Object.keys(results)">
+        <template v-if="results[type].length">
+          <li :key="type" />
+          <li
+            v-for="item of results[type]"
+            :key="item.id"
+          >
+            <NuxtLink
+              class="rounded-btn"
+              :to="item.path"
+            >
+              <component
+                :is="`app-icon-${type}`"
+                class="inline-block w-5 h-5 mr-2 stroke-current text-gray-400"
+              />
+              {{ item.title }}
+            </NuxtLink>
+          </li>
+        </template>
       </template>
     </template>
 
