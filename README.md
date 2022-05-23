@@ -30,6 +30,7 @@
   - Support for [nuxt/axios](https://axios.nuxtjs.org/) and [nuxt/auth](https://auth.nuxtjs.org/).
 - Modular Vue.js component library system.
 - Slot and Wrapper theming system.
+- Support for multilingual content.
 - API and File proxy.
 
 Learn more at https://druxtjs.org

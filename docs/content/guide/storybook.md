@@ -1,6 +1,6 @@
 ---
 title: Storybook
-weight: -5
+weight: -4
 ---
 
 > Druxt provides zero-config, auto generated Storybook integration with live data.

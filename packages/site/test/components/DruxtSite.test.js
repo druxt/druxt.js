@@ -16,7 +16,8 @@ let store
 const mountComponent = (pending, options) => {
   const mocks = {
     $druxt: { settings: {} },
-    $fetchState: { pending }
+    $fetchState: { pending },
+    $route: { meta: {} }
   }
   const propsData = { theme: 'umami' }
   const stubs = ['DruxtBlockRegion', 'Nuxt']

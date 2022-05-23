@@ -20,8 +20,8 @@ const mock = {
   },
 }
 
-test('Nuxt module', () => {
-  DruxtViewsNuxtModule.call(mock)
+test('Nuxt module', async () => {
+  await DruxtViewsNuxtModule.call(mock)
   expect(mock.addModule).toHaveBeenCalledTimes(3)
   expect(mock.addPlugin).toHaveBeenCalledTimes(1)
 })

@@ -1,5 +1,17 @@
 # druxt-router
 
+## 0.27.0
+
+### Minor Changes
+
+- be21952: Added langcode support to the DruxtRouter.
+- be21952: Added langcode to component mixins.
+
+### Patch Changes
+
+- Updated dependencies [be21952]
+  - druxt@0.19.0
+
 ## 0.26.1
 
 ### Patch Changes

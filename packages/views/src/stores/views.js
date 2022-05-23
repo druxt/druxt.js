@@ -1,4 +1,5 @@
 import md5 from 'md5'
+import Vue from 'vue'
 
 const DruxtViewsStore = ({ store }) => {
   if (typeof store === 'undefined') {
@@ -43,14 +44,15 @@ const DruxtViewsStore = ({ store }) => {
        * @param {object} results - The JSON:API Views results.
        *
        * @example @lang js
-       * this.$store.commit('druxt/views/addResults', { results, viewId, displayId, hash })
+       * this.$store.commit('druxt/views/addResults', { results, viewId, displayId, prefix, hash })
        */
-      addResults (state, { results, viewId, displayId, hash }) {
+      addResults (state, { results, viewId, displayId, prefix, hash }) {
         if (!results || !viewId || !displayId || !hash) return
 
-        if (!state.results[viewId]) state.results[viewId] = {}
-        if (!state.results[viewId][displayId]) state.results[viewId][displayId] = {}
-        state.results[viewId][displayId][hash] = results
+        if (!state.results[viewId]) Vue.set(state.results, viewId, {})
+        if (!state.results[viewId][displayId]) Vue.set(state.results[viewId], displayId, {})
+        if (!state.results[viewId][displayId][prefix]) Vue.set(state.results[viewId][displayId], prefix, {})
+        Vue.set(state.results[viewId][displayId][prefix], hash, results)
       }
     },
 
@@ -77,15 +79,15 @@ const DruxtViewsStore = ({ store }) => {
        *   query
        * })
        */
-      async getResults ({ commit, state }, { viewId, displayId, query }) {
+      async getResults ({ commit, state }, { viewId, displayId, query, prefix }) {
         const hash = query ? md5(this.$druxt.buildQueryUrl('', query)) : '_default'
-        if (typeof ((state.results[viewId] || {})[displayId] || {})[hash] !== 'undefined') {
-          return state.results[viewId][displayId][hash]
+        if (typeof (((state.results[viewId] || {})[displayId] || {})[prefix] || {})[hash] !== 'undefined') {
+          return state.results[viewId][displayId][prefix][hash]
         }
 
-        const results = await this.$druxt.getResource(`views--${viewId}`, displayId, query)
+        const results = await this.$druxt.getResource(`views--${viewId}`, displayId, query, prefix)
 
-        commit('addResults', { results, viewId, displayId, hash })
+        commit('addResults', { results, viewId, displayId, prefix, hash })
 
         return results
       }

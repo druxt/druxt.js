@@ -4,23 +4,7 @@ display:
   default:
     display_title: 'Por defecto'
     display_options:
-      exposed_form:
-        options:
-          submit_button: Filtro
-          reset_button_label: Restablecer
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      pager:
-        options:
-          tags:
-            previous: '‹ Anterior'
-            next: 'Siguiente >'
-            first: '« Primero'
-            last: 'Último »'
-          expose:
-            items_per_page_label: 'Elementos por página'
-            items_per_page_options_all_label: '- Todo -'
-            offset_label: Desplazamiento
+      title: 'Contenido moderado'
       fields:
         title:
           label: Título
@@ -39,6 +23,27 @@ display:
           separator: ', '
         operations:
           label: Operaciones
+      pager:
+        options:
+          tags:
+            next: 'Siguiente >'
+            previous: '‹ Anterior'
+            first: '« Primero'
+            last: 'Último »'
+          expose:
+            items_per_page_label: 'Elementos por página'
+            items_per_page_options_all_label: '- Todo -'
+            offset_label: Desplazamiento
+      exposed_form:
+        options:
+          submit_button: Filtro
+          reset_button_label: Restablecer
+          exposed_sorts_label: 'Ordenar por'
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      empty:
+        area_text_custom:
+          content: 'No hay contenido moderado disponible. Solo las versiones pendientes de contenido, como los borradores, se enumeran aquí.'
       filters:
         title:
           expose:
@@ -52,9 +57,5 @@ display:
         langcode:
           expose:
             label: Idioma
-      title: 'Contenido moderado'
-      empty:
-        area_text_custom:
-          content: 'No hay contenido moderado disponible. Solo las versiones pendientes de contenido, como los borradores, se enumeran aquí.'
   moderated_content:
     display_title: 'Contenido moderado'

@@ -122,13 +122,17 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtViewsSorts[Type][Langcode]',
  *   'DruxtViewsSorts[Type]',
+ *   'DruxtViewsSorts[Default][Langcode]',
  *   'DruxtViewsSorts[Default]'
  * ]
  *
  * @example @lang js
  * [
+ *   'DruxtViewsSortsBasicEn',
  *   'DruxtViewsSortsBasic',
+ *   'DruxtViewsSortsDefaultEn',
  *   'DruxtViewsSortsDefault'
  * ]
  */

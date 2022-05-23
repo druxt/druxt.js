@@ -120,7 +120,9 @@ export default {
           visible = true
         }
 
-        if (pages.includes(this.route.resolvedPath) || (!pages.includes(this.route.resolvedPath) && negate)) {
+        // Remove langcode prefix from the resolved path before comparing.
+        const resolvedPath = (this.route.resolvedPath || '').replace(new RegExp(`^/${this.lang}`), '')
+        if (pages.includes(resolvedPath) || (!pages.includes(resolvedPath) && negate)) {
           visible = true
         }
 
@@ -165,7 +167,11 @@ export default {
         .addSort('weight')
         .addFields(type, ['drupal_internal__id', 'visibility', 'weight'])
 
-      const collection = await this.getCollection({ type, query })
+      const collection = await this.getCollection({
+        prefix: this.lang,
+        type,
+        query
+      })
       this.blocks = collection.data
     },
 
@@ -208,6 +214,7 @@ export default {
             attrs,
             key: block.attributes.drupal_internal__id,
             props: {
+              langcode: this.langcode,
               uuid: block.id,
             },
             ref: block.attributes.drupal_internal__id,
@@ -234,15 +241,21 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtBlockRegion[Name][Theme][Langcode]',
  *   'DruxtBlockRegion[Name][Theme]',
+ *   'DruxtBlockRegion[Name][Langcode]',
  *   'DruxtBlockRegion[Name]',
+ *   'DruxtBlockRegion[Default][Langcode]',
  *   'DruxtBlockRegion[Default]',
  * ]
  *
  * @example <caption>Banner top - Umami</caption> @lang js
  * [
+ *   'DruxtBlockRegionBannerTopUmamiEn',
  *   'DruxtBlockRegionBannerTopUmami',
+ *   'DruxtBlockRegionBannerTopEn',
  *   'DruxtBlockRegionBannerTop',
+ *   'DruxtBlockRegionDefaultEn',
  *   'DruxtBlockRegionDefault',
  * ]
  */

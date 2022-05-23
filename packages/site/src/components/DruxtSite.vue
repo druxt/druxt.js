@@ -195,13 +195,18 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtSite[Theme][Langcode]',
  *   'DruxtSite[Theme]',
- *   'DruxtSiteDefault',
+ *   'DruxtSite[Default][Langcode]',
+ *   'DruxtSite[Default]',
  * ]
  *
  * @example <caption>Umami</caption> @lang js
  * [
+ *   'DruxtSiteUmamiEn',
  *   'DruxtSiteUmami',
+ *   'DruxtSiteDefaultEn',
+ *   'DruxtSiteDefault',
  * ]
  */
 

@@ -1,7 +1,7 @@
 <template>
   <ul class="menu">
     <slot name="title" />
-    <li v-for="(item, key) of $store.state.menu" :key="key">
+    <li v-for="(item, key) of items" :key="key">
       <component :is="item.component" class="rounded-btn" v-bind="item.props">
         <component
           :is="`app-icon-${item.icon}`"
@@ -35,6 +35,17 @@ export default {
       type: Boolean,
       default: false,
     },
+
+    home: {
+      type: Boolean,
+      default: true
+    }
   },
+
+  computed: {
+    items: ({ $store, home }) => home
+      ? $store.state.menu
+      : $store.state.menu.filter((o) => o.icon !== 'home')
+  }
 };
 </script>

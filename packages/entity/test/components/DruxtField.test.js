@@ -30,6 +30,7 @@ const mocks = {
       isDev: false,
     }
   },
+  $route: { meta: {} }
 }
 
 const mountComponent = async ({ data, entity, field, mode = 'default', options = {}, uuid, schema }) => {

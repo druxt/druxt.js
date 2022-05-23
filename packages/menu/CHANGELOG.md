@@ -1,5 +1,28 @@
 # druxt-menu
 
+## 0.17.0
+
+### Minor Changes
+
+- be21952: Added multilingual support to the DruxtMenu component.
+
+  example:
+  ```jsx
+  <DruxtMenu
+    name="main"
+    langcode="es"
+  />
+  ```
+
+- be21952: Added langcode to component mixins.
+- be21952: Added multilingual support to Block components.
+
+### Patch Changes
+
+- Updated dependencies [be21952]
+  - druxt@0.19.0
+  - druxt-blocks@0.16.0
+
 ## 0.16.3
 
 ### Patch Changes

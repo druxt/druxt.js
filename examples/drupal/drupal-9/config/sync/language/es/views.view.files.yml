@@ -4,21 +4,7 @@ display:
   default:
     display_title: 'Por defecto'
     display_options:
-      exposed_form:
-        options:
-          submit_button: Filtro
-          reset_button_label: Restablecer
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      pager:
-        options:
-          tags:
-            previous: '‹ Anterior'
-            next: 'Siguiente >'
-          expose:
-            items_per_page_label: 'Elementos por página'
-            items_per_page_options_all_label: '- Todo -'
-            offset_label: Desplazamiento
+      title: Archivos
       fields:
         fid:
           label: Fid
@@ -40,6 +26,25 @@ display:
           label: 'Fecha de modificación'
         count:
           label: 'Usado en'
+      pager:
+        options:
+          tags:
+            next: 'Siguiente >'
+            previous: '‹ Anterior'
+          expose:
+            items_per_page_label: 'Elementos por página'
+            items_per_page_options_all_label: '- Todo -'
+            offset_label: Desplazamiento
+      exposed_form:
+        options:
+          submit_button: Filtro
+          reset_button_label: Restablecer
+          exposed_sorts_label: 'Ordenar por'
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      empty:
+        area_text_custom:
+          content: 'No hay archivos disponibles.'
       filters:
         filename:
           expose:
@@ -50,10 +55,6 @@ display:
         status:
           expose:
             label: Estado
-      title: Archivos
-      empty:
-        area_text_custom:
-          content: 'No hay archivos disponibles.'
   page_1:
     display_title: 'Resumen de ficheros'
     display_options:
@@ -62,15 +63,7 @@ display:
   page_2:
     display_title: 'Usos del archivo'
     display_options:
-      pager:
-        options:
-          tags:
-            previous: '‹ Anterior'
-            next: 'Siguiente >'
-          expose:
-            items_per_page_label: 'Elementos por página'
-            items_per_page_options_all_label: '- Todo -'
-            offset_label: Desplazamiento
+      title: 'Usos del archivo'
       fields:
         entity_label:
           label: Entidad
@@ -80,7 +73,15 @@ display:
           label: 'Módulo de registro'
         count:
           label: 'Recuento de uso'
-      title: 'Usos del archivo'
+      pager:
+        options:
+          tags:
+            next: 'Siguiente >'
+            previous: '‹ Anterior'
+          expose:
+            items_per_page_label: 'Elementos por página'
+            items_per_page_options_all_label: '- Todo -'
+            offset_label: Desplazamiento
       arguments:
         fid:
           exception:

@@ -51,7 +51,7 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
     'druxt-views'
   ]
   for (const module of druxtModules) {
-    this.addModule(module)
+    await this.addModule(module)
   }
 
   // Add default layout.

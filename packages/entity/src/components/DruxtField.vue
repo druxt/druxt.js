@@ -281,7 +281,11 @@ export default {
           if (this.isFile && schemaType === 'view') {
             return h('DruxtEntity', {
               attrs,
-              props: { type: item.type, uuid: item.id },
+              props: {
+                langcode: this.lang,
+                type: item.type,
+                uuid: item.id
+              },
               scopedSlots: { default: ({ entity }) => h('a', {
                 domProps: {
                   href: (entity.attributes.uri || {}).url,
@@ -295,7 +299,11 @@ export default {
           if (this.isImage && schemaType === 'view') {
             return h('DruxtEntity', {
               attrs,
-              props: { type: item.type, uuid: item.id },
+              props: {
+                langcode: this.lang,
+                type: item.type,
+                uuid: item.id
+              },
               scopedSlots: { default: ({ entity }) => h('img', {
                 domProps: {
                   src: (entity.attributes.uri || {}).url
@@ -334,6 +342,7 @@ export default {
             return h('DruxtEntity', {
               attrs,
               props: {
+                langcode: this.lang,
                 mode: this.schema.settings.display.view_mode || 'default',
                 type: item.type,
                 uuid: item.id,
@@ -346,6 +355,7 @@ export default {
             return h('details', [h('DruxtEntityForm', {
               attrs,
               props: {
+                langcode: this.lang,
                 mode: this.schema.settings.display.view_mode || 'default',
                 type: item.type,
                 uuid: item.id,
@@ -433,21 +443,33 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtField[Type][Id][SchemaType][Langcode]',
  *   'DruxtField[Type][Id][SchemaType]',
+ *   'DruxtField[Type][Id][Langcode]',
  *   'DruxtField[Type][Id]',
+ *   'DruxtField[Type][SchemaType][Langcode]',
  *   'DruxtField[Type][SchemaType]',
+ *   'DruxtField[Default][SchemaType][Langcode]',
  *   'DruxtField[Default][SchemaType]',
+ *   'DruxtField[Type][Langcode]',
  *   'DruxtField[Type]',
+ *   'DruxtField[Default][Langcode]',
  *   'DruxtField[Default]',
  * ]
  *
  * @example <caption>Media field</caption> @lang js
  * [
+ *   'DruxtFieldEntityReferenceEntityViewFieldMediaImageViewEn',
  *   'DruxtFieldEntityReferenceEntityViewFieldMediaImageView',
+ *   'DruxtFieldEntityReferenceEntityViewFieldMediaImageEn',
  *   'DruxtFieldEntityReferenceEntityViewFieldMediaImage',
+ *   'DruxtFieldEntityReferenceEntityViewViewEn',
  *   'DruxtFieldEntityReferenceEntityViewView',
+ *   'DruxtFieldDefaultViewEn',
  *   'DruxtFieldDefaultView',
+ *   'DruxtFieldEntityReferenceEntityViewEn',
  *   'DruxtFieldEntityReferenceEntityView',
+ *   'DruxtFieldDefaultEn',
  *   'DruxtFieldDefault',
  * ]
  */

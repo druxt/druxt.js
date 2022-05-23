@@ -26,6 +26,7 @@ const mocks = {
       isDev: false,
     },
   },
+  $route: { meta: {} }
 }
 
 const mountComponent = (propsData) => {
@@ -74,13 +75,13 @@ describe('DruxtEntity', () => {
 
     // Data.
     expect(Object.keys(wrapper.vm.component.$attrs)).toStrictEqual([
-      'entity', 'fields', 'schema', 'value'
+      'langcode', 'entity', 'fields', 'schema', 'value'
     ])
     expect(wrapper.vm.component.is).toBe('DruxtEntityNodePage')
     expect(wrapper.vm.component.options).toMatchSnapshot()
     expect(wrapper.vm.component.props).toStrictEqual({})
     expect(Object.keys(wrapper.vm.component.propsData)).toStrictEqual([
-      'entity', 'fields', 'schema', 'value',
+      'langcode', 'entity', 'fields', 'schema', 'value',
     ])
 
     expect(Object.keys(wrapper.vm.entity)).toStrictEqual(['type', 'id', 'links', 'attributes', 'relationships'])
@@ -112,7 +113,7 @@ describe('DruxtEntity', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Data.
-    expect(wrapper.vm.component.$attrs).toStrictEqual({})
+    expect(wrapper.vm.component.$attrs).toStrictEqual({ langcode: undefined })
     expect(wrapper.vm.component.is).toBe('DruxtEntityNodePageDefault')
     expect(Object.keys(wrapper.vm.component.props)).toStrictEqual([
       'value', 'schema', 'fields', 'entity'
@@ -145,7 +146,7 @@ describe('DruxtEntity', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Data.
-    expect(wrapper.vm.component.$attrs).toStrictEqual({})
+    expect(wrapper.vm.component.$attrs).toStrictEqual({ langcode: undefined })
     expect(wrapper.vm.component.is).toBe('DruxtEntityNodePageDefault')
     expect(Object.keys(wrapper.vm.component.props)).toStrictEqual([
       'value', 'schema', 'fields', 'entity'

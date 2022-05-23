@@ -74,12 +74,5 @@ export default {
         bundleFilter: true,
       }
     }
-  },
-
-  /**
-   * Nuxt proxy module.
-   */
-  proxy: {
-    '/en/jsonapi': baseUrl
   }
 }

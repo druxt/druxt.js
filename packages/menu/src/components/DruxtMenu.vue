@@ -216,7 +216,7 @@ export default {
      */
     entities() {
       this.$forceUpdate()
-    }
+    },
   },
 
   methods: {
@@ -241,8 +241,11 @@ export default {
           }
         }
 
-        const entities = this.getEntitiesByFilter((key) => {
-          return this.entities[key].attributes.menu_name === this.name && this.entities[key].attributes.parent === parent
+        const entities = this.getEntitiesByFilter({
+          filter: (key) => {
+            return this.entities[this.lang][key].attributes.menu_name === this.name && this.entities[this.lang][key].attributes.parent === parent
+          },
+          prefix: this.lang
         })
 
         for (const key in entities) {
@@ -280,7 +283,11 @@ export default {
      */
     async fetchData(settings) {
       if (!this.value) {
-        await this.getMenu({ name: this.name, settings: settings.query })
+        await this.getMenu({
+          name: this.name,
+          settings: settings.query,
+          prefix: this.lang
+        })
         this.model = this.getMenuItems()
       }
     },
@@ -325,11 +332,12 @@ export default {
      */
     slots(h) {
       return {
-        default: (attrs) => this.items.map((item) => h('DruxtMenuItem', {
+        default: (attrs) => (this.items || []).map((item) => h('DruxtMenuItem', {
           attrs,
           key: item.entity.id,
           props: {
             item,
+            langcode: this.lang
           },
         })),
       }
@@ -344,13 +352,17 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtMenu[Name][Langcode]',
  *   'DruxtMenu[Name]',
- *   'DruxtMenuDefault',
+ *   'DruxtMenu[Default][Langcode]',
+ *   'DruxtMenu[Default]',
  * ]
  *
  * @example <caption>Main menu (default)</caption> @lang js
  * [
+ *   'DruxtMenuMainEn',
  *   'DruxtMenuMain',
+ *   'DruxtMenuDefaultEn',
  *   'DruxtMenuDefault',
  * ]
  */

@@ -425,11 +425,16 @@ export default {
       if (!this.view && (this.uuid || this.viewId)) {
         if (this.uuid) {
           this.view = await this.getResource({
+            prefix: this.lang,
             type: this.type,
             id: this.uuid,
           })
         } else {
-          const collection = await this.getCollection({ type: this.type, query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId) })
+          const collection = await this.getCollection({
+            prefix: this.lang,
+            type: this.type,
+            query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId)
+          })
           this.view = { data: collection.data[0] }
         }
       }
@@ -443,9 +448,10 @@ export default {
       if (viewId) {
         const query = this.getQuery(settings)
         this.resource = await this.getResults({
-          viewId,
           displayId: this.displayId,
-          query: stringify(query)
+          prefix: this.lang,
+          query: stringify(query),
+          viewId
         })
       }
     },
@@ -562,6 +568,7 @@ export default {
           ref: 'attachements_before',
           props: {
             displayId,
+            langcode: this.lang,
             type: this.type,
             uuid: this.uuid,
             viewId: this.viewId,
@@ -583,6 +590,7 @@ export default {
           attrs: { ...attrs },
           key: result.id,
           props: {
+            langcode: this.lang,
             mode: this.mode,
             type: result.type,
             uuid: result.id
@@ -617,6 +625,7 @@ export default {
           ref: 'attachements_after',
           props: {
             displayId,
+            langcode: this.lang,
             type: this.type,
             uuid: this.uuid,
             viewId: this.viewId,
@@ -641,19 +650,29 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtView[ViewId][DisplayId][Langcode]',
  *   'DruxtView[ViewId][DisplayId]',
+ *   'DruxtView[ViewId][Langcode]',
  *   'DruxtView[ViewId]',
+ *   'DruxtView[UUID][DisplayId][Langcode]',
  *   'DruxtView[UUID][DisplayId]',
+ *   'DruxtView[UUID][Langcode]',
  *   'DruxtView[UUID]',
+ *   'DruxtView[DisplayId][Langcode]',
  *   'DruxtView[DisplayId]',
  * ]
  *
  * @example <caption>featured_articles (default)</caption> @lang js
  * [
+ *   'DruxtViewFeaturedArticlesDefaultEn',
  *   'DruxtViewFeaturedArticlesDefault',
+ *   'DruxtViewFeaturedArticlesEn',
  *   'DruxtViewFeaturedArticles',
+ *   'DruxtView16f5d68e5bae4d7aa61c6b2bc3b6d3b6DefaultEn',
  *   'DruxtView16f5d68e5bae4d7aa61c6b2bc3b6d3b6Default',
+ *   'DruxtView16f5d68e5bae4d7aa61c6b2bc3b6d3b6En',
  *   'DruxtView16f5d68e5bae4d7aa61c6b2bc3b6d3b6',
+ *   'DruxtViewDefaultEn',
  *   'DruxtViewDefault',
  * ]
  */

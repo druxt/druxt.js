@@ -1,5 +1,31 @@
 # druxt-views
 
+## 0.19.0
+
+### Minor Changes
+
+- be21952: Added langcode and prefix support to DruxtView component and Vuex store.
+
+  ⚠ Potential breaking change
+
+  ```diff
+  - $store.state['druxt/views'].results.frontpage.page_1
+  + $store.state['druxt/views'].results.frontpage.page_1[undefined]
+  + $store.state['druxt/views'].results.frontpage.page_1.en
+  + $store.state['druxt/views'].results.frontpage.page_1.es
+  ```
+
+- be21952: Added langcode to component mixins.
+- be21952: Added multilingual support to Views block components.
+
+### Patch Changes
+
+- Updated dependencies [be21952]
+  - druxt@0.19.0
+  - druxt-router@0.27.0
+  - druxt-blocks@0.16.0
+  - druxt-entity@0.25.0
+
 ## 0.18.2
 
 ### Patch Changes

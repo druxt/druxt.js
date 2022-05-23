@@ -1,5 +1,41 @@
 # druxt
 
+## 0.19.0
+
+### Minor Changes
+
+- be21952: Added langcode / prefix support to DruxtClient methods.
+
+  ```js
+  const data = await druxt.getResource('node--article', id, undefined, 'en')
+  ```
+
+- be21952: Added langcode suffixed component options for multilingual templates.
+
+  example:
+  ```diff
+  + DruxtEntityNodeArticleFullEn
+  + DruxtEntityNodeArticleFullEs
+  ```
+
+- be21952: Added langcode prefix support to the DruxtStore.
+
+  ⚠ Potential breaking change
+
+  ```diff
+  - $store.state.druxt.collections['view--view'].abefce528d89d7fcf5c59d4469f33e12
+  + $store.state.druxt.collections['view--view'].abefce528d89d7fcf5c59d4469f33e12[undefined]
+  + $store.state.druxt.collections['view--view'].abefce528d89d7fcf5c59d4469f33e12.en
+  + $store.state.druxt.collections['view--view'].abefce528d89d7fcf5c59d4469f33e12.es
+  - $store.state.druxt.resources['node--recipe']['444d06fc-f4bc-435e-9892-d7e719957ecc']
+  + $store.state.druxt.resources['node--recipe']['444d06fc-f4bc-435e-9892-d7e719957ecc'][undefined]
+  + $store.state.druxt.resources['node--recipe']['444d06fc-f4bc-435e-9892-d7e719957ecc'].en
+  + $store.state.druxt.resources['node--recipe']['444d06fc-f4bc-435e-9892-d7e719957ecc'].es
+  ```
+
+- be21952: Added language prefixes to API proxy support.
+- be21952: Added multilingual support to the base DruxtModule component.
+
 ## 0.18.3
 
 ### Patch Changes

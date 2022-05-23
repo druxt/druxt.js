@@ -28,8 +28,18 @@ const DruxtMenuMixin = {
     },
 
     /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * The menu parent ID to use as the root of the menu.
-     * 
+     *
      * @type {string}
      */
     parentId: {

@@ -20,7 +20,8 @@ const mountComponent = (entity, options = {}) => {
   const mocks = {
     $fetchState: {
       pending: true
-    }
+    },
+    $route: { meta: {} }
   }
 
   const propsData = { block: entity }
@@ -51,6 +52,7 @@ describe('Component - DruxtBlockViewsBlock', () => {
 
     expect(wrapper.vm.propsData).toStrictEqual({
       displayId: 'block_1',
+      langcode: undefined,
       uuid: mockView.data.id,
       viewId: 'promoted_items'
     })

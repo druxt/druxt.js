@@ -1,5 +1,7 @@
 import { existsSync } from 'fs'
 import { join, resolve } from 'path'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
+import { DruxtClient } from 'druxt'
 
 /**
  * The Nuxt.js module function.
@@ -45,13 +47,47 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
 
   // Add Druxt router custom wildcard route.
   if (options.router.wildcard) {
+    // Ignore page routes.
+    if (!options.router.pages) {
+      this.nuxt.hook('build:before', () =>
+        this.nuxt.options.build.createRoutes = () => []
+      )
+    }
+
+    // Add route template.
     this.addTemplate({
       src: resolve(__dirname, '../templates/component.js'),
       fileName: 'components/druxt-router.js',
       options
     })
 
-    this.extendRoutes((routes, resolve) => {
+    // Fetch languages.
+    const druxt = new DruxtClient(options.baseUrl, {
+      ...options,
+      // Disable API Proxy, as Proxies aren't available at build.
+      proxy: { ...options.proxy || {}, api: false },
+    })
+    const resourceType = 'configurable_language--configurable_language'
+    const query = new DrupalJsonApiParams().addFields(resourceType, ['drupal_internal__id'])
+    const languages = (await druxt.getCollectionAll(resourceType, query) || [])
+      .map((o) => o.data)
+      .flat()
+      .filter((o) => !['und', 'zxx'].includes(o.attributes.drupal_internal__id))
+
+    // Extend routes.
+    this.extendRoutes((routes) => {
+      // Add route per language.
+      languages.forEach((o) => {
+        routes.push({
+          name: `druxt-router__${o.attributes.drupal_internal__id}`,
+          path: `/${o.attributes.drupal_internal__id}*`,
+          component: resolve(this.options.buildDir, 'components/druxt-router.js'),
+          chunkName: 'druxt-router',
+          meta: { langcode: o.attributes.drupal_internal__id }
+        })
+      })
+
+      // Add wildcard route.
       routes.push({
         name: 'druxt-router',
         path: '*',
@@ -59,13 +95,6 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
         chunkName: 'druxt-router'
       })
     })
-  }
-
-  // Ignore page routes.
-  if (options.router.wildcard && !options.router.pages) {
-    this.nuxt.hook('build:before', () =>
-      this.nuxt.options.build.createRoutes = () => []
-    )
   }
 
   // Add plugin.

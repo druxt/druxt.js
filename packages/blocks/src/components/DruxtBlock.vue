@@ -170,13 +170,22 @@ export default {
       // Fetch Block by UUID.
       if (this.uuid) {
         const id = this.uuid
-        this.resource = await this.getResource({ type, id, query })
+        this.resource = await this.getResource({
+          id,
+          prefix: this.lang,
+          type,
+          query
+        })
       }
 
       // Fetch Block by Drupal internal ID.
       else if (this.id) {
         query.addFilter('drupal_internal__id', this.id)
-        const collection = await this.getCollection({ type, query })
+        const collection = await this.getCollection({
+          prefix: this.lang,
+          type,
+          query
+        })
         this.resource = { data: collection.data[0] }
       }
     },
@@ -237,19 +246,29 @@ export default {
  *
  * @example @lang js
  * [
+ *   'DruxtBlock[Plugin][PluginId][Region][Theme][Langcode]',
  *   'DruxtBlock[Plugin][PluginId][Region][Theme]',
+ *   'DruxtBlock[Plugin][PluginId][Theme][Langcode]',
  *   'DruxtBlock[Plugin][PluginId][Theme]',
+ *   'DruxtBlock[Plugin][Region][Theme][Langcode]',
  *   'DruxtBlock[Plugin][Region][Theme]',
+ *   'DruxtBlock[Plugin][Theme][Langcode]',
  *   'DruxtBlock[Plugin][Theme]',
+ *   'DruxtBlock[Default][Langcode]',
  *   'DruxtBlock[Default]',
  * ]
  *
  * @example <caption>Umami Branding block</caption> @lang js
  * [
+ *   'DruxtBlockSystemBrandingBlockHeaderUmamiEn',
  *   'DruxtBlockSystemBrandingBlockHeaderUmami',
+ *   'DruxtBlockSystemBrandingBlockHeaderEn',
  *   'DruxtBlockSystemBrandingBlockHeader',
+ *   'DruxtBlockSystemBrandingBlockUmamiEn',
  *   'DruxtBlockSystemBrandingBlockUmami',
+ *   'DruxtBlockSystemBrandingBlockEn',
  *   'DruxtBlockSystemBrandingBlock',
+ *   'DruxtBlockDefaultEn',
  *   'DruxtBlockDefault',
  * ]
  */

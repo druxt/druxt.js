@@ -81,13 +81,14 @@ class DruxtMenu {
    *
    * @param {string} menuName - The menu name.
    * @param {object} settings - The Druxt Menu query settings object.
+   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    */
-  async get(menuName, settings) {
+  async get(menuName, settings, prefix) {
     if (this.options.menu.jsonApiMenuItems) {
-      return this.getJsonApiMenuItems(menuName, settings)
+      return this.getJsonApiMenuItems(menuName, settings, prefix)
     }
 
-    return this.getMenuLinkContent(menuName, settings)
+    return this.getMenuLinkContent(menuName, settings, prefix)
   }
 
   /**
@@ -101,8 +102,9 @@ class DruxtMenu {
    *
    * @param {string} menuName - The menu name.
    * @param {object} settings - The Druxt Menu query settings object.
+   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    */
-  async getMenuLinkContent(menuName, settings) {
+  async getMenuLinkContent(menuName, settings, prefix) {
     const resource = 'menu_link_content--menu_link_content'
     const requiredFields = ['bundle', 'link', 'menu_name', 'parent', 'title', 'weight']
 
@@ -110,7 +112,7 @@ class DruxtMenu {
     const query = this.buildQuery(resource, menuName, requiredFields, settings)
 
     const entities = []
-    const collections = await this.druxt.getCollectionAll(resource, query)
+    const collections = await this.druxt.getCollectionAll(resource, query, prefix)
     for (const collection of collections) {
       for (const entity of collection.data) {
         entities.push(entity)
@@ -138,15 +140,18 @@ class DruxtMenu {
    *
    * @param {string} menuName - The menu name.
    * @param {object} settings - The Druxt Menu query settings object.
+   * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    */
-  async getJsonApiMenuItems(menuName, settings) {
+  async getJsonApiMenuItems(menuName, settings, prefix) {
     const menuItemsResource = `menu_items--${menuName}`
     const resource = 'menu_link_content--menu_link_content'
     const requiredFields = ['menu_name', 'parent', 'title', 'url', 'weight']
 
     // Add the JSON API Menu items resource to the index.
-    await this.druxt.getIndex()
-    this.druxt.index[menuItemsResource] = { href: `${this.druxt.options.endpoint}/menu_items/${menuName}` }
+    await this.druxt.getIndex(undefined, prefix)
+    if (!(this.druxt.index[prefix][menuItemsResource] || {}).href) {
+      this.druxt.index[prefix][menuItemsResource] = { href: `${prefix || ''}${this.druxt.options.endpoint}/menu_items/${menuName}` }
+    }
 
     // Build query.
     const query = this.buildQuery(resource, menuName, requiredFields, settings)
@@ -165,7 +170,7 @@ class DruxtMenu {
     const entities = []
     let collections = []
     try {
-      collections = await this.druxt.getCollectionAll(menuItemsResource, query)
+      collections = await this.druxt.getCollectionAll(menuItemsResource, query, prefix)
     } catch(e) {
       return { entities }
     }

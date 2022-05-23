@@ -19,6 +19,7 @@ describe('DruxtModule component', () => {
           isDev: false,
         },
       },
+      $route: { meta: {} }
     }
   })
 
@@ -79,6 +80,23 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.$refs.module.component.props.value).toStrictEqual({ test: true })
     expect(wrapper.vm.$refs.module.model).toStrictEqual({ test: true })
     expect(wrapper.vm.$refs.module.value).toStrictEqual({ test: true })
+  })
+
+  test('watch - lang', async () => {
+    // Setup component.
+    const wrapper = mount(DruxtModule, { localVue, mocks })
+    wrapper.vm.$fetch = jest.fn()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Ensure defeaults.
+    expect(wrapper.vm.lang).toBe(undefined)
+
+    // Uppdate langcode.
+    await wrapper.setProps({ langcode: 'en' })
+
+    // Ensure fetch is called and computed prop is updated.
+    expect(wrapper.vm.$fetch).toHaveBeenCalled()
+    expect(wrapper.vm.lang).toBe('en')
   })
 
   test('error', async () => {
@@ -173,11 +191,11 @@ describe('DruxtModule component', () => {
 
     // Data.
     expect(wrapper.vm.component).toStrictEqual({
-      $attrs: { foo: 'bar' },
+      $attrs: { foo: 'bar', langcode: undefined },
       is: 'DruxtWrapper',
       options: [],
       props: {},
-      propsData: { foo: 'bar' },
+      propsData: { foo: 'bar', langcode: undefined },
       settings: {},
       slots: ['default'],
     })
@@ -188,9 +206,9 @@ describe('DruxtModule component', () => {
 
     expect(wrapper.vm.getModuleComponents(wrapperData.props)).toStrictEqual([])
     expect(wrapper.vm.getModulePropsData()).toStrictEqual({
-      $attrs: { foo: 'bar' },
+      $attrs: { foo: 'bar', langcode: undefined },
       props: {},
-      propsData: { foo: 'bar' },
+      propsData: { foo: 'bar', langcode: undefined },
     })
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
 
@@ -223,11 +241,11 @@ describe('DruxtModule component', () => {
 
     // Data.
     expect(wrapper.vm.component).toStrictEqual({
-      $attrs: {},
+      $attrs: { langcode: undefined },
       is: 'CustomModuleWrapper',
       options: ['CustomModuleWrapper'],
       props: { foo: 'bar' },
-      propsData: { foo: 'bar' },
+      propsData: { foo: 'bar', langcode: undefined },
       settings: { foo: 'bar', custom: true },
       slots: ['default'],
     })
@@ -243,9 +261,9 @@ describe('DruxtModule component', () => {
       parts: ['Wrapper']
     }])
     expect(wrapper.vm.getModulePropsData(wrapperData.props)).toStrictEqual({
-      $attrs: {},
+      $attrs: { langcode: undefined },
       props: { foo: 'bar' },
-      propsData: { foo: 'bar' },
+      propsData: { foo: 'bar', langcode: undefined },
     })
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
 
@@ -259,6 +277,47 @@ describe('DruxtModule component', () => {
 
     // HTML snapshot.
     expect(wrapper.html()).toMatchSnapshot()
+  })
+
+  test('component options', async () => {
+    const CustomModule = {
+      name: 'CustomModule',
+      extends: DruxtModule,
+      druxt: {
+        componentOptions: () => ([['foo', 'bar'], ['foo', 'bar', 'baz']]),
+        async fetchConfig() {},
+        async fetchData(settings) {},
+        propsData: () => ({ foo: 'bar' }),
+        settings: ({}, settings) => ({ ...settings, custom: true }),
+        slots: (h) => ({ default: () => h('div', ['test'] )}),
+      }
+    }
+
+    const wrapper = mount(CustomModule, {
+      localVue,
+      mocks,
+      // propsData: { langcode: 'en' },
+      stubs: ['DruxtWrapper']
+    })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'CustomModuleFooBarBaz',
+      'CustomModuleFooBar',
+      'CustomModuleFoo',
+    ])
+
+    wrapper.vm.$fetch = wrapper.vm.$options.fetch
+    await wrapper.setProps({ langcode: 'en' })
+    await localVue.nextTick()
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'CustomModuleFooBarBazEn',
+      'CustomModuleFooBarEn',
+      'CustomModuleFooBarBaz',
+      'CustomModuleFooEn',
+      'CustomModuleFooBar',
+      'CustomModuleFoo',
+    ])
   })
 
   test('dev mode slot', async () => {

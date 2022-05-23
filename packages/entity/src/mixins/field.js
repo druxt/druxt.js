@@ -32,6 +32,16 @@ const DruxtFieldMixin = {
     },
 
     /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * Inner wrapper component and props.
      * @type {object}
      * @default { component: 'div', props: {} }
@@ -97,7 +107,7 @@ const DruxtFieldMixin = {
   /** */
   computed: {
     /**
-     * 
+     *
      * @type {boolean|object}
      * @default false
      */
