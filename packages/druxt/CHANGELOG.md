@@ -1,5 +1,11 @@
 # druxt
 
+## 0.19.1
+
+### Patch Changes
+
+- 4150e25: Fixed issues on single lingual sites
+
 ## 0.19.0
 
 ### Minor Changes
@@ -7,12 +13,13 @@
 - be21952: Added langcode / prefix support to DruxtClient methods.
 
   ```js
-  const data = await druxt.getResource('node--article', id, undefined, 'en')
+  const data = await druxt.getResource("node--article", id, undefined, "en");
   ```
 
 - be21952: Added langcode suffixed component options for multilingual templates.
 
   example:
+
   ```diff
   + DruxtEntityNodeArticleFullEn
   + DruxtEntityNodeArticleFullEs
