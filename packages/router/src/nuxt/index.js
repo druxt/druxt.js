@@ -62,17 +62,20 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
     })
 
     // Fetch languages.
+    let languages = []
     const druxt = new DruxtClient(options.baseUrl, {
       ...options,
       // Disable API Proxy, as Proxies aren't available at build.
       proxy: { ...options.proxy || {}, api: false },
     })
-    const resourceType = 'configurable_language--configurable_language'
-    const query = new DrupalJsonApiParams().addFields(resourceType, ['drupal_internal__id'])
-    const languages = (await druxt.getCollectionAll(resourceType, query) || [])
-      .map((o) => o.data)
-      .flat()
-      .filter((o) => !['und', 'zxx'].includes(o.attributes.drupal_internal__id))
+    const languageResourceType = 'configurable_language--configurable_language'
+    if (await druxt.getIndex(languageResourceType)) {
+      const query = new DrupalJsonApiParams().addFields(languageResourceType, ['drupal_internal__id'])
+      languages = (await druxt.getCollectionAll(languageResourceType, query) || [])
+        .map((o) => o.data)
+        .flat()
+        .filter((o) => !['und', 'zxx'].includes(((o || {}).attributes || {}).drupal_internal__id))
+    }
 
     // Extend routes.
     this.extendRoutes((routes) => {
