@@ -1,5 +1,11 @@
 # druxt-blocks
 
+## 0.16.1
+
+### Patch Changes
+
+- Version bump
+
 ## 0.16.0
 
 ### Minor Changes
@@ -7,12 +13,9 @@
 - be21952: Added multilingual support to the DruxtBlock and DruxtBlockRegion component.
 
   example:
+
   ```jsx
-  <DruxtBlockRegion
-    name="header"
-    theme="umami"
-    langcode="es"
-  />
+  <DruxtBlockRegion name="header" theme="umami" langcode="es" />
   ```
 
 - be21952: Add support for multilingual paths in DruxtBlockRegion.

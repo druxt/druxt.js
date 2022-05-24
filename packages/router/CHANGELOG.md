@@ -1,5 +1,13 @@
 # druxt-router
 
+## 0.27.1
+
+### Patch Changes
+
+- 4150e25: Fixed issues on single lingual sites
+- Updated dependencies [4150e25]
+  - druxt@0.19.1
+
 ## 0.27.0
 
 ### Minor Changes
