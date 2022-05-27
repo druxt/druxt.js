@@ -1,5 +1,11 @@
 # druxt-router
 
+## 0.27.2
+
+### Patch Changes
+
+- f86b372f: Fixed issues on single lingual sites
+
 ## 0.27.1
 
 ### Patch Changes

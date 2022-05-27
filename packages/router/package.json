@@ -1,6 +1,6 @@
 {
   "name": "druxt-router",
-  "version": "0.27.1",
+  "version": "0.27.2",
   "description": "Drupal router for Nuxt, powered by the Drupal Decoupled Router module.",
   "keywords": [
     "cms",
