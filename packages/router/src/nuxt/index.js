@@ -80,7 +80,7 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
     // Extend routes.
     this.extendRoutes((routes) => {
       // Add route per language.
-      languages.forEach((o) => {
+      languages.filter((o) => o).forEach((o) => {
         routes.push({
           name: `druxt-router__${o.attributes.drupal_internal__id}`,
           path: `/${o.attributes.drupal_internal__id}*`,
