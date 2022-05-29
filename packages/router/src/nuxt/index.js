@@ -69,7 +69,7 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
       proxy: { ...options.proxy || {}, api: false },
     })
     const languageResourceType = 'configurable_language--configurable_language'
-    if (await druxt.getIndex(languageResourceType)) {
+    if (((await druxt.getIndex(languageResourceType)) || {}).href) {
       const query = new DrupalJsonApiParams().addFields(languageResourceType, ['drupal_internal__id'])
       languages = (await druxt.getCollectionAll(languageResourceType, query) || [])
         .map((o) => o.data)

@@ -51,7 +51,7 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
 
       // Langcode prefixed API endpoints.
       const languageResourceType = 'configurable_language--configurable_language'
-      if (await druxt.getIndex(languageResourceType)) {
+      if (((await druxt.getIndex(languageResourceType)) || {}).href) {
         const query = new DrupalJsonApiParams().addFields(languageResourceType, ['drupal_internal__id'])
         const languages = (await druxt.getCollectionAll(languageResourceType, query) || [])
           .map((o) => o.data)
