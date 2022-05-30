@@ -10629,7 +10629,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-router@workspace:packages/router"
   dependencies:
-    druxt: ^0.19.1
+    druxt: ^0.19.2
     url-parse: ^1.5.10
     vue: ^2.6.14
     vue-router: ^3.5.4
@@ -10750,7 +10750,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt@^0.19.0, druxt@^0.19.1, druxt@workspace:packages/druxt":
+"druxt@^0.19.0, druxt@^0.19.2, druxt@workspace:packages/druxt":
   version: 0.0.0-use.local
   resolution: "druxt@workspace:packages/druxt"
   dependencies:

@@ -1,5 +1,12 @@
 # druxt
 
+## 0.19.2
+
+### Patch Changes
+
+- 9819eeed: Fixed issue with single lingual sites using JSON:API Extras.
+- 4ff0ad81: Changed order of Druxt Proxy entries.
+
 ## 0.19.1
 
 ### Patch Changes

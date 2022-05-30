@@ -1,5 +1,13 @@
 # druxt-router
 
+## 0.27.3
+
+### Patch Changes
+
+- 9819eeed: Fixed issue with single lingual sites using JSON:API Extras.
+- Updated dependencies [4ff0ad81]
+  - druxt@0.19.2
+
 ## 0.27.2
 
 ### Patch Changes
