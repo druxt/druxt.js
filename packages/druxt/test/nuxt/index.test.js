@@ -156,11 +156,11 @@ describe('DruxtJS Nuxt module', () => {
     expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
     // Ensure proxies are set.
     expect(mock.options.proxy).toStrictEqual([
+      `${options.baseUrl}/array-test`,
       `${options.baseUrl}${options.endpoint}`,
       `${options.baseUrl}/en${options.endpoint}`,
       `${options.baseUrl}/es${options.endpoint}`,
       `${options.baseUrl}/router/translate-path`,
-      `${options.baseUrl}/array-test`,
     ])
 
     // Set object proxy settings.
@@ -172,10 +172,10 @@ describe('DruxtJS Nuxt module', () => {
     expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
     // Ensure proxies are set.
     expect(mock.options.proxy).toStrictEqual({
+      '/object-test': options.baseUrl,
       [`/en${options.endpoint}`]: options.baseUrl,
       [`/es${options.endpoint}`]: options.baseUrl,
       [options.endpoint]: options.baseUrl,
-      '/object-test': options.baseUrl,
       '/router/translate-path': options.baseUrl
     })
   })

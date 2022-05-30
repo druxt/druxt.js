@@ -77,14 +77,14 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     if (this.options.proxy) {
       if (Array.isArray(this.options.proxy)) {
         this.options.proxy = [
-          ...Object.keys(proxies).map((path) => `${options.baseUrl}${path}`),
-          ...this.options.proxy
+          ...this.options.proxy,
+          ...Object.keys(proxies).map((path) => `${options.baseUrl}${path}`)
         ]
       }
       else {
         this.options.proxy = {
-          ...proxies,
-          ...this.options.proxy
+          ...this.options.proxy,
+          ...proxies
         }
       }
     }
