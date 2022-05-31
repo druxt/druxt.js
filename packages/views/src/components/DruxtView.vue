@@ -281,7 +281,7 @@ export default {
 
   watch: {
     async '$route.query'(to) {
-      if (!Object.entries(to).length) {
+      if (!Object.entries(to || {}).length) {
         this.model = {
           filter: {},
           page: null,
@@ -297,7 +297,7 @@ export default {
     'model.filter': {
       deep: true,
       async handler(to, from) {
-        if (!Object.entries(to).length && !Object.entries(from).length) {
+        if (!Object.entries(to || {}).length && !Object.entries(from || {}).length) {
           return
         }
         await this.$fetch()
