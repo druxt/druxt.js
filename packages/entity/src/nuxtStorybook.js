@@ -41,6 +41,7 @@ export default async function ({ stories }) {
         return {
           resourceType: `${entity}--${bundle}`,
           entities: (await druxt.getCollection(`${entity}--${bundle}`, new DrupalJsonApiParams()
+            .addFilter('status', 1)
             .addFields(`${entity}--${bundle}`, ['id', 'title', 'name', 'info'])
           )).data.map((o) => ({
             id: o.id,
