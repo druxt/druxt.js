@@ -33,6 +33,10 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     ...(this.options || {}).druxt,
   }
 
+  // Normalize slashes.
+  this.options.baseUrl = options.baseUrl = options.baseUrl.endsWith('/') ? options.baseUrl.slice(0, -1) : options.baseUrl
+  this.options.endpoint = options.endpoint = options.endpoint.startsWith('/') ? options.endpoint : `/${options.endpoint}`
+
   const druxt = new DruxtClient(options.baseUrl, {
     ...options,
     // Disable API Proxy, as Proxies aren't available at build.
