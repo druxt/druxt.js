@@ -34,8 +34,8 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
   }
 
   // Normalize slashes.
-  options.baseUrl = options.baseUrl.endsWith('/') ? options.baseUrl.slice(0, -1) : options.baseUrl
-  options.endpoint = options.endpoint.startsWith('/') ? options.endpoint : `/${options.endpoint}`
+  this.options.baseUrl = options.baseUrl = options.baseUrl.endsWith('/') ? options.baseUrl.slice(0, -1) : options.baseUrl
+  this.options.endpoint = options.endpoint = options.endpoint.startsWith('/') ? options.endpoint : `/${options.endpoint}`
 
   const druxt = new DruxtClient(options.baseUrl, {
     ...options,
