@@ -1,0 +1,65 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "errors": [
+      {
+        "title": "Forbidden",
+        "status": "403",
+        "detail": "The current user is not authorized to filter by the `status` field, given in the path `status`.",
+        "links": {
+          "via": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user?fields%5Buser--user%5D=id%2Ctitle%2Cname%2Cinfo&filter%5Bstatus%5D=1"
+          },
+          "info": {
+            "href": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.4"
+          }
+        }
+      }
+    ]
+  },
+  "status": 403,
+  "statusText": "Forbidden",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "env": {
+      "FormData": null
+    },
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "method": "get",
+    "url": "/en/jsonapi/user/user?filter%5Bstatus%5D=1&fields%5Buser--user%5D=id%2Ctitle%2Cname%2Cinfo"
+  },
+  "request": {}
+}

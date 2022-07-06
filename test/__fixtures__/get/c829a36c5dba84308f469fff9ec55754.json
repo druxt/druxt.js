@@ -1,0 +1,69 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "block_content--disclaimer_block",
+        "id": "9b4dcd67-99f3-48d0-93c9-2c46648b29de",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/block_content/disclaimer_block/9b4dcd67-99f3-48d0-93c9-2c46648b29de"
+          }
+        },
+        "attributes": {
+          "info": "Umami Disclaimer"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/block_content/disclaimer_block?fields%5Bblock_content--disclaimer_block%5D=id%2Ctitle%2Cname%2Cinfo&filter%5Bstatus%5D=1"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "env": {
+      "FormData": null
+    },
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "method": "get",
+    "url": "/en/jsonapi/block_content/disclaimer_block?filter%5Bstatus%5D=1&fields%5Bblock_content--disclaimer_block%5D=id%2Ctitle%2Cname%2Cinfo"
+  },
+  "request": {}
+}

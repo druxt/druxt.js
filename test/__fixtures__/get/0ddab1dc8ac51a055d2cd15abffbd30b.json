@@ -1,0 +1,126 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "standard.front_page",
+        "attributes": {
+          "menu_name": "main",
+          "parent": "",
+          "title": "Home",
+          "url": "/en",
+          "weight": "0",
+          "description": "",
+          "enabled": true,
+          "expanded": false,
+          "meta": [],
+          "options": [],
+          "provider": "demo_umami",
+          "route": {
+            "name": "<front>",
+            "parameters": []
+          }
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "views_view:views.featured_articles.page_1",
+        "attributes": {
+          "menu_name": "main",
+          "parent": "",
+          "title": "Articles",
+          "url": "/en/articles",
+          "weight": "20",
+          "description": "",
+          "enabled": true,
+          "expanded": false,
+          "meta": {
+            "view_id": "featured_articles",
+            "display_id": "page_1"
+          },
+          "options": [],
+          "provider": "views",
+          "route": {
+            "name": "view.featured_articles.page_1",
+            "parameters": []
+          }
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "views_view:views.recipes.page_1",
+        "attributes": {
+          "menu_name": "main",
+          "parent": "",
+          "title": "Recipes",
+          "url": "/en/recipes",
+          "weight": "30",
+          "description": "",
+          "enabled": true,
+          "expanded": false,
+          "meta": {
+            "view_id": "recipes",
+            "display_id": "page_1"
+          },
+          "options": [],
+          "provider": "views",
+          "route": {
+            "name": "view.recipes.page_1",
+            "parameters": []
+          }
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/jsonapi/menu_items/main?filter%5Benabled%5D=1&filter%5Bmenu_name%5D=main"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "env": {
+      "FormData": null
+    },
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "method": "get",
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/menu_items/main?filter%5Benabled%5D=1&filter%5Bmenu_name%5D=main"
+  },
+  "request": {}
+}

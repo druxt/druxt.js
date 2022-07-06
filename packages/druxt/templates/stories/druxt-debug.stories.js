@@ -1,4 +1,4 @@
-import DruxtDebug from './DruxtDebug.vue'
+import DruxtDebug from 'druxt/dist/components/DruxtDebug.vue'
 
 export default {
   title: 'Druxt/DruxtDebug',
@@ -27,7 +27,9 @@ Json.args = {
 }
 Json.parameters = {
   docs: {
-    storyDescription: 'The **json** prop takes any data and runs it through a basic JSON formatter for improved readability.',
+    description: {
+      story: 'The **json** prop takes any data and runs it through a basic JSON formatter for improved readability.',
+    },
     source: {
       code: '<DruxtDebug :json="entity" open>Debug information</DruxtDebug>'
     },
@@ -40,7 +42,9 @@ Summary.args = {
 }
 Summary.parameters = {
   docs: {
-    storyDescription: 'The **summary** prop can be used to provide a quick explanation of the debug component.',
+    description: {
+      story: 'The **summary** prop can be used to provide a quick explanation of the debug component.',
+    },
     source: {
       code: `<DruxtDebug summary="${Summary.args.sumary}">Debug information</DruxtDebug>`
     },

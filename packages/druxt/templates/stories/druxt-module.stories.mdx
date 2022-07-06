@@ -102,7 +102,7 @@ Druxt module.
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 export default {
   name: 'MyModule',
-  extends: DruxtModule
+  extends: DruxtModule,
   druxt: {
     async fetchConfig() {
       // Load configuration data here.
@@ -113,7 +113,7 @@ export default {
     // Build nested arrays of component options based on the context.
     componentOptions: (context) => ([['default']]),
     // Map props data from the context.
-    propsData: (context) => ({ ...context }),
+    propsData: (context) => ({}),
     // Build slots render arrays.
     slots(h) {
       return {

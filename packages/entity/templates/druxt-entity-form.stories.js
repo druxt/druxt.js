@@ -51,7 +51,9 @@ export const Wrapper = (args, { argTypes }) => ({
 })
 Wrapper.parameters = {
   docs: {
-    storyDescription: 'The DruxtEntityForm component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' + code + '\n```',
+    description: {
+      story: 'The DruxtEntityForm component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' + code + '\n```',
+    },
     source: { code }
   }
 }
@@ -70,7 +72,9 @@ export const TemplateInjection = (args, { argTypes }) => ({
 })
 TemplateInjection.parameters = {
   docs: {
-    storyDescription: 'The DruxtEntityForm component can be themed by injecting the default template into the compomnent.\n\n```jsx\n' + code + '\n```',
+    description: {
+      story: 'The DruxtEntityForm component can be themed by injecting the default template into the compomnent.\n\n```jsx\n' + code + '\n```',
+    },
     source: { code }
   }
 }

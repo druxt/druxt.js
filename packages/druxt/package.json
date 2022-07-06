@@ -34,7 +34,6 @@
   "module": "dist/druxt.esm.js",
   "files": [
     "dist",
-    "stories",
     "templates"
   ],
   "dependencies": {

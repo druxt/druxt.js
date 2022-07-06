@@ -163,10 +163,28 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
   this.options.cli.badgeMessages.push(`${chalk.bold('API:')} ${chalk.blue.underline(options.baseUrl + options.endpoint)}`)
 
   // Nuxt Storybook.
+  const self = this
   this.nuxt.hook('storybook:config', async ({ stories }) => {
-    stories.push('druxt/stories/*.stories.mdx')
-    stories.push('druxt/dist/components/*.stories.mdx')
-    stories.push('druxt/dist/components/*.stories.mjs')
+    // Druxt README story.
+    self.addTemplate({
+      src: resolve(__dirname, '../templates/stories/README.stories.mdx'),
+      fileName: 'stories/druxt-README.stories.mdx',
+    })
+    stories.push(resolve(self.options.buildDir, './stories/druxt-README.stories.mdx'))
+
+    // Druxt custom module story.
+    self.addTemplate({
+      src: resolve(__dirname, '../templates/stories/druxt-module.stories.mdx'),
+      fileName: 'stories/druxt-module.stories.mdx',
+    })
+    stories.push(resolve(self.options.buildDir, './stories/druxt-module.stories.mdx'))
+
+    // DruxtDebug component story.
+    self.addTemplate({
+      src: resolve(__dirname, '../templates/stories/druxt-debug.stories.js'),
+      fileName: 'stories/druxt-debug.stories.js',
+    })
+    stories.push(resolve(self.options.buildDir, './stories/druxt-debug.stories.js'))
   })
 }
 

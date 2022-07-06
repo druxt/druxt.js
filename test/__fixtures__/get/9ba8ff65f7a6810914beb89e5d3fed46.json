@@ -1,0 +1,153 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "node--article",
+        "id": "3424eaa2-e077-4264-a5f7-78e07f8b48d1",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/3424eaa2-e077-4264-a5f7-78e07f8b48d1?resourceVersion=id%3A22"
+          }
+        },
+        "attributes": {
+          "title": "Give it a go and grow your own herbs"
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "1d18e820-a1ef-442c-b8b4-78d14bb00c31",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/1d18e820-a1ef-442c-b8b4-78d14bb00c31?resourceVersion=id%3A24"
+          }
+        },
+        "attributes": {
+          "title": "Dairy-free and delicious milk chocolate"
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "768145bc-5bbc-46a6-b91f-08230ba96fd6",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/768145bc-5bbc-46a6-b91f-08230ba96fd6?resourceVersion=id%3A26"
+          }
+        },
+        "attributes": {
+          "title": "The real deal for supermarket savvy shopping"
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "6d37a58e-61a0-4851-a6c6-1aea35bad22c",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/6d37a58e-61a0-4851-a6c6-1aea35bad22c?resourceVersion=id%3A28"
+          }
+        },
+        "attributes": {
+          "title": "The Umami guide to our favorite mushrooms"
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "2c5492df-99ee-426c-9764-a616a0263025",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/2c5492df-99ee-426c-9764-a616a0263025?resourceVersion=id%3A30"
+          }
+        },
+        "attributes": {
+          "title": "Let's hear it for carrots"
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "9e4805dd-fd1f-4ca8-8ddd-8557689c7f0e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/9e4805dd-fd1f-4ca8-8ddd-8557689c7f0e?resourceVersion=id%3A32"
+          }
+        },
+        "attributes": {
+          "title": "Baking mishaps - our troubleshooting tips"
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "32abd8be-c643-45a7-a78d-5e94fe6cdc88",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/32abd8be-c643-45a7-a78d-5e94fe6cdc88?resourceVersion=id%3A34"
+          }
+        },
+        "attributes": {
+          "title": "Skip the spirits with delicious mocktails"
+        }
+      },
+      {
+        "type": "node--article",
+        "id": "68d21c46-e0d4-4712-8084-4e6534d294e7",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/68d21c46-e0d4-4712-8084-4e6534d294e7?resourceVersion=id%3A36"
+          }
+        },
+        "attributes": {
+          "title": "Give your oatmeal the ultimate makeover"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article?fields%5Bnode--article%5D=id%2Ctitle%2Cname%2Cinfo&filter%5Bstatus%5D=1"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "env": {
+      "FormData": null
+    },
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "method": "get",
+    "url": "/en/jsonapi/node/article?filter%5Bstatus%5D=1&fields%5Bnode--article%5D=id%2Ctitle%2Cname%2Cinfo"
+  },
+  "request": {}
+}

@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join, resolve } from 'path'
 
 /**
  * The Nuxt.js module function.
@@ -29,8 +29,13 @@ const DruxtBreadcrumbModule = function () {
   })
 
   // Nuxt Storybook.
+  const { addTemplate, options } = this
   this.nuxt.hook('storybook:config', ({ stories }) => {
-    stories.push('druxt-breadcrumb/dist/components/*.stories.mjs')
+    addTemplate({
+      src: resolve(__dirname, '../templates/druxt-breadcrumb.stories.js'),
+      fileName: 'stories/druxt-breadcrumb.stories.js',
+    })
+    stories.push(resolve(options.buildDir, './stories/druxt-breadcrumb.stories.js'))
   })
 }
 
