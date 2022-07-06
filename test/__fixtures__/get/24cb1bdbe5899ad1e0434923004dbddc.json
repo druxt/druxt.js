@@ -1,0 +1,177 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "node--recipe",
+        "id": "484fe0c5-7e56-4b5b-8da0-bbf076cfc5d7",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/484fe0c5-7e56-4b5b-8da0-bbf076cfc5d7?resourceVersion=id%3A2"
+          }
+        },
+        "attributes": {
+          "title": "Deep mediterranean quiche"
+        }
+      },
+      {
+        "type": "node--recipe",
+        "id": "91ddb770-822f-4f2a-95a4-b8e0a54cff66",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/91ddb770-822f-4f2a-95a4-b8e0a54cff66?resourceVersion=id%3A4"
+          }
+        },
+        "attributes": {
+          "title": "Vegan chocolate and nut brownies"
+        }
+      },
+      {
+        "type": "node--recipe",
+        "id": "cde67eae-7faf-4edf-81da-9638da6c8e1f",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/cde67eae-7faf-4edf-81da-9638da6c8e1f?resourceVersion=id%3A6"
+          }
+        },
+        "attributes": {
+          "title": "Super easy vegetarian pasta bake"
+        }
+      },
+      {
+        "type": "node--recipe",
+        "id": "36d1d034-6686-4377-b82e-9bc74b3d3084",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/36d1d034-6686-4377-b82e-9bc74b3d3084?resourceVersion=id%3A8"
+          }
+        },
+        "attributes": {
+          "title": "Watercress soup"
+        }
+      },
+      {
+        "type": "node--recipe",
+        "id": "495e4413-f717-4a85-9790-9c41cefb295e",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/495e4413-f717-4a85-9790-9c41cefb295e?resourceVersion=id%3A10"
+          }
+        },
+        "attributes": {
+          "title": "Victoria sponge cake"
+        }
+      },
+      {
+        "type": "node--recipe",
+        "id": "40eee877-d894-4322-ae78-8fa8556658ad",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/40eee877-d894-4322-ae78-8fa8556658ad?resourceVersion=id%3A12"
+          }
+        },
+        "attributes": {
+          "title": "Gluten free pizza"
+        }
+      },
+      {
+        "type": "node--recipe",
+        "id": "aa2d77db-6be1-4d3e-8699-f656338771cf",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/aa2d77db-6be1-4d3e-8699-f656338771cf?resourceVersion=id%3A14"
+          }
+        },
+        "attributes": {
+          "title": "Thai green curry"
+        }
+      },
+      {
+        "type": "node--recipe",
+        "id": "1de079e1-7d7c-4d5a-99c7-f894da1b3aea",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/1de079e1-7d7c-4d5a-99c7-f894da1b3aea?resourceVersion=id%3A16"
+          }
+        },
+        "attributes": {
+          "title": "Crema catalana"
+        }
+      },
+      {
+        "type": "node--recipe",
+        "id": "6878789f-31c2-4f4f-8a12-b8a9226f1428",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/6878789f-31c2-4f4f-8a12-b8a9226f1428?resourceVersion=id%3A18"
+          }
+        },
+        "attributes": {
+          "title": "Fiery chili sauce"
+        }
+      },
+      {
+        "type": "node--recipe",
+        "id": "5affad29-c2b5-49aa-8ab6-ee230f4257fa",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/5affad29-c2b5-49aa-8ab6-ee230f4257fa?resourceVersion=id%3A20"
+          }
+        },
+        "attributes": {
+          "title": "Borscht with pork ribs"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe?fields%5Bnode--recipe%5D=id%2Ctitle%2Cname%2Cinfo&filter%5Bstatus%5D=1"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "env": {
+      "FormData": null
+    },
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "method": "get",
+    "url": "/en/jsonapi/node/recipe?filter%5Bstatus%5D=1&fields%5Bnode--recipe%5D=id%2Ctitle%2Cname%2Cinfo"
+  },
+  "request": {}
+}
