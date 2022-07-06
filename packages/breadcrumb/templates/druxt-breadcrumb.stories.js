@@ -1,4 +1,4 @@
-import DruxtBreadcrumb from './DruxtBreadcrumb.vue'
+import DruxtBreadcrumb from 'druxt-breadcrumb/dist/components//DruxtBreadcrumb.vue'
 
 export default {
   title: 'Druxt/Breadcrumb/DruxtBreadcrumb',

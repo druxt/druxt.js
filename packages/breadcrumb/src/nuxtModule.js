@@ -33,7 +33,7 @@ const DruxtBreadcrumbModule = function () {
   this.nuxt.hook('storybook:config', ({ stories }) => {
     addTemplate({
       src: resolve(__dirname, '../templates/druxt-breadcrumb.stories.js'),
-      fileName: 'stories/druxt-breadcrumbs.stories.js',
+      fileName: 'stories/druxt-breadcrumb.stories.js',
     })
     stories.push(resolve(options.buildDir, './stories/druxt-breadcrumb.stories.js'))
   })
