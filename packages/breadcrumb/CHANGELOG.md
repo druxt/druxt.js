@@ -1,5 +1,15 @@
 # druxt-breadcrumb
 
+## 0.15.1
+
+### Patch Changes
+
+- 45e14b84: Fixed support for nuxt/storybook.
+- Updated dependencies [352b7a51]
+  - druxt@0.19.3
+  - druxt-blocks@0.16.2
+  - druxt-router@0.27.4
+
 ## 0.15.0
 
 ### Minor Changes

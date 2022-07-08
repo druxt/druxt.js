@@ -1,5 +1,13 @@
 # druxt
 
+## 0.19.3
+
+### Patch Changes
+
+- 44f97b9c: Normalized slashes for baseUrl and endpoint options.
+- 352b7a51: Fixed plugin paths issue for Windows users.
+- 45e14b84: Fixed support for nuxt/storybook.
+
 ## 0.19.2
 
 ### Patch Changes

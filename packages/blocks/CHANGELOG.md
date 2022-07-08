@@ -1,5 +1,15 @@
 # druxt-blocks
 
+## 0.16.2
+
+### Patch Changes
+
+- 45e14b84: Fixed support for nuxt/storybook.
+- Updated dependencies [352b7a51]
+  - druxt@0.19.3
+  - druxt-entity@0.25.1
+  - druxt-router@0.27.4
+
 ## 0.16.1
 
 ### Patch Changes

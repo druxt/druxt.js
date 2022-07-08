@@ -1,5 +1,17 @@
 # druxt-views
 
+## 0.19.1
+
+### Patch Changes
+
+- ffd9d542: Fixed undefined errors in DruxtView watch methods.
+- 45e14b84: Fixed support for nuxt/storybook.
+- Updated dependencies [352b7a51]
+  - druxt@0.19.3
+  - druxt-entity@0.25.1
+  - druxt-blocks@0.16.2
+  - druxt-router@0.27.4
+
 ## 0.19.0
 
 ### Minor Changes

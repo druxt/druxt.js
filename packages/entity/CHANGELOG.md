@@ -1,5 +1,15 @@
 # druxt-entity
 
+## 0.25.1
+
+### Patch Changes
+
+- 28bed4ca: Fixed bug with DruxtEntity Storybook and unpublished content.
+- 45e14b84: Fixed support for nuxt/storybook.
+- Updated dependencies [352b7a51]
+  - druxt@0.19.3
+  - druxt-router@0.27.4
+
 ## 0.25.0
 
 ### Minor Changes
@@ -7,6 +17,7 @@
 - be21952: Added **langcode** prop to DruxtEntity and DruxtField components for multilingual support.
 
   example:
+
   ```jsx
   <DruxtEntity
     type="node--recipe"

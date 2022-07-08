@@ -1,5 +1,14 @@
 # druxt-menu
 
+## 0.17.1
+
+### Patch Changes
+
+- 45e14b84: Fixed support for nuxt/storybook.
+- Updated dependencies [352b7a51]
+  - druxt@0.19.3
+  - druxt-blocks@0.16.2
+
 ## 0.17.0
 
 ### Minor Changes
@@ -7,11 +16,9 @@
 - be21952: Added multilingual support to the DruxtMenu component.
 
   example:
+
   ```jsx
-  <DruxtMenu
-    name="main"
-    langcode="es"
-  />
+  <DruxtMenu name="main" langcode="es" />
   ```
 
 - be21952: Added langcode to component mixins.

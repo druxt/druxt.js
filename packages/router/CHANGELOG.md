@@ -1,5 +1,13 @@
 # druxt-router
 
+## 0.27.4
+
+### Patch Changes
+
+- 45e14b84: Fixed support for nuxt/storybook.
+- Updated dependencies [352b7a51]
+  - druxt@0.19.3
+
 ## 0.27.3
 
 ### Patch Changes
