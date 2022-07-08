@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-import { join, resolve } from 'path'
+import { join, normalize, resolve } from 'path'
 import { DruxtClient } from '../client'
 import meta from '../../package.json'
 
@@ -130,12 +130,12 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     plugins = typeof extendPlugins === 'function' ? extendPlugins(plugins) : plugins
 
     // Extract the $axios plugin.
-    const axiosIndex = plugins.findIndex(({ src }) => src === `${this.options.buildDir}/axios.js`)
+    const axiosIndex = plugins.findIndex(({ src }) => src === normalize(`${this.options.buildDir}/axios.js`))
     const axiosPlugin = plugins[axiosIndex]
     plugins.splice(axiosIndex, 1)
 
     // Extract the $druxt plugin.
-    const druxtIndex = plugins.findIndex(({ src }) => src === `${this.options.buildDir}/druxt.js`)
+    const druxtIndex = plugins.findIndex(({ src }) => src === normalize(`${this.options.buildDir}/druxt.js`))
     const druxtPlugin = plugins[druxtIndex]
     plugins.splice(druxtIndex, 1)
 
