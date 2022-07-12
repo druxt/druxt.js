@@ -44,7 +44,7 @@ export default {
      * @type {boolean}
      * @default true
      * @example @lang vue
-     * <DruxtBreacrumb :home="false" />
+     * <DruxtBreadcrumb :home="false" />
      */
     home: {
       type: Boolean,
@@ -59,7 +59,7 @@ export default {
      * @type {string}
      *
      * @example @lang vue
-     * <DruxtBreacrumb path="/node/1" />
+     * <DruxtBreadcrumb path="/node/1" />
      */
     path: {
       type: String,
