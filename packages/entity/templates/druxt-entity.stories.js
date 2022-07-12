@@ -1,4 +1,10 @@
 import DruxtEntity from 'druxt-entity/dist/components/DruxtEntity.vue'
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+
+DruxtEntity.__docgenInfo.props = [
+  ...DruxtModule.__docgenInfo.props,
+  ...DruxtEntity.__docgenInfo.props,
+].sort((a, b) => a.name < b.name ? -1 : 1).filter((o) => o.name !== 'v-model')
 
 export default {
   title: 'Druxt/Entity/DruxtEntity',

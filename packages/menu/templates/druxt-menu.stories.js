@@ -1,4 +1,10 @@
 import DruxtMenu from 'druxt-menu/dist/components/DruxtMenu.vue'
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+
+DruxtMenu.__docgenInfo.props = [
+  ...DruxtModule.__docgenInfo.props,
+  ...DruxtMenu.__docgenInfo.props,
+].sort((a, b) => a.name < b.name ? -1 : 1).filter((o) => o.name !== 'v-model')
 
 export default {
   title: 'Druxt/Menu/DruxtMenu',
