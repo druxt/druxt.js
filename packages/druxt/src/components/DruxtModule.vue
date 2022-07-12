@@ -39,6 +39,11 @@ export default {
   props: {
     /**
      * The resource langcode.
+     *
+     * @example
+     * <DruxtModule langcode="en" />
+     *
+     * @type {String}
      */
     langcode: {
       type: String,
@@ -46,7 +51,13 @@ export default {
     },
 
     /**
-     * The module value.
+     * The module component model value.
+     *
+     * Used to bypass the Drupal JSON:API fetch, setting the module data
+     * directly.
+     *
+     * @example
+     * <DruxtModule v-model="{ foo: bar }" />
      *
      * @type {(Array|Boolean|Date|Number|Object|String)}
      * @model
