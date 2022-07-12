@@ -81,7 +81,7 @@ class DruxtDocgen {
       // Javascript.
       'packages/*/src/**/*.js',
       // Vue.js.
-      'packages/*/src/**/*.vue',
+      'packages/*/src/components/**/*.vue',
       // Exclude fixtures, mocks and tests.
       '!**/__*__/**/*',
     ])
