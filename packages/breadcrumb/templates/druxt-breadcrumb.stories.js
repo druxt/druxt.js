@@ -1,4 +1,10 @@
-import DruxtBreadcrumb from 'druxt-breadcrumb/dist/components//DruxtBreadcrumb.vue'
+import DruxtBreadcrumb from 'druxt-breadcrumb/dist/components/DruxtBreadcrumb.vue'
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+
+DruxtBreadcrumb.__docgenInfo.props = [
+  ...DruxtModule.__docgenInfo.props,
+  ...DruxtBreadcrumb.__docgenInfo.props,
+].sort((a, b) => a.name < b.name ? -1 : 1).filter((o) => o.name !== 'v-model')
 
 export default {
   title: 'Druxt/Breadcrumb/DruxtBreadcrumb',

@@ -1,4 +1,10 @@
 import DruxtRouter from 'druxt-router/dist/components/DruxtRouter.vue'
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+
+DruxtRouter.__docgenInfo.props = [
+  ...DruxtModule.__docgenInfo.props,
+  ...DruxtRouter.__docgenInfo.props,
+].sort((a, b) => a.name < b.name ? -1 : 1).filter((o) => o.name !== 'v-model')
 
 export default {
   title: 'Druxt/Router/DruxtRouter',

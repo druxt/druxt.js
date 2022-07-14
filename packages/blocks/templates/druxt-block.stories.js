@@ -1,4 +1,10 @@
 import DruxtBlock from 'druxt-blocks/dist/components/DruxtBlock.vue'
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+
+DruxtBlock.__docgenInfo.props = [
+  ...DruxtModule.__docgenInfo.props,
+  ...DruxtBlock.__docgenInfo.props,
+].sort((a, b) => a.name < b.name ? -1 : 1).filter((o) => o.name !== 'v-model')
 
 export default {
   title: 'Druxt/Blocks/DruxtBlock',

@@ -1,4 +1,10 @@
 import DruxtView from 'druxt-views/dist/components/DruxtView.vue'
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+
+DruxtView.__docgenInfo.props = [
+  ...DruxtModule.__docgenInfo.props,
+  ...DruxtView.__docgenInfo.props,
+].sort((a, b) => a.name < b.name ? -1 : 1).filter((o) => o.name !== 'v-model')
 
 export default {
   title: 'Druxt/Views/DruxtView',
