@@ -92,6 +92,12 @@ export default {
     regions: ({ model, value }) => model || value || [],
   },
 
+  watch: {
+    theme() {
+      this.$fetch()
+    }
+  },
+
   methods: {
     ...mapActions({ getCollection: 'druxt/getCollection' }),
   },

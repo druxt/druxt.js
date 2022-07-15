@@ -280,7 +280,7 @@ export default {
   },
 
   watch: {
-    async '$route.query'(to) {
+    '$route.query'(to) {
       if (!Object.entries(to || {}).length) {
         this.model = {
           filter: {},
@@ -290,42 +290,42 @@ export default {
       }
     },
 
-    async displayId() {
-      await this.$fetch()
+    arguments() {
+      this.$fetch()
+    },
+
+    displayId() {
+      this.$fetch()
     },
 
     'model.filter': {
       deep: true,
-      async handler(to, from) {
+      handler(to, from) {
         if (!Object.entries(to || {}).length && !Object.entries(from || {}).length) {
           return
         }
-        await this.$fetch()
+        this.$fetch()
       },
     },
 
-    async 'model.page'(to, from) {
+    'model.page'(to, from) {
       if (to !== from) {
-        await this.$fetch()
+        this.$fetch()
       }
     },
 
-    async 'model.sort'(to, from) {
+    'model.sort'(to, from) {
       if (to !== from) {
-        await this.$fetch()
+        this.$fetch()
       }
     },
 
-    async query() {
-      await this.$fetch()
+    uuid() {
+      this.$fetch()
     },
 
-    async uuid() {
-      await this.$fetch()
-    },
-
-    async viewId() {
-      await this.$fetch()
+    viewId() {
+      this.$fetch()
     },
   },
 

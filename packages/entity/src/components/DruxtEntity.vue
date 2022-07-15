@@ -170,6 +170,10 @@ export default {
       this.$fetch()
     },
 
+    settings() {
+      this.$fetch()
+    },
+
     schemaType() {
       this.$fetch()
     },
