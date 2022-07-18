@@ -140,21 +140,19 @@ describe('DruxtView', () => {
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({})
 
     // Watches.
-    expect(mocks.$fetch).toHaveBeenCalledTimes(0)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(2)
     await DruxtView.watch.displayId.call(mocks)
-    expect(mocks.$fetch).toHaveBeenCalledTimes(1)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(3)
     wrapper.vm.model.page = 1
     await localVue.nextTick()
-    expect(mocks.$fetch).toHaveBeenCalledTimes(2)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(4)
     wrapper.vm.model.sort = 'nid'
     await localVue.nextTick()
-    expect(mocks.$fetch).toHaveBeenCalledTimes(3)
-    await DruxtView.watch.query.call(mocks)
-    expect(mocks.$fetch).toHaveBeenCalledTimes(4)
-    await DruxtView.watch.uuid.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(5)
-    await DruxtView.watch.viewId.call(mocks)
+    await DruxtView.watch.uuid.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(6)
+    await DruxtView.watch.viewId.call(mocks)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(7)
   })
 
   test('fetch by uuid', async () => {
