@@ -25,7 +25,7 @@ import DruxtMenuStorybook from './nuxtStorybook'
  *
  * @param {object} moduleOptions - Module options object.
  */
-const DruxtMenuNuxtModule = function (moduleOptions = {}) {
+const DruxtMenuNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
@@ -35,6 +35,9 @@ const DruxtMenuNuxtModule = function (moduleOptions = {}) {
       ...moduleOptions,
     }
   }
+
+  // Add dependant modules.
+  await this.addModule(['druxt', options])
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
@@ -48,9 +51,6 @@ const DruxtMenuNuxtModule = function (moduleOptions = {}) {
     fileName: 'druxt-menu.js',
     options
   })
-
-  // Enable Vuex Store.
-  this.options.store = true
 
   // Add Vuex plugin.
   this.addPlugin({
