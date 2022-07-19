@@ -40,6 +40,9 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
     }
   }
 
+  // Add dependant modules.
+  await this.addModule(['druxt', options])
+
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
     dirs.push({ path: join(__dirname, '../dist/components') })
@@ -106,9 +109,6 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
     fileName: 'druxt-router.js',
     options
   })
-
-  // Enable Vuex Store.
-  this.options.store = true
 
   // Add Vuex plugin.
   this.addPlugin({
