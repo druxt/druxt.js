@@ -3,6 +3,7 @@ import { DruxtMenuNuxtModule } from '../src/nuxtModule'
 jest.mock('../src/nuxtStorybook')
 
 const mock = {
+  addModule: jest.fn(),
   addPlugin: jest.fn(),
   nuxt: {
     hook: jest.fn((hook, fn) => {
@@ -18,7 +19,7 @@ const mock = {
   }
 }
 
-test('Nuxt module', () => {
-  DruxtMenuNuxtModule.call(mock)
+test('Nuxt module', async () => {
+  await DruxtMenuNuxtModule.call(mock)
   expect(mock.addPlugin).toHaveBeenCalled()
 })

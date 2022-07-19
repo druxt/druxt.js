@@ -2,4 +2,4 @@
 "druxt-site": minor
 ---
 
-Added watch for 'theme' prop
+Added watch for 'theme' prop.

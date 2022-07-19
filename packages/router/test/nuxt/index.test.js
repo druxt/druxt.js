@@ -1,6 +1,7 @@
 import DruxtRouterNuxtModule from '../../nuxt'
 
 const mock = {
+  addModule: jest.fn(),
   addPlugin: jest.fn(),
   addTemplate: jest.fn(),
   extendRoutes: jest.fn((func) => {
