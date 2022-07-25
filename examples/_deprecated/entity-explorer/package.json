@@ -5,7 +5,7 @@
     "druxt": "link:../../../packages/druxt",
     "druxt-entity": "link:../../../packages/druxt-entity",
     "druxt-schema": "link:../../../packages/druxt-schema",
-    "nuxt-edge": "latest",
+    "nuxt": "latest",
     "vue-live": "latest"
   },
   "scripts": {
