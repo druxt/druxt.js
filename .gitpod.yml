@@ -16,11 +16,11 @@ tasks:
       yarn build
 
       # druxtjs.org install
-      cd $GITPOD_REPO_ROOT/docs && yarn
+      cd $GITPOD_REPO_ROOT/docs/nuxt && yarn
       cd $GITPOD_REPO_ROOT && yarn build:docs
     command: |
       # Start Drupal
-      cd $GITPOD_REPO_ROOT/examples/drupal/drupal-9 && ddev start -y && ddev drush uli
+      cd $GITPOD_REPO_ROOT/docs/drupal && ddev start -y && ddev drush uli
 
       # Display welcome message
       cd $GITPOD_REPO_ROOT && cat .gitpod/WELCOME.md

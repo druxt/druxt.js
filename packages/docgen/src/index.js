@@ -16,7 +16,7 @@ const cwd = path.join(__dirname, '..')
 class DruxtDocgen {
   constructor() {
     this.components = []
-    this.destination = 'docs/content'
+    this.destination = 'docs/nuxt/content'
   }
 
   /**

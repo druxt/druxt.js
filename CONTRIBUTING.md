@@ -94,10 +94,10 @@ To build your changed documentation, run the following command:
 yarn build:docs
 ```
 
-The documentation website is a Nuxt site located in the `/docs` directory, to test your changes run the following command:
+The documentation website is a Nuxt site located in the `/docs/nuxt` directory, to test your changes run the following command:
 
 ```sh
-cd docs && yarn dev
+cd docs/nuxt && yarn dev
 ```
 
 * * *

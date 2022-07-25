@@ -11,7 +11,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: ./docs/Dockerfile
+      dockerfile: ./docs/nuxt/Dockerfile
     labels:
       lagoon.type: node
     ports:

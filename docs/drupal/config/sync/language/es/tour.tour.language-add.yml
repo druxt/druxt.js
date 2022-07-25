@@ -1,0 +1,11 @@
+label: 'Añadiendo idiomas'
+tips:
+  language-add-overview:
+    label: 'Añadiendo idiomas'
+    body: '<p>Esta página ofrece la posibilidad de añadir idiomas comunes a su sitio.</p><p>Si el idioma deseado no está disponible, puede añadir un idioma personalizado</p>'
+  language-add-choose:
+    label: 'Seleccionar idioma'
+    body: '<p>Elija un idioma de la lista, o elija “Idioma personalizado…” al final de la lista.</p><p>Haga clic en el botón “Añadir idioma” cuando termine de elegir su idioma.</p><p>Cuando agregue un idioma personalizado, obtendrá un formulario adicional donde podrá proporcionar el nombre, código y dirección del idioma.</p>'
+  language-add-continue:
+    label: Continuando
+    body: '<p>Ahora que usted tiene una visión general de la funcionalidad "Añadir idiomas", puede continuar:<ul><li>Añadiendo un idioma</li><li>Añadiendo un idioma personalizado</li><li><a href="[site:url]admin/config/regional/language">Viendo los idiomas configurados</a></li></ul></p>'
