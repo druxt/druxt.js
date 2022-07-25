@@ -8,7 +8,7 @@ RUN yarn build:docs
 
 # Build static files.
 FROM amazeeio/node:14
-COPY --from=builder /app/docs /app
+COPY --from=builder /app/docs/nuxt /app
 
 RUN yarn
 RUN yarn generate
