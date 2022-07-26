@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.media.responsive_3x2
   module:
     - editor
+    - geshifilter
     - media
 _core:
   default_config_hash: ZXpzv2RkjgnvhpZNSs-jvYSlMbRTnpODJCxaMHx_Wog
@@ -64,3 +65,11 @@ filters:
       allowed_media_types:
         image: image
         remote_video: remote_video
+  filter_geshifilter:
+    id: filter_geshifilter
+    provider: geshifilter
+    status: true
+    weight: 0
+    settings:
+      general_tags: {  }
+      per_language_settings: {  }

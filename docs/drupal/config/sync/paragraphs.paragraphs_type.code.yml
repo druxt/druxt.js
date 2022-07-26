@@ -1,0 +1,10 @@
+uuid: f2daf453-d8e9-4c5e-a4dd-68e2921e29e6
+langcode: en
+status: true
+dependencies: {  }
+id: code
+label: Code
+icon_uuid: null
+icon_default: null
+description: 'A <em>code paragraph</code> is used to create formatted code snippets.'
+behavior_plugins: {  }

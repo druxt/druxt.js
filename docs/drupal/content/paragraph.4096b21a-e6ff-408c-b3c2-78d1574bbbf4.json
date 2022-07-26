@@ -1,0 +1,58 @@
+{
+    "uuid": [
+        {
+            "value": "4096b21a-e6ff-408c-b3c2-78d1574bbbf4"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "code",
+            "target_type": "paragraphs_type",
+            "target_uuid": "f2daf453-d8e9-4c5e-a4dd-68e2921e29e6"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-26T00:39:00+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": "3cb4149a-0692-4525-bf53-f5453fc6abe9",
+                    "region": "content"
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "field_code": [
+        {
+            "sourcecode": "const druxt = new DruxtClient('https:\/\/demo-api.druxtjs.org', {\r\n  axios: {\r\n    headers: {'X-Custom-Header': true},\r\n  },\r\n  endpoint: 'jsonapi'\r\n})",
+            "language": "javascript"
+        }
+    ],
+    "field_text": [
+        {
+            "value": "<p>It also provides an options object to configure the client:<\/p>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

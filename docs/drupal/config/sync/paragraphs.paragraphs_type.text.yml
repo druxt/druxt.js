@@ -1,0 +1,10 @@
+uuid: b8f453b4-eafc-4858-9c61-04a9747f37ac
+langcode: en
+status: true
+dependencies: {  }
+id: text
+label: Text
+icon_uuid: null
+icon_default: null
+description: 'A <em>text paragraph</em> provides a Wysiwyg for content creation.'
+behavior_plugins: {  }

@@ -23,7 +23,13 @@
         "drupal/core-recommended": "9.4.5",
         "drupal/decoupled_router": "2.0.3",
         "drupal/druxt": "^1.1.1",
+        "drupal/geshifilter": "^2.0@beta",
+        "drupal/gin": "^3.0@beta",
+        "drupal/gin_login": "^1.2",
+        "drupal/gin_toolbar": "^1.0@beta",
         "drupal/jsonapi_hypermedia": "^1.8",
+        "drupal/jsonapi_node_preview_tab": "^1.0@beta",
+        "drupal/layout_paragraphs": "^2.0@beta",
         "drupal/simple_oauth": "^5.2",
         "drupal/tome": "^1.7",
         "drush/drush": "^11.1"

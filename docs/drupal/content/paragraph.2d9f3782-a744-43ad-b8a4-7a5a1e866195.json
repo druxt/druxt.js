@@ -1,0 +1,52 @@
+{
+    "uuid": [
+        {
+            "value": "2d9f3782-a744-43ad-b8a4-7a5a1e866195"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "text",
+            "target_type": "paragraphs_type",
+            "target_uuid": "b8f453b4-eafc-4858-9c61-04a9747f37ac"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-26T00:39:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": "3cb4149a-0692-4525-bf53-f5453fc6abe9",
+                    "region": "content"
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "field_text": [
+        {
+            "value": "<p>See the <a href=\"\/api\/packages\/druxt\/client\">API documentation<\/a> for more details.<\/p>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+uuid: ed1278f8-3a61-45a3-8933-e8728276866f
+langcode: en
+status: true
+dependencies:
+  module:
+    - layout_paragraphs
+id: section
+label: Section
+icon_uuid: null
+icon_default: null
+description: 'A <em>section paragraph</em> is used for content layout.'
+behavior_plugins:
+  layout_paragraphs:
+    enabled: true
+    available_layouts:
+      layout_onecol: 'One column'
+      layout_twocol_section: 'Two column'
+      layout_threecol_section: 'Three column'
+      layout_fourcol_section: 'Four column'

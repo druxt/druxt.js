@@ -1,0 +1,33 @@
+uuid: fc8d4a17-ccc3-4aae-93df-1656a11fa946
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.code.field_code
+    - field.field.paragraph.code.field_text
+    - paragraphs.paragraphs_type.code
+  module:
+    - geshifield
+    - text
+id: paragraph.code.default
+targetEntityType: paragraph
+bundle: code
+mode: default
+content:
+  field_code:
+    type: geshifield_default
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_text:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

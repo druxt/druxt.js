@@ -1,0 +1,21 @@
+uuid: 0320c037-59d4-44f3-81a0-8971e07f3af3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_code
+    - paragraphs.paragraphs_type.code
+  module:
+    - geshifield
+id: paragraph.code.field_code
+field_name: field_code
+entity_type: paragraph
+bundle: code
+label: Code
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: geshifield

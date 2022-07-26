@@ -1,0 +1,32 @@
+uuid: a48ed065-fa45-4169-83a8-6b2ef8341859
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_content
+    - node.type.advanced_page
+  module:
+    - entity_reference_revisions
+id: node.advanced_page.field_content
+field_name: field_content
+entity_type: node
+bundle: advanced_page
+label: Content
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles: null
+    negate: 1
+    target_bundles_drag_drop:
+      section:
+        weight: 2
+        enabled: false
+      text:
+        weight: 4
+        enabled: false
+field_type: entity_reference_revisions

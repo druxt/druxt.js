@@ -1,0 +1,62 @@
+{
+    "uuid": [
+        {
+            "value": "89434393-0280-4695-9af4-ea953a8af64e"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "code",
+            "target_type": "paragraphs_type",
+            "target_uuid": "f2daf453-d8e9-4c5e-a4dd-68e2921e29e6"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-26T01:29:52+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": "79dfe8bc-8829-4647-a80a-2c729f69192b",
+                    "region": "content"
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "field_code": [
+        {
+            "sourcecode": "\/\/ Get a collection of recipes.\r\ndruxt.getCollection('node--recipe').then(collection => {\r\n  \/\/ Do the thing.\r\n})\r\n\r\n\/\/ Get the first 5 recipes.\r\ndruxt.getCollection('node--recipe', 'page[limit]=5').then(collection => {\r\n  \/\/ Do the thing.\r\n})\r\n\r\n\/\/ Get the first 5 recipes in spanish.\r\ndruxt.getCollection(\r\n  'node--recipe',\r\n  'page[limit]=5',\r\n  'es'\r\n).then(collection => {\r\n  \/\/ Do the thing.\r\n})\r\n",
+            "language": "javascript"
+        }
+    ],
+    "field_text": [
+        {
+            "value": "<p>The <strong>getCollection<\/strong> method requires the resource type, and has an optional <strong>query<\/strong>&nbsp;and <strong>prefix<\/strong> parameter.<\/p>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

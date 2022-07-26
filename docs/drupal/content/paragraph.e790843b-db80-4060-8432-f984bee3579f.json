@@ -1,0 +1,62 @@
+{
+    "uuid": [
+        {
+            "value": "e790843b-db80-4060-8432-f984bee3579f"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "code",
+            "target_type": "paragraphs_type",
+            "target_uuid": "f2daf453-d8e9-4c5e-a4dd-68e2921e29e6"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-26T01:31:09+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": "9591fc1f-03a7-40ec-9ea1-f65f95a13409",
+                    "region": "content"
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "field_code": [
+        {
+            "sourcecode": "\/\/ Get all recipes.\r\ndruxt.getCollectionAll('node--recipe').then(collections => {\r\n  for (i in collections) {\r\n    const collection = collections[i]\r\n    for (j in collection.data) {\r\n      const resource = collection.data[j]\r\n      \/\/ Do the thing.\r\n    }\r\n  }\r\n})",
+            "language": "javascript"
+        }
+    ],
+    "field_text": [
+        {
+            "value": "<p>The <strong>getCollectionAll<\/strong> takes the same parameters as the <strong>getCollection<\/strong> method, and will return an array of all collections.<\/p>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

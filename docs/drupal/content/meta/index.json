@@ -946,5 +946,32 @@
     "user.b8245fe3-b0e8-4300-89e9-733dc6c4a52b": [],
     "consumer.1a6b8816-26de-4b70-bcdf-919600542f03": [
         "user.1bc973b1-4bee-403f-8f76-52387c936207"
-    ]
+    ],
+    "paragraph.ba3476d1-7e55-4528-869a-31c88d692316": [],
+    "paragraph.6af1c1c9-5844-4139-afe4-6c1aae263b7e": [],
+    "node.d217d49f-7b77-4786-8295-2ebb882c2e81": [
+        "user.1bc973b1-4bee-403f-8f76-52387c936207",
+        "paragraph.ba3476d1-7e55-4528-869a-31c88d692316",
+        "paragraph.6af1c1c9-5844-4139-afe4-6c1aae263b7e",
+        "paragraph.3cb4149a-0692-4525-bf53-f5453fc6abe9",
+        "paragraph.85612c18-7716-48a3-8062-a49b5d86c5e0",
+        "paragraph.4096b21a-e6ff-408c-b3c2-78d1574bbbf4",
+        "paragraph.2d9f3782-a744-43ad-b8a4-7a5a1e866195",
+        "paragraph.656af6ff-5756-47a4-87fb-8708a3642536",
+        "paragraph.c0517f6d-a643-46f3-a48e-e538fe6e3d1b",
+        "paragraph.79dfe8bc-8829-4647-a80a-2c729f69192b",
+        "paragraph.89434393-0280-4695-9af4-ea953a8af64e",
+        "paragraph.9591fc1f-03a7-40ec-9ea1-f65f95a13409",
+        "paragraph.e790843b-db80-4060-8432-f984bee3579f"
+    ],
+    "paragraph.3cb4149a-0692-4525-bf53-f5453fc6abe9": [],
+    "paragraph.85612c18-7716-48a3-8062-a49b5d86c5e0": [],
+    "paragraph.4096b21a-e6ff-408c-b3c2-78d1574bbbf4": [],
+    "paragraph.2d9f3782-a744-43ad-b8a4-7a5a1e866195": [],
+    "paragraph.656af6ff-5756-47a4-87fb-8708a3642536": [],
+    "paragraph.c0517f6d-a643-46f3-a48e-e538fe6e3d1b": [],
+    "paragraph.79dfe8bc-8829-4647-a80a-2c729f69192b": [],
+    "paragraph.89434393-0280-4695-9af4-ea953a8af64e": [],
+    "paragraph.9591fc1f-03a7-40ec-9ea1-f65f95a13409": [],
+    "paragraph.e790843b-db80-4060-8432-f984bee3579f": []
 }

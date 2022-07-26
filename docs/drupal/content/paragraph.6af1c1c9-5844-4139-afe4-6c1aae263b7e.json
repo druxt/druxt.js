@@ -1,0 +1,52 @@
+{
+    "uuid": [
+        {
+            "value": "6af1c1c9-5844-4139-afe4-6c1aae263b7e"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "text",
+            "target_type": "paragraphs_type",
+            "target_uuid": "b8f453b4-eafc-4858-9c61-04a9747f37ac"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-26T00:28:23+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": "ba3476d1-7e55-4528-869a-31c88d692316",
+                    "region": "content"
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "field_text": [
+        {
+            "value": "<p>The <strong>DruxtClient<\/strong> is the communication layer between Nuxt and the Drupal JSON:API.<\/p>\r\n\r\n<p>It provides methods to get JSON:API Resources and Collection of resources from the Drupal server using the <a href=\"https:\/\/www.npmjs.com\/package\/axios\">Axios<\/a>&nbsp;library.<\/p>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

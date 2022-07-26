@@ -1,0 +1,55 @@
+{
+    "uuid": [
+        {
+            "value": "656af6ff-5756-47a4-87fb-8708a3642536"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "section",
+            "target_type": "paragraphs_type",
+            "target_uuid": "ed1278f8-3a61-45a3-8933-e8728276866f"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-26T00:40:31+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "layout": "layout_onecol",
+                    "config": {
+                        "label": ""
+                    },
+                    "parent_uuid": null,
+                    "region": null
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "field_title": [
+        {
+            "value": "Getting a resource"
+        }
+    ]
+}

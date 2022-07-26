@@ -1,0 +1,59 @@
+{
+    "uuid": [
+        {
+            "value": "9591fc1f-03a7-40ec-9ea1-f65f95a13409"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "section",
+            "target_type": "paragraphs_type",
+            "target_uuid": "ed1278f8-3a61-45a3-8933-e8728276866f"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-26T01:30:16+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "layout": "layout_onecol",
+                    "config": {
+                        "label": ""
+                    },
+                    "parent_uuid": null,
+                    "region": null
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "field_title": [
+        {
+            "value": "Getting all collections of a resource"
+        }
+    ]
+}

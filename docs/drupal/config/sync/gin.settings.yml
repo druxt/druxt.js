@@ -1,0 +1,16 @@
+_core:
+  default_config_hash: UvSCt3S_NldJPFzvhSNOy9vWoPPFhmsmTC12vtVss9s
+preset_accent_color: blue
+preset_focus_color: gin
+enable_darkmode: '0'
+classic_toolbar: vertical
+secondary_toolbar_frontend: true
+logo:
+  use_default: true
+high_contrast_mode: false
+layout_density: default
+show_description_toggle: false
+show_user_theme_settings: false
+third_party_settings:
+  shortcut:
+    module_link: true

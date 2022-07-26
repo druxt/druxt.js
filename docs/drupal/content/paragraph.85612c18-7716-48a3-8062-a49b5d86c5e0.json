@@ -1,0 +1,58 @@
+{
+    "uuid": [
+        {
+            "value": "85612c18-7716-48a3-8062-a49b5d86c5e0"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "code",
+            "target_type": "paragraphs_type",
+            "target_uuid": "f2daf453-d8e9-4c5e-a4dd-68e2921e29e6"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-26T00:38:17+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": "3cb4149a-0692-4525-bf53-f5453fc6abe9",
+                    "region": "content"
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "field_code": [
+        {
+            "sourcecode": "const { DruxtClient } = require('druxt')\r\nconst druxt = new DruxtClient('https:\/\/demo-api.druxtjs.org')",
+            "language": "javascript"
+        }
+    ],
+    "field_text": [
+        {
+            "value": "<p>The Client requires the <strong>baseUrl<\/strong> for your Drupal backend:<\/p>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

@@ -7,6 +7,7 @@ module:
   block_content: 0
   breakpoint: 0
   ckeditor: 0
+  codesnippetgeshi: 0
   color: 0
   config: 0
   config_translation: 0
@@ -21,20 +22,28 @@ module:
   druxt: 0
   dynamic_page_cache: 0
   editor: 0
+  entity_reference_revisions: 0
   field: 0
   field_ui: 0
   file: 0
   filter: 0
+  geshifield: 0
+  geshifilter: 0
+  gin_login: 0
+  gin_toolbar: 0
   help: 0
   history: 0
   image: 0
   jsonapi: 0
+  jsonapi_hypermedia: 0
   jsonapi_menu_items: 0
+  jsonapi_node_preview_tab: 0
   jsonapi_resources: 0
   jsonapi_views: 0
   language: 0
   layout_builder: 0
   layout_discovery: 0
+  layout_paragraphs: 0
   link: 0
   locale: 0
   media: 0
@@ -69,8 +78,11 @@ module:
   workflows: 0
   content_translation: 10
   views: 10
+  paragraphs: 11
   demo_umami: 1000
 theme:
   seven: 0
   umami: 0
+  claro: 0
+  gin: 0
 profile: demo_umami

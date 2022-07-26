@@ -1,0 +1,58 @@
+{
+    "uuid": [
+        {
+            "value": "c0517f6d-a643-46f3-a48e-e538fe6e3d1b"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "code",
+            "target_type": "paragraphs_type",
+            "target_uuid": "f2daf453-d8e9-4c5e-a4dd-68e2921e29e6"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-26T00:41:20+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": "656af6ff-5756-47a4-87fb-8708a3642536",
+                    "region": "content"
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "field_code": [
+        {
+            "sourcecode": "\/\/ Get a page.\r\ndruxt.getResource('node--page', 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd').then(resource => {\r\n  \/\/ Do the thing.\r\n})\r\n\r\n\/\/ Get a page's title.\r\ndruxt.getResource(\r\n  'node--page',\r\n  'd8dfd355-7f2f-4fc3-a149-288e4e293bdd',\r\n  'fields[node--page]=title'\r\n).then(resource => {\r\n  \/\/ Do the thing.\r\n})\r\n\r\n\/\/ Get a page in Spanish.\r\ndruxt.getResource(\r\n  'node--page',\r\n  'd8dfd355-7f2f-4fc3-a149-288e4e293bdd'\r\n  undefined,\r\n  'es'\r\n).then(resource => {\r\n  \/\/ Do the thing.\r\n})",
+            "language": "javascript"
+        }
+    ],
+    "field_text": [
+        {
+            "value": "<p>The <strong>getResource<\/strong> method requires the resource <strong>type<\/strong> and <strong>id<\/strong>, and has an optional <strong>query<\/strong>&nbsp;and <strong>prefix<\/strong>&nbsp;parameter.<\/p>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}
