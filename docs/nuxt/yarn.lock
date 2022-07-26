@@ -9392,7 +9392,7 @@ __metadata:
     druxt-site: ^0.12.1
     nuxt: 2.15.8
     nuxt-social-meta: 1.0.0
-    vue-server-renderer: 2.7.8
+    vue: 2.6.14
   languageName: unknown
   linkType: soft
 
@@ -11995,15 +11995,6 @@ fsevents@^1.2.7:
   dependencies:
     has: ^1.0.3
   checksum: 183b3b96fed19822b13959876b0317e61fc2cb5ebcbc21639904c81f7ae328af57f8e18cc4750a9c4abebd686130c70d34a89521e57dbe002edfa4614507ce18
-  languageName: node
-  linkType: hard
-
-"is-core-module@npm:^2.9.0":
-  version: 2.9.0
-  resolution: "is-core-module@npm:2.9.0"
-  dependencies:
-    has: ^1.0.3
-  checksum: b27034318b4b462f1c8f1dfb1b32baecd651d891a4e2d1922135daeff4141dfced2b82b07aef83ef54275c4a3526aa38da859223664d0868ca24182badb784ce
   languageName: node
   linkType: hard
 
@@ -15167,7 +15158,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"path-parse@npm:^1.0.6, path-parse@npm:^1.0.7":
+"path-parse@npm:^1.0.6":
   version: 1.0.7
   resolution: "path-parse@npm:1.0.7"
   checksum: 49abf3d81115642938a8700ec580da6e830dde670be21893c62f4e10bd7dd4c3742ddc603fe24f898cba7eb0c6bc1777f8d9ac14185d34540c6d4d80cd9cae8a
@@ -17705,19 +17696,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"resolve@npm:^1.22.0":
-  version: 1.22.1
-  resolution: "resolve@npm:1.22.1"
-  dependencies:
-    is-core-module: ^2.9.0
-    path-parse: ^1.0.7
-    supports-preserve-symlinks-flag: ^1.0.0
-  bin:
-    resolve: bin/resolve
-  checksum: 07af5fc1e81aa1d866cbc9e9460fbb67318a10fa3c4deadc35c3ad8a898ee9a71a86a65e4755ac3195e0ea0cfbe201eb323ebe655ce90526fd61917313a34e4e
-  languageName: node
-  linkType: hard
-
 "resolve@patch:resolve@^1.1.7#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.12.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.15.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.19.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.2.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.20.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.3.2#~builtin<compat/resolve>":
   version: 1.20.0
   resolution: "resolve@patch:resolve@npm%3A1.20.0#~builtin<compat/resolve>::version=1.20.0&hash=07638b"
@@ -17725,19 +17703,6 @@ fsevents@^1.2.7:
     is-core-module: ^2.2.0
     path-parse: ^1.0.6
   checksum: a0dd7d16a8e47af23afa9386df2dff10e3e0debb2c7299a42e581d9d9b04d7ad5d2c53f24f1e043f7b3c250cbdc71150063e53d0b6559683d37f790b7c8c3cd5
-  languageName: node
-  linkType: hard
-
-"resolve@patch:resolve@^1.22.0#~builtin<compat/resolve>":
-  version: 1.22.1
-  resolution: "resolve@patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=07638b"
-  dependencies:
-    is-core-module: ^2.9.0
-    path-parse: ^1.0.7
-    supports-preserve-symlinks-flag: ^1.0.0
-  bin:
-    resolve: bin/resolve
-  checksum: 5656f4d0bedcf8eb52685c1abdf8fbe73a1603bb1160a24d716e27a57f6cecbe2432ff9c89c2bd57542c3a7b9d14b1882b73bfe2e9d7849c9a4c0b8b39f02b8b
   languageName: node
   linkType: hard
 
@@ -18123,15 +18088,6 @@ fsevents@^1.2.7:
   dependencies:
     randombytes: ^2.1.0
   checksum: bb45a427690c3d2711e28499de0fbf25036af1e23c63c6a9237ed0aa572fd0941fcdefe50a2dccf26d9df8c8b86ae38659e19d8ba7afd3fbc1f1c7539a2a48d2
-  languageName: node
-  linkType: hard
-
-"serialize-javascript@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "serialize-javascript@npm:6.0.0"
-  dependencies:
-    randombytes: ^2.1.0
-  checksum: 56f90b562a1bdc92e55afb3e657c6397c01a902c588c0fe3d4c490efdcc97dcd2a3074ba12df9e94630f33a5ce5b76a74784a7041294628a6f4306e0ec84bf93
   languageName: node
   linkType: hard
 
@@ -19038,13 +18994,6 @@ fsevents@^1.2.7:
   dependencies:
     has-flag: ^4.0.0
   checksum: 3dda818de06ebbe5b9653e07842d9479f3555ebc77e9a0280caf5a14fb877ffee9ed57007c3b78f5a6324b8dbeec648d9e97a24e2ed9fdb81ddc69ea07100f4a
-  languageName: node
-  linkType: hard
-
-"supports-preserve-symlinks-flag@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
-  checksum: 53b1e247e68e05db7b3808b99b892bd36fb096e6fba213a06da7fab22045e97597db425c724f2bbd6c99a3c295e1e73f3e4de78592289f38431049e1277ca0ae
   languageName: node
   linkType: hard
 
@@ -20278,22 +20227,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"vue-server-renderer@npm:2.7.8":
-  version: 2.7.8
-  resolution: "vue-server-renderer@npm:2.7.8"
-  dependencies:
-    chalk: ^4.1.2
-    hash-sum: ^2.0.0
-    he: ^1.2.0
-    lodash.template: ^4.5.0
-    lodash.uniq: ^4.5.0
-    resolve: ^1.22.0
-    serialize-javascript: ^6.0.0
-    source-map: 0.5.6
-  checksum: b56d98d1bfa52c980068a53d5f0a21293c1083536d0306bc49ea894c9055c55167600a694828d5694abe3ffe240963b58261a562cd4d94f16daa2fc98fcf1d67
-  languageName: node
-  linkType: hard
-
 "vue-server-renderer@npm:^2.6.12":
   version: 2.6.14
   resolution: "vue-server-renderer@npm:2.6.14"
@@ -20337,7 +20270,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"vue@npm:^2.6.12":
+"vue@npm:2.6.14, vue@npm:^2.6.12":
   version: 2.6.14
   resolution: "vue@npm:2.6.14"
   checksum: 23524a1bdca094d62cb3491a46317eed75184b5d61d28fa846ea5d2b241c1cc7084fc67ee259d47a50a6d0bbc33ecaceb7bb52bff81312fe7da07263f3419942
