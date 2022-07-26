@@ -1,3 +1,7 @@
+const baseUrl = process.env.GITPOD_WORKSPACE_ID
+  ? `https://8080-${process.env.GITPOD_WORKSPACE_ID}.${process.env.GITPOD_WORKSPACE_CLUSTER_HOST}`
+  : process.env.BASE_URL || 'http://druxtjs.ddev.site'
+
 export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
@@ -53,7 +57,13 @@ export default {
       twitter: '@DruxtJS',
       twitter_card: 'summary_large_image',
     }],
+    'druxt-site',
   ],
+
+  // DruxtJS configuration.
+  druxt: {
+    baseUrl
+  },
 
   // Content module configuration: https://go.nuxtjs.dev/config-content
   content: {},
