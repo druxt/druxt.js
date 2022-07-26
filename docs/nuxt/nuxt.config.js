@@ -58,11 +58,17 @@ export default {
       twitter_card: 'summary_large_image',
     }],
     'druxt-site',
+    'druxt-layout-paragraphs',
   ],
 
   // DruxtJS configuration.
   druxt: {
-    baseUrl
+    baseUrl,
+    entity: {
+      components: {
+        fields: false,
+      }
+    }
   },
 
   // Content module configuration: https://go.nuxtjs.dev/config-content

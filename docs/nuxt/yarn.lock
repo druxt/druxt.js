@@ -2782,6 +2782,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@highlightjs/vue-plugin@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@highlightjs/vue-plugin@npm:1.0.2"
+  dependencies:
+    highlight.js: ^10.7.2
+  checksum: 4f5cde40a54794e3390f75c9b7ce8afa8460981fc6658c776a542a26dbf0778150f92aaa206b2b0537a3da8efaa6e35f5b8f9ed993ed9380643b22a35f3ffb1f
+  languageName: node
+  linkType: hard
+
 "@istanbuljs/load-nyc-config@npm:^1.0.0":
   version: 1.1.0
   resolution: "@istanbuljs/load-nyc-config@npm:1.1.0"
@@ -9243,6 +9252,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"druxt-layout-paragraphs@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "druxt-layout-paragraphs@npm:0.3.0"
+  checksum: a7842a9aa5044c761adf64f4c51da07a185a424328dcdda2444e99ec79ed7ec4debec3e167b4d03b8058e2d3aea64d82cf1d7d13ece42cadd26da021354d81ed
+  languageName: node
+  linkType: hard
+
 "druxt-menu@npm:^0.17.1":
   version: 0.17.1
   resolution: "druxt-menu@npm:0.17.1"
@@ -9380,6 +9396,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxtjs-org@workspace:."
   dependencies:
+    "@highlightjs/vue-plugin": 1.0.2
     "@nuxt/content": 1.15.1
     "@nuxt/postcss8": 1.1.3
     "@nuxtjs/google-analytics": 2.4.0
@@ -9389,6 +9406,7 @@ __metadata:
     "@tailwindcss/typography": 0.4.1
     core-js: 3.25.1
     daisyui: 1.25.4
+    druxt-layout-paragraphs: ^0.3.0
     druxt-site: ^0.12.1
     nuxt: 2.15.8
     nuxt-social-meta: 1.0.0
@@ -11269,7 +11287,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"highlight.js@npm:^10.1.1, highlight.js@npm:~10.7.0":
+"highlight.js@npm:^10.1.1, highlight.js@npm:^10.7.2, highlight.js@npm:~10.7.0":
   version: 10.7.3
   resolution: "highlight.js@npm:10.7.3"
   checksum: defeafcd546b535d710d8efb8e650af9e3b369ef53e28c3dc7893eacfe263200bba4c5fcf43524ae66d5c0c296b1af0870523ceae3e3104d24b7abf6374a4fea
