@@ -4,15 +4,18 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "start": "nuxt start",
-    "storybook": "nuxt storybook"
+    "storybook": "nuxt storybook",
+    "test:cypress": "npx cypress run --project test",
+    "test:cypress:open": "npx cypress open --project test"
   },
   "dependencies": {
-    "druxt-site": "link:../../../packages/druxt-site",
+    "druxt-site": "link:../../packages/druxt-site",
     "nuxt": "latest"
   },
   "devDependencies": {
     "@nuxt/postcss8": "latest",
     "@nuxtjs/storybook": "latest",
+    "cypress": "^10.3.0",
     "postcss": "latest"
   }
 }
