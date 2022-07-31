@@ -6,8 +6,9 @@ dependencies:
     - menu_ui
 third_party_settings:
   menu_ui:
-    available_menus: {  }
-    parent: ''
+    available_menus:
+      - druxtjs-org-menu
+    parent: 'druxtjs-org-menu:'
 name: 'Advanced page'
 type: advanced_page
 description: 'Use <en>advanced pages</en> for your structure, paragraphs based content, such as a Guide or Tutorial page.'

@@ -1,0 +1,8 @@
+uuid: 56c67b31-2dff-4425-9e75-03b22595445b
+langcode: en
+status: true
+dependencies: {  }
+id: druxtjs-org-menu
+label: 'DruxtJS.org documentation menu'
+description: 'Primary navigation for the DruxtJS.org documentation website'
+locked: false
