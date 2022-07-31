@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.advanced_page.field_content
+    - field.field.node.advanced_page.field_section
     - node.type.advanced_page
   module:
     - user
@@ -20,4 +21,5 @@ content:
     region: content
 hidden:
   field_content: true
+  field_section: true
   langcode: true

@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.advanced_page.field_content
+    - field.field.node.advanced_page.field_section
     - node.type.advanced_page
   module:
     - layout_paragraphs
@@ -20,12 +21,13 @@ content:
       view_mode: default
       link: ''
     third_party_settings: {  }
-    weight: 101
+    weight: 1
     region: content
   links:
     settings: {  }
     third_party_settings: {  }
-    weight: 100
+    weight: 0
     region: content
 hidden:
+  field_section: true
   langcode: true

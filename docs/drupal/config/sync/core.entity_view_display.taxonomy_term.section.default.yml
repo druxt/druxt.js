@@ -1,0 +1,22 @@
+uuid: b2276818-3bfe-474c-949c-8ba242a07dca
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.section
+  module:
+    - text
+id: taxonomy_term.section.default
+targetEntityType: taxonomy_term
+bundle: section
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  langcode: true

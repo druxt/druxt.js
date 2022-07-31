@@ -9,6 +9,7 @@ dependencies:
     - druxt
     - filter
     - media
+    - paragraphs_type_permissions
     - search
     - system
 _core:
@@ -24,3 +25,6 @@ permissions:
   - 'search content'
   - 'use text format restricted_html'
   - 'view media'
+  - 'view paragraph content code'
+  - 'view paragraph content section'
+  - 'view paragraph content text'

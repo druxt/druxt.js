@@ -1,16 +1,27 @@
 _core:
   default_config_hash: UvSCt3S_NldJPFzvhSNOy9vWoPPFhmsmTC12vtVss9s
+favicon:
+  mimetype: image/vnd.microsoft.icon
+  path: core/profiles/demo_umami/themes/umami/favicon.ico
+  use_default: false
+features:
+  comment_user_picture: true
+  comment_user_verification: true
+  favicon: true
+  node_user_picture: true
+logo:
+  use_default: true
+third_party_settings:
+  shortcut:
+    module_link: true
 preset_accent_color: blue
 preset_focus_color: gin
 enable_darkmode: '0'
 classic_toolbar: vertical
 secondary_toolbar_frontend: true
-logo:
-  use_default: true
 high_contrast_mode: false
+accent_color: ''
+focus_color: ''
 layout_density: default
 show_description_toggle: false
 show_user_theme_settings: false
-third_party_settings:
-  shortcut:
-    module_link: true

@@ -18,6 +18,7 @@
         "composer/installers": "^2.2",
         "cweagans/composer-patches": "^1.7",
         "drupal-tome/tome_drush": "dev-master",
+        "drupal/coffee": "^1.2",
         "drupal/core-composer-scaffold": "9.4.5",
         "drupal/core-project-message": "9.4.5",
         "drupal/core-recommended": "9.4.5",
@@ -30,6 +31,7 @@
         "drupal/jsonapi_hypermedia": "^1.8",
         "drupal/jsonapi_node_preview_tab": "^1.0@beta",
         "drupal/layout_paragraphs": "^2.0@beta",
+        "drupal/pathauto": "^1.10",
         "drupal/simple_oauth": "^5.2",
         "drupal/tome": "^1.7",
         "drush/drush": "^11.1"
