@@ -962,7 +962,8 @@
         "paragraph.79dfe8bc-8829-4647-a80a-2c729f69192b",
         "paragraph.89434393-0280-4695-9af4-ea953a8af64e",
         "paragraph.9591fc1f-03a7-40ec-9ea1-f65f95a13409",
-        "paragraph.e790843b-db80-4060-8432-f984bee3579f"
+        "paragraph.e790843b-db80-4060-8432-f984bee3579f",
+        "taxonomy_term.053b7196-c242-42cb-b7cf-7bb46d8dd26f"
     ],
     "paragraph.3cb4149a-0692-4525-bf53-f5453fc6abe9": [],
     "paragraph.85612c18-7716-48a3-8062-a49b5d86c5e0": [],
@@ -973,5 +974,33 @@
     "paragraph.79dfe8bc-8829-4647-a80a-2c729f69192b": [],
     "paragraph.89434393-0280-4695-9af4-ea953a8af64e": [],
     "paragraph.9591fc1f-03a7-40ec-9ea1-f65f95a13409": [],
-    "paragraph.e790843b-db80-4060-8432-f984bee3579f": []
+    "paragraph.e790843b-db80-4060-8432-f984bee3579f": [],
+    "taxonomy_term.053b7196-c242-42cb-b7cf-7bb46d8dd26f": [
+        "user.1bc973b1-4bee-403f-8f76-52387c936207"
+    ],
+    "path_alias.3b65075b-d0ed-4cb0-bbba-837098e8fb93": [
+        "node.d217d49f-7b77-4786-8295-2ebb882c2e81"
+    ],
+    "paragraph.23bfb74b-9073-4a43-9436-cc78145f1dd3": [],
+    "paragraph.e387999c-254a-4b25-91b9-f4fc951ce123": [],
+    "paragraph.8bdc8777-1a35-465b-9607-403bad9e60a5": [],
+    "paragraph.5a53e8ec-8824-473a-80f7-d0662259b9a3": [],
+    "paragraph.b9122fd3-b704-4d64-b538-e4fad44e39b8": [],
+    "paragraph.f2318b75-d9e5-4181-94d8-0f10d9fa38af": [],
+    "paragraph.304fa8c8-57cb-4a8e-a998-f3bbfd8fceba": [],
+    "node.1d84bdca-0e3b-4717-81ca-da47c774b803": [
+        "user.1bc973b1-4bee-403f-8f76-52387c936207",
+        "paragraph.23bfb74b-9073-4a43-9436-cc78145f1dd3",
+        "paragraph.e387999c-254a-4b25-91b9-f4fc951ce123",
+        "paragraph.8bdc8777-1a35-465b-9607-403bad9e60a5",
+        "paragraph.5a53e8ec-8824-473a-80f7-d0662259b9a3",
+        "paragraph.b9122fd3-b704-4d64-b538-e4fad44e39b8",
+        "paragraph.f2318b75-d9e5-4181-94d8-0f10d9fa38af",
+        "paragraph.304fa8c8-57cb-4a8e-a998-f3bbfd8fceba",
+        "taxonomy_term.053b7196-c242-42cb-b7cf-7bb46d8dd26f"
+    ],
+    "path_alias.131f798f-e81c-4503-b125-2d50176e7cde": [
+        "node.1d84bdca-0e3b-4717-81ca-da47c774b803"
+    ],
+    "path_alias.04f5ef46-dbeb-42aa-a7c5-f1cc54c8da6a": []
 }

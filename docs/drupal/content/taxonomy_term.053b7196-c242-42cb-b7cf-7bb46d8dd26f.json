@@ -1,0 +1,93 @@
+{
+    "uuid": [
+        {
+            "value": "053b7196-c242-42cb-b7cf-7bb46d8dd26f"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "vid": [
+        {
+            "target_id": "section",
+            "target_type": "taxonomy_vocabulary",
+            "target_uuid": "a4ebbf3c-7703-482f-9056-4858ead97a36"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2022-07-26T03:22:21+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "name": [
+        {
+            "value": "Guide"
+        }
+    ],
+    "description": [],
+    "weight": [
+        {
+            "value": 0
+        }
+    ],
+    "parent": [
+        {
+            "target_id": null
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-07-31T07:24:45+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/sections\/guide",
+            "langcode": "en",
+            "pathauto": 0
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "content_translation_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "1bc973b1-4bee-403f-8f76-52387c936207"
+        }
+    ],
+    "content_translation_created": [
+        {
+            "value": "2022-07-26T03:22:21+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ]
+}

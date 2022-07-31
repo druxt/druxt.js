@@ -1,0 +1,52 @@
+{
+    "uuid": [
+        {
+            "value": "5a53e8ec-8824-473a-80f7-d0662259b9a3"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "text",
+            "target_type": "paragraphs_type",
+            "target_uuid": "b8f453b4-eafc-4858-9c61-04a9747f37ac"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-31T07:16:48+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": "8bdc8777-1a35-465b-9607-403bad9e60a5",
+                    "region": "content"
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "field_text": [
+        {
+            "value": "<h2>Make Druxt work for you:<\/h2>\r\n\r\n<ul>\r\n\t<li>If you want to build a fully decoupled Drupal site, see <a href=\"\/modules\/site\/getting-started\">Getting started with DruxtSite<\/a>.<\/li>\r\n\t<li>If you want to build a Nuxt application with Druxt modules, see <a href=\"\/guide\/getting-started\">Getting&nbsp;started with Druxt<\/a>.<\/li>\r\n\t<li>If you want to use Druxt internals in your Node application, check out the <a href=\"\/api\">API Documentation<\/a>.<\/li>\r\n<\/ul>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

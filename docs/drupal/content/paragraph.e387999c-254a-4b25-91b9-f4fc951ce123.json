@@ -1,0 +1,52 @@
+{
+    "uuid": [
+        {
+            "value": "e387999c-254a-4b25-91b9-f4fc951ce123"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "text",
+            "target_type": "paragraphs_type",
+            "target_uuid": "b8f453b4-eafc-4858-9c61-04a9747f37ac"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-31T07:13:24+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": "23bfb74b-9073-4a43-9436-cc78145f1dd3",
+                    "region": "content"
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "field_text": [
+        {
+            "value": "<h2>What is Druxt?<\/h2>\r\n\r\n<p>Druxt is a framework for building Fully Decoupled Drupal and Nuxt.js applications and sites. It allows you to leverage the content modelling and management power of Drupal, and build elegant user experiences with Nuxt.js.<\/p>\r\n\r\n<blockquote>\r\n<p>TL;DR: Druxt = DRUpal + nUXT.<\/p>\r\n<\/blockquote>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

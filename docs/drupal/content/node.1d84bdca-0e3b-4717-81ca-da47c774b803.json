@@ -1,7 +1,7 @@
 {
     "uuid": [
         {
-            "value": "d217d49f-7b77-4786-8295-2ebb882c2e81"
+            "value": "1d84bdca-0e3b-4717-81ca-da47c774b803"
         }
     ],
     "langcode": [
@@ -18,7 +18,7 @@
     ],
     "revision_timestamp": [
         {
-            "value": "2022-07-26T03:57:10+00:00",
+            "value": "2022-07-31T07:26:50+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -42,18 +42,18 @@
     ],
     "title": [
         {
-            "value": "JSON:API Client"
+            "value": "DruxtJS"
         }
     ],
     "created": [
         {
-            "value": "2022-07-26T00:26:52+00:00",
+            "value": "2022-07-31T07:12:04+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
     "changed": [
         {
-            "value": "2022-07-26T03:57:10+00:00",
+            "value": "2022-07-31T07:26:50+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -76,7 +76,7 @@
     "moderation_state": [],
     "path": [
         {
-            "alias": "\/guide\/client",
+            "alias": "\/guide",
             "langcode": "en",
             "pathauto": 0
         }
@@ -94,51 +94,31 @@
     "field_content": [
         {
             "target_type": "paragraph",
-            "target_uuid": "ba3476d1-7e55-4528-869a-31c88d692316"
+            "target_uuid": "23bfb74b-9073-4a43-9436-cc78145f1dd3"
         },
         {
             "target_type": "paragraph",
-            "target_uuid": "6af1c1c9-5844-4139-afe4-6c1aae263b7e"
+            "target_uuid": "e387999c-254a-4b25-91b9-f4fc951ce123"
         },
         {
             "target_type": "paragraph",
-            "target_uuid": "3cb4149a-0692-4525-bf53-f5453fc6abe9"
+            "target_uuid": "8bdc8777-1a35-465b-9607-403bad9e60a5"
         },
         {
             "target_type": "paragraph",
-            "target_uuid": "85612c18-7716-48a3-8062-a49b5d86c5e0"
+            "target_uuid": "5a53e8ec-8824-473a-80f7-d0662259b9a3"
         },
         {
             "target_type": "paragraph",
-            "target_uuid": "4096b21a-e6ff-408c-b3c2-78d1574bbbf4"
+            "target_uuid": "b9122fd3-b704-4d64-b538-e4fad44e39b8"
         },
         {
             "target_type": "paragraph",
-            "target_uuid": "2d9f3782-a744-43ad-b8a4-7a5a1e866195"
+            "target_uuid": "f2318b75-d9e5-4181-94d8-0f10d9fa38af"
         },
         {
             "target_type": "paragraph",
-            "target_uuid": "656af6ff-5756-47a4-87fb-8708a3642536"
-        },
-        {
-            "target_type": "paragraph",
-            "target_uuid": "c0517f6d-a643-46f3-a48e-e538fe6e3d1b"
-        },
-        {
-            "target_type": "paragraph",
-            "target_uuid": "79dfe8bc-8829-4647-a80a-2c729f69192b"
-        },
-        {
-            "target_type": "paragraph",
-            "target_uuid": "89434393-0280-4695-9af4-ea953a8af64e"
-        },
-        {
-            "target_type": "paragraph",
-            "target_uuid": "9591fc1f-03a7-40ec-9ea1-f65f95a13409"
-        },
-        {
-            "target_type": "paragraph",
-            "target_uuid": "e790843b-db80-4060-8432-f984bee3579f"
+            "target_uuid": "304fa8c8-57cb-4a8e-a998-f3bbfd8fceba"
         }
     ],
     "field_section": [

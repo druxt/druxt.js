@@ -42,11 +42,7 @@
             "value": true
         }
     ],
-    "revision_translation_affected": [
-        {
-            "value": true
-        }
-    ],
+    "revision_translation_affected": [],
     "field_code": [
         {
             "sourcecode": "\/\/ Get a collection of recipes.\r\ndruxt.getCollection('node--recipe').then(collection => {\r\n  \/\/ Do the thing.\r\n})\r\n\r\n\/\/ Get the first 5 recipes.\r\ndruxt.getCollection('node--recipe', 'page[limit]=5').then(collection => {\r\n  \/\/ Do the thing.\r\n})\r\n\r\n\/\/ Get the first 5 recipes in spanish.\r\ndruxt.getCollection(\r\n  'node--recipe',\r\n  'page[limit]=5',\r\n  'es'\r\n).then(collection => {\r\n  \/\/ Do the thing.\r\n})\r\n",

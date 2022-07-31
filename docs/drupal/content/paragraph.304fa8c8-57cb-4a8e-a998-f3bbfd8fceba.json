@@ -1,7 +1,7 @@
 {
     "uuid": [
         {
-            "value": "9591fc1f-03a7-40ec-9ea1-f65f95a13409"
+            "value": "304fa8c8-57cb-4a8e-a998-f3bbfd8fceba"
         }
     ],
     "langcode": [
@@ -11,9 +11,9 @@
     ],
     "type": [
         {
-            "target_id": "section",
+            "target_id": "text",
             "target_type": "paragraphs_type",
-            "target_uuid": "ed1278f8-3a61-45a3-8933-e8728276866f"
+            "target_uuid": "b8f453b4-eafc-4858-9c61-04a9747f37ac"
         }
     ],
     "status": [
@@ -23,7 +23,7 @@
     ],
     "created": [
         {
-            "value": "2022-07-26T01:30:16+00:00",
+            "value": "2022-07-31T07:18:24+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -31,10 +31,6 @@
         {
             "value": {
                 "layout_paragraphs": {
-                    "layout": "layout_onecol",
-                    "config": {
-                        "label": ""
-                    },
                     "parent_uuid": null,
                     "region": null
                 }
@@ -47,9 +43,10 @@
         }
     ],
     "revision_translation_affected": [],
-    "field_title": [
+    "field_text": [
         {
-            "value": "Getting all collections of a resource"
+            "value": "<blockquote>\r\n<p>Druxt is like a Vue.js theme layer for Drupal.<\/p>\r\n<\/blockquote>\r\n\r\n<p>Druxt components can be themed using&nbsp;<strong>Wrapper components<\/strong>&nbsp;alongside Vue.js&nbsp;<strong>slots<\/strong>,&nbsp;<strong>$attrs<\/strong>&nbsp;and&nbsp;<strong>props<\/strong>.<\/p>\r\n\r\n<ul>\r\n\t<li>For more details, see the&nbsp;<a href=\"\/guide\/theming\">Theming guide<\/a>.<\/li>\r\n<\/ul>\r\n",
+            "format": "basic_html"
         }
     ]
 }

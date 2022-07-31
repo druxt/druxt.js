@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "131f798f-e81c-4503-b125-2d50176e7cde"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/1d84bdca-0e3b-4717-81ca-da47c774b803"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/guide"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

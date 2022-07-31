@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "3b65075b-d0ed-4cb0-bbba-837098e8fb93"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/d217d49f-7b77-4786-8295-2ebb882c2e81"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/guide\/client"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

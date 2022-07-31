@@ -1,0 +1,52 @@
+{
+    "uuid": [
+        {
+            "value": "f2318b75-d9e5-4181-94d8-0f10d9fa38af"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "text",
+            "target_type": "paragraphs_type",
+            "target_uuid": "b8f453b4-eafc-4858-9c61-04a9747f37ac"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-07-31T07:17:45+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": "b9122fd3-b704-4d64-b538-e4fad44e39b8",
+                    "region": "content"
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "field_text": [
+        {
+            "value": "<p>Druxt is built on two frameworks, Drupal and Nuxt.js, both with their own modules which can be used alongside Druxt modules.<\/p>\r\n\r\n<p>Druxt modules provide Nuxt modules, plugins, components and more to bridge the gap and make Decoupled development easier.<\/p>\r\n\r\n<ul>\r\n\t<li>For Druxt modules, see the&nbsp;<a href=\"\/modules\">Druxt modules list<\/a>.<\/li>\r\n\t<li>For Drupal modules, see the&nbsp;<a href=\"https:\/\/www.drupal.org\/project\/project_module\">Drupal modules list<\/a>.<\/li>\r\n\t<li>For Nuxt modules, see the&nbsp;<a href=\"https:\/\/modules.nuxtjs.org\/\">Nuxt modules list<\/a>.<\/li>\r\n<\/ul>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "04f5ef46-dbeb-42aa-a7c5-f1cc54c8da6a"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/34"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/sections\/guide"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}
