@@ -1002,5 +1002,11 @@
     "path_alias.131f798f-e81c-4503-b125-2d50176e7cde": [
         "node.1d84bdca-0e3b-4717-81ca-da47c774b803"
     ],
-    "path_alias.04f5ef46-dbeb-42aa-a7c5-f1cc54c8da6a": []
+    "path_alias.04f5ef46-dbeb-42aa-a7c5-f1cc54c8da6a": [],
+    "menu_link_content.972602b3-ded9-4e11-92c2-d7ed2e08f86f": [
+        "node.1d84bdca-0e3b-4717-81ca-da47c774b803"
+    ],
+    "menu_link_content.d5227032-11e1-4394-8d70-6ce6e16bd9b0": [
+        "node.d217d49f-7b77-4786-8295-2ebb882c2e81"
+    ]
 }
