@@ -6,10 +6,19 @@ export default {
   generate: { routes: ['/'] },
   telemetry: true,
   buildModules: ['@nuxt/postcss8'],
-  modules: ['druxt-site'],
+  modules: [
+    'druxt-auth',
+    'druxt-site'
+  ],
   druxt: {
     // The baseUrl of the Druxt enabled Drupal JSON:API server.
     baseUrl,
+
+    // DruxtAuth module settings; https://github.com/druxt/druxt-auth
+    auth: {
+      // OAuth consumer ID.
+      clientId: '1a6b8816-26de-4b70-bcdf-919600542f03',
+    },
 
     // Set the JSON:API endpoint, `/jsonapi` by default.
     // endpoint: '/api/v1'
@@ -35,7 +44,7 @@ export default {
     // Druxt proxy settings.
     proxy: {
       // Proxy the JSON:API request via the Nuxt proxy to prevent CORS issues.
-      api: true
+      // api: true
 
       // Proxy the Drupal files system, using `sites/default/files` by default.
       // Disable the proxy, or set a specific site to proxy.
