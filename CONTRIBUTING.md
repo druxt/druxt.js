@@ -29,6 +29,40 @@ If you are able to resolve an issue, or have improvements you would like to prop
 
 * * *
 
+## Example projects
+
+The Druxt monorepo contains a collection of example projects inside the aptly named "examples/" directory.
+
+All projects are connected to the locally built codebase and should be used for testing during development.
+
+All examples use the Drupal instance located @ `docs/drupal` (`cd docs/drupal && ddev start && ddev drupal-install`).
+
+### Custom module
+
+This a a bare bones example of a custom DruxtModule.
+
+`cd examples/custom-module && yarn && yarn dev`
+
+### DruxtSite
+
+This is an example of a basic, un-themed DruxtSite with support for authenticated users.
+
+`yarn example:druxt-site`
+
+### Entity form
+
+A basic contact form example of the DruxtEntityForm component.
+
+`cd examples/entity-form && yarn && yarn dev`
+
+### Node client
+
+A non-Nuxt example, using the DruxtClient in a basic node app.
+
+`cd examples/node-client && yarn && yarn dev`
+
+* * *
+
 ## Development tools
 
 The Druxt repository is setup with tools and automated processes to help with development and to ensure a maintainable project:
