@@ -18,6 +18,7 @@
     "clean:dist": "rimraf packages/*/dist packages/*/nuxt || true",
     "clean:pack": "rimraf packages/*/package.tgz || true",
     "dev": "siroc dev",
+    "example:druxt-site": "cd examples/druxt-site && yarn && yarn dev",
     "lint": "eslint --ext .js,.vue packages/*/src",
     "lint:commit": "commitlint",
     "lint:renovate": "renovate-config-validator",

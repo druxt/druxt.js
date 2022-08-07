@@ -44,7 +44,7 @@ export default {
     // Druxt proxy settings.
     proxy: {
       // Proxy the JSON:API request via the Nuxt proxy to prevent CORS issues.
-      // api: true
+      api: true
 
       // Proxy the Drupal files system, using `sites/default/files` by default.
       // Disable the proxy, or set a specific site to proxy.
