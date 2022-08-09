@@ -24,6 +24,7 @@
         "drupal/decoupled_router": "2.0.3",
         "drupal/druxt": "^1.1.1",
         "drupal/jsonapi_hypermedia": "^1.6",
+        "drupal/simple_oauth": "^5.2",
         "drupal/tome": "^1.6",
         "drush/drush": "^11.0"
     },

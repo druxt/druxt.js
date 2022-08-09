@@ -1,0 +1,16 @@
+#!/bin/bash
+
+## Description: Update Gitpod configuration in Drupal
+## Usage: gitpod-config
+## Example: "ddev gitpod-config"
+
+# Update the Consumer redirect URL.
+drush php-eval '
+$consumer = \Drupal::service("entity.repository")->loadEntityByUuid("consumer", "1a6b8816-26de-4b70-bcdf-919600542f03");
+$consumer->redirect = getenv("OAUTH_CALLBACK") ?: "http://localhost:3000/callback";
+# var_dump($consumer->redirect->value);
+$consumer->save();
+'
+
+# Rebuild cache.
+drush cache:rebuild

@@ -19,8 +19,11 @@ tasks:
       cd $GITPOD_REPO_ROOT/docs/nuxt && yarn
       cd $GITPOD_REPO_ROOT && yarn build:docs
     command: |
+      # Setup Gitpod .env
+      $GITPOD_REPO_ROOT/.gitpod/scripts/env-setup.sh
+
       # Start Drupal
-      cd $GITPOD_REPO_ROOT/docs/drupal && ddev start -y && ddev drush uli
+      cd $GITPOD_REPO_ROOT/docs/drupal && ddev start -y && ddev gitpod-config && ddev drush uli
 
       # Display welcome message
       cd $GITPOD_REPO_ROOT && cat .gitpod/WELCOME.md
