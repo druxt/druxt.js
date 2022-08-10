@@ -38,6 +38,22 @@ describe('DruxtSchema', () => {
     expect(schemas).toMatchSnapshot()
   })
 
+  test('get - mock error', async () => {
+    const mock = {
+      druxt: {
+        checkPermissions: jest.fn(() => { throw new Error('Mock error') }),
+        error: jest.fn((err) => { throw err }),
+        getCollectionAll: jest.fn(async () => ([{}])),
+        getIndex: jest.fn(() => ({})),
+      }
+    }
+    try {
+      await schema.get.call(mock)
+    } catch(err) {
+      expect(err.message).toBe('Mock error')
+    }
+  })
+
   test('getSchema', async () => {
     let config = {
       entityType: 'node',
