@@ -74,18 +74,27 @@ class DruxtSchema {
       ...['view', 'form'].map(async (schemaType) => {
         const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
         const query = new DrupalJsonApiParams().addSort('drupal_internal__id')
-        return (await this.druxt.getCollectionAll(resourceType, query))
-        .map((collection) => 
-          collection.data
-            .filter((data) => !!data.attributes.status)
-            .map((data) => ({
-              entityType: data.attributes.targetEntityType,
-              bundle: data.attributes.bundle,
-              mode: data.attributes.mode,
-              schemaType,
-              filter: this.options.schema.filter,
-              ...index[[data.attributes.targetEntityType, data.attributes.bundle].join('--')]
-            })))
+        const result = await this.druxt.getCollectionAll(resourceType, query)
+
+        // Check permissions.
+        try {
+          result.forEach((collection) => this.druxt.checkPermissions({ data: collection }))
+        } catch(err) {
+          this.druxt.error(err)
+        }
+
+        return result
+          .map((collection) =>
+            collection.data
+              .filter((data) => !!data.attributes.status)
+              .map((data) => ({
+                entityType: data.attributes.targetEntityType,
+                bundle: data.attributes.bundle,
+                mode: data.attributes.mode,
+                schemaType,
+                filter: this.options.schema.filter,
+                ...index[[data.attributes.targetEntityType, data.attributes.bundle].join('--')]
+              })))
       })
     ])).flat(2)
 

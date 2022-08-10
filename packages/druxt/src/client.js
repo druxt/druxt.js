@@ -273,9 +273,6 @@ class DruxtClient {
     try {
       const res = await this.axios.get(url, options)
 
-      // Check that the response hasn't omitted data due to missing permissions.
-      this.checkPermissions(res)
-
       return res
     } catch(err) {
       // Throw formatted error.
