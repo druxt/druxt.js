@@ -20,7 +20,12 @@
 
   })
 
-  it('Create content type and test nodes using jsonapi.', () => {
-    cy.get('@jsonapi')
-  })
+
+
+  // it('Create content type and test nodes using jsonapi.', () => {
+  //   cy.get('@jsonapi')
+  // })
+
+//  /tags/alcohol-free /taxonomy/term/1
+//  /tags/supermercados /taxonomy/term/26
 
