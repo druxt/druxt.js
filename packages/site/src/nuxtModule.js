@@ -17,10 +17,6 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
   const options = {
     baseUrl: moduleOptions.baseUrl,
     ...(this.options || {}).druxt || {},
-    menu: {
-      jsonApiMenuItems: true,
-      ...((this.options || {}).druxt || {}).menu,
-    },
     proxy: {
       api: false,
       files: true,
