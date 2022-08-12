@@ -10735,7 +10735,7 @@ __metadata:
     eslint: 7.32.0
     eslint-junit: 1.0.1
     eslint-plugin-nuxt: 2.0.0
-    eslint-plugin-vue: 7.18.0
+    eslint-plugin-vue: 7.20.0
     husky: 8.0.1
     jest: 27.5.1
     jest-junit: 13.0.0
@@ -11630,17 +11630,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:7.18.0":
-  version: 7.18.0
-  resolution: "eslint-plugin-vue@npm:7.18.0"
+"eslint-plugin-vue@npm:7.20.0":
+  version: 7.20.0
+  resolution: "eslint-plugin-vue@npm:7.20.0"
   dependencies:
     eslint-utils: ^2.1.0
     natural-compare: ^1.4.0
     semver: ^6.3.0
     vue-eslint-parser: ^7.10.0
   peerDependencies:
-    eslint: ^6.2.0 || ^7.0.0 || ^8.0.0-0
-  checksum: 5df7e23478cb1094c5a0918c4239d50126c1770e34d4fb9ad30737b58a9ad33d31dda7d05aad2bc28dc97651a6c34c67f243bd82145ff76b6aea81f5c06345fd
+    eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
+  checksum: 7b724ed8317ce3621cfd94235a68af20ec355fca93092cc09ee73fbffcefa69e3c5202b8035aae8e7457df6924dfe713834ae46dee08acdd9316188c47933956
   languageName: node
   linkType: hard
 
