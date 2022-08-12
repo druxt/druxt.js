@@ -1,5 +1,20 @@
 # druxt-breadcrumb
 
+## 0.16.0
+
+### Minor Changes
+
+- 54c8ece3: Enabled dependencies when only using Nuxt druxt-breadcrumb module.
+- fa5164d4: fix(#538): Fixed issue with multiple Home crumbs on multilingual sites.
+
+### Patch Changes
+
+- fc811db3: Add DruxtModule props to component module stories.
+- Updated dependencies [49b67872]
+  - druxt-router@0.28.0
+  - druxt-blocks@0.16.3
+  - druxt@0.20.0
+
 ## 0.15.1
 
 ### Patch Changes

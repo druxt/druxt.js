@@ -1,5 +1,24 @@
 # druxt-site
 
+## 0.13.0
+
+### Minor Changes
+
+- 2f2a7cce: Added watch for 'theme' prop.
+
+### Patch Changes
+
+- fc811db3: Add DruxtModule props to component module stories.
+- Updated dependencies [49b67872]
+  - druxt-menu@0.18.0
+  - druxt-router@0.28.0
+  - druxt-blocks@0.16.3
+  - druxt-breadcrumb@0.16.0
+  - druxt-entity@0.26.0
+  - druxt-views@0.20.0
+  - druxt@0.20.0
+  - druxt-schema@0.11.0
+
 ## 0.12.1
 
 ### Patch Changes
