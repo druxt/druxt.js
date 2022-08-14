@@ -6,3 +6,4 @@
 
 composer install
 drush -y tome:install
+drush cache:rebuild
