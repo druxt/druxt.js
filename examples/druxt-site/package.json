@@ -4,20 +4,16 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "start": "nuxt start",
-    "storybook": "nuxt storybook",
-    "test:cypress:run": "npx cypress run --project test",
-    "test:cypress:run:mobile": "cypress run --project test --config viewportWidth=375,viewportHeight=667",
-    "test:cypress:open": "npx cypress open --project test",
-    "test:cypress:open:mobile": "cypress open --project test --config viewportWidth=375,viewportHeight=667"
+    "storybook": "nuxt storybook"
   },
   "dependencies": {
-    "druxt-site": "link:../../packages/druxt-site",
+    "druxt-auth": "^0.1.0",
+    "druxt-site": "link:../../../packages/druxt-site",
     "nuxt": "latest"
   },
   "devDependencies": {
     "@nuxt/postcss8": "latest",
     "@nuxtjs/storybook": "latest",
-    "cypress": "^10.3.0",
     "postcss": "latest"
   }
 }

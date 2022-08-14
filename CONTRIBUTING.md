@@ -23,10 +23,43 @@ If you are able to resolve an issue, or have improvements you would like to prop
 
 1. If this a new issue, make sure to open a bug report or feature request.
 2. Fork the repository.
-3. Setup a development environment (see [steps below](#development-environment-setup)).
-4. Make a `feature/#` branch from the `develop` branch.
-5. Make and commit your changes.
-6. Create a Pull request: https://github.com/druxt/druxt.js/compare
+3. Make a `feature/#` branch from the `develop` branch.
+4. Make and commit your changes.
+5. Create a Pull request: https://github.com/druxt/druxt.js/compare
+
+* * *
+
+## Example projects
+
+The Druxt monorepo contains a collection of example projects inside the aptly named "examples/" directory.
+
+All projects are connected to the locally built codebase and should be used for testing during development.
+
+All examples use the Drupal instance located @ `docs/drupal` (`cd docs/drupal && ddev start && ddev drupal-install`).
+
+### Custom module
+
+This a a bare bones example of a custom DruxtModule.
+
+`cd examples/custom-module && yarn && yarn dev`
+
+### DruxtSite
+
+This is an example of a basic, un-themed DruxtSite with support for authenticated users.
+
+`yarn example:druxt-site`
+
+### Entity form
+
+A basic contact form example of the DruxtEntityForm component.
+
+`cd examples/entity-form && yarn && yarn dev`
+
+### Node client
+
+A non-Nuxt example, using the DruxtClient in a basic node app.
+
+`cd examples/node-client && yarn && yarn dev`
 
 * * *
 
@@ -39,8 +72,7 @@ The Druxt repository is setup with tools and automated processes to help with de
 - [Conventional commits](#conventional-commits) - Standardised commit messages
 - [Docgen](#docgen) - Documentation generator
 - [Gitpod](#gitpod) - Cloud based IDE
-- [Jest](#jest) - Automated unit testing
-- [Cypress](#cypress) - Automated end-to-end testing
+- [Jest](#jest) - Automated testing
 - [Linting](#linting) - Coding styles and standards
 - [Siroc](#siroc) - Zero-config build tools
 
@@ -96,10 +128,10 @@ To build your changed documentation, run the following command:
 yarn build:docs
 ```
 
-The documentation website is a Nuxt site located in the `/docs` directory, to test your changes run the following command:
+The documentation website is a Nuxt site located in the `/docs/nuxt` directory, to test your changes run the following command:
 
 ```sh
-cd docs && yarn dev
+cd docs/nuxt && yarn dev
 ```
 
 * * *
@@ -132,23 +164,6 @@ Test files are located within the relevant packages `test` directories. E.g., `p
 
 * * *
 
-### Cypress
-
-Automated end-to-end testing is implemented using Cypress.
-
-To run the Cypress tests:
-
-```sh
-yarn add node-gyp
-yarn add cypress --dev
-yarn run cypress install
-yarn run cypress open
-```
-
-- For more details, refer to the [Cypress documentation](https://docs.cypress.io/guides).
-
-* * *
-
 ### Linting
 
 Code styles and standards are enforced by linting tools, including **ESLint**.
@@ -176,47 +191,3 @@ yarn build --watch
 ```
 
 _Note: currently Siroc does not watch the Vue components for changes, you will need to manually re-run the command as required._
-
-* * *
-
-## Development Environment Setup
-
-A development environment may be setup using either Gitpod or a local development environment.
-
-* * *
-### Gitpod
-
-1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository.
-2. Go to the forked repository.
-3. Click the GitPod button.
-4. Go to the GitPod terminal and create a feature/# branch from the develop branch:
-   ```git branch feature/999-feature-name``` (create local git branch).
-   ```git checkout feature/999-feature-name``` (switch to the new branch).
-   ```git push -u origin feature/999-feature-name``` (push new branch to remote github repo).
-5. ```yarn``` (installs dependencies).
-6. ```yarn build``` (builds local packages).
-7. ```cd docs/drupal && ddev start && ddev drupal-install``` (install local D9 backend).
-8. ```cd ../../examples/druxt-site && yarn && yarn dev``` (install and run druxt-site).
-9. Make and commit your changes.
-10. Create a Pull request: https://github.com/druxt/druxt.js/compare.
-   
-* * *
-
-### Local Development
-
-1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository.
-2. Clone the forked repository to your local development environment.
-3. Create a feature/# branch from the develop branch:
-   ```git branch feature/999-feature-name``` (create local git branch).
-   ```git checkout feature/999-feature-name``` (switch to the new branch).
-   ```git push -u origin feature/999-feature-name``` (push new branch to remote github repo).
-4. ```yarn``` (installs dependencies)
-5. ```yarn build``` (builds local packages)
-6. ```cd docs/drupal && ddev start && ddev drupal-install``` (install local D9 backend)
-7. ```cd ../../examples/druxt-site && yarn && yarn dev``` (install and run druxt-site)
-8. Make and commit your changes.
-9. Create a Pull request: https://github.com/druxt/druxt.js/compare.
-   
-
-
-
