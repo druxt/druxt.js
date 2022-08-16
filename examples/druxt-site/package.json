@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "druxt-auth": "^0.1.0",
-    "druxt-site": "link:../../../packages/druxt-site",
+    "druxt-site": "link:../../packages/druxt-site",
     "nuxt": "latest"
   },
   "devDependencies": {
