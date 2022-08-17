@@ -1,0 +1,109 @@
+{
+    "uuid": [
+        {
+            "value": "3663a96c-c170-4e52-ba4b-87704c746443"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "advanced_page",
+            "target_type": "node_type",
+            "target_uuid": "531e034b-da41-414d-a80b-b7f9f2bd639d"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2022-08-17T00:50:13+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "1bc973b1-4bee-403f-8f76-52387c936207"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "1bc973b1-4bee-403f-8f76-52387c936207"
+        }
+    ],
+    "title": [
+        {
+            "value": "Multilingual content"
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-08-17T00:49:22+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2022-08-17T00:50:13+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": false
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [],
+    "path": [
+        {
+            "alias": "\/guide\/multilingual",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_content": [
+        {
+            "target_type": "paragraph",
+            "target_uuid": "79c9361c-0fa1-49bd-bdaf-c60a2fdde02f"
+        }
+    ],
+    "field_section": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "053b7196-c242-42cb-b7cf-7bb46d8dd26f"
+        }
+    ]
+}

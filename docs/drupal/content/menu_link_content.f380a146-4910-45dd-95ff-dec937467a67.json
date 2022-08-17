@@ -1,7 +1,7 @@
 {
     "uuid": [
         {
-            "value": "d5227032-11e1-4394-8d70-6ce6e16bd9b0"
+            "value": "f380a146-4910-45dd-95ff-dec937467a67"
         }
     ],
     "langcode": [
@@ -16,7 +16,7 @@
     ],
     "revision_created": [
         {
-            "value": "2022-07-31T23:27:45+00:00",
+            "value": "2022-08-17T00:54:13+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -29,7 +29,7 @@
     ],
     "title": [
         {
-            "value": "The DruxtClient"
+            "value": "Contributing"
         }
     ],
     "description": [],
@@ -40,7 +40,7 @@
     ],
     "link": [
         {
-            "uri": "entity:node\/d217d49f-7b77-4786-8295-2ebb882c2e81",
+            "uri": "internal:\/node\/a7980e63-7d94-4cc5-8122-d0fe59d5238d",
             "title": null,
             "options": []
         }
@@ -52,12 +52,12 @@
     ],
     "rediscover": [
         {
-            "value": false
+            "value": true
         }
     ],
     "weight": [
         {
-            "value": -46
+            "value": 0
         }
     ],
     "expanded": [
@@ -72,7 +72,7 @@
     ],
     "changed": [
         {
-            "value": "2022-08-17T00:52:06+00:00",
+            "value": "2022-08-17T00:54:13+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],

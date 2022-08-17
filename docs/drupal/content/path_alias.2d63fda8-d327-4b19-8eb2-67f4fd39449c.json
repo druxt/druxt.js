@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "2d63fda8-d327-4b19-8eb2-67f4fd39449c"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/6a792b3f-5c14-4971-9815-19af57fb332e"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/guide\/proxy"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

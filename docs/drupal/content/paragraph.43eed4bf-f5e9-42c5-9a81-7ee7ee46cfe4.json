@@ -1,0 +1,56 @@
+{
+    "uuid": [
+        {
+            "value": "43eed4bf-f5e9-42c5-9a81-7ee7ee46cfe4"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "text",
+            "target_type": "paragraphs_type",
+            "target_uuid": "b8f453b4-eafc-4858-9c61-04a9747f37ac"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-08-17T00:52:47+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": null,
+                    "region": null
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "field_text": [
+        {
+            "value": "<blockquote>\r\n<p>Druxt provides zero-config, auto generated Storybook integration with live data.<\/p>\r\n<\/blockquote>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

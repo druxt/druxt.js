@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "ae653243-3a4d-435f-8da0-3532e44d9cae"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/3663a96c-c170-4e52-ba4b-87704c746443"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/guide\/multilingual"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

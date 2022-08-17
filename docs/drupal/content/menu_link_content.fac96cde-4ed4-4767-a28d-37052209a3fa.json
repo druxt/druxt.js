@@ -1,7 +1,7 @@
 {
     "uuid": [
         {
-            "value": "d5227032-11e1-4394-8d70-6ce6e16bd9b0"
+            "value": "fac96cde-4ed4-4767-a28d-37052209a3fa"
         }
     ],
     "langcode": [
@@ -16,7 +16,7 @@
     ],
     "revision_created": [
         {
-            "value": "2022-07-31T23:27:45+00:00",
+            "value": "2022-08-17T00:50:13+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -29,7 +29,7 @@
     ],
     "title": [
         {
-            "value": "The DruxtClient"
+            "value": "Multilingual content"
         }
     ],
     "description": [],
@@ -40,7 +40,7 @@
     ],
     "link": [
         {
-            "uri": "entity:node\/d217d49f-7b77-4786-8295-2ebb882c2e81",
+            "uri": "internal:\/node\/3663a96c-c170-4e52-ba4b-87704c746443",
             "title": null,
             "options": []
         }
@@ -52,12 +52,12 @@
     ],
     "rediscover": [
         {
-            "value": false
+            "value": true
         }
     ],
     "weight": [
         {
-            "value": -46
+            "value": -48
         }
     ],
     "expanded": [

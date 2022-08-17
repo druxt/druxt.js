@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "2678ccc1-dee4-4fe2-a170-68705fd1f870"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/42853196-edae-4a58-bae1-0936edc87480"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/guide\/theming"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

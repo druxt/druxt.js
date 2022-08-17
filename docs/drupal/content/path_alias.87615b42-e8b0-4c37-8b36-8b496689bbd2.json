@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "87615b42-e8b0-4c37-8b36-8b496689bbd2"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/acef9e3d-02ac-44ad-9347-6870a5182134"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/guide\/storybook"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

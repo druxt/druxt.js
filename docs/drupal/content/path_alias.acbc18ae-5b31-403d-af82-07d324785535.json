@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "acbc18ae-5b31-403d-af82-07d324785535"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/ce313821-d498-46db-ab36-32ed5dcd21b3"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/guide\/getting-started"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

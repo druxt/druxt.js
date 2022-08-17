@@ -1,7 +1,7 @@
 {
     "uuid": [
         {
-            "value": "d5227032-11e1-4394-8d70-6ce6e16bd9b0"
+            "value": "9bee9025-be5a-44db-806b-0aac0a7e4d39"
         }
     ],
     "langcode": [
@@ -16,7 +16,7 @@
     ],
     "revision_created": [
         {
-            "value": "2022-07-31T23:27:45+00:00",
+            "value": "2022-08-17T00:51:35+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -29,7 +29,7 @@
     ],
     "title": [
         {
-            "value": "The DruxtClient"
+            "value": "Proxy"
         }
     ],
     "description": [],
@@ -40,8 +40,8 @@
     ],
     "link": [
         {
-            "uri": "entity:node\/d217d49f-7b77-4786-8295-2ebb882c2e81",
-            "title": null,
+            "uri": "internal:\/node\/6a792b3f-5c14-4971-9815-19af57fb332e",
+            "title": "",
             "options": []
         }
     ],
@@ -52,12 +52,12 @@
     ],
     "rediscover": [
         {
-            "value": false
+            "value": true
         }
     ],
     "weight": [
         {
-            "value": -46
+            "value": -47
         }
     ],
     "expanded": [
@@ -72,7 +72,7 @@
     ],
     "changed": [
         {
-            "value": "2022-08-17T00:52:06+00:00",
+            "value": "2022-08-22T23:56:59+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],

@@ -1,0 +1,56 @@
+{
+    "uuid": [
+        {
+            "value": "79c9361c-0fa1-49bd-bdaf-c60a2fdde02f"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "text",
+            "target_type": "paragraphs_type",
+            "target_uuid": "b8f453b4-eafc-4858-9c61-04a9747f37ac"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-08-17T00:49:49+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": null,
+                    "region": null
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "field_text": [
+        {
+            "value": "<p>Druxt has support for multilingual content in all modules and in various forms:<\/p>\r\n\r\n<ul>\r\n\t<li>The DruxtClient and Store can fetch translated resources and collections<\/li>\r\n\t<li>Druxt module components can specify language with the&nbsp;<strong>langcode<\/strong>&nbsp;prop<\/li>\r\n\t<li>Theming can be done in language specific components<\/li>\r\n<\/ul>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}

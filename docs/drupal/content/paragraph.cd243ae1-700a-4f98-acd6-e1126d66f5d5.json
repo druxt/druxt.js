@@ -1,0 +1,52 @@
+{
+    "uuid": [
+        {
+            "value": "cd243ae1-700a-4f98-acd6-e1126d66f5d5"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "text",
+            "target_type": "paragraphs_type",
+            "target_uuid": "b8f453b4-eafc-4858-9c61-04a9747f37ac"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2022-08-17T00:46:13+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "behavior_settings": [
+        {
+            "value": {
+                "layout_paragraphs": {
+                    "parent_uuid": null,
+                    "region": null
+                }
+            }
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "field_text": [
+        {
+            "value": "<blockquote>\r\n<p>Druxt is a Fully Decoupled Drupal framework.<\/p>\r\n<\/blockquote>\r\n\r\n<p>Druxt gives you the tools to connect your Nuxt.js frontend to your Drupal JSON:API backend.<\/p>\r\n",
+            "format": "basic_html"
+        }
+    ]
+}
