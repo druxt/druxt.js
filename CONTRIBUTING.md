@@ -104,10 +104,10 @@ The Druxt repository is setup with tools and automated processes to help with de
 - [Changesets](#changesets) - Changelog and versioning
 - [Codecov](#codecov) - Automated code coverage
 - [Conventional commits](#conventional-commits) - Standardised commit messages
+- [Cypress](#cypress) - Automated end-to-end testing
 - [Docgen](#docgen) - Documentation generator
 - [Gitpod](#gitpod) - Cloud based IDE
 - [Jest](#jest) - Automated unit testing
-- [Cypress](#cypress) - Automated end-to-end testing
 - [Linting](#linting) - Coding styles and standards
 - [Siroc](#siroc) - Zero-config build tools
 
@@ -150,6 +150,23 @@ The Conventional Commits specification is a lightweight convention on top of com
 A **husky** git hook is used to ensure the standard is enforced, and will explain what changes to make as required.
 
 - For more details, refer to the [Conventional Commits documentation](https://www.conventionalcommits.org/).
+
+* * *
+
+### Cypress
+
+Automated end-to-end testing is implemented using Cypress.
+
+To run the Cypress tests:
+
+```sh
+yarn add node-gyp
+yarn add cypress --dev
+yarn run cypress install
+yarn run cypress open
+```
+
+- For more details, refer to the [Cypress documentation](https://docs.cypress.io/guides).
 
 * * *
 
@@ -196,23 +213,6 @@ yarn test --watch
 Test files are located within the relevant packages `test` directories. E.g., `packages/druxt/test`
 
 - For more details, refer to the [Jest documentation](https://jestjs.io/docs/getting-started).
-
-* * *
-
-### Cypress
-
-Automated end-to-end testing is implemented using Cypress.
-
-To run the Cypress tests:
-
-```sh
-yarn add node-gyp
-yarn add cypress --dev
-yarn run cypress install
-yarn run cypress open
-```
-
-- For more details, refer to the [Cypress documentation](https://docs.cypress.io/guides).
 
 * * *
 
