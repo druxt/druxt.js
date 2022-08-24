@@ -9,6 +9,39 @@ Druxt is an open source project, built, supported and maintained by the communit
 
 * * *
 
+## Development Environment Setup
+
+The Druxt development environment can be run both in the Cloud, using GitPod.io, or locally:
+
+* * *
+
+### Gitpod
+
+1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository. e.g., `https://github.com/USER/druxt.js`
+2. Open the forked repository in GitPod by appending `https://gitpod.io#` to your GitHub repository. e.g., `https://gitpod.io#github.com/USER/druxt.js`
+3. Wait patiently for the environment to setup...
+4. Run DruxtSite example: `yarn example:druxt-site`
+
+GitPod will automatically run the following tasks:
+  - Install all core dependencies: `yarn install`
+  - Build the Druxt modules: `yarn build`
+  - Geneate the documentation: `yarn build:docs`
+  - Start a Drupal backend: `cd docs/drupal && ddev start -y`
+  - Display a welcome message: `cat .gitpod/WELCOME.md`
+
+* * *
+
+### Local Development
+
+1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository. e.g., `https://github.com/USER/druxt.js`
+2. Clone the forked repository to your local development environment. e.g., `git clone https://github.com/USER/druxt.js`
+3. Install dependencies: `yarn`
+4. Build packages: `yarn build`
+5. Start a Drupal backend (requires DDev): `cd docs/drupal && ddev start -y && ddev drupal-install`
+6. Run DruxtSite example: `yarn example:druxt-site`   
+
+* * *
+
 ## Bug reports, feature requests
 
 One of the easiest ways to contribute to Druxt is to open issues, giving as much detail as possible to make it easier other contributors and maintainers: http://github.com/druxt/druxt.js/issues/new/choose
@@ -210,47 +243,3 @@ yarn build --watch
 ```
 
 _Note: currently Siroc does not watch the Vue components for changes, you will need to manually re-run the command as required._
-
-* * *
-
-## Development Environment Setup
-
-A development environment may be setup using either Gitpod or a local development environment.
-
-* * *
-### Gitpod
-
-1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository.
-2. Go to the forked repository.
-3. Click the GitPod button.
-4. Go to the GitPod terminal and create a feature/# branch from the develop branch:
-   ```git branch feature/999-feature-name``` (create local git branch).
-   ```git checkout feature/999-feature-name``` (switch to the new branch).
-   ```git push -u origin feature/999-feature-name``` (push new branch to remote github repo).
-5. ```yarn``` (installs dependencies).
-6. ```yarn build``` (builds local packages).
-7. ```cd docs/drupal && ddev start && ddev drupal-install``` (install local D9 backend).
-8. ```cd ../../examples/druxt-site && yarn && yarn dev``` (install and run druxt-site).
-9. Make and commit your changes.
-10. Create a Pull request: https://github.com/druxt/druxt.js/compare.
-   
-* * *
-
-### Local Development
-
-1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository.
-2. Clone the forked repository to your local development environment.
-3. Create a feature/# branch from the develop branch:
-   ```git branch feature/999-feature-name``` (create local git branch).
-   ```git checkout feature/999-feature-name``` (switch to the new branch).
-   ```git push -u origin feature/999-feature-name``` (push new branch to remote github repo).
-4. ```yarn``` (installs dependencies)
-5. ```yarn build``` (builds local packages)
-6. ```cd docs/drupal && ddev start && ddev drupal-install``` (install local D9 backend)
-7. ```cd ../../examples/druxt-site && yarn && yarn dev``` (install and run druxt-site)
-8. Make and commit your changes.
-9. Create a Pull request: https://github.com/druxt/druxt.js/compare.
-   
-
-
-
