@@ -1,5 +1,11 @@
 # druxt-entity
 
+## 0.26.1
+
+### Patch Changes
+
+- cc185819: fix(#552): sanitised empty emitted strings to prevent `true` error on themed text fields.
+
 ## 0.26.0
 
 ### Minor Changes
