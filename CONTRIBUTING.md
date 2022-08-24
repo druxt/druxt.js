@@ -56,7 +56,7 @@ If you are able to resolve an issue, or have improvements you would like to prop
 
 1. If this a new issue, make sure to open a bug report or feature request.
 2. Fork the repository.
-3. Setup a development environment (see [steps below](#development-environment-setup)).
+3. Setup a development environment (see [steps above](#development-environment-setup)).
 4. Make a `feature/#` branch from the `develop` branch.
 5. Make and commit your changes.
 6. Create a Pull request: https://github.com/druxt/druxt.js/compare
@@ -180,10 +180,10 @@ To build your changed documentation, run the following command:
 yarn build:docs
 ```
 
-The documentation website is a Nuxt site located in the `/docs` directory, to test your changes run the following command:
+The documentation website is a Nuxt site located in the `/docs/nuxt` directory, to test your changes run the following command:
 
 ```sh
-cd docs && yarn dev
+cd docs/nuxt && yarn dev
 ```
 
 * * *
