@@ -8,7 +8,7 @@
     "serve": "yarn generate && yarn start",
     "start": "nuxt start",
     "storybook": "nuxt storybook",
-    "test": "start-server-and-test 'yarn serve' http://localhost:3000 'yarn cypress:run'",
+    "test": "start-server-and-test 'yarn dev' http://localhost:3000 'yarn cypress:run'",
     "test:cypress:run": "yarn cypress:run",
     "test:cypress:run:mobile": "yarn cypress:run --config viewportWidth=375,viewportHeight=667",
     "test:cypress:open": "yarn cypress:open",
