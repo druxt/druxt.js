@@ -31,6 +31,7 @@ const DruxtMenuNuxtModule = async function (moduleOptions = {}) {
     baseUrl: moduleOptions.baseUrl,
     ...(this.options || {}).druxt || {},
     menu: {
+      jsonApiMenuItems: true,
       ...((this.options || {}).druxt || {}).menu,
       ...moduleOptions,
     }

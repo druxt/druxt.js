@@ -10541,15 +10541,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"druxt-blocks@^0.16.2, druxt-blocks@workspace:packages/blocks":
+"druxt-blocks@^0.16.3, druxt-blocks@workspace:packages/blocks":
   version: 0.0.0-use.local
   resolution: "druxt-blocks@workspace:packages/blocks"
   dependencies:
     axios: ^0.27.2
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.19.3
-    druxt-entity: ^0.25.1
-    druxt-router: ^0.27.4
+    druxt: ^0.20.0
+    druxt-entity: ^0.26.0
+    druxt-router: ^0.28.0
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -10560,13 +10560,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-breadcrumb@^0.15.1, druxt-breadcrumb@workspace:packages/breadcrumb":
+"druxt-breadcrumb@^0.16.0, druxt-breadcrumb@workspace:packages/breadcrumb":
   version: 0.0.0-use.local
   resolution: "druxt-breadcrumb@workspace:packages/breadcrumb"
   dependencies:
-    druxt: ^0.19.3
-    druxt-blocks: ^0.16.2
-    druxt-router: ^0.27.4
+    druxt: ^0.20.0
+    druxt-blocks: ^0.16.3
+    druxt-router: ^0.28.0
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -10595,26 +10595,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-entity@^0.25.1, druxt-entity@workspace:packages/entity":
+"druxt-entity@^0.26.0, druxt-entity@workspace:packages/entity":
   version: 0.0.0-use.local
   resolution: "druxt-entity@workspace:packages/entity"
   dependencies:
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.19.3
-    druxt-router: ^0.27.4
-    druxt-schema: ^0.10.4
+    druxt: ^0.20.0
+    druxt-router: ^0.28.0
+    druxt-schema: ^0.11.0
   languageName: unknown
   linkType: soft
 
-"druxt-menu@^0.17.1, druxt-menu@workspace:packages/menu":
+"druxt-menu@^0.18.0, druxt-menu@workspace:packages/menu":
   version: 0.0.0-use.local
   resolution: "druxt-menu@workspace:packages/menu"
   dependencies:
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.19.3
-    druxt-blocks: ^0.16.2
+    druxt: ^0.20.0
+    druxt-blocks: ^0.16.3
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -10625,11 +10625,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-router@^0.27.4, druxt-router@workspace:packages/router":
+"druxt-router@^0.28.0, druxt-router@workspace:packages/router":
   version: 0.0.0-use.local
   resolution: "druxt-router@workspace:packages/router"
   dependencies:
-    druxt: ^0.19.3
+    druxt: ^0.20.0
     url-parse: ^1.5.10
     vue: ^2.6.14
     vue-router: ^3.5.4
@@ -10644,13 +10644,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-schema@^0.10.4, druxt-schema@workspace:packages/schema":
+"druxt-schema@^0.11.0, druxt-schema@workspace:packages/schema":
   version: 0.0.0-use.local
   resolution: "druxt-schema@workspace:packages/schema"
   dependencies:
     consola: ^2.15.3
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.19.0
+    druxt: ^0.20.0
     vue: ^2.6.14
     vuex: ^3.6.2
   dependenciesMeta:
@@ -10666,14 +10666,14 @@ __metadata:
   resolution: "druxt-site@workspace:packages/site"
   dependencies:
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.19.3
-    druxt-blocks: ^0.16.2
-    druxt-breadcrumb: ^0.15.1
-    druxt-entity: ^0.25.1
-    druxt-menu: ^0.17.1
-    druxt-router: ^0.27.4
-    druxt-schema: ^0.10.4
-    druxt-views: ^0.19.1
+    druxt: ^0.20.0
+    druxt-blocks: ^0.16.3
+    druxt-breadcrumb: ^0.16.0
+    druxt-entity: ^0.26.0
+    druxt-menu: ^0.18.0
+    druxt-router: ^0.28.0
+    druxt-schema: ^0.11.0
+    druxt-views: ^0.20.0
     md5: ^2.3.0
     vue: ^2.6.14
     vuex: ^3.6.2
@@ -10690,23 +10690,23 @@ __metadata:
   resolution: "druxt-test-utils@workspace:packages/test-utils"
   dependencies:
     drupal-jsonapi-params: 2.0.0
-    jest-mock-axios: 4.5.0
+    jest-mock-axios: 4.6.1
   peerDependencies:
     druxt: "*"
   languageName: unknown
   linkType: soft
 
-"druxt-views@^0.19.1, druxt-views@workspace:packages/views":
+"druxt-views@^0.20.0, druxt-views@workspace:packages/views":
   version: 0.0.0-use.local
   resolution: "druxt-views@workspace:packages/views"
   dependencies:
     axios: ^0.27.2
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^2.0.0
-    druxt: ^0.19.3
-    druxt-blocks: ^0.16.2
-    druxt-entity: ^0.25.1
-    druxt-router: ^0.27.4
+    druxt: ^0.20.0
+    druxt-blocks: ^0.16.3
+    druxt-entity: ^0.26.0
+    druxt-router: ^0.28.0
     md5: ^2.3.0
     vue: ^2.6.14
     vuex: ^3.6.2
@@ -10735,11 +10735,11 @@ __metadata:
     eslint: 7.32.0
     eslint-junit: 1.0.1
     eslint-plugin-nuxt: 2.0.0
-    eslint-plugin-vue: 7.18.0
+    eslint-plugin-vue: 7.20.0
     husky: 8.0.1
     jest: 27.5.1
-    jest-junit: 13.0.0
-    jest-mock-axios: 4.5.0
+    jest-junit: 13.2.0
+    jest-mock-axios: 4.6.1
     regenerator-runtime: 0.13.9
     renovate: 32.0.2
     rimraf: 3.0.2
@@ -10750,7 +10750,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt@^0.19.0, druxt@^0.19.3, druxt@workspace:packages/druxt":
+"druxt@^0.20.0, druxt@workspace:packages/druxt":
   version: 0.0.0-use.local
   resolution: "druxt@workspace:packages/druxt"
   dependencies:
@@ -11630,17 +11630,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:7.18.0":
-  version: 7.18.0
-  resolution: "eslint-plugin-vue@npm:7.18.0"
+"eslint-plugin-vue@npm:7.20.0":
+  version: 7.20.0
+  resolution: "eslint-plugin-vue@npm:7.20.0"
   dependencies:
     eslint-utils: ^2.1.0
     natural-compare: ^1.4.0
     semver: ^6.3.0
     vue-eslint-parser: ^7.10.0
   peerDependencies:
-    eslint: ^6.2.0 || ^7.0.0 || ^8.0.0-0
-  checksum: 5df7e23478cb1094c5a0918c4239d50126c1770e34d4fb9ad30737b58a9ad33d31dda7d05aad2bc28dc97651a6c34c67f243bd82145ff76b6aea81f5c06345fd
+    eslint: ^6.2.0 || ^7.0.0 || ^8.0.0
+  checksum: 7b724ed8317ce3621cfd94235a68af20ec355fca93092cc09ee73fbffcefa69e3c5202b8035aae8e7457df6924dfe713834ae46dee08acdd9316188c47933956
   languageName: node
   linkType: hard
 
@@ -14992,15 +14992,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jest-junit@npm:13.0.0":
-  version: 13.0.0
-  resolution: "jest-junit@npm:13.0.0"
+"jest-junit@npm:13.2.0":
+  version: 13.2.0
+  resolution: "jest-junit@npm:13.2.0"
   dependencies:
     mkdirp: ^1.0.4
     strip-ansi: ^6.0.1
     uuid: ^8.3.2
     xml: ^1.0.1
-  checksum: d3a1bf6e98250837d1a9939cd54f29a7bd4fb835af30e92d0d544300fbe634eb86d2b018c79a7a35b123d933bf3e6c96ba13c0161cdefbf66fc3ab771707572e
+  checksum: 0a42447e0c9ae689ae43275944a72587216cb028d45f2bd54bfc9e7e38f90bb03caa571e58ac16fba44c121c7c5f6ae766c50833851f23153f7430b1b3b317c2
   languageName: node
   linkType: hard
 
@@ -15043,12 +15043,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jest-mock-axios@npm:4.5.0":
-  version: 4.5.0
-  resolution: "jest-mock-axios@npm:4.5.0"
+"jest-mock-axios@npm:4.6.1":
+  version: 4.6.1
+  resolution: "jest-mock-axios@npm:4.6.1"
   dependencies:
+    "@jest/globals": ^27.5.1
+    jest: ^27.5.1
     synchronous-promise: ^2.0.15
-  checksum: 913da820bd5252c8832e26f3853e19f966cb46cd12368ffee8ceb3143188bad66a6d1af89f39affe0a4e7941ff4b7442889320782915e6f9470b1371872c8a93
+  checksum: b9ba93966cc66a320743e40dadd3481680fe9895647e76dbbcf183aa5da3aa6164ce5f635190ad5dc2a480bac1acf44ca9d36d56ab6e769b1a512402f5220ff0
   languageName: node
   linkType: hard
 
@@ -15305,7 +15307,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"jest@npm:27.5.1":
+"jest@npm:27.5.1, jest@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest@npm:27.5.1"
   dependencies:

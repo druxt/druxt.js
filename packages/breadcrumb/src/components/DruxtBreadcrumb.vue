@@ -143,12 +143,13 @@ export default {
           route = false
         }
 
-        if (route.label) {
+        // If this route has a label and doesn't resolve to the current path, add to the crumbs.
+        if (route.label && route.resolvedPath !== path) {
           crumbs.push({ to, text: route.label })
         }
 
         // If this route is the home path, prevent a duplicate home item.
-        if (route.isHomePath) {
+        if (route.isHomePath || to === ['/', (route.props || {}).langcode].filter((o) => o).join('')) {
           addHome = false
         }
 

@@ -1,5 +1,19 @@
 # druxt-menu
 
+## 0.18.0
+
+### Minor Changes
+
+- 33301873: feat(#539): Use JSON:API Menu Items data by default.
+- 54c8ece3: Enabled dependencies when only using Nuxt druxt-menu module.
+
+### Patch Changes
+
+- fc811db3: Add DruxtModule props to component module stories.
+- Updated dependencies [49b67872]
+  - druxt-blocks@0.16.3
+  - druxt@0.20.0
+
 ## 0.17.1
 
 ### Patch Changes

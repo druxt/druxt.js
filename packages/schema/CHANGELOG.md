@@ -1,5 +1,16 @@
 # druxt-schema
 
+## 0.11.0
+
+### Minor Changes
+
+- 49b67872: fix(#543): Added permission check to schema generation.
+
+### Patch Changes
+
+- Updated dependencies [49b67872]
+  - druxt@0.20.0
+
 ## 0.10.4
 
 ### Patch Changes

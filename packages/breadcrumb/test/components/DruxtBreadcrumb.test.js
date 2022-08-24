@@ -37,7 +37,11 @@ const mountComponent = ({ path, routes, propsData, options }) => {
       path,
       route: {
         label,
-        isHomePath
+        isHomePath,
+        props: {
+          langcode: undefined
+        },
+        resolvedPath: path
       }
     })
   }
@@ -69,7 +73,11 @@ describe('DruxtBreadcrumb', () => {
 
     expect(wrapper.vm.route).toStrictEqual({
       isHomePath: true,
-      label: '/'
+      label: '/',
+      props: {
+        langcode: undefined
+      },
+      resolvedPath: '/'
     })
     expect(Object.keys(wrapper.vm.routes)).toHaveLength(1)
 
@@ -90,7 +98,11 @@ describe('DruxtBreadcrumb', () => {
 
     expect(wrapper.vm.route).toStrictEqual({
       isHomePath: false,
-      label: '/level-1'
+      label: '/level-1',
+      props: {
+        langcode: undefined
+      },
+      resolvedPath: '/level-1'
     })
 
     expect(wrapper.vm.crumbs).toHaveLength(2)
@@ -108,7 +120,11 @@ describe('DruxtBreadcrumb', () => {
 
     expect(wrapper.vm.route).toStrictEqual({
       isHomePath: false,
-      label: '/level-1/level-2'
+      label: '/level-1/level-2',
+      props: {
+        langcode: undefined
+      },
+      resolvedPath: '/level-1/level-2'
     })
 
     expect(wrapper.vm.crumbs).toHaveLength(3)
@@ -141,7 +157,11 @@ describe('DruxtBreadcrumb', () => {
 
     expect(wrapper.vm.route).toStrictEqual({
       isHomePath: false,
-      label: '/level-1/level-2'
+      label: '/level-1/level-2',
+      props: {
+        langcode: undefined
+      },
+      resolvedPath: '/level-1/level-2',
     })
 
     expect(wrapper.vm.crumbs).toHaveLength(2)
@@ -184,7 +204,11 @@ describe('DruxtBreadcrumb', () => {
 
     expect(wrapper.vm.route).toStrictEqual({
       isHomePath: false,
-      label: '/error/level-2'
+      label: '/error/level-2',
+      props: {
+        langcode: undefined
+      },
+      resolvedPath: '/error/level-2',
     })
 
     expect(wrapper.vm.crumbs).toHaveLength(2)

@@ -1,5 +1,25 @@
 # druxt-entity
 
+## 0.26.1
+
+### Patch Changes
+
+- cc185819: fix(#552): sanitised empty emitted strings to prevent `true` error on themed text fields.
+
+## 0.26.0
+
+### Minor Changes
+
+- 2f2a7cce: Added watch for 'settings' prop.
+
+### Patch Changes
+
+- fc811db3: Add DruxtModule props to component module stories.
+- Updated dependencies [49b67872]
+  - druxt-router@0.28.0
+  - druxt@0.20.0
+  - druxt-schema@0.11.0
+
 ## 0.25.1
 
 ### Patch Changes

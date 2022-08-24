@@ -1,5 +1,11 @@
 # druxt
 
+## 0.20.0
+
+### Minor Changes
+
+- 49b67872: fix(#543): Removed permission check error from API requests.
+
 ## 0.19.3
 
 ### Patch Changes
