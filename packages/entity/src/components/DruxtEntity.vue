@@ -395,7 +395,12 @@ export default {
           on: {
             input: (value) => {
               const type = !field.relationship ? 'attributes' : 'relationships'
-              this.model[type][id] = value
+              if (value) {
+                this.model[type][id] = value
+              }
+              else if (this.model[type][id]) {
+                delete this.model[type][id]
+              }
               this.$emit('input', this.model)
             }
           },

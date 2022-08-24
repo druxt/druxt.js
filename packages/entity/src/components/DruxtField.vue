@@ -1,6 +1,10 @@
 <script>
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
+// Extract the DruxtModule model watch.
+const modelWatch = DruxtModule.watch.model
+delete DruxtModule.watch.model
+
 /**
  * Renders a Drupal Field using Drupals by field type and formatter settings.
  *
@@ -164,6 +168,14 @@ export default {
     errors() {
       this.component.props.errors = this.errors
       this.component.propsData.errors = this.errors
+    },
+
+    model() {
+      // Sanitize empty string based fields.
+      if (this.model === '') { this.model = undefined }
+
+      // Invoke the DruxtModule model watch callback.
+      modelWatch.call(this)
     },
   },
 
