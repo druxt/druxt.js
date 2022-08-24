@@ -5,7 +5,7 @@ module.exports = {
   moduleFileExtensions: ['js', 'json', 'vue'],
   modulePathIgnorePatterns: ['/examples/'],
   testEnvironment: 'jsdom',
-  testPathIgnorePatterns: ['/examples/'],
+  testPathIgnorePatterns: ['/examples/', '/docs/drupal'],
   transform: {
     '^.+\\.(js)$': 'esbuild-jest',
     '^.+\\.(mjs)$': 'esbuild-jest',

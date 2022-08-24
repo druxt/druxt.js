@@ -19,12 +19,15 @@
     "clean:pack": "rimraf packages/*/package.tgz || true",
     "dev": "siroc dev",
     "example:druxt-site": "cd examples/druxt-site && yarn && yarn dev",
+    "example:druxt-site:test": "cd examples/druxt-site && yarn && yarn test",
     "lint": "eslint --ext .js,.vue packages/*/src",
     "lint:commit": "commitlint",
     "lint:renovate": "renovate-config-validator",
     "package": "siroc run yarn pack --workspaces",
     "postinstall": "husky install",
-    "test": "NODE_OPTIONS=--unhandled-rejections=warn jest",
+    "test": "yarn test:unit && yarn test:e2e",
+    "test:e2e": "yarn example:druxt-site:test",
+    "test:unit": "NODE_OPTIONS=--unhandled-rejections=warn jest",
     "version": "changeset version"
   },
   "devDependencies": {
