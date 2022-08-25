@@ -8,6 +8,8 @@ defaults: &defaults
 jobs:
   build:
     <<: *defaults
+    docker:
+      - image: circleci/node:15.14
     steps:
       - checkout
 
@@ -43,7 +45,7 @@ jobs:
           paths:
             - .
 
-  test:
+  lint:
     <<: *defaults
     steps:
       - attach_workspace:
@@ -60,8 +62,18 @@ jobs:
           command: yarn lint:renovate
 
       - run:
-          name: Run tests
-          command: yarn test --reporters=jest-junit --runInBand
+          name: Bundlewatch
+          command: yarn bundlewatch
+
+  test_unit:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Run unit tests
+          command: yarn test:unit --reporters=jest-junit --runInBand
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
             NODE_OPTIONS: --max_old_space_size=8192
@@ -70,15 +82,45 @@ jobs:
           name: Upload coverage report
           command: yarn dlx codecov
 
-      - run:
-          name: Bundlewatch
-          command: yarn bundlewatch
-
       - store_test_results:
           path: ./reports/junit/
 
       - store_artifacts:
           path: ./reports/junit
+
+  test_e2e:
+    machine:
+      image: ubuntu-2004:2022.07.1
+    working_directory: ~/repo
+    environment:
+      DDEV_NONINTERACTIVE: "true"
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Install ddev
+          command: |
+            curl -LO https://raw.githubusercontent.com/drud/ddev/master/scripts/install_ddev.sh && bash install_ddev.sh
+
+      - run:
+          name: Start server running
+          command: |
+            cd docs/drupal && ddev start -y
+
+      - run:
+          name: Install Drupal
+          command: |
+            cd docs/drupal && ddev drupal-install
+
+      - run:
+          name: Run end-to-end tests
+          command: yarn test:e2e
+
+      - store_artifacts:
+          path: ./examples/druxt-site/test/cypress/screenshots
+      - store_artifacts:
+          path: ./examples/druxt-site/test/cypress/videos
 
   # TODO - Fix CI deploy
   # deploy:
@@ -101,9 +143,16 @@ workflows:
   test_deploy:
     jobs:
       - build
-      - test:
+      - lint:
           requires:
             - build
+      - test_unit:
+          requires:
+            - build
+      - test_e2e:
+          requires:
+            - build
+
       # - deploy:
       #     requires:
       #       - build
