@@ -9,6 +9,39 @@ Druxt is an open source project, built, supported and maintained by the communit
 
 * * *
 
+## Development Environment Setup
+
+The Druxt development environment can be run both in the Cloud, using GitPod.io, or locally:
+
+* * *
+
+### Gitpod
+
+1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository. e.g., `https://github.com/USER/druxt.js`
+2. Open the forked repository in GitPod by appending `https://gitpod.io#` to your GitHub repository. e.g., `https://gitpod.io#github.com/USER/druxt.js`
+3. Wait patiently for the environment to setup...
+4. Run DruxtSite example: `yarn example:druxt-site`
+
+GitPod will automatically run the following tasks:
+  - Install all core dependencies: `yarn install`
+  - Build the Druxt modules: `yarn build`
+  - Geneate the documentation: `yarn build:docs`
+  - Start a Drupal backend: `cd docs/drupal && ddev start -y`
+  - Display a welcome message: `cat .gitpod/WELCOME.md`
+
+* * *
+
+### Local Development
+
+1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository. e.g., `https://github.com/USER/druxt.js`
+2. Clone the forked repository to your local development environment. e.g., `git clone https://github.com/USER/druxt.js`
+3. Install dependencies: `yarn`
+4. Build packages: `yarn build`
+5. Start a Drupal backend (requires DDev): `cd docs/drupal && ddev start -y && ddev drupal-install`
+6. Run DruxtSite example: `yarn example:druxt-site`   
+
+* * *
+
 ## Bug reports, feature requests
 
 One of the easiest ways to contribute to Druxt is to open issues, giving as much detail as possible to make it easier other contributors and maintainers: http://github.com/druxt/druxt.js/issues/new/choose
@@ -23,9 +56,10 @@ If you are able to resolve an issue, or have improvements you would like to prop
 
 1. If this a new issue, make sure to open a bug report or feature request.
 2. Fork the repository.
-3. Make a `feature/#` branch from the `develop` branch.
-4. Make and commit your changes.
-5. Create a Pull request: https://github.com/druxt/druxt.js/compare
+3. Setup a development environment (see [steps above](#development-environment-setup)).
+4. Make a `feature/#` branch from the `develop` branch.
+5. Make and commit your changes.
+6. Create a Pull request: https://github.com/druxt/druxt.js/compare
 
 * * *
 
@@ -70,9 +104,10 @@ The Druxt repository is setup with tools and automated processes to help with de
 - [Changesets](#changesets) - Changelog and versioning
 - [Codecov](#codecov) - Automated code coverage
 - [Conventional commits](#conventional-commits) - Standardised commit messages
+- [Cypress](#cypress) - Automated end-to-end testing
 - [Docgen](#docgen) - Documentation generator
 - [Gitpod](#gitpod) - Cloud based IDE
-- [Jest](#jest) - Automated testing
+- [Jest](#jest) - Automated unit testing
 - [Linting](#linting) - Coding styles and standards
 - [Siroc](#siroc) - Zero-config build tools
 
@@ -115,6 +150,18 @@ The Conventional Commits specification is a lightweight convention on top of com
 A **husky** git hook is used to ensure the standard is enforced, and will explain what changes to make as required.
 
 - For more details, refer to the [Conventional Commits documentation](https://www.conventionalcommits.org/).
+
+* * *
+
+### Cypress
+
+Automated end-to-end testing is implemented using Cypress:
+
+```sh
+yarn test:e2e
+```
+
+- For more details, refer to the [Cypress documentation](https://docs.cypress.io/guides).
 
 * * *
 

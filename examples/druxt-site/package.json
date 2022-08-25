@@ -1,19 +1,30 @@
 {
   "name": "druxt-site",
   "scripts": {
+    "cypress:open": "npx cypress open --project test",
+    "cypress:run": "npx cypress run --project test",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
+    "serve": "yarn generate && yarn start",
     "start": "nuxt start",
-    "storybook": "nuxt storybook"
+    "storybook": "nuxt storybook",
+    "test": "start-server-and-test 'yarn dev' http://localhost:3000 'yarn cypress:run'",
+    "test:open": "start-server-and-test 'yarn dev' http://localhost:3000 'yarn cypress:open'",
+    "test:cypress:run": "yarn cypress:run",
+    "test:cypress:run:mobile": "yarn cypress:run --config viewportWidth=375,viewportHeight=667",
+    "test:cypress:open": "yarn cypress:open",
+    "test:cypress:open:mobile": "yarn cypress:open --config viewportWidth=375,viewportHeight=667"
   },
   "dependencies": {
     "druxt-auth": "^0.1.0",
-    "druxt-site": "link:../../../packages/druxt-site",
+    "druxt-site": "link:../../packages/druxt-site",
     "nuxt": "latest"
   },
   "devDependencies": {
     "@nuxt/postcss8": "latest",
     "@nuxtjs/storybook": "latest",
-    "postcss": "latest"
+    "cypress": "^10.3.0",
+    "postcss": "latest",
+    "start-server-and-test": "^1.14.0"
   }
 }
