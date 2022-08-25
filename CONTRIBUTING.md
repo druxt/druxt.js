@@ -155,15 +155,10 @@ A **husky** git hook is used to ensure the standard is enforced, and will explai
 
 ### Cypress
 
-Automated end-to-end testing is implemented using Cypress.
-
-To run the Cypress tests:
+Automated end-to-end testing is implemented using Cypress:
 
 ```sh
-yarn add node-gyp
-yarn add cypress --dev
-yarn run cypress install
-yarn run cypress open
+yarn test:e2e
 ```
 
 - For more details, refer to the [Cypress documentation](https://docs.cypress.io/guides).

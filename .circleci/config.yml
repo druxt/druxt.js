@@ -8,8 +8,6 @@ defaults: &defaults
 jobs:
   build:
     <<: *defaults
-    docker:
-      - image: circleci/node:15.14
     steps:
       - checkout
 
