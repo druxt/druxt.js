@@ -12,8 +12,8 @@ dependencies:
     - layout_builder
 third_party_settings:
   layout_builder:
-    allow_custom: false
     enabled: false
+    allow_custom: false
 _core:
   default_config_hash: 3-ywiAmzlIyMCYihJv4YZF-dS0l8zYwIqbrxUjLyUik
 id: media.image.medium_8_7
@@ -22,12 +22,14 @@ bundle: image
 mode: medium_8_7
 content:
   field_media_image:
+    type: image
     label: visually_hidden
     settings:
-      image_style: medium_8_7
       image_link: ''
+      image_style: medium_8_7
+      image_loading:
+        attribute: lazy
     third_party_settings: {  }
-    type: image
     weight: 1
     region: content
 hidden:
