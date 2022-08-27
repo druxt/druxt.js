@@ -4698,17 +4698,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/typography@npm:^0.4":
-  version: 0.4.1
-  resolution: "@tailwindcss/typography@npm:0.4.1"
+"@tailwindcss/typography@npm:^0.5":
+  version: 0.5.4
+  resolution: "@tailwindcss/typography@npm:0.5.4"
   dependencies:
     lodash.castarray: ^4.4.0
     lodash.isplainobject: ^4.0.6
     lodash.merge: ^4.6.2
-    lodash.uniq: ^4.5.0
   peerDependencies:
-    tailwindcss: ">=2.0.0"
-  checksum: d234509964f59389d00ccc0529b033a5aa670a93149a48520cd2088d102b894cc746146052ea844a926bbea4b16904f5f6b2874399511bf78d55631bdb88ac68
+    tailwindcss: "*"
+  checksum: 016f27266e07fd9966ab785c4182e5ad97c06a2198ff8df739cac90a544ee9c7ac2ac968a4fe9280a1378c3ac8943a315a9f09e70085f21f2839ebc080c88fd8
   languageName: node
   linkType: hard
 
@@ -7990,10 +7989,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:3.22.5":
-  version: 3.22.5
-  resolution: "core-js@npm:3.22.5"
-  checksum: d3d7495d7cdde01cf9ac3debc5087afc3c8dd56baa4953d9ccbb46b1a80872c79d14c1e6343c664c9c0fade288ab44c70b54dd34f879a71e6eff6fffeab84e00
+"core-js@npm:3.25.0":
+  version: 3.25.0
+  resolution: "core-js@npm:3.25.0"
+  checksum: 5a72740bf5babaf2e6203da4c0e831a0b97c3fe6f21b4c1aa8601d3a927660a22128dd8f0e86ce84778c4e5372ab0fc03c7944afa7e215c7fb13b2c79d5d5504
   languageName: node
   linkType: hard
 
@@ -9076,8 +9075,8 @@ __metadata:
     "@nuxtjs/pwa": 3.3.5
     "@nuxtjs/storybook": 4.2.0
     "@nuxtjs/tailwindcss": 4.2.1
-    "@tailwindcss/typography": ^0.4
-    core-js: 3.22.5
+    "@tailwindcss/typography": ^0.5
+    core-js: 3.25.0
     daisyui: 1.25.4
     nuxt: 2.15.8
     nuxt-social-meta: 1.0.0

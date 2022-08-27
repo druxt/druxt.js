@@ -45,7 +45,7 @@
   ],
   "dependencies": {
     "deepmerge": "^4.2.2",
-    "drupal-jsonapi-params": "^2.0.0",
+    "drupal-jsonapi-params": "^2.1.0",
     "druxt": "^0.20.0",
     "druxt-router": "^0.28.0",
     "druxt-schema": "^0.11.0"
