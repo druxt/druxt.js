@@ -41,21 +41,21 @@
     "@nuxtjs/proxy": "^2.1.0",
     "chalk": "^4.1.2",
     "deepmerge": "^4.2.2",
-    "drupal-jsonapi-params": "^2.0.0",
+    "drupal-jsonapi-params": "^2.1.0",
     "md5": "^2.3.0",
     "querystring": "^0.2.1",
-    "scule": "^0.2.1"
+    "scule": "^0.3.2"
   },
   "devDependencies": {
-    "@storybook/addon-docs": "^6.4.22"
+    "@storybook/addon-docs": "^6.5.10"
   },
   "peerDependencies": {
     "axios": "*",
     "consola": "*"
   },
   "optionalDependencies": {
-    "core-js": "^3.22.5",
-    "vue": "^2.6.14",
+    "core-js": "^3.25.0",
+    "vue": "^2.7.10",
     "vuex": "^3.6.2"
   },
   "publishConfig": {

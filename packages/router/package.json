@@ -46,13 +46,13 @@
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
-    "vue-router": "^3.5.4"
+    "vue-router": "^3.6.4"
   },
   "peerDependencies": {
     "drupal-jsonapi-params": "*"
   },
   "optionalDependencies": {
-    "vue": "^2.6.14",
+    "vue": "^2.7.10",
     "vuex": "^3.6.2"
   },
   "publishConfig": {

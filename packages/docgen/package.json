@@ -20,7 +20,7 @@
     "jsdoc-vuex-plugin": "1.0.0",
     "markdown-it-task-lists": "2.1.1",
     "ncp": "2.0.0",
-    "vue-docgen-api": "4.46.0",
+    "vue-docgen-api": "4.52.0",
     "yargs": "17.5.1"
   }
 }

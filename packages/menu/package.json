@@ -43,12 +43,12 @@
   ],
   "dependencies": {
     "deepmerge": "^4.2.2",
-    "drupal-jsonapi-params": "^2.0.0",
+    "drupal-jsonapi-params": "^2.1.0",
     "druxt": "^0.20.0",
     "druxt-blocks": "^0.16.3"
   },
   "optionalDependencies": {
-    "vue": "^2.6.14",
+    "vue": "^2.7.10",
     "vuex": "^3.6.2"
   },
   "publishConfig": {

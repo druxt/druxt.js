@@ -43,7 +43,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "deepmerge": "^4.2.2",
-    "drupal-jsonapi-params": "^2.0.0",
+    "drupal-jsonapi-params": "^2.1.0",
     "druxt": "^0.20.0",
     "druxt-blocks": "^0.16.3",
     "druxt-entity": "^0.26.0",
@@ -51,7 +51,7 @@
     "md5": "^2.3.0"
   },
   "optionalDependencies": {
-    "vue": "^2.6.14",
+    "vue": "^2.7.10",
     "vuex": "^3.6.2"
   },
   "publishConfig": {
