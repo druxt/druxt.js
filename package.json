@@ -20,6 +20,7 @@
     "dev": "siroc dev",
     "example:druxt-site": "cd examples/druxt-site && yarn && yarn dev",
     "example:druxt-site:test": "start-server-and-test 'yarn example:druxt-site' http://localhost:3000 'npx cypress run --project examples/druxt-site/test'",
+    "example:druxt-site:test:open": "start-server-and-test 'yarn example:druxt-site' http://localhost:3000 'npx cypress open --project examples/druxt-site/test'",
     "lint": "eslint --ext .js,.vue packages/*/src",
     "lint:commit": "commitlint",
     "lint:renovate": "renovate-config-validator",
@@ -33,9 +34,11 @@
   "devDependencies": {
     "@babel/core": "7.17.12",
     "@babel/preset-env": "7.17.12",
+    "@badeball/cypress-cucumber-preprocessor": "^12.1.0",
     "@changesets/cli": "2.22.0",
     "@commitlint/cli": "17.0.0",
     "@commitlint/config-conventional": "17.0.0",
+    "@cypress/webpack-preprocessor": "^5.12.2",
     "@vue/test-utils": "1.3.0",
     "babel-core": "7.0.0-bridge.0",
     "bundlewatch": "0.3.3",
@@ -55,9 +58,13 @@
     "rimraf": "3.0.2",
     "siroc": "0.16.0",
     "start-server-and-test": "^1.14.0",
+    "ts-node": "^10.9.1",
     "vue": "2.6.14",
     "vue-jest": "3.0.7",
     "vue-template-compiler": "2.6.14"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true
   },
   "packageManager": "yarn@3.2.1"
 }
