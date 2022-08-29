@@ -1,4 +1,4 @@
-it('Umami: Homepage', () => {
+it('DruxtJS.org: Homepage', () => {
   // Given I visit the homepage.
   cy.visit('/')
 
