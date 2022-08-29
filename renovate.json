@@ -21,6 +21,7 @@
     "@nuxtjs/storybook",
     "@commitlint/cli",
     "@commitlint/config-conventional",
+    "@tailwindcss/typography",
     "renovate"
   ]
 }

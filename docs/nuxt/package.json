@@ -4,15 +4,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "cypress:open": "npx cypress open --project test",
+    "cypress:run": "npx cypress run --project test",
     "dev": "NODE_OPTIONS='--openssl-legacy-provider' nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "storybook": "nuxt storybook"
+    "storybook": "nuxt storybook",
+    "test": "start-server-and-test 'yarn dev' http://localhost:3000 'yarn cypress:run'",
+    "test:open": "start-server-and-test 'yarn dev' http://localhost:3000 'yarn cypress:open'"
   },
   "dependencies": {
     "@nuxt/content": "1.15.1",
-    "@tailwindcss/typography": "^0.5",
+    "@tailwindcss/typography": "0.4.1",
     "core-js": "3.25.0",
     "daisyui": "1.25.4",
     "nuxt": "2.15.8",
@@ -23,6 +27,8 @@
     "@nuxtjs/google-analytics": "2.4.0",
     "@nuxtjs/pwa": "3.3.5",
     "@nuxtjs/storybook": "4.2.0",
-    "@nuxtjs/tailwindcss": "4.2.1"
+    "@nuxtjs/tailwindcss": "4.2.1",
+    "cypress": "^10.6.0",
+    "start-server-and-test": "^1.14.0"
   }
 }
