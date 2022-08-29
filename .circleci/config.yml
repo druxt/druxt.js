@@ -114,11 +114,18 @@ jobs:
       - run:
           name: Run end-to-end tests
           command: yarn test:e2e
-
       - store_artifacts:
           path: ./examples/druxt-site/test/cypress/screenshots
       - store_artifacts:
           path: ./examples/druxt-site/test/cypress/videos
+
+      - run:
+          name: Run DruxtJS.org end-to-end tests
+          command: cd docs/nuxt && nvm i && nvm use && npm install --global yarn && yarn && yarn test
+      - store_artifacts:
+          path: ./docs/nuxt/test/cypress/screenshots
+      - store_artifacts:
+          path: ./docs/nuxt/test/cypress/videos
 
   # TODO - Fix CI deploy
   # deploy:
