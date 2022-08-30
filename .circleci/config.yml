@@ -112,6 +112,10 @@ jobs:
             cd docs/drupal && ddev drupal-install
 
       - run:
+          name: Install cypress
+          command: npx cypress install
+
+      - run:
           name: Run end-to-end tests
           command: yarn test:e2e
       - store_artifacts:
