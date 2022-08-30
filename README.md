@@ -2,6 +2,7 @@
 
 [![npm](https://badgen.net/npm/v/druxt)](https://www.npmjs.com/package/druxt)
 [![CircleCI](https://circleci.com/gh/druxt/druxt.js.svg?style=svg)](https://circleci.com/gh/druxt/druxt.js)
+[![Cypress](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/w4vd6v&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/w4vd6v/runs)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 

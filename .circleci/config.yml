@@ -112,6 +112,10 @@ jobs:
             cd docs/drupal && ddev drupal-install
 
       - run:
+          name: Install cypress
+          command: npx cypress install
+
+      - run:
           name: Run end-to-end tests
           command: yarn test:e2e
       - store_artifacts:
@@ -121,7 +125,7 @@ jobs:
 
       - run:
           name: Run DruxtJS.org end-to-end tests
-          command: cd docs/nuxt && nvm i && nvm use && npm install --global yarn && yarn && yarn test
+          command: yarn docs:test
       - store_artifacts:
           path: ./docs/nuxt/test/cypress/screenshots
       - store_artifacts:
