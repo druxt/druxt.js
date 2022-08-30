@@ -125,7 +125,7 @@ jobs:
 
       - run:
           name: Run DruxtJS.org end-to-end tests
-          command: yarn:docs:test
+          command: yarn docs:test
       - store_artifacts:
           path: ./docs/nuxt/test/cypress/screenshots
       - store_artifacts:
