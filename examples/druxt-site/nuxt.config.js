@@ -68,7 +68,7 @@ export default {
     // DruxtSite module settings; https://druxtjs.org/modules/site
     site: {
       // Disable the DruxtSite default layout.
-      // layout: false,
+      layout: false,
 
       // Set the backend theme for DruxtBlock layouts.
       theme: 'umami'
