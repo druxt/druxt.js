@@ -1,4 +1,4 @@
-it('Umami: Homepage', () => {
+it('Storybook: DruxtJS', () => {
   // Given I visit the Storybook index
   cy.visit('/')
 
@@ -30,6 +30,11 @@ it('Umami: Homepage', () => {
 
   // And I should be at the DruxtDebug docs page
   cy.url().should('contain', '?path=/docs/druxt-druxtdebug--default')
+})
+
+it('Storybook: DruxtBlocks', () => {
+  // Given I visit the Storybook index
+  cy.visit('/')
 
   // And I should see a Blocks story group
   const druxtBlocks = cy.get('#druxt-blocks')
@@ -44,12 +49,6 @@ it('Umami: Homepage', () => {
 
   // And I click on the DruxtBlock story group
   druxtBlocksBlock.click()
-
-  // And I should be at the DruxtBlock story group docs
-  cy.url().should('contain', '?path=/docs/druxt-blocks-druxtblock--default')
-
-  // Then I click on the Canvas tab.
-  cy.get('button:contains("Canvas")').click()
 
   // And I should be at the DruxtBlock story group docs
   cy.url().should('contain', '?path=/story/druxt-blocks-druxtblock--default')
@@ -95,5 +94,17 @@ it('Umami: Homepage', () => {
   druxtBlocksSeven.click()
 
   // And I see the DruxtBlock Seven story group has 6 children
-  cy.get('button[data-parent-id="druxt-blocks-seven"]').should('have.length', 6)
+  cy.get('[data-parent-id="druxt-blocks-seven"]').should('have.length', 6)
+
+  const druxtBlocksSevenHeader = cy.get('#druxt-blocks-seven-header')
+  druxtBlocksSevenHeader.should('contain.text', 'Header')
+  druxtBlocksSevenHeader.click()
+
+  cy.get('[data-parent-id="druxt-blocks-seven-header"]').should('have.length', 3)
+
+  cy.get('button[data-parent-id="druxt-blocks-seven-header"]:first').click()
+  cy.get('[data-selected="true"]').should('have.text', 'DruxtBlock')
+
+  cy.get('[data-parent-id="druxt-blocks-seven-header"]:last').click()
+  cy.get('[data-selected="true"]').should('have.text', 'DruxtBlockRegion')
 })
