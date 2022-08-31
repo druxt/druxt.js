@@ -4239,9 +4239,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"druxt-site@link:../../../packages/druxt-entity::locator=entity-form%40workspace%3A.":
+"druxt-entity@link:../../../packages/entity::locator=entity-form%40workspace%3A.":
   version: 0.0.0-use.local
-  resolution: "druxt-site@link:../../../packages/druxt-entity::locator=entity-form%40workspace%3A."
+  resolution: "druxt-entity@link:../../../packages/entity::locator=entity-form%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"druxt-views@link:../../../packages/views::locator=entity-form%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "druxt-views@link:../../../packages/views::locator=entity-form%40workspace%3A."
   languageName: node
   linkType: soft
 
@@ -4354,7 +4360,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "entity-form@workspace:."
   dependencies:
-    druxt-site: "link:../../../packages/druxt-entity"
+    druxt-entity: "link:../../../packages/entity"
+    druxt-views: "link:../../../packages/views"
     nuxt: latest
   languageName: unknown
   linkType: soft

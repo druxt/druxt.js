@@ -6,7 +6,8 @@
     "dev": "nuxt"
   },
   "dependencies": {
-    "druxt-site": "link:../../../packages/druxt-entity",
+    "druxt-entity": "link:../../../packages/entity",
+    "druxt-views": "link:../../../packages/views",
     "nuxt": "latest"
   }
 }

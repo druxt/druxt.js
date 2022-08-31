@@ -27,6 +27,7 @@
     "example:druxt-site:storybook:test:open": "start-server-and-test 'yarn example:druxt-site:storybook --port 3000' http://localhost:3000 'npx cypress open --project examples/druxt-site/test'",
     "example:druxt-site:test": "start-server-and-test 'yarn example:druxt-site' http://localhost:3000 'npx cypress run --project examples/druxt-site/test --spec examples/druxt-site/test/cypress/e2e/umami-*.cy.js'",
     "example:druxt-site:test:open": "start-server-and-test 'yarn example:druxt-site' http://localhost:3000 'npx cypress open --project examples/druxt-site/test'",
+    "example:entity-form": "cd examples/entity-form && yarn && yarn dev",
     "lint": "eslint --ext .js,.vue packages/*/src",
     "lint:commit": "commitlint",
     "lint:renovate": "renovate-config-validator",

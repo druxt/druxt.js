@@ -1,31 +1,34 @@
 <template>
-  <div>
-    <h1>DruxtEntityForm example:</h1>
+  <!-- If user is not logged in, present login form -->
+  <div v-if="!isLoggedIn">
+    @TODO - Login UI
+  </div>
 
-    <h2>Contact form - Basic</h2>
-    <pre><code>&lt;DruxtEntityForm type="contact_message--feedback" /&gt;</code></pre>
+  <!-- If logged in, but no entity is set, render the Content view -->
+  <div v-else-if="!entity">
+    <DruxtView view-id="content" />
+  </div>
 
-    <pre v-if="response">
-      <code>{{ JSON.stringify(response, null, '  ') }}</code>
-    </pre>
-
-    <DruxtEntityForm
-      type="contact_message--feedback"
-      @error="setResponse"
-      @submit="setResponse"
-    />
+  <div v-else>
+    <button @click="clearEntity">Close</button>
+    <DruxtEntityForm :uuid="entity.id" :type="entity.type" />
   </div>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+
 export default {
-  data: () => ({
-    response: null,
-  }),
-  methods: {
-    setResponse(response) {
-      this.response = response;
-    },
+  computed: {
+    isLoggedIn: () => true,
+
+    ...mapState({
+      entity: state => state.entity
+    })
   },
-};
+
+  methods: {
+    ...mapMutations(['clearEntity'])
+  }
+}
 </script>
