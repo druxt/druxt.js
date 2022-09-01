@@ -1,5 +1,6 @@
 beforeEach(() => {
   cy.visit('/')
+  cy.wait(2000)
 })
 
 it('Storybook: DruxtJS', () => {
