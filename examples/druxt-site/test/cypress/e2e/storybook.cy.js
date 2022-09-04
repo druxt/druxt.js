@@ -250,6 +250,7 @@ it('Storybook: Site', () => {
   cy.get('#druxt-site-themes-seven--default').click()
 
   // Open the Docs tab.
+  cy.wait(500)
   cy.get('button:contains("Docs")').click()
   cy.url().should('contain', '?path=/docs/druxt-site-themes-seven--default')
 })
