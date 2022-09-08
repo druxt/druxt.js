@@ -9421,10 +9421,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.25.0":
-  version: 3.25.0
-  resolution: "core-js@npm:3.25.0"
-  checksum: 5a72740bf5babaf2e6203da4c0e831a0b97c3fe6f21b4c1aa8601d3a927660a22128dd8f0e86ce84778c4e5372ab0fc03c7944afa7e215c7fb13b2c79d5d5504
+"core-js@npm:^3.25.1":
+  version: 3.25.1
+  resolution: "core-js@npm:3.25.1"
+  checksum: bfacb078e790913841e2d5008b9b6705ae56ed23f83c7f0ae08d330d874561012611089d53b71520105234ed0abba36f28d91b391514a16541a8c8d98c464239
   languageName: node
   linkType: hard
 
@@ -10358,7 +10358,7 @@ __metadata:
     druxt: ^0.20.0
     url-parse: ^1.5.10
     vue: ^2.7.10
-    vue-router: ^3.6.4
+    vue-router: ^3.6.5
     vuex: ^3.6.2
   peerDependencies:
     drupal-jsonapi-params: "*"
@@ -10486,7 +10486,7 @@ __metadata:
     "@nuxtjs/proxy": ^2.1.0
     "@storybook/addon-docs": ^6.5.10
     chalk: ^4.1.2
-    core-js: ^3.25.0
+    core-js: ^3.25.1
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^2.1.0
     md5: ^2.3.0
@@ -22049,10 +22049,10 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^3.6.4":
-  version: 3.6.4
-  resolution: "vue-router@npm:3.6.4"
-  checksum: 4c86ad39283b90086bd58fd9bfb71b5def4fbf227211e6dceaa1c6957af3d6422d5391b7b9e3f257df3b59907473e5b48434fdede9a8f0a30ba02df9f637d233
+"vue-router@npm:^3.6.5":
+  version: 3.6.5
+  resolution: "vue-router@npm:3.6.5"
+  checksum: b014ba4cba6838a4a6b7a2352b18982c2fd8bbbd6287e09c510845895d28f1c141fefb88369d1875c0cb6c7336c8536f614c8d1f5ac1c8709d60b4f945c486fb
   languageName: node
   linkType: hard
 
