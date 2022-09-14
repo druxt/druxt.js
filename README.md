@@ -14,10 +14,9 @@
 
 - Documentation: https://druxtjs.org
 - Community Discord server: https://discord.druxtjs.org
-- Demo - Umami Food Magazine:
-  - https://demo.druxtjs.org
-  - https://druxt-umami.netlify.app
-  - https://storybook.demo.druxtjs.org
+- Demo - Umami food magazine:
+  - https://umami.demo.druxtjs.org
+  - https://storybook.umami.demo.druxtjs.org
 - Quickstart repositories:
   - https://github.com/druxt/quickstart-druxt-site
   - https://github.com/druxt/quickstart-druxt-site-tome
