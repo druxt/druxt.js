@@ -6,8 +6,12 @@
     "dev": "nuxt"
   },
   "dependencies": {
+    "@nuxtjs/composition-api": "^0.33.1",
     "druxt-entity": "link:../../../packages/entity",
     "druxt-views": "link:../../../packages/views",
-    "nuxt": "latest"
+    "nuxt-edge": "latest"
+  },
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.12.3"
   }
 }
