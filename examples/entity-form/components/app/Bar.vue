@@ -15,31 +15,24 @@
 
     <v-spacer />
 
-     <!--
+    <!--
       Dialog for maintaining servers
       components/default-layout/server-dialog.vue
     -->
-    <ServerDialog />
+    <!-- <ServerDialog /> -->
 
-     <!--
+    <!--
       Dialog displaying about information
       components/default-layout/about-dialog.vue
     -->
-    <AboutDialog />
+    <AppAboutDialog />
   </v-app-bar>
 </template>
 
 <script>
 export default {
-  name: 'AppBar',
-
-  setup (props, context) {
-    const title = 'Druxt Content Editing Demo'
-
-    return {
-      title,
-    }
-  },
-
+  data: () => ({
+    title: 'Druxt Content Editing Demo'
+  })
 }
 </script>

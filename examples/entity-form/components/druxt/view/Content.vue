@@ -10,7 +10,10 @@
         mode="card"
       >
         <template #default="{ entity }">
-          <AppCard :title="entity.attributes.title" @click.native="setEntity(entity)" />
+          <AppCard
+            :title="entity.attributes.title"
+            @click.native="setEntity(entity)"
+          />
         </template>
       </DruxtEntity>
     </div>
@@ -25,7 +28,9 @@ export default {
   mixins: [DruxtViewsViewMixin],
 
   methods: {
-    ...mapMutations(['setEntity']),
+    ...mapMutations({
+      setEntity: 'app/entities/set'
+    }),
   }
 }
 </script>

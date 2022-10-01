@@ -23,12 +23,15 @@ export default {
     isLoggedIn: () => true,
 
     ...mapState({
-      entities: state => state.entities
+      entity: state => state.app.entities.active
     })
   },
 
   methods: {
-    ...mapMutations(['clearEntities'])
+    ...mapMutations({
+      clearEntity: 'app/entities/clear'
+      // 'clearEntities'
+    })
   }
 }
 </script>

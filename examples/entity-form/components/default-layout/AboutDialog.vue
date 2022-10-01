@@ -5,10 +5,10 @@
   >
     <template #activator="{ on, attrs }">
       <ToolbarBtn
-        v-on="on"
-        v-bind="attrs"
         icon="mdi-information-outline"
         tooltip="About"
+        v-bind="attrs"
+        v-on="on"
       />
     </template>
     <v-card height="300px">
@@ -22,22 +22,13 @@
 
 <script>
 export default {
-  name: 'AboutDialog',
-
-  setup (props, context) {
-    const dialog = false
-    const aboutText = `
+  data: () => ({
+    dialog: false,
+    aboutText: `
       This app provide an example of a Druxt Vuetify site that can view
        and edit Drupal content (nodes).
-      Built using Vue.js, Vuetify and Druxt.`
-    const tmText = `Drupal is a registered trademark of Dries Buytaert.`
-
-    return {
-      dialog,
-      aboutText,
-      tmText,
-    }
-  },
-
+      Built using Vue.js, Vuetify and Druxt.`,
+    tmText: 'Drupal is a registered trademark of Dries Buytaert.'
+  }),
 }
 </script>

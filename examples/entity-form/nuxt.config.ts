@@ -7,7 +7,7 @@ export default {
     'druxt-entity',
     'druxt-views',
     '@nuxtjs/vuetify',
-    '@nuxtjs/composition-api/module'
+    // '@nuxtjs/composition-api/module'
   ],
   druxt: {
     baseUrl
