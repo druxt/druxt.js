@@ -1,0 +1,21 @@
+uuid: e03d2eb2-a5a8-4a0b-81b2-013574584e2f
+langcode: en
+status: true
+dependencies:
+  config:
+    - outline.outline._DIR
+  module:
+    - text
+id: outline_entry._DIR.default
+targetEntityType: outline_entry
+bundle: _DIR
+mode: default
+content:
+  content:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden: {  }

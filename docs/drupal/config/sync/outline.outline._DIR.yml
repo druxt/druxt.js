@@ -1,0 +1,12 @@
+uuid: b30780f5-3a86-4bee-9df8-8c20ce88d7c9
+langcode: und
+status: true
+dependencies: {  }
+name: 'Directory of Drush Site-Install'
+description: 'Outline Directory for Drush Site-Install'
+weight: 10
+render: '0'
+expand_levels: 1
+hide_name: true
+oid: _DIR
+root_entry_id: null
