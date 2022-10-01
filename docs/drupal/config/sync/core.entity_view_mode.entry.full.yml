@@ -1,0 +1,12 @@
+uuid: be4a949f-8a52-4d69-b197-c6d1ad26fbff
+langcode: en
+status: true
+dependencies:
+  module:
+    - outline
+_core:
+  default_config_hash: 3SGST5wOpl1SJmpX99MJGVAMa-10oSZ_NgcNjiHLMcQ
+id: entry.full
+label: 'Outline entry'
+targetEntityType: outline_entry
+cache: true

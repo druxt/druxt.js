@@ -1,0 +1,18 @@
+uuid: c9de1496-596e-480d-a599-f9cde18292f4
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: '-DTam7usQHiRACzRTZTGGyVdUXGS9A9B5lJFkIpZyCE'
+name: outline
+label: Outline
+schema: outline
+schema_configuration: {  }
+persisted_queries_settings: {  }
+endpoint: /outline-graphql
+debug_flag: 15
+caching: true
+batching: true
+disable_introspection: false
+query_depth: null
+query_complexity: null
