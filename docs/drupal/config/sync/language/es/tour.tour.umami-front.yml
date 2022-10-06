@@ -17,8 +17,8 @@ tips:
     body: 'Este sitio web de ejemplo proporciona una colección de artículos y recetas que demuestran cómo el contenido se puede administrar fácilmente de una forma flexible y estructurada.'
   umami-front-views:
     label: 'Configurando la visualización del contenido'
-    body: 'Los modos de visualización se pueden configurar para proporcionar diferentes presentaciones de contenido. Estos artículos y recetas promocionados utilizan la función de modos de visualización para formatear las imágenes con diferentes proporciones.'
   umami-views:
+    label: 'Visualizando contenido con vistas'
     body: 'Drupal facilita la creación de listas de contenido filtrado y el control de cómo se muestra el contenido mediante la función Vistas. Este  ejemplo de últimas recetas utiliza una vista para obtener las cuatro recetas más recientes, muestra la vista como un bloque que se posiciona en la primera página con el sistema de bloques.'
   front-bookend:
     label: 'Continúe explorando Drupal'

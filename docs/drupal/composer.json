@@ -19,9 +19,9 @@
         "cweagans/composer-patches": "^1.7",
         "drupal-tome/tome_drush": "dev-master",
         "drupal/coffee": "^1.2",
-        "drupal/core-composer-scaffold": "9.4.5",
-        "drupal/core-project-message": "9.4.5",
-        "drupal/core-recommended": "9.4.5",
+        "drupal/core-composer-scaffold": "9.4.7",
+        "drupal/core-project-message": "9.4.7",
+        "drupal/core-recommended": "9.4.7",
         "drupal/decoupled_router": "2.0.3",
         "drupal/druxt": "^1.1.1",
         "drupal/geshifilter": "^2.0@beta",
@@ -37,7 +37,7 @@
         "drush/drush": "^11.1"
     },
     "require-dev": {
-        "drupal/core-dev": "9.4.5"
+        "drupal/core-dev": "9.4.7"
     },
     "conflict": {
         "drupal/drupal": "*"
