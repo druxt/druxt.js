@@ -212,10 +212,11 @@ export default {
       // Debug data.
       /* @slot Debug information */
       scopedSlots.default = () => {
-        let summary = `Placeholder for the '${((this.block || {}).attributes || {}).drupal_internal__id}' block.`
+        if (!(this.block || {}).attributes) return
+
+        let summary = `Missing Vue template for the '${this.block.attributes.drupal_internal__id}' block`
         let description = [
-          h('p', 'DruxtBlocks knows that a block can be rendered, and has information provided by Drupal, but not enough to automatically determine the behaviour of the block.'),
-          h('p', 'To render this block manually, create a Nuxt component with one of the following component options.'),
+          h('p', `Create a Druxt theme component to render the "${this.block.attributes.settings.label}" block.`),
         ]
 
         // Ensure an ID or UUID.
@@ -228,14 +229,24 @@ export default {
           { props: { summary } },
           [
             h('div', description),
-            !!this.component.options.length && h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-            ((this.block || {}).attributes || {}).settings && h('label', ['Block settings:', h('pre', [JSON.stringify(this.block.attributes.settings, null, '  ')])])
+            !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
+            h('details', [h('summary', 'JSON:API resource'), h('pre', [h('code', [JSON.stringify(this.block, null, '  ')])])])
           ]
         )
       }
 
       return scopedSlots
     },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: 'block',
+      mixins: {
+        'DruxtBlocksBlockMixin': 'druxt-blocks'
+      }
+    }
   },
 }
 
