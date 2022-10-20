@@ -1,3 +1,5 @@
+/* global beforeEach, describe, expect, jest, test */
+
 import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'

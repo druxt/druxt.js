@@ -212,15 +212,15 @@ export default {
       // Debug data.
       /* @slot Debug information */
       scopedSlots.default = () => {
-        if (!(this.block || {}).attributes) return
+        let summary, description
 
-        let summary = `Missing Vue template for the '${this.block.attributes.drupal_internal__id}' block`
-        let description = [
-          h('p', `Create a Druxt theme component to render the "${this.block.attributes.settings.label}" block.`),
-        ]
-
+        if ((this.block || {}).attributes) {
+          summary = `Missing Vue template for the '${this.block.attributes.drupal_internal__id}' block`
+          description = [
+            h('p', `Create a Druxt theme component to render the "${this.block.attributes.settings.label}" block.`),
+          ]
         // Ensure an ID or UUID.
-        if (!this.id && !this.uuid) {
+        } else if (!this.id && !this.uuid) {
           summary = "Missing required 'id' or 'uuid' prop."
           description = [h('p', "The DruxtBlock component requires either the 'id' or 'uuid' prop to be set.")]
         }
@@ -230,7 +230,7 @@ export default {
           [
             h('div', description),
             !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
-            h('details', [h('summary', 'JSON:API resource'), h('pre', [h('code', [JSON.stringify(this.block, null, '  ')])])])
+            !!this.block && h('details', [h('summary', 'JSON:API resource'), h('pre', [h('code', [JSON.stringify(this.block, null, '  ')])])])
           ]
         )
       }
