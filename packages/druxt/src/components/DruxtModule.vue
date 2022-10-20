@@ -388,8 +388,8 @@ export default {
             'DruxtDebug',
             { props: { summary: 'Missing default slot' } },
             [
-              h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-              h('label', ['propsData:', h('pre', [h('code', [JSON.stringify(this.component.propsData, null, '  ')])])])
+              !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
+              h('details', [h('summary', 'Data'), h('pre', [h('code', [JSON.stringify(this.model, null, '  ')])])])
             ]
           )
         }

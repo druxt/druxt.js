@@ -28,7 +28,9 @@
       "require": "./dist/druxt.ssr.js",
       "import": "./dist/druxt.esm.js"
     },
-    "./components/*": "./dist/components/*"
+    "./components/*": "./dist/components/*",
+    "./server-middleware/*": "./dist/server-middleware/*",
+    "./dist/server-middleware/template.mjs": "./dist/server-middleware/template.mjs"
   },
   "main": "dist/druxt.ssr.js",
   "module": "dist/druxt.esm.js",
@@ -42,6 +44,7 @@
     "chalk": "^4.1.2",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^2.1.0",
+    "launch-editor": "^2.6.0",
     "md5": "^2.3.0",
     "querystring": "^0.2.1",
     "scule": "^0.3.2"
