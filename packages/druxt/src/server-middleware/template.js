@@ -9,6 +9,7 @@ app.use(bodyParser.json())
 app.post('/add', async (req, res) => {
   const { path, settings } = req.body
   if (!path) throw new Error('Missing required path attribute.')
+  if (typeof path !== 'string' || !/^[a-zA-Z]+$/.test(path)) throw new Error('Unsupported value provided for the path attribute.')
 
   const prefix = kebabCase(settings.component).replace('-', '/') + '/'
   const dest = 'components/' + path.replace(settings.component, prefix) + '.vue'
