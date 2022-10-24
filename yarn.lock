@@ -10489,6 +10489,7 @@ __metadata:
     core-js: ^3.25.1
     deepmerge: ^4.2.2
     drupal-jsonapi-params: ^2.1.0
+    express-rate-limit: ^6.6.0
     launch-editor: ^2.6.0
     md5: ^2.3.0
     querystring: ^0.2.1
@@ -11715,6 +11716,15 @@ __metadata:
     jest-matcher-utils: ^27.5.1
     jest-message-util: ^27.5.1
   checksum: b2c66beb52de53ef1872165aace40224e722bca3c2274c54cfa74b6d617d55cf0ccdbf36783ccd64dbea501b280098ed33fd0b207d4f15bc03cd3c7a24364a6a
+  languageName: node
+  linkType: hard
+
+"express-rate-limit@npm:^6.6.0":
+  version: 6.6.0
+  resolution: "express-rate-limit@npm:6.6.0"
+  peerDependencies:
+    express: ^4 || ^5
+  checksum: 056e26c30af5eb3904036e6bb912fe485cf2e23eb21e3bb500f0c165fba5ffe0eebc94991b25f1457f78c25185c282a26f2a1dfce0ec3245f7ee2eb5c954ef99
   languageName: node
   linkType: hard
 

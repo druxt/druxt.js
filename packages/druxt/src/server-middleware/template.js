@@ -1,10 +1,17 @@
 const bodyParser = require('body-parser')
 const app = require('express')()
+const rateLimit = require('express-rate-limit')
 const fs = require('fs')
 const launch = require('launch-editor')
 const { kebabCase } = require('scule')
 
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 60
+})
+
 app.use(bodyParser.json())
+app.use(limiter)
 
 app.post('/add', async (req, res) => {
   const { path, settings } = req.body
@@ -91,7 +98,11 @@ ${exports.join('\r\n')}
 
   await fs.promises.mkdir(dir, { recursive: true })
   fs.writeFile(dest, template, (err) => {
-    if (err) throw err
+    if (err) {
+      console.error(err.message)
+      res.status(500)
+      return
+    }
     launch(dest)
     res.json({ file: dest })
   })

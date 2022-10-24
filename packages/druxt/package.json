@@ -44,6 +44,7 @@
     "chalk": "^4.1.2",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^2.1.0",
+    "express-rate-limit": "^6.6.0",
     "launch-editor": "^2.6.0",
     "md5": "^2.3.0",
     "querystring": "^0.2.1",
