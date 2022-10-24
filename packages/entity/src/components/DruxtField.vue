@@ -415,12 +415,17 @@ export default {
 
           // Fallback: Provide debug data.
           if (this.$nuxt.context.isDev) {
+            const summary = `Missing Vue template for '${this.schema.id} (${this.schema.type}')`
+            const description = [
+              h('p', 'Create a Druxt theme component to render the field.'),
+            ]
             return h('DruxtDebug',
-              { props: { summary: `Missing wrapper component for '${this.schema.id} (${this.schema.type}')`} },
+              { props: { summary } },
               [
-                h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-                h('label', ['Data:', h('pre', [JSON.stringify(item, null, '  ')])]),
-                h('label', ['Schema:', h('pre', [JSON.stringify(this.schema, null, '  ')])])
+                h('div', description),
+                !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
+                h('details', [h('summary', 'Data'), h('pre', [h('code', [JSON.stringify(item, null, '  ')])])]),
+                !!this.schema && h('details', [h('summary', 'Schema'), h('pre', [h('code', [JSON.stringify(this.schema, null, '  ')])])])
               ]
             )
           }
@@ -445,6 +450,15 @@ export default {
 
       return scopedSlots
     },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      mixins: {
+        'DruxtFieldMixin': 'druxt-entity'
+      }
+    }
   },
 }
 

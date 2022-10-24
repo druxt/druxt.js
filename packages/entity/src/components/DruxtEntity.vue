@@ -376,11 +376,17 @@ export default {
       const scopedSlots = {}
 
       if (!this.schema) {
+        const summary = `Missing display settings for resource type: '${this.type}--${this.mode}'`
+        const description = [
+          h('p', 'Create a Druxt theme component to render the entity.'),
+        ]
+
         scopedSlots.debug = () => h('DruxtDebug',
-          { props: { summary: `Missing schema for '${this.type}--${this.mode}'`} },
+          { props: { summary } },
           [
-            h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-            h('label', ['Entity:', h('pre', [JSON.stringify(this.entity, null, '  ')])]),
+            h('div', description),
+            !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
+            h('details', [h('summary', 'JSON:API resource'), h('pre', [h('code', [JSON.stringify(this.model, null, '  ')])])])
           ]
         )
         return scopedSlots
@@ -413,7 +419,21 @@ export default {
 
       return scopedSlots
     },
-  },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      mixins: {
+        'DruxtEntityMixin': 'druxt-entity'
+      },
+      druxt: {
+        'query.//fields': ['name', 'path', 'title'],
+        'query.//include': [],
+        'query.//schema': true
+      }
+    }
+  }
 }
 
 /**

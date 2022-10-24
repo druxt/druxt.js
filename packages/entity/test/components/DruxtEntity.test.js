@@ -8,6 +8,7 @@ import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import { DruxtSchemaStore } from '../../../schema/src'
 import DruxtEntity from '../../src/components/DruxtEntity.vue'
 import DruxtField from '../../src/components/DruxtField.vue'
+import DruxtDevelTemplate from '../../../druxt/src/components/DruxtDevelTemplate.vue'
 
 let localVue
 
@@ -30,7 +31,14 @@ const mocks = {
 }
 
 const mountComponent = (propsData) => {
-  return mount(DruxtEntity, { localVue, mocks, propsData, store, stubs })
+  return mount(DruxtEntity, {
+    components: { DruxtDevelTemplate },
+    localVue,
+    mocks,
+    propsData,
+    store,
+    stubs
+  })
 }
 
 describe('DruxtEntity', () => {
