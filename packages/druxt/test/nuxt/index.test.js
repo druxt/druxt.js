@@ -26,10 +26,10 @@ describe('DruxtJS Nuxt module', () => {
         }),
       },
       options: {
+        buildDir: 'build',
         druxt: options,
         cli: {
           badgeMessages: [],
-          buildDir: 'build',
         }
       },
       DruxtNuxtModule
