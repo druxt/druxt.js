@@ -33,8 +33,8 @@ const DruxtEntityMixin = {
      * @type {object}
      */
     fields: {
-      type: Object,
-      required: true,
+      type: [Object, Boolean],
+      default: undefined,
     },
 
     /**
@@ -53,7 +53,7 @@ const DruxtEntityMixin = {
      */
     schema: {
       type: Object,
-      required: true,
+      default: undefined,
     },
 
     /**
@@ -78,7 +78,7 @@ const DruxtEntityMixin = {
      * Array of CSS classes.
      * @type {string[]}
      */
-    classes: ({ schema }) => [
+    classes: ({ schema }) => schema && [
       schema.id,
       schema.resourceType,
       schema.config.entityType,
