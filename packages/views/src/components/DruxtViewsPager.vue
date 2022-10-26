@@ -166,6 +166,16 @@ export default {
           ]),
         ])
       }
+    },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: "{ count, options, resource, type, model }",
+      mixins: {
+        'DruxtViewsPagerMixin': 'druxt-views'
+      }
     }
   }
 }
