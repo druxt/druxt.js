@@ -231,7 +231,17 @@ export default {
 
       return scopedSlots
     },
-  },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: '{ blocks, name, theme }',
+      mixins: {
+        'DruxtBlocksRegionMixin': 'druxt-blocks'
+      }
+    }
+  }
 }
 
 /**
