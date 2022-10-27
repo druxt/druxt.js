@@ -342,6 +342,16 @@ export default {
         })),
       }
     },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: 'items',
+      mixins: {
+        'DruxtMenuMixin': 'druxt-menu'
+      }
+    }
   },
 }
 
