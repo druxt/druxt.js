@@ -40,8 +40,8 @@ export default {
           path: this.option,
           settings: {
             component: this.module.$options._componentTag,
-            props: Object.entries(this.module.component.propsData).map(([key, value]) => ({ key, type: typeof value })),
-            ...(this.module.$options.druxt.template || {}),
+            props: Object.entries(this.module.component.propsData || {}).map(([key, value]) => ({ key, type: typeof value })),
+            ...((this.module.$options.druxt || {}).template || {}),
           }
         }
       })
