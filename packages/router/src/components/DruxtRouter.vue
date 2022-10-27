@@ -255,18 +255,29 @@ export default {
      *
      * @return {ScopedSlots} The Scoped slots object.
      */
-    slots(h) {
-      const scopedSlots = {}
+    // slots(h) {
+    //   const scopedSlots = {}
 
-      // Provide defualt error message.
-      if (this.model.error) {
-        scopedSlots.default = () => h('div', [
-          h('h1', [`Error ${this.model.error.statusCode}`]),
-          h('p', [this.model.error.message]),
-        ])
+    //   // Provide defualt error message.
+    //   if (this.model.error) {
+    //     scopedSlots.default = () => h('div', [
+    //       h('h1', [`Error ${this.model.error.statusCode}`]),
+    //       h('p', [this.model.error.message]),
+    //     ])
+    //   }
+
+    //   return scopedSlots
+    // }
+
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: '{ path, route }',
+      mixins: {
+        'DruxtRouterMixin': 'druxt-router'
       }
-
-      return scopedSlots
     }
   }
 }
