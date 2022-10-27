@@ -191,6 +191,13 @@ export default {
 
       return scopedSlots
     },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: '{ props, regions, theme }',
+    }
   }
 }
 
