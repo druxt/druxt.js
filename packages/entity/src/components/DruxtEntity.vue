@@ -424,6 +424,7 @@ export default {
      * Druxt development template tool configuration.
      */
     template: {
+      debug: '{ entity, schema }',
       mixins: {
         'DruxtEntityMixin': 'druxt-entity'
       },
