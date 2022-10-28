@@ -21,15 +21,23 @@ exports[`DruxtEntity component defaults 2`] = `
 exports[`DruxtEntity missing schema 1`] = `
 "<div>
   <div entity=\\"[object Object]\\" value=\\"[object Object]\\">
-    <druxtdebug-stub summary=\\"Missing schema for 'file--file--default'\\"><label>Component options:<ul>
-          <li>DruxtEntityFileFileDefaultView</li>
-          <li>DruxtEntityFileDefaultView</li>
-          <li>DruxtEntityFileFileDefault</li>
-          <li>DruxtEntityFileDefault</li>
-          <li>DruxtEntityFileFile</li>
-          <li>DruxtEntityFile</li>
-          <li>DruxtEntityDefault</li>
-        </ul></label><label>Entity:<pre>{
+    <druxtdebug-stub summary=\\"Missing display settings for resource type: 'file--file--default'\\">
+      <div>
+        <p>Create a Druxt theme component to render the entity.</p>
+      </div>
+      <div><select>
+          <option>DruxtEntityFileFileDefaultView</option>
+          <option>DruxtEntityFileDefaultView</option>
+          <option>DruxtEntityFileFileDefault</option>
+          <option>DruxtEntityFileDefault</option>
+          <option>DruxtEntityFileFile</option>
+          <option>DruxtEntityFile</option>
+          <option>DruxtEntityDefault</option>
+        </select> <button>
+          Create
+        </button></div>
+      <details>
+        <summary>JSON:API resource</summary><pre><code>{
   \\"type\\": \\"file--file\\",
   \\"id\\": \\"7adbf02c-6e41-40ae-9124-8b4781f9c160\\",
   \\"links\\": {
@@ -64,7 +72,9 @@ exports[`DruxtEntity missing schema 1`] = `
       }
     }
   }
-}</pre></label></druxtdebug-stub>
+}</code></pre>
+      </details>
+    </druxtdebug-stub>
   </div>
 </div>"
 `;

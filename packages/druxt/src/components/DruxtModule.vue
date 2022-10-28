@@ -384,12 +384,15 @@ export default {
       // Provide debug data if Nuxt is running in dev mode.
       if (!scopedSlots.default && this.$nuxt.context.isDev)  {
         if (!scopedSlots.debug) {
+          const summary = 'Missing default slot'
+          const description = [h('p', `The "${this.$options._componentTag}" component does not provide a default slot.`), h('p', 'Create a Druxt theme component to render the data as required.')]
           scopedSlots.debug = () => h(
             'DruxtDebug',
-            { props: { summary: 'Missing default slot' } },
+            { props: { summary } },
             [
-              h('label', ['Component options:', h('ul', this.component.options.map((s) => h('li', [s])))]),
-              h('label', ['propsData:', h('pre', [h('code', [JSON.stringify(this.component.propsData, null, '  ')])])])
+              h('div', description),
+              this.component.is === 'DruxtWrapper' && !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
+              h('details', [h('summary', 'Data'), h('pre', [h('code', [JSON.stringify(this.component.propsData, null, '  ')])])])
             ]
           )
         }

@@ -640,6 +640,16 @@ export default {
 
       return scopedSlots
     },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: "{ view, results }",
+      mixins: {
+        'DruxtViewsViewMixin': 'druxt-views'
+      }
+    }
   }
 }
 

@@ -114,6 +114,16 @@ export default {
 
       return scopedSlots
     },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: "{ options, filters, model, type }",
+      mixins: {
+        'DruxtViewsFiltersMixin': 'druxt-views'
+      }
+    }
   },
 }
 

@@ -1,7 +1,9 @@
+/* global beforeEach, describe, expect, jest, test */
+
 import DruxtNuxtModule from '../../src'
 
 const options = {
-  baseUrl: 'https://demo-api.druxtjs.org',
+  baseUrl: 'https://api.umami.demo.druxtjs.org',
   endpoint: '/jsonapi',
 }
 
@@ -12,6 +14,7 @@ describe('DruxtJS Nuxt module', () => {
     mock = {
       addModule: jest.fn(),
       addPlugin: jest.fn(),
+      addServerMiddleware: jest.fn(),
       addTemplate: jest.fn(),
       nuxt: {
         hook: jest.fn((hook, fn) => {
@@ -23,10 +26,10 @@ describe('DruxtJS Nuxt module', () => {
         }),
       },
       options: {
+        buildDir: 'build',
         druxt: options,
         cli: {
           badgeMessages: [],
-          buildDir: 'build',
         }
       },
       DruxtNuxtModule
@@ -178,6 +181,16 @@ describe('DruxtJS Nuxt module', () => {
       [`/es${options.endpoint}`]: options.baseUrl,
       [options.endpoint]: options.baseUrl,
       '/router/translate-path': options.baseUrl
+    })
+  })
+
+  test('Devel - Server middleware', () => {
+    // Enable development mode.
+    mock.options.dev = true
+    DruxtNuxtModule.call(mock)
+    expect(mock.addServerMiddleware).toHaveBeenCalledWith({
+      handler: 'druxt/dist/server-middleware/template.mjs',
+      path: '/_druxt/template'
     })
   })
 })

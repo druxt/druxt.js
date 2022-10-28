@@ -117,10 +117,10 @@ jobs:
 
       - run:
           name: Run DruxtSite end-to-end tests
-          command: yarn start-server-and-test 'yarn example:druxt-site' http://localhost:3000 'npx cypress run --project examples/druxt-site/test --spec examples/druxt-site/test/cypress/e2e/umami-*.cy.js --record --tag examples-druxt-site'
+          command: yarn start-server-and-test 'yarn example:druxt-site' http://localhost:3000 'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/nuxt/*.cy.js" --record --tag examples-druxt-site'
       - run:
           name: Run DruxtSite storybook end-to-end tests
-          command: yarn start-server-and-test 'yarn example:druxt-site:storybook --port 3000' http://localhost:3000 'npx cypress run --project examples/druxt-site/test --spec examples/druxt-site/test/cypress/e2e/storybook.cy.js --record --tag examples-druxt-site-storybook'
+          command: yarn start-server-and-test 'yarn example:druxt-site:storybook --port 3000' http://localhost:3000 'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/storybook/*.cy.js" --record --tag examples-druxt-site-storybook'
       - store_artifacts:
           path: ./examples/druxt-site/test/cypress/screenshots
       - store_artifacts:

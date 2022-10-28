@@ -111,6 +111,16 @@ export default {
           ])))
         ]),
       }
+    },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: "{ model, options, sorts, type }",
+      mixins: {
+        'DruxtViewsSortsMixin': 'druxt-views'
+      }
     }
   }
 }

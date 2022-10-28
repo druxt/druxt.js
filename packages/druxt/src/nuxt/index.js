@@ -162,6 +162,15 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
   this.options.cli.badgeMessages.push(`${chalk.blue.bold('Druxt')} @ v${meta.version}`)
   this.options.cli.badgeMessages.push(`${chalk.bold('API:')} ${chalk.blue.underline(options.baseUrl + options.endpoint)}`)
 
+  // Development mode features.
+  if (this.options.dev) {
+    // Add the template stubber server middleware.
+    this.addServerMiddleware({
+      path: '/_druxt/template',
+      handler: 'druxt/dist/server-middleware/template.mjs'
+    })
+  }
+
   // Nuxt Storybook.
   const self = this
   this.nuxt.hook('storybook:config', async ({ stories }) => {

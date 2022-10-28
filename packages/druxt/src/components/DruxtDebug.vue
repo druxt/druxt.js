@@ -1,11 +1,15 @@
 <template>
-  <details v-if="$nuxt.context.isDev">
+  <details
+    v-if="$nuxt.context.isDev"
+    title="Expand for details"
+  >
     <summary v-text="title" />
     <pre v-if="json"><!--
       --><code>{{ JSON.stringify(json, null, '  ') }}</code><!--
     --></pre>
     <!-- @slot Debug content -->
     <slot />
+    <small>Note: This message is only visible when development mode is enabled.</small>
   </details>
 
   <div v-else />
@@ -81,7 +85,30 @@ details {
   padding: 1rem;
 }
 
+details > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+details > summary::after {
+  content: '(expand)';
+  font-size: 0.75rem;
+  color: blue;
+  vertical-align: super;
+  text-decoration: underline;
+  margin-left: 0.25rem;
+}
+
 details[open] > summary {
   margin-bottom: 1rem;
+}
+
+details[open] > summary::after {
+  content: ''
+}
+
+details small:last-of-type {
+  display: block;
+  margin-top: 2rem;
 }
 </style>

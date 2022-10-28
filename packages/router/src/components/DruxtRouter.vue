@@ -267,6 +267,16 @@ export default {
       }
 
       return scopedSlots
+    },
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: '{ path, route }',
+      mixins: {
+        'DruxtRouterMixin': 'druxt-router'
+      }
     }
   }
 }

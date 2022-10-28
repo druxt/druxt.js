@@ -43,7 +43,17 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ filter, model }) => ({ filter, value: model })
+    propsData: ({ filter, model }) => ({ filter, value: model }),
+
+    /**
+     * Druxt development template tool configuration.
+     */
+    template: {
+      debug: "{ filter, model }",
+      mixins: {
+        'DruxtViewsFilterMixin': 'druxt-views'
+      }
+    }
   },
 }
 
