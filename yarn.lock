@@ -6401,6 +6401,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vue/devtools-api@npm:^6.4.5":
+  version: 6.4.5
+  resolution: "@vue/devtools-api@npm:6.4.5"
+  checksum: 40c5adc8788cb283972ce09ba7ce105fa894f4decec9168829cc8e6211462763402442e6c31be76f9da62b0e74ae724971b924571367b4ac89b94dc6894e2d07
+  languageName: node
+  linkType: hard
+
 "@vue/shared@npm:3.2.4":
   version: 3.2.4
   resolution: "@vue/shared@npm:3.2.4"
@@ -10485,6 +10492,7 @@ __metadata:
     "@nuxtjs/axios": ^5.13.6
     "@nuxtjs/proxy": ^2.1.0
     "@storybook/addon-docs": ^6.5.10
+    "@vue/devtools-api": ^6.4.5
     chalk: ^4.1.2
     core-js: ^3.25.1
     deepmerge: ^4.2.2
