@@ -16,6 +16,7 @@ Vue.mixin({
             settings: {
               component: payload.componentInstance.$options._componentTag,
               props: Object.entries(payload.componentInstance.component.propsData || {}).map(([key, value]) => ({ key, type: typeof value })),
+              slots: payload.componentInstance.component.slots,
               ...((payload.componentInstance.$options.druxt || {}).template || {}),
             }
           }
