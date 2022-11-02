@@ -245,7 +245,8 @@ export default {
       debug: 'block',
       mixins: {
         'DruxtBlocksBlockMixin': 'druxt-blocks'
-      }
+      },
+      slots: false
     }
   },
 }

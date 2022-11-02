@@ -169,6 +169,12 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
       path: '/_druxt/template',
       handler: 'druxt/dist/server-middleware/template.mjs'
     })
+
+    // Add the Vue devtools plugin.
+    this.addPlugin({
+      src: resolve(__dirname, '../dist/plugins/devtools.mjs'),
+      fileName: 'druxt-devtools.js'
+    })
   }
 
   // Nuxt Storybook.

@@ -41,6 +41,7 @@ export default {
           settings: {
             component: this.module.$options._componentTag,
             props: Object.entries(this.module.component.propsData || {}).map(([key, value]) => ({ key, type: typeof value })),
+            slots: this.module.component.slots,
             ...((this.module.$options.druxt || {}).template || {}),
           }
         }

@@ -29,6 +29,7 @@
       "import": "./dist/druxt.esm.js"
     },
     "./components/*": "./dist/components/*",
+    "./plugins/*": "./dist/plugins/*",
     "./server-middleware/*": "./dist/server-middleware/*",
     "./dist/server-middleware/template.mjs": "./dist/server-middleware/template.mjs"
   },
@@ -41,6 +42,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/proxy": "^2.1.0",
+    "@vue/devtools-api": "^6.4.5",
     "chalk": "^4.1.2",
     "deepmerge": "^4.2.2",
     "drupal-jsonapi-params": "^2.1.0",
