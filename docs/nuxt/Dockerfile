@@ -1,4 +1,4 @@
-FROM amazeeio/node:14-builder as builder
+FROM amazeeio/node:18-builder as builder
 
 # Build source files.
 COPY . /app/
@@ -7,7 +7,7 @@ RUN yarn build
 RUN yarn build:docs
 
 # Build static files.
-FROM amazeeio/node:14
+FROM amazeeio/node:18
 COPY --from=builder /app/docs/nuxt /app
 
 RUN yarn
