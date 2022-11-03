@@ -1,5 +1,18 @@
 # druxt-blocks
 
+## 0.17.0
+
+### Minor Changes
+
+- f6b4a664: feat(#578): updated missing vue component message with DruxtDevelTemplate tool.
+
+### Patch Changes
+
+- Updated dependencies [29905ff6]
+  - druxt@0.21.0
+  - druxt-entity@0.27.0
+  - druxt-router@0.29.0
+
 ## 0.16.3
 
 ### Patch Changes
@@ -78,7 +91,7 @@
   ```js
   import { DruxtBlocksRegionMixin } from "druxt-blocks";
   export default {
-    mixins: [DruxtBlocksRegionMixin]
+    mixins: [DruxtBlocksRegionMixin],
   };
   ```
 

@@ -1,5 +1,23 @@
 # druxt-site
 
+## 0.14.0
+
+### Minor Changes
+
+- f6b4a664: feat(#578): updated component to support the DruxtDevelTemplate tool.
+
+### Patch Changes
+
+- Updated dependencies [29905ff6]
+  - druxt-views@0.21.0
+  - druxt@0.21.0
+  - druxt-entity@0.27.0
+  - druxt-menu@0.19.0
+  - druxt-router@0.29.0
+  - druxt-breadcrumb@0.17.0
+  - druxt-blocks@0.17.0
+  - druxt-schema@0.11.1
+
 ## 0.13.0
 
 ### Minor Changes

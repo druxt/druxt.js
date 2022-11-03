@@ -1,5 +1,17 @@
 # druxt-menu
 
+## 0.19.0
+
+### Minor Changes
+
+- f6b4a664: feat(#578): updated components to support the DruxtDevelTemplate tool.
+
+### Patch Changes
+
+- Updated dependencies [29905ff6]
+  - druxt@0.21.0
+  - druxt-blocks@0.17.0
+
 ## 0.18.0
 
 ### Minor Changes
