@@ -1,6 +1,6 @@
 ---
 title: Proxy
-weight: -4
+weight: -5
 ---
 
 ### Druxt and Proxies
