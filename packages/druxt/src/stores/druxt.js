@@ -239,8 +239,9 @@ const DruxtStore = ({ store }) => {
 
                 return data.filter((o) => typeof o === 'object' && o).map((o) => {
                   return dispatch('getResource', {
-                    type: o.type,
                     id: o.id,
+                    prefix,
+                    type: o.type,
                     query: { ...queryObject, include },
                   })
                 })
