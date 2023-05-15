@@ -1,5 +1,24 @@
 # druxt-entity
 
+## 0.27.1
+
+### Patch Changes
+
+- 39af33a4: fix(#632): add passthrough attrs to DruxtField
+
+## 0.27.0
+
+### Minor Changes
+
+- f6b4a664: feat(#578): updated missing schema/vue component message with DruxtDevelTemplate tool.
+
+### Patch Changes
+
+- Updated dependencies [e46a3290]
+  - druxt@0.21.0
+  - druxt-router@0.29.0
+  - druxt-schema@0.11.1
+
 ## 0.26.1
 
 ### Patch Changes
@@ -174,10 +193,10 @@
         include: ["field_media_image", "field_media_image.field_media_image"],
         fields: [
           ["file--file", ["uri"]],
-          ["media--image", []]
-        ]
-      }
-    }
+          ["media--image", []],
+        ],
+      },
+    },
   };
   ```
 
@@ -295,10 +314,10 @@
     druxt: {
       entity: {
         components: {
-          fields: false
-        }
-      }
-    }
+          fields: false,
+        },
+      },
+    },
   };
   ```
 
