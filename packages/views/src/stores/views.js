@@ -60,14 +60,14 @@ const DruxtViewsStore = ({ store }) => {
        * @mutator {object} addResults=results Removes JSON:API Views results from the Vuex state object.
        *
        * @example @lang js
-       * this.$store.commit('druxt/views/flushResults', { viewId, displayId, prefix, hash })
+       * this.$store.commit('druxt/views/purgeResults', { viewId, displayId, prefix, hash })
        */
       flushResults (state, { viewId, displayId, prefix, hash }) {
         if (!viewId) Vue.set(state, 'results', {})
-        else if (viewId && !displayId) Vue.set(state.results, viewId, {})
-        else if (viewId && displayId && !prefix) Vue.set(state.results[viewId], displayId, {})
+        else if (viewId && !displayId && !prefix && !hash) Vue.set(state.results, viewId, {})
+        else if (viewId && displayId && !prefix && !hash) Vue.set(state.results[viewId], displayId, {})
         else if (viewId && displayId && prefix && !hash) Vue.set(state.results[viewId][displayId], prefix, {})
-        else if (viewId && displayId && prefix && hash) Vue.set(state.results[viewId][displayId][prefix], hash, {})
+        else if (viewId && displayId && (prefix || prefix === undefined) && hash) Vue.set(state.results[viewId][displayId][prefix], hash, {})
       },
     },
 
