@@ -53,7 +53,22 @@ const DruxtViewsStore = ({ store }) => {
         if (!state.results[viewId][displayId]) Vue.set(state.results[viewId], displayId, {})
         if (!state.results[viewId][displayId][prefix]) Vue.set(state.results[viewId][displayId], prefix, {})
         Vue.set(state.results[viewId][displayId][prefix], hash, results)
-      }
+      },
+
+      /**
+       * @name flushResults
+       * @mutator {object} addResults=results Removes JSON:API Views results from the Vuex state object.
+       *
+       * @example @lang js
+       * this.$store.commit('druxt/views/flushResults', { viewId, displayId, prefix, hash })
+       */
+      flushResults (state, { viewId, displayId, prefix, hash }) {
+        if (!viewId) Vue.set(state, 'results', {})
+        else if (viewId && !displayId) Vue.set(state.results, viewId, {})
+        else if (viewId && displayId && !prefix) Vue.set(state.results[viewId], displayId, {})
+        else if (viewId && displayId && prefix && !hash) Vue.set(state.results[viewId][displayId], prefix, {})
+        else if (viewId && displayId && prefix && hash) Vue.set(state.results[viewId][displayId][prefix], hash, {})
+      },
     },
 
     /**
@@ -79,9 +94,9 @@ const DruxtViewsStore = ({ store }) => {
        *   query
        * })
        */
-      async getResults ({ commit, state }, { viewId, displayId, query, prefix }) {
+      async getResults ({ commit, state }, { viewId, displayId, query, prefix, bypassCache = false }) {
         const hash = query ? md5(this.$druxt.buildQueryUrl('', query)) : '_default'
-        if (typeof (((state.results[viewId] || {})[displayId] || {})[prefix] || {})[hash] !== 'undefined') {
+        if (!bypassCache && typeof (((state.results[viewId] || {})[displayId] || {})[prefix] || {})[hash] !== 'undefined') {
           return state.results[viewId][displayId][prefix][hash]
         }
 

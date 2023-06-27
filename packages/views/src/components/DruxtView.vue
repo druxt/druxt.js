@@ -329,6 +329,14 @@ export default {
     },
   },
 
+  created() {
+    // If static, re-fetch data allowing for cache-bypass.
+    // @TODO - Don't re-fetch in serverless configuration.
+    if (this.$store.app.context.isStatic) {
+      this.$fetch()
+    }
+  },
+
   methods: {
     /**
      * Builds the query for the JSON:API request.
@@ -446,12 +454,22 @@ export default {
     async fetchData(settings) {
       const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
       if (viewId) {
+        // Check if we need to bypass cache.
+        let bypassCache = false
+        if (typeof settings.query.bypassCache === 'boolean') {
+          bypassCache = settings.query.bypassCache
+        }
+
+        // Build query.
         const query = this.getQuery(settings)
+
+        // Execute the resquest.
         this.resource = await this.getResults({
           displayId: this.displayId,
           prefix: this.lang,
           query: stringify(query),
-          viewId
+          viewId,
+          bypassCache
         })
       }
     },
@@ -474,8 +492,15 @@ export default {
     /**
      * Component settings.
      */
-    settings: ({ $druxt }, wrapperSettings) => {
+    settings: (context, wrapperSettings) => {
+      const { $druxt } = context
       const settings = merge($druxt.settings.views || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
+
+      // Evaluate the bypass cache function.
+      if (typeof settings.query.bypassCache === 'function') {
+        settings.query.bypassCache = !!settings.query.bypassCache(context)
+      }
+
       return {
         query: settings.query || {},
       }
