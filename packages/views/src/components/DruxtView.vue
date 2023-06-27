@@ -456,7 +456,7 @@ export default {
       if (viewId) {
         // Check if we need to bypass cache.
         let bypassCache = false
-        if (typeof settings.query.bypassCache === 'boolean') {
+        if (typeof (settings.query || {}).bypassCache === 'boolean') {
           bypassCache = settings.query.bypassCache
         }
 
@@ -497,7 +497,7 @@ export default {
       const settings = merge($druxt.settings.views || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
 
       // Evaluate the bypass cache function.
-      if (typeof settings.query.bypassCache === 'function') {
+      if (typeof (settings.query || {}).bypassCache === 'function') {
         settings.query.bypassCache = !!settings.query.bypassCache(context)
       }
 
