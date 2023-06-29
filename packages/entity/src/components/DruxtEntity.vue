@@ -187,6 +187,14 @@ export default {
     },
   },
 
+  created() {
+    // If static, re-fetch data allowing for cache-bypass.
+    // @TODO - Don't re-fetch in serverless configuration.
+    if (this.$store.app.context.isStatic) {
+      this.$fetch()
+    }
+  },
+
   methods: {
     /**
      * Builds the query for the JSON:API request.
@@ -318,12 +326,22 @@ export default {
       }
 
       if (this.uuid && !this.value) {
+        // Check if we need to bypass cache.
+        let bypassCache = false
+        if (typeof (settings.query || {}).bypassCache === 'boolean') {
+          bypassCache = settings.query.bypassCache
+        }
+
+        // Build query.
         const query = this.getQuery(settings)
+
+        // Execute the resquest.
         const resource = await this.getResource({
           id: this.uuid,
           prefix: this.lang,
           type: this.type,
-          query
+          query,
+          bypassCache
         })
         const entity = { ...(resource.data || {}) }
         entity.included = resource.included
@@ -342,12 +360,20 @@ export default {
     /**
      * Component settings.
      */
-    settings: ({ $druxt, settings }, wrapperSettings) => {
+    settings: (context, wrapperSettings) => {
+      const { $druxt, settings } = context
+
       // Start with the `nuxt.config.js` `druxt.settings.entity` settings and
       // merge the Wrapper component settings on top.
       let mergedSettings = merge($druxt.settings.entity || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
       // Merge the DruxtEntity component `settings` property on top.
       mergedSettings = merge(mergedSettings || {}, settings, { arrayMerge: (dest, src) => src })
+
+      // Evaluate the bypass cache function.
+      if (typeof (mergedSettings.query || {}).bypassCache === 'function') {
+        mergedSettings.query.bypassCache = !!mergedSettings.query.bypassCache(context)
+      }
+
       // Currently only returning the query settings.
       return {
         query: mergedSettings.query || {},
