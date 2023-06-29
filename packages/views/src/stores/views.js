@@ -41,7 +41,7 @@ const DruxtViewsStore = ({ store }) => {
       /**
        * @name addResults
        * @mutator {object} addResults=results Adds JSON:API Views results to the Vuex state object.
-       * @param {object} results - The JSON:API Views results.
+       * @param {addResultsContext} context
        *
        * @example @lang js
        * this.$store.commit('druxt/views/addResults', { results, viewId, displayId, prefix, hash })
@@ -57,10 +57,15 @@ const DruxtViewsStore = ({ store }) => {
 
       /**
        * @name flushResults
-       * @mutator {object} addResults=results Removes JSON:API Views results from the Vuex state object.
+       * @mutator {object} flushResults=results Removes JSON:API Views results from the Vuex state object.
+       * @param {flushResultsContext} context
        *
        * @example @lang js
-       * this.$store.commit('druxt/views/purgeResults', { viewId, displayId, prefix, hash })
+       * // Flush all results.
+       * this.$store.commit('druxt/views/flushResults', {})
+       *
+       * // Flush target results.
+       * this.$store.commit('druxt/views/flushResults', { viewId, displayId, prefix, hash })
        */
       flushResults (state, { viewId, displayId, prefix, hash }) {
         if (!viewId) Vue.set(state, 'results', {})
@@ -84,14 +89,15 @@ const DruxtViewsStore = ({ store }) => {
        *
        * @name getResults
        * @action get=results
-       * @param {object} query The View results query object
+       * @param {getResultsContext} context
        * @return {object} The JSON:API Views results resource.
        *
        * @example @lang js
        * const { data, meta, links } = await this.$store.dispatch('druxt/view/getResults', {
        *   viewId,
        *   displayId,
-       *   query
+       *   query,
+       *   bypassCache: false
        * })
        */
       async getResults ({ commit, state }, { viewId, displayId, query, prefix, bypassCache = false }) {
@@ -115,3 +121,64 @@ const DruxtViewsStore = ({ store }) => {
 }
 
 export { DruxtViewsStore }
+
+/**
+ * Parameters for the `addResults` mutation.
+ *
+ * @typedef {object} addResultsContext
+ *
+ * @param {array} results - The Drupal JSON:API Views results.
+ * @param {string} viewId - The Drupal View ID.
+ * @param {string} displayId - The Drupal View Display ID.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+ * @param {string} hash - A unique hash based of the query string.
+ *
+ * @example @lang js
+ * {
+ *   results: [{ ... }],
+ *   viewId: 'promoted_items',
+ *   displayId: 'block_1',
+ *   prefix: 'en',
+ *   hash: '_default'
+ * }
+ */
+
+/**
+ * Parameters for the `flushResults` mutation.
+ *
+ * @typedef {object} flushResultsContext
+ *
+ * @param {string} [viewId] - The Drupal View ID.
+ * @param {string} [displayId] - The Drupal View Display ID.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+ * @param {string} [hash] - A unique hash based of the query string.
+ *
+ * @example @lang js
+ * {
+ *   viewId: 'promoted_items',
+ *   displayId: 'block_1',
+ *   prefix: 'en',
+ *   hash: '_default'
+ * }
+ */
+
+/**
+ * Parameters for the `getResults` action.
+ *
+ * @typedef {object} getResultsContext
+ *
+ * @param {string} viewId - The Drupal View ID.
+ * @param {string} displayId - The Drupal View Display ID.
+ * @param {(string|object)} [query] - (Optional) JSON:API Views query string.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+ * @param {boolean} [bypassCache] - (Optional) Bypass the Vuex cached results.
+ *
+ * @example @lang js
+ * {
+ *   viewId: 'promoted_items',
+ *   displayId: 'block_1',
+ *   query: new DrupalJsonApiParams(),
+ *   prefix: 'en',
+ *   bypassCache: true
+ * }
+ */
