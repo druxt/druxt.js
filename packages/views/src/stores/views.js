@@ -102,15 +102,22 @@ const DruxtViewsStore = ({ store }) => {
        */
       async getResults ({ commit, state }, { viewId, displayId, query, prefix, bypassCache = false }) {
         const hash = query ? md5(this.$druxt.buildQueryUrl('', query)) : '_default'
-        if (!bypassCache && typeof (((state.results[viewId] || {})[displayId] || {})[prefix] || {})[hash] !== 'undefined') {
-          return state.results[viewId][displayId][prefix][hash]
+
+        let cache
+        if (typeof (((state.results[viewId] || {})[displayId] || {})[prefix] || {})[hash] !== 'undefined') {
+          cache = state.results[viewId][displayId][prefix][hash]
+          if (!bypassCache) return cache
         }
 
-        const results = await this.$druxt.getResource(`views--${viewId}`, displayId, query, prefix)
-
-        commit('addResults', { results, viewId, displayId, prefix, hash })
-
-        return results
+        try {
+          const results = await this.$druxt.getResource(`views--${viewId}`, displayId, query, prefix)
+          commit('addResults', { results, viewId, displayId, prefix, hash })
+          return results
+        }
+        catch(e) {
+          // Fall back to cache if possible.
+          return cache ? cache : false
+        }
       }
     }
   }

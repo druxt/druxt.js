@@ -79,6 +79,17 @@ export default {
     },
 
     /**
+     * Module settings object.
+     *
+     * @type {ModuleSettings}
+     * @default {}
+     */
+    settings: {
+      type: Object,
+      default: () => ({}),
+    },
+
+    /**
      * JSON:API Resource type.
      *
      * @type {string}
@@ -329,7 +340,7 @@ export default {
     },
   },
 
-  created() {
+  mounted() {
     // If static, re-fetch data allowing for cache-bypass.
     // @TODO - Don't re-fetch in serverless configuration.
     if (this.$store.app.context.isStatic) {
@@ -493,16 +504,23 @@ export default {
      * Component settings.
      */
     settings: (context, wrapperSettings) => {
-      const { $druxt } = context
-      const settings = merge($druxt.settings.views || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
+      const { $druxt, settings } = context
+
+      // Start with the `nuxt.config.js` `druxt.settings.views` settings and
+      // merge the Wrapper component settings on top.
+      let mergedSettings = merge(($druxt.settings || {}).views || {}, wrapperSettings || {}, { arrayMerge: (dest, src) => src })
+      // Merge the DruxtViews component `settings` property on top.
+      mergedSettings = merge(mergedSettings || {}, settings || {}, { arrayMerge: (dest, src) => src })
 
       // Evaluate the bypass cache function.
-      if (typeof (settings.query || {}).bypassCache === 'function') {
-        settings.query.bypassCache = !!settings.query.bypassCache(context)
+      if (typeof (mergedSettings.query || {}).bypassCache === 'function') {
+        mergedSettings.query.bypassCache = !!mergedSettings.query.bypassCache(context)
       }
 
+      console.log('mergedSettings', mergedSettings)
+
       return {
-        query: settings.query || {},
+        query: mergedSettings.query || {},
       }
     },
 

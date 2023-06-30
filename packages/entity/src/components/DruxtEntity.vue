@@ -187,7 +187,7 @@ export default {
     },
   },
 
-  created() {
+  mounted() {
     // If static, re-fetch data allowing for cache-bypass.
     // @TODO - Don't re-fetch in serverless configuration.
     if (this.$store.app.context.isStatic) {
@@ -365,9 +365,9 @@ export default {
 
       // Start with the `nuxt.config.js` `druxt.settings.entity` settings and
       // merge the Wrapper component settings on top.
-      let mergedSettings = merge($druxt.settings.entity || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
+      let mergedSettings = merge(($druxt.settings || {}).entity || {}, wrapperSettings || {}, { arrayMerge: (dest, src) => src })
       // Merge the DruxtEntity component `settings` property on top.
-      mergedSettings = merge(mergedSettings || {}, settings, { arrayMerge: (dest, src) => src })
+      mergedSettings = merge(mergedSettings || {}, settings || {}, { arrayMerge: (dest, src) => src })
 
       // Evaluate the bypass cache function.
       if (typeof (mergedSettings.query || {}).bypassCache === 'function') {

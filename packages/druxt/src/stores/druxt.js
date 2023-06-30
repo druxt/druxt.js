@@ -244,7 +244,7 @@ const DruxtStore = ({ store }) => {
        */
       async getResource ({ commit, dispatch, state }, { type, id, query, prefix, bypassCache = false }) {
         // Get the resource from the store if it's avaialble.
-        const storedResource = !bypassCache && ((state.resources[type] || {})[id] || {})[prefix] ?
+        const storedResource = ((state.resources[type] || {})[id] || {})[prefix] ?
           { ...state.resources[type][id][prefix] }
           : null
 
@@ -322,9 +322,13 @@ const DruxtStore = ({ store }) => {
 
         // Request the resource from the DruxtClient if required.
         let resource
-        if (!storedResource || fields) {
-          resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
-          commit('addResource', { prefix, resource: { ...resource } })
+        if (bypassCache || !storedResource || fields) {
+          try {
+            resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
+            commit('addResource', { prefix, resource: { ...resource } })
+          } catch(e) {
+            // Do nothing, just don't error.
+          }
         }
 
         // Build resource to be returned.
