@@ -88,5 +88,15 @@ describe('DruxtViewsStore', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     await store.dispatch('druxt/views/getResults', query)
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
+
+    // Bypass cache
+    const cache = await store.dispatch('druxt/views/getResults', { ...query, bypassCache: true })
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+
+    // Fallback to cache
+    store.$druxt.getResource = jest.fn(() => { throw new Error() })
+    const fallback = await store.dispatch('druxt/views/getResults', { ...query, bypassCache: true })
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(fallback).toBe(cache)
   })
 })

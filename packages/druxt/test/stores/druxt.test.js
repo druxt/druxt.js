@@ -143,6 +143,22 @@ describe('DruxtStore', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     expect(storedResource).toStrictEqual(resource)
     expect(storedResource).toStrictEqual(expected)
+
+    // Assert that:
+    // - Cache is bypassed
+    const bypassedResource = await store.dispatch('druxt/getResource', { ...mockPage.data, bypassCache: true })
+    delete resource._druxt_full
+    delete bypassedResource._druxt_full
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(bypassedResource).toStrictEqual(resource)
+
+    // Assert that:
+    // - When bypassing cache, in case live data is unavailable, fallback to cache.
+    store.$druxt.getResource = jest.fn(() => { throw new Error() })
+    const fallback = await store.dispatch('druxt/getResource', { ...mockPage.data, bypassCache: true })
+    delete fallback._druxt_full
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(fallback).toStrictEqual(bypassedResource)
   })
 
   test('getResource - filter', async () => {

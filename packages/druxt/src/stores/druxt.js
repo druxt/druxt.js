@@ -300,7 +300,7 @@ const DruxtStore = ({ store }) => {
         }
 
         // Return if we have the full resource.
-        if ((storedResource || {})._druxt_full) {
+        if (!bypassCache && (storedResource || {})._druxt_full) {
           return storedResource
         }
         const isFull = typeof (queryObject.fields || {})[type] !== 'string'
