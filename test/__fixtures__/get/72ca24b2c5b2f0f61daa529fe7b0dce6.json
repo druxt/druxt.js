@@ -1,0 +1,105 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "configurable_language--configurable_language",
+        "id": "0a1a3417-32af-4020-b26d-c5b433ddc0e5",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/configurable_language/configurable_language/0a1a3417-32af-4020-b26d-c5b433ddc0e5"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "en"
+        }
+      },
+      {
+        "type": "configurable_language--configurable_language",
+        "id": "feec23d8-7796-4cda-8e12-63b2c3bc6175",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/configurable_language/configurable_language/feec23d8-7796-4cda-8e12-63b2c3bc6175"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "es"
+        }
+      },
+      {
+        "type": "configurable_language--configurable_language",
+        "id": "309993bf-1612-4fa7-b1de-53aa18ce24ff",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/configurable_language/configurable_language/309993bf-1612-4fa7-b1de-53aa18ce24ff"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "und"
+        }
+      },
+      {
+        "type": "configurable_language--configurable_language",
+        "id": "35b25fb7-0713-4b60-8724-f3458c446d62",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/configurable_language/configurable_language/35b25fb7-0713-4b60-8724-f3458c446d62"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": "zxx"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/configurable_language/configurable_language?fields%5Bconfigurable_language--configurable_language%5D=drupal_internal__id"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json",
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "env": {
+      "FormData": null
+    },
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "method": "get",
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/configurable_language/configurable_language?fields%5Bconfigurable_language--configurable_language%5D=drupal_internal__id"
+  },
+  "request": {}
+}
