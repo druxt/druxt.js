@@ -167,10 +167,10 @@ const DruxtStore = ({ store }) => {
        *
        * @example @lang js
        * // Flush all resources.
-       * this.$store.commit('druxt/flushResources', {})
+       * this.$store.commit('druxt/flushResource', {})
        *
        * // Flush target resource.
-       * this.$store.commit('druxt/flushResources', { id, type, prefix, hash })
+       * this.$store.commit('druxt/flushResource', { id, type, prefix, hash })
        */
       flushResource (state, { type, id, prefix }) {
         if (!type) Vue.set(state, 'resources', {})

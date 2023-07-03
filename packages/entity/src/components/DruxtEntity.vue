@@ -511,7 +511,8 @@ export default {
  * property.
  *
  * @typedef {object} ModuleSettings
- * @param {object} query - Entity Query settings:
+ * @param {object} query - Entity query settings:
+ * @param {(boolean|function)} query.bypassCache - Whether to pull the data from the Vuex store or from the JSON:API.
  * @param {(string[]|array[])} query.fields - An array or arrays of fields to filter from the JSON:API Resources.
  * @param {string[]} query.include - An array of relationships to include alongside the JSON:API Resource.
  * @param {boolean} query.schema - Whether to automatically detect fields to filter, per the Display mode.
@@ -521,11 +522,12 @@ export default {
  * export default {
  *   druxt: {
  *     query: {
+ *       bypassCache: ({ $store }) => $store.$auth.loggedIn,
  *       fields: [['title'], ['user--user', ['display_name']]],
  *       include: ['uid']
  *       schema: true,
  *     },
- *   }
+ *   },
  * }
  *
  * @example <caption>DruxtEntity component with settings</caption> @lang vue
@@ -535,6 +537,7 @@ export default {
  *     :uuid="uuid"
  *     :settings="{
  *       query: {
+ *         bypassCache: true,
  *         fields: [['title'], ['user--user', ['display_name']]],
  *         include: ['uid']
  *         schema: true,

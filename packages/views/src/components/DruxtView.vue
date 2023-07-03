@@ -735,28 +735,40 @@ export default {
  * or the Wrapper component `druxt` object.
  *
  * @typedef {object} ModuleSettings
- * @param {boolean} bundleFilter - Whether to automatically detect Resource types to filter, based on the View `bundle` filter.
- * @param {string[]} fields - An array of fields to filter from the JSON:API Views Resource types.
- * @param {string[]} resourceTypes - An array of Resource types to be used by the Fields filter.
+ * @param {object} query - View results query settings:
+ * @param {(boolean|function)} query.bypassCache - Whether to pull the data from the Vuex store or from the JSON:API.
+ * @param {boolean} query.bundleFilter - Whether to automatically detect Resource types to filter, based on the View `bundle` filter.
+ * @param {string[]} query.fields - An array of fields to filter from the JSON:API Views Resource types.
+ * @param {string[]} query.resourceTypes - An array of Resource types to be used by the Fields filter.
  *
- * @example @lang js
- * {
- *   bundleFilter: false,
- *   fields: [],
- *   resourceTypes: []
- * }
- *
- * @example @lang vue
+ * @example <caption>DruxtView Wrapper component</caption> @lang vue
  * <script>
  * export default {
  *   druxt: {
  *     query: {
+ *       bypassCache: ({ $store }) => $store.$auth.loggedIn,
  *       bundleFilter: false,
- *       fields: ['title']
+ *       fields: [],
  *       resourceTypes: ['node--article'],
  *     },
- *   }
+ *   },
  * }
+ *
+ * @example <caption>DruxtView component with settings</caption> @lang vue
+ * <template>
+ *   <DruxtView
+ *     display-id="block_1"
+ *     view-id="promoted_items
+ *     :settings="{
+ *       query: {
+ *         bypassCache: true,
+ *         bundleFilter: false,
+ *         fields: ['title']
+ *         resourceTypes: [],
+ *       }
+ *     }"
+ *   />
+ * </template>
  */
 
 /**
