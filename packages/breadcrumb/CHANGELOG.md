@@ -1,5 +1,18 @@
 # druxt-breadcrumb
 
+## 0.17.0
+
+### Minor Changes
+
+- f6b4a664: feat(#578): updated component to support the DruxtDevelTemplate tool.
+
+### Patch Changes
+
+- Updated dependencies [e46a3290]
+  - druxt@0.21.0
+  - druxt-router@0.29.0
+  - druxt-blocks@0.17.0
+
 ## 0.16.0
 
 ### Minor Changes
