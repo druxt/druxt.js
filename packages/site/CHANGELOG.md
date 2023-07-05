@@ -1,5 +1,19 @@
 # druxt-site
 
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies [41cab3a0]
+  - druxt-views@0.22.0
+  - druxt@0.22.0
+  - druxt-entity@0.28.0
+  - druxt-blocks@0.17.1
+  - druxt-breadcrumb@0.17.1
+  - druxt-menu@0.19.1
+  - druxt-router@0.29.1
+  - druxt-schema@0.11.2
+
 ## 0.14.0
 
 ### Minor Changes

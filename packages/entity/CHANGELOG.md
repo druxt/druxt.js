@@ -1,5 +1,18 @@
 # druxt-entity
 
+## 0.28.0
+
+### Minor Changes
+
+- 41cab3a0: feat(#639): add bypassCache druxt setting to DruxtEntity components.
+
+### Patch Changes
+
+- Updated dependencies [41cab3a0]
+  - druxt@0.22.0
+  - druxt-router@0.29.1
+  - druxt-schema@0.11.2
+
 ## 0.27.1
 
 ### Patch Changes
