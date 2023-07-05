@@ -292,7 +292,7 @@ export default {
           // File: View.
           if (this.isFile && schemaType === 'view') {
             return h('DruxtEntity', {
-              attrs,
+              attrs: { ...attrs, ...self.$attrs },
               props: {
                 langcode: this.lang,
                 type: item.type,
@@ -310,7 +310,7 @@ export default {
           // Image: View
           if (this.isImage && schemaType === 'view') {
             return h('DruxtEntity', {
-              attrs,
+              attrs: { ...attrs, ...self.$attrs },
               props: {
                 langcode: this.lang,
                 type: item.type,
@@ -352,7 +352,7 @@ export default {
           // Relationship: View.
           if (this.relationship && (item || {}).id && schemaType === 'view') {
             return h('DruxtEntity', {
-              attrs,
+              attrs: { ...attrs, ...self.$attrs },
               props: {
                 langcode: this.lang,
                 mode: this.schema.settings.display.view_mode || 'default',
@@ -365,7 +365,7 @@ export default {
           // Relationship: Form.
           if (this.relationship && (item || {}).id && schemaType === 'form') {
             return h('details', [h('DruxtEntityForm', {
-              attrs,
+              attrs: { ...attrs, ...self.$attrs },
               props: {
                 langcode: this.lang,
                 mode: this.schema.settings.display.view_mode || 'default',
