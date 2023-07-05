@@ -143,6 +143,22 @@ describe('DruxtStore', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     expect(storedResource).toStrictEqual(resource)
     expect(storedResource).toStrictEqual(expected)
+
+    // Assert that:
+    // - Cache is bypassed
+    const bypassedResource = await store.dispatch('druxt/getResource', { ...mockPage.data, bypassCache: true })
+    delete resource._druxt_full
+    delete bypassedResource._druxt_full
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(bypassedResource).toStrictEqual(resource)
+
+    // Assert that:
+    // - When bypassing cache, in case live data is unavailable, fallback to cache.
+    store.$druxt.getResource = jest.fn(() => { throw new Error() })
+    const fallback = await store.dispatch('druxt/getResource', { ...mockPage.data, bypassCache: true })
+    delete fallback._druxt_full
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(fallback).toStrictEqual(bypassedResource)
   })
 
   test('getResource - filter', async () => {
@@ -281,5 +297,52 @@ describe('DruxtStore', () => {
 
     await store.dispatch('druxt/getCollection', { type: 'node--page', query: {} })
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
+  })
+
+  test('flushCollection', async () => {
+    const type = 'node--page'
+    const hash ='_default'
+    const prefix = 'en'
+
+    // Ensure that the results state is populated.
+    const collection = await getMockCollection(type)
+    store.commit('druxt/addCollection', { collection, type, prefix, hash })
+    expect(store.state.druxt.collections[type][hash][prefix]).toStrictEqual(collection)
+
+    store.commit('druxt/flushCollection', { type, hash, prefix })
+    expect(store.state.druxt.collections[type][hash][prefix]).toStrictEqual({})
+
+    store.commit('druxt/flushCollection', { type, hash })
+    expect(store.state.druxt.collections[type][hash]).toStrictEqual({})
+
+    store.commit('druxt/flushCollection', { type })
+    expect(store.state.druxt.collections[type]).toStrictEqual({})
+
+    store.commit('druxt/flushCollection', {})
+    expect(store.state.druxt.collections).toStrictEqual({})
+
+  })
+
+  test('flushResource', async () => {
+    const type = 'node--page'
+    const prefix = 'en'
+
+    // Ensure that the results state is populated.
+    const resource = await getMockResource(type)
+    const id = resource.data.id
+    store.commit('druxt/addResource', { prefix, resource })
+    expect(store.state.druxt.resources[type][id][prefix]).toStrictEqual(resource)
+
+    store.commit('druxt/flushResource', { type, id, prefix })
+    expect(store.state.druxt.resources[type][id][prefix]).toStrictEqual({})
+
+    store.commit('druxt/flushResource', { type, id })
+    expect(store.state.druxt.resources[type][id]).toStrictEqual({})
+
+    store.commit('druxt/flushResource', { type })
+    expect(store.state.druxt.resources[type]).toStrictEqual({})
+
+    store.commit('druxt/flushResource', {})
+    expect(store.state.druxt.resources).toStrictEqual({})
   })
 })
