@@ -14,7 +14,24 @@ Array [
 
 exports[`DruxtEntity component defaults 2`] = `
 "<div>
-  <druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"></druxtentitynodepage-stub>
+  <druxtentitynodepage-stub entity=\\"[object Object]\\" fields=\\"[object Object]\\" schema=\\"[object Object]\\" value=\\"[object Object]\\">
+    <div>
+      <div>
+        <div>
+          <p>Umami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided 'out of the box'.</p>
+          <p>For more information visit <a href=\\"https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile\\">https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile</a>.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div>
+        <div>
+          <p>Umami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided 'out of the box'.</p>
+          <p>For more information visit <a href=\\"https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile\\">https://www.drupal.org/docs/8/umami-drupal-8-demonstration-installation-profile</a>.</p>
+        </div>
+      </div>
+    </div>
+  </druxtentitynodepage-stub>
 </div>"
 `;
 

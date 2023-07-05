@@ -2,42 +2,88 @@
 
 exports[`DruxtBreadcrumb 404 route 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object]\\" value=\\"[object Object]\\"></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object]\\" value=\\"[object Object]\\">
+    <ul>
+      <li>
+        <nuxtlink>Home</nuxtlink>
+      </li>
+    </ul>
+  </druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb level 1 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object],[object Object]\\" value=\\"[object Object],[object Object]\\"></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object],[object Object]\\" value=\\"[object Object],[object Object]\\">
+    <ul>
+      <li>
+        <nuxtlink>Home</nuxtlink>
+      </li>
+      <li>/level-1</li>
+    </ul>
+  </druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb level 2 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object],[object Object],[object Object]\\" value=\\"[object Object],[object Object],[object Object]\\"></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object],[object Object],[object Object]\\" value=\\"[object Object],[object Object],[object Object]\\">
+    <ul>
+      <li>
+        <nuxtlink>Home</nuxtlink>
+      </li>
+      <li>
+        <nuxtlink>/level-1</nuxtlink>
+      </li>
+      <li>/level-1/level-2</li>
+    </ul>
+  </druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb manual path 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object],[object Object],[object Object]\\" value=\\"[object Object],[object Object],[object Object]\\"></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object],[object Object],[object Object]\\" value=\\"[object Object],[object Object],[object Object]\\">
+    <ul>
+      <li>
+        <nuxtlink>Home</nuxtlink>
+      </li>
+      <li>
+        <nuxtlink>/level-1</nuxtlink>
+      </li>
+      <li>/level-1/level-2</li>
+    </ul>
+  </druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb missing parent 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object],[object Object]\\" value=\\"[object Object],[object Object]\\"></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object],[object Object]\\" value=\\"[object Object],[object Object]\\">
+    <ul>
+      <li>
+        <nuxtlink>Home</nuxtlink>
+      </li>
+      <li>/level-1/level-2</li>
+    </ul>
+  </druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb no home 1`] = `
 "<div>
-  <druxtwrapper-stub></druxtwrapper-stub>
+  <druxtwrapper-stub>
+    <ul></ul>
+  </druxtwrapper-stub>
 </div>"
 `;
 
 exports[`DruxtBreadcrumb root 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object]\\" value=\\"[object Object]\\"></druxtwrapper-stub>
+  <druxtwrapper-stub crumbs=\\"[object Object]\\" value=\\"[object Object]\\">
+    <ul>
+      <li>/</li>
+    </ul>
+  </druxtwrapper-stub>
 </div>"
 `;
