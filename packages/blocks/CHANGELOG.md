@@ -1,5 +1,11 @@
 # druxt-blocks
 
+## 0.17.2
+
+### Patch Changes
+
+- 400e4f8f: fix issue with axios dependency
+
 ## 0.17.1
 
 ### Patch Changes

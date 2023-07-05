@@ -11174,7 +11174,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"druxt-blocks@^0.17.1, druxt-blocks@workspace:packages/blocks":
+"druxt-blocks@^0.17.1, druxt-blocks@^0.17.2, druxt-blocks@workspace:packages/blocks":
   version: 0.0.0-use.local
   resolution: "druxt-blocks@workspace:packages/blocks"
   dependencies:
@@ -11337,7 +11337,7 @@ __metadata:
     deepmerge: ^4.3.1
     drupal-jsonapi-params: ^2.2.0
     druxt: ^0.22.0
-    druxt-blocks: ^0.17.1
+    druxt-blocks: ^0.17.2
     druxt-entity: ^0.28.0
     druxt-router: ^0.29.1
     md5: ^2.3.0
