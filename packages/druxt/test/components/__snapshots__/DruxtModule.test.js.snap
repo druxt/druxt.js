@@ -2,7 +2,9 @@
 
 exports[`DruxtModule component custom module - no wrapper 1`] = `
 "<div>
-  <druxtwrapper-stub foo=\\"bar\\"></druxtwrapper-stub>
+  <druxtwrapper-stub foo=\\"bar\\">
+    <div>test</div>
+  </druxtwrapper-stub>
 </div>"
 `;
 

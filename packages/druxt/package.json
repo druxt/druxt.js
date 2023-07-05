@@ -42,26 +42,26 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/proxy": "^2.1.0",
-    "@vue/devtools-api": "^6.4.5",
+    "@vue/devtools-api": "^6.5.0",
     "chalk": "^4.1.2",
-    "deepmerge": "^4.2.2",
-    "drupal-jsonapi-params": "^2.1.0",
-    "express-rate-limit": "^6.6.0",
+    "deepmerge": "^4.3.1",
+    "drupal-jsonapi-params": "^2.2.0",
+    "express-rate-limit": "^6.7.0",
     "launch-editor": "^2.6.0",
     "md5": "^2.3.0",
     "querystring": "^0.2.1",
     "scule": "^0.3.2"
   },
   "devDependencies": {
-    "@storybook/addon-docs": "^6.5.10"
+    "@storybook/addon-docs": "^6.5.16"
   },
   "peerDependencies": {
     "axios": "*",
     "consola": "*"
   },
   "optionalDependencies": {
-    "core-js": "^3.25.1",
-    "vue": "^2.7.10",
+    "core-js": "^3.31.0",
+    "vue": "^2.7.14",
     "vuex": "^3.6.2"
   },
   "publishConfig": {

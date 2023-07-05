@@ -52,7 +52,7 @@
     "drupal-jsonapi-params": "*"
   },
   "optionalDependencies": {
-    "vue": "^2.7.10",
+    "vue": "^2.7.14",
     "vuex": "^3.6.2"
   },
   "publishConfig": {

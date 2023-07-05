@@ -19,6 +19,7 @@ display:
         message:
           label: Mensaje
           alter:
+            path: 'admin/reports/dblog/event/{{ wid }}'
             alt: '{{ message }}'
         name:
           label: Usuario
