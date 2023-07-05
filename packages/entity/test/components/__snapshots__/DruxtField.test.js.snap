@@ -24,8 +24,8 @@ exports[`DruxtField fallback - form 1`] = `
 exports[`DruxtField file - view 1`] = `
 "<div data=\\"[object Object]\\">
   <div data=\\"[object Object]\\" errors=\\"\\" relationship=\\"true\\" schema=\\"[object Object]\\" value=\\"[object Object]\\">
-    <div>
-      <div entity=\\"[object Object]\\" value=\\"[object Object]\\"><a target=\\"_blank\\" href=\\"/sites/default/files/mediterranean-quiche-umami.jpg\\">mediterranean-quiche-umami.jpg</a></div>
+    <div data=\\"[object Object]\\">
+      <div data=\\"[object Object]\\" entity=\\"[object Object]\\" value=\\"[object Object]\\"><a target=\\"_blank\\" href=\\"/sites/default/files/mediterranean-quiche-umami.jpg\\">mediterranean-quiche-umami.jpg</a></div>
     </div>
   </div>
 </div>"
@@ -34,8 +34,8 @@ exports[`DruxtField file - view 1`] = `
 exports[`DruxtField image - view 1`] = `
 "<div data=\\"[object Object]\\">
   <div data=\\"[object Object]\\" errors=\\"\\" relationship=\\"true\\" schema=\\"[object Object]\\" value=\\"[object Object]\\">
-    <div>
-      <div entity=\\"[object Object]\\" value=\\"[object Object]\\"><img src=\\"/sites/default/files/mediterranean-quiche-umami.jpg\\"></div>
+    <div data=\\"[object Object]\\">
+      <div data=\\"[object Object]\\" entity=\\"[object Object]\\" value=\\"[object Object]\\"><img src=\\"/sites/default/files/mediterranean-quiche-umami.jpg\\"></div>
     </div>
   </div>
 </div>"
