@@ -40,11 +40,11 @@
   ],
   "dependencies": {
     "consola": "^2.15.3",
-    "drupal-jsonapi-params": "^2.1.0",
+    "drupal-jsonapi-params": "^2.2.0",
     "druxt": "^0.21.0"
   },
   "optionalDependencies": {
-    "vue": "^2.7.10",
+    "vue": "^2.7.14",
     "vuex": "^3.6.2"
   },
   "publishConfig": {
