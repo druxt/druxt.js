@@ -52,6 +52,29 @@ describe('DruxtViewsStore', () => {
     expect(Object.keys(store.state['druxt/views'].results)).toHaveLength(1)
   })
 
+  test('flushResults', async () => {
+    // Ensure that the results state is populated.
+    const results = await store.$druxt.getResource(`views--${viewId}`, displayId)
+    const prefix = 'en'
+    store.commit('druxt/views/addResults', { results, viewId, displayId, prefix, hash: '_default' })
+    expect(store.state['druxt/views'].results[viewId][displayId][prefix]._default).toBe(results)
+
+    store.commit('druxt/views/flushResults', { viewId, displayId, prefix, hash: '_default'})
+    expect(store.state['druxt/views'].results[viewId][displayId][prefix]._default).toStrictEqual({})
+
+    store.commit('druxt/views/flushResults', { viewId, displayId, prefix})
+    expect(store.state['druxt/views'].results[viewId][displayId][prefix]).toStrictEqual({})
+
+    store.commit('druxt/views/flushResults', { viewId, displayId })
+    expect(store.state['druxt/views'].results[viewId][displayId]).toStrictEqual({})
+
+    store.commit('druxt/views/flushResults', { viewId })
+    expect(store.state['druxt/views'].results[viewId]).toStrictEqual({})
+
+    store.commit('druxt/views/flushResults', {})
+    expect(store.state['druxt/views'].results).toStrictEqual({})
+  })
+
   test('getResults', async () => {
     const query = { viewId, displayId, query: {} }
     const results = await store.dispatch('druxt/views/getResults', query)
@@ -65,5 +88,15 @@ describe('DruxtViewsStore', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     await store.dispatch('druxt/views/getResults', query)
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
+
+    // Bypass cache
+    const cache = await store.dispatch('druxt/views/getResults', { ...query, bypassCache: true })
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+
+    // Fallback to cache
+    store.$druxt.getResource = jest.fn(() => { throw new Error() })
+    const fallback = await store.dispatch('druxt/views/getResults', { ...query, bypassCache: true })
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    expect(fallback).toBe(cache)
   })
 })
