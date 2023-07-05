@@ -517,8 +517,6 @@ export default {
         mergedSettings.query.bypassCache = !!mergedSettings.query.bypassCache(context)
       }
 
-      console.log('mergedSettings', mergedSettings)
-
       return {
         query: mergedSettings.query || {},
       }
