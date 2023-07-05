@@ -140,6 +140,44 @@ const DruxtStore = ({ store }) => {
 
         Vue.set(state.resources[type][id], prefix, resource)
       },
+
+      /**
+       * @name flushCollection
+       * @mutator {object} flushCollection=collections Removes JSON:API collections from the Vuex state object.
+       * @param {flushCollectionContext} context
+       *
+       * @example @lang js
+       * // Flush all collections.
+       * this.$store.commit('druxt/flushCollection', {})
+       *
+       * // Flush target collection.
+       * this.$store.commit('druxt/flushCollection', { type, hash, prefix })
+       */
+      flushCollection (state, { type, hash, prefix }) {
+        if (!type) Vue.set(state, 'collections', {})
+        else if (type && !hash && !prefix) Vue.set(state.collections, type, {})
+        else if (type && hash && !prefix) Vue.set(state.collections[type], hash, {})
+        else if (type && hash && prefix) Vue.set(state.collections[type][hash], prefix, {})
+      },
+
+      /**
+       * @name flushResource
+       * @mutator {object} flushResource=resources Removes JSON:API resources from the Vuex state object.
+       * @param {flushResourceContext} context
+       *
+       * @example @lang js
+       * // Flush all resources.
+       * this.$store.commit('druxt/flushResource', {})
+       *
+       * // Flush target resource.
+       * this.$store.commit('druxt/flushResource', { id, type, prefix, hash })
+       */
+      flushResource (state, { type, id, prefix }) {
+        if (!type) Vue.set(state, 'resources', {})
+        else if (type && !id && !prefix) Vue.set(state.resources, type, {})
+        else if (type && id && !prefix) Vue.set(state.resources[type], id, {})
+        else if (type && id && prefix) Vue.set(state.resources[type][id], prefix, {})
+      }
     },
 
     /**
@@ -159,15 +197,16 @@ const DruxtStore = ({ store }) => {
        * const resources = await this.$store.dispatch('druxt/getCollection', {
        *   type: 'node--article',
        *   query: new DrupalJsonApiParams().addFilter('status', '1'),
+       *   bypassCache: false
        * })
        */
-      async getCollection ({ commit, state }, { type, query, prefix }) {
+      async getCollection ({ commit, state }, { type, query, prefix, bypassCache = false }) {
         // Generate a hash using query data excluding the 'fields' and 'include' data.
         const queryObject = getDrupalJsonApiParams(query).getQueryObject()
         const hash = query ? md5(JSON.stringify({ ...queryObject, fields: {}, include: [] })) : '_default'
 
         // If collection hash exists, re-hydrate and return the data.
-        if (((state.collections[type] || {})[hash] || {})[prefix]) {
+        if (!bypassCache && ((state.collections[type] || {})[hash] || {})[prefix]) {
           return {
             ...state.collections[type][hash][prefix],
             // Hydrate resource data.
@@ -197,9 +236,13 @@ const DruxtStore = ({ store }) => {
        * @return {object} The Drupal JSON:API resource.
        *
        * @example @lang js
-       * const resource = await this.$store.dispatch('druxt/getResource', { type: 'node--article', id })
+       * const resource = await this.$store.dispatch('druxt/getResource', {
+       *   type: 'node--article',
+       *   id,
+       *   bypassCache: false
+       * })
        */
-      async getResource ({ commit, dispatch, state }, { type, id, query, prefix }) {
+      async getResource ({ commit, dispatch, state }, { type, id, query, prefix, bypassCache = false }) {
         // Get the resource from the store if it's avaialble.
         const storedResource = ((state.resources[type] || {})[id] || {})[prefix] ?
           { ...state.resources[type][id][prefix] }
@@ -239,8 +282,9 @@ const DruxtStore = ({ store }) => {
 
                 return data.filter((o) => typeof o === 'object' && o).map((o) => {
                   return dispatch('getResource', {
-                    type: o.type,
                     id: o.id,
+                    prefix,
+                    type: o.type,
                     query: { ...queryObject, include },
                   })
                 })
@@ -256,7 +300,7 @@ const DruxtStore = ({ store }) => {
         }
 
         // Return if we have the full resource.
-        if ((storedResource || {})._druxt_full) {
+        if (!bypassCache && (storedResource || {})._druxt_full) {
           return storedResource
         }
         const isFull = typeof (queryObject.fields || {})[type] !== 'string'
@@ -278,9 +322,13 @@ const DruxtStore = ({ store }) => {
 
         // Request the resource from the DruxtClient if required.
         let resource
-        if (!storedResource || fields) {
-          resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
-          commit('addResource', { prefix, resource: { ...resource } })
+        if (bypassCache || !storedResource || fields) {
+          try {
+            resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
+            commit('addResource', { prefix, resource: { ...resource } })
+          } catch(e) {
+            // Do nothing, just don't error.
+          }
         }
 
         // Build resource to be returned.
@@ -351,6 +399,40 @@ export { DruxtStore }
  */
 
 /**
+ * Parameters for the `flushCollection` mutation.
+ *
+ * @typedef {object} flushCollectionContext
+ *
+ * @param {string} type - The JSON:API collection resource type.
+ * @param {string} hash - An md5 hash of the query string.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+ *
+ * @example @lang js
+ * {
+ *   type: 'node--page',
+ *   hash: '_default',
+ *   prefix: 'en'
+ * }
+ */
+
+/**
+ * Parameters for the `flushResource` mutation.
+ *
+ * @typedef {object} flushResourceContext
+ *
+ * @param {string} [type] - The JSON:API Resource type.
+ * @param {string} [id] - The Drupal resource UUID.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+ *
+ * @example @lang js
+ * {
+ *   type: 'node--page',
+ *   id: 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd',
+ *   prefix: 'en'
+ * }
+ */
+
+/**
  * Parameters for the `getCollection` action.
  *
  * @typedef {object} getCollectionContext
@@ -358,11 +440,13 @@ export { DruxtStore }
  * @param {string} type - The JSON:API collection resource type.
  * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
  * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+ * @param {boolean} [bypassCache] - (Optional) Bypass the Vuex cached collection.
  *
  * @example @lang js
  * {
  *   type: 'node--page',
- *   query: new DrupalJsonApiParams().addFilter('status', '1')
+ *   query: new DrupalJsonApiParams().addFilter('status', '1'),
+ *   bypassCache: false
  * }
  */
 
@@ -375,12 +459,14 @@ export { DruxtStore }
  * @param {string} id - The Drupal resource UUID.
  * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
  * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+ * @param {boolean} [bypassCache] - (Optional) Bypass the Vuex cached resource.
  *
  * @example @lang js
  * {
  *   type: 'node--page',
  *   id: 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd',
- *   prefix: 'en'
+ *   prefix: 'en',
+ *   bypassCache: false
  * }
  */
 
