@@ -1,5 +1,12 @@
 # druxt
 
+## 0.22.0
+
+### Minor Changes
+
+- 41cab3a0: feat(#639): added druxt/flushCollection and druxt/flushResource mutations
+- 41cab3a0: feat(#639): added bypassCache option to druxt/getCollection and druxt/getResource actions
+
 ## 0.21.1
 
 ### Patch Changes

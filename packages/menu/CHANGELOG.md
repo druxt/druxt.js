@@ -1,5 +1,13 @@
 # druxt-menu
 
+## 0.19.1
+
+### Patch Changes
+
+- Updated dependencies [41cab3a0]
+  - druxt@0.22.0
+  - druxt-blocks@0.17.1
+
 ## 0.19.0
 
 ### Minor Changes

@@ -8,7 +8,7 @@ tips:
     body: 'Cualquier bloque personalizado o contribuido se puede agregar a una región en particular haciendo clic en el botón Colocar bloque. También se puede crear un nuevo bloque haciendo clic en Colocar bloque.'
   block-region:
     label: 'Región de bloque'
-    body: 'Asigne o cambie la región de un bloque haciendo clic aquí. Aparecerá una lista desplegable con todas las regiones. Puede colocar un bloque en varias regiones.'
+    body: 'Asigne o cambie la región de un bloque haciendo click aquí. Aparecerá una lista desplegable con todas las regiones. Puedes poner el mismo bloque en varias regiones.'
   configure-block:
     label: 'Configurar bloque'
     body: 'Al hacer clic en "Configurar", puede seguir adelante y editar el contenido del bloque, editar la configuración de visibilidad e incluso cambiar la ubicación de donde se muestra en su tema.'

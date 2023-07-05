@@ -25,6 +25,7 @@ display:
         access:
           label: 'Último acceso'
           settings:
+            future_format: 'Desde hace @interval'
             past_format: 'Hace @interval'
         operations:
           label: Operaciones

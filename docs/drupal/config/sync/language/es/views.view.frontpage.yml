@@ -17,7 +17,16 @@ display:
           content: 'Todavía no se ha creado contenido para la portada.'
         title:
           title: 'Bienvenido a [site:name]'
+      header:
+        area:
+          content:
+            value: '<p class="text-align-center">Explore recetas para cada tipo de ocasión, ingrediente y nivel de habilidad.</p>'
   feed_1:
     display_title: 'Canal de noticias'
   page_1:
     display_title: Página
+    display_options:
+      header:
+        area:
+          content:
+            value: '<p class="text-align-center">Explore recetas para cada tipo de ocasión, ingrediente y nivel de habilidad</p>'
