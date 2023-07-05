@@ -1,5 +1,21 @@
 # druxt-views
 
+## 0.22.0
+
+### Minor Changes
+
+- 41cab3a0: feat(#639): added druxt/views/flushResults mutation.
+- 41cab3a0: feat(#639): added bypassCache option to druxt/views/getResults action.
+- 41cab3a0: feat(#639): added bypassCache druxt setting to DruxtView component.
+
+### Patch Changes
+
+- Updated dependencies [41cab3a0]
+  - druxt@0.22.0
+  - druxt-entity@0.28.0
+  - druxt-blocks@0.17.1
+  - druxt-router@0.29.1
+
 ## 0.21.0
 
 ### Minor Changes

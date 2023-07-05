@@ -1,5 +1,12 @@
 # druxt-router
 
+## 0.29.1
+
+### Patch Changes
+
+- Updated dependencies [41cab3a0]
+  - druxt@0.22.0
+
 ## 0.29.0
 
 ### Minor Changes
