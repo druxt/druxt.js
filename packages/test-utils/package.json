@@ -1,6 +1,6 @@
 {
   "name": "druxt-test-utils",
-  "version": "0.2.13",
+  "version": "1.0.0",
   "private": true,
   "description": "Test utilities for Druxt development.",
   "keywords": [
@@ -18,7 +18,7 @@
   "module": "dist/druxt-test-utils.esm.js",
   "dependencies": {
     "drupal-jsonapi-params": "2.1.0",
-    "jest-mock-axios": "4.6.1"
+    "jest-mock-axios": "4.7.2"
   },
   "peerDependencies": {
     "druxt": "*"

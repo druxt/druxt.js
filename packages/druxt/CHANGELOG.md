@@ -1,5 +1,19 @@
 # druxt
 
+## 0.21.1
+
+### Patch Changes
+
+- e46a3290 by nx-alejandrolacasa: fix(#628): add prefix to included resources fetch
+
+## 0.21.0
+
+### Minor Changes
+
+- f6b4a664: feat(#578): added DruxtDevelTemplate component to simplify template creation in development mode.
+- f6b4a664: feat(#578): updated missing default slot message with DruxtDevelTemplate tool.
+- 29905ff6: feat(#583): add Vue devtools plugin
+
 ## 0.20.0
 
 ### Minor Changes
@@ -148,9 +162,9 @@
   export default {
     druxt: {
       proxy: {
-        api: true
-      }
-    }
+        api: true,
+      },
+    },
   };
   ```
 
@@ -165,9 +179,9 @@
   export default {
     druxt: {
       proxy: {
-        files: "default"
-      }
-    }
+        files: "default",
+      },
+    },
   };
   ```
 
@@ -195,7 +209,7 @@
     type,
     id,
     attributes: {},
-    relationships: {}
+    relationships: {},
   });
   ```
 
@@ -302,9 +316,9 @@ Thanks to [d34dman](https://github.com/d34dman)
     v-model="{
       attributes: {
         title: 'My Entity',
-        field_name: 'Value'
+        field_name: 'Value',
       },
-      relationships: {}
+      relationships: {},
     }"
   />
   ```
@@ -344,7 +358,7 @@ Thanks to [d34dman](https://github.com/d34dman)
   import { DruxtModule } from "druxt";
   export default {
     name: "MyCustomDruxtModule",
-    extends: DruxtModule
+    extends: DruxtModule,
   };
   </script>
   ```
@@ -391,17 +405,17 @@ Thanks to [d34dman](https://github.com/d34dman)
   <script>
   export default {
     data: () => ({
-      resource: null
+      resource: null,
     }),
 
     async fetch() {
       const resource = await this.$store.dispatch("druxt/getResource", {
         type: "node--article",
         id: uuid,
-        query
+        query,
       });
       this.resource = resource;
-    }
+    },
   };
   </script>
   ```
