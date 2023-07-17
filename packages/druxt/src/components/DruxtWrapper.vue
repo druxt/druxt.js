@@ -1,6 +1,6 @@
 <template>
   <div>
-    <slot />
+    <slot v-bind="{ ...$parent.$attrs }" />
   </div>
 </template>
 
