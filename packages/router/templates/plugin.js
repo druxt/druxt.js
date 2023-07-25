@@ -1,6 +1,6 @@
 import { DruxtRouter } from 'druxt-router'
 
-export default (context, inject) => {
+export default ({ app }, inject) => {
   const baseUrl = '<%= options.baseUrl %>'
   const options = {}
 
@@ -24,6 +24,9 @@ export default (context, inject) => {
   <% if (typeof options.axios === 'object') { %>
   // Axios settings.
   options.axios = <%= JSON.stringify(options.axios) %>
+  <% } else { %>
+  // Use the @nuxtjs/axios module Axios instance.
+  options.axios = app.$axios
   <% } %>
 
   const router = new DruxtRouter(baseUrl, options)
