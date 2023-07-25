@@ -1,5 +1,13 @@
 # druxt-views
 
+## 0.22.1
+
+### Patch Changes
+
+- 400e4f8f: fix issue with axios dependency
+- Updated dependencies [400e4f8f]
+  - druxt-blocks@0.17.2
+
 ## 0.22.0
 
 ### Minor Changes
