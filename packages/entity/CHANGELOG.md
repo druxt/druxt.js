@@ -1,5 +1,14 @@
 # druxt-entity
 
+## 0.28.1
+
+### Patch Changes
+
+- Updated dependencies [86094105]
+  - druxt@0.23.0
+  - druxt-router@0.30.0
+  - druxt-schema@0.11.3
+
 ## 0.28.0
 
 ### Minor Changes

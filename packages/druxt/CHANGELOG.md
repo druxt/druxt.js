@@ -1,5 +1,11 @@
 # druxt
 
+## 0.23.0
+
+### Minor Changes
+
+- 7664d90d: feat(#87): add attrs passthrough to DruxtWrapper component
+
 ## 0.22.0
 
 ### Minor Changes

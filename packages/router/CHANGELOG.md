@@ -1,5 +1,16 @@
 # druxt-router
 
+## 0.30.0
+
+### Minor Changes
+
+- 86094105: feat(#660): added @nuxtjs/axios support to the Router plugin.
+
+### Patch Changes
+
+- Updated dependencies [7664d90d]
+  - druxt@0.23.0
+
 ## 0.29.1
 
 ### Patch Changes
