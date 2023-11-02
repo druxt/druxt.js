@@ -1,10 +1,15 @@
 # druxt-menu
 
+## 0.19.3
+
+### Patch Changes
+
+- feat(#679): Adds Nuxt Auth Axios instance to the DruxtMenu plugin to ensure correct results are provided when authenticated.
+
 ## 0.19.2
 
 ### Patch Changes
 
-- 86c8235b: feat(#679): Adds Nuxt Auth Axios instance to the DruxtMenu plugin to ensure correct results are provided when authenticated.
 - Updated dependencies [7664d90d]
   - druxt@0.24.0
 
