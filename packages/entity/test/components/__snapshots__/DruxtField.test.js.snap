@@ -2,22 +2,22 @@
 
 exports[`DruxtField boolean - form 1`] = `
 "<div data=\\"true\\">
-  <div data=\\"true\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"true\\"><label><strong data=\\"true\\">Status:</strong><br>
-      <div><input data=\\"true\\" type=\\"checkbox\\"></div></label></div>
+  <div data=\\"true\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"true\\"><label><strong>Status:</strong><br>
+      <div><input type=\\"checkbox\\"></div></label></div>
 </div>"
 `;
 
 exports[`DruxtField datetime - form 1`] = `
 "<div data=\\"2021-10-25T00:48:44+00:00\\">
-  <div data=\\"2021-10-25T00:48:44+00:00\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"2021-10-25T00:48:44+00:00\\"><label><strong data=\\"2021-10-25T00:48:44+00:00\\">Created:</strong><br>
-      <div><input data=\\"2021-10-25T00:48:44+00:00\\" type=\\"datetime-local\\"></div></label></div>
+  <div data=\\"2021-10-25T00:48:44+00:00\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"2021-10-25T00:48:44+00:00\\"><label><strong>Created:</strong><br>
+      <div><input type=\\"datetime-local\\"></div></label></div>
 </div>"
 `;
 
 exports[`DruxtField fallback - form 1`] = `
 "<div data=\\"[object Object]\\">
-  <div data=\\"[object Object]\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"><label><strong data=\\"[object Object]\\">Path:</strong><br>
-      <div><textarea data=\\"[object Object]\\"></textarea></div></label></div>
+  <div data=\\"[object Object]\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"><label><strong>Path:</strong><br>
+      <div><textarea></textarea></div></label></div>
 </div>"
 `;
 
@@ -43,13 +43,13 @@ exports[`DruxtField image - view 1`] = `
 
 exports[`DruxtField link - view 1`] = `
 "<div data=\\"[object Object]\\">
-  <div data=\\"[object Object]\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"><a data=\\"[object Object]\\" href=\\"https://druxtjs.org\\" target=\\"_blank\\">DruxtJS</a></div>
+  <div data=\\"[object Object]\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"[object Object]\\"><a href=\\"https://druxtjs.org\\" target=\\"_blank\\">DruxtJS</a></div>
 </div>"
 `;
 
 exports[`DruxtField text - form 1`] = `
 "<div data=\\"About Umami\\">
-  <div data=\\"About Umami\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"About Umami\\"><label><strong data=\\"About Umami\\">Title:</strong><br>
-      <div><input data=\\"About Umami\\"></div></label></div>
+  <div data=\\"About Umami\\" errors=\\"\\" schema=\\"[object Object]\\" value=\\"About Umami\\"><label><strong>Title:</strong><br>
+      <div><input></div></label></div>
 </div>"
 `;
