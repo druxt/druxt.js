@@ -1,6 +1,6 @@
 {
   "name": "druxt-site",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "description": "Out of the box Decoupled Drupal sites with Druxt.",
   "keywords": [
     "cms",
@@ -47,7 +47,7 @@
     "druxt-blocks": "^0.17.1",
     "druxt-breadcrumb": "^0.17.1",
     "druxt-entity": "^0.28.0",
-    "druxt-menu": "^0.19.1",
+    "druxt-menu": "^0.20.0",
     "druxt-router": "^0.29.1",
     "druxt-schema": "^0.11.2",
     "druxt-views": "^0.22.0",

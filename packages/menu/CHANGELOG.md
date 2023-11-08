@@ -1,5 +1,11 @@
 # druxt-menu
 
+## 0.20.0
+
+### Minor Changes
+
+- 62980259: feat(#679): update menu items when logged in on static generated site
+
 ## 0.19.3
 
 ### Patch Changes

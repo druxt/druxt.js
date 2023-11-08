@@ -219,6 +219,14 @@ export default {
     },
   },
 
+  mounted() {
+    // If logged in and statically generated, re-fetch the menu.
+    if (this?.$auth?.loggedIn && this?.$store?.app?.context?.isStatic) {
+      const settings = this.$options.druxt.settings(this, this.component.settings)
+      this.$options.druxt.fetchData.call(this, settings)
+    }
+  },
+
   methods: {
     /**
      * Recursively gets required menu items from the Vuex store.
