@@ -1,5 +1,12 @@
 # druxt-site
 
+## 0.14.3
+
+### Patch Changes
+
+- Updated dependencies [26b1bc6f]
+  - druxt-menu@0.21.0
+
 ## 0.14.2
 
 ### Patch Changes

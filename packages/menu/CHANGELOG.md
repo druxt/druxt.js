@@ -1,5 +1,11 @@
 # druxt-menu
 
+## 0.21.0
+
+### Minor Changes
+
+- 26b1bc6f: feat(#684): added druxtMenu/flushEntities Vuex mutation.
+
 ## 0.20.0
 
 ### Minor Changes

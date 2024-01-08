@@ -222,6 +222,7 @@ export default {
   mounted() {
     // If logged in and statically generated, re-fetch the menu.
     if (this?.$auth?.loggedIn && this?.$store?.app?.context?.isStatic) {
+      this.$store.commit('druxtMenu/flushEntities', { prefix: this.lang })
       const settings = this.$options.druxt.settings(this, this.component.settings)
       this.$options.druxt.fetchData.call(this, settings)
     }

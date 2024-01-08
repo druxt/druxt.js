@@ -11240,7 +11240,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"druxt-menu@^0.20.0, druxt-menu@workspace:packages/menu":
+"druxt-menu@^0.21.0, druxt-menu@workspace:packages/menu":
   version: 0.0.0-use.local
   resolution: "druxt-menu@workspace:packages/menu"
   dependencies:
@@ -11322,7 +11322,7 @@ __metadata:
     druxt-blocks: ^0.17.1
     druxt-breadcrumb: ^0.17.1
     druxt-entity: ^0.28.0
-    druxt-menu: ^0.20.0
+    druxt-menu: ^0.21.0
     druxt-router: ^0.29.1
     druxt-schema: ^0.11.2
     druxt-views: ^0.22.0
