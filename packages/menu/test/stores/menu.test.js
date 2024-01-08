@@ -33,4 +33,20 @@ describe('DruxtStore', () => {
     expect(store.$druxtMenu.get).toHaveBeenCalledWith('main', { test: true }, undefined)
     store.dispatch('druxtMenu/get', 'name')
   })
+
+  test('AddEntities', async () => {
+    expect(store.state.druxtMenu.entities).toStrictEqual({})
+    store.commit('druxtMenu/addEntities', { entities: [{ id: 'test' }] })
+    expect(Object.entries(store.state.druxtMenu.entities[undefined]).length).toBe(1)
+    expect(store.state.druxtMenu.entities[undefined].test).toStrictEqual({ id: 'test' })
+  })
+
+  test('flushEntities', async () => {
+    expect(store.state.druxtMenu.entities).toStrictEqual({})
+    store.commit('druxtMenu/addEntities', { entities: [{ id: 'test' }] })
+    expect(Object.entries(store.state.druxtMenu.entities[undefined]).length).toBe(1)
+    store.commit('druxtMenu/flushEntities', { prefix: 'undefined' })
+    expect(Object.entries(store.state.druxtMenu.entities[undefined]).length).toBe(0)
+    store.commit('druxtMenu/flushEntities', {})
+  })
 })
