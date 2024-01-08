@@ -44,9 +44,11 @@ describe('DruxtStore', () => {
   test('flushEntities', async () => {
     expect(store.state.druxtMenu.entities).toStrictEqual({})
     store.commit('druxtMenu/addEntities', { entities: [{ id: 'test' }] })
+    store.commit('druxtMenu/addEntities', { entities: [{ id: 'test2' }], prefix: 'es' })
     expect(Object.entries(store.state.druxtMenu.entities[undefined]).length).toBe(1)
     store.commit('druxtMenu/flushEntities', { prefix: 'undefined' })
     expect(Object.entries(store.state.druxtMenu.entities[undefined]).length).toBe(0)
     store.commit('druxtMenu/flushEntities', {})
+    expect(Object.entries(store.state.druxtMenu.entities).length).toBe(0)
   })
 })
