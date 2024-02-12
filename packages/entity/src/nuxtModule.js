@@ -38,7 +38,7 @@ const DruxtEntityNuxtModule = async function (moduleOptions = {}) {
       ...((this.options || {}).druxt || {}).entity,
       ...moduleOptions,
       components: {
-        fields: true,
+        fields: false,
         ...(((this.options || {}).druxt || {}).entity || {}).components,
         ...moduleOptions.components
       }
