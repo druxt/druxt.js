@@ -48,7 +48,7 @@
     "druxt-blocks": "^0.17.1"
   },
   "optionalDependencies": {
-    "vue": "^2.7.14",
+    "vue": "^3.4.21",
     "vuex": "^3.6.2"
   },
   "publishConfig": {
