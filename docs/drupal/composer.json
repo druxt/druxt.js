@@ -18,18 +18,18 @@
         "composer/installers": "^2.2",
         "cweagans/composer-patches": "^1.7.3",
         "drupal-tome/tome_drush": "dev-master",
-        "drupal/core-composer-scaffold": "9.5.9",
-        "drupal/core-project-message": "9.5.9",
-        "drupal/core-recommended": "9.5.9",
+        "drupal/core-composer-scaffold": "9.5.11",
+        "drupal/core-project-message": "9.5.11",
+        "drupal/core-recommended": "9.5.11",
         "drupal/decoupled_router": "2.0.4",
         "drupal/druxt": "^1.2.0",
         "drupal/jsonapi_hypermedia": "^1.9.0",
-        "drupal/simple_oauth": "^5.2.3",
-        "drupal/tome": "^1.11.0",
+        "drupal/simple_oauth": "^5.2.5",
+        "drupal/tome": "^1.12.0",
         "drush/drush": "^11.6.0"
     },
     "require-dev": {
-        "drupal/core-dev": "9.5.9"
+        "drupal/core-dev": "9.5.11"
     },
     "conflict": {
         "drupal/drupal": "*"
