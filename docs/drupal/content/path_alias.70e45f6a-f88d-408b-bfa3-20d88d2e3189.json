@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "70e45f6a-f88d-408b-bfa3-20d88d2e3189"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/1"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/sin-alcohol"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

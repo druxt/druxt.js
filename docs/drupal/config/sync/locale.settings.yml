@@ -1,3 +1,5 @@
+_core:
+  default_config_hash: cSdYeE-_AQETCNZnl8BMFS9-sVn5--VzAYILkpPBUbM
 cache_strings: true
 translate_english: false
 javascript:
@@ -11,5 +13,3 @@ translation:
   update_interval_days: 0
   path: sites/default/files/translations
   import_enabled: true
-_core:
-  default_config_hash: cSdYeE-_AQETCNZnl8BMFS9-sVn5--VzAYILkpPBUbM

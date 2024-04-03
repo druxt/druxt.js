@@ -1,0 +1,97 @@
+{
+    "uuid": [
+        {
+            "value": "1d0ae0e2-272e-4a46-b9a3-8b11f97cf4d6"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "vid": [
+        {
+            "target_id": "recipe_category",
+            "target_type": "taxonomy_vocabulary",
+            "target_uuid": "855ab3f1-5288-462d-ae72-5485aaf9e1a8"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "name": [
+        {
+            "value": "Tentempi\u00e9s"
+        }
+    ],
+    "description": [
+        {
+            "value": null,
+            "format": null
+        }
+    ],
+    "weight": [
+        {
+            "value": 0
+        }
+    ],
+    "parent": [
+        {
+            "target_id": null
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipe-category\/tentempi\u00e9s",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "content_translation_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "1b73526a-a941-4ebf-b40f-3da0ff2fd1e0"
+        }
+    ],
+    "content_translation_created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ]
+}

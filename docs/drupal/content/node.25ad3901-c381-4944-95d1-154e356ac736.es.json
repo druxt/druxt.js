@@ -1,0 +1,177 @@
+{
+    "uuid": [
+        {
+            "value": "25ad3901-c381-4944-95d1-154e356ac736"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "36be3096-044b-4ff5-a599-6ed860f589a8"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "title": [
+        {
+            "value": "Pastel Victoria"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/pastel-victoria",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 20
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "easy"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "225g mantequilla o margarina"
+        },
+        {
+            "value": "225g az\u00facar en polvo"
+        },
+        {
+            "value": "225g harina autoniveladora"
+        },
+        {
+            "value": "4 huevos"
+        },
+        {
+            "value": "1 cucharadita polvo de hornear"
+        },
+        {
+            "value": "3 cucharadas mermelada para el relleno"
+        },
+        {
+            "value": "Az\u00facar glas para espolvorear la parte superior"
+        },
+        {
+            "value": "Crema para servir"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "5f4e1647-b2f4-4af9-b273-5dc7141019aa"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 10
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 20
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "b30b5c8b-8cf9-4bae-ac33-838016b525f1"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>Precaliente el horno a 350\u00b0F\/180\u00b0C y engrase dos moldes para pasteles de 8 pulgadas.<\/li>\n  <li>En un taz\u00f3n grande, mezcle la mantequilla y el az\u00facar, luego agregue los huevos, la harina y el polvo para hornear.<\/li>\n  <li>Distribuya la mezcla uniformemente entre los 2 moldes para pasteles.<\/li>\n  <li>Coloque ambas moldes en el medio del horno precalentado durante 20 minutos, antes de verificar con un cuchillo. Cuando el cuchillo salga limpio, \u00a1est\u00e1 listo!<\/li>\n  <li>Permita que se enfr\u00ede en los moldes antes de colocarlos en un estante de enfriamiento.<\/li>\n  <li>Agregue la mermelada, apile, espolvoree con az\u00facar glas y sirva con una cucharada grande de crema. \u00a1Disfruta!<\/li>\n<\/ol>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Un tradicional bizcocho Victoria, perfecto para cualquier tarde con una taza de t\u00e9.",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "50f47f34-a075-4e87-a668-10c31cdac47b"
+        }
+    ]
+}

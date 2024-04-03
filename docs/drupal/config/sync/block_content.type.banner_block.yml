@@ -1,4 +1,4 @@
-uuid: 4af6586f-2ccf-47b0-a9ec-ab63ed2c7ed9
+uuid: b3f476ab-171a-41c1-a88e-3115c4ae6250
 langcode: en
 status: true
 dependencies: {  }
@@ -7,4 +7,4 @@ _core:
 id: banner_block
 label: 'Banner block'
 revision: 0
-description: 'A banner block contains a title, summary, link to content and a background image. The background image is scaled to fill the browser''s width.'
+description: "A banner block contains a title, summary, link to content and a background image. The background image is scaled to fill the browser's width."

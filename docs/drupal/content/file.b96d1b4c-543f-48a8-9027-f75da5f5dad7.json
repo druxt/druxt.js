@@ -1,0 +1,50 @@
+{
+    "uuid": [
+        {
+            "value": "b96d1b4c-543f-48a8-9027-f75da5f5dad7"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "uid": [],
+    "filename": [
+        {
+            "value": "oatmeal-fruit-syrup-topping.jpg"
+        }
+    ],
+    "uri": [
+        {
+            "value": "public:\/\/oatmeal-fruit-syrup-topping.jpg"
+        }
+    ],
+    "filemime": [
+        {
+            "value": "image\/jpeg"
+        }
+    ],
+    "filesize": [
+        {
+            "value": 76171
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ]
+}

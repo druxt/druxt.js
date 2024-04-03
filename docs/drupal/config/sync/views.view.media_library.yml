@@ -1,4 +1,4 @@
-uuid: 3f885107-f148-4439-a9e7-9eee40b63cd1
+uuid: 004e8227-4b62-4dee-bd14-4beaa1f8cf2e
 langcode: en
 status: true
 dependencies:
@@ -14,7 +14,7 @@ dependencies:
     module:
       - media_library
 _core:
-  default_config_hash: i4J5FjzV8ifYKKI-WjQ2hGiv_m2zBw_oLo99jKtSvaU
+  default_config_hash: iFhkNhGoobQ7V0PJEH_Io9Vlli35kiaeQfdqUttfQeU
 id: media_library
 label: 'Media library'
 module: views
@@ -915,7 +915,6 @@ display:
           default_argument_type: fixed
           default_argument_options:
             argument: ''
-          default_argument_skip_url: false
           summary_options:
             base_path: ''
             count: true
@@ -1133,7 +1132,7 @@ display:
             image_link: ''
             image_style: media_library
             image_loading:
-              attribute: lazy
+              attribute: eager
         name:
           id: name
           table: media_field_data
@@ -1172,6 +1171,15 @@ display:
             date_format: short
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: long
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
       access:
         type: perm
         options:
@@ -1197,7 +1205,6 @@ display:
           default_argument_type: fixed
           default_argument_options:
             argument: ''
-          default_argument_skip_url: false
           summary_options:
             base_path: ''
             count: true

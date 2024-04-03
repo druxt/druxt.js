@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "c78ba691-ebb5-47cc-b068-b7d082bfafcf"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/9"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/dairy-free"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

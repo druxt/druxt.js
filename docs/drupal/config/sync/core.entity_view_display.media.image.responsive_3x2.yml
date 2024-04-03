@@ -1,4 +1,4 @@
-uuid: 8aaa5be2-3979-4fc4-be72-0b61e71c2c74
+uuid: 9ac069ea-9c2b-4df8-bffe-2871b84a0fed
 langcode: en
 status: true
 dependencies:
@@ -12,22 +12,24 @@ dependencies:
     - responsive_image
 third_party_settings:
   layout_builder:
-    allow_custom: false
     enabled: false
+    allow_custom: false
 _core:
-  default_config_hash: _y983RdcS0-xJnTJwBNh9ZLKm5WfWFYtRkfXBw9Jrl8
+  default_config_hash: AHN57x0NVQTL1hl8cNaq7oPSKUCs685-UCutulyL440
 id: media.image.responsive_3x2
 targetEntityType: media
 bundle: image
 mode: responsive_3x2
 content:
   field_media_image:
-    label: visually_hidden
+    type: responsive_image
+    label: hidden
     settings:
       responsive_image_style: 3_2_image
       image_link: ''
+      image_loading:
+        attribute: lazy
     third_party_settings: {  }
-    type: responsive_image
     weight: 1
     region: content
 hidden:

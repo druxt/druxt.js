@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "cd08c2e0-85f9-4856-af31-43166328f986"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/9d12c5ac-9dd2-4459-b37a-4c24fda315d7"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipes\/salsa-de-chile-ardiente"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

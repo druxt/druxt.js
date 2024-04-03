@@ -1,8 +1,11 @@
-uuid: df8b77f7-493f-4d89-8f4c-e84bf03bed3c
+uuid: 6da5122b-c620-4c8b-aa2a-406f4d4931ba
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_display.node.article.full
+    - core.entity_view_display.node.page.full
+    - core.entity_view_display.node.recipe.full
     - node.type.article
     - node.type.page
     - node.type.recipe
@@ -13,14 +16,14 @@ dependencies:
     - content_moderation
     - contextual
     - file
+    - layout_builder
     - node
     - path
-    - quickedit
     - system
     - taxonomy
     - toolbar
 _core:
-  default_config_hash: LTVLicJHSI5S_ETMORlStpHVdGWi4B84ynjsQrGHLZo
+  default_config_hash: 0vhO_07tJzAJlfixEyshv-AbpRto3wdMJHkgK5CjBEY
 id: author
 label: Author
 weight: 3
@@ -29,10 +32,13 @@ permissions:
   - 'access content overview'
   - 'access contextual links'
   - 'access files overview'
-  - 'access in-place editing'
   - 'access toolbar'
   - 'cancel account'
   - 'change own username'
+  - 'configure editable article node layout overrides'
+  - 'configure editable page node layout overrides'
+  - 'configure editable recipe node layout overrides'
+  - 'create and edit custom blocks'
   - 'create article content'
   - 'create page content'
   - 'create recipe content'
@@ -41,6 +47,7 @@ permissions:
   - 'create url aliases'
   - 'delete article revisions'
   - 'delete own article content'
+  - 'delete own files'
   - 'delete own page content'
   - 'delete own recipe content'
   - 'delete page revisions'

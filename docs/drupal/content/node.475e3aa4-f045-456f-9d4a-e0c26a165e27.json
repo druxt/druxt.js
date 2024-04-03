@@ -1,0 +1,104 @@
+{
+    "uuid": [
+        {
+            "value": "475e3aa4-f045-456f-9d4a-e0c26a165e27"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "page",
+            "target_type": "node_type",
+            "target_uuid": "8196a412-9d1d-4b8b-9020-f65663084626"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "516f5ed6-a36a-4ecc-bded-b6384fb83d6b"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "516f5ed6-a36a-4ecc-bded-b6384fb83d6b"
+        }
+    ],
+    "title": [
+        {
+            "value": "About Umami"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": false
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/about-umami",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "body": [
+        {
+            "value": "<p>Umami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided 'out of the box'.<\/p><p>For more information visit <a href='https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile'>https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile<\/a>.<\/p>",
+            "format": "basic_html",
+            "summary": null
+        }
+    ]
+}

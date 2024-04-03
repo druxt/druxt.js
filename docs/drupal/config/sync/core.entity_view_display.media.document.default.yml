@@ -1,4 +1,4 @@
-uuid: caa7c02b-8233-4a9d-b7ed-7a22a06205bf
+uuid: 54a8f80d-bfff-4105-bf9b-37e19380f20c
 langcode: en
 status: true
 dependencies:
@@ -8,17 +8,17 @@ dependencies:
   module:
     - file
 _core:
-  default_config_hash: PKsZLhRLrXFHjGpwQ2mnGGYIxX2AhT875Z7eoAwDRfM
+  default_config_hash: fsmCtf08IYrs9KYJo5RUJK_KvfsDYjzAPjbT4pWpZ7g
 id: media.document.default
 targetEntityType: media
 bundle: document
 mode: default
 content:
   field_media_document:
+    type: file_default
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }
-    type: file_default
     weight: 1
     region: content
 hidden:

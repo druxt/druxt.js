@@ -5,7 +5,7 @@ it('DruxtDevelTemplate tool', () => {
   cy.visit('/')
 
   // Umami Search block.
-  const searchBlock = '[data-fetch-key^="DruxtBlock:dc9cc806-d5d5-4187-af7a-f9d5b13fea8b:0"]'
+  const searchBlock = '[data-fetch-key^="DruxtBlock:9ae71192-5a61-4ede-8a11-f92f543c1f4a:0"]'
 
   // I see a DruxtDebug component.
   cy.get(searchBlock)

@@ -1,4 +1,4 @@
-uuid: a9ca99e3-82c9-40cb-b14b-ccd4d5fcb32e
+uuid: 6b81194c-4b16-42a6-84e9-acbf928bc501
 langcode: en
 status: true
 dependencies:
@@ -19,7 +19,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: RlSxLwuRuF-0V2vwRuVExdo82l1VCEIhWFssIbOuuO4
+  default_config_hash: fFbMGddoLC5A9zR24OWZ1evoxwPrsIsb9ZwM9LXx6qw
 id: node.recipe.card_common_alt
 targetEntityType: node
 bundle: recipe
@@ -27,13 +27,13 @@ mode: card_common_alt
 content:
   field_media_image:
     type: entity_reference_entity_view
-    weight: 1
-    region: content
     label: hidden
     settings:
       view_mode: square
       link: false
     third_party_settings: {  }
+    weight: 1
+    region: content
 hidden:
   content_moderation_control: true
   field_cooking_time: true

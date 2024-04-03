@@ -1,5 +1,7 @@
-display_extenders: {  }
-skip_cache: false
+_core:
+  default_config_hash: 8oDr9oPVb_ostrNnVV6V7VdphwoH_u-NqTS0u7SE7qc
+display_extenders:
+  - jsonapi_views
 sql_signature: false
 ui:
   show:
@@ -44,5 +46,3 @@ field_rewrite_elements:
   ins: INS
   q: Q
   s: S
-_core:
-  default_config_hash: uZHsLrDp1ThO0RvupHKcPzLOyVvWexm58JTTHNDo7yc

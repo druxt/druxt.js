@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "ac3494d9-7ea6-4f1c-9f40-0668d85d937f"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/3"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/baking"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

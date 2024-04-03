@@ -1,19 +1,19 @@
-uuid: f562dcea-9047-4508-8727-f666645886d0
+uuid: 20d8f14f-5a33-41a9-a659-dc3affe7338d
 langcode: en
 status: true
 dependencies:
   content:
     - 'block_content:banner_block:4c7d58a3-a45d-412d-9068-259c57e40541'
-  enforced:
-    module:
-      - demo_umami_content
   module:
     - block_content
     - system
   theme:
     - umami
+  enforced:
+    module:
+      - demo_umami_content
 _core:
-  default_config_hash: GV14DJgIYE6E2q5G4j5sZUDkVLOjAEYDFs-8PwlsukM
+  default_config_hash: IkW5_SiJrLyjpht0MTFKFFUcnakHfT1AJaN0VTL4gn8
 id: umami_banner_recipes
 theme: umami
 region: banner_top
@@ -23,14 +23,14 @@ plugin: 'block_content:4c7d58a3-a45d-412d-9068-259c57e40541'
 settings:
   id: 'block_content:4c7d58a3-a45d-412d-9068-259c57e40541'
   label: 'Umami Recipes Banner'
-  provider: block_content
   label_display: '0'
+  provider: block_content
   status: true
   info: ''
   view_mode: full
 visibility:
   request_path:
     id: request_path
-    pages: "/recipes\r\n"
     negate: false
     context_mapping: {  }
+    pages: "/recipes\r\n"

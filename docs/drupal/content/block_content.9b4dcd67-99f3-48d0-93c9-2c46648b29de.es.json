@@ -13,12 +13,12 @@
         {
             "target_id": "disclaimer_block",
             "target_type": "block_content_type",
-            "target_uuid": "d137a389-ded5-474a-9ab3-4386a98d5e1c"
+            "target_uuid": "abd1e57d-64ea-40b6-b052-df9636fc00cd"
         }
     ],
     "revision_created": [
         {
-            "value": "2022-03-29T23:42:56+00:00",
+            "value": "2024-04-03T23:15:53+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -36,7 +36,7 @@
     ],
     "changed": [
         {
-            "value": "2022-03-29T23:42:56+00:00",
+            "value": "2024-04-03T23:15:53+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -68,18 +68,18 @@
     "content_translation_uid": [
         {
             "target_type": "user",
-            "target_uuid": "9037d975-34ff-4020-b8ff-18cf8715361a"
+            "target_uuid": "1b73526a-a941-4ebf-b40f-3da0ff2fd1e0"
         }
     ],
     "content_translation_created": [
         {
-            "value": "2022-03-29T23:42:56+00:00",
+            "value": "2024-04-03T23:15:53+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
     "field_copyright": [
         {
-            "value": "&copy; 2022 T\u00e9rminos y Condiciones",
+            "value": "&copy; 2024 T\u00e9rminos y Condiciones",
             "format": "basic_html"
         }
     ],

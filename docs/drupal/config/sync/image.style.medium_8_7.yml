@@ -1,9 +1,9 @@
-uuid: cc817216-790b-40fc-a15a-7ff0005293f1
+uuid: c26649a6-9ec9-45e3-b7fc-9e239e05b5f6
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: PCCLxoHsTUcZQuXt7VXrtaNXnh9LCpf9hfHNPazCKlI
+  default_config_hash: FpdM9AUkrAauvLPfclvSglEcpKOf7Uhi5WKu9CJYejM
 name: medium_8_7
 label: 'Medium 8:7 (266x236)'
 effects:
@@ -12,6 +12,6 @@ effects:
     id: image_scale_and_crop
     weight: 1
     data:
-      anchor: center-center
       width: 266
       height: 236
+      anchor: center-center

@@ -1,4 +1,4 @@
-uuid: a2a2dd21-3577-4764-b7bf-d40351469c57
+uuid: 76871773-21f3-450d-b2ac-4d2e5c41b412
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
     - file
     - path
 _core:
-  default_config_hash: mMjsaQJZLLLCdVCwBaVuhN-nZzGZt25anUJcqdIHsS8
+  default_config_hash: HjxDIuZutC7qeg5XMVn6O44D7uwmU1OsS3XgMx2Se6Q
 id: media.video.default
 targetEntityType: media
 bundle: video
@@ -22,12 +22,12 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_media_video_file:
+    type: file_generic
     weight: 0
+    region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
-    type: file_generic
-    region: content
   langcode:
     type: language_select
     weight: 2
@@ -43,20 +43,20 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 100
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
     weight: 5
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
-    region: content
     third_party_settings: {  }
 hidden:
   moderation_state: true

@@ -1,0 +1,102 @@
+{
+    "uuid": [
+        {
+            "value": "32f33181-4dc2-4f77-bfef-34f6fc237eba"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "image",
+            "target_type": "media_type",
+            "target_uuid": "ac06de62-ba06-4041-a2c7-1eedb3fbaf25"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "1b73526a-a941-4ebf-b40f-3da0ff2fd1e0"
+        }
+    ],
+    "name": [
+        {
+            "value": "Percances al hornear - nuestros consejos para solucionar los problemas"
+        }
+    ],
+    "thumbnail": [
+        {
+            "alt": "Un delicioso brownie de chocolate",
+            "title": null,
+            "width": 768,
+            "height": 511,
+            "target_type": "file",
+            "target_uuid": "f64d0762-a761-430d-8c0c-79533deca226"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": null,
+            "pid": null,
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_media_image": [
+        {
+            "alt": "Un delicioso brownie de chocolate",
+            "title": null,
+            "width": 768,
+            "height": 511,
+            "target_type": "file",
+            "target_uuid": "4077fd47-5f27-481b-aa13-a965df43c358"
+        }
+    ]
+}

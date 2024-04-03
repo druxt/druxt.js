@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "07c04371-c4b5-497e-bd14-e9fd71126a0b"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/24"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/shopping"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

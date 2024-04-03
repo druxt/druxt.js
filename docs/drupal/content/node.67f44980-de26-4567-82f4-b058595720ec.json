@@ -1,0 +1,200 @@
+{
+    "uuid": [
+        {
+            "value": "67f44980-de26-4567-82f4-b058595720ec"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "36be3096-044b-4ff5-a599-6ed860f589a8"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "title": [
+        {
+            "value": "Vegan chocolate and nut brownies"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/vegan-chocolate-and-nut-brownies",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 20
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "medium"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "6 tbsp sunflower oil"
+        },
+        {
+            "value": " 80g vegan dark chocolate"
+        },
+        {
+            "value": " 170g plain flour"
+        },
+        {
+            "value": " 80g coconut flour"
+        },
+        {
+            "value": " 1 tsp baking powder"
+        },
+        {
+            "value": " 9 tsp cocoa powder"
+        },
+        {
+            "value": " 100g caster sugar"
+        },
+        {
+            "value": " 3 tbsp of maple syrup"
+        },
+        {
+            "value": " 1\/4 tsp sea salt"
+        },
+        {
+            "value": " 1 tsp vanilla extract"
+        },
+        {
+            "value": " 230ml unsweetened organic soya milk"
+        },
+        {
+            "value": " 100g pecan nuts"
+        },
+        {
+            "value": " 80g walnut halves"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "fa2f6c6d-46ec-441e-b6b8-2e6025549505"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 12
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 20
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "1d0ae0e2-272e-4a46-b9a3-8b11f97cf4d6"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>Use a little of the sunflower oil to grease an 8 inch square baking tin (or similar size) and line the tin with greaseproof paper.<\/li>\n  <li>Preheat the oven to 350\u00b0F\/180\u00b0C.<\/li>\n  <li>Break approximately 1\/3rd of the chocolate bar off and chop into small pieces. Roughly chop 2\/3rds of the pecan nuts and mix together with the chopped chocolate. Set aside.<\/li>\n  <li>For finishing the brownies, chop or crush the remaining pecan nuts and walnuts, mix together and set aside.<\/li>\n  <li>Melt the remaining chocolate by bringing a couple inches of water to the boil in a small saucepan that is suitably sized for holding a heatproof bowl in the pan opening. Do not allow the bottom of the heatproof bowl to touch the water. Place the chocolate into the bowl to melt, stirring occasionally to ensure the chocolate has fully melted. Once melted, set aside and allow to cool slightly.<\/li>\n  <li>Whilst the chocolate is melting, begin to sieve the plain flour, coconut flour, and cocoa powder into a large mixing bowl and mix. Once mixed, stir in the baking powder and sugar.<\/li>\n  <li>Once the chocolate has cooled a little, begin to slowly stir the vanilla essence, sunflower oil, soya milk, and melted chocolate into the flour and cocoa mix.<\/li>\n  <li>Now stir in the previously chopped chocolate and pecan nuts, ensuring they are stirred evenly into the mixture.<\/li>\n  <li>Pour the mixture into the baking tin and spread evenly with a spatula.<\/li>\n  <li>Sprinkle the chopped pecan nuts and walnuts across the top and bake in the centre of the oven for 18 to 23 minutes.<\/li>\n  <li>Remove from the oven and allow to cool for 45 minutes. Carefully use the edges of the greaseproof paper to lift the brownie out of the tin and place onto a chopping board. With a sharp knife, gently cut into evenly sized pieces.<\/li>\n  <li>Serve on their own or with some vegan cream or ice cream.<\/li>\n<\/ol>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Scrumptious vegan chocolate brownies that are rich, fudgy, and nutty. These delights have a surprise hint of coconut making them the perfect indulgence. Serve warm with a little vanilla dairy-free ice cream!",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "2cd7ab68-9ebf-4a70-9179-fee1f28a7b07"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e8febdf5-e83d-481b-985e-f2fbd254d5b2"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "7a134de6-ac52-4aa3-b7a4-4d05e8fc425f"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "52d71e48-5940-4bfe-ac89-1fd0f354f056"
+        }
+    ]
+}

@@ -82,10 +82,10 @@
   + $store.state.druxt.collections['view--view'].abefce528d89d7fcf5c59d4469f33e12[undefined]
   + $store.state.druxt.collections['view--view'].abefce528d89d7fcf5c59d4469f33e12.en
   + $store.state.druxt.collections['view--view'].abefce528d89d7fcf5c59d4469f33e12.es
-  - $store.state.druxt.resources['node--recipe']['444d06fc-f4bc-435e-9892-d7e719957ecc']
-  + $store.state.druxt.resources['node--recipe']['444d06fc-f4bc-435e-9892-d7e719957ecc'][undefined]
-  + $store.state.druxt.resources['node--recipe']['444d06fc-f4bc-435e-9892-d7e719957ecc'].en
-  + $store.state.druxt.resources['node--recipe']['444d06fc-f4bc-435e-9892-d7e719957ecc'].es
+  - $store.state.druxt.resources['node--recipe']['67f44980-de26-4567-82f4-b058595720ec']
+  + $store.state.druxt.resources['node--recipe']['67f44980-de26-4567-82f4-b058595720ec'][undefined]
+  + $store.state.druxt.resources['node--recipe']['67f44980-de26-4567-82f4-b058595720ec'].en
+  + $store.state.druxt.resources['node--recipe']['67f44980-de26-4567-82f4-b058595720ec'].es
   ```
 
 - be21952: Added language prefixes to API proxy support.

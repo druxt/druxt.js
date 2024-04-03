@@ -2,7 +2,7 @@ const { DruxtClient } = require('druxt')
 
 const baseUrl = process.env.GITPOD_WORKSPACE_ID
   ? `https://8080-${process.env.GITPOD_WORKSPACE_ID}.${process.env.GITPOD_WORKSPACE_CLUSTER_HOST}`
-  : process.env.BASE_URL || 'http://drupal-9.ddev.site'
+  : process.env.BASE_URL || 'http://druxtjs-drupal.ddev.site'
 
 const druxt = new DruxtClient(baseUrl)
 
@@ -17,22 +17,22 @@ druxt.getIndex(undefined, 'es').then(index => {
 })
 
 // Get a page.
-druxt.getResource('node--page', 'cd44fe14-86ae-4853-8e22-7b1b73cd98f5', 'fields[node--page]=title').then((resource) => {
+druxt.getResource('node--page', '475e3aa4-f045-456f-9d4a-e0c26a165e27', 'fields[node--page]=title').then((resource) => {
   console.log('getResource', resource)
 })
 
 // Get page in spanish.
-druxt.getResource('node--page', 'cd44fe14-86ae-4853-8e22-7b1b73cd98f5', 'fields[node--page]=title', 'es').then((resource) => {
+druxt.getResource('node--page', '475e3aa4-f045-456f-9d4a-e0c26a165e27', 'fields[node--page]=title', 'es').then((resource) => {
   console.log('getResource', resource)
 })
 
 // Get related uid.
-druxt.getRelated('node--page', 'cd44fe14-86ae-4853-8e22-7b1b73cd98f5', 'uid').then((resource) => {
+druxt.getRelated('node--page', '475e3aa4-f045-456f-9d4a-e0c26a165e27', 'uid').then((resource) => {
   console.log('getRelated', resource)
 })
 
 // Get related uid in spanish.
-druxt.getRelated('node--page', 'cd44fe14-86ae-4853-8e22-7b1b73cd98f5', 'uid', undefined, 'es').then((resource) => {
+druxt.getRelated('node--page', '475e3aa4-f045-456f-9d4a-e0c26a165e27', 'uid', undefined, 'es').then((resource) => {
   console.log('getRelated', resource)
 })
 

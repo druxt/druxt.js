@@ -1,0 +1,213 @@
+{
+    "uuid": [
+        {
+            "value": "c3d057c8-4a25-4d13-9e4a-956c66ef0af0"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "36be3096-044b-4ff5-a599-6ed860f589a8"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "title": [
+        {
+            "value": "Borscht con costillas de cerdo"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/borscht-con-costillas-de-cerdo",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 60
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "medium"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "400-500g de costillas de cerdo"
+        },
+        {
+            "value": " 2 remolachas"
+        },
+        {
+            "value": " 2 tomates"
+        },
+        {
+            "value": " \u00bc de ra\u00edz de apio"
+        },
+        {
+            "value": " \u00bc de repollo"
+        },
+        {
+            "value": " 3-4 patatas medianas"
+        },
+        {
+            "value": " 1 zanahoria"
+        },
+        {
+            "value": " 1 cebolla"
+        },
+        {
+            "value": " 1-2 peras ahumadas"
+        },
+        {
+            "value": " 2 hojas de laurel"
+        },
+        {
+            "value": " 3 guisantes de pimienta de Jamaica"
+        },
+        {
+            "value": " 1 cabeza de ajo"
+        },
+        {
+            "value": " 1 pimiento morr\u00f3n"
+        },
+        {
+            "value": " 200ml de jugo de tomate"
+        },
+        {
+            "value": " 30g de mantequilla"
+        },
+        {
+            "value": " 2 cucharadas de pasta de tomate"
+        },
+        {
+            "value": " 3l de agua"
+        },
+        {
+            "value": " Crema agria"
+        },
+        {
+            "value": " 1 lata de alubias"
+        },
+        {
+            "value": " Sal al gusto"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "d2ed09e1-415b-459a-9879-bdc21febfa99"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 8
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 30
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "01180fe9-c92a-44ea-8883-c1fe1ff8677e"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>Precaliente el horno a 400\u00b0F\/200\u00b0C, luego coloque las costillas de cerdo en su interior y horn\u00e9elas durante 30 min. Lave la ra\u00edz del apio, pero no la pele. Coja la zanahoria y c\u00f3rtela en trozos medianos.<\/li>\n  <li>Ponga las costillas de cerdo al horno en una olla y a\u00f1ada 3 litros de agua. Agregue la ra\u00edz de apio cortada y la zanahoria junto con la mitad de la cebolla sin pelar. Lleve la olla a ebullici\u00f3n. Despu\u00e9s de eso, caliente a fuego medio y siga hirviendo durante 30 min.<\/li>\n  <li>El coraz\u00f3n del borscht son las verduras asadas previamente. Pique el pimiento morr\u00f3n y haga lo mismo con los tomates y la cebolla. Coloque la mantequilla en una cacerola y agregue las verduras. Coc\u00ednelos a fuego moderado para ablandar los vegetales, luego agregue dos cucharadas de pasta de tomate, baje el fuego y siga guis\u00e1ndolos durante 5 a 7 minutos. Adem\u00e1s, ralle una remolacha y p\u00f3ngala en la cacerola tambi\u00e9n y coc\u00ednelas todas juntas durante 3-4 minutos m\u00e1s.<\/li>\n  <li>Corte un diente de ajo por la mitad y agr\u00e9guelo a la olla. Triture el repollo y d\u00e9jelo a un lado para agregarlo m\u00e1s tarde.<\/li>\n  <li>Se necesita jugo de remolacha, as\u00ed que tome la segunda remolacha y exprima todo el jugo. Si no tiene un exprimidor de jugo, puede rallar una remolacha y exprimirla a trav\u00e9s del colador. Luego agregue el jugo junto con la pimienta de Jamaica, las hojas de laurel y varias pizcas de sal (a su gusto).<\/li>\n  <li>Tambi\u00e9n puede agregar frijoles enlatados: es una adici\u00f3n opcional.<\/li>\n  <li>Ponga las peras ahumadas en una olla. Har\u00e1n que el plato huela a humo.<\/li>\n  <li>Felicitaciones, nuestro borscht est\u00e1 casi listo. Ahora puede agregar repollo rallado y en cinco minutos puede dejar la olla a un lado del fuego. Guarde el borscht durante 30 minutos.<\/li>\n<\/ol>\n<p>Sirva el borscht junto con una cucharada de crema agria y eneldo picado. Ponga el resto del borscht en la nevera y recuerde que sabe mejor al d\u00eda siguiente.<\/p>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Puedo hablar de borscht todo el d\u00eda. Cada familia ucraniana tiene su receta: con frijoles, sin repollo, etc. Sin embargo, todas son v\u00e1lidas: no existe una receta 'correcta' unificada. La receta que est\u00e1 a punto de leer y cocinar es borscht con costillas de cerdo. Disfr\u00fatala. \u00a1Este plato le har\u00e1 sentir una verdadera alma ucraniana!",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "dd9f806e-6557-435a-8ab3-dd71a1455ad7"
+        }
+    ]
+}

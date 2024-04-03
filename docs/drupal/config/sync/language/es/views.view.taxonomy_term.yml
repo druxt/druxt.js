@@ -1,4 +1,4 @@
-label: 'Término de la taxonomía'
+label: 'Término de taxonomía'
 description: 'Contenido perteneciente a un determinado término de taxonomía.'
 display:
   default:

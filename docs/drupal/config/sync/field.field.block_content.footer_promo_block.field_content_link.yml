@@ -1,4 +1,4 @@
-uuid: 144a1324-e23b-4605-b940-0d8d96284ea3
+uuid: eb8706b0-2f52-4d6c-80ba-bdea48debc70
 langcode: en
 status: true
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
   module:
     - link
 _core:
-  default_config_hash: WwnoEc6GOtgWuG9lpfyBl7wVO8X1YPGgJ6xCMlRzgtw
+  default_config_hash: uUyF__j8hBcHCitBa0VowfEVRxsweBQR1CEmIMnzcKo
 id: block_content.footer_promo_block.field_content_link
 field_name: field_content_link
 entity_type: block_content
@@ -20,6 +20,6 @@ translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
-  link_type: 17
   title: 2
+  link_type: 17
 field_type: link

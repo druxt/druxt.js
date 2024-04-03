@@ -1,4 +1,4 @@
-uuid: 87332030-bfba-43ca-bee4-986d83bbfdbe
+uuid: 52fdf75c-c60b-4bf1-ac0a-00d900f5b720
 langcode: en
 status: true
 dependencies:
@@ -12,43 +12,43 @@ dependencies:
     - link
     - media_library
 _core:
-  default_config_hash: FNFwP_5q5Uzshz331PKZ7kcZDVFhvIBwcsnQFkKHz6o
+  default_config_hash: 7ddBimytut2MwSDhk6ez4WL5nEK3QZMa6dVW2S5qxGI
 id: block_content.footer_promo_block.default
 targetEntityType: block_content
 bundle: footer_promo_block
 mode: default
 content:
   field_content_link:
+    type: link_default
     weight: 4
+    region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
     third_party_settings: {  }
-    type: link_default
-    region: content
   field_media_image:
+    type: media_library_widget
     weight: 6
+    region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
-    type: media_library_widget
-    region: content
   field_summary:
+    type: string_textarea
     weight: 3
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: string_textarea
-    region: content
   field_title:
+    type: string_textfield
     weight: 1
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   info:
     type: string_textfield
     weight: 0
