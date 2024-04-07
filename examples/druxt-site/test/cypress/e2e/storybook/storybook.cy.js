@@ -31,7 +31,7 @@ it('Storybook: Blocks', () => {
   cy.get('#druxt-blocks-druxtblock').should('contain.text', 'DruxtBlock')
   cy.get('#druxt-blocks-druxtblock').click()
   cy.url().should('contain', '?path=/story/druxt-blocks-druxtblock--default')
-  cy.get('#control-id').should('exist').find('option').should('have.length', 27)
+  cy.get('#control-id').should('exist').find('option').should('have.length', 28)
   cy.get('#control-id').select('umami_main_menu')
   cy.url().should('contain', '&args=id:umami_main_menu')
   cy.get('#set-langcode').should('exist')
@@ -50,18 +50,18 @@ it('Storybook: Blocks', () => {
   cy.get('#control-theme').select('umami')
   cy.url().should('contain', '&args=name:footer;theme:umami')
 
-  // Test the DruxtBlocks Seven story group.
-  cy.get('#druxt-blocks-seven').should('contain.text', 'Seven')
-  cy.get('#druxt-blocks-seven').click()
-  cy.get('[data-parent-id="druxt-blocks-seven"]').should('have.length', 6)
+  // Test the DruxtBlocks Claro story group.
+  cy.get('#druxt-blocks-claro').should('contain.text', 'Claro')
+  cy.get('#druxt-blocks-claro').click()
+  cy.get('[data-parent-id="druxt-blocks-claro"]').should('have.length', 6)
 
-  // Test the DruxtBlocks Seven Header region story group.
-  cy.get('#druxt-blocks-seven-header').should('contain.text', 'Header')
-  cy.get('#druxt-blocks-seven-header').click()
-  cy.get('[data-parent-id="druxt-blocks-seven-header"]').should('have.length', 3)
-  cy.get('button[data-parent-id="druxt-blocks-seven-header"]:first').click()
+  // Test the DruxtBlocks Claro Header region story group.
+  cy.get('#druxt-blocks-claro-header').should('contain.text', 'Header')
+  cy.get('#druxt-blocks-claro-header').click()
+  cy.get('[data-parent-id="druxt-blocks-claro-header"]').should('have.length', 3)
+  cy.get('button[data-parent-id="druxt-blocks-claro-header"]:first').click()
   cy.get('[data-selected="true"]').should('have.text', 'DruxtBlock')
-  cy.get('[data-parent-id="druxt-blocks-seven-header"]:last').click()
+  cy.get('[data-parent-id="druxt-blocks-claro-header"]:last').click()
   cy.get('[data-selected="true"]').should('have.text', 'DruxtBlockRegion')
 })
 
@@ -126,7 +126,7 @@ it('Storybook: Entity', () => {
   // View the "About Umami" page.
   cy.get('#control-type').select('node--page')
   cy.get('#set-uuid').click()
-  cy.get('#control-uuid').type('cd44fe14-86ae-4853-8e22-7b1b73cd98f5')
+  cy.get('#control-uuid').type('475e3aa4-f045-456f-9d4a-e0c26a165e27')
 
   // Open the Docs tab.
   cy.get('button:contains("Docs")').click()
@@ -151,7 +151,7 @@ it('Storybook: Entity', () => {
   // Edit the "About Umami" page.
   cy.get('#control-type').select('node--page')
   cy.get('#set-uuid').click()
-  cy.get('#control-uuid').type('cd44fe14-86ae-4853-8e22-7b1b73cd98f5')
+  cy.get('#control-uuid').type('475e3aa4-f045-456f-9d4a-e0c26a165e27')
 
   // Test the Node group.
   cy.get('#druxt-entity-node').should('contain.text', 'Node')
@@ -164,12 +164,12 @@ it('Storybook: Entity', () => {
   cy.get('#druxt-entity-node-recipe-view-displays').should('exist')
   cy.get('#druxt-entity-node-recipe-view-displays').click()
   cy.get('#control-mode').select('card')
-  cy.get('#control-uuid').select('Vegan chocolate and nut brownies (444d06fc-f4bc-435e-9892-d7e719957ecc)')
+  cy.get('#control-uuid').select('Vegan chocolate and nut brownies (67f44980-de26-4567-82f4-b058595720ec)')
 
   // Test view displays.
   cy.get('#druxt-entity-node-recipe-form-displays').should('exist')
   cy.get('#druxt-entity-node-recipe-form-displays').click()
-  cy.get('#control-uuid').select('Vegan chocolate and nut brownies (444d06fc-f4bc-435e-9892-d7e719957ecc)')
+  cy.get('#control-uuid').select('Vegan chocolate and nut brownies (67f44980-de26-4567-82f4-b058595720ec)')
 })
 
 it('Storybook: Menu', () => {
@@ -201,7 +201,7 @@ it('Storybook: Views', () => {
   // Test the root View group.
   cy.get('#druxt-views').should('contain.text', 'Views')
   cy.get('#druxt-views').click()
-  cy.get('[data-parent-id="druxt-views"]').should('have.length', 7)
+  cy.get('[data-parent-id="druxt-views"]').should('have.length', 8)
 
   // Test the DruxtView group.
   cy.get('#druxt-views-druxtview').should('contain.text', 'DruxtView')
@@ -238,19 +238,19 @@ it('Storybook: Site', () => {
   cy.get('#set-langcode').should('exist')
   cy.get('#control-theme').should('exist')
   cy.get('#set-wrapper').should('exist')
-  cy.get('#control-theme').select('seven')
+  cy.get('#control-theme').select('claro')
 
   // Test the Themes group
   cy.get('#druxt-site-themes').should('contain.text', 'Themes')
   cy.get('#druxt-site-themes').click()
   cy.get('[data-parent-id="druxt-site-themes"]').should('have.length', 2)
 
-  // Test the Seven site.
-  cy.get('#druxt-site-themes-seven--default').should('contain.text', 'Seven')
-  cy.get('#druxt-site-themes-seven--default').click()
+  // Test the Claro site.
+  cy.get('#druxt-site-themes-claro--default').should('contain.text', 'Claro')
+  cy.get('#druxt-site-themes-claro--default').click()
 
   // Open the Docs tab.
   cy.wait(500)
   cy.get('button:contains("Docs")').click()
-  cy.url().should('contain', '?path=/docs/druxt-site-themes-seven--default')
+  cy.url().should('contain', '?path=/docs/druxt-site-themes-claro--default')
 })

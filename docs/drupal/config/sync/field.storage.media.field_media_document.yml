@@ -1,24 +1,24 @@
-uuid: c2383878-2dfe-4a9d-89b6-1c30b31fc15f
+uuid: 5150b021-18ad-4358-9065-081aae718655
 langcode: en
 status: true
 dependencies:
-  enforced:
-    module:
-      - media
   module:
     - file
     - media
+  enforced:
+    module:
+      - media
 _core:
-  default_config_hash: rQoPQKvhehKl_xDCFHeMJ5nA5i6bxUSdrNxazOSPGTg
+  default_config_hash: BdkTx7IL59MCw5a_fOZprPTOGM_wcjz-Fm8g7HV3vFk
 id: media.field_media_document
 field_name: field_media_document
 entity_type: media
 type: file
 settings:
-  uri_scheme: public
   target_type: file
   display_field: false
   display_default: false
+  uri_scheme: public
 module: file
 locked: false
 cardinality: 1

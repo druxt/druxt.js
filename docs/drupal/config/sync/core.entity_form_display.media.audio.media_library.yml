@@ -1,0 +1,24 @@
+uuid: 962d1759-59d0-445d-b749-dd120a548b46
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.audio.field_media_audio_file
+    - media.type.audio
+_core:
+  default_config_hash: p7OOHjc4ERLoD32QU2IMpuZwRcK6A6EBCfv6-grihTg
+id: media.audio.media_library
+targetEntityType: media
+bundle: audio
+mode: media_library
+content: {  }
+hidden:
+  created: true
+  field_media_audio_file: true
+  langcode: true
+  moderation_state: true
+  name: true
+  path: true
+  status: true
+  uid: true

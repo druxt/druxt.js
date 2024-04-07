@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "0fd2d548-8bdc-4fb1-96ee-8f4fabc86939"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/6fd63d49-f212-43fe-a213-60c85d653583"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipes\/pizza-sin-gluten"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

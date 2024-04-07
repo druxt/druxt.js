@@ -1,4 +1,4 @@
-uuid: daa666ea-6302-495b-abb6-b6ca44107093
+uuid: 02ec362a-0a37-4eaa-bbee-92813381b16f
 langcode: en
 status: true
 dependencies:
@@ -8,13 +8,11 @@ dependencies:
     - image.style.max_325x325
     - image.style.max_650x650
 _core:
-  default_config_hash: CcYzyNx9FjzWWNCWNl2j5tTKTB6FlMgInqtB3oTYnX4
+  default_config_hash: Unkmln__qi9qOxcbi45MSohgU9fqi18TmoteHuiN9Ws
 id: wide
 label: Wide
 image_style_mappings:
   -
-    breakpoint_id: responsive_image.viewport_sizing
-    multiplier: 1x
     image_mapping_type: sizes
     image_mapping:
       sizes: '(min-width: 1290px) 1290px, 100vw'
@@ -23,5 +21,7 @@ image_style_mappings:
         - max_1300x1300
         - max_650x650
         - max_325x325
+    breakpoint_id: responsive_image.viewport_sizing
+    multiplier: 1x
 breakpoint_group: responsive_image
 fallback_image_style: max_325x325

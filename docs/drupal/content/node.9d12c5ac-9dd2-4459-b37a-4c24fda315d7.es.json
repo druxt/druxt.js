@@ -1,0 +1,189 @@
+{
+    "uuid": [
+        {
+            "value": "9d12c5ac-9dd2-4459-b37a-4c24fda315d7"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "36be3096-044b-4ff5-a599-6ed860f589a8"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "title": [
+        {
+            "value": "Salsa de chile ardiente"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/salsa-de-chile-ardiente",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 50
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "easy"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "2 cebollas rojas"
+        },
+        {
+            "value": " 1 lim\u00f3n"
+        },
+        {
+            "value": " 2 limas"
+        },
+        {
+            "value": " 250ml vinagre de malta"
+        },
+        {
+            "value": " 7 dientes de ajo"
+        },
+        {
+            "value": " 1 pimiento verde"
+        },
+        {
+            "value": " 1 pimiento rojo"
+        },
+        {
+            "value": " 800g tomates cherry"
+        },
+        {
+            "value": " 30 chiles mezclados"
+        },
+        {
+            "value": " Aceite de oliva"
+        },
+        {
+            "value": " 1 cucharada pimienta negra molida"
+        },
+        {
+            "value": " 1 cucharada az\u00facar morena"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "c8cb7062-de75-41d7-96bf-0d79147a65fe"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 60
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 10
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "adda62bd-5643-4079-85bf-6670e8c02343"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>Precaliente el horno a 400\u00b0F\/200\u00b0C.<\/li>\n  <li>Picar finamente las cebollas rojas y sudar suavemente a fuego lento en aceite de oliva durante 5 minutos.<\/li>\n  <li>Pelar el ajo y agregarlo a las cebollas.<\/li>\n  <li>Mientras tanto, picar los pimientos en trozos de 1 pulgada. Agregue los pimientos y los tomates a un plato para asar, y frote con jugo de lim\u00f3n, aceite de oliva y pimienta negra. Transferir al horno y asar por 30 minutos.<\/li>\n  <li>Una vez que las cebollas y el ajo se hayan ablandado, pique y agregue los chiles, las semillas y todo. Mezclar bien y continuar friendo suavemente.<\/li>\n  <li>L\u00e1vese bien las manos despu\u00e9s de manipular los chiles crudos.<\/li>\n  <li>Una vez que los tomates y los pimientos hayan terminado de asarse, agr\u00e9guelos a la sart\u00e9n. Cocine por al menos 10 minutos, rompi\u00e9ndolos con un triturador o una batidora de mano mientras se cocinan a fuego lento. Una vez roto, mezclar el az\u00facar.<\/li>\n  <li>Transfiera la salsa a una licuadora y mezcle hasta que quede suave.<\/li>\n  <li>Regresa a la sart\u00e9n y agrega el vinagre y el jugo de las limas.<\/li>\n  <li>Cocine por otros 10 minutos, luego deje enfriar.<\/li>\n  <li>Transfiera a frascos esterilizados y mant\u00e9ngalos refrigerados.<\/li>\n  <li>Dejar por lo menos dos semanas antes de la degustaci\u00f3n.<\/li>\n<\/ol>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Una rica y ardiente salsa de chile. Tenga cuidado al manejar chiles. \u00a1Y servir con moderaci\u00f3n!",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e24653c6-7630-4f29-9cd3-40b5c8912c7e"
+        }
+    ]
+}

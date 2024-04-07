@@ -1,0 +1,102 @@
+{
+    "uuid": [
+        {
+            "value": "1eb3881a-d1e8-4334-a8d2-78ffaf8e406f"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "image",
+            "target_type": "media_type",
+            "target_uuid": "ac06de62-ba06-4041-a2c7-1eedb3fbaf25"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "1b73526a-a941-4ebf-b40f-3da0ff2fd1e0"
+        }
+    ],
+    "name": [
+        {
+            "value": "Salta los esp\u00edritus con deliciosos c\u00f3cteles sin alcohol"
+        }
+    ],
+    "thumbnail": [
+        {
+            "alt": "Mocktail de mojito fresco con guarnici\u00f3n de hojas de menta, hielo y lima en rodajas",
+            "title": null,
+            "width": 768,
+            "height": 512,
+            "target_type": "file",
+            "target_uuid": "f7dc4120-3d53-483e-9324-dd92aa49091c"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": null,
+            "pid": null,
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_media_image": [
+        {
+            "alt": "Mocktail de mojito fresco con guarnici\u00f3n de hojas de menta, hielo y lima en rodajas",
+            "title": null,
+            "width": 768,
+            "height": 512,
+            "target_type": "file",
+            "target_uuid": "148359d7-73d4-40d8-be9e-0cf4600bc08b"
+        }
+    ]
+}

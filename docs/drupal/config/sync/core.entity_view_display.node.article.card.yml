@@ -1,4 +1,4 @@
-uuid: 221f4cda-c5be-4fde-a515-dcbe2a0ecb92
+uuid: b9996223-9d8f-4762-b2a5-e655ddb66cdd
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: 9zwIquVyAsdSoSw-cxx3hBf7QDHjtR7uneOy84xHasQ
+  default_config_hash: i79LeNivGBk3gNPxGYymqgw2pc5o6nwHdVRm9bjBV2o
 id: node.article.card
 targetEntityType: node
 bundle: article
@@ -20,13 +20,13 @@ mode: card
 content:
   field_media_image:
     type: entity_reference_entity_view
-    weight: 1
-    region: content
     label: hidden
     settings:
       view_mode: responsive_3x2
       link: false
     third_party_settings: {  }
+    weight: 1
+    region: content
 hidden:
   body: true
   content_moderation_control: true

@@ -1,4 +1,4 @@
-uuid: 5768bd7b-5785-4ca2-ba38-c4909b4f170c
+uuid: e6ca4152-a981-43f5-b0ab-3e6b5ed34463
 langcode: en
 status: true
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
   module:
     - file
 _core:
-  default_config_hash: i9e8OQPmP3H3xwsK7b6rMppqxTifykRn6jOHOo3nBgg
+  default_config_hash: GtmugEmRa78VABVEwh2AHkz-pIpl5vSUVDRa6zYYN5s
 id: media.audio.default
 targetEntityType: media
 bundle: audio
@@ -16,7 +16,6 @@ mode: default
 content:
   field_media_audio_file:
     type: file_audio
-    weight: 0
     label: visually_hidden
     settings:
       controls: true
@@ -24,6 +23,7 @@ content:
       loop: false
       multiple_file_display_type: tags
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden:
   created: true

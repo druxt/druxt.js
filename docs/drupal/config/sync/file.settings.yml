@@ -1,8 +1,15 @@
+_core:
+  default_config_hash: 2bwjZB1IjEYbppgZT3g7YW_5h_LDZYNa3DaDEfWX82U
 description:
   type: textfield
   length: 128
 icon:
   directory: core/modules/file/icons
 make_unused_managed_files_temporary: false
-_core:
-  default_config_hash: 0aMkoXYnax5_tHI9C9zHs-K48KJ6K75PHtD9x-0nbgM
+filename_sanitization:
+  transliterate: false
+  replace_whitespace: false
+  replace_non_alphanumeric: false
+  deduplicate_separators: false
+  lowercase: false
+  replacement_character: '-'

@@ -1,4 +1,4 @@
-uuid: da1485e0-6123-4371-ac16-e85b080c531d
+uuid: 669484e1-f83f-472b-b3cf-cf61fc201171
 langcode: en
 status: true
 dependencies:
@@ -12,7 +12,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: nbwld-a_5QouyJm-jc1P6TfErstPGVCdx1fM4jhm530
+  default_config_hash: dfPfEs6xV0ItZWeYoSXQ_0bnTCdVd7uHaLW4ZzlzExk
 id: node.article.card_common_alt
 targetEntityType: node
 bundle: article
@@ -20,13 +20,13 @@ mode: card_common_alt
 content:
   field_media_image:
     type: entity_reference_entity_view
-    weight: 1
-    region: content
     label: hidden
     settings:
       view_mode: responsive_3x2
       link: false
     third_party_settings: {  }
+    weight: 1
+    region: content
 hidden:
   body: true
   content_moderation_control: true

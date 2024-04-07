@@ -1,0 +1,175 @@
+{
+    "uuid": [
+        {
+            "value": "cde963d6-22e9-46ea-9823-fe70c69fba0a"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "36be3096-044b-4ff5-a599-6ed860f589a8"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "title": [
+        {
+            "value": "Curry verde tailand\u00e9s"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/curry-verde-tailandes",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 15
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "medium"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "400g de leche de coco"
+        },
+        {
+            "value": " 400g de pollo o tofu"
+        },
+        {
+            "value": " 15g de pasta de curry verde tailand\u00e9s"
+        },
+        {
+            "value": " 1 diente de ajo"
+        },
+        {
+            "value": " 10g de salsa de pescado"
+        },
+        {
+            "value": " 400g de champi\u00f1ones"
+        },
+        {
+            "value": " 200g de jud\u00edas verdes"
+        },
+        {
+            "value": " Hojas de cilantro fresco"
+        },
+        {
+            "value": " Arroz jazm\u00edn"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "47000471-3831-49e4-8405-ef3cecc68a81"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 4
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 10
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "01180fe9-c92a-44ea-8883-c1fe1ff8677e"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>En un wok grande, dorar el pollo, luego bajar el fuego y cocinar suavemente el ajo. A\u00f1adir las jud\u00edas verdes picadas y revolver.<\/li>\n  <li>A\u00f1adir la leche de coco, la pasta de curry verde y la salsa de pescado. Mezclar bien y cocinar a fuego lento.<\/li>\n  <li>Agregar los champi\u00f1ones picados y cocinar a fuego lento hasta que el pollo (o tofu) est\u00e9 cocido.<\/li>\n  <li>Servir con arroz jazm\u00edn y una pizca de cilantro.<\/li>\n<\/ol>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Una versi\u00f3n r\u00e1pida y f\u00e1cil del cl\u00e1sico curry verde tailand\u00e9s. \u00a1Perfecto para una comida entre semana!",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": []
+}

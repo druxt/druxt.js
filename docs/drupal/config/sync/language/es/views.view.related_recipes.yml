@@ -1,0 +1,23 @@
+display:
+  default:
+    display_title: 'Por defecto'
+    display_options:
+      fields:
+        title:
+          separator: ', '
+      exposed_form:
+        options:
+          submit_button: Aplicar
+          reset_button_label: Restablecer
+          exposed_sorts_label: 'Ordenar por'
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      arguments:
+        nid:
+          exception:
+            title: Todo(s)
+        field_recipe_category_target_id:
+          exception:
+            title: Todo(s)
+  related_recipes_block:
+    display_title: Bloque

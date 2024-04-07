@@ -1,16 +1,15 @@
 _core:
   default_config_hash: R4IF-ClDHXxblLcG0L7MgsLvfBIMAvi_skumNFQwkDc
 module:
+  announcements_feed: 0
   automated_cron: 0
   big_pipe: 0
   block: 0
   block_content: 0
   breakpoint: 0
-  ckeditor: 0
-  color: 0
+  ckeditor5: 0
   config: 0
   config_translation: 0
-  consumers: 0
   contact: 0
   content_moderation: 0
   contextual: 0
@@ -47,13 +46,11 @@ module:
   page_cache: 0
   path: 0
   path_alias: 0
-  quickedit: 0
-  rdf: 0
   responsive_image: 0
+  sdc: 0
   search: 0
   serialization: 0
   shortcut: 0
-  simple_oauth: 0
   system: 0
   taxonomy: 0
   text: 0
@@ -62,7 +59,6 @@ module:
   tome_static: 0
   tome_sync: 0
   toolbar: 0
-  tour: 0
   update: 0
   user: 0
   views_ui: 0
@@ -71,6 +67,6 @@ module:
   views: 10
   demo_umami: 1000
 theme:
-  seven: 0
+  claro: 0
   umami: 0
 profile: demo_umami

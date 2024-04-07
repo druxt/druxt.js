@@ -1,4 +1,4 @@
-uuid: 0e84976b-2cef-40de-935a-95349dcfbdfc
+uuid: d2d04729-b8bf-4f3f-892e-ee33c1d57436
 langcode: en
 status: true
 dependencies:
@@ -15,7 +15,7 @@ dependencies:
     - path
     - text
 _core:
-  default_config_hash: QiMqI3f6a4D_rqJBhUL4QcW3c5bOtmES2rOx2PT5Vj4
+  default_config_hash: mazCvvkQjG6AJa8nkv6JN1WPjHmMoHMBI6jP3Va4tT4
 id: node.article.default
 targetEntityType: node
 bundle: article
@@ -23,7 +23,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 1
+    weight: 2
     region: content
     settings:
       rows: 9
@@ -38,15 +38,15 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_media_image:
-    weight: 5
+    type: media_library_widget
+    weight: 1
+    region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
-    type: media_library_widget
-    region: content
   field_tags:
     type: entity_reference_autocomplete_tags
-    weight: 3
+    weight: 4
     region: content
     settings:
       match_operator: CONTAINS
@@ -56,7 +56,7 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
@@ -75,24 +75,24 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 8
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 11
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 9
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield

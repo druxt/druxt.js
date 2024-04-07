@@ -18,18 +18,18 @@
         "composer/installers": "^2.2",
         "cweagans/composer-patches": "^1.7.3",
         "drupal-tome/tome_drush": "dev-master",
-        "drupal/core-composer-scaffold": "9.5.9",
-        "drupal/core-project-message": "9.5.9",
-        "drupal/core-recommended": "9.5.9",
+        "drupal/core-composer-scaffold": "^10",
+        "drupal/core-project-message": "^10",
+        "drupal/core-recommended": "^10",
         "drupal/decoupled_router": "2.0.4",
         "drupal/druxt": "^1.2.0",
         "drupal/jsonapi_hypermedia": "^1.9.0",
         "drupal/simple_oauth": "^5.2.3",
         "drupal/tome": "^1.11.0",
-        "drush/drush": "^11.6.0"
+        "drush/drush": "^12"
     },
     "require-dev": {
-        "drupal/core-dev": "9.5.9"
+        "drupal/core-dev": "^10"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -43,7 +43,9 @@
             "drupal/core-composer-scaffold": true,
             "drupal/core-project-message": true,
             "cweagans/composer-patches": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true
         }
     },
     "extra": {

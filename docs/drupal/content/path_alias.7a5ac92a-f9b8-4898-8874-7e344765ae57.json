@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "7a5ac92a-f9b8-4898-8874-7e344765ae57"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/62a560b5-1954-4bf7-ba87-609ce73675e0"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipes\/deep-mediterranean-quiche"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

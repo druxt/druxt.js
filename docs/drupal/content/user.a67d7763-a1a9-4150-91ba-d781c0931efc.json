@@ -1,0 +1,68 @@
+{
+    "uid": [
+        {
+            "value": 4
+        }
+    ],
+    "uuid": [
+        {
+            "value": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "preferred_langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "preferred_admin_langcode": [],
+    "name": [
+        {
+            "value": "Umami"
+        }
+    ],
+    "mail": [
+        {
+            "value": "umami@example.com"
+        }
+    ],
+    "timezone": [
+        {
+            "value": "UTC"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "roles": [
+        {
+            "target_id": "author",
+            "target_type": "user_role",
+            "target_uuid": "6da5122b-c620-4c8b-aa2a-406f4d4931ba"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "user_picture": []
+}

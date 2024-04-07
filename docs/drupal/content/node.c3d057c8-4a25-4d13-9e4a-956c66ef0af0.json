@@ -1,0 +1,209 @@
+{
+    "uuid": [
+        {
+            "value": "c3d057c8-4a25-4d13-9e4a-956c66ef0af0"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "36be3096-044b-4ff5-a599-6ed860f589a8"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "title": [
+        {
+            "value": "Borscht with pork ribs"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/borscht-with-pork-ribs",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 60
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "medium"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "400-500g pork ribs"
+        },
+        {
+            "value": "2 beets"
+        },
+        {
+            "value": "2 tomatoes"
+        },
+        {
+            "value": "\u00bc celery root"
+        },
+        {
+            "value": "\u00bc cabbage"
+        },
+        {
+            "value": "3-4 medium potatoes"
+        },
+        {
+            "value": "1 carrot"
+        },
+        {
+            "value": "1 onion"
+        },
+        {
+            "value": "1-2 smoked pears"
+        },
+        {
+            "value": "2 bay leaves"
+        },
+        {
+            "value": "3 allspice berries"
+        },
+        {
+            "value": "1 bulb garlic"
+        },
+        {
+            "value": "1 bell pepper"
+        },
+        {
+            "value": "200ml tomato juice"
+        },
+        {
+            "value": "30g butter"
+        },
+        {
+            "value": "2 tbsp tomato paste"
+        },
+        {
+            "value": "3l water"
+        },
+        {
+            "value": "Sour cream"
+        },
+        {
+            "value": "1 can beans (optional)"
+        },
+        {
+            "value": "Salt to taste"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "d2ed09e1-415b-459a-9879-bdc21febfa99"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 8
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 30
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "01180fe9-c92a-44ea-8883-c1fe1ff8677e"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>Preheat the oven to 400\u00b0F\/200\u00b0C. Put pork ribs on the baking dish and bake them for 30 minutes. Wash but don\u2019t peel the celery root. Dice the carrot.<\/li>\n  <li>Put the baked pork ribs in a pot and add 3 liters of water. Chop the celery root and carrot and add them to the pot, along with half the unpeeled onion. Bring the pot to the boil and simmer for 30 minutes.<\/li>\n  <li>The heart of the borscht is saut\u00e9ed vegetables. Dice the bell pepper, tomatoes, and remainder of the onion. Place the butter in a saucepan and add the vegetables. Cook them over a moderate heat until soft. Add the tomato paste, reduce the heat, and simmer for 5-7 minutes. Grate a beet, add it to the saucepan, and stew for a further 3-4 minutes.<\/li>\n  <li>Cut a garlic bulb in a half and add it to the pot. Shred the cabbage and put it aside.<\/li>\n  <li>Take the second beet and squeeze all the juice out. If you don\u2019t have a juice squeezer, you can grate a beet and pass it through the sieve. Add the juice together with the allspice, bay leaves, and several pinches of salt to taste.<\/li>\n  <li>Optionally add the canned beans.<\/li>\n  <li>Add the smoked pears to the pot. They will make your dish smell smoky.<\/li>\n  <li>Add the shredded cabbage and cook for a further 5  minutes.<\/li>\n  <li>Take the borscht off the heat and let it stand for 30 minutes.<\/li>\n<\/ol>\n<p>Serve the borscht with a spoon of sour cream and chopped dill. Put the leftover borscht in the fridge, and remember that it tastes better the next day!<\/p>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Every Ukrainian family has a modification; with beans, without cabbage, etc. They are all valid though, there\u2019s no unified \u2018correct\u2019 recipe. The one you are about to read and cook is borscht with pork ribs. You\u2019ll appreciate its taste and flavor. You\u2019ll connect and feel a true Ukrainian soul while savoring!",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "dd9f806e-6557-435a-8ab3-dd71a1455ad7"
+        }
+    ]
+}
