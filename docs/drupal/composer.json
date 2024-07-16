@@ -18,12 +18,14 @@
         "composer/installers": "^2.2",
         "cweagans/composer-patches": "^1.7.3",
         "drupal-tome/tome_drush": "dev-master",
-        "drupal/core-composer-scaffold": "^10",
-        "drupal/core-project-message": "^10",
-        "drupal/core-recommended": "^10",
-        "drupal/decoupled_router": "2.0.4",
+        "drupal/core-composer-scaffold": "10.3.1",
+        "drupal/core-project-message": "10.3.1",
+        "drupal/core-recommended": "10.3.1",
+        "drupal/decoupled_router": "^2.0",
         "drupal/druxt": "^1.2.0",
         "drupal/jsonapi_hypermedia": "^1.9.0",
+        "drupal/jsonapi_menu_items": "^1.2",
+        "drupal/jsonapi_resources": "^1.2",
         "drupal/simple_oauth": "^5.2.3",
         "drupal/tome": "^1.11.0",
         "drush/drush": "^12"
@@ -70,10 +72,10 @@
                 "https://www.drupal.org/project/druxt/issues/3273228": "https://git.drupalcode.org/project/druxt/-/merge_requests/9.diff"
             },
             "drupal/decoupled_router": {
-                "https://www.drupal.org/project/decoupled_router/issues/3111456": "https://git.drupalcode.org/project/decoupled_router/-/merge_requests/11.diff"
+                "https://www.drupal.org/project/decoupled_router/issues/3111456": "https://www.drupal.org/files/issues/2024-07-11/decouple_router-3111456-resolve-language-issue-63--get-translation-re-rolled.patch"
             },
             "drupal/jsonapi_menu_items": {
-                "https://www.drupal.org/project/jsonapi_menu_items/issues/3192576": "https://www.drupal.org/files/issues/2023-02-10/3192576-18.patch"
+                "https://www.drupal.org/project/jsonapi_menu_items/issues/3192576": "https://git.drupalcode.org/project/jsonapi_menu_items/-/merge_requests/16.diff"
             }
         }
     }

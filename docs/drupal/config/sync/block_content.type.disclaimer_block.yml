@@ -6,5 +6,5 @@ _core:
   default_config_hash: _pCMU5fiFIhusD-eK3I_2BAZIrFoctN1lcuJfL5mnZY
 id: disclaimer_block
 label: 'Disclaimer block'
-revision: 0
+revision: false
 description: 'A disclaimer block contains disclaimer and copyright text.'
