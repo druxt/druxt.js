@@ -133,8 +133,8 @@ display:
           click_sort_column: target_id
           type: image
           settings:
-            image_style: thumbnail
             image_link: ''
+            image_style: thumbnail
             image_loading:
               attribute: lazy
           group_column: ''
@@ -539,6 +539,7 @@ display:
             offset: false
             offset_label: Offset
           quantity: 9
+          pagination_heading_level: h4
       exposed_form:
         type: basic
         options:
