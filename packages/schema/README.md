@@ -25,7 +25,7 @@ Add module to `nuxt.config.js`
 module.exports = {
   modules: [
     ...
-    'druxt-schema'
+    'druxt-schema/nuxt'
   ],
 
   druxt: {
