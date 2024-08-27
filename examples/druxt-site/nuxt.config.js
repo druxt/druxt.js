@@ -5,10 +5,11 @@ export default {
   target: 'static',
   generate: { routes: ['/'] },
   telemetry: true,
+  build: { quiet: false },
   buildModules: ['@nuxt/postcss8'],
   modules: [
     'druxt-auth',
-    'druxt-site'
+    'druxt-site/nuxt'
   ],
   druxt: {
     // The baseUrl of the Druxt enabled Drupal JSON:API server.

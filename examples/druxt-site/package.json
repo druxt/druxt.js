@@ -12,11 +12,16 @@
   "dependencies": {
     "druxt-auth": "^0.1.0",
     "druxt-site": "link:../../packages/druxt-site",
-    "nuxt": "latest"
+    "nuxt": "2"
   },
   "devDependencies": {
     "@nuxt/postcss8": "latest",
     "@nuxtjs/storybook": "latest",
     "postcss": "latest"
+  },
+  "resolutions": {
+    "vue": "^2.7",
+    "vue-server-renderer": "^2.7",
+    "vue-template-compiler": "^2.7"
   }
 }
