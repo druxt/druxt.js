@@ -42,9 +42,9 @@
     "templates"
   ],
   "dependencies": {
-    "druxt": "^0.22.0",
+    "druxt": "^0.24.0",
     "druxt-blocks": "^0.17.1",
-    "druxt-router": "^0.29.1"
+    "druxt-router": "^0.31.0"
   },
   "optionalDependencies": {
     "vue": "^2.7.14",
