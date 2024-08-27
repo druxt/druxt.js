@@ -43,12 +43,12 @@
   ],
   "dependencies": {
     "drupal-jsonapi-params": "^2.2.0",
-    "druxt": "^0.22.0",
+    "druxt": "^0.24.0",
     "druxt-blocks": "^0.17.1",
     "druxt-breadcrumb": "^0.17.1",
     "druxt-entity": "^0.28.0",
     "druxt-menu": "^0.21.0",
-    "druxt-router": "^0.29.1",
+    "druxt-router": "^0.31.0",
     "druxt-schema": "^0.11.2",
     "druxt-views": "^0.22.0",
     "md5": "^2.3.0"

@@ -41,7 +41,7 @@
   "dependencies": {
     "consola": "^2.15.3",
     "drupal-jsonapi-params": "^2.2.0",
-    "druxt": "^0.22.0"
+    "druxt": "^0.24.0"
   },
   "optionalDependencies": {
     "vue": "^2.7.14",

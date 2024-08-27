@@ -44,10 +44,10 @@
     "axios": "0.27.2",
     "deepmerge": "^4.3.1",
     "drupal-jsonapi-params": "^2.2.0",
-    "druxt": "^0.22.0",
+    "druxt": "^0.24.0",
     "druxt-blocks": "^0.17.2",
     "druxt-entity": "^0.28.0",
-    "druxt-router": "^0.29.1",
+    "druxt-router": "^0.31.0",
     "md5": "^2.3.0"
   },
   "optionalDependencies": {

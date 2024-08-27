@@ -11,10 +11,6 @@ jobs:
     steps:
       - checkout
 
-      - run:
-          name: Install Codecov
-          command: yarn add codecov
-
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
