@@ -172,7 +172,7 @@ export default {
         type,
         query
       })
-      this.blocks = collection.data
+      this.blocks = collection?.data
     },
 
     /**
@@ -207,7 +207,7 @@ export default {
     slots(h) {
       // Build scoped slots for each block.
       const scopedSlots = {}
-      this.blocks.map((block) => {
+      this.blocks?.map((block) => {
         scopedSlots[block.attributes.drupal_internal__id] = (attrs) => {
           delete (attrs || {})['data-fetch-key']
           return h('DruxtBlock', {
@@ -223,7 +223,7 @@ export default {
       })
 
       // Build default slot.
-      scopedSlots.default = (attrs) => h('div', this.blocks.map((block) =>
+      scopedSlots.default = (attrs) => h('div', this.blocks?.map((block) =>
         this.isVisible(block)
           ? scopedSlots[block.attributes.drupal_internal__id](attrs)
           : false
