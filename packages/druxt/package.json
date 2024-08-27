@@ -42,12 +42,12 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/proxy": "^2.1.0",
-    "@vue/devtools-api": "^6.5.0",
+    "@vue/devtools-api": "^6.6.3",
     "chalk": "^4.1.2",
     "deepmerge": "^4.3.1",
-    "drupal-jsonapi-params": "^2.2.0",
-    "express-rate-limit": "^6.7.0",
-    "launch-editor": "^2.6.0",
+    "drupal-jsonapi-params": "^2.3.1",
+    "express-rate-limit": "^6.11.2",
+    "launch-editor": "^2.8.1",
     "md5": "^2.3.0",
     "querystring": "^0.2.1",
     "scule": "^0.3.2"
@@ -60,8 +60,8 @@
     "consola": "*"
   },
   "optionalDependencies": {
-    "core-js": "^3.31.0",
-    "vue": "^2.7.14",
+    "core-js": "^3.38.1",
+    "vue": "^2.7.16",
     "vuex": "^3.6.2"
   },
   "publishConfig": {
