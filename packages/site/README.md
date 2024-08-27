@@ -25,7 +25,7 @@
 ```js
 module.exports = {
   modules: [
-    'druxt-site'
+    'druxt-site/nuxt'
   ],
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org'
