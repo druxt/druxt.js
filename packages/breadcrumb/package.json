@@ -33,17 +33,20 @@
       "require": "./dist/druxt-breadcrumb.ssr.js",
       "import": "./dist/druxt-breadcrumb.esm.js"
     },
-    "./components/*": "./dist/components/*"
+    "./components/*": "./dist/components/*",
+    "./nuxt": "./nuxt/index.js"
   },
   "main": "dist/druxt-breadcrumb.ssr.js",
   "module": "dist/druxt-breadcrumb.esm.js",
   "files": [
     "dist",
+    "nuxt",
     "templates"
   ],
   "dependencies": {
+    "@nuxt/kit": "^3.12.2",
     "druxt": "^0.24.0",
-    "druxt-blocks": "^0.17.1",
+    "druxt-blocks": "^0.17.2",
     "druxt-router": "^0.31.0"
   },
   "optionalDependencies": {

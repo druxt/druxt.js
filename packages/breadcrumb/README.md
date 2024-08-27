@@ -23,7 +23,7 @@ Add module to `nuxt.config.js`
 
 ```js
 module.exports = {
-  modules: ['druxt-breadcrumb'],
+  modules: ['druxt-breadcrumb/nuxt'],
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org',
   },

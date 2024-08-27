@@ -1,17 +1,3 @@
-import { DruxtBreadcrumbModule } from './nuxtModule'
-
-/**
- * The Nuxt.js module function.
- *
- * Installs the module functionality in a Nuxt.js frontend.
- *
- * @type {Function}
- * @exports default
- * @name DruxtBreadcrumbModule
- * @see {@link ./module|DruxtBreadcrumbModule}
- */
-export default DruxtBreadcrumbModule
-
 /**
  * Vue.js Mixin.
  *
@@ -20,3 +6,12 @@ export default DruxtBreadcrumbModule
  * @see {@link ./mixins/breadcrumb|DruxtBreadcrumbMixin}
  */
  export { DruxtBreadcrumbMixin } from './mixins/breadcrumb'
+
+/**
+ * Default function to alert user to incorrectly installed module.
+ *
+ * This was added as part of the @nuxt/kit update due to breaking changes.
+ */
+export default () => {
+  throw new Error("DruxtBreadcrumb Nuxt module must be installed as 'druxt-breadcrumb/nuxt'")
+}
