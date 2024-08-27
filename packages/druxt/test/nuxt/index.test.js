@@ -1,30 +1,32 @@
 /* global beforeEach, describe, expect, jest, test */
 
-import DruxtNuxtModule from '../../src'
+import DruxtNuxtModule from '../../src/nuxt'
+
+jest.mock('@nuxt/kit', () => ({
+  addPluginTemplate: jest.fn(),
+  defineNuxtModule: (module) => module,
+  installModule: jest.fn(),
+}))
+
+import { addPluginTemplate, installModule } from '@nuxt/kit'
 
 const options = {
   baseUrl: 'https://api.umami.demo.druxtjs.org',
   endpoint: '/jsonapi',
 }
 
-let mock
+let nuxtMock
 
 describe('DruxtJS Nuxt module', () => {
   beforeEach(() => {
-    mock = {
-      addModule: jest.fn(),
-      addPlugin: jest.fn(),
-      addServerMiddleware: jest.fn(),
-      addTemplate: jest.fn(),
-      nuxt: {
-        hook: jest.fn((hook, fn) => {
-          const arg = {
-            'components:dirs': [],
-            'storybook:config': { stories: [] }
-          }
-          return fn(arg[hook])
-        }),
-      },
+    nuxtMock = {
+      hook: jest.fn((hook, fn) => {
+        const arg = {
+          'components:dirs': [],
+          'storybook:config': { stories: [] }
+        }
+        return fn(arg[hook])
+      }),
       options: {
         buildDir: 'build',
         druxt: options,
@@ -32,85 +34,84 @@ describe('DruxtJS Nuxt module', () => {
           badgeMessages: [],
         }
       },
-      DruxtNuxtModule
     }
   })
 
-  test('Module options', () => {
+  test('Module options', async () => {
     // Call Druxt module with module options.
-    DruxtNuxtModule.call(mock, options)
+    await DruxtNuxtModule.setup(options, nuxtMock)
 
     // Expect addPlugin to have been called with options.
-    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
+    expect(addPluginTemplate).toHaveBeenCalledWith(expect.objectContaining({ options }))
   })
 
-  test('Root options', () => {
+  test('Root options', async () => {
     // Set root options.
-    mock.options.druxt = options
+    nuxtMock.options.druxt = options
 
     // Call Druxt module.
-    DruxtNuxtModule.call(mock)
+    await DruxtNuxtModule.setup({}, nuxtMock)
 
     // Expect addPlugin to have been called with options.
-    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
+    expect(addPluginTemplate).toHaveBeenCalledWith(expect.objectContaining({ options }))
   })
 
   test('Default options', async () => {
     // Expect:
     // - Components enabled.
     // - Vuex store enabled.
-    await DruxtNuxtModule.call(mock)
-    expect(mock.options.components).toBe(true)
-    expect(mock.options.store).toBe(true)
+    await DruxtNuxtModule.setup({}, nuxtMock)
+    expect(nuxtMock.options.components).toBe(true)
+    expect(nuxtMock.options.store).toBe(true)
 
     // Expect:
     // - Components disbaled.
-    mock.options.components = false
-    await DruxtNuxtModule.call(mock)
-    expect(mock.options.components).toBe(false)
+    nuxtMock.options.components = false
+    await DruxtNuxtModule.setup({}, nuxtMock)
+    expect(nuxtMock.options.components).toBe(false)
   })
 
   test('Plugin order', async () => {
     // Expect:
     // - extendPlugins to be a function.
-    await DruxtNuxtModule.call(mock)
-    expect(typeof mock.options.extendPlugins).toBe('function')
+    await DruxtNuxtModule.setup({}, nuxtMock)
+    expect(typeof nuxtMock.options.extendPlugins).toBe('function')
 
     // Expect:
     // - The plugins should have the $druxt plugin first.
     const plugins = [
-      { src: `${mock.options.buildDir}/foobar.js` },
-      { src: `${mock.options.buildDir}/druxt.js` },
-      { src: `${mock.options.buildDir}/axios.js` }
+      { src: `${nuxtMock.options.buildDir}/foobar.js` },
+      { src: `${nuxtMock.options.buildDir}/druxt.js` },
+      { src: `${nuxtMock.options.buildDir}/axios.js` }
     ]
-    let sorted = mock.options.extendPlugins(plugins)
-    expect(sorted[0].src).toBe(`${mock.options.buildDir}/axios.js`)
-    expect(sorted[1].src).toBe(`${mock.options.buildDir}/druxt.js`)
+    let sorted = nuxtMock.options.extendPlugins(plugins)
+    expect(sorted[0].src).toBe(`${nuxtMock.options.buildDir}/axios.js`)
+    expect(sorted[1].src).toBe(`${nuxtMock.options.buildDir}/druxt.js`)
   })
 
   test('@nuxtjs/axios module', async () => {
-    mock.options.extendPlugins = jest.fn((o) => o)
+    nuxtMock.options.extendPlugins = jest.fn((o) => o)
 
-    await DruxtNuxtModule.call(mock)
+    await DruxtNuxtModule.setup({}, nuxtMock)
 
-    // Expect addModule to have been called to install @nuxtjs/axios.
-    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/axios')
+    // Expect installModule to have been called to install @nuxtjs/axios.
+    expect(installModule).toHaveBeenCalledWith('@nuxtjs/axios', expect.any(Object), expect.any(Object))
   })
 
   test('API Proxy', async () => {
     // Enable API Proxy.
-    mock.options.druxt = {
+    nuxtMock.options.druxt = {
       ...options,
       proxy: {
         api: true,
       }
     }
-    await DruxtNuxtModule.call(mock)
+    await DruxtNuxtModule.setup({}, nuxtMock)
 
     // Ensure Nuxt proxy is enabled.
-    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
+    expect(installModule).toHaveBeenCalledWith('@nuxtjs/proxy', expect.any(Object), expect.any(Object))
     // Ensure proxies are set.
-    expect(mock.options.proxy).toStrictEqual({
+    expect(nuxtMock.options.proxy).toStrictEqual({
       [`/en${options.endpoint}`]: options.baseUrl,
       [`/es${options.endpoint}`]: options.baseUrl,
       [options.endpoint]: options.baseUrl,
@@ -120,31 +121,31 @@ describe('DruxtJS Nuxt module', () => {
 
   test('File Proxy', async () => {
     // Enable File proxy.
-    mock.options.druxt = {
+    nuxtMock.options.druxt = {
       ...options,
       proxy: {
         files: true,
       }
     }
-    await DruxtNuxtModule.call(mock)
+    await DruxtNuxtModule.setup({}, nuxtMock)
 
-    expect(mock.options.proxy).toStrictEqual({
+    expect(nuxtMock.options.proxy).toStrictEqual({
       '/sites/default/files': options.baseUrl
     })
 
     // Use custom files directory.
-    delete mock.options.proxy
-    mock.options.druxt.proxy.files = 'druxtjs.org'
-    await DruxtNuxtModule.call(mock)
+    delete nuxtMock.options.proxy
+    nuxtMock.options.druxt.proxy.files = 'druxtjs.org'
+    await DruxtNuxtModule.setup({}, nuxtMock)
 
-    expect(mock.options.proxy).toStrictEqual({
+    expect(nuxtMock.options.proxy).toStrictEqual({
       '/sites/druxtjs.org/files': options.baseUrl
     })
   })
 
   test('Proxy - merge options', async () => {
     // Enable API Proxy.
-    mock.options.druxt = {
+    nuxtMock.options.druxt = {
       ...options,
       proxy: {
         api: true,
@@ -152,14 +153,14 @@ describe('DruxtJS Nuxt module', () => {
     }
 
     // Set array proxy settings.
-    mock.options.proxy = [`${options.baseUrl}/array-test`]
+    nuxtMock.options.proxy = [`${options.baseUrl}/array-test`]
 
-    await DruxtNuxtModule.call(mock)
+    await DruxtNuxtModule.setup({}, nuxtMock)
 
     // Ensure Nuxt proxy is enabled.
-    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
+    expect(installModule).toHaveBeenCalledWith('@nuxtjs/proxy', expect.any(Object), expect.any(Object))
     // Ensure proxies are set.
-    expect(mock.options.proxy).toStrictEqual([
+    expect(nuxtMock.options.proxy).toStrictEqual([
       `${options.baseUrl}/array-test`,
       `${options.baseUrl}${options.endpoint}`,
       `${options.baseUrl}/en${options.endpoint}`,
@@ -168,14 +169,14 @@ describe('DruxtJS Nuxt module', () => {
     ])
 
     // Set object proxy settings.
-    mock.options.proxy = { '/object-test': options.baseUrl }
+    nuxtMock.options.proxy = { '/object-test': options.baseUrl }
 
-    await DruxtNuxtModule.call(mock)
+    await DruxtNuxtModule.setup({}, nuxtMock)
 
     // Ensure Nuxt proxy is enabled.
-    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
+    expect(installModule).toHaveBeenCalledWith('@nuxtjs/proxy', expect.any(Object), expect.any(Object))
     // Ensure proxies are set.
-    expect(mock.options.proxy).toStrictEqual({
+    expect(nuxtMock.options.proxy).toStrictEqual({
       '/object-test': options.baseUrl,
       [`/en${options.endpoint}`]: options.baseUrl,
       [`/es${options.endpoint}`]: options.baseUrl,
@@ -184,13 +185,14 @@ describe('DruxtJS Nuxt module', () => {
     })
   })
 
-  test('Devel - Server middleware', () => {
-    // Enable development mode.
-    mock.options.dev = true
-    DruxtNuxtModule.call(mock)
-    expect(mock.addServerMiddleware).toHaveBeenCalledWith({
-      handler: 'druxt/dist/server-middleware/template.mjs',
-      path: '/_druxt/template'
-    })
-  })
+  // @TODO - Reimplement the development server middleware.
+  // test('Devel - Server middleware', () => {
+  //   // Enable development mode.
+  //   nuxtMock.options.dev = true
+  //   DruxtNuxtModule.setup({}, nuxtMock)
+  //   expect(nuxtMock.addServerMiddleware).toHaveBeenCalledWith({
+  //     handler: 'druxt/dist/server-middleware/template.mjs',
+  //     path: '/_druxt/template'
+  //   })
+  // })
 })

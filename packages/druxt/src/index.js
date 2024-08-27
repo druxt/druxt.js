@@ -1,6 +1,3 @@
-import { DruxtNuxtModule } from './nuxt'
-DruxtNuxtModule.meta = require('../package.json')
-
 /**
  * The JSON:API client used by the Druxt Nuxt plugin and DruxtStore.
  *
@@ -14,25 +11,6 @@ DruxtNuxtModule.meta = require('../package.json')
  * const druxt = new DruxtClient('https://demo-api.druxtjs.org')
  */
 export { DruxtClient } from './client'
-
-/**
- * The Druxt module for Nuxt.
- *
- * @type {Function}
- * @exports default
- * @name DruxtNuxtModule
- * @see {@link /api/packages/druxt/nuxtModule|DruxtNuxtModule}
- *
- * @example <caption>Installing the Druxt module</caption> @lang js
- * // nuxt.config.js
- * export default {
- *   modules: ['druxt'],
- *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
- *   }
- * }
- */
-export default DruxtNuxtModule
 
 /**
  * Vuex module used to interface with the DruxtClient and store resource data.
@@ -54,7 +32,10 @@ export default DruxtNuxtModule
 export { DruxtStore } from './stores/druxt'
 
 /**
- * @deprecated
- * @private
+ * Default function to alert user to incorrectly installed module.
+ *
+ * This was added as part of the @nuxt/kit update due to breaking changes.
  */
-export { DruxtClass } from './class'
+export default () => {
+  throw new Error("Druxt Nuxt module must be installed as 'druxt/nuxt'")
+}

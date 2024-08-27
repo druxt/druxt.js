@@ -7,9 +7,10 @@
         v-text="label"
       />
     </select>
-    <button @click="onClick">
+    <!-- @TODO - Re-implement this. -->
+    <!-- <button @click="onClick">
       Create
-    </button>
+    </button> -->
   </div>
 </template>
 
@@ -20,10 +21,10 @@ export default {
   }),
 
   computed: {
-    module: ({ $parent }) => ($parent.component || {}).options
+    module: ({ $parent }) => $parent.component?.options
       ? $parent
-      : ($parent.$parent || {}).$parent || {},
-    options: ({ module }) => (module.component || {}).options || []
+      : $parent.$parent?.$parent || {},
+    options: ({ module }) => module.component?.options || []
   },
 
   created() {
@@ -42,7 +43,7 @@ export default {
             component: this.module.$options._componentTag,
             props: Object.entries(this.module.component.propsData || {}).map(([key, value]) => ({ key, type: typeof value })),
             slots: this.module.component.slots,
-            ...((this.module.$options.druxt || {}).template || {}),
+            ...(this.module.$options.druxt?.template || {}),
           }
         }
       })
