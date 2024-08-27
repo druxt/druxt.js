@@ -1,18 +1,3 @@
-import { DruxtViewsNuxtModule } from './nuxt'
-DruxtViewsNuxtModule.meta = require('../package.json')
-
-/**
- * The Nuxt.js module function.
- *
- * Installs the module functionality in a Nuxt application.
- *
- * @type {Function}
- * @exports default
- * @name DruxtViewsNuxtModule
- * @see {@link ./nuxt|DruxtViewsNuxtModule}
- */
-export default DruxtViewsNuxtModule
-
 /**
  * Vuex store module.
  *
@@ -36,3 +21,12 @@ export { DruxtViewsStore } from './stores/views'
  * @see {@link ./mixins/view|DruxtViewsViewMixin}
  */
 export * from './mixins'
+
+/**
+ * Default function to alert user to incorrectly installed module.
+ *
+ * This was added as part of the @nuxt/kit update due to breaking changes.
+ */
+export default () => {
+  throw new Error("DruxtViews Nuxt module must be installed as 'druxt-views/nuxt'")
+}
