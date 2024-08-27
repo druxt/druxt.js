@@ -1,17 +1,3 @@
-import { DruxtEntityNuxtModule } from './nuxtModule'
-
-/**
- * The Nuxt.js module function.
- *
- * Installs the module functionality in a Nuxt application.
- *
- * @type {Function}
- * @exports default
- * @name DruxtEntityNuxtModule
- * @see {@link ./nuxtModule|DruxtEntityNuxtModule}
- */
-export default DruxtEntityNuxtModule
-
 /**
  * Vue.js mixins.
  *
@@ -22,3 +8,12 @@ export default DruxtEntityNuxtModule
  * @see {@link ./mixins/field|DruxtFieldMixin}
  */
 export * from './mixins'
+
+/**
+ * Default function to alert user to incorrectly installed module.
+ *
+ * This was added as part of the @nuxt/kit update due to breaking changes.
+ */
+export default () => {
+  throw new Error("DruxtEntity Nuxt module must be installed as 'druxt-entity/nuxt'")
+}
