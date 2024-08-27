@@ -186,10 +186,10 @@ class DruxtRouter {
    * @returns {boolean|string} The redirect path or false.
    */
   getRedirect (path, route = {}) {
-    const prefix = (route.props || {}).langcode || ''
+    const prefix = route.props?.langcode || ''
 
     // Redirect to route provided redirect.
-    if (((route.redirect || [])[0] || {}).to) {
+    if (route.redirect?.[0]?.to) {
       return route.redirect[0].to
     }
     const url = Url(path)

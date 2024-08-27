@@ -67,7 +67,7 @@ export default {
     const result = await store.dispatch('druxtRouter/get', route.fullPath)
 
     // Process redirect.
-    if (result.redirect) {
+    if (result?.redirect) {
       redirect(result.redirect)
     }
   },

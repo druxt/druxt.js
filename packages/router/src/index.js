@@ -57,3 +57,12 @@ export { DruxtRouterStore } from './stores/router'
   * </script>
   */
  export { DruxtRouterMixin } from './mixins/router'
+
+/**
+ * Default function to alert user to incorrectly installed module.
+ *
+ * This was added as part of the @nuxt/kit update due to breaking changes.
+ */
+export default () => {
+  throw new Error("DruxtRouter Nuxt module must be installed as 'druxt-router/nuxt'")
+}
