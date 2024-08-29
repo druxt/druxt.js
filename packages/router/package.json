@@ -46,7 +46,7 @@
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
-    "vue-router": "^3.6.5"
+    "vue-router": "^4.4.3"
   },
   "peerDependencies": {
     "drupal-jsonapi-params": "*"
