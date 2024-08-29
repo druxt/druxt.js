@@ -15,9 +15,9 @@
   "dependencies": {
     "@nuxt/content": "1.15.1",
     "@tailwindcss/typography": "0.4.1",
-    "core-js": "3.31.0",
+    "core-js": "3.38.1",
     "daisyui": "1.25.4",
-    "nuxt": "2.17.0",
+    "nuxt": "2.18.1",
     "nuxt-social-meta": "1.0.0"
   },
   "devDependencies": {
@@ -26,6 +26,7 @@
     "@nuxtjs/google-analytics": "2.4.0",
     "@nuxtjs/pwa": "3.3.5",
     "@nuxtjs/storybook": "4.2.0",
-    "@nuxtjs/tailwindcss": "4.2.1"
+    "@nuxtjs/tailwindcss": "4.2.1",
+    "tailwindcss": "^2.2.2"
   }
 }
