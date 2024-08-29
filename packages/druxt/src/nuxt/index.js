@@ -189,18 +189,17 @@ const DruxtNuxtModule = defineNuxtModule({
 
     // Development mode features.
     if (nuxt.options.dev) {
-      // @TODO - AddServerMiddleware isn't part of @nuxt/kit
       // Add the template stubber server middleware.
-      // this.addServerMiddleware({
-      //   path: '/_druxt/template',
-      //   handler: 'druxt/dist/server-middleware/template.mjs'
-      // })
+      nuxt.options.serverMiddleware.push({
+        path: '/_druxt/template',
+        handler: 'druxt/dist/server-middleware/template.mjs'
+      })
 
-      // // Add the Vue devtools plugin.
-      // this.addPlugin({
-      //   src: resolve(__dirname, '../dist/plugins/devtools.mjs'),
-      //   fileName: 'druxt-devtools.js'
-      // })
+      // Add the Vue devtools plugin.
+      addPluginTemplate({
+        src: resolve(__dirname, '../dist/plugins/devtools.mjs'),
+        fileName: 'druxt-devtools.js'
+      })
     }
 
     // Nuxt Storybook.

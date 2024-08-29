@@ -7,10 +7,9 @@
         v-text="label"
       />
     </select>
-    <!-- @TODO - Re-implement this. -->
-    <!-- <button @click="onClick">
+    <button @click="onClick">
       Create
-    </button> -->
+    </button>
   </div>
 </template>
 

@@ -50,7 +50,9 @@ exports[`DruxtEntity missing schema 1`] = `
           <option>DruxtEntityFileFile</option>
           <option>DruxtEntityFile</option>
           <option>DruxtEntityDefault</option>
-        </select></div>
+        </select> <button>
+          Create
+        </button></div>
       <details>
         <summary>JSON:API resource</summary><pre><code>{
   "type": "file--file",
