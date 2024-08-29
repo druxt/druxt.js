@@ -9704,6 +9704,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chalk@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "chalk@npm:5.3.0"
+  checksum: 623922e077b7d1e9dedaea6f8b9e9352921f8ae3afe739132e0e00c275971bdd331268183b2628cf4ab1727c45ea1f28d7e24ac23ce1db1eb653c414ca8a5a80
+  languageName: node
+  linkType: hard
+
 "changelog-filename-regex@npm:2.0.1":
   version: 2.0.1
   resolution: "changelog-filename-regex@npm:2.0.1"
@@ -11585,7 +11592,7 @@ __metadata:
     "@nuxtjs/proxy": ^2.1.0
     "@storybook/addon-docs": ^6.5.16
     "@vue/devtools-api": ^6.6.3
-    chalk: ^4.1.2
+    chalk: ^5.3.0
     core-js: ^3.38.1
     deepmerge: ^4.3.1
     drupal-jsonapi-params: ^2.3.1
