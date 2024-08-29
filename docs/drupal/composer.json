@@ -19,7 +19,7 @@
         "cweagans/composer-patches": "^1.7.3",
         "drupal-tome/tome_drush": "dev-master",
         "drupal/core-composer-scaffold": "^10",
-        "drupal/core-project-message": "^10",
+        "drupal/core-project-message": "^11",
         "drupal/core-recommended": "^10",
         "drupal/decoupled_router": "2.0.5",
         "drupal/druxt": "^1.2.0",
