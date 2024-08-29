@@ -43,7 +43,7 @@
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/proxy": "^2.1.0",
     "@vue/devtools-api": "^6.6.3",
-    "chalk": "^4.1.2",
+    "chalk": "^5.3.0",
     "deepmerge": "^4.3.1",
     "drupal-jsonapi-params": "^2.3.1",
     "express-rate-limit": "^6.11.2",
