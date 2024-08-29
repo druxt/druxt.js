@@ -9854,7 +9854,7 @@ __metadata:
     daisyui: 1.25.4
     nuxt: 2.18.1
     nuxt-social-meta: 1.0.0
-    tailwindcss: ^2.2.2
+    tailwindcss: ^2.2.19
   languageName: unknown
   linkType: soft
 
@@ -19750,7 +19750,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:^2.2.2":
+"tailwindcss@npm:^2.2.19, tailwindcss@npm:^2.2.2":
   version: 2.2.19
   resolution: "tailwindcss@npm:2.2.19"
   dependencies:
