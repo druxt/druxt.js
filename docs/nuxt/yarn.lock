@@ -9854,6 +9854,7 @@ __metadata:
     daisyui: 1.25.4
     nuxt: 2.18.1
     nuxt-social-meta: 1.0.0
+    tailwindcss: ^2.2.2
   languageName: unknown
   linkType: soft
 
