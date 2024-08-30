@@ -2,7 +2,7 @@
 
 exports[`DruxtRouterComponent Slots 1`] = `
 "<div>
-  <div path=\\"/error\\" route=\\"[object Object]\\">
+  <div path="/error" route="[object Object]">
     <div>
       <h1>Error 404</h1>
       <p>Unable to resolve path /error.</p>

@@ -4,6 +4,6 @@ exports[`Component - DruxtFieldEntityReferenceEntityView default 1`] = `
 "<div>
   <!---->
   <!---->
-  <druxtentity-stub wrapper=\\"[object Object]\\" mode=\\"default\\" settings=\\"[object Object]\\" type=\\"pages\\" uuid=\\"fe00c55d-0335-49d6-964e-a868c0c68f9c\\"></druxtentity-stub>
+  <druxtentity-stub wrapper="[object Object]" mode="default" settings="[object Object]" type="pages" uuid="fe00c55d-0335-49d6-964e-a868c0c68f9c"></druxtentity-stub>
 </div>"
 `;
