@@ -26,7 +26,7 @@
         "drupal/jsonapi_hypermedia": "^1.10.0",
         "drupal/simple_oauth": "^5.2.5",
         "drupal/tome": "^1.12.0",
-        "drush/drush": "^12"
+        "drush/drush": "^13"
     },
     "require-dev": {
         "drupal/core-dev": "^10"
