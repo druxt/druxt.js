@@ -17,7 +17,7 @@
     "@tailwindcss/typography": "0.4.1",
     "core-js": "3.38.1",
     "daisyui": "1.25.4",
-    "nuxt": "2.18.1",
+    "nuxt": "3.13.0",
     "nuxt-social-meta": "1.0.0"
   },
   "devDependencies": {
