@@ -15,7 +15,7 @@
   "dependencies": {
     "dmd": "6.2.3",
     "globby": "11.1.0",
-    "jsdoc-to-markdown": "7.1.1",
+    "jsdoc-to-markdown": "8.0.3",
     "jsdoc-vuejs": "3.0.9",
     "jsdoc-vuex-plugin": "1.0.0",
     "markdown-it-task-lists": "2.1.1",
