@@ -11319,7 +11319,7 @@ __metadata:
     core-js: ^3.38.1
     deepmerge: ^4.3.1
     drupal-jsonapi-params: ^2.3.1
-    express-rate-limit: ^6.11.2
+    express-rate-limit: ^7.4.0
     launch-editor: ^2.8.1
     md5: ^2.3.0
     querystring: ^0.2.1
@@ -12374,12 +12374,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express-rate-limit@npm:^6.11.2":
-  version: 6.11.2
-  resolution: "express-rate-limit@npm:6.11.2"
+"express-rate-limit@npm:^7.4.0":
+  version: 7.4.0
+  resolution: "express-rate-limit@npm:7.4.0"
   peerDependencies:
-    express: ^4 || ^5
-  checksum: 3cc4032ee2f7063647f45e338e10c9a67d8595a0f9a5a291d6633b6d96aab6201c8943bae74491f824cb6230a59921daec95ef4e22c1112759a766456c0f1f19
+    express: 4 || 5 || ^5.0.0-beta.1
+  checksum: 81ddba751b401ff7f04207155dd0559938b5614754f73950d86acc1463dd7ea6a458a5ba941bcf108e8913b786bca6cde94c19ba504cf61f864edf92cc1bdbae
   languageName: node
   linkType: hard
 
