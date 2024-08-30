@@ -61,7 +61,7 @@
     "jest-mock-axios": "4.7.3",
     "regenerator-runtime": "0.14.1",
     "renovate": "32.0.2",
-    "rimraf": "3.0.2",
+    "rimraf": "6.0.1",
     "siroc": "0.16.0",
     "start-server-and-test": "^2.0.5",
     "vue": "2.7.16",
