@@ -68,5 +68,5 @@
     "vue-jest": "3.0.7",
     "vue-template-compiler": "2.7.16"
   },
-  "packageManager": "yarn@3.8.5"
+  "packageManager": "yarn@4.4.1"
 }
