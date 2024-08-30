@@ -48,7 +48,7 @@
   },
   "optionalDependencies": {
     "vue": "^2.7.16",
-    "vuex": "^3.6.2"
+    "vuex": "^4.1.0"
   },
   "publishConfig": {
     "access": "public"
