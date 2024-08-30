@@ -1,7 +1,7 @@
 import { addLayout, defineNuxtModule, installModule } from '@nuxt/kit'
 import { existsSync } from 'fs'
 import { resolve } from 'path'
-// import DruxtSiteStorybook from '../nuxtStorybook'
+import DruxtSiteStorybook from './storybook'
 
 /**
  * Nuxt module function to install Druxt Site.
@@ -74,9 +74,9 @@ const DruxtSiteNuxtModule = defineNuxtModule({
 
     // Nuxt Storybook.
     // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
-    // this.nuxt.hook('storybook:config', async ({ stories }) => {
-    //   await DruxtSiteStorybook.call(this, { options, stories })
-    // })
+    nuxt.hook('storybook:config', async ({ stories }) => {
+      await DruxtSiteStorybook.call(nuxt, { options, stories })
+    })
   }
 })
 

@@ -1,6 +1,6 @@
 import { defineNuxtModule, installModule } from '@nuxt/kit'
 import { join } from 'path'
-// import DruxtEntityStorybook from '../nuxtStorybook'
+import DruxtEntityStorybook from './storybook'
 
 /**
  * The Nuxt.js module function.
@@ -72,9 +72,9 @@ const DruxtEntityNuxtModule = defineNuxtModule({
 
     // Nuxt Storybook.
     // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
-    // this.nuxt.hook('storybook:config', async ({ stories }) => {
-    //   await DruxtEntityStorybook.call(this, { stories })
-    // })
+    nuxt.hook('storybook:config', async ({ stories }) => {
+      await DruxtEntityStorybook.call(nuxt, { stories })
+    })
   }
 })
 

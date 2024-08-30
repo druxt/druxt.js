@@ -1,6 +1,6 @@
 import { addPluginTemplate, defineNuxtModule, installModule } from '@nuxt/kit'
 import { join, resolve } from 'path'
-// import DruxtMenuStorybook from './storybook'
+import DruxtMenuStorybook from './storybook'
 
 /**
  * The Nuxt.js module function.
@@ -72,9 +72,9 @@ const DruxtMenuNuxtModule = defineNuxtModule({
 
     // Nuxt Storybook.
     // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
-    // this.nuxt.hook('storybook:config', async ({ stories }) => {
-    //   await DruxtMenuStorybook.call(this, { stories })
-    // })
+    nuxt.hook('storybook:config', async ({ stories }) => {
+      await DruxtMenuStorybook.call(nuxt, { stories })
+    })
   }
 })
 

@@ -1,6 +1,6 @@
 import { addPluginTemplate, defineNuxtModule, installModule } from '@nuxt/kit'
 import { join, resolve } from 'path'
-// import DruxtViewsStorybook from './storybook'
+import DruxtViewsStorybook from './storybook'
 
 /**
  * The Nuxt.js module function.
@@ -67,13 +67,13 @@ const DruxtViewsNuxtModule = defineNuxtModule({
 
     // Enable Vuex Store.
     nuxt.options.store = true
-  }
 
-  // Nuxt Storybook.
-  // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
-  // this.nuxt.hook('storybook:config', async ({ stories }) => {
-  //   await DruxtViewsStorybook.call(this, { stories })
-  // })
+    // Nuxt Storybook.
+    // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
+    nuxt.hook('storybook:config', async ({ stories }) => {
+      await DruxtViewsStorybook.call(nuxt, { stories })
+    })
+  }
 })
 
 export default DruxtViewsNuxtModule

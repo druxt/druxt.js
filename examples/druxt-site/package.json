@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@nuxt/postcss8": "latest",
-    "@nuxtjs/storybook": "latest",
+    "@nuxtjs/storybook": "4",
     "postcss": "latest"
   },
   "resolutions": {

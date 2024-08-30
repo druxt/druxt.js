@@ -1,3 +1,4 @@
+import { addTemplate } from '@nuxt/kit'
 import { resolve } from 'path'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
@@ -8,8 +9,6 @@ const titleFn = (parts) =>
   ).join('/')
 
 export default async function ({ options, stories }) {
-  const { addTemplate } = this
-
   // Setup DruxtClient instance.
   const druxt = new DruxtClient(options.baseUrl, { ...options, proxy: { api: false } })
 

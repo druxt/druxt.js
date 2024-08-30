@@ -1,10 +1,11 @@
+import { addTemplate } from '@nuxt/kit'
 import merge from 'deepmerge'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
 import { resolve } from 'path'
 
 export default async function ({ stories }) {
-  const { addTemplate, options } = this
+  const { options } = this
 
   // Setup DruxtClient instance.
   const druxt = new DruxtClient(options.druxt.baseUrl, { ...options.druxt, proxy: { api: false } })

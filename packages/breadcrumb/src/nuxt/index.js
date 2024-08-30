@@ -1,5 +1,5 @@
-import { defineNuxtModule, installModule } from '@nuxt/kit'
-import { join } from 'path'
+import { addTemplate, defineNuxtModule, installModule } from '@nuxt/kit'
+import { join, resolve } from 'path'
 
 /**
  * The Nuxt.js module function.
@@ -54,13 +54,13 @@ const DruxtBreadcrumbModule = defineNuxtModule({
 
     // Nuxt Storybook.
     // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
-    // nuxt.hook('storybook:config', ({ stories }) => {
-    //   addTemplate({
-    //     src: resolve(__dirname, '../templates/druxt-breadcrumb.stories.js'),
-    //     fileName: 'stories/druxt-breadcrumb.stories.js',
-    //   })
-    //   stories.push(resolve(nuxt.options.buildDir, './stories/druxt-breadcrumb.stories.js'))
-    // })
+    nuxt.hook('storybook:config', ({ stories }) => {
+      addTemplate({
+        src: resolve(__dirname, '../templates/druxt-breadcrumb.stories.js'),
+        fileName: 'stories/druxt-breadcrumb.stories.js',
+      })
+      stories.push(resolve(nuxt.options.buildDir, './stories/druxt-breadcrumb.stories.js'))
+    })
   }
 })
 

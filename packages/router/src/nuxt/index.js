@@ -135,14 +135,14 @@ const DruxtRouterNuxtModule = defineNuxtModule({
 
     // Nuxt Storybook.
     // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
-    // nuxt.hook('storybook:config', async ({ stories }) => {
-    //   addTemplate({
-    //     src: resolve(__dirname, '../templates/druxt-router.stories.js'),
-    //     fileName: 'stories/druxt-router.stories.js',
-    //     options: {}
-    //   })
-    //   stories.push(resolve(options.buildDir, './stories/druxt-router.stories.js'))
-    // })
+    nuxt.hook('storybook:config', async ({ stories }) => {
+      addTemplate({
+        src: resolve(__dirname, '../templates/druxt-router.stories.js'),
+        fileName: 'stories/druxt-router.stories.js',
+        options: {}
+      })
+      stories.push(resolve(nuxt.options.buildDir, './stories/druxt-router.stories.js'))
+    })
   }
 })
 

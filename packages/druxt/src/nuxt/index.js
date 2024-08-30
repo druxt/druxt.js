@@ -1,4 +1,4 @@
-import { addPluginTemplate, defineNuxtModule, installModule } from '@nuxt/kit'
+import { addPluginTemplate, addTemplate, defineNuxtModule, installModule } from '@nuxt/kit'
 import chalk from 'chalk'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { join, normalize, resolve } from 'path'
@@ -204,28 +204,28 @@ const DruxtNuxtModule = defineNuxtModule({
 
     // Nuxt Storybook.
     // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
-    // nuxt.hook('storybook:config', async ({ stories }) => {
-    //   // Druxt README story.
-    //   addTemplate({
-    //     src: resolve(__dirname, '../templates/stories/README.stories.mdx'),
-    //     fileName: 'stories/druxt-README.stories.mdx',
-    //   })
-    //   stories.push(resolve(nuxt.options.buildDir, './stories/druxt-README.stories.mdx'))
+    nuxt.hook('storybook:config', async ({ stories }) => {
+      // Druxt README story.
+      addTemplate({
+        src: resolve(__dirname, '../templates/stories/README.stories.mdx'),
+        fileName: 'stories/druxt-README.stories.mdx',
+      })
+      stories.push(resolve(nuxt.options.buildDir, './stories/druxt-README.stories.mdx'))
 
-    //   // Druxt custom module story.
-    //   addTemplate({
-    //     src: resolve(__dirname, '../templates/stories/druxt-module.stories.mdx'),
-    //     fileName: 'stories/druxt-module.stories.mdx',
-    //   })
-    //   stories.push(resolve(nuxt.options.buildDir, './stories/druxt-module.stories.mdx'))
+      // Druxt custom module story.
+      addTemplate({
+        src: resolve(__dirname, '../templates/stories/druxt-module.stories.mdx'),
+        fileName: 'stories/druxt-module.stories.mdx',
+      })
+      stories.push(resolve(nuxt.options.buildDir, './stories/druxt-module.stories.mdx'))
 
-    //   // DruxtDebug component story.
-    //   addTemplate({
-    //     src: resolve(__dirname, '../templates/stories/druxt-debug.stories.js'),
-    //     fileName: 'stories/druxt-debug.stories.js',
-    //   })
-    //   stories.push(resolve(nuxt.options.buildDir, './stories/druxt-debug.stories.js'))
-    // })
+      // DruxtDebug component story.
+      addTemplate({
+        src: resolve(__dirname, '../templates/stories/druxt-debug.stories.js'),
+        fileName: 'stories/druxt-debug.stories.js',
+      })
+      stories.push(resolve(nuxt.options.buildDir, './stories/druxt-debug.stories.js'))
+    })
   }
 })
 
