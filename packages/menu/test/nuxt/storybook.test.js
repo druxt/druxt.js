@@ -2,8 +2,11 @@ import DruxtMenuStorybook from '../../src/nuxt/storybook'
 
 jest.mock('axios')
 
-const mock = {
+jest.mock('@nuxt/kit', () => ({
   addTemplate: jest.fn(),
+}))
+
+const mock = {
   options: {
     buildDir: '',
     druxt: {

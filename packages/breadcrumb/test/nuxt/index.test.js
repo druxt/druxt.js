@@ -1,6 +1,7 @@
 import DruxtBreadcrumbModule from '../../src/nuxt'
 
 jest.mock('@nuxt/kit', () => ({
+  addTemplate: jest.fn(),
   defineNuxtModule: (module) => module,
   installModule: jest.fn(),
 }))
