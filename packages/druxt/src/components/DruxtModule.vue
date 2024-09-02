@@ -444,7 +444,7 @@ export default {
 
     // Return only wrapper if fetch state is still pending and Druxt hasn't set
     // the available component options.
-    if (this.$fetchState.pending && !this.component.options?.length) {
+    if (this.$fetchState.pending && !this.component?.options?.length) {
       return h(this.wrapper?.component || 'div', wrapperData)
     }
 

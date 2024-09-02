@@ -68,7 +68,7 @@ export default {
   },
 
   data: ({ $druxt }) => ({
-    defaultTheme: ($druxt.settings.site || {}).theme,
+    defaultTheme: $druxt?.settings?.site?.theme,
   }),
 
   /** */
@@ -129,7 +129,7 @@ export default {
             .addFields(type, ['theme'])
             .addFilter('plugin', 'system_main_block')
             .addPageLimit(1)
-        }).then((resources) => resources.data[0].attributes.theme)
+        })?.then((resources) => resources.data[0].attributes.theme)
       }
 
       // Fetch all available regions.
@@ -139,7 +139,7 @@ export default {
           query: new DrupalJsonApiParams()
             .addFilter('theme', this.theme || this.defaultTheme)
             .addFields(type, ['region']),
-        }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
+        })?.then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
       }
     },
 
