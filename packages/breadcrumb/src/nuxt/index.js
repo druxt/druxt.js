@@ -53,7 +53,6 @@ const DruxtBreadcrumbModule = defineNuxtModule({
     })
 
     // Nuxt Storybook.
-    // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
     nuxt.hook('storybook:config', ({ stories }) => {
       addTemplate({
         src: resolve(__dirname, '../templates/druxt-breadcrumb.stories.js'),

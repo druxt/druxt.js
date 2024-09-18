@@ -134,7 +134,6 @@ const DruxtRouterNuxtModule = defineNuxtModule({
     nuxt.options.store = true
 
     // Nuxt Storybook.
-    // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
     nuxt.hook('storybook:config', async ({ stories }) => {
       addTemplate({
         src: resolve(__dirname, '../templates/druxt-router.stories.js'),

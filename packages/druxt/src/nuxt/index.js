@@ -9,9 +9,6 @@ import { DruxtClient } from 'druxt'
  *
  * @param {ModuleOptions} moduleOptions - DruxtJS module options.
  *
- * @todo - Re-implement development mode features.
- * @todo - Re-implement storybook integration.
- *
  * @example <caption>Nuxt configuration with module options</caption> @lang js
  * module.exports = {
  *   modules: [
@@ -203,7 +200,6 @@ const DruxtNuxtModule = defineNuxtModule({
     }
 
     // Nuxt Storybook.
-    // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
     nuxt.hook('storybook:config', async ({ stories }) => {
       // Druxt README story.
       addTemplate({

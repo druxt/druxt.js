@@ -71,7 +71,6 @@ const DruxtEntityNuxtModule = defineNuxtModule({
     })
 
     // Nuxt Storybook.
-    // @TODO - @nuxt/kit and @nuxt/storybook aren't compatible.
     nuxt.hook('storybook:config', async ({ stories }) => {
       await DruxtEntityStorybook.call(nuxt, { stories })
     })
