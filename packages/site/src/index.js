@@ -1,5 +1,3 @@
-import { DruxtSiteNuxtModule } from './nuxtModule'
-
 /**
  * Vue.js Mixin.
  *
@@ -26,23 +24,10 @@ import { DruxtSiteNuxtModule } from './nuxtModule'
 export { DruxtSiteMixin } from './mixins/site'
 
 /**
- * The Nuxt.js module functions.
+ * Default function to alert user to incorrectly installed module.
  *
- * Installs and configures all DruxtJS Site modules.
- *
- * @type {Function}
- * @exports default
- * @name DruxtSiteNuxtModule
- * @see {@link ./nuxtModule|DruxtSiteNuxtModule}
- *
- * @example <caption>nuxt.config.js</caption> @lang js
- * module.exports = {
- *   modules: [
- *     'druxt-site'
- *   ],
- *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
- *   }
- * }
+ * This was added as part of the @nuxt/kit update due to breaking changes.
  */
-export default DruxtSiteNuxtModule
+export default () => {
+  throw new Error("DruxtSite Nuxt module must be installed as 'druxt-site/nuxt'")
+}

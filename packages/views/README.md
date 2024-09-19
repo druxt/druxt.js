@@ -24,7 +24,7 @@ Add module to `nuxt.config.js`
 ```js
 module.exports = {
   modules: [
-    'druxt-views'
+    'druxt-views/nuxt'
   ],
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org',

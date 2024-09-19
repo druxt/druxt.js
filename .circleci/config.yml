@@ -3,7 +3,7 @@ version: 2.1
 defaults: &defaults
   working_directory: ~/repo
   docker:
-  - image: cimg/node:16.20.2
+  - image: cimg/node:20.14
 
 jobs:
   build:
@@ -84,7 +84,7 @@ jobs:
 
   test_e2e:
     machine:
-      image: ubuntu-2004:current
+      image: ubuntu-2204:current
     working_directory: ~/repo
     environment:
       DDEV_NONINTERACTIVE: "true"

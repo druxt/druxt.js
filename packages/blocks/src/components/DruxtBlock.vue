@@ -93,7 +93,7 @@ export default {
      *
      * @return {object}
      */
-    block: ({ resource }) => (resource || {}).data,
+    block: ({ resource }) => resource?.data,
   },
 
   watch: {
@@ -156,7 +156,7 @@ export default {
       const type = 'block--block'
       const query = new DrupalJsonApiParams()
 
-      const fields = ((this.$druxt.settings.blocks || {}).query || {}).fields
+      const fields = this.$druxt?.settings.blocks?.query?.fields
       if (Array.isArray(fields)) {
         query.addFields(type, [
           ...fields,
@@ -214,10 +214,10 @@ export default {
       scopedSlots.default = () => {
         let summary, description
 
-        if ((this.block || {}).attributes) {
+        if (this.block?.attributes) {
           summary = `Missing Vue template for the '${this.block.attributes.drupal_internal__id}' block`
           description = [
-            h('p', `Create a Druxt theme component to render the "${this.block.attributes.settings.label}" block.`),
+            h('p', `Create a Druxt theme component to render the "${this.block.attributes?.settings?.label}" block.`),
           ]
         // Ensure an ID or UUID.
         } else if (!this.id && !this.uuid) {
@@ -229,7 +229,7 @@ export default {
           { props: { summary } },
           [
             h('div', description),
-            !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
+            !!this.component.options?.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
             !!this.block && h('details', [h('summary', 'JSON:API resource'), h('pre', [h('code', [JSON.stringify(this.block, null, '  ')])])])
           ]
         )

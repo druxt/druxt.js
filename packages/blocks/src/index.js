@@ -1,27 +1,3 @@
-import { DruxtBlocksNuxtModule } from './nuxtModule'
-
-/**
- * The Nuxt.js module function.
- *
- * Installs the module functionality in a Nuxt application.
- *
- * @type {Function}
- * @exports default
- * @name DruxtBlocksModule
- * @see {@link /api/packages/blocks/nuxtModule|DruxtBlocksModule}
- *
- * @example <caption>nuxt.config.js</caption> @lang js
- * module.exports = {
- *   modules: [
- *     'druxt-blocks'
- *   ],
- *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
- *   }
- * }
- */
-export default DruxtBlocksNuxtModule
-
 /**
  * The DruxtBlocksBlockMixin adds props and computed props to your DruxtBlock
  * wrapper component.
@@ -52,3 +28,12 @@ export default DruxtBlocksNuxtModule
  * }
  */
 export { DruxtBlocksRegionMixin } from './mixins/region'
+
+/**
+ * Default function to alert user to incorrectly installed module.
+ *
+ * This was added as part of the @nuxt/kit update due to breaking changes.
+ */
+export default () => {
+  throw new Error("DruxtBlocks Nuxt module must be installed as 'druxt-blocks/nuxt'")
+}

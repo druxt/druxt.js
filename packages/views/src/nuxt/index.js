@@ -1,3 +1,4 @@
+import { addPluginTemplate, defineNuxtModule, installModule } from '@nuxt/kit'
 import { join, resolve } from 'path'
 import DruxtViewsStorybook from './storybook'
 
@@ -23,45 +24,55 @@ import DruxtViewsStorybook from './storybook'
  *
  * @param {object} moduleOptions - Nuxt module options object.
  */
-const DruxtViewsNuxtModule = async function (moduleOptions = {}) {
-  // Set default options.
-  const options = {
-    baseUrl: moduleOptions.baseUrl,
-    ...(this.options || {}).druxt || {},
-    views: {
-      query: {},
-      ...((this.options || {}).druxt || {}).views,
-      ...moduleOptions,
+const DruxtViewsNuxtModule = defineNuxtModule({
+  meta: {
+    name: 'druxt-views',
+  },
+  defaults: {
+    baseUrl: '',
+    endpoint: '/jsonapi'
+  },
+
+  async setup(moduleOptions, nuxt) {
+    // Set default options.
+    const options = {
+      baseUrl: moduleOptions.baseUrl,
+      ...nuxt.options?.druxt || {},
+      views: {
+        query: {},
+        ...nuxt.options?.druxt?.views,
+        ...moduleOptions,
+      }
     }
+
+    // Register components directories.
+    nuxt.hook('components:dirs', dirs => {
+      dirs.push({ path: join(__dirname, '../dist/components') })
+      dirs.push({ path: join(__dirname, '../dist/components/blocks') })
+    })
+
+    // Add dependant modules.
+    await installModule('druxt/nuxt', options, nuxt)
+    const modules = ['druxt-entity/nuxt', 'druxt-schema/nuxt']
+    for (const module of modules) {
+      await installModule(module, { baseUrl: options.baseUrl }, nuxt)
+    }
+
+    // Add Vuex plugin.
+    addPluginTemplate({
+      src: resolve(__dirname, '../templates/store.js'),
+      fileName: 'store/druxt-views.js',
+      options: options.druxt
+    })
+
+    // Enable Vuex Store.
+    nuxt.options.store = true
+
+    // Nuxt Storybook.
+    nuxt.hook('storybook:config', async ({ stories }) => {
+      await DruxtViewsStorybook.call(nuxt, { stories })
+    })
   }
+})
 
-  // Register components directories.
-  this.nuxt.hook('components:dirs', dirs => {
-    dirs.push({ path: join(__dirname, 'components') })
-    dirs.push({ path: join(__dirname, 'components/blocks') })
-  })
-
-  // Add dependant modules.
-  await this.addModule(['druxt', options])
-  const modules = ['druxt-entity', 'druxt-schema']
-  for (const module of modules) {
-    await this.addModule([module, { baseUrl: options.baseUrl }])
-  }
-
-  // Add Vuex plugin.
-  this.addPlugin({
-    src: resolve(__dirname, '../templates/store.js'),
-    fileName: 'store/druxt-views.js',
-    options: options.druxt
-  })
-
-  // Enable Vuex Store.
-  options.store = true
-
-  // Nuxt Storybook.
-  this.nuxt.hook('storybook:config', async ({ stories }) => {
-    await DruxtViewsStorybook.call(this, { stories })
-  })
-}
-
-export { DruxtViewsNuxtModule }
+export default DruxtViewsNuxtModule

@@ -1,5 +1,3 @@
-import { DruxtSchemaNuxtModule } from './nuxtModule'
-
 /**
  * The core module functionality.
  *
@@ -46,23 +44,10 @@ export { DruxtSchemaMixin } from './mixins/schema'
 export { DruxtSchemaStore } from './stores/schema'
 
 /**
- * The Nuxt.js module function.
+ * Default function to alert user to incorrectly installed module.
  *
- * Installs the module functionality in a Nuxt.js frontend.
- *
- * @type {Function}
- * @exports default
- * @name DruxtSchemaNuxtModule
- * @see {@link ./module|DruxtSchemaNuxtModule}
- *
- * @example <caption>nuxt.config.js</caption> @lang js
- * module.exports = {
- *   modules: [
- *     'druxt-schema'
- *   ],
- *   druxt: {
- *     baseUrl: 'https://example.com'
- *   }
- * }
+ * This was added as part of the @nuxt/kit update due to breaking changes.
  */
-export default DruxtSchemaNuxtModule
+export default () => {
+  throw new Error("DruxtSchema Nuxt module must be installed as 'druxt-schema/nuxt'")
+}

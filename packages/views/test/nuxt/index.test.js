@@ -1,27 +1,28 @@
-import { DruxtViewsNuxtModule } from '../../src/nuxt'
+import DruxtViewsNuxtModule from '../../src/nuxt'
 
 jest.mock('../../src/nuxt/storybook')
 
-const mock = {
-  addModule: jest.fn(),
-  addPlugin: jest.fn(),
-  nuxt: {
-    hook: jest.fn((hook, fn) => {
-      const arg = {
-        'components:dirs': [],
-        'storybook:config': { stories: [] }
-      }
-      return fn(arg[hook])
-    }),
-  },
-  options: {
-    druxt: {},
-    modules: [],
-  },
+jest.mock('@nuxt/kit', () => ({
+  addPluginTemplate: jest.fn(),
+  defineNuxtModule: (module) => module,
+  installModule: jest.fn(),
+}))
+
+import { addPluginTemplate, installModule } from '@nuxt/kit'
+
+const nuxtMock = {
+  hook: jest.fn((hook, fn) => {
+    const arg = {
+      'components:dirs': [],
+      'storybook:config': { stories: [] }
+    }
+    return fn(arg[hook])
+  }),
+  options: {},
 }
 
 test('Nuxt module', async () => {
-  await DruxtViewsNuxtModule.call(mock)
-  expect(mock.addModule).toHaveBeenCalledTimes(3)
-  expect(mock.addPlugin).toHaveBeenCalledTimes(1)
+  await DruxtViewsNuxtModule.setup({}, nuxtMock)
+  expect(installModule).toHaveBeenCalledTimes(3)
+  expect(addPluginTemplate).toHaveBeenCalledTimes(1)
 })

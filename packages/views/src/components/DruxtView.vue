@@ -160,7 +160,7 @@ export default {
      * @type {string[]}
      */
     attachments_after() {
-      if (!((((this.view || {}).data || {}).attributes || {}).display)) return false
+      if (!this.view?.data?.attributes?.display) return false
 
       const displays = this.view.data.attributes.display
       return Object.keys(displays).filter(key => {
@@ -176,7 +176,7 @@ export default {
      * @type {string[]}
      */
     attachments_before() {
-      if (!((((this.view || {}).data || {}).attributes || {}).display)) return false
+      if (!this.view?.data?.attributes?.display) return false
 
       const displays = this.view.data.attributes.display
       return Object.keys(displays).filter(key => {
@@ -201,7 +201,7 @@ export default {
      * @type {object}
      */
     display() {
-      if (!(((this.view || {}).data || {}).attributes || {}).display) return {}
+      if (!this.view?.data?.attributes?.display) return {}
 
       if (this.display_id === 'default') return this.view.data.attributes.display[this.display_id]
 
@@ -259,7 +259,7 @@ export default {
      * @type {object[]}
      */
     results() {
-      return (this.resource || {}).data || []
+      return this.resource?.data || []
     },
 
     /**
@@ -432,8 +432,8 @@ export default {
      * @returns {ComponentOptions}
      */
     componentOptions: ({ displayId, uuid, view, viewId }) => ([
-      [viewId || ((view.data || {}).attributes || {}).drupal_internal__id, displayId],
-      [uuid || (view.data || {}).id, displayId],
+      [viewId || view?.data?.attributes?.drupal_internal__id, displayId],
+      [uuid || view?.data?.id, displayId],
       [displayId]
     ]),
 
@@ -454,7 +454,7 @@ export default {
             type: this.type,
             query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId)
           })
-          this.view = { data: collection.data[0] }
+          this.view = { data: collection?.data?.[0] }
         }
       }
     },
@@ -463,7 +463,7 @@ export default {
      * Fetch JSON:API Views results.
      */
     async fetchData(settings) {
-      const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
+      const viewId = this.viewId || this.view?.data?.attributes?.drupal_internal__id
       if (viewId) {
         // Check if we need to bypass cache.
         let bypassCache = false

@@ -59,6 +59,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-junit": "16.0.0",
     "jest-mock-axios": "4.7.3",
+    "node-gyp": "^10.2.0",
     "regenerator-runtime": "0.14.1",
     "renovate": "32.0.2",
     "rimraf": "6.0.1",
@@ -68,5 +69,10 @@
     "vue-jest": "3.0.7",
     "vue-template-compiler": "2.7.16"
   },
-  "packageManager": "yarn@3.8.5"
+  "packageManager": "yarn@3.8.5",
+  "resolutions": {
+    "vue": "^2.7",
+    "vue-server-renderer": "^2.7",
+    "vue-template-compiler": "^2.7"
+  }
 }

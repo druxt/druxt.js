@@ -23,7 +23,7 @@ Add module to `nuxt.config.js`
 
 ```js
 module.exports = {
-  modules: ['druxt-menu'],
+  modules: ['druxt-menu/nuxt'],
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org',
     menu: {

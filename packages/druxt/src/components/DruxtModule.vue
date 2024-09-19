@@ -130,12 +130,12 @@ export default {
    * }
    */
   async fetch() {
-    if (!(this.$options || {}).druxt) {
+    if (!this.$options?.druxt) {
       return false
     }
 
     // Fetch configuration.
-    if ((this.$options.druxt || {}).fetchConfig) {
+    if (this.$options.druxt?.fetchConfig) {
       try {
         await this.$options.druxt.fetchConfig.call(this)
       } catch(err) {
@@ -145,7 +145,7 @@ export default {
 
     // Build wrapper component object.
     let options = []
-    const hasDefaultTemplate = !!(((this.$vnode || {}).data || {}).scopedSlots || {}).default
+    const hasDefaultTemplate = !!this.$vnode?.data?.scopedSlots?.default
     // Load wrapper components if:
     if (
       // No default template and wrapper isn't false OR
@@ -156,7 +156,7 @@ export default {
       options = this.getModuleComponents()
     }
     let component = {
-      is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
+      is: options.filter(o => o.global)?.[0]?.name || 'DruxtWrapper',
       options: options.map(o => o.name) || [],
     }
 
@@ -165,12 +165,12 @@ export default {
 
     // Build module settings.
     component.settings = wrapperData.druxt || {}
-    if ((this.$options.druxt || {}).settings) {
+    if (this.$options.druxt?.settings) {
       component.settings = this.$options.druxt.settings(this, component.settings)
     }
 
     // Fetch resource.
-    if ((this.$options.druxt || {}).fetchData) {
+    if (this.$options.druxt?.fetchData) {
       try {
         await this.$options.druxt.fetchData.call(this, component.settings)
       } catch(err) {
@@ -189,7 +189,7 @@ export default {
   },
 
   computed: {
-    lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode
+    lang: ({ langcode, $route }) => langcode || $route.meta?.langcode
   },
 
   watch: {
@@ -225,9 +225,9 @@ export default {
     error(err, context = {}) {
       // Build error details.
       const { url } = err.druxt || {}
-      const title = (err.response || {}).statusText || ((((err.response || {}).data || {}).errors || [])[0] || {}).title
-      const summary = (err.response || {}).status
-        ? [(err.response || {}).status, title].filter((s) => s).join(': ')
+      const title = err.response?.statusText || err.response?.data?.error?.[0]?.title
+      const summary = err.response?.status
+        ? [err.response?.status, title].filter((s) => s).join(': ')
         : err.message
 
       // Set the component to a Debug component with error details.
@@ -237,7 +237,7 @@ export default {
         props: {
           json: {
             url,
-            errors: ((err.response || {}).data || {}).errors
+            errors: err.response?.data?.errors
           },
           summary
         }
@@ -251,13 +251,13 @@ export default {
      */
     getModuleComponents() {
       // Ensure that the Druxt module component has `druxt.componentOptions`.
-      if (!(this.$options.druxt || {}).componentOptions) {
+      if (!this.$options.druxt?.componentOptions) {
         return []
       }
       const options = this.$options.druxt.componentOptions.call(this, this)
 
       // Ensure that there available component options are returned.
-      if (!(options || []).length) {
+      if (!options?.length) {
         return []
       }
 
@@ -321,7 +321,7 @@ export default {
      * @return {object}
      */
     getModulePropsData(wrapperProps = {}) {
-      if (!(this.$options.druxt || {}).propsData) {
+      if (!this.$options.druxt?.propsData) {
         return {}
       }
 
@@ -391,7 +391,7 @@ export default {
             { props: { summary } },
             [
               h('div', description),
-              this.component.is === 'DruxtWrapper' && !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
+              this.component.is === 'DruxtWrapper' && !!this.component.options?.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
               h('details', [h('summary', 'Data'), h('pre', [h('code', [JSON.stringify(this.component.propsData, null, '  ')])])])
             ]
           )
@@ -437,15 +437,15 @@ export default {
     const self = this
 
     const wrapperData = {
-      class: (this.wrapper || {}).class || undefined,
-      style: (this.wrapper || {}).style || undefined,
-      props: (this.wrapper || {}).propsData || undefined,
+      class: this.wrapper?.class || undefined,
+      style: this.wrapper?.style || undefined,
+      props: this.wrapper?.propsData || undefined,
     }
 
     // Return only wrapper if fetch state is still pending and Druxt hasn't set
     // the available component options.
-    if (this.$fetchState.pending && !this.component.options.length) {
-      return h((this.wrapper || {}).component || 'div', wrapperData)
+    if (this.$fetchState.pending && !this.component?.options?.length) {
+      return h(this.wrapper?.component || 'div', wrapperData)
     }
 
     // Prepare attributes.
@@ -458,7 +458,7 @@ export default {
     }
 
     // Return component.
-    return h((this.wrapper || {}).component || 'div', wrapperData, [
+    return h(this.wrapper?.component || 'div', wrapperData, [
       h(this.component.is, {
         attrs,
         on: {

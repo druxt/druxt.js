@@ -32,15 +32,18 @@
       "require": "./dist/druxt-views.ssr.js",
       "import": "./dist/druxt-views.esm.js"
     },
-    "./components/*": "./dist/components/*"
+    "./components/*": "./dist/components/*",
+    "./nuxt": "./nuxt/index.js"
   },
   "main": "dist/druxt-views.ssr.js",
   "module": "dist/druxt-views.esm.js",
   "files": [
     "dist",
+    "nuxt",
     "templates"
   ],
   "dependencies": {
+    "@nuxt/kit": "^3.12.2",
     "axios": "0.28.0",
     "deepmerge": "^4.3.1",
     "drupal-jsonapi-params": "^2.3.1",

@@ -75,8 +75,8 @@ export default {
     crumbs: ({ model }) => model,
 
     ...mapState({
-      route: state => state.druxtRouter.route,
-      routes: state => state.druxtRouter.routes
+      route: state => state.druxtRouter?.route,
+      routes: state => state.druxtRouter?.routes
     })
   },
 
@@ -103,9 +103,9 @@ export default {
      * Fetch Crumbs
      */
     async fetchCrumbs() {
-      const path = this.path || this.$route.path
+      const path = this.path || this.$route?.path
       let route = this.route
-      if (path && path !== route.path) {
+      if (path && path !== route?.path) {
         route = await this.getRoute(path)
       }
 

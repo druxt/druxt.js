@@ -205,7 +205,7 @@ export default {
     }),
 
     ...mapState({
-      entities: state => state.druxtMenu.entities
+      entities: state => state.druxtMenu?.entities
     })
   },
 

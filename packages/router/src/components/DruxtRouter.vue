@@ -67,7 +67,7 @@ export default {
     const result = await store.dispatch('druxtRouter/get', route.fullPath)
 
     // Process redirect.
-    if (result.redirect) {
+    if (result?.redirect) {
       redirect(result.redirect)
     }
   },
@@ -199,7 +199,7 @@ export default {
      */
     componentOptions: ({ module, route }) => [
       // @TODO - Add Path options.
-      [module || 'error', route.isHomePath ? 'front' : 'not-front'],
+      [module || 'error', route?.isHomePath ? 'front' : 'not-front'],
       ['default']
     ],
 
@@ -259,7 +259,7 @@ export default {
       const scopedSlots = {}
 
       // Provide defualt error message.
-      if (this.model.error) {
+      if (this.model?.error) {
         scopedSlots.default = () => h('div', [
           h('h1', [`Error ${this.model.error.statusCode}`]),
           h('p', [this.model.error.message]),
