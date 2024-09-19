@@ -20,7 +20,6 @@ const nuxtMock = {
   }),
 }
 
-
 test('Nuxt module', async () => {
   nuxtMock.options = {
     build: {},
@@ -32,6 +31,8 @@ test('Nuxt module', async () => {
 
   nuxtMock.options.druxt.router = { pages: true }
   await DruxtRouterNuxtModule.setup({}, nuxtMock)
+  expect(installModule).toHaveBeenCalledTimes(1)
+  expect(extendPages).toHaveBeenCalledTimes(1)
   expect(addPluginTemplate).toHaveBeenCalledTimes(2)
   expect(addTemplate).toHaveBeenCalledTimes(2)
   expect(nuxtMock.hook).toHaveBeenCalledTimes(2)

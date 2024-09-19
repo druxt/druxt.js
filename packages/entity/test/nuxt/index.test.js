@@ -1,11 +1,12 @@
 import DruxtEntityNuxtModule from '../../src/nuxt'
 
-// jest.mock('../src/nuxtStorybook')
+jest.mock('../../src/nuxt/storybook')
 
 jest.mock('@nuxt/kit', () => ({
   defineNuxtModule: (module) => module,
   installModule: jest.fn(),
 }))
+import { installModule } from '@nuxt/kit'
 
 const nuxtMock = {
   hook: jest.fn((hook, fn) => {
@@ -23,4 +24,7 @@ test('Nuxt module', async () => {
     modules: [],
   }
   await DruxtEntityNuxtModule.setup({}, nuxtMock)
+
+  expect(installModule).toHaveBeenCalledTimes(2)
+  expect(nuxtMock.hook).toHaveBeenCalledTimes(2)
 })

@@ -43,6 +43,10 @@ describe('DruxtJS Nuxt module', () => {
 
     // Expect addPlugin to have been called with options.
     expect(addPluginTemplate).toHaveBeenCalledWith(expect.objectContaining({ options }))
+
+    // Ensure that Druxt and Axios plugins are correctly ordered.
+    const mockPlugins = [{ src: `${nuxtMock.options.buildDir}/druxt.js` }, { src: `${nuxtMock.options.buildDir}/axios.js` }]
+    expect(nuxtMock.options.extendPlugins(mockPlugins)[0].src).toEqual(`${nuxtMock.options.buildDir}/axios.js`)
   })
 
   test('Root options', async () => {
