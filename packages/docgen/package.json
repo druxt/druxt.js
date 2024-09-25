@@ -13,7 +13,7 @@
     "cli": "bin/druxt-docgen.js"
   },
   "dependencies": {
-    "dmd": "6.2.3",
+    "dmd": "7.0.7",
     "globby": "11.1.0",
     "jsdoc-to-markdown": "8.0.3",
     "jsdoc-vuejs": "3.0.9",
