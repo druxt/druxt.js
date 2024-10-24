@@ -42,12 +42,12 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/proxy": "^2.1.0",
-    "@vue/devtools-api": "^6.6.3",
+    "@vue/devtools-api": "^6.6.4",
     "chalk": "^4.1.2",
     "deepmerge": "^4.3.1",
-    "drupal-jsonapi-params": "^2.3.1",
-    "express-rate-limit": "^7.4.0",
-    "launch-editor": "^2.8.1",
+    "drupal-jsonapi-params": "^2.3.2",
+    "express-rate-limit": "^7.4.1",
+    "launch-editor": "^2.9.1",
     "md5": "^2.3.0",
     "querystring": "^0.2.1",
     "scule": "^0.3.2"
