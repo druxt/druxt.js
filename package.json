@@ -64,7 +64,7 @@
     "rimraf": "6.0.1",
     "siroc": "0.16.0",
     "start-server-and-test": "^2.0.5",
-    "vue": "2.7.16",
+    "vue": "3.0.0",
     "vue-jest": "3.0.7",
     "vue-template-compiler": "2.7.16"
   },
