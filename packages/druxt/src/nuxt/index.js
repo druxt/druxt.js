@@ -1,4 +1,4 @@
-import { addPluginTemplate, addTemplate, defineNuxtModule, extendRouteRules, installModule, isNuxt2 } from '@nuxt/kit'
+import { addImports, addPluginTemplate, addTemplate, defineNuxtModule, extendRouteRules, installModule, isNuxt2 } from '@nuxt/kit'
 import chalk from 'chalk'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { join, normalize, resolve } from 'path'
@@ -146,8 +146,9 @@ const DruxtNuxtModule = defineNuxtModule({
       }
     })
 
-    // Install the @nuxtjs/axios module for Nuxt 2.
+    // Install dependencies and requirements for Nuxt 2.
     if (isNuxt2()) {
+      // Install the @nuxtjs/axios module.
       if (!options.axios) {
         nuxt.options.axios = {
           baseURL: options.baseUrl,
@@ -189,12 +190,24 @@ const DruxtNuxtModule = defineNuxtModule({
 
       // Add Vuex plugin.
       addPluginTemplate({
-        src: resolve(__dirname, '../templates/store.js'),
+        src: resolve(__dirname, '../templates/stores/vuex.js'),
         fileName: 'store/druxt.js',
         options
       })
     }
 
+    // Install dependencies and requirements for Nuxt 3.
+    if (!isNuxt2()) {
+      addTemplate({
+        src: resolve(__dirname, '../templates/stores/pinia.js'),
+        fileName: 'stores/druxt.js',
+        options
+      })
+      addImports({
+        from: '#build/stores/druxt',
+        name: 'useDruxtStore'
+      })
+    }
 
     // Get the version from the root directories package.json.
     const rootDir = __dirname.endsWith('/src/nuxt') ? '../..' : '..'

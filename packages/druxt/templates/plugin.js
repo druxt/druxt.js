@@ -15,6 +15,7 @@ export default defineNuxtPlugin((app) => {
     options.proxy.api = false
   }
 
+  <% if (typeof isNuxt2 === 'function' && isNuxt2()) { %>
   <% if (typeof options.axios === 'object') { %>
   // Axios settings.
   console.warn('[druxt] Axios instance settings are deprecated, use @nuxtjs/axios module configuration instead.')
@@ -22,6 +23,7 @@ export default defineNuxtPlugin((app) => {
   <% } else { %>
   // Use the @nuxtjs/axios module Axios instance.
   options.axios = app.$axios
+  <% } %>
   <% } %>
 
   const druxt = new DruxtClient(options.baseUrl, options)

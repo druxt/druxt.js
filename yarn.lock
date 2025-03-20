@@ -11617,6 +11617,7 @@ __metadata:
     express-rate-limit: ^7.4.0
     launch-editor: ^2.8.1
     md5: ^2.3.0
+    pinia: ^2.2.3
     querystring: ^0.2.1
     scule: ^0.3.2
     vue: ^2.7.16
@@ -11626,6 +11627,8 @@ __metadata:
     consola: "*"
   dependenciesMeta:
     core-js:
+      optional: true
+    pinia:
       optional: true
     vue:
       optional: true
@@ -19314,6 +19317,25 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"pinia@npm:^2.2.3":
+  version: 2.2.3
+  resolution: "pinia@npm:2.2.3"
+  dependencies:
+    "@vue/devtools-api": ^6.6.3
+    vue-demi: ^0.14.10
+  peerDependencies:
+    "@vue/composition-api": ^1.4.0
+    typescript: ">=4.4.4"
+    vue: ^2.6.14 || ^3.3.0
+  peerDependenciesMeta:
+    "@vue/composition-api":
+      optional: true
+    typescript:
+      optional: true
+  checksum: 2e87370a259de5227f9b8ab5638bb8a84e071828e29796b34045b3b7340024aecfb00dac126bc3281089afe3d681b6c6d86d5bff8182a6d6c22956652ebb4869
+  languageName: node
+  linkType: hard
+
 "pirates@npm:^4.0.0":
   version: 4.0.4
   resolution: "pirates@npm:4.0.4"
@@ -23791,6 +23813,22 @@ typescript@^4.3.5:
   version: 3.1.0
   resolution: "void-elements@npm:3.1.0"
   checksum: 0390f818107fa8fce55bb0a5c3f661056001c1d5a2a48c28d582d4d847347c2ab5b7f8272314cac58acf62345126b6b09bea623a185935f6b1c3bbce0dfd7f7f
+  languageName: node
+  linkType: hard
+
+"vue-demi@npm:^0.14.10":
+  version: 0.14.10
+  resolution: "vue-demi@npm:0.14.10"
+  peerDependencies:
+    "@vue/composition-api": ^1.0.0-rc.1
+    vue: ^3.0.0-0 || ^2.6.0
+  peerDependenciesMeta:
+    "@vue/composition-api":
+      optional: true
+  bin:
+    vue-demi-fix: bin/vue-demi-fix.js
+    vue-demi-switch: bin/vue-demi-switch.js
+  checksum: 9b4106f99be3b0c1dd4a6dc5725f5e8f79c6b98d1eeb849bf2c54416cd77f4aa344960b202768865245cfa82d57f49a9d96f67f5d8e256604b9dac1c5df9a8d6
   languageName: node
   linkType: hard
 

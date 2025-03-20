@@ -64,6 +64,7 @@
   },
   "optionalDependencies": {
     "core-js": "^3.38.1",
+    "pinia": "^2.2.3",
     "vue": "^2.7.16",
     "vuex": "^3.6.2"
   },
