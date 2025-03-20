@@ -1,7 +1,6 @@
-import { addPluginTemplate, addTemplate, defineNuxtModule, useLogger } from '@nuxt/kit'
+import { addImports, addPluginTemplate, addTemplate, defineNuxtModule, isNuxt2, useLogger } from '@nuxt/kit'
+import { DruxtSchema } from 'druxt-schema'
 import { resolve } from 'path'
-
-import { DruxtSchema } from '../schema'
 
 /**
  * The Nuxt.js module function.
@@ -50,22 +49,41 @@ const DruxtSchemaNuxtModule = defineNuxtModule({
       }
     }
 
-    // Add plugin.
+    // Add $druxtSchema plugin.
     addPluginTemplate({
       src: resolve(__dirname, '../templates/plugin.js'),
-      fileName: 'druxt-schema.js',
-      options
+      fileName: 'druxtSchema.js',
+      options: {
+        ...options,
+        isNuxt2
+      }
     })
 
-    // Enable Vuex Store.
-    nuxt.options.store = true
+    // Install Vuex store for Nuxt 2.
+    if (isNuxt2()) {
+      // Enable Vuex Store.
+      nuxt.options.store = true
 
-    // Add Vuex plugin.
-    addPluginTemplate({
-      src: resolve(__dirname, '../templates/store.js'),
-      fileName: 'store/druxt-schema.js',
-      options
-    })
+      // Add Vuex plugin.
+      addPluginTemplate({
+        src: resolve(__dirname, '../templates/stores/vuex.js'),
+        fileName: 'store/druxt-schema.js',
+        options
+      })
+    }
+
+    // Or Pinia store for Nuxt 3
+    else {
+      addTemplate({
+        src: resolve(__dirname, '../templates/stores/pinia.js'),
+        fileName: 'stores/druxt-schema.js',
+        options
+      })
+      addImports({
+        from: '#build/stores/druxt-schema',
+        name: 'useDruxtSchemaStore'
+      })
+    }
 
     // Generate schema files.
     nuxt.hook('modules:done', async () => {
@@ -89,7 +107,6 @@ const DruxtSchemaNuxtModule = defineNuxtModule({
           src: resolve(__dirname, '../templates/schema.json'),
           fileName: `schemas/${name}.json`,
           options: { schema },
-          // @TODO - Does it need to be written to the file system?
           write: true
         })
       }

@@ -11492,7 +11492,7 @@ __metadata:
   resolution: "druxt-schema@workspace:packages/schema"
   dependencies:
     "@nuxt/kit": ^3.12.2
-    consola: ^2.15.3
+    consola: ^3.2.3
     drupal-jsonapi-params: ^2.3.1
     druxt: ^0.24.0
     vue: ^2.7.16
