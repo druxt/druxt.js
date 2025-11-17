@@ -7261,6 +7261,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"druxt-entity@link:../../packages/druxt-entity::locator=druxt-site%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "druxt-entity@link:../../packages/druxt-entity::locator=druxt-site%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "druxt-site@link:../../packages/druxt-site::locator=druxt-site%40workspace%3A.":
   version: 0.0.0-use.local
   resolution: "druxt-site@link:../../packages/druxt-site::locator=druxt-site%40workspace%3A."
@@ -7274,6 +7280,7 @@ __metadata:
     "@nuxt/postcss8": latest
     "@nuxtjs/storybook": latest
     druxt-auth: ^0.1.0
+    druxt-entity: "link:../../packages/druxt-entity"
     druxt-site: "link:../../packages/druxt-site"
     nuxt: latest
     postcss: latest

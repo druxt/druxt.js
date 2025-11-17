@@ -25,8 +25,8 @@ export default {
 
     // DruxtEntity module settings; https://druxtjs.org/modules/entity
     entity: {
-      // Disable the deprecated DruxtField components.
-      components: { fields: false },
+      // Enable deprecated DruxtField components only for the specific e2e test
+      components: { fields: process.env.DRUXT_DEPRECATED_FIELDS === 'true' },
 
       query: {
         // Enable Drupal display mode schema based filtering of the JSON:API

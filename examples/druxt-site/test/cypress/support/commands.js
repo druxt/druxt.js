@@ -24,42 +24,21 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-// Cypress.Commands.add("login", ({ username = 'admin' }, { password = 'admin' }, { rememberUser = false } = {}) => {
+// Capture console warnings
+Cypress.Commands.add('captureConsoleWarn', () => {
+  const warnings = []
+  cy.window().then((win) => {
+    const originalWarn = win.console.warn
+    win.console.warn = (...args) => {
+      warnings.push(args.join(' '))
+      originalWarn.apply(win.console, args)
+    }
+    cy.wrap(warnings).as('consoleWarnings')
+  })
+})
 
-//   const signInUrl = "http://localhost:3000"
-//   const signInPath = "/user/login"
-//   cy.visit(signInUrl + signInPath)
-
-//   const log = Cypress.log({
-//     name: "login",
-//     displayName: "LOGIN",
-//     message: [`🔐 Authenticating | ${username}`],
-//     // @ts-ignore
-//     autoEnd: false,
-//   });
-
-//   log.snapshot("before");
-
-//   // Fill out login form fields.
-//   cy.get("#edit-name").type(username);
-//   cy.get("edit-pass").type(password);
-
-//   // Submit login form.
-//   cy.get("edit-submit").click();
-
-//   cy.wait("@loginUser").then((loginUser: any) => {
-//     log.set({
-//       consoleProps() {
-//         return {
-//           username,
-//           password,
-//           // userId: loginUser.response.statusCode !== 401 && loginUser.response.body.user.id,
-//         };
-//       },
-//     });
-
-//     log.snapshot("after");
-//     log.end();
-//   });
-// });
+// Get captured console warnings
+Cypress.Commands.add('getConsoleWarnings', () => {
+  return cy.get('@consoleWarnings')
+})
 
