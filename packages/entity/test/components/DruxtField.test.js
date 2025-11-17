@@ -1,5 +1,3 @@
-/* global beforeEach, describe, expect, jest, test */
-
 import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { getMockResource } from 'druxt-test-utils'
@@ -35,7 +33,7 @@ const mocks = {
   $route: { meta: {} }
 }
 
-const mountComponent = async ({ data, entity, field, mode = 'default', options = {}, uuid, schema }) => {
+const mountComponent = async ({ data, entity, field, mode = 'default', options = {}, schema }) => {
   data = data || { ...entity.attributes, ...entity.relationships }
 
   if (!schema) {

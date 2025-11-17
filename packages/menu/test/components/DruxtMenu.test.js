@@ -15,7 +15,7 @@ const baseUrl = 'https://demo-api.druxtjs.org'
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
-localVue.component('druxt-menu-item', DruxtMenuItemComponent)
+localVue.component('DruxtMenuItem', DruxtMenuItemComponent)
 
 let store
 
@@ -124,7 +124,7 @@ describe('DruxtMenu', () => {
           }
         }
       },
-      getEntitiesByFilter: jest.fn(({ filter, prefix }) => {
+      getEntitiesByFilter: jest.fn(({ filter }) => {
         expect(filter('test')).toBe(true)
       }),
       name: 'test'

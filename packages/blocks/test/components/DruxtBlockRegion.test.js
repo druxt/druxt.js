@@ -27,7 +27,7 @@ const mountComponent = (name = null, options = {}) => {
     $route: { meta: {} }
   }
 
-  return shallowMount(DruxtBlockRegion, { localVue, mocks, propsData, store, ...options })
+  return shallowMount(DruxtBlockRegion, { localVue, mocks, propsData, store, stubs: ['DruxtBlock'], ...options })
 }
 
 describe('Component - DruxtBlockRegion', () => {

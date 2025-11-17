@@ -29,7 +29,11 @@ const mountComponent = (propsData) => {
     }
   }
 
-  return mount(DruxtViewsSorts, { localVue, mocks, propsData, store })
+  const stubs = {
+    NuxtLink: true
+  }
+
+  return mount(DruxtViewsSorts, { localVue, mocks, propsData, store, stubs })
 }
 
 describe('DruxtViewsSorts', () => {

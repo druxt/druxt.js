@@ -1,6 +1,7 @@
 import { DruxtBreadcrumbModule } from '../src/nuxtModule'
 
 const mock = {
+  addModule: jest.fn(),
   addTemplate: jest.fn(),
   nuxt: {
     hook: jest.fn((hook, fn) => {

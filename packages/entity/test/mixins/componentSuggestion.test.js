@@ -41,8 +41,8 @@ describe('DruxtEntityComponentSuggestionMixin', () => {
   test('suggestion rules', () => {
     const mocks = {
       $druxtEntity: { options: { entity: { suggestions: [
-        { type: false, value: ctx => 'DruxtEntityOptionsFunction' },
-        { type: false, value: ctx => false },
+        { type: false, value: () => 'DruxtEntityOptionsFunction' },
+        { type: false, value: () => false },
         { value: 'DruxtEntityOptionsNoMatch' }
       ] } } },
       suggestionDefaults: [{

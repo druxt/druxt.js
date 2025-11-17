@@ -59,6 +59,9 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
   })
 
   test('link', async () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent()
 
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -71,9 +74,17 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
       },
       text: 'Welcome to Contenta CMS!'
     }])
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldEntityReferenceLabel component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
   })
 
   test('no link', async () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent(false)
 
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -84,5 +95,10 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
       props: false,
       text: 'Welcome to Contenta CMS!'
     }])
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldEntityReferenceLabel component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
   })
 })

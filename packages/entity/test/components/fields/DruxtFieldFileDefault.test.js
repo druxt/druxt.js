@@ -56,10 +56,18 @@ describe('Component - DruxtFieldFileDefault', () => {
   })
 
   test('default', async () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent({
       type: 'file',
       uuid: '8500bf6b-75d4-41b6-8385-f5c6eb6906d5'
     })
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldFileDefault component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
 
     expect(wrapper.vm.entities.length).toBe(0)
 

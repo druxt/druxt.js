@@ -37,7 +37,15 @@ describe('Component - DruxtFieldNumberInteger', () => {
   })
 
   test('default', async () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent()
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
 
     expect(wrapper.vm.prefix).toBe(false)
     expect(wrapper.vm.suffix).toBe(false)
@@ -47,7 +55,15 @@ describe('Component - DruxtFieldNumberInteger', () => {
   })
 
   test('prefix', async () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent('#')
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
 
     expect(wrapper.vm.prefix).toBe('#')
     expect(wrapper.vm.suffix).toBe(false)
@@ -57,7 +73,15 @@ describe('Component - DruxtFieldNumberInteger', () => {
   })
 
   test('suffix', async () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent(false, ' item(s)')
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
 
     expect(wrapper.vm.prefix).toBe(false)
     expect(wrapper.vm.suffix).toBe(' item(s)')
@@ -67,7 +91,15 @@ describe('Component - DruxtFieldNumberInteger', () => {
   })
 
   test('prefix_suffix', async () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent('AUD $', '.00')
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
 
     expect(wrapper.vm.prefix).toBe('AUD $')
     expect(wrapper.vm.suffix).toBe('.00')

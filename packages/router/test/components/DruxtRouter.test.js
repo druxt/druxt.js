@@ -17,7 +17,11 @@ const localVue = createLocalVue()
 localVue.use(VueRouter)
 localVue.use(Vuex)
 
-const stubs = ['DruxtDebug', 'DruxtEntity']
+const stubs = {
+  DruxtDebug: true,
+  DruxtEntity: true,
+  DruxtDevelTemplate: true
+}
 
 let store
 const mocks = {

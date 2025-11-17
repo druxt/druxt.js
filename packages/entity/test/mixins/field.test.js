@@ -1,7 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import { getMockResource } from 'druxt-test-utils'
 
-import DruxtField from '../../src/components/DruxtField.vue'
 import { DruxtFieldMixin } from '../../src/mixins/field'
 
 // Setup local vue instance.

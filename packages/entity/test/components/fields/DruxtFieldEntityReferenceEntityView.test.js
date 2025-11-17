@@ -8,8 +8,6 @@ import DruxtFieldEntityReferenceEntityView from '../../../src/components/fields/
 
 jest.mock('axios')
 
-const baseURL = 'https://example.com'
-
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -38,7 +36,13 @@ const mountComponent = (options) => {
     schema: {}
   }
 
-  return shallowMount(DruxtFieldEntityReferenceEntityView, { ...options, localVue, propsData, store, stubs })
+  return shallowMount(DruxtFieldEntityReferenceEntityView, {
+    ...options,
+    localVue,
+    propsData,
+    store,
+    stubs
+  })
 }
 
 describe('Component - DruxtFieldEntityReferenceEntityView', () => {
@@ -55,7 +59,15 @@ describe('Component - DruxtFieldEntityReferenceEntityView', () => {
   })
 
   test('default', async () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent()
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldEntityReferenceEntityView component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
 
     await localVue.nextTick()
     await localVue.nextTick()

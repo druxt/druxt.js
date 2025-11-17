@@ -5,7 +5,7 @@ exports[`DruxtBreadcrumb 404 route 1`] = `
   <druxtwrapper-stub crumbs="[object Object]" value="[object Object]">
     <ul>
       <li>
-        <nuxtlink>Home</nuxtlink>
+        <nuxtlink-stub>Home</nuxtlink-stub>
       </li>
     </ul>
   </druxtwrapper-stub>
@@ -17,7 +17,7 @@ exports[`DruxtBreadcrumb level 1 1`] = `
   <druxtwrapper-stub crumbs="[object Object],[object Object]" value="[object Object],[object Object]">
     <ul>
       <li>
-        <nuxtlink>Home</nuxtlink>
+        <nuxtlink-stub>Home</nuxtlink-stub>
       </li>
       <li>/level-1</li>
     </ul>
@@ -30,10 +30,10 @@ exports[`DruxtBreadcrumb level 2 1`] = `
   <druxtwrapper-stub crumbs="[object Object],[object Object],[object Object]" value="[object Object],[object Object],[object Object]">
     <ul>
       <li>
-        <nuxtlink>Home</nuxtlink>
+        <nuxtlink-stub>Home</nuxtlink-stub>
       </li>
       <li>
-        <nuxtlink>/level-1</nuxtlink>
+        <nuxtlink-stub>/level-1</nuxtlink-stub>
       </li>
       <li>/level-1/level-2</li>
     </ul>
@@ -46,10 +46,10 @@ exports[`DruxtBreadcrumb manual path 1`] = `
   <druxtwrapper-stub crumbs="[object Object],[object Object],[object Object]" value="[object Object],[object Object],[object Object]">
     <ul>
       <li>
-        <nuxtlink>Home</nuxtlink>
+        <nuxtlink-stub>Home</nuxtlink-stub>
       </li>
       <li>
-        <nuxtlink>/level-1</nuxtlink>
+        <nuxtlink-stub>/level-1</nuxtlink-stub>
       </li>
       <li>/level-1/level-2</li>
     </ul>
@@ -62,7 +62,7 @@ exports[`DruxtBreadcrumb missing parent 1`] = `
   <druxtwrapper-stub crumbs="[object Object],[object Object]" value="[object Object],[object Object]">
     <ul>
       <li>
-        <nuxtlink>Home</nuxtlink>
+        <nuxtlink-stub>Home</nuxtlink-stub>
       </li>
       <li>/level-1/level-2</li>
     </ul>

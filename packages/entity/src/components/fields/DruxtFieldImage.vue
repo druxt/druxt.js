@@ -35,7 +35,7 @@ export default {
   name: 'DruxtFieldImage',
   extends: DruxtFieldFileDefault,
   mounted() {
-    console.warn(`[druxt-entity] The ${this.$options._componentTag} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+    console.warn(`[druxt-entity] The ${this.$options._componentTag || this.$options.name} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
   },
 }
 </script>

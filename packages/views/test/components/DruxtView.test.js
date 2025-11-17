@@ -33,7 +33,7 @@ const mocks = {
   }
 }
 
-const stubs = ['DruxtDebug', 'DruxtEntity']
+const stubs = ['DruxtDebug', 'DruxtEntity', 'DruxtViewsPager']
 const mountComponent = (propsData) => shallowMount(DruxtView, { localVue, mocks, propsData, store, stubs })
 
 describe('DruxtView', () => {
@@ -228,7 +228,7 @@ describe('DruxtView', () => {
   })
 
   test('v-model', () => {
-    const h = jest.fn((tag, options, children) => {
+    const h = jest.fn((tag, options) => {
       options.on.input.call(mock, options.attrs.mock)
     })
     const mock = {

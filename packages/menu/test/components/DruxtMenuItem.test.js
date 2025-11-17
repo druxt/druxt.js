@@ -43,8 +43,6 @@ const propsData = {
   }
 }
 
-const stubs = ['nuxt-link']
-
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -58,7 +56,6 @@ const mountComponent = options => {
     localVue,
     propsData,
     parentComponent: DruxtMenuComponent,
-    stubs,
     ...options
   })
 }

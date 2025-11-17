@@ -65,7 +65,7 @@ describe('DruxtModule component', () => {
       components: { DruxtModule },
       data: () => ({ model: null })
     }
-    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtDebug'] })
+    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtDebug', 'DruxtDevelTemplate'] })
 
     // Default state.
     expect(wrapper.vm.model).toStrictEqual(null)
@@ -105,7 +105,7 @@ describe('DruxtModule component', () => {
       extends: DruxtModule,
     }
 
-    let wrapper = mount(CustomModule, {localVue, mocks, stubs: ['DruxtDebug'] })
+    let wrapper = mount(CustomModule, {localVue, mocks, stubs: ['DruxtDebug', 'DruxtDevelTemplate'] })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
@@ -133,7 +133,7 @@ describe('DruxtModule component', () => {
     CustomModule.druxt = {
       fetchConfig: async () => { throw new Error('Fetch config error') }
     }
-    wrapper = mount(CustomModule, {localVue, mocks, stubs: ['DruxtDebug'] })
+    wrapper = mount(CustomModule, {localVue, mocks, stubs: ['DruxtDebug', 'DruxtDevelTemplate'] })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
     // Expect the component to be DruxtDebug.
     expect(wrapper.vm.component.is).toBe('DruxtDebug')
@@ -144,7 +144,7 @@ describe('DruxtModule component', () => {
     CustomModule.druxt = {
       fetchData: async () => { throw new Error('Fetch data error') }
     }
-    wrapper = mount(CustomModule, {localVue, mocks, stubs: ['DruxtDebug'] })
+    wrapper = mount(CustomModule, {localVue, mocks, stubs: ['DruxtDebug', 'DruxtDevelTemplate'] })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
     // Expect the component to be DruxtDebug.
     expect(wrapper.vm.component.is).toBe('DruxtDebug')
@@ -219,8 +219,10 @@ describe('DruxtModule component', () => {
   test('custom module - wrapper', async () => {
     localVue.component('CustomModuleWrapper', {
       druxt: { foo: 'bar' },
-      props: ['foo'],
-      render: () => {}
+      props: {
+        foo: { type: String, default: undefined }
+      },
+      render: () => null
     })
 
     const CustomModule = {
@@ -229,9 +231,9 @@ describe('DruxtModule component', () => {
       druxt: {
         componentOptions: () => ([['wrapper']]),
         async fetchConfig() {},
-        async fetchData(settings) {},
+        async fetchData() {},
         propsData: () => ({ foo: 'bar' }),
-        settings: ({}, settings) => ({ ...settings, custom: true }),
+        settings: (_unused, settings) => ({ ...settings, custom: true }),
         slots: (h) => ({ default: () => h('div', ['test'] )}),
       }
     }
@@ -286,9 +288,9 @@ describe('DruxtModule component', () => {
       druxt: {
         componentOptions: () => ([['foo', 'bar'], ['foo', 'bar', 'baz']]),
         async fetchConfig() {},
-        async fetchData(settings) {},
+        async fetchData() {},
         propsData: () => ({ foo: 'bar' }),
-        settings: ({}, settings) => ({ ...settings, custom: true }),
+        settings: (_unused, settings) => ({ ...settings, custom: true }),
         slots: (h) => ({ default: () => h('div', ['test'] )}),
       }
     }
@@ -322,7 +324,7 @@ describe('DruxtModule component', () => {
 
   test('dev mode slot', async () => {
     mocks.$nuxt.context.isDev = true
-    const wrapper = mount(DruxtModule, { localVue, mocks, stubs: ['DruxtDebug'] })
+    const wrapper = mount(DruxtModule, { localVue, mocks, stubs: ['DruxtDebug', 'DruxtDevelTemplate'] })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Default slot.

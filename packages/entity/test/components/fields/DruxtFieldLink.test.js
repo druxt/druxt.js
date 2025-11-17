@@ -29,10 +29,18 @@ describe('Component - DruxtFieldLink', () => {
   })
 
   test('absolute', async () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent({
       title: 'absolute',
       uri: baseURL
     })
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldLink component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
 
     expect(wrapper.vm.links.length).toBe(1)
     expect(wrapper.vm.links[0].component).toBe('a')
@@ -40,10 +48,18 @@ describe('Component - DruxtFieldLink', () => {
   })
 
   test('relative', () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent({
       title: 'relative',
       uri: '/path'
     })
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldLink component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
 
     expect(wrapper.vm.links.length).toBe(1)
     expect(wrapper.vm.links[0].component).toBe('nuxt-link')
@@ -51,10 +67,18 @@ describe('Component - DruxtFieldLink', () => {
   })
 
   test('internal:', () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent({
       title: 'internal',
       uri: 'internal:/path'
     })
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldLink component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
 
     expect(wrapper.vm.links.length).toBe(1)
     expect(wrapper.vm.links[0].component).toBe('nuxt-link')

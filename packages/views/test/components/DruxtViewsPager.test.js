@@ -29,7 +29,7 @@ const mountComponent = (propsData) => {
     }
   }
 
-  return mount(DruxtViewsPager, { localVue, mocks, propsData, store })
+  return mount(DruxtViewsPager, { localVue, mocks, propsData, store, stubs: { NuxtLink: true } })
 }
 
 describe('DruxtViewsPager', () => {

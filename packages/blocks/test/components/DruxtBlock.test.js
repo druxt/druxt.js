@@ -1,6 +1,3 @@
-/* global beforeEach, describe, expect, jest, test */
-
-import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
@@ -35,7 +32,7 @@ const mountComponent = (propsData = {}, options = {}, mocks = {}) => {
     $route: { meta: {} },
     ...mocks
   }
-  return mount(DruxtBlock, { localVue, mocks, propsData, store, stubs: ['DruxtDebug'], ...options })
+  return mount(DruxtBlock, { localVue, mocks, propsData, store, stubs: ['DruxtDebug', 'DruxtDevelTemplate'], ...options })
 }
 
 describe('Component - DruxtBlock', () => {

@@ -4,6 +4,7 @@ module.exports = {
   coveragePathIgnorePatterns: ['/dist/'],
   moduleFileExtensions: ['js', 'json', 'vue'],
   modulePathIgnorePatterns: ['/docs', '/examples/'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['/docs', '/examples/'],
   transform: {

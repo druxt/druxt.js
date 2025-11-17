@@ -51,7 +51,7 @@ const mountComponent = ({ path, routes, propsData, options }) => {
 
   const components = { DruxtDebug }
 
-  return shallowMount(DruxtBreadcrumb, { components, store, localVue, mocks, propsData, ...options })
+  return shallowMount(DruxtBreadcrumb, { components, store, localVue, mocks, propsData, stubs: { NuxtLink: true }, ...options })
 }
 
 describe('DruxtBreadcrumb', () => {

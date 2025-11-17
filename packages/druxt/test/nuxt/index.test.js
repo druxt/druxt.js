@@ -1,5 +1,3 @@
-/* global beforeEach, describe, expect, jest, test */
-
 import DruxtNuxtModule from '../../src'
 
 const options = {

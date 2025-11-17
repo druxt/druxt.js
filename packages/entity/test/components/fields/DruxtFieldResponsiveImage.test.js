@@ -58,9 +58,17 @@ describe('Component - DruxtFieldResponsiveImage', () => {
   })
 
   test('default', async () => {
+    // Spy on console.warn to verify deprecation warning is emitted
+    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
     const wrapper = mountComponent()
     await wrapper.vm.$options.fetch.call(wrapper.vm)
     await wrapper.vm.$forceUpdate()
+
+    // Verify deprecation warning was emitted
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldResponsiveImage component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+
+    consoleWarnSpy.mockRestore()
 
     expect(wrapper.vm.entities.length).toBe(1)
 
