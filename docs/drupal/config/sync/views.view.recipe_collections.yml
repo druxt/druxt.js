@@ -1,4 +1,4 @@
-uuid: f6699fdb-ca2e-4ed1-b476-75f372cf7dfb
+uuid: 461f0cdf-855d-4351-805a-23e0d0cd1d15
 langcode: en
 status: true
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
     - taxonomy
     - user
 _core:
-  default_config_hash: pmCadX6j84JfVOFLccia1-J7yBVPuxiarEqKqK88NLs
+  default_config_hash: y5rGzmgAHSDM1X1tHGYXxewaGAZXotQnSYs-2Skjdz4
 id: recipe_collections
 label: 'Recipe Collections'
 module: views
@@ -172,16 +172,13 @@ display:
         groups:
           1: AND
       style:
-        type: grid
+        type: grid_responsive
         options:
           grouping: {  }
           columns: 4
-          automatic_width: false
+          cell_min_width: 100
+          grid_gutter: 14
           alignment: vertical
-          row_class_custom: ''
-          row_class_default: true
-          col_class_custom: ''
-          col_class_default: true
       row:
         type: fields
       query:
@@ -209,7 +206,7 @@ display:
     display_plugin: block
     position: 1
     display_options:
-      rendering_language: '***LANGUAGE_language_interface***'
+      rendering_language: '***LANGUAGE_language_content***'
       display_extenders: {  }
       block_hide_empty: true
     cache_metadata:

@@ -1,0 +1,133 @@
+{
+    "uuid": [
+        {
+            "value": "35c94d2f-bd3e-49bd-8635-d58cc20310e0"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "article",
+            "target_type": "node_type",
+            "target_uuid": "59b7b1c1-8674-4851-9796-daf4bf44f63a"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "ff59c9f9-c440-4ef9-8a87-a942ae799c12"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "43f8a493-61bc-4fd1-ad80-286b62013e29"
+        }
+    ],
+    "title": [
+        {
+            "value": "Salta los esp\u00edritus con deliciosos c\u00f3cteles sin alcohol"
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-14T23:34:34+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-14T23:34:34+00:00"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/articles\/salta-los-espiritus-con-deliciosos-cocteles-sin-alcohol",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_body": [
+        {
+            "value": "<p>\u00bfTener un c\u00f3ctel? Entonces, \u00bfpor qu\u00e9 no ofrecer algo tan especial para aquellos que no beben alcohol pero quieren unirse a la diversi\u00f3n? Despu\u00e9s de todo, \u00bfqu\u00e9 c\u00f3ctel est\u00e1 completo sin esos incre\u00edbles vasos de frutas mixtas, colores brillantes y, por supuesto, las peque\u00f1as sombrillas? Haga su esfuerzo por el medio ambiente tirando las pajitas de pl\u00e1stico y adquiera algunas alternativas de gran apariencia, hechas de vidrio, metal o incluso bamb\u00fa. No se olvide de las cl\u00e1sicas copas de c\u00f3ctel y los modernos vasos para dar vida a estas recetas.<\/p>\n<p>Entonces, tome la batidora, s\u00e1ltese los esp\u00edritus y mezcle estos c\u00f3cteles sin alcohol deliciosamente refrescantes que no le dejar\u00e1n a usted ni a sus invitados, carentes de sabor o estilo.<\/p>\n<h2>Mango-licious<\/h2>\n<p>Esta deliciosa bebida tiene un sabor sofisticado que es ideal para adultos y su color es perfecto para una barbacoa al final del verano.<\/p>\n<h3>Instrucciones:<\/h3>\n<p>Dale unas rodajas de pepino y un poco de miel en una coctelera. Agregue una medida de esp\u00edritu de pur\u00e9 de mango y el jugo de una lima. A\u00f1adir un poco de hielo y agitar para todo lo que vales. Usando un colador, vierta en un vaso de lujo y cubra con cerveza de jengibre. Unas pocas rodajas de lim\u00f3n y ya est\u00e1 listo para ir.<\/p>\n<h2>Mocky Mojito<\/h2>\n<p>No hay nada como un Mojito en un d\u00eda caluroso y esta versi\u00f3n es ideal para un relajante momento de felicidad en el jard\u00edn.<\/p>\n<h3>Instrucciones:<\/h3>\n<p>Mezcle az\u00facar, un poco de lim\u00f3n y hojas de menta en un vaso alto, luego agregue unos trozos de hielo, cubra con el jugo de una naranja sangu\u00ednea (para el efecto de la puesta del sol) y agregue un chorrito de agua de soda. Agrega unas cuantas ramitas de menta para un look aut\u00e9ntico.<\/p>\n<h2>Fresa Sin Pecado Martini<\/h2>\n<p>Las fresas agregan un hermoso y rico rojo a esta cola de burla, mientras que el jengibre le da una peque\u00f1a patada. Servir en un vaso de martini adecuado, pero tal vez evitar las aceitunas.<\/p>\n<h3>Instrucciones:<\/h3>\n<p>Mezcle una fresa con un gui\u00f3n, una cerveza de jengibre y un poco de jarabe de az\u00facar en una coctelera. A\u00f1adir una tapa llena de flor de sa\u00faco y unas cuantas hojas de menta. Poner una rodaja de naranja y lim\u00f3n y agitar con hielo. Cuela en tu copa y disfruta del dulce sabor a fresa.<\/p>\n<h2>Reina del Coco<\/h2>\n<p>Loca por los cocos? Entonces te encantar\u00e1 el sabor refrescante de este c\u00f3ctel a base de coco. Los sabores dan un toque tropical, mientras que el aspecto es la sofisticaci\u00f3n del adulto.<\/p>\n<h3>Instrucciones:<\/h3>\n<p>Agregue pepinos en rodajas, el jugo de una lima o dos, y algunas hojas de menta a una jarra de agua de coco y deje enfriar e infundir durante unas horas en la nevera. Tambi\u00e9n puedes agregar un poco de az\u00facar si te apetece este dulce. Para servir vierte en vasos llenos de hielo con rodajas de pepino y hojas de menta. Sencilla y hermosa.<\/p>\n",
+            "format": "basic_html",
+            "processed": "<p>\u00bfTener un c\u00f3ctel? Entonces, \u00bfpor qu\u00e9 no ofrecer algo tan especial para aquellos que no beben alcohol pero quieren unirse a la diversi\u00f3n? Despu\u00e9s de todo, \u00bfqu\u00e9 c\u00f3ctel est\u00e1 completo sin esos incre\u00edbles vasos de frutas mixtas, colores brillantes y, por supuesto, las peque\u00f1as sombrillas? Haga su esfuerzo por el medio ambiente tirando las pajitas de pl\u00e1stico y adquiera algunas alternativas de gran apariencia, hechas de vidrio, metal o incluso bamb\u00fa. No se olvide de las cl\u00e1sicas copas de c\u00f3ctel y los modernos vasos para dar vida a estas recetas.<\/p>\n<p>Entonces, tome la batidora, s\u00e1ltese los esp\u00edritus y mezcle estos c\u00f3cteles sin alcohol deliciosamente refrescantes que no le dejar\u00e1n a usted ni a sus invitados, carentes de sabor o estilo.<\/p>\n<h2>Mango-licious<\/h2>\n<p>Esta deliciosa bebida tiene un sabor sofisticado que es ideal para adultos y su color es perfecto para una barbacoa al final del verano.<\/p>\n<h3>Instrucciones:<\/h3>\n<p>Dale unas rodajas de pepino y un poco de miel en una coctelera. Agregue una medida de esp\u00edritu de pur\u00e9 de mango y el jugo de una lima. A\u00f1adir un poco de hielo y agitar para todo lo que vales. Usando un colador, vierta en un vaso de lujo y cubra con cerveza de jengibre. Unas pocas rodajas de lim\u00f3n y ya est\u00e1 listo para ir.<\/p>\n<h2>Mocky Mojito<\/h2>\n<p>No hay nada como un Mojito en un d\u00eda caluroso y esta versi\u00f3n es ideal para un relajante momento de felicidad en el jard\u00edn.<\/p>\n<h3>Instrucciones:<\/h3>\n<p>Mezcle az\u00facar, un poco de lim\u00f3n y hojas de menta en un vaso alto, luego agregue unos trozos de hielo, cubra con el jugo de una naranja sangu\u00ednea (para el efecto de la puesta del sol) y agregue un chorrito de agua de soda. Agrega unas cuantas ramitas de menta para un look aut\u00e9ntico.<\/p>\n<h2>Fresa Sin Pecado Martini<\/h2>\n<p>Las fresas agregan un hermoso y rico rojo a esta cola de burla, mientras que el jengibre le da una peque\u00f1a patada. Servir en un vaso de martini adecuado, pero tal vez evitar las aceitunas.<\/p>\n<h3>Instrucciones:<\/h3>\n<p>Mezcle una fresa con un gui\u00f3n, una cerveza de jengibre y un poco de jarabe de az\u00facar en una coctelera. A\u00f1adir una tapa llena de flor de sa\u00faco y unas cuantas hojas de menta. Poner una rodaja de naranja y lim\u00f3n y agitar con hielo. Cuela en tu copa y disfruta del dulce sabor a fresa.<\/p>\n<h2>Reina del Coco<\/h2>\n<p>Loca por los cocos? Entonces te encantar\u00e1 el sabor refrescante de este c\u00f3ctel a base de coco. Los sabores dan un toque tropical, mientras que el aspecto es la sofisticaci\u00f3n del adulto.<\/p>\n<h3>Instrucciones:<\/h3>\n<p>Agregue pepinos en rodajas, el jugo de una lima o dos, y algunas hojas de menta a una jarra de agua de coco y deje enfriar e infundir durante unas horas en la nevera. Tambi\u00e9n puedes agregar un poco de az\u00facar si te apetece este dulce. Para servir vierte en vasos llenos de hielo con rodajas de pepino y hojas de menta. Sencilla y hermosa.<\/p>\n"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "9416c87d-1357-4cee-904f-e1357c8a8c7e"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "855300e2-f93a-47af-a6b8-949c8335d7ad"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "82e297ba-994b-4315-9660-44a0394045a1"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "196cd522-ad5a-47d8-aa08-94514f77957b"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "41c93f13-a114-4a00-ad79-26d40fd39f69"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "684bcab9-bfd9-463c-a2ae-03cc6693f9b8"
+        }
+    ]
+}

@@ -1,0 +1,49 @@
+{
+    "uuid": [
+        {
+            "value": "bb2b5f47-d939-4bc3-ac29-c1626bd65700"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "uid": [],
+    "filename": [
+        {
+            "value": "vegan-chocolate.jpg"
+        }
+    ],
+    "uri": [
+        {
+            "value": "public:\/\/vegan-chocolate.jpg",
+            "url": "\/sites\/default\/files\/vegan-chocolate.jpg"
+        }
+    ],
+    "filemime": [
+        {
+            "value": "image\/jpeg"
+        }
+    ],
+    "filesize": [
+        {
+            "value": 65650
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ]
+}

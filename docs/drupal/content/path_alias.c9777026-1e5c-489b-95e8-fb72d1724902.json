@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "c9777026-1e5c-489b-95e8-fb72d1724902"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/dbc8237b-4cbe-4a13-9212-0fdcaa672738"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipes\/gluten-free-pizza"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

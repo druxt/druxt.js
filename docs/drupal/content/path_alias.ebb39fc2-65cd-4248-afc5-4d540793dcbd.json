@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "ebb39fc2-65cd-4248-afc5-4d540793dcbd"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/21"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/pasta"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

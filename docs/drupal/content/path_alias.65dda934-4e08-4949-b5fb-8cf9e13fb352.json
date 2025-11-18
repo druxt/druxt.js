@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "65dda934-4e08-4949-b5fb-8cf9e13fb352"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/23"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/seasonal"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

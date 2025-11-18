@@ -1,4 +1,4 @@
-uuid: 8af8bbb4-d1c3-4adf-9823-978f81b5ec70
+uuid: 5b9f61fe-7cbb-41bf-ac9b-ea2deb29c9dc
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
     module:
       - content_moderation
 _core:
-  default_config_hash: 7olvKOaJNf15B-Bj4eD1wJyaz4BR7CNA9cEjWBssa2Y
+  default_config_hash: SeyUoUjWFNY3MNSth2i3GkQJlgDYe0GECc-zchRdQGQ
 id: moderated_content
 label: 'Moderated content'
 module: views
@@ -415,6 +415,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 50
           total_pages: null
           id: 0
@@ -531,8 +532,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -573,8 +572,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -617,8 +614,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
             reduce: true
           is_grouped: false
           group_info:
@@ -660,8 +655,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -775,6 +768,7 @@ display:
           empty_table: true
           caption: ''
           description: ''
+          class: ''
       row:
         type: fields
       query:

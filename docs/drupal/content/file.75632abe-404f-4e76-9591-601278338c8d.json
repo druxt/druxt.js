@@ -1,0 +1,49 @@
+{
+    "uuid": [
+        {
+            "value": "75632abe-404f-4e76-9591-601278338c8d"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "uid": [],
+    "filename": [
+        {
+            "value": "veggie-pasta-bake-umami.jpg"
+        }
+    ],
+    "uri": [
+        {
+            "value": "public:\/\/veggie-pasta-bake-umami.jpg",
+            "url": "\/sites\/default\/files\/veggie-pasta-bake-umami.jpg"
+        }
+    ],
+    "filemime": [
+        {
+            "value": "image\/jpeg"
+        }
+    ],
+    "filesize": [
+        {
+            "value": 102082
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ]
+}

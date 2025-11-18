@@ -1,0 +1,176 @@
+{
+    "uuid": [
+        {
+            "value": "29ca486f-af7d-46b5-b35d-164233d9d96f"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "62d6a84b-edb2-4255-b092-641f323d2cc1"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "5067c45a-2ee7-4ed8-b3fd-0cb8e311f33d"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "5067c45a-2ee7-4ed8-b3fd-0cb8e311f33d"
+        }
+    ],
+    "title": [
+        {
+            "value": "Pastel Victoria"
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-02T23:34:34+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-02T23:34:34+00:00"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/pastel-victoria",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 20
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "easy"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "225g mantequilla o margarina"
+        },
+        {
+            "value": "225g az\u00facar en polvo"
+        },
+        {
+            "value": "225g harina autoniveladora"
+        },
+        {
+            "value": "4 huevos"
+        },
+        {
+            "value": "1 cucharadita polvo de hornear"
+        },
+        {
+            "value": "3 cucharadas mermelada para el relleno"
+        },
+        {
+            "value": "Az\u00facar glas para espolvorear la parte superior"
+        },
+        {
+            "value": "Crema para servir"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "3a805327-1059-4036-83ae-9e1b164ff017"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 10
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 20
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "cdb9762a-7bae-4289-b6a9-d1881c632db2"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>Precaliente el horno a 350\u00b0F\/180\u00b0C y engrase dos moldes para pasteles de 8 pulgadas.<\/li>\n  <li>En un taz\u00f3n grande, mezcle la mantequilla y el az\u00facar, luego agregue los huevos, la harina y el polvo para hornear.<\/li>\n  <li>Distribuya la mezcla uniformemente entre los 2 moldes para pasteles.<\/li>\n  <li>Coloque ambas moldes en el medio del horno precalentado durante 20 minutos, antes de verificar con un cuchillo. Cuando el cuchillo salga limpio, \u00a1est\u00e1 listo!<\/li>\n  <li>Permita que se enfr\u00ede en los moldes antes de colocarlos en un estante de enfriamiento.<\/li>\n  <li>Agregue la mermelada, apile, espolvoree con az\u00facar glas y sirva con una cucharada grande de crema. \u00a1Disfruta!<\/li>\n<\/ol>\n",
+            "format": "basic_html",
+            "processed": "<ol>\n<li>Precaliente el horno a 350\u00b0F\/180\u00b0C y engrase dos moldes para pasteles de 8 pulgadas.<\/li>\n<li>En un taz\u00f3n grande, mezcle la mantequilla y el az\u00facar, luego agregue los huevos, la harina y el polvo para hornear.<\/li>\n<li>Distribuya la mezcla uniformemente entre los 2 moldes para pasteles.<\/li>\n<li>Coloque ambas moldes en el medio del horno precalentado durante 20 minutos, antes de verificar con un cuchillo. Cuando el cuchillo salga limpio, \u00a1est\u00e1 listo!<\/li>\n<li>Permita que se enfr\u00ede en los moldes antes de colocarlos en un estante de enfriamiento.<\/li>\n<li>Agregue la mermelada, apile, espolvoree con az\u00facar glas y sirva con una cucharada grande de crema. \u00a1Disfruta!<\/li>\n<\/ol>\n"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Un tradicional bizcocho Victoria, perfecto para cualquier tarde con una taza de t\u00e9.",
+            "format": "basic_html",
+            "processed": "<p>Un tradicional bizcocho Victoria, perfecto para cualquier tarde con una taza de t\u00e9.<\/p>\n"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "91ff24fb-6fe4-47f4-9c73-cd283942a0ad"
+        }
+    ]
+}

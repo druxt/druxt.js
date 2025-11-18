@@ -1,0 +1,49 @@
+{
+    "uuid": [
+        {
+            "value": "1b1acb86-4af2-4c71-97ca-44a68587ea61"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "uid": [],
+    "filename": [
+        {
+            "value": "borscht-with-pork-ribs-umami.jpg"
+        }
+    ],
+    "uri": [
+        {
+            "value": "public:\/\/borscht-with-pork-ribs-umami.jpg",
+            "url": "\/sites\/default\/files\/borscht-with-pork-ribs-umami.jpg"
+        }
+    ],
+    "filemime": [
+        {
+            "value": "image\/jpeg"
+        }
+    ],
+    "filesize": [
+        {
+            "value": 66852
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ]
+}

@@ -1,0 +1,63 @@
+{
+    "uid": [
+        {
+            "value": 0
+        }
+    ],
+    "uuid": [
+        {
+            "value": "c48b5ede-5355-480a-9a82-020a44a08104"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "preferred_langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "preferred_admin_langcode": [],
+    "name": [
+        {
+            "value": ""
+        }
+    ],
+    "mail": [],
+    "timezone": [],
+    "status": [
+        {
+            "value": false
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "access": [
+        {
+            "value": "1970-01-01T00:00:00+00:00"
+        }
+    ],
+    "login": [
+        {
+            "value": "1970-01-01T00:00:00+00:00"
+        }
+    ],
+    "init": [],
+    "roles": [],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "user_picture": []
+}

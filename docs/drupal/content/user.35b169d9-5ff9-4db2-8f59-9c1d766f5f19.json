@@ -1,0 +1,77 @@
+{
+    "uid": [
+        {
+            "value": 7
+        }
+    ],
+    "uuid": [
+        {
+            "value": "35b169d9-5ff9-4db2-8f59-9c1d766f5f19"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "preferred_langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "preferred_admin_langcode": [],
+    "name": [
+        {
+            "value": "Holly Foat"
+        }
+    ],
+    "mail": [
+        {
+            "value": "holly.foat@example.com"
+        }
+    ],
+    "timezone": [
+        {
+            "value": "Australia\/Melbourne"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "access": [
+        {
+            "value": "1970-01-01T00:00:00+00:00"
+        }
+    ],
+    "login": [
+        {
+            "value": "1970-01-01T00:00:00+00:00"
+        }
+    ],
+    "init": [],
+    "roles": [
+        {
+            "target_id": "author",
+            "target_type": "user_role",
+            "target_uuid": "9789bdf0-2423-433c-8993-f9c25d2f777e"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "user_picture": []
+}

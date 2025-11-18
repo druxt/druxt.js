@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "c759d89f-a750-412e-831b-95651d1e4be4"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/9"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/sin-lactosa"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

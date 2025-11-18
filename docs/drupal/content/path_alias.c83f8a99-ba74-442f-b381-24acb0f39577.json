@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "c83f8a99-ba74-442f-b381-24acb0f39577"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/29"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipe-category\/accompaniments"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

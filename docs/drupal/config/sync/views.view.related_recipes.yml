@@ -1,4 +1,4 @@
-uuid: e6fb6b73-7a92-4d0d-8223-321be8c14511
+uuid: e49c3bb9-922d-4ca0-b6f2-03722c873ebf
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
     - node
     - user
 _core:
-  default_config_hash: Ryen6nIKjYz5bQ12cioXy11oHg0Pi3KtcG8KNrKluxA
+  default_config_hash: 75BE3MYblIjbBokUC5Z_GCbkKZpv0KCOrE24nKQdwmo
 id: related_recipes
 label: 'Related recipes'
 module: views
@@ -156,7 +156,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: numeric
+          plugin_id: entity_target_id
+          target_entity_type_id: taxonomy_term
           default_action: default
           exception:
             value: all
@@ -256,11 +257,13 @@ display:
             default_group_multiple: {  }
             group_items: {  }
       style:
-        type: default
+        type: grid_responsive
         options:
-          row_class: ''
-          default_row_class: true
           uses_fields: false
+          columns: 4
+          cell_min_width: 240
+          grid_gutter: 14
+          alignment: horizontal
       row:
         type: 'entity:node'
         options:
@@ -275,7 +278,7 @@ display:
           replica: false
           query_tags: {  }
       relationships: {  }
-      css_class: grid--4
+      css_class: ''
       header: {  }
       footer: {  }
       display_extenders: {  }

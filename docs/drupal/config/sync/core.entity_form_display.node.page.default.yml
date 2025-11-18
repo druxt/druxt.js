@@ -1,9 +1,9 @@
-uuid: c8695f55-89e4-4cf7-81ff-47115fa377f2
+uuid: 734b2693-b974-455b-8f3b-86b40be79527
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.page.body
+    - field.field.node.page.field_body
     - field.field.node.page.layout_builder__layout
     - node.type.page
     - workflows.workflow.editorial
@@ -12,27 +12,25 @@ dependencies:
     - path
     - text
 _core:
-  default_config_hash: bSaCNjQVqm0mI_ghsiOMVHGXiNTjwlSljer-HLgy1uw
+  default_config_hash: mPtG38lCTiHJbg7XQYLh8QUynjA1Umtceng-XC7K364
 id: node.page.default
 targetEntityType: node
 bundle: page
 mode: default
 content:
-  body:
-    type: text_textarea_with_summary
-    weight: 6
-    region: content
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-      show_summary: false
-    third_party_settings: {  }
   created:
     type: datetime_timestamp
     weight: 2
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_body:
+    type: text_textarea
+    weight: 6
+    region: content
+    settings:
+      rows: 9
+      placeholder: ''
     third_party_settings: {  }
   langcode:
     type: language_select

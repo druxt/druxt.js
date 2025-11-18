@@ -1,0 +1,170 @@
+{
+    "uuid": [
+        {
+            "value": "48dd50e9-9eaa-439a-8456-68951e35b5f5"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "62d6a84b-edb2-4255-b092-641f323d2cc1"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "5067c45a-2ee7-4ed8-b3fd-0cb8e311f33d"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "5067c45a-2ee7-4ed8-b3fd-0cb8e311f33d"
+        }
+    ],
+    "title": [
+        {
+            "value": "Watercress soup"
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-01T23:34:34+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-01T23:34:34+00:00"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/watercress-soup",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 20
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "easy"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "3 bunches watercress"
+        },
+        {
+            "value": "3 potatoes"
+        },
+        {
+            "value": "3 onions"
+        },
+        {
+            "value": "2 leeks"
+        },
+        {
+            "value": "800ml stock"
+        },
+        {
+            "value": "5 tbsp cr\u00e8me fra\u00eeche"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "c31c3cb4-73dd-4e19-9e9e-d1286ef41fd7"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 4
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 10
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e0802d82-938a-4591-8eff-f2508e8c69cc"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>Prepare the vegetables by peeling and chopping the potatoes, finely chopping the onions, leeks and garlic.<\/li>\n  <li>Heat a little oil in a pan and add the chopped vegetables, gently cooking them for about 5 minutes.<\/li>\n  <li>Add the vegetable stock to the same pan and turn up the heat until simmering, adding the watercress after about 10 minutes. Cook until all the vegetables are soft and easily mashed.<\/li>\n  <li>Liquidize the soup either with a hand blender or in a mixer, until smooth.<\/li>\n  <li>If the soup has cooled too much whilst being liquidized, stir in the cr\u00e8me fra\u00eeche and reheat before serving (otherwise serve straight away). Season to taste.<\/li>\n<\/ol>\n",
+            "format": "basic_html",
+            "processed": "<ol>\n<li>Prepare the vegetables by peeling and chopping the potatoes, finely chopping the onions, leeks and garlic.<\/li>\n<li>Heat a little oil in a pan and add the chopped vegetables, gently cooking them for about 5 minutes.<\/li>\n<li>Add the vegetable stock to the same pan and turn up the heat until simmering, adding the watercress after about 10 minutes. Cook until all the vegetables are soft and easily mashed.<\/li>\n<li>Liquidize the soup either with a hand blender or in a mixer, until smooth.<\/li>\n<li>If the soup has cooled too much whilst being liquidized, stir in the cr\u00e8me fra\u00eeche and reheat before serving (otherwise serve straight away). Season to taste.<\/li>\n<\/ol>\n"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "A wonderfully simple and light soup, making the most of seasonal, local produce. ",
+            "format": "basic_html",
+            "processed": "<p>A wonderfully simple and light soup, making the most of seasonal, local produce.<\/p>\n"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "3bcc1421-b31e-4d6a-a6dc-8529b143e019"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e97ae065-9a07-4288-ace5-1d9c8c701fab"
+        }
+    ]
+}

@@ -1,14 +1,14 @@
 name: druxtjs-drupal
-type: drupal10
+type: drupal11
 docroot: web
-php_version: "8.2"
+php_version: "8.3"
 webserver_type: nginx-fpm
 router_http_port: "80"
 router_https_port: "443"
 xdebug_enabled: false
 additional_hostnames: []
 additional_fqdns: []
-mariadb_version: "10.3"
+mariadb_version: "10.6"
 mysql_version: ""
 nfs_mount_enabled: false
 mutagen_enabled: false

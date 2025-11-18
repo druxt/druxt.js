@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "3873d417-3cc4-4422-90af-e48b4a2eec3b"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/5"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/cake"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

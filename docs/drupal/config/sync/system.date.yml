@@ -1,10 +1,10 @@
 _core:
-  default_config_hash: t7clj3mzmOGrXX0HuCH5usf0vEqRtnMTBFVBIEmZ5pc
+  default_config_hash: IVsFTD1mvR2NGBP_1myt9kFIFmGepH4PyaN5aQBYpno
 first_day: 0
 country:
-  default: ''
+  default: null
 timezone:
-  default: UTC
+  default: Australia/Melbourne
   user:
     configurable: true
     default: 0

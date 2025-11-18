@@ -1,20 +1,20 @@
-uuid: 4f620d29-a7fa-4b64-8c1e-1f6aa84a4594
+uuid: 3035f6f2-fb33-4bea-8966-da2bc3eeaef1
 langcode: en
 status: true
 dependencies:
   config:
     - block_content.type.basic
-    - field.field.block_content.basic.body
+    - field.field.block_content.basic.field_body
   module:
     - text
 _core:
-  default_config_hash: Z_A9ZLEHHMkrMrOGRILzgpl84yZyeD3yPGA1kr4OZag
+  default_config_hash: 9odywPNFDT8ETSygsDnM_Or7W4brfJmXTM9J7subGME
 id: block_content.basic.default
 targetEntityType: block_content
 bundle: basic
 mode: default
 content:
-  body:
+  field_body:
     type: text_default
     label: hidden
     settings: {  }

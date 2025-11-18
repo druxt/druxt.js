@@ -1,4 +1,4 @@
-uuid: 36be3096-044b-4ff5-a599-6ed860f589a8
+uuid: 62d6a84b-edb2-4255-b092-641f323d2cc1
 langcode: en
 status: true
 dependencies:
@@ -9,11 +9,11 @@ third_party_settings:
     available_menus: {  }
     parent: ''
 _core:
-  default_config_hash: '-3P1yuM15pcimXHBBhevjW-4aqojpmZbUgAqlVIeweo'
+  default_config_hash: NQt2gULY4oel0NzoDdFVygry3XstQ8obHX8IT6ntrOM
 name: Recipe
 type: recipe
 description: 'Add a new recipe to the site.'
-help: ''
+help: null
 new_revision: true
 preview_mode: 1
 display_submitted: false

@@ -1,9 +1,9 @@
-uuid: 6638a82f-31f3-4662-b9d0-a2bef821542a
+uuid: 998a58ce-8e02-4d78-9510-9446aaa3b4ad
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: UvyzcBQEEO6SAbpuSVwDoOm11Rw359-35hNMo907LuQ
+  default_config_hash: lifvcPxurjedstx5MZ_j-JVQhHq1gCEf1gxAYoI0iBY
 name: medium_3_2_2x
 label: 'Medium 3:2 2x (1200x800)'
 effects:
@@ -15,3 +15,9 @@ effects:
       width: 1200
       height: 800
       anchor: center-center
+  1d1dd894-df16-49b4-8433-0a41624ccde2:
+    uuid: 1d1dd894-df16-49b4-8433-0a41624ccde2
+    id: image_convert_avif
+    weight: 2
+    data:
+      extension: webp

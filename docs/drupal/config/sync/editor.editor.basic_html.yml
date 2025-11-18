@@ -1,4 +1,4 @@
-uuid: 6485c767-c6c3-4b1f-821f-cf61a6634a5c
+uuid: 5c240119-eb3e-498f-973f-88c6fe21b9dc
 langcode: en
 status: true
 dependencies:
@@ -7,7 +7,7 @@ dependencies:
   module:
     - ckeditor5
 _core:
-  default_config_hash: RFH4bE-oPmYicd5s-z2BqgHqlmiPax_SMOzwHm1-lds
+  default_config_hash: 5sugZ_9n2v1-Z-8xk0tf9Fe1n3u07K-K_otvwsuIQTw
 format: basic_html
 editor: ckeditor5
 settings:
@@ -62,9 +62,3 @@ settings:
       allow_view_mode_override: true
 image_upload:
   status: false
-  scheme: public
-  directory: inline-images
-  max_size: ''
-  max_dimensions:
-    width: null
-    height: null

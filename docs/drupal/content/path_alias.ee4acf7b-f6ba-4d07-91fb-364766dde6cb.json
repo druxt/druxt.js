@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "ee4acf7b-f6ba-4d07-91fb-364766dde6cb"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/543d0568-093c-480e-9c2b-f256c58b8bf7"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/articles\/the-umami-guide-to-our-favorite-mushrooms"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

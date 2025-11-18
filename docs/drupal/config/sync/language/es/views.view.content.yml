@@ -20,6 +20,9 @@ display:
             format_custom_true: Publicado
         changed:
           label: Actualizado
+        langcode:
+          label: Idioma
+          separator: ', '
         operations:
           label: Operaciones
       pager:

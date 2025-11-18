@@ -1,4 +1,4 @@
-uuid: 713c5ff8-f212-4f22-8549-e0b7392d1d47
+uuid: 67d6ac17-246d-4de8-8ca0-15a1f86a9f36
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
     - node
     - user
 _core:
-  default_config_hash: 2LvgMiGJX6xeQSnjnJC3KpqBoG91zxN_zCzC4FSITM0
+  default_config_hash: uWorjw7SIK2814X7Mt5Fc1hJ1b3RRS94jCERTrhBgE0
 id: featured_articles
 label: 'Featured Articles'
 module: views
@@ -78,7 +78,8 @@ display:
         type: mini
         options:
           offset: 0
-          items_per_page: 9
+          pagination_heading_level: h4
+          items_per_page: 12
           total_pages: null
           id: 0
           tags:
@@ -215,7 +216,13 @@ display:
         groups:
           1: AND
       style:
-        type: default
+        type: grid_responsive
+        options:
+          uses_fields: false
+          columns: 3
+          cell_min_width: 240
+          grid_gutter: 14
+          alignment: horizontal
       row:
         type: 'entity:node'
         options:
@@ -230,7 +237,7 @@ display:
           replica: false
           query_tags: {  }
       relationships: {  }
-      css_class: grid--3
+      css_class: ''
       header: {  }
       footer: {  }
       display_extenders: {  }
@@ -249,7 +256,7 @@ display:
     display_plugin: page
     position: 1
     display_options:
-      rendering_language: '***LANGUAGE_language_interface***'
+      rendering_language: '***LANGUAGE_language_content***'
       display_extenders: {  }
       path: articles
       menu:

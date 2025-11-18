@@ -1,4 +1,4 @@
-uuid: 16ce00e9-d763-4212-8f46-7c70b2b6738a
+uuid: e527b389-8ee7-4094-b253-658215760648
 langcode: en
 status: true
 dependencies:
@@ -11,7 +11,7 @@ dependencies:
     - node
     - user
 _core:
-  default_config_hash: _KLELv4iIpdfR0I90qBgn9vTp6gOFWWA35V69OJ4kjo
+  default_config_hash: lfZQBdW5a-7s3r496H9bI7LL4mYu-49-pB7zCuDiZN0
 id: promoted_items
 label: 'Promoted Items'
 module: views
@@ -407,7 +407,7 @@ display:
         filter_groups: false
       css_class: view-promoted-items--double
       display_description: ''
-      rendering_language: '***LANGUAGE_language_interface***'
+      rendering_language: '***LANGUAGE_language_content***'
       display_extenders: {  }
       displays:
         block_1: block_1
@@ -571,7 +571,7 @@ display:
         filter_groups: false
       css_class: 'container view-promoted-items--single'
       display_description: ''
-      rendering_language: '***LANGUAGE_language_interface***'
+      rendering_language: '***LANGUAGE_language_content***'
       display_extenders: {  }
     cache_metadata:
       max-age: -1

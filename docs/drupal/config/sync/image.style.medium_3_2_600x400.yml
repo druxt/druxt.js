@@ -1,9 +1,9 @@
-uuid: 69fdc4f1-bd84-40b0-9fef-cf58674b5c37
+uuid: e98eb53f-1ce8-4ce2-b683-492effb5d4ef
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: vWSg7d9EvxQ6pTULGPScRmOumIiUbFxaAgr0JvgfBWU
+  default_config_hash: sI-z1TAXWJMyEN96AG3mZ6VNuAz-egf3ubmJj-76QB0
 name: medium_3_2_600x400
 label: 'Medium 3:2 (600x400)'
 effects:
@@ -15,3 +15,9 @@ effects:
       width: 600
       height: 400
       anchor: center-center
+  cdd80cc9-5ecc-4040-9d83-a271c5142b7d:
+    uuid: cdd80cc9-5ecc-4040-9d83-a271c5142b7d
+    id: image_convert_avif
+    weight: 2
+    data:
+      extension: webp

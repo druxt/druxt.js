@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "82d0785e-e75a-46aa-b714-4614675b874f"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/20"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/party"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "5bd13382-5306-4f75-b14f-f268051fb5ee"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/17"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/learn-to-cook"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-uuid: 6da5122b-c620-4c8b-aa2a-406f4d4931ba
+uuid: 9789bdf0-2423-433c-8993-f9c25d2f777e
 langcode: en
 status: true
 dependencies:
@@ -23,11 +23,11 @@ dependencies:
     - taxonomy
     - toolbar
 _core:
-  default_config_hash: 0vhO_07tJzAJlfixEyshv-AbpRto3wdMJHkgK5CjBEY
+  default_config_hash: oxYBa-hJuHuBlVF60mUi0dvHmER-5xRgw277hsbfAW4
 id: author
 label: Author
 weight: 3
-is_admin: null
+is_admin: false
 permissions:
   - 'access content overview'
   - 'access contextual links'

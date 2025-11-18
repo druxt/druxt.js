@@ -1,4 +1,4 @@
-uuid: 536918cf-f05f-4cfb-8fcb-5c370e7e8ad8
+uuid: 7f775665-23d7-42c1-a10b-1e7d82eefbd3
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
     - node
     - user
 _core:
-  default_config_hash: _od5qwg6RJLMfULo1hSHoK9b4-FYDXDfcYBTuqdd-74
+  default_config_hash: NwHzk3-TFboCbMr__BylFYIxcH2otOJo0OrdL6iWDDQ
 id: frontpage
 label: Frontpage
 module: node
@@ -94,7 +94,7 @@ display:
           admin_label: ''
           entity_type: node
           entity_field: sticky
-          plugin_id: boolean
+          plugin_id: standard
           order: DESC
           expose:
             label: ''
@@ -273,12 +273,13 @@ display:
         groups:
           1: AND
       style:
-        type: default
+        type: grid_responsive
         options:
-          grouping: {  }
-          row_class: ''
-          default_row_class: true
           uses_fields: false
+          columns: 2
+          cell_min_width: 240
+          grid_gutter: 14
+          alignment: horizontal
       row:
         type: 'entity:node'
         options:
@@ -339,7 +340,7 @@ display:
         options:
           relationship: none
           view_mode: rss
-      rendering_language: '***LANGUAGE_language_interface***'
+      rendering_language: '***LANGUAGE_language_content***'
       display_extenders: {  }
       path: rss.xml
       sitename_title: true
@@ -362,7 +363,7 @@ display:
       defaults:
         css_class: false
         header: false
-      css_class: grid--2
+      css_class: ''
       header:
         area:
           id: area
@@ -377,7 +378,7 @@ display:
             value: '<p class="text-align-center">Explore recipes across every type of occasion, ingredient, and skill level</p>'
             format: full_html
           tokenize: false
-      rendering_language: '***LANGUAGE_language_interface***'
+      rendering_language: '***LANGUAGE_language_content***'
       display_extenders: {  }
       path: node
     cache_metadata:

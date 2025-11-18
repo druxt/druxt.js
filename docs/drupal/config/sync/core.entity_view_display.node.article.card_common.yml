@@ -1,10 +1,10 @@
-uuid: ffc56b35-d7fa-438e-8e35-7c8f20e7beb7
+uuid: 5206b9e0-79da-4dff-8554-e7753d67cecd
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.node.card_common
-    - field.field.node.article.body
+    - field.field.node.article.field_body
     - field.field.node.article.field_media_image
     - field.field.node.article.field_tags
     - field.field.node.article.layout_builder__layout
@@ -12,7 +12,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: R9x1YJuIkeANYTz3vxHD6R5_ExkcYlXpxmWYBXcvA7Q
+  default_config_hash: 2QY8sy_faZ8A-JN_Y88p_VRmxJDf3P-zOoc8QoEvlJ0
 id: node.article.card_common
 targetEntityType: node
 bundle: article
@@ -28,8 +28,8 @@ content:
     weight: 1
     region: content
 hidden:
-  body: true
   content_moderation_control: true
+  field_body: true
   field_tags: true
   langcode: true
   layout_builder__layout: true

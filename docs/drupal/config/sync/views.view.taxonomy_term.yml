@@ -1,4 +1,4 @@
-uuid: 62ec9d8a-c647-4d04-8bfc-75134254f314
+uuid: 3953b9a2-35fb-49c5-b87e-cabd53eee847
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
     - taxonomy
     - user
 _core:
-  default_config_hash: bxCQ9jemdZGWNXxwiRQTPqEpS-JiDTQx0NHfcDKWF4g
+  default_config_hash: kMjZgtsLAtRhweR-8tYEzqWYPNZYxJT4IwoB6UdqjLY
 id: taxonomy_term
 label: 'Taxonomy term'
 module: taxonomy
@@ -29,6 +29,7 @@ display:
         type: mini
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 12
           total_pages: 0
           id: 0
@@ -214,12 +215,13 @@ display:
         groups:
           1: AND
       style:
-        type: default
+        type: grid_responsive
         options:
-          grouping: {  }
-          row_class: ''
-          default_row_class: true
           uses_fields: false
+          columns: 4
+          cell_min_width: 240
+          grid_gutter: 14
+          alignment: horizontal
       row:
         type: 'entity:node'
         options:
@@ -234,7 +236,7 @@ display:
           replica: false
           query_tags: {  }
       relationships: {  }
-      css_class: grid--4
+      css_class: ''
       link_display: page_1
       link_url: ''
       header:
@@ -288,7 +290,7 @@ display:
       query:
         type: views_query
         options: {  }
-      rendering_language: '***LANGUAGE_language_interface***'
+      rendering_language: '***LANGUAGE_language_content***'
       display_extenders: {  }
       path: taxonomy/term/%/feed
       displays:
@@ -311,7 +313,7 @@ display:
       query:
         type: views_query
         options: {  }
-      rendering_language: '***LANGUAGE_language_interface***'
+      rendering_language: '***LANGUAGE_language_content***'
       display_extenders: {  }
       path: taxonomy/term/%
     cache_metadata:

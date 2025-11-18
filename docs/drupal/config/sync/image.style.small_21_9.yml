@@ -1,9 +1,9 @@
-uuid: e5665c41-38eb-4a68-a80a-abf4c6c2951c
+uuid: 6b7234e8-c367-48ba-92b2-81ba713006bb
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: YP_BPXbm6Jc3Wjxrfdn9dBqERf6qnub02Tj0uhmi-ww
+  default_config_hash: QhmorLgbb-5DcDRGsZADVHOFJqNDdh28qNo4RzG6emc
 name: small_21_9
 label: 'Small 21:9 (768x330)'
 effects:
@@ -15,3 +15,9 @@ effects:
       width: 768
       height: 330
       anchor: center-center
+  f4f34147-c147-4e51-a7e2-5334f5ddb6f7:
+    uuid: f4f34147-c147-4e51-a7e2-5334f5ddb6f7
+    id: image_convert_avif
+    weight: 2
+    data:
+      extension: webp

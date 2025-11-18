@@ -1,9 +1,9 @@
-uuid: d2d04729-b8bf-4f3f-892e-ee33c1d57436
+uuid: 783b2fc6-a31c-4188-b2fc-a53f7c77b00a
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.article.body
+    - field.field.node.article.field_body
     - field.field.node.article.field_media_image
     - field.field.node.article.field_tags
     - field.field.node.article.layout_builder__layout
@@ -15,27 +15,25 @@ dependencies:
     - path
     - text
 _core:
-  default_config_hash: mazCvvkQjG6AJa8nkv6JN1WPjHmMoHMBI6jP3Va4tT4
+  default_config_hash: V_mQX3lwu6482HOfcK0HfurwDi10qGMqgqAzQG4WG8E
 id: node.article.default
 targetEntityType: node
 bundle: article
 mode: default
 content:
-  body:
-    type: text_textarea_with_summary
-    weight: 2
-    region: content
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-      show_summary: false
-    third_party_settings: {  }
   created:
     type: datetime_timestamp
     weight: 7
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_body:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 9
+      placeholder: ''
     third_party_settings: {  }
   field_media_image:
     type: media_library_widget

@@ -1,4 +1,4 @@
-uuid: f6dc8b4b-b65c-446b-9061-dbae539119ef
+uuid: 54dded44-a869-4f75-9198-af2f6bb28cdf
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
     - media
     - user
 _core:
-  default_config_hash: 7d9f__iKDjy8x8-Cnbj1-DRZPOEWYTZ4DT6ETtjARiI
+  default_config_hash: WY2kwgfngPIaHi9zhcwBATmp_4pnMcAAa7bXfp5OXtc
 id: media
 label: Media
 module: views
@@ -522,6 +522,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 50
           total_pages: null
           id: 0
@@ -615,8 +616,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -657,8 +656,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -787,8 +784,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -806,6 +801,7 @@ display:
         type: table
         options:
           grouping: {  }
+          class: ''
           row_class: ''
           default_row_class: true
           columns:

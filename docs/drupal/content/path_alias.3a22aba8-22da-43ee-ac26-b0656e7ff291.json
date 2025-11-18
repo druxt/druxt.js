@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "3a22aba8-22da-43ee-ac26-b0656e7ff291"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/29"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipe-category\/acompa\u00f1amientos"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "1b47c872-6906-4c0b-b7ba-e3cbc51d6c00"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/19"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/avena"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

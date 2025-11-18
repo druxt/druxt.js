@@ -1,4 +1,4 @@
-uuid: 7faf1398-fe19-4c9d-9901-ed4810e07ae3
+uuid: 9f03a1c2-920d-44ca-921d-c16534d419ad
 langcode: en
 status: true
 dependencies:
@@ -6,7 +6,7 @@ dependencies:
     - block_content
     - user
 _core:
-  default_config_hash: AcOE_1RLjX4okjWSOk7Pen1IdtPsY0Nbn0HXWG3zMqc
+  default_config_hash: M40v7fFSz1d3AWG7BVYgglHAfF2lD5dzrjcEUZO-9OM
 id: block_content
 label: 'Content blocks'
 module: views
@@ -273,6 +273,7 @@ display:
         type: mini
         options:
           offset: 0
+          pagination_heading_level: h4
           items_per_page: 50
           total_pages: null
           id: 0
@@ -358,8 +359,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
           is_grouped: false
           group_info:
             label: ''
@@ -400,8 +399,6 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -502,6 +499,7 @@ display:
           empty_table: true
           caption: ''
           description: ''
+          class: ''
       row:
         type: fields
       query:

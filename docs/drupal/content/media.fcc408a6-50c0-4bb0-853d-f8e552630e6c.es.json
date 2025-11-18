@@ -1,0 +1,99 @@
+{
+    "uuid": [
+        {
+            "value": "fcc408a6-50c0-4bb0-853d-f8e552630e6c"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "image",
+            "target_type": "media_type",
+            "target_uuid": "efa181ad-a88e-489e-a64c-16daea01cf58"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "c48b5ede-5355-480a-9a82-020a44a08104"
+        }
+    ],
+    "name": [
+        {
+            "value": "Prueba y cultiva tus propias hierbas"
+        }
+    ],
+    "thumbnail": [
+        {
+            "alt": "Hierbas frescas cortadas incluyendo menta, perejil, tomillo y eneldo.",
+            "title": null,
+            "width": 768,
+            "height": 512,
+            "target_type": "file",
+            "target_uuid": "05554907-afcc-407e-9246-869747b22dfd"
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": null,
+            "pid": null,
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_media_image": [
+        {
+            "alt": "Hierbas frescas cortadas incluyendo menta, perejil, tomillo y eneldo.",
+            "title": null,
+            "width": 768,
+            "height": 512,
+            "target_type": "file",
+            "target_uuid": "b6fdb925-30fa-4b13-b58d-83c6ab945c22"
+        }
+    ]
+}

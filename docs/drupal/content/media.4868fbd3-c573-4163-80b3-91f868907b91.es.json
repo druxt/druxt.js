@@ -1,0 +1,99 @@
+{
+    "uuid": [
+        {
+            "value": "4868fbd3-c573-4163-80b3-91f868907b91"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "image",
+            "target_type": "media_type",
+            "target_uuid": "efa181ad-a88e-489e-a64c-16daea01cf58"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "c48b5ede-5355-480a-9a82-020a44a08104"
+        }
+    ],
+    "name": [
+        {
+            "value": "Pasta vegetariana al horno con una rica salsa de tomate cubierta de queso que har\u00e1 que se te haga la boca agua."
+        }
+    ],
+    "thumbnail": [
+        {
+            "alt": "Pasta vegetariana al horno con una rica salsa de tomate cubierta de queso que har\u00e1 que se te haga la boca agua.",
+            "title": null,
+            "width": 3000,
+            "height": 1571,
+            "target_type": "file",
+            "target_uuid": "7740cef3-6fbe-47fe-9109-6de6f1178ff1"
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": null,
+            "pid": null,
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_media_image": [
+        {
+            "alt": "Pasta vegetariana al horno con una rica salsa de tomate cubierta de queso que har\u00e1 que se te haga la boca agua.",
+            "title": null,
+            "width": 3000,
+            "height": 1571,
+            "target_type": "file",
+            "target_uuid": "9d0ed00c-8e71-4389-86dc-791aa622313e"
+        }
+    ]
+}

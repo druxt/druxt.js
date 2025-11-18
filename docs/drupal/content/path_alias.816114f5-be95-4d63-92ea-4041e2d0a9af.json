@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "816114f5-be95-4d63-92ea-4041e2d0a9af"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/12"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/bebidas"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

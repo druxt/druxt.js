@@ -1,0 +1,49 @@
+{
+    "uuid": [
+        {
+            "value": "b0146338-591b-4ec0-8ed8-c7c6fb0038ca"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "uid": [],
+    "filename": [
+        {
+            "value": "umami-bundle.png"
+        }
+    ],
+    "uri": [
+        {
+            "value": "public:\/\/umami-bundle.png",
+            "url": "\/sites\/default\/files\/umami-bundle.png"
+        }
+    ],
+    "filemime": [
+        {
+            "value": "image\/png"
+        }
+    ],
+    "filesize": [
+        {
+            "value": 30490
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ]
+}

@@ -1,0 +1,49 @@
+{
+    "uuid": [
+        {
+            "value": "6723083e-540a-4833-97a1-648258119f5e"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "uid": [],
+    "filename": [
+        {
+            "value": "chocolate-brownie-umami.jpg"
+        }
+    ],
+    "uri": [
+        {
+            "value": "public:\/\/chocolate-brownie-umami.jpg",
+            "url": "\/sites\/default\/files\/chocolate-brownie-umami.jpg"
+        }
+    ],
+    "filemime": [
+        {
+            "value": "image\/jpeg"
+        }
+    ],
+    "filesize": [
+        {
+            "value": 30431
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "07738a72-481d-4dc4-8b9d-4a814865ac6b"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/a1ff4b12-490c-4b98-9cc8-da8e7b3d1ac9"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipes\/quiche-mediterr\u00e1neo-profundo"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

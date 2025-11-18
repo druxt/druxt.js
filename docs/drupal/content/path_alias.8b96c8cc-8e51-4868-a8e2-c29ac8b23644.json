@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "8b96c8cc-8e51-4868-a8e2-c29ac8b23644"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/e2e9c13e-adf9-4a44-8b27-ead94c31526f"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/articles\/dairy-free-and-delicious-milk-chocolate"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

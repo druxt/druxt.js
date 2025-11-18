@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "ddb5ad67-852d-4cba-acc1-afb683caf611"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/30"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipe-category\/postres"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

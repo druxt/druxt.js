@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "84b1059d-c32e-4374-a106-979e2272df44"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/11"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/dinner-party"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

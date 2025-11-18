@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "90292bdb-8676-479a-ae9e-4b34bfcf82ed"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/22"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/pastry"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

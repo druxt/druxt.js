@@ -1,9 +1,9 @@
-uuid: b99c1372-71e1-4939-a83c-aae4343fe4b6
+uuid: 38e6be89-9f4e-4ea4-a20e-1df585bd7c3c
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: OZ_xf-3lAZ4jwNXjT6E8wcCCYbpLM-Pv1HB90f001ac
+  default_config_hash: JdxTVaeYrWM97VPFX89qTG28V0Et3nPEYfMJpI1AUgA
 name: large_21_9
 label: 'Large 21:9 (1440x620)'
 effects:
@@ -15,3 +15,9 @@ effects:
       width: 1440
       height: 620
       anchor: center-center
+  622f10ec-5f36-427e-a54a-4c0b8a45d6ab:
+    uuid: 622f10ec-5f36-427e-a54a-4c0b8a45d6ab
+    id: image_convert_avif
+    weight: 2
+    data:
+      extension: webp

@@ -1,6 +1,6 @@
-# Drupal 9
+# Drupal 11
 
-This directory contains an example Drupal 9 repository, setup for Druxt.
+This directory contains an example Drupal 11 repository, setup for Druxt.
 
 ## Get started
 

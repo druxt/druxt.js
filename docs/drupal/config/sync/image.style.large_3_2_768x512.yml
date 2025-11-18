@@ -1,9 +1,9 @@
-uuid: 43cb802c-14db-4d04-921b-febb55694f06
+uuid: 29cdce9b-3d11-47d5-91cc-1e9a3c2f83ec
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: d_qJOkT_HVjRkE68srSYDTLe76HiXH-efjM8Zc5jaHA
+  default_config_hash: tWFjh2I2A6eZZeMPDld_BtOPULKhxPe3hd84NffBluU
 name: large_3_2_768x512
 label: 'Large 3:2 (768x512)'
 effects:
@@ -15,3 +15,9 @@ effects:
       width: 768
       height: 512
       anchor: center-center
+  11b52bd1-8d1a-4e61-9578-3a3a290760a2:
+    uuid: 11b52bd1-8d1a-4e61-9578-3a3a290760a2
+    id: image_convert_avif
+    weight: 2
+    data:
+      extension: webp

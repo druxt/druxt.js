@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "bfcc9cad-633d-4040-9566-44b2bb852691"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/14"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/cultiva-los-tuyos"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

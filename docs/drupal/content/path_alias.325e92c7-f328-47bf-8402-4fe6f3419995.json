@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "325e92c7-f328-47bf-8402-4fe6f3419995"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/1ce89ac4-bda2-4f4a-b350-901a0ff647ab"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipes\/borscht-con-costillas-de-cerdo"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

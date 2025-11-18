@@ -1,0 +1,105 @@
+{
+    "uuid": [
+        {
+            "value": "e0594800-2a3a-4431-91b6-f4120f1efb39"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "page",
+            "target_type": "node_type",
+            "target_uuid": "2e1ae325-d3e2-4576-a0f7-6f8626967cfb"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "4e003e9a-1815-4442-9832-958218f1bea1"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "4e003e9a-1815-4442-9832-958218f1bea1"
+        }
+    ],
+    "title": [
+        {
+            "value": "Acerca de Umami"
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-16T23:34:34+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-16T23:34:34+00:00"
+        }
+    ],
+    "promote": [
+        {
+            "value": false
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/acerca-de-umami",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_body": [
+        {
+            "value": "<p> Umami es una revista ficticia de alimentos que se ha creado para demostrar c\u00f3mo se puede construir un sitio de Drupal con la funcionalidad que se proporciona 'fuera de la caja'. <\/p> <p> Para obtener m\u00e1s informaci\u00f3n, visite <a href=\"https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile\">https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile<\/a>.<\/p> ",
+            "format": "basic_html",
+            "processed": "<p> Umami es una revista ficticia de alimentos que se ha creado para demostrar c\u00f3mo se puede construir un sitio de Drupal con la funcionalidad que se proporciona 'fuera de la caja'. <\/p>\n<p> Para obtener m\u00e1s informaci\u00f3n, visite <a href=\"https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile\">https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile<\/a>.<\/p>\n"
+        }
+    ]
+}

@@ -1,0 +1,99 @@
+{
+    "uuid": [
+        {
+            "value": "9416c87d-1357-4cee-904f-e1357c8a8c7e"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "image",
+            "target_type": "media_type",
+            "target_uuid": "efa181ad-a88e-489e-a64c-16daea01cf58"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "c48b5ede-5355-480a-9a82-020a44a08104"
+        }
+    ],
+    "name": [
+        {
+            "value": "Salta los esp\u00edritus con deliciosos c\u00f3cteles sin alcohol"
+        }
+    ],
+    "thumbnail": [
+        {
+            "alt": "Mocktail de mojito fresco con guarnici\u00f3n de hojas de menta, hielo y lima en rodajas",
+            "title": null,
+            "width": 768,
+            "height": 512,
+            "target_type": "file",
+            "target_uuid": "ca2e1406-3238-45c9-93c7-d45631e9478f"
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": null,
+            "pid": null,
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_media_image": [
+        {
+            "alt": "Mocktail de mojito fresco con guarnici\u00f3n de hojas de menta, hielo y lima en rodajas",
+            "title": null,
+            "width": 768,
+            "height": 512,
+            "target_type": "file",
+            "target_uuid": "c294d055-c439-4d03-a3f7-929390262d02"
+        }
+    ]
+}

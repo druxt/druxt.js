@@ -1,10 +1,10 @@
-uuid: dcf2b573-b434-42b8-96d4-29b5e5048ef0
+uuid: 960eb363-e911-4d9b-9141-bb342f843b35
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.article.body
+    - field.field.node.article.field_body
     - field.field.node.article.field_media_image
     - field.field.node.article.field_tags
     - field.field.node.article.layout_builder__layout
@@ -13,14 +13,14 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: MhG-M4NWrXFUsvNY-DdBxcZw5JnvIDzN4Ke5z29ScAw
+  default_config_hash: iUwTTqad91Xymb21AYtx8aOrrKU3uPtRfymE5zbsi98
 id: node.article.teaser
 targetEntityType: node
 bundle: article
 mode: teaser
 content:
-  body:
-    type: text_summary_or_trimmed
+  field_body:
+    type: text_trimmed
     label: hidden
     settings:
       trim_length: 600

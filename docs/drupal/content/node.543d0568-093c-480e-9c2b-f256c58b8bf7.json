@@ -1,0 +1,117 @@
+{
+    "uuid": [
+        {
+            "value": "543d0568-093c-480e-9c2b-f256c58b8bf7"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "article",
+            "target_type": "node_type",
+            "target_uuid": "59b7b1c1-8674-4851-9796-daf4bf44f63a"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "5067c45a-2ee7-4ed8-b3fd-0cb8e311f33d"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "5067c45a-2ee7-4ed8-b3fd-0cb8e311f33d"
+        }
+    ],
+    "title": [
+        {
+            "value": "The Umami guide to our favorite mushrooms"
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-11T23:34:34+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-11T23:34:34+00:00"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/articles\/the-umami-guide-to-our-favorite-mushrooms",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_body": [
+        {
+            "value": "<p>We think mushrooms are one of the most enjoyable ingredients to cook with. There are plenty of edible varieties to try, each with their own distinctive shape, size, and taste. And with curious names such as chanterelle, the gypsy, horn of plenty, or hen of the woods, who wouldn't want to know more about cooking with the mighty mushroom?<\/p>\n<p>One of the best things about mushrooms is their versatility. They can be fried, roasted, grilled, steamed, or even cooked in the microwave. And they can be served as the main ingredient for a dish, or simply added as part of the mix. This makes mushrooms an ideal choice for creating absolutely delicious vegetarian dishes.<\/p>\n<p>So let's take a look at some of our favorite types of mushroom. You might not have tried cooking with them before but don't let that put you off. With their delicious, distinctive flavors you can easily transform soups, starters, sauces and create amazing pasta, or stir-fry dishes.<\/p>\n<p>Try the lovely <strong>shiitake<\/strong>. Used in Asian cooking, these can be purchased dried and rehydrated for a strong, deep flavor. Or buy fresh and add to soups and stir-fries. Not only does this mushroom have an intense flavor, it looks lovely too. The deep brown and smooth shapes will provide texture to your meal. In their dried form and rehydrated, these are the perfect addition for a deep and flavorful stock for a risotto.<\/p>\n<p>The gorgeous sunny <strong>chanterelle<\/strong> with its yellow flesh has a fruity flavor - but it is worth mentioning that there are many lookalikes out there and care should be taken to ensure you're eating the right ones. These look great in an omelette or an Asian soup to complement the yellow tones.<\/p>\n<p>The brown <strong>morel<\/strong> offers a meaty and distinctive flavor and you'll probably love how extraordinary they look in a meal. The morel is a more popular mushroom during the spring, when their availability is high.<\/p>\n<p>For delicacy try the <strong>enoki<\/strong> with its tiny white heads that grow in a bunch. These can even be eaten raw in salads. Finally, you can choose the popular <strong>oyster<\/strong> mushroom. They are named thus because they look nothing like a mushroom and resemble the innards of an oyster and their sweet flavor is delicious.<\/p>\n",
+            "format": "basic_html",
+            "processed": "<p>We think mushrooms are one of the most enjoyable ingredients to cook with. There are plenty of edible varieties to try, each with their own distinctive shape, size, and taste. And with curious names such as chanterelle, the gypsy, horn of plenty, or hen of the woods, who wouldn't want to know more about cooking with the mighty mushroom?<\/p>\n<p>One of the best things about mushrooms is their versatility. They can be fried, roasted, grilled, steamed, or even cooked in the microwave. And they can be served as the main ingredient for a dish, or simply added as part of the mix. This makes mushrooms an ideal choice for creating absolutely delicious vegetarian dishes.<\/p>\n<p>So let's take a look at some of our favorite types of mushroom. You might not have tried cooking with them before but don't let that put you off. With their delicious, distinctive flavors you can easily transform soups, starters, sauces and create amazing pasta, or stir-fry dishes.<\/p>\n<p>Try the lovely <strong>shiitake<\/strong>. Used in Asian cooking, these can be purchased dried and rehydrated for a strong, deep flavor. Or buy fresh and add to soups and stir-fries. Not only does this mushroom have an intense flavor, it looks lovely too. The deep brown and smooth shapes will provide texture to your meal. In their dried form and rehydrated, these are the perfect addition for a deep and flavorful stock for a risotto.<\/p>\n<p>The gorgeous sunny <strong>chanterelle<\/strong> with its yellow flesh has a fruity flavor - but it is worth mentioning that there are many lookalikes out there and care should be taken to ensure you're eating the right ones. These look great in an omelette or an Asian soup to complement the yellow tones.<\/p>\n<p>The brown <strong>morel<\/strong> offers a meaty and distinctive flavor and you'll probably love how extraordinary they look in a meal. The morel is a more popular mushroom during the spring, when their availability is high.<\/p>\n<p>For delicacy try the <strong>enoki<\/strong> with its tiny white heads that grow in a bunch. These can even be eaten raw in salads. Finally, you can choose the popular <strong>oyster<\/strong> mushroom. They are named thus because they look nothing like a mushroom and resemble the innards of an oyster and their sweet flavor is delicious.<\/p>\n"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "acae6d20-d4dd-47cb-b65f-5f854939f1a4"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "b46a07a1-a9bb-4827-bd49-7f751edf9f43"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e97ae065-9a07-4288-ace5-1d9c8c701fab"
+        }
+    ]
+}

@@ -1,9 +1,9 @@
-uuid: 2fe0ac16-1751-4269-a97e-e943984091af
+uuid: 09d1e9ff-2d5a-4aba-b697-99f67de78e94
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: NA8SyavQiAMuCA7-JgmsuH2OAvUVjeNpY6jp7A5HRQw
+  default_config_hash: evHcVdAxcqUvU5FyFtu1XwTlUhuE70A_gS2GKHWzGgk
 name: square_large
 label: 'Square Large'
 effects:
@@ -15,3 +15,9 @@ effects:
       width: 900
       height: 900
       anchor: center-center
+  54c8c29a-0a39-4ff0-b61b-8e85cc9367a4:
+    uuid: 54c8c29a-0a39-4ff0-b61b-8e85cc9367a4
+    id: image_convert_avif
+    weight: 2
+    data:
+      extension: webp

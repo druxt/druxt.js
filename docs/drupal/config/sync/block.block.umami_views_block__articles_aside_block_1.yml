@@ -1,4 +1,4 @@
-uuid: 57ab9ed6-efa6-40c5-b948-7c520b48d727
+uuid: 783dfae4-e2df-4fef-a11d-5360f5e6612c
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
   theme:
     - umami
 _core:
-  default_config_hash: 8-Bn-bZrfr5YvVJQnkk07At7wicycvUIEnhKSHex2co
+  default_config_hash: JLXIzIIWBf-LrnyNNCfZBwRraOVBDmDuTOaZVoTFZfg
 id: umami_views_block__articles_aside_block_1
 theme: umami
 region: sidebar
@@ -23,7 +23,7 @@ settings:
   label_display: visible
   provider: views
   views_label: ''
-  items_per_page: none
+  items_per_page: null
 visibility:
   'entity_bundle:node':
     id: 'entity_bundle:node'

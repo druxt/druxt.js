@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "9dad7347-0412-400e-8476-b643e80b4112"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/23"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/estacional"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

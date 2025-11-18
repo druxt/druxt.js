@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "00c93c06-ec90-4201-be93-1ca19c41a010"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/6"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/carrots"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

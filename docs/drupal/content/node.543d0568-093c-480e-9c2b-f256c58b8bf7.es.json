@@ -1,0 +1,121 @@
+{
+    "uuid": [
+        {
+            "value": "543d0568-093c-480e-9c2b-f256c58b8bf7"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "article",
+            "target_type": "node_type",
+            "target_uuid": "59b7b1c1-8674-4851-9796-daf4bf44f63a"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "5067c45a-2ee7-4ed8-b3fd-0cb8e311f33d"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "5067c45a-2ee7-4ed8-b3fd-0cb8e311f33d"
+        }
+    ],
+    "title": [
+        {
+            "value": "Gu\u00eda Umami de nuestras setas preferidas"
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-11T23:34:34+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-11T23:34:34+00:00"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/articles\/guia-umami-de-nuestras-setas-preferidas",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_body": [
+        {
+            "value": "<p>Creemos que las setas son uno de los ingredientes que m\u00e1s se pueden disfrutar en la cocina. Hay muchas variedades comestibles para probar, cada una con su propia forma, tama\u00f1o y sabor distintivos. Y con curiosos nombres como rebozuelo, seta gitana, trompeta de los muertos o frigola frondosa \u00bfqui\u00e9n no querr\u00eda saber m\u00e1s sobre cocinar con las poderosas setas?<\/p>\n<p>Una de las mejoras cosas que tienen las setas son su versatilidad. Pueden ser fritas, tostadas, asadas al horno oa la parrilla e incluso cocinadas en un microondas. Y pueden ser servidas como ingrediente principal del plato como parte de un conjunto mayor. Esto hace a las setas una opci\u00f3n ideal para crear simples y deliciosos platos vegetarianos.<\/p>\n<p>As\u00ed que echemos un vistazo a algunos de nuestros tipos preferidos de setas. Es posible que no hayas intentado cocinar con ellas antes, pero no dejes que eso te desanime. Con sus deliciosos y particulares sabores puedes transformar f\u00e1cilmente sopas, entrantes, salsas y crear incre\u00edbles platos de pasta o salteados.<\/p>\n<p>Prueba el adorable <strong>shiitake<\/strong>. Usadas en la cocina asi\u00e1tica, pueden comprarse secos y rehidratados para obtener un sabor fuerte y profundo. O comprarlo fresco y a\u00f1adirlo a sopas y sofritos. No solo es una seta de intenso sabor, sino tambi\u00e9n de encantadora apariencia. Las formas de color marr\u00f3n oscuro y suave proporcionar\u00e1n textura a su comida. En su forma rehidratada son el complemento perfecto para un caldo o un risotto.<\/p>\n<p>La hermosa <strong>rebozuelo<\/strong> (o chantarela) con su pulpa amarilla, tiene un sabor afrutado, pero vale la pena mencionar que hay muchas variedades parecidas por ah\u00ed y se ha de tener cuidado para asegurarse de que se est\u00e1 comiendo la correcta. Quedan muy bien en una tortilla o una sopa asi\u00e1tica para complementar los tonos amarillos.<\/p>\n<p>La <strong>morchella<\/strong> (o morilla) marr\u00f3n ofrece un sabor carnoso y distintivo y probablemente te encantar\u00e1 lo extraordinaria que se ve en una comida. La morchella es una seta m\u00e1s popular durante la primavera, que es cuando su disponibilidad es m\u00e1s alta.<\/p>\n<p>Para algo delicado, pruebe la <strong>enoki<\/strong>, con sus diminutas cabezas blancas que crecen en un mont\u00f3n. Incluso se pueden comer crudas en ensaladas. Por \u00faltimo, puedes elegir la popular seta <strong>ostra<\/strong>. Se nombran porque no se parecen en nada a una seta y se asemejan a las entra\u00f1as de una ostra y su sabor dulce es delicioso.<\/p>\n",
+            "format": "basic_html",
+            "processed": "<p>Creemos que las setas son uno de los ingredientes que m\u00e1s se pueden disfrutar en la cocina. Hay muchas variedades comestibles para probar, cada una con su propia forma, tama\u00f1o y sabor distintivos. Y con curiosos nombres como rebozuelo, seta gitana, trompeta de los muertos o frigola frondosa \u00bfqui\u00e9n no querr\u00eda saber m\u00e1s sobre cocinar con las poderosas setas?<\/p>\n<p>Una de las mejoras cosas que tienen las setas son su versatilidad. Pueden ser fritas, tostadas, asadas al horno oa la parrilla e incluso cocinadas en un microondas. Y pueden ser servidas como ingrediente principal del plato como parte de un conjunto mayor. Esto hace a las setas una opci\u00f3n ideal para crear simples y deliciosos platos vegetarianos.<\/p>\n<p>As\u00ed que echemos un vistazo a algunos de nuestros tipos preferidos de setas. Es posible que no hayas intentado cocinar con ellas antes, pero no dejes que eso te desanime. Con sus deliciosos y particulares sabores puedes transformar f\u00e1cilmente sopas, entrantes, salsas y crear incre\u00edbles platos de pasta o salteados.<\/p>\n<p>Prueba el adorable <strong>shiitake<\/strong>. Usadas en la cocina asi\u00e1tica, pueden comprarse secos y rehidratados para obtener un sabor fuerte y profundo. O comprarlo fresco y a\u00f1adirlo a sopas y sofritos. No solo es una seta de intenso sabor, sino tambi\u00e9n de encantadora apariencia. Las formas de color marr\u00f3n oscuro y suave proporcionar\u00e1n textura a su comida. En su forma rehidratada son el complemento perfecto para un caldo o un risotto.<\/p>\n<p>La hermosa <strong>rebozuelo<\/strong> (o chantarela) con su pulpa amarilla, tiene un sabor afrutado, pero vale la pena mencionar que hay muchas variedades parecidas por ah\u00ed y se ha de tener cuidado para asegurarse de que se est\u00e1 comiendo la correcta. Quedan muy bien en una tortilla o una sopa asi\u00e1tica para complementar los tonos amarillos.<\/p>\n<p>La <strong>morchella<\/strong> (o morilla) marr\u00f3n ofrece un sabor carnoso y distintivo y probablemente te encantar\u00e1 lo extraordinaria que se ve en una comida. La morchella es una seta m\u00e1s popular durante la primavera, que es cuando su disponibilidad es m\u00e1s alta.<\/p>\n<p>Para algo delicado, pruebe la <strong>enoki<\/strong>, con sus diminutas cabezas blancas que crecen en un mont\u00f3n. Incluso se pueden comer crudas en ensaladas. Por \u00faltimo, puedes elegir la popular seta <strong>ostra<\/strong>. Se nombran porque no se parecen en nada a una seta y se asemejan a las entra\u00f1as de una ostra y su sabor dulce es delicioso.<\/p>\n"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "acae6d20-d4dd-47cb-b65f-5f854939f1a4"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "b46a07a1-a9bb-4827-bd49-7f751edf9f43"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e97ae065-9a07-4288-ace5-1d9c8c701fab"
+        }
+    ]
+}

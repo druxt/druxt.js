@@ -1,10 +1,11 @@
-uuid: 855ab3f1-5288-462d-ae72-5485aaf9e1a8
+uuid: 3adfd3a9-8868-4432-b7e0-f2b2bfd8bbf0
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: wm3zsxqjVUNldWJhh-FumMfn2duT5EdGZstKm92JNak
+  default_config_hash: g1hpqhug1bWnyoOPv5du_3POB76wiJSWzp_mwVELYiw
 name: 'Recipe category'
 vid: recipe_category
 description: 'Use this taxonomy to group recipes of the same type together.'
 weight: 0
+new_revision: false

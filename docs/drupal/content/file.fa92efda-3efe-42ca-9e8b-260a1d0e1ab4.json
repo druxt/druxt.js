@@ -1,0 +1,49 @@
+{
+    "uuid": [
+        {
+            "value": "fa92efda-3efe-42ca-9e8b-260a1d0e1ab4"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "uid": [],
+    "filename": [
+        {
+            "value": "supermarket-savvy-umami.jpg"
+        }
+    ],
+    "uri": [
+        {
+            "value": "public:\/\/supermarket-savvy-umami.jpg",
+            "url": "\/sites\/default\/files\/supermarket-savvy-umami.jpg"
+        }
+    ],
+    "filemime": [
+        {
+            "value": "image\/jpeg"
+        }
+    ],
+    "filesize": [
+        {
+            "value": 100645
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ]
+}

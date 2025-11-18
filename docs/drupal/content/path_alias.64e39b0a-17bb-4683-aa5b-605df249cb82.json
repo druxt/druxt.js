@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "64e39b0a-17bb-4683-aa5b-605df249cb82"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/20"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/fiesta"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-uuid: 85efc4ce-4949-435e-86b0-dc7501fcc744
+uuid: e164c916-6968-4dc9-ba15-df728ac6f5a7
 langcode: en
 status: true
 dependencies:
@@ -22,7 +22,7 @@ dependencies:
     - path
     - text
 _core:
-  default_config_hash: WZPgNLXp5gpBryDcfhT15FsgmA5m-JG8DsSE-PbmoeM
+  default_config_hash: h7Q6m6wHbv3Yb3Qu2Q7_5g1R7bcvC59l7nV3waF9QFM
 id: node.recipe.default
 targetEntityType: node
 bundle: recipe
@@ -115,12 +115,6 @@ content:
     settings:
       include_locked: true
     third_party_settings: {  }
-  layout_builder__layout:
-    type: null
-    weight: 26
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
     weight: 20
@@ -177,4 +171,5 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  layout_builder__layout: true

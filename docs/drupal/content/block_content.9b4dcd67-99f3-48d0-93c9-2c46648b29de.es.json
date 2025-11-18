@@ -13,13 +13,12 @@
         {
             "target_id": "disclaimer_block",
             "target_type": "block_content_type",
-            "target_uuid": "abd1e57d-64ea-40b6-b052-df9636fc00cd"
+            "target_uuid": "0fa95093-e11f-4bf5-b77f-08423a97054f"
         }
     ],
     "revision_created": [
         {
-            "value": "2024-04-03T23:15:53+00:00",
-            "format": "Y-m-d\\TH:i:sP"
+            "value": "2025-11-17T23:34:28+00:00"
         }
     ],
     "revision_user": [],
@@ -36,8 +35,7 @@
     ],
     "changed": [
         {
-            "value": "2024-04-03T23:15:53+00:00",
-            "format": "Y-m-d\\TH:i:sP"
+            "value": "2025-11-17T23:34:28+00:00"
         }
     ],
     "reusable": [
@@ -68,25 +66,26 @@
     "content_translation_uid": [
         {
             "target_type": "user",
-            "target_uuid": "1b73526a-a941-4ebf-b40f-3da0ff2fd1e0"
+            "target_uuid": "c48b5ede-5355-480a-9a82-020a44a08104"
         }
     ],
     "content_translation_created": [
         {
-            "value": "2024-04-03T23:15:53+00:00",
-            "format": "Y-m-d\\TH:i:sP"
+            "value": "2025-11-17T23:34:28+00:00"
         }
     ],
     "field_copyright": [
         {
-            "value": "&copy; 2024 T\u00e9rminos y Condiciones",
-            "format": "basic_html"
+            "value": "&copy; 2025 T\u00e9rminos y Condiciones",
+            "format": "basic_html",
+            "processed": "<p>\u00a9 2025 T\u00e9rminos y Condiciones<\/p>\n"
         }
     ],
     "field_disclaimer": [
         {
             "value": "<strong>Revista Umami y Publicaciones Umami<\/strong> es una revista ficticia publicada con prop\u00f3sito ilustrativo s\u00f3lamente.",
-            "format": "basic_html"
+            "format": "basic_html",
+            "processed": "<p><strong>Revista Umami y Publicaciones Umami<\/strong> es una revista ficticia publicada con prop\u00f3sito ilustrativo s\u00f3lamente.<\/p>\n"
         }
     ]
 }

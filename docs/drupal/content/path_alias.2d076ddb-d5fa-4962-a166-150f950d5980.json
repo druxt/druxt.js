@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "2d076ddb-d5fa-4962-a166-150f950d5980"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/15"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/healthy"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

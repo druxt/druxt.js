@@ -1,9 +1,9 @@
-uuid: 694fa2bb-61ea-4c37-88e9-758ff41f7f11
+uuid: c1a6e13a-6333-4b7a-8a1a-10b06bd0e438
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.article.body
+    - field.field.node.article.field_body
     - field.field.node.article.field_media_image
     - field.field.node.article.field_tags
     - field.field.node.article.layout_builder__layout
@@ -17,13 +17,13 @@ third_party_settings:
     enabled: false
     allow_custom: false
 _core:
-  default_config_hash: 4UCaLHrYCxt7yCaGzdiyAzD8E0ecaVIDI7aLVunEu2Y
+  default_config_hash: SQ-ojShGoVrC-QpDOUupKSAwGVYen5Vg_S4JhxtXgn0
 id: node.article.default
 targetEntityType: node
 bundle: article
 mode: default
 content:
-  body:
+  field_body:
     type: text_default
     label: hidden
     settings: {  }

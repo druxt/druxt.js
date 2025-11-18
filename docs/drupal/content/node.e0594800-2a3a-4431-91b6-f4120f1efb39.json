@@ -1,0 +1,101 @@
+{
+    "uuid": [
+        {
+            "value": "e0594800-2a3a-4431-91b6-f4120f1efb39"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "page",
+            "target_type": "node_type",
+            "target_uuid": "2e1ae325-d3e2-4576-a0f7-6f8626967cfb"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2025-11-17T23:34:28+00:00"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "4e003e9a-1815-4442-9832-958218f1bea1"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "4e003e9a-1815-4442-9832-958218f1bea1"
+        }
+    ],
+    "title": [
+        {
+            "value": "About Umami"
+        }
+    ],
+    "created": [
+        {
+            "value": "2025-11-16T23:34:34+00:00"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2025-11-16T23:34:34+00:00"
+        }
+    ],
+    "promote": [
+        {
+            "value": false
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/about-umami",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_body": [
+        {
+            "value": "<p>Umami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided 'out of the box'.<\/p><p>For more information visit <a href=\"https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile\">https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile<\/a>.<\/p>",
+            "format": "basic_html",
+            "processed": "<p>Umami is a fictional food magazine that has been created to demonstrate how you might build a Drupal site using functionality provided 'out of the box'.<\/p>\n<p>For more information visit <a href=\"https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile\">https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile<\/a>.<\/p>\n"
+        }
+    ]
+}

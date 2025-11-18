@@ -1,4 +1,4 @@
-uuid: 92d45d7a-68be-4974-9527-e439150395fa
+uuid: 2ab54719-6684-47a9-93c4-ef56a9537885
 langcode: en
 status: true
 dependencies:
@@ -25,11 +25,11 @@ dependencies:
     - taxonomy
     - toolbar
 _core:
-  default_config_hash: KHU4qJYoRffGMMrKK4zGKsvAO6vOQKh_P34MIyra7jI
+  default_config_hash: sPKcdyD0c7VBKh6ETK8IjejBnGev7qhKbv3fh--V8kc
 id: editor
 label: Editor
 weight: 4
-is_admin: null
+is_admin: false
 permissions:
   - 'access administration pages'
   - 'access content overview'
