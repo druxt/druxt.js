@@ -9,10 +9,10 @@ const mock = {
     druxt: {
       baseUrl: 'https://demo-api.druxtjs.org',
       menu: {
-        jsonApiMenuItems: true
-      }
-    }
-  }
+        jsonApiMenuItems: true,
+      },
+    },
+  },
 }
 
 test('Nuxt Storybook', async () => {

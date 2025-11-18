@@ -95,8 +95,8 @@ export default {
      * - Emits `reset`.
      */
     onReset() {
-      this.model = JSON.parse(JSON.stringify(this.entity)),
-      this.response = undefined
+      ;(this.model = JSON.parse(JSON.stringify(this.entity))),
+        (this.response = undefined)
       this.$emit('reset')
     },
 
@@ -142,9 +142,8 @@ export default {
       // Use DruxtEntity to build the Field based slots.
       const scopedSlots = DruxtEntity.druxt.slots.call(this, h)
 
-      scopedSlots.buttons = (attrs) => h(
-        'DruxtEntityFormButtons',
-        {
+      scopedSlots.buttons = (attrs) =>
+        h('DruxtEntityFormButtons', {
           attrs,
           on: {
             reset: this.onReset,
@@ -154,13 +153,12 @@ export default {
             schema: this.schema || {},
           },
           ref: 'buttons',
-        },
-      )
+        })
 
       // Build default slot.
       scopedSlots.default = (attrs) => [
         ...Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs)),
-        scopedSlots.buttons(attrs)
+        scopedSlots.buttons(attrs),
       ]
 
       return scopedSlots

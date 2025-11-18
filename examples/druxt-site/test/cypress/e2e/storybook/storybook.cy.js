@@ -39,11 +39,23 @@ it('Storybook: Blocks', () => {
   cy.get('#set-wrapper').should('exist')
 
   // Test the DruxtBlockRegion group.
-  cy.get('#druxt-blocks-druxtblockregion').should('contain.text', 'DruxtBlockRegion')
+  cy.get('#druxt-blocks-druxtblockregion').should(
+    'contain.text',
+    'DruxtBlockRegion'
+  )
   cy.get('#druxt-blocks-druxtblockregion').click()
-  cy.url().should('contain', '?path=/story/druxt-blocks-druxtblockregion--default')
-  cy.get('#control-name').should('exist').find('option').should('have.length', 15)
-  cy.get('#control-theme').should('exist').find('option').should('have.length', 3)
+  cy.url().should(
+    'contain',
+    '?path=/story/druxt-blocks-druxtblockregion--default'
+  )
+  cy.get('#control-name')
+    .should('exist')
+    .find('option')
+    .should('have.length', 15)
+  cy.get('#control-theme')
+    .should('exist')
+    .find('option')
+    .should('have.length', 3)
 
   // Set the block region to the umami footer.
   cy.get('#control-name').select('footer')
@@ -58,7 +70,10 @@ it('Storybook: Blocks', () => {
   // Test the DruxtBlocks Claro Header region story group.
   cy.get('#druxt-blocks-claro-header').should('contain.text', 'Header')
   cy.get('#druxt-blocks-claro-header').click()
-  cy.get('[data-parent-id="druxt-blocks-claro-header"]').should('have.length', 3)
+  cy.get('[data-parent-id="druxt-blocks-claro-header"]').should(
+    'have.length',
+    3
+  )
   cy.get('button[data-parent-id="druxt-blocks-claro-header"]:first').click()
   cy.get('[data-selected="true"]').should('have.text', 'DruxtBlock')
   cy.get('[data-parent-id="druxt-blocks-claro-header"]:last').click()
@@ -92,9 +107,15 @@ it('Storybook: Breadcrumb', () => {
   cy.get('#druxt-breadcrumb').click()
 
   // Test the DruxtBreadcrumb group.
-  cy.get('#druxt-breadcrumb-druxtbreadcrumb').should('contain.text', 'DruxtBreadcrumb')
+  cy.get('#druxt-breadcrumb-druxtbreadcrumb').should(
+    'contain.text',
+    'DruxtBreadcrumb'
+  )
   cy.get('#druxt-breadcrumb-druxtbreadcrumb').click()
-  cy.url().should('contain', '?path=/story/druxt-breadcrumb-druxtbreadcrumb--default')
+  cy.url().should(
+    'contain',
+    '?path=/story/druxt-breadcrumb-druxtbreadcrumb--default'
+  )
   cy.get('#set-home').should('exist')
   cy.get('#set-langcode').should('exist')
   cy.get('#set-path').should('exist')
@@ -102,13 +123,18 @@ it('Storybook: Breadcrumb', () => {
 
   // Open the Docs tab.
   cy.get('button:contains("Docs")').click()
-  cy.url().should('contain', '?path=/docs/druxt-breadcrumb-druxtbreadcrumb--default')
+  cy.url().should(
+    'contain',
+    '?path=/docs/druxt-breadcrumb-druxtbreadcrumb--default'
+  )
 })
 
 it('Storybook: Entity', () => {
   // Test the root Entity group.
-  cy.get('#druxt-entity').should('contain.text', 'Entity')
-  .should('contain.text', 'Entity').click()
+  cy.get('#druxt-entity')
+    .should('contain.text', 'Entity')
+    .should('contain.text', 'Entity')
+    .click()
 
   // Test the DruxtEntity group.
   cy.get('#druxt-entity-druxtentity').should('contain.text', 'DruxtEntity')
@@ -126,17 +152,23 @@ it('Storybook: Entity', () => {
   // View the "About Umami" page.
   cy.get('#control-type').select('node--page')
   cy.get('#set-uuid').click()
-  cy.get('#control-uuid').type('475e3aa4-f045-456f-9d4a-e0c26a165e27')
+  cy.get('#control-uuid').type('e0594800-2a3a-4431-91b6-f4120f1efb39')
 
   // Open the Docs tab.
   cy.get('button:contains("Docs")').click()
   cy.url().should('contain', '?path=/docs/druxt-entity-druxtentity--default')
 
   // Test the DruxtEntityForm group.
-  cy.get('#druxt-entity-druxtentityform').should('contain.text', 'DruxtEntityForm')
+  cy.get('#druxt-entity-druxtentityform').should(
+    'contain.text',
+    'DruxtEntityForm'
+  )
   cy.get('#druxt-entity-druxtentityform').click()
   cy.get('button:contains("Canvas")').click()
-  cy.url().should('contain', '?path=/story/druxt-entity-druxtentityform--default')
+  cy.url().should(
+    'contain',
+    '?path=/story/druxt-entity-druxtentityform--default'
+  )
   // cy.get('#set-langcode').should('exist')
   cy.get('#set-mode').should('exist')
   cy.get('#set-settings').should('exist')
@@ -151,25 +183,32 @@ it('Storybook: Entity', () => {
   // Edit the "About Umami" page.
   cy.get('#control-type').select('node--page')
   cy.get('#set-uuid').click()
-  cy.get('#control-uuid').type('475e3aa4-f045-456f-9d4a-e0c26a165e27')
+  cy.get('#control-uuid').type('e0594800-2a3a-4431-91b6-f4120f1efb39')
 
   // Test the Node group.
   cy.get('#druxt-entity-node').should('contain.text', 'Node')
   cy.get('#druxt-entity-node').click()
   cy.get('[data-parent-id="druxt-entity-node"]').should('have.length', 3)
-  cy.get('[data-parent-id="druxt-entity-node"]:last').should('have.text', 'Recipe')
+  cy.get('[data-parent-id="druxt-entity-node"]:last').should(
+    'have.text',
+    'Recipe'
+  )
   cy.get('[data-parent-id="druxt-entity-node"]:last').click()
 
   // Test view displays.
   cy.get('#druxt-entity-node-recipe-view-displays').should('exist')
   cy.get('#druxt-entity-node-recipe-view-displays').click()
   cy.get('#control-mode').select('card')
-  cy.get('#control-uuid').select('Vegan chocolate and nut brownies (67f44980-de26-4567-82f4-b058595720ec)')
+  cy.get('#control-uuid').select(
+    'Vegan chocolate and nut brownies (a8fd7e75-6d2a-4fca-96b1-d8c747a5f88c)'
+  )
 
   // Test view displays.
   cy.get('#druxt-entity-node-recipe-form-displays').should('exist')
   cy.get('#druxt-entity-node-recipe-form-displays').click()
-  cy.get('#control-uuid').select('Vegan chocolate and nut brownies (67f44980-de26-4567-82f4-b058595720ec)')
+  cy.get('#control-uuid').select(
+    'Vegan chocolate and nut brownies (a8fd7e75-6d2a-4fca-96b1-d8c747a5f88c)'
+  )
 })
 
 it('Storybook: Menu', () => {
@@ -189,12 +228,18 @@ it('Storybook: Menu', () => {
   cy.get('#control-name').select('Footer')
 
   // Test the User account menu.
-  cy.get('#druxt-menu-user-account-menu--default').should('contain.text', 'User account menu')
+  cy.get('#druxt-menu-user-account-menu--default').should(
+    'contain.text',
+    'User account menu'
+  )
   cy.get('#druxt-menu-user-account-menu--default').click()
 
   // Open the Docs tab.
   cy.get('button:contains("Docs")').click()
-  cy.url().should('contain', '?path=/docs/druxt-menu-user-account-menu--default')
+  cy.url().should(
+    'contain',
+    '?path=/docs/druxt-menu-user-account-menu--default'
+  )
 })
 
 it('Storybook: Views', () => {

@@ -9,6 +9,6 @@
  * Placeholder component for the Druxt Wrapper themeing system.
  */
 export default {
-  name: 'DruxtWrapper'
+  name: 'DruxtWrapper',
 }
 </script>

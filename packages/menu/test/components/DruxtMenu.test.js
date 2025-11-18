@@ -22,11 +22,16 @@ let store
 const mocks = {
   $druxt: { settings: {} },
   $route: { path: '/' },
-  $fetchState: { pending: true }
+  $fetchState: { pending: true },
 }
 
 const mountComponent = (options = {}) => {
-  return shallowMount(DruxtMenuComponent, { ...options, store, localVue, mocks })
+  return shallowMount(DruxtMenuComponent, {
+    ...options,
+    store,
+    localVue,
+    mocks,
+  })
 }
 
 describe('DruxtMenu', () => {
@@ -45,13 +50,18 @@ describe('DruxtMenu', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtMenuComponent.fetchKey.call(wrapper.vm, jest.fn(() => 1))).toBe('DruxtMenu:main:1')
+    expect(
+      DruxtMenuComponent.fetchKey.call(
+        wrapper.vm,
+        jest.fn(() => 1)
+      )
+    ).toBe('DruxtMenu:main:1')
 
     // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtMenuMain',
-      'DruxtMenuDefault'
+      'DruxtMenuDefault',
     ])
     expect(Object.keys(wrapper.vm.getScopedSlots())).toStrictEqual(['default'])
 
@@ -112,27 +122,27 @@ describe('DruxtMenu', () => {
     })
   })
 
-  test('getEntitysByFilter', async() => {
+  test('getEntitysByFilter', async () => {
     const mock = {
       entities: {
         undefined: {
           test: {
             attributes: {
               menu_name: 'test',
-              parent: null
-            }
-          }
-        }
+              parent: null,
+            },
+          },
+        },
       },
       getEntitiesByFilter: jest.fn(({ filter }) => {
         expect(filter('test')).toBe(true)
       }),
-      name: 'test'
+      name: 'test',
     }
     DruxtMenuComponent.methods.getMenuItems.call(mock)
     expect(mock.getEntitiesByFilter).toHaveBeenLastCalledWith({
       filter: expect.any(Function),
-      prefix: undefined
+      prefix: undefined,
     })
   })
 })

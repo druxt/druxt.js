@@ -4,31 +4,35 @@ import { DruxtClient } from 'druxt'
 
 // @todo - Use component naming convention for title.
 const titleFn = (parts) =>
-parts
-  .map(
-    (part) =>
-      part.charAt(0).toUpperCase() + part.slice(1).replace(/_/g, ' ')
-  )
-  .join('/')
+  parts
+    .map(
+      (part) => part.charAt(0).toUpperCase() + part.slice(1).replace(/_/g, ' ')
+    )
+    .join('/')
 
 export default async function ({ stories }) {
   const { addTemplate, options } = this
 
   // Setup DruxtClient instance.
-  const druxt = new DruxtClient(options.druxt.baseUrl, { ...options.druxt, proxy: { api: false } })
+  const druxt = new DruxtClient(options.druxt.baseUrl, {
+    ...options.druxt,
+    proxy: { api: false },
+  })
 
   // Get all required data.
   const resourceType = 'menu--menu'
   const query = new DrupalJsonApiParams()
     .addFilter('status', 1)
     .addFields(resourceType, ['description', 'drupal_internal__id', 'label'])
-  const menus = (await druxt.getCollectionAll(resourceType, query)).map((collection) => collection.data).flat()
+  const menus = (await druxt.getCollectionAll(resourceType, query))
+    .map((collection) => collection.data)
+    .flat()
 
   // DruxtMenu story.
   addTemplate({
     src: resolve(__dirname, `../templates/druxt-menu.stories.js`),
     fileName: `stories/druxt-menu.stories.js`,
-    options: { menus }
+    options: { menus },
   })
   stories.push(resolve(options.buildDir, './stories/druxt-menu.stories.js'))
 

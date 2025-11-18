@@ -9,7 +9,7 @@ import { join, resolve } from 'path'
  *
  * Options are set on the root level `druxt` Nuxt.js config object.
  *
-* @example <caption>nuxt.config.js</caption> @lang js
+ * @example <caption>nuxt.config.js</caption> @lang js
  * module.exports = {
  *   modules: [
  *     'druxt-breadcrumb'
@@ -25,11 +25,11 @@ const DruxtBreadcrumbModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
-    ...(this.options || {}).druxt || {},
+    ...((this.options || {}).druxt || {}),
     breadcrumb: {
       ...((this.options || {}).druxt || {}).breadcrumb,
       ...moduleOptions,
-    }
+    },
   }
 
   // Add dependent module.
@@ -37,7 +37,7 @@ const DruxtBreadcrumbModule = async function (moduleOptions = {}) {
   await this.addModule(['druxt-router/nuxt', options])
 
   // Register components directories.
-  this.nuxt.hook('components:dirs', dirs => {
+  this.nuxt.hook('components:dirs', (dirs) => {
     dirs.push({ path: join(__dirname, 'components') })
     dirs.push({ path: join(__dirname, 'components/blocks') })
   })
@@ -48,7 +48,9 @@ const DruxtBreadcrumbModule = async function (moduleOptions = {}) {
       src: resolve(__dirname, '../templates/druxt-breadcrumb.stories.js'),
       fileName: 'stories/druxt-breadcrumb.stories.js',
     })
-    stories.push(resolve(this.options.buildDir, './stories/druxt-breadcrumb.stories.js'))
+    stories.push(
+      resolve(this.options.buildDir, './stories/druxt-breadcrumb.stories.js')
+    )
   })
 }
 

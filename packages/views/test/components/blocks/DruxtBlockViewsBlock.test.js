@@ -19,14 +19,21 @@ const stubs = ['druxt-view']
 const mountComponent = (entity, options = {}) => {
   const mocks = {
     $fetchState: {
-      pending: true
+      pending: true,
     },
-    $route: { meta: {} }
+    $route: { meta: {} },
   }
 
   const propsData = { block: entity }
 
-  return mount(DruxtBlockViewsBlock, { localVue, mocks, propsData, store, stubs, ...options })
+  return mount(DruxtBlockViewsBlock, {
+    localVue,
+    mocks,
+    propsData,
+    store,
+    stubs,
+    ...options,
+  })
 }
 
 describe('Component - DruxtBlockViewsBlock', () => {
@@ -40,9 +47,15 @@ describe('Component - DruxtBlockViewsBlock', () => {
   })
 
   test('default', async () => {
-    const blockQuery = new DrupalJsonApiParams().addFilter('drupal_internal__id', 'views_block__promoted_items_block_1')
+    const blockQuery = new DrupalJsonApiParams().addFilter(
+      'drupal_internal__id',
+      'views_block__promoted_items_block_1'
+    )
     const mockBlock = await getMockResource('block--block', blockQuery)
-    const viewQuery = new DrupalJsonApiParams().addFilter('drupal_internal__id', 'promoted_items')
+    const viewQuery = new DrupalJsonApiParams().addFilter(
+      'drupal_internal__id',
+      'promoted_items'
+    )
     const mockView = await getMockResource('view--view', viewQuery)
 
     const wrapper = mountComponent(mockBlock.data)
@@ -54,7 +67,7 @@ describe('Component - DruxtBlockViewsBlock', () => {
       displayId: 'block_1',
       langcode: undefined,
       uuid: mockView.data.id,
-      viewId: 'promoted_items'
+      viewId: 'promoted_items',
     })
   })
 })

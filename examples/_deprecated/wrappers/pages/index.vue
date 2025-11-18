@@ -81,13 +81,20 @@ import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
 export default {
   async fetch() {
-    const query = new DrupalJsonApiParams().addPageLimit(1).addFields(this.type, ['id'])
-    this.uuid = (await this.$store.dispatch('druxt/getCollection', { type: this.type, query })).data[0].id
+    const query = new DrupalJsonApiParams()
+      .addPageLimit(1)
+      .addFields(this.type, ['id'])
+    this.uuid = (
+      await this.$store.dispatch('druxt/getCollection', {
+        type: this.type,
+        query,
+      })
+    ).data[0].id
   },
 
   data: () => ({
     uuid: null,
-    type: 'node--page'
-  })
+    type: 'node--page',
+  }),
 }
 </script>

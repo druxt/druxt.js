@@ -61,7 +61,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ type }) => ([[type], ['default']]),
+    componentOptions: ({ type }) => [[type], ['default']],
 
     /**
      * Provides propsData for the DruxtWrapper.
@@ -69,7 +69,12 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ options, filters, model, type }) => ({ options, filters, type, value: model }),
+    propsData: ({ options, filters, model, type }) => ({
+      options,
+      filters,
+      type,
+      value: model,
+    }),
 
     /**
      * Provides the scoped slots object for the Module render function.
@@ -92,25 +97,30 @@ export default {
 
       // Build scoped slots for each filter.
       this.filters.map((filter) => {
-        scopedSlots[filter.expose.identifier] = (attrs) => h('DruxtViewsFilter', {
-          attrs: { ...attrs, ...this.$attrs },
-          props: {
-            filter,
-            value: this.model[filter.expose.identifier]
-          },
-          ref: filter.expose.identifier,
-          on: {
-            input: (value) => {
-              this.model = { ...this.model, [filter.expose.identifier]: value }
-            }
-          }
-        })
+        scopedSlots[filter.expose.identifier] = (attrs) =>
+          h('DruxtViewsFilter', {
+            attrs: { ...attrs, ...this.$attrs },
+            props: {
+              filter,
+              value: this.model[filter.expose.identifier],
+            },
+            ref: filter.expose.identifier,
+            on: {
+              input: (value) => {
+                this.model = {
+                  ...this.model,
+                  [filter.expose.identifier]: value,
+                }
+              },
+            },
+          })
       })
 
       // Build default slot.
-      scopedSlots.default = (attrs) => this.filters.map(
-        (filter) => scopedSlots[filter.expose.identifier](attrs)
-      )
+      scopedSlots.default = (attrs) =>
+        this.filters.map((filter) =>
+          scopedSlots[filter.expose.identifier](attrs)
+        )
 
       return scopedSlots
     },
@@ -119,11 +129,11 @@ export default {
      * Druxt development template tool configuration.
      */
     template: {
-      debug: "{ options, filters, model, type }",
+      debug: '{ options, filters, model, type }',
       mixins: {
-        'DruxtViewsFiltersMixin': 'druxt-views'
-      }
-    }
+        DruxtViewsFiltersMixin: 'druxt-views',
+      },
+    },
   },
 }
 

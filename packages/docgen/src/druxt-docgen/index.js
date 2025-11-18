@@ -10,8 +10,7 @@ const argv = yargs
     type: 'string',
   })
   .help()
-  .alias('help', 'h')
-  .argv
+  .alias('help', 'h').argv
 
 const druxtDocgen = new DruxtDocgen(argv.config || null)
 

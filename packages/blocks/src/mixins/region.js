@@ -16,7 +16,7 @@
  * }
  * </script>
  */
- const DruxtBlocksRegionMixin = {
+const DruxtBlocksRegionMixin = {
   /** */
   props: {
     /**
@@ -36,8 +36,8 @@
      * @type {string}
      */
     langcode: {
-       type: String,
-       default: undefined,
+      type: String,
+      default: undefined,
     },
 
     /**
@@ -46,9 +46,9 @@
      * @type {string}
      * @default content
      */
-     name: {
+    name: {
       type: String,
-      default: 'content'
+      default: 'content',
     },
 
     /**
@@ -59,7 +59,7 @@
      */
     theme: {
       type: String,
-      required: true
+      required: true,
     },
   },
 }

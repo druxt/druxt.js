@@ -1,15 +1,9 @@
 <template>
   <div>
     <select v-model="option">
-      <option
-        v-for="(label, key) of options"
-        :key="key"
-        v-text="label"
-      />
+      <option v-for="(label, key) of options" :key="key" v-text="label" />
     </select>
-    <button @click="onClick">
-      Create
-    </button>
+    <button @click="onClick">Create</button>
   </div>
 </template>
 
@@ -20,10 +14,11 @@ export default {
   }),
 
   computed: {
-    module: ({ $parent }) => ($parent.component || {}).options
-      ? $parent
-      : ($parent.$parent || {}).$parent || {},
-    options: ({ module }) => (module.component || {}).options || []
+    module: ({ $parent }) =>
+      ($parent.component || {}).options
+        ? $parent
+        : ($parent.$parent || {}).$parent || {},
+    options: ({ module }) => (module.component || {}).options || [],
   },
 
   created() {
@@ -40,13 +35,15 @@ export default {
           path: this.option,
           settings: {
             component: this.module.$options._componentTag,
-            props: Object.entries(this.module.component.propsData || {}).map(([key, value]) => ({ key, type: typeof value })),
+            props: Object.entries(this.module.component.propsData || {}).map(
+              ([key, value]) => ({ key, type: typeof value })
+            ),
             slots: this.module.component.slots,
             ...((this.module.$options.druxt || {}).template || {}),
-          }
-        }
+          },
+        },
       })
-    }
-  }
+    },
+  },
 }
 </script>

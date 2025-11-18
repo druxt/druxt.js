@@ -23,24 +23,31 @@ const mocks = {
     settings: {},
   },
   $fetchState: {
-    pending: false
+    pending: false,
   },
   $nuxt: {
     context: {
       isDev: false,
-    }
+    },
   },
-  $route: { meta: {} }
+  $route: { meta: {} },
 }
 
-const mountComponent = async ({ data, entity, field, mode = 'default', options = {}, schema }) => {
+const mountComponent = async ({
+  data,
+  entity,
+  field,
+  mode = 'default',
+  options = {},
+  schema,
+}) => {
   data = data || { ...entity.attributes, ...entity.relationships }
 
   if (!schema) {
     schema = require(`../../../../test/__fixtures__/schemas/${entity.type}--${mode}--view.json`)
   }
 
-  const fieldSchema = schema.fields.find(element => element.id === field)
+  const fieldSchema = schema.fields.find((element) => element.id === field)
 
   const propsData = {
     data: data[field],
@@ -49,7 +56,7 @@ const mountComponent = async ({ data, entity, field, mode = 'default', options =
       ...fieldSchema,
     },
     value: data[field],
-    relationship: !!entity.relationships[field]
+    relationship: !!entity.relationships[field],
   }
 
   return mount(DruxtField, { ...options, localVue, mocks, propsData, store })
@@ -69,7 +76,7 @@ describe('DruxtField', () => {
     store.$druxtSchema = {
       import: (schema) => {
         return require(`../../../../test/__fixtures__/schemas/${schema}.json`)
-      }
+      },
     }
 
     store.app = { context: { error: jest.fn() }, store }
@@ -91,7 +98,12 @@ describe('DruxtField', () => {
     expect(wrapper.vm.value).toStrictEqual(expect.any(Object))
 
     // Fetch key.
-    expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:body:0')
+    expect(
+      DruxtField.fetchKey.call(
+        wrapper.vm,
+        jest.fn(() => 0)
+      )
+    ).toBe('DruxtField:body:0')
 
     // Data.
     expect(wrapper.vm.model).toStrictEqual(wrapper.vm.value)
@@ -140,12 +152,9 @@ describe('DruxtField', () => {
         },
       },
     }
-    expect(Object.keys(DruxtField.druxt.slots.call(slotsMock, h))).toStrictEqual([
-      'label',
-      'label-above',
-      'field-0',
-      'default',
-    ])
+    expect(
+      Object.keys(DruxtField.druxt.slots.call(slotsMock, h))
+    ).toStrictEqual(['label', 'label-above', 'field-0', 'default'])
 
     slotsMock.label.position = 'inline'
     slotsMock.$nuxt.context.isDev = true
@@ -154,7 +163,7 @@ describe('DruxtField', () => {
       'label',
       'label-inline',
       'field-0',
-      'default'
+      'default',
     ])
     slots.default({})
   })
@@ -164,7 +173,7 @@ describe('DruxtField', () => {
     localVue.component('DruxtFieldTextDefault', {
       render(h) {
         return h('slot')
-      }
+      },
     })
 
     const mockPage = await getMockResource('node--page')
@@ -175,7 +184,12 @@ describe('DruxtField', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:body:0')
+    expect(
+      DruxtField.fetchKey.call(
+        wrapper.vm,
+        jest.fn(() => 0)
+      )
+    ).toBe('DruxtField:body:0')
 
     // Computed props.
     expect(wrapper.vm.data).toStrictEqual(wrapper.vm.model)
@@ -197,7 +211,12 @@ describe('DruxtField', () => {
       'DruxtFieldTextDefault',
       'DruxtFieldDefault',
     ])
-    expect(Object.keys(wrapper.vm.value)).toStrictEqual(['value', 'format', 'processed', 'summary'])
+    expect(Object.keys(wrapper.vm.value)).toStrictEqual([
+      'value',
+      'format',
+      'processed',
+      'summary',
+    ])
   })
 
   test('boolean - form', async () => {
@@ -207,10 +226,12 @@ describe('DruxtField', () => {
       field: 'status',
       schema: {
         config: { schemaType: 'form' },
-        fields: [{
-          id: 'status',
-          type: 'boolean_checkbox',
-        }],
+        fields: [
+          {
+            id: 'status',
+            type: 'boolean_checkbox',
+          },
+        ],
       },
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -234,11 +255,13 @@ describe('DruxtField', () => {
       field: 'created',
       schema: {
         config: { schemaType: 'form' },
-        fields: [{
-          id: 'created',
-          settings: { display: {} },
-          type: 'datetime_timestamp',
-        }],
+        fields: [
+          {
+            id: 'created',
+            settings: { display: {} },
+            type: 'datetime_timestamp',
+          },
+        ],
       },
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -264,11 +287,13 @@ describe('DruxtField', () => {
       field: 'field_media_image',
       schema: {
         config: { schemaType: 'view' },
-        fields: [{
-          id: 'field_media_image',
-          settings: { display: {} },
-          type: 'file_default',
-        }],
+        fields: [
+          {
+            id: 'field_media_image',
+            settings: { display: {} },
+            type: 'file_default',
+          },
+        ],
       },
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -289,11 +314,13 @@ describe('DruxtField', () => {
       field: 'field_media_image',
       schema: {
         config: { schemaType: 'view' },
-        fields: [{
-          id: 'field_media_image',
-          settings: { display: {} },
-          type: 'image',
-        }],
+        fields: [
+          {
+            id: 'field_media_image',
+            settings: { display: {} },
+            type: 'image',
+          },
+        ],
       },
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -313,16 +340,20 @@ describe('DruxtField', () => {
       field: 'field_link',
       schema: {
         config: { schemaType: 'view' },
-        fields: [{
-          id: 'field_link',
-          settings: { display: {} },
-          type: 'link',
-        }],
+        fields: [
+          {
+            id: 'field_link',
+            settings: { display: {} },
+            type: 'link',
+          },
+        ],
       },
-      data: { field_link: {
-        title: 'DruxtJS',
-        uri: 'https://druxtjs.org',
-      }},
+      data: {
+        field_link: {
+          title: 'DruxtJS',
+          uri: 'https://druxtjs.org',
+        },
+      },
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
@@ -338,11 +369,13 @@ describe('DruxtField', () => {
       field: 'title',
       schema: {
         config: { schemaType: 'form' },
-        fields: [{
-          id: 'title',
-          settings: { display: {} },
-          type: 'string_textfield',
-        }],
+        fields: [
+          {
+            id: 'title',
+            settings: { display: {} },
+            type: 'string_textfield',
+          },
+        ],
       },
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -370,7 +403,12 @@ describe('DruxtField', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:field_media_image:0')
+    expect(
+      DruxtField.fetchKey.call(
+        wrapper.vm,
+        jest.fn(() => 0)
+      )
+    ).toBe('DruxtField:field_media_image:0')
 
     // Computed props.
     expect(wrapper.vm.data).toStrictEqual(wrapper.vm.model)
@@ -402,10 +440,12 @@ describe('DruxtField', () => {
       field: 'path',
       schema: {
         config: { schemaType: 'form' },
-        fields: [{
-          id: 'path',
-          settings: { display: {} },
-        }],
+        fields: [
+          {
+            id: 'path',
+            settings: { display: {} },
+          },
+        ],
       },
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)

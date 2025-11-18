@@ -26,7 +26,7 @@ const DruxtSchemaStore = ({ store }) => {
      * @type {state}
      */
     state: () => ({
-      schemas: {}
+      schemas: {},
     }),
 
     /**
@@ -44,7 +44,7 @@ const DruxtSchemaStore = ({ store }) => {
        */
       addSchema(state, { id, schema }) {
         state.schemas[id] = schema
-      }
+      },
     },
 
     /**
@@ -71,17 +71,26 @@ const DruxtSchemaStore = ({ store }) => {
           mode: 'default',
           schemaType: 'view',
 
-          ...resource
+          ...resource,
         }
 
         // Build ID from resource type.
         if (!resource.id && resource.resourceType) {
-          resource.id = [resource.resourceType, resource.mode, resource.schemaType].join('--')
+          resource.id = [
+            resource.resourceType,
+            resource.mode,
+            resource.schemaType,
+          ].join('--')
         }
 
         // Build ID from entity and bundle types.
         if (!resource.id && resource.bundle) {
-          resource.id = [resource.entityType, resource.bundle, resource.mode, resource.schemaType].join('--')
+          resource.id = [
+            resource.entityType,
+            resource.bundle,
+            resource.mode,
+            resource.schemaType,
+          ].join('--')
         }
 
         if (!resource.id) {
@@ -95,12 +104,12 @@ const DruxtSchemaStore = ({ store }) => {
         }
 
         return state.schemas[resource.id]
-      }
-    }
+      },
+    },
   }
 
   store.registerModule(namespace, module, {
-    preserveState: Boolean(store.state[namespace])
+    preserveState: Boolean(store.state[namespace]),
   })
 }
 

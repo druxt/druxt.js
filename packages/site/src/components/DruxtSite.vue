@@ -64,7 +64,7 @@ export default {
     theme: {
       type: String,
       default: undefined,
-    }
+    },
   },
 
   data: ({ $druxt }) => ({
@@ -79,11 +79,16 @@ export default {
      * @return {object}
      */
     props: ({ defaultTheme, regions, theme }) =>
-      Object.fromEntries(regions.map((region) => [region, {
-        key: region,
-        name: region,
-        theme: theme || defaultTheme,
-      }])),
+      Object.fromEntries(
+        regions.map((region) => [
+          region,
+          {
+            key: region,
+            name: region,
+            theme: theme || defaultTheme,
+          },
+        ])
+      ),
 
     /**
      * An array of unique region names.
@@ -95,7 +100,7 @@ export default {
   watch: {
     theme() {
       this.$fetch()
-    }
+    },
   },
 
   methods: {
@@ -112,7 +117,10 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ defaultTheme, theme }) => [[theme || defaultTheme], ['default']],
+    componentOptions: ({ defaultTheme, theme }) => [
+      [theme || defaultTheme],
+      ['default'],
+    ],
 
     /**
      * Fetches theme filtered region names from the Block JSON:API resources to
@@ -128,7 +136,7 @@ export default {
           query: new DrupalJsonApiParams()
             .addFields(type, ['theme'])
             .addFilter('plugin', 'system_main_block')
-            .addPageLimit(1)
+            .addPageLimit(1),
         }).then((resources) => resources.data[0].attributes.theme)
       }
 
@@ -139,7 +147,11 @@ export default {
           query: new DrupalJsonApiParams()
             .addFilter('theme', this.theme || this.defaultTheme)
             .addFields(type, ['region']),
-        }).then((resources) => resources.data.map((resource) => resource.attributes.region).filter((v, i, s) => s.indexOf(v) === i))
+        }).then((resources) =>
+          resources.data
+            .map((resource) => resource.attributes.region)
+            .filter((v, i, s) => s.indexOf(v) === i)
+        )
       }
     },
 
@@ -149,7 +161,11 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ defaultTheme, props, regions, theme }) => ({ props, regions, theme: theme || defaultTheme }),
+    propsData: ({ defaultTheme, props, regions, theme }) => ({
+      props,
+      regions,
+      theme: theme || defaultTheme,
+    }),
 
     /**
      * Provides the scoped slots object for the Module render function.
@@ -178,16 +194,23 @@ export default {
 
       // Build scoped slots for each region.
       const scopedSlots = {
-        ...Object.fromEntries(this.regions.map((region) => [region, (attrs) => h('DruxtBlockRegion', {
-          attrs,
-          key: region,
-          props: this.props[region],
-          ref: region,
-        })]))
+        ...Object.fromEntries(
+          this.regions.map((region) => [
+            region,
+            (attrs) =>
+              h('DruxtBlockRegion', {
+                attrs,
+                key: region,
+                props: this.props[region],
+                ref: region,
+              }),
+          ])
+        ),
       }
 
       // Build default slot.
-      scopedSlots.default = (attrs) => this.regions.map((region) => (scopedSlots[region] || (() => {}))(attrs))
+      scopedSlots.default = (attrs) =>
+        this.regions.map((region) => (scopedSlots[region] || (() => {}))(attrs))
 
       return scopedSlots
     },
@@ -197,8 +220,8 @@ export default {
      */
     template: {
       debug: '{ props, regions, theme }',
-    }
-  }
+    },
+  },
 }
 
 /**

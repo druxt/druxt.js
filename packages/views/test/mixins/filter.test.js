@@ -8,7 +8,7 @@ const localVue = createLocalVue()
 const component = {
   name: 'DruxtViewsFilterTest',
   mixins: [DruxtViewsFilterMixin],
-  render: () => ({})
+  render: () => ({}),
 }
 
 test('DruxtViewsFilterMixin', async () => {

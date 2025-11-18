@@ -58,8 +58,8 @@ export default {
      */
     value: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
 
   watch: {
@@ -67,7 +67,7 @@ export default {
       if (to !== from) {
         this.$emit('input', this.model)
       }
-    }
+    },
   },
 
   /** */
@@ -79,7 +79,9 @@ export default {
      * @returns {object}
      */
     getQuery(link) {
-      const query = Object.fromEntries(new URLSearchParams(link.href.split('?')[1]))
+      const query = Object.fromEntries(
+        new URLSearchParams(link.href.split('?')[1])
+      )
       if (typeof query.page === 'string') query.page = parseInt(query.page)
       return query
     },
@@ -103,7 +105,7 @@ export default {
     setPage(link) {
       const query = this.getQuery(link)
       this.model = query.page
-    }
+    },
   },
 
   /** DruxtModule settings */
@@ -114,7 +116,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ type }) => ([[type], ['default']]),
+    componentOptions: ({ type }) => [[type], ['default']],
 
     /**
      * Provides propsData for the DruxtWrapper.
@@ -127,7 +129,7 @@ export default {
       options,
       resource,
       type,
-      value: model
+      value: model,
     }),
 
     /**
@@ -140,31 +142,42 @@ export default {
     slots(h) {
       const self = this
       return {
-        default: () => h('ul', [
-          // Next.
-          ((self.resource || {}).links || {}).prev && h('li', [
-            h('NuxtLink', {
-              nativeOn: {
-                click() {
-                  self.setPage(self.resource.links.prev)
-                },
-              },
-              props: { to: self.getRoute(self.resource.links.prev) },
-            }, [self.options.tags.previous]),
-          ]),
+        default: () =>
+          h('ul', [
+            // Next.
+            ((self.resource || {}).links || {}).prev &&
+              h('li', [
+                h(
+                  'NuxtLink',
+                  {
+                    nativeOn: {
+                      click() {
+                        self.setPage(self.resource.links.prev)
+                      },
+                    },
+                    props: { to: self.getRoute(self.resource.links.prev) },
+                  },
+                  [self.options.tags.previous]
+                ),
+              ]),
 
-          // Previous.
-          ((self.resource || {}).links || {}).next && h('li', [
-            h('NuxtLink', {
-              nativeOn: {
-                click() {
-                  self.setPage(self.resource.links.next)
-                },
-              },
-              props: { to: self.getRoute(self.resource.links.next) },
-            }, [self.options.tags.next]),
+            // Previous.
+            ((self.resource || {}).links || {}).next &&
+              h('li', [
+                h(
+                  'NuxtLink',
+                  {
+                    nativeOn: {
+                      click() {
+                        self.setPage(self.resource.links.next)
+                      },
+                    },
+                    props: { to: self.getRoute(self.resource.links.next) },
+                  },
+                  [self.options.tags.next]
+                ),
+              ]),
           ]),
-        ])
       }
     },
 
@@ -172,12 +185,12 @@ export default {
      * Druxt development template tool configuration.
      */
     template: {
-      debug: "{ count, options, resource, type, model }",
+      debug: '{ count, options, resource, type, model }',
       mixins: {
-        'DruxtViewsPagerMixin': 'druxt-views'
-      }
-    }
-  }
+        DruxtViewsPagerMixin: 'druxt-views',
+      },
+    },
+  },
 }
 
 /**

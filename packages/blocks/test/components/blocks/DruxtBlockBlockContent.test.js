@@ -22,10 +22,16 @@ const mountComponent = (entity, options = {}) => {
       pending: false,
     },
     $store: store,
-    $route: { meta: {} }
+    $route: { meta: {} },
   }
 
-  return mount(DruxtBlockBlockContent, { localVue, mocks, propsData, stubs: ['DruxtEntity'], ...options })
+  return mount(DruxtBlockBlockContent, {
+    localVue,
+    mocks,
+    propsData,
+    stubs: ['DruxtEntity'],
+    ...options,
+  })
 }
 
 describe('Component - DruxtBlockBlockContent', () => {
@@ -42,7 +48,10 @@ describe('Component - DruxtBlockBlockContent', () => {
   })
 
   test('default', async () => {
-    const query = new DrupalJsonApiParams().addFilter('settings.provider', 'block_content')
+    const query = new DrupalJsonApiParams().addFilter(
+      'settings.provider',
+      'block_content'
+    )
     const mockBlock = await getMockResource('block--block', query)
     store.commit('druxt/addResource', { resource: mockBlock })
 
@@ -50,7 +59,10 @@ describe('Component - DruxtBlockBlockContent', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(Object.keys(wrapper.vm.propsData)).toStrictEqual([
-      'key', 'langcode', 'type', 'uuid',
+      'key',
+      'langcode',
+      'type',
+      'uuid',
     ])
   })
 })

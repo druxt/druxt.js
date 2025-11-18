@@ -38,7 +38,7 @@ const DruxtRouterStore = ({ store }) => {
       entities: {},
       redirect: false,
       route: {},
-      routes: {}
+      routes: {},
     }),
 
     /**
@@ -56,8 +56,10 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxtRouter/addEntity', entity)
        */
-      addEntity (state, entity) {
-        console.warn('[druxt-router] `druxtRouter/addEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.')
+      addEntity(state, entity) {
+        console.warn(
+          '[druxt-router] `druxtRouter/addEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.'
+        )
         if (!entity || typeof entity.id === 'undefined') {
           // @TODO - Error?
           return
@@ -73,7 +75,7 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxtRouter/setRedirect', redirect)
        */
-      setRedirect (state, redirect) {
+      setRedirect(state, redirect) {
         state.redirect = redirect
       },
 
@@ -87,7 +89,7 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxtRouter/addRoute', { path, route })
        */
-      addRoute (state, { path, route }) {
+      addRoute(state, { path, route }) {
         if (typeof path !== 'string' || typeof route === 'undefined') {
           // @TODO - Error?
           return
@@ -104,14 +106,17 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxtRouter/setRoute', '/')
        */
-      setRoute (state, path) {
-        if (typeof path !== 'string' || typeof state.routes[path] === 'undefined') {
+      setRoute(state, path) {
+        if (
+          typeof path !== 'string' ||
+          typeof state.routes[path] === 'undefined'
+        ) {
           // @TODO - Error?
           return
         }
 
         state.route = state.routes[path]
-      }
+      },
     },
 
     /**
@@ -133,12 +138,16 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * const { redirect, route } = await this.$store.dispatch('druxtRouter/get', '/')
        */
-      async get ({ commit, dispatch }, path) {
+      async get({ commit, dispatch }, path) {
         // Get route by path from 'getRoute'.
         const route = await dispatch('getRoute', path)
 
         // Handle route errors.
-        if (route.error && typeof route.error.statusCode !== 'undefined' && ((this.app || {}).context || {}).error) {
+        if (
+          route.error &&
+          typeof route.error.statusCode !== 'undefined' &&
+          ((this.app || {}).context || {}).error
+        ) {
           return this.app.context.error(route.error)
         }
 
@@ -172,8 +181,10 @@ const DruxtRouterStore = ({ store }) => {
        *
        * @todo Rename getEntity to getResource.
        */
-      async getEntity ({ commit, state }, query) {
-        console.warn('[druxt-router] `druxtRouter/getEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.')
+      async getEntity({ commit, state }, query) {
+        console.warn(
+          '[druxt-router] `druxtRouter/getEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.'
+        )
         if (typeof state.entities[query.id] !== 'undefined') {
           return state.entities[query.id]
         }
@@ -210,9 +221,14 @@ const DruxtRouterStore = ({ store }) => {
        *   options: { all: true }
        * })
        */
-      async getResources (app, { resource, query }) {
-        console.warn('[druxt-router] `druxtRouter/getResources` is deprecated. See http://druxtjs.org/api/stores/druxt.')
-        const collection = await this.app.store.dispatch('druxt/getCollection', { type: resource, query })
+      async getResources(app, { resource, query }) {
+        console.warn(
+          '[druxt-router] `druxtRouter/getResources` is deprecated. See http://druxtjs.org/api/stores/druxt.'
+        )
+        const collection = await this.app.store.dispatch(
+          'druxt/getCollection',
+          { type: resource, query }
+        )
         return collection.data || false
       },
 
@@ -231,7 +247,7 @@ const DruxtRouterStore = ({ store }) => {
        * @example @lang js
        * const route = await this.$store.dispatch('druxtRouter/getRoute', '/')
        */
-      async getRoute ({ commit, state }, path) {
+      async getRoute({ commit, state }, path) {
         if (typeof state.routes[path] !== 'undefined') {
           return state.routes[path]
         }
@@ -240,18 +256,23 @@ const DruxtRouterStore = ({ store }) => {
         try {
           route = await this.$druxtRouter().getRoute(path)
         } catch (err) {
-          route = { error: { statusCode: err.response.status, message: err.response.data.message } }
+          route = {
+            error: {
+              statusCode: err.response.status,
+              message: err.response.data.message,
+            },
+          }
         }
 
         commit('addRoute', { path, route })
 
         return route
-      }
-    }
+      },
+    },
   }
 
   store.registerModule(namespace, module, {
-    preserveState: Boolean(store.state[namespace])
+    preserveState: Boolean(store.state[namespace]),
   })
 }
 

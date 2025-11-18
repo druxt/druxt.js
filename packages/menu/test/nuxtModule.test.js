@@ -9,14 +9,14 @@ const mock = {
     hook: jest.fn((hook, fn) => {
       const arg = {
         'components:dirs': [],
-        'storybook:config': { stories: [] }
+        'storybook:config': { stories: [] },
       }
       return fn(arg[hook])
     }),
   },
   options: {
-    druxt: {}
-  }
+    druxt: {},
+  },
 }
 
 test('Nuxt module', async () => {
@@ -25,19 +25,28 @@ test('Nuxt module', async () => {
   expect(mock.addPlugin).toHaveBeenCalled()
 
   // Expect JSON:API Menu Items tp be enabled.
-  expect(mock.addModule).toHaveBeenLastCalledWith(['druxt', {
-    baseUrl: undefined,
-    menu: {
-      jsonApiMenuItems: true
-    }
-  }])
+  expect(mock.addModule).toHaveBeenLastCalledWith([
+    'druxt',
+    {
+      baseUrl: undefined,
+      menu: {
+        jsonApiMenuItems: true,
+      },
+    },
+  ])
 
   // Use overridden options; Drupal content menu items.
-  await DruxtMenuNuxtModule.call({ ...mock, options: { druxt: { menu: { jsonApiMenuItems: false }}} })
-  expect(mock.addModule).toHaveBeenLastCalledWith(['druxt', {
-    baseUrl: undefined,
-    menu: {
-      jsonApiMenuItems: false
-    }
-  }])
+  await DruxtMenuNuxtModule.call({
+    ...mock,
+    options: { druxt: { menu: { jsonApiMenuItems: false } } },
+  })
+  expect(mock.addModule).toHaveBeenLastCalledWith([
+    'druxt',
+    {
+      baseUrl: undefined,
+      menu: {
+        jsonApiMenuItems: false,
+      },
+    },
+  ])
 })

@@ -11,7 +11,7 @@ const DruxtTestModule = {
   mixins: [DruxtComponentMixin],
   druxt: () => ({
     componentOptions: [['wrapper']],
-    propsData: {}
+    propsData: {},
   }),
   render: () => ({}),
 }
@@ -27,8 +27,8 @@ describe('DruxtComponentMixin', () => {
       localVue,
       stubs: { DruxtTestModuleWrapper },
       mocks: {
-        $druxt: new DruxtClass('https://demo-api.druxtjs.org')
-      }
+        $druxt: new DruxtClass('https://demo-api.druxtjs.org'),
+      },
     })
   })
 
@@ -36,7 +36,7 @@ describe('DruxtComponentMixin', () => {
     expect(wrapper.vm.component).toStrictEqual({
       is: 'DruxtWrapper',
       options: [],
-      propsData: {}
+      propsData: {},
     })
   })
 
@@ -47,7 +47,7 @@ describe('DruxtComponentMixin', () => {
     expect(wrapper.vm.component).toStrictEqual({
       is: 'DruxtWrapper',
       options: [],
-      propsData: {}
+      propsData: {},
     })
 
     // No matching global component, expect default values.
@@ -56,7 +56,7 @@ describe('DruxtComponentMixin', () => {
     expect(wrapper.vm.component).toStrictEqual({
       is: 'DruxtWrapper',
       options: ['Wrapper'],
-      propsData: {}
+      propsData: {},
     })
 
     // Expect matching global component.
@@ -65,7 +65,7 @@ describe('DruxtComponentMixin', () => {
     expect(wrapper.vm.component).toStrictEqual({
       is: 'DruxtTestModuleWrapper',
       options: ['DruxtTestModuleWrapper'],
-      propsData: {}
+      propsData: {},
     })
   })
 })

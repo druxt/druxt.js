@@ -10,16 +10,18 @@
     </div>
 
     <!-- Label: Inline -->
-    <slot
-      v-if="$scopedSlots['label-inline']"
-      name="label-inline"
-    />
+    <slot v-if="$scopedSlots['label-inline']" name="label-inline" />
 
     <!-- Items -->
     <nuxt-link
       v-for="entity of entities"
       :key="entity.id"
-      :to="entity.attributes.uri.value.replace('public://', '/sites/default/files/')"
+      :to="
+        entity.attributes.uri.value.replace(
+          'public://',
+          '/sites/default/files/'
+        )
+      "
     >
       {{ entity.attributes.filename }}
     </nuxt-link>
@@ -44,19 +46,26 @@ export default {
    * @property {object[]} entities
    */
   data: () => ({
-    entities: []
+    entities: [],
   }),
 
   async fetch() {
     for (const delta in this.items) {
       const item = this.items[delta]
-      const resource = await this.getResource({ id: item.uuid, type: item.type })
+      const resource = await this.getResource({
+        id: item.uuid,
+        type: item.type,
+      })
       this.entities[delta] = resource.data
     }
   },
 
   mounted() {
-    console.warn(`[druxt-entity] The ${this.$options._componentTag || this.$options.name} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+    console.warn(
+      `[druxt-entity] The ${
+        this.$options._componentTag || this.$options.name
+      } component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`
+    )
   },
 
   methods: {
@@ -64,8 +73,8 @@ export default {
      * Maps `druxt/getResource` Vuex action to `this.getResource`.
      */
     ...mapActions({
-      getResource: 'druxt/getResource'
-    })
-  }
+      getResource: 'druxt/getResource',
+    }),
+  },
 }
 </script>

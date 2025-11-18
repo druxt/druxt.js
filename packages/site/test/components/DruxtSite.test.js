@@ -17,12 +17,19 @@ const mountComponent = (pending, options) => {
   const mocks = {
     $druxt: { settings: {} },
     $fetchState: { pending },
-    $route: { meta: {} }
+    $route: { meta: {} },
   }
   const propsData = { theme: 'umami' }
   const stubs = ['DruxtBlockRegion', 'Nuxt']
 
-  return mount(DruxtSite, { localVue, mocks, propsData, store, stubs, ...options })
+  return mount(DruxtSite, {
+    localVue,
+    mocks,
+    propsData,
+    store,
+    stubs,
+    ...options,
+  })
 }
 
 describe('DruxtSite component', () => {
@@ -52,13 +59,19 @@ describe('DruxtSite component', () => {
       'footer',
       'tabs',
       'page_title',
-      'content_bottom'
+      'content_bottom',
     ])
-    expect(Object.keys(wrapper.vm.$refs)).toStrictEqual(['component', ...wrapper.vm.regions])
+    expect(Object.keys(wrapper.vm.$refs)).toStrictEqual([
+      'component',
+      ...wrapper.vm.regions,
+    ])
 
     // Druxt Component mixin.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
-    expect(wrapper.vm.component.options).toStrictEqual(['DruxtSiteUmami', 'DruxtSiteDefault'])
+    expect(wrapper.vm.component.options).toStrictEqual([
+      'DruxtSiteUmami',
+      'DruxtSiteDefault',
+    ])
 
     expect(wrapper.html()).toMatchSnapshot()
   })
@@ -78,13 +91,15 @@ describe('DruxtSite component', () => {
     expect(scopedSlots.default).toHaveBeenCalledWith({
       props: wrapper.vm.props,
       regions: wrapper.vm.regions,
-      theme: wrapper.vm.theme
+      theme: wrapper.vm.theme,
     })
   })
 
   test('no blocks', async () => {
     const wrapper = mountComponent(false)
     expect(wrapper.vm.regions.length).toBe(0)
-    expect(wrapper.vm.getScopedSlots().default().componentOptions.tag).toBe('Nuxt')
+    expect(wrapper.vm.getScopedSlots().default().componentOptions.tag).toBe(
+      'Nuxt'
+    )
   })
 })

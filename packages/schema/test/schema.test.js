@@ -16,7 +16,9 @@ describe('DruxtSchema', () => {
 
   test('constructor', () => {
     // Throw error if 'baseURL' not provided.
-    expect(() => { new DruxtSchema() }).toThrow('The \'baseUrl\' parameter is required.')
+    expect(() => {
+      new DruxtSchema()
+    }).toThrow("The 'baseUrl' parameter is required.")
 
     // Ensure class type.
     expect(new DruxtSchema(baseUrl)).toBeInstanceOf(DruxtSchema)
@@ -41,15 +43,19 @@ describe('DruxtSchema', () => {
   test('get - mock error', async () => {
     const mock = {
       druxt: {
-        checkPermissions: jest.fn(() => { throw new Error('Mock error') }),
-        error: jest.fn((err) => { throw err }),
-        getCollectionAll: jest.fn(async () => ([{}])),
+        checkPermissions: jest.fn(() => {
+          throw new Error('Mock error')
+        }),
+        error: jest.fn((err) => {
+          throw err
+        }),
+        getCollectionAll: jest.fn(async () => [{}]),
         getIndex: jest.fn(() => ({})),
-      }
+      },
     }
     try {
       await schema.get.call(mock)
-    } catch(err) {
+    } catch (err) {
       expect(err.message).toBe('Mock error')
     }
   })
@@ -57,7 +63,7 @@ describe('DruxtSchema', () => {
   test('getSchema', async () => {
     let config = {
       entityType: 'node',
-      bundle: 'page'
+      bundle: 'page',
     }
 
     const result = await schema.getSchema(config)

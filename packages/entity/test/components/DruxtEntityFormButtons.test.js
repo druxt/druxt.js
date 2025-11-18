@@ -12,13 +12,18 @@ let store
 
 const mocks = {
   $fetchState: {
-    pending: false
+    pending: false,
   },
-  $route: { meta: {} }
+  $route: { meta: {} },
 }
 
 const mountComponent = async (propsData) => {
-  const wrapper = mount(DruxtEntityFormButtons, { localVue, mocks, propsData, store })
+  const wrapper = mount(DruxtEntityFormButtons, {
+    localVue,
+    mocks,
+    propsData,
+    store,
+  })
   await wrapper.vm.$options.fetch.call(wrapper.vm)
   return wrapper
 }
@@ -37,7 +42,7 @@ describe('DruxtEntityFormButtons', () => {
     store.$druxtSchema = {
       import: (schema) => {
         return require(`../../../../test/__fixtures__/schemas/${schema}.json`)
-      }
+      },
     }
 
     store.app = { context: { error: jest.fn() }, store }

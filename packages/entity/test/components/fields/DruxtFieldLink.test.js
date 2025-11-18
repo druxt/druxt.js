@@ -17,10 +17,15 @@ const stubs = ['nuxt-link']
 const mountComponent = (link = {}, options) => {
   const propsData = {
     value: [link],
-    schema: {}
+    schema: {},
   }
 
-  return shallowMount(DruxtFieldLink, { ...options, localVue, propsData, stubs })
+  return shallowMount(DruxtFieldLink, {
+    ...options,
+    localVue,
+    propsData,
+    stubs,
+  })
 }
 
 describe('Component - DruxtFieldLink', () => {
@@ -30,15 +35,19 @@ describe('Component - DruxtFieldLink', () => {
 
   test('absolute', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent({
       title: 'absolute',
-      uri: baseURL
+      uri: baseURL,
     })
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldLink component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldLink component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 
@@ -49,15 +58,19 @@ describe('Component - DruxtFieldLink', () => {
 
   test('relative', () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent({
       title: 'relative',
-      uri: '/path'
+      uri: '/path',
     })
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldLink component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldLink component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 
@@ -68,15 +81,19 @@ describe('Component - DruxtFieldLink', () => {
 
   test('internal:', () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent({
       title: 'internal',
-      uri: 'internal:/path'
+      uri: 'internal:/path',
     })
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldLink component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldLink component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 

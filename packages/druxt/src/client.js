@@ -22,13 +22,15 @@ class DruxtClient {
    */
   constructor(baseUrl, options = {}) {
     // Consola logger.
-    this.log = consola.create({ defaults: {
-      tag: 'DruxtClient'
-    }})
+    this.log = consola.create({
+      defaults: {
+        tag: 'DruxtClient',
+      },
+    })
 
     // Check for URL.
     if (!baseUrl) {
-      throw new Error('The \'baseUrl\' parameter is required.')
+      throw new Error("The 'baseUrl' parameter is required.")
     }
 
     /**
@@ -46,9 +48,9 @@ class DruxtClient {
     // Else, setup new instance of Axios.
     else {
       this.axios = axios.create({
-        ...options.axios || {},
+        ...(options.axios || {}),
         // Set baseURL if proxy is not enabled.
-        baseURL: baseUrl && !(options.proxy || {}).api ? baseUrl : undefined
+        baseURL: baseUrl && !(options.proxy || {}).api ? baseUrl : undefined,
       })
     }
 
@@ -57,13 +59,16 @@ class DruxtClient {
     if (options.debug) {
       const log = this.log
       // @TODO - Add test coverage.
-      this.axios.interceptors.request.use((config) => {
-        log.info(config.url)
-        return config
-      }, (error) => {
-        log.error(error)
-        return Promise.reject(error)
-      })
+      this.axios.interceptors.request.use(
+        (config) => {
+          log.info(config.url)
+          return config
+        },
+        (error) => {
+          log.error(error)
+          return Promise.reject(error)
+        }
+      )
     }
 
     /**
@@ -75,7 +80,7 @@ class DruxtClient {
       endpoint: '/jsonapi',
       jsonapiResourceConfig: 'jsonapi_resource_config--jsonapi_resource_config',
 
-      ...options
+      ...options,
     }
 
     /**
@@ -93,7 +98,7 @@ class DruxtClient {
    *
    * @param {object} headers - An object containing HTTP headers.
    */
-  addHeaders (headers) {
+  addHeaders(headers) {
     if (typeof headers === 'undefined') {
       return false
     }
@@ -116,7 +121,7 @@ class DruxtClient {
    *
    * @return {string} The URL with query string.
    */
-  buildQueryUrl (url, query) {
+  buildQueryUrl(url, query) {
     if (!query) {
       return url
     }
@@ -127,7 +132,11 @@ class DruxtClient {
     }
 
     // If Query is object with 'getQueryString' function, (e.g., drupal-jsonapi-params)...
-    if (typeof query === 'object' && typeof query.getQueryString === 'function' && (query = query.getQueryString())) {
+    if (
+      typeof query === 'object' &&
+      typeof query.getQueryString === 'function' &&
+      (query = query.getQueryString())
+    ) {
       return [url, query].join('?')
     }
 
@@ -149,7 +158,7 @@ class DruxtClient {
    *
    * @private
    */
-  checkPermissions (res) {
+  checkPermissions(res) {
     // Error handling: Required permissions.
     if (res.data.meta && res.data.meta.omitted) {
       const permissions = {}
@@ -168,9 +177,15 @@ class DruxtClient {
           response: {
             statusText: res.data.meta.omitted.detail,
             data: {
-              errors: [{ detail: `Required permissions:\n - ${Object.keys(permissions).join('\n - ')}` }]
-            }
-          }
+              errors: [
+                {
+                  detail: `Required permissions:\n - ${Object.keys(
+                    permissions
+                  ).join('\n - ')}`,
+                },
+              ],
+            },
+          },
         }
         throw err
       }
@@ -212,8 +227,8 @@ class DruxtClient {
         { data: resource },
         {
           headers: {
-            'Content-Type': 'application/vnd.api+json'
-          }
+            'Content-Type': 'application/vnd.api+json',
+          },
         }
       )
     } catch (err) {
@@ -238,8 +253,10 @@ class DruxtClient {
 
     const title = [
       (err.response || {}).status,
-      (err.response || {}).statusText || err.message
-    ].filter((s) => s).join(': ')
+      (err.response || {}).statusText || err.message,
+    ]
+      .filter((s) => s)
+      .join(': ')
     const meta = { url: url && [this.options.baseUrl, url].join('') }
 
     // Build message.
@@ -247,7 +264,12 @@ class DruxtClient {
 
     // Add meta information.
     if (Object.values(meta).filter((o) => o).length) {
-      message.push(Object.entries(meta).filter(([, v]) => v).map(([key, value]) => `${key.toUpperCase()}: ${value}`).join('\n'))
+      message.push(
+        Object.entries(meta)
+          .filter(([, v]) => v)
+          .map(([key, value]) => `${key.toUpperCase()}: ${value}`)
+          .join('\n')
+      )
     }
 
     // Add main error details.
@@ -274,7 +296,7 @@ class DruxtClient {
       const res = await this.axios.get(url, options)
 
       return res
-    } catch(err) {
+    } catch (err) {
       // Throw formatted error.
       this.error(err, { url })
     }
@@ -365,16 +387,18 @@ class DruxtClient {
 
     // Throw error if index is invalid.
     if (typeof index !== 'object') {
-      const err = { response: { statusText: 'Invalid JSON:API endpoint' }}
+      const err = { response: { statusText: 'Invalid JSON:API endpoint' } }
       this.error(err, { url })
     }
 
     // Remove Base URL from the resource URL.
     const baseUrl = this.options.baseUrl
-    index = Object.fromEntries(Object.entries(index).map(([key, value]) => {
-      value.href = value.href.replace(baseUrl, '')
-      return [key, value]
-    }))
+    index = Object.fromEntries(
+      Object.entries(index).map(([key, value]) => {
+        value.href = value.href.replace(baseUrl, '')
+        return [key, value]
+      })
+    )
 
     // Use JSON:API resource config to decorate the index.
     // @TODO - Add test coverage.
@@ -383,8 +407,10 @@ class DruxtClient {
 
       // Get JSON:API resource config if permissions setup correctly.
       try {
-        resources = (await this.get(index[this.options.jsonapiResourceConfig].href)).data.data
-      } catch(err) {
+        resources = (
+          await this.get(index[this.options.jsonapiResourceConfig].href)
+        ).data.data
+      } catch (err) {
         this.log.warn(err.message)
       }
 
@@ -396,13 +422,13 @@ class DruxtClient {
           resourceType: resource.attributes.resourceType,
           entityType: internal[0],
           bundle: internal[1],
-          resourceFields: resource.attributes.resourceFields
+          resourceFields: resource.attributes.resourceFields,
         }
 
         const id = [item.entityType, item.bundle].join('--')
         index[id] = {
           ...item,
-          ...index[id]
+          ...index[id],
         }
       }
     }
@@ -501,7 +527,7 @@ class DruxtClient {
    *
    * @returns {object} The response data
    */
-   async updateResource(resource, prefix) {
+  async updateResource(resource, prefix) {
     const { href } = await this.getIndex(resource.type, prefix)
     if (!href) {
       return false
@@ -515,8 +541,8 @@ class DruxtClient {
         { data: resource },
         {
           headers: {
-            'Content-Type': 'application/vnd.api+json'
-          }
+            'Content-Type': 'application/vnd.api+json',
+          },
         }
       )
     } catch (err) {
@@ -530,32 +556,32 @@ class DruxtClient {
 
 export { DruxtClient }
 
- /**
-  * DruxtClient options object.
-  *
-  * @typedef {object} DruxtClientOptions
-  *
-  * @param {object} [axios] - Axios instance settings.
-  * @param {boolean} [debug=false] - Enable Debug mode for verbose console log messages.
-  * @param {string} [endpoint=jsonapi] - The JSON:API endpoint.
-  * @param {string} [jsonapiResourceConfig=jsonapi_resource_config--jsonapi_resource_config] -
-  *   The JSON:API resource config type, used for [JSON:API Extras](https://www.drupal.org/project/jsonapi_extras) support.
-  *
-  * @see {@link https://github.com/axios/axios#request-config}
-  *
-  * @example @lang js
-  * {
-  *   // Axios instance settings.
-  *   axios: {
-  *     // Set axios headers.
-  *     headers: { 'X-Custom-Header': true },
-  *   },
-  *   // Enable debug console log messages.
-  *   debug: true,
-  *   // JSON:API endpoint.
-  *   endpoint: 'api',
-  * }
-  */
+/**
+ * DruxtClient options object.
+ *
+ * @typedef {object} DruxtClientOptions
+ *
+ * @param {object} [axios] - Axios instance settings.
+ * @param {boolean} [debug=false] - Enable Debug mode for verbose console log messages.
+ * @param {string} [endpoint=jsonapi] - The JSON:API endpoint.
+ * @param {string} [jsonapiResourceConfig=jsonapi_resource_config--jsonapi_resource_config] -
+ *   The JSON:API resource config type, used for [JSON:API Extras](https://www.drupal.org/project/jsonapi_extras) support.
+ *
+ * @see {@link https://github.com/axios/axios#request-config}
+ *
+ * @example @lang js
+ * {
+ *   // Axios instance settings.
+ *   axios: {
+ *     // Set axios headers.
+ *     headers: { 'X-Custom-Header': true },
+ *   },
+ *   // Enable debug console log messages.
+ *   debug: true,
+ *   // JSON:API endpoint.
+ *   endpoint: 'api',
+ * }
+ */
 
 /**
  * @typedef {string|object} DruxtClientQuery

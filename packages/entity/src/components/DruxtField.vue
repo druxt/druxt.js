@@ -46,7 +46,7 @@ export default {
      */
     relationship: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     /**
@@ -56,7 +56,7 @@ export default {
      */
     schema: {
       type: Object,
-      required: true
+      required: true,
     },
 
     /**
@@ -64,7 +64,7 @@ export default {
      */
     options: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
 
     /**
@@ -80,8 +80,13 @@ export default {
   },
 
   fetchKey(getCounter) {
-    const parent = (this.$parent || {}).entity || ((this.$parent || {}).$parent || {}).entity || {}
-    const parts = ['DruxtField', parent.type, parent.id, this.schema.id].filter((o) => o)
+    const parent =
+      (this.$parent || {}).entity ||
+      ((this.$parent || {}).$parent || {}).entity ||
+      {}
+    const parts = ['DruxtField', parent.type, parent.id, this.schema.id].filter(
+      (o) => o
+    )
     return [...parts, getCounter(parts.join(':'))].join(':')
   },
 
@@ -120,14 +125,16 @@ export default {
      *
      * @type {boolean}
      */
-    isFile: ({ schema }) => ['file_default', 'file_generic'].includes(schema.type),
+    isFile: ({ schema }) =>
+      ['file_default', 'file_generic'].includes(schema.type),
 
     /**
      * Field is Image?
      *
      * @type {boolean}
      */
-    isImage: ({ schema }) => ['image', 'image_image', 'responsive_image'].includes(schema.type),
+    isImage: ({ schema }) =>
+      ['image', 'image_image', 'responsive_image'].includes(schema.type),
 
     /**
      * Field is Link?
@@ -148,7 +155,8 @@ export default {
      *
      * @type {boolean}
      */
-    isText: ({ schema }) => ['number_integer', 'string_textfield'].includes(schema.type),
+    isText: ({ schema }) =>
+      ['number_integer', 'string_textfield'].includes(schema.type),
 
     /**
      * The Field label display settings.
@@ -158,7 +166,12 @@ export default {
      */
     label: ({ schema }) =>
       schema.config.schemaType === 'form'
-        ? { ...schema.label, text: (schema.label || {}).text || schema.id[0].toUpperCase() + schema.id.substring(1) }
+        ? {
+            ...schema.label,
+            text:
+              (schema.label || {}).text ||
+              schema.id[0].toUpperCase() + schema.id.substring(1),
+          }
         : ((schema || {}).label || {}).text
         ? schema.label
         : { position: 'hidden' },
@@ -172,7 +185,9 @@ export default {
 
     model() {
       // Sanitize empty string based fields.
-      if (this.model === '') { this.model = undefined }
+      if (this.model === '') {
+        this.model = undefined
+      }
 
       // Invoke the DruxtModule model watch callback.
       modelWatch.call(this)
@@ -187,11 +202,11 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ schema }) => ([
+    componentOptions: ({ schema }) => [
       [schema.type || 'undefined', schema.id, (schema.config || {}).schemaType],
       [schema.type || 'undefined', (schema.config || {}).schemaType],
       ['default', (schema.config || {}).schemaType],
-    ]),
+    ],
 
     /**
      * Provides propsData for the DruxtWrapper.
@@ -199,7 +214,12 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ errors, model, relationship, schema }) => ({ errors, relationship, schema, value: model }),
+    propsData: ({ errors, model, relationship, schema }) => ({
+      errors,
+      relationship,
+      schema,
+      value: model,
+    }),
 
     /**
      * Provides the scoped slots object for the Module render function.
@@ -227,20 +247,28 @@ export default {
      */
     slots(h) {
       const scopedSlots = {}
-      const { schemaType } = ((this.schema || {}).config || {})
+      const { schemaType } = (this.schema || {}).config || {}
       const self = this
 
       // Label(s).
       if ((this.label || {}).text) {
-        scopedSlots.label = (attrs) => h('strong', { attrs }, [`${this.label.text}:`])
-        if (this.label.position && ['above', 'inline'].includes(this.label.position)) {
+        scopedSlots.label = (attrs) =>
+          h('strong', { attrs }, [`${this.label.text}:`])
+        if (
+          this.label.position &&
+          ['above', 'inline'].includes(this.label.position)
+        ) {
           scopedSlots[`label-${this.label.position}`] = scopedSlots.label
         }
       }
 
       const items = (this.model || {}).data
-        ? Array.isArray(this.model.data) ? this.model.data : [this.model.data]
-        : Array.isArray(this.model) ? this.model : [this.model]
+        ? Array.isArray(this.model.data)
+          ? this.model.data
+          : [this.model.data]
+        : Array.isArray(this.model)
+        ? this.model
+        : [this.model]
 
       // Render a slot for each field delta.
       for (const delta in items) {
@@ -248,45 +276,53 @@ export default {
           value = value || fallback
           self.relationship
             ? self.isMultiple
-              ? self.model.data[delta] = value
-              : self.model.data = value
+              ? (self.model.data[delta] = value)
+              : (self.model.data = value)
             : self.isMultiple
-              ? self.model[delta] = value
-              : self.model = value
+            ? (self.model[delta] = value)
+            : (self.model = value)
         }
 
         const item = items[delta]
         scopedSlots[`field-${delta}`] = (attrs) => {
           // Boolean: Form.
           if (this.isBoolean && schemaType === 'form') {
-            return h('div', [h('input', {
-              attrs,
-              domProps: {
-                checked: item,
-                type: 'checkbox',
-              },
-              on: {
-                input(e) { setModel(e.target.checked, false) }
-              }
-            })])
+            return h('div', [
+              h('input', {
+                attrs,
+                domProps: {
+                  checked: item,
+                  type: 'checkbox',
+                },
+                on: {
+                  input(e) {
+                    setModel(e.target.checked, false)
+                  },
+                },
+              }),
+            ])
           }
 
           // Date/Time: Form.
           if (this.isDateTime && schemaType === 'form') {
-            return h('div', [h('input', {
-              attrs,
-              domProps: {
-                placeholder: this.schema.settings.display.placeholder,
-                type: 'datetime-local',
-                value: (item || '').split('+')[0],
-              },
-              on: {
-                input(e) {
-                  const value = [e.target.value, (item || '').split('+')[1]].filter((s) => s).join('+')
-                  setModel(value)
-                }
-              }
-            })])
+            return h('div', [
+              h('input', {
+                attrs,
+                domProps: {
+                  placeholder: this.schema.settings.display.placeholder,
+                  type: 'datetime-local',
+                  value: (item || '').split('+')[0],
+                },
+                on: {
+                  input(e) {
+                    const value = [e.target.value, (item || '').split('+')[1]]
+                      .filter((s) => s)
+                      .join('+')
+                    setModel(value)
+                  },
+                },
+              }),
+            ])
           }
 
           // File: View.
@@ -296,14 +332,21 @@ export default {
               props: {
                 langcode: this.lang,
                 type: item.type,
-                uuid: item.id
+                uuid: item.id,
               },
-              scopedSlots: { default: ({ entity }) => h('a', {
-                domProps: {
-                  href: (entity.attributes.uri || {}).url,
-                  target: '_blank',
-                },
-              }, [entity.attributes.filename]) }
+              scopedSlots: {
+                default: ({ entity }) =>
+                  h(
+                    'a',
+                    {
+                      domProps: {
+                        href: (entity.attributes.uri || {}).url,
+                        target: '_blank',
+                      },
+                    },
+                    [entity.attributes.filename]
+                  ),
+              },
             })
           }
 
@@ -314,13 +357,16 @@ export default {
               props: {
                 langcode: this.lang,
                 type: item.type,
-                uuid: item.id
+                uuid: item.id,
               },
-              scopedSlots: { default: ({ entity }) => h('img', {
-                domProps: {
-                  src: (entity.attributes.uri || {}).url
-                }
-              })}
+              scopedSlots: {
+                default: ({ entity }) =>
+                  h('img', {
+                    domProps: {
+                      src: (entity.attributes.uri || {}).url,
+                    },
+                  }),
+              },
             })
           }
 
@@ -328,25 +374,35 @@ export default {
           if (this.isLink && schemaType === 'view') {
             if (!(item || {}).uri) return
             return /^(?:[a-z]+:)?\/\//i.test(item.uri)
-              ? h('a', { attrs, domProps: { href: item.uri, target: '_blank' } }, [item.title])
-              : h('NuxtLink', { attrs, props: { to: item.uri.replace('internal:', '') } }, [item.title])
+              ? h(
+                  'a',
+                  { attrs, domProps: { href: item.uri, target: '_blank' } },
+                  [item.title]
+                )
+              : h(
+                  'NuxtLink',
+                  { attrs, props: { to: item.uri.replace('internal:', '') } },
+                  [item.title]
+                )
           }
 
           // Text: Form.
           if (this.isText && schemaType === 'form') {
-            return h('div', [h('input', {
-              attrs,
-              domProps: {
-                placeholder: this.schema.settings.display.placeholder,
-                size: this.schema.settings.display.size,
-                value: item,
-              },
-              on: {
-                input(e) {
-                  setModel(e.target.value)
-                }
-              }
-            })])
+            return h('div', [
+              h('input', {
+                attrs,
+                domProps: {
+                  placeholder: this.schema.settings.display.placeholder,
+                  size: this.schema.settings.display.size,
+                  value: item,
+                },
+                on: {
+                  input(e) {
+                    setModel(e.target.value)
+                  },
+                },
+              }),
+            ])
           }
 
           // Relationship: View.
@@ -364,15 +420,17 @@ export default {
 
           // Relationship: Form.
           if (this.relationship && (item || {}).id && schemaType === 'form') {
-            return h('details', [h('DruxtEntityForm', {
-              attrs: { ...attrs, ...self.$attrs },
-              props: {
-                langcode: this.lang,
-                mode: this.schema.settings.display.view_mode || 'default',
-                type: item.type,
-                uuid: item.id,
-              },
-            })])
+            return h('details', [
+              h('DruxtEntityForm', {
+                attrs: { ...attrs, ...self.$attrs },
+                props: {
+                  langcode: this.lang,
+                  mode: this.schema.settings.display.view_mode || 'default',
+                  type: item.type,
+                  uuid: item.id,
+                },
+              }),
+            ])
           }
 
           // Fallback: View.
@@ -383,34 +441,40 @@ export default {
             }
 
             // Return `.processed` or `.value` if present.
-            if (((item || {}).processed || (item || {}).value)) {
-              return h('div', { attrs, domProps: { innerHTML: item.processed || item.value } })
+            if ((item || {}).processed || (item || {}).value) {
+              return h('div', {
+                attrs,
+                domProps: { innerHTML: item.processed || item.value },
+              })
             }
           }
 
           // Fallback: Form: Other fields render a textarea.
           if (schemaType === 'form') {
-            return h('div', [h('textarea', {
-              attrs,
-              domProps: {
-                placeholder: this.schema.settings.display.placeholder,
-                rows: this.schema.settings.display.rows,
-                value: typeof item === 'object'
-                  ? JSON.stringify(item, null, "  ")
-                  : item
-              },
-              on: {
-                input(e) {
-                  let value = e.target.value
-                  try {
-                    value = JSON.parse(e.target.value)
-                  } catch(err) {
-                    // TODO: Handle error
-                  }
-                  setModel(value)
-                }
-              }
-            })])
+            return h('div', [
+              h('textarea', {
+                attrs,
+                domProps: {
+                  placeholder: this.schema.settings.display.placeholder,
+                  rows: this.schema.settings.display.rows,
+                  value:
+                    typeof item === 'object'
+                      ? JSON.stringify(item, null, '  ')
+                      : item,
+                },
+                on: {
+                  input(e) {
+                    let value = e.target.value
+                    try {
+                      value = JSON.parse(e.target.value)
+                    } catch (err) {
+                      // TODO: Handle error
+                    }
+                    setModel(value)
+                  },
+                },
+              }),
+            ])
           }
 
           // Fallback: Provide debug data.
@@ -419,30 +483,39 @@ export default {
             const description = [
               h('p', 'Create a Druxt theme component to render the field.'),
             ]
-            return h('DruxtDebug',
-              { props: { summary } },
-              [
-                h('div', description),
-                !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
-                h('details', [h('summary', 'Data'), h('pre', [h('code', [JSON.stringify(item, null, '  ')])])]),
-                !!this.schema && h('details', [h('summary', 'Schema'), h('pre', [h('code', [JSON.stringify(this.schema, null, '  ')])])])
-              ]
-            )
+            return h('DruxtDebug', { props: { summary } }, [
+              h('div', description),
+              !!this.component.options.length &&
+                h('DruxtDevelTemplate', {
+                  props: { options: this.component.options },
+                }),
+              h('details', [
+                h('summary', 'Data'),
+                h('pre', [h('code', [JSON.stringify(item, null, '  ')])]),
+              ]),
+              !!this.schema &&
+                h('details', [
+                  h('summary', 'Schema'),
+                  h('pre', [
+                    h('code', [JSON.stringify(this.schema, null, '  ')]),
+                  ]),
+                ]),
+            ])
           }
         }
       }
 
       // Default slot to add label to field as required.
       scopedSlots.default = (attrs) => {
-        const fields = items.map((item, delta) => scopedSlots[`field-${delta}`](attrs))
+        const fields = items.map((item, delta) =>
+          scopedSlots[`field-${delta}`](attrs)
+        )
         if (schemaType === 'form' && scopedSlots.label) {
-          return h('label', [
-            scopedSlots.label(attrs),
-            h('br'),
-            fields
-          ])
-        }
-        else if (this.label.position && scopedSlots[`label-${this.label.position}`]) {
+          return h('label', [scopedSlots.label(attrs), h('br'), fields])
+        } else if (
+          this.label.position &&
+          scopedSlots[`label-${this.label.position}`]
+        ) {
           return [scopedSlots[`label-${this.label.position}`](attrs), fields]
         }
         return [fields]
@@ -456,9 +529,9 @@ export default {
      */
     template: {
       mixins: {
-        'DruxtFieldMixin': 'druxt-entity'
-      }
-    }
+        DruxtFieldMixin: 'druxt-entity',
+      },
+    },
   },
 }
 

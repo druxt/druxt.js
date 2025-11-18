@@ -10,7 +10,7 @@ export default {
     query: {
       // Filter only Schema fields.
       schema: true,
-    }
-  }
+    },
+  },
 }
 </script>

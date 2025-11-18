@@ -63,7 +63,7 @@ const DruxtViewsViewMixin = {
      */
     mode: {
       type: [Boolean, String],
-      default: 'default'
+      default: 'default',
     },
 
     /**
@@ -95,7 +95,7 @@ const DruxtViewsViewMixin = {
       type: Object,
       default: () => ({
         page: null,
-      })
+      }),
     },
 
     /**
@@ -116,15 +116,15 @@ const DruxtViewsViewMixin = {
    */
   data() {
     return {
-      model: this.value
+      model: this.value,
     }
   },
 
   watch: {
     model() {
       this.$emit('input', this.model)
-    }
-  }
+    },
+  },
 }
 
 export { DruxtViewsViewMixin }

@@ -31,7 +31,7 @@ const DruxtViewsStore = ({ store }) => {
      * @readonly
      */
     state: () => ({
-      results: {}
+      results: {},
     }),
 
     /**
@@ -46,12 +46,14 @@ const DruxtViewsStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxt/views/addResults', { results, viewId, displayId, prefix, hash })
        */
-      addResults (state, { results, viewId, displayId, prefix, hash }) {
+      addResults(state, { results, viewId, displayId, prefix, hash }) {
         if (!results || !viewId || !displayId || !hash) return
 
         if (!state.results[viewId]) Vue.set(state.results, viewId, {})
-        if (!state.results[viewId][displayId]) Vue.set(state.results[viewId], displayId, {})
-        if (!state.results[viewId][displayId][prefix]) Vue.set(state.results[viewId][displayId], prefix, {})
+        if (!state.results[viewId][displayId])
+          Vue.set(state.results[viewId], displayId, {})
+        if (!state.results[viewId][displayId][prefix])
+          Vue.set(state.results[viewId][displayId], prefix, {})
         Vue.set(state.results[viewId][displayId][prefix], hash, results)
       },
 
@@ -67,12 +69,21 @@ const DruxtViewsStore = ({ store }) => {
        * // Flush target results.
        * this.$store.commit('druxt/views/flushResults', { viewId, displayId, prefix, hash })
        */
-      flushResults (state, { viewId, displayId, prefix, hash }) {
+      flushResults(state, { viewId, displayId, prefix, hash }) {
         if (!viewId) Vue.set(state, 'results', {})
-        else if (viewId && !displayId && !prefix && !hash) Vue.set(state.results, viewId, {})
-        else if (viewId && displayId && !prefix && !hash) Vue.set(state.results[viewId], displayId, {})
-        else if (viewId && displayId && prefix && !hash) Vue.set(state.results[viewId][displayId], prefix, {})
-        else if (viewId && displayId && (prefix || prefix === undefined) && hash) Vue.set(state.results[viewId][displayId][prefix], hash, {})
+        else if (viewId && !displayId && !prefix && !hash)
+          Vue.set(state.results, viewId, {})
+        else if (viewId && displayId && !prefix && !hash)
+          Vue.set(state.results[viewId], displayId, {})
+        else if (viewId && displayId && prefix && !hash)
+          Vue.set(state.results[viewId][displayId], prefix, {})
+        else if (
+          viewId &&
+          displayId &&
+          (prefix || prefix === undefined) &&
+          hash
+        )
+          Vue.set(state.results[viewId][displayId][prefix], hash, {})
       },
     },
 
@@ -100,30 +111,42 @@ const DruxtViewsStore = ({ store }) => {
        *   bypassCache: false
        * })
        */
-      async getResults ({ commit, state }, { viewId, displayId, query, prefix, bypassCache = false }) {
-        const hash = query ? md5(this.$druxt.buildQueryUrl('', query)) : '_default'
+      async getResults(
+        { commit, state },
+        { viewId, displayId, query, prefix, bypassCache = false }
+      ) {
+        const hash = query
+          ? md5(this.$druxt.buildQueryUrl('', query))
+          : '_default'
 
         let cache
-        if (typeof (((state.results[viewId] || {})[displayId] || {})[prefix] || {})[hash] !== 'undefined') {
+        if (
+          typeof (((state.results[viewId] || {})[displayId] || {})[prefix] ||
+            {})[hash] !== 'undefined'
+        ) {
           cache = state.results[viewId][displayId][prefix][hash]
           if (!bypassCache) return cache
         }
 
         try {
-          const results = await this.$druxt.getResource(`views--${viewId}`, displayId, query, prefix)
+          const results = await this.$druxt.getResource(
+            `views--${viewId}`,
+            displayId,
+            query,
+            prefix
+          )
           commit('addResults', { results, viewId, displayId, prefix, hash })
           return results
-        }
-        catch(e) {
+        } catch (e) {
           // Fall back to cache if possible.
           return cache ? cache : false
         }
-      }
-    }
+      },
+    },
   }
 
   store.registerModule(namespace, module, {
-    preserveState: Boolean(store.state[namespace])
+    preserveState: Boolean(store.state[namespace]),
   })
 }
 

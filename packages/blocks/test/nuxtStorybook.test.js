@@ -7,9 +7,9 @@ const mock = {
   options: {
     buildDir: '',
     druxt: {
-      baseUrl: 'https://demo-api.druxtjs.org'
-    }
-  }
+      baseUrl: 'https://demo-api.druxtjs.org',
+    },
+  },
 }
 
 test('Nuxt Storybook', async () => {

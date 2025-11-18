@@ -1,7 +1,10 @@
 <template>
   <div>
     <h1>Test Deprecated Field Components</h1>
-    <p>This page tests that deprecated field components emit proper console warnings.</p>
+    <p>
+      This page tests that deprecated field components emit proper console
+      warnings.
+    </p>
 
     <div data-cy="deprecated-components-container">
       <!-- Test deprecated field components -->
@@ -17,7 +20,12 @@
 
       <DruxtFieldNumberInteger
         :value="[42, 24, 12]"
-        :schema="{ settings: { display: { prefix_suffix: true }, config: { prefix: '$', suffix: '.00' } } }"
+        :schema="{
+          settings: {
+            display: { prefix_suffix: true },
+            config: { prefix: '$', suffix: '.00' },
+          },
+        }"
       />
 
       <DruxtFieldLink
@@ -40,7 +48,7 @@ export default {
     DruxtFieldTextDefault,
     DruxtFieldTextTrimmed,
     DruxtFieldNumberInteger,
-    DruxtFieldLink
-  }
+    DruxtFieldLink,
+  },
 }
 </script>

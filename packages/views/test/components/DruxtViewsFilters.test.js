@@ -18,7 +18,7 @@ let store
 const mocks = {
   $fetch: jest.fn(),
   $fetchState: {
-    pending: true
+    pending: true,
   },
   $nuxt: {
     context: {
@@ -26,8 +26,8 @@ const mocks = {
     },
   },
   $route: {
-    query: {}
-  }
+    query: {},
+  },
 }
 
 const mountComponent = (propsData) => {
@@ -51,18 +51,15 @@ describe('DruxtViewsFilters', () => {
       id: 'test',
       plugin_id: 'test',
       expose: {
-        identifier: 'test'
-      }
+        identifier: 'test',
+      },
     }
     const wrapper = mountComponent({ filters: [filter] })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Slots.
     const slots = wrapper.vm.getScopedSlots()
-    expect(Object.keys(slots)).toStrictEqual([
-      'test',
-      'default',
-    ])
+    expect(Object.keys(slots)).toStrictEqual(['test', 'default'])
     expect(Object.entries(slots.default.call(wrapper.vm)).length).toBe(1)
     expect(wrapper.vm.model).toStrictEqual({})
     slots.test.call(wrapper.vm).componentOptions.listeners.input(1)
@@ -77,7 +74,7 @@ describe('DruxtViewsFilters', () => {
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtViewsFiltersBasic',
-      'DruxtViewsFiltersDefault'
+      'DruxtViewsFiltersDefault',
     ])
   })
 
@@ -86,36 +83,45 @@ describe('DruxtViewsFilters', () => {
       id: 'test',
       plugin_id: 'test',
       expose: {
-        identifier: 'test'
-      }
+        identifier: 'test',
+      },
     }
 
     const Component = {
-      template: "<DruxtViewsFilters v-model='model' ref='module' v-bind='props' @input='onInput' />",
+      template:
+        "<DruxtViewsFilters v-model='model' ref='module' v-bind='props' @input='onInput' />",
       components: { DruxtViewsFilters },
       data: () => ({ model: {} }),
       computed: {
         props: () => ({
-          filters: [filter]
-        })
+          filters: [filter],
+        }),
       },
       methods: {
         onInput: jest.fn(),
-      }
+      },
     }
-    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtWrapper', 'NotDruxtWrapper'] })
+    const wrapper = mount(Component, {
+      localVue,
+      mocks,
+      stubs: ['DruxtWrapper', 'NotDruxtWrapper'],
+    })
 
     // Default state.
     expect(wrapper.vm.model).toStrictEqual({})
-    expect(wrapper.vm.$refs.module.component.props.value).toStrictEqual(undefined)
+    expect(wrapper.vm.$refs.module.component.props.value).toStrictEqual(
+      undefined
+    )
     expect(wrapper.vm.$refs.module.model).toStrictEqual({})
     expect(wrapper.vm.$refs.module.value).toStrictEqual({})
     expect(Component.methods.onInput).not.toHaveBeenCalled()
 
     // Change model value.
-    await wrapper.setData({ model: { test: true }})
+    await wrapper.setData({ model: { test: true } })
     expect(wrapper.vm.model).toStrictEqual({ test: true })
-    expect(wrapper.vm.$refs.module.component.props.value).toStrictEqual({ test: true })
+    expect(wrapper.vm.$refs.module.component.props.value).toStrictEqual({
+      test: true,
+    })
     expect(wrapper.vm.$refs.module.value).toStrictEqual({ test: true })
     expect(wrapper.vm.$refs.module.model).toStrictEqual({ test: true })
     expect(Component.methods.onInput).toHaveBeenCalledWith({ test: true })

@@ -124,8 +124,11 @@ const DruxtEntityComponentSuggestionMixin = {
       const rules = []
 
       // Add druxt.entity.suggestions configuration rules.
-      if (this.$druxtEntity && Array.isArray(this.$druxtEntity.options.entity.suggestions)) {
-        this.$druxtEntity.options.entity.suggestions.map(item => {
+      if (
+        this.$druxtEntity &&
+        Array.isArray(this.$druxtEntity.options.entity.suggestions)
+      ) {
+        this.$druxtEntity.options.entity.suggestions.map((item) => {
           if (item.type === this.tokenType) {
             rules.push(item)
           }
@@ -134,7 +137,9 @@ const DruxtEntityComponentSuggestionMixin = {
 
       // Add component default rules.
       if (typeof this.suggestionDefaults !== 'undefined') {
-        this.suggestionDefaults.map(item => { rules.push(item) })
+        this.suggestionDefaults.map((item) => {
+          rules.push(item)
+        })
       }
 
       return rules
@@ -152,7 +157,7 @@ const DruxtEntityComponentSuggestionMixin = {
       return {
         route: this.$store.state.druxtRouter.route,
         tokens: this.tokens,
-        ...this.props
+        ...this.props,
       }
     },
 
@@ -161,7 +166,7 @@ const DruxtEntityComponentSuggestionMixin = {
      *
      * @default false
      */
-    tokenType: () => false
+    tokenType: () => false,
   },
 
   /**
@@ -174,10 +179,13 @@ const DruxtEntityComponentSuggestionMixin = {
      * @kind method
      * @return {string} The transformed string.
      */
-    suggest: (string) => typeof string === 'string'
-      ? string.replace(/((\b|[^a-zA-Z0-9]+)[a-zA-Z0-9])/gi, (match, p1, p2) => match.toUpperCase().replace(p2, ''))
-      : false
-  }
+    suggest: (string) =>
+      typeof string === 'string'
+        ? string.replace(/((\b|[^a-zA-Z0-9]+)[a-zA-Z0-9])/gi, (match, p1, p2) =>
+            match.toUpperCase().replace(p2, '')
+          )
+        : false,
+  },
 }
 
 export { DruxtEntityComponentSuggestionMixin }

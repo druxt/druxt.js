@@ -8,12 +8,9 @@ export default {
       config.resolve.alias.vue$ = 'vue/dist/vue.esm.js'
     },
   },
-  buildModules: [
-    '@nuxtjs/vuetify',
-    'druxt-entity'
-  ],
+  buildModules: ['@nuxtjs/vuetify', 'druxt-entity'],
   druxt: {
     baseUrl,
-    proxy: { files: true }
-  }
+    proxy: { files: true },
+  },
 }

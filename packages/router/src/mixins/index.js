@@ -15,7 +15,7 @@
  * }
  * </script>
  */
- export { DruxtRouterEntityMixin } from './entity'
+export { DruxtRouterEntityMixin } from './entity'
 
 /**
  * Router Wrapper Vue.js Mixin.

@@ -31,20 +31,22 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
-    ...(this.options || {}).druxt || {},
+    ...((this.options || {}).druxt || {}),
     router: {
-      pages: (await existsSync(resolve(this.options.srcDir, this.options.dir.pages))),
+      pages: await existsSync(
+        resolve(this.options.srcDir, this.options.dir.pages)
+      ),
       wildcard: true,
       ...((this.options || {}).druxt || {}).router,
       ...moduleOptions,
-    }
+    },
   }
 
   // Add dependant modules.
   await this.addModule(['druxt', options])
 
   // Register components directories.
-  this.nuxt.hook('components:dirs', dirs => {
+  this.nuxt.hook('components:dirs', (dirs) => {
     dirs.push({ path: join(__dirname, '../dist/components') })
   })
 
@@ -52,8 +54,9 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
   if (options.router.wildcard) {
     // Ignore page routes.
     if (!options.router.pages) {
-      this.nuxt.hook('build:before', () =>
-        this.nuxt.options.build.createRoutes = () => []
+      this.nuxt.hook(
+        'build:before',
+        () => (this.nuxt.options.build.createRoutes = () => [])
       )
     }
 
@@ -61,7 +64,7 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
     this.addTemplate({
       src: resolve(__dirname, '../templates/component.js'),
       fileName: 'components/druxt-router.js',
-      options
+      options,
     })
 
     // Fetch languages.
@@ -69,36 +72,50 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
     const druxt = new DruxtClient(options.baseUrl, {
       ...options,
       // Disable API Proxy, as Proxies aren't available at build.
-      proxy: { ...options.proxy || {}, api: false },
+      proxy: { ...(options.proxy || {}), api: false },
     })
     const languageResourceType = 'configurable_language--configurable_language'
     if (((await druxt.getIndex(languageResourceType)) || {}).href) {
-      const query = new DrupalJsonApiParams().addFields(languageResourceType, ['drupal_internal__id'])
-      languages = (await druxt.getCollectionAll(languageResourceType, query) || [])
+      const query = new DrupalJsonApiParams().addFields(languageResourceType, [
+        'drupal_internal__id',
+      ])
+      languages = (
+        (await druxt.getCollectionAll(languageResourceType, query)) || []
+      )
         .map((o) => o.data)
         .flat()
-        .filter((o) => !['und', 'zxx'].includes(((o || {}).attributes || {}).drupal_internal__id))
+        .filter(
+          (o) =>
+            !['und', 'zxx'].includes(
+              ((o || {}).attributes || {}).drupal_internal__id
+            )
+        )
     }
 
     // Extend routes.
     this.extendRoutes((routes) => {
       // Add route per language.
-      languages.filter((o) => o).forEach((o) => {
-        routes.push({
-          name: `druxt-router__${o.attributes.drupal_internal__id}`,
-          path: `/${o.attributes.drupal_internal__id}*`,
-          component: resolve(this.options.buildDir, 'components/druxt-router.js'),
-          chunkName: 'druxt-router',
-          meta: { langcode: o.attributes.drupal_internal__id }
+      languages
+        .filter((o) => o)
+        .forEach((o) => {
+          routes.push({
+            name: `druxt-router__${o.attributes.drupal_internal__id}`,
+            path: `/${o.attributes.drupal_internal__id}*`,
+            component: resolve(
+              this.options.buildDir,
+              'components/druxt-router.js'
+            ),
+            chunkName: 'druxt-router',
+            meta: { langcode: o.attributes.drupal_internal__id },
+          })
         })
-      })
 
       // Add wildcard route.
       routes.push({
         name: 'druxt-router',
         path: '*',
         component: resolve(this.options.buildDir, 'components/druxt-router.js'),
-        chunkName: 'druxt-router'
+        chunkName: 'druxt-router',
       })
     })
   }
@@ -107,14 +124,14 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
   this.addPlugin({
     src: resolve(__dirname, '../templates/plugin.js'),
     fileName: 'druxt-router.js',
-    options
+    options,
   })
 
   // Add Vuex plugin.
   this.addPlugin({
     src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt-router.js',
-    options
+    options,
   })
 
   // Nuxt Storybook.
@@ -122,9 +139,11 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
     this.addTemplate({
       src: resolve(__dirname, '../templates/druxt-router.stories.js'),
       fileName: 'stories/druxt-router.stories.js',
-      options: {}
+      options: {},
     })
-    stories.push(resolve(this.options.buildDir, './stories/druxt-router.stories.js'))
+    stories.push(
+      resolve(this.options.buildDir, './stories/druxt-router.stories.js')
+    )
   })
 }
 

@@ -7,7 +7,7 @@ const localVue = createLocalVue()
 
 const componentOptions = [
   ['one', 'two', 'three'],
-  ['one', 'three']
+  ['one', 'three'],
 ]
 
 // Mock Druxt module.
@@ -15,8 +15,8 @@ const DruxtTestModule = {
   render: () => ({}),
   druxt: () => ({
     componentOptions,
-    propsData: {}
-  })
+    propsData: {},
+  }),
 }
 
 // Mock Druxt module wrapper.
@@ -30,7 +30,10 @@ describe('DruxtJS Class', () => {
     druxt = new DruxtClass()
 
     // Mount vm.
-    wrapper = mount(DruxtTestModule, { localVue, stubs: { DruxtTestModuleOneTwoThree } })
+    wrapper = mount(DruxtTestModule, {
+      localVue,
+      stubs: { DruxtTestModuleOneTwoThree },
+    })
     wrapper.vm.$options.druxt = DruxtTestModule.druxt
   })
 
@@ -49,7 +52,12 @@ describe('DruxtJS Class', () => {
     expect(components[3].pascal).toBe('One')
 
     // Get all matches with custom prefix, expect 4 results.
-    components = druxt.getComponents(wrapper.vm, componentOptions, true, 'custom-prefix')
+    components = druxt.getComponents(
+      wrapper.vm,
+      componentOptions,
+      true,
+      'custom-prefix'
+    )
     expect(components.length).toBe(4)
     expect(components[0].prefix).toBe('custom-prefix')
     expect(components[0].pascal).toBe('CustomPrefixOneTwoThree')
@@ -63,7 +71,7 @@ describe('DruxtJS Class', () => {
       kebab: 'druxt-test-module-one-two-three',
       parts: ['one', 'two', 'three'],
       pascal: 'DruxtTestModuleOneTwoThree',
-      prefix: 'druxt-test-module'
+      prefix: 'druxt-test-module',
     })
   })
 
@@ -75,9 +83,9 @@ describe('DruxtJS Class', () => {
     expect(await druxt.getModuleData(wrapper.vm)).toStrictEqual({
       componentOptions: [
         ['one', 'two', 'three'],
-        ['one', 'three']
+        ['one', 'three'],
       ],
-      propsData: {}
+      propsData: {},
     })
 
     // Invoke with vm name set.

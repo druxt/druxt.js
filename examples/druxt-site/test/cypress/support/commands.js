@@ -41,4 +41,3 @@ Cypress.Commands.add('captureConsoleWarn', () => {
 Cypress.Commands.add('getConsoleWarnings', () => {
   return cy.get('@consoleWarnings')
 })
-

@@ -9,7 +9,7 @@ const localVue = createLocalVue()
 const component = {
   name: 'DruxtEntityTest',
   mixins: [DruxtEntityMixin],
-  render: () => ({})
+  render: () => ({}),
 }
 
 describe('DruxtEntityMixin', () => {
@@ -21,6 +21,8 @@ describe('DruxtEntityMixin', () => {
 
     const wrapper = mount(component, { localVue, propsData })
 
-    expect(wrapper.vm.classes).toBe('node--page--default--view node--page node page default view')
+    expect(wrapper.vm.classes).toBe(
+      'node--page--default--view node--page node page default view'
+    )
   })
 })

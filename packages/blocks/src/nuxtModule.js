@@ -27,19 +27,19 @@ const DruxtBlocksNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
-    ...(this.options || {}).druxt || {},
+    ...((this.options || {}).druxt || {}),
     blocks: {
       query: {},
       ...((this.options || {}).druxt || {}).site,
       ...moduleOptions,
-    }
+    },
   }
 
   // Add Druxt module.
   await this.addModule(['druxt', options])
 
   // Register components directories.
-  this.nuxt.hook('components:dirs', dirs => {
+  this.nuxt.hook('components:dirs', (dirs) => {
     dirs.push({ path: join(__dirname, 'components') })
     dirs.push({ path: join(__dirname, 'components/blocks') })
   })

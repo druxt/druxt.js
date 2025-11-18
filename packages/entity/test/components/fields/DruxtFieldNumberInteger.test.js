@@ -19,16 +19,21 @@ const mountComponent = (prefix = false, suffix = false, options) => {
       settings: {
         config: {
           prefix,
-          suffix
+          suffix,
         },
         display: {
-          prefix_suffix: !!(prefix || suffix)
-        }
-      }
-    }
+          prefix_suffix: !!(prefix || suffix),
+        },
+      },
+    },
   }
 
-  return shallowMount(DruxtFieldNumberInteger, { ...options, localVue, propsData, stubs })
+  return shallowMount(DruxtFieldNumberInteger, {
+    ...options,
+    localVue,
+    propsData,
+    stubs,
+  })
 }
 
 describe('Component - DruxtFieldNumberInteger', () => {
@@ -38,12 +43,16 @@ describe('Component - DruxtFieldNumberInteger', () => {
 
   test('default', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent()
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 
@@ -56,12 +65,16 @@ describe('Component - DruxtFieldNumberInteger', () => {
 
   test('prefix', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent('#')
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 
@@ -74,12 +87,16 @@ describe('Component - DruxtFieldNumberInteger', () => {
 
   test('suffix', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent(false, ' item(s)')
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 
@@ -92,12 +109,16 @@ describe('Component - DruxtFieldNumberInteger', () => {
 
   test('prefix_suffix', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent('AUD $', '.00')
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldNumberInteger component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 

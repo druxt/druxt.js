@@ -29,19 +29,19 @@ const DruxtMenuNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
-    ...(this.options || {}).druxt || {},
+    ...((this.options || {}).druxt || {}),
     menu: {
       jsonApiMenuItems: true,
       ...((this.options || {}).druxt || {}).menu,
       ...moduleOptions,
-    }
+    },
   }
 
   // Add dependant modules.
   await this.addModule(['druxt', options])
 
   // Register components directories.
-  this.nuxt.hook('components:dirs', dirs => {
+  this.nuxt.hook('components:dirs', (dirs) => {
     dirs.push({ path: join(__dirname, 'components') })
     dirs.push({ path: join(__dirname, 'components/blocks') })
   })
@@ -50,14 +50,14 @@ const DruxtMenuNuxtModule = async function (moduleOptions = {}) {
   this.addPlugin({
     src: resolve(__dirname, '../templates/plugin.js'),
     fileName: 'druxt-menu.js',
-    options
+    options,
   })
 
   // Add Vuex plugin.
   this.addPlugin({
     src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt-menu.js',
-    options
+    options,
   })
 
   // Nuxt Storybook.

@@ -38,7 +38,7 @@ const DruxtBlocksBlockMixin = {
     langcode: {
       type: String,
       default: undefined,
-    }
+    },
   },
 
   /** */
@@ -50,8 +50,8 @@ const DruxtBlocksBlockMixin = {
      */
     settings() {
       return this.block.attributes.settings
-    }
-  }
+    },
+  },
 }
 
 export { DruxtBlocksBlockMixin }

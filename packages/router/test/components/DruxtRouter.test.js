@@ -20,18 +20,18 @@ localVue.use(Vuex)
 const stubs = {
   DruxtDebug: true,
   DruxtEntity: true,
-  DruxtDevelTemplate: true
+  DruxtDevelTemplate: true,
 }
 
 let store
 const mocks = {
   $druxt: {
     settings: {
-      router: {}
-    }
+      router: {},
+    },
   },
   $fetchState: {
-    pending: true
+    pending: true,
   },
   $nuxt: {
     context: {
@@ -41,9 +41,9 @@ const mocks = {
   $redirect: jest.fn(),
   app: {
     context: {
-      error: jest.fn()
-    }
-  }
+      error: jest.fn(),
+    },
+  },
 }
 
 const mountComponent = (propsData, fullPath, options = {}) => {
@@ -51,7 +51,15 @@ const mountComponent = (propsData, fullPath, options = {}) => {
   if (fullPath) {
     router.push({ path: fullPath })
   }
-  return mount(DruxtRouterComponent, { localVue, mocks, propsData, router, store, stubs, ...options })
+  return mount(DruxtRouterComponent, {
+    localVue,
+    mocks,
+    propsData,
+    router,
+    store,
+    stubs,
+    ...options,
+  })
 }
 
 describe('DruxtRouterComponent', () => {
@@ -67,10 +75,18 @@ describe('DruxtRouterComponent', () => {
   test('Middleware - Homepage', async () => {
     // Mount component.
     const wrapper = mountComponent({}, '/')
-    await DruxtRouterComponent.middleware({ $druxt: wrapper.vm.$druxt, store: wrapper.vm.$store, route: wrapper.vm.$route })
+    await DruxtRouterComponent.middleware({
+      $druxt: wrapper.vm.$druxt,
+      store: wrapper.vm.$store,
+      route: wrapper.vm.$route,
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(mockAxios.get).toHaveBeenNthCalledWith(1, '/router/translate-path?path=/', expect.any(Object))
+    expect(mockAxios.get).toHaveBeenNthCalledWith(
+      1,
+      '/router/translate-path?path=/',
+      expect.any(Object)
+    )
 
     wrapper.vm.head = DruxtRouterComponent.head
 
@@ -78,18 +94,20 @@ describe('DruxtRouterComponent', () => {
 
     expect(wrapper.vm.head()).toStrictEqual({
       title: expect.any(String),
-      link: [{
-        hid: 'canonical',
-        href: `${baseUrl}/en/node`,
-        rel: 'canonical'
-      }]
+      link: [
+        {
+          hid: 'canonical',
+          href: `${baseUrl}/en/node`,
+          rel: 'canonical',
+        },
+      ],
     })
 
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtRouterViewFront',
       'DruxtRouterView',
-      'DruxtRouterDefault'
+      'DruxtRouterDefault',
     ])
 
     expect(wrapper.vm.route).toHaveProperty('type')
@@ -103,13 +121,18 @@ describe('DruxtRouterComponent', () => {
     // Mount component.
     const wrapper = mountComponent({}, '/node/1')
     const redirect = jest.fn()
-    await DruxtRouterComponent.middleware({ $druxt: wrapper.vm.$druxt, store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
+    await DruxtRouterComponent.middleware({
+      $druxt: wrapper.vm.$druxt,
+      store: wrapper.vm.$store,
+      redirect,
+      route: wrapper.vm.$route,
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtRouterEntityNotFront',
       'DruxtRouterEntity',
-      'DruxtRouterDefault'
+      'DruxtRouterDefault',
     ])
   })
 
@@ -117,7 +140,12 @@ describe('DruxtRouterComponent', () => {
     // Mount component.
     const wrapper = mountComponent({}, '/en/node')
     const redirect = jest.fn()
-    await DruxtRouterComponent.middleware({ $druxt: wrapper.vm.$druxt, store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
+    await DruxtRouterComponent.middleware({
+      $druxt: wrapper.vm.$druxt,
+      store: wrapper.vm.$store,
+      redirect,
+      route: wrapper.vm.$route,
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(redirect).toBeCalledWith('/')
@@ -130,7 +158,12 @@ describe('DruxtRouterComponent', () => {
     // Mount component.
     const wrapper = mountComponent({}, '/en/node')
     const redirect = jest.fn()
-    await DruxtRouterComponent.middleware({ $druxt:wrapper.vm.$druxt, store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
+    await DruxtRouterComponent.middleware({
+      $druxt: wrapper.vm.$druxt,
+      store: wrapper.vm.$store,
+      redirect,
+      route: wrapper.vm.$route,
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Assert redirect wasn't invoked.
@@ -155,12 +188,12 @@ describe('DruxtRouterComponent', () => {
       name: 'DruxtRouterError',
       render(h) {
         return h('div', [this.$scopedSlots.default()])
-      }
+      },
     }
 
     // Simulate error.
     const wrapper = mountComponent({}, '/error', {
-      components: { DruxtRouterError }
+      components: { DruxtRouterError },
     })
     wrapper.vm.$fetch = wrapper.vm.$options.fetch
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -172,33 +205,44 @@ describe('DruxtRouterComponent', () => {
     // Build mocked slots.
     const mock = {
       ...wrapper.vm,
-      $createElement: jest.fn()
+      $createElement: jest.fn(),
     }
-    const mockedSlots = wrapper.vm.$options.druxt.slots.call(mock, mock.$createElement)
+    const mockedSlots = wrapper.vm.$options.druxt.slots.call(
+      mock,
+      mock.$createElement
+    )
 
     // Assert default slot.
     mockedSlots.default()
     expect(mock.$createElement).toBeCalledWith('h1', ['Error 404'])
-    expect(mock.$createElement).toBeCalledWith('p', ['Unable to resolve path /error.'])
+    expect(mock.$createElement).toBeCalledWith('p', [
+      'Unable to resolve path /error.',
+    ])
   })
 
   test('Metatags', () => {
     const mock = {
       route: { canonical: undefined },
-      metatags: [{
-        name: 'test'
-      }]
+      metatags: [
+        {
+          name: 'test',
+        },
+      ],
     }
     expect(DruxtRouterComponent.head.call(mock)).toStrictEqual({
-      link: [{
-        hid: 'canonical',
-        href: undefined,
-        rel: 'canonical'
-      }],
-      meta: [{
-        name: 'test'
-      }],
-      title: undefined
+      link: [
+        {
+          hid: 'canonical',
+          href: undefined,
+          rel: 'canonical',
+        },
+      ],
+      meta: [
+        {
+          name: 'test',
+        },
+      ],
+      title: undefined,
     })
   })
 
@@ -206,24 +250,30 @@ describe('DruxtRouterComponent', () => {
     const wrapper = mountComponent({}, '/')
     wrapper.vm.$fetch = wrapper.vm.$options.fetch
     await wrapper.vm.$options.fetch.call(wrapper.vm)
-    expect(mockAxios.get).toHaveBeenNthCalledWith(1, '/router/translate-path?path=/', expect.any(Object))
+    expect(mockAxios.get).toHaveBeenNthCalledWith(
+      1,
+      '/router/translate-path?path=/',
+      expect.any(Object)
+    )
 
     // Assert that homepage route resoles correctly.
     wrapper.vm.head = DruxtRouterComponent.head
     expect(wrapper.vm.title).toBe('Home')
     expect(wrapper.vm.head()).toStrictEqual({
       title: expect.any(String),
-      link: [{
-        hid: 'canonical',
-        href: `${baseUrl}/en/node`,
-        rel: 'canonical'
-      }]
+      link: [
+        {
+          hid: 'canonical',
+          href: `${baseUrl}/en/node`,
+          rel: 'canonical',
+        },
+      ],
     })
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtRouterViewFront',
       'DruxtRouterView',
-      'DruxtRouterDefault'
+      'DruxtRouterDefault',
     ])
     expect(wrapper.vm.route).toHaveProperty('type')
     expect(wrapper.vm.route).toHaveProperty('label')
@@ -236,7 +286,11 @@ describe('DruxtRouterComponent', () => {
     const wrapper = mountComponent({ path: '/' })
     wrapper.vm.$fetch = wrapper.vm.$options.fetch
     await wrapper.vm.$options.fetch.call(wrapper.vm)
-    expect(mockAxios.get).toHaveBeenNthCalledWith(1, '/router/translate-path?path=/', expect.any(Object))
+    expect(mockAxios.get).toHaveBeenNthCalledWith(
+      1,
+      '/router/translate-path?path=/',
+      expect.any(Object)
+    )
     expect(wrapper.vm.path).toBe('/')
     expect(wrapper.vm.route.resolvedPath).toBe('/en/node')
 
@@ -244,9 +298,14 @@ describe('DruxtRouterComponent', () => {
     await wrapper.setProps({ path: '/node/1' })
     await localVue.nextTick()
     await localVue.nextTick()
-    expect(mockAxios.get).toHaveBeenLastCalledWith('/router/translate-path?path=/node/1', expect.any(Object))
+    expect(mockAxios.get).toHaveBeenLastCalledWith(
+      '/router/translate-path?path=/node/1',
+      expect.any(Object)
+    )
     expect(wrapper.vm.path).toBe('/node/1')
-    expect(wrapper.vm.route.resolvedPath).toBe('/en/recipes/deep-mediterranean-quiche')
+    expect(wrapper.vm.route.resolvedPath).toBe(
+      '/en/recipes/deep-mediterranean-quiche'
+    )
   })
 
   test('Watch - $route', async () => {
@@ -256,7 +315,11 @@ describe('DruxtRouterComponent', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Assert default state.
-    expect(mockAxios.get).toHaveBeenNthCalledWith(1, '/router/translate-path?path=/', expect.any(Object))
+    expect(mockAxios.get).toHaveBeenNthCalledWith(
+      1,
+      '/router/translate-path?path=/',
+      expect.any(Object)
+    )
 
     // Change to mock route.
     wrapper.vm.$store.state.druxtRouter.routes['/test'] = { test: true }
@@ -264,7 +327,8 @@ describe('DruxtRouterComponent', () => {
 
     // Assert the route has been updated.
     await localVue.nextTick()
-    expect(wrapper.vm.$store.state.druxtRouter.route).toStrictEqual({ test: true })
+    expect(wrapper.vm.$store.state.druxtRouter.route).toStrictEqual({
+      test: true,
+    })
   })
-
 })

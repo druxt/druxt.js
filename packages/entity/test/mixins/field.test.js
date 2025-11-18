@@ -42,11 +42,13 @@ describe('DruxtFieldMixin', () => {
       value: entity.relationships.field_media_image,
     }
     const wrapper = mount(component, { localVue, propsData })
-    expect(wrapper.vm.items).toStrictEqual([{
-      mode: propsData.schema.settings.display.view_mode,
-      type: propsData.value.data.type,
-      uuid: propsData.value.data.id,
-    }])
+    expect(wrapper.vm.items).toStrictEqual([
+      {
+        mode: propsData.schema.settings.display.view_mode,
+        type: propsData.value.data.type,
+        uuid: propsData.value.data.id,
+      },
+    ])
   })
 
   test('v-model', async () => {

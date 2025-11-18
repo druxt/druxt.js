@@ -10,10 +10,7 @@
     </div>
 
     <!-- Label: Inline -->
-    <slot
-      v-if="$scopedSlots['label-inline']"
-      name="label-inline"
-    />
+    <slot v-if="$scopedSlots['label-inline']" name="label-inline" />
 
     <!-- Items -->
     <component
@@ -49,7 +46,7 @@ export default {
   data: () => ({
     component: 'span',
     entities: false,
-    loading: false
+    loading: false,
   }),
 
   async fetch() {
@@ -63,20 +60,31 @@ export default {
 
       this.entities[delta] = {
         props: false,
-        text: result.data.attributes[Object.keys(result.data.attributes).find(e => ['name', 'title'].includes(e))]
+        text: result.data.attributes[
+          Object.keys(result.data.attributes).find((e) =>
+            ['name', 'title'].includes(e)
+          )
+        ],
       }
 
-      if (((this.schema.settings || {}).display || {}).link && result.data.attributes.path.alias) {
+      if (
+        ((this.schema.settings || {}).display || {}).link &&
+        result.data.attributes.path.alias
+      ) {
         this.component = 'nuxt-link'
         this.entities[delta].props = {
-          to: result.data.attributes.path.alias
+          to: result.data.attributes.path.alias,
         }
       }
     }
   },
 
   mounted() {
-    console.warn(`[druxt-entity] The ${this.$options._componentTag || this.$options.name} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+    console.warn(
+      `[druxt-entity] The ${
+        this.$options._componentTag || this.$options.name
+      } component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`
+    )
   },
 
   methods: {
@@ -84,8 +92,8 @@ export default {
      * Maps `druxt/getResource` Vuex action to `this.getResource`.
      */
     ...mapActions({
-      getResource: 'druxt/getResource'
-    })
-  }
+      getResource: 'druxt/getResource',
+    }),
+  },
 }
 </script>

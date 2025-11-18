@@ -39,8 +39,8 @@ export default {
    */
   computed: {
     ...mapState('druxtRouter', {
-      title: state => state.route.label
-    })
-  }
+      title: (state) => state.route.label,
+    }),
+  },
 }
 </script>

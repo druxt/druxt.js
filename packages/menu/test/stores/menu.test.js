@@ -17,37 +17,61 @@ describe('DruxtStore', () => {
     store = new Vuex.Store()
     DruxtMenuStore({ store })
     store.$druxtMenu = {
-      get: jest.fn()
+      get: jest.fn(),
     }
   })
 
   test('init', () => {
-    expect(() => { DruxtMenuStore({}) }).toThrow('Vuex store not found.')
+    expect(() => {
+      DruxtMenuStore({})
+    }).toThrow('Vuex store not found.')
   })
 
   test('get', async () => {
     await store.dispatch('druxtMenu/get', 'main')
-    expect(store.$druxtMenu.get).toHaveBeenCalledWith('main', undefined, undefined)
+    expect(store.$druxtMenu.get).toHaveBeenCalledWith(
+      'main',
+      undefined,
+      undefined
+    )
 
-    await store.dispatch('druxtMenu/get', { name: 'main', settings: { test: true }})
-    expect(store.$druxtMenu.get).toHaveBeenCalledWith('main', { test: true }, undefined)
+    await store.dispatch('druxtMenu/get', {
+      name: 'main',
+      settings: { test: true },
+    })
+    expect(store.$druxtMenu.get).toHaveBeenCalledWith(
+      'main',
+      { test: true },
+      undefined
+    )
     store.dispatch('druxtMenu/get', 'name')
   })
 
   test('AddEntities', async () => {
     expect(store.state.druxtMenu.entities).toStrictEqual({})
     store.commit('druxtMenu/addEntities', { entities: [{ id: 'test' }] })
-    expect(Object.entries(store.state.druxtMenu.entities[undefined]).length).toBe(1)
-    expect(store.state.druxtMenu.entities[undefined].test).toStrictEqual({ id: 'test' })
+    expect(
+      Object.entries(store.state.druxtMenu.entities[undefined]).length
+    ).toBe(1)
+    expect(store.state.druxtMenu.entities[undefined].test).toStrictEqual({
+      id: 'test',
+    })
   })
 
   test('flushEntities', async () => {
     expect(store.state.druxtMenu.entities).toStrictEqual({})
     store.commit('druxtMenu/addEntities', { entities: [{ id: 'test' }] })
-    store.commit('druxtMenu/addEntities', { entities: [{ id: 'test2' }], prefix: 'es' })
-    expect(Object.entries(store.state.druxtMenu.entities[undefined]).length).toBe(1)
+    store.commit('druxtMenu/addEntities', {
+      entities: [{ id: 'test2' }],
+      prefix: 'es',
+    })
+    expect(
+      Object.entries(store.state.druxtMenu.entities[undefined]).length
+    ).toBe(1)
     store.commit('druxtMenu/flushEntities', { prefix: 'undefined' })
-    expect(Object.entries(store.state.druxtMenu.entities[undefined]).length).toBe(0)
+    expect(
+      Object.entries(store.state.druxtMenu.entities[undefined]).length
+    ).toBe(0)
     store.commit('druxtMenu/flushEntities', {})
     expect(Object.entries(store.state.druxtMenu.entities).length).toBe(0)
   })

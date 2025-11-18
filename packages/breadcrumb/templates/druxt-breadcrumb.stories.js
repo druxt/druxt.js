@@ -4,17 +4,19 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 DruxtBreadcrumb.__docgenInfo.props = [
   ...DruxtModule.__docgenInfo.props,
   ...DruxtBreadcrumb.__docgenInfo.props,
-].sort((a, b) => a.name < b.name ? -1 : 1).filter((o) => o.name !== 'v-model')
+]
+  .sort((a, b) => (a.name < b.name ? -1 : 1))
+  .filter((o) => o.name !== 'v-model')
 
 export default {
   title: 'Druxt/Breadcrumb/DruxtBreadcrumb',
-  component: DruxtBreadcrumb
+  component: DruxtBreadcrumb,
 }
 
 const Template = (args, { argTypes }) => ({
   components: { DruxtBreadcrumb },
   props: Object.keys(argTypes),
-  template: `<DruxtBreadcrumb v-bind="$props" />`
+  template: `<DruxtBreadcrumb v-bind="$props" />`,
 })
 
 export const Default = Template.bind({})
@@ -43,15 +45,18 @@ export const Wrapper = (args, { argTypes }) => ({
       <li v-for="option of $refs.module.getModuleComponents()" :key="option.name">{{ option.name }}</li>
     </ul>
   </template>
-</DruxtBreadcrumb>`
+</DruxtBreadcrumb>`,
 })
 Wrapper.parameters = {
   docs: {
     description: {
-      story: 'The DruxtBreadcrumb component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' + code + '\n```',
+      story:
+        'The DruxtBreadcrumb component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' +
+        code +
+        '\n```',
     },
-    source: { code }
-  }
+    source: { code },
+  },
 }
 
 // Template injection story.
@@ -64,13 +69,19 @@ code = `<DruxtBreadcrumb>
 export const TemplateInjection = (args, { argTypes }) => ({
   components: { DruxtBreadcrumb },
   props: Object.keys(argTypes),
-  template: code.replace('<DruxtBreadcrumb>', '<DruxtBreadcrumb v-bind="$props">')
+  template: code.replace(
+    '<DruxtBreadcrumb>',
+    '<DruxtBreadcrumb v-bind="$props">'
+  ),
 })
 TemplateInjection.parameters = {
   docs: {
     description: {
-      story: 'The DruxtBreadcrumb component can be themed by injecting the default template into the compomnent.\n\n```jsx\n' + code + '\n```',
+      story:
+        'The DruxtBreadcrumb component can be themed by injecting the default template into the compomnent.\n\n```jsx\n' +
+        code +
+        '\n```',
     },
-    source: { code }
-  }
+    source: { code },
+  },
 }

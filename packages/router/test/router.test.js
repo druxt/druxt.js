@@ -17,7 +17,9 @@ describe('DruxtRouter', () => {
 
   test('constructor', () => {
     // Throw error if 'baseUrl' not provided.
-    expect(() => { return new DruxtRouter() }).toThrow('The \'baseUrl\' parameter is required.')
+    expect(() => {
+      return new DruxtRouter()
+    }).toThrow("The 'baseUrl' parameter is required.")
 
     // Ensure class type.
     expect(new DruxtRouter(baseUrl)).toBeInstanceOf(DruxtRouter)
@@ -27,7 +29,7 @@ describe('DruxtRouter', () => {
   test('constructor - axiosSettings', () => {
     const headers = { 'X-DruxtRouter': true }
     const mockRouter = new DruxtRouter(baseUrl, {
-      axios: { headers }
+      axios: { headers },
     })
     expect(mockRouter).toBeInstanceOf(DruxtRouter)
 
@@ -47,8 +49,12 @@ describe('DruxtRouter', () => {
   test('buildQueryUrl', () => {
     expect(router.buildQueryUrl('url', 'query')).toBe('url?query')
     expect(router.buildQueryUrl('url', '?query')).toBe('url?query')
-    expect(router.buildQueryUrl('url', { getQueryString: () => 'query' })).toBe('url?query')
-    expect(router.buildQueryUrl('url', { query: 'string' })).toBe('url?query=string')
+    expect(router.buildQueryUrl('url', { getQueryString: () => 'query' })).toBe(
+      'url?query'
+    )
+    expect(router.buildQueryUrl('url', { query: 'string' })).toBe(
+      'url?query=string'
+    )
 
     expect(router.buildQueryUrl('url', {})).toBe('url')
     expect(router.buildQueryUrl('url', [])).toBe('url')
@@ -62,22 +68,24 @@ describe('DruxtRouter', () => {
       data: {
         meta: {
           omitted: {
-            detail: 'Some resources have been omitted because of insufficient authorization.',
+            detail:
+              'Some resources have been omitted because of insufficient authorization.',
             links: {
               help: null,
               item: {
                 meta: {
-                  detail: 'The current user is not allowed to GET the selected resource. The \'administer node fields\' permission is required.'
-                }
-              }
-            }
-          }
-        }
-      }
+                  detail:
+                    "The current user is not allowed to GET the selected resource. The 'administer node fields' permission is required.",
+                },
+              },
+            },
+          },
+        },
+      },
     }
     try {
       router.checkPermissions(res)
-    } catch(err) {
+    } catch (err) {
       expect(err.response.data.errors[0]).toMatchSnapshot()
     }
   })
@@ -105,7 +113,7 @@ describe('DruxtRouter', () => {
   test('get - error', async () => {
     try {
       await router.get('/error')
-    } catch(err) {
+    } catch (err) {
       expect(err.response.status).toBe(404)
       expect(err.response.data.message).toBe('Unable to resolve path /error.')
     }
@@ -145,24 +153,24 @@ describe('DruxtRouter', () => {
 
     // Route provided redirect.
     redirect = router.getRedirect(null, {
-      redirect: [{ to: '/' }]
+      redirect: [{ to: '/' }],
     })
     expect(redirect).toBe('/')
 
     // Root redirect.
     redirect = router.getRedirect('/', {
-      isHomePath: true
+      isHomePath: true,
     })
     expect(redirect).toBe(false)
 
     redirect = router.getRedirect('/node/1', {
-      isHomePath: true
+      isHomePath: true,
     })
     expect(redirect).toBe('/')
 
     // Clean url redirect.
     redirect = router.getRedirect('/node/2', {
-      canonical: 'https://example.com/clean-url'
+      canonical: 'https://example.com/clean-url',
     })
     expect(redirect).toBe('/clean-url')
 
@@ -172,12 +180,12 @@ describe('DruxtRouter', () => {
 
     // Querystring.
     redirect = router.getRedirect('/?querystring', {
-      isHomePath: true
+      isHomePath: true,
     })
     expect(redirect).toBe(false)
 
     redirect = router.getRedirect('/clean-url?querystring', {
-      canonical: 'https://example.com/clean-url'
+      canonical: 'https://example.com/clean-url',
     })
     expect(redirect).toBe(false)
   })
@@ -185,16 +193,22 @@ describe('DruxtRouter', () => {
   // @deprecated
   test('getResource', async () => {
     const mockPage = await getMockResource('node--page')
-    const entity = await router.getResource({ type: mockPage.data.type, id: mockPage.data.id })
+    const entity = await router.getResource({
+      type: mockPage.data.type,
+      id: mockPage.data.id,
+    })
     expect(entity).toHaveProperty('type', mockPage.data.type)
 
     try {
       await router.getResource({ id: 'test', type: 'missing' })
-    } catch(err) {
+    } catch (err) {
       expect(err.response.status).toBe(404)
       expect(err.response.statusText).toBe('Not Found')
     }
-    expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi/missing/test', undefined)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(
+      '/jsonapi/missing/test',
+      undefined
+    )
 
     const empty = await router.getResource()
     expect(empty).toBe(false)
@@ -203,23 +217,36 @@ describe('DruxtRouter', () => {
   // @deprecated
   test('getResources', async () => {
     const resources = await router.getResources('node--page')
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page`, undefined)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(
+      `${baseUrl}/en/jsonapi/node/page`,
+      undefined
+    )
     expect(resources.length).toBe(1)
 
     await router.getResources('node--page', { 'filter[status]': 1 })
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page?filter%5Bstatus%5D=1`, undefined)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(
+      `${baseUrl}/en/jsonapi/node/page?filter%5Bstatus%5D=1`,
+      undefined
+    )
 
     const noResource = await router.getResources()
     expect(noResource).toBe(false)
 
-    const query = new DrupalJsonApiParams().addFields('node--recipe', []).addPageLimit(5)
+    const query = new DrupalJsonApiParams()
+      .addFields('node--recipe', [])
+      .addPageLimit(5)
     await router.getResources('node--recipe', query, { all: true })
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`, undefined)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(
+      `${baseUrl}/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`,
+      undefined
+    )
   })
 
   test('getResourceByRoute', async () => {
     const mockPage = await getMockResource('node--page')
-    const mockRoute = await getMockRoute(`/node/${mockPage.data.attributes.drupal_internal__nid}`)
+    const mockRoute = await getMockRoute(
+      `/node/${mockPage.data.attributes.drupal_internal__nid}`
+    )
     const entity = await router.getResourceByRoute(mockRoute.data)
 
     expect(entity).toHaveProperty('id', mockPage.data.id)
@@ -247,7 +274,7 @@ describe('DruxtRouter', () => {
     // Get 404 error.
     try {
       await router.getRoute('/error')
-    } catch(err) {
+    } catch (err) {
       expect(err.response.status).toBe(404)
       expect(err.response.data.message).toBe('Unable to resolve path /error.')
     }
@@ -257,7 +284,7 @@ describe('DruxtRouter', () => {
     const brokenRouter = new DruxtRouter('https://example.com', {})
     try {
       await brokenRouter.getRoute('/broken-router')
-    } catch(err) {
+    } catch (err) {
       expect(err.response).toMatchSnapshot()
     }
   })

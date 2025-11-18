@@ -10,8 +10,8 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 
 const testComponent = {
-  render () {},
-  mixins: [DruxtRouterEntityMixin]
+  render() {},
+  mixins: [DruxtRouterEntityMixin],
 }
 
 let store
@@ -35,7 +35,7 @@ describe('DruxtRouterEntityMixin', () => {
         uuid: mockPage.data.id,
       },
       store,
-      localVue
+      localVue,
     })
 
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -49,18 +49,18 @@ describe('DruxtRouterEntityMixin', () => {
         data: {
           id: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9',
           type: 'node--page',
-          cache: true
-        }
+          cache: true,
+        },
       },
     })
 
     const wrapper = shallowMount(testComponent, {
       propsData: {
         type: 'node--page',
-        uuid: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9'
+        uuid: '4eb8bcc1-3b2e-4663-89cd-b8ca6d4d0cc9',
       },
       store,
-      localVue
+      localVue,
     })
 
     await wrapper.vm.$options.fetch.call(wrapper.vm)

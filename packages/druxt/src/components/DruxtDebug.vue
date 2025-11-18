@@ -1,15 +1,15 @@
 <template>
-  <details
-    v-if="$nuxt.context.isDev"
-    title="Expand for details"
-  >
+  <details v-if="$nuxt.context.isDev" title="Expand for details">
     <summary v-text="title" />
     <pre v-if="json"><!--
       --><code>{{ JSON.stringify(json, null, '  ') }}</code><!--
     --></pre>
     <!-- @slot Debug content -->
     <slot />
-    <small>Note: This message is only visible when development mode is enabled.</small>
+    <small
+      >Note: This message is only visible when development mode is
+      enabled.</small
+    >
   </details>
 
   <div v-else />
@@ -38,7 +38,7 @@ export default {
      */
     json: {
       type: [Array, Boolean, Object, Number, String],
-      default: undefined
+      default: undefined,
     },
 
     /**
@@ -62,7 +62,7 @@ export default {
      * @return {object}
      */
     module: ({ $parent }) =>
-      $parent.$options._componentTag === "DruxtWrapper"
+      $parent.$options._componentTag === 'DruxtWrapper'
         ? $parent.$parent
         : $parent,
 
@@ -71,11 +71,12 @@ export default {
      *
      * @return {string}
      */
-    title: ({ module, summary }) => module.$options._componentTag
-      ? `[${module.$options._componentTag}] ${summary}`
-      : summary,
+    title: ({ module, summary }) =>
+      module.$options._componentTag
+        ? `[${module.$options._componentTag}] ${summary}`
+        : summary,
   },
-};
+}
 </script>
 
 <style scoped>
@@ -104,7 +105,7 @@ details[open] > summary {
 }
 
 details[open] > summary::after {
-  content: ''
+  content: '';
 }
 
 details small:last-of-type {

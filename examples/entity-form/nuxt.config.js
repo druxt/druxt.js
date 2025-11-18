@@ -3,5 +3,5 @@ const baseUrl = process.env.GITPOD_WORKSPACE_ID
   : process.env.BASE_URL || 'http://druxtjs-drupal.ddev.site'
 
 export default {
-  buildModules: [['druxt-entity', { baseUrl }]]
+  buildModules: [['druxt-entity', { baseUrl }]],
 }

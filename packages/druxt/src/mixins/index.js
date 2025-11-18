@@ -7,4 +7,4 @@
  * @deprecated
  * @private
  */
- export { DruxtComponentMixin } from './component'
+export { DruxtComponentMixin } from './component'

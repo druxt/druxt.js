@@ -26,8 +26,8 @@ const DruxtComponentMixin = {
       default: () => ({
         component: 'div',
         propsData: {},
-      })
-    }
+      }),
+    },
   },
 
   /**
@@ -66,8 +66,8 @@ const DruxtComponentMixin = {
     }
 
     const options = druxt.getComponents(this, moduleData.componentOptions, true)
-    this.component.options = options.map(item => item.pascal)
-    const available = options.filter(item => item.global)
+    this.component.options = options.map((item) => item.pascal)
+    const available = options.filter((item) => item.global)
     if (!available.length) {
       return
     }

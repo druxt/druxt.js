@@ -1,7 +1,7 @@
 import * as DruxtFieldComponents from '../../../src/components/fields'
 
 global.console = {
-  warn: jest.fn()
+  warn: jest.fn(),
 }
 
 describe('DruxtFieldComponents - Deprecations', () => {
@@ -16,7 +16,9 @@ describe('DruxtFieldComponents - Deprecations', () => {
           _componentTag: component,
         },
       })
-      expect(console.warn).toHaveBeenCalledWith(`[druxt-entity] The ${component} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+      expect(console.warn).toHaveBeenCalledWith(
+        `[druxt-entity] The ${component} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`
+      )
     })
   }
 })

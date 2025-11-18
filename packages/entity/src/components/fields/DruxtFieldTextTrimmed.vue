@@ -20,12 +20,18 @@ export default {
      * @default 600
      */
     trimLength() {
-      return (((this.schema || {}).settings || {}).display || {}).trim_length || 600
+      return (
+        (((this.schema || {}).settings || {}).display || {}).trim_length || 600
+      )
     },
   },
 
   mounted() {
-    console.warn(`[druxt-entity] The ${this.$options._componentTag || this.$options.name} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+    console.warn(
+      `[druxt-entity] The ${
+        this.$options._componentTag || this.$options.name
+      } component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`
+    )
   },
 
   methods: {
@@ -38,7 +44,7 @@ export default {
      */
     format(item) {
       return item.value.slice(0, this.trimLength)
-    }
-  }
+    },
+  },
 }
 </script>

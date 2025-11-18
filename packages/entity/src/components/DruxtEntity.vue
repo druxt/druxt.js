@@ -55,7 +55,7 @@ export default {
      */
     mode: {
       type: String,
-      default: 'default'
+      default: 'default',
     },
 
     /**
@@ -86,7 +86,7 @@ export default {
      */
     type: {
       type: String,
-      required: true
+      required: true,
     },
 
     /**
@@ -96,7 +96,7 @@ export default {
      */
     uuid: {
       type: [Boolean, String],
-      default: false
+      default: false,
     },
   },
 
@@ -116,7 +116,13 @@ export default {
   }),
 
   fetchKey(getCounter) {
-    const parts = ['DruxtEntity', this.type, this.uuid, this.mode, this.schemaType].filter((o) => o)
+    const parts = [
+      'DruxtEntity',
+      this.type,
+      this.uuid,
+      this.mode,
+      this.schemaType,
+    ].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
   },
 
@@ -139,8 +145,12 @@ export default {
 
       const fields = {}
       for (const field of schema.fields || []) {
-        const relationship = !!((field.settings || {}).storage || {}).target_type || !!(model.relationships || {})[field.id]
-        const value = relationship ? ((model || {}).relationships || {})[field.id] : ((model || {}).attributes || {})[field.id]
+        const relationship =
+          !!((field.settings || {}).storage || {}).target_type ||
+          !!(model.relationships || {})[field.id]
+        const value = relationship
+          ? ((model || {}).relationships || {})[field.id]
+          : ((model || {}).attributes || {})[field.id]
 
         // Filter out empty fields if not using the Form schema type.
         // @todo - Make this configurable?
@@ -150,7 +160,11 @@ export default {
           id: field.id,
           // @todo - Remove deprecated 'data'.
           data: value,
-          errors: (errors || []).filter((o) => ((o.source || {}).pointer || '').startsWith(`/data/attributes/${field.id}`)),
+          errors: (errors || []).filter((o) =>
+            ((o.source || {}).pointer || '').startsWith(
+              `/data/attributes/${field.id}`
+            )
+          ),
           langcode: lang,
           relationship,
           schema: {
@@ -214,15 +228,26 @@ export default {
       let rootFields = []
       if (settings.query.fields && Array.isArray(settings.query.fields)) {
         // If the first item is a string, this is a root level filter array.
-        if (settings.query.fields.length === 0 || typeof settings.query.fields[0] === 'string' || typeof settings.query.fields[0] === 'undefined') {
+        if (
+          settings.query.fields.length === 0 ||
+          typeof settings.query.fields[0] === 'string' ||
+          typeof settings.query.fields[0] === 'undefined'
+        ) {
           rootFields = settings.query.fields
-        // Otherwise this is an array structure field map.
+          // Otherwise this is an array structure field map.
         } else if (Array.isArray(settings.query.fields[0])) {
-          rootFields = settings.query.fields.find((a) => a.length === 0 || typeof [...a].pop() === 'string' || typeof [...a].pop() === 'undefined') || []
+          rootFields =
+            settings.query.fields.find(
+              (a) =>
+                a.length === 0 ||
+                typeof [...a].pop() === 'string' ||
+                typeof [...a].pop() === 'undefined'
+            ) || []
 
           // Apply included field mapping.
           const fieldMaps = settings.query.fields.filter(
-            (a) => a.length == 2 && typeof a[0] === 'string' && Array.isArray(a[1])
+            (a) =>
+              a.length == 2 && typeof a[0] === 'string' && Array.isArray(a[1])
           )
           for (const fieldMap of fieldMaps) {
             query.addFields(fieldMap[0], fieldMap[1])
@@ -233,7 +258,10 @@ export default {
       // If Schema mode, generate list including schema fields and explicitly
       // defined fields.
       if (settings.query.schema) {
-        rootFields = [...((this.schema || {}).fields || []).map((o) => o.id), ...rootFields]
+        rootFields = [
+          ...((this.schema || {}).fields || []).map((o) => o.id),
+          ...rootFields,
+        ]
       }
 
       // Apply root fields filter.
@@ -267,8 +295,8 @@ export default {
      */
     ...mapActions({
       getResource: 'druxt/getResource',
-      getSchema: 'druxtSchema/get'
-    })
+      getSchema: 'druxtSchema/get',
+    }),
   },
 
   /** DruxtModule settings */
@@ -279,26 +307,24 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ mode, schema, schemaType, type }) => ([
+    componentOptions: ({ mode, schema, schemaType, type }) => [
       // DruxtEntity[ResourceType][ViewMode][SchemaType]
       [
         (schema || {}).resourceType || type,
         ((schema || {}).config || {}).mode || mode,
-        ((schema || {}).config || {}).schemaType || schemaType || 'view'
+        ((schema || {}).config || {}).schemaType || schemaType || 'view',
       ],
 
       // DruxtEntity[EntityType][ViewMode][SchemaType]
       [
-        (((schema || {}).resourceType || type) || '').split('--').shift(),
+        ((schema || {}).resourceType || type || '').split('--').shift(),
         ((schema || {}).config || {}).mode || mode,
-        ((schema || {}).config || {}).schemaType || schemaType || 'view'
+        ((schema || {}).config || {}).schemaType || schemaType || 'view',
       ],
 
       // DruxtEntity[ViewMode]
-      [
-        ((schema || {}).config || {}).mode || mode,
-      ],
-    ]),
+      [((schema || {}).config || {}).mode || mode],
+    ],
 
     /**
      * Fetches the Druxt schema object.
@@ -310,7 +336,7 @@ export default {
           mode: this.mode,
           schemaType: this.schemaType || 'view',
         })
-      } catch(e) {
+      } catch (e) {
         // TODO: Handle error
       }
     },
@@ -341,7 +367,7 @@ export default {
           prefix: this.lang,
           type: this.type,
           query,
-          bypassCache
+          bypassCache,
         })
         const entity = { ...(resource.data || {}) }
         entity.included = resource.included
@@ -355,7 +381,12 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ fields, model, schema }) => ({ entity: model, fields, schema, value: model }),
+    propsData: ({ fields, model, schema }) => ({
+      entity: model,
+      fields,
+      schema,
+      value: model,
+    }),
 
     /**
      * Component settings.
@@ -365,13 +396,20 @@ export default {
 
       // Start with the `nuxt.config.js` `druxt.settings.entity` settings and
       // merge the Wrapper component settings on top.
-      let mergedSettings = merge(($druxt.settings || {}).entity || {}, wrapperSettings || {}, { arrayMerge: (dest, src) => src })
+      let mergedSettings = merge(
+        ($druxt.settings || {}).entity || {},
+        wrapperSettings || {},
+        { arrayMerge: (dest, src) => src }
+      )
       // Merge the DruxtEntity component `settings` property on top.
-      mergedSettings = merge(mergedSettings || {}, settings || {}, { arrayMerge: (dest, src) => src })
+      mergedSettings = merge(mergedSettings || {}, settings || {}, {
+        arrayMerge: (dest, src) => src,
+      })
 
       // Evaluate the bypass cache function.
       if (typeof (mergedSettings.query || {}).bypassCache === 'function') {
-        mergedSettings.query.bypassCache = !!mergedSettings.query.bypassCache(context)
+        mergedSettings.query.bypassCache =
+          !!mergedSettings.query.bypassCache(context)
       }
 
       // Currently only returning the query settings.
@@ -407,41 +445,48 @@ export default {
           h('p', 'Create a Druxt theme component to render the entity.'),
         ]
 
-        scopedSlots.debug = () => h('DruxtDebug',
-          { props: { summary } },
-          [
+        scopedSlots.debug = () =>
+          h('DruxtDebug', { props: { summary } }, [
             h('div', description),
-            !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
-            h('details', [h('summary', 'JSON:API resource'), h('pre', [h('code', [JSON.stringify(this.model, null, '  ')])])])
-          ]
-        )
+            !!this.component.options.length &&
+              h('DruxtDevelTemplate', {
+                props: { options: this.component.options },
+              }),
+            h('details', [
+              h('summary', 'JSON:API resource'),
+              h('pre', [h('code', [JSON.stringify(this.model, null, '  ')])]),
+            ]),
+          ])
         return scopedSlots
       }
 
       // Build scoped slots for each field.
       Object.entries(this.fields).map(([id, field]) => {
-        scopedSlots[id] = (attrs) => h('DruxtField', {
-          attrs,
-          key: id,
-          props: field,
-          on: {
-            input: (value) => {
-              const type = !field.relationship ? 'attributes' : 'relationships'
-              if (value) {
-                this.model[type][id] = value
-              }
-              else if (this.model[type][id]) {
-                delete this.model[type][id]
-              }
-              this.$emit('input', this.model)
-            }
-          },
-          ref: id,
-        })
+        scopedSlots[id] = (attrs) =>
+          h('DruxtField', {
+            attrs,
+            key: id,
+            props: field,
+            on: {
+              input: (value) => {
+                const type = !field.relationship
+                  ? 'attributes'
+                  : 'relationships'
+                if (value) {
+                  this.model[type][id] = value
+                } else if (this.model[type][id]) {
+                  delete this.model[type][id]
+                }
+                this.$emit('input', this.model)
+              },
+            },
+            ref: id,
+          })
       })
 
       // Build default slot.
-      scopedSlots.default = (attrs) => Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
+      scopedSlots.default = (attrs) =>
+        Object.entries(this.fields).map(([id]) => scopedSlots[id](attrs))
 
       return scopedSlots
     },
@@ -452,15 +497,15 @@ export default {
     template: {
       debug: '{ entity, schema }',
       mixins: {
-        'DruxtEntityMixin': 'druxt-entity'
+        DruxtEntityMixin: 'druxt-entity',
       },
       druxt: {
         'query.//fields': ['name', 'path', 'title'],
         'query.//include': [],
-        'query.//schema': true
-      }
-    }
-  }
+        'query.//schema': true,
+      },
+    },
+  },
 }
 
 /**

@@ -31,11 +31,11 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ filter }) => ([
+    componentOptions: ({ filter }) => [
       [filter.id],
       [filter.plugin_id, filter.id],
-      ['default']
-    ]),
+      ['default'],
+    ],
 
     /**
      * Provides propsData for the DruxtWrapper.
@@ -49,11 +49,11 @@ export default {
      * Druxt development template tool configuration.
      */
     template: {
-      debug: "{ filter, model }",
+      debug: '{ filter, model }',
       mixins: {
-        'DruxtViewsFilterMixin': 'druxt-views'
-      }
-    }
+        DruxtViewsFilterMixin: 'druxt-views',
+      },
+    },
   },
 }
 

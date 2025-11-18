@@ -34,7 +34,7 @@ const DruxtViewsSortsMixin = {
      */
     sorts: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
     },
 
     /**
@@ -65,7 +65,7 @@ const DruxtViewsSortsMixin = {
    */
   data() {
     return {
-      model: this.value
+      model: this.value,
     }
   },
 
@@ -74,8 +74,8 @@ const DruxtViewsSortsMixin = {
       if (to !== from) {
         this.$emit('input', this.model)
       }
-    }
-  }
+    },
+  },
 }
 
 export { DruxtViewsSortsMixin }

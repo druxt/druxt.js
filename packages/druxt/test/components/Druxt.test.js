@@ -31,7 +31,7 @@ describe('Druxt component', () => {
     const Component = {
       template: "<Druxt v-model='model' ref='druxt' module='test-module' />",
       components: { Druxt },
-      data: () => ({ model: null })
+      data: () => ({ model: null }),
     }
     const wrapper = mount(Component, { localVue, stubs: ['DruxtTestModule'] })
 
@@ -41,7 +41,7 @@ describe('Druxt component', () => {
     expect(wrapper.vm.$refs.druxt.value).toStrictEqual(null)
 
     // Change model value.
-    await wrapper.setData({ model: { test: true }})
+    await wrapper.setData({ model: { test: true } })
 
     expect(wrapper.vm.model).toStrictEqual({ test: true })
     expect(wrapper.vm.$refs.druxt.model).toStrictEqual({ test: true })
@@ -64,8 +64,8 @@ describe('Druxt component', () => {
     const wrapper = mountWrapper({
       module: 'test-module',
       wrapper: {
-        component: 'span'
-      }
+        component: 'span',
+      },
     })
 
     // Props.
@@ -79,7 +79,7 @@ describe('Druxt component', () => {
   test('unwrapped', () => {
     const wrapper = mountWrapper({
       module: 'test-module',
-      wrapper: false
+      wrapper: false,
     })
 
     // Props.

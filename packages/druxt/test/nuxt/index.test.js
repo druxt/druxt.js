@@ -18,7 +18,7 @@ describe('DruxtJS Nuxt module', () => {
         hook: jest.fn((hook, fn) => {
           const arg = {
             'components:dirs': [],
-            'storybook:config': { stories: [] }
+            'storybook:config': { stories: [] },
           }
           return fn(arg[hook])
         }),
@@ -28,9 +28,9 @@ describe('DruxtJS Nuxt module', () => {
         druxt: options,
         cli: {
           badgeMessages: [],
-        }
+        },
       },
-      DruxtNuxtModule
+      DruxtNuxtModule,
     }
   })
 
@@ -39,7 +39,9 @@ describe('DruxtJS Nuxt module', () => {
     DruxtNuxtModule.call(mock, options)
 
     // Expect addPlugin to have been called with options.
-    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
+    expect(mock.addPlugin).toHaveBeenCalledWith(
+      expect.objectContaining({ options })
+    )
   })
 
   test('Root options', () => {
@@ -50,7 +52,9 @@ describe('DruxtJS Nuxt module', () => {
     DruxtNuxtModule.call(mock)
 
     // Expect addPlugin to have been called with options.
-    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
+    expect(mock.addPlugin).toHaveBeenCalledWith(
+      expect.objectContaining({ options })
+    )
   })
 
   test('Default options', async () => {
@@ -79,7 +83,7 @@ describe('DruxtJS Nuxt module', () => {
     const plugins = [
       { src: `${mock.options.buildDir}/foobar.js` },
       { src: `${mock.options.buildDir}/druxt.js` },
-      { src: `${mock.options.buildDir}/axios.js` }
+      { src: `${mock.options.buildDir}/axios.js` },
     ]
     let sorted = mock.options.extendPlugins(plugins)
     expect(sorted[0].src).toBe(`${mock.options.buildDir}/axios.js`)
@@ -101,7 +105,7 @@ describe('DruxtJS Nuxt module', () => {
       ...options,
       proxy: {
         api: true,
-      }
+      },
     }
     await DruxtNuxtModule.call(mock)
 
@@ -112,7 +116,7 @@ describe('DruxtJS Nuxt module', () => {
       [`/en${options.endpoint}`]: options.baseUrl,
       [`/es${options.endpoint}`]: options.baseUrl,
       [options.endpoint]: options.baseUrl,
-      '/router/translate-path': options.baseUrl
+      '/router/translate-path': options.baseUrl,
     })
   })
 
@@ -122,12 +126,12 @@ describe('DruxtJS Nuxt module', () => {
       ...options,
       proxy: {
         files: true,
-      }
+      },
     }
     await DruxtNuxtModule.call(mock)
 
     expect(mock.options.proxy).toStrictEqual({
-      '/sites/default/files': options.baseUrl
+      '/sites/default/files': options.baseUrl,
     })
 
     // Use custom files directory.
@@ -136,7 +140,7 @@ describe('DruxtJS Nuxt module', () => {
     await DruxtNuxtModule.call(mock)
 
     expect(mock.options.proxy).toStrictEqual({
-      '/sites/druxtjs.org/files': options.baseUrl
+      '/sites/druxtjs.org/files': options.baseUrl,
     })
   })
 
@@ -146,7 +150,7 @@ describe('DruxtJS Nuxt module', () => {
       ...options,
       proxy: {
         api: true,
-      }
+      },
     }
 
     // Set array proxy settings.
@@ -178,7 +182,7 @@ describe('DruxtJS Nuxt module', () => {
       [`/en${options.endpoint}`]: options.baseUrl,
       [`/es${options.endpoint}`]: options.baseUrl,
       [options.endpoint]: options.baseUrl,
-      '/router/translate-path': options.baseUrl
+      '/router/translate-path': options.baseUrl,
     })
   })
 
@@ -188,7 +192,7 @@ describe('DruxtJS Nuxt module', () => {
     DruxtNuxtModule.call(mock)
     expect(mock.addServerMiddleware).toHaveBeenCalledWith({
       handler: 'druxt/dist/server-middleware/template.mjs',
-      path: '/_druxt/template'
+      path: '/_druxt/template',
     })
   })
 })

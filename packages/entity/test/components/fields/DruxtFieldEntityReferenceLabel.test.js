@@ -22,27 +22,36 @@ const mountComponent = (link = true, options) => {
     attributes: {
       title: 'Welcome to Contenta CMS!',
       path: {
-        alias: '/welcome'
-      }
-    }
+        alias: '/welcome',
+      },
+    },
   }
-  store.commit('druxt/addResource', { resource: { data: entity }})
+  store.commit('druxt/addResource', { resource: { data: entity } })
 
   const mocks = {
     $fetchState: {
-      pending: false
-    }
+      pending: false,
+    },
   }
 
   const propsData = {
-    value: [{
-      type: entity.type,
-      uuid: entity.id
-    }],
-    schema: { settings: { display: { link } }}
+    value: [
+      {
+        type: entity.type,
+        uuid: entity.id,
+      },
+    ],
+    schema: { settings: { display: { link } } },
   }
 
-  return shallowMount(DruxtFieldEntityReferenceLabel, { ...options, localVue, mocks, propsData, store, stubs })
+  return shallowMount(DruxtFieldEntityReferenceLabel, {
+    ...options,
+    localVue,
+    mocks,
+    propsData,
+    store,
+    stubs,
+  })
 }
 
 describe('Component - DruxtFieldEntityReferenceLabel', () => {
@@ -60,7 +69,9 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
 
   test('link', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent()
 
@@ -68,22 +79,28 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
 
     expect(wrapper.vm.entities.length).toBe(1)
     expect(wrapper.vm.component).toBe('nuxt-link')
-    expect(wrapper.vm.entities).toStrictEqual([{
-      props: {
-        to: '/welcome'
+    expect(wrapper.vm.entities).toStrictEqual([
+      {
+        props: {
+          to: '/welcome',
+        },
+        text: 'Welcome to Contenta CMS!',
       },
-      text: 'Welcome to Contenta CMS!'
-    }])
+    ])
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldEntityReferenceLabel component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldEntityReferenceLabel component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
   })
 
   test('no link', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent(false)
 
@@ -91,13 +108,17 @@ describe('Component - DruxtFieldEntityReferenceLabel', () => {
 
     expect(wrapper.vm.entities.length).toBe(1)
     expect(wrapper.vm.component).toBe('span')
-    expect(wrapper.vm.entities).toStrictEqual([{
-      props: false,
-      text: 'Welcome to Contenta CMS!'
-    }])
+    expect(wrapper.vm.entities).toStrictEqual([
+      {
+        props: false,
+        text: 'Welcome to Contenta CMS!',
+      },
+    ])
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldEntityReferenceLabel component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldEntityReferenceLabel component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
   })

@@ -38,7 +38,7 @@ const DruxtRouterMixin = {
      *
      * @type {string}
      */
-     path: {
+    path: {
       type: String,
       default: undefined,
     },
@@ -50,9 +50,9 @@ const DruxtRouterMixin = {
      */
     route: {
       type: Object,
-      required: true
-    }
-  }
+      required: true,
+    },
+  },
 }
 
 export { DruxtRouterMixin }

@@ -21,27 +21,36 @@ const mountComponent = (options) => {
     id: 'fe00c55d-0335-49d6-964e-a868c0c68f9c',
     attributes: {
       uri: {
-        value: 'public://sites/default/image.jpg'
-      }
-    }
+        value: 'public://sites/default/image.jpg',
+      },
+    },
   }
-  store.commit('druxt/addResource', { resource: { data: entity }})
+  store.commit('druxt/addResource', { resource: { data: entity } })
 
   const mocks = {
     $fetchState: {
-      pending: false
-    }
+      pending: false,
+    },
   }
 
   const propsData = {
-    value: [{
-      type: entity.type,
-      uuid: entity.id
-    }],
-    schema: {}
+    value: [
+      {
+        type: entity.type,
+        uuid: entity.id,
+      },
+    ],
+    schema: {},
   }
 
-  return shallowMount(DruxtFieldResponsiveImage, { ...options, localVue, mocks, propsData, store, stubs })
+  return shallowMount(DruxtFieldResponsiveImage, {
+    ...options,
+    localVue,
+    mocks,
+    propsData,
+    store,
+    stubs,
+  })
 }
 
 describe('Component - DruxtFieldResponsiveImage', () => {
@@ -59,14 +68,18 @@ describe('Component - DruxtFieldResponsiveImage', () => {
 
   test('default', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent()
     await wrapper.vm.$options.fetch.call(wrapper.vm)
     await wrapper.vm.$forceUpdate()
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldResponsiveImage component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldResponsiveImage component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 

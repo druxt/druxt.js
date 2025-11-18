@@ -7,11 +7,11 @@ export default {
   extends: DruxtModule,
 
   druxt: {
-    componentOptions: () => ([['Default']]),
+    componentOptions: () => [['Default']],
     propsData: ({ model }) => ({ value: model }),
     slots(h) {
       return {
-        default: (attrs) => h('div', { attrs }, [this.model])
+        default: (attrs) => h('div', { attrs }, [this.model]),
       }
     },
   },

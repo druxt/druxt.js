@@ -2,13 +2,13 @@ import DruxtDebug from 'druxt/dist/components/DruxtDebug.vue'
 
 export default {
   title: 'Druxt/DruxtDebug',
-  component: DruxtDebug
+  component: DruxtDebug,
 }
 
 const Template = (args) => ({
   components: { DruxtDebug },
   props: Object.keys(args),
-  template: `<DruxtDebug v-bind="$props">Debug information.</DruxtDebug>`
+  template: `<DruxtDebug v-bind="$props">Debug information.</DruxtDebug>`,
 })
 
 export const Default = Template.bind({})
@@ -28,25 +28,27 @@ Json.args = {
 Json.parameters = {
   docs: {
     description: {
-      story: 'The **json** prop takes any data and runs it through a basic JSON formatter for improved readability.',
+      story:
+        'The **json** prop takes any data and runs it through a basic JSON formatter for improved readability.',
     },
     source: {
-      code: '<DruxtDebug :json="entity" open>Debug information</DruxtDebug>'
+      code: '<DruxtDebug :json="entity" open>Debug information</DruxtDebug>',
     },
   },
 }
 
 export const Summary = Template.bind({})
 Summary.args = {
-  summary: 'A brief debug message'
+  summary: 'A brief debug message',
 }
 Summary.parameters = {
   docs: {
     description: {
-      story: 'The **summary** prop can be used to provide a quick explanation of the debug component.',
+      story:
+        'The **summary** prop can be used to provide a quick explanation of the debug component.',
     },
     source: {
-      code: `<DruxtDebug summary="${Summary.args.sumary}">Debug information</DruxtDebug>`
+      code: `<DruxtDebug summary="${Summary.args.sumary}">Debug information</DruxtDebug>`,
     },
   },
 }

@@ -48,7 +48,7 @@ export default {
      */
     home: {
       type: Boolean,
-      default: true
+      default: true,
     },
 
     /**
@@ -63,8 +63,8 @@ export default {
      */
     path: {
       type: String,
-      default: undefined
-    }
+      default: undefined,
+    },
   },
 
   /** */
@@ -75,9 +75,9 @@ export default {
     crumbs: ({ model }) => model,
 
     ...mapState({
-      route: state => state.druxtRouter.route,
-      routes: state => state.druxtRouter.routes
-    })
+      route: (state) => state.druxtRouter.route,
+      routes: (state) => state.druxtRouter.routes,
+    }),
   },
 
   /** */
@@ -85,7 +85,7 @@ export default {
     /**
      * Updates crumbs on Route change.
      */
-    $route: async function() {
+    $route: async function () {
       await this.$fetch()
     },
 
@@ -95,7 +95,7 @@ export default {
 
     path() {
       this.$fetch()
-    }
+    },
   },
 
   methods: {
@@ -139,7 +139,7 @@ export default {
         let route
         try {
           route = await this.getRoute(to)
-        } catch(err) {
+        } catch (err) {
           route = false
         }
 
@@ -149,7 +149,10 @@ export default {
         }
 
         // If this route is the home path, prevent a duplicate home item.
-        if (route.isHomePath || to === ['/', (route.props || {}).langcode].filter((o) => o).join('')) {
+        if (
+          route.isHomePath ||
+          to === ['/', (route.props || {}).langcode].filter((o) => o).join('')
+        ) {
           addHome = false
         }
 
@@ -160,7 +163,7 @@ export default {
       if (this.home && addHome) {
         crumbs.push({
           to: '/',
-          text: 'Home'
+          text: 'Home',
         })
       }
 
@@ -171,8 +174,8 @@ export default {
      * Maps `druxtRouter/getRoute` Vuex action to `this.getRoute`.
      */
     ...mapActions({
-      getRoute: 'druxtRouter/getRoute'
-    })
+      getRoute: 'druxtRouter/getRoute',
+    }),
   },
 
   /** DruxtModule settings */
@@ -214,13 +217,19 @@ export default {
       const scopedSlots = {}
 
       // Build default slot.
-      scopedSlots.default = () => this.$createElement('ul', (this.crumbs || []).map((crumb) =>
-        this.$createElement('li', [
-          crumb.to
-            ? this.$createElement('NuxtLink', { props: { to: crumb.to }}, [crumb.text])
-            : crumb.text
-        ])
-      ))
+      scopedSlots.default = () =>
+        this.$createElement(
+          'ul',
+          (this.crumbs || []).map((crumb) =>
+            this.$createElement('li', [
+              crumb.to
+                ? this.$createElement('NuxtLink', { props: { to: crumb.to } }, [
+                    crumb.text,
+                  ])
+                : crumb.text,
+            ])
+          )
+        )
 
       return scopedSlots
     },
@@ -231,9 +240,9 @@ export default {
     template: {
       debug: 'crumbs',
       mixins: {
-        'DruxtBreadcrumbMixin': 'druxt-breadcrumb'
-      }
-    }
+        DruxtBreadcrumbMixin: 'druxt-breadcrumb',
+      },
+    },
   },
 }
 

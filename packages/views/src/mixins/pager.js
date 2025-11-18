@@ -75,7 +75,7 @@ const DruxtViewsPagerMixin = {
    */
   data() {
     return {
-      model: this.value
+      model: this.value,
     }
   },
 
@@ -84,8 +84,8 @@ const DruxtViewsPagerMixin = {
       if (to !== from) {
         this.$emit('input', this.model)
       }
-    }
-  }
+    },
+  },
 }
 
 export { DruxtViewsPagerMixin }

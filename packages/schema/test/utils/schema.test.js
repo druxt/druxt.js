@@ -17,7 +17,7 @@ describe('Schema', () => {
   test('generate:view', async () => {
     const config = {
       entityType: 'node',
-      bundle: 'page'
+      bundle: 'page',
     }
 
     const schema = new Schema(config, { druxtSchema })
@@ -47,7 +47,7 @@ describe('Schema', () => {
     const config = {
       entityType: 'node',
       bundle: 'page',
-      schemaType: 'form'
+      schemaType: 'form',
     }
 
     const schema = new Schema(config, { druxtSchema })
@@ -77,7 +77,7 @@ describe('Schema', () => {
     const config = {
       entityType: 'node',
       bundle: 'page',
-      filter: ['node--page--default--view']
+      filter: ['node--page--default--view'],
     }
 
     const nodePage = new Schema(config, { druxtSchema })
@@ -95,7 +95,10 @@ describe('Schema', () => {
       filter: ['node--page--default--view'],
     }
 
-    const schema = new Schema(config, { druxtSchema, data: { type: 'node--page' } })
-    expect(schema.data).toStrictEqual({ 'node--page': { type: 'node--page' }})
+    const schema = new Schema(config, {
+      druxtSchema,
+      data: { type: 'node--page' },
+    })
+    expect(schema.data).toStrictEqual({ 'node--page': { type: 'node--page' } })
   })
 })

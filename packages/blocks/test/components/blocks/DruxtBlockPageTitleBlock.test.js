@@ -15,13 +15,18 @@ let store
 
 const mockBlock = {
   id: 'test-block',
-  attributes: {}
+  attributes: {},
 }
 
 const mountComponent = (entity, options = {}) => {
   const propsData = { block: entity }
 
-  return mount(DruxtBlockPageTitleBlock, { localVue, propsData, store, ...options })
+  return mount(DruxtBlockPageTitleBlock, {
+    localVue,
+    propsData,
+    store,
+    ...options,
+  })
 }
 
 describe('Component - DruxtBlockPageTitleBlock', () => {
@@ -36,7 +41,10 @@ describe('Component - DruxtBlockPageTitleBlock', () => {
   })
 
   test('default', async () => {
-    store.commit('druxtRouter/addRoute', { path: '/', route: { label: 'Test' } })
+    store.commit('druxtRouter/addRoute', {
+      path: '/',
+      route: { label: 'Test' },
+    })
     store.commit('druxtRouter/setRoute', '/')
     const wrapper = mountComponent(mockBlock)
 

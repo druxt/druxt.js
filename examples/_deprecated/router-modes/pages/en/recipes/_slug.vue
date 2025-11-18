@@ -5,7 +5,7 @@ export default {
   extends: DruxtRouter,
   computed: {
     // Set your metatags.
-    metatags: () => ({})
-  }
+    metatags: () => ({}),
+  },
 }
 </script>

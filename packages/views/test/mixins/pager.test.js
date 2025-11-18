@@ -8,7 +8,7 @@ const localVue = createLocalVue()
 const component = {
   name: 'DruxtViewsPagerTest',
   mixins: [DruxtViewsPagerMixin],
-  render: () => ({})
+  render: () => ({}),
 }
 
 test('DruxtViewsPagerMixin', async () => {

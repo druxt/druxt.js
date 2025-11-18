@@ -26,7 +26,7 @@
               :items="[
                 { type: 'node--article', label: 'Articles' },
                 { type: 'node--recipe', label: 'Recipes' },
-                { type: 'node--page', label: 'Pages' }
+                { type: 'node--page', label: 'Pages' },
               ]"
               item-text="label"
               item-value="type"
@@ -72,7 +72,7 @@ export default {
     displays: undefined,
     resource: undefined,
     resources: undefined,
-    resourceType: 'node--recipe'
+    resourceType: 'node--recipe',
   }),
 
   async fetch() {
@@ -80,7 +80,7 @@ export default {
       type: this.resourceType,
       query: new DrupalJsonApiParams()
         .addFilter('status', '1')
-        .addFields(this.resourceType, ['id', 'title'])
+        .addFields(this.resourceType, ['id', 'title']),
     })
     this.resource = this.resources.data[0]
 
@@ -90,7 +90,7 @@ export default {
       query: new DrupalJsonApiParams()
         .addFilter('targetEntityType', parts[0])
         .addFilter('bundle', parts[1])
-        .addFields('entity_view_display--entity_view_display', ['mode'])
+        .addFields('entity_view_display--entity_view_display', ['mode']),
     })
   },
 
@@ -108,7 +108,7 @@ export default {
   },
 
   methods: {
-    ...mapActions({ getCollection: 'druxt/getCollection' })
-  }
+    ...mapActions({ getCollection: 'druxt/getCollection' }),
+  },
 }
 </script>

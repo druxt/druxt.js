@@ -24,7 +24,7 @@ const DruxtMenuMixin = {
      */
     items: {
       type: Array,
-      required: true
+      required: true,
     },
 
     /**
@@ -45,7 +45,7 @@ const DruxtMenuMixin = {
     parentId: {
       type: String,
       default: null,
-    }
+    },
   },
 }
 

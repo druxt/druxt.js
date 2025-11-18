@@ -6,10 +6,7 @@ export default {
   generate: { routes: ['/'] },
   telemetry: true,
   buildModules: ['@nuxt/postcss8'],
-  modules: [
-    'druxt-auth',
-    'druxt-site'
-  ],
+  modules: ['druxt-auth', 'druxt-site'],
   druxt: {
     // The baseUrl of the Druxt enabled Drupal JSON:API server.
     baseUrl,
@@ -25,8 +22,8 @@ export default {
 
     // DruxtEntity module settings; https://druxtjs.org/modules/entity
     entity: {
-      // Enable deprecated DruxtField components only for the specific e2e test
-      components: { fields: process.env.DRUXT_DEPRECATED_FIELDS === 'true' },
+      // Disable deprecated DruxtField components.
+      components: { fields: false },
 
       query: {
         // Enable Drupal display mode schema based filtering of the JSON:API
@@ -44,7 +41,7 @@ export default {
     // Druxt proxy settings.
     proxy: {
       // Proxy the JSON:API request via the Nuxt proxy to prevent CORS issues.
-      api: true
+      api: true,
 
       // Proxy the Drupal files system, using `sites/default/files` by default.
       // Disable the proxy, or set a specific site to proxy.
@@ -58,7 +55,6 @@ export default {
       // builds without the need of a live Drupal backend. The Route is still
       // is retrieved by the fetch hook instead.
       // middleware: false
-
       // Disable the wildcard router, which is enabled by default in the
       // DruxtSite module. This allows more fine grained control over your
       // routing.
@@ -71,7 +67,7 @@ export default {
       // layout: false,
 
       // Set the backend theme for DruxtBlock layouts.
-      theme: 'umami'
+      theme: 'umami',
     },
 
     // DruxtViews module settings; https://druxtjs.org/modules/views
@@ -81,7 +77,7 @@ export default {
         // This reduces requests to just ID and type, and can be done manually
         // if the bundle filter has not been set in Drupal.
         bundleFilter: true,
-      }
-    }
-  }
+      },
+    },
+  },
 }

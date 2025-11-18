@@ -16,7 +16,7 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
-    ...(this.options || {}).druxt || {},
+    ...((this.options || {}).druxt || {}),
     proxy: {
       api: false,
       files: true,
@@ -31,7 +31,7 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
   this.options.druxt = options
 
   // Register components directories.
-  this.nuxt.hook('components:dirs', dirs => {
+  this.nuxt.hook('components:dirs', (dirs) => {
     dirs.push({ path: join(__dirname, 'components') })
   })
 
@@ -44,14 +44,19 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
     'druxt-menu',
     'druxt-router/nuxt',
     'druxt-schema',
-    'druxt-views'
+    'druxt-views',
   ]
   for (const module of druxtModules) {
     await this.addModule(module)
   }
 
   // Add default layout.
-  if (!(await existsSync(resolve(this.options.srcDir, this.options.dir.layouts))) && options.site.layout) {
+  if (
+    !(await existsSync(
+      resolve(this.options.srcDir, this.options.dir.layouts)
+    )) &&
+    options.site.layout
+  ) {
     this.addLayout(resolve(__dirname, './layouts/default.vue'), 'default')
   }
 

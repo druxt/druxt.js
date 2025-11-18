@@ -11,12 +11,12 @@ const mock = {
     hook: jest.fn((hook, fn) => {
       const arg = {
         'components:dirs': [],
-        'storybook:config': { stories: [] }
+        'storybook:config': { stories: [] },
       }
       return fn(arg[hook])
     }),
   },
-  DruxtSiteNuxtModule
+  DruxtSiteNuxtModule,
 }
 
 jest.mock('druxt-schema')

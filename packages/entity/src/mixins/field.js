@@ -15,9 +15,7 @@ import { DruxtEntityContextMixin } from './context'
  * </script>
  */
 const DruxtFieldMixin = {
-  mixins: [
-    DruxtEntityContextMixin
-  ],
+  mixins: [DruxtEntityContextMixin],
 
   /** */
   props: {
@@ -51,8 +49,8 @@ const DruxtFieldMixin = {
       type: Object,
       default: () => ({
         component: 'div',
-        props: {}
-      })
+        props: {},
+      }),
     },
 
     /**
@@ -60,9 +58,9 @@ const DruxtFieldMixin = {
      *
      * @type {boolean}
      */
-     relationship: {
+    relationship: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     /**
@@ -71,13 +69,13 @@ const DruxtFieldMixin = {
      */
     schema: {
       type: Object,
-      required: true
+      required: true,
     },
 
     /**
      * The Field value.
      */
-     value: {
+    value: {
       type: [Array, Boolean, Number, String, Object],
       default: undefined,
     },
@@ -92,8 +90,8 @@ const DruxtFieldMixin = {
       type: Object,
       default: () => ({
         component: 'div',
-        props: {}
-      })
+        props: {},
+      }),
     },
   },
 
@@ -115,7 +113,9 @@ const DruxtFieldMixin = {
       if (typeof model === 'undefined' || model === null) return []
 
       if (relationship) {
-        const items = Array.isArray(model.data) ? [...model.data] : [{ ...model.data }]
+        const items = Array.isArray(model.data)
+          ? [...model.data]
+          : [{ ...model.data }]
         return items.map((item) => ({
           type: item.type || (item.data || {}).type,
           uuid: item.id || (item.data || {}).id,
@@ -124,7 +124,7 @@ const DruxtFieldMixin = {
       }
 
       return Array.isArray(model) ? [...model] : [model]
-    }
+    },
   },
 
   watch: {
@@ -138,8 +138,8 @@ const DruxtFieldMixin = {
       if (this.model !== this.value) {
         this.model = this.value
       }
-    }
-  }
+    },
+  },
 }
 
 export { DruxtFieldMixin }

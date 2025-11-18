@@ -33,7 +33,7 @@ const DruxtRouterEntityMixin = {
      */
     mode: {
       type: String,
-      default: 'default'
+      default: 'default',
     },
 
     /**
@@ -43,7 +43,7 @@ const DruxtRouterEntityMixin = {
      */
     type: {
       type: String,
-      required: true
+      required: true,
     },
 
     /**
@@ -53,14 +53,14 @@ const DruxtRouterEntityMixin = {
      */
     uuid: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   /**
    * Loads the JSON:API resource via the Vuex store.
    */
-  async fetch () {
+  async fetch() {
     // Use resource from Vuex store if available.
     if (typeof this.entities[this.uuid] !== 'undefined') {
       this.entity = this.entities[this.uuid]
@@ -69,7 +69,10 @@ const DruxtRouterEntityMixin = {
 
     // Otherwise invoke getResource() to retrieve it from Drupal.
     if (!this.entity && this.uuid && this.type) {
-      const resource = await this.getResource({ id: this.uuid, type: this.type })
+      const resource = await this.getResource({
+        id: this.uuid,
+        type: this.type,
+      })
       this.entity = resource.data
       this.loading = false
     }
@@ -85,7 +88,7 @@ const DruxtRouterEntityMixin = {
    */
   data: () => ({
     entity: false,
-    loading: true
+    loading: true,
   }),
 
   /**
@@ -98,8 +101,8 @@ const DruxtRouterEntityMixin = {
    */
   computed: {
     ...mapState({
-      entities: state => state.druxt.resources
-    })
+      entities: (state) => state.druxt.resources,
+    }),
   },
 
   /**
@@ -113,9 +116,9 @@ const DruxtRouterEntityMixin = {
   methods: {
     ...mapActions({
       getEntity: 'druxtRouter/getEntity',
-      getResource: 'druxt/getResource'
-    })
-  }
+      getResource: 'druxt/getResource',
+    }),
+  },
 }
 
 export { DruxtRouterEntityMixin }

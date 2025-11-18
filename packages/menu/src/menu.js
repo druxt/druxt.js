@@ -19,17 +19,17 @@ class DruxtMenu {
    * @param {string} baseUrl - The URL of the Drupal backend.
    * @param {ModuleOptions} options - The module options.
    */
-  constructor (baseUrl, options = {}) {
+  constructor(baseUrl, options = {}) {
     // Check for URL.
     if (!baseUrl) {
-      throw new Error('The \'baseUrl\' parameter is required.')
+      throw new Error("The 'baseUrl' parameter is required.")
     }
 
     this.options = {
       menu: {
-        jsonApiMenuItems: false
+        jsonApiMenuItems: false,
       },
-      ...options
+      ...options,
     }
 
     /**
@@ -106,13 +106,24 @@ class DruxtMenu {
    */
   async getMenuLinkContent(menuName, settings, prefix) {
     const resource = 'menu_link_content--menu_link_content'
-    const requiredFields = ['bundle', 'link', 'menu_name', 'parent', 'title', 'weight']
+    const requiredFields = [
+      'bundle',
+      'link',
+      'menu_name',
+      'parent',
+      'title',
+      'weight',
+    ]
 
     // Build query.
     const query = this.buildQuery(resource, menuName, requiredFields, settings)
 
     const entities = []
-    const collections = await this.druxt.getCollectionAll(resource, query, prefix)
+    const collections = await this.druxt.getCollectionAll(
+      resource,
+      query,
+      prefix
+    )
     for (const collection of collections) {
       for (const entity of collection.data) {
         entities.push(entity)
@@ -150,7 +161,11 @@ class DruxtMenu {
     // Add the JSON API Menu items resource to the index.
     await this.druxt.getIndex(undefined, prefix)
     if (!(this.druxt.index[prefix][menuItemsResource] || {}).href) {
-      this.druxt.index[prefix][menuItemsResource] = { href: `${prefix || ''}${this.druxt.options.endpoint}/menu_items/${menuName}` }
+      this.druxt.index[prefix][menuItemsResource] = {
+        href: `${prefix || ''}${
+          this.druxt.options.endpoint
+        }/menu_items/${menuName}`,
+      }
     }
 
     // Build query.
@@ -170,8 +185,12 @@ class DruxtMenu {
     const entities = []
     let collections = []
     try {
-      collections = await this.druxt.getCollectionAll(menuItemsResource, query, prefix)
-    } catch(e) {
+      collections = await this.druxt.getCollectionAll(
+        menuItemsResource,
+        query,
+        prefix
+      )
+    } catch (e) {
       return { entities }
     }
     for (const collection of collections) {
@@ -184,7 +203,7 @@ class DruxtMenu {
               uri: `internal:${entity.attributes.url}`,
             },
             parent: entity.attributes.parent || null,
-          }
+          },
         })
       }
     }

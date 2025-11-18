@@ -11,9 +11,9 @@ const DruxtSchemaPlugin = {
    * @example @lang js
    * const schema = await this.$druxtSchema.import('node--page--default--view')
    */
-  import: async id => {
+  import: async (id) => {
     return import(`./schemas/${id}.json`)
-      .then(m => m.default || m)
+      .then((m) => m.default || m)
       .catch(async (err) => {
         const parts = id.split('--')
 
@@ -22,9 +22,11 @@ const DruxtSchemaPlugin = {
 
         // Fallback to the default view mode.
         parts[parts.length - 2] = 'default'
-        return import(`./schemas/${parts.join('--')}.json`).then(m => m.default || m)
+        return import(`./schemas/${parts.join('--')}.json`).then(
+          (m) => m.default || m
+        )
       })
-  }
+  },
 }
 
 export default (context, inject) => {

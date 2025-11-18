@@ -1,6 +1,7 @@
 import DruxtBlock from 'druxt-blocks/dist/components/DruxtBlock.vue'
 
-const code = '<DruxtBlock id="<%= options.block.attributes.drupal_internal__id %>" />'
+const code =
+  '<DruxtBlock id="<%= options.block.attributes.drupal_internal__id %>" />'
 
 export default {
   title: '<%= options.title %>',
@@ -16,7 +17,10 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Renders the **<%= options.block.attributes.settings.label || options.block.attributes.drupal_internal__id %>** block.\n\n```jsx\n\n' + code + '\n```'
+        component:
+          'Renders the **<%= options.block.attributes.settings.label || options.block.attributes.drupal_internal__id %>** block.\n\n```jsx\n\n' +
+          code +
+          '\n```',
       },
     },
   },
@@ -37,6 +41,6 @@ Default.args = {
 Default.storyName = 'DruxtBlock'
 Default.parameters = {
   docs: {
-    source: { code }
-  }
+    source: { code },
+  },
 }

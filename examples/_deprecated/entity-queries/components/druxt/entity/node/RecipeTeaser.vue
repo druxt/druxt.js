@@ -14,8 +14,8 @@ export default {
         ['title'], // Filter the Entity resource.
         ['media--image', []], // Filter the Media resource.
         ['file--file', ['uri']], // Filter the File resource.
-      ]
-    }
-  }
+      ],
+    },
+  },
 }
 </script>

@@ -35,7 +35,7 @@ export default {
      */
     sorts: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
     },
 
     /**
@@ -54,7 +54,7 @@ export default {
       if (to !== from) {
         this.$emit('input', this.model)
       }
-    }
+    },
   },
 
   methods: {
@@ -77,7 +77,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ type }) => ([[type], ['default']]),
+    componentOptions: ({ type }) => [[type], ['default']],
 
     /**
      * Provides propsData for the DruxtWrapper.
@@ -85,7 +85,12 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ model, options, sorts, type }) => ({ options, sorts, type, value: model }),
+    propsData: ({ model, options, sorts, type }) => ({
+      options,
+      sorts,
+      type,
+      value: model,
+    }),
 
     /**
      * Provides the scoped slots object for the Module render function.
@@ -97,19 +102,29 @@ export default {
     slots(h) {
       const self = this
       return {
-        default: () => h('div', [
-          h('strong', [this.options.exposed_sorts_label]),
-          h('ul', this.sorts.map((sort) => h('li', [
-            h('NuxtLink', {
-              nativeOn: {
-                click() {
-                  self.model = sort.id
-                },
-              },
-              props: { to: this.sortBy(sort) },
-            }, [sort.expose.label])
-          ])))
-        ]),
+        default: () =>
+          h('div', [
+            h('strong', [this.options.exposed_sorts_label]),
+            h(
+              'ul',
+              this.sorts.map((sort) =>
+                h('li', [
+                  h(
+                    'NuxtLink',
+                    {
+                      nativeOn: {
+                        click() {
+                          self.model = sort.id
+                        },
+                      },
+                      props: { to: this.sortBy(sort) },
+                    },
+                    [sort.expose.label]
+                  ),
+                ])
+              )
+            ),
+          ]),
       }
     },
 
@@ -117,12 +132,12 @@ export default {
      * Druxt development template tool configuration.
      */
     template: {
-      debug: "{ model, options, sorts, type }",
+      debug: '{ model, options, sorts, type }',
       mixins: {
-        'DruxtViewsSortsMixin': 'druxt-views'
-      }
-    }
-  }
+        DruxtViewsSortsMixin: 'druxt-views',
+      },
+    },
+  },
 }
 
 /**

@@ -32,7 +32,7 @@ const DruxtEntityNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
-    ...(this.options || {}).druxt || {},
+    ...((this.options || {}).druxt || {}),
     entity: {
       query: {},
       ...((this.options || {}).druxt || {}).entity,
@@ -40,9 +40,9 @@ const DruxtEntityNuxtModule = async function (moduleOptions = {}) {
       components: {
         fields: false,
         ...(((this.options || {}).druxt || {}).entity || {}).components,
-        ...moduleOptions.components
-      }
-    }
+        ...moduleOptions.components,
+      },
+    },
   }
 
   // Add dependant modules.
@@ -50,10 +50,10 @@ const DruxtEntityNuxtModule = async function (moduleOptions = {}) {
   await this.addModule(['druxt-schema', { baseUrl: options.baseUrl }])
 
   // Register components directories.
-  this.nuxt.hook('components:dirs', dirs => {
+  this.nuxt.hook('components:dirs', (dirs) => {
     dirs.push({
       path: join(__dirname, 'components'),
-      ignore: ['fields']
+      ignore: ['fields'],
     })
     if (options.entity.components.fields) {
       dirs.push({ path: join(__dirname, 'components/fields') })

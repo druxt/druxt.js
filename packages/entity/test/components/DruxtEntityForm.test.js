@@ -20,18 +20,24 @@ $druxt.settings = {}
 const mocks = {
   $druxt,
   $fetchState: {
-    pending: false
+    pending: false,
   },
   $nuxt: {
     context: {
       isDev: false,
     },
   },
-  $route: { meta: {} }
+  $route: { meta: {} },
 }
 
 const mountComponent = async (propsData) => {
-  const wrapper = mount(DruxtEntityForm, { localVue, mocks, propsData, store, stubs: ['DruxtEntityForm'] })
+  const wrapper = mount(DruxtEntityForm, {
+    localVue,
+    mocks,
+    propsData,
+    store,
+    stubs: ['DruxtEntityForm'],
+  })
   await wrapper.vm.$options.fetch.call(wrapper.vm)
   return wrapper
 }
@@ -55,7 +61,7 @@ describe('DruxtEntityForm', () => {
     store.$druxtSchema = {
       import: (schema) => {
         return require(`../../../../test/__fixtures__/schemas/${schema}.json`)
-      }
+      },
     }
 
     store.app = { context: { error: jest.fn() }, store }
@@ -81,7 +87,9 @@ describe('DruxtEntityForm', () => {
     await localVue.nextTick()
     expect(wrapper.emitted().error).toBeFalsy()
     expect(wrapper.emitted().submit).toBeTruthy()
-    expect(wrapper.vm.response.data.data.id).toBe('8e8d340a-04af-461a-ac63-12415d33e936')
+    expect(wrapper.vm.response.data.data.id).toBe(
+      '8e8d340a-04af-461a-ac63-12415d33e936'
+    )
     expect(wrapper.vm.errors).toBe(undefined)
     expect(wrapper.vm.$refs.title.errors.length).toBe(0)
 

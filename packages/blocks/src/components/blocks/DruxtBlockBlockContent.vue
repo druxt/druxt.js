@@ -1,9 +1,6 @@
 <template>
   <div>
-    <DruxtEntity
-      v-if="!$fetchState.pending && propsData"
-      v-bind="propsData"
-    />
+    <DruxtEntity v-if="!$fetchState.pending && propsData" v-bind="propsData" />
   </div>
 </template>
 
@@ -40,7 +37,9 @@ export default {
       prefix: this.langcode,
       type: this.block.type,
       id: this.block.id,
-      query: new DrupalJsonApiParams().addFields(this.block.type, ['dependencies']),
+      query: new DrupalJsonApiParams().addFields(this.block.type, [
+        'dependencies',
+      ]),
     })
   },
 
@@ -58,7 +57,8 @@ export default {
     propsData: ({ $fetchState, $store, block, langcode }) => {
       if ($fetchState.pending) return false
 
-      const { data } = $store.state.druxt.resources[block.type][block.id][langcode]
+      const { data } =
+        $store.state.druxt.resources[block.type][block.id][langcode]
       if (!((data || {}).attributes || {}).dependencies) return false
 
       const parts = data.attributes.dependencies.content[0].split(':')
@@ -67,7 +67,7 @@ export default {
         key: data.attributes.dependencies.content[0],
         langcode,
         type: `${parts[0]}--${parts[1]}`,
-        uuid: parts[2]
+        uuid: parts[2],
       }
     },
   },

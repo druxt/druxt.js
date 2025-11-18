@@ -35,7 +35,7 @@ const DruxtBreadcrumbMixin = {
     langcode: {
       type: String,
       default: undefined,
-    }
+    },
   },
 }
 

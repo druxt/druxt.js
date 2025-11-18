@@ -46,7 +46,7 @@ const DruxtEntityContextMixin = {
      */
     context: {
       type: Object,
-      default: function() {
+      default: function () {
         return { ...this.$parent.context }
       },
     },

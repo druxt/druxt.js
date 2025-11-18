@@ -4,18 +4,20 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 DruxtRouter.__docgenInfo.props = [
   ...DruxtModule.__docgenInfo.props,
   ...DruxtRouter.__docgenInfo.props,
-].sort((a, b) => a.name < b.name ? -1 : 1).filter((o) => o.name !== 'v-model')
+]
+  .sort((a, b) => (a.name < b.name ? -1 : 1))
+  .filter((o) => o.name !== 'v-model')
 
 export default {
   title: 'Druxt/Router/DruxtRouter',
-  component: DruxtRouter
+  component: DruxtRouter,
 }
 
 // Default story.
 export const Default = (args, { argTypes }) => ({
   components: { DruxtRouter },
   props: Object.keys(argTypes),
-  template: `<DruxtRouter v-bind="$props" />`
+  template: `<DruxtRouter v-bind="$props" />`,
 })
 Default.args = { path: '/' }
 
@@ -42,15 +44,18 @@ export const Wrapper = (args, { argTypes }) => ({
       <li v-for="option of $refs.module.getModuleComponents()" :key="option.name">{{ option.name }}</li>
     </ul>
   </template>
-</DruxtRouter>`
+</DruxtRouter>`,
 })
 Wrapper.parameters = {
   docs: {
     description: {
-      story: 'The DruxtRouter component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' + code + '\n```',
+      story:
+        'The DruxtRouter component can be themed by using a Druxt Wrapper component.\n\nCreate an appropriately named component, using the relevant component option, with the following boilerplate:\n\n```jsx\n' +
+        code +
+        '\n```',
     },
-    source: { code }
-  }
+    source: { code },
+  },
 }
 
 // Template injection story.
@@ -63,13 +68,16 @@ code = `<DruxtRouter path="">
 export const TemplateInjection = (args, { argTypes }) => ({
   components: { DruxtRouter },
   props: Object.keys(argTypes),
-  template: code.replace('path=""', 'v-bind="$props"')
+  template: code.replace('path=""', 'v-bind="$props"'),
 })
 TemplateInjection.parameters = {
   docs: {
     description: {
-      story: 'The DruxtRouter component can be themed by injecting the default template into the compomnent.\n\n```jsx\n' + code + '\n```',
+      story:
+        'The DruxtRouter component can be themed by injecting the default template into the compomnent.\n\n```jsx\n' +
+        code +
+        '\n```',
     },
-    source: { code }
-  }
+    source: { code },
+  },
 }

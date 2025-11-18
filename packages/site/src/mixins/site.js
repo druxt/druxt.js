@@ -52,9 +52,9 @@ const DruxtSiteMixin = {
      *
      * @type {string[]},
      */
-     regions: {
+    regions: {
       type: Array,
-      default: () => ([])
+      default: () => [],
     },
 
     /**

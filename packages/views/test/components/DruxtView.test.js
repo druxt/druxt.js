@@ -17,24 +17,25 @@ let store
 const mocks = {
   $createElement: jest.fn(),
   $druxt: {
-    settings: {}
+    settings: {},
   },
   $fetch: jest.fn(),
   $fetchState: {
-    pending: true
+    pending: true,
   },
   $nuxt: {
     context: {
       isDev: false,
-    }
+    },
   },
   $route: {
-    query: {}
-  }
+    query: {},
+  },
 }
 
 const stubs = ['DruxtDebug', 'DruxtEntity', 'DruxtViewsPager']
-const mountComponent = (propsData) => shallowMount(DruxtView, { localVue, mocks, propsData, store, stubs })
+const mountComponent = (propsData) =>
+  shallowMount(DruxtView, { localVue, mocks, propsData, store, stubs })
 
 describe('DruxtView', () => {
   beforeEach(() => {
@@ -51,12 +52,17 @@ describe('DruxtView', () => {
   test('featured_articles', async () => {
     const wrapper = mountComponent({
       displayId: 'page_1',
-      viewId: 'featured_articles'
+      viewId: 'featured_articles',
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtView.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtView:featured_articles:page_1:0')
+    expect(
+      DruxtView.fetchKey.call(
+        wrapper.vm,
+        jest.fn(() => 0)
+      )
+    ).toBe('DruxtView:featured_articles:page_1:0')
 
     // Props.
     expect(wrapper.vm.displayId).toBe('page_1')
@@ -77,7 +83,7 @@ describe('DruxtView', () => {
       'results',
       'pager',
       'attachments_after',
-      'default'
+      'default',
     ])
 
     const h = jest.fn()
@@ -93,10 +99,12 @@ describe('DruxtView', () => {
     expect(h).toHaveBeenCalledWith('DruxtEntity', expect.any(Object))
 
     // Test empty results.
-    slotsMock.display.display_options.empty = [{
-      content: '<p>No content</p>',
-      plugin_id: 'text_custom',
-    }]
+    slotsMock.display.display_options.empty = [
+      {
+        content: '<p>No content</p>',
+        plugin_id: 'text_custom',
+      },
+    ]
     slotsMock.results = []
     expect(DruxtView.druxt.slots.call(slotsMock, h).results({}).length).toBe(1)
     expect(h).toHaveBeenCalledTimes(9)
@@ -111,7 +119,7 @@ describe('DruxtView', () => {
     wrapper.vm.model = {
       page: 1,
       filter: { test: 1 },
-      sort: 'test'
+      sort: 'test',
     }
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({
       page: 1,
@@ -135,7 +143,7 @@ describe('DruxtView', () => {
     expect(wrapper.vm.model).toStrictEqual({
       filter: {},
       page: null,
-      sort: null
+      sort: null,
     })
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({})
 
@@ -163,7 +171,12 @@ describe('DruxtView', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtView.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe(`DruxtView:${mockView.data.id}:default:0`)
+    expect(
+      DruxtView.fetchKey.call(
+        wrapper.vm,
+        jest.fn(() => 0)
+      )
+    ).toBe(`DruxtView:${mockView.data.id}:default:0`)
   })
 
   // TODO : Fix test for filters / attachments, etc.
@@ -210,20 +223,26 @@ describe('DruxtView', () => {
     const mock = { arguments: [], model: {} }
     expect(DruxtView.methods.getQuery.call(mock)).toStrictEqual({})
 
-    mock.display = { display_options: { filters: [{
-      entity_type: 'node',
-      plugin_id: 'bundle',
-      value: { page: 'page' }
-    }] } }
+    mock.display = {
+      display_options: {
+        filters: [
+          {
+            entity_type: 'node',
+            plugin_id: 'bundle',
+            value: { page: 'page' },
+          },
+        ],
+      },
+    }
     expect(DruxtView.methods.getQuery.call(mock)).toStrictEqual({})
 
     // Druxt query settings.
-    const settings = { query: { fields: ['title'] }}
+    const settings = { query: { fields: ['title'] } }
     expect(DruxtView.methods.getQuery.call(mock, settings)).toStrictEqual({})
 
     settings.query.bundleFilter = true
     expect(DruxtView.methods.getQuery.call(mock, settings)).toStrictEqual({
-      'fields[node--page]': 'uuid,title'
+      'fields[node--page]': 'uuid,title',
     })
   })
 
@@ -232,13 +251,15 @@ describe('DruxtView', () => {
       options.on.input.call(mock, options.attrs.mock)
     })
     const mock = {
-      filters: [{
-        id: 'test',
-        plugin_id: 'test',
-        expose: {
-          identifier: 'test',
+      filters: [
+        {
+          id: 'test',
+          plugin_id: 'test',
+          expose: {
+            identifier: 'test',
+          },
         },
-      }],
+      ],
       model: {
         filter: {},
         page: null,
@@ -247,7 +268,7 @@ describe('DruxtView', () => {
       results: [],
       showPager: true,
       showSorts: true,
-      viewId: 'test'
+      viewId: 'test',
     }
     const slots = DruxtView.druxt.slots.call(mock, h)
 

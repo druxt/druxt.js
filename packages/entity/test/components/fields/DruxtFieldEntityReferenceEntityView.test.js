@@ -22,18 +22,20 @@ const mountComponent = (options) => {
     attributes: {
       title: 'Welcome to Contenta CMS!',
       path: {
-        alias: '/welcome'
-      }
-    }
+        alias: '/welcome',
+      },
+    },
   }
-  store.commit('druxt/addResource', { resource: { data: entity }})
+  store.commit('druxt/addResource', { resource: { data: entity } })
 
   const propsData = {
-    value: [{
-      type: entity.type,
-      uuid: entity.id
-    }],
-    schema: {}
+    value: [
+      {
+        type: entity.type,
+        uuid: entity.id,
+      },
+    ],
+    schema: {},
   }
 
   return shallowMount(DruxtFieldEntityReferenceEntityView, {
@@ -41,7 +43,7 @@ const mountComponent = (options) => {
     localVue,
     propsData,
     store,
-    stubs
+    stubs,
   })
 }
 
@@ -60,12 +62,16 @@ describe('Component - DruxtFieldEntityReferenceEntityView', () => {
 
   test('default', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent()
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldEntityReferenceEntityView component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldEntityReferenceEntityView component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 

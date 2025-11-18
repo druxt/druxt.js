@@ -34,13 +34,17 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
   }
 
   // Normalize slashes.
-  this.options.baseUrl = options.baseUrl = options.baseUrl.endsWith('/') ? options.baseUrl.slice(0, -1) : options.baseUrl
-  this.options.endpoint = options.endpoint = options.endpoint.startsWith('/') ? options.endpoint : `/${options.endpoint}`
+  this.options.baseUrl = options.baseUrl = options.baseUrl.endsWith('/')
+    ? options.baseUrl.slice(0, -1)
+    : options.baseUrl
+  this.options.endpoint = options.endpoint = options.endpoint.startsWith('/')
+    ? options.endpoint
+    : `/${options.endpoint}`
 
   const druxt = new DruxtClient(options.baseUrl, {
     ...options,
     // Disable API Proxy, as Proxies aren't available at build.
-    proxy: { ...options.proxy || {}, api: false },
+    proxy: { ...(options.proxy || {}), api: false },
   })
 
   // Nuxt proxy integration.
@@ -54,13 +58,24 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
       proxies[options.endpoint] = options.baseUrl
 
       // Langcode prefixed API endpoints.
-      const languageResourceType = 'configurable_language--configurable_language'
+      const languageResourceType =
+        'configurable_language--configurable_language'
       if (((await druxt.getIndex(languageResourceType)) || {}).href) {
-        const query = new DrupalJsonApiParams().addFields(languageResourceType, ['drupal_internal__id'])
-        const languages = (await druxt.getCollectionAll(languageResourceType, query) || [])
+        const query = new DrupalJsonApiParams().addFields(
+          languageResourceType,
+          ['drupal_internal__id']
+        )
+        const languages = (
+          (await druxt.getCollectionAll(languageResourceType, query)) || []
+        )
           .map((o) => o.data)
           .flat()
-          .filter((o) => !['und', 'zxx'].includes(((o || {}).attributes || {}).drupal_internal__id))
+          .filter(
+            (o) =>
+              !['und', 'zxx'].includes(
+                ((o || {}).attributes || {}).drupal_internal__id
+              )
+          )
           .map((o) => o.attributes.drupal_internal__id)
         for (const langcode of languages) {
           proxies[`/${langcode}${options.endpoint}`] = options.baseUrl
@@ -73,7 +88,10 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
 
     // Enable proxying of the Drupal site files.
     if ((options.proxy || {}).files) {
-      const filesPath = typeof options.proxy.files === 'string' ? options.proxy.files : 'default'
+      const filesPath =
+        typeof options.proxy.files === 'string'
+          ? options.proxy.files
+          : 'default'
       proxies[`/sites/${filesPath}/files`] = options.baseUrl
     }
 
@@ -82,13 +100,12 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
       if (Array.isArray(this.options.proxy)) {
         this.options.proxy = [
           ...this.options.proxy,
-          ...Object.keys(proxies).map((path) => `${options.baseUrl}${path}`)
+          ...Object.keys(proxies).map((path) => `${options.baseUrl}${path}`),
         ]
-      }
-      else {
+      } else {
         this.options.proxy = {
           ...this.options.proxy,
-          ...proxies
+          ...proxies,
         }
       }
     }
@@ -106,13 +123,13 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     this.options.axios = {
       baseURL: options.baseUrl,
       proxy: !!(options.proxy || {}).api,
-      ...this.options.axios
+      ...this.options.axios,
     }
     this.addModule('@nuxtjs/axios')
   }
 
   // Register components directories.
-  this.nuxt.hook('components:dirs', dirs => {
+  this.nuxt.hook('components:dirs', (dirs) => {
     dirs.push({ path: join(__dirname, 'components') })
   })
 
@@ -120,22 +137,27 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
   this.addPlugin({
     src: resolve(__dirname, '../templates/plugin.js'),
     fileName: 'druxt.js',
-    options
+    options,
   })
 
   // Make the $axios and $druxt plugins the first to load.
   const extendPlugins = this.options.extendPlugins
   this.options.extendPlugins = (plugins) => {
     // Run the user defined extendPlugins function if defined.
-    plugins = typeof extendPlugins === 'function' ? extendPlugins(plugins) : plugins
+    plugins =
+      typeof extendPlugins === 'function' ? extendPlugins(plugins) : plugins
 
     // Extract the $axios plugin.
-    const axiosIndex = plugins.findIndex(({ src }) => src === normalize(`${this.options.buildDir}/axios.js`))
+    const axiosIndex = plugins.findIndex(
+      ({ src }) => src === normalize(`${this.options.buildDir}/axios.js`)
+    )
     const axiosPlugin = plugins[axiosIndex]
     plugins.splice(axiosIndex, 1)
 
     // Extract the $druxt plugin.
-    const druxtIndex = plugins.findIndex(({ src }) => src === normalize(`${this.options.buildDir}/druxt.js`))
+    const druxtIndex = plugins.findIndex(
+      ({ src }) => src === normalize(`${this.options.buildDir}/druxt.js`)
+    )
     const druxtPlugin = plugins[druxtIndex]
     plugins.splice(druxtIndex, 1)
 
@@ -149,7 +171,7 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
   this.addPlugin({
     src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt.js',
-    options
+    options,
   })
 
   // Enable Vuex Store.
@@ -159,21 +181,27 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
   this.options.components = this.options.components ?? true
 
   // Add CLI badge.
-  this.options.cli.badgeMessages.push(`${chalk.blue.bold('Druxt')} @ v${meta.version}`)
-  this.options.cli.badgeMessages.push(`${chalk.bold('API:')} ${chalk.blue.underline(options.baseUrl + options.endpoint)}`)
+  this.options.cli.badgeMessages.push(
+    `${chalk.blue.bold('Druxt')} @ v${meta.version}`
+  )
+  this.options.cli.badgeMessages.push(
+    `${chalk.bold('API:')} ${chalk.blue.underline(
+      options.baseUrl + options.endpoint
+    )}`
+  )
 
   // Development mode features.
   if (this.options.dev) {
     // Add the template stubber server middleware.
     this.addServerMiddleware({
       path: '/_druxt/template',
-      handler: 'druxt/dist/server-middleware/template.mjs'
+      handler: 'druxt/dist/server-middleware/template.mjs',
     })
 
     // Add the Vue devtools plugin.
     this.addPlugin({
       src: resolve(__dirname, '../dist/plugins/devtools.mjs'),
-      fileName: 'druxt-devtools.js'
+      fileName: 'druxt-devtools.js',
     })
   }
 
@@ -185,21 +213,27 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
       src: resolve(__dirname, '../templates/stories/README.stories.mdx'),
       fileName: 'stories/druxt-README.stories.mdx',
     })
-    stories.push(resolve(self.options.buildDir, './stories/druxt-README.stories.mdx'))
+    stories.push(
+      resolve(self.options.buildDir, './stories/druxt-README.stories.mdx')
+    )
 
     // Druxt custom module story.
     self.addTemplate({
       src: resolve(__dirname, '../templates/stories/druxt-module.stories.mdx'),
       fileName: 'stories/druxt-module.stories.mdx',
     })
-    stories.push(resolve(self.options.buildDir, './stories/druxt-module.stories.mdx'))
+    stories.push(
+      resolve(self.options.buildDir, './stories/druxt-module.stories.mdx')
+    )
 
     // DruxtDebug component story.
     self.addTemplate({
       src: resolve(__dirname, '../templates/stories/druxt-debug.stories.js'),
       fileName: 'stories/druxt-debug.stories.js',
     })
-    stories.push(resolve(self.options.buildDir, './stories/druxt-debug.stories.js'))
+    stories.push(
+      resolve(self.options.buildDir, './stories/druxt-debug.stories.js')
+    )
   })
 }
 

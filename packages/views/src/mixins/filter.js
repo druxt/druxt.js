@@ -45,7 +45,7 @@ const DruxtViewsFilterMixin = {
    */
   data() {
     return {
-      model: this.value
+      model: this.value,
     }
   },
 
@@ -54,8 +54,8 @@ const DruxtViewsFilterMixin = {
       if (to !== from) {
         this.$emit('input', this.model)
       }
-    }
-  }
+    },
+  },
 }
 
 export { DruxtViewsFilterMixin }

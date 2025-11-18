@@ -1,11 +1,9 @@
 <template>
   <div>
-    <label><strong>{{ $parent.label.text }}:</strong><br /></label>
-    <input
-      v-model="model"
-      size="60"
-      type="text"
-    ></input>
+    <label
+      ><strong>{{ $parent.label.text }}:</strong><br
+    /></label>
+    <input v-model="model" size="60" type="text" />
   </div>
 </template>
 

@@ -16,7 +16,7 @@ export default {
   data: ({ value }) => ({ model: value }),
 
   druxt: {
-    foo: 'bar'
+    foo: 'bar',
   },
 }
 </script>

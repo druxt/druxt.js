@@ -27,16 +27,16 @@ const DruxtViewsNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
-    ...(this.options || {}).druxt || {},
+    ...((this.options || {}).druxt || {}),
     views: {
       query: {},
       ...((this.options || {}).druxt || {}).views,
       ...moduleOptions,
-    }
+    },
   }
 
   // Register components directories.
-  this.nuxt.hook('components:dirs', dirs => {
+  this.nuxt.hook('components:dirs', (dirs) => {
     dirs.push({ path: join(__dirname, 'components') })
     dirs.push({ path: join(__dirname, 'components/blocks') })
   })
@@ -52,7 +52,7 @@ const DruxtViewsNuxtModule = async function (moduleOptions = {}) {
   this.addPlugin({
     src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt-views.js',
-    options: options.druxt
+    options: options.druxt,
   })
 
   // Enable Vuex Store.

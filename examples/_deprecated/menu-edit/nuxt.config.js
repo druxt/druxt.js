@@ -4,14 +4,11 @@ const baseUrl = process.env.GITPOD_WORKSPACE_ID
 
 export default {
   components: true,
-  modules: [
-    'bootstrap-vue/nuxt',
-    'druxt-menu',
-  ],
+  modules: ['bootstrap-vue/nuxt', 'druxt-menu'],
   druxt: {
     baseUrl,
     menu: {
       jsonApiMenuItems: true,
     },
-  }
+  },
 }

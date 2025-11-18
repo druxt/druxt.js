@@ -29,18 +29,23 @@
         <!-- eslint-disable -->
         <p>
           This is an example of a Fully decoupled Drupal menu being rendered by
-          the <a href="https://menu.druxtjs.org" target="_blank">DruxtMenu</a> and
-          <a href="https://drupal.org/project/jsonapi_menu_items" target="_blank">JSON:API Menu Items</a>
+          the
+          <a href="https://menu.druxtjs.org" target="_blank">DruxtMenu</a> and
+          <a
+            href="https://drupal.org/project/jsonapi_menu_items"
+            target="_blank"
+            >JSON:API Menu Items</a
+          >
           modules.
         </p>
         <p>
           This example uses the
-          <a href="https://www.npmjs.com/package/vuedraggable" target="blank">VueDraggable</a>
+          <a href="https://www.npmjs.com/package/vuedraggable" target="blank"
+            >VueDraggable</a
+          >
           component to provide a frontend editing experience.
         </p>
-        <strong>
-          Click the lock icon to toggle edit mode.
-        </strong>
+        <strong> Click the lock icon to toggle edit mode. </strong>
         <!-- eslint-enable -->
       </b-col>
     </b-row>

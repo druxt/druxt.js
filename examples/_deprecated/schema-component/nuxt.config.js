@@ -4,5 +4,5 @@ const baseUrl = process.env.GITPOD_WORKSPACE_ID
 
 export default {
   buildModules: [['druxt-schema', { baseUrl }]],
-  components: true
+  components: true,
 }

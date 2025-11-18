@@ -50,7 +50,7 @@ export default {
      */
     name: {
       type: String,
-      default: 'content'
+      default: 'content',
     },
 
     /**
@@ -64,7 +64,7 @@ export default {
      */
     theme: {
       type: String,
-      required: true
+      required: true,
     },
   },
 
@@ -72,7 +72,7 @@ export default {
    * @property {objects[]} blocks - The Block JSON:API resources.
    */
   data: () => ({
-    blocks: []
+    blocks: [],
   }),
 
   fetchKey(getCounter) {
@@ -85,8 +85,8 @@ export default {
    */
   computed: {
     ...mapState('druxtRouter', {
-      route: state => state.route
-    })
+      route: (state) => state.route,
+    }),
   },
 
   watch: {
@@ -96,7 +96,7 @@ export default {
 
     theme() {
       this.$fetch()
-    }
+    },
   },
 
   methods: {
@@ -114,15 +114,26 @@ export default {
       if ((block.attributes.visibility || {}).request_path) {
         let visible = false
         const { negate } = block.attributes.visibility.request_path
-        const pages = block.attributes.visibility.request_path.pages.split(/\r?\n/).filter(i => i)
+        const pages = block.attributes.visibility.request_path.pages
+          .split(/\r?\n/)
+          .filter((i) => i)
 
-        if (pages.includes('<front>') && (this.route.isHomePath || (!this.route.isHomePath && negate))) {
+        if (
+          pages.includes('<front>') &&
+          (this.route.isHomePath || (!this.route.isHomePath && negate))
+        ) {
           visible = true
         }
 
         // Remove langcode prefix from the resolved path before comparing.
-        const resolvedPath = (this.route.resolvedPath || '').replace(new RegExp(`^/${this.lang}`), '')
-        if (pages.includes(resolvedPath) || (!pages.includes(resolvedPath) && negate)) {
+        const resolvedPath = (this.route.resolvedPath || '').replace(
+          new RegExp(`^/${this.lang}`),
+          ''
+        )
+        if (
+          pages.includes(resolvedPath) ||
+          (!pages.includes(resolvedPath) && negate)
+        ) {
           visible = true
         }
 
@@ -138,8 +149,8 @@ export default {
      * Maps `druxt/getCollection` Vuex action to `this.getCollection`.
      */
     ...mapActions({
-      getCollection: 'druxt/getCollection'
-    })
+      getCollection: 'druxt/getCollection',
+    }),
   },
 
   /**
@@ -170,7 +181,7 @@ export default {
       const collection = await this.getCollection({
         prefix: this.lang,
         type,
-        query
+        query,
       })
       this.blocks = collection.data
     },
@@ -223,11 +234,15 @@ export default {
       })
 
       // Build default slot.
-      scopedSlots.default = (attrs) => h('div', this.blocks.map((block) =>
-        this.isVisible(block)
-          ? scopedSlots[block.attributes.drupal_internal__id](attrs)
-          : false
-      ))
+      scopedSlots.default = (attrs) =>
+        h(
+          'div',
+          this.blocks.map((block) =>
+            this.isVisible(block)
+              ? scopedSlots[block.attributes.drupal_internal__id](attrs)
+              : false
+          )
+        )
 
       return scopedSlots
     },
@@ -238,10 +253,10 @@ export default {
     template: {
       debug: '{ blocks, name, theme }',
       mixins: {
-        'DruxtBlocksRegionMixin': 'druxt-blocks'
-      }
-    }
-  }
+        DruxtBlocksRegionMixin: 'druxt-blocks',
+      },
+    },
+  },
 }
 
 /**

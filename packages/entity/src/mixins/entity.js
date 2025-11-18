@@ -59,7 +59,7 @@ const DruxtEntityMixin = {
     /**
      * The Entity value.
      */
-     value: {
+    value: {
       type: Object,
       default: undefined,
     },
@@ -78,15 +78,17 @@ const DruxtEntityMixin = {
      * Array of CSS classes.
      * @type {string[]}
      */
-    classes: ({ schema }) => schema && [
-      schema.id,
-      schema.resourceType,
-      schema.config.entityType,
-      schema.config.bundle,
-      schema.config.mode,
-      schema.config.schemaType,
-    ].join(' '),
-  }
+    classes: ({ schema }) =>
+      schema &&
+      [
+        schema.id,
+        schema.resourceType,
+        schema.config.entityType,
+        schema.config.bundle,
+        schema.config.mode,
+        schema.config.schemaType,
+      ].join(' '),
+  },
 }
 
 export { DruxtEntityMixin }

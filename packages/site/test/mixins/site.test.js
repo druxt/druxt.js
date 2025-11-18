@@ -13,7 +13,7 @@ let store
 const component = {
   name: 'DruxtSiteTest',
   mixins: [DruxtSiteMixin],
-  render: () => ({})
+  render: () => ({}),
 }
 
 describe('DruxtSiteMixin', () => {

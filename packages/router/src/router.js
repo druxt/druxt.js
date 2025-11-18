@@ -30,7 +30,7 @@ class DruxtRouter {
    * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
    * @param {array} [options.types] - Array of Druxt Router type definitions.
    */
-  constructor (baseUrl, options = {}) {
+  constructor(baseUrl, options = {}) {
     /**
      * Druxt router options.
      * @type {object}
@@ -40,31 +40,31 @@ class DruxtRouter {
       types: [
         {
           type: 'entity',
-          canonical: route => route.entity.canonical,
+          canonical: (route) => route.entity.canonical,
           component: 'druxt-entity',
           property: 'entity',
-          props: route => ({
+          props: (route) => ({
             langcode: route.entity.langcode,
             type: route.jsonapi.resourceName,
-            uuid: route.entity.uuid
-          })
+            uuid: route.entity.uuid,
+          }),
         },
         {
           type: 'views',
-          canonical: route => route.resolved,
+          canonical: (route) => route.resolved,
           component: 'druxt-view',
           property: 'view',
-          props: route => ({
+          props: (route) => ({
             displayId: route.view.display_id,
             langcode: route.view.langcode || undefined,
             type: route.jsonapi.resourceName,
             uuid: route.view.uuid,
-            viewId: route.view.view_id
-          })
-        }
+            viewId: route.view.view_id,
+          }),
+        },
       ],
 
-      ...options
+      ...options,
     }
 
     /**
@@ -89,8 +89,10 @@ class DruxtRouter {
    *
    * @param {object} headers - An object containing HTTP headers.
    */
-  addHeaders (headers) {
-    console.warn('[druxt-router] `addHeaders` is deprecated. See http://druxtjs.org/api/client.')
+  addHeaders(headers) {
+    console.warn(
+      '[druxt-router] `addHeaders` is deprecated. See http://druxtjs.org/api/client.'
+    )
     if (typeof headers === 'undefined') {
       return false
     }
@@ -114,8 +116,10 @@ class DruxtRouter {
    *
    * @return {string} The URL with query string.
    */
-  buildQueryUrl (url, query) {
-    console.warn('[druxt-router] `buildQueryUrl` is deprecated. See http://druxtjs.org/api/client.')
+  buildQueryUrl(url, query) {
+    console.warn(
+      '[druxt-router] `buildQueryUrl` is deprecated. See http://druxtjs.org/api/client.'
+    )
     return this.druxt.buildQueryUrl(url, query)
   }
 
@@ -129,8 +133,10 @@ class DruxtRouter {
    *
    * @private
    */
-  checkPermissions (res) {
-    console.warn('[druxt-router] `checkPermissions` is deprecated. See http://druxtjs.org/api/client.')
+  checkPermissions(res) {
+    console.warn(
+      '[druxt-router] `checkPermissions` is deprecated. See http://druxtjs.org/api/client.'
+    )
     return this.druxt.checkPermissions(res)
   }
 
@@ -144,7 +150,7 @@ class DruxtRouter {
    *
    * @returns {object} The route and redirect data.
    */
-  async get (path) {
+  async get(path) {
     const route = await this.getRoute(path)
     const redirect = this.getRedirect(path, route)
 
@@ -164,8 +170,10 @@ class DruxtRouter {
    *
    * @returns {object} The resource index object or the specified resource.
    */
-  async getIndex (resource) {
-    console.warn('[druxt-router] `getIndex` is deprecated. See http://druxtjs.org/api/client.')
+  async getIndex(resource) {
+    console.warn(
+      '[druxt-router] `getIndex` is deprecated. See http://druxtjs.org/api/client.'
+    )
     this.index = await this.druxt.getIndex(resource)
     return this.index
   }
@@ -185,7 +193,7 @@ class DruxtRouter {
    *
    * @returns {boolean|string} The redirect path or false.
    */
-  getRedirect (path, route = {}) {
+  getRedirect(path, route = {}) {
     const prefix = (route.props || {}).langcode || ''
 
     // Redirect to route provided redirect.
@@ -229,8 +237,10 @@ class DruxtRouter {
    *
    * @returns {object} The JSON:API resource data.
    */
-  async getResource (query = {}) {
-    console.warn('[druxt-router] `getResource` is deprecated. See http://druxtjs.org/api/client.')
+  async getResource(query = {}) {
+    console.warn(
+      '[druxt-router] `getResource` is deprecated. See http://druxtjs.org/api/client.'
+    )
     const resource = await this.druxt.getResource(query.type, query.id)
     return resource.data || false
   }
@@ -255,12 +265,18 @@ class DruxtRouter {
    * @param {boolean} [options.all=false] - Load all results.
    * @return {object[]} Array of resources.
    */
-  async getResources (resource, query, options = {}) {
-    console.warn('[druxt-router] `getResources` is deprecated. See http://druxtjs.org/api/client.')
+  async getResources(resource, query, options = {}) {
+    console.warn(
+      '[druxt-router] `getResources` is deprecated. See http://druxtjs.org/api/client.'
+    )
     let resources = { data: [] }
     if (options.all) {
       const collections = await this.druxt.getCollectionAll(resource, query)
-      collections.map((collection) => { (collection.data || []).map((resource) => { resources.data.push(resource) }) })
+      collections.map((collection) => {
+        ;(collection.data || []).map((resource) => {
+          resources.data.push(resource)
+        })
+      })
     } else {
       resources = await this.druxt.getCollection(resource, query)
     }
@@ -278,8 +294,12 @@ class DruxtRouter {
    *
    * @returns {object} The JSON:API resource data.
    */
-  async getResourceByRoute (route) {
-    const resource = await this.druxt.getResource(route.jsonapi.resourceName, route.entity.uuid, route.prefix)
+  async getResourceByRoute(route) {
+    const resource = await this.druxt.getResource(
+      route.jsonapi.resourceName,
+      route.entity.uuid,
+      route.prefix
+    )
     return resource.data || false
   }
 
@@ -293,13 +313,13 @@ class DruxtRouter {
    *
    * @returns {object} The route object.
    */
-  async getRoute (path = '/') {
+  async getRoute(path = '/') {
     // @TODO - Add validation/error handling.
     const url = `/router/translate-path?path=${path}`
 
     const response = await this.druxt.get(url, {
       // Prevent invalid routes (404) from throwing validation errors.
-      validateStatus: status => status < 500
+      validateStatus: (status) => status < 500,
     })
 
     const data = {
@@ -308,7 +328,7 @@ class DruxtRouter {
       label: false,
       redirect: false,
 
-      ...response.data
+      ...response.data,
     }
 
     let route = {
@@ -322,7 +342,7 @@ class DruxtRouter {
       props: false,
       redirect: data.redirect,
       resolvedPath: Url(data.resolved).pathname,
-      entity: data.entity
+      entity: data.entity,
     }
 
     // Determine route type by configuration.
@@ -330,10 +350,13 @@ class DruxtRouter {
     // @SEE  - https://www.drupal.org/project/decoupled_router/issues/3146024
     for (const key in this.options.types) {
       const type = {
-        ...this.options.types[key]
+        ...this.options.types[key],
       }
 
-      if (typeof type.property !== 'string' || typeof data[type.property] === 'undefined') {
+      if (
+        typeof type.property !== 'string' ||
+        typeof data[type.property] === 'undefined'
+      ) {
         continue
       }
       delete type.property
@@ -351,7 +374,7 @@ class DruxtRouter {
       // Merge type
       route = {
         ...route,
-        ...type
+        ...type,
       }
       break
     }
@@ -362,13 +385,24 @@ class DruxtRouter {
       if (response.status === 404) {
         // Is the Decoupled Router installed?
         if (typeof response.data !== 'object') {
-          response.data = { errors: [{
-            detail: 'Please ensure the Decoupled Router module is installed and configured correctly.'
-          }]}
+          response.data = {
+            errors: [
+              {
+                detail:
+                  'Please ensure the Decoupled Router module is installed and configured correctly.',
+              },
+            ],
+          }
         }
         // Has the Decoupled Router provided an error message?
         else if (response.data.message || response.data.details) {
-          response.data.errors = [{ detail: [response.data.message, response.data.details].filter((s) => s).join('\n') }]
+          response.data.errors = [
+            {
+              detail: [response.data.message, response.data.details]
+                .filter((s) => s)
+                .join('\n'),
+            },
+          ]
         }
       }
 

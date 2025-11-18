@@ -10,7 +10,7 @@ export default {
     query: {
       // Filter specific fields.
       fields: ['field_summary', 'langcode', 'path'],
-    }
-  }
+    },
+  },
 }
 </script>

@@ -14,13 +14,13 @@ const mock = {
     hook: jest.fn((hook, fn) => {
       const arg = {
         'components:dirs': [],
-        'storybook:config': { stories: [] }
+        'storybook:config': { stories: [] },
       }
       return fn(arg[hook])
     }),
-    options: { build: {} }
+    options: { build: {} },
   },
-  DruxtRouterNuxtModule
+  DruxtRouterNuxtModule,
 }
 
 test('Nuxt module', async () => {

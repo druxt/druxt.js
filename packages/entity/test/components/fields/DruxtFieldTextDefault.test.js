@@ -11,21 +11,25 @@ describe('Component - DruxtFieldTextDefault', () => {
   test('default', async () => {
     const propsData = {
       value: [{ processed: 'DruxtFieldTextDefault' }],
-      schema: {}
+      schema: {},
     }
 
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = shallowMount(DruxtFieldTextDefault, {
       localVue,
-      propsData
+      propsData,
     })
 
     expect(wrapper.vm.format(wrapper.vm.items[0])).toBe('DruxtFieldTextDefault')
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldTextDefault component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldTextDefault component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     // Restore console.warn
     consoleWarnSpy.mockRestore()

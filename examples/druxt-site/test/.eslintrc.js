@@ -9,6 +9,6 @@ module.exports = {
     afterEach: 'readonly',
     it: 'readonly',
     describe: 'readonly',
-    expect: 'readonly'
-  }
+    expect: 'readonly',
+  },
 }

@@ -8,8 +8,8 @@ const localVue = createLocalVue()
 localVue.use(Vuex)
 
 const testComponent = {
-  render () {},
-  mixins: [DruxtSchemaMixin]
+  render() {},
+  mixins: [DruxtSchemaMixin],
 }
 
 let store
@@ -20,7 +20,7 @@ describe('DruxtSchemaRouterEntityMixin', () => {
     store = new Vuex.Store()
     DruxtSchemaStore({ store })
     store.$druxtSchema = {
-      import: jest.fn(() => ({}))
+      import: jest.fn(() => ({})),
     }
   })
 
@@ -30,7 +30,7 @@ describe('DruxtSchemaRouterEntityMixin', () => {
         type: 'node--page',
       },
       store,
-      localVue
+      localVue,
     })
 
     // Bind and execute fetch() method.

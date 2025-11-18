@@ -33,18 +33,18 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
-    ...(this.options || {}).druxt || {},
+    ...((this.options || {}).druxt || {}),
     schema: {
-      ...((this.options || {}).druxt || {}).schema || {},
+      ...(((this.options || {}).druxt || {}).schema || {}),
       ...moduleOptions,
-    }
+    },
   }
 
   // Add plugin.
   this.addPlugin({
     src: resolve(__dirname, '../templates/plugin.js'),
     fileName: 'druxt-schema.js',
-    options
+    options,
   })
 
   // Enable Vuex Store.
@@ -54,7 +54,7 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
   this.addPlugin({
     src: resolve(__dirname, '../templates/store.js'),
     fileName: 'store/druxt-schema.js',
-    options
+    options,
   })
 
   // Generate schemas.
@@ -62,13 +62,15 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
     const druxtSchema = new DruxtSchema(options.baseUrl, {
       ...options,
       // Disable API Proxy, as Proxies aren't available at build.
-      proxy: { ...options.proxy || {}, api: false },
+      proxy: { ...(options.proxy || {}), api: false },
     })
     const { schemas } = await druxtSchema.get()
 
     // Throw error if no schema files generated.
     if (!Object.entries(schemas).length) {
-      throw new Error('No Druxt Schema files generated.\n Have you created any content types yet?')
+      throw new Error(
+        'No Druxt Schema files generated.\n Have you created any content types yet?'
+      )
     }
 
     for (const name in schemas) {
@@ -78,7 +80,7 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
       this.addTemplate({
         src: resolve(__dirname, '../templates/schema.json'),
         fileName: `schemas/${name}.json`,
-        options: { schema }
+        options: { schema },
       })
     }
 

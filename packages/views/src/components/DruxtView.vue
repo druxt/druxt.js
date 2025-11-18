@@ -124,7 +124,7 @@ export default {
     viewId: {
       type: String,
       default: null,
-    }
+    },
   },
 
   /**
@@ -143,12 +143,16 @@ export default {
         sort: model.sort || null,
       },
       resource: null,
-      view: false
+      view: false,
     }
   },
 
   fetchKey(getCounter) {
-    const parts = ['DruxtView', this.viewId || this.uuid, this.displayId].filter((o) => o)
+    const parts = [
+      'DruxtView',
+      this.viewId || this.uuid,
+      this.displayId,
+    ].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
   },
 
@@ -160,14 +164,18 @@ export default {
      * @type {string[]}
      */
     attachments_after() {
-      if (!((((this.view || {}).data || {}).attributes || {}).display)) return false
+      if (!(((this.view || {}).data || {}).attributes || {}).display)
+        return false
 
       const displays = this.view.data.attributes.display
-      return Object.keys(displays).filter(key => {
-        return displays[key].display_plugin === 'attachment'
-          && displays[key].display_options.attachment_position === 'after'
-          && typeof displays[key].display_options.displays[this.displayId] !== 'undefined'
-        })
+      return Object.keys(displays).filter((key) => {
+        return (
+          displays[key].display_plugin === 'attachment' &&
+          displays[key].display_options.attachment_position === 'after' &&
+          typeof displays[key].display_options.displays[this.displayId] !==
+            'undefined'
+        )
+      })
     },
 
     /**
@@ -176,14 +184,18 @@ export default {
      * @type {string[]}
      */
     attachments_before() {
-      if (!((((this.view || {}).data || {}).attributes || {}).display)) return false
+      if (!(((this.view || {}).data || {}).attributes || {}).display)
+        return false
 
       const displays = this.view.data.attributes.display
-      return Object.keys(displays).filter(key => {
-        return displays[key].display_plugin === 'attachment'
-          && displays[key].display_options.attachment_position === 'before'
-          && typeof displays[key].display_options.displays[this.displayId] !== 'undefined'
-        })
+      return Object.keys(displays).filter((key) => {
+        return (
+          displays[key].display_plugin === 'attachment' &&
+          displays[key].display_options.attachment_position === 'before' &&
+          typeof displays[key].display_options.displays[this.displayId] !==
+            'undefined'
+        )
+      })
     },
 
     /**
@@ -203,7 +215,8 @@ export default {
     display() {
       if (!(((this.view || {}).data || {}).attributes || {}).display) return {}
 
-      if (this.display_id === 'default') return this.view.data.attributes.display[this.display_id]
+      if (this.display_id === 'default')
+        return this.view.data.attributes.display[this.display_id]
 
       return merge(
         this.view.data.attributes.display['default'],
@@ -217,7 +230,9 @@ export default {
      * @type {object[]}
      */
     filters() {
-      return Object.values(((this.display || {}).display_options || {}).filters || {}).filter(filter => filter.exposed)
+      return Object.values(
+        ((this.display || {}).display_options || {}).filters || {}
+      ).filter((filter) => filter.exposed)
     },
 
     /**
@@ -239,9 +254,12 @@ export default {
     mode() {
       if (!this.display || !this.display.display_options) return 'default'
 
-      if (!this.display.display_options.row.type.includes('entity:')) return 'default'
+      if (!this.display.display_options.row.type.includes('entity:'))
+        return 'default'
 
-      return (this.display.display_options.row.options || {}).view_mode || 'default'
+      return (
+        (this.display.display_options.row.options || {}).view_mode || 'default'
+      )
     },
 
     /**
@@ -277,7 +295,12 @@ export default {
      * @type {boolean}
      */
     showSorts() {
-      return !!(((((this.display || {}).display_options || {}).exposed_form || {}).options || {}).expose_sort_order && this.sorts.length)
+      return !!(
+        (
+          (((this.display || {}).display_options || {}).exposed_form || {})
+            .options || {}
+        ).expose_sort_order && this.sorts.length
+      )
     },
 
     /**
@@ -286,8 +309,10 @@ export default {
      * @type {object[]}
      */
     sorts() {
-      return Object.values(((this.display || {}).display_options || {}).sorts || {}).filter(sort => sort.exposed)
-    }
+      return Object.values(
+        ((this.display || {}).display_options || {}).sorts || {}
+      ).filter((sort) => sort.exposed)
+    },
   },
 
   watch: {
@@ -312,7 +337,10 @@ export default {
     'model.filter': {
       deep: true,
       handler(to, from) {
-        if (!Object.entries(to || {}).length && !Object.entries(from || {}).length) {
+        if (
+          !Object.entries(to || {}).length &&
+          !Object.entries(from || {}).length
+        ) {
           return
         }
         this.$fetch()
@@ -363,7 +391,8 @@ export default {
       // Check all filters for 'bundle' plugin with bundle data, and use if
       // found build resourceTypes array.
       if ((settings.query || {}).bundleFilter === true) {
-        const filters = ((this.display || {}).display_options || {}).filters || []
+        const filters =
+          ((this.display || {}).display_options || {}).filters || []
         Object.values(filters).map((filter) => {
           if (filter.plugin_id === 'bundle' && filter.value) {
             Object.keys(filter.value).map((bundle) => {
@@ -376,7 +405,10 @@ export default {
       // Filter fields.
       if ((resourceTypes || []).length) {
         for (const resourceType of resourceTypes) {
-          query[`fields[${resourceType}]`] = ['uuid', ...(settings.query || {}).fields || []].join(',')
+          query[`fields[${resourceType}]`] = [
+            'uuid',
+            ...((settings.query || {}).fields || []),
+          ].join(',')
         }
       }
 
@@ -419,8 +451,8 @@ export default {
     ...mapActions({
       getCollection: 'druxt/getCollection',
       getResource: 'druxt/getResource',
-      getResults: 'druxt/views/getResults'
-    })
+      getResults: 'druxt/views/getResults',
+    }),
   },
 
   /** DruxtModule settings */
@@ -431,11 +463,14 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
-    componentOptions: ({ displayId, uuid, view, viewId }) => ([
-      [viewId || ((view.data || {}).attributes || {}).drupal_internal__id, displayId],
+    componentOptions: ({ displayId, uuid, view, viewId }) => [
+      [
+        viewId || ((view.data || {}).attributes || {}).drupal_internal__id,
+        displayId,
+      ],
       [uuid || (view.data || {}).id, displayId],
-      [displayId]
-    ]),
+      [displayId],
+    ],
 
     /**
      * Fetch View configuration resource.
@@ -452,7 +487,10 @@ export default {
           const collection = await this.getCollection({
             prefix: this.lang,
             type: this.type,
-            query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId)
+            query: new DrupalJsonApiParams().addFilter(
+              'drupal_internal__id',
+              this.viewId
+            ),
           })
           this.view = { data: collection.data[0] }
         }
@@ -463,7 +501,9 @@ export default {
      * Fetch JSON:API Views results.
      */
     async fetchData(settings) {
-      const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
+      const viewId =
+        this.viewId ||
+        (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
       if (viewId) {
         // Check if we need to bypass cache.
         let bypassCache = false
@@ -480,7 +520,7 @@ export default {
           prefix: this.lang,
           query: stringify(query),
           viewId,
-          bypassCache
+          bypassCache,
         })
       }
     },
@@ -497,7 +537,7 @@ export default {
       mode: vm.mode,
       pager: vm.pager,
       results: vm.results,
-      view: vm.view
+      view: vm.view,
     }),
 
     /**
@@ -508,13 +548,20 @@ export default {
 
       // Start with the `nuxt.config.js` `druxt.settings.views` settings and
       // merge the Wrapper component settings on top.
-      let mergedSettings = merge(($druxt.settings || {}).views || {}, wrapperSettings || {}, { arrayMerge: (dest, src) => src })
+      let mergedSettings = merge(
+        ($druxt.settings || {}).views || {},
+        wrapperSettings || {},
+        { arrayMerge: (dest, src) => src }
+      )
       // Merge the DruxtViews component `settings` property on top.
-      mergedSettings = merge(mergedSettings || {}, settings || {}, { arrayMerge: (dest, src) => src })
+      mergedSettings = merge(mergedSettings || {}, settings || {}, {
+        arrayMerge: (dest, src) => src,
+      })
 
       // Evaluate the bypass cache function.
       if (typeof (mergedSettings.query || {}).bypassCache === 'function') {
-        mergedSettings.query.bypassCache = !!mergedSettings.query.bypassCache(context)
+        mergedSettings.query.bypassCache =
+          !!mergedSettings.query.bypassCache(context)
       }
 
       return {
@@ -552,132 +599,160 @@ export default {
       // Ensure an ID or UUID.
       if (!this.viewId && !this.uuid) {
         return {
-          default: () => h(
-            'DruxtDebug',
-            { props: { summary: "Missing required 'uuid' or 'viewId' prop.", }},
-            [h('p', "The DruxtView component requires either the 'uuid' or 'viewId' prop to be set.")]
-          )
+          default: () =>
+            h(
+              'DruxtDebug',
+              {
+                props: { summary: "Missing required 'uuid' or 'viewId' prop." },
+              },
+              [
+                h(
+                  'p',
+                  "The DruxtView component requires either the 'uuid' or 'viewId' prop to be set."
+                ),
+              ]
+            ),
         }
       }
 
       // Headers.
-      scopedSlots.header = () => Object.entries(this.headers).map(([key, header]) => h('span', {
-        domProps: { innerHTML: (header.content || {}).value }, key
-      }))
+      scopedSlots.header = () =>
+        Object.entries(this.headers).map(([key, header]) =>
+          h('span', {
+            domProps: { innerHTML: (header.content || {}).value },
+            key,
+          })
+        )
 
       // Exposed filters.
       if (this.filters.length) {
-        scopedSlots.filters = (attrs) => h('DruxtViewsFilters', {
-          attrs: { ...attrs },
-          on: {
-            input: (value) => {
-              this.model.filter = value
-            }
-          },
-          ref: 'filters',
-          props: {
-            filters: this.filters,
-            value: this.model.filter,
-            ...(((this.display || {}).display_options || {}).exposed_form || {})
-          },
-        })
+        scopedSlots.filters = (attrs) =>
+          h('DruxtViewsFilters', {
+            attrs: { ...attrs },
+            on: {
+              input: (value) => {
+                this.model.filter = value
+              },
+            },
+            ref: 'filters',
+            props: {
+              filters: this.filters,
+              value: this.model.filter,
+              ...(((this.display || {}).display_options || {}).exposed_form ||
+                {}),
+            },
+          })
       }
 
       // Exposed sorts.
       if (this.showSorts) {
-        scopedSlots.sorts = (attrs) => h('DruxtViewsSorts', {
-          attrs: { ...attrs },
-          on: {
-            input: (value) => {
-              this.model.sort = value
-            }
-          },
-          ref: 'sorts',
-          props: {
-            sorts: this.sorts,
-            value: this.model.sort,
-            ...(((this.display || {}).display_options || {}).exposed_form || {})
-          }
-        })
+        scopedSlots.sorts = (attrs) =>
+          h('DruxtViewsSorts', {
+            attrs: { ...attrs },
+            on: {
+              input: (value) => {
+                this.model.sort = value
+              },
+            },
+            ref: 'sorts',
+            props: {
+              sorts: this.sorts,
+              value: this.model.sort,
+              ...(((this.display || {}).display_options || {}).exposed_form ||
+                {}),
+            },
+          })
       }
 
       // Attachments before.
       if (this.attachments_before) {
-        scopedSlots.attachments_before = (attrs) => this.attachments_before.map((displayId) => h('DruxtView', {
-          attrs: { ...attrs },
-          key: displayId,
-          ref: 'attachements_before',
-          props: {
-            displayId,
-            langcode: this.lang,
-            type: this.type,
-            uuid: this.uuid,
-            viewId: this.viewId,
-          },
-        }))
+        scopedSlots.attachments_before = (attrs) =>
+          this.attachments_before.map((displayId) =>
+            h('DruxtView', {
+              attrs: { ...attrs },
+              key: displayId,
+              ref: 'attachements_before',
+              props: {
+                displayId,
+                langcode: this.lang,
+                type: this.type,
+                uuid: this.uuid,
+                viewId: this.viewId,
+              },
+            })
+          )
       }
 
       // Results.
       scopedSlots.results = (attrs) => {
         if (!this.results.length) {
-          return Object.values(((this.display || {}).display_options || {}).empty || {})
+          return Object.values(
+            ((this.display || {}).display_options || {}).empty || {}
+          )
             .filter((o) => o.plugin_id === 'text_custom')
             .map((empty) => {
               return h('div', { domProps: { innerHTML: empty.content } })
             })
         }
 
-        return this.results.map((result) => h('DruxtEntity', {
-          attrs: { ...attrs },
-          key: result.id,
-          props: {
-            langcode: this.lang,
-            mode: this.mode,
-            type: result.type,
-            uuid: result.id
-          }
-        }))
+        return this.results.map((result) =>
+          h('DruxtEntity', {
+            attrs: { ...attrs },
+            key: result.id,
+            props: {
+              langcode: this.lang,
+              mode: this.mode,
+              type: result.type,
+              uuid: result.id,
+            },
+          })
+        )
       }
 
       // Pager.
       if (this.showPager) {
-        scopedSlots.pager = (attrs) => h('DruxtViewsPager', {
-          attrs: { ...attrs },
-          on: {
-            input: (value) => {
-              this.model.page = value
-            }
-          },
-          ref: 'pager',
-          props: {
-            count: this.count,
-            resource: this.resource,
-            value: this.model.page,
-            ...this.pager,
-          }
-        })
+        scopedSlots.pager = (attrs) =>
+          h('DruxtViewsPager', {
+            attrs: { ...attrs },
+            on: {
+              input: (value) => {
+                this.model.page = value
+              },
+            },
+            ref: 'pager',
+            props: {
+              count: this.count,
+              resource: this.resource,
+              value: this.model.page,
+              ...this.pager,
+            },
+          })
       }
 
       // Attachments after.
       if (this.attachments_after) {
-        scopedSlots.attachments_after = (attrs) => this.attachments_after.map((displayId) => h('DruxtView', {
-          attrs: { ...attrs },
-          key: displayId,
-          ref: 'attachements_after',
-          props: {
-            displayId,
-            langcode: this.lang,
-            type: this.type,
-            uuid: this.uuid,
-            viewId: this.viewId,
-          },
-        }))
+        scopedSlots.attachments_after = (attrs) =>
+          this.attachments_after.map((displayId) =>
+            h('DruxtView', {
+              attrs: { ...attrs },
+              key: displayId,
+              ref: 'attachements_after',
+              props: {
+                displayId,
+                langcode: this.lang,
+                type: this.type,
+                uuid: this.uuid,
+                viewId: this.viewId,
+              },
+            })
+          )
       }
 
       // Build default slot.
-      scopedSlots.default = (attrs) => Object.keys(scopedSlots)
-        .filter((key) => !['default', '_normalized'].includes(key))
-        .map((key) => scopedSlots[key](attrs))
+      scopedSlots.default = (attrs) =>
+        Object.keys(scopedSlots)
+          .filter((key) => !['default', '_normalized'].includes(key))
+          .map((key) => scopedSlots[key](attrs))
 
       return scopedSlots
     },
@@ -686,12 +761,12 @@ export default {
      * Druxt development template tool configuration.
      */
     template: {
-      debug: "{ view, results }",
+      debug: '{ view, results }',
       mixins: {
-        'DruxtViewsViewMixin': 'druxt-views'
-      }
-    }
-  }
+        DruxtViewsViewMixin: 'druxt-views',
+      },
+    },
+  },
 }
 
 /**

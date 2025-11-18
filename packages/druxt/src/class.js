@@ -30,20 +30,27 @@ class DruxtClass {
 
     options
       // Filter out incorrectly typed items.
-      .filter(item => Array.isArray(item))
+      .filter((item) => Array.isArray(item))
 
       // Process each item.
-      .map(item => {
+      .map((item) => {
         const variants = []
 
-        item.map(string => {
+        item.map((string) => {
           const parts = variants.length ? [...variants[0].parts] : []
           parts.push(string)
           const clone = [...parts]
 
           // Attach prefix as required.
-          if (typeof prefix !== 'string' && (prefix !== false || typeof prefix === 'undefined') && ((vm || {}).$options || {}).name) {
-            prefix = vm.$options.name.match(/[A-Z][a-z]+/g).map(word => word.toLowerCase()).join('-')
+          if (
+            typeof prefix !== 'string' &&
+            (prefix !== false || typeof prefix === 'undefined') &&
+            ((vm || {}).$options || {}).name
+          ) {
+            prefix = vm.$options.name
+              .match(/[A-Z][a-z]+/g)
+              .map((word) => word.toLowerCase())
+              .join('-')
           }
 
           if (prefix) {
@@ -51,13 +58,21 @@ class DruxtClass {
           }
 
           // Generate component name values.
-          const kebab = clone.map(string => string.toLowerCase().replace(/--|_/g, '-')).join('-')
-          const pascal = kebab.replace(/((\b|[^a-zA-Z0-9]+)[a-zA-Z0-9])/gi, (match, p1, p2) => match.toUpperCase().replace(p2, ''))
+          const kebab = clone
+            .map((string) => string.toLowerCase().replace(/--|_/g, '-'))
+            .join('-')
+          const pascal = kebab.replace(
+            /((\b|[^a-zA-Z0-9]+)[a-zA-Z0-9])/gi,
+            (match, p1, p2) => match.toUpperCase().replace(p2, '')
+          )
 
           // Check if component is globally registered.
           let global = false
           for (const name of [kebab, pascal]) {
-            if (typeof (((vm || {}).$options || {}).components || {})[name] !== 'undefined') {
+            if (
+              typeof (((vm || {}).$options || {}).components || {})[name] !==
+              'undefined'
+            ) {
               global = true
               break
             }
@@ -67,7 +82,7 @@ class DruxtClass {
         })
 
         // Add variants to results.
-        variants.map(variant => {
+        variants.map((variant) => {
           // Ensure unique results.
           if (unique[variant.pascal]) {
             return
@@ -80,7 +95,7 @@ class DruxtClass {
 
     // Return globally registered components or all.
     return results
-      .filter(option => option.global || !!all)
+      .filter((option) => option.global || !!all)
       .sort((a, b) => b.parts.length - a.parts.length)
   }
 
@@ -97,7 +112,10 @@ class DruxtClass {
     const moduleData = await vm.$options.druxt({ vm })
 
     if ((vm.$options || {}).name) {
-      moduleData.name = vm.$options.name.match(/[A-Z][a-z]+/g).map(word => word.toLowerCase()).join('-')
+      moduleData.name = vm.$options.name
+        .match(/[A-Z][a-z]+/g)
+        .map((word) => word.toLowerCase())
+        .join('-')
     }
 
     return moduleData

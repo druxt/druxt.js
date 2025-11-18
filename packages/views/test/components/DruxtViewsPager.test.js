@@ -17,7 +17,7 @@ const mountComponent = (propsData) => {
   const mocks = {
     $fetch: jest.fn(),
     $fetchState: {
-      pending: true
+      pending: true,
     },
     $nuxt: {
       context: {
@@ -25,11 +25,17 @@ const mountComponent = (propsData) => {
       },
     },
     $route: {
-      query: {}
-    }
+      query: {},
+    },
   }
 
-  return mount(DruxtViewsPager, { localVue, mocks, propsData, store, stubs: { NuxtLink: true } })
+  return mount(DruxtViewsPager, {
+    localVue,
+    mocks,
+    propsData,
+    store,
+    stubs: { NuxtLink: true },
+  })
 }
 
 describe('DruxtViewsPager', () => {
@@ -60,14 +66,14 @@ describe('DruxtViewsPager', () => {
     expect(wrapper.vm.getQuery(link)).toStrictEqual({ page: 1 })
     expect(wrapper.vm.getRoute(link)).toStrictEqual({
       query: {
-        page: 1
-      }
+        page: 1,
+      },
     })
 
     // Slots.
     await wrapper.setProps({
       options: { tags: { next: 'Next', previous: 'Previous' } },
-      resource: { links: { next: link, prev: { href: '?page=-1' } } }
+      resource: { links: { next: link, prev: { href: '?page=-1' } } },
     })
     const defaultSlot = wrapper.vm.getScopedSlots().default.call(wrapper.vm)
     expect(defaultSlot.tag).toBe('ul')
@@ -86,7 +92,7 @@ describe('DruxtViewsPager', () => {
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtViewsPagerTest',
-      'DruxtViewsPagerDefault'
+      'DruxtViewsPagerDefault',
     ])
   })
 })

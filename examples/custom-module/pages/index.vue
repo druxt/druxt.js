@@ -13,7 +13,7 @@
 <script>
 export default {
   data: () => ({
-    model: 'Hello Custom Module'
+    model: 'Hello Custom Module',
   }),
 }
 </script>

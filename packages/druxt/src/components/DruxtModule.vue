@@ -47,7 +47,7 @@ export default {
      */
     langcode: {
       type: String,
-      default: undefined
+      default: undefined,
     },
 
     /**
@@ -85,7 +85,7 @@ export default {
      */
     wrapper: {
       type: [Boolean, Object],
-      default: () => undefined
+      default: () => undefined,
     },
   },
 
@@ -138,14 +138,16 @@ export default {
     if ((this.$options.druxt || {}).fetchConfig) {
       try {
         await this.$options.druxt.fetchConfig.call(this)
-      } catch(err) {
+      } catch (err) {
         return this.error(err)
       }
     }
 
     // Build wrapper component object.
     let options = []
-    const hasDefaultTemplate = !!(((this.$vnode || {}).data || {}).scopedSlots || {}).default
+    const hasDefaultTemplate = !!(
+      ((this.$vnode || {}).data || {}).scopedSlots || {}
+    ).default
     // Load wrapper components if:
     if (
       // No default template and wrapper isn't false OR
@@ -156,8 +158,10 @@ export default {
       options = this.getModuleComponents()
     }
     let component = {
-      is: (((options.filter(o => o.global) || [])[0] || {}).name || 'DruxtWrapper'),
-      options: options.map(o => o.name) || [],
+      is:
+        ((options.filter((o) => o.global) || [])[0] || {}).name ||
+        'DruxtWrapper',
+      options: options.map((o) => o.name) || [],
     }
 
     // Get wrapper data.
@@ -166,14 +170,17 @@ export default {
     // Build module settings.
     component.settings = wrapperData.druxt || {}
     if ((this.$options.druxt || {}).settings) {
-      component.settings = this.$options.druxt.settings(this, component.settings)
+      component.settings = this.$options.druxt.settings(
+        this,
+        component.settings
+      )
     }
 
     // Fetch resource.
     if ((this.$options.druxt || {}).fetchData) {
       try {
         await this.$options.druxt.fetchData.call(this, component.settings)
-      } catch(err) {
+      } catch (err) {
         return this.error(err, { component })
       }
     }
@@ -189,7 +196,7 @@ export default {
   },
 
   computed: {
-    lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode
+    lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode,
   },
 
   watch: {
@@ -214,7 +221,7 @@ export default {
       if (this.value !== this.model) {
         this.model = this.value
       }
-    }
+    },
   },
 
   /** */
@@ -225,22 +232,24 @@ export default {
     error(err, context = {}) {
       // Build error details.
       const { url } = err.druxt || {}
-      const title = (err.response || {}).statusText || ((((err.response || {}).data || {}).errors || [])[0] || {}).title
+      const title =
+        (err.response || {}).statusText ||
+        ((((err.response || {}).data || {}).errors || [])[0] || {}).title
       const summary = (err.response || {}).status
         ? [(err.response || {}).status, title].filter((s) => s).join(': ')
         : err.message
 
       // Set the component to a Debug component with error details.
       this.component = {
-        ...context.component || {},
+        ...(context.component || {}),
         is: 'DruxtDebug',
         props: {
           json: {
             url,
-            errors: ((err.response || {}).data || {}).errors
+            errors: ((err.response || {}).data || {}).errors,
           },
-          summary
-        }
+          summary,
+        },
       }
     },
 
@@ -263,7 +272,7 @@ export default {
 
       // Build list of available components.
       let components = []
-      for (const set of options.filter(set => Array.isArray(set))) {
+      for (const set of options.filter((set) => Array.isArray(set))) {
         const variants = []
 
         // Add langcode suffix to all sets.
@@ -283,11 +292,15 @@ export default {
 
           // Add langcode suffixed component option.
           if (this.lang) {
-            const langcodeName = pascalCase([this.$options.name, ...parts, this.lang])
+            const langcodeName = pascalCase([
+              this.$options.name,
+              ...parts,
+              this.lang,
+            ])
             components.push({
               global: !!this.$options.components[langcodeName],
               name: langcodeName,
-              parts: [...parts, this.lang]
+              parts: [...parts, this.lang],
             })
           }
 
@@ -295,13 +308,18 @@ export default {
           components.push({
             global: !!this.$options.components[name],
             name,
-            parts
+            parts,
           })
         }
       }
 
       // Filter unique components.
-      const unique = components.filter(((s) => (o) => !s.has(o.name) && s.add(o.name))(new Set))
+      const unique = components.filter(
+        (
+          (s) => (o) =>
+            !s.has(o.name) && s.add(o.name)
+        )(new Set())
+      )
 
       // Sort items by parts length.
       const sorted = unique.sort((a, b) => b.parts.length - a.parts.length)
@@ -327,12 +345,14 @@ export default {
 
       const propsData = {
         langcode: this.lang,
-        ...this.$options.druxt.propsData.call(this, this)
+        ...this.$options.druxt.propsData.call(this, this),
       }
 
       // Props.
       const props = {}
-      const propsKeys = Object.keys(wrapperProps).filter(i => Object.keys(propsData).includes(i))
+      const propsKeys = Object.keys(wrapperProps).filter((i) =>
+        Object.keys(propsData).includes(i)
+      )
       for (const key of propsKeys) {
         props[key] = propsData[key]
       }
@@ -340,7 +360,9 @@ export default {
       // $attrs.
       const $attrs = { ...this.$attrs }
       delete $attrs['data-fetch-key']
-      const $attrsKeys = Object.keys(propsData).filter(i => !Object.keys(wrapperProps).includes(i))
+      const $attrsKeys = Object.keys(propsData).filter(
+        (i) => !Object.keys(wrapperProps).includes(i)
+      )
       for (const key of $attrsKeys) {
         $attrs[key] = propsData[key]
       }
@@ -365,36 +387,60 @@ export default {
       // Return debug error if any missing props are found.
       if (required.length) {
         return {
-          default: () => h('DruxtDebug', { props: { summary: `Missing required props: ${required.join(', ')}.` } })
+          default: () =>
+            h('DruxtDebug', {
+              props: {
+                summary: `Missing required props: ${required.join(', ')}.`,
+              },
+            }),
         }
       }
 
-      const scopedSlots = typeof (this.$options.druxt || {}).slots === 'function'
-        ? this.$options.druxt.slots.call(this, h)
-        : {}
+      const scopedSlots =
+        typeof (this.$options.druxt || {}).slots === 'function'
+          ? this.$options.druxt.slots.call(this, h)
+          : {}
 
       // Pass through default scoped slot if provided.
       if (typeof this.$scopedSlots.default === 'function') {
-        scopedSlots.default = (attrs) => this.$scopedSlots.default({
-          ...((this.$options.druxt || {}).propsData || (() => {}))(this),
-          ...attrs
-        })
+        scopedSlots.default = (attrs) =>
+          this.$scopedSlots.default({
+            ...((this.$options.druxt || {}).propsData || (() => {}))(this),
+            ...attrs,
+          })
       }
 
       // Provide debug data if Nuxt is running in dev mode.
-      if (!scopedSlots.default && this.$nuxt.context.isDev)  {
+      if (!scopedSlots.default && this.$nuxt.context.isDev) {
         if (!scopedSlots.debug) {
           const summary = 'Missing default slot'
-          const description = [h('p', `The "${this.$options._componentTag}" component does not provide a default slot.`), h('p', 'Create a Druxt theme component to render the data as required.')]
-          scopedSlots.debug = () => h(
-            'DruxtDebug',
-            { props: { summary } },
-            [
+          const description = [
+            h(
+              'p',
+              `The "${this.$options._componentTag}" component does not provide a default slot.`
+            ),
+            h(
+              'p',
+              'Create a Druxt theme component to render the data as required.'
+            ),
+          ]
+          scopedSlots.debug = () =>
+            h('DruxtDebug', { props: { summary } }, [
               h('div', description),
-              this.component.is === 'DruxtWrapper' && !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
-              h('details', [h('summary', 'Data'), h('pre', [h('code', [JSON.stringify(this.component.propsData, null, '  ')])])])
-            ]
-          )
+              this.component.is === 'DruxtWrapper' &&
+                !!this.component.options.length &&
+                h('DruxtDevelTemplate', {
+                  props: { options: this.component.options },
+                }),
+              h('details', [
+                h('summary', 'Data'),
+                h('pre', [
+                  h('code', [
+                    JSON.stringify(this.component.propsData, null, '  '),
+                  ]),
+                ]),
+              ]),
+            ])
         }
         scopedSlots.default = scopedSlots.debug
       }
@@ -421,8 +467,12 @@ export default {
       }
 
       // Get data from unresolved component.
-      else if (typeof this.$options.components[component] === 'function' && this._init) {
-        wrapperData = (await this.$options.components[component].call(this)) || {}
+      else if (
+        typeof this.$options.components[component] === 'function' &&
+        this._init
+      ) {
+        wrapperData =
+          (await this.$options.components[component].call(this)) || {}
       }
 
       const options = Vue.util.mergeOptions({}, wrapperData)
@@ -430,7 +480,7 @@ export default {
         druxt: options.druxt || {},
         props: options.props || {},
       }
-    }
+    },
   },
 
   render(h) {
@@ -453,7 +503,10 @@ export default {
     delete attrs['data-fetch-key']
 
     // Unwrap default template based component if required.
-    if ((this.$scopedSlots.default && !this.wrapper) || this.wrapper === false) {
+    if (
+      (this.$scopedSlots.default && !this.wrapper) ||
+      this.wrapper === false
+    ) {
       this.component.is = 'DruxtWrapper'
     }
 
@@ -465,14 +518,14 @@ export default {
           input(value) {
             self.model = value
             self.$emit('input', value)
-          }
+          },
         },
         props: this.component.props,
         ref: 'component',
         scopedSlots: this.getScopedSlots(),
-      })
+      }),
     ])
-  }
+  },
 }
 
 /**

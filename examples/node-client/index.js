@@ -7,34 +7,57 @@ const baseUrl = process.env.GITPOD_WORKSPACE_ID
 const druxt = new DruxtClient(baseUrl)
 
 // Get index.
-druxt.getIndex().then(index => {
+druxt.getIndex().then((index) => {
   console.log('getIndex', index)
 })
 
 // Get spanish index.
-druxt.getIndex(undefined, 'es').then(index => {
+druxt.getIndex(undefined, 'es').then((index) => {
   console.log('getIndex', index)
 })
 
 // Get a page.
-druxt.getResource('node--page', '475e3aa4-f045-456f-9d4a-e0c26a165e27', 'fields[node--page]=title').then((resource) => {
-  console.log('getResource', resource)
-})
+druxt
+  .getResource(
+    'node--page',
+    '475e3aa4-f045-456f-9d4a-e0c26a165e27',
+    'fields[node--page]=title'
+  )
+  .then((resource) => {
+    console.log('getResource', resource)
+  })
 
 // Get page in spanish.
-druxt.getResource('node--page', '475e3aa4-f045-456f-9d4a-e0c26a165e27', 'fields[node--page]=title', 'es').then((resource) => {
-  console.log('getResource', resource)
-})
+druxt
+  .getResource(
+    'node--page',
+    '475e3aa4-f045-456f-9d4a-e0c26a165e27',
+    'fields[node--page]=title',
+    'es'
+  )
+  .then((resource) => {
+    console.log('getResource', resource)
+  })
 
 // Get related uid.
-druxt.getRelated('node--page', '475e3aa4-f045-456f-9d4a-e0c26a165e27', 'uid').then((resource) => {
-  console.log('getRelated', resource)
-})
+druxt
+  .getRelated('node--page', '475e3aa4-f045-456f-9d4a-e0c26a165e27', 'uid')
+  .then((resource) => {
+    console.log('getRelated', resource)
+  })
 
 // Get related uid in spanish.
-druxt.getRelated('node--page', '475e3aa4-f045-456f-9d4a-e0c26a165e27', 'uid', undefined, 'es').then((resource) => {
-  console.log('getRelated', resource)
-})
+druxt
+  .getRelated(
+    'node--page',
+    '475e3aa4-f045-456f-9d4a-e0c26a165e27',
+    'uid',
+    undefined,
+    'es'
+  )
+  .then((resource) => {
+    console.log('getRelated', resource)
+  })
 
 // Get a collection of recipes.
 druxt.getCollection('node--recipe').then((collection) => {
@@ -51,7 +74,7 @@ druxt.getCollection('node--recipe', undefined, 'es').then((collection) => {
 })
 
 // Get all Recipe nodes.
-druxt.getCollectionAll('node--recipe').then(collections => {
+druxt.getCollectionAll('node--recipe').then((collections) => {
   console.log('getCollectionAll')
   for (i in collections) {
     const collection = collections[i]
@@ -63,7 +86,7 @@ druxt.getCollectionAll('node--recipe').then(collections => {
 })
 
 // Get all spanish Recipe nodes.
-druxt.getCollectionAll('node--recipe', undefined, 'es').then(collections => {
+druxt.getCollectionAll('node--recipe', undefined, 'es').then((collections) => {
   console.log('getCollectionAll - Spanish')
   for (i in collections) {
     const collection = collections[i]

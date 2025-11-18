@@ -14,13 +14,15 @@ describe('DruxtSchemaStore', () => {
     // Setup vuex store.
     store = new Vuex.Store()
     store.$druxtSchema = {
-      import: jest.fn(() => ({}))
+      import: jest.fn(() => ({})),
     }
     DruxtSchemaStore({ store })
   })
 
   test('init', () => {
-    expect(() => { DruxtSchemaStore({})({}) }).toThrow('Vuex store not found.')
+    expect(() => {
+      DruxtSchemaStore({})({})
+    }).toThrow('Vuex store not found.')
   })
 
   test('addSchema', () => {

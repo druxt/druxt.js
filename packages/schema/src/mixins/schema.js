@@ -24,7 +24,7 @@ const DruxtSchemaMixin = {
      */
     mode: {
       type: String,
-      default: 'default'
+      default: 'default',
     },
 
     /**
@@ -32,7 +32,7 @@ const DruxtSchemaMixin = {
      *
      * @type {('view'|'form')}
      */
-     schemaType: {
+    schemaType: {
       type: String,
       default: undefined,
     },
@@ -44,7 +44,7 @@ const DruxtSchemaMixin = {
      */
     type: {
       type: String,
-      required: true
+      required: true,
     },
   },
 
@@ -55,7 +55,7 @@ const DruxtSchemaMixin = {
     this.schema = await this.getSchema({
       resourceType: this.type,
       mode: this.mode,
-      schemaType: this.schemaType || 'view'
+      schemaType: this.schemaType || 'view',
     })
   },
 
@@ -63,7 +63,7 @@ const DruxtSchemaMixin = {
    * @property {object} schema - The Drupal Schema data.
    */
   data: () => ({
-    schema: false
+    schema: false,
   }),
 
   /** */
@@ -75,9 +75,9 @@ const DruxtSchemaMixin = {
      * @method
      */
     ...mapActions({
-      getSchema: 'druxtSchema/get'
-    })
-  }
+      getSchema: 'druxtSchema/get',
+    }),
+  },
 }
 
 export { DruxtSchemaMixin }

@@ -8,22 +8,27 @@ jest.mock('axios')
 const localVue = createLocalVue()
 
 const mountComponent = (item, trimLength) => {
-  return shallowMount(DruxtFieldTextSummaryOrTrimmed, { localVue, propsData: {
-    value: [item],
-    schema: {
-      settings: {
-        display: {
-          trim_length: trimLength,
+  return shallowMount(DruxtFieldTextSummaryOrTrimmed, {
+    localVue,
+    propsData: {
+      value: [item],
+      schema: {
+        settings: {
+          display: {
+            trim_length: trimLength,
+          },
         },
       },
-    }
-  } })
+    },
+  })
 }
 
 describe('Component - DruxtFieldTextSummaryOrTrimmed', () => {
   test('summary', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent({
       summary: 'Summary',
@@ -31,7 +36,9 @@ describe('Component - DruxtFieldTextSummaryOrTrimmed', () => {
     })
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldTextSummaryOrTrimmed component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldTextSummaryOrTrimmed component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 
@@ -41,12 +48,16 @@ describe('Component - DruxtFieldTextSummaryOrTrimmed', () => {
 
   test('trimmed', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent({ value: 'x'.repeat(1024) }, 100)
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldTextSummaryOrTrimmed component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldTextSummaryOrTrimmed component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 

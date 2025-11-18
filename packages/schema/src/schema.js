@@ -35,17 +35,17 @@ class DruxtSchema {
    */
   constructor(baseUrl, options = {}) {
     // Check for URL.
-    if (!baseUrl) throw new Error('The \'baseUrl\' parameter is required.')
+    if (!baseUrl) throw new Error("The 'baseUrl' parameter is required.")
 
     this.options = {
       auth: {
-        type: false
+        type: false,
       },
       schema: {
         filter: [],
       },
 
-      ...options
+      ...options,
     }
 
     /**
@@ -70,21 +70,23 @@ class DruxtSchema {
   async get() {
     const index = await this.druxt.getIndex()
 
-    const displays = (await Promise.all([
-      ...['view', 'form'].map(async (schemaType) => {
-        const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
-        const query = new DrupalJsonApiParams().addSort('drupal_internal__id')
-        const result = await this.druxt.getCollectionAll(resourceType, query)
+    const displays = (
+      await Promise.all([
+        ...['view', 'form'].map(async (schemaType) => {
+          const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
+          const query = new DrupalJsonApiParams().addSort('drupal_internal__id')
+          const result = await this.druxt.getCollectionAll(resourceType, query)
 
-        // Check permissions.
-        try {
-          result.forEach((collection) => this.druxt.checkPermissions({ data: collection }))
-        } catch(err) {
-          this.druxt.error(err)
-        }
+          // Check permissions.
+          try {
+            result.forEach((collection) =>
+              this.druxt.checkPermissions({ data: collection })
+            )
+          } catch (err) {
+            this.druxt.error(err)
+          }
 
-        return result
-          .map((collection) =>
+          return result.map((collection) =>
             collection.data
               .filter((data) => !!data.attributes.status)
               .map((data) => ({
@@ -93,15 +95,22 @@ class DruxtSchema {
                 mode: data.attributes.mode,
                 schemaType,
                 filter: this.options.schema.filter,
-                ...index[[data.attributes.targetEntityType, data.attributes.bundle].join('--')]
-              })))
-      })
-    ])).flat(2)
+                ...index[
+                  [
+                    data.attributes.targetEntityType,
+                    data.attributes.bundle,
+                  ].join('--')
+                ],
+              }))
+          )
+        }),
+      ])
+    ).flat(2)
 
     const schemas = Object.fromEntries(
       (await Promise.all(displays.map((config) => this.getSchema(config))))
         .filter((o) => o)
-        .map((schema) => ([schema.id, schema.schema]))
+        .map((schema) => [schema.id, schema.schema])
     )
 
     return { index, schemas }

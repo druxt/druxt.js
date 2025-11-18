@@ -17,7 +17,7 @@ const mountComponent = (propsData) => {
   const mocks = {
     $fetch: jest.fn(),
     $fetchState: {
-      pending: true
+      pending: true,
     },
     $nuxt: {
       context: {
@@ -25,12 +25,12 @@ const mountComponent = (propsData) => {
       },
     },
     $route: {
-      query: {}
-    }
+      query: {},
+    },
   }
 
   const stubs = {
-    NuxtLink: true
+    NuxtLink: true,
   }
 
   return mount(DruxtViewsSorts, { localVue, mocks, propsData, store, stubs })
@@ -50,7 +50,7 @@ describe('DruxtViewsSorts', () => {
 
   test('Component', async () => {
     const wrapper = mountComponent({
-      type: 'test'
+      type: 'test',
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
@@ -60,23 +60,27 @@ describe('DruxtViewsSorts', () => {
     expect(wrapper.vm.type).toBe('test')
 
     await wrapper.setProps({
-      sorts: [{
-        expose: {
-          label: 'Test',
+      sorts: [
+        {
+          expose: {
+            label: 'Test',
+          },
+          id: 'test',
         },
-        id: 'test',
-      }],
+      ],
     })
-    expect(wrapper.vm.sorts).toStrictEqual([{
-      expose: { label: 'Test' },
-      id: 'test',
-    }])
+    expect(wrapper.vm.sorts).toStrictEqual([
+      {
+        expose: { label: 'Test' },
+        id: 'test',
+      },
+    ])
 
     // Methods.
     expect(wrapper.vm.sortBy({ id: 'title' })).toStrictEqual({
       query: {
-        sort: 'title'
-      }
+        sort: 'title',
+      },
     })
 
     // Slots.
@@ -95,7 +99,7 @@ describe('DruxtViewsSorts', () => {
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtViewsSortsTest',
-      'DruxtViewsSortsDefault'
+      'DruxtViewsSortsDefault',
     ])
   })
 })

@@ -24,10 +24,17 @@ const mountComponent = (name = null, options = {}) => {
 
   const mocks = {
     $fetchState: { pending: true },
-    $route: { meta: {} }
+    $route: { meta: {} },
   }
 
-  return shallowMount(DruxtBlockRegion, { localVue, mocks, propsData, store, stubs: ['DruxtBlock'], ...options })
+  return shallowMount(DruxtBlockRegion, {
+    localVue,
+    mocks,
+    propsData,
+    store,
+    stubs: ['DruxtBlock'],
+    ...options,
+  })
 }
 
 describe('Component - DruxtBlockRegion', () => {
@@ -55,7 +62,12 @@ describe('Component - DruxtBlockRegion', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtBlockRegion.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtBlockRegion:content:0')
+    expect(
+      DruxtBlockRegion.fetchKey.call(
+        wrapper.vm,
+        jest.fn(() => 0)
+      )
+    ).toBe('DruxtBlockRegion:content:0')
 
     // Props.
     expect(wrapper.vm.name).toBe('content')
@@ -92,7 +104,12 @@ describe('Component - DruxtBlockRegion', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtBlockRegion.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtBlockRegion:banner_top:0')
+    expect(
+      DruxtBlockRegion.fetchKey.call(
+        wrapper.vm,
+        jest.fn(() => 0)
+      )
+    ).toBe('DruxtBlockRegion:banner_top:0')
 
     // Props.
     expect(wrapper.vm.name).toBe('banner_top')
@@ -129,7 +146,10 @@ describe('Component - DruxtBlockRegion', () => {
     ])
 
     // Assert that the results are corectly sorted.
-    expect(wrapper.vm.blocks[0].attributes.weight < wrapper.vm.blocks[1].attributes.weight).toBeTruthy()
+    expect(
+      wrapper.vm.blocks[0].attributes.weight <
+        wrapper.vm.blocks[1].attributes.weight
+    ).toBeTruthy()
   })
 
   test('custom default slot', async () => {
@@ -138,7 +158,12 @@ describe('Component - DruxtBlockRegion', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtBlockRegion.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtBlockRegion:content:0')
+    expect(
+      DruxtBlockRegion.fetchKey.call(
+        wrapper.vm,
+        jest.fn(() => 0)
+      )
+    ).toBe('DruxtBlockRegion:content:0')
 
     wrapper.vm.getScopedSlots().default()
     expect(scopedSlots.default).toHaveBeenCalledWith({

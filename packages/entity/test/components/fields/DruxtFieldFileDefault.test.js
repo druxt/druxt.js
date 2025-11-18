@@ -22,24 +22,31 @@ const mountComponent = (link = {}, options) => {
     attributes: {
       filename: 'file.ext',
       uri: {
-        value: 'public://test/file.ext'
-      }
-    }
+        value: 'public://test/file.ext',
+      },
+    },
   }
-  store.commit('druxt/addResource', { resource: { data: entity }})
+  store.commit('druxt/addResource', { resource: { data: entity } })
 
   const mocks = {
     $fetchState: {
-      pending: false
-    }
+      pending: false,
+    },
   }
 
   const propsData = {
     value: [link],
-    schema: {}
+    schema: {},
   }
 
-  return shallowMount(DruxtFieldFileDefault, { ...options, localVue, mocks, propsData, store, stubs })
+  return shallowMount(DruxtFieldFileDefault, {
+    ...options,
+    localVue,
+    mocks,
+    propsData,
+    store,
+    stubs,
+  })
 }
 
 describe('Component - DruxtFieldFileDefault', () => {
@@ -57,15 +64,19 @@ describe('Component - DruxtFieldFileDefault', () => {
 
   test('default', async () => {
     // Spy on console.warn to verify deprecation warning is emitted
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const consoleWarnSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => {})
 
     const wrapper = mountComponent({
       type: 'file',
-      uuid: '8500bf6b-75d4-41b6-8385-f5c6eb6906d5'
+      uuid: '8500bf6b-75d4-41b6-8385-f5c6eb6906d5',
     })
 
     // Verify deprecation warning was emitted
-    expect(consoleWarnSpy).toHaveBeenCalledWith('[druxt-entity] The DruxtFieldFileDefault component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html')
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[druxt-entity] The DruxtFieldFileDefault component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html'
+    )
 
     consoleWarnSpy.mockRestore()
 

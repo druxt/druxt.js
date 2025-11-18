@@ -57,7 +57,7 @@ export default {
      */
     itemClass: {
       type: String,
-      default: ''
+      default: '',
     },
 
     /**
@@ -68,7 +68,7 @@ export default {
      */
     itemComponent: {
       type: String,
-      default: 'li'
+      default: 'li',
     },
 
     /**
@@ -109,7 +109,7 @@ export default {
      */
     name: {
       type: String,
-      default: 'main'
+      default: 'main',
     },
 
     /**
@@ -132,7 +132,7 @@ export default {
      */
     parentClass: {
       type: String,
-      default: ''
+      default: '',
     },
 
     /**
@@ -143,7 +143,7 @@ export default {
      */
     parentComponent: {
       type: String,
-      default: 'li'
+      default: 'li',
     },
 
     /**
@@ -153,7 +153,7 @@ export default {
      */
     parentWrapperClass: {
       type: String,
-      default: ''
+      default: '',
     },
 
     /**
@@ -164,8 +164,8 @@ export default {
      */
     parentWrapperComponent: {
       type: String,
-      default: 'ul'
-    }
+      default: 'ul',
+    },
   },
 
   fetchKey(getCounter) {
@@ -201,12 +201,12 @@ export default {
     },
 
     ...mapGetters({
-      getEntitiesByFilter: 'druxtMenu/getEntitiesByFilter'
+      getEntitiesByFilter: 'druxtMenu/getEntitiesByFilter',
     }),
 
     ...mapState({
-      entities: state => state.druxtMenu.entities
-    })
+      entities: (state) => state.druxtMenu.entities,
+    }),
   },
 
   /** */
@@ -223,7 +223,10 @@ export default {
     // If logged in and statically generated, re-fetch the menu.
     if (this?.$auth?.loggedIn && this?.$store?.app?.context?.isStatic) {
       this.$store.commit('druxtMenu/flushEntities', { prefix: this.lang })
-      const settings = this.$options.druxt.settings(this, this.component.settings)
+      const settings = this.$options.druxt.settings(
+        this,
+        this.component.settings
+      )
       this.$options.druxt.fetchData.call(this, settings)
     }
   },
@@ -252,14 +255,18 @@ export default {
 
         const entities = this.getEntitiesByFilter({
           filter: (key) => {
-            return this.entities[this.lang][key].attributes.menu_name === this.name && this.entities[this.lang][key].attributes.parent === parent
+            return (
+              this.entities[this.lang][key].attributes.menu_name ===
+                this.name &&
+              this.entities[this.lang][key].attributes.parent === parent
+            )
           },
-          prefix: this.lang
+          prefix: this.lang,
         })
 
         for (const key in entities) {
           const entity = entities[key]
-          items.push({ entity, children: this.getMenuItems(entity, position)})
+          items.push({ entity, children: this.getMenuItems(entity, position) })
         }
       }
 
@@ -272,8 +279,8 @@ export default {
      * Maps `druxtMenu/get` Vuex action to `this.getMenu`.
      */
     ...mapActions({
-      getMenu: 'druxtMenu/get'
-    })
+      getMenu: 'druxtMenu/get',
+    }),
   },
 
   /** DruxtModule settings. */
@@ -295,7 +302,7 @@ export default {
         await this.getMenu({
           name: this.name,
           settings: settings.query,
-          prefix: this.lang
+          prefix: this.lang,
         })
         this.model = this.getMenuItems()
       }
@@ -307,20 +314,29 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @returns {PropsData}
      */
-    propsData: ({ model, parentId }) => ({ items: model, parentId, value: model }),
+    propsData: ({ model, parentId }) => ({
+      items: model,
+      parentId,
+      value: model,
+    }),
 
     /**
      * Component settings.
      */
-    settings: ({ $druxt, depth, maxDepth, minDepth, parentId }, wrapperSettings) => {
-      const settings = merge($druxt.settings.menu || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
+    settings: (
+      { $druxt, depth, maxDepth, minDepth, parentId },
+      wrapperSettings
+    ) => {
+      const settings = merge($druxt.settings.menu || {}, wrapperSettings, {
+        arrayMerge: (dest, src) => src,
+      })
       return {
         query: {
           ...(settings.query || {}),
           max_depth: maxDepth || depth,
           min_depth: minDepth,
           parent: parentId,
-        }
+        },
       }
     },
 
@@ -341,14 +357,17 @@ export default {
      */
     slots(h) {
       return {
-        default: (attrs) => (this.items || []).map((item) => h('DruxtMenuItem', {
-          attrs,
-          key: item.entity.id,
-          props: {
-            item,
-            langcode: this.lang
-          },
-        })),
+        default: (attrs) =>
+          (this.items || []).map((item) =>
+            h('DruxtMenuItem', {
+              attrs,
+              key: item.entity.id,
+              props: {
+                item,
+                langcode: this.lang,
+              },
+            })
+          ),
       }
     },
 
@@ -358,9 +377,9 @@ export default {
     template: {
       debug: 'items',
       mixins: {
-        'DruxtMenuMixin': 'druxt-menu'
-      }
-    }
+        DruxtMenuMixin: 'druxt-menu',
+      },
+    },
   },
 }
 

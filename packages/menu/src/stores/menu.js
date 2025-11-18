@@ -26,7 +26,7 @@ const DruxtMenuStore = ({ store }) => {
      * Vuex State object.
      */
     state: () => ({
-      entities: {}
+      entities: {},
     }),
 
     /**
@@ -42,7 +42,7 @@ const DruxtMenuStore = ({ store }) => {
        * @example @lang js
        * this.$store.commit('druxtMenu/addEntities', entities)
        */
-      addEntities (state, { entities, prefix }) {
+      addEntities(state, { entities, prefix }) {
         if (!state.entities[prefix]) Vue.set(state.entities, prefix, {})
 
         for (const index in entities) {
@@ -60,8 +60,9 @@ const DruxtMenuStore = ({ store }) => {
        * // Flush all menu entities.
        * this.$store.commit('druxt/flushCollection', {})
        */
-      flushEntities (state, { prefix }) {
-        if (!prefix || typeof state.entities !== 'object') Vue.set(state, 'entities', {})
+      flushEntities(state, { prefix }) {
+        if (!prefix || typeof state.entities !== 'object')
+          Vue.set(state, 'entities', {})
         if (prefix) Vue.set(state.entities, prefix, {})
       },
     },
@@ -84,14 +85,14 @@ const DruxtMenuStore = ({ store }) => {
        * @example @lang js
        * await this.$store.dispatch('druxtMenu/get', { name: 'main' })
        */
-      async get ({ commit }, context) {
-        const { name, settings, prefix } = typeof context === 'object'
-          ? context
-          : { name: context }
-        const { entities } = (await this.$druxtMenu.get(name, settings, prefix)) || {}
+      async get({ commit }, context) {
+        const { name, settings, prefix } =
+          typeof context === 'object' ? context : { name: context }
+        const { entities } =
+          (await this.$druxtMenu.get(name, settings, prefix)) || {}
 
         commit('addEntities', { entities, prefix })
-      }
+      },
     },
 
     /**
@@ -110,19 +111,23 @@ const DruxtMenuStore = ({ store }) => {
        *   return this.entities[key].attributes.menu_name === 'main'
        * })
        */
-      getEntitiesByFilter: (state) => ({ filter, prefix }) => {
-        const keys = Object.keys((state.entities || {})[prefix]).filter(key => filter(key))
-        if (!keys.length) return {}
+      getEntitiesByFilter:
+        (state) =>
+        ({ filter, prefix }) => {
+          const keys = Object.keys((state.entities || {})[prefix]).filter(
+            (key) => filter(key)
+          )
+          if (!keys.length) return {}
 
-        return Object.assign(
-          ...keys.map(key => ({ [key]: state.entities[prefix][key] }))
-        )
-      }
-    }
+          return Object.assign(
+            ...keys.map((key) => ({ [key]: state.entities[prefix][key] }))
+          )
+        },
+    },
   }
 
   store.registerModule(namespace, module, {
-    preserveState: Boolean(store.state[namespace])
+    preserveState: Boolean(store.state[namespace]),
   })
 }
 

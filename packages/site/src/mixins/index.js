@@ -21,4 +21,4 @@
  * }
  * </script>
  */
- export { DruxtSiteMixin } from './site'
+export { DruxtSiteMixin } from './site'

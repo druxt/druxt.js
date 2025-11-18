@@ -8,10 +8,10 @@ const mock = {
     hook: (hook, fn) => {
       const arg = {
         'components:dirs': [],
-        'storybook:config': { stories: [] }
+        'storybook:config': { stories: [] },
       }
       return fn(arg[hook])
-    }
+    },
   },
   DruxtEntityNuxtModule,
 }

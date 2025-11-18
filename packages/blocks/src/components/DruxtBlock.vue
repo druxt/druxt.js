@@ -103,7 +103,7 @@ export default {
 
     uuid() {
       this.$fetch()
-    }
+    },
   },
 
   methods: {
@@ -113,7 +113,7 @@ export default {
     ...mapActions({
       getCollection: 'druxt/getCollection',
       getResource: 'druxt/getResource',
-    })
+    }),
   },
 
   /**
@@ -133,16 +133,25 @@ export default {
       let plugin = block.attributes.plugin || ''
       let pluginId = null
       if (plugin.includes(':')) {
-        [plugin, pluginId] = plugin.split(':')
+        ;[plugin, pluginId] = plugin.split(':')
       }
 
       // Construct component options.
       const componentOptions = []
       if (pluginId) {
-        componentOptions.push([plugin, pluginId, block.attributes.region, block.attributes.theme])
+        componentOptions.push([
+          plugin,
+          pluginId,
+          block.attributes.region,
+          block.attributes.theme,
+        ])
         componentOptions.push([plugin, pluginId, block.attributes.theme])
       }
-      componentOptions.push([plugin, block.attributes.region, block.attributes.theme])
+      componentOptions.push([
+        plugin,
+        block.attributes.region,
+        block.attributes.theme,
+      ])
       componentOptions.push([plugin, block.attributes.theme])
       componentOptions.push(['default'])
       return componentOptions
@@ -174,7 +183,7 @@ export default {
           id,
           prefix: this.lang,
           type,
-          query
+          query,
         })
       }
 
@@ -184,7 +193,7 @@ export default {
         const collection = await this.getCollection({
           prefix: this.lang,
           type,
-          query
+          query,
         })
         this.resource = { data: collection.data[0] }
       }
@@ -217,22 +226,34 @@ export default {
         if ((this.block || {}).attributes) {
           summary = `Missing Vue template for the '${this.block.attributes.drupal_internal__id}' block`
           description = [
-            h('p', `Create a Druxt theme component to render the "${this.block.attributes.settings.label}" block.`),
+            h(
+              'p',
+              `Create a Druxt theme component to render the "${this.block.attributes.settings.label}" block.`
+            ),
           ]
-        // Ensure an ID or UUID.
+          // Ensure an ID or UUID.
         } else if (!this.id && !this.uuid) {
           summary = "Missing required 'id' or 'uuid' prop."
-          description = [h('p', "The DruxtBlock component requires either the 'id' or 'uuid' prop to be set.")]
+          description = [
+            h(
+              'p',
+              "The DruxtBlock component requires either the 'id' or 'uuid' prop to be set."
+            ),
+          ]
         }
 
-        return h('DruxtDebug',
-          { props: { summary } },
-          [
-            h('div', description),
-            !!this.component.options.length && h('DruxtDevelTemplate', { props: { options: this.component.options }}),
-            !!this.block && h('details', [h('summary', 'JSON:API resource'), h('pre', [h('code', [JSON.stringify(this.block, null, '  ')])])])
-          ]
-        )
+        return h('DruxtDebug', { props: { summary } }, [
+          h('div', description),
+          !!this.component.options.length &&
+            h('DruxtDevelTemplate', {
+              props: { options: this.component.options },
+            }),
+          !!this.block &&
+            h('details', [
+              h('summary', 'JSON:API resource'),
+              h('pre', [h('code', [JSON.stringify(this.block, null, '  ')])]),
+            ]),
+        ])
       }
 
       return scopedSlots
@@ -244,10 +265,10 @@ export default {
     template: {
       debug: 'block',
       mixins: {
-        'DruxtBlocksBlockMixin': 'druxt-blocks'
+        DruxtBlocksBlockMixin: 'druxt-blocks',
       },
-      slots: false
-    }
+      slots: false,
+    },
   },
 }
 

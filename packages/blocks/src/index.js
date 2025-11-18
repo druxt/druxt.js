@@ -36,7 +36,7 @@ export default DruxtBlocksNuxtModule
  *   mixins: [DruxtBlocksBlockMixin]
  * }
  */
- export { DruxtBlocksBlockMixin } from './mixins/block'
+export { DruxtBlocksBlockMixin } from './mixins/block'
 
 /**
  * The DruxtBlocksRegionMixin adds props to your DruxtBlock wrapper component.

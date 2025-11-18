@@ -24,7 +24,7 @@ export default {
   mixins: [DruxtBlocksBlockMixin],
 
   data: () => ({
-    languages: undefined
+    languages: undefined,
   }),
 
   async fetch() {
@@ -34,8 +34,8 @@ export default {
       .addFields(resourceType, ['drupal_internal__id', 'label'])
     this.languages = await this.$store.dispatch('druxt/getCollection', {
       type: resourceType,
-      query
+      query,
     })
-  }
+  },
 }
 </script>

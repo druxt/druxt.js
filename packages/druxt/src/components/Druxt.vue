@@ -30,7 +30,7 @@ export default {
       default: () => ({
         component: 'div',
         propsData: {},
-      })
+      }),
     },
 
     /**
@@ -63,7 +63,7 @@ export default {
      */
     propsData: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
 
     /**
@@ -88,7 +88,7 @@ export default {
       default: () => ({
         component: 'div',
         propsData: {},
-      })
+      }),
     },
   },
 
@@ -117,7 +117,7 @@ export default {
       if (this.value !== this.model) {
         this.model = this.value
       }
-    }
+    },
   },
 
   created() {
@@ -129,7 +129,10 @@ export default {
      * Sets the module component and propsData.
      */
     setModuleComponent() {
-      const component = `Druxt${this.module.split('-').map(string => string.charAt(0).toUpperCase() + string.slice(1)).join('')}`
+      const component = `Druxt${this.module
+        .split('-')
+        .map((string) => string.charAt(0).toUpperCase() + string.slice(1))
+        .join('')}`
       if (!this.$options.components[component]) {
         return
       }
@@ -152,10 +155,12 @@ export default {
     })
 
     if ((this.wrapper || {}).component) {
-      return h(this.wrapper.component, { props: this.wrapper.propsData }, [component])
+      return h(this.wrapper.component, { props: this.wrapper.propsData }, [
+        component,
+      ])
     }
 
     return component
-  }
+  },
 }
 </script>

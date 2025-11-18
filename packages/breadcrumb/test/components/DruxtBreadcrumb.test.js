@@ -16,7 +16,7 @@ const mountComponent = ({ path, routes, propsData, options }) => {
   // Setup mocks.
   const mocks = {
     $route: { path },
-    $fetchState: { pending: false }
+    $fetchState: { pending: false },
   }
 
   if (typeof routes === 'undefined') {
@@ -39,10 +39,10 @@ const mountComponent = ({ path, routes, propsData, options }) => {
         label,
         isHomePath,
         props: {
-          langcode: undefined
+          langcode: undefined,
         },
-        resolvedPath: path
-      }
+        resolvedPath: path,
+      },
     })
   }
   if (typeof store.state.druxtRouter.routes[path] !== 'undefined') {
@@ -51,7 +51,15 @@ const mountComponent = ({ path, routes, propsData, options }) => {
 
   const components = { DruxtDebug }
 
-  return shallowMount(DruxtBreadcrumb, { components, store, localVue, mocks, propsData, stubs: { NuxtLink: true }, ...options })
+  return shallowMount(DruxtBreadcrumb, {
+    components,
+    store,
+    localVue,
+    mocks,
+    propsData,
+    stubs: { NuxtLink: true },
+    ...options,
+  })
 }
 
 describe('DruxtBreadcrumb', () => {
@@ -62,7 +70,7 @@ describe('DruxtBreadcrumb', () => {
       getRoute: async (to) => {
         if (to === '/error') throw new Error('Error')
         return { data: {} }
-      }
+      },
     }))
     DruxtRouterStore({ store })
   })
@@ -75,9 +83,9 @@ describe('DruxtBreadcrumb', () => {
       isHomePath: true,
       label: '/',
       props: {
-        langcode: undefined
+        langcode: undefined,
       },
-      resolvedPath: '/'
+      resolvedPath: '/',
     })
     expect(Object.keys(wrapper.vm.routes)).toHaveLength(1)
 
@@ -93,16 +101,19 @@ describe('DruxtBreadcrumb', () => {
   })
 
   test('level 1', async () => {
-    const wrapper = mountComponent({ path: '/level-1', routes: ['/', '/level-1'] })
+    const wrapper = mountComponent({
+      path: '/level-1',
+      routes: ['/', '/level-1'],
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({
       isHomePath: false,
       label: '/level-1',
       props: {
-        langcode: undefined
+        langcode: undefined,
       },
-      resolvedPath: '/level-1'
+      resolvedPath: '/level-1',
     })
 
     expect(wrapper.vm.crumbs).toHaveLength(2)
@@ -114,7 +125,7 @@ describe('DruxtBreadcrumb', () => {
   test('level 2', async () => {
     const wrapper = mountComponent({
       path: '/level-1/level-2',
-      routes: ['/', '/level-1', '/level-1/level-2']
+      routes: ['/', '/level-1', '/level-1/level-2'],
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
@@ -122,9 +133,9 @@ describe('DruxtBreadcrumb', () => {
       isHomePath: false,
       label: '/level-1/level-2',
       props: {
-        langcode: undefined
+        langcode: undefined,
       },
-      resolvedPath: '/level-1/level-2'
+      resolvedPath: '/level-1/level-2',
     })
 
     expect(wrapper.vm.crumbs).toHaveLength(3)
@@ -139,7 +150,7 @@ describe('DruxtBreadcrumb', () => {
       propsData: {
         path: '/level-1/level-2',
       },
-      routes: ['/', '/level-1', '/level-1/level-2']
+      routes: ['/', '/level-1', '/level-1/level-2'],
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
@@ -152,14 +163,17 @@ describe('DruxtBreadcrumb', () => {
   })
 
   test('missing parent', async () => {
-    const wrapper = mountComponent({ path: '/level-1/level-2', routes: ['/', '/level-1/level-2'] })
+    const wrapper = mountComponent({
+      path: '/level-1/level-2',
+      routes: ['/', '/level-1/level-2'],
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({
       isHomePath: false,
       label: '/level-1/level-2',
       props: {
-        langcode: undefined
+        langcode: undefined,
       },
       resolvedPath: '/level-1/level-2',
     })
@@ -175,38 +189,51 @@ describe('DruxtBreadcrumb', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({})
-    expect(wrapper.vm.crumbs).toStrictEqual([{
-      text: 'Home',
-      to: '/'
-    }])
+    expect(wrapper.vm.crumbs).toStrictEqual([
+      {
+        text: 'Home',
+        to: '/',
+      },
+    ])
 
     expect(wrapper.html()).toMatchSnapshot()
   })
 
   test('multilingual home', async () => {
-    const wrapper = mountComponent({ path: '/en/level-1', routes: ['/', {
-      label: 'Home',
-      path: '/en',
-      isHomePath: true
-    }] })
+    const wrapper = mountComponent({
+      path: '/en/level-1',
+      routes: [
+        '/',
+        {
+          label: 'Home',
+          path: '/en',
+          isHomePath: true,
+        },
+      ],
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({})
-    expect(wrapper.vm.crumbs).toStrictEqual([{
-      text: 'Home',
-      to: '/en'
-    }])
+    expect(wrapper.vm.crumbs).toStrictEqual([
+      {
+        text: 'Home',
+        to: '/en',
+      },
+    ])
   })
 
   test('error', async () => {
-    const wrapper = mountComponent({ path: '/error/level-2', routes: ['/', '/error/level-2'] })
+    const wrapper = mountComponent({
+      path: '/error/level-2',
+      routes: ['/', '/error/level-2'],
+    })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.route).toStrictEqual({
       isHomePath: false,
       label: '/error/level-2',
       props: {
-        langcode: undefined
+        langcode: undefined,
       },
       resolvedPath: '/error/level-2',
     })
@@ -234,12 +261,16 @@ describe('DruxtBreadcrumb', () => {
 
     wrapper.vm.getScopedSlots().default.call()
     expect(scopedSlots.default).toHaveBeenCalledWith({
-      crumbs: [{
-        text: '/',
-      }],
-      value: [{
-        text: '/',
-      }],
+      crumbs: [
+        {
+          text: '/',
+        },
+      ],
+      value: [
+        {
+          text: '/',
+        },
+      ],
     })
   })
 

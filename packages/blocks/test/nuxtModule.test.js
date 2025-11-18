@@ -8,17 +8,17 @@ const mock = {
     hook: jest.fn((hook, fn) => {
       const arg = {
         'components:dirs': [],
-        'storybook:config': { stories: [] }
+        'storybook:config': { stories: [] },
       }
       return fn(arg[hook])
     }),
   },
-  DruxtBlocksNuxtModule
+  DruxtBlocksNuxtModule,
 }
 
 test('Nuxt module', () => {
   mock.options = {
-    druxt: {}
+    druxt: {},
   }
   mock.DruxtBlocksNuxtModule()
 })

@@ -31,7 +31,9 @@ describe('DruxtRouterStore', () => {
   })
 
   test('init', () => {
-    expect(() => { DruxtRouterStore({}) }).toThrow('Vuex store not found.')
+    expect(() => {
+      DruxtRouterStore({})
+    }).toThrow('Vuex store not found.')
   })
 
   test('addEntity', async () => {
@@ -47,11 +49,15 @@ describe('DruxtRouterStore', () => {
 
     // Ensure that good data is committed to state.
     store.commit('druxtRouter/addEntity', mockPage.data)
-    expect(store.state.druxtRouter.entities[mockPage.data.id]).toBe(mockPage.data)
+    expect(store.state.druxtRouter.entities[mockPage.data.id]).toBe(
+      mockPage.data
+    )
     expect(Object.keys(store.state.druxtRouter.entities)).toHaveLength(1)
 
     store.commit('druxtRouter/addEntity', mockRecipe.data)
-    expect(store.state.druxtRouter.entities[mockRecipe.data.id]).toBe(mockRecipe.data)
+    expect(store.state.druxtRouter.entities[mockRecipe.data.id]).toBe(
+      mockRecipe.data
+    )
     expect(Object.keys(store.state.druxtRouter.entities)).toHaveLength(2)
   })
 
@@ -98,7 +104,10 @@ describe('DruxtRouterStore', () => {
     store.commit('druxtRouter/setRoute', '/')
     expect(store.state.druxtRouter.route).toStrictEqual(mockRoutes[0])
 
-    store.commit('druxtRouter/addRoute', { path: '/node/1', route: mockRoutes[1] })
+    store.commit('druxtRouter/addRoute', {
+      path: '/node/1',
+      route: mockRoutes[1],
+    })
     store.commit('druxtRouter/setRoute', '/node/1')
     expect(store.state.druxtRouter.route).toStrictEqual(mockRoutes[1])
   })
@@ -117,7 +126,10 @@ describe('DruxtRouterStore', () => {
 
     // Test failed request.
     await store.dispatch('druxtRouter/get', '/error')
-    expect(store.app.context.error).toHaveBeenCalledWith({ message: 'Unable to resolve path /error.', statusCode: 404 })
+    expect(store.app.context.error).toHaveBeenCalledWith({
+      message: 'Unable to resolve path /error.',
+      statusCode: 404,
+    })
   })
 
   test('getEntity', async () => {
@@ -131,7 +143,10 @@ describe('DruxtRouterStore', () => {
   })
 
   test('getResources', async () => {
-    const resources = await store.dispatch('druxtRouter/getResources', { resource: 'node--page', query: {} })
+    const resources = await store.dispatch('druxtRouter/getResources', {
+      resource: 'node--page',
+      query: {},
+    })
     expect(resources.length).toBe(1)
   })
 

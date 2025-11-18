@@ -10,17 +10,19 @@
     </div>
 
     <!-- Label: Inline -->
-    <slot
-      v-if="$scopedSlots['label-inline']"
-      name="label-inline"
-    />
+    <slot v-if="$scopedSlots['label-inline']" name="label-inline" />
 
     <!-- Items -->
     <img
       v-for="entity of entities"
       :key="entity.id"
-      :src="entity.attributes.uri.value.replace('public://', '/sites/default/files/')"
-    >
+      :src="
+        entity.attributes.uri.value.replace(
+          'public://',
+          '/sites/default/files/'
+        )
+      "
+    />
   </component>
 </template>
 
@@ -35,7 +37,11 @@ export default {
   name: 'DruxtFieldImage',
   extends: DruxtFieldFileDefault,
   mounted() {
-    console.warn(`[druxt-entity] The ${this.$options._componentTag || this.$options.name} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+    console.warn(
+      `[druxt-entity] The ${
+        this.$options._componentTag || this.$options.name
+      } component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`
+    )
   },
 }
 </script>

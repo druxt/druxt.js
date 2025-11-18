@@ -39,7 +39,7 @@ export default {
    * @property {(string|boolean)} uuid - The Views JSON:API resource UUID.
    */
   data: () => ({
-    uuid: false
+    uuid: false,
   }),
 
   /**
@@ -81,7 +81,7 @@ export default {
         displayId: this.displayId,
         langcode: this.langcode,
         uuid: this.uuid,
-        viewId: this.viewId
+        viewId: this.viewId,
       }
     },
 
@@ -101,7 +101,7 @@ export default {
      */
     ...mapActions({
       getCollection: 'druxt/getCollection',
-    })
-  }
+    }),
+  },
 }
 </script>

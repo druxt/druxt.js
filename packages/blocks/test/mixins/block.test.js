@@ -10,7 +10,7 @@ localVue.use(Vuex)
 const component = {
   name: 'DruxtBlockTest',
   mixins: [DruxtBlocksBlockMixin],
-  render: () => ({})
+  render: () => ({}),
 }
 
 describe('DruxtBlocksBlockMixin', () => {
@@ -18,9 +18,9 @@ describe('DruxtBlocksBlockMixin', () => {
     const propsData = {
       block: {
         attributes: {
-          settings: {}
-        }
-      }
+          settings: {},
+        },
+      },
     }
     const wrapper = mount(component, { localVue, propsData })
 

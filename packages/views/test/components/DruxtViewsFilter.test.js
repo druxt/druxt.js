@@ -17,7 +17,7 @@ const mountComponent = (propsData) => {
   const mocks = {
     $fetch: jest.fn(),
     $fetchState: {
-      pending: true
+      pending: true,
     },
     $nuxt: {
       context: {
@@ -25,8 +25,8 @@ const mountComponent = (propsData) => {
       },
     },
     $route: {
-      query: {}
-    }
+      query: {},
+    },
   }
 
   return mount(DruxtViewsFilter, { localVue, mocks, propsData, store })
@@ -49,8 +49,8 @@ describe('DruxtViewsFilter', () => {
       id: 'test',
       plugin_id: 'test',
       expose: {
-        identifier: 'test'
-      }
+        identifier: 'test',
+      },
     }
     const wrapper = mountComponent({ filter })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -65,7 +65,7 @@ describe('DruxtViewsFilter', () => {
     expect(wrapper.vm.component.options).toStrictEqual([
       'DruxtViewsFilterTestTest',
       'DruxtViewsFilterTest',
-      'DruxtViewsFilterDefault'
+      'DruxtViewsFilterDefault',
     ])
   })
 })

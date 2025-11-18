@@ -9,8 +9,8 @@
 export default {
   druxt: {
     query: {
-      schema: true
-    }
-  }
+      schema: true,
+    },
+  },
 }
 </script>

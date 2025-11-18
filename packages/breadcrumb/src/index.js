@@ -19,4 +19,4 @@ export default DruxtBreadcrumbModule
  * @exports DruxtBreadcrumbMixin
  * @see {@link ./mixins/breadcrumb|DruxtBreadcrumbMixin}
  */
- export { DruxtBreadcrumbMixin } from './mixins/breadcrumb'
+export { DruxtBreadcrumbMixin } from './mixins/breadcrumb'

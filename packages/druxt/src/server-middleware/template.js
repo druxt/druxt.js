@@ -7,7 +7,7 @@ const { kebabCase } = require('scule')
 
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 60
+  max: 60,
 })
 
 app.use(bodyParser.json())
@@ -16,7 +16,8 @@ app.use(limiter)
 app.post('/add', async (req, res) => {
   const { path, settings } = req.body
   if (!path) throw new Error('Missing required path attribute.')
-  if (typeof path !== 'string' || !/^[a-zA-Z0-9]+$/.test(path)) throw new Error('Unsupported value provided for the path attribute.')
+  if (typeof path !== 'string' || !/^[a-zA-Z0-9]+$/.test(path))
+    throw new Error('Unsupported value provided for the path attribute.')
 
   const prefix = kebabCase(settings.component).replace('-', '/') + '/'
   const dest = 'components/' + path.replace(settings.component, prefix) + '.vue'
@@ -28,18 +29,22 @@ app.post('/add', async (req, res) => {
 
   // Add slots.
   if (Array.isArray(settings.slots)) {
-    const items = (settings.slots.length > 1
-      ? settings.slots.filter((name) => name !== 'default')
-      : settings.slots).filter((name) => name !== 'debug')
+    const items = (
+      settings.slots.length > 1
+        ? settings.slots.filter((name) => name !== 'default')
+        : settings.slots
+    ).filter((name) => name !== 'debug')
     slots = items.map((name) => `\r\n    <slot name="${name}" />`).join('')
-  }
-  else if (typeof settings.slots === 'string') {
+  } else if (typeof settings.slots === 'string') {
     slots = `\r\n    <slot name="${settings.slot}" />`
   }
 
   // Use mixin if provided by the module.
   if (settings.mixins) {
-    imports = Object.entries(settings.mixins).map(([mixin, module]) => `import { ${mixin} } from '${module}'\r\n`) + '\r\n'
+    imports =
+      Object.entries(settings.mixins).map(
+        ([mixin, module]) => `import { ${mixin} } from '${module}'\r\n`
+      ) + '\r\n'
     const mixins = Object.keys(settings.mixins).map((mixin) => mixin)
     exports.push(`  mixins: [${mixins.join(', ')}],`)
   }
@@ -50,7 +55,7 @@ app.post('/add', async (req, res) => {
       '  data: ({ value }) => ({ model: value }),',
       '  props: [',
       ...settings.props.map((o) => `    '${o.key}',`),
-      '  ],'
+      '  ],',
     ]
   }
 
@@ -70,21 +75,20 @@ app.post('/add', async (req, res) => {
         if (parts.length) {
           pointer[part] = pointer[part] || {}
           pointer = pointer[part]
-        }
-        else {
-          pointer[part] = (comment ? '// ' : '') + `${part}: ${JSON.stringify(value)}`
+        } else {
+          pointer[part] =
+            (comment ? '// ' : '') + `${part}: ${JSON.stringify(value)}`
         }
       }
     }
     const formatRecrusive = (item, depth = 2) => {
       for (const [key, value] of Object.entries(item)) {
         if (typeof value === 'object') {
-          exports.push(`${" ".repeat(depth * 2)}${key}: {`)
+          exports.push(`${' '.repeat(depth * 2)}${key}: {`)
           formatRecrusive(value, depth + 1)
-          exports.push(`${" ".repeat(depth * 2)}},`)
-        }
-        else if (typeof value === 'string') {
-          exports.push(`${" ".repeat(depth * 2)}${value},`)
+          exports.push(`${' '.repeat(depth * 2)}},`)
+        } else if (typeof value === 'string') {
+          exports.push(`${' '.repeat(depth * 2)}${value},`)
         }
       }
     }

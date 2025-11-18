@@ -9,10 +9,10 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: '<%= options.description || " " %>'
-      }
-    }
-  }
+        component: '<%= options.description || " " %>',
+      },
+    },
+  },
 }
 
 export const Default = (args, { argTypes }) => {
@@ -28,7 +28,7 @@ Default.args = {
 Default.parameters = {
   docs: {
     source: {
-      code: '<DruxtMenu name="<%= options.name %>" />'
-    }
-  }
+      code: '<DruxtMenu name="<%= options.name %>" />',
+    },
+  },
 }

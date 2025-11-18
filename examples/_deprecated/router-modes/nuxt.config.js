@@ -11,13 +11,12 @@ export default {
       // serverside redirect handling.
       // Disable the middleware for serverless, full static builds.
       // middleware: false
-
       // Wildcard router is enabled by the DruxtSite module.
       // wildcard: false
     },
     site: {
       // Disable the default Site layout.
-      layout: false
-    }
-  }
+      layout: false,
+    },
+  },
 }

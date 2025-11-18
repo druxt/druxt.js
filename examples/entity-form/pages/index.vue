@@ -24,8 +24,8 @@ export default {
   }),
   methods: {
     setResponse(response) {
-      this.response = response;
+      this.response = response
     },
   },
-};
+}
 </script>

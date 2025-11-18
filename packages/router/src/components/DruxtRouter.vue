@@ -57,9 +57,12 @@ export default {
    *   }
    * }
    */
-  async middleware ({ $druxt, redirect, route, store }) {
+  async middleware({ $druxt, redirect, route, store }) {
     // Ensure Router middleware is enabled.
-    if (typeof ($druxt.settings.router || {}).middleware !== 'undefined' && !$druxt.settings.router.middleware) {
+    if (
+      typeof ($druxt.settings.router || {}).middleware !== 'undefined' &&
+      !$druxt.settings.router.middleware
+    ) {
       return
     }
 
@@ -99,8 +102,8 @@ export default {
      */
     value: {
       type: Object,
-      default: () => undefined
-    }
+      default: () => undefined,
+    },
   },
 
   /**
@@ -121,16 +124,16 @@ export default {
    *
    * @todo Improve metatag support.
    */
-  head () {
+  head() {
     const head = {
       title: this.title,
       link: [
         {
           hid: 'canonical',
           rel: 'canonical',
-          href: this.canonical || (this.route || {}).canonical
-        }
-      ]
+          href: this.canonical || (this.route || {}).canonical,
+        },
+      ],
     }
 
     if (this.metatags) {
@@ -148,7 +151,9 @@ export default {
      * @type {string}
      */
     module: ({ route }) =>
-      (route || {}).component && route.component.startsWith('druxt-') ? route.component.substring(6) : false,
+      (route || {}).component && route.component.startsWith('druxt-')
+        ? route.component.substring(6)
+        : false,
 
     /**
      * The route object.
@@ -176,7 +181,11 @@ export default {
   watch: {
     $route() {
       const path = this.$route.fullPath
-      if (this.$store.state.druxtRouter.routes[path] && this.$store.state.druxtRouter.route !== this.$store.state.druxtRouter.routes[path]) {
+      if (
+        this.$store.state.druxtRouter.routes[path] &&
+        this.$store.state.druxtRouter.route !==
+          this.$store.state.druxtRouter.routes[path]
+      ) {
         this.$store.commit('druxtRouter/setRoute', path)
       }
     },
@@ -186,7 +195,7 @@ export default {
      */
     async path() {
       await this.$fetch()
-    }
+    },
   },
 
   /** DruxtModule settings */
@@ -200,7 +209,7 @@ export default {
     componentOptions: ({ module, route }) => [
       // @TODO - Add Path options.
       [module || 'error', route.isHomePath ? 'front' : 'not-front'],
-      ['default']
+      ['default'],
     ],
 
     /**
@@ -236,7 +245,7 @@ export default {
      */
     propsData: ({ $route, path, model }) => ({
       path: path || $route.fullPath,
-      route: model
+      route: model,
     }),
 
     /**
@@ -260,10 +269,11 @@ export default {
 
       // Provide defualt error message.
       if (this.model.error) {
-        scopedSlots.default = () => h('div', [
-          h('h1', [`Error ${this.model.error.statusCode}`]),
-          h('p', [this.model.error.message]),
-        ])
+        scopedSlots.default = () =>
+          h('div', [
+            h('h1', [`Error ${this.model.error.statusCode}`]),
+            h('p', [this.model.error.message]),
+          ])
       }
 
       return scopedSlots
@@ -275,10 +285,10 @@ export default {
     template: {
       debug: '{ path, route }',
       mixins: {
-        'DruxtRouterMixin': 'druxt-router'
-      }
-    }
-  }
+        DruxtRouterMixin: 'druxt-router',
+      },
+    },
+  },
 }
 
 /**

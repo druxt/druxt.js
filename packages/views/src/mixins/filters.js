@@ -24,7 +24,7 @@ const DruxtViewsFiltersMixin = {
      */
     filters: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
     },
 
     /**
@@ -65,9 +65,9 @@ const DruxtViewsFiltersMixin = {
    */
   data() {
     return {
-      model: this.value
+      model: this.value,
     }
-  }
+  },
 }
 
 export { DruxtViewsFiltersMixin }

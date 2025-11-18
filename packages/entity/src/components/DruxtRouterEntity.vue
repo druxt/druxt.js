@@ -1,8 +1,5 @@
 <template>
-  <DruxtEntity
-    v-bind="route.props"
-    mode="full"
-  />
+  <DruxtEntity v-bind="route.props" mode="full" />
 </template>
 
 <script>

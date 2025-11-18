@@ -11,7 +11,8 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Renders a Drupal block regions using the **<%= options.theme %>** theme configuration.\n\n```jsx\n\n<DruxtSite theme="<%= options.theme %>" />\n```'
+        component:
+          'Renders a Drupal block regions using the **<%= options.theme %>** theme configuration.\n\n```jsx\n\n<DruxtSite theme="<%= options.theme %>" />\n```',
       },
     },
   },
@@ -28,11 +29,12 @@ export const Default = Template.bind({})
 Default.args = {
   theme: '<%= options.theme %>',
 }
-Default.storyName = '<%= options.theme.charAt(0).toUpperCase() + options.theme.slice(1) %>'
+Default.storyName =
+  '<%= options.theme.charAt(0).toUpperCase() + options.theme.slice(1) %>'
 Default.parameters = {
   docs: {
     source: {
-      code: '<DruxtSite theme="<%= options.theme %>" />'
-    }
-  }
+      code: '<DruxtSite theme="<%= options.theme %>" />',
+    },
+  },
 }

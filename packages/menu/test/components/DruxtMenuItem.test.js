@@ -15,8 +15,8 @@ const propsData = {
       attributes: {
         title: 'Parent',
         link: { uri: 'internal:/parent' },
-        route: { name: 'test' }
-      }
+        route: { name: 'test' },
+      },
     },
     children: [
       {
@@ -24,39 +24,39 @@ const propsData = {
           attributes: {
             title: 'Child - Internal',
             link: { uri: 'entity:node/1' },
-            route: { name: 'test-child' }
-          }
+            route: { name: 'test-child' },
+          },
         },
-        children: []
+        children: [],
       },
       {
         entity: {
           attributes: {
             title: 'Child - External',
             link: { uri: 'entity:https://druxtjs.org' },
-            route: { name: '' }
-          }
+            route: { name: '' },
+          },
         },
-        children: []
+        children: [],
       },
-    ]
-  }
+    ],
+  },
 }
 
 // Setup local vue instance.
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-const mountComponent = options => {
+const mountComponent = (options) => {
   config.mocks.$route = {
-    path: '/'
+    path: '/',
   }
 
   return shallowMount(DruxtMenuItemComponent, {
     localVue,
     propsData,
     parentComponent: DruxtMenuComponent,
-    ...options
+    ...options,
   })
 }
 
@@ -92,11 +92,11 @@ describe('DruxtMenuItem', () => {
             attributes: {
               title: 'External',
               url: 'https://druxtjs.org',
-              route: { name: '' }
-            }
-          }
-        }
-      }
+              route: { name: '' },
+            },
+          },
+        },
+      },
     })
 
     // Ensure we get sane default HTML.

@@ -5,16 +5,17 @@ export default {
   component: DruxtBlockRegion,
   argTypes: {
     name: {
-      control: false
+      control: false,
     },
     theme: {
-      control: false
-    }
+      control: false,
+    },
   },
   parameters: {
     docs: {
       description: {
-        component: 'Renders all visible blocks assigned to the **<%= options.region %>** region for the **<%= options.theme %>** theme.\n\n```jsx\n\n<DruxtBlockRegion name="<%= options.region %>" theme="<%= options.theme %>" />\n```'
+        component:
+          'Renders all visible blocks assigned to the **<%= options.region %>** region for the **<%= options.theme %>** theme.\n\n```jsx\n\n<DruxtBlockRegion name="<%= options.region %>" theme="<%= options.theme %>" />\n```',
       },
     },
   },
@@ -36,7 +37,7 @@ Default.storyName = 'DruxtBlockRegion'
 Default.parameters = {
   docs: {
     source: {
-      code: '<DruxtBlockRegion name="<%= options.region %>" theme="<%= options.theme %>" />'
-    }
-  }
+      code: '<DruxtBlockRegion name="<%= options.region %>" theme="<%= options.theme %>" />',
+    },
+  },
 }
