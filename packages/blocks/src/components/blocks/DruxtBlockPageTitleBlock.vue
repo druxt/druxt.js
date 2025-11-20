@@ -3,8 +3,10 @@
 </template>
 
 <script>
+/* istanbul ignore next */
 import { mapState } from 'vuex'
 
+/* istanbul ignore next */
 import { DruxtBlocksBlockMixin } from 'druxt-blocks'
 
 /**

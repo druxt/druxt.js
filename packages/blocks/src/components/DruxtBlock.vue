@@ -1,6 +1,9 @@
 <script>
+/* istanbul ignore next */
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
+/* istanbul ignore next */
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+/* istanbul ignore next */
 import { mapActions } from 'vuex'
 
 /**

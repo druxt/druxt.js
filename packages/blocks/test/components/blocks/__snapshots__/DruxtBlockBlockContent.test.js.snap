@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component - DruxtBlockBlockContent default 1`] = `
+"<div>
+  <druxtentity-stub type="block_content--banner_block" uuid="9aadf4a1-ded6-4017-a10d-a5e043396edf"></druxtentity-stub>
+</div>"
+`;
+
+exports[`Component - DruxtBlockBlockContent propsData - no data 1`] = `
+"<div>
+  <!---->
+</div>"
+`;
+
+exports[`Component - DruxtBlockBlockContent propsData - no dependencies 1`] = `
+"<div>
+  <!---->
+</div>"
+`;
+
+exports[`Component - DruxtBlockBlockContent propsData - pending 1`] = `
+"<div>
+  <!---->
+</div>"
+`;

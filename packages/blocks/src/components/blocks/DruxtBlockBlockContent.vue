@@ -5,7 +5,9 @@
 </template>
 
 <script>
+/* istanbul ignore next */
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
+/* istanbul ignore next */
 import { DruxtBlocksBlockMixin } from 'druxt-blocks'
 
 /**

@@ -1,5 +1,49 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Component - DruxtBlock custom default slot 1`] = `
+"<div>
+  <div block="[object Object]"></div>
+</div>"
+`;
+
+exports[`Component - DruxtBlock dev mode slot 1`] = `
+"<div>
+  <div block="[object Object]">
+    <druxtdebug-stub>
+      <div>
+        <p>Create a Druxt theme component to render the "Site branding" block.</p>
+      </div>
+      <druxtdeveltemplate-stub></druxtdeveltemplate-stub>
+      <details>
+        <summary>JSON:API resource</summary><pre><code>{
+  "type": "block--block",
+  "id": "9d3d3a23-69f5-4c2d-9a00-287492a52987",
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/9d3d3a23-69f5-4c2d-9a00-287492a52987"
+    }
+  },
+  "attributes": {
+    "region": "header",
+    "theme": "umami",
+    "plugin": "system_branding_block",
+    "settings": {
+      "id": "system_branding_block",
+      "label": "Site branding",
+      "provider": "system",
+      "label_display": "0",
+      "use_site_logo": true,
+      "use_site_name": false,
+      "use_site_slogan": true
+    }
+  }
+}</code></pre>
+      </details>
+    </druxtdebug-stub>
+  </div>
+</div>"
+`;
+
 exports[`Component - DruxtBlock error - missing required props 1`] = `
 "<div>
   <div>
@@ -7,6 +51,41 @@ exports[`Component - DruxtBlock error - missing required props 1`] = `
       <div>
         <p>The DruxtBlock component requires either the 'id' or 'uuid' prop to be set.</p>
       </div>
+    </druxtdebug-stub>
+  </div>
+</div>"
+`;
+
+exports[`Component - DruxtBlock uuid 1`] = `
+"<div>
+  <div block="[object Object]">
+    <druxtdebug-stub>
+      <div>
+        <p>Create a Druxt theme component to render the "Breadcrumbs" block.</p>
+      </div>
+      <druxtdeveltemplate-stub></druxtdeveltemplate-stub>
+      <details>
+        <summary>JSON:API resource</summary><pre><code>{
+  "type": "block--block",
+  "id": "b73a1b20-a9a3-4f93-a93f-e59723e6db33",
+  "links": {
+    "self": {
+      "href": "https://demo-api.druxtjs.org/en/jsonapi/block/block/b73a1b20-a9a3-4f93-a93f-e59723e6db33"
+    }
+  },
+  "attributes": {
+    "theme": "claro",
+    "region": "breadcrumb",
+    "plugin": "system_breadcrumb_block",
+    "settings": {
+      "id": "system_breadcrumb_block",
+      "label": "Breadcrumbs",
+      "provider": "system",
+      "label_display": "0"
+    }
+  }
+}</code></pre>
+      </details>
     </druxtdebug-stub>
   </div>
 </div>"

@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component - DruxtBlockRegion custom default slot 1`] = `"<div></div>"`;
+
+exports[`Component - DruxtBlockRegion default 1`] = `
+"<div>
+  <druxtwrapper-stub blocks="[object Object]" name="content" theme="umami">
+    <druxtblock-stub></druxtblock-stub>
+    <div>
+      <druxtblock-stub></druxtblock-stub>
+    </div>
+  </druxtwrapper-stub>
+</div>"
+`;

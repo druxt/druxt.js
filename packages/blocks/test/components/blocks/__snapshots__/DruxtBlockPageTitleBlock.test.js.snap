@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component - DruxtBlockPageTitleBlock default 1`] = `"<h1>Test</h1>"`;
+
+exports[`Component - DruxtBlockPageTitleBlock empty title 1`] = `"<h1></h1>"`;
+
+exports[`Component - DruxtBlockPageTitleBlock no label 1`] = `"<h1></h1>"`;
+
+exports[`Component - DruxtBlockPageTitleBlock no route 1`] = `"<h1></h1>"`;
+
+exports[`Component - DruxtBlockPageTitleBlock special characters 1`] = `"<h1>Test &amp; Title &lt;&gt;</h1>"`;
