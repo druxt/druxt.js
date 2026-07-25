@@ -1,4 +1,4 @@
-# DruxtJS; A bridge between frameworks.
+# DruxtJS; A bridge between frameworks
 
 [![npm](https://badgen.net/npm/v/druxt)](https://www.npmjs.com/package/druxt)
 [![CircleCI](https://circleci.com/gh/druxt/druxt.js.svg?style=svg)](https://circleci.com/gh/druxt/druxt.js)
@@ -6,9 +6,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 
-
 > Druxt = DRUpal + nUXT = Fully Decoupled Drupal.
-
 
 ## Links
 
@@ -22,7 +20,6 @@
   - https://github.com/druxt/quickstart-druxt-site-tome
   - https://github.com/druxt/quickstart-druxt-serverless
 
-
 ## Features
 
 - Fully Decoupled Drupal, with [Nuxt.js](https://github.com/nuxt/nuxt.js#features) in the frontend.
@@ -35,7 +32,6 @@
 
 Learn more at https://druxtjs.org
 
-
 ## Core modules
 
 - `druxt-blocks` - Decoupled Blocks and Regions
@@ -47,7 +43,6 @@ Learn more at https://druxtjs.org
 - `druxt-site` - Out-of-the-box decoupled Drupal Site
 - `druxt-views` - Decoupled Views
 
-
 ## Support
 
 Find support or get involved in building Druxt via the community channels:
@@ -55,10 +50,9 @@ Find support or get involved in building Druxt via the community channels:
 - [DruxtJS Discord server](https://discord.druxtjs.org)
 - **#druxt** Slack channel on [Drupal.org slack](https://drupal.org/slack)
 
-
 ## Contributing
 
-Druxt is an open source project, built by the comunity for the community.
+Druxt is an open source project, built by the community for the community.
 
 See the [Contributing guide](./CONTRIBUTING.md) for details on how to #get-involved.
 

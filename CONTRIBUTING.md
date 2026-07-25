@@ -7,13 +7,13 @@ weight: 5
 
 Druxt is an open source project, built, supported and maintained by the community, for the community.
 
-* * *
+---
 
 ## Development Environment Setup
 
 The Druxt development environment can be run both in the Cloud, using GitPod.io, or locally:
 
-* * *
+---
 
 ### Gitpod
 
@@ -23,13 +23,14 @@ The Druxt development environment can be run both in the Cloud, using GitPod.io,
 4. Run DruxtSite example: `yarn example:druxt-site`
 
 GitPod will automatically run the following tasks:
-  - Install all core dependencies: `yarn install`
-  - Build the Druxt modules: `yarn build`
-  - Geneate the documentation: `yarn build:docs`
-  - Start a Drupal backend: `cd docs/drupal && ddev start -y`
-  - Display a welcome message: `cat .gitpod/WELCOME.md`
 
-* * *
+- Install all core dependencies: `yarn install`
+- Build the Druxt modules: `yarn build`
+- Generate the documentation: `yarn build:docs`
+- Start a Drupal backend: `cd docs/drupal && ddev start -y`
+- Display a welcome message: `cat .gitpod/WELCOME.md`
+
+---
 
 ### Local Development
 
@@ -38,9 +39,9 @@ GitPod will automatically run the following tasks:
 3. Install dependencies: `yarn`
 4. Build packages: `yarn build`
 5. Start a Drupal backend (requires DDev): `cd docs/drupal && ddev start -y && ddev drupal-install`
-6. Run DruxtSite example: `yarn example:druxt-site`   
+6. Run DruxtSite example: `yarn example:druxt-site`
 
-* * *
+---
 
 ## Bug reports, feature requests
 
@@ -48,7 +49,7 @@ One of the easiest ways to contribute to Druxt is to open issues, giving as much
 
 When reporting bugs please make sure to provide detailed steps to reproduce the issue, and when possible provide a Gitpod workspace snapshot to demonstrate the issue.
 
-* * *
+---
 
 ## Pull requests
 
@@ -61,7 +62,7 @@ If you are able to resolve an issue, or have improvements you would like to prop
 5. Make and commit your changes.
 6. Create a Pull request: https://github.com/druxt/druxt.js/compare
 
-* * *
+---
 
 ## Example projects
 
@@ -95,7 +96,7 @@ A non-Nuxt example, using the DruxtClient in a basic node app.
 
 `cd examples/node-client && yarn && yarn dev`
 
-* * *
+---
 
 ## Development tools
 
@@ -111,7 +112,7 @@ The Druxt repository is setup with tools and automated processes to help with de
 - [Linting](#linting) - Coding styles and standards
 - [Siroc](#siroc) - Zero-config build tools
 
-* * *
+---
 
 ### Changesets
 
@@ -125,11 +126,11 @@ yarn changeset
 
 Be sure to commit your changeset file alongside your changes.
 
-* * *
+---
 
 ### Codecov
 
-Codecov.io is used as part of the automated testing process to ensure that changes don't inadvertantly reduce the overall code coverage of the project.
+Codecov.io is used as part of the automated testing process to ensure that changes don't inadvertently reduce the overall code coverage of the project.
 
 The coverage report is generated as part of the [Jest](#jest) testing:
 
@@ -139,7 +140,7 @@ yarn test
 
 - For more details, refer to the [Druxt Codecov.io report](https://app.codecov.io/gh/druxt/druxt.js)
 
-* * *
+---
 
 ### Conventional commits
 
@@ -151,7 +152,7 @@ A **husky** git hook is used to ensure the standard is enforced, and will explai
 
 - For more details, refer to the [Conventional Commits documentation](https://www.conventionalcommits.org/).
 
-* * *
+---
 
 ### Cypress
 
@@ -163,7 +164,7 @@ yarn test:e2e
 
 - For more details, refer to the [Cypress documentation](https://docs.cypress.io/guides).
 
-* * *
+---
 
 ### Docgen
 
@@ -181,7 +182,7 @@ The documentation website is a Nuxt site located in the `/docs/nuxt` directory, 
 cd docs/nuxt && yarn dev
 ```
 
-* * *
+---
 
 ### Gitpod
 
@@ -193,7 +194,7 @@ Click the button below to get started:
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/druxt/druxt.js)
 
-* * *
+---
 
 ### Jest
 
@@ -209,7 +210,7 @@ Test files are located within the relevant packages `test` directories. E.g., `p
 
 - For more details, refer to the [Jest documentation](https://jestjs.io/docs/getting-started).
 
-* * *
+---
 
 ### Linting
 
@@ -223,7 +224,7 @@ You can also manually run linting using the following command:
 yarn lint
 ```
 
-* * *
+---
 
 ### Siroc
 

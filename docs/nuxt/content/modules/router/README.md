@@ -11,20 +11,22 @@ description: Drupal router for Nuxt, powered by the Drupal Decoupled Router modu
   - **Content entity** routes resolve **DruxtEntity** components
   - **Drupal Views** page routes resolve **DruxtView** components
 
-* * *
+---
 
 ## Installation
 
 1. Download the module:
+
    ```sh
    npm i druxt-router
    ```
 
 2. Add the module to `nuxt.config.js`:
+
    ```js
    export default {
      modules: ['druxt-router/nuxt'],
-   }
+   };
    ```
 
 ### Options
@@ -50,9 +52,9 @@ description: Drupal router for Nuxt, powered by the Drupal Decoupled Router modu
 
   Controls whether the wildcard route should be installed into the Nuxt/Vue router.
 
-* * *
+---
 
-##  Vue.js components
+## Vue.js components
 
 ### DruxtRouter
 
@@ -66,4 +68,4 @@ If no Path is provided, the component will default to the Vue router fullpath.
 
 - For more details, refer to the [DruxtBlock API documentation](/api/packages/router/components/DruxtRouter).
 
-* * *
+---

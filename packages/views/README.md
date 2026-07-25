@@ -23,9 +23,7 @@ Add module to `nuxt.config.js`
 
 ```js
 module.exports = {
-  modules: [
-    'druxt-views'
-  ],
+  modules: ['druxt-views'],
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org',
     views: {
@@ -33,7 +31,7 @@ module.exports = {
       fields: ['title'],
     },
   },
-}
+};
 ```
 
 ## Usage
@@ -47,6 +45,7 @@ The DruxtView component uses the [JSON:API Views module](https://drupal.org/proj
 ```
 
 The View can be themed by providing a default scoped slot:
+
 ```vue
 <DruxtView view-id="frontpage">
   <template #default="{ results }">
@@ -56,6 +55,7 @@ The View can be themed by providing a default scoped slot:
 ```
 
 The component also provides a DruxtWrapper component for theming:
+
 ```vue
 <template>
   <div>
@@ -74,17 +74,17 @@ See the [DruxtViews API documentation](https://druxtjs.org/api/packages/views/co
 
 These options are specific to this module.
 
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `views.query.bundleFilter` | `boolean` | No | `false` | Whether to automatically detect Resource types to filter, based on the View `bundle` filter. |
-| `views.query.fields` | `string[]` | No | `[]` | An array of fields to filter from the JSON:API Views Resource types. |
-| `views.query.resourceTypes` | `string[]` | No | `[]` | An array of Resource types to be used by the Fields filter. |
+| Option                      | Type       | Required | Default | Description                                                                                  |
+| --------------------------- | ---------- | -------- | ------- | -------------------------------------------------------------------------------------------- |
+| `views.query.bundleFilter`  | `boolean`  | No       | `false` | Whether to automatically detect Resource types to filter, based on the View `bundle` filter. |
+| `views.query.fields`        | `string[]` | No       | `[]`    | An array of fields to filter from the JSON:API Views Resource types.                         |
+| `views.query.resourceTypes` | `string[]` | No       | `[]`    | An array of Resource types to be used by the Fields filter.                                  |
 
 ### Base Druxt options
 
 These options are available to all Druxt modules.
 
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
-| `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
+| Option    | Type     | Required | Default | Description                                                                  |
+| --------- | -------- | -------- | ------- | ---------------------------------------------------------------------------- |
+| `axios`   | `object` | No       | `{}`    | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
+| `baseUrl` | `string` | Yes      | `null`  | Base URL for the Drupal installation.                                        |

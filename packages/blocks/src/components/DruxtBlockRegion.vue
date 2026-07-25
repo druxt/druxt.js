@@ -101,7 +101,7 @@ export default {
 
   methods: {
     /**
-     * Checks if a given block shoud be visible.
+     * Checks if a given block should be visible.
      *
      * Uses Request Path visibility details if available with the DruxtRouter.
      *
@@ -150,6 +150,8 @@ export default {
      * Provides the available component naming options for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param context.name
+     * @param context.theme
      * @returns {ComponentOptions}
      */
     componentOptions: ({ name, theme }) => [[name, theme], ['default']],
@@ -179,6 +181,9 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param context.blocks
+     * @param context.name
+     * @param context.theme
      * @returns {PropsData}
      */
     propsData: ({ blocks, name, theme }) => ({ blocks, name, theme }),
@@ -191,6 +196,7 @@ export default {
      *
      * The `default` slot will render all blocks, filtered by route visibility.
      *
+     * @param h
      * @return {ScopedSlots} The Scoped slots object.
      *
      * @example <caption>DruxtBlockRegion**Name**.vue</caption> @lang vue

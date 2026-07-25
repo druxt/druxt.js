@@ -1,0 +1,148 @@
+---
+# GitLab CI for the druxt.js monorepo: lint → test → secret-detection, with
+# collapsible section helpers and a per-file JSON/shell/YAML sweep.
+#
+# CircleCI (.circleci/config.yml) remains the canonical CI for now; this pipeline
+# is additive, giving any GitLab mirror of this repo a real pipeline with
+# secret-detection coverage. Consolidating onto a single CI system is a
+# deliberately separate decision, not part of this pipeline's scope.
+
+stages:
+  - lint
+  - test
+  - secret-detection
+
+variables:
+  SECRET_DETECTION_ENABLED: 'true'
+
+include:
+  - template: Security/Secret-Detection.gitlab-ci.yml
+
+secret_detection:
+  stage: secret-detection
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+default:
+  image: mcr.microsoft.com/devcontainers/python:3
+  tags: [docker]
+  timeout: 15m
+  before_script:
+    - 'section_start() { local n="$1" t="${2:-$1}"; printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)" "$n" "$t"; }'
+    - 'section_end() { printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)" "$1"; }'
+
+#
+# --- Lint Stage ---
+#
+
+lint:json:
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "json-lint" "Validating JSON files"
+    - |
+      rc=0; count=0
+      while IFS= read -r -d '' f; do
+        count=$((count + 1))
+        if python3 -m json.tool "$f" > /dev/null 2>&1; then
+          echo "  [PASS] $f"
+        else
+          echo "  [FAIL] $f"
+          rc=1
+        fi
+      done < <(find . -name '*.json' -not -path '*/.git/*' -not -path '*/node_modules/*' \
+        -not -path '*/dist/*' -not -path '*/.vscode/*' -not -path '*/templates/*' -print0)
+      echo "--- $count JSON file(s) checked ---"
+      exit "$rc"
+    - section_end "json-lint"
+
+lint:shell:
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "shell-lint" "Checking shell script syntax"
+    - |
+      rc=0; count=0
+      while IFS= read -r -d '' f; do
+        count=$((count + 1))
+        if bash -n "$f" 2>/dev/null; then
+          echo "  [PASS] $f"
+        else
+          echo "  [FAIL] $f"
+          rc=1
+        fi
+      done < <(find . -name '*.sh' -not -path '*/.git/*' -not -path '*/node_modules/*' -print0)
+      echo "--- $count shell file(s) checked ---"
+      exit "$rc"
+    - section_end "shell-lint"
+
+lint:yaml:
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "yaml-lint" "Linting YAML files"
+    - pip install yamllint -q
+    - yamllint .gitlab-ci.yml
+    - section_end "yaml-lint"
+
+lint:markdown:
+  stage: lint
+  interruptible: true
+  image: node:16.20.2
+  script:
+    - section_start "md-lint" "Linting Markdown files"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:md
+    - section_end "md-lint"
+
+lint:cspell:
+  stage: lint
+  interruptible: true
+  image: node:16.20.2
+  script:
+    - section_start "cspell" "Spell checking project files"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:cspell
+    - section_end "cspell"
+
+lint:js:
+  stage: lint
+  interruptible: true
+  image: node:16.20.2
+  script:
+    - section_start "eslint" "Linting JS/Vue sources"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint
+    - section_end "eslint"
+
+#
+# --- Test Stage ---
+#
+
+test:unit:
+  stage: test
+  interruptible: true
+  image: node:16.20.2
+  needs: []
+  script:
+    - section_start "jest" "Running unit tests"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - NODE_OPTIONS="--max_old_space_size=8192" yarn test:unit --reporters=jest-junit --runInBand
+    - section_end "jest"
+  artifacts:
+    when: always
+    paths:
+      - reports/junit/
+    reports:
+      junit: reports/junit/junit.xml
+  allow_failure: true

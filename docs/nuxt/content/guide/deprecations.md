@@ -7,15 +7,13 @@ TODO: Move to API documentation
 
 # Deprecations
 
-
-
 ## DruxtStore / addResource - hash
 
 > [druxt] The `hash` argument for `druxt/addResource` has been deprecated.
 
 **Version:** `>= 0.6.0`
 
-Prior to `0.6.0`, the DruxtStore store used a `hash` argument to seperate the various filtered resource results:
+Prior to `0.6.0`, the DruxtStore store used a `hash` argument to separate the various filtered resource results:
 
 ```js
 // Deprecated, hash is no longer required.

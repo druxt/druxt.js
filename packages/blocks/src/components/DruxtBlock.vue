@@ -8,7 +8,7 @@ import { mapActions } from 'vuex'
  * internal ID.
  *
  * While the DruxtBlock component can't automatically render every Drupal block,
- * it does provide the Block settings to a targetted Druxt wrapper component for
+ * it does provide the Block settings to a targeted Druxt wrapper component for
  * manual theming.
  *
  * @example <caption>Render a block using **id**</caption> @lang vue
@@ -91,6 +91,8 @@ export default {
     /**
      * The Block entity data.
      *
+     * @param root0
+     * @param root0.resource
      * @return {object}
      */
     block: ({ resource }) => (resource || {}).data,
@@ -124,6 +126,7 @@ export default {
      * Provides the available component naming options for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param context.block
      * @returns {ComponentOptions}
      */
     componentOptions: ({ block }) => {
@@ -194,6 +197,7 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param context.block
      * @returns {PropsData}
      */
     propsData: ({ block }) => ({ block }),
@@ -204,6 +208,7 @@ export default {
      * A default slot is provided with debug information if Nuxt is in
      * development mode.
      *
+     * @param h
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {

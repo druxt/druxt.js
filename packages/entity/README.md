@@ -13,7 +13,6 @@
 - Documentation: https://druxtjs.org/modules/entity
 - Community Discord server: https://discord.druxtjs.org
 
-
 ## Install
 
 `$ npm install druxt-entity`
@@ -34,7 +33,7 @@ module.exports = {
       },
     },
   },
-}
+};
 ```
 
 ## Usage
@@ -66,6 +65,7 @@ See the [DruxtEntityForm API Documentation](https://druxtjs.org/api/packages/ent
 ### Theming
 
 Both components can be themed by providing a default template:
+
 ```vue
 <DruxtEntity type="node--page" :uuid="uuid">
   <template #default="{ entity, fields, schema }">
@@ -75,6 +75,7 @@ Both components can be themed by providing a default template:
 ```
 
 The module also provides Wrapper components with scoped slots for theming:
+
 ```vue
 <template>
   <div>
@@ -92,17 +93,17 @@ See the [Druxt Theming guide](https://druxtjs.org/guide/theming) for more inform
 
 These options are specific to this module.
 
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `entity.components.fields` | `boolean` | No | `false` | Whether to import deprecated default Field components. |
-| `entity.query.fields` | `string[]` | No | `[]` | An array of fields to filter all Entity JSON:API queries. |
-| `entity.query.schema` | `boolean` | No | `false` | Whether to automatically filter fields based on Display schema. |
+| Option                     | Type       | Required | Default | Description                                                     |
+| -------------------------- | ---------- | -------- | ------- | --------------------------------------------------------------- |
+| `entity.components.fields` | `boolean`  | No       | `false` | Whether to import deprecated default Field components.          |
+| `entity.query.fields`      | `string[]` | No       | `[]`    | An array of fields to filter all Entity JSON:API queries.       |
+| `entity.query.schema`      | `boolean`  | No       | `false` | Whether to automatically filter fields based on Display schema. |
 
 ### Base Druxt options
 
 These options are available to all Druxt modules.
 
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
-| `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
+| Option    | Type     | Required | Default | Description                                                                  |
+| --------- | -------- | -------- | ------- | ---------------------------------------------------------------------------- |
+| `axios`   | `object` | No       | `{}`    | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
+| `baseUrl` | `string` | Yes      | `null`  | Base URL for the Drupal installation.                                        |

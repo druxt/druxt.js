@@ -29,6 +29,10 @@
     "example:druxt-site:test:open": "start-server-and-test 'yarn example:druxt-site' http://localhost:3000 'npx cypress open --project examples/druxt-site/test'",
     "lint": "eslint --ext .js,.vue packages/*/src",
     "lint:commit": "commitlint",
+    "lint:cspell": "cspell lint --no-progress --no-must-find-files --gitignore --dot \"**/*.{js,vue,json,md,yml,yaml}\"",
+    "lint:format": "prettier --check \"**/*.{js,vue,json,md,yml,yaml}\"",
+    "lint:format:fix": "prettier --write \"**/*.{js,vue,json,md,yml,yaml}\"",
+    "lint:md": "markdownlint-cli2 \"**/*.md\"",
     "lint:renovate": "renovate-config-validator",
     "package": "siroc run yarn pack --workspaces",
     "postinstall": "husky install",
@@ -47,18 +51,26 @@
     "babel-core": "7.0.0-bridge.0",
     "bundlewatch": "0.4.0",
     "codecov": "^3.8.3",
+    "cspell": "^7.3.8",
     "cypress": "^13.14.1",
     "esbuild": "0.23.1",
     "esbuild-jest": "0.5.0",
     "eslint": "7.32.0",
+    "eslint-config-prettier": "^8.10.0",
     "eslint-junit": "1.0.1",
+    "eslint-plugin-jsdoc": "^39.9.1",
     "eslint-plugin-nuxt": "2.0.0",
     "eslint-plugin-vue": "7.20.0",
+    "eslint-plugin-yml": "^1.14.0",
     "husky": "8.0.3",
     "jest": "29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-junit": "16.0.0",
     "jest-mock-axios": "4.7.3",
+    "lint-staged": "^14.0.0",
+    "markdownlint-cli2": "^0.13.0",
+    "node-gyp": "^9.4.1",
+    "prettier": "^3.3.3",
     "regenerator-runtime": "0.14.1",
     "renovate": "32.0.2",
     "rimraf": "6.0.1",
@@ -68,5 +80,24 @@
     "vue-jest": "3.0.7",
     "vue-template-compiler": "2.7.16"
   },
-  "packageManager": "yarn@3.8.5"
+  "packageManager": "yarn@3.8.5",
+  "engines": {
+    "node": ">=16.20.1",
+    "yarn": ">=3.6.1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix"
+    ],
+    "*.vue": [
+      "eslint --fix"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "jest-junit": {
+    "outputDirectory": "reports/junit",
+    "outputName": "junit.xml"
+  }
 }

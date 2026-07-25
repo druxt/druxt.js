@@ -6,7 +6,7 @@ const DruxtMenuStore = ({ store }) => {
   }
 
   /**
-   * @namesapce
+   * @namespace
    */
   const namespace = 'druxtMenu'
 
@@ -37,6 +37,8 @@ const DruxtMenuStore = ({ store }) => {
        * @name addEntities
        * @mutator {object} addEntities=entities Adds specified Drupal JSON:API Menu Items data to the Vuex state object.
        * @param {State} state - The Vuex State object.
+       * @param entities.entities
+       * @param entities.prefix
        * @param {object} entities - The Drupal JSON:API Menu Item entities.
        *
        * @example @lang js
@@ -54,6 +56,9 @@ const DruxtMenuStore = ({ store }) => {
       /**
        * @name flushEntities
        * @mutator {object} flushEntities=entities Removes JSON:API menu item entities from the Vuex state object.
+       * @param state
+       * @param root0
+       * @param root0.prefix
        * @param {flushEntitiesContext} context
        *
        * @example @lang js
@@ -79,6 +84,7 @@ const DruxtMenuStore = ({ store }) => {
        * @name get
        * @action get=entities
        * @param {object} app - The Nuxt app context.
+       * @param app.commit
        * @param {string|object} context - The Menu name or context object.
        *
        * @example @lang js

@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Yarn / build artifacts
+.yarn/cache/
+.pnp.*
+packages/*/dist/
+packages/*/nuxt/
+packages/*/package.tgz
+coverage/
+bin/
+
+# Generated docs
+docs/nuxt/node_modules/
+docs/nuxt/.nuxt/
+docs/nuxt/dist/
+docs/content/api/
+
+# Examples (have their own tooling)
+examples/*/node_modules/
+examples/*/.nuxt/
+examples/*/dist/
+
+# Lockfiles (reformatted only by their own tooling)
+yarn.lock
+package-lock.json
+**/yarn.lock
+
+# Minified / vendored
+*.min.js
+*.min.css
+
+# Test fixtures with intentional formatting
+test/
+
+# ASCII art with intentional character-alignment whitespace
+.gitpod/WELCOME.md
+
+# Package templates (EJS / dynamic syntax prettier cannot parse)
+packages/*/templates/

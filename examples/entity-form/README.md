@@ -8,6 +8,6 @@ This directory contains an example of the DruxtEntityForm component in Nuxt.
 
 ## Try it out
 
-```
+```bash
 yarn && yarn dev
 ```

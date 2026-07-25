@@ -68,6 +68,12 @@ const DruxtStore = ({ store }) => {
       /**
        * @name addCollection
        * @mutator {object} addCollection=collections Adds a JSON:API collection to the Vuex state object.
+       * @param state
+       * @param root0
+       * @param root0.collection
+       * @param root0.type
+       * @param root0.hash
+       * @param root0.prefix
        * @param {addCollectionContext} context
        *
        * @example @lang js
@@ -100,6 +106,11 @@ const DruxtStore = ({ store }) => {
       /**
        * @name addResource
        * @mutator {object} addResource=resources Adds a JSON:API resource to the Vuex state object.
+       * @param state
+       * @param root0
+       * @param root0.prefix
+       * @param root0.resource
+       * @param root0.hash
        * @param {addResourceContext} context
        *
        * @example @lang js
@@ -144,6 +155,11 @@ const DruxtStore = ({ store }) => {
       /**
        * @name flushCollection
        * @mutator {object} flushCollection=collections Removes JSON:API collections from the Vuex state object.
+       * @param state
+       * @param root0
+       * @param root0.type
+       * @param root0.hash
+       * @param root0.prefix
        * @param {flushCollectionContext} context
        *
        * @example @lang js
@@ -163,6 +179,11 @@ const DruxtStore = ({ store }) => {
       /**
        * @name flushResource
        * @mutator {object} flushResource=resources Removes JSON:API resources from the Vuex state object.
+       * @param state
+       * @param root0
+       * @param root0.type
+       * @param root0.id
+       * @param root0.prefix
        * @param {flushResourceContext} context
        *
        * @example @lang js
@@ -188,6 +209,13 @@ const DruxtStore = ({ store }) => {
        * Get collection of resources.
        *
        * @name getCollection
+       * @param root0
+       * @param root0.type
+       * @param root0.query
+       * @param root0.prefix
+       * @param root0.bypassCache
+       * @param root0.commit
+       * @param root0.state
        * @action getCollection
        * @param {getCollectionContext} context
        * @return {object[]} Array of Drupal JSON:API resource data.
@@ -231,6 +259,15 @@ const DruxtStore = ({ store }) => {
        * - Returns cached result from Vuex store when available.
        *
        * @name getResource
+       * @param root0
+       * @param root0.type
+       * @param root0.id
+       * @param root0.query
+       * @param root0.prefix
+       * @param root0.bypassCache
+       * @param root0.commit
+       * @param root0.dispatch
+       * @param root0.state
        * @action getResource=resources
        * @param {getResourceContext} context
        * @return {object} The Drupal JSON:API resource.
@@ -243,7 +280,7 @@ const DruxtStore = ({ store }) => {
        * })
        */
       async getResource ({ commit, dispatch, state }, { type, id, query, prefix, bypassCache = false }) {
-        // Get the resource from the store if it's avaialble.
+        // Get the resource from the store if it's available.
         const storedResource = ((state.resources[type] || {})[id] || {})[prefix] ?
           { ...state.resources[type][id][prefix] }
           : null

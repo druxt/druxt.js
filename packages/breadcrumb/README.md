@@ -27,7 +27,7 @@ module.exports = {
   druxt: {
     baseUrl: 'https://demo-api.druxtjs.org',
   },
-}
+};
 ```
 
 ## Usage
@@ -41,6 +41,7 @@ The DruxtBreadcrumb component uses the Vue Router and DruxtRouter to build a lis
 ```
 
 The crumbs can be themed by providing a default scoped slot:
+
 ```vue
 <DruxtBreadcrumb>
   <template #default="{ crumbs }">
@@ -50,6 +51,7 @@ The crumbs can be themed by providing a default scoped slot:
 ```
 
 The DruxtBreadcrumb also provide a DruxtWrapper component for theming:
+
 ```vue
 <!-- DruxtBreadcrumbDefault.vue -->
 <template>
@@ -67,7 +69,7 @@ See the [DruxtBreadcrumb API documentation](https://druxtjs.org/api/packages/bre
 
 These options are available to all Druxt modules, in the `nuxt.config.js` file.
 
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `druxt.axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
-| `druxt.baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
+| Option          | Type     | Required | Default | Description                                                                  |
+| --------------- | -------- | -------- | ------- | ---------------------------------------------------------------------------- |
+| `druxt.axios`   | `object` | No       | `{}`    | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
+| `druxt.baseUrl` | `string` | Yes      | `null`  | Base URL for the Drupal installation.                                        |

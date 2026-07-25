@@ -13,11 +13,9 @@
 - Documentation: https://druxtjs.org/modules/blocks
 - Community Discord server: https://discord.druxtjs.org
 
-
 ## Install
 
 `$ npm install druxt-blocks`
-
 
 ### Nuxt.js
 
@@ -34,7 +32,7 @@ module.exports = {
       },
     },
   },
-}
+};
 ```
 
 ## Usage
@@ -53,7 +51,6 @@ The DruxtBlock component renders a Drupal JSON:API Block resource by ID or UUID.
 
 See the [DruxtBlock API Documentation](https://druxtjs.org/api/packages/blocks/components/DruxtBlock) for more information.
 
-
 ### DruxtBlockRegion
 
 The DruxtBlockRegion component renders all visible blocks for the specified theme region.
@@ -65,7 +62,6 @@ The DruxtBlockRegion component renders all visible blocks for the specified them
 ![Example DruxtBlockRegion component](https://druxtjs.org/images/druxt-block-region.png)
 
 See the [DruxtBlockRegion API Documentation](https://druxtjs.org/api/packages/blocks/components/DruxtBlockRegion) for more information.
-
 
 ### Theming
 
@@ -83,24 +79,22 @@ The module also provides Wrapper components with scoped slots for theming.
 
 See the [Druxt Theming guide](https://druxtjs.org/guide/theming) for more information.
 
-
 ## Options
 
 ### DruxtBlock options
 
 These options are specific to this module.
 
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `block.query.fields` | `string[]` | No | `[]` | An array of fields to filter all Block JSON:API queries. |
-
+| Option               | Type       | Required | Default | Description                                              |
+| -------------------- | ---------- | -------- | ------- | -------------------------------------------------------- |
+| `block.query.fields` | `string[]` | No       | `[]`    | An array of fields to filter all Block JSON:API queries. |
 
 ### Base Druxt options
 
 These options are available to all Druxt modules.
 
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
-| `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
-| `endpoint` | `string` | No | `/jsonapi` | JSON:API Endpoint of the Drupal installation. |
+| Option     | Type     | Required | Default    | Description                                                                  |
+| ---------- | -------- | -------- | ---------- | ---------------------------------------------------------------------------- |
+| `axios`    | `object` | No       | `{}`       | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
+| `baseUrl`  | `string` | Yes      | `null`     | Base URL for the Drupal installation.                                        |
+| `endpoint` | `string` | No       | `/jsonapi` | JSON:API Endpoint of the Drupal installation.                                |

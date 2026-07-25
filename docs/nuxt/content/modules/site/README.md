@@ -7,7 +7,6 @@ description: Out of the box Decoupled Drupal sites with Druxt.
 
 Using Drupal's built in Entity display modes and Field formatter system, Views, Blocks and more, the Druxt Site module provides the out of the box experience you expect.
 
-
 ## Features
 
 - **Router** with path alias and redirect support for Entity and Views pages.
@@ -18,20 +17,22 @@ Using Drupal's built in Entity display modes and Field formatter system, Views, 
 - **Breadcrumb**, **Menus** and more.
 - **File Proxy** enabled by default, and support for API proxying.
 
-* * *
+---
 
 ## Installation
 
 1. Download the module:
+
    ```sh
    npm i druxt-site
    ```
 
 2. Add the module to `nuxt.config.js`:
+
    ```js
    export default {
      modules: ['druxt-site'],
-   }
+   };
    ```
 
 ### Options
@@ -45,12 +46,12 @@ Using Drupal's built in Entity display modes and Field formatter system, Views, 
 
 - `druxt.router.theme`
 
-  Type: `string`  
+  Type: `string`
 
   Sets the default theme to be used by the DruxtSite component. Theme can be overridden by the `theme` property on the component.  
   If no value is provided, a fallback value will be determined from the JSON:API.
 
-* * *
+---
 
 ## Vue.js components
 

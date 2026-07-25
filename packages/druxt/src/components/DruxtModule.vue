@@ -90,6 +90,8 @@ export default {
   },
 
   /**
+   * @param root0
+   * @param root0.value
    * @property {ComponentData} component - The wrapper component and propsData to be rendered.
    * @property {object} model - The model object.
    */
@@ -150,7 +152,7 @@ export default {
     if (
       // No default template and wrapper isn't false OR
       (!hasDefaultTemplate && this.wrapper !== false) ||
-      // Default tempalte and wrapper is set
+      // Default template and wrapper is set
       (hasDefaultTemplate && this.wrapper)
     ) {
       options = this.getModuleComponents()
@@ -221,6 +223,8 @@ export default {
   methods: {
     /**
      * Sets the component to render a DruxtDebug error message.
+     * @param err
+     * @param context
      */
     error(err, context = {}) {
       // Build error details.
@@ -312,6 +316,7 @@ export default {
     /**
      * Get module propsData via modules `druxt.propsData()` callback.
      *
+     * @param wrapperProps
      * @example @lang js
      * {
      *   bar: 'foo',

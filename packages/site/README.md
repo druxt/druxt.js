@@ -5,7 +5,6 @@
 [![codecov](https://codecov.io/gh/druxt/druxt-site/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-site)
 [![npm](https://badgen.net/npm/v/druxt-site)](https://www.npmjs.com/package/druxt-site)
 
-
 > Out of the box Decoupled Drupal sites with Druxt.
 
 ## Links
@@ -24,16 +23,14 @@
 
 ```js
 module.exports = {
-  modules: [
-    'druxt-site'
-  ],
+  modules: ['druxt-site'],
   druxt: {
-    baseUrl: 'https://demo-api.druxtjs.org'
-  }
-}
+    baseUrl: 'https://demo-api.druxtjs.org',
+  },
+};
 ```
 
-2. Add the `DruxtSite` component to your layout:
+1. Add the `DruxtSite` component to your layout:
 
 ```vue
 <template>
@@ -47,8 +44,8 @@ module.exports = {
 
 These options are available to all Druxt modules.
 
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
-| `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
-| `endpoint` | `string` | No | `/jsonapi` | JSON:API Endpoint of the Drupal installation. |
+| Option     | Type     | Required | Default    | Description                                                                  |
+| ---------- | -------- | -------- | ---------- | ---------------------------------------------------------------------------- |
+| `axios`    | `object` | No       | `{}`       | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
+| `baseUrl`  | `string` | Yes      | `null`     | Base URL for the Drupal installation.                                        |
+| `endpoint` | `string` | No       | `/jsonapi` | JSON:API Endpoint of the Drupal installation.                                |

@@ -8,6 +8,6 @@ demonstration backend.
 
 ## Try it out
 
-```
+```bash
 yarn && yarn dev
 ```

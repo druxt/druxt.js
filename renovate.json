@@ -1,27 +1,46 @@
 {
-  "extends": [
-    "@nuxtjs"
-  ],
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "baseBranches": ["develop"],
+  "automerge": true,
+  "rangeStrategy": "bump",
+  "dependencyDashboard": true,
+  "pinDigests": true,
+  "branchPrefix": "deps/",
   "labels": ["dependencies"],
+  "enabledManagers": ["github-actions", "npm"],
   "packageRules": [
     {
-      "groupName": "examples",
-      "matchPaths": ["examples/**"]
+      "description": "Freeze the build-stack boundary packages (Node, Yarn, Vue, Nuxt, and core build/lint/test tooling) — these are pinned intentionally and bumped only as part of a deliberate, coordinated upgrade, not routine automation.",
+      "matchManagers": ["npm"],
+      "matchPackageNames": [
+        "node",
+        "yarn",
+        "siroc",
+        "vue",
+        "vue-template-compiler",
+        "nuxt",
+        "jest",
+        "eslint",
+        "@commitlint/cli",
+        "@commitlint/config-conventional",
+        "@nuxtjs/storybook",
+        "@tailwindcss/typography",
+        "renovate"
+      ],
+      "enabled": false
     },
     {
-      "groupName": "eslint",
-      "matchPackagePatterns": ["eslint"]
+      "description": "Disable all major-version bumps — majors require manual review, not automated merging.",
+      "matchManagers": ["npm", "github-actions"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     },
     {
-      "groupName": "jest",
-      "matchPackagePatterns": ["jest"]
+      "description": "Group all remaining updates into a single PR.",
+      "matchPackageNames": ["*"],
+      "groupName": "all dependencies",
+      "groupSlug": "all"
     }
-  ],
-  "ignoreDeps": [
-    "@nuxtjs/storybook",
-    "@commitlint/cli",
-    "@commitlint/config-conventional",
-    "@tailwindcss/typography",
-    "renovate"
   ]
 }

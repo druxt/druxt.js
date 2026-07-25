@@ -11,23 +11,25 @@ The Schema module uses the Drupal's Display mode configuration JSON:API data to 
 - **Configurable schema filter**
 - **View and Form schemas**
 
-* * *
+---
 
 ## Installation
 
 1. Download the module:
+
    ```sh
    npm i druxt-schema
    ```
 
 2. Add the module to `nuxt.config.js`:
+
    ```js
    export default {
      modules: ['druxt-schema'],
-   }
+   };
    ```
 
-* * *
+---
 
 ## Settings
 
@@ -48,10 +50,10 @@ export default {
         'media--image--square--view',
         // Or use a regular expression.
         '.*?--form',
-      ]
-    }
-  }
-}
+      ],
+    },
+  },
+};
 ```
 
-* * *
+---

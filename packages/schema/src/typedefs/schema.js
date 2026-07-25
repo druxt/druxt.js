@@ -53,7 +53,7 @@
  *     ...
  *   },
  *   id: 'node--page--default--view',
- *   isValud: true,
+ *   isValid: true,
  *   resourceType: 'node--page',
  *   schema: Schema { }
  * }

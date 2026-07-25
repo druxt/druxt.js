@@ -14,23 +14,25 @@ description: Drupal Display Mode powered Entity, Form and Field Druxt components
 - **Druxt Router** integration
 - **@nuxtjs/Storybook** integration
 
-* * *
+---
 
 ## Installation
 
 1. Download the module:
+
    ```sh
    npm i druxt-entity
    ```
 
 2. Add the module to `nuxt.config.js`:
+
    ```js
    export default {
      modules: ['druxt-entity'],
-   }
+   };
    ```
 
-* * *
+---
 
 ## Vue.js Components
 
@@ -41,11 +43,7 @@ Renders a Drupal Content Entity by JSON:API resource type, UUID, view mode and s
 Fields are rendered as [DruxtField](/api/packages/entity/components/DruxtField) components, based on the Drupal display mode configuration.
 
 ```vue
-<DruxtEntity
-  :type="resourceType"
-  :uuid="uuid"
-  :mode="displayMode"
-/>
+<DruxtEntity :type="resourceType" :uuid="uuid" :mode="displayMode" />
 ```
 
 - For more details, refer to the [DruxtEntity component API documentation](/api/packages/entity/components/DruxtEntity).
@@ -68,7 +66,7 @@ Renders a Drupal Content Entity form with submission and validation support.
 
 - For more details, refer to the [DruxtEntityForm component API documentation](/api/packages/entity/components/DruxtEntityForm).
 
-* * *
+---
 
 ## Settings
 
@@ -81,6 +79,7 @@ Entity query settings can be provided to include related resources and filter th
 - **schema**: Boolean, if `true` fields will be populated by the Drupal Display schema information.
 
 _Example: Wrapper component with Query settings:_
+
 ```vue
 <script>
 export default {
@@ -88,9 +87,9 @@ export default {
     query: {
       fields: ['title', 'path'],
       schema: true,
-    }
-  }
-}
+    },
+  },
+};
 </script>
 ```
 
@@ -105,8 +104,8 @@ _Example: DruxtEntity with settings property:_
         fields: [
           ['file--file', ['uri']],
           ['media--image', []],
-        ]
-      }
+        ],
+      },
     }"
     type="node--recipe"
     :uuid="uuid"
@@ -115,6 +114,7 @@ _Example: DruxtEntity with settings property:_
 ```
 
 The default behaviour can be set via `nuxt.config.js`:
+
 ```js
 druxt: {
   entity: {
@@ -126,7 +126,7 @@ druxt: {
 }
 ```
 
-* * *
+---
 
 ## Router support
 
@@ -134,12 +134,12 @@ The DruxtEntity module provides a **DruxtRouterEntity** component that is used b
 
 - For more details, see the [Druxt Router module](/modules/router).
 
-* * *
+---
 
 ## Storybook
 
-DruxtEntity provides zero-config, auto generated Storybook integration with a live data connnection to your Druxt backend.
+DruxtEntity provides zero-config, auto generated Storybook integration with a live data connection to your Druxt backend.
 
 - For more details, see the [Storybook guide](/guide/storybook).
 
-* * *
+---

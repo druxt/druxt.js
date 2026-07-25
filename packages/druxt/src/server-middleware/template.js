@@ -76,11 +76,11 @@ app.post('/add', async (req, res) => {
         }
       }
     }
-    const formatRecrusive = (item, depth = 2) => {
+    const formatRecursive = (item, depth = 2) => {
       for (const [key, value] of Object.entries(item)) {
         if (typeof value === 'object') {
           exports.push(`${" ".repeat(depth * 2)}${key}: {`)
-          formatRecrusive(value, depth + 1)
+          formatRecursive(value, depth + 1)
           exports.push(`${" ".repeat(depth * 2)}},`)
         }
         else if (typeof value === 'string') {
@@ -90,7 +90,7 @@ app.post('/add', async (req, res) => {
     }
 
     exports.push('\r\n  druxt: {')
-    formatRecrusive(druxt)
+    formatRecursive(druxt)
     exports.push('  },')
   }
 

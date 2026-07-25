@@ -429,6 +429,10 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param context.displayId
+     * @param context.uuid
+     * @param context.view
+     * @param context.viewId
      * @returns {ComponentOptions}
      */
     componentOptions: ({ displayId, uuid, view, viewId }) => ([
@@ -461,6 +465,7 @@ export default {
 
     /**
      * Fetch JSON:API Views results.
+     * @param settings
      */
     async fetchData(settings) {
       const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
@@ -474,7 +479,7 @@ export default {
         // Build query.
         const query = this.getQuery(settings)
 
-        // Execute the resquest.
+        // Execute the request.
         this.resource = await this.getResults({
           displayId: this.displayId,
           prefix: this.lang,
@@ -489,6 +494,7 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param vm
      * @returns {PropsData}
      */
     propsData: (vm) => ({
@@ -502,6 +508,8 @@ export default {
 
     /**
      * Component settings.
+     * @param context
+     * @param wrapperSettings
      */
     settings: (context, wrapperSettings) => {
       const { $druxt, settings } = context
@@ -534,6 +542,7 @@ export default {
      * - attachments_after
      * - default (all of the above)
      *
+     * @param h
      * @example <caption>DruxtView**ViewId**.vue</caption> @lang vue
      * <template>
      *   <div>
@@ -606,7 +615,7 @@ export default {
         scopedSlots.attachments_before = (attrs) => this.attachments_before.map((displayId) => h('DruxtView', {
           attrs: { ...attrs },
           key: displayId,
-          ref: 'attachements_before',
+          ref: 'attachments_before',
           props: {
             displayId,
             langcode: this.lang,
@@ -663,7 +672,7 @@ export default {
         scopedSlots.attachments_after = (attrs) => this.attachments_after.map((displayId) => h('DruxtView', {
           attrs: { ...attrs },
           key: displayId,
-          ref: 'attachements_after',
+          ref: 'attachments_after',
           props: {
             displayId,
             langcode: this.lang,
