@@ -28,7 +28,7 @@ Find more details in the [Guide](/guide)
 
 ## Community support
 
-Druxt is an open source project, built by the community for the community.
+Druxt is an open-source project, built by the community for the community.
 
 Find support or get involved in building Druxt via the community channels:
 

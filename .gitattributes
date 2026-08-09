@@ -1,4 +1,7 @@
-# Exclude dev-only files from npm distribution archives.
+# Exclude dev-only files from Git archives (git archive / GitHub source
+# downloads). export-ignore has no effect on npm pack/publish - that's
+# controlled per-package by "files" in package.json (see each package's
+# package.json for its own allowlist).
 
 # Agent integration
 AGENTS.md          export-ignore

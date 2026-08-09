@@ -104,6 +104,7 @@ export default {
     entity: null,
   }),
   async fetch() {
+    const id = this.$route.params.id;
     this.entity = await this.$store.dispatch('druxt/getResource', { type: 'node--article', id });
   },
 };

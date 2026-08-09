@@ -30,7 +30,7 @@ green. All 11 packages (`druxt`, `blocks`, `breadcrumb`, `entity`, `menu`,
 `router`, `schema`, `site`, `views`, `docgen`, `test-utils`) must produce their
 `dist/*.ssr.js` + `dist/*.esm.js` (docgen outputs `bin/druxt-docgen.js`).
 
-The build stack (Node 16, Yarn 3, jest 27, eslint 7, Vue 2.7, Nuxt 2, siroc) is
+The build stack (Node 16, Yarn 3, jest 29, eslint 7, Vue 2.7, Nuxt 2, siroc) is
 intentionally pinned — a future major upgrade (Node 18+, Vue 3, Nuxt 3/4) is a
 separate, deliberate effort, not something to drift into via routine dependency
 bumps. `renovate.json` freezes these packages from automated updates accordingly.
@@ -39,7 +39,8 @@ bumps. `renovate.json` freezes these packages from automated updates accordingly
 
 - `yarn build` — siroc build of all packages
 - `yarn test:unit` — jest (`NODE_OPTIONS=--unhandled-rejections=warn`)
-- `yarn lint` — eslint (airbnb-base) across `packages/*/src`
+- `yarn lint` — eslint (`eslint:recommended` + `plugin:nuxt/recommended` +
+  `plugin:vue/recommended`, matching every sibling package) across `packages/*/src`
 - `yarn lint:md` / `yarn lint:cspell` / `yarn lint:format` — markdownlint / cspell / prettier
 - `yarn lint:renovate` — validate `renovate.json`
 - `yarn bundlewatch` — bundle size guard (`packages/**/dist/*.js` ≤ 50kb)

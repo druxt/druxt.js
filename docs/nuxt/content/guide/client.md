@@ -102,10 +102,8 @@ _Get all recipes._
 
 ```js
 druxt.getCollectionAll('node--recipe').then((collections) => {
-  for (i in collections) {
-    const collection = collections[i];
-    for (j in collection.data) {
-      const resource = collection.data[j];
+  for (const collection of collections) {
+    for (const resource of collection.data) {
       // Do the thing.
     }
   }

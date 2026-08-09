@@ -75,11 +75,11 @@ Alternatively, the behaviour can be set directly on a Menu wrapper component:
 export default {
   druxt: {
     query: {
-      fields: ['description'. 'options'],
+      fields: ['description', 'options'],
       requiredOnly: false,
-    }
-  }
-}
+    },
+  },
+};
 </script>
 ```
 
@@ -95,7 +95,7 @@ The DruxtMenu module provides a **DruxtBlockSystemMenuBlock** component that is 
 
 ## Storybook
 
-DruxtMenu provides zero-config, auto generated Storybook integration with a live data connection to your Druxt backend.
+DruxtMenu provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
 
 - For more details, see the [Storybook guide](/guide/storybook).
 

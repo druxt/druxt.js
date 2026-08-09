@@ -138,7 +138,7 @@ The DruxtEntity module provides a **DruxtRouterEntity** component that is used b
 
 ## Storybook
 
-DruxtEntity provides zero-config, auto generated Storybook integration with a live data connection to your Druxt backend.
+DruxtEntity provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
 
 - For more details, see the [Storybook guide](/guide/storybook).
 

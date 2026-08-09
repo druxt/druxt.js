@@ -6,7 +6,7 @@ packages/*/nuxt/
 coverage/
 docs/nuxt/node_modules/
 docs/nuxt/.nuxt/
-docs/content/api/
+docs/nuxt/content/api/
 examples/*/node_modules/
 examples/*/.nuxt/
 CHANGELOG.md

@@ -23,7 +23,7 @@ Add module to `nuxt.config.js`
 
 ```js
 module.exports = {
-  modules: [...'druxt-schema'],
+  modules: ['druxt-schema'],
 
   druxt: {
     baseUrl: 'https://example.com',

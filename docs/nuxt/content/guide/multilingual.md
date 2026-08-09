@@ -9,7 +9,7 @@ Druxt has support for multilingual content in all modules and in various forms:
 
 - The DruxtClient and Store can fetch translated resources and collections
 - Druxt module components can specify language with the **langcode** prop
-- Theming can be done in language specific components
+- Theming can be done in language-specific components
 
 ---
 
@@ -81,6 +81,6 @@ _Example: Rendering a DruxtEntity component in spanish_
 
 ## Language theme components
 
-All Druxt modules provide language specific theme component options, allowing for language specific customisations.
+All Druxt modules provide language-specific theme component options, allowing for language-specific customisations.
 
 _Example: `~/components/druxt/entity/node/page/Es.vue`_

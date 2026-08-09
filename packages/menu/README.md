@@ -40,7 +40,7 @@ module.exports = {
 
 ### DruxtMenu component
 
-The DruxtMenu component intelligently loads in your Drupal menu using the built in JSON:API as well as the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module.
+The DruxtMenu component intelligently loads in your Drupal menu using the built-in JSON:API as well as the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module.
 
 ```vue
 <DruxtMenu name="main" :depth="1" />
@@ -84,7 +84,7 @@ These options are specific to this module.
 | ------------------------- | ---------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
 | `menu.jsonApiMenuItems`   | `boolean`  | No       | `false` | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. |
 | `menu.query.fields`       | `string[]` | No       | `false` | An array of fields to filter all JSON:API Menu queries.                                                  |
-| `menu.query.requiredOnly` | `boolean`  | No       | `false` | Whether to automatically filter to module defined minimum required fields.                               |
+| `menu.query.requiredOnly` | `boolean`  | No       | `false` | Whether to automatically filter to module-defined minimum required fields.                               |
 
 ### Base Druxt options
 

@@ -93,7 +93,7 @@ lint:yaml:
 lint:markdown:
   stage: lint
   interruptible: true
-  image: node:16.20.2
+  image: node:16.20.1
   script:
     - section_start "md-lint" "Linting Markdown files"
     - corepack enable
@@ -104,7 +104,7 @@ lint:markdown:
 lint:cspell:
   stage: lint
   interruptible: true
-  image: node:16.20.2
+  image: node:16.20.1
   script:
     - section_start "cspell" "Spell checking project files"
     - corepack enable
@@ -115,7 +115,7 @@ lint:cspell:
 lint:js:
   stage: lint
   interruptible: true
-  image: node:16.20.2
+  image: node:16.20.1
   script:
     - section_start "eslint" "Linting JS/Vue sources"
     - corepack enable
@@ -130,7 +130,7 @@ lint:js:
 test:unit:
   stage: test
   interruptible: true
-  image: node:16.20.2
+  image: node:16.20.1
   needs: []
   script:
     - section_start "jest" "Running unit tests"
@@ -145,7 +145,6 @@ test:unit:
       - reports/junit/
     reports:
       junit: reports/junit/junit.xml
-  allow_failure: true
 
 #
 # --- Preview Stage ---
@@ -158,7 +157,7 @@ test:unit:
 pages:preview:
   stage: preview
   interruptible: true
-  image: node:16.20.2
+  image: node:16.20.1
   needs: []
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'

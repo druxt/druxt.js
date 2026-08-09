@@ -87,7 +87,7 @@ druxt: {
 
 ## Storybook
 
-DruxtBlocks provides zero-config, auto generated Storybook integration with a live data connection to your Druxt backend.
+DruxtBlocks provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
 
 ![DruxtBlocks Storybook integration](/images/druxt-block-storybook.png)
 

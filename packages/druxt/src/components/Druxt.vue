@@ -97,7 +97,7 @@ export default {
    *
    * @param root0
    * @param root0.value
-   * @property {objects} components - The module and wrapper components settings.
+   * @property {object} component - The module and wrapper component settings.
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({

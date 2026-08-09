@@ -52,7 +52,7 @@ Find support or get involved in building Druxt via the community channels:
 
 ## Contributing
 
-Druxt is an open source project, built by the community for the community.
+Druxt is an open-source project, built by the community for the community.
 
 See the [Contributing guide](./CONTRIBUTING.md) for details on how to #get-involved.
 
