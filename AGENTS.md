@@ -75,7 +75,7 @@ because a `@param` line that exists but says nothing is strictly worse than a
 missing one - it looks intentional and finished when it isn't.
 
 If a param is legitimately hard to give a real one-line description, prefer a
-named `@typedef` (see `addCollectionContext` and siblings in
+named `@typedef` (see `addCollectionPayload` and siblings in
 `packages/druxt/src/stores/druxt.js`, or `PropsData`/`ComponentOptions` in
 `packages/blocks/src/components/DruxtBlockRegion.vue`) over a half-documented
 inline breakdown. Consistency matters here more than most repos: this docs

@@ -178,8 +178,8 @@ pages:preview:
     - yarn install --immutable
     - yarn generate
     - section_end "docs-build"
-  publish: docs/nuxt/dist
   pages:
+    publish: docs/nuxt/dist
     path_prefix: '$CI_MERGE_REQUEST_IID'
     expire_in: 1 week
   environment:
