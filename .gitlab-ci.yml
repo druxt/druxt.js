@@ -218,6 +218,7 @@ docs:review:
   timeout: 1h
   rules:
     - when: manual
+      allow_failure: true
   script:
     - section_start "docs-build" "Building druxtjs.org for review"
     - corepack enable

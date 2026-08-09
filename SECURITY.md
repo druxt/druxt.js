@@ -10,9 +10,10 @@ Report vulnerabilities through GitHub's private vulnerability reporting:
 
 (Repo → **Security** → **Report a vulnerability**.)
 
-If GitHub Security Advisories are unavailable, contact the maintainer directly via
-the [druxt.org](https://druxtjs.org) community channels (Discord) and request a
-private reporting path.
+If GitHub Security Advisories are unavailable, contact a maintainer privately via
+Discord DM — do **not** post vulnerability details in public channels. Use the
+[druxt.org](https://druxtjs.org) community Discord to find a maintainer, then
+continue the conversation in direct messages.
 
 Include if possible:
 
@@ -27,10 +28,11 @@ discussion.
 
 ## Supply-chain posture
 
-- **GitHub Actions** used in `.github/workflows/*.yml` are pinned to floating
-  majors for readability but **Rewritten by Renovate to SHA digests** on its next
-  run (`renovate.json` → `pinDigests: true`). This binds CI runs to immutable
-  action revisions.
+- **GitHub Actions** used in `.github/workflows/*.yml` are pinned to full commit
+  SHAs, not floating tags. Renovate keeps those pins current
+  (`renovate.json` → `pinDigests: true`) by rewriting the committed SHAs when
+  newer action releases arrive. The committed SHAs are immutable between Renovate
+  runs, so CI executes exactly the action revisions that were reviewed.
 - **GitLab CI** runs the `Security/Secret-Detection.gitlab-ci.yml` template on
   every pipeline (branch push and merge-request event); commits containing known
   secret patterns are blocked.
