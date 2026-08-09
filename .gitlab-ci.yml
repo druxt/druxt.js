@@ -153,6 +153,12 @@ test:unit:
 # parallel deployment, so reviewers can see how inline-doc/API changes render
 # before merging. Production (main) still deploys via Lagoon; this is
 # MR-only and never touches that pipeline.
+#
+# Disabled for now: this GitLab instance doesn't have Pages actually reachable
+# (no pages_external_url / exposed port / proxy host - see
+# localhost/localhost#2 for what's missing). Kept defined, not deleted, so
+# it's a one-line flip back to enabled once that's fixed. Until then, use the
+# docs:review job below for an on-demand look at a build.
 
 pages:preview:
   stage: preview
@@ -160,7 +166,8 @@ pages:preview:
   image: node:16.20.1
   needs: []
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - when: never
+    # - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   script:
     - section_start "docs-build" "Building druxtjs.org for MR preview"
     - corepack enable
@@ -186,8 +193,9 @@ pages:preview:stop:
   interruptible: true
   needs: []
   rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      when: manual
+    - when: never
+    # - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    #   when: manual
   variables:
     GIT_STRATEGY: none
   environment:
@@ -195,3 +203,43 @@ pages:preview:stop:
     action: stop
   script:
     - echo "Stopping preview deployment for MR $CI_MERGE_REQUEST_IID"
+
+# Manual, on-demand alternative to pages:preview while GitLab Pages isn't
+# reachable: builds docs/nuxt and serves the static output through a
+# Cloudflare quick tunnel (no account/token needed) for as long as the job
+# runs. Click "Run" on this job in the pipeline view, then watch its log for
+# the https://*.trycloudflare.com URL. Stop the job (or let it time out) when
+# you're done reviewing - the tunnel dies with it.
+docs:review:
+  stage: preview
+  interruptible: false
+  image: node:16.20.1
+  needs: []
+  timeout: 1h
+  rules:
+    - when: manual
+  script:
+    - section_start "docs-build" "Building druxtjs.org for review"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - cd docs/nuxt
+    - yarn install --immutable
+    - yarn generate
+    - section_end "docs-build"
+    - section_start "tunnel" "Serving docs/nuxt/dist through a Cloudflare quick tunnel"
+    - |
+      arch="$(uname -m)"
+      case "$arch" in
+        aarch64|arm64) cf_arch=arm64 ;;
+        x86_64) cf_arch=amd64 ;;
+        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+      esac
+      curl -sL "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${cf_arch}" -o /usr/local/bin/cloudflared
+      chmod +x /usr/local/bin/cloudflared
+    - npx --yes serve -l 8080 dist &
+    - sleep 3
+    - echo "Tunnel starting - the review URL will appear below as https://*.trycloudflare.com"
+    - cloudflared tunnel --url http://localhost:8080 --no-autoupdate
+    - section_end "tunnel"

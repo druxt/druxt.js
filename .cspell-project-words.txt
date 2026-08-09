@@ -1,10 +1,13 @@
+aarch
 Autobuild
 automerge
 autobuild
+autoupdate
 axios
 behaviour
 bundlewatch
 cimg
+cloudflared
 codecov
 Colour
 consola
