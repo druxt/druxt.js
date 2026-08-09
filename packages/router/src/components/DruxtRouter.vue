@@ -48,11 +48,7 @@ export default {
    * This can be disabled by setting the `druxt.router.middleware` option to
    * `false` in `nuxt.config.js`
    *
-   * @param root0
-   * @param root0.$druxt
-   * @param root0.redirect
-   * @param root0.route
-   * @param root0.store
+   * @param {object} root0.$druxt - The Druxt Nuxt context plugin instance.
    * @example @lang js
    * export default {
    *   druxt: {
@@ -109,8 +105,6 @@ export default {
   },
 
   /**
-   * @param root0
-   * @param root0.value
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({
@@ -202,8 +196,6 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.module
-     * @param context.route
      * @returns {ComponentOptions}
      */
     componentOptions: ({ module, route }) => [
@@ -241,9 +233,7 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.$route
-     * @param context.path
-     * @param context.model
+     * @param {object} context.$route - The current Vue Router route object.
      * @returns {PropsData}
      */
     propsData: ({ $route, path, model }) => ({
@@ -257,7 +247,6 @@ export default {
      * - **debug**: A Debug component with a Path override field.
      * - **default**: Default error handling.
      *
-     * @param h
      * @example <caption>DruxtRouter**Module**.vue</caption> @lang vue
      * <template>
      *   <div>

@@ -101,9 +101,6 @@ export default {
   },
 
   /**
-   * @param root0
-   * @param root0.type
-   * @param root0.value
    * @property {object} model - The model object.
    * @property {object} schema - The DruxtSchema object.
    */
@@ -128,8 +125,6 @@ export default {
     /**
      * The Entity object.
      *
-     * @param root0
-     * @param root0.model
      * @return {object}.
      */
     entity: ({ model }) => ({ ...model }),
@@ -137,13 +132,6 @@ export default {
     /**
      * Entity fields based on Display mode.
      *
-     * @param root0
-     * @param root0.errors
-     * @param root0.isEmpty
-     * @param root0.lang
-     * @param root0.model
-     * @param root0.schema
-     * @param root0.schemaType
      * @return {object}
      */
     fields: ({ errors, isEmpty, lang, model, schema, schemaType }) => {
@@ -289,10 +277,6 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.mode
-     * @param context.schema
-     * @param context.schemaType
-     * @param context.type
      * @returns {ComponentOptions}
      */
     componentOptions: ({ mode, schema, schemaType, type }) => ([
@@ -333,7 +317,6 @@ export default {
 
     /**
      * Fetches the content entity JSON:API resource.
-     * @param settings
      */
     async fetchData(settings) {
       if (!this.type) return
@@ -370,17 +353,12 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.fields
-     * @param context.model
-     * @param context.schema
      * @returns {PropsData}
      */
     propsData: ({ fields, model, schema }) => ({ entity: model, fields, schema, value: model }),
 
     /**
      * Component settings.
-     * @param context
-     * @param wrapperSettings
      */
     settings: (context, wrapperSettings) => {
       const { $druxt, settings } = context
@@ -410,7 +388,6 @@ export default {
      *
      * Additionally, the `default` slot will render all fields as per the
      *
-     * @param h
      * @example <caption>DruxtEntity**ResourceType**.vue</caption> @lang vue
      * <template>
      *   <div>

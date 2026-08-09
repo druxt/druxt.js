@@ -95,8 +95,6 @@ export default {
   /**
    * Vue.js Data object.
    *
-   * @param root0
-   * @param root0.value
    * @property {object} component - The module and wrapper component settings.
    * @property {object} model - The model object.
    */

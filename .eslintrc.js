@@ -14,7 +14,9 @@ module.exports = {
     'jsdoc/require-returns': 'off',
     'jsdoc/require-param': 'warn',
     'jsdoc/check-param-names': 'warn',
-    'jsdoc/valid-types': 'warn'
+    'jsdoc/valid-types': 'warn',
+    'jsdoc/require-param-type': 'error',
+    'jsdoc/require-param-description': 'error'
   },
   overrides: [
     {

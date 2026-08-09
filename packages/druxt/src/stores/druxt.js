@@ -68,13 +68,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name addCollection
        * @mutator {object} addCollection=collections Adds a JSON:API collection to the Vuex state object.
-       * @param state
-       * @param root0
-       * @param root0.collection
-       * @param root0.type
-       * @param root0.hash
-       * @param root0.prefix
-       * @param {addCollectionContext} context
+       * @param {addCollectionContext} context - The mutation context.
        *
        * @example @lang js
        * this.$store.commit('druxt/addCollection', { collection, type, hash })
@@ -106,12 +100,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name addResource
        * @mutator {object} addResource=resources Adds a JSON:API resource to the Vuex state object.
-       * @param state
-       * @param root0
-       * @param root0.prefix
-       * @param root0.resource
-       * @param root0.hash
-       * @param {addResourceContext} context
+       * @param {addResourceContext} context - The mutation context.
        *
        * @example @lang js
        * this.$store.commit('druxt/addResource', { resource })
@@ -155,12 +144,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name flushCollection
        * @mutator {object} flushCollection=collections Removes JSON:API collections from the Vuex state object.
-       * @param state
-       * @param root0
-       * @param root0.type
-       * @param root0.hash
-       * @param root0.prefix
-       * @param {flushCollectionContext} context
+       * @param {flushCollectionContext} context - The mutation context.
        *
        * @example @lang js
        * // Flush all collections.
@@ -179,12 +163,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name flushResource
        * @mutator {object} flushResource=resources Removes JSON:API resources from the Vuex state object.
-       * @param state
-       * @param root0
-       * @param root0.type
-       * @param root0.id
-       * @param root0.prefix
-       * @param {flushResourceContext} context
+       * @param {flushResourceContext} context - The mutation context.
        *
        * @example @lang js
        * // Flush all resources.
@@ -209,15 +188,8 @@ const DruxtStore = ({ store }) => {
        * Get collection of resources.
        *
        * @name getCollection
-       * @param root0
-       * @param root0.type
-       * @param root0.query
-       * @param root0.prefix
-       * @param root0.bypassCache
-       * @param root0.commit
-       * @param root0.state
        * @action getCollection
-       * @param {getCollectionContext} context
+       * @param {getCollectionContext} context - The action context.
        * @return {object[]} Array of Drupal JSON:API resource data.
        *
        * @example @lang js
@@ -259,17 +231,8 @@ const DruxtStore = ({ store }) => {
        * - Returns cached result from Vuex store when available.
        *
        * @name getResource
-       * @param root0
-       * @param root0.type
-       * @param root0.id
-       * @param root0.query
-       * @param root0.prefix
-       * @param root0.bypassCache
-       * @param root0.commit
-       * @param root0.dispatch
-       * @param root0.state
        * @action getResource=resources
-       * @param {getResourceContext} context
+       * @param {getResourceContext} context - The action context.
        * @return {object} The Drupal JSON:API resource.
        *
        * @example @lang js

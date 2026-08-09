@@ -80,7 +80,7 @@ const DruxtRouterStore = ({ store }) => {
       /**
        * @name addRoute
        * @mutator {object} addRoute=routes Adds the supplied route to the Vuex state object.
-       * @param {object} context
+       * @param {object} context - The mutation context.
        * @param {string} context.path - The route path.
        * @param {object} context.route - The route object.
        *
@@ -164,7 +164,7 @@ const DruxtRouterStore = ({ store }) => {
        *
        * @name getEntity
        * @action getEntity=entities
-       * @param {object} query
+       * @param {object} query - The JSON:API resource query.
        * @return {object} The Drupal entity JSON:API resource data.
        *
        * @example @lang js
@@ -196,7 +196,7 @@ const DruxtRouterStore = ({ store }) => {
        * @param {object} context Object containing `druxtRouter.getResources()` parameters.
        * @param {string} context.resource - The JSON:API resource type.
        * @param {string|object} context.query - A JSON:API query string or object.
-       * @param {object} [context.options]
+       * @param {object} [context.options] - Additional request options.
        * @param {boolean} [context.options.all=false] - Load all results.
        * @return {object[]} Array of Drupal JSON:API resource data.
        *

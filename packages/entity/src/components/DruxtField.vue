@@ -86,8 +86,6 @@ export default {
   },
 
   /**
-   * @param root0
-   * @param root0.value
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({
@@ -187,7 +185,6 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.schema
      * @returns {ComponentOptions}
      */
     componentOptions: ({ schema }) => ([
@@ -200,10 +197,6 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.errors
-     * @param context.model
-     * @param context.relationship
-     * @param context.schema
      * @returns {PropsData}
      */
     propsData: ({ errors, model, relationship, schema }) => ({ errors, relationship, schema, value: model }),
@@ -222,7 +215,6 @@ export default {
      * A default slot is provided with debug information if Nuxt is in
      * development mode.
      *
-     * @param h
      * @example <caption>DruxtField**SchemaType**.vue</caption> @lang vue
      * <template>
      *   <div>

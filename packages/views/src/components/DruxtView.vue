@@ -429,10 +429,6 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.displayId
-     * @param context.uuid
-     * @param context.view
-     * @param context.viewId
      * @returns {ComponentOptions}
      */
     componentOptions: ({ displayId, uuid, view, viewId }) => ([
@@ -465,7 +461,6 @@ export default {
 
     /**
      * Fetch JSON:API Views results.
-     * @param settings
      */
     async fetchData(settings) {
       const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
@@ -494,7 +489,6 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param vm
      * @returns {PropsData}
      */
     propsData: (vm) => ({
@@ -508,8 +502,6 @@ export default {
 
     /**
      * Component settings.
-     * @param context
-     * @param wrapperSettings
      */
     settings: (context, wrapperSettings) => {
       const { $druxt, settings } = context
@@ -542,7 +534,6 @@ export default {
      * - attachments_after
      * - default (all of the above)
      *
-     * @param h
      * @example <caption>DruxtView**ViewId**.vue</caption> @lang vue
      * <template>
      *   <div>

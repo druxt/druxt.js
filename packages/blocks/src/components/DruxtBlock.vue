@@ -91,8 +91,6 @@ export default {
     /**
      * The Block entity data.
      *
-     * @param root0
-     * @param root0.resource
      * @return {object}
      */
     block: ({ resource }) => (resource || {}).data,
@@ -126,7 +124,6 @@ export default {
      * Provides the available component naming options for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.block
      * @returns {ComponentOptions}
      */
     componentOptions: ({ block }) => {
@@ -197,7 +194,6 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.block
      * @returns {PropsData}
      */
     propsData: ({ block }) => ({ block }),
@@ -208,7 +204,6 @@ export default {
      * A default slot is provided with debug information if Nuxt is in
      * development mode.
      *
-     * @param h
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {

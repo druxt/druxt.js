@@ -150,8 +150,6 @@ export default {
      * Provides the available component naming options for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.name
-     * @param context.theme
      * @returns {ComponentOptions}
      */
     componentOptions: ({ name, theme }) => [[name, theme], ['default']],
@@ -181,9 +179,6 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param context.blocks
-     * @param context.name
-     * @param context.theme
      * @returns {PropsData}
      */
     propsData: ({ blocks, name, theme }) => ({ blocks, name, theme }),
@@ -196,7 +191,6 @@ export default {
      *
      * The `default` slot will render all blocks, filtered by route visibility.
      *
-     * @param h
      * @return {ScopedSlots} The Scoped slots object.
      *
      * @example <caption>DruxtBlockRegion**Name**.vue</caption> @lang vue

@@ -228,7 +228,6 @@ class DruxtClient {
    *
    * @param {object} err - The error object
    *
-   * @param context
    * @throws {Error} A formatted error.
    */
   error(err, context = {}) {

@@ -87,10 +87,10 @@
   },
   "lint-staged": {
     "*.js": [
-      "eslint --fix"
+      "eslint --fix --fix-type problem,layout"
     ],
     "*.vue": [
-      "eslint --fix"
+      "eslint --fix --fix-type problem,layout"
     ],
     "*.{json,md,yml,yaml}": [
       "prettier --write"

@@ -45,6 +45,42 @@ bumps. `renovate.json` freezes these packages from automated updates accordingly
 - `yarn lint:renovate` — validate `renovate.json`
 - `yarn bundlewatch` — bundle size guard (`packages/**/dist/*.js` ≤ 50kb)
 
+## Inline documentation (JSDoc) → API docs
+
+Every JS/Vue source file's JSDoc is scraped by `packages/docgen` (`yarn
+build:docs`) into Markdown under `docs/nuxt/content/api/`, then rendered as
+part of the [druxtjs.org](https://druxtjs.org) API reference. **The JSDoc you
+write is the public documentation, verbatim** - there's no separate editing
+pass, so a sloppy `@param` renders as a sloppy docs page.
+
+The rule, and the reason it exists: **every `@param` line must have both a
+`{type}` and a `- description`, with no exceptions** (a `{typedef}` reference
+like `@param {addCollectionContext} context - The mutation context.` counts -
+you don't have to re-enumerate a typedef's own properties inline). This is
+enforced by ESLint (`jsdoc/require-param-type` and
+`jsdoc/require-param-description`, both `error` in `.eslintrc.js`) - `yarn
+lint` fails on a bare `@param context.name` with no type/description.
+
+This rule exists because of a real regression: an earlier pass added bare
+`@param context.name` / `@param context.theme` stub lines across ~10 packages
+(no type, no description) to silence the separate `jsdoc/require-param`
+_warning_ ("this destructured property isn't mentioned at all"). The intent
+was reasonable, but the execution left the properties _mentioned_ with
+nothing to say about them, which renders as empty Type/Description table
+cells - worse than not mentioning them at all. All of it was reverted;
+`jsdoc/require-param`/`jsdoc/check-param-names` are left at `warn` (documenting
+every destructured property is aspirational, not everywhere is there yet) but
+`require-param-type`/`require-param-description` are `error` specifically
+because a `@param` line that exists but says nothing is strictly worse than a
+missing one - it looks intentional and finished when it isn't.
+
+If a param is legitimately hard to give a real one-line description, prefer a
+named `@typedef` (see `addCollectionContext` and siblings in
+`packages/druxt/src/stores/druxt.js`, or `PropsData`/`ComponentOptions` in
+`packages/blocks/src/components/DruxtBlockRegion.vue`) over a half-documented
+inline breakdown. Consistency matters here more than most repos: this docs
+site is the entire public-facing reference for the framework.
+
 ## Package layout
 
 | Path                  | npm name           | Role                                       |
