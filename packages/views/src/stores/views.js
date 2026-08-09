@@ -41,7 +41,7 @@ const DruxtViewsStore = ({ store }) => {
       /**
        * @name addResults
        * @mutator {object} addResults=results Adds JSON:API Views results to the Vuex state object.
-       * @param {addResultsContext} context - The mutation context.
+       * @param {addResultsPayload} payload - The mutation payload.
        *
        * @example @lang js
        * this.$store.commit('druxt/views/addResults', { results, viewId, displayId, prefix, hash })
@@ -58,7 +58,7 @@ const DruxtViewsStore = ({ store }) => {
       /**
        * @name flushResults
        * @mutator {object} flushResults=results Removes JSON:API Views results from the Vuex state object.
-       * @param {flushResultsContext} context - The mutation context.
+       * @param {flushResultsPayload} payload - The mutation payload.
        *
        * @example @lang js
        * // Flush all results.
@@ -132,7 +132,7 @@ export { DruxtViewsStore }
 /**
  * Parameters for the `addResults` mutation.
  *
- * @typedef {object} addResultsContext
+ * @typedef {object} addResultsPayload
  *
  * @param {array} results - The Drupal JSON:API Views results.
  * @param {string} viewId - The Drupal View ID.
@@ -153,7 +153,7 @@ export { DruxtViewsStore }
 /**
  * Parameters for the `flushResults` mutation.
  *
- * @typedef {object} flushResultsContext
+ * @typedef {object} flushResultsPayload
  *
  * @param {string} [viewId] - The Drupal View ID.
  * @param {string} [displayId] - The Drupal View Display ID.

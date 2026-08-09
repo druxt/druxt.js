@@ -55,7 +55,7 @@ pass, so a sloppy `@param` renders as a sloppy docs page.
 
 The rule, and the reason it exists: **every `@param` line must have both a
 `{type}` and a `- description`, with no exceptions** (a `{typedef}` reference
-like `@param {addCollectionContext} context - The mutation context.` counts -
+like `@param {addCollectionPayload} payload - The mutation payload.` counts -
 you don't have to re-enumerate a typedef's own properties inline). This is
 enforced by ESLint (`jsdoc/require-param-type` and
 `jsdoc/require-param-description`, both `error` in `.eslintrc.js`) - `yarn

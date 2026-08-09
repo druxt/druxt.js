@@ -55,7 +55,7 @@ const DruxtMenuStore = ({ store }) => {
       /**
        * @name flushEntities
        * @mutator {object} flushEntities=entities Removes JSON:API menu item entities from the Vuex state object.
-       * @param {flushEntitiesContext} context - The mutation context.
+       * @param {flushEntitiesPayload} payload - The mutation payload.
        *
        * @example @lang js
        * // Flush all menu entities.
@@ -139,7 +139,7 @@ export { DruxtMenuStore }
 /**
  * Parameters for the `flushEntities` mutation.
  *
- * @typedef {object} flushEntitiesContext
+ * @typedef {object} flushEntitiesPayload
  *
  * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  *
