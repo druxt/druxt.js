@@ -114,8 +114,16 @@ This repo uses GitFlow:
 When starting work, branch from `develop`:
 
 ```bash
-git checkout develop && git pull && git checkout -b feat/<short-desc>
+git checkout develop && git pull && git checkout -b feature/<short-desc>
 ```
+
+Branch prefix is `feature/`, not `feat/` — Lagoon's `druxtjs-org` project only
+auto-deploys a preview environment for direct branch pushes matching
+`^feature/|^(develop|main)$`. (Open PRs get a preview regardless of branch
+name, since Lagoon's separate "Pull Requests Enabled" setting covers that —
+`feature/` only matters for previewing a branch pushed without a PR yet.) This
+is unrelated to commit-message `feat:` types (Conventional Commits), which
+stay as-is.
 
 ## CI
 
