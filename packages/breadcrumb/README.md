@@ -1,7 +1,7 @@
 # DruxtBreadcrumb
 
 [![npm](https://badgen.net/npm/v/druxt-breadcrumb)](https://www.npmjs.com/package/druxt-breadcrumb)
-[![CircleCI](https://circleci.com/gh/druxt/druxt-breadcrumb.svg?style=svg)](https://circleci.com/gh/druxt/druxt-breadcrumb)
+[![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-breadcrumb/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-breadcrumb?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-breadcrumb/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-breadcrumb)
 

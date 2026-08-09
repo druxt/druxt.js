@@ -1,6 +1,6 @@
 # DruxtJS Site module
 
-[![CircleCI](https://circleci.com/gh/druxt/druxt-site.svg?style=svg)](https://circleci.com/gh/druxt/druxt-site)
+[![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-site/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-site?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-site/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-site)
 [![npm](https://badgen.net/npm/v/druxt-site)](https://www.npmjs.com/package/druxt-site)

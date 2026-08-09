@@ -1,16 +1,16 @@
 ---
-# GitLab CI for the druxt.js monorepo: lint → test → secret-detection, with
-# collapsible section helpers and a per-file JSON/shell/YAML sweep.
+# GitLab CI for the druxt.js monorepo: lint → test → secret-detection → preview,
+# with collapsible section helpers and a per-file JSON/shell/YAML sweep.
 #
-# CircleCI (.circleci/config.yml) remains the canonical CI for now; this pipeline
+# GitHub Actions (.github/workflows/ci.yml) is the canonical CI; this pipeline
 # is additive, giving any GitLab mirror of this repo a real pipeline with
-# secret-detection coverage. Consolidating onto a single CI system is a
-# deliberately separate decision, not part of this pipeline's scope.
+# secret-detection coverage and per-MR docs previews via GitLab Pages.
 
 stages:
   - lint
   - test
   - secret-detection
+  - preview
 
 variables:
   SECRET_DETECTION_ENABLED: 'true'
@@ -146,3 +146,53 @@ test:unit:
     reports:
       junit: reports/junit/junit.xml
   allow_failure: true
+
+#
+# --- Preview Stage ---
+#
+# Publishes a per-MR static build of docs/nuxt (druxtjs.org) as a GitLab Pages
+# parallel deployment, so reviewers can see how inline-doc/API changes render
+# before merging. Production (main) still deploys via Lagoon; this is
+# MR-only and never touches that pipeline.
+
+pages:preview:
+  stage: preview
+  interruptible: true
+  image: node:16.20.2
+  needs: []
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  script:
+    - section_start "docs-build" "Building druxtjs.org for MR preview"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - cd docs/nuxt
+    - yarn install --immutable
+    - yarn generate
+    - section_end "docs-build"
+  publish: docs/nuxt/dist
+  pages:
+    path_prefix: '$CI_MERGE_REQUEST_IID'
+    expire_in: 1 week
+  environment:
+    name: 'pages/mr-$CI_MERGE_REQUEST_IID'
+    url: '$CI_PAGES_URL/$CI_MERGE_REQUEST_IID'
+    on_stop: pages:preview:stop
+    auto_stop_in: 1 week
+
+pages:preview:stop:
+  stage: preview
+  interruptible: true
+  needs: []
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: 'pages/mr-$CI_MERGE_REQUEST_IID'
+    action: stop
+  script:
+    - echo "Stopping preview deployment for MR $CI_MERGE_REQUEST_IID"

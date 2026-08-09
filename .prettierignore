@@ -15,7 +15,7 @@ bin/
 docs/nuxt/node_modules/
 docs/nuxt/.nuxt/
 docs/nuxt/dist/
-docs/content/api/
+docs/nuxt/content/api/
 
 # Examples (have their own tooling)
 examples/*/node_modules/

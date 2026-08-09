@@ -82,11 +82,12 @@ git checkout develop && git pull && git checkout -b feat/<short-desc>
 
 ## CI
 
-- **CircleCI** (`.circleci/config.yml`) — canonical CI on `cimg/node:16.20.2`.
-  Jobs: `build`, `lint`, `test_unit`, `test_e2e` (ddev + Drupal + Cypress). The
-  `deploy` job is commented out (separate work).
+- **GitHub Actions** (`.github/workflows/ci.yml`) — canonical CI, on Node
+  16.20.1. Jobs: `build`, `lint`, `test-unit` (coverage uploaded to Codecov),
+  `test-e2e` (DDEV + Drupal + Cypress). Runs on push/PR to `develop`/`main`.
+  Replaces CircleCI, which is no longer used.
 - **GitLab CI** (`.gitlab-ci.yml`) — additive pipeline (lint + test +
-  `secret-detection` stage); does not replace CircleCI.
+  `secret-detection` + `preview` stages).
 - **CodeQL** (`.github/workflows/codeql-analysis.yml`) — scans `develop` weekly.
 
 ## Reference

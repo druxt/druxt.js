@@ -1,0 +1,285 @@
+import fs from 'fs'
+import globby from 'globby'
+import jsdoc2md from 'jsdoc-to-markdown'
+import mkdirp from 'mkdirp'
+import ncp from 'ncp'
+import vueDocs from 'vue-docgen-api'
+import dmd from 'dmd'
+
+import { DruxtDocgen } from '../src'
+
+jest.mock('fs', () => ({ writeFileSync: jest.fn() }))
+jest.mock('globby', () => jest.fn())
+jest.mock('jsdoc-to-markdown', () => ({ getTemplateDataSync: jest.fn() }))
+jest.mock('mkdirp', () => ({ sync: jest.fn() }))
+jest.mock('ncp', () => jest.fn())
+jest.mock('vue-docgen-api', () => ({ parse: jest.fn() }))
+jest.mock('dmd', () => jest.fn())
+jest.mock('consola', () => ({ info: jest.fn() }))
+
+let docgen
+
+describe('DruxtDocgen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    docgen = new DruxtDocgen()
+  })
+
+  test('constructor', () => {
+    expect(docgen.components).toStrictEqual([])
+    expect(docgen.destination).toBe('docs/nuxt/content')
+  })
+
+  test('generateDocs calls each generator in order', async () => {
+    docgen.generateApiDocs = jest.fn()
+    docgen.generatePackageList = jest.fn()
+    docgen.generateComponentsList = jest.fn()
+    docgen.copyFiles = jest.fn()
+
+    await docgen.generateDocs()
+
+    expect(docgen.generateApiDocs).toHaveBeenCalledTimes(1)
+    expect(docgen.generatePackageList).toHaveBeenCalledTimes(1)
+    expect(docgen.generateComponentsList).toHaveBeenCalledTimes(1)
+    expect(docgen.copyFiles).toHaveBeenCalledTimes(1)
+  })
+
+  describe('copyFiles', () => {
+    test('copies changelogs and the contributing guide', async () => {
+      globby.mockResolvedValueOnce(['packages/druxt/CHANGELOG.md'])
+      ncp.mockImplementation((from, to, optionsOrCb, maybeCb) => {
+        const cb = typeof optionsOrCb === 'function' ? optionsOrCb : maybeCb
+        if (cb) cb()
+      })
+
+      await docgen.copyFiles()
+
+      expect(globby).toHaveBeenCalledWith('packages/*/CHANGELOG.md')
+      expect(ncp).toHaveBeenCalledWith(
+        'packages/druxt/CHANGELOG.md',
+        'docs/nuxt/content/api/packages/druxt/CHANGELOG.md',
+        expect.any(Object),
+        expect.any(Function)
+      )
+      expect(ncp).toHaveBeenCalledWith(
+        'CONTRIBUTING.md',
+        'docs/nuxt/content/guide/CONTRIBUTING.md'
+      )
+    })
+  })
+
+  describe('processJs', () => {
+    test('fixes Vuex inner-scoped state', async () => {
+      const templateData = [{ name: 'state', scope: 'inner' }]
+
+      await docgen.processJs('file.js', templateData)
+
+      expect(templateData[0].scope).toBeUndefined()
+    })
+
+    test('promotes @mutator-tagged items to mutation methods', async () => {
+      const templateData = [{
+        mutators: [{ description: 'Sets the value.' }]
+      }]
+
+      await docgen.processJs('file.js', templateData)
+
+      expect(templateData[0]).toMatchObject({
+        description: 'Sets the value.',
+        kind: 'method',
+        scope: 'mutation'
+      })
+    })
+
+    test('leaves unrelated items untouched', async () => {
+      const templateData = [{ name: 'foo', scope: 'static' }]
+
+      await docgen.processJs('file.js', templateData)
+
+      expect(templateData[0]).toStrictEqual({ name: 'foo', scope: 'static' })
+    })
+  })
+
+  describe('processVue', () => {
+    test('injects undocumented props from vue-docgen-api', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [{ name: 'foo', description: 'A prop.', tags: {} }]
+      })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      const injected = templateData.find((item) => item.name === 'foo')
+      expect(injected).toMatchObject({
+        id: 'module:DruxtTest.props.foo',
+        kind: 'member',
+        scope: 'static',
+        memberof: 'module:DruxtTest.props'
+      })
+    })
+
+    test('does not duplicate props already present in templateData', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [{ name: 'foo', description: 'A prop.', tags: {} }]
+      })
+
+      const templateData = [
+        { id: 'module:DruxtTest', memberof: null },
+        { id: 'module:DruxtTest.props.foo', name: 'foo' }
+      ]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData.filter((item) => item.name === 'foo')).toHaveLength(1)
+    })
+
+    test('expands @vue-computed tagged items into computed properties', async () => {
+      vueDocs.mockResolvedValueOnce
+      vueDocs.parse.mockResolvedValueOnce({ displayName: 'DruxtTest', props: [] })
+
+      const templateData = [{
+        id: 'module:DruxtTest.computed.foo',
+        memberof: 'module:DruxtTest.computed',
+        description: '<p>Text</p><table>junk</table>',
+        _vueComputed: [{ name: 'bar' }]
+      }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      // The source strips from `</p` onward (note: no closing `>`), so the
+      // trailing `>` of `</p>` is stripped along with the rest.
+      expect(templateData[0].description).toBe('<p>Text')
+      const expanded = templateData.find((item) => item.id.endsWith('.computed.bar'))
+      expect(expanded).toMatchObject({
+        kind: 'property',
+        scope: 'static',
+        memberof: 'module:DruxtTest.computed'
+      })
+    })
+
+    test('derives memberof from id when missing', async () => {
+      vueDocs.parse.mockResolvedValueOnce({ displayName: 'DruxtTest', props: [] })
+
+      const templateData = [{ id: 'module:DruxtTest.methods.foo', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData[0].memberof).toBe('module:DruxtTest.methods')
+    })
+  })
+
+  describe('writeTemplateData', () => {
+    test('does nothing when templateData is falsy', () => {
+      docgen.writeTemplateData('src/foo.js', null)
+
+      expect(dmd).not.toHaveBeenCalled()
+      expect(fs.writeFileSync).not.toHaveBeenCalled()
+    })
+
+    test('does nothing when dmd produces no content', () => {
+      dmd.mockReturnValueOnce('')
+
+      docgen.writeTemplateData('src/foo.js', [{ id: 'module:foo' }])
+
+      expect(fs.writeFileSync).not.toHaveBeenCalled()
+    })
+
+    test('writes generated markdown with frontmatter', () => {
+      dmd.mockReturnValueOnce('# Foo\n\nDocs.')
+
+      docgen.writeTemplateData('src/components/DruxtFoo.vue', [{ id: 'module:DruxtFoo' }])
+
+      expect(mkdirp.sync).toHaveBeenCalledWith('docs/nuxt/content/api/components')
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        'docs/nuxt/content/api/components/DruxtFoo.md',
+        expect.stringContaining('title: DruxtFoo')
+      )
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining('# Foo\n\nDocs.')
+      )
+    })
+  })
+
+  describe('generateApiDocs', () => {
+    test('dispatches .js files to processJs and .vue files to processVue', async () => {
+      globby.mockResolvedValueOnce(['packages/druxt/src/index.js', 'packages/druxt/src/components/Druxt.vue'])
+      jsdoc2md.getTemplateDataSync.mockReturnValue([{ id: 'module:test' }])
+      vueDocs.parse.mockResolvedValue({ displayName: 'Druxt', props: [] })
+
+      docgen.processJs = jest.fn()
+      docgen.processVue = jest.fn()
+      docgen.writeTemplateData = jest.fn()
+
+      await docgen.generateApiDocs()
+
+      expect(docgen.processJs).toHaveBeenCalledWith('packages/druxt/src/index.js', expect.any(Array))
+      expect(docgen.processVue).toHaveBeenCalledWith('packages/druxt/src/components/Druxt.vue', expect.any(Array))
+      expect(docgen.writeTemplateData).toHaveBeenCalledTimes(2)
+    })
+
+    test('tracks Vue components for the components list', async () => {
+      globby.mockResolvedValueOnce(['packages/druxt/src/components/Druxt.vue'])
+      jsdoc2md.getTemplateDataSync.mockReturnValue([{ id: 'module:test' }])
+
+      docgen.processVue = jest.fn()
+      docgen.writeTemplateData = jest.fn()
+
+      await docgen.generateApiDocs()
+
+      expect(docgen.components).toHaveLength(1)
+      expect(docgen.components[0]).toMatchObject({ file: 'packages/druxt/src/components/Druxt.vue' })
+    })
+  })
+
+  describe('generateComponentsList', () => {
+    test('writes an index of top-level components only', () => {
+      docgen.components = [
+        { file: 'packages/druxt/src/components/Druxt.vue', templateData: [{ name: 'Druxt', description: 'The Druxt component.' }] },
+        // Nested component (path has more than 5 segments) should be excluded.
+        { file: 'packages/druxt/src/components/nested/Deep.vue', templateData: [{ name: 'Deep', description: '...' }] }
+      ]
+
+      docgen.generateComponentsList()
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        'docs/nuxt/content/api/components.md',
+        expect.stringContaining('## Druxt')
+      )
+      const [, content] = fs.writeFileSync.mock.calls[0]
+      expect(content).not.toContain('## Deep')
+    })
+  })
+
+  describe('generatePackageList', () => {
+    test('writes an index of public packages, sorted and filtered', async () => {
+      globby.mockResolvedValueOnce([
+        'packages/druxt/package.json',
+        'packages/test-utils/package.json'
+      ])
+
+      jest.doMock(
+        '../../../packages/druxt/package.json',
+        () => ({ name: 'druxt', version: '1.0.0', description: 'Core.', private: false }),
+        { virtual: true }
+      )
+      jest.doMock(
+        '../../../packages/test-utils/package.json',
+        () => ({ name: 'druxt-test-utils', version: '0.1.0', private: true }),
+        { virtual: true }
+      )
+
+      await docgen.generatePackageList()
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        'docs/nuxt/content/api/README.md',
+        expect.stringContaining('## druxt')
+      )
+      const [, content] = fs.writeFileSync.mock.calls[0]
+      expect(content).not.toContain('druxt-test-utils')
+    })
+  })
+})

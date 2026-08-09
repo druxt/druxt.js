@@ -34,6 +34,7 @@ Ksection
 langcode
 longname
 mailhog
+markdownlint
 metatag
 metatags
 mise

@@ -1,0 +1,163 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.1
+          cache: yarn
+
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: yarn build:docs
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            packages/*/dist
+            packages/*/CHANGELOG.md
+            docs/nuxt/content/api
+          retention-days: 1
+
+  lint:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.1
+          cache: yarn
+
+      - run: yarn install --immutable
+
+      - name: ESLint
+        run: yarn lint --format ./node_modules/eslint-junit/index.js
+        env:
+          ESLINT_JUNIT_OUTPUT: ./reports/junit/eslint.xml
+
+      - name: markdownlint
+        run: yarn lint:md
+
+      - name: CSpell
+        run: yarn lint:cspell
+
+      - name: Renovate config validator
+        run: yarn lint:renovate
+
+      - name: Bundlewatch
+        run: yarn bundlewatch
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-results
+          path: ./reports/junit/
+
+  test-unit:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.1
+          cache: yarn
+
+      - run: yarn install --immutable
+      - run: yarn build
+
+      - name: Run unit tests
+        run: yarn test:unit --reporters=jest-junit --runInBand
+        env:
+          NODE_OPTIONS: --max_old_space_size=8192
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: ./reports/junit/
+
+      - name: Upload coverage to Codecov
+        if: ${{ env.CODECOV_TOKEN != '' }}
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          directory: ./coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  test-e2e:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16.20.1
+          cache: yarn
+
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: yarn build:docs
+
+      - name: Setup DDEV
+        uses: ddev/github-action-setup-ddev@v1
+        with:
+          autostart: false
+
+      - name: Start Drupal backend
+        working-directory: docs/drupal
+        run: ddev start -y && ddev drupal-install
+
+      - run: npx cypress install
+
+      - name: DruxtSite e2e
+        run: |
+          yarn start-server-and-test 'yarn example:druxt-site' http://localhost:3000 \
+            'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/nuxt/*.cy.js"'
+
+      - name: DruxtSite Storybook e2e
+        run: |
+          yarn start-server-and-test 'yarn example:druxt-site:storybook --port 3000' http://localhost:3000 \
+            'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/storybook/*.cy.js"'
+
+      - name: druxtjs.org e2e
+        run: |
+          yarn start-server-and-test docs:dev http://localhost:3000 \
+            'npx cypress run --project docs/nuxt/test'
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots-videos
+          path: |
+            examples/druxt-site/test/cypress/screenshots
+            examples/druxt-site/test/cypress/videos
+            docs/nuxt/test/cypress/screenshots
+            docs/nuxt/test/cypress/videos
