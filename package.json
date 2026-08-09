@@ -80,10 +80,10 @@
     "vue-jest": "3.0.7",
     "vue-template-compiler": "2.7.16"
   },
-  "packageManager": "yarn@3.8.5",
+  "packageManager": "yarn@3.6.1",
   "engines": {
-    "node": ">=16.20.1",
-    "yarn": ">=3.6.1"
+    "node": "16.20.1",
+    "yarn": "3.6.1"
   },
   "lint-staged": {
     "*.js": [

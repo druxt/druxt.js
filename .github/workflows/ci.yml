@@ -68,6 +68,8 @@ jobs:
       - name: Renovate config validator
         run: yarn lint:renovate
 
+      - run: yarn build
+
       - name: Bundlewatch
         run: yarn bundlewatch
         env:

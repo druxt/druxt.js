@@ -251,7 +251,7 @@ class DruxtRouter {
    *
    * @param {string} resource - The JSON:API resource type.
    * @param {string|object} query - A JSON:API query string or object.
-   * @param {object} [options] - Additional request options.
+   * @param {object} [options] - Resource-loading options.
    * @param {boolean} [options.all=false] - Load all results.
    * @return {object[]} Array of resources.
    */

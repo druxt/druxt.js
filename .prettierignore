@@ -31,8 +31,8 @@ package-lock.json
 *.min.js
 *.min.css
 
-# Test fixtures with intentional formatting
-test/
+# Recorded API-response fixtures (exact byte-for-byte content, not source)
+test/__fixtures__/
 
 # ASCII art with intentional character-alignment whitespace
 .gitpod/WELCOME.md

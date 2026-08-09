@@ -42,6 +42,12 @@ describe('DruxtDocgen', () => {
     expect(docgen.generatePackageList).toHaveBeenCalledTimes(1)
     expect(docgen.generateComponentsList).toHaveBeenCalledTimes(1)
     expect(docgen.copyFiles).toHaveBeenCalledTimes(1)
+    expect(docgen.generateApiDocs.mock.invocationCallOrder[0])
+      .toBeLessThan(docgen.generatePackageList.mock.invocationCallOrder[0])
+    expect(docgen.generatePackageList.mock.invocationCallOrder[0])
+      .toBeLessThan(docgen.generateComponentsList.mock.invocationCallOrder[0])
+    expect(docgen.generateComponentsList.mock.invocationCallOrder[0])
+      .toBeLessThan(docgen.copyFiles.mock.invocationCallOrder[0])
   })
 
   describe('copyFiles', () => {

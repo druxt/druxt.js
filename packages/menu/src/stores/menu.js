@@ -41,7 +41,7 @@ const DruxtMenuStore = ({ store }) => {
        * @param {string} [root0.prefix] - (Optional) The JSON:API endpoint prefix or langcode.
        *
        * @example @lang js
-       * this.$store.commit('druxtMenu/addEntities', entities)
+       * this.$store.commit('druxtMenu/addEntities', { entities, prefix })
        */
       addEntities (state, { entities, prefix }) {
         if (!state.entities[prefix]) Vue.set(state.entities, prefix, {})
