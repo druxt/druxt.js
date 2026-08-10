@@ -77,6 +77,10 @@ jobs:
         run: yarn bundlewatch
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_SHA on a pull_request event is a synthetic merge commit, not
+          # the PR's actual head commit - a status posted against it never
+          # shows up on the PR. Force bundlewatch onto the real head SHA.
+          CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         continue-on-error: true
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
