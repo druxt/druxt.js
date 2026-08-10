@@ -92,6 +92,10 @@ jobs:
   test-unit:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      # Job-level, not step-level: a step's `if:` can't see env set within
+      # that same step, so the Codecov step's own `if:` needs this here.
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -123,8 +127,6 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
           directory: ./coverage
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   test-e2e:
     needs: build
