@@ -9,7 +9,7 @@ tasks:
         name: Report preview URL to GitHub as a Deployment
         command: node scripts/notify-github-deployment.js
         service: app
-        shell: bash
+        shell: sh
 
 environments:
   main:
