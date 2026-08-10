@@ -1,6 +1,5 @@
 # Deprecations
 
-
 ## DruxtField default components
 
 > [druxt-entity] The `*` component is deprecated.
@@ -20,5 +19,5 @@ module.exports = {
       },
     },
   },
-}
+};
 ```

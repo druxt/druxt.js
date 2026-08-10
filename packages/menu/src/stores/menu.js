@@ -6,7 +6,7 @@ const DruxtMenuStore = ({ store }) => {
   }
 
   /**
-   * @namesapce
+   * @namespace
    */
   const namespace = 'druxtMenu'
 
@@ -37,10 +37,11 @@ const DruxtMenuStore = ({ store }) => {
        * @name addEntities
        * @mutator {object} addEntities=entities Adds specified Drupal JSON:API Menu Items data to the Vuex state object.
        * @param {State} state - The Vuex State object.
-       * @param {object} entities - The Drupal JSON:API Menu Item entities.
+       * @param {object[]} root0.entities - The Drupal JSON:API Menu Item entities.
+       * @param {string} [root0.prefix] - (Optional) The JSON:API endpoint prefix or langcode.
        *
        * @example @lang js
-       * this.$store.commit('druxtMenu/addEntities', entities)
+       * this.$store.commit('druxtMenu/addEntities', { entities, prefix })
        */
       addEntities (state, { entities, prefix }) {
         if (!state.entities[prefix]) Vue.set(state.entities, prefix, {})
@@ -54,7 +55,7 @@ const DruxtMenuStore = ({ store }) => {
       /**
        * @name flushEntities
        * @mutator {object} flushEntities=entities Removes JSON:API menu item entities from the Vuex state object.
-       * @param {flushEntitiesContext} context
+       * @param {flushEntitiesPayload} payload - The mutation payload.
        *
        * @example @lang js
        * // Flush all menu entities.
@@ -138,7 +139,7 @@ export { DruxtMenuStore }
 /**
  * Parameters for the `flushEntities` mutation.
  *
- * @typedef {object} flushEntitiesContext
+ * @typedef {object} flushEntitiesPayload
  *
  * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  *

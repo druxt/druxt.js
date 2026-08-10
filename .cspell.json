@@ -1,0 +1,35 @@
+{
+  "files": ["**/*.{js,vue,json,md,yml,yaml}"],
+  "dictionaryDefinitions": [
+    { "name": "project-words", "path": "./.cspell-project-words.txt" }
+  ],
+  "dictionaries": ["project-words", "bash", "misc", "node", "softwareTerms"],
+  "ignorePaths": [
+    ".git/",
+    "node_modules/",
+    "**/node_modules/",
+    ".yarn/",
+    "packages/*/dist/",
+    "packages/*/nuxt/",
+    "packages/*/templates/",
+    "coverage/",
+    "docs/drupal/",
+    "docs/nuxt/node_modules/",
+    "docs/nuxt/.nuxt/",
+    "examples/*/node_modules/",
+    "examples/_deprecated/",
+    "test/",
+    "**/CHANGELOG.md",
+    ".gitpod/WELCOME.md",
+    "*.lock",
+    "yarn.lock",
+    "package-lock.json",
+    "*.svg",
+    "*.png",
+    "*.jpg",
+    "*.gif",
+    "*.ico",
+    "*.min.*"
+  ],
+  "useGitignore": true
+}

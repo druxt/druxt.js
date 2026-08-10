@@ -1,14 +1,13 @@
-# DruxtJS; The Fully Decoupled Drupal Framework.
+# DruxtJS; The Fully Decoupled Drupal Framework
 
 [![npm](https://badgen.net/npm/v/druxt)](https://www.npmjs.com/package/druxt)
-[![CircleCI](https://circleci.com/gh/druxt/druxt.js.svg?style=svg)](https://circleci.com/gh/druxt/druxt.js)
+[![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 
-
 > Druxt = DRUpal + nUXT = Fully Decoupled Drupal.
 
-* * *
+---
 
 ## Links
 
@@ -19,7 +18,7 @@
   - https://druxt-umami.netlify.app
   - https://umami-storybook.druxtjs.org
 
-* * *
+---
 
 ## Features
 
@@ -30,7 +29,7 @@
 
 Learn more at https://druxtjs.org
 
-* * *
+---
 
 ## Modules
 
@@ -43,23 +42,24 @@ Learn more at https://druxtjs.org
 - [druxt-site](https://druxtjs.org/modules/site) - Out-of-the-box decoupled Drupal Site
 - [druxt-views](https://druxtjs.org/modules/views) - Decoupled Views
 
-* * *
+---
 
 ## Support
 
-Druxt is an open source project, built by the comunity for the community.
+Druxt is an open-source project, built by the community for the community.
 
 Find support or get involved in building Druxt via the community channels:
+
 - [DruxtJS Discord server](https://discord.druxtjs.org)
 - **#druxt** Slack channel on [Drupal.org slack](https://drupal.org/slack)
 
-* * *
+---
 
 ## Contributing
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/druxt/druxt.js)
 
-* * *
+---
 
 ## License
 

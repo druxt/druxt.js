@@ -28,5 +28,12 @@
     "@nuxtjs/storybook": "4.2.0",
     "@nuxtjs/tailwindcss": "4.2.1",
     "tailwindcss": "^2.2.19"
+  },
+  "resolutions": {
+    "vue-template-compiler": "2.7.16"
+  },
+  "packageManager": "yarn@3.6.1",
+  "engines": {
+    "node": "16.20.1"
   }
 }

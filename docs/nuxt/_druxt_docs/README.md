@@ -4,12 +4,12 @@ heroImage: ./logo.svg
 actionText: Get started
 actionLink: /guide/getting-started
 features:
-- title: Simplicity first
-  details: The Druxt component connects Nuxt.js to your Drupal JSON:API.
-- title: Community built
-  details: Built by the community, for the community.
-- title: Decoupled Drupal sites
-  details: The Site module brings decoupled Vue.js theming system to Drupal.
+  - title: Simplicity first
+    details: The Druxt component connects Nuxt.js to your Drupal JSON:API.
+  - title: Community built
+    details: Built by the community, for the community.
+  - title: Decoupled Drupal sites
+    details: The Site module brings decoupled Vue.js theming system to Drupal.
 ---
 
 > DruxtJS provides an easy connection between a Drupal JSON:API backend and Nuxt.js frontend application.
@@ -20,22 +20,20 @@ Two methods of communication with the Drupal JSON:API are provided by Druxt, a f
 
 See the [Guide](/guide) and [API Documentation](/api) for details.
 
-
 ## Themable modules
 
 Druxt uses a Module and slot-based Wrapper component system, making it easy to render and theme Drupal data.
 
 Find more details in the [Guide](/guide)
 
-
 ## Community support
 
-Druxt is an open source project, built by the comunity for the community.
+Druxt is an open-source project, built by the community for the community.
 
 Find support or get involved in building Druxt via the community channels:
+
 - [DruxtJS Discord server](https://discord.druxtjs.org)
 - **#druxt** Slack channel on [Drupal.org slack](https://drupal.org/slack)
-
 
 ## Fully decoupled Drupal sites
 

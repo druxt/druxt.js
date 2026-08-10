@@ -1,0 +1,182 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+          cache: yarn
+
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: yarn build:docs
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: build-output
+          path: |
+            packages/*/dist
+            packages/*/CHANGELOG.md
+            docs/nuxt/content/api
+          retention-days: 1
+
+  lint:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: write # Bundlewatch posts a commit status via the Statuses API.
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+          cache: yarn
+
+      - run: yarn install --immutable
+
+      - name: ESLint
+        run: yarn lint --format ./node_modules/eslint-junit/index.js
+        env:
+          ESLINT_JUNIT_OUTPUT: ./reports/junit/eslint.xml
+
+      - name: markdownlint
+        run: yarn lint:md
+
+      - name: CSpell
+        run: yarn lint:cspell
+
+      - name: Renovate config validator
+        run: yarn lint:renovate
+
+      - run: yarn build
+
+      - name: Bundlewatch
+        run: yarn bundlewatch
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_SHA on a pull_request event is a synthetic merge commit, not
+          # the PR's actual head commit - a status posted against it never
+          # shows up on the PR. Force bundlewatch onto the real head SHA.
+          CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        continue-on-error: true
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: lint-results
+          path: ./reports/junit/
+
+  test-unit:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      # Job-level, not step-level: a step's `if:` can't see env set within
+      # that same step, so the Codecov step's own `if:` needs this here.
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+          cache: yarn
+
+      - run: yarn install --immutable
+      - run: yarn build
+
+      - name: Run unit tests
+        run: yarn test:unit --reporters=jest-junit --runInBand
+        env:
+          NODE_OPTIONS: --max_old_space_size=8192
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: test-results
+          path: ./reports/junit/
+
+      - name: Upload coverage to Codecov
+        if: ${{ env.CODECOV_TOKEN != '' }}
+        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          directory: ./coverage
+
+  test-e2e:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+          cache: yarn
+
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: yarn build:docs
+
+      - name: Setup DDEV
+        uses: ddev/github-action-setup-ddev@fdf2f5c97943bae638f31df6df86f1defa6210c0 # v1
+        with:
+          autostart: false
+
+      - name: Start Drupal backend
+        working-directory: docs/drupal
+        run: ddev start -y && ddev drupal-install
+
+      - run: npx cypress install
+
+      - name: DruxtSite e2e
+        run: |
+          yarn start-server-and-test 'yarn example:druxt-site' http://localhost:3000 \
+            'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/nuxt/*.cy.js"'
+
+      - name: DruxtSite Storybook e2e
+        run: |
+          yarn start-server-and-test 'yarn example:druxt-site:storybook --port 3000' http://localhost:3000 \
+            'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/storybook/*.cy.js"'
+
+      - name: druxtjs.org e2e
+        run: |
+          yarn start-server-and-test docs:dev http://localhost:3000 \
+            'npx cypress run --project docs/nuxt/test'
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: failure()
+        with:
+          name: cypress-screenshots-videos
+          path: |
+            examples/druxt-site/test/cypress/screenshots
+            examples/druxt-site/test/cypress/videos
+            docs/nuxt/test/cypress/screenshots
+            docs/nuxt/test/cypress/videos

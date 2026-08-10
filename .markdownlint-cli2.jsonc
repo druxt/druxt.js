@@ -1,0 +1,29 @@
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD024": { "siblings_only": true },
+    "MD025": { "front_matter_title": "" },
+    "MD033": false,
+    "MD034": false,
+    "MD041": false,
+    "MD036": false
+  },
+  "ignores": [
+    "node_modules/**",
+    "**/node_modules/**",
+    ".yarn/**",
+    "packages/*/dist/**",
+    "packages/*/nuxt/**",
+    "coverage/**",
+    "docs/nuxt/node_modules/**",
+    "docs/nuxt/.nuxt/**",
+    "docs/nuxt/content/api/**",
+    "docs/drupal/**",
+    "examples/*/node_modules/**",
+    "examples/_deprecated/**",
+    ".changeset/**",
+    "**/CHANGELOG.md",
+    ".gitpod/WELCOME.md"
+  ]
+}

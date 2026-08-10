@@ -80,9 +80,9 @@ const DruxtRouterStore = ({ store }) => {
       /**
        * @name addRoute
        * @mutator {object} addRoute=routes Adds the supplied route to the Vuex state object.
-       * @param {object} context
-       * @param {string} context.path - The route path.
-       * @param {object} context.route - The route object.
+       * @param {object} payload - The mutation payload.
+       * @param {string} payload.path - The route path.
+       * @param {object} payload.route - The route object.
        *
        * @example @lang js
        * this.$store.commit('druxtRouter/addRoute', { path, route })
@@ -164,7 +164,7 @@ const DruxtRouterStore = ({ store }) => {
        *
        * @name getEntity
        * @action getEntity=entities
-       * @param {object} query
+       * @param {object} query - The JSON:API resource query.
        * @return {object} The Drupal entity JSON:API resource data.
        *
        * @example @lang js
@@ -196,18 +196,15 @@ const DruxtRouterStore = ({ store }) => {
        * @param {object} context Object containing `druxtRouter.getResources()` parameters.
        * @param {string} context.resource - The JSON:API resource type.
        * @param {string|object} context.query - A JSON:API query string or object.
-       * @param {object} [context.options]
-       * @param {boolean} [context.options.all=false] - Load all results.
        * @return {object[]} Array of Drupal JSON:API resource data.
        *
        * @example @lang js
-       * // Load all currently published Articles.
+       * // Load currently published Articles.
        * const query = new DrupalJsonApiParams()
        * query.addFilter('status', '1')
        * const resources = await this.$store.dispatch('druxtRouter/getResources', {
        *   resource: 'node--article',
-       *   query,
-       *   options: { all: true }
+       *   query
        * })
        */
       async getResources (app, { resource, query }) {

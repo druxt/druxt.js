@@ -101,7 +101,7 @@ export default {
 
   methods: {
     /**
-     * Checks if a given block shoud be visible.
+     * Checks if a given block should be visible.
      *
      * Uses Request Path visibility details if available with the DruxtRouter.
      *

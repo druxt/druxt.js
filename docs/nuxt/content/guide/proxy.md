@@ -7,7 +7,7 @@ weight: -5
 
 > Druxt provides API and File proxying using the @nuxtjs/proxy module.
 
-* * *
+---
 
 ## API proxy
 
@@ -21,15 +21,15 @@ prevent CORS issues.
 ```js
 export default {
   druxt: {
-    proxy: { api: true }
-  }
-}
+    proxy: { api: true },
+  },
+};
 ```
 
 Two proxy items will be created, one for the JSON:API endpoint, and the other
 for the decoupled router.
 
-* * *
+---
 
 ## Files proxy
 
@@ -39,9 +39,9 @@ directory to your frontend domain.
 ```js
 export default {
   druxt: {
-    proxy: { files: true }
-  }
-}
+    proxy: { files: true },
+  },
+};
 ```
 
 If you are using a multi-site path, use the path as the value instead of `true`:
@@ -49,16 +49,16 @@ If you are using a multi-site path, use the path as the value instead of `true`:
 ```js
 export default {
   druxt: {
-    proxy: { files: 'druxtjs.org' }
-  }
-}
+    proxy: { files: 'druxtjs.org' },
+  },
+};
 ```
 
-* * *
+---
 
-## Aditional proxy settings
+## Additional proxy settings
 
-Druxt uses the Nuxt Proxy module, additonal proxies can be set in
+Druxt uses the Nuxt Proxy module, additional proxies can be set in
 **nuxt.config.js** and will be merged with the API and file proxy values.
 
 ```js
@@ -67,12 +67,12 @@ export default {
     proxy: {
       api: true,
       files: true,
-    }
+    },
   },
   proxy: {
-    '/en/jsonapi': 'https://demo-api.druxtjs.org'
-  }
-}
+    '/en/jsonapi': 'https://demo-api.druxtjs.org',
+  },
+};
 ```
 
 For more details, see the [Nuxt Proxy module](https://github.com/nuxt-community/proxy-module).

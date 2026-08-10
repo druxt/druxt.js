@@ -207,7 +207,7 @@ export default {
      * A scoped slot per field item is provided, with support for:
      * - File, Image, Link, Number, Text and other View fields.
      * - Boolean, Date/Time, Text and other Form fields.
-     * - Entitiy references.
+     * - Entity references.
      *
      * A scoped slot is provided for the label, as well as label-above and
      * label-inline depending on the field schema.

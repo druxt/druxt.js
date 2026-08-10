@@ -58,7 +58,7 @@ class DruxtSchema {
   }
 
   /**
-   * Gets all available schemas for Entitiy Views and Form modes.
+   * Gets all available schemas for Entity Views and Form modes.
    *
    * @returns {object} The JSON:API Resource index and processed schemas.
    *

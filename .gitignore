@@ -22,8 +22,9 @@ packages/*/nuxt
 # Build files
 packages/*/package.tgz
 
-# Coverage reports
+# Coverage / test reports
 coverage
+reports
 
 # Intellij idea
 *.iml

@@ -10,7 +10,7 @@ import { DruxtSchema } from './schema'
  * - Adds the Schema Vuex store to Nuxt.js.
  * - Builds the Schema data via the `builder:prepared` hook.
  *
- * The module function should not be used directly, but rather installed via yout Nuxt.js configuration file.
+ * The module function should not be used directly, but rather installed via your Nuxt.js configuration file.
  *
  * Options are set on the root level `druxt` Nuxt.js config object.
  *

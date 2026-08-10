@@ -474,7 +474,7 @@ export default {
         // Build query.
         const query = this.getQuery(settings)
 
-        // Execute the resquest.
+        // Execute the request.
         this.resource = await this.getResults({
           displayId: this.displayId,
           prefix: this.lang,
@@ -606,7 +606,7 @@ export default {
         scopedSlots.attachments_before = (attrs) => this.attachments_before.map((displayId) => h('DruxtView', {
           attrs: { ...attrs },
           key: displayId,
-          ref: 'attachements_before',
+          ref: 'attachments_before',
           props: {
             displayId,
             langcode: this.lang,
@@ -663,7 +663,7 @@ export default {
         scopedSlots.attachments_after = (attrs) => this.attachments_after.map((displayId) => h('DruxtView', {
           attrs: { ...attrs },
           key: displayId,
-          ref: 'attachements_after',
+          ref: 'attachments_after',
           props: {
             displayId,
             langcode: this.lang,

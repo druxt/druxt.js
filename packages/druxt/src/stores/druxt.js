@@ -68,7 +68,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name addCollection
        * @mutator {object} addCollection=collections Adds a JSON:API collection to the Vuex state object.
-       * @param {addCollectionContext} context
+       * @param {addCollectionPayload} payload - The mutation payload.
        *
        * @example @lang js
        * this.$store.commit('druxt/addCollection', { collection, type, hash })
@@ -100,7 +100,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name addResource
        * @mutator {object} addResource=resources Adds a JSON:API resource to the Vuex state object.
-       * @param {addResourceContext} context
+       * @param {addResourcePayload} payload - The mutation payload.
        *
        * @example @lang js
        * this.$store.commit('druxt/addResource', { resource })
@@ -144,7 +144,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name flushCollection
        * @mutator {object} flushCollection=collections Removes JSON:API collections from the Vuex state object.
-       * @param {flushCollectionContext} context
+       * @param {flushCollectionPayload} payload - The mutation payload.
        *
        * @example @lang js
        * // Flush all collections.
@@ -163,7 +163,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name flushResource
        * @mutator {object} flushResource=resources Removes JSON:API resources from the Vuex state object.
-       * @param {flushResourceContext} context
+       * @param {flushResourcePayload} payload - The mutation payload.
        *
        * @example @lang js
        * // Flush all resources.
@@ -189,7 +189,7 @@ const DruxtStore = ({ store }) => {
        *
        * @name getCollection
        * @action getCollection
-       * @param {getCollectionContext} context
+       * @param {getCollectionContext} context - The action context.
        * @return {object[]} Array of Drupal JSON:API resource data.
        *
        * @example @lang js
@@ -232,7 +232,7 @@ const DruxtStore = ({ store }) => {
        *
        * @name getResource
        * @action getResource=resources
-       * @param {getResourceContext} context
+       * @param {getResourceContext} context - The action context.
        * @return {object} The Drupal JSON:API resource.
        *
        * @example @lang js
@@ -243,7 +243,7 @@ const DruxtStore = ({ store }) => {
        * })
        */
       async getResource ({ commit, dispatch, state }, { type, id, query, prefix, bypassCache = false }) {
-        // Get the resource from the store if it's avaialble.
+        // Get the resource from the store if it's available.
         const storedResource = ((state.resources[type] || {})[id] || {})[prefix] ?
           { ...state.resources[type][id][prefix] }
           : null
@@ -359,7 +359,7 @@ export { DruxtStore }
 /**
  * Parameters for the `addCollection` mutation.
  *
- * @typedef {object} addCollectionContext
+ * @typedef {object} addCollectionPayload
  *
  * @param {object} collection - A collection of JSON:API resources.
  * @param {string} type - The JSON:API collection resource type.
@@ -382,7 +382,7 @@ export { DruxtStore }
 /**
  * Parameters for the `addResource` mutation.
  *
- * @typedef {object} addResourceContext
+ * @typedef {object} addResourcePayload
  *
  * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  * @param {object} resource - The JSON:API resource.
@@ -401,7 +401,7 @@ export { DruxtStore }
 /**
  * Parameters for the `flushCollection` mutation.
  *
- * @typedef {object} flushCollectionContext
+ * @typedef {object} flushCollectionPayload
  *
  * @param {string} type - The JSON:API collection resource type.
  * @param {string} hash - An md5 hash of the query string.
@@ -418,7 +418,7 @@ export { DruxtStore }
 /**
  * Parameters for the `flushResource` mutation.
  *
- * @typedef {object} flushResourceContext
+ * @typedef {object} flushResourcePayload
  *
  * @param {string} [type] - The JSON:API Resource type.
  * @param {string} [id] - The Drupal resource UUID.

@@ -1,5 +1,5 @@
 /**
- * Provides a mechanism for rendering custom Vue.js components for targetted theming.
+ * Provides a mechanism for rendering custom Vue.js components for targeted theming.
  *
  * Suggestion rules are configurable via:
  * - Global suggestions in the `nuxt.config.js` file.

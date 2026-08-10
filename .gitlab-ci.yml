@@ -1,0 +1,254 @@
+---
+# GitLab CI for the druxt.js monorepo: lint → test → secret-detection → preview,
+# with collapsible section helpers and a per-file JSON/shell/YAML sweep.
+#
+# GitHub Actions (.github/workflows/ci.yml) is the canonical CI; this pipeline
+# is additive, giving any GitLab mirror of this repo a real pipeline with
+# secret-detection coverage and per-MR docs previews via GitLab Pages.
+
+stages:
+  - lint
+  - test
+  - secret-detection
+  - preview
+
+variables:
+  SECRET_DETECTION_ENABLED: 'true'
+
+include:
+  - template: Security/Secret-Detection.gitlab-ci.yml
+
+secret_detection:
+  stage: secret-detection
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+default:
+  image: mcr.microsoft.com/devcontainers/python:3
+  tags: [docker]
+  timeout: 15m
+  before_script:
+    - 'section_start() { local n="$1" t="${2:-$1}"; printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)" "$n" "$t"; }'
+    - 'section_end() { printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)" "$1"; }'
+
+#
+# --- Lint Stage ---
+#
+
+lint:json:
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "json-lint" "Validating JSON files"
+    - |
+      rc=0; count=0
+      while IFS= read -r -d '' f; do
+        count=$((count + 1))
+        if python3 -m json.tool "$f" > /dev/null 2>&1; then
+          echo "  [PASS] $f"
+        else
+          echo "  [FAIL] $f"
+          rc=1
+        fi
+      done < <(find . -name '*.json' -not -path '*/.git/*' -not -path '*/node_modules/*' \
+        -not -path '*/dist/*' -not -path '*/.vscode/*' -not -path '*/templates/*' -print0)
+      echo "--- $count JSON file(s) checked ---"
+      exit "$rc"
+    - section_end "json-lint"
+
+lint:shell:
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "shell-lint" "Checking shell script syntax"
+    - |
+      rc=0; count=0
+      while IFS= read -r -d '' f; do
+        count=$((count + 1))
+        if bash -n "$f" 2>/dev/null; then
+          echo "  [PASS] $f"
+        else
+          echo "  [FAIL] $f"
+          rc=1
+        fi
+      done < <(find . -name '*.sh' -not -path '*/.git/*' -not -path '*/node_modules/*' -print0)
+      echo "--- $count shell file(s) checked ---"
+      exit "$rc"
+    - section_end "shell-lint"
+
+lint:yaml:
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "yaml-lint" "Linting YAML files"
+    - pip install yamllint -q
+    - yamllint .gitlab-ci.yml
+    - section_end "yaml-lint"
+
+lint:markdown:
+  stage: lint
+  interruptible: true
+  image: node:16.20.1
+  script:
+    - section_start "md-lint" "Linting Markdown files"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:md
+    - section_end "md-lint"
+
+lint:cspell:
+  stage: lint
+  interruptible: true
+  image: node:16.20.1
+  script:
+    - section_start "cspell" "Spell checking project files"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:cspell
+    - section_end "cspell"
+
+lint:js:
+  stage: lint
+  interruptible: true
+  image: node:16.20.1
+  script:
+    - section_start "eslint" "Linting JS/Vue sources"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint
+    - section_end "eslint"
+
+#
+# --- Test Stage ---
+#
+
+test:unit:
+  stage: test
+  interruptible: true
+  image: node:16.20.1
+  needs: []
+  script:
+    - section_start "jest" "Running unit tests"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - NODE_OPTIONS="--max_old_space_size=8192" yarn test:unit --reporters=jest-junit --runInBand
+    - section_end "jest"
+  artifacts:
+    when: always
+    paths:
+      - reports/junit/
+    reports:
+      junit: reports/junit/junit.xml
+
+#
+# --- Preview Stage ---
+#
+# Publishes a per-MR static build of docs/nuxt (druxtjs.org) as a GitLab Pages
+# parallel deployment, so reviewers can see how inline-doc/API changes render
+# before merging. Production (main) still deploys via Lagoon; this is
+# MR-only and never touches that pipeline.
+#
+# Disabled for now: this GitLab instance doesn't have Pages actually reachable
+# (no pages_external_url / exposed port / proxy host - see
+# localhost/localhost#2 for what's missing). Kept defined, not deleted, so
+# it's a one-line flip back to enabled once that's fixed. Until then, use the
+# docs:review job below for an on-demand look at a build.
+
+pages:preview:
+  stage: preview
+  interruptible: true
+  image: node:16.20.1
+  needs: []
+  rules:
+    - when: never
+    # - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  script:
+    - section_start "docs-build" "Building druxtjs.org for MR preview"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - cd docs/nuxt
+    - yarn install --immutable
+    - yarn generate
+    - section_end "docs-build"
+  pages:
+    publish: docs/nuxt/dist
+    path_prefix: '$CI_MERGE_REQUEST_IID'
+    expire_in: 1 week
+  environment:
+    name: 'pages/mr-$CI_MERGE_REQUEST_IID'
+    url: '$CI_PAGES_URL/$CI_MERGE_REQUEST_IID'
+    on_stop: pages:preview:stop
+    auto_stop_in: 1 week
+
+pages:preview:stop:
+  stage: preview
+  interruptible: true
+  needs: []
+  rules:
+    - when: never
+    # - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    #   when: manual
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: 'pages/mr-$CI_MERGE_REQUEST_IID'
+    action: stop
+  script:
+    - echo "Stopping preview deployment for MR $CI_MERGE_REQUEST_IID"
+
+# Manual, on-demand alternative to pages:preview while GitLab Pages isn't
+# reachable: builds docs/nuxt and serves the static output through a
+# Cloudflare quick tunnel (no account/token needed) for as long as the job
+# runs. Click "Run" on this job in the pipeline view, then watch its log for
+# the https://*.trycloudflare.com URL. Stop the job (or let it time out) when
+# you're done reviewing - the tunnel dies with it.
+docs:review:
+  stage: preview
+  interruptible: false
+  image: node:16.20.1
+  needs: []
+  timeout: 1h
+  rules:
+    - when: manual
+      allow_failure: true
+  script:
+    - section_start "docs-build" "Building druxtjs.org for review"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - cd docs/nuxt
+    - yarn install --immutable
+    - yarn generate
+    - section_end "docs-build"
+    - section_start "tunnel" "Serving docs/nuxt/dist through a Cloudflare quick tunnel"
+    - |
+      cf_version="2026.7.3"
+      arch="$(uname -m)"
+      case "$arch" in
+        aarch64|arm64)
+          cf_arch=arm64
+          cf_sha256=65259e652a7bea08bf5df603233ab22b8bf3116af8df9f9206209af6a1b955c0
+          ;;
+        x86_64)
+          cf_arch=amd64
+          cf_sha256=9d71c677db00134c1bd4144b7783486b654ad281b1ea62b4972098d19f770f17
+          ;;
+        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+      esac
+      curl -sL "https://github.com/cloudflare/cloudflared/releases/download/${cf_version}/cloudflared-linux-${cf_arch}" -o /usr/local/bin/cloudflared
+      echo "${cf_sha256}  /usr/local/bin/cloudflared" | sha256sum -c - || { echo "cloudflared checksum mismatch" >&2; exit 1; }
+      chmod +x /usr/local/bin/cloudflared
+    - npx --yes serve -l 8080 dist &
+    - sleep 3
+    - echo "Tunnel starting - the review URL will appear below as https://*.trycloudflare.com"
+    - cloudflared tunnel --url http://localhost:8080 --no-autoupdate
+    - section_end "tunnel"

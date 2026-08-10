@@ -1,6 +1,6 @@
 {
   "name": "router-modes",
-  "packageManager": "yarn@3.0.0",
+  "packageManager": "yarn@3.6.1",
   "scripts": {
     "dev": "nuxt dev",
     "generate": "nuxt generate",

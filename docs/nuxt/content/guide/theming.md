@@ -6,10 +6,11 @@ weight: -6
 # Theming
 
 Druxt components can be themed using two primary methods:
+
 - [Druxt wrapper components](#druxtwrapper)
 - [Default template injection](#default-template)
 
-* * *
+---
 
 ## DruxtWrapper
 
@@ -28,10 +29,7 @@ If there are no matching component names, a default `DruxtWrapper` component wil
 - For more details, see the [DruxtModule API documentation](/api/packages/druxt/components/DruxtModule).
 
 ```vue
-<Druxt
-  module="entity"
-  :props-data="{ type: 'node--article', uuid }"
-/>
+<Druxt module="entity" :props-data="{ type: 'node--article', uuid }" />
 ```
 
 ```vue
@@ -45,7 +43,7 @@ If there are no matching component names, a default `DruxtWrapper` component wil
 </template>
 ```
 
-* * *
+---
 
 ## Default template
 
@@ -71,4 +69,4 @@ By default, a component using the default template will not be wrapped by a Drux
     // This will be wrapped by a DruxtBlock Wrapper component.
   </template>
 </DruxtBlock>
-````
+```

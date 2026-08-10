@@ -335,7 +335,7 @@ export default {
         // Build query.
         const query = this.getQuery(settings)
 
-        // Execute the resquest.
+        // Execute the request.
         const resource = await this.getResource({
           id: this.uuid,
           prefix: this.lang,

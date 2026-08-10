@@ -95,7 +95,7 @@ export default {
   /**
    * Vue.js Data object.
    *
-   * @property {objects} components - The module and wrapper components settinsg.
+   * @property {object} component - The module component and its propsData.
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({

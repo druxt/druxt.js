@@ -48,6 +48,7 @@ export default {
    * This can be disabled by setting the `druxt.router.middleware` option to
    * `false` in `nuxt.config.js`
    *
+   * @param {object} root0.$druxt - The Druxt Nuxt context plugin instance.
    * @example @lang js
    * export default {
    *   druxt: {
@@ -232,6 +233,7 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.$route - The current Vue Router route object.
      * @returns {PropsData}
      */
     propsData: ({ $route, path, model }) => ({
@@ -258,7 +260,7 @@ export default {
     slots(h) {
       const scopedSlots = {}
 
-      // Provide defualt error message.
+      // Provide default error message.
       if (this.model.error) {
         scopedSlots.default = () => h('div', [
           h('h1', [`Error ${this.model.error.statusCode}`]),

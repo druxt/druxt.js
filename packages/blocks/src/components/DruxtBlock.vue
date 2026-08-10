@@ -8,7 +8,7 @@ import { mapActions } from 'vuex'
  * internal ID.
  *
  * While the DruxtBlock component can't automatically render every Drupal block,
- * it does provide the Block settings to a targetted Druxt wrapper component for
+ * it does provide the Block settings to a targeted Druxt wrapper component for
  * manual theming.
  *
  * @example <caption>Render a block using **id**</caption> @lang vue

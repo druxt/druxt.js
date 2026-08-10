@@ -1,7 +1,7 @@
 # DruxtMenu
 
 [![npm](https://badgen.net/npm/v/druxt-menu)](https://www.npmjs.com/package/druxt-menu)
-[![CircleCI](https://circleci.com/gh/druxt/druxt-menu.svg?style=svg)](https://circleci.com/gh/druxt/druxt-menu)
+[![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-menu/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-menu?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt-menu/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-menu)
 
@@ -33,14 +33,14 @@ module.exports = {
       },
     },
   },
-}
+};
 ```
 
-## Usgae
+## Usage
 
 ### DruxtMenu component
 
-The DruxtMenu component inteligentally loads in your Drupal menu using the built in JSON:API as well as the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module.
+The DruxtMenu component intelligently loads in your Drupal menu using the built-in JSON:API as well as the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module.
 
 ```vue
 <DruxtMenu name="main" :depth="1" />
@@ -53,6 +53,7 @@ See the [DruxtMenu API Documentation](https://druxtjs.org/api/packages/menu/comp
 ### Theming
 
 The DruxtMenu component can be themed by providing a default template:
+
 ```vue
 <DruxtMenu name="main">
   <template #default="{ items }">
@@ -62,6 +63,7 @@ The DruxtMenu component can be themed by providing a default template:
 ```
 
 The module also provides Wrapper components with scoped slots for theming:
+
 ```vue
 <template>
   <div>
@@ -78,18 +80,18 @@ See the [Druxt Theming guide](https://druxtjs.org/guide/theming) for more inform
 
 These options are specific to this module.
 
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `menu.jsonApiMenuItems` | `boolean` | No | `false` | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. |
-| `menu.query.fields` | `string[]` | No | `false` | An array of fields to filter all JSON:API Menu queries. |
-| `menu.query.requiredOnly` | `boolean` | No | `false` | Whether to automatically filter to module defined minimum required fields. |
+| Option                    | Type       | Required | Default | Description                                                                                              |
+| ------------------------- | ---------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| `menu.jsonApiMenuItems`   | `boolean`  | No       | `false` | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. |
+| `menu.query.fields`       | `string[]` | No       | `false` | An array of fields to filter all JSON:API Menu queries.                                                  |
+| `menu.query.requiredOnly` | `boolean`  | No       | `false` | Whether to automatically filter to module-defined minimum required fields.                               |
 
 ### Base Druxt options
 
 These options are available to all Druxt modules.
 
-| Option | Type | Required | Default | Description |
-| --- | --- | --- | --- | --- |
-| `axios` | `object` | No | `{}` | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
-| `baseUrl` | `string` | Yes | `null` | Base URL for the Drupal installation. |
-| `endpoint` | `string` | No | `/jsonapi` | JSON:API Endpoint of the Drupal installation. |
+| Option     | Type     | Required | Default    | Description                                                                  |
+| ---------- | -------- | -------- | ---------- | ---------------------------------------------------------------------------- |
+| `axios`    | `object` | No       | `{}`       | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
+| `baseUrl`  | `string` | Yes      | `null`     | Base URL for the Drupal installation.                                        |
+| `endpoint` | `string` | No       | `/jsonapi` | JSON:API Endpoint of the Drupal installation.                                |
