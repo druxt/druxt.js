@@ -71,7 +71,7 @@
     "jest-mock-axios": "4.9.0",
     "knip": "2.43.0",
     "lint-staged": "^14.0.1",
-    "markdownlint-cli2": "^0.23.2",
+    "markdownlint-cli2": "^0.13.0",
     "node-gyp": "^9.4.1",
     "prettier": "^3.9.6",
     "regenerator-runtime": "0.14.1",
@@ -83,10 +83,10 @@
     "vue-jest": "3.0.7",
     "vue-template-compiler": "2.7.16"
   },
-  "packageManager": "yarn@3.8.7",
+  "packageManager": "yarn@3.6.1",
   "engines": {
     "node": "16.20.1",
-    "yarn": "3.8.7"
+    "yarn": "3.6.1"
   },
   "lint-staged": {
     "*.js": [
