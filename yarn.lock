@@ -7578,14 +7578,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:0.33.0":
-  version: 0.33.0
-  resolution: "axios@npm:0.33.0"
+"axios@npm:1.18.0":
+  version: 1.18.0
+  resolution: "axios@npm:1.18.0"
   dependencies:
-    follow-redirects: ^1.15.4
-    form-data: ^4.0.4
-    proxy-from-env: ^1.1.0
-  checksum: 4699b045c25488f0a6b8b321fdd9265d700042ca73dcfa5554b3c6f9218779cfbf361f7df17870a8723dd3be2e4d9ff14b461a2c6874987243bd632bb6c04ef1
+    follow-redirects: ^1.16.0
+    form-data: ^4.0.5
+    https-proxy-agent: ^5.0.1
+    proxy-from-env: ^2.1.0
+  checksum: 87e66c8583f69f3aec2d03d2840e4074d71c67d0e06a5c33de8926b0f11c9d31a8509adc6814167cc1fc470bc3f24f99a10fcb6632843192126567340dd1a8ce
   languageName: node
   linkType: hard
 
@@ -10679,7 +10680,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-blocks@workspace:packages/blocks"
   dependencies:
-    axios: 0.33.0
+    axios: 1.18.0
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
     vue: ^2.7.16
@@ -10764,7 +10765,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-router@workspace:packages/router"
   dependencies:
-    axios: 0.33.0
+    axios: 1.18.0
     druxt: ^0.24.0
     url-parse: ^1.5.10
     vue: ^2.7.16
@@ -10784,7 +10785,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-schema@workspace:packages/schema"
   dependencies:
-    axios: 0.33.0
+    axios: 1.18.0
     consola: ^2.15.3
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
@@ -10836,7 +10837,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-views@workspace:packages/views"
   dependencies:
-    axios: 0.33.0
+    axios: 1.18.0
     deepmerge: ^4.3.1
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
