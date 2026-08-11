@@ -161,7 +161,7 @@ stay as-is.
   `secret-detection` + `preview` stages).
 - **Dependency/security auditing** — `yarn npm audit` (native Yarn Berry, not
   a third-party action) and `knip`, run in both CI systems. Production-only
-  audit blocks; full audit and knip are reporting-only for now. See
+  audit and knip block; the full audit is reporting-only. See
   "Dependency audit: production vs. full" above.
 - **CodeQL** (`.github/workflows/codeql-analysis.yml`) — scans `develop` weekly.
 
