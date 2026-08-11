@@ -33,6 +33,8 @@ homepath
 interruptible
 jsdocs
 jsonapi
+knip
+Knip
 Ksection
 langcode
 longname

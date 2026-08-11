@@ -43,7 +43,33 @@ bumps. `renovate.json` freezes these packages from automated updates accordingly
   `plugin:vue/recommended`, matching every sibling package) across `packages/*/src`
 - `yarn lint:md` / `yarn lint:cspell` / `yarn lint:format` — markdownlint / cspell / prettier
 - `yarn lint:renovate` — validate `renovate.json`
+- `yarn lint:audit` — `yarn npm audit`, production dependencies only, fails on
+  high/critical (the CI gate). `yarn lint:audit:full` includes devDependencies
+  and is reporting-only — see the note below.
+- `yarn lint:knip` — [knip](https://knip.dev), scoped to
+  `dependencies,unlisted` (unused and undeclared-but-imported packages).
+  Blocking in CI. `--no-config-hints`: this knip version's "unused item in
+  ignoreDependencies" check is flaky (observed contradictory results across
+  successive runs with no code changes between them) — don't trust it to
+  decide whether an ignore entry is still needed; verify with `grep`
+  instead, the way every entry in `knip.jsonc` already is. See `knip.jsonc`
+  for confirmed false positives (Vue SFC parsing isn't supported at this
+  Node-16-forced version, Nuxt module-string registration, JSON-config-file
+  references — none of these are things knip's static analysis can trace).
 - `yarn bundlewatch` — bundle size guard (`packages/**/dist/*.js` ≤ 50kb)
+
+### Dependency audit: production vs. full
+
+`yarn lint:audit` (production-only) is the blocking gate and is currently
+clean - keep it that way. `yarn lint:audit:full` additionally covers
+devDependencies and, as of this writing, reports ~50 advisories, almost all
+inherited transitively through `renovate` (used only for `yarn
+lint:renovate`) and other build/lint/test tooling. This isn't neglect: the
+patched versions of `renovate`, `jest`, `eslint`, etc. all require Node 18+,
+which conflicts with the Node 16 toolchain freeze above - `renovate` itself is
+effectively frozen for the same reason `vue`/`nuxt`/`jest` are, even though
+it's not in `renovate.json`'s explicit freeze list. Don't chase these
+piecemeal; they resolve together whenever the Node 16 → 18+ upgrade happens.
 
 ## Inline documentation (JSDoc) → API docs
 
@@ -133,6 +159,10 @@ stay as-is.
   Replaces CircleCI, which is no longer used.
 - **GitLab CI** (`.gitlab-ci.yml`) — additive pipeline (lint + test +
   `secret-detection` + `preview` stages).
+- **Dependency/security auditing** — `yarn npm audit` (native Yarn Berry, not
+  a third-party action) and `knip`, run in both CI systems. Production-only
+  audit and knip block; the full audit is reporting-only. See
+  "Dependency audit: production vs. full" above.
 - **CodeQL** (`.github/workflows/codeql-analysis.yml`) — scans `develop` weekly.
 
 ## Reference

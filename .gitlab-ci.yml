@@ -123,6 +123,36 @@ lint:js:
     - yarn lint
     - section_end "eslint"
 
+# Two-tier: the full recursive audit (including devDependencies) is reporting
+# only - most of its findings live behind the Node 16/Yarn 3 toolchain freeze
+# (see AGENTS.md) and aren't fixable without that separate, deliberate
+# upgrade. The production-only gate is what actually blocks the pipeline -
+# shipped runtime dependencies must stay clean.
+lint:dependency-audit:
+  stage: lint
+  interruptible: true
+  image: node:16.20.1
+  script:
+    - section_start "audit-full" "Full dependency audit (reporting only, includes devDependencies)"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:audit:full || true
+    - section_end "audit-full"
+    - section_start "audit-production" "Production dependency audit (blocking)"
+    - yarn lint:audit
+    - section_end "audit-production"
+
+lint:knip:
+  stage: lint
+  interruptible: true
+  image: node:16.20.1
+  script:
+    - section_start "knip" "Checking for unused/unlisted dependencies"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:knip
+    - section_end "knip"
+
 #
 # --- Test Stage ---
 #

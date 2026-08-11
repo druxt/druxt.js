@@ -44,9 +44,7 @@
   "dependencies": {
     "axios": "0.28.0",
     "drupal-jsonapi-params": "^2.3.1",
-    "druxt": "^0.24.0",
-    "druxt-entity": "^0.28.0",
-    "druxt-router": "^0.31.0"
+    "druxt": "^0.24.0"
   },
   "optionalDependencies": {
     "vue": "^2.7.16",

@@ -5,11 +5,15 @@
   "automerge": true,
   "rangeStrategy": "bump",
   "dependencyDashboard": true,
-  "pinDigests": true,
   "branchPrefix": "deps/",
   "labels": ["dependencies"],
   "enabledManagers": ["github-actions", "npm"],
   "packageRules": [
+    {
+      "description": "Pin GitHub Actions to immutable commit SHAs (supply-chain hardening). Scoped to github-actions only — a global pinDigests caused Yarn Berry (npm) lockfile artifact-update failures: the deps/all PR (#759) regenerates yarn.lock with digest-pinned npm entries that `yarn install --immutable` then rejects (YN0028). npm packages already carry integrity hashes in yarn.lock, so digest pinning adds nothing but breakage there.",
+      "matchManagers": ["github-actions"],
+      "pinDigests": true
+    },
     {
       "description": "Freeze the build-stack boundary packages (Node, Yarn, Vue, Nuxt, and core build/lint/test tooling) — these are pinned intentionally and bumped only as part of a deliberate, coordinated upgrade, not routine automation.",
       "matchManagers": ["npm"],

@@ -71,6 +71,16 @@ jobs:
       - name: Renovate config validator
         run: yarn lint:renovate
 
+      - name: Dependency audit (full report, includes devDependencies)
+        run: yarn lint:audit:full
+        continue-on-error: true
+
+      - name: Dependency audit (production, blocking)
+        run: yarn lint:audit
+
+      - name: Knip (unused/unlisted dependencies)
+        run: yarn lint:knip
+
       - run: yarn build
 
       - name: Bundlewatch

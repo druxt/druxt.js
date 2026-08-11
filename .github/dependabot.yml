@@ -1,0 +1,25 @@
+# Dependabot is intentionally disabled for the ecosystems Renovate manages.
+#
+# Renovate (renovate.json) owns all dependency updates for this repo's enabled
+# ecosystems (npm, github-actions), including a deliberate freeze policy for
+# the Node 16 / Vue 2 / Nuxt 2 toolchain and supply-chain SHA pinning for
+# GitHub Actions. Running Dependabot in parallel produced duplicate and
+# policy-violating PRs (e.g. #744 bumping vue 2 -> 3.0.0 against the freeze).
+#
+# This file suppresses Dependabot *version* updates via open-pull-requests-limit.
+# NOTE: Dependabot *security* updates are governed by a separate repository
+# setting ("Dependabot security updates" under Settings -> Code security), not
+# by this file. To stop those too, disable that setting there — Renovate
+# surfaces vulnerabilities via its own Dependency Dashboard (issue #211).
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0

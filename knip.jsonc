@@ -1,0 +1,62 @@
+{
+  "$schema": "https://unpkg.com/knip@2/schema.json",
+  "ignoreDependencies": [
+    // Referenced only via a CLI flag/config value in CI YAML, not imported -
+    // knip's static analysis doesn't parse .gitlab-ci.yml / workflow files.
+    "eslint-junit",
+    "jest-junit",
+    // Native-module build tool - invoked implicitly by npm/node-gyp-build
+    // during install (e.g. for `re2`), never imported by name.
+    "node-gyp",
+    // Used by packages/druxt/templates/stories/*.stories.mdx - MDX-level
+    // Storybook addon usage isn't traced by this knip version.
+    "@storybook/addon-docs",
+    // knip@2.43.0 (the last release supporting Node 16 - see AGENTS.md) has
+    // no Vue SFC plugin, so it can't see imports inside a .vue file's
+    // <script> block. Verified real usage for each via grep before adding:
+    // druxt-blocks (packages/breadcrumb/menu/views), deepmerge
+    // (packages/entity).
+    "druxt-blocks",
+    "deepmerge",
+    // Registered by Nuxt module *name string*
+    // (`this.addModule(['druxt', ...])` /
+    // `this.addModule(['druxt-router/nuxt', ...])` in
+    // packages/breadcrumb/src/nuxtModule.js, and the `modules: [...]` array
+    // in packages/site/src/nuxtModule.js) rather than a static
+    // import/require - knip's dependency graph never sees these as "used".
+    // Verified each via grep before adding.
+    "druxt",
+    "druxt-router",
+    "druxt-breadcrumb",
+    "druxt-entity",
+    "druxt-menu",
+    "druxt-schema",
+    "druxt-views",
+    // Referenced only by path string in packages/docgen/jsdoc.json's
+    // `plugins` array (a JSON config file, not something knip parses for
+    // dependency usage) - both genuinely required at runtime by jsdoc.
+    "jsdoc-vuejs",
+    "jsdoc-vuex-plugin",
+    // Used in packages/druxt/src/{plugins/devtools.js,server-middleware/
+    // template.js} and packages/druxt/templates/*.js, none of which are
+    // reached by knip's entry-point graph (they're registered via
+    // resolve()'d file-path strings passed to Nuxt's addPlugin/
+    // addServerMiddleware, not statically imported) - same root cause as
+    // the Vue SFC gap above, different mechanism. Verified each via grep.
+    "@nuxtjs/axios",
+    "@nuxtjs/proxy",
+    "@vue/devtools-api",
+    "express-rate-limit",
+    "launch-editor",
+    "querystring",
+    "scule",
+    // CLI argument parser for packages/docgen — imported in
+    // src/druxt-docgen/index.js and required in the siroc-built
+    // bin/druxt-docgen.js. knip@2.43.0 intermittently fails to trace it
+    // (the flakiness called out in AGENTS.md — "contradictory results
+    // across successive runs with no code changes"), occasionally
+    // flagging it as an unused dependency and failing the now-blocking
+    // lint:knip gate. Verified real usage via grep before adding.
+    "yargs"
+  ]
+}
