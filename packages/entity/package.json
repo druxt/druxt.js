@@ -50,6 +50,10 @@
     "druxt-router": "^0.31.0",
     "druxt-schema": "^0.11.2"
   },
+  "devDependencies": {
+    "druxt-test-utils": "^0.2.15",
+    "vuex": "^3.6.2"
+  },
   "publishConfig": {
     "access": "public"
   }

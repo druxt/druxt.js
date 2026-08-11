@@ -50,8 +50,7 @@
     "druxt-menu": "^0.21.0",
     "druxt-router": "^0.31.0",
     "druxt-schema": "^0.11.2",
-    "druxt-views": "^0.22.0",
-    "md5": "^2.3.0"
+    "druxt-views": "^0.22.0"
   },
   "optionalDependencies": {
     "vue": "^2.7.16",

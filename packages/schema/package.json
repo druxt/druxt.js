@@ -43,6 +43,9 @@
     "drupal-jsonapi-params": "^2.3.1",
     "druxt": "^0.24.0"
   },
+  "devDependencies": {
+    "axios": "0.28.0"
+  },
   "optionalDependencies": {
     "vue": "^2.7.16",
     "vuex": "^3.6.2"
