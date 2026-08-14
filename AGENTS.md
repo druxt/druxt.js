@@ -21,9 +21,12 @@ fresh clone:
 
 ```bash
 mise install          # activates Node 16.20.1 from .mise.toml
-yarn install          # uses Yarn 3.6.1 via corepack (packageManager field)
+corepack enable       # enables the corepack shim (reads packageManager field)
+yarn install          # uses Yarn 3.6.1 via corepack
 yarn build            # = yarn clean && siroc build → produces packages/*/dist
 ```
+
+Or simply `make setup && make build`.
 
 `yarn build` is the regression gate — every config/tooling change must keep it
 green. All 11 packages (`druxt`, `blocks`, `breadcrumb`, `entity`, `menu`,

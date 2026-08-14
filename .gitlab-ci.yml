@@ -37,6 +37,35 @@ default:
     - 'section_end() { printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)" "$1"; }'
 
 #
+# --- Node Job Template ---
+#
+# All node-based jobs share the same image and Yarn Berry cache. The cache key
+# is the yarn.lock hash prefixed with the Node image tag, so a cache hit skips
+# both the download and the native addon compilation (deasync, re2, etc.) — and
+# the image prefix prevents restoring native binaries compiled under a
+# different Node version. enableGlobalCache: false in .yarnrc.yml keeps the
+# cache in .yarn/cache/ (project-local, CI-cacheable).
+.node:
+  image: node:16.20.1
+  cache:
+    - key:
+        files:
+          - yarn.lock
+        prefix: node-16.20.1
+      paths:
+        - .yarn/cache/
+        - node_modules/
+      policy: pull-push
+    - key:
+        files:
+          - docs/nuxt/yarn.lock
+        prefix: node-16.20.1
+      paths:
+        - docs/nuxt/.yarn/cache/
+        - docs/nuxt/node_modules/
+      policy: pull-push
+
+#
 # --- Lint Stage ---
 #
 
@@ -91,9 +120,9 @@ lint:yaml:
     - section_end "yaml-lint"
 
 lint:markdown:
+  extends: .node
   stage: lint
   interruptible: true
-  image: node:16.20.1
   script:
     - section_start "md-lint" "Linting Markdown files"
     - corepack enable
@@ -102,9 +131,9 @@ lint:markdown:
     - section_end "md-lint"
 
 lint:cspell:
+  extends: .node
   stage: lint
   interruptible: true
-  image: node:16.20.1
   script:
     - section_start "cspell" "Spell checking project files"
     - corepack enable
@@ -113,9 +142,9 @@ lint:cspell:
     - section_end "cspell"
 
 lint:js:
+  extends: .node
   stage: lint
   interruptible: true
-  image: node:16.20.1
   script:
     - section_start "eslint" "Linting JS/Vue sources"
     - corepack enable
@@ -129,9 +158,9 @@ lint:js:
 # upgrade. The production-only gate is what actually blocks the pipeline -
 # shipped runtime dependencies must stay clean.
 lint:dependency-audit:
+  extends: .node
   stage: lint
   interruptible: true
-  image: node:16.20.1
   script:
     - section_start "audit-full" "Full dependency audit (reporting only, includes devDependencies)"
     - corepack enable
@@ -143,9 +172,9 @@ lint:dependency-audit:
     - section_end "audit-production"
 
 lint:knip:
+  extends: .node
   stage: lint
   interruptible: true
-  image: node:16.20.1
   script:
     - section_start "knip" "Checking for unused/unlisted dependencies"
     - corepack enable
@@ -158,9 +187,9 @@ lint:knip:
 #
 
 test:unit:
+  extends: .node
   stage: test
   interruptible: true
-  image: node:16.20.1
   needs: []
   script:
     - section_start "jest" "Running unit tests"
@@ -191,9 +220,9 @@ test:unit:
 # docs:review job below for an on-demand look at a build.
 
 pages:preview:
+  extends: .node
   stage: preview
   interruptible: true
-  image: node:16.20.1
   needs: []
   rules:
     - when: never
@@ -241,9 +270,9 @@ pages:preview:stop:
 # the https://*.trycloudflare.com URL. Stop the job (or let it time out) when
 # you're done reviewing - the tunnel dies with it.
 docs:review:
+  extends: .node
   stage: preview
   interruptible: false
-  image: node:16.20.1
   needs: []
   timeout: 1h
   rules:

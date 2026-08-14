@@ -2,7 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "baseBranches": ["develop"],
-  "automerge": true,
+  "automerge": false,
+  "vulnerabilityAlerts": {
+    "enabled": false
+  },
   "rangeStrategy": "bump",
   "dependencyDashboard": true,
   "branchPrefix": "deps/",
@@ -30,6 +33,7 @@
         "@commitlint/config-conventional",
         "@nuxtjs/storybook",
         "@tailwindcss/typography",
+        "markdownlint-cli2",
         "renovate"
       ],
       "enabled": false

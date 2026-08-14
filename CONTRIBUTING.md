@@ -36,10 +36,12 @@ GitPod will automatically run the following tasks:
 
 1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository. e.g., `https://github.com/USER/druxt.js`
 2. Clone the forked repository to your local development environment. e.g., `git clone https://github.com/USER/druxt.js`
-3. Install dependencies: `yarn`
+3. Set up the development environment: `make setup` (enables corepack and installs dependencies)
 4. Build packages: `yarn build`
 5. Start a Drupal backend (requires DDev): `cd docs/drupal && ddev start -y && ddev drupal-install`
 6. Run DruxtSite example: `yarn example:druxt-site`
+
+> **Note:** If `make` is not available, run `corepack enable && yarn install` manually instead of `make setup`. This project uses [Yarn Berry](https://yarnpkg.com/) via [corepack](https://nodejs.org/api/corepack.html), which requires Node.js 16.9+ or 14.19+.
 
 ---
 

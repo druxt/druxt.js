@@ -12,6 +12,7 @@ tasks:
       .gitpod/scripts/drupal-setup.sh
 
       # druxt.js build install and build
+      corepack enable
       yarn install
       yarn build
 
