@@ -1,16 +1,19 @@
-# Dependabot is intentionally disabled for the ecosystems Renovate manages.
+# Dependabot and Renovate responsibilities are deliberately split:
 #
-# Renovate (renovate.json) owns all dependency updates for this repo's enabled
-# ecosystems (npm, github-actions), including a deliberate freeze policy for
-# the Node 16 / Vue 2 / Nuxt 2 toolchain and supply-chain SHA pinning for
-# GitHub Actions. Running Dependabot in parallel produced duplicate and
-# policy-violating PRs (e.g. #744 bumping vue 2 -> 3.0.0 against the freeze).
+#   - Renovate (renovate.json) owns all routine *version* updates (npm,
+#     github-actions), including a deliberate freeze policy for the Node 16 /
+#     Vue 2 / Nuxt 2 toolchain and supply-chain SHA pinning for GitHub Actions.
+#     vulnerabilityAlerts is disabled in renovate.json to avoid duplicate
+#     security PRs. automerge is false — all PRs require manual review.
 #
-# This file suppresses Dependabot *version* updates via open-pull-requests-limit.
-# NOTE: Dependabot *security* updates are governed by a separate repository
-# setting ("Dependabot security updates" under Settings -> Code security), not
-# by this file. To stop those too, disable that setting there — Renovate
-# surfaces vulnerabilities via its own Dependency Dashboard (issue #211).
+#   - Dependabot owns *security* (CVE) updates only. Security update PRs are
+#     enabled at the repo level (Settings -> Code security -> Dependabot
+#     security updates). Grouped security updates are enabled so CVE fixes are
+#     batched per ecosystem rather than one PR per advisory.
+#
+# This file suppresses Dependabot *version* updates via
+# open-pull-requests-limit: 0 for every directory Dependabot has ever scanned
+# in this repo. Security update PRs are unaffected by this limit.
 version: 2
 updates:
   - package-ecosystem: 'npm'
@@ -20,6 +23,41 @@ updates:
     open-pull-requests-limit: 0
   - package-ecosystem: 'github-actions'
     directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0
+  - package-ecosystem: 'npm'
+    directory: '/docs/nuxt'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0
+  - package-ecosystem: 'composer'
+    directory: '/docs/drupal'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0
+  - package-ecosystem: 'npm'
+    directory: '/examples/custom-module'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0
+  - package-ecosystem: 'npm'
+    directory: '/examples/druxt-site'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0
+  - package-ecosystem: 'npm'
+    directory: '/examples/entity-form'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0
+  - package-ecosystem: 'npm'
+    directory: '/examples/_deprecated/debug-component'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 0
+  - package-ecosystem: 'npm'
+    directory: '/examples/_deprecated/entity-explorer'
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 0

@@ -13,6 +13,7 @@ Colour
 consola
 corepack
 customisations
+deasync
 ddev
 dbaeumer
 decoupled
@@ -70,3 +71,4 @@ vuex
 yaml
 yamllint
 yarnpkg
+yarnrc
