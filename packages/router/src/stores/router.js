@@ -143,9 +143,9 @@ const DruxtRouterStore = ({ store }) => {
         // Get route by path from 'getRoute'.
         const route = await dispatch('getRoute', path)
 
-        // Handle route errors.
-        if (route.error && typeof route.error.statusCode !== 'undefined' && ((this.app || {}).context || {}).error) {
-          return this.app.context.error(route.error)
+        // Handle route errors. The middleware renders the Nuxt error page.
+        if (route.error && typeof route.error.statusCode !== 'undefined') {
+          return { error: route.error, route }
         }
 
         // Set active route.

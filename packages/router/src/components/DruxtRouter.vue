@@ -50,6 +50,7 @@ export default {
    *
    * @param {object} context - The Nuxt context.
    * @param {object} context.$druxt - The Druxt Nuxt context plugin instance.
+   * @param {Function} context.error - The Nuxt error method.
    * @param {Function} context.redirect - The Nuxt redirect method.
    * @param {object} context.route - The current route.
    * @param {object} context.store - The Vuex store.
@@ -62,7 +63,7 @@ export default {
    *   }
    * }
    */
-  async middleware ({ $druxt, redirect, route, store }) {
+  async middleware ({ $druxt, error, redirect, route, store }) {
     // Ensure Router middleware is enabled.
     if (typeof ($druxt.settings.router || {}).middleware !== 'undefined' && !$druxt.settings.router.middleware) {
       return
@@ -70,6 +71,11 @@ export default {
 
     // Get and set the current route and redirect information.
     const result = await store.dispatch('druxtRouter/get', route.fullPath)
+
+    // Render the Nuxt error page for route errors, e.g. 403 and 404.
+    if (result.error) {
+      return error(result.error)
+    }
 
     // Process redirect.
     if (result.redirect) {

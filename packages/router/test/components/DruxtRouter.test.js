@@ -119,6 +119,16 @@ describe('DruxtRouterComponent', () => {
     expect(redirect).toBeCalledWith('/')
   })
 
+  test('Middleware - Error', async () => {
+    // Mount component.
+    const wrapper = mountComponent({}, '/error')
+    const error = jest.fn()
+    await DruxtRouterComponent.middleware({ $druxt: wrapper.vm.$druxt, error, store: wrapper.vm.$store, route: wrapper.vm.$route })
+
+    // Route errors are passed to the Nuxt error function.
+    expect(error).toHaveBeenCalledWith({ message: 'Unable to resolve path /error.', statusCode: 404 })
+  })
+
   test('Middleware - Disabled', async () => {
     // Disable middleware.
     mocks.$druxt.settings.router.middleware = false
