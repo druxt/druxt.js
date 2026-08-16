@@ -20,6 +20,11 @@ export default ({ app }, inject) => {
   options.axios = app.$axios
   <% } %>
 
+  // Reuse the druxt module client if available.
+  if (app.$druxt) {
+    options.druxtClient = app.$druxt
+  }
+
   const druxtMenu = new DruxtMenu(baseUrl, options)
   inject('druxtMenu', druxtMenu)
 }

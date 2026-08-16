@@ -1,6 +1,10 @@
 import { DruxtClient } from 'druxt'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
+// Menu results, cached per client so backends and credentials never mix.
+// Each entry holds the request promise, so concurrent callers share one fetch.
+const menuCache = new WeakMap()
+
 /**
  * DruxtMenu class.
  *
@@ -37,10 +41,12 @@ class DruxtMenu {
     /**
      * Instance of the Druxt Client.
      *
+     * Uses the injected `druxtClient` if provided, else creates a new instance.
+     *
      * @type {DruxtClient}
      * @see {@link https://druxtjs.org/api/packages/druxt/client}
      */
-    this.druxt = new DruxtClient(baseUrl, options)
+    this.druxt = options.druxtClient || new DruxtClient(baseUrl, options)
   }
 
   /**
@@ -78,6 +84,8 @@ class DruxtMenu {
   /**
    * Gets the menu items JSON:API resources using the configured method.
    *
+   * Results are cached per client and process, keyed by prefix, menu name, settings and method.
+   *
    * @example @lang js
    * const menu = await druxtMenu.get('main')
    *
@@ -86,11 +94,21 @@ class DruxtMenu {
    * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
    */
   async get(menuName, settings, prefix) {
-    if (this.options.menu.jsonApiMenuItems) {
-      return this.getJsonApiMenuItems(menuName, settings, prefix)
+    if (!menuCache.has(this.druxt)) menuCache.set(this.druxt, new Map())
+    const cache = menuCache.get(this.druxt)
+
+    const jsonApiMenuItems = !!this.options.menu.jsonApiMenuItems
+    const cacheKey = JSON.stringify([prefix || '', menuName, settings || {}, jsonApiMenuItems])
+    if (!cache.has(cacheKey)) {
+      const request = jsonApiMenuItems
+        ? this.getJsonApiMenuItems(menuName, settings, prefix)
+        : this.getMenuLinkContent(menuName, settings, prefix)
+      cache.set(cacheKey, request)
+      // A failed request is dropped so the next call retries.
+      request.catch(() => cache.delete(cacheKey))
     }
 
-    return this.getMenuLinkContent(menuName, settings, prefix)
+    return cache.get(cacheKey)
   }
 
   /**
