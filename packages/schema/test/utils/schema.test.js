@@ -98,4 +98,43 @@ describe('Schema', () => {
     const schema = new Schema(config, { druxtSchema, data: { type: 'node--page' } })
     expect(schema.data).toStrictEqual({ 'node--page': { type: 'node--page' }})
   })
+
+  test('getResources - cached per process', async () => {
+    druxtSchema.druxt.getCollection = jest.fn(async () => ({ data: [] }))
+
+    const config = { entityType: 'node', bundle: 'page' }
+    const query = { 'filter[drupal_internal__id]': 'node.page.cache-test' }
+
+    const schemaA = new Schema(config, { druxtSchema })
+    await schemaA.getResources('entity_view_display--entity_view_display', query)
+    expect(druxtSchema.druxt.getCollection).toHaveBeenCalledTimes(1)
+
+    // A second Schema instance reuses the cached collection.
+    const schemaB = new Schema(config, { druxtSchema })
+    await schemaB.getResources('entity_view_display--entity_view_display', query)
+    expect(druxtSchema.druxt.getCollection).toHaveBeenCalledTimes(1)
+
+    // A different query is cached separately.
+    await schemaB.getResources('entity_view_display--entity_view_display', { 'filter[entity_type]': 'node' })
+    expect(druxtSchema.druxt.getCollection).toHaveBeenCalledTimes(2)
+
+    // Concurrent requests for one collection share a fetch.
+    const concurrent = { 'filter[drupal_internal__id]': 'node.page.concurrent' }
+    await Promise.all([schemaA.getResources('field_config--field_config', concurrent), schemaB.getResources('field_config--field_config', concurrent)])
+    expect(druxtSchema.druxt.getCollection).toHaveBeenCalledTimes(3)
+
+    // Another client has its own cache.
+    const otherSchema = { druxt: { getCollection: jest.fn(async () => ({ data: [] })) } }
+    await new Schema(config, { druxtSchema: otherSchema }).getResources('entity_view_display--entity_view_display', query)
+    expect(otherSchema.druxt.getCollection).toHaveBeenCalledTimes(1)
+  })
+
+  test('getResources - preloaded data wins', async () => {
+    druxtSchema.druxt.getCollection = jest.fn(async () => ({ data: [] }))
+    const preloaded = { type: 'entity_view_display--entity_view_display', data: [{ id: 'preloaded' }] }
+    const schema = new Schema({ entityType: 'node', bundle: 'page' }, { druxtSchema, data: preloaded })
+
+    expect(await schema.getResources(preloaded.type, {})).toStrictEqual(preloaded)
+    expect(druxtSchema.druxt.getCollection).toHaveBeenCalledTimes(0)
+  })
 })
