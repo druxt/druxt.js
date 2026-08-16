@@ -14,6 +14,8 @@ describe('DruxtClient', () => {
   beforeEach(() => {
     mockAxios.reset()
     druxt = new DruxtClient(baseUrl)
+    // Reset the shared JSON:API index cache.
+    Object.keys(druxt.index).forEach((key) => delete druxt.index[key])
   })
 
   test('constructor', () => {
@@ -258,6 +260,52 @@ describe('DruxtClient', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
     expect(cachedResourceIndex).toHaveProperty('href')
+  })
+
+  test('getIndex - shared between clients', async () => {
+    const clientB = new DruxtClient(baseUrl)
+
+    await druxt.getIndex()
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
+
+    // A second client with the same base URL reuses the cached index.
+    await clientB.getIndex()
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
+    expect(Object.keys(clientB.index[undefined]).length).toBe(64)
+
+    // A client with a different base URL fetches its own index.
+    const clientC = new DruxtClient('https://other.example.com')
+    await clientC.getIndex()
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+
+    // A client with a different resource config decorates its own index.
+    const clientD = new DruxtClient(baseUrl, { jsonapiResourceConfig: 'other--config' })
+    await clientD.getIndex()
+    expect(mockAxios.get).toHaveBeenCalledTimes(3)
+  })
+
+  test('getIndex - not shared across Axios instances', async () => {
+    await druxt.getIndex()
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
+
+    // Another Axios instance carries its own credentials, so its client
+    // fetches its own index rather than reusing the shared one.
+    const ownAxios = jest.fn()
+    ownAxios.get = jest.fn(async () => ({ data: { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } } }))
+    const clientE = new DruxtClient(baseUrl, { axios: ownAxios })
+    const index = await clientE.getIndex()
+    expect(ownAxios.get).toHaveBeenCalledTimes(1)
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
+    expect(Object.keys(index)).toStrictEqual(['node--page'])
+    expect(Object.keys(druxt.index[undefined]).length).toBe(64)
+  })
+
+  test('getIndex - concurrent requests share one fetch', async () => {
+    const clientB = new DruxtClient(baseUrl)
+
+    await Promise.all([druxt.getIndex(), clientB.getIndex(), druxt.getIndex()])
+    expect(mockAxios.get).toHaveBeenCalledTimes(1)
+    expect(Object.keys(clientB.index[undefined]).length).toBe(64)
   })
 
   test('getRelated', async () => {
