@@ -29,6 +29,11 @@ export default ({ app }, inject) => {
   options.axios = app.$axios
   <% } %>
 
+  // Reuse the druxt module client if available.
+  if (app.$druxt) {
+    options.druxtClient = app.$druxt
+  }
+
   const router = new DruxtRouter(baseUrl, options)
   inject('druxtRouter', () => router)
 }

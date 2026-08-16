@@ -115,9 +115,10 @@ describe('DruxtRouterStore', () => {
     await store.dispatch('druxtRouter/get', '/')
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
-    // Test failed request.
-    await store.dispatch('druxtRouter/get', '/error')
-    expect(store.app.context.error).toHaveBeenCalledWith({ message: 'Unable to resolve path /error.', statusCode: 404 })
+    // Test failed request. The error is returned for the middleware to render.
+    const failed = await store.dispatch('druxtRouter/get', '/error')
+    expect(failed.error).toStrictEqual({ message: 'Unable to resolve path /error.', statusCode: 404 })
+    expect(failed.route).toHaveProperty('error')
   })
 
   test('getEntity', async () => {
