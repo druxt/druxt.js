@@ -50,6 +50,9 @@
     "druxt": "^0.24.0",
     "druxt-blocks": "^0.17.2"
   },
+  "devDependencies": {
+    "axios": "0.33.0"
+  },
   "optionalDependencies": {
     "vue": "^2.7.16",
     "vuex": "^3.6.2"
