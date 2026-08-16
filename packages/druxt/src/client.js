@@ -2,6 +2,13 @@ import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
 
+// Shared JSON:API index cache. Keyed by the Axios instance, which carries the
+// credentials, then by base URL, endpoint and resource config, so clients on
+// one instance fetch the index once per process and never see another
+// instance's index. Each bucket also holds the in-flight requests, so
+// concurrent clients share one fetch.
+const indexCache = new WeakMap()
+
 /**
  * The Druxt JSON:API client.
  *
@@ -82,11 +89,23 @@ class DruxtClient {
       ...options
     }
 
+    // Share the index between clients on the same Axios instance, base URL,
+    // endpoint and resource config.
+    const indexKey = JSON.stringify([baseUrl, this.options.endpoint, this.options.jsonapiResourceConfig])
+    this.indexKey = indexKey
+    if (!indexCache.has(this.axios)) indexCache.set(this.axios, { index: {}, requests: {} })
+    const cache = indexCache.get(this.axios)
+    this.indexRequests = cache.requests
+
     /**
      * JSON:API Index.
+     *
+     * Shared between clients on the same Axios instance with the same base
+     * URL, endpoint and resource config.
+     *
      * @type {object}
      */
-    this.index = {}
+    this.index = cache.index[indexKey] || (cache.index[indexKey] = {})
   }
 
   /**
@@ -366,14 +385,28 @@ class DruxtClient {
    * @returns {object} The resource index object or the specified resource.
    */
   async getIndex(resource, prefix) {
-    if ((this.index || {})[prefix] && !resource) {
-      return this.index[prefix]
+    if (!(this.index || {})[prefix]) {
+      // Concurrent callers, on this client or another sharing the index,
+      // wait on one request. A failed request is dropped so the next call retries.
+      const key = [this.indexKey, prefix || ''].join(':')
+      const request = this.indexRequests[key] || (this.indexRequests[key] = this.fetchIndex(prefix))
+      try {
+        await request
+      } finally {
+        if (this.indexRequests[key] === request) delete this.indexRequests[key]
+      }
     }
 
-    if ((this.index || {})[prefix] && resource) {
-      return this.index[prefix][resource] ? this.index[prefix][resource] : false
-    }
+    return resource ? this.index[prefix][resource] || false : this.index[prefix]
+  }
 
+  /**
+   * Fetches and stores the JSON:API index for a prefix.
+   *
+   * @private
+   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+   */
+  async fetchIndex(prefix) {
     const url = [prefix, this.options.endpoint].join('')
     const { data } = await this.get(url)
     let index = data.links
@@ -424,8 +457,6 @@ class DruxtClient {
 
     // Set index.
     this.index[prefix] = index
-
-    return resource ? this.index[prefix][resource] || false : this.index[prefix]
   }
 
   /**

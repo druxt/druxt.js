@@ -13,6 +13,8 @@ describe('DruxtRouter', () => {
   beforeEach(() => {
     mockAxios.reset()
     router = new DruxtRouter(baseUrl, { axios })
+    // Reset the shared JSON:API index cache.
+    Object.keys(router.druxt.index).forEach((key) => delete router.druxt.index[key])
   })
 
   test('constructor', () => {
