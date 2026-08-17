@@ -26,8 +26,8 @@ export default {
 };
 ```
 
-Two proxy items will be created, one for the JSON:API endpoint, and the other
-for the decoupled router.
+This creates two proxy items: one for the JSON:API endpoint, and one for the
+decoupled router.
 
 ---
 

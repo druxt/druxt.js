@@ -74,7 +74,7 @@ Renders a Drupal Content Entity form with submission and validation support.
 
 Entity query settings can be provided to include related resources and filter the returned fields.
 
-- **fields**: An array of strings, or array of arrays formatted for the Drupal JSON:API Params addFields method, used to filter the returned resources fields.
+- **fields**: An array of strings, or an array of arrays. Formatted for the Drupal JSON:API Params `addFields` method, used to filter the returned resource fields.
 - **include**: An array of relationship id's to include in the returned resources.
 - **schema**: Boolean, if `true` fields will be populated by the Drupal Display schema information.
 

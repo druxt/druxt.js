@@ -9,7 +9,7 @@ weight: -10
 
 ### What is Druxt?
 
-Druxt is a framework for building Fully Decoupled Drupal and Nuxt.js applications and sites. It allows you to leverage the content modelling and management power of Drupal, and build elegant user experiences with Nuxt.js.
+Druxt is a framework for building Fully Decoupled Drupal and Nuxt.js applications and sites. It allows you to use the content modelling and management power of Drupal, and build elegant user experiences with Nuxt.js.
 
 > TL;DR: Druxt = DRUpal + nUXT.
 

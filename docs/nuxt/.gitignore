@@ -101,3 +101,6 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# Vale style packages (downloaded by `vale sync`, not committed)
+styles/
