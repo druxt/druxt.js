@@ -13,7 +13,7 @@ TODO: Move to API documentation
 
 **Version:** `>= 0.6.0`
 
-Prior to `0.6.0`, the DruxtStore store used a `hash` argument to separate the filtered resource results:
+Prior to `0.6.0`, DruxtStore used a `hash` argument to separate the filtered resource results:
 
 ```js
 // Deprecated, hash is no longer required.

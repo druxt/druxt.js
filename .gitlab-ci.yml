@@ -173,9 +173,25 @@ lint:vale:
       tar -xzf /tmp/vale.tar.gz -C /usr/local/bin vale
       chmod +x /usr/local/bin/vale
     - section_end "vale-install"
+    - section_start "vale-style" "Installing the ai-tells style package"
+    - |
+      ai_tells_version="1.31.0"
+      ai_tells_sha256="bc1267248f13e65928475c439ad7ae1bf806a20d09254c08d7d8c4a9c8b811f0"
+      curl -sL "https://github.com/tbhb/vale-ai-tells/releases/download/v${ai_tells_version}/ai-tells.zip" -o /tmp/ai-tells.zip
+      echo "${ai_tells_sha256}  /tmp/ai-tells.zip" | sha256sum -c - || { echo "ai-tells checksum mismatch" >&2; exit 1; }
+      python3 -c "
+      import zipfile, os
+      with zipfile.ZipFile('/tmp/ai-tells.zip') as z:
+          for name in z.namelist():
+              if name.startswith('ai-tells/styles/') and not name.endswith('/'):
+                  target = os.path.join('docs/nuxt/styles', name[len('ai-tells/styles/'):])
+                  os.makedirs(os.path.dirname(target), exist_ok=True)
+                  with open(target, 'wb') as f:
+                      f.write(z.read(name))
+      "
+    - section_end "vale-style"
     - section_start "vale-lint" "Linting docs/nuxt/content for AI-tell prose patterns"
     - cd docs/nuxt
-    - vale sync
     - vale content
     - section_end "vale-lint"
 

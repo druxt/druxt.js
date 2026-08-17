@@ -106,8 +106,23 @@ jobs:
           curl -sL "https://github.com/vale-cli/vale/releases/download/v${vale_version}/vale_${vale_version}_Linux_${vale_arch}.tar.gz" -o /tmp/vale.tar.gz
           echo "${vale_sha256}  /tmp/vale.tar.gz" | sha256sum -c -
           tar -xzf /tmp/vale.tar.gz -C /tmp vale
+
+          ai_tells_version="1.31.0"
+          ai_tells_sha256="bc1267248f13e65928475c439ad7ae1bf806a20d09254c08d7d8c4a9c8b811f0"
+          curl -sL "https://github.com/tbhb/vale-ai-tells/releases/download/v${ai_tells_version}/ai-tells.zip" -o /tmp/ai-tells.zip
+          echo "${ai_tells_sha256}  /tmp/ai-tells.zip" | sha256sum -c -
+          python3 -c "
+          import zipfile, os
+          with zipfile.ZipFile('/tmp/ai-tells.zip') as z:
+              for name in z.namelist():
+                  if name.startswith('ai-tells/styles/') and not name.endswith('/'):
+                      target = os.path.join('docs/nuxt/styles', name[len('ai-tells/styles/'):])
+                      os.makedirs(os.path.dirname(target), exist_ok=True)
+                      with open(target, 'wb') as f:
+                          f.write(z.read(name))
+          "
+
           cd docs/nuxt
-          /tmp/vale sync
           /tmp/vale content
 
       - name: Renovate config validator
