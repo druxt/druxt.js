@@ -25,6 +25,7 @@ drush
 Drupals
 druxt
 druxtjs
+endswith
 esm
 felixfbecker
 frontpage
@@ -40,10 +41,12 @@ Ksection
 langcode
 longname
 mailhog
+makedirs
 markdownlint
 metatag
 metatags
 mise
+namelist
 npmjs
 nuxt
 nuxtjs
@@ -56,6 +59,7 @@ scule
 siroc
 ssr
 Standardised
+startswith
 storybook
 stubber
 Themable
@@ -72,3 +76,4 @@ yaml
 yamllint
 yarnpkg
 yarnrc
+zipfile

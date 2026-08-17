@@ -15,7 +15,7 @@ Druxt gives you the tools to connect your Nuxt.js frontend to your Drupal JSON:A
 
 All Druxt sites and applications need both Drupal (backend) and Nuxt (frontend) to be installed.
 
-Each codebase can live in its own directory within a single repository, or exist in separate repositories.
+Each codebase can live in its own directory within one repository, or exist in separate repositories.
 
 ---
 
@@ -63,7 +63,7 @@ Each codebase can live in its own directory within a single repository, or exist
    };
    ```
 
-   \* _**Note:** Replace `https://demo-api.druxtjs.org` with your own Drupal backend._
+   \* _Replace `https://demo-api.druxtjs.org` with your own Drupal backend._
 
 4. Start Nuxt: `npm run dev`
 

@@ -4,7 +4,7 @@ title: Getting started with DruxtSite
 
 > DruxtSite gives you an out-of-the-box Drupal site experience with a Nuxt.js frontend.
 
-Think of the DruxtSite module as a distribution of Drupal, Nuxt and Druxt to provide a Vue.js theme layer for Drupal.
+DruxtSite combines Drupal, Nuxt and Druxt into a Vue.js theme layer for Drupal.
 
 ---
 
@@ -20,9 +20,9 @@ Try out a pre-installed, pre-configured DruxtSite install with GitPod.
 
 All Druxt sites need both Drupal (backend) and Nuxt (frontend) to be installed.
 
-Each codebase can live in its own directory within a single repository, or exist in separate repositories.
+Each codebase can live in its own directory within one repository, or exist in separate repositories.
 
-- For an example of a single repository, see the [Quickstart DruxtSite repository](https://github.com/druxt/quickstart-druxt-site).
+- For an example combining both into one repository, see the [Quickstart DruxtSite repository](https://github.com/druxt/quickstart-druxt-site).
 - For an example of individual repositories, see:
   - [Umami demo Nuxt repository](https://github.com/druxt/demo.druxtjs.org)
   - [Umami demo Drupal repository](https://github.com/druxt/demo-api.druxtjs.org)
@@ -73,7 +73,7 @@ Each codebase can live in its own directory within a single repository, or exist
    };
    ```
 
-   \* _**Note:** Replace `https://demo-api.druxtjs.org` with your own Drupal backend._
+   \* _Replace `https://demo-api.druxtjs.org` with your own Drupal backend._
 
 4. Add the `DruxtSite` component to your page or layout:
 

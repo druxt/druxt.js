@@ -11,15 +11,15 @@ weight: -3
 
 Druxt integrates with the Vue.js Devtools to provide easier access to debug information, and to simplify the theming process.
 
-* * *
+---
 
 ## Features
 
-* DruxtJS custom inspector with connection information.
-* Druxt theme component template creation tool.
-* Druxt tag in the component inspector.
+- DruxtJS custom inspector with connection information.
+- Druxt tool for creating theme component templates.
+- Druxt tag in the component inspector.
 
-* * *
+---
 
 ### Installation
 
