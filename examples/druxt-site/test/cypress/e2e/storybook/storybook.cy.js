@@ -32,7 +32,7 @@ it('Storybook: Blocks', () => {
   cy.get('#druxt-blocks-druxtblock').click()
   cy.url().should('contain', '?path=/story/druxt-blocks-druxtblock--default')
   cy.get('#control-id').should('exist').find('option').should('have.length.gte', 20)
-  cy.get('#control-id option[value="umami_main_menu"]').should('exist')
+  cy.get('#control-id').find('option').should('contain.text', 'umami_main_menu')
   cy.get('#control-id').select('umami_main_menu')
   cy.url().should('contain', '&args=id:umami_main_menu')
   cy.get('#set-langcode').should('exist')
@@ -44,9 +44,9 @@ it('Storybook: Blocks', () => {
   cy.get('#druxt-blocks-druxtblockregion').click()
   cy.url().should('contain', '?path=/story/druxt-blocks-druxtblockregion--default')
   cy.get('#control-name').should('exist').find('option').should('have.length.gte', 10)
-  cy.get('#control-name option[value="footer"]').should('exist')
+  cy.get('#control-name').find('option').should('contain.text', 'footer')
   cy.get('#control-theme').should('exist').find('option').should('have.length.gte', 2)
-  cy.get('#control-theme option[value="umami"]').should('exist')
+  cy.get('#control-theme').find('option').should('contain.text', 'umami')
 
   // Set the block region to the umami footer.
   cy.get('#control-name').select('footer')
