@@ -302,7 +302,7 @@
 // same named import as the sibling examples.
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
-// Strips markup for the word counts. Loops to a fixpoint so nested tags
+// Strips markup for the word counts. Loops until the text stops changing, so nested tags
 // can't reform after one pass, and `>?` drops an unterminated trailing
 // tag - single-pass regex stripping leaves both behind (CodeQL
 // js/incomplete-multi-character-sanitization).
