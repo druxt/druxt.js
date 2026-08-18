@@ -68,6 +68,22 @@ file_put_contents($settings_local_php, sprintf(
 ));
 PASS('SQLite database configured.');
 
+// Rollback-journal SQLite lets readers block the one writer. tome:install's
+// parent process holds read locks while its child drush processes run, so a
+// child's end-of-request cache write can deadlock against the parent and die
+// as 'database is locked' - a busy timeout alone can't help, since the parent
+// won't release until the child exits. WAL lets readers and the writer
+// coexist, and the mode persists in the database file, so setting it once
+// here covers every later connection.
+TASK('Enabling SQLite WAL journal mode.');
+$pdo = new \PDO('sqlite:' . $db_file);
+$journal_mode = $pdo->query('PRAGMA journal_mode=WAL;')->fetchColumn();
+unset($pdo);
+if (strtolower((string) $journal_mode) !== 'wal') {
+  FAIL('Could not enable WAL journal mode (got %s).', var_export($journal_mode, TRUE));
+}
+PASS('WAL journal mode enabled.');
+
 TASK('Running drush tome:install.');
 drush('tome:install');
 // tome:install's single config:import enables the language module mid-import,
