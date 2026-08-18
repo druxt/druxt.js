@@ -302,7 +302,19 @@
 // same named import as the sibling examples.
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
-const stripTags = (html) => String(html || '').replace(/<[^>]*>/g, ' ')
+// Strips markup for the word counts. Loops to a fixpoint so nested tags
+// can't reform after one pass, and `>?` drops an unterminated trailing
+// tag - single-pass regex stripping leaves both behind (CodeQL
+// js/incomplete-multi-character-sanitization).
+const stripTags = (html) => {
+  let text = String(html || '')
+  let previous
+  do {
+    previous = text
+    text = text.replace(/<[^>]*>?/g, ' ')
+  } while (text !== previous)
+  return text
+}
 const words = (text) => (stripTags(text).trim().match(/\S+/g) || []).length
 
 export default {
