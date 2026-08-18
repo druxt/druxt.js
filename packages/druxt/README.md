@@ -57,7 +57,7 @@ Find support or get involved in building Druxt via the community channels:
 
 ## Contributing
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/druxt/druxt.js)
+See the [Contributing guide](https://github.com/druxt/druxt.js/blob/develop/CONTRIBUTING.md).
 
 ---
 

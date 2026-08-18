@@ -237,7 +237,13 @@ const DruxtRouterStore = ({ store }) => {
         try {
           route = await this.$druxtRouter().getRoute(path)
         } catch (err) {
-          route = { error: { statusCode: err.response.status, message: err.response.data.message } }
+          // `err.response` is only set when the backend actually returned an
+          // HTTP response; a network failure (backend unreachable, timeout,
+          // connection reset) leaves it undefined, so fall back to `err`
+          // itself rather than crashing on the access.
+          const statusCode = (err.response || {}).status || 500
+          const message = ((err.response || {}).data || {}).message || err.message
+          route = { error: { statusCode, message } }
         }
 
         commit('addRoute', { path, route })

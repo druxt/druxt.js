@@ -122,7 +122,8 @@ export default {
         this.$store.commit('druxt/addResource', { resource })
         this.$emit('submit', resource)
       } catch (err) {
-        this.response = err.response.data
+        // Network-level failures reject without a response object.
+        this.response = (err.response || {}).data
         this.$emit('error', this.response)
       }
 

@@ -12,7 +12,7 @@ import DruxtWrapper from './DruxtWrapper.vue'
  * via the druxt settings object.
  *
  * @example @lang js
- * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+ * import DruxtModule from 'druxt/components/DruxtModule.vue'
  * export default {
  *   name: 'DruxtTestModule',
  *   extends: DruxtModule,
@@ -113,7 +113,7 @@ export default {
    * the `DruxtModule.fetch()` hook.
    *
    * @example @lang js <caption>Manually invoking DruxtModule.fetch().</caption>
-   * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+   * import DruxtModule from 'druxt/components/DruxtModule.vue'
    * export default {
    *   name: 'DruxtTestModule',
    *   extends: DruxtModule,
@@ -278,8 +278,14 @@ export default {
           // Convert parts into a pascalCase component name.
           const name = pascalCase([this.$options.name, ...parts])
 
-          // Store set variant data to be used in next set item.
-          variants.unshift({ global, name, parts })
+          // Store set variant data to be used in next set item. (Only
+          // `.parts` is read back from `variants` - no `global` key is
+          // needed here; it was previously a bare `global` object-shorthand
+          // property, which happened to reference Node's global object in
+          // SSR/webpack contexts and silently did nothing, but throws
+          // `ReferenceError: global is not defined` in an actual browser -
+          // e.g. Vite, which doesn't polyfill it.)
+          variants.unshift({ name, parts })
 
           // Add langcode suffixed component option.
           if (this.lang) {
