@@ -13,8 +13,9 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
-import './commands'
+// Shared commands (cy.druxtEntityRenders(), cy.druxtMenuHasItems(), ...),
+// reused across every examples/* app. See examples/shared/README.md.
+import '../../../../shared/cypress/commands'
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
+// App-local commands.
+import './commands'

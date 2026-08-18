@@ -1,11 +1,37 @@
-const baseUrl = process.env.GITPOD_WORKSPACE_ID
-  ? `https://8080-${process.env.GITPOD_WORKSPACE_ID}.${process.env.GITPOD_WORKSPACE_CLUSTER_HOST}`
-  : process.env.BASE_URL || 'http://druxtjs-drupal.ddev.site'
+import { resolve } from 'path'
+
+const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:8888'
 export default {
   target: 'static',
   generate: { routes: ['/'] },
   telemetry: true,
+  // No head config at all meant no viewport meta tag shipped - mobile
+  // browsers rendered the page at a desktop-width layout viewport, then
+  // scaled the whole thing down to fit.
+  head: {
+    meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
+  },
+  css: ['~/assets/css/main.css'],
+  // The Druxt logo, pulsing, while the app boots.
+  loadingIndicator: {
+    name: resolve(__dirname, '../shared/static/druxt-loading.html'),
+    background: '#fff',
+  },
   buildModules: ['@nuxt/postcss8'],
+  // Proxies the Umami theme's logo through this app's own origin - scoped
+  // to this one file, not all of /core (Drupal core's own codebase).
+  proxy: {
+    '/core/profiles/demo_umami/themes/umami/logo.svg': baseUrl,
+    // druxt.proxy.api only proxies the unprefixed /jsonapi. Once a route
+    // resolves in Spanish, Druxt requests /es/jsonapi/... - proxy every
+    // enabled language prefix or those requests miss the backend.
+    '/en/jsonapi': baseUrl,
+    '/es/jsonapi': baseUrl,
+  },
+  components: [{ path: '~/components', global: true }],
+  // Explicitly registers two wrapper components Nuxt's directory auto-scan
+  // wasn't picking up - see plugins/druxt-wrappers.js.
+  plugins: ['~/plugins/druxt-wrappers.js'],
   modules: [
     'druxt-auth',
     'druxt-site'
