@@ -63,7 +63,7 @@ if (file_exists($db_file)) {
 }
 $settings_local_php = 'web/sites/default/settings.local.php';
 file_put_contents($settings_local_php, sprintf(
-  "<?php\n\n/**\n * @file\n * Provision-only override, written fresh each run by .devtools/provision.\n * Gitignored - never committed.\n */\n\n\$databases['default']['default'] = [\n  'driver' => 'sqlite',\n  'database' => '%s',\n];\n",
+  "<?php\n\n/**\n * @file\n * Provision-only override, written fresh each run by .devtools/provision.\n * Gitignored - never committed.\n */\n\n\$databases['default']['default'] = [\n  'driver' => 'sqlite',\n  'database' => '%s',\n  // SQLite allows one writer; tome:install runs child drush processes\n  // while the parent holds a connection, and on slow CI disks a write\n  // hitting the lock fails as 'database is locked' unless it waits.\n  // PDO::ATTR_TIMEOUT is pdo_sqlite's busy timeout, in seconds.\n  'pdo' => [\n    \\PDO::ATTR_TIMEOUT => 60,\n  ],\n];\n",
   $db_file
 ));
 PASS('SQLite database configured.');
