@@ -111,13 +111,18 @@ TASK('Clearing installed content and aligning the site identity.');
 drush('php-script %s', __DIR__ . '/serial-content-delete.php');
 PASS('Content cleared.');
 
+// Via php-script rather than `drush config:import`: when core.extension
+// changes, drush hands the module install batch to a nested drush process,
+// which reintroduces the parent/child SQLite deadlock this provision exists
+// to avoid. Core's ConfigImporter runs every step in-process.
+//
 // Twice: the first pass enables the language module mid-import, so the
 // language.es config translation collection (202 items: view titles, menu
 // labels, block settings) only lands on the second. One pass left /es
 // serving English view titles and menus.
 TASK('Importing configuration (twice - translation collections land on the second pass).');
-drush('config:import');
-drush('config:import');
+drush('php-script %s', __DIR__ . '/serial-config-import.php');
+drush('php-script %s', __DIR__ . '/serial-config-import.php');
 PASS('Configuration imported.');
 
 TASK('Importing content serially.');
