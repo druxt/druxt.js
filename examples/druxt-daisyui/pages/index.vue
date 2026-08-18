@@ -190,7 +190,7 @@ export default {
       transition: dragging ? 'none' : `transform ${EXIT_MS}ms ease-out`,
     }),
 
-    // Strips markup for the card's plain-text summary. Loops to a fixpoint
+    // Strips markup for the card's plain-text summary. Loops until the text stops changing,
     // so nested tags can't reform after one pass, and `>?` drops an
     // unterminated trailing tag - single-pass regex stripping leaves both
     // behind (CodeQL js/incomplete-multi-character-sanitization).
