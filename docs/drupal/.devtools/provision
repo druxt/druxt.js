@@ -84,14 +84,45 @@ if (strtolower((string) $journal_mode) !== 'wal') {
 }
 PASS('WAL journal mode enabled.');
 
-TASK('Running drush tome:install.');
-drush('tome:install');
-// tome:install's single config:import enables the language module mid-import,
-// so the language.es config translation collection (202 items: view titles,
-// menu labels, block settings) never lands - only a re-import sees it. This
-// left /es serving English view titles and menus.
-TASK('Re-importing config so the language.es translation collection lands.');
+// tome:install spawns child drush processes (site-install, config:import,
+// per-chunk content imports) while the parent stays bootstrapped. SQLite
+// allows one writer, and on slow CI disks that combination deadlocks: a
+// child's end-of-request cache write waits out its busy timeout against the
+// parent's locks and dies as 'database is locked'. The same steps run here
+// directly, one process at a time, so no two processes ever share the
+// database.
+if (!preg_match('/^profile: (\S+)$/m', $content, $matches)) {
+  FAIL('Could not read the install profile from %s.', $extension_yml);
+}
+$profile = $matches[1];
+
+TASK('Installing Drupal (%s profile).', $profile);
+drush('site-install %s', $profile);
+PASS('Site installed.');
+
+TASK('Enabling tome_sync.');
+drush('pm:enable %s', 'tome_sync');
+PASS('tome_sync enabled.');
+
+// The install's own content has to go before config:import - it reshapes
+// bundles the demo content occupies - and the site UUID has to match sync
+// or config:import refuses to start.
+TASK('Clearing installed content and aligning the site identity.');
+drush('php-script %s', __DIR__ . '/serial-content-delete.php');
+PASS('Content cleared.');
+
+// Twice: the first pass enables the language module mid-import, so the
+// language.es config translation collection (202 items: view titles, menu
+// labels, block settings) only lands on the second. One pass left /es
+// serving English view titles and menus.
+TASK('Importing configuration (twice - translation collections land on the second pass).');
 drush('config:import');
+drush('config:import');
+PASS('Configuration imported.');
+
+TASK('Importing content serially.');
+drush('php-script %s', __DIR__ . '/serial-content-import.php');
+PASS('Content imported.');
 drush('php-eval %s', 'node_access_rebuild();');
 drush('cache:rebuild');
 PASS('Site installed from committed config/content.');
