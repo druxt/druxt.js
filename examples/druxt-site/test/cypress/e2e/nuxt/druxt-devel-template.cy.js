@@ -1,4 +1,3 @@
-/* global cy, it */
 
 it('DruxtDevelTemplate tool', () => {
   // Given I visit the homepage.
@@ -8,7 +7,9 @@ it('DruxtDevelTemplate tool', () => {
   const searchBlock = '[data-fetch-key^="DruxtBlock:9ae71192-5a61-4ede-8a11-f92f543c1f4a:0"]'
 
   // I see a DruxtDebug component.
-  cy.get(searchBlock)
+  // First spec in the run: the first visit compiles the dev bundle, which
+  // can far exceed the default 4s timeout on CI runners.
+  cy.get(searchBlock, { timeout: 120000 })
     .find('details summary')
     .first()
     .should('contain.text', "[DruxtBlock] Missing Vue template for the 'umami_search' block")

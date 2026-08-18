@@ -7,7 +7,7 @@ it('druxt-tailwind: Meal Planner library, drag-and-drop, and derived totals', ()
 
   // Header + shell - no site menu, this app is a single-purpose tool, not
   // a Druxt "Site" (that's what examples/druxt-site demonstrates).
-  cy.get('h1').should('have.text', 'Meal Planner')
+  cy.get('h1').invoke('text').invoke('trim').should('equal', 'Meal Planner')
   cy.get('[data-fetch-key^="DruxtMenu"]').should('not.exist')
 
   // Library renders with category chips and styled thumbnails.

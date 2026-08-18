@@ -89,7 +89,7 @@ it('druxt-bootstrapvue: Taxonomy section - recipe categories and tags, no leftov
   cy.get('[data-testid="coc-term-row"]').its('length').should('be.gt', 10)
   cy.get('[data-testid="coc-term-row"] .coc-type').should('contain.text', 'Category')
   cy.get('[data-testid="coc-term-row"] .coc-type').should('contain.text', 'Tag')
-  cy.get('[data-testid="coc-term-name"]').first().should('have.value').and('not.be.empty')
+  cy.get('[data-testid="coc-term-name"]').first().invoke('val').should('not.be.empty')
 
   // Search narrows the taxonomy list too.
   cy.get('[data-testid="coc-search"]').clear().type('dessert')
