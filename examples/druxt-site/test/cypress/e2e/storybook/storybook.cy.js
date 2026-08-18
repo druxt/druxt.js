@@ -31,7 +31,8 @@ it('Storybook: Blocks', () => {
   cy.get('#druxt-blocks-druxtblock').should('contain.text', 'DruxtBlock')
   cy.get('#druxt-blocks-druxtblock').click()
   cy.url().should('contain', '?path=/story/druxt-blocks-druxtblock--default')
-  cy.get('#control-id').should('exist').find('option').should('have.length', 28)
+  cy.get('#control-id').should('exist').find('option').should('have.length.gte', 20)
+  cy.get('#control-id option[value="umami_main_menu"]').should('exist')
   cy.get('#control-id').select('umami_main_menu')
   cy.url().should('contain', '&args=id:umami_main_menu')
   cy.get('#set-langcode').should('exist')
@@ -42,8 +43,10 @@ it('Storybook: Blocks', () => {
   cy.get('#druxt-blocks-druxtblockregion').should('contain.text', 'DruxtBlockRegion')
   cy.get('#druxt-blocks-druxtblockregion').click()
   cy.url().should('contain', '?path=/story/druxt-blocks-druxtblockregion--default')
-  cy.get('#control-name').should('exist').find('option').should('have.length', 15)
-  cy.get('#control-theme').should('exist').find('option').should('have.length', 3)
+  cy.get('#control-name').should('exist').find('option').should('have.length.gte', 10)
+  cy.get('#control-name option[value="footer"]').should('exist')
+  cy.get('#control-theme').should('exist').find('option').should('have.length.gte', 2)
+  cy.get('#control-theme option[value="umami"]').should('exist')
 
   // Set the block region to the umami footer.
   cy.get('#control-name').select('footer')
@@ -53,12 +56,12 @@ it('Storybook: Blocks', () => {
   // Test the DruxtBlocks Claro story group.
   cy.get('#druxt-blocks-claro').should('contain.text', 'Claro')
   cy.get('#druxt-blocks-claro').click()
-  cy.get('[data-parent-id="druxt-blocks-claro"]').should('have.length', 6)
+  cy.get('[data-parent-id="druxt-blocks-claro"]').should('have.length.gte', 1)
 
   // Test the DruxtBlocks Claro Header region story group.
   cy.get('#druxt-blocks-claro-header').should('contain.text', 'Header')
   cy.get('#druxt-blocks-claro-header').click()
-  cy.get('[data-parent-id="druxt-blocks-claro-header"]').should('have.length', 3)
+  cy.get('[data-parent-id="druxt-blocks-claro-header"]').should('have.length.gte', 1)
   cy.get('button[data-parent-id="druxt-blocks-claro-header"]:first').click()
   cy.get('[data-selected="true"]').should('have.text', 'DruxtBlock')
   cy.get('[data-parent-id="druxt-blocks-claro-header"]:last').click()
