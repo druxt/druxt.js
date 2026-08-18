@@ -1,0 +1,170 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "5cb6bf25-a595-4b7b-b7a3-155cfabfbde4",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/5cb6bf25-a595-4b7b-b7a3-155cfabfbde4"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.full",
+            "field.field.node.recipe.field_cooking_time",
+            "field.field.node.recipe.field_difficulty",
+            "field.field.node.recipe.field_ingredients",
+            "field.field.node.recipe.field_media_image",
+            "field.field.node.recipe.field_number_of_servings",
+            "field.field.node.recipe.field_preparation_time",
+            "field.field.node.recipe.field_recipe_category",
+            "field.field.node.recipe.field_recipe_instruction",
+            "field.field.node.recipe.field_summary",
+            "field.field.node.recipe.field_tags",
+            "field.field.node.recipe.layout_builder__layout",
+            "node.type.recipe",
+            "views.view.related_recipes"
+          ],
+          "module": [
+            "layout_builder",
+            "layout_discovery",
+            "options",
+            "text",
+            "user",
+            "views"
+          ],
+          "theme": ["umami"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": true,
+            "allow_custom": true
+          }
+        },
+        "drupal_internal__id": "node.recipe.full",
+        "targetEntityType": "node",
+        "bundle": "recipe",
+        "mode": "full",
+        "content": {
+          "content_moderation_control": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 10,
+            "region": "content"
+          },
+          "field_cooking_time": {
+            "type": "number_integer",
+            "label": "inline",
+            "settings": {
+              "thousand_separator": "",
+              "prefix_suffix": true
+            },
+            "third_party_settings": [],
+            "weight": 5,
+            "region": "content"
+          },
+          "field_difficulty": {
+            "type": "list_default",
+            "label": "inline",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 7,
+            "region": "content"
+          },
+          "field_ingredients": {
+            "type": "string",
+            "label": "above",
+            "settings": {
+              "link_to_entity": false
+            },
+            "third_party_settings": [],
+            "weight": 8,
+            "region": "content"
+          },
+          "field_number_of_servings": {
+            "type": "number_integer",
+            "label": "inline",
+            "settings": {
+              "thousand_separator": "",
+              "prefix_suffix": false
+            },
+            "third_party_settings": [],
+            "weight": 6,
+            "region": "content"
+          },
+          "field_preparation_time": {
+            "type": "number_integer",
+            "label": "inline",
+            "settings": {
+              "thousand_separator": "",
+              "prefix_suffix": true
+            },
+            "third_party_settings": [],
+            "weight": 4,
+            "region": "content"
+          },
+          "field_recipe_category": {
+            "type": "entity_reference_label",
+            "label": "inline",
+            "settings": {
+              "link": true
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          },
+          "field_recipe_instruction": {
+            "type": "text_default",
+            "label": "above",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 9,
+            "region": "content"
+          },
+          "field_summary": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          },
+          "field_tags": {
+            "type": "entity_reference_label",
+            "label": "inline",
+            "settings": {
+              "link": true
+            },
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "field_media_image": true,
+          "langcode": true,
+          "layout_builder__layout": true,
+          "links": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=node.recipe.full"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "f3436932-c621-401c-a905-8102c265e6ca",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/f3436932-c621-401c-a905-8102c265e6ca"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.media.field_media_audio_file",
+            "media.type.audio"
+          ],
+          "module": ["file"]
+        },
+        "drupal_internal__id": "media.audio.field_media_audio_file",
+        "field_name": "field_media_audio_file",
+        "entity_type": "media",
+        "bundle": "audio",
+        "label": "Audio file",
+        "description": "",
+        "required": true,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:file",
+          "handler_settings": [],
+          "file_directory": "[date:custom:Y]-[date:custom:m]",
+          "file_extensions": "mp3 wav aac",
+          "max_filesize": "",
+          "description_field": false
+        },
+        "field_type": "file"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=audio"
+    }
+  }
+}
