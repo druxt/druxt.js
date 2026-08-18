@@ -35,10 +35,10 @@
     <h2>Component - Path prop</h2>
     <p>A Path property can be provided or bound to the DruxtRouter component to specify what route should be rendered.</p>
     <p>This mode allows explicit rendering of specified routes.</p>
-    <pre><code>&lt;DruxtRouter path="/node/1" /&gt;</code></pre>
+    <pre><code>&lt;DruxtRouter path="/en/recipes/fiery-chili-sauce" /&gt;</code></pre>
     <details>
       <summary>Output</summary>
-      <DruxtRouter path="/node/1" />
+      <DruxtRouter path="/en/recipes/fiery-chili-sauce" />
     </details>
 
     <hr />
@@ -54,7 +54,7 @@
     }
   }
 }</code></pre>
-    <NuxtLink to="/node/1">Example: /node/1</NuxtLink>
+    <NuxtLink to="/en/recipes/fiery-chili-sauce">Example: /en/recipes/fiery-chili-sauce</NuxtLink>
 
     <hr />
 

@@ -42,7 +42,10 @@ it('Examples: reactive filtering re-ranks by ingredient coverage', () => {
     })
 
   // Toggling every chip off: no terms, dashes instead of percentages.
-  cy.get('.rf-chip--active').click({ multiple: true })
+  // One chip at a time by name - each toggle re-renders the chip list, and
+  // clicking a detached element fails the run.
+  cy.contains('button', 'onion').click()
+  cy.contains('button', 'garlic').click()
   cy.get('.rf-status').should('contain.text', 'no ingredients selected')
   cy.get('.rf-pct').each(($pct) => {
     expect($pct.text()).to.equal('—')
