@@ -21,9 +21,7 @@
     "docs/nuxt/content/api/**",
     "docs/drupal/**",
     "examples/*/node_modules/**",
-    "examples/_deprecated/**",
     ".changeset/**",
-    "**/CHANGELOG.md",
-    ".gitpod/WELCOME.md"
+    "**/CHANGELOG.md"
   ]
 }

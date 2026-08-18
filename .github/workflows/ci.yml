@@ -205,6 +205,106 @@ jobs:
           fail_ci_if_error: true
           directory: ./coverage
 
+  # The three themed showcase examples (daisyui, tailwind, bootstrapvue) run
+  # as a parallel matrix - each gets its own backend and dev server, which
+  # keeps any single app's failure attributable and the wall time down.
+  # druxt-site's e2e stays in test-e2e below alongside Storybook and the
+  # docs site; it was running there before this suite existed.
+  test-examples:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        example: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .yarn/cache
+            docs/nuxt/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'docs/nuxt/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+      - run: yarn build
+
+      # Same docker-free backend as test-e2e: PHP built-in server + SQLite,
+      # not DDEV. See docs/drupal/README.md and .devtools/.
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, sqlite3
+
+      - name: Assemble, provision, and start the Drupal backend
+        working-directory: docs/drupal
+        run: |
+          .devtools/assemble
+          .devtools/provision
+          .devtools/start
+        env:
+          WEBSERVER_HOST: 127.0.0.1
+          WEBSERVER_PORT: 8888
+
+      - run: npx cypress install
+
+      - name: ${{ matrix.example }} e2e
+        env:
+          BASE_URL: http://127.0.0.1:8888
+        run: yarn example:${{ matrix.example }}:test
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: failure()
+        with:
+          name: cypress-${{ matrix.example }}
+          path: |
+            examples/${{ matrix.example }}/test/cypress/screenshots
+            examples/${{ matrix.example }}/test/cypress/videos
+
+  # Backend-free: the druxt-inspect CLI suite replays recorded JSON:API
+  # fixtures (examples/node-client/test/adapter.js), so it needs neither the
+  # Drupal backend nor Cypress - just the built workspace packages.
+  test-node-client:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .yarn/cache
+            docs/nuxt/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'docs/nuxt/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+      - run: yarn build
+
+      - name: druxt-inspect CLI tests
+        run: yarn test:node-client
+
   test-e2e:
     needs: build
     runs-on: ubuntu-latest
@@ -232,23 +332,36 @@ jobs:
       - run: yarn build
       - run: yarn build:docs
 
-      - name: Setup DDEV
-        uses: ddev/github-action-setup-ddev@fdf2f5c97943bae638f31df6df86f1defa6210c0 # v1
+      # Docker-free: PHP built-in server + SQLite, not DDEV. See
+      # docs/drupal/README.md and .devtools/ for the reasoning.
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
-          autostart: false
+          php-version: '8.3'
+          extensions: pdo_sqlite, sqlite3
 
-      - name: Start Drupal backend
+      - name: Assemble, provision, and start the Drupal backend
         working-directory: docs/drupal
-        run: ddev start -y && ddev drupal-install
+        run: |
+          .devtools/assemble
+          .devtools/provision
+          .devtools/start
+        env:
+          WEBSERVER_HOST: 127.0.0.1
+          WEBSERVER_PORT: 8888
 
       - run: npx cypress install
 
       - name: DruxtSite e2e
+        env:
+          BASE_URL: http://127.0.0.1:8888
         run: |
           yarn start-server-and-test 'yarn example:druxt-site' http://localhost:3000 \
-            'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/nuxt/*.cy.js"'
+            'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/nuxt/**/*.cy.js"'
 
       - name: DruxtSite Storybook e2e
+        env:
+          BASE_URL: http://127.0.0.1:8888
         run: |
           yarn start-server-and-test 'yarn example:druxt-site:storybook --port 3000' http://localhost:3000 \
             'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/storybook/*.cy.js"'

@@ -158,7 +158,7 @@ stay as-is.
 
 - **GitHub Actions** (`.github/workflows/ci.yml`) — canonical CI, on Node
   16.20.1. Jobs: `build`, `lint`, `test-unit` (coverage uploaded to Codecov),
-  `test-e2e` (DDEV + Drupal + Cypress). Runs on push/PR to `develop`/`main`.
+  `test-e2e` (Drupal backend + Cypress). Runs on push/PR to `develop`/`main`.
   Replaces CircleCI, which is no longer used.
 - **GitLab CI** (`.gitlab-ci.yml`) — additive pipeline (lint + test +
   `secret-detection` + `preview` stages).
@@ -167,6 +167,16 @@ stay as-is.
   audit and knip block; the full audit is reporting-only. See
   "Dependency audit: production vs. full" above.
 - **CodeQL** (`.github/workflows/codeql-analysis.yml`) — scans `develop` weekly.
+
+## docs/drupal local dev
+
+`docs/drupal`'s local/CI workflow is Docker-free: PHP's built-in
+server plus a throwaway SQLite database (`docs/drupal/.devtools/`, `make
+build`). `test-e2e` uses this path, pinned to PHP 8.3 (not this repo's usual
+8.4: `docs/drupal`'s current `composer.lock` needs 8.2/8.3, see
+`docs/drupal/README.md`). See `docs/drupal/.devtools/README.md` for how the
+SQLite path works and why it's built the way it is. (DDEV-based setups live
+in the `quickstart` repo, not here.)
 
 ## Reference
 

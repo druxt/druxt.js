@@ -56,12 +56,6 @@ Druxt is an open-source project, built by the community for the community.
 
 See the [Contributing guide](./CONTRIBUTING.md) for details on how to #get-involved.
 
-### Cloud development
-
-This repository is setup for development in the cloud using [gitpod.io](https://gitpod.io), to get started, click the link below, or navigate to: https://gitpod.io/#https://github.com/druxt/druxt.js
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/druxt/druxt.js)
-
 ## License
 
 [MIT](https://github.com/druxt/druxt.js/blob/develop/LICENSE)

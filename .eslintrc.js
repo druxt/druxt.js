@@ -24,19 +24,16 @@ module.exports = {
       env: { jest: true }
     },
     {
-      // docs/nuxt Cypress specs. `cy` and `Cypress` are injected by the
-      // runner and the suite functions come from its bundled Mocha, so none
-      // of them are imported. The jest override above does not reach these:
-      // its `test/**/*.js` glob is anchored at this config's directory, and
-      // jest would not supply `cy` in any case.
-      //
-      // Scoped to docs/nuxt rather than every Cypress project, because the
-      // examples suite declares the same globals inline with a
-      // `/* global cy, it */` comment, which this would turn into a
-      // no-redeclare error.
-      files: ['docs/nuxt/test/cypress/**/*.cy.js'],
+      // Cypress specs, every project (docs/nuxt and the examples suite
+      // alike). `cy` and `Cypress` are injected by the runner and the suite
+      // functions come from its bundled Mocha, so none of them are imported.
+      // The jest override above does not reach these: its `test/**/*.js`
+      // glob is anchored at this config's directory, and jest would not
+      // supply `cy` in any case. Specs must not re-declare these via
+      // `/* global */` comments - that trips no-redeclare.
+      files: ['**/cypress/**/*.js'],
       env: { browser: true, mocha: true },
-      globals: { cy: 'readonly', Cypress: 'readonly' }
+      globals: { cy: 'readonly', Cypress: 'readonly', expect: 'readonly' }
     }
   ]
 }
