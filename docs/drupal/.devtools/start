@@ -1,0 +1,112 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Start the PHP built-in development server.
+ *
+ * Runs with the working directory set to `web/` (the docroot) — some
+ * contrib modules (e.g. jsonapi_hypermedia) resolve paths relative to the
+ * process cwd in a way that only matches the docroot under the built-in
+ * server, not wherever the shell started.
+ */
+
+declare(strict_types=1);
+
+namespace DruxtjsDevTools;
+
+require_once __DIR__ . '/helpers.php';
+
+// -----------------------------------------------------------------------------
+// Variables.
+// -----------------------------------------------------------------------------
+
+$webserver = resolve_webserver(auto_discover: TRUE);
+$webserver_host = $webserver['host'];
+$webserver_port = $webserver['port'];
+
+$webserver_wait_timeout = (int) getenv_default('WEBSERVER_WAIT_TIMEOUT', '20');
+
+// Enable Xdebug when XDEBUG env var is set.
+$xdebug_enabled = getenv_default('XDEBUG', '') !== '';
+$xdebug_flags = $xdebug_enabled ? ' -d xdebug.mode=debug -d xdebug.start_with_request=yes' : '';
+
+// -----------------------------------------------------------------------------
+
+echo '===============================' . PHP_EOL;
+echo '      💻 START ENVIRONMENT     ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+
+if ($xdebug_enabled) {
+  TASK('Verifying that the Xdebug PHP extension is installed.');
+  $php_v = (string) shell_exec('php -v 2>/dev/null');
+  if (stripos($php_v, 'xdebug') === FALSE) {
+    FAIL('XDEBUG=1 is set but the Xdebug PHP extension is not installed on the host.');
+  }
+  PASS('Xdebug extension is loaded.');
+}
+
+TASK('Stopping previously started services, if any.');
+@passthru(sprintf('lsof -ti:%s | xargs kill -9 2>/dev/null', escapeshellarg($webserver_port)));
+
+TASK('Starting the PHP webserver (docroot: web/).');
+$cwd = (string) getcwd();
+passthru(sprintf(
+  'cd %s/web && nohup php%s -S %s:%s -t . .ht.router.php >/tmp/druxtjs-drupal-php-server.log 2>&1 &',
+  escapeshellarg($cwd),
+  $xdebug_flags,
+  escapeshellarg($webserver_host),
+  escapeshellarg($webserver_port)
+));
+
+NOTE('Waiting up to %s seconds for the server to be ready.', (string) $webserver_wait_timeout);
+$ready = FALSE;
+for ($i = 0; $i < $webserver_wait_timeout; $i++) {
+  sleep(1);
+  $fp = @fsockopen($webserver_host, (int) $webserver_port, $errno, $errstr, 1);
+  if ($fp !== FALSE) {
+    fclose($fp);
+    $ready = TRUE;
+    break;
+  }
+}
+if (!$ready) {
+  $log = @file_get_contents('/tmp/druxtjs-drupal-php-server.log') ?: '';
+  FAIL('Unable to start inbuilt PHP server' . ($log !== '' ? "\n" . $log : ''));
+}
+PASS('Server started successfully.');
+
+TASK('Checking that the server can serve content.');
+$context = stream_context_create(['http' => ['method' => 'HEAD', 'timeout' => 5, 'ignore_errors' => TRUE]]);
+$headers = @get_headers(sprintf('http://%s:%s', $webserver_host, $webserver_port), FALSE, $context);
+if ($headers === FALSE || !isset($headers[0]) || (!str_contains($headers[0], '200') && !str_contains($headers[0], '30'))) {
+  FAIL('Server is started, but site cannot be served.');
+}
+PASS('Server can serve content.');
+
+$site_url = sprintf('http://%s:%s', $webserver_host, $webserver_port);
+
+// Print a one-time login link — non-fatal if the site isn't provisioned yet
+// (first run before `.devtools/provision`), since drush() would otherwise
+// abort the script.
+$login_exit_code = 0;
+$login_link = is_file('vendor/bin/drush') ? trim(drush('uli -l %s --no-browser', $site_url, $login_exit_code)) : '';
+
+echo PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo '    💻 ENVIRONMENT READY  ✅  ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+echo 'Directory : ' . $cwd . '/web' . PHP_EOL;
+echo 'URL       : ' . $site_url . PHP_EOL;
+echo 'XDebug    : ' . ($xdebug_enabled ? 'Enabled' : 'Disabled') . PHP_EOL;
+if ($login_exit_code === 0 && $login_link !== '') {
+  echo 'Login     : ' . $login_link . PHP_EOL;
+}
+echo PHP_EOL;
+if ($login_exit_code !== 0) {
+  echo '> Next steps:' . PHP_EOL;
+  echo '  .devtools/provision    # Provision the site (first run / reset)' . PHP_EOL;
+  echo PHP_EOL;
+}

@@ -1,0 +1,75 @@
+{
+  "uuid": [
+    {
+      "value": "e7043528-3e7c-44b1-9a78-6b05bc888698"
+    }
+  ],
+  "langcode": [
+    {
+      "value": "en"
+    }
+  ],
+  "owner_id": [
+    {
+      "target_type": "user",
+      "target_uuid": "1b73526a-a941-4ebf-b40f-3da0ff2fd1e0"
+    }
+  ],
+  "client_id": [
+    {
+      "value": "c6e3275c-05cb-45f0-a3c3-c037bf730963"
+    }
+  ],
+  "label": [
+    {
+      "value": "Druxt"
+    }
+  ],
+  "description": [
+    {
+      "value": "Public PKCE consumer for the Druxt frontend examples."
+    }
+  ],
+  "image": [
+    {
+      "target_id": null,
+      "alt": null,
+      "title": null,
+      "width": null,
+      "height": null
+    }
+  ],
+  "third_party": [
+    {
+      "value": false
+    }
+  ],
+  "is_default": [
+    {
+      "value": true
+    }
+  ],
+  "default_langcode": [
+    {
+      "value": true
+    }
+  ],
+  "secret": [],
+  "confidential": [
+    {
+      "value": false
+    }
+  ],
+  "roles": [],
+  "redirect": [
+    {
+      "value": "http:\/\/localhost:3004\/callback"
+    }
+  ],
+  "user_id": [],
+  "pkce": [
+    {
+      "value": true
+    }
+  ]
+}
