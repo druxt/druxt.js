@@ -28,25 +28,19 @@ targetEntityType: node
 bundle: recipe
 mode: default
 content:
-  created:
-    type: datetime_timestamp
-    weight: 15
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_cooking_time:
     type: number
     weight: 3
     region: content
     settings:
       placeholder: ''
-    third_party_settings: {  }
+    third_party_settings: {}
   field_difficulty:
     type: options_select
     weight: 5
     region: content
-    settings: {  }
-    third_party_settings: {  }
+    settings: {}
+    third_party_settings: {}
   field_ingredients:
     type: string_textfield
     weight: 11
@@ -54,34 +48,34 @@ content:
     settings:
       size: 60
       placeholder: ''
-    third_party_settings: {  }
+    third_party_settings: {}
   field_media_image:
     type: media_library_widget
     weight: 9
     region: content
     settings:
-      media_types: {  }
-    third_party_settings: {  }
+      media_types: {}
+    third_party_settings: {}
   field_number_of_servings:
     type: number
     weight: 4
     region: content
     settings:
       placeholder: ''
-    third_party_settings: {  }
+    third_party_settings: {}
   field_preparation_time:
     type: number
     weight: 2
     region: content
     settings:
       placeholder: ''
-    third_party_settings: {  }
+    third_party_settings: {}
   field_recipe_category:
     type: options_buttons
     weight: 6
     region: content
-    settings: {  }
-    third_party_settings: {  }
+    settings: {}
+    third_party_settings: {}
   field_recipe_instruction:
     type: text_textarea
     weight: 13
@@ -89,7 +83,7 @@ content:
     settings:
       rows: 5
       placeholder: ''
-    third_party_settings: {  }
+    third_party_settings: {}
   field_summary:
     type: text_textarea
     weight: 10
@@ -97,7 +91,7 @@ content:
     settings:
       rows: 5
       placeholder: ''
-    third_party_settings: {  }
+    third_party_settings: {}
   field_tags:
     type: entity_reference_autocomplete_tags
     weight: 7
@@ -107,53 +101,21 @@ content:
       match_limit: 10
       size: 60
       placeholder: ''
-    third_party_settings: {  }
-  langcode:
-    type: language_select
-    weight: 1
-    region: content
-    settings:
-      include_locked: true
-    third_party_settings: {  }
-  layout_builder__layout:
-    type: null
-    weight: 26
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  moderation_state:
-    type: moderation_state_default
-    weight: 20
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  path:
-    type: path
-    weight: 18
-    region: content
-    settings: {  }
-    third_party_settings: {  }
+    third_party_settings: {}
   promote:
     type: boolean_checkbox
     weight: 16
     region: content
     settings:
       display_label: true
-    third_party_settings: {  }
+    third_party_settings: {}
   status:
     type: boolean_checkbox
     weight: 19
     region: content
     settings:
       display_label: true
-    third_party_settings: {  }
-  sticky:
-    type: boolean_checkbox
-    weight: 17
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
+    third_party_settings: {}
   title:
     type: string_textfield
     weight: 0
@@ -161,20 +123,13 @@ content:
     settings:
       size: 60
       placeholder: ''
-    third_party_settings: {  }
-  translation:
-    weight: 12
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  uid:
-    type: entity_reference_autocomplete
-    weight: 14
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-hidden: {  }
+    third_party_settings: {}
+hidden:
+  created: true
+  langcode: true
+  layout_builder__layout: true
+  moderation_state: true
+  path: true
+  sticky: true
+  translation: true
+  uid: true

@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Assemble the site codebase.
+ *
+ * Unlike the extension-scaffold `assemble` this pattern is modelled on,
+ * `docs/drupal` already IS the site codebase — there is no `composer
+ * create-project` scaffolding step or module-symlinking to do. This just
+ * installs dependencies.
+ */
+
+declare(strict_types=1);
+
+namespace DruxtjsDevTools;
+
+require_once __DIR__ . '/helpers.php';
+
+echo '===============================' . PHP_EOL;
+echo '         🏗️ ASSEMBLE           ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+
+TASK('Validating tools.');
+command_must_exist('composer');
+PASS('Tools are valid.');
+
+TASK('Installing Composer dependencies.');
+putenv('COMPOSER_MEMORY_LIMIT=-1');
+passthru_or_fail('composer install --no-interaction --no-progress');
+PASS('Dependencies installed.');
+
+echo PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo '    🏗 ASSEMBLE COMPLETE ✅   ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+echo '> Next steps:' . PHP_EOL;
+echo '  .devtools/provision    # Install the site (SQLite + Tome import)' . PHP_EOL;
+echo '  .devtools/start        # Start the webserver' . PHP_EOL;
+echo PHP_EOL;
