@@ -37,27 +37,7 @@ updates:
       interval: 'weekly'
     open-pull-requests-limit: 0
   - package-ecosystem: 'npm'
-    directory: '/examples/custom-module'
-    schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 0
-  - package-ecosystem: 'npm'
     directory: '/examples/druxt-site'
-    schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 0
-  - package-ecosystem: 'npm'
-    directory: '/examples/entity-form'
-    schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 0
-  - package-ecosystem: 'npm'
-    directory: '/examples/_deprecated/debug-component'
-    schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 0
-  - package-ecosystem: 'npm'
-    directory: '/examples/_deprecated/entity-explorer'
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 0

@@ -42,8 +42,8 @@ default:
 #
 # All node-based jobs share the same image and Yarn Berry cache. The cache key
 # is the yarn.lock hash prefixed with the Node image tag, so a cache hit skips
-# both the download and the native addon compilation (deasync, re2, etc.) — and
-# the image prefix prevents restoring native binaries compiled under a
+# both the download and the native addon compilation (deasync, re2, etc.).
+# The image prefix prevents restoring native binaries compiled under a
 # different Node version. enableGlobalCache: false in .yarnrc.yml keeps the
 # cache in .yarn/cache/ (project-local, CI-cacheable).
 .node:
@@ -558,3 +558,309 @@ audit:seo:
       - docs/nuxt/.unlighthouse/
     expire_in: 1 week
     expose_as: 'Lighthouse audit'
+
+# Manual: provisions docs/drupal + the example apps and exposes each over a
+# Cloudflare quick tunnel for as long as the job runs. Click "Run" on this job,
+# then watch its log for the https://*.trycloudflare.com URLs.
+#
+# Variables (all settable when triggering):
+# - PREVIEW_EXAMPLES: CSV subset of site,daisyui,tailwind,bootstrapvue
+#   (default: all four)
+# - PREVIEW_MODE: dev (default) | prod | both. Dev = `yarn dev` on the app's
+#   port (3001-3004; bootstrapvue is 3004 - its OAuth consumer's committed
+#   redirect URI). Prod = `yarn build && yarn start` - in "both" mode prod
+#   uses port+200 (3201-3204) so the dev and prod servers can coexist.
+# - PREVIEW_DURATION_SECONDS: how long to keep the preview alive
+#   (default 3600, clamped to 18000 - keep under the job timeout).
+#
+# code-server (VS Code in the browser) and the one-time Drupal login link
+# are owner conveniences that only make sense with authentication: job logs
+# can be readable by more people than you think, so both are skipped unless
+# PREVIEW_CODE_PASSWORD is set. With it set, code-server requires that
+# password (--auth password).
+#
+# Known limitation: the Content Ops Console (bootstrapvue) can't complete
+# OAuth login through a random quick-tunnel hostname - its redirect is
+# committed to localhost:3004/callback. That app is read-only over tunnels;
+# use the devcontainer (or a local checkout) for its login flow.
+examples:preview:
+  stage: preview
+  interruptible: false
+  when: manual
+  needs: []
+  allow_failure: true
+  resource_group: examples-preview
+  timeout: 6h
+  image: php:8.3
+  variables:
+    PREVIEW_EXAMPLES: 'site,daisyui,tailwind,bootstrapvue'
+    PREVIEW_MODE: 'dev'
+    PREVIEW_DURATION_SECONDS: '3600'
+    # code-server's own install.sh prefixes "v" itself to build both the
+    # release tag and asset filename - this was double-prefixed to "vv...",
+    # 404ing every time (only surfaced once PREVIEW_CODE_PASSWORD started
+    # reaching the job - it was unprotected before that, so this whole
+    # branch never ran).
+    CODE_SERVER_VERSION: '4.132.0'
+    WEBSERVER_HOST: 127.0.0.1
+    WEBSERVER_PORT: '8888'
+    # python3/make/g++: the monorepo's native addons (deasync, re2) need
+    # a compile toolchain that the minimal php image lacks.
+    PHP_APT_PACKAGES: 'git unzip curl ca-certificates python3 python3-setuptools build-essential libsqlite3-dev libzip-dev libicu-dev libpng-dev libjpeg62-turbo-dev libfreetype6-dev libonig-dev libxml2-dev'
+    PHP_EXTENSIONS: 'mbstring pdo_sqlite intl gd xml zip opcache'
+  cache:
+    - key:
+        files:
+          - yarn.lock
+        prefix: php83-node16
+      paths:
+        - .yarn/cache/
+        - node_modules/
+      policy: pull-push
+    - key:
+        files:
+          - docs/drupal/composer.lock
+        prefix: php83
+      paths:
+        - docs/drupal/vendor/
+      policy: pull-push
+    # Static key: lockfile churn just costs one cold run, and CI's
+    # files-key limit is 2 - not enough for the four example lockfiles.
+    - key: examples-php83-node16
+      paths:
+        - examples/*/node_modules/
+      policy: pull-push
+  before_script:
+    # default.before_script's section helpers are replaced by this
+    # before_script, so redefine them here.
+    - 'section_start() { local n="$1" t="${2:-$1}"; printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)" "$n" "$t"; }'
+    - 'section_end() { printf "\e[0Ksection_end:%s\r\e[0K\n" "$(date +%s)" "$1"; }'
+    - apt-get update -yqq && apt-get install -yqq $PHP_APT_PACKAGES
+    - docker-php-ext-configure gd --with-freetype --with-jpeg
+    - docker-php-ext-install -j"$(nproc)" $PHP_EXTENSIONS
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=2.10.2
+    - export NVM_DIR="$HOME/.nvm" && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    - . "$NVM_DIR/nvm.sh" --no-use && nvm install && nvm use
+    - node --version
+    - corepack enable
+    - |
+      cf_version="2026.7.3"
+      arch="$(uname -m)"
+      case "$arch" in
+        aarch64|arm64)
+          cf_arch=arm64
+          cf_sha256=65259e652a7bea08bf5df603233ab22b8bf3116af8df9f9206209af6a1b955c0
+          ;;
+        x86_64)
+          cf_arch=amd64
+          cf_sha256=9d71c677db00134c1bd4144b7783486b654ad281b1ea62b4972098d19f770f17
+          ;;
+        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+      esac
+      curl -sL "https://github.com/cloudflare/cloudflared/releases/download/${cf_version}/cloudflared-linux-${cf_arch}" -o /usr/local/bin/cloudflared
+      echo "${cf_sha256}  /usr/local/bin/cloudflared" | sha256sum -c - || { echo "cloudflared checksum mismatch" >&2; exit 1; }
+      chmod +x /usr/local/bin/cloudflared
+  script:
+    - section_start "backend" "Provisioning the docs/drupal backend (SQLite, Docker-free)"
+    - |
+      set -euo pipefail
+      cd docs/drupal
+      .devtools/assemble
+      .devtools/provision
+      nohup .devtools/start > /tmp/drupal-start.log 2>&1 &
+      cd "$CI_PROJECT_DIR"
+    - |
+      for i in $(seq 1 60); do
+        if curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null 2>&1; then echo "backend up"; break; fi
+        sleep 5
+      done
+      curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null
+    - section_end "backend"
+    - section_start "frontend" "Building the monorepo and starting the example apps"
+    - |
+      set -euo pipefail
+      yarn install --immutable
+      yarn build
+    - |
+      # Start helper: $1=variant $2=app $3=port. tailwind is a plain Vite
+      # app (vite / vite preview --port); the others are Nuxt 2
+      # (nuxt dev/start -p, which also overrides bootstrapvue's committed
+      # config port when prod runs on port+200).
+      run_variant() {
+        variant="$1" app="$2" port="$3"
+        dir="examples/druxt-$app"
+        log="/tmp/${variant}-${app}.log"
+        if [ "$variant" = prod ]; then (cd "$dir" && yarn install && yarn build) || exit 1; fi
+        if [ "$app" = tailwind ]; then
+          if [ "$variant" = dev ]; then
+            (cd "$dir" && nohup yarn vite --port "$port" --strictPort > "$log" 2>&1 &)
+          else
+            (cd "$dir" && nohup yarn vite preview --port "$port" --strictPort > "$log" 2>&1 &)
+          fi
+        else
+          if [ "$variant" = dev ]; then
+            (cd "$dir" && nohup yarn dev -p "$port" > "$log" 2>&1 &)
+          else
+            (cd "$dir" && nohup yarn start -p "$port" > "$log" 2>&1 &)
+          fi
+        fi
+      }
+      # Deps first - the examples cache may be cold.
+      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+      for app in "${EXAMPLES[@]}"; do (cd "examples/druxt-$app" && yarn install); done
+      for app in "${EXAMPLES[@]}"; do
+        case "$app" in
+          site) port=3001 ;;
+          daisyui) port=3002 ;;
+          tailwind) port=3003 ;;
+          bootstrapvue) port=3004 ;;
+          *) echo "unknown example: $app (expected site|daisyui|tailwind|bootstrapvue)" >&2; exit 1 ;;
+        esac
+        [ "$PREVIEW_MODE" = "prod" ] || run_variant dev "$app" "$port"
+        [ "$PREVIEW_MODE" = "dev" ] || run_variant prod "$app" "$((port + 200))"
+      done
+    - |
+      # Wait for each port to accept TCP - dev servers listen before their
+      # first compile finishes, and the tunnel doesn't care either way.
+      wait_port() {
+        for i in $(seq 1 120); do
+          (echo > "/dev/tcp/127.0.0.1/$1") 2>/dev/null && return 0
+          sleep 5
+        done
+        echo "port $1 never opened" >&2; return 1
+      }
+      rc=0
+      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+      for app in "${EXAMPLES[@]}"; do
+        case "$app" in site) p=3001 ;; daisyui) p=3002 ;; tailwind) p=3003 ;; bootstrapvue) p=3004 ;; esac
+        [ "$PREVIEW_MODE" = "prod" ] || wait_port "$p" || rc=1
+        [ "$PREVIEW_MODE" = "dev" ] || wait_port "$((p + 200))" || rc=1
+      done
+      # Not "exit $rc": script items share one shell, a bare exit ends
+      # the job and skips the tunnel steps below.
+      if [ "$rc" -ne 0 ]; then
+        echo "one or more app ports never opened" >&2
+        exit 1
+      fi
+    - section_end "frontend"
+    - section_start "tunnels" "Opening Cloudflare quick tunnels"
+    - |
+      nohup cloudflared tunnel --url "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}" --no-autoupdate > /tmp/tunnel-backend.log 2>&1 &
+      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+      for app in "${EXAMPLES[@]}"; do
+        case "$app" in site) p=3001 ;; daisyui) p=3002 ;; tailwind) p=3003 ;; bootstrapvue) p=3004 ;; esac
+        [ "$PREVIEW_MODE" = "prod" ] || nohup cloudflared tunnel --url "http://localhost:${p}" --no-autoupdate > "/tmp/tunnel-${app}-dev.log" 2>&1 &
+        [ "$PREVIEW_MODE" = "dev" ] || nohup cloudflared tunnel --url "http://localhost:$((p + 200))" --no-autoupdate > "/tmp/tunnel-${app}-prod.log" 2>&1 &
+      done
+    - |
+      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
+      for i in $(seq 1 30); do
+        ready=1
+        [ -n "$(tunnel_url /tmp/tunnel-backend.log)" ] || ready=0
+        IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+        for app in "${EXAMPLES[@]}"; do
+          case "$app" in site) p=3001 ;; daisyui) p=3002 ;; tailwind) p=3003 ;; bootstrapvue) p=3004 ;; esac
+          if [ "$PREVIEW_MODE" != "prod" ] && [ -z "$(tunnel_url "/tmp/tunnel-${app}-dev.log")" ]; then ready=0; fi
+          if [ "$PREVIEW_MODE" != "dev" ] && [ -z "$(tunnel_url "/tmp/tunnel-${app}-prod.log")" ]; then ready=0; fi
+        done
+        [ "$ready" -eq 1 ] && break
+        sleep 2
+      done
+    - section_end "tunnels"
+    - |
+      set -euo pipefail
+      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
+      FAILED=0
+      BACKEND_URL="$(tunnel_url /tmp/tunnel-backend.log)"
+      [ -n "$BACKEND_URL" ] || { echo "backend tunnel not ready"; tail -n 20 /tmp/tunnel-backend.log || true; FAILED=1; }
+      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+      for app in "${EXAMPLES[@]}"; do
+        for variant in dev prod; do
+          [ "$PREVIEW_MODE" = "both" ] || [ "$PREVIEW_MODE" = "$variant" ] || continue
+          log="/tmp/tunnel-${app}-${variant}.log"
+          url="$(tunnel_url "$log")"
+          [ -n "$url" ] || { echo "$app ($variant) tunnel not ready"; tail -n 20 "$log" || true; FAILED=1; }
+        done
+      done
+      [ "$FAILED" -eq 0 ] || exit 1
+    - |
+      # Content Ops Console's OAuth2 login computes its own redirect_uri
+      # from whatever origin it's served from, so it works over the tunnel
+      # too - as long as Drupal has that exact URI registered. The tunnel
+      # hostname is random per run, so point the consumer's (single-value)
+      # redirect field at it here instead of committing it. If both dev and
+      # prod variants are running, the last one wins - the field can only
+      # hold one URI.
+      set -euo pipefail
+      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
+      if [[ ",${PREVIEW_EXAMPLES}," == *",bootstrapvue,"* ]]; then
+        for variant in dev prod; do
+          [ "$PREVIEW_MODE" = "both" ] || [ "$PREVIEW_MODE" = "$variant" ] || continue
+          url="$(tunnel_url "/tmp/tunnel-bootstrapvue-${variant}.log")"
+          [ -n "$url" ] || continue
+          CONSUMER_REDIRECT_URI="${url}/callback" \
+            bash -c 'cd docs/drupal && PHPRC=.devtools/etc/php.ini vendor/bin/drush -y php-script .devtools/consumer-set-redirect.php'
+        done
+      fi
+    - |
+      set -euo pipefail
+      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
+      CODE_ENABLED=false
+      LOGIN_LINK=""
+      if [ -n "${PREVIEW_CODE_PASSWORD:-}" ]; then
+        curl -fsSL https://code-server.dev/install.sh | sh -s -- --version "$CODE_SERVER_VERSION"
+        # code-server defaults to Open VSX, not the Microsoft Marketplace -
+        # same recommendations as .devcontainer/devcontainer.json, so a
+        # reviewer editing here gets the same PHP/Vue/lint tooling.
+        for ext in \
+          redhat.vscode-yaml \
+          bmewburn.vscode-intelephense-client \
+          ValeryanM.vscode-phpsab \
+          SanderRonde.phpstan-vscode \
+          Stanislav.vscode-drupal \
+          Vue.volar \
+          dbaeumer.vscode-eslint \
+          bradlc.vscode-tailwindcss \
+          antfu.iconify \
+          vitest.explorer \
+          davidanson.vscode-markdownlint \
+          streetsidesoftware.code-spell-checker \
+          EditorConfig.EditorConfig; do
+          code-server --install-extension "$ext" || true
+        done
+        PASSWORD="$PREVIEW_CODE_PASSWORD" nohup code-server --auth password --bind-addr 0.0.0.0:8080 "$CI_PROJECT_DIR" > /tmp/code-server.log 2>&1 &
+        nohup cloudflared tunnel --url http://localhost:8080 --no-autoupdate > /tmp/tunnel-code.log 2>&1 &
+        for i in $(seq 1 30); do [ -n "$(tunnel_url /tmp/tunnel-code.log)" ] && break; sleep 2; done
+        CODE_ENABLED=true
+        BACKEND_URL="$(tunnel_url /tmp/tunnel-backend.log)"
+        LOGIN_LINK="$(cd docs/drupal && PHPRC=.devtools/etc/php.ini vendor/bin/drush -y uli --uri="$BACKEND_URL" 2>/dev/null || true)"
+      fi
+      echo "=================================================="
+      echo " Examples preview - live until this job is stopped"
+      echo "=================================================="
+      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+      for app in "${EXAMPLES[@]}"; do
+        case "$app" in
+          site) label="druxt-site" ;;
+          daisyui) label="Recipe Box (daisyui)" ;;
+          tailwind) label="Meal Planner (tailwind)" ;;
+          bootstrapvue) label="Content Ops Console (bootstrapvue)" ;;
+        esac
+        if [ "$PREVIEW_MODE" != "prod" ]; then
+          echo " $label (dev):  $(tunnel_url "/tmp/tunnel-${app}-dev.log")"
+        fi
+        if [ "$PREVIEW_MODE" != "dev" ]; then
+          echo " $label (prod): $(tunnel_url "/tmp/tunnel-${app}-prod.log")"
+        fi
+      done
+      echo " Backend:      $(tunnel_url /tmp/tunnel-backend.log)"
+      if [ "$CODE_ENABLED" = "true" ]; then
+        echo " Login link:   ${LOGIN_LINK:-not ready}"
+        echo " Code:         $(tunnel_url /tmp/tunnel-code.log) (password: your PREVIEW_CODE_PASSWORD variable)"
+      else
+        echo " (code-server + login link skipped - set PREVIEW_CODE_PASSWORD to enable)"
+      fi
+      echo "=================================================="
+      DURATION="$PREVIEW_DURATION_SECONDS"
+      [ "$DURATION" -le 18000 ] || DURATION=18000
+      sleep "$DURATION"

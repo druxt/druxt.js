@@ -11,24 +11,7 @@ Druxt is an open source project, built, supported and maintained by the communit
 
 ## Development Environment Setup
 
-The Druxt development environment can be run both in the Cloud, using GitPod.io, or locally:
-
----
-
-### Gitpod
-
-1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository. e.g., `https://github.com/USER/druxt.js`
-2. Open the forked repository in GitPod by appending `https://gitpod.io#` to your GitHub repository. e.g., `https://gitpod.io#github.com/USER/druxt.js`
-3. Wait patiently for the environment to setup...
-4. Run DruxtSite example: `yarn example:druxt-site`
-
-GitPod will automatically run the following tasks:
-
-- Install all core dependencies: `yarn install`
-- Build the Druxt modules: `yarn build`
-- Generate the documentation: `yarn build:docs`
-- Start a Drupal backend: `cd docs/drupal && ddev start -y`
-- Display a welcome message: `cat .gitpod/WELCOME.md`
+The Druxt development environment runs locally:
 
 ---
 
@@ -38,7 +21,7 @@ GitPod will automatically run the following tasks:
 2. Clone the forked repository to your local development environment. e.g., `git clone https://github.com/USER/druxt.js`
 3. Set up the development environment: `make setup` (enables corepack and installs dependencies)
 4. Build packages: `yarn build`
-5. Start a Drupal backend (requires DDev): `cd docs/drupal && ddev start -y && ddev drupal-install`
+5. Start a Drupal backend (PHP 8.3 + SQLite, no Docker): `cd docs/drupal && .devtools/assemble && .devtools/provision && .devtools/start`
 6. Run DruxtSite example: `yarn example:druxt-site`
 
 > **Note:** If `make` is not available, run `corepack enable && yarn install` manually instead of `make setup`. This project uses [Yarn Berry](https://yarnpkg.com/) via [corepack](https://nodejs.org/api/corepack.html), which requires Node.js 16.9+ or 14.19+.
@@ -49,7 +32,7 @@ GitPod will automatically run the following tasks:
 
 One of the easiest ways to contribute to Druxt is to open issues, giving as much detail as possible to make it easier other contributors and maintainers: http://github.com/druxt/druxt.js/issues/new/choose
 
-When reporting bugs please make sure to provide detailed steps to reproduce the issue, and when possible provide a Gitpod workspace snapshot to demonstrate the issue.
+When reporting bugs please make sure to provide detailed steps to reproduce the issue, and when possible provide a minimal reproduction (a repo or snippet that triggers the bug).
 
 ---
 
@@ -72,7 +55,7 @@ The Druxt monorepo contains a collection of example projects inside the aptly na
 
 All projects are connected to the locally built codebase and should be used for testing during development.
 
-All examples use the Drupal instance located @ `docs/drupal` (`cd docs/drupal && ddev start && ddev drupal-install`).
+All examples use the Drupal instance located @ `docs/drupal` (`cd docs/drupal && .devtools/assemble && .devtools/provision && .devtools/start`).
 
 ### Custom module
 
@@ -109,7 +92,6 @@ The Druxt repository is setup with tools and automated processes to help with de
 - [Conventional commits](#conventional-commits) - Standardised commit messages
 - [Cypress](#cypress) - Automated end-to-end testing
 - [Docgen](#docgen) - Documentation generator
-- [Gitpod](#gitpod) - Cloud based IDE
 - [Jest](#jest) - Automated unit testing
 - [Linting](#linting) - Coding styles and standards
 - [Siroc](#siroc) - Zero-config build tools
@@ -183,18 +165,6 @@ The documentation website is a Nuxt site located in the `/docs/nuxt` directory, 
 ```sh
 cd docs/nuxt && yarn dev
 ```
-
----
-
-### Gitpod
-
-The easiest way to develop or test Druxt is via Gitpod, a cloud based IDE.
-
-All dependencies are pre-installed and configured to get started with Druxt development.
-
-Click the button below to get started:
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/druxt/druxt.js)
 
 ---
 
