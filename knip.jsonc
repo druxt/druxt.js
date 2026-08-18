@@ -63,6 +63,14 @@
     // across successive runs with no code changes"), occasionally
     // flagging it as an unused dependency and failing the now-blocking
     // lint:knip gate. Verified real usage via grep before adding.
-    "yargs"
+    "yargs",
+    // examples/node-client isn't a declared yarn workspace (only
+    // `packages/*` is in the root package.json's `workspaces` field), so
+    // knip checks its files against the root package.json's dependencies,
+    // not examples/node-client/package.json's own (where axios is
+    // correctly listed as a devDependency) - a plain `require('axios')` in
+    // examples/node-client/test/adapter.js is otherwise directly traceable
+    // and gets flagged as unlisted. Verified real usage via grep.
+    "axios"
   ]
 }
