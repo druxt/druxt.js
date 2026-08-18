@@ -12,14 +12,14 @@ it('druxt-tailwind: Meal Planner library, drag-and-drop, and derived totals', ()
 
   // Library renders with category chips and styled thumbnails.
   cy.get('[data-testid="mp-row"]').its('length').should('be.gte', 10)
-  cy.get('[data-testid="mp-chip"]').first().should('have.text', 'All')
+  cy.get('[data-testid="mp-chip"]').first().invoke('text').invoke('trim').should('equal', 'All')
 
   // Click-to-select then click-to-place (the touch/assistive path).
   cy.get('[data-testid="mp-row"]').first().click()
   cy.get('[data-testid="mp-selected-hint"]').should('exist')
   cy.get('[data-testid="mp-day"][data-day="Mon"]').click()
   cy.get('[data-testid="mp-item"][data-day="Mon"]').should('have.length', 1)
-  cy.get('[data-testid="mp-week-count"]').should('have.text', '1')
+  cy.get('[data-testid="mp-week-count"]').invoke('text').invoke('trim').should('equal', '1')
 
   // Drag-and-drop places via the same store action.
   cy.get('[data-testid="mp-row"]').then(($row) => {
@@ -38,13 +38,13 @@ it('druxt-tailwind: Meal Planner library, drag-and-drop, and derived totals', ()
     })
   })
   cy.get('[data-testid="mp-item"][data-day="Tue"]').should('have.length', 1)
-  cy.get('[data-testid="mp-week-count"]').should('have.text', '2')
+  cy.get('[data-testid="mp-week-count"]').invoke('text').invoke('trim').should('equal', '2')
 
   // Totals and shopping list are derived and recalculate on removal.
   cy.get('[data-testid="mp-week-time"]').should('not.have.text', '0h 0m')
   cy.get('[data-testid="mp-shopping-item"]').its('length').should('be.gt', 0)
   cy.get('[data-testid="mp-remove"]').first().click()
-  cy.get('[data-testid="mp-week-count"]').should('have.text', '1')
+  cy.get('[data-testid="mp-week-count"]').invoke('text').invoke('trim').should('equal', '1')
 })
 
 it('druxt-tailwind: no leftover Site-model routes', () => {

@@ -78,9 +78,21 @@ if (!$ready) {
 PASS('Server started successfully.');
 
 TASK('Checking that the server can serve content.');
-$context = stream_context_create(['http' => ['method' => 'HEAD', 'timeout' => 5, 'ignore_errors' => TRUE]]);
-$headers = @get_headers(sprintf('http://%s:%s', $webserver_host, $webserver_port), FALSE, $context);
-if ($headers === FALSE || !isset($headers[0]) || (!str_contains($headers[0], '200') && !str_contains($headers[0], '30'))) {
+// The first request bootstraps a cold Drupal - route rebuild and cache
+// warms can far exceed a single 5 second window on a slow CI runner, so
+// retry rather than judging the site on one attempt.
+$context = stream_context_create(['http' => ['method' => 'HEAD', 'timeout' => 15, 'ignore_errors' => TRUE]]);
+$served = FALSE;
+$deadline = time() + 90;
+do {
+  $headers = @get_headers(sprintf('http://%s:%s', $webserver_host, $webserver_port), FALSE, $context);
+  if ($headers !== FALSE && isset($headers[0]) && (str_contains($headers[0], '200') || str_contains($headers[0], '30'))) {
+    $served = TRUE;
+    break;
+  }
+  sleep(3);
+} while (time() < $deadline);
+if (!$served) {
   FAIL('Server is started, but site cannot be served.');
 }
 PASS('Server can serve content.');
