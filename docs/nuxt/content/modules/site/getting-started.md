@@ -8,14 +8,6 @@ DruxtSite combines Drupal, Nuxt and Druxt into a Vue.js theme layer for Drupal.
 
 ---
 
-## Quickstart - GitPod
-
-Try out a pre-installed, pre-configured DruxtSite install with GitPod.
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/druxt/quickstart-druxt-site)
-
----
-
 ## Getting started
 
 All Druxt sites need both Drupal (backend) and Nuxt (frontend) to be installed.
