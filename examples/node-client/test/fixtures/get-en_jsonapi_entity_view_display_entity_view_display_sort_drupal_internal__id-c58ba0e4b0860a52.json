@@ -1,0 +1,2235 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "af05b8fb-96d9-4fd6-8bf6-b19cc08b1367",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/af05b8fb-96d9-4fd6-8bf6-b19cc08b1367"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.banner_block",
+            "field.field.block_content.banner_block.field_content_link",
+            "field.field.block_content.banner_block.field_media_image",
+            "field.field.block_content.banner_block.field_summary",
+            "field.field.block_content.banner_block.field_title"
+          ],
+          "module": ["link"]
+        },
+        "drupal_internal__id": "block_content.banner_block.default",
+        "targetEntityType": "block_content",
+        "bundle": "banner_block",
+        "mode": "default",
+        "content": {
+          "field_content_link": {
+            "type": "link",
+            "label": "hidden",
+            "settings": {
+              "trim_length": 80,
+              "url_only": false,
+              "url_plain": false,
+              "rel": "",
+              "target": ""
+            },
+            "third_party_settings": [],
+            "weight": 4,
+            "region": "content"
+          },
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "scale_crop_7_3_large",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          },
+          "field_summary": {
+            "type": "basic_string",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 3,
+            "region": "content"
+          },
+          "field_title": {
+            "type": "string",
+            "label": "hidden",
+            "settings": {
+              "link_to_entity": false
+            },
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "4f620d29-a7fa-4b64-8c1e-1f6aa84a4594",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/4f620d29-a7fa-4b64-8c1e-1f6aa84a4594"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.basic",
+            "field.field.block_content.basic.body"
+          ],
+          "module": ["text"]
+        },
+        "drupal_internal__id": "block_content.basic.default",
+        "targetEntityType": "block_content",
+        "bundle": "basic",
+        "mode": "default",
+        "content": {
+          "body": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "a650676c-ca3e-40e2-8df8-a8b6d4f41b30",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/a650676c-ca3e-40e2-8df8-a8b6d4f41b30"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.disclaimer_block",
+            "field.field.block_content.disclaimer_block.field_copyright",
+            "field.field.block_content.disclaimer_block.field_disclaimer"
+          ],
+          "module": ["text"]
+        },
+        "drupal_internal__id": "block_content.disclaimer_block.default",
+        "targetEntityType": "block_content",
+        "bundle": "disclaimer_block",
+        "mode": "default",
+        "content": {
+          "field_copyright": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          },
+          "field_disclaimer": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "c0850272-a733-4c13-b46b-bdc77621eb15",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/c0850272-a733-4c13-b46b-bdc77621eb15"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.footer_promo_block",
+            "field.field.block_content.footer_promo_block.field_content_link",
+            "field.field.block_content.footer_promo_block.field_media_image",
+            "field.field.block_content.footer_promo_block.field_summary",
+            "field.field.block_content.footer_promo_block.field_title"
+          ],
+          "module": ["link"]
+        },
+        "drupal_internal__id": "block_content.footer_promo_block.default",
+        "targetEntityType": "block_content",
+        "bundle": "footer_promo_block",
+        "mode": "default",
+        "content": {
+          "field_content_link": {
+            "type": "link",
+            "label": "hidden",
+            "settings": {
+              "trim_length": 80,
+              "url_only": false,
+              "url_plain": false,
+              "rel": "",
+              "target": ""
+            },
+            "third_party_settings": [],
+            "weight": 4,
+            "region": "content"
+          },
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "medium_8_7",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          },
+          "field_summary": {
+            "type": "basic_string",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 3,
+            "region": "content"
+          },
+          "field_title": {
+            "type": "string",
+            "label": "hidden",
+            "settings": {
+              "link_to_entity": false
+            },
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "e6ca4152-a981-43f5-b0ab-3e6b5ed34463",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/e6ca4152-a981-43f5-b0ab-3e6b5ed34463"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.field.media.audio.field_media_audio_file",
+            "media.type.audio"
+          ],
+          "module": ["file"]
+        },
+        "drupal_internal__id": "media.audio.default",
+        "targetEntityType": "media",
+        "bundle": "audio",
+        "mode": "default",
+        "content": {
+          "field_media_audio_file": {
+            "type": "file_audio",
+            "label": "visually_hidden",
+            "settings": {
+              "controls": true,
+              "autoplay": false,
+              "loop": false,
+              "multiple_file_display_type": "tags"
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "langcode": true,
+          "name": true,
+          "thumbnail": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "771e41d9-a0fc-455d-beb8-03e254ce25be",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/771e41d9-a0fc-455d-beb8-03e254ce25be"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.media_library",
+            "field.field.media.audio.field_media_audio_file",
+            "image.style.thumbnail",
+            "media.type.audio"
+          ],
+          "module": ["image"]
+        },
+        "drupal_internal__id": "media.audio.media_library",
+        "targetEntityType": "media",
+        "bundle": "audio",
+        "mode": "media_library",
+        "content": {
+          "thumbnail": {
+            "type": "image",
+            "label": "hidden",
+            "settings": {
+              "image_link": "",
+              "image_style": "thumbnail",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "field_media_audio_file": true,
+          "langcode": true,
+          "name": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "54a8f80d-bfff-4105-bf9b-37e19380f20c",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/54a8f80d-bfff-4105-bf9b-37e19380f20c"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.field.media.document.field_media_document",
+            "media.type.document"
+          ],
+          "module": ["file"]
+        },
+        "drupal_internal__id": "media.document.default",
+        "targetEntityType": "media",
+        "bundle": "document",
+        "mode": "default",
+        "content": {
+          "field_media_document": {
+            "type": "file_default",
+            "label": "visually_hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "langcode": true,
+          "name": true,
+          "thumbnail": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "62edafdc-0a90-4c0c-a0c3-c38d1a7f02cd",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/62edafdc-0a90-4c0c-a0c3-c38d1a7f02cd"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.media_library",
+            "field.field.media.document.field_media_document",
+            "image.style.thumbnail",
+            "media.type.document"
+          ],
+          "module": ["image"]
+        },
+        "drupal_internal__id": "media.document.media_library",
+        "targetEntityType": "media",
+        "bundle": "document",
+        "mode": "media_library",
+        "content": {
+          "thumbnail": {
+            "type": "image",
+            "label": "hidden",
+            "settings": {
+              "image_link": "",
+              "image_style": "thumbnail",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "field_media_document": true,
+          "langcode": true,
+          "name": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "99dbf79e-1e5c-4a1d-bcc5-db800d55f325",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/99dbf79e-1e5c-4a1d-bcc5-db800d55f325"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.field.media.image.field_media_image",
+            "media.type.image",
+            "responsive_image.styles.3_2_image"
+          ],
+          "module": ["responsive_image"]
+        },
+        "drupal_internal__id": "media.image.default",
+        "targetEntityType": "media",
+        "bundle": "image",
+        "mode": "default",
+        "content": {
+          "field_media_image": {
+            "type": "responsive_image",
+            "label": "visually_hidden",
+            "settings": {
+              "responsive_image_style": "3_2_image",
+              "image_link": "",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "langcode": true,
+          "name": true,
+          "thumbnail": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "9a000a3a-1ad4-4920-bd58-cfb007ab9939",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/9a000a3a-1ad4-4920-bd58-cfb007ab9939"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.media_library",
+            "field.field.media.image.field_media_image",
+            "image.style.medium",
+            "media.type.image"
+          ],
+          "module": ["image"]
+        },
+        "drupal_internal__id": "media.image.media_library",
+        "targetEntityType": "media",
+        "bundle": "image",
+        "mode": "media_library",
+        "content": {
+          "thumbnail": {
+            "type": "image",
+            "label": "hidden",
+            "settings": {
+              "image_link": "",
+              "image_style": "medium",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "field_media_image": true,
+          "langcode": true,
+          "name": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "b1c5d61b-0882-4cd2-8752-7f72993fbcb7",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/b1c5d61b-0882-4cd2-8752-7f72993fbcb7"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.medium_8_7",
+            "field.field.media.image.field_media_image",
+            "image.style.medium_8_7",
+            "media.type.image"
+          ],
+          "module": ["image", "layout_builder"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": false,
+            "allow_custom": false
+          }
+        },
+        "drupal_internal__id": "media.image.medium_8_7",
+        "targetEntityType": "media",
+        "bundle": "image",
+        "mode": "medium_8_7",
+        "content": {
+          "field_media_image": {
+            "type": "image",
+            "label": "visually_hidden",
+            "settings": {
+              "image_link": "",
+              "image_style": "medium_8_7",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "langcode": true,
+          "name": true,
+          "thumbnail": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "9ac069ea-9c2b-4df8-bffe-2871b84a0fed",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/9ac069ea-9c2b-4df8-bffe-2871b84a0fed"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.responsive_3x2",
+            "field.field.media.image.field_media_image",
+            "media.type.image",
+            "responsive_image.styles.3_2_image"
+          ],
+          "module": ["layout_builder", "responsive_image"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": false,
+            "allow_custom": false
+          }
+        },
+        "drupal_internal__id": "media.image.responsive_3x2",
+        "targetEntityType": "media",
+        "bundle": "image",
+        "mode": "responsive_3x2",
+        "content": {
+          "field_media_image": {
+            "type": "responsive_image",
+            "label": "hidden",
+            "settings": {
+              "responsive_image_style": "3_2_image",
+              "image_link": "",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "langcode": true,
+          "name": true,
+          "thumbnail": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "84e72994-1720-4eb7-9b69-1704406f144b",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/84e72994-1720-4eb7-9b69-1704406f144b"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.scale_crop_7_3_large",
+            "field.field.media.image.field_media_image",
+            "media.type.image",
+            "responsive_image.styles.hero"
+          ],
+          "module": ["layout_builder", "responsive_image"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": false,
+            "allow_custom": false
+          }
+        },
+        "drupal_internal__id": "media.image.scale_crop_7_3_large",
+        "targetEntityType": "media",
+        "bundle": "image",
+        "mode": "scale_crop_7_3_large",
+        "content": {
+          "field_media_image": {
+            "type": "responsive_image",
+            "label": "hidden",
+            "settings": {
+              "responsive_image_style": "hero",
+              "image_link": "",
+              "image_loading": {
+                "attribute": "eager"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "langcode": true,
+          "name": true,
+          "thumbnail": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "bcc033e2-63c4-4ebc-96a3-1dd07b4e236c",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/bcc033e2-63c4-4ebc-96a3-1dd07b4e236c"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.square",
+            "field.field.media.image.field_media_image",
+            "media.type.image",
+            "responsive_image.styles.square"
+          ],
+          "module": ["layout_builder", "responsive_image"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": false,
+            "allow_custom": false
+          }
+        },
+        "drupal_internal__id": "media.image.square",
+        "targetEntityType": "media",
+        "bundle": "image",
+        "mode": "square",
+        "content": {
+          "field_media_image": {
+            "type": "responsive_image",
+            "label": "visually_hidden",
+            "settings": {
+              "responsive_image_style": "square",
+              "image_link": "",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "langcode": true,
+          "name": true,
+          "thumbnail": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "d136c7de-6aea-4c5c-a586-20d38d2a4f76",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/d136c7de-6aea-4c5c-a586-20d38d2a4f76"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.field.media.remote_video.field_media_oembed_video",
+            "media.type.remote_video"
+          ],
+          "module": ["media"]
+        },
+        "drupal_internal__id": "media.remote_video.default",
+        "targetEntityType": "media",
+        "bundle": "remote_video",
+        "mode": "default",
+        "content": {
+          "field_media_oembed_video": {
+            "type": "oembed",
+            "label": "hidden",
+            "settings": {
+              "max_width": 0,
+              "max_height": 0,
+              "loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "langcode": true,
+          "name": true,
+          "thumbnail": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "db769cbd-c07c-41c9-9ca0-9e4fcb10fa95",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/db769cbd-c07c-41c9-9ca0-9e4fcb10fa95"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.media_library",
+            "field.field.media.remote_video.field_media_oembed_video",
+            "image.style.medium",
+            "media.type.remote_video"
+          ],
+          "module": ["image"]
+        },
+        "drupal_internal__id": "media.remote_video.media_library",
+        "targetEntityType": "media",
+        "bundle": "remote_video",
+        "mode": "media_library",
+        "content": {
+          "thumbnail": {
+            "type": "image",
+            "label": "hidden",
+            "settings": {
+              "image_link": "",
+              "image_style": "medium",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "field_media_oembed_video": true,
+          "langcode": true,
+          "name": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "553a7c4b-4d49-4f33-89c8-a069fd93531e",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/553a7c4b-4d49-4f33-89c8-a069fd93531e"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.field.media.video.field_media_video_file",
+            "media.type.video"
+          ],
+          "module": ["file"]
+        },
+        "drupal_internal__id": "media.video.default",
+        "targetEntityType": "media",
+        "bundle": "video",
+        "mode": "default",
+        "content": {
+          "field_media_video_file": {
+            "type": "file_video",
+            "label": "visually_hidden",
+            "settings": {
+              "controls": true,
+              "autoplay": false,
+              "loop": false,
+              "multiple_file_display_type": "tags",
+              "muted": false,
+              "width": 640,
+              "height": 480
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "langcode": true,
+          "name": true,
+          "thumbnail": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "4a4eb14b-dccd-40c4-a0dc-0b5a8d9a72ca",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/4a4eb14b-dccd-40c4-a0dc-0b5a8d9a72ca"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.media_library",
+            "field.field.media.video.field_media_video_file",
+            "image.style.thumbnail",
+            "media.type.video"
+          ],
+          "module": ["image"]
+        },
+        "drupal_internal__id": "media.video.media_library",
+        "targetEntityType": "media",
+        "bundle": "video",
+        "mode": "media_library",
+        "content": {
+          "thumbnail": {
+            "type": "image",
+            "label": "hidden",
+            "settings": {
+              "image_link": "",
+              "image_style": "thumbnail",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "field_media_video_file": true,
+          "langcode": true,
+          "name": true,
+          "uid": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "b9996223-9d8f-4762-b2a5-e655ddb66cdd",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/b9996223-9d8f-4762-b2a5-e655ddb66cdd"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.card",
+            "field.field.node.article.body",
+            "field.field.node.article.field_media_image",
+            "field.field.node.article.field_tags",
+            "field.field.node.article.layout_builder__layout",
+            "node.type.article"
+          ],
+          "module": ["user"]
+        },
+        "drupal_internal__id": "node.article.card",
+        "targetEntityType": "node",
+        "bundle": "article",
+        "mode": "card",
+        "content": {
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "responsive_3x2",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "body": true,
+          "content_moderation_control": true,
+          "field_tags": true,
+          "langcode": true,
+          "layout_builder__layout": true,
+          "links": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "ffc56b35-d7fa-438e-8e35-7c8f20e7beb7",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/ffc56b35-d7fa-438e-8e35-7c8f20e7beb7"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.card_common",
+            "field.field.node.article.body",
+            "field.field.node.article.field_media_image",
+            "field.field.node.article.field_tags",
+            "field.field.node.article.layout_builder__layout",
+            "node.type.article"
+          ],
+          "module": ["user"]
+        },
+        "drupal_internal__id": "node.article.card_common",
+        "targetEntityType": "node",
+        "bundle": "article",
+        "mode": "card_common",
+        "content": {
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "responsive_3x2",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "body": true,
+          "content_moderation_control": true,
+          "field_tags": true,
+          "langcode": true,
+          "layout_builder__layout": true,
+          "links": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "669484e1-f83f-472b-b3cf-cf61fc201171",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/669484e1-f83f-472b-b3cf-cf61fc201171"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.card_common_alt",
+            "field.field.node.article.body",
+            "field.field.node.article.field_media_image",
+            "field.field.node.article.field_tags",
+            "field.field.node.article.layout_builder__layout",
+            "node.type.article"
+          ],
+          "module": ["user"]
+        },
+        "drupal_internal__id": "node.article.card_common_alt",
+        "targetEntityType": "node",
+        "bundle": "article",
+        "mode": "card_common_alt",
+        "content": {
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "responsive_3x2",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "body": true,
+          "content_moderation_control": true,
+          "field_tags": true,
+          "langcode": true,
+          "layout_builder__layout": true,
+          "links": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "694fa2bb-61ea-4c37-88e9-758ff41f7f11",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/694fa2bb-61ea-4c37-88e9-758ff41f7f11"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.field.node.article.body",
+            "field.field.node.article.field_media_image",
+            "field.field.node.article.field_tags",
+            "field.field.node.article.layout_builder__layout",
+            "node.type.article"
+          ],
+          "module": ["layout_builder", "text", "user"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": false,
+            "allow_custom": false
+          }
+        },
+        "drupal_internal__id": "node.article.default",
+        "targetEntityType": "node",
+        "bundle": "article",
+        "mode": "default",
+        "content": {
+          "body": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 3,
+            "region": "content"
+          },
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "responsive_3x2",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          },
+          "field_tags": {
+            "type": "entity_reference_label",
+            "label": "above",
+            "settings": {
+              "link": true
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          },
+          "links": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 4,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "content_moderation_control": true,
+          "langcode": true,
+          "layout_builder__layout": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "fa847f41-a043-4f74-b837-995a59dad724",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/fa847f41-a043-4f74-b837-995a59dad724"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.full",
+            "field.field.node.article.body",
+            "field.field.node.article.field_media_image",
+            "field.field.node.article.field_tags",
+            "field.field.node.article.layout_builder__layout",
+            "node.type.article"
+          ],
+          "module": ["layout_builder", "layout_discovery", "text", "user"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": true,
+            "allow_custom": true
+          }
+        },
+        "drupal_internal__id": "node.article.full",
+        "targetEntityType": "node",
+        "bundle": "article",
+        "mode": "full",
+        "content": {
+          "body": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 3,
+            "region": "content"
+          },
+          "content_moderation_control": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 5,
+            "region": "content"
+          },
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "responsive_3x2",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          },
+          "field_tags": {
+            "type": "entity_reference_label",
+            "label": "inline",
+            "settings": {
+              "link": true
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          },
+          "links": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 4,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true,
+          "layout_builder__layout": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "e544bffe-b198-4731-9993-84774412238a",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/e544bffe-b198-4731-9993-84774412238a"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.rss",
+            "field.field.node.article.body",
+            "field.field.node.article.field_media_image",
+            "field.field.node.article.field_tags",
+            "field.field.node.article.layout_builder__layout",
+            "node.type.article"
+          ],
+          "module": ["user"]
+        },
+        "drupal_internal__id": "node.article.rss",
+        "targetEntityType": "node",
+        "bundle": "article",
+        "mode": "rss",
+        "content": {
+          "links": {
+            "weight": 100,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "body": true,
+          "content_moderation_control": true,
+          "field_media_image": true,
+          "field_tags": true,
+          "langcode": true,
+          "layout_builder__layout": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "dcf2b573-b434-42b8-96d4-29b5e5048ef0",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/dcf2b573-b434-42b8-96d4-29b5e5048ef0"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.teaser",
+            "field.field.node.article.body",
+            "field.field.node.article.field_media_image",
+            "field.field.node.article.field_tags",
+            "field.field.node.article.layout_builder__layout",
+            "node.type.article"
+          ],
+          "module": ["text", "user"]
+        },
+        "drupal_internal__id": "node.article.teaser",
+        "targetEntityType": "node",
+        "bundle": "article",
+        "mode": "teaser",
+        "content": {
+          "body": {
+            "type": "text_summary_or_trimmed",
+            "label": "hidden",
+            "settings": {
+              "trim_length": 600
+            },
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          },
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "responsive_3x2",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          },
+          "field_tags": {
+            "type": "entity_reference_label",
+            "label": "above",
+            "settings": {
+              "link": true
+            },
+            "third_party_settings": [],
+            "weight": 3,
+            "region": "content"
+          },
+          "links": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 4,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "content_moderation_control": true,
+          "langcode": true,
+          "layout_builder__layout": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "e8553707-a3d1-4d60-b176-3f73b138da36",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/e8553707-a3d1-4d60-b176-3f73b138da36"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.field.node.page.body",
+            "field.field.node.page.layout_builder__layout",
+            "node.type.page"
+          ],
+          "module": ["layout_builder", "text", "user"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": false,
+            "allow_custom": false
+          }
+        },
+        "drupal_internal__id": "node.page.default",
+        "targetEntityType": "node",
+        "bundle": "page",
+        "mode": "default",
+        "content": {
+          "body": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          },
+          "content_moderation_control": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          },
+          "links": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true,
+          "layout_builder__layout": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "199d360d-5ebb-4855-a876-ff84b2b0bdfa",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/199d360d-5ebb-4855-a876-ff84b2b0bdfa"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.full",
+            "field.field.node.page.body",
+            "field.field.node.page.layout_builder__layout",
+            "node.type.page"
+          ],
+          "module": ["layout_builder", "layout_discovery", "text", "user"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": true,
+            "allow_custom": true
+          }
+        },
+        "drupal_internal__id": "node.page.full",
+        "targetEntityType": "node",
+        "bundle": "page",
+        "mode": "full",
+        "content": {
+          "body": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          },
+          "content_moderation_control": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          },
+          "links": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true,
+          "layout_builder__layout": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "afb7a5fe-7a44-4da5-9ed1-0d6d52fe893b",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/afb7a5fe-7a44-4da5-9ed1-0d6d52fe893b"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.teaser",
+            "field.field.node.page.body",
+            "field.field.node.page.layout_builder__layout",
+            "node.type.page"
+          ],
+          "module": ["text", "user"]
+        },
+        "drupal_internal__id": "node.page.teaser",
+        "targetEntityType": "node",
+        "bundle": "page",
+        "mode": "teaser",
+        "content": {
+          "body": {
+            "type": "text_summary_or_trimmed",
+            "label": "hidden",
+            "settings": {
+              "trim_length": 600
+            },
+            "third_party_settings": [],
+            "weight": 100,
+            "region": "content"
+          },
+          "links": {
+            "weight": 101,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "content_moderation_control": true,
+          "langcode": true,
+          "layout_builder__layout": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "f789f001-96ae-4311-9e1b-c790cbf1b16f",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/f789f001-96ae-4311-9e1b-c790cbf1b16f"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.card",
+            "field.field.node.recipe.field_cooking_time",
+            "field.field.node.recipe.field_difficulty",
+            "field.field.node.recipe.field_ingredients",
+            "field.field.node.recipe.field_media_image",
+            "field.field.node.recipe.field_number_of_servings",
+            "field.field.node.recipe.field_preparation_time",
+            "field.field.node.recipe.field_recipe_category",
+            "field.field.node.recipe.field_recipe_instruction",
+            "field.field.node.recipe.field_summary",
+            "field.field.node.recipe.field_tags",
+            "field.field.node.recipe.layout_builder__layout",
+            "node.type.recipe"
+          ],
+          "module": ["options", "user"]
+        },
+        "drupal_internal__id": "node.recipe.card",
+        "targetEntityType": "node",
+        "bundle": "recipe",
+        "mode": "card",
+        "content": {
+          "field_difficulty": {
+            "type": "list_default",
+            "label": "inline",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          },
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "responsive_3x2",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "content_moderation_control": true,
+          "field_cooking_time": true,
+          "field_ingredients": true,
+          "field_number_of_servings": true,
+          "field_preparation_time": true,
+          "field_recipe_category": true,
+          "field_recipe_instruction": true,
+          "field_summary": true,
+          "field_tags": true,
+          "langcode": true,
+          "layout_builder__layout": true,
+          "links": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "69f78288-ea66-4327-a227-dd57d718e1aa",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/69f78288-ea66-4327-a227-dd57d718e1aa"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.card_common",
+            "field.field.node.recipe.field_cooking_time",
+            "field.field.node.recipe.field_difficulty",
+            "field.field.node.recipe.field_ingredients",
+            "field.field.node.recipe.field_media_image",
+            "field.field.node.recipe.field_number_of_servings",
+            "field.field.node.recipe.field_preparation_time",
+            "field.field.node.recipe.field_recipe_category",
+            "field.field.node.recipe.field_recipe_instruction",
+            "field.field.node.recipe.field_summary",
+            "field.field.node.recipe.field_tags",
+            "field.field.node.recipe.layout_builder__layout",
+            "node.type.recipe"
+          ],
+          "module": ["user"]
+        },
+        "drupal_internal__id": "node.recipe.card_common",
+        "targetEntityType": "node",
+        "bundle": "recipe",
+        "mode": "card_common",
+        "content": {
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "responsive_3x2",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "content_moderation_control": true,
+          "field_cooking_time": true,
+          "field_difficulty": true,
+          "field_ingredients": true,
+          "field_number_of_servings": true,
+          "field_preparation_time": true,
+          "field_recipe_category": true,
+          "field_recipe_instruction": true,
+          "field_summary": true,
+          "field_tags": true,
+          "langcode": true,
+          "layout_builder__layout": true,
+          "links": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "6b81194c-4b16-42a6-84e9-acbf928bc501",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/6b81194c-4b16-42a6-84e9-acbf928bc501"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.card_common_alt",
+            "field.field.node.recipe.field_cooking_time",
+            "field.field.node.recipe.field_difficulty",
+            "field.field.node.recipe.field_ingredients",
+            "field.field.node.recipe.field_media_image",
+            "field.field.node.recipe.field_number_of_servings",
+            "field.field.node.recipe.field_preparation_time",
+            "field.field.node.recipe.field_recipe_category",
+            "field.field.node.recipe.field_recipe_instruction",
+            "field.field.node.recipe.field_summary",
+            "field.field.node.recipe.field_tags",
+            "field.field.node.recipe.layout_builder__layout",
+            "node.type.recipe"
+          ],
+          "module": ["user"]
+        },
+        "drupal_internal__id": "node.recipe.card_common_alt",
+        "targetEntityType": "node",
+        "bundle": "recipe",
+        "mode": "card_common_alt",
+        "content": {
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "square",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "content_moderation_control": true,
+          "field_cooking_time": true,
+          "field_difficulty": true,
+          "field_ingredients": true,
+          "field_number_of_servings": true,
+          "field_preparation_time": true,
+          "field_recipe_category": true,
+          "field_recipe_instruction": true,
+          "field_summary": true,
+          "field_tags": true,
+          "langcode": true,
+          "layout_builder__layout": true,
+          "links": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "b6b0ad04-ca0b-44ec-9cfc-c4489d7a1cfa",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/b6b0ad04-ca0b-44ec-9cfc-c4489d7a1cfa"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.field.node.recipe.field_cooking_time",
+            "field.field.node.recipe.field_difficulty",
+            "field.field.node.recipe.field_ingredients",
+            "field.field.node.recipe.field_media_image",
+            "field.field.node.recipe.field_number_of_servings",
+            "field.field.node.recipe.field_preparation_time",
+            "field.field.node.recipe.field_recipe_category",
+            "field.field.node.recipe.field_recipe_instruction",
+            "field.field.node.recipe.field_summary",
+            "field.field.node.recipe.field_tags",
+            "field.field.node.recipe.layout_builder__layout",
+            "node.type.recipe"
+          ],
+          "module": ["options", "text", "user"]
+        },
+        "drupal_internal__id": "node.recipe.default",
+        "targetEntityType": "node",
+        "bundle": "recipe",
+        "mode": "default",
+        "content": {
+          "field_cooking_time": {
+            "type": "number_integer",
+            "label": "above",
+            "settings": {
+              "thousand_separator": "",
+              "prefix_suffix": true
+            },
+            "third_party_settings": [],
+            "weight": 6,
+            "region": "content"
+          },
+          "field_difficulty": {
+            "type": "list_default",
+            "label": "above",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 8,
+            "region": "content"
+          },
+          "field_ingredients": {
+            "type": "string",
+            "label": "above",
+            "settings": {
+              "link_to_entity": false
+            },
+            "third_party_settings": [],
+            "weight": 9,
+            "region": "content"
+          },
+          "field_media_image": {
+            "type": "entity_reference_entity_view",
+            "label": "hidden",
+            "settings": {
+              "view_mode": "responsive_3x2",
+              "link": false
+            },
+            "third_party_settings": [],
+            "weight": 4,
+            "region": "content"
+          },
+          "field_number_of_servings": {
+            "type": "number_integer",
+            "label": "above",
+            "settings": {
+              "thousand_separator": "",
+              "prefix_suffix": true
+            },
+            "third_party_settings": [],
+            "weight": 7,
+            "region": "content"
+          },
+          "field_preparation_time": {
+            "type": "number_integer",
+            "label": "above",
+            "settings": {
+              "thousand_separator": "",
+              "prefix_suffix": true
+            },
+            "third_party_settings": [],
+            "weight": 5,
+            "region": "content"
+          },
+          "field_recipe_category": {
+            "type": "entity_reference_label",
+            "label": "above",
+            "settings": {
+              "link": true
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          },
+          "field_recipe_instruction": {
+            "type": "text_default",
+            "label": "above",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 10,
+            "region": "content"
+          },
+          "field_summary": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          },
+          "field_tags": {
+            "type": "entity_reference_label",
+            "label": "above",
+            "settings": {
+              "link": true
+            },
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          },
+          "links": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 11,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "content_moderation_control": true,
+          "langcode": true,
+          "layout_builder__layout": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "5cb6bf25-a595-4b7b-b7a3-155cfabfbde4",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/5cb6bf25-a595-4b7b-b7a3-155cfabfbde4"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.full",
+            "field.field.node.recipe.field_cooking_time",
+            "field.field.node.recipe.field_difficulty",
+            "field.field.node.recipe.field_ingredients",
+            "field.field.node.recipe.field_media_image",
+            "field.field.node.recipe.field_number_of_servings",
+            "field.field.node.recipe.field_preparation_time",
+            "field.field.node.recipe.field_recipe_category",
+            "field.field.node.recipe.field_recipe_instruction",
+            "field.field.node.recipe.field_summary",
+            "field.field.node.recipe.field_tags",
+            "field.field.node.recipe.layout_builder__layout",
+            "node.type.recipe",
+            "views.view.related_recipes"
+          ],
+          "module": [
+            "layout_builder",
+            "layout_discovery",
+            "options",
+            "text",
+            "user",
+            "views"
+          ],
+          "theme": ["umami"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": true,
+            "allow_custom": true
+          }
+        },
+        "drupal_internal__id": "node.recipe.full",
+        "targetEntityType": "node",
+        "bundle": "recipe",
+        "mode": "full",
+        "content": {
+          "content_moderation_control": {
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 10,
+            "region": "content"
+          },
+          "field_cooking_time": {
+            "type": "number_integer",
+            "label": "inline",
+            "settings": {
+              "thousand_separator": "",
+              "prefix_suffix": true
+            },
+            "third_party_settings": [],
+            "weight": 5,
+            "region": "content"
+          },
+          "field_difficulty": {
+            "type": "list_default",
+            "label": "inline",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 7,
+            "region": "content"
+          },
+          "field_ingredients": {
+            "type": "string",
+            "label": "above",
+            "settings": {
+              "link_to_entity": false
+            },
+            "third_party_settings": [],
+            "weight": 8,
+            "region": "content"
+          },
+          "field_number_of_servings": {
+            "type": "number_integer",
+            "label": "inline",
+            "settings": {
+              "thousand_separator": "",
+              "prefix_suffix": false
+            },
+            "third_party_settings": [],
+            "weight": 6,
+            "region": "content"
+          },
+          "field_preparation_time": {
+            "type": "number_integer",
+            "label": "inline",
+            "settings": {
+              "thousand_separator": "",
+              "prefix_suffix": true
+            },
+            "third_party_settings": [],
+            "weight": 4,
+            "region": "content"
+          },
+          "field_recipe_category": {
+            "type": "entity_reference_label",
+            "label": "inline",
+            "settings": {
+              "link": true
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          },
+          "field_recipe_instruction": {
+            "type": "text_default",
+            "label": "above",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 9,
+            "region": "content"
+          },
+          "field_summary": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          },
+          "field_tags": {
+            "type": "entity_reference_label",
+            "label": "inline",
+            "settings": {
+              "link": true
+            },
+            "third_party_settings": [],
+            "weight": 2,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "field_media_image": true,
+          "langcode": true,
+          "layout_builder__layout": true,
+          "links": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "6fdf58b0-4291-40d2-b4a6-371e13ecc46d",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/6fdf58b0-4291-40d2-b4a6-371e13ecc46d"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.node.teaser",
+            "field.field.node.recipe.field_cooking_time",
+            "field.field.node.recipe.field_difficulty",
+            "field.field.node.recipe.field_ingredients",
+            "field.field.node.recipe.field_media_image",
+            "field.field.node.recipe.field_number_of_servings",
+            "field.field.node.recipe.field_preparation_time",
+            "field.field.node.recipe.field_recipe_category",
+            "field.field.node.recipe.field_recipe_instruction",
+            "field.field.node.recipe.field_summary",
+            "field.field.node.recipe.field_tags",
+            "field.field.node.recipe.layout_builder__layout",
+            "node.type.recipe"
+          ],
+          "module": ["user"]
+        },
+        "drupal_internal__id": "node.recipe.teaser",
+        "targetEntityType": "node",
+        "bundle": "recipe",
+        "mode": "teaser",
+        "content": {
+          "links": {
+            "weight": 100,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "content_moderation_control": true,
+          "field_cooking_time": true,
+          "field_difficulty": true,
+          "field_ingredients": true,
+          "field_media_image": true,
+          "field_number_of_servings": true,
+          "field_preparation_time": true,
+          "field_recipe_category": true,
+          "field_recipe_instruction": true,
+          "field_summary": true,
+          "field_tags": true,
+          "langcode": true,
+          "layout_builder__layout": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "83b9414f-6393-4e43-b12f-f15d84b93d4e",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/83b9414f-6393-4e43-b12f-f15d84b93d4e"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": ["taxonomy.vocabulary.recipe_category"],
+          "module": ["text"]
+        },
+        "drupal_internal__id": "taxonomy_term.recipe_category.default",
+        "targetEntityType": "taxonomy_term",
+        "bundle": "recipe_category",
+        "mode": "default",
+        "content": {
+          "description": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "a556d934-9513-4bed-be6e-cbbc7b6c2564",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/a556d934-9513-4bed-be6e-cbbc7b6c2564"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": ["taxonomy.vocabulary.tags"],
+          "module": ["text"]
+        },
+        "drupal_internal__id": "taxonomy_term.tags.default",
+        "targetEntityType": "taxonomy_term",
+        "bundle": "tags",
+        "mode": "default",
+        "content": {
+          "description": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "d26604d7-0ed0-4101-9148-751f48f0ce74",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/d26604d7-0ed0-4101-9148-751f48f0ce74"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.user.compact",
+            "field.field.user.user.user_picture",
+            "image.style.thumbnail"
+          ],
+          "module": ["image", "user"]
+        },
+        "drupal_internal__id": "user.user.compact",
+        "targetEntityType": "user",
+        "bundle": "user",
+        "mode": "compact",
+        "content": {
+          "user_picture": {
+            "type": "image",
+            "label": "hidden",
+            "settings": {
+              "image_link": "content",
+              "image_style": "thumbnail",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true,
+          "member_for": true
+        }
+      }
+    },
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "c36549ef-6ae4-41ea-bc74-92d1e9282a93",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/c36549ef-6ae4-41ea-bc74-92d1e9282a93"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.field.user.user.user_picture",
+            "image.style.thumbnail"
+          ],
+          "module": ["image", "user"]
+        },
+        "drupal_internal__id": "user.user.default",
+        "targetEntityType": "user",
+        "bundle": "user",
+        "mode": "default",
+        "content": {
+          "member_for": {
+            "weight": 5,
+            "region": "content"
+          },
+          "user_picture": {
+            "type": "image",
+            "label": "hidden",
+            "settings": {
+              "image_link": "content",
+              "image_style": "thumbnail",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display?sort=drupal_internal__id"
+    }
+  }
+}

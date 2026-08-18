@@ -1,0 +1,32 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "node--page",
+      "id": "475e3aa4-f045-456f-9d4a-e0c26a165e27",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/node/page/475e3aa4-f045-456f-9d4a-e0c26a165e27?resourceVersion=id%3A40"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "title": "About Umami"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/node/page?fields%5Bnode--page%5D=drupal_internal__id%2Ctitle%2Cname%2Clabel%2Cinfo%2Cdisplay_name%2Clangcode&page%5Blimit%5D=2"
+    }
+  }
+}

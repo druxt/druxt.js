@@ -1,0 +1,68 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "db769cbd-c07c-41c9-9ca0-9e4fcb10fa95",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/db769cbd-c07c-41c9-9ca0-9e4fcb10fa95"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.media_library",
+            "field.field.media.remote_video.field_media_oembed_video",
+            "image.style.medium",
+            "media.type.remote_video"
+          ],
+          "module": ["image"]
+        },
+        "drupal_internal__id": "media.remote_video.media_library",
+        "targetEntityType": "media",
+        "bundle": "remote_video",
+        "mode": "media_library",
+        "content": {
+          "thumbnail": {
+            "type": "image",
+            "label": "hidden",
+            "settings": {
+              "image_link": "",
+              "image_style": "medium",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "field_media_oembed_video": true,
+          "langcode": true,
+          "name": true,
+          "uid": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=media.remote_video.media_library"
+    }
+  }
+}
