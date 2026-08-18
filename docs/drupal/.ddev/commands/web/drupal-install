@@ -1,9 +1,0 @@
-#!/bin/bash
-
-## Description: Install Drupal
-## Usage: drupal-install
-## Example: "ddev drupal-install"
-
-composer install
-drush -y tome:install
-drush cache:rebuild

@@ -1,82 +1,102 @@
 {
-    "name": "druxt/drupal-9-example",
-    "description": "Example Drupal 9 backend for use in the Druxt examples.",
-    "type": "project",
-    "license": "GPL-2.0-or-later",
-    "homepage": "https://druxtjs.org",
-    "support": {
-        "docs": "https://druxtjs.org",
-        "chat": "https://discord.druxtjs.org"
-    },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://packages.drupal.org/8"
-        }
-    ],
-    "require": {
-        "composer/installers": "^2.3.0",
-        "cweagans/composer-patches": "^1.7.3",
-        "drupal-tome/tome_drush": "dev-master",
-        "drupal/core-composer-scaffold": "^10",
-        "drupal/core-project-message": "^10",
-        "drupal/core-recommended": "^10",
-        "drupal/decoupled_router": "2.0.5",
-        "drupal/druxt": "^1.2.0",
-        "drupal/jsonapi_hypermedia": "^1.10.0",
-        "drupal/simple_oauth": "^5.2.5",
-        "drupal/tome": "^1.12.0",
-        "drush/drush": "^12"
-    },
-    "require-dev": {
-        "drupal/core-dev": "^10"
-    },
-    "conflict": {
-        "drupal/drupal": "*"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "composer/installers": true,
-            "drupal/core-composer-scaffold": true,
-            "drupal/core-project-message": true,
-            "cweagans/composer-patches": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "php-http/discovery": true,
-            "phpstan/extension-installer": true
-        }
-    },
-    "extra": {
-        "drupal-scaffold": {
-            "locations": {
-                "web-root": "web/"
-            }
-        },
-        "installer-paths": {
-            "web/core": ["type:drupal-core"],
-            "web/libraries/{$name}": ["type:drupal-library"],
-            "web/modules/contrib/{$name}": ["type:drupal-module"],
-            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
-            "web/themes/contrib/{$name}": ["type:drupal-theme"],
-            "drush/Commands/contrib/{$name}": ["type:drupal-drush"],
-            "web/modules/custom/{$name}": ["type:drupal-custom-module"],
-            "web/profiles/custom/{$name}": ["type:drupal-custom-profile"],
-            "web/themes/custom/{$name}": ["type:drupal-custom-theme"]
-        },
-        "patches": {
-            "drupal/decoupled_router": {
-                "https://www.drupal.org/project/decoupled_router/issues/3172926": "https://www.drupal.org/files/issues/2020-09-24/3172926-2.patch",
-                "https://www.drupal.org/project/decoupled_router/issues/3468825": "https://git.drupalcode.org/project/decoupled_router/-/merge_requests/20.diff"
-            },
-            "drupal/druxt": {
-                "#3315030 - Add a wildcard route translator": "https://git.drupalcode.org/project/druxt/-/merge_requests/11.diff",
-                "https://www.drupal.org/project/druxt/issues/3467742": "https://git.drupalcode.org/project/druxt/-/merge_requests/14.diff"
-            },
-            "drupal/jsonapi_menu_items": {
-                "https://www.drupal.org/project/jsonapi_menu_items/issues/3192576": "https://www.drupal.org/files/issues/2023-02-10/3192576-18.patch"
-            }
-        }
+  "name": "druxt/drupal-9-example",
+  "description": "Example Drupal 9 backend for use in the Druxt examples.",
+  "type": "project",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://druxtjs.org",
+  "support": {
+    "docs": "https://druxtjs.org",
+    "chat": "https://discord.druxtjs.org"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
     }
+  ],
+  "require": {
+    "composer/installers": "^2.3.0",
+    "cweagans/composer-patches": "^1.7.3",
+    "drupal-tome/tome_drush": "dev-master",
+    "drupal/core-composer-scaffold": "^10",
+    "drupal/core-project-message": "^10",
+    "drupal/core-recommended": "^10",
+    "drupal/decoupled_router": "2.0.5",
+    "drupal/druxt": "^1.2.0",
+    "drupal/jsonapi_hypermedia": "^1.10.0",
+    "drupal/simple_oauth": "^5.2.5",
+    "drupal/tome": "^1.12.0",
+    "drush/drush": "^12"
+  },
+  "require-dev": {
+    "drupal/core-dev": "^10"
+  },
+  "conflict": {
+    "drupal/drupal": "*"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "composer/installers": true,
+      "drupal/core-composer-scaffold": true,
+      "drupal/core-project-message": true,
+      "cweagans/composer-patches": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "php-http/discovery": true,
+      "phpstan/extension-installer": true
+    }
+  },
+  "extra": {
+    "drupal-scaffold": {
+      "locations": {
+        "web-root": "web/"
+      }
+    },
+    "installer-paths": {
+      "web/core": [
+        "type:drupal-core"
+      ],
+      "web/libraries/{$name}": [
+        "type:drupal-library"
+      ],
+      "web/modules/contrib/{$name}": [
+        "type:drupal-module"
+      ],
+      "web/profiles/contrib/{$name}": [
+        "type:drupal-profile"
+      ],
+      "web/themes/contrib/{$name}": [
+        "type:drupal-theme"
+      ],
+      "drush/Commands/contrib/{$name}": [
+        "type:drupal-drush"
+      ],
+      "web/modules/custom/{$name}": [
+        "type:drupal-custom-module"
+      ],
+      "web/profiles/custom/{$name}": [
+        "type:drupal-custom-profile"
+      ],
+      "web/themes/custom/{$name}": [
+        "type:drupal-custom-theme"
+      ]
+    },
+    "patches": {
+      "drupal/decoupled_router": {
+        "https://www.drupal.org/project/decoupled_router/issues/3172926": "https://www.drupal.org/files/issues/2020-09-24/3172926-2.patch",
+        "https://www.drupal.org/project/decoupled_router/issues/3468825": "https://git.drupalcode.org/project/decoupled_router/-/merge_requests/20.diff",
+        "#3111456 Resolve the language from the requested path, so /es serves Spanish instead of the default language": "patches/decoupled_router-3111456-resolve-language-from-path.patch"
+      },
+      "drupal/druxt": {
+        "#3315030 - Add a wildcard route translator": "https://git.drupalcode.org/project/druxt/-/merge_requests/11.diff",
+        "https://www.drupal.org/project/druxt/issues/3467742": "https://git.drupalcode.org/project/druxt/-/merge_requests/14.diff",
+        "#3273228 Add langcode to Views Decoupled Router integration, so the /es front page stays Spanish": "patches/druxt-3273228-views-route-langcode.patch"
+      },
+      "drupal/jsonapi_menu_items": {
+        "https://www.drupal.org/project/jsonapi_menu_items/issues/3192576": "https://www.drupal.org/files/issues/2023-02-10/3192576-18.patch"
+      }
+    }
+  }
 }

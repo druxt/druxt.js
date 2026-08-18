@@ -1,0 +1,104 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Provision the site: install Drupal against a throwaway SQLite database
+ * and import the committed config/content via Tome.
+ *
+ * Unlike the extension-scaffold `provision` this pattern is modelled on
+ * (which runs a vanilla `drush site-install`), docs/drupal already has
+ * real committed config and content — provisioning here means
+ * `drush tome:install`, not `site-install`.
+ *
+ * The committed config/sync is authored against DDEV's MySQL (`mysql: 0`
+ * in config/sync/core.extension.yml), and Drupal refuses to uninstall the
+ * module providing its own active DB driver — so this patches the enabled
+ * module list to also enable `sqlite`, additively (never removing `mysql`)
+ * and only in this checkout, never committed.
+ *
+ * The SQLite connection itself is written to `web/sites/default/settings
+ * .local.php` (gitignored), not `settings.php` (tracked) — unlike the
+ * reference pattern, which appends directly to a tracked settings.php and
+ * relies on the developer noticing and discarding the diff. settings.php
+ * already has a commented-out settings.local.php include (enabled as part
+ * of this same change), so provision never touches a tracked file.
+ */
+
+declare(strict_types=1);
+
+namespace DruxtjsDevTools;
+
+require_once __DIR__ . '/helpers.php';
+
+// -----------------------------------------------------------------------------
+// Variables.
+// -----------------------------------------------------------------------------
+
+$db_file = getenv_default('DB_FILE', '/tmp/druxtjs-drupal-site.sqlite');
+
+// -----------------------------------------------------------------------------
+
+echo '===============================' . PHP_EOL;
+echo '         🚀 PROVISION          ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+
+TASK('Enabling the sqlite module in this checkout only (never committed).');
+$extension_yml = 'config/sync/core.extension.yml';
+$content = (string) file_get_contents($extension_yml);
+if (!str_contains($content, "\n  sqlite:")) {
+  $anchor = "  shortcut: 0\n";
+  if (!str_contains($content, $anchor)) {
+    FAIL('Could not find the expected anchor ("%s") in %s to patch in the sqlite module. The module list may have changed shape — update this script\'s anchor rather than skipping the patch.', trim($anchor), $extension_yml);
+  }
+  $content = str_replace($anchor, $anchor . "  sqlite: 0\n", $content);
+  file_put_contents($extension_yml, $content);
+}
+PASS('sqlite module enabled for this checkout.');
+
+TASK('Configuring the SQLite database at %s.', $db_file);
+if (file_exists($db_file)) {
+  unlink($db_file);
+}
+$settings_local_php = 'web/sites/default/settings.local.php';
+file_put_contents($settings_local_php, sprintf(
+  "<?php\n\n/**\n * @file\n * Provision-only override, written fresh each run by .devtools/provision.\n * Gitignored - never committed.\n */\n\n\$databases['default']['default'] = [\n  'driver' => 'sqlite',\n  'database' => '%s',\n];\n",
+  $db_file
+));
+PASS('SQLite database configured.');
+
+TASK('Running drush tome:install.');
+drush('tome:install');
+// tome:install's single config:import enables the language module mid-import,
+// so the language.es config translation collection (202 items: view titles,
+// menu labels, block settings) never lands - only a re-import sees it. This
+// left /es serving English view titles and menus.
+TASK('Re-importing config so the language.es translation collection lands.');
+drush('config:import');
+drush('php-eval %s', 'node_access_rebuild();');
+drush('cache:rebuild');
+PASS('Site installed from committed config/content.');
+
+TASK('Removing the Consumers module default consumer.');
+drush('php-script %s', __DIR__ . '/consumer-cleanup.php');
+PASS('Exactly one OAuth consumer (the committed Druxt consumer) remains.');
+
+TASK('Setting the admin account password.');
+drush('php-script %s', __DIR__ . '/set-admin-password.php');
+PASS('Admin (uid 1) password set to the documented example login.');
+
+TASK('Pre-generating image style derivatives.');
+drush('php-script %s', __DIR__ . '/image-derivatives.php');
+PASS('Image style derivatives are available at tokenless paths.');
+
+echo PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo '   🚀 PROVISION COMPLETE  ✅  ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+echo 'Database: ' . $db_file . PHP_EOL;
+echo PHP_EOL;
+echo '> Next steps:' . PHP_EOL;
+echo '  .devtools/start    # Start the webserver' . PHP_EOL;
+echo PHP_EOL;
