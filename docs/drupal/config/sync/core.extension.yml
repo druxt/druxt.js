@@ -10,6 +10,7 @@ module:
   ckeditor5: 0
   config: 0
   config_translation: 0
+  consumers: 0
   contact: 0
   content_moderation: 0
   contextual: 0
@@ -51,6 +52,8 @@ module:
   search: 0
   serialization: 0
   shortcut: 0
+  simple_oauth: 0
+  sqlite: 0
   system: 0
   taxonomy: 0
   text: 0

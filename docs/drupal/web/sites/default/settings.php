@@ -290,7 +290,7 @@ $settings['config_sync_directory'] = '../config/sync';
  *   $settings['hash_salt'] = file_get_contents('/home/example/salt.txt');
  * @endcode
  */
-$settings['hash_salt'] = '';
+$settings['hash_salt'] = 'gpujn0J808pn0aRJyo0h71ryKWIZwjx9tPjqd4i3dM3y9NYt7QGeEivY9GkHXyntiPAf5X28iQ';
 
 /**
  * Deployment identifier.
@@ -623,6 +623,18 @@ $settings['update_free_access'] = FALSE;
 # $config['user.settings']['anonymous'] = 'Visitor';
 
 /**
+ * Simple OAuth key paths.
+ *
+ * The OAuth keys are committed at ../keys relative to the Drupal root
+ * (web/). simple_oauth checks the paths with plain file_exists(), which
+ * resolves relative paths against the process working directory (web/
+ * under the built-in server, the project root under drush), so an
+ * absolute path built from $app_root is used instead.
+ */
+$config['simple_oauth.settings']['public_key'] = $app_root . '/../keys/public.key';
+$config['simple_oauth.settings']['private_key'] = $app_root . '/../keys/private.key';
+
+/**
  * Fast 404 pages:
  *
  * Drupal can generate fully themed 404 pages. However, some of these responses
@@ -774,7 +786,13 @@ if (file_exists(__DIR__ . '/settings.ddev.php') && getenv('IS_DDEV_PROJECT') == 
  *
  * Keep this code block at the end of this file to take full effect.
  */
-#
-# if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
-#   include $app_root . '/' . $site_path . '/settings.local.php';
-# }
+if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
+  include $app_root . '/' . $site_path . '/settings.local.php';
+}
+$databases['default']['default'] = array (
+  'database' => '/tmp/druxtjs-drupal-site.sqlite',
+  'prefix' => '',
+  'driver' => 'sqlite',
+  'namespace' => 'Drupal\\sqlite\\Driver\\Database\\sqlite',
+  'autoload' => 'core/modules/sqlite/src/Driver/Database/sqlite/',
+);

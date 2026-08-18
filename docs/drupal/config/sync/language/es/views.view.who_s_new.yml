@@ -17,4 +17,4 @@ display:
     display_options:
       display_description: 'Un listado de nuevos usuarios'
       block_description: 'Quién es nuevo'
-      block_category: Usuario
+      block_category: User
