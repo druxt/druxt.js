@@ -1,0 +1,61 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_storage_config--field_storage_config",
+      "id": "14df9271-cf2f-434b-888b-4870d1b98d6c",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_storage_config/field_storage_config/14df9271-cf2f-434b-888b-4870d1b98d6c"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "module": ["file", "image", "user"]
+        },
+        "drupal_internal__id": "user.user_picture",
+        "field_name": "user_picture",
+        "entity_type": "user",
+        "field_storage_config_type": "image",
+        "settings": {
+          "target_type": "file",
+          "display_field": false,
+          "display_default": false,
+          "uri_scheme": "public",
+          "default_image": {
+            "uuid": null,
+            "alt": "",
+            "title": "",
+            "width": null,
+            "height": null
+          }
+        },
+        "module": "image",
+        "locked": false,
+        "cardinality": 1,
+        "translatable": true,
+        "indexes": {
+          "target_id": ["target_id"]
+        },
+        "persist_with_no_fields": false,
+        "custom_storage": false
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/field_storage_config/field_storage_config?filter%5Bentity_type%5D=user"
+    }
+  }
+}

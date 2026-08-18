@@ -1,10 +1,23 @@
 {
-  "name": "druxt-example-node-client",
-  "main": "index.js",
+  "name": "druxt-inspect",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CLI for inspecting a Drupal JSON:API backend through Druxt's framework-agnostic clients - resource types, schemas, entity samples, views, and Vue component stubs.",
+  "license": "MIT",
+  "bin": "bin/druxt-inspect.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node index.js"
+    "test": "jest --config jest.config.js"
+  },
+  "engines": {
+    "node": ">=16"
   },
   "dependencies": {
-    "druxt": "link:../../../packages/druxt"
+    "druxt": "link:../../packages/druxt",
+    "druxt-schema": "link:../../packages/schema"
+  },
+  "devDependencies": {
+    "axios": "0.28.0",
+    "jest": "29.7.0"
   }
 }

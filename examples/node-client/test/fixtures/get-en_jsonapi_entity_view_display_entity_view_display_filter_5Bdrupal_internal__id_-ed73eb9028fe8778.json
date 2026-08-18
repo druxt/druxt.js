@@ -1,0 +1,64 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "d26604d7-0ed0-4101-9148-751f48f0ce74",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/d26604d7-0ed0-4101-9148-751f48f0ce74"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.user.compact",
+            "field.field.user.user.user_picture",
+            "image.style.thumbnail"
+          ],
+          "module": ["image", "user"]
+        },
+        "drupal_internal__id": "user.user.compact",
+        "targetEntityType": "user",
+        "bundle": "user",
+        "mode": "compact",
+        "content": {
+          "user_picture": {
+            "type": "image",
+            "label": "hidden",
+            "settings": {
+              "image_link": "content",
+              "image_style": "thumbnail",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true,
+          "member_for": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=user.user.compact"
+    }
+  }
+}
