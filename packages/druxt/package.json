@@ -29,6 +29,7 @@
       "import": "./dist/druxt.esm.js"
     },
     "./components/*": "./dist/components/*",
+    "./dist/components/*": "./dist/components/*",
     "./plugins/*": "./dist/plugins/*",
     "./server-middleware/*": "./dist/server-middleware/*",
     "./dist/server-middleware/template.mjs": "./dist/server-middleware/template.mjs"
