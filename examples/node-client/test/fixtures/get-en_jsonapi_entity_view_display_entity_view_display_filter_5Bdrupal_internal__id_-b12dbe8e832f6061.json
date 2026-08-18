@@ -1,0 +1,68 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "771e41d9-a0fc-455d-beb8-03e254ce25be",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/771e41d9-a0fc-455d-beb8-03e254ce25be"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.media_library",
+            "field.field.media.audio.field_media_audio_file",
+            "image.style.thumbnail",
+            "media.type.audio"
+          ],
+          "module": ["image"]
+        },
+        "drupal_internal__id": "media.audio.media_library",
+        "targetEntityType": "media",
+        "bundle": "audio",
+        "mode": "media_library",
+        "content": {
+          "thumbnail": {
+            "type": "image",
+            "label": "hidden",
+            "settings": {
+              "image_link": "",
+              "image_style": "thumbnail",
+              "image_loading": {
+                "attribute": "lazy"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "field_media_audio_file": true,
+          "langcode": true,
+          "name": true,
+          "uid": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=media.audio.media_library"
+    }
+  }
+}

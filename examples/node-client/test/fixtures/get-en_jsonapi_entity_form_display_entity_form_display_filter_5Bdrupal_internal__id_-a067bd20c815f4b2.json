@@ -1,0 +1,54 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_form_display--entity_form_display",
+      "id": "87e7a06b-177a-4528-af14-f6e932f2ee5c",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_form_display/entity_form_display/87e7a06b-177a-4528-af14-f6e932f2ee5c"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_form_mode.media.media_library",
+            "field.field.media.video.field_media_video_file",
+            "media.type.video"
+          ]
+        },
+        "drupal_internal__id": "media.video.media_library",
+        "targetEntityType": "media",
+        "bundle": "video",
+        "mode": "media_library",
+        "content": [],
+        "hidden": {
+          "created": true,
+          "field_media_video_file": true,
+          "langcode": true,
+          "moderation_state": true,
+          "name": true,
+          "path": true,
+          "status": true,
+          "uid": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/entity_form_display/entity_form_display?filter%5Bdrupal_internal__id%5D=media.video.media_library"
+    }
+  }
+}

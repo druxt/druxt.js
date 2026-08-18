@@ -1,0 +1,160 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "eb8706b0-2f52-4d6c-80ba-bdea48debc70",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/eb8706b0-2f52-4d6c-80ba-bdea48debc70"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.footer_promo_block",
+            "field.storage.block_content.field_content_link"
+          ],
+          "module": ["link"]
+        },
+        "drupal_internal__id": "block_content.footer_promo_block.field_content_link",
+        "field_name": "field_content_link",
+        "entity_type": "block_content",
+        "bundle": "footer_promo_block",
+        "label": "Find out more link",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "title": 2,
+          "link_type": 17
+        },
+        "field_type": "link"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "bd0225b3-6811-47a3-a3f8-0071adb36aed",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/bd0225b3-6811-47a3-a3f8-0071adb36aed"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.footer_promo_block",
+            "field.storage.block_content.field_media_image",
+            "media.type.image"
+          ]
+        },
+        "drupal_internal__id": "block_content.footer_promo_block.field_media_image",
+        "field_name": "field_media_image",
+        "entity_type": "block_content",
+        "bundle": "footer_promo_block",
+        "label": "Media Image",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:media",
+          "handler_settings": {
+            "target_bundles": {
+              "image": "image"
+            },
+            "sort": {
+              "field": "_none"
+            },
+            "auto_create": true,
+            "auto_create_bundle": ""
+          }
+        },
+        "field_type": "entity_reference"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "7b5d348e-25c6-4e3f-a2f8-a9197ac21060",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/7b5d348e-25c6-4e3f-a2f8-a9197ac21060"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.footer_promo_block",
+            "field.storage.block_content.field_summary"
+          ]
+        },
+        "drupal_internal__id": "block_content.footer_promo_block.field_summary",
+        "field_name": "field_summary",
+        "entity_type": "block_content",
+        "bundle": "footer_promo_block",
+        "label": "Promo text",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "string_long"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "2b5ef55a-e49b-459f-aa9a-65a96685dba3",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/2b5ef55a-e49b-459f-aa9a-65a96685dba3"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.footer_promo_block",
+            "field.storage.block_content.field_title"
+          ]
+        },
+        "drupal_internal__id": "block_content.footer_promo_block.field_title",
+        "field_name": "field_title",
+        "entity_type": "block_content",
+        "bundle": "footer_promo_block",
+        "label": "Promo title",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "string"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=block_content&filter%5Bbundle%5D=footer_promo_block"
+    }
+  }
+}
