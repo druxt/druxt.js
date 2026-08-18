@@ -1,37 +1,20 @@
-
-it('DruxtDevelTemplate tool', () => {
-  // Given I visit the homepage.
+// This spec originally exercised the DruxtDevelTemplate tool against the
+// Umami search block's missing-template debug UI. The theming pass then
+// added components/druxt/block/SearchFormBlockUmami.vue, so that block can
+// never show the debug UI again - the premise is gone. What remains worth
+// pinning is the resolution itself: the block finds its wrapper and renders
+// the real form. A purpose-built, permanently unthemed demo block for the
+// devel-template tool belongs to the pattern examples overhaul.
+it('Umami search block resolves its wrapper component', () => {
   cy.visit('/')
 
-  // Umami Search block.
-  const searchBlock = '[data-fetch-key^="DruxtBlock:9ae71192-5a61-4ede-8a11-f92f543c1f4a:0"]'
-
-  // I see a DruxtDebug component.
   // First spec in the run: the first visit compiles the dev bundle, which
   // can far exceed the default 4s timeout on CI runners.
-  cy.get(searchBlock, { timeout: 120000 })
-    .find('details summary')
-    .first()
-    .should('contain.text', "[DruxtBlock] Missing Vue template for the 'umami_search' block")
-    .click()
-
-  // It has 5 theme component options.
-  cy.get(searchBlock)
-    .find('select option')
-    .should('have.length', 5)
-
-  // I create the DruxtBlockSearchFormBlock component
-  cy.get(searchBlock)
-    .find('select')
-    .select('DruxtBlockSearchFormBlock')
-  cy.get(searchBlock)
-    .find('button')
-    .click()
-
-  // cy.wait(5000)
-  // cy.get(searchBlock)
-  //   .find('details summary')
-  //   .first()
-  //   .should('contain.text', "[DruxtBlockSearchFormBlock] Debug")
-  //   .click()
+  const searchBlock = '[data-fetch-key^="DruxtBlock:9ae71192-5a61-4ede-8a11-f92f543c1f4a:0"]'
+  cy.get(searchBlock, { timeout: 120000 }).within(() => {
+    // The themed form, not DruxtDebug's missing-template details.
+    cy.get('input[type="search"], input[type="text"]').should('exist')
+    cy.contains('button', 'Search').should('exist')
+    cy.get('details summary').should('not.exist')
+  })
 })

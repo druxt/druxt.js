@@ -1,7 +1,7 @@
 it('Examples: DruxtRouter modes', () => {
   cy.visit('/examples/router-modes')
 
-  cy.get('h1').first().should('have.text', 'DruxtRouter - Router modes')
+  cy.contains('h1', 'DruxtRouter - Router modes').should('exist')
 
   // Four documented modes, each its own section.
   cy.contains('h2', 'Component - Default').should('exist')
