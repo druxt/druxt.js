@@ -85,10 +85,10 @@ const DruxtStore = ({ store }) => {
         // Store and dehydrate collection resources.
         collection.data = dehydrateResources({ commit: this.commit, prefix, queryObject, resources: collection.data })
 
-        // Extract and store included resources.
+        // Keep the dehydrated refs (don't delete) so a cache hit in
+        // getCollection can re-hydrate `included`, same as `data`.
         if (collection.included) {
           collection.included = dehydrateResources({ commit: this.commit, prefix, queryObject, resources: collection.included })
-          delete collection.included
         }
 
         // Recursively merge new collection data into stored collection.
@@ -207,10 +207,13 @@ const DruxtStore = ({ store }) => {
 
         // If collection hash exists, re-hydrate and return the data.
         if (!bypassCache && ((state.collections[type] || {})[hash] || {})[prefix]) {
+          const cached = state.collections[type][hash][prefix]
           return {
-            ...state.collections[type][hash][prefix],
+            ...cached,
             // Hydrate resource data.
-            data: state.collections[type][hash][prefix].data.map((o) => ((state.resources[o.type][o.id] || {})[prefix] || {}).data)
+            data: cached.data.map((o) => ((state.resources[o.type][o.id] || {})[prefix] || {}).data),
+            // Same for included - a cache hit must match a fresh fetch.
+            ...(cached.included ? { included: cached.included.map((o) => ((state.resources[o.type][o.id] || {})[prefix] || {}).data) } : {}),
           }
         }
 
