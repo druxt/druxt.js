@@ -4,7 +4,12 @@ on:
   push:
     branches: [develop, main]
   pull_request:
-    branches: [develop, main]
+    # feature/** so a stacked PR is actually checked. A PR based on another
+    # feature branch matched nothing here, so it ran no jobs at all: not build,
+    # lint, tests or the audit, and the PR showed no checks rather than showing
+    # them failing. Stacking is only useful if the upper PR is verified before
+    # its base merges.
+    branches: [develop, main, 'feature/**']
 
 permissions:
   contents: read
@@ -380,3 +385,126 @@ jobs:
             examples/druxt-site/test/cypress/videos
             docs/nuxt/test/cypress/screenshots
             docs/nuxt/test/cypress/videos
+
+  audit-seo:
+    name: audit-seo
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      # The generated API reference. content/api is gitignored and produced by
+      # `yarn build:docs`, so without it the site generates 20 pages instead of
+      # 130 and the audit silently covers a fraction of the site.
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: build-output
+
+      # The artifact's internal layout depends on upload-artifact rooting it at
+      # the least common ancestor of the paths the build job gave it. Nothing
+      # downloaded this artifact before, so that had never been exercised.
+      # Checked here rather than left to fail later: without content/api the
+      # site still generates, just with 21 routes instead of 131, and the audit
+      # would report a pass over a fraction of the site. The sitemap floor below
+      # would catch it, but only after installing Chromium.
+      - name: Check the generated API reference arrived
+        run: |
+          test -d docs/nuxt/content/api || {
+            echo "docs/nuxt/content/api missing after downloading build-output." >&2
+            echo "The artifact layout changed, or the build job stopped publishing it." >&2
+            exit 1
+          }
+          echo "API reference: $(find docs/nuxt/content/api -name '*.md' | wc -l) generated pages"
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .yarn/cache
+            docs/nuxt/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'docs/nuxt/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Generate the site
+        run: |
+          yarn install --immutable
+          cd docs/nuxt
+          yarn install --immutable
+          yarn generate
+
+      # Node 22 from here, matching the node:22 image the GitLab job uses.
+      # unlighthouse-ci@0.18.0 declares node >=22.18.0 and means it: on 20 it
+      # dies importing `glob` from node:fs/promises, which does not exist before
+      # 22. It cannot run on this repo's pinned Node 16 and does not need to,
+      # since it only speaks HTTP to the built site and never imports project
+      # code. Switching versions mid-job is enough; the site is already built.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - name: Audit the generated site
+        working-directory: docs/nuxt
+        env:
+          # The full set, on a dedicated ephemeral runner with no contention.
+          # This is the authoritative baseline; the GitLab job samples because
+          # its runner shares a busy host. UNLIGHTHOUSE_SAMPLE is left unset,
+          # which means no sampling.
+          UNLIGHTHOUSE_CONCURRENCY: '2'
+        run: |
+          # Exact versions. This toolchain is version-sensitive in ways that
+          # bite silently: unlighthouse only reads some config keys in some
+          # versions, so floating on @latest lets an unrelated upstream release
+          # change an audit on a re-run.
+          npx --yes playwright@1.62.1 install --with-deps chromium
+          # Matched on the directory prefix, not an exact name. Playwright now
+          # ships Chrome for Testing, which unpacks to chrome-linux64 rather
+          # than the chrome-linux this used to look for, so an exact path found
+          # nothing on the runner while still matching in a local devcontainer
+          # on the older layout.
+          CHROME_PATH="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path '*chrome-linux*' | head -1)"
+          test -n "$CHROME_PATH" || { echo "No Playwright Chromium found; unlighthouse would fall back to its own download" >&2; exit 1; }
+          export CHROME_PATH
+
+          npx --yes serve@14.2.6 -l 4000 dist &
+          npx --yes wait-on@9.1.0 http://localhost:4000 --timeout 60000
+
+          # Assert the route source before auditing. sitemapRoutes() returns []
+          # on any read failure and ci.budget is 0, so without this a partial
+          # build produces a green job that audited a handful of crawled pages.
+          # A floor, not an equality check, so adding docs cannot fail the build.
+          test -f dist/sitemap.xml || { echo "dist/sitemap.xml missing; the audit would silently scan only crawled routes" >&2; exit 1; }
+          locs="$(grep -c '<loc>' dist/sitemap.xml)"
+          echo "sitemap advertises $locs routes"
+          test "$locs" -ge 100 || { echo "Only $locs routes in sitemap.xml, expected >= 100; refusing to report a partial audit as a pass" >&2; exit 1; }
+
+          npx --yes unlighthouse-ci@0.18.0 --site http://localhost:4000
+
+      # Chromium instances outlive the step when the audit times out mid-route.
+      # Harmless on a throwaway GitHub runner, but the same job runs on a
+      # long-lived GitLab runner where 62 orphans from one failed run took the
+      # host past a load average of 400. Kept identical in both so the job does
+      # not depend on which runner it lands on.
+      - name: Clean up browser processes
+        if: always()
+        run: pkill -9 -f 'user-data-dir=/tmp/puppeteer' || true
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: docs/nuxt/.unlighthouse
+          # .unlighthouse is a dotfile directory and upload-artifact skips
+          # hidden paths by default, with a warning rather than an error. The
+          # audit ran, wrote its report, and published nothing, while the job
+          # stayed green: the numbers this job exists to produce were simply
+          # absent.
+          include-hidden-files: true
+          retention-days: 7

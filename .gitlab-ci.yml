@@ -10,6 +10,7 @@ stages:
   - lint
   - test
   - secret-detection
+  - audit
   - preview
 
 variables:
@@ -671,3 +672,90 @@ examples:preview:
       DURATION="$PREVIEW_DURATION_SECONDS"
       [ "$DURATION" -le 18000 ] || DURATION=18000
       sleep "$DURATION"
+
+docs:build:
+  extends: .node
+  stage: audit
+  interruptible: true
+  needs: []
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - docs/nuxt/**/*
+        - packages/*/src/**/*
+  script:
+    - section_start "docs-build" "Generating druxtjs.org"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - cd docs/nuxt
+    - yarn install --immutable
+    - yarn generate
+    - section_end "docs-build"
+  artifacts:
+    paths:
+      - docs/nuxt/dist/
+    expire_in: 1 day
+
+audit:seo:
+  stage: audit
+  image: node:22
+  tags: [docker]
+  timeout: 30m
+  interruptible: true
+  needs: ['docs:build']
+  variables:
+    # A sample, not the full set. This runner shares a host with other work that
+    # has repeatedly taken the load average past 400, and a full 131-route audit
+    # failed there three times: orphaned browsers, a Chromium out-of-memory, and
+    # a single route exceeding its timeout. None of those said anything about
+    # the site. sampleRoutes covers every page template, so a template
+    # regression still fails here; GitHub Actions runs the full set on a
+    # dedicated runner and is the authoritative baseline.
+    UNLIGHTHOUSE_SAMPLE: '25'
+    UNLIGHTHOUSE_CONCURRENCY: '1'
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - docs/nuxt/**/*
+        - packages/*/src/**/*
+  script:
+    - cd docs/nuxt
+    # Exact versions, not @latest. This toolchain is version-sensitive in ways
+    # that bite silently: unlighthouse only reads some config keys in some
+    # versions, and the directory Playwright unpacks Chromium into is an
+    # implementation detail that has already changed once. Floating them means
+    # an unrelated upstream release can change or break an MR audit on a re-run.
+    - npx --yes playwright@1.62.1 install --with-deps chromium
+    # Matched on the directory prefix, not an exact name: Playwright now ships
+    # Chrome for Testing, which unpacks to chrome-linux64 rather than
+    # chrome-linux. The exact path found nothing on a GitHub runner.
+    - export CHROME_PATH=$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)
+    - test -n "$CHROME_PATH" || { echo "No Playwright Chromium found; the audit would silently fall back to an x86_64 download" >&2; exit 1; }
+    - npx --yes serve@14.2.6 -l 4000 dist &
+    - npx --yes wait-on@9.1.0 http://localhost:4000 --timeout 60000
+    # Assert the route source before auditing. sitemapRoutes() returns [] on any
+    # read failure and ci.budget is 0, so without this a partial artifact or a
+    # degraded content tree produces a green job that audited a handful of
+    # crawled pages. Measured full list is ~131 routes; this is a floor, not an
+    # equality check, so adding or removing docs does not fail the build.
+    - test -f dist/sitemap.xml || { echo "dist/sitemap.xml missing; audit would silently scan only crawled routes" >&2; exit 1; }
+    - |
+      locs=$(grep -c '<loc>' dist/sitemap.xml)
+      echo "sitemap advertises $locs routes"
+      test "$locs" -ge 100 || { echo "Only $locs routes in sitemap.xml, expected >= 100; refusing to report a partial audit as a pass" >&2; exit 1; }
+    - npx --yes unlighthouse-ci@0.18.0 --site http://localhost:4000
+  after_script:
+    # Chromium instances outlive the job when the audit times out mid-route.
+    # Observed 62 orphans from a single failed run, holding 1.4GB and taking
+    # the host's load average past 400, which then starved the next audit into
+    # timing out as well. Matched on the puppeteer profile directory so this
+    # cannot reach a browser belonging to anything else.
+    - pkill -9 -f 'user-data-dir=/tmp/puppeteer' 2>/dev/null || true
+  artifacts:
+    when: always
+    paths:
+      - docs/nuxt/.unlighthouse/
+    expire_in: 1 week
+    expose_as: 'Lighthouse audit'

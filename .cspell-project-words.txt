@@ -114,6 +114,7 @@ phpmyadmin
 phprc
 phpsab
 phpstan
+pkill
 prebuilds
 quickstarts
 recognise
