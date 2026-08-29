@@ -79,7 +79,7 @@ describe('DruxtDocgen', () => {
       expect(call[1]).toContain('## 1.0.0 - 2026-01-01')
       expect(ncp).toHaveBeenCalledWith(
         'CONTRIBUTING.md',
-        'docs/nuxt/content/guide/CONTRIBUTING.md'
+        'docs/nuxt/content/how-to/contributing.md'
       )
     })
   })
@@ -185,6 +185,71 @@ describe('DruxtDocgen', () => {
 
       expect(templateData[0].memberof).toBe('module:DruxtTest.methods')
     })
+
+    test('injects type and default value from vue-docgen-api', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [{
+          name: 'foo',
+          description: 'A prop.',
+          type: { name: 'union', elements: [{ name: 'boolean' }, { name: 'object' }] },
+          defaultValue: { value: 'false' },
+          tags: {}
+        }]
+      })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      const injected = templateData.find((item) => item.name === 'foo')
+      expect(injected.type).toStrictEqual({ names: ['boolean', 'object'] })
+      expect(injected.defaultvalue).toBe('false')
+    })
+
+    test('injects a props container when the file documents no props inline', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [{ name: 'foo', description: 'A prop.', tags: {} }]
+      })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData.map((o) => o.id)).toContain('module:DruxtTest.props')
+    })
+
+    test('injects inherited members from resolved extends/mixins sources', async () => {
+      vueDocs.parse.mockResolvedValueOnce({ displayName: 'DruxtTest', props: [] })
+      fs.existsSync.mockReturnValueOnce(true)
+      fs.readFileSync.mockReturnValueOnce(`
+<script>
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+
+export default {
+  name: 'DruxtTest',
+  extends: DruxtModule
+}
+</script>
+`)
+      jsdoc2md.getTemplateDataSync.mockReturnValueOnce([
+        { id: 'module:DruxtModule', kind: 'module' },
+        { id: 'module:DruxtModule.methods.getScopedSlots', kind: 'function', memberof: 'module:DruxtModule.methods' },
+        { id: 'module:DruxtModule.props.value', kind: 'member', memberof: 'module:DruxtModule.props' },
+        { id: 'Unused', kind: 'member' }
+      ])
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      const method = templateData.find((item) => item.id === 'module:DruxtTest.methods.getScopedSlots')
+      expect(method).toMatchObject({ kind: 'function', memberof: 'module:DruxtTest.methods' })
+
+      // Items not belonging to the referenced mixin are not injected.
+      expect(templateData.find((item) => item.id === 'Unused')).toBeUndefined()
+    })
   })
 
   describe('writeTemplateData', () => {
@@ -262,7 +327,7 @@ describe('DruxtDocgen', () => {
       docgen.generateComponentsList()
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
-        'docs/nuxt/content/api/components.md',
+        'docs/nuxt/content/components/README.md',
         expect.stringContaining('## Druxt')
       )
       const [, content] = fs.writeFileSync.mock.calls[0]

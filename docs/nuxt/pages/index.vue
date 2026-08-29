@@ -9,8 +9,8 @@
           Druxt is a framework for building fully decoupled Drupal and Nuxt.js applications and sites.
         </p>
         <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <NuxtLink class="btn btn-primary gap-2" to="/guide/getting-started">
-            <AppIconGuide class="w-5 h-5" /> Get started
+          <NuxtLink class="btn btn-primary gap-2" to="/tutorials/getting-started">
+            <AppIconTutorials class="w-5 h-5" /> Get started
           </NuxtLink>
           <NuxtLink class="btn btn-ghost gap-2" to="/modules">
             <AppIconModules class="w-5 h-5" /> Browse modules
@@ -18,8 +18,8 @@
         </div>
         <!--
           Quickstart command. The advanced panel (collapsed by default) swaps
-          between the four quickstart repositories and between giget and the
-          DevPod CLI, rewriting this one command in place.
+          between the four quickstart repositories and between the Gitpod URL
+          and the DevPod CLI, rewriting this one command in place.
         -->
         <div class="mt-8 w-full max-w-2xl">
           <div class="flex items-center gap-2 rounded-btn bg-base-100 border border-base-300 px-4 py-2 text-left">
@@ -106,11 +106,38 @@
     </section>
 
     <!-- Features -->
-    <section class="max-w-5xl mx-auto px-6 py-20 grid gap-10 sm:grid-cols-3">
+    <section class="max-w-5xl mx-auto px-6 py-20 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
       <div v-for="feature of features" :key="feature.title">
         <component :is="feature.icon" class="w-6 h-6 mb-3 text-primary-focus" />
         <h2 class="text-lg font-semibold" v-text="feature.title" />
-        <p class="mt-2 text-sm text-base-content/70" v-text="feature.description" />
+        <p class="mt-2 text-sm text-base-content/70">
+          {{ feature.description }}
+          <NuxtLink v-if="feature.to" :to="feature.to" v-text="feature.linkText" />
+        </p>
+      </div>
+    </section>
+
+    <!-- Built with Druxt -->
+    <section class="border-t border-base-300 bg-base-200">
+      <div class="max-w-5xl mx-auto px-6 py-20 grid gap-12 items-center lg:grid-cols-[1fr,20rem]">
+        <NuxtLink to="/how-to/example-apps" class="block rounded-box border border-base-300 bg-base-100 overflow-hidden hover:border-primary hover:shadow-lg transition">
+          <img
+            src="/images/examples-content-ops-console.png"
+            alt="Content Ops Console: a dark sidebar and a dense editorial table with inline difficulty and prep time editing"
+            class="block w-full h-auto"
+          >
+        </NuxtLink>
+
+        <div>
+          <h2 class="text-2xl font-semibold">Built with Druxt</h2>
+          <p class="mt-4 text-base-content/70">
+            Four reference apps run against the same Drupal Umami demo content. Each one proves a different integration path, from a ten page pattern index to this editorial console.
+          </p>
+          <p class="mt-3 text-sm text-base-content/70">
+            Content Ops Console: a dense editorial table with inline difficulty and prep time editing, and a needs attention filter, showing real content from the backend.
+          </p>
+          <NuxtLink class="btn btn-primary btn-sm mt-6" to="/how-to/example-apps">Explore the example apps</NuxtLink>
+        </div>
       </div>
     </section>
 
@@ -187,9 +214,16 @@ export default {
         description: 'The DruxtWrapper pattern lets you override any component, down to a single field, without forking the library.',
       },
       {
-        icon: 'app-icon-guide',
+        icon: 'app-icon-globe',
         title: 'Multilingual and proxy support',
         description: 'Language negotiation and a request proxy work out of the box for multilingual Drupal sites.',
+      },
+      {
+        icon: 'app-icon-lock',
+        title: 'OAuth2 login flows',
+        description: 'druxt-auth handles Authorization Code with PKCE, token storage and authenticated requests.',
+        to: '/tutorials/authentication',
+        linkText: 'Add a login flow.',
       },
     ],
   }),
