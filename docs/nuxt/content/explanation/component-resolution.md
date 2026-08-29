@@ -1,7 +1,7 @@
 ---
 title: Component resolution
 weight: -5
-description: Wrapper discovery and the Druxt theme layer.
+description: Druxt finds a wrapper component by ranking candidate names from the render context, then hands it the props, slots and attributes it needs.
 ---
 
 Every Druxt component (entities, fields, menus, views, blocks) delegates

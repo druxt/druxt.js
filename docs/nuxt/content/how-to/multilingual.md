@@ -1,7 +1,7 @@
 ---
 title: Serve content in multiple languages
 weight: -5
-description: Fetch and render Drupal content in more than one language.
+description: Fetch and render Drupal content in more than one language, using langcode prefixes across the client, the store and Druxt module components.
 ---
 
 Druxt has support for multilingual content in all modules:

@@ -1,7 +1,7 @@
 ---
 title: Troubleshoot common issues
 weight: 2
-description: Quick answers to the errors and gotchas that come up most often.
+description: Quick answers to the problems reported most often by real users, from the missing Vue template box to site-wide JSON:API 403 failures.
 ---
 
 > **Before you start:** this guide assumes a working Druxt site. See
