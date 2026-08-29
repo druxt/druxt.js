@@ -45,7 +45,25 @@
             @keydown.esc.prevent="close"
           >
           <button v-if="query" type="button" class="btn btn-ghost btn-xs" @click="query = ''">Clear</button>
-          <kbd v-else class="kbd kbd-xs">esc</kbd>
+          <!--
+            A button, not a bare <kbd>. It sits in the same slot as the Clear
+            button above and looks just as clickable, so a mouse user reads it
+            as the close control and clicks it, and nothing happened. The
+            <kbd> stays as the visible label so it still reads as the keyboard
+            hint it also is; the sr-only text supplies the meaning, and keeping
+            "esc" inside the accessible name leaves the control addressable by
+            voice (WCAG 2.5.3).
+          -->
+          <button
+            v-else
+            type="button"
+            class="flex-shrink-0 cursor-pointer rounded-btn opacity-70 hover:opacity-100 transition-opacity"
+            title="Close search"
+            @click="close"
+          >
+            <span class="sr-only">Close search</span>
+            <kbd class="kbd kbd-xs">esc</kbd>
+          </button>
         </div>
 
         <!--
