@@ -1,13 +1,15 @@
+// Requires the generated API content (`yarn build:docs`), which CI runs
+// before this suite.
 it('DruxtJS.org: API documentation', () => {
-  // Given I visit the homepage.
-  cy.visit('/')
+  cy.visit('/api')
 
-  // Then I click on "API documentation"
-  cy.get('.hero .btn-primary').click()
+  cy.get('h1').should('have.text', 'Packages')
 
-  // And I should be on "/api"
-  cy.url().should('include', '/api')
+  // The index links each package's generated reference.
+  cy.contains('a', 'Read the docs').should('exist')
 
-  // And I should see the "API Documentation" heading.
-  cy.get('.text-4xl').should('have.text', 'API Documentation')
+  // A generated API document renders with its source link.
+  cy.visit('/api/packages/druxt/client')
+  cy.get('h1').should('contain', 'DruxtClient')
+  cy.contains('a', 'View source on GitHub').should('exist')
 })

@@ -1,13 +1,16 @@
 it('DruxtJS.org: Get started', () => {
-  // Given I visit the homepage.
   cy.visit('/')
 
-  // Then I click on "Get Started"
-  cy.get('.hero .btn-secondary').click()
+  cy.contains('a', 'Get started').click()
 
-  // And I should be on "/guide"
-  cy.url().should('include', '/guide')
+  cy.url().should('include', '/guide/getting-started')
+  cy.get('h1').should('have.text', 'Getting started with Druxt.js')
 
-  // And I should see the "Guide" heading.
-  cy.get('.text-4xl').should('have.text', 'Guide')
+  // Exactly one h1: the page header renders the frontmatter title, and the
+  // markdown body no longer repeats it.
+  cy.get('h1').should('have.length', 1)
+
+  // Docs pages carry breadcrumbs and an edit link.
+  cy.get('nav[aria-label="Breadcrumb"]').should('contain', 'Guide')
+  cy.contains('a', 'Edit this page on GitHub').should('exist')
 })
