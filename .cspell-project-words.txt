@@ -7,6 +7,7 @@ Consolas
 Contenta
 Databaseless
 Devel
+Diataxis
 Drupals
 Fraunces
 Knip
@@ -72,6 +73,7 @@ fullpath
 giget
 gruntfuggly
 homepath
+hrefs
 iconify
 intelephense
 interruptible

@@ -481,7 +481,7 @@ jobs:
           # This is the authoritative baseline; the GitLab job samples because
           # its runner shares a busy host. UNLIGHTHOUSE_SAMPLE is left unset,
           # which means no sampling.
-          UNLIGHTHOUSE_CONCURRENCY: '2'
+          UNLIGHTHOUSE_CONCURRENCY: "2"
         run: |
           # Exact versions. This toolchain is version-sensitive in ways that
           # bite silently: unlighthouse only reads some config keys in some

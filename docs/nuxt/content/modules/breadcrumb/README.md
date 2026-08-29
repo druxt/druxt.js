@@ -1,6 +1,6 @@
 ---
 title: Breadcrumb
-description: Decoupled Router based Breadcrumb Druxt component.
+description: Render a breadcrumb trail in Nuxt from the Drupal decoupled router, with the DruxtBreadcrumb component and its theming options.
 ---
 
 ![Example DruxtBreadcrumb component](/images/druxt-breadcrumb.png)

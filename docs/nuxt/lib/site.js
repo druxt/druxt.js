@@ -23,13 +23,39 @@ const SITE_DESCRIPTION
   = 'Druxt is a framework for building fully decoupled Drupal and Nuxt.js applications and sites.'
 
 /**
- * The three documentation sections.
+ * The documentation sections.
  *
  * `description` is written for a reader deciding whether this section answers
  * their question, so it is reused verbatim by llms.txt and by the section
  * pages' own og:description. `priority` and `changefreq` feed sitemap.xml.
  */
 const SECTIONS = {
+  tutorials: {
+    label: 'Tutorials',
+    description: 'Lessons that take you from nothing to a working Druxt site, one step at a time.',
+    priority: 0.9,
+    changefreq: 'monthly',
+  },
+  'how-to': {
+    label: 'How-to guides',
+    description: 'Goal-oriented recipes for theming, proxying, multilingual content and the clients.',
+    priority: 0.8,
+    changefreq: 'monthly',
+  },
+  explanation: {
+    label: 'Concepts',
+    description: 'How Druxt works and why: architecture, routing, the store, schemas and component resolution.',
+    priority: 0.7,
+    changefreq: 'monthly',
+  },
+  components: {
+    label: 'Components',
+    description: 'Every Druxt component, generated from the package source by druxt-docgen.',
+    priority: 0.5,
+    changefreq: 'yearly',
+  },
+  // Retained for the legacy /guide/* URLs, which redirect to the sections
+  // above. Nothing routes here since the Diataxis restructure.
   guide: {
     label: 'Guide',
     description: 'Installation, configuration, theming and contribution docs, written by hand.',

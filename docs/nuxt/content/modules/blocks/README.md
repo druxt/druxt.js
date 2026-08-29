@@ -1,6 +1,6 @@
 ---
 title: Blocks
-description: Drupal Block and Block Region Druxt components.
+description: Render Drupal blocks and block regions in Nuxt with the druxt-blocks components, themed through the Druxt component suggestion system.
 ---
 
 ![Example DruxtBlockRegion component](/images/druxt-block-region.png)

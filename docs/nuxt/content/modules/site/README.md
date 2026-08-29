@@ -1,6 +1,6 @@
 ---
 title: Site
-description: Out of the box Decoupled Drupal sites with Druxt.
+description: Out-of-the-box decoupled Drupal sites with DruxtSite, wiring layout, blocks, menus and content together from one Nuxt module.
 ---
 
 ![Drupal Umami Parity demo](/images/umami.png)

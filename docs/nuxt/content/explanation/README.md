@@ -1,7 +1,7 @@
 ---
 title: Concepts
 weight: -10
-description: Understanding-oriented explanations of how Druxt works and why.
+description: 'Understanding-oriented explanations of how Druxt works and why: architecture, the store, decoupled routing, schemas and component resolution.'
 ---
 
 Concepts are **understanding-oriented**: they explain how Druxt works and the
