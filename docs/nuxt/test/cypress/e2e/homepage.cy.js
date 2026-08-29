@@ -1,20 +1,23 @@
+// Selectors here are semantic (roles, landmarks, link text) rather than
+// utility classes. The previous suite asserted on `.hero`, `.navbar` and
+// `.text-5xl`, which the redesign removed, so every spec failed at once.
 it('DruxtJS.org: Homepage', () => {
-  // Given I visit the homepage.
   cy.visit('/')
 
-  // I should see the Navbar
-  cy.get('.navbar').should('exist')
+  // The banner, with the search trigger and the version badge.
+  cy.get('header').should('exist')
+  cy.get('header').contains('button', 'Search docs').should('exist')
+  cy.get('header').find('a.badge').should('contain', 'v')
 
-  // And I should see the Hero block
-  // And have a heading of DruxtJS
-  cy.get('.hero').should('exist')
-    .find('.text-5xl').should('have.text', 'DruxtJS')
+  // The hero states what Druxt is, and offers the two calls to action.
+  cy.get('h1').should('have.text', 'The Fully Decoupled Drupal Framework')
+  cy.contains('a', 'Get started').should('have.attr', 'href', '/guide/getting-started')
+  cy.contains('a', 'Browse modules').should('have.attr', 'href', '/modules')
 
-  // And I should see the CTAs:
-  // - Get Started
-  cy.get('.hero .btn-secondary').should('have.text', 'Get started')
-  // - Druxt Modules
-  cy.get('.hero .btn-accent').should('have.text', 'Druxt modules')
-  // - API Documentation
-  cy.get('.hero .btn-primary').should('have.text', 'API documentation')
+  // The quickstart command is copyable.
+  cy.contains('code', 'giget').should('exist')
+  cy.contains('button', 'Copy').should('exist')
+
+  // And the site footer is present on the homepage, not only on docs pages.
+  cy.get('footer').contains('a', 'GitHub').should('exist')
 })
