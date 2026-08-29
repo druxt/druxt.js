@@ -77,20 +77,39 @@ export default {
       return (item.children || []).filter((child) => this.to(child) && this.to(child) !== to)
     },
 
+    /**
+     * The item's route, trailing slash removed, with the root kept as '/'.
+     *
+     * Trimming used to reduce Home's '/' to an empty string, which the
+     * falsiness guards in isActive and isCurrent then treated as "no route" —
+     * so Home could never be marked active or current, on the one page it
+     * points at, and the `to === ''` branch below was unreachable.
+     */
     to(item) {
       const to = (item.props || {}).to
-      return to ? to.replace(/\/$/, '') : null
+      if (!to) return null
+      return to.replace(/\/$/, '') || '/'
+    },
+
+    /** The current route, normalised the same way, for comparison. */
+    currentPath() {
+      return this.$route.path.replace(/\/$/, '') || '/'
     },
 
     isCurrent(item) {
       const to = this.to(item)
-      return !!to && this.$route.path.replace(/\/$/, '') === to
+      return !!to && this.currentPath() === to
     },
 
     isActive(item) {
       const to = this.to(item)
       if (!to) return false
-      return to === '' ? this.$route.path === '/' : this.$route.path.startsWith(to)
+      const path = this.currentPath()
+      // Home matches only itself; every other section also matches its
+      // descendants. Compared segment-wise so /guide does not light up on
+      // a sibling route that merely shares its prefix.
+      if (to === '/') return path === '/'
+      return path === to || path.startsWith(to + '/')
     },
   },
 }

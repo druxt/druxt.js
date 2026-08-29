@@ -46,7 +46,19 @@ export const extractHero = (document) => {
     ...n,
     children: (n.children || [])
       .filter((child) => child !== node)
-      .filter((child) => !(isElement(child, 'p') && !(child.children || []).some((o) => o !== node && o.type === 'element' && o.tag !== 'img') && (child.children || []).includes(node)))
+      // Drop the paragraph that only wrapped the hero image, but keep one
+      // that also carries its own content. The sibling test counts text as
+      // well as elements: markdown puts `![img](x) caption` in a single
+      // paragraph whose caption is a text node, and an element-only test
+      // discarded that text along with the image.
+      .filter((child) => !(
+        isElement(child, 'p')
+        && (child.children || []).includes(node)
+        && !(child.children || []).some((o) => o !== node && (
+          (o.type === 'element' && o.tag !== 'img')
+          || (o.type === 'text' && (o.value || '').trim())
+        ))
+      ))
       .map((child) => (child.children ? strip(child) : child)),
   })
 

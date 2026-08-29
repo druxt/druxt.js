@@ -21,15 +21,30 @@
     -->
     <div
       v-if="zoom"
+      ref="dialog"
       class="fixed inset-0 z-[80] bg-neutral/80 p-6 flex items-center justify-center cursor-[zoom-out]"
-      @click="zoom = null"
+      role="dialog"
+      aria-modal="true"
+      :aria-label="zoom.alt ? 'Enlarged: ' + zoom.alt : 'Enlarged image'"
+      @click.self="zoom = null"
+      @keydown.tab="onTab"
     >
+      <button
+        type="button"
+        class="absolute top-4 right-4 btn btn-sm btn-circle"
+        aria-label="Close image"
+        @click="zoom = null"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
       <img :src="zoom.src" :alt="zoom.alt" class="max-h-full max-w-full rounded-box shadow-2xl">
     </div>
   </div>
 </template>
 
 <script>
+import { trapTab } from '~/utils/focus'
+
 /**
  * NuxtContent with the module-page conventions applied.
  *
@@ -50,7 +65,7 @@ export default {
   },
 
   /** The image currently enlarged, as { src, alt }; null when closed. */
-  data: () => ({ zoom: null }),
+  data: () => ({ zoom: null, restoreFocusTo: null }),
 
   mounted() {
     this.$nextTick(this.enhance)
@@ -70,6 +85,18 @@ export default {
 
     zoom(open) {
       document.documentElement.style.overflow = open ? 'hidden' : ''
+
+      if (open) {
+        this.restoreFocusTo = document.activeElement
+        this.$nextTick(() => {
+          const close = this.$refs.dialog && this.$refs.dialog.querySelector('[aria-label="Close image"]')
+          if (close) close.focus()
+        })
+        return
+      }
+      const target = this.restoreFocusTo
+      this.restoreFocusTo = null
+      if (target && document.contains(target)) this.$nextTick(() => target.focus())
     },
 
     $route() {
@@ -78,6 +105,10 @@ export default {
   },
 
   methods: {
+    onTab(e) {
+      trapTab(this.$refs.dialog, e)
+    },
+
     enhance() {
       const root = this.$refs.prose
       if (!root) return
@@ -95,8 +126,13 @@ export default {
         const figure = document.createElement('figure')
         figure.className = 'not-prose my-8'
 
-        const frame = document.createElement('div')
-        frame.className = 'rounded-box overflow-hidden border border-base-300 bg-base-200 cursor-[zoom-in]'
+        // A button, not a div: it was click-only, so the enlarge affordance
+        // existed for a mouse and for nothing else. Keyboard users could not
+        // reach it and screen readers were not told it did anything.
+        const frame = document.createElement('button')
+        frame.type = 'button'
+        frame.className = 'block w-full rounded-box overflow-hidden border border-base-300 bg-base-200 cursor-[zoom-in]'
+        frame.setAttribute('aria-label', img.alt ? 'Enlarge: ' + img.alt : 'Enlarge image')
         frame.addEventListener('click', () => { this.zoom = { src: img.src, alt: img.alt } })
 
         img.parentNode.insertBefore(figure, img)

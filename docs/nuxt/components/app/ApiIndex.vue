@@ -82,10 +82,17 @@ export default {
 
   methods: {
     async fetch() {
+      // The parent component instance is reused across /modules/<pkg> route
+      // changes, so a quick move between modules can leave two queries in
+      // flight. Without this, an earlier one resolving later would overwrite
+      // the current package's entries with the previous package's. Same
+      // guard AppSearch uses for its debounced queries.
+      const pkg = this.pkg
       try {
-        const entries = await this.$content('api/packages/' + this.pkg, { deep: true })
+        const entries = await this.$content('api/packages/' + pkg, { deep: true })
           .only(['title', 'path', 'dir'])
           .fetch()
+        if (pkg !== this.pkg) return
         // Matched on the filename, not the title. docgen gives these
         // friendly titles — CHANGELOG.md becomes "Release notes" and
         // index.md takes the module's own name — so a title-based test
@@ -95,6 +102,7 @@ export default {
         this.entries = (Array.isArray(entries) ? entries : [entries])
           .filter((o) => o && !/^(README|CHANGELOG|index)$/i.test((o.path || '').split('/').pop()))
       } catch (e) {
+        if (pkg !== this.pkg) return
         this.entries = []
       }
     },
