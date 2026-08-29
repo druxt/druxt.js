@@ -1,13 +1,18 @@
 it('DruxtJS.org: Modules', () => {
-  // Given I visit the homepage.
   cy.visit('/')
 
-  // Then I click on "Modules"
-  cy.get('.hero .btn-accent').click()
+  cy.contains('a', 'Browse modules').click()
 
-  // And I should be on "/modules"
   cy.url().should('include', '/modules')
+  cy.get('h1').should('have.text', 'Druxt modules')
 
-  // And I should see the "Modules" heading.
-  cy.get('.text-4xl').should('have.text', 'Modules')
+  // The index lists the runtime modules as cards, by display name.
+  cy.get('a[href="/modules/entity"]').should('contain', 'Entity')
+
+  // A module page carries the shared chrome: breadcrumb, source and
+  // release notes.
+  cy.visit('/modules/entity')
+  cy.get('nav[aria-label="Breadcrumb"]').should('contain', 'Modules')
+  cy.contains('a', 'Source').should('have.attr', 'href').and('include', 'github.com/druxt')
+  cy.contains('a', 'Release notes').should('have.attr', 'href', '/api/packages/entity/CHANGELOG')
 })
