@@ -69,7 +69,7 @@ class DruxtDocgen {
     }
 
     // Contributing guide.
-    await ncp('CONTRIBUTING.md', `${this.destination}/guide/CONTRIBUTING.md`)
+    await ncp('CONTRIBUTING.md', `${this.destination}/how-to/contributing.md`)
   }
 
   /**

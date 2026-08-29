@@ -19,6 +19,7 @@
     "docs/nuxt/node_modules/**",
     "docs/nuxt/.nuxt/**",
     "docs/nuxt/content/api/**",
+    "docs/nuxt/content/modules/*/readme/**",
     "docs/drupal/**",
     "examples/*/node_modules/**",
     ".changeset/**",

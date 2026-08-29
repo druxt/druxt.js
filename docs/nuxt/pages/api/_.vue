@@ -56,6 +56,21 @@ export default {
       ? 'https://github.com/druxt/druxt.js/tree/develop' + document.dir.replace('/api/packages', '/packages')
       : null),
 
+    /** 'src / packages / entity / …' rendered as links back up the tree. */
+    breadcrumbs: ({ document }) => {
+      const dir = document.dir || ''
+      // The API section root has no source path to mirror — nothing to show.
+      if (dir === '/api') return []
+
+      const dirs = dir.replace('/api/', 'src/').split('/')
+      const last = dirs.length - 1
+      return dirs.map((dir, index) => {
+        let to
+        if (index === 1) to = '/api'
+        if (index > 1 && index < last) to = dirs.slice(0, index + 1).join('/').replace('src/', '/api/')
+        return { text: index === last ? document.title : dir, to }
+      })
+    },
   },
 }
 </script>

@@ -79,7 +79,7 @@ describe('DruxtDocgen', () => {
       expect(call[1]).toContain('## 1.0.0 - 2026-01-01')
       expect(ncp).toHaveBeenCalledWith(
         'CONTRIBUTING.md',
-        'docs/nuxt/content/guide/CONTRIBUTING.md'
+        'docs/nuxt/content/how-to/contributing.md'
       )
     })
   })
