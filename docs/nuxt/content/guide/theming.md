@@ -3,8 +3,6 @@ title: Theming
 weight: -6
 ---
 
-# Theming
-
 Druxt components can be themed using two primary methods:
 
 - [Druxt wrapper components](#druxtwrapper)

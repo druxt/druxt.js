@@ -3,7 +3,7 @@ title: Proxy
 weight: -5
 ---
 
-### Druxt and Proxies
+## Druxt and Proxies
 
 > Druxt provides API and File proxying using the @nuxtjs/proxy module.
 

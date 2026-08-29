@@ -3,7 +3,7 @@ title: JSON:API Client
 weight: 5
 ---
 
-# DruxtClient
+## DruxtClient
 
 The DruxtClient is the communication layer between Nuxt and the Drupal JSON:API.
 

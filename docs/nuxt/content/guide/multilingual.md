@@ -3,8 +3,6 @@ title: Multilingual content
 weight: -5
 ---
 
-# Multilingual content
-
 Druxt has support for multilingual content in all modules:
 
 - The DruxtClient and Store can fetch translated resources and collections
