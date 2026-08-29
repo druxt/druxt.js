@@ -140,6 +140,17 @@ The DruxtEntity module provides a **DruxtRouterEntity** component that is used b
 
 DruxtEntity provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
 
-- For more details, see the [Storybook guide](/guide/storybook).
+- For more details, see the [Storybook guide](/how-to/storybook).
 
 ---
+
+## Deprecations
+
+The default DruxtField components are deprecated. See the
+[deprecations page](/modules/entity/deprecations) for what replaces them.
+
+---
+
+## Package README
+
+The full npm package README (features, badges, install) is mirrored as the [generated package README page](/modules/entity/readme).

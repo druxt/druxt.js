@@ -64,7 +64,11 @@ export default {
 
     /** 'src / packages / entity / …' rendered as links back up the tree. */
     breadcrumbs: ({ document }) => {
-      const dirs = (document.dir || '').replace('/api/', 'src/').split('/')
+      const dir = document.dir || ''
+      // The API section root has no source path to mirror — nothing to show.
+      if (dir === '/api') return []
+
+      const dirs = dir.replace('/api/', 'src/').split('/')
       const last = dirs.length - 1
       return dirs.map((dir, index) => {
         let to

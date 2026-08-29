@@ -89,6 +89,12 @@ The DruxtViews module provides a **DruxtRouterView** component that is used by t
 
 DruxtViews provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
 
-- For more details, see the [Storybook guide](/guide/storybook).
+- For more details, see the [Storybook guide](/how-to/storybook).
 
 ---
+
+---
+
+## Package README
+
+The full npm package README (features, badges, install) is mirrored as the [generated package README page](/modules/views/readme).

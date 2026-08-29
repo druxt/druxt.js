@@ -57,3 +57,14 @@ export default {
 ```
 
 ---
+
+## API
+
+- For the full class and store reference, see the
+  [DruxtSchema API documentation](/api/packages/schema).
+
+---
+
+## Package README
+
+The full npm package README (features, badges, install) is mirrored as the [generated package README page](/modules/schema/readme).

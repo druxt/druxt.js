@@ -91,6 +91,12 @@ DruxtBlocks provides zero-config, auto-generated Storybook integration with a li
 
 ![DruxtBlocks Storybook integration](/images/druxt-block-storybook.png)
 
-- For more details, see the [Storybook guide](/guide/storybook).
+- For more details, see the [Storybook guide](/how-to/storybook).
 
 ---
+
+---
+
+## Package README
+
+The full npm package README (features, badges, install) is mirrored as the [generated package README page](/modules/blocks/readme).

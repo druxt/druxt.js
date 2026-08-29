@@ -189,6 +189,14 @@ export default {
   },
 
   computed: {
+    /**
+     * The current language code: the `langcode` prop if set, otherwise the
+     * route's langcode metadata.
+     *
+     * Used by Druxt modules to fetch the correct resource translation.
+     *
+     * @return {string} The current language code.
+     */
     lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode
   },
 

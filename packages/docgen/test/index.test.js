@@ -8,7 +8,11 @@ import dmd from 'dmd'
 
 import { DruxtDocgen } from '../src'
 
-jest.mock('fs', () => ({ writeFileSync: jest.fn() }))
+jest.mock('fs', () => ({
+  writeFileSync: jest.fn(),
+  existsSync: jest.fn(() => false),
+  readFileSync: jest.fn()
+}))
 jest.mock('globby', () => jest.fn())
 jest.mock('jsdoc-to-markdown', () => ({ getTemplateDataSync: jest.fn() }))
 jest.mock('mkdirp', () => ({ sync: jest.fn() }))
@@ -34,6 +38,7 @@ describe('DruxtDocgen', () => {
     docgen.generateApiDocs = jest.fn()
     docgen.generatePackageList = jest.fn()
     docgen.generateComponentsList = jest.fn()
+    docgen.generateModuleReadmes = jest.fn()
     docgen.copyFiles = jest.fn()
 
     await docgen.generateDocs()
@@ -41,12 +46,15 @@ describe('DruxtDocgen', () => {
     expect(docgen.generateApiDocs).toHaveBeenCalledTimes(1)
     expect(docgen.generatePackageList).toHaveBeenCalledTimes(1)
     expect(docgen.generateComponentsList).toHaveBeenCalledTimes(1)
+    expect(docgen.generateModuleReadmes).toHaveBeenCalledTimes(1)
     expect(docgen.copyFiles).toHaveBeenCalledTimes(1)
     expect(docgen.generateApiDocs.mock.invocationCallOrder[0])
       .toBeLessThan(docgen.generatePackageList.mock.invocationCallOrder[0])
     expect(docgen.generatePackageList.mock.invocationCallOrder[0])
       .toBeLessThan(docgen.generateComponentsList.mock.invocationCallOrder[0])
     expect(docgen.generateComponentsList.mock.invocationCallOrder[0])
+      .toBeLessThan(docgen.generateModuleReadmes.mock.invocationCallOrder[0])
+    expect(docgen.generateModuleReadmes.mock.invocationCallOrder[0])
       .toBeLessThan(docgen.copyFiles.mock.invocationCallOrder[0])
   })
 
@@ -69,7 +77,7 @@ describe('DruxtDocgen', () => {
       )
       expect(ncp).toHaveBeenCalledWith(
         'CONTRIBUTING.md',
-        'docs/nuxt/content/guide/CONTRIBUTING.md'
+        'docs/nuxt/content/how-to/contributing.md'
       )
     })
   })
@@ -175,6 +183,71 @@ describe('DruxtDocgen', () => {
 
       expect(templateData[0].memberof).toBe('module:DruxtTest.methods')
     })
+
+    test('injects type and default value from vue-docgen-api', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [{
+          name: 'foo',
+          description: 'A prop.',
+          type: { name: 'union', elements: [{ name: 'boolean' }, { name: 'object' }] },
+          defaultValue: { value: 'false' },
+          tags: {}
+        }]
+      })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      const injected = templateData.find((item) => item.name === 'foo')
+      expect(injected.type).toStrictEqual({ names: ['boolean', 'object'] })
+      expect(injected.defaultvalue).toBe('false')
+    })
+
+    test('injects a props container when the file documents no props inline', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [{ name: 'foo', description: 'A prop.', tags: {} }]
+      })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData.map((o) => o.id)).toContain('module:DruxtTest.props')
+    })
+
+    test('injects inherited members from resolved extends/mixins sources', async () => {
+      vueDocs.parse.mockResolvedValueOnce({ displayName: 'DruxtTest', props: [] })
+      fs.existsSync.mockReturnValueOnce(true)
+      fs.readFileSync.mockReturnValueOnce(`
+<script>
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+
+export default {
+  name: 'DruxtTest',
+  extends: DruxtModule
+}
+</script>
+`)
+      jsdoc2md.getTemplateDataSync.mockReturnValueOnce([
+        { id: 'module:DruxtModule', kind: 'module' },
+        { id: 'module:DruxtModule.methods.getScopedSlots', kind: 'function', memberof: 'module:DruxtModule.methods' },
+        { id: 'module:DruxtModule.props.value', kind: 'member', memberof: 'module:DruxtModule.props' },
+        { id: 'Unused', kind: 'member' }
+      ])
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      const method = templateData.find((item) => item.id === 'module:DruxtTest.methods.getScopedSlots')
+      expect(method).toMatchObject({ kind: 'function', memberof: 'module:DruxtTest.methods' })
+
+      // Items not belonging to the referenced mixin are not injected.
+      expect(templateData.find((item) => item.id === 'Unused')).toBeUndefined()
+    })
   })
 
   describe('writeTemplateData', () => {
@@ -252,7 +325,7 @@ describe('DruxtDocgen', () => {
       docgen.generateComponentsList()
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
-        'docs/nuxt/content/api/components.md',
+        'docs/nuxt/content/components/README.md',
         expect.stringContaining('## Druxt')
       )
       const [, content] = fs.writeFileSync.mock.calls[0]
@@ -286,6 +359,37 @@ describe('DruxtDocgen', () => {
       )
       const [, content] = fs.writeFileSync.mock.calls[0]
       expect(content).not.toContain('druxt-test-utils')
+    })
+  })
+
+  describe('generateModuleReadmes', () => {
+    test('writes a labeled page per public package with a README', async () => {
+      globby.mockResolvedValueOnce([
+        'packages/druxt/package.json',
+        'packages/test-utils/package.json'
+      ])
+
+      jest.doMock(
+        '../../../packages/druxt/package.json',
+        () => ({ name: 'druxt', version: '1.0.0', private: false }),
+        { virtual: true }
+      )
+      jest.doMock(
+        '../../../packages/test-utils/package.json',
+        () => ({ name: 'druxt-test-utils', version: '0.1.0', private: true }),
+        { virtual: true }
+      )
+      fs.existsSync.mockReturnValueOnce(true)
+      fs.readFileSync.mockReturnValueOnce('# druxt\n\nCore package.\n')
+
+      await docgen.generateModuleReadmes()
+
+      expect(fs.writeFileSync).toHaveBeenCalledTimes(1)
+      const [destination, content] = fs.writeFileSync.mock.calls[0]
+      expect(destination).toBe('docs/nuxt/content/modules/druxt/readme/index.md')
+      expect(content).toContain('title: druxt README')
+      expect(content).toContain('# druxt')
+      expect(content).toContain('automatically generated')
     })
   })
 })

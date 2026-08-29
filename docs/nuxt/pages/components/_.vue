@@ -11,23 +11,21 @@
 </template>
 
 <script>
-import { seoHead } from '~/utils/seo'
-import { documentDescription } from '~/utils/content'
 export default {
-  name: 'AppGuideDocument',
+  name: 'AppComponentsDocument',
 
   async asyncData({ $content, error, params, store, route }) {
     const slug = params.pathMatch || 'README'
 
     let document
     try {
-      document = await $content('guide/', slug).fetch()
+      document = await $content('components/', slug).fetch()
     } catch (e) {
       return error({ statusCode: 404, message: 'Document not found' })
     }
 
     // Siblings, for the prev/next footer.
-    const index = await $content('guide')
+    const index = await $content('components')
       .sortBy('weight')
       .only(['path', 'title'])
       .fetch()
@@ -39,20 +37,19 @@ export default {
   },
 
   head() {
-    return seoHead({
+    return {
       title: this.document.title,
-      description: documentDescription(this.document),
-      path: this.$route.path,
-    })
+      meta: [{ hid: 'description', name: 'description', content: this.document.description || '' }],
+    }
   },
 
   computed: {
     breadcrumbs: ({ document }) => [
-      { text: 'Guide', to: '/guide' },
+      { text: 'Components', to: '/components' },
       { text: document.title },
     ],
 
-    editPath: ({ document }) => 'guide' + document.path.replace('/guide', '') + '.md',
+    editPath: ({ document }) => 'components' + document.path.replace('/components', '') + '.md',
 
     position: ({ index, document }) => index.findIndex((o) => o.path === document.path),
 

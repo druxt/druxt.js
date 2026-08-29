@@ -1,2 +1,4 @@
 api
-guide/CONTRIBUTING.md
+components
+modules/*/readme
+how-to/contributing.md

@@ -64,3 +64,9 @@ Renders all available block regions based on the specified theme.
 ```
 
 - For more details, refer to the [DruxtSite API documentation](/api/packages/site/components/DruxtSite).
+
+---
+
+## Package README
+
+The full npm package README (features, badges, install) is mirrored as the [generated package README page](/modules/site/readme).

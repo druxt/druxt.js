@@ -69,3 +69,17 @@ If no Path is provided, the component will default to the Vue router fullpath.
 - For more details, refer to the [DruxtBlock API documentation](/api/packages/router/components/DruxtRouter).
 
 ---
+
+## Deprecations
+
+Retired `DruxtRouter` client pass-through methods and their replacements are
+listed on the [deprecations page](/modules/router/deprecations).
+
+- For the routing API itself, see the
+  [DruxtRouter API documentation](/api/packages/router/router).
+
+---
+
+## Package README
+
+The full npm package README (features, badges, install) is mirrored as the [generated package README page](/modules/router/readme).

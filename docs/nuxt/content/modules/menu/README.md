@@ -33,6 +33,29 @@ description: Drupal Menu and Menu item Druxt components, with support for the JS
 
 ---
 
+## Drupal requirements
+
+Rendering a menu needs data from the Drupal side, and where it comes from
+depends on what you want:
+
+- **Menu blocks** (the typical site case): rendered by the
+  [Blocks module](/modules/blocks): no extra Drupal setup.
+- **Full menus by name** (`<DruxtMenu name="main">`): requires the
+  [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items)
+  Drupal module:
+
+  ```sh
+  composer require drupal/jsonapi_menu_items
+  drush pm:enable jsonapi_menu_items
+  ```
+
+  Once enabled, Druxt automatically switches to the
+  `jsonapi_menu_items` resource for menu fetching (set
+  `druxt.menu.jsonApiMenuItems: false` to prevent that). Multilingual
+  menus need `jsonapi_menu_items` `1.2.4` or later.
+
+---
+
 ## Vue.js Components
 
 ### DruxtMenu
@@ -97,6 +120,12 @@ The DruxtMenu module provides a **DruxtBlockSystemMenuBlock** component that is 
 
 DruxtMenu provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
 
-- For more details, see the [Storybook guide](/guide/storybook).
+- For more details, see the [Storybook guide](/how-to/storybook).
 
 ---
+
+---
+
+## Package README
+
+The full npm package README (features, badges, install) is mirrored as the [generated package README page](/modules/menu/readme).

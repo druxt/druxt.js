@@ -37,6 +37,12 @@ export default {
     let document
     try {
       document = await $content('modules/', slug).fetch()
+      // A directory-index target (e.g. `readme/index.md`) resolves
+      // ambiguously and returns the directory listing instead of the
+      // document; retry against the index file explicitly.
+      if (Array.isArray(document)) {
+        document = await $content('modules/', slug + '/index').fetch()
+      }
     } catch (e) {
       return error({ statusCode: 404, message: 'Document not found' })
     }

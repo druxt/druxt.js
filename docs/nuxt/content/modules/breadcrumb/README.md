@@ -43,3 +43,9 @@ Renders a list of breadcrumbs based on the active route.
 - For more details, refer to the [DruxtBreadcrumb API documentation](/api/packages/breadcrumb/components/DruxtBreadcrumb).
 
 ---
+
+---
+
+## Package README
+
+The full npm package README (features, badges, install) is mirrored as the [generated package README page](/modules/breadcrumb/readme).

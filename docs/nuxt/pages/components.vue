@@ -1,5 +1,5 @@
 <template>
-  <!-- Parent route for /guide/*; the child renders the document. -->
+  <!-- Parent route; the child renders the document. -->
   <div>
     <NuxtChild />
   </div>

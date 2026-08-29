@@ -11,6 +11,7 @@ Drupals
 Fraunces
 Knip
 Ksection
+Linkcheck
 Menlo
 Neue
 PKCE
@@ -51,6 +52,7 @@ dbaeumer
 ddev
 deasync
 decoupled
+defaultvalue
 devcontainer
 devcontainers
 devel
@@ -63,6 +65,7 @@ druxtjs
 endswith
 esm
 felixfbecker
+filesystems
 freetype
 frontpage
 fullpath
@@ -84,6 +87,7 @@ libsqlite
 libzip
 licence
 lightboxes
+linkcheck
 llms
 lockfiles
 longname

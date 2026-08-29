@@ -196,6 +196,42 @@ lint:vale:
     - vale content
     - section_end "vale-lint"
 
+# Checks docs/nuxt/content for dead links (external URLs, plus internal
+# /path links resolved against the live druxtjs.org so a broken
+# cross-reference or a not-yet-deployed image shows up the same way a real
+# dead link would). Report-only: lychee has a track record of randomly
+# hitting rate limits against real external hosts, so a transient failure
+# here shouldn't block the pipeline.
+lint:linkcheck:
+  stage: lint
+  interruptible: true
+  allow_failure: true
+  script:
+    - section_start "linkcheck-install" "Installing lychee"
+    - |
+      lychee_version="0.24.2"
+      arch="$(uname -m)"
+      case "$arch" in
+        aarch64|arm64)
+          lychee_arch=aarch64-unknown-linux-gnu
+          lychee_sha256=91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c
+          ;;
+        x86_64)
+          lychee_arch=x86_64-unknown-linux-gnu
+          lychee_sha256=1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
+          ;;
+        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+      esac
+      curl -sL --max-time 60 "https://github.com/lycheeverse/lychee/releases/download/lychee-v${lychee_version}/lychee-${lychee_arch}.tar.gz" -o /tmp/lychee.tar.gz
+      echo "${lychee_sha256}  /tmp/lychee.tar.gz" | sha256sum -c - || { echo "lychee checksum mismatch" >&2; exit 1; }
+      tar -xzf /tmp/lychee.tar.gz --strip-components=1 -C /tmp "lychee-${lychee_arch}/lychee"
+      chmod +x /tmp/lychee
+    - section_end "linkcheck-install"
+    - section_start "linkcheck" "Checking links in docs/nuxt/content"
+    - cd docs/nuxt
+    - /tmp/lychee --no-progress --format detailed --config .lychee.toml --base-url https://druxtjs.org --exclude-loopback 'content/**/*.md'
+    - section_end "linkcheck"
+
 lint:js:
   extends: .node
   stage: lint

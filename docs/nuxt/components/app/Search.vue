@@ -134,7 +134,10 @@
                 class="w-full text-left px-4 py-2.5 flex items-center gap-3 hover:bg-base-200/60"
                 @click="go({ path: item.to })"
               >
-                <AppIconGuide class="w-4 h-4 flex-shrink-0 opacity-70 stroke-current" />
+                <component
+                  :is="'app-icon-' + (item.to.slice(1).split('/')[0] || 'guide')"
+                  class="w-4 h-4 flex-shrink-0 opacity-70 stroke-current"
+                />
                 <span class="min-w-0">
                   <span class="block text-sm truncate">{{ item.text }}</span>
                   <!-- Several documents share a title (every module has a
@@ -148,7 +151,7 @@
             </template>
 
             <p v-if="!searches.length && !recent.length" class="px-4 py-6 text-sm text-base-content/70">
-              Search across the guide, the module documentation and the generated API reference.
+              Search across the tutorials, how-to guides, module documentation and the generated API reference.
             </p>
           </template>
 
@@ -176,12 +179,15 @@ import { documentContext } from '~/utils/content'
 import { trapTab } from '~/utils/focus'
 
 const GROUPS = [
-  { type: 'guide', label: 'Guide' },
+  { type: 'tutorials', label: 'Tutorials' },
+  { type: 'how-to', label: 'How-to guides' },
   { type: 'modules', label: 'Modules' },
+  { type: 'components', label: 'Components' },
   { type: 'api', label: 'API' },
+  { type: 'explanation', label: 'Concepts' },
 ]
 
-const EMPTY = () => ({ guide: [], modules: [], api: [] })
+const EMPTY = () => ({ tutorials: [], 'how-to': [], modules: [], components: [], api: [], explanation: [] })
 
 export default {
   props: {
