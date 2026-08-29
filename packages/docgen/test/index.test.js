@@ -241,6 +241,47 @@ describe('DruxtDocgen', () => {
         expect.stringContaining('title: DruxtClient')
       )
     })
+
+    test('flags the page when the documented symbol is deprecated', () => {
+      dmd.mockReturnValueOnce('# ~~DruxtFoo~~')
+
+      docgen.writeTemplateData('src/components/DruxtFoo.vue', [
+        { id: 'module:DruxtFoo', deprecated: true },
+      ])
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining('deprecated: true')
+      )
+    })
+
+    test('flags a class whose root is the constructor signature', () => {
+      dmd.mockReturnValueOnce('# ~~DruxtClass~~')
+
+      docgen.writeTemplateData('src/class.js', [
+        { id: 'DruxtClass()' },
+        { id: 'DruxtClass', deprecated: true },
+      ])
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining('deprecated: true')
+      )
+    })
+
+    test('does not flag the page when only a member is deprecated', () => {
+      dmd.mockReturnValueOnce('# DruxtMenu')
+
+      docgen.writeTemplateData('src/components/DruxtMenu.vue', [
+        { id: 'module:DruxtMenu' },
+        { id: 'module:DruxtMenu.computed.items', deprecated: true },
+      ])
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.not.stringContaining('deprecated:')
+      )
+    })
   })
 
   describe('generateApiDocs', () => {
