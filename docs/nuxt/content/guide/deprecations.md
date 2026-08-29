@@ -5,7 +5,7 @@ weight: 10
 
 TODO: Move to API documentation
 
-# Deprecations
+## Deprecations
 
 ## DruxtStore / addResource - hash
 

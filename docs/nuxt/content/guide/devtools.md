@@ -3,8 +3,6 @@ title: Vue.js Devtools
 weight: -3
 ---
 
-### Vue.js Devtools
-
 > Browser devtools extension for debugging Vue.js applications, now with DruxtJS integration
 
 ![Vue.js Devtools integration](/images/vuejs-devtools.png)
