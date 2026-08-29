@@ -1,0 +1,115 @@
+/* Global accessibility baseline. Registered in nuxt.config.js `css`. */
+
+/* daisyUI's button and link resets drop the UA focus ring in places; a single
+   visible focus indicator, keyboard-only, covers every interactive element. */
+:focus-visible {
+  outline: 2px solid hsl(var(--pf));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* The bare `:focus-visible` above is specificity (0,1,0) and loses to daisyUI's
+   own `.menu :where(li) > a:focus` and `.btn:focus`, which set a *transparent*
+   outline. Measured before this rule: 13 of 34 tab stops — the whole sidebar
+   nav, the header nav and the colour-mode options — computed
+   `outline: rgba(0,0,0,0) solid 2px` with no box-shadow, i.e. no visible focus
+   at all in either theme (WCAG 2.4.7). `.btn`'s dark focus ring also measured
+   1.04:1 against base-100. !important is deliberate: this is the accessibility
+   floor and it must beat any component library rule that lands after it. */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible,
+.btn:focus-visible,
+.menu :where(li) > *:focus-visible {
+  outline: 2px solid hsl(var(--pf)) !important;
+  outline-offset: 2px;
+  box-shadow: none !important;
+}
+
+/* Same specificity problem, different symptom: daisyUI's
+   `.menu .menu-title > span` hard-codes `hsla(var(--bc)/0.4)` and beats the
+   `text-base-content/70` utility on the element, so the sidebar's "Navigation"
+   and "Recent documents" labels measured 2.35:1 (light) and 3.4:1 (dark) at
+   12px/700, against a 4.5:1 requirement. The Revision 2 contrast pass set the
+   class but the class never won. */
+.menu .menu-title > span,
+.menu .menu-title > a {
+  color: hsl(var(--bc) / 0.7);
+}
+
+/* Windows high-contrast / forced colours: keep borders that are drawn with
+   background colours visible. */
+@media (forced-colors: active) {
+  .border-base-300 { border-color: CanvasText; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The code-copy button is `opacity-0` until its `pre` is hovered, which left
+   it permanently invisible to keyboard users — still in the tab order, still
+   focusable, never shown (WCAG 2.4.7). A `focus:opacity-100` utility did not
+   take effect here, so this states it explicitly rather than depending on
+   JIT variant generation. Scoped to the button AppProse injects. */
+.prose pre button:focus,
+.prose pre button:focus-visible {
+  opacity: 1;
+}
+
+/* Filled brand buttons.
+   `primary` (#53b0eb) and `secondary` (#41b883) are the brand tints and are
+   used, correctly, for borders, badges, radios and icons. They are simply too
+   light to carry text: white on them measures 2.39:1 and 2.50:1, and the
+   logo's own blue (#3498DB) is no better at 3.15:1 — no text colour works on
+   a tint that pale except near-black, which reads wrong on a blue button.
+
+   So the tint stays the brand colour everywhere it is decorative, and only
+   the filled buttons drop to the darker in-family shade already in the
+   palette (primary-focus #036397 / secondary-focus #3b8070), which carries
+   white at 6.49:1 and 4.66:1. There are exactly two such buttons on the site:
+   the homepage CTA and the module card's "Get started".
+
+   Hover darkens with a brightness filter because the focus shade is already
+   the darkest step defined for each colour. */
+.btn-primary {
+  background-color: hsl(var(--pf));
+  border-color: hsl(var(--pf));
+}
+
+.btn-secondary {
+  background-color: hsl(var(--sf));
+  border-color: hsl(var(--sf));
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  filter: brightness(0.9);
+}
+
+/* Search dialog input row.
+   The input sits between the search icon and the esc key, so the default
+   focus ring drew a rectangle around the middle child only — visibly inset
+   inside the row's own border, excluding both siblings. Suppress the ring on
+   the input and draw it on the row instead, so the focus indicator matches
+   what a user reads as "the search box". */
+.search-row:focus-within {
+  outline: 2px solid hsl(var(--pf));
+  outline-offset: -2px;
+  /* Matches the dialog panel's own `rounded-box` (daisyUI's --rounded-box,
+     1rem) on the top corners and squares off the bottom two, because this row
+     is the top section of that panel and the results list continues directly
+     beneath it. A uniform smaller radius left the ring visibly tighter than
+     the corner it sat inside. */
+  border-radius: var(--rounded-box, 1rem) var(--rounded-box, 1rem) 0 0;
+}
+
+.search-row input:focus,
+.search-row input:focus-visible {
+  outline: none !important;
+}
