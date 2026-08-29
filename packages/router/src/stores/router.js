@@ -46,7 +46,9 @@ const DruxtRouterStore = ({ store }) => {
      */
     mutations: {
       /**
-       * @deprecated
+       * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+       *   Use the DruxtStore druxt/addResource mutation instead.
+       * @see https://druxtjs.org/modules/router/deprecations
        * @see {@link https://druxtjs.org/api/stores/druxt}
        *
        * @name addEntity
@@ -161,7 +163,9 @@ const DruxtRouterStore = ({ store }) => {
        * - Caches result in the Vuex store.
        * - Returns cached result from Vuex store when available.
        *
-       * @deprecated
+       * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+       *   Use the DruxtStore druxt/getResource action instead.
+       * @see https://druxtjs.org/modules/router/deprecations
        * @see {@link https://druxtjs.org/api/stores/druxt}
        *
        * @name getEntity
@@ -193,7 +197,9 @@ const DruxtRouterStore = ({ store }) => {
       /**
        * Get multiple resources.
        *
-       * @deprecated
+       * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+       *   Use the DruxtStore druxt/getCollection action instead.
+       * @see https://druxtjs.org/modules/router/deprecations
        * @see {@link https://druxtjs.org/api/stores/druxt}
        *
        * @name getResources
