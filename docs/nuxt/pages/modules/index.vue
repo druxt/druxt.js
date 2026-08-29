@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { seoHead } from '~/utils/seo'
+import { documentDescription } from '~/utils/content'
 export default {
   name: 'AppModulesIndex',
 
@@ -27,7 +29,11 @@ export default {
   },
 
   head() {
-    return { title: this.document.title }
+    return seoHead({
+      title: this.document.title,
+      description: documentDescription(this.document),
+      path: this.$route.path,
+    })
   },
 
   computed: {
