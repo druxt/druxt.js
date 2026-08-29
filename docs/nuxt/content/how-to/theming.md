@@ -1,7 +1,7 @@
 ---
 title: Theme Druxt components
 weight: -6
-description: Customize component output with wrapper components, slots and props.
+description: Customize Druxt component output with wrapper components, the default template, slots and props, without forking or patching the framework.
 ---
 
 > **Before you start:** this guide assumes a working Druxt site (see

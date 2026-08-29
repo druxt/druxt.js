@@ -1,5 +1,6 @@
 ---
 title: Getting started with DruxtSite
+description: Install DruxtSite and connect a Nuxt 2 frontend to a Drupal backend.
 ---
 
 > DruxtSite gives you an out-of-the-box Drupal site experience with a Nuxt.js frontend.
