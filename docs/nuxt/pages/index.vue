@@ -134,9 +134,23 @@
 </template>
 
 <script>
+import { SITE_DESCRIPTION } from '~/lib/site'
+import { seoHead } from '~/utils/seo'
+
 export default {
-  head: {
-    titleTemplate: 'DruxtJS',
+  head() {
+    return {
+      // The homepage is the one page whose title should not be suffixed: it is
+      // already the site name, and head.titleTemplate would make it
+      // "DruxtJS - DruxtJS".
+      titleTemplate: 'DruxtJS - The Fully Decoupled Drupal Framework',
+      ...seoHead({
+        title: null,
+        description: SITE_DESCRIPTION,
+        path: '/',
+        type: 'website',
+      }),
+    }
   },
 
   data: () => ({

@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { seoHead } from '~/utils/seo'
+import { documentDescription } from '~/utils/content'
 export default {
   name: 'AppGuideDocument',
 
@@ -37,10 +39,11 @@ export default {
   },
 
   head() {
-    return {
+    return seoHead({
       title: this.document.title,
-      meta: [{ hid: 'description', name: 'description', content: this.document.description || '' }],
-    }
+      description: documentDescription(this.document),
+      path: this.$route.path,
+    })
   },
 
   computed: {

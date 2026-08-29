@@ -17,8 +17,7 @@
     "@tailwindcss/typography": "0.4.1",
     "core-js": "3.38.1",
     "daisyui": "1.25.4",
-    "nuxt": "2.18.1",
-    "nuxt-social-meta": "1.0.0"
+    "nuxt": "2.18.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
