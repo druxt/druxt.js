@@ -1,6 +1,7 @@
 ---
 title: Deprecations
 weight: 10
+description: Retired DruxtField default components and props, with their replacements.
 ---
 
 # Deprecations

@@ -40,7 +40,16 @@ export default {
     store.commit('addRecent', { text: document.title, to: route.path })
     store.commit('setToc', document.toc || [])
 
-    return { document }
+    // Which ancestor directories are real pages. Most are not: only a
+    // directory holding an index.md renders, so linking every ancestor
+    // produced hrefs like /api/packages/entity/components, which Nuxt then
+    // crawled into the generate list and failed on.
+    const indexes = await $content('api', { deep: true }).only(['path']).fetch()
+    const linkable = indexes
+      .filter((o) => o.path.endsWith('/index'))
+      .map((o) => o.path.replace(/\/index$/, ''))
+
+    return { document, linkable }
   },
 
   head() {
@@ -57,7 +66,7 @@ export default {
       : null),
 
     /** 'src / packages / entity / …' rendered as links back up the tree. */
-    breadcrumbs: ({ document }) => {
+    breadcrumbs: ({ document, linkable }) => {
       const dir = document.dir || ''
       // The API section root has no source path to mirror — nothing to show.
       if (dir === '/api') return []
@@ -67,7 +76,10 @@ export default {
       return dirs.map((dir, index) => {
         let to
         if (index === 1) to = '/api'
-        if (index > 1 && index < last) to = dirs.slice(0, index + 1).join('/').replace('src/', '/api/')
+        if (index > 1 && index < last) {
+          const candidate = dirs.slice(0, index + 1).join('/').replace('src/', '/api/')
+          if ((linkable || []).includes(candidate)) to = candidate
+        }
         return { text: index === last ? document.title : dir, to }
       })
     },

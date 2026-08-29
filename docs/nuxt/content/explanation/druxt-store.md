@@ -1,7 +1,7 @@
 ---
 title: The DruxtStore
 weight: -8
-description: Collections, resources, and how Druxt modules share state.
+description: The DruxtStore caches Drupal collections and resources as shared references, so two components asking for the same article hit Drupal once.
 ---
 
 The `DruxtStore` is a Vuex module that acts as Druxt's shared data layer:

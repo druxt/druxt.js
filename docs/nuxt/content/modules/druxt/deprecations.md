@@ -1,6 +1,7 @@
 ---
 title: Deprecations
 weight: 10
+description: Retired DruxtStore signatures and internal classes, with their replacements.
 ---
 
 # Deprecations

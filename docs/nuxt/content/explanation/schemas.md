@@ -1,7 +1,7 @@
 ---
 title: The schema system
 weight: -6
-description: Drupal display modes as a component data source.
+description: Drupal display modes become schemas that drive field rendering, generated once at startup and reused to narrow the JSON:API query.
 ---
 
 After routing resolves _which_ entity to render, the next question is

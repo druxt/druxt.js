@@ -1,7 +1,7 @@
 ---
 title: Decoupled routing
 weight: -7
-description: How Drupal routes map to frontend paths.
+description: Only Drupal knows which entity serves a path, so Druxt asks it, then turns that answer into a resource request and follows any redirect.
 ---
 
 In a fully decoupled site the frontend handles the URL, but the content lives
