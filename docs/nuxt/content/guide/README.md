@@ -3,7 +3,7 @@ title: Introduction
 weight: -10
 ---
 
-# DruxtJS
+## DruxtJS
 
 ## The Fully Decoupled Drupal Framework
 

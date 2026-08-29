@@ -3,8 +3,6 @@ title: Getting started with Druxt.js
 weight: -9
 ---
 
-### Getting started with Druxt.js
-
 > Druxt is a Fully Decoupled Drupal framework.
 
 Druxt gives you the tools to connect your Nuxt.js frontend to your Drupal JSON:API backend.
