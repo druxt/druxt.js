@@ -1,9 +1,12 @@
 ---
-title: JSON:API Client
-weight: 5
+title: Use the Druxt client directly
+weight: -1
+description: Fetch resources and collections with DruxtClient, with or without Nuxt.
 ---
 
-## DruxtClient
+> **Before you start:** this guide assumes a working Druxt site (see
+> [Getting started](/tutorials/getting-started)) and a reason to bypass the
+> component layer: custom fetching, scripting, or non-Nuxt usage.
 
 The DruxtClient is the communication layer between Nuxt and the Drupal JSON:API.
 
