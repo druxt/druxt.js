@@ -1,36 +1,63 @@
 <template>
-  <div>
-    <!-- TODO: Add breadcrumb / path -->
-    <NuxtContent
-      v-if="document"
-      class="prose prose-sm sm:prose lg:prose-lg xl:prose-xl"
-      :document="document"
-    />
-  </div>
+  <article>
+    <AppBreadcrumbs :items="breadcrumbs" />
+
+    <AppPageHeader :title="document.title" :description="document.description" />
+
+    <NuxtContent class="prose" :document="document" />
+
+    <AppDocFooter :edit-path="editPath" :prev="prev" :next="next" />
+  </article>
 </template>
 
 <script>
 export default {
-  name: "AppGuideDocument",
+  name: 'AppGuideDocument',
 
   async asyncData({ $content, error, params, store, route }) {
-    const path = params.pathMatch || "README";
-    let response;
+    const slug = params.pathMatch || 'README'
+
+    let document
     try {
-      response = await $content("guide/", params.pathMatch || "README").fetch();
+      document = await $content('guide/', slug).fetch()
     } catch (e) {
-      return error({ message: "Document not found" });
+      return error({ statusCode: 404, message: 'Document not found' })
     }
 
-    store.commit("addRecent", { text: response.title, to: route.path });
+    // Siblings, for the prev/next footer.
+    const index = await $content('guide')
+      .sortBy('weight')
+      .only(['path', 'title'])
+      .fetch()
 
-    return { document: response, path };
+    store.commit('addRecent', { text: document.title, to: route.path })
+    store.commit('setToc', document.toc || [])
+
+    return { document, slug, index }
   },
 
   head() {
     return {
       title: this.document.title,
-    };
+      meta: [{ hid: 'description', name: 'description', content: this.document.description || '' }],
+    }
   },
-};
+
+  computed: {
+    breadcrumbs: ({ document }) => [
+      { text: 'Guide', to: '/guide' },
+      { text: document.title },
+    ],
+
+    editPath: ({ document }) => 'guide' + document.path.replace('/guide', '') + '.md',
+
+    position: ({ index, document }) => index.findIndex((o) => o.path === document.path),
+
+    prev: ({ index, position }) => (position > 0 ? link(index[position - 1]) : null),
+
+    next: ({ index, position }) => (position > -1 && position < index.length - 1 ? link(index[position + 1]) : null),
+  },
+}
+
+const link = (item) => (item ? { text: item.title, to: item.path.replace('/README', '') } : null)
 </script>

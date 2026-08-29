@@ -1,79 +1,72 @@
 <template>
-  <div>
-    <!-- TODO: Add link to GitHub -->
-    <div class="text-sm breadcrumbs">
-      <ul>
-        <li v-for="({ text, path }, index) of dirs" :key="index">
-          <NuxtLink v-if="path" :to="path" v-text="text" />
-          <span v-else v-text="text" />
-        </li>
-      </ul>
-    </div>
-    <h2 class="mb-5 text-3xl">{{ title }}</h2>
+  <article>
+    <AppBreadcrumbs :items="breadcrumbs" />
 
-    <div>
-      <!-- TODO: Link to module page? -->
-      <div v-if="module" class="badge badge-primary">{{ module }}</div>
-      <!-- TODO: Add file type badge; Component, Mixin, etc -->
-    </div>
+    <AppPageHeader :title="document.title" :badges="badges">
+      <a
+        v-if="source"
+        class="mt-5 inline-flex items-center gap-2 text-sm text-base-content/70 hover:text-primary-focus"
+        :href="source"
+        target="_blank"
+        rel="noopener"
+      >
+        <AppIconExternal class="w-4 h-4" /> View source on GitHub
+      </a>
+    </AppPageHeader>
 
-    <NuxtContent
-      v-if="document"
-      class="prose prose-sm sm:prose lg:prose-lg xl:prose-xl"
-      :document="document"
-    />
-  </div>
+    <NuxtContent class="prose" :document="document" />
+  </article>
 </template>
 
 <script>
 export default {
-  name: "AppApiDocument",
+  name: 'AppApiDocument',
 
   async asyncData({ $content, error, params, store, route }) {
-    let response;
+    let path = params.pathMatch || 'README'
+    if (path.endsWith('/')) path += 'index'
+
+    let document
     try {
-      let path = params.pathMatch || "README";
-      if (path.endsWith("/")) path += "index";
-      response = await $content("api/", path).fetch();
-      if (Array.isArray(response)) {
-        response = await $content("api/", params.pathMatch + "/index").fetch();
+      document = await $content('api/', path).fetch()
+      if (Array.isArray(document)) {
+        document = await $content('api/', params.pathMatch + '/index').fetch()
       }
     } catch (e) {
-      return error({ message: "Document not found" });
+      return error({ statusCode: 404, message: 'Document not found' })
     }
 
-    store.commit("addRecent", { text: response.title, to: route.path });
+    store.commit('addRecent', { text: document.title, to: route.path })
+    store.commit('setToc', document.toc || [])
 
-    return { document: response };
+    return { document }
   },
 
   head() {
-    return {
-      title: this.document.title,
-    };
+    return { title: this.document.title }
   },
 
   computed: {
-    module: ({ document }) => document.dir.split("/")[3],
+    /** The package the document belongs to, e.g. 'druxt-entity'. */
+    module: ({ document }) => (document.dir || '').split('/')[3],
 
-    dirs: ({ document }) => {
-      const dirs = document.dir.replace("/api/", "src/").split("/");
+    badges: ({ module }) => (module ? [{ text: module }] : []),
+
+    source: ({ document }) => (document.dir
+      ? 'https://github.com/druxt/druxt.js/tree/develop' + document.dir.replace('/api/packages', '/packages')
+      : null),
+
+    /** 'src / packages / entity / …' rendered as links back up the tree. */
+    breadcrumbs: ({ document }) => {
+      const dirs = (document.dir || '').replace('/api/', 'src/').split('/')
+      const last = dirs.length - 1
       return dirs.map((dir, index) => {
-        let path;
-        if (index === 1) path = "/api";
-        if (index > 1)
-          path = dirs
-            .slice(0, index + 1)
-            .join("/")
-            .replace("src/", "/api/");
-        return {
-          path,
-          text: dir,
-        };
-      });
+        let to
+        if (index === 1) to = '/api'
+        if (index > 1 && index < last) to = dirs.slice(0, index + 1).join('/').replace('src/', '/api/')
+        return { text: index === last ? document.title : dir, to }
+      })
     },
-
-    title: ({ document }) => document.title,
   },
-};
+}
 </script>
