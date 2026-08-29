@@ -161,6 +161,56 @@ export default {
     },
   },
 
+  generate: {
+    /**
+     * Every content route, given to the generator explicitly.
+     *
+     * Nuxt discovers dynamic routes by crawling links out of the pages it has
+     * already generated. The API reference is listed by AppApiIndex, which
+     * fetches its entries client side, so most of those links do not exist in
+     * the generated HTML for the crawler to follow. Measured before this: 50 of
+     * 109 API pages were written to dist, and the other 59 existed only as the
+     * SPA fallback — served by 200.html, invisible to a crawler, and impossible
+     * to list in a sitemap honestly.
+     *
+     * @returns {string[]} Route paths to generate.
+     */
+    routes() {
+      const path = require('path')
+      const { readContent } = require('./lib/content-index')
+      return readContent(path.join(__dirname, 'content')).map((doc) => doc.route)
+    },
+  },
+
+  hooks: {
+    /**
+     * Write the machine-readable indexes into the static export.
+     *
+     * `generate:done` rather than a build step so these run against the same
+     * content the pages were just generated from, including `content/api`,
+     * which docgen writes and which is absent from a fresh checkout. If it has
+     * not been built, the API entries are simply missing rather than pointing
+     * at URLs that were never generated.
+     *
+     * @param {object} generator - The Nuxt generator instance.
+     */
+    async 'generate:done'(generator) {
+      const fs = require('fs')
+      const path = require('path')
+      const { readContent } = require('./lib/content-index')
+      const { buildLlmsTxt } = require('./lib/llms-txt')
+      const { buildSitemap } = require('./lib/sitemap')
+
+      const { srcDir, generate } = generator.nuxt.options
+      const docs = readContent(path.join(srcDir, 'content'))
+
+      await fs.promises.writeFile(path.join(generate.dir, 'llms.txt'), buildLlmsTxt(docs))
+      await fs.promises.writeFile(path.join(generate.dir, 'sitemap.xml'), buildSitemap(docs))
+
+      console.log('SEO: wrote llms.txt and sitemap.xml for ' + docs.length + ' documents')
+    },
+  },
+
   build: {},
   telemetry: true,
 
