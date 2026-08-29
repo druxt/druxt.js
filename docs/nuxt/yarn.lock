@@ -4300,12 +4300,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxtjs/google-analytics@npm:2.4.0":
-  version: 2.4.0
-  resolution: "@nuxtjs/google-analytics@npm:2.4.0"
+"@nuxtjs/color-mode@npm:2.1.1":
+  version: 2.1.1
+  resolution: "@nuxtjs/color-mode@npm:2.1.1"
   dependencies:
-    vue-analytics: ^5.22.1
-  checksum: a6196032093fd3306ee8c50b3bb32d860670b3e82b7947b4e410195830a1f5c6f107f90fb3c210d9250ffe1ad465ac397e441c3f9211a48df0267a7898f742b3
+    defu: ^5.0.0
+    lodash.template: ^4.5.0
+  checksum: a3b6579efb72aa7d83da9cd04371f70917c20d5aaa21f572ab4845d99e1a4f67f11e8f5b997d6197801afb1c76007478fd0a5436b985d8c3a17354556ace2aff
   languageName: node
   linkType: hard
 
@@ -9839,7 +9840,7 @@ __metadata:
     "@babel/plugin-proposal-private-property-in-object": ^7.21.11
     "@nuxt/content": 1.15.1
     "@nuxt/postcss8": 1.1.3
-    "@nuxtjs/google-analytics": 2.4.0
+    "@nuxtjs/color-mode": 2.1.1
     "@nuxtjs/pwa": 3.3.5
     "@nuxtjs/storybook": 4.2.0
     "@nuxtjs/tailwindcss": 4.2.1
@@ -9848,6 +9849,7 @@ __metadata:
     daisyui: 1.25.4
     nuxt: 2.18.1
     nuxt-social-meta: 1.0.0
+    prism-themes: 1.9.0
     tailwindcss: ^2.2.19
   languageName: unknown
   linkType: soft
@@ -17173,6 +17175,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prism-themes@npm:1.9.0":
+  version: 1.9.0
+  resolution: "prism-themes@npm:1.9.0"
+  checksum: ddbadb8d83fc23e428409d7dd1d62dde6033a3afabd721d292e2d251f5693e3eccb7f9641704374f3df3dde59c0e2c8a3c069a7aa72990c4a00acb57f2af81f8
+  languageName: node
+  linkType: hard
+
 "prismjs@npm:^1.21.0, prismjs@npm:^1.23.0":
   version: 1.29.0
   resolution: "prismjs@npm:1.29.0"
@@ -20880,13 +20889,6 @@ __metadata:
   version: 3.1.0
   resolution: "void-elements@npm:3.1.0"
   checksum: 0390f818107fa8fce55bb0a5c3f661056001c1d5a2a48c28d582d4d847347c2ab5b7f8272314cac58acf62345126b6b09bea623a185935f6b1c3bbce0dfd7f7f
-  languageName: node
-  linkType: hard
-
-"vue-analytics@npm:^5.22.1":
-  version: 5.22.1
-  resolution: "vue-analytics@npm:5.22.1"
-  checksum: 2948a92428425f0c0f6e4b80a8b5679d152d3f76d35c26df482c903ae6798d6bb1ed110811c58a3123f53c26ff6696c61526f6d37b3cf4299bc83dd9af93a215
   languageName: node
   linkType: hard
 
