@@ -21,10 +21,12 @@ description: Zero-config Storybook with auto-generated stories fed by live Drupa
 
 ## Set up Storybook
 
-1. Install the [Nuxt Storybook module](https://storybook.nuxtjs.org).
+1. Install the [Nuxt Storybook module](https://storybook.nuxtjs.org), pinned to
+   the 4.x line. Later majors require `@nuxt/kit` and Nuxt 3, which this
+   Nuxt 2 stack does not provide:
 
    ```sh
-   npm i -D @nuxtjs/storybook @storybook/addon-docs
+   npm i -D @nuxtjs/storybook@4.2.0 @storybook/addon-docs
    ```
 
 2. Run Storybook:
