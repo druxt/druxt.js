@@ -75,8 +75,13 @@ button:focus-visible,
    white at 6.49:1 and 4.66:1. There are exactly two such buttons on the site:
    the homepage CTA and the module card's "Get started".
 
-   Hover darkens with a brightness filter because the focus shade is already
-   the darkest step defined for each colour. */
+   Hover darkens the background explicitly rather than with
+   `filter: brightness()`. A filter applies to the whole element, so it dims
+   the white label along with the background: on secondary that took the
+   hover state to 4.40:1, under the 4.5:1 needed for text. Darkening only the
+   background moves contrast the other way, to 8.38:1 and 6.63:1. The values
+   are literals because these are already the darkest step each colour
+   defines. */
 .btn-primary {
   background-color: hsl(var(--pf));
   border-color: hsl(var(--pf));
@@ -87,9 +92,14 @@ button:focus-visible,
   border-color: hsl(var(--sf));
 }
 
-.btn-primary:hover,
+.btn-primary:hover {
+  background-color: #02527d;
+  border-color: #02527d;
+}
+
 .btn-secondary:hover {
-  filter: brightness(0.9);
+  background-color: #2f6659;
+  border-color: #2f6659;
 }
 
 /* Search dialog input row.

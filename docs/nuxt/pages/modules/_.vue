@@ -24,8 +24,13 @@ export default {
   },
 
   async asyncData({ $content, error, params, store, route }) {
-    const slug = params.pathMatch
-      ? (params.pathMatch.includes('/') ? params.pathMatch : params.pathMatch + '/README')
+    // Trailing slashes are trimmed first: `/modules/entity/` arrives as
+    // `entity/`, which the `includes('/')` test below read as "already a
+    // sub-page path" and queried verbatim, so the route 404'd while
+    // `/modules/entity` resolved.
+    const match = (params.pathMatch || '').replace(/\/+$/, '')
+    const slug = match
+      ? (match.includes('/') ? match : match + '/README')
       : 'README'
 
     let document

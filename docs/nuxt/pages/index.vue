@@ -29,7 +29,7 @@
               class="btn btn-xs btn-ghost flex-shrink-0"
               :aria-label="'Copy ' + command"
               @click="copy"
-            >{{ copied ? 'Copied' : 'Copy' }}</button>
+            >{{ copyLabel }}</button>
           </div>
 
           <button
@@ -143,6 +143,7 @@ export default {
     slogan: 'The Fully Decoupled Drupal Framework',
     advanced: false,
     copied: false,
+    copyFailed: false,
     repo: 'quickstart',
     runner: 'giget',
     runners: [
@@ -185,6 +186,12 @@ export default {
     /** The starter kits currently offered. */
     starterKits: ({ quickstarts }) => quickstarts.filter((o) => o.enabled),
 
+    /** Copy button label, including the failure the catch used to swallow. */
+    copyLabel: ({ copied, copyFailed }) => {
+      if (copyFailed) return 'Copy failed'
+      return copied ? 'Copied' : 'Copy'
+    },
+
     /**
      * One command block, rewritten by the repo and runner pickers.
      *
@@ -202,6 +209,7 @@ export default {
   watch: {
     command() {
       this.copied = false
+      this.copyFailed = false
     },
   },
 
@@ -218,7 +226,11 @@ export default {
         // the production-gated snippet isn't present — dev, preview, SSR.
         window.gtag?.('event', 'copy_quickstart_command', { repo: this.repo, runner: this.runner })
       } catch (e) {
-        this.copied = false
+        // Say so, rather than leaving the button silent. navigator.clipboard
+        // is undefined on non-secure origins and writeText can be denied, and
+        // this is the site's most important command to copy.
+        this.copyFailed = true
+        setTimeout(() => { this.copyFailed = false }, 2000)
       }
     },
   },
