@@ -25,6 +25,7 @@ Vuedoc
 ZRHGDGSD
 aarch
 antfu
+apos
 autobuild
 automerge
 autoupdate
@@ -83,6 +84,7 @@ libsqlite
 libzip
 licence
 lightboxes
+llms
 lockfiles
 longname
 mailhog
@@ -97,6 +99,7 @@ namelist
 neighbour
 neue
 nohup
+normalise
 normalised
 npmjs
 nproc
@@ -113,6 +116,8 @@ phpsab
 phpstan
 prebuilds
 quickstarts
+recognise
+recrawl
 renderable
 repoint
 reskins
@@ -134,6 +139,7 @@ toggleable
 topbar
 umami
 unjs
+unlighthouse
 vetur
 vite
 vitest
@@ -145,6 +151,8 @@ vuex
 webfonts
 wireframe
 wireframes
+worktree
+worktrees
 yaml
 yamllint
 yarnpkg
