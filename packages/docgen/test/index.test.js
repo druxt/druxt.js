@@ -282,6 +282,28 @@ export default {
       )
     })
 
+    test('titles a package index after the package, not the first symbol', () => {
+      dmd.mockReturnValueOnce('# DruxtSiteMixin')
+
+      docgen.writeTemplateData('packages/site/src/index.js', [{ id: 'module:DruxtSiteMixin' }])
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining('title: Site')
+      )
+    })
+
+    test('leaves per-symbol page titles alone', () => {
+      dmd.mockReturnValueOnce('# DruxtClient')
+
+      docgen.writeTemplateData('packages/druxt/src/client.js', [{ id: 'DruxtClient' }])
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining('title: DruxtClient')
+      )
+    })
+
     test('flags the page when the documented symbol is deprecated', () => {
       dmd.mockReturnValueOnce('# ~~DruxtFoo~~')
 

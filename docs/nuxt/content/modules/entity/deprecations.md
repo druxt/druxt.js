@@ -1,5 +1,6 @@
 ---
 title: Deprecations
+weight: 10
 ---
 
 # Deprecations

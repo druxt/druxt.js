@@ -44,7 +44,7 @@ Using Drupal's built in Entity display modes and Field formatter system, Views, 
 
   Adds a default layout if no default layout has been provided.
 
-- `druxt.router.theme`
+- `druxt.site.theme`
 
   Type: `string`
 
