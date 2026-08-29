@@ -81,7 +81,7 @@ export default {
      * The item's route, trailing slash removed, with the root kept as '/'.
      *
      * Trimming used to reduce Home's '/' to an empty string, which the
-     * falsiness guards in isActive and isCurrent then treated as "no route" —
+     * empty-value guards in isActive and isCurrent then read as "no route",
      * so Home could never be marked active or current, on the one page it
      * points at, and the `to === ''` branch below was unreachable.
      */
