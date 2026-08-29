@@ -72,8 +72,9 @@ If no Path is provided, the component will default to the Vue router fullpath.
 
 ## Deprecations
 
-Retired `DruxtRouter` client pass-through methods and their replacements are
-listed on the [deprecations page](/modules/router/deprecations).
+Retired `DruxtRouter` client pass-through methods and `druxtRouter` store
+resource members, with their replacements, are listed on the
+[deprecations page](/modules/router/deprecations).
 
 - For the routing API itself, see the
   [DruxtRouter API documentation](/api/packages/router/router).

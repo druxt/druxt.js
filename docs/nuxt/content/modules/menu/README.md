@@ -126,6 +126,14 @@ DruxtMenu provides zero-config, auto-generated Storybook integration with a live
 
 ---
 
+## Deprecations
+
+The `items` computed property is deprecated in favour of `model`. See the
+[deprecations page](/modules/menu/deprecations) for what replaces it, and what
+is unaffected.
+
+---
+
 ## Package README
 
 The full npm package README (features, badges, install) is mirrored as the [generated package README page](/modules/menu/readme).
