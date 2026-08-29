@@ -104,3 +104,6 @@ sw.*
 
 # Vale style packages (downloaded by `vale sync`, not committed)
 styles/
+
+# Unlighthouse audit output
+.unlighthouse
