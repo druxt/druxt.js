@@ -72,7 +72,8 @@ export default {
 
   data: () => ({
     docs: [
-      { text: 'Guide', to: '/guide' },
+      { text: 'Tutorials', to: '/tutorials' },
+      { text: 'How-to guides', to: '/how-to' },
       { text: 'Modules', to: '/modules' },
       { text: 'API reference', to: '/api' },
     ],

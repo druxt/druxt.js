@@ -81,7 +81,9 @@ class DruxtRouter {
   /**
    * Add headers to the Axios instance.
    *
-   * @deprecated
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   *   Set headers via the DruxtClient axios options, or client.axios interceptors instead.
+   * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/client}
    *
    * @example @lang js
@@ -101,7 +103,9 @@ class DruxtRouter {
   /**
    * Build query URL.
    *
-   * @deprecated
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   *   Use client.buildQueryUrl(url, query) instead.
+   * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/client}
    *
    * @example @lang js
@@ -122,7 +126,9 @@ class DruxtRouter {
   /**
    * Check response for permissions.
    *
-   * @deprecated
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   *   Handle JSON:API meta.omitted links client-side instead.
+   * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/client}
    *
    * @param {object} res - Axios GET request response object.
@@ -154,7 +160,9 @@ class DruxtRouter {
   /**
    * Get index of all available resources, or the optionally specified resource.
    *
-   * @deprecated
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   *   Use client.getIndex(resource) instead.
+   * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/client}
    *
    * @example @lang js
@@ -218,7 +226,9 @@ class DruxtRouter {
   /**
    * Get a JSON:API resource by type and ID.
    *
-   * @deprecated
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   *   Use client.getResource(type, id) instead.
+   * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/client}
    *
    * @example @lang js
@@ -239,7 +249,9 @@ class DruxtRouter {
   /**
    * Gets a collection of resources.
    *
-   * @deprecated
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   *   Use client.getResources(resource, query, options) instead.
+   * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/client}
    *
    * @todo Add granular pagination.
