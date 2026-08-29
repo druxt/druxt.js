@@ -107,7 +107,7 @@ const DruxtStore = ({ store }) => {
        */
       addResource (state, { prefix, resource, hash }) {
         if (hash) {
-          console.warn('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/guide/deprecations.html#druxtstore-addresource-hash')
+          console.warn('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/modules/druxt/deprecations#druxtstore-addresource-hash')
         }
 
         const { id, type } = (resource || {}).data || {}
