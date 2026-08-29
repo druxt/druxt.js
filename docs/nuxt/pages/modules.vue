@@ -47,22 +47,31 @@ export default {
   // no module nav) and it only appeared after the client re-fetched on
   // mount.
   async fetch() {
-    if (!this.pkg) {
+    // Captured before awaiting, and re-checked after. This instance is reused
+    // across /modules/<pkg> route changes, so moving quickly between modules
+    // can leave two fetches in flight and an earlier one resolving later
+    // would restore the previous module's chrome over the current page.
+    const pkg = this.pkg
+
+    if (!pkg) {
       this.module = null
       this.pages = []
-      this.index = await this.$content('modules/README')
+      const index = await this.$content('modules/README')
         .only(['title', 'description'])
         .fetch()
         .catch(() => null)
+      if (pkg !== this.pkg) return
+      this.index = index
       return
     }
 
     // The module's own README, plus any sibling documents as sub-pages.
     const [module, pages] = await Promise.all([
-      this.$content('modules/' + this.pkg + '/README').only(['title', 'description']).fetch().catch(() => null),
-      this.$content('modules/' + this.pkg).only(['title', 'path', 'slug']).fetch().catch(() => []),
+      this.$content('modules/' + pkg + '/README').only(['title', 'description']).fetch().catch(() => null),
+      this.$content('modules/' + pkg).only(['title', 'path', 'slug']).fetch().catch(() => []),
     ])
 
+    if (pkg !== this.pkg) return
     this.module = module
     this.pages = (Array.isArray(pages) ? pages : [pages]).filter(Boolean)
   },
