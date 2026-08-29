@@ -1,46 +1,57 @@
 <template>
   <div>
-    <!-- TODO: Add breadcrumb / path -->
-    <h2 class="mb-5 text-3xl">{{ document.title }}</h2>
+    <!-- Every module README opens with a screenshot; it becomes the hero. -->
+    <AppFigure v-if="hero" :src="hero.src" :alt="hero.alt" class="mb-8" />
 
-    <div class="prose prose-sm sm:prose lg:prose-lg xl:prose-xl mb-10">
-      <blockquote v-text="document.description" />
-    </div>
+    <AppProse v-if="document" :document="document" />
 
-    <NuxtContent
-      v-if="document"
-      class="prose prose-sm sm:prose lg:prose-lg xl:prose-xl"
-      :document="document"
-    />
+    <AppApiIndex v-if="pkg" :pkg="pkg" class="mt-12" />
+
+    <AppDocFooter :edit-path="editPath" />
   </div>
 </template>
 
 <script>
+import { extractHero } from '~/utils/content'
+
 export default {
-  name: "AppGuideDocument",
+  name: 'AppModuleDocument',
+
+  // Supplied by pages/modules.vue via <NuxtChild>.
+  props: {
+    module: { type: Object, default: null },
+    pkg: { type: String, default: null },
+  },
 
   async asyncData({ $content, error, params, store, route }) {
-    const path = params.pathMatch
-      ? params.pathMatch.includes("/")
-        ? params.pathMatch
-        : params.pathMatch + "/README"
-      : "README";
-    let response;
+    const slug = params.pathMatch
+      ? (params.pathMatch.includes('/') ? params.pathMatch : params.pathMatch + '/README')
+      : 'README'
+
+    let document
     try {
-      response = await $content("modules/", path).fetch();
+      document = await $content('modules/', slug).fetch()
     } catch (e) {
-      return error({ message: "Document not found" });
+      return error({ statusCode: 404, message: 'Document not found' })
     }
 
-    store.commit("addRecent", { text: response.title, to: route.path });
+    const { hero, body } = extractHero(document)
 
-    return { document: response, path };
+    store.commit('addRecent', { text: document.title, to: route.path })
+    store.commit('setToc', document.toc || [])
+
+    return { document: { ...document, body }, hero, slug }
   },
 
   head() {
     return {
       title: this.document.title,
-    };
+      meta: [{ hid: 'description', name: 'description', content: this.document.description || '' }],
+    }
   },
-};
+
+  computed: {
+    editPath: ({ slug }) => 'modules/' + slug + '.md',
+  },
+}
 </script>
