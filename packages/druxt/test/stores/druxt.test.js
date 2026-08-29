@@ -105,7 +105,7 @@ describe('DruxtStore', () => {
     // Test deprecated hash argument.
     const spy = jest.spyOn(console, 'warn').mockImplementation()
     store.commit('druxt/addResource', { resource: mockArticle, hash: 'deprecated' })
-    expect(console.warn).toHaveBeenCalledWith('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/guide/deprecations.html#druxtstore-addresource-hash');
+    expect(console.warn).toHaveBeenCalledWith('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/modules/druxt/deprecations#druxtstore-addresource-hash');
     spy.mockRestore()
   })
 
