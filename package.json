@@ -90,13 +90,21 @@
   },
   "lint-staged": {
     "*.js": [
-      "eslint --fix --fix-type problem,layout"
+      "eslint --fix --fix-type problem,layout,suggestion",
+      "cspell lint --no-progress --no-must-find-files"
     ],
     "*.vue": [
-      "eslint --fix --fix-type problem,layout"
+      "eslint --fix --fix-type problem,layout,suggestion",
+      "cspell lint --no-progress --no-must-find-files"
     ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
+    "*.{json,yml,yaml}": [
+      "prettier --write",
+      "cspell lint --no-progress --no-must-find-files"
+    ],
+    "*.md": [
+      "prettier --write",
+      "markdownlint-cli2",
+      "cspell lint --no-progress --no-must-find-files"
     ]
   },
   "jest-junit": {
