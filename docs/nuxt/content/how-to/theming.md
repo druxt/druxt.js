@@ -130,3 +130,6 @@ button that scaffolds the file for you, wrapper path already filled in.
   same mechanism from the module author's side.
 - [Debug Druxt with the Vue Devtools](/how-to/devtools): inspect
   `component.options` live.
+- [Explore the example apps](/how-to/example-apps): the `druxt-site`
+  example includes a wrapper-theming pattern page, the wrapper system
+  running against real content.
