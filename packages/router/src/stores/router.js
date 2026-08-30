@@ -168,6 +168,9 @@ const DruxtRouterStore = ({ store }) => {
        *
        * @name getEntity
        * @action getEntity=entities
+       * @param {object} context - The Vuex action context.
+       * @param {Function} context.commit - Commits mutations to the store.
+       * @param {object} context.state - The Vuex module state.
        * @param {object} query - The JSON:API resource query.
        * @return {object} The Drupal entity JSON:API resource data.
        *

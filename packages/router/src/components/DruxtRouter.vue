@@ -109,6 +109,8 @@ export default {
   },
 
   /**
+   * @param {object} vm - The component ViewModel.
+   * @param {object} vm.value - The Router object, used to bypass the JSON:API.
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({
@@ -200,6 +202,8 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.module - The route module.
+     * @param {object} context.route - The route object.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ module, route }) => [
@@ -238,6 +242,8 @@ export default {
      *
      * @param {object} context - The module component ViewModel.
      * @param {object} context.$route - The current Vue Router route object.
+     * @param {string} context.path - The Decoupled router path.
+     * @param {object} context.model - The route model object.
      * @returns {PropsData}
      */
     propsData: ({ $route, path, model }) => ({
@@ -259,6 +265,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {
