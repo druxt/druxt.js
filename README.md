@@ -94,7 +94,7 @@ guides, module documentation and the full API reference.
 
 Find support or get involved in building Druxt via the community channels:
 
-- [DruxtJS Discord server](https://discord.druxtjs.org)
+- [DruxtJS Discord server](https://discord.gg/QnZD46c)
 - **#druxt** Slack channel on [Drupal.org slack](https://drupal.org/slack)
 
 ## Contributing
