@@ -12,7 +12,7 @@
 ## Links
 
 - Documentation: https://druxtjs.org
-- Community Discord server: https://discord.druxtjs.org
+- Community Discord server: https://discord.gg/QnZD46c
 - Demo - Umami Food Magazine:
   - https://demo.druxtjs.org
   - https://druxt-umami.netlify.app
@@ -50,7 +50,7 @@ Druxt is an open-source project, built by the community for the community.
 
 Find support or get involved in building Druxt via the community channels:
 
-- [DruxtJS Discord server](https://discord.druxtjs.org)
+- [DruxtJS Discord server](https://discord.gg/QnZD46c)
 - **#druxt** Slack channel on [Drupal.org slack](https://drupal.org/slack)
 
 ---
