@@ -90,7 +90,10 @@ const DruxtViewsStore = ({ store }) => {
        *
        * @name getResults
        * @action get=results
-       * @param {getResultsContext} context - The action context.
+       * @param {object} context - The Vuex action context.
+       * @param {Function} context.commit - Commits mutations to the store.
+       * @param {object} context.state - The Vuex module state.
+       * @param {getResultsContext} payload - The action parameters.
        * @return {object} The JSON:API Views results resource.
        *
        * @example @lang js

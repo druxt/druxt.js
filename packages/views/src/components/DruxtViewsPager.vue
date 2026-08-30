@@ -112,6 +112,7 @@ export default {
      * Provides the available component naming options for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.type - The Pager type.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ type }) => ([[type], ['default']]),
@@ -120,6 +121,11 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.count - The JSON:API Views results total count.
+     * @param {object} context.options - The Pager options.
+     * @param {object} context.resource - The JSON:API Views results resource.
+     * @param {string} context.type - The Pager type.
+     * @param {number} context.model - The DruxtViewsPager model value.
      * @returns {PropsData}
      */
     propsData: ({ count, options, resource, type, model }) => ({
@@ -135,6 +141,7 @@ export default {
      *
      * The `default` slot will render basic pagination based on the JSON:API links.
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {

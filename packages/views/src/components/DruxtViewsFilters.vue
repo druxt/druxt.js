@@ -59,6 +59,7 @@ export default {
      * Provides the available component naming options for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.type - The Exposed form type.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ type }) => ([[type], ['default']]),
@@ -67,6 +68,10 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.options - The Exposed form options.
+     * @param {object[]} context.filters - The Exposed Filter objects.
+     * @param {object} context.model - The DruxtViewsFilters model value.
+     * @param {string} context.type - The Exposed form type.
      * @returns {PropsData}
      */
     propsData: ({ options, filters, model, type }) => ({ options, filters, type, value: model }),
@@ -85,6 +90,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {
