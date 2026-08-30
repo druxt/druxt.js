@@ -15,7 +15,7 @@ All Druxt sites need both Drupal (backend) and Nuxt (frontend) to be installed.
 
 Each codebase can live in its own directory within one repository, or exist in separate repositories.
 
-- For an example combining both into one repository, see the [Quickstart DruxtSite repository](https://github.com/druxt/quickstart-druxt-site).
+- For an example combining both into one repository, see the [Quickstart repository](https://github.com/druxt/quickstart).
 - For an example of individual repositories, see:
   - [Umami demo Nuxt repository](https://github.com/druxt/demo.druxtjs.org)
   - [Umami demo Drupal repository](https://github.com/druxt/demo-api.druxtjs.org)
