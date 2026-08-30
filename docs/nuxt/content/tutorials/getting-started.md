@@ -111,9 +111,8 @@ Now open the **same path on the Nuxt frontend**:
 http://localhost:3000/node/1
 
 **Outcome:** the article title and body render, but this page was not built
-by Drupal's theming system. Drupal served the content as JSON:API data; Nuxt
-rendered it. That round trip (content in Drupal, rendering in Nuxt) is what
-Druxt does.
+by Drupal's theming system. Drupal served the content as JSON:API data and
+Nuxt rendered it.
 
 ## What you've got
 
