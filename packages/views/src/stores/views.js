@@ -97,7 +97,7 @@ const DruxtViewsStore = ({ store }) => {
        * @return {object} The JSON:API Views results resource.
        *
        * @example @lang js
-       * const { data, meta, links } = await this.$store.dispatch('druxt/view/getResults', {
+       * const { data, meta, links } = await this.$store.dispatch('druxt/views/getResults', {
        *   viewId,
        *   displayId,
        *   query,

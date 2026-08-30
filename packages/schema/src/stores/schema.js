@@ -42,7 +42,7 @@ const DruxtSchemaStore = ({ store }) => {
        * @param {object} data.schema - The Schema object.
        *
        * @example @lang js
-       * this.$store.commit('druxtSchema/addSchema', { id, schema }})
+       * this.$store.commit('druxtSchema/addSchema', { id, schema })
        */
       addSchema(state, { id, schema }) {
         state.schemas[id] = schema
@@ -62,7 +62,7 @@ const DruxtSchemaStore = ({ store }) => {
        * @returns {Schema} The Druxt Schema object.
        *
        * @example @lang js
-       * const schema = await this.$store.dispatch('druxtRouter/get', '/')
+       * const schema = await this.$store.dispatch('druxtSchema/get', { resourceType: 'node--page' })
        */
       async get({ state, commit }, resource = {}) {
         resource = {

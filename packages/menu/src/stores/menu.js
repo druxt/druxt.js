@@ -61,7 +61,7 @@ const DruxtMenuStore = ({ store }) => {
        *
        * @example @lang js
        * // Flush all menu entities.
-       * this.$store.commit('druxt/flushCollection', {})
+       * this.$store.commit('druxtMenu/flushEntities', {})
        */
       flushEntities (state, { prefix }) {
         if (!prefix || typeof state.entities !== 'object') Vue.set(state, 'entities', {})

@@ -174,7 +174,7 @@ const DruxtStore = ({ store }) => {
        * this.$store.commit('druxt/flushResource', {})
        *
        * // Flush target resource.
-       * this.$store.commit('druxt/flushResource', { id, type, prefix, hash })
+       * this.$store.commit('druxt/flushResource', { id, type, prefix })
        */
       flushResource (state, { type, id, prefix }) {
         if (!type) Vue.set(state, 'resources', {})
@@ -395,6 +395,7 @@ export { DruxtStore }
  *
  * @typedef {object} addResourcePayload
  *
+ * @param {string} [hash] - (Deprecated) The Vuex cache hash, ignored by the mutation. See https://druxtjs.org/modules/druxt/deprecations
  * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  * @param {object} resource - The JSON:API resource.
  *
