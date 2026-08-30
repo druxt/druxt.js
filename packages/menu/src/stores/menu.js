@@ -82,6 +82,7 @@ const DruxtMenuStore = ({ store }) => {
        * @name get
        * @action get=entities
        * @param {object} app - The Nuxt app context.
+       * @param {Function} app.commit - Commits mutations to the store.
        * @param {string|object} context - The Menu name or context object.
        *
        * @example @lang js

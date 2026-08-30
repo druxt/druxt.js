@@ -82,7 +82,10 @@ export default {
 
   methods: {
     /**
-     * Returns a menu link components.
+     * Returns a menu link component.
+     *
+     * @param {Function} h - The Vue createElement function.
+     * @param {object} entity - The menu item entity.
      */
     getLink(h, entity = {}) {
       if (!entity.attributes) return false
@@ -104,6 +107,8 @@ export default {
 
     /**
      * The menu item template functions.
+     *
+     * @param {Function} h - The Vue createElement function.
      */
     templates(h) {
       return {
@@ -140,6 +145,8 @@ export default {
 
   /**
    * The Vue.js render function.
+   *
+   * @param {Function} h - The Vue createElement function.
    */
   render(h) {
     if (!this.menu) return false
