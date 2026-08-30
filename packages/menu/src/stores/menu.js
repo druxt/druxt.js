@@ -37,9 +37,7 @@ const DruxtMenuStore = ({ store }) => {
        * @name addEntities
        * @mutator {object} addEntities=entities Adds specified Drupal JSON:API Menu Items data to the Vuex state object.
        * @param {State} state - The Vuex State object.
-       * @param {object} payload - The mutation payload.
-       * @param {object[]} payload.entities - The Drupal JSON:API Menu Item entities.
-       * @param {string} [payload.prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+       * @param {addEntitiesPayload} payload - The mutation payload.
        *
        * @example @lang js
        * this.$store.commit('druxtMenu/addEntities', { entities, prefix })
@@ -138,6 +136,21 @@ export { DruxtMenuStore }
  *
  * @typedef {object} State
  * @property {object} entities - The Drupal JSON:API Menu Item entities.
+ */
+
+/**
+ * Parameters for the `addEntities` mutation.
+ *
+ * @typedef {object} addEntitiesPayload
+ *
+ * @param {object[]} entities - The Drupal JSON:API Menu Item entities.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+ *
+ * @example @lang js
+ * {
+ *   entities: [{}],
+ *   prefix: 'en'
+ * }
  */
 
 /**

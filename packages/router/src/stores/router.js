@@ -83,9 +83,7 @@ const DruxtRouterStore = ({ store }) => {
        * @name addRoute
        * @mutator {object} addRoute=routes Adds the supplied route to the Vuex state object.
        * @param {object} state - The Vuex state object.
-       * @param {object} payload - The mutation payload.
-       * @param {string} payload.path - The route path.
-       * @param {object} payload.route - The route object.
+       * @param {addRoutePayload} payload - The mutation payload.
        *
        * @example @lang js
        * this.$store.commit('druxtRouter/addRoute', { path, route })
@@ -201,9 +199,7 @@ const DruxtRouterStore = ({ store }) => {
        * @name getResources
        * @action getResources
        * @param {object} app - The Nuxt app context.
-       * @param {object} payload - Object containing `druxtRouter.getResources()` parameters.
-       * @param {string} payload.resource - The JSON:API resource type.
-       * @param {string|object} payload.query - A JSON:API query string or object.
+       * @param {getResourcesContext} payload - The action parameters.
        * @return {object[]} Array of Drupal JSON:API resource data.
        *
        * @example @lang js
@@ -261,3 +257,33 @@ const DruxtRouterStore = ({ store }) => {
 }
 
 export { DruxtRouterStore }
+
+/**
+ * Parameters for the `addRoute` mutation.
+ *
+ * @typedef {object} addRoutePayload
+ *
+ * @param {string} path - The route path.
+ * @param {object} route - The route object.
+ *
+ * @example @lang js
+ * {
+ *   path: '/',
+ *   route: {}
+ * }
+ */
+
+/**
+ * Parameters for the `getResources` action.
+ *
+ * @typedef {object} getResourcesContext
+ *
+ * @param {string} resource - The JSON:API resource type.
+ * @param {string|object} query - A JSON:API query string or object.
+ *
+ * @example @lang js
+ * {
+ *   resource: 'node--article',
+ *   query: new DrupalJsonApiParams().addFilter('status', '1')
+ * }
+ */
