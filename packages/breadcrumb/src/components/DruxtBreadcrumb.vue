@@ -70,6 +70,8 @@ export default {
   /** */
   computed: {
     /**
+     * @param {object} vm - The component ViewModel.
+     * @param {object[]} vm.model - The Breadcrumbs model value.
      * @property {objects[]} crumbs - The Breadcrumbs.
      */
     crumbs: ({ model }) => model,
@@ -197,6 +199,7 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object[]} context.model - The Breadcrumbs model value.
      * @returns {PropsData}
      */
     propsData: ({ model }) => ({ crumbs: model, value: model }),

@@ -38,6 +38,8 @@ const DruxtSchemaStore = ({ store }) => {
        * @mutator {object} addSchema=schemas
        * @param {state} state - The Vuex State object.
        * @param {object} data - Schema object and ID to be committed.
+       * @param {string} data.id - The Schema ID.
+       * @param {object} data.schema - The Schema object.
        *
        * @example @lang js
        * this.$store.commit('druxtSchema/addSchema', { id, schema }})
