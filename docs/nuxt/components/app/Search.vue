@@ -2,11 +2,11 @@
   <transition name="fade">
     <div
       v-if="open"
+      ref="dialog"
       class="fixed inset-0 z-[70] flex items-start justify-center px-4 pt-[12vh] bg-neutral/50"
       role="dialog"
       aria-modal="true"
       aria-label="Search documentation"
-      ref="dialog"
       @click.self="close"
       @keydown.esc.prevent="close"
       @keydown.tab="onTab"
@@ -32,7 +32,7 @@
             v-model="query"
             type="text"
             class="flex-1 h-14 bg-transparent outline-none text-base placeholder:text-base-content/70"
-            placeholder="Search the guide, modules and API…"
+            placeholder="Search the docs, modules and API…"
             autocomplete="off"
             spellcheck="false"
             role="combobox"
@@ -200,7 +200,14 @@ export default {
   }),
 
   computed: {
-    /** Results flattened in display order, for keyboard navigation. */
+    /**
+     * Results flattened in display order, for keyboard navigation.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {object[]} vm.groups - The result groups in display order.
+     * @param {object} vm.results - The search results, keyed by group type.
+     * @returns {object[]} The flattened results.
+     */
     flat: ({ groups, results }) => groups.reduce((acc, group) => acc.concat(results[group.type]), []),
 
     // Excludes the page you are on, matching AppSidebar: offering a link to
@@ -301,17 +308,29 @@ export default {
      * It declares `aria-modal="true"`, which tells assistive technology the
      * rest of the page is hidden — so letting focus walk out into content the
      * AT is actively suppressing is worse than not claiming modality at all.
+     *
+     * @param {KeyboardEvent} e - The Tab keydown event.
      */
     onTab(e) {
       trapTab(this.$refs.dialog, e)
     },
 
-    /** Where a recent document sits, so same-titled pages are told apart. */
+    /**
+     * Where a recent document sits, so same-titled pages are told apart.
+     *
+     * @param {string} to - The document route path.
+     * @returns {string} The section context label.
+     */
     contextFor(to) {
       return documentContext(to)
     },
 
-    /** Stable per-result DOM id, so aria-activedescendant can point at it. */
+    /**
+     * Stable per-result DOM id, so aria-activedescendant can point at it.
+     *
+     * @param {object} item - The search result item.
+     * @returns {string} The DOM id.
+     */
     optionId(item) {
       return 'search-option-' + item.path.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '')
     },
