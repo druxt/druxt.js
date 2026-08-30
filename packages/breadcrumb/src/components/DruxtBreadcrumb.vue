@@ -180,7 +180,6 @@ export default {
     /**
      * Provides the available component naming options for the Druxt Wrapper.
      *
-     * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
     componentOptions: () => [['default']],

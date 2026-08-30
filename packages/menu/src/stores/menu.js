@@ -37,8 +37,9 @@ const DruxtMenuStore = ({ store }) => {
        * @name addEntities
        * @mutator {object} addEntities=entities Adds specified Drupal JSON:API Menu Items data to the Vuex state object.
        * @param {State} state - The Vuex State object.
-       * @param {object[]} root0.entities - The Drupal JSON:API Menu Item entities.
-       * @param {string} [root0.prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+       * @param {object} payload - The mutation payload.
+       * @param {object[]} payload.entities - The Drupal JSON:API Menu Item entities.
+       * @param {string} [payload.prefix] - (Optional) The JSON:API endpoint prefix or langcode.
        *
        * @example @lang js
        * this.$store.commit('druxtMenu/addEntities', { entities, prefix })
@@ -55,6 +56,7 @@ const DruxtMenuStore = ({ store }) => {
       /**
        * @name flushEntities
        * @mutator {object} flushEntities=entities Removes JSON:API menu item entities from the Vuex state object.
+       * @param {object} state - The Vuex state object.
        * @param {flushEntitiesPayload} payload - The mutation payload.
        *
        * @example @lang js
@@ -104,7 +106,8 @@ const DruxtMenuStore = ({ store }) => {
        *
        * @name getEntitiesByFilter
        * @type {Function}
-       * @param {Function} filter - A `filter()` method compatible function.
+       * @param {object} state - The Vuex state object.
+       * @returns {Function} Filter function; takes `{ filter, prefix }` where `filter` is a `filter()` method compatible function.
        *
        * @example @lang js
        * const items = this.$store.getters.getEntitiesByFilter(key => {

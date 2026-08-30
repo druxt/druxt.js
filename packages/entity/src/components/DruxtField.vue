@@ -538,7 +538,7 @@ export default {
  * Provides scoped slots for use in the Wrapper component.
  *
  * @typedef {object} ScopedSlots
- * @param {function} field-# - A slot per field item, e.g. `field-0`.
+ * @param {function} * - A slot per field item, e.g. `field-0`.
  * @param {function} label - The field label.
  * @param {function} label-above - The field label, if label position is 'above'.
  * @param {function} label-inline - The field label, if label position is 'inline'.

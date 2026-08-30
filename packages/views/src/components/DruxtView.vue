@@ -223,7 +223,7 @@ export default {
     /**
      * The View Headers data.
      *
-     * @type {@object}
+     * @type {object[]}
      */
     headers() {
       if (!this.display) return []
@@ -488,7 +488,7 @@ export default {
     /**
      * Provides propsData for the DruxtWrapper.
      *
-     * @param {object} context - The module component ViewModel.
+     * @param {object} vm - The module component ViewModel.
      * @returns {PropsData}
      */
     propsData: (vm) => ({

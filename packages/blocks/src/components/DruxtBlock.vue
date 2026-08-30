@@ -48,7 +48,7 @@ export default {
     /**
      * The Blocks internal ID.
      *
-     * @type string
+     * @type {string}
      *
      * @example @lang vue
      * <DruxtBlock id="umami_branding" />

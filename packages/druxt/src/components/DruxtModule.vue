@@ -489,6 +489,7 @@ export default {
  * }]
  */
 
+/* eslint-disable jsdoc/valid-types -- the property is Vue's `is`; the namepath parser rejects that word in any spelling */
 /**
  * @typedef {object} ComponentData
  * @property {object} $attrs - propsData not registered by the Wrapper component.
@@ -513,6 +514,7 @@ export default {
  *   settings: { fooBar: true },
  * }
  */
+/* eslint-enable jsdoc/valid-types */
 
 /**
  * @typedef {object} WrapperData

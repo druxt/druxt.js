@@ -69,7 +69,7 @@ const DruxtEntityComponentSuggestionMixin = {
      * Returns the first item of the Suggested components array that has a
      * registered Vue.js component.
      *
-     * @type string
+     * @type {string}
      * @default div
      */
     component() {

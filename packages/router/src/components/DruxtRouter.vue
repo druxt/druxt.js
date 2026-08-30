@@ -48,7 +48,11 @@ export default {
    * This can be disabled by setting the `druxt.router.middleware` option to
    * `false` in `nuxt.config.js`
    *
-   * @param {object} root0.$druxt - The Druxt Nuxt context plugin instance.
+   * @param {object} context - The Nuxt context.
+   * @param {object} context.$druxt - The Druxt Nuxt context plugin instance.
+   * @param {Function} context.redirect - The Nuxt redirect method.
+   * @param {object} context.route - The current route.
+   * @param {object} context.store - The Vuex store.
    * @example @lang js
    * export default {
    *   druxt: {

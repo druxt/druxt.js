@@ -68,6 +68,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name addCollection
        * @mutator {object} addCollection=collections Adds a JSON:API collection to the Vuex state object.
+       * @param {object} state - The Vuex state object.
        * @param {addCollectionPayload} payload - The mutation payload.
        *
        * @example @lang js
@@ -100,6 +101,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name addResource
        * @mutator {object} addResource=resources Adds a JSON:API resource to the Vuex state object.
+       * @param {object} state - The Vuex state object.
        * @param {addResourcePayload} payload - The mutation payload.
        *
        * @example @lang js
@@ -144,6 +146,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name flushCollection
        * @mutator {object} flushCollection=collections Removes JSON:API collections from the Vuex state object.
+       * @param {object} state - The Vuex state object.
        * @param {flushCollectionPayload} payload - The mutation payload.
        *
        * @example @lang js
@@ -163,6 +166,7 @@ const DruxtStore = ({ store }) => {
       /**
        * @name flushResource
        * @mutator {object} flushResource=resources Removes JSON:API resources from the Vuex state object.
+       * @param {object} state - The Vuex state object.
        * @param {flushResourcePayload} payload - The mutation payload.
        *
        * @example @lang js

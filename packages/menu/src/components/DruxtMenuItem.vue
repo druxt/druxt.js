@@ -45,7 +45,7 @@ export default {
     /**
      * The parent DruxtMenu component, if present.
      *
-     * @type {@object}
+     * @type {object|boolean}
      */
     menu: ({ $parent }) => {
       let menu = false
