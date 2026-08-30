@@ -150,6 +150,8 @@ export default {
      * Provides the available component naming options for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.name - The Block regions machine name.
+     * @param {string} context.theme - A Drupal theme machine name.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ name, theme }) => [[name, theme], ['default']],
@@ -179,6 +181,9 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object[]} context.blocks - The Block JSON:API resources for the region.
+     * @param {string} context.name - The Block regions machine name.
+     * @param {string} context.theme - A Drupal theme machine name.
      * @returns {PropsData}
      */
     propsData: ({ blocks, name, theme }) => ({ blocks, name, theme }),
@@ -203,6 +208,7 @@ export default {
      *     <slot name="umami_branding" />
      *   </div>
      * </template>
+     * @param {Function} h - The Vue createElement function.
      */
     slots(h) {
       // Build scoped slots for each block.
