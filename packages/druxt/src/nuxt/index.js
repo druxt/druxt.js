@@ -111,6 +111,13 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     this.addModule('@nuxtjs/axios')
   }
 
+  // Transpile axios: a hoisted axios >= 1 is ESM-first and breaks the Nuxt 2 SSR require chain (#658).
+  this.options.build = this.options.build || {}
+  this.options.build.transpile = this.options.build.transpile || []
+  if (!this.options.build.transpile.includes('axios')) {
+    this.options.build.transpile.push('axios')
+  }
+
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
     dirs.push({ path: join(__dirname, 'components') })
