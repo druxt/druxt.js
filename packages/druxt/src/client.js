@@ -227,6 +227,7 @@ class DruxtClient {
    * Throw a formatted error.
    *
    * @param {object} err - The error object
+   * @param {object} context - The error context; the requested URL.
    *
    * @throws {Error} A formatted error.
    */

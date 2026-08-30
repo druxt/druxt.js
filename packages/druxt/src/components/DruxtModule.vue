@@ -90,6 +90,8 @@ export default {
   },
 
   /**
+   * @param {object} vm - The component ViewModel.
+   * @param {*} vm.value - The module component model value.
    * @property {ComponentData} component - The wrapper component and propsData to be rendered.
    * @property {object} model - The model object.
    */
@@ -189,6 +191,17 @@ export default {
   },
 
   computed: {
+    /**
+     * The current language code: the `langcode` prop if set, otherwise the
+     * route's langcode metadata.
+     *
+     * Used by Druxt modules to fetch the correct resource translation.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {string} vm.langcode - The `langcode` prop.
+     * @param {object} vm.$route - The current route.
+     * @return {string} The current language code.
+     */
     lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode
   },
 
@@ -221,6 +234,9 @@ export default {
   methods: {
     /**
      * Sets the component to render a DruxtDebug error message.
+     *
+     * @param {object} err - The error object.
+     * @param {object} context - The error context; the requested URL.
      */
     error(err, context = {}) {
       // Build error details.
@@ -318,6 +334,7 @@ export default {
      *   foo: 'bar',
      * }
      *
+     * @param {object} wrapperProps - Props registered by the Wrapper component.
      * @return {object}
      */
     getModulePropsData(wrapperProps = {}) {

@@ -193,7 +193,10 @@ const DruxtStore = ({ store }) => {
        *
        * @name getCollection
        * @action getCollection
-       * @param {getCollectionContext} context - The action context.
+       * @param {object} context - The Vuex action context.
+       * @param {Function} context.commit - Commits mutations to the store.
+       * @param {object} context.state - The Vuex module state.
+       * @param {getCollectionContext} payload - The action parameters.
        * @return {object[]} Array of Drupal JSON:API resource data.
        *
        * @example @lang js
@@ -236,7 +239,11 @@ const DruxtStore = ({ store }) => {
        *
        * @name getResource
        * @action getResource=resources
-       * @param {getResourceContext} context - The action context.
+       * @param {object} context - The Vuex action context.
+       * @param {Function} context.commit - Commits mutations to the store.
+       * @param {Function} context.dispatch - Dispatches other store actions.
+       * @param {object} context.state - The Vuex module state.
+       * @param {getResourceContext} payload - The action parameters.
        * @return {object} The Drupal JSON:API resource.
        *
        * @example @lang js
