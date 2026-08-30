@@ -192,7 +192,7 @@ const DruxtStore = ({ store }) => {
        * Get collection of resources.
        *
        * @name getCollection
-       * @action getCollection
+       * @action getCollection=collections
        * @param {object} context - The Vuex action context.
        * @param {Function} context.commit - Commits mutations to the store.
        * @param {object} context.state - The Vuex module state.
