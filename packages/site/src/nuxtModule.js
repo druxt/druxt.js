@@ -1,4 +1,3 @@
-import { existsSync } from 'fs'
 import { join, resolve } from 'path'
 import DruxtSiteStorybook from './nuxtStorybook'
 
@@ -58,6 +57,8 @@ const DruxtSiteNuxtModule = async function (moduleOptions = {}) {
   }
 
   // Add default layout.
+  // fs is loaded at call time via the Nuxt resolver, so client bundles never see it (#545).
+  const { existsSync } = this.nuxt.resolver.requireModule('fs')
   if (!(await existsSync(resolve(this.options.srcDir, this.options.dir.layouts))) && options.site.layout) {
     this.addLayout(resolve(__dirname, './layouts/default.vue'), 'default')
   }
