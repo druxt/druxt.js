@@ -129,11 +129,15 @@ export { DruxtSchemaStore }
  */
 
 /**
+ * The Druxt Schema object.
+ *
  * @typedef {object} Schema
  * @see {@link ../typedefs/schema|Schema}
  */
 
 /**
+ * Druxt Schema configuration object.
+ *
  * @typedef {object} SchemaConfiguration
  * @see {@link ../typedefs/schemaConfiguration|SchemaConfiguration}
  */

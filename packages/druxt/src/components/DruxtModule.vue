@@ -14,19 +14,16 @@ import DruxtWrapper from './DruxtWrapper.vue'
  * @example @lang js
  * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * export default {
- *   name: 'DruxtTestModule',
+ *   name: 'DruxtCustomModule',
  *   extends: DruxtModule,
  *   druxt: {
  *     async fetchConfig() {},
  *     async fetchData(settings) {},
- *     componentOptions: (context) => ([[context.foo, context.bar, 'default']]),
- *     propsData: (context) => ({
- *       foo: context.foo,
- *       bar: context.bar,
- *     }),
+ *     componentOptions: () => ([['Default']]),
+ *     propsData: ({ model }) => ({ value: model }),
  *     slots(h) {
  *       return {
- *         default: (attrs) => h('DruxtDebug', ['Hello world'])
+ *         default: (attrs) => h('div', { attrs }, [this.model])
  *       }
  *     }
  *   }
@@ -75,9 +72,9 @@ export default {
      * @example
      * <DruxtModule
      *   :wrapper="{
-     *     component: 'MyWrapper',
-     *     class: 'wrapper',
-     *     propsData: { foo: 'bar' }
+     *     component: 'BCard',
+     *     class: 'article-card',
+     *     propsData: { noBody: true }
      *   }"
      * />
      *
@@ -117,17 +114,14 @@ export default {
    * @example @lang js <caption>Manually invoking DruxtModule.fetch().</caption>
    * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
    * export default {
-   *   name: 'DruxtTestModule',
+   *   name: 'DruxtCustomModule',
    *   extends: DruxtModule,
    *   async fetch() {
    *     await DruxtModule.fetch.call(this)
    *   }
    *   druxt: {
-   *     componentOptions: () => ([['wrapper']]),
-   *     propsData: (ctx) => ({
-   *       bar: ctx.bar,
-   *       foo: ctx.foo,
-   *     }),
+   *     componentOptions: () => ([['Default']]),
+   *     propsData: ({ model }) => ({ value: model }),
    *   }
    * }
    */
@@ -330,8 +324,9 @@ export default {
      *
      * @example @lang js
      * {
-     *   bar: 'foo',
-     *   foo: 'bar',
+     *   $attrs: { entity: {}, fields: {}, langcode: 'en', schema: {} },
+     *   props: { value: {} },
+     *   propsData: { entity: {}, fields: {}, langcode: 'en', schema: {}, value: {} },
      * }
      *
      * @param {object} wrapperProps - Props registered by the Wrapper component.
@@ -493,6 +488,9 @@ export default {
 }
 
 /**
+ * The list of candidate Wrapper components, with naming parts and global
+ * registration state.
+ *
  * @typedef {object[]} Components
  * @property {boolean} global - Component global registration state.
  * @property {string} name - The component name.
@@ -501,13 +499,15 @@ export default {
  * @example @lang js
  * [{
  *   global: true,
- *   pascal: 'DruxtTestModuleWrapper',
- *   parts: ['Wrapper'],
+ *   name: 'DruxtEntityNodeArticleDefault',
+ *   parts: ['NodeArticle', 'Default'],
  * }]
  */
 
 /* eslint-disable jsdoc/valid-types -- the property is Vue's `is`; the namepath parser rejects that word in any spelling */
 /**
+ * The Wrapper component and propsData to be rendered.
+ *
  * @typedef {object} ComponentData
  * @property {object} $attrs - propsData not registered by the Wrapper component.
  * @property {string} is=DruxtWrapper - The Wrapper component name.
@@ -518,33 +518,38 @@ export default {
  *
  * @example @lang js
  * {
- *   $attrs: { bar: 'foo' },
- *   is: 'DruxtTestModuleWrapper',
+ *   $attrs: { entity: {}, fields: {}, schema: {} },
+ *   is: 'DruxtEntityNodeArticleDefault',
  *   options: [
- *     'DruxtTestModuleWrapper',
+ *     'DruxtEntityNodeArticleDefault',
+ *     'DruxtEntityDefault',
  *   ],
- *   props: { foo: 'bar' },
+ *   props: { value: {} },
  *   propsData: {
- *     bar: 'foo',
- *     foo: 'bar',
+ *     entity: {},
+ *     fields: {},
+ *     schema: {},
+ *     value: {},
  *   },
- *   settings: { fooBar: true },
+ *   settings: { query: {} },
  * }
  */
 /* eslint-enable jsdoc/valid-types */
 
 /**
+ * Druxt settings and registered props retrieved from the Wrapper component.
+ *
  * @typedef {object} WrapperData
  * @property {object} druxt - Druxt settings object for use by Druxt module.
  * @property {object} props - Registered props oject.
  *
  * @example @lang js
  * {
- *   druxt: { fooBar: true },
+ *   druxt: { query: { fields: ['path', 'title'] } },
  *   props: {
- *     foo: {
- *       type: String,
- *       default: '',
+ *     value: {
+ *       type: Object,
+ *       default: () => ({}),
  *     }
  *   }
  * }

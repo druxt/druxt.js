@@ -483,9 +483,9 @@ export { DruxtStore }
  */
 
 /**
- * @typedef {string|object} DruxtClientQuery
- *
  * A correctly formatted JSON:API query string or object.
+ *
+ * @typedef {string|object} DruxtClientQuery
  *
  * @example
  * page[limit]=5&page[offset]=5
