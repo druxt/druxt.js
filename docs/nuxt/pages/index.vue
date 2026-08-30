@@ -131,10 +131,10 @@
         <div>
           <h2 class="text-2xl font-semibold">Built with Druxt</h2>
           <p class="mt-4 text-base-content/70">
-            Four reference apps run against the same Drupal Umami demo content. Each one proves a different integration path, from a ten page pattern index to this editorial console.
+            Four reference apps run against the same Drupal Umami demo content. The smallest is a ten page pattern index. The largest is the Content Ops Console, above.
           </p>
           <p class="mt-3 text-sm text-base-content/70">
-            Content Ops Console: a dense editorial table with inline difficulty and prep time editing, and a needs attention filter, showing real content from the backend.
+            It edits difficulty and prep time inline, and filters for articles with fields still missing.
           </p>
           <NuxtLink class="btn btn-primary btn-sm mt-6" to="/how-to/example-apps">Explore the example apps</NuxtLink>
         </div>
