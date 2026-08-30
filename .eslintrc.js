@@ -12,9 +12,9 @@ module.exports = {
   plugins: ['jsdoc'],
   rules: {
     'jsdoc/require-returns': 'off',
-    'jsdoc/require-param': 'warn',
-    'jsdoc/check-param-names': 'warn',
-    'jsdoc/valid-types': 'warn',
+    'jsdoc/require-param': 'error',
+    'jsdoc/check-param-names': 'error',
+    'jsdoc/valid-types': 'error',
     'jsdoc/require-param-type': 'error',
     'jsdoc/require-param-description': 'error'
   },
