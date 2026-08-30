@@ -1,0 +1,59 @@
+{
+  "name": "Druxt",
+  "image": "mcr.microsoft.com/devcontainers/base:trixie",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "16.20.1"
+    },
+    // Installed through gh-release rather than the mise feature: that
+    // feature asks for the "latest" jdx/mise release and does not expose
+    // a tag filter, and mise now publishes vfox-* releases from the same
+    // repository. The regex keeps us on mise's own v-tags while still
+    // tracking the newest one.
+    "ghcr.io/devcontainers-extra/features/gh-release:1": {
+      "repo": "jdx/mise",
+      "binaryNames": "mise",
+      // mise ships the same build as .tar.gz, .tar.xz, .tar.zst and an
+      // extensionless binary; without this the resolver finds four
+      // matches and refuses to choose.
+      "assetRegex": ".tar.gz$",
+      "releaseTagRegex": "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "containerEnv": {
+    // Node is provided by the devcontainer feature above - .mise.toml's
+    // pin is for host users. Without this, `mise install` tries to build
+    // Node from source inside the container.
+    "MISE_DISABLE_TOOLS": "node"
+  },
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Nuxt (docs site / examples)",
+      "onAutoForward": "silent"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // Absolute path to where the gh-release feature installs the
+        // binary. The extension's default bare "mise" value is treated
+        // as workspace-relative, fails to hash, and re-prompts for
+        // approval on every config reload.
+        "mise.binPath": "/usr/local/bin/mise"
+      },
+      "extensions": [
+        "hverlin.mise-vscode",
+        "dbaeumer.vscode-eslint",
+        "EditorConfig.EditorConfig",
+        "davidanson.vscode-markdownlint",
+        "streetsidesoftware.code-spell-checker",
+        "redhat.vscode-yaml",
+        "Vue.volar"
+      ]
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "remoteUser": "vscode"
+}

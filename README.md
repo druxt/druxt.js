@@ -108,6 +108,12 @@ and all dependencies installed on first open.
 
 [![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/druxt/druxt.js)
 
+### Dev container
+
+This repository ships a dev container (`.devcontainer/devcontainer.json`) for VS Code, GitHub Codespaces and [DevPod](https://devpod.sh), with Node, Yarn and all dependencies installed on first open.
+
+[![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/druxt/druxt.js)
+
 ## License
 
 [MIT](https://github.com/druxt/druxt.js/blob/develop/LICENSE)
