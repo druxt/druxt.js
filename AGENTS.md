@@ -40,6 +40,12 @@ bumps. `renovate.json` freezes these packages from automated updates accordingly
 
 ## Commands
 
+The full local verification gate, in order:
+
+```bash
+yarn lint && yarn build && yarn test:unit && yarn build:docs
+```
+
 - `yarn build` — siroc build of all packages
 - `yarn test:unit` — jest (`NODE_OPTIONS=--unhandled-rejections=warn`)
 - `yarn lint` — eslint (`eslint:recommended` + `plugin:nuxt/recommended` +
@@ -86,9 +92,11 @@ The rule, and the reason it exists: **every `@param` line must have both a
 `{type}` and a `- description`, with no exceptions** (a `{typedef}` reference
 like `@param {addCollectionPayload} payload - The mutation payload.` counts -
 you don't have to re-enumerate a typedef's own properties inline). This is
-enforced by ESLint (`jsdoc/require-param-type` and
-`jsdoc/require-param-description`, both `error` in `.eslintrc.js`) - `yarn
-lint` fails on a bare `@param context.name` with no type/description.
+enforced by ESLint: `jsdoc/require-param-type`, `jsdoc/require-param-description`,
+`jsdoc/require-param`, `jsdoc/check-param-names` and `jsdoc/valid-types` are
+all `error` in `.eslintrc.js` - `yarn lint` fails on a bare
+`@param context.name` with no type/description, and on any undocumented or
+misnamed param.
 
 This rule exists because of a real regression: an earlier pass added bare
 `@param context.name` / `@param context.theme` stub lines across ~10 packages
@@ -96,12 +104,14 @@ This rule exists because of a real regression: an earlier pass added bare
 _warning_ ("this destructured property isn't mentioned at all"). The intent
 was reasonable, but the execution left the properties _mentioned_ with
 nothing to say about them, which renders as empty Type/Description table
-cells - worse than not mentioning them at all. All of it was reverted;
-`jsdoc/require-param`/`jsdoc/check-param-names` are left at `warn` (documenting
-every destructured property is aspirational, not everywhere is there yet) but
-`require-param-type`/`require-param-description` are `error` specifically
-because a `@param` line that exists but says nothing is strictly worse than a
-missing one - it looks intentional and finished when it isn't.
+cells - worse than not mentioning them at all. All of it was reverted, and
+every destructured property has since been documented for real, so the
+param-coverage rules now sit at `error` alongside the type/description pair.
+The pre-commit hook applies eslint's suggestion-type fixes, so a new
+undocumented param gets its `@param` line scaffolded automatically - and the
+type/description errors then block the commit until the line says something.
+A `@param` that exists but says nothing is strictly worse than a missing
+one - it looks intentional and finished when it isn't.
 
 If a param is legitimately hard to give a real one-line description, prefer a
 named `@typedef` (see `addCollectionPayload` and siblings in
