@@ -1,7 +1,7 @@
 /**
  * Druxt utility class.
  *
- * @deprecated in druxt:0.17.0 and is removed from druxt:1.0.0.
+ * @deprecated in druxt:0.17.0 and is removed from druxt:2.0.0.
  *   Use DruxtModule instead.
  * @see https://druxtjs.org/modules/druxt/deprecations
  * @private

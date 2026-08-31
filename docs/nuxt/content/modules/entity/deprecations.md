@@ -92,7 +92,7 @@ suggestion-system mechanics from scratch.
 > [druxt-entity] Use the component suggestion system.
 
 **Deprecated in:** `druxt-entity:0.5.0`
-**Removed in:** `druxt-entity:1.0.0`
+**Removed in:** `druxt-entity:2.0.0`
 
 `options` was an early mechanism for configuring field slots, replaced by the
 [component suggestion system](/explanation/component-resolution) in `0.5.0`.
@@ -104,7 +104,7 @@ wrapper component instead of configuring options.
 > [druxt-entity] Use `DruxtModule` instead.
 
 **Deprecated in:** `druxt-entity:0.5.0`
-**Removed in:** `druxt-entity:1.0.0`
+**Removed in:** `druxt-entity:2.0.0`
 
 These internal mixins (both `@private`) predate `DruxtModule` absorbing the
 same behaviour. They have no generated API page, so they are recorded here:
