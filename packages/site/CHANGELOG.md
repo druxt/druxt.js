@@ -32,6 +32,7 @@
 
 ### Minor Changes
 
+- Changed the default menu data source to the JSON:API Menu Items module. ([#539](https://github.com/druxt/druxt.js/issues/539), [`3330187`](https://github.com/druxt/druxt.js/commit/33301873))
 - Added watch for 'theme' prop. ([`2f2a7cc`](https://github.com/druxt/druxt.js/commit/2f2a7cce))
 
 ### Patch Changes
@@ -126,12 +127,14 @@
 
 ### Patch Changes
 
+- Enabled Nuxt components auto-discovery by default. ([#310](https://github.com/druxt/druxt.js/issues/310), [`e3e634c`](https://github.com/druxt/druxt.js/commit/e3e634cf))
 - Updated dependencies: druxt@0.12.0, druxt-router@0.22.0, druxt-menu@0.14.1, druxt-entity@0.20.0, druxt-views@0.15.0, druxt-blocks@0.13.1, druxt-breadcrumb@0.12.1, druxt-schema@0.8.1.
 
 ## 0.9.0 - 2021-09-29
 
 ### Minor Changes
 
+- Defaulted the router pages option on the presence of a pages/ directory. ([#292](https://github.com/druxt/druxt.js/issues/292), [`9d905e8`](https://github.com/druxt/druxt.js/commit/9d905e86))
 - Updated storybook integration. ([`8d28c18`](https://github.com/druxt/druxt.js/commit/8d28c18))
 - Added default theme option and fallback to DruxtSite component. ([`97d24d5`](https://github.com/druxt/druxt.js/commit/97d24d5))
 - Added default layout. ([`97d24d5`](https://github.com/druxt/druxt.js/commit/97d24d5))

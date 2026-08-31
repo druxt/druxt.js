@@ -1,5 +1,11 @@
 # druxt-breadcrumb
 
+## 0.17.2 - 2023-07-25
+
+### Patch Changes
+
+- Updated dependencies: druxt@0.23.0, druxt-blocks@0.17.3, druxt-router@0.30.0.
+
 ## 0.17.1 - 2023-07-05
 
 ### Patch Changes

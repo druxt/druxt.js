@@ -2,6 +2,10 @@
 
 ## 0.24.0 - 2023-11-02
 
+- No package changes; version alignment release.
+
+## 0.23.0 - 2023-07-25
+
 ### Minor Changes
 
 - Added attrs passthrough to the DruxtWrapper component, so attributes like `role` set via the wrapper reach the rendered markup. ([#87](https://github.com/druxt/druxt.js/issues/87), [`7664d90`](https://github.com/druxt/druxt.js/commit/7664d90d))
@@ -133,7 +137,7 @@
 ### Minor Changes
 
 - Made the \$druxt plugin first to be available to all Druxt module plugins. ([`dc226c2`](https://github.com/druxt/druxt.js/commit/dc226c2))
-- Added improved error handling. ([`7b749bd`](https://github.com/druxt/druxt.js/commit/7b749bd))
+- Added improved error handling, with more context in error messages. ([#408](https://github.com/druxt/druxt.js/issues/408), [`7b749bd`](https://github.com/druxt/druxt.js/commit/7b749bd5), [`bc079cf`](https://github.com/druxt/druxt.js/commit/bc079cfb))
 
 ## 0.15.0 - 2021-12-11
 
@@ -253,6 +257,10 @@
 - Added Druxt API URL to Nuxt CLI badge. ([`317184e`](https://github.com/druxt/druxt.js/commit/317184e))
 
 ## 0.9.0 - 2021-09-13
+
+### Patch Changes
+
+- Updated the scule dependency to ^0.2.0. ([`d27081b`](https://github.com/druxt/druxt.js/commit/d27081b2))
 
 ### Minor Changes
 

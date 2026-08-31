@@ -1,5 +1,11 @@
 # druxt-schema
 
+## 0.11.3 - 2023-07-25
+
+### Patch Changes
+
+- Updated dependencies: druxt@0.23.0.
+
 ## 0.11.2 - 2023-07-05
 
 ### Patch Changes
@@ -39,6 +45,7 @@
 
 ### Patch Changes
 
+- Added support for the @nuxtjs/axios module. ([#63](https://github.com/druxt/druxt.js/issues/63), [`e3d5238`](https://github.com/druxt/druxt.js/commit/e3d5238c))
 - Added error if no schema files are generated. ([`de8fc92`](https://github.com/druxt/druxt.js/commit/de8fc92))
 - Updated dependencies: druxt@0.18.0.
 
@@ -122,6 +129,22 @@
 ### Patch Changes
 
 - Fixed issue with inconsistent schemas.
+
+## 0.7.6 - 2021-05-24
+
+- No release notes were recorded for this version.
+
+## 0.7.5 - 2021-05-24
+
+- No release notes were recorded for this version.
+
+## 0.7.4 - 2021-04-27
+
+- No release notes were recorded for this version.
+
+## 0.7.3 - 2021-04-27
+
+- No release notes were recorded for this version.
 
 ## 0.7.2 - 2021-03-29
 

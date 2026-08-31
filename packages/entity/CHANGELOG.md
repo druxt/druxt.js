@@ -1,5 +1,11 @@
 # druxt-entity
 
+## 0.28.1 - 2023-07-25
+
+### Patch Changes
+
+- Updated dependencies: druxt@0.23.0, druxt-router@0.30.0, druxt-schema@0.11.3.
+
 ## 0.28.0 - 2023-07-05
 
 ### Minor Changes
@@ -164,6 +170,7 @@
 
 ### Minor Changes
 
+- Added API Proxy support. ([#362](https://github.com/druxt/druxt.js/issues/362), [`77ab204`](https://github.com/druxt/druxt.js/commit/77ab204c))
 - Added **include** option and the ability to filter related resources. ([`025315a`](https://github.com/druxt/druxt.js/commit/025315a))
 
   ```js

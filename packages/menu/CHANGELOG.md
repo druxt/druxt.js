@@ -130,6 +130,7 @@
 
 ### Minor Changes
 
+- Added API Proxy support. ([#362](https://github.com/druxt/druxt.js/issues/362), [`77ab204`](https://github.com/druxt/druxt.js/commit/77ab204c))
 - Refactored DruxtModule fetch hooks. ([`e7b1533`](https://github.com/druxt/druxt.js/commit/e7b1533))
 
 ### Patch Changes
@@ -137,6 +138,10 @@
 - Updated dependencies: druxt-blocks@0.14.0, druxt@0.13.0.
 
 ## 0.14.3 - 2021-10-13
+
+- Republish of 0.14.2; no package changes.
+
+## 0.14.2 - 2021-10-13
 
 ### Patch Changes
 

@@ -1,5 +1,11 @@
 # druxt-views
 
+## 0.22.2 - 2023-07-25
+
+### Patch Changes
+
+- Updated dependencies: druxt@0.23.0, druxt-blocks@0.17.3, druxt-entity@0.28.1, druxt-router@0.30.0.
+
 ## 0.22.1 - 2023-07-05
 
 ### Patch Changes
@@ -82,6 +88,7 @@
 
 ### Patch Changes
 
+- Added support for the @nuxtjs/axios module. ([#63](https://github.com/druxt/druxt.js/issues/63), [`e3d5238`](https://github.com/druxt/druxt.js/commit/e3d5238c))
 - Updated dependencies: druxt@0.18.0, druxt-blocks@0.15.1, druxt-entity@0.24.2, druxt-router@0.26.1.
 
 ## 0.18.0 - 2022-02-07
@@ -137,6 +144,7 @@
 
 ### Minor Changes
 
+- Added API Proxy support. ([#362](https://github.com/druxt/druxt.js/issues/362), [`77ab204`](https://github.com/druxt/druxt.js/commit/77ab204c))
 - Refactored DruxtModule fetch hooks. ([`e7b1533`](https://github.com/druxt/druxt.js/commit/e7b1533))
 
 ### Patch Changes

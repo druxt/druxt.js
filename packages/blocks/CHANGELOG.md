@@ -1,5 +1,11 @@
 # druxt-blocks
 
+## 0.17.3 - 2023-07-25
+
+### Patch Changes
+
+- Updated dependencies: druxt@0.23.0, druxt-entity@0.28.1, druxt-router@0.30.0.
+
 ## 0.17.2 - 2023-07-05
 
 ### Patch Changes
@@ -16,6 +22,7 @@
 
 ### Minor Changes
 
+- Added Vue devtools integration. ([#583](https://github.com/druxt/druxt.js/issues/583), [`29905ff`](https://github.com/druxt/druxt.js/commit/29905ff6))
 - Updated missing vue component message with DruxtDevelTemplate tool. ([#578](https://github.com/druxt/druxt.js/issues/578), [`f6b4a66`](https://github.com/druxt/druxt.js/commit/f6b4a664))
 
 ### Patch Changes
@@ -131,6 +138,7 @@
 
 ### Minor Changes
 
+- Added API Proxy support. ([#362](https://github.com/druxt/druxt.js/issues/362), [`77ab204`](https://github.com/druxt/druxt.js/commit/77ab204c))
 - Refactored DruxtModule fetch hooks. ([`e7b1533`](https://github.com/druxt/druxt.js/commit/e7b1533))
 
 ### Patch Changes

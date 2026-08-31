@@ -2,13 +2,19 @@
 
 ## 0.31.0 - 2023-11-02
 
+### Patch Changes
+
+- Updated dependencies: druxt@0.24.0.
+
+## 0.30.0 - 2023-07-25
+
 ### Minor Changes
 
 - Added @nuxtjs/axios support to the Router plugin, so requests to the Decoupled Router carry the app Axios configuration, including authentication headers. ([#660](https://github.com/druxt/druxt.js/issues/660), [`8609410`](https://github.com/druxt/druxt.js/commit/86094105))
 
 ### Patch Changes
 
-- Updated dependencies: druxt@0.24.0.
+- Updated dependencies: druxt@0.23.0.
 
 ## 0.29.1 - 2023-07-05
 
@@ -79,6 +85,7 @@
 
 ### Patch Changes
 
+- Added support for the @nuxtjs/axios module. ([#63](https://github.com/druxt/druxt.js/issues/63), [`e3d5238`](https://github.com/druxt/druxt.js/commit/e3d5238c))
 - Updated dependencies: druxt@0.18.0.
 
 ## 0.26.0 - 2022-02-07
