@@ -5,7 +5,7 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * The DruxtRouter component renders a Drupal decoupled route, or path, using
  * the appropriate Druxt component.
  *
- * For instance, using the path `/node/1` would render a DruxtEntity component.
+ * The path `/node/1` renders a DruxtEntity component.
  *
  * The Vue router path will be used if not path is defined.
  *

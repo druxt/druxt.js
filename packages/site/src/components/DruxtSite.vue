@@ -10,7 +10,7 @@ import { mapActions } from 'vuex'
  * While Drupal provides placement configuration for blocks, it does not provide
  * any information on where each region should be placed.
  *
- * All regions are provided as scoped slots for the Druxt Wrapper component.
+ * Each region is provided as a scoped slot for the Druxt Wrapper component.
  *
  * @example @lang vue
  * <template>
