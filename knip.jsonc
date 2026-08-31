@@ -5,6 +5,12 @@
     // knip's static analysis doesn't parse .gitlab-ci.yml / workflow files.
     "eslint-junit",
     "jest-junit",
+    // Required by docs/nuxt/lib/og-images.js, reached only through
+    // docs/nuxt/scripts/og-render.js, which nuxt.config.js spawns by path
+    // string via execFileSync (a child process - see the comment there) -
+    // knip cannot trace a spawn. Verified via grep before adding.
+    "satori",
+    "@resvg/resvg-js",
     // Native-module build tool - invoked implicitly by npm/node-gyp-build
     // during install (e.g. for `re2`), never imported by name.
     "node-gyp",

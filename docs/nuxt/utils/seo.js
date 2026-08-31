@@ -8,7 +8,7 @@
  * share card and the canonical URL cannot drift apart.
  */
 
-import { SITE_ORIGIN, SITE_NAME, SITE_DESCRIPTION, TITLE_SUFFIX, TWITTER_HANDLE, SECTIONS, canonicalUrl, sectionFor, titleFromPath } from '~/lib/site'
+import { SITE_ORIGIN, SITE_NAME, SITE_DESCRIPTION, TITLE_SUFFIX, TWITTER_HANDLE, SECTIONS, canonicalUrl, ogImageUrl, sectionFor, titleFromPath } from '~/lib/site'
 
 /** Longest description worth emitting. Google truncates around 160 characters. */
 const DESCRIPTION_LIMIT = 160
@@ -74,7 +74,10 @@ export const seoHead = ({ title, description, path, image, type }) => {
   // no browser chrome to say which site it came from. The <title> tag gets the
   // suffix from head.titleTemplate, so passing it here would double it.
   const shareTitle = heading ? heading + TITLE_SUFFIX : SITE_NAME
-  const shareImage = image || SITE_ORIGIN + '/og-druxt.png'
+  // Section pages get their generated card; everything else keeps the
+  // static fallback. Both derive from the same content index, so a page
+  // that generates also gets a card.
+  const shareImage = image || ogImageUrl(path) || SITE_ORIGIN + '/og-druxt.png'
 
   return {
     title: heading || undefined,

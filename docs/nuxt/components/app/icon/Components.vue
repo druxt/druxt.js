@@ -7,10 +7,23 @@
     aria-hidden="true"
   >
     <path
+      v-for="d of paths"
+      :key="d"
       stroke-linecap="round"
       stroke-linejoin="round"
       stroke-width="2"
-      d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"
+      :d="d"
     />
   </svg>
 </template>
+
+<script>
+import paths from './paths'
+
+export default {
+  computed: {
+    /** This section's path data from the shared geometry. */
+    paths: () => paths.components,
+  },
+}
+</script>
