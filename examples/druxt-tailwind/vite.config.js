@@ -35,10 +35,10 @@ export default defineConfig({
   },
   server: {
     host: true,
-    // Match the port the Nuxt examples serve on, so the root
-    // `example:druxt-tailwind:test` script (start-server-and-test waiting on
-    // localhost:3000) and the Cypress baseUrl work unchanged.
-    port: 3000,
+    // Each example app owns a port (site 3000, daisyui 3001, tailwind
+    // 3002, bootstrapvue 3004), so any two can run side by side locally
+    // without colliding. The root test script and Cypress baseUrl match.
+    port: 3002,
     strictPort: true,
     proxy,
     // Vite rejects requests whose Host header isn't localhost/an IP by
