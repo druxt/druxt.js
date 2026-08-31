@@ -70,10 +70,12 @@ export default {
     // swaps this layout's entire surrounding markup (sidebar, TOC aside),
     // not just the <Nuxt/> page slot, which the transition mechanism isn't
     // built to handle. Path-gated (not hash) so TOC anchor jumps still work.
+    // 'instant' opts route changes out of the html { scroll-behavior: smooth }
+    // in app.css, which is for in-page scrolls only.
     $route(to, from) {
       this.sidebar = false
       this.searchOpen = false
-      if (to.path !== from.path) window.scrollTo(0, 0)
+      if (to.path !== from.path) window.scrollTo({ top: 0, behavior: 'instant' })
     },
 
     /**
