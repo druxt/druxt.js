@@ -30,7 +30,7 @@
 
 ### Patch Changes
 
-- Sanitised empty emitted strings to prevent `true` error on themed text fields. ([#552](https://github.com/druxt/druxt.js/issues/552), [`cc18581`](https://github.com/druxt/druxt.js/commit/cc185819))
+- Sanitised empty emitted strings, fixing themed text fields whose value became `true` when emptied. ([#552](https://github.com/druxt/druxt.js/issues/552), [`cc18581`](https://github.com/druxt/druxt.js/commit/cc185819))
 
 ## 0.26.0 - 2022-08-12
 

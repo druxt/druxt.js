@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- Added @nuxtjs/axios support to the Router plugin. ([#660](https://github.com/druxt/druxt.js/issues/660), [`8609410`](https://github.com/druxt/druxt.js/commit/86094105))
+- Added @nuxtjs/axios support to the Router plugin, so requests to the Decoupled Router carry the app Axios configuration, including authentication headers. ([#660](https://github.com/druxt/druxt.js/issues/660), [`8609410`](https://github.com/druxt/druxt.js/commit/86094105))
 
 ### Patch Changes
 

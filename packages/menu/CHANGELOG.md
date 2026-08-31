@@ -4,13 +4,13 @@
 
 ### Minor Changes
 
-- Added druxtMenu/flushEntities Vuex mutation. ([#684](https://github.com/druxt/druxt.js/issues/684), [`26b1bc6`](https://github.com/druxt/druxt.js/commit/26b1bc6f))
+- Added the druxtMenu/flushEntities Vuex mutation, so cached menus can be flushed, for example on logout. ([#684](https://github.com/druxt/druxt.js/issues/684), [`26b1bc6`](https://github.com/druxt/druxt.js/commit/26b1bc6f))
 
 ## 0.20.0 - 2023-11-08
 
 ### Minor Changes
 
-- Updated menu items when logged in on static generated site. ([#679](https://github.com/druxt/druxt.js/issues/679), [`6298025`](https://github.com/druxt/druxt.js/commit/62980259))
+- Fixed menus not updating with authenticated links when logged in on a statically generated site. ([#679](https://github.com/druxt/druxt.js/issues/679), [`6298025`](https://github.com/druxt/druxt.js/commit/62980259))
 
 ## 0.19.3 - 2023-11-02
 
@@ -44,7 +44,7 @@
 
 ### Minor Changes
 
-- Use JSON:API Menu Items data by default. ([#539](https://github.com/druxt/druxt.js/issues/539), [`3330187`](https://github.com/druxt/druxt.js/commit/33301873))
+- Changed the default menu data source to the JSON:API Menu Items module, which covers the system and plugin menus that core JSON:API menu items cannot provide; set `menu.jsonApiMenuItems: false` for the old behaviour. ([#539](https://github.com/druxt/druxt.js/issues/539), [`3330187`](https://github.com/druxt/druxt.js/commit/33301873))
 - Enabled dependencies when only using Nuxt druxt-menu module. ([`54c8ece`](https://github.com/druxt/druxt.js/commit/54c8ece3))
 
 ### Patch Changes

@@ -16,7 +16,7 @@
 
 ### Minor Changes
 
-- Added permission check to schema generation. ([#543](https://github.com/druxt/druxt.js/issues/543), [`49b6787`](https://github.com/druxt/druxt.js/commit/49b67872))
+- Added a permission check to schema generation, part of the fix for permission-restricted blocks breaking DruxtSite page renders. ([#543](https://github.com/druxt/druxt.js/issues/543), [`49b6787`](https://github.com/druxt/druxt.js/commit/49b67872))
 
 ### Patch Changes
 
