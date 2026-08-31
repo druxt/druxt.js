@@ -1,4 +1,5 @@
 aarch
+amazeeio
 antfu
 apos
 Appétit
@@ -157,6 +158,7 @@ unjs
 unlighthouse
 unregisters
 Unsets
+uselagoon
 Valeryan
 vetur
 vfox
