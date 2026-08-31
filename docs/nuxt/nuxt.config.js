@@ -94,6 +94,7 @@ export default {
   plugins: [
     '~/plugins/color-mode-theme.client.js',
     '~/plugins/analytics.client.js',
+    '~/plugins/chunk-reload.client.js',
   ],
   components: true,
 
@@ -123,6 +124,16 @@ export default {
   },
 
   pwa: {
+    // No service worker: a worker caching a docs site serves stale
+    // documentation, and it pins open tabs to dead builds whose chunks are
+    // gone, leaving links that silently do nothing. enabled: false ships
+    // @nuxtjs/pwa's self-destroying sw.js plus a client script that
+    // unregisters existing workers and clears their caches, so browsers
+    // that installed the old worker heal on their next visit.
+    workbox: {
+      enabled: false,
+    },
+
     // @nuxtjs/pwa's meta module also emits Open Graph and Twitter tags, built
     // from this site's package.json. That made it a third source of share
     // metadata, and the values were wrong: og:title came out as "druxtjs-org",
