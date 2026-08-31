@@ -5,8 +5,25 @@
  * ("feat(#87): add attrs passthrough") into changelog sentences with the
  * issue and commit linked ("Added attrs passthrough ([#87](…), [abc1234](…))").
  * Pure string transforms: no network, no GitHub API, works offline.
+ *
+ * Repo-agnostic: the link base comes from the root package.json repository
+ * field, so the same file serves every Druxt repository.
  */
-const REPO = 'https://github.com/druxt/druxt.js'
+const path = require('path')
+
+const REPO = (() => {
+  try {
+    // Changesets runs from the repository root.
+    const pkg = require(path.join(process.cwd(), 'package.json'))
+    const url = typeof pkg.repository === 'string' ? pkg.repository : (pkg.repository || {}).url || ''
+    const match = url.match(/github\.com[/:]([\w.-]+\/[\w.-]+?)(?:\.git)?$/)
+      || url.match(/^github:([\w.-]+\/[\w.-]+)$/)
+    if (match) return `https://github.com/${match[1]}`
+  } catch {
+    // Fall through to the default.
+  }
+  return 'https://github.com/druxt/druxt.js'
+})()
 
 // Leading verbs normalized to Keep a Changelog past tense.
 const VERBS = {
