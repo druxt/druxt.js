@@ -33,6 +33,11 @@ green. All 11 packages (`druxt`, `blocks`, `breadcrumb`, `entity`, `menu`,
 `router`, `schema`, `site`, `views`, `docgen`, `test-utils`) must produce their
 `dist/*.ssr.js` + `dist/*.esm.js` (docgen outputs `bin/druxt-docgen.js`).
 
+Nuxt 2's esm config loader patches the module system: a `nuxt.config.js`
+build hook that `require`s a modern ESM-leaning package (satori, resvg)
+dies silently — no stack, exit 1 in CI. Spawn a clean child process for
+such work instead (see `docs/nuxt/scripts/og-render.js`).
+
 The build stack (Node 16, Yarn 3, jest 29, eslint 7, Vue 2.7, Nuxt 2, siroc) is
 intentionally pinned — a future major upgrade (Node 18+, Vue 3, Nuxt 3/4) is a
 separate, deliberate effort, not something to drift into via routine dependency
