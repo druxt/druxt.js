@@ -11,7 +11,7 @@ description: The retired DruxtMenu items computed property, and what replaces it
 > [druxt-menu] The `items` computed property is deprecated.
 
 **Deprecated in:** `druxt-menu:0.11.0`
-**Removed in:** `druxt-menu:1.0.0`
+**Removed in:** `druxt-menu:2.0.0`
 
 `0.11.0` added `v-model` support to `DruxtMenu`. The processed menu items
 moved to the standard `model` property, and the `items` computed stayed

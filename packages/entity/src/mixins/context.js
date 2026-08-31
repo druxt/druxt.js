@@ -5,7 +5,7 @@
  * components.
  *
  * @mixin
- * @deprecated in druxt-entity:0.5.0 and is removed from druxt-entity:1.0.0.
+ * @deprecated in druxt-entity:0.5.0 and is removed from druxt-entity:2.0.0.
  *   Use DruxtModule instead.
  * @see https://druxtjs.org/modules/entity/deprecations
  * @private

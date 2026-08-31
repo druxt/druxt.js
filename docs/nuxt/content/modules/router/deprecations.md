@@ -35,7 +35,7 @@ pass-through methods are.
 > [druxt-router] Use the DruxtStore instead.
 
 **Deprecated in:** `druxt-router:0.18.0`
-**Removed in:** `druxt-router:1.0.0`
+**Removed in:** `druxt-router:2.0.0`
 
 The same release deprecated the `druxtRouter` store's generic resource
 members. Routing state (`route`, `routes`, `redirects`) stays in

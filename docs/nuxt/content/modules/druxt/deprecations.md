@@ -30,7 +30,7 @@ this.$store.commit('druxt/addResource', { resource });
 > [druxt] Use `DruxtModule` instead.
 
 **Deprecated in:** `druxt:0.17.0`
-**Removed in:** `druxt:1.0.0`
+**Removed in:** `druxt:2.0.0`
 
 These were internal building blocks (all marked `@private`) from before
 `DruxtModule` became the shared base component. They are superseded by it and
