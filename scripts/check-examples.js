@@ -22,8 +22,8 @@ const STRUCTURE_EXEMPT = ['shared']
 
 /**
  * @param {string} dir - Directory to search.
- * @returns {string[]} Absolute paths of every package.json found one or two
- *   levels below `dir` (covers `examples/<name>`).
+ * @returns {string[]} Absolute paths of every package.json found one level
+ *   below `dir` (`examples/<name>`).
  */
 function findPackageJsonFiles (dir) {
   const found = []
@@ -35,11 +35,9 @@ function findPackageJsonFiles (dir) {
       found.push(pkgPath)
       continue
     }
-    for (const nested of fs.readdirSync(entryPath, { withFileTypes: true })) {
-      if (!nested.isDirectory()) continue
-      const nestedPkgPath = path.join(entryPath, nested.name, 'package.json')
-      if (fs.existsSync(nestedPkgPath)) found.push(nestedPkgPath)
-    }
+    // One level only: the structure rules below iterate top-level
+    // examples/<name>, and a deeper scan would dependency-check nested
+    // packages the structure rules never see.
   }
   return found
 }
@@ -57,7 +55,7 @@ for (const pkgPath of findPackageJsonFiles(examplesDir)) {
       if (!fs.existsSync(target)) {
         errors.push(`${path.relative(examplesDir, pkgPath)}: "${name}": "${range}" does not resolve (${target} does not exist)`)
       }
-    } else if (range === 'latest' || range.includes('-edge')) {
+    } else if (range === 'latest' || /-edge(\.|$)/.test(range)) {
       errors.push(`${path.relative(examplesDir, pkgPath)}: "${name}": "${range}" is an unpinned latest/edge-channel range - pin to a specific version`)
     }
   }

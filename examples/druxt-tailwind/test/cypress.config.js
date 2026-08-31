@@ -6,6 +6,6 @@ module.exports = defineConfig({
     openMode: 0,
   },
   e2e: {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://localhost:3002',
   },
 });
