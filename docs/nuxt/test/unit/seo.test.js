@@ -208,15 +208,11 @@ describe('SITE_ORIGIN', () => {
     expect(load()).toBe('https://tunnel.example')
   })
 
-  test('preview environments derive their own route', () => {
+  test('a Lagoon route alone does not change the baked origin', () => {
+    // Routes are runtime-only in Lagoon; scripts/start.sh owns the preview
+    // origin. Baking a route here would silently diverge from that.
     process.env.LAGOON_ENVIRONMENT_TYPE = 'development'
     process.env.LAGOON_ROUTE = 'https://pr.druxtjs-org.au2.amazee.io'
-    expect(load()).toBe('https://pr.druxtjs-org.au2.amazee.io')
-  })
-
-  test('production ignores its route and keeps the canonical domain', () => {
-    process.env.LAGOON_ENVIRONMENT_TYPE = 'production'
-    process.env.LAGOON_ROUTE = 'https://druxtjs.org'
     expect(load()).toBe('https://druxtjs.org')
   })
 
