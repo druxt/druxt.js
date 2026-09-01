@@ -361,10 +361,84 @@ docs:review:
       curl -sL "https://github.com/cloudflare/cloudflared/releases/download/${cf_version}/cloudflared-linux-${cf_arch}" -o /usr/local/bin/cloudflared
       echo "${cf_sha256}  /usr/local/bin/cloudflared" | sha256sum -c - || { echo "cloudflared checksum mismatch" >&2; exit 1; }
       chmod +x /usr/local/bin/cloudflared
-    - npx --yes serve -l 8080 dist &
-    - sleep 3
-    - echo "Tunnel starting - the review URL will appear below as https://*.trycloudflare.com"
-    - cloudflared tunnel --url http://localhost:8080 --no-autoupdate
+    # Serve a copy, never dist itself: the generate above baked the
+    # production origin into og:image, og:url and canonical URLs (plus the
+    # hydration payload), so scrapers pointed at a preview would follow
+    # og:image to production where the files do not exist yet. The copy is
+    # rewritten to the tunnel origin once the URL is known, and again on
+    # every recreation, keeping one generate per job.
+    - rm -rf dist-serve && cp -a dist dist-serve
+    - npx --yes serve -l 8080 dist-serve &
+    # Supervised: account-less quick tunnels can register and then die
+    # silently (the hostname drops out of DNS while cloudflared keeps
+    # running and the log shows nothing), leaving the job green with a dead
+    # URL. So the URL is verified through the edge before it is announced,
+    # probed every minute afterwards, and the tunnel is recreated when it
+    # goes dark. http2 transport: QUIC needs UDP buffer sizes the docker
+    # runner does not grant.
+    - |
+      failures=0
+      while [ "$failures" -lt 5 ]; do
+        : > tunnel.log
+        cloudflared tunnel --url http://localhost:8080 --no-autoupdate --protocol http2 >> tunnel.log 2>&1 &
+        cf_pid=$!
+        url=""
+        tries=0
+        while [ "$tries" -lt 30 ] && [ -z "$url" ]; do
+          url=$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' tunnel.log | head -1 || true)
+          [ -n "$url" ] || sleep 2
+          tries=$((tries + 1))
+        done
+        # A fresh quick-tunnel hostname can take minutes to appear in public
+        # DNS, and every recreation issues a new name that restarts that
+        # wait - so probe one hostname patiently (curl exit 6 is the DNS
+        # lag) and recreate only when cloudflared itself has died.
+        ok=""
+        if [ -n "$url" ]; then
+          probes=0
+          while [ "$probes" -lt 30 ]; do
+            rc=0
+            curl -sf -o /dev/null --max-time 15 "$url/" || rc=$?
+            if [ "$rc" -eq 0 ]; then ok=1; break; fi
+            if ! kill -0 "$cf_pid" 2>/dev/null; then echo "cloudflared exited while waiting"; break; fi
+            if [ "$((probes % 6))" -eq 0 ]; then echo "waiting for $url (curl exit $rc)"; fi
+            probes=$((probes + 1))
+            sleep 10
+          done
+        fi
+        if [ -z "$ok" ]; then
+          echo "Quick tunnel failed to come up (url: ${url:-none}); recreating..."
+          kill "$cf_pid" 2>/dev/null || true
+          wait "$cf_pid" 2>/dev/null || true
+          failures=$((failures + 1))
+          continue
+        fi
+        rm -rf dist-serve && cp -a dist dist-serve
+        grep -rIl 'https://druxtjs.org' dist-serve | xargs -r sed -i "s|https://druxtjs.org|$url|g"
+        echo "=============================================================="
+        echo "  REVIEW URL: $url  (verified; share URLs rewritten to it)"
+        echo "=============================================================="
+        announced=$(date +%s)
+        while kill -0 "$cf_pid" 2>/dev/null; do
+          sleep 60
+          if ! curl -sf -o /dev/null --max-time 30 "$url/"; then
+            echo "Tunnel went dark at the edge; recreating..."
+            kill "$cf_pid" 2>/dev/null || true
+            break
+          fi
+        done
+        wait "$cf_pid" 2>/dev/null || true
+        # A tunnel that dies within five minutes of announcing is a flap
+        # and counts toward the cap; one that served a while earns a reset.
+        if [ "$(( $(date +%s) - announced ))" -lt 300 ]; then
+          failures=$((failures + 1))
+        else
+          failures=0
+        fi
+      done
+      echo "Giving up: the quick tunnel failed 5 times in a row" >&2
+      tail -50 tunnel.log >&2 || true
+      exit 1
     - section_end "tunnel"
 
 docs:build:
