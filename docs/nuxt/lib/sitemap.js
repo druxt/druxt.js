@@ -31,23 +31,16 @@ const escapeXml = (value) => String(value)
   .replace(/'/g, '&apos;')
 
 /**
- * `YYYY-MM-DD`, the W3C date form sitemaps accept for `<lastmod>`.
- *
- * @param {Date} date - Source date.
- * @returns {string} The formatted date.
- */
-const isoDate = (date) => new Date(date).toISOString().slice(0, 10)
-
-/**
  * One `<url>` entry.
  *
- * @param {object} entry - The URL, lastmod, changefreq and priority.
+ * @param {object} entry - The URL, changefreq and priority.
  * @returns {string} The XML fragment.
  */
+// No <lastmod>: file mtimes are checkout time in CI, so every URL would
+// claim fresh modification on every build - worse than omitting it.
 const urlEntry = (entry) => [
   '  <url>',
   '    <loc>' + escapeXml(entry.loc) + '</loc>',
-  '    <lastmod>' + entry.lastmod + '</lastmod>',
   '    <changefreq>' + entry.changefreq + '</changefreq>',
   '    <priority>' + entry.priority.toFixed(1) + '</priority>',
   '  </url>',
@@ -72,17 +65,10 @@ const buildSitemap = (docs, options) => {
   const origin = settings.origin || SITE_ORIGIN
   const now = settings.now || new Date()
 
-  const newest = docs.reduce(
-    (latest, doc) => (doc.mtime > latest ? doc.mtime : latest),
-    new Date(0),
-  )
 
   const entries = [{
     loc: origin + '/',
-    // The homepage is hand-built rather than a content file, so it has no mtime
-    // of its own. The newest document is the honest answer: it is when the site
     // last changed in a way a crawler would care about.
-    lastmod: isoDate(docs.length ? newest : now),
     changefreq: HOME.changefreq,
     priority: HOME.priority,
   }]
@@ -96,7 +82,6 @@ const buildSitemap = (docs, options) => {
     const section = SECTIONS[doc.section]
     entries.push({
       loc: origin + doc.route,
-      lastmod: isoDate(doc.mtime),
       changefreq: section ? section.changefreq : 'monthly',
       priority: section ? section.priority : 0.5,
     })
@@ -111,4 +96,4 @@ const buildSitemap = (docs, options) => {
   ].join('\n')
 }
 
-module.exports = { buildSitemap, escapeXml, isoDate }
+module.exports = { buildSitemap, escapeXml }

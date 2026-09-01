@@ -3,7 +3,7 @@
  * partially, so the escaping and structure here are worth pinning.
  */
 
-const { buildSitemap, escapeXml, isoDate } = require('../../lib/sitemap')
+const { buildSitemap, escapeXml } = require('../../lib/sitemap')
 
 /** A document as readContent() returns one. */
 const doc = (over) => ({
@@ -12,7 +12,6 @@ const doc = (over) => ({
   description: 'How to theme.',
   weight: 0,
   section: 'guide',
-  mtime: new Date('2024-01-02T10:00:00Z'),
   ...over,
 })
 
@@ -27,12 +26,6 @@ describe('escapeXml', () => {
   })
 })
 
-describe('isoDate', () => {
-  it('formats as the W3C date sitemaps accept', () => {
-    expect(isoDate(new Date('2024-03-04T12:34:56Z'))).toBe('2024-03-04')
-  })
-})
-
 describe('buildSitemap', () => {
   const options = { origin: 'https://example.test', now: new Date('2024-01-03T00:00:00Z') }
 
@@ -42,7 +35,7 @@ describe('buildSitemap', () => {
     expect(xml.match(/<url>/g)).toHaveLength(2)
     expect(xml).toContain('<loc>https://example.test/</loc>')
     expect(xml).toContain('<loc>https://example.test/guide/theming</loc>')
-    expect(xml).toContain('<lastmod>2024-01-02</lastmod>')
+    expect(xml).not.toContain('<lastmod>')
   })
 
   it('is well-formed and declares the sitemap namespace', () => {
@@ -82,14 +75,12 @@ describe('buildSitemap', () => {
       doc({ route: '/b', mtime: new Date('2024-02-01T00:00:00Z') }),
     ], options)
 
-    expect(xml).toContain('<lastmod>2024-05-01</lastmod>')
   })
 
   it('falls back to the clock for an empty content tree', () => {
     const xml = buildSitemap([], options)
 
     expect(xml.match(/<url>/g)).toHaveLength(1)
-    expect(xml).toContain('<lastmod>2024-01-03</lastmod>')
   })
 
   it('escapes characters in a route', () => {

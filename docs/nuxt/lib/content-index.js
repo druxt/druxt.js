@@ -166,7 +166,7 @@ const walk = (dir, root) => {
  * Read the content tree.
  *
  * @param {string} contentDir - Absolute path to the content root.
- * @returns {Array<object>} Documents as { route, title, description, section, mtime }.
+ * @returns {Array<object>} Documents as { route, title, description, section }.
  */
 const readContent = (contentDir) => {
   if (!fs.existsSync(contentDir)) return []
@@ -184,10 +184,6 @@ const readContent = (contentDir) => {
         description: data.description || excerpt(content),
         weight: typeof data.weight === 'number' ? data.weight : 0,
         section: route.split('/').filter(Boolean)[0] || null,
-        // The commit date would be a truer <lastmod>, but a CI checkout has no
-        // per-file history without a full clone. mtime is stable within a build
-        // and is what the file system can actually answer.
-        mtime: fs.statSync(absolute).mtime,
       }
     })
     .sort((a, b) => a.route.localeCompare(b.route))

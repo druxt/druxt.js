@@ -163,6 +163,13 @@ describe('seoHead', () => {
 
   it('defaults the share image and accepts an override', () => {
     expect(content(head, 'og:image')).toBe('https://druxtjs.org/og-druxt.png')
+  })
+
+  test('a caller-supplied image carries no dimension claims', () => {
+    const head = seoHead({ title: 'x', description: 'y', path: '/guide', image: 'https://example.test/card.jpg' })
+    expect(content(head, 'og:image')).toBe('https://example.test/card.jpg')
+    expect(head.meta.find((o) => o.hid === 'og:image:width')).toBeUndefined()
+    expect(head.meta.find((o) => o.hid === 'og:image:height')).toBeUndefined()
     expect(content(seoHead({ title: 'A', path: '/a', image: 'https://x.test/a.png' }), 'og:image'))
       .toBe('https://x.test/a.png')
   })

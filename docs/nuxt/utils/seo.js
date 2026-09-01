@@ -89,11 +89,13 @@ export const seoHead = ({ title, description, path, image, type }) => {
       { hid: 'og:site_name', property: 'og:site_name', content: SITE_NAME },
 
       // Dimensions let a scraper reserve the right space before fetching the
-      // image, and several crawlers will not render a card without them. Ported
-      // from nuxt-social-meta's `img_size` when that module was removed; they
-      // describe static/og-druxt.png, so they change with `shareImage`.
-      { hid: 'og:image:width', property: 'og:image:width', content: '1200' },
-      { hid: 'og:image:height', property: 'og:image:height', content: '630' },
+      // image, and several crawlers will not render a card without them. They
+      // describe the site's own 1200x630 cards, so a caller-supplied image of
+      // unknown size gets no claim rather than a wrong one.
+      ...(image ? [] : [
+        { hid: 'og:image:width', property: 'og:image:width', content: '1200' },
+        { hid: 'og:image:height', property: 'og:image:height', content: '630' },
+      ]),
 
       { hid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
       { hid: 'twitter:site', name: 'twitter:site', content: TWITTER_HANDLE },
