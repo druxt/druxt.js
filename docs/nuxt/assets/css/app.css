@@ -37,6 +37,13 @@ button:focus-visible,
   color: hsl(var(--bc) / 0.7);
 }
 
+/* Smooth in-page scrolling: anchor jumps, TOC links and programmatic
+   scrolls glide site-wide. Route changes opt out in layouts/default.vue,
+   and the reduced-motion block below forces this back to instant. */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Windows high-contrast / forced colours: keep borders that are drawn with
    background colours visible. */
 @media (forced-colors: active) {
