@@ -65,6 +65,50 @@ export const extractHero = (document) => {
   return { hero, body: strip(body) }
 }
 
+/** Plain text of a node and everything under it. */
+const textOf = (node) => {
+  if (!node) return ''
+  if (node.type === 'text') return node.value || ''
+  return (node.children || []).map(textOf).join('')
+}
+
+/**
+ * A one-line summary of a document, for `<meta name="description">`.
+ *
+ * @nuxt/content v1 only surfaces frontmatter fields, and almost nothing in
+ * `content/` sets a `description`, so `document.description` is undefined on
+ * nearly every page. The first paragraph is the same thing a reader would skim
+ * to decide whether the page is relevant.
+ *
+ * This deliberately mirrors the rules in lib/content-index.js `excerpt()`,
+ * which does the same job at build time for sitemap.xml and llms.txt. Two
+ * implementations because the inputs differ: this walks the parsed AST, that
+ * one reads raw Markdown off disk before Nuxt exists. Keep the skip rules in
+ * step.
+ *
+ * @param {object} document - A @nuxt/content document.
+ * @returns {string} A plain-text summary, or an empty string.
+ */
+export const documentDescription = (document) => {
+  if (document && document.description) return document.description
+
+  const children = ((document || {}).body || {}).children || []
+
+  for (const node of children) {
+    if (node.type !== 'element') continue
+    if (node.tag !== 'p' && node.tag !== 'blockquote') continue
+
+    const text = textOf(node).replace(/\s+/g, ' ').trim()
+    if (!text) continue
+    // A note to a maintainer, not a summary. See content/guide/deprecations.md.
+    if (/^(TODO|FIXME|NOTE|XXX)\b[:\s]/i.test(text)) continue
+
+    return text
+  }
+
+  return ''
+}
+
 /** Sections a module README declares, used to build the in-page nav. */
 export const sections = (document) => (document.toc || [])
   .filter((o) => o.depth === 2)
