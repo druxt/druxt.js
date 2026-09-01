@@ -15,6 +15,9 @@ const GA_MEASUREMENT_ID = 'G-Y1ZRHGDGSD'
 // deploys never send hits into the real property.
 const isProduction = process.env.LAGOON_ENVIRONMENT_TYPE === 'production'
 
+// Routes generate:routeFailed reported; generate:done refuses to ship them.
+const failedRoutes = []
+
 import { SITE_NAME, SITE_DESCRIPTION } from './lib/site'
 
 /** The `druxt` package version, or null where the monorepo root isn't present. */
@@ -187,6 +190,20 @@ export default {
 
   hooks: {
     /**
+     * Collects routes whose generation failed, so the build can refuse to
+     * ship them. Without this, `nuxt generate` logs the error, writes the
+     * error page as real HTML at the route, and exits 0 - the page then
+     * serves as a live 200. Measured on production before the guard: seven
+     * such pages, together taking 17% of sessions.
+     *
+     * @param {object} failure - The failed route.
+     * @param {string} failure.route - The route path.
+     */
+    'generate:routeFailed'({ route }) {
+      failedRoutes.push(route)
+    },
+
+    /**
      * Write the machine-readable indexes into the static export.
      *
      * `generate:done` rather than a build step so these run against the same
@@ -198,6 +215,15 @@ export default {
      * @param {object} generator - The Nuxt generator instance.
      */
     async 'generate:done'(generator) {
+      // Before the index writes: a rejected build must not leave a
+      // sitemap or llms.txt on disk describing pages it refused to ship.
+
+      if (failedRoutes.length) {
+        throw new Error(
+          'Refusing to ship ' + failedRoutes.length + ' route(s) that failed to generate: ' + failedRoutes.join(', '),
+        )
+      }
+
       const fs = require('fs')
       const path = require('path')
       const { readContent } = require('./lib/content-index')
