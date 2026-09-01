@@ -41,7 +41,7 @@ export { DruxtSchemaMixin } from './mixins/schema'
  *
  * @exports DruxtSchemaStore
  * @type {Function}
- * @see {@link /api/packages/schema/store/schema|DruxtSchemaStore}
+ * @see {@link /api/packages/schema/stores/schema|DruxtSchemaStore}
  */
 export { DruxtSchemaStore } from './stores/schema'
 
