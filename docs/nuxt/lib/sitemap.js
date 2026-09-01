@@ -36,7 +36,7 @@ const escapeXml = (value) => String(value)
  * @param {object} entry - The URL, changefreq and priority.
  * @returns {string} The XML fragment.
  */
-// No <lastmod>: file mtimes are checkout time in CI, so every URL would
+// No <lastmod>: file modification times are checkout time in CI, so every URL would
 // claim fresh modification on every build - worse than omitting it.
 const urlEntry = (entry) => [
   '  <url>',
