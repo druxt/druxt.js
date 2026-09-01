@@ -389,16 +389,20 @@ docs:review:
           [ -n "$url" ] || sleep 2
           tries=$((tries + 1))
         done
-        # A fresh quick-tunnel hostname can take minutes to appear in public
-        # DNS, and every recreation issues a new name that restarts that
-        # wait - so probe one hostname patiently (curl exit 6 is the DNS
-        # lag) and recreate only when cloudflared itself has died.
+        # The runner's resolver never answers for quick-tunnel hostnames
+        # (every probe exits 6 while browsers resolve the same name fine),
+        # so verification resolves over DoH instead of the local resolver.
+        # A fresh hostname can still take minutes to publish, and every
+        # recreation issues a new name that restarts that wait - so probe
+        # one hostname patiently and recreate only when cloudflared itself
+        # has died.
+        doh="--doh-url https://cloudflare-dns.com/dns-query"
         ok=""
         if [ -n "$url" ]; then
           probes=0
           while [ "$probes" -lt 30 ]; do
             rc=0
-            curl -sf -o /dev/null --max-time 15 "$url/" || rc=$?
+            curl -sf $doh -o /dev/null --max-time 15 "$url/" || rc=$?
             if [ "$rc" -eq 0 ]; then ok=1; break; fi
             if ! kill -0 "$cf_pid" 2>/dev/null; then echo "cloudflared exited while waiting"; break; fi
             if [ "$((probes % 6))" -eq 0 ]; then echo "waiting for $url (curl exit $rc)"; fi
@@ -421,7 +425,7 @@ docs:review:
         announced=$(date +%s)
         while kill -0 "$cf_pid" 2>/dev/null; do
           sleep 60
-          if ! curl -sf -o /dev/null --max-time 30 "$url/"; then
+          if ! curl -sf $doh -o /dev/null --max-time 30 "$url/"; then
             echo "Tunnel went dark at the edge; recreating..."
             kill "$cf_pid" 2>/dev/null || true
             break
