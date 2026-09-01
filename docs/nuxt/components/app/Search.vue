@@ -172,6 +172,7 @@
 </template>
 
 <script>
+import { isReportableTerm, searchEvent, searchSelectEvent } from '~/lib/analytics'
 import { documentContext } from '~/utils/content'
 import { trapTab } from '~/utils/focus'
 
@@ -255,11 +256,18 @@ export default {
       }
       this.loading = true
       this.debounce = setTimeout(this.search, 180)
+
+      // Reported on a longer, separate debounce than the search itself.
+      // Sharing the 180ms one would file every prefix of a half-typed word as
+      // its own search and bury the term the reader actually meant.
+      clearTimeout(this.reportDebounce)
+      this.reportDebounce = setTimeout(this.reportSearch, 1200)
     },
   },
 
   beforeDestroy() {
     clearTimeout(this.debounce)
+    clearTimeout(this.reportDebounce)
     // Don't leave the page unscrollable if the dialog is torn down while open.
     document.documentElement.style.overflow = ''
   },
@@ -335,11 +343,47 @@ export default {
       })
     },
 
+    /**
+     * Report the settled query to GA4.
+     *
+     * Runs after results have resolved, so `flat.length` is the count the
+     * reader actually saw. A zero-result query reports as `search_no_results`,
+     * which is the signal worth having: it is a content backlog written by the
+     * audience rather than guessed at.
+     *
+     * @returns {void}
+     */
+    reportSearch() {
+      if (!isReportableTerm(this.query)) return
+      // Results have not settled yet. Re-arm rather than return: returning
+      // drops the term permanently, and biases the loss toward slow and
+      // first-visit sessions — exactly the ones `search_no_results` exists to
+      // catch. `beforeDestroy` clears this same slot, so a retry cannot
+      // outlive the dialog.
+      if (this.loading) {
+        clearTimeout(this.reportDebounce)
+        this.reportDebounce = setTimeout(this.reportSearch, 400)
+        return
+      }
+      this.$track(...searchEvent(this.query, this.flat.length))
+    },
+
     go(item) {
       if (!item) return
-      if (this.query) this.$store.commit('addRecentSearch', this.query)
-      this.close()
+      // Resolved before tracking, not after: navigation strips the /README
+      // suffix, so recording the raw item.path would file a link_path that
+      // never reconciles with the page_path GA4 reports for the page the
+      // reader actually lands on.
       const path = (item.path || '').replace(/\/README$/, '')
+      if (this.query) {
+        this.$store.commit('addRecentSearch', this.query)
+        const index = this.flat.findIndex((o) => o.path === item.path)
+        // A miss yields -1, which would report as position 0 and be
+        // indistinguishable from a real rank. Drop it instead.
+        // Fires before the route change so it is not lost to the navigation.
+        if (index > -1) this.$track(...searchSelectEvent(this.query, path, index))
+      }
+      this.close()
       if (path && path !== this.$route.path) this.$router.push(path)
     },
 
