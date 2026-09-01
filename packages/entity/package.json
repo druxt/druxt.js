@@ -42,7 +42,8 @@
   "files": [
     "dist",
     "templates",
-    "icon.svg"
+    "icon.svg",
+    "banner.svg"
   ],
   "dependencies": {
     "deepmerge": "^4.3.1",

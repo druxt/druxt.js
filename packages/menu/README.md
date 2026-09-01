@@ -39,8 +39,14 @@ menu item themes through the Druxt component suggestion system.
    ```js
    export default {
      modules: ['druxt-menu'],
+     druxt: {
+       baseUrl: 'https://demo-api.druxtjs.org',
+     },
    };
    ```
+
+   `druxt.baseUrl` is required: without it the generated plugin throws
+   `The 'baseUrl' parameter is required.`
 
 ---
 
@@ -60,10 +66,10 @@ depends on what you want:
   drush pm:enable jsonapi_menu_items
   ```
 
-  Once enabled, Druxt automatically switches to the
-  `jsonapi_menu_items` resource for menu fetching (set
-  `druxt.menu.jsonApiMenuItems: false` to prevent that). Multilingual
-  menus need `jsonapi_menu_items` `1.2.4` or later.
+  Once enabled, set `druxt.menu.jsonApiMenuItems: true` to fetch menus
+  through the `jsonapi_menu_items` resource; without it Druxt keeps using
+  `menu_link_content`. Multilingual menus need `jsonapi_menu_items`
+  `1.2.4` or later.
 
 ---
 
@@ -151,7 +157,7 @@ These options are specific to this module.
 
 | Option                    | Type       | Required | Default | Description                                                                                              |
 | ------------------------- | ---------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
-| `menu.jsonApiMenuItems`   | `boolean`  | No       | `true`  | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. |
+| `menu.jsonApiMenuItems`   | `boolean`  | No       | `false` | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. |
 | `menu.query.fields`       | `string[]` | No       | `false` | An array of fields to filter all JSON:API Menu queries.                                                  |
 | `menu.query.requiredOnly` | `boolean`  | No       | `false` | Whether to automatically filter to module-defined minimum required fields.                               |
 

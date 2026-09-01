@@ -111,9 +111,9 @@ DruxtBlocks provides zero-config, auto-generated Storybook integration with a li
 
 These options are specific to this module.
 
-| Option               | Type       | Required | Default | Description                                              |
-| -------------------- | ---------- | -------- | ------- | -------------------------------------------------------- |
-| `block.query.fields` | `string[]` | No       | `[]`    | An array of fields to filter all Block JSON:API queries. |
+| Option                | Type       | Required | Default | Description                                              |
+| --------------------- | ---------- | -------- | ------- | -------------------------------------------------------- |
+| `blocks.query.fields` | `string[]` | No       | `[]`    | An array of fields to filter all Block JSON:API queries. |
 
 ### Base Druxt options
 

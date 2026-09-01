@@ -37,7 +37,8 @@
   "files": [
     "dist",
     "templates",
-    "icon.svg"
+    "icon.svg",
+    "banner.svg"
   ],
   "dependencies": {
     "consola": "^2.15.3",

@@ -16,7 +16,7 @@
     class="sticky top-16 z-40 -mx-5 sm:-mx-8 lg:-mx-12 -mt-8 lg:-mt-12 mb-8
            border-b border-base-300 bg-base-100/95 backdrop-blur
            transition-transform"
-    :class="hidden ? '-translate-y-[200%]' : ''"
+    :class="hidden ? 'translate-y-[-200%]' : ''"
   >
     <nav class="px-5 sm:px-8 lg:px-12 h-11 flex items-center gap-1 text-sm" aria-label="Breadcrumb">
       <!-- Ancestors collapse into one menu below sm. -->

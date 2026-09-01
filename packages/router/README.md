@@ -99,10 +99,11 @@ resource members, with their replacements, are listed on the
 
 These options are specific to this module.
 
-| Option            | Type      | Required | Default | Description                                   |
-| ----------------- | --------- | -------- | ------- | --------------------------------------------- |
-| `router.pages`    | `boolean` | No       | `true`  | Whether to parse the Nuxt `pages/` directory. |
-| `router.wildcard` | `boolean` | No       | `true`  | Whether to install the wildcard route.        |
+| Option              | Type      | Required | Default                     | Description                                             |
+| ------------------- | --------- | -------- | --------------------------- | ------------------------------------------------------- |
+| `router.middleware` | `boolean` | No       | `true`                      | Whether to run the Route page middleware and redirects. |
+| `router.pages`      | `boolean` | No       | `true` if **pages/** exists | Whether to parse the Nuxt `pages/` directory.           |
+| `router.wildcard`   | `boolean` | No       | `true`                      | Whether to install the wildcard route.                  |
 
 ### Base Druxt options
 

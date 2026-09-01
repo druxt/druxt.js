@@ -7,7 +7,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 
-> Drupal Display Mode powered Entity, Form and Field Druxt components.
+> Drupal Display Mode-powered Entity, Form and Field Druxt components.
 
 DruxtEntity renders Drupal content in Vue. Point the `DruxtEntity` component
 at a resource type and UUID and it renders the entity's fields exactly as the
@@ -169,11 +169,11 @@ The default DruxtField components are deprecated. See the
 
 These options are specific to this module.
 
-| Option                     | Type       | Required | Default | Description                                                     |
-| -------------------------- | ---------- | -------- | ------- | --------------------------------------------------------------- |
-| `entity.components.fields` | `boolean`  | No       | `false` | Whether to import deprecated default Field components.          |
-| `entity.query.fields`      | `string[]` | No       | `[]`    | An array of fields to filter all Entity JSON:API queries.       |
-| `entity.query.schema`      | `boolean`  | No       | `false` | Whether to automatically filter fields based on Display schema. |
+| Option                     | Type                     | Required | Default | Description                                                                    |
+| -------------------------- | ------------------------ | -------- | ------- | ------------------------------------------------------------------------------ |
+| `entity.components.fields` | `boolean`                | No       | `false` | Whether to import deprecated default Field components.                         |
+| `entity.query.fields`      | `string[] \| string[][]` | No       | `[]`    | An array of fields, or of field arrays, to filter all Entity JSON:API queries. |
+| `entity.query.schema`      | `boolean`                | No       | `false` | Whether to automatically filter fields based on Display schema.                |
 
 ### Base Druxt options
 

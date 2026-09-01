@@ -34,8 +34,13 @@ export default {
     // across /modules/<pkg> route changes, so moving quickly between modules
     // can leave two fetches in flight and an earlier one resolving later
     // would restore the previous route's header over the current page.
+    // Cleared, not just skipped: this instance is reused across routes, so a
+    // stale index would render the section header above a module page.
     const pkg = this.pkg
-    if (pkg) return
+    if (pkg) {
+      this.index = null
+      return
+    }
 
     const index = await this.$content('modules/README')
       .only(['title', 'description'])

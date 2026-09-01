@@ -58,6 +58,14 @@ const SECTIONS = {
     priority: 0.4,
     changefreq: 'yearly',
   },
+  // Claimed by route rather than by path segment: sectionFor() returns this
+  // for component reference pages, which the content index files under api.
+  components: {
+    label: 'Components',
+    description: 'Reference for the Druxt Vue components: what each one renders, and the props and slots it takes.',
+    priority: 0.4,
+    changefreq: 'yearly',
+  },
 }
 
 /**
