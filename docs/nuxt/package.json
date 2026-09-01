@@ -8,7 +8,7 @@
     "cypress:run": "npx cypress run --project test",
     "dev": "nuxt",
     "build": "nuxt build",
-    "start": "nuxt start",
+    "start": "node scripts/serve.js",
     "generate": "nuxt generate",
     "storybook": "nuxt storybook"
   },
