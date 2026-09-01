@@ -88,7 +88,10 @@ export default {
   },
 
   css: ['~/assets/css/app.css'],
-  plugins: ['~/plugins/color-mode-theme.client.js'],
+  plugins: [
+    '~/plugins/color-mode-theme.client.js',
+    '~/plugins/analytics.client.js',
+  ],
   components: true,
 
   buildModules: [
