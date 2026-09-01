@@ -4,8 +4,16 @@
 
 const isElement = (node, tag) => node && node.type === 'element' && node.tag === tag
 
-/** Depth-first search for the first <img>, returning it and its parent. */
+/**
+ * Depth-first search for the first <img>, returning it and its parent.
+ *
+ * @param {object} node - The AST node to search from.
+ * @param {?object} parent - The node's parent, carried through the descent.
+ * @returns {?object} The image and its parent, as { node, parent }.
+ */
 const findImage = (node, parent) => {
+  // Linked images are badges, never the hero screenshot.
+  if (isElement(node, 'a')) return null
   if (isElement(node, 'img')) return { node, parent }
   const children = (node && node.children) || []
   for (const child of children) {
@@ -22,6 +30,9 @@ const findImage = (node, parent) => {
  *
  * Returns { hero, body } — body is a copy with the image (and its wrapping
  * paragraph, if that is all the paragraph held) removed.
+ *
+ * @param {object} document - The content document.
+ * @returns {object} The hero image and remaining body, as { hero, body }.
  */
 export const extractHero = (document) => {
   const body = document && document.body
@@ -65,7 +76,12 @@ export const extractHero = (document) => {
   return { hero, body: strip(body) }
 }
 
-/** Plain text of a node and everything under it. */
+/**
+ * Plain text of a node and everything under it.
+ *
+ * @param {?object} node - The AST node.
+ * @returns {string} The concatenated text content.
+ */
 const textOf = (node) => {
   if (!node) return ''
   if (node.type === 'text') return node.value || ''
@@ -109,7 +125,12 @@ export const documentDescription = (document) => {
   return ''
 }
 
-/** Sections a module README declares, used to build the in-page nav. */
+/**
+ * Sections a module README declares, used to build the in-page nav.
+ *
+ * @param {object} document - The content document.
+ * @returns {object[]} Depth-2 headings as { id, text }.
+ */
 export const sections = (document) => (document.toc || [])
   .filter((o) => o.depth === 2)
   .map((o) => ({ id: o.id, text: o.text }))
