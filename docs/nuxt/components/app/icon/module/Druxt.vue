@@ -9,7 +9,22 @@
     stroke-linejoin="round"
     aria-hidden="true"
   >
-    <path style="stroke: hsl(var(--pf))" d="M21.5 19.25h-19L9.4 5.5l3.4 6.45" />
-    <path style="stroke: hsl(var(--sf))" d="M12.8 11.95l2.6-5.4 6.1 12.7" />
+    <path
+      v-for="(entry, index) of paths"
+      :key="index"
+      :style="'stroke: hsl(var(--' + (entry[1] === 'sf' ? 'sf' : 'pf') + '))'"
+      :d="entry[0]"
+    />
   </svg>
 </template>
+
+<script>
+import paths from './paths'
+
+export default {
+  computed: {
+    /** This module's [d, tone] pairs from the shared geometry. */
+    paths: () => paths.druxt,
+  },
+}
+</script>
