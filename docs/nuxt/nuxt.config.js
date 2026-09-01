@@ -220,13 +220,18 @@ export default {
      *
      * @param {object} generator - The Nuxt generator instance.
      */
-    async 'generate:done'(generator) {
+    async 'generate:done'(generator, errors) {
       // Before the index writes: a rejected build must not leave a
       // sitemap or llms.txt on disk describing pages it refused to ship.
-
-      if (failedRoutes.length) {
+      // `errors` carries the "handled" failures (a route rendering the
+      // error page, e.g. Document not found) that never fire
+      // generate:routeFailed; the generator still writes those pages as
+      // real HTML, so they count as failures here all the same.
+      const handled = (errors || []).map((e) => e.route)
+      const failed = [...new Set([...failedRoutes, ...handled])]
+      if (failed.length) {
         throw new Error(
-          'Refusing to ship ' + failedRoutes.length + ' route(s) that failed to generate: ' + failedRoutes.join(', '),
+          'Refusing to ship ' + failed.length + ' route(s) that failed to generate: ' + failed.join(', '),
         )
       }
 
