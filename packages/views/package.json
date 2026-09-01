@@ -38,7 +38,8 @@
   "module": "dist/druxt-views.esm.js",
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "icon.svg"
   ],
   "dependencies": {
     "axios": "0.28.0",

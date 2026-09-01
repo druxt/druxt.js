@@ -36,7 +36,8 @@
   "module": "dist/druxt-schema.esm.js",
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "icon.svg"
   ],
   "dependencies": {
     "consola": "^2.15.3",

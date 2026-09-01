@@ -41,7 +41,8 @@
   "module": "dist/druxt-entity.esm.js",
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "icon.svg"
   ],
   "dependencies": {
     "deepmerge": "^4.3.1",

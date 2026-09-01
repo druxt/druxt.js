@@ -39,7 +39,8 @@
   "files": [
     "dist",
     "nuxt",
-    "templates"
+    "templates",
+    "icon.svg"
   ],
   "dependencies": {
     "druxt": "^0.24.0",

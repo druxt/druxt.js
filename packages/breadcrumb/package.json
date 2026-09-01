@@ -39,7 +39,8 @@
   "module": "dist/druxt-breadcrumb.esm.js",
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "icon.svg"
   ],
   "dependencies": {
     "druxt": "^0.24.0",

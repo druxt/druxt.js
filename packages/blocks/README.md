@@ -1,45 +1,55 @@
-# DruxtJS Blocks
+<img src="./banner.svg" alt="DruxtBlocks: Drupal blocks and block regions in Nuxt">
+
+# DruxtBlocks
 
 [![npm](https://badgen.net/npm/v/druxt-blocks)](https://www.npmjs.com/package/druxt-blocks)
 [![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
-[![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-blocks/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-blocks?targetFile=package.json)
-[![codecov](https://codecov.io/gh/druxt/druxt-blocks/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-blocks)
+[![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
+[![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 
-> Drupal Block and Block Region Druxt components.
+> Render Drupal blocks and block regions in Nuxt with the druxt-blocks components, themed through the Druxt component suggestion system.
 
-## Links
+DruxtBlocks brings Drupal's block layout to Nuxt. `DruxtBlockRegion` renders
+every visible block Drupal places in a theme region, and `DruxtBlock` renders
+a single block anywhere in your layout. Both resolve through the Druxt
+component suggestion system, so overriding one block's markup takes a single
+Vue component.
 
-- DruxtJS: https://druxtjs.org
-- Documentation: https://druxtjs.org/modules/blocks
-- Community Discord server: https://discord.druxtjs.org
+![Example DruxtBlockRegion component](https://druxtjs.org/images/druxt-block-region.png)
 
-## Install
+## Features
 
-`$ npm install druxt-blocks`
+- Vue.js components:
+  - **DruxtBlock**: Render Drupal blocks by UUID or internal ID
+  - **DruxtBlockRegion**: Render all blocks within a region
+- **Druxt settings**: Filter JSON:API fields
+- **@nuxtjs/Storybook** integration
 
-### Nuxt.js
+---
 
-Add module to `nuxt.config.js`
+## Installation
 
-```js
-module.exports = {
-  modules: ['druxt-blocks'],
-  druxt: {
-    baseUrl: 'https://demo-api.druxtjs.org',
-    blocks: {
-      query: {
-        fields: [],
-      },
-    },
-  },
-};
-```
+1. Install the package:
 
-## Usage
+   ```sh
+   npm i druxt-blocks
+   ```
 
-### DruxtBlock component
+2. Add the module to `nuxt.config.js`:
 
-The DruxtBlock component renders a Drupal JSON:API Block resource by ID or UUID.
+   ```js
+   export default {
+     modules: ['druxt-blocks'],
+   };
+   ```
+
+---
+
+## Vue.js components
+
+### DruxtBlock
+
+Renders a Drupal Block by UUID or Drupal's internal ID.
 
 ```vue
 <DruxtBlock :id="drupal_internal__id" />
@@ -49,35 +59,51 @@ The DruxtBlock component renders a Drupal JSON:API Block resource by ID or UUID.
 <DruxtBlock :uuid="uuid" />
 ```
 
-See the [DruxtBlock API Documentation](https://druxtjs.org/api/packages/blocks/components/DruxtBlock) for more information.
+- For more details, refer to the [DruxtBlock API documentation](https://druxtjs.org/api/packages/blocks/components/DruxtBlock).
 
 ### DruxtBlockRegion
 
-The DruxtBlockRegion component renders all visible blocks for the specified theme region.
+Renders all visible blocks by theme and region name.
 
 ```vue
 <DruxtBlockRegion :name="name" :theme="theme" />
 ```
 
-![Example DruxtBlockRegion component](https://druxtjs.org/images/druxt-block-region.png)
+- For more details, refer to the [DruxtBlockRegion API documentation](https://druxtjs.org/api/packages/blocks/components/DruxtBlockRegion).
 
-See the [DruxtBlockRegion API Documentation](https://druxtjs.org/api/packages/blocks/components/DruxtBlockRegion) for more information.
+---
 
-### Theming
+## Settings
 
-Both components can be themed by providing a default template:
+### Reducing Block data
 
-```vue
-<DruxtBlock :id="id">
-  <template #default="{ block }">
-    {{ block }}
-  </template>
-</DruxtEntity>
+The default behaviour of the Block module is to retrieve all available fields from the JSON:API.
+
+This behaviour is configurable using the modules `query` option, allowing for manually filtered `fields`.
+
+The default behaviour can be set via `nuxt.config.js`:
+
+```js
+druxt: {
+  blocks: {
+    query: {
+      fields: ['dependencies'],
+    },
+  },
+}
 ```
 
-The module also provides Wrapper components with scoped slots for theming.
+---
 
-See the [Druxt Theming guide](https://druxtjs.org/guide/theming) for more information.
+## Storybook
+
+DruxtBlocks provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
+
+![DruxtBlocks Storybook integration](https://druxtjs.org/images/druxt-block-storybook.png)
+
+- For more details, see the [Storybook guide](https://druxtjs.org/guide/storybook).
+
+---
 
 ## Options
 
@@ -98,3 +124,9 @@ These options are available to all Druxt modules.
 | `axios`    | `object` | No       | `{}`       | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
 | `baseUrl`  | `string` | Yes      | `null`     | Base URL for the Drupal installation.                                        |
 | `endpoint` | `string` | No       | `/jsonapi` | JSON:API Endpoint of the Drupal installation.                                |
+
+## Links
+
+- DruxtJS: https://druxtjs.org
+- Documentation: https://druxtjs.org/modules/blocks
+- Community Discord server: https://discord.gg/QnZD46c

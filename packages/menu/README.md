@@ -1,78 +1,147 @@
+<img src="./banner.svg" alt="DruxtMenu: Drupal menus as Vue components">
+
 # DruxtMenu
 
 [![npm](https://badgen.net/npm/v/druxt-menu)](https://www.npmjs.com/package/druxt-menu)
 [![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
-[![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-menu/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-menu?targetFile=package.json)
-[![codecov](https://codecov.io/gh/druxt/druxt-menu/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-menu)
+[![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
+[![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 
 > Drupal Menu and Menu item Druxt components, with support for the JSON:API Menu Items module.
 
-## Links
+DruxtMenu renders Drupal menus in Nuxt. Ask for a menu by name and you get
+the tree Drupal manages; with the JSON:API Menu Items module it covers full
+menus, including module-defined links, not just content links. Every menu and
+menu item themes through the Druxt component suggestion system.
 
-- DruxtJS: https://druxtjs.org
-- Documentation: https://druxtjs.org/modules/menu
-- Community Discord server: https://discord.druxtjs.org
+![Example DruxtMenu component](https://druxtjs.org/images/druxt-menu.png)
 
-## Install
+## Features
 
-`$ npm install druxt-menu`
+- Vue.js components:
+  - **DruxtMenu**: Render Drupal menu by name
+- **Druxt settings**: Filter JSON:API fields
+- **Drupal Menu blocks**
+- **@nuxtjs/Storybook** integration
 
-### Nuxt.js
+---
 
-Add module to `nuxt.config.js`
+## Installation
 
-```js
-module.exports = {
-  modules: ['druxt-menu'],
-  druxt: {
-    baseUrl: 'https://demo-api.druxtjs.org',
-    menu: {
-      query: {
-        requiredOnly: true,
-        fields: [],
-      },
-    },
-  },
-};
-```
+1. Install the package:
 
-## Usage
+   ```sh
+   npm i druxt-menu
+   ```
 
-### DruxtMenu component
+2. Add the module to `nuxt.config.js`:
 
-The DruxtMenu component intelligently loads in your Drupal menu using the built-in JSON:API as well as the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module.
+   ```js
+   export default {
+     modules: ['druxt-menu'],
+   };
+   ```
+
+---
+
+## Drupal requirements
+
+Rendering a menu needs data from the Drupal side, and where it comes from
+depends on what you want:
+
+- **Menu blocks** (the typical site case): rendered by the
+  [Blocks module](https://druxtjs.org/modules/blocks): no extra Drupal setup.
+- **Full menus by name** (`<DruxtMenu name="main">`): requires the
+  [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items)
+  Drupal module:
+
+  ```sh
+  composer require drupal/jsonapi_menu_items
+  drush pm:enable jsonapi_menu_items
+  ```
+
+  Once enabled, Druxt automatically switches to the
+  `jsonapi_menu_items` resource for menu fetching (set
+  `druxt.menu.jsonApiMenuItems: false` to prevent that). Multilingual
+  menus need `jsonapi_menu_items` `1.2.4` or later.
+
+---
+
+## Vue.js Components
+
+### DruxtMenu
+
+Renders a Drupal menu using either the default Drupal content menus, or the full menu via the [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module.
 
 ```vue
 <DruxtMenu name="main" :depth="1" />
 ```
 
-![Example DruxtMenu component](https://druxtjs.org/images/druxt-menu.png)
+- For more details, refer to the [DruxtMenu API documentation](https://druxtjs.org/api/packages/menu/components/DruxtMenu).
 
-See the [DruxtMenu API Documentation](https://druxtjs.org/api/packages/menu/components/DruxtMenu) for more information.
+---
 
-### Theming
+## Settings
 
-The DruxtMenu component can be themed by providing a default template:
+### Reducing JSON:API data
 
-```vue
-<DruxtMenu name="main">
-  <template #default="{ items }">
-    {{ items }}
-  </template>
-</DruxtMenu>
+The default behaviour of the Menu module is to retrieve all available fields from the JSON:API.
+
+This behaviour is configurable using the modules `query` option, allowing for manually filtered `fields` or automatically filtered fields using the `requiredOnly` option.
+
+The default behaviour can be set via `nuxt.config.js`:
+
+```js
+druxt: {
+  menu: {
+    query: {
+      fields: [],
+      requiredOnly: true,
+    },
+  },
+}
 ```
 
-The module also provides Wrapper components with scoped slots for theming:
+Alternatively, the behaviour can be set directly on a Menu wrapper component:
 
 ```vue
-<template>
-  <div>
-    <slot />
-  <div>
-</template>
+<script>
+export default {
+  druxt: {
+    query: {
+      fields: ['description', 'options'],
+      requiredOnly: false,
+    },
+  },
+};
+</script>
 ```
 
-See the [Druxt Theming guide](https://druxtjs.org/guide/theming) for more information.
+---
+
+## Menu blocks
+
+The DruxtMenu module provides a **DruxtBlockSystemMenuBlock** component that is used by the Druxt Block module to render Drupal menu blocks.
+
+- For more details, see the [Druxt Blocks module](https://druxtjs.org/modules/blocks).
+
+---
+
+## Storybook
+
+DruxtMenu provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
+
+- For more details, see the [Storybook guide](https://druxtjs.org/guide/storybook).
+
+---
+
+## Deprecations
+
+The `items` computed property is deprecated in favour of `model`. See the
+[deprecations page](https://druxtjs.org/modules/menu/deprecations) for what replaces it, and what
+is unaffected.
+
+---
 
 ## Options
 
@@ -82,7 +151,7 @@ These options are specific to this module.
 
 | Option                    | Type       | Required | Default | Description                                                                                              |
 | ------------------------- | ---------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
-| `menu.jsonApiMenuItems`   | `boolean`  | No       | `false` | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. |
+| `menu.jsonApiMenuItems`   | `boolean`  | No       | `true`  | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. |
 | `menu.query.fields`       | `string[]` | No       | `false` | An array of fields to filter all JSON:API Menu queries.                                                  |
 | `menu.query.requiredOnly` | `boolean`  | No       | `false` | Whether to automatically filter to module-defined minimum required fields.                               |
 
@@ -95,3 +164,9 @@ These options are available to all Druxt modules.
 | `axios`    | `object` | No       | `{}`       | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
 | `baseUrl`  | `string` | Yes      | `null`     | Base URL for the Drupal installation.                                        |
 | `endpoint` | `string` | No       | `/jsonapi` | JSON:API Endpoint of the Drupal installation.                                |
+
+## Links
+
+- DruxtJS: https://druxtjs.org
+- Documentation: https://druxtjs.org/modules/menu
+- Community Discord server: https://discord.gg/QnZD46c
