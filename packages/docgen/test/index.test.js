@@ -8,7 +8,11 @@ import dmd from 'dmd'
 
 import { DruxtDocgen } from '../src'
 
-jest.mock('fs', () => ({ writeFileSync: jest.fn() }))
+jest.mock('fs', () => ({
+  writeFileSync: jest.fn(),
+  existsSync: jest.fn(() => false),
+  readFileSync: jest.fn()
+}))
 jest.mock('globby', () => jest.fn())
 jest.mock('jsdoc-to-markdown', () => ({ getTemplateDataSync: jest.fn() }))
 jest.mock('mkdirp', () => ({ sync: jest.fn() }))
@@ -34,6 +38,7 @@ describe('DruxtDocgen', () => {
     docgen.generateApiDocs = jest.fn()
     docgen.generatePackageList = jest.fn()
     docgen.generateComponentsList = jest.fn()
+    docgen.generateModuleReadmes = jest.fn()
     docgen.copyFiles = jest.fn()
 
     await docgen.generateDocs()
@@ -41,18 +46,22 @@ describe('DruxtDocgen', () => {
     expect(docgen.generateApiDocs).toHaveBeenCalledTimes(1)
     expect(docgen.generatePackageList).toHaveBeenCalledTimes(1)
     expect(docgen.generateComponentsList).toHaveBeenCalledTimes(1)
+    expect(docgen.generateModuleReadmes).toHaveBeenCalledTimes(1)
     expect(docgen.copyFiles).toHaveBeenCalledTimes(1)
     expect(docgen.generateApiDocs.mock.invocationCallOrder[0])
       .toBeLessThan(docgen.generatePackageList.mock.invocationCallOrder[0])
     expect(docgen.generatePackageList.mock.invocationCallOrder[0])
       .toBeLessThan(docgen.generateComponentsList.mock.invocationCallOrder[0])
     expect(docgen.generateComponentsList.mock.invocationCallOrder[0])
+      .toBeLessThan(docgen.generateModuleReadmes.mock.invocationCallOrder[0])
+    expect(docgen.generateModuleReadmes.mock.invocationCallOrder[0])
       .toBeLessThan(docgen.copyFiles.mock.invocationCallOrder[0])
   })
 
   describe('copyFiles', () => {
     test('copies changelogs and the contributing guide', async () => {
       globby.mockResolvedValueOnce(['packages/druxt/CHANGELOG.md'])
+      fs.readFileSync.mockReturnValueOnce('# druxt\n\n## 1.0.0 - 2026-01-01\n\n- Added a thing.\n')
       ncp.mockImplementation((from, to, optionsOrCb, maybeCb) => {
         const cb = typeof optionsOrCb === 'function' ? optionsOrCb : maybeCb
         if (cb) cb()
@@ -61,12 +70,13 @@ describe('DruxtDocgen', () => {
       await docgen.copyFiles()
 
       expect(globby).toHaveBeenCalledWith('packages/*/CHANGELOG.md')
-      expect(ncp).toHaveBeenCalledWith(
-        'packages/druxt/CHANGELOG.md',
-        'docs/nuxt/content/api/packages/druxt/CHANGELOG.md',
-        expect.any(Object),
-        expect.any(Function)
-      )
+      const call = fs.writeFileSync.mock.calls
+        .find(([destination]) => destination === 'docs/nuxt/content/api/packages/druxt/CHANGELOG.md')
+      expect(call).toBeDefined()
+      expect(call[1]).toContain('title: Release notes')
+      // The H1 repeats the module header on the site, so the mirror strips it.
+      expect(call[1]).not.toContain('# druxt')
+      expect(call[1]).toContain('## 1.0.0 - 2026-01-01')
       expect(ncp).toHaveBeenCalledWith(
         'CONTRIBUTING.md',
         'docs/nuxt/content/guide/CONTRIBUTING.md'
@@ -286,6 +296,39 @@ describe('DruxtDocgen', () => {
       )
       const [, content] = fs.writeFileSync.mock.calls[0]
       expect(content).not.toContain('druxt-test-utils')
+    })
+  })
+
+  describe('generateModuleReadmes', () => {
+    test('writes a labeled page per public package with a README', async () => {
+      globby.mockResolvedValueOnce([
+        'packages/druxt/package.json',
+        'packages/test-utils/package.json'
+      ])
+
+      jest.doMock(
+        '../../../packages/druxt/package.json',
+        () => ({ name: 'druxt', version: '1.0.0', private: false }),
+        { virtual: true }
+      )
+      jest.doMock(
+        '../../../packages/test-utils/package.json',
+        () => ({ name: 'druxt-test-utils', version: '0.1.0', private: true }),
+        { virtual: true }
+      )
+      fs.existsSync.mockReturnValueOnce(true)
+      fs.readFileSync.mockReturnValueOnce('# druxt\n\nCore package.\n')
+
+      await docgen.generateModuleReadmes()
+
+      expect(fs.writeFileSync).toHaveBeenCalledTimes(1)
+      const [destination, content] = fs.writeFileSync.mock.calls[0]
+      expect(destination).toBe('docs/nuxt/content/modules/druxt/README.md')
+      expect(content).toContain('title: Druxt')
+      // The H1 repeats the module header on the site, so the mirror strips it.
+      expect(content).not.toContain('# druxt')
+      expect(content).toContain('Core package.')
+      expect(content).toContain('automatically generated')
     })
   })
 })
