@@ -97,4 +97,17 @@ describe('scripts/serve', () => {
     const res = await request(server, '/guide', { method: 'POST' })
     expect(res.status).toBe(405)
   })
+
+  test('a file lost between stat and open gets a 500, not a crash', async () => {
+    const { PassThrough } = require('stream')
+    jest.spyOn(fs, 'createReadStream').mockImplementationOnce(() => {
+      const stream = new PassThrough()
+      process.nextTick(() => stream.emit('error', new Error('gone')))
+      return stream
+    })
+    const res = await request(server, '/guide')
+    expect(res.status).toBe(500)
+    const after = await request(server, '/guide')
+    expect(after.status).toBe(200)
+  })
 })

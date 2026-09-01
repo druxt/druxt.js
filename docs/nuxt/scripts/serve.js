@@ -51,8 +51,18 @@ const sendFile = (res, file, stats, headOnly, status) => {
       : 'no-cache',
   }
   if (headOnly) return send(res, status, headers, undefined, true)
-  res.writeHead(status, headers)
-  fs.createReadStream(file).pipe(res)
+  // Headers wait for 'open': a file lost between stat and open gets a clean
+  // 500, and an unhandled stream error would otherwise kill the process.
+  const stream = fs.createReadStream(file)
+  stream.on('open', () => {
+    res.writeHead(status, headers)
+    stream.pipe(res)
+  })
+  stream.on('error', () => {
+    if (res.headersSent) return res.destroy()
+    send(res, 500, { 'Content-Type': 'text/plain; charset=utf-8' }, 'Internal Server Error')
+  })
+  res.on('close', () => stream.destroy())
 }
 
 const statFile = (file) => {
