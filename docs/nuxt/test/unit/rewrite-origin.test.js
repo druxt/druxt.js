@@ -78,9 +78,9 @@ describe('scripts/rewrite-origin.sh', () => {
     expect(read(dir, 'index.html')).toContain('https://druxtjs.org/og/site.png')
   })
 
-  test('a route with a trailing slash does not double the separator', () => {
+  test.each([['a trailing slash', '/'], ['several trailing slashes', '///']])('strips %s from the route', (_name, suffix) => {
     const dir = fixture()
-    run(dir, { LAGOON_ENVIRONMENT_TYPE: 'development', LAGOON_ROUTE: ROUTE + '/' })
+    run(dir, { LAGOON_ENVIRONMENT_TYPE: 'development', LAGOON_ROUTE: ROUTE + suffix })
 
     expect(read(dir, 'sitemap.xml')).toContain(ROUTE + '/guide')
     expect(read(dir, 'sitemap.xml')).not.toContain('//guide')

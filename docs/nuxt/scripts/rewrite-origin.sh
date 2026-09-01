@@ -16,7 +16,11 @@ ORIGIN='https://druxtjs.org'
 [ "$LAGOON_ENVIRONMENT_TYPE" = 'production' ] && exit 0
 [ -n "$LAGOON_ROUTE" ] || exit 0
 
-route="${LAGOON_ROUTE%/}"
+# Every trailing slash, not just one: `${var%/}` strips a single character,
+# so a route ending in `//` would still produce doubled separators.
+route="$LAGOON_ROUTE"
+while [ "${route%/}" != "$route" ]; do route="${route%/}"; done
+
 matches=$(grep -rIl "$ORIGIN" dist 2>/dev/null || true)
 
 [ -n "$matches" ] || exit 0
