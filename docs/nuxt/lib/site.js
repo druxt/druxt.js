@@ -11,15 +11,14 @@
 /**
  * Canonical origin. Every absolute URL the build emits is built from this.
  *
- * Overridable per build so a preview or tunnel can emit URLs that resolve to
- * itself: share scrapers only fetch absolute URLs, and pointing a preview's
+ * Overridable per build so a local build or tunnel can emit URLs that resolve
+ * to itself: share scrapers only fetch absolute URLs, and pointing a preview's
  * og:image at production means testing against files that are not deployed
- * yet. Lagoon previews derive it from their own route automatically;
- * production leaves both unset and keeps the canonical domain.
+ * yet. Lagoon routes exist only at runtime, never as build args, so previews
+ * cannot resolve their own route here - scripts/start.sh rewrites the baked
+ * origin when the container starts instead.
  */
-const SITE_ORIGIN = process.env.SITE_ORIGIN
-  || (process.env.LAGOON_ENVIRONMENT_TYPE !== 'production' && process.env.LAGOON_ROUTE)
-  || 'https://druxtjs.org'
+const SITE_ORIGIN = process.env.SITE_ORIGIN || 'https://druxtjs.org'
 
 const SITE_NAME = 'DruxtJS'
 

@@ -19,9 +19,15 @@ COPY --from=builder /app/docs/nuxt /app
 # Node 16 (this broke a preview build via cssnano needing Node >=18).
 RUN corepack enable
 RUN yarn || true
+
+# Lagoon passes this as a build arg, but only declared args reach the build.
+# It gates the analytics snippet baked in at generate time. Routes are
+# runtime-only in Lagoon, so scripts/rewrite-origin.sh resolves the origin at
+# container start instead.
+ARG LAGOON_ENVIRONMENT_TYPE
 RUN yarn generate
 
 ENV HOST=0.0.0.0
 EXPOSE 3000
 
-CMD ["yarn", "start"]
+CMD ["sh", "scripts/start.sh"]
