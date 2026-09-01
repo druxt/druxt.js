@@ -39,7 +39,9 @@
   "module": "dist/druxt-menu.esm.js",
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "icon.svg",
+    "banner.svg"
   ],
   "dependencies": {
     "deepmerge": "^4.3.1",

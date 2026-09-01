@@ -19,10 +19,17 @@
       <AppSidebar :open="sidebar" @close="sidebar = false" @open-search="searchOpen = true" />
 
       <main id="main" class="min-w-0 px-5 py-8 sm:px-8 lg:px-12 lg:py-12">
-        <AppSubheader />
-        <div class="mx-auto max-w-content">
-          <Nuxt />
-        </div>
+        <AppBreadcrumbBar />
+        <!-- Module identity chrome; lives here (not in a page) so it
+             survives tab navigation between /modules/<pkg> and its
+             /api/packages/<pkg> pages. It wraps the page slot because its
+             sticky bar needs the page's height to stick within; on other
+             routes it renders only the slot. -->
+        <AppModuleHeader>
+          <div class="mx-auto max-w-content">
+            <Nuxt />
+          </div>
+        </AppModuleHeader>
       </main>
 
       <aside class="hidden xl:block py-12 pr-8">
@@ -83,6 +90,8 @@ export default {
      * button so keyboard and screen-reader users land inside the overlay
      * rather than behind it; closing returns focus to whatever opened it
      * (the header hamburger), instead of dropping it on <body>.
+     *
+     * @param {boolean} open - Whether the drawer is now open.
      */
     sidebar(open) {
       if (open) {

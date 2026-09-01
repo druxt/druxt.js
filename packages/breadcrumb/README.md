@@ -1,67 +1,59 @@
+<img src="./banner.svg" alt="DruxtBreadcrumb: breadcrumb trails from the Drupal decoupled router">
+
 # DruxtBreadcrumb
 
 [![npm](https://badgen.net/npm/v/druxt-breadcrumb)](https://www.npmjs.com/package/druxt-breadcrumb)
 [![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
-[![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt-breadcrumb/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt-breadcrumb?targetFile=package.json)
-[![codecov](https://codecov.io/gh/druxt/druxt-breadcrumb/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt-breadcrumb)
+[![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
+[![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 
-> Decoupled Router based Breadcrumb Druxt component.
+> Render a breadcrumb trail in Nuxt from the Drupal decoupled router, with the DruxtBreadcrumb component and its theming options.
 
-## Links
+DruxtBreadcrumb builds a breadcrumb trail for the current route. It walks the
+route's parent paths through the decoupled router, so the trail follows your
+Drupal path hierarchy with no manual configuration, and it themes like every
+other Druxt component.
 
-- DruxtJS: https://druxtjs.org
-- Documentation: https://druxtjs.org/modules/breadcrumb
-- Community Discord server: https://discord.druxtjs.org
+![Example DruxtBreadcrumb component](https://druxtjs.org/images/druxt-breadcrumb.png)
 
-## Install
+## Features
 
-`$ npm install druxt-breadcrumb`
+- Vue.js components:
+  - **DruxtBreadcrumb**: Render Drupal breadcrumbs by route
 
-### Nuxt.js
+---
 
-Add module to `nuxt.config.js`
+## Installation
 
-```js
-module.exports = {
-  modules: ['druxt-breadcrumb'],
-  druxt: {
-    baseUrl: 'https://demo-api.druxtjs.org',
-  },
-};
-```
+1. Install the package:
 
-## Usage
+   ```sh
+   npm i druxt-breadcrumb
+   ```
 
-### DruxtBreadcrumb component
+2. Add the module to `nuxt.config.js`:
 
-The DruxtBreadcrumb component uses the Vue Router and DruxtRouter to build a list of crumbs.
+   ```js
+   export default {
+     modules: ['druxt-breadcrumb'],
+   };
+   ```
+
+---
+
+## Vue.js components
+
+### DruxtBreadcrumb
+
+Renders a list of breadcrumbs based on the active route.
 
 ```vue
 <DruxtBreadcrumb />
 ```
 
-The crumbs can be themed by providing a default scoped slot:
+- For more details, refer to the [DruxtBreadcrumb API documentation](https://druxtjs.org/api/packages/breadcrumb/components/DruxtBreadcrumb).
 
-```vue
-<DruxtBreadcrumb>
-  <template #default="{ crumbs }">
-    {{ crumbs }}
-  </template>
-</DruxtBreadcrumb>
-```
-
-The DruxtBreadcrumb also provide a DruxtWrapper component for theming:
-
-```vue
-<!-- DruxtBreadcrumbDefault.vue -->
-<template>
-  <div>
-    <slot />
-  <div>
-</template>
-```
-
-See the [DruxtBreadcrumb API documentation](https://druxtjs.org/api/packages/breadcrumb/components/DruxtBreadcrumb) for more information.
+---
 
 ## Options
 
@@ -73,3 +65,9 @@ These options are available to all Druxt modules, in the `nuxt.config.js` file.
 | --------------- | -------- | -------- | ------- | ---------------------------------------------------------------------------- |
 | `druxt.axios`   | `object` | No       | `{}`    | [Axios instance settings](https://github.com/axios/axios#axioscreateconfig). |
 | `druxt.baseUrl` | `string` | Yes      | `null`  | Base URL for the Drupal installation.                                        |
+
+## Links
+
+- DruxtJS: https://druxtjs.org
+- Documentation: https://druxtjs.org/modules/breadcrumb
+- Community Discord server: https://discord.gg/QnZD46c

@@ -10,9 +10,9 @@ it('DruxtJS.org: Modules', () => {
   cy.get('a[href="/modules/entity"]').should('contain', 'Entity')
 
   // A module page carries the shared chrome: breadcrumb, source and
-  // release notes.
+  // changelog.
   cy.visit('/modules/entity')
   cy.get('nav[aria-label="Breadcrumb"]').should('contain', 'Modules')
   cy.contains('a', 'Source').should('have.attr', 'href').and('include', 'github.com/druxt')
-  cy.contains('a', 'Release notes').should('have.attr', 'href', '/api/packages/entity/CHANGELOG')
+  cy.contains('a', 'Changelog').should('have.attr', 'href', '/api/packages/entity/CHANGELOG')
 })

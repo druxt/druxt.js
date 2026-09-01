@@ -58,6 +58,14 @@ const SECTIONS = {
     priority: 0.4,
     changefreq: 'yearly',
   },
+  // Claimed by route rather than by path segment: sectionFor() returns this
+  // for component reference pages, which the content index files under api.
+  components: {
+    label: 'Components',
+    description: 'Reference for the Druxt Vue components: what each one renders, and the props and slots it takes.',
+    priority: 0.4,
+    changefreq: 'yearly',
+  },
 }
 
 /**
@@ -96,7 +104,12 @@ const canonicalUrl = (path) => {
  * @returns {string|null} The section key.
  */
 const sectionFor = (path) => {
-  const first = normalisePath(path).split('/').filter(Boolean)[0]
+  const normalised = normalisePath(path)
+  // Component reference pages live under /api/packages/*/components/, but
+  // they belong to the Components section — the sidebar, header, breadcrumb
+  // and OG cards all claim them for it, and the descriptions here follow.
+  if (/^\/api\/packages\/[^/]+\/components(\/|$)/.test(normalised)) return 'components'
+  const first = normalised.split('/').filter(Boolean)[0]
   return first && SECTIONS[first] ? first : null
 }
 
