@@ -3,6 +3,7 @@ antfu
 apos
 Appétit
 Autobuild
+autobuild
 automerge
 autoupdate
 axios
@@ -17,8 +18,10 @@ codecov
 Colour
 Colours
 composables
+Composables
 consola
 Consolas
+consolas
 Contenta
 contentacms
 corepack
@@ -33,8 +36,10 @@ deasync
 decoupled
 devcontainer
 devcontainers
+devel
 Devel
 devpod
+Diataxis
 docgen
 dragend
 Drupals
@@ -44,6 +49,7 @@ druxtjs
 endswith
 esm
 felixfbecker
+filesystems
 Fraunces
 freetype
 frontpage
@@ -56,6 +62,7 @@ intelephense
 interruptible
 jsdocs
 jsonapi
+Knip
 knip
 Ksection
 langcode
@@ -67,6 +74,8 @@ libsqlite
 libzip
 licence
 lightboxes
+Linkcheck
+linkcheck
 llms
 lockfiles
 longname
@@ -74,6 +83,7 @@ mailhog
 makedirs
 markdownlint
 mbstring
+menlo
 Menlo
 metatag
 metatags
@@ -81,6 +91,7 @@ mise
 namelist
 neighbour
 Neue
+neue
 nohup
 normalise
 normalised
@@ -107,8 +118,12 @@ recrawl
 renderable
 repoint
 reskins
+Resvg
+resvg
 router
+satori
 scule
+segoe
 Segoe
 setuptools
 shivammathur
@@ -123,6 +138,7 @@ swipeable
 tailwindcss
 testid
 Themable
+themable
 toggleable
 topbar
 umami
