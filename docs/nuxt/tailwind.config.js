@@ -33,7 +33,7 @@ const prose = (theme) => ({
       borderBottom: '1px solid hsl(var(--b3))',
       '&:hover': { borderBottomColor: 'hsl(var(--pf))' },
     },
-    'h1, h2, h3, h4': { color: 'hsl(var(--bc))', scrollMarginTop: '7.5rem' },
+    'h1, h2, h3, h4': { color: 'hsl(var(--bc))', scrollMarginTop: '10.5rem' },
     'h2 > a, h3 > a': { borderBottom: 'none', fontWeight: 'inherit' },
     strong: { color: 'hsl(var(--bc))', fontWeight: '600' },
     'a strong, blockquote strong, thead th strong': { color: 'inherit' },
@@ -69,7 +69,9 @@ const prose = (theme) => ({
     'blockquote p:last-of-type::after': { content: 'none' },
     thead: { borderBottomColor: 'hsl(var(--b3))' },
     'tbody tr': { borderBottomColor: 'hsl(var(--b3))' },
-    img: { borderRadius: theme('borderRadius.lg'), border: '1px solid hsl(var(--b3))' },
+    img: { borderRadius: theme('borderRadius.lg') },
+    // Badges: linked images render as an inline row, not stacked blocks.
+    'a > img': { display: 'inline-block', marginTop: '0', marginBottom: '0', borderRadius: '0' },
     hr: { borderColor: 'hsl(var(--b3))' },
   },
 })
