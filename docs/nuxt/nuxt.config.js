@@ -15,6 +15,8 @@ const GA_MEASUREMENT_ID = 'G-Y1ZRHGDGSD'
 // deploys never send hits into the real property.
 const isProduction = process.env.LAGOON_ENVIRONMENT_TYPE === 'production'
 
+import { SITE_NAME, SITE_DESCRIPTION } from './lib/site'
+
 /** The `druxt` package version, or null where the monorepo root isn't present. */
 let druxtVersion = null
 try {
@@ -108,23 +110,104 @@ export default {
     storageKey: 'druxt-color-mode',
   },
 
+  pwa: {
+    // @nuxtjs/pwa's meta module also emits Open Graph and Twitter tags, built
+    // from this site's package.json. That made it a third source of share
+    // metadata, and the values were wrong: og:title came out as "druxtjs-org",
+    // the npm package name. It was invisible while nuxt-social-meta's hid-keyed
+    // tags sat on top of it, and surfaced on the error pages the moment that
+    // module was removed.
+    //
+    // utils/seo.js owns every og:* and twitter:* tag now. The manifest, icons
+    // and theme-color this module also provides are still wanted, so it stays
+    // registered with only its share tags turned off.
+    meta: {
+      // Without these, @nuxtjs/pwa names the app from package.json and the iOS
+      // home-screen title reads "druxtjs-org". Same package-name leak as the
+      // og:title above, in a place a share-tag audit does not look.
+      name: SITE_NAME,
+      description: SITE_DESCRIPTION,
+
+      ogTitle: false,
+      ogDescription: false,
+      ogImage: false,
+      ogUrl: false,
+      twitterCard: false,
+      twitterSite: false,
+      twitterCreator: false,
+    },
+
+    manifest: {
+      name: SITE_NAME,
+      short_name: SITE_NAME,
+      description: SITE_DESCRIPTION,
+    },
+  },
+
+  // nuxt-social-meta used to live here, injecting one site-wide Open Graph set
+  // across all 130 routes. utils/seo.js now emits the full set per page, so the
+  // module was a second source of truth for the share title and image that
+  // could drift from it. Its tags were hid-keyed and so were being replaced
+  // rather than duplicated, but everything it contributed (image dimensions,
+  // the Twitter handle) has moved into seoHead.
   modules: [
     '@nuxt/content',
-    ['nuxt-social-meta', {
-      title: 'DruxtJS - The Fully Decoupled Drupal Framework',
-      site_name: 'DruxtJS',
-      description: 'Druxt is a framework for building Fully Decoupled Drupal and Nuxt.js applications and sites.',
-      img: 'https://druxtjs.org/og-druxt.png',
-      img_size: { width: '1200', height: '630' },
-      twitter: '@DruxtJS',
-      twitter_card: 'summary_large_image',
-    }],
   ],
 
   content: {
     markdown: {
       // Anchors are what components/app/Toc.vue scroll-spies against.
       prism: { theme: 'prism-themes/themes/prism-material-oceanic.css' },
+    },
+  },
+
+  generate: {
+    /**
+     * Every content route, given to the generator explicitly.
+     *
+     * Nuxt discovers dynamic routes by crawling links out of the pages it has
+     * already generated. The API reference is listed by AppApiIndex, which
+     * fetches its entries client side, so most of those links do not exist in
+     * the generated HTML for the crawler to follow. Measured before this: 50 of
+     * 109 API pages were written to dist, and the other 59 existed only as the
+     * SPA fallback — served by 200.html, invisible to a crawler, and impossible
+     * to list in a sitemap honestly.
+     *
+     * @returns {string[]} Route paths to generate.
+     */
+    routes() {
+      const path = require('path')
+      const { readContent } = require('./lib/content-index')
+      return readContent(path.join(__dirname, 'content')).map((doc) => doc.route)
+    },
+  },
+
+  hooks: {
+    /**
+     * Write the machine-readable indexes into the static export.
+     *
+     * `generate:done` rather than a build step so these run against the same
+     * content the pages were just generated from, including `content/api`,
+     * which docgen writes and which is absent from a fresh checkout. If it has
+     * not been built, the API entries are simply missing rather than pointing
+     * at URLs that were never generated.
+     *
+     * @param {object} generator - The Nuxt generator instance.
+     */
+    async 'generate:done'(generator) {
+      const fs = require('fs')
+      const path = require('path')
+      const { readContent } = require('./lib/content-index')
+      const { buildLlmsTxt } = require('./lib/llms-txt')
+      const { buildSitemap } = require('./lib/sitemap')
+
+      const { srcDir, generate } = generator.nuxt.options
+      const docs = readContent(path.join(srcDir, 'content'))
+
+      await fs.promises.writeFile(path.join(generate.dir, 'llms.txt'), buildLlmsTxt(docs))
+      await fs.promises.writeFile(path.join(generate.dir, 'sitemap.xml'), buildSitemap(docs))
+
+      console.log('SEO: wrote llms.txt and sitemap.xml for ' + docs.length + ' documents')
     },
   },
 

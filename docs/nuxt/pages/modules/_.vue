@@ -12,7 +12,8 @@
 </template>
 
 <script>
-import { extractHero } from '~/utils/content'
+import { seoHead } from '~/utils/seo'
+import { documentDescription, extractHero } from '~/utils/content'
 
 export default {
   name: 'AppModuleDocument',
@@ -49,10 +50,11 @@ export default {
   },
 
   head() {
-    return {
+    return seoHead({
       title: this.document.title,
-      meta: [{ hid: 'description', name: 'description', content: this.document.description || '' }],
-    }
+      description: documentDescription(this.document),
+      path: this.$route.path,
+    })
   },
 
   computed: {
