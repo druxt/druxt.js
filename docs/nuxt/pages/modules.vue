@@ -1,36 +1,20 @@
 <template>
   <!--
-    Parent route for /modules/*. The existing site already used this NuxtChild
-    pattern; it now carries the shared module chrome — breadcrumbs, the module
-    header and the sub-page tabs — so /modules/entity and
-    /modules/entity/deprecations keep their context instead of re-rendering it.
+    Parent route for /modules/*. The module identity chrome lives in the
+    layout, which owns it for the /api/packages/<pkg> tabs as well; this route
+    adds only the index document's own header.
   -->
   <div>
-    <AppBreadcrumbs :items="breadcrumbs" />
-
-    <template v-if="module">
-      <AppPageHeader :title="module.title" :description="module.description" :badges="badges">
-        <div class="mt-5 flex flex-wrap gap-2">
-          <a class="btn btn-sm btn-ghost gap-2" :href="repo" target="_blank" rel="noopener">
-            <AppIconGithub class="w-4 h-4" /> Source
-          </a>
-          <NuxtLink class="btn btn-sm btn-ghost gap-2" :to="'/api/packages/' + pkg + '/CHANGELOG'">
-            <AppIconApi class="w-4 h-4" /> Release notes
-          </NuxtLink>
-        </div>
-      </AppPageHeader>
-
-      <AppModuleNav :pkg="pkg" :pages="pages" class="mb-8" />
-    </template>
 
     <!-- /modules itself: the index document's own title and description. -->
-    <AppPageHeader v-else-if="index" :title="index.title" :description="index.description" />
+    <AppPageHeader v-if="index" :title="index.title" :description="index.description" />
 
-    <NuxtChild :module="module" :pkg="pkg" />
+    <NuxtChild :pkg="pkg" />
   </div>
 </template>
 
 <script>
+
 export default {
   name: 'AppModulesParent',
 
@@ -38,42 +22,32 @@ export default {
   // (parent + child match) if some matched component opts in explicitly.
   scrollToTop: true,
 
-  data: () => ({ module: null, index: null, pages: [] }),
+  data: () => ({ index: null }),
 
   // Nuxt's special fetch() hook, not a plain method — this is what makes SSR
   // await it before sending HTML. Previously this lived under `methods` and
   // was only ever invoked by the `pkg` watcher below, so Nuxt never waited
-  // for it: the server shipped blank chrome (no header, no breadcrumb title,
-  // no module nav) and it only appeared after the client re-fetched on
-  // mount.
+  // for it: the server shipped a blank index header that only appeared after
+  // the client re-fetched on mount.
   async fetch() {
     // Captured before awaiting, and re-checked after. This instance is reused
     // across /modules/<pkg> route changes, so moving quickly between modules
     // can leave two fetches in flight and an earlier one resolving later
-    // would restore the previous module's chrome over the current page.
+    // would restore the previous route's header over the current page.
+    // Cleared, not just skipped: this instance is reused across routes, so a
+    // stale index would render the section header above a module page.
     const pkg = this.pkg
-
-    if (!pkg) {
-      this.module = null
-      this.pages = []
-      const index = await this.$content('modules/README')
-        .only(['title', 'description'])
-        .fetch()
-        .catch(() => null)
-      if (pkg !== this.pkg) return
-      this.index = index
+    if (pkg) {
+      this.index = null
       return
     }
 
-    // The module's own README, plus any sibling documents as sub-pages.
-    const [module, pages] = await Promise.all([
-      this.$content('modules/' + pkg + '/README').only(['title', 'description']).fetch().catch(() => null),
-      this.$content('modules/' + pkg).only(['title', 'path', 'slug']).fetch().catch(() => []),
-    ])
-
-    if (pkg !== this.pkg) return
-    this.module = module
-    this.pages = (Array.isArray(pages) ? pages : [pages]).filter(Boolean)
+    const index = await this.$content('modules/README')
+      .only(['title', 'description'])
+      .fetch()
+      .catch(() => null)
+    if (this.pkg) return
+    this.index = index
   },
 
   computed: {
@@ -81,16 +55,6 @@ export default {
     pkg() {
       const [, , pkg] = this.$route.path.split('/')
       return pkg || null
-    },
-
-    repo: ({ pkg }) => 'https://github.com/druxt/druxt.js/tree/develop/packages/' + pkg,
-
-    badges: ({ pkg }) => (pkg ? [{ text: 'druxt-' + pkg }] : []),
-
-    breadcrumbs() {
-      const items = [{ text: 'Modules', to: '/modules' }]
-      if (this.module) items.push({ text: this.module.title, to: '/modules/' + this.pkg })
-      return items
     },
   },
 

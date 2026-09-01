@@ -18,29 +18,9 @@
 </template>
 
 <script>
-import Blocks from './icon/module/Blocks.vue'
-import Breadcrumb from './icon/module/Breadcrumb.vue'
-import Druxt from './icon/module/Druxt.vue'
-import Entity from './icon/module/Entity.vue'
-import Menu from './icon/module/Menu.vue'
-import Router from './icon/module/Router.vue'
-import Schema from './icon/module/Schema.vue'
-import Site from './icon/module/Site.vue'
-import Views from './icon/module/Views.vue'
-
 // Imported statically: the pick is dynamic by data, which auto-import
 // template scanning cannot see.
-const icons = {
-  blocks: Blocks,
-  breadcrumb: Breadcrumb,
-  druxt: Druxt,
-  entity: Entity,
-  menu: Menu,
-  router: Router,
-  schema: Schema,
-  site: Site,
-  views: Views,
-}
+import { moduleIcon } from './icon/module'
 
 export default {
   props: {
@@ -51,8 +31,14 @@ export default {
   computed: {
     pkg: ({ module }) => module.dir.split('/')[2],
 
-    /** The module's icon component; the core mark covers unknown packages. */
-    icon: ({ pkg }) => icons[pkg] || Druxt,
+    /**
+     * The module's icon component; the core mark covers unknown packages.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {string} vm.pkg - The package directory name.
+     * @returns {object} The icon component.
+     */
+    icon: ({ pkg }) => moduleIcon(pkg),
   },
 }
 </script>

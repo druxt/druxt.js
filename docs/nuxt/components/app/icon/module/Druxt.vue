@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import paths from './paths'
+import paths from '~/lib/module-icon-paths'
 
 export default {
   computed: {

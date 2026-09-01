@@ -20,7 +20,6 @@ export default {
 
   // Supplied by pages/modules.vue via <NuxtChild>.
   props: {
-    module: { type: Object, default: null },
     pkg: { type: String, default: null },
   },
 

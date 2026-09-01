@@ -39,7 +39,9 @@
   "module": "dist/druxt-blocks.esm.js",
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "icon.svg",
+    "banner.svg"
   ],
   "dependencies": {
     "axios": "0.28.0",

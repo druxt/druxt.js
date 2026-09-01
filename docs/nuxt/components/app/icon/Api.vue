@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import paths from './paths'
+import paths from '~/lib/icon-paths'
 
 export default {
   computed: {
