@@ -219,7 +219,7 @@
 
 ### Minor Changes
 
-- Added module level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
+- Added module-level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
 - Updated storybook integration. ([`8d28c18`](https://github.com/druxt/druxt.js/commit/8d28c18))
 - Moved `$druxtEntity` plugin settings to `$druxt.settings.entity`. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
 
@@ -271,7 +271,7 @@
 
 - Added support for default template injection.
 
-  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080)
+  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080---2021-06-20)
 
 - Added support for schema-less entities.
 - Added improved defaults to the DruxtField component.
@@ -296,7 +296,7 @@
 ### Minor Changes
 
 - Fixed issue with EntityReferenceLabel component.
-- Added watch to update DeruxtEntity data on props change.
+- Added watch to update DruxtEntity data on props change.
 - Updated components v-model support.
 - Updated Storybook integration.
 - Updated dependencies.
@@ -349,14 +349,14 @@
 
 ### Patch Changes
 
-- Fixed issue with Storybook intergration.
+- Fixed issue with Storybook integration.
 - Updated Storybook integration.
 
 ## 0.11.1 - 2021-03-04
 
 ### Patch Changes
 
-- Fixed issue with Storybook intergration.
+- Fixed issue with Storybook integration.
 
 ## 0.11.0 - 2021-03-02
 
@@ -410,7 +410,7 @@
 ### Patch Changes
 
 - Updated DruxtEntity for DruxtComponentMixin.
-- Updatd Field component mixins.
+- Updated Field component mixins.
 - Updated dependencies.
 
 ## 0.7.0 - 2020-10-23
@@ -491,7 +491,7 @@
 ### Patch Changes
 
 - Fixed issues with EntityReferenceLabel field.
-- Updated NuberInteger field.
+- Updated NumberInteger field.
 
 ## 0.2.1 - 2020-05-30
 

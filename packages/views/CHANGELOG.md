@@ -181,7 +181,7 @@
 ### Minor Changes
 
 - Moved `$druxtViews` plugin settings to `$druxt.settings.views`. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
-- Added module level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
+- Added module-level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
 - Updated storybook integration. ([`8d28c18`](https://github.com/druxt/druxt.js/commit/8d28c18))
 
 ### Patch Changes
@@ -232,7 +232,7 @@
 
 - Added support for default template injection.
 
-  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080)
+  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080---2021-06-20)
 
 - Added ability to load by UUID or View ID.
 
@@ -272,7 +272,7 @@
 
 ### Patch Changes
 
-- Fixed missing attachement Views.
+- Fixed missing attachment Views.
 
 ## 0.8.2 - 2021-03-08
 
@@ -285,13 +285,13 @@
 ### Patch Changes
 
 - Fixed issues with Storybook integration.
-- Fixed missing attachements Views.
+- Fixed missing attachments Views.
 
 ## 0.8.0 - 2021-03-06
 
 ### Minor Changes
 
-- Added Storybook intergration.
+- Added Storybook integration.
 - Fixed broken View results.
 
 ## 0.7.2 - 2021-03-01

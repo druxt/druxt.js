@@ -54,20 +54,20 @@
 
 ### Patch Changes
 
-- Fixed issue with single lingual sites using JSON:API Extras. ([`9819eee`](https://github.com/druxt/druxt.js/commit/9819eeed))
+- Fixed issue with single-lingual sites using JSON:API Extras. ([`9819eee`](https://github.com/druxt/druxt.js/commit/9819eeed))
 - Updated dependencies: druxt@0.19.2.
 
 ## 0.27.2 - 2022-05-27
 
 ### Patch Changes
 
-- Fixed issues on single lingual sites. ([`f86b372`](https://github.com/druxt/druxt.js/commit/f86b372f))
+- Fixed issues on single-lingual sites. ([`f86b372`](https://github.com/druxt/druxt.js/commit/f86b372f))
 
 ## 0.27.1 - 2022-05-24
 
 ### Patch Changes
 
-- Fixed issues on single lingual sites. ([`4150e25`](https://github.com/druxt/druxt.js/commit/4150e25))
+- Fixed issues on single-lingual sites. ([`4150e25`](https://github.com/druxt/druxt.js/commit/4150e25))
 - Updated dependencies: druxt@0.19.1.
 
 ## 0.27.0 - 2022-05-23
@@ -181,7 +181,7 @@
   +modules: ['druxt-router/nuxt']
   ```
 
-- Added module level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
+- Added module-level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
 
 ### Patch Changes
 
@@ -337,7 +337,7 @@
 
 ### Minor Changes
 
-- Updated module to use shared Druxt configruation.
+- Updated module to use shared Druxt configuration.
 
 ## 0.8.0 - 2020-03-31
 

@@ -156,7 +156,7 @@
 ### Minor Changes
 
 - Moved `$druxtBlocks` plugin settings to `$druxt.settings.blocks`. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
-- Added module level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
+- Added module-level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
 - Updated storybook integration. ([`8d28c18`](https://github.com/druxt/druxt.js/commit/8d28c18))
 
 ### Patch Changes
@@ -206,7 +206,7 @@
 ### Minor Changes
 
 - Added support for default template injection.
-  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080)
+  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080---2021-06-20)
 
 ## 0.9.2 - 2021-06-16
 
@@ -246,13 +246,13 @@
 
 ### Patch Changes
 
-- Updated depedencies.
+- Updated dependencies.
 
 ## 0.7.4 - 2020-11-14
 
 ### Patch Changes
 
-- Updated depedencies.
+- Updated dependencies.
 
 ## 0.7.3 - 2020-10-25
 

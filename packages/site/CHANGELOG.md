@@ -51,7 +51,7 @@
 
 ### Minor Changes
 
-- Added out of the box multilingual support. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
+- Added out-of-the-box multilingual support. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
 - Added langcode to component mixins. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
 
 ### Patch Changes
@@ -63,7 +63,6 @@
 ### Patch Changes
 
 - Updated drupal-jsonapi-params to 2.0.0. ([`540afca`](https://github.com/druxt/druxt.js/commit/540afca))
-- Updated dependencies.
 - Updated dependencies: druxt-views@0.18.2, druxt-blocks@0.15.2, druxt@0.18.2, druxt-entity@0.24.3, druxt-menu@0.16.3, druxt-schema@0.10.3.
 
 ## 0.11.1 - 2022-02-23

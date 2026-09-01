@@ -158,7 +158,7 @@
 
 ### Minor Changes
 
-- Added module level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
+- Added module-level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
 - Updated storybook integration. ([`8d28c18`](https://github.com/druxt/druxt.js/commit/8d28c18))
 
 ### Patch Changes
@@ -208,7 +208,7 @@
 
 - Added support for default template injection.
 
-  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080)
+  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080---2021-06-20)
 
 - Added support for v-model.
 - Updated dependencies.

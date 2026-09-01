@@ -169,7 +169,7 @@
 ### Minor Changes
 
 - Added support for default template injection.
-  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080)
+  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080---2021-06-20)
 
 ## 0.8.0 - 2021-06-07
 

@@ -100,7 +100,7 @@
 
 ### Minor Changes
 
-- Added module level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
+- Added module-level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
 
 ### Patch Changes
 

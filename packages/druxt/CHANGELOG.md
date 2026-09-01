@@ -49,14 +49,14 @@
 
 ### Patch Changes
 
-- Fixed issue with single lingual sites using JSON:API Extras. ([`9819eee`](https://github.com/druxt/druxt.js/commit/9819eeed))
+- Fixed issue with single-lingual sites using JSON:API Extras. ([`9819eee`](https://github.com/druxt/druxt.js/commit/9819eeed))
 - Changed order of Druxt Proxy entries. ([`4ff0ad8`](https://github.com/druxt/druxt.js/commit/4ff0ad81))
 
 ## 0.19.1 - 2022-05-24
 
 ### Patch Changes
 
-- Fixed issues on single lingual sites. ([`4150e25`](https://github.com/druxt/druxt.js/commit/4150e25))
+- Fixed issues on single-lingual sites. ([`4150e25`](https://github.com/druxt/druxt.js/commit/4150e25))
 
 ## 0.19.0 - 2022-05-23
 
@@ -68,7 +68,7 @@
   const data = await druxt.getResource("node--article", id, undefined, "en");
   ```
 
-- Added langcode suffixed component options for multilingual templates. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
+- Added langcode-suffixed component options for multilingual templates. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
 
   example:
 
@@ -206,7 +206,7 @@
 
   - `/sites/${PATH}/files` -> `${BASEURL}/site/${PATH}/files`
 
-- Changed template injected module components to not use a DruxtWrapper component by default. ([`c4457e1`](https://github.com/druxt/druxt.js/commit/c4457e1))
+- Changed template-injected module components to not use a DruxtWrapper component by default. ([`c4457e1`](https://github.com/druxt/druxt.js/commit/c4457e1))
 - Refactored DruxtModule fetch hooks. ([`e7b1533`](https://github.com/druxt/druxt.js/commit/e7b1533))
 
 ## 0.12.0 - 2021-10-10
@@ -348,7 +348,7 @@ Thanks to [d34dman](https://github.com/d34dman)
 
 ### Patch Changes
 
-- Fixed issue with normalizaton of include/sort data.
+- Fixed issue with normalization of include/sort data.
 - Fixed issue with queryobject in getResource action.
 - Updated dependencies.
 
@@ -358,7 +358,7 @@ Thanks to [d34dman](https://github.com/d34dman)
 
 - Refactored DruxtStore.
   - Added support for partial resources
-  - Added dehyrdation/rehydration of included resources and collections
+  - Added dehydration/rehydration of included resources and collections
 - Fixed issue with DruxtStore reactivity.
 
 ## 0.5.1 - 2021-03-16
