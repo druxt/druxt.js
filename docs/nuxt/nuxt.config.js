@@ -18,7 +18,7 @@ const isProduction = process.env.LAGOON_ENVIRONMENT_TYPE === 'production'
 // Routes generate:routeFailed reported; generate:done refuses to ship them.
 const failedRoutes = []
 
-import { SITE_NAME, SITE_DESCRIPTION, SITE_ORIGIN } from './lib/site'
+import { SITE_NAME, SITE_DESCRIPTION, SITE_ORIGIN, docTypeExpression } from './lib/site'
 
 /** The `druxt` package version, or null where the monorepo root isn't present. */
 let druxtVersion = null
@@ -76,11 +76,18 @@ export default {
       // on a production-gated `yarn generate`, where one document load
       // produced js/config, then js/config again after a NuxtLink click.
       // Don't add one without re-measuring this first.
+      //
+      // That same re-execution is what carries `doc_type`: the expression
+      // reads location.pathname at call time, so each re-fired config reports
+      // the Diataxis section of the page just navigated to. Registering
+      // `doc_type` as an event-scoped custom dimension in GA4 is what makes it
+      // visible in reports; until that is done the parameter is collected and
+      // simply not surfaced.
       ...(isProduction ? [
         { hid: 'ga-src', src: `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`, async: true },
         {
           hid: 'ga-init',
-          innerHTML: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_MEASUREMENT_ID}');`,
+          innerHTML: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_MEASUREMENT_ID}',{doc_type:${docTypeExpression()}});`,
         },
       ] : []),
     ],

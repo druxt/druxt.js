@@ -173,6 +173,62 @@ const ogImageUrl = (path) => {
   return SITE_ORIGIN + '/og' + normalised + '.png'
 }
 
+/**
+ * The Diataxis bucket a path belongs to, as reported to GA4.
+ *
+ * The whole point of a Diataxis restructure is the claim that splitting
+ * tutorials from how-to guides from reference material serves readers better.
+ * Nothing in GA4 can test that claim while every page is just a `pagePath`
+ * string: comparing sections means hand-matching path prefixes in every
+ * report, and comparing them *over time* means doing it consistently forever.
+ * Reported as a dimension instead, "do how-to guides hold readers better than
+ * tutorials" becomes one breakdown.
+ *
+ * `home` is separated from `other` because the homepage is the single busiest
+ * page and would otherwise dominate an `other` bucket that is meant to surface
+ * strays.
+ *
+ * The legacy `guide` section is still a SECTIONS key and so reports under its
+ * own name rather than falling into `other`. That is deliberate: it measures
+ * how much traffic still arrives on pre-restructure URLs, which is the
+ * redirect-health signal the restructure needs and cannot get anywhere else.
+ *
+ * @param {string} path - A route path.
+ * @returns {string} `home`, a section key, or `other`.
+ */
+const docTypeFor = (path) => {
+  const first = normalisePath(path).split('/').filter(Boolean)[0]
+  if (!first) return 'home'
+  // hasOwnProperty, not a truthiness lookup: `SECTIONS['constructor']` resolves
+  // up the prototype chain to a truthy value, so `/constructor` — and
+  // `/toString`, `/__proto__`, and anything else a scanner probes — would
+  // report as its own bucket. `docTypeExpression` uses Object.keys and never
+  // had the hole, so this was also a live disagreement between the two.
+  return Object.prototype.hasOwnProperty.call(SECTIONS, first) ? first : 'other'
+}
+
+/**
+ * `docTypeFor` as a self-contained browser expression, for inlining into the
+ * GA4 snippet.
+ *
+ * The snippet is a string in nuxt.config.js and cannot import this module, so
+ * the section list is baked in at build time from `SECTIONS` — the one place
+ * it is defined — rather than being retyped. `docTypeFor` and this expression
+ * are asserted to agree in the unit tests, which is what stops them drifting.
+ *
+ * It must stay an expression evaluated at call time, not a constant: vue-meta
+ * re-executes the whole inline script on every client-side navigation, which
+ * is how `gtag('config')` re-fires per page. Reading `location.pathname` at
+ * that moment is what makes the dimension follow the reader.
+ *
+ * @returns {string} A JavaScript expression yielding the doc type.
+ */
+const docTypeExpression = () => {
+  const known = JSON.stringify(Object.keys(SECTIONS))
+  return `(function(){var s=(location.pathname.split('/').filter(Boolean)[0]||'');`
+    + `return s?(${known}.indexOf(s)>-1?s:'other'):'home'})()`
+}
+
 module.exports = {
   SITE_ORIGIN,
   SITE_NAME,
@@ -185,4 +241,6 @@ module.exports = {
   ogImageUrl,
   sectionFor,
   titleFromPath,
+  docTypeFor,
+  docTypeExpression,
 }
