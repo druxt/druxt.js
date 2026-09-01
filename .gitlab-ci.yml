@@ -120,6 +120,33 @@ lint:yaml:
     - yamllint .gitlab-ci.yml
     - section_end "yaml-lint"
 
+# Static checks prove the redirects map is well-formed; only nginx itself
+# proves nginx accepts it. A map that fails to compile leaves the site
+# serving soft 200s with no log errors, so this closes that failure class.
+lint:redirects:
+  stage: lint
+  interruptible: true
+  image: nginx:1.27-alpine
+  script:
+    - section_start "redirects-nginx" "Proving nginx parses the redirects map"
+    - |
+      cat > /tmp/map-test.conf <<CONF
+      events {}
+      http {
+        map \$host\$uri \$redirectdomain {
+          include $CI_PROJECT_DIR/.lagoon/redirects-map.conf;
+        }
+        server {
+          listen 8080;
+          if (\$redirectdomain) {
+            return 301 \$redirectdomain;
+          }
+        }
+      }
+      CONF
+    - nginx -t -c /tmp/map-test.conf
+    - section_end "redirects-nginx"
+
 lint:markdown:
   extends: .node
   stage: lint
