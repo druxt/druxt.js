@@ -26,6 +26,8 @@
  * The error body, shared by layouts/error.vue and pages/404.vue so the
  * client-side error page and the statically served 404 stay one design.
  */
+import { notFoundEvent } from '~/lib/analytics'
+
 export default {
   props: {
     /** HTTP status the page represents. */
@@ -40,6 +42,21 @@ export default {
     message: ({ statusCode }) => (statusCode === 404
       ? 'That page does not exist. It may have moved, or the link that brought you here may be out of date.'
       : 'An unexpected error occurred while loading this page.'),
+  },
+
+  /** @returns {void} */
+  mounted() {
+    if (this.statusCode !== 404) return
+    // window.location, not $route: this component also renders from the
+    // statically generated dist/404/index.html, and the path the reader
+    // actually asked for is the one worth recording.
+    //
+    // The referrer is the half that makes this actionable. A 404 alone says a
+    // URL is dead; the referrer says whether it is a broken internal link, a
+    // stale external one, or a search engine holding an index entry that
+    // should have been redirected — which is the failure mode a URL
+    // restructure produces.
+    this.$track(...notFoundEvent(window.location.pathname, document.referrer))
   },
 }
 </script>

@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import { copyCodeEvent, languageFromClass } from '~/lib/analytics'
 import { trapTab } from '~/utils/focus'
 
 /**
@@ -170,6 +171,13 @@ export default {
           try {
             await navigator.clipboard.writeText(pre.innerText.replace(/\nCopy$/, ''))
             button.textContent = 'Copied'
+            // Only a successful copy counts. A clipboard rejection means the
+            // reader did not get the snippet, and recording it as usage would
+            // overstate exactly the metric this exists to measure.
+            this.$track(...copyCodeEvent(
+              this.$route.path,
+              languageFromClass(pre.className) || languageFromClass((pre.querySelector('code') || {}).className),
+            ))
           } catch (e) {
             button.textContent = 'Copy failed'
           }
