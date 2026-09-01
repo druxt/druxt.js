@@ -18,6 +18,8 @@ const REPO = (() => {
     const url = typeof pkg.repository === 'string' ? pkg.repository : (pkg.repository || {}).url || ''
     const match = url.match(/github\.com[/:]([\w.-]+\/[\w.-]+?)(?:\.git)?$/)
       || url.match(/^github:([\w.-]+\/[\w.-]+)$/)
+      // npm's bare shorthand ("owner/repo") also means GitHub.
+      || url.match(/^([\w.-]+\/[\w.-]+)$/)
     if (match) return `https://github.com/${match[1]}`
   } catch {
     // Fall through to the default.
@@ -105,7 +107,10 @@ const rewrite = (summary) => {
 
 const getReleaseLine = async (changeset) => {
   const [first, ...rest] = changeset.summary.split('\n')
-  const { text, issues, breaking } = rewrite(first)
+  const result = rewrite(first)
+  const { text, issues } = result
+  // Conventional commits also declare breakage in a footer.
+  const breaking = result.breaking || rest.some((line) => /^BREAKING[ -]CHANGE:/.test(line.trim()))
 
   const refs = issues.map((n) => `[#${n}](${REPO}/issues/${n})`)
   if (changeset.commit) {
