@@ -1,72 +1,67 @@
 # druxt-entity
 
-## 0.28.0
+## 0.28.1 - 2023-07-25
+
+### Patch Changes
+
+- Updated dependencies: druxt@0.23.0, druxt-router@0.30.0, druxt-schema@0.11.3.
+
+## 0.28.0 - 2023-07-05
 
 ### Minor Changes
 
-- 41cab3a0: feat(#639): add bypassCache druxt setting to DruxtEntity components.
+- Added bypassCache druxt setting to DruxtEntity components. ([#639](https://github.com/druxt/druxt.js/issues/639), [`41cab3a`](https://github.com/druxt/druxt.js/commit/41cab3a0))
 
 ### Patch Changes
 
-- Updated dependencies [41cab3a0]
-  - druxt@0.22.0
-  - druxt-router@0.29.1
-  - druxt-schema@0.11.2
+- Updated dependencies: druxt@0.22.0, druxt-router@0.29.1, druxt-schema@0.11.2.
 
-## 0.27.1
+## 0.27.1 - 2023-05-15
 
 ### Patch Changes
 
-- 39af33a4: fix(#632): add passthrough attrs to DruxtField
+- Added passthrough attrs to DruxtField. ([#632](https://github.com/druxt/druxt.js/issues/632), [`39af33a`](https://github.com/druxt/druxt.js/commit/39af33a4))
 
-## 0.27.0
+## 0.27.0 - 2022-11-03
 
 ### Minor Changes
 
-- f6b4a664: feat(#578): updated missing schema/vue component message with DruxtDevelTemplate tool.
+- Updated missing schema/vue component message with DruxtDevelTemplate tool. ([#578](https://github.com/druxt/druxt.js/issues/578), [`f6b4a66`](https://github.com/druxt/druxt.js/commit/f6b4a664))
 
 ### Patch Changes
 
-- Updated dependencies [e46a3290]
-  - druxt@0.21.0
-  - druxt-router@0.29.0
-  - druxt-schema@0.11.1
+- Updated dependencies: druxt@0.21.0, druxt-router@0.29.0, druxt-schema@0.11.1.
 
-## 0.26.1
+## 0.26.1 - 2022-08-24
 
 ### Patch Changes
 
-- cc185819: fix(#552): sanitised empty emitted strings to prevent `true` error on themed text fields.
+- Sanitised empty emitted strings, fixing themed text fields whose value became `true` when emptied. ([#552](https://github.com/druxt/druxt.js/issues/552), [`cc18581`](https://github.com/druxt/druxt.js/commit/cc185819))
 
-## 0.26.0
+## 0.26.0 - 2022-08-12
 
 ### Minor Changes
 
-- 2f2a7cce: Added watch for 'settings' prop.
+- Added watch for 'settings' prop. ([`2f2a7cc`](https://github.com/druxt/druxt.js/commit/2f2a7cce))
 
 ### Patch Changes
 
-- fc811db3: Add DruxtModule props to component module stories.
-- Updated dependencies [49b67872]
-  - druxt-router@0.28.0
-  - druxt@0.20.0
-  - druxt-schema@0.11.0
+- Added DruxtModule props to component module stories. ([`fc811db`](https://github.com/druxt/druxt.js/commit/fc811db3))
+- Updated dependencies: druxt-router@0.28.0, druxt@0.20.0, druxt-schema@0.11.0.
 
-## 0.25.1
+## 0.25.1 - 2022-07-08
 
 ### Patch Changes
 
-- 28bed4ca: Fixed bug with DruxtEntity Storybook and unpublished content.
-- 45e14b84: Fixed support for nuxt/storybook.
-- Updated dependencies [352b7a51]
-  - druxt@0.19.3
-  - druxt-router@0.27.4
+- Fixed bug with DruxtEntity Storybook and unpublished content. ([`28bed4c`](https://github.com/druxt/druxt.js/commit/28bed4ca))
+- Fixed support for nuxt/storybook. ([`45e14b8`](https://github.com/druxt/druxt.js/commit/45e14b84))
+- Updated dependencies: druxt@0.19.3, druxt-router@0.27.4.
 
-## 0.25.0
+## 0.25.0 - 2022-05-23
 
 ### Minor Changes
 
-- be21952: Added **langcode** prop to DruxtEntity and DruxtField components for multilingual support.
+- Added **langcode** prop to DruxtEntity and DruxtField components for multilingual support. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
 
   example:
 
@@ -78,58 +73,47 @@
   />
   ```
 
-- be21952: Added langcode to component mixins.
+- Added langcode to component mixins. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
 
 ### Patch Changes
 
-- Updated dependencies [be21952]
-  - druxt@0.19.0
-  - druxt-router@0.27.0
-  - druxt-schema@0.10.4
+- Updated dependencies: druxt@0.19.0, druxt-router@0.27.0, druxt-schema@0.10.4.
 
-## 0.24.3
+## 0.24.3 - 2022-04-14
 
 ### Patch Changes
 
-- 540afca: Updated drupal-jsonapi-params to 2.0.0
-- Updated dependencies [540afca]
-  - druxt@0.18.2
-  - druxt-schema@0.10.3
+- Updated drupal-jsonapi-params to 2.0.0. ([`540afca`](https://github.com/druxt/druxt.js/commit/540afca))
+- Updated dependencies: druxt@0.18.2, druxt-schema@0.10.3.
 
-## 0.24.2
+## 0.24.2 - 2022-02-23
 
 ### Patch Changes
 
-- Updated dependencies [e3d5238]
-  - druxt-schema@0.10.2
-  - druxt@0.18.0
-  - druxt-router@0.26.1
+- Updated dependencies: druxt-schema@0.10.2, druxt@0.18.0, druxt-router@0.26.1.
 
-## 0.24.1
+## 0.24.1 - 2022-02-10
 
 ### Patch Changes
 
-- d65eb40: fix(#438): fixed DruxtEntity and DruxtEntityForm stories.
+- Fixed DruxtEntity and DruxtEntityForm stories. ([#438](https://github.com/druxt/druxt.js/issues/438), [`d65eb40`](https://github.com/druxt/druxt.js/commit/d65eb40))
 
-## 0.24.0
+## 0.24.0 - 2022-02-07
 
 ### Minor Changes
 
-- b79701c: feat(#249): Improved DruxtEntity and DruxtEntityForm storybook stories and documentation.
+- Improved DruxtEntity and DruxtEntityForm storybook stories and documentation. ([#249](https://github.com/druxt/druxt.js/issues/249), [`b79701c`](https://github.com/druxt/druxt.js/commit/b79701c))
 
 ### Patch Changes
 
-- d7e92b2: feat(#249): Fixed errors in storybook.
-- Updated dependencies [b79701c]
-  - druxt-router@0.26.0
-  - druxt@0.17.0
-  - druxt-schema@0.10.1
+- Fixed errors in storybook. ([#249](https://github.com/druxt/druxt.js/issues/249), [`d7e92b2`](https://github.com/druxt/druxt.js/commit/d7e92b2))
+- Updated dependencies: druxt-router@0.26.0, druxt@0.17.0, druxt-schema@0.10.1.
 
-## 0.23.0
+## 0.23.0 - 2022-01-12
 
 ### Minor Changes
 
-- 87ec487: Updated DruxtRouterEntity to use Full view mode.
+- Updated DruxtRouterEntity to use Full view mode. ([`87ec487`](https://github.com/druxt/druxt.js/commit/87ec487))
 
   ⚠ Potential breaking change
 
@@ -142,62 +126,52 @@
   +components/druxt/entity/node/page/Full.vue
   ```
 
-- 60ee4e8: Added DruxtEntity[EntityType][viewmode][SchemaType] component options.
+- Added DruxtEntity[EntityType][viewmode][SchemaType] component options. ([`60ee4e8`](https://github.com/druxt/druxt.js/commit/60ee4e8))
 
 ### Patch Changes
 
-- Updated dependencies [87ec487]
-  - druxt-schema@0.10.0
+- Updated dependencies: druxt-schema@0.10.0.
 
-## 0.22.0
+## 0.22.0 - 2021-12-30
 
 ### Minor Changes
 
-- 7b749bd: Updated DruxtEntityForm error handling.
+- Updated DruxtEntityForm error handling. ([`7b749bd`](https://github.com/druxt/druxt.js/commit/7b749bd))
 
 ### Patch Changes
 
-- Updated dependencies [7b749bd]
-  - druxt@0.16.0
-  - druxt-router@0.25.0
-  - druxt-schema@0.9.3
+- Updated dependencies: druxt@0.16.0, druxt-router@0.25.0, druxt-schema@0.9.3.
 
-## 0.21.4
+## 0.21.4 - 2021-12-11
 
 ### Patch Changes
 
-- Updated dependencies [2ae1d6d]
-  - druxt@0.15.0
-  - druxt-router@0.24.2
-  - druxt-schema@0.9.2
+- Updated dependencies: druxt@0.15.0, druxt-router@0.24.2, druxt-schema@0.9.2.
 
-## 0.21.3
+## 0.21.3 - 2021-12-04
 
 ### Patch Changes
 
-- Updated dependencies [45bc0b9]
-  - druxt@0.14.0
-  - druxt-router@0.24.1
-  - druxt-schema@0.9.1
+- Updated dependencies: druxt@0.14.0, druxt-router@0.24.1, druxt-schema@0.9.1.
 
-## 0.21.2
+## 0.21.2 - 2021-11-24
 
 ### Patch Changes
 
-- Updated dependencies [9161b38]
-  - druxt-router@0.24.0
+- Updated dependencies: druxt-router@0.24.0.
 
-## 0.21.1
+## 0.21.1 - 2021-11-17
 
 ### Patch Changes
 
-- 6ade3a2: Fixed Vuex mutation error
+- Fixed Vuex mutation error. ([`6ade3a2`](https://github.com/druxt/druxt.js/commit/6ade3a2))
 
-## 0.21.0
+## 0.21.0 - 2021-11-10
 
 ### Minor Changes
 
-- 025315a: Added **include** option and the ability to filter related resources.
+- Added API Proxy support. ([#362](https://github.com/druxt/druxt.js/issues/362), [`77ab204`](https://github.com/druxt/druxt.js/commit/77ab204c))
+- Added **include** option and the ability to filter related resources. ([`025315a`](https://github.com/druxt/druxt.js/commit/025315a))
 
   ```js
   export default {
@@ -213,7 +187,7 @@
   };
   ```
 
-- 025315a: Added **settings** property to the DruxtEntity and DruxtEntityForm components.
+- Added **settings** property to the DruxtEntity and DruxtEntityForm components. ([`025315a`](https://github.com/druxt/druxt.js/commit/025315a))
 
   ```vue
   <template>
@@ -225,72 +199,58 @@
   </template>
   ```
 
-- e7b1533: Refactored DruxtModule fetch hooks
+- Refactored DruxtModule fetch hooks. ([`e7b1533`](https://github.com/druxt/druxt.js/commit/e7b1533))
 
 ### Patch Changes
 
-- Updated dependencies [77ab204]
-  - druxt-schema@0.9.0
-  - druxt@0.13.0
-  - druxt-router@0.23.0
+- Updated dependencies: druxt-schema@0.9.0, druxt@0.13.0, druxt-router@0.23.0.
 
-## 0.20.0
+## 0.20.0 - 2021-10-10
 
 ### Minor Changes
 
-- 897dcbc: Updated DruxtEntityForm to use new DruxtClient methods
+- Updated DruxtEntityForm to use new DruxtClient methods. ([`897dcbc`](https://github.com/druxt/druxt.js/commit/897dcbc))
 
 ### Patch Changes
 
-- Updated dependencies [4504a2f]
-  - druxt@0.12.0
-  - druxt-router@0.22.0
-  - druxt-schema@0.8.1
+- Updated dependencies: druxt@0.12.0, druxt-router@0.22.0, druxt-schema@0.8.1.
 
-## 0.19.0
+## 0.19.0 - 2021-09-29
 
 ### Minor Changes
 
-- dae345e: Added module level options
-- 8d28c18: Updated storybook integration
-- dae345e: Moved `$druxtEntity` plugin settings to `$druxt.settings.entity`
+- Added module-level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
+- Updated storybook integration. ([`8d28c18`](https://github.com/druxt/druxt.js/commit/8d28c18))
+- Moved `$druxtEntity` plugin settings to `$druxt.settings.entity`. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
 
 ### Patch Changes
 
-- Updated dependencies [9d905e8]
-  - druxt-router@0.21.0
-  - druxt-schema@0.8.0
-  - druxt@0.11.0
+- Updated dependencies: druxt-router@0.21.0, druxt-schema@0.8.0, druxt@0.11.0.
 
-## 0.18.0
+## 0.18.0 - 2021-09-19
 
 ### Minor Changes
 
-- 715e5ef: Updated component registration method to use the Nuxt `components:dirs` hook
-- 2b8c3f3: Updated to use DruxtDebug component
+- Updated component registration method to use the Nuxt `components:dirs` hook. ([`715e5ef`](https://github.com/druxt/druxt.js/commit/715e5ef))
+- Updated to use DruxtDebug component. ([`2b8c3f3`](https://github.com/druxt/druxt.js/commit/2b8c3f3))
 
 ### Patch Changes
 
-- 49454cb: Fixed path to components in Storybook
-- Updated dependencies [1ab762c]
-  - druxt-router@0.20.0
-  - druxt@0.10.0
-  - druxt-schema@0.7.10
+- Fixed path to components in Storybook. ([`49454cb`](https://github.com/druxt/druxt.js/commit/49454cb))
+- Updated dependencies: druxt-router@0.20.0, druxt@0.10.0, druxt-schema@0.7.10.
 
-## 0.17.1
+## 0.17.1 - 2021-09-14
 
 ### Patch Changes
 
-- c4616df: Fixed dependencies
-- Updated dependencies [c4616df]
-  - druxt-router@0.19.1
-  - druxt-schema@0.7.9
+- Fixed dependencies. ([`c4616df`](https://github.com/druxt/druxt.js/commit/c4616df))
+- Updated dependencies: druxt-router@0.19.1, druxt-schema@0.7.9.
 
-## 0.17.0
+## 0.17.0 - 2021-09-13
 
 ### Minor Changes
 
-- 21170fb: Moved Vue components out of bundle
+- Moved Vue components out of bundle. ([`21170fb`](https://github.com/druxt/druxt.js/commit/21170fb))
 
   ⚠ Potential breaking change
 
@@ -303,22 +263,19 @@
 
 ### Patch Changes
 
-- Updated dependencies [21170fb]
-  - druxt@0.9.0
-  - druxt-router@0.19.0
-  - druxt-schema@0.7.8
+- Updated dependencies: druxt@0.9.0, druxt-router@0.19.0, druxt-schema@0.7.8.
 
-## 0.16.0
+## 0.16.0 - 2021-07-04
 
 ### Minor Changes
 
-- Added support for default template injection
+- Added support for default template injection.
 
-  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080)
+  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080---2021-06-20)
 
-- Added support for schema-less entities
-- Added improved defaults to the DruxtField component
-- Deprecated DruxtField default field components
+- Added support for schema-less entities.
+- Added improved defaults to the DruxtField component.
+- Deprecated DruxtField default field components.
 
   The components can be tree shaken with the following setting in `nuxt.config.js`:
 
@@ -334,33 +291,33 @@
   };
   ```
 
-## 0.15.0
+## 0.15.0 - 2021-06-18
 
 ### Minor Changes
 
-- Fixed issue with EntityReferenceLabel component
-- Added watch to update DeruxtEntity data on props change
-- Updated components v-model support
-- Updated Storybook integration
-- Updated dependencies
+- Fixed issue with EntityReferenceLabel component.
+- Added watch to update DruxtEntity data on props change.
+- Updated components v-model support.
+- Updated Storybook integration.
+- Updated dependencies.
 
-## 0.14.2
-
-### Patch Changes
-
-- Updated fetchKey
-
-## 0.14.1
+## 0.14.2 - 2021-06-13
 
 ### Patch Changes
 
-- Added custom fetchKey to fix hydration issues
+- Updated fetchKey.
 
-## 0.14.0
+## 0.14.1 - 2021-06-12
+
+### Patch Changes
+
+- Added custom fetchKey to fix hydration issues.
+
+## 0.14.0 - 2021-05-06
 
 ### Minor Changes
 
-- Added v-model support for DruxtEntity/DruxtEntityForm components
+- Added v-model support for DruxtEntity/DruxtEntityForm components.
 
   ```vue
   <template>
@@ -369,11 +326,11 @@
   </template>
   ```
 
-## 0.13.0
+## 0.13.0 - 2021-04-22
 
 ### Minor Changes
 
-- Added DruxtEntityForm component
+- Added DruxtEntityForm component.
 
   ```vue
   <DruxtEntityForm type="node--page" @submit="onSubmit" @error="onError" />
@@ -381,184 +338,184 @@
 
   - For more details, refer to the [DruxtEntityForm API documentation](/api/packages/entity/components/DruxtEntityForm)
 
-## 0.12.0
+## 0.12.0 - 2021-03-15
 
 ### Minor Changes
 
-- Added ability to filter JSON:API fields
-- Updated Storybook integration
+- Added ability to filter JSON:API fields.
+- Updated Storybook integration.
 
-## 0.11.2
-
-### Patch Changes
-
-- Fixed issue with Storybook intergration
-- Updated Storybook integration
-
-## 0.11.1
+## 0.11.2 - 2021-03-06
 
 ### Patch Changes
 
-- Fixed issue with Storybook intergration
+- Fixed issue with Storybook integration.
+- Updated Storybook integration.
 
-## 0.11.0
+## 0.11.1 - 2021-03-04
+
+### Patch Changes
+
+- Fixed issue with Storybook integration.
+
+## 0.11.0 - 2021-03-02
 
 ### Minor Changes
 
-- Added DruxtEntity Storybook integration
-- Updated dependencies
+- Added DruxtEntity Storybook integration.
+- Updated dependencies.
 
-## 0.10.1
+## 0.10.1 - 2021-02-28
 
 ### Patch Changes
 
-- Added TextSummaryOrTrimmed field
-- Added TextTrimmed field
-- Updated dependencies
+- Added TextSummaryOrTrimmed field.
+- Added TextTrimmed field.
+- Updated dependencies.
 
-## 0.10.0
+## 0.10.0 - 2021-02-10
 
 ### Minor Changes
 
-- Refactored module to use DruxtClient/DruxtStore
+- Refactored module to use DruxtClient/DruxtStore.
 
-## 0.9.0
-
-### Minor Changes
-
-- Added support for Entity reference view mode
-- Add ability to passthrough \$attrs
-
-## 0.8.1
-
-### Patch Changes
-
-- Updated dependencies
-
-## 0.8.0
+## 0.9.0 - 2021-01-12
 
 ### Minor Changes
 
-- Added DruxtRouter Entity component
-- Updated dependencies
+- Added support for Entity reference view mode.
+- Added ability to passthrough \$attrs.
 
-## 0.7.2
-
-### Patch Changes
-
-- Updated dependencies
-
-## 0.7.1
+## 0.8.1 - 2021-01-07
 
 ### Patch Changes
 
-- Updated DruxtEntity for DruxtComponentMixin
-- Updatd Field component mixins
-- Updated dependencies
+- Updated dependencies.
 
-## 0.7.0
+## 0.8.0 - 2020-12-04
 
 ### Minor Changes
 
-- Updated DruxtEntity for DruxtComponentMixin
+- Added DruxtRouter Entity component.
+- Updated dependencies.
 
-## 0.6.3
-
-### Patch Changes
-
-- Fixed issue with images and HMR
-
-## 0.6.2
+## 0.7.2 - 2020-11-14
 
 ### Patch Changes
 
-- Fixed issue with `internal:` links
-- Updated dependencies
+- Updated dependencies.
 
-## 0.6.1
+## 0.7.1 - 2020-10-24
 
 ### Patch Changes
 
-- Updated dependencies
+- Updated DruxtEntity for DruxtComponentMixin.
+- Updated Field component mixins.
+- Updated dependencies.
 
-## 0.6.0
+## 0.7.0 - 2020-10-23
 
 ### Minor Changes
 
-- Refactored to use Nuxt fetch hook
+- Updated DruxtEntity for DruxtComponentMixin.
 
-## 0.5.2
-
-### Patch Changes
-
-- Updated documentation
-
-## 0.5.1
+## 0.6.3 - 2020-10-14
 
 ### Patch Changes
 
-- Added support for UUIDs in component suggestions
+- Fixed issue with images and HMR.
 
-## 0.5.0
+## 0.6.2 - 2020-10-09
+
+### Patch Changes
+
+- Fixed issue with `internal:` links.
+- Updated dependencies.
+
+## 0.6.1 - 2020-08-29
+
+### Patch Changes
+
+- Updated dependencies.
+
+## 0.6.0 - 2020-08-27
 
 ### Minor Changes
 
-- Added isEmpty method
-- Added FileDefault and Image fields
-- Added mode to EntityReferenceEntityView field
-- Added component suggestion system
-- Added context mixin
+- Refactored to use Nuxt fetch hook.
 
-## 0.4.0
-
-### Minor Changes
-
-- Update Field and label system
-- Updated Entity suggestions
-
-## 0.3.1
+## 0.5.2 - 2020-08-06
 
 ### Patch Changes
 
-- Added named slots for fields
+- Updated documentation.
 
-## 0.3.0
-
-### Minor Changes
-
-- Added view mode suggestions
-- Added field id suggestions
-
-## 0.2.2
+## 0.5.1 - 2020-07-02
 
 ### Patch Changes
 
-- Fixed issues with EntityReferenceLabel field
-- Updated NuberInteger field
+- Added support for UUIDs in component suggestions.
 
-## 0.2.1
-
-### Patch Changes
-
-- Added BasicString field
-- Added Timestamp field
-- Fixed issue with ReferenceLabel field
-- Fixed empty field filter
-
-## 0.2.0
+## 0.5.0 - 2020-06-29
 
 ### Minor Changes
 
-- Added better multivalue field support
-- Added ResponsiveImage field
-- Added EntityReferenceEntityView field
-- Added NumberInteger field
-- Added EntityReferenceRevisionsEntityView field
-- Added ListDefault field
-- Added Link field
-- Added DatetimeDefault field
-- Updated dependencies
+- Added isEmpty method.
+- Added FileDefault and Image fields.
+- Added mode to EntityReferenceEntityView field.
+- Added component suggestion system.
+- Added context mixin.
 
-## 0.1.0
+## 0.4.0 - 2020-06-22
+
+### Minor Changes
+
+- Updated Field and label system.
+- Updated Entity suggestions.
+
+## 0.3.1 - 2020-06-14
+
+### Patch Changes
+
+- Added named slots for fields.
+
+## 0.3.0 - 2020-06-13
+
+### Minor Changes
+
+- Added view mode suggestions.
+- Added field id suggestions.
+
+## 0.2.2 - 2020-05-31
+
+### Patch Changes
+
+- Fixed issues with EntityReferenceLabel field.
+- Updated NumberInteger field.
+
+## 0.2.1 - 2020-05-30
+
+### Patch Changes
+
+- Added BasicString field.
+- Added Timestamp field.
+- Fixed issue with ReferenceLabel field.
+- Fixed empty field filter.
+
+## 0.2.0 - 2020-05-29
+
+### Minor Changes
+
+- Added better multivalue field support.
+- Added ResponsiveImage field.
+- Added EntityReferenceEntityView field.
+- Added NumberInteger field.
+- Added EntityReferenceRevisionsEntityView field.
+- Added ListDefault field.
+- Added Link field.
+- Added DatetimeDefault field.
+- Updated dependencies.
+
+## 0.1.0 - 2020-05-21
 
 ### Initial release

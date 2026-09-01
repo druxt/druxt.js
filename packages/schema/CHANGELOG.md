@@ -1,211 +1,219 @@
 # druxt-schema
 
-## 0.11.2
+## 0.11.3 - 2023-07-25
 
 ### Patch Changes
 
-- Updated dependencies [41cab3a0]
-  - druxt@0.22.0
+- Updated dependencies: druxt@0.23.0.
 
-## 0.11.1
+## 0.11.2 - 2023-07-05
 
 ### Patch Changes
 
-- Updated dependencies [e46a3290]
-  - druxt@0.21.0
+- Updated dependencies: druxt@0.22.0.
 
-## 0.11.0
+## 0.11.1 - 2022-11-03
+
+### Patch Changes
+
+- Updated dependencies: druxt@0.21.0.
+
+## 0.11.0 - 2022-08-12
 
 ### Minor Changes
 
-- 49b67872: fix(#543): Added permission check to schema generation.
+- Added a permission check to schema generation, part of the fix for permission-restricted blocks breaking DruxtSite page renders. ([#543](https://github.com/druxt/druxt.js/issues/543), [`49b6787`](https://github.com/druxt/druxt.js/commit/49b67872))
 
 ### Patch Changes
 
-- Updated dependencies [49b67872]
-  - druxt@0.20.0
+- Updated dependencies: druxt@0.20.0.
 
-## 0.10.4
-
-### Patch Changes
-
-- Updated dependencies [be21952]
-  - druxt@0.19.0
-
-## 0.10.3
+## 0.10.4 - 2022-05-23
 
 ### Patch Changes
 
-- 540afca: Updated drupal-jsonapi-params to 2.0.0
-- Updated dependencies [540afca]
-  - druxt@0.18.2
+- Updated dependencies: druxt@0.19.0.
 
-## 0.10.2
+## 0.10.3 - 2022-04-14
 
 ### Patch Changes
 
-- de8fc92: Added error if no schema files are generated.
-- Updated dependencies [e3d5238]
-  - druxt@0.18.0
+- Updated drupal-jsonapi-params to 2.0.0. ([`540afca`](https://github.com/druxt/druxt.js/commit/540afca))
+- Updated dependencies: druxt@0.18.2.
 
-## 0.10.1
+## 0.10.2 - 2022-02-23
 
 ### Patch Changes
 
-- Updated dependencies [b79701c]
-  - druxt@0.17.0
+- Added support for the @nuxtjs/axios module. ([#63](https://github.com/druxt/druxt.js/issues/63), [`e3d5238`](https://github.com/druxt/druxt.js/commit/e3d5238c))
+- Added error if no schema files are generated. ([`de8fc92`](https://github.com/druxt/druxt.js/commit/de8fc92))
+- Updated dependencies: druxt@0.18.0.
 
-## 0.10.0
+## 0.10.1 - 2022-02-07
+
+### Patch Changes
+
+- Updated dependencies: druxt@0.17.0.
+
+## 0.10.0 - 2022-01-12
 
 ### Minor Changes
 
-- 87ec487: Add fallback to 'default' if schema view mode is missing.
+- Added fallback to 'default' if schema view mode is missing. ([`87ec487`](https://github.com/druxt/druxt.js/commit/87ec487))
 
-## 0.9.3
-
-### Patch Changes
-
-- Updated dependencies [7b749bd]
-  - druxt@0.16.0
-
-## 0.9.2
+## 0.9.3 - 2021-12-30
 
 ### Patch Changes
 
-- Updated dependencies [2ae1d6d]
-  - druxt@0.15.0
+- Updated dependencies: druxt@0.16.0.
 
-## 0.9.1
+## 0.9.2 - 2021-12-11
 
 ### Patch Changes
 
-- Updated dependencies [45bc0b9]
-  - druxt@0.14.0
+- Updated dependencies: druxt@0.15.0.
 
-## 0.9.0
+## 0.9.1 - 2021-12-04
+
+### Patch Changes
+
+- Updated dependencies: druxt@0.14.0.
+
+## 0.9.0 - 2021-11-10
 
 ### Minor Changes
 
-- 77ab204: Disabled API Proxy when generating schema files
+- Disabled API Proxy when generating schema files. ([`77ab204`](https://github.com/druxt/druxt.js/commit/77ab204))
 
 ### Patch Changes
 
-- d12dfb5: Added missing schemaType prop to DruxtSchemaMixin
-- Updated dependencies [77ab204]
-  - druxt@0.13.0
+- Added missing schemaType prop to DruxtSchemaMixin. ([`d12dfb5`](https://github.com/druxt/druxt.js/commit/d12dfb5))
+- Updated dependencies: druxt@0.13.0.
 
-## 0.8.1
+## 0.8.1 - 2021-10-10
 
 ### Patch Changes
 
-- Updated dependencies [4504a2f]
-  - druxt@0.12.0
+- Updated dependencies: druxt@0.12.0.
 
-## 0.8.0
+## 0.8.0 - 2021-09-29
 
 ### Minor Changes
 
-- dae345e: Added module level options
+- Added module-level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
 
 ### Patch Changes
 
-- Updated dependencies [dae345e]
-  - druxt@0.11.0
+- Updated dependencies: druxt@0.11.0.
 
-## 0.7.10
-
-### Patch Changes
-
-- Updated dependencies [715e5ef]
-  - druxt@0.10.0
-
-## 0.7.9
+## 0.7.10 - 2021-09-19
 
 ### Patch Changes
 
-- c4616df: Fixed dependencies
+- Updated dependencies: druxt@0.10.0.
 
-## 0.7.8
-
-### Patch Changes
-
-- Updated dependencies [21170fb]
-  - druxt@0.9.0
-
-## 0.7.7
+## 0.7.9 - 2021-09-14
 
 ### Patch Changes
 
-- Fixed issue with inconsistent schemas
+- Fixed dependencies. ([`c4616df`](https://github.com/druxt/druxt.js/commit/c4616df))
 
-## 0.7.2
-
-### Patch Changes
-
-- Updated get() query
-
-## 0.7.1
+## 0.7.8 - 2021-09-13
 
 ### Patch Changes
 
-- Updated Nuxt module
+- Updated dependencies: druxt@0.9.0.
 
-## 0.7.0
+## 0.7.7 - 2021-06-08
+
+### Patch Changes
+
+- Fixed issue with inconsistent schemas.
+
+## 0.7.6 - 2021-05-24
+
+- No release notes were recorded for this version.
+
+## 0.7.5 - 2021-05-24
+
+- No release notes were recorded for this version.
+
+## 0.7.4 - 2021-04-27
+
+- No release notes were recorded for this version.
+
+## 0.7.3 - 2021-04-27
+
+- No release notes were recorded for this version.
+
+## 0.7.2 - 2021-03-29
+
+### Patch Changes
+
+- Updated get() query.
+
+## 0.7.1 - 2021-03-02
+
+### Patch Changes
+
+- Updated Nuxt module.
+
+## 0.7.0 - 2021-02-09
 
 ### Minor Changes
 
-- Refactored to use DruxtClient
+- Refactored to use DruxtClient.
 
-## 0.6.2
-
-### Patch Changes
-
-- Add support for more than 50 schemas
-
-## 0.6.1
+## 0.6.2 - 2021-01-12
 
 ### Patch Changes
 
-- Updated dependencies
+- Added support for more than 50 schemas.
 
-## 0.6.0
-
-### Minor Changes
-
-- Removed auth functionality
-- Updated dependencies
-
-## 0.5.1
+## 0.6.1 - 2021-01-08
 
 ### Patch Changes
 
-- Fixed dependencies
+- Updated dependencies.
 
-## 0.5.0
-
-### Minor Changes
-
-- Refactored to use Nuxt fetch hook
-
-## 0.4.0
+## 0.6.0 - 2020-10-08
 
 ### Minor Changes
 
-- Added support for remapped resources
+- Removed auth functionality.
+- Updated dependencies.
 
-## 0.3.0
+## 0.5.1 - 2020-08-28
+
+### Patch Changes
+
+- Fixed dependencies.
+
+## 0.5.0 - 2020-08-27
 
 ### Minor Changes
 
-- Added support for custom endpoint
-- Added message to Nuxt build
+- Refactored to use Nuxt fetch hook.
 
-## 0.2.0
+## 0.4.0 - 2020-06-30
 
 ### Minor Changes
 
-- Add ability to filter require schemas
+- Added support for remapped resources.
 
-## 0.1.0
+## 0.3.0 - 2020-06-12
+
+### Minor Changes
+
+- Added support for custom endpoint.
+- Added message to Nuxt build.
+
+## 0.2.0 - 2020-05-17
+
+### Minor Changes
+
+- Added ability to filter require schemas.
+
+## 0.1.0 - 2020-05-04
 
 ### Initial release

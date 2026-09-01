@@ -42,7 +42,7 @@
     "test": "yarn test:unit && yarn test:e2e",
     "test:e2e": "yarn example:druxt-site:test && yarn example:druxt-site:storybook:test",
     "test:unit": "NODE_OPTIONS=--unhandled-rejections=warn jest",
-    "version": "changeset version"
+    "version": "changeset version && node scripts/changelog-dates.mjs"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",

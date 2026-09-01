@@ -1,75 +1,64 @@
 # druxt-views
 
-## 0.22.1
+## 0.22.2 - 2023-07-25
 
 ### Patch Changes
 
-- 400e4f8f: fix issue with axios dependency
-- Updated dependencies [400e4f8f]
-  - druxt-blocks@0.17.2
+- Updated dependencies: druxt@0.23.0, druxt-blocks@0.17.3, druxt-entity@0.28.1, druxt-router@0.30.0.
 
-## 0.22.0
+## 0.22.1 - 2023-07-05
+
+### Patch Changes
+
+- Fixed issue with axios dependency. ([`400e4f8`](https://github.com/druxt/druxt.js/commit/400e4f8f))
+- Updated dependencies: druxt-blocks@0.17.2.
+
+## 0.22.0 - 2023-07-05
 
 ### Minor Changes
 
-- 41cab3a0: feat(#639): added druxt/views/flushResults mutation.
-- 41cab3a0: feat(#639): added bypassCache option to druxt/views/getResults action.
-- 41cab3a0: feat(#639): added bypassCache druxt setting to DruxtView component.
+- Added druxt/views/flushResults mutation. ([#639](https://github.com/druxt/druxt.js/issues/639), [`41cab3a`](https://github.com/druxt/druxt.js/commit/41cab3a0))
+- Added bypassCache option to druxt/views/getResults action. ([#639](https://github.com/druxt/druxt.js/issues/639), [`41cab3a`](https://github.com/druxt/druxt.js/commit/41cab3a0))
+- Added bypassCache druxt setting to DruxtView component. ([#639](https://github.com/druxt/druxt.js/issues/639), [`41cab3a`](https://github.com/druxt/druxt.js/commit/41cab3a0))
 
 ### Patch Changes
 
-- Updated dependencies [41cab3a0]
-  - druxt@0.22.0
-  - druxt-entity@0.28.0
-  - druxt-blocks@0.17.1
-  - druxt-router@0.29.1
+- Updated dependencies: druxt@0.22.0, druxt-entity@0.28.0, druxt-blocks@0.17.1, druxt-router@0.29.1.
 
-## 0.21.0
+## 0.21.0 - 2022-11-03
 
 ### Minor Changes
 
-- f6b4a664: feat(#578): updated components to support the DruxtDevelTemplate tool.
+- Updated components to support the DruxtDevelTemplate tool. ([#578](https://github.com/druxt/druxt.js/issues/578), [`f6b4a66`](https://github.com/druxt/druxt.js/commit/f6b4a664))
 
 ### Patch Changes
 
-- Updated dependencies [39af33a4]
-  - druxt-entity@0.27.0
-  - druxt@0.21.0
-  - druxt-router@0.29.0
-  - druxt-blocks@0.17.0
+- Updated dependencies: druxt-entity@0.27.0, druxt@0.21.0, druxt-router@0.29.0, druxt-blocks@0.17.0.
 
-## 0.20.0
+## 0.20.0 - 2022-08-12
 
 ### Minor Changes
 
-- 2f2a7cce: Added watch for 'arguments' prop.
+- Added watch for 'arguments' prop. ([`2f2a7cc`](https://github.com/druxt/druxt.js/commit/2f2a7cce))
 
 ### Patch Changes
 
-- fc811db3: Add DruxtModule props to component module stories.
-- Updated dependencies [49b67872]
-  - druxt-router@0.28.0
-  - druxt-blocks@0.16.3
-  - druxt-entity@0.26.0
-  - druxt@0.20.0
+- Added DruxtModule props to component module stories. ([`fc811db`](https://github.com/druxt/druxt.js/commit/fc811db3))
+- Updated dependencies: druxt-router@0.28.0, druxt-blocks@0.16.3, druxt-entity@0.26.0, druxt@0.20.0.
 
-## 0.19.1
+## 0.19.1 - 2022-07-08
 
 ### Patch Changes
 
-- ffd9d542: Fixed undefined errors in DruxtView watch methods.
-- 45e14b84: Fixed support for nuxt/storybook.
-- Updated dependencies [352b7a51]
-  - druxt@0.19.3
-  - druxt-entity@0.25.1
-  - druxt-blocks@0.16.2
-  - druxt-router@0.27.4
+- Fixed undefined errors in DruxtView watch methods. ([`ffd9d54`](https://github.com/druxt/druxt.js/commit/ffd9d542))
+- Fixed support for nuxt/storybook. ([`45e14b8`](https://github.com/druxt/druxt.js/commit/45e14b84))
+- Updated dependencies: druxt@0.19.3, druxt-entity@0.25.1, druxt-blocks@0.16.2, druxt-router@0.27.4.
 
-## 0.19.0
+## 0.19.0 - 2022-05-23
 
 ### Minor Changes
 
-- be21952: Added langcode and prefix support to DruxtView component and Vuex store.
+- Added langcode and prefix support to DruxtView component and Vuex store. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
 
   ⚠ Potential breaking change
 
@@ -80,76 +69,56 @@
   + $store.state['druxt/views'].results.frontpage.page_1.es
   ```
 
-- be21952: Added langcode to component mixins.
-- be21952: Added multilingual support to Views block components.
+- Added langcode to component mixins. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
+- Added multilingual support to Views block components. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
 
 ### Patch Changes
 
-- Updated dependencies [be21952]
-  - druxt@0.19.0
-  - druxt-router@0.27.0
-  - druxt-blocks@0.16.0
-  - druxt-entity@0.25.0
+- Updated dependencies: druxt@0.19.0, druxt-router@0.27.0, druxt-blocks@0.16.0, druxt-entity@0.25.0.
 
-## 0.18.2
+## 0.18.2 - 2022-04-14
 
 ### Patch Changes
 
-- c6d7c83: Fixed available component options.
-- 540afca: Updated drupal-jsonapi-params to 2.0.0
-- Updated dependencies [540afca]
-  - druxt-blocks@0.15.2
-  - druxt@0.18.2
-  - druxt-entity@0.24.3
+- Fixed available component options. ([`c6d7c83`](https://github.com/druxt/druxt.js/commit/c6d7c83))
+- Updated drupal-jsonapi-params to 2.0.0. ([`540afca`](https://github.com/druxt/druxt.js/commit/540afca))
+- Updated dependencies: druxt-blocks@0.15.2, druxt@0.18.2, druxt-entity@0.24.3.
 
-## 0.18.1
+## 0.18.1 - 2022-02-23
 
 ### Patch Changes
 
-- Updated dependencies [e3d5238]
-  - druxt@0.18.0
-  - druxt-blocks@0.15.1
-  - druxt-entity@0.24.2
-  - druxt-router@0.26.1
+- Added support for the @nuxtjs/axios module. ([#63](https://github.com/druxt/druxt.js/issues/63), [`e3d5238`](https://github.com/druxt/druxt.js/commit/e3d5238c))
+- Updated dependencies: druxt@0.18.0, druxt-blocks@0.15.1, druxt-entity@0.24.2, druxt-router@0.26.1.
 
-## 0.18.0
+## 0.18.0 - 2022-02-07
 
 ### Minor Changes
 
-- b79701c: feat(#249): Improved DruxtView storybook stories and documentation.
+- Improved DruxtView storybook stories and documentation. ([#249](https://github.com/druxt/druxt.js/issues/249), [`b79701c`](https://github.com/druxt/druxt.js/commit/b79701c))
 
 ### Patch Changes
 
-- d7e92b2: feat(#249): Fixed errors in storybook.
-- Updated dependencies [b79701c]
-  - druxt-router@0.26.0
-  - druxt-blocks@0.15.0
-  - druxt@0.17.0
-  - druxt-entity@0.24.0
+- Fixed errors in storybook. ([#249](https://github.com/druxt/druxt.js/issues/249), [`d7e92b2`](https://github.com/druxt/druxt.js/commit/d7e92b2))
+- Updated dependencies: druxt-router@0.26.0, druxt-blocks@0.15.0, druxt@0.17.0, druxt-entity@0.24.0.
 
-## 0.17.2
+## 0.17.2 - 2022-01-12
 
 ### Patch Changes
 
-- Updated dependencies [60ee4e8]
-  - druxt-entity@0.23.0
-  - druxt-blocks@0.14.5
+- Updated dependencies: druxt-entity@0.23.0, druxt-blocks@0.14.5.
 
-## 0.17.1
+## 0.17.1 - 2021-12-30
 
 ### Patch Changes
 
-- Updated dependencies [7b749bd]
-  - druxt@0.16.0
-  - druxt-entity@0.22.0
-  - druxt-router@0.25.0
-  - druxt-blocks@0.14.4
+- Updated dependencies: druxt@0.16.0, druxt-entity@0.22.0, druxt-router@0.25.0, druxt-blocks@0.14.4.
 
-## 0.17.0
+## 0.17.0 - 2021-12-11
 
 ### Minor Changes
 
-- 7709ece: Fixed DruxtViewsFilter render method
+- Fixed DruxtViewsFilter render method. ([`7709ece`](https://github.com/druxt/druxt.js/commit/7709ece))
 
   ⚠ Potential breaking change
 
@@ -157,51 +126,37 @@
 
 ### Patch Changes
 
-- Updated dependencies [2ae1d6d]
-  - druxt@0.15.0
-  - druxt-blocks@0.14.3
-  - druxt-entity@0.21.4
-  - druxt-router@0.24.2
+- Updated dependencies: druxt@0.15.0, druxt-blocks@0.14.3, druxt-entity@0.21.4, druxt-router@0.24.2.
 
-## 0.16.2
+## 0.16.2 - 2021-12-04
 
 ### Patch Changes
 
-- Updated dependencies [45bc0b9]
-  - druxt@0.14.0
-  - druxt-blocks@0.14.2
-  - druxt-entity@0.21.3
-  - druxt-router@0.24.1
+- Updated dependencies: druxt@0.14.0, druxt-blocks@0.14.2, druxt-entity@0.21.3, druxt-router@0.24.1.
 
-## 0.16.1
+## 0.16.1 - 2021-11-24
 
 ### Patch Changes
 
-- Updated dependencies [9161b38]
-  - druxt-router@0.24.0
-  - druxt-blocks@0.14.1
-  - druxt-entity@0.21.2
+- Updated dependencies: druxt-router@0.24.0, druxt-blocks@0.14.1, druxt-entity@0.21.2.
 
-## 0.16.0
+## 0.16.0 - 2021-11-10
 
 ### Minor Changes
 
-- e7b1533: Refactored DruxtModule fetch hooks
+- Added API Proxy support. ([#362](https://github.com/druxt/druxt.js/issues/362), [`77ab204`](https://github.com/druxt/druxt.js/commit/77ab204c))
+- Refactored DruxtModule fetch hooks. ([`e7b1533`](https://github.com/druxt/druxt.js/commit/e7b1533))
 
 ### Patch Changes
 
-- d80f5d4: Fixed issue with undefined wrapper in DruxtViewsFilter
-- Updated dependencies [025315a]
-  - druxt-entity@0.21.0
-  - druxt-blocks@0.14.0
-  - druxt@0.13.0
-  - druxt-router@0.23.0
+- Fixed issue with undefined wrapper in DruxtViewsFilter. ([`d80f5d4`](https://github.com/druxt/druxt.js/commit/d80f5d4))
+- Updated dependencies: druxt-entity@0.21.0, druxt-blocks@0.14.0, druxt@0.13.0, druxt-router@0.23.0.
 
-## 0.15.0
+## 0.15.0 - 2021-10-10
 
 ### Minor Changes
 
-- c769243: Added support for Contextual filters (arguments)
+- Added support for Contextual filters (arguments). ([`c769243`](https://github.com/druxt/druxt.js/commit/c769243))
 
   ```vue
   <DruxtView
@@ -213,65 +168,50 @@
 
 ### Patch Changes
 
-- Updated dependencies [4504a2f]
-  - druxt@0.12.0
-  - druxt-router@0.22.0
-  - druxt-entity@0.20.0
-  - druxt-blocks@0.13.1
+- Updated dependencies: druxt@0.12.0, druxt-router@0.22.0, druxt-entity@0.20.0, druxt-blocks@0.13.1.
 
-## 0.14.1
+## 0.14.1 - 2021-09-29
 
 ### Patch Changes
 
-- b9e5839: Fixed missing templates in package
+- Fixed missing templates in package. ([`b9e5839`](https://github.com/druxt/druxt.js/commit/b9e5839))
 
-## 0.14.0
+## 0.14.0 - 2021-09-29
 
 ### Minor Changes
 
-- dae345e: Moved `$druxtViews` plugin settings to `$druxt.settings.views`
-- dae345e: Added module level options
-- 8d28c18: Updated storybook integration
+- Moved `$druxtViews` plugin settings to `$druxt.settings.views`. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
+- Added module-level options. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
+- Updated storybook integration. ([`8d28c18`](https://github.com/druxt/druxt.js/commit/8d28c18))
 
 ### Patch Changes
 
-- 4da7fd3: Fixed errors when no props provided to component
-- Updated dependencies [9d905e8]
-  - druxt-router@0.21.0
-  - druxt-blocks@0.13.0
-  - druxt-entity@0.19.0
-  - druxt@0.11.0
+- Fixed errors when no props provided to component. ([`4da7fd3`](https://github.com/druxt/druxt.js/commit/4da7fd3))
+- Updated dependencies: druxt-router@0.21.0, druxt-blocks@0.13.0, druxt-entity@0.19.0, druxt@0.11.0.
 
-## 0.13.0
+## 0.13.0 - 2021-09-19
 
 ### Minor Changes
 
-- 715e5ef: Updated component registration method to use the Nuxt `components:dirs` hook
+- Updated component registration method to use the Nuxt `components:dirs` hook. ([`715e5ef`](https://github.com/druxt/druxt.js/commit/715e5ef))
 
 ### Patch Changes
 
-- 49454cb: Fixed path to components in Storybook
-- Updated dependencies [1ab762c]
-  - druxt-router@0.20.0
-  - druxt-blocks@0.12.0
-  - druxt@0.10.0
-  - druxt-entity@0.18.0
+- Fixed path to components in Storybook. ([`49454cb`](https://github.com/druxt/druxt.js/commit/49454cb))
+- Updated dependencies: druxt-router@0.20.0, druxt-blocks@0.12.0, druxt@0.10.0, druxt-entity@0.18.0.
 
-## 0.12.1
+## 0.12.1 - 2021-09-14
 
 ### Patch Changes
 
-- c4616df: Fixed dependencies
-- Updated dependencies [c4616df]
-  - druxt-blocks@0.11.1
-  - druxt-entity@0.17.1
-  - druxt-router@0.19.1
+- Fixed dependencies. ([`c4616df`](https://github.com/druxt/druxt.js/commit/c4616df))
+- Updated dependencies: druxt-blocks@0.11.1, druxt-entity@0.17.1, druxt-router@0.19.1.
 
-## 0.12.0
+## 0.12.0 - 2021-09-13
 
 ### Minor Changes
 
-- 21170fb: Moved Vue components out of bundle
+- Moved Vue components out of bundle. ([`21170fb`](https://github.com/druxt/druxt.js/commit/21170fb))
 
   ⚠ Potential breaking change
 
@@ -284,163 +224,159 @@
 
 ### Patch Changes
 
-- Updated dependencies [21170fb]
-  - druxt-blocks@0.11.0
-  - druxt@0.9.0
-  - druxt-entity@0.17.0
-  - druxt-router@0.19.0
+- Updated dependencies: druxt-blocks@0.11.0, druxt@0.9.0, druxt-entity@0.17.0, druxt-router@0.19.0.
 
-## 0.11.0
+## 0.11.0 - 2021-06-24
 
 ### Minor Changes
 
-- Added support for default template injection
+- Added support for default template injection.
 
-  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080)
+  - For details, see the [Druxt 0.8.0 release notes](/api/packages/druxt/CHANGELOG#080---2021-06-20)
 
-- Added ability to load by UUID or View ID
+- Added ability to load by UUID or View ID.
 
-## 0.10.0
-
-### Minor Changes
-
-- Added empty content to results slot if no results
-
-## 0.9.3
-
-### Patch Changes
-
-- Fixed issue with model filter forcing a refresh
-
-## 0.9.2
-
-### Patch Changes
-
-- Added fetchKey to fix hydration issues
-
-## 0.9.1
-
-### Patch Changes
-
-- Fixed issue with default view mode value
-
-## 0.9.0
+## 0.10.0 - 2021-06-17
 
 ### Minor Changes
 
-- Added ability to filter JSON:API fields
-- Refactored components to use DruxtModule
-- Fixed issues with Storybook integration
+- Added empty content to results slot if no results.
 
-## 0.8.3
+## 0.9.3 - 2021-06-14
 
 ### Patch Changes
 
-- Fixed missing attachement Views
+- Fixed issue with model filter forcing a refresh.
 
-## 0.8.2
-
-### Patch Changes
-
-- Fixed issues with Storybook integration
-
-## 0.8.1
+## 0.9.2 - 2021-06-12
 
 ### Patch Changes
 
-- Fixed issues with Storybook integration
-- Fixed missing attachements Views
+- Added fetchKey to fix hydration issues.
 
-## 0.8.0
+## 0.9.1 - 2021-04-26
+
+### Patch Changes
+
+- Fixed issue with default view mode value.
+
+## 0.9.0 - 2021-03-22
 
 ### Minor Changes
 
-- Added Storybook intergration
-- Fixed broken View results
+- Added ability to filter JSON:API fields.
+- Refactored components to use DruxtModule.
+- Fixed issues with Storybook integration.
 
-## 0.7.2
-
-### Patch Changes
-
-- Fixed broken View results
-
-## 0.7.1
+## 0.8.3 - 2021-03-09
 
 ### Patch Changes
 
-- Fixed deprecation notice
+- Fixed missing attachment Views.
 
-## 0.7.0
+## 0.8.2 - 2021-03-08
+
+### Patch Changes
+
+- Fixed issues with Storybook integration.
+
+## 0.8.1 - 2021-03-08
+
+### Patch Changes
+
+- Fixed issues with Storybook integration.
+- Fixed missing attachments Views.
+
+## 0.8.0 - 2021-03-06
 
 ### Minor Changes
 
-- Refactored module to use DruxtClient/DruxtStore
-- Added pagination
-- Added exposed sorts
-- Added exposed filters
-- Added Views Vuex store
+- Added Storybook integration.
+- Fixed broken View results.
 
-## 0.6.2
+## 0.7.2 - 2021-03-01
 
 ### Patch Changes
 
-- Fixed issue with View display data
+- Fixed broken View results.
 
-## 0.6.1
+## 0.7.1 - 2021-02-27
 
 ### Patch Changes
 
-- Updated dependencies
+- Fixed deprecation notice.
 
-## 0.6.0
+## 0.7.0 - 2021-02-22
 
 ### Minor Changes
 
-- Added DruxtRouter View component
-- Updated dependencies
+- Refactored module to use DruxtClient/DruxtStore.
+- Added pagination.
+- Added exposed sorts.
+- Added exposed filters.
+- Added Views Vuex store.
 
-## 0.5.1
-
-### Patch Changes
-
-- Updated dependencies
-
-## 0.5.0
-
-### Minor Changes
-
-- Added support for DruxtComponentMixin
-- Updated dependencies
-
-## 0.4.2
+## 0.6.2 - 2021-01-29
 
 ### Patch Changes
 
-- Updated attachment_before/after slots
-- Updated dependencies
+- Fixed issue with View display data.
 
-## 0.4.1
-
-### Patch Changes
-
-- Added attachment_before/after slots
-
-## 0.4.0
-
-### Minor Changes
-
-## 0.3.0
-
-### Minor Changes
-
-## 0.2.1
+## 0.6.1 - 2021-01-08
 
 ### Patch Changes
 
-## 0.2.0
+- Updated dependencies.
+
+## 0.6.0 - 2020-12-04
 
 ### Minor Changes
 
-## 0.1.0
+- Added DruxtRouter View component.
+- Updated dependencies.
+
+## 0.5.1 - 2020-11-14
+
+### Patch Changes
+
+- Updated dependencies.
+
+## 0.5.0 - 2020-10-19
+
+### Minor Changes
+
+- Added support for DruxtComponentMixin.
+- Updated dependencies.
+
+## 0.4.2 - 2020-10-09
+
+### Patch Changes
+
+- Updated attachment_before/after slots.
+- Updated dependencies.
+
+## 0.4.1 - 2020-09-28
+
+### Patch Changes
+
+- Added attachment_before/after slots.
+
+## 0.4.0 - 2020-09-01
+
+### Minor Changes
+
+## 0.3.0 - 2020-07-07
+
+### Minor Changes
+
+## 0.2.1 - 2020-06-16
+
+### Patch Changes
+
+## 0.2.0 - 2020-06-13
+
+### Minor Changes
+
+## 0.1.0 - 2020-06-05
 
 ### Initial release

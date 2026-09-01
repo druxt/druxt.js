@@ -12,9 +12,11 @@ bmewburn
 bootstrapvue
 bradlc
 bundlewatch
+chunkloaderror
 cimg
 cloudflared
 codecov
+Codespaces
 Colour
 Colours
 composables
@@ -34,6 +36,7 @@ dbaeumer
 ddev
 deasync
 decoupled
+defaultvalue
 devcontainer
 devcontainers
 devel
@@ -41,6 +44,8 @@ Devel
 devpod
 Diataxis
 docgen
+doclet
+doclets
 dragend
 Drupals
 drush
@@ -48,6 +53,7 @@ druxt
 druxtjs
 endswith
 esm
+extensionless
 felixfbecker
 filesystems
 Fraunces
@@ -57,6 +63,8 @@ fullpath
 giget
 gruntfuggly
 homepath
+hrefs
+hverlin
 iconify
 intelephense
 interruptible
@@ -111,10 +119,12 @@ phpstan
 PKCE
 pkill
 prebuilds
+preconfigured
 Quickstart
 quickstarts
 recognise
 recrawl
+redirectdomain
 renderable
 repoint
 reskins
@@ -141,12 +151,15 @@ Themable
 themable
 toggleable
 topbar
+trixie
 umami
 unjs
 unlighthouse
+unregisters
 Unsets
 Valeryan
 vetur
+vfox
 vite
 vitest
 vnode
