@@ -7,6 +7,9 @@
  *
  * CommonJS so nuxt.config.js's generate hook can require it; webpack
  * interop lets the components import from it just as well.
+ *
+ * Lives in lib/, not components/: the components tree is auto-registered,
+ * and Vue rejects this map's `components` key as a component definition.
  */
 module.exports = {
   guide: [

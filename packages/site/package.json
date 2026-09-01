@@ -39,7 +39,9 @@
   "module": "dist/druxt-site.esm.js",
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "icon.svg",
+    "banner.svg"
   ],
   "dependencies": {
     "drupal-jsonapi-params": "^2.3.1",

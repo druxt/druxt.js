@@ -26,14 +26,14 @@ const MONO = 'IBM Plex Mono'
  * The section icon geometry, shared with the section icon components the
  * same way the module geometry is below.
  */
-const SECTION_ICON_PATHS = require('../components/app/icon/paths')
+const SECTION_ICON_PATHS = require('./icon-paths')
 
 /**
  * The module icon geometry, shared with the icon components so a mark is
  * only ever drawn in one place. pf/sf mirror the theme variables the
  * components render with; here they resolve to literal hexes for Satori.
  */
-const MODULE_ICON_PATHS = require('../components/app/icon/module/paths')
+const MODULE_ICON_PATHS = require('./module-icon-paths')
 
 /** components/app/Logo.vue, verbatim. Two brand chevrons plus the ink one. */
 const LOGO_PATHS = [

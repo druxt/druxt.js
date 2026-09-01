@@ -52,6 +52,7 @@ jobs:
             packages/*/dist
             packages/*/CHANGELOG.md
             docs/nuxt/content/api
+            docs/nuxt/content/modules/*/README.md
           retention-days: 1
 
   lint:
@@ -282,9 +283,11 @@ jobs:
         with:
           persist-credentials: false
 
-      # The generated API reference. content/api is gitignored and produced by
-      # `yarn build:docs`, so without it the site generates 20 pages instead of
-      # 130 and the audit silently covers a fraction of the site.
+      # The generated content. content/api and the module READMEs are
+      # gitignored and produced by `yarn build:docs`: without the API tree the
+      # site generates 20 pages instead of 130 and the audit silently covers a
+      # fraction of it, and without the READMEs every module page loses its
+      # body, which the generate guard then refuses to ship.
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: build-output
@@ -296,14 +299,21 @@ jobs:
       # site still generates, just with 21 routes instead of 131, and the audit
       # would report a pass over a fraction of the site. The sitemap floor below
       # would catch it, but only after installing Chromium.
-      - name: Check the generated API reference arrived
+      - name: Check the generated content arrived
         run: |
           test -d docs/nuxt/content/api || {
             echo "docs/nuxt/content/api missing after downloading build-output." >&2
             echo "The artifact layout changed, or the build job stopped publishing it." >&2
             exit 1
           }
+          readmes=$(find docs/nuxt/content/modules -mindepth 2 -name 'README.md' | wc -l)
+          test "$readmes" -gt 0 || {
+            echo "No docs/nuxt/content/modules/*/README.md after downloading build-output." >&2
+            echo "Module pages render these as their body; generating without them fails the route guard." >&2
+            exit 1
+          }
           echo "API reference: $(find docs/nuxt/content/api -name '*.md' | wc -l) generated pages"
+          echo "Module bodies: $readmes mirrored READMEs"
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:

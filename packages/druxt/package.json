@@ -37,7 +37,9 @@
   "module": "dist/druxt.esm.js",
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "icon.svg",
+    "banner.svg"
   ],
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",

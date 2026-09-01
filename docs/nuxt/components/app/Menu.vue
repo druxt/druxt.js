@@ -35,6 +35,23 @@
             v-bind="child.props"
             v-text="child.text"
           />
+
+          <!-- Third level, for the active API package: its reference pages. -->
+          <ul
+            v-if="children && childrenOf(child).length && isActive(child)"
+            class="menu gap-0.5 pl-3 ml-3 border-l border-base-300"
+          >
+            <li v-for="(leaf, leafKey) of childrenOf(child)" :key="leafKey">
+              <component
+                :is="leaf.component"
+                class="rounded-btn px-3 py-1 text-[13px]"
+                :class="isCurrent(leaf) ? 'bg-base-200 text-primary-focus font-semibold' : 'text-base-content/70 hover:text-base-content'"
+                :aria-current="isCurrent(leaf) ? 'page' : null"
+                v-bind="leaf.props"
+                v-text="leaf.text"
+              />
+            </li>
+          </ul>
         </li>
       </ul>
     </li>
@@ -63,6 +80,12 @@ export default {
   },
 
   methods: {
+    /**
+     * The icon component name for a menu item.
+     *
+     * @param {object} item - The menu item.
+     * @returns {string} The registered icon component name.
+     */
     iconComponent(item) {
       return 'app-icon-' + item.icon
     },
@@ -71,6 +94,9 @@ export default {
      * A section's index document is discovered alongside its siblings, which
      * previously produced "Tutorials › Tutorials" in the trail. The parent
      * link already goes there, so drop any child pointing at the same route.
+     *
+     * @param {object} item - The menu item.
+     * @returns {object[]} The item's linkable children.
      */
     childrenOf(item) {
       const to = this.to(item)
@@ -84,6 +110,9 @@ export default {
      * empty-value guards in isActive and isCurrent then read as "no route",
      * so Home could never be marked active or current, on the one page it
      * points at, and the `to === ''` branch below was unreachable.
+     *
+     * @param {object} item - The menu item.
+     * @returns {?string} The normalised route, or null without one.
      */
     to(item) {
       const to = (item.props || {}).to
@@ -109,6 +138,12 @@ export default {
       // descendants. Compared segment-wise so /guide does not light up on
       // a sibling route that merely shares its prefix.
       if (to === '/') return path === '/'
+      // Component reference pages live under /api/packages/*/components/,
+      // but they belong to the Components section: it claims them, and the
+      // API section stands down for them.
+      const onComponent = /^\/api\/packages\/[^/]+\/components(\/|$)/.test(path)
+      if (to === '/components' && onComponent) return true
+      if (to === '/api' && onComponent) return false
       return path === to || path.startsWith(to + '/')
     },
   },

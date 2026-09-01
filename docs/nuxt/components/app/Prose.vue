@@ -68,17 +68,6 @@ export default {
   /** The image currently enlarged, as { src, alt }; null when closed. */
   data: () => ({ zoom: null, restoreFocusTo: null }),
 
-  mounted() {
-    this.$nextTick(this.enhance)
-    this.onKey = (e) => { if (e.key === 'Escape') this.zoom = null }
-    window.addEventListener('keydown', this.onKey)
-  },
-
-  beforeDestroy() {
-    window.removeEventListener('keydown', this.onKey)
-    document.documentElement.style.overflow = ''
-  },
-
   watch: {
     document() {
       this.$nextTick(this.enhance)
@@ -105,6 +94,19 @@ export default {
     },
   },
 
+  mounted() {
+    this.$nextTick(this.enhance)
+    this.onKey = (e) => { if (e.key === 'Escape') this.zoom = null }
+    window.addEventListener('keydown', this.onKey)
+  },
+
+
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.onKey)
+    document.documentElement.style.overflow = ''
+  },
+
+
   methods: {
     onTab(e) {
       trapTab(this.$refs.dialog, e)
@@ -124,6 +126,13 @@ export default {
       root.querySelectorAll('img:not([data-enhanced])').forEach((img) => {
         img.setAttribute('data-enhanced', '')
 
+        // Linked images (badges) navigate on click: no zoom figure.
+        const link = img.closest('a')
+        if (link) {
+          link.style.borderBottom = 'none'
+          return
+        }
+
         const figure = document.createElement('figure')
         figure.className = 'not-prose my-8'
 
@@ -132,7 +141,7 @@ export default {
         // reach it and screen readers were not told it did anything.
         const frame = document.createElement('button')
         frame.type = 'button'
-        frame.className = 'block w-full rounded-box overflow-hidden border border-base-300 bg-base-200 cursor-[zoom-in]'
+        frame.className = 'block w-full rounded-box overflow-hidden cursor-[zoom-in]'
         frame.setAttribute('aria-label', img.alt ? 'Enlarge: ' + img.alt : 'Enlarge image')
         frame.addEventListener('click', () => { this.zoom = { src: img.src, alt: img.alt } })
 
