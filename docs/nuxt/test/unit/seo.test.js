@@ -161,8 +161,13 @@ describe('seoHead', () => {
     expect(content(home, 'og:title')).toBe('DruxtJS')
   })
 
-  it('defaults the share image and accepts an override', () => {
-    expect(content(head, 'og:image')).toBe('https://druxtjs.org/og-druxt.png')
+  it('serves the generated card for section pages and falls back to the site card', () => {
+    expect(content(head, 'og:image')).toBe('https://druxtjs.org/og/guide/theming.png')
+
+    const home = seoHead({ title: null, path: '/', type: 'website' })
+    expect(content(home, 'og:image')).toBe('https://druxtjs.org/og/site.png')
+    expect(content(seoHead({ title: 'A', path: '/a', image: 'https://x.test/a.png' }), 'og:image'))
+      .toBe('https://x.test/a.png')
   })
 
   test('a caller-supplied image carries no dimension claims', () => {
@@ -170,8 +175,6 @@ describe('seoHead', () => {
     expect(content(head, 'og:image')).toBe('https://example.test/card.jpg')
     expect(head.meta.find((o) => o.hid === 'og:image:width')).toBeUndefined()
     expect(head.meta.find((o) => o.hid === 'og:image:height')).toBeUndefined()
-    expect(content(seoHead({ title: 'A', path: '/a', image: 'https://x.test/a.png' }), 'og:image'))
-      .toBe('https://x.test/a.png')
   })
 
   it('uses the same summary for description, og and twitter', () => {
@@ -183,5 +186,41 @@ describe('seoHead', () => {
   it('canonicalises the URL it advertises', () => {
     expect(content(seoHead({ title: 'A', path: '/guide/a/' }), 'og:url'))
       .toBe('https://druxtjs.org/guide/a')
+  })
+})
+
+describe('SITE_ORIGIN', () => {
+  const load = () => {
+    jest.resetModules()
+    return require('~/lib/site').SITE_ORIGIN
+  }
+
+  afterEach(() => {
+    delete process.env.SITE_ORIGIN
+    delete process.env.LAGOON_ENVIRONMENT_TYPE
+    delete process.env.LAGOON_ROUTE
+  })
+
+  test('an explicit override wins over everything', () => {
+    process.env.SITE_ORIGIN = 'https://tunnel.example'
+    process.env.LAGOON_ENVIRONMENT_TYPE = 'development'
+    process.env.LAGOON_ROUTE = 'https://preview.example'
+    expect(load()).toBe('https://tunnel.example')
+  })
+
+  test('preview environments derive their own route', () => {
+    process.env.LAGOON_ENVIRONMENT_TYPE = 'development'
+    process.env.LAGOON_ROUTE = 'https://pr.druxtjs-org.au2.amazee.io'
+    expect(load()).toBe('https://pr.druxtjs-org.au2.amazee.io')
+  })
+
+  test('production ignores its route and keeps the canonical domain', () => {
+    process.env.LAGOON_ENVIRONMENT_TYPE = 'production'
+    process.env.LAGOON_ROUTE = 'https://druxtjs.org'
+    expect(load()).toBe('https://druxtjs.org')
+  })
+
+  test('nothing set means the canonical domain', () => {
+    expect(load()).toBe('https://druxtjs.org')
   })
 })

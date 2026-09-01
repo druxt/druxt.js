@@ -18,7 +18,7 @@ const isProduction = process.env.LAGOON_ENVIRONMENT_TYPE === 'production'
 // Routes generate:routeFailed reported; generate:done refuses to ship them.
 const failedRoutes = []
 
-import { SITE_NAME, SITE_DESCRIPTION } from './lib/site'
+import { SITE_NAME, SITE_DESCRIPTION, SITE_ORIGIN } from './lib/site'
 
 /** The `druxt` package version, or null where the monorepo root isn't present. */
 let druxtVersion = null
@@ -96,6 +96,12 @@ export default {
     '~/plugins/analytics.client.js',
   ],
   components: true,
+
+  // Mirrors the SITE_ORIGIN override into the client bundle so hydration
+  // recomputes the same absolute URLs the generated HTML carries.
+  env: {
+    SITE_ORIGIN,
+  },
 
   buildModules: [
     '@nuxtjs/pwa',
@@ -226,6 +232,7 @@ export default {
 
       const fs = require('fs')
       const path = require('path')
+      const { execFileSync } = require('child_process')
       const { readContent } = require('./lib/content-index')
       const { buildLlmsTxt } = require('./lib/llms-txt')
       const { buildSitemap } = require('./lib/sitemap')
@@ -236,7 +243,16 @@ export default {
       await fs.promises.writeFile(path.join(generate.dir, 'llms.txt'), buildLlmsTxt(docs))
       await fs.promises.writeFile(path.join(generate.dir, 'sitemap.xml'), buildSitemap(docs))
 
-      console.log('SEO: wrote llms.txt and sitemap.xml for ' + docs.length + ' documents')
+      // A child process, not a require: satori and resvg crash inside this
+      // process, where the esm config loader has patched the module system.
+      const cards = execFileSync(process.execPath, [
+        path.join(srcDir, 'scripts', 'og-render.js'),
+        path.join(srcDir, 'content'),
+        path.join(srcDir, 'assets', 'fonts'),
+        path.join(generate.dir, 'og'),
+      ], { stdio: ['ignore', 'pipe', 'inherit'] }).toString().trim()
+
+      console.log('SEO: wrote llms.txt, sitemap.xml and ' + cards + ' share cards for ' + docs.length + ' documents')
     },
   },
 

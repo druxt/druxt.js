@@ -8,8 +8,18 @@
  * rather than one for the build and a second for the runtime `head()`.
  */
 
-/** Canonical origin. Every absolute URL the build emits is built from this. */
-const SITE_ORIGIN = 'https://druxtjs.org'
+/**
+ * Canonical origin. Every absolute URL the build emits is built from this.
+ *
+ * Overridable per build so a preview or tunnel can emit URLs that resolve to
+ * itself: share scrapers only fetch absolute URLs, and pointing a preview's
+ * og:image at production means testing against files that are not deployed
+ * yet. Lagoon previews derive it from their own route automatically;
+ * production leaves both unset and keeps the canonical domain.
+ */
+const SITE_ORIGIN = process.env.SITE_ORIGIN
+  || (process.env.LAGOON_ENVIRONMENT_TYPE !== 'production' && process.env.LAGOON_ROUTE)
+  || 'https://druxtjs.org'
 
 const SITE_NAME = 'DruxtJS'
 
@@ -108,6 +118,23 @@ const titleFromPath = (path) => {
   return words.charAt(0).toUpperCase() + words.slice(1)
 }
 
+/**
+ * The generated share card URL for a route, or null where none is generated.
+ *
+ * Cards exist for every content document, which is exactly the routes inside
+ * a live section. The homepage and anything outside a section fall back to
+ * the generated site card, og/site.png.
+ *
+ * @param {string} path - A route path.
+ * @returns {string|null} Absolute image URL, or null.
+ */
+const ogImageUrl = (path) => {
+  const normalised = normalisePath(path)
+  const section = sectionFor(normalised)
+  if (!section) return null
+  return SITE_ORIGIN + '/og' + normalised + '.png'
+}
+
 module.exports = {
   SITE_ORIGIN,
   SITE_NAME,
@@ -117,6 +144,7 @@ module.exports = {
   SECTIONS,
   normalisePath,
   canonicalUrl,
+  ogImageUrl,
   sectionFor,
   titleFromPath,
 }

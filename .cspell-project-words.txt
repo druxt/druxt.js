@@ -3,6 +3,7 @@ antfu
 apos
 Appétit
 Autobuild
+autobuild
 automerge
 autoupdate
 axios
@@ -22,6 +23,7 @@ Composables
 composables
 consola
 Consolas
+consolas
 Contenta
 contentacms
 corepack
@@ -38,6 +40,7 @@ defaultvalue
 devcontainer
 devcontainers
 Devel
+devel
 devpod
 Diataxis
 docgen
@@ -67,6 +70,7 @@ intelephense
 interruptible
 jsdocs
 jsonapi
+Knip
 knip
 Ksection
 langcode
@@ -79,6 +83,7 @@ libzip
 licence
 lightboxes
 Linkcheck
+linkcheck
 llms
 lockfiles
 longname
@@ -87,12 +92,14 @@ makedirs
 markdownlint
 mbstring
 Menlo
+menlo
 metatag
 metatags
 mise
 namelist
 neighbour
 Neue
+neue
 nohup
 normalise
 normalised
@@ -122,10 +129,12 @@ renderable
 repoint
 reskins
 Resvg
+resvg
 router
 satori
 scule
 Segoe
+segoe
 setuptools
 shivammathur
 siroc
@@ -139,6 +148,7 @@ swipeable
 tailwindcss
 testid
 Themable
+themable
 toggleable
 topbar
 trixie
