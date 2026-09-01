@@ -139,6 +139,7 @@ Segoe
 setuptools
 shivammathur
 siroc
+slashless
 ssr
 Standardised
 Stanislav
