@@ -69,7 +69,8 @@ export default {
       return dirs.map((dir, index) => {
         let to
         if (index === 1) to = '/api'
-        if (index > 1 && index < last) to = dirs.slice(0, index + 1).join('/').replace('src/', '/api/')
+        // Only the package root has a document; deeper directories (components/, mixins/) would 404.
+        if (index === 2 && index < last) to = dirs.slice(0, index + 1).join('/').replace('src/', '/api/')
         return { text: index === last ? document.title : dir, to }
       })
     },
