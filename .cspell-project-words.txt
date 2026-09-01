@@ -1,4 +1,5 @@
 aarch
+amazeeio
 antfu
 apos
 Appétit
@@ -138,6 +139,7 @@ Segoe
 setuptools
 shivammathur
 siroc
+slashless
 ssr
 Standardised
 Stanislav
@@ -157,6 +159,7 @@ unjs
 unlighthouse
 unregisters
 Unsets
+uselagoon
 Valeryan
 vetur
 vfox
