@@ -22,7 +22,8 @@ RUN yarn || true
 
 # Lagoon passes this as a build arg, but only declared args reach the build.
 # It gates the analytics snippet baked in at generate time. Routes are
-# runtime-only in Lagoon, so scripts/start.sh resolves the origin instead.
+# runtime-only in Lagoon, so scripts/rewrite-origin.sh resolves the origin at
+# container start instead.
 ARG LAGOON_ENVIRONMENT_TYPE
 RUN yarn generate
 
