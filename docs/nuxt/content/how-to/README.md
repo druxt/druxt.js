@@ -22,6 +22,8 @@ tutorial](/tutorials/getting-started).
 - [Use Druxt in a Node application](/how-to/use-the-node-client): run the client outside Nuxt.
 - [Explore the example apps](/how-to/example-apps): four complete reference implementations.
 - [Deploy a static site](/how-to/deploy-static): generate and host the output on a static host or CDN.
+- [Deploy a server-rendered site](/how-to/deploy-server): run the node service behind a web server, or the static-plus-fallback hybrid.
+- [Authenticate users with OAuth](/how-to/authentication): the full Simple OAuth setup from scratch, both sides.
 - [Environment variables](/how-to/environment-variables): every variable a build reads, and the build-time vs runtime trap.
 - [Troubleshoot common issues](/how-to/troubleshooting): quick answers to the errors and gotchas that come up most often.
 - [Contributing](/how-to/contributing): set up a development environment and submit changes.

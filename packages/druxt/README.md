@@ -44,6 +44,22 @@ on. It provides the three pieces the whole framework shares:
    [Troubleshooting](https://druxtjs.org/how-to/troubleshooting)
    if requests are failing after install.
 
+## Compatibility
+
+As of September 2026:
+
+| | Supported |
+| --- | --- |
+| Nuxt | 2.15 or later (Nuxt 2 line). Nuxt 3 is not supported; it is the next major's target. |
+| Vue | 2.7 |
+| Node | 16 recommended; 14 works. 17 and later need `NODE_OPTIONS=--openssl-legacy-provider` to build. |
+| Drupal core | 8.8 through 11 |
+| Drupal module | `drupal/druxt` ^1.2, which brings `decoupled_router` ^2.0, `jsonapi_menu_items` and `jsonapi_views` |
+| Known pins | `@nuxtjs/storybook` 4.2.0 (later majors need Nuxt 3); axios 0.x, or add it to `build.transpile` |
+
+Translated routes additionally need a `decoupled_router` patch; see the
+[multilingual guide](https://druxtjs.org/how-to/multilingual).
+
 ## Settings
 
 | Option        | Type              | Default     | Description                                                              |
