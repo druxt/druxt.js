@@ -77,9 +77,9 @@ export default {
      * DruxtBlockRegion propsData for regions.
      *
      * @param {object} vm - The component ViewModel.
-     * @param {string} vm.defaultTheme - The default Drupal theme machine name.
+     * @param {string|undefined} vm.defaultTheme - The default Drupal theme machine name.
      * @param {string[]} vm.regions - An array of unique region names.
-     * @param {string} vm.theme - Drupal theme ID.
+     * @param {string|undefined} vm.theme - Drupal theme ID.
      * @return {object}
      */
     props: ({ defaultTheme, regions, theme }) =>
@@ -118,8 +118,8 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param {string} context.defaultTheme - The default Drupal theme machine name.
-     * @param {string} context.theme - Drupal theme ID.
+     * @param {string|undefined} context.defaultTheme - The default Drupal theme machine name.
+     * @param {string|undefined} context.theme - Drupal theme ID.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ defaultTheme, theme }) => [[theme || defaultTheme], ['default']],
@@ -157,10 +157,10 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param {string} context.defaultTheme - The default Drupal theme machine name.
+     * @param {string|undefined} context.defaultTheme - The default Drupal theme machine name.
      * @param {object} context.props - DruxtBlockRegion propsData for regions.
      * @param {string[]} context.regions - An array of unique region names.
-     * @param {string} context.theme - Drupal theme ID.
+     * @param {string|undefined} context.theme - Drupal theme ID.
      * @returns {PropsData}
      */
     propsData: ({ defaultTheme, props, regions, theme }) => ({ props, regions, theme: theme || defaultTheme }),

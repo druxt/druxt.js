@@ -90,7 +90,7 @@ export default {
    * @param {object} vm - The component ViewModel.
    * @param {*} vm.value - The module component model value.
    * @property {ComponentData} component - The wrapper component and propsData to be rendered.
-   * @property {object} model - The model object.
+   * @property {*} model - The module component model value.
    */
   data: ({ value }) => ({
     component: {
@@ -230,7 +230,7 @@ export default {
      * Sets the component to render a DruxtDebug error message.
      *
      * @param {object} err - The error object.
-     * @param {object} context - The error context; the requested URL.
+     * @param {object} [context] - Error context; carries the wrapper component data where the failure knows it.
      */
     error(err, context = {}) {
       // Build error details.

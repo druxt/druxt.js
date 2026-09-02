@@ -320,7 +320,7 @@ export default {
      * @param {object} context - The module component ViewModel.
      * @param {object} context.$druxt - The Druxt Nuxt plugin instance.
      * @param {number} context.depth - The depth of the menu items to render.
-     * @param {number} context.maxDepth - The maximum depth of the menu tree data to load.
+     * @param {number|null} context.maxDepth - The maximum depth of the menu tree data to load.
      * @param {number} context.minDepth - The minimum depth of the menu tree.
      * @param {string} context.parentId - The menu parent ID to use as the root of the menu.
      * @param {object} wrapperSettings - Settings provided by the Wrapper component.

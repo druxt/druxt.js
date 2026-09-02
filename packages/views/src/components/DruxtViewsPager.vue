@@ -121,7 +121,7 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param {string} context.count - The JSON:API Views results total count.
+     * @param {boolean|number} context.count - The JSON:API Views results total count.
      * @param {object} context.options - The Pager options.
      * @param {object} context.resource - The JSON:API Views results resource.
      * @param {string} context.type - The Pager type.

@@ -38,7 +38,7 @@ const EDIT_BASE = 'https://github.com/druxt/druxt.js/edit/develop/docs/nuxt/cont
 
 export default {
   props: {
-    /** Content-relative path, e.g. 'tutorials/getting-started.md'. */
+    /** Content-relative path, e.g. 'guide/getting-started.md'. */
     editPath: { type: String, default: null },
     prev: { type: Object, default: null },
     next: { type: Object, default: null },

@@ -94,7 +94,7 @@ const DruxtViewsStore = ({ store }) => {
        * @param {Function} context.commit - Commits mutations to the store.
        * @param {object} context.state - The Vuex module state.
        * @param {getResultsContext} payload - The action parameters.
-       * @return {object} The JSON:API Views results resource.
+       * @return {object|boolean} The JSON:API Views results resource, or false where the request failed with nothing cached.
        *
        * @example @lang js
        * const { data, meta, links } = await this.$store.dispatch('druxt/views/getResults', {

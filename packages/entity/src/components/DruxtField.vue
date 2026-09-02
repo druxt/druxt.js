@@ -201,7 +201,7 @@ export default {
      *
      * @param {object} context - The module component ViewModel.
      * @param {object[]} context.errors - Field errors from the form submission response.
-     * @param {object} context.model - The model object.
+     * @param {Array|boolean|number|object|string} context.model - The field value.
      * @param {boolean} context.relationship - `true` if this field is a JSON:API relationship.
      * @param {object} context.schema - The DruxtSchema field schema object.
      * @returns {PropsData}

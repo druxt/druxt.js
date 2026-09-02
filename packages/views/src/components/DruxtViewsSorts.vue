@@ -84,7 +84,7 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
-     * @param {object} context.model - The DruxtViewsSorts model value.
+     * @param {string} context.model - The selected sort ID.
      * @param {object} context.options - The Exposed form options.
      * @param {object[]} context.sorts - The Exposed Sort objects.
      * @param {string} context.type - The Exposed form type.
@@ -160,7 +160,7 @@ export default {
  * @param {object} options - The Exposed form options.
  * @param {object[]} sorts - The Exposed Sort objects.
  * @param {string} type - The Exposed form type.
- * @param {integer} value - The DruxtViewSorts model value.
+ * @param {string} value - The selected sort ID.
  *
  * @example @lang js
  * {
