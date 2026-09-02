@@ -98,6 +98,8 @@ const DruxtFieldMixin = {
   },
 
   /**
+   * @param {object} vm - The component ViewModel.
+   * @param {Array|boolean|number|object|string} vm.value - The Field value.
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({

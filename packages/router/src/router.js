@@ -24,7 +24,7 @@ class DruxtRouter {
    * @example @lang js
    * const router = new DruxtRouter('https://example.com', {})
    *
-   * @param {string} baseURL - The Drupal base URL.
+   * @param {string} baseUrl - The Drupal base URL.
    * @param {object} [options] - Druxt Router options.
    * @param {object} [options.axios] - Axios instance settings.
    * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
@@ -224,8 +224,9 @@ class DruxtRouter {
    * @example @lang js
    * const data = await router.druxt.getResource('node--article', id)
    *
-   * @param {string} type - The JSON:API resource type.
-   * @param {string} id - The Drupal resource UUID.
+   * @param {object} query - The resource query.
+   * @param {string} query.type - The JSON:API resource type.
+   * @param {string} query.id - The Drupal resource UUID.
    *
    * @returns {object} The JSON:API resource data.
    */

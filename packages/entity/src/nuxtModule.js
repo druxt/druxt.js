@@ -25,6 +25,7 @@ import DruxtEntityStorybook from './nuxtStorybook'
  *
  * @todo Document options.
  *
+ * @param {object} moduleOptions - The Nuxt.js module options.
  * @property {object} options.druxt - DruxtJS root level options.
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  */

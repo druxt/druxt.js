@@ -16,7 +16,6 @@ const DruxtViewsStore = ({ store }) => {
    *
    * Provides a Vuex state object, mutations and actions for interacting with JSON:API Views.
    *
-   * @name druxt/views
    * @module druxt/views
    */
   const module = {
@@ -41,6 +40,7 @@ const DruxtViewsStore = ({ store }) => {
       /**
        * @name addResults
        * @mutator {object} addResults=results Adds JSON:API Views results to the Vuex state object.
+       * @param {object} state - The Vuex state object.
        * @param {addResultsPayload} payload - The mutation payload.
        *
        * @example @lang js
@@ -58,6 +58,7 @@ const DruxtViewsStore = ({ store }) => {
       /**
        * @name flushResults
        * @mutator {object} flushResults=results Removes JSON:API Views results from the Vuex state object.
+       * @param {object} state - The Vuex state object.
        * @param {flushResultsPayload} payload - The mutation payload.
        *
        * @example @lang js
@@ -89,11 +90,14 @@ const DruxtViewsStore = ({ store }) => {
        *
        * @name getResults
        * @action get=results
-       * @param {getResultsContext} context - The action context.
-       * @return {object} The JSON:API Views results resource.
+       * @param {object} context - The Vuex action context.
+       * @param {Function} context.commit - Commits mutations to the store.
+       * @param {object} context.state - The Vuex module state.
+       * @param {getResultsContext} payload - The action parameters.
+       * @return {object|boolean} The JSON:API Views results resource, or false where the request failed with nothing cached.
        *
        * @example @lang js
-       * const { data, meta, links } = await this.$store.dispatch('druxt/view/getResults', {
+       * const { data, meta, links } = await this.$store.dispatch('druxt/views/getResults', {
        *   viewId,
        *   displayId,
        *   query,

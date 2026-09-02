@@ -223,7 +223,7 @@ export default {
     /**
      * The View Headers data.
      *
-     * @type {@object}
+     * @type {object[]}
      */
     headers() {
       if (!this.display) return []
@@ -429,6 +429,10 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.displayId - The View Display ID.
+     * @param {string} context.uuid - The View UUID.
+     * @param {object} context.view - The View JSON:API resource data.
+     * @param {string} context.viewId - The View ID.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ displayId, uuid, view, viewId }) => ([
@@ -461,6 +465,8 @@ export default {
 
     /**
      * Fetch JSON:API Views results.
+     *
+     * @param {object} settings - The module settings object, including the results query configuration.
      */
     async fetchData(settings) {
       const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
@@ -488,7 +494,7 @@ export default {
     /**
      * Provides propsData for the DruxtWrapper.
      *
-     * @param {object} context - The module component ViewModel.
+     * @param {object} vm - The module component ViewModel.
      * @returns {PropsData}
      */
     propsData: (vm) => ({
@@ -502,6 +508,10 @@ export default {
 
     /**
      * Component settings.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @param {object} wrapperSettings - Settings provided by the Wrapper component.
+     * @returns {object} The merged module settings.
      */
     settings: (context, wrapperSettings) => {
       const { $druxt, settings } = context
@@ -543,6 +553,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {

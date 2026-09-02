@@ -5,7 +5,7 @@ import { DruxtSchemaNuxtModule } from './nuxtModule'
  *
  * Provides methods for generating Druxt.js Schema files from the Drupal JSON:API.
  *
- * @type class
+ * @type {class}
  * @exports DruxtSchema
  * @see {@link /api/packages/schema/schema|DruxtSchema}
  *

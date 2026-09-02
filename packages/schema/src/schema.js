@@ -4,6 +4,8 @@ import { DruxtClient } from 'druxt'
 import { Schema } from './utils/schema'
 
 /**
+ * Druxt Schema configuration object.
+ *
  * @typedef {object} SchemaConfiguration
  * @see {@link ./typedefs/schema_configuration|SchemaConfiguration}
  */

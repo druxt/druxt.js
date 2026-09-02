@@ -5,7 +5,6 @@
   "description": "API Doc generation tool for Druxt modules.",
   "keywords": [
     "druxt",
-    "vuepress",
     "jsdocs"
   ],
   "license": "MIT",

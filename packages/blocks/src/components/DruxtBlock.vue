@@ -48,7 +48,7 @@ export default {
     /**
      * The Blocks internal ID.
      *
-     * @type string
+     * @type {string}
      *
      * @example @lang vue
      * <DruxtBlock id="umami_branding" />
@@ -91,6 +91,8 @@ export default {
     /**
      * The Block entity data.
      *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.resource - The Block JSON:API resource.
      * @return {object}
      */
     block: ({ resource }) => (resource || {}).data,
@@ -124,6 +126,7 @@ export default {
      * Provides the available component naming options for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.block - The Block entity data.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ block }) => {
@@ -194,6 +197,7 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.block - The Block entity data.
      * @returns {PropsData}
      */
     propsData: ({ block }) => ({ block }),
@@ -204,6 +208,7 @@ export default {
      * A default slot is provided with debug information if Nuxt is in
      * development mode.
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {

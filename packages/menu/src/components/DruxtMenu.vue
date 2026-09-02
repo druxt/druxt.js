@@ -282,6 +282,7 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.name - The name of the menu to load and render.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ name }) => [[name], ['default']],
@@ -289,6 +290,8 @@ export default {
     /**
      * Builds and executes the JSON:API query, loading the menu items into the
      * druxtMenu Vuex store.
+     *
+     * @param {object} settings - The module settings object, including the menu items query configuration.
      */
     async fetchData(settings) {
       if (!this.value) {
@@ -305,12 +308,23 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object[]} context.model - The menu items model value.
+     * @param {string} context.parentId - The menu parent ID to use as the root of the menu.
      * @returns {PropsData}
      */
     propsData: ({ model, parentId }) => ({ items: model, parentId, value: model }),
 
     /**
      * Component settings.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @param {object} context.$druxt - The Druxt Nuxt plugin instance.
+     * @param {number} context.depth - The depth of the menu items to render.
+     * @param {number|null} context.maxDepth - The maximum depth of the menu tree data to load.
+     * @param {number} context.minDepth - The minimum depth of the menu tree.
+     * @param {string} context.parentId - The menu parent ID to use as the root of the menu.
+     * @param {object} wrapperSettings - Settings provided by the Wrapper component.
+     * @returns {object} The merged module settings.
      */
     settings: ({ $druxt, depth, maxDepth, minDepth, parentId }, wrapperSettings) => {
       const settings = merge($druxt.settings.menu || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
@@ -337,6 +351,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {

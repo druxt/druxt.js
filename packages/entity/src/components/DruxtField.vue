@@ -86,6 +86,8 @@ export default {
   },
 
   /**
+   * @param {object} vm - The component ViewModel.
+   * @param {(array|boolean|number|object|string)} vm.value - The Field value.
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({
@@ -185,6 +187,7 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.schema - The DruxtSchema field schema object.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ schema }) => ([
@@ -197,6 +200,10 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object[]} context.errors - Field errors from the form submission response.
+     * @param {Array|boolean|number|object|string} context.model - The field value.
+     * @param {boolean} context.relationship - `true` if this field is a JSON:API relationship.
+     * @param {object} context.schema - The DruxtSchema field schema object.
      * @returns {PropsData}
      */
     propsData: ({ errors, model, relationship, schema }) => ({ errors, relationship, schema, value: model }),
@@ -223,6 +230,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {
@@ -538,7 +546,7 @@ export default {
  * Provides scoped slots for use in the Wrapper component.
  *
  * @typedef {object} ScopedSlots
- * @param {function} field-# - A slot per field item, e.g. `field-0`.
+ * @param {function} * - A slot per field item, e.g. `field-0`.
  * @param {function} label - The field label.
  * @param {function} label-above - The field label, if label position is 'above'.
  * @param {function} label-inline - The field label, if label position is 'inline'.

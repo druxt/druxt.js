@@ -101,6 +101,9 @@ export default {
   },
 
   /**
+   * @param {object} vm - The component ViewModel.
+   * @param {string} vm.type - The JSON:API resource type.
+   * @param {object} vm.value - The module component model value.
    * @property {object} model - The model object.
    * @property {object} schema - The DruxtSchema object.
    */
@@ -125,6 +128,8 @@ export default {
     /**
      * The Entity object.
      *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.model - The model object.
      * @return {object}.
      */
     entity: ({ model }) => ({ ...model }),
@@ -132,6 +137,13 @@ export default {
     /**
      * Entity fields based on Display mode.
      *
+     * @param {object} vm - The component ViewModel.
+     * @param {object[]} vm.errors - Form submission response errors, if any.
+     * @param {Function} vm.isEmpty - Checks if an Entity field is empty.
+     * @param {string} vm.lang - The current language code.
+     * @param {object} vm.model - The model object.
+     * @param {object} vm.schema - The DruxtSchema object.
+     * @param {('view'|'form')} vm.schemaType - Drupal display schema type, 'view' or 'form'.
      * @return {object}
      */
     fields: ({ errors, isEmpty, lang, model, schema, schemaType }) => {
@@ -277,6 +289,10 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.mode - The Drupal display mode.
+     * @param {object} context.schema - The DruxtSchema object.
+     * @param {('view'|'form')} context.schemaType - Drupal display schema type, 'view' or 'form'.
+     * @param {string} context.type - The JSON:API resource type.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ mode, schema, schemaType, type }) => ([
@@ -317,6 +333,8 @@ export default {
 
     /**
      * Fetches the content entity JSON:API resource.
+     *
+     * @param {object} settings - The module settings object, including the resource query configuration.
      */
     async fetchData(settings) {
       if (!this.type) return
@@ -353,12 +371,19 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.fields - Entity fields based on the display mode.
+     * @param {object} context.model - The model object.
+     * @param {object} context.schema - The DruxtSchema object.
      * @returns {PropsData}
      */
     propsData: ({ fields, model, schema }) => ({ entity: model, fields, schema, value: model }),
 
     /**
      * Component settings.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @param {object} wrapperSettings - Settings provided by the Wrapper component.
+     * @returns {object} The merged module settings.
      */
     settings: (context, wrapperSettings) => {
       const { $druxt, settings } = context
@@ -396,6 +421,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {

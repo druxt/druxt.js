@@ -42,7 +42,7 @@ export default {
   mixins: [DruxtFieldMixin],
 
   /**
-   * @property {string} component=span - The component used to wrap the field items.
+   * @property {string} [component=span] - The component used to wrap the field items.
    * @property {boolean|object} entities
    * @property {boolean} loading - Loading status.
    */

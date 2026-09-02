@@ -5,7 +5,7 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * The DruxtRouter component renders a Drupal decoupled route, or path, using
  * the appropriate Druxt component.
  *
- * For instance, using the path `/node/1` would render a DruxtEntity component.
+ * The path `/node/1` renders a DruxtEntity component.
  *
  * The Vue router path will be used if not path is defined.
  *
@@ -48,7 +48,11 @@ export default {
    * This can be disabled by setting the `druxt.router.middleware` option to
    * `false` in `nuxt.config.js`
    *
-   * @param {object} root0.$druxt - The Druxt Nuxt context plugin instance.
+   * @param {object} context - The Nuxt context.
+   * @param {object} context.$druxt - The Druxt Nuxt context plugin instance.
+   * @param {Function} context.redirect - The Nuxt redirect method.
+   * @param {object} context.route - The current route.
+   * @param {object} context.store - The Vuex store.
    * @example @lang js
    * export default {
    *   druxt: {
@@ -105,7 +109,9 @@ export default {
   },
 
   /**
-   * @property {object} model - The model object.
+   * @param {object} vm - The component ViewModel.
+   * @param {object} [vm.value] - The Router object, used to bypass the JSON:API.
+   * @property {object|undefined} model - The route model, from the optional value prop.
    */
   data: ({ value }) => ({
     debug: {
@@ -196,6 +202,8 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string|false} context.module - The route module, or false where the route has none.
+     * @param {object} context.route - The route object.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ module, route }) => [
@@ -234,6 +242,8 @@ export default {
      *
      * @param {object} context - The module component ViewModel.
      * @param {object} context.$route - The current Vue Router route object.
+     * @param {string} [context.path] - The Decoupled router path.
+     * @param {object|undefined} context.model - The route model, from the optional value prop.
      * @returns {PropsData}
      */
     propsData: ({ $route, path, model }) => ({
@@ -255,6 +265,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {

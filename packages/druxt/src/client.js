@@ -227,6 +227,7 @@ class DruxtClient {
    * Throw a formatted error.
    *
    * @param {object} err - The error object
+   * @param {object} context - The error context; the requested URL.
    *
    * @throws {Error} A formatted error.
    */
@@ -558,9 +559,9 @@ export { DruxtClient }
   */
 
 /**
- * @typedef {string|object} DruxtClientQuery
- *
  * A correctly formatted JSON:API query string or object.
+ *
+ * @typedef {string|object} DruxtClientQuery
  *
  * @example
  * page[limit]=5&page[offset]=5

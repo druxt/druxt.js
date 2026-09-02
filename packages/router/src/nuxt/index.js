@@ -23,6 +23,7 @@ import { DruxtClient } from 'druxt'
  *   }
  * }
  *
+ * @param {object} moduleOptions - The Nuxt.js module options.
  * @property {object} options.druxt - Druxt root level options.
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  * @property {string} options.druxt.router.component - File to custom Router component.
