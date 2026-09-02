@@ -7,7 +7,9 @@ description: Drupal display modes become schemas that drive field rendering, gen
 After routing resolves _which_ entity to render, the next question is
 _which fields, in what order, with what settings_. Druxt's answer is
 unusual: it doesn't invent a frontend field configuration, it reads
-Drupal's **display modes**.
+Drupal's **display modes**. A display mode is Drupal's saved, per-view
+configuration of which fields appear, in what order, with which formatter
+and settings, managed by site builders in the admin UI.
 
 The `druxt-schema` package turns view modes and form modes into
 **schemas**: plain objects describing the fields to render and the

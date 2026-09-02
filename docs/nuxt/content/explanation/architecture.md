@@ -30,7 +30,8 @@ order:
    [router](/explanation/routing) module.
 2. **Path translation**: Druxt asks Drupal (via the `decoupled_router`
    module) what entity serves this path. The answer identifies the entity
-   type, bundle, UUID and view mode.
+   type, bundle (Drupal's word for a content type, like `article`), UUID
+   and view mode.
 3. **Data fetching**: the [DruxtStore](/explanation/druxt-store) checks its
    cache, and asks Drupal's JSON:API for anything missing. [Display-mode
    schemas](/explanation/schemas) can narrow the query so only rendered
@@ -39,7 +40,8 @@ order:
    delegates its markup to a [theme component chosen by the suggestion
    system](/explanation/component-resolution).
 5. **Response**: Nuxt returns fully server-rendered HTML, then hydrates it
-   as a Vue application in the browser.
+   in the browser: Vue takes over the already-rendered markup and makes it
+   interactive without re-fetching the page.
 
 ## What lives where
 
