@@ -28,23 +28,25 @@ and applies three:
 "drupal/decoupled_router": {
   "https://www.drupal.org/project/decoupled_router/issues/3172926": "https://www.drupal.org/files/issues/2020-09-24/3172926-2.patch",
   "https://www.drupal.org/project/decoupled_router/issues/3468825": "https://git.drupalcode.org/project/decoupled_router/-/merge_requests/20.diff",
-  "#3111456 Resolve the language from the requested path": "patches/decoupled_router-3111456-resolve-language-from-path.patch"
+  "#3111456 Resolve the language from the requested path": "https://raw.githubusercontent.com/druxt/druxt.js/develop/docs/drupal/patches/decoupled_router-3111456-resolve-language-from-path.patch"
 }
 ```
 
 The #3111456 patch is rerolled against `2.0.5`. The files attached to the issue
-target earlier releases and do not apply cleanly, so take the rerolled copy from
-[`docs/drupal/patches/`](https://github.com/druxt/druxt.js/tree/develop/docs/drupal/patches).
+target earlier releases and do not apply cleanly.
 
 Translated **Views** routes need one more, on `druxt` itself:
 
 ```json
 "drupal/druxt": {
-  "#3273228 Add langcode to Views Decoupled Router integration": "patches/druxt-3273228-views-route-langcode.patch"
+  "#3273228 Add langcode to Views Decoupled Router integration": "https://raw.githubusercontent.com/druxt/druxt.js/develop/docs/drupal/patches/druxt-3273228-views-route-langcode.patch"
 }
 ```
 
-That one is rerolled too, and lives in the same directory.
+Both rerolls are held in this repository rather than on their issues, because
+each replaces work that is still open upstream. See
+[`docs/drupal/patches/README.md`](https://github.com/druxt/druxt.js/tree/develop/docs/drupal/patches/README.md)
+for what each one changes and what is still to do before it goes to drupal.org.
 
 `jsonapi_menu_items` has included language support since `1.2.4`; no patch
 required.
