@@ -37,8 +37,14 @@ target earlier releases and do not apply cleanly, so take the rerolled copy from
 [`docs/drupal/patches/`](https://github.com/druxt/druxt.js/tree/develop/docs/drupal/patches).
 
 Translated **Views** routes need one more, on `druxt` itself:
-[#3273228](https://www.drupal.org/project/druxt/issues/3273228), also carried as
-a rerolled patch in that directory.
+
+```json
+"drupal/druxt": {
+  "#3273228 Add langcode to Views Decoupled Router integration": "patches/druxt-3273228-views-route-langcode.patch"
+}
+```
+
+That one is rerolled too, and lives in the same directory.
 
 `jsonapi_menu_items` has included language support since `1.2.4`; no patch
 required.
