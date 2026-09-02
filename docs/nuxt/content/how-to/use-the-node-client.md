@@ -154,22 +154,29 @@ Node process:
 
 ```javascript
 const { DruxtClient } = require('druxt');
+const { DrupalJsonApiParams } = require('drupal-jsonapi-params');
 
-const druxt = new DruxtClient('http://127.0.0.1:8888');
+async function main() {
+  const druxt = new DruxtClient('http://127.0.0.1:8888');
 
-// The JSON:API index.
-const index = await druxt.getIndex();
+  // The JSON:API index.
+  const index = await druxt.getIndex();
 
-// A collection, one page.
-const collection = await druxt.getCollection('node--recipe');
+  // A collection, one page.
+  const collection = await druxt.getCollection('node--recipe');
 
-// A single resource by UUID, with JSON:API query filtering.
-const recipe = await druxt.getResource('node--recipe', uuid, {
-  'fields[node--recipe]': 'title,field_ingredients',
-});
+  // A single resource by UUID, with JSON:API query filtering. `query` takes a
+  // query string, or an object with a `getQueryString()` method.
+  const uuid = collection.data[0].id;
+  const query = new DrupalJsonApiParams()
+    .addFields('node--recipe', ['title', 'field_ingredients']);
+  const recipe = await druxt.getResource('node--recipe', uuid, query);
 
-// Every page of a collection.
-const collections = await druxt.getCollectionAll('node--recipe');
+  // Every page of a collection.
+  const collections = await druxt.getCollectionAll('node--recipe');
+}
+
+main();
 ```
 
 `DruxtClient` also accepts an axios instance via `options.axios` - the same
