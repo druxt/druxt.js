@@ -1,6 +1,5 @@
 <template>
   <article>
-    <AppBreadcrumbs :items="breadcrumbs" />
 
     <AppPageHeader :title="document.title" :description="document.description" />
 
@@ -47,11 +46,6 @@ export default {
   },
 
   computed: {
-    breadcrumbs: ({ document }) => [
-      { text: 'Components', to: '/components' },
-      { text: document.title },
-    ],
-
     editPath: ({ document }) => 'components' + document.path.replace('/components', '') + '.md',
 
     position: ({ index, document }) => index.findIndex((o) => o.path === document.path),

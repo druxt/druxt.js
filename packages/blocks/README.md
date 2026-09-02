@@ -101,7 +101,7 @@ DruxtBlocks provides zero-config, auto-generated Storybook integration with a li
 
 ![DruxtBlocks Storybook integration](https://druxtjs.org/images/druxt-block-storybook.png)
 
-- For more details, see the [Storybook guide](https://druxtjs.org/guide/storybook).
+- For more details, see the [Storybook guide](https://druxtjs.org/how-to/storybook).
 
 ---
 

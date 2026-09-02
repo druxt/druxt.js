@@ -33,7 +33,7 @@ cd my-druxt-site
 npm run setup
 ```
 
-The [getting started tutorial](https://druxtjs.org/guide/getting-started)
+The [getting started tutorial](https://druxtjs.org/tutorials/getting-started)
 walks through the same steps with explanations. Other starters cover
 [Tome static content](https://github.com/druxt/quickstart-druxt-site-tome) and
 [serverless](https://github.com/druxt/quickstart-druxt-serverless) setups.
