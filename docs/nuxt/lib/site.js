@@ -63,14 +63,6 @@ const SECTIONS = {
     priority: 0.5,
     changefreq: 'yearly',
   },
-  // Retained for the legacy /guide/* URLs, which redirect to the sections
-  // above. Nothing routes here since the Diataxis restructure.
-  guide: {
-    label: 'Guide',
-    description: 'Installation, configuration, theming and contribution docs, written by hand.',
-    priority: 0.8,
-    changefreq: 'monthly',
-  },
   modules: {
     label: 'Modules',
     description: 'Per-module documentation for the Druxt packages: what each one renders and how to override it.',
@@ -80,14 +72,6 @@ const SECTIONS = {
   api: {
     label: 'API',
     description: 'Component, mixin and store reference generated from the package source by druxt-docgen.',
-    priority: 0.4,
-    changefreq: 'yearly',
-  },
-  // Claimed by route rather than by path segment: sectionFor() returns this
-  // for component reference pages, which the content index files under api.
-  components: {
-    label: 'Components',
-    description: 'Reference for the Druxt Vue components: what each one renders, and the props and slots it takes.',
     priority: 0.4,
     changefreq: 'yearly',
   },

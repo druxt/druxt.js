@@ -34,8 +34,8 @@ What it generates:
 | ------------------------------------ | --------------------------------------------------------------------- |
 | `content/api/**`                     | JSDoc from `packages/*/src/**/*.js`, component docs from `.vue` files |
 | `content/api/README.md`              | Package list with versions from `package.json`                        |
-| `content/api/components.md`          | Components index                                                      |
-| `content/modules/<pkg>/CHANGELOG.md` | `packages/<pkg>/CHANGELOG.md`                                         |
+| `content/components/README.md`       | Components index                                                      |
+| `content/api/packages/<pkg>/CHANGELOG.md` | `packages/<pkg>/CHANGELOG.md`                                    |
 | `content/how-to/contributing.md`     | root `CONTRIBUTING.md`                                                |
 
 Because the JSDoc **is** the public API reference, the monorepo's ESLint
