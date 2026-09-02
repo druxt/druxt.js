@@ -23,7 +23,7 @@
     "druxt-router": "link:../../packages/router",
     "druxt-schema": "link:../../packages/schema",
     "druxt-views": "link:../../packages/views",
-    "nuxt": "2.15.8",
+    "nuxt": "3.21.10",
     "vuedraggable": "2.24.3"
   },
   "devDependencies": {
