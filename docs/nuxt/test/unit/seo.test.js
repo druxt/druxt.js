@@ -25,8 +25,8 @@ describe('normalisePath', () => {
 
 describe('canonicalUrl', () => {
   it('collapses the trailing-slash variant onto one absolute URL', () => {
-    expect(canonicalUrl('/guide/theming/')).toBe('https://druxtjs.org/guide/theming')
-    expect(canonicalUrl('/guide/theming')).toBe('https://druxtjs.org/guide/theming')
+    expect(canonicalUrl('/how-to/theming/')).toBe('https://druxtjs.org/how-to/theming')
+    expect(canonicalUrl('/how-to/theming')).toBe('https://druxtjs.org/how-to/theming')
   })
 
   it('keeps the root slash', () => {
@@ -36,7 +36,7 @@ describe('canonicalUrl', () => {
 
 describe('sectionFor', () => {
   it('identifies the documentation sections', () => {
-    expect(sectionFor('/guide/theming')).toBe('guide')
+    expect(sectionFor('/how-to/theming')).toBe('how-to')
     expect(sectionFor('/api/packages/druxt')).toBe('api')
   })
 
@@ -48,7 +48,7 @@ describe('sectionFor', () => {
 
 describe('titleFromPath', () => {
   it('humanises the last segment', () => {
-    expect(titleFromPath('/guide/getting-started')).toBe('Getting started')
+    expect(titleFromPath('/tutorials/getting-started')).toBe('Getting started')
     expect(titleFromPath('/modules/entity/deprecations')).toBe('Deprecations')
   })
 
@@ -111,11 +111,11 @@ describe('descriptionFor', () => {
 })
 
 describe('seoHead', () => {
-  const head = seoHead({ title: 'Theming', description: 'How to theme.', path: '/guide/theming' })
+  const head = seoHead({ title: 'Theming', description: 'How to theme.', path: '/how-to/theming' })
 
   it('declares exactly one canonical URL', () => {
     expect(head.link.filter((tag) => tag.rel === 'canonical')).toHaveLength(1)
-    expect(head.link[0].href).toBe('https://druxtjs.org/guide/theming')
+    expect(head.link[0].href).toBe('https://druxtjs.org/how-to/theming')
   })
 
   it('emits the full share-card set that nuxt-social-meta used to supply', () => {
@@ -162,7 +162,7 @@ describe('seoHead', () => {
   })
 
   it('serves the generated card for section pages and falls back to the site card', () => {
-    expect(content(head, 'og:image')).toBe('https://druxtjs.org/og/guide/theming.png')
+    expect(content(head, 'og:image')).toBe('https://druxtjs.org/og/how-to/theming.png')
 
     const home = seoHead({ title: null, path: '/', type: 'website' })
     expect(content(home, 'og:image')).toBe('https://druxtjs.org/og/site.png')

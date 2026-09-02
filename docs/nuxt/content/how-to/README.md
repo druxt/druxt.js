@@ -1,0 +1,26 @@
+---
+title: How-to guides
+weight: -10
+description: Goal-oriented recipes for specific tasks, assuming a working Druxt site.
+---
+
+How-to guides are **goal-oriented**: each one starts from a real-world goal
+and ends with that goal achieved. They assume you already have a working
+Druxt site; if you don't, start with the [Getting started
+tutorial](/tutorials/getting-started).
+
+## Guides
+
+- [Serve content in multiple languages](/how-to/multilingual): fetch and render translated content.
+- [Proxy the Drupal backend through Nuxt](/how-to/proxy): prevent CORS issues.
+- [Theme Druxt components](/how-to/theming): customize output with wrappers and slots.
+- [Browse and develop components in Storybook](/how-to/storybook): zero-config stories with live data.
+- [Debug Druxt with the Vue Devtools](/how-to/devtools): inspect connections and suggestions.
+- [Use the Druxt client directly](/how-to/use-the-druxt-client): fetch resources without components.
+- [Use Druxt in a Node application](/how-to/use-the-node-client): run the client outside Nuxt.
+- [Explore the example apps](/how-to/example-apps): four complete reference implementations.
+- [Troubleshoot common issues](/how-to/troubleshooting): quick answers to the errors and gotchas that come up most often.
+- [Contributing](/how-to/contributing): set up a development environment and submit changes.
+
+For step-by-step lessons, see [Tutorials](/tutorials). For the reasoning
+behind the system, see [Concepts](/explanation).

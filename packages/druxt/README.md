@@ -41,7 +41,7 @@ on. It provides the three pieces the whole framework shares:
    [Druxt module](https://www.drupal.org/project/druxt) and grant the
    **access druxt resources** permission to the relevant roles. Missing this
    is the most common cause of site-wide JSON:API failures. See
-   [Troubleshooting](https://druxtjs.org/guide)
+   [Troubleshooting](https://druxtjs.org/how-to/troubleshooting)
    if requests are failing after install.
 
 ## Settings
@@ -50,7 +50,7 @@ on. It provides the three pieces the whole framework shares:
 | ------------- | ----------------- | ----------- | ------------------------------------------------------------------------ |
 | `baseUrl`     | `string`          |             | The Drupal backend URL. **Required.**                                    |
 | `endpoint`    | `string`          | `'jsonapi'` | The JSON:API endpoint path.                                              |
-| `proxy.api`   | `boolean`         | `false`     | Proxy API requests via Nuxt ([guide](https://druxtjs.org/guide/proxy)). |
+| `proxy.api`   | `boolean`         | `false`     | Proxy API requests via Nuxt ([guide](https://druxtjs.org/how-to/proxy)). |
 | `proxy.files` | `boolean\|string` | `false`     | Proxy Drupal files. A string sets the site.                              |
 
 See the [Nuxt module API](https://druxtjs.org/api/packages/druxt/nuxt) for the full
@@ -69,7 +69,7 @@ const client = new DruxtClient('https://demo-api.druxtjs.org');
 const collection = await client.getCollection('node--article');
 ```
 
-- [Use the Druxt client directly](https://druxtjs.org/guide/client): practical
+- [Use the Druxt client directly](https://druxtjs.org/how-to/use-the-druxt-client): practical
   guide, including non-Nuxt usage.
 - [DruxtClient API](https://druxtjs.org/api/packages/druxt/client): full method reference.
 
@@ -85,7 +85,7 @@ const resource = await this.$store.dispatch('druxt/getResource', {
 });
 ```
 
-- [The DruxtStore concept page](https://druxtjs.org/guide): how it works
+- [The DruxtStore concept page](https://druxtjs.org/explanation/druxt-store): how it works
   and why it exists.
 - [DruxtStore API](https://druxtjs.org/api/packages/druxt/stores/druxt): mutations and
   actions.
@@ -96,14 +96,14 @@ const resource = await this.$store.dispatch('druxt/getResource', {
 The base component for all Druxt components: it turns a `druxt()` options
 object (component suggestions, props, slots) into themeable rendering.
 Building on it is covered by the
-[custom module tutorial](https://druxtjs.org/guide), and the mechanism
-by [Component resolution](https://druxtjs.org/guide/theming).
+[custom module tutorial](https://druxtjs.org/tutorials/first-custom-module), and the mechanism
+by [Component resolution](https://druxtjs.org/how-to/theming).
 
 - [DruxtModule API](https://druxtjs.org/api/packages/druxt/components/DruxtModule).
 
 ## Where to go next
 
-- New to Druxt? Start with the [Getting started tutorial](https://druxtjs.org/guide/getting-started).
+- New to Druxt? Start with the [Getting started tutorial](https://druxtjs.org/tutorials/getting-started).
 - Ready for the full site experience? See the [Site module](https://druxtjs.org/modules/site).
 
 ---

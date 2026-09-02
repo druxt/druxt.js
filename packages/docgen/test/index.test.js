@@ -79,7 +79,8 @@ describe('DruxtDocgen', () => {
       expect(call[1]).toContain('## 1.0.0 - 2026-01-01')
       expect(ncp).toHaveBeenCalledWith(
         'CONTRIBUTING.md',
-        'docs/nuxt/content/guide/CONTRIBUTING.md'
+        'docs/nuxt/content/how-to/contributing.md',
+        expect.any(Function)
       )
     })
   })
@@ -218,6 +219,28 @@ describe('DruxtDocgen', () => {
         expect.stringContaining('# Foo\n\nDocs.')
       )
     })
+
+    test('titles a package index after the package, not the first symbol', () => {
+      dmd.mockReturnValueOnce('# DruxtSiteMixin')
+
+      docgen.writeTemplateData('packages/site/src/index.js', [{ id: 'module:DruxtSiteMixin' }])
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining('title: Site')
+      )
+    })
+
+    test('leaves per-symbol page titles alone', () => {
+      dmd.mockReturnValueOnce('# DruxtClient')
+
+      docgen.writeTemplateData('packages/druxt/src/client.js', [{ id: 'DruxtClient' }])
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining('title: DruxtClient')
+      )
+    })
   })
 
   describe('generateApiDocs', () => {
@@ -262,7 +285,7 @@ describe('DruxtDocgen', () => {
       docgen.generateComponentsList()
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
-        'docs/nuxt/content/api/components.md',
+        'docs/nuxt/content/components/README.md',
         expect.stringContaining('## Druxt')
       )
       const [, content] = fs.writeFileSync.mock.calls[0]

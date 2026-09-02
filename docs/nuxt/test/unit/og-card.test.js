@@ -121,8 +121,8 @@ describe('routes and URLs', () => {
 
   test('section pages get card URLs, everything else falls back', () => {
     expect(ogImageUrl('/modules/entity')).toBe('https://druxtjs.org/og/modules/entity.png')
-    expect(ogImageUrl('/guide/')).toBe('https://druxtjs.org/og/guide.png')
+    expect(ogImageUrl('/how-to/')).toBe('https://druxtjs.org/og/how-to.png')
     expect(ogImageUrl('/')).toBeNull()
-    expect(ogImageUrl('/guide/theming')).toBe('https://druxtjs.org/og/guide/theming.png')
+    expect(ogImageUrl('/how-to/theming')).toBe('https://druxtjs.org/og/how-to/theming.png')
   })
 })

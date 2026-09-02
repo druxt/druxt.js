@@ -3,7 +3,7 @@ it('DruxtJS.org: Get started', () => {
 
   cy.contains('a', 'Get started').click()
 
-  cy.url().should('include', '/guide/getting-started')
+  cy.url().should('include', '/tutorials/getting-started')
   cy.get('h1').should('have.text', 'Getting started with Druxt.js')
 
   // Exactly one h1: the page header renders the frontmatter title, and the
@@ -11,6 +11,6 @@ it('DruxtJS.org: Get started', () => {
   cy.get('h1').should('have.length', 1)
 
   // Docs pages carry breadcrumbs and an edit link.
-  cy.get('nav[aria-label="Breadcrumb"]').should('contain', 'Guide')
+  cy.get('nav[aria-label="Breadcrumb"]').should('contain', 'Tutorials')
   cy.contains('a', 'Edit this page on GitHub').should('exist')
 })

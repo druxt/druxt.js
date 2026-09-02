@@ -11,7 +11,7 @@ it('DruxtJS.org: Homepage', () => {
 
   // The hero states what Druxt is, and offers the two calls to action.
   cy.get('h1').should('have.text', 'The Fully Decoupled Drupal Framework')
-  cy.contains('a', 'Get started').should('have.attr', 'href', '/guide/getting-started')
+  cy.contains('a', 'Get started').should('have.attr', 'href', '/tutorials/getting-started')
   cy.contains('a', 'Browse modules').should('have.attr', 'href', '/modules')
 
   // The quickstart command is copyable.

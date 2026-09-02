@@ -1,11 +1,10 @@
 ---
-title: Deprecation notes
+title: Deprecations
 weight: 10
+description: Retired DruxtStore signatures and internal classes, with their replacements.
 ---
 
-TODO: Move to API documentation
-
-## Deprecations
+# Deprecations
 
 ## DruxtStore / addResource - hash
 
@@ -17,11 +16,11 @@ Prior to `0.6.0`, DruxtStore used a `hash` argument to separate the filtered res
 
 ```js
 // Deprecated, hash is no longer required.
-this.$store.commit('druxt/addResource, { resource, hash })
+this.$store.commit('druxt/addResource', { resource, hash });
 ```
 
 As of `0.6.0`, the store combines all results into a composite record without the need of the hash:
 
 ```js
-this.$store.commit('druxt/addResource, { resource })
+this.$store.commit('druxt/addResource', { resource });
 ```

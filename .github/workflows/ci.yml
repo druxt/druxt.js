@@ -52,6 +52,8 @@ jobs:
             packages/*/dist
             packages/*/CHANGELOG.md
             docs/nuxt/content/api
+            docs/nuxt/content/components/README.md
+            docs/nuxt/content/how-to/contributing.md
             docs/nuxt/content/modules/*/README.md
           retention-days: 1
 
@@ -423,6 +425,16 @@ jobs:
           test "$readmes" -gt 0 || {
             echo "No docs/nuxt/content/modules/*/README.md after downloading build-output." >&2
             echo "Module pages render these as their body; generating without them fails the route guard." >&2
+            exit 1
+          }
+          test -f docs/nuxt/content/components/README.md || {
+            echo "docs/nuxt/content/components/README.md missing after downloading build-output." >&2
+            echo "The /components page renders it; generating without it fails the route guard." >&2
+            exit 1
+          }
+          test -f docs/nuxt/content/how-to/contributing.md || {
+            echo "docs/nuxt/content/how-to/contributing.md missing after downloading build-output." >&2
+            echo "The /how-to/contributing page renders it; generating without it fails the route guard." >&2
             exit 1
           }
           echo "API reference: $(find docs/nuxt/content/api -name '*.md' | wc -l) generated pages"

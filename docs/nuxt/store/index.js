@@ -1,3 +1,9 @@
+const sectionChildren = (index) => index.map((o) => ({
+  component: "NuxtLink",
+  text: o.title,
+  props: { to: o.path.replace("/README", "") },
+}));
+
 export const actions = {
   async nuxtServerInit({ commit }, { $content }) {
     try {
@@ -29,17 +35,17 @@ export const actions = {
         }));
       commit("addMenuChildren", { children: moduleChildren, parent: "/modules" });
 
-      // Add Guide menu children to the vuex store.
-      const guideIndex = await $content("guide")
-        .sortBy("weight")
-        .only(["path", "title", "weight"])
-        .fetch();
-      const guideChildren = guideIndex.map((o) => ({
-        component: "NuxtLink",
-        text: o.title,
-        props: { to: o.path.replace("/README", "") },
-      }));
-      commit("addMenuChildren", { children: guideChildren, parent: "/guide" });
+      // Add the Diataxis section menu children to the Vuex store.
+      for (const section of ["tutorials", "how-to", "explanation"]) {
+        const index = await $content(section)
+          .sortBy("weight")
+          .only(["path", "title", "weight"])
+          .fetch();
+        commit("addMenuChildren", {
+          children: sectionChildren(index),
+          parent: `/${section}`,
+        });
+      }
 
       // Add API menu children to the Vuex store: one entry per package,
       // each carrying its own pages for the sidebar's third level.

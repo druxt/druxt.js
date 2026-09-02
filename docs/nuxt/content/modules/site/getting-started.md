@@ -1,5 +1,6 @@
 ---
 title: Getting started with DruxtSite
+description: Install DruxtSite and connect a Nuxt 2 frontend to a Drupal backend.
 ---
 
 > DruxtSite gives you an out-of-the-box Drupal site experience with a Nuxt.js frontend.
@@ -41,11 +42,19 @@ Each codebase can live in its own directory within one repository, or exist in s
 
 ### Nuxt
 
-1. [Install Nuxt](https://nuxtjs.org/guide/installation/)
+1. Start from a **Nuxt 2** project. DruxtSite targets Nuxt 2 and Vue 2, so
+   `npx create-nuxt-app` is not a route to one any more: it now scaffolds
+   Nuxt 3 or later, which DruxtSite does not support.
+
+   The quickstart gives you a working Nuxt 2 tree with Druxt already wired in:
 
    ```sh
-   npx create-nuxt-app [destination]
+   npx giget@latest gh:druxt/quickstart#develop my-druxt-site
+   cd my-druxt-site
    ```
+
+   To add DruxtSite to an existing project instead, continue from step 2. It
+   must be on Nuxt 2.
 
 2. Install the Site module:
 

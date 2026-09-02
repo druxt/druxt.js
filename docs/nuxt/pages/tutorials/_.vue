@@ -13,20 +13,23 @@
 import { seoHead } from '~/utils/seo'
 import { documentDescription } from '~/utils/content'
 export default {
-  name: 'AppGuideDocument',
+  name: 'AppTutorialDocument',
 
   async asyncData({ $content, error, params, store, route }) {
-    const slug = params.pathMatch || 'README'
+    const slug = (params.pathMatch || '').replace(/\/+$/, '') || 'README'
 
     let document
     try {
-      document = await $content('guide/', slug).fetch()
+      document = await $content('tutorials/', slug).fetch()
     } catch (e) {
+      // @nuxt/content throws `<path> not found` for a missing document. Any
+      // other rejection is a real fault, and must not be flattened into a 404.
+      if (!/ not found$/.test(e.message)) throw e
       return error({ statusCode: 404, message: 'Document not found' })
     }
 
     // Siblings, for the prev/next footer.
-    const index = await $content('guide')
+    const index = await $content('tutorials')
       .sortBy('weight')
       .only(['path', 'title'])
       .fetch()
@@ -46,7 +49,12 @@ export default {
   },
 
   computed: {
-    editPath: ({ document }) => 'guide' + document.path.replace('/guide', '') + '.md',
+    breadcrumbs: ({ document }) => [
+      { text: 'Tutorials', to: '/tutorials' },
+      { text: document.title },
+    ],
+
+    editPath: ({ document }) => 'tutorials' + document.path.replace('/tutorials', '') + '.md',
 
     position: ({ index, document }) => index.findIndex((o) => o.path === document.path),
 

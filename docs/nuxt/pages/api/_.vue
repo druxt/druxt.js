@@ -24,23 +24,34 @@ export default {
   name: 'AppApiDocument',
 
   async asyncData({ $content, error, params, store, route }) {
-    let path = params.pathMatch || 'README'
-    if (path.endsWith('/')) path += 'index'
+    const path = (params.pathMatch || '').replace(/\/+$/, '') || 'README'
 
     let document
     try {
       document = await $content('api/', path).fetch()
       if (Array.isArray(document)) {
-        document = await $content('api/', params.pathMatch + '/index').fetch()
+        document = await $content('api/', path + '/index').fetch()
       }
     } catch (e) {
+      // @nuxt/content throws `<path> not found` for a missing document. Any
+      // other rejection is a real fault, and must not be flattened into a 404.
+      if (!/ not found$/.test(e.message)) throw e
       return error({ statusCode: 404, message: 'Document not found' })
     }
 
     store.commit('addRecent', { text: document.title, to: route.path })
     store.commit('setToc', document.toc || [])
 
-    return { document }
+    // Which ancestor directories are real pages. Most are not: only a
+    // directory holding an index.md renders, so linking every ancestor
+    // produced hrefs like /api/packages/entity/components, which Nuxt then
+    // crawled into the generate list and failed on.
+    const indexes = await $content('api', { deep: true }).only(['path']).fetch()
+    const linkable = indexes
+      .filter((o) => o.path.endsWith('/index'))
+      .map((o) => o.path.replace(/\/index$/, ''))
+
+    return { document, linkable }
   },
 
   head() {
@@ -56,6 +67,24 @@ export default {
       ? 'https://github.com/druxt/druxt.js/tree/develop' + document.dir.replace('/api/packages', '/packages')
       : null),
 
+    /** 'src / packages / entity / …' rendered as links back up the tree. */
+    breadcrumbs: ({ document, linkable }) => {
+      const dir = document.dir || ''
+      // The API section root has no source path to mirror — nothing to show.
+      if (dir === '/api') return []
+
+      const dirs = dir.replace('/api/', 'src/').split('/')
+      const last = dirs.length - 1
+      return dirs.map((dir, index) => {
+        let to
+        if (index === 1) to = '/api'
+        if (index > 1 && index < last) {
+          const candidate = dirs.slice(0, index + 1).join('/').replace('src/', '/api/')
+          if ((linkable || []).includes(candidate)) to = candidate
+        }
+        return { text: index === last ? document.title : dir, to }
+      })
+    },
   },
 }
 </script>

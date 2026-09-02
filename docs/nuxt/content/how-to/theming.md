@@ -1,7 +1,13 @@
 ---
-title: Theming
+title: Theme Druxt components
 weight: -6
+description: Customize Druxt component output with wrapper components, the default template, slots and props, without forking or patching the framework.
 ---
+
+> **Before you start:** this guide assumes a working Druxt site (see
+> [Getting started](/tutorials/getting-started)). It also helps to have read
+> [Component resolution](/explanation/component-resolution) for why the
+> suggestion chain works the way it does.
 
 Druxt components can be themed using two primary methods:
 
@@ -68,3 +74,25 @@ By default, a component using the default template will not be wrapped by a Drux
   </template>
 </DruxtBlock>
 ```
+
+---
+
+## "Missing Vue template" box
+
+Two components, `DruxtBlock` and `DruxtField`, opt into a dev-mode debug box
+when nothing themes them yet. For a block you'll see:
+
+> Missing Vue template for the 'umami_search' block
+
+For a field, the wording differs slightly (`Missing Vue template for
+'<schema.id> (<schema.type>)'`), since each component authors its own
+fallback rather than inheriting one from `DruxtModule`. Other modules don't
+currently have this box at all; a missing wrapper there just renders the
+plain `DruxtWrapper` default output described above, with nothing to expand.
+
+Either way, this is expected, not an error, and it **only renders when Nuxt
+is in development mode** (`$nuxt.context.isDev`); production builds show
+nothing there instead. Expand it and you'll find a dropdown of every valid
+wrapper name for that component (from `component.options`, the same list
+described under [DruxtWrapper](#druxtwrapper) above) plus a **Create**
+button that scaffolds the file for you, wrapper path already filled in.
