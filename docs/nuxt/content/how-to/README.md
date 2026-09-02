@@ -21,6 +21,8 @@ tutorial](/tutorials/getting-started).
 - [Use the Druxt client directly](/how-to/use-the-druxt-client): fetch resources without components.
 - [Use Druxt in a Node application](/how-to/use-the-node-client): run the client outside Nuxt.
 - [Explore the example apps](/how-to/example-apps): four complete reference implementations.
+- [Deploy a static site](/how-to/deploy-static): generate and host the output on a static host or CDN.
+- [Environment variables](/how-to/environment-variables): every variable a build reads, and the build-time vs runtime trap.
 - [Troubleshoot common issues](/how-to/troubleshooting): quick answers to the errors and gotchas that come up most often.
 - [Contributing](/how-to/contributing): set up a development environment and submit changes.
 

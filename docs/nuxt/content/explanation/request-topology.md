@@ -96,13 +96,17 @@ Authenticated flows ride on the same topology. Tokens and cookies issued by
 Drupal are scoped to Drupal's origin: a separate-host layout needs the
 frontend to send credentials cross-origin (and CORS configured to allow
 it), while subdomain and same-origin layouts can share cookies. If
-authentication matters to your site, pick the layout first. A deployment
-models overview covering how these choices combine arrives with the
-deployment guides.
+authentication matters to your site, pick the layout first. See
+[Deployment models](/explanation/deployment-models) for how these
+choices combine.
 
 ## Where to go next
 
+- [Deployment models](/explanation/deployment-models): how these choices
+  combine into production shapes.
 - [Configure CORS in Drupal](/how-to/configure-cors) and
   [Proxy the Drupal backend](/how-to/proxy): the two implementations.
+- [Environment variables](/how-to/environment-variables): where
+  `baseUrl` comes from per environment.
 - [Troubleshoot common issues](/how-to/troubleshooting): the failure
   modes this topology produces.

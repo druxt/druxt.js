@@ -117,8 +117,9 @@ NODE_OPTIONS=--openssl-legacy-provider nuxt build
 ```
 
 This also works in CI and static-host build settings by prefixing the
-build command. Pin the build host's Node version explicitly so this
-stays predictable.
+build command; [Deploy a static
+site](/how-to/deploy-static#node-version) covers pinning the host's
+Node version so this stays predictable.
 
 ## Builds fail on Windows
 

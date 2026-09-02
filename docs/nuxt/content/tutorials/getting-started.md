@@ -139,6 +139,8 @@ is the only file you'd change to point the frontend at a different Drupal.
   the next lesson.
 - Log a user in: [Add a login flow](/tutorials/authentication): the OAuth
   setup this command already provisioned, put to use.
+- Put it online: [Deploy your site](/tutorials/deploy-your-site), the
+  deployment lesson.
 - Understand the machine you just started:
   [Architecture](/explanation/architecture).
 - Start customizing the look: [Theme Druxt components](/how-to/theming).

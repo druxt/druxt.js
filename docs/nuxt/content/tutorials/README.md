@@ -17,6 +17,8 @@ lesson.
   `DruxtModule` to create your own Druxt-powered components.
 - [Add a login flow](/tutorials/authentication): turn the quickstart's
   already-configured OAuth setup into a real, working login.
+- [Deploy your site](/tutorials/deploy-your-site): take the quickstart
+  from localhost to a live URL on a free static host.
 
 If you already have a site running and want to accomplish a specific task,
 see the [How-to guides](/how-to). To understand _why_ Druxt works the way it

@@ -111,6 +111,7 @@ nuxi
 nuxt
 nuxtjs
 octref
+olivero
 opcache
 openspec
 pbody
@@ -121,6 +122,7 @@ phpstan
 PKCE
 pkill
 prebuilds
+preconfigure
 preconfigured
 preflighted
 Quickstart
@@ -137,6 +139,7 @@ router
 safelisted
 satori
 scaffolder
+scriptable
 scule
 Segoe
 segoe
@@ -159,6 +162,7 @@ toggleable
 topbar
 trixie
 umami
+uncacheable
 unjs
 unlighthouse
 unregisters
