@@ -71,7 +71,7 @@ class DruxtRouter {
      * Instance of the Druxt Client.
      *
      * @type {DruxtClient}
-     * @see {@link http://druxtjs.org/api/client}
+     * @see {@link https://druxtjs.org/api/packages/druxt/client}
      */
     this.druxt = new DruxtClient(baseUrl, this.options)
 
@@ -81,8 +81,10 @@ class DruxtRouter {
   /**
    * Add headers to the Axios instance.
    *
-   * @deprecated
-   * @see {@link https://druxtjs.org/api/client}
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   *   Set headers via the DruxtClient axios options, or client.axios interceptors instead.
+   * @see https://druxtjs.org/modules/router/deprecations
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @example @lang js
    * router.druxt.addHeaders({ 'Authorization': `Basic ${token}` })
@@ -90,7 +92,7 @@ class DruxtRouter {
    * @param {object} headers - An object containing HTTP headers.
    */
   addHeaders (headers) {
-    console.warn('[druxt-router] `addHeaders` is deprecated. See http://druxtjs.org/api/client.')
+    console.warn('[druxt-router] `addHeaders` is deprecated. See https://druxtjs.org/api/packages/druxt/client.')
     if (typeof headers === 'undefined') {
       return false
     }
@@ -101,8 +103,10 @@ class DruxtRouter {
   /**
    * Build query URL.
    *
-   * @deprecated
-   * @see {@link https://druxtjs.org/api/client}
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   *   Use client.buildQueryUrl(url, query) instead.
+   * @see https://druxtjs.org/modules/router/deprecations
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @example @lang js
    * const query = new DrupalJsonApiParams()
@@ -115,22 +119,24 @@ class DruxtRouter {
    * @return {string} The URL with query string.
    */
   buildQueryUrl (url, query) {
-    console.warn('[druxt-router] `buildQueryUrl` is deprecated. See http://druxtjs.org/api/client.')
+    console.warn('[druxt-router] `buildQueryUrl` is deprecated. See https://druxtjs.org/api/packages/druxt/client.')
     return this.druxt.buildQueryUrl(url, query)
   }
 
   /**
    * Check response for permissions.
    *
-   * @deprecated
-   * @see {@link https://druxtjs.org/api/client}
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   *   Handle JSON:API meta.omitted links client-side instead.
+   * @see https://druxtjs.org/modules/router/deprecations
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @param {object} res - Axios GET request response object.
    *
    * @private
    */
   checkPermissions (res) {
-    console.warn('[druxt-router] `checkPermissions` is deprecated. See http://druxtjs.org/api/client.')
+    console.warn('[druxt-router] `checkPermissions` is deprecated. See https://druxtjs.org/api/packages/druxt/client.')
     return this.druxt.checkPermissions(res)
   }
 
@@ -154,8 +160,10 @@ class DruxtRouter {
   /**
    * Get index of all available resources, or the optionally specified resource.
    *
-   * @deprecated
-   * @see {@link https://druxtjs.org/api/client}
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   *   Use client.getIndex(resource) instead.
+   * @see https://druxtjs.org/modules/router/deprecations
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @example @lang js
    * const { href } = await router.druxt.getIndex('node--article')
@@ -165,7 +173,7 @@ class DruxtRouter {
    * @returns {object} The resource index object or the specified resource.
    */
   async getIndex (resource) {
-    console.warn('[druxt-router] `getIndex` is deprecated. See http://druxtjs.org/api/client.')
+    console.warn('[druxt-router] `getIndex` is deprecated. See https://druxtjs.org/api/packages/druxt/client.')
     this.index = await this.druxt.getIndex(resource)
     return this.index
   }
@@ -218,8 +226,10 @@ class DruxtRouter {
   /**
    * Get a JSON:API resource by type and ID.
    *
-   * @deprecated
-   * @see {@link https://druxtjs.org/api/client}
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   *   Use client.getResource(type, id) instead.
+   * @see https://druxtjs.org/modules/router/deprecations
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @example @lang js
    * const data = await router.druxt.getResource('node--article', id)
@@ -231,7 +241,7 @@ class DruxtRouter {
    * @returns {object} The JSON:API resource data.
    */
   async getResource (query = {}) {
-    console.warn('[druxt-router] `getResource` is deprecated. See http://druxtjs.org/api/client.')
+    console.warn('[druxt-router] `getResource` is deprecated. See https://druxtjs.org/api/packages/druxt/client.')
     const resource = await this.druxt.getResource(query.type, query.id)
     return resource.data || false
   }
@@ -239,8 +249,11 @@ class DruxtRouter {
   /**
    * Gets a collection of resources.
    *
-   * @deprecated
-   * @see {@link https://druxtjs.org/api/client}
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   *   Use client.getCollection(resource, query), or
+   *   client.getCollectionAll(resource, query) for `options.all`, instead.
+   * @see https://druxtjs.org/modules/router/deprecations
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @todo Add granular pagination.
    *
@@ -257,7 +270,7 @@ class DruxtRouter {
    * @return {object[]} Array of resources.
    */
   async getResources (resource, query, options = {}) {
-    console.warn('[druxt-router] `getResources` is deprecated. See http://druxtjs.org/api/client.')
+    console.warn('[druxt-router] `getResources` is deprecated. See https://druxtjs.org/api/packages/druxt/client.')
     let resources = { data: [] }
     if (options.all) {
       const collections = await this.druxt.getCollectionAll(resource, query)

@@ -12,7 +12,7 @@ describe('DruxtFieldComponents - Deprecations', () => {
           _componentTag: component,
         },
       })
-      expect(console.warn).toBeCalledWith(`[druxt-entity] The ${component} component is deprecated. See https://entity.druxtjs.org/guide/deprecations.html`)
+      expect(console.warn).toBeCalledWith(`[druxt-entity] The ${component} component is deprecated. See https://druxtjs.org/modules/entity/deprecations`)
     })
   }
 })

@@ -10,7 +10,8 @@ description: Retired DruxtField default components and props, with their replace
 
 > [druxt-entity] The `*` component is deprecated.
 
-**Version:** `>= 0.16.0`
+**Deprecated in:** `druxt-entity:0.16.0`
+**Removed in:** `druxt-entity:2.0.0`
 
 The default DruxtField components were deprecated in version `0.16.0` and will be removed in a future release.
 
@@ -86,3 +87,30 @@ resolved per field via the
 
 The [custom module tutorial](/tutorials/first-custom-module) covers the
 suggestion-system mechanics from scratch.
+
+## DruxtField / options prop
+
+> [druxt-entity] Use the component suggestion system.
+
+**Deprecated in:** `druxt-entity:0.5.0`
+**Removed in:** `druxt-entity:2.0.0`
+
+`options` was an early mechanism for configuring field slots, replaced by the
+[component suggestion system](/explanation/component-resolution) in `0.5.0`.
+Nothing in the module reads it any more, so passing it has no effect. Name a
+wrapper component instead of configuring options.
+
+## Internal mixins
+
+> [druxt-entity] Use `DruxtModule` instead.
+
+**Deprecated in:** `druxt-entity:0.5.0`
+**Removed in:** `druxt-entity:2.0.0`
+
+These internal mixins (both `@private`) predate `DruxtModule` absorbing the
+same behaviour. They have no generated API page, so they are recorded here:
+
+| Deprecated                  | Replacement                                 |
+| --------------------------- | ------------------------------------------- |
+| `componentSuggestion` mixin | `DruxtModule`'s component suggestion system |
+| `context` mixin             | `DruxtModule`                               |

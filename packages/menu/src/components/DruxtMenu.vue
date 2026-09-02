@@ -179,7 +179,9 @@ export default {
      * The processed Menu items.
      *
      * @type {objects[]}
-     * @deprecated
+     * @deprecated in druxt-menu:0.11.0 and is removed from druxt-menu:2.0.0.
+     *   Use the model property (v-model) instead.
+     * @see https://druxtjs.org/modules/menu/deprecations
      */
     items: ({ model }) => model,
 
