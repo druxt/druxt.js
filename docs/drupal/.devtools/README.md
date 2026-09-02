@@ -29,7 +29,7 @@ cd docs/drupal
 .devtools/start
 ```
 
-Or via `make` (see the root `Makefile`):
+Or via `make` (see `docs/drupal/Makefile`):
 
 ```bash
 make build   # assemble + provision + start

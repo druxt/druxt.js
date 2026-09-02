@@ -50,9 +50,9 @@ Or from this directory:
 yarn && yarn dev
 ```
 
-Serves on `http://localhost:3004` — **pinned**, not 3000 like the other
-examples: the committed OAuth consumer's redirect URI is
-`http://localhost:3004/callback`, so changing the port breaks login.
+Serves on `http://localhost:3004`. The port is **pinned**: the committed
+OAuth consumer's redirect URI is `http://localhost:3004/callback`, so
+changing it breaks login.
 
 Sign in with **admin / druxt123** (the `docs/drupal` test user) to unlock
 editing — the same credentials are shown directly in the app's sidebar

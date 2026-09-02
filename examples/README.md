@@ -47,9 +47,9 @@ yarn build        # once, or `yarn dev` to watch-rebuild packages/*/dist
 
 # Then any example (BASE_URL defaults to http://127.0.0.1:8888):
 yarn example:druxt-site         # :3000, Nuxt + druxt-site
-yarn example:druxt-daisyui      # :3000, Nuxt + DaisyUI
-yarn example:druxt-bootstrapvue # :3000, Nuxt + BootstrapVue
-yarn example:druxt-tailwind     # :3000, Vite (no Nuxt)
+yarn example:druxt-daisyui      # :3001, Nuxt + DaisyUI
+yarn example:druxt-bootstrapvue # :3004, Nuxt + BootstrapVue
+yarn example:druxt-tailwind     # :3002, Vite (no Nuxt)
 
 # The CLI (no dev server):
 cd examples/node-client && node bin/druxt-inspect.js --help

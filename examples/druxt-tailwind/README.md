@@ -56,7 +56,7 @@ Or from this directory:
 yarn && yarn dev
 ```
 
-Serves on `http://localhost:3000`.
+Serves on `http://localhost:3002`.
 
 ## Configuration
 
