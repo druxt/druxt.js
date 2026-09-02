@@ -8,7 +8,13 @@
 import { clampDescription, descriptionFor, seoHead } from '../../utils/seo'
 import { canonicalUrl, docTypeExpression, docTypeFor, normalisePath, sectionFor, titleFromPath } from '../../lib/site'
 
-/** Look up one meta tag's content by hid. */
+/**
+ * Look up one meta tag's content by hid.
+ *
+ * @param {object} head - A vue-meta head object.
+ * @param {string} hid - The tag's hid.
+ * @returns {string|undefined} The tag's content.
+ */
 const content = (head, hid) => (head.meta.find((tag) => tag.hid === hid) || {}).content
 
 describe('normalisePath', () => {

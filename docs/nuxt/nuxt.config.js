@@ -237,6 +237,7 @@ export default {
      * at URLs that were never generated.
      *
      * @param {object} generator - The Nuxt generator instance.
+     * @param {object[]} errors - Handled route failures the generator collected.
      */
     async 'generate:done'(generator, errors) {
       // Before the index writes: a rejected build must not leave a
