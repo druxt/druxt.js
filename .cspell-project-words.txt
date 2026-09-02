@@ -59,6 +59,7 @@ felixfbecker
 filesystems
 Fraunces
 freetype
+frontends
 frontpage
 fullpath
 giget
@@ -121,6 +122,7 @@ PKCE
 pkill
 prebuilds
 preconfigured
+preflighted
 Quickstart
 quickstarts
 recognise
@@ -133,6 +135,7 @@ Resvg
 resvg
 router
 satori
+scaffolder
 scule
 Segoe
 segoe

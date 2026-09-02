@@ -7,7 +7,7 @@ description: Quick answers to the problems reported most often by real users, fr
 > **Before you start:** this guide assumes a working Druxt site. See
 > [Getting started](/tutorials/getting-started).
 
-This page covers the three issues that account for most of the confusion
+This page covers the issues that account for most of the confusion
 reported by real users over the life of this project. Each entry below is a
 quick answer with a link to the fuller explanation.
 
@@ -48,6 +48,82 @@ before debugging anything else. The [quickstart](/tutorials/getting-started)
 grants this automatically. Installing Druxt on an existing site does not.
 See the [`druxt` module reference](/modules/druxt#installation) for the
 full installation steps.
+
+## "…has been blocked by CORS policy" in the browser console
+
+The browser is refusing a cross-origin request to Drupal. Only requests
+made **by the browser** can fail this way; if the site server-renders fine
+and breaks on navigation or dynamic data, this is why. Two fixes, pick
+one: [configure CORS in Drupal](/how-to/configure-cors) so the backend
+answers cross-origin requests, or [proxy the API through the
+frontend](/how-to/proxy) so no request is cross-origin (server deployments
+only). [Request topology](/explanation/request-topology) explains when
+each applies.
+
+## The build fails reaching the backend (ECONNREFUSED, timeouts, 400s)
+
+`nuxt build` and `nuxt generate` fetch schemas and content from Drupal
+**from the machine running the build**. A `baseUrl` that works in your
+browser can still be unreachable from the build: `localhost` inside a
+container is the container itself, a Docker hostname does not resolve
+outside its network, and a backend behind basic auth or a VPN blocks the
+build the same way. Confirm with `curl <baseUrl>/jsonapi` from the build
+environment. CI setups should wait for the backend to answer before
+starting the build. See [Request
+topology](/explanation/request-topology#baseurl-rules).
+
+## The site only shows "Welcome to Nuxt"
+
+The Nuxt scaffolder creates a default `pages/index.vue`, and an explicit
+page always wins over Druxt's wildcard route. Delete `pages/index.vue`
+and the homepage resolves through Drupal like every other path. See
+[Decoupled routing](/explanation/routing).
+
+## Build error: the pages directory is missing
+
+Nuxt requires a `pages/` directory even when Druxt's wildcard router
+provides every route. Create it with a placeholder:
+`mkdir pages && touch pages/.gitkeep`.
+
+## Composer refuses to install drupal/druxt
+
+A stability error (`minimum-stability`) means a dependency's current
+release is below your project's floor. Require an explicit constraint,
+for example `composer require drupal/druxt:^1.0`, before loosening
+`minimum-stability`. See [Prepare the Drupal
+backend](/how-to/prepare-the-backend).
+
+## "require() of ES Module axios" crash on a fresh install
+
+Newer axios releases are ESM-only and break Nuxt 2's CommonJS server
+build. Pin axios to a 0.x release, or transpile it:
+
+```js
+export default {
+  build: {
+    transpile: ['axios'],
+  },
+};
+```
+
+## "error:0308010C:digital envelope routines" on Node 17 or later
+
+Nuxt 2's webpack 4 uses an OpenSSL API that Node 17 removed. Either build
+on Node 16, or set the legacy provider in the build environment:
+
+```sh
+NODE_OPTIONS=--openssl-legacy-provider nuxt build
+```
+
+This also works in CI and static-host build settings by prefixing the
+build command.
+
+## Builds fail on Windows
+
+Nuxt 2 tooling and several Druxt build steps have known problems on
+native Windows (path separators, OpenSSL differences). Use
+[WSL2](https://learn.microsoft.com/windows/wsl/) and run everything
+inside the Linux environment; that is the tested and recommended setup.
 
 ## Where to go next
 
