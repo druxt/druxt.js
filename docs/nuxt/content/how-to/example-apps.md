@@ -16,8 +16,8 @@ real captures of the running apps (except where noted).
 > [`examples/README.md`](https://github.com/druxt/druxt.js/tree/develop/examples/README.md)
 > in the monorepo for exact run commands per app.
 >
-> All four apps below are built, and each screenshot was captured from the
-> app actually running.
+> Each screenshot below was captured from the app it documents, running
+> against a local backend.
 > The branch's own remaining follow-ups (a design-doc rewrite, two stale
 > Cypress specs) don't affect what's shown here.
 
