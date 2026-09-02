@@ -42,11 +42,11 @@
   ],
   "dependencies": {
     "consola": "^2.15.3",
-    "drupal-jsonapi-params": "^2.3.1",
+    "drupal-jsonapi-params": "^2.3.2",
     "druxt": "^0.24.0"
   },
   "devDependencies": {
-    "axios": "0.28.0"
+    "axios": "0.33.0"
   },
   "optionalDependencies": {
     "vue": "^2.7.16",
