@@ -37,10 +37,10 @@ const DruxtSchemaStore = ({ store }) => {
        * @name addSchema
        * @mutator {object} addSchema=schemas
        * @param {state} state - The Vuex State object.
-       * @param {object} data - Schema object and ID to be committed.
+       * @param {addSchemaPayload} data - Schema object and ID to be committed.
        *
        * @example @lang js
-       * this.$store.commit('druxtSchema/addSchema', { id, schema }})
+       * this.$store.commit('druxtSchema/addSchema', { id, schema })
        */
       addSchema(state, { id, schema }) {
         state.schemas[id] = schema
@@ -60,7 +60,7 @@ const DruxtSchemaStore = ({ store }) => {
        * @returns {Schema} The Druxt Schema object.
        *
        * @example @lang js
-       * const schema = await this.$store.dispatch('druxtRouter/get', '/')
+       * const schema = await this.$store.dispatch('druxtSchema/get', { resourceType: 'node--page' })
        */
       async get({ state, commit }, resource = {}) {
         resource = {
@@ -114,11 +114,30 @@ export { DruxtSchemaStore }
  */
 
 /**
+ * Parameters for the `addSchema` mutation.
+ *
+ * @typedef {object} addSchemaPayload
+ *
+ * @param {string} id - The Schema ID.
+ * @param {object} schema - The Schema object.
+ *
+ * @example @lang js
+ * {
+ *   id: 'node--page--default--view',
+ *   schema: {}
+ * }
+ */
+
+/**
+ * The Druxt Schema object.
+ *
  * @typedef {object} Schema
  * @see {@link ../typedefs/schema|Schema}
  */
 
 /**
+ * Druxt Schema configuration object.
+ *
  * @typedef {object} SchemaConfiguration
  * @see {@link ../typedefs/schemaConfiguration|SchemaConfiguration}
  */

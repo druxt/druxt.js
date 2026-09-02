@@ -29,6 +29,7 @@ export default {
      * Provides the available component naming options for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.filter - The Exposed Filter object.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ filter }) => ([
@@ -41,6 +42,8 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.filter - The Exposed Filter object.
+     * @param {*} context.model - The DruxtViewsFilter model value.
      * @returns {PropsData}
      */
     propsData: ({ filter, model }) => ({ filter, value: model }),

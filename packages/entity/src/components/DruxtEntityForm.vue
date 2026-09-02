@@ -82,6 +82,8 @@ export default {
     /**
      * An array of errors if present in the form submission response data.
      *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.response - The form submission response data.
      * @return {object[]}
      */
     errors: ({ response }) => (response || {}).errors,
@@ -136,6 +138,7 @@ export default {
     /**
      * Adds a `buttons` slot to the DruxtEntity scope slots.
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {object}
      */
     slots(h) {

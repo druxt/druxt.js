@@ -66,6 +66,8 @@ const DruxtEntityMixin = {
   },
 
   /**
+   * @param {object} vm - The component ViewModel.
+   * @param {object} vm.value - The Entity value.
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({

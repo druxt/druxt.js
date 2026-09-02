@@ -41,7 +41,7 @@ export default {
     /**
      * The menu name.
      *
-     * @type string
+     * @type {string}
      */
     name() {
       return this.settings.id.split(':')[1]

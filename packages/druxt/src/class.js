@@ -87,6 +87,7 @@ class DruxtClass {
   /**
    * Get the Druxt module data from the referenced component.
    *
+   * @param {object} vm - The Druxt module component ViewModel.
    * @returns {ModuleData}
    */
   async getModuleData(vm) {

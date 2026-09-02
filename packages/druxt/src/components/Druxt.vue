@@ -95,8 +95,10 @@ export default {
   /**
    * Vue.js Data object.
    *
+   * @param {object} vm - The component ViewModel.
+   * @param {*} vm.value - The module component model value.
    * @property {object} component - The module component and its propsData.
-   * @property {object} model - The model object.
+   * @property {*} model - The module component model value.
    */
   data: ({ value }) => ({
     component: {

@@ -60,6 +60,8 @@
  */
 
  /**
+ * Druxt Schema configuration object.
+ *
  * @typedef {object} SchemaConfiguration
  * @see {@link ./schemaConfiguration|SchemaConfiguration}
  */
