@@ -1,0 +1,476 @@
+/**
+ * Wireframe system for the druxt-site example.
+ *
+ * Derived from the "System" section of the design specimen
+ * (openspec/changes/druxtjs-examples-suite/design/Druxt Site Specimen.dc.html):
+ * type scale 44/28/20/16 + 11px mono labels, 8px spacing rhythm, ink region
+ * rules, hairline item separators, system font stack, no palette, no cards,
+ * no shadows. The Umami logo is the only colour on the page.
+ *
+ * The Drupal-driven markup renders without utility classes, so the system
+ * hangs off element selectors and the attributes Druxt components leak onto
+ * their root nodes (region `name`, view `mode`, field `errors`/`value`),
+ * which survive both hydration and client-side navigation.
+ */
+
+:root {
+  --ink: #111110;
+  --muted: #6f6f6a;
+  --rule: #cfcfc9;
+  --hairline: #e4e4de;
+  --paper: #fbfbf9;
+
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 40px;
+  --space-5: 64px;
+  --space-6: 96px;
+
+  --measure: 66ch;
+
+  /* One page gutter, used by every region. Change it here, not per-region. */
+  --gutter: 32px;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --gutter: 16px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--system);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+h1 {
+  margin: 0 0 var(--space-3);
+  font-size: 44px;
+  line-height: 1.05;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  margin: 0 0 var(--space-3);
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  margin: 0 0 var(--space-2);
+  font-size: 20px;
+  line-height: 1.25;
+  font-weight: 500;
+}
+
+h4 {
+  margin: 0 0 var(--space-2);
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 500;
+}
+
+p {
+  margin: 0 0 var(--space-2);
+  max-width: var(--measure);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+ul,
+ol {
+  margin: 0 0 var(--space-2);
+  padding-left: var(--space-3);
+}
+
+li {
+  margin: 0 0 var(--space-1);
+}
+
+blockquote {
+  margin: 0 0 var(--space-2);
+  padding-left: var(--space-2);
+  border-left: 1px solid var(--rule);
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--ink);
+  margin: var(--space-4) 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: var(--ink);
+}
+
+strong {
+  font-weight: 500;
+}
+
+code,
+pre {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+code {
+  color: var(--muted);
+}
+
+pre {
+  margin: 0 0 var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid var(--rule);
+  background: #fff;
+  overflow: auto;
+  line-height: 1.7;
+}
+
+pre code {
+  color: var(--ink);
+}
+
+dl {
+  margin: 0 0 var(--space-2);
+}
+
+dt {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+dd {
+  margin: 0 0 var(--space-1);
+}
+
+details {
+  margin: 0 0 var(--space-2);
+}
+
+summary {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  background: #fff;
+  color: var(--ink);
+  padding: 11px 12px;
+  font-family: var(--system);
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+
+button {
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: #fff;
+  color: var(--ink);
+  padding: 10px 18px;
+  font-family: var(--system);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+button#submit {
+  background: var(--ink);
+  color: #fff;
+}
+
+button#submit:hover {
+  background: #fff;
+  color: var(--ink);
+}
+
+/*
+ * Regions: Umami theme regions render in source order. Each carries a 1px
+ * ink boundary rule; CSS only sets spacing and rules.
+ */
+
+/* Every region shares the one gutter, so content lines up down the whole
+   page - including regions this theme adds that aren't named below. The
+   rules that follow set vertical rhythm only; none of them repeat the
+   horizontal value. */
+div[name] {
+  padding: var(--space-3) var(--gutter);
+}
+
+div[name="pre_header"],
+div[name="banner_top"],
+div[name="header"],
+div[name="highlighted"],
+div[name="breadcrumbs"],
+div[name="content"],
+div[name="sidebar"],
+div[name="footer"],
+div[name="footer_bottom"],
+div[name="page_top"],
+div[name="page_bottom"] {
+  border-top: 1px solid var(--ink);
+}
+
+div[name="pre_header"] {
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+  font-size: 12px;
+}
+
+div[name="pre_header"] details,
+div[name="pre_header"] pre {
+  margin: 0;
+}
+
+div[name="pre_header"] ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: inline;
+}
+
+div[name="pre_header"] li {
+  display: inline;
+  margin: 0 var(--space-1) 0 0;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+div[name="pre_header"] li + li {
+  margin-left: var(--space-2);
+}
+
+div[name="pre_header"] a,
+div[name="pre_header"] li {
+  color: var(--muted);
+}
+
+div[name="pre_header"] .nuxt-link-exact-active,
+div[name="pre_header"] li {
+  color: var(--ink);
+}
+
+div[name="header"] {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+
+div[name="header"] li {
+  display: inline-block;
+  margin: 0 var(--space-3) 0 0;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+div[name="header"] li a {
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+
+div[name="header"] li a.nuxt-link-exact-active,
+div[name="header"] li a.nuxt-link-active {
+  border-bottom-color: var(--ink);
+}
+
+div[name="breadcrumbs"] {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--hairline);
+}
+
+div[name="breadcrumbs"] ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+div[name="breadcrumbs"] li {
+  display: inline;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+div[name="breadcrumbs"] li + li::before {
+  content: '/';
+  margin: 0 var(--space-1);
+}
+
+div[name="content"] {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-5);
+}
+
+div[name="footer"] {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+}
+
+/*
+ * Fields: labels render as <strong> inside the DruxtField wrapper, values
+ * as sibling <div>s. Labels take the 11px mono treatment; consecutive
+ * values (multi-value fields like ingredients) get hairline separators.
+ */
+
+div[errors] > strong {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+div[errors] > div {
+  padding: var(--space-1) 0;
+}
+
+div[errors] > div + div {
+  border-top: 1px solid var(--hairline);
+}
+
+/*
+ * Entity cards (CardCommon: <a> wrapping <h2> + image field) become
+ * bordered index rows: thumbnail left, title right, hairline between.
+ */
+
+a[href] > h2 {
+  font-size: 20px;
+  line-height: 1.2;
+  margin: 0;
+}
+
+a[href]:has(> h2) {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--hairline);
+  text-decoration: none;
+}
+
+a[href]:has(> h2) > h2 {
+  grid-column: 2;
+}
+
+a[href]:has(> h2) > div {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+a[href]:has(> h2) img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+}
+
+/*
+ * Views: pager items render as <ul><li> inside the View wrapper; numbered
+ * boxes in mono, ink border on the current item.
+ */
+
+div[mode] ul {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0 0;
+}
+
+div[mode] ul li {
+  display: inline-block;
+  margin: 0 var(--space-1) 0 0;
+  padding: 8px 12px;
+  border: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+div[mode] ul li a {
+  text-decoration: none;
+  color: var(--muted);
+}
+
+div[mode] ul li:hover {
+  border-color: var(--ink);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+label strong {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+input[size] {
+  width: 100%;
+  max-width: 520px;
+}

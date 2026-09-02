@@ -14,7 +14,9 @@ package-lock.json
 */**/yarn.lock
 
 # Dist folders
-bin
+# Scoped to packages/: a bare `bin` also matched examples/node-client/bin,
+# which is hand-written source, not docgen's build output.
+packages/*/bin
 dist
 packages/*/nuxt
 
@@ -24,6 +26,11 @@ packages/*/package.tgz
 # Coverage / test reports
 coverage
 reports
+
+# Cypress failure artifacts (every example app's test/cypress/ generates
+# these on a failed run - not source, never meant to be committed)
+**/test/cypress/screenshots
+**/test/cypress/videos
 
 # Intellij idea
 *.iml

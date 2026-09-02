@@ -1,0 +1,171 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "9fe3d01c-8e28-460c-93b6-b65bcc6640a6",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/9fe3d01c-8e28-460c-93b6-b65bcc6640a6"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": ["field.storage.node.body", "node.type.article"],
+          "module": ["text"]
+        },
+        "drupal_internal__id": "node.article.body",
+        "field_name": "body",
+        "entity_type": "node",
+        "bundle": "article",
+        "label": "Body",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "display_summary": true,
+          "required_summary": false,
+          "allowed_formats": []
+        },
+        "field_type": "text_with_summary"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "3c6aa075-1c94-4d8a-87cb-78167b99089e",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/3c6aa075-1c94-4d8a-87cb-78167b99089e"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_media_image",
+            "media.type.image",
+            "node.type.article"
+          ]
+        },
+        "drupal_internal__id": "node.article.field_media_image",
+        "field_name": "field_media_image",
+        "entity_type": "node",
+        "bundle": "article",
+        "label": "Media Image",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:media",
+          "handler_settings": {
+            "target_bundles": {
+              "image": "image"
+            },
+            "sort": {
+              "field": "_none"
+            },
+            "auto_create": false,
+            "auto_create_bundle": ""
+          }
+        },
+        "field_type": "entity_reference"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "c0f33749-1684-4c04-892a-a25a9274fd95",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/c0f33749-1684-4c04-892a-a25a9274fd95"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.field_tags",
+            "node.type.article",
+            "taxonomy.vocabulary.tags"
+          ]
+        },
+        "drupal_internal__id": "node.article.field_tags",
+        "field_name": "field_tags",
+        "entity_type": "node",
+        "bundle": "article",
+        "label": "Tags",
+        "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
+        "required": false,
+        "translatable": false,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:taxonomy_term",
+          "handler_settings": {
+            "target_bundles": {
+              "tags": "tags"
+            },
+            "sort": {
+              "field": "_none"
+            },
+            "auto_create": true
+          }
+        },
+        "field_type": "entity_reference"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "9772b7bb-ed4e-49ff-b77f-f5a38a80beb3",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/9772b7bb-ed4e-49ff-b77f-f5a38a80beb3"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.node.layout_builder__layout",
+            "node.type.article"
+          ],
+          "module": ["layout_builder"]
+        },
+        "drupal_internal__id": "node.article.layout_builder__layout",
+        "field_name": "layout_builder__layout",
+        "entity_type": "node",
+        "bundle": "article",
+        "label": "Layout",
+        "description": "",
+        "required": false,
+        "translatable": false,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "layout_section"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=node&filter%5Bbundle%5D=article"
+    }
+  }
+}

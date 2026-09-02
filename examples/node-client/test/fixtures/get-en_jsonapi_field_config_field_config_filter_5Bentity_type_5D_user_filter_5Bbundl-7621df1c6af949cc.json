@@ -1,0 +1,67 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "84fb3400-bcef-4ae5-b570-5982af082123",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/84fb3400-bcef-4ae5-b570-5982af082123"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": ["field.storage.user.user_picture"],
+          "module": ["image", "user"]
+        },
+        "drupal_internal__id": "user.user.user_picture",
+        "field_name": "user_picture",
+        "entity_type": "user",
+        "bundle": "user",
+        "label": "Picture",
+        "description": "Your virtual face or picture.",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:file",
+          "handler_settings": [],
+          "file_directory": "pictures/[date:custom:Y]-[date:custom:m]",
+          "file_extensions": "png gif jpg jpeg webp",
+          "max_filesize": "",
+          "max_resolution": "",
+          "min_resolution": "",
+          "alt_field": false,
+          "alt_field_required": false,
+          "title_field": false,
+          "title_field_required": false,
+          "default_image": {
+            "uuid": null,
+            "alt": "",
+            "title": "",
+            "width": null,
+            "height": null
+          }
+        },
+        "field_type": "image"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=user&filter%5Bbundle%5D=user"
+    }
+  }
+}
