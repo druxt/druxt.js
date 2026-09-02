@@ -137,7 +137,7 @@ The DruxtMenu module provides a **DruxtBlockSystemMenuBlock** component that is 
 
 DruxtMenu provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
 
-- For more details, see the [Storybook guide](https://druxtjs.org/guide/storybook).
+- For more details, see the [Storybook guide](https://druxtjs.org/how-to/storybook).
 
 ---
 

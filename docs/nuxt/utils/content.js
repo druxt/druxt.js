@@ -116,7 +116,7 @@ export const documentDescription = (document) => {
 
     const text = textOf(node).replace(/\s+/g, ' ').trim()
     if (!text) continue
-    // A note to a maintainer, not a summary. See content/guide/deprecations.md.
+    // A note to a maintainer, not a summary. See content/modules/druxt/deprecations.md.
     if (/^(TODO|FIXME|NOTE|XXX)\b[:\s]/i.test(text)) continue
 
     return text
