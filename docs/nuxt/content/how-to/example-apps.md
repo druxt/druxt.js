@@ -12,12 +12,12 @@ real captures of the running apps (except where noted).
 
 > **Before you start:** these are apps you run yourself against a local
 > Drupal backend, not hosted demos. See [Getting
-> started](/tutorials/getting-started) for the backend, or `examples/README.md`
+> started](/tutorials/getting-started) for the backend, or
+> [`examples/README.md`](https://github.com/druxt/druxt.js/tree/develop/examples/README.md)
 > in the monorepo for exact run commands per app.
 >
-> **In progress:** the example suite is still landing on
-> `feature/examples-consolidation`, not yet merged. All four apps below are
-> built and each screenshot was captured from the app actually running.
+> All four apps below are built, and each screenshot was captured from the
+> app actually running.
 > The branch's own remaining follow-ups (a design-doc rewrite, two stale
 > Cypress specs) don't affect what's shown here.
 

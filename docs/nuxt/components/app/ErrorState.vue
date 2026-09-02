@@ -9,7 +9,8 @@
     <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
       <button type="button" class="btn btn-primary" @click="searchOpen = true">Search the docs</button>
       <NuxtLink class="btn btn-ghost" to="/">Home</NuxtLink>
-      <NuxtLink class="btn btn-ghost" to="/guide">Guide</NuxtLink>
+      <NuxtLink class="btn btn-ghost" to="/tutorials">Tutorials</NuxtLink>
+      <NuxtLink class="btn btn-ghost" to="/how-to">How-to guides</NuxtLink>
       <NuxtLink class="btn btn-ghost" to="/modules">Modules</NuxtLink>
       <NuxtLink class="btn btn-ghost" to="/api">API reference</NuxtLink>
     </div>

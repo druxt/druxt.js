@@ -17,25 +17,31 @@ Druxt has support for multilingual content in all modules:
 
 ---
 
-## Required Drupal patch
+## Required Drupal patches
 
-Translated route resolution needs one patch on `decoupled_router` until
+Translated route resolution needs patches on `decoupled_router` until
 [#3111456](https://www.drupal.org/project/decoupled_router/issues/3111456)
-is released:
+is released. The reference backend pins `drupal/decoupled_router` to `2.0.5`
+and applies three:
 
 ```json
 "drupal/decoupled_router": {
-  "https://www.drupal.org/project/decoupled_router/issues/3111456#comment-15211077": "https://www.drupal.org/files/issues/2023-08-30/decoupled_router-3111456-resolve_lang-66.patch"
+  "https://www.drupal.org/project/decoupled_router/issues/3172926": "https://www.drupal.org/files/issues/2020-09-24/3172926-2.patch",
+  "https://www.drupal.org/project/decoupled_router/issues/3468825": "https://git.drupalcode.org/project/decoupled_router/-/merge_requests/20.diff",
+  "#3111456 Resolve the language from the requested path": "patches/decoupled_router-3111456-resolve-language-from-path.patch"
 }
 ```
 
-Earlier versions of this guide required two more patches, neither is needed
-anymore:
+The #3111456 patch is rerolled against `2.0.5`. The files attached to the issue
+target earlier releases and do not apply cleanly, so take the rerolled copy from
+[`docs/drupal/patches/`](https://github.com/druxt/druxt.js/tree/develop/docs/drupal/patches).
 
-- `jsonapi_menu_items` has included language support since `1.2.4`; no
-  patch required.
-- Translated **Views** routes are tracked separately in
-  [druxt#3273228](https://www.drupal.org/project/druxt/issues/3273228).
+Translated **Views** routes need one more, on `druxt` itself:
+[#3273228](https://www.drupal.org/project/druxt/issues/3273228), also carried as
+a rerolled patch in that directory.
+
+`jsonapi_menu_items` has included language support since `1.2.4`; no patch
+required.
 
 ---
 

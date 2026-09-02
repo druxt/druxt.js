@@ -82,7 +82,7 @@ const SECTIONS = {
  * `/` preserved for the homepage.
  *
  * Trailing slashes matter here because both forms resolve. Without a single
- * canonical spelling, `/guide/theming` and `/guide/theming/` are two URLs
+ * canonical spelling, `/how-to/theming` and `/how-to/theming/` are two URLs
  * serving one page, which is the duplicate-content case `<link rel=canonical>`
  * exists to collapse.
  *

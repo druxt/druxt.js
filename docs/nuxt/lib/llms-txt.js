@@ -57,7 +57,7 @@ const listItem = (title, url, notes) => (
 /**
  * Render `/llms.txt`.
  *
- * The guide and module pages are listed in full. The API reference is not: it
+ * The Diataxis and module pages are listed in full. The API reference is not: it
  * is 100+ generated pages, one per component or mixin, and listing them all
  * buries what the project actually is under a wall of near-identical entries.
  * The per-package API index URLs go under `## Optional` instead, which is what

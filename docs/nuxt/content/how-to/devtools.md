@@ -25,4 +25,5 @@ Druxt integrates with the Vue.js Devtools to provide easier access to debug info
 
 ### Installation
 
-1. [Install the Vue.js Devtools](https://devtools.vuejs.org/getting-started/installation.html)
+1. [Install the Vue.js Devtools v6](https://devtools-v6.vuejs.org/guide/installation.html)
+   (v7 dropped Vue 2 support; Druxt is Vue 2.7)

@@ -26,7 +26,7 @@ description: Zero-config Storybook with auto-generated stories fed by live Drupa
    Nuxt 2 stack does not provide:
 
    ```sh
-   npm i -D @nuxtjs/storybook@4.2.0 @storybook/addon-docs
+   npm i -D @nuxtjs/storybook@4.2.0 @storybook/addon-docs@6.5.16
    ```
 
 2. Run Storybook:

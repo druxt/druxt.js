@@ -43,6 +43,9 @@ export default {
         document = await $content('modules/', slug + '/index').fetch()
       }
     } catch (e) {
+      // @nuxt/content throws `<path> not found` for a missing document. Any
+      // other rejection is a real fault, and must not be flattened into a 404.
+      if (!/ not found$/.test(e.message)) throw e
       return error({ statusCode: 404, message: 'Document not found' })
     }
 

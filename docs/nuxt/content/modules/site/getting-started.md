@@ -50,6 +50,7 @@ Each codebase can live in its own directory within one repository, or exist in s
 
    ```sh
    npx giget@latest gh:druxt/quickstart#develop my-druxt-site
+   cd my-druxt-site
    ```
 
    To add DruxtSite to an existing project instead, continue from step 2. It

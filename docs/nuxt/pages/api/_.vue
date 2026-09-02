@@ -24,16 +24,18 @@ export default {
   name: 'AppApiDocument',
 
   async asyncData({ $content, error, params, store, route }) {
-    let path = params.pathMatch || 'README'
-    if (path.endsWith('/')) path += 'index'
+    const path = (params.pathMatch || '').replace(/\/+$/, '') || 'README'
 
     let document
     try {
       document = await $content('api/', path).fetch()
       if (Array.isArray(document)) {
-        document = await $content('api/', params.pathMatch + '/index').fetch()
+        document = await $content('api/', path + '/index').fetch()
       }
     } catch (e) {
+      // @nuxt/content throws `<path> not found` for a missing document. Any
+      // other rejection is a real fault, and must not be flattened into a 404.
+      if (!/ not found$/.test(e.message)) throw e
       return error({ statusCode: 404, message: 'Document not found' })
     }
 
