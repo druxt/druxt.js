@@ -15,11 +15,9 @@ real captures of the running apps (except where noted).
 > started](/tutorials/getting-started) for the backend, or `examples/README.md`
 > in the monorepo for exact run commands per app.
 >
-> **In progress:** the example suite is still landing on
-> `feature/examples-consolidation`, not yet merged. All four apps below are
-> built and each screenshot was captured from the app actually running.
-> The branch's own remaining follow-ups (a design-doc rewrite, two stale
-> Cypress specs) don't affect what's shown here.
+> **New:** the example suite is recent and still being refined. All four
+> apps below are built and working, and each screenshot was captured from
+> the app actually running.
 
 ---
 
