@@ -18,24 +18,24 @@ everything a Drupal theme would: markup, styling, navigation and the
 request/render lifecycle. Druxt targets **Nuxt 2** (and Vue 2); check the
 [compatibility table](/modules/druxt) before reaching for newer
 releases. Instead of PHP rendering Twig on each request, Nuxt renders Vue
-components on a node server, or ahead of time into static files, and then
+components on a Node.js server, or ahead of time into static files, and then
 **hydrates** in the browser: the JavaScript takes over the rendered page
 and makes it interactive. [Request
 topology](/explanation/request-topology) covers what runs where.
 
 ## The mapping
 
-| Drupal idea                       | Nuxt/Vue counterpart               | Notes                                                                    |
-| --------------------------------- | ---------------------------------- | ------------------------------------------------------------------------ |
-| Twig template                     | Vue component                      | Markup, logic and styling in one `.vue` file                             |
-| Theme hook suggestions            | Druxt component suggestions        | The deliberate twin; see below                                           |
-| Region                            | Layout with `<slot>` or `<nuxt />` | Layouts wrap pages the way `page.html.twig` wraps content                |
-| Module                            | Nuxt module or plugin              | Configured in `nuxt.config.js`                                           |
-| `settings.php`                    | `nuxt.config.js`                   | One file, JavaScript, in version control                                 |
-| Composer                          | npm (or yarn)                      | `package.json` is `composer.json`, `npm install` restores the tree       |
-| drush                             | npm scripts                        | `npm run dev`, `npm run generate` and friends, defined per project       |
-| Cache rebuild                     | Restart the dev server, or rebuild | Config changes need a restart; content changes do not                    |
-| Routing (hook_menu, path aliases) | The Druxt wildcard route           | Drupal keeps owning paths; see [Decoupled routing](/explanation/routing) |
+| Drupal idea                             | Nuxt/Vue counterpart               | Notes                                                                    |
+| --------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------ |
+| Twig template                           | Vue component                      | Markup, logic and styling in one `.vue` file                             |
+| Theme hook suggestions                  | Druxt component suggestions        | The deliberate twin; see below                                           |
+| Region                                  | Layout with `<slot>` or `<nuxt />` | Layouts wrap pages the way `page.html.twig` wraps content                |
+| Module                                  | Nuxt module or plugin              | Configured in `nuxt.config.js`                                           |
+| `settings.php`                          | `nuxt.config.js`                   | One file, JavaScript, in version control                                 |
+| Composer                                | npm (or yarn)                      | `package.json` is `composer.json`, `npm install` restores the tree       |
+| drush                                   | npm scripts                        | `npm run dev`, `npm run generate` and friends, defined per project       |
+| Cache rebuild                           | Restart the dev server, or rebuild | Config changes need a restart; content changes do not                    |
+| Routing (`*.routing.yml`, path aliases) | The Druxt wildcard route           | Drupal keeps owning paths; see [Decoupled routing](/explanation/routing) |
 
 ## The part that will feel familiar
 
