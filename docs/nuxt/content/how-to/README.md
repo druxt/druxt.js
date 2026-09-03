@@ -11,6 +11,8 @@ tutorial](/tutorials/getting-started).
 
 ## Guides
 
+- [Prepare the Drupal backend](/how-to/prepare-the-backend): modules, permissions and JSON:API settings for a Druxt-ready site.
+- [Configure CORS in Drupal](/how-to/configure-cors): let the browser talk to the backend directly.
 - [Serve content in multiple languages](/how-to/multilingual): fetch and render translated content.
 - [Proxy the Drupal backend through Nuxt](/how-to/proxy): prevent CORS issues.
 - [Theme Druxt components](/how-to/theming): customize output with wrappers and slots.
