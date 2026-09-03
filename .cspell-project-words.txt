@@ -134,6 +134,7 @@ reskins
 Resvg
 resvg
 router
+safelisted
 satori
 scaffolder
 scule

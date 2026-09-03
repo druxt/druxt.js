@@ -15,7 +15,7 @@ knowing which of the three is failing.
 | ------- | ---------------- | ---- | ---------------- |
 | Build | The Node process running `nuxt build` or `nuxt generate` | Once, at build time | No |
 | Server rendering | The Node server rendering a page | On each uncached page request | No |
-| Browser | The visitor's browser, after hydration | On client-side navigation and dynamic data | Yes |
+| Browser | The visitor's browser, after hydration | On client-side navigation and dynamic data | Yes, when calling Drupal directly cross-origin |
 
 CORS is a browser security mechanism. Requests made by Node, at build time
 or during server rendering, are ordinary server-to-server HTTP and are
@@ -40,8 +40,9 @@ the page so the browser does not refetch it. See
 
 **In the browser**, client-side navigation fetches new routes and resources
 directly from the JSON:API endpoint, and dynamic features (forms, search,
-authenticated content) make live requests. These are the requests CORS
-applies to.
+authenticated content) make live requests. CORS applies to these when
+they go straight to Drupal on another origin; routed through the proxy,
+they stay same-origin.
 
 ## CORS and the proxy are alternatives
 
@@ -63,7 +64,7 @@ must reach Drupal needs CORS configured in Drupal, full stop.
 | Layout | Example | Notes |
 | ------ | ------- | ----- |
 | Separate hosts | `example.com` + `cms.example.io` | The common case. Browser requests are cross-origin: configure CORS or run the proxy. |
-| Subdomains | `example.com` + `cms.example.com` | Still cross-origin for CORS purposes, but cookies can be shared across the parent domain, which simplifies authenticated flows. |
+| Subdomains | `example.com` + `cms.example.com` | Still cross-origin for CORS purposes: direct browser requests need credentialed CORS with the explicit origin listed. Cookies can be shared across the parent domain, which helps authenticated flows, but shared cookies do not make the hosts same-origin. |
 | Same origin | One domain, a reverse proxy routes `/jsonapi` and `/router` to Drupal | No CORS at all. The routing lives in your web server rather than in Druxt. |
 
 Drupal and Nuxt are always two applications with two document roots, even

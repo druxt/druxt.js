@@ -95,8 +95,9 @@ backend](/how-to/prepare-the-backend).
 
 ## "require() of ES Module axios" crash on a fresh install
 
-Newer axios releases are ESM-only and break Nuxt 2's CommonJS server
-build. Pin axios to a 0.x release, or transpile it:
+Nuxt 2's webpack 4 resolves newer axios releases through their ESM
+entry, which its CommonJS server build cannot load. Pin axios to a 0.x
+release, or transpile it:
 
 ```js
 export default {
@@ -108,8 +109,9 @@ export default {
 
 ## "error:0308010C:digital envelope routines" on Node 17 or later
 
-Nuxt 2's webpack 4 uses an OpenSSL API that Node 17 removed. Either build
-on Node 16, or set the legacy provider in the build environment:
+Node 17 moved to OpenSSL 3, which rejects the legacy hashing algorithms
+Nuxt 2's webpack 4 relies on. Either build on Node 16, or enable the
+legacy provider in the build environment:
 
 ```sh
 NODE_OPTIONS=--openssl-legacy-provider nuxt build

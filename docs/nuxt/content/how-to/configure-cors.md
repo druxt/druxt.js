@@ -57,8 +57,12 @@ Three keys matter most:
   JSON:API (forms). `OPTIONS` must stay: browsers send it as the
   preflight.
 - `supportsCredentials` stays `false` for anonymous reads. Set it `true`
-  only for cookie-based authenticated flows, in which case
-  `allowedOrigins` must list explicit origins, never `'*'`.
+  only for credentialed flows, in which case `allowedOrigins` must list
+  explicit origins, never `'*'`, and `allowedHeaders` must name the
+  headers your requests use, such as
+  `['Authorization', 'Content-Type', 'Accept']`: the wildcard does not
+  cover non-safelisted headers on credentialed requests, and
+  `Authorization` always needs an explicit entry.
 
 ## Verify
 
@@ -66,6 +70,19 @@ Ask Drupal for a resource with an `Origin` header and check the response:
 
 ```sh
 curl -sI -H "Origin: https://www.example.com" \
+  https://cms.example.com/jsonapi | grep -i access-control
+```
+
+That covers simple reads. Requests with non-simple methods or headers
+(writes, `Authorization`) go through an `OPTIONS` preflight, so test
+that too, and check the allow-origin, allow-methods and allow-headers
+values that come back:
+
+```sh
+curl -si -X OPTIONS \
+  -H "Origin: https://www.example.com" \
+  -H "Access-Control-Request-Method: POST" \
+  -H "Access-Control-Request-Headers: authorization,content-type" \
   https://cms.example.com/jsonapi | grep -i access-control
 ```
 
