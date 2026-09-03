@@ -43,6 +43,24 @@ order:
    in the browser: Vue takes over the already-rendered markup and makes it
    interactive without re-fetching the page.
 
+The same five steps, as a picture:
+
+```mermaid
+%% One page request through the decoupled stack, from browser to hydration
+sequenceDiagram
+  participant B as Browser
+  participant N as Nuxt + Druxt
+  participant DR as decoupled_router
+  participant JA as JSON:API
+  B->>N: GET /article-path
+  N->>DR: translate-path?path=/article-path
+  DR-->>N: entity type, bundle, UUID
+  N->>JA: fetch resource (schema-narrowed)
+  JA-->>N: JSON:API resource + includes
+  N-->>B: server-rendered HTML + serialized store
+  Note over B: Hydration. Vue takes over the markup.
+```
+
 ## What lives where
 
 | Layer              | Package(s)                                                      | Responsibility                                                       |

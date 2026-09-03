@@ -15,7 +15,23 @@ description: 'The full OAuth setup from scratch: Simple OAuth keys, scopes and a
 Druxt authenticates with OAuth 2 Authorization Code + PKCE:
 [Simple OAuth](https://www.drupal.org/project/simple_oauth) on the Drupal
 side, [druxt-auth](https://github.com/druxt/druxt-auth) (built on
-`@nuxtjs/auth-next`) on the Nuxt side.
+`@nuxtjs/auth-next`) on the Nuxt side. The whole flow:
+
+```mermaid
+%% The Authorization Code + PKCE login flow between browser, frontend and Drupal
+sequenceDiagram
+  participant B as Browser
+  participant F as Frontend (druxt-auth)
+  participant D as Drupal (Simple OAuth)
+  B->>F: Log in
+  F->>D: /oauth/authorize + code challenge
+  D->>B: Drupal login form
+  B->>D: credentials
+  D-->>F: redirect to /callback with code
+  F->>D: /oauth/token + code verifier
+  D-->>F: access + refresh tokens
+  Note over F: Authorization header set on the shared axios instance
+```
 
 ## Drupal: install and generate keys
 
@@ -54,11 +70,13 @@ set to **role** and mapped to the role your users hold. Drupal has two
 built-in roles, Anonymous and Authenticated, and permissions attach to
 roles, so `authenticated` is the usual mapping here.
 
+![The Simple OAuth Scopes administration screen, where Dynamic scopes are managed](/images/backend-scopes.png)
+
 ## Drupal: create the consumer
 
 A Consumer is Drupal's entity for one registered OAuth client, provided
 by the `consumers` module that arrives as a Simple OAuth dependency.
-Create one at `/admin/config/services/consumers` (an administrator
+Create one at `/admin/config/services/consumer` (an administrator
 account is needed for all of these forms):
 
 | Field        | Value                                                       |
@@ -69,6 +87,8 @@ account is needed for all of these forms):
 | PKCE         | On                                                          |
 | Scopes       | The scope you created, set as the consumer's default        |
 | Redirect URI | `https://your-frontend/callback`, one per environment       |
+
+![The Consumers administration screen listing one client with its Client ID, label and per-environment callback redirect URIs](/images/backend-consumers.png)
 
 Every frontend origin that logs in needs its redirect URI registered;
 the origins people forget are previews and `http://localhost:3000`.
