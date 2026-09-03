@@ -126,20 +126,87 @@ html {
    only styling; !important still has to beat the presentation attributes
    and inline font styles mermaid 8 writes on each element. Values are the
    design spec against the daisyUI tokens, so both themes come from one rule. */
+/* Outranks the typography plugin's figure margin. */
+.prose .docs-diagram,
 .docs-diagram {
   margin: 1.5rem 0;
-  overflow-x: auto;
 }
 .docs-diagram svg {
   display: block;
   margin: 0 auto;
   max-width: 100%;
 }
-/* Below 640px a diagram never renders under 70% of its natural size (the
-   floor plugins/mermaid.client.js sets); it scrolls in its container instead. */
+/* Below 640px a diagram never renders under 85% of its natural size (the
+   floor plugins/mermaid.client.js sets); it scrolls in its frame instead. */
 @media (max-width: 639px) {
   .docs-diagram svg {
     min-width: var(--docs-diagram-floor, 0);
+  }
+}
+/* A diagram is a figure: frame > scroller > svg, then the caption the
+   plugin takes from the source's first %% line. The frame carries the
+   same right-edge fade the tables use while there is more to scroll. */
+.docs-diagram .docs-diagram-frame {
+  position: relative;
+}
+.docs-diagram .docs-diagram-scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.docs-diagram .docs-diagram-scroll:focus-visible {
+  outline: 2px solid hsl(var(--p));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.docs-diagram .docs-diagram-frame::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  background: linear-gradient(to right, hsl(var(--b1) / 0), hsl(var(--b1)));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.docs-diagram .docs-diagram-frame[data-overflow]::after {
+  opacity: 1;
+}
+.docs-diagram figcaption {
+  margin-top: 10px;
+  color: hsl(var(--bc) / 0.7);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+}
+/* A row of small diagrams (the deployment models): content-sized cards
+   sharing the spare width, captions aligned along the bottom, one column
+   below 640px. Content opts in with <div class="docs-diagram-row">. */
+.docs-diagram-row {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 16px;
+  margin: 1.5rem 0;
+}
+.docs-diagram-row .docs-diagram {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 16px 12px 12px;
+  border: 1px solid hsl(var(--b3));
+  border-radius: 8px;
+}
+.docs-diagram-row .docs-diagram figcaption {
+  margin-top: auto;
+  padding-top: 12px;
+}
+.docs-diagram-row .docs-diagram svg {
+  min-width: 0;
+}
+@media (max-width: 639px) {
+  .docs-diagram-row {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 /* Mermaid writes its own font stacks inline on each text element (Open-Sans
@@ -151,6 +218,12 @@ html {
 .docs-diagram foreignObject div,
 .docs-diagram foreignObject span {
   font-family: inherit !important;
+}
+/* Labels take a tight line-height instead of the prose column's, so node
+   boxes hug their text. */
+.docs-diagram foreignObject div,
+.docs-diagram foreignObject span {
+  line-height: 1.35;
 }
 
 /* Nodes and actors share one treatment: identity comes from a solid border
@@ -175,6 +248,10 @@ html {
   font-size: 14px !important;
   font-weight: 600 !important;
 }
+/* Sequence actors run 13px so four fit the prose column at full size. */
+.docs-diagram text.actor {
+  font-size: 13px !important;
+}
 .docs-diagram .cluster rect {
   fill: hsl(var(--b1)) !important;
   stroke: hsl(var(--bc) / 0.2) !important;
@@ -193,16 +270,31 @@ html {
 .docs-diagram .messageText,
 .docs-diagram .labelText,
 .docs-diagram .loopText {
-  font-size: 14px !important;
+  font-size: 13px !important;
+}
+/* Message labels get a page-coloured halo so they stay legible where they
+   cross a lifeline. */
+.docs-diagram text.messageText {
+  paint-order: stroke fill;
+  stroke: hsl(var(--b1)) !important;
+  stroke-width: 5px !important;
+  stroke-linejoin: round;
 }
 .docs-diagram .edgeLabel,
 .docs-diagram foreignObject div {
   color: hsl(var(--bc)) !important;
 }
+/* Flowchart edge labels are chips, so the line stops cleanly either side. */
 .docs-diagram .edgeLabel,
 .docs-diagram .edgeLabel rect {
   background-color: hsl(var(--b1)) !important;
   fill: hsl(var(--b1)) !important;
+}
+.docs-diagram .edgeLabel {
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 13px !important;
+  line-height: 1.35;
 }
 
 /* Line hierarchy: messages and edges, then lifelines, then frames. */
@@ -222,6 +314,12 @@ html {
 .docs-diagram marker.cross path {
   fill: none !important;
   stroke: hsl(var(--bc) / 0.75) !important;
+}
+/* Dotted edges are the convention for the browser's requests to Drupal,
+   where CORS applies. */
+.docs-diagram .edge-pattern-dotted {
+  stroke-dasharray: 2 4 !important;
+  stroke-linecap: round;
 }
 /* Mermaid 8 writes the actor height into the lifeline's class attribute
    (class="200"), so lifelines are matched by id. */

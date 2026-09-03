@@ -7,45 +7,122 @@
  * follow the colour mode live with no re-render. Until JavaScript runs,
  * the page shows the diagram source, which reads as a text description.
  *
- * Authoring contract: a first line of `%% <text>` becomes the SVG's
- * accessible label.
+ * Authoring contract: a first line of `%% <text>` becomes the figure's
+ * caption and the SVG's accessible name. Consecutive fences inside
+ * <div class="docs-diagram-row"> render as a row of cards (app.css).
  */
 
 let uid = 0
 let mermaidReady
+
+// Layout values are the design spec; font sizes and weights match the
+// app.css text rules so mermaid measures what renders.
+const config = {
+  startOnLoad: false,
+  theme: 'neutral',
+  fontFamily: 'inherit',
+  flowchart: {
+    useMaxWidth: true,
+    htmlLabels: true,
+    curve: 'monotoneX',
+    padding: 10,
+    nodeSpacing: 32,
+    rankSpacing: 48,
+    diagramPadding: 4,
+  },
+  sequence: {
+    useMaxWidth: true,
+    wrap: true,
+    width: 150,
+    height: 44,
+    actorMargin: 18,
+    diagramMarginX: 4,
+    diagramMarginY: 8,
+    boxMargin: 8,
+    boxTextMargin: 6,
+    noteMargin: 8,
+    messageMargin: 28,
+    mirrorActors: false,
+    bottomMarginAdj: 4,
+    actorFontSize: 13,
+    actorFontWeight: 600,
+    messageFontSize: 13,
+    noteFontSize: 13,
+  },
+}
+// Sequence actors size to fill the column the diagram sits in, so labels
+// render at their CSS size instead of scaling with the SVG.
+const actorWidth = { min: 120, max: 200 }
 
 // Only diagram pages pay for the library; everything else skips the chunk.
 const ensureMermaid = () => {
   mermaidReady =
     mermaidReady ||
     import('mermaid').then((m) => {
-      m.default.initialize({
-        startOnLoad: false,
-        theme: 'neutral',
-        fontFamily: 'inherit',
-        flowchart: { useMaxWidth: true },
-        // Wrapped messages keep four actors inside the 672px prose column,
-        // so labels stay at their CSS size instead of scaling down with
-        // the SVG. Font size and weight match the app.css text rules so
-        // layout measures what renders.
-        sequence: {
-          useMaxWidth: true,
-          wrap: true,
-          width: 150,
-          actorMargin: 20,
-          diagramMarginX: 8,
-          actorFontWeight: 600,
-          messageFontSize: 14,
-        },
-      })
+      m.default.initialize(config)
       return m.default
     })
   return mermaidReady
 }
 
+const participants = (source) => {
+  const declared = source.match(/^\s*(participant|actor)\s/gm)
+  if (declared) return declared.length
+  const ids = new Set()
+  source.replace(/^\s*([\w-]+)\s*(?:-->>|->>|-->|->|--x|-x|--\)|-\))\s*([\w-]+)\s*:/gm, (m, from, to) => {
+    ids.add(from)
+    ids.add(to)
+  })
+  return ids.size || 1
+}
+
+const fitActors = (mermaid, container, source) => {
+  if (!/^\s*sequenceDiagram/m.test(source)) return
+  const { diagramMarginX, actorMargin } = config.sequence
+  const n = participants(source)
+  const column = container.clientWidth
+  if (!column) return
+  const width = Math.floor((column - 2 * diagramMarginX - (n - 1) * actorMargin) / n)
+  mermaid.initialize({
+    ...config,
+    sequence: { ...config.sequence, width: Math.max(actorWidth.min, Math.min(actorWidth.max, width)) },
+  })
+}
+
+// figure > frame > scroller > svg, then the caption. The frame's fade and
+// the scroller's tab stop exist only while there is more to scroll.
+const wrap = (container, svg, label) => {
+  const frame = document.createElement('div')
+  frame.className = 'docs-diagram-frame'
+  const scroller = document.createElement('div')
+  scroller.className = 'docs-diagram-scroll'
+  scroller.appendChild(svg)
+  frame.appendChild(scroller)
+  container.innerHTML = ''
+  container.appendChild(frame)
+  if (label) {
+    const caption = document.createElement('figcaption')
+    caption.id = `${svg.id}-caption`
+    caption.textContent = label
+    container.appendChild(caption)
+    svg.setAttribute('aria-labelledby', caption.id)
+  }
+  const update = () => {
+    const overflow = scroller.scrollWidth > scroller.clientWidth + 1
+    const atEnd = scroller.scrollLeft + scroller.clientWidth >= scroller.scrollWidth - 1
+    frame.toggleAttribute('data-overflow', overflow && !atEnd)
+    if (overflow) scroller.setAttribute('tabindex', '0')
+    else scroller.removeAttribute('tabindex')
+  }
+  scroller.addEventListener('scroll', update, { passive: true })
+  if (window.ResizeObserver) new ResizeObserver(update).observe(scroller)
+  update()
+}
+
 const renderInto = (mermaid, container, source) => {
   const label = (source.match(/^%% (.+)$/m) || [])[1]
   try {
+    fitActors(mermaid, container, source)
     mermaid.render(`docs-diagram-${uid++}`, source, (svg) => {
       // Mermaid 8 reports parse failures through an empty callback rather
       // than a throw; fall back to the readable source either way.
@@ -55,19 +132,19 @@ const renderInto = (mermaid, container, source) => {
       }
       container.innerHTML = svg
       const el = container.querySelector('svg')
-      if (el) {
-        el.setAttribute('role', 'img')
-        if (label) el.setAttribute('aria-label', label)
-        el.removeAttribute('height')
-        // Drop mermaid's embedded stylesheet: its #id-prefixed rules outrank
-        // the site styles that give diagrams their colour-mode palette.
-        el.querySelectorAll('style').forEach((style) => style.remove())
-        // useMaxWidth scales the diagram to its column; on a phone that
-        // shrank 14px labels to 4px. app.css reads this floor below 640px,
-        // where the diagram then scrolls in its container instead.
-        const natural = parseFloat((el.getAttribute('viewBox') || '').split(/\s+/)[2])
-        if (natural) el.style.setProperty('--docs-diagram-floor', `${Math.round(natural * 0.7)}px`)
-      }
+      if (!el) return
+      el.setAttribute('role', 'img')
+      if (label) el.setAttribute('aria-label', label)
+      el.removeAttribute('height')
+      // Drop mermaid's embedded stylesheet: its #id-prefixed rules outrank
+      // the site styles that give diagrams their colour-mode palette.
+      el.querySelectorAll('style').forEach((style) => style.remove())
+      // useMaxWidth scales the diagram to its column; on a phone that
+      // shrank 14px labels to 4px. app.css reads this floor below 640px,
+      // where the diagram then scrolls in its frame instead.
+      const natural = parseFloat((el.getAttribute('viewBox') || '').split(/\s+/)[2])
+      if (natural) el.style.setProperty('--docs-diagram-floor', `${Math.round(natural * 0.85)}px`)
+      wrap(container, el, label)
     })
   } catch (e) {
     // Leave the readable source in place; a broken diagram must not take
@@ -83,8 +160,8 @@ const renderAll = () => {
       const wrapper = code.closest('.nuxt-content-highlight') || code.closest('pre')
       if (!wrapper) return
       const source = code.textContent.trim()
-      const container = document.createElement('div')
-      container.className = 'docs-diagram'
+      const container = document.createElement('figure')
+      container.className = 'docs-diagram not-prose'
       wrapper.replaceWith(container)
       renderInto(mermaid, container, source)
     })

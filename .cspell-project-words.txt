@@ -75,6 +75,7 @@ jsonapi
 Knip
 knip
 Ksection
+labelledby
 langcode
 libfreetype
 libicu
