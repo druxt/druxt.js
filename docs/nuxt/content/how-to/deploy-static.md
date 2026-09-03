@@ -1,7 +1,7 @@
 ---
 title: Deploy a static site
 weight: 3
-description: 'Generate the site and host the output on a static host or CDN, with Netlify as the worked example.'
+description: Generate the site and host the files anywhere static. Netlify is the worked example.
 ---
 
 > **Before you start:** read [Deployment

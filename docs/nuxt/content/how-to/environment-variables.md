@@ -15,14 +15,13 @@ real environment variables. `.env` stays out of git; commit a
 
 ## The variables
 
-| Variable          | Consumed by                                        | Purpose                                                                                                                                                                                                       |
-| ----------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BASE_URL`        | `nuxt.config.js` → `druxt.baseUrl`                 | The Drupal origin, scheme included and trimmed of any trailing slash. Must be reachable from wherever the consuming code runs. [Request topology](/explanation/request-topology#baseurl-rules) has the rules. |
-| `OAUTH_CLIENT_ID` | `druxt-auth`                                       | The consumer id created in Drupal for the login flow.                                                                                                                                                         |
-| `NUXT_TARGET`     | `nuxt.config.js` → `target`                        | `static` for generated builds, unset for the node server. One config file serves both modes.                                                                                                                  |
-| `PORT`, `HOST`    | The dev and node servers                           | Where the frontend listens.                                                                                                                                                                                   |
-| `NODE_OPTIONS`    | Node itself                                        | `--openssl-legacy-provider` for building on Node 17 or later ([why](/how-to/troubleshooting#error0308010cdigital-envelope-routines-on-node-17-or-later)).                                                     |
-| `DRUXT_BASE_URL`  | [The node client CLI](/how-to/use-the-node-client) | Backend origin for `druxt-inspect`.                                                                                                                                                                           |
+| Variable          | Consumed by                        | Purpose                                                                                                                                                                                                       |
+| ----------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BASE_URL`        | `nuxt.config.js` → `druxt.baseUrl` | The Drupal origin, scheme included and trimmed of any trailing slash. Must be reachable from wherever the consuming code runs. [Request topology](/explanation/request-topology#baseurl-rules) has the rules. |
+| `OAUTH_CLIENT_ID` | `druxt-auth`                       | The consumer id created in Drupal for the login flow.                                                                                                                                                         |
+| `NUXT_TARGET`     | `nuxt.config.js` → `target`        | `static` for generated builds, unset for the node server. One config file serves both modes.                                                                                                                  |
+| `PORT`, `HOST`    | The dev and node servers           | Where the frontend listens.                                                                                                                                                                                   |
+| `NODE_OPTIONS`    | Node itself                        | `--openssl-legacy-provider` for building on Node 17 or later ([why](/how-to/troubleshooting#error0308010cdigital-envelope-routines-on-node-17-or-later)).                                                     |
 
 A copyable template:
 

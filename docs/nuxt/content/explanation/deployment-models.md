@@ -30,7 +30,8 @@ visitor navigates, so going backendless means disabling the router
 middleware (`druxt.router.middleware: false` in `nuxt.config.js`) and
 cutting out every runtime request. A databaseless backend completes the
 shape: Drupal exists only during the build, its content exported to
-files with [Tome](https://tome.fyi), as in the
+files with [Tome](https://www.drupal.org/project/tome)'s Tome Sync, as
+in the
 [quickstart-druxt-site-tome](https://github.com/druxt/quickstart-druxt-site-tome)
 starter. The starter does not yet preconfigure the no-runtime-requests
 half, so treat that part as an advanced configuration.
@@ -52,8 +53,7 @@ server fallback. One build serves generated pages from a web server with
 long cache headers, and a node service behind it catches routes that
 were not generated, such as authenticated pages. Nuxt's `target` option
 (the build target) can be driven by an environment variable so one
-`nuxt.config.js` serves all modes. A server deployment guide showing
-the working shape arrives with the authentication material.
+`nuxt.config.js` serves all modes.
 
 ## Choosing a model
 
