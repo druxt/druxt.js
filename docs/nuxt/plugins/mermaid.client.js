@@ -159,7 +159,7 @@ const renderAll = () => {
   if (!document.querySelector('pre code.language-mermaid, pre.language-mermaid code')) return
   ensureMermaid().then((mermaid) => {
     document.querySelectorAll('pre code.language-mermaid, pre.language-mermaid code').forEach((code) => {
-      const wrapper = code.closest('.nuxt-content-highlight') || code.closest('pre')
+      const wrapper = code.closest('.nuxt-content-highlight') || code.closest('.docs-code') || code.closest('pre')
       if (!wrapper) return
       const source = code.textContent.trim()
       const container = document.createElement('figure')

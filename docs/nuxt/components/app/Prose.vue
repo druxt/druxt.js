@@ -173,6 +173,14 @@ export default {
         // reveals the copy button where there is no hover.
         pre.tabIndex = 0
 
+        // The button anchors to a wrapper, not the pre: the pre scrolls, and
+        // an absolutely positioned child of a scroll container scrolls with
+        // the code.
+        const wrapper = document.createElement('div')
+        wrapper.className = 'docs-code'
+        pre.parentNode.insertBefore(wrapper, pre)
+        wrapper.appendChild(pre)
+
         const button = document.createElement('button')
         button.type = 'button'
         button.className = 'docs-copy'
@@ -222,8 +230,8 @@ export default {
           timer = setTimeout(() => setState(null, 'Copy', ''), 2000)
         })
 
-        pre.appendChild(button)
-        pre.appendChild(status)
+        wrapper.appendChild(button)
+        wrapper.appendChild(status)
       })
     },
 
