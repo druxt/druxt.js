@@ -53,12 +53,12 @@ sequenceDiagram
   participant DR as decoupled_router
   participant JA as JSON:API
   B->>N: GET /article-path
-  N->>DR: translate-path?path=/article-path
-  DR-->>N: entity type, bundle, UUID
-  N->>JA: fetch resource (schema-narrowed)
-  JA-->>N: JSON:API resource + includes
-  N-->>B: server-rendered HTML + serialized store
-  Note over B: Hydration. Vue takes over the markup.
+  N->>DR: translate /article-path
+  DR-->>N: type, bundle, UUID
+  N->>JA: fetch the resource, schema fields only
+  JA-->>N: resource + includes
+  N-->>B: HTML + serialized store
+  Note over B,N: Hydration: Vue takes over the markup
 ```
 
 ## What lives where

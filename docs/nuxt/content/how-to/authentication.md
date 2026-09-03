@@ -32,7 +32,7 @@ sequenceDiagram
   D-->>F: redirect to /callback with code
   F->>D: /oauth/token + code verifier
   D-->>F: access + refresh tokens
-  Note over F: Authorization header set on the shared axios instance
+  Note over B,F: Authorization header set on the shared axios instance
 ```
 
 ## Drupal: install and generate keys

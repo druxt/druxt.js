@@ -23,6 +23,30 @@ behind this page.
 | Forms, auth, search  | No                     | Yes                                  | Yes             |
 | API proxy            | No (no server)         | No (no server)                       | Yes             |
 
+<div class="docs-diagram-row">
+
+```mermaid
+%% Fully static
+flowchart TB
+  V1[Visitors] --> H1[Static host]
+```
+
+```mermaid
+%% Static plus live backend
+flowchart TB
+  V2[Visitors] --> H2[Static host]
+  V2 -.->|"forms, auth, search"| D2[(Drupal)]
+```
+
+```mermaid
+%% Server-rendered
+flowchart TB
+  V3[Visitors] --> N3[Node service]
+  N3 -->|every request| D3[(Drupal)]
+```
+
+</div>
+
 **Fully static** generates every page at build time and deploys plain
 files, with no backend left running. This is a deliberate build mode, not the
 default: an ordinary build still asks Drupal to resolve routes when a
@@ -36,37 +60,17 @@ in the
 starter. The starter does not yet preconfigure the no-runtime-requests
 half, so treat that part as an advanced configuration.
 
-```mermaid
-%% Fully static: visitors talk only to the static host
-flowchart TB
-  H1[Static host] --- V1[Visitors]
-```
-
 **Static + live backend** is the recommended default. Pages are generated
 and served from a static host, while the browser talks to the
 still-running Drupal for the live parts: authenticated content, form
 submissions, search. With no frontend server to proxy through, this
 model needs [CORS configured in Drupal](/how-to/configure-cors).
 
-```mermaid
-%% Static plus live backend: pages from the static host, live features from Drupal
-flowchart TB
-  H2[Static host] --- V2[Visitors]
-  V2 -.->|"forms, auth, search"| D2[(Drupal)]
-```
-
 **Server-rendered** runs the built app as a node service: a long-lived
 process you supervise, listening on a port behind your web server. Every
 request renders live data, the [API proxy](/how-to/proxy) can shield the
 backend origin, and server middleware can hold secrets (mail delivery,
 search backends). You host and operate that node process alongside PHP.
-
-```mermaid
-%% Server-rendered: every request flows through the Node service to Drupal
-flowchart TB
-  V3[Visitors] --> N3[Node service]
-  N3 -->|every request| D3[(Drupal)]
-```
 
 Production sites also combine models into a hybrid: static files with a
 server fallback. One build serves generated pages from a web server with
