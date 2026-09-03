@@ -1,6 +1,6 @@
 ---
 title: Authenticate users with OAuth
-weight: 0
+weight: 5
 description: 'The full OAuth setup from scratch: Simple OAuth keys, scopes and a consumer in Drupal, druxt-auth in Nuxt, and the traps on both sides.'
 ---
 
@@ -60,14 +60,14 @@ by the `consumers` module that arrives as a Simple OAuth dependency.
 Create one at `/admin/config/services/consumers` (an administrator
 account is needed for all of these forms):
 
-| Field | Value |
-| ----- | ----- |
-| Client ID | A stable id your frontend will use; generate a UUID |
-| Secret | Empty. A browser app cannot keep a secret; PKCE replaces it |
-| Confidential | Off |
-| PKCE | On |
-| Scopes | The scope you created, set as the consumer's default |
-| Redirect URI | `https://your-frontend/callback`, one per environment |
+| Field        | Value                                                       |
+| ------------ | ----------------------------------------------------------- |
+| Client ID    | A stable id your frontend will use; generate a UUID         |
+| Secret       | Empty. A browser app cannot keep a secret; PKCE replaces it |
+| Confidential | Off                                                         |
+| PKCE         | On                                                          |
+| Scopes       | The scope you created, set as the consumer's default        |
+| Redirect URI | `https://your-frontend/callback`, one per environment       |
 
 Every frontend origin that logs in needs its redirect URI registered;
 the origins people forget are previews and `http://localhost:3000`.
@@ -81,10 +81,8 @@ it registers server middleware that `nuxt start` only loads from
 
 ```js
 export default {
-  modules: [
-    ['druxt-auth', { clientId: process.env.OAUTH_CLIENT_ID }],
-  ],
-}
+  modules: [['druxt-auth', { clientId: process.env.OAUTH_CLIENT_ID }]],
+};
 ```
 
 No `scope` option is needed. When the app sends none, Drupal applies
@@ -99,7 +97,7 @@ PKCE flow above, the right default) and `drupal-password` (server-side
 password grant). Trigger a login from any component:
 
 ```js
-this.$auth.loginWith('drupal-authorization_code')
+this.$auth.loginWith('drupal-authorization_code');
 ```
 
 The `/callback` route is handled for you.

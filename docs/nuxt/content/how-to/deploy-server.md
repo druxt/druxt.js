@@ -62,6 +62,8 @@ location / {
 
 location @node {
   proxy_pass http://127.0.0.1:3000;
+  proxy_set_header Host $host;
+  proxy_set_header X-Forwarded-Proto $scheme;
 }
 ```
 

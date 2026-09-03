@@ -1,6 +1,6 @@
 ---
 title: Troubleshoot common issues
-weight: 2
+weight: 7
 description: Quick answers to the problems reported most often by real users, from the missing Vue template box to site-wide JSON:API 403 failures.
 ---
 
