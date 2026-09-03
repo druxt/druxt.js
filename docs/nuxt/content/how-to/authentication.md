@@ -19,10 +19,11 @@ side, [druxt-auth](https://github.com/druxt/druxt-auth) (built on
 
 ## Drupal: install and generate keys
 
-Simple OAuth 6 requires Drupal core 10.3 or later.
+Simple OAuth 6.1, the current 6.x line, requires Drupal core 10.3 or
+later (6.0 accepted 10.2).
 
 ```sh
-composer require drupal/simple_oauth:^6
+composer require drupal/simple_oauth:^6.1
 drush pm:enable simple_oauth -y
 mkdir ../keys
 drush simple-oauth:generate-keys ../keys

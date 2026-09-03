@@ -34,6 +34,9 @@ server {
   listen 443 ssl http2;
   server_name www.example.com;
 
+  ssl_certificate /etc/ssl/certs/www.example.com.pem;
+  ssl_certificate_key /etc/ssl/private/www.example.com.key;
+
   location / {
     proxy_pass http://127.0.0.1:3000;
     proxy_set_header Host $host;
