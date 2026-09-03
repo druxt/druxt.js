@@ -11,9 +11,9 @@ Druxt provides API and File proxying using the @nuxtjs/proxy module.
 > proxy applies and when you need [CORS](/how-to/configure-cors) instead,
 > see [Request topology](/explanation/request-topology).
 
-The proxy is server middleware: it runs inside `nuxt dev` and
-`nuxt start`. **A generated static site has no server, so the proxy does
-not exist there.** If you deploy with `nuxt generate` and the browser must
+The proxy runs as server middleware inside `nuxt dev` and `nuxt start`.
+**A generated static site has no server, so the proxy does not exist
+there.** If you deploy with `nuxt generate` and the browser must
 reach Drupal, [configure CORS in Drupal](/how-to/configure-cors) instead.
 
 ---

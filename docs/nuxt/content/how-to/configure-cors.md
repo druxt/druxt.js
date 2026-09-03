@@ -13,18 +13,19 @@ When the frontend and backend are on different origins, the browser blocks
 cross-origin JSON:API requests unless Drupal answers with CORS headers.
 This is the direct fix. The alternative, [proxying through the
 frontend](/how-to/proxy), avoids CORS but only works while a Nuxt server
-is running; a generated static site needs CORS.
+is running. A generated static site needs CORS.
 
-The Druxt Drupal module enables CORS by default when it is otherwise
-disabled, which is enough for anonymous reads. It does not set the
-allowed methods, so preflighted requests (form submissions, and any
-request carrying an `Authorization` header) can still fail until you
-configure the block below explicitly. Explicit configuration always
-wins, and is what production sites should ship.
+The Druxt Drupal module enables CORS when it is otherwise disabled,
+which covers anonymous reads because Drupal core's stock configuration
+allows every origin. The module does not set the allowed methods, so
+preflighted requests (form submissions, and any request carrying an
+`Authorization` header) can still fail until you configure the block
+below explicitly. Explicit configuration always wins, and is what
+production sites should run.
 
 ## Enable cors.config
 
-Drupal core ships the configuration disabled in
+Drupal core includes the configuration, disabled, in
 `sites/default/default.services.yml`. Copy the file to
 `sites/default/services.yml` if it does not exist, and set the
 `cors.config` block:
@@ -47,12 +48,13 @@ Then rebuild caches:
 drush cache:rebuild
 ```
 
-Three keys matter most:
+The keys to get right:
 
 - `allowedOrigins` is your frontend origin, scheme included, no trailing
   slash. List each environment that needs access (production, previews,
-  `http://localhost:3000` for local development), or use `['*']` while
-  developing. Do not ship `'*'` together with credentials support.
+  `http://localhost:3000`, the Nuxt dev server's default, for local
+  development), or use `['*']` while
+  developing. Never deploy `'*'` together with credentials support.
 - `allowedMethods` needs more than GET only if the site writes through
   JSON:API (forms). `OPTIONS` must stay: browsers send it as the
   preflight.
@@ -66,7 +68,8 @@ Three keys matter most:
 
 ## Verify
 
-Ask Drupal for a resource with an `Origin` header and check the response:
+Ask Drupal for a resource with an `Origin` header, and check the
+response:
 
 ```sh
 curl -sI -H "Origin: https://www.example.com" \
@@ -96,16 +99,16 @@ your hosting platform does not strip the headers.
 
 Origins differ per environment, and `services.yml` is not part of config
 sync. A clean pattern used by production Druxt sites: keep a
-`services.yml` per environment (for example
+`services.yml` per environment (say
 `sites/default/envs/<env>/services.yml`) and include the right one from
 `settings.php`, so development can stay permissive while production lists
 exact origins.
 
 ## When to prefer the proxy
 
-| Situation | Use |
-| --------- | --- |
-| Generated static site (`nuxt generate`) | CORS. There is no server to proxy through. |
-| Nuxt server, one frontend origin | Either. The [proxy](/how-to/proxy) needs no backend change. |
-| Several frontends sharing one backend | CORS, with each origin listed. |
-| You cannot change the backend | The proxy, and a server-rendered deployment. |
+| Situation                               | Use                                                              |
+| --------------------------------------- | ---------------------------------------------------------------- |
+| Generated static site (`nuxt generate`) | CORS. The proxy would need a server.                             |
+| Nuxt server, one frontend origin        | Either. The [proxy](/how-to/proxy) leaves the backend untouched. |
+| Several frontends sharing one backend   | CORS, with each origin listed.                                   |
+| You cannot change the backend           | The proxy, and a server-rendered deployment.                     |

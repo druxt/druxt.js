@@ -8,10 +8,8 @@ description: Quick answers to the problems reported most often by real users, fr
 > [Getting started](/tutorials/getting-started).
 
 This page covers the issues that account for most of the confusion
-reported by real users over the life of this project. Each entry below is a
-quick answer with a link to the fuller explanation.
-
----
+reported by real users over the life of this project. Each entry is a
+quick answer, with a link wherever a fuller explanation exists.
 
 ## "Missing Vue template" box
 
@@ -52,8 +50,8 @@ full installation steps.
 ## "…has been blocked by CORS policy" in the browser console
 
 The browser is refusing a cross-origin request to Drupal. Only requests
-made **by the browser** can fail this way; if the site server-renders fine
-and breaks on navigation or dynamic data, this is why. Two fixes, pick
+made **by the browser** can fail this way, so a site that server-renders
+fine and breaks on navigation or live data is failing here. Two fixes, pick
 one: [configure CORS in Drupal](/how-to/configure-cors) so the backend
 answers cross-origin requests, or [proxy the API through the
 frontend](/how-to/proxy) so no request is cross-origin (server deployments
@@ -81,23 +79,24 @@ and the homepage resolves through Drupal like every other path. See
 
 ## Build error: the pages directory is missing
 
-Nuxt requires a `pages/` directory even when Druxt's wildcard router
-provides every route. Create it with a placeholder:
-`mkdir pages && touch pages/.gitkeep`.
+Nuxt requires a `pages/` directory even when [Druxt's wildcard
+router](/explanation/routing) provides every route. Create it with a
+placeholder: `mkdir pages && touch pages/.gitkeep`.
 
 ## Composer refuses to install drupal/druxt
 
 A stability error (`minimum-stability`) means a dependency's current
-release is below your project's floor. Require an explicit constraint,
-for example `composer require drupal/druxt:^1.0`, before loosening
-`minimum-stability`. See [Prepare the Drupal
+release is below your project's floor. Allow the pre-release for that
+one package with a stability flag, as in
+`composer require drupal/jsonapi_views:^1.1@beta`, rather than lowering
+`minimum-stability` project-wide. See [Prepare the Drupal
 backend](/how-to/prepare-the-backend).
 
 ## "require() of ES Module axios" crash on a fresh install
 
 Nuxt 2's webpack 4 resolves newer axios releases through their ESM
-entry, which its CommonJS server build cannot load. Pin axios to a 0.x
-release, or transpile it:
+entry, which the server, built as CommonJS, cannot load. Pin axios to a 0.x
+release, or transpile it in `nuxt.config.js`:
 
 ```js
 export default {
@@ -118,17 +117,23 @@ NODE_OPTIONS=--openssl-legacy-provider nuxt build
 ```
 
 This also works in CI and static-host build settings by prefixing the
-build command.
+build command. Pin the build host's Node version explicitly so this
+stays predictable.
 
 ## Builds fail on Windows
 
 Nuxt 2 tooling and several Druxt build steps have known problems on
 native Windows (path separators, OpenSSL differences). Use
 [WSL2](https://learn.microsoft.com/windows/wsl/) and run everything
-inside the Linux environment; that is the tested and recommended setup.
+inside the Linux environment. That is the setup the maintainers test.
 
 ## Where to go next
 
 - [Theme Druxt components](/how-to/theming): wrapper components in full.
 - [The schema system](/explanation/schemas): how schemas are built and cached.
+- [Request topology](/explanation/request-topology): which request is
+  actually failing, and why.
+- [Prepare the Drupal backend](/how-to/prepare-the-backend) and
+  [Configure CORS in Drupal](/how-to/configure-cors): the backend-side
+  fixes.
 - [`druxt` module reference](/modules/druxt): installation and permissions.
