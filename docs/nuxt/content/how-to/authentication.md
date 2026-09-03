@@ -172,10 +172,72 @@ CSRF token from Drupal's `/session/token` and send it in the
 
 ## Logging out
 
-`this.$auth.logout()` ends the frontend session. Data fetched while
-logged in stays in the [DruxtStore](/explanation/druxt-store) until the
-page reloads; a logout flow that must drop privileged content
-immediately should force a reload or flush the affected resources.
+`this.$auth.logout()` ends the frontend session, and nothing more. Two
+things survive it: data fetched while logged in stays in the
+[DruxtStore](/explanation/druxt-store) until the page reloads, and the
+issued tokens stay valid on the Drupal side until they expire, because
+Simple OAuth has no logout or revocation endpoint of its own
+([#2945273](https://www.drupal.org/project/simple_oauth/issues/2945273)
+adds one as a patch).
+
+The pattern production Druxt sites use is a dedicated logout page that
+revokes, logs out and cleans up, then forces a full page load, which
+also empties the store:
+
+```vue
+<!-- pages/user/logout.vue -->
+<template>
+  <p>
+    Logging out.
+    <NuxtLink to="#" @click.native="logout()">Click here</NuxtLink>
+    if you are not redirected.
+  </p>
+</template>
+
+<script>
+export default {
+  mounted() {
+    this.logout();
+  },
+
+  methods: {
+    async logout() {
+      // Revoke the tokens server-side first. This endpoint comes from
+      // the #2945273 patch (or your own route that revokes the user's
+      // tokens); proxy it through the frontend so the call is
+      // same-origin. Skip this step and the tokens outlive the logout.
+      await this.$axios.post('/oauth/logout');
+
+      await this.$auth.logout();
+
+      // @nuxtjs/auth-next can leave its cookies behind; clear them so
+      // a stale strategy or expiry does not confuse the next login.
+      [
+        'auth._token.druxt',
+        'auth._refresh_token.druxt',
+        'auth._token_expiration.druxt',
+        'auth.strategy',
+      ].forEach((name) => {
+        document.cookie = `${name}=; Path=/; Max-Age=0`;
+      });
+
+      // A full page load, not router.push: this is what drops
+      // privileged content from the DruxtStore.
+      location.href = location.origin;
+    },
+  },
+};
+</script>
+```
+
+Route the endpoint through the proxy so it shares the frontend origin
+(alongside `druxt.proxy.api`, or explicitly):
+
+```js
+proxy: {
+  '/oauth/logout': process.env.BASE_URL,
+},
+```
 
 ## Known limitations
 
