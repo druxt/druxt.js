@@ -31,6 +31,8 @@ The inspector's **Connection details** node shows the `baseUrl` and
 combine into. When a page renders nothing, this is the two-second check
 that the frontend points at the backend you think it does.
 
+![The DruxtJS inspector's Connection details node, showing the configured baseUrl and endpoint and the computed JSON:API address](/images/devtools-inspector.png)
+
 ## Theme suggestions on every component
 
 Select any Druxt component in the standard component inspector and its
@@ -41,7 +43,11 @@ the suggestion chain that
 and Druxt components are easy to spot in the tree, tagged `druxt` in
 blue.
 
+![DruxtSite selected in the component tree, its druxt-tagged children expanded, with the state pane's druxt section showing $theme resolved to DruxtSiteOlivero above DruxtSiteDefault](/images/devtools-theme.png)
+
 ## Scaffold a wrapper from the browser
+
+![The $theme list with the save action revealed beside the unregistered DruxtSiteDefault suggestion](/images/devtools-scaffold.png)
 
 Each unregistered name in the `$theme` list carries a save action.
 Clicking it asks the dev server to create that wrapper file, at its
