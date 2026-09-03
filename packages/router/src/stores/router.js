@@ -49,7 +49,7 @@ const DruxtRouterStore = ({ store }) => {
        * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
        *   Use the DruxtStore druxt/addResource mutation instead.
        * @see https://druxtjs.org/modules/router/deprecations
-       * @see {@link https://druxtjs.org/api/stores/druxt}
+       * @see {@link https://druxtjs.org/api/packages/druxt/stores/druxt}
        *
        * @name addEntity
        * @mutator {object} addEntity=entities Adds specified Drupal entity JSON:API resource data to the Vuex state object.
@@ -166,7 +166,7 @@ const DruxtRouterStore = ({ store }) => {
        * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
        *   Use the DruxtStore druxt/getResource action instead.
        * @see https://druxtjs.org/modules/router/deprecations
-       * @see {@link https://druxtjs.org/api/stores/druxt}
+       * @see {@link https://druxtjs.org/api/packages/druxt/stores/druxt}
        *
        * @name getEntity
        * @action getEntity=entities
@@ -200,7 +200,7 @@ const DruxtRouterStore = ({ store }) => {
        * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
        *   Use the DruxtStore druxt/getCollection action instead.
        * @see https://druxtjs.org/modules/router/deprecations
-       * @see {@link https://druxtjs.org/api/stores/druxt}
+       * @see {@link https://druxtjs.org/api/packages/druxt/stores/druxt}
        *
        * @name getResources
        * @action getResources

@@ -12,15 +12,16 @@ description: Move a 0.x site to Druxt 1.0.0, then use deprecation warnings as th
 
 1.0.0 declares stability rather than changing behaviour: it is not a
 breaking release, and a site current on the last 0.x releases upgrades
-by bumping versions. Update every `druxt*` package together so the
-versions stay aligned:
+by bumping versions. Install every `druxt*` package your
+`package.json` names at the new major explicitly; `npm update` respects
+the existing 0.x ranges and would leave you where you started:
 
 ```sh
-npm update druxt druxt-site
+npm install druxt@^1.0.0 druxt-site@^1.0.0
 ```
 
-List the ones your `package.json` actually names; a partial bump across
-druxt packages is the main thing to avoid. Then build and browse the
+Extend the command with each `druxt*` package you actually depend on; a
+partial bump across druxt packages is the main thing to avoid. Then build and browse the
 site in development mode:
 
 ```sh

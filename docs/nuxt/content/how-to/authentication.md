@@ -206,7 +206,13 @@ export default {
       // the #2945273 patch (or your own route that revokes the user's
       // tokens); proxy it through the frontend so the call is
       // same-origin. Skip this step and the tokens outlive the logout.
-      await this.$axios.post('/oauth/logout');
+      // A failed revocation must not leave the user locally logged in,
+      // so the local cleanup below runs regardless.
+      try {
+        await this.$axios.post('/oauth/logout');
+      } catch (e) {
+        console.warn('Token revocation failed; tokens live until expiry.', e);
+      }
 
       await this.$auth.logout();
 

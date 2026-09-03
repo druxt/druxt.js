@@ -84,10 +84,10 @@ npm run dev
 
 **Outcome:** two services are now running:
 
-| URL                   | What it is       |
-| --------------------- | ---------------- |
-| http://127.0.0.1:8888 | Drupal (backend) |
-| http://localhost:3000 | Nuxt (frontend)  |
+| URL                                                      | What it is       |
+| -------------------------------------------------------- | ---------------- |
+| http://127.0.0.1:8888, or the port setup printed         | Drupal (backend) |
+| http://localhost:3000, or the port `npm run dev` printed | Nuxt (frontend)  |
 
 Open http://localhost:3000 (or the next free port, printed in the
 terminal). The page you see is rendered by Nuxt. It's a
