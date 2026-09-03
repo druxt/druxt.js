@@ -17,7 +17,7 @@ const prose = (theme) => ({
     color: 'hsl(var(--bc) / 0.85)',
     // The docs link to Drupal.org issues and GitLab merge requests as bare
     // URLs, and an unbroken 600px link cannot be wrapped by normal word
-    // breaking — it pushed the whole page sideways on a phone. Measured on
+    // breaking - it pushed the whole page sideways on a phone. Measured on
     // /guide/multilingual at 375px: the document scrolled to 702px, moving
     // the header and sidebar with it. Only the long token breaks; ordinary
     // prose still wraps between words.
@@ -51,11 +51,7 @@ const prose = (theme) => ({
     },
     'code::before': { content: 'none' },
     'code::after': { content: 'none' },
-    pre: {
-      backgroundColor: '#2f495e',
-      color: '#e5ecf1',
-      borderRadius: theme('borderRadius.lg'),
-    },
+    // pre: surface, Prism palette and copy button live in assets/css/code.css.
     'pre code': { backgroundColor: 'transparent', color: 'inherit', padding: 0 },
     blockquote: {
       borderLeftColor: colors.secondary,
@@ -67,8 +63,7 @@ const prose = (theme) => ({
     },
     'blockquote p:first-of-type::before': { content: 'none' },
     'blockquote p:last-of-type::after': { content: 'none' },
-    thead: { borderBottomColor: 'hsl(var(--b3))' },
-    'tbody tr': { borderBottomColor: 'hsl(var(--b3))' },
+    // table: header, row rules, scroll region and stacking live in assets/css/app.css.
     img: { borderRadius: theme('borderRadius.lg') },
     // Badges: linked images render as an inline row, not stacked blocks.
     'a > img': { display: 'inline-block', marginTop: '0', marginBottom: '0', borderRadius: '0' },
@@ -114,7 +109,7 @@ module.exports = {
     themes: [
       {
         light: {
-          // White stays the text colour on brand fills — the conventional
+          // White stays the text colour on brand fills - the conventional
           // look, and the brand hues below are untouched. The contrast
           // problem is solved in assets/css/app.css by filling the two
           // filled buttons with the darker in-family shade (primary-focus /

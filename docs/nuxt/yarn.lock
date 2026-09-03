@@ -10729,7 +10729,6 @@ __metadata:
     daisyui: 1.25.4
     mermaid: 8.14.0
     nuxt: 2.18.1
-    prism-themes: 1.9.0
     satori: 0.33.4
     tailwindcss: ^2.2.19
   languageName: unknown
@@ -18155,13 +18154,6 @@ __metadata:
   version: 1.1.0
   resolution: "pretty-time@npm:1.1.0"
   checksum: a319e7009aadbc6cfedbd8b66861327d3a0c68bd3e8794bf5b86f62b40b01b9479c5a70c76bb368ad454acce52a1216daee460cc825766e2442c04f3a84a02c9
-  languageName: node
-  linkType: hard
-
-"prism-themes@npm:1.9.0":
-  version: 1.9.0
-  resolution: "prism-themes@npm:1.9.0"
-  checksum: ddbadb8d83fc23e428409d7dd1d62dde6033a3afabd721d292e2d251f5693e3eccb7f9641704374f3df3dde59c0e2c8a3c069a7aa72990c4a00acb57f2af81f8
   languageName: node
   linkType: hard
 
