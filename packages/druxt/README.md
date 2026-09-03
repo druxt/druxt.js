@@ -46,15 +46,16 @@ on. It provides the three pieces the whole framework shares:
 
 ## Compatibility
 
-As of September 2026:
+As of September 2026. Current release: druxt 0.24.0, published November
+2023.
 
 | | Supported |
 | --- | --- |
-| Nuxt | 2.15 or later (Nuxt 2 line). Nuxt 3 is not supported; it is the next major's target. |
+| Nuxt | 2.15 or later (Nuxt 2 line). Nuxt 3 is not supported. |
 | Vue | 2.7 |
-| Node | 16 recommended; 14 works. 17 and later need `NODE_OPTIONS=--openssl-legacy-provider` to build. |
-| Drupal core | 8.8 through 11 |
-| Drupal module | `drupal/druxt` ^1.2, which brings `decoupled_router` ^2.0, `jsonapi_menu_items` and `jsonapi_views` |
+| Node | 16, the tested version. 17 and later need `NODE_OPTIONS=--openssl-legacy-provider` to build. |
+| Drupal core | 10.1 through 11 in practice: the module accepts 8.8+, but its Decoupled Router 2.x dependency requires 10.1. Tested against 10 and 11. |
+| Drupal module | `drupal/druxt` ^1.2, which brings `decoupled_router`, `jsonapi_menu_items` and `jsonapi_views`. Hold `decoupled_router` below 2.0.7 ([#3618675](https://www.drupal.org/i/3618675)). |
 | Known pins | `@nuxtjs/storybook` 4.2.0 (later majors need Nuxt 3); axios 0.x, or add it to `build.transpile` |
 
 Translated routes additionally need a `decoupled_router` patch; see the
@@ -65,7 +66,7 @@ Translated routes additionally need a `decoupled_router` patch; see the
 | Option        | Type              | Default     | Description                                                              |
 | ------------- | ----------------- | ----------- | ------------------------------------------------------------------------ |
 | `baseUrl`     | `string`          |             | The Drupal backend URL. **Required.**                                    |
-| `endpoint`    | `string`          | `'jsonapi'` | The JSON:API endpoint path.                                              |
+| `endpoint`    | `string`          | `'/jsonapi'` | The JSON:API endpoint path.                                             |
 | `proxy.api`   | `boolean`         | `false`     | Proxy API requests via Nuxt ([guide](https://druxtjs.org/how-to/proxy)). |
 | `proxy.files` | `boolean\|string` | `false`     | Proxy Drupal files. A string sets the site.                              |
 

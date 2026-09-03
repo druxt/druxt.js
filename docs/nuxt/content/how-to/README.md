@@ -4,8 +4,8 @@ weight: -10
 description: Goal-oriented recipes for specific tasks, assuming a working Druxt site.
 ---
 
-How-to guides are **goal-oriented**: each one starts from a real-world goal
-and ends with that goal achieved. They assume you already have a working
+How-to guides are **goal-oriented**: recipes for a task you already
+have, not lessons. They assume you already have a working
 Druxt site; if you don't, start with the [Getting started
 tutorial](/tutorials/getting-started).
 
@@ -21,8 +21,8 @@ tutorial](/tutorials/getting-started).
 - [Use the Druxt client directly](/how-to/use-the-druxt-client): fetch resources without components.
 - [Use Druxt in a Node application](/how-to/use-the-node-client): run the client outside Nuxt.
 - [Explore the example apps](/how-to/example-apps): four complete reference implementations.
-- [Deploy a static site](/how-to/deploy-static): generate and host the output on a static host or CDN.
-- [Deploy a server-rendered site](/how-to/deploy-server): run the node service behind a web server, or the static-plus-fallback hybrid.
+- [Deploy a static site](/how-to/deploy-static): the worked Netlify example, from local proof to rebuild hooks.
+- [Deploy a server-rendered site](/how-to/deploy-server): the node service behind nginx, and the hybrid with a server fallback.
 - [Authenticate users with OAuth](/how-to/authentication): the full Simple OAuth setup from scratch, both sides.
 - [Environment variables](/how-to/environment-variables): every variable a build reads, and the build-time vs runtime trap.
 - [Troubleshoot common issues](/how-to/troubleshooting): quick answers to the errors and gotchas that come up most often.
