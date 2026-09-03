@@ -11,7 +11,7 @@ vue-docgen-api), and renders them as the Markdown pages that power the
 
 ## Installation
 
-Private CLI inside the druxt.js monorepo — no npm install. From the monorepo
+Private CLI inside the druxt.js monorepo - no npm install. From the monorepo
 root, dependencies come with `yarn install`; the binary is built by
 `yarn build` (siroc) as `packages/docgen/bin/druxt-docgen.js`.
 
@@ -24,7 +24,7 @@ yarn build        # builds bin/druxt-docgen.js (required first)
 yarn build:docs   # runs docgen against packages/*/src
 ```
 
-Output lands under `docs/nuxt/content/api/` (gitignored — always
+Output lands under `docs/nuxt/content/api/` (gitignored - always
 generated, never committed), plus per-package CHANGELOG copies and the
 root CONTRIBUTING guide.
 
@@ -39,7 +39,7 @@ What it generates:
 | `content/how-to/contributing.md`     | root `CONTRIBUTING.md`                                                |
 
 Because the JSDoc **is** the public API reference, the monorepo's ESLint
-config enforces complete `@param` typing and descriptions — see the
+config enforces complete `@param` typing and descriptions - see the
 monorepo AGENTS.md for the rules and their rationale.
 
 ## License

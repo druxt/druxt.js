@@ -93,7 +93,7 @@ backend holds.
 build output. The stories still make live requests, so Drupal must
 [allow the Storybook origin through CORS](/how-to/configure-cors) when
 it is served from a different origin. The Umami demo publishes its Storybook at
-[umami-storybook.druxtjs.org](https://umami-storybook.druxtjs.org),
+[storybook.umami.demo.druxtjs.org](https://storybook.umami.demo.druxtjs.org),
 which is this whole page in live form against the Umami demo content.
 
 ## Where to go next

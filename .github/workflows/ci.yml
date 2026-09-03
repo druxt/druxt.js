@@ -166,6 +166,10 @@ jobs:
           cd docs/nuxt
           /tmp/vale content
 
+      - name: Em-dash check (hand-authored prose and site source)
+        run: |
+          ! grep -rn "\xe2\x80\x94" docs/nuxt/content docs/nuxt/components docs/nuxt/pages docs/nuxt/plugins docs/nuxt/lib docs/nuxt/assets docs/nuxt/layouts docs/nuxt/utils docs/nuxt/scripts packages/druxt/README.md packages/docgen/README.md packages/test-utils/README.md CONTRIBUTING.md --include='*.md' --include='*.vue' --include='*.js' --include='*.mjs' --include='*.css'
+
       # Root-relative /images/ links are excluded from the production
       # linkcheck (they ship with the same change; probing production only
       # measures deployment lag), so this check pins them to the files that
