@@ -2,8 +2,8 @@
   <div ref="prose" class="prose">
     <!--
       Keyed on the document path so each document gets a brand-new subtree.
-      enhance() below rewrites DOM that NuxtContent owns — figures() wraps
-      each <img> in a <figure> and re-parents it — which leaves Vue patching
+      enhance() below rewrites DOM that NuxtContent owns - figures() wraps
+      each <img> in a <figure> and re-parents it - which leaves Vue patching
       against a tree that no longer matches its vnodes. Measured without the
       key, navigating blocks -> entity -> blocks: an orphaned empty <figure>
       persisted onto pages with no images at all, and returning to a
@@ -16,7 +16,7 @@
       Lightbox for prose images. figures() gives every image a cursor-zoom-in
       frame and a click handler; this renders the result locally rather than
       emitting to a parent, because the only consumer (pages/modules/_.vue)
-      never listened for it — the affordance was there but the click did
+      never listened for it - the affordance was there but the click did
       nothing. Mirrors AppFigure's own lightbox.
     -->
     <div
@@ -51,7 +51,7 @@ import { trapTab } from '~/utils/focus'
  *
  * @nuxt/content v1 has no prose component overrides, so the rendered output is
  * enhanced after mount. Everything here is a treatment of markdown the modules
- * already write — no content changes required:
+ * already write - no content changes required:
  *
  * - images become captioned, click-to-enlarge figures (alt text is the caption)
  * - code blocks get a copy button
@@ -203,7 +203,7 @@ export default {
         }
         // navigator.clipboard is undefined on non-secure origins (a preview
         // served over plain HTTP), and writeText can reject on a permission
-        // denial — without this the button silently never reacts and the
+        // denial - without this the button silently never reacts and the
         // rejection goes unhandled.
         button.addEventListener('click', async () => {
           try {

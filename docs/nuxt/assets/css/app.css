@@ -10,8 +10,8 @@
 
 /* The bare `:focus-visible` above is specificity (0,1,0) and loses to daisyUI's
    own `.menu :where(li) > a:focus` and `.btn:focus`, which set a *transparent*
-   outline. Measured before this rule: 13 of 34 tab stops — the whole sidebar
-   nav, the header nav and the colour-mode options — computed
+   outline. Measured before this rule: 13 of 34 tab stops - the whole sidebar
+   nav, the header nav and the colour-mode options - computed
    `outline: rgba(0,0,0,0) solid 2px` with no box-shadow, i.e. no visible focus
    at all in either theme (WCAG 2.4.7). `.btn`'s dark focus ring also measured
    1.04:1 against base-100. !important is deliberate: this is the accessibility
@@ -63,7 +63,7 @@ html {
    `primary` (#53b0eb) and `secondary` (#41b883) are the brand tints and are
    used, correctly, for borders, badges, radios and icons. They are simply too
    light to carry text: white on them measures 2.39:1 and 2.50:1, and the
-   logo's own blue (#3498DB) is no better at 3.15:1 — no text colour works on
+   logo's own blue (#3498DB) is no better at 3.15:1 - no text colour works on
    a tint that pale except near-black, which reads wrong on a blue button.
 
    So the tint stays the brand colour everywhere it is decorative, and only
@@ -101,7 +101,7 @@ html {
 
 /* Search dialog input row.
    The input sits between the search icon and the esc key, so the default
-   focus ring drew a rectangle around the middle child only — visibly inset
+   focus ring drew a rectangle around the middle child only - visibly inset
    inside the row's own border, excluding both siblings. Suppress the ring on
    the input and draw it on the row instead, so the focus indicator matches
    what a user reads as "the search box". */

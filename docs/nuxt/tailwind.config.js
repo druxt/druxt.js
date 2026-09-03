@@ -17,7 +17,7 @@ const prose = (theme) => ({
     color: 'hsl(var(--bc) / 0.85)',
     // The docs link to Drupal.org issues and GitLab merge requests as bare
     // URLs, and an unbroken 600px link cannot be wrapped by normal word
-    // breaking — it pushed the whole page sideways on a phone. Measured on
+    // breaking - it pushed the whole page sideways on a phone. Measured on
     // /guide/multilingual at 375px: the document scrolled to 702px, moving
     // the header and sidebar with it. Only the long token breaks; ordinary
     // prose still wraps between words.
@@ -109,7 +109,7 @@ module.exports = {
     themes: [
       {
         light: {
-          // White stays the text colour on brand fills — the conventional
+          // White stays the text colour on brand fills - the conventional
           // look, and the brand hues below are untouched. The contrast
           // problem is solved in assets/css/app.css by filling the two
           // filled buttons with the darker in-family shade (primary-focus /
