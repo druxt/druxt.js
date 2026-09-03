@@ -1,6 +1,6 @@
 ---
 title: Contributing
-weight: 5
+weight: 8
 ---
 
 > All contributions are welcomed and appreciated.

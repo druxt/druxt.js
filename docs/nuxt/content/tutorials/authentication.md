@@ -115,6 +115,6 @@ rather than requiring people to know the `/user/login` URL by heart.
 - See this flow put to work in a real app: [Explore the example
   apps](/how-to/example-apps): Content Ops Console uses this exact login to
   authenticate its inline content editing.
-- Full authentication option reference (password grant, scopes, environment
-  variables): the [`druxt-auth` README](https://github.com/druxt/druxt-auth).
+- Full authentication option reference (scopes, environment variables):
+  the [`druxt-auth` README](https://github.com/druxt/druxt-auth).
 - Understand the machine you just started: [Architecture](/explanation/architecture).
