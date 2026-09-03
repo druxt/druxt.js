@@ -32,10 +32,14 @@ const require = createRequire(import.meta.url)
  * usual places, or from PLAYWRIGHT_MODULE.
  */
 const resolvePlaywright = () => {
+  // npm's global root is not on the require path, so ask npm for it.
+  let globalRoot
+  try { globalRoot = execFileSync('npm', ['root', '-g'], { encoding: 'utf8' }).trim() } catch (e) { /* optional */ }
   const candidates = [
     process.env.PLAYWRIGHT_MODULE,
     'playwright',
     path.join(process.cwd(), 'node_modules', 'playwright'),
+    globalRoot && path.join(globalRoot, 'playwright'),
   ].filter(Boolean)
   for (const candidate of candidates) {
     try { return require(candidate) } catch (e) { /* next */ }
