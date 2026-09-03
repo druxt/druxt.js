@@ -69,6 +69,13 @@ html {
   opacity: 1;
 }
 
+/* Touch devices have no hover, so the hover-revealed button never appears. */
+@media (hover: none) {
+  .prose pre button {
+    opacity: 1;
+  }
+}
+
 /* Filled brand buttons.
    `primary` (#53b0eb) and `secondary` (#41b883) are the brand tints and are
    used, correctly, for borders, badges, radios and icons. They are simply too
