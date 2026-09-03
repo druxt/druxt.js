@@ -27,7 +27,21 @@ configuration of its own.
 
 Prove the build before involving a host. Set Nuxt's target to `static`
 (`target: 'static'` in `nuxt.config.js`, or the `NUXT_TARGET` variable
-where the project reads one, as the quickstart does), then:
+where the project reads one, as the quickstart does). If the project
+enables the [API proxy](/how-to/proxy) (`druxt.proxy.api`, on by
+default in the quickstart), turn it off for static builds. The proxy is server middleware that no
+static host can run, so leaving it enabled sends the browser's API
+requests to the static host instead of Drupal. Tying it to the target keeps one config serving both modes:
+
+```js
+druxt: {
+  proxy: { api: process.env.NUXT_TARGET !== 'static' },
+},
+```
+
+Direct browser requests then need
+[CORS configured in Drupal](/how-to/configure-cors). Generate and
+serve:
 
 ```sh
 npx nuxt generate
@@ -97,7 +111,7 @@ changes.
 The same, scriptable:
 
 ```sh
-npm install --global netlify-cli
+npm install --global netlify-cli@15   # newer majors need Node 18+
 netlify init
 NODE_OPTIONS=--openssl-legacy-provider npm run generate
 netlify deploy --prod --dir=dist

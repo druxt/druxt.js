@@ -26,7 +26,7 @@ slow part.
 ## 1. Tell Nuxt what to generate
 
 The quickstart's routes come from Drupal, so the static generator needs
-a starting point to crawl from. Add two lines to `nuxt/nuxt.config.js`,
+a starting point to crawl from. Add this line to `nuxt/nuxt.config.js`,
 just inside `export default {`:
 
 ```js
@@ -37,6 +37,20 @@ generate: { fallback: '404.html', routes: ['/'] },
 rest by following links. `fallback: '404.html'` writes the not-found
 page where static hosts expect it (this replaces the default `200.html`
 single-page-app fallback).
+
+Then find the `proxy` setting inside the `druxt` block and tie it to
+the build target:
+
+```js
+proxy: {
+  api: process.env.NUXT_TARGET !== 'static'
+},
+```
+
+The proxy is server middleware that no static host can run. With this
+line, development keeps the proxy, and the static build has the browser
+talk to Drupal directly (the demo backend used later answers any
+origin).
 
 ## 2. Generate locally and prove the dependency
 
@@ -92,8 +106,14 @@ Expect the crawler to find and render the demo's pages this time; the
 generated homepage carries the Umami menu. Deploy the output:
 
 ```sh
-npm install --global netlify-cli
+npm install --global netlify-cli@15
 netlify login
+```
+
+(Newer Netlify CLI majors need Node 18 and later; 15 is the last line
+that runs on the Node 16 this stack pins.)
+
+```sh
 netlify deploy --prod --dir=nuxt/dist
 ```
 
