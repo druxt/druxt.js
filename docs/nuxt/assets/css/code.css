@@ -1,0 +1,144 @@
+/* Code blocks and their copy button.
+
+   One dark surface in both themes: the site's strongest identity element and
+   a single Prism palette to maintain. The literals are the dark theme's own
+   tokens, kept as custom properties so a theme can override them. This
+   replaces the prism-themes CSS @nuxt/content used to inject. */
+:root {
+  --docs-code-bg: #16202b;
+  --docs-code-border: #243040;
+  --docs-code-fg: #e5ecf1;
+  --docs-code-key: #53b0eb;
+  --docs-code-string: #41b883;
+  --docs-code-number: #7cc5f1;
+}
+
+.prose pre {
+  position: relative;
+  padding: 20px 24px;
+  border: 1px solid var(--docs-code-border);
+  border-radius: 8px;
+  background-color: var(--docs-code-bg);
+  color: var(--docs-code-fg);
+  font-size: 14px;
+  line-height: 1.7;
+}
+@media (max-width: 639px) {
+  .prose pre {
+    padding: 16px;
+    font-size: 13px;
+  }
+}
+
+/* Prism tokens. Every token resolves to one of six roles. */
+.prose pre .token.key,
+.prose pre .token.property,
+.prose pre .token.attr-name,
+.prose pre .token.selector,
+.prose pre .token.tag,
+.prose pre .token.function,
+.prose pre .token.class-name {
+  color: var(--docs-code-key);
+}
+.prose pre .token.string,
+.prose pre .token.char,
+.prose pre .token.attr-value,
+.prose pre .token.template-string,
+.prose pre .token.inserted {
+  color: var(--docs-code-string);
+}
+.prose pre .token.number,
+.prose pre .token.constant,
+.prose pre .token.symbol,
+.prose pre .token.operator,
+.prose pre .token.url,
+.prose pre .token.entity,
+.prose pre .token.regex,
+.prose pre .token.variable {
+  color: var(--docs-code-number);
+}
+.prose pre .token.boolean,
+.prose pre .token.keyword,
+.prose pre .token.important {
+  color: var(--docs-code-fg);
+  font-weight: 700;
+}
+.prose pre .token.punctuation {
+  color: var(--docs-code-fg);
+  opacity: 0.5;
+}
+.prose pre .token.comment,
+.prose pre .token.prolog,
+.prose pre .token.doctype,
+.prose pre .token.cdata,
+.prose pre .token.deleted {
+  color: var(--docs-code-fg);
+  opacity: 0.6;
+  font-style: italic;
+}
+.prose pre .token.bold {
+  font-weight: 700;
+}
+.prose pre .token.italic {
+  font-style: italic;
+}
+
+/* AppProse wraps each pre in .docs-code. The pre is the scroll region, so the
+   copy button anchors to the wrapper instead and stays put while the code
+   scrolls. The wrapper carries the block's margin. */
+.prose .docs-code {
+  position: relative;
+  margin: 1.5rem 0;
+}
+.prose .docs-code pre {
+  margin: 0;
+}
+
+/* Copy button, injected by AppProse. It sits over the code, so it is hidden
+   until the reader shows intent: hovering the block, focusing it (AppProse
+   makes each block focusable, so a tap or Tab reveals it), or tabbing to the
+   button itself. Opaque, so the code beneath never bleeds through. It
+   announces "Copied" through a live region and reserves the wider label's
+   width so the text swap does not move the button. */
+.prose .docs-code .docs-copy {
+  position: absolute;
+  /* 10px inside the pre's 1px border. */
+  top: 11px;
+  right: 11px;
+  display: inline-grid;
+  padding: 4px 10px;
+  border: 1px solid rgb(255 255 255 / 0.15);
+  border-radius: 6px;
+  background-color: #29323c;
+  background-color: color-mix(in srgb, var(--docs-code-bg), #fff 8%);
+  color: rgb(229 236 241 / 0.85);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 150ms, background-color 150ms, color 150ms, border-color 150ms;
+}
+.prose .docs-code:hover .docs-copy,
+.prose .docs-code:focus-within .docs-copy,
+.prose .docs-code .docs-copy[data-state='copied'] {
+  opacity: 1;
+}
+.prose .docs-code .docs-copy > span,
+.prose .docs-code .docs-copy::after {
+  grid-area: 1 / 1;
+}
+.prose .docs-code .docs-copy::after {
+  content: 'Copied';
+  visibility: hidden;
+}
+.prose .docs-code .docs-copy:hover,
+.prose .docs-code .docs-copy:focus-visible {
+  background-color: #3a434c;
+  background-color: color-mix(in srgb, var(--docs-code-bg), #fff 15%);
+  color: var(--docs-code-fg);
+}
+.prose .docs-code .docs-copy[data-state='copied'] {
+  border-color: hsl(var(--s) / 0.4);
+  color: hsl(var(--s));
+}

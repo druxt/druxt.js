@@ -1,9 +1,9 @@
 // GA4. @nuxtjs/google-analytics (the module this used to run through) only
-// ever spoke the Universal Analytics protocol via vue-analytics/analytics.js —
+// ever spoke the Universal Analytics protocol via vue-analytics/analytics.js -
 // UA stopped processing hits in July 2023, so it was silently collecting
 // nothing. Nuxt 3+'s replacement, nuxt-gtag, depends on @nuxt/kit and can't
 // run on this frozen Nuxt 2 stack, so this is a plain gtag.js snippet
-// instead — no new runtime dependency, same head.script mechanism the
+// instead - no new runtime dependency, same head.script mechanism the
 // colour-mode bridge already uses below.
 const GA_MEASUREMENT_ID = 'G-Y1ZRHGDGSD'
 
@@ -11,7 +11,7 @@ const GA_MEASUREMENT_ID = 'G-Y1ZRHGDGSD'
 // .lagoon.yml's `main` branch (druxtjs.org itself); every preview/branch
 // build gets 'development'. yarn generate runs inside Lagoon's own build
 // container (see docs/nuxt/Dockerfile), so this is set at generate time and
-// bakes the right answer into the static output per environment — preview
+// bakes the right answer into the static output per environment - preview
 // deploys never send hits into the real property.
 const isProduction = process.env.LAGOON_ENVIRONMENT_TYPE === 'production'
 
@@ -38,7 +38,7 @@ export default {
   // docs/nuxt/Dockerfile's final stage is `COPY --from=builder /app/docs/nuxt
   // /app`, so this file lands at /app/nuxt.config.js and `../../packages`
   // resolves outside the image. Verified: MODULE_NOT_FOUND in that layout,
-  // resolves fine from a repo checkout — which is why local and GitLab CI
+  // resolves fine from a repo checkout - which is why local and GitLab CI
   // `yarn generate` never caught it and only Lagoon deploys would break.
   // AppHeader's `v-if="version"` simply hides the badge when it is null.
   publicRuntimeConfig: {
@@ -54,7 +54,7 @@ export default {
       { hid: 'description', name: 'description', content: '' },
       { name: 'format-detection', content: 'telephone=no' },
     ],
-    // static/ ships icon.png, not a .ico — the old href 404s (on the live
+    // static/ ships icon.png, not a .ico - the old href 404s (on the live
     // site too, so this predates the redesign). @nuxtjs/pwa generates the
     // rest of the icon set from this same source image.
     link: [{ rel: 'icon', type: 'image/png', href: '/icon.png' }],
@@ -62,7 +62,7 @@ export default {
       // Sets data-theme before first paint, mirroring the localStorage/OS
       // preference logic @nuxtjs/color-mode runs internally. Needed because
       // 2.1.1 (the last Nuxt-2-compatible release) only supports writing a
-      // CSS class, not a data-theme attribute — see plugins/color-mode-
+      // CSS class, not a data-theme attribute - see plugins/color-mode-
       // theme.client.js for the reactive half of this bridge.
       {
         hid: 'druxt-theme-init',
@@ -72,7 +72,7 @@ export default {
       // vue-meta re-executes this inline script on every client-side
       // navigation, so gtag('config') re-fires and reports the destination
       // page. That means client-side routing is already counted and a
-      // router.afterEach page_view plugin would double-count them — measured
+      // router.afterEach page_view plugin would double-count them - measured
       // on a production-gated `yarn generate`, where one document load
       // produced js/config, then js/config again after a NuxtLink click.
       // Don't add one without re-measuring this first.
@@ -97,7 +97,7 @@ export default {
     },
   },
 
-  css: ['~/assets/css/app.css'],
+  css: ['~/assets/css/app.css', '~/assets/css/code.css'],
   plugins: [
     '~/plugins/color-mode-theme.client.js',
     '~/plugins/analytics.client.js',
@@ -121,7 +121,7 @@ export default {
 
   // The daisyUI themes in tailwind.config.js are named 'light' and 'dark'.
   // color-mode@2.1.1 only toggles a CSS class (no data-theme support until
-  // v3, which requires Nuxt 3/4) — classSuffix: '' makes that class match
+  // v3, which requires Nuxt 3/4) - classSuffix: '' makes that class match
   // the theme name; plugins/color-mode-theme.client.js + the head.script
   // above bridge it to the data-theme attribute daisyUI actually reads.
   colorMode: {
@@ -188,7 +188,8 @@ export default {
   content: {
     markdown: {
       // Anchors are what components/app/Toc.vue scroll-spies against.
-      prism: { theme: 'prism-themes/themes/prism-material-oceanic.css' },
+      // Token colours come from assets/css/code.css, not a Prism theme.
+      prism: { theme: false },
     },
   },
 
@@ -201,7 +202,7 @@ export default {
      * fetches its entries client side, so most of those links do not exist in
      * the generated HTML for the crawler to follow. Measured before this: 50 of
      * 109 API pages were written to dist, and the other 59 existed only as the
-     * SPA fallback — served by 200.html, invisible to a crawler, and impossible
+     * SPA fallback - served by 200.html, invisible to a crawler, and impossible
      * to list in a sitemap honestly.
      *
      * @returns {string[]} Route paths to generate.
