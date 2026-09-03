@@ -110,7 +110,8 @@ rather than requiring people to know the `/user/login` URL by heart.
 
 ## Where to go next
 
-- Keep learning: [Build a custom Druxt module](/tutorials/first-custom-module).
+- Keep learning: [Deploy your site](/tutorials/deploy-your-site), the
+  final lesson.
 - See this flow put to work in a real app: [Explore the example
   apps](/how-to/example-apps): Content Ops Console uses this exact login to
   authenticate its inline content editing.
