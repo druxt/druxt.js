@@ -24,7 +24,19 @@ const ensureMermaid = () => {
         theme: 'neutral',
         fontFamily: 'inherit',
         flowchart: { useMaxWidth: true },
-        sequence: { useMaxWidth: true },
+        // Wrapped messages keep four actors inside the 672px prose column,
+        // so labels stay at their CSS size instead of scaling down with
+        // the SVG. Font size and weight match the app.css text rules so
+        // layout measures what renders.
+        sequence: {
+          useMaxWidth: true,
+          wrap: true,
+          width: 150,
+          actorMargin: 20,
+          diagramMarginX: 8,
+          actorFontWeight: 600,
+          messageFontSize: 14,
+        },
       })
       return m.default
     })
