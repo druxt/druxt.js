@@ -59,23 +59,6 @@ html {
   }
 }
 
-/* The code-copy button is `opacity-0` until its `pre` is hovered, which left
-   it permanently invisible to keyboard users — still in the tab order, still
-   focusable, never shown (WCAG 2.4.7). A `focus:opacity-100` utility did not
-   take effect here, so this states it explicitly rather than depending on
-   JIT variant generation. Scoped to the button AppProse injects. */
-.prose pre button:focus,
-.prose pre button:focus-visible {
-  opacity: 1;
-}
-
-/* Touch devices have no hover, so the hover-revealed button never appears. */
-@media (hover: none) {
-  .prose pre button {
-    opacity: 1;
-  }
-}
-
 /* Filled brand buttons.
    `primary` (#53b0eb) and `secondary` (#41b883) are the brand tints and are
    used, correctly, for borders, badges, radios and icons. They are simply too
@@ -139,9 +122,10 @@ html {
 }
 
 /* Fenced mermaid diagrams, rendered by plugins/mermaid.client.js.
-   Colours override mermaid's own embedded stylesheet (hence !important)
-   with the daisyUI tokens, so diagrams follow the colour mode with no
-   re-render. */
+   The plugin strips mermaid's embedded styles, so these rules are the
+   only styling; !important still has to beat the presentation attributes
+   and inline font styles mermaid 8 writes on each element. Values are the
+   design spec against the daisyUI tokens, so both themes come from one rule. */
 .docs-diagram {
   margin: 1.5rem 0;
   overflow-x: auto;
@@ -150,31 +134,67 @@ html {
   display: block;
   margin: 0 auto;
   max-width: 100%;
+}
+/* Below 640px a diagram never renders under 70% of its natural size (the
+   floor plugins/mermaid.client.js sets); it scrolls in its container instead. */
+@media (max-width: 639px) {
+  .docs-diagram svg {
+    min-width: var(--docs-diagram-floor, 0);
+  }
+}
+/* Mermaid writes its own font stacks inline on each text element (Open-Sans
+   for actors, Trebuchet for messages), so the site font has to be forced on
+   the text itself, not just the svg. */
+.docs-diagram svg,
+.docs-diagram text,
+.docs-diagram tspan,
+.docs-diagram foreignObject div,
+.docs-diagram foreignObject span {
   font-family: inherit !important;
 }
-.docs-diagram .actor,
+
+/* Nodes and actors share one treatment: identity comes from a solid border
+   and a bold label, not a louder fill. */
+.docs-diagram rect.actor,
 .docs-diagram .node rect,
 .docs-diagram .node polygon,
 .docs-diagram .node circle,
+.docs-diagram .node path,
 .docs-diagram rect.rect {
   fill: hsl(var(--b2)) !important;
-  stroke: hsl(var(--bc) / 0.35) !important;
+  stroke: hsl(var(--b3)) !important;
+  stroke-width: 1px !important;
+  rx: 8;
+  ry: 8;
+}
+.docs-diagram text.actor,
+.docs-diagram .node .label,
+.docs-diagram .node .nodeLabel {
+  fill: hsl(var(--bc)) !important;
+  color: hsl(var(--bc)) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
 }
 .docs-diagram .cluster rect {
   fill: hsl(var(--b1)) !important;
-  stroke: hsl(var(--bc) / 0.25) !important;
+  stroke: hsl(var(--bc) / 0.2) !important;
+  stroke-width: 1px !important;
+  rx: 10;
+  ry: 10;
 }
+
 .docs-diagram text,
 .docs-diagram .messageText,
-.docs-diagram .noteText,
 .docs-diagram .labelText,
-.docs-diagram .loopText,
-.docs-diagram .cluster-label text,
-.docs-diagram .titleText {
+.docs-diagram .loopText {
   fill: hsl(var(--bc)) !important;
   stroke: none !important;
 }
-.docs-diagram .node .label,
+.docs-diagram .messageText,
+.docs-diagram .labelText,
+.docs-diagram .loopText {
+  font-size: 14px !important;
+}
 .docs-diagram .edgeLabel,
 .docs-diagram foreignObject div {
   color: hsl(var(--bc)) !important;
@@ -184,45 +204,216 @@ html {
   background-color: hsl(var(--b1)) !important;
   fill: hsl(var(--b1)) !important;
 }
+
+/* Line hierarchy: messages and edges, then lifelines, then frames. */
 .docs-diagram .messageLine0,
 .docs-diagram .messageLine1,
-.docs-diagram .actor-line,
 .docs-diagram .edgePath .path,
-.docs-diagram .flowchart-link,
-.docs-diagram .loopLine {
-  stroke: hsl(var(--bc) / 0.6) !important;
+.docs-diagram .flowchart-link {
+  stroke: hsl(var(--bc) / 0.75) !important;
+  stroke-width: 1.5px !important;
 }
 .docs-diagram .arrowheadPath,
-.docs-diagram marker path {
-  fill: hsl(var(--bc) / 0.6) !important;
+.docs-diagram marker path,
+.docs-diagram marker circle {
+  fill: hsl(var(--bc) / 0.75) !important;
   stroke: none !important;
 }
-.docs-diagram .note {
-  fill: hsl(var(--p) / 0.15) !important;
-  stroke: hsl(var(--p) / 0.6) !important;
+.docs-diagram marker.cross path {
+  fill: none !important;
+  stroke: hsl(var(--bc) / 0.75) !important;
 }
-.docs-diagram .messageText,
-.docs-diagram .noteText,
-.docs-diagram .labelText,
-.docs-diagram .loopText {
-  font-size: 14px !important;
+/* Mermaid 8 writes the actor height into the lifeline's class attribute
+   (class="200"), so lifelines are matched by id. */
+.docs-diagram line[id^="actor"],
+.docs-diagram .actor-line {
+  stroke: hsl(var(--bc) / 0.25) !important;
+  stroke-width: 1px !important;
 }
-.docs-diagram .actor {
-  rx: 6;
+.docs-diagram .loopLine {
+  stroke: hsl(var(--bc) / 0.4) !important;
+  stroke-width: 1px !important;
+}
+.docs-diagram .labelBox {
+  fill: hsl(var(--b2)) !important;
+  stroke: hsl(var(--bc) / 0.4) !important;
+  stroke-width: 1px !important;
 }
 
-/* Prose tables: contain wide tables in their own scroll region, and stop
-   identifiers (env var names, option keys) wrapping mid-token. The global
-   overflow-wrap: anywhere on code is for long URLs in running prose; inside
-   a cell it shredded names like NODE_OPTIONS. */
-.prose table {
+/* Notes read as an aside: a light primary tint, not a warning. */
+.docs-diagram .note {
+  fill: hsl(var(--p) / 0.1) !important;
+  stroke: hsl(var(--p) / 0.35) !important;
+  stroke-width: 1px !important;
+  rx: 4;
+  ry: 4;
+}
+.docs-diagram .noteText {
+  fill: hsl(var(--bc)) !important;
+  font-size: 13px !important;
+}
+
+/* Cluster titles and diagram titles carry the one accent. */
+.docs-diagram .cluster-label text,
+.docs-diagram .cluster-label .nodeLabel,
+.docs-diagram .titleText {
+  fill: hsl(var(--pf)) !important;
+  color: hsl(var(--pf)) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+/* Prose tables. AppProse wraps each table in .docs-table > .docs-table-scroll,
+   a scroll region that is only in the tab order while it overflows, and
+   labels body cells with their column heading for the stacked layout. */
+.prose .docs-table {
+  position: relative;
+  margin: 2em 0;
+}
+.prose .docs-table-scroll {
+  overflow-x: auto;
+}
+.prose .docs-table table {
+  margin: 0;
+}
+/* Until AppProse wraps it (or without JavaScript) a wide table scrolls itself. */
+.prose table:not([data-enhanced]) {
   display: block;
   width: max-content;
   max-width: 100%;
   overflow-x: auto;
 }
+/* Identifiers (env var names, option keys) stay on one line. The global
+   overflow-wrap: anywhere on code is for long URLs in running prose; inside
+   a cell it shredded names like NODE_OPTIONS. */
 .prose table code,
 .prose thead th {
   white-space: nowrap;
   overflow-wrap: normal;
+}
+.prose thead {
+  border-bottom: 0;
+}
+.prose thead th {
+  color: hsl(var(--bc));
+  font-weight: 600;
+  padding: 10px 16px;
+  border-bottom: 1px solid hsl(var(--bc) / 0.4);
+  vertical-align: top;
+}
+.prose tbody td {
+  padding: 10px 16px;
+  vertical-align: top;
+}
+.prose thead th:first-child,
+.prose tbody td:first-child {
+  padding-left: 0;
+}
+.prose tbody tr {
+  border-bottom: 1px solid hsl(var(--b3));
+}
+.prose tbody tr:last-child {
+  border-bottom: 0;
+}
+/* Right-edge fade while there is more table to the right. Painted as an
+   overlay, not a scroll shadow: cells are transparent, so a gradient behind
+   them would never show. AppProse toggles data-overflow from the scroller. */
+.prose .docs-table::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  background: linear-gradient(to right, hsl(var(--b1) / 0), hsl(var(--b1)));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.prose .docs-table[data-overflow]::after {
+  opacity: 1;
+}
+@media print {
+  .prose .docs-table::after {
+    display: none;
+  }
+}
+/* Below 640px a table with column headings stacks: each row becomes a block
+   headed by its first cell, and the other cells print their heading above
+   the value. Tables without headings keep scrolling. */
+@media (max-width: 639px) {
+  .prose .docs-table[data-stack] table,
+  .prose .docs-table[data-stack] tbody,
+  .prose .docs-table[data-stack] tr,
+  .prose .docs-table[data-stack] td {
+    display: block;
+  }
+  .prose .docs-table[data-stack] thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .prose .docs-table[data-stack] tr {
+    padding: 14px 0;
+    border-bottom: 1px solid hsl(var(--b3));
+  }
+  .prose .docs-table[data-stack] tr:last-child {
+    border-bottom: 0;
+  }
+  .prose .docs-table[data-stack] td {
+    padding: 0;
+    color: hsl(var(--bc));
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .prose .docs-table[data-stack] td:first-child {
+    font-weight: 600;
+  }
+  .prose .docs-table[data-stack] td + td::before {
+    content: attr(data-label);
+    display: block;
+    margin: 10px 0 3px;
+    color: hsl(var(--bc) / 0.6);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .prose .docs-table[data-stack] table code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Screenshot figures (AppFigure, and the figures AppProse builds around
+   prose images): a hairline frame, a shadow in light only, no browser chrome. */
+.docs-figure-frame {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid hsl(var(--b3));
+  border-radius: 8px;
+  background-color: hsl(var(--b2));
+  box-shadow: 0 1px 3px rgb(15 23 32 / 0.08);
+}
+[data-theme='dark'] .docs-figure-frame {
+  box-shadow: none;
+}
+.docs-figure-frame img {
+  display: block;
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+.docs-figure figcaption {
+  margin-top: 10px;
+  color: hsl(var(--bc) / 0.7);
+  font-size: 13px;
+  text-align: left;
 }

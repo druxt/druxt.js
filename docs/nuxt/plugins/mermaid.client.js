@@ -50,6 +50,11 @@ const renderInto = (mermaid, container, source) => {
         // Drop mermaid's embedded stylesheet: its #id-prefixed rules outrank
         // the site styles that give diagrams their colour-mode palette.
         el.querySelectorAll('style').forEach((style) => style.remove())
+        // useMaxWidth scales the diagram to its column; on a phone that
+        // shrank 14px labels to 4px. app.css reads this floor below 640px,
+        // where the diagram then scrolls in its container instead.
+        const natural = parseFloat((el.getAttribute('viewBox') || '').split(/\s+/)[2])
+        if (natural) el.style.setProperty('--docs-diagram-floor', `${Math.round(natural * 0.7)}px`)
       }
     })
   } catch (e) {

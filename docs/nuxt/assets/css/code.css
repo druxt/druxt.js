@@ -1,0 +1,122 @@
+/* Code blocks and their copy button.
+
+   One dark surface in both themes: the site's strongest identity element and
+   a single Prism palette to maintain. The literals are the dark theme's own
+   tokens, kept as custom properties so a theme can override them. This
+   replaces the prism-themes CSS @nuxt/content used to inject. */
+:root {
+  --docs-code-bg: #16202b;
+  --docs-code-border: #243040;
+  --docs-code-fg: #e5ecf1;
+  --docs-code-key: #53b0eb;
+  --docs-code-string: #41b883;
+  --docs-code-number: #7cc5f1;
+}
+
+.prose pre {
+  position: relative;
+  padding: 20px 24px;
+  border: 1px solid var(--docs-code-border);
+  border-radius: 8px;
+  background-color: var(--docs-code-bg);
+  color: var(--docs-code-fg);
+  font-size: 14px;
+  line-height: 1.7;
+}
+@media (max-width: 639px) {
+  .prose pre {
+    padding: 16px;
+    font-size: 13px;
+  }
+}
+
+/* Prism tokens. Every token resolves to one of six roles. */
+.prose pre .token.key,
+.prose pre .token.property,
+.prose pre .token.attr-name,
+.prose pre .token.selector,
+.prose pre .token.tag,
+.prose pre .token.function,
+.prose pre .token.class-name {
+  color: var(--docs-code-key);
+}
+.prose pre .token.string,
+.prose pre .token.char,
+.prose pre .token.attr-value,
+.prose pre .token.template-string,
+.prose pre .token.inserted {
+  color: var(--docs-code-string);
+}
+.prose pre .token.number,
+.prose pre .token.constant,
+.prose pre .token.symbol,
+.prose pre .token.operator,
+.prose pre .token.url,
+.prose pre .token.entity,
+.prose pre .token.regex,
+.prose pre .token.variable {
+  color: var(--docs-code-number);
+}
+.prose pre .token.boolean,
+.prose pre .token.keyword,
+.prose pre .token.important {
+  color: var(--docs-code-fg);
+  font-weight: 700;
+}
+.prose pre .token.punctuation {
+  color: var(--docs-code-fg);
+  opacity: 0.5;
+}
+.prose pre .token.comment,
+.prose pre .token.prolog,
+.prose pre .token.doctype,
+.prose pre .token.cdata,
+.prose pre .token.deleted {
+  color: var(--docs-code-fg);
+  opacity: 0.6;
+  font-style: italic;
+}
+.prose pre .token.bold {
+  font-weight: 700;
+}
+.prose pre .token.italic {
+  font-style: italic;
+}
+
+/* Copy button, injected by AppProse. Always visible, so keyboard and touch
+   users get the same affordance as hover; it announces "Copied" through a
+   live region and reserves the wider label's width so the text swap does
+   not move the button. */
+.prose pre .docs-copy {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-grid;
+  padding: 4px 10px;
+  border: 1px solid rgb(255 255 255 / 0.15);
+  border-radius: 6px;
+  background-color: rgb(255 255 255 / 0.08);
+  color: rgb(229 236 241 / 0.85);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+  transition: background-color 150ms, color 150ms, border-color 150ms;
+}
+.prose pre .docs-copy > span,
+.prose pre .docs-copy::after {
+  grid-area: 1 / 1;
+}
+.prose pre .docs-copy::after {
+  content: 'Copied';
+  visibility: hidden;
+}
+.prose pre .docs-copy:hover,
+.prose pre .docs-copy:focus-visible {
+  background-color: rgb(255 255 255 / 0.15);
+  color: var(--docs-code-fg);
+}
+.prose pre .docs-copy[data-state='copied'] {
+  border-color: hsl(var(--s) / 0.4);
+  color: hsl(var(--s));
+}

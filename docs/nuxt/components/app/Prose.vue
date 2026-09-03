@@ -55,6 +55,7 @@ import { trapTab } from '~/utils/focus'
  *
  * - images become captioned, click-to-enlarge figures (alt text is the caption)
  * - code blocks get a copy button
+ * - tables get a keyboard-reachable scroll region and per-cell column labels
  * - the "For more details, refer to the … API documentation" lines the modules
  *   end each component section with become buttons rather than bullet points
  * - the `* * *` rules between sections are hidden; the headings already
@@ -94,6 +95,11 @@ export default {
     },
   },
 
+  created() {
+    // Plain property, not data: observers are not render state.
+    this.tableObservers = []
+  },
+
   mounted() {
     this.$nextTick(this.enhance)
     this.onKey = (e) => { if (e.key === 'Escape') this.zoom = null }
@@ -104,6 +110,7 @@ export default {
   beforeDestroy() {
     window.removeEventListener('keydown', this.onKey)
     document.documentElement.style.overflow = ''
+    this.disconnectTables()
   },
 
 
@@ -116,8 +123,10 @@ export default {
       const root = this.$refs.prose
       if (!root) return
 
+      this.disconnectTables()
       this.figures(root)
       this.copyButtons(root)
+      this.tables(root)
       this.apiLinks(root)
       root.querySelectorAll('hr').forEach((hr) => hr.setAttribute('data-decorative', ''))
     },
@@ -134,14 +143,14 @@ export default {
         }
 
         const figure = document.createElement('figure')
-        figure.className = 'not-prose my-8'
+        figure.className = 'docs-figure not-prose my-8'
 
         // A button, not a div: it was click-only, so the enlarge affordance
         // existed for a mouse and for nothing else. Keyboard users could not
         // reach it and screen readers were not told it did anything.
         const frame = document.createElement('button')
         frame.type = 'button'
-        frame.className = 'block w-full rounded-box overflow-hidden cursor-[zoom-in]'
+        frame.className = 'docs-figure-frame cursor-[zoom-in]'
         frame.setAttribute('aria-label', img.alt ? 'Enlarge: ' + img.alt : 'Enlarge image')
         frame.addEventListener('click', () => { this.zoom = { src: img.src, alt: img.alt } })
 
@@ -151,7 +160,6 @@ export default {
 
         if (img.alt) {
           const caption = document.createElement('figcaption')
-          caption.className = 'mt-2 text-sm text-base-content/55'
           caption.textContent = img.alt
           figure.appendChild(caption)
         }
@@ -161,40 +169,120 @@ export default {
     copyButtons(root) {
       root.querySelectorAll('pre:not([data-enhanced])').forEach((pre) => {
         pre.setAttribute('data-enhanced', '')
-        pre.classList.add('relative', 'group')
 
         const button = document.createElement('button')
         button.type = 'button'
-        button.textContent = 'Copy'
+        button.className = 'docs-copy'
         // A label, because every one of these otherwise reads as a bare
-        // "Copy". Its focus visibility lives in assets/css/app.css: with only
-        // a hover variant the button stayed fully transparent while focused —
-        // in the tab order, but invisible to the keyboard user on it.
+        // "Copy". The visible text is a span so code.css can reserve the
+        // wider "Copied" width behind it.
         button.setAttribute('aria-label', 'Copy code to clipboard')
-        button.className = 'absolute top-2 right-2 px-2 py-1 rounded-btn text-xs bg-white/10 text-white/70 opacity-0 group-hover:opacity-100 transition-opacity'
+        const label = document.createElement('span')
+        label.textContent = 'Copy'
+        button.appendChild(label)
+
+        // The state change is announced here, not by the button text: the
+        // button keeps its name, and the live region reaches screen readers
+        // whether or not focus is still on the button.
+        const status = document.createElement('span')
+        status.className = 'sr-only'
+        status.setAttribute('role', 'status')
+        status.setAttribute('aria-live', 'polite')
+
+        const code = pre.querySelector('code') || pre
+        let timer
+        const setState = (state, text, announce) => {
+          clearTimeout(timer)
+          label.textContent = text
+          status.textContent = announce
+          if (state) button.dataset.state = state
+          else delete button.dataset.state
+        }
         // navigator.clipboard is undefined on non-secure origins (a preview
         // served over plain HTTP), and writeText can reject on a permission
         // denial — without this the button silently never reacts and the
         // rejection goes unhandled.
         button.addEventListener('click', async () => {
           try {
-            await navigator.clipboard.writeText(pre.innerText.replace(/\nCopy$/, ''))
-            button.textContent = 'Copied'
+            await navigator.clipboard.writeText(code.innerText)
+            setState('copied', 'Copied', 'Copied to clipboard')
             // Only a successful copy counts. A clipboard rejection means the
             // reader did not get the snippet, and recording it as usage would
             // overstate exactly the metric this exists to measure.
             this.$track(...copyCodeEvent(
               this.$route.path,
-              languageFromClass(pre.className) || languageFromClass((pre.querySelector('code') || {}).className),
+              languageFromClass(pre.className) || languageFromClass(code.className),
             ))
           } catch (e) {
-            button.textContent = 'Copy failed'
+            setState('failed', 'Failed', 'Copy failed')
           }
-          setTimeout(() => { button.textContent = 'Copy' }, 1500)
+          timer = setTimeout(() => setState(null, 'Copy', ''), 2000)
         })
 
         pre.appendChild(button)
+        pre.appendChild(status)
       })
+    },
+
+    tables(root) {
+      root.querySelectorAll('table:not([data-enhanced])').forEach((table) => {
+        table.setAttribute('data-enhanced', '')
+
+        // Column headings become data-label on every body cell; the stacked
+        // layout in app.css prints them above each value below 640px.
+        const headings = Array.from(table.querySelectorAll('thead th')).map((th) => th.textContent.trim())
+        table.querySelectorAll('tbody tr').forEach((row) => {
+          Array.from(row.children).forEach((cell, i) => {
+            if (headings[i]) cell.setAttribute('data-label', headings[i])
+          })
+        })
+
+        const wrapper = document.createElement('div')
+        wrapper.className = 'docs-table'
+        if (headings.length) wrapper.setAttribute('data-stack', '')
+
+        const scroller = document.createElement('div')
+        scroller.className = 'docs-table-scroll'
+        scroller.setAttribute('role', 'region')
+        scroller.setAttribute('aria-label', this.tableLabel(table, root))
+
+        table.parentNode.insertBefore(wrapper, table)
+        scroller.appendChild(table)
+        wrapper.appendChild(scroller)
+
+        // A scroll region is only a tab stop while it scrolls; the fade shows
+        // only while there is more to the right.
+        const update = () => {
+          const overflow = scroller.scrollWidth > scroller.clientWidth + 1
+          const atEnd = scroller.scrollLeft + scroller.clientWidth >= scroller.scrollWidth - 1
+          wrapper.toggleAttribute('data-overflow', overflow && !atEnd)
+          if (overflow) scroller.setAttribute('tabindex', '0')
+          else scroller.removeAttribute('tabindex')
+        }
+        scroller.addEventListener('scroll', update, { passive: true })
+        if (window.ResizeObserver) {
+          const observer = new ResizeObserver(update)
+          observer.observe(scroller)
+          observer.observe(table)
+          this.tableObservers.push(observer)
+        }
+        update()
+      })
+    },
+
+    // The nearest heading above the table names its scroll region.
+    tableLabel(table, root) {
+      for (let node = table; node && node !== root; node = node.parentElement) {
+        for (let prev = node.previousElementSibling; prev; prev = prev.previousElementSibling) {
+          if (/^H[1-6]$/.test(prev.tagName)) return prev.textContent.trim()
+        }
+      }
+      return this.document.title || 'Table'
+    },
+
+    disconnectTables() {
+      this.tableObservers.forEach((observer) => observer.disconnect())
+      this.tableObservers = []
     },
 
     apiLinks(root) {

@@ -163,6 +163,7 @@ themable
 toggleable
 topbar
 trixie
+tspan
 umami
 uncacheable
 unjs

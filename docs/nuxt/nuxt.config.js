@@ -97,7 +97,7 @@ export default {
     },
   },
 
-  css: ['~/assets/css/app.css'],
+  css: ['~/assets/css/app.css', '~/assets/css/code.css'],
   plugins: [
     '~/plugins/color-mode-theme.client.js',
     '~/plugins/analytics.client.js',
@@ -188,7 +188,8 @@ export default {
   content: {
     markdown: {
       // Anchors are what components/app/Toc.vue scroll-spies against.
-      prism: { theme: 'prism-themes/themes/prism-material-oceanic.css' },
+      // Token colours come from assets/css/code.css, not a Prism theme.
+      prism: { theme: false },
     },
   },
 
