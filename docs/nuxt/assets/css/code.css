@@ -83,10 +83,12 @@
   font-style: italic;
 }
 
-/* Copy button, injected by AppProse. Always visible, so keyboard and touch
-   users get the same affordance as hover; it announces "Copied" through a
-   live region and reserves the wider label's width so the text swap does
-   not move the button. */
+/* Copy button, injected by AppProse. It sits over the code, so it is hidden
+   until the reader shows intent: hovering the block, focusing it (AppProse
+   makes each block focusable, so a tap or Tab reveals it), or tabbing to the
+   button itself. Opaque, so the code beneath never bleeds through. It
+   announces "Copied" through a live region and reserves the wider label's
+   width so the text swap does not move the button. */
 .prose pre .docs-copy {
   position: absolute;
   top: 10px;
@@ -95,13 +97,20 @@
   padding: 4px 10px;
   border: 1px solid rgb(255 255 255 / 0.15);
   border-radius: 6px;
-  background-color: rgb(255 255 255 / 0.08);
+  background-color: #29323c;
+  background-color: color-mix(in srgb, var(--docs-code-bg), #fff 8%);
   color: rgb(229 236 241 / 0.85);
   font-size: 12px;
   font-weight: 500;
   line-height: 1.5;
   text-align: center;
-  transition: background-color 150ms, color 150ms, border-color 150ms;
+  opacity: 0;
+  transition: opacity 150ms, background-color 150ms, color 150ms, border-color 150ms;
+}
+.prose pre:hover .docs-copy,
+.prose pre:focus-within .docs-copy,
+.prose pre .docs-copy[data-state='copied'] {
+  opacity: 1;
 }
 .prose pre .docs-copy > span,
 .prose pre .docs-copy::after {
@@ -113,7 +122,8 @@
 }
 .prose pre .docs-copy:hover,
 .prose pre .docs-copy:focus-visible {
-  background-color: rgb(255 255 255 / 0.15);
+  background-color: #3a434c;
+  background-color: color-mix(in srgb, var(--docs-code-bg), #fff 15%);
   color: var(--docs-code-fg);
 }
 .prose pre .docs-copy[data-state='copied'] {

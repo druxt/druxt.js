@@ -169,6 +169,9 @@ export default {
     copyButtons(root) {
       root.querySelectorAll('pre:not([data-enhanced])').forEach((pre) => {
         pre.setAttribute('data-enhanced', '')
+        // Focusable, as a scrollable region should be, and so a tap or Tab
+        // reveals the copy button where there is no hover.
+        pre.tabIndex = 0
 
         const button = document.createElement('button')
         button.type = 'button'
