@@ -32,9 +32,8 @@ default language. The demo backend, which does not carry the patch,
 shows it live: `/router/translate-path?path=/es/recipes` answers with
 the `/en/recipes` resource.
 
-Earlier versions of this guide also patched `jsonapi_menu_items`, which
-has included language support since 1.2.4. Translated **Views** routes
-are tracked separately in
+Menus need `jsonapi_menu_items` 1.2.4 or later. Translated **Views**
+routes do not resolve yet, tracked in
 [druxt#3273228](https://www.drupal.org/project/druxt/issues/3273228).
 
 ## Fetch a translated resource
