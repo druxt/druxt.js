@@ -81,16 +81,16 @@ an `nginx` service whose image contains the generated files plus a
   (declared as build arguments), not just the running container. This
   is true of any Docker-based platform.
 - The backend must be reachable from the builder. Gate the build on the
-  backend answering (`curl` its `/jsonapi` until 200) and retry the
-  build once or twice; large generates can fail transiently.
+  backend answering (`curl` its `/jsonapi` until 200), and retry the
+  build once or twice, because large generates can fail transiently.
 
 ## Content freshness
 
 Server-rendered pages are live. Generated pages in the hybrid are not:
 rebuild on a schedule, or from a Drupal webhook, whichever matches how
-often editors publish. See [Deploy a
-static site](/how-to/deploy-static#after-the-first-deploy) for the
-rebuild options; they apply to the hybrid's static half unchanged.
+often editors publish. The rebuild options in [Deploy a static
+site](/how-to/deploy-static#after-the-first-deploy) apply to the
+hybrid's static half unchanged.
 
 ## Where to go next
 

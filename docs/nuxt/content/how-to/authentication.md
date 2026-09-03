@@ -45,20 +45,20 @@ leaked token while keeping sessions usable.
 ## Drupal: create a scope
 
 Simple OAuth 6 refuses any authorization request it cannot resolve a
-scope for, and **a fresh site ships no scopes**, so every login fails
+scope for, and **a fresh site has an empty scope list**, so every login fails
 with "Check the `scope` parameter" until one exists. Create one at
 `/admin/config/people/simple_oauth/oauth2_scope`: grant types
-`authorization_code` and `refresh_token`, granularity **role**, mapped
-to the role your users hold. Drupal ships two built-in roles, Anonymous
-and Authenticated, and permissions attach to roles; `authenticated` is
-the usual mapping here.
+`authorization_code` and `refresh_token`, with the `granularity` field
+set to **role** and mapped to the role your users hold. Drupal has two
+built-in roles, Anonymous and Authenticated, and permissions attach to
+roles, so `authenticated` is the usual mapping here.
 
 ## Drupal: create the consumer
 
-A Consumer is Drupal's entity for one registered OAuth client; the
-`consumers` module providing it installs with Simple OAuth. Create one
-at `/admin/config/services/consumers` (an administrator account is
-needed for all of these forms):
+A Consumer is Drupal's entity for one registered OAuth client, provided
+by the `consumers` module that arrives as a Simple OAuth dependency.
+Create one at `/admin/config/services/consumers` (an administrator
+account is needed for all of these forms):
 
 | Field | Value |
 | ----- | ----- |
@@ -87,9 +87,9 @@ export default {
 }
 ```
 
-No `scope` option is needed: when the app sends none, Drupal applies
-the consumer's default scopes, which is why the table above sets your
-scope as the default. Pass `scope: ['<machine-name>']` only when one
+No `scope` option is needed. When the app sends none, Drupal applies
+the consumer's default scopes, and the consumer table above made your
+scope that default. Pass `scope: ['<machine-name>']` only when one
 consumer serves several scopes and this app must pick; the value must
 equal the scope's machine name in Drupal, or logins fail with the same
 "Check the `scope` parameter" error.
@@ -113,17 +113,17 @@ that path errors. Either create your own page at `pages/user/login.vue`
 that calls `loginWith`, or point the menu link somewhere the frontend
 owns. There is no default login page to fall back on.
 
-## Which requests carry the token
+## Which requests send the token
 
 On login, `@nuxtjs/auth-next` sets the `Authorization` header on the
 app's shared axios instance, and Druxt's client uses that same instance
 by default, so JSON:API requests for entities, menus and routes carry
 the token automatically. Drupal then applies the user's real permissions
-to every response. Two caveats:
+to every response. The caveats:
 
 - The header is global to that instance. Requests your app makes to
-  third-party APIs through the same `$axios` carry the user's token
-  too; give those a separate axios instance.
+  third-party APIs through the same `$axios` include the user's token
+  too. Give those a separate axios instance.
 - Configuring `druxt.axios` in `nuxt.config.js` makes the DruxtClient
   create its own instance, and the automatic header no longer reaches
   it. Either keep the default wiring, or attach the token explicitly
