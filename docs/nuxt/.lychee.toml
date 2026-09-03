@@ -6,6 +6,10 @@
 # Hosts that block automated requests or rate-limit bots. Excluded to reduce
 # false negatives that don't indicate a real dead link.
 exclude = [
+  # Root-relative /images/ links resolve against the production base-url,
+  # but new screenshots only exist in-branch until the site deploys; the
+  # files themselves ship in static/images with the same change.
+  "druxtjs.org/images/",
   "linkedin.com",
   "npmjs.com",
   "fonts.gstatic.com",
