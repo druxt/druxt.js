@@ -93,9 +93,13 @@ consumer serves several scopes and this app must pick; the value must
 equal the scope's machine name in Drupal, or logins fail with the same
 "Check the `scope` parameter" error.
 
-The module registers two strategies: `drupal-authorization_code` (the
-PKCE flow above, the right default) and `drupal-password` (server-side
-password grant). Trigger a login from any component:
+The module registers two strategies. `drupal-authorization_code` is the
+PKCE flow above and the one to use. `drupal-password` (server-side
+password grant) does not work against the backend this page builds:
+Simple OAuth 6 removed the password grant (its remaining grants are
+authorization code, client credentials and refresh token), so that
+strategy only functions against a Simple OAuth 5.x backend. Trigger a
+login from any component:
 
 ```js
 this.$auth.loginWith('drupal-authorization_code');
@@ -159,4 +163,4 @@ immediately should force a reload or flush the affected resources.
 - [Request topology](/explanation/request-topology#cookies-and-sessions):
   how hosting layout affects cookies and credentialed CORS.
 - [druxt-auth README](https://github.com/druxt/druxt-auth): every module
-  option, including the password-grant strategy's server-side secret.
+  option.
