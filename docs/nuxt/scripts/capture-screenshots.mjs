@@ -145,6 +145,12 @@ await page.goto(uli, { waitUntil: 'networkidle' })
 
 for (const shot of SHOTS) {
   await page.goto(BACKEND + shot.path, { waitUntil: 'networkidle' })
+  // One-time login links are single-use: a stale link bounces every admin
+  // path to the login form, which would be screenshotted without this.
+  if (page.url().includes('/user/login')) {
+    console.error(`${shot.name}: landed on ${page.url()} - the one-time login URL is stale or already used. Generate a fresh one and re-run.`)
+    process.exit(1)
+  }
   if (shot.prepare) await shot.prepare(page)
   const file = path.join(OUT, shot.name)
   await screenshotElement(page, shot.selector, file)

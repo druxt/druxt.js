@@ -10,14 +10,37 @@
  * Authoring contract: a first line of `%% <text>` becomes the SVG's
  * accessible label.
  */
-import mermaid from 'mermaid'
 
 let uid = 0
+let mermaidReady
 
-const renderInto = (container, source) => {
+// Only diagram pages pay for the library; everything else skips the chunk.
+const ensureMermaid = () => {
+  mermaidReady =
+    mermaidReady ||
+    import('mermaid').then((m) => {
+      m.default.initialize({
+        startOnLoad: false,
+        theme: 'neutral',
+        fontFamily: 'inherit',
+        flowchart: { useMaxWidth: true },
+        sequence: { useMaxWidth: true },
+      })
+      return m.default
+    })
+  return mermaidReady
+}
+
+const renderInto = (mermaid, container, source) => {
   const label = (source.match(/^%% (.+)$/m) || [])[1]
   try {
     mermaid.render(`docs-diagram-${uid++}`, source, (svg) => {
+      // Mermaid 8 reports parse failures through an empty callback rather
+      // than a throw; fall back to the readable source either way.
+      if (!svg) {
+        container.textContent = source
+        return
+      }
       container.innerHTML = svg
       const el = container.querySelector('svg')
       if (el) {
@@ -37,25 +60,21 @@ const renderInto = (container, source) => {
 }
 
 const renderAll = () => {
-  document.querySelectorAll('pre code.language-mermaid, pre.language-mermaid code').forEach((code) => {
-    const wrapper = code.closest('.nuxt-content-highlight') || code.closest('pre')
-    if (!wrapper) return
-    const source = code.textContent.trim()
-    const container = document.createElement('div')
-    container.className = 'docs-diagram'
-    wrapper.replaceWith(container)
-    renderInto(container, source)
+  if (!document.querySelector('pre code.language-mermaid, pre.language-mermaid code')) return
+  ensureMermaid().then((mermaid) => {
+    document.querySelectorAll('pre code.language-mermaid, pre.language-mermaid code').forEach((code) => {
+      const wrapper = code.closest('.nuxt-content-highlight') || code.closest('pre')
+      if (!wrapper) return
+      const source = code.textContent.trim()
+      const container = document.createElement('div')
+      container.className = 'docs-diagram'
+      wrapper.replaceWith(container)
+      renderInto(mermaid, container, source)
+    })
   })
 }
 
 export default ({ app }) => {
-  mermaid.initialize({
-    startOnLoad: false,
-    theme: 'neutral',
-    fontFamily: 'inherit',
-    flowchart: { useMaxWidth: true },
-    sequence: { useMaxWidth: true },
-  })
   window.onNuxtReady(() => {
     renderAll()
     app.router.afterEach(() => {
