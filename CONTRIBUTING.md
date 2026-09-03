@@ -84,7 +84,7 @@ The Content Ops Console: a BootstrapVue editorial app with authenticated JSON:AP
 
 ### node-client
 
-A non-Nuxt example: the `druxt-inspect` CLI built on DruxtClient. See [Use Druxt in a Node application](https://druxtjs.org/how-to/use-the-node-client).
+A non-Nuxt example script showing DruxtClient and DruxtSchema in plain Node. Not a shipped tool. See [Use Druxt in a Node application](https://druxtjs.org/how-to/use-the-node-client).
 
 The reader-facing tour of these apps is [Explore the example apps](https://druxtjs.org/how-to/example-apps).
 
