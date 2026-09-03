@@ -91,8 +91,10 @@ over more than one place.
 ## What you can skip
 
 Drupal's own rendering stack, Twig templates, the theme layer and render
-arrays: Druxt replaces all of it with Vue, and a standard Druxt site
-never touches Drupal's routing or form APIs either. If a Drupal tutorial
+arrays: Druxt replaces all of it with Vue, and you never write code
+against Drupal's routing or form APIs either. Drupal itself keeps
+owning paths and aliases; the frontend resolves them through the
+decoupled router, which is backend configuration, not code you write. If a Drupal tutorial
 spends its time in `.theme` files and Twig, it is solving a problem Druxt
 has already taken off your plate.
 
