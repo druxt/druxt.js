@@ -197,3 +197,5 @@ The same three ideas power every Druxt module in the
   [Component resolution](/explanation/component-resolution).
 - Read the base class reference:
   [DruxtModule API](/api/packages/druxt/components/DruxtModule).
+- Keep learning: [Add a login flow](/tutorials/authentication), the
+  next lesson.
