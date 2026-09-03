@@ -66,12 +66,12 @@ leaked token while keeping sessions usable.
 Simple OAuth 6 refuses any authorization request it cannot resolve a
 scope for, and **a fresh site has an empty scope list**, so every login fails
 with "Check the `scope` parameter" until one exists. Create one at
-`/admin/config/people/simple_oauth/oauth2_scope`: grant types
-`authorization_code` and `refresh_token`, with the `granularity` field
-set to **role** and mapped to the role your users hold; `authenticated`
-is the usual mapping here.
+`/admin/config/people/simple_oauth/oauth2_scope/dynamic/add`: grant
+types `authorization_code` and `refresh_token`, with the `granularity`
+field set to **role** and mapped to the role your users hold;
+`authenticated` is the usual mapping here.
 
-![The Simple OAuth Scopes administration screen, where Dynamic scopes are managed](/images/backend-scopes.png)
+![The Add scope form: machine-readable name, description, grant type checkboxes, and the field mapping the scope to a role](/images/backend-scopes.png)
 
 ## Drupal: create the consumer
 
