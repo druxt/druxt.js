@@ -106,7 +106,7 @@ const buildLlmsTxt = (docs, options) => {
       // Labelled from the route, not the document title. docgen titles each
       // package index after the first symbol it happens to document, so
       // /api/packages/blocks is titled "DruxtBlocksModule" and
-      // /api/packages/site is titled "DruxtSiteMixin" — names that point at one
+      // /api/packages/site is titled "DruxtSiteMixin" - names that point at one
       // export rather than the package a reader is looking for.
       const name = doc.route.split('/').pop()
       const label = name.charAt(0).toUpperCase() + name.slice(1)

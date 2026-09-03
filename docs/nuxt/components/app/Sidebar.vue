@@ -4,7 +4,7 @@
          below the sidebar's own lg:sticky breakpoint; on full-bleed pages
          (docs=false) the sidebar never goes sticky, so it must stay in
          overlay mode as long as the header's hamburger trigger is visible
-         (xl:hidden) — otherwise there's a width range with a trigger but
+         (xl:hidden) - otherwise there's a width range with a trigger but
          no backdrop or close button to dismiss it. -->
     <div v-if="open" class="fixed inset-0 z-40 bg-neutral/60" :class="docs ? 'lg:hidden' : 'xl:hidden'" @click="$emit('close')" />
 
@@ -88,10 +88,6 @@ export default {
 
   data: () => ({ shortcut: MAC_SHORTCUT }),
 
-  mounted() {
-    this.shortcut = searchShortcut()
-  },
-
   computed: {
     // Excludes the page you are on: it was always the first entry, spending a
     // row of a five-row list on the one document you certainly don't need a
@@ -101,8 +97,12 @@ export default {
       .slice(0, 5),
   },
 
+  mounted() {
+    this.shortcut = searchShortcut()
+  },
+
   methods: {
-    /** Where a recent document sits, so same-titled pages are told apart. */
+    // Where a recent document sits, so same-titled pages are told apart.
     contextFor(to) {
       return documentContext(to)
     },

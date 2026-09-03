@@ -5,7 +5,7 @@
         The hamburger opens the drawer, so it must disappear exactly where the
         drawer does. On documentation pages the sidebar becomes sticky at `lg`,
         so above that the button had nothing to open: between 1024 and 1279px
-        it was visible but inert — the drawer's own backdrop and close button
+        it was visible but inert - the drawer's own backdrop and close button
         are `lg:hidden`, and the click handler only ever sets `sidebar = true`,
         so it could not even be undone. The homepage has no sticky sidebar, so
         there the drawer (and this button) stay useful until `xl`, where the
@@ -31,7 +31,7 @@
         ecosystem: Vite, VitePress and Pinia all make the version in the nav
         a link to their changelog. The target is the site's own generated
         page (docgen writes api/packages/<pkg>/CHANGELOG from the package's
-        CHANGELOG.md) rather than GitHub, so the reader stays in the docs —
+        CHANGELOG.md) rather than GitHub, so the reader stays in the docs -
         it is the same page the module pages already call "Release notes".
       -->
       <NuxtLink
@@ -114,15 +114,15 @@ export default {
     external: ({ $store }) => $store.state.menu.filter((o) => o.component === 'a'),
   },
 
+  mounted() {
+    this.shortcut = searchShortcut()
+  },
+
   methods: {
-    /** GitHub and Discord get their own marks; anything else falls back. */
+    // GitHub and Discord get their own marks; anything else falls back.
     iconFor(link) {
       return 'app-icon-' + (link.icon || 'external')
     },
-  },
-
-  mounted() {
-    this.shortcut = searchShortcut()
   },
 }
 </script>

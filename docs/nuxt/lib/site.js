@@ -125,7 +125,7 @@ const canonicalUrl = (path) => {
 const sectionFor = (path) => {
   const normalised = normalisePath(path)
   // Component reference pages live under /api/packages/*/components/, but
-  // they belong to the Components section — the sidebar, header, breadcrumb
+  // they belong to the Components section - the sidebar, header, breadcrumb
   // and OG cards all claim them for it, and the descriptions here follow.
   if (/^\/api\/packages\/[^/]+\/components(\/|$)/.test(normalised)) return 'components'
   const first = normalised.split('/').filter(Boolean)[0]
@@ -137,7 +137,7 @@ const sectionFor = (path) => {
  *
  * content/modules/entity/deprecations.md has no frontmatter at all, so it has
  * no title to read, and the page currently renders `<title>druxtjs-org</title>`
- * — the npm package name, picked up as the last fallback. Used by the build
+ * - the npm package name, picked up as the last fallback. Used by the build
  * and by the runtime `head()` alike so the two agree.
  *
  * @param {string} path - A route path.
@@ -194,8 +194,8 @@ const docTypeFor = (path) => {
   const first = normalisePath(path).split('/').filter(Boolean)[0]
   if (!first) return 'home'
   // hasOwnProperty, not a truthiness lookup: `SECTIONS['constructor']` resolves
-  // up the prototype chain to a truthy value, so `/constructor` — and
-  // `/toString`, `/__proto__`, and anything else a scanner probes — would
+  // up the prototype chain to a truthy value, so `/constructor` - and
+  // `/toString`, `/__proto__`, and anything else a scanner probes - would
   // report as its own bucket. `docTypeExpression` uses Object.keys and never
   // had the hole, so this was also a live disagreement between the two.
   return Object.prototype.hasOwnProperty.call(SECTIONS, first) ? first : 'other'
@@ -206,8 +206,8 @@ const docTypeFor = (path) => {
  * GA4 snippet.
  *
  * The snippet is a string in nuxt.config.js and cannot import this module, so
- * the section list is baked in at build time from `SECTIONS` — the one place
- * it is defined — rather than being retyped. `docTypeFor` and this expression
+ * the section list is baked in at build time from `SECTIONS` - the one place
+ * it is defined - rather than being retyped. `docTypeFor` and this expression
  * are asserted to agree in the unit tests, which is what stops them drifting.
  *
  * It must stay an expression evaluated at call time, not a constant: vue-meta

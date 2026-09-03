@@ -179,7 +179,7 @@ export default {
     ],
     // Only the entries marked `enabled` are offered. The rest stay listed
     // here, rather than being deleted, because they are expected back once
-    // they are working again — flipping the flag is the whole change. The
+    // they are working again - flipping the flag is the whole change. The
     // picker hides itself while only one is enabled (see `starterKits`),
     // so a single-option radio group is never rendered.
     quickstarts: [
@@ -271,7 +271,7 @@ export default {
         // convention and is not processed as a GA4 event. window.gtag is a
         // global (top-level function declaration in the classic inline
         // snippet), and optional-chaining keeps this a silent no-op wherever
-        // the production-gated snippet isn't present — dev, preview, SSR.
+        // the production-gated snippet isn't present - dev, preview, SSR.
         window.gtag?.('event', 'copy_quickstart_command', { repo: this.repo, runner: this.runner })
       } catch (e) {
         // Say so, rather than leaving the button silent. navigator.clipboard

@@ -73,7 +73,7 @@ export default {
     // Fallback for Nuxt's own scroll-to-top: its scrollBehavior resolves via
     // a `triggerScroll` event Nuxt emits after the page transition
     // completes, but that signal never fires when a navigation crosses the
-    // isDocs boundary above — leaving/entering the full-bleed home template
+    // isDocs boundary above - leaving/entering the full-bleed home template
     // swaps this layout's entire surrounding markup (sidebar, TOC aside),
     // not just the <Nuxt/> page slot, which the transition mechanism isn't
     // built to handle. Path-gated (not hash) so TOC anchor jumps still work.
@@ -137,7 +137,7 @@ export default {
 
 <style scoped>
 /* Tailwind's JIT engine here doesn't convert the underscore-as-space in
-   multi-token arbitrary values (e.g. grid-cols-[17rem_minmax(0,1fr)]) — it
+   multi-token arbitrary values (e.g. grid-cols-[17rem_minmax(0,1fr)]) - it
    compiles to the literal, invalid `17rem_minmax(0,1fr)`, which the browser
    ignores, silently collapsing this to a single-column grid (sidebar, then
    content, stacked). Plain CSS avoids the arbitrary-value parser entirely. */
