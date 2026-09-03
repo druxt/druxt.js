@@ -6,7 +6,9 @@
  *   - A Druxt site's Storybook running (default http://localhost:3003).
  *     The documented source is the monorepo's examples/druxt-site:
  *     `BASE_URL=<backend> NODE_OPTIONS=--openssl-legacy-provider yarn storybook`
- *     (the NODE_OPTIONS prefix on Node 17+ only).
+ *     (the NODE_OPTIONS prefix on Node 17+ only). Use an Umami backend
+ *     (docs/drupal, or https://demo-api.druxtjs.org) so the entity story
+ *     carries real fields.
  *   - playwright resolvable, as in capture-screenshots.mjs.
  *   - Optional: pngquant on PATH (or PNGQUANT env) for optimization.
  *
@@ -69,10 +71,18 @@ try {
   optimize(file)
   console.log(`captured ${file}`)
 
-  // One generated story with its controls: the site's main menu.
-  await page.locator(`${tree} [data-nodetype="story"]`, { hasText: 'Main navigation' }).first().click()
-  await page.waitForTimeout(6000)
-  file = path.join(OUT, 'storybook-menu-story.png')
+  // One generated entity story with its controls: a recipe's full display,
+  // which carries the most fields on an Umami backend.
+  for (const label of [/^Node$/, /^Recipe$/]) {
+    await page.locator(`${tree} [data-nodetype="group"]`, { hasText: label }).first().click()
+    await page.waitForTimeout(900)
+  }
+  await page.locator(`${tree} [data-nodetype="component"]`, { hasText: 'View displays' }).first().click()
+  await page.waitForTimeout(900)
+  await page.locator(`${tree} [data-nodetype="story"]`, { hasText: /^full$/ }).first().click()
+  // The story auto-selects a real entity uuid; give the fetch time.
+  await page.waitForTimeout(8000)
+  file = path.join(OUT, 'storybook-entity-story.png')
   await page.screenshot({ path: file })
   optimize(file)
   console.log(`captured ${file}`)

@@ -58,7 +58,7 @@ in Drupal, and after a Storybook restart its story is there.
 
 ## Work a story
 
-![A generated menu story rendering the site's live main navigation, with fifteen controls for the component's props](/images/storybook-menu-story.png)
+![A recipe's full display story rendering live Umami content, its summary, category, tags and timing fields, with the uuid control set to a real recipe](/images/storybook-entity-story.png)
 
 Every story renders through the same components the site uses, against
 live data, and the Controls panel exposes the component's props. Entity
