@@ -53,7 +53,8 @@ server fallback. One build serves generated pages from a web server with
 long cache headers, and a node service behind it catches routes that
 were not generated, such as authenticated pages. Nuxt's `target` option
 (the build target) can be driven by an environment variable so one
-`nuxt.config.js` serves all modes.
+`nuxt.config.js` serves all modes; [Deploy a server-rendered
+site](/how-to/deploy-server) shows the working shape.
 
 ## Choosing a model
 
@@ -87,6 +88,8 @@ so the data half of that is ready.
 
 - [Deploy a static site](/how-to/deploy-static): the generate-and-host
   procedure.
+- [Deploy a server-rendered site](/how-to/deploy-server): the node
+  service and the hybrid.
 - [Environment variables](/how-to/environment-variables): what each
   build needs to know.
 - [The deploy-your-site tutorial](/tutorials/deploy-your-site): this

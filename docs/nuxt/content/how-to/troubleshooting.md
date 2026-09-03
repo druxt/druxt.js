@@ -1,6 +1,6 @@
 ---
 title: Troubleshoot common issues
-weight: 2
+weight: 7
 description: Quick answers to the problems reported most often by real users, from the missing Vue template box to site-wide JSON:API 403 failures.
 ---
 
@@ -95,8 +95,9 @@ backend](/how-to/prepare-the-backend).
 ## "require() of ES Module axios" crash on a fresh install
 
 Nuxt 2's webpack 4 resolves newer axios releases through their ESM
-entry, which the server, built as CommonJS, cannot load. Pin axios to a 0.x
-release, or transpile it in `nuxt.config.js`:
+entry, which the server, built as CommonJS, cannot load. Pin axios to a
+0.x release (the [compatibility table](/modules/druxt) lists the known
+pins), or transpile it in `nuxt.config.js`:
 
 ```js
 export default {

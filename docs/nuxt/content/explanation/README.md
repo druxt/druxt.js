@@ -21,7 +21,7 @@ instructions. For doing, see the [How-to guides](/how-to).
   data source.
 - [Component resolution](/explanation/component-resolution): wrapper
   discovery and the theme layer.
-- [Request topology](/explanation/request-topology): build, server and
-  browser requests, and what that means for CORS, the proxy and hosting.
-- [Deployment models](/explanation/deployment-models): fully static,
-  static with a live backend, or server-rendered, and how to choose.
+- [Request topology](/explanation/request-topology): which requests
+  happen where, and why CORS only ever bites in the browser.
+- [Deployment models](/explanation/deployment-models): three production
+  shapes and the decision framework between them.
