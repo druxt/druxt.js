@@ -17,6 +17,26 @@ knowing which of the three is failing.
 | Server rendering | The Node server rendering a page                         | On each uncached page request           | No                                             |
 | Browser          | The visitor's browser, after hydration                   | On client-side navigation and live data | Yes, when calling Drupal directly cross-origin |
 
+The same table, as a picture:
+
+```mermaid
+%% The three request contexts. Only browser requests cross the CORS boundary.
+flowchart LR
+  subgraph once [At build time]
+    G["nuxt generate / nuxt build"]
+  end
+  subgraph perRequest [During server rendering]
+    S[Node server]
+  end
+  subgraph client [In the browser]
+    V[Visitor's browser]
+  end
+  D[("Drupal<br>JSON:API")]
+  G -->|"schemas + content"| D
+  S -->|"routes + resources"| D
+  V -->|"navigation + live data<br>(CORS applies)"| D
+```
+
 CORS is a browser security mechanism. Requests made by Node, at build time
 or during server rendering, are ordinary server-to-server HTTP and are
 never blocked by CORS. Hydration is the moment the browser's JavaScript

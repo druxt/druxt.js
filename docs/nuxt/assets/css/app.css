@@ -69,6 +69,13 @@ html {
   opacity: 1;
 }
 
+/* Touch devices have no hover, so the hover-revealed button never appears. */
+@media (hover: none) {
+  .prose pre button {
+    opacity: 1;
+  }
+}
+
 /* Filled brand buttons.
    `primary` (#53b0eb) and `secondary` (#41b883) are the brand tints and are
    used, correctly, for borders, badges, radios and icons. They are simply too
@@ -129,4 +136,93 @@ html {
 .search-row input:focus,
 .search-row input:focus-visible {
   outline: none !important;
+}
+
+/* Fenced mermaid diagrams, rendered by plugins/mermaid.client.js.
+   Colours override mermaid's own embedded stylesheet (hence !important)
+   with the daisyUI tokens, so diagrams follow the colour mode with no
+   re-render. */
+.docs-diagram {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+.docs-diagram svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  font-family: inherit !important;
+}
+.docs-diagram .actor,
+.docs-diagram .node rect,
+.docs-diagram .node polygon,
+.docs-diagram .node circle,
+.docs-diagram rect.rect {
+  fill: hsl(var(--b2)) !important;
+  stroke: hsl(var(--bc) / 0.35) !important;
+}
+.docs-diagram .cluster rect {
+  fill: hsl(var(--b1)) !important;
+  stroke: hsl(var(--bc) / 0.25) !important;
+}
+.docs-diagram text,
+.docs-diagram .messageText,
+.docs-diagram .noteText,
+.docs-diagram .labelText,
+.docs-diagram .loopText,
+.docs-diagram .cluster-label text,
+.docs-diagram .titleText {
+  fill: hsl(var(--bc)) !important;
+  stroke: none !important;
+}
+.docs-diagram .node .label,
+.docs-diagram .edgeLabel,
+.docs-diagram foreignObject div {
+  color: hsl(var(--bc)) !important;
+}
+.docs-diagram .edgeLabel,
+.docs-diagram .edgeLabel rect {
+  background-color: hsl(var(--b1)) !important;
+  fill: hsl(var(--b1)) !important;
+}
+.docs-diagram .messageLine0,
+.docs-diagram .messageLine1,
+.docs-diagram .actor-line,
+.docs-diagram .edgePath .path,
+.docs-diagram .flowchart-link,
+.docs-diagram .loopLine {
+  stroke: hsl(var(--bc) / 0.6) !important;
+}
+.docs-diagram .arrowheadPath,
+.docs-diagram marker path {
+  fill: hsl(var(--bc) / 0.6) !important;
+  stroke: none !important;
+}
+.docs-diagram .note {
+  fill: hsl(var(--p) / 0.15) !important;
+  stroke: hsl(var(--p) / 0.6) !important;
+}
+.docs-diagram .messageText,
+.docs-diagram .noteText,
+.docs-diagram .labelText,
+.docs-diagram .loopText {
+  font-size: 14px !important;
+}
+.docs-diagram .actor {
+  rx: 6;
+}
+
+/* Prose tables: contain wide tables in their own scroll region, and stop
+   identifiers (env var names, option keys) wrapping mid-token. The global
+   overflow-wrap: anywhere on code is for long URLs in running prose; inside
+   a cell it shredded names like NODE_OPTIONS. */
+.prose table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.prose table code,
+.prose thead th {
+  white-space: nowrap;
+  overflow-wrap: normal;
 }

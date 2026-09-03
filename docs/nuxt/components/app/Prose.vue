@@ -201,6 +201,10 @@ export default {
       root.querySelectorAll('li > a[href^="/api/"]').forEach((link) => {
         const li = link.parentNode
         if (li.children.length !== 1 || li.dataset.enhanced) return
+        // Only when the link IS the whole item: a link followed by prose
+        // (": full method reference.") must stay a bullet, or the button
+        // renders with an orphaned text tail beside it.
+        if (li.textContent.trim() !== link.textContent.trim()) return
         li.dataset.enhanced = ''
         li.classList.add('list-none', 'ml-0')
         link.className = 'not-prose inline-flex items-center gap-2 px-3 py-1.5 rounded-btn border border-base-300 text-sm no-underline hover:border-primary'

@@ -13,7 +13,7 @@
       </a>
     </AppPageHeader>
 
-    <NuxtContent class="prose" :document="document" />
+    <AppProse :document="document" />
   </article>
 </template>
 

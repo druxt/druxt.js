@@ -102,6 +102,7 @@ export default {
     '~/plugins/color-mode-theme.client.js',
     '~/plugins/analytics.client.js',
     '~/plugins/chunk-reload.client.js',
+    '~/plugins/mermaid.client.js',
   ],
   components: true,
 

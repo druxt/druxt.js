@@ -57,6 +57,8 @@ permissions attach to roles. Grant **Access DruxtJS JSON:API resources**
 drush role:perm:add anonymous 'access druxt resources'
 ```
 
+![The Drupal permissions table filtered to DruxtJS, with Access DruxtJS JSON:API resources checked for the Anonymous user role](/images/backend-permissions.png)
+
 The permission grants read-only (GET) access to the configuration
 resources the frontend needs to build itself: entity view and form
 displays and modes, field and field storage configuration, JSON:API
@@ -88,6 +90,8 @@ drush config:set jsonapi.settings read_only 0 -y
 
 Skip this if the site never writes through the API; read-only is the
 safer place to stay.
+
+![Drupal's JSON:API settings form with the accept-all-operations option selected](/images/backend-jsonapi-settings.png)
 
 ## Have some content and displays
 

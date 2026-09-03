@@ -3,7 +3,7 @@
 
     <AppPageHeader :title="document.title" :description="document.description" />
 
-    <NuxtContent class="prose" :document="document" />
+    <AppProse :document="document" />
 
     <AppDocFooter :edit-path="editPath" :prev="prev" :next="next" />
   </article>

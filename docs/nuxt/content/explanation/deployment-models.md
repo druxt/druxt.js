@@ -23,6 +23,24 @@ behind this page.
 | Forms, auth, search  | No                     | Yes                                  | Yes             |
 | API proxy            | No (no server)         | No (no server)                       | Yes             |
 
+The shapes, side by side:
+
+```mermaid
+%% The three deployment models and what keeps talking to Drupal
+flowchart TB
+  subgraph m1 [Fully static]
+    H1[Static host] --- V1[Visitors]
+  end
+  subgraph m2 [Static + live backend]
+    H2[Static host] --- V2[Visitors]
+    V2 -.->|"forms, auth, search"| D2[(Drupal)]
+  end
+  subgraph m3 [Server-rendered]
+    V3[Visitors] --> N3[Node service]
+    N3 -->|every request| D3[(Drupal)]
+  end
+```
+
 **Fully static** generates every page at build time and deploys plain
 files, with no backend left running. This is a deliberate build mode, not the
 default: an ordinary build still asks Drupal to resolve routes when a
