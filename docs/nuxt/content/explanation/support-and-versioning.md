@@ -34,8 +34,10 @@ maintained base, not to chase new majors. Adopting a newer Nuxt is
 - **Deprecation before removal.** An API scheduled for removal keeps
   working through the whole 1.x line, warns in the console when used,
   and is removed in 2.0.0.
-- **Fixes keep coming.** The 1.x line receives bug and security fixes
-  for the supported stack above.
+- **Fixes, within reason.** The 1.x line receives bug and security
+  fixes for the stack above while 2.0.0 is developed, and within reason
+  after 2.0.0 is released. 2.0.0 is the priority, and 1.x maintenance
+  does not come ahead of it.
 
 ## How deprecation works
 
