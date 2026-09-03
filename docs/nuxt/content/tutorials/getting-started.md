@@ -15,7 +15,10 @@ You'll use:
 - **The one-command setup**: provisions a local throwaway Drupal (SQLite)
   with Druxt and OAuth pre-configured.
 
-No prior Druxt knowledge is assumed.
+No prior Druxt knowledge is assumed. If one half of the stack is new to
+you, [Drupal for Nuxt developers](/explanation/drupal-for-nuxt-developers)
+and [Nuxt for Drupal developers](/explanation/nuxt-for-drupal-developers)
+fill in the other side's vocabulary. This tutorial works without them.
 
 ## Prerequisites
 

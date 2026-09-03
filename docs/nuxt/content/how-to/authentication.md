@@ -10,7 +10,9 @@ description: 'The full OAuth setup from scratch: Simple OAuth keys, scopes and a
 > backend. Drupal-side commands run in the Drupal project root, with
 > [drush](https://www.drush.org) installed
 > (`composer require drush/drush`); if the backend runs in a container,
-> prefix them with your tool's exec command.
+> prefix them with your tool's exec command. New to the Drupal side?
+> Start with
+> [Drupal for Nuxt developers](/explanation/drupal-for-nuxt-developers).
 
 Druxt authenticates with OAuth 2 Authorization Code + PKCE:
 [Simple OAuth](https://www.drupal.org/project/simple_oauth) on the Drupal

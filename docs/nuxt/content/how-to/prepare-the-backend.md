@@ -14,7 +14,10 @@ Commands run in the Drupal project root. `composer` manages Drupal
 dependencies; [drush](https://www.drush.org) is Drupal's CLI, installed
 into the project with `composer require drush/drush`. If the backend
 runs in a container, prefix commands with your tool's exec command.
-Every step also has an admin-UI path, noted as it appears.
+Every step also has an admin-UI path, noted as it appears. If Drupal and
+its tooling are new to you,
+[Drupal for Nuxt developers](/explanation/drupal-for-nuxt-developers)
+explains the concepts these steps lean on.
 
 ## Install the Druxt module
 
