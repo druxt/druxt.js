@@ -72,7 +72,7 @@ Ask Drupal for a resource with an `Origin` header, and check the
 response:
 
 ```sh
-curl -sI -H "Origin: https://www.example.com" \
+curl -s -o /dev/null -D - -H "Origin: https://www.example.com" \
   https://cms.example.com/jsonapi | grep -i access-control
 ```
 
