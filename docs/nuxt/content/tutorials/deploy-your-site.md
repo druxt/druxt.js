@@ -141,7 +141,7 @@ browsers can reach. The realistic options:
   next to hosted Drupal.
 - **A databaseless backend.** Drupal can exist only at build time, its
   content exported to files with
-  [Tome](https://tome.fyi), and the
+  [Tome](https://www.drupal.org/project/tome), and the
   [quickstart-druxt-site-tome](https://github.com/druxt/quickstart-druxt-site-tome)
   starter is this shape. Freeing the result from any backend also means
   disabling the router middleware, covered under the fully static
