@@ -39,8 +39,10 @@ are tracked separately in
 
 ## Fetch a translated resource
 
-Every DruxtClient method and DruxtStore action takes a langcode
-`prefix`, falling back to the backend's default language when omitted:
+The DruxtClient resource methods (`getResource`, `getCollection`,
+`getCollectionAll`, `getIndex`) and the matching DruxtStore actions
+take a langcode `prefix`, falling back to the backend's default
+language when omitted:
 
 ```js
 this.$store.dispatch('druxt/getResource', {

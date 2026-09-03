@@ -43,38 +43,42 @@ const URL = process.argv[2] || 'http://localhost:3003'
 const optimize = (file) => {
   const pngquant = process.env.PNGQUANT || 'pngquant'
   try {
-    execFileSync(pngquant, ['--force', '--skip-if-larger', '--quality', '65-90', '--output', file, file])
-  } catch (e) { /* optional */ }
-}
-
-const browser = await chromium.launch()
-const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
-await page.goto(URL, { waitUntil: 'networkidle', timeout: 60000 })
-await page.waitForTimeout(4000)
-
-const tree = '#storybook-explorer-tree'
-// The generated inventory, expanded one level.
-for (const label of ['Blocks', 'Entity', 'Menu', 'Views']) {
-  try {
-    await page.locator(`${tree} [data-nodetype="group"]`, { hasText: label }).first().click()
-    await page.waitForTimeout(800)
-  } catch (e) {
-    console.error(`group not found: ${label} - is the backend serving content?`)
+      execFileSync(pngquant, ['--force', '--skip-if-larger', '--quality', '65-90', '--output', file, file])
+    } catch (e) { /* optional */ }
   }
+
+  const browser = await chromium.launch()
+try {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+  await page.goto(URL, { waitUntil: 'networkidle', timeout: 60000 })
+  await page.waitForTimeout(4000)
+
+  const tree = '#storybook-explorer-tree'
+  // The generated inventory, expanded one level.
+  for (const label of ['Blocks', 'Entity', 'Menu', 'Views']) {
+    try {
+      await page.locator(`${tree} [data-nodetype="group"]`, { hasText: label }).first().click()
+      await page.waitForTimeout(800)
+    } catch (e) {
+      console.error(`group not found: ${label} - is the backend serving content?`)
+    }
+  }
+  await page.waitForTimeout(1500)
+  let file = path.join(OUT, 'storybook-tree.png')
+  await page.screenshot({ path: file })
+  optimize(file)
+  console.log(`captured ${file}`)
+
+  // One generated story with its controls: the site's main menu.
+  await page.locator(`${tree} [data-nodetype="story"]`, { hasText: 'Main navigation' }).first().click()
+  await page.waitForTimeout(6000)
+  file = path.join(OUT, 'storybook-menu-story.png')
+  await page.screenshot({ path: file })
+  optimize(file)
+  console.log(`captured ${file}`)
+
+  console.log('Done. Review the images before committing.')
+} finally {
+  // A failed capture must not leave Chromium holding the process open.
+  await browser.close()
 }
-await page.waitForTimeout(1500)
-let file = path.join(OUT, 'storybook-tree.png')
-await page.screenshot({ path: file })
-optimize(file)
-console.log(`captured ${file}`)
-
-// One generated story with its controls: the site's main menu.
-await page.locator(`${tree} [data-nodetype="story"]`, { hasText: 'Main navigation' }).first().click()
-await page.waitForTimeout(6000)
-file = path.join(OUT, 'storybook-menu-story.png')
-await page.screenshot({ path: file })
-optimize(file)
-console.log(`captured ${file}`)
-
-await browser.close()
-console.log('Done. Review the images before committing.')

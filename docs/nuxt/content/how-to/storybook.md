@@ -21,8 +21,12 @@ from.
    does not use:
 
    ```sh
-   npm i -D @nuxtjs/storybook@4 @storybook/addon-docs
+   npm i -D @nuxtjs/storybook@4
    ```
+
+   The module bundles `@storybook/addon-essentials` at the matching
+   Storybook 6 version; do not add addons unversioned, since current
+   majors require Storybook 10.
 
 2. Run it (on Node 17 or later, prefix with
    `NODE_OPTIONS=--openssl-legacy-provider`, as for any build in this
@@ -66,7 +70,7 @@ makes Storybook the fastest way to answer "what does this display mode
 look like" without building a page.
 
 The **Docs** tab on each component collects its props and stories on
-one page (that is what `@storybook/addon-docs` is for).
+one page. It comes with the bundled essentials addon.
 
 ## Develop a theme component in isolation
 
@@ -86,7 +90,9 @@ backend holds.
 
 `nuxt storybook build` writes a static Storybook
 (by default to `storybook-static/`), deployable to any static host like any other
-build output. The Umami demo publishes its Storybook at
+build output. The stories still make live requests, so Drupal must
+[allow the Storybook origin through CORS](/how-to/configure-cors) when
+it is served from a different origin. The Umami demo publishes its Storybook at
 [umami-storybook.druxtjs.org](https://umami-storybook.druxtjs.org),
 which is this whole page in live form against the Umami demo content.
 
