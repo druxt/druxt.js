@@ -18,8 +18,7 @@ tutorial](/tutorials/getting-started).
 - [Proxy the Drupal backend through Nuxt](/how-to/proxy): prevent CORS issues.
 - [Browse and develop components in Storybook](/how-to/storybook): zero-config stories with live data.
 - [Debug Druxt with the Vue Devtools](/how-to/devtools): inspect connections and suggestions.
-- [Use the Druxt client directly](/how-to/use-the-druxt-client): fetch resources without components.
-- [Use Druxt in a Node application](/how-to/use-the-node-client): run the client outside Nuxt.
+- [Use the Druxt client directly](/how-to/use-the-druxt-client): fetch resources without components, in Nuxt or plain Node.
 - [Explore the example apps](/how-to/example-apps): four complete reference implementations.
 - [Deploy a static site](/how-to/deploy-static): the worked Netlify example, from local proof to rebuild hooks.
 - [Deploy a server-rendered site](/how-to/deploy-server): the node service behind nginx, and the hybrid with a server fallback.

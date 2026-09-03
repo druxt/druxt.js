@@ -4,13 +4,23 @@ weight: -1
 description: Fetch resources and collections with DruxtClient, with or without Nuxt.
 ---
 
-> **Before you start:** this guide assumes a working Druxt site (see
-> [Getting started](/tutorials/getting-started)) and a reason to bypass the
-> component layer: custom fetching, scripting, or non-Nuxt usage.
+> **Before you start:** this guide assumes a Drupal backend with Druxt
+> enabled (see [Getting started](/tutorials/getting-started)) and a reason
+> to bypass the component layer: custom fetching, scripting, or non-Nuxt
+> usage.
 
-The DruxtClient is the communication layer between Nuxt and the Drupal JSON:API.
+The DruxtClient is the communication layer between the frontend and the
+Drupal JSON:API. It provides methods to get JSON:API resources and
+collections of resources from the Drupal server using the
+[Axios](https://www.npmjs.com/package/axios) library.
 
-It provides methods to get JSON:API resources and collections of resources from the Drupal server using the [Axios](https://www.npmjs.com/package/axios) library.
+It is plain JavaScript with no Vue or Nuxt requirement. Inside a Druxt
+site it is already there as `this.$druxt`; in any other Node process,
+install it and instantiate it yourself:
+
+```sh
+npm install druxt
+```
 
 ## Setup
 
@@ -116,3 +126,27 @@ druxt.getCollectionAll('node--recipe').then((collections) => {
   }
 });
 ```
+
+## Testing against fixtures
+
+`DruxtClient` accepts an axios instance via `options.axios`, the same
+injection point Nuxt's plugin uses. Handing it an axios adapter that
+replays recorded JSON:API responses lets a test suite run with no
+backend at all.
+
+## A worked example
+
+The monorepo's
+[`examples/node-client`](https://github.com/druxt/druxt.js/tree/develop/examples/node-client)
+directory shows the client and `druxt-schema` in a standalone Node
+script (listing a backend's resource types, printing schemas, sampling
+content), with a Jest suite running against recorded fixtures through
+the axios injection point. It is an example of what you could build,
+not part of the framework. The package is private to the repository and
+not published to npm.
+
+## Where to go next
+
+- [The schema system](/explanation/schemas): what schemas are and where
+  they come from.
+- [DruxtClient API](/api/packages/druxt/client): every method.
