@@ -1,5 +1,5 @@
 ---
-title: Deprecations
+title: DruxtMenu deprecations
 weight: 10
 description: The retired DruxtMenu items computed property, and what replaces it.
 ---

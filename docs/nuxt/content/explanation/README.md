@@ -1,7 +1,7 @@
 ---
 title: Concepts
 weight: -10
-description: 'Understanding-oriented explanations of how Druxt works and why: architecture, the store, decoupled routing, schemas and component resolution.'
+description: 'Understanding-oriented explanations of how Druxt works and why, from the architecture and data flow to deployment shapes and the vocabulary of both sides of the stack.'
 ---
 
 Concepts are **understanding-oriented**: they explain how Druxt works and the
@@ -29,3 +29,5 @@ instructions. For doing, see the [How-to guides](/how-to).
   the backend vocabulary and tooling, in frontend terms.
 - [Nuxt for Drupal developers](/explanation/nuxt-for-drupal-developers):
   the frontend concepts, mapped to the Drupal ideas they replace.
+- [Support and versioning](/explanation/support-and-versioning): what a
+  release number promises, and how deprecation works.

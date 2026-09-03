@@ -14,17 +14,21 @@ the styling is _your_ components, discovered by _its_ rules.
 ## The suggestion chain
 
 A `DruxtEntity` rendering an article in the `teaser` mode generates
-candidates like:
+candidates in this order (most specific first):
 
 ```text
 DruxtEntityNodeArticleTeaser
+DruxtEntityNodeTeaser
 DruxtEntityNodeArticle
 DruxtEntityNode
-DruxtEntity
+DruxtEntityTeaser
 ```
 
-The first **registered** component wins; if none match, Druxt falls back to
-its own default rendering. Candidate sets combine any context the module
+Bare `DruxtEntity` is never a candidate. The first candidate that exists
+as a component in your project wins; if none match, Druxt falls back to
+its own default rendering. Registered means discovered by Nuxt's
+auto-import from your `components/` directory, so a saved file is
+immediately a candidate. Candidate sets combine any context the module
 provides (entity type, bundle, view mode, field name), and, when a
 language is in play, a langcode-suffixed variant of every candidate
 (`DruxtEntityNodeArticleTeaserEs`) is tried first.

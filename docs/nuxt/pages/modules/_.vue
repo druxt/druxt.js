@@ -1,5 +1,9 @@
 <template>
   <div>
+    <!-- docgen lifts the README's h1 into frontmatter, so without this the
+         page has no h1 at all and its outline starts at h2. -->
+    <AppPageHeader v-if="document" :title="document.title" :description="document.description" />
+
     <!-- Every module README opens with a screenshot; it becomes the hero. -->
     <AppFigure v-if="hero" :src="hero.src" :alt="hero.alt" class="mb-8" />
 

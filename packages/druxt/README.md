@@ -57,6 +57,9 @@ As of September 2026. Current release: druxt 0.24.0, published November 2023.
 | Drupal module | `drupal/druxt` ^1.2, which brings `decoupled_router`, `jsonapi_menu_items` and `jsonapi_views`. Hold `decoupled_router` below 2.0.7 ([#3618675](https://www.drupal.org/i/3618675)). |
 | Known pins    | `@nuxtjs/storybook` 4.2.0 (later majors need Nuxt 3); axios 0.x, or add it to `build.transpile`                                                                                     |
 
+What these bounds promise over time is stated in the
+[support and versioning policy](https://druxtjs.org/explanation/support-and-versioning).
+
 Translated routes additionally need a `decoupled_router` patch; see the
 [multilingual guide](https://druxtjs.org/how-to/multilingual).
 

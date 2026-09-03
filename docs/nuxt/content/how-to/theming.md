@@ -1,7 +1,7 @@
 ---
 title: Theme Druxt components
 weight: -6
-description: Customize Druxt component output with wrapper components, the default template, slots and props, without forking or patching the framework.
+description: Change Druxt component output with wrapper components, the default template, slots and props, without forking or patching the framework.
 ---
 
 > **Before you start:** this guide assumes a working Druxt site (see
@@ -9,51 +9,77 @@ description: Customize Druxt component output with wrapper components, the defau
 > [Component resolution](/explanation/component-resolution) for why the
 > suggestion chain works the way it does.
 
-Druxt components can be themed using two primary methods:
+Druxt components are themed two ways: a **wrapper component** placed at a
+conventional path, or the **default template** passed inline. Wrappers are
+the Drupal-template-suggestions of Druxt; the default template is the
+quick inline override.
 
-- [Druxt wrapper components](#druxtwrapper)
-- [Default template injection](#default-template)
+## Theme with a wrapper component
 
----
+Everything follows from one rule: **the file path is the component
+name**. Nuxt auto-imports everything under `components/`, turning the
+path into a PascalCase name, and Druxt renders the most specific name
+that exists. The file starts working the moment it is saved.
 
-## DruxtWrapper
+1. Render a Druxt component:
 
-Druxt modules use a DruxtWrapper component system to render a Vue component with the available data, slots, props and $attrs to be used for theming.
+   ```vue
+   <Druxt module="entity" :props-data="{ type: 'node--article', uuid: page.uuid }" />
+   ```
 
-The specific component rendered is determined by list of available component options, made from properties and data provided by the module, and using the first registered option.
+2. Create a wrapper at the path that spells the suggestion you want to
+   own. To theme every article in the default display:
 
-e.g., A DruxtEntity component might render a `DruxtEntityNodeArticleDefault.vue` wrapper component.
+   ```vue
+   <!-- components/druxt/entity/node/article/Default.vue -->
+   <!-- Auto-imported as DruxtEntityNodeArticleDefault -->
+   <template>
+     <div>
+       <h1>{{ entity.attributes.title }}</h1>
+
+       <slot />
+     </div>
+   </template>
+
+   <script>
+   export default {
+     props: {
+       entity: { type: Object, required: true },
+     },
+   };
+   </script>
+   ```
+
+3. Reload. The entity now renders through your wrapper: your markup, the
+   module's data, arriving as props.
+
+Each module passes its own props (`entity` here; a block wrapper gets
+`block`, and so on), and anything you do not declare as a prop is still
+available on `$attrs`. Declare what you use, as above, so the template
+reads plainly.
 
 ![Example DruxtWrapper in Vue dev tools](/images/theming-druxt-wrapper.png)
 
-Component options can be seen via the `component.options` data of the relevant Druxt module component.
+## Find the right wrapper name
 
-If there are no matching component names, a default `DruxtWrapper` component will be used to render the default output of the module.
+The full candidate list for any component on the page is in its
+`component.options` data, visible in
+[Vue devtools](/how-to/devtools). In development mode, `DruxtBlock` and
+`DruxtField` also print the list in the debug box described below,
+with a Create button that scaffolds the file for you. If no candidate
+matches, the plain `DruxtWrapper` default output renders, so a site
+with no wrappers still works.
 
-- For more details, see the [DruxtModule API documentation](/api/packages/druxt/components/DruxtModule).
-
-```vue
-<Druxt module="entity" :props-data="{ type: 'node--article', uuid }" />
-```
-
-```vue
-<!-- ~/components/druxt/entity/node/article/Default.vue -->
-<template>
-  <div>
-    <h1>{{ $attrs.entity.attributes.title }}</h1>
-
-    <slot />
-  </div>
-</template>
-```
-
----
+- Full lookup order and naming rules:
+  [Component resolution](/explanation/component-resolution).
+- Base class details:
+  [DruxtModule API](/api/packages/druxt/components/DruxtModule).
 
 ## Default template
 
-Most Druxt modules can have the default template overridden, allowing for full control of the default slot rendering.
-
-The available data provided to the template scope is determined by the relevant module.
+Most Druxt modules accept an inline default template, giving full control
+of the default slot without creating a file. The template scope receives the
+same data the module would pass a wrapper:
 
 ```vue
 <DruxtEntity v-bind="props">
@@ -65,17 +91,16 @@ The available data provided to the template scope is determined by the relevant 
 </DruxtEntity>
 ```
 
-By default, a component using the default template will not be wrapped by a DruxtWrapper component. It is possible to enable the DruxtWrapper system by setting the `wrapper` property to `true`:
+A component with a default template skips the wrapper system. To have
+both, set the `wrapper` property:
 
 ```vue
 <DruxtBlock v-bind="props" :wrapper="true">
   <template #default="{ block }">
-    // This will be wrapped by a DruxtBlock Wrapper component.
+    <!-- Wrapped by a DruxtBlock wrapper component. -->
   </template>
 </DruxtBlock>
 ```
-
----
 
 ## "Missing Vue template" box
 
@@ -94,5 +119,14 @@ Either way, this is expected, not an error, and it **only renders when Nuxt
 is in development mode** (`$nuxt.context.isDev`); production builds show
 nothing there instead. Expand it and you'll find a dropdown of every valid
 wrapper name for that component (from `component.options`, the same list
-described under [DruxtWrapper](#druxtwrapper) above) plus a **Create**
+described under [Find the right wrapper name](#find-the-right-wrapper-name) above) plus a **Create**
 button that scaffolds the file for you, wrapper path already filled in.
+
+## Where to go next
+
+- [Component resolution](/explanation/component-resolution): the naming
+  rules behind the wrapper system.
+- [Build your first custom module](/tutorials/first-custom-module): the
+  same mechanism from the module author's side.
+- [Debug Druxt with the Vue Devtools](/how-to/devtools): inspect
+  `component.options` live.

@@ -1,6 +1,6 @@
 ---
 title: Nuxt for Drupal developers
-weight: -8
+weight: -1
 description: 'The Nuxt and Vue concepts behind a Druxt frontend, mapped to the Drupal ideas they replace.'
 ---
 
@@ -25,17 +25,17 @@ topology](/explanation/request-topology) covers what runs where.
 
 ## The mapping
 
-| Drupal idea                             | Nuxt/Vue counterpart               | Notes                                                                                                                                     |
-| --------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Twig template                           | Vue component                      | Markup, logic and styling in one `.vue` file                                                                                              |
-| Theme hook suggestions                  | Druxt component suggestions        | The deliberate twin; see below                                                                                                            |
-| Region                                  | Layout with `<slot>` or `<nuxt />` | Layouts wrap pages the way `page.html.twig` wraps content                                                                                 |
-| Module                                  | Nuxt module or plugin              | Configured in `nuxt.config.js`                                                                                                            |
-| `settings.php`                          | `nuxt.config.js`                   | One file, JavaScript, in version control                                                                                                  |
-| Composer                                | npm (or yarn)                      | `package.json` is `composer.json`, `npm install` restores the tree                                                                        |
-| drush                                   | npm scripts                        | `npm run dev`, `npm run generate` and friends, defined per project                                                                        |
-| Cache rebuild                           | Restart the dev server, or rebuild | Config changes need a restart. Content is live in dev and SSR; a generated static build embeds it, so content changes need a regeneration |
-| Routing (`*.routing.yml`, path aliases) | The Druxt wildcard route           | Drupal keeps owning paths; see [Decoupled routing](/explanation/routing)                                                                  |
+| Drupal idea | Nuxt/Vue counterpart | Notes |
+| ----------- | -------------------- | ----- |
+| Twig template | Vue component | Markup, logic and styling in one `.vue` file |
+| Theme hook suggestions | Druxt component suggestions | The deliberate twin; see below |
+| Region | Layout with `<slot>` or `<nuxt />` | Layouts are the outer shell only: DruxtSite still renders your backend theme's block regions from Drupal |
+| Module | Nuxt module or plugin | Configured in `nuxt.config.js` |
+| `settings.php` | `nuxt.config.js` | One file, JavaScript, in version control |
+| Composer | npm (or yarn) | `package.json` is `composer.json`, `npm install` restores the tree |
+| drush | npm scripts | `npm run dev`, `npm run setup` and friends, defined per project |
+| Cache rebuild | Restart the dev server, or rebuild | Config changes need a restart. Content is live in dev and SSR; a generated static build embeds it, so content changes need a regeneration |
+| Routing (`*.routing.yml`, path aliases) | The Druxt wildcard route | Drupal keeps owning paths; see [Decoupled routing](/explanation/routing) |
 
 ## The part that will feel familiar
 
@@ -53,7 +53,7 @@ hands-on guide.
 
 A `.vue` file can hold three sections, each optional: `<template>` (the markup, with
 `{{ variable }}` interpolation much like Twig), `<script>` (the
-component's data and behavior) and `<style>`. Data flows into components
+component's data and behaviour) and `<style>`. Data flows into components
 through **props**, roughly the variables a preprocess function hands a
 template. Named **slots** are insertion points a wrapper exposes, the
 concept behind Druxt's themeable wrappers. The examples in these docs

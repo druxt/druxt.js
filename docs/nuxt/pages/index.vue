@@ -6,7 +6,7 @@
         <AppLogo class="w-20 mb-7" title="DruxtJS" />
         <h1 class="text-4xl sm:text-5xl font-bold tracking-tight" v-text="slogan" />
         <p class="mt-4 text-lg text-base-content/70 max-w-xl">
-          Druxt is a framework for building fully decoupled Drupal and Nuxt.js applications and sites.
+          Drupal decides the content and the layout; Nuxt renders it. Fully decoupled, themeable component by component.
         </p>
         <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
           <NuxtLink class="btn btn-primary gap-2" to="/tutorials/getting-started">
@@ -131,10 +131,10 @@
         <div>
           <h2 class="text-2xl font-semibold">Built with Druxt</h2>
           <p class="mt-4 text-base-content/70">
-            Four reference apps run against the same Drupal Umami demo content. The smallest is a ten page pattern index. The largest is the Content Ops Console, above.
+            Four reference apps run against the same Drupal Umami demo content. The smallest is an eleven page pattern index. The largest is the Content Ops Console, above.
           </p>
           <p class="mt-3 text-sm text-base-content/70">
-            It edits difficulty and prep time inline, and filters for articles with fields still missing.
+            Every edit it makes is an authenticated OAuth2 write back through JSON:API, and it filters for content with fields still missing.
           </p>
           <NuxtLink class="btn btn-primary btn-sm mt-6" to="/how-to/example-apps">Explore the example apps</NuxtLink>
         </div>
@@ -165,20 +165,6 @@ import { SITE_DESCRIPTION } from '~/lib/site'
 import { seoHead } from '~/utils/seo'
 
 export default {
-  head() {
-    return {
-      // The homepage is the one page whose title should not be suffixed: it is
-      // already the site name, and head.titleTemplate would make it
-      // "DruxtJS - DruxtJS".
-      titleTemplate: 'DruxtJS - The Fully Decoupled Drupal Framework',
-      ...seoHead({
-        title: null,
-        description: SITE_DESCRIPTION,
-        path: '/',
-        type: 'website',
-      }),
-    }
-  },
 
   data: () => ({
     slogan: 'The Fully Decoupled Drupal Framework',
@@ -216,7 +202,7 @@ export default {
       {
         icon: 'app-icon-globe',
         title: 'Multilingual and proxy support',
-        description: 'Language negotiation and a request proxy work out of the box for multilingual Drupal sites.',
+        description: 'A langcode-aware client, store and components, plus a request proxy. Translated routes need one backend patch.',
       },
       {
         icon: 'app-icon-lock',
@@ -227,14 +213,28 @@ export default {
       },
     ],
   }),
+  head() {
+    return {
+      // The homepage is the one page whose title should not be suffixed: it is
+      // already the site name, and head.titleTemplate would make it
+      // "DruxtJS - DruxtJS".
+      titleTemplate: 'DruxtJS - The Fully Decoupled Drupal Framework',
+      ...seoHead({
+        title: null,
+        description: SITE_DESCRIPTION,
+        path: '/',
+        type: 'website',
+      }),
+    }
+  },
 
   computed: {
     modules: ({ $store }) => $store.state.modules,
 
-    /** The starter kits currently offered. */
+    // The starter kits currently offered.
     starterKits: ({ quickstarts }) => quickstarts.filter((o) => o.enabled),
 
-    /** Copy button label, including the failure the catch used to swallow. */
+    // Copy button label, including the failure the catch used to swallow.
     copyLabel: ({ copied, copyFailed }) => {
       if (copyFailed) return 'Copy failed'
       return copied ? 'Copied' : 'Copy'
@@ -250,7 +250,7 @@ export default {
     command() {
       return this.runner === 'devpod'
         ? 'devpod up github.com/druxt/' + this.repo
-        : 'npx giget@latest gh:druxt/' + this.repo + '#develop my-druxt-site --install'
+        : 'npx giget@1 gh:druxt/' + this.repo + '#develop my-druxt-site --install'
     },
   },
 

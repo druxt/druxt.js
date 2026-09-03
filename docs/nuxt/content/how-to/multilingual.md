@@ -43,7 +43,7 @@ anymore:
 
 All DruxtClient and DruxtStore methods and actions have support for a langcode prefix, falling back to the default language, as determined by the Drupal backend.
 
-_Example: Fetching a spanish recipe from the DruxtStore_
+_Example: Fetching a Spanish recipe from the DruxtStore_
 
 ```js
 this.$store.dispatch('druxt/getResource', {
@@ -61,7 +61,7 @@ this.$store.dispatch('druxt/getResource', {
 
 DruxtModule components have a **langcode** prop to specify the language, as well as a computed **lang** prop containing the fallback language if no langcode prop is provided.
 
-_Example: Rendering a DruxtEntity component in spanish_
+_Example: Rendering a DruxtEntity component in Spanish_
 
 ```jsx
 <DruxtEntity type="node--page" id="d8dfd355-7f2f-4fc3-a149-288e4e293bdd" langcode="es" />

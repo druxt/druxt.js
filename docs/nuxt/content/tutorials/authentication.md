@@ -16,19 +16,19 @@ before building on it.
 
 ## Step 1: See what's already there
 
-Open `nuxt/nuxt.config.js` in your project and look at `buildModules`:
+Open `nuxt/nuxt.config.js` in your project and look at `modules`:
 
 ```js
-buildModules: [
-  '@nuxtjs/eslint-module',
+modules: [
   ['druxt-auth', { clientId: process.env.OAUTH_CLIENT_ID }],
   'druxt-site',
-];
+],
 ```
 
 The [`druxt-auth`](https://github.com/druxt/druxt-auth) module is already
 installed and configured: `npm run setup` (back in Getting started)
-provisioned a Drupal OAuth Consumer for you and wrote its ID to
+provisioned a Drupal OAuth Consumer (Drupal's entity for one registered
+OAuth client) for you and wrote its ID to
 `OAUTH_CLIENT_ID` in `.env`. There's also already a page at
 `nuxt/pages/user/login.vue` that starts the login flow:
 
@@ -96,7 +96,9 @@ usable: `user` is populated from Drupal's `/oauth/userinfo` endpoint. A
 natural next step is adding a login/logout link to your layout using those,
 rather than requiring people to know the `/user/login` URL by heart.
 
-## Known limitations (current as of `druxt-auth` 0.4.0)
+## Known limitations
+
+Current as of `druxt-auth` 0.4.0:
 
 - **No automatic token refresh for this flow.** The Authorization Code
   strategy here doesn't have refresh-token handling configured, so your

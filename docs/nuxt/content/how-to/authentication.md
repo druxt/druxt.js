@@ -68,9 +68,8 @@ scope for, and **a fresh site has an empty scope list**, so every login fails
 with "Check the `scope` parameter" until one exists. Create one at
 `/admin/config/people/simple_oauth/oauth2_scope`: grant types
 `authorization_code` and `refresh_token`, with the `granularity` field
-set to **role** and mapped to the role your users hold. Drupal has two
-built-in roles, Anonymous and Authenticated, and permissions attach to
-roles, so `authenticated` is the usual mapping here.
+set to **role** and mapped to the role your users hold; `authenticated`
+is the usual mapping here.
 
 ![The Simple OAuth Scopes administration screen, where Dynamic scopes are managed](/images/backend-scopes.png)
 
@@ -177,6 +176,16 @@ CSRF token from Drupal's `/session/token` and send it in the
 logged in stays in the [DruxtStore](/explanation/druxt-store) until the
 page reloads; a logout flow that must drop privileged content
 immediately should force a reload or flush the affected resources.
+
+## Known limitations
+
+The limitations documented in the
+[authentication tutorial](/tutorials/authentication#known-limitations)
+apply to this setup identically: druxt-auth's authorization-code flow
+does not refresh tokens automatically (sessions end when the access
+token expires), and no logout control is included by default. Both are
+druxt-auth issues rather than backend configuration, so nothing on this
+page works around them.
 
 ## Where to go next
 

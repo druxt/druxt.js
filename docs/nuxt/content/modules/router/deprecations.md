@@ -1,5 +1,5 @@
 ---
-title: Deprecations
+title: DruxtRouter deprecations
 weight: 10
 description: Retired DruxtRouter client and store members, with their replacements.
 ---

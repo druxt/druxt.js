@@ -10,7 +10,7 @@ description: Fetch resources and collections with DruxtClient, with or without N
 
 The DruxtClient is the communication layer between Nuxt and the Drupal JSON:API.
 
-It provides methods to get JSON:API Resources and Collection of resources from the Drupal server using the [Axios](https://www.npmjs.com/package/axios) library.
+It provides methods to get JSON:API resources and collections of resources from the Drupal server using the [Axios](https://www.npmjs.com/package/axios) library.
 
 ## Setup
 
@@ -59,14 +59,11 @@ druxt
 _Get a translated page._
 
 ```js
-druxt.getResource(
-  'node--page',
-  'd8dfd355-7f2f-4fc3-a149-288e4e293bdd'
-  undefined,
-  'es'
-).then(resource => {
-  // Do the thing.
-})
+druxt
+  .getResource('node--page', 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd', undefined, 'es')
+  .then((resource) => {
+    // Do the thing.
+  });
 ```
 
 ## Getting a collection of resources
@@ -89,7 +86,7 @@ druxt.getCollection('node--recipe', 'page[limit]=5').then((collection) => {
 });
 ```
 
-_Get the first 5 recipes in spanish._
+_Get the first 5 recipes in Spanish._
 
 ```js
 druxt.getCollection('node--recipe', 'page[limit]=5', 'es').then((collection) => {
@@ -99,7 +96,7 @@ druxt.getCollection('node--recipe', 'page[limit]=5', 'es').then((collection) => 
 
 ## Getting all collections of a resource
 
-The `getCollectionAll` takes the same parameters as the `getCollection` method, and will return an array of all collections.
+The `getCollectionAll` method takes the same parameters as `getCollection`, and will return an array of all collections.
 
 _Get all recipes._
 

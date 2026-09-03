@@ -6,11 +6,11 @@
 const { buildLlmsTxt, UTM } = require('../../lib/llms-txt')
 
 const doc = (over) => ({
-  route: '/guide/theming',
+  route: '/how-to/theming',
   title: 'Theming',
   description: 'How to theme.',
   weight: 0,
-  section: 'guide',
+  section: 'how-to',
   mtime: new Date('2024-01-02T00:00:00Z'),
   ...over,
 })
@@ -25,15 +25,15 @@ describe('buildLlmsTxt', () => {
     expect(lines[2].startsWith('> ')).toBe(true)
   })
 
-  it('lists guide and module documents under their own headings', () => {
+  it('lists guide-section and module documents under their own headings', () => {
     const out = buildLlmsTxt([
       doc(),
       doc({ route: '/modules/entity', title: 'Entity', description: 'Entity components.', section: 'modules' }),
     ], options)
 
-    expect(out).toContain('## Guide')
+    expect(out).toContain('## How-to guides')
     expect(out).toContain('## Modules')
-    expect(out).toContain('- [Theming](https://example.test/guide/theming?' + UTM + '): How to theme.')
+    expect(out).toContain('- [Theming](https://example.test/how-to/theming?' + UTM + '): How to theme.')
     expect(out).toContain('- [Entity](https://example.test/modules/entity?' + UTM + '): Entity components.')
   })
 
@@ -46,8 +46,8 @@ describe('buildLlmsTxt', () => {
 
   it('orders documents by weight, then route', () => {
     const out = buildLlmsTxt([
-      doc({ route: '/guide/b', title: 'B', weight: 5 }),
-      doc({ route: '/guide/a', title: 'A', weight: -10 }),
+      doc({ route: '/how-to/b', title: 'B', weight: 5 }),
+      doc({ route: '/how-to/a', title: 'A', weight: -10 }),
     ], options)
 
     expect(out.indexOf('[A]')).toBeLessThan(out.indexOf('[B]'))
@@ -56,7 +56,7 @@ describe('buildLlmsTxt', () => {
   it('omits a section entirely when it has no documents', () => {
     const out = buildLlmsTxt([doc()], options)
 
-    expect(out).toContain('## Guide')
+    expect(out).toContain('## How-to guides')
     expect(out).not.toContain('## Modules')
   })
 
@@ -103,7 +103,7 @@ describe('buildLlmsTxt', () => {
   it('omits the trailing colon for a document with no description', () => {
     const out = buildLlmsTxt([doc({ description: '' })], options)
 
-    expect(out).toContain('- [Theming](https://example.test/guide/theming?' + UTM + ')\n')
+    expect(out).toContain('- [Theming](https://example.test/how-to/theming?' + UTM + ')\n')
   })
 
   it('ends with a newline', () => {

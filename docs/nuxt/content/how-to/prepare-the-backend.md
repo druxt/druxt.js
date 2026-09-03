@@ -50,8 +50,8 @@ with a stability flag, as in
 
 ## Grant the permission
 
-Drupal has two built-in roles, Anonymous and Authenticated, and
-permissions attach to roles. Grant **Access DruxtJS JSON:API resources**
+Every Drupal site has the Anonymous and Authenticated roles (plus any
+you create), and permissions attach to roles. Grant **Access DruxtJS JSON:API resources**
 (`access druxt resources`) to every role the frontend connects as, at
 `/admin/people/permissions` or with drush. For a public site that is the
 **Anonymous** role:
