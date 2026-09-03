@@ -111,8 +111,10 @@ BASE_URL=https://demo-api.druxtjs.org NUXT_TARGET=static npm run generate --pref
 
 (The same Node 17+ `NODE_OPTIONS` prefix applies here.)
 
-Expect the crawler to find and render the demo's pages this time; the
-generated homepage carries the Umami menu. Deploy the output:
+Expect the homepage, the language variants and the listing pages
+(articles, recipes) this time, with the Umami menu rendered. Individual
+articles and recipes are not crawled: the listings render their links
+client-side, where the crawler cannot follow them. Deploy the output:
 
 ```sh
 npm install --global netlify-cli@15

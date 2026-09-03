@@ -21,6 +21,13 @@ const { DruxtClient } = require('druxt');
 const druxt = new DruxtClient('https://demo-api.druxtjs.org');
 ```
 
+The UUIDs in the examples below are illustrative: the demo backend is
+reinstalled on every rollout, so its IDs change. List
+`https://demo-api.druxtjs.org/jsonapi/node/page` and take an `id` from
+the response before running them. Query a resource's fields rather than
+assuming names; Umami's body field, for one, is `field_body`, not
+`body`.
+
 It also provides an options object to configure the client:
 
 ```js

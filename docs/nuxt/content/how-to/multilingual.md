@@ -43,7 +43,8 @@ anymore:
 
 All DruxtClient and DruxtStore methods and actions have support for a langcode prefix, falling back to the default language, as determined by the Drupal backend.
 
-_Example: Fetching a Spanish recipe from the DruxtStore_
+_Example: Fetching a Spanish page from the DruxtStore. Take a real `id`
+from your backend's `/jsonapi/node/page` listing._
 
 ```js
 this.$store.dispatch('druxt/getResource', {
