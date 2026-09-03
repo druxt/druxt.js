@@ -98,6 +98,9 @@ const wrap = (container, svg, label) => {
   frame.className = 'docs-diagram-frame'
   const scroller = document.createElement('div')
   scroller.className = 'docs-diagram-scroll'
+  // Named, because it is a tab stop while it overflows.
+  scroller.setAttribute('role', 'region')
+  scroller.setAttribute('aria-label', label || 'Diagram')
   scroller.appendChild(svg)
   frame.appendChild(scroller)
   container.innerHTML = ''
