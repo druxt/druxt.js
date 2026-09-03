@@ -11,15 +11,16 @@ description: 'The DruxtJS devtools inspector shows connection details and live t
 ![Vue.js Devtools showing the DruxtJS integration](/images/vuejs-devtools.png)
 
 Druxt registers a plugin with the
-[Vue.js Devtools](https://devtools.vuejs.org) that turns the browser
+[Vue.js Devtools](https://devtools-v6.vuejs.org) that turns the browser
 extension into a theming companion. Every Druxt component on the page
 shows which wrapper it resolved and which names it would have accepted,
 with a scaffold action on each.
 
 ## Install
 
-1. [Install the Vue.js Devtools](https://devtools.vuejs.org/getting-started/installation.html)
-   browser extension.
+1. [Install the Vue.js Devtools v6](https://devtools-v6.vuejs.org/guide/installation.html)
+   browser extension; v6 is the line that supports Vue 2, and the
+   current v7 line does not.
 2. Run your site with `nuxt dev` and open the devtools panel. A
    **DruxtJS** inspector appears alongside the standard Vue panes.
 

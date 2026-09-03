@@ -28,9 +28,7 @@ is released:
 ```
 
 The symptom without it is quiet: prefixed routes resolve, but to the
-default language. The demo backend, which does not carry the patch,
-shows it live: `/router/translate-path?path=/es/recipes` answers with
-the `/en/recipes` resource.
+default language.
 
 Menus need `jsonapi_menu_items` 1.2.4 or later. Translated **Views**
 routes do not resolve yet, tracked in
@@ -84,35 +82,6 @@ components/druxt/entity/node/page/DefaultEs.vue   Spanish only
 `Default.vue`. Use it for the cases where translation
 changes the design: reversed text direction, longer labels, a
 language-specific asset.
-
-## Offer a language switch
-
-The minimal switcher links the current path across prefixes, letting
-Drupal's router resolve each variant:
-
-```vue
-<template>
-  <nav>
-    <NuxtLink v-for="code of ['en', 'es']" :key="code" :to="prefixed(code)">
-      {{ code.toUpperCase() }}
-    </NuxtLink>
-  </nav>
-</template>
-
-<script>
-export default {
-  methods: {
-    prefixed(code) {
-      return '/' + code + this.$route.path.replace(/^\/(en|es)(?=\/|$)/, '');
-    },
-  },
-};
-</script>
-```
-
-List the codes your Drupal site actually enables, matching its
-configured path prefixes. A missing translation resolves to the
-entity's fallback language rather than a 404.
 
 ## Where to go next
 
