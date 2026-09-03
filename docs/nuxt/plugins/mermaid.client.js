@@ -139,7 +139,8 @@ const disconnectStale = () => {
 }
 
 const renderInto = (mermaid, container, source) => {
-  const label = (source.match(/^%% (.+)$/m) || [])[1]
+  // The caption is the first line only.
+  const label = (/^%% (.+)/.exec(source) || [])[1]
   try {
     fitActors(mermaid, container, source)
     mermaid.render(`docs-diagram-${uid++}`, source, (svg) => {
