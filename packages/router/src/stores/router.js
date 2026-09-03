@@ -60,7 +60,7 @@ const DruxtRouterStore = ({ store }) => {
        * this.$store.commit('druxtRouter/addEntity', entity)
        */
       addEntity (state, entity) {
-        console.warn('[druxt-router] `druxtRouter/addEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.')
+        console.warn('[druxt-router] `druxtRouter/addEntity` is deprecated. See https://druxtjs.org/api/packages/druxt/stores/druxt')
         if (!entity || typeof entity.id === 'undefined') {
           // @TODO - Error?
           return
@@ -182,7 +182,7 @@ const DruxtRouterStore = ({ store }) => {
        * @todo Rename getEntity to getResource.
        */
       async getEntity ({ commit, state }, query) {
-        console.warn('[druxt-router] `druxtRouter/getEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.')
+        console.warn('[druxt-router] `druxtRouter/getEntity` is deprecated. See https://druxtjs.org/api/packages/druxt/stores/druxt')
         if (typeof state.entities[query.id] !== 'undefined') {
           return state.entities[query.id]
         }
@@ -218,7 +218,7 @@ const DruxtRouterStore = ({ store }) => {
        * })
        */
       async getResources (app, { resource, query }) {
-        console.warn('[druxt-router] `druxtRouter/getResources` is deprecated. See http://druxtjs.org/api/stores/druxt.')
+        console.warn('[druxt-router] `druxtRouter/getResources` is deprecated. See https://druxtjs.org/api/packages/druxt/stores/druxt')
         const collection = await this.app.store.dispatch('druxt/getCollection', { type: resource, query })
         return collection.data || false
       },
