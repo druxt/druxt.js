@@ -63,26 +63,27 @@ const SHOTS = [
   {
     name: 'backend-permissions.png',
     path: '/admin/people/permissions',
+    // The permissions table, filtered so the Druxt grant is in frame.
+    selector: 'table',
     async prepare(page) {
-      const filter = page.locator('input[data-drupal-selector="edit-text"]').first()
+      const filter = page.locator('input[name="text"], input[data-drupal-selector="edit-text"]').first()
       if (await filter.count()) {
-        await filter.fill('druxt')
+        // Typed, not filled: Drupal's permission filter listens on keyup,
+        // which a programmatic fill never emits.
+        await filter.pressSequentially('druxt', { delay: 30 })
         await page.waitForTimeout(600)
       }
-      const row = page.locator('text=Access DruxtJS JSON:API resources').first()
-      if (await row.count()) await row.scrollIntoViewIfNeeded()
-      await page.waitForTimeout(300)
     },
-    clip: { x: 264, y: 0, width: 1016, height: 640 },
   },
   {
     name: 'backend-jsonapi-settings.png',
     path: '/admin/config/services/jsonapi',
-    clip: { x: 264, y: 0, width: 1016, height: 560 },
+    selector: 'form',
   },
   {
     name: 'backend-consumers.png',
     path: '/admin/config/services/consumer',
+    selector: 'table',
     async prepare(page) {
       // The quickstart registers one callback per candidate dev port; the
       // docs talk about one frontend, so only the :3000 redirect stays.
@@ -92,14 +93,39 @@ const SHOTS = [
         })
       })
     },
-    clip: { x: 264, y: 0, width: 1016, height: 520 },
   },
   {
     name: 'backend-scopes.png',
     path: '/admin/config/people/simple_oauth/oauth2_scope',
-    clip: { x: 264, y: 0, width: 1016, height: 520 },
+    selector: 'main, .layout-container',
   },
 ]
+
+/**
+ * Capture one element plus a uniform margin, instead of a fixed clip: the
+ * shot frames the content the docs page talks about, not the admin
+ * toolbar and breadcrumbs above it.
+ */
+const screenshotElement = async (page, selector, file, padding = 32) => {
+  await page.evaluate(() => window.scrollTo(0, 0))
+  const box = await page.locator(selector).first().boundingBox()
+  if (!box) throw new Error(`no visible element for "${selector}"`)
+  const x = Math.max(0, box.x - padding)
+  const y = Math.max(0, box.y - padding)
+  const clip = {
+    x,
+    y,
+    width: box.width + (box.x - x) + padding,
+    height: box.height + (box.y - y) + padding,
+  }
+  const original = page.viewportSize()
+  await page.setViewportSize({
+    width: Math.max(original.width, Math.ceil(clip.x + clip.width)),
+    height: Math.max(original.height, Math.ceil(clip.y + clip.height)),
+  })
+  await page.screenshot({ path: file, clip })
+  await page.setViewportSize(original)
+}
 
 const optimize = (file) => {
   const bin = process.env.PNGQUANT || 'pngquant'
@@ -121,7 +147,7 @@ for (const shot of SHOTS) {
   await page.goto(BACKEND + shot.path, { waitUntil: 'networkidle' })
   if (shot.prepare) await shot.prepare(page)
   const file = path.join(OUT, shot.name)
-  await page.screenshot({ path: file, clip: shot.clip })
+  await screenshotElement(page, shot.selector, file)
   console.log('captured', shot.name)
   if (existsSync(file)) optimize(file)
 }
