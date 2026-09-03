@@ -14,6 +14,8 @@
 
 let uid = 0
 let mermaidReady
+// Live observers, so navigation away from a page releases its diagrams.
+let observers = []
 
 // Layout values are the design spec; font sizes and weights match the
 // app.css text rules so mermaid measures what renders.
@@ -120,8 +122,20 @@ const wrap = (container, svg, label) => {
     else scroller.removeAttribute('tabindex')
   }
   scroller.addEventListener('scroll', update, { passive: true })
-  if (window.ResizeObserver) new ResizeObserver(update).observe(scroller)
+  if (window.ResizeObserver) {
+    const observer = new ResizeObserver(update)
+    observer.observe(scroller)
+    observers.push({ observer, target: scroller })
+  }
   update()
+}
+
+const disconnectStale = () => {
+  observers = observers.filter(({ observer, target }) => {
+    if (target.isConnected) return true
+    observer.disconnect()
+    return false
+  })
 }
 
 const renderInto = (mermaid, container, source) => {
@@ -159,6 +173,7 @@ const renderInto = (mermaid, container, source) => {
 }
 
 const renderAll = () => {
+  disconnectStale()
   if (!document.querySelector('pre code.language-mermaid, pre.language-mermaid code')) return
   ensureMermaid().then((mermaid) => {
     document.querySelectorAll('pre code.language-mermaid, pre.language-mermaid code').forEach((code) => {
