@@ -21,3 +21,5 @@ instructions. For doing, see the [How-to guides](/how-to).
   data source.
 - [Component resolution](/explanation/component-resolution): wrapper
   discovery and the theme layer.
+- [Request topology](/explanation/request-topology): build, server and
+  browser requests, and what that means for CORS, the proxy and hosting.

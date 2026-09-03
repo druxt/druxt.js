@@ -57,9 +57,10 @@ order:
 | Everything at once | `druxt-site`                                                    | Opinionated bundle: a working site layout out of the box             |
 
 On the Drupal side, the [`druxt`](https://www.drupal.org/project/druxt)
-module is the only required piece (it adds the permissions and path
-translators). `decoupled_router`, `jsonapi_menu_items` and `jsonapi_views`
-are Drupal dependencies of the matching frontend modules.
+module is the only piece to install (it adds the permissions and path
+translators). It depends on `decoupled_router`, `jsonapi_menu_items` and
+`jsonapi_views`, so composer and Drupal bring those in with it. See
+[Prepare the Drupal backend](/how-to/prepare-the-backend).
 
 ## Why this shape
 
