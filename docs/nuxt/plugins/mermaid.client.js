@@ -19,6 +19,8 @@ let mermaidReady
 // app.css text rules so mermaid measures what renders.
 const config = {
   startOnLoad: false,
+  // Mermaid's default, pinned: rendered SVG lands in the page via innerHTML.
+  securityLevel: 'strict',
   theme: 'neutral',
   fontFamily: 'inherit',
   flowchart: {
