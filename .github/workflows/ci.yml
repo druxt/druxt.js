@@ -564,9 +564,39 @@ jobs:
         with:
           node-version: 22
 
+      # On pull requests that touch only content, audit the routes the
+      # changed files render plus a small key-page set (homepage, the
+      # getting-started funnel, a section index and a module page, which also
+      # covers the main templates). Any change to a
+      # template-level file (components, layouts, config, styles, docgen)
+      # affects every page, so those, and every push to develop/main, keep the
+      # full authoritative run.
+      - name: Select routes to audit
+        id: routes
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename') || { echo "file listing failed; running the full audit" >&2; exit 0; }
+          if echo "$files" | grep -qE '^docs/nuxt/(components|layouts|pages|plugins|lib|modules|assets|nuxt\.config|tailwind\.config|package\.json|yarn\.lock)' || echo "$files" | grep -qE '^packages/docgen/'; then
+            echo "template-level change; running the full audit"
+            exit 0
+          fi
+          routes="/,/tutorials/getting-started,/how-to,/modules/druxt"
+          while IFS= read -r f; do
+            case "$f" in
+              docs/nuxt/content/*/README.md) routes="$routes,/$(dirname "${f#docs/nuxt/content/}")" ;;
+              docs/nuxt/content/*.md) r="${f#docs/nuxt/content/}"; routes="$routes,/${r%.md}" ;;
+              packages/*/README.md) pkg="${f#packages/}"; routes="$routes,/modules/${pkg%/README.md}" ;;
+            esac
+          done <<< "$files"
+          echo "routes=$routes" >> "$GITHUB_OUTPUT"
+          echo "selected routes: $routes"
+
       - name: Audit the generated site
         working-directory: docs/nuxt
         env:
+          UNLIGHTHOUSE_ROUTES: ${{ steps.routes.outputs.routes }}
           # The full set, on a dedicated ephemeral runner with no contention.
           # This is the authoritative baseline; the GitLab job samples because
           # its runner shares a busy host. UNLIGHTHOUSE_SAMPLE is left unset,
@@ -595,6 +625,17 @@ jobs:
           # build produces a green job that audited a handful of crawled pages.
           # A floor, not an equality check, so adding docs cannot fail the build.
           test -f dist/sitemap.xml || { echo "dist/sitemap.xml missing; the audit would silently scan only crawled routes" >&2; exit 1; }
+
+          # With an explicit route list, an empty intersection with the sitemap
+          # means every mapped route fell out of the build: fail loudly rather
+          # than silently auditing nothing.
+          if [ -n "$UNLIGHTHOUSE_ROUTES" ]; then
+            found=0
+            for r in $(echo "$UNLIGHTHOUSE_ROUTES" | tr ',' ' '); do
+              grep -q "<loc>[^<]*$r</loc>" dist/sitemap.xml && found=1 && break
+            done
+            [ "$found" = "1" ] || { echo "no selected route exists in the build: $UNLIGHTHOUSE_ROUTES" >&2; exit 1; }
+          fi
           locs="$(grep -c '<loc>' dist/sitemap.xml)"
           echo "sitemap advertises $locs routes"
           test "$locs" -ge 100 || { echo "Only $locs routes in sitemap.xml, expected >= 100; refusing to report a partial audit as a pass" >&2; exit 1; }
