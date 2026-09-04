@@ -6,10 +6,20 @@
     bar simply scrolled away under the site header.
   -->
   <div>
-    <template v-if="pkg && module">
+    <template v-if="pkg">
       <!-- Full header: identity, description, Source. Pill-free per the
            approved boards; the package name is plain mono, not a badge. -->
       <header class="mx-auto max-w-content pb-5">
+        <!--
+          On a package's own route this block is the page header, so it owns
+          the h1. It cannot be the visible title: that is the dropdown
+          trigger, and a trigger is a <button>, whose content model is
+          phrasing content only - an h1 inside it is invalid and its heading
+          semantics are not reliably exposed. So the heading is here,
+          carrying the same text, and the visible title stays a span.
+        -->
+        <h1 v-if="isRoot" class="sr-only" v-text="title" />
+
         <div class="flex items-center gap-3 sm:gap-4">
           <span class="w-11 h-11 sm:w-14 sm:h-14 rounded-btn bg-base-200 text-primary-focus grid place-items-center flex-shrink-0">
             <component :is="icon" class="w-6 h-6 sm:w-8 sm:h-8" />
@@ -18,7 +28,7 @@
                machine name; menu behavior lives in AppDropdown. -->
           <AppDropdown :items="siblings" button-class="min-w-0 px-1 -mx-1 hover:bg-base-200">
             <span class="min-w-0 flex flex-col text-left sm:flex-row sm:items-baseline sm:gap-3">
-              <component :is="titleTag" class="text-2xl sm:text-3xl font-bold tracking-tight" v-text="module.title" />
+              <span class="text-2xl sm:text-3xl font-bold tracking-tight" v-text="title" />
               <span class="font-mono text-[13px] sm:text-[15px] text-primary-focus" v-text="name" />
             </span>
           </AppDropdown>
@@ -27,7 +37,7 @@
             <AppIconGithub class="w-4 h-4" /><span class="hidden sm:inline">Source</span>
           </a>
         </div>
-        <p v-if="module.description" class="mt-3 text-[15px] text-base-content/70" v-text="module.description" />
+        <p v-if="description" class="mt-3 text-[15px] text-base-content/70" v-text="description" />
       </header>
 
       <!-- The bar's stuck state flips when this sentinel passes under the
@@ -58,7 +68,7 @@
             <!-- The switcher works while stuck too, same trigger idiom. -->
             <AppDropdown :items="siblings" button-class="px-1.5 py-0.5 -mx-1 hover:bg-base-200">
               <span class="flex items-baseline gap-2">
-                <span class="text-[15px] sm:text-base font-bold" v-text="module.title" />
+                <span class="text-[15px] sm:text-base font-bold" v-text="title" />
                 <span class="hidden sm:inline font-mono text-[13px] text-primary-focus" v-text="name" />
               </span>
             </AppDropdown>
@@ -178,15 +188,41 @@ export default {
     },
 
     /**
-     * The element wrapping the module title. This block is the page header
-     * on a package's root pages, so it carries the h1 there; on the tab
-     * pages beneath them the page's own header owns the h1 instead.
+     * Whether this block is the page header for the current route, i.e. a
+     * package's own page rather than one of the tabs beneath it. The page
+     * components read the same test to skip their own header.
      *
      * @param {object} vm - The component ViewModel.
      * @param {object} vm.$route - The current route.
-     * @returns {string} The tag name to render.
+     * @returns {boolean} True on a package root.
      */
-    titleTag: ({ $route }) => (isPackageRoot($route.path) ? 'h1' : 'span'),
+    isRoot: ({ $route }) => isPackageRoot($route.path),
+
+    /**
+     * The module's display title, falling back to the package name when the
+     * generated README is missing.
+     *
+     * The fallback is load-bearing, not cosmetic: on a package root the page
+     * component suppresses its own header because this one is showing, so a
+     * header that declined to render would leave the page with no title and
+     * no source link at all. Rendering on `pkg` alone keeps that invariant
+     * true rather than hoping the README fetch succeeded.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {?object} vm.module - The module's README document, or null.
+     * @param {string} vm.name - The npm package name.
+     * @returns {string} The title to display.
+     */
+    title: ({ module, name }) => (module || {}).title || name,
+
+    /**
+     * The module's description, when the README supplied one.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {?object} vm.module - The module's README document, or null.
+     * @returns {?string} The description, or null.
+     */
+    description: ({ module }) => (module || {}).description || null,
 
     /**
      * The npm package name shown in mono; plain `druxt` for the core.

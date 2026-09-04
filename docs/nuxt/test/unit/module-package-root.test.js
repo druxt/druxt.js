@@ -15,6 +15,25 @@ describe('isPackageRoot', () => {
     }
   })
 
+  // The same page, reached by the URL its source filename spells out. The
+  // sitemap lists the collapsed path, but both resolve, and both used to
+  // print the module identity twice. Found by drx://docs.
+  test('index routes for a package root', () => {
+    expect(isPackageRoot('/modules/entity/README')).toBe(true)
+    expect(isPackageRoot('/modules/entity/README/')).toBe(true)
+    expect(isPackageRoot('/api/packages/entity/index')).toBe(true)
+    expect(isPackageRoot('/api/packages/entity/index/')).toBe(true)
+  })
+
+  // '' is falsy, so an empty segment slips past a truthiness guard on the
+  // segment after the package name.
+  test('doubled slashes do not read as a package root', () => {
+    expect(isPackageRoot('/api/packages/entity//CHANGELOG')).toBe(false)
+    expect(isPackageRoot('/modules/entity//deprecations')).toBe(false)
+    // Pinning that normalising the separators does not break the ordinary case.
+    expect(isPackageRoot('//modules//entity')).toBe(true)
+  })
+
   // These are the pages that keep their own header: the module header above
   // them names the module, not the page.
   test('pages beneath a package root', () => {
@@ -31,6 +50,11 @@ describe('isPackageRoot', () => {
     expect(isPackageRoot('/modules/docgen')).toBe(false)
     expect(isPackageRoot('/api/packages/docgen')).toBe(false)
     expect(isPackageRoot('/how-to/proxy')).toBe(false)
+    // An index segment collapses to the section, not to a package.
+    expect(isPackageRoot('/modules/README')).toBe(false)
+    expect(isPackageRoot('/api/packages/index')).toBe(false)
+    // A private package keeps its own header at either URL.
+    expect(isPackageRoot('/api/packages/docgen/index')).toBe(false)
   })
 })
 

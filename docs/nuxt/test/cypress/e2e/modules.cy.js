@@ -20,6 +20,15 @@ it('DruxtJS.org: Modules', () => {
   // identity is named once, not once by the header and again by the page.
   cy.get('h1').should('have.length', 1).and('have.text', 'Entity')
 
+  // Counting h1s cannot see one nested somewhere it may not be. The visible
+  // title is a dropdown trigger, so a heading placed there ships inside a
+  // <button>, which takes phrasing content only.
+  cy.get('button h1').should('not.exist')
+
+  // The same page at the URL its source filename spells out.
+  cy.visit('/modules/entity/README')
+  cy.get('h1').should('have.length', 1).and('have.text', 'Entity')
+
   cy.visit('/api/packages/entity')
   cy.get('h1').should('have.length', 1).and('have.text', 'Entity')
 
