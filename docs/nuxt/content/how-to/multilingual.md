@@ -1,6 +1,7 @@
 ---
-title: Multilingual content
+title: Serve content in multiple languages
 weight: -5
+description: Fetch and render Drupal content in more than one language, using langcode prefixes across the client, the store and Druxt module components.
 ---
 
 Druxt has support for multilingual content in all modules:
@@ -9,39 +10,32 @@ Druxt has support for multilingual content in all modules:
 - Druxt module components can specify language with the **langcode** prop
 - Theming can be done in language-specific components
 
+> **Before you start:** this guide assumes a working Druxt site (see
+> [Getting started](/tutorials/getting-started)) with at least two languages
+> enabled in Drupal and URL path prefixes configured
+> (**Configuration → Regional and language → Languages**).
+
 ---
 
-## Getting started
+## Required Drupal patch
 
-The following Drupal patches are required to enable multilingual content in the JSON:API:
-
-- Decoupled Router:
-  - Issue: https://www.drupal.org/project/decoupled_router/issues/3111456
-  - Patch: https://git.drupalcode.org/project/decoupled_router/-/merge_requests/5.diff
-
-- Druxt (Decoupled View routes):
-  - Issue: https://www.drupal.org/project/druxt/issues/3273228
-  - Patch: https://git.drupalcode.org/project/druxt/-/merge_requests/9.diff
-
-- JSON:API Menu Items:
-  - Issue: https://www.drupal.org/project/jsonapi_menu_items/issues/3192576
-  - Patch: https://git.drupalcode.org/project/jsonapi_menu_items/-/merge_requests/7.diff
-
-### tl;dr
-
-Add the following to your composer.json patches:
+Translated route resolution needs one patch on `decoupled_router` until
+[#3111456](https://www.drupal.org/project/decoupled_router/issues/3111456)
+is released:
 
 ```json
-"drupal/druxt": {
-    "https://www.drupal.org/project/druxt/issues/3273228": "https://git.drupalcode.org/project/druxt/-/merge_requests/9.diff"
-},
 "drupal/decoupled_router": {
-    "https://www.drupal.org/project/decoupled_router/issues/3111456#comment-14093342": "https://git.drupalcode.org/project/decoupled_router/-/merge_requests/5.diff"
-},
-"drupal/jsonapi_menu_items": {
-    "https://www.drupal.org/project/jsonapi_menu_items/issues/3192576#comment-14473856": "https://git.drupalcode.org/project/jsonapi_menu_items/-/merge_requests/7.diff"
+  "https://www.drupal.org/project/decoupled_router/issues/3111456#comment-15211077": "https://www.drupal.org/files/issues/2023-08-30/decoupled_router-3111456-resolve_lang-66.patch"
 }
 ```
+
+Earlier versions of this guide required two more patches, neither is needed
+anymore:
+
+- `jsonapi_menu_items` has included language support since `1.2.4`; no
+  patch required.
+- Translated **Views** routes are tracked separately in
+  [druxt#3273228](https://www.drupal.org/project/druxt/issues/3273228).
 
 ---
 
@@ -49,7 +43,8 @@ Add the following to your composer.json patches:
 
 All DruxtClient and DruxtStore methods and actions have support for a langcode prefix, falling back to the default language, as determined by the Drupal backend.
 
-_Example: Fetching a spanish recipe from the DruxtStore_
+_Example: Fetching a Spanish page from the DruxtStore. Take a real `id`
+from your backend's `/jsonapi/node/page` listing._
 
 ```js
 this.$store.dispatch('druxt/getResource', {
@@ -67,7 +62,7 @@ this.$store.dispatch('druxt/getResource', {
 
 DruxtModule components have a **langcode** prop to specify the language, as well as a computed **lang** prop containing the fallback language if no langcode prop is provided.
 
-_Example: Rendering a DruxtEntity component in spanish_
+_Example: Rendering a DruxtEntity component in Spanish_
 
 ```jsx
 <DruxtEntity type="node--page" id="d8dfd355-7f2f-4fc3-a149-288e4e293bdd" langcode="es" />

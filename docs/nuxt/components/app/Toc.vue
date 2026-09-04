@@ -25,20 +25,19 @@ export default {
   data: () => ({ active: null }),
 
   computed: {
-    /**
-     * Content pages push their document.toc into the store, so the TOC does
-     * not need to know which page rendered it.
-     */
+    // Content pages push their document.toc into the store, so the TOC does
+    // not need to know which page rendered it.
     links: ({ $store }) => ($store.state.toc || []).filter((o) => o.depth === 2 || o.depth === 3),
 
-    /**
-     * The shallowest heading level this document actually uses.
-     *
-     * Indentation is relative to this rather than hard-coded to depth 2,
-     * because not every document starts at `##` — the getting-started guide
-     * opens at `###`, so its very first entry rendered indented beneath
-     * nothing. Anything at the document's own top level now sits flush.
-     */
+    // The shallowest heading level this document actually uses.
+
+    // Indentation is relative to this rather than hard-coded to depth 2,
+
+    // because not every document starts at `##` - the getting-started guide
+
+    // opens at `###`, so its very first entry rendered indented beneath
+
+    // nothing. Anything at the document's own top level now sits flush.
     baseDepth: ({ links }) => (links.length ? Math.min(...links.map((o) => o.depth)) : 2),
   },
 
@@ -63,7 +62,7 @@ export default {
 
   methods: {
     // Called from the `links` watcher, which fires as soon as the new page's
-    // TOC lands in the store — a Vuex commit made inside asyncData(), before
+    // TOC lands in the store - a Vuex commit made inside asyncData(), before
     // Nuxt has applied the fetched document and NuxtContent has rendered its
     // headings. A single $nextTick isn't enough to wait that out, so retry
     // across a few animation frames until the headings actually exist.

@@ -103,7 +103,26 @@ function sampleRoutes(routes, limit) {
  * over: orphaned browsers, a Chromium OOM, and a single route exceeding its
  * timeout. None of those said anything about the site.
  */
-const routes = sampleRoutes(sitemapRoutes(), Number(process.env.UNLIGHTHOUSE_SAMPLE || 0))
+/**
+ * Explicit route selection, for pull requests that touch only content.
+ *
+ * UNLIGHTHOUSE_ROUTES is a comma-separated list of routes derived from the
+ * changed files (set by the CI job on pull_request events; never on the
+ * develop/main pushes, which stay the full authoritative baseline). The list
+ * is intersected with the sitemap so a renamed or deleted page cannot be
+ * audited into a 404, and the crawler is disabled alongside it, since
+ * crawling out from a two-page list would rediscover the whole site and
+ * defeat the point.
+ */
+const explicitRoutes = (process.env.UNLIGHTHOUSE_ROUTES || '')
+  .split(',')
+  .map((route) => route.trim())
+  .filter(Boolean)
+
+const allRoutes = sitemapRoutes()
+const routes = explicitRoutes.length
+  ? allRoutes.filter((route) => explicitRoutes.includes(route))
+  : sampleRoutes(allRoutes, Number(process.env.UNLIGHTHOUSE_SAMPLE || 0))
 
 module.exports = {
   site: 'http://localhost:4000',
@@ -149,12 +168,12 @@ module.exports = {
   urls: routes,
 
   scanner: {
-    // Left enabled deliberately, as a floor rather than the plan. With it off,
-    // a failure to read the route list above degrades to a silent near-empty
-    // audit: measured 4 routes scanned and still exiting 0, which reads as a
-    // pass. Crawling on top of a complete list costs nothing, since it only
-    // rediscovers routes already queued.
-    crawler: true,
+    // Enabled as a floor when auditing the full set: with it off, a failure
+    // to read the route list above degrades to a silent near-empty audit
+    // (measured 4 routes scanned, exit 0). Disabled for an explicit changed
+    // -pages list, where crawling would pull the whole site back in; the CI
+    // step fails loudly instead when that list resolves to nothing.
+    crawler: explicitRoutes.length === 0,
 
 // No dynamicSampling here on purpose. Supplying `urls` turns unlighthouse's
     // own sampling off, along with the sitemap, robots and the crawler, so

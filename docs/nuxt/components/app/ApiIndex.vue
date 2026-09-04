@@ -17,7 +17,12 @@
         <h3 class="text-xs font-semibold uppercase tracking-wider text-base-content/70 mb-2" v-text="group.label" />
         <ul class="space-y-1">
           <li v-for="item of group.items" :key="item.path">
-            <NuxtLink class="text-sm hover:text-primary-focus" :to="item.path" v-text="item.title" />
+            <NuxtLink
+              class="text-sm hover:text-primary-focus"
+              :class="item.deprecated ? 'text-base-content/50' : ''"
+              :to="item.path"
+              v-text="item.title"
+            /><span v-if="item.deprecated" class="sr-only">(deprecated)</span>
           </li>
         </ul>
       </div>
@@ -28,7 +33,7 @@
 <script>
 // Keys are directory segments docgen emits under api/packages/<pkg>/.
 // `package` is for entries at the package root (the Nuxt module, the client,
-// the schema) and `other` is the genuine fallback — before these were added,
+// the schema) and `other` is the genuine fallback - before these were added,
 // everything that was not a component/mixin/store landed in "Other", which
 // made it a grab-bag of unrelated things rather than a category.
 const LABELS = {
@@ -54,7 +59,7 @@ export default {
   computed: {
     total: ({ entries }) => entries.length,
 
-    /** Entries bucketed by the directory they were generated from. */
+    // Entries bucketed by the directory they were generated from.
     groups: ({ entries, pkg }) => {
       const root = 'api/packages/' + pkg
       const buckets = {}
@@ -72,7 +77,15 @@ export default {
 
       return Object.keys(LABELS)
         .filter((type) => buckets[type])
-        .map((type) => ({ type, label: LABELS[type], items: buckets[type] }))
+        .map((type) => ({
+          type,
+          label: LABELS[type],
+          // Live entries first, deprecated dimmed below them, both A-Z.
+          items: buckets[type].slice().sort((a, b) =>
+            (!a.deprecated === !b.deprecated
+              ? (a.title || '').localeCompare(b.title || '')
+              : (a.deprecated ? 1 : -1))),
+        }))
     },
   },
 
@@ -90,12 +103,12 @@ export default {
       const pkg = this.pkg
       try {
         const entries = await this.$content('api/packages/' + pkg, { deep: true })
-          .only(['title', 'path', 'dir'])
+          .only(['title', 'path', 'dir', 'deprecated'])
           .fetch()
         if (pkg !== this.pkg) return
         // Matched on the filename, not the title. docgen gives these
-        // friendly titles — CHANGELOG.md becomes "Release notes" and
-        // index.md takes the module's own name — so a title-based test
+        // friendly titles - CHANGELOG.md becomes "Release notes" and
+        // index.md takes the module's own name - so a title-based test
         // never matched and both leaked into the listing: "Release notes"
         // duplicated the button already in the module header, and index.md
         // sat beside nuxtModule.md under the identical title.

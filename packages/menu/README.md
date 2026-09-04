@@ -137,7 +137,7 @@ The DruxtMenu module provides a **DruxtBlockSystemMenuBlock** component that is 
 
 DruxtMenu provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
 
-- For more details, see the [Storybook guide](https://druxtjs.org/guide/storybook).
+- For more details, see the [Storybook guide](https://druxtjs.org/how-to/storybook).
 
 ---
 
@@ -155,11 +155,11 @@ is unaffected.
 
 These options are specific to this module.
 
-| Option                    | Type       | Required | Default | Description                                                                                              |
-| ------------------------- | ---------- | -------- | ------- | -------------------------------------------------------------------------------------------------------- |
-| `menu.jsonApiMenuItems`   | `boolean`  | No       | `false` | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. |
-| `menu.query.fields`       | `string[]` | No       | `false` | An array of fields to filter all JSON:API Menu queries.                                                  |
-| `menu.query.requiredOnly` | `boolean`  | No       | `false` | Whether to automatically filter to module-defined minimum required fields.                               |
+| Option                    | Type       | Required | Default | Description                                                                                                                                                                                                   |
+| ------------------------- | ---------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `menu.jsonApiMenuItems`   | `boolean`  | No       | `true`  | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. The Nuxt module enables this by default; the `DruxtMenu` class used directly defaults it to `false`. |
+| `menu.query.fields`       | `string[]` | No       | `false` | An array of fields to filter all JSON:API Menu queries.                                                                                                                                                       |
+| `menu.query.requiredOnly` | `boolean`  | No       | `false` | Whether to automatically filter to module-defined minimum required fields.                                                                                                                                    |
 
 ### Base Druxt options
 
@@ -175,4 +175,4 @@ These options are available to all Druxt modules.
 
 - DruxtJS: https://druxtjs.org
 - Documentation: https://druxtjs.org/modules/menu
-- Community Discord server: https://discord.gg/QnZD46c
+- Community Discord server: https://discord.druxtjs.org

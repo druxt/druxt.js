@@ -8,12 +8,12 @@
  * The event set is deliberately small. Each one answers a question the docs
  * team actually has, and nothing here is collected because it was easy:
  *
- * - `search` / `search_no_results` — what readers look for, and what they look
+ * - `search` / `search_no_results` - what readers look for, and what they look
  *   for and do not find. The second is the highest-value signal the site can
  *   produce: it is a content backlog written by the audience.
- * - `search_select` — whether search answered, and which result won.
- * - `copy_code` — which snippets are actually used, as opposed to scrolled past.
- * - `page_not_found` — broken inbound links, with the referrer that sent them.
+ * - `search_select` - whether search answered, and which result won.
+ * - `copy_code` - which snippets are actually used, as opposed to scrolled past.
+ * - `page_not_found` - broken inbound links, with the referrer that sent them.
  */
 
 /** GA4 rejects oversized values, and a long query is a typo, not a search. */

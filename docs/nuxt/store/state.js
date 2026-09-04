@@ -10,6 +10,20 @@ export default () => ({
   },
   {
     component: 'NuxtLink',
+    text: 'Tutorials',
+    icon: 'tutorials',
+    props: { to: '/tutorials' },
+    children: [],
+  },
+  {
+    component: 'NuxtLink',
+    text: 'How-to guides',
+    icon: 'how-to',
+    props: { to: '/how-to' },
+    children: [],
+  },
+  {
+    component: 'NuxtLink',
     text: 'Modules',
     icon: 'modules',
     props: { to: '/modules' },
@@ -17,9 +31,9 @@ export default () => ({
   },
   {
     component: 'NuxtLink',
-    text: 'Guide',
-    icon: 'guide',
-    props: { to: '/guide' },
+    text: 'Components',
+    icon: 'components',
+    props: { to: '/components' },
     children: [],
   },
   {
@@ -27,6 +41,13 @@ export default () => ({
     text: 'API',
     icon: 'api',
     props: { to: '/api' },
+    children: [],
+  },
+  {
+    component: 'NuxtLink',
+    text: 'Concepts',
+    icon: 'explanation',
+    props: { to: '/explanation' },
     children: [],
   },
   {
@@ -40,11 +61,9 @@ export default () => ({
     component: 'a',
     text: 'Discord',
     icon: 'discord',
-    // The invite directly, not discord.druxtjs.org: that vanity host is a
-    // GitHub Pages redirect whose certificate only covers *.github.io, so
-    // every browser shows a full-page TLS interstitial before it can
-    // redirect. Verified with openssl and curl.
-    props: { href: 'https://discord.gg/QnZD46c', target: '_blank' },
+    // The branded host: its certificate is valid again, and it is the one
+    // URL that survives invite rotation.
+    props: { href: 'https://discord.druxtjs.org', target: '_blank' },
     children: [],
   }],
 

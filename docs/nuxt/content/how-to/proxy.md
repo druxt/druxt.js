@@ -1,11 +1,20 @@
 ---
-title: Proxy
-weight: -5
+title: Proxy the Drupal backend through Nuxt
+weight: -4
+description: Prevent CORS issues by routing API and file requests through the frontend.
 ---
 
-## Druxt and Proxies
+Druxt provides API and File proxying using the @nuxtjs/proxy module.
 
-> Druxt provides API and File proxying using the @nuxtjs/proxy module.
+> **Before you start:** this guide assumes a working Druxt site. See
+> [Getting started](/tutorials/getting-started). To understand when the
+> proxy applies and when you need [CORS](/how-to/configure-cors) instead,
+> see [Request topology](/explanation/request-topology).
+
+The proxy runs as server middleware inside `nuxt dev` and `nuxt start`.
+**A generated static site has no server, so the proxy does not exist
+there.** If you deploy with `nuxt generate` and the browser must
+reach Drupal, [configure CORS in Drupal](/how-to/configure-cors) instead.
 
 ---
 

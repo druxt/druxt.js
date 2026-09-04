@@ -9,7 +9,7 @@
     <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
       <button type="button" class="btn btn-primary" @click="searchOpen = true">Search the docs</button>
       <NuxtLink class="btn btn-ghost" to="/">Home</NuxtLink>
-      <NuxtLink class="btn btn-ghost" to="/guide">Guide</NuxtLink>
+      <NuxtLink class="btn btn-ghost" to="/tutorials">Tutorials</NuxtLink>
       <NuxtLink class="btn btn-ghost" to="/modules">Modules</NuxtLink>
       <NuxtLink class="btn btn-ghost" to="/api">API reference</NuxtLink>
     </div>
@@ -54,7 +54,7 @@ export default {
     // The referrer is the half that makes this actionable. A 404 alone says a
     // URL is dead; the referrer says whether it is a broken internal link, a
     // stale external one, or a search engine holding an index entry that
-    // should have been redirected — which is the failure mode a URL
+    // should have been redirected - which is the failure mode a URL
     // restructure produces.
     this.$track(...notFoundEvent(window.location.pathname, document.referrer))
   },

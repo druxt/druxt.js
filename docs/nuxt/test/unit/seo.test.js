@@ -6,9 +6,15 @@
  */
 
 import { clampDescription, descriptionFor, seoHead } from '../../utils/seo'
-import { canonicalUrl, normalisePath, sectionFor, titleFromPath } from '../../lib/site'
+import { canonicalUrl, docTypeExpression, docTypeFor, normalisePath, sectionFor, titleFromPath } from '../../lib/site'
 
-/** Look up one meta tag's content by hid. */
+/**
+ * Look up one meta tag's content by hid.
+ *
+ * @param {object} head - A vue-meta head object.
+ * @param {string} hid - The tag's hid.
+ * @returns {string|undefined} The tag's content.
+ */
 const content = (head, hid) => (head.meta.find((tag) => tag.hid === hid) || {}).content
 
 describe('normalisePath', () => {
@@ -218,5 +224,75 @@ describe('SITE_ORIGIN', () => {
 
   test('nothing set means the canonical domain', () => {
     expect(load()).toBe('https://druxtjs.org')
+  })
+})
+
+describe('docTypeFor', () => {
+  it('buckets each Diataxis section under its own key', () => {
+    expect(docTypeFor('/tutorials/getting-started')).toBe('tutorials')
+    expect(docTypeFor('/how-to/proxy')).toBe('how-to')
+    expect(docTypeFor('/explanation/routing')).toBe('explanation')
+    expect(docTypeFor('/modules/menu')).toBe('modules')
+  })
+
+  it('separates the homepage, which would otherwise swamp the strays bucket', () => {
+    expect(docTypeFor('/')).toBe('home')
+    expect(docTypeFor('')).toBe('home')
+  })
+
+  it('keeps the legacy guide section as its own bucket, not other', () => {
+    // `guide` is still a SECTIONS key, and reporting it separately is the
+    // point: it measures how much traffic still arrives on pre-restructure
+    // URLs, which is the redirect-health signal the restructure needs.
+    expect(docTypeFor('/guide/proxy')).toBe('guide')
+  })
+
+  it('buckets anything unrecognised as other', () => {
+    expect(docTypeFor('/404')).toBe('other')
+    expect(docTypeFor('/nonsense/path')).toBe('other')
+  })
+
+  it('does not mistake an inherited Object key for a section', () => {
+    // A truthiness lookup resolves these up the prototype chain and reports
+    // e.g. `constructor` as its own bucket. Scanners probe exactly these.
+    expect(docTypeFor('/constructor')).toBe('other')
+    expect(docTypeFor('/toString')).toBe('other')
+    expect(docTypeFor('/hasOwnProperty')).toBe('other')
+  })
+
+  it('ignores a trailing slash, so one page is one row', () => {
+    expect(docTypeFor('/how-to/proxy/')).toBe(docTypeFor('/how-to/proxy'))
+  })
+})
+
+describe('docTypeExpression', () => {
+  /**
+   * The inlined expression and docTypeFor are two implementations of one rule,
+   * and only this test stops them drifting apart.
+   *
+   * @param {string} pathname - The location.pathname to evaluate against.
+   * @returns {string} The doc type the inlined expression yields.
+   */
+  const evaluate = (pathname) => {
+    const location = { pathname }
+    // eslint-disable-next-line no-new-func
+    return Function('location', `return ${docTypeExpression()}`)(location)
+  }
+
+  it('agrees with docTypeFor on every section, the homepage and a stray', () => {
+    for (const path of [
+      '/', '/tutorials/getting-started', '/how-to/proxy', '/explanation/routing',
+      '/modules/menu', '/components', '/api/packages/druxt', '/guide/proxy',
+      // Inherited Object keys: the case where the two implementations
+      // previously disagreed, so the drift test must cover it.
+      '/constructor', '/toString', '/hasOwnProperty', '/__proto__',
+    ]) {
+      expect(evaluate(path)).toBe(docTypeFor(path))
+    }
+  })
+
+  it('reads the path at call time, so it follows client-side navigation', () => {
+    expect(evaluate('/tutorials')).toBe('tutorials')
+    expect(evaluate('/how-to')).toBe('how-to')
   })
 })

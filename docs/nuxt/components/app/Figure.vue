@@ -1,15 +1,15 @@
 <template>
-  <figure class="my-0">
+  <figure class="docs-figure my-0">
     <button
       type="button"
-      class="block w-full rounded-box overflow-hidden border border-base-300 bg-base-200 cursor-[zoom-in]"
+      class="docs-figure-frame cursor-[zoom-in]"
       :aria-label="'Enlarge: ' + alt"
       @click="zoom = true"
     >
       <img :src="src" :alt="alt" class="block w-full" loading="lazy">
     </button>
 
-    <figcaption v-if="caption && alt" class="mt-2 text-sm text-base-content/55" v-text="alt" />
+    <figcaption v-if="caption && alt" v-text="alt" />
 
     <!--
       Screenshots of rendered Drupal data are dense; full-size viewing

@@ -24,7 +24,7 @@ export default {
 
   data: () => ({ index: null }),
 
-  // Nuxt's special fetch() hook, not a plain method — this is what makes SSR
+  // Nuxt's special fetch() hook, not a plain method - this is what makes SSR
   // await it before sending HTML. Previously this lived under `methods` and
   // was only ever invoked by the `pkg` watcher below, so Nuxt never waited
   // for it: the server shipped a blank index header that only appeared after

@@ -1,6 +1,7 @@
 ---
 title: Contributing
-weight: 5
+weight: 9
+description: Set up the Druxt development environment, report bugs, and submit changes with changesets and conventional commits.
 ---
 
 > All contributions are welcomed and appreciated.
@@ -9,13 +10,13 @@ Druxt is an open source project, built, supported and maintained by the communit
 
 ---
 
-## Development Environment Setup
+## Development environment setup
 
 The Druxt development environment runs locally:
 
 ---
 
-### Local Development
+### Local development
 
 1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository. e.g., `https://github.com/USER/druxt.js`
 2. Clone the forked repository to your local development environment. e.g., `git clone https://github.com/USER/druxt.js`
@@ -30,7 +31,7 @@ The Druxt development environment runs locally:
 
 ## Bug reports, feature requests
 
-One of the easiest ways to contribute to Druxt is to open issues, giving as much detail as possible to make it easier other contributors and maintainers: http://github.com/druxt/druxt.js/issues/new/choose
+One of the easiest ways to contribute to Druxt is to open issues, giving as much detail as possible to make it easier for other contributors and maintainers: [open an issue](https://github.com/druxt/druxt.js/issues/new/choose)
 
 When reporting bugs please make sure to provide detailed steps to reproduce the issue, and when possible provide a minimal reproduction (a repo or snippet that triggers the bug).
 
@@ -57,29 +58,35 @@ All projects are connected to the locally built codebase and should be used for 
 
 All examples use the Drupal instance located @ `docs/drupal` (`cd docs/drupal && .devtools/assemble && .devtools/provision && .devtools/start`).
 
-### Custom module
+### druxt-site
 
-This a a bare bones example of a custom DruxtModule.
-
-`cd examples/custom-module && yarn && yarn dev`
-
-### DruxtSite
-
-This is an example of a basic, un-themed DruxtSite with support for authenticated users.
+An unstyled DruxtSite pattern index, including an eleven page `/examples/*` demonstration suite.
 
 `yarn example:druxt-site`
 
-### Entity form
+### druxt-daisyui
 
-A basic contact form example of the DruxtEntityForm component.
+A daisyUI-themed DruxtSite.
 
-`cd examples/entity-form && yarn && yarn dev`
+`yarn example:druxt-daisyui`
 
-### Node client
+### druxt-tailwind
 
-A non-Nuxt example, using the DruxtClient in a basic node app.
+A Tailwind-themed DruxtSite.
 
-`cd examples/node-client && yarn && yarn dev`
+`yarn example:druxt-tailwind`
+
+### druxt-bootstrapvue
+
+The Content Ops Console: a BootstrapVue editorial app with authenticated JSON:API writes.
+
+`yarn example:druxt-bootstrapvue`
+
+### node-client
+
+A non-Nuxt example script showing DruxtClient and DruxtSchema in plain Node. Not a shipped tool. See [Use the Druxt client directly](https://druxtjs.org/how-to/use-the-druxt-client).
+
+The reader-facing tour of these apps is [Explore the example apps](https://druxtjs.org/how-to/example-apps).
 
 ---
 
@@ -119,7 +126,7 @@ Codecov.io is used as part of the automated testing process to ensure that chang
 The coverage report is generated as part of the [Jest](#jest) testing:
 
 ```sh
-yarn test
+yarn test:unit
 ```
 
 - For more details, refer to the [Druxt Codecov.io report](https://app.codecov.io/gh/druxt/druxt.js)
@@ -175,7 +182,7 @@ Automated testing is implemented using Jest.
 It is recommended to run Jest in **watch** mode when making changes:
 
 ```sh
-yarn test --watch
+yarn test:unit --watch
 ```
 
 Test files are located within the relevant packages `test` directories. E.g., `packages/druxt/test`

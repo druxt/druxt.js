@@ -100,4 +100,4 @@ These options are specific to this module.
 
 - DruxtJS: https://druxtjs.org
 - Documentation: https://druxtjs.org/modules/schema
-- Community Discord server: https://discord.gg/QnZD46c
+- Community Discord server: https://discord.druxtjs.org

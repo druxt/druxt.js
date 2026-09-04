@@ -1,5 +1,9 @@
 <template>
   <div>
+    <!-- docgen lifts the README's h1 into frontmatter, so without this the
+         page has no h1 at all and its outline starts at h2. -->
+    <AppPageHeader v-if="document" :title="document.title" :description="document.description" />
+
     <!-- Every module README opens with a screenshot; it becomes the hero. -->
     <AppFigure v-if="hero" :src="hero.src" :alt="hero.alt" class="mb-8" />
 
@@ -36,6 +40,12 @@ export default {
     let document
     try {
       document = await $content('modules/', slug).fetch()
+      // A directory-index target (e.g. `readme/index.md`) resolves
+      // ambiguously and returns the directory listing instead of the
+      // document; retry against the index file explicitly.
+      if (Array.isArray(document)) {
+        document = await $content('modules/', slug + '/index').fetch()
+      }
     } catch (e) {
       return error({ statusCode: 404, message: 'Document not found' })
     }

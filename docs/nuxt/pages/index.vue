@@ -9,8 +9,8 @@
           Druxt is a framework for building fully decoupled Drupal and Nuxt.js applications and sites.
         </p>
         <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <NuxtLink class="btn btn-primary gap-2" to="/guide/getting-started">
-            <AppIconGuide class="w-5 h-5" /> Get started
+          <NuxtLink class="btn btn-primary gap-2" to="/tutorials/getting-started">
+            <AppIconTutorials class="w-5 h-5" /> Get started
           </NuxtLink>
           <NuxtLink class="btn btn-ghost gap-2" to="/modules">
             <AppIconModules class="w-5 h-5" /> Browse modules
@@ -18,8 +18,8 @@
         </div>
         <!--
           Quickstart command. The advanced panel (collapsed by default) swaps
-          between the four quickstart repositories and between giget and the
-          DevPod CLI, rewriting this one command in place.
+          between the four quickstart repositories and between the Gitpod URL
+          and the DevPod CLI, rewriting this one command in place.
         -->
         <div class="mt-8 w-full max-w-2xl">
           <div class="flex items-center gap-2 rounded-btn bg-base-100 border border-base-300 px-4 py-2 text-left">
@@ -106,11 +106,38 @@
     </section>
 
     <!-- Features -->
-    <section class="max-w-5xl mx-auto px-6 py-20 grid gap-10 sm:grid-cols-3">
+    <section class="max-w-5xl mx-auto px-6 py-20 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
       <div v-for="feature of features" :key="feature.title">
         <component :is="feature.icon" class="w-6 h-6 mb-3 text-primary-focus" />
         <h2 class="text-lg font-semibold" v-text="feature.title" />
-        <p class="mt-2 text-sm text-base-content/70" v-text="feature.description" />
+        <p class="mt-2 text-sm text-base-content/70">
+          {{ feature.description }}
+          <NuxtLink v-if="feature.to" :to="feature.to" v-text="feature.linkText" />
+        </p>
+      </div>
+    </section>
+
+    <!-- Built with Druxt -->
+    <section class="border-t border-base-300 bg-base-200">
+      <div class="max-w-5xl mx-auto px-6 py-20 grid gap-12 items-center lg:grid-cols-[1fr,20rem]">
+        <NuxtLink to="/how-to/example-apps" class="block rounded-box border border-base-300 bg-base-100 overflow-hidden hover:border-primary hover:shadow-lg transition">
+          <img
+            src="/images/examples-content-ops-console.png"
+            alt="Content Ops Console: a dark sidebar and a dense editorial table with inline difficulty and prep time editing"
+            class="block w-full h-auto"
+          >
+        </NuxtLink>
+
+        <div>
+          <h2 class="text-2xl font-semibold">Built with Druxt</h2>
+          <p class="mt-4 text-base-content/70">
+            Four reference apps run against the same Drupal Umami demo content. The smallest is an eleven page pattern index. The largest is the Content Ops Console, above.
+          </p>
+          <p class="mt-3 text-sm text-base-content/70">
+            Every edit it makes is an authenticated OAuth2 write back through JSON:API, and it filters for content with fields still missing.
+          </p>
+          <NuxtLink class="btn btn-primary btn-sm mt-6" to="/how-to/example-apps">Explore the example apps</NuxtLink>
+        </div>
       </div>
     </section>
 
@@ -138,20 +165,6 @@ import { SITE_DESCRIPTION } from '~/lib/site'
 import { seoHead } from '~/utils/seo'
 
 export default {
-  head() {
-    return {
-      // The homepage is the one page whose title should not be suffixed: it is
-      // already the site name, and head.titleTemplate would make it
-      // "DruxtJS - DruxtJS".
-      titleTemplate: 'DruxtJS - The Fully Decoupled Drupal Framework',
-      ...seoHead({
-        title: null,
-        description: SITE_DESCRIPTION,
-        path: '/',
-        type: 'website',
-      }),
-    }
-  },
 
   data: () => ({
     slogan: 'The Fully Decoupled Drupal Framework',
@@ -166,7 +179,7 @@ export default {
     ],
     // Only the entries marked `enabled` are offered. The rest stay listed
     // here, rather than being deleted, because they are expected back once
-    // they are working again — flipping the flag is the whole change. The
+    // they are working again - flipping the flag is the whole change. The
     // picker hides itself while only one is enabled (see `starterKits`),
     // so a single-option radio group is never rendered.
     quickstarts: [
@@ -187,20 +200,41 @@ export default {
         description: 'The DruxtWrapper pattern lets you override any component, down to a single field, without forking the library.',
       },
       {
-        icon: 'app-icon-guide',
+        icon: 'app-icon-globe',
         title: 'Multilingual and proxy support',
-        description: 'Language negotiation and a request proxy work out of the box for multilingual Drupal sites.',
+        description: 'A langcode-aware client, store and components, plus a request proxy. Translated routes need one backend patch.',
+      },
+      {
+        icon: 'app-icon-lock',
+        title: 'OAuth2 login flows',
+        description: 'druxt-auth handles Authorization Code with PKCE, token storage and authenticated requests.',
+        to: '/tutorials/authentication',
+        linkText: 'Add a login flow.',
       },
     ],
   }),
+  head() {
+    return {
+      // The homepage is the one page whose title should not be suffixed: it is
+      // already the site name, and head.titleTemplate would make it
+      // "DruxtJS - DruxtJS".
+      titleTemplate: 'DruxtJS - The Fully Decoupled Drupal Framework',
+      ...seoHead({
+        title: null,
+        description: SITE_DESCRIPTION,
+        path: '/',
+        type: 'website',
+      }),
+    }
+  },
 
   computed: {
     modules: ({ $store }) => $store.state.modules,
 
-    /** The starter kits currently offered. */
+    // The starter kits currently offered.
     starterKits: ({ quickstarts }) => quickstarts.filter((o) => o.enabled),
 
-    /** Copy button label, including the failure the catch used to swallow. */
+    // Copy button label, including the failure the catch used to swallow.
     copyLabel: ({ copied, copyFailed }) => {
       if (copyFailed) return 'Copy failed'
       return copied ? 'Copied' : 'Copy'
@@ -216,7 +250,7 @@ export default {
     command() {
       return this.runner === 'devpod'
         ? 'devpod up github.com/druxt/' + this.repo
-        : 'npx giget@latest gh:druxt/' + this.repo + '#develop my-druxt-site --install'
+        : 'npx giget@1 gh:druxt/' + this.repo + '#develop my-druxt-site --install'
     },
   },
 
@@ -237,7 +271,7 @@ export default {
         // convention and is not processed as a GA4 event. window.gtag is a
         // global (top-level function declaration in the classic inline
         // snippet), and optional-chaining keeps this a silent no-op wherever
-        // the production-gated snippet isn't present — dev, preview, SSR.
+        // the production-gated snippet isn't present - dev, preview, SSR.
         window.gtag?.('event', 'copy_quickstart_command', { repo: this.repo, runner: this.runner })
       } catch (e) {
         // Say so, rather than leaving the button silent. navigator.clipboard

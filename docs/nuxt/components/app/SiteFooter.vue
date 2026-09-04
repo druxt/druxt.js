@@ -4,8 +4,8 @@
     already exists and is a different thing: that one is per-document
     (edit-on-GitHub, prev/next), this one is the site's own.
 
-    Colours come from theme tokens only — base-200 ground, base-300 top
-    border, primary links — so a palette change carries through here without
+    Colours come from theme tokens only - base-200 ground, base-300 top
+    border, primary links - so a palette change carries through here without
     touching this file.
   -->
   <footer class="border-t border-base-300 bg-base-200 text-base-content">
@@ -72,15 +72,16 @@ export default {
 
   data: () => ({
     docs: [
-      { text: 'Guide', to: '/guide' },
+      { text: 'Tutorials', to: '/tutorials' },
+      { text: 'How-to guides', to: '/how-to' },
       { text: 'Modules', to: '/modules' },
       { text: 'API reference', to: '/api' },
     ],
     community: [
       { text: 'GitHub', href: 'https://github.com/druxt/druxt.js' },
-      // The invite directly, not discord.druxtjs.org — that vanity host's
+      // The invite directly, not discord.druxtjs.org - that vanity host's
       // certificate only covers *.github.io and trips a TLS interstitial.
-      { text: 'Discord', href: 'https://discord.gg/QnZD46c' },
+      { text: 'Discord', href: 'https://discord.druxtjs.org' },
       { text: 'Druxt on Drupal.org', href: 'https://www.drupal.org/project/druxt' },
     ],
   }),

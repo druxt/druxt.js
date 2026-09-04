@@ -70,4 +70,4 @@ These options are available to all Druxt modules, in the `nuxt.config.js` file.
 
 - DruxtJS: https://druxtjs.org
 - Documentation: https://druxtjs.org/modules/breadcrumb
-- Community Discord server: https://discord.gg/QnZD46c
+- Community Discord server: https://discord.druxtjs.org

@@ -19,6 +19,39 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Classifies what a pull request touches, so the slow jobs and steps run
+  # only when their subject changed. Push events (develop/main, the
+  # production path) report everything as changed, so full coverage always
+  # holds where it matters. If the file listing fails, everything defaults
+  # to changed: fail open, never silently skip.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      deps: ${{ steps.classify.outputs.deps }}
+      site: ${{ steps.classify.outputs.site }}
+      packages: ${{ steps.classify.outputs.packages }}
+    steps:
+      - id: classify
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          deps=true; site=true; packages=true
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename'); then
+              deps=false; site=false; packages=false
+              echo "$files" | grep -qE '(^|/)(yarn\.lock|package\.json|\.yarnrc\.yml)$' && deps=true
+              echo "$files" | grep -qE '^(docs/nuxt/|packages/docgen/|packages/[^/]+/README\.md)' && site=true
+              echo "$files" | grep -qE '^packages/' && packages=true
+            else
+              echo "file listing failed; running everything" >&2
+            fi
+          fi
+          {
+            echo "deps=$deps"
+            echo "site=$site"
+            echo "packages=$packages"
+          } >> "$GITHUB_OUTPUT"
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -52,11 +85,13 @@ jobs:
             packages/*/dist
             packages/*/CHANGELOG.md
             docs/nuxt/content/api
+            docs/nuxt/content/components
             docs/nuxt/content/modules/*/README.md
+            docs/nuxt/content/how-to/contributing.md
           retention-days: 1
 
   lint:
-    needs: build
+    needs: [build, changes]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -131,22 +166,81 @@ jobs:
           cd docs/nuxt
           /tmp/vale content
 
+      # Root-relative /images/ links are excluded from the production
+      # linkcheck (they ship with the same change; probing production only
+      # measures deployment lag), so this check pins them to the files that
+      # actually exist in the branch.
+      - name: Image references resolve to files
+        run: |
+          missing=0
+          while IFS= read -r ref; do
+            if [ ! -f "docs/nuxt/static$ref" ]; then
+              echo "missing image file for reference: $ref" >&2
+              missing=1
+            fi
+          done < <(grep -rhoE '\]\(/images/[^) ]+\)' docs/nuxt/content --include='*.md' | sed 's/](\(.*\))/\1/' | sort -u)
+          exit "$missing"
+
+      - name: Linkcheck (docs/nuxt/content)
+        continue-on-error: true
+        run: |
+          lychee_version="0.24.2"
+          arch="$(uname -m)"
+          case "$arch" in
+            aarch64|arm64)
+              lychee_arch=aarch64-unknown-linux-gnu
+              lychee_sha256=91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c
+              ;;
+            x86_64)
+              lychee_arch=x86_64-unknown-linux-gnu
+              lychee_sha256=1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
+              ;;
+            *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+          esac
+          curl -sL --max-time 60 "https://github.com/lycheeverse/lychee/releases/download/lychee-v${lychee_version}/lychee-${lychee_arch}.tar.gz" -o /tmp/lychee.tar.gz
+          echo "${lychee_sha256}  /tmp/lychee.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/lychee.tar.gz --strip-components=1 -C /tmp "lychee-${lychee_arch}/lychee"
+          chmod +x /tmp/lychee
+
+          cd docs/nuxt
+          /tmp/lychee --no-progress --format detailed --config .lychee.toml --base-url https://druxtjs.org --exclude-loopback 'content/**/*.md'
+
       - name: Renovate config validator
         run: yarn lint:renovate
 
       - name: Dependency audit (full report, includes devDependencies)
+        if: needs.changes.outputs.deps == 'true'
+        env:
+          YARN_HTTP_TIMEOUT: '180000'
         run: yarn lint:audit:full
         continue-on-error: true
 
+      # The registry's audit endpoint times out often enough to matter, so the
+      # blocking pass retries before it fails anyone's pipeline.
       - name: Dependency audit (production, blocking)
-        run: yarn lint:audit
+        if: needs.changes.outputs.deps == 'true'
+        env:
+          YARN_HTTP_TIMEOUT: '180000'
+        run: |
+          for attempt in 1 2 3; do
+            yarn lint:audit && exit 0
+            status=$?
+            if [ "$attempt" -lt 3 ]; then
+              echo "audit attempt $attempt failed (exit $status); retrying in 30s" >&2
+              sleep 30
+            fi
+          done
+          exit "$status"
 
       - name: Knip (unused/unlisted dependencies)
+        if: needs.changes.outputs.deps == 'true'
         run: yarn lint:knip
 
-      - run: yarn build
+      - if: needs.changes.outputs.deps == 'true' || needs.changes.outputs.packages == 'true'
+        run: yarn build
 
       - name: Bundlewatch
+        if: needs.changes.outputs.deps == 'true' || needs.changes.outputs.packages == 'true'
         run: yarn bundlewatch
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -390,7 +484,8 @@ jobs:
   audit-seo:
     name: audit-seo
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, changes]
+    if: needs.changes.outputs.site == 'true'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -423,6 +518,15 @@ jobs:
           test "$readmes" -gt 0 || {
             echo "No docs/nuxt/content/modules/*/README.md after downloading build-output." >&2
             echo "Module pages render these as their body; generating without them fails the route guard." >&2
+            exit 1
+          }
+          test -d docs/nuxt/content/components || {
+            echo "docs/nuxt/content/components missing after downloading build-output." >&2
+            echo "The /components section fails the route guard without it." >&2
+            exit 1
+          }
+          test -f docs/nuxt/content/how-to/contributing.md || {
+            echo "docs/nuxt/content/how-to/contributing.md missing after downloading build-output." >&2
             exit 1
           }
           echo "API reference: $(find docs/nuxt/content/api -name '*.md' | wc -l) generated pages"
@@ -460,9 +564,39 @@ jobs:
         with:
           node-version: 22
 
+      # On pull requests that touch only content, audit the routes the
+      # changed files render plus a small key-page set (homepage, the
+      # getting-started funnel, a section index and a module page, which also
+      # covers the main templates). Any change to a
+      # template-level file (components, layouts, config, styles, docgen)
+      # affects every page, so those, and every push to develop/main, keep the
+      # full authoritative run.
+      - name: Select routes to audit
+        id: routes
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename') || { echo "file listing failed; running the full audit" >&2; exit 0; }
+          if echo "$files" | grep -qE '^docs/nuxt/(components|layouts|pages|plugins|lib|modules|assets|nuxt\.config|tailwind\.config|package\.json|yarn\.lock)' || echo "$files" | grep -qE '^packages/docgen/'; then
+            echo "template-level change; running the full audit"
+            exit 0
+          fi
+          routes="/,/tutorials/getting-started,/how-to,/modules/druxt"
+          while IFS= read -r f; do
+            case "$f" in
+              docs/nuxt/content/*/README.md) routes="$routes,/$(dirname "${f#docs/nuxt/content/}")" ;;
+              docs/nuxt/content/*.md) r="${f#docs/nuxt/content/}"; routes="$routes,/${r%.md}" ;;
+              packages/*/README.md) pkg="${f#packages/}"; routes="$routes,/modules/${pkg%/README.md}" ;;
+            esac
+          done <<< "$files"
+          echo "routes=$routes" >> "$GITHUB_OUTPUT"
+          echo "selected routes: $routes"
+
       - name: Audit the generated site
         working-directory: docs/nuxt
         env:
+          UNLIGHTHOUSE_ROUTES: ${{ steps.routes.outputs.routes }}
           # The full set, on a dedicated ephemeral runner with no contention.
           # This is the authoritative baseline; the GitLab job samples because
           # its runner shares a busy host. UNLIGHTHOUSE_SAMPLE is left unset,
@@ -491,6 +625,17 @@ jobs:
           # build produces a green job that audited a handful of crawled pages.
           # A floor, not an equality check, so adding docs cannot fail the build.
           test -f dist/sitemap.xml || { echo "dist/sitemap.xml missing; the audit would silently scan only crawled routes" >&2; exit 1; }
+
+          # With an explicit route list, an empty intersection with the sitemap
+          # means every mapped route fell out of the build: fail loudly rather
+          # than silently auditing nothing.
+          if [ -n "$UNLIGHTHOUSE_ROUTES" ]; then
+            found=0
+            for r in $(echo "$UNLIGHTHOUSE_ROUTES" | tr ',' ' '); do
+              grep -q "<loc>[^<]*$r</loc>" dist/sitemap.xml && found=1 && break
+            done
+            [ "$found" = "1" ] || { echo "no selected route exists in the build: $UNLIGHTHOUSE_ROUTES" >&2; exit 1; }
+          fi
           locs="$(grep -c '<loc>' dist/sitemap.xml)"
           echo "sitemap advertises $locs routes"
           test "$locs" -ge 100 || { echo "Only $locs routes in sitemap.xml, expected >= 100; refusing to report a partial audit as a pass" >&2; exit 1; }

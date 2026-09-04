@@ -16,7 +16,7 @@
           `search-row` moves the focus ring onto this whole row rather than
           the bare <input>. The input is only the middle of three flex
           children, so a ring on the input alone drew an inset rectangle that
-          excluded the search icon and the esc key — it read as a box inside
+          excluded the search icon and the esc key - it read as a box inside
           the box. See assets/css/app.css.
         -->
         <div class="search-row flex items-center gap-3 px-4 border-b border-base-300">
@@ -134,7 +134,10 @@
                 class="w-full text-left px-4 py-2.5 flex items-center gap-3 hover:bg-base-200/60"
                 @click="go({ path: item.to })"
               >
-                <AppIconGuide class="w-4 h-4 flex-shrink-0 opacity-70 stroke-current" />
+                <component
+                  :is="'app-icon-' + (item.to.slice(1).split('/')[0] || 'guide')"
+                  class="w-4 h-4 flex-shrink-0 opacity-70 stroke-current"
+                />
                 <span class="min-w-0">
                   <span class="block text-sm truncate">{{ item.text }}</span>
                   <!-- Several documents share a title (every module has a
@@ -148,7 +151,7 @@
             </template>
 
             <p v-if="!searches.length && !recent.length" class="px-4 py-6 text-sm text-base-content/70">
-              Search across the guide, the module documentation and the generated API reference.
+              Search across the tutorials, how-to guides, module documentation and the generated API reference.
             </p>
           </template>
 
@@ -177,12 +180,15 @@ import { documentContext } from '~/utils/content'
 import { trapTab } from '~/utils/focus'
 
 const GROUPS = [
-  { type: 'guide', label: 'Guide' },
+  { type: 'tutorials', label: 'Tutorials' },
+  { type: 'how-to', label: 'How-to guides' },
   { type: 'modules', label: 'Modules' },
+  { type: 'components', label: 'Components' },
   { type: 'api', label: 'API' },
+  { type: 'explanation', label: 'Concepts' },
 ]
 
-const EMPTY = () => ({ guide: [], modules: [], api: [] })
+const EMPTY = () => ({ tutorials: [], 'how-to': [], modules: [], components: [], api: [], explanation: [] })
 
 export default {
   props: {
@@ -306,7 +312,7 @@ export default {
      * Keep Tab inside the dialog.
      *
      * It declares `aria-modal="true"`, which tells assistive technology the
-     * rest of the page is hidden — so letting focus walk out into content the
+     * rest of the page is hidden - so letting focus walk out into content the
      * AT is actively suppressing is worse than not claiming modality at all.
      *
      * @param {KeyboardEvent} e - The Tab keydown event.
@@ -376,7 +382,7 @@ export default {
       if (!isReportableTerm(this.query)) return
       // Results have not settled yet. Re-arm rather than return: returning
       // drops the term permanently, and biases the loss toward slow and
-      // first-visit sessions — exactly the ones `search_no_results` exists to
+      // first-visit sessions - exactly the ones `search_no_results` exists to
       // catch. `beforeDestroy` clears this same slot, so a retry cannot
       // outlive the dialog.
       if (this.loading) {

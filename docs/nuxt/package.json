@@ -17,6 +17,7 @@
     "@tailwindcss/typography": "0.4.1",
     "core-js": "3.50.0",
     "daisyui": "1.25.4",
+    "mermaid": "8.14.0",
     "nuxt": "2.18.1"
   },
   "devDependencies": {
@@ -27,7 +28,6 @@
     "@nuxtjs/storybook": "4.2.0",
     "@nuxtjs/tailwindcss": "4.2.1",
     "@resvg/resvg-js": "2.6.2",
-    "prism-themes": "1.9.0",
     "satori": "0.33.4",
     "tailwindcss": "^2.2.19"
   },

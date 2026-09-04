@@ -4,7 +4,7 @@
     the breadcrumbs all render their sibling/heading menus through this, so
     trigger affordance, panel styling and dismissal behave identically
     everywhere. Dismissed on outside click, Escape, route change and page
-    scroll — the panel is absolutely positioned, so a scrolled page would
+    scroll - the panel is absolutely positioned, so a scrolled page would
     otherwise carry an open panel off screen.
   -->
   <div class="relative inline-flex">

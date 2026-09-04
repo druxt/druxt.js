@@ -59,6 +59,7 @@ felixfbecker
 filesystems
 Fraunces
 freetype
+frontends
 frontpage
 fullpath
 giget
@@ -74,6 +75,7 @@ jsonapi
 Knip
 knip
 Ksection
+labelledby
 langcode
 libfreetype
 libicu
@@ -99,6 +101,7 @@ metatags
 mise
 namelist
 neighbour
+networkidle
 Neue
 neue
 nohup
@@ -110,6 +113,7 @@ nuxi
 nuxt
 nuxtjs
 octref
+olivero
 opcache
 openspec
 pbody
@@ -119,8 +123,11 @@ phpsab
 phpstan
 PKCE
 pkill
+pngquant
 prebuilds
+preconfigure
 preconfigured
+preflighted
 Quickstart
 quickstarts
 recognise
@@ -132,7 +139,10 @@ reskins
 Resvg
 resvg
 router
+safelisted
 satori
+scaffolder
+scriptable
 scule
 Segoe
 segoe
@@ -154,7 +164,9 @@ themable
 toggleable
 topbar
 trixie
+tspan
 umami
+uncacheable
 unjs
 unlighthouse
 unregisters
