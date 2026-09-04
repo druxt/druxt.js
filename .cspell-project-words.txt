@@ -12,6 +12,7 @@ behaviour
 bmewburn
 bootstrapvue
 bradlc
+browsable
 bundlewatch
 chunkloaderror
 cimg
@@ -104,6 +105,7 @@ neighbour
 networkidle
 Neue
 neue
+nodetype
 nohup
 normalise
 normalised
@@ -134,6 +136,7 @@ recognise
 recrawl
 redirectdomain
 renderable
+repage
 repoint
 reskins
 Resvg
@@ -188,6 +191,8 @@ wireframe
 wireframes
 worktree
 worktrees
+Xvfb
+xvfb
 yaml
 yamllint
 yarnpkg

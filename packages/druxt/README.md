@@ -146,8 +146,7 @@ by [Component resolution](https://druxtjs.org/explanation/component-resolution).
 - Community Discord server: https://discord.druxtjs.org
 - Demo - Umami Food Magazine:
   - https://demo.druxtjs.org
-  - https://druxt-umami.netlify.app
-  - https://umami-storybook.druxtjs.org
+  - https://storybook.umami.demo.druxtjs.org
 
 ---
 

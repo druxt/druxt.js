@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-Shared test utilities for Druxt module development — Jest helpers that mock
+Shared test utilities for Druxt module development - Jest helpers that mock
 the Drupal JSON:API layer so unit tests run without a live backend.
 
 ## Installation
@@ -18,7 +18,7 @@ yarn workspace <package> add -D "druxt-test-utils@workspace:^"
 ## Usage
 
 The helpers run a real `DruxtClient` against a Jest-mocked axios, so tests
-need the module mock in place — as used throughout the monorepo's own
+need the module mock in place - as used throughout the monorepo's own
 suites (see `packages/druxt/test/client.test.js`):
 
 ```js
