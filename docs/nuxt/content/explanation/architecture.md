@@ -14,6 +14,14 @@ In a Druxt site, the two jobs are split:
 - **Druxt** is the contract between them: clients, stores, schemas and
   components that turn JSON:API data into a rendered page.
 
+How much Drupal drives is your choice.
+[DruxtSite](/modules/site) renders a whole site from Drupal's block
+layout and menus with no frontend layout decisions at all; individual
+components (`DruxtEntity`, `DruxtView`, `DruxtMenu`) drop Drupal-driven
+pieces into pages and layouts you design yourself; and every component
+can be overridden through the [theme layer](/how-to/theming). The
+machinery below is the same at any point on that spectrum.
+
 Understanding the split explains most of Druxt's design decisions:
 
 - Why the frontend asks Drupal to translate paths.

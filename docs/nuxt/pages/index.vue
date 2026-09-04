@@ -6,7 +6,7 @@
         <AppLogo class="w-20 mb-7" title="DruxtJS" />
         <h1 class="text-4xl sm:text-5xl font-bold tracking-tight" v-text="slogan" />
         <p class="mt-4 text-lg text-base-content/70 max-w-xl">
-          Drupal decides the content and the layout; Nuxt renders it. Fully decoupled, themeable component by component.
+          Druxt is a framework for building fully decoupled Drupal and Nuxt.js applications and sites.
         </p>
         <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
           <NuxtLink class="btn btn-primary gap-2" to="/tutorials/getting-started">
