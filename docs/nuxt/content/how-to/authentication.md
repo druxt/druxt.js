@@ -315,7 +315,7 @@ axios instances, and refresh-token lifetimes, apply unchanged.
 ## Where to go next
 
 - [Deploy with a Nuxt server](/how-to/deploy-server): authenticated
-  sites need a runtime; static hosting cannot keep the session.
+  sites need a runtime, because static hosting cannot keep the session.
 - [Request topology](/explanation/request-topology#cookies-and-sessions):
   how hosting layout affects cookies and credentialed CORS.
 - [druxt-auth README](https://github.com/druxt/druxt-auth): every module

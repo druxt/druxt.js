@@ -45,7 +45,7 @@ Keep Decoupled Router below `2.0.7` for now
 changed a subscriber signature the Drupal Druxt module (1.2.1 and
 earlier) does not declare, and route resolution silently stops working
 ([#3618675](https://www.drupal.org/i/3618675)); drop the pin once a
-release containing that fix ships.
+release containing that fix is out.
 
 If composer refuses with a stability error, a dependency's current
 release is below your project's `minimum-stability` (set in the Drupal

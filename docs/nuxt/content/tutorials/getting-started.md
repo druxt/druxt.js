@@ -99,7 +99,7 @@ Open http://localhost:3000 (or the next free port, printed in the
 terminal). The page you see is rendered by Nuxt, and it looks like
 this:
 
-![The fresh quickstart frontend: the site name and menu, dashed dev-mode placeholders for blocks nothing themes yet, and Drupal's no-front-page-content message](/images/getting-started-fresh-site.png)
+![The fresh quickstart frontend, with the site name and menu above dashed dev-mode placeholders and Drupal's no-front-page-content message](/images/getting-started-fresh-site.png)
 
 It's mostly empty because the backend has no content yet; the dashed
 boxes are dev-mode placeholders for blocks nothing themes, which

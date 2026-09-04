@@ -138,7 +138,7 @@ issues](/how-to/troubleshooting) covers the build and CORS failure
 modes; if the demo backend itself is unreachable, the deploy still
 serves its generated pages, and navigation degrades until it returns.
 
-Change `theme` back to `olivero` (the value the quickstart ships,
+Change `theme` back to `olivero` (the quickstart's original value,
 Drupal's default frontend theme) when you return to local work.
 
 ## Step 4: Publishing your own content
