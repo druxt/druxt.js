@@ -4,6 +4,7 @@ antfu
 apos
 Appétit
 Autobuild
+autobuild
 automerge
 autoupdate
 axios
@@ -21,8 +22,10 @@ Codespaces
 Colour
 Colours
 Composables
+composables
 consola
 Consolas
+consolas
 Contenta
 contentacms
 corepack
@@ -39,6 +42,7 @@ defaultvalue
 devcontainer
 devcontainers
 Devel
+devel
 devpod
 Diataxis
 docgen
@@ -70,6 +74,7 @@ interruptible
 jsdocs
 jsonapi
 Knip
+knip
 Ksection
 labelledby
 langcode
@@ -82,6 +87,7 @@ libzip
 licence
 lightboxes
 Linkcheck
+linkcheck
 llms
 lockfiles
 longname
@@ -90,6 +96,7 @@ makedirs
 markdownlint
 mbstring
 Menlo
+menlo
 metatag
 metatags
 mise
@@ -97,6 +104,7 @@ namelist
 neighbour
 networkidle
 Neue
+neue
 nodetype
 nohup
 normalise
@@ -132,6 +140,7 @@ repage
 repoint
 reskins
 Resvg
+resvg
 router
 safelisted
 satori
@@ -139,6 +148,7 @@ scaffolder
 scriptable
 scule
 Segoe
+segoe
 setuptools
 shivammathur
 siroc
@@ -153,6 +163,7 @@ swipeable
 tailwindcss
 testid
 Themable
+themable
 toggleable
 topbar
 trixie
