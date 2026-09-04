@@ -1,6 +1,6 @@
 ---
 title: Drupal for Nuxt developers
-weight: -2
+weight: -8
 description: 'The Drupal vocabulary, tools and commands the rest of these docs assume, explained for developers coming from the JavaScript side.'
 ---
 

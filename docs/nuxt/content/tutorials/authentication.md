@@ -1,6 +1,6 @@
 ---
 title: Add a login flow
-weight: -7
+weight: -8
 description: Turn the quickstart's already-configured OAuth setup into a real, working login.
 ---
 
@@ -116,7 +116,7 @@ Current as of `druxt-auth` 0.4.0:
 ## Where to go next
 
 - Keep learning: [Deploy your site](/tutorials/deploy-your-site), the
-  final lesson.
+  next lesson.
 - See this flow put to work in a real app: [Explore the example
   apps](/how-to/example-apps): Content Ops Console uses this exact login to
   authenticate its inline content editing.

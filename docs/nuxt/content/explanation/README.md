@@ -13,6 +13,10 @@ instructions. For doing, see the [How-to guides](/how-to).
 
 - [Architecture](/explanation/architecture): the fully decoupled Drupal and
   Nuxt.js request lifecycle, end to end.
+- [Drupal for Nuxt developers](/explanation/drupal-for-nuxt-developers):
+  the backend vocabulary and tooling, in frontend terms.
+- [Nuxt for Drupal developers](/explanation/nuxt-for-drupal-developers):
+  the frontend concepts, mapped to the Drupal ideas they replace.
 - [The DruxtStore](/explanation/druxt-store): collections, resources, and
   how modules share state.
 - [Decoupled routing](/explanation/routing): how Drupal routes map to
@@ -25,9 +29,5 @@ instructions. For doing, see the [How-to guides](/how-to).
   happen where, and why CORS only ever bites in the browser.
 - [Deployment models](/explanation/deployment-models): three production
   shapes and the decision framework between them.
-- [Drupal for Nuxt developers](/explanation/drupal-for-nuxt-developers):
-  the backend vocabulary and tooling, in frontend terms.
-- [Nuxt for Drupal developers](/explanation/nuxt-for-drupal-developers):
-  the frontend concepts, mapped to the Drupal ideas they replace.
 - [Support and versioning](/explanation/support-and-versioning): what a
   release number promises, and how deprecation works.

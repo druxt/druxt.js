@@ -113,3 +113,8 @@ same behaviour. They have no generated API page, so they are recorded here:
 | --------------------------- | ------------------------------------------- |
 | `componentSuggestion` mixin | `DruxtModule`'s component suggestion system |
 | `context` mixin             | `DruxtModule`                               |
+
+## Where to go next
+
+- [`druxt-entity` module reference](/modules/entity): options and components.
+- [Upgrade Druxt](/how-to/upgrade): the procedure these removals feed into.

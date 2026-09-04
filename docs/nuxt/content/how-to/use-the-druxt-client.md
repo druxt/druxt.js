@@ -1,6 +1,6 @@
 ---
 title: Use the Druxt client directly
-weight: -1
+weight: -3
 description: Fetch resources and collections with DruxtClient, with or without Nuxt.
 ---
 

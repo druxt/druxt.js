@@ -1,6 +1,6 @@
 ---
 title: Authenticate users with OAuth
-weight: 5
+weight: 0
 description: 'The full OAuth setup from scratch: Simple OAuth keys, scopes and a consumer in Drupal, druxt-auth in Nuxt, and the traps on both sides.'
 ---
 
@@ -314,8 +314,8 @@ axios instances, and refresh-token lifetimes, apply unchanged.
 
 ## Where to go next
 
-- [Add a login flow](/tutorials/authentication): the tutorial version on
-  the quickstart.
+- [Deploy with a Nuxt server](/how-to/deploy-server): authenticated
+  sites need a runtime; static hosting cannot keep the session.
 - [Request topology](/explanation/request-topology#cookies-and-sessions):
   how hosting layout affects cookies and credentialed CORS.
 - [druxt-auth README](https://github.com/druxt/druxt-auth): every module

@@ -1,6 +1,6 @@
 ---
 title: Building a custom Druxt module
-weight: -8
+weight: -6
 description: Extend DruxtModule to build your own Druxt-powered, themeable component backed by Drupal data.
 ---
 
@@ -201,5 +201,3 @@ The same three ideas power every Druxt module in the
   [Component resolution](/explanation/component-resolution).
 - Read the base class reference:
   [DruxtModule API](/api/packages/druxt/components/DruxtModule).
-- Keep learning: [Add a login flow](/tutorials/authentication), the
-  next lesson.

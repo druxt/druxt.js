@@ -4,6 +4,10 @@ weight: -8
 description: 'Make an existing Drupal site Druxt-ready: modules, JSON:API settings, permissions and the minimum content the frontend needs.'
 ---
 
+> **Before you start:** new to the Drupal side of this stack? The
+> [Drupal for Nuxt developers](/explanation/drupal-for-nuxt-developers)
+> primer covers the vocabulary this guide uses.
+
 The [quickstart](/tutorials/getting-started) provisions a ready-made
 backend. This guide is for the other case: making a Drupal site you
 already have Druxt-ready. (Starting from nothing? Create a site with
@@ -144,3 +148,12 @@ topology](/explanation/request-topology) explains the difference;
 | JSON:API writes, if forms are used        | `drush config:set jsonapi.settings read_only 0`           |
 | At least one content type with a display  | Drupal admin                                              |
 | CORS or proxy decided                     | [Request topology](/explanation/request-topology)         |
+
+## Where to go next
+
+- [Configure CORS in Drupal](/how-to/configure-cors): let a browser
+  frontend on another origin talk to this backend.
+- [Proxy the Drupal backend through Nuxt](/how-to/proxy): the
+  same-origin alternative to CORS.
+- [Theme Druxt components](/how-to/theming): start shaping what the
+  frontend renders from this backend.

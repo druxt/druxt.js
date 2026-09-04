@@ -57,7 +57,7 @@ has no code changes waiting in the removal queue.
 
 ## Where to go next
 
-- [Support and versioning](/explanation/support-and-versioning): the
-  policy behind this procedure.
+- [Deprecations in druxt](/modules/druxt/deprecations): the 2.0.0
+  removals to migrate away from while on 1.x.
 - [Troubleshoot common issues](/how-to/troubleshooting): if the upgrade
   surfaces build errors unrelated to deprecation.

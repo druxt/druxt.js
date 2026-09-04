@@ -143,7 +143,7 @@ is the only file you'd change to point the frontend at a different Drupal.
 
 ## Where to go next
 
-- Keep learning: [Build a custom Druxt module](/tutorials/first-custom-module),
+- Keep learning: [Add a login flow](/tutorials/authentication),
   the next lesson.
 - Log a user in: [Add a login flow](/tutorials/authentication): the OAuth
   setup this command already provisioned, put to use.

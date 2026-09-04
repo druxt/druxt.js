@@ -1,6 +1,6 @@
 ---
 title: Debug Druxt with the Vue Devtools
-weight: -2
+weight: -1
 description: 'The DruxtJS devtools inspector shows connection details and live theme suggestions, and scaffolds wrapper components in one click.'
 ---
 

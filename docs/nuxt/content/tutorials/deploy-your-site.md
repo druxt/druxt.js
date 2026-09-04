@@ -1,6 +1,6 @@
 ---
 title: Deploy your site
-weight: -6
+weight: -7
 description: Generate the quickstart as static files, prove why the backend still matters, and put a working Druxt site on a live URL.
 ---
 
@@ -8,6 +8,11 @@ The [first tutorial](/tutorials/getting-started) ended with a site running
 on your machine. This lesson takes the next step: generating the site as static files
 and finishing with a working Druxt site on a public URL. It also proves
 why the backend still matters.
+
+## Prerequisites
+
+- The [Getting started](/tutorials/getting-started) tutorial, completed and
+  still running (`npm run dev` in your project root).
 
 One constraint shapes the lesson. A Druxt site needs its backend even
 after generating, because route lookups on navigation and live data are
@@ -23,7 +28,7 @@ and running (`npm run info` shows its status), a
 packages globally, and about half an hour. The generate runs are the
 slow part.
 
-## 1. Tell Nuxt what to generate
+## Step 1: Tell Nuxt what to generate
 
 The quickstart's routes come from Drupal, so the static generator needs
 a starting point to crawl from. Add this line to `nuxt/nuxt.config.js`,
@@ -52,7 +57,7 @@ line, development keeps the proxy, and the static build has the browser
 talk to Drupal directly (the demo backend used later answers any
 origin).
 
-## 2. Generate locally and prove the dependency
+## Step 2: Generate locally and prove the dependency
 
 Check the backend is up (`npm run info`), then generate from the project
 root:
@@ -83,7 +88,7 @@ Start the backend again for good measure: `npm run dev`, then Ctrl+C
 once it is up (the frontend stops; the backend keeps serving, which is
 what `npm run stop` is for).
 
-## 3. Deploy against the public demo backend
+## Step 3: Deploy against the public demo backend
 
 The Druxt demo backend at `https://demo-api.druxtjs.org` is public,
 answers browsers from any origin, and runs the Umami food-magazine demo
@@ -138,7 +143,7 @@ serves its generated pages, and navigation degrades until it returns.
 
 Change `theme` back to `olivero` when you return to local work.
 
-## 4. Publishing your own content
+## Step 4: Publishing your own content
 
 To put **your** content on that URL, your backend has to live somewhere
 browsers can reach. The realistic options:
@@ -163,6 +168,8 @@ and hands off to the deploy guides.
 
 ## Where to go next
 
+- Keep learning: [Build a custom Druxt module](/tutorials/first-custom-module),
+  the final lesson.
 - [Deployment models](/explanation/deployment-models): choose the shape
   for your real site.
 - [Deploy a static site](/how-to/deploy-static): the production version

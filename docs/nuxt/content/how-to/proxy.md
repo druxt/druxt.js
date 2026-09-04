@@ -1,6 +1,6 @@
 ---
 title: Proxy the Drupal backend through Nuxt
-weight: -4
+weight: -6
 description: Route API and file requests through the frontend origin, so browser traffic never crosses the CORS boundary.
 ---
 

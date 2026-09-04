@@ -169,3 +169,7 @@ command.
   tutorial, starting from the quickstart.
 - [The deployment models overview](/explanation/deployment-models): what
   static does and does not give you.
+- [Deploy with a Nuxt server](/how-to/deploy-server): when the static
+  limits above rule this model out.
+- [Environment variables](/how-to/environment-variables): every variable
+  these builds read, on one page.

@@ -1,6 +1,6 @@
 ---
 title: The DruxtStore
-weight: -8
+weight: -6
 description: The DruxtStore caches Drupal collections and resources as shared references, so two components asking for the same article hit Drupal once.
 ---
 

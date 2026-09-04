@@ -1,6 +1,6 @@
 ---
 title: Theme Druxt components
-weight: -6
+weight: -5
 description: Change Druxt component output with wrapper components, the default template, slots and props, without forking or patching the framework.
 ---
 
