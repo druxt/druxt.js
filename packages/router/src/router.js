@@ -21,6 +21,17 @@ import Url from 'url-parse'
  * import { DruxtRouter } from 'druxt-router'
  * const router = new DruxtRouter('https://example.com', {})
  *
+ * @example @lang js <caption>Adding a custom route type.</caption>
+ * const router = new DruxtRouter('https://example.com', {
+ *   types: [{
+ *     type: 'entity',
+ *     canonical: (route) => route.entity.canonical,
+ *     component: 'my-entity-component',
+ *     property: 'entity',
+ *     props: (route) => ({ uuid: route.entity.uuid }),
+ *   }],
+ * })
+ *
  * @see https://druxtjs.org/modules/router
  */
 class DruxtRouter {
@@ -30,20 +41,6 @@ class DruxtRouter {
    * - Validates module options.
    * - Sets up Axios instance.
    * - Sets up options.
-   *
-   * @example @lang js
-   * const router = new DruxtRouter('https://example.com', {})
-   *
-   * @example @lang js <caption>Adding a custom route type.</caption>
-   * const router = new DruxtRouter('https://example.com', {
-   *   types: [{
-   *     type: 'entity',
-   *     canonical: (route) => route.entity.canonical,
-   *     component: 'my-entity-component',
-   *     property: 'entity',
-   *     props: (route) => ({ uuid: route.entity.uuid }),
-   *   }],
-   * })
    *
    * @param {string} baseUrl - The Drupal base URL.
    * @param {object} [options] - Druxt Router options.
