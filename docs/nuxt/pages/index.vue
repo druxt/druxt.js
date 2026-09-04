@@ -8,6 +8,10 @@
         <p class="mt-4 text-lg text-base-content/70 max-w-xl">
           Druxt is a framework for building fully decoupled Drupal and Nuxt.js applications and sites.
         </p>
+        <p class="mt-2 text-sm text-base-content/60">
+          Built on the Nuxt 2 / Vue 2 line: see
+          <NuxtLink class="underline hover:text-primary-focus" to="/explanation/support-and-versioning">support and versioning</NuxtLink>.
+        </p>
         <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
           <NuxtLink class="btn btn-primary gap-2" to="/tutorials/getting-started">
             <AppIconTutorials class="w-5 h-5" /> Get started

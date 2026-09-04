@@ -11,7 +11,7 @@ lesson.
 
 ## Lessons
 
-- [Getting started with Druxt.js](/tutorials/getting-started): set up a
+- [Getting started with Druxt](/tutorials/getting-started): set up a
   Nuxt application powered by a Drupal backend.
 - [Add a login flow](/tutorials/authentication): turn the quickstart's
   already-configured OAuth setup into a real, working login.

@@ -83,7 +83,7 @@ checks, so test with a regular user.
 
 A Consumer is Drupal's entity for one registered OAuth client, provided
 by the `consumers` module that arrives as a Simple OAuth dependency.
-Create one at `/admin/config/services/consumer` (an administrator
+Create one at `/admin/config/services/consumer/add` (an administrator
 account is needed for all of these forms):
 
 | Field        | Value                                                       |

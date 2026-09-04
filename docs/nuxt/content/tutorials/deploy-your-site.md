@@ -11,8 +11,12 @@ why the backend still matters.
 
 ## Prerequisites
 
-- The [Getting started](/tutorials/getting-started) tutorial, completed and
-  still running (`npm run dev` in your project root).
+- The [Getting started](/tutorials/getting-started) tutorial, completed,
+  with its backend provisioned and running (`npm run info` shows its
+  status).
+- A [Netlify](https://www.netlify.com) account.
+- Permission to install npm packages globally, and about half an hour.
+  The generate runs are the slow part.
 
 One constraint shapes the lesson. A Druxt site needs its backend even
 after generating, because route lookups on navigation and live data are
@@ -20,13 +24,6 @@ browser requests. Your throwaway backend runs on your machine, where
 the internet cannot reach it, so the live deploy in step 3 points at
 the public Druxt demo backend instead. Your own article stays local for
 now, and step 4 covers what publishing your own content takes.
-
-**What you need:** the completed [Getting
-started](/tutorials/getting-started) setup with its backend provisioned
-and running (`npm run info` shows its status), a
-[Netlify](https://www.netlify.com) account, permission to install npm
-packages globally, and about half an hour. The generate runs are the
-slow part.
 
 ## Step 1: Tell Nuxt what to generate
 
@@ -141,7 +138,8 @@ issues](/how-to/troubleshooting) covers the build and CORS failure
 modes; if the demo backend itself is unreachable, the deploy still
 serves its generated pages, and navigation degrades until it returns.
 
-Change `theme` back to `olivero` when you return to local work.
+Change `theme` back to `olivero` (the value the quickstart ships,
+Drupal's default frontend theme) when you return to local work.
 
 ## Step 4: Publishing your own content
 

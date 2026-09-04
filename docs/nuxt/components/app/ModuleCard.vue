@@ -10,7 +10,7 @@
     <p class="text-sm text-base-content/70 flex-1" v-text="module.description" />
 
     <div class="flex flex-wrap gap-2 pt-1">
-      <NuxtLink class="btn btn-sm btn-secondary" :to="module.dir">Get started</NuxtLink>
+      <NuxtLink class="btn btn-sm btn-secondary" :to="module.dir">Module docs</NuxtLink>
       <NuxtLink class="btn btn-sm btn-ghost" :to="'/api/packages/' + pkg">API</NuxtLink>
       <NuxtLink class="btn btn-sm btn-ghost" :to="'/api/packages/' + pkg + '/CHANGELOG'">Changelog</NuxtLink>
     </div>

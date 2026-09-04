@@ -7,7 +7,9 @@ description: Generate the site and host the files anywhere static. Netlify is th
 > **Before you start:** read [Deployment
 > models](/explanation/deployment-models) to confirm static is your
 > model. The backend must be reachable from wherever the build runs,
-> and from visitors' browsers once deployed.
+> and from visitors' browsers once deployed. In the quickstart layout
+> Nuxt lives in `nuxt/`, so the equivalents of the commands below are
+> `npm run generate --prefix nuxt` and a `nuxt/dist` publish directory.
 
 `nuxt generate` renders every page to plain files in `dist/`. Any static
 host serves them; this guide uses Netlify for the worked example, and
@@ -20,7 +22,7 @@ authenticated content are live browser requests, so the backend you generate
 against must stay reachable from visitors' browsers, with
 [CORS configured](/how-to/configure-cors). Generating a site that needs
 no backend at all is the [fully static
-model](/explanation/deployment-models#the-three-models), a deliberate
+model](/explanation/deployment-models#the-models), a deliberate
 configuration of its own.
 
 ## Generate the site locally first

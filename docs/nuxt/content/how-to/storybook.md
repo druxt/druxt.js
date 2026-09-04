@@ -21,7 +21,7 @@ from.
    does not use:
 
    ```sh
-   npm i -D @nuxtjs/storybook@4
+   npm install -D @nuxtjs/storybook@4
    ```
 
    The module bundles `@storybook/addon-essentials` at the matching

@@ -23,7 +23,7 @@ its tooling are new to you,
 [Drupal for Nuxt developers](/explanation/drupal-for-nuxt-developers)
 explains the concepts these steps lean on.
 
-## Install the Druxt module
+## Install the Drupal Druxt module
 
 ```sh
 composer require drupal/druxt
@@ -37,13 +37,15 @@ and [JSON:API Views](https://www.drupal.org/project/jsonapi_views).
 Composer downloads them with the module, and enabling `druxt` enables all
 of them. In practice this needs Drupal core `10.1` or later (the module
 itself accepts `8.8`+, but its Decoupled Router 2.x dependency requires
-`10.1`), and the maintained backends test against 10 and 11.
+`10.1`), and the maintained backends test against 10 and 11 (verified against
+druxt 1.2.1).
 
 Keep Decoupled Router below `2.0.7` for now
 (`composer require 'drupal/decoupled_router:^2.0 <2.0.7'`). 2.0.7
-changed a subscriber signature the current Druxt module does not
-declare, and route resolution silently stops working
-([#3618675](https://www.drupal.org/i/3618675)).
+changed a subscriber signature the Drupal Druxt module (1.2.1 and
+earlier) does not declare, and route resolution silently stops working
+([#3618675](https://www.drupal.org/i/3618675)); drop the pin once a
+release containing that fix ships.
 
 If composer refuses with a stability error, a dependency's current
 release is below your project's `minimum-stability` (set in the Drupal
@@ -92,7 +94,7 @@ with 405 responses until writes are enabled, at
 `/admin/config/services/jsonapi` or with drush:
 
 ```sh
-drush config:set jsonapi.settings read_only 0 -y
+drush config:set --input-format=yaml jsonapi.settings read_only false -y
 ```
 
 Skip this if the site never writes through the API; read-only is the
@@ -145,7 +147,7 @@ topology](/explanation/request-topology) explains the difference;
 | ----------------------------------------- | --------------------------------------------------------- |
 | Druxt module installed and enabled        | `composer require drupal/druxt` + `drush pm:enable druxt` |
 | Permission granted to the connecting role | `drush role:perm:add anonymous 'access druxt resources'`  |
-| JSON:API writes, if forms are used        | `drush config:set jsonapi.settings read_only 0`           |
+| JSON:API writes, if forms are used        | `drush config:set --input-format=yaml jsonapi.settings read_only false`           |
 | At least one content type with a display  | Drupal admin                                              |
 | CORS or proxy decided                     | [Request topology](/explanation/request-topology)         |
 

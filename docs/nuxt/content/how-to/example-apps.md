@@ -17,7 +17,7 @@ form. Screenshots below are real captures of the running apps.
 
 ---
 
-## druxt-site: the technical reference
+## Reference app (druxt-site): the technical baseline
 
 ![The druxt-site /examples index, listing ten technical pattern pages](/images/examples-druxt-site.png)
 

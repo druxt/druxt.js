@@ -21,10 +21,12 @@ name**. Nuxt auto-imports everything under `components/`, turning the
 path into a PascalCase name, and Druxt renders the most specific name
 that exists. The file starts working the moment it is saved.
 
-1. Render a Druxt component:
+1. Render a Druxt component (a UUID is the `id` of any JSON:API
+   resource, e.g. from `/jsonapi/node/article`; here it arrives as a
+   prop):
 
    ```vue
-   <Druxt module="entity" :props-data="{ type: 'node--article', uuid: page.uuid }" />
+   <Druxt module="entity" :props-data="{ type: 'node--article', uuid: '87e155a1-70c5-4a3c-a1a4-fee8a2ee3155' }" />
    ```
 
 2. Create a wrapper at the path that spells the suggestion you want to
@@ -82,7 +84,7 @@ of the default slot without creating a file. The template scope receives the
 same data the module would pass a wrapper:
 
 ```vue
-<DruxtEntity v-bind="props">
+<DruxtEntity type="node--article" :uuid="uuid">
   <template #default="{ entity }">
     <div>
       <h1>{{ entity.attributes.title }}</h1>
@@ -95,7 +97,7 @@ A component with a default template skips the wrapper system. To have
 both, set the `wrapper` property:
 
 ```vue
-<DruxtBlock v-bind="props" :wrapper="true">
+<DruxtBlock id="umami_branding" :wrapper="true">
   <template #default="{ block }">
     <!-- Wrapped by a DruxtBlock wrapper component. -->
   </template>

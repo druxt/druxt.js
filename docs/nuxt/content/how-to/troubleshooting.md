@@ -40,8 +40,9 @@ Druxt gates all of its JSON:API access behind one Drupal permission:
 don't obviously point at that permission. Errors instead reference whatever
 the underlying JSON:API resource would normally require (e.g. entity
 display-related admin permissions) rather than the Druxt permission itself.
-If JSON:API access fails site-wide right after installing the Druxt module,
-check **Drupal → People → Permissions** for **access druxt resources**
+If JSON:API access fails site-wide right after installing the Drupal Druxt module,
+check **Drupal → People → Permissions** for **Access DruxtJS JSON:API
+resources** (machine name `access druxt resources`)
 before debugging anything else. The [quickstart](/tutorials/getting-started)
 grants this automatically. Installing Druxt on an existing site does not.
 See the [`druxt` module reference](/modules/druxt#installation) for the

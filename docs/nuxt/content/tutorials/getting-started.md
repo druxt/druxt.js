@@ -1,5 +1,5 @@
 ---
-title: Getting started with Druxt.js
+title: Getting started with Druxt
 weight: -9
 description: From an empty machine to a running fully decoupled Drupal and Nuxt site.
 ---
@@ -22,18 +22,19 @@ fill in the other side's vocabulary. This tutorial works without them.
 
 ## Prerequisites
 
-- [Node 16](https://nodejs.org): if you use [nvm](https://github.com/nvm-sh/nvm)
-  or [mise](https://mise.jdx.dev), `nvm use` / `mise install` picks the pinned
-  version for you.
+- [Node](https://nodejs.org): 16 is the tested version, and the quickstart
+  scripts handle newer Node automatically. `node -v` tells you what you have;
+  [nvm](https://github.com/nvm-sh/nvm) / [mise](https://mise.jdx.dev) users get
+  the pinned version from `nvm use` / `mise install`.
 - One of:
   - PHP 8.3 or newer with the `pdo_sqlite` extension and [Composer](https://getcomposer.org),
     or
   - [DDEV](https://ddev.readthedocs.io) (Docker). The steps below assume
-    the local PHP path; for DDEV, follow the DDEV section of the
-    [quickstart README](https://github.com/druxt/quickstart#readme) for
-    setup, then rejoin at step 3.
-- A [GitHub](https://github.com) account (to create a project from the
-  template).
+    the local PHP path; with DDEV, replace Step 2's setup with
+    `ddev start`, `ddev drupal-install` and `ddev druxt-add-consumer`,
+    then rejoin at Step 3.
+- A [GitHub](https://github.com) account, if you create the project from
+  the template button (the `giget` path below needs none).
 
 > If you'd rather watch the pieces being assembled by hand, the
 > [quickstart repository](https://github.com/druxt/quickstart) README documents
@@ -52,6 +53,11 @@ npx giget@1 gh:druxt/quickstart#develop my-druxt-site
 cd my-druxt-site
 ```
 
+(`giget@1` is the last major that runs on Node 16; `#develop` is the
+template's default branch. The homepage one-liner adds `--install`, which
+runs the next step's setup for you; skip Step 2's setup command if you
+used it.)
+
 **Outcome:** you are inside your project root, and it contains a `drupal/`
 directory (the backend) and a `nuxt/` directory (the frontend).
 
@@ -66,7 +72,7 @@ npm run setup
 This one command:
 
 1. installs the frontend dependencies,
-2. provisions a fresh Drupal site with the Druxt module, Simple OAuth and an
+2. provisions a fresh Drupal site with the Drupal Druxt module, Simple OAuth and an
    OAuth consumer (SQLite, throwaway),
 3. starts the backend, and
 4. writes `BASE_URL` and `OAUTH_CLIENT_ID` to `.env`.
@@ -90,8 +96,17 @@ npm run dev
 | http://localhost:3000, or the port `npm run dev` printed | Nuxt (frontend)  |
 
 Open http://localhost:3000 (or the next free port, printed in the
-terminal). The page you see is rendered by Nuxt. It's a
-little empty: the backend has no content yet. That's the next step.
+terminal). The page you see is rendered by Nuxt, and it looks like
+this:
+
+![The fresh quickstart frontend: the site name and menu, dashed dev-mode placeholders for blocks nothing themes yet, and Drupal's no-front-page-content message](/images/getting-started-fresh-site.png)
+
+It's mostly empty because the backend has no content yet; the dashed
+boxes are dev-mode placeholders for blocks nothing themes, which
+[theming](/how-to/theming) explains later. That's the next step. (If
+you see "Welcome to Nuxt" or an error page instead, the frontend is not
+talking to the backend: see
+[Troubleshooting](/how-to/troubleshooting).)
 
 ## Step 4: Create your first content
 
@@ -135,7 +150,7 @@ A local fully decoupled site, and a set of commands to run it:
 | `npm run info`  | Show backend status and details             |
 
 The moving parts, in one paragraph: `drupal/` is a standard Drupal 11 site
-with the [Druxt module](https://www.drupal.org/project/druxt) installed and
+with the [Drupal Druxt module](https://www.drupal.org/project/druxt) installed and
 the _access druxt resources_ permission enabled. `nuxt/` is a Nuxt 2 site
 using the `druxt-site` module, which pulls layout, menus, blocks and content
 from the backend. `.env` tells the frontend where to find the backend, and
