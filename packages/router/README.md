@@ -27,6 +27,8 @@ alongside it, so a custom page can take over any route.
 
 ## Installation
 
+> Included with [`druxt-site`](https://druxtjs.org/modules/site); install separately only when composing modules yourself.
+
 1. Install the package:
 
    ```sh

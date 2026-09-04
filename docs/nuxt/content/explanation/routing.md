@@ -1,6 +1,6 @@
 ---
 title: Decoupled routing
-weight: -7
+weight: -5
 description: Only Drupal knows which entity serves a path, so Druxt asks it, then turns that answer into a resource request and follows any redirect.
 ---
 

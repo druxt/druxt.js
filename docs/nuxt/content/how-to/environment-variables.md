@@ -1,6 +1,6 @@
 ---
 title: Environment variables
-weight: 6
+weight: 2
 description: 'Every variable a Druxt build reads, where it comes from, and the build-time vs runtime distinction that catches people out.'
 ---
 

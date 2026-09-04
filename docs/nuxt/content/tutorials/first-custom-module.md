@@ -1,6 +1,6 @@
 ---
 title: Building a custom Druxt module
-weight: -8
+weight: -6
 description: Extend DruxtModule to build your own Druxt-powered, themeable component backed by Drupal data.
 ---
 
@@ -17,7 +17,7 @@ You'll know each step worked because each one has a visible outcome.
 
 ## Prerequisites
 
-- You completed [Getting started with Druxt.js](/tutorials/getting-started)
+- You completed [Getting started with Druxt](/tutorials/getting-started)
   and the quickstart is running locally (`npm run dev`).
 - At least one Article is published in the backend.
 - You're comfortable reading a Vue single-file component.
@@ -194,12 +194,12 @@ resolved theme component wrapped them.
    rendering is yours to override, whether per use, per site, or globally.
 
 The same three ideas power every Druxt module in the
-[modules list](/modules). When you're ready:
+[modules list](/modules).
+
+## Where to go next
 
 - Go deeper on overriding: [Theme Druxt components](/how-to/theming).
 - Understand why the suggestion chain looks the way it does:
   [Component resolution](/explanation/component-resolution).
 - Read the base class reference:
   [DruxtModule API](/api/packages/druxt/components/DruxtModule).
-- Keep learning: [Add a login flow](/tutorials/authentication), the
-  next lesson.

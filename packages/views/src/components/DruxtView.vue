@@ -512,7 +512,7 @@ export default {
      * Component settings.
      *
      * @param {object} context - The module component ViewModel.
-     * @param {object} wrapperSettings - Settings provided by the Wrapper component.
+     * @param {object} wrapperSettings - Settings provided by the wrapper component.
      * @returns {object} The merged module settings.
      */
     settings: (context, wrapperSettings) => {
@@ -743,7 +743,7 @@ export default {
 
 /**
  * Provides settings for the View module, via the `nuxt.config.js` `druxt.views`
- * or the Wrapper component `druxt` object.
+ * or the wrapper component `druxt` object.
  *
  * @typedef {object} ModuleSettings
  * @param {object} query - View results query settings:
@@ -808,7 +808,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} header - The View header.

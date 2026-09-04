@@ -266,7 +266,7 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
  *
@@ -326,7 +326,7 @@ export default {
  */
 
 /**
- * Provides propsData for use in the Wrapper component.
+ * Provides propsData for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {object} block - The Block Entity data.
@@ -344,7 +344,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} default - Debug information if Nuxt is in development mode.

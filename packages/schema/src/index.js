@@ -3,7 +3,7 @@ import { DruxtSchemaNuxtModule } from './nuxtModule'
 /**
  * The core module functionality.
  *
- * Provides methods for generating Druxt.js Schema files from the Drupal JSON:API.
+ * Provides methods for generating Druxt Schema files from the Drupal JSON:API.
  *
  * @type {class}
  * @exports DruxtSchema

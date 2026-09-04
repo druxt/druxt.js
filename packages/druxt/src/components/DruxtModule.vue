@@ -344,7 +344,7 @@ export default {
      *   propsData: { entity: {}, fields: {}, langcode: 'en', schema: {}, value: {} },
      * }
      *
-     * @param {object} wrapperProps - Props registered by the Wrapper component.
+     * @param {object} wrapperProps - Props registered by the wrapper component.
      * @return {object}
      */
     getModulePropsData(wrapperProps = {}) {
@@ -432,7 +432,7 @@ export default {
     /**
      * Get wrapper component data.
      *
-     * @param {string} component - The Wrapper component name.
+     * @param {string} component - The wrapper component name.
      *
      * @return {WrapperData}
      */
@@ -524,15 +524,15 @@ export default {
 /* eslint-disable jsdoc/valid-types --
    the property is Vue's `is`; the namepath parser rejects that word in any spelling */
 /**
- * The Wrapper component and propsData to be rendered.
+ * The wrapper component and propsData to be rendered.
  *
  * @typedef {object} ComponentData
- * @property {object} $attrs - propsData not registered by the Wrapper component.
- * @property {string} is=DruxtWrapper - The Wrapper component name.
- * @property {string[]} options - The Wrapper component options.
- * @property {object} props - propsData registered by the Wrapper component.
+ * @property {object} $attrs - propsData not registered by the wrapper component.
+ * @property {string} is=DruxtWrapper - The wrapper component name.
+ * @property {string[]} options - The wrapper component options.
+ * @property {object} props - propsData registered by the wrapper component.
  * @property {object} propsData - The component propsData object.
- * @property {object} settings - Druxt settings object provided by the Wrapper component.
+ * @property {object} settings - Druxt settings object provided by the wrapper component.
  *
  * @example @lang js
  * {
@@ -555,7 +555,7 @@ export default {
 /* eslint-enable jsdoc/valid-types */
 
 /**
- * Druxt settings and registered props retrieved from the Wrapper component.
+ * Druxt settings and registered props retrieved from the wrapper component.
  *
  * @typedef {object} WrapperData
  * @property {object} druxt - Druxt settings object for use by Druxt module.

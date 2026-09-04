@@ -240,7 +240,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} default - A JSON:API resource links based pager.

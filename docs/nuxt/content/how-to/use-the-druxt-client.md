@@ -1,6 +1,6 @@
 ---
 title: Use the Druxt client directly
-weight: -1
+weight: -3
 description: Fetch resources and collections with DruxtClient, with or without Nuxt.
 ---
 
@@ -27,8 +27,9 @@ npm install druxt
 The Client requires the `baseUrl` for your Drupal backend:
 
 ```js
-const { DruxtClient } = require('druxt');
-const druxt = new DruxtClient('https://demo-api.druxtjs.org');
+import { DruxtClient } from 'druxt'
+const druxt = new DruxtClient('https://demo-api.druxtjs.org')
+// (In CommonJS: const { DruxtClient } = require('druxt'))
 ```
 
 The UUIDs in the examples below are illustrative: the demo backend is

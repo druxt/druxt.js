@@ -1,6 +1,6 @@
 ---
 title: Browse and develop components in Storybook
-weight: -3
+weight: -2
 description: Storybook stories generated from live Drupal data, with a story tree that mirrors your backend and controls driven by real content.
 ---
 
@@ -21,7 +21,7 @@ from.
    does not use:
 
    ```sh
-   npm i -D @nuxtjs/storybook@4
+   npm install -D @nuxtjs/storybook@4
    ```
 
    The module bundles `@storybook/addon-essentials` at the matching

@@ -56,3 +56,8 @@ await this.$store.dispatch('druxtRouter/getEntity', query);
 // Use the DruxtStore.
 await this.$store.dispatch('druxt/getResource', { type, id });
 ```
+
+## Where to go next
+
+- [`druxt-router` module reference](/modules/router): options and components.
+- [Upgrade Druxt](/how-to/upgrade): the procedure these removals feed into.

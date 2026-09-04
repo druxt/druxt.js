@@ -112,3 +112,12 @@ exact origins.
 | Nuxt server, one frontend origin        | Either. The [proxy](/how-to/proxy) leaves the backend untouched. |
 | Several frontends sharing one backend   | CORS, with each origin listed.                                   |
 | You cannot change the backend           | The proxy, and a server-rendered deployment.                     |
+
+## Where to go next
+
+- [Proxy the Drupal backend through Nuxt](/how-to/proxy): the
+  same-origin alternative when a server renders the frontend.
+- [Request topology](/explanation/request-topology): which requests
+  cross origins, and why only those need CORS.
+- [Troubleshoot common issues](/how-to/troubleshooting): the CORS
+  failures and their signatures.

@@ -1,6 +1,6 @@
 ---
 title: Serve content in multiple languages
-weight: -5
+weight: -4
 description: Fetch and render translated Drupal content with langcode prefixes, from the route to the store to language-specific theme components.
 ---
 

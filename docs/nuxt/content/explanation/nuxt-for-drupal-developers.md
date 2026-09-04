@@ -1,6 +1,6 @@
 ---
 title: Nuxt for Drupal developers
-weight: -1
+weight: -7
 description: 'The Nuxt and Vue concepts behind a Druxt frontend, mapped to the Drupal ideas they replace.'
 ---
 

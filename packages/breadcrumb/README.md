@@ -25,6 +25,8 @@ other Druxt component.
 
 ## Installation
 
+> Included with [`druxt-site`](https://druxtjs.org/modules/site); install separately only when composing modules yourself.
+
 1. Install the package:
 
    ```sh

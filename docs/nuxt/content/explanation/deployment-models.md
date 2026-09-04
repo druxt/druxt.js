@@ -1,6 +1,6 @@
 ---
 title: Deployment models
-weight: -3
+weight: -1
 description: How a Druxt site goes to production, from fully static files through a server-rendered node service, and how to choose between the models.
 ---
 

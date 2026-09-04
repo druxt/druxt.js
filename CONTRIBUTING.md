@@ -8,13 +8,12 @@ description: Set up the Druxt development environment, report bugs, and submit c
 
 Druxt is an open source project, built, supported and maintained by the community, for the community.
 
----
-
 ## Development environment setup
 
 The Druxt development environment can be run in a dev container (VS Code, GitHub Codespaces, DevPod) or locally:
 
----
+First, fork [druxt/druxt.js](https://github.com/druxt/druxt.js) on GitHub,
+giving you `https://github.com/USER/druxt.js` to work from.
 
 ### Dev container
 
@@ -22,29 +21,23 @@ The Druxt development environment can be run in a dev container (VS Code, GitHub
 
 [![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/druxt/druxt.js)
 
-1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository. e.g., `https://github.com/USER/druxt.js`
-2. Open the fork in the tool of your choice:
+1. Open the fork in the tool of your choice:
    - **VS Code**: clone, open the folder, run **Dev Containers: Reopen in Container**.
    - **GitHub Codespaces**: on the repository page, **Code → Open with Codespaces**.
    - **[DevPod](https://devpod.sh)**: run `devpod up github.com/USER/druxt.js`, or add the same URL as a workspace source in DevPod's desktop app.
-3. Wait for the post-create setup to finish, then build the packages: `yarn build`
+2. Wait for the post-create setup to finish, then build the packages: `yarn build`
 
 The container covers package development, unit tests, linting and the documentation site. It does not provision a Drupal backend. Use the `docs/drupal` `.devtools` flow (below) or a [quickstart repository](https://github.com/druxt/quickstart) when you need one.
 
----
-
 ### Local development
 
-1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository. e.g., `https://github.com/USER/druxt.js`
-2. Clone the forked repository to your local development environment. e.g., `git clone https://github.com/USER/druxt.js`
-3. Set up the development environment: `make setup` (enables corepack and installs dependencies)
-4. Build packages: `yarn build`
-5. Start a Drupal backend (PHP 8.3 + SQLite, no Docker): `cd docs/drupal && .devtools/assemble && .devtools/provision && .devtools/start`
-6. Run DruxtSite example: `yarn example:druxt-site`
+1. Clone the forked repository to your local development environment. e.g., `git clone https://github.com/USER/druxt.js`
+2. Set up the development environment: `make setup` (enables corepack and installs dependencies)
+3. Build packages: `yarn build`
+4. Start a Drupal backend (PHP 8.3 + SQLite, no Docker): `cd docs/drupal && .devtools/assemble && .devtools/provision && .devtools/start`
+5. Run DruxtSite example: `yarn example:druxt-site`
 
-> If `make` is not available, run `corepack enable && yarn install` manually instead of `make setup`. This project uses [Yarn Berry](https://yarnpkg.com/) via [corepack](https://nodejs.org/api/corepack.html), which requires Node.js 16.9+ or 14.19+.
-
----
+> If `make` is not available, run `corepack enable && yarn install` manually instead of `make setup`. This project uses [Yarn Berry](https://yarnpkg.com/) via [corepack](https://nodejs.org/api/corepack.html), which requires Node 16.9 or later.
 
 ## Bug reports, feature requests
 
@@ -52,11 +45,9 @@ One of the easiest ways to contribute to Druxt is to open issues, giving as much
 
 When reporting bugs please make sure to provide detailed steps to reproduce the issue, and when possible provide a minimal reproduction (a repo or snippet that triggers the bug).
 
----
-
 ## Pull requests
 
-To resolve an issue or propose an improvement, use the following process to create a Pull request:
+To resolve an issue or propose an improvement, use the following process to create a pull request:
 
 1. If this a new issue, make sure to open a bug report or feature request.
 2. Fork the repository.
@@ -64,8 +55,6 @@ To resolve an issue or propose an improvement, use the following process to crea
 4. Make a `feature/#` branch from the `develop` branch.
 5. Make and commit your changes.
 6. Create a Pull request: https://github.com/druxt/druxt.js/compare
-
----
 
 ## Example projects
 
@@ -105,8 +94,6 @@ A non-Nuxt example script showing DruxtClient and DruxtSchema in plain Node. Not
 
 The reader-facing tour of these apps is [Explore the example apps](https://druxtjs.org/how-to/example-apps).
 
----
-
 ## Development tools
 
 The Druxt repository is setup with tools and automated processes to help with development and to ensure a maintainable project:
@@ -121,8 +108,6 @@ The Druxt repository is setup with tools and automated processes to help with de
 - [Linting](#linting) - Coding styles and standards
 - [Siroc](#siroc) - Zero-config build tools
 
----
-
 ### Changesets
 
 Changesets is a tool to manage the mono-repo packages changelogs and versions.
@@ -134,8 +119,6 @@ yarn changeset
 ```
 
 Be sure to commit your changeset file alongside your changes.
-
----
 
 ### Codecov
 
@@ -149,8 +132,6 @@ yarn test:unit
 
 - For more details, refer to the [Druxt Codecov.io report](https://app.codecov.io/gh/druxt/druxt.js)
 
----
-
 ### Conventional commits
 
 > A specification for adding human and machine readable meaning to commit messages
@@ -161,8 +142,6 @@ A **husky** git hook is used to ensure the standard is enforced, and will explai
 
 - For more details, refer to the [Conventional Commits documentation](https://www.conventionalcommits.org/).
 
----
-
 ### Cypress
 
 Automated end-to-end testing is implemented using Cypress:
@@ -172,8 +151,6 @@ yarn test:e2e
 ```
 
 - For more details, refer to the [Cypress documentation](https://docs.cypress.io/guides).
-
----
 
 ### Docgen
 
@@ -191,8 +168,6 @@ The documentation website is a Nuxt site located in the `/docs/nuxt` directory, 
 cd docs/nuxt && yarn dev
 ```
 
----
-
 ### Jest
 
 Automated testing is implemented using Jest.
@@ -207,8 +182,6 @@ Test files are located within the relevant packages `test` directories. E.g., `p
 
 - For more details, refer to the [Jest documentation](https://jestjs.io/docs/getting-started).
 
----
-
 ### Linting
 
 Code styles and standards are enforced by linting tools, including **ESLint**.
@@ -220,8 +193,6 @@ You can also manually run linting using the following command:
 ```sh
 yarn lint
 ```
-
----
 
 ### Siroc
 

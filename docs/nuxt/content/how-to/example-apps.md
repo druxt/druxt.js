@@ -17,7 +17,7 @@ form. Screenshots below are real captures of the running apps.
 
 ---
 
-## druxt-site: the technical reference
+## Reference app (druxt-site): the technical baseline
 
 ![The druxt-site /examples index, listing ten technical pattern pages](/images/examples-druxt-site.png)
 
@@ -99,3 +99,6 @@ commands), then from the monorepo root:
   `druxt-site`'s `/examples/*` pages, above.
 - Understand the machine all four apps sit on top of:
   [Architecture](/explanation/architecture).
+- Steal their patterns for your own site: [Theme Druxt
+  components](/how-to/theming) and [Browse and develop components in
+  Storybook](/how-to/storybook).

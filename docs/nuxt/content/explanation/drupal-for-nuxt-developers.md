@@ -1,6 +1,6 @@
 ---
 title: Drupal for Nuxt developers
-weight: -2
+weight: -8
 description: 'The Drupal vocabulary, tools and commands the rest of these docs assume, explained for developers coming from the JavaScript side.'
 ---
 
@@ -35,6 +35,7 @@ The terms these docs use, and the closest frontend concept for each:
 | View                  | A configurable content query with its own display                                          | A saved query plus its list component                                          |
 | Module                | An installable extension (the [Druxt module](https://www.drupal.org/project/druxt) is one) | An npm package or Nuxt module                                                  |
 | Permission            | A grant checked per role, per operation                                                    | Route/API authorization                                                        |
+| Machine name          | The stable ID of a thing, distinct from its human label                                    | A slug or key                                                                  |
 
 The one that matters most to Druxt is the display mode: Druxt reads
 display modes as schemas and resolves Vue components from them, so a
@@ -94,7 +95,7 @@ Drupal's own rendering stack, Twig templates, the theme layer and render
 arrays: Druxt replaces all of it with Vue, and you never write code
 against Drupal's routing or form APIs either. Drupal itself keeps
 owning paths and aliases; the frontend resolves them through the
-decoupled router, which is backend configuration, not code you write. If a Drupal tutorial
+Decoupled Router module, which is backend configuration, not code you write. If a Drupal tutorial
 spends its time in `.theme` files and Twig, it is solving a problem Druxt
 has already taken off your plate.
 

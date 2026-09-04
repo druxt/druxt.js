@@ -1,6 +1,6 @@
 ---
 title: Component resolution
-weight: -5
+weight: -3
 description: Druxt finds a wrapper component by ranking candidate names from the render context, then hands it the props, slots and attributes it needs.
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: Request topology
-weight: -4
+weight: -2
 description: 'Which requests happen at build time, during server rendering and in the browser, and what that means for CORS, the proxy and your hosting layout.'
 ---
 

@@ -47,3 +47,8 @@ If you extended either directly, extend
 provides the component suggestion system, the wrapper contract, and the
 `propsData` / `slots` callbacks described in
 [Component resolution](/explanation/component-resolution).
+
+## Where to go next
+
+- [`druxt` module reference](/modules/druxt): options and components.
+- [Upgrade Druxt](/how-to/upgrade): the procedure these removals feed into.

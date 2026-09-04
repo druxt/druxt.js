@@ -4,7 +4,7 @@ it('DruxtJS.org: Get started', () => {
   cy.contains('a', 'Get started').click()
 
   cy.url().should('include', '/tutorials/getting-started')
-  cy.get('h1').should('have.text', 'Getting started with Druxt.js')
+  cy.get('h1').should('have.text', 'Getting started with Druxt')
 
   // Exactly one h1: the page header renders the frontmatter title, and the
   // markdown body no longer repeats it.
