@@ -43,11 +43,11 @@ the suggestion chain that
 and Druxt components are easy to spot in the tree, tagged `druxt` in
 blue.
 
-![DruxtSite selected in the component tree, its druxt-tagged children expanded, with the state pane's druxt section showing $theme resolved to DruxtSiteOlivero above DruxtSiteDefault](/images/devtools-theme.png)
+![A recipe's DruxtEntity selected in the component tree above its DruxtField children, with the state pane's druxt section showing $theme resolved to DruxtEntityNodeRecipe above its ordered suggestion list](/images/devtools-theme.png)
 
 ## Scaffold a wrapper from the browser
 
-![The $theme list with the save action revealed beside the unregistered DruxtSiteDefault suggestion](/images/devtools-scaffold.png)
+![The recipe's $theme list with the save action revealed beside the unregistered DruxtEntityNodeRecipeFullViewEn suggestion](/images/devtools-scaffold.png)
 
 Each unregistered name in the `$theme` list carries a save action.
 Clicking it asks the dev server to create that wrapper file, at its

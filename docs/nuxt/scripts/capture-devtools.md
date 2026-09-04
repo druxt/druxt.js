@@ -31,24 +31,31 @@ backend running.
    },
    ```
 
-3. Position the window and drive it with xdotool; capture each state
+3. Open a content-rich page, so the tree and suggestion chain carry
+   real substance: a recipe on an Umami backend
+   (`/en/recipes/deep-mediterranean-quiche` against
+   `https://demo-api.druxtjs.org`) gives a DruxtEntity with nine
+   DruxtField children and a 14-entry `$theme` list.
+
+4. Position the window and drive it with xdotool; capture each state
    with `import -window <window-id> <file>`:
 
-   - `devtools-theme.png`: expand the tree to DruxtSite's regions,
-     select DruxtSite, scroll the state pane to the `druxt` section so
-     `$theme` and its suggestion list are visible.
-   - `devtools-scaffold.png`: hover the unregistered suggestion in that
+   - `devtools-theme.png`: type `druxt` into "Find components", expand
+     down to the recipe's DruxtEntity and its DruxtField children,
+     select DruxtEntity, scroll the state pane to the `druxt` section
+     and expand `$theme` so the full suggestion list is visible.
+   - `devtools-scaffold.png`: hover an unregistered suggestion in that
      list so its save action shows.
    - `devtools-inspector.png`: open the DruxtJS inspector (the droplet
      icon in the left rail), select Connection details.
 
-4. Crop each capture to its subject so the three images stay small and
+5. Crop each capture to its subject so the three images stay small and
    visually distinct (geometries assume the 1280x800 window at the
    origin):
 
    ```sh
    convert devtools-theme.png -crop 1095x690+185+55 +repage devtools-theme.png
-   convert devtools-scaffold.png -crop 547x142+733+628 +repage devtools-scaffold.png
+   convert devtools-scaffold.png -crop 547x345+733+395 +repage devtools-scaffold.png
    convert devtools-inspector.png -crop 1280x235+0+25 +repage devtools-inspector.png
    ```
 
@@ -56,4 +63,4 @@ backend running.
    the `$theme` list with the save action, inspector is the top strip
    with the rail, node list and connection details.
 
-5. Optimize with `pngquant --quality 65-90` and revert the config edit.
+6. Optimize with `pngquant --quality 65-90` and revert the config edit.
