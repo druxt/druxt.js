@@ -112,7 +112,7 @@ class DruxtRouter {
   /**
    * Add headers to the Axios instance.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Set headers via the DruxtClient axios options, or client.axios interceptors instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
@@ -134,7 +134,7 @@ class DruxtRouter {
   /**
    * Build query URL.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Use client.buildQueryUrl(url, query) instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
@@ -157,7 +157,7 @@ class DruxtRouter {
   /**
    * Check response for permissions.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Handle JSON:API meta.omitted links client-side instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
@@ -191,7 +191,7 @@ class DruxtRouter {
   /**
    * Get index of all available resources, or the optionally specified resource.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Use client.getIndex(resource) instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
@@ -257,7 +257,7 @@ class DruxtRouter {
   /**
    * Get a JSON:API resource by type and ID.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Use client.getResource(type, id) instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
@@ -280,7 +280,7 @@ class DruxtRouter {
   /**
    * Gets a collection of resources.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Use client.getCollectionAll(resource, query) instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}

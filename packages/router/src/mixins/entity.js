@@ -4,7 +4,7 @@ import { mapActions, mapState } from 'vuex'
  * The DruxtRouterEntityMixin Vue.js mixin provides easy integration with the DruxtJS Router Vuex store, including on-demand loading of JSON:API resources.
  *
  * **Warning:** This mixin relies on the deprecated `druxtRouter/getEntity` Vuex store action,
- * which is removed in druxt-router 1.0.0. Use the DruxtEntity component instead.
+ * which is removed in druxt-router 2.0.0. Use the DruxtEntity component instead.
  *
  * @see {@link https://druxtjs.org/modules/entity|DruxtEntity}
  *

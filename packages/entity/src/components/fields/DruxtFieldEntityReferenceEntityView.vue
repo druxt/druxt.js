@@ -29,7 +29,7 @@ import { DruxtFieldMixin } from 'druxt-entity'
 
 /**
  * Renders an entity reference field's referenced entities as DruxtEntity components.
- * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:1.0.0.
+ * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:2.0.0.
  *   Use a field wrapper component resolved by the component suggestion system instead.
  * @see https://druxtjs.org/modules/entity/deprecations
  */
