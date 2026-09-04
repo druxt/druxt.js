@@ -17,6 +17,8 @@ class DruxtDocgen {
   constructor() {
     this.components = []
     this.destination = 'docs/nuxt/content'
+    this.apiPages = []
+    this.inheritedTypes = {}
   }
 
   /**
