@@ -19,6 +19,39 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Classifies what a pull request touches, so the slow jobs and steps run
+  # only when their subject changed. Push events (develop/main, the
+  # production path) report everything as changed, so full coverage always
+  # holds where it matters. If the file listing fails, everything defaults
+  # to changed: fail open, never silently skip.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      deps: ${{ steps.classify.outputs.deps }}
+      site: ${{ steps.classify.outputs.site }}
+      packages: ${{ steps.classify.outputs.packages }}
+    steps:
+      - id: classify
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          deps=true; site=true; packages=true
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename'); then
+              deps=false; site=false; packages=false
+              echo "$files" | grep -qE '(^|/)(yarn\.lock|package\.json|\.yarnrc\.yml)$' && deps=true
+              echo "$files" | grep -qE '^(docs/nuxt/|packages/docgen/|packages/[^/]+/README\.md)' && site=true
+              echo "$files" | grep -qE '^packages/' && packages=true
+            else
+              echo "file listing failed; running everything" >&2
+            fi
+          fi
+          {
+            echo "deps=$deps"
+            echo "site=$site"
+            echo "packages=$packages"
+          } >> "$GITHUB_OUTPUT"
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -58,7 +91,7 @@ jobs:
           retention-days: 1
 
   lint:
-    needs: build
+    needs: [build, changes]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -161,6 +194,7 @@ jobs:
         run: yarn lint:renovate
 
       - name: Dependency audit (full report, includes devDependencies)
+        if: needs.changes.outputs.deps == 'true'
         env:
           YARN_HTTP_TIMEOUT: '180000'
         run: yarn lint:audit:full
@@ -169,6 +203,7 @@ jobs:
       # The registry's audit endpoint times out often enough to matter, so the
       # blocking pass retries before it fails anyone's pipeline.
       - name: Dependency audit (production, blocking)
+        if: needs.changes.outputs.deps == 'true'
         env:
           YARN_HTTP_TIMEOUT: '180000'
         run: |
@@ -183,11 +218,14 @@ jobs:
           exit "$status"
 
       - name: Knip (unused/unlisted dependencies)
+        if: needs.changes.outputs.deps == 'true'
         run: yarn lint:knip
 
-      - run: yarn build
+      - if: needs.changes.outputs.deps == 'true' || needs.changes.outputs.packages == 'true'
+        run: yarn build
 
       - name: Bundlewatch
+        if: needs.changes.outputs.deps == 'true' || needs.changes.outputs.packages == 'true'
         run: yarn bundlewatch
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -431,7 +469,8 @@ jobs:
   audit-seo:
     name: audit-seo
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, changes]
+    if: needs.changes.outputs.site == 'true'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
