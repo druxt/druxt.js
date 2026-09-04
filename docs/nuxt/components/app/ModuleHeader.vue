@@ -18,7 +18,7 @@
                machine name; menu behavior lives in AppDropdown. -->
           <AppDropdown :items="siblings" button-class="min-w-0 px-1 -mx-1 hover:bg-base-200">
             <span class="min-w-0 flex flex-col text-left sm:flex-row sm:items-baseline sm:gap-3">
-              <span class="text-2xl sm:text-3xl font-bold tracking-tight" v-text="module.title" />
+              <component :is="titleTag" class="text-2xl sm:text-3xl font-bold tracking-tight" v-text="module.title" />
               <span class="font-mono text-[13px] sm:text-[15px] text-primary-focus" v-text="name" />
             </span>
           </AppDropdown>
@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import { moduleIcon, moduleName, modulePkgs } from './icon/module'
+import { isPackageRoot, moduleIcon, moduleName, modulePkgs } from './icon/module'
 
 export default {
   data: () => ({
@@ -176,6 +176,17 @@ export default {
         : null
       return candidate && modulePkgs.includes(candidate) ? candidate : null
     },
+
+    /**
+     * The element wrapping the module title. This block is the page header
+     * on a package's root pages, so it carries the h1 there; on the tab
+     * pages beneath them the page's own header owns the h1 instead.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.$route - The current route.
+     * @returns {string} The tag name to render.
+     */
+    titleTag: ({ $route }) => (isPackageRoot($route.path) ? 'h1' : 'span'),
 
     /**
      * The npm package name shown in mono; plain `druxt` for the core.

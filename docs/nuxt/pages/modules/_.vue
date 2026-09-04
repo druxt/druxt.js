@@ -1,8 +1,10 @@
 <template>
   <div>
-    <!-- docgen lifts the README's h1 into frontmatter, so without this the
-         page has no h1 at all and its outline starts at h2. -->
-    <AppPageHeader v-if="document" :title="document.title" :description="document.description" :icon="icon" :mono="mono" />
+    <!-- The page's own title, for the tab pages under a module. Skipped on
+         the module's own route, where the layout's module header is already
+         the page header: rendering both printed the identity block twice,
+         icon and package name included. -->
+    <AppPageHeader v-if="document && !inModuleHeader" :title="document.title" :description="document.description" />
 
     <!-- Every module README opens with a screenshot; it becomes the hero. -->
     <AppFigure v-if="hero" :src="hero.src" :alt="hero.alt" class="mb-8" />
@@ -18,7 +20,7 @@
 <script>
 import { seoHead } from '~/utils/seo'
 import { documentDescription, extractHero } from '~/utils/content'
-import { moduleIcon, moduleName } from '~/components/app/icon/module'
+import { isPackageRoot } from '~/components/app/icon/module'
 
 export default {
   name: 'AppModuleDocument',
@@ -70,9 +72,16 @@ export default {
   computed: {
     editPath: ({ slug }) => 'modules/' + slug + '.md',
 
-    // The module's icon and npm name, matching its card on the index pages.
-    icon: ({ pkg }) => (pkg ? moduleIcon(pkg) : null),
-    mono: ({ pkg }) => (pkg ? moduleName(pkg) : null),
+    /**
+     * Whether the layout's module header is already serving as this page's
+     * header, in which case repeating it here prints the module identity
+     * twice.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.$route - The current route.
+     * @returns {boolean} True when the header above already names this page.
+     */
+    inModuleHeader: ({ $route }) => isPackageRoot($route.path),
   },
 }
 </script>

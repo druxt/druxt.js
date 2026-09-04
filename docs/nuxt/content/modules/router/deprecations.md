@@ -4,8 +4,6 @@ weight: 10
 description: Retired DruxtRouter client and store members, with their replacements.
 ---
 
-# Deprecations
-
 ## DruxtRouter pass-through methods
 
 > [druxt-router] Use the DruxtClient directly.

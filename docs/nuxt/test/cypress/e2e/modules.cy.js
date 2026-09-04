@@ -15,4 +15,15 @@ it('DruxtJS.org: Modules', () => {
   cy.get('nav[aria-label="Breadcrumb"]').should('contain', 'Modules')
   cy.contains('a', 'Source').should('have.attr', 'href').and('include', 'github.com/druxt')
   cy.contains('a', 'Changelog').should('have.attr', 'href', '/api/packages/entity/CHANGELOG')
+
+  // The module header is the page header on a package root, so the module
+  // identity is named once, not once by the header and again by the page.
+  cy.get('h1').should('have.length', 1).and('have.text', 'Entity')
+
+  cy.visit('/api/packages/entity')
+  cy.get('h1').should('have.length', 1).and('have.text', 'Entity')
+
+  // A page under a module keeps its own title, and only its own.
+  cy.visit('/modules/entity/deprecations')
+  cy.get('h1').should('have.length', 1).and('have.text', 'DruxtEntity deprecations')
 })
