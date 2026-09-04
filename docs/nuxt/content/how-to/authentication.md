@@ -170,6 +170,40 @@ than by the OAuth header: attach the Bearer token as above, or fetch a
 CSRF token from Drupal's `/session/token` and send it in the
 `X-CSRF-Token` header alongside cookie auth.
 
+## Keep the session alive
+
+The scheme handles refresh tokens out of the box: Simple OAuth issues
+one to this flow when the scope enables the `refresh_token` grant, and
+`this.$auth.refreshTokens()` exchanges it for a fresh access token. What
+nothing does by default is call it. Server rendering also always starts
+logged out, because the tokens live client-side.
+
+The pattern production Druxt sites use is a mount-time check in the
+default layout: after hydration, when auth storage holds token state but
+the session is not logged in, refresh; when the refresh fails, the
+tokens are spent, so log out:
+
+```js
+// layouts/default.vue
+export default {
+  mounted() {
+    this.$nextTick(() => {
+      const hasState = Object.keys(this.$auth.$storage._state).some(
+        (key) => !!this.$auth.$storage._state[key],
+      );
+      if (this.$route.name !== 'callback' && !this.$auth.loggedIn && hasState) {
+        this.$auth.refreshTokens().catch(() => this.$auth.logout());
+      }
+    });
+  },
+};
+```
+
+Skip the callback route (the code exchange is mid-flight there), and
+guard against loops if your logout redirects somewhere that mounts this
+layout again; a flag in `sessionStorage` set on failure and cleared on
+the login page does it.
+
 ## Logging out
 
 `this.$auth.logout()` ends the frontend session, and nothing more. Two
@@ -249,11 +283,9 @@ proxy: {
 
 The limitations documented in the
 [authentication tutorial](/tutorials/authentication#known-limitations)
-apply to this setup identically: druxt-auth's authorization-code flow
-does not refresh tokens automatically (sessions end when the access
-token expires), and no logout control is included by default. Both are
-druxt-auth issues rather than backend configuration, so nothing on this
-page works around them.
+apply to this setup identically: no logout control is included by
+default (the [Logging out](#logging-out) section above is the fix), and
+sessions do not renew silently without the pattern below.
 
 ## Where to go next
 

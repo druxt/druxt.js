@@ -100,13 +100,14 @@ rather than requiring people to know the `/user/login` URL by heart.
 
 Current as of `druxt-auth` 0.4.0:
 
-- **No automatic token refresh for this flow.** The Authorization Code
-  strategy here doesn't have refresh-token handling configured, so your
-  session ends when the access token expires rather than renewing silently.
-  Password grant (a different setup; see the
-  [`druxt-auth` README](https://github.com/druxt/druxt-auth)) does have
-  refresh handling, but needs a _confidential_ Consumer with a secret, unlike
-  the public one this tutorial's Consumer already is.
+- **Sessions don't renew silently by default.** Nothing schedules a
+  token refresh for this strategy, so the session ends when the access
+  token expires. The pieces are all there, though: the backend issues a
+  refresh token to this flow (the provisioned scope enables the
+  `refresh_token` grant) and `this.$auth.refreshTokens()` renews the
+  session on demand. The
+  [authentication how-to](/how-to/authentication#keep-the-session-alive)
+  shows the pattern production sites use.
 - **Logging out** isn't wired to any UI yet either: `this.$auth.logout()`
   ends the session once you've added something to call it.
 
