@@ -166,6 +166,21 @@ jobs:
           cd docs/nuxt
           /tmp/vale content
 
+      # Root-relative /images/ links are excluded from the production
+      # linkcheck (they ship with the same change; probing production only
+      # measures deployment lag), so this check pins them to the files that
+      # actually exist in the branch.
+      - name: Image references resolve to files
+        run: |
+          missing=0
+          while IFS= read -r ref; do
+            if [ ! -f "docs/nuxt/static$ref" ]; then
+              echo "missing image file for reference: $ref" >&2
+              missing=1
+            fi
+          done < <(grep -rhoE '\]\(/images/[^) ]+\)' docs/nuxt/content --include='*.md' | sed 's/](\(.*\))/\1/' | sort -u)
+          exit "$missing"
+
       - name: Linkcheck (docs/nuxt/content)
         continue-on-error: true
         run: |

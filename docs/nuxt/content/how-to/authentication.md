@@ -245,7 +245,9 @@ export default {
       try {
         await this.$axios.post('/oauth/logout');
       } catch (e) {
-        console.warn('Token revocation failed; tokens live until expiry.', e);
+        // Do not log the error object itself: axios keeps the request
+        // config, Authorization header included, on rejections.
+        console.warn('Token revocation failed; tokens live until expiry.');
       }
 
       await this.$auth.logout();
@@ -285,7 +287,8 @@ The limitations documented in the
 [authentication tutorial](/tutorials/authentication#known-limitations)
 apply to this setup identically: no logout control is included by
 default (the [Logging out](#logging-out) section above is the fix), and
-sessions do not renew silently without the pattern below.
+sessions do not renew silently without the pattern in
+[Keep the session alive](#keep-the-session-alive) above.
 
 ## Where to go next
 
