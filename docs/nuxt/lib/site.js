@@ -218,7 +218,12 @@ const docTypeFor = (path) => {
  * @returns {string} A JavaScript expression yielding the doc type.
  */
 const docTypeExpression = () => {
+  // Escaped for embedding in an inline <script>: `<` and the JS line
+  // separators would otherwise terminate or break the script element.
   const known = JSON.stringify(Object.keys(SECTIONS))
+    .replace(/</g, '\\u003c')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029')
   return `(function(){var s=(location.pathname.split('/').filter(Boolean)[0]||'');`
     + `return s?(${known}.indexOf(s)>-1?s:'other'):'home'})()`
 }

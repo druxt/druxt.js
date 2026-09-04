@@ -7,6 +7,12 @@
 // colour-mode bridge already uses below.
 const GA_MEASUREMENT_ID = 'G-Y1ZRHGDGSD'
 
+// The id is interpolated into an inline script; the shape assertion keeps
+// any other character class off the page.
+if (!/^G-[A-Z0-9]+$/.test(GA_MEASUREMENT_ID)) {
+  throw new Error('GA_MEASUREMENT_ID must match G-[A-Z0-9]+')
+}
+
 // LAGOON_ENVIRONMENT_TYPE is 'production' only for the environment matching
 // .lagoon.yml's `main` branch (druxtjs.org itself); every preview/branch
 // build gets 'development'. yarn generate runs inside Lagoon's own build
