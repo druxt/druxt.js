@@ -1,6 +1,6 @@
 ---
 title: Building a custom Druxt module
-weight: -6
+weight: -5
 description: Extend DruxtModule to build your own Druxt-powered, themeable component backed by Drupal data.
 ---
 

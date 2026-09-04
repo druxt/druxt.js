@@ -158,7 +158,7 @@ is the only file you'd change to point the frontend at a different Drupal.
 
 ## Where to go next
 
-- Keep learning: [Add a login flow](/tutorials/authentication),
+- Keep learning: [Theme your front page](/tutorials/theme-your-front-page),
   the next lesson.
 - Log a user in: [Add a login flow](/tutorials/authentication): the OAuth
   setup this command already provisioned, put to use.
@@ -166,7 +166,8 @@ is the only file you'd change to point the frontend at a different Drupal.
   deployment lesson.
 - Understand the machine you just started:
   [Architecture](/explanation/architecture).
-- Start customizing the look: [Theme Druxt components](/how-to/theming).
+- Reference for the theme layer:
+  [Theme Druxt components](/how-to/theming).
 - Browse what each package does: [Druxt modules](/modules).
 - See finished Druxt sites running in production:
   [demo.druxtjs.org](https://demo.druxtjs.org).
