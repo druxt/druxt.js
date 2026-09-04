@@ -515,3 +515,12 @@ html {
   font-size: 13px;
   text-align: left;
 }
+
+/* Deprecated API members render struck through; dim them as well so the
+   live surface stands out at a glance. */
+.prose :is(s, del) {
+  opacity: 0.55;
+}
+.prose :is(s, del) a {
+  color: inherit;
+}
