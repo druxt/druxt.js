@@ -4,8 +4,10 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
 /**
- * The DruxtMenu component renders a Drupal menu using either the default
- * Drupal content menus, or the full menu via the JSON:API Menu Items module.
+ * The DruxtMenu component renders a Drupal menu using menu link content
+ * entities via the core JSON:API (content-created links only), or the
+ * complete menu tree, including module-defined links, via the JSON:API Menu
+ * Items module.
  *
  * @example @lang vue
  * <DruxtMenu name="main" />
@@ -21,13 +23,15 @@ import { mapActions, mapGetters, mapState } from 'vuex'
  *   mixins: [DruxtMenuMixin]
  * }
  *
- * @example <caption>DruxtMenu with template injection</caption> @lang vue
+ * @example <caption>default slot (template injection)</caption> @lang vue
  * <DruxtMenu>
  *   <template #default="{ items }">
  *     <!-- Do whatever you want here -->
  *     <DruxtDebug :json="items" />
  *   </template>
  * </DruxtMenu>
+ *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
  */
 export default {
   name: 'DruxtMenu',
@@ -99,7 +103,8 @@ export default {
     },
 
     /**
-     * The name of the menu to load and render.
+     * The Drupal menu machine name (for example, `main` or `footer`) of the
+     * menu to load and render.
      *
      * @example @lang vue
      * <DruxtMenu name="main" />

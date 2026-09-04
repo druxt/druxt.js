@@ -43,6 +43,8 @@ const DruxtEntityContextMixin = {
    */
   props: {
     /**
+     * The context object, inherited from the parent component's context by default.
+     *
      * @type {object}
      * @default { ...this.$parent.context }
      */

@@ -7,7 +7,11 @@ import { join, resolve } from 'path'
  *
  * The module function should not be used directly, but rather installed via your Nuxt.js configuration file.
  *
+ * A Nuxt module configures the Nuxt application, and is unrelated to a Drupal module.
+ *
  * Options are set on the root level `druxt` Nuxt.js config object.
+ *
+ * @see {@link https://druxtjs.org/explanation/nuxt-for-drupal-developers|Nuxt for Drupal developers}
  *
 * @example <caption>nuxt.config.js</caption> @lang js
  * module.exports = {

@@ -23,7 +23,7 @@ import { mapActions, mapState } from 'vuex'
  *   mixins: [DruxtBreadcrumbMixin]
  * }
  *
- * @example <caption>DruxtBreadcrumb with template injection</caption> @lang vue
+ * @example <caption>DruxtBreadcrumb default slot (template injection)</caption> @lang vue
  * <DruxtBreadcrumb>
  *   <template #default="{ crumbs }">
  *     <!-- Do whatever you want here -->

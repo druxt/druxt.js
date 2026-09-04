@@ -1,9 +1,30 @@
 /**
- * Schema.
+ * The Schema generator utility.
+ *
+ * Generates a Druxt Schema object for a single Drupal Entity display mode,
+ * using Entity Form and View Display configuration data from the Drupal
+ * JSON:API.
+ *
+ * Used by the DruxtSchema class to build the schema files consumed by the
+ * DruxtEntity module; it is not typically used directly.
  *
  * @class
+ *
+ * @example @lang js
+ * const schema = new Schema({ entityType: 'node', bundle: 'page' }, { druxtSchema })
+ * const data = await schema.generate()
+ *
+ * @see {@link https://druxtjs.org/modules/schema|Schema module guide}
  */
 class Schema {
+  /**
+   * Schema constructor.
+   *
+   * @param {SchemaConfiguration} config - The Schema configuration object.
+   * @param {object} context - Additional Schema generation context.
+   * @param {DruxtSchema} context.druxtSchema - A DruxtSchema instance, used to fetch the display and field configuration.
+   * @param {object} [context.data] - Preloaded JSON:API resource data.
+   */
   constructor(config, { druxtSchema, data }) {
     if (config.resourceFields) {
       this.resourceFields = config.resourceFields
@@ -57,10 +78,26 @@ class Schema {
     this.druxtSchema = druxtSchema
   }
 
+  /**
+   * Generates the schema, as per the configured schema type ('view' or 'form').
+   *
+   * @example @lang js
+   * const data = await schema.generate()
+   *
+   * @returns {object|boolean} The generated schema, or false if the display configuration is unavailable.
+   */
   async generate() {
     return this[this.config.schemaType]()
   }
 
+  /**
+   * Gets a collection of JSON:API resources, using preloaded data where available.
+   *
+   * @param {string} resource - The JSON:API resource type.
+   * @param {string|object} query - A correctly formatted JSON:API query string or object.
+   *
+   * @returns {object} The JSON:API collection data.
+   */
   async getResources(resource, query) {
     if (this.data[resource]) return this.data[resource]
 
@@ -68,6 +105,11 @@ class Schema {
     return this.data[resource]
   }
 
+  /**
+   * Generates the Form schema fields, using the Entity Form Display, Field Config and Field Storage Config resources.
+   *
+   * @returns {object|boolean} The generated schema, or false if the display configuration is unavailable.
+   */
   async form() {
     const entityFormDisplay = await this.getResources('entity_form_display--entity_form_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res.data) ? res.data[0] : res)
     if (!entityFormDisplay) return false
@@ -145,6 +187,11 @@ class Schema {
     return this.schema
   }
 
+  /**
+   * Generates the View schema fields, using the Entity View Display and Field Config resources.
+   *
+   * @returns {object|boolean} The generated schema, or false if the display configuration is unavailable.
+   */
   async view() {
     const entityViewDisplay = await this.getResources('entity_view_display--entity_view_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res.data) ? res.data[0] : res)
     if (!entityViewDisplay) return false
@@ -211,3 +258,10 @@ class Schema {
 }
 
 export { Schema }
+
+/**
+ * Druxt Schema configuration object.
+ *
+ * @typedef {object} SchemaConfiguration
+ * @see {@link ../typedefs/schemaConfiguration|SchemaConfiguration}
+ */

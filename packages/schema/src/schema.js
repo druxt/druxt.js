@@ -7,7 +7,7 @@ import { Schema } from './utils/schema'
  * Druxt Schema configuration object.
  *
  * @typedef {object} SchemaConfiguration
- * @see {@link ./typedefs/schema_configuration|SchemaConfiguration}
+ * @see {@link ./typedefs/schemaConfiguration|SchemaConfiguration}
  */
 
 /**
@@ -17,12 +17,11 @@ import { Schema } from './utils/schema'
  */
 class DruxtSchema {
   /**
-   * DruxtSchemaRouter constructor.
+   * DruxtSchema constructor.
    *
    * - Validates module options.
    * - Sets up options.
-   * - Sets up Druxt.js Router instance.
-   * - (Optional) Sets up oauth2 authentication.
+   * - Sets up a DruxtClient instance.
    *
    * @example @lang js
    * const schema = new DruxtSchema('https://example.com', {})
@@ -54,7 +53,7 @@ class DruxtSchema {
      * Instance of the Druxt Client.
      *
      * @type {DruxtClient}
-     * @see {@link http://druxtjs.org/api/client}
+     * @see {@link https://druxtjs.org/api/packages/druxt/client|DruxtClient}
      */
     this.druxt = new DruxtClient(baseUrl, this.options)
   }
@@ -115,7 +114,7 @@ class DruxtSchema {
    * @param {SchemaConfiguration} config - The Schema configuration object.
    * @param {string} config.entityType - The Drupal Entity type.
    * @param {string} config.bundle - The Entity bundle.
-   * @param {object} [options] -
+   * @param {object} [options] - (Optional) Additional Schema generation options, e.g. preloaded JSON:API resource data.
    *
    * @returns {Schema} The generated Schema.
    *

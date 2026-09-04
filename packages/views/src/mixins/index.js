@@ -1,9 +1,13 @@
 /**
  * Vue.js mixin for DruxtViewsFilter slot themable components.
  *
+ * A mixin adds reusable props and logic to a Vue component, similar to a PHP
+ * trait in Drupal development.
+ *
  * @type {object}
  * @exports DruxtViewsFilterMixin
  * @see {@link ./filter|DruxtViewsFilterMixin}
+ * @see {@link https://v2.vuejs.org/v2/guide/mixins.html|Vue.js Mixins}
  */
 export { DruxtViewsFilterMixin } from './filter'
 

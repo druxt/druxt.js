@@ -22,6 +22,7 @@ export { DruxtClient } from './client'
  * @exports default
  * @name DruxtNuxtModule
  * @see {@link /api/packages/druxt/nuxt|DruxtNuxtModule}
+ * @see {@link https://druxtjs.org/modules/druxt|Druxt module guide}
  *
  * @example <caption>Installing the Druxt module</caption> @lang js
  * // nuxt.config.js

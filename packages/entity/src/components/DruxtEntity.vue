@@ -12,12 +12,24 @@ import { mapActions } from 'vuex'
  * Fields are rendered as DruxtField components, based on the Drupal display
  * mode configuration.
  *
+ * @see https://druxtjs.org/modules/entity
+ *
  * @example @lang vue
  * <DruxtEntity
  *   type="node--article"
  *   :uuid="uuid"
  *   mode="teaser"
  * />
+ *
+ * @example <caption>DruxtEntity with v-model</caption> @lang vue
+ * <template>
+ *   <DruxtEntity v-model="model" type="node--article" :uuid="uuid" />
+ * </template>
+ *
+ * <script>
+ * export default {
+ *   data: () => ({ model: undefined }),
+ * }
  *
  * @example <caption>DruxtEntity Wrapper component boilerplate</caption> @lang vue
  * <template>
@@ -30,7 +42,9 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtEntityMixin]
  * }
  *
- * @example <caption>DruxtEntity with template injection</caption> @lang vue
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
+ *
+ * @example <caption>DruxtEntity default slot (template injection)</caption> @lang vue
  * <DruxtEntity type="" uuid="">
  *   <template #default="{ entity }">
  *     <!-- Do whatever you want here -->
@@ -92,7 +106,8 @@ export default {
     /**
      * Entity UUID.
      *
-     * @type {string}
+     * @type {(boolean|string)}
+     * @default false
      */
     uuid: {
       type: [Boolean, String],
@@ -101,9 +116,11 @@ export default {
   },
 
   /**
+   * Provides the reactive entity model and display schema state.
+   *
    * @param {object} vm - The component ViewModel.
    * @param {string} vm.type - The JSON:API resource type.
-   * @param {object} vm.value - The module component model value.
+   * @param {object} vm.value - The Vue.js v-model value. If set, it provides the entity data directly and the JSON:API fetch is skipped.
    * @property {object} model - The model object.
    * @property {object} schema - The DruxtSchema object.
    */
@@ -130,7 +147,7 @@ export default {
      *
      * @param {object} vm - The component ViewModel.
      * @param {object} vm.model - The model object.
-     * @return {object}.
+     * @return {object} A copy of the entity model, containing the JSON:API attributes, relationships and included resource data.
      */
     entity: ({ model }) => ({ ...model }),
 
@@ -144,7 +161,7 @@ export default {
      * @param {object} vm.model - The model object.
      * @param {object} vm.schema - The DruxtSchema object.
      * @param {('view'|'form')} vm.schemaType - Drupal display schema type, 'view' or 'form'.
-     * @return {object}
+     * @return {object} Field objects keyed by field ID, each containing the field's schema, value, errors and relationship status.
      */
     fields: ({ errors, isEmpty, lang, model, schema, schemaType }) => {
       if (!schema) return false
@@ -213,7 +230,7 @@ export default {
      *
      * @param {ModuleSettings} settings - The merged module and component settings object.
      *
-     * @return {boolean|object}
+     * @return {boolean|object} The DrupalJsonApiParams query object.
      */
     getQuery(settings) {
       const query = new DrupalJsonApiParams()
@@ -260,7 +277,7 @@ export default {
      * Checks if an Entity field is empty.
      *
      * @param {*} value - Field value.
-     * @return {boolean}
+     * @return {boolean} `true` if the field value is empty.
      */
     isEmpty(value) {
       if (typeof value === 'undefined') return true
@@ -412,6 +429,7 @@ export default {
      * current display mode.
      *
      * Additionally, the `default` slot will render all fields as per the
+     * Drupal display mode configuration.
      *
      * @example <caption>DruxtEntity**ResourceType**.vue</caption> @lang vue
      * <template>
@@ -494,6 +512,8 @@ export default {
  *
  * @typedef {array[]} ComponentOptions
  *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
+ *
  * @example @lang js
  * [
  *   'DruxtEntity[ResourceType][DisplayMode][SchemaType][Langcode]',
@@ -550,7 +570,7 @@ export default {
  *     query: {
  *       bypassCache: ({ $store }) => $store.$auth.loggedIn,
  *       fields: [['title'], ['user--user', ['display_name']]],
- *       include: ['uid']
+ *       include: ['uid'],
  *       schema: true,
  *     },
  *   },
@@ -565,7 +585,7 @@ export default {
  *       query: {
  *         bypassCache: true,
  *         fields: [['title'], ['user--user', ['display_name']]],
- *         include: ['uid']
+ *         include: ['uid'],
  *         schema: true,
  *       }
  *     }"

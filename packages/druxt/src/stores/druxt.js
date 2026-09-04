@@ -43,6 +43,8 @@ const DruxtStore = ({ store }) => {
    *
    * @name druxt
    * @module druxt
+   *
+   * @see https://druxtjs.org/explanation/druxt-store
    */
   const module = {
     namespaced: true,
@@ -244,7 +246,8 @@ const DruxtStore = ({ store }) => {
        * @param {Function} context.dispatch - Dispatches other store actions.
        * @param {object} context.state - The Vuex module state.
        * @param {getResourceContext} payload - The action parameters.
-       * @return {object} The Drupal JSON:API resource.
+       * @return {object} The full JSON:API document for the resource; the resource itself is
+       *   on the `data` property, e.g. `resource.data.attributes`.
        *
        * @example @lang js
        * const resource = await this.$store.dispatch('druxt/getResource', {
@@ -395,7 +398,7 @@ export { DruxtStore }
  *
  * @typedef {object} addResourcePayload
  *
- * @param {string} [hash] - (Deprecated) The Vuex cache hash, ignored by the mutation. See https://druxtjs.org/modules/druxt/deprecations
+ * @param {string} [hash] - (Deprecated) The Vuex cache hash, ignored by the mutation. See {@link https://druxtjs.org/modules/druxt/deprecations|deprecations}.
  * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
  * @param {object} resource - The JSON:API resource.
  *
@@ -487,8 +490,8 @@ export { DruxtStore }
  *
  * @typedef {string|object} DruxtClientQuery
  *
- * @example
- * page[limit]=5&page[offset]=5
+ * @example @lang js
+ * 'page[limit]=5&page[offset]=5'
  *
  * @example @lang js
  * new DrupalJsonApiParams().addPageLimit(5)

@@ -4,6 +4,7 @@ import { DruxtEntityContextMixin } from './context'
  * Provides Vue.js properties to render a DruxtField Wrapper component.
  *
  * @mixin
+ * @see https://druxtjs.org/modules/entity
  *
  * @example @lang vue
  * <script>
@@ -25,6 +26,7 @@ const DruxtFieldMixin = {
      * JSON:API errors.
      *
      * @type {array}
+     * @default []
      */
     errors: {
       type: Array,
@@ -76,6 +78,7 @@ const DruxtFieldMixin = {
 
     /**
      * The Field value.
+     * @type {(array|boolean|number|object|string)}
      */
      value: {
       type: [Array, Boolean, Number, String, Object],
@@ -98,6 +101,8 @@ const DruxtFieldMixin = {
   },
 
   /**
+   * Provides the reactive field model, initialized from the value property.
+   *
    * @param {object} vm - The component ViewModel.
    * @param {Array|boolean|number|object|string} vm.value - The Field value.
    * @property {object} model - The model object.
@@ -109,9 +114,13 @@ const DruxtFieldMixin = {
   /** */
   computed: {
     /**
+     * The Field items, normalised to an array for rendering.
+     *
+     * Relationship values are mapped to `{ type, uuid, mode }` objects for use
+     * with the DruxtEntity component.
      *
      * @type {boolean|object}
-     * @default false
+     * @default []
      */
     items: ({ model, relationship, schema }) => {
       if (typeof model === 'undefined' || model === null) return []

@@ -5,11 +5,13 @@ import Vue from 'vue'
 import DruxtWrapper from './DruxtWrapper.vue'
 
 /**
- * The DruxtModule component is used to make a Druxt module, simply import and
- * extend the component to get started.
+ * The DruxtModule component renders a Druxt module; import and extend the
+ * component to build your own module.
  *
  * The component provides access to the Druxt Wrapper theming and fetch system
  * via the druxt settings object.
+ *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
  *
  * @example @lang js
  * import DruxtModule from 'druxt/components/DruxtModule.vue'
@@ -37,7 +39,7 @@ export default {
     /**
      * The resource langcode.
      *
-     * @example
+     * @example @lang vue
      * <DruxtModule langcode="en" />
      *
      * @type {string}
@@ -48,13 +50,20 @@ export default {
     },
 
     /**
-     * The module component model value.
+     * The Vue.js v-model binding for the module.
      *
-     * Used to bypass the Drupal JSON:API fetch, setting the module data
-     * directly.
+     * Setting a value provides the module data directly, so the Drupal
+     * JSON:API fetch is skipped.
      *
-     * @example
-     * <DruxtModule v-model="{ foo: bar }" />
+     * @example @lang vue
+     * <template>
+     *   <DruxtModule v-model="model" />
+     * </template>
+     *
+     * <script>
+     * export default {
+     *   data: () => ({ model: { foo: 'bar' } })
+     * }
      *
      * @type {*}
      * @model
@@ -118,7 +127,7 @@ export default {
    *   extends: DruxtModule,
    *   async fetch() {
    *     await DruxtModule.fetch.call(this)
-   *   }
+   *   },
    *   druxt: {
    *     componentOptions: () => ([['Default']]),
    *     propsData: ({ model }) => ({ value: model }),
@@ -497,6 +506,8 @@ export default {
  * The list of candidate Wrapper components, with naming parts and global
  * registration state.
  *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
+ *
  * @typedef {object[]} Components
  * @property {boolean} global - Component global registration state.
  * @property {string} name - The component name.
@@ -510,7 +521,8 @@ export default {
  * }]
  */
 
-/* eslint-disable jsdoc/valid-types -- the property is Vue's `is`; the namepath parser rejects that word in any spelling */
+/* eslint-disable jsdoc/valid-types --
+   the property is Vue's `is`; the namepath parser rejects that word in any spelling */
 /**
  * The Wrapper component and propsData to be rendered.
  *

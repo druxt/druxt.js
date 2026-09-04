@@ -10,6 +10,8 @@ import DruxtBlocksStorybook from './nuxtStorybook'
  *
  * Options are set on the root level `druxt` Nuxt.js config object.
  *
+ * @see https://druxtjs.org/modules/blocks
+ *
  * @example @lang js
  * // `nuxt.config.js`
  * module.exports = {

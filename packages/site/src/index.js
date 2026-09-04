@@ -34,6 +34,7 @@ export { DruxtSiteMixin } from './mixins/site'
  * @exports default
  * @name DruxtSiteNuxtModule
  * @see {@link ./nuxtModule|DruxtSiteNuxtModule}
+ * @see {@link https://druxtjs.org/modules/site|Site module guide}
  *
  * @example <caption>nuxt.config.js</caption> @lang js
  * module.exports = {

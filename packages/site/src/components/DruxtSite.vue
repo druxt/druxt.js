@@ -32,7 +32,7 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtSiteMixin]
  * }
  *
- * @example <caption>DruxtSite with template injection</caption> @lang vue
+ * @example <caption>DruxtSite default slot (template injection)</caption> @lang vue
  * <DruxtSite>
  *   <template #default="{ props, regions, theme }">
  *     <!-- Do whatever you want here -->
@@ -58,6 +58,9 @@ export default {
      *
      * Used to filter the available regions from the Drupal Blocks JSON:API
      * resources.
+     *
+     * If not set, the theme from the `druxt.site.theme` module option is
+     * used, falling back to the first available theme.
      *
      * @type {string}
      */

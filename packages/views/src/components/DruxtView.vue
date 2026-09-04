@@ -9,7 +9,7 @@ import { mapActions } from 'vuex'
  * The DruxtView component renders Drupal Views using configuration and
  * results provided by the Drupal View and the JSON:API Views module.
  *
- * The component renders slots for  the View's headers, footers, entity results,
+ * The component renders slots for the View's headers, footers, entity results,
  * exposed sorts and filters, and supports contextual filters.
  *
  * @example @lang vue
@@ -33,13 +33,15 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtViewsViewMixin]
  * }
  *
- * @example <caption>DruxtView with template injection</caption> @lang vue
+ * @example <caption>default slot (template injection)</caption> @lang vue
  * <DruxtView>
  *   <template #default="{ results }">
  *     <!-- Do whatever you want here -->
  *     <DruxtDebug :json="results" />
  *   </template>
  * </DruxtView>
+ *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
  */
 export default {
   name: 'DruxtView',

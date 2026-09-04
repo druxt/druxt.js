@@ -10,6 +10,10 @@ import DruxtSiteStorybook from './nuxtStorybook'
  * - Adds default configuration for @nuxtjs/proxy.
  * - Enables Vuex store.
  *
+ * A Nuxt module configures the Nuxt application, and is unrelated to a Drupal module.
+ *
+ * @see {@link https://druxtjs.org/explanation/nuxt-for-drupal-developers|Nuxt for Drupal developers}
+ *
  * @param {ModuleOptions} moduleOptions - The Nuxt.js module options.
  */
 const DruxtSiteNuxtModule = async function (moduleOptions = {}) {

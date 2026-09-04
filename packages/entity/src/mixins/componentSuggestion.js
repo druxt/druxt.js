@@ -90,7 +90,7 @@ const DruxtEntityComponentSuggestionMixin = {
      * Contains an Array of possible Component names calculated by the
      * Suggestion Rules and Token context.
      *
-     * @type {string[]}.
+     * @type {string[]}
      */
     suggestions() {
       const suggestions = []

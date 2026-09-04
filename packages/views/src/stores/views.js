@@ -17,6 +17,8 @@ const DruxtViewsStore = ({ store }) => {
    * Provides a Vuex state object, mutations and actions for interacting with JSON:API Views.
    *
    * @module druxt/views
+   *
+   * @see {@link https://druxtjs.org/explanation/druxt-store|The DruxtStore}
    */
   const module = {
     namespaced: true,

@@ -2,7 +2,7 @@
 import DruxtFieldTextDefault from './DruxtFieldTextDefault.vue'
 
 /**
- * Text Trimmed field.
+ * Renders a formatted text field's value, trimmed to the configured length.
  * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:2.0.0.
  *   Use a field wrapper component resolved by the component suggestion system instead.
  * @see https://druxtjs.org/modules/entity/deprecations
@@ -36,7 +36,7 @@ export default {
      *
      * @param {object} item - The field item.
      *
-     * @return {string}
+     * @return {string} The item's value, trimmed to the trim length.
      */
     format(item) {
       return item.value.slice(0, this.trimLength)
