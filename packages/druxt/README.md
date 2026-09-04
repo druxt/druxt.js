@@ -46,7 +46,7 @@ on. It provides the three pieces the whole framework shares:
 
 ## Compatibility
 
-As of September 2026. Current release: druxt 0.24.0, published November 2023.
+As of September 2026. See the [releases](https://github.com/druxt/druxt.js/releases) for the current version.
 
 |               | Supported                                                                                                                                                                           |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

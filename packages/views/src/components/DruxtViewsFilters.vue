@@ -184,7 +184,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} [filter.expose.identifier] - Slot per filter.

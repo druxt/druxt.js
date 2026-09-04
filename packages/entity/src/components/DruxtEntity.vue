@@ -399,7 +399,7 @@ export default {
      * Component settings.
      *
      * @param {object} context - The module component ViewModel.
-     * @param {object} wrapperSettings - Settings provided by the Wrapper component.
+     * @param {object} wrapperSettings - Settings provided by the wrapper component.
      * @returns {object} The merged module settings.
      */
     settings: (context, wrapperSettings) => {
@@ -508,7 +508,7 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
  *
@@ -553,7 +553,7 @@ export default {
 
 /**
  * Provides settings for the Entity module, via the `nuxt.config.js` `druxt.entity`,
- * the Wrapper component `druxt` object or the DruxtEntity component `settings`
+ * the wrapper component `druxt` object or the DruxtEntity component `settings`
  * property.
  *
  * @typedef {object} ModuleSettings
@@ -594,7 +594,7 @@ export default {
  */
 
 /**
- * Provides property data for use in the Wrapper component.
+ * Provides property data for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {object} entity - The Drupal Entity JSON:API resource data.
@@ -628,7 +628,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} * - Slot per field.

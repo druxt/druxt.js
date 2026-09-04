@@ -330,7 +330,7 @@ export default {
      * @param {number|null} context.maxDepth - The maximum depth of the menu tree data to load.
      * @param {number} context.minDepth - The minimum depth of the menu tree.
      * @param {string} context.parentId - The menu parent ID to use as the root of the menu.
-     * @param {object} wrapperSettings - Settings provided by the Wrapper component.
+     * @param {object} wrapperSettings - Settings provided by the wrapper component.
      * @returns {object} The merged module settings.
      */
     settings: ({ $druxt, depth, maxDepth, minDepth, parentId }, wrapperSettings) => {
@@ -387,7 +387,7 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
  *
@@ -410,7 +410,7 @@ export default {
 
 /**
  * Provides settings for the Menu module, via the `nuxt.config.js` `druxt.menu`
- * or the Wrapper component `druxt` object.
+ * or the wrapper component `druxt` object.
  *
  * @typedef {object} ModuleSettings
  * @param {string[]} fields - An array of fields to filter all JSON:API Menu queries.
@@ -435,7 +435,7 @@ export default {
  */
 
 /**
- * Provides propsData for use in the Wrapper component.
+ * Provides propsData for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {object[]} items - The Menu items structured data.
@@ -459,7 +459,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} default - All menu items using the DruxtMenuItem component

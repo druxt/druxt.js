@@ -295,7 +295,7 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
  *
@@ -321,7 +321,7 @@ export default {
  */
 
 /**
- * Provides property data for use in the Wrapper component.
+ * Provides property data for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {string} path - The route path.
@@ -346,7 +346,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} debug - A Debug component with a Path override field.
