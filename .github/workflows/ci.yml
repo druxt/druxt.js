@@ -161,11 +161,26 @@ jobs:
         run: yarn lint:renovate
 
       - name: Dependency audit (full report, includes devDependencies)
+        env:
+          YARN_HTTP_TIMEOUT: '180000'
         run: yarn lint:audit:full
         continue-on-error: true
 
+      # The registry's audit endpoint times out often enough to matter, so the
+      # blocking pass retries before it fails anyone's pipeline.
       - name: Dependency audit (production, blocking)
-        run: yarn lint:audit
+        env:
+          YARN_HTTP_TIMEOUT: '180000'
+        run: |
+          for attempt in 1 2 3; do
+            yarn lint:audit && exit 0
+            status=$?
+            if [ "$attempt" -lt 3 ]; then
+              echo "audit attempt $attempt failed (exit $status); retrying in 30s" >&2
+              sleep 30
+            fi
+          done
+          exit "$status"
 
       - name: Knip (unused/unlisted dependencies)
         run: yarn lint:knip
@@ -502,7 +517,7 @@ jobs:
           # This is the authoritative baseline; the GitLab job samples because
           # its runner shares a busy host. UNLIGHTHOUSE_SAMPLE is left unset,
           # which means no sampling.
-          UNLIGHTHOUSE_CONCURRENCY: "2"
+          UNLIGHTHOUSE_CONCURRENCY: '2'
         run: |
           # Exact versions. This toolchain is version-sensitive in ways that
           # bite silently: unlighthouse only reads some config keys in some
