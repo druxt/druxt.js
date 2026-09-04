@@ -16,7 +16,7 @@
           `search-row` moves the focus ring onto this whole row rather than
           the bare <input>. The input is only the middle of three flex
           children, so a ring on the input alone drew an inset rectangle that
-          excluded the search icon and the esc key — it read as a box inside
+          excluded the search icon and the esc key - it read as a box inside
           the box. See assets/css/app.css.
         -->
         <div class="search-row flex items-center gap-3 px-4 border-b border-base-300">
@@ -312,7 +312,7 @@ export default {
      * Keep Tab inside the dialog.
      *
      * It declares `aria-modal="true"`, which tells assistive technology the
-     * rest of the page is hidden — so letting focus walk out into content the
+     * rest of the page is hidden - so letting focus walk out into content the
      * AT is actively suppressing is worse than not claiming modality at all.
      *
      * @param {KeyboardEvent} e - The Tab keydown event.
@@ -382,7 +382,7 @@ export default {
       if (!isReportableTerm(this.query)) return
       // Results have not settled yet. Re-arm rather than return: returning
       // drops the term permanently, and biases the loss toward slow and
-      // first-visit sessions — exactly the ones `search_no_results` exists to
+      // first-visit sessions - exactly the ones `search_no_results` exists to
       // catch. `beforeDestroy` clears this same slot, so a retry cannot
       // outlive the dialog.
       if (this.loading) {

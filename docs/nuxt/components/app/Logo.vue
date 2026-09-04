@@ -25,7 +25,7 @@
 <script>
 export default {
   props: {
-    /** Render the whole mark in currentColor — for coloured surfaces. */
+    /** Render the whole mark in currentColor - for coloured surfaces. */
     mono: { type: Boolean, default: false },
     /** Accessible name; omit for decorative use. */
     title: { type: String, default: null },

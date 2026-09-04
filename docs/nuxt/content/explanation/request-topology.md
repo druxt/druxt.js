@@ -20,21 +20,19 @@ knowing which of the three is failing.
 The same table, as a picture:
 
 ```mermaid
-%% The three request contexts. Only browser requests cross the CORS boundary.
+%% The three request contexts. Only the browser's requests cross the CORS boundary.
 flowchart LR
-  subgraph once [At build time]
-    G["nuxt generate / nuxt build"]
-  end
-  subgraph perRequest [During server rendering]
+  subgraph server [Server side: no CORS]
+    G[Build step]
     S[Node server]
   end
-  subgraph client [In the browser]
+  subgraph browser [Browser: CORS applies]
     V[Visitor's browser]
   end
   D[("Drupal<br>JSON:API")]
   G -->|"schemas + content"| D
   S -->|"routes + resources"| D
-  V -->|"navigation + live data<br>(CORS applies)"| D
+  V -.->|"navigation + live data"| D
 ```
 
 CORS is a browser security mechanism. Requests made by Node, at build time

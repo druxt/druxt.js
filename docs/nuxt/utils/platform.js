@@ -6,7 +6,7 @@
  * non-Mac both were on screen together at >=1024px showing different keys for
  * the same shortcut.
  *
- * Must be called client-side only — it reads `navigator`, so components use it
+ * Must be called client-side only - it reads `navigator`, so components use it
  * from `mounted()` and start from the default below during SSR.
  */
 export const MAC_SHORTCUT = '⌘K'

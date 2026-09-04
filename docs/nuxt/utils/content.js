@@ -28,7 +28,7 @@ const findImage = (node, parent) => {
  * of the body here so the page can render it as a hero figure rather than an
  * unstyled inline image halfway down the prose.
  *
- * Returns { hero, body } — body is a copy with the image (and its wrapping
+ * Returns { hero, body } - body is a copy with the image (and its wrapping
  * paragraph, if that is all the paragraph held) removed.
  *
  * @param {object} document - The content document.
@@ -138,8 +138,8 @@ export const sections = (document) => (document.toc || [])
 /**
  * Where a document sits, for disambiguating a bare title.
  *
- * Several documents legitimately share a title — every module has its own
- * "Deprecations" page, for instance — so a recent-documents list showing
+ * Several documents legitimately share a title - every module has its own
+ * "Deprecations" page, for instance - so a recent-documents list showing
  * only titles renders three identical rows. This returns the path segments
  * above the leaf, title-cased, capped at the last two so it stays short in
  * a 17rem sidebar:

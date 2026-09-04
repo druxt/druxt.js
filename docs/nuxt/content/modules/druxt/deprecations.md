@@ -1,5 +1,5 @@
 ---
-title: Deprecations
+title: Druxt core deprecations
 weight: 10
 description: Retired DruxtStore signatures and internal classes, with their replacements.
 ---

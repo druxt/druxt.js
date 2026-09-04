@@ -28,7 +28,7 @@
 <script>
 // Keys are directory segments docgen emits under api/packages/<pkg>/.
 // `package` is for entries at the package root (the Nuxt module, the client,
-// the schema) and `other` is the genuine fallback — before these were added,
+// the schema) and `other` is the genuine fallback - before these were added,
 // everything that was not a component/mixin/store landed in "Other", which
 // made it a grab-bag of unrelated things rather than a category.
 const LABELS = {
@@ -54,7 +54,7 @@ export default {
   computed: {
     total: ({ entries }) => entries.length,
 
-    /** Entries bucketed by the directory they were generated from. */
+    // Entries bucketed by the directory they were generated from.
     groups: ({ entries, pkg }) => {
       const root = 'api/packages/' + pkg
       const buckets = {}
@@ -94,8 +94,8 @@ export default {
           .fetch()
         if (pkg !== this.pkg) return
         // Matched on the filename, not the title. docgen gives these
-        // friendly titles — CHANGELOG.md becomes "Release notes" and
-        // index.md takes the module's own name — so a title-based test
+        // friendly titles - CHANGELOG.md becomes "Release notes" and
+        // index.md takes the module's own name - so a title-based test
         // never matched and both leaked into the listing: "Release notes"
         // duplicated the button already in the module header, and index.md
         // sat beside nuxtModule.md under the identical title.

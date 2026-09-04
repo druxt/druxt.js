@@ -1,5 +1,5 @@
 ---
-title: Deprecations
+title: DruxtEntity deprecations
 weight: 10
 description: Retired DruxtField default components and props, with their replacements.
 ---

@@ -180,7 +180,7 @@ describe('readContent', () => {
 
   it('falls back to a route-derived title when there is no frontmatter', () => {
     // content/modules/entity/deprecations.md has none, and rendered
-    // <title>druxtjs-org</title> — the npm package name — before this.
+    // <title>druxtjs-org</title> - the npm package name - before this.
     write('modules/entity/deprecations.md', '# Deprecations\n\nSome text.\n')
 
     expect(readContent(dir)[0]).toMatchObject({

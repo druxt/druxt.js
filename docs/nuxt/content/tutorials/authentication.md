@@ -16,19 +16,19 @@ before building on it.
 
 ## Step 1: See what's already there
 
-Open `nuxt/nuxt.config.js` in your project and look at `buildModules`:
+Open `nuxt/nuxt.config.js` in your project and look at `modules`:
 
 ```js
-buildModules: [
-  '@nuxtjs/eslint-module',
+modules: [
   ['druxt-auth', { clientId: process.env.OAUTH_CLIENT_ID }],
   'druxt-site',
-];
+],
 ```
 
 The [`druxt-auth`](https://github.com/druxt/druxt-auth) module is already
 installed and configured: `npm run setup` (back in Getting started)
-provisioned a Drupal OAuth Consumer for you and wrote its ID to
+provisioned a Drupal OAuth Consumer (Drupal's entity for one registered
+OAuth client) for you and wrote its ID to
 `OAUTH_CLIENT_ID` in `.env`. There's also already a page at
 `nuxt/pages/user/login.vue` that starts the login flow:
 
@@ -96,15 +96,20 @@ usable: `user` is populated from Drupal's `/oauth/userinfo` endpoint. A
 natural next step is adding a login/logout link to your layout using those,
 rather than requiring people to know the `/user/login` URL by heart.
 
-## Known limitations (current as of `druxt-auth` 0.4.0)
+## Known limitations
 
-- **No automatic token refresh for this flow.** The Authorization Code
-  strategy here doesn't have refresh-token handling configured, so your
-  session ends when the access token expires rather than renewing silently.
-  Password grant (a different setup; see the
-  [`druxt-auth` README](https://github.com/druxt/druxt-auth)) does have
-  refresh handling, but needs a _confidential_ Consumer with a secret, unlike
-  the public one this tutorial's Consumer already is.
+Current as of `druxt-auth` 0.4.0:
+
+- **Sessions renew silently, with three caveats.** The scheme
+  refreshes an expired access token automatically on any request, and
+  server rendering restores cold loads from the cookie-held tokens. The
+  real limits: an expired access token alone never logs anyone out
+  (`autoLogout` defaults off), a custom `druxt.axios` instance bypasses
+  the automatic refresh (the
+  [how-to](/how-to/authentication#keep-the-session-alive) covers that
+  case), and auth-next assumes a 30-day refresh token while the
+  consumer default is 14, so a long-idle session can still end
+  mid-request.
 - **Logging out** isn't wired to any UI yet either: `this.$auth.logout()`
   ends the session once you've added something to call it.
 

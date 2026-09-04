@@ -58,8 +58,13 @@ Check the backend is up (`npm run info`), then generate from the project
 root:
 
 ```sh
-NUXT_TARGET=static NODE_OPTIONS=--openssl-legacy-provider npm run generate --prefix nuxt
+NUXT_TARGET=static npm run generate --prefix nuxt
 ```
+
+(On Node 17 or later, prefix the command with
+`NODE_OPTIONS=--openssl-legacy-provider`; Node 16, the tested version,
+rejects that flag and does not need it. See
+[Troubleshooting](/how-to/troubleshooting) for why.)
 
 Nuxt renders your pages, your article included, into `nuxt/dist/` as
 plain HTML, CSS and JavaScript. Serve it and click around:
@@ -87,11 +92,13 @@ environment override.
 
 First, its blocks and menus belong to Drupal's `umami` theme, and a
 Druxt frontend renders the block layout of whatever theme it is told
-about. In `nuxt/nuxt.config.js`, find `site: { theme: 'olivero' }` and
-change it:
+about. In `nuxt/nuxt.config.js`, find the `site` block and change its
+`theme`:
 
 ```js
-theme: 'umami';
+site: {
+  theme: 'umami'
+},
 ```
 
 Second, generate against the demo backend. Passing `BASE_URL` on the
@@ -99,11 +106,15 @@ command line overrides `.env` for this run only, so nothing needs
 editing back afterwards:
 
 ```sh
-BASE_URL=https://demo-api.druxtjs.org NUXT_TARGET=static NODE_OPTIONS=--openssl-legacy-provider npm run generate --prefix nuxt
+BASE_URL=https://demo-api.druxtjs.org NUXT_TARGET=static npm run generate --prefix nuxt
 ```
 
-Expect the crawler to find and render the demo's pages this time; the
-generated homepage carries the Umami menu. Deploy the output:
+(The same Node 17+ `NODE_OPTIONS` prefix applies here.)
+
+Expect the homepage, the language variants and the listing pages
+(articles, recipes) this time, with the Umami menu rendered. Individual
+articles and recipes are not crawled: the listings render their links
+client-side, where the crawler cannot follow them. Deploy the output:
 
 ```sh
 npm install --global netlify-cli@15

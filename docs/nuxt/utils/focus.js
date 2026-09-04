@@ -1,5 +1,5 @@
 /**
- * Focus helpers shared by the two modal overlays — the navigation drawer and
+ * Focus helpers shared by the two modal overlays - the navigation drawer and
  * the search dialog.
  *
  * Both previously declared themselves modal (the drawer visually, the search
@@ -22,7 +22,7 @@ const FOCUSABLE = [
 /**
  * The tabbable elements inside a container, in document order.
  *
- * Filters out anything not rendered — `visibility: hidden` subtrees and
+ * Filters out anything not rendered - `visibility: hidden` subtrees and
  * `display: none` branches both report no client rects, which matters because
  * the drawer hides its own close button above the sticky breakpoint.
  *

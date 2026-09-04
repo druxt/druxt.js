@@ -54,7 +54,7 @@ export default {
     // The referrer is the half that makes this actionable. A 404 alone says a
     // URL is dead; the referrer says whether it is a broken internal link, a
     // stale external one, or a search engine holding an index entry that
-    // should have been redirected — which is the failure mode a URL
+    // should have been redirected - which is the failure mode a URL
     // restructure produces.
     this.$track(...notFoundEvent(window.location.pathname, document.referrer))
   },

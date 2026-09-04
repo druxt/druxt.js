@@ -7,7 +7,7 @@
     detail pages the module tab bar stacks beneath as the third layer.
 
     On short viewports (under 800px tall, half the desktop audience is
-    1366x768) the bar hides on downward scroll and returns on upward scroll —
+    1366x768) the bar hides on downward scroll and returns on upward scroll -
     except where the module tab bar stacks beneath it, whose static 108px pin
     would otherwise expose a see-through band where this bar was.
   -->

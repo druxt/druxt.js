@@ -26,9 +26,12 @@ fill in the other side's vocabulary. This tutorial works without them.
   or [mise](https://mise.jdx.dev), `nvm use` / `mise install` picks the pinned
   version for you.
 - One of:
-  - PHP 8.4 with the `pdo_sqlite` extension and [Composer](https://getcomposer.org),
+  - PHP 8.3 or newer with the `pdo_sqlite` extension and [Composer](https://getcomposer.org),
     or
-  - [DDEV](https://ddev.readthedocs.io) (Docker).
+  - [DDEV](https://ddev.readthedocs.io) (Docker). The steps below assume
+    the local PHP path; for DDEV, follow the DDEV section of the
+    [quickstart README](https://github.com/druxt/quickstart#readme) for
+    setup, then rejoin at step 3.
 - A [GitHub](https://github.com) account (to create a project from the
   template).
 
@@ -45,7 +48,7 @@ your own repository from the starter, then clone it locally.
 If you prefer the terminal, `giget` does the same in one line:
 
 ```sh
-npx giget@latest gh:druxt/quickstart#develop my-druxt-site
+npx giget@1 gh:druxt/quickstart#develop my-druxt-site
 cd my-druxt-site
 ```
 
@@ -70,7 +73,8 @@ This one command:
 
 **Outcome:** the setup script prints a series of `PASS` lines and ends with
 the backend marked as running. Your `.env` file now contains a `BASE_URL`
-pointing at `http://127.0.0.1:8888`.
+pointing at `http://127.0.0.1:8888` (or the next free port; the script
+picks one and prints it).
 
 ## Step 3: Start the frontend
 
@@ -80,12 +84,13 @@ npm run dev
 
 **Outcome:** two services are now running:
 
-| URL                   | What it is       |
-| --------------------- | ---------------- |
-| http://127.0.0.1:8888 | Drupal (backend) |
-| http://localhost:3000 | Nuxt (frontend)  |
+| URL                                                      | What it is       |
+| -------------------------------------------------------- | ---------------- |
+| http://127.0.0.1:8888, or the port setup printed         | Drupal (backend) |
+| http://localhost:3000, or the port `npm run dev` printed | Nuxt (frontend)  |
 
-Open http://localhost:3000. The page you see is rendered by Nuxt. It's a
+Open http://localhost:3000 (or the next free port, printed in the
+terminal). The page you see is rendered by Nuxt. It's a
 little empty: the backend has no content yet. That's the next step.
 
 ## Step 4: Create your first content
@@ -96,8 +101,8 @@ Log into Drupal without touching a password:
 npm run login
 ```
 
-**Outcome:** your browser opens a Drupal admin session, logged in as the
-site administrator.
+**Outcome:** the command prints a one-time login link. Open it in your
+browser for a Drupal admin session, logged in as the site administrator.
 
 In the admin toolbar, go to **Content → Add content → Article**, give it a
 title (such as `Hello Druxt`), and **Save**.

@@ -14,6 +14,14 @@ In a Druxt site, the two jobs are split:
 - **Druxt** is the contract between them: clients, stores, schemas and
   components that turn JSON:API data into a rendered page.
 
+How much Drupal drives is your choice.
+[DruxtSite](/modules/site) renders a whole site from Drupal's block
+layout and menus with no frontend layout decisions at all; individual
+components (`DruxtEntity`, `DruxtView`, `DruxtMenu`) drop Drupal-driven
+pieces into pages and layouts you design yourself; and every component
+can be overridden through the [theme layer](/how-to/theming). The
+machinery below is the same at any point on that spectrum.
+
 Understanding the split explains most of Druxt's design decisions:
 
 - Why the frontend asks Drupal to translate paths.
@@ -54,11 +62,11 @@ sequenceDiagram
   participant JA as JSON:API
   B->>N: GET /article-path
   N->>DR: translate-path?path=/article-path
-  DR-->>N: entity type, bundle, UUID
-  N->>JA: fetch resource (schema-narrowed)
-  JA-->>N: JSON:API resource + includes
-  N-->>B: server-rendered HTML + serialized store
-  Note over B: Hydration. Vue takes over the markup.
+  DR-->>N: type, bundle, UUID
+  N->>JA: fetch the resource, schema fields only
+  JA-->>N: resource + includes
+  N-->>B: HTML + serialized store
+  Note over B,N: Hydration: Vue takes over the markup
 ```
 
 ## What lives where

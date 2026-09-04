@@ -32,7 +32,7 @@ sequenceDiagram
   D-->>F: redirect to /callback with code
   F->>D: /oauth/token + code verifier
   D-->>F: access + refresh tokens
-  Note over F: Authorization header set on the shared axios instance
+  Note over B,F: Authorization header set on the shared axios instance
 ```
 
 ## Drupal: install and generate keys
@@ -66,13 +66,18 @@ leaked token while keeping sessions usable.
 Simple OAuth 6 refuses any authorization request it cannot resolve a
 scope for, and **a fresh site has an empty scope list**, so every login fails
 with "Check the `scope` parameter" until one exists. Create one at
-`/admin/config/people/simple_oauth/oauth2_scope`: grant types
-`authorization_code` and `refresh_token`, with the `granularity` field
-set to **role** and mapped to the role your users hold. Drupal has two
-built-in roles, Anonymous and Authenticated, and permissions attach to
-roles, so `authenticated` is the usual mapping here.
+`/admin/config/people/simple_oauth/oauth2_scope/dynamic/add`: grant
+types `authorization_code` and `refresh_token`, with the `granularity`
+field set to **role** and mapped to the role your users hold;
+`authenticated` is the usual mapping here.
 
-![The Simple OAuth Scopes administration screen, where Dynamic scopes are managed](/images/backend-scopes.png)
+That same role also needs the **Grant simple_oauth codes** permission
+(`grant simple_oauth codes`). Without it the consent screen returns to
+itself with "The 'grant simple_oauth codes' permission is required."
+and no login completes. The administrator account bypasses permission
+checks, so test with a regular user.
+
+![The Add scope form: machine-readable name, description, grant type checkboxes, and the field mapping the scope to a role](/images/backend-scopes.png)
 
 ## Drupal: create the consumer
 
@@ -171,12 +176,141 @@ than by the OAuth header: attach the Bearer token as above, or fetch a
 CSRF token from Drupal's `/session/token` and send it in the
 `X-CSRF-Token` header alongside cookie auth.
 
+## Keep the session alive
+
+Sessions renew silently out of the box. Simple OAuth issues a refresh
+token to this flow when the scope enables the `refresh_token` grant,
+and an interceptor on the shared axios instance exchanges it for a
+fresh access token on any request that finds the current one expired.
+Server rendering joins in: the tokens are stored as cookies, so a cold
+reload refreshes during the server render and arrives with fresh
+cookies and a restored session.
+
+A custom `druxt.axios` instance bypasses the interceptor (the same
+wiring caveat as the Bearer-token section above), and a generated
+static site has no server render to restore a cold load. Both fall
+outside the automatic path. For those, add a mount-time check
+in the default layout: after hydration, when auth storage holds token
+state but the session is not logged in, refresh, and when the refresh
+fails the tokens are spent, so log out:
+
+```js
+// layouts/default.vue
+export default {
+  mounted() {
+    this.$nextTick(() => {
+      const hasState = Object.keys(this.$auth.$storage._state).some(
+        (key) => !!this.$auth.$storage._state[key],
+      );
+      if (this.$route.name !== 'callback' && !this.$auth.loggedIn && hasState) {
+        this.$auth.refreshTokens().catch(() => this.$auth.logout());
+      }
+    });
+  },
+};
+```
+
+Skip the callback route (the code exchange is mid-flight there), and
+guard against loops if your logout redirects somewhere that mounts this
+layout again; a flag in `sessionStorage` set on failure and cleared on
+the login page does it.
+
 ## Logging out
 
-`this.$auth.logout()` ends the frontend session. Data fetched while
-logged in stays in the [DruxtStore](/explanation/druxt-store) until the
-page reloads; a logout flow that must drop privileged content
-immediately should force a reload or flush the affected resources.
+`this.$auth.logout()` ends the frontend session, and nothing more. Two
+things survive it: data fetched while logged in stays in the
+[DruxtStore](/explanation/druxt-store) until the page reloads, and the
+issued tokens keep working. Measured after a logout with no revocation,
+the old access token still answers API requests and the old refresh
+token still mints new access tokens for its whole lifetime, because
+Simple OAuth has no logout or revocation endpoint of its own
+([#2945273](https://www.drupal.org/project/simple_oauth/issues/2945273)
+adds one as a patch).
+
+The pattern production Druxt sites use is a dedicated logout page that
+revokes, logs out and cleans up, then forces a full page load, which
+also empties the store:
+
+```vue
+<!-- pages/user/logout.vue -->
+<template>
+  <p>
+    Logging out.
+    <NuxtLink to="#" @click.native="logout()">Click here</NuxtLink>
+    if you are not redirected.
+  </p>
+</template>
+
+<script>
+export default {
+  mounted() {
+    this.logout();
+  },
+
+  methods: {
+    async logout() {
+      // Revoke the tokens server-side first. This endpoint comes from
+      // the #2945273 patch (or your own route that revokes the user's
+      // tokens); proxy it through the frontend so the call is
+      // same-origin. Skip this step and the tokens outlive the logout.
+      // A failed revocation must not leave the user locally logged in,
+      // so the local cleanup below runs regardless.
+      try {
+        await this.$axios.post('/oauth/logout');
+      } catch (e) {
+        // Do not log the error object itself: axios keeps the request
+        // config, Authorization header included, on rejections.
+        console.warn('Token revocation failed; tokens live until expiry.');
+      }
+
+      const strategy = this.$auth.strategy.name;
+      await this.$auth.logout();
+
+      // auth-next's reset() writes the literal string "false" into these
+      // keys rather than removing them (removal happens only on undefined
+      // or null), in cookies and localStorage both, so clear both stores.
+      [
+        `auth._token.${strategy}`,
+        `auth._token_expiration.${strategy}`,
+        `auth._refresh_token.${strategy}`,
+        `auth._refresh_token_expiration.${strategy}`,
+        `auth.${strategy}.pkce_state`,
+        'auth.strategy',
+      ].forEach((name) => {
+        document.cookie = `${name}=; Path=/; Max-Age=0`;
+        localStorage.removeItem(name);
+      });
+
+      // A full page load, not router.push: this is what drops
+      // privileged content from the DruxtStore.
+      location.href = location.origin;
+    },
+  },
+};
+</script>
+```
+
+`auth.strategy` reappears on the next page load holding the default
+strategy name. That is auth-next seeding itself, for anonymous visitors
+too, not leftover session state.
+
+Route the endpoint through the proxy so it shares the frontend origin
+(alongside `druxt.proxy.api`, or explicitly):
+
+```js
+proxy: {
+  '/oauth/logout': process.env.BASE_URL,
+},
+```
+
+## Known limitations
+
+The limitations documented in the
+[authentication tutorial](/tutorials/authentication#known-limitations)
+apply to this setup identically: no logout control is included by
+default (the [Logging out](#logging-out) section above is the fix), and
+the session caveats listed there, the `autoLogout` default, custom
+axios instances, and refresh-token lifetimes, apply unchanged.
 
 ## Where to go next
 

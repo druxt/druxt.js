@@ -4,7 +4,7 @@
     preference. This uses a manual mounted-flag instead of Nuxt's built-in
     <client-only>, whose bundled implementation (vue-client-only, itself
     versioned "0.0.0-semantic-release") renders an empty comment node here
-    under Vue 2.7 — its functional-component `slots()`/`parent` handling
+    under Vue 2.7 - its functional-component `slots()`/`parent` handling
     doesn't behave the same as it did pre-2.7, and Nuxt 2 has no newer
     build. Confirmed against a live preview: $colorMode/data-theme were
     both correct, but the toggle's own markup (real content and the

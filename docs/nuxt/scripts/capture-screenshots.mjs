@@ -100,8 +100,8 @@ const SHOTS = [
   },
   {
     name: 'backend-scopes.png',
-    path: '/admin/config/people/simple_oauth/oauth2_scope',
-    selector: 'main, .layout-container',
+    path: '/admin/config/people/simple_oauth/oauth2_scope/dynamic/add',
+    selector: 'form',
   },
 ]
 

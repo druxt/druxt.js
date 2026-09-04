@@ -139,6 +139,10 @@ export default {
       type: 'node--article',
     });
     this.articles = collection.data;
+    // Overriding fetch() replaces the base hook that resolves the theme
+    // component, so invoke it manually. Without this line the druxt block
+    // below never runs.
+    await DruxtModule.fetch.call(this);
   },
 
   druxt: {
