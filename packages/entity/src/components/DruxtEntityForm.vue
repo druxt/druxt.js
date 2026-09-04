@@ -29,7 +29,7 @@ import { default as DruxtEntity } from './DruxtEntity.vue'
  *   mixins: [DruxtEntityMixin]
  * }
  *
- * @example <caption>DruxtEntityForm with template injection</caption> @lang vue
+ * @example <caption>DruxtEntityForm default slot (template injection)</caption> @lang vue
  * <DruxtEntityForm type="">
  *   <template #default="{ entity }">
  *     <!-- Do whatever you want here -->

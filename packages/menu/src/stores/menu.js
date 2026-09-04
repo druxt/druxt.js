@@ -18,6 +18,8 @@ const DruxtMenuStore = ({ store }) => {
    *
    * @name druxtMenu
    * @module druxtMenu
+   *
+   * @see {@link https://druxtjs.org/explanation/druxt-store|The DruxtStore}
    */
   const module = {
     namespaced: true,
@@ -79,9 +81,9 @@ const DruxtMenuStore = ({ store }) => {
        *
        * @name get
        * @action get=entities
-       * @param {object} app - The Nuxt app context.
-       * @param {Function} app.commit - Commits mutations to the store.
-       * @param {string|object} context - The Menu name or context object.
+       * @param {object} vuexContext - The Vuex action context.
+       * @param {Function} vuexContext.commit - Commits mutations to the store.
+       * @param {string|object} context - The menu name, or an object containing the menu `name` and optional `settings` and `prefix` properties.
        *
        * @example @lang js
        * await this.$store.dispatch('druxtMenu/get', { name: 'main' })

@@ -6,7 +6,8 @@ const modelWatch = DruxtModule.watch.model
 delete DruxtModule.watch.model
 
 /**
- * Renders a Drupal Field using Drupals by field type and formatter settings.
+ * Renders a Drupal field using a component chosen by the field type and
+ * formatter settings.
  *
  * @see https://druxtjs.org/modules/entity
  *

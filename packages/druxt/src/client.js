@@ -478,7 +478,9 @@ class DruxtClient {
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
-   * @returns {object} The JSON:API resource data.
+   * @returns {object|boolean} The full JSON:API document; the requested resource is on the
+   *   `data` property, e.g. `result.data.attributes`. Returns `false` if either `type` or
+   *   `id` is missing.
    * @todo update method to take a context object instead of 4 parameters.
    */
   async getResource(type, id, query, prefix) {

@@ -4,8 +4,8 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions } from 'vuex'
 
 /**
- * The DruxtBlock component is used to render a Drupal Block by UUID or Drupal's
- * internal ID.
+ * The DruxtBlock component renders a Drupal Block by UUID or by its block
+ * placement machine name.
  *
  * While the DruxtBlock component can't automatically render every Drupal block,
  * it does provide the Block settings to a targeted Druxt wrapper component for
@@ -30,7 +30,9 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtBlocksBlockMixin]
  * }
  *
- * @example <caption>DruxtBlock with template injection</caption> @lang vue
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
+ *
+ * @example <caption>DruxtBlock default slot (template injection)</caption> @lang vue
  * <DruxtBlock id="umami_branding">
  *   <template #default="{ block }">
  *     <!-- Do whatever you want here -->
@@ -44,11 +46,12 @@ export default {
   extends: DruxtModule,
 
   /**
-   * The DruxtBlock component requires either the UUID or internal ID property.
+   * The DruxtBlock component requires either the `uuid` or `id` property.
    */
   props: {
     /**
-     * The Blocks internal ID.
+     * The block placement machine name, as configured on Drupal's Block layout
+     * page (/admin/structure/block).
      *
      * @type {string}
      * @default null
@@ -187,7 +190,7 @@ export default {
         })
       }
 
-      // Fetch Block by Drupal internal ID.
+      // Fetch Block by placement machine name (drupal_internal__id).
       else if (this.id) {
         query.addFilter('drupal_internal__id', this.id)
         const collection = await this.getCollection({
@@ -266,6 +269,8 @@ export default {
  * Provides the available naming options for the Wrapper component.
  *
  * @typedef {array[]} ComponentOptions
+ *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
  *
  * @example @lang js
  * [

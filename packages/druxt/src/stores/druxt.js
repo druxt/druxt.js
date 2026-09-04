@@ -43,6 +43,8 @@ const DruxtStore = ({ store }) => {
    *
    * @name druxt
    * @module druxt
+   *
+   * @see https://druxtjs.org/explanation/druxt-store
    */
   const module = {
     namespaced: true,
@@ -244,7 +246,8 @@ const DruxtStore = ({ store }) => {
        * @param {Function} context.dispatch - Dispatches other store actions.
        * @param {object} context.state - The Vuex module state.
        * @param {getResourceContext} payload - The action parameters.
-       * @return {object} The Drupal JSON:API resource.
+       * @return {object} The full JSON:API document for the resource; the resource itself is
+       *   on the `data` property, e.g. `resource.data.attributes`.
        *
        * @example @lang js
        * const resource = await this.$store.dispatch('druxt/getResource', {

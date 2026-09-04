@@ -42,7 +42,8 @@
     },
 
     /**
-     * The Block regions machine name.
+     * A region machine name from the Drupal theme's block layout
+     * (/admin/structure/block).
      *
      * @type {string}
      * @default content
@@ -53,7 +54,7 @@
     },
 
     /**
-     * A Drupal theme machine name.
+     * The machine name of the Drupal theme that provides the block layout.
      *
      * @type {string}
      * @required

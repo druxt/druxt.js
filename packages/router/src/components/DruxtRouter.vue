@@ -7,7 +7,7 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  *
  * The path `/node/1` renders a DruxtEntity component.
  *
- * The Vue router path will be used if not path is defined.
+ * The Vue router path is used if no path is given.
  *
  * @example <caption>Render using the Vue router path</caption> @lang vue
  * <DruxtRouter />
@@ -29,7 +29,7 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  *   mixins: [DruxtRouterMixin]
  * }
  *
- * @example <caption>DruxtRouter with template injection</caption> @lang vue
+ * @example <caption>DruxtRouter default slot (template injection)</caption> @lang vue
  * <DruxtRouter>
  *   <template #default="{ route }">
  *     <!-- Do whatever you want here -->

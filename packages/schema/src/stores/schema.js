@@ -15,6 +15,8 @@ const DruxtSchemaStore = ({ store }) => {
    *
    * @name druxtSchema
    * @module druxtSchema
+   *
+   * @see {@link https://druxtjs.org/explanation/druxt-store|The DruxtStore}
    */
   const module = {
     namespaced: true,

@@ -18,6 +18,8 @@ const DruxtRouterStore = ({ store }) => {
    * @name druxtRouter
    * @module druxtRouter
    *
+   * @see https://druxtjs.org/explanation/druxt-store
+   *
    * @todo Change namespace to `druxt/router`.
    */
   const module = {

@@ -32,7 +32,7 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtSiteMixin]
  * }
  *
- * @example <caption>DruxtSite with template injection</caption> @lang vue
+ * @example <caption>DruxtSite default slot (template injection)</caption> @lang vue
  * <DruxtSite>
  *   <template #default="{ props, regions, theme }">
  *     <!-- Do whatever you want here -->

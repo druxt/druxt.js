@@ -13,6 +13,14 @@ import Url from 'url-parse'
  *
  * Provides core Drupal JSON:API query functionality.
  *
+ * @example @lang js <caption>Inside a Nuxt component; the plugin injects a factory function, note the call.</caption>
+ * const router = this.$druxtRouter()
+ * const { route } = await router.get('/node/1')
+ *
+ * @example @lang js <caption>Manual construction.</caption>
+ * import { DruxtRouter } from 'druxt-router'
+ * const router = new DruxtRouter('https://example.com', {})
+ *
  * @see https://druxtjs.org/modules/router
  */
 class DruxtRouter {
@@ -26,11 +34,32 @@ class DruxtRouter {
    * @example @lang js
    * const router = new DruxtRouter('https://example.com', {})
    *
+   * @example @lang js <caption>Adding a custom route type.</caption>
+   * const router = new DruxtRouter('https://example.com', {
+   *   types: [{
+   *     type: 'entity',
+   *     canonical: (route) => route.entity.canonical,
+   *     component: 'my-entity-component',
+   *     property: 'entity',
+   *     props: (route) => ({ uuid: route.entity.uuid }),
+   *   }],
+   * })
+   *
    * @param {string} baseUrl - The Drupal base URL.
    * @param {object} [options] - Druxt Router options.
    * @param {object} [options.axios] - Axios instance settings.
    * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
-   * @param {array} [options.types] - Array of Druxt Router type definitions.
+   * @param {object[]} [options.types] - Druxt Router route type definitions. These are
+   *   constructor-only: the Nuxt module's plugin does not forward a `types` option from
+   *   `nuxt.config.js`.
+   * @param {string} [options.types[].type] - The type id, e.g. 'entity' or 'views'.
+   * @param {Function|string} [options.types[].canonical] - The canonical path, or a function of
+   *   the route data that returns it.
+   * @param {string} [options.types[].component] - Name of the component used to render the route.
+   * @param {string} [options.types[].property] - The route response property to extract; the
+   *   type matches only when this property is present in the response.
+   * @param {Function} [options.types[].props] - A function of the route data that returns the
+   *   props object for the component.
    */
   constructor (baseUrl, options = {}) {
     /**
@@ -83,7 +112,7 @@ class DruxtRouter {
   /**
    * Add headers to the Axios instance.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
    *   Set headers via the DruxtClient axios options, or client.axios interceptors instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
@@ -105,7 +134,7 @@ class DruxtRouter {
   /**
    * Build query URL.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
    *   Use client.buildQueryUrl(url, query) instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
@@ -128,7 +157,7 @@ class DruxtRouter {
   /**
    * Check response for permissions.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
    *   Handle JSON:API meta.omitted links client-side instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
@@ -162,7 +191,7 @@ class DruxtRouter {
   /**
    * Get index of all available resources, or the optionally specified resource.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
    *   Use client.getIndex(resource) instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
@@ -228,7 +257,7 @@ class DruxtRouter {
   /**
    * Get a JSON:API resource by type and ID.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
    *   Use client.getResource(type, id) instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
@@ -251,8 +280,8 @@ class DruxtRouter {
   /**
    * Gets a collection of resources.
    *
-   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
-   *   Use client.getResources(resource, query, options) instead.
+   * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:1.0.0.
+   *   Use client.getCollectionAll(resource, query) instead.
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
