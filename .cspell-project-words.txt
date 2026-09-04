@@ -136,6 +136,7 @@ recognise
 recrawl
 redirectdomain
 renderable
+repage
 repoint
 reskins
 Resvg
@@ -190,8 +191,8 @@ wireframe
 wireframes
 worktree
 worktrees
-xvfb
 Xvfb
+xvfb
 yaml
 yamllint
 yarnpkg

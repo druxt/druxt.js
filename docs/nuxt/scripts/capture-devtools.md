@@ -42,4 +42,18 @@ backend running.
    - `devtools-inspector.png`: open the DruxtJS inspector (the droplet
      icon in the left rail), select Connection details.
 
-4. Optimize with `pngquant --quality 65-90` and revert the config edit.
+4. Crop each capture to its subject so the three images stay small and
+   visually distinct (geometries assume the 1280x800 window at the
+   origin):
+
+   ```sh
+   convert devtools-theme.png -crop 1095x690+185+55 +repage devtools-theme.png
+   convert devtools-scaffold.png -crop 547x142+733+628 +repage devtools-scaffold.png
+   convert devtools-inspector.png -crop 1280x235+0+25 +repage devtools-inspector.png
+   ```
+
+   Theme keeps the component tree and full state pane, scaffold is just
+   the `$theme` list with the save action, inspector is the top strip
+   with the rail, node list and connection details.
+
+5. Optimize with `pngquant --quality 65-90` and revert the config edit.
