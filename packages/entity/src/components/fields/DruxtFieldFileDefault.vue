@@ -32,8 +32,8 @@ import { DruxtFieldMixin } from 'druxt-entity'
 import { mapActions } from 'vuex'
 
 /**
- * File Default field.
- * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:2.0.0.
+ * Renders a file field's items as links to the referenced files.
+ * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:1.0.0.
  *   Use a field wrapper component resolved by the component suggestion system instead.
  * @see https://druxtjs.org/modules/entity/deprecations
  */
@@ -43,7 +43,9 @@ export default {
   mixins: [DruxtFieldMixin],
 
   /**
-   * @property {object[]} entities
+   * Provides the fetched file resources for rendering.
+   *
+   * @property {object[]} entities - The File JSON:API resources referenced by the field items.
    */
   data: () => ({
     entities: []

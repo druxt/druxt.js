@@ -39,6 +39,7 @@ import { default as DruxtEntity } from './DruxtEntity.vue'
  *
  * @extends DruxtEntity
  * @see {@link ./DruxtEntity|DruxtEntity}
+ * @see https://druxtjs.org/modules/entity
  */
 export default {
   name: 'DruxtEntityForm',
@@ -84,7 +85,7 @@ export default {
      *
      * @param {object} vm - The component ViewModel.
      * @param {object} vm.response - The form submission response data.
-     * @return {object[]}
+     * @return {object[]} The JSON:API errors from the form submission response, or `undefined`.
      */
     errors: ({ response }) => (response || {}).errors,
   },
@@ -140,7 +141,7 @@ export default {
      * Adds a `buttons` slot to the DruxtEntity scope slots.
      *
      * @param {Function} h - The Vue createElement function.
-     * @return {object}
+     * @return {object} The DruxtEntity scoped slots, with an added `buttons` slot and a default slot that appends the form buttons after the fields.
      */
     slots(h) {
       // Use DruxtEntity to build the Field based slots.

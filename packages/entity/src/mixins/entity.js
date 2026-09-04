@@ -4,6 +4,7 @@ import { DruxtEntityContextMixin } from './context'
  * Provides Vue.js properties to render a DruxtEntity or DruxtEntityForm Wrapper component.
  *
  * @mixin
+ * @see https://druxtjs.org/modules/entity
  *
  * @example @lang vue
  * <script>
@@ -49,7 +50,7 @@ const DruxtEntityMixin = {
 
     /**
      * DruxtJS Schema object.
-     * @type {object}}
+     * @type {object}
      */
     schema: {
       type: Object,
@@ -58,6 +59,7 @@ const DruxtEntityMixin = {
 
     /**
      * The Entity value.
+     * @type {object}
      */
      value: {
       type: Object,
@@ -66,6 +68,8 @@ const DruxtEntityMixin = {
   },
 
   /**
+   * Provides the reactive entity model, initialized from the value property.
+   *
    * @param {object} vm - The component ViewModel.
    * @param {object} vm.value - The Entity value.
    * @property {object} model - The model object.

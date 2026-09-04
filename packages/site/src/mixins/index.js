@@ -5,7 +5,7 @@
  *
  * @type {object}
  * @exports DruxtSiteMixin
- * @see {@link ./mixins/site|DruxtSiteMixin}
+ * @see {@link ./site|DruxtSiteMixin}
  * @example @lang vue
  * <template>
  *   <div>

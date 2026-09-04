@@ -8,6 +8,8 @@ delete DruxtModule.watch.model
 /**
  * Renders a Drupal Field using Drupals by field type and formatter settings.
  *
+ * @see https://druxtjs.org/modules/entity
+ *
  * @example
  * <DruxtField
  *   :schema="{
@@ -32,6 +34,7 @@ export default {
      * JSON:API errors.
      *
      * @type {object[]}
+     * @default []
      */
     errors: {
       type: Array,
@@ -88,6 +91,8 @@ export default {
   },
 
   /**
+   * Provides the reactive field model, initialized from the value property.
+   *
    * @param {object} vm - The component ViewModel.
    * @param {(array|boolean|number|object|string)} vm.value - The Field value.
    * @property {object} model - The model object.

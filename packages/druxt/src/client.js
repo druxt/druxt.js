@@ -4,6 +4,10 @@ import consola from 'consola'
 
 /**
  * The Druxt JSON:API client.
+ *
+ * Communicates with the Drupal JSON:API to fetch, create and update resources.
+ *
+ * @see {@link https://druxtjs.org/modules/druxt|Druxt module guide}
  */
 class DruxtClient {
   /**
@@ -226,6 +230,13 @@ class DruxtClient {
   /**
    * Throw a formatted error.
    *
+   * @example @lang js
+   * try {
+   *   await this.$druxt.axios.get(url)
+   * } catch (err) {
+   *   this.$druxt.error(err, { url })
+   * }
+   *
    * @param {object} err - The error object
    * @param {object} context - The error context; the requested URL.
    *
@@ -264,6 +275,9 @@ class DruxtClient {
 
   /**
    * Execute an Axios GET request, with permission checking and error handling.
+   *
+   * @example @lang js
+   * const res = await this.$druxt.get('/jsonapi/node/article')
    *
    * @param {string} url - The URL to GET.
    * @param {object} options - An Axios options object.
@@ -563,8 +577,8 @@ export { DruxtClient }
  *
  * @typedef {string|object} DruxtClientQuery
  *
- * @example
- * page[limit]=5&page[offset]=5
+ * @example @lang js
+ * 'page[limit]=5&page[offset]=5'
  *
  * @example @lang js
  * new DrupalJsonApiParams().addPageLimit(5)

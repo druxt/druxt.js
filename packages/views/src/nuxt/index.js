@@ -10,6 +10,8 @@ import DruxtViewsStorybook from './storybook'
  *
  * Options are set on the root level `druxt` Nuxt config object.
  *
+ * @see https://druxtjs.org/modules/views
+ *
  * @example @lang js
  * // `nuxt.config.js`
  * module.exports = {

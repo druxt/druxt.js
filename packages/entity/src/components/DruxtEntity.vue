@@ -12,6 +12,8 @@ import { mapActions } from 'vuex'
  * Fields are rendered as DruxtField components, based on the Drupal display
  * mode configuration.
  *
+ * @see https://druxtjs.org/modules/entity
+ *
  * @example @lang vue
  * <DruxtEntity
  *   type="node--article"
@@ -93,6 +95,7 @@ export default {
      * Entity UUID.
      *
      * @type {string}
+     * @default false
      */
     uuid: {
       type: [Boolean, String],
@@ -101,6 +104,8 @@ export default {
   },
 
   /**
+   * Provides the reactive entity model and display schema state.
+   *
    * @param {object} vm - The component ViewModel.
    * @param {string} vm.type - The JSON:API resource type.
    * @param {object} vm.value - The module component model value.
@@ -130,7 +135,7 @@ export default {
      *
      * @param {object} vm - The component ViewModel.
      * @param {object} vm.model - The model object.
-     * @return {object}.
+     * @return {object} A copy of the entity model, containing the JSON:API attributes, relationships and included resource data.
      */
     entity: ({ model }) => ({ ...model }),
 
@@ -144,7 +149,7 @@ export default {
      * @param {object} vm.model - The model object.
      * @param {object} vm.schema - The DruxtSchema object.
      * @param {('view'|'form')} vm.schemaType - Drupal display schema type, 'view' or 'form'.
-     * @return {object}
+     * @return {object} Field objects keyed by field ID, each containing the field's schema, value, errors and relationship status.
      */
     fields: ({ errors, isEmpty, lang, model, schema, schemaType }) => {
       if (!schema) return false
@@ -213,7 +218,7 @@ export default {
      *
      * @param {ModuleSettings} settings - The merged module and component settings object.
      *
-     * @return {boolean|object}
+     * @return {boolean|object} The DrupalJsonApiParams query object.
      */
     getQuery(settings) {
       const query = new DrupalJsonApiParams()
@@ -260,7 +265,7 @@ export default {
      * Checks if an Entity field is empty.
      *
      * @param {*} value - Field value.
-     * @return {boolean}
+     * @return {boolean} `true` if the field value is empty.
      */
     isEmpty(value) {
       if (typeof value === 'undefined') return true

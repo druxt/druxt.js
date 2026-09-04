@@ -487,8 +487,8 @@ export { DruxtStore }
  *
  * @typedef {string|object} DruxtClientQuery
  *
- * @example
- * page[limit]=5&page[offset]=5
+ * @example @lang js
+ * 'page[limit]=5&page[offset]=5'
  *
  * @example @lang js
  * new DrupalJsonApiParams().addPageLimit(5)

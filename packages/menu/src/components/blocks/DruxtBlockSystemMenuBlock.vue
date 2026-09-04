@@ -22,7 +22,7 @@ import { DruxtBlocksBlockMixin } from 'druxt-blocks'
  *   uuid="d4efd803-94af-4742-bc94-ea4360085b74"
  * />
  *
- * @see {@link https://blocks.druxtjs.org/api/components/DruxtBlock|DruxtBlock}
+ * @see {@link https://druxtjs.org/api/packages/blocks/components/DruxtBlock|DruxtBlock}
  */
 export default {
   name: 'DruxtBlockSystemMenuBlock',
@@ -30,7 +30,7 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link https://blocks.druxtjs.org/api/mixins/block|DruxtBlocksBlockMixin}
+   * @see {@link https://druxtjs.org/api/packages/blocks/mixins/block|DruxtBlocksBlockMixin}
    */
   mixins: [DruxtBlocksBlockMixin],
 

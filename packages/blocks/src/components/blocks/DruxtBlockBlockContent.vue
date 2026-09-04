@@ -31,7 +31,7 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link ../../mixins/DruxtBlocksBlockMixin|DruxtBlocksBlockMixin}
+   * @see {@link /api/packages/blocks/mixins/block|DruxtBlocksBlockMixin}
    */
   mixins: [DruxtBlocksBlockMixin],
 
@@ -53,7 +53,7 @@ export default {
      *
      * @type {object}
      *
-     * @see {@link https://druxt.github.io/druxt-entity/api/components/DruxtEntity|DruxtEntity}
+     * @see {@link /api/packages/entity/components/DruxtEntity|DruxtEntity}
      */
     propsData: ({ $fetchState, $store, block, langcode }) => {
       if ($fetchState.pending) return false

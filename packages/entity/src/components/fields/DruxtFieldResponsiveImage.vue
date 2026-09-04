@@ -30,8 +30,8 @@ import { DruxtFieldMixin } from 'druxt-entity'
 import { mapActions } from 'vuex'
 
 /**
- * Responsive Image field.
- * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:2.0.0.
+ * Renders a responsive image field's items as HTML image elements.
+ * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:1.0.0.
  *   Use a field wrapper component resolved by the component suggestion system instead.
  * @see https://druxtjs.org/modules/entity/deprecations
  */
@@ -41,7 +41,9 @@ export default {
   mixins: [DruxtFieldMixin],
 
   /**
-   * @property {object[]} entities
+   * Provides the fetched image file resources for rendering.
+   *
+   * @property {object[]} entities - The File JSON:API resources referenced by the field items.
    */
   data: () => ({
     entities: []

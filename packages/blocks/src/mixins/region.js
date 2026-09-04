@@ -3,6 +3,7 @@
  * component.
  *
  * @mixin
+ * @see https://druxtjs.org/modules/blocks
  *
  * @example @lang vue
  * <template>
@@ -22,7 +23,7 @@
     /**
      * The Block JSON:API resources.
      *
-     * @type {objects[]}
+     * @type {object[]}
      * @required
      */
     blocks: {

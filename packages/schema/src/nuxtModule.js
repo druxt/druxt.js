@@ -27,6 +27,8 @@ import { DruxtSchema } from './schema'
  *
  * @todo Document options.
  *
+ * @see {@link https://druxtjs.org/modules/schema|Schema module guide}
+ *
  * @param {object} moduleOptions - Nuxt.js module options object.
  */
 const DruxtSchemaNuxtModule = function (moduleOptions = {}) {

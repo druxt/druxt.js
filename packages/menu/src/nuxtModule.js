@@ -12,6 +12,8 @@ import DruxtMenuStorybook from './nuxtStorybook'
  *
  * Options are set on the root level `druxt` Nuxt config object.
  *
+ * @see https://druxtjs.org/modules/menu
+ *
  * @example @lang js
  * // `nuxt.config.js`
  * module.exports = {

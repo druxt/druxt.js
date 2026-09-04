@@ -28,8 +28,8 @@
 import { DruxtFieldMixin } from 'druxt-entity'
 
 /**
- * String field.
- * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:2.0.0.
+ * Renders a string field's values as plain text.
+ * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:1.0.0.
  *   Use a field wrapper component resolved by the component suggestion system instead.
  * @see https://druxtjs.org/modules/entity/deprecations
  */

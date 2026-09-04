@@ -36,8 +36,8 @@
 import { DruxtFieldMixin } from 'druxt-entity'
 
 /**
- * Number Integer field.
- * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:2.0.0.
+ * Renders an integer field's values with the configured prefix and suffix.
+ * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:1.0.0.
  *   Use a field wrapper component resolved by the component suggestion system instead.
  * @see https://druxtjs.org/modules/entity/deprecations
  */
@@ -48,12 +48,24 @@ export default {
 
   /** */
   computed: {
+    /**
+     * The text to render before each value, if enabled by the field display settings.
+     *
+     * @type {boolean|string}
+     * @default false
+     */
     prefix() {
       if (!this.schema.settings.display.prefix_suffix || !this.schema.settings.config.prefix) return false
 
       return this.schema.settings.config.prefix
     },
 
+    /**
+     * The text to render after each value, if enabled by the field display settings.
+     *
+     * @type {boolean|string}
+     * @default false
+     */
     suffix() {
       if (!this.schema.settings.display.prefix_suffix || !this.schema.settings.config.suffix) return false
 

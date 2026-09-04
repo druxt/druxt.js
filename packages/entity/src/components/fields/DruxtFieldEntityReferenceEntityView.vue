@@ -28,8 +28,8 @@ import DruxtEntity from '../../components/DruxtEntity.vue'
 import { DruxtFieldMixin } from 'druxt-entity'
 
 /**
- * Entity Reference Entity View field.
- * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:2.0.0.
+ * Renders an entity reference field's referenced entities as DruxtEntity components.
+ * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:1.0.0.
  *   Use a field wrapper component resolved by the component suggestion system instead.
  * @see https://druxtjs.org/modules/entity/deprecations
  */

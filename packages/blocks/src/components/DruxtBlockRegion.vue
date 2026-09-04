@@ -10,6 +10,8 @@ import { mapActions, mapState } from 'vuex'
  * All blocks, including those not visible, are provided as slots for the Druxt
  * Wrapper component.
  *
+ * @see https://druxtjs.org/modules/blocks
+ *
  * @example @lang vue
  * <DruxtBlockRegion name="header" theme="umami" />
  *
@@ -25,12 +27,12 @@ import { mapActions, mapState } from 'vuex'
  * }
  *
  * @example <caption>DruxtBlockRegion with template injection</caption> @lang vue
- * <DruxtBlock id="umami_branding">
- *   <template #default="{ block }">
+ * <DruxtBlockRegion name="header" theme="umami">
+ *   <template #default="{ blocks }">
  *     <!-- Do whatever you want here -->
- *     <DruxtDebug :json="block" />
+ *     <DruxtDebug :json="blocks" />
  *   </template>
- * </DruxtBlock>
+ * </DruxtBlockRegion>
  */
 export default {
   name: 'DruxtBlockRegion',
@@ -69,7 +71,9 @@ export default {
   },
 
   /**
-   * @property {objects[]} blocks - The Block JSON:API resources.
+   * Provides the fetched Block resources for the region.
+   *
+   * @property {object[]} blocks - The Block JSON:API resources.
    */
   data: () => ({
     blocks: []
@@ -81,7 +85,7 @@ export default {
   },
 
   /**
-   * @vue-computed {object} route The current Route from the [DruxtRouter vuex store](https://router.druxtjs.org/api/stores/router.html).
+   * @vue-computed {object} route The current Route from the [DruxtRouter vuex store](https://druxtjs.org/api/packages/router/stores/router).
    */
   computed: {
     ...mapState('druxtRouter', {
@@ -107,7 +111,7 @@ export default {
      *
      * @param {object} block - The Block entity object.
      *
-     * @return {boolean}
+     * @return {boolean} `true` if the block should be rendered on the current route.
      */
     isVisible(block) {
       // Request path visibility conditions.

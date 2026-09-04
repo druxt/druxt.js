@@ -94,7 +94,7 @@ const DruxtRouterEntityMixin = {
    * - Maps Vuex `entities` state to `this->entities`.
    *
    * @property {object} entities - The mapped Druxt Router Vuex `entities` state.
-   * @see {@link store|src/store.js}
+   * @see {@link https://druxtjs.org/api/packages/druxt/stores/druxt|DruxtStore}
    */
   computed: {
     ...mapState({
@@ -108,7 +108,8 @@ const DruxtRouterEntityMixin = {
    * - Maps Vuex `druxtRouter/getEntity` action to `this->getEntity()`.
    * - Maps Vuex `druxt/getResource` action to `this->getResource()`.
    *
-   * @see {@link store|src/store.js}
+   * @see {@link ../stores/router|DruxtRouterStore}
+   * @see {@link https://druxtjs.org/api/packages/druxt/stores/druxt|DruxtStore}
    */
   methods: {
     ...mapActions({

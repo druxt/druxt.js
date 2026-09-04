@@ -9,6 +9,17 @@ import { DruxtEntityNuxtModule } from './nuxtModule'
  * @exports default
  * @name DruxtEntityNuxtModule
  * @see {@link ./nuxtModule|DruxtEntityNuxtModule}
+ * @see https://druxtjs.org/modules/entity
+ *
+ * @example <caption>nuxt.config.js</caption> @lang js
+ * module.exports = {
+ *   modules: [
+ *     'druxt-entity'
+ *   ],
+ *   druxt: {
+ *     baseUrl: 'https://demo-api.druxtjs.org'
+ *   }
+ * }
  */
 export default DruxtEntityNuxtModule
 

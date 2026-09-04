@@ -14,6 +14,8 @@ import { DruxtClient } from 'druxt'
  *
  * Options are set on the root level `druxt` Nuxt config object.
  *
+ * @see https://druxtjs.org/modules/router
+ *
  * @example @lang js
  * // `nuxt.config.js`
  * module.exports = {

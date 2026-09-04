@@ -12,6 +12,8 @@ import Url from 'url-parse'
  * DruxtRouter class.
  *
  * Provides core Drupal JSON:API query functionality.
+ *
+ * @see https://druxtjs.org/modules/router
  */
 class DruxtRouter {
   /**
@@ -71,7 +73,7 @@ class DruxtRouter {
      * Instance of the Druxt Client.
      *
      * @type {DruxtClient}
-     * @see {@link http://druxtjs.org/api/client}
+     * @see {@link https://druxtjs.org/api/packages/druxt/client}
      */
     this.druxt = new DruxtClient(baseUrl, this.options)
 
@@ -84,7 +86,7 @@ class DruxtRouter {
    * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Set headers via the DruxtClient axios options, or client.axios interceptors instead.
    * @see https://druxtjs.org/modules/router/deprecations
-   * @see {@link https://druxtjs.org/api/client}
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @example @lang js
    * router.druxt.addHeaders({ 'Authorization': `Basic ${token}` })
@@ -106,7 +108,7 @@ class DruxtRouter {
    * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Use client.buildQueryUrl(url, query) instead.
    * @see https://druxtjs.org/modules/router/deprecations
-   * @see {@link https://druxtjs.org/api/client}
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @example @lang js
    * const query = new DrupalJsonApiParams()
@@ -129,7 +131,7 @@ class DruxtRouter {
    * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Handle JSON:API meta.omitted links client-side instead.
    * @see https://druxtjs.org/modules/router/deprecations
-   * @see {@link https://druxtjs.org/api/client}
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @param {object} res - Axios GET request response object.
    *
@@ -163,7 +165,7 @@ class DruxtRouter {
    * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Use client.getIndex(resource) instead.
    * @see https://druxtjs.org/modules/router/deprecations
-   * @see {@link https://druxtjs.org/api/client}
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @example @lang js
    * const { href } = await router.druxt.getIndex('node--article')
@@ -229,7 +231,7 @@ class DruxtRouter {
    * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Use client.getResource(type, id) instead.
    * @see https://druxtjs.org/modules/router/deprecations
-   * @see {@link https://druxtjs.org/api/client}
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @example @lang js
    * const data = await router.druxt.getResource('node--article', id)
@@ -252,7 +254,7 @@ class DruxtRouter {
    * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
    *   Use client.getResources(resource, query, options) instead.
    * @see https://druxtjs.org/modules/router/deprecations
-   * @see {@link https://druxtjs.org/api/client}
+   * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
    * @todo Add granular pagination.
    *

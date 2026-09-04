@@ -11,6 +11,8 @@ import { mapActions } from 'vuex'
  * it does provide the Block settings to a targeted Druxt wrapper component for
  * manual theming.
  *
+ * @see https://druxtjs.org/modules/blocks
+ *
  * @example <caption>Render a block using **id**</caption> @lang vue
  * <DruxtBlock id="umami_branding" />
  *
@@ -49,6 +51,7 @@ export default {
      * The Blocks internal ID.
      *
      * @type {string}
+     * @default null
      *
      * @example @lang vue
      * <DruxtBlock id="umami_branding" />
@@ -64,6 +67,7 @@ export default {
      * If used, the **id** prop will be ignored.
      *
      * @type {string}
+     * @default null
      *
      * @example @lang vue
      * <DruxtBlock uuid="59104acd-88e1-43c3-bd5f-35800f206394" />
@@ -75,6 +79,8 @@ export default {
   },
 
   /**
+   * Provides the fetched Block resource state.
+   *
    * @property {object} resource - The JSON:API resource object.
    */
   data: () => ({
@@ -93,7 +99,7 @@ export default {
      *
      * @param {object} vm - The component ViewModel.
      * @param {object} vm.resource - The Block JSON:API resource.
-     * @return {object}
+     * @return {object} The Block entity JSON:API resource data.
      */
     block: ({ resource }) => (resource || {}).data,
   },

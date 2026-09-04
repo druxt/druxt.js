@@ -59,6 +59,9 @@ export default {
      * Used to filter the available regions from the Drupal Blocks JSON:API
      * resources.
      *
+     * If not set, the theme from the `druxt.site.theme` module option is
+     * used, falling back to the first available theme.
+     *
      * @type {string}
      */
     theme: {

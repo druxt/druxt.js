@@ -21,13 +21,13 @@ import { DruxtBlocksBlockMixin } from 'druxt-blocks'
  *   uuid="43d613c6-ab66-453d-bce1-e1dfc990b4a1"
  * />
  *
- * @see {@link https://blocks.druxtjs.org/api/components/DruxtBlock|DruxtBlock}
+ * @see {@link https://druxtjs.org/api/packages/blocks/components/DruxtBlock|DruxtBlock}
  */
 export default {
   name: 'DruxtBlockViewsBlock',
 
   /**
-   * @see {@link https://blocks.druxtjs.org/api/mixins/block|DruxtBlocksBlockMixin}
+   * @see {@link https://druxtjs.org/api/packages/blocks/mixins/block|DruxtBlocksBlockMixin}
    */
   mixins: [DruxtBlocksBlockMixin],
 

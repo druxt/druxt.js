@@ -22,6 +22,7 @@ export { DruxtClient } from './client'
  * @exports default
  * @name DruxtNuxtModule
  * @see {@link /api/packages/druxt/nuxt|DruxtNuxtModule}
+ * @see {@link https://druxtjs.org/modules/druxt|Druxt module guide}
  *
  * @example <caption>Installing the Druxt module</caption> @lang js
  * // nuxt.config.js
@@ -54,7 +55,7 @@ export default DruxtNuxtModule
 export { DruxtStore } from './stores/druxt'
 
 /**
- * @deprecated in druxt:0.17.0 and is removed from druxt:2.0.0.
+ * @deprecated in druxt:0.17.0 and is removed from druxt:1.0.0.
  *   Use DruxtModule instead.
  * @see https://druxtjs.org/modules/druxt/deprecations
  * @private

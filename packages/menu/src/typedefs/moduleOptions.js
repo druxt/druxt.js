@@ -6,16 +6,11 @@
   * @property {string} [endpoint=jsonapi] - The Drupal JSON:API endpoint.
   * @property {MenuOptions} [menu] - The DruxtMenu options.
   *
+  * @see {@link ./menuOptions|MenuOptions}
+  *
   * @example @lang js
   * {
   *   endpoint: 'jsonapi',
   *   menu: {}
   * }
   */
-
-  /**
-   * DruxtMenu options.
-   *
-   * @typedef {object} MenuOptions
-   * @see {@link ./menuOptions|MenuOptions}
-   */
