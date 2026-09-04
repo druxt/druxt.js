@@ -35,7 +35,6 @@ package-lock.json
 test/__fixtures__/
 
 # ASCII art with intentional character-alignment whitespace
-.gitpod/WELCOME.md
 
 # Package templates (EJS / dynamic syntax prettier cannot parse)
 packages/*/templates/

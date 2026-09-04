@@ -161,6 +161,14 @@ Find support or get involved in building Druxt via the community channels:
 
 ---
 
+## Contributing
+
+[![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/druxt/druxt.js)
+
+See the [Contributing guide](https://github.com/druxt/druxt.js/blob/develop/CONTRIBUTING.md).
+
+---
+
 ## License
 
 [MIT](https://github.com/druxt/druxt.js/blob/develop/LICENSE)

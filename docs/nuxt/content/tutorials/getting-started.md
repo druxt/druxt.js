@@ -153,5 +153,7 @@ is the only file you'd change to point the frontend at a different Drupal.
   [Architecture](/explanation/architecture).
 - Start customizing the look: [Theme Druxt components](/how-to/theming).
 - Browse what each package does: [Druxt modules](/modules).
+- See finished Druxt sites running in production:
+  [demo.druxtjs.org](https://demo.druxtjs.org).
 - Something not working the way you expect? [Troubleshoot common
   issues](/how-to/troubleshooting).

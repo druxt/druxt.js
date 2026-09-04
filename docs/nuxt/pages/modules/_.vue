@@ -2,7 +2,7 @@
   <div>
     <!-- docgen lifts the README's h1 into frontmatter, so without this the
          page has no h1 at all and its outline starts at h2. -->
-    <AppPageHeader v-if="document" :title="document.title" :description="document.description" />
+    <AppPageHeader v-if="document" :title="document.title" :description="document.description" :icon="icon" :mono="mono" />
 
     <!-- Every module README opens with a screenshot; it becomes the hero. -->
     <AppFigure v-if="hero" :src="hero.src" :alt="hero.alt" class="mb-8" />
@@ -18,6 +18,7 @@
 <script>
 import { seoHead } from '~/utils/seo'
 import { documentDescription, extractHero } from '~/utils/content'
+import { moduleIcon, moduleName } from '~/components/app/icon/module'
 
 export default {
   name: 'AppModuleDocument',
@@ -68,6 +69,10 @@ export default {
 
   computed: {
     editPath: ({ slug }) => 'modules/' + slug + '.md',
+
+    // The module's icon and npm name, matching its card on the index pages.
+    icon: ({ pkg }) => (pkg ? moduleIcon(pkg) : null),
+    mono: ({ pkg }) => (pkg ? moduleName(pkg) : null),
   },
 }
 </script>

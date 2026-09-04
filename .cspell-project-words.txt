@@ -191,8 +191,8 @@ wireframe
 wireframes
 worktree
 worktrees
-Xvfb
 xvfb
+Xvfb
 yaml
 yamllint
 yarnpkg

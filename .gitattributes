@@ -24,8 +24,6 @@ CLAUDE.md          export-ignore
 .gitignore         export-ignore
 .gitlab-ci.yml     export-ignore
 .github            export-ignore
-.gitpod.yml        export-ignore
-.gitpod            export-ignore
 .circleci          export-ignore
 .changeset         export-ignore
 .husky             export-ignore

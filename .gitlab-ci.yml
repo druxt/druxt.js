@@ -86,7 +86,7 @@ lint:json:
           rc=1
         fi
       done < <(find . -name '*.json' -not -path '*/.git/*' -not -path '*/node_modules/*' \
-        -not -path '*/dist/*' -not -path '*/.vscode/*' -not -path '*/templates/*' -print0)
+        -not -path '*/dist/*' -not -path '*/.vscode/*' -not -path '*/.devcontainer/*' -not -path '*/templates/*' -print0)
       echo "--- $count JSON file(s) checked ---"
       exit "$rc"
     - section_end "json-lint"

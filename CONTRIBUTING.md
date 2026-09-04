@@ -4,7 +4,7 @@ weight: 9
 description: Set up the Druxt development environment, report bugs, and submit changes with changesets and conventional commits.
 ---
 
-> All contributions are welcomed and appreciated.
+> Contributions are welcomed and appreciated.
 
 Druxt is an open source project, built, supported and maintained by the community, for the community.
 
@@ -12,7 +12,24 @@ Druxt is an open source project, built, supported and maintained by the communit
 
 ## Development environment setup
 
-The Druxt development environment runs locally:
+The Druxt development environment can be run in a dev container (VS Code, GitHub Codespaces, DevPod) or locally:
+
+---
+
+### Dev container
+
+`.devcontainer/devcontainer.json` provides a ready environment with Node 16 and Yarn via corepack. Monorepo and documentation dependencies install on first open.
+
+[![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/druxt/druxt.js)
+
+1. Go to the [druxt/druxt.js](https://github.com/druxt/druxt.js) and fork the repository. e.g., `https://github.com/USER/druxt.js`
+2. Open the fork in the tool of your choice:
+   - **VS Code**: clone, open the folder, run **Dev Containers: Reopen in Container**.
+   - **GitHub Codespaces**: on the repository page, **Code → Open with Codespaces**.
+   - **[DevPod](https://devpod.sh)**: run `devpod up github.com/USER/druxt.js`, or add the same URL as a workspace source in DevPod's desktop app.
+3. Wait for the post-create setup to finish, then build the packages: `yarn build`
+
+The container covers package development, unit tests, linting and the documentation site. It does not provision a Drupal backend. Use the `docs/drupal` `.devtools` flow (below) or a [quickstart repository](https://github.com/druxt/quickstart) when you need one.
 
 ---
 
@@ -25,7 +42,7 @@ The Druxt development environment runs locally:
 5. Start a Drupal backend (PHP 8.3 + SQLite, no Docker): `cd docs/drupal && .devtools/assemble && .devtools/provision && .devtools/start`
 6. Run DruxtSite example: `yarn example:druxt-site`
 
-> **Note:** If `make` is not available, run `corepack enable && yarn install` manually instead of `make setup`. This project uses [Yarn Berry](https://yarnpkg.com/) via [corepack](https://nodejs.org/api/corepack.html), which requires Node.js 16.9+ or 14.19+.
+> If `make` is not available, run `corepack enable && yarn install` manually instead of `make setup`. This project uses [Yarn Berry](https://yarnpkg.com/) via [corepack](https://nodejs.org/api/corepack.html), which requires Node.js 16.9+ or 14.19+.
 
 ---
 
@@ -39,7 +56,7 @@ When reporting bugs please make sure to provide detailed steps to reproduce the 
 
 ## Pull requests
 
-If you are able to resolve an issue, or have improvements you would like to propose, use following process to create a Pull request:
+To resolve an issue or propose an improvement, use the following process to create a Pull request:
 
 1. If this a new issue, make sure to open a bug report or feature request.
 2. Fork the repository.
@@ -52,9 +69,9 @@ If you are able to resolve an issue, or have improvements you would like to prop
 
 ## Example projects
 
-The Druxt monorepo contains a collection of example projects inside the aptly named "examples/" directory.
+The Druxt monorepo contains a collection of example projects inside the `examples/` directory.
 
-All projects are connected to the locally built codebase and should be used for testing during development.
+The example projects run against the locally built codebase, for testing during development.
 
 All examples use the Drupal instance located @ `docs/drupal` (`cd docs/drupal && .devtools/assemble && .devtools/provision && .devtools/start`).
 
@@ -98,6 +115,7 @@ The Druxt repository is setup with tools and automated processes to help with de
 - [Codecov](#codecov) - Automated code coverage
 - [Conventional commits](#conventional-commits) - Standardised commit messages
 - [Cypress](#cypress) - Automated end-to-end testing
+- [Dev container](#dev-container) - Ready-made development environment
 - [Docgen](#docgen) - Documentation generator
 - [Jest](#jest) - Automated unit testing
 - [Linting](#linting) - Coding styles and standards
@@ -137,7 +155,7 @@ yarn test:unit
 
 > A specification for adding human and machine readable meaning to commit messages
 
-The Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history; which makes it easier to write automated tools on top of.
+The Conventional Commits specification is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history, which makes it easier to write automated tools on top of.
 
 A **husky** git hook is used to ensure the standard is enforced, and will explain what changes to make as required.
 

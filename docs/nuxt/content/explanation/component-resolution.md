@@ -92,11 +92,7 @@ Separately from the suggestion system, any Druxt component accepts a
 `wrapper` prop that swaps the element wrapping its output:
 
 ```vue
-<DruxtEntity
-  type="node--article"
-  :uuid="uuid"
-  :wrapper="{ component: 'b', propsData: { class: 'title' } }"
-/>
+<DruxtEntity type="node--article" :uuid="uuid" :wrapper="{ component: 'b', class: 'title' }" />
 ```
 
 This composes with the theme layer: the wrapper component is resolved by
