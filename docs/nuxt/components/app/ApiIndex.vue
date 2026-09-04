@@ -17,7 +17,12 @@
         <h3 class="text-xs font-semibold uppercase tracking-wider text-base-content/70 mb-2" v-text="group.label" />
         <ul class="space-y-1">
           <li v-for="item of group.items" :key="item.path">
-            <NuxtLink class="text-sm hover:text-primary-focus" :to="item.path" v-text="item.title" />
+            <NuxtLink
+              class="text-sm hover:text-primary-focus"
+              :class="item.deprecated ? 'text-base-content/50' : ''"
+              :to="item.path"
+              v-text="item.title"
+            /><span v-if="item.deprecated" class="sr-only">(deprecated)</span>
           </li>
         </ul>
       </div>
@@ -72,7 +77,15 @@ export default {
 
       return Object.keys(LABELS)
         .filter((type) => buckets[type])
-        .map((type) => ({ type, label: LABELS[type], items: buckets[type] }))
+        .map((type) => ({
+          type,
+          label: LABELS[type],
+          // Live entries first, deprecated dimmed below them, both A-Z.
+          items: buckets[type].slice().sort((a, b) =>
+            (!a.deprecated === !b.deprecated
+              ? (a.title || '').localeCompare(b.title || '')
+              : (a.deprecated ? 1 : -1))),
+        }))
     },
   },
 
@@ -90,7 +103,7 @@ export default {
       const pkg = this.pkg
       try {
         const entries = await this.$content('api/packages/' + pkg, { deep: true })
-          .only(['title', 'path', 'dir'])
+          .only(['title', 'path', 'dir', 'deprecated'])
           .fetch()
         if (pkg !== this.pkg) return
         // Matched on the filename, not the title. docgen gives these
