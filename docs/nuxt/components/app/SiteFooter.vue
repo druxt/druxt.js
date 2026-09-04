@@ -81,7 +81,7 @@ export default {
       { text: 'GitHub', href: 'https://github.com/druxt/druxt.js' },
       // The invite directly, not discord.druxtjs.org - that vanity host's
       // certificate only covers *.github.io and trips a TLS interstitial.
-      { text: 'Discord', href: 'https://discord.gg/QnZD46c' },
+      { text: 'Discord', href: 'https://discord.druxtjs.org' },
       { text: 'Druxt on Drupal.org', href: 'https://www.drupal.org/project/druxt' },
     ],
   }),

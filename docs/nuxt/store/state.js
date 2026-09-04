@@ -61,11 +61,9 @@ export default () => ({
     component: 'a',
     text: 'Discord',
     icon: 'discord',
-    // The invite directly, not discord.druxtjs.org: that vanity host is a
-    // GitHub Pages redirect whose certificate only covers *.github.io, so
-    // every browser shows a full-page TLS interstitial before it can
-    // redirect. Verified with openssl and curl.
-    props: { href: 'https://discord.gg/QnZD46c', target: '_blank' },
+    // The branded host: its certificate is valid again, and it is the one
+    // URL that survives invite rotation.
+    props: { href: 'https://discord.druxtjs.org', target: '_blank' },
     children: [],
   }],
 

@@ -143,7 +143,7 @@ by [Component resolution](https://druxtjs.org/explanation/component-resolution).
 ## Links
 
 - Documentation: https://druxtjs.org
-- Community Discord server: https://discord.gg/QnZD46c
+- Community Discord server: https://discord.druxtjs.org
 - Demo - Umami Food Magazine:
   - https://demo.druxtjs.org
   - https://druxt-umami.netlify.app
@@ -157,7 +157,7 @@ Druxt is an open-source project, built by the community for the community.
 
 Find support or get involved in building Druxt via the community channels:
 
-- [DruxtJS Discord server](https://discord.gg/QnZD46c)
+- [DruxtJS Discord server](https://discord.druxtjs.org)
 - **#druxt** Slack channel on [Drupal.org slack](https://drupal.org/slack)
 
 ---
