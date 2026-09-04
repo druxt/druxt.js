@@ -100,14 +100,16 @@ rather than requiring people to know the `/user/login` URL by heart.
 
 Current as of `druxt-auth` 0.4.0:
 
-- **Sessions don't renew silently by default.** Nothing schedules a
-  token refresh for this strategy, so the session ends when the access
-  token expires. The pieces are all there, though: the backend issues a
-  refresh token to this flow (the provisioned scope enables the
-  `refresh_token` grant) and `this.$auth.refreshTokens()` renews the
-  session on demand. The
-  [authentication how-to](/how-to/authentication#keep-the-session-alive)
-  shows the pattern production sites use.
+- **Sessions renew silently, with three caveats.** The scheme
+  refreshes an expired access token automatically on any request, and
+  server rendering restores cold loads from the cookie-held tokens. The
+  real limits: an expired access token alone never logs anyone out
+  (`autoLogout` defaults off), a custom `druxt.axios` instance bypasses
+  the automatic refresh (the
+  [how-to](/how-to/authentication#keep-the-session-alive) covers that
+  case), and auth-next assumes a 30-day refresh token while the
+  consumer default is 14, so a long-idle session can still end
+  mid-request.
 - **Logging out** isn't wired to any UI yet either: `this.$auth.logout()`
   ends the session once you've added something to call it.
 

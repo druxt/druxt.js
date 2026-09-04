@@ -71,6 +71,12 @@ types `authorization_code` and `refresh_token`, with the `granularity`
 field set to **role** and mapped to the role your users hold;
 `authenticated` is the usual mapping here.
 
+That same role also needs the **Grant simple_oauth codes** permission
+(`grant simple_oauth codes`). Without it the consent screen returns to
+itself with "The 'grant simple_oauth codes' permission is required."
+and no login completes. The administrator account bypasses permission
+checks, so test with a regular user.
+
 ![The Add scope form: machine-readable name, description, grant type checkboxes, and the field mapping the scope to a role](/images/backend-scopes.png)
 
 ## Drupal: create the consumer
@@ -172,16 +178,21 @@ CSRF token from Drupal's `/session/token` and send it in the
 
 ## Keep the session alive
 
-The scheme handles refresh tokens out of the box: Simple OAuth issues
-one to this flow when the scope enables the `refresh_token` grant, and
-`this.$auth.refreshTokens()` exchanges it for a fresh access token. What
-nothing does by default is call it. Server rendering also always starts
-logged out, because the tokens live client-side.
+Sessions renew silently out of the box. Simple OAuth issues a refresh
+token to this flow when the scope enables the `refresh_token` grant,
+and an interceptor on the shared axios instance exchanges it for a
+fresh access token on any request that finds the current one expired.
+Server rendering joins in: the tokens are stored as cookies, so a cold
+reload refreshes during the server render and arrives with fresh
+cookies and a restored session.
 
-The pattern production Druxt sites use is a mount-time check in the
-default layout: after hydration, when auth storage holds token state but
-the session is not logged in, refresh; when the refresh fails, the
-tokens are spent, so log out:
+A custom `druxt.axios` instance bypasses the interceptor (the same
+wiring caveat as the Bearer-token section above), and a generated
+static site has no server render to restore a cold load. Both fall
+outside the automatic path. For those, add a mount-time check
+in the default layout: after hydration, when auth storage holds token
+state but the session is not logged in, refresh, and when the refresh
+fails the tokens are spent, so log out:
 
 ```js
 // layouts/default.vue
@@ -209,7 +220,9 @@ the login page does it.
 `this.$auth.logout()` ends the frontend session, and nothing more. Two
 things survive it: data fetched while logged in stays in the
 [DruxtStore](/explanation/druxt-store) until the page reloads, and the
-issued tokens stay valid on the Drupal side until they expire, because
+issued tokens keep working. Measured after a logout with no revocation,
+the old access token still answers API requests and the old refresh
+token still mints new access tokens for its whole lifetime, because
 Simple OAuth has no logout or revocation endpoint of its own
 ([#2945273](https://www.drupal.org/project/simple_oauth/issues/2945273)
 adds one as a patch).
@@ -250,17 +263,22 @@ export default {
         console.warn('Token revocation failed; tokens live until expiry.');
       }
 
+      const strategy = this.$auth.strategy.name;
       await this.$auth.logout();
 
-      // @nuxtjs/auth-next can leave its cookies behind; clear them so
-      // a stale strategy or expiry does not confuse the next login.
+      // auth-next's reset() writes the literal string "false" into these
+      // keys rather than removing them (removal happens only on undefined
+      // or null), in cookies and localStorage both, so clear both stores.
       [
-        'auth._token.druxt',
-        'auth._refresh_token.druxt',
-        'auth._token_expiration.druxt',
+        `auth._token.${strategy}`,
+        `auth._token_expiration.${strategy}`,
+        `auth._refresh_token.${strategy}`,
+        `auth._refresh_token_expiration.${strategy}`,
+        `auth.${strategy}.pkce_state`,
         'auth.strategy',
       ].forEach((name) => {
         document.cookie = `${name}=; Path=/; Max-Age=0`;
+        localStorage.removeItem(name);
       });
 
       // A full page load, not router.push: this is what drops
@@ -271,6 +289,10 @@ export default {
 };
 </script>
 ```
+
+`auth.strategy` reappears on the next page load holding the default
+strategy name. That is auth-next seeding itself, for anonymous visitors
+too, not leftover session state.
 
 Route the endpoint through the proxy so it shares the frontend origin
 (alongside `druxt.proxy.api`, or explicitly):
@@ -287,8 +309,8 @@ The limitations documented in the
 [authentication tutorial](/tutorials/authentication#known-limitations)
 apply to this setup identically: no logout control is included by
 default (the [Logging out](#logging-out) section above is the fix), and
-sessions do not renew silently without the pattern in
-[Keep the session alive](#keep-the-session-alive) above.
+the session caveats listed there, the `autoLogout` default, custom
+axios instances, and refresh-token lifetimes, apply unchanged.
 
 ## Where to go next
 
