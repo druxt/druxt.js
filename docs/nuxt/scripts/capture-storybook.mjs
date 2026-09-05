@@ -7,7 +7,7 @@
  *     The documented source is the monorepo's examples/druxt-site:
  *     `BASE_URL=<backend> NODE_OPTIONS=--openssl-legacy-provider yarn storybook`
  *     (the NODE_OPTIONS prefix on Node 17+ only). Use an Umami backend
- *     (docs/drupal, or https://demo-api.druxtjs.org) so the entity story
+ *     (docs/drupal, or https://api.umami.demo.druxtjs.org) so the entity story
  *     carries real fields.
  *   - playwright resolvable, as in capture-screenshots.mjs.
  *   - Optional: pngquant on PATH (or PNGQUANT env) for optimization.

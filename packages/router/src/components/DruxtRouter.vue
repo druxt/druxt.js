@@ -331,7 +331,7 @@ export default {
  * {
  *   path: '/',
  *   route: {
- *     canonical: 'https://demo-api.druxtjs.org/en/node',
+ *     canonical: 'https://api.umami.demo.druxtjs.org/en/node',
  *     component: 'druxt-view',
  *     error: false,
  *     isHomePath: true,

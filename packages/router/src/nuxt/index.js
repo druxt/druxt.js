@@ -24,7 +24,7 @@ import { DruxtClient } from 'druxt'
  * module.exports = {
  *   buildModules: ['druxt-router/nuxt'],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  *

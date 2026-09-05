@@ -42,7 +42,7 @@ export { DruxtSiteMixin } from './mixins/site'
  *     'druxt-site'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  */

@@ -60,7 +60,6 @@
       "value": false
     }
   ],
-  "roles": [],
   "redirect": [
     {
       "value": "http:\/\/localhost:3004\/callback"

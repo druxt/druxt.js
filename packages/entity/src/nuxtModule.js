@@ -21,7 +21,7 @@ import DruxtEntityStorybook from './nuxtStorybook'
  *     'druxt-entity'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  *

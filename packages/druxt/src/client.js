@@ -19,7 +19,7 @@ class DruxtClient {
    *
    * @example @lang js
    * const DruxtClient = require('druxt').DruxtClient
-   * const druxt = new DruxtClient('https://demo-api.druxtjs.org', {})
+   * const druxt = new DruxtClient('https://api.umami.demo.druxtjs.org', {})
    *
    * @param {string} baseUrl - The Drupal base URL.
    * @param {DruxtClientOptions} [options] - The DruxtClient options object.

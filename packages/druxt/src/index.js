@@ -11,7 +11,7 @@ DruxtNuxtModule.meta = require('../package.json')
  *
  * @example <caption>Creating a new instance of the DruxtClient</caption> @lang js
  * import { DruxtClient } from 'druxt'
- * const druxt = new DruxtClient('https://demo-api.druxtjs.org')
+ * const druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
  */
 export { DruxtClient } from './client'
 
@@ -29,7 +29,7 @@ export { DruxtClient } from './client'
  * export default {
  *   modules: ['druxt'],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  */
