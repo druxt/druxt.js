@@ -4,6 +4,11 @@ Patches kept in the repo rather than referenced by URL, because each one is a
 reworked version of a patch or merge request that is still open upstream. Each
 is a replacement for the work already on its issue, not a parallel fix.
 
+**Each patch targets the exact dependency version `composer.lock` pins**, and a
+patch that applies cleanly to one release is not portable to the next. Nothing
+outside this directory should copy one without checking the version it was cut
+against, stated per patch below.
+
 Nothing here has been pushed to drupal.org yet; each is intended to become
 the replacement patch/MR on its issue once it has proven itself here.
 
@@ -34,6 +39,16 @@ Issue: [#3273228 Add langcode to Views Decoupled Router integration](https://www
 The companion to the above: with Decoupled Router resolving the language,
 view routes (the front page among them) still resolved in the default language
 and returned no langcode, so the frontend had nothing to keep the prefix from.
+
+**Targets `drupal/druxt` 1.2.0**, the version `composer.lock` pins here. It does
+not apply to 1.2.1 or later, and the reason is worth stating because the failure
+is confusing: 1.2.1 added the same `use MethodNotAllowedException` import this
+patch adds, so applying it produces a duplicate import and the file stops
+parsing. 1.2.2 then rewrote most of `ViewsPathTranslatorSubscriber`, adding
+`declare(strict_types=1)`, `#[\Override]` and `: void`, dropping the
+`CacheableJsonResponse` guard, and moving route resolution to `ROUTE_NAME` with
+`array_intersect_key` parameters. A backend on 1.2.2 needs a patch cut against
+1.2.2, not this one. The fix is still unreleased: #3273228 did not make 1.2.2.
 
 Reworked from [MR9](https://git.drupalcode.org/project/druxt/-/merge_requests/9),
 which is at "needs work" for good reasons:
