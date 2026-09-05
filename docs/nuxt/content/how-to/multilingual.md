@@ -17,29 +17,22 @@ through all four.
 
 ## Patch the backend
 
-Multilingual routing depends on fixes that are not released yet. Copy the
-`extra.patches` block from
-[`docs/drupal/composer.json`](https://github.com/druxt/druxt.js/blob/develop/docs/drupal/composer.json)
-in this repository, which is the set the reference backend runs, rather
-than assembling one from issue pages:
+Two fixes for prefixed-path routing are written and reviewed but not yet in
+a release, so a multilingual backend needs them applied:
 
 | Project | Issue | Without it |
 | ------- | ----- | ---------- |
 | decoupled_router | [#3111456](https://www.drupal.org/i/3111456) | Prefixed paths resolve, but always in the default language |
-| decoupled_router | [#3172926](https://www.drupal.org/i/3172926) | Unpublished and inaccessible paths resolve inconsistently |
-| decoupled_router | [#3468825](https://www.drupal.org/i/3468825) | Redirects are not followed to their destination |
 | druxt | [#3273228](https://www.drupal.org/i/3273228) | Views routes, the front page among them, resolve in the default language and return no langcode |
-| druxt | [#3315030](https://www.drupal.org/i/3315030) | Wildcard routes are not translated |
-| druxt | [#3467742](https://www.drupal.org/i/3467742) | A view with no `view_id` throws instead of falling through |
 
-Two of them, #3111456 and #3273228, are committed files rather than URLs,
-because the versions attached to those issues do not apply to the releases
-the backend pins. Take the committed ones.
+Copy the `extra.patches` block and the two files it names from
+[`docs/drupal`](https://github.com/druxt/druxt.js/tree/develop/docs/drupal)
+in this repository. That is the set the reference backend runs, so it is
+kept working rather than assembled from issue pages.
 
-**Each patch is cut against one dependency version**, and none is portable
-to the next release of its project.
-[`docs/drupal/patches/README.md`](https://github.com/druxt/druxt.js/blob/develop/docs/drupal/patches/README.md)
-records which version each targets and why.
+Both are cut against the versions `composer.json` pins, and a patch that
+applies to one release will not always apply to the next, so check the
+version before reusing one elsewhere.
 
 A missing patch fails quietly: prefixed routes still resolve, just to the
 wrong language, so it reads as content not being translated.

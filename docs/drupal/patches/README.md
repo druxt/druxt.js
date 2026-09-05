@@ -1,79 +1,72 @@
 # Local patches
 
-The files here are patches kept in the repo rather than referenced by URL,
-because each is a reworked version of a patch or merge request still open
-upstream: a replacement for the work already on its issue, not a parallel fix.
+Two patches, both for the same thing: a decoupled frontend asks the router to
+translate `/es`, the request carries no language prefix of its own, and
+everything resolves in the site's default language. Both fixes are written and
+under review upstream but not in a release yet.
 
-`composer.json` also references three patches **by URL**, as
-`git.drupalcode.org/.../merge_requests/N.diff`. Prefer a local file for
-anything added from here on, because a merge request diff is regenerated on
-every push to its branch and this project runs `cweagans/composer-patches`
-**1.x**, which keeps no patch hashes. So a moved branch is not caught: the
-next `composer install` fetches whatever the diff says that day, applies it,
-and the build stays green. (2.x would fail loudly with a hash mismatch
-instead, which is the safer failure.) Where a URL is unavoidable, pin a fork
-commit rather than a merge request diff.
+They are kept as files here rather than as URLs. A merge request diff is
+regenerated on every push to its branch, and this project runs
+`cweagans/composer-patches` **1.x**, which records no patch hashes, so a moved
+branch would not be caught: the next `composer install` would fetch whatever
+the diff said that day, apply it, and the build would stay green. A file in the
+repository changes only when someone changes it.
 
-**Each patch targets the exact dependency version `composer.lock` pins**, and a
-patch that applies cleanly to one release is not portable to the next. Nothing
-outside this directory should copy one without checking the version it was cut
-against, stated per patch below.
+**Each patch is cut against the exact version `composer.json` pins.** A patch
+that applies to one release will not always apply to the next, so re-cut rather
+than re-use when the pin moves. The base each was cut against is recorded below.
 
-Nothing here has been pushed to drupal.org yet; each is intended to become
-the replacement patch/MR on its issue once it has proven itself here.
+Both are snapshots of upstream work, not parallel fixes. The issue is the
+source of truth; when either lands in a release, delete the patch here and
+raise the version constraint instead.
 
 ## `decoupled_router-3111456-resolve-language-from-path.patch`
 
-Issue: [#3111456 Unable to resolve path on node in other language than default](https://www.drupal.org/project/decoupled_router/issues/3111456)
+Issue: [#3111456 Unable to resolve path on node in other language than
+default](https://www.drupal.org/project/decoupled_router/issues/3111456),
+at *needs review*.
 
-Decoupled Router negotiates the language from the request URL, but a decoupled
+Decoupled Router negotiates language from the request URL, but a decoupled
 frontend calls `/router/translate-path?path=/es` with no prefix of its own, so
 every path resolves as the default language.
 
-Reworked from the patch at comment 66, rerolled against 2.0.5. The newer patch
-at comment 103 was tried first and rejected: it hands the router the system
-path with the language prefix stripped, which 500s **every aliased path in all
-languages**. Comment 66 resolves the alias and puts the prefix back, leaving
-the router the shape it already expected, and is the revision
-umami.demo.druxtjs.org has run in production.
+Taken from
+[MR 35](https://git.drupalcode.org/project/decoupled_router/-/merge_requests/35),
+reduced to the files a site needs at runtime: the two event subscribers and
+`decoupled_router.routing.yml`. The merge request's own tests are not included,
+because a consuming site does not run them.
 
-Still to do before offering upstream: `getNegotiator()` is declared on
-`ConfigurableLanguageManagerInterface`, not the `LanguageManagerInterface` the
-constructor type-hints. It is safe behind the `isMultilingual()` guard, but
-injecting `language_negotiator` directly would type-check properly.
+- **Cut against:** `drupal/decoupled_router` **2.0.7**
+- **Excludes:** `tests/`, `.cspell.json`
 
 ## `druxt-3273228-views-route-langcode.patch`
 
-Issue: [#3273228 Add langcode to Views Decoupled Router integration](https://www.drupal.org/project/druxt/issues/3273228)
+Issue: [#3273228 Add langcode to Views Decoupled Router
+integration](https://www.drupal.org/project/druxt/issues/3273228),
+at *needs review*.
 
-The companion to the above: with Decoupled Router resolving the language,
-view routes (the front page among them) still resolved in the default language
-and returned no langcode, so the frontend had nothing to keep the prefix from.
+The companion to the above. With Decoupled Router resolving the language, view
+routes (the front page among them) still resolved in the default language and
+returned no langcode, so the frontend had nothing to keep the prefix from.
 
-**Targets `drupal/druxt` 1.2.0**, the version `composer.lock` pins here. It does
-not apply to 1.2.1 or later, and the reason is worth stating because the failure
-is confusing: 1.2.1 added the same `use MethodNotAllowedException` import this
-patch adds, so applying it produces a duplicate import and the file stops
-parsing. 1.2.2 then rewrote most of `ViewsPathTranslatorSubscriber`, adding
-`declare(strict_types=1)`, `#[\Override]` and `: void`, dropping the
-`CacheableJsonResponse` guard, and moving route resolution to `ROUTE_NAME` with
-`array_intersect_key` parameters. A backend on 1.2.2 needs a patch cut against
-1.2.2, not this one. The fix is still unreleased: #3273228 did not make 1.2.2.
+Generated from the issue fork branch
+`feature/3273228-views_route_langcode`, which is based on the 1.2.2 tag, so it
+carries the 1.2.x fixes already released and adds only the langcode work.
 
-Reworked from [MR9](https://git.drupalcode.org/project/druxt/-/merge_requests/9),
-which is at "needs work" for good reasons:
+- **Cut against:** `drupal/druxt` **1.2.2**
+- **Fork head:** `36b63420310ba4566779f9b9222c6b745d60c688`
+- **Touches:** `src/EventSubscriber/ViewsPathTranslatorSubscriber.php` only
 
-- it imports `MethodNotAllowedException` twice, which is fatal
-- its `MethodNotAllowedException` catch lost its `return`, so execution carries
-  on to an undefined `$match_info`
-- it reinstates `if (!$match_info['view_id'])`, undoing the `isset()` guard
-  added for #3467742 (MR14, also applied here)
-- it leans on the parent's `getPathFromAlias()` and `$this->languageManager`,
-  which only exist once the unmerged #3111456 patch is applied
+Unlike the version this replaced, it does not depend on the #3111456 patch
+being applied: it reads the prefix off the path via
+`language.negotiation url.prefixes` rather than through
+`getPathFromAlias()` and `$this->languageManager` on the parent, both of
+which only exist on a patched Decoupled Router. The two patches are now
+independent, and applying only one is a supported thing to do.
 
-This version keeps MR9's wider coverage (the route, the JSON:API entry point
-and individual, and the `jsonapi_views` route all resolve against the
-negotiated language) and does its own negotiation, so it stands up against an
-unpatched Decoupled Router.
-
-Applies on top of MR11 and MR14, in that order, matching `composer.json`.
+One limitation, recorded because it is easy to mistake for a fault: the
+langcode is reported reliably, but the generated URLs carrying the prefix
+could not be demonstrated in a kernel test, because `PathProcessorLanguage`
+builds its processor list from the negotiator and a kernel test does not wire
+that up. It works in a real request; two tests upstream skip with that stated
+reason.

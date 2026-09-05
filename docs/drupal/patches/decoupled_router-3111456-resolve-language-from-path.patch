@@ -1,237 +1,225 @@
-diff --git a/decoupled_router.services.yml b/decoupled_router.services.yml
-index 90e959c..5753807 100644
---- a/decoupled_router.services.yml
-+++ b/decoupled_router.services.yml
-@@ -4,7 +4,8 @@ services:
-     arguments: ['decoupled_router']
-   decoupled_router.router_path_translator.subscriber:
-     class: Drupal\decoupled_router\EventSubscriber\RouterPathTranslatorSubscriber
--    arguments: ['@service_container', '@logger.channel.decoupled_router', '@router.no_access_checks', '@module_handler', '@config.factory', '@path_alias.manager']
-+    arguments: ['@service_container', '@logger.channel.decoupled_router', '@router.no_access_checks', '@module_handler', '@config.factory', '@path_alias.manager',
-+                '@language_manager', '@entity.repository']
-     tags:
-       - { name: event_subscriber }
-   decoupled_router.redirect_path_translator.subscriber:
-diff --git a/src/Controller/PathTranslator.php b/src/Controller/PathTranslator.php
-index aa9b516..941185c 100644
---- a/src/Controller/PathTranslator.php
-+++ b/src/Controller/PathTranslator.php
-@@ -62,6 +62,10 @@ class PathTranslator extends ControllerBase {
-     if (empty($path)) {
-       throw new NotFoundHttpException('Unable to translate empty path. Please send a ?path query string parameter with your request.');
-     }
-+    // Remove query string from path if present.
-+    if (strpos($path, '?') !== FALSE) {
-+      $path = explode('?', $path)[0];
-+    }
-     // Handling backward compatibility to manage the Http-kernel request.
-     $request_type = version_compare(\Drupal::VERSION, '10.0', '>=') ? HttpKernelInterface::MAIN_REQUEST : HttpKernelInterface::MASTER_REQUEST;
-     // Now that we have the path, let's fire an event for translations.
+diff --git a/decoupled_router.routing.yml b/decoupled_router.routing.yml
+index 00a70fc7e1a46424b88702e8dcedc31b530c2c69..44fb51bbaf06979095059b3fa89e2b40cba6d1ba 100644
+--- a/decoupled_router.routing.yml
++++ b/decoupled_router.routing.yml
+@@ -3,6 +3,11 @@ decoupled_router.path_translation:
+   defaults:
+     _title: 'Translates an incoming path into a formatted response.'
+     _controller: '\Drupal\decoupled_router\Controller\PathTranslator::translate'
++    # This is an API endpoint, so it must answer the request it was given.
++    # The Redirect module normalises routes by default, which on a site
++    # where every language has a URL prefix turns a request for this path
++    # into a redirect to the prefixed form of it.
++    _disable_route_normalizer: TRUE
+   methods: [GET]
+   options:
+     _auth: ['basic_auth', 'cookie', 'oauth2', 'jwt_auth']
 diff --git a/src/EventSubscriber/RedirectPathTranslatorSubscriber.php b/src/EventSubscriber/RedirectPathTranslatorSubscriber.php
-index 8d5e8f9..4df786a 100644
+index 0e40ed627472ad0cb2074e093888798e3608c107..8e64abe292ea357f7a97573f8e9ffda9a6a89821 100644
 --- a/src/EventSubscriber/RedirectPathTranslatorSubscriber.php
 +++ b/src/EventSubscriber/RedirectPathTranslatorSubscriber.php
-@@ -5,8 +5,10 @@ namespace Drupal\decoupled_router\EventSubscriber;
- use Drupal\Component\Serialization\Json;
- use Drupal\Core\Cache\CacheableJsonResponse;
- use Drupal\Core\GeneratedUrl;
-+use Drupal\Core\Language\LanguageInterface;
- use Drupal\Core\Url;
+@@ -10,6 +10,7 @@ use Drupal\Core\Cache\CacheableMetadata;
+ use Drupal\Core\Config\ConfigFactoryInterface;
+ use Drupal\Core\Extension\ModuleHandlerInterface;
+ use Drupal\Core\Language\LanguageManagerInterface;
++use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
  use Drupal\decoupled_router\PathTranslatorEvent;
+ use Drupal\path_alias\AliasManagerInterface;
+ use Drupal\redirect\Exception\RedirectLoopException;
+@@ -17,6 +18,7 @@ use Drupal\redirect\RedirectRepository;
+ use Psr\Log\LoggerInterface;
+ use Symfony\Component\DependencyInjection\Attribute\Autowire;
+ use Symfony\Component\DependencyInjection\ContainerInterface;
 +use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
  
  /**
-  * Event subscriber that processes a path translation with the redirect info.
-@@ -46,13 +48,40 @@ class RedirectPathTranslatorSubscriber extends RouterPathTranslatorSubscriber {
-     $redirects_trace = [];
-     while (TRUE) {
-       $destination = $this->cleanSubdirInPath($destination, $event->getRequest());
-+      $path_without_prefix = $destination;
-+      $langcodes = [];
-+      if ($this->languageManager->isMultilingual()) {
-+        $langcodes = [LanguageInterface::LANGCODE_NOT_SPECIFIED];
-+        $language_negotiation_url = $this->languageManager->getNegotiator()
-+          ->getNegotiationMethodInstance('language-url');
-+        $router_request = Request::create($destination);
-+        $langcode = $language_negotiation_url->getLangcode($router_request);
-+
-+        // If language negotiation fails, we add the current language to the
-+        // list of languages to check for redirects, we assume that the
-+        // current language is the language which the user wants to see.
-+        if(!$langcode) {
-+          $langcode = $this->languageManager->getCurrentLanguage()->getId();
-+          $langcodes[] = $langcode;
-+        }
-+
-+        $language_prefixes = $this->configFactory->get('language.negotiation')->get('url.prefixes');
-+        $lang_prefix = $language_prefixes[$langcode] ?? '';
-+        if ($langcode && ($destination === "/$lang_prefix" || strpos($destination, "/$lang_prefix/") === 0)) {
-+          $langcodes[] = $langcode;
-+          $path_without_prefix = $language_negotiation_url->processInbound($destination, $router_request);
+@@ -66,6 +68,30 @@ class RedirectPathTranslatorSubscriber extends RouterPathTranslatorSubscriber {
+     $request_query = $original_parsed_url['query'];
+     $source_path = $this->cleanSubdirInPath($original_parsed_url['path'], $event->getRequest());
+ 
++    // Redirects are stored without a language prefix. When the path carries
++    // one, strip it and match in the language the prefix negotiates. The
++    // negotiated request language is the fallback.
++    $langcode = $this->languageManager->getCurrentLanguage()->getId();
++    $prefix = '';
++    $method = $this->getUrlNegotiationMethod();
++    if ($method instanceof InboundPathProcessorInterface) {
++      $source_request = Request::create($source_path);
++      $path_langcode = $method->getLangcode($source_request);
++      if ($path_langcode) {
++        // The language of the path wins over the negotiated request
++        // language, also when the path carries no prefix.
++        $langcode = $path_langcode;
++        $inner_path = $method->processInbound($source_path, $source_request);
++        if ($inner_path !== $source_path) {
++          $detected_prefix = $this->splitLanguagePrefix($source_path, $inner_path);
++          if ($detected_prefix !== NULL) {
++            $prefix = $detected_prefix;
++            $source_path = $inner_path;
++          }
 +        }
 +      }
-       // Find if there is a redirect for this path.
--      $results = $redirect_storage
-+      $query = $redirect_storage
-         ->getQuery()
-         ->accessCheck(TRUE)
-         // Redirects are stored without the leading slash :-(.
--        ->condition('redirect_source.path', ltrim($destination, '/'))
--        ->execute();
-+        ->condition('redirect_source__path', ltrim($path_without_prefix, '/'));
-+      if (!empty($langcodes)) {
-+        $query->condition('language', $langcodes, 'IN');
++    }
++
+     $cacheable_metadata = new CacheableMetadata();
+     $cacheable_metadata->addCacheableDependency($this->configFactory->get('redirect.settings'));
+ 
+@@ -73,7 +99,7 @@ class RedirectPathTranslatorSubscriber extends RouterPathTranslatorSubscriber {
+       $redirect = $this->redirectRepository->findMatchingRedirect(
+         $source_path,
+         $request_query,
+-        $this->languageManager->getCurrentLanguage()->getId(),
++        $langcode,
+         $cacheable_metadata
+       );
+     }
+@@ -99,6 +125,19 @@ class RedirectPathTranslatorSubscriber extends RouterPathTranslatorSubscriber {
+       $redirect_url->setOption('query', (array) $redirect_url->getOption('query') + $request_query);
+     }
+ 
++    // Build the target in the language of the path prefix. A target that has
++    // a route is stamped with the language of the current request otherwise,
++    // which on a site where every language has a prefix means the fallback
++    // language, and the target then carries the wrong prefix. Only do this
++    // when a prefix was actually stripped, since a negotiation method can
++    // report a language for a path that carries no prefix at all.
++    if ($prefix !== '' && !$redirect_url->isExternal()) {
++      $path_language = $this->languageManager->getLanguage($langcode);
++      if ($path_language) {
++        $redirect_url->setOption('language', $path_language);
 +      }
-+      $results = $query->execute();
-       $rid = reset($results);
-       if (!$rid) {
-         break;
-@@ -61,7 +90,8 @@ class RedirectPathTranslatorSubscriber extends RouterPathTranslatorSubscriber {
-       $redirect = $redirect_storage->load($rid);
-       $response->addCacheableDependency($redirect);
-       $uri = $redirect->get('redirect_redirect')->uri;
--      $url = Url::fromUri($uri)->toString(TRUE);
-+      $options['language'] = $redirect->language();
-+      $url = Url::fromUri($uri, $options)->toString(TRUE);
-       $redirects_trace[] = [
-         'from' => $this->makeRedirectUrl($destination, $original_query_string),
-         'to' => $this->makeRedirectUrl($url->getGeneratedUrl(), $original_query_string),
++    }
++
+     $redirect_url_string = $redirect_url->toString();
+ 
+     // Preserve the fragment as per RFC 7231, see
+@@ -110,6 +149,22 @@ class RedirectPathTranslatorSubscriber extends RouterPathTranslatorSubscriber {
+       $redirect_url_string = $redirect_url->toString();
+     }
+ 
++    // Keep the path prefix on an internal redirect target. Without it the
++    // route level cannot resolve a destination alias in the path language.
++    if ($prefix !== '' && !$redirect_url->isExternal()) {
++      // The generated URL carries the subdirectory Drupal is installed in.
++      // The prefix belongs behind it, so a site below /subdir serves
++      // /subdir/de/user/login and not /de/subdir/user/login.
++      $base_path = rtrim($event->getRequest()->getBasePath(), '/');
++      $target = $redirect_url_string;
++      if ($base_path !== '' && str_starts_with($target, $base_path)) {
++        $target = substr($target, strlen($base_path));
++      }
++      if ($target !== $prefix && !str_starts_with($target, "$prefix/")) {
++        $redirect_url_string = $base_path . $prefix . $target;
++      }
++    }
++
+     $redirects_trace[] = [
+       'from' => $event->getPath(),
+       'to' => $redirect_url_string,
+@@ -129,8 +184,20 @@ class RedirectPathTranslatorSubscriber extends RouterPathTranslatorSubscriber {
+       // We should return the redirect data.
+       $response->setStatusCode(200);
+       $cacheable_metadata->addCacheableDependency($this->decoupledRouterConfig);
++      // The path prefix lives only on the string, so the string is the
++      // source of truth for the reported target. It must match the
++      // redirect trace above.
++      $resolved = $redirect_url_string;
++      if (!$redirect_url->isExternal() && $this->decoupledRouterConfig->get('absolute_resolved_urls')) {
++        $resolved = $event->getRequest()->getSchemeAndHttpHost() . $resolved;
++      }
++      // Compare the home path in the language of the path prefix.
++      $language = $this->languageManager->getLanguage($langcode);
++      if ($language && !$redirect_url->isExternal()) {
++        $redirect_url->setOption('language', $language);
++      }
+       $content = [
+-        'resolved' => $redirect_url->setAbsolute($this->decoupledRouterConfig->get('absolute_resolved_urls'))->toString(TRUE)->getGeneratedUrl(),
++        'resolved' => $resolved,
+         'isExternal' => FALSE,
+         'isHomePath' => $this->resolvedPathIsHomePath($redirect_url, $cacheable_metadata),
+       ];
 diff --git a/src/EventSubscriber/RouterPathTranslatorSubscriber.php b/src/EventSubscriber/RouterPathTranslatorSubscriber.php
-index cc20fad..aefe2be 100644
+index 7f98e02d5d2b3d2d2e0eeeda93ad90b60966836f..0cc05c11b0675bb805391460ffb886ec07273d71 100644
 --- a/src/EventSubscriber/RouterPathTranslatorSubscriber.php
 +++ b/src/EventSubscriber/RouterPathTranslatorSubscriber.php
-@@ -9,7 +9,10 @@ use Drupal\Core\Config\ConfigFactoryInterface;
+@@ -11,12 +11,17 @@ use Drupal\Core\Config\ConfigFactoryInterface;
  use Drupal\Core\Entity\ContentEntityType;
  use Drupal\Core\Entity\EntityInterface;
  use Drupal\Core\Entity\EntityMalformedException;
-+use Drupal\Core\Entity\EntityRepositoryInterface;
 +use Drupal\Core\Entity\TranslatableInterface;
  use Drupal\Core\Extension\ModuleHandlerInterface;
-+use Drupal\Core\Language\LanguageManagerInterface;
++use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
  use Drupal\Core\Routing\RouteObjectInterface;
  use Drupal\Core\StringTranslation\StringTranslationTrait;
  use Drupal\Core\Url;
-@@ -73,6 +76,27 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
+ use Drupal\Core\Utility\Error;
++use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+ use Drupal\decoupled_router\PathTranslatorEvent;
++use Drupal\language\LanguageNegotiationMethodInterface;
++use Drupal\language\Plugin\LanguageNegotiation\LanguageNegotiationUrl;
+ use Drupal\path_alias\AliasManagerInterface;
+ use Psr\Log\LoggerInterface;
+ use Symfony\Component\DependencyInjection\ContainerInterface;
+@@ -43,6 +48,11 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
     */
-   protected $aliasManager;
+   protected const LOG_ENTITY_NOT_FOUND = TRUE;
  
 +  /**
-+   * The language manager.
-+   *
-+   * @var \Drupal\Core\Language\LanguageManagerInterface
-+   */
-+  protected $languageManager;
-+
-+  /**
-+   * The entity repository service.
-+   *
-+   * @var \Drupal\Core\Entity\EntityRepositoryInterface
-+   */
-+  protected $entityRepository;
-+
-+  /**
 +   * The langcode if added as a prefix to the path.
-+   *
-+   * @var string
 +   */
-+  protected $langcode;
++  protected ?string $langcode = NULL;
 +
    /**
     * RouterPathTranslatorSubscriber constructor.
     *
-@@ -88,6 +112,10 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
-    *   The config factory.
-    * @param \Drupal\path_alias\AliasManagerInterface $aliasManager
-    *   The alias manager.
-+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-+   *   The language manager.
-+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-+   *   The entity repository.
-    */
-   public function __construct(
-     ContainerInterface $container,
-@@ -96,6 +124,8 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
-     ModuleHandlerInterface $module_handler,
-     ConfigFactoryInterface $config_factory,
-     AliasManagerInterface $aliasManager,
-+    LanguageManagerInterface $language_manager,
-+    EntityRepositoryInterface $entity_repository,
-   ) {
-     $this->container = $container;
-     $this->logger = $logger;
-@@ -103,6 +133,8 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
-     $this->moduleHandler = $module_handler;
-     $this->configFactory = $config_factory;
-     $this->aliasManager = $aliasManager;
-+    $this->languageManager = $language_manager;
-+    $this->entityRepository = $entity_repository;
-   }
- 
-   /**
-@@ -116,6 +148,10 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
+@@ -96,6 +106,13 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
      }
-     $path = $event->getPath();
-     $path = $this->cleanSubdirInPath($path, $event->getRequest());
-+    if ($this->languageManager->isMultilingual()) {
+ 
+     $path = $this->cleanQueriesAndFragment($path);
++
++    // Get the system path from the alias if applicable. The alias lookup
++    // needs the bare path, so this runs after the query string and the
++    // fragment are removed.
++    if ($this->container->get('language_manager')->isMultilingual()) {
 +      $path = $this->getPathFromAlias($path);
 +    }
-+
      try {
        $match_info = $this->router->match($path);
      }
-@@ -145,6 +181,14 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
-       $this->logger->notice('A route has been found but it has no entity information.');
+@@ -117,6 +134,18 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
+       }
        return;
      }
-+    elseif (!empty($this->langcode)) {
-+      if ($entity->hasTranslation($this->langcode) && method_exists($entity, 'getTranslation')) {
++
++    // Get entity translation if applicable.
++    if (!empty($this->langcode)) {
++      if ($entity instanceof TranslatableInterface && $entity->hasTranslation($this->langcode)) {
 +        $entity = $entity->getTranslation($this->langcode);
 +      }
 +      else {
-+        $entity = $this->entityRepository->getTranslationFromContext($entity, $this->langcode);
++        $entity = $this->container->get('entity.repository')->getTranslationFromContext($entity, $this->langcode);
 +      }
 +    }
++    $resolved_url_options['language'] = $entity->language();
++
      $response->addCacheableDependency($entity);
      if ($entity->getEntityType() instanceof ContentEntityType) {
        $can_view = $entity->access('view', NULL, TRUE);
-@@ -181,9 +225,14 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
-       return;
-     }
-     $entity_param = $param_uses_uuid ? $entity->id() : $entity->uuid();
--    $resolved_url = Url::fromRoute($match_info[RouteObjectInterface::ROUTE_NAME], [
--      $route_parameter_entity_key => $entity_param,
--    ], ['absolute' => TRUE])->toString(TRUE);
-+    $resolved_url = Url::fromRoute(
-+      $match_info[RouteObjectInterface::ROUTE_NAME],
-+      [$route_parameter_entity_key => $entity_param],
-+      [
-+        'absolute' => TRUE,
-+        'language' => $entity->language()
-+      ]
-+    )->toString(TRUE);
-     $response->addCacheableDependency($canonical_url);
-     $response->addCacheableDependency($resolved_url);
-     $is_home_path = $this->resolvedPathIsHomePath($resolved_url->getGeneratedUrl());
-@@ -193,6 +242,10 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
- 
-     $label_accessible = $entity->access('view label', NULL, TRUE);
-     $response->addCacheableDependency($label_accessible);
-+    $langcode = NULL;
-+    if ($entity instanceof TranslatableInterface) {
-+      $langcode = $entity->language()->getId();
-+    }
-     $output = [
-       'resolved' => $resolved_url->getGeneratedUrl(),
-       'isHomePath' => $is_home_path,
-@@ -202,6 +255,7 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
-         'bundle' => $entity->bundle(),
-         'id' => $entity->id(),
+@@ -176,6 +205,12 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
          'uuid' => $entity->uuid(),
-+        'langcode' => $langcode,
        ],
      ];
++
++    // Only add langcode if available.
++    if ($entity instanceof TranslatableInterface) {
++      $output['entity']['langcode'] = $entity->language()->getId();
++    }
++
      if ($label_accessible->isAllowed()) {
-@@ -219,23 +273,37 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
+       $output['label'] = $entity->label();
+     }
+@@ -191,23 +226,37 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
        $rt_repo = $this->container->get('jsonapi.resource_type.repository');
        $rt = $rt_repo->get($entity_type_id, $entity->bundle());
        $type_name = $rt->getTypeName();
@@ -274,15 +262,39 @@ index cc20fad..aefe2be 100644
          'entryPoint' => $entry_point_url->getGeneratedUrl(),
        ];
        $output['meta'] = [
-@@ -385,6 +453,35 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
-     return preg_replace(sprintf('/^%s/', $regexp), '', $path);
+@@ -391,7 +440,15 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
+     }
+     $home_path = $this->configFactory->get('system.site')->get('page.front');
+     if ($resolved_url instanceof Url) {
+-      $home_url = Url::fromUserInput($home_path)->setAbsolute((bool) $resolved_url->getOption('absolute'))->toString();
++      // Compare in the language of the resolved URL. Without this a prefixed
++      // home path never matches the home URL built for the request language.
++      $home_url_object = Url::fromUserInput($home_path)
++        ->setAbsolute((bool) $resolved_url->getOption('absolute'));
++      $language = $resolved_url->getOption('language');
++      if ($language) {
++        $home_url_object->setOption('language', $language);
++      }
++      $home_url = $home_url_object->toString();
+       $resolved_url = $resolved_url->toString();
+     }
+     else {
+@@ -402,4 +459,110 @@ class RouterPathTranslatorSubscriber implements EventSubscriberInterface {
+     return $resolved_url === $home_url;
    }
  
 +  /**
 +   * Convert an alias to its source path.
 +   *
-+   * This is a workaround for a bug where matcher fails on aliases prefixed by
-+   * a language prefix when it doesn't match the negotiated language.
++   * The router matches with the negotiated request language, so an alias
++   * behind another language's prefix does not resolve. This method asks the
++   * URL negotiation plugin for the path language, resolves the alias in that
++   * language, and puts the prefix back.
++   *
++   * Language negotiation is pluggable. The URL prefix is only one method, so
++   * this method uses the negotiation plugin itself and reads no prefix
++   * configuration. When URL negotiation is not enabled, the path is returned
++   * unchanged.
 +   *
 +   * @param string $path
 +   *   The input path string.
@@ -290,23 +302,91 @@ index cc20fad..aefe2be 100644
 +   * @return string
 +   *   The output path string.
 +   */
-+  protected function getPathFromAlias($path) {
-+    $config = $this->configFactory->get('language.negotiation')->get('url');
-+    $language_negotiation_url = $this->languageManager->getNegotiator()
-+      ->getNegotiationMethodInstance('language-url');
-+    $router_request = Request::create($path);
-+    $langcode = $language_negotiation_url->getLangcode($router_request);
-+    $prefix = $config['prefixes'][$langcode] ?? NULL;
-+    if ($prefix && ($path == "/$prefix" || strpos($path, "/$prefix/") === 0)) {
-+      $this->langcode = $langcode;
-+      $path_without_prefix = $language_negotiation_url->processInbound($path, $router_request);
-+      $path = $this->aliasManager->getPathByAlias($path_without_prefix, $langcode);
-+      $path = "/$prefix" . $path;
++  protected function getPathFromAlias(string $path): string {
++    $this->langcode = NULL;
++    $method = $this->getUrlNegotiationMethod();
++    if (!$method instanceof InboundPathProcessorInterface) {
++      return $path;
 +    }
++    $router_request = Request::create($path);
++    $langcode = $method->getLangcode($router_request);
++    if (!$langcode) {
++      return $path;
++    }
++    $inner_path = $method->processInbound($path, $router_request);
++    if ($inner_path === $path) {
++      // The plugin found no prefix to strip, so there is no alias to re-map.
++      // It still reported a language for this path, by domain or by session
++      // for example, and the translation lookup needs it. The redirect
++      // subscriber uses the language on the same terms.
++      $this->langcode = $langcode;
++      return $path;
++    }
++    $prefix = $this->splitLanguagePrefix($path, $inner_path);
++    if ($prefix === NULL) {
++      // The prefix could not be identified. Leave the path alone.
++      return $path;
++    }
++    $this->langcode = $langcode;
++    $resolved = $this->aliasManager->getPathByAlias($inner_path, $langcode);
 +
-+    return $path;
++    return $prefix . ($resolved === '/' ? '' : $resolved);
 +  }
 +
-   /**
-    * Checks if the resolved path is the home path.
-    *
++  /**
++   * Gets the language prefix that the negotiation plugin removed from a path.
++   *
++   * The plugin normalises the path it returns, so the inner path is not
++   * always a literal tail of the input. A trailing slash is the common case:
++   * "/de/node/1/" comes back as "/node/1". Counting characters then leaves
++   * the separator in the prefix and builds "/de//node/1", which matches no
++   * route. Compare the two paths without their trailing slashes instead.
++   *
++   * @param string $path
++   *   The path as it arrived, including the prefix.
++   * @param string $inner_path
++   *   The path the plugin returned, without the prefix.
++   *
++   * @return string|null
++   *   The prefix, or NULL when it cannot be identified.
++   */
++  protected function splitLanguagePrefix(string $path, string $inner_path): ?string {
++    $path = rtrim($path, '/');
++    $inner_path = rtrim($inner_path, '/');
++    if ($inner_path === '') {
++      // The path is only the prefix.
++      return $path;
++    }
++    if (!str_ends_with($path, $inner_path)) {
++      return NULL;
++    }
++
++    return rtrim(substr($path, 0, -strlen($inner_path)), '/');
++  }
++
++  /**
++   * Get the URL language negotiation method plugin, if the site has one.
++   *
++   * @return \Drupal\language\LanguageNegotiationMethodInterface|null
++   *   The plugin, or NULL when URL negotiation is not available.
++   */
++  protected function getUrlNegotiationMethod(): ?LanguageNegotiationMethodInterface {
++    if (!$this->container->has('language_negotiator')) {
++      return NULL;
++    }
++    /** @var \Drupal\language\LanguageNegotiatorInterface $negotiator */
++    $negotiator = $this->container->get('language_negotiator');
++    // The negotiator receives the current user from LanguageRequestSubscriber,
++    // which only runs for an HTTP request. Code that dispatches the path
++    // translation event from Drush, cron or a queue worker leaves it unset,
++    // and the plugin then fails on a NULL user. Set it here as well.
++    $negotiator->setCurrentUser($this->container->get('current_user'));
++    try {
++      return $negotiator->getNegotiationMethodInstance(LanguageNegotiationUrl::METHOD_ID);
++    }
++    catch (PluginNotFoundException) {
++      return NULL;
++    }
++  }
++
+ }
