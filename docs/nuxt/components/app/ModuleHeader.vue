@@ -317,9 +317,15 @@ export default {
   watch: {
     // Refetch only when the module changes; switching tabs within one
     // module keeps the header exactly as it is - that is the point.
+    //
+    // The sentinel is rebound here rather than on `module`, because the
+    // header renders on `pkg` alone: arriving at a package whose README
+    // fails to load leaves `module` null, so a `module` watcher never
+    // fires and the sticky bar would never engage.
     pkg() {
       this.open = false
       this.$fetch()
+      this.$nextTick(() => this.observe())
     },
 
     $route() {
@@ -342,11 +348,6 @@ export default {
           }))
         })
       }
-    },
-
-    // The sentinel only exists while a module is shown; rebind around it.
-    module() {
-      this.$nextTick(() => this.observe())
     },
   },
 
