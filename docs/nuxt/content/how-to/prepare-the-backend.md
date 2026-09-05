@@ -26,7 +26,7 @@ explains the concepts these steps lean on.
 ## Install the Drupal Druxt module
 
 ```sh
-composer require drupal/druxt
+composer require drupal/druxt:^1.2.2
 drush pm:enable druxt -y
 ```
 
@@ -35,9 +35,13 @@ The module depends on core's `jsonapi` module and three contrib projects:
 [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items)
 and [JSON:API Views](https://www.drupal.org/project/jsonapi_views).
 Composer downloads them with the module, and enabling `druxt` enables all
-of them. In practice this needs Drupal core `10.1` or later (the module
-itself accepts `8.8`+, but its Decoupled Router 2.x dependency requires
-`10.1`), and the maintained backends test against 10 and 11 (verified against
+of them. This needs Drupal core 10 or 11: `drupal/druxt` 1.2.2 declares
+`^10 || ^11 || ^12` and ended support for 8 and 9, and while core 12 is
+declared, Decoupled Router and JSON:API Menu Items do not support it yet.
+Pin `^1.2.2` rather than `^1.2`: 1.2.1 and earlier fatal against Decoupled
+Router 2.0.7 ([#3618675](https://www.drupal.org/i/3618675)), which Composer
+will happily install alongside them. The maintained backends test against 10
+and 11 (verified against
 druxt 1.2.1).
 
 Keep Decoupled Router below `2.0.7` for now
