@@ -17,17 +17,11 @@ through all four.
 
 ## Patch the backend
 
-Multilingual routing depends on fixes that are not released yet, and it
-takes more than one. The reference backend applies six patches, three to
-`decoupled_router` and three to `druxt`, and the working set is
+Multilingual routing depends on fixes that are not released yet. Copy the
+`extra.patches` block from
 [`docs/drupal/composer.json`](https://github.com/druxt/druxt.js/blob/develop/docs/drupal/composer.json)
-in this repository. Copy the `extra.patches` block from there rather than
-assembling one from issue pages, and read
-[`docs/drupal/patches/README.md`](https://github.com/druxt/druxt.js/blob/develop/docs/drupal/patches/README.md),
-which records why each is needed and which dependency version it was cut
-against.
-
-What the six are for:
+in this repository, which is the set the reference backend runs, rather
+than assembling one from issue pages:
 
 | Project | Issue | Without it |
 | ------- | ----- | ---------- |
@@ -38,20 +32,17 @@ What the six are for:
 | druxt | [#3315030](https://www.drupal.org/i/3315030) | Wildcard routes are not translated |
 | druxt | [#3467742](https://www.drupal.org/i/3467742) | A view with no `view_id` throws instead of falling through |
 
-Two of them, #3111456 and #3273228, are local rerolls committed to this
-repository rather than URLs. The versions on the issues do not apply
-cleanly to the releases the backend pins, which is the whole reason the
-rerolls exist, so take the committed files rather than the issue
-attachments.
+Two of them, #3111456 and #3273228, are committed files rather than URLs,
+because the versions attached to those issues do not apply to the releases
+the backend pins. Take the committed ones.
 
-**A patch is cut against one dependency version.** The druxt rerolls here
-target `drupal/druxt` 1.2.0 and do not apply to 1.2.1 or later, because
-1.2.1 added an import the patch also adds and 1.2.2 rewrote most of the
-file. Check the version before copying.
+**Each patch is cut against one dependency version**, and none is portable
+to the next release of its project.
+[`docs/drupal/patches/README.md`](https://github.com/druxt/druxt.js/blob/develop/docs/drupal/patches/README.md)
+records which version each targets and why.
 
-The symptom of a missing patch is quiet rather than loud: prefixed routes
-keep resolving, just to the wrong language, so it reads as content not
-being translated rather than as routing being broken.
+A missing patch fails quietly: prefixed routes still resolve, just to the
+wrong language, so it reads as content not being translated.
 
 Menus need `jsonapi_menu_items` 1.2.4 or later.
 
