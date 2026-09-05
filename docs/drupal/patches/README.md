@@ -1,8 +1,18 @@
 # Local patches
 
-Patches kept in the repo rather than referenced by URL, because each one is a
-reworked version of a patch or merge request that is still open upstream. Each
-is a replacement for the work already on its issue, not a parallel fix.
+The files here are patches kept in the repo rather than referenced by URL,
+because each is a reworked version of a patch or merge request still open
+upstream: a replacement for the work already on its issue, not a parallel fix.
+
+`composer.json` also references three patches **by URL**, as
+`git.drupalcode.org/.../merge_requests/N.diff`. Prefer a local file for
+anything added from here on, because a merge request diff is regenerated on
+every push to its branch and this project runs `cweagans/composer-patches`
+**1.x**, which keeps no patch hashes. So a moved branch is not caught: the
+next `composer install` fetches whatever the diff says that day, applies it,
+and the build stays green. (2.x would fail loudly with a hash mismatch
+instead, which is the safer failure.) Where a URL is unavoidable, pin a fork
+commit rather than a merge request diff.
 
 **Each patch targets the exact dependency version `composer.lock` pins**, and a
 patch that applies cleanly to one release is not portable to the next. Nothing
