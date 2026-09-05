@@ -4,8 +4,6 @@ weight: 10
 description: Retired DruxtStore signatures and internal classes, with their replacements.
 ---
 
-# Deprecations
-
 ## DruxtStore / addResource - hash
 
 > [druxt] The `hash` argument for `druxt/addResource` has been deprecated.

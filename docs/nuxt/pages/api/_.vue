@@ -1,7 +1,9 @@
 <template>
   <article>
 
-    <AppPageHeader :title="document.title">
+    <!-- Skipped on a package's API root: the layout's module header there
+         carries the same title and the same source link. -->
+    <AppPageHeader v-if="!inModuleHeader" :title="document.title">
       <a
         v-if="source"
         class="mt-5 inline-flex items-center gap-2 text-sm text-base-content/70 hover:text-primary-focus"
@@ -20,6 +22,7 @@
 <script>
 import { seoHead } from '~/utils/seo'
 import { documentDescription } from '~/utils/content'
+import { isPackageRoot } from '~/components/app/icon/module'
 export default {
   name: 'AppApiDocument',
 
@@ -52,6 +55,16 @@ export default {
   },
 
   computed: {
+    /**
+     * Whether the layout's module header is already this page's header,
+     * carrying the same title and the same source link.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.$route - The current route.
+     * @returns {boolean} True on a module package's API root.
+     */
+    inModuleHeader: ({ $route }) => isPackageRoot($route.path),
+
     source: ({ document }) => (document.dir
       ? 'https://github.com/druxt/druxt.js/tree/develop' + document.dir.replace('/api/packages', '/packages')
       : null),

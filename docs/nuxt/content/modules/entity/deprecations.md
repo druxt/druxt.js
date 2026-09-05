@@ -4,8 +4,6 @@ weight: 10
 description: Retired DruxtField default components and props, with their replacements.
 ---
 
-# Deprecations
-
 ## DruxtField default components
 
 > [druxt-entity] The `*` component is deprecated.
