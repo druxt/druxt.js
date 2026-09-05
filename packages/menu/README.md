@@ -42,7 +42,7 @@ menu item themes through the Druxt component suggestion system.
    export default {
      modules: ['druxt-menu'],
      druxt: {
-       baseUrl: 'https://demo-api.druxtjs.org',
+       baseUrl: 'https://api.umami.demo.druxtjs.org',
      },
    };
    ```

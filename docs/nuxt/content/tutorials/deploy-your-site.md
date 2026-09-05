@@ -87,7 +87,7 @@ what `npm run stop` is for).
 
 ## Step 3: Deploy against the public demo backend
 
-The Druxt demo backend at `https://demo-api.druxtjs.org` is public,
+The Druxt demo backend at `https://api.umami.demo.druxtjs.org` is public,
 answers browsers from any origin, and runs the Umami food-magazine demo
 content. Pointing your frontend at it takes a theme change and an
 environment override.
@@ -108,7 +108,7 @@ command line overrides `.env` for this run only, so nothing needs
 editing back afterwards:
 
 ```sh
-BASE_URL=https://demo-api.druxtjs.org NUXT_TARGET=static npm run generate --prefix nuxt
+BASE_URL=https://api.umami.demo.druxtjs.org NUXT_TARGET=static npm run generate --prefix nuxt
 ```
 
 (The same Node 17+ `NODE_OPTIONS` prefix applies here.)

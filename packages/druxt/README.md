@@ -30,11 +30,11 @@ on. It provides the three pieces the whole framework shares:
 
    ```js
    export default {
-     modules: [['druxt', { baseUrl: 'https://demo-api.druxtjs.org' }]],
+     modules: [['druxt', { baseUrl: 'https://api.umami.demo.druxtjs.org' }]],
    };
    ```
 
-   \* _Replace `https://demo-api.druxtjs.org` with your own
+   \* _Replace `https://api.umami.demo.druxtjs.org` with your own
    Drupal backend._
 
 3. On the Drupal side, install and enable the
@@ -84,7 +84,7 @@ through it.
 ```js
 import { DruxtClient } from 'druxt';
 
-const client = new DruxtClient('https://demo-api.druxtjs.org');
+const client = new DruxtClient('https://api.umami.demo.druxtjs.org');
 const collection = await client.getCollection('node--article');
 ```
 

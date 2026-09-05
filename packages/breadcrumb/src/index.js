@@ -18,7 +18,7 @@ import { DruxtBreadcrumbModule } from './nuxtModule'
  *     'druxt-breadcrumb'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  */
