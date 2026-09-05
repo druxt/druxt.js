@@ -39,11 +39,14 @@ Before theming something, name it. Ask the backend what the front path
 resolves to:
 
 ```sh
+BASE_URL=$(grep '^BASE_URL=' .env | cut -d= -f2-)
 curl "$BASE_URL/router/translate-path?path=/"
 ```
 
-(`$BASE_URL` is in your project's `.env`. On the quickstart it holds
-`http://127.0.0.1:8888`.)
+Run both lines from your project root. The first reads the backend URL out
+of `.env`, because `curl` does not load that file itself. Read it rather
+than typing a port: setup takes the next free one, so yours may not be
+8888.
 
 **Outcome:** the response names a view. Abridged, the parts that matter
 are:
@@ -268,6 +271,8 @@ way.
 
 ## Where to go next
 
+- Keep learning: [Add a login flow](/tutorials/authentication), the next
+  lesson.
 - [Theme Druxt components](/how-to/theming): the reference version of this,
   including the default-template alternative to wrapper files and the
   dev-mode box that scaffolds a wrapper for you.
