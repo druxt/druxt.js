@@ -5,7 +5,9 @@ description: Change Druxt component output with wrapper components, the default 
 ---
 
 > **Before you start:** this guide assumes a working Druxt site (see
-> [Getting started](/tutorials/getting-started)). It also helps to have read
+> [Getting started](/tutorials/getting-started)). If you have never written
+> a wrapper, [Theme your front page](/tutorials/theme-your-front-page)
+> walks through two of them end to end. It also helps to have read
 > [Component resolution](/explanation/component-resolution) for why the
 > suggestion chain works the way it does.
 

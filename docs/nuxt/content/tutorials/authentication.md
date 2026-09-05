@@ -1,6 +1,6 @@
 ---
 title: Add a login flow
-weight: -8
+weight: -7
 description: Turn the quickstart's already-configured OAuth setup into a real, working login.
 ---
 

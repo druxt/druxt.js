@@ -110,6 +110,8 @@ introspection exist to show you which component was chosen.
 
 ## Where to go next
 
+- [Theme your front page](/tutorials/theme-your-front-page): the rules
+  above, applied to a real page, start to finish.
 - [Theme Druxt components](/how-to/theming): the practical side.
 - [DruxtModule API reference](/api/packages/druxt/components/DruxtModule):
   the base class behind everything described here.

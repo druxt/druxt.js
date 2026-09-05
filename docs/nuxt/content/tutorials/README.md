@@ -13,6 +13,8 @@ lesson.
 
 - [Getting started with Druxt](/tutorials/getting-started): set up a
   Nuxt application powered by a Drupal backend.
+- [Theme your front page](/tutorials/theme-your-front-page): replace the
+  front page listing and its teasers with your own components.
 - [Add a login flow](/tutorials/authentication): turn the quickstart's
   already-configured OAuth setup into a real, working login.
 - [Deploy your site](/tutorials/deploy-your-site): generate the

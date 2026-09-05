@@ -1,6 +1,6 @@
 ---
 title: Deploy your site
-weight: -7
+weight: -6
 description: Generate the quickstart as static files, prove why the backend still matters, and put a working Druxt site on a live URL.
 ---
 
