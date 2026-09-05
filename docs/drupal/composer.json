@@ -18,18 +18,18 @@
         "composer/installers": "^2.3.0",
         "cweagans/composer-patches": "^1.7.3",
         "drupal-tome/tome_drush": "dev-master",
-        "drupal/core-composer-scaffold": "^10",
-        "drupal/core-project-message": "^10",
-        "drupal/core-recommended": "^10",
+        "drupal/core-composer-scaffold": "~11",
+        "drupal/core-project-message": "~11",
+        "drupal/core-recommended": "~11",
         "drupal/decoupled_router": "^2.0.7",
         "drupal/druxt": "^1.2.2",
         "drupal/jsonapi_hypermedia": "^1.10.0",
-        "drupal/simple_oauth": "^5.2.5",
-        "drupal/tome": "^1.12.0",
-        "drush/drush": "^12"
+        "drupal/simple_oauth": "^6.1",
+        "drupal/tome": "^1.16",
+        "drush/drush": "^13"
     },
     "require-dev": {
-        "drupal/core-dev": "^10"
+        "drupal/core-dev": "~11"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -40,12 +40,14 @@
         "sort-packages": true,
         "allow-plugins": {
             "composer/installers": true,
-            "drupal/core-composer-scaffold": true,
-            "drupal/core-project-message": true,
             "cweagans/composer-patches": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal/core-composer-scaffold": true,
+            "drupal/core-project-message": true,
             "php-http/discovery": true,
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "symfony/runtime": true,
+            "tbachert/spi": true
         }
     },
     "extra": {
@@ -85,10 +87,10 @@
         },
         "patches": {
             "drupal/decoupled_router": {
-                "#3111456 Resolve the language from the requested path, so /es serves Spanish instead of the default language": "patches/decoupled_router-3111456-resolve-language-from-path.patch"
+                "#3111456 Resolve the language from the requested path, so /es serves Spanish instead of the default language": "https://git.drupalcode.org/project/decoupled_router/-/merge_requests/35.diff"
             },
             "drupal/druxt": {
-                "#3273228 Add langcode to Views Decoupled Router integration, so the /es front page stays Spanish": "patches/druxt-3273228-views-route-langcode.patch"
+                "#3273228 Add langcode to Views Decoupled Router integration, so the /es front page stays Spanish": "https://git.drupalcode.org/project/druxt/-/merge_requests/9.diff"
             }
         }
     }
