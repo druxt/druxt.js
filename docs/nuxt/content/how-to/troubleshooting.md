@@ -95,7 +95,7 @@ container rebuilds, so Drupal keeps serving from the old container and the
 visible effect is routes and Views paths silently not resolving, not an
 error page. `drush cr` is usually where it first shows.
 
-Fix by taking the release that carries it:
+Fix by upgrading to the release that includes it:
 
 ```sh
 composer require drupal/druxt:^1.2.2

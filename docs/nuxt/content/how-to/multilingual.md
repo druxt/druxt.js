@@ -17,8 +17,8 @@ through all four.
 
 ## Patch the backend
 
-Two fixes for prefixed-path routing are written and reviewed but not yet in
-a release, so a multilingual backend needs them applied:
+Prefixed-path routing relies on fixes that are written and reviewed but not
+yet released, so a multilingual backend needs them applied:
 
 | Project | Issue | Without it |
 | ------- | ----- | ---------- |
@@ -31,12 +31,16 @@ in this repository. Both entries point at the merge request diff on
 drupal.org, so you get whatever the branch currently holds rather than a
 copy that has to be maintained. That is the set the reference backend runs.
 
-Take the versions `composer.json` pins along with the patches. A merge
-request is written against a particular release, and applying its diff to a
-different one will either fail or, worse, apply differently.
+Applying them needs `cweagans/composer-patches` in `require` and in
+`config.allow-plugins`. Both are in the same file. Without the plugin,
+Composer ignores `extra.patches` and installs the modules unpatched.
 
-A missing patch fails quietly: prefixed routes still resolve, just to the
-wrong language, so it reads as content not being translated.
+Take the versions `composer.json` pins along with the patches. A merge
+request is written against one release, and applying its diff to another
+will either fail or, worse, apply differently.
+
+Without the patches, prefixed routes still resolve, but in the wrong
+language, which looks like missing translations rather than a routing bug.
 
 Menus need `jsonapi_menu_items` 1.2.4 or later.
 
