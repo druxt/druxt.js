@@ -38,6 +38,31 @@ See `.devtools/README.md` (or the comments in each script) for how this
 works and why it's built the way it is — in the spirit of
 [AlexSkrypnyk/drupal_extension_scaffold](https://github.com/AlexSkrypnyk/drupal_extension_scaffold).
 
+## Patches
+
+Two, both unreleased upstream fixes for the same problem: a decoupled frontend
+asks the router to translate `/es`, the request carries no language prefix of
+its own, and everything resolves in the default language.
+
+| Project | Issue | Reference |
+| ------- | ----- | --------- |
+| decoupled_router | [#3111456](https://www.drupal.org/i/3111456) | merge request 35 diff |
+| druxt | [#3273228](https://www.drupal.org/i/3273228) | merge request 9 diff |
+
+**Both are referenced as merge request diffs on purpose, not vendored.** This
+backend is a dogfooding site: it should track what those branches actually do,
+so a change upstream shows up here and can be fed back to the issue rather than
+being frozen out by a local copy. Every reference has the same exit, which is
+the issue landing in a release; when that happens, drop the patch and raise the
+version constraint.
+
+The cost is worth knowing. A merge request diff is regenerated on every push to
+its branch, and this project runs `cweagans/composer-patches` **1.x**, which
+records no patch hashes. A re-cut patch that no longer applies still fails
+loudly. A re-cut patch that *does* apply and now behaves differently lands
+silently and the build stays green. That is the accepted trade for dogfooding,
+not an oversight.
+
 ### Gotcha: Tome auto-exports on entity/config save
 
 Tome watches entity and config save operations and writes changes straight

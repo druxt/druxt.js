@@ -25,14 +25,15 @@ a release, so a multilingual backend needs them applied:
 | decoupled_router | [#3111456](https://www.drupal.org/i/3111456) | Prefixed paths resolve, but always in the default language |
 | druxt | [#3273228](https://www.drupal.org/i/3273228) | Views routes, the front page among them, resolve in the default language and return no langcode |
 
-Copy the `extra.patches` block and the two files it names from
-[`docs/drupal`](https://github.com/druxt/druxt.js/tree/develop/docs/drupal)
-in this repository. That is the set the reference backend runs, so it is
-kept working rather than assembled from issue pages.
+Copy the `extra.patches` block from
+[`docs/drupal/composer.json`](https://github.com/druxt/druxt.js/blob/develop/docs/drupal/composer.json)
+in this repository. Both entries point at the merge request diff on
+drupal.org, so you get whatever the branch currently holds rather than a
+copy that has to be maintained. That is the set the reference backend runs.
 
-Both are cut against the versions `composer.json` pins, and a patch that
-applies to one release will not always apply to the next, so check the
-version before reusing one elsewhere.
+Take the versions `composer.json` pins along with the patches. A merge
+request is written against a particular release, and applying its diff to a
+different one will either fail or, worse, apply differently.
 
 A missing patch fails quietly: prefixed routes still resolve, just to the
 wrong language, so it reads as content not being translated.

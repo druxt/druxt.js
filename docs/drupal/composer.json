@@ -1,6 +1,6 @@
 {
-    "name": "druxt/drupal-9-example",
-    "description": "Example Drupal 9 backend for use in the Druxt examples.",
+    "name": "druxt/docs-backend",
+    "description": "Drupal backend for the druxtjs.org documentation and examples.",
     "type": "project",
     "license": "GPL-2.0-or-later",
     "homepage": "https://druxtjs.org",
