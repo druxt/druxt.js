@@ -15,24 +15,45 @@ components take a `langcode` prop, and the theme layer resolves
 language-specific components. This guide walks one translated page
 through all four.
 
-## Patch the router
+## Patch the backend
 
-Translated route resolution needs one patch on `decoupled_router` until
-[#3111456](https://www.drupal.org/project/decoupled_router/issues/3111456)
-is released:
+Multilingual routing depends on fixes that are not released yet, and it
+takes more than one. The reference backend applies six patches, three to
+`decoupled_router` and three to `druxt`, and the working set is
+[`docs/drupal/composer.json`](https://github.com/druxt/druxt.js/blob/develop/docs/drupal/composer.json)
+in this repository. Copy the `extra.patches` block from there rather than
+assembling one from issue pages, and read
+[`docs/drupal/patches/README.md`](https://github.com/druxt/druxt.js/blob/develop/docs/drupal/patches/README.md),
+which records why each is needed and which dependency version it was cut
+against.
 
-```json
-"drupal/decoupled_router": {
-  "https://www.drupal.org/project/decoupled_router/issues/3111456#comment-15211077": "https://www.drupal.org/files/issues/2023-08-30/decoupled_router-3111456-resolve_lang-66.patch"
-}
-```
+What the six are for:
 
-The symptom without it is quiet: prefixed routes resolve, but to the
-default language.
+| Project | Issue | Without it |
+| ------- | ----- | ---------- |
+| decoupled_router | [#3111456](https://www.drupal.org/i/3111456) | Prefixed paths resolve, but always in the default language |
+| decoupled_router | [#3172926](https://www.drupal.org/i/3172926) | Unpublished and inaccessible paths resolve inconsistently |
+| decoupled_router | [#3468825](https://www.drupal.org/i/3468825) | Redirects are not followed to their destination |
+| druxt | [#3273228](https://www.drupal.org/i/3273228) | Views routes, the front page among them, resolve in the default language and return no langcode |
+| druxt | [#3315030](https://www.drupal.org/i/3315030) | Wildcard routes are not translated |
+| druxt | [#3467742](https://www.drupal.org/i/3467742) | A view with no `view_id` throws instead of falling through |
 
-Menus need `jsonapi_menu_items` 1.2.4 or later. Translated **Views**
-routes do not resolve yet, tracked in
-[druxt#3273228](https://www.drupal.org/project/druxt/issues/3273228).
+Two of them, #3111456 and #3273228, are local rerolls committed to this
+repository rather than URLs. The versions on the issues do not apply
+cleanly to the releases the backend pins, which is the whole reason the
+rerolls exist, so take the committed files rather than the issue
+attachments.
+
+**A patch is cut against one dependency version.** The druxt rerolls here
+target `drupal/druxt` 1.2.0 and do not apply to 1.2.1 or later, because
+1.2.1 added an import the patch also adds and 1.2.2 rewrote most of the
+file. Check the version before copying.
+
+The symptom of a missing patch is quiet rather than loud: prefixed routes
+keep resolving, just to the wrong language, so it reads as content not
+being translated rather than as routing being broken.
+
+Menus need `jsonapi_menu_items` 1.2.4 or later.
 
 ## Fetch a translated resource
 
