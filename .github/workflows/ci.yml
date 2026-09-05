@@ -558,6 +558,11 @@ jobs:
           yarn install --immutable
           yarn generate
 
+      # The map is keyed on $host$request_uri and its targets are pages, so
+      # a typo only shows as a 404 in production. dist exists at this point.
+      - name: Verify the redirects map
+        run: .lagoon/verify-redirects.sh
+
       # Node 22 from here, matching the node:22 image the GitLab job uses.
       # unlighthouse-ci@0.18.0 declares node >=22.18.0 and means it: on 20 it
       # dies importing `glob` from node:fs/promises, which does not exist before
