@@ -160,6 +160,28 @@ describe('DruxtRouter', () => {
     })
     expect(redirect).toBe('/')
 
+    // The backend reports the default langcode for an unprefixed path, so "/"
+    // is the home path and must not bounce to "/en".
+    redirect = router.getRedirect('/', {
+      isHomePath: true,
+      props: { langcode: 'en' }
+    })
+    expect(redirect).toBe(false)
+
+    // A prefixed home path still resolves to itself.
+    redirect = router.getRedirect('/es', {
+      isHomePath: true,
+      props: { langcode: 'es' }
+    })
+    expect(redirect).toBe(false)
+
+    // Anything else still redirects to the prefixed home path.
+    redirect = router.getRedirect('/node/1', {
+      isHomePath: true,
+      props: { langcode: 'es' }
+    })
+    expect(redirect).toBe('/es')
+
     // Clean url redirect.
     redirect = router.getRedirect('/node/2', {
       canonical: 'https://example.com/clean-url'

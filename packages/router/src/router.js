@@ -233,7 +233,9 @@ class DruxtRouter {
     // Redirect to root if route is home path but path isn't root.
     if (route.isHomePath) {
       const homePath = prefix ? `/${prefix}` : '/'
-      if (!(url.pathname === homePath || url.pathname === `${homePath}/`)) {
+      // An unprefixed path reports the default langcode, so "/" is already the
+      // home path and redirecting it to "/<langcode>" is a redirect to itself.
+      if (!['/', homePath, `${homePath}/`].includes(url.pathname)) {
         return homePath
       }
       return false
