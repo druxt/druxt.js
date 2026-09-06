@@ -43,8 +43,8 @@ decoupled
 defaultvalue
 devcontainer
 devcontainers
-devel
 Devel
+devel
 devpod
 Diataxis
 dind
@@ -76,8 +76,8 @@ intelephense
 interruptible
 jsdocs
 jsonapi
-Knip
 knip
+Knip
 Ksection
 labelledby
 langcode
@@ -105,8 +105,8 @@ mailhog
 makedirs
 markdownlint
 mbstring
-menlo
 Menlo
+menlo
 metatag
 metatags
 mise
@@ -157,8 +157,8 @@ satori
 scaffolder
 scriptable
 scule
-segoe
 Segoe
+segoe
 setuptools
 shivammathur
 siroc
@@ -185,6 +185,7 @@ unjs
 unlighthouse
 unregisters
 Unsets
+urandom
 uselagoon
 Valeryan
 vetur

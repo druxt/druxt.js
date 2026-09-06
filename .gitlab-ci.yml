@@ -112,8 +112,13 @@ secret_detection:
       # appears contiguously in the configuration.
       pem_head="-----BEGIN"" PRIVATE KEY-----"
       pem_tail="-----END"" PRIVATE KEY-----"
-      printf '%s\nMIIBVgIBADANBgkqhkiG9w0BAQEFAASCAUAwggE8AgEAAkEAqZ3vN8kLmT2xYwPq\nRfHjWnB4dGcVsAyUeIoLpKmXtZbNvQrEjHgFdSwCzTuMaPkYxNbOiVlRcHgQwEyA\n%s\n' \
-        "$pem_head" "$pem_tail" > "$scope/.yarn/releases/yarn-9.9.9.cjs"
+      # Body generated rather than embedded. Unlike the three credentials
+      # above, private-key matches on the header keyword and ignores the body,
+      # so nothing is lost by generating it, and a base64 blob in this file
+      # would only give the spell checker something to complain about.
+      printf '%s\n%s\n%s\n' "$pem_head" \
+        "$(head -c 96 /dev/urandom | base64 | tr -d '\n')" "$pem_tail" \
+        > "$scope/.yarn/releases/yarn-9.9.9.cjs"
       ./gitleaks detect --no-git --source "$scope" --config .gitleaks.toml \
         --no-banner --redact \
         --report-format json --report-path "$scope/report.json" || true

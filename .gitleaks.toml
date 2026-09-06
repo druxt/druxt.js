@@ -1,13 +1,19 @@
 # gitleaks configuration.
 #
-# The default rule set, plus per-rule path allowlists. Nothing here allowlists
-# a credential, and nothing here is global: every entry sits inside the
-# allowlist of the single rule it was written for, so suppressing a
-# false positive from one detector never silences the others on that path.
+# The default rule set, plus per-rule path allowlists.
 #
-# Real findings belong in .gitleaksignore, one fingerprint at a time, each with
-# a reason. A rule loosened here would silently cover every future commit; a
-# fingerprint there covers exactly one known occurrence and nothing else.
+# No allowlist is global. Every entry sits inside the allowlist of the single
+# rule it was written for, so excusing a false positive from one detector never
+# silences the others on that path. The `scope` check in the secret_detection
+# job asserts this: it plants a private key at a path the generic-api-key
+# allowlist matches and fails if it is not reported.
+#
+# Two of the three entries are false positives. The third is not: the committed
+# Simple OAuth private key is deliberately allowlisted under the private-key
+# rule, and stays allowlisted until provisioning generates the pair instead of
+# reading a committed one. It is described in full below rather than reduced to
+# a fingerprint, because a reader deserves to know a real credential is parked
+# here and why.
 
 [extend]
 useDefault = true
