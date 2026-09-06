@@ -28,14 +28,30 @@ secret_detection:
   # gitleaks reads git history and needs nothing this pipeline builds.
   dependencies: []
   variables:
+    # Without this the scan covers only as much history as the project's clone
+    # depth happens to allow, and a secret in an older commit reads as clean.
+    # A scan whose coverage depends on an unrelated project setting is a scan
+    # that can quietly stop scanning.
+    GIT_DEPTH: 0
     GITLEAKS_VERSION: '8.30.1'
-    GITLEAKS_SHA256: '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb'
+    GITLEAKS_SHA256_X64: '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb'
+    GITLEAKS_SHA256_ARM64: 'e4a487ee7ccd7d3a7f7ec08657610aa3606637dab924210b3aee62570fb4b080'
   script:
     - section_start "gitleaks" "Scanning for committed secrets"
     - apk add --no-cache curl tar git > /dev/null
-    - curl -sSLo gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
-    - echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
-    - tar -xzf gitleaks.tar.gz gitleaks
+    # Detect rather than assume, as the cloudflared block below already does.
+    # This runner is arm64; the x64 archive only ran because the image resolved
+    # to amd64 under emulation. Its checksum verifies either way, so the failure
+    # would arrive as an exec format error rather than as a download problem.
+    - |
+      case "$(uname -m)" in
+        aarch64|arm64) gl_arch=arm64; gl_sha="$GITLEAKS_SHA256_ARM64" ;;
+        x86_64)        gl_arch=x64;   gl_sha="$GITLEAKS_SHA256_X64" ;;
+        *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+      esac
+      curl -sSLo gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_${gl_arch}.tar.gz"
+      echo "${gl_sha}  gitleaks.tar.gz" | sha256sum -c -
+      tar -xzf gitleaks.tar.gz gitleaks
     - ./gitleaks detect --source . --no-banner --redact --verbose
     - section_end "gitleaks"
     # A scan that finds nothing looks identical to a scan that cannot find
@@ -60,7 +76,14 @@ secret_detection:
       stripe="sk""_live_51aBcD2eFgH3iJkL4mNoP5qR6sTuV7wXyZ8a"
       slack="xo""xb-263594753641-2529420432-J1n4h6a9pQrStUvWxYz1AbCd"
       printf 'a = "%s"\nb = "%s"\nc = "%s"\n' "$pat" "$stripe" "$slack" > "$canary/canary.txt"
-      ./gitleaks detect --no-git --source "$canary" --no-banner --redact \
+      # --config is what makes this canary mean what the comment above says.
+      # Scanning a temp directory without it uses gitleaks' embedded defaults,
+      # so a widened allowlist in .gitleaks.toml cannot affect the result:
+      # measured, the canary scores 3 of 3 against a config that allowlists
+      # everything. With --config it scores 0 and the job fails, which is the
+      # behaviour this check exists for.
+      ./gitleaks detect --no-git --source "$canary" --config .gitleaks.toml \
+        --no-banner --redact \
         --report-format json --report-path "$canary/report.json" || true
       found=$(grep -c '"RuleID"' "$canary/report.json" || true)
       rm -rf "$canary"
@@ -804,6 +827,11 @@ audit:seo:
 # changed.
 test:e2e:site:
   extends: .node
+  # node:16.20.1 is Debian buster, which is EOL: its repositories are archived,
+  # so apt-get update fails and the Cypress dependencies below never install.
+  # Cypress then dies on `spawn Xvfb ENOENT`. bookworm is current and is the
+  # same base the php:8.3 jobs install browser dependencies from successfully.
+  image: node:16.20.1-bookworm
   stage: test
   interruptible: true
   needs: []
@@ -821,7 +849,14 @@ test:e2e:site:
         - .gitlab-ci.yml
   script:
     - section_start "deps" "Installing the browser dependencies"
-    - apt-get update -yqq && apt-get install -yqq $CYPRESS_APT_PACKAGES
+    # Asserted, not assumed: on the previous base apt-get update failed, the
+    # install never ran, and the job carried on to fail forty seconds later
+    # inside Cypress with a missing-Xvfb error that says nothing about apt.
+    - |
+      set -e
+      apt-get update -yqq
+      apt-get install -yqq $CYPRESS_APT_PACKAGES
+      command -v Xvfb >/dev/null || { echo "Xvfb missing after install" >&2; exit 1; }
     - section_end "deps"
     - section_start "build" "Building the monorepo and the API docs"
     - corepack enable
