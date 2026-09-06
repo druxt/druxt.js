@@ -40,7 +40,7 @@ jobs:
             if files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename'); then
               deps=false; site=false; packages=false
               echo "$files" | grep -qE '(^|/)(yarn\.lock|package\.json|\.yarnrc\.yml)$' && deps=true
-              echo "$files" | grep -qE '^(docs/nuxt/|packages/docgen/|packages/[^/]+/README\.md)' && site=true
+              echo "$files" | grep -qE '^(docs/nuxt/|packages/docgen/|packages/[^/]+/README\.md|\.lagoon/)' && site=true
               echo "$files" | grep -qE '^packages/' && packages=true
             else
               echo "file listing failed; running everything" >&2
@@ -557,6 +557,11 @@ jobs:
           cd docs/nuxt
           yarn install --immutable
           yarn generate
+
+      # The map is keyed on $host$request_uri and its targets are pages, so
+      # a typo only shows as a 404 in production. dist exists at this point.
+      - name: Verify the redirects map
+        run: .lagoon/verify-redirects.sh
 
       # Node 22 from here, matching the node:22 image the GitLab job uses.
       # unlighthouse-ci@0.18.0 declares node >=22.18.0 and means it: on 20 it
