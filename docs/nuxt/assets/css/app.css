@@ -389,6 +389,10 @@ html {
   white-space: nowrap;
   overflow-wrap: normal;
 }
+/* Cell links break at spaces only; the global anywhere rule split #3111456. */
+.prose table a {
+  overflow-wrap: normal;
+}
 .prose thead {
   border-bottom: 0;
 }

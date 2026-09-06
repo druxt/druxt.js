@@ -22,7 +22,7 @@ import DruxtViewsStorybook from './storybook'
  *     'druxt-views'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  *

@@ -34,7 +34,7 @@ backend running.
 3. Open a content-rich page, so the tree and suggestion chain carry
    real substance: a recipe on an Umami backend
    (`/en/recipes/deep-mediterranean-quiche` against
-   `https://demo-api.druxtjs.org`) gives a DruxtEntity with nine
+   `https://api.umami.demo.druxtjs.org`) gives a DruxtEntity with nine
    DruxtField children and a 14-entry `$theme` list.
 
 4. Position the window and drive it with xdotool; capture each state

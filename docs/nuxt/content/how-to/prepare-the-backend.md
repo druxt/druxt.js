@@ -26,7 +26,7 @@ explains the concepts these steps lean on.
 ## Install the Drupal Druxt module
 
 ```sh
-composer require drupal/druxt
+composer require drupal/druxt:^1.2.2
 drush pm:enable druxt -y
 ```
 
@@ -35,17 +35,13 @@ The module depends on core's `jsonapi` module and three contrib projects:
 [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items)
 and [JSON:API Views](https://www.drupal.org/project/jsonapi_views).
 Composer downloads them with the module, and enabling `druxt` enables all
-of them. In practice this needs Drupal core `10.1` or later (the module
-itself accepts `8.8`+, but its Decoupled Router 2.x dependency requires
-`10.1`), and the maintained backends test against 10 and 11 (verified against
-druxt 1.2.1).
+of them.
 
-Keep Decoupled Router below `2.0.7` for now
-(`composer require 'drupal/decoupled_router:^2.0 <2.0.7'`). 2.0.7
-changed a subscriber signature the Drupal Druxt module (1.2.1 and
-earlier) does not declare, and route resolution silently stops working
-([#3618675](https://www.drupal.org/i/3618675)); drop the pin once a
-release containing that fix is out.
+Drupal core 10 or 11: 1.2.2 ended support for 8 and 9, and declares 12
+ahead of Decoupled Router and JSON:API Menu Items supporting it. Pin
+`^1.2.2` rather than `^1.2`, because Composer will otherwise pair an
+earlier release with a Decoupled Router it cannot run against
+([routes stop resolving](/how-to/troubleshooting#routes-and-views-paths-stop-resolving-after-a-composer-update)).
 
 If composer refuses with a stability error, a dependency's current
 release is below your project's `minimum-stability` (set in the Drupal

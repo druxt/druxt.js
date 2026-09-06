@@ -1,6 +1,6 @@
 it('Umami: Homepage', () => {
-  // Given I visit the homepage.
-  cy.visit('/')
+  // Given I visit the homepage. Every language has a URL prefix, so it is /en.
+  cy.visit('/en')
 
   // Language Switcher block.
   const languageBlock = '[data-fetch-key^="DruxtBlockLanguageBlock"]'

@@ -6,7 +6,8 @@
 // the real form. A purpose-built, permanently unthemed demo block for the
 // devel-template tool belongs to the pattern examples overhaul.
 it('Umami search block resolves its wrapper component', () => {
-  cy.visit('/')
+  // Every language has a URL prefix, so the homepage is /en.
+  cy.visit('/en')
 
   // First spec in the run: the first visit compiles the dev bundle, which
   // can far exceed the default 4s timeout on CI runners.

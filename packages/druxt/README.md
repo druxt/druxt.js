@@ -30,11 +30,11 @@ on. It provides the three pieces the whole framework shares:
 
    ```js
    export default {
-     modules: [['druxt', { baseUrl: 'https://demo-api.druxtjs.org' }]],
+     modules: [['druxt', { baseUrl: 'https://api.umami.demo.druxtjs.org' }]],
    };
    ```
 
-   \* _Replace `https://demo-api.druxtjs.org` with your own
+   \* _Replace `https://api.umami.demo.druxtjs.org` with your own
    Drupal backend._
 
 3. On the Drupal side, install and enable the
@@ -53,8 +53,8 @@ As of September 2026. See the [releases](https://github.com/druxt/druxt.js/relea
 | Nuxt          | 2.15 or later (Nuxt 2 line). Nuxt 3 is not supported.                                                                                                                               |
 | Vue           | 2.7                                                                                                                                                                                 |
 | Node          | 16, the tested version. Node 16 is past upstream end of life; the 1.x line targets it deliberately. 17 and later need `NODE_OPTIONS=--openssl-legacy-provider` to build.            |
-| Drupal core   | 10.1 through 11 in practice: the module accepts 8.8+, but its Decoupled Router 2.x dependency requires 10.1. Tested against 10 and 11.                                              |
-| Drupal module | `drupal/druxt` ^1.2, which brings `decoupled_router`, `jsonapi_menu_items` and `jsonapi_views`. Hold `decoupled_router` below 2.0.7 ([#3618675](https://www.drupal.org/i/3618675)). |
+| Drupal core   | 10 or 11. `drupal/druxt` 1.2.2 declares `^10 \|\| ^11 \|\| ^12` and ended 8 and 9 support; 12 is declared but waits on Decoupled Router and JSON:API Menu Items. Tested against 10 and 11. |
+| Drupal module | `drupal/druxt` ^1.2.2, which brings `decoupled_router`, `jsonapi_menu_items` and `jsonapi_views`. Earlier 1.2.x releases are incompatible with Decoupled Router 2.0.7 ([#3618675](https://www.drupal.org/i/3618675)). |
 | Known pins    | `@nuxtjs/storybook` 4.2.0 (later majors need Nuxt 3); axios 0.x, or add it to `build.transpile`                                                                                     |
 
 What these bounds promise over time is stated in the
@@ -84,7 +84,7 @@ through it.
 ```js
 import { DruxtClient } from 'druxt';
 
-const client = new DruxtClient('https://demo-api.druxtjs.org');
+const client = new DruxtClient('https://api.umami.demo.druxtjs.org');
 const collection = await client.getCollection('node--article');
 ```
 

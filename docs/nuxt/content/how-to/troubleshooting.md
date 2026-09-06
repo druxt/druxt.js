@@ -84,6 +84,27 @@ Nuxt requires a `pages/` directory even when [Druxt's wildcard
 router](/explanation/routing) provides every route. Create it with a
 placeholder: `mkdir pages && touch pages/.gitkeep`.
 
+## Routes and Views paths stop resolving after a composer update
+
+`composer update` brings Decoupled Router 2.0.7, and `drupal/druxt` 1.2.1
+and earlier fatal against it: their path translator overrides
+`onPathTranslation()` without the `: void` return type 2.0.7 declares.
+
+The symptom is quiet rather than loud. The fatal happens while the
+container rebuilds, so Drupal keeps serving from the old container and the
+visible effect is routes and Views paths silently not resolving, not an
+error page. `drush cr` is usually where it first shows.
+
+Fix by upgrading to the release that includes it:
+
+```sh
+composer require drupal/druxt:^1.2.2
+drush cr
+```
+
+1.2.2 also ends Drupal 8 and 9 support, so pin `^1.2.2` only on core 10 or
+later. See [#3618675](https://www.drupal.org/i/3618675).
+
 ## Composer refuses to install drupal/druxt
 
 A stability error (`minimum-stability`) means a dependency's current

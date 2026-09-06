@@ -28,13 +28,13 @@ The Client requires the `baseUrl` for your Drupal backend:
 
 ```js
 import { DruxtClient } from 'druxt'
-const druxt = new DruxtClient('https://demo-api.druxtjs.org')
+const druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
 // (In CommonJS: const { DruxtClient } = require('druxt'))
 ```
 
 The UUIDs in the examples below are illustrative: the demo backend is
 reinstalled on every rollout, so its IDs change. List
-`https://demo-api.druxtjs.org/jsonapi/node/page` and take an `id` from
+`https://api.umami.demo.druxtjs.org/jsonapi/node/page` and take an `id` from
 the response before running them. Query a resource's fields rather than
 assuming names; Umami's body field, for one, is `field_body`, not
 `body`.
@@ -42,7 +42,7 @@ assuming names; Umami's body field, for one, is `field_body`, not
 It also provides an options object to configure the client:
 
 ```js
-const druxt = new DruxtClient('https://demo-api.druxtjs.org', {
+const druxt = new DruxtClient('https://api.umami.demo.druxtjs.org', {
   axios: {
     headers: { 'X-Custom-Header': true },
   },

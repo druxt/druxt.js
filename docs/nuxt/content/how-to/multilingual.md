@@ -15,24 +15,34 @@ components take a `langcode` prop, and the theme layer resolves
 language-specific components. This guide walks one translated page
 through all four.
 
-## Patch the router
+## Patch the backend
 
-Translated route resolution needs one patch on `decoupled_router` until
-[#3111456](https://www.drupal.org/project/decoupled_router/issues/3111456)
-is released:
+Prefixed-path routing relies on fixes that are written and reviewed but not
+yet released, so a multilingual backend needs them applied:
 
-```json
-"drupal/decoupled_router": {
-  "https://www.drupal.org/project/decoupled_router/issues/3111456#comment-15211077": "https://www.drupal.org/files/issues/2023-08-30/decoupled_router-3111456-resolve_lang-66.patch"
-}
-```
+| Project | Issue | Without it |
+| ------- | ----- | ---------- |
+| decoupled_router | [#3111456](https://www.drupal.org/i/3111456) | Prefixed paths resolve, but always in the default language |
+| druxt | [#3273228](https://www.drupal.org/i/3273228) | Views routes, the front page among them, resolve in the default language and return no langcode |
 
-The symptom without it is quiet: prefixed routes resolve, but to the
-default language.
+Copy the `extra.patches` block from
+[`docs/drupal/composer.json`](https://github.com/druxt/druxt.js/blob/develop/docs/drupal/composer.json)
+in this repository. Both entries point at the merge request diff on
+drupal.org, so you get whatever the branch currently holds rather than a
+copy that has to be maintained. That is the set the reference backend runs.
 
-Menus need `jsonapi_menu_items` 1.2.4 or later. Translated **Views**
-routes do not resolve yet, tracked in
-[druxt#3273228](https://www.drupal.org/project/druxt/issues/3273228).
+Applying them needs `cweagans/composer-patches` in `require` and in
+`config.allow-plugins`. Both are in the same file. Without the plugin,
+Composer ignores `extra.patches` and installs the modules unpatched.
+
+Take the versions `composer.json` pins along with the patches. A merge
+request is written against one release, and applying its diff to another
+will either fail or, worse, apply differently.
+
+Without the patches, prefixed routes still resolve, but in the wrong
+language, which looks like missing translations rather than a routing bug.
+
+Menus need `jsonapi_menu_items` 1.2.4 or later.
 
 ## Fetch a translated resource
 

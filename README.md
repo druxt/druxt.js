@@ -50,7 +50,7 @@ npm i druxt-site
 export default {
   modules: ['druxt-site'],
   druxt: {
-    baseUrl: 'https://demo-api.druxtjs.org',
+    baseUrl: 'https://api.umami.demo.druxtjs.org',
   },
 };
 ```

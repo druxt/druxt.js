@@ -6,7 +6,8 @@
 // the alarm.
 describe('Multilingual', () => {
   it('switches to Spanish from the language block and stays there', () => {
-    cy.visit('/')
+    // Every language has a URL prefix, so the homepage is /en.
+    cy.visit('/en')
 
     // The language switcher offers both languages.
     const languageBlock = '[data-fetch-key^="DruxtBlockLanguageBlock"]'
