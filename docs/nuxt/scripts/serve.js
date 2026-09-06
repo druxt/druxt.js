@@ -7,12 +7,44 @@
  * entry advertises - and answers unknown paths with the SPA shell as a 200.
  * This serves the same dist with the redirect reversed and a real 404
  * status, using node core only so the runtime image needs no dependencies.
+ *
+ * Legacy URLs are redirected from the same map nginx uses for the package
+ * subdomains. druxtjs.org itself is routed to this server, not nginx, so
+ * the map's druxtjs.org rules only take effect when answered here.
  */
 const http = require('http')
 const fs = require('fs')
 const path = require('path')
 
 const DIST = path.join(__dirname, '..', 'dist')
+
+// The image copies the map beside the site; a repo checkout has it in .lagoon.
+const REDIRECTS_MAPS = [
+  process.env.REDIRECTS_MAP,
+  path.join(__dirname, '..', 'redirects-map.conf'),
+  path.join(__dirname, '..', '..', '..', '.lagoon', 'redirects-map.conf'),
+].filter(Boolean)
+
+// A druxtjs.org rule: `~^(www\.)?druxtjs\.org<path regex>/?$ <target>;`
+const RULE = /^~\^\(www\\\.\)\?druxtjs\\\.org(\S+)\/\?\$\s+(\S+);$/
+
+/**
+ * Parse the druxtjs.org rules out of an nginx redirects map.
+ *
+ * Targets are made relative so a preview environment redirects within its
+ * own host, and slashless so the redirect lands in one hop.
+ *
+ * @param {string} conf - The map file contents.
+ * @returns {{ pattern: RegExp, target: string }[]} Rules in file order.
+ */
+const parseRedirects = (conf) => String(conf).split('\n').reduce((rules, line) => {
+  const match = line.trim().match(RULE)
+  if (!match || match[2].includes('$')) return rules
+  const target = match[2].replace(/^https:\/\/druxtjs\.org/, '').replace(/\/+$/, '')
+  return rules.concat({ pattern: new RegExp(`^${match[1]}/?$`), target: target || '/' })
+}, [])
+
+const loadRedirects = (file) => (file ? parseRedirects(fs.readFileSync(file, 'utf8')) : [])
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -79,7 +111,7 @@ const notModified = (req, stats) => {
   return Boolean(ims) && new Date(ims) >= new Date(stats.mtime.toUTCString())
 }
 
-const createHandler = (dist) => (req, res) => {
+const createHandler = (dist, redirects = []) => (req, res) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     return send(res, 405, { Allow: 'GET, HEAD' }, 'Method Not Allowed')
   }
@@ -93,6 +125,12 @@ const createHandler = (dist) => (req, res) => {
     search = url.search
   } catch (e) {
     return send(res, 400, {}, 'Bad Request')
+  }
+
+  // Legacy URLs go first so their slashed form also lands in one hop.
+  const legacy = redirects.find(({ pattern }) => pattern.test(pathname))
+  if (legacy) {
+    return send(res, 301, { Location: legacy.target + search })
   }
 
   // Canonical URLs carry no trailing slash: strip it with one permanent
@@ -118,12 +156,18 @@ const createHandler = (dist) => (req, res) => {
   return send(res, 404, { 'Content-Type': 'text/plain; charset=utf-8' }, 'Not Found', headOnly)
 }
 
-module.exports = { createHandler, DIST }
+module.exports = { createHandler, parseRedirects, loadRedirects, DIST, REDIRECTS_MAPS }
 
 if (require.main === module) {
   const host = process.env.HOST || '0.0.0.0'
   const port = Number(process.env.PORT) || 3000
-  http.createServer(createHandler(DIST)).listen(port, host, () => {
+  const map = REDIRECTS_MAPS.find((file) => statFile(file))
+  const redirects = loadRedirects(map)
+  http.createServer(createHandler(DIST, redirects)).listen(port, host, () => {
     process.stdout.write(`serve: ${DIST} on http://${host}:${port}\n`)
+    // Logged so a deploy shows whether the map made it into the image.
+    process.stdout.write(map
+      ? `serve: ${redirects.length} legacy redirects from ${map}\n`
+      : 'serve: no redirects map found, legacy URLs will 404\n')
   })
 }

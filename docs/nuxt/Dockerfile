@@ -10,6 +10,8 @@ RUN yarn build:docs
 # Build static files.
 FROM amazeeio/node:16@sha256:11f2d4ce2e741dbdc87cf4929e3a30f0d06ece1e137b33073aa291154d067316
 COPY --from=builder /app/docs/nuxt /app
+# scripts/serve.js answers the map's druxtjs.org rules; nginx never sees that host.
+COPY --from=builder /app/.lagoon/redirects-map.conf /app/redirects-map.conf
 
 # corepack reads docs/nuxt/package.json's own packageManager field (this
 # stage only has docs/nuxt, not the monorepo root, so it can't fall back to

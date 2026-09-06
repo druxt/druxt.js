@@ -3,7 +3,7 @@ import http from 'http'
 import os from 'os'
 import path from 'path'
 
-const { createHandler } = require('~/scripts/serve')
+const { createHandler, parseRedirects, loadRedirects, REDIRECTS_MAPS } = require('~/scripts/serve')
 
 const request = (server, urlPath, options = {}) => new Promise((resolve, reject) => {
   const { port } = server.address()
@@ -109,5 +109,78 @@ describe('scripts/serve', () => {
     expect(res.status).toBe(500)
     const after = await request(server, '/guide')
     expect(after.status).toBe(200)
+  })
+})
+
+describe('scripts/serve legacy redirects', () => {
+  const conf = [
+    '# comment',
+    '',
+    '~^(www\\.)?druxtjs\\.org/guide/theming/?$ https://druxtjs.org/how-to/theming;',
+    '~^(www\\.)?druxtjs\\.org/guide/deprecations\\.html/?$ https://druxtjs.org/modules/druxt/deprecations;',
+    '~^(www\\.)?druxtjs\\.org/api/menu\\.html/?$ https://druxtjs.org/api/packages/menu/;',
+    '~^blocks.druxtjs.org/api/mixins/block.html https://druxtjs.org/api/packages/blocks/mixins/block;',
+    '~^blocks.druxtjs.org https://druxtjs.org$request_uri;',
+  ].join('\n')
+
+  let dist
+  let server
+
+  beforeAll(async () => {
+    dist = fs.mkdtempSync(path.join(os.tmpdir(), 'serve-legacy-test-'))
+    fs.writeFileSync(path.join(dist, '404.html'), '<h1>not found</h1>')
+    server = http.createServer(createHandler(dist, parseRedirects(conf)))
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve))
+  })
+
+  afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve))
+    fs.rmSync(dist, { recursive: true, force: true })
+  })
+
+  test('parses only the druxtjs.org rules, with relative slashless targets', () => {
+    expect(parseRedirects(conf)).toEqual([
+      { pattern: /^\/guide\/theming\/?$/, target: '/how-to/theming' },
+      { pattern: /^\/guide\/deprecations\.html\/?$/, target: '/modules/druxt/deprecations' },
+      { pattern: /^\/api\/menu\.html\/?$/, target: '/api/packages/menu' },
+    ])
+  })
+
+  test('redirects a legacy URL permanently, query preserved', async () => {
+    const res = await request(server, '/guide/theming?ref=1')
+    expect(res.status).toBe(301)
+    expect(res.headers.location).toBe('/how-to/theming?ref=1')
+  })
+
+  test('the slashed and .html forms land in one hop', async () => {
+    const slashed = await request(server, '/guide/theming/')
+    expect(slashed.headers.location).toBe('/how-to/theming')
+    const html = await request(server, '/guide/deprecations.html')
+    expect(html.headers.location).toBe('/modules/druxt/deprecations')
+  })
+
+  test('a rule is anchored, not a prefix', async () => {
+    const res = await request(server, '/guide/theming-extra')
+    expect(res.status).toBe(404)
+  })
+
+  test('the repo map loads every druxtjs.org rule', () => {
+    const map = REDIRECTS_MAPS.find((file) => file.endsWith(path.join('.lagoon', 'redirects-map.conf')))
+    const rules = fs.readFileSync(map, 'utf8').split('\n')
+      .filter((line) => line.startsWith('~^(www\\.)?druxtjs\\.org'))
+    expect(rules.length).toBeGreaterThan(0)
+    const redirects = loadRedirects(map)
+    expect(redirects).toHaveLength(rules.length)
+    const legacy = (pathname) => (redirects.find(({ pattern }) => pattern.test(pathname)) || {}).target
+    expect(legacy('/guide')).toBe('/tutorials')
+    expect(legacy('/guide/getting-started')).toBe('/tutorials/getting-started')
+    expect(legacy('/guide/theming')).toBe('/how-to/theming')
+    expect(legacy('/guide/deprecations')).toBe('/modules/druxt/deprecations')
+    expect(legacy('/guides/node-client')).toBe('/how-to/use-the-druxt-client')
+    expect(legacy('/api/stores/schema.html')).toBe('/api/packages/schema/stores/schema')
+  })
+
+  test('no map means no redirects, not a crash', () => {
+    expect(loadRedirects(undefined)).toEqual([])
   })
 })
