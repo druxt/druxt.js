@@ -25,7 +25,7 @@ paths = [
   '''\.yarn/releases/yarn-[0-9.]+\.cjs$''',
 ]
 
-# --- Known finding, parked, tracked by druxt.js#100 ------------------------
+# --- Known finding, parked pending the provisioning fix -------------------
 #
 # docs/drupal/keys/private.key is a Simple OAuth signing key for the throwaway
 # SQLite docs backend, committed in 072a7150 (2022-08-10) and public since.
@@ -37,20 +37,21 @@ paths = [
 # No history purge. Four years public means the key is burned, and rewriting a
 # public repository's history would recover nothing. The fix is to stop
 # depending on a committed pair: generate it during .devtools/provision and
-# untrack keys/*.key. That is druxt.js#100.
+# untrack keys/*.key. Tracked separately; see the merge request that added
+# this entry for the decision and the fix outline.
 #
 # Scoped to this one path rather than to commit fingerprints, because the file
 # appears in many commits and a fingerprint list that missed one would leave the
 # job red for a reason nobody could find. It allowlists a single known file and
 # nothing else.
 #
-# Delete this entry when #100 untracks the file. The scan should then pass
+# Delete this entry when the key is untracked. The scan should then pass
 # because the key is gone, not because this is here.
 [[rules]]
 id = "private-key"
 
   [rules.allowlist]
-  description = "Committed docs backend OAuth key, tracked by druxt.js#100"
+  description = "Committed docs backend OAuth key, tracked for removal"
   paths = [
     'docs/drupal/keys/private\.key$',
   ]
