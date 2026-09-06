@@ -16,11 +16,61 @@ stages:
 variables:
   SECRET_DETECTION_ENABLED: 'true'
 
-include:
-  - template: Security/Secret-Detection.gitlab-ci.yml
-
+# Secret scanning is gitleaks, not GitLab's Security/Secret-Detection
+# template. That template is an Ultimate-tier feature: on a non-Ultimate
+# instance the include produces no job at all, so the configuration reads as
+# coverage while scanning nothing. This job was previously that include, and
+# was both required and inert, which is the worst of the two.
 secret_detection:
   stage: secret-detection
+  image: alpine:3.21
+  interruptible: true
+  # gitleaks reads git history and needs nothing this pipeline builds.
+  dependencies: []
+  variables:
+    GITLEAKS_VERSION: '8.30.1'
+    GITLEAKS_SHA256: '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb'
+  script:
+    - section_start "gitleaks" "Scanning for committed secrets"
+    - apk add --no-cache curl tar git > /dev/null
+    - curl -sSLo gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+    - echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
+    - tar -xzf gitleaks.tar.gz gitleaks
+    - ./gitleaks detect --source . --no-banner --redact --verbose
+    - section_end "gitleaks"
+    # A scan that finds nothing looks identical to a scan that cannot find
+    # anything. Plant three credentials outside the repository and assert all
+    # three are reported, so a bad download, a config change or a widened
+    # allowlist fails the job instead of passing it quietly.
+    #
+    # Each value is split across its own prefix so no fragment in this file
+    # triggers the rule it is meant to exercise: the repository scan above runs
+    # over this file too, and a canary that flags itself would need an ignore
+    # entry, which is the thing being guarded against.
+    #
+    # Fixed values, not generated ones. Detection is keyword-driven rather than
+    # entropy-driven, so a generated credential fires only sometimes and
+    # presents as flake. A value verified once keeps firing. Invented, not
+    # copied from vendor documentation: gitleaks allowlists documentation keys,
+    # and a canary built from one is inert in exactly the way this catches.
+    - section_start "canary" "Checking that the scanner still detects"
+    - |
+      canary="$(mktemp -d)"
+      pat="gh""p_8fK2mQ7xR4tV9nB3jH6yW1sZ5cD8gL0aE4uY"
+      stripe="sk""_live_51aBcD2eFgH3iJkL4mNoP5qR6sTuV7wXyZ8a"
+      slack="xo""xb-263594753641-2529420432-J1n4h6a9pQrStUvWxYz1AbCd"
+      printf 'a = "%s"\nb = "%s"\nc = "%s"\n' "$pat" "$stripe" "$slack" > "$canary/canary.txt"
+      ./gitleaks detect --no-git --source "$canary" --no-banner --redact \
+        --report-format json --report-path "$canary/report.json" || true
+      found=$(grep -c '"RuleID"' "$canary/report.json" || true)
+      rm -rf "$canary"
+      if [ "$found" != "3" ]; then
+        echo "The canary planted 3 credentials and gitleaks reported $found."
+        echo "The scan above proves nothing while this is true."
+        exit 1
+      fi
+      echo "Canary detected 3 of 3 planted credentials."
+    - section_end "canary"
 
 workflow:
   rules:
@@ -323,6 +373,45 @@ test:unit:
     reports:
       junit: reports/junit/junit.xml
 
+# Mirrors the GitHub build job. Nothing here needs Drupal, so it is ungated:
+# a package that does not build is worth knowing about on every pipeline, and
+# it is the cheapest signal in the file.
+test:build:
+  extends: .node
+  stage: test
+  interruptible: true
+  needs: []
+  script:
+    - section_start "build" "Building every package and the API docs"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - section_end "build"
+    # A build that produces nothing still exits zero. Assert the artefacts
+    # exist, or this job passes on an empty dist.
+    - section_start "verify" "Checking the build produced artefacts"
+    - |
+      set -euo pipefail
+      count=$(find packages -mindepth 3 -path '*/dist/*.js' | wc -l)
+      echo "$count built file(s) under packages/*/dist"
+      [ "$count" -gt 0 ] || { echo "yarn build produced no dist output" >&2; exit 1; }
+    - section_end "verify"
+
+# Mirrors the GitHub test-node-client job. No backend, so ungated.
+test:node-client:
+  extends: .node
+  stage: test
+  interruptible: true
+  needs: []
+  script:
+    - section_start "node-client" "Running the node client tests"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn test:node-client
+    - section_end "node-client"
+
 #
 # --- Preview Stage ---
 #
@@ -597,6 +686,202 @@ audit:seo:
 
 # Manual: provisions docs/drupal + the example apps and exposes each over a
 # Cloudflare quick tunnel for as long as the job runs. Click "Run" on this job,
+#
+# --- Drupal-backed jobs ---
+#
+# One provisioner, shared. docs/drupal is installed with plain Composer against
+# SQLite and served by PHP's built-in server: no Docker, no DDEV. An earlier
+# attempt at docker:dind plus DDEV on this runner hit an arm64/amd64 image
+# mismatch and then unresolvable service networking, which is why this shape
+# exists.
+#
+# Jobs inherit this with `extends:` and provision their own backend. They must
+# not `needs:` a shared provisioning job: a provisioner skipped by its own
+# rules would take its dependents with it, and the pipeline would report "e2e
+# did not run" rather than "e2e was gated out". A second provision when two
+# jobs run is the right price for that.
+.drupal-backend:
+  image: php:8.3
+  interruptible: true
+  variables:
+    WEBSERVER_HOST: 127.0.0.1
+    WEBSERVER_PORT: '8888'
+    # python3/make/g++: the monorepo's native addons (deasync, re2) need
+    # a compile toolchain that the minimal php image lacks.
+    PHP_APT_PACKAGES: 'git unzip curl ca-certificates python3 python3-setuptools build-essential libsqlite3-dev libzip-dev libicu-dev libpng-dev libjpeg62-turbo-dev libfreetype6-dev libonig-dev libxml2-dev'
+    PHP_EXTENSIONS: 'mbstring pdo_sqlite intl gd xml zip opcache'
+  cache:
+    - key:
+        files:
+          - yarn.lock
+        prefix: php83-node16
+      paths:
+        - .yarn/cache/
+        - node_modules/
+      policy: pull-push
+    - key:
+        files:
+          - docs/drupal/composer.lock
+        prefix: php83
+      paths:
+        - docs/drupal/vendor/
+      policy: pull-push
+  before_script:
+    # default.before_script's section helpers are replaced by this
+    # before_script, so redefine them here.
+    - 'section_start() { local n="$1" t="${2:-$1}"; printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)" "$n" "$t"; }'
+    - 'section_end() { printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)" "$1"; }'
+    - apt-get update -yqq && apt-get install -yqq $PHP_APT_PACKAGES
+    - docker-php-ext-configure gd --with-freetype --with-jpeg
+    - docker-php-ext-install -j"$(nproc)" $PHP_EXTENSIONS
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=2.10.2
+    - export NVM_DIR="$HOME/.nvm" && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    - . "$NVM_DIR/nvm.sh" --no-use && nvm install && nvm use
+    - node --version
+    - corepack enable
+
+# Provisioning steps, pulled into a job's script with
+# `!reference [.provision-backend, script]`. A hidden job rather than a YAML
+# anchor so it composes with the rest of a script list.
+.provision-backend:
+  script:
+    - section_start "backend" "Provisioning the docs/drupal backend (SQLite, Docker-free)"
+    - |
+      set -euo pipefail
+      cd docs/drupal
+      .devtools/assemble
+      .devtools/provision
+      nohup .devtools/start > /tmp/drupal-start.log 2>&1 &
+      cd "$CI_PROJECT_DIR"
+    - |
+      for i in $(seq 1 60); do
+        if curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null 2>&1; then echo "backend up"; break; fi
+        sleep 5
+      done
+      # Not just the loop: a loop that times out still falls through, so
+      # assert once more and fail rather than continue against no backend.
+      curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null
+    - section_end "backend"
+
+# Cypress on top of the backend. The browser packages and the install are the
+# only difference; the runner is known to support this, because
+# packages/quickstart runs blocking Cypress on it today.
+.cypress:
+  extends: .drupal-backend
+  stage: test
+  needs: []
+  variables:
+    CYPRESS_APT_PACKAGES: 'libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
+  before_script:
+    - !reference [.drupal-backend, before_script]
+    - apt-get install -yqq $CYPRESS_APT_PACKAGES
+  artifacts:
+    when: on_failure
+    paths:
+      - examples/druxt-site/test/cypress/screenshots
+      - examples/druxt-site/test/cypress/videos
+      - docs/nuxt/test/cypress/screenshots
+      - docs/nuxt/test/cypress/videos
+    expire_in: 1 week
+
+# The druxtjs.org suite. The site deploys from main, so a merge request
+# targeting main gets the full run whatever it touched; other merge requests
+# get it only when the site or its backend changed.
+#
+# `changes:` is paired with the merge-request condition rather than used on a
+# branch pipeline, where it compares against the previous push and is not a
+# reliable statement about the change under review. audit:seo already uses
+# this idiom in this file.
+test:e2e:site:
+  extends: .cypress
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+    - if: $CI_COMMIT_BRANCH == 'main'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - docs/nuxt/**/*
+        - docs/drupal/**/*
+        # A change to the pipeline re-runs the jobs the pipeline defines.
+        # Without this, a merge request that only edits this file cannot
+        # exercise what it changes.
+        - .gitlab-ci.yml
+  script:
+    - !reference [.provision-backend, script]
+    - section_start "build" "Building the monorepo and the API docs"
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - section_end "build"
+    - section_start "cypress" "Running the druxtjs.org suite"
+    - npx cypress install
+    - |
+      yarn start-server-and-test docs:dev http://localhost:3000 \
+        'npx cypress run --project docs/nuxt/test'
+    - section_end "cypress"
+
+# The two examples/druxt-site suites. These exercise the packages against the
+# real backend, and are what caught the decoupled_router isHomePath
+# regression that a green GitLab pipeline had missed.
+test:e2e:packages:
+  extends: .cypress
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'develop' || $CI_COMMIT_BRANCH == 'main'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - packages/**/*
+        - examples/druxt-site/**/*
+        - docs/drupal/**/*
+        - yarn.lock
+        # See the note on test:e2e:site.
+        - .gitlab-ci.yml
+  script:
+    - !reference [.provision-backend, script]
+    - section_start "build" "Building the monorepo"
+    - yarn install --immutable
+    - yarn build
+    - section_end "build"
+    - section_start "cypress-nuxt" "DruxtSite against the backend"
+    - npx cypress install
+    - yarn example:druxt-site:test
+    - section_end "cypress-nuxt"
+    - section_start "cypress-storybook" "DruxtSite Storybook"
+    - yarn example:druxt-site:storybook:test
+    - section_end "cypress-storybook"
+
+# Mirrors the GitHub test-examples matrix. Same path rule as the packages
+# suites: these break for the same reasons.
+test:examples:
+  extends: .cypress
+  parallel:
+    matrix:
+      - EXAMPLE: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'develop' || $CI_COMMIT_BRANCH == 'main'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - packages/**/*
+        - examples/druxt-site/**/*
+        - docs/drupal/**/*
+        - yarn.lock
+        # See the note on test:e2e:site.
+        - .gitlab-ci.yml
+  script:
+    - !reference [.provision-backend, script]
+    - section_start "build" "Building the monorepo"
+    - yarn install --immutable
+    - yarn build
+    - section_end "build"
+    - section_start "example" "Testing $EXAMPLE against the backend"
+    - npx cypress install
+    - yarn "example:${EXAMPLE}:test"
+    - section_end "example"
+  artifacts:
+    when: on_failure
+    paths:
+      - examples/$EXAMPLE/test/cypress/screenshots
+      - examples/$EXAMPLE/test/cypress/videos
+    expire_in: 1 week
+
 # then watch its log for the https://*.trycloudflare.com URLs.
 #
 # Variables (all settable when triggering):
@@ -620,6 +905,9 @@ audit:seo:
 # committed to localhost:3004/callback. That app is read-only over tunnels;
 # use the devcontainer (or a local checkout) for its login flow.
 examples:preview:
+  # Same backend template as the e2e jobs, so there is one provisioner in this
+  # file rather than three copies drifting apart.
+  extends: .drupal-backend
   stage: preview
   interruptible: false
   when: manual
@@ -627,7 +915,6 @@ examples:preview:
   allow_failure: true
   resource_group: examples-preview
   timeout: 6h
-  image: php:8.3
   variables:
     PREVIEW_EXAMPLES: 'site,daisyui,tailwind,bootstrapvue'
     PREVIEW_MODE: 'dev'
@@ -638,12 +925,8 @@ examples:preview:
     # reaching the job - it was unprotected before that, so this whole
     # branch never ran).
     CODE_SERVER_VERSION: '4.132.0'
-    WEBSERVER_HOST: 127.0.0.1
-    WEBSERVER_PORT: '8888'
-    # python3/make/g++: the monorepo's native addons (deasync, re2) need
-    # a compile toolchain that the minimal php image lacks.
-    PHP_APT_PACKAGES: 'git unzip curl ca-certificates python3 python3-setuptools build-essential libsqlite3-dev libzip-dev libicu-dev libpng-dev libjpeg62-turbo-dev libfreetype6-dev libonig-dev libxml2-dev'
-    PHP_EXTENSIONS: 'mbstring pdo_sqlite intl gd xml zip opcache'
+    # WEBSERVER_HOST, WEBSERVER_PORT, PHP_APT_PACKAGES and PHP_EXTENSIONS come
+    # from .drupal-backend.
   cache:
     - key:
         files:
@@ -667,18 +950,11 @@ examples:preview:
         - examples/*/node_modules/
       policy: pull-push
   before_script:
-    # default.before_script's section helpers are replaced by this
-    # before_script, so redefine them here.
-    - 'section_start() { local n="$1" t="${2:-$1}"; printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)" "$n" "$t"; }'
-    - 'section_end() { printf "\e[0Ksection_end:%s\r\e[0K\n" "$(date +%s)" "$1"; }'
-    - apt-get update -yqq && apt-get install -yqq $PHP_APT_PACKAGES
-    - docker-php-ext-configure gd --with-freetype --with-jpeg
-    - docker-php-ext-install -j"$(nproc)" $PHP_EXTENSIONS
-    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=2.10.2
-    - export NVM_DIR="$HOME/.nvm" && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-    - . "$NVM_DIR/nvm.sh" --no-use && nvm install && nvm use
-    - node --version
-    - corepack enable
+    - !reference [.drupal-backend, before_script]
+    # cloudflared is preview-only, so it stays here rather than in the shared
+    # template. Checksums are per architecture and pinned: an unverified binary
+    # that opens a public tunnel to this build is not something to fetch on
+    # trust, and this runner may be either.
     - |
       cf_version="2026.7.3"
       arch="$(uname -m)"
@@ -697,21 +973,7 @@ examples:preview:
       echo "${cf_sha256}  /usr/local/bin/cloudflared" | sha256sum -c - || { echo "cloudflared checksum mismatch" >&2; exit 1; }
       chmod +x /usr/local/bin/cloudflared
   script:
-    - section_start "backend" "Provisioning the docs/drupal backend (SQLite, Docker-free)"
-    - |
-      set -euo pipefail
-      cd docs/drupal
-      .devtools/assemble
-      .devtools/provision
-      nohup .devtools/start > /tmp/drupal-start.log 2>&1 &
-      cd "$CI_PROJECT_DIR"
-    - |
-      for i in $(seq 1 60); do
-        if curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null 2>&1; then echo "backend up"; break; fi
-        sleep 5
-      done
-      curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null
-    - section_end "backend"
+    - !reference [.provision-backend, script]
     - section_start "frontend" "Building the monorepo and starting the example apps"
     - |
       set -euo pipefail
