@@ -40,7 +40,7 @@ jobs:
             if files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename'); then
               deps=false; site=false; packages=false
               echo "$files" | grep -qE '(^|/)(yarn\.lock|package\.json|\.yarnrc\.yml)$' && deps=true
-              echo "$files" | grep -qE '^(docs/nuxt/|packages/docgen/|packages/[^/]+/README\.md)' && site=true
+              echo "$files" | grep -qE '^(docs/nuxt/|packages/docgen/|packages/[^/]+/README\.md|\.lagoon/)' && site=true
               echo "$files" | grep -qE '^packages/' && packages=true
             else
               echo "file listing failed; running everything" >&2
