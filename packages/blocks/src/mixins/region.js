@@ -3,6 +3,7 @@
  * component.
  *
  * @mixin
+ * @see https://druxtjs.org/modules/blocks
  *
  * @example @lang vue
  * <template>
@@ -22,7 +23,7 @@
     /**
      * The Block JSON:API resources.
      *
-     * @type {objects[]}
+     * @type {object[]}
      * @required
      */
     blocks: {
@@ -41,7 +42,8 @@
     },
 
     /**
-     * The Block regions machine name.
+     * A region machine name from the Drupal theme's block layout
+     * (/admin/structure/block).
      *
      * @type {string}
      * @default content
@@ -52,7 +54,7 @@
     },
 
     /**
-     * A Drupal theme machine name.
+     * The machine name of the Drupal theme that provides the block layout.
      *
      * @type {string}
      * @required

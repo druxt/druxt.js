@@ -1,12 +1,14 @@
 /**
- * Provides a mechanism for rendering custom Vue.js components for targetted theming.
+ * Provides a mechanism for rendering custom Vue.js components for targeted theming.
  *
  * Suggestion rules are configurable via:
  * - Global suggestions in the `nuxt.config.js` file.
  * - Component specific suggestions in the relevant Vue.js file.
  *
  * @mixin
- * @deprecated
+ * @deprecated in druxt-entity:0.5.0 and is removed from druxt-entity:2.0.0.
+ *   Use DruxtModule's component suggestion system instead.
+ * @see https://druxtjs.org/modules/entity/deprecations
  * @private
  *
  * @example @lang js
@@ -69,7 +71,7 @@ const DruxtEntityComponentSuggestionMixin = {
      * Returns the first item of the Suggested components array that has a
      * registered Vue.js component.
      *
-     * @type string
+     * @type {string}
      * @default div
      */
     component() {
@@ -88,7 +90,7 @@ const DruxtEntityComponentSuggestionMixin = {
      * Contains an Array of possible Component names calculated by the
      * Suggestion Rules and Token context.
      *
-     * @type {string[]}.
+     * @type {string[]}
      */
     suggestions() {
       const suggestions = []

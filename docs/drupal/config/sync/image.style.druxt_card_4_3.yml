@@ -1,0 +1,15 @@
+uuid: 5f0f7149-8f2e-4c07-9581-7d68a97bf353
+langcode: en
+status: true
+dependencies: {}
+name: druxt_card_4_3
+label: 'Druxt Card 4:3'
+effects:
+  3bbde2a0-d806-49d3-a318-6dd4e2b47d51:
+    uuid: 3bbde2a0-d806-49d3-a318-6dd4e2b47d51
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 600
+      height: 450
+      anchor: center-center

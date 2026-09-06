@@ -5,7 +5,7 @@
       v-model="model"
       size="60"
       type="text"
-    ></input>
+    />
   </div>
 </template>
 

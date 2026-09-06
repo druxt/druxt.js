@@ -12,7 +12,7 @@ import meta from '../../package.json'
  * @example <caption>Nuxt configuration with module options</caption> @lang js
  * module.exports = {
  *   modules: [
- *     ['druxt', { baseUrl: 'https://demo-api.druxtjs.org' }]
+ *     ['druxt', { baseUrl: 'https://api.umami.demo.druxtjs.org' }]
  *   ]
  * }
  *
@@ -22,7 +22,7 @@ import meta from '../../package.json'
  *     'druxt'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  */
@@ -219,7 +219,7 @@ export { DruxtNuxtModule }
  * export default {
  *   modules: ['druxt'],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org',
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org',
  *     endpoint: '/jsonapi',
  *     proxy: {
  *       api: true,

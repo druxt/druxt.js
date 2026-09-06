@@ -1,19 +1,19 @@
-uuid: 1055b70b-db77-45df-bfd7-0933889fa0b1
+uuid: c3cbc22e-f2a0-4f08-aebd-b2319d1935f9
 langcode: en
 status: true
 dependencies:
   module:
     - node
 _core:
-  default_config_hash: KBAsj-0Ku-LoXFwASCdDJQf7EXvfMNnTAYgqSM1fyUE
+  default_config_hash: AQ1aW930W_9KZ73o6X1iqvDnAPefFOPaKluiXklRQtA
 id: node.field_ingredients
 field_name: field_ingredients
 entity_type: node
 type: string
 settings:
   max_length: 255
-  is_ascii: false
   case_sensitive: false
+  is_ascii: false
 module: core
 locked: false
 cardinality: -1

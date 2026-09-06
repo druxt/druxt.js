@@ -1,0 +1,61 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "node--recipe",
+      "id": "62a560b5-1954-4bf7-ba87-609ce73675e0",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/node/recipe/62a560b5-1954-4bf7-ba87-609ce73675e0?resourceVersion=id%3A59"
+        }
+      },
+      "attributes": {
+        "title": "Deep mediterranean quiche",
+        "langcode": "en"
+      }
+    },
+    {
+      "type": "node--recipe",
+      "id": "67f44980-de26-4567-82f4-b058595720ec",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/node/recipe/67f44980-de26-4567-82f4-b058595720ec?resourceVersion=id%3A60"
+        }
+      },
+      "attributes": {
+        "title": "Vegan chocolate and nut brownies",
+        "langcode": "en"
+      }
+    },
+    {
+      "type": "node--recipe",
+      "id": "beba18d8-5a05-47b7-8757-5d76e86da8c5",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/node/recipe/beba18d8-5a05-47b7-8757-5d76e86da8c5?resourceVersion=id%3A61"
+        }
+      },
+      "attributes": {
+        "title": "Super easy vegetarian pasta bake",
+        "langcode": "en"
+      }
+    }
+  ],
+  "links": {
+    "next": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/node/recipe?page%5Boffset%5D=3&page%5Blimit%5D=3&fields%5Bnode--recipe%5D=drupal_internal__id%2Ctitle%2Cname%2Clabel%2Cinfo%2Cdisplay_name%2Clangcode"
+    },
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/node/recipe?fields%5Bnode--recipe%5D=drupal_internal__id%2Ctitle%2Cname%2Clabel%2Cinfo%2Cdisplay_name%2Clangcode&page%5Blimit%5D=3"
+    }
+  }
+}

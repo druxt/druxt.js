@@ -1,79 +1,74 @@
 <template>
-  <div>
-    <!-- TODO: Add link to GitHub -->
-    <div class="text-sm breadcrumbs">
-      <ul>
-        <li v-for="({ text, path }, index) of dirs" :key="index">
-          <NuxtLink v-if="path" :to="path" v-text="text" />
-          <span v-else v-text="text" />
-        </li>
-      </ul>
-    </div>
-    <h2 class="mb-5 text-3xl">{{ title }}</h2>
+  <article>
 
-    <div>
-      <!-- TODO: Link to module page? -->
-      <div v-if="module" class="badge badge-primary">{{ module }}</div>
-      <!-- TODO: Add file type badge; Component, Mixin, etc -->
-    </div>
+    <!-- Skipped on a package's API root: the layout's module header there
+         carries the same title and the same source link. -->
+    <AppPageHeader v-if="!inModuleHeader" :title="document.title">
+      <a
+        v-if="source"
+        class="mt-5 inline-flex items-center gap-2 text-sm text-base-content/70 hover:text-primary-focus"
+        :href="source"
+        target="_blank"
+        rel="noopener"
+      >
+        <AppIconExternal class="w-4 h-4" /> View source on GitHub
+      </a>
+    </AppPageHeader>
 
-    <NuxtContent
-      v-if="document"
-      class="prose prose-sm sm:prose lg:prose-lg xl:prose-xl"
-      :document="document"
-    />
-  </div>
+    <AppProse :document="document" />
+  </article>
 </template>
 
 <script>
+import { seoHead } from '~/utils/seo'
+import { documentDescription } from '~/utils/content'
+import { isPackageRoot } from '~/components/app/icon/module'
 export default {
-  name: "AppApiDocument",
+  name: 'AppApiDocument',
 
   async asyncData({ $content, error, params, store, route }) {
-    let response;
+    let path = params.pathMatch || 'README'
+    if (path.endsWith('/')) path += 'index'
+
+    let document
     try {
-      let path = params.pathMatch || "README";
-      if (path.endsWith("/")) path += "index";
-      response = await $content("api/", path).fetch();
-      if (Array.isArray(response)) {
-        response = await $content("api/", params.pathMatch + "/index").fetch();
+      document = await $content('api/', path).fetch()
+      if (Array.isArray(document)) {
+        document = await $content('api/', params.pathMatch + '/index').fetch()
       }
     } catch (e) {
-      return error({ message: "Document not found" });
+      return error({ statusCode: 404, message: 'Document not found' })
     }
 
-    store.commit("addRecent", { text: response.title, to: route.path });
+    store.commit('addRecent', { text: document.title, to: route.path })
+    store.commit('setToc', document.toc || [])
 
-    return { document: response };
+    return { document }
   },
 
   head() {
-    return {
+    return seoHead({
       title: this.document.title,
-    };
+      description: documentDescription(this.document),
+      path: this.$route.path,
+    })
   },
 
   computed: {
-    module: ({ document }) => document.dir.split("/")[3],
+    /**
+     * Whether the layout's module header is already this page's header,
+     * carrying the same title and the same source link.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.$route - The current route.
+     * @returns {boolean} True on a module package's API root.
+     */
+    inModuleHeader: ({ $route }) => isPackageRoot($route.path),
 
-    dirs: ({ document }) => {
-      const dirs = document.dir.replace("/api/", "src/").split("/");
-      return dirs.map((dir, index) => {
-        let path;
-        if (index === 1) path = "/api";
-        if (index > 1)
-          path = dirs
-            .slice(0, index + 1)
-            .join("/")
-            .replace("src/", "/api/");
-        return {
-          path,
-          text: dir,
-        };
-      });
-    },
+    source: ({ document }) => (document.dir
+      ? 'https://github.com/druxt/druxt.js/tree/develop' + document.dir.replace('/api/packages', '/packages')
+      : null),
 
-    title: ({ document }) => document.title,
   },
-};
+}
 </script>

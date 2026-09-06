@@ -1,0 +1,91 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_form_display--entity_form_display",
+      "id": "ab3d60e9-2335-4834-952d-7eb9907df572",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_form_display/entity_form_display/ab3d60e9-2335-4834-952d-7eb9907df572"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": ["contact.form.feedback"]
+        },
+        "drupal_internal__id": "contact_message.feedback.default",
+        "targetEntityType": "contact_message",
+        "bundle": "feedback",
+        "mode": "default",
+        "content": {
+          "copy": {
+            "weight": 4,
+            "region": "content",
+            "settings": [],
+            "third_party_settings": []
+          },
+          "langcode": {
+            "type": "language_select",
+            "weight": 2,
+            "region": "content",
+            "settings": {
+              "include_locked": true
+            },
+            "third_party_settings": []
+          },
+          "mail": {
+            "weight": 1,
+            "region": "content",
+            "settings": [],
+            "third_party_settings": []
+          },
+          "message": {
+            "type": "string_textarea",
+            "weight": 3,
+            "region": "content",
+            "settings": {
+              "rows": 12,
+              "placeholder": ""
+            },
+            "third_party_settings": []
+          },
+          "name": {
+            "weight": 0,
+            "region": "content",
+            "settings": [],
+            "third_party_settings": []
+          },
+          "subject": {
+            "type": "string_textfield",
+            "weight": 2,
+            "region": "content",
+            "settings": {
+              "size": 60,
+              "placeholder": ""
+            },
+            "third_party_settings": []
+          }
+        },
+        "hidden": {
+          "preview": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/entity_form_display/entity_form_display?filter%5Bdrupal_internal__id%5D=contact_message.feedback.default"
+    }
+  }
+}

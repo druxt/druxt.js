@@ -1,303 +1,170 @@
 # druxt-site
 
-## 0.14.3
+## 0.14.3 - 2024-01-08
 
 ### Patch Changes
 
-- Updated dependencies [26b1bc6f]
-  - druxt-menu@0.21.0
+- Updated dependencies: druxt-menu@0.21.0.
 
-## 0.14.2
-
-### Patch Changes
-
-- Updated dependencies [62980259]
-  - druxt-menu@0.20.0
-
-## 0.14.1
+## 0.14.2 - 2023-07-25
 
 ### Patch Changes
 
-- Updated dependencies [41cab3a0]
-  - druxt-views@0.22.0
-  - druxt@0.22.0
-  - druxt-entity@0.28.0
-  - druxt-blocks@0.17.1
-  - druxt-breadcrumb@0.17.1
-  - druxt-menu@0.19.1
-  - druxt-router@0.29.1
-  - druxt-schema@0.11.2
+- Updated dependencies: druxt-menu@0.20.0.
 
-## 0.14.0
+## 0.14.1 - 2023-07-05
+
+### Patch Changes
+
+- Updated dependencies: druxt-views@0.22.0, druxt@0.22.0, druxt-entity@0.28.0, druxt-blocks@0.17.1, druxt-breadcrumb@0.17.1, druxt-menu@0.19.1, druxt-router@0.29.1, druxt-schema@0.11.2.
+
+## 0.14.0 - 2022-11-03
 
 ### Minor Changes
 
-- f6b4a664: feat(#578): updated component to support the DruxtDevelTemplate tool.
+- Updated component to support the DruxtDevelTemplate tool. ([#578](https://github.com/druxt/druxt.js/issues/578), [`f6b4a66`](https://github.com/druxt/druxt.js/commit/f6b4a664))
 
 ### Patch Changes
 
-- Updated dependencies [39af33a4]
-  - druxt-entity@0.27.0
-  - druxt-views@0.21.0
-  - druxt@0.21.0
-  - druxt-menu@0.19.0
-  - druxt-router@0.29.0
-  - druxt-breadcrumb@0.17.0
-  - druxt-blocks@0.17.0
-  - druxt-schema@0.11.1
+- Updated dependencies: druxt-entity@0.27.0, druxt-views@0.21.0, druxt@0.21.0, druxt-menu@0.19.0, druxt-router@0.29.0, druxt-breadcrumb@0.17.0, druxt-blocks@0.17.0, druxt-schema@0.11.1.
 
-## 0.13.0
+## 0.13.0 - 2022-08-12
 
 ### Minor Changes
 
-- 2f2a7cce: Added watch for 'theme' prop.
+- Changed the default menu data source to the JSON:API Menu Items module. ([#539](https://github.com/druxt/druxt.js/issues/539), [`3330187`](https://github.com/druxt/druxt.js/commit/33301873))
+- Added watch for 'theme' prop. ([`2f2a7cc`](https://github.com/druxt/druxt.js/commit/2f2a7cce))
 
 ### Patch Changes
 
-- fc811db3: Add DruxtModule props to component module stories.
-- Updated dependencies [49b67872]
-  - druxt-menu@0.18.0
-  - druxt-router@0.28.0
-  - druxt-blocks@0.16.3
-  - druxt-breadcrumb@0.16.0
-  - druxt-entity@0.26.0
-  - druxt-views@0.20.0
-  - druxt@0.20.0
-  - druxt-schema@0.11.0
+- Added DruxtModule props to component module stories. ([`fc811db`](https://github.com/druxt/druxt.js/commit/fc811db3))
+- Updated dependencies: druxt-menu@0.18.0, druxt-router@0.28.0, druxt-blocks@0.16.3, druxt-breadcrumb@0.16.0, druxt-entity@0.26.0, druxt-views@0.20.0, druxt@0.20.0, druxt-schema@0.11.0.
 
-## 0.12.1
+## 0.12.1 - 2022-07-08
 
 ### Patch Changes
 
-- 45e14b84: Fixed support for nuxt/storybook.
-- Updated dependencies [352b7a51]
-  - druxt@0.19.3
-  - druxt-entity@0.25.1
-  - druxt-views@0.19.1
-  - druxt-blocks@0.16.2
-  - druxt-breadcrumb@0.15.1
-  - druxt-menu@0.17.1
-  - druxt-router@0.27.4
+- Fixed support for nuxt/storybook. ([`45e14b8`](https://github.com/druxt/druxt.js/commit/45e14b84))
+- Updated dependencies: druxt@0.19.3, druxt-entity@0.25.1, druxt-views@0.19.1, druxt-blocks@0.16.2, druxt-breadcrumb@0.15.1, druxt-menu@0.17.1, druxt-router@0.27.4.
 
-## 0.12.0
+## 0.12.0 - 2022-05-23
 
 ### Minor Changes
 
-- be21952: Added out of the box multilingual support.
-- be21952: Added langcode to component mixins.
+- Added out-of-the-box multilingual support. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
+- Added langcode to component mixins. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
 
 ### Patch Changes
 
-- Updated dependencies [be21952]
-  - druxt@0.19.0
-  - druxt-router@0.27.0
-  - druxt-blocks@0.16.0
-  - druxt-menu@0.17.0
-  - druxt-entity@0.25.0
-  - druxt-breadcrumb@0.15.0
-  - druxt-views@0.19.0
-  - druxt-schema@0.10.4
+- Updated dependencies: druxt@0.19.0, druxt-router@0.27.0, druxt-blocks@0.16.0, druxt-menu@0.17.0, druxt-entity@0.25.0, druxt-breadcrumb@0.15.0, druxt-views@0.19.0, druxt-schema@0.10.4.
 
-## 0.11.2
+## 0.11.2 - 2022-04-14
 
 ### Patch Changes
 
-- 540afca: Updated drupal-jsonapi-params to 2.0.0
-- Updated dependencies [c6d7c83]
-- Updated dependencies [540afca]
-  - druxt-views@0.18.2
-  - druxt-blocks@0.15.2
-  - druxt@0.18.2
-  - druxt-entity@0.24.3
-  - druxt-menu@0.16.3
-  - druxt-schema@0.10.3
+- Updated drupal-jsonapi-params to 2.0.0. ([`540afca`](https://github.com/druxt/druxt.js/commit/540afca))
+- Updated dependencies: druxt-views@0.18.2, druxt-blocks@0.15.2, druxt@0.18.2, druxt-entity@0.24.3, druxt-menu@0.16.3, druxt-schema@0.10.3.
 
-## 0.11.1
+## 0.11.1 - 2022-02-23
 
 ### Patch Changes
 
-- Updated dependencies [e3d5238]
-  - druxt-schema@0.10.2
-  - druxt@0.18.0
-  - druxt-blocks@0.15.1
-  - druxt-breadcrumb@0.14.1
-  - druxt-entity@0.24.2
-  - druxt-menu@0.16.1
-  - druxt-router@0.26.1
-  - druxt-views@0.18.1
+- Updated dependencies: druxt-schema@0.10.2, druxt@0.18.0, druxt-blocks@0.15.1, druxt-breadcrumb@0.14.1, druxt-entity@0.24.2, druxt-menu@0.16.1, druxt-router@0.26.1, druxt-views@0.18.1.
 
-## 0.11.0
+## 0.11.0 - 2022-02-07
 
 ### Minor Changes
 
-- b79701c: feat(#249): Improved DruxtSite storybook stories and documentation.
+- Improved DruxtSite storybook stories and documentation. ([#249](https://github.com/druxt/druxt.js/issues/249), [`b79701c`](https://github.com/druxt/druxt.js/commit/b79701c))
 
 ### Patch Changes
 
-- Updated dependencies [b79701c]
-  - druxt-router@0.26.0
-  - druxt-blocks@0.15.0
-  - druxt@0.17.0
-  - druxt-views@0.18.0
-  - druxt-menu@0.16.0
-  - druxt-entity@0.24.0
-  - druxt-breadcrumb@0.14.0
-  - druxt-schema@0.10.1
+- Updated dependencies: druxt-router@0.26.0, druxt-blocks@0.15.0, druxt@0.17.0, druxt-views@0.18.0, druxt-menu@0.16.0, druxt-entity@0.24.0, druxt-breadcrumb@0.14.0, druxt-schema@0.10.1.
 
-## 0.10.5
+## 0.10.5 - 2022-01-12
 
 ### Patch Changes
 
-- Updated dependencies [60ee4e8]
-  - druxt-schema@0.10.0
-  - druxt-entity@0.23.0
-  - druxt-blocks@0.14.5
-  - druxt-views@0.17.2
+- Updated dependencies: druxt-schema@0.10.0, druxt-entity@0.23.0, druxt-blocks@0.14.5, druxt-views@0.17.2.
 
-## 0.10.4
+## 0.10.4 - 2021-12-30
 
 ### Patch Changes
 
-- Updated dependencies [7b749bd]
-  - druxt@0.16.0
-  - druxt-entity@0.22.0
-  - druxt-router@0.25.0
-  - druxt-blocks@0.14.4
-  - druxt-breadcrumb@0.13.4
-  - druxt-menu@0.15.3
-  - druxt-schema@0.9.3
-  - druxt-views@0.17.1
+- Updated dependencies: druxt@0.16.0, druxt-entity@0.22.0, druxt-router@0.25.0, druxt-blocks@0.14.4, druxt-breadcrumb@0.13.4, druxt-menu@0.15.3, druxt-schema@0.9.3, druxt-views@0.17.1.
 
-## 0.10.3
+## 0.10.3 - 2021-12-11
 
 ### Patch Changes
 
-- Updated dependencies [2ae1d6d]
-  - druxt@0.15.0
-  - druxt-views@0.17.0
-  - druxt-blocks@0.14.3
-  - druxt-breadcrumb@0.13.3
-  - druxt-entity@0.21.4
-  - druxt-menu@0.15.2
-  - druxt-router@0.24.2
-  - druxt-schema@0.9.2
+- Updated dependencies: druxt@0.15.0, druxt-views@0.17.0, druxt-blocks@0.14.3, druxt-breadcrumb@0.13.3, druxt-entity@0.21.4, druxt-menu@0.15.2, druxt-router@0.24.2, druxt-schema@0.9.2.
 
-## 0.10.2
+## 0.10.2 - 2021-12-04
 
 ### Patch Changes
 
-- Updated dependencies [45bc0b9]
-  - druxt@0.14.0
-  - druxt-blocks@0.14.2
-  - druxt-breadcrumb@0.13.2
-  - druxt-entity@0.21.3
-  - druxt-menu@0.15.1
-  - druxt-router@0.24.1
-  - druxt-schema@0.9.1
-  - druxt-views@0.16.2
+- Updated dependencies: druxt@0.14.0, druxt-blocks@0.14.2, druxt-breadcrumb@0.13.2, druxt-entity@0.21.3, druxt-menu@0.15.1, druxt-router@0.24.1, druxt-schema@0.9.1, druxt-views@0.16.2.
 
-## 0.10.1
+## 0.10.1 - 2021-11-24
 
 ### Patch Changes
 
-- Updated dependencies [9161b38]
-  - druxt-router@0.24.0
-  - druxt-blocks@0.14.1
-  - druxt-breadcrumb@0.13.1
-  - druxt-entity@0.21.2
-  - druxt-views@0.16.1
+- Updated dependencies: druxt-router@0.24.0, druxt-blocks@0.14.1, druxt-breadcrumb@0.13.1, druxt-entity@0.21.2, druxt-views@0.16.1.
 
-## 0.10.0
+## 0.10.0 - 2021-11-10
 
 ### Minor Changes
 
-- 77ab204: Replaced File Proxy with Druxt proxy
-- e7b1533: Refactored DruxtModule fetch hooks
+- Replaced File Proxy with Druxt proxy. ([`77ab204`](https://github.com/druxt/druxt.js/commit/77ab204))
+- Refactored DruxtModule fetch hooks. ([`e7b1533`](https://github.com/druxt/druxt.js/commit/e7b1533))
 
 ### Patch Changes
 
-- Updated dependencies [025315a]
-  - druxt-entity@0.21.0
-  - druxt-views@0.16.0
-  - druxt-schema@0.9.0
-  - druxt-blocks@0.14.0
-  - druxt-breadcrumb@0.13.0
-  - druxt@0.13.0
-  - druxt-menu@0.15.0
-  - druxt-router@0.23.0
+- Updated dependencies: druxt-entity@0.21.0, druxt-views@0.16.0, druxt-schema@0.9.0, druxt-blocks@0.14.0, druxt-breadcrumb@0.13.0, druxt@0.13.0, druxt-menu@0.15.0, druxt-router@0.23.0.
 
-## 0.9.1
+## 0.9.1 - 2021-10-10
 
 ### Patch Changes
 
-- Updated dependencies [4504a2f]
-  - druxt@0.12.0
-  - druxt-router@0.22.0
-  - druxt-menu@0.14.1
-  - druxt-entity@0.20.0
-  - druxt-views@0.15.0
-  - druxt-blocks@0.13.1
-  - druxt-breadcrumb@0.12.1
-  - druxt-schema@0.8.1
+- Enabled Nuxt components auto-discovery by default. ([#310](https://github.com/druxt/druxt.js/issues/310), [`e3e634c`](https://github.com/druxt/druxt.js/commit/e3e634cf))
+- Updated dependencies: druxt@0.12.0, druxt-router@0.22.0, druxt-menu@0.14.1, druxt-entity@0.20.0, druxt-views@0.15.0, druxt-blocks@0.13.1, druxt-breadcrumb@0.12.1, druxt-schema@0.8.1.
 
-## 0.9.0
+## 0.9.0 - 2021-09-29
 
 ### Minor Changes
 
-- 8d28c18: Updated storybook integration
-- 97d24d5: Added default theme option and fallback to DruxtSite component
-- 97d24d5: Added default layout
+- Defaulted the router pages option on the presence of a pages/ directory. ([#292](https://github.com/druxt/druxt.js/issues/292), [`9d905e8`](https://github.com/druxt/druxt.js/commit/9d905e86))
+- Updated storybook integration. ([`8d28c18`](https://github.com/druxt/druxt.js/commit/8d28c18))
+- Added default theme option and fallback to DruxtSite component. ([`97d24d5`](https://github.com/druxt/druxt.js/commit/97d24d5))
+- Added default layout. ([`97d24d5`](https://github.com/druxt/druxt.js/commit/97d24d5))
 
 ### Patch Changes
 
-- dae345e: Fixed default @nuxtjs/proxy settings
-- Updated dependencies [9d905e8]
-  - druxt-router@0.21.0
-  - druxt-views@0.14.0
-  - druxt-breadcrumb@0.12.0
-  - druxt-blocks@0.13.0
-  - druxt-entity@0.19.0
-  - druxt-menu@0.14.0
-  - druxt-schema@0.8.0
-  - druxt@0.11.0
+- Fixed default @nuxtjs/proxy settings. ([`dae345e`](https://github.com/druxt/druxt.js/commit/dae345e))
+- Updated dependencies: druxt-router@0.21.0, druxt-views@0.14.0, druxt-breadcrumb@0.12.0, druxt-blocks@0.13.0, druxt-entity@0.19.0, druxt-menu@0.14.0, druxt-schema@0.8.0, druxt@0.11.0.
 
-## 0.8.0
+## 0.8.0 - 2021-09-19
 
 ### Minor Changes
 
-- 715e5ef: Updated component registration method to use the Nuxt `components:dirs` hook
+- Updated component registration method to use the Nuxt `components:dirs` hook. ([`715e5ef`](https://github.com/druxt/druxt.js/commit/715e5ef))
 
 ### Patch Changes
 
-- Updated dependencies [1ab762c]
-  - druxt-router@0.20.0
-  - druxt-blocks@0.12.0
-  - druxt-breadcrumb@0.11.0
-  - druxt@0.10.0
-  - druxt-entity@0.18.0
-  - druxt-menu@0.13.0
-  - druxt-views@0.13.0
-  - druxt-schema@0.7.10
+- Updated dependencies: druxt-router@0.20.0, druxt-blocks@0.12.0, druxt-breadcrumb@0.11.0, druxt@0.10.0, druxt-entity@0.18.0, druxt-menu@0.13.0, druxt-views@0.13.0, druxt-schema@0.7.10.
 
-## 0.7.1
+## 0.7.1 - 2021-09-14
 
 ### Patch Changes
 
-- c4616df: Fixed dependencies
-- Updated dependencies [c4616df]
-  - druxt-blocks@0.11.1
-  - druxt-breadcrumb@0.10.1
-  - druxt-entity@0.17.1
-  - druxt-menu@0.12.1
-  - druxt-router@0.19.1
-  - druxt-schema@0.7.9
-  - druxt-views@0.12.1
+- Fixed dependencies. ([`c4616df`](https://github.com/druxt/druxt.js/commit/c4616df))
+- Updated dependencies: druxt-blocks@0.11.1, druxt-breadcrumb@0.10.1, druxt-entity@0.17.1, druxt-menu@0.12.1, druxt-router@0.19.1, druxt-schema@0.7.9, druxt-views@0.12.1.
 
-## 0.7.0
+## 0.7.0 - 2021-09-13
 
 ### Minor Changes
 
-- 21170fb: Moved Vue components out of bundle
+- Moved Vue components out of bundle. ([`21170fb`](https://github.com/druxt/druxt.js/commit/21170fb))
 
   ⚠ Potential breaking change
 
@@ -308,61 +175,53 @@
   +import DruxtSite from 'druxt-site/dist/components/DruxtSite.vue'
   ```
 
-- da19102: Added BlockRegion \$refs to DruxtSite component
+- Added BlockRegion \$refs to DruxtSite component. ([`da19102`](https://github.com/druxt/druxt.js/commit/da19102))
 
 ### Patch Changes
 
-- a6a6592: Added fallback to Nuxt component if no Blocks are set
-- Updated dependencies [21170fb]
-  - druxt-blocks@0.11.0
-  - druxt-breadcrumb@0.10.0
-  - druxt@0.9.0
-  - druxt-entity@0.17.0
-  - druxt-menu@0.12.0
-  - druxt-router@0.19.0
-  - druxt-views@0.12.0
-  - druxt-schema@0.7.8
+- Added fallback to Nuxt component if no Blocks are set. ([`a6a6592`](https://github.com/druxt/druxt.js/commit/a6a6592))
+- Updated dependencies: druxt-blocks@0.11.0, druxt-breadcrumb@0.10.0, druxt@0.9.0, druxt-entity@0.17.0, druxt-menu@0.12.0, druxt-router@0.19.0, druxt-views@0.12.0, druxt-schema@0.7.8.
 
-## 0.6.0
+## 0.6.0 - 2021-07-07
 
 ### Minor Changes
 
-## 0.5.2
+## 0.5.2 - 2021-06-02
 
 ### Patch Changes
 
-## 0.5.1
+## 0.5.1 - 2021-06-02
 
 ### Patch Changes
 
-## 0.5.0
+## 0.5.0 - 2021-06-02
 
 ### Minor Changes
 
-## 0.4.0
+## 0.4.0 - 2021-02-27
 
 ### Minor Changes
 
-## 0.3.0
+## 0.3.0 - 2020-12-18
 
 ### Minor Changes
 
-## 0.2.2
+## 0.2.2 - 2020-10-25
 
 ### Patch Changes
 
-## 0.2.1
+## 0.2.1 - 2020-10-24
 
 ### Patch Changes
 
-## 0.2.0
+## 0.2.0 - 2020-10-16
 
 ### Minor Changes
 
-## 0.1.1
+## 0.1.1 - 2020-10-09
 
 ### Patch Changes
 
-## 0.1.0
+## 0.1.0 - 2020-10-01
 
 ### Minor Changes

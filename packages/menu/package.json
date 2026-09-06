@@ -39,16 +39,18 @@
   "module": "dist/druxt-menu.esm.js",
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "icon.svg",
+    "banner.svg"
   ],
   "dependencies": {
     "deepmerge": "^4.3.1",
-    "drupal-jsonapi-params": "^2.2.0",
+    "drupal-jsonapi-params": "^2.3.2",
     "druxt": "^0.24.0",
-    "druxt-blocks": "^0.17.1"
+    "druxt-blocks": "^0.17.2"
   },
   "optionalDependencies": {
-    "vue": "^2.7.14",
+    "vue": "^2.7.16",
     "vuex": "^3.6.2"
   },
   "publishConfig": {

@@ -10,6 +10,8 @@ import { mapActions, mapState } from 'vuex'
  * All blocks, including those not visible, are provided as slots for the Druxt
  * Wrapper component.
  *
+ * @see https://druxtjs.org/modules/blocks
+ *
  * @example @lang vue
  * <DruxtBlockRegion name="header" theme="umami" />
  *
@@ -24,13 +26,15 @@ import { mapActions, mapState } from 'vuex'
  *   mixins: [DruxtBlocksRegionMixin]
  * }
  *
- * @example <caption>DruxtBlockRegion with template injection</caption> @lang vue
- * <DruxtBlock id="umami_branding">
- *   <template #default="{ block }">
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
+ *
+ * @example <caption>DruxtBlockRegion default slot (template injection)</caption> @lang vue
+ * <DruxtBlockRegion name="header" theme="umami">
+ *   <template #default="{ blocks }">
  *     <!-- Do whatever you want here -->
- *     <DruxtDebug :json="block" />
+ *     <DruxtDebug :json="blocks" />
  *   </template>
- * </DruxtBlock>
+ * </DruxtBlockRegion>
  */
 export default {
   name: 'DruxtBlockRegion',
@@ -40,7 +44,8 @@ export default {
   /** */
   props: {
     /**
-     * The Block regions machine name.
+     * A region machine name from the Drupal theme's block layout
+     * (/admin/structure/block).
      *
      * @type {string}
      * @default content
@@ -54,7 +59,7 @@ export default {
     },
 
     /**
-     * A Drupal theme machine name.
+     * The machine name of the Drupal theme that provides the block layout.
      *
      * @type {string}
      * @required
@@ -69,7 +74,9 @@ export default {
   },
 
   /**
-   * @property {objects[]} blocks - The Block JSON:API resources.
+   * Provides the fetched Block resources for the region.
+   *
+   * @property {object[]} blocks - The Block JSON:API resources.
    */
   data: () => ({
     blocks: []
@@ -81,7 +88,7 @@ export default {
   },
 
   /**
-   * @vue-computed {object} route The current Route from the [DruxtRouter vuex store](https://router.druxtjs.org/api/stores/router.html).
+   * @vue-computed {object} route The current Route from the [DruxtRouter vuex store](https://druxtjs.org/api/packages/router/stores/router).
    */
   computed: {
     ...mapState('druxtRouter', {
@@ -101,13 +108,13 @@ export default {
 
   methods: {
     /**
-     * Checks if a given block shoud be visible.
+     * Checks if a given block should be visible.
      *
      * Uses Request Path visibility details if available with the DruxtRouter.
      *
      * @param {object} block - The Block entity object.
      *
-     * @return {boolean}
+     * @return {boolean} `true` if the block should be rendered on the current route.
      */
     isVisible(block) {
       // Request path visibility conditions.
@@ -150,6 +157,8 @@ export default {
      * Provides the available component naming options for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.name - The region machine name.
+     * @param {string} context.theme - The Drupal theme machine name.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ name, theme }) => [[name, theme], ['default']],
@@ -179,6 +188,9 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object[]} context.blocks - The Block JSON:API resources for the region.
+     * @param {string} context.name - The region machine name.
+     * @param {string} context.theme - The Drupal theme machine name.
      * @returns {PropsData}
      */
     propsData: ({ blocks, name, theme }) => ({ blocks, name, theme }),
@@ -203,6 +215,7 @@ export default {
      *     <slot name="umami_branding" />
      *   </div>
      * </template>
+     * @param {Function} h - The Vue createElement function.
      */
     slots(h) {
       // Build scoped slots for each block.
@@ -245,9 +258,11 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
+ *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
  *
  * @example @lang js
  * [
@@ -271,12 +286,12 @@ export default {
  */
 
 /**
- * Provides propsData for use in the Wrapper component.
+ * Provides propsData for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {object[]} blocks - The Block JSON:API resources.
- * @param {string} name - The Block regions machine name.
- * @param {string} theme - A Drupal theme machine name.
+ * @param {string} name - The region machine name.
+ * @param {string} theme - The Drupal theme machine name.
  *
  * @example @lang js
  * {
@@ -293,7 +308,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} [drupal_internal__id] - Slot per block.

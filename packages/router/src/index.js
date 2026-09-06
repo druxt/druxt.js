@@ -28,7 +28,7 @@ export { DruxtRouterStore } from './stores/router'
  * @name DruxtRouterEntityMixin
  * @see {@link ./mixins/entity|DruxtRouterEntityMixin}
  *
- * @example
+ * @example @lang vue
  * <script>
  * import { DruxtRouterEntityMixin } from 'druxt-router'
  *
@@ -47,7 +47,7 @@ export { DruxtRouterStore } from './stores/router'
   * @name DruxtRouterMixin
   * @see {@link ./mixins/router|DruxtRouterMixin}
   *
-  * @example
+  * @example @lang vue
   * <script>
   * import { DruxtRouterMixin } from 'druxt-router'
   *

@@ -1,0 +1,175 @@
+{
+    "uuid": [
+        {
+            "value": "73a9a5a6-83d7-4f1d-a906-f7f59956a7a8"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "recipe",
+            "target_type": "node_type",
+            "target_uuid": "36be3096-044b-4ff5-a599-6ed860f589a8"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "title": [
+        {
+            "value": "Sopa de berro"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/recipes\/sopa-de-berro",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_cooking_time": [
+        {
+            "value": 20
+        }
+    ],
+    "field_difficulty": [
+        {
+            "value": "easy"
+        }
+    ],
+    "field_ingredients": [
+        {
+            "value": "3 racimos de berros"
+        },
+        {
+            "value": "3 patatas"
+        },
+        {
+            "value": "3 cebollas"
+        },
+        {
+            "value": "2 puerros"
+        },
+        {
+            "value": "800ml de caldo"
+        },
+        {
+            "value": "75g de cr\u00e8me fra\u00eeche"
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "ef434da9-0790-4907-98f7-f08165a2d9c4"
+        }
+    ],
+    "field_number_of_servings": [
+        {
+            "value": 4
+        }
+    ],
+    "field_preparation_time": [
+        {
+            "value": 10
+        }
+    ],
+    "field_recipe_category": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "5d72ea6d-e4a4-4354-9a31-ef680804598e"
+        }
+    ],
+    "field_recipe_instruction": [
+        {
+            "value": "<ol>\n  <li>Prepare las verduras pelando y cortando las patatas y picando finamente las cebollas, los puerros y el ajo.<\/li>\n  <li>Caliente un poco de aceite en una sart\u00e9n y agregue las verduras picadas, cocin\u00e1ndolas suavemente durante unos 5 minutos.<\/li>\n  <li>Agregue el caldo de verduras a la misma sart\u00e9n y aumente el fuego hasta que hierva a fuego lento, agregando el berro despu\u00e9s de unos 10 minutos. Cocine hasta que todas las verduras est\u00e9n blandas y se muelan f\u00e1cilmente.<\/li>\n  <li>Licuar la sopa con una batidora de mano o en un mezclador, hasta que est\u00e9 suave.<\/li>\n  <li>Si la sopa se ha enfriado demasiado mientras se est\u00e1 licuando, agregue la cr\u00e8me fra\u00eeche y vuelva a calentarla antes de servirla (de lo contrario, s\u00edrvala de inmediato). Sazone a su gusto.<\/li>\n<\/ol>\n",
+            "format": "basic_html"
+        }
+    ],
+    "field_summary": [
+        {
+            "value": "Una sopa maravillosamente simple y ligera, que aprovecha al m\u00e1ximo los productos locales de temporada.",
+            "format": "basic_html"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "dd9f806e-6557-435a-8ab3-dd71a1455ad7"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "e24653c6-7630-4f29-9cd3-40b5c8912c7e"
+        }
+    ]
+}

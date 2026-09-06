@@ -23,7 +23,7 @@ import { mapActions, mapState } from 'vuex'
  *   mixins: [DruxtBreadcrumbMixin]
  * }
  *
- * @example <caption>DruxtBreadcrumb with template injection</caption> @lang vue
+ * @example <caption>DruxtBreadcrumb default slot (template injection)</caption> @lang vue
  * <DruxtBreadcrumb>
  *   <template #default="{ crumbs }">
  *     <!-- Do whatever you want here -->
@@ -70,6 +70,8 @@ export default {
   /** */
   computed: {
     /**
+     * @param {object} vm - The component ViewModel.
+     * @param {object[]} vm.model - The Breadcrumbs model value.
      * @property {objects[]} crumbs - The Breadcrumbs.
      */
     crumbs: ({ model }) => model,
@@ -180,7 +182,6 @@ export default {
     /**
      * Provides the available component naming options for the Druxt Wrapper.
      *
-     * @param {object} context - The module component ViewModel.
      * @returns {ComponentOptions}
      */
     componentOptions: () => [['default']],
@@ -198,6 +199,7 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object[]} context.model - The Breadcrumbs model value.
      * @returns {PropsData}
      */
     propsData: ({ model }) => ({ crumbs: model, value: model }),
@@ -238,7 +240,7 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
  *
@@ -256,7 +258,7 @@ export default {
  */
 
 /**
- * Provides propsData for use in the Wrapper component.
+ * Provides propsData for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {objects[]} crumbs - The Breadcrumbs.
@@ -276,7 +278,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} default - Crumbs as a list of NuxtLink's.

@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "6950de21-89a6-4836-9a76-2cb002d5ee95"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/25ad3901-c381-4944-95d1-154e356ac736"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipes\/pastel-victoria"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

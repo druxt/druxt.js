@@ -13,12 +13,12 @@
         {
             "target_id": "banner_block",
             "target_type": "block_content_type",
-            "target_uuid": "4af6586f-2ccf-47b0-a9ec-ab63ed2c7ed9"
+            "target_uuid": "b3f476ab-171a-41c1-a88e-3115c4ae6250"
         }
     ],
     "revision_created": [
         {
-            "value": "2022-03-29T23:42:56+00:00",
+            "value": "2024-04-03T23:15:53+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -36,7 +36,7 @@
     ],
     "changed": [
         {
-            "value": "2022-03-29T23:42:56+00:00",
+            "value": "2024-04-03T23:15:53+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -68,12 +68,12 @@
     "content_translation_uid": [
         {
             "target_type": "user",
-            "target_uuid": "9037d975-34ff-4020-b8ff-18cf8715361a"
+            "target_uuid": "1b73526a-a941-4ebf-b40f-3da0ff2fd1e0"
         }
     ],
     "content_translation_created": [
         {
-            "value": "2022-03-29T23:42:56+00:00",
+            "value": "2024-04-03T23:15:53+00:00",
             "format": "Y-m-d\\TH:i:sP"
         }
     ],
@@ -87,7 +87,7 @@
     "field_media_image": [
         {
             "target_type": "media",
-            "target_uuid": "6754f234-5ad6-4914-a8f2-2573fa541490"
+            "target_uuid": "e3c3c37b-5abd-4435-b3ff-bf51c230e68e"
         }
     ],
     "field_summary": [

@@ -18,7 +18,7 @@ const DruxtBreadcrumbMixin = {
    */
   props: {
     /**
-     * The Breadcrumbs.
+     * The Breadcrumbs; an array of objects with `text` and optional `to` properties.
      *
      * @type {object[]}
      */

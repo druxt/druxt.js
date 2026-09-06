@@ -53,13 +53,15 @@
  *     ...
  *   },
  *   id: 'node--page--default--view',
- *   isValud: true,
+ *   isValid: true,
  *   resourceType: 'node--page',
  *   schema: Schema { }
  * }
  */
 
  /**
+ * Druxt Schema configuration object.
+ *
  * @typedef {object} SchemaConfiguration
  * @see {@link ./schemaConfiguration|SchemaConfiguration}
  */

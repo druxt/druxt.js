@@ -8,7 +8,12 @@ import DruxtViewsStorybook from './storybook'
  *
  * The module function should not be used directly, but rather installed via your Nuxt configuration file.
  *
+ * A Nuxt module configures the Nuxt application, and is unrelated to a Drupal module.
+ *
  * Options are set on the root level `druxt` Nuxt config object.
+ *
+ * @see https://druxtjs.org/modules/views
+ * @see {@link https://druxtjs.org/explanation/nuxt-for-drupal-developers|Nuxt for Drupal developers}
  *
  * @example @lang js
  * // `nuxt.config.js`
@@ -17,7 +22,7 @@ import DruxtViewsStorybook from './storybook'
  *     'druxt-views'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  *

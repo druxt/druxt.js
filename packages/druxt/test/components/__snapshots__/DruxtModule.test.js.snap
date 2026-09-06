@@ -2,7 +2,7 @@
 
 exports[`DruxtModule component custom module - no wrapper 1`] = `
 "<div>
-  <druxtwrapper-stub foo=\\"bar\\">
+  <druxtwrapper-stub foo="bar">
     <div>test</div>
   </druxtwrapper-stub>
 </div>"
@@ -17,10 +17,10 @@ exports[`DruxtModule component custom module - wrapper 1`] = `
 exports[`DruxtModule component defaults 1`] = `"<div></div>"`;
 
 exports[`DruxtModule component error 1`] = `
-Object {
-  "json": Object {
-    "errors": Array [
-      Object {
+{
+  "json": {
+    "errors": [
+      {
         "details": "Test error",
       },
     ],
@@ -31,8 +31,8 @@ Object {
 `;
 
 exports[`DruxtModule component error 2`] = `
-Object {
-  "json": Object {
+{
+  "json": {
     "errors": undefined,
     "url": undefined,
   },
@@ -41,8 +41,8 @@ Object {
 `;
 
 exports[`DruxtModule component error 3`] = `
-Object {
-  "json": Object {
+{
+  "json": {
     "errors": undefined,
     "url": undefined,
   },

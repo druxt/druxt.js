@@ -6,7 +6,7 @@
 
 <script>
 /**
- * Placeholder component for the Druxt Wrapper themeing system.
+ * Placeholder component for the Druxt Wrapper theming system.
  */
 export default {
   name: 'DruxtWrapper'

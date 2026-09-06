@@ -59,6 +59,8 @@ export default {
     /**
      * The invoking Druxt module component.
      *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.$parent - The parent component instance.
      * @return {object}
      */
     module: ({ $parent }) =>
@@ -69,6 +71,9 @@ export default {
     /**
      * The computed summary title.
      *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.module - The invoking Druxt module component.
+     * @param {string} vm.summary - Text to use for debug summary.
      * @return {string}
      */
     title: ({ module, summary }) => module.$options._componentTag

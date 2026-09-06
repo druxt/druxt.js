@@ -16,8 +16,9 @@ const DruxtViewsStore = ({ store }) => {
    *
    * Provides a Vuex state object, mutations and actions for interacting with JSON:API Views.
    *
-   * @name druxt/views
    * @module druxt/views
+   *
+   * @see {@link https://druxtjs.org/explanation/druxt-store|The DruxtStore}
    */
   const module = {
     namespaced: true,
@@ -41,7 +42,8 @@ const DruxtViewsStore = ({ store }) => {
       /**
        * @name addResults
        * @mutator {object} addResults=results Adds JSON:API Views results to the Vuex state object.
-       * @param {addResultsContext} context
+       * @param {object} state - The Vuex state object.
+       * @param {addResultsPayload} payload - The mutation payload.
        *
        * @example @lang js
        * this.$store.commit('druxt/views/addResults', { results, viewId, displayId, prefix, hash })
@@ -58,7 +60,8 @@ const DruxtViewsStore = ({ store }) => {
       /**
        * @name flushResults
        * @mutator {object} flushResults=results Removes JSON:API Views results from the Vuex state object.
-       * @param {flushResultsContext} context
+       * @param {object} state - The Vuex state object.
+       * @param {flushResultsPayload} payload - The mutation payload.
        *
        * @example @lang js
        * // Flush all results.
@@ -89,11 +92,14 @@ const DruxtViewsStore = ({ store }) => {
        *
        * @name getResults
        * @action get=results
-       * @param {getResultsContext} context
-       * @return {object} The JSON:API Views results resource.
+       * @param {object} context - The Vuex action context.
+       * @param {Function} context.commit - Commits mutations to the store.
+       * @param {object} context.state - The Vuex module state.
+       * @param {getResultsContext} payload - The action parameters.
+       * @return {object|boolean} The JSON:API Views results resource, or false where the request failed with nothing cached.
        *
        * @example @lang js
-       * const { data, meta, links } = await this.$store.dispatch('druxt/view/getResults', {
+       * const { data, meta, links } = await this.$store.dispatch('druxt/views/getResults', {
        *   viewId,
        *   displayId,
        *   query,
@@ -132,7 +138,7 @@ export { DruxtViewsStore }
 /**
  * Parameters for the `addResults` mutation.
  *
- * @typedef {object} addResultsContext
+ * @typedef {object} addResultsPayload
  *
  * @param {array} results - The Drupal JSON:API Views results.
  * @param {string} viewId - The Drupal View ID.
@@ -153,7 +159,7 @@ export { DruxtViewsStore }
 /**
  * Parameters for the `flushResults` mutation.
  *
- * @typedef {object} flushResultsContext
+ * @typedef {object} flushResultsPayload
  *
  * @param {string} [viewId] - The Drupal View ID.
  * @param {string} [displayId] - The Drupal View Display ID.

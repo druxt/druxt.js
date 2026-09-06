@@ -1,4 +1,4 @@
-uuid: 0cfb266f-af17-4634-b734-400608baf1ff
+uuid: 04c8d151-66a5-4a53-998a-a3d7b46325a1
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
   theme:
     - umami
 _core:
-  default_config_hash: SZPzr7VsO6HsSYm68FN4U2dI8zPXrHzCuMtxRYc5huo
+  default_config_hash: rLgYDFYFOZvMqivqa3tBKA4mSvcypo4oTZKuZ9mMERc
 id: umami_views_block__recipe_collections_block
 theme: umami
 region: content_bottom
@@ -19,8 +19,8 @@ plugin: 'views_block:recipe_collections-block'
 settings:
   id: 'views_block:recipe_collections-block'
   label: ''
-  provider: views
   label_display: visible
+  provider: views
   views_label: ''
   items_per_page: none
 visibility: {  }

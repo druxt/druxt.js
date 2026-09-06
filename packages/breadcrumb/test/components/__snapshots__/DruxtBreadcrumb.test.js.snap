@@ -2,7 +2,7 @@
 
 exports[`DruxtBreadcrumb 404 route 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object]\\" value=\\"[object Object]\\">
+  <druxtwrapper-stub crumbs="[object Object]" value="[object Object]">
     <ul>
       <li>
         <nuxtlink>Home</nuxtlink>
@@ -14,7 +14,7 @@ exports[`DruxtBreadcrumb 404 route 1`] = `
 
 exports[`DruxtBreadcrumb level 1 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object],[object Object]\\" value=\\"[object Object],[object Object]\\">
+  <druxtwrapper-stub crumbs="[object Object],[object Object]" value="[object Object],[object Object]">
     <ul>
       <li>
         <nuxtlink>Home</nuxtlink>
@@ -27,7 +27,7 @@ exports[`DruxtBreadcrumb level 1 1`] = `
 
 exports[`DruxtBreadcrumb level 2 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object],[object Object],[object Object]\\" value=\\"[object Object],[object Object],[object Object]\\">
+  <druxtwrapper-stub crumbs="[object Object],[object Object],[object Object]" value="[object Object],[object Object],[object Object]">
     <ul>
       <li>
         <nuxtlink>Home</nuxtlink>
@@ -43,7 +43,7 @@ exports[`DruxtBreadcrumb level 2 1`] = `
 
 exports[`DruxtBreadcrumb manual path 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object],[object Object],[object Object]\\" value=\\"[object Object],[object Object],[object Object]\\">
+  <druxtwrapper-stub crumbs="[object Object],[object Object],[object Object]" value="[object Object],[object Object],[object Object]">
     <ul>
       <li>
         <nuxtlink>Home</nuxtlink>
@@ -59,7 +59,7 @@ exports[`DruxtBreadcrumb manual path 1`] = `
 
 exports[`DruxtBreadcrumb missing parent 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object],[object Object]\\" value=\\"[object Object],[object Object]\\">
+  <druxtwrapper-stub crumbs="[object Object],[object Object]" value="[object Object],[object Object]">
     <ul>
       <li>
         <nuxtlink>Home</nuxtlink>
@@ -80,7 +80,7 @@ exports[`DruxtBreadcrumb no home 1`] = `
 
 exports[`DruxtBreadcrumb root 1`] = `
 "<div>
-  <druxtwrapper-stub crumbs=\\"[object Object]\\" value=\\"[object Object]\\">
+  <druxtwrapper-stub crumbs="[object Object]" value="[object Object]">
     <ul>
       <li>/</li>
     </ul>

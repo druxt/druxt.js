@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "73b5b0bb-31de-4711-ab40-5afa8e92f143"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/10"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/postre"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

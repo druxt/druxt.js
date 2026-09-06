@@ -1,0 +1,87 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "936e262a-79bf-4a08-a051-0158cc0ccdb0",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/936e262a-79bf-4a08-a051-0158cc0ccdb0"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.disclaimer_block",
+            "field.storage.block_content.field_copyright"
+          ],
+          "module": ["text"]
+        },
+        "drupal_internal__id": "block_content.disclaimer_block.field_copyright",
+        "field_name": "field_copyright",
+        "entity_type": "block_content",
+        "bundle": "disclaimer_block",
+        "label": "Copyright",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "allowed_formats": []
+        },
+        "field_type": "text_long"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "17e4d7b9-a43b-44d2-b556-ecb76d2f190c",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/17e4d7b9-a43b-44d2-b556-ecb76d2f190c"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.disclaimer_block",
+            "field.storage.block_content.field_disclaimer"
+          ],
+          "module": ["text"]
+        },
+        "drupal_internal__id": "block_content.disclaimer_block.field_disclaimer",
+        "field_name": "field_disclaimer",
+        "entity_type": "block_content",
+        "bundle": "disclaimer_block",
+        "label": "Disclaimer",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "allowed_formats": []
+        },
+        "field_type": "text_long"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=block_content&filter%5Bbundle%5D=disclaimer_block"
+    }
+  }
+}

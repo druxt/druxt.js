@@ -1,7 +1,8 @@
 {
   "plugins": [
     "node_modules/jsdoc-vuejs",
-    "node_modules/jsdoc-vuex-plugin"
+    "node_modules/jsdoc-vuex-plugin",
+    "packages/docgen/plugins/vuex-action-fix.js"
   ],
   "source": {
     "includePattern": "\\.(vue|js)$",

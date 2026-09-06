@@ -10,7 +10,7 @@ import { mapActions } from 'vuex'
  * While Drupal provides placement configuration for blocks, it does not provide
  * any information on where each region should be placed.
  *
- * All regions are provided as scoped slots for the Druxt Wrapper component.
+ * Each region is provided as a scoped slot for the Druxt Wrapper component.
  *
  * @example @lang vue
  * <template>
@@ -32,7 +32,7 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtSiteMixin]
  * }
  *
- * @example <caption>DruxtSite with template injection</caption> @lang vue
+ * @example <caption>DruxtSite default slot (template injection)</caption> @lang vue
  * <DruxtSite>
  *   <template #default="{ props, regions, theme }">
  *     <!-- Do whatever you want here -->
@@ -59,6 +59,9 @@ export default {
      * Used to filter the available regions from the Drupal Blocks JSON:API
      * resources.
      *
+     * If not set, the theme from the `druxt.site.theme` module option is
+     * used, falling back to the first available theme.
+     *
      * @type {string}
      */
     theme: {
@@ -76,6 +79,10 @@ export default {
     /**
      * DruxtBlockRegion propsData for regions.
      *
+     * @param {object} vm - The component ViewModel.
+     * @param {string|undefined} vm.defaultTheme - The default Drupal theme machine name.
+     * @param {string[]} vm.regions - An array of unique region names.
+     * @param {string|undefined} vm.theme - Drupal theme ID.
      * @return {object}
      */
     props: ({ defaultTheme, regions, theme }) =>
@@ -87,6 +94,10 @@ export default {
 
     /**
      * An array of unique region names.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {string[]} vm.model - The region names model value.
+     * @param {string[]} vm.value - The module component model value.
      * @return {string[]}
      */
     regions: ({ model, value }) => model || value || [],
@@ -110,6 +121,8 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string|undefined} context.defaultTheme - The default Drupal theme machine name.
+     * @param {string|undefined} context.theme - Drupal theme ID.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ defaultTheme, theme }) => [[theme || defaultTheme], ['default']],
@@ -147,6 +160,10 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string|undefined} context.defaultTheme - The default Drupal theme machine name.
+     * @param {object} context.props - DruxtBlockRegion propsData for regions.
+     * @param {string[]} context.regions - An array of unique region names.
+     * @param {string|undefined} context.theme - Drupal theme ID.
      * @returns {PropsData}
      */
     propsData: ({ defaultTheme, props, regions, theme }) => ({ props, regions, theme: theme || defaultTheme }),
@@ -169,6 +186,7 @@ export default {
      * </template>
      *
      * @return {ScopedSlots} The Scoped slots object.
+     * @param {Function} h - The Vue createElement function.
      */
     slots(h) {
       // If no regions, return Nuxt component.
@@ -202,7 +220,7 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
  *
@@ -224,7 +242,7 @@ export default {
  */
 
 /**
- * Provides propsData for use in the Wrapper component.
+ * Provides propsData for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {object} props - DruxtBlockRegion propsData for regions.
@@ -246,7 +264,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} * - Slot per region.

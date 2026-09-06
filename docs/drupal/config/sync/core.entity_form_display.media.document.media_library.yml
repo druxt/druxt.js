@@ -1,0 +1,24 @@
+uuid: f1b13fa2-8a09-418d-a9ea-6f91b8cbd2e2
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.media.media_library
+    - field.field.media.document.field_media_document
+    - media.type.document
+_core:
+  default_config_hash: SfiJ6KimR36h6Xf28k5I94zC-NXW8L1uA2c0YKPqEug
+id: media.document.media_library
+targetEntityType: media
+bundle: document
+mode: media_library
+content: {  }
+hidden:
+  created: true
+  field_media_document: true
+  langcode: true
+  moderation_state: true
+  name: true
+  path: true
+  status: true
+  uid: true

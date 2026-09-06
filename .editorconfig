@@ -11,3 +11,13 @@ insert_final_newline = true
 
 [*.md]
 trim_trailing_whitespace = false
+max_line_length = off
+
+[*.{json,yml,yaml}]
+indent_size = 2
+
+[*.lock]
+indent_style = ignore
+
+[Makefile]
+indent_style = tab

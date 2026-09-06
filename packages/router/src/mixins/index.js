@@ -4,9 +4,9 @@
  * @type {object}
  * @exports DruxtRouterEntityMixin
  * @name DruxtRouterEntityMixin
- * @see {@link ./mixins/entity|DruxtRouterEntityMixin}
+ * @see {@link ./entity|DruxtRouterEntityMixin}
  *
- * @example
+ * @example @lang vue
  * <script>
  * import { DruxtRouterEntityMixin } from 'druxt-router'
  *
@@ -23,9 +23,9 @@
  * @type {object}
  * @exports DruxtRouterMixin
  * @name DruxtRouterMixin
- * @see {@link ./mixins/router|DruxtRouterMixin}
+ * @see {@link ./router|DruxtRouterMixin}
  *
- * @example
+ * @example @lang vue
  * <script>
  * import { DruxtRouterMixin } from 'druxt-router'
  *

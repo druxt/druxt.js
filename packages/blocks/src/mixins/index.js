@@ -1,4 +1,13 @@
 /**
+ * @file Vue.js mixins for the DruxtBlocks module.
+ *
+ * A mixin adds reusable props and logic to a Vue.js component, similar to a
+ * PHP trait in Drupal.
+ *
+ * @see {@link https://v2.vuejs.org/v2/guide/mixins.html|Vue.js mixins}
+ */
+
+/**
  * The DruxtBlocksBlockMixin adds props and computed props to your DruxtBlock
  * wrapper component.
  *

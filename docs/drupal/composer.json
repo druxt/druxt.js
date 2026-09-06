@@ -1,6 +1,6 @@
 {
-    "name": "druxt/drupal-9-example",
-    "description": "Example Drupal 9 backend for use in the Druxt examples.",
+    "name": "druxt/docs-backend",
+    "description": "Drupal backend for the druxtjs.org documentation and examples.",
     "type": "project",
     "license": "GPL-2.0-or-later",
     "homepage": "https://druxtjs.org",
@@ -15,21 +15,21 @@
         }
     ],
     "require": {
-        "composer/installers": "^2.2",
+        "composer/installers": "^2.3.0",
         "cweagans/composer-patches": "^1.7.3",
         "drupal-tome/tome_drush": "dev-master",
-        "drupal/core-composer-scaffold": "9.5.9",
-        "drupal/core-project-message": "9.5.9",
-        "drupal/core-recommended": "9.5.9",
-        "drupal/decoupled_router": "2.0.4",
-        "drupal/druxt": "^1.2.0",
-        "drupal/jsonapi_hypermedia": "^1.9.0",
-        "drupal/simple_oauth": "^5.2.3",
-        "drupal/tome": "^1.11.0",
-        "drush/drush": "^11.6.0"
+        "drupal/core-composer-scaffold": "~11",
+        "drupal/core-project-message": "~11",
+        "drupal/core-recommended": "~11",
+        "drupal/decoupled_router": "^2.0.7",
+        "drupal/druxt": "^1.2.2",
+        "drupal/jsonapi_hypermedia": "^1.10.0",
+        "drupal/simple_oauth": "^6.1",
+        "drupal/tome": "^1.16",
+        "drush/drush": "^13"
     },
     "require-dev": {
-        "drupal/core-dev": "9.5.9"
+        "drupal/core-dev": "~11"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -37,13 +37,20 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
+        "platform": {
+            "php": "8.3"
+        },
         "sort-packages": true,
         "allow-plugins": {
             "composer/installers": true,
+            "cweagans/composer-patches": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
             "drupal/core-composer-scaffold": true,
             "drupal/core-project-message": true,
-            "cweagans/composer-patches": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true,
+            "symfony/runtime": true,
+            "tbachert/spi": true
         }
     },
     "extra": {
@@ -53,25 +60,40 @@
             }
         },
         "installer-paths": {
-            "web/core": ["type:drupal-core"],
-            "web/libraries/{$name}": ["type:drupal-library"],
-            "web/modules/contrib/{$name}": ["type:drupal-module"],
-            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
-            "web/themes/contrib/{$name}": ["type:drupal-theme"],
-            "drush/Commands/contrib/{$name}": ["type:drupal-drush"],
-            "web/modules/custom/{$name}": ["type:drupal-custom-module"],
-            "web/profiles/custom/{$name}": ["type:drupal-custom-profile"],
-            "web/themes/custom/{$name}": ["type:drupal-custom-theme"]
+            "web/core": [
+                "type:drupal-core"
+            ],
+            "web/libraries/{$name}": [
+                "type:drupal-library"
+            ],
+            "web/modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "web/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "web/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "drush/Commands/contrib/{$name}": [
+                "type:drupal-drush"
+            ],
+            "web/modules/custom/{$name}": [
+                "type:drupal-custom-module"
+            ],
+            "web/profiles/custom/{$name}": [
+                "type:drupal-custom-profile"
+            ],
+            "web/themes/custom/{$name}": [
+                "type:drupal-custom-theme"
+            ]
         },
         "patches": {
-            "drupal/druxt": {
-                "https://www.drupal.org/project/druxt/issues/3273228": "https://git.drupalcode.org/project/druxt/-/merge_requests/9.diff"
-            },
             "drupal/decoupled_router": {
-                "https://www.drupal.org/project/decoupled_router/issues/3111456": "https://git.drupalcode.org/project/decoupled_router/-/merge_requests/11.diff"
+                "#3111456 Resolve the language from the requested path, so /es serves Spanish instead of the default language": "https://git.drupalcode.org/project/decoupled_router/-/merge_requests/35.diff"
             },
-            "drupal/jsonapi_menu_items": {
-                "https://www.drupal.org/project/jsonapi_menu_items/issues/3192576": "https://www.drupal.org/files/issues/2023-02-10/3192576-18.patch"
+            "drupal/druxt": {
+                "#3273228 Add langcode to Views Decoupled Router integration, so the /es front page stays Spanish": "https://git.drupalcode.org/project/druxt/-/merge_requests/9.diff"
             }
         }
     }

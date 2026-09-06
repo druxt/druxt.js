@@ -1,22 +1,25 @@
 {
   "name": "druxt-site",
+  "private": true,
   "scripts": {
     "cypress:open": "npx cypress open --project test",
     "cypress:run": "npx cypress run --project test",
     "dev": "nuxt dev",
+    "test": "yarn cypress:run",
     "generate": "nuxt generate",
     "serve": "yarn generate && yarn start",
     "start": "nuxt start",
     "storybook": "nuxt storybook"
   },
   "dependencies": {
+    "drupal-jsonapi-params": "^2.3.1",
     "druxt-auth": "^0.1.0",
-    "druxt-site": "link:../../packages/druxt-site",
-    "nuxt": "latest"
+    "druxt-site": "link:../../packages/site",
+    "nuxt": "2.15.8"
   },
   "devDependencies": {
-    "@nuxt/postcss8": "latest",
-    "@nuxtjs/storybook": "latest",
-    "postcss": "latest"
+    "@nuxt/postcss8": "1.1.3",
+    "@nuxtjs/storybook": "4.3.2",
+    "postcss": "8.4.31"
   }
 }

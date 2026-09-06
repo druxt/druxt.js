@@ -1,0 +1,13 @@
+node_modules/
+**/node_modules/
+.yarn/cache/
+packages/*/dist/
+packages/*/nuxt/
+coverage/
+docs/nuxt/node_modules/
+docs/nuxt/.nuxt/
+docs/nuxt/content/api/
+examples/*/node_modules/
+examples/*/.nuxt/
+CHANGELOG.md
+.changeset/

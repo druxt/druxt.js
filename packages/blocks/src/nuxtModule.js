@@ -6,9 +6,11 @@ import DruxtBlocksStorybook from './nuxtStorybook'
  *
  * - Adds the Vue.js components to the Nuxt.js frontend.
  *
- * The module function should not be used directly, but rather installed via yout Nuxt.js configuration file.
+ * The module function should not be used directly, but rather installed via your Nuxt.js configuration file.
  *
  * Options are set on the root level `druxt` Nuxt.js config object.
+ *
+ * @see https://druxtjs.org/modules/blocks
  *
  * @example @lang js
  * // `nuxt.config.js`
@@ -17,7 +19,7 @@ import DruxtBlocksStorybook from './nuxtStorybook'
  *     'druxt-blocks'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  *

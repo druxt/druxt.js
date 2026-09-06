@@ -1,0 +1,88 @@
+# gitleaks configuration.
+#
+# The default rule set, plus per-rule path allowlists.
+#
+# No allowlist is global. Every entry sits inside the allowlist of the single
+# rule it was written for, so excusing a false positive from one detector never
+# silences the others on that path. The `scope` check in the secret_detection
+# job asserts this: it plants a private key at a path the generic-api-key
+# allowlist matches and fails if it is not reported.
+#
+# Two of the three entries are false positives. The third is not: the committed
+# Simple OAuth private key is deliberately allowlisted under the private-key
+# rule, and stays allowlisted until provisioning generates the pair instead of
+# reading a committed one. It is described in full below rather than reduced to
+# a fingerprint, because a reader deserves to know a real credential is parked
+# here and why.
+
+[extend]
+useDefault = true
+
+# --- Known finding, parked pending the provisioning fix -------------------
+#
+# docs/drupal/keys/private.key is a Simple OAuth signing key for the throwaway
+# SQLite docs backend, committed in 072a7150 (2022-08-10) and public since.
+# Provisioning currently depends on it: .devtools/README explains that
+# simple_oauth resolves key paths against the process working directory, so the
+# pair lives in the committed keys/ directory with paths injected by a $config
+# override in settings.php.
+#
+# No history purge. Four years public means the key is burned, and rewriting a
+# public repository's history would recover nothing. The fix is to stop
+# depending on a committed pair: generate it during .devtools/provision and
+# untrack keys/*.key. Tracked separately; see the merge request that added
+# this entry for the decision and the fix outline.
+#
+# Scoped to this one path rather than to commit fingerprints, because the file
+# appears in many commits and a fingerprint list that missed one would leave the
+# job red for a reason nobody could find. It allowlists a single known file and
+# nothing else.
+#
+# Delete this entry when the key is untracked. The scan should then pass
+# because the key is gone, not because this is here.
+[[rules]]
+id = "private-key"
+
+  [rules.allowlist]
+  description = "Committed docs backend OAuth key, tracked for removal"
+  paths = [
+    'docs/drupal/keys/private\.key$',
+  ]
+
+# --- Historical built documentation ----------------------------------------
+#
+# Only reachable now that the job scans full history. Five generic-api-key
+# matches in api/stores/druxt.html and guide/client.html, from 2021 commits
+# titled "Built artifacts of <sha> [ci skip]": the old documentation site's
+# rendered HTML, committed by CI.
+#
+# The matches are syntax-highlighted example code. The flagged value is a
+# Drupal entity UUID in an API usage example:
+#
+#     druxt.getResource('node--page', '<uuid>', 'fields[node--page]=title')
+#
+# generic-api-key fires on its entropy. It is documentation, not a credential.
+#
+# Neither path exists in the working tree, and no job writes to them any more,
+# so this cannot mask anything a contributor could commit today. Scoped to the
+# rule and to those two paths rather than to the whole of history.
+[[rules]]
+id = "generic-api-key"
+
+  [rules.allowlist]
+  description = "Rendered example code, and vendored Yarn release bundles"
+  paths = [
+    # Built documentation HTML from before 2022. See the note above.
+    'api/stores/druxt\.html$',
+    'guide/client\.html$',
+    # Vendored Yarn release bundles. Third-party minified JavaScript written by
+    # Yarn's own `set version`, where this rule matches high-entropy parser
+    # identifiers next to names like MismatchedTokenException, at column 127 of
+    # a single-line file. Nothing here is written by hand.
+    #
+    # Scoped to this rule, not global. As a top-level [allowlist] it suppressed
+    # every detector on these paths, so a real credential committed inside a
+    # Yarn bundle would have gone unreported. The canary in .gitlab-ci.yml now
+    # plants exactly that case and asserts it is still found.
+    '\.yarn/releases/yarn-[0-9.]+\.cjs$',
+  ]

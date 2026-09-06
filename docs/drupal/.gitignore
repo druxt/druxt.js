@@ -12,6 +12,11 @@
 # Ignore sensitive information
 /web/sites/*/settings.local.php
 
+# Tome content export mirrors every entity, including OAuth tokens - these
+# carry live, valid secret values (see content/oauth2_token.*.json), not
+# meaningful demo content. Never commit them.
+/content/oauth2_token.*.json
+
 # Ignore Drupal's file directory
 /web/sites/*/files/
 !/web/sites/default/files/.gitkeep

@@ -1,7 +1,14 @@
 <template>
-  <div class="container mx-auto my-20 px-5">
-    <h1 class="text-4xl text-primary border-b mb-10">API Documentation</h1>
-
+  <!-- Parent route for /api/*; the child renders the document. -->
+  <div>
     <NuxtChild />
   </div>
 </template>
+
+<script>
+export default {
+  // Nuxt's default scrollBehavior only resets scroll for a nested route
+  // (parent + child match) if some matched component opts in explicitly.
+  scrollToTop: true,
+}
+</script>

@@ -1,19 +1,19 @@
-uuid: 5b25a793-28b1-4cb6-931d-8a3d50487268
+uuid: 0ce46ece-aba1-42d7-8b5b-bbf9f45de988
 langcode: en
 status: true
 dependencies:
   module:
     - block_content
 _core:
-  default_config_hash: yegE14uuLFTlGV6vjedwDtDpSFKBNfc1nfMJGxFTTPQ
+  default_config_hash: gLKURXFJkccqGfXGKsS6GKkQ8MwpUgEgdLoNvdcAmtw
 id: block_content.field_title
 field_name: field_title
 entity_type: block_content
 type: string
 settings:
   max_length: 255
-  is_ascii: false
   case_sensitive: false
+  is_ascii: false
 module: core
 locked: false
 cardinality: 1

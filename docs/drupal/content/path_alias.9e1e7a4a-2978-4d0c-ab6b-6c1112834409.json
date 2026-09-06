@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "9e1e7a4a-2978-4d0c-ab6b-6c1112834409"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/825df06d-9e94-4d40-bf3d-35c5de31860d"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/recipes\/crema-catalana"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

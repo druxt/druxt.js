@@ -1,48 +1,48 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DruxtRouter checkPermissions 1`] = `
-Object {
+{
   "detail": "Required permissions:
  - administer node fields",
 }
 `;
 
 exports[`DruxtRouter getRoute 1`] = `
-Object {
-  "config": Object {
+{
+  "config": {
     "baseURL": "https://8080-magenta-koi-31w8trra.ws-us25.gitpod.io",
-    "headers": Object {
+    "headers": {
       "Accept": "application/json, text/plain, */*",
     },
     "maxBodyLength": -1,
     "maxContentLength": -1,
     "method": "get",
-    "options": Object {},
+    "options": {},
     "timeout": 0,
-    "transformRequest": Array [
+    "transformRequest": [
       null,
     ],
-    "transformResponse": Array [
+    "transformResponse": [
       null,
     ],
     "url": "/router/translate-path?path=/broken-router",
     "xsrfCookieName": "XSRF-TOKEN",
     "xsrfHeaderName": "X-XSRF-TOKEN",
   },
-  "data": Object {
-    "errors": Array [
-      Object {
+  "data": {
+    "errors": [
+      {
         "detail": "Please ensure the Decoupled Router module is installed and configured correctly.",
       },
     ],
   },
-  "headers": Object {
+  "headers": {
     "cache-control": "must-revalidate, no-cache, private",
     "content-language": "en",
     "content-type": "text/html; charset=UTF-8",
     "expires": "Sun, 19 Nov 1978 05:00:00 GMT",
   },
-  "request": Object {},
+  "request": {},
   "status": 404,
   "statusText": "Not Found",
 }

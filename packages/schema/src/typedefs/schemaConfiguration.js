@@ -13,7 +13,7 @@
   * {
   *   bundle: 'page',
   *   entityType: 'node',
-  *   filters: [],
+  *   filter: [],
   *   mode: 'default',
   *   schemaType: 'view'
   * }

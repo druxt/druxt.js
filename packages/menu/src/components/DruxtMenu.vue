@@ -4,8 +4,10 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
 /**
- * The DruxtMenu component renders a Drupal menu using either the default
- * Drupal content menus, or the full menu via the JSON:API Menu Items module.
+ * The DruxtMenu component renders a Drupal menu using menu link content
+ * entities via the core JSON:API (content-created links only), or the
+ * complete menu tree, including module-defined links, via the JSON:API Menu
+ * Items module.
  *
  * @example @lang vue
  * <DruxtMenu name="main" />
@@ -21,13 +23,15 @@ import { mapActions, mapGetters, mapState } from 'vuex'
  *   mixins: [DruxtMenuMixin]
  * }
  *
- * @example <caption>DruxtMenu with template injection</caption> @lang vue
+ * @example <caption>default slot (template injection)</caption> @lang vue
  * <DruxtMenu>
  *   <template #default="{ items }">
  *     <!-- Do whatever you want here -->
  *     <DruxtDebug :json="items" />
  *   </template>
  * </DruxtMenu>
+ *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
  */
 export default {
   name: 'DruxtMenu',
@@ -99,7 +103,8 @@ export default {
     },
 
     /**
-     * The name of the menu to load and render.
+     * The Drupal menu machine name (for example, `main` or `footer`) of the
+     * menu to load and render.
      *
      * @example @lang vue
      * <DruxtMenu name="main" />
@@ -179,7 +184,9 @@ export default {
      * The processed Menu items.
      *
      * @type {objects[]}
-     * @deprecated
+     * @deprecated in druxt-menu:0.11.0 and is removed from druxt-menu:2.0.0.
+     *   Use the model property (v-model) instead.
+     * @see https://druxtjs.org/modules/menu/deprecations
      */
     items: ({ model }) => model,
 
@@ -282,6 +289,7 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.name - The name of the menu to load and render.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ name }) => [[name], ['default']],
@@ -289,6 +297,8 @@ export default {
     /**
      * Builds and executes the JSON:API query, loading the menu items into the
      * druxtMenu Vuex store.
+     *
+     * @param {object} settings - The module settings object, including the menu items query configuration.
      */
     async fetchData(settings) {
       if (!this.value) {
@@ -305,12 +315,23 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object[]} context.model - The menu items model value.
+     * @param {string} context.parentId - The menu parent ID to use as the root of the menu.
      * @returns {PropsData}
      */
     propsData: ({ model, parentId }) => ({ items: model, parentId, value: model }),
 
     /**
      * Component settings.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @param {object} context.$druxt - The Druxt Nuxt plugin instance.
+     * @param {number} context.depth - The depth of the menu items to render.
+     * @param {number|null} context.maxDepth - The maximum depth of the menu tree data to load.
+     * @param {number} context.minDepth - The minimum depth of the menu tree.
+     * @param {string} context.parentId - The menu parent ID to use as the root of the menu.
+     * @param {object} wrapperSettings - Settings provided by the wrapper component.
+     * @returns {object} The merged module settings.
      */
     settings: ({ $druxt, depth, maxDepth, minDepth, parentId }, wrapperSettings) => {
       const settings = merge($druxt.settings.menu || {}, wrapperSettings, { arrayMerge: (dest, src) => src })
@@ -337,6 +358,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {
@@ -365,7 +387,7 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
  *
@@ -388,7 +410,7 @@ export default {
 
 /**
  * Provides settings for the Menu module, via the `nuxt.config.js` `druxt.menu`
- * or the Wrapper component `druxt` object.
+ * or the wrapper component `druxt` object.
  *
  * @typedef {object} ModuleSettings
  * @param {string[]} fields - An array of fields to filter all JSON:API Menu queries.
@@ -413,7 +435,7 @@ export default {
  */
 
 /**
- * Provides propsData for use in the Wrapper component.
+ * Provides propsData for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {object[]} items - The Menu items structured data.
@@ -437,7 +459,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} default - All menu items using the DruxtMenuItem component

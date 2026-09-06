@@ -1,16 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DruxtClient checkPermissions 1`] = `
-Object {
+{
   "detail": "Required permissions:
  - administer node fields",
 }
 `;
 
 exports[`DruxtClient createResource 1`] = `
-Object {
+{
   "detail": "subject: This value should not be null.",
-  "source": Object {
+  "source": {
     "pointer": "/data/attributes/subject",
   },
   "status": "422",
@@ -35,19 +35,19 @@ Test error details."
 `;
 
 exports[`DruxtClient getIndex 1`] = `
-Object {
+{
   "statusText": "Invalid JSON:API endpoint",
 }
 `;
 
 exports[`DruxtClient getResource 1`] = `
-Object {
-  "detail": "The \\"entity\\" parameter was not converted for the path \\"/jsonapi/node/article/{entity}\\" (route name: \\"jsonapi.node--article.individual\\")",
-  "links": Object {
-    "info": Object {
+{
+  "detail": "The "entity" parameter was not converted for the path "/jsonapi/node/article/{entity}" (route name: "jsonapi.node--article.individual")",
+  "links": {
+    "info": {
       "href": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5",
     },
-    "via": Object {
+    "via": {
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article/missing",
     },
   },

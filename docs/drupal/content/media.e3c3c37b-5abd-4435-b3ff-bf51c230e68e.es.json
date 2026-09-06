@@ -1,0 +1,102 @@
+{
+    "uuid": [
+        {
+            "value": "e3c3c37b-5abd-4435-b3ff-bf51c230e68e"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "bundle": [
+        {
+            "target_id": "image",
+            "target_type": "media_type",
+            "target_uuid": "ac06de62-ba06-4041-a2c7-1eedb3fbaf25"
+        }
+    ],
+    "revision_created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_user": [],
+    "revision_log_message": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "1b73526a-a941-4ebf-b40f-3da0ff2fd1e0"
+        }
+    ],
+    "name": [
+        {
+            "value": "(Hero) Bizcochos veganos de chocolate y nueces"
+        }
+    ],
+    "thumbnail": [
+        {
+            "alt": "Una pila de brownies de chocolate y nuez, rociados con migas de nuez y nuez triturada, reci\u00e9n sacados del horno",
+            "title": null,
+            "width": 3000,
+            "height": 1571,
+            "target_type": "file",
+            "target_uuid": "e20cd1ea-78a1-4094-a2bf-d1d8e830eda8"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "path": [
+        {
+            "alias": null,
+            "pid": null,
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "field_media_image": [
+        {
+            "alt": "Una pila de brownies de chocolate y nuez, rociados con migas de nuez y nuez triturada, reci\u00e9n sacados del horno",
+            "title": null,
+            "width": 3000,
+            "height": 1571,
+            "target_type": "file",
+            "target_uuid": "b61b5529-4970-45f9-ae52-c58755818f33"
+        }
+    ]
+}

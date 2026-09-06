@@ -28,6 +28,9 @@ display:
           label: 'Usado en'
           alter:
             path: 'admin/content/files/usage/{{ fid }}'
+          format_plural_string: !!binary MSBsdWdhcgNAY291bnQgbHVnYXJlcw==
+        operations:
+          label: Operaciones
       pager:
         options:
           tags:
@@ -75,6 +78,7 @@ display:
           label: 'Módulo de registro'
         count:
           label: 'Recuento de uso'
+          format_plural_string: !!binary MQNAY291bnQ=
       pager:
         options:
           tags:

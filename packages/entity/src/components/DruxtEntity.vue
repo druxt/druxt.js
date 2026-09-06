@@ -12,12 +12,24 @@ import { mapActions } from 'vuex'
  * Fields are rendered as DruxtField components, based on the Drupal display
  * mode configuration.
  *
+ * @see https://druxtjs.org/modules/entity
+ *
  * @example @lang vue
  * <DruxtEntity
  *   type="node--article"
  *   :uuid="uuid"
  *   mode="teaser"
  * />
+ *
+ * @example <caption>DruxtEntity with v-model</caption> @lang vue
+ * <template>
+ *   <DruxtEntity v-model="model" type="node--article" :uuid="uuid" />
+ * </template>
+ *
+ * <script>
+ * export default {
+ *   data: () => ({ model: undefined }),
+ * }
  *
  * @example <caption>DruxtEntity Wrapper component boilerplate</caption> @lang vue
  * <template>
@@ -30,7 +42,9 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtEntityMixin]
  * }
  *
- * @example <caption>DruxtEntity with template injection</caption> @lang vue
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
+ *
+ * @example <caption>DruxtEntity default slot (template injection)</caption> @lang vue
  * <DruxtEntity type="" uuid="">
  *   <template #default="{ entity }">
  *     <!-- Do whatever you want here -->
@@ -92,7 +106,8 @@ export default {
     /**
      * Entity UUID.
      *
-     * @type {string}
+     * @type {(boolean|string)}
+     * @default false
      */
     uuid: {
       type: [Boolean, String],
@@ -101,6 +116,11 @@ export default {
   },
 
   /**
+   * Provides the reactive entity model and display schema state.
+   *
+   * @param {object} vm - The component ViewModel.
+   * @param {string} vm.type - The JSON:API resource type.
+   * @param {object} vm.value - The Vue.js v-model value. If set, it provides the entity data directly and the JSON:API fetch is skipped.
    * @property {object} model - The model object.
    * @property {object} schema - The DruxtSchema object.
    */
@@ -125,14 +145,23 @@ export default {
     /**
      * The Entity object.
      *
-     * @return {object}.
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.model - The model object.
+     * @return {object} A copy of the entity model, containing the JSON:API attributes, relationships and included resource data.
      */
     entity: ({ model }) => ({ ...model }),
 
     /**
      * Entity fields based on Display mode.
      *
-     * @return {object}
+     * @param {object} vm - The component ViewModel.
+     * @param {object[]} vm.errors - Form submission response errors, if any.
+     * @param {Function} vm.isEmpty - Checks if an Entity field is empty.
+     * @param {string} vm.lang - The current language code.
+     * @param {object} vm.model - The model object.
+     * @param {object} vm.schema - The DruxtSchema object.
+     * @param {('view'|'form')} vm.schemaType - Drupal display schema type, 'view' or 'form'.
+     * @return {object} Field objects keyed by field ID, each containing the field's schema, value, errors and relationship status.
      */
     fields: ({ errors, isEmpty, lang, model, schema, schemaType }) => {
       if (!schema) return false
@@ -201,7 +230,7 @@ export default {
      *
      * @param {ModuleSettings} settings - The merged module and component settings object.
      *
-     * @return {boolean|object}
+     * @return {boolean|object} The DrupalJsonApiParams query object.
      */
     getQuery(settings) {
       const query = new DrupalJsonApiParams()
@@ -248,7 +277,7 @@ export default {
      * Checks if an Entity field is empty.
      *
      * @param {*} value - Field value.
-     * @return {boolean}
+     * @return {boolean} `true` if the field value is empty.
      */
     isEmpty(value) {
       if (typeof value === 'undefined') return true
@@ -277,6 +306,10 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.mode - The Drupal display mode.
+     * @param {object} context.schema - The DruxtSchema object.
+     * @param {('view'|'form')} context.schemaType - Drupal display schema type, 'view' or 'form'.
+     * @param {string} context.type - The JSON:API resource type.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ mode, schema, schemaType, type }) => ([
@@ -317,6 +350,8 @@ export default {
 
     /**
      * Fetches the content entity JSON:API resource.
+     *
+     * @param {object} settings - The module settings object, including the resource query configuration.
      */
     async fetchData(settings) {
       if (!this.type) return
@@ -335,7 +370,7 @@ export default {
         // Build query.
         const query = this.getQuery(settings)
 
-        // Execute the resquest.
+        // Execute the request.
         const resource = await this.getResource({
           id: this.uuid,
           prefix: this.lang,
@@ -353,12 +388,19 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.fields - Entity fields based on the display mode.
+     * @param {object} context.model - The model object.
+     * @param {object} context.schema - The DruxtSchema object.
      * @returns {PropsData}
      */
     propsData: ({ fields, model, schema }) => ({ entity: model, fields, schema, value: model }),
 
     /**
      * Component settings.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @param {object} wrapperSettings - Settings provided by the wrapper component.
+     * @returns {object} The merged module settings.
      */
     settings: (context, wrapperSettings) => {
       const { $druxt, settings } = context
@@ -387,6 +429,7 @@ export default {
      * current display mode.
      *
      * Additionally, the `default` slot will render all fields as per the
+     * Drupal display mode configuration.
      *
      * @example <caption>DruxtEntity**ResourceType**.vue</caption> @lang vue
      * <template>
@@ -396,6 +439,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {
@@ -464,9 +508,11 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
+ *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
  *
  * @example @lang js
  * [
@@ -507,7 +553,7 @@ export default {
 
 /**
  * Provides settings for the Entity module, via the `nuxt.config.js` `druxt.entity`,
- * the Wrapper component `druxt` object or the DruxtEntity component `settings`
+ * the wrapper component `druxt` object or the DruxtEntity component `settings`
  * property.
  *
  * @typedef {object} ModuleSettings
@@ -524,7 +570,7 @@ export default {
  *     query: {
  *       bypassCache: ({ $store }) => $store.$auth.loggedIn,
  *       fields: [['title'], ['user--user', ['display_name']]],
- *       include: ['uid']
+ *       include: ['uid'],
  *       schema: true,
  *     },
  *   },
@@ -539,7 +585,7 @@ export default {
  *       query: {
  *         bypassCache: true,
  *         fields: [['title'], ['user--user', ['display_name']]],
- *         include: ['uid']
+ *         include: ['uid'],
  *         schema: true,
  *       }
  *     }"
@@ -548,7 +594,7 @@ export default {
  */
 
 /**
- * Provides property data for use in the Wrapper component.
+ * Provides property data for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {object} entity - The Drupal Entity JSON:API resource data.
@@ -582,7 +628,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} * - Slot per field.

@@ -1,0 +1,61 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "33323786-2011-4dc6-b401-43849721262e",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/33323786-2011-4dc6-b401-43849721262e"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "field.storage.media.field_media_document",
+            "media.type.document"
+          ],
+          "module": ["file"],
+          "enforced": {
+            "module": ["media"]
+          }
+        },
+        "drupal_internal__id": "media.document.field_media_document",
+        "field_name": "field_media_document",
+        "entity_type": "media",
+        "bundle": "document",
+        "label": "Document",
+        "description": "",
+        "required": true,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:file",
+          "handler_settings": [],
+          "file_directory": "[date:custom:Y]-[date:custom:m]",
+          "file_extensions": "txt rtf doc docx ppt pptx xls xlsx pdf odf odg odp ods odt fodt fods fodp fodg key numbers pages",
+          "max_filesize": "",
+          "description_field": false
+        },
+        "field_type": "file"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=media&filter%5Bbundle%5D=document"
+    }
+  }
+}

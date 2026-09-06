@@ -5,9 +5,9 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  * The DruxtRouter component renders a Drupal decoupled route, or path, using
  * the appropriate Druxt component.
  *
- * For instance, using the path `/node/1` would render a DruxtEntity component.
+ * The path `/node/1` renders a DruxtEntity component.
  *
- * The Vue router path will be used if not path is defined.
+ * The Vue router path is used if no path is given.
  *
  * @example <caption>Render using the Vue router path</caption> @lang vue
  * <DruxtRouter />
@@ -29,7 +29,7 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
  *   mixins: [DruxtRouterMixin]
  * }
  *
- * @example <caption>DruxtRouter with template injection</caption> @lang vue
+ * @example <caption>DruxtRouter default slot (template injection)</caption> @lang vue
  * <DruxtRouter>
  *   <template #default="{ route }">
  *     <!-- Do whatever you want here -->
@@ -48,6 +48,11 @@ export default {
    * This can be disabled by setting the `druxt.router.middleware` option to
    * `false` in `nuxt.config.js`
    *
+   * @param {object} context - The Nuxt context.
+   * @param {object} context.$druxt - The Druxt Nuxt context plugin instance.
+   * @param {Function} context.redirect - The Nuxt redirect method.
+   * @param {object} context.route - The current route.
+   * @param {object} context.store - The Vuex store.
    * @example @lang js
    * export default {
    *   druxt: {
@@ -104,7 +109,9 @@ export default {
   },
 
   /**
-   * @property {object} model - The model object.
+   * @param {object} vm - The component ViewModel.
+   * @param {object} [vm.value] - The Router object, used to bypass the JSON:API.
+   * @property {object|undefined} model - The route model, from the optional value prop.
    */
   data: ({ value }) => ({
     debug: {
@@ -195,6 +202,8 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string|false} context.module - The route module, or false where the route has none.
+     * @param {object} context.route - The route object.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ module, route }) => [
@@ -232,6 +241,9 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.$route - The current Vue Router route object.
+     * @param {string} [context.path] - The Decoupled router path.
+     * @param {object|undefined} context.model - The route model, from the optional value prop.
      * @returns {PropsData}
      */
     propsData: ({ $route, path, model }) => ({
@@ -253,12 +265,13 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {
       const scopedSlots = {}
 
-      // Provide defualt error message.
+      // Provide default error message.
       if (this.model.error) {
         scopedSlots.default = () => h('div', [
           h('h1', [`Error ${this.model.error.statusCode}`]),
@@ -282,7 +295,7 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
  *
@@ -308,7 +321,7 @@ export default {
  */
 
 /**
- * Provides property data for use in the Wrapper component.
+ * Provides property data for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {string} path - The route path.
@@ -318,7 +331,7 @@ export default {
  * {
  *   path: '/',
  *   route: {
- *     canonical: 'https://demo-api.druxtjs.org/en/node',
+ *     canonical: 'https://api.umami.demo.druxtjs.org/en/node',
  *     component: 'druxt-view',
  *     error: false,
  *     isHomePath: true,
@@ -333,7 +346,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} debug - A Debug component with a Path override field.

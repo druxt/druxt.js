@@ -1,7 +1,9 @@
 /**
  * Druxt utility class.
  *
- * @deprecated
+ * @deprecated in druxt:0.17.0 and is removed from druxt:2.0.0.
+ *   Use DruxtModule instead.
+ * @see https://druxtjs.org/modules/druxt/deprecations
  * @private
  */
 class DruxtClass {
@@ -87,6 +89,7 @@ class DruxtClass {
   /**
    * Get the Druxt module data from the referenced component.
    *
+   * @param {object} vm - The Druxt module component ViewModel.
    * @returns {ModuleData}
    */
   async getModuleData(vm) {

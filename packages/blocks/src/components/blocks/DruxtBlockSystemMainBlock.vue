@@ -28,7 +28,7 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link ../../mixins/DruxtBlocksBlockMixin|DruxtBlocksBlockMixin}
+   * @see {@link /api/packages/blocks/mixins/block|DruxtBlocksBlockMixin}
    */
   mixins: [DruxtBlocksBlockMixin],
 }

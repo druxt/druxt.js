@@ -9,7 +9,7 @@ import { mapActions } from 'vuex'
  * The DruxtView component renders Drupal Views using configuration and
  * results provided by the Drupal View and the JSON:API Views module.
  *
- * The component renders slots for  the View's headers, footers, entity results,
+ * The component renders slots for the View's headers, footers, entity results,
  * exposed sorts and filters, and supports contextual filters.
  *
  * @example @lang vue
@@ -33,13 +33,15 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtViewsViewMixin]
  * }
  *
- * @example <caption>DruxtView with template injection</caption> @lang vue
+ * @example <caption>default slot (template injection)</caption> @lang vue
  * <DruxtView>
  *   <template #default="{ results }">
  *     <!-- Do whatever you want here -->
  *     <DruxtDebug :json="results" />
  *   </template>
  * </DruxtView>
+ *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
  */
 export default {
   name: 'DruxtView',
@@ -223,7 +225,7 @@ export default {
     /**
      * The View Headers data.
      *
-     * @type {@object}
+     * @type {object[]}
      */
     headers() {
       if (!this.display) return []
@@ -429,6 +431,10 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {string} context.displayId - The View Display ID.
+     * @param {string} context.uuid - The View UUID.
+     * @param {object} context.view - The View JSON:API resource data.
+     * @param {string} context.viewId - The View ID.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ displayId, uuid, view, viewId }) => ([
@@ -461,6 +467,8 @@ export default {
 
     /**
      * Fetch JSON:API Views results.
+     *
+     * @param {object} settings - The module settings object, including the results query configuration.
      */
     async fetchData(settings) {
       const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
@@ -474,7 +482,7 @@ export default {
         // Build query.
         const query = this.getQuery(settings)
 
-        // Execute the resquest.
+        // Execute the request.
         this.resource = await this.getResults({
           displayId: this.displayId,
           prefix: this.lang,
@@ -488,7 +496,7 @@ export default {
     /**
      * Provides propsData for the DruxtWrapper.
      *
-     * @param {object} context - The module component ViewModel.
+     * @param {object} vm - The module component ViewModel.
      * @returns {PropsData}
      */
     propsData: (vm) => ({
@@ -502,6 +510,10 @@ export default {
 
     /**
      * Component settings.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @param {object} wrapperSettings - Settings provided by the wrapper component.
+     * @returns {object} The merged module settings.
      */
     settings: (context, wrapperSettings) => {
       const { $druxt, settings } = context
@@ -543,6 +555,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {
@@ -606,7 +619,7 @@ export default {
         scopedSlots.attachments_before = (attrs) => this.attachments_before.map((displayId) => h('DruxtView', {
           attrs: { ...attrs },
           key: displayId,
-          ref: 'attachements_before',
+          ref: 'attachments_before',
           props: {
             displayId,
             langcode: this.lang,
@@ -663,7 +676,7 @@ export default {
         scopedSlots.attachments_after = (attrs) => this.attachments_after.map((displayId) => h('DruxtView', {
           attrs: { ...attrs },
           key: displayId,
-          ref: 'attachements_after',
+          ref: 'attachments_after',
           props: {
             displayId,
             langcode: this.lang,
@@ -730,7 +743,7 @@ export default {
 
 /**
  * Provides settings for the View module, via the `nuxt.config.js` `druxt.views`
- * or the Wrapper component `druxt` object.
+ * or the wrapper component `druxt` object.
  *
  * @typedef {object} ModuleSettings
  * @param {object} query - View results query settings:
@@ -795,7 +808,7 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
  * @param {function} header - The View header.

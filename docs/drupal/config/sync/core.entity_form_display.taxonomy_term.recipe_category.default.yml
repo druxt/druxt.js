@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.recipe_category
+  module:
+    - text
+id: taxonomy_term.recipe_category.default
+targetEntityType: taxonomy_term
+bundle: recipe_category
+mode: default
+content:
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {}
+  description:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {}
+hidden:
+  langcode: true
+  path: true
+  weight: true
+  status: true
+  content_translation_source: true
+  content_translation_outdated: true

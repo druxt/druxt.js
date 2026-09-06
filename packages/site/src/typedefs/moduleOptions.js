@@ -13,7 +13,7 @@
   *     auth: { ... },
   *     headers: { ... },
   *   },
-  *   baseUrl: 'https://demo-api.druxtjs.org',
+  *   baseUrl: 'https://api.umami.demo.druxtjs.org',
   *   endpoint: 'jsonapi',
   * }
   */

@@ -1,4 +1,4 @@
-uuid: a7c44e95-cd44-46b2-9bca-27fbc81cf66f
+uuid: c8562866-076e-443f-9e2f-ceffff1226cc
 langcode: en
 status: true
 dependencies:
@@ -7,13 +7,11 @@ dependencies:
     - image.style.square_medium
     - image.style.square_small
 _core:
-  default_config_hash: og75t756ursDlFFeLJ6EQaxDU0RvyFOks94sfk4V5qk
+  default_config_hash: GpF5bxrG-809dulakRzRzswnfW135gT5VYvGHrySCsQ
 id: square
 label: Square
 image_style_mappings:
   -
-    breakpoint_id: responsive_image.viewport_sizing
-    multiplier: 1x
     image_mapping_type: sizes
     image_mapping:
       sizes: 100vw
@@ -21,5 +19,7 @@ image_style_mappings:
         - square_large
         - square_medium
         - square_small
+    breakpoint_id: responsive_image.viewport_sizing
+    multiplier: 1x
 breakpoint_group: responsive_image
 fallback_image_style: square_medium

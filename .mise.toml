@@ -1,0 +1,5 @@
+[tools]
+node = "16.20.1"
+
+[env]
+MISE_WORKSPACE = "druxtjs"

@@ -1,0 +1,156 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Provision the site: install Drupal against a throwaway SQLite database
+ * and import the committed config/content via Tome.
+ *
+ * Unlike the extension-scaffold `provision` this pattern is modelled on
+ * (which runs a vanilla `drush site-install`), docs/drupal already has
+ * real committed config and content — provisioning here means
+ * `drush tome:install`, not `site-install`.
+ *
+ * The committed config/sync is authored against DDEV's MySQL (`mysql: 0`
+ * in config/sync/core.extension.yml), and Drupal refuses to uninstall the
+ * module providing its own active DB driver — so this patches the enabled
+ * module list to also enable `sqlite`, additively (never removing `mysql`)
+ * and only in this checkout, never committed.
+ *
+ * The SQLite connection itself is written to `web/sites/default/settings
+ * .local.php` (gitignored), not `settings.php` (tracked) — unlike the
+ * reference pattern, which appends directly to a tracked settings.php and
+ * relies on the developer noticing and discarding the diff. settings.php
+ * already has a commented-out settings.local.php include (enabled as part
+ * of this same change), so provision never touches a tracked file.
+ */
+
+declare(strict_types=1);
+
+namespace DruxtjsDevTools;
+
+require_once __DIR__ . '/helpers.php';
+
+// -----------------------------------------------------------------------------
+// Variables.
+// -----------------------------------------------------------------------------
+
+$db_file = getenv_default('DB_FILE', '/tmp/druxtjs-drupal-site.sqlite');
+
+// -----------------------------------------------------------------------------
+
+echo '===============================' . PHP_EOL;
+echo '         🚀 PROVISION          ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+
+TASK('Enabling the sqlite module in this checkout only (never committed).');
+$extension_yml = 'config/sync/core.extension.yml';
+$content = (string) file_get_contents($extension_yml);
+if (!str_contains($content, "\n  sqlite:")) {
+  $anchor = "  shortcut: 0\n";
+  if (!str_contains($content, $anchor)) {
+    FAIL('Could not find the expected anchor ("%s") in %s to patch in the sqlite module. The module list may have changed shape — update this script\'s anchor rather than skipping the patch.', trim($anchor), $extension_yml);
+  }
+  $content = str_replace($anchor, $anchor . "  sqlite: 0\n", $content);
+  file_put_contents($extension_yml, $content);
+}
+PASS('sqlite module enabled for this checkout.');
+
+TASK('Configuring the SQLite database at %s.', $db_file);
+if (file_exists($db_file)) {
+  unlink($db_file);
+}
+$settings_local_php = 'web/sites/default/settings.local.php';
+file_put_contents($settings_local_php, sprintf(
+  "<?php\n\n/**\n * @file\n * Provision-only override, written fresh each run by .devtools/provision.\n * Gitignored - never committed.\n */\n\n\$databases['default']['default'] = [\n  'driver' => 'sqlite',\n  'database' => '%s',\n  // SQLite allows one writer; tome:install runs child drush processes\n  // while the parent holds a connection, and on slow CI disks a write\n  // hitting the lock fails as 'database is locked' unless it waits.\n  // PDO::ATTR_TIMEOUT is pdo_sqlite's busy timeout, in seconds.\n  'pdo' => [\n    \\PDO::ATTR_TIMEOUT => 60,\n  ],\n];\n",
+  $db_file
+));
+PASS('SQLite database configured.');
+
+// Rollback-journal SQLite lets readers block the one writer. tome:install's
+// parent process holds read locks while its child drush processes run, so a
+// child's end-of-request cache write can deadlock against the parent and die
+// as 'database is locked' - a busy timeout alone can't help, since the parent
+// won't release until the child exits. WAL lets readers and the writer
+// coexist, and the mode persists in the database file, so setting it once
+// here covers every later connection.
+TASK('Enabling SQLite WAL journal mode.');
+$pdo = new \PDO('sqlite:' . $db_file);
+$journal_mode = $pdo->query('PRAGMA journal_mode=WAL;')->fetchColumn();
+unset($pdo);
+if (strtolower((string) $journal_mode) !== 'wal') {
+  FAIL('Could not enable WAL journal mode (got %s).', var_export($journal_mode, TRUE));
+}
+PASS('WAL journal mode enabled.');
+
+// tome:install spawns child drush processes (site-install, config:import,
+// per-chunk content imports) while the parent stays bootstrapped. SQLite
+// allows one writer, and on slow CI disks that combination deadlocks: a
+// child's end-of-request cache write waits out its busy timeout against the
+// parent's locks and dies as 'database is locked'. The same steps run here
+// directly, one process at a time, so no two processes ever share the
+// database.
+if (!preg_match('/^profile: (\S+)$/m', $content, $matches)) {
+  FAIL('Could not read the install profile from %s.', $extension_yml);
+}
+$profile = $matches[1];
+
+TASK('Installing Drupal (%s profile).', $profile);
+drush('site-install %s', $profile);
+PASS('Site installed.');
+
+TASK('Enabling tome_sync.');
+drush('pm:enable %s', 'tome_sync');
+PASS('tome_sync enabled.');
+
+// The install's own content has to go before config:import - it reshapes
+// bundles the demo content occupies - and the site UUID has to match sync
+// or config:import refuses to start.
+TASK('Clearing installed content and aligning the site identity.');
+drush('php-script %s', __DIR__ . '/serial-content-delete.php');
+PASS('Content cleared.');
+
+// Via php-script rather than `drush config:import`: when core.extension
+// changes, drush hands the module install batch to a nested drush process,
+// which reintroduces the parent/child SQLite deadlock this provision exists
+// to avoid. Core's ConfigImporter runs every step in-process.
+//
+// Twice: the first pass enables the language module mid-import, so the
+// language.es config translation collection (202 items: view titles, menu
+// labels, block settings) only lands on the second. One pass left /es
+// serving English view titles and menus.
+TASK('Importing configuration (twice - translation collections land on the second pass).');
+drush('php-script %s', __DIR__ . '/serial-config-import.php');
+drush('php-script %s', __DIR__ . '/serial-config-import.php');
+PASS('Configuration imported.');
+
+TASK('Importing content serially.');
+drush('php-script %s', __DIR__ . '/serial-content-import.php');
+PASS('Content imported.');
+drush('php-eval %s', 'node_access_rebuild();');
+drush('cache:rebuild');
+PASS('Site installed from committed config/content.');
+
+TASK('Removing the Consumers module default consumer.');
+drush('php-script %s', __DIR__ . '/consumer-cleanup.php');
+PASS('Exactly one OAuth consumer (the committed Druxt consumer) remains.');
+
+TASK('Setting the admin account password.');
+drush('php-script %s', __DIR__ . '/set-admin-password.php');
+PASS('Admin (uid 1) password set to the documented example login.');
+
+TASK('Pre-generating image style derivatives.');
+drush('php-script %s', __DIR__ . '/image-derivatives.php');
+PASS('Image style derivatives are available at tokenless paths.');
+
+echo PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo '   🚀 PROVISION COMPLETE  ✅  ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+echo 'Database: ' . $db_file . PHP_EOL;
+echo PHP_EOL;
+echo '> Next steps:' . PHP_EOL;
+echo '  .devtools/start    # Start the webserver' . PHP_EOL;
+echo PHP_EOL;

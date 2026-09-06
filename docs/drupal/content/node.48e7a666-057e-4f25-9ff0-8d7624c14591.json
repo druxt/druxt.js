@@ -1,0 +1,120 @@
+{
+    "uuid": [
+        {
+            "value": "48e7a666-057e-4f25-9ff0-8d7624c14591"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "article",
+            "target_type": "node_type",
+            "target_uuid": "76ccc436-67b7-4ec7-a719-25b08fcb1db3"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "a67d7763-a1a9-4150-91ba-d781c0931efc"
+        }
+    ],
+    "title": [
+        {
+            "value": "Baking mishaps - our troubleshooting tips"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": true
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": true
+        }
+    ],
+    "revision_translation_affected": [],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/articles\/baking-mishaps-our-troubleshooting-tips",
+            "langcode": "en"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "body": [
+        {
+            "value": "<p>You follow the recipe, you weigh all your ingredients, you use the right oven temperature and you take your time and yet still, your baking comes out with a soggy bottom, fails to rise or just tastes plain horrible. We have come up with a list of the most frustrating baking problems and the techniques you can use to try and avoid them.<\/p>\n<h2>Your cake failed to rise<\/h2>\n<p>Don't under any circumstances open the oven door in the middle of the cooking time. The heat will come whooshing out, destroying the chemical reaction taking place inside your cake. Your raising agent needs the heat to become activated and you might kill it off.<\/p>\n<h2>Your cake is chewy and tough<\/h2>\n<p>If your light sponge is the consistency of a spare tire, you might have over-mixed your batter. Keep the lightness inside your cake mixture by carefully and gently folding in the ingredients and only to the point they are just mixed. If you over-fold, the gluten in the flour will start to come out and you'll be making bread instead of cake.<\/p>\n<h2>Your cookies burned<\/h2>\n<p>A great trick is to use light colored bakeware, rather than black. It is less likely to absorb the heat and transfer it to the bottom of your biscuits. Using baking paper will also help with this. Also, using too much sugar can result in your cookies browning too much and giving them a caramelized look.<\/p>\n<h2>Split top to your cake or bread<\/h2>\n<p>Your oven is very likely too hot. If you suspect your oven doesn't keep to the right temperature, invest in a thermometer and check it regularly throughout the cooking. With bread, over-mixing the dough can result in a cracked or split top.<\/p>\n<h2>The dreaded soggy bottom<\/h2>\n<p>As mentioned above, the color of your pan is important. In this case, a dark pan will increase the heat at the bottom and give you that crisp underneath that you want. If you are using a flaky pastry, you really need to blind bake it. Putting your pie towards the bottom of the oven will increase the heat reaching that part.<\/p>\n<h2>Your pastry has shrunk<\/h2>\n<p>You simply tried to make it stretch too far. When rolling, don't try to make it too thin or too big and when draping over your pan, allow it to settle on its own without stretching it to fit. Or just add more pastry - everyone loves pastry anyway!<\/p>\n",
+            "format": "basic_html",
+            "summary": null
+        }
+    ],
+    "field_media_image": [
+        {
+            "target_type": "media",
+            "target_uuid": "32f33181-4dc2-4f77-bfef-34f6fc237eba"
+        }
+    ],
+    "field_tags": [
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "2cd7ab68-9ebf-4a70-9179-fee1f28a7b07"
+        },
+        {
+            "target_type": "taxonomy_term",
+            "target_uuid": "4e50256a-bda4-4bf4-9be4-4fc8df27095d"
+        }
+    ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "druxt-bootstrapvue",
+  "private": true,
+  "scripts": {
+    "cypress:open": "npx cypress open --project test",
+    "cypress:run": "npx cypress run --project test",
+    "dev": "nuxt dev",
+    "test": "yarn cypress:run",
+    "generate": "nuxt generate",
+    "serve": "yarn generate && yarn start",
+    "start": "nuxt start"
+  },
+  "dependencies": {
+    "@fontsource/source-sans-3": "^5.3.0",
+    "bootstrap": "4.6.2",
+    "bootstrap-vue": "2.23.1",
+    "drupal-jsonapi-params": "^2.3.1",
+    "druxt": "link:../../packages/druxt",
+    "druxt-auth": "^0.1.0",
+    "druxt-breadcrumb": "link:../../packages/breadcrumb",
+    "druxt-entity": "link:../../packages/entity",
+    "druxt-menu": "link:../../packages/menu",
+    "druxt-router": "link:../../packages/router",
+    "druxt-schema": "link:../../packages/schema",
+    "druxt-views": "link:../../packages/views",
+    "nuxt": "2.15.8",
+    "vuedraggable": "2.24.3"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "7.21.11"
+  }
+}

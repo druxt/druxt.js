@@ -29,8 +29,10 @@
 import { DruxtFieldMixin } from 'druxt-entity'
 
 /**
- * Text Default field.
- * @deprecated
+ * Renders a formatted text field's processed HTML.
+ * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:2.0.0.
+ *   Use a field wrapper component resolved by the component suggestion system instead.
+ * @see https://druxtjs.org/modules/entity/deprecations
  */
 export default {
   name: 'DruxtFieldTextDefault',
@@ -47,7 +49,7 @@ export default {
      *
      * @param {object} item - The field item.
      *
-     * @return {string}
+     * @return {string} The item's processed HTML.
      */
     format: (item) => item.processed
   }

@@ -125,6 +125,27 @@ describe('DruxtEntityForm', () => {
     expect(wrapper.vm.$refs.title.errors.length).toBe(0)
   })
 
+  test('network error', async () => {
+    const wrapper = await mountComponent({ type: 'node--page' })
+    wrapper.vm.model.attributes.title = 'Test'
+
+    // Reject without a response, as a network-level failure does - the
+    // error handler must not assume err.response exists.
+    const client = wrapper.vm.$druxt
+    const createResource = client.createResource
+    client.createResource = () => Promise.reject(new Error('Network Error'))
+
+    await wrapper.find('button#submit').trigger('click')
+    await localVue.nextTick()
+    await localVue.nextTick()
+
+    client.createResource = createResource
+
+    expect(wrapper.emitted().error).toStrictEqual([[undefined]])
+    expect(wrapper.vm.response).toBe(undefined)
+    expect(wrapper.vm.submitting).toBe(false)
+  })
+
   test('edit', async () => {
     const mockPage = await getMockResource('node--page')
     const uuid = mockPage.data.id

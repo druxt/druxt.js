@@ -1,0 +1,604 @@
+import fs from 'fs'
+import globby from 'globby'
+import jsdoc2md from 'jsdoc-to-markdown'
+import mkdirp from 'mkdirp'
+import ncp from 'ncp'
+import vueDocs from 'vue-docgen-api'
+import dmd from 'dmd'
+
+import { DruxtDocgen } from '../src'
+
+jest.mock('fs', () => ({
+  writeFileSync: jest.fn(),
+  existsSync: jest.fn(() => false),
+  readFileSync: jest.fn()
+}))
+jest.mock('globby', () => jest.fn())
+jest.mock('jsdoc-to-markdown', () => ({ getTemplateDataSync: jest.fn() }))
+jest.mock('mkdirp', () => ({ sync: jest.fn() }))
+jest.mock('ncp', () => jest.fn())
+jest.mock('vue-docgen-api', () => ({ parse: jest.fn() }))
+jest.mock('dmd', () => jest.fn())
+jest.mock('consola', () => ({ info: jest.fn(), warn: jest.fn() }))
+
+let docgen
+
+describe('DruxtDocgen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    docgen = new DruxtDocgen()
+  })
+
+  test('constructor', () => {
+    expect(docgen.components).toStrictEqual([])
+    expect(docgen.destination).toBe('docs/nuxt/content')
+    expect(docgen.apiPages).toStrictEqual([])
+    expect(docgen.inheritedTypes).toStrictEqual({})
+  })
+
+  test('generateDocs calls each generator in order', async () => {
+    docgen.generateApiDocs = jest.fn()
+    docgen.generatePackageList = jest.fn()
+    docgen.generateComponentsList = jest.fn()
+    docgen.generateModuleReadmes = jest.fn()
+    docgen.copyFiles = jest.fn()
+
+    await docgen.generateDocs()
+
+    expect(docgen.generateApiDocs).toHaveBeenCalledTimes(1)
+    expect(docgen.generatePackageList).toHaveBeenCalledTimes(1)
+    expect(docgen.generateComponentsList).toHaveBeenCalledTimes(1)
+    expect(docgen.generateModuleReadmes).toHaveBeenCalledTimes(1)
+    expect(docgen.copyFiles).toHaveBeenCalledTimes(1)
+    expect(docgen.generateApiDocs.mock.invocationCallOrder[0])
+      .toBeLessThan(docgen.generatePackageList.mock.invocationCallOrder[0])
+    expect(docgen.generatePackageList.mock.invocationCallOrder[0])
+      .toBeLessThan(docgen.generateComponentsList.mock.invocationCallOrder[0])
+    expect(docgen.generateComponentsList.mock.invocationCallOrder[0])
+      .toBeLessThan(docgen.generateModuleReadmes.mock.invocationCallOrder[0])
+    expect(docgen.generateModuleReadmes.mock.invocationCallOrder[0])
+      .toBeLessThan(docgen.copyFiles.mock.invocationCallOrder[0])
+  })
+
+  describe('copyFiles', () => {
+    test('copies changelogs and the contributing guide', async () => {
+      globby.mockResolvedValueOnce(['packages/druxt/CHANGELOG.md'])
+      fs.readFileSync.mockReturnValueOnce('# druxt\n\n## 1.0.0 - 2026-01-01\n\n- Added a thing.\n')
+      ncp.mockImplementation((from, to, optionsOrCb, maybeCb) => {
+        const cb = typeof optionsOrCb === 'function' ? optionsOrCb : maybeCb
+        if (cb) cb()
+      })
+
+      await docgen.copyFiles()
+
+      expect(globby).toHaveBeenCalledWith('packages/*/CHANGELOG.md')
+      const call = fs.writeFileSync.mock.calls
+        .find(([destination]) => destination === 'docs/nuxt/content/api/packages/druxt/CHANGELOG.md')
+      expect(call).toBeDefined()
+      expect(call[1]).toContain('title: Release notes')
+      // The H1 repeats the module header on the site, so the mirror strips it.
+      expect(call[1]).not.toContain('# druxt')
+      expect(call[1]).toContain('## 1.0.0 - 2026-01-01')
+      expect(ncp).toHaveBeenCalledWith(
+        'CONTRIBUTING.md',
+        'docs/nuxt/content/how-to/contributing.md'
+      )
+    })
+  })
+
+  describe('processJs', () => {
+    test('fixes Vuex inner-scoped state', async () => {
+      const templateData = [{ name: 'state', scope: 'inner' }]
+
+      await docgen.processJs('file.js', templateData)
+
+      expect(templateData[0].scope).toBeUndefined()
+    })
+
+    test('promotes @mutator-tagged items to mutation methods', async () => {
+      const templateData = [{
+        mutators: [{ description: 'Sets the value.' }]
+      }]
+
+      await docgen.processJs('file.js', templateData)
+
+      expect(templateData[0]).toMatchObject({
+        description: 'Sets the value.',
+        kind: 'method',
+        scope: 'mutation'
+      })
+    })
+
+    test('leaves unrelated items untouched', async () => {
+      const templateData = [{ name: 'foo', scope: 'static' }]
+
+      await docgen.processJs('file.js', templateData)
+
+      expect(templateData[0]).toStrictEqual({ name: 'foo', scope: 'static' })
+    })
+  })
+
+  describe('processVue', () => {
+    test('injects undocumented props from vue-docgen-api', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [{ name: 'foo', description: 'A prop.', tags: {} }]
+      })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      const injected = templateData.find((item) => item.name === 'foo')
+      expect(injected).toMatchObject({
+        id: 'module:DruxtTest.props.foo',
+        kind: 'member',
+        scope: 'static',
+        memberof: 'module:DruxtTest.props'
+      })
+    })
+
+    test('does not duplicate props already present in templateData', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [{ name: 'foo', description: 'A prop.', tags: {} }]
+      })
+
+      const templateData = [
+        { id: 'module:DruxtTest', memberof: null },
+        { id: 'module:DruxtTest.props.foo', name: 'foo' }
+      ]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData.filter((item) => item.name === 'foo')).toHaveLength(1)
+    })
+
+    test('expands @vue-computed tagged items into computed properties', async () => {
+      vueDocs.mockResolvedValueOnce
+      vueDocs.parse.mockResolvedValueOnce({ displayName: 'DruxtTest', props: [] })
+
+      const templateData = [{
+        id: 'module:DruxtTest.computed.foo',
+        memberof: 'module:DruxtTest.computed',
+        description: '<p>Text</p><table>junk</table>',
+        _vueComputed: [{ name: 'bar' }]
+      }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      // The source strips from `</p` onward (note: no closing `>`), so the
+      // trailing `>` of `</p>` is stripped along with the rest.
+      expect(templateData[0].description).toBe('<p>Text')
+      const expanded = templateData.find((item) => item.id.endsWith('.computed.bar'))
+      expect(expanded).toMatchObject({
+        kind: 'property',
+        scope: 'static',
+        memberof: 'module:DruxtTest.computed'
+      })
+    })
+
+    test('derives memberof from id when missing', async () => {
+      vueDocs.parse.mockResolvedValueOnce({ displayName: 'DruxtTest', props: [] })
+
+      const templateData = [{ id: 'module:DruxtTest.methods.foo', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData[0].memberof).toBe('module:DruxtTest.methods')
+    })
+
+    test('injects type and default value from vue-docgen-api', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [{
+          name: 'foo',
+          description: 'A prop.',
+          type: { name: 'union', elements: [{ name: 'boolean' }, { name: 'object' }] },
+          defaultValue: { value: 'false' },
+          tags: {}
+        }]
+      })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      const injected = templateData.find((item) => item.name === 'foo')
+      expect(injected.type).toStrictEqual({ names: ['boolean', 'object'] })
+      // Literals render unquoted: the raw source text is parsed, not kept.
+      expect(injected.defaultvalue).toBe(false)
+    })
+
+    test('drops undefined defaults and unquotes string defaults', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [
+          { name: 'foo', defaultValue: { value: 'undefined' }, tags: {} },
+          { name: 'bar', defaultValue: { value: "'wrapper'" }, tags: {} }
+        ]
+      })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData.find((item) => item.name === 'foo').defaultvalue).toBeUndefined()
+      expect(templateData.find((item) => item.name === 'bar').defaultvalue).toBe('wrapper')
+    })
+
+    test('injects a props container when the file documents no props inline', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [{ name: 'foo', description: 'A prop.', tags: {} }]
+      })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData.map((o) => o.id)).toContain('module:DruxtTest.props')
+    })
+
+    test('injects inherited members from resolved extends/mixins sources', async () => {
+      vueDocs.parse.mockResolvedValueOnce({ displayName: 'DruxtTest', props: [] })
+      fs.existsSync.mockReturnValueOnce(true)
+      fs.readFileSync.mockReturnValueOnce(`
+<script>
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+
+export default {
+  name: 'DruxtTest',
+  extends: DruxtModule
+}
+</script>
+`)
+      jsdoc2md.getTemplateDataSync.mockReturnValueOnce([
+        { id: 'module:DruxtModule', kind: 'module' },
+        { id: 'module:DruxtModule.methods.getScopedSlots', kind: 'function', memberof: 'module:DruxtModule.methods' },
+        { id: 'module:DruxtModule.props.value', kind: 'member', memberof: 'module:DruxtModule.props' },
+        { id: 'Unused', kind: 'member' }
+      ])
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      const method = templateData.find((item) => item.id === 'module:DruxtTest.methods.getScopedSlots')
+      expect(method).toMatchObject({ kind: 'function', memberof: 'module:DruxtTest.methods' })
+
+      // Items not belonging to the referenced mixin are not injected.
+      expect(templateData.find((item) => item.id === 'Unused')).toBeUndefined()
+    })
+  })
+
+  describe('writeTemplateData', () => {
+    test('does nothing when templateData is falsy', () => {
+      docgen.writeTemplateData('src/foo.js', null)
+
+      expect(dmd).not.toHaveBeenCalled()
+      expect(fs.writeFileSync).not.toHaveBeenCalled()
+    })
+
+    test('does nothing when dmd produces no content', () => {
+      dmd.mockReturnValueOnce('')
+
+      docgen.writeTemplateData('src/foo.js', [{ id: 'module:foo' }])
+
+      expect(fs.writeFileSync).not.toHaveBeenCalled()
+    })
+
+    test('buffers generated markdown, written with frontmatter on flush', () => {
+      dmd.mockReturnValueOnce('# Foo\n\nDocs.')
+
+      docgen.writeTemplateData('src/components/DruxtFoo.vue', [{ id: 'module:DruxtFoo' }])
+
+      // Pages buffer so flushApiPages can resolve cross-page links first.
+      expect(fs.writeFileSync).not.toHaveBeenCalled()
+      expect(docgen.apiPages).toHaveLength(1)
+      expect(docgen.apiPages[0].destination).toBe('docs/nuxt/content/api/components/DruxtFoo.md')
+      expect(docgen.apiPages[0].frontmatter).toContain('title: DruxtFoo')
+
+      docgen.flushApiPages()
+
+      expect(mkdirp.sync).toHaveBeenCalledWith('docs/nuxt/content/api/components')
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        'docs/nuxt/content/api/components/DruxtFoo.md',
+        expect.stringContaining('title: DruxtFoo')
+      )
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining('# Foo\n\nDocs.')
+      )
+    })
+
+    test('sinks deprecated members below live ones within a group', () => {
+      dmd.mockReturnValueOnce('# Foo')
+      const templateData = [
+        { id: 'module:DruxtFoo' },
+        { id: 'module:DruxtFoo.methods.old', memberof: 'module:DruxtFoo.methods', deprecated: true },
+        { id: 'module:DruxtFoo.methods.live', memberof: 'module:DruxtFoo.methods' },
+      ]
+
+      docgen.writeTemplateData('src/components/DruxtFoo.vue', templateData)
+
+      expect(templateData.map((o) => o.id.split('.').pop())).toStrictEqual(['module:DruxtFoo', 'live', 'old'])
+    })
+
+    test('titles store pages and heads them with the title over the namespace', () => {
+      dmd.mockReturnValueOnce('## druxtMenu\n\nThe store body.')
+
+      docgen.writeTemplateData('packages/menu/src/stores/menu.js', [{ id: 'module:druxtMenu' }])
+
+      expect(docgen.apiPages[0].frontmatter).toContain('title: DruxtMenuStore')
+      expect(docgen.apiPages[0].content).toContain('## DruxtMenuStore')
+      expect(docgen.apiPages[0].content).toContain('registered under the `druxtMenu` namespace')
+    })
+
+    test('titles a directory index after its package and role', () => {
+      dmd.mockReturnValueOnce('## DruxtFooMixin')
+
+      docgen.writeTemplateData('packages/foo/src/mixins/index.js', [{ id: 'module:DruxtFooMixin' }])
+
+      expect(docgen.apiPages[0].frontmatter).toContain('title: Foo mixins')
+    })
+
+    test('titles a package index after the package, not the first symbol', () => {
+      dmd.mockReturnValueOnce('# DruxtSiteMixin')
+
+      docgen.writeTemplateData('packages/site/src/index.js', [{ id: 'module:DruxtSiteMixin' }])
+
+      expect(docgen.apiPages[0].frontmatter).toContain('title: Site')
+    })
+
+    test('leaves per-symbol page titles alone', () => {
+      dmd.mockReturnValueOnce('# DruxtClient')
+
+      docgen.writeTemplateData('packages/druxt/src/client.js', [{ id: 'DruxtClient' }])
+
+      expect(docgen.apiPages[0].frontmatter).toContain('title: DruxtClient')
+    })
+
+    test('flags the page when the documented symbol is deprecated', () => {
+      dmd.mockReturnValueOnce('# ~~DruxtFoo~~')
+
+      docgen.writeTemplateData('src/components/DruxtFoo.vue', [
+        { id: 'module:DruxtFoo', deprecated: true },
+      ])
+
+      expect(docgen.apiPages[0].frontmatter).toContain('deprecated: true')
+      expect(docgen.apiPages[0].deprecated).toBe(true)
+    })
+
+    test('flags a class whose root is the constructor signature', () => {
+      dmd.mockReturnValueOnce('# ~~DruxtClass~~')
+
+      docgen.writeTemplateData('src/class.js', [
+        { id: 'DruxtClass()' },
+        { id: 'DruxtClass', deprecated: true },
+      ])
+
+      expect(docgen.apiPages[0].frontmatter).toContain('deprecated: true')
+    })
+
+    test('does not flag the page when only a member is deprecated', () => {
+      dmd.mockReturnValueOnce('# DruxtMenu')
+
+      docgen.writeTemplateData('src/components/DruxtMenu.vue', [
+        { id: 'module:DruxtMenu' },
+        { id: 'module:DruxtMenu.computed.items', memberof: 'module:DruxtMenu.computed', deprecated: true },
+      ])
+
+      expect(docgen.apiPages[0].frontmatter).not.toContain('deprecated:')
+    })
+  })
+
+  describe('flushApiPages', () => {
+    const consola = require('consola')
+
+    test('resolves links, cleans generator artifacts and warns on dead targets', () => {
+      docgen.apiPages = [{
+        file: 'packages/foo/src/components/FooBar.vue',
+        destination: 'docs/nuxt/content/api/packages/foo/components/FooBar.md',
+        frontmatter: '---\ntitle: FooBar\n---\n\n',
+        title: 'FooBar',
+        content: [
+          '## FooBar',
+          '',
+          '[https://druxtjs.org/api/packages/foo/components/FooBar](https://druxtjs.org/api/packages/foo/components/FooBar)',
+          '[relative](../mixins/foo)',
+          '[missing](/api/nope)',
+          '**See**: https://druxtjs.org/modules/foo  ',
+          '***Deprecated*** in druxt-foo:0.1.0 and is removed from druxt-foo:2.0.0.',
+          '',
+          '#### .methods',
+          '',
+          '**Kind**: static property of FooBar',
+          '',
+          '* * *',
+          '',
+          '#### .some\\_member',
+          '',
+          '```vue',
+          '<script>',
+          "export default { name: 'FooBar' }",
+          '```',
+          '',
+        ].join('\n'),
+      }]
+      docgen.inheritedTypes = {
+        'packages/foo/src/components/FooBar.vue': { source: 'DruxtModule', names: ['ComponentData'] },
+      }
+
+      docgen.flushApiPages()
+
+      const [destination, written] = fs.writeFileSync.mock.calls[0]
+      expect(destination).toBe('docs/nuxt/content/api/packages/foo/components/FooBar.md')
+      // Absolute self-links root and take the page title as label.
+      expect(written).toContain('[FooBar](/api/packages/foo/components/FooBar)')
+      // Relative links resolve against the page route.
+      expect(written).toContain('[relative](/api/packages/foo/mixins/foo)')
+      // Bare See URLs become links.
+      expect(written).toContain('**See**: [/modules/foo](/modules/foo)')
+      // Deprecation prose reads as one sentence.
+      expect(written).toContain('***Deprecated*** in druxt-foo:0.1.0, removed from druxt-foo:2.0.0.')
+      // Empty inherited container sections drop; escaped headings unescape.
+      expect(written).not.toContain('#### .methods')
+      expect(written).toContain('#### .some_member')
+      // Unclosed example script fences close for copy-paste.
+      expect(written).toContain('</script>\n```')
+      // Inherited typedefs render as a links line, not re-emitted sections.
+      expect(written).toContain('## Inherited type definitions')
+      expect(written).toContain('`ComponentData`')
+      // The dead target warns for the per-package source passes.
+      expect(consola.warn).toHaveBeenCalledWith(expect.stringContaining('/api/nope'))
+    })
+
+    test('builds a curated package index with deprecated entries grouped last', () => {
+      const page = (file, destination, title, deprecated = false) => ({
+        file,
+        destination,
+        title,
+        deprecated,
+        frontmatter: `---\ntitle: ${title}\n---\n\n`,
+        content: `## ${title}`,
+      })
+      docgen.apiPages = [
+        page('packages/foo/src/index.js', 'docs/nuxt/content/api/packages/foo/index.md', 'Foo'),
+        page('packages/foo/src/components/FooBar.vue', 'docs/nuxt/content/api/packages/foo/components/FooBar.md', 'FooBar'),
+        page('packages/foo/src/components/OldThing.vue', 'docs/nuxt/content/api/packages/foo/components/OldThing.md', 'OldThing', true),
+        page('packages/foo/src/nuxt/index.js', 'docs/nuxt/content/api/packages/foo/nuxt/index.md', 'FooNuxtModule'),
+        // Title collision across packages disambiguates with the npm name.
+        page('packages/foo/src/typedefs/moduleOptions.js', 'docs/nuxt/content/api/packages/foo/typedefs/moduleOptions.md', 'ModuleOptions'),
+        page('packages/bar/src/typedefs/moduleOptions.js', 'docs/nuxt/content/api/packages/bar/typedefs/moduleOptions.md', 'ModuleOptions'),
+      ]
+
+      docgen.flushApiPages()
+
+      const index = fs.writeFileSync.mock.calls
+        .find(([destination]) => destination.endsWith('packages/foo/index.md'))[1]
+      expect(index).toContain('## In this package')
+      expect(index).toContain('### Nuxt module')
+      expect(index).toContain('[FooNuxtModule](/api/packages/foo/nuxt)')
+      expect(index).toContain('### Components\n\n- [FooBar](/api/packages/foo/components/FooBar)')
+      expect(index).toContain('### Deprecated')
+      expect(index).toContain('- [OldThing](/api/packages/foo/components/OldThing) (component)')
+      expect(index).toContain('[ModuleOptions (druxt-foo)](/api/packages/foo/typedefs/moduleOptions)')
+      const typedefPage = fs.writeFileSync.mock.calls
+        .find(([destination]) => destination.endsWith('bar/typedefs/moduleOptions.md'))[1]
+      expect(typedefPage).toContain('title: ModuleOptions (druxt-bar)')
+    })
+  })
+
+  describe('generateApiDocs', () => {
+    test('dispatches .js files to processJs and .vue files to processVue', async () => {
+      globby.mockResolvedValueOnce(['packages/druxt/src/index.js', 'packages/druxt/src/components/Druxt.vue'])
+      jsdoc2md.getTemplateDataSync.mockReturnValue([{ id: 'module:test' }])
+      vueDocs.parse.mockResolvedValue({ displayName: 'Druxt', props: [] })
+
+      docgen.processJs = jest.fn()
+      docgen.processVue = jest.fn()
+      docgen.writeTemplateData = jest.fn()
+
+      await docgen.generateApiDocs()
+
+      expect(docgen.processJs).toHaveBeenCalledWith('packages/druxt/src/index.js', expect.any(Array))
+      expect(docgen.processVue).toHaveBeenCalledWith('packages/druxt/src/components/Druxt.vue', expect.any(Array))
+      expect(docgen.writeTemplateData).toHaveBeenCalledTimes(2)
+    })
+
+    test('tracks Vue components for the components list', async () => {
+      globby.mockResolvedValueOnce(['packages/druxt/src/components/Druxt.vue'])
+      jsdoc2md.getTemplateDataSync.mockReturnValue([{ id: 'module:test' }])
+
+      docgen.processVue = jest.fn()
+      docgen.writeTemplateData = jest.fn()
+
+      await docgen.generateApiDocs()
+
+      expect(docgen.components).toHaveLength(1)
+      expect(docgen.components[0]).toMatchObject({ file: 'packages/druxt/src/components/Druxt.vue' })
+    })
+  })
+
+  describe('generateComponentsList', () => {
+    test('writes an index of top-level components only', () => {
+      docgen.components = [
+        { file: 'packages/druxt/src/components/Druxt.vue', templateData: [{ name: 'Druxt', description: 'The Druxt component.' }] },
+        // Nested component (path has more than 5 segments) should be excluded.
+        { file: 'packages/druxt/src/components/nested/Deep.vue', templateData: [{ name: 'Deep', description: '...' }] }
+      ]
+
+      docgen.generateComponentsList()
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        'docs/nuxt/content/components/README.md',
+        expect.stringContaining('## Druxt')
+      )
+      const [, content] = fs.writeFileSync.mock.calls[0]
+      expect(content).not.toContain('## Deep')
+    })
+  })
+
+  describe('generatePackageList', () => {
+    test('writes an index of public packages, sorted and filtered', async () => {
+      globby.mockResolvedValueOnce([
+        'packages/druxt/package.json',
+        'packages/test-utils/package.json'
+      ])
+
+      jest.doMock(
+        '../../../packages/druxt/package.json',
+        () => ({ name: 'druxt', version: '1.0.0', description: 'Core.', private: false }),
+        { virtual: true }
+      )
+      jest.doMock(
+        '../../../packages/test-utils/package.json',
+        () => ({ name: 'druxt-test-utils', version: '0.1.0', private: true }),
+        { virtual: true }
+      )
+
+      await docgen.generatePackageList()
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        'docs/nuxt/content/api/README.md',
+        expect.stringContaining('## druxt')
+      )
+      const [, content] = fs.writeFileSync.mock.calls[0]
+      expect(content).not.toContain('druxt-test-utils')
+    })
+  })
+
+  describe('generateModuleReadmes', () => {
+    test('writes a labeled page per public package with a README', async () => {
+      globby.mockResolvedValueOnce([
+        'packages/druxt/package.json',
+        'packages/test-utils/package.json'
+      ])
+
+      jest.doMock(
+        '../../../packages/druxt/package.json',
+        () => ({ name: 'druxt', version: '1.0.0', private: false }),
+        { virtual: true }
+      )
+      jest.doMock(
+        '../../../packages/test-utils/package.json',
+        () => ({ name: 'druxt-test-utils', version: '0.1.0', private: true }),
+        { virtual: true }
+      )
+      fs.existsSync.mockReturnValueOnce(true)
+      fs.readFileSync.mockReturnValueOnce('# druxt\n\nCore package.\n')
+
+      await docgen.generateModuleReadmes()
+
+      expect(fs.writeFileSync).toHaveBeenCalledTimes(1)
+      const [destination, content] = fs.writeFileSync.mock.calls[0]
+      expect(destination).toBe('docs/nuxt/content/modules/druxt/README.md')
+      expect(content).toContain('title: Druxt')
+      // The H1 repeats the module header on the site, so the mirror strips it.
+      expect(content).not.toContain('# druxt')
+      expect(content).toContain('Core package.')
+      expect(content).toContain('automatically generated')
+    })
+  })
+})

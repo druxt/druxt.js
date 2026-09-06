@@ -1,0 +1,50 @@
+{
+  "_comment": "Titles and slugs sourced from Drupal core's demo_umami_content install data (packages/druxtjs/docs/drupal/web/core/profiles/demo_umami/modules/demo_umami_content/default_content/languages/en/node/*.csv), which is where the DDEV backend's Umami seed content originates. Slugs are stable path aliases baked into that content generator; entity UUIDs are NOT (Drupal assigns them fresh on every install), so tests should resolve entities by visiting their path rather than by UUID. All paths below are langcode-relative - prepend the active langcode ('/en' throughout this suite) before visiting, e.g. `/en/recipes/deep-mediterranean-quiche`, `/en/recipes`, `/en/about-umami`. Verified empirically (not just from views.view.*.yml's unprefixed `path:` config, which is misleading here): visiting a View page-display path or a node path WITHOUT the `/en` prefix returns an empty client-only SSR shell (`serverRendered:false`) on this backend, not the expected content - the language-negotiation-by-path setup this site uses requires the prefix even though the raw Views config doesn't show it.",
+
+  "recipes": [
+    {
+      "title": "Deep mediterranean quiche",
+      "path": "/en/recipes/deep-mediterranean-quiche"
+    },
+    {
+      "title": "Vegan chocolate and nut brownies",
+      "path": "/en/recipes/vegan-chocolate-and-nut-brownies"
+    },
+    {
+      "title": "Super easy vegetarian pasta bake",
+      "path": "/en/recipes/super-easy-vegetarian-pasta-bake"
+    },
+    { "title": "Watercress soup", "path": "/en/recipes/watercress-soup" },
+    {
+      "title": "Victoria sponge cake",
+      "path": "/en/recipes/victoria-sponge-cake"
+    }
+  ],
+
+  "recipesListing": "/en/recipes",
+
+  "articles": [
+    {
+      "title": "Give it a go and grow your own herbs",
+      "path": "/en/articles/give-it-a-go-and-grow-your-own-herbs"
+    },
+    {
+      "title": "Dairy-free and delicious milk chocolate",
+      "path": "/en/articles/dairy-free-and-delicious-milk-chocolate"
+    },
+    {
+      "title": "Let's hear it for carrots",
+      "path": "/en/articles/lets-hear-it-for-carrots"
+    }
+  ],
+
+  "articlesListing": "/en/articles",
+
+  "pages": [{ "title": "About Umami", "path": "/en/about-umami" }],
+
+  "menus": {
+    "_comment": "The 'main' entries below are sourced from Drupal core's demo_umami.links.menu.yml (static 'Home' link) and the 'menu' key on the recipes/featured_articles Views' page_1 displays (config/install/views.view.{recipes,featured_articles}.yml) - all three ship in the stock profile. Anything beyond these three (e.g. 'About Umami', 'Contact') is NOT in the stock profile and may or may not exist on a given DDEV instance; verify before depending on it in a spec. 'account' is confirmed against the existing druxt-site homepage spec.",
+    "main": ["Home", "Articles", "Recipes"],
+    "account": ["Log in"]
+  }
+}

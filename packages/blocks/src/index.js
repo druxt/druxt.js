@@ -9,6 +9,7 @@ import { DruxtBlocksNuxtModule } from './nuxtModule'
  * @exports default
  * @name DruxtBlocksModule
  * @see {@link /api/packages/blocks/nuxtModule|DruxtBlocksModule}
+ * @see https://druxtjs.org/modules/blocks
  *
  * @example <caption>nuxt.config.js</caption> @lang js
  * module.exports = {
@@ -16,7 +17,7 @@ import { DruxtBlocksNuxtModule } from './nuxtModule'
  *     'druxt-blocks'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  */

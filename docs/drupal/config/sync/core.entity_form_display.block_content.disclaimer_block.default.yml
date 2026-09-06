@@ -1,4 +1,4 @@
-uuid: f56cd96c-4355-464c-b87f-5848a929abfd
+uuid: f72a1c4b-e7aa-408a-ace4-9496ec83d3b7
 langcode: en
 status: true
 dependencies:
@@ -9,28 +9,28 @@ dependencies:
   module:
     - text
 _core:
-  default_config_hash: o3swbJIqzZxLd38t2o_OkUrYbyiActN6GsXK6A4gM98
+  default_config_hash: mlTv1KOTm97M2NDwu4_hqWGI-ISj8vYdv-i_eWmhUIU
 id: block_content.disclaimer_block.default
 targetEntityType: block_content
 bundle: disclaimer_block
 mode: default
 content:
   field_copyright:
+    type: text_textarea
     weight: 28
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   field_disclaimer:
+    type: text_textarea
     weight: 27
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   info:
     type: string_textfield
     weight: -5
@@ -48,8 +48,8 @@ content:
     third_party_settings: {  }
   translation:
     weight: 10
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
 hidden:
   moderation_state: true

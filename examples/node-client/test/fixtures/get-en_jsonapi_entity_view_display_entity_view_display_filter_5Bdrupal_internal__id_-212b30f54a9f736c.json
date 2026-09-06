@@ -1,0 +1,53 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "83b9414f-6393-4e43-b12f-f15d84b93d4e",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/83b9414f-6393-4e43-b12f-f15d84b93d4e"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": ["taxonomy.vocabulary.recipe_category"],
+          "module": ["text"]
+        },
+        "drupal_internal__id": "taxonomy_term.recipe_category.default",
+        "targetEntityType": "taxonomy_term",
+        "bundle": "recipe_category",
+        "mode": "default",
+        "content": {
+          "description": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=taxonomy_term.recipe_category.default"
+    }
+  }
+}

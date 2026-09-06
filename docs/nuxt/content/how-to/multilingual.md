@@ -1,0 +1,103 @@
+---
+title: Serve content in multiple languages
+weight: -4
+description: Fetch and render translated Drupal content with langcode prefixes, from the route to the store to language-specific theme components.
+---
+
+> **Before you start:** this guide assumes a working Druxt site (see
+> [Getting started](/tutorials/getting-started)) with at least two
+> languages enabled in Drupal and URL path prefixes configured
+> (**Configuration → Regional and language → Languages**).
+
+Multilingual support runs through every layer: the router resolves
+prefixed paths, the client and store fetch translated resources, module
+components take a `langcode` prop, and the theme layer resolves
+language-specific components. This guide walks one translated page
+through all four.
+
+## Patch the backend
+
+Prefixed-path routing relies on fixes that are written and reviewed but not
+yet released, so a multilingual backend needs them applied:
+
+| Project | Issue | Without it |
+| ------- | ----- | ---------- |
+| decoupled_router | [#3111456](https://www.drupal.org/i/3111456) | Prefixed paths resolve, but always in the default language |
+| druxt | [#3273228](https://www.drupal.org/i/3273228) | Views routes, the front page among them, resolve in the default language and return no langcode |
+
+Copy the `extra.patches` block from
+[`docs/drupal/composer.json`](https://github.com/druxt/druxt.js/blob/develop/docs/drupal/composer.json)
+in this repository. Both entries point at the merge request diff on
+drupal.org, so you get whatever the branch currently holds rather than a
+copy that has to be maintained. That is the set the reference backend runs.
+
+Applying them needs `cweagans/composer-patches` in `require` and in
+`config.allow-plugins`. Both are in the same file. Without the plugin,
+Composer ignores `extra.patches` and installs the modules unpatched.
+
+Take the versions `composer.json` pins along with the patches. A merge
+request is written against one release, and applying its diff to another
+will either fail or, worse, apply differently.
+
+Without the patches, prefixed routes still resolve, but in the wrong
+language, which looks like missing translations rather than a routing bug.
+
+Menus need `jsonapi_menu_items` 1.2.4 or later.
+
+## Fetch a translated resource
+
+The DruxtClient resource methods (`getResource`, `getCollection`,
+`getCollectionAll`, `getIndex`) and the matching DruxtStore actions
+take a langcode `prefix`, falling back to the backend's default
+language when omitted:
+
+```js
+this.$store.dispatch('druxt/getResource', {
+  type: 'node--page',
+  id: 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd',
+  prefix: 'es',
+});
+```
+
+(Take a real `id` from your backend's `/jsonapi/node/page` listing;
+demo ids change with every reinstall.) The prefix maps straight onto
+Drupal's prefixed endpoints: `/es/jsonapi/...` serves the Spanish
+variants.
+
+## Render in a language
+
+Module components take a `langcode` prop, and expose the resolved
+language (prop or fallback) as the computed `lang`:
+
+```vue
+<DruxtEntity type="node--page" :id="id" langcode="es" />
+```
+
+On a routed page you rarely set this by hand: the wildcard route
+carries the language of the path it resolved, and the components
+inherit it.
+
+## Theme per language
+
+The [component suggestion chain](/explanation/component-resolution)
+tries a langcode-suffixed variant of every candidate first, so a
+language-specific wrapper is just a more specific file:
+
+```text
+components/druxt/entity/node/page/Default.vue     every language
+components/druxt/entity/node/page/DefaultEs.vue   Spanish only
+```
+
+`DefaultEs.vue` wins for `langcode: 'es'`. Every other language renders
+`Default.vue`. Use it for the cases where translation
+changes the design: reversed text direction, longer labels, a
+language-specific asset.
+
+## Where to go next
+
+- [Component resolution](/explanation/component-resolution): where the
+  langcode suffix sits in the full lookup order.
+- [Decoupled routing](/explanation/routing): how prefixed paths reach
+  Drupal at all.
+- [Use the Druxt client directly](/how-to/use-the-druxt-client): the
+  `prefix` parameter on every method.

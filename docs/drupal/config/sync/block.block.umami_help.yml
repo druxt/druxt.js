@@ -1,4 +1,4 @@
-uuid: 007badba-0e9a-4150-9e67-3dc2b72925fc
+uuid: 874408fb-778c-455f-81d2-8a10644c8cb4
 langcode: en
 status: true
 dependencies:
@@ -7,7 +7,7 @@ dependencies:
   theme:
     - umami
 _core:
-  default_config_hash: GOu0a7TCZFduLne1PASXV_dCXui1qpGhjgopzee1j_I
+  default_config_hash: YC1H0JGjRvoA9RedtLhXY-9AYUTPz3XxcmDb_3H-tWY
 id: umami_help
 theme: umami
 region: highlighted
@@ -17,6 +17,6 @@ plugin: help_block
 settings:
   id: help_block
   label: Help
-  provider: help
   label_display: '0'
+  provider: help
 visibility: {  }

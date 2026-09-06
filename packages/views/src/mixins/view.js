@@ -17,7 +17,7 @@ import { DruxtEntityContextMixin } from 'druxt-entity'
 const DruxtViewsViewMixin = {
   /**
    * Vue.js mixins.
-   * @see {@link https://entity.druxtjs.org/api/mixins/context|DruxtEntityContextMixin}
+   * @see {@link https://druxtjs.org/modules/entity/deprecations|DruxtEntityContextMixin (deprecated)}
    * @type {object[]}
    */
   mixins: [DruxtEntityContextMixin],

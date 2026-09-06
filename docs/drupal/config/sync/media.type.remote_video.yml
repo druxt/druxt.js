@@ -1,9 +1,9 @@
-uuid: f1509129-efe9-4930-adad-6cb77eb62687
+uuid: 01fff41f-e80f-4bdf-87e6-86bc7a80b59b
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: FvzYbqrSLeKG-eXDngFRYlGe3_f8RaSXPBf3i4jWpa0
+  default_config_hash: hIBTnDGgDKnCiP6HUZm1m7600DHUEpC6FN3LQ4sUgZ4
 id: remote_video
 label: 'Remote video'
 description: 'A remotely hosted video from YouTube or Vimeo.'
@@ -11,10 +11,10 @@ source: 'oembed:video'
 queue_thumbnail_downloads: false
 new_revision: true
 source_configuration:
-  thumbnails_directory: 'public://oembed_thumbnails'
+  source_field: field_media_oembed_video
+  thumbnails_directory: 'public://oembed_thumbnails/[date:custom:Y-m]'
   providers:
     - YouTube
     - Vimeo
-  source_field: field_media_oembed_video
 field_map:
   title: name

@@ -1,0 +1,53 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "a556d934-9513-4bed-be6e-cbbc7b6c2564",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/a556d934-9513-4bed-be6e-cbbc7b6c2564"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": ["taxonomy.vocabulary.tags"],
+          "module": ["text"]
+        },
+        "drupal_internal__id": "taxonomy_term.tags.default",
+        "targetEntityType": "taxonomy_term",
+        "bundle": "tags",
+        "mode": "default",
+        "content": {
+          "description": {
+            "type": "text_default",
+            "label": "hidden",
+            "settings": [],
+            "third_party_settings": [],
+            "weight": 0,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "langcode": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=taxonomy_term.tags.default"
+    }
+  }
+}

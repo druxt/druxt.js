@@ -1,4 +1,4 @@
-uuid: 44d5497d-227a-4b8f-a44a-380b3009528b
+uuid: af05b8fb-96d9-4fd6-8bf6-b19cc08b1367
 langcode: en
 status: true
 dependencies:
@@ -11,14 +11,14 @@ dependencies:
   module:
     - link
 _core:
-  default_config_hash: WK_QNizqurKDgVn7UssZ5JJ_sDVXCd0ly_GoXD8alvc
+  default_config_hash: XP9qQ7mjv2YDvcDVdFdj6RMmWV3YC8T9U6GFMEseQEg
 id: block_content.banner_block.default
 targetEntityType: block_content
 bundle: banner_block
 mode: default
 content:
   field_content_link:
-    weight: 4
+    type: link
     label: hidden
     settings:
       trim_length: 80
@@ -27,31 +27,31 @@ content:
       rel: ''
       target: ''
     third_party_settings: {  }
-    type: link
+    weight: 4
     region: content
   field_media_image:
     type: entity_reference_entity_view
-    weight: 1
     label: hidden
     settings:
       view_mode: scale_crop_7_3_large
       link: false
     third_party_settings: {  }
+    weight: 1
     region: content
   field_summary:
-    weight: 3
+    type: basic_string
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 3
     region: content
   field_title:
-    weight: 2
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 2
     region: content
 hidden:
   langcode: true

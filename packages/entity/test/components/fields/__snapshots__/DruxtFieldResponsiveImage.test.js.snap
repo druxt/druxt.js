@@ -3,5 +3,5 @@
 exports[`Component - DruxtFieldResponsiveImage default 1`] = `
 "<div>
   <!---->
-  <!----> <img src=\\"/sites/default/files/sites/default/image.jpg\\"></div>"
+  <!----> <img src="/sites/default/files/sites/default/image.jpg"></div>"
 `;

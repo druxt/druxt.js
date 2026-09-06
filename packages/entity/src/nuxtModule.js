@@ -12,6 +12,8 @@ import DruxtEntityStorybook from './nuxtStorybook'
  *
  * Options are set on the root level `druxt` Nuxt config object.
  *
+ * @see https://druxtjs.org/modules/entity
+ *
  * @example @lang js
  * // `nuxt.config.js`
  * module.exports = {
@@ -19,12 +21,13 @@ import DruxtEntityStorybook from './nuxtStorybook'
  *     'druxt-entity'
  *   ],
  *   druxt: {
- *     baseUrl: 'https://demo-api.druxtjs.org'
+ *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
  * }
  *
  * @todo Document options.
  *
+ * @param {object} moduleOptions - The Nuxt.js module options.
  * @property {object} options.druxt - DruxtJS root level options.
  * @property {string} options.druxt.baseUrl - Base URL of Drupal JSON:API backend.
  */
@@ -38,7 +41,7 @@ const DruxtEntityNuxtModule = async function (moduleOptions = {}) {
       ...((this.options || {}).druxt || {}).entity,
       ...moduleOptions,
       components: {
-        fields: true,
+        fields: false,
         ...(((this.options || {}).druxt || {}).entity || {}).components,
         ...moduleOptions.components
       }

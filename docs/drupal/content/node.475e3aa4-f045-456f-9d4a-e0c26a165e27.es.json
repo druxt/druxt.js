@@ -1,0 +1,108 @@
+{
+    "uuid": [
+        {
+            "value": "475e3aa4-f045-456f-9d4a-e0c26a165e27"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "page",
+            "target_type": "node_type",
+            "target_uuid": "8196a412-9d1d-4b8b-9020-f65663084626"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "revision_uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "516f5ed6-a36a-4ecc-bded-b6384fb83d6b"
+        }
+    ],
+    "revision_log": [],
+    "status": [
+        {
+            "value": true
+        }
+    ],
+    "uid": [
+        {
+            "target_type": "user",
+            "target_uuid": "516f5ed6-a36a-4ecc-bded-b6384fb83d6b"
+        }
+    ],
+    "title": [
+        {
+            "value": "Acerca de Umami"
+        }
+    ],
+    "created": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "changed": [
+        {
+            "value": "2024-04-03T23:15:53+00:00",
+            "format": "Y-m-d\\TH:i:sP"
+        }
+    ],
+    "promote": [
+        {
+            "value": false
+        }
+    ],
+    "sticky": [
+        {
+            "value": false
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": false
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": true
+        }
+    ],
+    "moderation_state": [
+        {
+            "value": "published"
+        }
+    ],
+    "path": [
+        {
+            "alias": "\/acerca-de-umami",
+            "langcode": "es"
+        }
+    ],
+    "content_translation_source": [
+        {
+            "value": "und"
+        }
+    ],
+    "content_translation_outdated": [
+        {
+            "value": false
+        }
+    ],
+    "body": [
+        {
+            "value": "<p> Umami es una revista ficticia de alimentos que se ha creado para demostrar c\u00f3mo se puede construir un sitio de Drupal con la funcionalidad que se proporciona 'fuera de la caja'. <\/p> <p> Para obtener m\u00e1s informaci\u00f3n, visite <a href='https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile'>https:\/\/www.drupal.org\/docs\/umami-drupal-demonstration-installation-profile<\/a>.<\/p> ",
+            "format": "basic_html",
+            "summary": null
+        }
+    ]
+}

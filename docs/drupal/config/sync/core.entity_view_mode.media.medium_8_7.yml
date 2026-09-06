@@ -1,12 +1,13 @@
-uuid: b4b92c31-4b0e-43c9-b79a-dea7adcf9a52
+uuid: e2ed39f7-cd5c-41e7-aeb2-778cb7769082
 langcode: en
 status: true
 dependencies:
   module:
     - media
 _core:
-  default_config_hash: MLQ-b8I239yOJy9cH7ZG9vuo3lvjRyVoQhebrlHVPF8
+  default_config_hash: 9AxBqzhw93Eoonvxvqn4V4xPFefPqF3gm5NTEUi1gx4
 id: media.medium_8_7
 label: 'Medium 8:7'
+description: ''
 targetEntityType: media
 cache: true

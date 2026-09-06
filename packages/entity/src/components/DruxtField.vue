@@ -6,7 +6,10 @@ const modelWatch = DruxtModule.watch.model
 delete DruxtModule.watch.model
 
 /**
- * Renders a Drupal Field using Drupals by field type and formatter settings.
+ * Renders a Drupal field using a component chosen by the field type and
+ * formatter settings.
+ *
+ * @see https://druxtjs.org/modules/entity
  *
  * @example
  * <DruxtField
@@ -32,6 +35,7 @@ export default {
      * JSON:API errors.
      *
      * @type {object[]}
+     * @default []
      */
     errors: {
       type: Array,
@@ -60,7 +64,9 @@ export default {
     },
 
     /**
-     * @deprecated
+     * @deprecated in druxt-entity:0.5.0 and is removed from druxt-entity:2.0.0.
+     *   Use the component suggestion system instead.
+     * @see https://druxtjs.org/modules/entity/deprecations
      */
     options: {
       type: Object,
@@ -86,6 +92,10 @@ export default {
   },
 
   /**
+   * Provides the reactive field model, initialized from the value property.
+   *
+   * @param {object} vm - The component ViewModel.
+   * @param {(array|boolean|number|object|string)} vm.value - The Field value.
    * @property {object} model - The model object.
    */
   data: ({ value }) => ({
@@ -185,6 +195,7 @@ export default {
      * Provides the available component naming options for the Druxt Wrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object} context.schema - The DruxtSchema field schema object.
      * @returns {ComponentOptions}
      */
     componentOptions: ({ schema }) => ([
@@ -197,6 +208,10 @@ export default {
      * Provides propsData for the DruxtWrapper.
      *
      * @param {object} context - The module component ViewModel.
+     * @param {object[]} context.errors - Field errors from the form submission response.
+     * @param {Array|boolean|number|object|string} context.model - The field value.
+     * @param {boolean} context.relationship - `true` if this field is a JSON:API relationship.
+     * @param {object} context.schema - The DruxtSchema field schema object.
      * @returns {PropsData}
      */
     propsData: ({ errors, model, relationship, schema }) => ({ errors, relationship, schema, value: model }),
@@ -207,7 +222,7 @@ export default {
      * A scoped slot per field item is provided, with support for:
      * - File, Image, Link, Number, Text and other View fields.
      * - Boolean, Date/Time, Text and other Form fields.
-     * - Entitiy references.
+     * - Entity references.
      *
      * A scoped slot is provided for the label, as well as label-above and
      * label-inline depending on the field schema.
@@ -223,6 +238,7 @@ export default {
      *   </div>
      * </template>
      *
+     * @param {Function} h - The Vue createElement function.
      * @return {ScopedSlots} The Scoped slots object.
      */
     slots(h) {
@@ -463,7 +479,7 @@ export default {
 }
 
 /**
- * Provides the available naming options for the Wrapper component.
+ * Provides the available naming options for the wrapper component.
  *
  * @typedef {array[]} ComponentOptions
  *
@@ -501,7 +517,7 @@ export default {
  */
 
 /**
- * Provides propsData for use in the Wrapper component.
+ * Provides propsData for use in the wrapper component.
  *
  * @typedef {object} PropsData
  * @param {object[]} errors - JSON:API errors.
@@ -535,10 +551,10 @@ export default {
  */
 
 /**
- * Provides scoped slots for use in the Wrapper component.
+ * Provides scoped slots for use in the wrapper component.
  *
  * @typedef {object} ScopedSlots
- * @param {function} field-# - A slot per field item, e.g. `field-0`.
+ * @param {function} * - A slot per field item, e.g. `field-0`.
  * @param {function} label - The field label.
  * @param {function} label-above - The field label, if label position is 'above'.
  * @param {function} label-inline - The field label, if label position is 'inline'.

@@ -3,9 +3,9 @@ import { DruxtSchemaNuxtModule } from './nuxtModule'
 /**
  * The core module functionality.
  *
- * Provides methods for generating Druxt.js Schema files from the Drupal JSON:API.
+ * Provides methods for generating Druxt Schema files from the Drupal JSON:API.
  *
- * @type class
+ * @type {class}
  * @exports DruxtSchema
  * @see {@link /api/packages/schema/schema|DruxtSchema}
  *
@@ -41,7 +41,16 @@ export { DruxtSchemaMixin } from './mixins/schema'
  *
  * @exports DruxtSchemaStore
  * @type {Function}
- * @see {@link /api/packages/schema/store/schema|DruxtSchemaStore}
+ * @see {@link /api/packages/schema/stores/schema|DruxtSchemaStore}
+ *
+ * @example <caption>Manual usage</caption> @lang js
+ * import { DruxtSchemaStore } from 'druxt-schema'
+ * import Vue from 'vue'
+ * import Vuex from 'vuex'
+ *
+ * Vue.use(Vuex)
+ * const store = new Vuex.Store()
+ * DruxtSchemaStore({ store })
  */
 export { DruxtSchemaStore } from './stores/schema'
 
@@ -53,7 +62,8 @@ export { DruxtSchemaStore } from './stores/schema'
  * @type {Function}
  * @exports default
  * @name DruxtSchemaNuxtModule
- * @see {@link ./module|DruxtSchemaNuxtModule}
+ * @see {@link ./nuxtModule|DruxtSchemaNuxtModule}
+ * @see {@link https://druxtjs.org/modules/schema|Schema module guide}
  *
  * @example <caption>nuxt.config.js</caption> @lang js
  * module.exports = {

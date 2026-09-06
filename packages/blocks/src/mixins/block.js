@@ -3,6 +3,7 @@
  * component.
  *
  * @mixin
+ * @see https://druxtjs.org/modules/blocks
  *
  * @example @lang vue
  * <template>

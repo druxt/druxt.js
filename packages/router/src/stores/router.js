@@ -18,6 +18,8 @@ const DruxtRouterStore = ({ store }) => {
    * @name druxtRouter
    * @module druxtRouter
    *
+   * @see https://druxtjs.org/explanation/druxt-store
+   *
    * @todo Change namespace to `druxt/router`.
    */
   const module = {
@@ -46,18 +48,21 @@ const DruxtRouterStore = ({ store }) => {
      */
     mutations: {
       /**
-       * @deprecated
-       * @see {@link https://druxtjs.org/api/stores/druxt}
+       * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+       *   Use the DruxtStore druxt/addResource mutation instead.
+       * @see https://druxtjs.org/modules/router/deprecations
+       * @see {@link https://druxtjs.org/api/packages/druxt/stores/druxt}
        *
        * @name addEntity
        * @mutator {object} addEntity=entities Adds specified Drupal entity JSON:API resource data to the Vuex state object.
+       * @param {object} state - The Vuex state object.
        * @param {object} entity - The Drupal entity JSON:API resource data.
        *
        * @example @lang js
        * this.$store.commit('druxtRouter/addEntity', entity)
        */
       addEntity (state, entity) {
-        console.warn('[druxt-router] `druxtRouter/addEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.')
+        console.warn('[druxt-router] `druxtRouter/addEntity` is deprecated. See https://druxtjs.org/api/packages/druxt/stores/druxt')
         if (!entity || typeof entity.id === 'undefined') {
           // @TODO - Error?
           return
@@ -68,6 +73,7 @@ const DruxtRouterStore = ({ store }) => {
       /**
        * @name setRedirect
        * @mutator {object} setRedirect=redirect Sets the active redirect.
+       * @param {object} state - The Vuex state object.
        * @param {object} redirect - The Redirect object.
        *
        * @example @lang js
@@ -80,9 +86,8 @@ const DruxtRouterStore = ({ store }) => {
       /**
        * @name addRoute
        * @mutator {object} addRoute=routes Adds the supplied route to the Vuex state object.
-       * @param {object} context
-       * @param {string} context.path - The route path.
-       * @param {object} context.route - The route object.
+       * @param {object} state - The Vuex state object.
+       * @param {addRoutePayload} payload - The mutation payload.
        *
        * @example @lang js
        * this.$store.commit('druxtRouter/addRoute', { path, route })
@@ -99,6 +104,7 @@ const DruxtRouterStore = ({ store }) => {
       /**
        * @name setRoute
        * @mutator {string} setRoute=route Sets the active route by path.
+       * @param {object} state - The Vuex state object.
        * @param {string} path - The route path
        *
        * @example @lang js
@@ -159,12 +165,17 @@ const DruxtRouterStore = ({ store }) => {
        * - Caches result in the Vuex store.
        * - Returns cached result from Vuex store when available.
        *
-       * @deprecated
-       * @see {@link https://druxtjs.org/api/stores/druxt}
+       * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+       *   Use the DruxtStore druxt/getResource action instead.
+       * @see https://druxtjs.org/modules/router/deprecations
+       * @see {@link https://druxtjs.org/api/packages/druxt/stores/druxt}
        *
        * @name getEntity
        * @action getEntity=entities
-       * @param {object} query
+       * @param {object} context - The Vuex action context.
+       * @param {Function} context.commit - Commits mutations to the store.
+       * @param {object} context.state - The Vuex module state.
+       * @param {object} query - The JSON:API resource query.
        * @return {object} The Drupal entity JSON:API resource data.
        *
        * @example @lang js
@@ -173,7 +184,7 @@ const DruxtRouterStore = ({ store }) => {
        * @todo Rename getEntity to getResource.
        */
       async getEntity ({ commit, state }, query) {
-        console.warn('[druxt-router] `druxtRouter/getEntity` is deprecated. See http://druxtjs.org/api/stores/druxt.')
+        console.warn('[druxt-router] `druxtRouter/getEntity` is deprecated. See https://druxtjs.org/api/packages/druxt/stores/druxt')
         if (typeof state.entities[query.id] !== 'undefined') {
           return state.entities[query.id]
         }
@@ -188,30 +199,28 @@ const DruxtRouterStore = ({ store }) => {
       /**
        * Get multiple resources.
        *
-       * @deprecated
-       * @see {@link https://druxtjs.org/api/stores/druxt}
+       * @deprecated in druxt-router:0.18.0 and is removed from druxt-router:2.0.0.
+       *   Use the DruxtStore druxt/getCollection action instead.
+       * @see https://druxtjs.org/modules/router/deprecations
+       * @see {@link https://druxtjs.org/api/packages/druxt/stores/druxt}
        *
        * @name getResources
        * @action getResources
-       * @param {object} context Object containing `druxtRouter.getResources()` parameters.
-       * @param {string} context.resource - The JSON:API resource type.
-       * @param {string|object} context.query - A JSON:API query string or object.
-       * @param {object} [context.options]
-       * @param {boolean} [context.options.all=false] - Load all results.
+       * @param {object} app - The Nuxt app context.
+       * @param {getResourcesContext} payload - The action parameters.
        * @return {object[]} Array of Drupal JSON:API resource data.
        *
        * @example @lang js
-       * // Load all currently published Articles.
+       * // Load currently published Articles.
        * const query = new DrupalJsonApiParams()
        * query.addFilter('status', '1')
        * const resources = await this.$store.dispatch('druxtRouter/getResources', {
        *   resource: 'node--article',
-       *   query,
-       *   options: { all: true }
+       *   query
        * })
        */
       async getResources (app, { resource, query }) {
-        console.warn('[druxt-router] `druxtRouter/getResources` is deprecated. See http://druxtjs.org/api/stores/druxt.')
+        console.warn('[druxt-router] `druxtRouter/getResources` is deprecated. See https://druxtjs.org/api/packages/druxt/stores/druxt')
         const collection = await this.app.store.dispatch('druxt/getCollection', { type: resource, query })
         return collection.data || false
       },
@@ -240,7 +249,13 @@ const DruxtRouterStore = ({ store }) => {
         try {
           route = await this.$druxtRouter().getRoute(path)
         } catch (err) {
-          route = { error: { statusCode: err.response.status, message: err.response.data.message } }
+          // `err.response` is only set when the backend actually returned an
+          // HTTP response; a network failure (backend unreachable, timeout,
+          // connection reset) leaves it undefined, so fall back to `err`
+          // itself rather than crashing on the access.
+          const statusCode = (err.response || {}).status || 500
+          const message = ((err.response || {}).data || {}).message || err.message
+          route = { error: { statusCode, message } }
         }
 
         commit('addRoute', { path, route })
@@ -256,3 +271,33 @@ const DruxtRouterStore = ({ store }) => {
 }
 
 export { DruxtRouterStore }
+
+/**
+ * Parameters for the `addRoute` mutation.
+ *
+ * @typedef {object} addRoutePayload
+ *
+ * @param {string} path - The route path.
+ * @param {object} route - The route object.
+ *
+ * @example @lang js
+ * {
+ *   path: '/',
+ *   route: {}
+ * }
+ */
+
+/**
+ * Parameters for the `getResources` action.
+ *
+ * @typedef {object} getResourcesContext
+ *
+ * @param {string} resource - The JSON:API resource type.
+ * @param {string|object} query - A JSON:API query string or object.
+ *
+ * @example @lang js
+ * {
+ *   resource: 'node--article',
+ *   query: new DrupalJsonApiParams().addFilter('status', '1')
+ * }
+ */

@@ -4,7 +4,7 @@ exports[`Component - DruxtFieldFileDefault default 1`] = `
 "<div>
   <!---->
   <!---->
-  <nuxt-link-stub to=\\"/sites/default/files/test/file.ext\\">
+  <nuxt-link-stub to="/sites/default/files/test/file.ext">
     file.ext
   </nuxt-link-stub>
 </div>"

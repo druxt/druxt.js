@@ -1,4 +1,4 @@
-uuid: aac35fa1-5dbd-48b8-ba83-e82416eec2ff
+uuid: ed96760c-7266-4ebf-920c-274e2de7f15a
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
     - image
     - path
 _core:
-  default_config_hash: YfCsrO-6vBi81DXSdDHvE4dunxYf3CVcSnagpcGmtc4
+  default_config_hash: q-WkhfaL-FVib3qYWYqmbvblviQQrbFUf3R4CcW4e1c
 id: media.image.default
 targetEntityType: media
 bundle: image
@@ -23,13 +23,13 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_media_image:
+    type: image_image
+    weight: 1
+    region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
-    type: image_image
-    weight: 1
-    region: content
   langcode:
     type: language_select
     weight: 2
@@ -53,10 +53,10 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 7
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   translation:
     weight: 6
@@ -66,12 +66,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 4
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
-    region: content
     third_party_settings: {  }
 hidden:
   moderation_state: true

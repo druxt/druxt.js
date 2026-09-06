@@ -29,7 +29,7 @@ import { default as DruxtEntity } from './DruxtEntity.vue'
  *   mixins: [DruxtEntityMixin]
  * }
  *
- * @example <caption>DruxtEntityForm with template injection</caption> @lang vue
+ * @example <caption>DruxtEntityForm default slot (template injection)</caption> @lang vue
  * <DruxtEntityForm type="">
  *   <template #default="{ entity }">
  *     <!-- Do whatever you want here -->
@@ -39,6 +39,7 @@ import { default as DruxtEntity } from './DruxtEntity.vue'
  *
  * @extends DruxtEntity
  * @see {@link ./DruxtEntity|DruxtEntity}
+ * @see https://druxtjs.org/modules/entity
  */
 export default {
   name: 'DruxtEntityForm',
@@ -82,7 +83,9 @@ export default {
     /**
      * An array of errors if present in the form submission response data.
      *
-     * @return {object[]}
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.response - The form submission response data.
+     * @return {object[]} The JSON:API errors from the form submission response, or `undefined`.
      */
     errors: ({ response }) => (response || {}).errors,
   },
@@ -122,7 +125,8 @@ export default {
         this.$store.commit('druxt/addResource', { resource })
         this.$emit('submit', resource)
       } catch (err) {
-        this.response = err.response.data
+        // Network-level failures reject without a response object.
+        this.response = (err.response || {}).data
         this.$emit('error', this.response)
       }
 
@@ -136,7 +140,8 @@ export default {
     /**
      * Adds a `buttons` slot to the DruxtEntity scope slots.
      *
-     * @return {object}
+     * @param {Function} h - The Vue createElement function.
+     * @return {object} The DruxtEntity scoped slots, with an added `buttons` slot and a default slot that appends the form buttons after the fields.
      */
     slots(h) {
       // Use DruxtEntity to build the Field based slots.

@@ -1,0 +1,35 @@
+# lychee configuration - external link checker for docs/nuxt/content.
+# Run via the lint:linkcheck CI job. Report-only (allow_failure): lychee
+# has a track record of randomly hitting rate limits on real runs, so a
+# transient failure here shouldn't block the pipeline.
+
+# Hosts that block automated requests or rate-limit bots. Excluded to reduce
+# false negatives that don't indicate a real dead link.
+exclude = [
+  # Root-relative /images/ links resolve against the production base-url,
+  # but new screenshots only exist in-branch until the site deploys; the
+  # files themselves ship in static/images with the same change.
+  "druxtjs.org/images/",
+  "linkedin.com",
+  "npmjs.com",
+  "fonts.gstatic.com",
+  "fonts.googleapis.com",
+]
+
+# exclude_path values are regular expressions, not globs. content/api and
+# content/modules/*/readme are build-time generated (not in the source tree
+# this job scans), so nothing below matches yet - kept for when a future job
+# scans the built site instead of the raw content/ source.
+exclude_path = [
+  "node_modules",
+  "\\.nuxt",
+  "\\.output",
+  "^dist",
+  "content/api",
+  "content/modules/[^/]+/readme",
+]
+
+max_concurrency = 4
+timeout = 20
+max_retries = 2
+accept = ["200", "301", "302", "429"]

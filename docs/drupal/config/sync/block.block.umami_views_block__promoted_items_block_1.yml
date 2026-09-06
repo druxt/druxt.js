@@ -1,4 +1,4 @@
-uuid: 1a573223-14d7-41ba-ab48-ec9a99bb4496
+uuid: c6be17e2-d8c3-421c-b25f-e049c2489e92
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
   theme:
     - umami
 _core:
-  default_config_hash: ngpai3pi8v_0w7ukQOEKB7RlbXEY_n9ZSAPqTMerFdo
+  default_config_hash: JQiEYLzNTj4IyGi0wooMJIWcdgA4NV_jqJzCOtt9EAI
 id: umami_views_block__promoted_items_block_1
 theme: umami
 region: banner_top
@@ -20,13 +20,13 @@ plugin: 'views_block:promoted_items-block_1'
 settings:
   id: 'views_block:promoted_items-block_1'
   label: ''
-  provider: views
   label_display: '0'
+  provider: views
   views_label: ''
   items_per_page: none
 visibility:
   request_path:
     id: request_path
-    pages: '<front>'
     negate: false
     context_mapping: {  }
+    pages: '<front>'

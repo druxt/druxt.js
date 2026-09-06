@@ -1,0 +1,1259 @@
+---
+# GitLab CI for the druxt.js monorepo: lint → test → secret-detection → preview,
+# with collapsible section helpers and a per-file JSON/shell/YAML sweep.
+#
+# GitHub Actions (.github/workflows/ci.yml) is the canonical CI; this pipeline
+# is additive, giving any GitLab mirror of this repo a real pipeline with
+# secret-detection coverage and per-MR docs previews via GitLab Pages.
+
+stages:
+  - lint
+  - test
+  - secret-detection
+  - audit
+  - preview
+
+variables:
+  SECRET_DETECTION_ENABLED: 'true'
+
+# Secret scanning is gitleaks, not GitLab's Security/Secret-Detection
+# template. That template is an Ultimate-tier feature: on a non-Ultimate
+# instance the include produces no job at all, so the configuration reads as
+# coverage while scanning nothing. This job was previously that include, and
+# was both required and inert, which is the worst of the two.
+secret_detection:
+  stage: secret-detection
+  image: alpine:3.21
+  interruptible: true
+  # gitleaks reads git history and needs nothing this pipeline builds.
+  dependencies: []
+  variables:
+    # Without this the scan covers only as much history as the project's clone
+    # depth happens to allow, and a secret in an older commit reads as clean.
+    # A scan whose coverage depends on an unrelated project setting is a scan
+    # that can quietly stop scanning.
+    GIT_DEPTH: 0
+    GITLEAKS_VERSION: '8.30.1'
+    GITLEAKS_SHA256_X64: '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb'
+    GITLEAKS_SHA256_ARM64: 'e4a487ee7ccd7d3a7f7ec08657610aa3606637dab924210b3aee62570fb4b080'
+  script:
+    - section_start "gitleaks" "Scanning for committed secrets"
+    - apk add --no-cache curl tar git > /dev/null
+    # Detect rather than assume, as the cloudflared block below already does.
+    # This runner is arm64; the x64 archive only ran because the image resolved
+    # to amd64 under emulation. Its checksum verifies either way, so the failure
+    # would arrive as an exec format error rather than as a download problem.
+    - |
+      case "$(uname -m)" in
+        aarch64|arm64) gl_arch=arm64; gl_sha="$GITLEAKS_SHA256_ARM64" ;;
+        x86_64)        gl_arch=x64;   gl_sha="$GITLEAKS_SHA256_X64" ;;
+        *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+      esac
+      curl -sSLo gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_${gl_arch}.tar.gz"
+      echo "${gl_sha}  gitleaks.tar.gz" | sha256sum -c -
+      tar -xzf gitleaks.tar.gz gitleaks
+    - ./gitleaks detect --source . --no-banner --redact --verbose
+    - section_end "gitleaks"
+    # A scan that finds nothing looks identical to a scan that cannot find
+    # anything. Plant three credentials outside the repository and assert all
+    # three are reported, so a bad download, a config change or a widened
+    # allowlist fails the job instead of passing it quietly.
+    #
+    # Each value is split across its own prefix so no fragment in this file
+    # triggers the rule it is meant to exercise: the repository scan above runs
+    # over this file too, and a canary that flags itself would need an ignore
+    # entry, which is the thing being guarded against.
+    #
+    # Fixed values, not generated ones. Detection is keyword-driven rather than
+    # entropy-driven, so a generated credential fires only sometimes and
+    # presents as flake. A value verified once keeps firing. Invented, not
+    # copied from vendor documentation: gitleaks allowlists documentation keys,
+    # and a canary built from one is inert in exactly the way this catches.
+    - section_start "canary" "Checking that the scanner still detects"
+    - |
+      canary="$(mktemp -d)"
+      pat="gh""p_8fK2mQ7xR4tV9nB3jH6yW1sZ5cD8gL0aE4uY"
+      stripe="sk""_live_51aBcD2eFgH3iJkL4mNoP5qR6sTuV7wXyZ8a"
+      slack="xo""xb-263594753641-2529420432-J1n4h6a9pQrStUvWxYz1AbCd"
+      printf 'a = "%s"\nb = "%s"\nc = "%s"\n' "$pat" "$stripe" "$slack" > "$canary/canary.txt"
+      # --config is what makes this canary mean what the comment above says.
+      # Scanning a temp directory without it uses gitleaks' embedded defaults,
+      # so a widened allowlist in .gitleaks.toml cannot affect the result:
+      # measured, the canary scores 3 of 3 against a config that allowlists
+      # everything. With --config it scores 0 and the job fails, which is the
+      # behaviour this check exists for.
+      ./gitleaks detect --no-git --source "$canary" --config .gitleaks.toml \
+        --no-banner --redact \
+        --report-format json --report-path "$canary/report.json" || true
+      found=$(grep -c '"RuleID"' "$canary/report.json" || true)
+      rm -rf "$canary"
+      if [ "$found" != "3" ]; then
+        echo "The canary planted 3 credentials and gitleaks reported $found."
+        echo "The scan above proves nothing while this is true."
+        exit 1
+      fi
+      echo "Canary detected 3 of 3 planted credentials."
+    - section_end "canary"
+    # The check above proves the scanner detects. It says nothing about whether
+    # an allowlist has widened from the one rule it was written for to all of
+    # them, which is what a top-level [allowlist] does and what this config
+    # previously had for the Yarn bundles.
+    #
+    # Plant a private key at a path the generic-api-key allowlist matches. It
+    # must still be reported: that path is excused from one detector, not from
+    # detection. Fixed value, for the same reason as the credentials above.
+    - section_start "scope" "Checking the allowlists are scoped to one rule each"
+    - |
+      scope="$(mktemp -d)"
+      mkdir -p "$scope/.yarn/releases"
+      # Split like the three credentials above, and for the same reason: the
+      # repository scan reads this file, so a PEM header written here in one
+      # piece is itself a finding. Assembled at runtime, the trigger never
+      # appears contiguously in the configuration.
+      pem_head="-----BEGIN"" PRIVATE KEY-----"
+      pem_tail="-----END"" PRIVATE KEY-----"
+      # Body generated rather than embedded. Unlike the three credentials
+      # above, private-key matches on the header keyword and ignores the body,
+      # so nothing is lost by generating it, and a base64 blob in this file
+      # would only give the spell checker something to complain about.
+      printf '%s\n%s\n%s\n' "$pem_head" \
+        "$(head -c 96 /dev/urandom | base64 | tr -d '\n')" "$pem_tail" \
+        > "$scope/.yarn/releases/yarn-9.9.9.cjs"
+      ./gitleaks detect --no-git --source "$scope" --config .gitleaks.toml \
+        --no-banner --redact \
+        --report-format json --report-path "$scope/report.json" || true
+      scoped=$(grep -c '"RuleID"' "$scope/report.json" || true)
+      rm -rf "$scope"
+      if [ "$scoped" -lt 1 ]; then
+        echo "A private key at an allowlisted Yarn path was not reported."
+        echo "An allowlist meant for one detector is suppressing all of them."
+        exit 1
+      fi
+      echo "Allowlists are scoped: a private key on an excused path is still reported."
+    - section_end "scope"
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+default:
+  image: mcr.microsoft.com/devcontainers/python:3
+  tags: [docker]
+  timeout: 15m
+  before_script:
+    - 'section_start() { local n="$1" t="${2:-$1}"; printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)" "$n" "$t"; }'
+    - 'section_end() { printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)" "$1"; }'
+
+#
+# --- Node Job Template ---
+#
+# All node-based jobs share the same image and Yarn Berry cache. The cache key
+# is the yarn.lock hash prefixed with the Node image tag, so a cache hit skips
+# both the download and the native addon compilation (deasync, re2, etc.).
+# The image prefix prevents restoring native binaries compiled under a
+# different Node version. enableGlobalCache: false in .yarnrc.yml keeps the
+# cache in .yarn/cache/ (project-local, CI-cacheable).
+.node:
+  image: node:16.20.1
+  cache:
+    - key:
+        files:
+          - yarn.lock
+        prefix: node-16.20.1
+      paths:
+        - .yarn/cache/
+        - node_modules/
+      policy: pull-push
+    - key:
+        files:
+          - docs/nuxt/yarn.lock
+        prefix: node-16.20.1
+      paths:
+        - docs/nuxt/.yarn/cache/
+        - docs/nuxt/node_modules/
+      policy: pull-push
+
+#
+# --- Lint Stage ---
+#
+
+lint:json:
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "json-lint" "Validating JSON files"
+    - |
+      rc=0; count=0
+      while IFS= read -r -d '' f; do
+        count=$((count + 1))
+        if python3 -m json.tool "$f" > /dev/null 2>&1; then
+          echo "  [PASS] $f"
+        else
+          echo "  [FAIL] $f"
+          rc=1
+        fi
+      done < <(find . -name '*.json' -not -path '*/.git/*' -not -path '*/node_modules/*' \
+        -not -path '*/dist/*' -not -path '*/.vscode/*' -not -path '*/.devcontainer/*' -not -path '*/templates/*' -print0)
+      echo "--- $count JSON file(s) checked ---"
+      exit "$rc"
+    - section_end "json-lint"
+
+lint:shell:
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "shell-lint" "Checking shell script syntax"
+    - |
+      rc=0; count=0
+      while IFS= read -r -d '' f; do
+        count=$((count + 1))
+        if bash -n "$f" 2>/dev/null; then
+          echo "  [PASS] $f"
+        else
+          echo "  [FAIL] $f"
+          rc=1
+        fi
+      done < <(find . -name '*.sh' -not -path '*/.git/*' -not -path '*/node_modules/*' -print0)
+      echo "--- $count shell file(s) checked ---"
+      exit "$rc"
+    - section_end "shell-lint"
+
+lint:yaml:
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "yaml-lint" "Linting YAML files"
+    - pip install yamllint -q
+    - yamllint .gitlab-ci.yml
+    - section_end "yaml-lint"
+
+# Static checks prove the redirects map is well-formed; only nginx itself
+# proves nginx accepts it. A map that fails to compile leaves the site
+# serving soft 200s with no log errors, so this closes that failure class.
+lint:redirects:
+  stage: lint
+  interruptible: true
+  image: nginx:1.27-alpine
+  script:
+    - section_start "redirects-nginx" "Proving nginx parses the redirects map"
+    - |
+      cat > /tmp/map-test.conf <<CONF
+      events {}
+      http {
+        map \$host\$uri \$redirectdomain {
+          include $CI_PROJECT_DIR/.lagoon/redirects-map.conf;
+        }
+        server {
+          listen 8080;
+          if (\$redirectdomain) {
+            return 301 \$redirectdomain;
+          }
+        }
+      }
+      CONF
+    - nginx -t -c /tmp/map-test.conf
+    - section_end "redirects-nginx"
+
+lint:markdown:
+  extends: .node
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "md-lint" "Linting Markdown files"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:md
+    - section_end "md-lint"
+
+lint:cspell:
+  extends: .node
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "cspell" "Spell checking project files"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:cspell
+    - section_end "cspell"
+
+# Prose-quality lint for docs/nuxt/content: flags AI-generated-text tells
+# (em-dash overuse, hedging, anthropomorphic verbs, overused vocabulary, etc.)
+# via the vale-ai-tells style package, scoped by docs/nuxt/.vale.ini to
+# hand-authored content only (content/api and content/modules/*/readme are
+# generated - see the exclusions in that file). Blocking: all real findings
+# against current docs content are fixed, and ai-tells.ColonUsage is disabled
+# site-wide (see the comment in .vale.ini) since it can't tell this site's
+# "**term**: Description" convention apart from a genuine AI tell.
+lint:vale:
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "vale-install" "Installing Vale"
+    - |
+      vale_version="3.17.1"
+      arch="$(uname -m)"
+      case "$arch" in
+        aarch64|arm64)
+          vale_arch=arm64
+          vale_sha256=92d91ebf9ee69ec077379be95cd09e6710ab33d3d5bab66bb482e66ebc80dc23
+          ;;
+        x86_64)
+          vale_arch=64-bit
+          vale_sha256=db947f89f2292e6a0381a61de155f6a5f5cb4cb460ca178ea412ef605559cefd
+          ;;
+        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+      esac
+      curl -sL --max-time 60 "https://github.com/vale-cli/vale/releases/download/v${vale_version}/vale_${vale_version}_Linux_${vale_arch}.tar.gz" -o /tmp/vale.tar.gz
+      echo "${vale_sha256}  /tmp/vale.tar.gz" | sha256sum -c - || { echo "vale checksum mismatch" >&2; exit 1; }
+      tar -xzf /tmp/vale.tar.gz -C /usr/local/bin vale
+      chmod +x /usr/local/bin/vale
+    - section_end "vale-install"
+    - section_start "vale-style" "Installing the ai-tells style package"
+    - |
+      ai_tells_version="1.31.0"
+      ai_tells_sha256="bc1267248f13e65928475c439ad7ae1bf806a20d09254c08d7d8c4a9c8b811f0"
+      curl -sL --max-time 60 "https://github.com/tbhb/vale-ai-tells/releases/download/v${ai_tells_version}/ai-tells.zip" -o /tmp/ai-tells.zip
+      echo "${ai_tells_sha256}  /tmp/ai-tells.zip" | sha256sum -c - || { echo "ai-tells checksum mismatch" >&2; exit 1; }
+      python3 -c "
+      import zipfile, os
+      with zipfile.ZipFile('/tmp/ai-tells.zip') as z:
+          for name in z.namelist():
+              if name.startswith('ai-tells/styles/') and not name.endswith('/'):
+                  target = os.path.join('docs/nuxt/styles', name[len('ai-tells/styles/'):])
+                  os.makedirs(os.path.dirname(target), exist_ok=True)
+                  with open(target, 'wb') as f:
+                      f.write(z.read(name))
+      "
+    - section_end "vale-style"
+    - section_start "vale-lint" "Linting docs/nuxt/content for AI-tell prose patterns"
+    - cd docs/nuxt
+    - vale content
+    - section_end "vale-lint"
+
+# Checks docs/nuxt/content for dead links (external URLs, plus internal
+# /path links resolved against the live druxtjs.org so a broken
+# cross-reference or a not-yet-deployed image shows up the same way a real
+# dead link would). Report-only: lychee has a track record of randomly
+# hitting rate limits against real external hosts, so a transient failure
+# here shouldn't block the pipeline.
+lint:linkcheck:
+  stage: lint
+  interruptible: true
+  allow_failure: true
+  script:
+    - section_start "linkcheck-install" "Installing lychee"
+    - |
+      lychee_version="0.24.2"
+      arch="$(uname -m)"
+      case "$arch" in
+        aarch64|arm64)
+          lychee_arch=aarch64-unknown-linux-gnu
+          lychee_sha256=91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c
+          ;;
+        x86_64)
+          lychee_arch=x86_64-unknown-linux-gnu
+          lychee_sha256=1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
+          ;;
+        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+      esac
+      curl -sL --max-time 60 "https://github.com/lycheeverse/lychee/releases/download/lychee-v${lychee_version}/lychee-${lychee_arch}.tar.gz" -o /tmp/lychee.tar.gz
+      echo "${lychee_sha256}  /tmp/lychee.tar.gz" | sha256sum -c - || { echo "lychee checksum mismatch" >&2; exit 1; }
+      tar -xzf /tmp/lychee.tar.gz --strip-components=1 -C /tmp "lychee-${lychee_arch}/lychee"
+      chmod +x /tmp/lychee
+    - section_end "linkcheck-install"
+    - section_start "linkcheck" "Checking links in docs/nuxt/content"
+    - cd docs/nuxt
+    - /tmp/lychee --no-progress --format detailed --config .lychee.toml --base-url https://druxtjs.org --exclude-loopback 'content/**/*.md'
+    - section_end "linkcheck"
+
+lint:js:
+  extends: .node
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "eslint" "Linting JS/Vue sources"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint
+    - section_end "eslint"
+
+# Two-tier: the full recursive audit (including devDependencies) is reporting
+# only - most of its findings live behind the Node 16/Yarn 3 toolchain freeze
+# (see AGENTS.md) and aren't fixable without that separate, deliberate
+# upgrade. The production-only gate is what actually blocks the pipeline -
+# shipped runtime dependencies must stay clean.
+lint:dependency-audit:
+  extends: .node
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "audit-full" "Full dependency audit (reporting only, includes devDependencies)"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:audit:full || true
+    - section_end "audit-full"
+    - section_start "audit-production" "Production dependency audit (blocking)"
+    - yarn lint:audit
+    - section_end "audit-production"
+
+lint:knip:
+  extends: .node
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "knip" "Checking for unused/unlisted dependencies"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:knip
+    - section_end "knip"
+
+#
+# --- Test Stage ---
+#
+
+test:unit:
+  extends: .node
+  stage: test
+  interruptible: true
+  needs: []
+  script:
+    - section_start "jest" "Running unit tests"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - NODE_OPTIONS="--max_old_space_size=8192" yarn test:unit --reporters=jest-junit --runInBand
+    - section_end "jest"
+  artifacts:
+    when: always
+    paths:
+      - reports/junit/
+    reports:
+      junit: reports/junit/junit.xml
+
+# Mirrors the GitHub build job. Nothing here needs Drupal, so it is ungated:
+# a package that does not build is worth knowing about on every pipeline, and
+# it is the cheapest signal in the file.
+test:build:
+  extends: .node
+  stage: test
+  interruptible: true
+  needs: []
+  script:
+    - section_start "build" "Building every package and the API docs"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - section_end "build"
+    # A build that produces nothing still exits zero. Assert the artefacts
+    # exist, or this job passes on an empty dist.
+    - section_start "verify" "Checking the build produced artefacts"
+    - |
+      set -euo pipefail
+      count=$(find packages -mindepth 3 -path '*/dist/*.js' | wc -l)
+      echo "$count built file(s) under packages/*/dist"
+      [ "$count" -gt 0 ] || { echo "yarn build produced no dist output" >&2; exit 1; }
+    - section_end "verify"
+
+# Mirrors the GitHub test-node-client job. No backend, so ungated.
+test:node-client:
+  extends: .node
+  stage: test
+  interruptible: true
+  needs: []
+  script:
+    - section_start "node-client" "Running the node client tests"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn test:node-client
+    - section_end "node-client"
+
+#
+# --- Preview Stage ---
+#
+# Publishes a per-MR static build of docs/nuxt (druxtjs.org) as a GitLab Pages
+# parallel deployment, so reviewers can see how inline-doc/API changes render
+# before merging. Production (main) still deploys via Lagoon; this is
+# MR-only and never touches that pipeline.
+#
+# Disabled for now: this GitLab instance doesn't have Pages actually reachable
+# (no pages_external_url / exposed port / proxy host - see
+# localhost/localhost#2 for what's missing). Kept defined, not deleted, so
+# it's a one-line flip back to enabled once that's fixed. Until then, use the
+# docs:review job below for an on-demand look at a build.
+
+pages:preview:
+  extends: .node
+  stage: preview
+  interruptible: true
+  needs: []
+  rules:
+    - when: never
+    # - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  script:
+    - section_start "docs-build" "Building druxtjs.org for MR preview"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - cd docs/nuxt
+    - yarn install --immutable
+    - yarn generate
+    - section_end "docs-build"
+  pages:
+    publish: docs/nuxt/dist
+    path_prefix: '$CI_MERGE_REQUEST_IID'
+    expire_in: 1 week
+  environment:
+    name: 'pages/mr-$CI_MERGE_REQUEST_IID'
+    url: '$CI_PAGES_URL/$CI_MERGE_REQUEST_IID'
+    on_stop: pages:preview:stop
+    auto_stop_in: 1 week
+
+pages:preview:stop:
+  stage: preview
+  interruptible: true
+  needs: []
+  rules:
+    - when: never
+    # - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    #   when: manual
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: 'pages/mr-$CI_MERGE_REQUEST_IID'
+    action: stop
+  script:
+    - echo "Stopping preview deployment for MR $CI_MERGE_REQUEST_IID"
+
+# Manual, on-demand alternative to pages:preview while GitLab Pages isn't
+# reachable: builds docs/nuxt and serves the static output through a
+# Cloudflare quick tunnel (no account/token needed) for as long as the job
+# runs. Click "Run" on this job in the pipeline view, then watch its log for
+# the https://*.trycloudflare.com URL. Stop the job (or let it time out) when
+# you're done reviewing - the tunnel dies with it.
+docs:review:
+  extends: .node
+  stage: preview
+  interruptible: false
+  needs: []
+  timeout: 1h
+  rules:
+    - when: manual
+      allow_failure: true
+  script:
+    - section_start "docs-build" "Building druxtjs.org for review"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - cd docs/nuxt
+    - yarn install --immutable
+    - yarn generate
+    - section_end "docs-build"
+    - section_start "tunnel" "Serving docs/nuxt/dist through a Cloudflare quick tunnel"
+    - |
+      cf_version="2026.7.3"
+      arch="$(uname -m)"
+      case "$arch" in
+        aarch64|arm64)
+          cf_arch=arm64
+          cf_sha256=65259e652a7bea08bf5df603233ab22b8bf3116af8df9f9206209af6a1b955c0
+          ;;
+        x86_64)
+          cf_arch=amd64
+          cf_sha256=9d71c677db00134c1bd4144b7783486b654ad281b1ea62b4972098d19f770f17
+          ;;
+        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+      esac
+      curl -sL "https://github.com/cloudflare/cloudflared/releases/download/${cf_version}/cloudflared-linux-${cf_arch}" -o /usr/local/bin/cloudflared
+      echo "${cf_sha256}  /usr/local/bin/cloudflared" | sha256sum -c - || { echo "cloudflared checksum mismatch" >&2; exit 1; }
+      chmod +x /usr/local/bin/cloudflared
+    # Serve a copy, never dist itself: the generate above baked the
+    # production origin into og:image, og:url and canonical URLs (plus the
+    # hydration payload), so scrapers pointed at a preview would follow
+    # og:image to production where the files do not exist yet. The copy is
+    # rewritten to the tunnel origin once the URL is known, and again on
+    # every recreation, keeping one generate per job.
+    - rm -rf dist-serve && cp -a dist dist-serve
+    - npx --yes serve -l 8080 dist-serve &
+    # Supervised: account-less quick tunnels can register and then die
+    # silently (the hostname drops out of DNS while cloudflared keeps
+    # running and the log shows nothing), leaving the job green with a dead
+    # URL. So the URL is verified through the edge before it is announced,
+    # probed every minute afterwards, and the tunnel is recreated when it
+    # goes dark. http2 transport: QUIC needs UDP buffer sizes the docker
+    # runner does not grant.
+    - |
+      failures=0
+      while [ "$failures" -lt 5 ]; do
+        : > tunnel.log
+        cloudflared tunnel --url http://localhost:8080 --no-autoupdate --protocol http2 >> tunnel.log 2>&1 &
+        cf_pid=$!
+        url=""
+        tries=0
+        while [ "$tries" -lt 30 ] && [ -z "$url" ]; do
+          url=$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' tunnel.log | head -1 || true)
+          [ -n "$url" ] || sleep 2
+          tries=$((tries + 1))
+        done
+        # The runner's resolver never answers for quick-tunnel hostnames
+        # (every probe exits 6 while browsers resolve the same name fine),
+        # so verification resolves over DoH instead of the local resolver.
+        # A fresh hostname can still take minutes to publish, and every
+        # recreation issues a new name that restarts that wait - so probe
+        # one hostname patiently and recreate only when cloudflared itself
+        # has died.
+        doh="--doh-url https://cloudflare-dns.com/dns-query"
+        ok=""
+        if [ -n "$url" ]; then
+          probes=0
+          while [ "$probes" -lt 30 ]; do
+            rc=0
+            curl -sf $doh -o /dev/null --max-time 15 "$url/" || rc=$?
+            if [ "$rc" -eq 0 ]; then ok=1; break; fi
+            if ! kill -0 "$cf_pid" 2>/dev/null; then echo "cloudflared exited while waiting"; break; fi
+            if [ "$((probes % 6))" -eq 0 ]; then echo "waiting for $url (curl exit $rc)"; fi
+            probes=$((probes + 1))
+            sleep 10
+          done
+        fi
+        if [ -z "$ok" ]; then
+          echo "Quick tunnel failed to come up (url: ${url:-none}); recreating..."
+          kill "$cf_pid" 2>/dev/null || true
+          wait "$cf_pid" 2>/dev/null || true
+          failures=$((failures + 1))
+          continue
+        fi
+        rm -rf dist-serve && cp -a dist dist-serve
+        grep -rIl 'https://druxtjs.org' dist-serve | xargs -r sed -i "s|https://druxtjs.org|$url|g"
+        echo "=============================================================="
+        echo "  REVIEW URL: $url  (verified; share URLs rewritten to it)"
+        echo "=============================================================="
+        announced=$(date +%s)
+        while kill -0 "$cf_pid" 2>/dev/null; do
+          sleep 60
+          if ! curl -sf $doh -o /dev/null --max-time 30 "$url/"; then
+            echo "Tunnel went dark at the edge; recreating..."
+            kill "$cf_pid" 2>/dev/null || true
+            break
+          fi
+        done
+        wait "$cf_pid" 2>/dev/null || true
+        # A tunnel that dies within five minutes of announcing is a flap
+        # and counts toward the cap; one that served a while earns a reset.
+        if [ "$(( $(date +%s) - announced ))" -lt 300 ]; then
+          failures=$((failures + 1))
+        else
+          failures=0
+        fi
+      done
+      echo "Giving up: the quick tunnel failed 5 times in a row" >&2
+      tail -50 tunnel.log >&2 || true
+      exit 1
+    - section_end "tunnel"
+
+docs:build:
+  extends: .node
+  stage: audit
+  interruptible: true
+  needs: []
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - docs/nuxt/**/*
+        - packages/*/src/**/*
+  script:
+    - section_start "docs-build" "Generating druxtjs.org"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - cd docs/nuxt
+    - yarn install --immutable
+    - yarn generate
+    - section_end "docs-build"
+  artifacts:
+    paths:
+      - docs/nuxt/dist/
+    expire_in: 1 day
+
+audit:seo:
+  stage: audit
+  image: node:22
+  tags: [docker]
+  timeout: 30m
+  interruptible: true
+  needs: ['docs:build']
+  variables:
+    # A sample, not the full set. This runner shares a host with other work that
+    # has repeatedly taken the load average past 400, and a full 131-route audit
+    # failed there three times: orphaned browsers, a Chromium out-of-memory, and
+    # a single route exceeding its timeout. None of those said anything about
+    # the site. sampleRoutes covers every page template, so a template
+    # regression still fails here; GitHub Actions runs the full set on a
+    # dedicated runner and is the authoritative baseline.
+    UNLIGHTHOUSE_SAMPLE: '25'
+    UNLIGHTHOUSE_CONCURRENCY: '1'
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - docs/nuxt/**/*
+        - packages/*/src/**/*
+  script:
+    - cd docs/nuxt
+    # Exact versions, not @latest. This toolchain is version-sensitive in ways
+    # that bite silently: unlighthouse only reads some config keys in some
+    # versions, and the directory Playwright unpacks Chromium into is an
+    # implementation detail that has already changed once. Floating them means
+    # an unrelated upstream release can change or break an MR audit on a re-run.
+    - npx --yes playwright@1.62.1 install --with-deps chromium
+    # Matched on the directory prefix, not an exact name: Playwright now ships
+    # Chrome for Testing, which unpacks to chrome-linux64 rather than
+    # chrome-linux. The exact path found nothing on a GitHub runner.
+    - export CHROME_PATH=$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)
+    - test -n "$CHROME_PATH" || { echo "No Playwright Chromium found; the audit would silently fall back to an x86_64 download" >&2; exit 1; }
+    - npx --yes serve@14.2.6 -l 4000 dist &
+    - npx --yes wait-on@9.1.0 http://localhost:4000 --timeout 60000
+    # Assert the route source before auditing. sitemapRoutes() returns [] on any
+    # read failure and ci.budget is 0, so without this a partial artifact or a
+    # degraded content tree produces a green job that audited a handful of
+    # crawled pages. Measured full list is ~131 routes; this is a floor, not an
+    # equality check, so adding or removing docs does not fail the build.
+    - test -f dist/sitemap.xml || { echo "dist/sitemap.xml missing; audit would silently scan only crawled routes" >&2; exit 1; }
+    - |
+      locs=$(grep -c '<loc>' dist/sitemap.xml)
+      echo "sitemap advertises $locs routes"
+      test "$locs" -ge 100 || { echo "Only $locs routes in sitemap.xml, expected >= 100; refusing to report a partial audit as a pass" >&2; exit 1; }
+    - npx --yes unlighthouse-ci@0.18.0 --site http://localhost:4000
+  after_script:
+    # Chromium instances outlive the job when the audit times out mid-route.
+    # Observed 62 orphans from a single failed run, holding 1.4GB and taking
+    # the host's load average past 400, which then starved the next audit into
+    # timing out as well. Matched on the puppeteer profile directory so this
+    # cannot reach a browser belonging to anything else.
+    - pkill -9 -f 'user-data-dir=/tmp/puppeteer' 2>/dev/null || true
+  artifacts:
+    when: always
+    paths:
+      - docs/nuxt/.unlighthouse/
+    expire_in: 1 week
+    expose_as: 'Lighthouse audit'
+
+# Manual: provisions docs/drupal + the example apps and exposes each over a
+# Cloudflare quick tunnel for as long as the job runs. Click "Run" on this job,
+#
+# --- Drupal-backed jobs ---
+#
+# One provisioner, shared. docs/drupal is installed with plain Composer against
+# SQLite and served by PHP's built-in server: no Docker, no DDEV. An earlier
+# attempt at docker:dind plus DDEV on this runner hit an arm64/amd64 image
+# mismatch and then unresolvable service networking, which is why this shape
+# exists.
+#
+# Jobs inherit this with `extends:` and provision their own backend. They must
+# not `needs:` a shared provisioning job: a provisioner skipped by its own
+# rules would take its dependents with it, and the pipeline would report "e2e
+# did not run" rather than "e2e was gated out". A second provision when two
+# jobs run is the right price for that.
+.drupal-backend:
+  image: php:8.3
+  interruptible: true
+  variables:
+    WEBSERVER_HOST: 127.0.0.1
+    WEBSERVER_PORT: '8888'
+    # python3/make/g++: the monorepo's native addons (deasync, re2) need
+    # a compile toolchain that the minimal php image lacks.
+    PHP_APT_PACKAGES: 'git unzip curl ca-certificates python3 python3-setuptools build-essential libsqlite3-dev libzip-dev libicu-dev libpng-dev libjpeg62-turbo-dev libfreetype6-dev libonig-dev libxml2-dev'
+    PHP_EXTENSIONS: 'mbstring pdo_sqlite intl gd xml zip opcache'
+  cache:
+    - key:
+        files:
+          - yarn.lock
+        prefix: php83-node16
+      paths:
+        - .yarn/cache/
+        - node_modules/
+      policy: pull-push
+    - key:
+        files:
+          - docs/drupal/composer.lock
+        prefix: php83
+      paths:
+        - docs/drupal/vendor/
+      policy: pull-push
+  before_script:
+    # default.before_script's section helpers are replaced by this
+    # before_script, so redefine them here.
+    - 'section_start() { local n="$1" t="${2:-$1}"; printf "\e[0Ksection_start:%s:%s\r\e[0K%s\n" "$(date +%s)" "$n" "$t"; }'
+    - 'section_end() { printf "\e[0Ksection_end:%s:%s\r\e[0K\n" "$(date +%s)" "$1"; }'
+    - apt-get update -yqq && apt-get install -yqq $PHP_APT_PACKAGES
+    - docker-php-ext-configure gd --with-freetype --with-jpeg
+    - docker-php-ext-install -j"$(nproc)" $PHP_EXTENSIONS
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer --version=2.10.2
+    - export NVM_DIR="$HOME/.nvm" && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    - . "$NVM_DIR/nvm.sh" --no-use && nvm install && nvm use
+    - node --version
+    - corepack enable
+
+# Provisioning steps, pulled into a job's script with
+# `!reference [.provision-backend, script]`. A hidden job rather than a YAML
+# anchor so it composes with the rest of a script list.
+.provision-backend:
+  script:
+    - section_start "backend" "Provisioning the docs/drupal backend (SQLite, Docker-free)"
+    - |
+      set -euo pipefail
+      cd docs/drupal
+      .devtools/assemble
+      .devtools/provision
+      nohup .devtools/start > /tmp/drupal-start.log 2>&1 &
+      cd "$CI_PROJECT_DIR"
+    - |
+      for i in $(seq 1 60); do
+        if curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null 2>&1; then echo "backend up"; break; fi
+        sleep 5
+      done
+      # Not just the loop: a loop that times out still falls through, so
+      # assert once more and fail rather than continue against no backend.
+      curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null
+    - section_end "backend"
+
+# Cypress on top of the backend. The browser packages and the install are the
+# only difference; the runner is known to support this, because
+# packages/quickstart runs blocking Cypress on it today.
+.cypress:
+  extends: .drupal-backend
+  stage: test
+  needs: []
+  variables:
+    CYPRESS_APT_PACKAGES: 'libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
+  before_script:
+    - !reference [.drupal-backend, before_script]
+    - apt-get install -yqq $CYPRESS_APT_PACKAGES
+  artifacts:
+    when: on_failure
+    paths:
+      - examples/druxt-site/test/cypress/screenshots
+      - examples/druxt-site/test/cypress/videos
+      - docs/nuxt/test/cypress/screenshots
+      - docs/nuxt/test/cypress/videos
+    expire_in: 1 week
+
+# The druxtjs.org suite. The site deploys from main, so a merge request
+# targeting main gets the full run whatever it touched; other merge requests
+# get it only when the site or its backend changed.
+#
+# `changes:` is paired with the merge-request condition rather than used on a
+# branch pipeline, where it compares against the previous push and is not a
+# reliable statement about the change under review. audit:seo already uses
+# this idiom in this file.
+# Standalone, and blocking. This suite needs no Drupal: docs/nuxt declares no
+# druxt dependencies, sets no Drupal baseUrl, and its specs cover documentation
+# pages (homepage, get-started, modules, api-docs, search). It previously
+# extended the backend template, which was copied from the GitHub job that runs
+# all three suites off a single install. It was provisioning a backend it never
+# read from.
+#
+# The site deploys from main, so a merge request targeting main gets the full
+# run whatever it touched; other merge requests get it only when the site
+# changed.
+test:e2e:site:
+  extends: .node
+  # node:16.20.1 is Debian buster, which is EOL: its repositories are archived,
+  # so apt-get update fails and the Cypress dependencies below never install.
+  # Cypress then dies on `spawn Xvfb ENOENT`. bookworm is current and is the
+  # same base the php:8.3 jobs install browser dependencies from successfully.
+  image: node:16.20.1-bookworm
+  stage: test
+  interruptible: true
+  needs: []
+  variables:
+    CYPRESS_APT_PACKAGES: 'libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
+    - if: $CI_COMMIT_BRANCH == 'main'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - docs/nuxt/**/*
+        # A change to the pipeline re-runs the jobs the pipeline defines.
+        # Without this, a merge request that only edits this file cannot
+        # exercise what it changes.
+        - .gitlab-ci.yml
+  script:
+    - section_start "deps" "Installing the browser dependencies"
+    # Asserted, not assumed: on the previous base apt-get update failed, the
+    # install never ran, and the job carried on to fail forty seconds later
+    # inside Cypress with a missing-Xvfb error that says nothing about apt.
+    - |
+      set -e
+      apt-get update -yqq
+      apt-get install -yqq $CYPRESS_APT_PACKAGES
+      command -v Xvfb >/dev/null || { echo "Xvfb missing after install" >&2; exit 1; }
+    - section_end "deps"
+    - section_start "build" "Building the monorepo and the API docs"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn build:docs
+    - section_end "build"
+    - section_start "cypress" "Running the druxtjs.org suite"
+    - npx cypress install
+    - |
+      yarn start-server-and-test docs:dev http://localhost:3000 \
+        'npx cypress run --project docs/nuxt/test'
+    - section_end "cypress"
+  artifacts:
+    when: on_failure
+    paths:
+      - docs/nuxt/test/cypress/screenshots
+      - docs/nuxt/test/cypress/videos
+    expire_in: 1 week
+
+# The two examples/druxt-site suites. These exercise the packages against the
+# real backend, and are what caught the decoupled_router isHomePath
+# regression that a green GitLab pipeline had missed.
+test:e2e:packages:
+  extends: .cypress
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'develop' || $CI_COMMIT_BRANCH == 'main'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - packages/**/*
+        - examples/druxt-site/**/*
+        - docs/drupal/**/*
+        - yarn.lock
+        # See the note on test:e2e:site.
+        - .gitlab-ci.yml
+  script:
+    - !reference [.provision-backend, script]
+    - section_start "build" "Building the monorepo"
+    - yarn install --immutable
+    - yarn build
+    - section_end "build"
+    - section_start "cypress-nuxt" "DruxtSite against the backend"
+    - npx cypress install
+    - yarn example:druxt-site:test
+    - section_end "cypress-nuxt"
+    - section_start "cypress-storybook" "DruxtSite Storybook"
+    - yarn example:druxt-site:storybook:test
+    - section_end "cypress-storybook"
+
+# Mirrors the GitHub test-examples matrix. Same path rule as the packages
+# suites: these break for the same reasons.
+test:examples:
+  extends: .cypress
+  parallel:
+    matrix:
+      - EXAMPLE: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'develop' || $CI_COMMIT_BRANCH == 'main'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      changes:
+        - packages/**/*
+        - examples/druxt-site/**/*
+        - docs/drupal/**/*
+        - yarn.lock
+        # See the note on test:e2e:site.
+        - .gitlab-ci.yml
+  script:
+    - !reference [.provision-backend, script]
+    - section_start "build" "Building the monorepo"
+    - yarn install --immutable
+    - yarn build
+    - section_end "build"
+    - section_start "example" "Testing $EXAMPLE against the backend"
+    - npx cypress install
+    - yarn "example:${EXAMPLE}:test"
+    - section_end "example"
+  artifacts:
+    when: on_failure
+    paths:
+      - examples/$EXAMPLE/test/cypress/screenshots
+      - examples/$EXAMPLE/test/cypress/videos
+    expire_in: 1 week
+
+# then watch its log for the https://*.trycloudflare.com URLs.
+#
+# Variables (all settable when triggering):
+# - PREVIEW_EXAMPLES: CSV subset of site,daisyui,tailwind,bootstrapvue
+#   (default: all four)
+# - PREVIEW_MODE: dev (default) | prod | both. Dev = `yarn dev` on the app's
+#   port (3001-3004; bootstrapvue is 3004 - its OAuth consumer's committed
+#   redirect URI). Prod = `yarn build && yarn start` - in "both" mode prod
+#   uses port+200 (3201-3204) so the dev and prod servers can coexist.
+# - PREVIEW_DURATION_SECONDS: how long to keep the preview alive
+#   (default 3600, clamped to 18000 - keep under the job timeout).
+#
+# code-server (VS Code in the browser) and the one-time Drupal login link
+# are owner conveniences that only make sense with authentication: job logs
+# can be readable by more people than you think, so both are skipped unless
+# PREVIEW_CODE_PASSWORD is set. With it set, code-server requires that
+# password (--auth password).
+#
+# Known limitation: the Content Ops Console (bootstrapvue) can't complete
+# OAuth login through a random quick-tunnel hostname - its redirect is
+# committed to localhost:3004/callback. That app is read-only over tunnels;
+# use the devcontainer (or a local checkout) for its login flow.
+examples:preview:
+  # Same backend template as the e2e jobs, so there is one provisioner in this
+  # file rather than three copies drifting apart.
+  extends: .drupal-backend
+  stage: preview
+  interruptible: false
+  when: manual
+  needs: []
+  allow_failure: true
+  resource_group: examples-preview
+  timeout: 6h
+  variables:
+    PREVIEW_EXAMPLES: 'site,daisyui,tailwind,bootstrapvue'
+    PREVIEW_MODE: 'dev'
+    PREVIEW_DURATION_SECONDS: '3600'
+    # code-server's own install.sh prefixes "v" itself to build both the
+    # release tag and asset filename - this was double-prefixed to "vv...",
+    # 404ing every time (only surfaced once PREVIEW_CODE_PASSWORD started
+    # reaching the job - it was unprotected before that, so this whole
+    # branch never ran).
+    CODE_SERVER_VERSION: '4.132.0'
+    # WEBSERVER_HOST, WEBSERVER_PORT, PHP_APT_PACKAGES and PHP_EXTENSIONS come
+    # from .drupal-backend.
+  cache:
+    - key:
+        files:
+          - yarn.lock
+        prefix: php83-node16
+      paths:
+        - .yarn/cache/
+        - node_modules/
+      policy: pull-push
+    - key:
+        files:
+          - docs/drupal/composer.lock
+        prefix: php83
+      paths:
+        - docs/drupal/vendor/
+      policy: pull-push
+    # Static key: lockfile churn just costs one cold run, and CI's
+    # files-key limit is 2 - not enough for the four example lockfiles.
+    - key: examples-php83-node16
+      paths:
+        - examples/*/node_modules/
+      policy: pull-push
+  before_script:
+    - !reference [.drupal-backend, before_script]
+    # cloudflared is preview-only, so it stays here rather than in the shared
+    # template. Checksums are per architecture and pinned: an unverified binary
+    # that opens a public tunnel to this build is not something to fetch on
+    # trust, and this runner may be either.
+    - |
+      cf_version="2026.7.3"
+      arch="$(uname -m)"
+      case "$arch" in
+        aarch64|arm64)
+          cf_arch=arm64
+          cf_sha256=65259e652a7bea08bf5df603233ab22b8bf3116af8df9f9206209af6a1b955c0
+          ;;
+        x86_64)
+          cf_arch=amd64
+          cf_sha256=9d71c677db00134c1bd4144b7783486b654ad281b1ea62b4972098d19f770f17
+          ;;
+        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+      esac
+      curl -sL "https://github.com/cloudflare/cloudflared/releases/download/${cf_version}/cloudflared-linux-${cf_arch}" -o /usr/local/bin/cloudflared
+      echo "${cf_sha256}  /usr/local/bin/cloudflared" | sha256sum -c - || { echo "cloudflared checksum mismatch" >&2; exit 1; }
+      chmod +x /usr/local/bin/cloudflared
+  script:
+    - !reference [.provision-backend, script]
+    - section_start "frontend" "Building the monorepo and starting the example apps"
+    - |
+      set -euo pipefail
+      yarn install --immutable
+      yarn build
+    - |
+      # Start helper: $1=variant $2=app $3=port. tailwind is a plain Vite
+      # app (vite / vite preview --port); the others are Nuxt 2
+      # (nuxt dev/start -p, which also overrides bootstrapvue's committed
+      # config port when prod runs on port+200).
+      run_variant() {
+        variant="$1" app="$2" port="$3"
+        dir="examples/druxt-$app"
+        log="/tmp/${variant}-${app}.log"
+        if [ "$variant" = prod ]; then (cd "$dir" && yarn install && yarn build) || exit 1; fi
+        if [ "$app" = tailwind ]; then
+          if [ "$variant" = dev ]; then
+            (cd "$dir" && nohup yarn vite --port "$port" --strictPort > "$log" 2>&1 &)
+          else
+            (cd "$dir" && nohup yarn vite preview --port "$port" --strictPort > "$log" 2>&1 &)
+          fi
+        else
+          if [ "$variant" = dev ]; then
+            (cd "$dir" && nohup yarn dev -p "$port" > "$log" 2>&1 &)
+          else
+            (cd "$dir" && nohup yarn start -p "$port" > "$log" 2>&1 &)
+          fi
+        fi
+      }
+      # Deps first - the examples cache may be cold.
+      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+      for app in "${EXAMPLES[@]}"; do (cd "examples/druxt-$app" && yarn install); done
+      for app in "${EXAMPLES[@]}"; do
+        case "$app" in
+          site) port=3001 ;;
+          daisyui) port=3002 ;;
+          tailwind) port=3003 ;;
+          bootstrapvue) port=3004 ;;
+          *) echo "unknown example: $app (expected site|daisyui|tailwind|bootstrapvue)" >&2; exit 1 ;;
+        esac
+        [ "$PREVIEW_MODE" = "prod" ] || run_variant dev "$app" "$port"
+        [ "$PREVIEW_MODE" = "dev" ] || run_variant prod "$app" "$((port + 200))"
+      done
+    - |
+      # Wait for each port to accept TCP - dev servers listen before their
+      # first compile finishes, and the tunnel doesn't care either way.
+      wait_port() {
+        for i in $(seq 1 120); do
+          (echo > "/dev/tcp/127.0.0.1/$1") 2>/dev/null && return 0
+          sleep 5
+        done
+        echo "port $1 never opened" >&2; return 1
+      }
+      rc=0
+      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+      for app in "${EXAMPLES[@]}"; do
+        case "$app" in site) p=3001 ;; daisyui) p=3002 ;; tailwind) p=3003 ;; bootstrapvue) p=3004 ;; esac
+        [ "$PREVIEW_MODE" = "prod" ] || wait_port "$p" || rc=1
+        [ "$PREVIEW_MODE" = "dev" ] || wait_port "$((p + 200))" || rc=1
+      done
+      # Not "exit $rc": script items share one shell, a bare exit ends
+      # the job and skips the tunnel steps below.
+      if [ "$rc" -ne 0 ]; then
+        echo "one or more app ports never opened" >&2
+        exit 1
+      fi
+    - section_end "frontend"
+    - section_start "tunnels" "Opening Cloudflare quick tunnels"
+    - |
+      nohup cloudflared tunnel --url "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}" --no-autoupdate > /tmp/tunnel-backend.log 2>&1 &
+      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+      for app in "${EXAMPLES[@]}"; do
+        case "$app" in site) p=3001 ;; daisyui) p=3002 ;; tailwind) p=3003 ;; bootstrapvue) p=3004 ;; esac
+        [ "$PREVIEW_MODE" = "prod" ] || nohup cloudflared tunnel --url "http://localhost:${p}" --no-autoupdate > "/tmp/tunnel-${app}-dev.log" 2>&1 &
+        [ "$PREVIEW_MODE" = "dev" ] || nohup cloudflared tunnel --url "http://localhost:$((p + 200))" --no-autoupdate > "/tmp/tunnel-${app}-prod.log" 2>&1 &
+      done
+    - |
+      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
+      for i in $(seq 1 30); do
+        ready=1
+        [ -n "$(tunnel_url /tmp/tunnel-backend.log)" ] || ready=0
+        IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+        for app in "${EXAMPLES[@]}"; do
+          case "$app" in site) p=3001 ;; daisyui) p=3002 ;; tailwind) p=3003 ;; bootstrapvue) p=3004 ;; esac
+          if [ "$PREVIEW_MODE" != "prod" ] && [ -z "$(tunnel_url "/tmp/tunnel-${app}-dev.log")" ]; then ready=0; fi
+          if [ "$PREVIEW_MODE" != "dev" ] && [ -z "$(tunnel_url "/tmp/tunnel-${app}-prod.log")" ]; then ready=0; fi
+        done
+        [ "$ready" -eq 1 ] && break
+        sleep 2
+      done
+    - section_end "tunnels"
+    - |
+      set -euo pipefail
+      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
+      FAILED=0
+      BACKEND_URL="$(tunnel_url /tmp/tunnel-backend.log)"
+      [ -n "$BACKEND_URL" ] || { echo "backend tunnel not ready"; tail -n 20 /tmp/tunnel-backend.log || true; FAILED=1; }
+      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+      for app in "${EXAMPLES[@]}"; do
+        for variant in dev prod; do
+          [ "$PREVIEW_MODE" = "both" ] || [ "$PREVIEW_MODE" = "$variant" ] || continue
+          log="/tmp/tunnel-${app}-${variant}.log"
+          url="$(tunnel_url "$log")"
+          [ -n "$url" ] || { echo "$app ($variant) tunnel not ready"; tail -n 20 "$log" || true; FAILED=1; }
+        done
+      done
+      [ "$FAILED" -eq 0 ] || exit 1
+    - |
+      # Content Ops Console's OAuth2 login computes its own redirect_uri
+      # from whatever origin it's served from, so it works over the tunnel
+      # too - as long as Drupal has that exact URI registered. The tunnel
+      # hostname is random per run, so point the consumer's (single-value)
+      # redirect field at it here instead of committing it. If both dev and
+      # prod variants are running, the last one wins - the field can only
+      # hold one URI.
+      set -euo pipefail
+      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
+      if [[ ",${PREVIEW_EXAMPLES}," == *",bootstrapvue,"* ]]; then
+        for variant in dev prod; do
+          [ "$PREVIEW_MODE" = "both" ] || [ "$PREVIEW_MODE" = "$variant" ] || continue
+          url="$(tunnel_url "/tmp/tunnel-bootstrapvue-${variant}.log")"
+          [ -n "$url" ] || continue
+          CONSUMER_REDIRECT_URI="${url}/callback" \
+            bash -c 'cd docs/drupal && PHPRC=.devtools/etc/php.ini vendor/bin/drush -y php-script .devtools/consumer-set-redirect.php'
+        done
+      fi
+    - |
+      set -euo pipefail
+      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
+      CODE_ENABLED=false
+      LOGIN_LINK=""
+      if [ -n "${PREVIEW_CODE_PASSWORD:-}" ]; then
+        curl -fsSL https://code-server.dev/install.sh | sh -s -- --version "$CODE_SERVER_VERSION"
+        # code-server defaults to Open VSX, not the Microsoft Marketplace -
+        # same recommendations as .devcontainer/devcontainer.json, so a
+        # reviewer editing here gets the same PHP/Vue/lint tooling.
+        for ext in \
+          redhat.vscode-yaml \
+          bmewburn.vscode-intelephense-client \
+          ValeryanM.vscode-phpsab \
+          SanderRonde.phpstan-vscode \
+          Stanislav.vscode-drupal \
+          Vue.volar \
+          dbaeumer.vscode-eslint \
+          bradlc.vscode-tailwindcss \
+          antfu.iconify \
+          vitest.explorer \
+          davidanson.vscode-markdownlint \
+          streetsidesoftware.code-spell-checker \
+          EditorConfig.EditorConfig; do
+          code-server --install-extension "$ext" || true
+        done
+        PASSWORD="$PREVIEW_CODE_PASSWORD" nohup code-server --auth password --bind-addr 0.0.0.0:8080 "$CI_PROJECT_DIR" > /tmp/code-server.log 2>&1 &
+        nohup cloudflared tunnel --url http://localhost:8080 --no-autoupdate > /tmp/tunnel-code.log 2>&1 &
+        for i in $(seq 1 30); do [ -n "$(tunnel_url /tmp/tunnel-code.log)" ] && break; sleep 2; done
+        CODE_ENABLED=true
+        BACKEND_URL="$(tunnel_url /tmp/tunnel-backend.log)"
+        LOGIN_LINK="$(cd docs/drupal && PHPRC=.devtools/etc/php.ini vendor/bin/drush -y uli --uri="$BACKEND_URL" 2>/dev/null || true)"
+      fi
+      echo "=================================================="
+      echo " Examples preview - live until this job is stopped"
+      echo "=================================================="
+      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
+      for app in "${EXAMPLES[@]}"; do
+        case "$app" in
+          site) label="druxt-site" ;;
+          daisyui) label="Recipe Box (daisyui)" ;;
+          tailwind) label="Meal Planner (tailwind)" ;;
+          bootstrapvue) label="Content Ops Console (bootstrapvue)" ;;
+        esac
+        if [ "$PREVIEW_MODE" != "prod" ]; then
+          echo " $label (dev):  $(tunnel_url "/tmp/tunnel-${app}-dev.log")"
+        fi
+        if [ "$PREVIEW_MODE" != "dev" ]; then
+          echo " $label (prod): $(tunnel_url "/tmp/tunnel-${app}-prod.log")"
+        fi
+      done
+      echo " Backend:      $(tunnel_url /tmp/tunnel-backend.log)"
+      if [ "$CODE_ENABLED" = "true" ]; then
+        echo " Login link:   ${LOGIN_LINK:-not ready}"
+        echo " Code:         $(tunnel_url /tmp/tunnel-code.log) (password: your PREVIEW_CODE_PASSWORD variable)"
+      else
+        echo " (code-server + login link skipped - set PREVIEW_CODE_PASSWORD to enable)"
+      fi
+      echo "=================================================="
+      DURATION="$PREVIEW_DURATION_SECONDS"
+      [ "$DURATION" -le 18000 ] || DURATION=18000
+      sleep "$DURATION"

@@ -5,28 +5,27 @@ import Vue from 'vue'
 import DruxtWrapper from './DruxtWrapper.vue'
 
 /**
- * The DruxtModule component is used to make a Druxt module, simply import and
- * extend the component to get started.
+ * The DruxtModule component renders a Druxt module; import and extend the
+ * component to build your own module.
  *
  * The component provides access to the Druxt Wrapper theming and fetch system
  * via the druxt settings object.
  *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
+ *
  * @example @lang js
- * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+ * import DruxtModule from 'druxt/components/DruxtModule.vue'
  * export default {
- *   name: 'DruxtTestModule',
+ *   name: 'DruxtCustomModule',
  *   extends: DruxtModule,
  *   druxt: {
  *     async fetchConfig() {},
  *     async fetchData(settings) {},
- *     componentOptions: (context) => ([[context.foo, context.bar, 'default']]),
- *     propsData: (context) => ({
- *       foo: context.foo,
- *       bar: context.bar,
- *     }),
+ *     componentOptions: () => ([['Default']]),
+ *     propsData: ({ model }) => ({ value: model }),
  *     slots(h) {
  *       return {
- *         default: (attrs) => h('DruxtDebug', ['Hello world'])
+ *         default: (attrs) => h('div', { attrs }, [this.model])
  *       }
  *     }
  *   }
@@ -40,7 +39,7 @@ export default {
     /**
      * The resource langcode.
      *
-     * @example
+     * @example @lang vue
      * <DruxtModule langcode="en" />
      *
      * @type {string}
@@ -51,13 +50,20 @@ export default {
     },
 
     /**
-     * The module component model value.
+     * The Vue.js v-model binding for the module.
      *
-     * Used to bypass the Drupal JSON:API fetch, setting the module data
-     * directly.
+     * Setting a value provides the module data directly, so the Drupal
+     * JSON:API fetch is skipped.
      *
-     * @example
-     * <DruxtModule v-model="{ foo: bar }" />
+     * @example @lang vue
+     * <template>
+     *   <DruxtModule v-model="model" />
+     * </template>
+     *
+     * <script>
+     * export default {
+     *   data: () => ({ model: { foo: 'bar' } })
+     * }
      *
      * @type {*}
      * @model
@@ -75,9 +81,9 @@ export default {
      * @example
      * <DruxtModule
      *   :wrapper="{
-     *     component: 'MyWrapper',
-     *     class: 'wrapper',
-     *     propsData: { foo: 'bar' }
+     *     component: 'BCard',
+     *     class: 'article-card',
+     *     propsData: { noBody: true }
      *   }"
      * />
      *
@@ -90,8 +96,10 @@ export default {
   },
 
   /**
+   * @param {object} vm - The component ViewModel.
+   * @param {*} vm.value - The module component model value.
    * @property {ComponentData} component - The wrapper component and propsData to be rendered.
-   * @property {object} model - The model object.
+   * @property {*} model - The module component model value.
    */
   data: ({ value }) => ({
     component: {
@@ -113,19 +121,16 @@ export default {
    * the `DruxtModule.fetch()` hook.
    *
    * @example @lang js <caption>Manually invoking DruxtModule.fetch().</caption>
-   * import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+   * import DruxtModule from 'druxt/components/DruxtModule.vue'
    * export default {
-   *   name: 'DruxtTestModule',
+   *   name: 'DruxtCustomModule',
    *   extends: DruxtModule,
    *   async fetch() {
    *     await DruxtModule.fetch.call(this)
-   *   }
+   *   },
    *   druxt: {
-   *     componentOptions: () => ([['wrapper']]),
-   *     propsData: (ctx) => ({
-   *       bar: ctx.bar,
-   *       foo: ctx.foo,
-   *     }),
+   *     componentOptions: () => ([['Default']]),
+   *     propsData: ({ model }) => ({ value: model }),
    *   }
    * }
    */
@@ -150,7 +155,7 @@ export default {
     if (
       // No default template and wrapper isn't false OR
       (!hasDefaultTemplate && this.wrapper !== false) ||
-      // Default tempalte and wrapper is set
+      // Default template and wrapper is set
       (hasDefaultTemplate && this.wrapper)
     ) {
       options = this.getModuleComponents()
@@ -189,6 +194,17 @@ export default {
   },
 
   computed: {
+    /**
+     * The current language code: the `langcode` prop if set, otherwise the
+     * route's langcode metadata.
+     *
+     * Used by Druxt modules to fetch the correct resource translation.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {string} vm.langcode - The `langcode` prop.
+     * @param {object} vm.$route - The current route.
+     * @return {string} The current language code.
+     */
     lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode
   },
 
@@ -221,6 +237,9 @@ export default {
   methods: {
     /**
      * Sets the component to render a DruxtDebug error message.
+     *
+     * @param {object} err - The error object.
+     * @param {object} [context] - Error context; carries the wrapper component data where the failure knows it.
      */
     error(err, context = {}) {
       // Build error details.
@@ -278,8 +297,14 @@ export default {
           // Convert parts into a pascalCase component name.
           const name = pascalCase([this.$options.name, ...parts])
 
-          // Store set variant data to be used in next set item.
-          variants.unshift({ global, name, parts })
+          // Store set variant data to be used in next set item. (Only
+          // `.parts` is read back from `variants` - no `global` key is
+          // needed here; it was previously a bare `global` object-shorthand
+          // property, which happened to reference Node's global object in
+          // SSR/webpack contexts and silently did nothing, but throws
+          // `ReferenceError: global is not defined` in an actual browser -
+          // e.g. Vite, which doesn't polyfill it.)
+          variants.unshift({ name, parts })
 
           // Add langcode suffixed component option.
           if (this.lang) {
@@ -314,10 +339,12 @@ export default {
      *
      * @example @lang js
      * {
-     *   bar: 'foo',
-     *   foo: 'bar',
+     *   $attrs: { entity: {}, fields: {}, langcode: 'en', schema: {} },
+     *   props: { value: {} },
+     *   propsData: { entity: {}, fields: {}, langcode: 'en', schema: {}, value: {} },
      * }
      *
+     * @param {object} wrapperProps - Props registered by the wrapper component.
      * @return {object}
      */
     getModulePropsData(wrapperProps = {}) {
@@ -405,7 +432,7 @@ export default {
     /**
      * Get wrapper component data.
      *
-     * @param {string} component - The Wrapper component name.
+     * @param {string} component - The wrapper component name.
      *
      * @return {WrapperData}
      */
@@ -476,6 +503,11 @@ export default {
 }
 
 /**
+ * The list of candidate Wrapper components, with naming parts and global
+ * registration state.
+ *
+ * @see {@link https://druxtjs.org/explanation/component-resolution|Component resolution}
+ *
  * @typedef {object[]} Components
  * @property {boolean} global - Component global registration state.
  * @property {string} name - The component name.
@@ -484,48 +516,58 @@ export default {
  * @example @lang js
  * [{
  *   global: true,
- *   pascal: 'DruxtTestModuleWrapper',
- *   parts: ['Wrapper'],
+ *   name: 'DruxtEntityNodeArticleDefault',
+ *   parts: ['NodeArticle', 'Default'],
  * }]
  */
 
+/* eslint-disable jsdoc/valid-types --
+   the property is Vue's `is`; the namepath parser rejects that word in any spelling */
 /**
+ * The wrapper component and propsData to be rendered.
+ *
  * @typedef {object} ComponentData
- * @property {object} $attrs - propsData not registered by the Wrapper component.
- * @property {string} is=DruxtWrapper - The Wrapper component name.
- * @property {string[]} options - The Wrapper component options.
- * @property {object} props - propsData registered by the Wrapper component.
+ * @property {object} $attrs - propsData not registered by the wrapper component.
+ * @property {string} is=DruxtWrapper - The wrapper component name.
+ * @property {string[]} options - The wrapper component options.
+ * @property {object} props - propsData registered by the wrapper component.
  * @property {object} propsData - The component propsData object.
- * @property {object} settings - Druxt settings object provided by the Wrapper component.
+ * @property {object} settings - Druxt settings object provided by the wrapper component.
  *
  * @example @lang js
  * {
- *   $attrs: { bar: 'foo' },
- *   is: 'DruxtTestModuleWrapper',
+ *   $attrs: { entity: {}, fields: {}, schema: {} },
+ *   is: 'DruxtEntityNodeArticleDefault',
  *   options: [
- *     'DruxtTestModuleWrapper',
+ *     'DruxtEntityNodeArticleDefault',
+ *     'DruxtEntityDefault',
  *   ],
- *   props: { foo: 'bar' },
+ *   props: { value: {} },
  *   propsData: {
- *     bar: 'foo',
- *     foo: 'bar',
+ *     entity: {},
+ *     fields: {},
+ *     schema: {},
+ *     value: {},
  *   },
- *   settings: { fooBar: true },
+ *   settings: { query: {} },
  * }
  */
+/* eslint-enable jsdoc/valid-types */
 
 /**
+ * Druxt settings and registered props retrieved from the wrapper component.
+ *
  * @typedef {object} WrapperData
  * @property {object} druxt - Druxt settings object for use by Druxt module.
  * @property {object} props - Registered props oject.
  *
  * @example @lang js
  * {
- *   druxt: { fooBar: true },
+ *   druxt: { query: { fields: ['path', 'title'] } },
  *   props: {
- *     foo: {
- *       type: String,
- *       default: '',
+ *     value: {
+ *       type: Object,
+ *       default: () => ({}),
  *     }
  *   }
  * }

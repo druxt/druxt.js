@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Nuxt Storybook 1`] = `
-Array [
+[
   "/stories/druxt-site.stories.js",
   "/stories/druxt-site.*.stories.js",
 ]

@@ -1,22 +1,22 @@
 # druxt-docgen
 
-## 0.6.0
+## 0.6.0 - 2021-09-22
 
 ### Minor Changes
 
-- 9741e11: feat: copy select static files into docs
+- Copy select static files into docs. ([`9741e11`](https://github.com/druxt/druxt.js/commit/9741e11))
 
-## 0.5.1
+## 0.5.1 - 2021-09-20
 
 ### Patch Changes
 
-- b82938e: Fixed incorrectly generated results
+- Fixed incorrectly generated results. ([`b82938e`](https://github.com/druxt/druxt.js/commit/b82938e))
 
-## 0.5.0
+## 0.5.0 - 2021-09-14
 
 ### Minor Changes
 
-- 604def9: feat(#157): generate packages list
-- 07ed13d: feat(#199): add support for package CHANGELOG.md files
-- 604def9: refactor(#137): Rewrite docgen for Druxt mono-repo.
-- 604def9: feat(#169): generate components list
+- Generate packages list. ([#157](https://github.com/druxt/druxt.js/issues/157), [`604def9`](https://github.com/druxt/druxt.js/commit/604def9))
+- Added support for package CHANGELOG.md files. ([#199](https://github.com/druxt/druxt.js/issues/199), [`07ed13d`](https://github.com/druxt/druxt.js/commit/07ed13d))
+- Rewrite docgen for Druxt mono-repo. ([#137](https://github.com/druxt/druxt.js/issues/137), [`604def9`](https://github.com/druxt/druxt.js/commit/604def9))
+- Generate components list. ([#169](https://github.com/druxt/druxt.js/issues/169), [`604def9`](https://github.com/druxt/druxt.js/commit/604def9))

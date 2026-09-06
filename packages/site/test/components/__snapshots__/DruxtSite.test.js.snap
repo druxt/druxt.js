@@ -2,7 +2,7 @@
 
 exports[`DruxtSite component defaults 1`] = `
 "<div>
-  <div props=\\"[object Object]\\" regions=\\"breadcrumbs,highlighted,pre_header,banner_top,header,content,bottom,footer,tabs,page_title,content_bottom\\" theme=\\"umami\\">
+  <div props="[object Object]" regions="breadcrumbs,highlighted,pre_header,banner_top,header,content,bottom,footer,tabs,page_title,content_bottom" theme="umami">
     <druxtblockregion-stub></druxtblockregion-stub>
     <druxtblockregion-stub></druxtblockregion-stub>
     <druxtblockregion-stub></druxtblockregion-stub>

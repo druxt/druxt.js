@@ -1,0 +1,160 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "field_config--field_config",
+      "id": "09368107-2b81-4b69-809c-257be58313ab",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/09368107-2b81-4b69-809c-257be58313ab"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.banner_block",
+            "field.storage.block_content.field_content_link"
+          ],
+          "module": ["link"]
+        },
+        "drupal_internal__id": "block_content.banner_block.field_content_link",
+        "field_name": "field_content_link",
+        "entity_type": "block_content",
+        "bundle": "banner_block",
+        "label": "Content Link",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "title": 2,
+          "link_type": 17
+        },
+        "field_type": "link"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "ffeeed7a-8104-449b-9b11-b338b9ed52c1",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/ffeeed7a-8104-449b-9b11-b338b9ed52c1"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.banner_block",
+            "field.storage.block_content.field_media_image",
+            "media.type.image"
+          ]
+        },
+        "drupal_internal__id": "block_content.banner_block.field_media_image",
+        "field_name": "field_media_image",
+        "entity_type": "block_content",
+        "bundle": "banner_block",
+        "label": "Media Image",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": {
+          "handler": "default:media",
+          "handler_settings": {
+            "target_bundles": {
+              "image": "image"
+            },
+            "sort": {
+              "field": "_none"
+            },
+            "auto_create": true,
+            "auto_create_bundle": ""
+          }
+        },
+        "field_type": "entity_reference"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "54b72ebb-98c8-44f9-80c3-b59268e471ad",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/54b72ebb-98c8-44f9-80c3-b59268e471ad"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.banner_block",
+            "field.storage.block_content.field_summary"
+          ]
+        },
+        "drupal_internal__id": "block_content.banner_block.field_summary",
+        "field_name": "field_summary",
+        "entity_type": "block_content",
+        "bundle": "banner_block",
+        "label": "Summary",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "string_long"
+      }
+    },
+    {
+      "type": "field_config--field_config",
+      "id": "eb28e5dd-3de3-4da3-be12-dc30d825ba2d",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config/eb28e5dd-3de3-4da3-be12-dc30d825ba2d"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "block_content.type.banner_block",
+            "field.storage.block_content.field_title"
+          ]
+        },
+        "drupal_internal__id": "block_content.banner_block.field_title",
+        "field_name": "field_title",
+        "entity_type": "block_content",
+        "bundle": "banner_block",
+        "label": "Title",
+        "description": "",
+        "required": false,
+        "translatable": true,
+        "default_value": [],
+        "default_value_callback": "",
+        "settings": [],
+        "field_type": "string"
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/field_config/field_config?filter%5Bentity_type%5D=block_content&filter%5Bbundle%5D=banner_block"
+    }
+  }
+}

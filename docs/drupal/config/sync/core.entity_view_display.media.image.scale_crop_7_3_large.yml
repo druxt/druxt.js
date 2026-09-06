@@ -1,34 +1,34 @@
-uuid: 3f2bb728-0227-4ec3-8f3d-db374547d991
+uuid: 84e72994-1720-4eb7-9b69-1704406f144b
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.media.scale_crop_7_3_large
     - field.field.media.image.field_media_image
-    - image.style.scale_crop_7_3_large
     - media.type.image
+    - responsive_image.styles.hero
   module:
-    - image
     - layout_builder
+    - responsive_image
 third_party_settings:
   layout_builder:
     enabled: false
     allow_custom: false
 _core:
-  default_config_hash: wE0QJQ4GF9ydxRYmb5jlAyr78TYMsPh6A_c_-eIyYNI
+  default_config_hash: vzvk6gNV0lxIQyI_vc2epnbvj9CNAT-xrh6bo_JaShw
 id: media.image.scale_crop_7_3_large
 targetEntityType: media
 bundle: image
 mode: scale_crop_7_3_large
 content:
   field_media_image:
-    type: image
-    label: visually_hidden
+    type: responsive_image
+    label: hidden
     settings:
+      responsive_image_style: hero
       image_link: ''
-      image_style: scale_crop_7_3_large
       image_loading:
-        attribute: lazy
+        attribute: eager
     third_party_settings: {  }
     weight: 1
     region: content

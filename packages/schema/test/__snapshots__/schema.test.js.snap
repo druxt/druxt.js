@@ -1,276 +1,276 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DruxtSchema get 1`] = `
-Object {
-  "block_content--banner_block--default--form": Object {
-    "config": Object {
+{
+  "block_content--banner_block--default--form": {
+    "config": {
       "bundle": "banner_block",
       "entityType": "block_content",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/block_content/banner_block",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": null,
         "description": null,
         "id": "info",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_title",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Title",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {
+          "storage": {
             "case_sensitive": false,
             "is_ascii": false,
             "max_length": 255,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": 1,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_summary",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Summary",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "placeholder": "",
             "rows": 5,
           },
-          "storage": Object {
+          "storage": {
             "case_sensitive": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textarea",
         "weight": 3,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_content_link",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Content Link",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "link_type": 17,
             "title": 2,
           },
-          "display": Object {
+          "display": {
             "placeholder_title": "",
             "placeholder_url": "",
           },
-          "storage": Array [],
+          "storage": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "link_default",
         "weight": 4,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
-            "media_types": Array [],
+          "display": {
+            "media_types": [],
           },
-          "storage": Object {
+          "storage": {
             "target_type": "media",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "media_library_widget",
         "weight": 6,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "translation",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 7,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "block_content--banner_block--default--form",
     "resourceType": "block_content--banner_block",
   },
-  "block_content--banner_block--default--view": Object {
-    "config": Object {
+  "block_content--banner_block--default--view": {
+    "config": {
       "bundle": "banner_block",
       "entityType": "block_content",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/block_content/banner_block",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "scale_crop_7_3_large",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 1,
       },
-      Object {
+      {
         "description": "",
         "id": "field_title",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Title",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "link_to_entity": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string",
         "weight": 2,
       },
-      Object {
+      {
         "description": "",
         "id": "field_summary",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Summary",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "basic_string",
         "weight": 3,
       },
-      Object {
+      {
         "description": "",
         "id": "field_content_link",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Content Link",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "link_type": 17,
             "title": 2,
           },
-          "display": Object {
+          "display": {
             "rel": "",
             "target": "",
             "trim_length": 80,
@@ -278,581 +278,581 @@ Object {
             "url_plain": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "link",
         "weight": 4,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "block_content--banner_block--default--view",
     "resourceType": "block_content--banner_block",
   },
-  "block_content--basic--default--form": Object {
-    "config": Object {
+  "block_content--basic--default--form": {
+    "config": {
       "bundle": "basic",
       "entityType": "block_content",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/block_content/basic",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": null,
         "description": null,
         "id": "info",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": -5,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "body",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Body",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "display_summary": false,
             "required_summary": false,
           },
-          "display": Object {
+          "display": {
             "placeholder": "",
             "rows": 9,
             "show_summary": false,
             "summary_rows": 3,
           },
-          "storage": Array [],
+          "storage": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_textarea_with_summary",
         "weight": -4,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "translation",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 10,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "block_content--basic--default--form",
     "resourceType": "block_content--basic",
   },
-  "block_content--basic--default--view": Object {
-    "config": Object {
+  "block_content--basic--default--view": {
+    "config": {
       "bundle": "basic",
       "entityType": "block_content",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/block_content/basic",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "body",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Body",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "display_summary": false,
             "required_summary": false,
           },
-          "display": Array [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 0,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "block_content--basic--default--view",
     "resourceType": "block_content--basic",
   },
-  "block_content--disclaimer_block--default--form": Object {
-    "config": Object {
+  "block_content--disclaimer_block--default--form": {
+    "config": {
       "bundle": "disclaimer_block",
       "entityType": "block_content",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/block_content/disclaimer_block",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": null,
         "description": null,
         "id": "info",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": -5,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "translation",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 10,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_disclaimer",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Disclaimer",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "placeholder": "",
             "rows": 5,
           },
-          "storage": Array [],
+          "storage": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_textarea",
         "weight": 27,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_copyright",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Copyright",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "placeholder": "",
             "rows": 5,
           },
-          "storage": Array [],
+          "storage": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_textarea",
         "weight": 28,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "block_content--disclaimer_block--default--form",
     "resourceType": "block_content--disclaimer_block",
   },
-  "block_content--disclaimer_block--default--view": Object {
-    "config": Object {
+  "block_content--disclaimer_block--default--view": {
+    "config": {
       "bundle": "disclaimer_block",
       "entityType": "block_content",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/block_content/disclaimer_block",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_disclaimer",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Disclaimer",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 1,
       },
-      Object {
+      {
         "description": "",
         "id": "field_copyright",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Copyright",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 2,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "block_content--disclaimer_block--default--view",
     "resourceType": "block_content--disclaimer_block",
   },
-  "block_content--footer_promo_block--default--form": Object {
-    "config": Object {
+  "block_content--footer_promo_block--default--form": {
+    "config": {
       "bundle": "footer_promo_block",
       "entityType": "block_content",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/block_content/footer_promo_block",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": null,
         "description": null,
         "id": "info",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_title",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Promo title",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {
+          "storage": {
             "case_sensitive": false,
             "is_ascii": false,
             "max_length": 255,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": 1,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_summary",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Promo text",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "placeholder": "",
             "rows": 5,
           },
-          "storage": Object {
+          "storage": {
             "case_sensitive": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textarea",
         "weight": 3,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_content_link",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Find out more link",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "link_type": 17,
             "title": 2,
           },
-          "display": Object {
+          "display": {
             "placeholder_title": "",
             "placeholder_url": "",
           },
-          "storage": Array [],
+          "storage": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "link_default",
         "weight": 4,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
-            "media_types": Array [],
+          "display": {
+            "media_types": [],
           },
-          "storage": Object {
+          "storage": {
             "target_type": "media",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "media_library_widget",
         "weight": 6,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "translation",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 7,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "block_content--footer_promo_block--default--form",
     "resourceType": "block_content--footer_promo_block",
   },
-  "block_content--footer_promo_block--default--view": Object {
-    "config": Object {
+  "block_content--footer_promo_block--default--view": {
+    "config": {
       "bundle": "footer_promo_block",
       "entityType": "block_content",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/block_content/footer_promo_block",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "medium_8_7",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 1,
       },
-      Object {
+      {
         "description": "",
         "id": "field_title",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Promo title",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "link_to_entity": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string",
         "weight": 2,
       },
-      Object {
+      {
         "description": "",
         "id": "field_summary",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Promo text",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "basic_string",
         "weight": 3,
       },
-      Object {
+      {
         "description": "",
         "id": "field_content_link",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Find out more link",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "link_type": 17,
             "title": 2,
           },
-          "display": Object {
+          "display": {
             "rel": "",
             "target": "",
             "trim_length": 80,
@@ -860,564 +860,564 @@ Object {
             "url_plain": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "link",
         "weight": 4,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "block_content--footer_promo_block--default--view",
     "resourceType": "block_content--footer_promo_block",
   },
-  "contact_message--feedback--default--form": Object {
-    "config": Object {
+  "contact_message--feedback--default--form": {
+    "config": {
       "bundle": "feedback",
       "entityType": "contact_message",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/contact_message/feedback",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": null,
         "description": null,
         "id": "name",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "mail",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 1,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "subject",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "message",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "placeholder": "",
             "rows": 12,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textarea",
         "weight": 3,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "copy",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 4,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "contact_message--feedback--default--form",
     "resourceType": "contact_message--feedback",
   },
-  "media--audio--default--form": Object {
-    "config": Object {
+  "media--audio--default--form": {
+    "config": {
       "bundle": "audio",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/audio",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_media_audio_file",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Audio file",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "description_field": false,
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "mp3 wav aac",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
           },
-          "display": Object {
+          "display": {
             "progress_indicator": "throbber",
           },
-          "storage": Object {
+          "storage": {
             "display_default": false,
             "display_field": false,
             "target_type": "file",
             "uri_scheme": "public",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "file_generic",
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "uid",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete",
         "weight": 5,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "created",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "datetime_timestamp",
         "weight": 10,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "path",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "path",
         "weight": 30,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "status",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 100,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--audio--default--form",
     "resourceType": "media--audio",
   },
-  "media--audio--default--view": Object {
-    "config": Object {
+  "media--audio--default--view": {
+    "config": {
       "bundle": "audio",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/audio",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_audio_file",
-        "label": Object {
+        "label": {
           "position": "visually_hidden",
           "text": "Audio file",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "description_field": false,
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "mp3 wav aac",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
           },
-          "display": Object {
+          "display": {
             "autoplay": false,
             "controls": true,
             "loop": false,
             "multiple_file_display_type": "tags",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "file_audio",
         "weight": 0,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--audio--default--view",
     "resourceType": "media--audio",
   },
-  "media--document--default--form": Object {
-    "config": Object {
+  "media--document--default--form": {
+    "config": {
       "bundle": "document",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/document",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_media_document",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Document",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "description_field": false,
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "txt rtf doc docx ppt pptx xls xlsx pdf odf odg odp ods odt fodt fods fodp fodg key numbers pages",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
           },
-          "display": Object {
+          "display": {
             "progress_indicator": "throbber",
           },
-          "storage": Object {
+          "storage": {
             "display_default": false,
             "display_field": false,
             "target_type": "file",
             "uri_scheme": "public",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "file_generic",
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "path",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "path",
         "weight": 4,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "uid",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete",
         "weight": 5,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "created",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "datetime_timestamp",
         "weight": 10,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "status",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 100,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--document--default--form",
     "resourceType": "media--document",
   },
-  "media--document--default--view": Object {
-    "config": Object {
+  "media--document--default--view": {
+    "config": {
       "bundle": "document",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/document",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_document",
-        "label": Object {
+        "label": {
           "position": "visually_hidden",
           "text": "Document",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "description_field": false,
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "txt rtf doc docx ppt pptx xls xlsx pdf odf odg odp ods odt fodt fods fodp fodg key numbers pages",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
           },
-          "display": Array [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "file_default",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--document--default--view",
     "resourceType": "media--document",
   },
-  "media--image--default--form": Object {
-    "config": Object {
+  "media--image--default--form": {
+    "config": {
       "bundle": "image",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": null,
         "description": null,
         "id": "name",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "alt_field": true,
             "alt_field_required": true,
-            "default_image": Object {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -1427,19 +1427,19 @@ Object {
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "png gif jpg jpeg",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
             "max_resolution": "",
             "min_resolution": "",
             "title_field": false,
             "title_field_required": false,
           },
-          "display": Object {
+          "display": {
             "preview_image_style": "thumbnail",
             "progress_indicator": "throbber",
           },
-          "storage": Object {
-            "default_image": Object {
+          "storage": {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -1452,155 +1452,155 @@ Object {
             "uri_scheme": "public",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "image_image",
         "weight": 1,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "path",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "path",
         "weight": 3,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "uid",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete",
         "weight": 4,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "created",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "datetime_timestamp",
         "weight": 5,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "translation",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 6,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "status",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 7,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--image--default--form",
     "resourceType": "media--image",
   },
-  "media--image--default--view": Object {
-    "config": Object {
+  "media--image--default--view": {
+    "config": {
       "bundle": "image",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "visually_hidden",
           "text": "Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "alt_field": true,
             "alt_field_required": true,
-            "default_image": Object {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -1610,50 +1610,50 @@ Object {
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "png gif jpg jpeg",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
             "max_resolution": "",
             "min_resolution": "",
             "title_field": false,
             "title_field_required": false,
           },
-          "display": Object {
+          "display": {
             "image_link": "",
             "responsive_image_style": "3_2_image",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "responsive_image",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--image--default--view",
     "resourceType": "media--image",
   },
-  "media--image--medium_8_7--view": Object {
-    "config": Object {
+  "media--image--medium_8_7--view": {
+    "config": {
       "bundle": "image",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image",
       "mode": "medium_8_7",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "visually_hidden",
           "text": "Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "alt_field": true,
             "alt_field_required": true,
-            "default_image": Object {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -1663,50 +1663,50 @@ Object {
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "png gif jpg jpeg",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
             "max_resolution": "",
             "min_resolution": "",
             "title_field": false,
             "title_field_required": false,
           },
-          "display": Object {
+          "display": {
             "image_link": "",
             "image_style": "medium_8_7",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "image",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--image--medium_8_7--view",
     "resourceType": "media--image",
   },
-  "media--image--responsive_3x2--view": Object {
-    "config": Object {
+  "media--image--responsive_3x2--view": {
+    "config": {
       "bundle": "image",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image",
       "mode": "responsive_3x2",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "visually_hidden",
           "text": "Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "alt_field": true,
             "alt_field_required": true,
-            "default_image": Object {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -1716,50 +1716,50 @@ Object {
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "png gif jpg jpeg",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
             "max_resolution": "",
             "min_resolution": "",
             "title_field": false,
             "title_field_required": false,
           },
-          "display": Object {
+          "display": {
             "image_link": "",
             "responsive_image_style": "3_2_image",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "responsive_image",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--image--responsive_3x2--view",
     "resourceType": "media--image",
   },
-  "media--image--scale_crop_7_3_large--view": Object {
-    "config": Object {
+  "media--image--scale_crop_7_3_large--view": {
+    "config": {
       "bundle": "image",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image",
       "mode": "scale_crop_7_3_large",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "visually_hidden",
           "text": "Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "alt_field": true,
             "alt_field_required": true,
-            "default_image": Object {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -1769,50 +1769,50 @@ Object {
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "png gif jpg jpeg",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
             "max_resolution": "",
             "min_resolution": "",
             "title_field": false,
             "title_field_required": false,
           },
-          "display": Object {
+          "display": {
             "image_link": "",
             "image_style": "scale_crop_7_3_large",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "image",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--image--scale_crop_7_3_large--view",
     "resourceType": "media--image",
   },
-  "media--image--square--view": Object {
-    "config": Object {
+  "media--image--square--view": {
+    "config": {
       "bundle": "image",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/image",
       "mode": "square",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "visually_hidden",
           "text": "Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "alt_field": true,
             "alt_field_required": true,
-            "default_image": Object {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -1822,374 +1822,374 @@ Object {
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "png gif jpg jpeg",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
             "max_resolution": "",
             "min_resolution": "",
             "title_field": false,
             "title_field_required": false,
           },
-          "display": Object {
+          "display": {
             "image_link": "",
             "responsive_image_style": "square",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "responsive_image",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--image--square--view",
     "resourceType": "media--image",
   },
-  "media--remote_video--default--form": Object {
-    "config": Object {
+  "media--remote_video--default--form": {
+    "config": {
       "bundle": "remote_video",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/remote_video",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_media_oembed_video",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Video URL",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {
+          "storage": {
             "case_sensitive": false,
             "is_ascii": false,
             "max_length": 255,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "oembed_textfield",
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "uid",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete",
         "weight": 4,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "created",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "datetime_timestamp",
         "weight": 10,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "path",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "path",
         "weight": 30,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "status",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 100,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--remote_video--default--form",
     "resourceType": "media--remote_video",
   },
-  "media--remote_video--default--view": Object {
-    "config": Object {
+  "media--remote_video--default--view": {
+    "config": {
       "bundle": "remote_video",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/remote_video",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_oembed_video",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Video URL",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "max_height": 0,
             "max_width": 0,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "oembed",
         "weight": 0,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--remote_video--default--view",
     "resourceType": "media--remote_video",
   },
-  "media--video--default--form": Object {
-    "config": Object {
+  "media--video--default--form": {
+    "config": {
       "bundle": "video",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/video",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_media_video_file",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Video file",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "description_field": false,
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "mp4",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
           },
-          "display": Object {
+          "display": {
             "progress_indicator": "throbber",
           },
-          "storage": Object {
+          "storage": {
             "display_default": false,
             "display_field": false,
             "target_type": "file",
             "uri_scheme": "public",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "file_generic",
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "uid",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete",
         "weight": 5,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "created",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "datetime_timestamp",
         "weight": 10,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "path",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "path",
         "weight": 30,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "status",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 100,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--video--default--form",
     "resourceType": "media--video",
   },
-  "media--video--default--view": Object {
-    "config": Object {
+  "media--video--default--view": {
+    "config": {
       "bundle": "video",
       "entityType": "media",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/media/video",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_video_file",
-        "label": Object {
+        "label": {
           "position": "visually_hidden",
           "text": "Video file",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "description_field": false,
             "file_directory": "[date:custom:Y]-[date:custom:m]",
             "file_extensions": "mp4",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
           },
-          "display": Object {
+          "display": {
             "autoplay": false,
             "controls": true,
             "height": 480,
@@ -2199,1501 +2199,1501 @@ Object {
             "width": 640,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "file_video",
         "weight": 0,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "media--video--default--view",
     "resourceType": "media--video",
   },
-  "node--article--card--view": Object {
-    "config": Object {
+  "node--article--card--view": {
+    "config": {
       "bundle": "article",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article",
       "mode": "card",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": false,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "responsive_3x2",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--article--card--view",
     "resourceType": "node--article",
   },
-  "node--article--card_common--view": Object {
-    "config": Object {
+  "node--article--card_common--view": {
+    "config": {
       "bundle": "article",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article",
       "mode": "card_common",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": false,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "responsive_3x2",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--article--card_common--view",
     "resourceType": "node--article",
   },
-  "node--article--card_common_alt--view": Object {
-    "config": Object {
+  "node--article--card_common_alt--view": {
+    "config": {
       "bundle": "article",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article",
       "mode": "card_common_alt",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": false,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "responsive_3x2",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--article--card_common_alt--view",
     "resourceType": "node--article",
   },
-  "node--article--default--form": Object {
-    "config": Object {
+  "node--article--default--form": {
+    "config": {
       "bundle": "article",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": null,
         "description": null,
         "id": "title",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "body",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Body",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "display_summary": true,
             "required_summary": false,
           },
-          "display": Object {
+          "display": {
             "placeholder": "",
             "rows": 9,
             "show_summary": false,
             "summary_rows": 3,
           },
-          "storage": Array [],
+          "storage": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_textarea_with_summary",
         "weight": 1,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": -1,
         "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
         "id": "field_tags",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Tags",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:taxonomy_term",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "tags": "tags",
               },
             },
           },
-          "display": Object {
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {
+          "storage": {
             "target_type": "taxonomy_term",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete_tags",
         "weight": 3,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": false,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
-            "media_types": Array [],
+          "display": {
+            "media_types": [],
           },
-          "storage": Object {
+          "storage": {
             "target_type": "media",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "media_library_widget",
         "weight": 5,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "uid",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete",
         "weight": 6,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "created",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "datetime_timestamp",
         "weight": 7,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "promote",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 8,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "sticky",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 9,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "path",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "path",
         "weight": 10,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "status",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 11,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "moderation_state",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "moderation_state_default",
         "weight": 12,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "translation",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 13,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--article--default--form",
     "resourceType": "node--article",
   },
-  "node--article--default--view": Object {
-    "config": Object {
+  "node--article--default--view": {
+    "config": {
       "bundle": "article",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
         "id": "field_tags",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Tags",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:taxonomy_term",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "tags": "tags",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": true,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_label",
         "weight": 0,
       },
-      Object {
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": false,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "responsive_3x2",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 2,
       },
-      Object {
+      {
         "description": "",
         "id": "body",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Body",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "display_summary": true,
             "required_summary": false,
           },
-          "display": Array [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 3,
       },
-      Object {
+      {
         "description": null,
         "id": "links",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
+        "settings": {
+          "config": {},
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 4,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--article--default--view",
     "resourceType": "node--article",
   },
-  "node--article--full--view": Object {
-    "config": Object {
+  "node--article--full--view": {
+    "config": {
       "bundle": "article",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article",
       "mode": "full",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
         "id": "field_tags",
-        "label": Object {
+        "label": {
           "position": "inline",
           "text": "Tags",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:taxonomy_term",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "tags": "tags",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": true,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_label",
         "weight": 0,
       },
-      Object {
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": false,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "responsive_3x2",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 2,
       },
-      Object {
+      {
         "description": "",
         "id": "body",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Body",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "display_summary": true,
             "required_summary": false,
           },
-          "display": Array [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 3,
       },
-      Object {
+      {
         "description": null,
         "id": "links",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
+        "settings": {
+          "config": {},
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 4,
       },
-      Object {
+      {
         "description": null,
         "id": "content_moderation_control",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
+        "settings": {
+          "config": {},
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 5,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--article--full--view",
     "resourceType": "node--article",
   },
-  "node--article--rss--view": Object {
-    "config": Object {
+  "node--article--rss--view": {
+    "config": {
       "bundle": "article",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article",
       "mode": "rss",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": null,
         "id": "links",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {},
+        "settings": {
+          "config": {},
+          "display": {},
         },
-        "thirdPartySettings": Object {},
+        "thirdPartySettings": {},
         "type": null,
         "weight": 100,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--article--rss--view",
     "resourceType": "node--article",
   },
-  "node--article--teaser--view": Object {
-    "config": Object {
+  "node--article--teaser--view": {
+    "config": {
       "bundle": "article",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/article",
       "mode": "teaser",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": false,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "responsive_3x2",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 1,
       },
-      Object {
+      {
         "description": "",
         "id": "body",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Body",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "display_summary": true,
             "required_summary": false,
           },
-          "display": Object {
+          "display": {
             "trim_length": 600,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_summary_or_trimmed",
         "weight": 2,
       },
-      Object {
+      {
         "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
         "id": "field_tags",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Tags",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:taxonomy_term",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "tags": "tags",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": true,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_label",
         "weight": 3,
       },
-      Object {
+      {
         "description": null,
         "id": "links",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
+        "settings": {
+          "config": {},
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 4,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--article--teaser--view",
     "resourceType": "node--article",
   },
-  "node--page--default--form": Object {
-    "config": Object {
+  "node--page--default--form": {
+    "config": {
       "bundle": "page",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": null,
         "description": null,
         "id": "title",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "uid",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete",
         "weight": 1,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "created",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "datetime_timestamp",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "promote",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 3,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "sticky",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 4,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "path",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "path",
         "weight": 5,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "body",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Body",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "display_summary": true,
             "required_summary": false,
           },
-          "display": Object {
+          "display": {
             "placeholder": "",
             "rows": 9,
             "show_summary": false,
             "summary_rows": 3,
           },
-          "storage": Array [],
+          "storage": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_textarea_with_summary",
         "weight": 6,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "status",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 7,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "moderation_state",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "moderation_state_default",
         "weight": 8,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "translation",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 10,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--page--default--form",
     "resourceType": "node--page",
   },
-  "node--page--default--view": Object {
-    "config": Object {
+  "node--page--default--view": {
+    "config": {
       "bundle": "page",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "body",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Body",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "display_summary": true,
             "required_summary": false,
           },
-          "display": Array [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 0,
       },
-      Object {
+      {
         "description": null,
         "id": "links",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
+        "settings": {
+          "config": {},
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 1,
       },
-      Object {
+      {
         "description": null,
         "id": "content_moderation_control",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
+        "settings": {
+          "config": {},
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 2,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--page--default--view",
     "resourceType": "node--page",
   },
-  "node--page--teaser--view": Object {
-    "config": Object {
+  "node--page--teaser--view": {
+    "config": {
       "bundle": "page",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/page",
       "mode": "teaser",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "body",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Body",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "display_summary": true,
             "required_summary": false,
           },
-          "display": Object {
+          "display": {
             "trim_length": 600,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_summary_or_trimmed",
         "weight": 100,
       },
-      Object {
+      {
         "description": null,
         "id": "links",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {},
+        "settings": {
+          "config": {},
+          "display": {},
         },
-        "thirdPartySettings": Object {},
+        "thirdPartySettings": {},
         "type": null,
         "weight": 101,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--page--teaser--view",
     "resourceType": "node--page",
   },
-  "node--recipe--card--view": Object {
-    "config": Object {
+  "node--recipe--card--view": {
+    "config": {
       "bundle": "recipe",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe",
       "mode": "card",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_difficulty",
-        "label": Object {
+        "label": {
           "position": "inline",
           "text": "Difficulty",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "list_default",
         "weight": 0,
       },
-      Object {
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "responsive_3x2",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 2,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--recipe--card--view",
     "resourceType": "node--recipe",
   },
-  "node--recipe--card_common--view": Object {
-    "config": Object {
+  "node--recipe--card_common--view": {
+    "config": {
       "bundle": "recipe",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe",
       "mode": "card_common",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "responsive_3x2",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--recipe--card_common--view",
     "resourceType": "node--recipe",
   },
-  "node--recipe--card_common_alt--view": Object {
-    "config": Object {
+  "node--recipe--card_common_alt--view": {
+    "config": {
       "bundle": "recipe",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe",
       "mode": "card_common_alt",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "square",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 1,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--recipe--card_common_alt--view",
     "resourceType": "node--recipe",
   },
-  "node--recipe--default--form": Object {
-    "config": Object {
+  "node--recipe--default--form": {
+    "config": {
       "bundle": "recipe",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": null,
         "description": null,
         "id": "title",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "langcode",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "include_locked": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "language_select",
         "weight": 1,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_preparation_time",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Preparation time",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "max": null,
             "min": 0,
             "prefix": "",
             "suffix": " minutes",
           },
-          "display": Object {
+          "display": {
             "placeholder": "",
           },
-          "storage": Object {
+          "storage": {
             "size": "normal",
             "unsigned": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "number",
         "weight": 2,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_cooking_time",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Cooking time",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "max": null,
             "min": 0,
             "prefix": "",
             "suffix": " minutes",
           },
-          "display": Object {
+          "display": {
             "placeholder": "",
           },
-          "storage": Object {
+          "storage": {
             "size": "normal",
             "unsigned": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "number",
         "weight": 3,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_number_of_servings",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Number of servings",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "max": null,
             "min": 0,
             "prefix": "",
             "suffix": "",
           },
-          "display": Object {
+          "display": {
             "placeholder": "",
           },
-          "storage": Object {
+          "storage": {
             "size": "normal",
             "unsigned": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "number",
         "weight": 4,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_difficulty",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Difficulty",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
-          "storage": Object {
-            "allowed_values": Object {
+        "settings": {
+          "config": [],
+          "display": [],
+          "storage": {
+            "allowed_values": {
               "easy": "Easy",
               "hard": "Hard",
               "medium": "Medium",
@@ -3701,974 +3701,974 @@ Object {
             "allowed_values_function": "",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "options_select",
         "weight": 5,
       },
-      Object {
+      {
         "cardinality": -1,
         "description": "",
         "id": "field_recipe_category",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Recipe category",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:taxonomy_term",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": false,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "direction": "asc",
                 "field": "name",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "recipe_category": "recipe_category",
               },
             },
           },
-          "display": Object {
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {
+          "storage": {
             "target_type": "taxonomy_term",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete_tags",
         "weight": 6,
       },
-      Object {
+      {
         "cardinality": -1,
         "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
         "id": "field_tags",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Tags",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:taxonomy_term",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "direction": "asc",
                 "field": "name",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "tags": "tags",
               },
             },
           },
-          "display": Object {
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {
+          "storage": {
             "target_type": "taxonomy_term",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete_tags",
         "weight": 7,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Media Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
-            "media_types": Array [],
+          "display": {
+            "media_types": [],
           },
-          "storage": Object {
+          "storage": {
             "target_type": "media",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "media_library_widget",
         "weight": 9,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "Provide a short overview of this recipe.",
         "id": "field_summary",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Summary",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "placeholder": "",
             "rows": 5,
           },
-          "storage": Array [],
+          "storage": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_textarea",
         "weight": 10,
       },
-      Object {
+      {
         "cardinality": -1,
         "description": "List the ingredients required for this recipe, one per item.",
         "id": "field_ingredients",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Ingredients",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {
+          "storage": {
             "case_sensitive": false,
             "is_ascii": false,
             "max_length": 255,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string_textfield",
         "weight": 11,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "translation",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 12,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "field_recipe_instruction",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Recipe instruction",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "placeholder": "",
             "rows": 5,
           },
-          "storage": Array [],
+          "storage": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_textarea",
         "weight": 13,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "uid",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "match_limit": 10,
             "match_operator": "CONTAINS",
             "placeholder": "",
             "size": 60,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_autocomplete",
         "weight": 14,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "created",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "datetime_timestamp",
         "weight": 15,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "promote",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 16,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "sticky",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 17,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "path",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "path",
         "weight": 18,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "status",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {
+        "settings": {
+          "config": {},
+          "display": {
             "display_label": true,
           },
-          "storage": Object {},
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "boolean_checkbox",
         "weight": 19,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "moderation_state",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": [],
+          "storage": {},
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "moderation_state_default",
         "weight": 20,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "",
         "id": "layout_builder__layout",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Layout",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
-          "storage": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
+          "storage": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 26,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--recipe--default--form",
     "resourceType": "node--recipe",
   },
-  "node--recipe--default--view": Object {
-    "config": Object {
+  "node--recipe--default--view": {
+    "config": {
       "bundle": "recipe",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "Provide a short overview of this recipe.",
         "id": "field_summary",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Summary",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 0,
       },
-      Object {
+      {
         "description": "",
         "id": "field_recipe_category",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Recipe category",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:taxonomy_term",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": false,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "direction": "asc",
                 "field": "name",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "recipe_category": "recipe_category",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": true,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_label",
         "weight": 1,
       },
-      Object {
+      {
         "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
         "id": "field_tags",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Tags",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:taxonomy_term",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "direction": "asc",
                 "field": "name",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "tags": "tags",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": true,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_label",
         "weight": 2,
       },
-      Object {
+      {
         "description": "",
         "id": "field_media_image",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Media Image",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:media",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "field": "_none",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "image": "image",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": false,
             "view_mode": "responsive_3x2",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_entity_view",
         "weight": 4,
       },
-      Object {
+      {
         "description": "",
         "id": "field_preparation_time",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Preparation time",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "max": null,
             "min": 0,
             "prefix": "",
             "suffix": " minutes",
           },
-          "display": Object {
+          "display": {
             "prefix_suffix": true,
             "thousand_separator": "",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "number_integer",
         "weight": 5,
       },
-      Object {
+      {
         "description": "",
         "id": "field_cooking_time",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Cooking time",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "max": null,
             "min": 0,
             "prefix": "",
             "suffix": " minutes",
           },
-          "display": Object {
+          "display": {
             "prefix_suffix": true,
             "thousand_separator": "",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "number_integer",
         "weight": 6,
       },
-      Object {
+      {
         "description": "",
         "id": "field_number_of_servings",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Number of servings",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "max": null,
             "min": 0,
             "prefix": "",
             "suffix": "",
           },
-          "display": Object {
+          "display": {
             "prefix_suffix": true,
             "thousand_separator": "",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "number_integer",
         "weight": 7,
       },
-      Object {
+      {
         "description": "",
         "id": "field_difficulty",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Difficulty",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "list_default",
         "weight": 8,
       },
-      Object {
+      {
         "description": "List the ingredients required for this recipe, one per item.",
         "id": "field_ingredients",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Ingredients",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "link_to_entity": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string",
         "weight": 9,
       },
-      Object {
+      {
         "description": "",
         "id": "field_recipe_instruction",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Recipe instruction",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 10,
       },
-      Object {
+      {
         "description": null,
         "id": "links",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
+        "settings": {
+          "config": {},
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 11,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--recipe--default--view",
     "resourceType": "node--recipe",
   },
-  "node--recipe--full--view": Object {
-    "config": Object {
+  "node--recipe--full--view": {
+    "config": {
       "bundle": "recipe",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe",
       "mode": "full",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "Provide a short overview of this recipe.",
         "id": "field_summary",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Summary",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 0,
       },
-      Object {
+      {
         "description": "",
         "id": "field_recipe_category",
-        "label": Object {
+        "label": {
           "position": "inline",
           "text": "Recipe category",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:taxonomy_term",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": false,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "direction": "asc",
                 "field": "name",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "recipe_category": "recipe_category",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": true,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_label",
         "weight": 1,
       },
-      Object {
+      {
         "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
         "id": "field_tags",
-        "label": Object {
+        "label": {
           "position": "inline",
           "text": "Tags",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "handler": "default:taxonomy_term",
-            "handler_settings": Object {
+            "handler_settings": {
               "auto_create": true,
               "auto_create_bundle": "",
-              "sort": Object {
+              "sort": {
                 "direction": "asc",
                 "field": "name",
               },
-              "target_bundles": Object {
+              "target_bundles": {
                 "tags": "tags",
               },
             },
           },
-          "display": Object {
+          "display": {
             "link": true,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "entity_reference_label",
         "weight": 2,
       },
-      Object {
+      {
         "description": "",
         "id": "field_preparation_time",
-        "label": Object {
+        "label": {
           "position": "inline",
           "text": "Preparation time",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "max": null,
             "min": 0,
             "prefix": "",
             "suffix": " minutes",
           },
-          "display": Object {
+          "display": {
             "prefix_suffix": true,
             "thousand_separator": "",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "number_integer",
         "weight": 4,
       },
-      Object {
+      {
         "description": "",
         "id": "field_cooking_time",
-        "label": Object {
+        "label": {
           "position": "inline",
           "text": "Cooking time",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "max": null,
             "min": 0,
             "prefix": "",
             "suffix": " minutes",
           },
-          "display": Object {
+          "display": {
             "prefix_suffix": true,
             "thousand_separator": "",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "number_integer",
         "weight": 5,
       },
-      Object {
+      {
         "description": "",
         "id": "field_number_of_servings",
-        "label": Object {
+        "label": {
           "position": "inline",
           "text": "Number of servings",
         },
         "required": true,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "max": null,
             "min": 0,
             "prefix": "",
             "suffix": "",
           },
-          "display": Object {
+          "display": {
             "prefix_suffix": false,
             "thousand_separator": "",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "number_integer",
         "weight": 6,
       },
-      Object {
+      {
         "description": "",
         "id": "field_difficulty",
-        "label": Object {
+        "label": {
           "position": "inline",
           "text": "Difficulty",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "list_default",
         "weight": 7,
       },
-      Object {
+      {
         "description": "List the ingredients required for this recipe, one per item.",
         "id": "field_ingredients",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Ingredients",
         },
         "required": false,
-        "settings": Object {
-          "config": Array [],
-          "display": Object {
+        "settings": {
+          "config": [],
+          "display": {
             "link_to_entity": false,
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "string",
         "weight": 8,
       },
-      Object {
+      {
         "description": "",
         "id": "field_recipe_instruction",
-        "label": Object {
+        "label": {
           "position": "above",
           "text": "Recipe instruction",
         },
         "required": true,
-        "settings": Object {
-          "config": Array [],
-          "display": Array [],
+        "settings": {
+          "config": [],
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 9,
       },
-      Object {
+      {
         "description": null,
         "id": "content_moderation_control",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
+        "settings": {
+          "config": {},
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": null,
         "weight": 10,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--recipe--full--view",
     "resourceType": "node--recipe",
   },
-  "node--recipe--teaser--view": Object {
-    "config": Object {
+  "node--recipe--teaser--view": {
+    "config": {
       "bundle": "recipe",
       "entityType": "node",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe",
       "mode": "teaser",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": null,
         "id": "links",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {},
+        "settings": {
+          "config": {},
+          "display": {},
         },
-        "thirdPartySettings": Object {},
+        "thirdPartySettings": {},
         "type": null,
         "weight": 100,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "node--recipe--teaser--view",
     "resourceType": "node--recipe",
   },
-  "taxonomy_term--recipe_category--default--view": Object {
-    "config": Object {
+  "taxonomy_term--recipe_category--default--view": {
+    "config": {
       "bundle": "recipe_category",
       "entityType": "taxonomy_term",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/taxonomy_term/recipe_category",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": null,
         "id": "description",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
+        "settings": {
+          "config": {},
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 0,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "taxonomy_term--recipe_category--default--view",
     "resourceType": "taxonomy_term--recipe_category",
   },
-  "taxonomy_term--tags--default--view": Object {
-    "config": Object {
+  "taxonomy_term--tags--default--view": {
+    "config": {
       "bundle": "tags",
       "entityType": "taxonomy_term",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/taxonomy_term/tags",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": null,
         "id": "description",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Array [],
+        "settings": {
+          "config": {},
+          "display": [],
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "text_default",
         "weight": 0,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "taxonomy_term--tags--default--view",
     "resourceType": "taxonomy_term--tags",
   },
-  "user--user--compact--view": Object {
-    "config": Object {
+  "user--user--compact--view": {
+    "config": {
       "bundle": "user",
       "entityType": "user",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user",
       "mode": "compact",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "Your virtual face or picture.",
         "id": "user_picture",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Picture",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "alt_field": false,
             "alt_field_required": false,
-            "default_image": Object {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -4678,69 +4678,69 @@ Object {
             "file_directory": "pictures/[date:custom:Y]-[date:custom:m]",
             "file_extensions": "png gif jpg jpeg",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
             "max_resolution": "",
             "min_resolution": "",
             "title_field": false,
             "title_field_required": false,
           },
-          "display": Object {
+          "display": {
             "image_link": "content",
             "image_style": "thumbnail",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "image",
         "weight": 0,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "user--user--compact--view",
     "resourceType": "user--user",
   },
-  "user--user--default--form": Object {
-    "config": Object {
+  "user--user--default--form": {
+    "config": {
       "bundle": "user",
       "entityType": "user",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user",
       "mode": "default",
       "schemaType": "form",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "cardinality": null,
         "description": null,
         "id": "account",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {},
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": {},
+          "storage": {},
         },
-        "thirdPartySettings": Object {},
+        "thirdPartySettings": {},
         "type": null,
         "weight": -10,
       },
-      Object {
+      {
         "cardinality": 1,
         "description": "Your virtual face or picture.",
         "id": "user_picture",
-        "label": Object {
+        "label": {
           "position": null,
           "text": "Picture",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "alt_field": false,
             "alt_field_required": false,
-            "default_image": Object {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -4750,19 +4750,19 @@ Object {
             "file_directory": "pictures/[date:custom:Y]-[date:custom:m]",
             "file_extensions": "png gif jpg jpeg",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
             "max_resolution": "",
             "min_resolution": "",
             "title_field": false,
             "title_field_required": false,
           },
-          "display": Object {
+          "display": {
             "preview_image_style": "thumbnail",
             "progress_indicator": "throbber",
           },
-          "storage": Object {
-            "default_image": Object {
+          "storage": {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -4775,92 +4775,92 @@ Object {
             "uri_scheme": "public",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "image_image",
         "weight": -1,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "language",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {},
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": {},
+          "storage": {},
         },
-        "thirdPartySettings": Object {},
+        "thirdPartySettings": {},
         "type": null,
         "weight": 0,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "contact",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {},
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": {},
+          "storage": {},
         },
-        "thirdPartySettings": Object {},
+        "thirdPartySettings": {},
         "type": null,
         "weight": 5,
       },
-      Object {
+      {
         "cardinality": null,
         "description": null,
         "id": "timezone",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {},
-          "storage": Object {},
+        "settings": {
+          "config": {},
+          "display": {},
+          "storage": {},
         },
-        "thirdPartySettings": Object {},
+        "thirdPartySettings": {},
         "type": null,
         "weight": 6,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "user--user--default--form",
     "resourceType": "user--user",
   },
-  "user--user--default--view": Object {
-    "config": Object {
+  "user--user--default--view": {
+    "config": {
       "bundle": "user",
       "entityType": "user",
-      "filter": Array [],
+      "filter": [],
       "href": "https://demo-api.druxtjs.org/en/jsonapi/user/user",
       "mode": "default",
       "schemaType": "view",
     },
-    "fields": Array [
-      Object {
+    "fields": [
+      {
         "description": "Your virtual face or picture.",
         "id": "user_picture",
-        "label": Object {
+        "label": {
           "position": "hidden",
           "text": "Picture",
         },
         "required": false,
-        "settings": Object {
-          "config": Object {
+        "settings": {
+          "config": {
             "alt_field": false,
             "alt_field_required": false,
-            "default_image": Object {
+            "default_image": {
               "alt": "",
               "height": null,
               "title": "",
@@ -4870,40 +4870,40 @@ Object {
             "file_directory": "pictures/[date:custom:Y]-[date:custom:m]",
             "file_extensions": "png gif jpg jpeg",
             "handler": "default:file",
-            "handler_settings": Array [],
+            "handler_settings": [],
             "max_filesize": "",
             "max_resolution": "",
             "min_resolution": "",
             "title_field": false,
             "title_field_required": false,
           },
-          "display": Object {
+          "display": {
             "image_link": "content",
             "image_style": "thumbnail",
           },
         },
-        "thirdPartySettings": Array [],
+        "thirdPartySettings": [],
         "type": "image",
         "weight": 0,
       },
-      Object {
+      {
         "description": null,
         "id": "member_for",
-        "label": Object {
+        "label": {
           "position": null,
           "text": null,
         },
         "required": false,
-        "settings": Object {
-          "config": Object {},
-          "display": Object {},
+        "settings": {
+          "config": {},
+          "display": {},
         },
-        "thirdPartySettings": Object {},
+        "thirdPartySettings": {},
         "type": null,
         "weight": 5,
       },
     ],
-    "groups": Array [],
+    "groups": [],
     "id": "user--user--default--view",
     "resourceType": "user--user",
   },

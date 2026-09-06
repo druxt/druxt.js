@@ -20,7 +20,7 @@ import { DruxtBlocksBlockMixin } from 'druxt-blocks'
  * />
  *
  * @see {@link ../DruxtBlock|DruxtBlock}
- * @see {@link https://druxt.github.io/druxt-router|DruxtJS Router}
+ * @see {@link https://druxtjs.org/modules/router|DruxtJS Router}
  */
 export default {
   name: 'DruxtBlockPageTitleBlock',
@@ -28,7 +28,7 @@ export default {
   /**
    * Vue.js Mixins.
    *
-   * @see {@link ../../mixins/DruxtBlocksBlockMixin|DruxtBlocksBlockMixin}
+   * @see {@link /api/packages/blocks/mixins/block|DruxtBlocksBlockMixin}
    */
   mixins: [DruxtBlocksBlockMixin],
 

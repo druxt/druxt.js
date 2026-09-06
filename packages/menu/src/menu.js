@@ -5,6 +5,8 @@ import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
  * DruxtMenu class.
  *
  * Provides methods for accessing Menu items from the Drupal JSON:API.
+ *
+ * @see https://druxtjs.org/modules/menu
  */
 class DruxtMenu {
   /**
@@ -36,7 +38,7 @@ class DruxtMenu {
      * Instance of the Druxt Client.
      *
      * @type {DruxtClient}
-     * @see {@link http://druxtjs.org/api/client}
+     * @see {@link https://druxtjs.org/api/packages/druxt/client}
      */
     this.druxt = new DruxtClient(baseUrl, options)
   }

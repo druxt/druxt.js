@@ -22,7 +22,7 @@ display:
             path: 'admin/reports/dblog/event/{{ wid }}'
             alt: '{{ message }}'
         name:
-          label: Usuario
+          label: User
           separator: ', '
         link:
           label: Operaciones

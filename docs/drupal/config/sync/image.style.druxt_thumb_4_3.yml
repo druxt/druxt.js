@@ -1,0 +1,15 @@
+uuid: 6ce36740-e6ba-4b32-b586-b4bb3c659a3d
+langcode: en
+status: true
+dependencies: {}
+name: druxt_thumb_4_3
+label: 'Druxt Thumb 4:3'
+effects:
+  9a58d0ea-59c6-4c1e-bf36-e1b005f6574a:
+    uuid: 9a58d0ea-59c6-4c1e-bf36-e1b005f6574a
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 240
+      height: 180
+      anchor: center-center

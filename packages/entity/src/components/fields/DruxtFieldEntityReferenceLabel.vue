@@ -33,8 +33,10 @@ import { DruxtFieldMixin } from 'druxt-entity'
 import { mapActions } from 'vuex'
 
 /**
- * Entity Reference Label field.
- * @deprecated
+ * Renders an entity reference field as the referenced entities' labels, optionally linked.
+ * @deprecated in druxt-entity:0.16.0 and is removed from druxt-entity:2.0.0.
+ *   Use a field wrapper component resolved by the component suggestion system instead.
+ * @see https://druxtjs.org/modules/entity/deprecations
  */
 export default {
   name: 'DruxtFieldEntityReferenceLabel',
@@ -42,8 +44,10 @@ export default {
   mixins: [DruxtFieldMixin],
 
   /**
-   * @property {string} component=span - The component used to wrap the field items.
-   * @property {boolean|object} entities
+   * Provides the referenced entities' label and link data for rendering.
+   *
+   * @property {string} [component=span] - The component used to wrap the field items.
+   * @property {boolean|object} entities - The label text and link props per referenced entity, or `false` until fetched.
    * @property {boolean} loading - Loading status.
    */
   data: () => ({

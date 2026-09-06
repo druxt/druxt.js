@@ -1,4 +1,4 @@
-uuid: c40cdf9d-83d0-4205-afe4-dd5a2a3b69ba
+uuid: 4f3a84c4-0ed6-45b9-88f2-a5244d78a42c
 langcode: en
 status: true
 dependencies:
@@ -8,11 +8,17 @@ dependencies:
     - editor
     - media
 _core:
-  default_config_hash: FlJ0Gmd21ZlGrou4dSu-EemZdQ7lApDvT33I9hbBCQc
+  default_config_hash: ENBvOU9rRkKN6OaSd_TI6mbzwdZIHWTwaW3p00ccJ_8
 name: 'Full HTML'
 format: full_html
 weight: 2
 filters:
+  editor_file_reference:
+    id: editor_file_reference
+    provider: editor
+    status: true
+    weight: 11
+    settings: {  }
   filter_align:
     id: filter_align
     provider: filter
@@ -25,18 +31,6 @@ filters:
     status: true
     weight: 9
     settings: {  }
-  filter_htmlcorrector:
-    id: filter_htmlcorrector
-    provider: filter
-    status: true
-    weight: 10
-    settings: {  }
-  editor_file_reference:
-    id: editor_file_reference
-    provider: editor
-    status: true
-    weight: 11
-    settings: {  }
   filter_html:
     id: filter_html
     provider: filter
@@ -46,6 +40,18 @@ filters:
       allowed_html: '<a href hreflang> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <s> <sup> <sub> <table> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <p> <h1> <pre> <drupal-media data-entity-type data-entity-uuid data-view-mode data-align data-caption alt title>'
       filter_html_help: true
       filter_html_nofollow: false
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
+    status: true
+    weight: 10
+    settings: {  }
+  filter_image_lazy_load:
+    id: filter_image_lazy_load
+    provider: filter
+    status: true
+    weight: 15
+    settings: {  }
   media_embed:
     id: media_embed
     provider: media
@@ -56,5 +62,8 @@ filters:
       allowed_view_modes:
         responsive_3x2: responsive_3x2
       allowed_media_types:
+        audio: audio
+        document: document
         image: image
         remote_video: remote_video
+        video: video

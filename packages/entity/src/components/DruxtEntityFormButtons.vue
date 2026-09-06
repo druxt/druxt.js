@@ -26,7 +26,7 @@ export default {
     /**
      * Get scoped slots for Entity form buttons.
      *
-     * @return {object}
+     * @return {object} Scoped slots for the `submit` and `reset` buttons, and a default slot rendering both.
      */
     getScopedSlots() {
       const buttons = ['submit', 'reset']
@@ -61,6 +61,13 @@ export default {
   },
 
   druxt: {
+    /**
+     * Provides the available component naming options for the Druxt Wrapper.
+     *
+     * @param {object} context - The module component ViewModel.
+     * @param {object} context.schema - The DruxtSchema object.
+     * @returns {Array} The component naming options.
+     */
     componentOptions: ({ schema }) => {
       let options = []
       // Ensure that the schema config data is present.

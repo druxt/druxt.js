@@ -4,9 +4,9 @@
  * @type {object}
  * @exports DruxtRouterComponent
  * @name DruxtRouterComponent
- * @see {@link ./components/DruxtRouter|DruxtRouterComponent}
+ * @see {@link ./DruxtRouter|DruxtRouterComponent}
  *
- * @example
+ * @example @lang js
  * <script>
  * import { DruxtRouterComponent } from 'druxt-router/dist/components'
  *

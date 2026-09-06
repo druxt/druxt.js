@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Stop the development server.
+ */
+
+declare(strict_types=1);
+
+namespace DruxtjsDevTools;
+
+require_once __DIR__ . '/helpers.php';
+
+$webserver_port = resolve_webserver()['port'];
+
+echo '===============================' . PHP_EOL;
+echo '      💻 STOP ENVIRONMENT      ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+
+TASK('Stopping previously started services on port %s, if any.', $webserver_port);
+@passthru(sprintf('lsof -ti:%s | xargs kill -9 2>/dev/null', escapeshellarg($webserver_port)));
+sleep(1);
+PASS('Services stopped on port %s.', $webserver_port);
+
+echo PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo '   💻 ENVIRONMENT STOPPED ✅  ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;

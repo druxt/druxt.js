@@ -1,0 +1,16 @@
+# druxtjs.org
+#
+# Everything here is public documentation and is meant to be indexed, quoted
+# and cited, by search engines and by assistants alike. There is no crawler
+# blocklist for that reason.
+
+User-agent: *
+Allow: /
+
+# Build artefacts of the Nuxt static export. They serve the same content the
+# HTML routes already expose, so indexing them only splits a page's signal
+# across two URLs.
+Disallow: /_nuxt/
+Disallow: /sw.js
+
+Sitemap: https://druxtjs.org/sitemap.xml

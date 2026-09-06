@@ -1,0 +1,74 @@
+{
+  "jsonapi": {
+    "version": "1.0",
+    "meta": {
+      "links": {
+        "self": {
+          "href": "http://jsonapi.org/format/1.0/"
+        }
+      }
+    }
+  },
+  "data": [
+    {
+      "type": "entity_view_display--entity_view_display",
+      "id": "84e72994-1720-4eb7-9b69-1704406f144b",
+      "links": {
+        "self": {
+          "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display/84e72994-1720-4eb7-9b69-1704406f144b"
+        }
+      },
+      "attributes": {
+        "langcode": "en",
+        "status": true,
+        "dependencies": {
+          "config": [
+            "core.entity_view_mode.media.scale_crop_7_3_large",
+            "field.field.media.image.field_media_image",
+            "media.type.image",
+            "responsive_image.styles.hero"
+          ],
+          "module": ["layout_builder", "responsive_image"]
+        },
+        "third_party_settings": {
+          "layout_builder": {
+            "enabled": false,
+            "allow_custom": false
+          }
+        },
+        "drupal_internal__id": "media.image.scale_crop_7_3_large",
+        "targetEntityType": "media",
+        "bundle": "image",
+        "mode": "scale_crop_7_3_large",
+        "content": {
+          "field_media_image": {
+            "type": "responsive_image",
+            "label": "hidden",
+            "settings": {
+              "responsive_image_style": "hero",
+              "image_link": "",
+              "image_loading": {
+                "attribute": "eager"
+              }
+            },
+            "third_party_settings": [],
+            "weight": 1,
+            "region": "content"
+          }
+        },
+        "hidden": {
+          "created": true,
+          "langcode": true,
+          "name": true,
+          "thumbnail": true,
+          "uid": true
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": {
+      "href": "http://127.0.0.1:8888/en/jsonapi/entity_view_display/entity_view_display?filter%5Bdrupal_internal__id%5D=media.image.scale_crop_7_3_large"
+    }
+  }
+}

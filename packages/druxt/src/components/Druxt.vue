@@ -1,6 +1,6 @@
 <script>
 /**
- * Utility component for rendering Druxt modules.
+ * Renders the specified Druxt module component, with support for wrapper and inner elements.
  *
  * @example @lang vue
  * <Druxt
@@ -38,7 +38,7 @@ export default {
      *
      * @type {string}
      *
-     * @example @lang vue <caption>Using the [DruxtJS Site module](https://site.druxtjs.org).</caption>
+     * @example @lang vue <caption>Using the [DruxtJS Site module](https://druxtjs.org/modules/site).</caption>
      * <Druxt module="site" />
      */
     module: {
@@ -51,7 +51,7 @@ export default {
      *
      * @type {object}
      *
-     * @example @lang vue <caption>Using the [DruxtJS Entity module](https://entity.druxtjs.org) to render a 'node--article' resource.</caption>
+     * @example @lang vue <caption>Using the [DruxtJS Entity module](https://druxtjs.org/modules/entity) to render a 'node--article' resource.</caption>
      * <Druxt
      *   module="entity"
      *   :props-data="{
@@ -95,8 +95,10 @@ export default {
   /**
    * Vue.js Data object.
    *
-   * @property {objects} components - The module and wrapper components settinsg.
-   * @property {object} model - The model object.
+   * @param {object} vm - The component ViewModel.
+   * @param {*} vm.value - The module component model value.
+   * @property {object} component - The module component and its propsData.
+   * @property {*} model - The module component model value.
    */
   data: ({ value }) => ({
     component: {

@@ -1,27 +1,54 @@
 {
-  "extends": [
-    "@nuxtjs"
-  ],
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "baseBranches": ["develop"],
+  "automerge": false,
+  "vulnerabilityAlerts": {
+    "enabled": false
+  },
+  "rangeStrategy": "bump",
+  "dependencyDashboard": true,
+  "branchPrefix": "deps/",
   "labels": ["dependencies"],
+  "enabledManagers": ["github-actions", "npm"],
   "packageRules": [
     {
-      "groupName": "examples",
-      "matchPaths": ["examples/**"]
+      "description": "Pin GitHub Actions to immutable commit SHAs (supply-chain hardening). Scoped to github-actions only — a global pinDigests caused Yarn Berry (npm) lockfile artifact-update failures: the deps/all PR (#759) regenerates yarn.lock with digest-pinned npm entries that `yarn install --immutable` then rejects (YN0028). npm packages already carry integrity hashes in yarn.lock, so digest pinning adds nothing but breakage there.",
+      "matchManagers": ["github-actions"],
+      "pinDigests": true
     },
     {
-      "groupName": "eslint",
-      "matchPackagePatterns": ["eslint"]
+      "description": "Freeze the build-stack boundary packages (Node, Yarn, Vue, Nuxt, and core build/lint/test tooling) — these are pinned intentionally and bumped only as part of a deliberate, coordinated upgrade, not routine automation.",
+      "matchManagers": ["npm"],
+      "matchPackageNames": [
+        "node",
+        "yarn",
+        "siroc",
+        "vue",
+        "vue-template-compiler",
+        "nuxt",
+        "jest",
+        "eslint",
+        "@commitlint/cli",
+        "@commitlint/config-conventional",
+        "@nuxtjs/storybook",
+        "@tailwindcss/typography",
+        "markdownlint-cli2",
+        "renovate"
+      ],
+      "enabled": false
     },
     {
-      "groupName": "jest",
-      "matchPackagePatterns": ["jest"]
+      "description": "Disable all major-version bumps — majors require manual review, not automated merging.",
+      "matchManagers": ["npm", "github-actions"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "description": "Group all remaining updates into a single PR.",
+      "matchPackageNames": ["*"],
+      "groupName": "all dependencies",
+      "groupSlug": "all"
     }
-  ],
-  "ignoreDeps": [
-    "@nuxtjs/storybook",
-    "@commitlint/cli",
-    "@commitlint/config-conventional",
-    "@tailwindcss/typography",
-    "renovate"
   ]
 }

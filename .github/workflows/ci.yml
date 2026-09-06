@@ -1,0 +1,674 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    # feature/** so a stacked PR is actually checked. A PR based on another
+    # feature branch matched nothing here, so it ran no jobs at all: not build,
+    # lint, tests or the audit, and the PR showed no checks rather than showing
+    # them failing. Stacking is only useful if the upper PR is verified before
+    # its base merges.
+    branches: [develop, main, 'feature/**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Classifies what a pull request touches, so the slow jobs and steps run
+  # only when their subject changed. Push events (develop/main, the
+  # production path) report everything as changed, so full coverage always
+  # holds where it matters. If the file listing fails, everything defaults
+  # to changed: fail open, never silently skip.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      deps: ${{ steps.classify.outputs.deps }}
+      site: ${{ steps.classify.outputs.site }}
+      packages: ${{ steps.classify.outputs.packages }}
+    steps:
+      - id: classify
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          deps=true; site=true; packages=true
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename'); then
+              deps=false; site=false; packages=false
+              echo "$files" | grep -qE '(^|/)(yarn\.lock|package\.json|\.yarnrc\.yml)$' && deps=true
+              echo "$files" | grep -qE '^(docs/nuxt/|packages/docgen/|packages/[^/]+/README\.md|\.lagoon/)' && site=true
+              echo "$files" | grep -qE '^packages/' && packages=true
+            else
+              echo "file listing failed; running everything" >&2
+            fi
+          fi
+          {
+            echo "deps=$deps"
+            echo "site=$site"
+            echo "packages=$packages"
+          } >> "$GITHUB_OUTPUT"
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .yarn/cache
+            docs/nuxt/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'docs/nuxt/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: yarn build:docs
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: build-output
+          path: |
+            packages/*/dist
+            packages/*/CHANGELOG.md
+            docs/nuxt/content/api
+            docs/nuxt/content/components
+            docs/nuxt/content/modules/*/README.md
+            docs/nuxt/content/how-to/contributing.md
+          retention-days: 1
+
+  lint:
+    needs: [build, changes]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: write # Bundlewatch posts a commit status via the Statuses API.
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .yarn/cache
+            docs/nuxt/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'docs/nuxt/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+
+      - name: ESLint
+        run: yarn lint --format ./node_modules/eslint-junit/index.js
+        env:
+          ESLINT_JUNIT_OUTPUT: ./reports/junit/eslint.xml
+
+      - name: markdownlint
+        run: yarn lint:md
+
+      - name: CSpell
+        run: yarn lint:cspell
+
+      - name: Vale (AI-tell prose lint)
+        run: |
+          vale_version="3.17.1"
+          arch="$(uname -m)"
+          case "$arch" in
+            aarch64|arm64)
+              vale_arch=arm64
+              vale_sha256=92d91ebf9ee69ec077379be95cd09e6710ab33d3d5bab66bb482e66ebc80dc23
+              ;;
+            x86_64)
+              vale_arch=64-bit
+              vale_sha256=db947f89f2292e6a0381a61de155f6a5f5cb4cb460ca178ea412ef605559cefd
+              ;;
+            *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+          esac
+          curl -sL --max-time 60 "https://github.com/vale-cli/vale/releases/download/v${vale_version}/vale_${vale_version}_Linux_${vale_arch}.tar.gz" -o /tmp/vale.tar.gz
+          echo "${vale_sha256}  /tmp/vale.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/vale.tar.gz -C /tmp vale
+
+          ai_tells_version="1.31.0"
+          ai_tells_sha256="bc1267248f13e65928475c439ad7ae1bf806a20d09254c08d7d8c4a9c8b811f0"
+          curl -sL --max-time 60 "https://github.com/tbhb/vale-ai-tells/releases/download/v${ai_tells_version}/ai-tells.zip" -o /tmp/ai-tells.zip
+          echo "${ai_tells_sha256}  /tmp/ai-tells.zip" | sha256sum -c -
+          python3 -c "
+          import zipfile, os
+          with zipfile.ZipFile('/tmp/ai-tells.zip') as z:
+              for name in z.namelist():
+                  if name.startswith('ai-tells/styles/') and not name.endswith('/'):
+                      target = os.path.join('docs/nuxt/styles', name[len('ai-tells/styles/'):])
+                      os.makedirs(os.path.dirname(target), exist_ok=True)
+                      with open(target, 'wb') as f:
+                          f.write(z.read(name))
+          "
+
+          cd docs/nuxt
+          /tmp/vale content
+
+      - name: Em-dash check (hand-authored prose and site source)
+        run: |
+          ! grep -rn "\xe2\x80\x94" docs/nuxt/content docs/nuxt/components docs/nuxt/pages docs/nuxt/plugins docs/nuxt/lib docs/nuxt/assets docs/nuxt/layouts docs/nuxt/utils docs/nuxt/scripts packages/druxt/README.md packages/docgen/README.md packages/test-utils/README.md CONTRIBUTING.md --include='*.md' --include='*.vue' --include='*.js' --include='*.mjs' --include='*.css'
+
+      # Root-relative /images/ links are excluded from the production
+      # linkcheck (they ship with the same change; probing production only
+      # measures deployment lag), so this check pins them to the files that
+      # actually exist in the branch.
+      - name: Image references resolve to files
+        run: |
+          missing=0
+          while IFS= read -r ref; do
+            if [ ! -f "docs/nuxt/static$ref" ]; then
+              echo "missing image file for reference: $ref" >&2
+              missing=1
+            fi
+          done < <(grep -rhoE '\]\(/images/[^) ]+\)' docs/nuxt/content --include='*.md' | sed 's/](\(.*\))/\1/' | sort -u)
+          exit "$missing"
+
+      - name: Linkcheck (docs/nuxt/content)
+        continue-on-error: true
+        run: |
+          lychee_version="0.24.2"
+          arch="$(uname -m)"
+          case "$arch" in
+            aarch64|arm64)
+              lychee_arch=aarch64-unknown-linux-gnu
+              lychee_sha256=91a7bd65685da41b90ccb9bc867a3d649a7818042dae04ff405e55a25bddee4c
+              ;;
+            x86_64)
+              lychee_arch=x86_64-unknown-linux-gnu
+              lychee_sha256=1f4e0ef7f6554a6ed33dd7ac144fb2e1bbed98598e7af973042fc5cd43951c9a
+              ;;
+            *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+          esac
+          curl -sL --max-time 60 "https://github.com/lycheeverse/lychee/releases/download/lychee-v${lychee_version}/lychee-${lychee_arch}.tar.gz" -o /tmp/lychee.tar.gz
+          echo "${lychee_sha256}  /tmp/lychee.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/lychee.tar.gz --strip-components=1 -C /tmp "lychee-${lychee_arch}/lychee"
+          chmod +x /tmp/lychee
+
+          cd docs/nuxt
+          /tmp/lychee --no-progress --format detailed --config .lychee.toml --base-url https://druxtjs.org --exclude-loopback 'content/**/*.md'
+
+      - name: Renovate config validator
+        run: yarn lint:renovate
+
+      - name: Dependency audit (full report, includes devDependencies)
+        if: needs.changes.outputs.deps == 'true'
+        env:
+          YARN_HTTP_TIMEOUT: '180000'
+        run: yarn lint:audit:full
+        continue-on-error: true
+
+      # The registry's audit endpoint times out often enough to matter, so the
+      # blocking pass retries before it fails anyone's pipeline.
+      - name: Dependency audit (production, blocking)
+        if: needs.changes.outputs.deps == 'true'
+        env:
+          YARN_HTTP_TIMEOUT: '180000'
+        run: |
+          for attempt in 1 2 3; do
+            yarn lint:audit && exit 0
+            status=$?
+            if [ "$attempt" -lt 3 ]; then
+              echo "audit attempt $attempt failed (exit $status); retrying in 30s" >&2
+              sleep 30
+            fi
+          done
+          exit "$status"
+
+      - name: Knip (unused/unlisted dependencies)
+        if: needs.changes.outputs.deps == 'true'
+        run: yarn lint:knip
+
+      - if: needs.changes.outputs.deps == 'true' || needs.changes.outputs.packages == 'true'
+        run: yarn build
+
+      - name: Bundlewatch
+        if: needs.changes.outputs.deps == 'true' || needs.changes.outputs.packages == 'true'
+        run: yarn bundlewatch
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_SHA on a pull_request event is a synthetic merge commit, not
+          # the PR's actual head commit - a status posted against it never
+          # shows up on the PR. Force bundlewatch onto the real head SHA.
+          CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        continue-on-error: true
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: lint-results
+          path: ./reports/junit/
+
+  test-unit:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      # Job-level, not step-level: a step's `if:` can't see env set within
+      # that same step, so the Codecov step's own `if:` needs this here.
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .yarn/cache
+            docs/nuxt/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'docs/nuxt/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+      - run: yarn build
+
+      - name: Run unit tests
+        run: yarn test:unit --reporters=jest-junit --runInBand
+        env:
+          NODE_OPTIONS: --max_old_space_size=8192
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: test-results
+          path: ./reports/junit/
+
+      - name: Upload coverage to Codecov
+        if: ${{ env.CODECOV_TOKEN != '' }}
+        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          directory: ./coverage
+
+  # The three themed showcase examples (daisyui, tailwind, bootstrapvue) run
+  # as a parallel matrix - each gets its own backend and dev server, which
+  # keeps any single app's failure attributable and the wall time down.
+  # druxt-site's e2e stays in test-e2e below alongside Storybook and the
+  # docs site; it was running there before this suite existed.
+  test-examples:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        example: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .yarn/cache
+            docs/nuxt/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'docs/nuxt/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+      - run: yarn build
+
+      # Same docker-free backend as test-e2e: PHP built-in server + SQLite,
+      # not DDEV. See docs/drupal/README.md and .devtools/.
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, sqlite3
+
+      - name: Assemble, provision, and start the Drupal backend
+        working-directory: docs/drupal
+        run: |
+          .devtools/assemble
+          .devtools/provision
+          .devtools/start
+        env:
+          WEBSERVER_HOST: 127.0.0.1
+          WEBSERVER_PORT: 8888
+
+      - run: npx cypress install
+
+      - name: ${{ matrix.example }} e2e
+        env:
+          BASE_URL: http://127.0.0.1:8888
+        run: yarn example:${{ matrix.example }}:test
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: failure()
+        with:
+          name: cypress-${{ matrix.example }}
+          path: |
+            examples/${{ matrix.example }}/test/cypress/screenshots
+            examples/${{ matrix.example }}/test/cypress/videos
+
+  # Backend-free: the druxt-inspect CLI suite replays recorded JSON:API
+  # fixtures (examples/node-client/test/adapter.js), so it needs neither the
+  # Drupal backend nor Cypress - just the built workspace packages.
+  test-node-client:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .yarn/cache
+            docs/nuxt/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'docs/nuxt/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+      - run: yarn build
+
+      - name: druxt-inspect CLI tests
+        run: yarn test:node-client
+
+  test-e2e:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .yarn/cache
+            docs/nuxt/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'docs/nuxt/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: yarn build:docs
+
+      # Docker-free: PHP built-in server + SQLite, not DDEV. See
+      # docs/drupal/README.md and .devtools/ for the reasoning.
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, sqlite3
+
+      - name: Assemble, provision, and start the Drupal backend
+        working-directory: docs/drupal
+        run: |
+          .devtools/assemble
+          .devtools/provision
+          .devtools/start
+        env:
+          WEBSERVER_HOST: 127.0.0.1
+          WEBSERVER_PORT: 8888
+
+      - run: npx cypress install
+
+      - name: DruxtSite e2e
+        env:
+          BASE_URL: http://127.0.0.1:8888
+        run: |
+          yarn start-server-and-test 'yarn example:druxt-site' http://localhost:3000 \
+            'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/nuxt/**/*.cy.js"'
+
+      - name: DruxtSite Storybook e2e
+        env:
+          BASE_URL: http://127.0.0.1:8888
+        run: |
+          yarn start-server-and-test 'yarn example:druxt-site:storybook --port 3000' http://localhost:3000 \
+            'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/storybook/*.cy.js"'
+
+      - name: druxtjs.org e2e
+        run: |
+          yarn start-server-and-test docs:dev http://localhost:3000 \
+            'npx cypress run --project docs/nuxt/test'
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: failure()
+        with:
+          name: cypress-screenshots-videos
+          path: |
+            examples/druxt-site/test/cypress/screenshots
+            examples/druxt-site/test/cypress/videos
+            docs/nuxt/test/cypress/screenshots
+            docs/nuxt/test/cypress/videos
+
+  audit-seo:
+    name: audit-seo
+    runs-on: ubuntu-latest
+    needs: [build, changes]
+    if: needs.changes.outputs.site == 'true'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      # The generated content. content/api and the module READMEs are
+      # gitignored and produced by `yarn build:docs`: without the API tree the
+      # site generates 20 pages instead of 130 and the audit silently covers a
+      # fraction of it, and without the READMEs every module page loses its
+      # body, which the generate guard then refuses to ship.
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: build-output
+
+      # The artifact's internal layout depends on upload-artifact rooting it at
+      # the least common ancestor of the paths the build job gave it. Nothing
+      # downloaded this artifact before, so that had never been exercised.
+      # Checked here rather than left to fail later: without content/api the
+      # site still generates, just with 21 routes instead of 131, and the audit
+      # would report a pass over a fraction of the site. The sitemap floor below
+      # would catch it, but only after installing Chromium.
+      - name: Check the generated content arrived
+        run: |
+          test -d docs/nuxt/content/api || {
+            echo "docs/nuxt/content/api missing after downloading build-output." >&2
+            echo "The artifact layout changed, or the build job stopped publishing it." >&2
+            exit 1
+          }
+          readmes=$(find docs/nuxt/content/modules -mindepth 2 -name 'README.md' | wc -l)
+          test "$readmes" -gt 0 || {
+            echo "No docs/nuxt/content/modules/*/README.md after downloading build-output." >&2
+            echo "Module pages render these as their body; generating without them fails the route guard." >&2
+            exit 1
+          }
+          test -d docs/nuxt/content/components || {
+            echo "docs/nuxt/content/components missing after downloading build-output." >&2
+            echo "The /components section fails the route guard without it." >&2
+            exit 1
+          }
+          test -f docs/nuxt/content/how-to/contributing.md || {
+            echo "docs/nuxt/content/how-to/contributing.md missing after downloading build-output." >&2
+            exit 1
+          }
+          echo "API reference: $(find docs/nuxt/content/api -name '*.md' | wc -l) generated pages"
+          echo "Module bodies: $readmes mirrored READMEs"
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            .yarn/cache
+            docs/nuxt/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock', 'docs/nuxt/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Generate the site
+        run: |
+          yarn install --immutable
+          cd docs/nuxt
+          yarn install --immutable
+          yarn generate
+
+      # The map is keyed on $host$request_uri and its targets are pages, so
+      # a typo only shows as a 404 in production. dist exists at this point.
+      - name: Verify the redirects map
+        run: .lagoon/verify-redirects.sh
+
+      # Node 22 from here, matching the node:22 image the GitLab job uses.
+      # unlighthouse-ci@0.18.0 declares node >=22.18.0 and means it: on 20 it
+      # dies importing `glob` from node:fs/promises, which does not exist before
+      # 22. It cannot run on this repo's pinned Node 16 and does not need to,
+      # since it only speaks HTTP to the built site and never imports project
+      # code. Switching versions mid-job is enough; the site is already built.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      # On pull requests that touch only content, audit the routes the
+      # changed files render plus a small key-page set (homepage, the
+      # getting-started funnel, a section index and a module page, which also
+      # covers the main templates). Any change to a
+      # template-level file (components, layouts, config, styles, docgen)
+      # affects every page, so those, and every push to develop/main, keep the
+      # full authoritative run.
+      - name: Select routes to audit
+        id: routes
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename') || { echo "file listing failed; running the full audit" >&2; exit 0; }
+          if echo "$files" | grep -qE '^docs/nuxt/(components|layouts|pages|plugins|lib|modules|assets|nuxt\.config|tailwind\.config|package\.json|yarn\.lock)' || echo "$files" | grep -qE '^packages/docgen/'; then
+            echo "template-level change; running the full audit"
+            exit 0
+          fi
+          routes="/,/tutorials/getting-started,/how-to,/modules/druxt"
+          while IFS= read -r f; do
+            case "$f" in
+              docs/nuxt/content/*/README.md) routes="$routes,/$(dirname "${f#docs/nuxt/content/}")" ;;
+              docs/nuxt/content/*.md) r="${f#docs/nuxt/content/}"; routes="$routes,/${r%.md}" ;;
+              packages/*/README.md) pkg="${f#packages/}"; routes="$routes,/modules/${pkg%/README.md}" ;;
+            esac
+          done <<< "$files"
+          echo "routes=$routes" >> "$GITHUB_OUTPUT"
+          echo "selected routes: $routes"
+
+      - name: Audit the generated site
+        working-directory: docs/nuxt
+        env:
+          UNLIGHTHOUSE_ROUTES: ${{ steps.routes.outputs.routes }}
+          # The full set, on a dedicated ephemeral runner with no contention.
+          # This is the authoritative baseline; the GitLab job samples because
+          # its runner shares a busy host. UNLIGHTHOUSE_SAMPLE is left unset,
+          # which means no sampling.
+          UNLIGHTHOUSE_CONCURRENCY: '2'
+        run: |
+          # Exact versions. This toolchain is version-sensitive in ways that
+          # bite silently: unlighthouse only reads some config keys in some
+          # versions, so floating on @latest lets an unrelated upstream release
+          # change an audit on a re-run.
+          npx --yes playwright@1.62.1 install --with-deps chromium
+          # Matched on the directory prefix, not an exact name. Playwright now
+          # ships Chrome for Testing, which unpacks to chrome-linux64 rather
+          # than the chrome-linux this used to look for, so an exact path found
+          # nothing on the runner while still matching in a local devcontainer
+          # on the older layout.
+          CHROME_PATH="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path '*chrome-linux*' | head -1)"
+          test -n "$CHROME_PATH" || { echo "No Playwright Chromium found; unlighthouse would fall back to its own download" >&2; exit 1; }
+          export CHROME_PATH
+
+          npx --yes serve@14.2.6 -l 4000 dist &
+          npx --yes wait-on@9.1.0 http://localhost:4000 --timeout 60000
+
+          # Assert the route source before auditing. sitemapRoutes() returns []
+          # on any read failure and ci.budget is 0, so without this a partial
+          # build produces a green job that audited a handful of crawled pages.
+          # A floor, not an equality check, so adding docs cannot fail the build.
+          test -f dist/sitemap.xml || { echo "dist/sitemap.xml missing; the audit would silently scan only crawled routes" >&2; exit 1; }
+
+          # With an explicit route list, an empty intersection with the sitemap
+          # means every mapped route fell out of the build: fail loudly rather
+          # than silently auditing nothing.
+          if [ -n "$UNLIGHTHOUSE_ROUTES" ]; then
+            found=0
+            for r in $(echo "$UNLIGHTHOUSE_ROUTES" | tr ',' ' '); do
+              grep -q "<loc>[^<]*$r</loc>" dist/sitemap.xml && found=1 && break
+            done
+            [ "$found" = "1" ] || { echo "no selected route exists in the build: $UNLIGHTHOUSE_ROUTES" >&2; exit 1; }
+          fi
+          locs="$(grep -c '<loc>' dist/sitemap.xml)"
+          echo "sitemap advertises $locs routes"
+          test "$locs" -ge 100 || { echo "Only $locs routes in sitemap.xml, expected >= 100; refusing to report a partial audit as a pass" >&2; exit 1; }
+
+          npx --yes unlighthouse-ci@0.18.0 --site http://localhost:4000
+
+      # Chromium instances outlive the step when the audit times out mid-route.
+      # Harmless on a throwaway GitHub runner, but the same job runs on a
+      # long-lived GitLab runner where 62 orphans from one failed run took the
+      # host past a load average of 400. Kept identical in both so the job does
+      # not depend on which runner it lands on.
+      - name: Clean up browser processes
+        if: always()
+        run: pkill -9 -f 'user-data-dir=/tmp/puppeteer' || true
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: docs/nuxt/.unlighthouse
+          # .unlighthouse is a dotfile directory and upload-artifact skips
+          # hidden paths by default, with a warning rather than an error. The
+          # audit ran, wrote its report, and published nothing, while the job
+          # stayed green: the numbers this job exists to produce were simply
+          # absent.
+          include-hidden-files: true
+          retention-days: 7

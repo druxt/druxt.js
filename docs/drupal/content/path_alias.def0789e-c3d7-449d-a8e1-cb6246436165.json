@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "def0789e-c3d7-449d-a8e1-cb6246436165"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "es"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/node\/f80f1ac7-30be-4ec2-8f1a-16b807d16e00"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/articles\/guia-umami-de-nuestras-setas-preferidas"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}

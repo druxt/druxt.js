@@ -1,0 +1,27 @@
+{
+    "uuid": [
+        {
+            "value": "bcc36be7-901f-49cb-acd6-a23ec4affd8b"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en"
+        }
+    ],
+    "path": [
+        {
+            "value": "\/taxonomy\/term\/8"
+        }
+    ],
+    "alias": [
+        {
+            "value": "\/tags\/cocktail-party"
+        }
+    ],
+    "status": [
+        {
+            "value": true
+        }
+    ]
+}
