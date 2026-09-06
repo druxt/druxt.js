@@ -1,0 +1,26 @@
+# gitleaks configuration.
+#
+# The default rule set, plus one path allowlist. Nothing here allowlists a
+# credential: the entry below is for vendored third-party bundles whose
+# minified output trips the generic-api-key heuristic, and it is scoped by path
+# so it cannot mask a finding anywhere else in the repository.
+#
+# Real findings belong in .gitleaksignore, one fingerprint at a time, each with
+# a reason. A rule loosened here would silently cover every future commit; a
+# fingerprint there covers exactly one known occurrence and nothing else.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = """
+Vendored Yarn release bundles. These are third-party minified JavaScript
+committed by Yarn's own `set version` command, and the generic-api-key rule
+matches high-entropy identifiers inside them: the reported "secret" sits next
+to parser internals such as MismatchedTokenException, at column 127 of a
+single-line bundle. Nothing in this repository writes these files by hand, so
+allowlisting the path costs no coverage of anything a contributor could commit.
+"""
+paths = [
+  '''\.yarn/releases/yarn-[0-9.]+\.cjs$''',
+]
