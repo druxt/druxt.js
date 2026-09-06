@@ -792,22 +792,39 @@ audit:seo:
 # branch pipeline, where it compares against the previous push and is not a
 # reliable statement about the change under review. audit:seo already uses
 # this idiom in this file.
+# Standalone, and blocking. This suite needs no Drupal: docs/nuxt declares no
+# druxt dependencies, sets no Drupal baseUrl, and its specs cover documentation
+# pages (homepage, get-started, modules, api-docs, search). It previously
+# extended the backend template, which was copied from the GitHub job that runs
+# all three suites off a single install. It was provisioning a backend it never
+# read from.
+#
+# The site deploys from main, so a merge request targeting main gets the full
+# run whatever it touched; other merge requests get it only when the site
+# changed.
 test:e2e:site:
-  extends: .cypress
+  extends: .node
+  stage: test
+  interruptible: true
+  needs: []
+  variables:
+    CYPRESS_APT_PACKAGES: 'libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event' && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'main'
     - if: $CI_COMMIT_BRANCH == 'main'
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       changes:
         - docs/nuxt/**/*
-        - docs/drupal/**/*
         # A change to the pipeline re-runs the jobs the pipeline defines.
         # Without this, a merge request that only edits this file cannot
         # exercise what it changes.
         - .gitlab-ci.yml
   script:
-    - !reference [.provision-backend, script]
+    - section_start "deps" "Installing the browser dependencies"
+    - apt-get update -yqq && apt-get install -yqq $CYPRESS_APT_PACKAGES
+    - section_end "deps"
     - section_start "build" "Building the monorepo and the API docs"
+    - corepack enable
     - yarn install --immutable
     - yarn build
     - yarn build:docs
@@ -818,12 +835,30 @@ test:e2e:site:
       yarn start-server-and-test docs:dev http://localhost:3000 \
         'npx cypress run --project docs/nuxt/test'
     - section_end "cypress"
+  artifacts:
+    when: on_failure
+    paths:
+      - docs/nuxt/test/cypress/screenshots
+      - docs/nuxt/test/cypress/videos
+    expire_in: 1 week
 
 # The two examples/druxt-site suites. These exercise the packages against the
 # real backend, and are what caught the decoupled_router isHomePath
 # regression that a green GitLab pipeline had missed.
+# NOT GATING, deliberately, until roadmap 8.12.
+#
+# docs/drupal is the in-repo demo_umami install and is not in use. Stuart's
+# ruling: druxt.js must not gate on it, and must not gate on a backend it does
+# not own. 8.12 brings the real sites in as submodules, at which point this
+# becomes a gate against something real, or it goes.
+#
+# allow_failure means this job cannot turn the pipeline red, which is the shape
+# this file otherwise rejects. The difference is that it is recorded, has a
+# stated end condition, and is not the default: when 8.12 lands, remove
+# allow_failure or delete the job. Do not leave it here unexamined.
 test:e2e:packages:
   extends: .cypress
+  allow_failure: true
   rules:
     - if: $CI_COMMIT_BRANCH == 'develop' || $CI_COMMIT_BRANCH == 'main'
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
@@ -848,10 +883,20 @@ test:e2e:packages:
     - yarn example:druxt-site:storybook:test
     - section_end "cypress-storybook"
 
-# Mirrors the GitHub test-examples matrix. Same path rule as the packages
-# suites: these break for the same reasons.
+# NOT GATING, deliberately, until roadmap 8.12.
+#
+# docs/drupal is the in-repo demo_umami install and is not in use. Stuart's
+# ruling: druxt.js must not gate on it, and must not gate on a backend it does
+# not own. 8.12 brings the real sites in as submodules, at which point this
+# becomes a gate against something real, or it goes.
+#
+# allow_failure means this job cannot turn the pipeline red, which is the shape
+# this file otherwise rejects. The difference is that it is recorded, has a
+# stated end condition, and is not the default: when 8.12 lands, remove
+# allow_failure or delete the job. Do not leave it here unexamined.
 test:examples:
   extends: .cypress
+  allow_failure: true
   parallel:
     matrix:
       - EXAMPLE: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
