@@ -845,20 +845,8 @@ test:e2e:site:
 # The two examples/druxt-site suites. These exercise the packages against the
 # real backend, and are what caught the decoupled_router isHomePath
 # regression that a green GitLab pipeline had missed.
-# NOT GATING, deliberately, until roadmap 8.12.
-#
-# docs/drupal is the in-repo demo_umami install and is not in use. Stuart's
-# ruling: druxt.js must not gate on it, and must not gate on a backend it does
-# not own. 8.12 brings the real sites in as submodules, at which point this
-# becomes a gate against something real, or it goes.
-#
-# allow_failure means this job cannot turn the pipeline red, which is the shape
-# this file otherwise rejects. The difference is that it is recorded, has a
-# stated end condition, and is not the default: when 8.12 lands, remove
-# allow_failure or delete the job. Do not leave it here unexamined.
 test:e2e:packages:
   extends: .cypress
-  allow_failure: true
   rules:
     - if: $CI_COMMIT_BRANCH == 'develop' || $CI_COMMIT_BRANCH == 'main'
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
@@ -883,20 +871,10 @@ test:e2e:packages:
     - yarn example:druxt-site:storybook:test
     - section_end "cypress-storybook"
 
-# NOT GATING, deliberately, until roadmap 8.12.
-#
-# docs/drupal is the in-repo demo_umami install and is not in use. Stuart's
-# ruling: druxt.js must not gate on it, and must not gate on a backend it does
-# not own. 8.12 brings the real sites in as submodules, at which point this
-# becomes a gate against something real, or it goes.
-#
-# allow_failure means this job cannot turn the pipeline red, which is the shape
-# this file otherwise rejects. The difference is that it is recorded, has a
-# stated end condition, and is not the default: when 8.12 lands, remove
-# allow_failure or delete the job. Do not leave it here unexamined.
+# Mirrors the GitHub test-examples matrix. Same path rule as the packages
+# suites: these break for the same reasons.
 test:examples:
   extends: .cypress
-  allow_failure: true
   parallel:
     matrix:
       - EXAMPLE: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
