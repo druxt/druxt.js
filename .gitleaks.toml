@@ -55,3 +55,30 @@ id = "private-key"
   paths = [
     'docs/drupal/keys/private\.key$',
   ]
+
+# --- Historical built documentation ----------------------------------------
+#
+# Only reachable now that the job scans full history. Five generic-api-key
+# matches in api/stores/druxt.html and guide/client.html, from 2021 commits
+# titled "Built artifacts of <sha> [ci skip]": the old documentation site's
+# rendered HTML, committed by CI.
+#
+# The matches are syntax-highlighted example code. The flagged value is a
+# Drupal entity UUID in an API usage example:
+#
+#     druxt.getResource('node--page', '<uuid>', 'fields[node--page]=title')
+#
+# generic-api-key fires on its entropy. It is documentation, not a credential.
+#
+# Neither path exists in the working tree, and no job writes to them any more,
+# so this cannot mask anything a contributor could commit today. Scoped to the
+# rule and to those two paths rather than to the whole of history.
+[[rules]]
+id = "generic-api-key"
+
+  [rules.allowlist]
+  description = "Rendered example code in the pre-2022 built documentation"
+  paths = [
+    'api/stores/druxt\.html$',
+    'guide/client\.html$',
+  ]
