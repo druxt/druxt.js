@@ -94,6 +94,38 @@ secret_detection:
       fi
       echo "Canary detected 3 of 3 planted credentials."
     - section_end "canary"
+    # The check above proves the scanner detects. It says nothing about whether
+    # an allowlist has widened from the one rule it was written for to all of
+    # them, which is what a top-level [allowlist] does and what this config
+    # previously had for the Yarn bundles.
+    #
+    # Plant a private key at a path the generic-api-key allowlist matches. It
+    # must still be reported: that path is excused from one detector, not from
+    # detection. Fixed value, for the same reason as the credentials above.
+    - section_start "scope" "Checking the allowlists are scoped to one rule each"
+    - |
+      scope="$(mktemp -d)"
+      mkdir -p "$scope/.yarn/releases"
+      # Split like the three credentials above, and for the same reason: the
+      # repository scan reads this file, so a PEM header written here in one
+      # piece is itself a finding. Assembled at runtime, the trigger never
+      # appears contiguously in the configuration.
+      pem_head="-----BEGIN"" PRIVATE KEY-----"
+      pem_tail="-----END"" PRIVATE KEY-----"
+      printf '%s\nMIIBVgIBADANBgkqhkiG9w0BAQEFAASCAUAwggE8AgEAAkEAqZ3vN8kLmT2xYwPq\nRfHjWnB4dGcVsAyUeIoLpKmXtZbNvQrEjHgFdSwCzTuMaPkYxNbOiVlRcHgQwEyA\n%s\n' \
+        "$pem_head" "$pem_tail" > "$scope/.yarn/releases/yarn-9.9.9.cjs"
+      ./gitleaks detect --no-git --source "$scope" --config .gitleaks.toml \
+        --no-banner --redact \
+        --report-format json --report-path "$scope/report.json" || true
+      scoped=$(grep -c '"RuleID"' "$scope/report.json" || true)
+      rm -rf "$scope"
+      if [ "$scoped" -lt 1 ]; then
+        echo "A private key at an allowlisted Yarn path was not reported."
+        echo "An allowlist meant for one detector is suppressing all of them."
+        exit 1
+      fi
+      echo "Allowlists are scoped: a private key on an excused path is still reported."
+    - section_end "scope"
 
 workflow:
   rules:

@@ -1,9 +1,9 @@
 # gitleaks configuration.
 #
-# The default rule set, plus one path allowlist. Nothing here allowlists a
-# credential: the entry below is for vendored third-party bundles whose
-# minified output trips the generic-api-key heuristic, and it is scoped by path
-# so it cannot mask a finding anywhere else in the repository.
+# The default rule set, plus per-rule path allowlists. Nothing here allowlists
+# a credential, and nothing here is global: every entry sits inside the
+# allowlist of the single rule it was written for, so suppressing a
+# false positive from one detector never silences the others on that path.
 #
 # Real findings belong in .gitleaksignore, one fingerprint at a time, each with
 # a reason. A rule loosened here would silently cover every future commit; a
@@ -11,19 +11,6 @@
 
 [extend]
 useDefault = true
-
-[allowlist]
-description = """
-Vendored Yarn release bundles. These are third-party minified JavaScript
-committed by Yarn's own `set version` command, and the generic-api-key rule
-matches high-entropy identifiers inside them: the reported "secret" sits next
-to parser internals such as MismatchedTokenException, at column 127 of a
-single-line bundle. Nothing in this repository writes these files by hand, so
-allowlisting the path costs no coverage of anything a contributor could commit.
-"""
-paths = [
-  '''\.yarn/releases/yarn-[0-9.]+\.cjs$''',
-]
 
 # --- Known finding, parked pending the provisioning fix -------------------
 #
@@ -77,8 +64,19 @@ id = "private-key"
 id = "generic-api-key"
 
   [rules.allowlist]
-  description = "Rendered example code in the pre-2022 built documentation"
+  description = "Rendered example code, and vendored Yarn release bundles"
   paths = [
+    # Built documentation HTML from before 2022. See the note above.
     'api/stores/druxt\.html$',
     'guide/client\.html$',
+    # Vendored Yarn release bundles. Third-party minified JavaScript written by
+    # Yarn's own `set version`, where this rule matches high-entropy parser
+    # identifiers next to names like MismatchedTokenException, at column 127 of
+    # a single-line file. Nothing here is written by hand.
+    #
+    # Scoped to this rule, not global. As a top-level [allowlist] it suppressed
+    # every detector on these paths, so a real credential committed inside a
+    # Yarn bundle would have gone unreported. The canary in .gitlab-ci.yml now
+    # plants exactly that case and asserts it is still found.
+    '\.yarn/releases/yarn-[0-9.]+\.cjs$',
   ]
