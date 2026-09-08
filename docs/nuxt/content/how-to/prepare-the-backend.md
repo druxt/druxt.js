@@ -81,6 +81,21 @@ trade-off is not acceptable, connect as an authenticated consumer instead
 and see the topology notes on
 [cookies and sessions](/explanation/request-topology#cookies-and-sessions).
 
+## Expose more resources
+
+From `drupal/druxt` 1.3.0 the list is a setting. Edit it at
+**Configuration > Web services > Druxt** (`/admin/config/services/druxt`),
+which needs the separate **Administer Druxt** (`administer druxt`)
+permission: `access druxt resources` grants the frontend its reads and
+nothing on the settings page. Everything on the list is readable by every
+role holding the permission, so the form offers configuration entities only.
+
+A module that needs a resource adds it in code with
+`hook_druxt_resources_alter()`, so installing the module is all a site has
+to do. The hook can add any resource, content entity types included; a
+change there is reviewable code where a checkbox is not. See
+`druxt.api.php` in the module for the details.
+
 ## Check the JSON:API settings
 
 Core's JSON:API defaults to read-only mode. Reads are all Druxt needs to
@@ -139,13 +154,13 @@ topology](/explanation/request-topology) explains the difference;
 
 ## Checklist
 
-| Item                                      | Command or place                                          |
-| ----------------------------------------- | --------------------------------------------------------- |
-| Druxt module installed and enabled        | `composer require drupal/druxt` + `drush pm:enable druxt` |
-| Permission granted to the connecting role | `drush role:perm:add anonymous 'access druxt resources'`  |
-| JSON:API writes, if forms are used        | `drush config:set --input-format=yaml jsonapi.settings read_only false`           |
-| At least one content type with a display  | Drupal admin                                              |
-| CORS or proxy decided                     | [Request topology](/explanation/request-topology)         |
+| Item                                      | Command or place                                                        |
+| ----------------------------------------- | ----------------------------------------------------------------------- |
+| Druxt module installed and enabled        | `composer require drupal/druxt` + `drush pm:enable druxt`               |
+| Permission granted to the connecting role | `drush role:perm:add anonymous 'access druxt resources'`                |
+| JSON:API writes, if forms are used        | `drush config:set --input-format=yaml jsonapi.settings read_only false` |
+| At least one content type with a display  | Drupal admin                                                            |
+| CORS or proxy decided                     | [Request topology](/explanation/request-topology)                       |
 
 ## Where to go next
 
