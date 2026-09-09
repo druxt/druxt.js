@@ -17,11 +17,16 @@ is running. A generated static site needs CORS.
 
 The Druxt Drupal module enables CORS when it is otherwise disabled,
 which covers anonymous reads because Drupal core's stock configuration
-allows every origin. The module does not set the allowed methods, so
-preflighted requests (form submissions, and any request carrying an
-`Authorization` header) can still fail until you configure the block
-below explicitly. Explicit configuration always wins, and is what
-production sites should run.
+allows every origin. From `drupal/druxt` 1.3.0 it also fills in
+`allowedHeaders` and `allowedMethods` with `*` when they are empty, so
+preflighted requests work: form submissions, and any request carrying an
+`Authorization` header. Before 1.3.0 the methods were left unset and those
+requests failed until the block below was configured.
+
+Those defaults apply only while `cors.config.enabled` is off. A site that
+enables CORS itself supplies every value, which is what production sites
+should run: `*` is the widest answer a browser will accept, and you can
+name your own origins and methods instead.
 
 ## Enable cors.config
 
