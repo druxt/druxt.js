@@ -16,31 +16,15 @@ frontend](/how-to/proxy), avoids CORS but only works while a Nuxt server
 is running. A generated static site needs CORS.
 
 The Druxt Drupal module supplies CORS settings on a site that has not
-configured them in `sites/default/services.yml`. Core ships the block
-disabled and allows every origin, so on such a site Druxt turns CORS on,
-and from `drupal/druxt` 1.3.0 it also fills `allowedHeaders` and
-`allowedMethods` with `*`. Preflighted requests then work: form
-submissions, and any request carrying an `Authorization` header.
+configured them in `sites/default/services.yml`: it enables CORS and fills
+`allowedHeaders` and `allowedMethods` with `*`, which covers anonymous
+reads and preflighted writes alike. Configure the block yourself and Druxt
+leaves all of it alone.
 
-Before 1.3.0 the module filled the headers and left the methods empty. An
-empty list permits no method at all, so the browser never sent the
-request. Anonymous reads still worked, which is why this went unnoticed:
-a GET with no unusual headers is not preflighted. Every JSON:API write
-is, because `application/vnd.api+json` is never a safelisted content
-type, and so is every read carrying an `Authorization` header.
-
-Upgrading fixes it, on an existing site as well as a new one: 1.3.0 sets
-the default for new installs and runs an update hook for sites already
-running Druxt. A site that had configured its own `allowedMethods` keeps
-what it configured.
-
-The running configuration will not tell you that you have the problem: it
-reports `enabled: true` with an empty `allowedMethods`, because the older
-module set the flag and stopped there.
-
-Configure the block yourself and Druxt leaves all of it alone. That is
-what production sites should run: `*` is the widest answer a browser will
-accept, and your own origins and methods are narrower.
+That is what production sites should run. `*` is the widest answer a
+browser will accept, and your own origins and methods are narrower. On
+`drupal/druxt` before 1.3.0 it is also the fix for
+[writes failing while reads work](/how-to/troubleshooting#writes-fail-while-reads-work-on-druxt-before-1-3-0).
 
 ## Enable cors.config
 

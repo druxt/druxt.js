@@ -59,6 +59,26 @@ frontend](/how-to/proxy) so no request is cross-origin (server deployments
 only). [Request topology](/explanation/request-topology) explains when
 each applies.
 
+## Writes fail while reads work, on druxt before 1.3.0
+
+Releases before 1.3.0 enabled CORS and set `allowedHeaders`, but left
+`allowedMethods` empty, and an empty list matches no method. Only
+preflighted requests are affected, which is every JSON:API write and every
+request with an `Authorization` header. Simple reads skip the preflight,
+so the site looks healthy until a form is submitted.
+
+Upgrade, then rebuild the cache: the value is applied when Drupal builds
+its service container.
+
+```sh
+composer require drupal/druxt:^1.3.1
+drush cache:rebuild
+```
+
+Or set the block yourself, which is what
+[Configure CORS in Drupal](/how-to/configure-cors) recommends anyway. A
+site that already configures `allowedMethods` was never affected.
+
 ## The build fails reaching the backend (ECONNREFUSED, timeouts, 400s)
 
 `nuxt build` and `nuxt generate` fetch schemas and content from Drupal
@@ -102,16 +122,17 @@ composer require drupal/druxt:^1.3.1
 drush cr
 ```
 
-The fix landed in 1.2.2, which also ends Drupal 8 and 9 support, so this
+1.2.2 carries the fix and also ends Drupal 8 and 9 support, so this
 applies on core 10 or later. See
 [#3618675](https://www.drupal.org/i/3618675).
 
 ## "Call to undefined function druxt_resources()" when enabling the module
 
 `drupal/druxt` 1.3.0 only, and only on a site that already has JSON:API
-enabled. The Extend form and `drush pm:install` load the module's install
-file without loading the module itself, and 1.3.0 moved the resource list
-the status report reads into a function the install file cannot see.
+enabled. The Extend form and `drush pm:install` load `druxt.install`
+without loading `druxt.module`. In 1.3.0 the status report reads the
+resource list from a function that only exists once the module file is
+loaded, so the check dies before it runs.
 
 Installing Druxt and JSON:API in the same operation never hit it, because
 the check is skipped while the JSON:API service is absent, and a site
