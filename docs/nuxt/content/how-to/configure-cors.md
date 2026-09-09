@@ -15,13 +15,16 @@ This is the direct fix. The alternative, [proxying through the
 frontend](/how-to/proxy), avoids CORS but only works while a Nuxt server
 is running. A generated static site needs CORS.
 
-The Druxt Drupal module enables CORS when it is otherwise disabled,
-which covers anonymous reads because Drupal core's stock configuration
-allows every origin. The module does not set the allowed methods, so
-preflighted requests (form submissions, and any request carrying an
-`Authorization` header) can still fail until you configure the block
-below explicitly. Explicit configuration always wins, and is what
-production sites should run.
+The Druxt Drupal module supplies CORS settings on a site that has not
+configured them in `sites/default/services.yml`: it enables CORS and fills
+`allowedHeaders` and `allowedMethods` with `*`, which covers anonymous
+reads and preflighted writes alike. Configure the block yourself and Druxt
+leaves all of it alone.
+
+That is what production sites should run. `*` is the widest answer a
+browser will accept, and your own origins and methods are narrower. On
+`drupal/druxt` before 1.3.0 it is also the fix for
+[writes failing while reads work](/how-to/troubleshooting#writes-fail-while-reads-work-on-druxt-before-1-3-0).
 
 ## Enable cors.config
 
@@ -94,6 +97,13 @@ A working configuration answers with
 `access-control-*` headers at all means the block is not loading: confirm
 the file is `sites/default/services.yml`, the site was cache-rebuilt, and
 your hosting platform does not strip the headers.
+
+Read the headers, not the status. A preflight the browser will refuse
+still answers `204 No Content` and still writes a normal line in the
+access log, and `curl` does not enforce the answer the way a browser
+does, so a request tested by hand succeeds while the same request from
+the site fails. That is what makes this hard to attribute: the backend
+looks healthy from every angle except the browser's.
 
 ## Per-environment configuration
 

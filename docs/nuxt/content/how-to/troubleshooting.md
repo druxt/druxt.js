@@ -59,6 +59,26 @@ frontend](/how-to/proxy) so no request is cross-origin (server deployments
 only). [Request topology](/explanation/request-topology) explains when
 each applies.
 
+## Writes fail while reads work, on druxt before 1.3.0
+
+Releases before 1.3.0 enabled CORS and set `allowedHeaders`, but left
+`allowedMethods` empty, and an empty list matches no method. Only
+preflighted requests are affected, which is every JSON:API write and every
+request with an `Authorization` header. Simple reads skip the preflight,
+so the site looks healthy until a form is submitted.
+
+Upgrade, then rebuild the cache: the value is applied when Drupal builds
+its service container.
+
+```sh
+composer require drupal/druxt:^1.3.1
+drush cache:rebuild
+```
+
+Or set the block yourself, which is what
+[Configure CORS in Drupal](/how-to/configure-cors) recommends anyway. A
+site that already configures `allowedMethods` was never affected.
+
 ## The build fails reaching the backend (ECONNREFUSED, timeouts, 400s)
 
 `nuxt build` and `nuxt generate` fetch schemas and content from Drupal
@@ -98,12 +118,39 @@ error page. `drush cr` is usually where it first shows.
 Fix by upgrading to the release that includes it:
 
 ```sh
-composer require drupal/druxt:^1.2.2
+composer require drupal/druxt:^1.3.1
 drush cr
 ```
 
-1.2.2 also ends Drupal 8 and 9 support, so pin `^1.2.2` only on core 10 or
-later. See [#3618675](https://www.drupal.org/i/3618675).
+1.2.2 carries the fix and also ends Drupal 8 and 9 support, so this
+applies on core 10 or later. See
+[#3618675](https://www.drupal.org/i/3618675).
+
+## Enabling the module fails with an undefined function error
+
+`Call to undefined function druxt_resources()`, on `drupal/druxt` 1.3.0
+only, and only when the module is added to a site that already has
+JSON:API enabled. The Extend form and `drush pm:install` load
+`druxt.install` without loading `druxt.module`, and in 1.3.0 the status
+report reads the resource list from a function that only exists once the
+module file is loaded.
+
+Installing Druxt and JSON:API in the same operation never hit it, and
+neither did a site already running Druxt, including through the 1.3.0
+update.
+
+```sh
+composer require drupal/druxt:^1.3.1
+drush cr
+```
+
+## The status report says a Druxt resource is missing
+
+`configurable_language` on a site without the Language module, or
+`jsonapi_resource_config` without JSON:API Extras. A resource for an
+entity type the site does not have is not applicable rather than missing,
+and 1.3.1 stopped reporting it. The warning is cosmetic on 1.3.0: nothing
+is broken, and the frontend does not ask for those resources.
 
 ## Composer refuses to install drupal/druxt
 
