@@ -26,7 +26,7 @@ explains the concepts these steps lean on.
 ## Install the Drupal Druxt module
 
 ```sh
-composer require drupal/druxt:^1.2.2
+composer require drupal/druxt:^1.3.1
 drush pm:enable druxt -y
 ```
 
@@ -37,11 +37,15 @@ and [JSON:API Views](https://www.drupal.org/project/jsonapi_views).
 Composer downloads them with the module, and enabling `druxt` enables all
 of them.
 
-Drupal core 10 or 11: 1.2.2 ended support for 8 and 9, and declares 12
-ahead of Decoupled Router and JSON:API Menu Items supporting it. Pin
-`^1.2.2` rather than `^1.2`, because Composer will otherwise pair an
-earlier release with a Decoupled Router it cannot run against
-([routes stop resolving](/how-to/troubleshooting#routes-and-views-paths-stop-resolving-after-a-composer-update)).
+Drupal core 10 or 11. The module declares `^10 || ^11 || ^12`, ahead of
+Decoupled Router and JSON:API Menu Items, which do not declare 12 yet.
+
+Pin `^1.3.1` rather than `^1.3`. Adding 1.3.0 to a site that already has
+JSON:API enabled dies with `Call to undefined function
+druxt_resources()`, because the Extend form and `drush pm:install` load
+the module's install file without loading the module itself. Installing
+Druxt and JSON:API together was never affected, and neither was a site
+already running Druxt.
 
 If composer refuses with a stability error, a dependency's current
 release is below your project's `minimum-stability` (set in the Drupal
@@ -156,7 +160,8 @@ topology](/explanation/request-topology) explains the difference;
 
 | Item                                      | Command or place                                                        |
 | ----------------------------------------- | ----------------------------------------------------------------------- |
-| Druxt module installed and enabled        | `composer require drupal/druxt` + `drush pm:enable druxt`               |
+| Druxt module installed and enabled        | `composer require drupal/druxt:^1.3.1` + `drush pm:enable druxt`        |
+| Exposed resources reviewed                | `/admin/config/services/druxt`                                          |
 | Permission granted to the connecting role | `drush role:perm:add anonymous 'access druxt resources'`                |
 | JSON:API writes, if forms are used        | `drush config:set --input-format=yaml jsonapi.settings read_only false` |
 | At least one content type with a display  | Drupal admin                                                            |

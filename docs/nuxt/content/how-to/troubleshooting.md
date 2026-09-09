@@ -98,12 +98,37 @@ error page. `drush cr` is usually where it first shows.
 Fix by upgrading to the release that includes it:
 
 ```sh
-composer require drupal/druxt:^1.2.2
+composer require drupal/druxt:^1.3.1
 drush cr
 ```
 
-1.2.2 also ends Drupal 8 and 9 support, so pin `^1.2.2` only on core 10 or
-later. See [#3618675](https://www.drupal.org/i/3618675).
+The fix landed in 1.2.2, which also ends Drupal 8 and 9 support, so this
+applies on core 10 or later. See
+[#3618675](https://www.drupal.org/i/3618675).
+
+## "Call to undefined function druxt_resources()" when enabling the module
+
+`drupal/druxt` 1.3.0 only, and only on a site that already has JSON:API
+enabled. The Extend form and `drush pm:install` load the module's install
+file without loading the module itself, and 1.3.0 moved the resource list
+the status report reads into a function the install file cannot see.
+
+Installing Druxt and JSON:API in the same operation never hit it, because
+the check is skipped while the JSON:API service is absent, and a site
+already running Druxt was unaffected, including through the 1.3.0 update.
+
+```sh
+composer require drupal/druxt:^1.3.1
+drush cr
+```
+
+## The status report says a Druxt resource is missing
+
+`configurable_language` on a site without the Language module, or
+`jsonapi_resource_config` without JSON:API Extras. A resource for an
+entity type the site does not have is not applicable rather than missing,
+and 1.3.1 stopped reporting it. The warning is cosmetic on 1.3.0: nothing
+is broken, and the frontend does not ask for those resources.
 
 ## Composer refuses to install drupal/druxt
 
