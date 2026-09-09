@@ -104,6 +104,13 @@ A working configuration answers with
 the file is `sites/default/services.yml`, the site was cache-rebuilt, and
 your hosting platform does not strip the headers.
 
+Read the headers, not the status. A preflight the browser will refuse
+still answers `204 No Content` and still writes a normal line in the
+access log, and `curl` does not enforce the answer the way a browser
+does, so a request tested by hand succeeds while the same request from
+the site fails. That is what makes this hard to attribute: the backend
+looks healthy from every angle except the browser's.
+
 ## Per-environment configuration
 
 Origins differ per environment, and `services.yml` is not part of config
