@@ -126,17 +126,18 @@ drush cr
 applies on core 10 or later. See
 [#3618675](https://www.drupal.org/i/3618675).
 
-## "Call to undefined function druxt_resources()" when enabling the module
+## Enabling the module fails with an undefined function error
 
-`drupal/druxt` 1.3.0 only, and only on a site that already has JSON:API
-enabled. The Extend form and `drush pm:install` load `druxt.install`
-without loading `druxt.module`. In 1.3.0 the status report reads the
-resource list from a function that only exists once the module file is
-loaded, so the check dies before it runs.
+`Call to undefined function druxt_resources()`, on `drupal/druxt` 1.3.0
+only, and only when the module is added to a site that already has
+JSON:API enabled. The Extend form and `drush pm:install` load
+`druxt.install` without loading `druxt.module`, and in 1.3.0 the status
+report reads the resource list from a function that only exists once the
+module file is loaded.
 
-Installing Druxt and JSON:API in the same operation never hit it, because
-the check is skipped while the JSON:API service is absent, and a site
-already running Druxt was unaffected, including through the 1.3.0 update.
+Installing Druxt and JSON:API in the same operation never hit it, and
+neither did a site already running Druxt, including through the 1.3.0
+update.
 
 ```sh
 composer require drupal/druxt:^1.3.1

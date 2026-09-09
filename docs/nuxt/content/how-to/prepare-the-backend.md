@@ -40,12 +40,9 @@ of them.
 Drupal core 10 or 11. The module declares `^10 || ^11 || ^12`, ahead of
 Decoupled Router and JSON:API Menu Items, which do not declare 12 yet.
 
-Pin `^1.3.1` rather than `^1.3`. Adding 1.3.0 to a site that already has
-JSON:API enabled dies with `Call to undefined function
-druxt_resources()`, because the Extend form and `drush pm:install` load
-the module's install file without loading the module itself. Installing
-Druxt and JSON:API together was never affected, and neither was a site
-already running Druxt.
+Pin `^1.3.1` rather than `^1.3`: it fixes a
+[fatal error](/how-to/troubleshooting#enabling-the-module-fails-with-an-undefined-function-error)
+when the module is added to a site that already has JSON:API enabled.
 
 If composer refuses with a stability error, a dependency's current
 release is below your project's `minimum-stability` (set in the Drupal
