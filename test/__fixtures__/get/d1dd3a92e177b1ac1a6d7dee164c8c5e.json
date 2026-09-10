@@ -1,0 +1,214 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.1",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "https://jsonapi.org/format/1.1/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:67671422-8d85-5113-94e7-80eee3ca2303",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": false,
+          "menu_name": "footer",
+          "meta": {
+            "entity_id": "39"
+          },
+          "options": [],
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "entity.node.canonical",
+            "parameters": {
+              "node": "33"
+            }
+          },
+          "title": "Tutorials",
+          "url": "/tutorials",
+          "weight": 0,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:77558c30-828e-51fd-b0b6-bdfee942ce34",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": false,
+          "menu_name": "footer",
+          "meta": {
+            "entity_id": "40"
+          },
+          "options": [],
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "entity.node.canonical",
+            "parameters": {
+              "node": "12"
+            }
+          },
+          "title": "How-to guides",
+          "url": "/how-to",
+          "weight": 1,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:2533c783-d3bf-55a3-af07-e668f72f68fc",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": false,
+          "menu_name": "footer",
+          "meta": {
+            "entity_id": "41"
+          },
+          "options": [],
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "entity.node.canonical",
+            "parameters": {
+              "node": "28"
+            }
+          },
+          "title": "Modules",
+          "url": "/modules",
+          "weight": 2,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:6c85eb8f-52d8-5539-bff3-a67b2c5a228c",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": false,
+          "menu_name": "footer",
+          "meta": {
+            "entity_id": "42"
+          },
+          "options": [],
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "",
+            "parameters": []
+          },
+          "title": "API reference",
+          "url": "/api",
+          "weight": 3,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:49cd8803-38fe-58dc-bc9f-3bf2cd6375a9",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": false,
+          "menu_name": "footer",
+          "meta": {
+            "entity_id": "43"
+          },
+          "options": {
+            "external": true
+          },
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "",
+            "parameters": []
+          },
+          "title": "GitHub",
+          "url": "https://github.com/druxt/druxt.js",
+          "weight": 4,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:09b41376-6fbc-5100-9390-16dc7ab7bbd2",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": false,
+          "menu_name": "footer",
+          "meta": {
+            "entity_id": "44"
+          },
+          "options": {
+            "external": true
+          },
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "",
+            "parameters": []
+          },
+          "title": "Discord",
+          "url": "https://discord.druxtjs.org",
+          "weight": 5,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:da0e3fff-928d-5005-943b-52c8dd06173a",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": false,
+          "menu_name": "footer",
+          "meta": {
+            "entity_id": "45"
+          },
+          "options": {
+            "external": true
+          },
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "",
+            "parameters": []
+          },
+          "title": "Druxt on Drupal.org",
+          "url": "https://www.drupal.org/project/druxt",
+          "weight": 6,
+          "langcode": "en"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/menu_items/footer?filter%5Benabled%5D=1&filter%5Bmenu_name%5D=footer"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/menu_items/footer?filter%5Benabled%5D=1&filter%5Bmenu_name%5D=footer",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org"
+  }
+}
