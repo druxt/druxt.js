@@ -62,8 +62,12 @@ describe('DruxtStore', () => {
       expect.objectContaining({ id, type: 'node--page' })
     )
 
-    // Expect the collection be stored without included data.
-    expect(store.state.druxt.collections['node--page']._default[undefined].included).toBeFalsy()
+    // Expect the collection be stored with dehydrated (not dropped)
+    // included resources, so a later cache hit can re-hydrate `included`
+    // the same way it re-hydrates `data`.
+    expect(store.state.druxt.collections['node--page']._default[undefined].included[0]).toStrictEqual(
+      expect.objectContaining({ id: included[0].id, type: 'node--article' })
+    )
   })
 
   test('addResource', async () => {
@@ -297,6 +301,26 @@ describe('DruxtStore', () => {
 
     await store.dispatch('druxt/getCollection', { type: 'node--page', query: {} })
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
+  })
+
+  test('getCollection cache hit re-hydrates included data', async () => {
+    const mockCollectionPage = await getMockCollection('node--page')
+    const includedId = 'included-article-uuid'
+    store.commit('druxt/addCollection', {
+      collection: {
+        ...mockCollectionPage,
+        included: [{ type: 'node--article', id: includedId, attributes: {} }],
+      },
+      type: 'node--page',
+      hash: '_default',
+    })
+
+    // A cache hit must return `included` the same way a fresh fetch would.
+    const cached = await store.dispatch('druxt/getCollection', { type: 'node--page' })
+    expect(cached.included).toHaveLength(1)
+    expect(cached.included[0]).toStrictEqual(
+      expect.objectContaining({ id: includedId, type: 'node--article' })
+    )
   })
 
   test('flushCollection', async () => {
