@@ -24,7 +24,7 @@ module.exports = {
       env: { jest: true }
     },
     {
-      // Cypress specs, every project (docs/nuxt and the examples suite
+      // Cypress specs, every project (the examples suite
       // alike). `cy` and `Cypress` are injected by the runner and the suite
       // functions come from its bundled Mocha, so none of them are imported.
       // The jest override above does not reach these: its `test/**/*.js`

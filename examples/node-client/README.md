@@ -51,7 +51,7 @@ From this directory:
 yarn install
 node bin/druxt-inspect.js --help
 
-# Against a running backend (docs/drupal/.devtools/start, or --baseUrl):
+# Against a running backend (examples/drupal/.devtools/start, or --baseUrl):
 node bin/druxt-inspect.js types --baseUrl http://127.0.0.1:8888
 node bin/druxt-inspect.js schema node--recipe --mode default --baseUrl http://127.0.0.1:8888
 node bin/druxt-inspect.js stubs node--recipe --mode card --output components/ --baseUrl http://127.0.0.1:8888

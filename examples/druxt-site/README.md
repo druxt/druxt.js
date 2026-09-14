@@ -74,7 +74,7 @@ A few small wrapper components fix real gaps in the plain
 ## Configuration
 
 The backend URL defaults to `http://127.0.0.1:8888`, the port
-`docs/drupal/.devtools/start` serves on. Override with the `BASE_URL`
+`examples/drupal/.devtools/start` serves on. Override with the `BASE_URL`
 environment variable if your backend runs elsewhere:
 
 ```bash

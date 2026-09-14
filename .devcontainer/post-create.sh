@@ -15,7 +15,7 @@ echo "==> Installing monorepo dependencies"
 yarn install
 
 echo "==> Installing documentation site dependencies"
-(cd docs/nuxt && yarn install)
+(yarn install)
 
 cat <<'EOF'
 

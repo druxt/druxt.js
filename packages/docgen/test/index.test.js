@@ -31,7 +31,7 @@ describe('DruxtDocgen', () => {
 
   test('constructor', () => {
     expect(docgen.components).toStrictEqual([])
-    expect(docgen.destination).toBe('docs/nuxt/content')
+    expect(docgen.destination).toBe('content')
     expect(docgen.apiPages).toStrictEqual([])
     expect(docgen.inheritedTypes).toStrictEqual({})
   })
@@ -73,7 +73,7 @@ describe('DruxtDocgen', () => {
 
       expect(globby).toHaveBeenCalledWith('packages/*/CHANGELOG.md')
       const call = fs.writeFileSync.mock.calls
-        .find(([destination]) => destination === 'docs/nuxt/content/api/packages/druxt/CHANGELOG.md')
+        .find(([destination]) => destination === 'content/api/packages/druxt/CHANGELOG.md')
       expect(call).toBeDefined()
       expect(call[1]).toContain('title: Release notes')
       // The H1 repeats the module header on the site, so the mirror strips it.
@@ -81,7 +81,7 @@ describe('DruxtDocgen', () => {
       expect(call[1]).toContain('## 1.0.0 - 2026-01-01')
       expect(ncp).toHaveBeenCalledWith(
         'CONTRIBUTING.md',
-        'docs/nuxt/content/how-to/contributing.md'
+        'content/how-to/contributing.md'
       )
     })
   })
@@ -296,14 +296,14 @@ export default {
       // Pages buffer so flushApiPages can resolve cross-page links first.
       expect(fs.writeFileSync).not.toHaveBeenCalled()
       expect(docgen.apiPages).toHaveLength(1)
-      expect(docgen.apiPages[0].destination).toBe('docs/nuxt/content/api/components/DruxtFoo.md')
+      expect(docgen.apiPages[0].destination).toBe('content/api/components/DruxtFoo.md')
       expect(docgen.apiPages[0].frontmatter).toContain('title: DruxtFoo')
 
       docgen.flushApiPages()
 
-      expect(mkdirp.sync).toHaveBeenCalledWith('docs/nuxt/content/api/components')
+      expect(mkdirp.sync).toHaveBeenCalledWith('content/api/components')
       expect(fs.writeFileSync).toHaveBeenCalledWith(
-        'docs/nuxt/content/api/components/DruxtFoo.md',
+        'content/api/components/DruxtFoo.md',
         expect.stringContaining('title: DruxtFoo')
       )
       expect(fs.writeFileSync).toHaveBeenCalledWith(
@@ -399,7 +399,7 @@ export default {
     test('resolves links, cleans generator artifacts and warns on dead targets', () => {
       docgen.apiPages = [{
         file: 'packages/foo/src/components/FooBar.vue',
-        destination: 'docs/nuxt/content/api/packages/foo/components/FooBar.md',
+        destination: 'content/api/packages/foo/components/FooBar.md',
         frontmatter: '---\ntitle: FooBar\n---\n\n',
         title: 'FooBar',
         content: [
@@ -433,7 +433,7 @@ export default {
       docgen.flushApiPages()
 
       const [destination, written] = fs.writeFileSync.mock.calls[0]
-      expect(destination).toBe('docs/nuxt/content/api/packages/foo/components/FooBar.md')
+      expect(destination).toBe('content/api/packages/foo/components/FooBar.md')
       // Absolute self-links root and take the page title as label.
       expect(written).toContain('[FooBar](/api/packages/foo/components/FooBar)')
       // Relative links resolve against the page route.
@@ -464,13 +464,13 @@ export default {
         content: `## ${title}`,
       })
       docgen.apiPages = [
-        page('packages/foo/src/index.js', 'docs/nuxt/content/api/packages/foo/index.md', 'Foo'),
-        page('packages/foo/src/components/FooBar.vue', 'docs/nuxt/content/api/packages/foo/components/FooBar.md', 'FooBar'),
-        page('packages/foo/src/components/OldThing.vue', 'docs/nuxt/content/api/packages/foo/components/OldThing.md', 'OldThing', true),
-        page('packages/foo/src/nuxt/index.js', 'docs/nuxt/content/api/packages/foo/nuxt/index.md', 'FooNuxtModule'),
+        page('packages/foo/src/index.js', 'content/api/packages/foo/index.md', 'Foo'),
+        page('packages/foo/src/components/FooBar.vue', 'content/api/packages/foo/components/FooBar.md', 'FooBar'),
+        page('packages/foo/src/components/OldThing.vue', 'content/api/packages/foo/components/OldThing.md', 'OldThing', true),
+        page('packages/foo/src/nuxt/index.js', 'content/api/packages/foo/nuxt/index.md', 'FooNuxtModule'),
         // Title collision across packages disambiguates with the npm name.
-        page('packages/foo/src/typedefs/moduleOptions.js', 'docs/nuxt/content/api/packages/foo/typedefs/moduleOptions.md', 'ModuleOptions'),
-        page('packages/bar/src/typedefs/moduleOptions.js', 'docs/nuxt/content/api/packages/bar/typedefs/moduleOptions.md', 'ModuleOptions'),
+        page('packages/foo/src/typedefs/moduleOptions.js', 'content/api/packages/foo/typedefs/moduleOptions.md', 'ModuleOptions'),
+        page('packages/bar/src/typedefs/moduleOptions.js', 'content/api/packages/bar/typedefs/moduleOptions.md', 'ModuleOptions'),
       ]
 
       docgen.flushApiPages()
@@ -532,7 +532,7 @@ export default {
       docgen.generateComponentsList()
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
-        'docs/nuxt/content/components/README.md',
+        'content/components/README.md',
         expect.stringContaining('## Druxt')
       )
       const [, content] = fs.writeFileSync.mock.calls[0]
@@ -561,7 +561,7 @@ export default {
       await docgen.generatePackageList()
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
-        'docs/nuxt/content/api/README.md',
+        'content/api/README.md',
         expect.stringContaining('## druxt')
       )
       const [, content] = fs.writeFileSync.mock.calls[0]
@@ -593,7 +593,7 @@ export default {
 
       expect(fs.writeFileSync).toHaveBeenCalledTimes(1)
       const [destination, content] = fs.writeFileSync.mock.calls[0]
-      expect(destination).toBe('docs/nuxt/content/modules/druxt/README.md')
+      expect(destination).toBe('content/modules/druxt/README.md')
       expect(content).toContain('title: Druxt')
       // The H1 repeats the module header on the site, so the mirror strips it.
       expect(content).not.toContain('# druxt')

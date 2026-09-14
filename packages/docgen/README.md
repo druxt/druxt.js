@@ -19,14 +19,11 @@ root, dependencies come with `yarn install`; the binary is built by
 
 From the druxt.js monorepo root (Node 16 via mise):
 
-```sh
-yarn build        # builds bin/druxt-docgen.js (required first)
-yarn build:docs   # runs docgen against packages/*/src
-```
-
-Output lands under `docs/nuxt/content/api/` (gitignored - always
-generated, never committed), plus per-package CHANGELOG copies and the
-root CONTRIBUTING guide.
+The output target is the caller's concern: the druxtjs.org site repo
+(druxt/druxtjs.org) instantiates `DruxtDocgen` with its own destination.
+The default destination is a bare `content/` relative to the working
+directory, plus per-package CHANGELOG copies and the root CONTRIBUTING
+guide.
 
 What it generates:
 
