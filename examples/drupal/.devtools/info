@@ -1,0 +1,105 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Print a read-only summary of the current development environment.
+ *
+ * Two output modes:
+ * - No arguments: print the formatted full summary.
+ * - 'info <field>': print only that field's value on stdout, exit 0.
+ *   Unknown field name prints '-' and exits 1.
+ */
+
+declare(strict_types=1);
+
+namespace DruxtjsDevTools;
+
+require_once __DIR__ . '/helpers.php';
+
+$webserver = resolve_webserver(validate_port: FALSE);
+$webserver_host = $webserver['host'];
+$host_source = $webserver['host_source'];
+$webserver_port = $webserver['port'];
+$port_source = $webserver['port_source'];
+
+$db_file = getenv_default('DB_FILE', '/tmp/druxtjs-drupal-site.sqlite');
+$has_drush = is_file('vendor/bin/drush');
+$site_url = sprintf('http://%s:%s', $webserver_host, $webserver_port);
+
+$fields = [
+  'drupal-version' => fn(): string => $has_drush ? info_drupal_version() : '-',
+  'php-version' => fn(): string => info_php_version(),
+  'composer' => fn(): string => info_tool_version('composer --version 2>/dev/null', '/Composer(?:\s+version)?\s+(\S+)/i'),
+  'drush' => fn(): string => $has_drush ? info_tool_version('vendor/bin/drush --version 2>/dev/null', '/(\d+\.\d+\.\d+)/') : '-',
+  'webserver-host' => fn(): string => $webserver_host,
+  'webserver-port' => fn(): string => $webserver_port,
+  'site-url' => fn(): string => $site_url,
+  'xdebug' => fn(): string => xdebug_state($webserver_port),
+  'database' => fn(): string => $db_file,
+];
+
+$field = isset($argv[1]) && !str_starts_with((string) $argv[1], '-') ? (string) $argv[1] : NULL;
+if ($field !== NULL) {
+  if (isset($fields[$field])) {
+    echo $fields[$field]() . PHP_EOL;
+    quit(0);
+  }
+  echo '-' . PHP_EOL;
+  quit(1);
+}
+
+$values = array_map(fn(callable $cb): string => $cb(), $fields);
+$php_path = command_path('php');
+
+echo PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo '       ENVIRONMENT INFO        ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+printf("Drupal version:     %s%s", $values['drupal-version'], PHP_EOL);
+printf("PHP version:        %s%s%s", $values['php-version'], $php_path !== FALSE && $values['php-version'] !== '-' ? ' (' . $php_path . ')' : '', PHP_EOL);
+printf("Composer:           %s%s", $values['composer'], PHP_EOL);
+printf("Drush:              %s%s", $values['drush'], PHP_EOL);
+echo PHP_EOL;
+printf("Webserver host:     %s (%s)%s", $values['webserver-host'], $host_source, PHP_EOL);
+printf("Webserver port:     %s (%s)%s", $values['webserver-port'], $port_source, PHP_EOL);
+printf("Site URL:           %s%s", $values['site-url'], PHP_EOL);
+printf("XDebug:             %s%s", $values['xdebug'], PHP_EOL);
+echo PHP_EOL;
+printf("Database:           %s%s", $values['database'], PHP_EOL);
+echo PHP_EOL;
+
+/**
+ * Get the host PHP version, or '-' if it cannot be parsed.
+ */
+function info_php_version(): string {
+  $out = (string) @shell_exec('php -v 2>/dev/null');
+  if ($out === '' || !preg_match('/^PHP\s+(\S+)/m', $out, $matches)) {
+    return '-';
+  }
+
+  return $matches[1];
+}
+
+/**
+ * Run a version probe and extract the first capture group.
+ */
+function info_tool_version(string $cmd, string $pattern): string {
+  $out = trim((string) @shell_exec($cmd));
+  if ($out === '' || !preg_match($pattern, $out, $matches)) {
+    return '-';
+  }
+
+  return trim($matches[1]);
+}
+
+/**
+ * Get the installed Drupal version via drush, or '-' if unavailable.
+ */
+function info_drupal_version(): string {
+  $cmd = 'vendor/bin/drush -r ' . escapeshellarg(getcwd() . '/web') . ' status --field=drupal-version 2>/dev/null';
+  $out = trim((string) @shell_exec($cmd));
+
+  return $out === '' ? '-' : $out;
+}

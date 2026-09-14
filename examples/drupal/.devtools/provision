@@ -1,0 +1,104 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Provision the site: install Drupal with the demo_umami profile against a
+ * throwaway SQLite database, then enable the Druxt stack and create the
+ * OAuth consumer the frontend examples expect.
+ *
+ * Unlike docs/drupal (now the druxtjs.org site backend), there is no
+ * committed config or Tome content here — `drush site-install demo_umami`
+ * ships its own demo content, and this script only layers on:
+ *
+ * - the Druxt module stack (druxt enables decoupled_router, jsonapi_menu_items,
+ *   jsonapi_views and simple_oauth as dependencies),
+ * - Spanish as a prefixed secondary language (the multilingual examples
+ *   exercise /es routing; without translated content the language-neutral
+ *   front page still serves),
+ * - the public PKCE consumer with the exact UUID and redirect the examples'
+ *   nuxt.config.js files hardcode,
+ * - a documented example admin password.
+ *
+ * The SQLite connection is written to `web/sites/default/settings.local.php`
+ * (gitignored), never to a tracked file.
+ */
+
+declare(strict_types=1);
+
+namespace DruxtjsDevTools;
+
+require_once __DIR__ . '/helpers.php';
+
+// -----------------------------------------------------------------------------
+// Variables.
+// -----------------------------------------------------------------------------
+
+$db_file = getenv_default('DB_FILE', '/tmp/druxtjs-examples-backend.sqlite');
+
+// -----------------------------------------------------------------------------
+
+echo '===============================' . PHP_EOL;
+echo '         🚀 PROVISION          ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+
+TASK('Configuring the SQLite database at %s.', $db_file);
+if (file_exists($db_file)) {
+  unlink($db_file);
+}
+$web_sites_default = 'web/sites/default';
+if (!is_dir($web_sites_default)) {
+  FAIL('Expected %s to exist — run .devtools/assemble first.', $web_sites_default);
+}
+$settings_local_php = $web_sites_default . '/settings.local.php';
+file_put_contents($settings_local_php, sprintf(
+  "<?php\n\n/**\n * @file\n * Provision-only override, written fresh each run by .devtools/provision.\n * Gitignored - never committed.\n */\n\n\$databases['default']['default'] = [\n  'driver' => 'sqlite',\n  'database' => '%s',\n  'prefix' => '',\n];\n",
+  $db_file
+));
+PASS('SQLite database configured.');
+
+// Rollback-journal SQLite lets readers block the one writer; WAL lets them
+// coexist. See docs/drupal's provision for the full reasoning — the same
+// hazard applies to any drush invocation that boots child processes.
+TASK('Enabling SQLite WAL journal mode.');
+$pdo = new \PDO('sqlite:' . $db_file);
+$journal_mode = $pdo->query('PRAGMA journal_mode=WAL;')->fetchColumn();
+unset($pdo);
+if (strtolower((string) $journal_mode) !== 'wal') {
+  FAIL('Could not enable WAL journal mode (got %s).', var_export($journal_mode, TRUE));
+}
+PASS('WAL journal mode enabled.');
+
+TASK('Installing Drupal (demo_umami profile).');
+drush('site-install demo_umami --yes --account-pass=druxt --site-name=\'Druxt examples\'');
+PASS('Site installed with Umami demo content.');
+
+TASK('Enabling the Druxt module stack.');
+drush('pm:enable druxt consumers --yes');
+PASS('druxt + consumers enabled.');
+
+TASK('Adding Spanish as a prefixed secondary language.');
+drush('php-script %s', __DIR__ . '/add-language.php');
+PASS('Spanish enabled at the /es prefix.');
+
+TASK('Creating the examples OAuth consumer.');
+drush('php-script %s', __DIR__ . '/create-consumer.php');
+PASS('Consumer %s exists (public PKCE, redirect %s).', 'c6e3275c-05cb-45f0-a3c3-c037bf730963', 'http://localhost:3004/callback');
+
+TASK('Setting the admin account password.');
+drush('php-script %s', __DIR__ . '/set-admin-password.php');
+PASS('Admin (uid 1) password set to the documented example login.');
+
+drush('cache:rebuild');
+
+echo PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo '   🚀 PROVISION COMPLETE  ✅  ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+echo 'Database: ' . $db_file . PHP_EOL;
+echo PHP_EOL;
+echo '> Next steps:' . PHP_EOL;
+echo '  .devtools/start    # Start the webserver' . PHP_EOL;
+echo PHP_EOL;
