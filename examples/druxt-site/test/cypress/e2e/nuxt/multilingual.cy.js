@@ -4,7 +4,17 @@
 // Spanish config translation collection landing at provision, and the
 // language-prefixed JSON:API proxies. If any of it regresses, this spec is
 // the alarm.
-describe('Multilingual', () => {
+//
+// These specs assert translated config and content, which only the full
+// druxtjs.org site backend (github.com/druxt/druxtjs.org) ships. The
+// examples/drupal dev backend is a minimal umami install with Spanish at
+// /es but no translated demo content, so CI's e2e lane sets
+// CYPRESS_backendVariant=minimal and skips this file; the site backend's
+// own pipeline runs it in full.
+const describeFullBackend =
+  Cypress.env('backendVariant') === 'minimal' ? describe.skip : describe
+
+describeFullBackend('Multilingual', () => {
   it('switches to Spanish from the language block and stays there', () => {
     // Every language has a URL prefix, so the homepage is /en.
     cy.visit('/en')

@@ -21,7 +21,7 @@
     "drupal/core-project-message": "~11",
     "drupal/core-recommended": "~11",
     "drupal/decoupled_router": "^2.0.7",
-    "drupal/druxt": "^1.2.2",
+    "drupal/druxt": "~1.2.0",
     "drupal/simple_oauth": "^6.1",
     "drush/drush": "^13"
   },

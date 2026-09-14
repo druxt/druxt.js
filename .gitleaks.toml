@@ -18,6 +18,19 @@
 [extend]
 useDefault = true
 
+# --- Historical canary, allowed at commit level ---------------------------
+#
+# fd3f0eaf scoped the allowlists to one detector each, and its scope-check
+# job embedded a whole fixed-value PEM to prove the generic-api-key path
+# excuse does not extend to the private-key rule. The PEM was split into
+# assembled runtime pieces one commit later, but the historical blob still
+# trips a full-history scan. The body is a fake generated for the canary,
+# never a credential; skipping that one commit is safe and narrower than a
+# content regex. Remove this only together with a history rewrite.
+[allowlist]
+description = "Canary PEM planted by the allowlist scope-check job"
+commits = ['fd3f0eaf85554048bd227d2f370f6569e2ebe118']
+
 # --- Known finding, parked pending the provisioning fix -------------------
 #
 # docs/drupal/keys/private.key is a Simple OAuth signing key for the throwaway

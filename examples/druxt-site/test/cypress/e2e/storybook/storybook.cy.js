@@ -167,19 +167,28 @@ it('Storybook: Entity', () => {
   cy.get('#druxt-entity-node-recipe-view-displays').should('exist')
   cy.get('#druxt-entity-node-recipe-view-displays').click()
   cy.get('#control-mode').select('card')
-  cy.get('#control-uuid').select('Vegan chocolate and nut brownies (67f44980-de26-4567-82f4-b058595720ec)')
+  // Any recipe in the select proves the entity story fetches live content;
+  // the minimal backend's demo UUIDs differ from the full site backend's.
+  cy.get('#control-uuid option')
+    .should('have.length.at.least', 2)
+    .then(($o) => cy.get('#control-uuid').select($o.eq(1).val()))
 
   // Test view displays.
   cy.get('#druxt-entity-node-recipe-form-displays').should('exist')
   cy.get('#druxt-entity-node-recipe-form-displays').click()
-  cy.get('#control-uuid').select('Vegan chocolate and nut brownies (67f44980-de26-4567-82f4-b058595720ec)')
+  cy.get('#control-uuid option')
+    .should('have.length.at.least', 2)
+    .then(($o) => cy.get('#control-uuid').select($o.eq(1).val()))
 })
 
 it('Storybook: Menu', () => {
   // Test the root Menu group.
   cy.get('#druxt-menu').should('contain.text', 'Menu')
   cy.get('#druxt-menu').click()
-  cy.get('[data-parent-id="druxt-menu"]').should('have.length', 6)
+  // One story per menu on the backend: the full site backend ships 6 menus,
+  // umami's default set is larger. The package-defined stories below are
+  // asserted explicitly, so only the floor is pinned here.
+  cy.get('[data-parent-id="druxt-menu"]').should('have.length.at.least', 6)
 
   // Test the DruxtMenu group.
   cy.get('#druxt-menu-druxtmenu').should('contain.text', 'DruxtMenu')

@@ -78,9 +78,19 @@ TASK('Enabling the Druxt module stack.');
 drush('pm:enable druxt consumers --yes');
 PASS('druxt + consumers enabled.');
 
+TASK("Granting anonymous 'access druxt resources' (schema/display reads).");
+drush('role:perm:add anonymous "access druxt resources"');
+drush('role:perm:add authenticated "access druxt resources"');
+PASS("Anonymous may read the druxt-exposed config resources.");
+
+
 TASK('Adding Spanish as a prefixed secondary language.');
 drush('php-script %s', __DIR__ . '/add-language.php');
 PASS('Spanish enabled at the /es prefix.');
+
+TASK('Creating the Basic page type for the schema example.');
+drush('php-script %s', __DIR__ . '/create-page-type.php');
+PASS('node--page exists with a body field.');
 
 TASK('Creating the examples OAuth consumer.');
 drush('php-script %s', __DIR__ . '/create-consumer.php');
