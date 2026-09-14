@@ -1,97 +1,97 @@
 {
-    "name": "druxt/examples-backend",
-    "description": "Minimal Drupal 11 Umami backend for developing the druxt.js packages against.",
-    "type": "project",
-    "license": "GPL-2.0-or-later",
-    "homepage": "https://druxtjs.org",
-    "support": {
-        "docs": "https://druxtjs.org",
-        "chat": "https://discord.druxtjs.org"
-    },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://packages.drupal.org/8"
-        }
-    ],
-    "require": {
-        "composer/installers": "^2.3.0",
-        "cweagans/composer-patches": "^1.7.3",
-        "drupal/core-composer-scaffold": "~11",
-        "drupal/core-project-message": "~11",
-        "drupal/core-recommended": "~11",
-        "drupal/decoupled_router": "^2.0.7",
-        "drupal/druxt": "^1.2.2",
-        "drupal/simple_oauth": "^6.1",
-        "drush/drush": "^13"
-    },
-    "require-dev": {
-        "drupal/core-dev": "~11"
-    },
-    "conflict": {
-        "drupal/drupal": "*"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "platform": {
-            "php": "8.3"
-        },
-        "sort-packages": true,
-        "allow-plugins": {
-            "composer/installers": true,
-            "cweagans/composer-patches": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "drupal/core-composer-scaffold": true,
-            "drupal/core-project-message": true,
-            "php-http/discovery": true,
-            "phpstan/extension-installer": true,
-            "symfony/runtime": true,
-            "tbachert/spi": true
-        }
-    },
-    "extra": {
-        "drupal-scaffold": {
-            "locations": {
-                "web-root": "web/"
-            }
-        },
-        "installer-paths": {
-            "web/core": [
-                "type:drupal-core"
-            ],
-            "web/libraries/{$name}": [
-                "type:drupal-library"
-            ],
-            "web/modules/contrib/{$name}": [
-                "type:drupal-module"
-            ],
-            "web/profiles/contrib/{$name}": [
-                "type:drupal-profile"
-            ],
-            "web/themes/contrib/{$name}": [
-                "type:drupal-theme"
-            ],
-            "drush/Commands/contrib/{$name}": [
-                "type:drupal-drush"
-            ],
-            "web/modules/custom/{$name}": [
-                "type:drupal-custom-module"
-            ],
-            "web/profiles/custom/{$name}": [
-                "type:drupal-custom-profile"
-            ],
-            "web/themes/custom/{$name}": [
-                "type:drupal-custom-theme"
-            ]
-        },
-        "patches": {
-            "drupal/decoupled_router": {
-                "#3111456 Resolve the language from the requested path, so /es serves Spanish instead of the default language": "https://git.drupalcode.org/project/decoupled_router/-/merge_requests/35.diff"
-            },
-            "drupal/druxt": {
-                "#3273228 Add langcode to Views Decoupled Router integration, so the /es front page stays Spanish": "https://git.drupalcode.org/project/druxt/-/merge_requests/9.diff"
-            }
-        }
+  "name": "druxt/examples-backend",
+  "description": "Minimal Drupal 11 Umami backend for developing the druxt.js packages against.",
+  "type": "project",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://druxtjs.org",
+  "support": {
+    "docs": "https://druxtjs.org",
+    "chat": "https://discord.druxtjs.org"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
     }
+  ],
+  "require": {
+    "composer/installers": "^2.3.0",
+    "cweagans/composer-patches": "^1.7.3",
+    "drupal/core-composer-scaffold": "~11",
+    "drupal/core-project-message": "~11",
+    "drupal/core-recommended": "~11",
+    "drupal/decoupled_router": "^2.0.7",
+    "drupal/druxt": "^1.2.2",
+    "drupal/simple_oauth": "^6.1",
+    "drush/drush": "^13"
+  },
+  "require-dev": {
+    "drupal/core-dev": "~11"
+  },
+  "conflict": {
+    "drupal/drupal": "*"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "platform": {
+      "php": "8.3"
+    },
+    "sort-packages": true,
+    "allow-plugins": {
+      "composer/installers": true,
+      "cweagans/composer-patches": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "drupal/core-composer-scaffold": true,
+      "drupal/core-project-message": true,
+      "php-http/discovery": true,
+      "phpstan/extension-installer": true,
+      "symfony/runtime": true,
+      "tbachert/spi": true
+    }
+  },
+  "extra": {
+    "drupal-scaffold": {
+      "locations": {
+        "web-root": "web/"
+      }
+    },
+    "installer-paths": {
+      "web/core": [
+        "type:drupal-core"
+      ],
+      "web/libraries/{$name}": [
+        "type:drupal-library"
+      ],
+      "web/modules/contrib/{$name}": [
+        "type:drupal-module"
+      ],
+      "web/profiles/contrib/{$name}": [
+        "type:drupal-profile"
+      ],
+      "web/themes/contrib/{$name}": [
+        "type:drupal-theme"
+      ],
+      "drush/Commands/contrib/{$name}": [
+        "type:drupal-drush"
+      ],
+      "web/modules/custom/{$name}": [
+        "type:drupal-custom-module"
+      ],
+      "web/profiles/custom/{$name}": [
+        "type:drupal-custom-profile"
+      ],
+      "web/themes/custom/{$name}": [
+        "type:drupal-custom-theme"
+      ]
+    },
+    "patches": {
+      "drupal/decoupled_router": {
+        "#3111456 Resolve the language from the requested path, so /es serves Spanish instead of the default language": "patches/decoupled_router-3111456-language-prefix.patch"
+      },
+      "drupal/druxt": {
+        "#3273228 Add langcode to Views Decoupled Router integration, so the /es front page stays Spanish": "patches/druxt-3273228-views-langcode.patch"
+      }
+    }
+  }
 }

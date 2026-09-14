@@ -212,3 +212,9 @@ yarnpkg
 yarnrc
 zipfile
 ZRHGDGSD
+
+dealerdirect
+docroot
+phpcodesniffer
+symfony
+tbachert
