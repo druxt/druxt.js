@@ -184,16 +184,18 @@ stays as this repo's convention.) This is unrelated to commit-message
 ## examples/drupal local dev
 
 `examples/drupal` is the minimal Umami dev backend (D11, demo_umami, the
-Druxt stack, `/es`, the examples' OAuth consumer). Its local/CI workflow is
-Docker-free: PHP's built-in server plus a throwaway SQLite database
-(`examples/drupal/.devtools/`, `make build`); a `.ddev/config.yaml` provides
-the DDEV alternative locally. `test-e2e` uses the Docker-free path, pinned
-to PHP 8.3. It ships no translated content: specs asserting translations
-(`multilingual.cy.js`) are gated on `CYPRESS_backendVariant` and belong to
-the site backend. See `examples/drupal/.devtools/README.md` for how the
-SQLite path works. The full druxtjs.org backend (Tome, translations) lives
-in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org); DDEV-based
-full-site setups live in the `quickstart` repo, not here.
+Druxt stack, `/en`+`/es`, the examples' OAuth consumer). Its local/CI
+workflow is Docker-free: PHP's built-in server plus a throwaway SQLite
+database (`examples/drupal/.devtools/`, `make build`); a
+`.ddev/config.yaml` provides the DDEV alternative locally. `test-e2e`
+uses the Docker-free path, pinned to PHP 8.3. `demo_umami` provisions
+its demo content in English and Spanish, and `multilingual.cy.js` runs
+against this backend in CI. Provision checks that the translations landed
+(a note locally, fatal under CI, `REQUIRE_TRANSLATIONS` overrides either);
+the provisioned database is per-checkout, override with `DB_FILE`. See `examples/drupal/.devtools/README.md` for how the SQLite
+path works. The full druxtjs.org backend (Tome, curated translations)
+lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org);
+DDEV-based full-site setups live in the `quickstart` repo, not here.
 
 ## Reference
 
