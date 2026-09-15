@@ -2,6 +2,9 @@ SHELL=/bin/bash
 
 WEBSERVER_HOST ?= 127.0.0.1
 WEBSERVER_PORT ?= 8888
+# Honors a DB_FILE from the environment; otherwise the same per-checkout
+# default the devtools scripts derive (see .devtools/helpers.php).
+DB_FILE ?= $(shell php -r 'require ".devtools/helpers.php"; echo DruxtjsDevTools\default_db_file();' 2>/dev/null || echo /tmp/druxtjs-examples-backend.sqlite)
 
 .PHONY: build assemble provision start stop info describe drush login debug reset delete destroy
 
@@ -63,6 +66,6 @@ login:
 delete destroy: reset
 
 reset: stop
-	rm -f /tmp/druxtjs-drupal-site.sqlite /tmp/druxtjs-drupal-php-server.log > /dev/null 2>&1 || true
+	rm -f "$(DB_FILE)" /tmp/druxtjs-drupal-php-server.log > /dev/null 2>&1 || true
 
 .DEFAULT_GOAL := build

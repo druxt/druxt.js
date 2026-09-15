@@ -23,7 +23,7 @@ $host_source = $webserver['host_source'];
 $webserver_port = $webserver['port'];
 $port_source = $webserver['port_source'];
 
-$db_file = getenv_default('DB_FILE', '/tmp/druxtjs-drupal-site.sqlite');
+$db_file = getenv_default('DB_FILE', default_db_file());
 $has_drush = is_file('vendor/bin/drush');
 $site_url = sprintf('http://%s:%s', $webserver_host, $webserver_port);
 

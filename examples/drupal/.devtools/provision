@@ -38,7 +38,7 @@ require_once __DIR__ . '/helpers.php';
 // Variables.
 // -----------------------------------------------------------------------------
 
-$db_file = getenv_default('DB_FILE', '/tmp/druxtjs-examples-backend.sqlite');
+$db_file = getenv_default('DB_FILE', default_db_file());
 
 // -----------------------------------------------------------------------------
 
@@ -57,8 +57,8 @@ if (!is_dir($web_sites_default)) {
 }
 $settings_local_php = $web_sites_default . '/settings.local.php';
 file_put_contents($settings_local_php, sprintf(
-  "<?php\n\n/**\n * @file\n * Provision-only override, written fresh each run by .devtools/provision.\n * Gitignored - never committed.\n */\n\n\$databases['default']['default'] = [\n  'driver' => 'sqlite',\n  'database' => '%s',\n  'prefix' => '',\n];\n",
-  $db_file
+  "<?php\n\n/**\n * @file\n * Provision-only override, written fresh each run by .devtools/provision.\n * Gitignored - never committed.\n */\n\n\$databases['default']['default'] = [\n  'driver' => 'sqlite',\n  'database' => %s,\n  'prefix' => '',\n];\n",
+  var_export($db_file, TRUE)
 ));
 PASS('SQLite database configured.');
 
@@ -75,8 +75,31 @@ if (strtolower((string) $journal_mode) !== 'wal') {
 PASS('WAL journal mode enabled.');
 
 TASK('Installing Drupal (demo_umami profile).');
-drush('site-install demo_umami --yes --account-pass=druxt --site-name=\'Druxt examples\'');
+$install_output = drush('site-install demo_umami --yes --account-pass=druxt --site-name=\'Druxt examples\'');
 PASS('Site installed with Umami demo content.');
+
+// The multilingual e2e suites assert the Spanish demo content, so a
+// translation-less install must never pass silently: surface it here,
+// where the cause is still obvious, instead of in a Cypress failure.
+// Translations live in node_field_data (the node base table holds one
+// row per node, in its original language). Counted via php-eval because
+// drush sqlq shells out to the sqlite3 binary, which the CI runners do
+// not install.
+// CI runs the multilingual specs against this backend, so there the
+// missing content is a provisioning failure, not a note to scroll past.
+// REQUIRE_TRANSLATIONS overrides the CI default either way.
+$es_nodes = trim((string) drush('php-eval %s', "print \Drupal::database()->select('node_field_data', 'n')->condition('langcode', 'es')->countQuery()->execute()->fetchField();"));
+if ($es_nodes === '' || (int) $es_nodes < 1) {
+  $require_translations = filter_var(getenv_default('REQUIRE_TRANSLATIONS', 'CI', '0'), FILTER_VALIDATE_BOOL);
+  $message = 'Spanish demo content is MISSING: 0 translated nodes after install. The multilingual specs will fail against this backend.';
+  if ($require_translations) {
+    FAIL('%s Set REQUIRE_TRANSLATIONS=0 to provision without them.', $message);
+  }
+  NOTE('%s Set REQUIRE_TRANSLATIONS=1 to make this fatal.', $message);
+}
+else {
+  PASS('Spanish demo content present (%s translated nodes).', $es_nodes);
+}
 
 TASK('Applying the druxt_examples recipe.');
 drush('recipe %s --yes', __DIR__ . '/../recipes/druxt_examples');

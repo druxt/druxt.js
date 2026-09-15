@@ -48,9 +48,9 @@ make reset      # stop + wipe the throwaway database
 | OAuth redirect | `http://localhost:3004/callback` (Content Ops Console port) |
 | Default URL | `http://127.0.0.1:8888` |
 
-## Multilingual caveat
+## Multilingual
 
-`/es` routing works (decoupled_router path-prefix resolution is exercised
-by the examples), but Umami's demo content is English-only — there is no
-translated recipe content here. The multilingual e2e specs that assert
-translated content run against the full site backend, not this one.
+Umami installs with English and Spanish, and its demo content comes with
+Spanish translations, so `/es` serves translated recipes and menus (the Spanish
+quiche recipe, the "Explore recetas" view). The multilingual e2e specs run
+against this backend.

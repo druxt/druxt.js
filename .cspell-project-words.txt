@@ -216,5 +216,6 @@ ZRHGDGSD
 dealerdirect
 docroot
 phpcodesniffer
+recetas
 symfony
 tbachert

@@ -23,6 +23,132 @@ declare(strict_types=1);
 namespace DruxtjsDevTools;
 
 /**
+ * Per-checkout default SQLite database path.
+ *
+ * Derived from the checkout location so parallel checkouts (or a CI matrix
+ * sharing a host) never provision over each other's database. DB_FILE
+ * overrides it everywhere it is read.
+ */
+function default_db_file(): string {
+  return sys_get_temp_dir() . '/druxtjs-examples-' . checkout_hash() . '.sqlite';
+}
+
+/**
+ * Short hash of this checkout's location, for per-checkout runtime files.
+ */
+function checkout_hash(): string {
+  return substr(sha1(dirname(__DIR__, 2)), 0, 8);
+}
+
+/**
+ * Per-checkout PID file for the PHP built-in server `start` launches.
+ */
+function server_pid_file(): string {
+  return sys_get_temp_dir() . '/druxtjs-examples-' . checkout_hash() . '.pid';
+}
+
+/**
+ * The PID of the PHP server this checkout started, or NULL if none runs.
+ *
+ * The PID file holds "<pid>\t<start time>", written by record_server_pid().
+ * A file naming a process that is gone, that is no longer a `php -S`
+ * server, or whose start time differs (the PID was reused) is stale: it
+ * is removed and NULL is returned.
+ */
+function server_pid(): ?int {
+  $pid_file = server_pid_file();
+  if (!is_file($pid_file)) {
+    return NULL;
+  }
+
+  [$pid, $started] = array_pad(explode("\t", trim((string) file_get_contents($pid_file)), 2), 2, '');
+  if (ctype_digit($pid) && (int) $pid > 0 && $started !== '') {
+    $command = process_command((int) $pid);
+    if (str_contains($command, 'php') && str_contains($command, ' -S ') && process_start((int) $pid) === $started) {
+      return (int) $pid;
+    }
+  }
+
+  @unlink($pid_file);
+  return NULL;
+}
+
+/**
+ * Record a freshly launched server PID together with its start time.
+ *
+ * @return bool
+ *   FALSE when the process is already gone.
+ */
+function record_server_pid(int $pid): bool {
+  $started = process_start($pid);
+  if ($started === '') {
+    @unlink(server_pid_file());
+    return FALSE;
+  }
+  file_put_contents(server_pid_file(), $pid . "\t" . $started . PHP_EOL);
+  return TRUE;
+}
+
+/**
+ * The command line of a running process, or '' when there is none.
+ */
+function process_command(int $pid): string {
+  return trim((string) @shell_exec(sprintf('ps -o command= -p %d 2>/dev/null', $pid)));
+}
+
+/**
+ * The start time of a running process, or '' when there is none.
+ */
+function process_start(int $pid): string {
+  return trim((string) @shell_exec(sprintf('ps -o lstart= -p %d 2>/dev/null', $pid)));
+}
+
+/**
+ * Stop the PHP server this checkout started.
+ *
+ * Only the PID recorded by `start` is signalled: never a server another
+ * checkout, or anything else, holds on the same port. TERM first, KILL if
+ * it lingers; FAILs if the process survives both.
+ *
+ * @return int|null
+ *   The PID that was stopped, or NULL when no server of ours was running.
+ */
+function stop_server(): ?int {
+  $pid = server_pid();
+  if ($pid === NULL) {
+    return NULL;
+  }
+
+  foreach ([15, 9] as $signal) {
+    signal_process($pid, $signal);
+    for ($i = 0; $i < 50; $i++) {
+      usleep(100000);
+      if (process_command($pid) === '') {
+        @unlink(server_pid_file());
+        return $pid;
+      }
+    }
+  }
+
+  FAIL('Unable to stop the PHP server (pid %d).', $pid);
+
+  // @codeCoverageIgnoreStart
+  return NULL;
+  // @codeCoverageIgnoreEnd
+}
+
+/**
+ * Send a signal to a process, via posix_kill() or the kill binary.
+ */
+function signal_process(int $pid, int $signal): void {
+  if (function_exists('posix_kill')) {
+    @posix_kill($pid, $signal);
+    return;
+  }
+  exec(sprintf('kill -%d %d 2>/dev/null', $signal, $pid));
+}
+
+/**
  * Get environment variable with fallback and default value.
  */
 function getenv_default(mixed ...$vars): string {
