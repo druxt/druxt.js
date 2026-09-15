@@ -17,7 +17,7 @@ giving you `https://github.com/USER/druxt.js` to work from.
 
 ### Dev container
 
-`.devcontainer/devcontainer.json` provides a ready environment with Node 16 and Yarn via corepack. Monorepo and documentation dependencies install on first open.
+`.devcontainer/devcontainer.json` provides a ready environment with Node 16 and Yarn via corepack. Monorepo dependencies install on first open.
 
 [![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/druxt/druxt.js)
 
