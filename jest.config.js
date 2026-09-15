@@ -30,19 +30,9 @@ module.exports = {
   // "docs" excluded the entire repo: in a git worktree at .worktrees/docs-seo
   // this config found 0 of 72 test files and exited 1. It also blocked the
   // docs site's own pure modules from ever being tested.
-  // docs/nuxt is deleted by the stacked PR that follows this one; on this
-  // intermediate tree its suites must not run (they need the `~` alias and
-  // their own install, and suite-level import failures exit jest 1 without
-  // appearing in the junit report). The entries die with the directory.
-  modulePathIgnorePatterns: [
-    '<rootDir>/docs/nuxt/',
-    '<rootDir>/examples/',
-  ],
+  modulePathIgnorePatterns: ['<rootDir>/examples/'],
   testEnvironment: 'jsdom',
-  testPathIgnorePatterns: [
-    '<rootDir>/docs/nuxt/',
-    '<rootDir>/examples/',
-  ],
+  testPathIgnorePatterns: ['<rootDir>/examples/'],
   transform: {
     '^.+\\.(js)$': 'esbuild-jest',
     '^.+\\.(mjs)$': 'esbuild-jest',

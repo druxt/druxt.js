@@ -23,8 +23,6 @@
     ".yarn/",
     "coverage/",
     "docs/drupal/",
-    "docs/nuxt/.nuxt/",
-    "docs/nuxt/node_modules/",
     "examples/*/node_modules/",
     "node_modules/",
     "package-lock.json",
