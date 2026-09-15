@@ -2,14 +2,16 @@
 
 /**
  * @file
- * Shared helper functions for docs/drupal's DevTools scripts.
+ * Shared helper functions for the examples/drupal backend's DevTools
+ * scripts.
  *
  * In the spirit of AlexSkrypnyk/drupal_extension_scaffold, but for a
- * full site checkout rather than a bare extension: no `build/` directory,
- * no `composer create-project` scaffolding step — `docs/drupal` already IS
- * the site codebase, so `assemble` is just `composer install` and
- * `provision` runs `drush tome:install` against the committed
- * config/content instead of a vanilla `site-install`.
+ * full site checkout rather than a bare extension: no `build/` directory
+ * and no `composer create-project` scaffolding step, because this
+ * checkout already IS the site codebase. `assemble` is just
+ * `composer install`, and `provision` runs a vanilla
+ * `drush site-install demo_umami` (the druxtjs.org site backend, by
+ * contrast, provisions from committed Tome config/content).
  *
  * The custom-script extension point (`scripts/<prefix>-*.sh` hooks) from
  * the reference pattern is intentionally not included here — nothing in

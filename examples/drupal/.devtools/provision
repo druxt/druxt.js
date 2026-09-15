@@ -7,8 +7,8 @@
  * throwaway SQLite database, then apply the druxt_examples recipe and
  * configure Simple OAuth.
  *
- * Unlike docs/drupal (now the druxtjs.org site backend), there is no
- * committed config or Tome content here — `drush site-install demo_umami`
+ * Unlike the druxtjs.org site backend (druxt/druxtjs.org), there is no
+ * committed config or Tome content here. `drush site-install demo_umami`
  * ships its own demo content, and this script only layers on:
  *
  * - the Druxt module stack and everything the frontend examples need
@@ -63,8 +63,8 @@ file_put_contents($settings_local_php, sprintf(
 PASS('SQLite database configured.');
 
 // Rollback-journal SQLite lets readers block the one writer; WAL lets them
-// coexist. See docs/drupal's provision for the full reasoning — the same
-// hazard applies to any drush invocation that boots child processes.
+// coexist. The same hazard applies to any drush invocation that boots
+// child processes alongside the running webserver.
 TASK('Enabling SQLite WAL journal mode.');
 $pdo = new \PDO('sqlite:' . $db_file);
 $journal_mode = $pdo->query('PRAGMA journal_mode=WAL;')->fetchColumn();
