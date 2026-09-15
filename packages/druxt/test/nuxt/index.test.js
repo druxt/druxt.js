@@ -1,5 +1,3 @@
-/* global beforeEach, describe, expect, jest, test */
-
 import DruxtNuxtModule from '../../src'
 
 const options = {
@@ -64,7 +62,7 @@ describe('DruxtJS Nuxt module', () => {
     expect(mock.options.store).toBe(true)
 
     // Expect:
-    // - Components disbaled.
+    // - Components disabled.
     mock.options.components = false
     await DruxtNuxtModule.call(mock)
     expect(mock.options.components).toBe(false)

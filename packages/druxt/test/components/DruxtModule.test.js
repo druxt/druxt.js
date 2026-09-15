@@ -88,10 +88,10 @@ describe('DruxtModule component', () => {
     wrapper.vm.$fetch = jest.fn()
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    // Ensure defeaults.
+    // Ensure defaults.
     expect(wrapper.vm.lang).toBe(undefined)
 
-    // Uppdate langcode.
+    // Update langcode.
     await wrapper.setProps({ langcode: 'en' })
 
     // Ensure fetch is called and computed prop is updated.
@@ -219,8 +219,8 @@ describe('DruxtModule component', () => {
   test('custom module - wrapper', async () => {
     localVue.component('CustomModuleWrapper', {
       druxt: { foo: 'bar' },
-      props: ['foo'],
-      render: () => {}
+      props: { foo: null },
+      render: () => null
     })
 
     const CustomModule = {
@@ -229,9 +229,9 @@ describe('DruxtModule component', () => {
       druxt: {
         componentOptions: () => ([['wrapper']]),
         async fetchConfig() {},
-        async fetchData(settings) {},
+        async fetchData() {},
         propsData: () => ({ foo: 'bar' }),
-        settings: ({}, settings) => ({ ...settings, custom: true }),
+        settings: (context, settings) => ({ ...settings, custom: true }),
         slots: (h) => ({ default: () => h('div', ['test'] )}),
       }
     }
@@ -286,9 +286,9 @@ describe('DruxtModule component', () => {
       druxt: {
         componentOptions: () => ([['foo', 'bar'], ['foo', 'bar', 'baz']]),
         async fetchConfig() {},
-        async fetchData(settings) {},
+        async fetchData() {},
         propsData: () => ({ foo: 'bar' }),
-        settings: ({}, settings) => ({ ...settings, custom: true }),
+        settings: (context, settings) => ({ ...settings, custom: true }),
         slots: (h) => ({ default: () => h('div', ['test'] )}),
       }
     }

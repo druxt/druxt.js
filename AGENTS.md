@@ -48,7 +48,7 @@ bumps. `renovate.json` freezes these packages from automated updates.
 The full local verification gate, in order:
 
 ```bash
-yarn lint && yarn build && yarn test:unit && yarn build:docs
+yarn lint && yarn build && yarn test:unit
 ```
 
 - `yarn build`: siroc build of all packages
@@ -87,9 +87,9 @@ piecemeal. They resolve together whenever the Node 16 → 18+ upgrade happens.
 
 ## Inline documentation (JSDoc) → API docs
 
-Every JS/Vue source file's JSDoc is scraped by `packages/docgen` (`yarn
-build:docs`) into Markdown under `docs/nuxt/content/api/`, then rendered as
-part of the [druxtjs.org](https://druxtjs.org) API reference. **The JSDoc you
+Every JS/Vue source file's JSDoc is scraped by `packages/docgen` into
+Markdown under `docs/nuxt/content/api/`, then rendered as part of the
+[druxtjs.org](https://druxtjs.org) API reference. **The JSDoc you
 write is the public documentation, verbatim** - there's no separate editing
 pass, so a sloppy `@param` renders as a sloppy docs page.
 
@@ -161,13 +161,11 @@ When starting work, branch from `develop`:
 git checkout develop && git pull && git checkout -b feature/<short-desc>
 ```
 
-Branch prefix is `feature/`, not `feat/`. Lagoon's `druxtjs-org` project only
-auto-deploys a preview environment for direct branch pushes matching
-`^feature/|^(develop|main)$`. (Open PRs get a preview regardless of branch
-name, since Lagoon's separate "Pull Requests Enabled" setting covers that.
-`feature/` only matters for previewing a branch pushed without a PR yet.) This
-is unrelated to commit-message `feat:` types (Conventional Commits), which
-stay as-is.
+Branch prefix is `feature/`, not `feat/`. (The docs site's Lagoon project
+keyed its branch previews on that prefix; the site now deploys from
+[druxt/druxtjs.org](https://github.com/druxt/druxtjs.org), and the prefix
+stays as this repo's convention.) This is unrelated to commit-message
+`feat:` types (Conventional Commits), which stay as-is.
 
 ## CI
 
@@ -185,11 +183,12 @@ stay as-is.
 
 ## docs/drupal local dev
 
-`docs/drupal`'s local/CI workflow is Docker-free: PHP's built-in
-server plus a throwaway SQLite database (`docs/drupal/.devtools/`, `make
-build`). `test-e2e` uses this path, pinned to PHP 8.3 (not this repo's usual
-8.4: `docs/drupal`'s current `composer.lock` needs 8.2/8.3, see
-`docs/drupal/README.md`). See `docs/drupal/.devtools/README.md` for how the
+`docs/drupal`'s local workflow is Docker-free: PHP's built-in server plus
+a throwaway SQLite database (`docs/drupal/.devtools/`, `make build`),
+pinned to PHP 8.3 (not this repo's usual 8.4: its current `composer.lock`
+needs 8.2/8.3, see `docs/drupal/README.md`). `test-e2e` and `test-examples`
+boot `examples/drupal` instead, through the same `.devtools` interface and
+the same PHP 8.3 pin. See `docs/drupal/.devtools/README.md` for how the
 SQLite path works and why it's built the way it is. (DDEV-based setups live
 in the `quickstart` repo, not here.)
 

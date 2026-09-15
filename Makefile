@@ -1,4 +1,4 @@
-.PHONY: help setup build dev docs test lint lint-all clean
+.PHONY: help setup build dev test lint lint-all clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -12,9 +12,6 @@ build: ## Build all packages
 
 dev: ## Start the DruxtSite development server
 	yarn example:druxt-site
-
-docs: ## Start the documentation site (druxtjs.org)
-	yarn docs:dev
 
 test: ## Run unit tests
 	yarn test:unit

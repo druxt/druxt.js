@@ -243,6 +243,19 @@ lint:cspell:
     - yarn lint:cspell
     - section_end "cspell"
 
+# AI-tell prose lint over the repo's own markdown and source comments; the
+# same pinned Vale + ai-tells install the GitHub lint job uses.
+lint:prose:
+  extends: .node
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "prose-lint" "Linting prose (Vale, ai-tells)"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:prose
+    - section_end "prose-lint"
+
 lint:js:
   extends: .node
   stage: lint
