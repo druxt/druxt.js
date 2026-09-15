@@ -36,6 +36,11 @@ describe('DruxtDocgen', () => {
     expect(docgen.inheritedTypes).toStrictEqual({})
   })
 
+  test('constructor honors a caller-provided destination', () => {
+    const siteDocgen = new DruxtDocgen({ destination: 'site-content' })
+    expect(siteDocgen.destination).toBe('site-content')
+  })
+
   test('generateDocs calls each generator in order', async () => {
     docgen.generateApiDocs = jest.fn()
     docgen.generatePackageList = jest.fn()
