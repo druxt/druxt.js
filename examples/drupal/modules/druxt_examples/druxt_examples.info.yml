@@ -1,0 +1,7 @@
+name: 'Druxt examples'
+description: 'Development backend support for the druxt.js frontend examples: the OAuth consumer their authentication flows expect.'
+package: Druxt
+type: module
+core_version_requirement: ^11
+dependencies:
+  - drupal:consumers

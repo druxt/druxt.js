@@ -439,8 +439,10 @@ test:node-client:
   needs: []
   variables:
     CYPRESS_APT_PACKAGES: 'libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
-    # The examples backend ships the minimal umami profile; specs that need
-    # the full curated site content opt in per-suite via describeFullBackend.
+    # The examples backend is the umami install with its Spanish
+    # translations; specs asserting the curated druxtjs.org site content
+    # (homepage banners, devel templates) gate on this and skip here. The
+    # site repo's pipeline runs them in full.
     CYPRESS_backendVariant: minimal
   before_script:
     - !reference [.drupal-backend, before_script]

@@ -4,21 +4,25 @@
 /**
  * @file
  * Provision the site: install Drupal with the demo_umami profile against a
- * throwaway SQLite database, then enable the Druxt stack and create the
- * OAuth consumer the frontend examples expect.
+ * throwaway SQLite database, then apply the druxt_examples recipe and
+ * configure Simple OAuth.
  *
  * Unlike docs/drupal (now the druxtjs.org site backend), there is no
  * committed config or Tome content here — `drush site-install demo_umami`
  * ships its own demo content, and this script only layers on:
  *
- * - the Druxt module stack (druxt enables decoupled_router, jsonapi_menu_items,
- *   jsonapi_views and simple_oauth as dependencies),
- * - Spanish as a prefixed secondary language (the multilingual examples
- *   exercise /es routing; without translated content the language-neutral
- *   front page still serves),
- * - the public PKCE consumer with the exact UUID and redirect the examples'
- *   nuxt.config.js files hardcode,
+ * - the Druxt module stack and everything the frontend examples need
+ *   (permissions, the body field on Basic pages, the OAuth consumer) via
+ *   the druxt_examples recipe — see recipes/druxt_examples/recipe.yml and
+ *   modules/druxt_examples/,
+ * - the Simple OAuth keypair, generated here rather than committed (the
+ *   keys/ directory is gitignored) and pointed at by simple_oauth.settings,
  * - a documented example admin password.
+ *
+ * demo_umami itself is multilingual: it installs Spanish alongside English
+ * with URL prefixes (en/es) and ships Spanish translations of its demo
+ * content and configuration. Nothing here touches the language setup — the
+ * multilingual examples run against exactly what the profile provides.
  *
  * The SQLite connection is written to `web/sites/default/settings.local.php`
  * (gitignored), never to a tracked file.
@@ -74,27 +78,32 @@ TASK('Installing Drupal (demo_umami profile).');
 drush('site-install demo_umami --yes --account-pass=druxt --site-name=\'Druxt examples\'');
 PASS('Site installed with Umami demo content.');
 
-TASK('Enabling the Druxt module stack.');
-drush('pm:enable druxt consumers --yes');
-PASS('druxt + consumers enabled.');
+TASK('Applying the druxt_examples recipe.');
+drush('recipe %s --yes', __DIR__ . '/../recipes/druxt_examples');
+PASS('Druxt stack, resource permissions, page body field and OAuth consumer in place.');
 
-TASK("Granting anonymous 'access druxt resources' (schema/display reads).");
-drush('role:perm:add anonymous "access druxt resources"');
-drush('role:perm:add authenticated "access druxt resources"');
-PASS("Anonymous may read the druxt-exposed config resources.");
-
-
-TASK('Adding Spanish as a prefixed secondary language.');
-drush('php-script %s', __DIR__ . '/add-language.php');
-PASS('Spanish enabled at the /es prefix.');
-
-TASK('Creating the Basic page type for the schema example.');
-drush('php-script %s', __DIR__ . '/create-page-type.php');
-PASS('node--page exists with a body field.');
-
-TASK('Creating the examples OAuth consumer.');
-drush('php-script %s', __DIR__ . '/create-consumer.php');
-PASS('Consumer %s exists (public PKCE, redirect %s).', 'c6e3275c-05cb-45f0-a3c3-c037bf730963', 'http://localhost:3004/callback');
+TASK('Generating the Simple OAuth keypair.');
+$keys_dir = __DIR__ . '/../keys';
+if (!is_dir($keys_dir)) {
+  mkdir($keys_dir, 0777, TRUE);
+}
+$private_key = $keys_dir . '/private.key';
+$public_key = $keys_dir . '/public.key';
+$res = openssl_pkey_new([
+  'private_key_bits' => 2048,
+  'private_key_type' => OPENSSL_KEYTYPE_RSA,
+]);
+if ($res === FALSE) {
+  FAIL('Could not generate an RSA keypair: %s.', openssl_error_string());
+}
+openssl_pkey_export($res, $private_pem);
+file_put_contents($private_key, $private_pem);
+file_put_contents($public_key, openssl_pkey_get_details($res)['key']);
+chmod($private_key, 0600);
+chmod($public_key, 0644);
+drush('config:set simple_oauth.settings public_key %s --yes', $public_key);
+drush('config:set simple_oauth.settings private_key %s --yes', $private_key);
+PASS('Simple OAuth keys generated and configured (keys/ is gitignored).');
 
 TASK('Setting the admin account password.');
 drush('php-script %s', __DIR__ . '/set-admin-password.php');

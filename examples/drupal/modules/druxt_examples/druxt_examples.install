@@ -1,0 +1,63 @@
+<?php
+
+/**
+ * @file
+ * Install functions for the Druxt examples development backend.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_install().
+ *
+ * Creates the public PKCE OAuth consumer the frontend examples expect.
+ *
+ * The UUID and client_id are fixed: examples/druxt-site and
+ * examples/druxt-bootstrapvue hardcode the client_id in their
+ * nuxt.config.js, and the redirect must be http://localhost:3004/callback
+ * (the Content Ops Console's dev port) or the authorization round-trip
+ * fails with "invalid redirect" before any example can log in.
+ *
+ * The Consumers module's own hook_install() creates a 'Default Consumer'
+ * with a random UUID and client_id first; it is replaced here so exactly
+ * one predictable consumer remains.
+ *
+ * The $is_syncing guard is deliberately omitted: the module's primary
+ * install path is the druxt_examples recipe, and recipes apply through
+ * the config-synchronization machinery, which passes $is_syncing = TRUE
+ * (the same parameter a staging sync would). Everything this hook does is
+ * idempotent — load-or-create by fixed client_id, delete anything else —
+ * so running it during a sync cannot clobber anything, and skipping it
+ * would leave the recipe-applied backend without its consumer.
+ */
+function druxt_examples_install(bool $is_syncing = FALSE): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('consumer');
+
+  $client_id = 'c6e3275c-05cb-45f0-a3c3-c037bf730963';
+  $values = [
+    'uuid' => 'e7043528-3e7c-44b1-9a78-6b05bc888698',
+    'client_id' => $client_id,
+    'label' => 'Druxt',
+    'description' => 'Public PKCE consumer for the Druxt frontend examples.',
+    'is_default' => TRUE,
+    'third_party' => FALSE,
+    'confidential' => FALSE,
+    'pkce' => TRUE,
+    'redirect' => 'http://localhost:3004/callback',
+  ];
+
+  $consumer = $storage->loadByProperties(['client_id' => $client_id]);
+  $consumer = reset($consumer) ?: NULL;
+  if ($consumer === NULL) {
+    $consumer = $storage->create($values);
+    $consumer->save();
+  }
+
+  // Remove any stray consumers (the Consumers module's default, or a
+  // previous run's leftovers) so exactly one remains.
+  foreach ($storage->loadMultiple() as $other) {
+    if ($other->get('client_id')->value !== $client_id) {
+      $other->delete();
+    }
+  }
+}

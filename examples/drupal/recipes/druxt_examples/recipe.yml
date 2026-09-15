@@ -1,0 +1,44 @@
+name: Druxt examples backend
+description: 'Configures the Umami-based backend for the druxt.js frontend examples: the Druxt module stack, anonymous access to the Druxt JSON:API resources, and the body field the schema example introspects. The OAuth consumer the examples hardcode is created by the druxt_examples module this recipe installs.'
+install:
+  - druxt
+  - simple_oauth
+  - druxt_examples
+config:
+  actions:
+    # The frontend examples fetch schemas, displays, menus and views as
+    # anonymous JSON:API reads; without this every DruxtClient model fetch
+    # returns 403 "Required permissions: administer ... display".
+    user.role.anonymous:
+      grantPermissions:
+        - 'access druxt resources'
+    user.role.authenticated:
+      grantPermissions:
+        - 'access druxt resources'
+    # The documented DruxtSchemaMixin example targets node--page, and schema
+    # generation needs the body field placed on the displays to produce the
+    # expected field config. Umami's own page type uses a field_body field
+    # instead, so the shared body field is added here.
+    core.entity_view_display.node.page.default:
+      setComponent:
+        name: body
+        options:
+          type: text_default
+          label: above
+          weight: 3
+          region: content
+          settings: { }
+          third_party_settings: { }
+    core.entity_form_display.node.page.default:
+      setComponent:
+        name: body
+        options:
+          type: text_textarea_with_summary
+          weight: 26
+          region: content
+          settings:
+            rows: 9
+            summary_rows: 3
+            placeholder: ''
+            show_summary: false
+          third_party_settings: { }
