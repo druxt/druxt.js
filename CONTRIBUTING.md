@@ -22,7 +22,7 @@ giving you `https://github.com/USER/druxt.js` to work from.
 [![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/druxt/druxt.js)
 
 1. Open the fork in the tool of your choice:
-   - **VS Code**: clone, open the folder, run **Dev Containers: Reopen in Container**.
+   - **VS Code**: clone, open the folder, run `Dev Containers: Reopen in Container`.
    - **GitHub Codespaces**: on the repository page, **Code → Open with Codespaces**.
    - **[DevPod](https://devpod.sh)**: run `devpod up github.com/USER/druxt.js`, or add the same URL as a workspace source in DevPod's desktop app.
 2. Wait for the post-create setup to finish, then build the packages: `yarn build`
@@ -84,13 +84,13 @@ A Tailwind-themed DruxtSite.
 
 ### druxt-bootstrapvue
 
-The Content Ops Console: a BootstrapVue editorial app with authenticated JSON:API writes.
+The Content Ops Console is a BootstrapVue editorial app with authenticated JSON:API writes.
 
 `yarn example:druxt-bootstrapvue`
 
 ### node-client
 
-A non-Nuxt example script showing DruxtClient and DruxtSchema in plain Node. Not a shipped tool. See [Use the Druxt client directly](https://druxtjs.org/how-to/use-the-druxt-client).
+A non-Nuxt example script showing DruxtClient and DruxtSchema in plain Node. It is not a published tool. See [Use the Druxt client directly](https://druxtjs.org/how-to/use-the-druxt-client).
 
 The reader-facing tour of these apps is [Explore the example apps](https://druxtjs.org/how-to/example-apps).
 

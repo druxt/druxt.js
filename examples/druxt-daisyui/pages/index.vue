@@ -98,7 +98,7 @@
           class="border-2 border-dashed border-base-300 rounded-3xl p-10 text-center flex flex-col gap-3 items-center"
         >
           <h2 class="m-0 font-heading text-2xl font-semibold">Nothing saved yet</h2>
-          <p class="m-0 text-sm leading-relaxed text-base-content/70 max-w-[26ch]">Swipe right on a recipe and it lands here. Your box stays on this device.</p>
+          <p class="m-0 text-sm leading-relaxed text-base-content/70 max-w-[26ch]">Swipe right on a recipe and it ends up here. Your box stays on this device.</p>
           <button type="button" class="btn btn-primary border-0 font-semibold" @click="view = 'deck'">Back to the deck</button>
         </div>
 
@@ -131,7 +131,7 @@
 
       <div class="flex items-center gap-2.5 py-4 border-t border-base-300">
         <span class="w-2 h-2 rounded-full bg-secondary flex-none" />
-        <p class="m-0 text-xs leading-relaxed text-base-content/50">Saved on this device. No account, no server &mdash; Vuex state written to localStorage, restored on load.</p>
+        <p class="m-0 text-xs leading-relaxed text-base-content/50">Saved on this device without an account or server: Vuex state written to localStorage, restored on load.</p>
       </div>
     </template>
 

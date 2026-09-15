@@ -11,7 +11,7 @@ Report vulnerabilities through GitHub's private vulnerability reporting:
 (Repo → **Security** → **Report a vulnerability**.)
 
 If GitHub Security Advisories are unavailable, contact a maintainer privately via
-Discord DM — do **not** post vulnerability details in public channels. Use the
+Discord DM. Do not post vulnerability details in public channels. Use the
 [druxt.org](https://druxtjs.org) community Discord to find a maintainer, then
 continue the conversation in direct messages.
 
@@ -23,7 +23,7 @@ Include if possible:
 - Any suggested mitigation
 
 You should receive an initial response within 72 hours. Coordinated disclosure is
-appreciated — please give maintainers time to assess and patch before public
+appreciated. Please give maintainers time to assess and patch before public
 discussion.
 
 ## Supply-chain posture
@@ -36,6 +36,6 @@ discussion.
 - **GitLab CI** runs the `Security/Secret-Detection.gitlab-ci.yml` template on
   every pipeline (branch push and merge-request event); commits containing known
   secret patterns are blocked.
-- **Dependency updates** arrive as a single grouped Renovate PR against `develop`,
+- **Dependency updates** arrive as one grouped Renovate PR against `develop`,
   automerge-on-green for non-major non-frozen bumps; majors and build-stack
   boundary packages are frozen and handled manually. See `renovate.json`.

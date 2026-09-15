@@ -6,7 +6,7 @@
 // the real form. A purpose-built, permanently unthemed demo block for the
 // devel-template tool belongs to the pattern examples overhaul.
 // These specs assert language-prefixed English (/en) routes, which only
-// the full druxtjs.org site backend ships. The examples/drupal dev
+// the full druxtjs.org site backend provides. The examples/drupal dev
 // backend is a minimal umami install whose default language is
 // unprefixed, so CI's e2e lane (CYPRESS_backendVariant=minimal) skips
 // this file; the site backend's own pipeline runs it in full.

@@ -52,8 +52,8 @@ it('druxt-daisyui: Recipe Box deck - save, skip, and persistence', () => {
   cy.reload()
   cy.get('[data-testid="rb-view-box"] span').should('have.text', '3')
 
-  // The box view (same page, no route change) lists the saved recipes and
-  // can remove them.
+  // The box view (same page, without a route change) lists the saved recipes
+  // and can remove them.
   cy.get('[data-testid="rb-view-box"]').click()
   cy.location('pathname').should('eq', '/')
   cy.get('[data-testid="rb-tile"]').should('have.length', 3)
@@ -68,9 +68,9 @@ it('druxt-daisyui: In-page detail panel saves to the same box', () => {
   cy.window().then((win) => win.localStorage.clear())
   cy.visit('/')
 
-  // "Open" shows the full recipe in-page - no navigation, no route change,
-  // matching the design brief ("the detail panel follows the top card")
-  // rather than the wildcard-routed page this used to navigate to.
+  // "Open" shows the full recipe in-page, with no navigation or route
+  // change, matching the design brief ("the detail panel follows the top
+  // card") rather than the wildcard-routed page this used to navigate to.
   cy.get('[data-testid="rb-card"] h2').invoke('text').as('cardTitle')
   cy.get('[data-testid="rb-open"]').click()
   cy.get('[data-testid="rdp-panel"]').should('be.visible')

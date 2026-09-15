@@ -4,16 +4,17 @@ const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:8888'
 
 export default {
   target: 'static',
-  // Each example app owns a port (site 3000, daisyui 3001, tailwind 3002,
-  // bootstrapvue 3004), so any two can run side by side locally without
-  // colliding - and without start-server-and-test polling the wrong app.
+  // Each example app is bound to a port (site 3000, daisyui 3001, tailwind
+  // 3002, bootstrapvue 3004), so any two can run side by side locally
+  // without colliding - and without start-server-and-test polling the
+  // wrong app.
   server: { port: 3001 },
   generate: { routes: ['/'] },
   telemetry: true,
-  // No head config at all meant no viewport meta tag shipped - mobile
-  // browsers rendered the page at a desktop-width layout viewport, then
-  // scaled the whole thing down to fit, so a design that's mobile-first
-  // by intent looked small and cramped on an actual phone.
+  // No head config at all meant the page didn't include a viewport meta
+  // tag - mobile browsers rendered the page at a desktop-width layout
+  // viewport, then scaled the whole thing down to fit, so a design that's
+  // mobile-first by intent looked small and cramped on an actual phone.
   head: {
     meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
   },

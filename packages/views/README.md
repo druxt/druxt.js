@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtViews: Drupal Views with filters, pagination and sorting">
+<img src="./banner.svg" alt="DruxtViews renders Drupal Views with filters, pagination and sorting">
 
 # DruxtViews
 
@@ -20,16 +20,16 @@ component suggestion system.
 ## Features
 
 - Vue.js components:
-  - **DruxtView**: Render a Drupal View by display as DruxtEntity components
+  - **DruxtView** renders a Drupal View by display as DruxtEntity components
 - **View page routing and Blocks** with Druxt module integrations
-- **Druxt settings**: Filter JSON:API fields
+- **Druxt settings** filter JSON:API fields
 - **@nuxtjs/Storybook** integration
 
 ---
 
 ## Installation
 
-> Included with [`druxt-site`](https://druxtjs.org/modules/site); install separately only when composing modules yourself.
+> Included with [`druxt-site`](https://druxtjs.org/modules/site). Install it separately only when composing modules yourself.
 
 1. Install the package:
 

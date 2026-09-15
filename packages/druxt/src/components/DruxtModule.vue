@@ -117,7 +117,7 @@ export default {
   /**
    * Loads the Druxt module data and applies a wrapper component as required.
    *
-   * **Important:** If your component has an existing `fetch` method, you must manually invoke
+   * If your component has an existing `fetch` method, you must manually invoke
    * the `DruxtModule.fetch()` hook.
    *
    * @example @lang js <caption>Manually invoking DruxtModule.fetch().</caption>
@@ -195,7 +195,7 @@ export default {
 
   computed: {
     /**
-     * The current language code: the `langcode` prop if set, otherwise the
+     * The current language code is the `langcode` prop if set, otherwise the
      * route's langcode metadata.
      *
      * Used by Druxt modules to fetch the correct resource translation.

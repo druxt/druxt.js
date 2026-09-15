@@ -166,7 +166,7 @@ describe('DruxtRouter', () => {
     })
     expect(redirect).toBe('/clean-url')
 
-    // No redirect.
+    // A null path does not redirect.
     redirect = router.getRedirect(null, {})
     expect(redirect).toBe(false)
 

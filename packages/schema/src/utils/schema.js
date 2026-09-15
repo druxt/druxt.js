@@ -1,7 +1,7 @@
 /**
  * The Schema generator utility.
  *
- * Generates a Druxt Schema object for a single Drupal Entity display mode,
+ * Generates a Druxt Schema object for one Drupal Entity display mode,
  * using Entity Form and View Display configuration data from the Drupal
  * JSON:API.
  *

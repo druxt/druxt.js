@@ -38,6 +38,7 @@ Databaseless
 davidanson
 dbaeumer
 ddev
+dealerdirect
 deasync
 decoupled
 defaultvalue
@@ -51,6 +52,7 @@ dind
 docgen
 doclet
 doclets
+docroot
 dragend
 Drupals
 drush
@@ -129,6 +131,7 @@ olivero
 opcache
 openspec
 pbody
+phpcodesniffer
 phpmyadmin
 phprc
 phpsab
@@ -142,6 +145,7 @@ preconfigured
 preflighted
 Quickstart
 quickstarts
+recetas
 recognise
 recrawl
 redirectdomain
@@ -170,7 +174,9 @@ startswith
 storybook
 stubber
 swipeable
+symfony
 tailwindcss
+tbachert
 testid
 Themable
 themable
@@ -212,10 +218,3 @@ yarnpkg
 yarnrc
 zipfile
 ZRHGDGSD
-
-dealerdirect
-docroot
-phpcodesniffer
-recetas
-symfony
-tbachert

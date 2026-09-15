@@ -35,7 +35,7 @@ export default defineConfig({
   },
   server: {
     host: true,
-    // Each example app owns a port (site 3000, daisyui 3001, tailwind
+    // Each example app is bound to a port (site 3000, daisyui 3001, tailwind
     // 3002, bootstrapvue 3004), so any two can run side by side locally
     // without colliding. The root test script and Cypress baseUrl match.
     port: 3002,
@@ -57,7 +57,7 @@ export default defineConfig({
     // package's Nuxt-module file does `XNuxtModule.meta = require('../package.json')`
     // at the top level (unconditionally, whether or not the Nuxt module is
     // ever used) - bundled into the same file as the framework-agnostic
-    // exports, this means a bare CommonJS `require()` call ships to the
+    // exports, this means a bare CommonJS `require()` call reaches the
     // browser, where it doesn't exist at all. Stubbing it to a no-op that
     // returns an empty object is safe here specifically because
     // `DruxtNuxtModule` itself is dead code in this app (never called) -

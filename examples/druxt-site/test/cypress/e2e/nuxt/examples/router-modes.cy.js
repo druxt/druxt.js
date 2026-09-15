@@ -3,7 +3,7 @@ it('Examples: DruxtRouter modes', () => {
 
   cy.contains('h1', 'DruxtRouter - Router modes').should('exist')
 
-  // Four documented modes, each its own section.
+  // The page documents four modes, each in its own section.
   cy.contains('h2', 'Component - Default').should('exist')
   cy.contains('h2', 'Component - Path prop').should('exist')
   cy.contains('h2', 'Page: Wildcard').should('exist')

@@ -428,7 +428,7 @@ export default {
      * A scoped slot is provided for each field being rendered, as per the
      * current display mode.
      *
-     * Additionally, the `default` slot will render all fields as per the
+     * The `default` slot will also render all fields as per the
      * Drupal display mode configuration.
      *
      * @example <caption>DruxtEntity**ResourceType**.vue</caption> @lang vue

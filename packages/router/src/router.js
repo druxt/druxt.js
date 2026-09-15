@@ -282,7 +282,7 @@ class DruxtRouter {
    * @see https://druxtjs.org/modules/router/deprecations
    * @see {@link https://druxtjs.org/api/packages/druxt/client}
    *
-   * @todo Add granular pagination.
+   * @todo Add fine-grained pagination.
    *
    * @example @lang js
    * // Load all currently published Articles.

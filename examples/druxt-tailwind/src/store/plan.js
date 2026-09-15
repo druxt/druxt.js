@@ -133,7 +133,8 @@ export default {
     /**
      * Deduplicated shopping list - every field_ingredients line from
      * every placed recipe, first occurrence wins, stable order (week
-     * order, then placement order within a day). Derived, never stored.
+     * order, then placement order within a day). The list is derived,
+     * never stored.
      *
      * @param {object} state - The module state.
      * @param {object} getters - The module getters.
@@ -191,7 +192,11 @@ export default {
      * select-then-tap dispatch the same action, so they cannot drift.
      *
      * @param {object} context - The Vuex action context.
+     * @param {Function} context.commit - The commit function.
      * @param {object} payload - Day, recipe id, and origin day if moving.
+     * @param {string} payload.day - The day slot to fill.
+     * @param {string} payload.id - The recipe id to place.
+     * @param {?string} payload.fromDay - The origin day when moving.
      */
     place({ commit }, { day, id, fromDay = null }) {
       commit('PLACE', { day, id, fromDay })
@@ -201,7 +206,10 @@ export default {
 
     /**
      * @param {object} context - The Vuex action context.
+     * @param {Function} context.commit - The commit function.
      * @param {object} payload - Day and recipe id to remove.
+     * @param {string} payload.day - The day slot to clear.
+     * @param {string} payload.id - The recipe id to remove.
      */
     remove({ commit }, payload) {
       commit('REMOVE', payload)
@@ -211,6 +219,8 @@ export default {
      * Toggle library selection - tap a selected row again to deselect.
      *
      * @param {object} context - The Vuex action context.
+     * @param {Function} context.commit - The commit function.
+     * @param {object} context.state - The store state.
      * @param {string} id - The recipe id to select or deselect.
      */
     select({ commit, state }, id) {
@@ -221,7 +231,8 @@ export default {
 
     /**
      * @param {object} context - The Vuex action context.
-     * @param {string} day - The day under the drag, or null to clear.
+     * @param {Function} context.commit - The commit function.
+     * @param {?string} day - The day under the drag, or null to clear.
      */
     setOver({ commit }, day) {
       commit('SET_OVER', day)

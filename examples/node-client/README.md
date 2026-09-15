@@ -1,14 +1,15 @@
 # druxt-inspect (node-client)
 
 A CLI for inspecting a Drupal JSON:API backend through Druxt's
-framework-agnostic clients — no Vue, no Nuxt, no browser.
+framework-agnostic clients. It runs on plain Node, without Vue, Nuxt,
+or a browser.
 
 Built directly on `DruxtClient` and `DruxtSchema` (from `druxt` and
 `druxt-schema`), the same classes every other example in this suite uses
-under the hood — proof that they're plain Node-usable on their own. Useful
-for exploring an unfamiliar backend's JSON:API shape, generating Vue
-component stubs from a display mode's schema, or letting an AI coding agent
-introspect a backend without spinning up a browser.
+under the hood, proof that they're plain Node-usable on their own. Useful
+for exploring an unfamiliar backend's JSON:API shape and generating Vue
+component stubs from a display mode's schema. It can also let an AI
+coding agent introspect a backend without spinning up a browser.
 
 ## What it demonstrates
 
@@ -16,8 +17,8 @@ introspect a backend without spinning up a browser.
 - A real CLI built on the same framework-agnostic classes `node-client`'s
   sibling examples rely on internally.
 - Jest tests running against **recorded JSON:API fixtures** (`test/record.js`
-  captures them from a live backend) — no live backend needed to run the
-  test suite, only for interactive/manual use.
+  captures them from a live backend). The suite itself runs without one.
+  Only interactive/manual use needs a live backend.
 
 ## Commands
 
@@ -57,8 +58,8 @@ node bin/druxt-inspect.js stubs node--recipe --mode card --output components/ --
 ```
 
 `examples/node-client` isn't part of the root `yarn` workspace (only
-`packages/*` is) — it needs its own `yarn install` here, same as every other
-example directory in this suite.
+`packages/*` is), so it needs its own `yarn install` here, same as every
+other example directory in this suite.
 
 ## Testing
 

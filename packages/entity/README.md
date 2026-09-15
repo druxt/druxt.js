@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtEntity: Display Mode powered Entity, Form and Field components">
+<img src="./banner.svg" alt="DruxtEntity renders Display Mode powered Entity, Form and Field components">
 
 # DruxtEntity
 
@@ -13,16 +13,16 @@ DruxtEntity renders Drupal content in Vue. Point the `DruxtEntity` component
 at a resource type and UUID and it renders the entity's fields exactly as the
 Drupal display mode configures them. `DruxtEntityForm` does the same for
 forms, with submission and validation handled for you. Drupal keeps deciding
-what shows where; your Nuxt components decide how it looks.
+what shows where. Your Nuxt components decide how it looks.
 
 ![Example DruxtEntity component](https://druxtjs.org/images/druxt-entity.png)
 
 ## Features
 
 - Vue.js components:
-  - **DruxtEntity**: Render a Drupal Content Entity by UUID
-  - **DruxtEntityForm**: Render a Drupal Content Entity form
-- **Druxt settings**: Include and filter resource fields
+  - **DruxtEntity** renders a Drupal Content Entity by UUID
+  - **DruxtEntityForm** renders a Drupal Content Entity form
+- **Druxt settings** include and filter resource fields
 - **Druxt Router** integration
 - **@nuxtjs/Storybook** integration
 
@@ -30,7 +30,7 @@ what shows where; your Nuxt components decide how it looks.
 
 ## Installation
 
-> Included with [`druxt-site`](https://druxtjs.org/modules/site); install separately only when composing modules yourself.
+> Included with [`druxt-site`](https://druxtjs.org/modules/site). Install it separately only when composing modules yourself.
 
 1. Install the package:
 
@@ -88,11 +88,11 @@ Renders a Drupal Content Entity form with submission and validation support.
 
 Entity query settings can be provided to include related resources and filter the returned fields.
 
-- **fields**: An array of strings, or an array of arrays. Formatted for the Drupal JSON:API Params `addFields` method, used to filter the returned resource fields.
-- **include**: An array of relationship id's to include in the returned resources.
-- **schema**: Boolean, if `true` fields will be populated by the Drupal Display schema information.
+- **fields** is an array of strings, or an array of arrays. Formatted for the Drupal JSON:API Params `addFields` method, used to filter the returned resource fields.
+- **include** is an array of relationship id's to include in the returned resources.
+- **schema** is a Boolean. If `true`, fields will be populated by the Drupal Display schema information.
 
-_Example: Wrapper component with Query settings:_
+_Example: wrapper component with Query settings:_
 
 ```vue
 <script>

@@ -281,8 +281,8 @@
       <div data-testid="coc-modal" class="coc-modal-form">
         <p class="small text-muted">
           DruxtEntityForm renders the full node--recipe form from the Drupal
-          form display. Anything beyond a single cell edit happens here rather
-          than in the table.
+          form display. Anything beyond a single-cell edit happens here
+          rather than in the table.
         </p>
         <DruxtEntityForm
           v-if="modalOpen && modalRecipe"
@@ -663,8 +663,8 @@ export default {
       }
     },
 
-    // Optimistic single-cell edit: the cell updates immediately, the row
-    // shows Saving, then Saved or Failed - the UI never waits on the
+    // Optimistic single-cell edit: the cell updates immediately and the row
+    // shows Saving, then Saved or Failed. The UI never waits on the
     // round-trip before showing the change. Shared by the Content table
     // (field_difficulty/field_preparation_time) and the Taxonomy table
     // (name) - patchCell only needs row.type/row.id, not a content-specific
@@ -766,7 +766,7 @@ export default {
       if (row) {
         Object.assign(row.attributes, attributes)
       }
-      // Refresh the Vuex druxt store as well: DruxtEntityForm shares
+      // Refresh the Vuex druxt store as well. DruxtEntityForm shares
       // attribute object references with the stored resource (edits leak
       // in live), but its own addResource commit is a no-op (wrong
       // payload shape), so without this the `changed` timestamp goes
@@ -1037,7 +1037,7 @@ export default {
    (DruxtEntityForm's, then DruxtWrapper's) before each field's own
    wrapper <div>. Fields with a custom Form.vue (number, options_select,
    boolean_checkbox) render their label directly inside that div, but any
-   field type without one falls through to a generic fallback that adds
+   field type without one reaches the generic fallback that adds
    one more wrapper <div> first - confirmed via live DOM inspection, not
    guessed. Collapsing both levels with `display: contents` promotes each
    label/details straight into the grid without touching any field's own

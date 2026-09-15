@@ -13,7 +13,7 @@
  *
  * It executes every command through a recording adapter and writes each
  * response body to test/fixtures/, along with the manifest that
- * test/adapter.js replays from. Re-run when the fixture data genuinely
+ * test/adapter.js replays from. Re-run when the fixture data really
  * needs to change - not as part of the test suite.
  */
 

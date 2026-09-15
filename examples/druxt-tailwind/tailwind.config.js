@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // A single accent color (the Umami brand red) used sparingly against
+        // One accent color (the Umami brand red) used sparingly against
         // an otherwise monochrome (gray-scale) palette - the utility-first
         // counterpart to druxt-daisyui's warmer, component-driven theme.
         accent: {
