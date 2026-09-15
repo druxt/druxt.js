@@ -89,7 +89,7 @@ piecemeal. They resolve together whenever the Node 16 → 18+ upgrade happens.
 Every JS/Vue source file's JSDoc is scraped by `packages/docgen` into
 Markdown that the [druxtjs.org](https://druxtjs.org) API reference renders
 (the site itself now lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org);
-this repo ships the generator). **The JSDoc you
+this repo provides the generator). **The JSDoc you
 write is the public documentation, verbatim** - there's no separate editing
 pass, so a sloppy `@param` renders as a sloppy docs page.
 
@@ -183,23 +183,16 @@ stays as this repo's convention.) This is unrelated to commit-message
 
 ## examples/drupal local dev
 
-`examples/drupal` is the Umami dev backend (D11, demo_umami, the Druxt stack,
-`/en`+`/es`, the examples' OAuth consumer). demo_umami installs Spanish with
-its demo content and config translations, so `multilingual.cy.js` runs in CI;
-only the specs asserting the curated druxtjs.org site content
-(`umami-homepage.cy.js`, `druxt-devel-template.cy.js`) are gated on
-`CYPRESS_backendVariant`. The Druxt stack, permissions, the page body field
-and the OAuth consumer are applied by the `druxt_examples` recipe
-(`examples/drupal/recipes/`) plus the `druxt_examples` module
-(`examples/drupal/modules/`, symlinked into `web/modules/custom/` via a
-composer path repository); `drupal/druxt` is tracked at the latest release.
-Its local/CI workflow is Docker-free: PHP's built-in server plus a throwaway
-SQLite database (`examples/drupal/.devtools/`, `make build`); a
-`.ddev/config.yaml` provides the DDEV alternative locally. `test-e2e` uses
-the Docker-free path, pinned to PHP 8.3. See
-`examples/drupal/.devtools/README.md` for how the SQLite path works. The full
-druxtjs.org backend (Tome, curated content) lives in
-[druxt/druxtjs.org](https://github.com/druxt/druxtjs.org); DDEV-based
+`examples/drupal` is the minimal Umami dev backend (D11, demo_umami, the
+Druxt stack, `/es`, the examples' OAuth consumer). Its local/CI workflow is
+Docker-free: PHP's built-in server plus a throwaway SQLite database
+(`examples/drupal/.devtools/`, `make build`); a `.ddev/config.yaml` provides
+the DDEV alternative locally. `test-e2e` uses the Docker-free path, pinned
+to PHP 8.3. It ships no translated content: specs asserting translations
+(`multilingual.cy.js`) are gated on `CYPRESS_backendVariant` and belong to
+the site backend. See `examples/drupal/.devtools/README.md` for how the
+SQLite path works. The full druxtjs.org backend (Tome, translations) lives
+in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org); DDEV-based
 full-site setups live in the `quickstart` repo, not here.
 
 ## Reference

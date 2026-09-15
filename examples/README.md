@@ -36,7 +36,7 @@ cd examples/drupal
 # prints the URL it's serving on, default http://127.0.0.1:8888
 ```
 
-No Docker required: just PHP 8.3, Composer, and SQLite. See
+You don't need Docker, just PHP 8.3, Composer, and SQLite. See
 `examples/drupal/.devtools/README.md` for details.
 
 ## Quick start

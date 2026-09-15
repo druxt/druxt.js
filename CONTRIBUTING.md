@@ -158,7 +158,7 @@ Druxt uses a custom Docgen module (`packages/docgen`) to generate API
 documentation from the package source code, using a combination of **JSDoc**
 and the **Vue Docgen API**. The documentation website that renders the output
 lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org); this repo
-ships the generator, not the site.
+provides the generator, not the site.
 
 ### Jest
 
