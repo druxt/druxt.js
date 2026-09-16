@@ -62,7 +62,7 @@ The Druxt monorepo contains a collection of example projects inside the `example
 
 The example projects run against the locally built codebase, for testing during development.
 
-All examples use the Drupal instance located @ `examples/drupal` (`cd examples/drupal && make build`), a minimal Umami install. The full druxtjs.org site backend (translations, Tome content) lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org).
+All examples use the Drupal instance located at `examples/drupal` (`cd examples/drupal && make build`), a minimal Umami install. The full druxtjs.org site backend (translations, Tome content) lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org).
 
 ### druxt-site
 
