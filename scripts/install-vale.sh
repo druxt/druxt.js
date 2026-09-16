@@ -76,8 +76,9 @@ verify() {
   fi
 }
 
+# Bounded: a stalled release download must fail the job, not hang it.
 fetch() {
-  curl -sSfL --retry 3 -o "$2" "$1"
+  curl -sSfL --retry 3 --connect-timeout 15 --max-time 180 -o "$2" "$1"
 }
 
 # --- Vale --------------------------------------------------------------------
