@@ -38,7 +38,9 @@ foreach ($files->loadMultiple() as $file) {
   foreach ($styles as $style) {
     $derivative = $style->buildUri($uri);
     if (!file_exists($derivative)) {
-      $style->createDerivative($uri, $derivative);
+      if (!$style->createDerivative($uri, $derivative)) {
+        throw new Exception(sprintf('Could not generate the %s derivative of %s.', $style->id(), $uri));
+      }
       $count++;
     }
   }

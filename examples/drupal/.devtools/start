@@ -114,6 +114,7 @@ do {
   sleep(3);
 } while (time() < $deadline);
 if (!$served) {
+  stop_server();
   FAIL('Server is started, but site cannot be served.');
 }
 PASS('Server can serve content.');

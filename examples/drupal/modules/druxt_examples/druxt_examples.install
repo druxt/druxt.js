@@ -30,8 +30,9 @@ use Drupal\simple_oauth\Oauth2ScopeInterface;
  * token only receives when the signed-in user has that role.
  *
  * The Consumers module's own hook_install() creates a 'Default Consumer'
- * with a random UUID and client_id first; it is replaced here so exactly
- * one predictable consumer remains.
+ * (client_id default_consumer) first; that placeholder is removed here so
+ * the predictable consumer is the only one a fresh backend has. Consumers
+ * anyone else registers are left alone.
  *
  * The $is_syncing guard is deliberately omitted: the module's primary
  * install path is the druxt_examples recipe, and recipes apply through
@@ -101,11 +102,10 @@ function druxt_examples_install(bool $is_syncing = FALSE): void {
     $consumer->save();
   }
 
-  // Remove any stray consumers (the Consumers module's default, or a
-  // previous run's leftovers) so exactly one remains.
-  foreach ($storage->loadMultiple() as $other) {
-    if ($other->get('client_id')->value !== $client_id) {
-      $other->delete();
-    }
+  // Remove the placeholder the Consumers module creates on install, and
+  // nothing else: a consumer somebody else registered on this backend is
+  // theirs to keep.
+  foreach ($storage->loadByProperties(['client_id' => 'default_consumer']) as $placeholder) {
+    $placeholder->delete();
   }
 }
