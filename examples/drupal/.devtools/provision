@@ -103,7 +103,13 @@ else {
 
 TASK('Applying the druxt_examples recipe.');
 drush('recipe %s --yes', __DIR__ . '/../recipes/druxt_examples');
-PASS('Druxt stack, resource permissions, page body field and OAuth consumer in place.');
+PASS('Druxt stack, resource permissions, page body field, image styles and OAuth consumer in place.');
+
+// The examples link derivative paths without an itok token; only a file
+// that already exists is served that way (see image-derivatives.php).
+TASK('Pre-generating the image style derivatives the examples link to.');
+drush('php-script %s', __DIR__ . '/image-derivatives.php');
+PASS('Image style derivatives are available at tokenless paths.');
 
 TASK('Generating the Simple OAuth keypair.');
 $keys_dir = __DIR__ . '/../keys';
