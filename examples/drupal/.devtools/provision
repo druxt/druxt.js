@@ -114,8 +114,11 @@ PASS('Image style derivatives are available at tokenless paths.');
 TASK('Generating the Simple OAuth keypair.');
 $keys_dir = __DIR__ . '/../keys';
 if (!is_dir($keys_dir)) {
-  mkdir($keys_dir, 0777, TRUE);
+  mkdir($keys_dir, 0700, TRUE);
 }
+// Owner-only whether the directory was just created (a permissive umask
+// would have widened it) or already existed.
+chmod($keys_dir, 0700);
 $private_key = $keys_dir . '/private.key';
 $public_key = $keys_dir . '/public.key';
 $res = openssl_pkey_new([
