@@ -1,11 +1,18 @@
 name: Druxt examples backend
 description: 'Configures the Umami-based backend for the druxt.js frontend examples: the Druxt module stack, anonymous access to the Druxt JSON:API resources, and the body field the schema example introspects. The OAuth consumer the examples hardcode is created by the druxt_examples module this recipe installs.'
 install:
+  # druxt pulls jsonapi in anyway; listed so the recipe may act on its config.
+  - jsonapi
   - druxt
   - simple_oauth
   - druxt_examples
 config:
   actions:
+    # Core ships JSON:API read-only, which answers every PATCH with 405. The
+    # Content Ops Console example writes back over its OAuth token.
+    jsonapi.settings:
+      simpleConfigUpdate:
+        read_only: false
     # The frontend examples fetch schemas, displays, menus and views as
     # anonymous JSON:API reads; without this every DruxtClient model fetch
     # returns 403 "Required permissions: administer ... display".

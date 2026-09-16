@@ -5,3 +5,4 @@ type: module
 core_version_requirement: ^11
 dependencies:
   - drupal:consumers
+  - simple_oauth:simple_oauth

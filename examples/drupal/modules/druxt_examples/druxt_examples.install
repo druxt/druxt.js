@@ -7,16 +7,27 @@
 
 declare(strict_types=1);
 
+use Drupal\simple_oauth\Entity\Oauth2Scope;
+use Drupal\simple_oauth\Oauth2ScopeInterface;
+
 /**
  * Implements hook_install().
  *
- * Creates the public PKCE OAuth consumer the frontend examples expect.
+ * Creates the public PKCE OAuth consumer the frontend examples expect, and
+ * the scope it signs users in with.
  *
  * The UUID and client_id are fixed: examples/druxt-site and
  * examples/druxt-bootstrapvue hardcode the client_id in their
  * nuxt.config.js, and the redirect must be http://localhost:3004/callback
  * (the Content Ops Console's dev port) or the authorization round-trip
  * fails with "invalid redirect" before any example can log in.
+ *
+ * Simple OAuth 6 permits no grant until the consumer lists it, and its
+ * authorize endpoint refuses a request that names no scope unless the
+ * consumer carries a default one. @nuxtjs/auth-next sends an empty scope,
+ * so the consumer allows the authorization code and refresh token grants
+ * and defaults to the druxt_examples scope: Umami's editor role, which a
+ * token only receives when the signed-in user has that role.
  *
  * The Consumers module's own hook_install() creates a 'Default Consumer'
  * with a random UUID and client_id first; it is replaced here so exactly
@@ -31,9 +42,37 @@ declare(strict_types=1);
  * would leave the recipe-applied backend without its consumer.
  */
 function druxt_examples_install(bool $is_syncing = FALSE): void {
+  $scope_id = 'druxt_examples';
+  if (Oauth2Scope::load($scope_id) === NULL) {
+    Oauth2Scope::create([
+      'id' => $scope_id,
+      'name' => $scope_id,
+      'description' => 'Everything the Druxt frontend examples do once signed in: the Umami editor role.',
+      'grant_types' => [
+        'authorization_code' => [
+          'status' => TRUE,
+          'description' => 'Sign in from a Druxt example.',
+        ],
+        'refresh_token' => [
+          'status' => TRUE,
+          'description' => 'Stay signed in.',
+        ],
+      ],
+      'umbrella' => FALSE,
+      'granularity_id' => Oauth2ScopeInterface::GRANULARITY_ROLE,
+      'granularity_configuration' => ['role' => 'editor'],
+    ])->save();
+  }
+
   $storage = \Drupal::entityTypeManager()->getStorage('consumer');
 
   $client_id = 'c6e3275c-05cb-45f0-a3c3-c037bf730963';
+  $grants = [
+    'grant_types' => ['authorization_code', 'refresh_token'],
+    'authorization_code_scopes' => [['scope_id' => $scope_id]],
+    // No consent screen: the examples are the only client of this backend.
+    'automatic_authorization' => TRUE,
+  ];
   $values = [
     'uuid' => 'e7043528-3e7c-44b1-9a78-6b05bc888698',
     'client_id' => $client_id,
@@ -44,12 +83,21 @@ function druxt_examples_install(bool $is_syncing = FALSE): void {
     'confidential' => FALSE,
     'pkce' => TRUE,
     'redirect' => 'http://localhost:3004/callback',
-  ];
+  ] + $grants;
 
   $consumer = $storage->loadByProperties(['client_id' => $client_id]);
   $consumer = reset($consumer) ?: NULL;
   if ($consumer === NULL) {
     $consumer = $storage->create($values);
+    $consumer->save();
+  }
+  else {
+    // A consumer from before the grants were declared gets them now.
+    foreach ($grants as $field => $value) {
+      if ($consumer->get($field)->isEmpty()) {
+        $consumer->set($field, $value);
+      }
+    }
     $consumer->save();
   }
 
