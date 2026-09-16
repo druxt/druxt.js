@@ -40,7 +40,11 @@ tar -xzf "$PHP_SRC_TMP/php-src.tar.gz" -C "$PHP_SRC_TMP/gd" --strip-components=3
   sudo make install > /dev/null
 )
 echo 'extension=gd' | sudo tee "$CONF_DIR/gd.ini" > /dev/null
-php -r "exit(extension_loaded('gd') && extension_loaded('pdo_sqlite') ? 0 : 1);" || { echo "gd or pdo_sqlite is not loaded" >&2; exit 1; }
+
+# The feature builds sodium as a shared module but never enables it, and
+# simple_oauth's lcobucci/jwt requires it.
+echo 'extension=sodium' | sudo tee "$CONF_DIR/sodium.ini" > /dev/null
+php -r "exit(extension_loaded('gd') && extension_loaded('pdo_sqlite') && extension_loaded('sodium') ? 0 : 1);" || { echo "gd, pdo_sqlite or sodium is not loaded" >&2; exit 1; }
 
 # OpenSSH forwards the host's LANG and LC_*, and bash warns on every start
 # when that locale is not generated here. Cover the usual English ones;
