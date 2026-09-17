@@ -37,7 +37,7 @@ const DruxtComponentMixin = {
    *
    * Loads the Druxt module data and applies a wrapper component as required.
    *
-   * **Important:** If your component has an existing `fetch` method, you must manually invoke
+   * If your component has an existing `fetch` method, you must manually invoke
    * the `DruxtComponentMixin.fetch()` hook.
    *
    * @see {@link https://nuxtjs.org/api/pages-fetch/}

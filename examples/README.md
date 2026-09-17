@@ -1,25 +1,25 @@
 # DruxtJS Examples
 
-Six directories covering the main ways to build with Druxt: the all-in-one
-site module, three themed showcases built on bespoke modules, a plain-Node
-CLI over the framework-agnostic clients, and the test infrastructure they
-share.
+The directories below cover the main ways to build with Druxt, from the
+all-in-one site module and three themed showcases built on bespoke
+modules to a plain-Node CLI over the framework-agnostic clients, plus
+the test infrastructure they share.
 
-| Directory            | What it is                                                                                                                                                                                                                                       | Stack                 |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------- |
-| `druxt-site`         | The canonical reference: a full site on the `druxt-site` all-in-one module, with `pages/examples/` demo pages consolidating every framework pattern (debug, wrappers, schema, router modes, entity queries/forms, menu editing, custom modules). | Nuxt 2 + druxt-site   |
-| `druxt-daisyui`      | Recipe Box: swipe through recipes one at a time, save the ones you like to a persistent collection, open any recipe in an in-page detail panel. DaisyUI 4 / Tailwind 3.                                                                          | Nuxt 2 + DaisyUI      |
-| `druxt-tailwind`     | Meal Planner: drag recipes onto a 7-day grid; totals and a shopping list derive live. TailwindCSS utilities only, and **no Nuxt**: plain Vue 2 + Vite 4, with each Nuxt module's wiring done by hand.                                            | Vue 2 + Vite 4        |
-| `druxt-bootstrapvue` | Content Ops Console: a dense, sortable/filterable content + taxonomy table with authenticated inline write-back to Drupal's JSON:API over real OAuth2. BootstrapVue 2.                                                                           | Nuxt 2 + BootstrapVue |
-| `node-client`        | `druxt-inspect`: a CLI (`types`, `schema`, `stubs`, `sample`, `views`) proving `DruxtClient`/`DruxtSchema` run anywhere Node does, with no Vue/Nuxt. Backend-free Jest suite via recorded fixtures.                                              | Node                  |
-| `shared`             | Cypress commands and Umami content fixtures used by the app examples above, imported not copied.                                                                                                                                                 | Cypress               |
+| Directory            | What it is                                                                                                                                                                                                                                                  | Stack                 |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| `druxt-site`         | A full site on the `druxt-site` all-in-one module and the suite's canonical reference, with `pages/examples/` demo pages consolidating every framework pattern (debug, wrappers, schema, router modes, entity queries/forms, menu editing, custom modules). | Nuxt 2 + druxt-site   |
+| `druxt-daisyui`      | Recipe Box: swipe through recipes one at a time and save the ones you like to a persistent collection. Open any recipe in an in-page detail panel. DaisyUI 4 / Tailwind 3.                                                                                  | Nuxt 2 + DaisyUI      |
+| `druxt-tailwind`     | Meal Planner: drag recipes onto a 7-day grid. Totals and a shopping list derive live. TailwindCSS utilities only, and **no Nuxt**: plain Vue 2 + Vite 4, with each Nuxt module's wiring done by hand.                                                       | Vue 2 + Vite 4        |
+| `druxt-bootstrapvue` | Content Ops Console: a dense, sortable/filterable content + taxonomy table with authenticated inline write-back to Drupal's JSON:API over real OAuth2. BootstrapVue 2.                                                                                      | Nuxt 2 + BootstrapVue |
+| `node-client`        | `druxt-inspect`: a CLI (`types`, `schema`, `stubs`, `sample`, `views`) proving `DruxtClient`/`DruxtSchema` run anywhere Node does, with no Vue/Nuxt. Backend-free Jest suite via recorded fixtures.                                                         | Node                  |
+| `shared`             | Cypress commands and Umami content fixtures used by the app examples above, imported not copied.                                                                                                                                                            | Cypress               |
 
 Only `druxt-site` represents Drupal's "Site" model (menu, breadcrumb,
 generic content browsing via the wildcard router). That's deliberate, and
 it's the one app in the suite meant to be read that way. Recipe Box, Meal
-Planner, and Content Ops Console are each a genuinely different,
-purpose-built application drawn from the same Umami demo content, not three
-reskins of one brochure site: none of them ship a site-wide menu or
+Planner, and Content Ops Console are each a distinct, purpose-built
+application drawn from the same Umami demo content, not three
+reskins of one brochure site: none of them provide a site-wide menu or
 breadcrumb, and none resolve arbitrary Drupal paths. Design briefs (mood
 board, palette, typography, component specs) for the three themed apps live
 in the project's internal workspace wiki, not in this repo.
@@ -35,7 +35,7 @@ cd docs/drupal
 # prints the URL it's serving on, default http://127.0.0.1:8888
 ```
 
-No Docker required: just PHP 8.3, Composer, and SQLite. See
+You don't need Docker: just PHP 8.3, Composer, and SQLite. See
 `docs/drupal/.devtools/README.md` for details.
 
 ## Quick start
@@ -57,7 +57,7 @@ cd examples/node-client && node bin/druxt-inspect.js --help
 
 ## Tests
 
-Each app example ships Cypress specs (runnable against a live backend):
+Each app example includes Cypress specs (runnable against a live backend):
 
 ```bash
 yarn example:druxt-site:test

@@ -38,7 +38,7 @@ What it generates:
 | `content/modules/<pkg>/CHANGELOG.md` | `packages/<pkg>/CHANGELOG.md`                                         |
 | `content/how-to/contributing.md`     | root `CONTRIBUTING.md`                                                |
 
-Because the JSDoc **is** the public API reference, the monorepo's ESLint
+Because the JSDoc is the public API reference, the monorepo's ESLint
 config enforces complete `@param` typing and descriptions - see the
 monorepo AGENTS.md for the rules and their rationale.
 

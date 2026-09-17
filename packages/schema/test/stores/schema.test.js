@@ -48,7 +48,7 @@ describe('DruxtSchemaStore', () => {
     schema = await store.dispatch('druxtSchema/get', { resourceType: 'test' })
     expect(schema).toStrictEqual({})
 
-    // Get schem by resourceType.
+    // Get schema by resourceType.
     schema = await store.dispatch('druxtSchema/get', { bundle: 'test' })
     expect(schema).toStrictEqual({})
   })

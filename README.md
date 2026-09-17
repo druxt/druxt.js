@@ -1,5 +1,5 @@
 <a href="https://druxtjs.org">
-  <img src=".github/banner.svg" alt="DruxtJS: The Fully Decoupled Drupal Framework">
+  <img src=".github/banner.svg" alt="DruxtJS, the fully decoupled Drupal framework">
 </a>
 
 # DruxtJS
@@ -14,7 +14,7 @@
 
 Druxt connects a [Drupal](https://www.drupal.org) backend to a
 [Nuxt](https://v2.nuxt.com) frontend. Drupal stays the editorial system your
-authors know, Nuxt renders the site, and Druxt does the work between them: it
+authors know, Nuxt renders the site, and Druxt bridges the two: it
 reads Drupal's JSON:API and turns routes, content entities, menus, blocks and
 views into Vue components you can theme.
 
@@ -67,17 +67,17 @@ export default {
 
 ## Modules
 
-| Module | Package | Purpose |
-| ------ | ------- | ------- |
-| [Druxt](https://druxtjs.org/modules/druxt) | `druxt` | The client, store and component foundation |
-| [Blocks](https://druxtjs.org/modules/blocks) | `druxt-blocks` | Decoupled block and region rendering |
-| [Breadcrumb](https://druxtjs.org/modules/breadcrumb) | `druxt-breadcrumb` | Router based breadcrumbs |
-| [Entity](https://druxtjs.org/modules/entity) | `druxt-entity` | Content entities, forms and fields |
-| [Menu](https://druxtjs.org/modules/menu) | `druxt-menu` | Decoupled Drupal menus |
-| [Router](https://druxtjs.org/modules/router) | `druxt-router` | Drupal routes in Nuxt |
-| [Schema](https://druxtjs.org/modules/schema) | `druxt-schema` | Display mode schemas |
-| [Site](https://druxtjs.org/modules/site) | `druxt-site` | A decoupled Drupal site out of the box |
-| [Views](https://druxtjs.org/modules/views) | `druxt-views` | Decoupled Drupal Views |
+| Module                                               | Package            | Purpose                                    |
+| ---------------------------------------------------- | ------------------ | ------------------------------------------ |
+| [Druxt](https://druxtjs.org/modules/druxt)           | `druxt`            | The client, store and component foundation |
+| [Blocks](https://druxtjs.org/modules/blocks)         | `druxt-blocks`     | Decoupled block and region rendering       |
+| [Breadcrumb](https://druxtjs.org/modules/breadcrumb) | `druxt-breadcrumb` | Router based breadcrumbs                   |
+| [Entity](https://druxtjs.org/modules/entity)         | `druxt-entity`     | Content entities, forms and fields         |
+| [Menu](https://druxtjs.org/modules/menu)             | `druxt-menu`       | Decoupled Drupal menus                     |
+| [Router](https://druxtjs.org/modules/router)         | `druxt-router`     | Drupal routes in Nuxt                      |
+| [Schema](https://druxtjs.org/modules/schema)         | `druxt-schema`     | Display mode schemas                       |
+| [Site](https://druxtjs.org/modules/site)             | `druxt-site`       | A decoupled Drupal site out of the box     |
+| [Views](https://druxtjs.org/modules/views)           | `druxt-views`      | Decoupled Drupal Views                     |
 
 ## Demo
 
@@ -102,7 +102,7 @@ Find support or get involved in building Druxt via the community channels:
 Druxt is an open-source project, built by the community for the community.
 See the [Contributing guide](./CONTRIBUTING.md) for how to get involved.
 
-This repository ships a dev container (`.devcontainer/devcontainer.json`) for
+This repository includes a dev container (`.devcontainer/devcontainer.json`) for
 VS Code, GitHub Codespaces and [DevPod](https://devpod.sh), with Node, Yarn
 and all dependencies installed on first open.
 

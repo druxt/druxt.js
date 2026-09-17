@@ -20,7 +20,7 @@
       <div class="flex flex-col gap-2 text-xs leading-normal text-gray-500">
         <div class="flex gap-2.5">
           <span class="w-1.5 h-1.5 bg-accent mt-1.5 shrink-0"></span>
-          <span>Native HTML5 drag-and-drop, no drag library</span>
+          <span>Native HTML5 drag-and-drop without a drag library</span>
         </div>
         <div class="flex gap-2.5">
           <span class="w-1.5 h-1.5 bg-accent mt-1.5 shrink-0"></span>
@@ -279,63 +279,6 @@ export default {
     dragging: null,
   }),
 
-  computed: {
-    categories() {
-      const seen = []
-      this.recipes.forEach((r) => {
-        if (r.category && !seen.includes(r.category)) seen.push(r.category)
-      })
-      return seen
-    },
-
-    chips() {
-      return ['All', ...this.categories]
-    },
-
-    visibleRecipes() {
-      return this.cat === 'All'
-        ? this.recipes
-        : this.recipes.filter((r) => r.category === this.cat)
-    },
-
-    byId() {
-      return this.recipes.reduce((map, r) => ({ ...map, [r.id]: r }), {})
-    },
-
-    libraryCountLabel() {
-      return `${this.visibleRecipes.length} of ${this.recipes.length} recipes · source: node--recipe collection`
-    },
-
-    selected() {
-      return this.$store.state.plan.selected
-    },
-
-    over() {
-      return this.$store.state.plan.over
-    },
-
-    weekCount() {
-      return this.$store.getters['plan/weekCount']
-    },
-
-    weekTimeLabel() {
-      const minutes = this.$store.getters['plan/weekMinutes']
-      return `${Math.floor(minutes / 60)}h ${minutes % 60}m`
-    },
-
-    busiestLabel() {
-      return this.weekCount ? this.$store.getters['plan/busiestDay'] : '—'
-    },
-
-    mixLabel() {
-      return this.$store.getters['plan/mixLabel']
-    },
-
-    shoppingList() {
-      return this.$store.getters['plan/shoppingList']
-    },
-  },
-
   async fetch() {
     const type = 'node--recipe'
     const resources = await this.$store.dispatch('druxt/getCollection', {
@@ -401,6 +344,63 @@ export default {
         meta: `${(category || '').toLowerCase()} · ${prep + cook} min · ${(difficulty || '').toLowerCase()}`,
       }
     })
+  },
+
+  computed: {
+    categories() {
+      const seen = []
+      this.recipes.forEach((r) => {
+        if (r.category && !seen.includes(r.category)) seen.push(r.category)
+      })
+      return seen
+    },
+
+    chips() {
+      return ['All', ...this.categories]
+    },
+
+    visibleRecipes() {
+      return this.cat === 'All'
+        ? this.recipes
+        : this.recipes.filter((r) => r.category === this.cat)
+    },
+
+    byId() {
+      return this.recipes.reduce((map, r) => ({ ...map, [r.id]: r }), {})
+    },
+
+    libraryCountLabel() {
+      return `${this.visibleRecipes.length} of ${this.recipes.length} recipes · source: node--recipe collection`
+    },
+
+    selected() {
+      return this.$store.state.plan.selected
+    },
+
+    over() {
+      return this.$store.state.plan.over
+    },
+
+    weekCount() {
+      return this.$store.getters['plan/weekCount']
+    },
+
+    weekTimeLabel() {
+      const minutes = this.$store.getters['plan/weekMinutes']
+      return `${Math.floor(minutes / 60)}h ${minutes % 60}m`
+    },
+
+    busiestLabel() {
+      return this.weekCount ? this.$store.getters['plan/busiestDay'] : '—'
+    },
+
+    mixLabel() {
+      return this.$store.getters['plan/mixLabel']
+    },
+
+    shoppingList() {
+      return this.$store.getters['plan/shoppingList']
+    },
   },
 
   methods: {

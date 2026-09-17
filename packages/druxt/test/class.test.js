@@ -37,7 +37,7 @@ describe('DruxtJS Class', () => {
   test('getComponents', () => {
     let components
 
-    // Get global matches, expect no results.
+    // Get global matches, expect 0 results.
     expect(druxt.getComponents(wrapper.vm, componentOptions).length).toBe(0)
 
     // Get all matches, expect 4 results.

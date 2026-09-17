@@ -137,7 +137,7 @@ describe('DruxtStore', () => {
     expect(resource).toStrictEqual(expected)
 
     // Assert that:
-    // - No additional get requests are executed.
+    // - The suite doesn't execute additional get requests.
     // - Rehydrated resource gives the same results.
     const storedResource = await store.dispatch('druxt/getResource', mockPage.data)
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
@@ -195,7 +195,7 @@ describe('DruxtStore', () => {
     expect(resource.data.attributes).toBe(undefined)
     expect(resource.data.relationships).toBe(undefined)
 
-    // Get the same resource but with a single field.
+    // Get the same resource but with one field.
     const partialResource = await store.dispatch('druxt/getResource', {
       ...request,
       query: new DrupalJsonApiParams()
@@ -229,7 +229,7 @@ describe('DruxtStore', () => {
     await store.dispatch('druxt/getResource', request)
 
     // Assert that:
-    // - No additional get requests were made.
+    // - The suite didn't make additional get requests.
     expect(mockAxios.get).toHaveBeenCalledTimes(4)
   })
 
@@ -277,7 +277,7 @@ describe('DruxtStore', () => {
     const storedResource = await store.dispatch('druxt/getResource', request)
 
     // Assert that:
-    // - No additional get requests are executed.
+    // - The suite doesn't execute additional get requests.
     // - Rehydrated resource gives the same results.
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
     expect(storedResource).toStrictEqual({

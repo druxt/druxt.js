@@ -2,14 +2,14 @@ it('druxt-bootstrapvue: Content console renders table, filters, and sorting', ()
   cy.visit('/')
 
   // Dark sidebar with brand and a signed-out login affordance. Content /
-  // Recipes / Articles / Taxonomy - no Menus (not implemented), no generic
-  // Site-model surface (that's what examples/druxt-site demonstrates).
+  // Recipes / Articles / Taxonomy only - Menus aren't implemented here, and
+  // the generic Site-model surface is what examples/druxt-site demonstrates.
   cy.get('.coc-sidebar').should('exist')
   cy.get('[data-testid="coc-login"]').should('exist')
   cy.get('[data-testid="coc-nav-item"]').should('have.length', 4)
   cy.get('[data-testid="coc-nav-item"]').should('not.contain.text', 'Menus')
 
-  // Topbar: title, item count, no unsaved edits yet, no error banner.
+  // Topbar: title, item count, the "no local edits" status, and no error banner.
   cy.get('h1').should('have.text', 'Content')
   cy.get('.coc-count').should('contain.text', 'of')
   cy.get('.coc-topbar .small.text-muted').should('contain.text', 'no local edits')
@@ -96,8 +96,8 @@ it('druxt-bootstrapvue: Taxonomy section - recipe categories and tags, no leftov
   cy.get('[data-testid="coc-term-row"]').should('have.length.gte', 1)
   cy.get('[data-testid="coc-search"]').clear()
 
-  // No wildcard router, no generic recipe/article page - this app's only
-  // reachable surface is the console itself.
+  // The wildcard router and the generic recipe/article page are absent -
+  // this app's only reachable surface is the console itself.
   cy.request({ url: '/en/recipes/deep-mediterranean-quiche', failOnStatusCode: false }).then(
     (response) => {
       expect(response.status).not.to.equal(200)
@@ -114,8 +114,8 @@ it('druxt-bootstrapvue: an unauthenticated edit surfaces the failure path', () =
   cy.get('[data-testid="coc-login"]').should('exist')
 
   // The sidebar tells a signed-out visitor exactly what to type - this is
-  // an OAuth2 login against a real backend, not a mocked auth state, so
-  // the credentials need to be discoverable in the UI itself.
+  // an OAuth2 login against a real backend rather than a mocked auth state,
+  // so the credentials need to be discoverable in the UI itself.
   cy.get('[data-testid="coc-test-creds"]')
     .should('be.visible')
     .and('contain.text', 'admin')

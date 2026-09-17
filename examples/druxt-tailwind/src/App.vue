@@ -10,9 +10,10 @@
       />
     </header>
 
-    <!-- No site menu, no breadcrumb: this app is a single-purpose tool, not
-         a Druxt "Site" (that's what examples/druxt-site demonstrates). The
-         Meal Planner owns the full viewport width for its two-pane layout. -->
+    <!-- A single-purpose tool rather than a Druxt "Site" (that's what
+         examples/druxt-site demonstrates). It has no site menu or
+         breadcrumb, and the Meal Planner fills the full viewport width
+         for its two-pane layout. -->
     <main class="flex-1 w-full px-6 lg:px-8 py-12">
       <router-view />
     </main>

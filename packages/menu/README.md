@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtMenu: Drupal menus as Vue components">
+<img src="./banner.svg" alt="DruxtMenu renders Drupal menus as Vue components">
 
 # DruxtMenu
 
@@ -19,8 +19,8 @@ menu item themes through the Druxt component suggestion system.
 ## Features
 
 - Vue.js components:
-  - **DruxtMenu**: Render Drupal menu by name
-- **Druxt settings**: Filter JSON:API fields
+  - **DruxtMenu** renders a Drupal menu by name
+- **Druxt settings** filter JSON:API fields
 - **Drupal Menu blocks**
 - **@nuxtjs/Storybook** integration
 
@@ -28,7 +28,7 @@ menu item themes through the Druxt component suggestion system.
 
 ## Installation
 
-> Included with [`druxt-site`](https://druxtjs.org/modules/site); install separately only when composing modules yourself.
+> Included with [`druxt-site`](https://druxtjs.org/modules/site). Install it separately only when composing modules yourself.
 
 1. Install the package:
 
@@ -159,7 +159,7 @@ These options are specific to this module.
 
 | Option                    | Type       | Required | Default | Description                                                                                                                                                                                                   |
 | ------------------------- | ---------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `menu.jsonApiMenuItems`   | `boolean`  | No       | `true`  | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. The Nuxt module enables this by default; the `DruxtMenu` class used directly defaults it to `false`. |
+| `menu.jsonApiMenuItems`   | `boolean`  | No       | `true`  | Use the Drupal [JSON:API Menu Items](https://www.drupal.org/project/jsonapi_menu_items) module resource. The Nuxt module enables this by default. The `DruxtMenu` class used directly defaults it to `false`. |
 | `menu.query.fields`       | `string[]` | No       | `false` | An array of fields to filter all JSON:API Menu queries.                                                                                                                                                       |
 | `menu.query.requiredOnly` | `boolean`  | No       | `false` | Whether to automatically filter to module-defined minimum required fields.                                                                                                                                    |
 

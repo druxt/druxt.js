@@ -185,7 +185,7 @@ it('Storybook: Menu', () => {
   // Test the root Menu group.
   cy.get('#druxt-menu').should('contain.text', 'Menu')
   cy.get('#druxt-menu').click()
-  // One story per menu on the backend: the full site backend ships 6 menus,
+  // One story per menu on the backend: the full site backend provides 6 menus,
   // umami's default set is larger. The package-defined stories below are
   // asserted explicitly, so only the floor is pinned here.
   cy.get('[data-parent-id="druxt-menu"]').should('have.length.at.least', 6)

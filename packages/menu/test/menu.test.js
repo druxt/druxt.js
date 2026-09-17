@@ -38,7 +38,7 @@ describe('DruxtMenu class', () => {
     // Ensure main menu returns three items.
     expect((await jsonApiMenu.get('main')).entities.length).toBe(3)
 
-    // Ensure non-existant menu return no items.
+    // Ensure a non-existent menu returns no items.
     expect((await jsonApiMenu.get('error')).entities.length).toBe(0)
 
     // TODO - Add mock test data, Umami Profile doesn't have deep enough menu items.

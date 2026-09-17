@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtBlocks: Drupal blocks and block regions in Nuxt">
+<img src="./banner.svg" alt="DruxtBlocks renders Drupal blocks and block regions in Nuxt">
 
 # DruxtBlocks
 
@@ -11,25 +11,25 @@
 
 DruxtBlocks brings Drupal's block layout to Nuxt. `DruxtBlockRegion` renders
 every visible block Drupal places in a theme region, and `DruxtBlock` renders
-a single block anywhere in your layout. Both resolve through the Druxt
-component suggestion system, so overriding one block's markup takes a single
-Vue component.
+one block anywhere in your layout. Both resolve through the Druxt
+component suggestion system, so overriding one block's markup takes one Vue
+component.
 
 ![Example DruxtBlockRegion component](https://druxtjs.org/images/druxt-block-region.png)
 
 ## Features
 
 - Vue.js components:
-  - **DruxtBlock**: Render Drupal blocks by UUID or internal ID
-  - **DruxtBlockRegion**: Render all blocks within a region
-- **Druxt settings**: Filter JSON:API fields
+  - **DruxtBlock** renders Drupal blocks by UUID or internal ID
+  - **DruxtBlockRegion** renders all blocks within a region
+- **Druxt settings** filter JSON:API fields
 - **@nuxtjs/Storybook** integration
 
 ---
 
 ## Installation
 
-> Included with [`druxt-site`](https://druxtjs.org/modules/site); install separately only when composing modules yourself.
+> Included with [`druxt-site`](https://druxtjs.org/modules/site). Install it separately only when composing modules yourself.
 
 1. Install the package:
 

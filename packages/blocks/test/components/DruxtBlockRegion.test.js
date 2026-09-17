@@ -128,7 +128,7 @@ describe('Component - DruxtBlockRegion', () => {
       'DruxtBlockRegionDefault',
     ])
 
-    // Assert that the results are corectly sorted.
+    // Assert that the results are correctly sorted.
     expect(wrapper.vm.blocks[0].attributes.weight < wrapper.vm.blocks[1].attributes.weight).toBeTruthy()
   })
 

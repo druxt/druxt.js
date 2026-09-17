@@ -17,7 +17,7 @@
 import { DruxtFieldMixin } from 'druxt-entity'
 
 // DruxtField's own type checks (isBoolean/isDateTime/isText) never match
-// options_select, so it fell through to a free-text textarea - the modal
+// options_select, so it reached the free-text textarea fallback - the modal
 // accepted values the table's own <select> would reject. Reads the real
 // allowed values from schema.settings.storage rather than hardcoding
 // them, so this covers any options_select field, not just one.

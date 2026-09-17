@@ -4,7 +4,7 @@
  * Minimal argv parser for the druxt-inspect CLI.
  *
  * Intentionally dependency-free: the CLI's argument surface is five
- * commands with a handful of options, and staying dependency-free means the
+ * commands with a few options, and staying dependency-free means the
  * package runs against nothing but its `druxt`/`druxt-schema` workspace
  * links - no registry fetch needed to use it.
  *

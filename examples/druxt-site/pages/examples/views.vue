@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>DruxtView examples</h1>
-    <blockquote>DruxtView renders a Drupal View using the JSON:API Views module - results, exposed filters/sorts, headers and footers. The following examples demonstrate the same two render paths as <NuxtLink to="/examples/wrappers">DruxtEntity</NuxtLink>: the default results slot (one DruxtEntity per row, themed by whatever wrapper components exist), and template injection for full control.</blockquote>
+    <blockquote>DruxtView renders a Drupal View using the JSON:API Views module - results, exposed filters/sorts, headers and footers. The following examples demonstrate the same two render paths as <NuxtLink to="/examples/wrappers">DruxtEntity</NuxtLink>: the default results slot (one DruxtEntity per row, themed by whatever wrapper components exist) and template injection for full control.</blockquote>
 
     <hr />
 

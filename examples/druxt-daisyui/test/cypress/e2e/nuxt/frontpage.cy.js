@@ -1,9 +1,9 @@
 it('druxt-daisyui: Homepage header and theme toggle', () => {
   cy.visit('/')
 
-  // No site-wide menu - Recipe Box is a focused tool, not a Druxt "Site"
-  // (that's what examples/druxt-site demonstrates). The header is just the
-  // logo and the theme toggle.
+  // No site-wide menu - Recipe Box is a focused tool rather than a Druxt
+  // "Site" (that's what examples/druxt-site demonstrates). The header is just
+  // the logo and the theme toggle.
   cy.get('header img[alt="Umami"]').should('exist')
   cy.get('[data-fetch-key^="DruxtMenu"]').should('not.exist')
 

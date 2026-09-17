@@ -15,7 +15,7 @@
  *
  * Fixtures are recorded from the docs/drupal Umami backend by
  * `node test/record.js` (see that file) - only re-record when the data
- * genuinely needs to change.
+ * really needs to change.
  */
 
 const fs = require('fs')

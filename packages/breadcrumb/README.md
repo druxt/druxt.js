@@ -19,13 +19,13 @@ other Druxt component.
 ## Features
 
 - Vue.js components:
-  - **DruxtBreadcrumb**: Render Drupal breadcrumbs by route
+  - **DruxtBreadcrumb** renders Drupal breadcrumbs by route
 
 ---
 
 ## Installation
 
-> Included with [`druxt-site`](https://druxtjs.org/modules/site); install separately only when composing modules yourself.
+> Included with [`druxt-site`](https://druxtjs.org/modules/site). Install it separately only when composing modules yourself.
 
 1. Install the package:
 

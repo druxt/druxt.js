@@ -6,7 +6,7 @@
 // the alarm.
 //
 // The examples/drupal backend runs this in full: demo_umami installs
-// Spanish alongside English with URL prefixes, and ships Spanish
+// Spanish alongside English with URL prefixes, and includes Spanish
 // translations of its demo content and configuration. Specs asserting the
 // curated druxtjs.org site content (homepage banners, devel templates)
 // remain gated on CYPRESS_backendVariant; see umami-homepage.cy.js.
@@ -19,7 +19,7 @@ describe('Multilingual', () => {
     const languageBlock = '[data-fetch-key^="DruxtBlockLanguageBlock"]'
     cy.get(languageBlock).find('li').should('have.length', 2)
 
-    // Clicking Spanish lands on the Spanish front page - not back on /.
+    // Clicking Spanish opens the Spanish front page, not /.
     cy.get(languageBlock).contains('a', 'Spanish').click()
     cy.url().should('include', '/es')
 
@@ -35,8 +35,8 @@ describe('Multilingual', () => {
     cy.get('div[name="page_title"]').should('contain.text', 'Inicio')
     cy.contains('Explore recetas').should('exist')
 
-    // Menu config translations: the main menu links, defined by views
-    // menu settings, translated via the language.es collection.
+    // Menu config translations: the main menu links are defined by views
+    // menu settings and translated via the language.es collection.
     cy.get('div[name="header"]').within(() => {
       cy.contains('a', 'Inicio').should('exist')
       cy.contains('a', 'Artículos').should('exist')
@@ -66,7 +66,7 @@ describe('Multilingual', () => {
     })
   })
 
-  // Known gap, asserted as such so a fix flips this test rather than
+  // Known gap, asserted deliberately so a fix flips this test rather than
   // silently changing behaviour: druxt-schema keys schemas without a
   // language dimension and generates them against the default language, so
   // field labels render untranslated even on Spanish pages, while field

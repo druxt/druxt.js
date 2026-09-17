@@ -20,7 +20,7 @@ import Vue from 'vue'
  * `Vue.observable()` rather than returned from `data()` - a component that
  * also defines its own `data()` (as DruxtModule-based components do) would
  * otherwise depend on Vue's parent/child `data()` merge order to preserve
- * this key, which is fragile. Assigning it directly sidesteps that merge
+ * this key, which is fragile. Assigning it directly avoids that merge
  * entirely.
  */
 export const fetchMixin = {
@@ -39,14 +39,15 @@ export const fetchMixin = {
     try {
       // `this.fetch()` (not `this.$options.fetch.call(this)`) would be the
       // natural-looking call here, but `fetch` is a Nuxt-specific top-level
-      // component option, not a Vue `methods` entry - Vue never binds it
-      // onto the instance itself, only onto `$options`. Calling `this.fetch()`
-      // directly fails silently in a very specific way: `this.fetch` is
-      // `undefined`, calling it throws, the `catch` below swallows that into
-      // `$fetchState.error`, and every component looks like it "loaded" with
-      // no data and no visible error - Nuxt's own fetch mixin does this
-      // `.call(this)` binding internally, invisibly, which is exactly the
-      // kind of implicit behavior this example is meant to surface.
+      // component option rather than a Vue `methods` entry. Vue binds it
+      // only onto `$options`, never onto the instance itself. Calling
+      // `this.fetch()` directly fails silently in a very specific way:
+      // `this.fetch` is `undefined`, calling it throws, the `catch` below
+      // swallows that into `$fetchState.error`, and every component looks
+      // like it "loaded" with no data and no visible error - Nuxt's own
+      // fetch mixin does this `.call(this)` binding internally, invisibly,
+      // which is exactly the kind of implicit behavior this example is
+      // meant to surface.
       await this.$options.fetch.call(this)
     } catch (err) {
       this.$fetchState.error = err

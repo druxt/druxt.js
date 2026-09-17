@@ -3,8 +3,9 @@ it('Examples: DruxtEntity query settings', () => {
 
   cy.get('h1').should('have.text', 'DruxtEntity query settings')
 
-  // Five DruxtEntity output blocks: defaults, schema filtering, field
-  // filtering, related-resource include, and query settings as a property.
+  // The page renders five DruxtEntity output blocks: defaults, schema
+  // filtering, field filtering, related-resource include, and query
+  // settings as a property.
   cy.get('details').should('have.length', 5)
 
   cy.get('details').eq(0).find('pre code').should('contain.text', '"type": "node--page"')

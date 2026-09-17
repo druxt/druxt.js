@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtRouter: Drupal routing for Nuxt, via Decoupled Router">
+<img src="./banner.svg" alt="DruxtRouter provides Drupal routing for Nuxt, via Decoupled Router">
 
 # DruxtRouter
 
@@ -18,7 +18,7 @@ alongside it, so a custom page can take over any route.
 ## Features
 
 - Vue.js components:
-  - **DruxtRouter**: Renders a Druxt component for the resolved Decoupled route
+  - **DruxtRouter** renders a Druxt component for the resolved Decoupled route
 - Route providers:
   - **Content entity** routes resolve **DruxtEntity** components
   - **Drupal Views** page routes resolve **DruxtView** components
@@ -27,7 +27,7 @@ alongside it, so a custom page can take over any route.
 
 ## Installation
 
-> Included with [`druxt-site`](https://druxtjs.org/modules/site); install separately only when composing modules yourself.
+> Included with [`druxt-site`](https://druxtjs.org/modules/site). Install it separately only when composing modules yourself.
 
 1. Install the package:
 

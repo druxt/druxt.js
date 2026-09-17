@@ -103,7 +103,7 @@ export default {
     },
 
     /**
-     * The Drupal menu machine name (for example, `main` or `footer`) of the
+     * The Drupal menu machine name (such as `main` or `footer`) of the
      * menu to load and render.
      *
      * @example @lang vue

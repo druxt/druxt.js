@@ -1,10 +1,10 @@
-# examples/drupal — the Umami dev backend
+# examples/drupal, the Umami dev backend
 
 A minimal Drupal 11 backend for developing the druxt.js packages against:
 the `demo_umami` profile, the Druxt module stack, Spanish at `/es`, and the
-public PKCE OAuth consumer the frontend examples hardcode. No committed
-config or content — every provision is a fresh `site-install` with Umami's
-own demo content.
+public PKCE OAuth consumer the frontend examples hardcode. Nothing here
+commits config or content; every provision is a fresh `site-install` with
+Umami's own demo content.
 
 The full production-shaped backend for druxtjs.org (Tome content sync,
 translations, jsonapi_hypermedia) lives in the
@@ -14,7 +14,7 @@ exists to be cheap to boot and throw away.
 ## DDEV (recommended locally)
 
 DDEV provides the services; the same provision script installs the site
-(inside the container, still SQLite — the point is a throwaway database):
+(inside the container, still SQLite, because the database is throwaway):
 
 ```bash
 cd examples/drupal
@@ -41,12 +41,12 @@ make reset      # stop + wipe the throwaway database
 
 ## Credentials and ports
 
-| Thing | Value |
-| ----- | ----- |
-| Admin login | `admin` / `druxt123` (set by provision) |
-| OAuth client id | `c6e3275c-05cb-45f0-a3c3-c037bf730963` (public PKCE) |
-| OAuth redirect | `http://localhost:3004/callback` (Content Ops Console port) |
-| Default URL | `http://127.0.0.1:8888` |
+| Thing           | Value                                                       |
+| --------------- | ----------------------------------------------------------- |
+| Admin login     | `admin` / `druxt123` (set by provision)                     |
+| OAuth client id | `c6e3275c-05cb-45f0-a3c3-c037bf730963` (public PKCE)        |
+| OAuth redirect  | `http://localhost:3004/callback` (Content Ops Console port) |
+| Default URL     | `http://127.0.0.1:8888`                                     |
 
 ## Multilingual
 

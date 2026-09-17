@@ -6,9 +6,9 @@ export default {
   target: 'static',
   generate: { routes: ['/'] },
   telemetry: true,
-  // No head config at all meant no viewport meta tag shipped - mobile
-  // browsers rendered the page at a desktop-width layout viewport, then
-  // scaled the whole thing down to fit.
+  // No head config at all meant the page didn't include a viewport meta
+  // tag - mobile browsers rendered the page at a desktop-width layout
+  // viewport, then scaled the whole thing down to fit.
   head: {
     meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
   },
@@ -21,8 +21,8 @@ export default {
   // (http://localhost:3004/callback) - see docs/drupal/.devtools/consumer-cleanup.php.
   server: { port: 3004 },
   // Self-hosted Source Sans 3 webfont - the weights the design uses.
-  // Adobe renamed the family from "Source Sans Pro", and the prototype's
-  // typography accordingly specifies Source Sans 3.
+  // Adobe renamed the family from "Source Sans Pro", so the prototype's
+  // typography specifies Source Sans 3.
   css: [
     '@fontsource/source-sans-3/400.css',
     '@fontsource/source-sans-3/600.css',
@@ -33,7 +33,7 @@ export default {
   ],
   // Proxies the Umami logo and the OAuth endpoints through this app's own
   // origin - token/userInfo because @nuxtjs/auth-next fetches them from
-  // the browser and the backend sends no CORS headers; authorize because
+  // the browser and the backend doesn't send CORS headers; authorize because
   // it's a top-level navigation that otherwise points at the backend's own
   // address, unreachable from anywhere but the machine running it (e.g.
   // over a tunnel). Anonymous /oauth/authorize hits also 302 straight to
@@ -53,7 +53,7 @@ export default {
   proxy: {
     // Prefix match: the Umami theme's icons (required.svg, search.svg,
     // etc.) and webfonts live under the same directory as logo.svg - a
-    // single entry covers all of them instead of enumerating each one.
+    // single entry covers them all instead of enumerating each one.
     '/core/profiles/demo_umami/themes/umami': baseUrl,
     '/oauth/authorize': { target: baseUrl, changeOrigin: false },
     '/en/oauth/authorize': { target: baseUrl, changeOrigin: false },

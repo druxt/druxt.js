@@ -5,7 +5,7 @@ export default {
   target: 'static',
   generate: { routes: ['/'] },
   telemetry: true,
-  // No head config at all meant no viewport meta tag shipped - mobile
+  // No head config at all meant no viewport meta tag in the HTML - mobile
   // browsers rendered the page at a desktop-width layout viewport, then
   // scaled the whole thing down to fit.
   head: {
@@ -86,8 +86,7 @@ export default {
       // middleware: false
 
       // Disable the wildcard router, which is enabled by default in the
-      // DruxtSite module. This allows more fine grained control over your
-      // routing.
+      // DruxtSite module. With it off, your own code controls the routing.
       // wildcard: false
     },
 

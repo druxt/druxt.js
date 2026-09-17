@@ -1,5 +1,5 @@
 // NOTE: unlike the Nuxt-based examples, this app is a client-rendered SPA
-// (no SSR) - `data-fetch-key` attributes never exist in its DOM, so these
+// (no SSR). `data-fetch-key` attributes never exist in its DOM, so these
 // specs assert on real rendered content instead of Druxt fetch keys.
 
 it('druxt-tailwind: Meal Planner library, drag-and-drop, and derived totals', () => {
@@ -48,8 +48,8 @@ it('druxt-tailwind: Meal Planner library, drag-and-drop, and derived totals', ()
 })
 
 it('druxt-tailwind: no leftover Site-model routes', () => {
-  // No wildcard route, no contact form, no generic recipe/article browsing
-  // - this app has exactly one page.
+  // This app has exactly one page, with no wildcard route, contact form,
+  // or generic recipe/article browsing.
   cy.visit('/en/recipes')
   cy.contains('h1', 'Not found').should('exist')
 

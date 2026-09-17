@@ -11,7 +11,7 @@
       <dt>middleware</dt>
       <dd>
         <p>Boolean; If true (default), executes middleware on the DruxtRouter page to handle server side redirects.</p>
-        <p>Disable this for Full Static Serverless builds.</p>
+        <p>Disable this when generating a Full Static build for serverless deployment.</p>
       </dd>
       <dt>wildcard</dt>
       <dd>
@@ -23,7 +23,7 @@
 
     <h2>Component - Default</h2>
     <p>By default the DruxtRouter component will render a Druxt component based on the Vue router route.</p>
-    <p>This mode allows routes to be controlled by the Nuxt <code>~/pages</code> components.</p>
+    <p>In this mode the Nuxt <code>~/pages</code> components control the routes.</p>
     <pre><code>&lt;DruxtRouter /&gt;</code></pre>
     <details>
       <summary>Output</summary>
@@ -34,7 +34,7 @@
 
     <h2>Component - Path prop</h2>
     <p>A Path property can be provided or bound to the DruxtRouter component to specify what route should be rendered.</p>
-    <p>This mode allows explicit rendering of specified routes.</p>
+    <p>In this mode the component renders the route you specify.</p>
     <pre><code>&lt;DruxtRouter path="/en/recipes/fiery-chili-sauce" /&gt;</code></pre>
     <details>
       <summary>Output</summary>
@@ -60,7 +60,7 @@
 
     <h2>Page: Extend</h2>
     <p>The DruxtRouter page can be extended.</p>
-    <p>This gives you full control of the router page with support for redirects via the page middleware.</p>
+    <p>You get full control of the router page, with support for redirects via the page middleware.</p>
     <p>To extend the router, create a <code>~/pages</code> component:</p>
     <pre><code>&lt;script&gt;
 import DruxtRouter from 'druxt-router/dist/components/DruxtRouter.vue'

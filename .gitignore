@@ -56,3 +56,6 @@ reports
 Network Trash Folder
 Temporary Items
 .apdisk
+
+.vale/bin/
+.vale/styles/
