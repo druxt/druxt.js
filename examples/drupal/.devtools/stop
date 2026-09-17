@@ -1,0 +1,33 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Stop the development server.
+ */
+
+declare(strict_types=1);
+
+namespace DruxtjsDevTools;
+
+require_once __DIR__ . '/helpers.php';
+
+echo '===============================' . PHP_EOL;
+echo '      💻 STOP ENVIRONMENT      ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+
+TASK('Stopping the PHP server this checkout started, if any.');
+$pid = stop_server();
+if ($pid === NULL) {
+  NOTE('No PHP server started by this checkout is running.');
+}
+else {
+  PASS('Stopped the PHP server (pid %d).', $pid);
+}
+
+echo PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo '   💻 ENVIRONMENT STOPPED ✅  ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;

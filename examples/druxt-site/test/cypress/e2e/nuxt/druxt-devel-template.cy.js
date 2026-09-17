@@ -5,6 +5,15 @@
 // pinning is the resolution itself: the block finds its wrapper and renders
 // the real form. A purpose-built, permanently unthemed demo block for the
 // devel-template tool belongs to the pattern examples overhaul.
+// These specs assert language-prefixed English (/en) routes, which only
+// the full druxtjs.org site backend ships. The examples/drupal dev
+// backend is a minimal umami install whose default language is
+// unprefixed, so CI's e2e lane (CYPRESS_backendVariant=minimal) skips
+// this file; the site backend's own pipeline runs it in full.
+const describeFullBackend =
+  Cypress.env('backendVariant') === 'minimal' ? describe.skip : describe
+
+describeFullBackend('site-backend spec', () => {
 it('Umami search block resolves its wrapper component', () => {
   // Every language has a URL prefix, so the homepage is /en.
   cy.visit('/en')
@@ -18,4 +27,5 @@ it('Umami search block resolves its wrapper component', () => {
     cy.contains('button', 'Search').should('exist')
     cy.get('details summary').should('not.exist')
   })
+})
 })

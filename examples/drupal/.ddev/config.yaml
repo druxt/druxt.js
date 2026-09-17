@@ -1,0 +1,15 @@
+name: druxt-examples-backend
+type: drupal
+docroot: web
+php_version: "8.3"
+webserver_type: nginx-fpm
+database:
+  type: mariadb
+  version: "10.11"
+use_dns_when_possible: true
+composer_version: "2"
+web_environment:
+  - COMPOSER_MEMORY_LIMIT=-1
+# DDEV is the local-dev happy path (see README.md); CI and the .devtools
+# scripts use SQLite and the PHP built-in server instead, so no DDEV-specific
+# services are needed here.

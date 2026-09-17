@@ -4,6 +4,12 @@
 // Spanish config translation collection landing at provision, and the
 // language-prefixed JSON:API proxies. If any of it regresses, this spec is
 // the alarm.
+//
+// The examples/drupal backend runs this in full: demo_umami installs
+// Spanish alongside English with URL prefixes, and ships Spanish
+// translations of its demo content and configuration. Specs asserting the
+// curated druxtjs.org site content (homepage banners, devel templates)
+// remain gated on CYPRESS_backendVariant; see umami-homepage.cy.js.
 describe('Multilingual', () => {
   it('switches to Spanish from the language block and stays there', () => {
     // Every language has a URL prefix, so the homepage is /en.

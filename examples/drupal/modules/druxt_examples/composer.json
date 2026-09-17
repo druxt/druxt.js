@@ -1,0 +1,6 @@
+{
+  "name": "druxt/druxt_examples",
+  "description": "Development backend support for the druxt.js frontend examples.",
+  "type": "drupal-custom-module",
+  "license": "GPL-2.0-or-later"
+}

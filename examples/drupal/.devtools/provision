@@ -1,0 +1,155 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * Provision the site: install Drupal with the demo_umami profile against a
+ * throwaway SQLite database, then apply the druxt_examples recipe and
+ * configure Simple OAuth.
+ *
+ * Unlike docs/drupal (now the druxtjs.org site backend), there is no
+ * committed config or Tome content here — `drush site-install demo_umami`
+ * ships its own demo content, and this script only layers on:
+ *
+ * - the Druxt module stack and everything the frontend examples need
+ *   (permissions, the body field on Basic pages, the OAuth consumer) via
+ *   the druxt_examples recipe — see recipes/druxt_examples/recipe.yml and
+ *   modules/druxt_examples/,
+ * - the Simple OAuth keypair, generated here rather than committed (the
+ *   keys/ directory is gitignored) and pointed at by simple_oauth.settings,
+ * - a documented example admin password.
+ *
+ * demo_umami itself is multilingual: it installs Spanish alongside English
+ * with URL prefixes (en/es) and ships Spanish translations of its demo
+ * content and configuration. Nothing here touches the language setup — the
+ * multilingual examples run against exactly what the profile provides.
+ *
+ * The SQLite connection is written to `web/sites/default/settings.local.php`
+ * (gitignored), never to a tracked file.
+ */
+
+declare(strict_types=1);
+
+namespace DruxtjsDevTools;
+
+require_once __DIR__ . '/helpers.php';
+
+// -----------------------------------------------------------------------------
+// Variables.
+// -----------------------------------------------------------------------------
+
+$db_file = getenv_default('DB_FILE', default_db_file());
+
+// -----------------------------------------------------------------------------
+
+echo '===============================' . PHP_EOL;
+echo '         🚀 PROVISION          ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+
+TASK('Configuring the SQLite database at %s.', $db_file);
+if (file_exists($db_file)) {
+  unlink($db_file);
+}
+$web_sites_default = 'web/sites/default';
+if (!is_dir($web_sites_default)) {
+  FAIL('Expected %s to exist — run .devtools/assemble first.', $web_sites_default);
+}
+$settings_local_php = $web_sites_default . '/settings.local.php';
+file_put_contents($settings_local_php, sprintf(
+  "<?php\n\n/**\n * @file\n * Provision-only override, written fresh each run by .devtools/provision.\n * Gitignored - never committed.\n */\n\n\$databases['default']['default'] = [\n  'driver' => 'sqlite',\n  'database' => %s,\n  'prefix' => '',\n];\n",
+  var_export($db_file, TRUE)
+));
+PASS('SQLite database configured.');
+
+// Rollback-journal SQLite lets readers block the one writer; WAL lets them
+// coexist. See docs/drupal's provision for the full reasoning — the same
+// hazard applies to any drush invocation that boots child processes.
+TASK('Enabling SQLite WAL journal mode.');
+$pdo = new \PDO('sqlite:' . $db_file);
+$journal_mode = $pdo->query('PRAGMA journal_mode=WAL;')->fetchColumn();
+unset($pdo);
+if (strtolower((string) $journal_mode) !== 'wal') {
+  FAIL('Could not enable WAL journal mode (got %s).', var_export($journal_mode, TRUE));
+}
+PASS('WAL journal mode enabled.');
+
+TASK('Installing Drupal (demo_umami profile).');
+$install_output = drush('site-install demo_umami --yes --account-pass=druxt123 --site-name=\'Druxt examples\'');
+PASS('Site installed with Umami demo content.');
+
+// The multilingual e2e suites assert the Spanish demo content, so a
+// translation-less install must never pass silently: surface it here,
+// where the cause is still obvious, instead of in a Cypress failure.
+// Translations live in node_field_data (the node base table holds one
+// row per node, in its original language). Counted via php-eval because
+// drush sqlq shells out to the sqlite3 binary, which the CI runners do
+// not install.
+// CI runs the multilingual specs against this backend, so there the
+// missing content is a provisioning failure, not a note to scroll past.
+// REQUIRE_TRANSLATIONS overrides the CI default either way.
+$es_nodes = trim((string) drush('php-eval %s', "print \Drupal::database()->select('node_field_data', 'n')->condition('langcode', 'es')->countQuery()->execute()->fetchField();"));
+if ($es_nodes === '' || (int) $es_nodes < 1) {
+  $require_translations = filter_var(getenv_default('REQUIRE_TRANSLATIONS', 'CI', '0'), FILTER_VALIDATE_BOOL);
+  $message = 'Spanish demo content is MISSING: 0 translated nodes after install. The multilingual specs will fail against this backend.';
+  if ($require_translations) {
+    FAIL('%s Set REQUIRE_TRANSLATIONS=0 to provision without them.', $message);
+  }
+  NOTE('%s Set REQUIRE_TRANSLATIONS=1 to make this fatal.', $message);
+}
+else {
+  PASS('Spanish demo content present (%s translated nodes).', $es_nodes);
+}
+
+TASK('Applying the druxt_examples recipe.');
+drush('recipe %s --yes', __DIR__ . '/../recipes/druxt_examples');
+PASS('Druxt stack, resource permissions, page body field, image styles and OAuth consumer in place.');
+
+// The examples link derivative paths without an itok token; only a file
+// that already exists is served that way (see image-derivatives.php).
+TASK('Pre-generating the image style derivatives the examples link to.');
+drush('php-script %s', __DIR__ . '/image-derivatives.php');
+PASS('Image style derivatives are available at tokenless paths.');
+
+TASK('Generating the Simple OAuth keypair.');
+$keys_dir = __DIR__ . '/../keys';
+if (!is_dir($keys_dir)) {
+  mkdir($keys_dir, 0700, TRUE);
+}
+// Owner-only whether the directory was just created (a permissive umask
+// would have widened it) or already existed.
+chmod($keys_dir, 0700);
+$private_key = $keys_dir . '/private.key';
+$public_key = $keys_dir . '/public.key';
+$res = openssl_pkey_new([
+  'private_key_bits' => 2048,
+  'private_key_type' => OPENSSL_KEYTYPE_RSA,
+]);
+if ($res === FALSE) {
+  FAIL('Could not generate an RSA keypair: %s.', openssl_error_string());
+}
+openssl_pkey_export($res, $private_pem);
+file_put_contents($private_key, $private_pem);
+file_put_contents($public_key, openssl_pkey_get_details($res)['key']);
+chmod($private_key, 0600);
+chmod($public_key, 0644);
+drush('config:set simple_oauth.settings public_key %s --yes', $public_key);
+drush('config:set simple_oauth.settings private_key %s --yes', $private_key);
+PASS('Simple OAuth keys generated and configured (keys/ is gitignored).');
+
+TASK('Setting the admin account password.');
+drush('php-script %s', __DIR__ . '/set-admin-password.php');
+PASS('Admin (uid 1) password set to the documented example login.');
+
+drush('cache:rebuild');
+
+echo PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo '   🚀 PROVISION COMPLETE  ✅  ' . PHP_EOL;
+echo '===============================' . PHP_EOL;
+echo PHP_EOL;
+echo 'Database: ' . $db_file . PHP_EOL;
+echo PHP_EOL;
+echo '> Next steps:' . PHP_EOL;
+echo '  .devtools/start    # Start the webserver' . PHP_EOL;
+echo PHP_EOL;
