@@ -68,11 +68,12 @@ it('druxt-bootstrapvue: Content console renders table, filters, and sorting', ()
   cy.get('[data-testid="coc-sort-title"]').click()
   cy.get('[data-testid="coc-row"]').its('length').should('be.gte', 14)
 
-  // Changed dates are formatted for scannability (d MMM yyyy).
+  // Changed dates are formatted for scannability (d MMM yyyy). en-GB's
+  // short September is "Sept", four letters, so the month is 3 to 4.
   cy.get('[data-testid="coc-row"]')
     .first()
     .invoke('text')
-    .should('match', /\d{1,2} [A-Z][a-z]{2} \d{4}/)
+    .should('match', /\d{1,2} [A-Z][a-z]{2,4} \d{4}/)
 })
 
 it('druxt-bootstrapvue: Taxonomy section - recipe categories and tags, no leftover Site-model routes', () => {
