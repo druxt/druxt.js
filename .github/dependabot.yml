@@ -26,16 +26,7 @@ updates:
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 0
-  - package-ecosystem: 'npm'
-    directory: '/docs/nuxt'
-    schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 0
-  - package-ecosystem: 'composer'
-    directory: '/docs/drupal'
-    schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 0
+
   - package-ecosystem: 'npm'
     directory: '/examples/druxt-site'
     schedule:

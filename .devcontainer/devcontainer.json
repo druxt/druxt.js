@@ -19,18 +19,40 @@
       "assetRegex": ".tar.gz$",
       "releaseTagRegex": "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
     },
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    // PHP for examples/drupal, provisioned without Docker by its .devtools.
+    // 8.3 is the backend's composer platform pin and what both CI systems
+    // run. The feature builds PHP against trixie's libsqlite3, which meets
+    // Drupal 11's 3.45 minimum; gd is built in post-create.sh because the
+    // feature leaves it out and Drupal's installer requires it.
+    "ghcr.io/devcontainers/features/php:1": {
+      "version": "8.3",
+      "installComposer": true
+    },
+    // node-gyp toolchain for the monorepo's native addons (deasync, re2):
+    // the base image ships none of it and `yarn install` fails without
+    // it (the same list .gitlab-ci.yml installs for the same reason).
+    // sqlite3 is the CLI drush reaches for; the image libraries are gd's.
+    "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
+      "packages": "python3,python3-setuptools,build-essential,sqlite3,libjpeg-dev,libpng-dev,libwebp-dev,libfreetype-dev,zlib1g-dev"
+    }
   },
   "containerEnv": {
     // Node is provided by the devcontainer feature above - .mise.toml's
     // pin is for host users. Without this, `mise install` tries to build
     // Node from source inside the container.
-    "MISE_DISABLE_TOOLS": "node"
+    "MISE_DISABLE_TOOLS": "node",
+    // Pin the example backend's port so the forward below always matches.
+    "WEBSERVER_PORT": "8888"
   },
-  "forwardPorts": [3000],
+  "forwardPorts": [3000, 8888],
   "portsAttributes": {
     "3000": {
-      "label": "Nuxt (docs site / examples)",
+      "label": "Nuxt (examples)",
+      "onAutoForward": "silent"
+    },
+    "8888": {
+      "label": "Umami backend (examples/drupal/.devtools)",
       "onAutoForward": "silent"
     }
   },

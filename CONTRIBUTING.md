@@ -17,7 +17,7 @@ giving you `https://github.com/USER/druxt.js` to work from.
 
 ### Dev container
 
-`.devcontainer/devcontainer.json` provides a ready environment with Node 16 and Yarn via corepack. Monorepo and documentation dependencies install on first open.
+`.devcontainer/devcontainer.json` provides a ready environment with Node 16 and Yarn via corepack. Monorepo dependencies install on first open.
 
 [![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/druxt/druxt.js)
 
@@ -27,14 +27,14 @@ giving you `https://github.com/USER/druxt.js` to work from.
    - **[DevPod](https://devpod.sh)**: run `devpod up github.com/USER/druxt.js`, or add the same URL as a workspace source in DevPod's desktop app.
 2. Wait for the post-create setup to finish, then build the packages: `yarn build`
 
-The container covers package development, unit tests, linting and the documentation site. It does not provision a Drupal backend. Use the `docs/drupal` `.devtools` flow (below) or a [quickstart repository](https://github.com/druxt/quickstart) when you need one.
+The container covers package development, unit tests and linting. It does not provision a Drupal backend. Use the `examples/drupal` `.devtools` flow (below) or a [quickstart repository](https://github.com/druxt/quickstart) when you need one.
 
 ### Local development
 
 1. Clone the forked repository to your local development environment. e.g., `git clone https://github.com/USER/druxt.js`
 2. Set up the development environment: `make setup` (enables corepack and installs dependencies)
 3. Build packages: `yarn build`
-4. Start a Drupal backend (PHP 8.3 + SQLite, no Docker): `cd docs/drupal && .devtools/assemble && .devtools/provision && .devtools/start`
+4. Start a Drupal backend (PHP 8.3 + SQLite, no Docker): `cd examples/drupal && make build` (or `.devtools/assemble && .devtools/provision && .devtools/start`)
 5. Run DruxtSite example: `yarn example:druxt-site`
 
 > If `make` is not available, run `corepack enable && yarn install` manually instead of `make setup`. This project uses [Yarn Berry](https://yarnpkg.com/) via [corepack](https://nodejs.org/api/corepack.html), which requires Node 16.9 or later.
@@ -62,7 +62,7 @@ The Druxt monorepo contains a collection of example projects inside the `example
 
 The example projects run against the locally built codebase, for testing during development.
 
-All examples use the Drupal instance located @ `docs/drupal` (`cd docs/drupal && .devtools/assemble && .devtools/provision && .devtools/start`).
+All examples use the Drupal instance located at `examples/drupal` (`cd examples/drupal && make build`), a minimal Umami install. The full druxtjs.org site backend (translations, Tome content) lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org).
 
 ### druxt-site
 
@@ -154,19 +154,11 @@ yarn test:e2e
 
 ### Docgen
 
-Druxt uses a custom Docgen module to generate API documentation from the package source code, using a combination of **JSDoc** and the **Vue Docgen API**.
-
-To build your changed documentation, run the following command:
-
-```sh
-yarn build:docs
-```
-
-The documentation website is a Nuxt site located in the `/docs/nuxt` directory, to test your changes run the following command:
-
-```sh
-cd docs/nuxt && yarn dev
-```
+Druxt uses a custom Docgen module (`packages/docgen`) to generate API
+documentation from the package source code, using a combination of **JSDoc**
+and the **Vue Docgen API**. The documentation website that renders the output
+lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org); this repo
+provides the generator, not the site.
 
 ### Jest
 

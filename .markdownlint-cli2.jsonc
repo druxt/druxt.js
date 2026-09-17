@@ -17,6 +17,9 @@
     "packages/*/nuxt/**",
     "coverage/**",
     "examples/*/node_modules/**",
+    "examples/drupal/vendor/**",
+    "examples/drupal/web/**",
+    "examples/drupal/drush/**",
     ".changeset/**",
     "**/CHANGELOG.md"
   ]

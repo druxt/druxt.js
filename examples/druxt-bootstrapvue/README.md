@@ -26,8 +26,8 @@ despite the "console" name.
 - `DruxtEntityForm`'s `updateResource`/PATCH path: the write side, not just
   read/render, and the first place in this suite that exercises it.
 - Real authentication (`druxt-auth` + `@nuxtjs/auth-next`, OAuth2
-  Authorization Code + PKCE against a committed `simple_oauth` Consumer on
-  `docs/drupal`) gating what's editable.
+  Authorization Code + PKCE against the `simple_oauth` Consumer that
+  `examples/drupal` provisions) gating what's editable.
 - Optimistic UI: local state updates ahead of server confirmation, with a
   visible in-flight state.
 - Failure handling as a first-class case: a network or validation failure
@@ -54,7 +54,8 @@ Serves on `http://localhost:3004`. The port is **pinned**: the committed
 OAuth consumer's redirect URI is `http://localhost:3004/callback`, so
 changing it breaks login.
 
-Sign in with **admin / druxt123** (the `docs/drupal` test user) to unlock
+Sign in with **admin / druxt123** (the `examples/drupal` admin, set by its
+provision) to unlock
 editing. The same credentials are shown directly in the app's sidebar
 whenever you're signed out, so there's nothing to look up. The table itself
 renders read-only when signed out; attempting an edit while signed out is a
@@ -64,7 +65,7 @@ rejects the unauthenticated write.
 ## Configuration
 
 The backend URL defaults to `http://127.0.0.1:8888`, the port
-`docs/drupal/.devtools/start` serves on. Override with the `BASE_URL`
+`examples/drupal/.devtools/start` serves on. Override with the `BASE_URL`
 environment variable if your backend runs elsewhere:
 
 ```bash
@@ -75,8 +76,9 @@ yarn dev
 BASE_URL=https://cms.example.com yarn dev
 ```
 
-`docs/drupal/.devtools/consumer-cleanup.php` manages the committed OAuth
-Consumer entity. Run it after re-provisioning if login stops working.
+The OAuth Consumer is created by `examples/drupal`'s `druxt_examples`
+module when the backend is provisioned. If login stops working, re-provision
+with `make build` in `examples/drupal`.
 
 ## Testing
 

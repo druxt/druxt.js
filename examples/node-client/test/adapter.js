@@ -13,7 +13,7 @@
  * - **record**: performs the real request and saves the response body,
  *   building the fixture manifest used by replay mode.
  *
- * Fixtures are recorded from the docs/drupal Umami backend by
+ * Fixtures are recorded from the examples/drupal Umami backend by
  * `node test/record.js` (see that file) - only re-record when the data
  * really needs to change.
  */

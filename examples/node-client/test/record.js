@@ -5,7 +5,7 @@
 /**
  * Records JSON:API fixture responses for the druxt-inspect test suite.
  *
- * Run manually against a live Druxt backend (default: the docs/drupal Umami
+ * Run manually against a live Druxt backend (default: the examples/drupal Umami
  * dev server on http://127.0.0.1:8888):
  *
  *   cd examples/node-client

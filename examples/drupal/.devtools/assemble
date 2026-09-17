@@ -6,7 +6,7 @@
  * Assemble the site codebase.
  *
  * Unlike the extension-scaffold `assemble` this pattern is modelled on,
- * `docs/drupal` already IS the site codebase — there is no `composer
+ * this checkout already IS the site codebase: there is no `composer
  * create-project` scaffolding step or module-symlinking to do. This just
  * installs dependencies.
  */

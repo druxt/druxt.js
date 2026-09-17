@@ -26,17 +26,18 @@ in the project's internal workspace wiki, not in this repo.
 
 ## Backend
 
-Every example targets the Umami demo Drupal backend at `docs/drupal`
-(druxtjs.org's own docs site backend):
+Every example targets the minimal Umami demo Drupal backend at
+`examples/drupal` (the full druxtjs.org site backend lives in
+[druxt/druxtjs.org](https://github.com/druxt/druxtjs.org)):
 
 ```bash
-cd docs/drupal
+cd examples/drupal
 .devtools/assemble && .devtools/provision && .devtools/start
 # prints the URL it's serving on, default http://127.0.0.1:8888
 ```
 
-You don't need Docker: just PHP 8.3, Composer, and SQLite. See
-`docs/drupal/.devtools/README.md` for details.
+You don't need Docker, just PHP 8.3, Composer, and SQLite. See
+`examples/drupal/.devtools/README.md` for details.
 
 ## Quick start
 

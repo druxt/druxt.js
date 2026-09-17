@@ -34,9 +34,8 @@ green. All 11 packages (`druxt`, `blocks`, `breadcrumb`, `entity`, `menu`,
 `dist/*.ssr.js` + `dist/*.esm.js` (docgen outputs `bin/druxt-docgen.js`).
 
 Nuxt 2's esm config loader patches the module system: a `nuxt.config.js`
-build hook that `require`s a modern ESM-leaning package (satori, resvg)
-dies silently (no stack, exit 1 in CI). Spawn a clean child process for
-such work instead (see `docs/nuxt/scripts/og-render.js`).
+build hook that `require`s a modern ESM-leaning package can die silently
+(no stack, exit 1 in CI). Spawn a clean child process for such work.
 
 The build stack (Node 16, Yarn 3, jest 29, eslint 7, Vue 2.7, Nuxt 2, siroc) is
 intentionally pinned. A future major upgrade (Node 18+, Vue 3, Nuxt 3/4) is a
@@ -88,8 +87,9 @@ piecemeal. They resolve together whenever the Node 16 → 18+ upgrade happens.
 ## Inline documentation (JSDoc) → API docs
 
 Every JS/Vue source file's JSDoc is scraped by `packages/docgen` into
-Markdown under `docs/nuxt/content/api/`, then rendered as part of the
-[druxtjs.org](https://druxtjs.org) API reference. **The JSDoc you
+Markdown that the [druxtjs.org](https://druxtjs.org) API reference renders
+(the site itself now lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org);
+this repo provides the generator). **The JSDoc you
 write is the public documentation, verbatim** - there's no separate editing
 pass, so a sloppy `@param` renders as a sloppy docs page.
 
@@ -122,7 +122,7 @@ If a param is legitimately hard to give a real one-line description, prefer a
 named `@typedef` (see `addCollectionPayload` and siblings in
 `packages/druxt/src/stores/druxt.js`, or `PropsData`/`ComponentOptions` in
 `packages/blocks/src/components/DruxtBlockRegion.vue`) over a half-documented
-inline breakdown. Consistency matters here more than most repos: this docs
+inline breakdown. Consistency matters here more than most repos: the docs
 site is the entire public-facing reference for the framework.
 
 ## Package layout
@@ -181,16 +181,21 @@ stays as this repo's convention.) This is unrelated to commit-message
   "Dependency audit: production vs. full" above.
 - **CodeQL** (`.github/workflows/codeql-analysis.yml`): scans `develop` weekly.
 
-## docs/drupal local dev
+## examples/drupal local dev
 
-`docs/drupal`'s local workflow is Docker-free: PHP's built-in server plus
-a throwaway SQLite database (`docs/drupal/.devtools/`, `make build`),
-pinned to PHP 8.3 (not this repo's usual 8.4: its current `composer.lock`
-needs 8.2/8.3, see `docs/drupal/README.md`). `test-e2e` and `test-examples`
-boot `examples/drupal` instead, through the same `.devtools` interface and
-the same PHP 8.3 pin. See `docs/drupal/.devtools/README.md` for how the
-SQLite path works and why it's built the way it is. (DDEV-based setups live
-in the `quickstart` repo, not here.)
+`examples/drupal` is the minimal Umami dev backend (D11, demo_umami, the
+Druxt stack, `/en`+`/es`, the examples' OAuth consumer). Its local/CI
+workflow is Docker-free: PHP's built-in server plus a throwaway SQLite
+database (`examples/drupal/.devtools/`, `make build`); a
+`.ddev/config.yaml` provides the DDEV alternative locally. `test-e2e`
+uses the Docker-free path, pinned to PHP 8.3. `demo_umami` provisions
+its demo content in English and Spanish, and `multilingual.cy.js` runs
+against this backend in CI. Provision checks that the translations landed
+(a note locally, fatal under CI, `REQUIRE_TRANSLATIONS` overrides either);
+the provisioned database is per-checkout, override with `DB_FILE`. See `examples/drupal/.devtools/README.md` for how the SQLite
+path works. The full druxtjs.org backend (Tome, curated translations)
+lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org);
+DDEV-based full-site setups live in the `quickstart` repo, not here.
 
 ## Reference
 

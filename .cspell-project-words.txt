@@ -100,6 +100,7 @@ libnotify
 libnss
 libonig
 libsqlite
+libwebp
 libxss
 libxtst
 libzip
