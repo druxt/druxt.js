@@ -28,6 +28,7 @@
     "url": "git+https://github.com/druxt/druxt.js"
   },
   "license": "MIT",
+  "author": "Stuart Clark <stuart@druxtjs.org>",
   "exports": {
     ".": {
       "require": "./dist/druxt-menu.ssr.js",
