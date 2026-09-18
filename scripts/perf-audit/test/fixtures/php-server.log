@@ -10,3 +10,4 @@
 [Fri Sep 18 02:42:00 2026] 127.0.0.1:45309 [200]: GET /sites/default/files/styles/druxt_card_4_3/public/quiche.jpg
 [Fri Sep 18 02:42:00 2026] 127.0.0.1:45310 [404]: GET /favicon.ico
 [Fri Sep 18 02:42:00 2026] 127.0.0.1:45311 [200]: GET /es/jsonapi
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45312 [200]: GET /system/files/druxt_card_4_3/public/quiche.jpg

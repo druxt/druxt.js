@@ -22,7 +22,7 @@ export function groupByEndpoint(entries) {
     else if (/^(\/[a-z-]+)?\/jsonapi\/[^/]+\/[^/]+\/[0-9a-f-]{36}/.test(clean)) groups.resources++
     else if (/^(\/[a-z-]+)?\/jsonapi\//.test(clean)) groups.collections++
     else if (/^(\/[a-z-]+)?\/router\/translate-path/.test(clean)) groups.router++
-    else if (/^\/(sites|system)\/.*\/files\//.test(clean)) groups.files++
+    else if (/^\/(sites\/[^/]+|system)\/files\//.test(clean)) groups.files++
     else groups.other++
   }
   return groups

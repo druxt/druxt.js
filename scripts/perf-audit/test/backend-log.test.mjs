@@ -9,14 +9,14 @@ const fixture = new URL('./fixtures/php-server.log', import.meta.url)
 
 test('parseLogLines keeps request lines only', async () => {
   const entries = parseLogLines(await readFile(fixture, 'utf8'))
-  assert.equal(entries.length, 8)
+  assert.equal(entries.length, 9)
   assert.deepEqual(entries[0], { method: 'GET', path: '/jsonapi', status: 200 })
   assert.deepEqual(entries[6], { method: 'GET', path: '/favicon.ico', status: 404 })
 })
 
 test('groupByEndpoint buckets by shape', async () => {
   const groups = groupByEndpoint(parseLogLines(await readFile(fixture, 'utf8')))
-  assert.deepEqual(groups, { index: 2, collections: 1, resources: 1, router: 1, menu: 1, files: 1, other: 1, total: 8 })
+  assert.deepEqual(groups, { index: 2, collections: 1, resources: 1, router: 1, menu: 1, files: 2, other: 1, total: 9 })
 })
 
 test('readNewLines returns only bytes past the offset', async () => {
