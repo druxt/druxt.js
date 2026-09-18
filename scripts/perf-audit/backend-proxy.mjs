@@ -5,6 +5,7 @@
 // same format backend-log.mjs's parser reads.
 import http from 'node:http'
 import { appendFileSync } from 'node:fs'
+import { pathToFileURL } from 'node:url'
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -81,7 +82,7 @@ export function startProxy({ port, target, logFile, upstreamTimeoutMs = 30000 })
   })
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const args = process.argv.slice(2)
   const opts = {}
   for (let i = 0; i < args.length; i++) {

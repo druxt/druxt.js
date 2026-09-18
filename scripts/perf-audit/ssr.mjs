@@ -43,7 +43,7 @@ export function analyseHtml(html) {
 
 export async function probe(url) {
   const started = performance.now()
-  const response = await fetch(url, { redirect: 'manual', headers: { accept: 'text/html' } })
+  const response = await fetch(url, { redirect: 'manual', headers: { accept: 'text/html' }, signal: AbortSignal.timeout(60000) })
   const ttfbMs = Math.round(performance.now() - started)
   const html = await response.text()
   const totalMs = Math.round(performance.now() - started)

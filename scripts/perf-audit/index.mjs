@@ -3,6 +3,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { execSync } from 'node:child_process'
 import { join, resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import net from 'node:net'
 import { parseArgs } from './args.mjs'
 import { config } from './config.mjs'
@@ -42,7 +43,13 @@ const defaults = {
   saveBaseline: baseline.saveBaseline,
   checkServer,
   now: () => new Date(),
-  commit: () => execSync('git rev-parse --short HEAD').toString().trim(),
+  commit: () => {
+    try {
+      return execSync('git rev-parse --short HEAD').toString().trim()
+    } catch {
+      return 'unknown'
+    }
+  },
 }
 
 async function probeRoute(deps, url) {
@@ -108,7 +115,7 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
   return { run, breaches: comparison.breaches, outDir, errors }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   runAudit(parseArgs(process.argv.slice(2)))
     .then(({ breaches, outDir, errors }) => { console.error(`Report written to ${outDir}`); process.exit(breaches || errors.length ? 1 : 0) })
     .catch((err) => { console.error(err.message); process.exit(1) })
