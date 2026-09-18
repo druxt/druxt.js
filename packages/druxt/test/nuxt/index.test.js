@@ -68,6 +68,16 @@ describe('DruxtJS Nuxt module', () => {
     expect(mock.options.components).toBe(false)
   })
 
+  test('Axios transpile', async () => {
+    // Expect:
+    // - axios added to build.transpile, once only.
+    await DruxtNuxtModule.call(mock)
+    expect(mock.options.build.transpile).toContain('axios')
+
+    await DruxtNuxtModule.call(mock)
+    expect(mock.options.build.transpile.filter((o) => o === 'axios')).toHaveLength(1)
+  })
+
   test('Plugin order', async () => {
     // Expect:
     // - extendPlugins to be a function.

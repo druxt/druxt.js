@@ -11094,7 +11094,7 @@ __metadata:
     vue: ^2.7.16
     vuex: ^3.6.2
   peerDependencies:
-    axios: "*"
+    axios: 0.28.0
     consola: "*"
   dependenciesMeta:
     core-js:
