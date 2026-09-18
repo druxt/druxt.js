@@ -1,0 +1,14 @@
+{
+  "requestedUrl": "http://localhost:3201/recipes",
+  "audits": {
+    "network-requests": { "details": { "items": [
+      { "url": "http://localhost:3201/recipes", "startTime": 0, "resourceType": "Document", "transferSize": 40000 },
+      { "url": "http://localhost:3201/_nuxt/app.js", "startTime": 300, "resourceType": "Script", "transferSize": 120000 },
+      { "url": "http://localhost:3201/jsonapi", "startTime": 1200, "resourceType": "XHR", "transferSize": 3000 },
+      { "url": "http://localhost:3201/jsonapi/menu_items/main", "startTime": 1300, "resourceType": "XHR", "transferSize": 2000 },
+      { "url": "http://localhost:3201/router/translate-path?path=/recipes", "startTime": 800, "resourceType": "XHR", "transferSize": 500 }
+    ] } },
+    "total-byte-weight": { "numericValue": 165500 },
+    "metrics": { "details": { "items": [ { "observedDomContentLoaded": 1000 } ] } }
+  }
+}
