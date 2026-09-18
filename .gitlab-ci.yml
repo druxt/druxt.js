@@ -554,6 +554,7 @@ perf:audit:
     # Node 22 for the audit only; the examples stay on the template's Node 16.
     - . "$NVM_DIR/nvm.sh" && nvm install 22 >/dev/null && nvm use 16 >/dev/null
     - NODE22="$(nvm which 22)"
+    - '"$NODE22" --test scripts/perf-audit/test/*.test.mjs'
     - '"$NODE22" "$(dirname "$NODE22")/npx" --yes playwright@1.62.1 install --with-deps chromium'
     - export CHROME_PATH=$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)
     - test -n "$CHROME_PATH" || { echo "No Playwright Chromium found" >&2; exit 1; }

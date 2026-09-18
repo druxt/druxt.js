@@ -66,16 +66,25 @@ jobs:
         with:
           node-version: 22
 
+      - name: Unit tests
+        run: node --test scripts/perf-audit/test/*.test.mjs
+
       - name: Install Chromium for Unlighthouse
         run: |
           npx --yes playwright@1.62.1 install --with-deps chromium
-          echo "CHROME_PATH=$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)" >> "$GITHUB_ENV"
+          CHROME_PATH="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)"
+          test -n "$CHROME_PATH" || { echo "No Playwright Chromium found" >&2; exit 1; }
+          echo "CHROME_PATH=$CHROME_PATH" >> "$GITHUB_ENV"
 
       - name: Audit
+        env:
+          AUDIT_EXAMPLES: ${{ inputs.examples }}
+          AUDIT_SKIP_LIGHTHOUSE: ${{ inputs.skip_lighthouse }}
+        continue-on-error: true
         run: |
           args=""
-          for e in $(echo "${{ inputs.examples }}" | tr ',' ' '); do args="$args --example $e"; done
-          if [ "${{ inputs.skip_lighthouse }}" = "true" ]; then args="$args --skip-lighthouse"; fi
+          for e in $(echo "$AUDIT_EXAMPLES" | tr ',' ' '); do args="$args --example $e"; done
+          if [ "$AUDIT_SKIP_LIGHTHOUSE" = "true" ]; then args="$args --skip-lighthouse"; fi
           node scripts/perf-audit/index.mjs $args
 
       - name: Stop the examples
@@ -88,3 +97,4 @@ jobs:
           name: perf-audit
           path: .perf/
           retention-days: 30
+          include-hidden-files: true
