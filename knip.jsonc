@@ -1,5 +1,10 @@
 {
   "$schema": "https://unpkg.com/knip@2/schema.json",
+  // The audit's tests run with `node --test`; without this the plugin's default
+  // `**/test/**` pattern treats the Jest mocks under test/ as entry files.
+  "node-test-runner": {
+    "entry": ["scripts/perf-audit/test/*.test.mjs"]
+  },
   "ignoreDependencies": [
     // Referenced only via a CLI flag/config value in CI YAML, not imported -
     // knip's static analysis doesn't parse .gitlab-ci.yml / workflow files.
