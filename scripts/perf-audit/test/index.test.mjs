@@ -91,3 +91,34 @@ test('runAudit records a rejected probe instead of aborting the run', async () =
     status: 0, ttfbMs: null, totalMs: null, htmlBytes: 0, nuxtBytes: 0, fetchKeys: 0, errorState: 'connect ECONNREFUSED',
   })
 })
+
+test('runAudit continues past a failing example and records the error', async () => {
+  const outDir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
+  const deps = {
+    probe: async () => ({ status: 200, ttfbMs: 1, totalMs: 2, htmlBytes: 1, nuxtBytes: 1, fetchKeys: 0, errorState: null }),
+    logSize: async () => 0,
+    readNewLines: async () => ({ text: '', offset: 0 }),
+    waitForSettle: async () => 0,
+    runUnlighthouse: async (example) => { if (example.name === 'druxt-daisyui') throw new Error('unlighthouse-ci exited with 1') },
+    readUnlighthouseResults: async () => ({ '/': { performance: 90, lcpMs: 1, clsScore: 0, tbtMs: 0, fcpMs: 1, requests: 1, bytes: 1, postLoadApiCalls: 0 } }),
+    loadBaseline: async () => ({}),
+    saveBaseline: async () => {},
+    checkServer: async () => true,
+    now: () => new Date('2026-09-18T00:00:00Z'),
+    commit: () => 'abc1234',
+  }
+  const examples = [
+    { name: 'druxt-site', port: 3200, routes: ['/'] },
+    { name: 'druxt-daisyui', port: 3201, routes: ['/'] },
+  ]
+  const result = await runAudit({ examples: null, skipLighthouse: false, updateBaseline: false, outDir }, deps, examples)
+  assert.equal(result.run['druxt-site']['/'].lighthouse.performance, 90)
+  assert.ok(result.run['druxt-daisyui']['/'])
+  assert.equal(result.run['druxt-daisyui']['/'].lighthouse, null)
+  assert.equal(result.errors.length, 1)
+  assert.equal(result.errors[0].example, 'druxt-daisyui')
+  const json = JSON.parse(await readFile(join(outDir, 'report.json'), 'utf8'))
+  assert.equal(json.errors.length, 1)
+  const md = await readFile(join(outDir, 'report.md'), 'utf8')
+  assert.match(md, /## druxt-site/)
+})

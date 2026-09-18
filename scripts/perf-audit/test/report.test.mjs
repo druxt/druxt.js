@@ -18,9 +18,10 @@ test('toMarkdown renders one table per example with deltas and breaches', () => 
   assert.match(md, /1 budget breach/)
 })
 
-test('toJson carries the run, the rows and the meta', () => {
-  const json = toJson({ 'druxt-site': {} }, { rows, breaches: 1 }, { generatedAt: 'x', commit: 'y' })
-  assert.deepEqual(Object.keys(json), ['meta', 'breaches', 'rows', 'run'])
+test('toJson carries the run, the rows, the meta and the per-example errors', () => {
+  const json = toJson({ 'druxt-site': {} }, { rows, breaches: 1 }, { generatedAt: 'x', commit: 'y' }, [{ example: 'druxt-daisyui', message: 'boom' }])
+  assert.deepEqual(Object.keys(json), ['meta', 'breaches', 'rows', 'run', 'errors'])
+  assert.deepEqual(json.errors, [{ example: 'druxt-daisyui', message: 'boom' }])
 })
 
 test('zero delta renders as 0, not empty', () => {

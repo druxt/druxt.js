@@ -15,6 +15,6 @@ export function toMarkdown({ rows, breaches }, meta) {
   return lines.join('\n')
 }
 
-export function toJson(run, comparison, meta) {
-  return { meta, breaches: comparison.breaches, rows: comparison.rows, run }
+export function toJson(run, comparison, meta, errors = []) {
+  return { meta, breaches: comparison.breaches, rows: comparison.rows, run, errors }
 }

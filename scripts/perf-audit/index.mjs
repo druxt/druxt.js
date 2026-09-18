@@ -77,18 +77,25 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
   await mkdir(outDir, { recursive: true })
 
   const run = {}
+  const errors = []
   for (const example of selected) {
-    if (!(await d.checkServer(example.port))) {
-      throw new Error(`${example.name} is not answering on port ${example.port}; start it with scripts/perf-audit/serve-examples.sh`)
-    }
-    run[example.name] = {}
-    for (const route of example.routes) run[example.name][route] = await measureRoute(example, route, d)
-    if (!opts.skipLighthouse) {
-      const dir = join(outDir, example.name)
-      await mkdir(dir, { recursive: true })
-      await d.runUnlighthouse(example, dir)
-      const results = await d.readUnlighthouseResults(join(dir, 'unlighthouse'))
-      for (const route of example.routes) run[example.name][route].lighthouse = results[route] || null
+    try {
+      if (!(await d.checkServer(example.port))) {
+        throw new Error(`${example.name} is not answering on port ${example.port}; start it with scripts/perf-audit/serve-examples.sh`)
+      }
+      run[example.name] = {}
+      for (const route of example.routes) run[example.name][route] = await measureRoute(example, route, d)
+      if (!opts.skipLighthouse) {
+        const dir = join(outDir, example.name)
+        await mkdir(dir, { recursive: true })
+        await d.runUnlighthouse(example, dir)
+        const results = await d.readUnlighthouseResults(join(dir, 'unlighthouse'))
+        for (const route of example.routes) run[example.name][route].lighthouse = results[route] || null
+      }
+    } catch (err) {
+      run[example.name] = run[example.name] || {}
+      errors.push({ example: example.name, message: err.message })
+      console.error(err.message)
     }
   }
 
@@ -96,15 +103,15 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
   const existingBaseline = await d.loadBaseline(BASELINE_FILE)
   const comparison = baseline.compare(run, existingBaseline, config.budgets)
   const md = toMarkdown(comparison, meta)
-  await writeFile(join(outDir, 'report.json'), JSON.stringify(toJson(run, comparison, meta), null, 2))
+  await writeFile(join(outDir, 'report.json'), JSON.stringify(toJson(run, comparison, meta, errors), null, 2))
   await writeFile(join(outDir, 'report.md'), md)
   console.log(md)
   if (opts.updateBaseline) await d.saveBaseline(BASELINE_FILE, baseline.mergeBaseline(existingBaseline, run))
-  return { run, breaches: comparison.breaches, outDir }
+  return { run, breaches: comparison.breaches, outDir, errors }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   runAudit(parseArgs(process.argv.slice(2)))
-    .then(({ breaches, outDir }) => { console.error(`Report written to ${outDir}`); process.exit(breaches ? 1 : 0) })
+    .then(({ breaches, outDir, errors }) => { console.error(`Report written to ${outDir}`); process.exit(breaches || errors.length ? 1 : 0) })
     .catch((err) => { console.error(err.message); process.exit(1) })
 }
