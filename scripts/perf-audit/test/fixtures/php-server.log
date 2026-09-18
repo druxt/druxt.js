@@ -1,0 +1,12 @@
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45304 Accepted
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45304 [200]: GET /jsonapi
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45304 Closing
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45305 Accepted
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45305 [200]: GET /router/translate-path?path=/
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45305 Closing
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45306 [200]: GET /jsonapi/node/recipe?filter%5Bstatus%5D=1
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45307 [200]: GET /jsonapi/node/recipe/8e8d340a-04af-461a-ac63-12415d33e936
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45308 [200]: GET /jsonapi/menu_items/main
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45309 [200]: GET /sites/default/files/styles/druxt_card_4_3/public/quiche.jpg
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45310 [404]: GET /favicon.ico
+[Fri Sep 18 02:42:00 2026] 127.0.0.1:45311 [200]: GET /es/jsonapi
