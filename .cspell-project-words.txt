@@ -17,6 +17,7 @@ bmewburn
 bootstrapvue
 bradlc
 browsable
+bsdtar
 bundlewatch
 canonicalises
 chunkloaderror
