@@ -1,0 +1,90 @@
+name: Performance audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      examples:
+        description: Examples to audit (comma separated), empty for all
+        required: false
+        default: ''
+      skip_lighthouse:
+        description: Skip the Lighthouse layer
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  perf-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+      - run: yarn build
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, sqlite3
+
+      - name: Assemble, provision, and start the Drupal backend
+        working-directory: examples/drupal
+        run: |
+          .devtools/assemble
+          .devtools/provision
+          .devtools/start
+        env:
+          WEBSERVER_HOST: 127.0.0.1
+          WEBSERVER_PORT: 8888
+
+      - name: Build and serve the examples through the audit proxy
+        run: scripts/perf-audit/serve-examples.sh start
+        env:
+          BASE_URL: http://127.0.0.1:8888
+
+      # Node 22 for the audit only; the examples stay on Node 16.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - name: Install Chromium for Unlighthouse
+        run: |
+          npx --yes playwright@1.62.1 install --with-deps chromium
+          echo "CHROME_PATH=$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)" >> "$GITHUB_ENV"
+
+      - name: Audit
+        run: |
+          args=""
+          for e in $(echo "${{ inputs.examples }}" | tr ',' ' '); do args="$args --example $e"; done
+          if [ "${{ inputs.skip_lighthouse }}" = "true" ]; then args="$args --skip-lighthouse"; fi
+          node scripts/perf-audit/index.mjs $args
+
+      - name: Stop the examples
+        if: always()
+        run: scripts/perf-audit/serve-examples.sh stop || true
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: perf-audit
+          path: .perf/
+          retention-days: 30
