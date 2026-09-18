@@ -22,3 +22,11 @@ test('toJson carries the run, the rows and the meta', () => {
   const json = toJson({ 'druxt-site': {} }, { rows, breaches: 1 }, { generatedAt: 'x', commit: 'y' })
   assert.deepEqual(Object.keys(json), ['meta', 'breaches', 'rows', 'run'])
 })
+
+test('zero delta renders as 0, not empty', () => {
+  const zeroDeltaRows = [
+    { example: 'druxt-site', route: '/', metric: 'ssr.status', current: 200, baseline: 200, delta: 0, breach: null },
+  ]
+  const md = toMarkdown({ rows: zeroDeltaRows, breaches: 0 }, { generatedAt: '2026-09-18T00:00:00Z', commit: 'abc1234' })
+  assert.match(md, /\| \/ \| ssr\.status \| 200 \| 200 \| 0 \| \|/)
+})

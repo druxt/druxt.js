@@ -7,9 +7,8 @@ export function toMarkdown({ rows, breaches }, meta) {
   for (const example of examples) {
     lines.push(`## ${example}`, '', '| Route | Metric | Current | Baseline | Delta | Breach |', '| --- | --- | --- | --- | --- | --- |')
     for (const row of rows.filter((r) => r.example === example)) {
-      const deltaCell = row.delta === null ? '' : row.delta
       const breachCell = row.breach || ''
-      lines.push(`| ${row.route} | ${row.metric} | ${cell(row.current)} | ${cell(row.baseline)} |${deltaCell ? ` ${deltaCell} ` : ' '}|${breachCell ? ` ${breachCell} ` : ' '}|`)
+      lines.push(`| ${row.route} | ${row.metric} | ${cell(row.current)} | ${cell(row.baseline)} |${row.delta === null ? ' ' : ` ${row.delta} `}|${breachCell ? ` ${breachCell} ` : ' '}|`)
     }
     lines.push('')
   }
