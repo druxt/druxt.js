@@ -3,15 +3,19 @@
 # Node 16. Usage: serve-examples.sh start|stop [example ...]
 set -euo pipefail
 
-node_major="$(node -v | sed -E 's/^v([0-9]+)\..*/\1/')"
-if [ "$node_major" != "16" ]; then
-  echo "serve-examples.sh needs Node 16 on PATH, found $(node -v)." >&2
-  exit 2
-fi
-
 cd "$(dirname "$0")/../.."
 root="$(pwd)"
 cmd="${1:-start}"; shift || true
+
+# `stop` only signals recorded process groups, so it must work under any Node, or none.
+if [ "$cmd" != "stop" ]; then
+  node_major="$(node -v | sed -E 's/^v([0-9]+)\..*/\1/')"
+  if [ "$node_major" != "16" ]; then
+    echo "serve-examples.sh needs Node 16 on PATH, found $(node -v)." >&2
+    exit 2
+  fi
+fi
+
 examples=("$@"); [ ${#examples[@]} -gt 0 ] || examples=(druxt-site druxt-daisyui druxt-bootstrapvue)
 declare -A ports=([druxt-site]=3200 [druxt-daisyui]=3201 [druxt-bootstrapvue]=3204)
 mkdir -p "$root/.perf"

@@ -80,7 +80,7 @@ jobs:
 
       - name: Stop the examples
         if: always()
-        run: scripts/perf-audit/serve-examples.sh stop || true
+        run: scripts/perf-audit/serve-examples.sh stop
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()

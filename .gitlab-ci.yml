@@ -562,7 +562,7 @@ perf:audit:
     - PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/index.mjs
     - section_end "audit"
   after_script:
-    - scripts/perf-audit/serve-examples.sh stop || true
+    - scripts/perf-audit/serve-examples.sh stop
     - pkill -9 -f 'user-data-dir=/tmp/puppeteer' 2>/dev/null || true
   artifacts:
     when: always
