@@ -1,8 +1,34 @@
 // Server render probes: one fetch per route, timed, then the HTML analysed.
 import { performance } from 'node:perf_hooks'
 
-const NUXT_SCRIPT = /<script>window\.__NUXT__=([\s\S]*?)<\/script>/
-const ERROR_STATE = /error:\{([^}]*)\}/
+const NUXT_SCRIPT = /<script[^>]*>\s*window\.__NUXT__=([\s\S]*?)<\/script>/
+const ERROR_KEY = /[{,]error:/
+
+function extractErrorState(nuxtPayload) {
+  const match = ERROR_KEY.exec(nuxtPayload)
+  if (!match) return null
+  const errorStart = match.index + match[0].length
+  const char = nuxtPayload[errorStart]
+  if (char !== '{') {
+    if (nuxtPayload.slice(errorStart, errorStart + 4) === 'null') return null
+    return null
+  }
+  let depth = 0
+  let pos = errorStart
+  while (pos < nuxtPayload.length) {
+    if (nuxtPayload[pos] === '{') depth++
+    else if (nuxtPayload[pos] === '}') {
+      depth--
+      if (depth === 0) {
+        const value = nuxtPayload.slice(errorStart + 1, pos)
+        if (!/^\s*$/.test(value)) return value
+        return null
+      }
+    }
+    pos++
+  }
+  return null
+}
 
 export function analyseHtml(html) {
   const nuxt = NUXT_SCRIPT.exec(html)
@@ -10,8 +36,7 @@ export function analyseHtml(html) {
   const fetchKeys = (html.match(/data-fetch-key=/g) || []).length
   let errorState = null
   if (nuxt) {
-    const error = ERROR_STATE.exec(nuxt[1])
-    if (error && !/^\s*$/.test(error[1])) errorState = error[1]
+    errorState = extractErrorState(nuxt[1])
   }
   return { htmlBytes: Buffer.byteLength(html), nuxtBytes, fetchKeys, errorState }
 }

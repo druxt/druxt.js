@@ -34,3 +34,17 @@ test('probe times a request against a local server', async () => {
     server.close()
   }
 })
+
+test('analyseHtml tolerates script tag attributes', () => {
+  const html = '<script nonce="abc" type="text/javascript">window.__NUXT__=(function(a){return {error:null}}(null));</script>'
+  const result = analyseHtml(html)
+  assert.ok(result.nuxtBytes > 0)
+  assert.equal(result.errorState, null)
+})
+
+test('analyseHtml extracts nested error objects', () => {
+  const html = '<script>window.__NUXT__=(function(a){return {layout:"default",error:{statusCode:500,message:"boom",data:{path:"/x"}},state:{}}}(null));</script>'
+  const result = analyseHtml(html)
+  assert.match(result.errorState, /statusCode:500/)
+  assert.match(result.errorState, /data:\{path:"\/x"\}/)
+})
