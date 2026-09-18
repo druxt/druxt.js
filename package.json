@@ -45,6 +45,8 @@
     "lint:prose:install": "bash scripts/install-vale.sh .vale/bin .vale/styles",
     "lint:renovate": "renovate-config-validator",
     "package": "siroc run yarn pack --workspaces",
+    "perf:audit": "node scripts/perf-audit/index.mjs",
+    "perf:audit:test": "node --test scripts/perf-audit/test/",
     "postinstall": "husky install",
     "test": "yarn test:unit && yarn test:e2e",
     "test:e2e": "yarn example:druxt-site:test && yarn example:druxt-site:storybook:test",

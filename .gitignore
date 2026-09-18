@@ -26,6 +26,7 @@ packages/*/package.tgz
 # Coverage / test reports
 coverage
 reports
+.perf/
 
 # Cypress failure artifacts (every example app's test/cypress/ generates
 # these on a failed run - not source, never meant to be committed)
