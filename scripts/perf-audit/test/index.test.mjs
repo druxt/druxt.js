@@ -3,7 +3,17 @@ import assert from 'node:assert/strict'
 import { mkdtemp, readFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { runAudit } from '../index.mjs'
+import net from 'node:net'
+import { runAudit, checkServer } from '../index.mjs'
+
+test('checkServer resolves true for a listening port and false once it stops listening', async () => {
+  const server = net.createServer((socket) => socket.end())
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve))
+  const port = server.address().port
+  assert.equal(await checkServer(port), true)
+  await new Promise((resolve) => server.close(resolve))
+  assert.equal(await checkServer(port, 200), false)
+})
 
 test('runAudit measures cold and warm per route and writes the report', async () => {
   const outDir = await mkdtemp(join(tmpdir(), 'perf-audit-'))

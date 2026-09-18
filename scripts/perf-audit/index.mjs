@@ -3,6 +3,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { execSync } from 'node:child_process'
 import { join, resolve } from 'node:path'
+import net from 'node:net'
 import { parseArgs } from './args.mjs'
 import { config } from './config.mjs'
 import * as backendLog from './backend-log.mjs'
@@ -19,6 +20,17 @@ if (major < 18) {
   process.exit(2)
 }
 
+// A TCP connect, not an HTTP request: a route fetched here to check readiness
+// would count as the cold pass the audit is about to measure.
+export function checkServer(port, timeoutMs = 2000) {
+  return new Promise((resolve) => {
+    const socket = net.createConnection({ host: '127.0.0.1', port, timeout: timeoutMs })
+    socket.once('connect', () => { socket.destroy(); resolve(true) })
+    socket.once('error', () => resolve(false))
+    socket.once('timeout', () => { socket.destroy(); resolve(false) })
+  })
+}
+
 const defaults = {
   probe: ssr.probe,
   logSize: backendLog.logSize,
@@ -28,7 +40,7 @@ const defaults = {
   readUnlighthouseResults: lighthouse.readUnlighthouseResults,
   loadBaseline: baseline.loadBaseline,
   saveBaseline: baseline.saveBaseline,
-  checkServer: async (url) => (await fetch(url, { method: 'HEAD' }).catch(() => null))?.ok ?? false,
+  checkServer,
   now: () => new Date(),
   commit: () => execSync('git rev-parse --short HEAD').toString().trim(),
 }
@@ -66,7 +78,7 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
 
   const run = {}
   for (const example of selected) {
-    if (!(await d.checkServer(`http://localhost:${example.port}/`))) {
+    if (!(await d.checkServer(example.port))) {
       throw new Error(`${example.name} is not answering on port ${example.port}; start it with scripts/perf-audit/serve-examples.sh`)
     }
     run[example.name] = {}

@@ -92,7 +92,8 @@ for example in "${examples[@]}"; do
     exec setsid env BASE_URL="http://127.0.0.1:${proxy_port}" npx nuxt start --target server --port "${ports[$example]}" --hostname 127.0.0.1
   ) >"$root/.perf/${example}.start.log" 2>&1 &
   echo $! >"$pidfile"
-  for _ in $(seq 1 60); do curl -fsS -o /dev/null "http://127.0.0.1:${ports[$example]}/" && break; sleep 2; done
-  curl -fsS -o /dev/null "http://127.0.0.1:${ports[$example]}/" || { echo "$example did not start; see $root/.perf/${example}.start.log" >&2; exit 1; }
+  # A TCP-only wait, never an HTTP request: an HTTP probe here would render the
+  # front page and pollute the cold pass the audit measures once it connects.
+  wait_for_port "${ports[$example]}" 60 || { echo "$example did not start; see $root/.perf/${example}.start.log" >&2; exit 1; }
   echo "$example on ${ports[$example]}"
 done
