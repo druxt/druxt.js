@@ -14,6 +14,7 @@ test('writeUnlighthouseConfig pins the site, routes and browser', async () => {
   assert.match(text, /http:\/\/localhost:3201/)
   assert.match(text, /"\/recipes"/)
   assert.match(text, /crawler: false/)
+  assert.match(text, /samples: 3/)
   assert.match(text, /maxConcurrency: 1/)
   assert.match(text, /--no-sandbox/)
 })

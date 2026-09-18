@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { loadBaseline, compare, saveBaseline } from '../baseline.mjs'
 
-const budgets = { backendRequests: 'no-increase', performanceDrop: 5, payloadGrowthPercent: 10 }
+const budgets = { backendRequests: 'no-increase', performanceDrop: 10, payloadGrowthPercent: 10 }
 const route = (over = {}) => ({
   backendCold: { total: 6 }, backendWarm: { total: 2 },
   ssr: { status: 200, errorState: null, ttfbMs: 120, nuxtBytes: 20000, fetchKeys: 12 },
@@ -25,7 +25,7 @@ test('breaches: more backend requests, performance drop, payload growth, error s
   const run = { 'druxt-site': { '/': route({
     backendWarm: { total: 3 },
     ssr: { status: 500, errorState: 'statusCode:500', ttfbMs: 100, nuxtBytes: 23000, fetchKeys: 12 },
-    lighthouse: { performance: 84, lcpMs: 1500, clsScore: 0.01, tbtMs: 50, postLoadApiCalls: 0 },
+    lighthouse: { performance: 79, lcpMs: 1500, clsScore: 0.01, tbtMs: 50, postLoadApiCalls: 0 },
   }) } }
   const { rows, breaches } = compare(run, baseline, budgets)
   const breached = rows.filter((r) => r.breach).map((r) => r.metric)

@@ -12,7 +12,7 @@ module.exports = {
   site: 'http://localhost:${example.port}',
   outputPath: ${JSON.stringify(join(outDir, 'unlighthouse'))},
   urls: ${JSON.stringify(example.routes)},
-  scanner: { crawler: false, samples: 1 },
+  scanner: { crawler: false, samples: 3 },
   puppeteerClusterOptions: { maxConcurrency: 1, timeout: 900000 },
   puppeteerOptions: {
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
