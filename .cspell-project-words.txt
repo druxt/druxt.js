@@ -1,5 +1,7 @@
 aarch
 amazeeio
+analyse
+analysed
 antfu
 apos
 Appétit
@@ -197,6 +199,7 @@ Tiempo
 toggleable
 topbar
 trixie
+ttfb
 tspan
 umami
 uncacheable
