@@ -555,7 +555,8 @@ perf:audit:
     - . "$NVM_DIR/nvm.sh" && nvm install 22 >/dev/null && nvm use 16 >/dev/null
     - NODE22="$(nvm which 22)"
     - '"$NODE22" --test scripts/perf-audit/test/*.test.mjs'
-    - '"$NODE22" "$(dirname "$NODE22")/npx" --yes playwright@1.62.1 install --with-deps chromium'
+    # Node 22 on PATH: npx spawns the playwright binary with the `node` it finds there.
+    - PATH="$(dirname "$NODE22"):$PATH" npx --yes playwright@1.62.1 install --with-deps chromium
     - export CHROME_PATH=$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)
     - test -n "$CHROME_PATH" || { echo "No Playwright Chromium found" >&2; exit 1; }
     - section_end "browser"
