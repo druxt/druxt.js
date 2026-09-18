@@ -148,6 +148,7 @@ phpmyadmin
 phprc
 phpsab
 phpstan
+pidfile
 PKCE
 pkill
 pngquant
@@ -178,6 +179,7 @@ scriptable
 scule
 segoe
 Segoe
+setsid
 setuptools
 shivammathur
 siroc

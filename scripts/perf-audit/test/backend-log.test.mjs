@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFile, writeFile, mkdtemp, appendFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { parseLogLines, groupByEndpoint, readNewLines, waitForSettle } from '../backend-log.mjs'
+import { parseLogLines, groupByEndpoint, readNewLines, waitForSettle, logSize } from '../backend-log.mjs'
 
 const fixture = new URL('./fixtures/php-server.log', import.meta.url)
 
@@ -29,6 +29,14 @@ test('readNewLines returns only bytes past the offset', async () => {
   const second = await readNewLines(file, first.offset)
   assert.equal(second.text, 'new line\n')
   assert.equal(second.offset, first.offset + 'new line\n'.length)
+})
+
+test('logSize returns the current byte size, 0 when missing', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
+  const file = join(dir, 'log')
+  assert.equal(await logSize(join(dir, 'missing')), 0)
+  await writeFile(file, 'abcde')
+  assert.equal(await logSize(file), 5)
 })
 
 test('waitForSettle resolves once the file stops growing', async () => {

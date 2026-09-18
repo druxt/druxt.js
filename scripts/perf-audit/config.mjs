@@ -2,7 +2,7 @@
 export const config = {
   // Where examples/drupal/.devtools/start writes the php -S request log.
   backendLog: '/tmp/druxtjs-drupal-php-server.log',
-  backendUrl: 'http://127.0.0.1:8888',
+  backendUrl: process.env.BASE_URL || 'http://127.0.0.1:8888',
   examples: [
     { name: 'druxt-site', port: 3200, routes: ['/', '/recipes', '/recipes/deep-mediterranean-quiche', '/articles/give-it-a-go-and-grow-your-own-herbs', '/en/recipe-category/main-courses'] },
     { name: 'druxt-daisyui', port: 3201, routes: ['/', '/recipes', '/recipes/deep-mediterranean-quiche', '/articles/give-it-a-go-and-grow-your-own-herbs'] },

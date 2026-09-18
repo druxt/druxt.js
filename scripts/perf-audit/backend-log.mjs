@@ -28,6 +28,15 @@ export function groupByEndpoint(entries) {
   return groups
 }
 
+export async function logSize(file) {
+  try {
+    return (await stat(file)).size
+  } catch (err) {
+    if (err.code === 'ENOENT') return 0
+    throw err
+  }
+}
+
 export async function readNewLines(file, offset) {
   const { size } = await stat(file)
   if (size <= offset) return { text: '', offset }
