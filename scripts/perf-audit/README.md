@@ -4,7 +4,7 @@ Measures the example applications per route and compares each run with `perf/bas
 
 | Layer | Metrics | Source |
 | --- | --- | --- |
-| Backend | requests per server render, cold and warm, by endpoint | the `php -S` log written by `examples/drupal/.devtools/start` |
+| Backend | requests per server render, cold and warm, by endpoint | the audit's own proxy log (`backend-proxy.mjs`), started by `serve-examples.sh` on port 8890; the examples are built with `BASE_URL` pointed at it, so every backend call in these timings carries one extra local hop |
 | Server render | time to first byte, HTML bytes, inline `__NUXT__` bytes, `data-fetch-key` count, status, error state | one fetch per route against `nuxt start` |
 | Browser | Lighthouse performance, LCP, CLS, TBT, FCP, requests, bytes, API calls after load | Unlighthouse CI |
 
@@ -13,9 +13,14 @@ Measures the example applications per route and compares each run with `perf/bas
 The audit needs Node 18 or later; the examples build under Node 16.
 
     examples/drupal/.devtools/start
+    yarn build
     scripts/perf-audit/serve-examples.sh start
     mise exec node@22 -- yarn perf:audit
     scripts/perf-audit/serve-examples.sh stop
+
+`yarn build` and `serve-examples.sh` both run under Node 16. After a run,
+`examples/*/.nuxt` is built against the proxy port, not the real backend;
+rebuild the examples before using them for anything else.
 
 Flags: `--example <name>` (repeatable), `--skip-lighthouse`, `--update-baseline`, `--out <dir>`.
 
