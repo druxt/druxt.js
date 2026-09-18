@@ -33,3 +33,11 @@ Reports land in `.perf/<timestamp>/report.md` and `report.json`. Budgets are in 
 3. `mise exec node@22 -- yarn perf:audit --update-baseline` and commit `perf/baseline.json` with the release.
 
 In CI the manual gitlab `perf:audit` job and the GitHub `Performance audit` workflow (`workflow_dispatch`, with optional example and skip-Lighthouse inputs) do the same and keep `.perf/` as an artifact.
+
+## Comments on the merge request
+
+A run started from a merge request pipeline comments the summary on it, provided
+`PERF_AUDIT_GITLAB_TOKEN` is set as a masked project variable holding a project
+access token with `api` scope. A run on GitHub comments on the open pull request
+for the branch, using the workflow's own token. Either way a later run edits the
+same comment instead of adding a new one. Commenting never fails the job.

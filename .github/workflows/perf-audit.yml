@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   perf-audit:
@@ -77,6 +78,7 @@ jobs:
           echo "CHROME_PATH=$CHROME_PATH" >> "$GITHUB_ENV"
 
       - name: Audit
+        id: audit
         env:
           AUDIT_EXAMPLES: ${{ inputs.examples }}
           AUDIT_SKIP_LIGHTHOUSE: ${{ inputs.skip_lighthouse }}
@@ -86,6 +88,12 @@ jobs:
           for e in $(echo "$AUDIT_EXAMPLES" | tr ',' ' '); do args="$args --example $e"; done
           if [ "$AUDIT_SKIP_LIGHTHOUSE" = "true" ]; then args="$args --skip-lighthouse"; fi
           node scripts/perf-audit/index.mjs $args
+
+      - name: Comment on the pull request
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/perf-audit/comment.mjs "$(ls -d .perf/*/ | tail -1)report.json"
 
       - name: Stop the examples
         if: always()

@@ -191,6 +191,7 @@ Stanislav
 startswith
 storybook
 stubber
+summarise
 swipeable
 symfony
 tailwindcss
