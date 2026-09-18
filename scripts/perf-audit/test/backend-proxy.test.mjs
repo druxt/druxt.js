@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import http from 'node:http'
+import net from 'node:net'
 import { readFileSync, mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -65,4 +66,27 @@ test('startProxy answers 502 and logs it when the upstream is unreachable', asyn
   assert.deepEqual(entries[0], { method: 'GET', path: '/jsonapi', status: 502 })
 
   await proxy.close()
+})
+
+test('startProxy answers 504 and logs it when the upstream never responds', async () => {
+  // Accepts the TCP connection but never writes an HTTP response, so the
+  // proxy's own request to it hangs until the upstream timeout fires.
+  const sockets = new Set()
+  const upstream = net.createServer((socket) => { sockets.add(socket); socket.on('close', () => sockets.delete(socket)) })
+  await new Promise((resolve) => upstream.listen(0, '127.0.0.1', resolve))
+  const upstreamPort = upstream.address().port
+
+  const dir = mkdtempSync(join(tmpdir(), 'perf-audit-proxy-'))
+  const logFile = join(dir, 'backend-requests.log')
+  const proxy = await startProxy({ port: 0, target: `http://127.0.0.1:${upstreamPort}`, logFile, upstreamTimeoutMs: 100 })
+
+  const res = await fetch(`http://127.0.0.1:${proxy.port}/jsonapi`)
+  assert.equal(res.status, 504)
+
+  const entries = await waitForLines(logFile, 1)
+  assert.deepEqual(entries[0], { method: 'GET', path: '/jsonapi', status: 504 })
+
+  await proxy.close()
+  for (const socket of sockets) socket.destroy()
+  await new Promise((resolve) => upstream.close(resolve))
 })

@@ -25,7 +25,7 @@ function logLine(logFile, remotePort, status, method, pathWithQuery) {
   appendFileSync(logFile, line)
 }
 
-export function startProxy({ port, target, logFile }) {
+export function startProxy({ port, target, logFile, upstreamTimeoutMs = 30000 }) {
   const targetUrl = new URL(target)
   const targetPort = targetUrl.port || 80
 
@@ -48,9 +48,21 @@ export function startProxy({ port, target, logFile }) {
         upstreamRes.pipe(res)
       })
 
-      upstreamReq.on('error', () => {
-        if (!res.headersSent) res.writeHead(502)
+      upstreamReq.setTimeout(upstreamTimeoutMs, () => upstreamReq.destroy(new Error('upstream timeout')))
+
+      upstreamReq.on('error', (err) => {
+        const status = err.message === 'upstream timeout' ? 504 : 502
+        if (!res.headersSent) res.writeHead(status)
         res.end()
+      })
+
+      req.on('error', () => {
+        if (res.writable) res.end()
+        logLine(logFile, remotePort, 499, method, pathWithQuery)
+      })
+
+      res.on('error', () => {
+        logLine(logFile, remotePort, 499, method, pathWithQuery)
       })
 
       res.on('finish', () => {
@@ -60,6 +72,7 @@ export function startProxy({ port, target, logFile }) {
       req.pipe(upstreamReq)
     })
 
+    server.on('clientError', (err, socket) => socket.destroy())
     server.on('error', reject)
     server.listen(port, '127.0.0.1', () => resolve({
       port: server.address().port,
