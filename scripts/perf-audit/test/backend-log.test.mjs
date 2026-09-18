@@ -44,6 +44,13 @@ test('waitForSettle resolves once the file stops growing', async () => {
   const file = join(dir, 'log')
   await writeFile(file, 'a\n')
   setTimeout(() => appendFile(file, 'b\n'), 100)
-  const offset = await waitForSettle(file, 0, { quietMs: 300, timeoutMs: 5000 })
-  assert.equal(offset, 4)
+  const size = await waitForSettle(file, { quietMs: 300, timeoutMs: 5000 })
+  assert.equal(size, 4)
+})
+
+test('waitForSettle treats a missing file as size 0', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
+  const file = join(dir, 'missing')
+  const size = await waitForSettle(file, { quietMs: 50, timeoutMs: 500 })
+  assert.equal(size, 0)
 })

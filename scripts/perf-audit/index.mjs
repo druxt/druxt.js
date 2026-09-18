@@ -58,13 +58,11 @@ async function measureRoute(example, route, deps) {
   const backend = []
   let probed
   for (let pass = 0; pass < 2; pass++) {
-    const before = await deps.logSize(config.backendLog)
-    const start = await deps.waitForSettle(config.backendLog, before, { quietMs: 100, timeoutMs: 1000 })
+    const start = await deps.waitForSettle(config.backendLog, { quietMs: 100, timeoutMs: 1000 })
     probed = await probeRoute(deps, url)
-    const end = await deps.waitForSettle(config.backendLog, start)
+    await deps.waitForSettle(config.backendLog, {})
     const { text } = await deps.readNewLines(config.backendLog, start)
     backend.push(backendLog.groupByEndpoint(backendLog.parseLogLines(text)))
-    void end
   }
   return { backendCold: backend[0], backendWarm: backend[1], ssr: probed, lighthouse: null }
 }

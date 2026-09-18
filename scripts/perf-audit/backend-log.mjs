@@ -50,13 +50,13 @@ export async function readNewLines(file, offset) {
   }
 }
 
-export async function waitForSettle(file, offset, { quietMs = 500, timeoutMs = 15000 } = {}) {
+export async function waitForSettle(file, { quietMs = 500, timeoutMs = 15000 } = {}) {
   const started = Date.now()
-  let last = (await stat(file)).size
+  let last = await logSize(file)
   let quietSince = Date.now()
   while (Date.now() - started < timeoutMs) {
     await new Promise((resolve) => setTimeout(resolve, 50))
-    const { size } = await stat(file)
+    const size = await logSize(file)
     if (size !== last) { last = size; quietSince = Date.now() }
     else if (Date.now() - quietSince >= quietMs) return size
   }
