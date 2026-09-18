@@ -1,8 +1,5 @@
 #!/usr/bin/env node
-// A reverse proxy the audit runs itself, so backend-request counting doesn't
-// depend on the provisioned backend's own log (some backends never write a
-// per-request completion line). Logs one line per finished request in the
-// same format backend-log.mjs's parser reads.
+// php -S logs only the requests it serves itself, not the ones its router script hands to Drupal, so the audit logs backend requests here.
 import http from 'node:http'
 import { appendFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'

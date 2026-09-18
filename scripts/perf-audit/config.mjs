@@ -2,11 +2,8 @@
 import { resolve } from 'node:path'
 
 export const config = {
-  // The audit's own proxy log (backend-proxy.mjs), not the backend's own log:
-  // some backends never write a per-request completion line.
+  // See backend-proxy.mjs for why the audit runs its own proxy.
   backendLog: process.env.PERF_AUDIT_BACKEND_LOG || resolve('.perf/backend-requests.log'),
-  backendUrl: process.env.BASE_URL || 'http://127.0.0.1:8888',
-  proxyPort: Number(process.env.PERF_AUDIT_PROXY_PORT || 8890),
   examples: [
     // Every non-root route on druxt-site answers under the /en/ prefix; the
     // unprefixed path 302s there instead of rendering.

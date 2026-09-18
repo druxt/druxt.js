@@ -60,12 +60,10 @@ if [ "$cmd" = "stop" ]; then
   exit 0
 fi
 
-# The audit brings its own request log: some backends never write a
-# per-request completion line to their own log, so counting backend requests
-# through the provisioned backend is unreliable. This proxy sits between the
-# examples and the real backend and logs every forwarded request itself. One
-# proxy is shared across every example, so a second `start` (e.g. one example
-# at a time) must not restart it underneath the examples already using it.
+# See scripts/perf-audit/backend-proxy.mjs for why the audit runs its own
+# proxy. One proxy is shared across every example, so a second `start` (e.g.
+# one example at a time) must not restart it underneath the examples already
+# using it.
 if proxy_running; then
   echo "proxy already running on ${proxy_port}"
 else
@@ -84,9 +82,9 @@ for example in "${examples[@]}"; do
   # needs a live per-request SSR server instead, so force --target server.
   (
     cd "$root/examples/$example"
-    corepack yarn install --silent
+    corepack yarn install
     BASE_URL="http://127.0.0.1:${proxy_port}" npx nuxt build --target server
-  ) >"$root/.perf/${example}.build.log" 2>&1
+  ) >"$root/.perf/${example}.build.log" 2>&1 || { echo "$example build failed; see .perf/${example}.build.log" >&2; exit 1; }
   (
     cd "$root/examples/$example"
     exec setsid env BASE_URL="http://127.0.0.1:${proxy_port}" npx nuxt start --target server --port "${ports[$example]}" --hostname 127.0.0.1
