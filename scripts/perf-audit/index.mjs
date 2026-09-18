@@ -81,12 +81,13 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
   }
 
   const meta = { generatedAt: d.now().toISOString(), commit: d.commit() }
-  const comparison = baseline.compare(run, await d.loadBaseline(BASELINE_FILE), config.budgets)
+  const existingBaseline = await d.loadBaseline(BASELINE_FILE)
+  const comparison = baseline.compare(run, existingBaseline, config.budgets)
   const md = toMarkdown(comparison, meta)
   await writeFile(join(outDir, 'report.json'), JSON.stringify(toJson(run, comparison, meta), null, 2))
   await writeFile(join(outDir, 'report.md'), md)
   console.log(md)
-  if (opts.updateBaseline) await d.saveBaseline(BASELINE_FILE, run)
+  if (opts.updateBaseline) await d.saveBaseline(BASELINE_FILE, baseline.mergeBaseline(existingBaseline, run))
   return { run, breaches: comparison.breaches, outDir }
 }
 
