@@ -143,3 +143,25 @@ test('runAudit records a route missing from the Lighthouse results as an error',
   assert.equal(result.errors.length, 1)
   assert.match(result.errors[0].message, /druxt-daisyui \/: no Lighthouse result/)
 })
+
+test('runAudit leaves the baseline alone when the audit recorded errors', async () => {
+  const outDir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
+  let saved = null
+  const deps = {
+    probe: async () => ({ status: 200, ttfbMs: 1, totalMs: 2, htmlBytes: 1, nuxtBytes: 1, fetchKeys: 0, errorState: null }),
+    logSize: async () => 0,
+    readNewLines: async () => ({ text: '', offset: 0 }),
+    waitForSettle: async () => 0,
+    runUnlighthouse: async () => { throw new Error('unlighthouse-ci exited with 1') },
+    readUnlighthouseResults: async () => ({}),
+    loadBaseline: async () => ({}),
+    saveBaseline: async (file, run) => { saved = run },
+    checkServer: async () => true,
+    now: () => new Date('2026-09-18T00:00:00Z'),
+    commit: () => 'abc1234',
+  }
+  const examples = [{ name: 'druxt-site', port: 3200, routes: ['/'] }]
+  const result = await runAudit({ examples: null, skipLighthouse: false, updateBaseline: true, outDir }, deps, examples)
+  assert.equal(result.errors.length, 1)
+  assert.equal(saved, null)
+})

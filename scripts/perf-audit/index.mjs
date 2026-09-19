@@ -113,7 +113,8 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
   await writeFile(join(outDir, 'report.json'), JSON.stringify(toJson(run, comparison, meta, errors), null, 2))
   await writeFile(join(outDir, 'report.md'), md)
   console.log(md)
-  if (opts.updateBaseline) await d.saveBaseline(BASELINE_FILE, baseline.mergeBaseline(existingBaseline, run))
+  if (opts.updateBaseline && errors.length) console.error('Baseline not updated: the audit recorded errors.')
+  else if (opts.updateBaseline) await d.saveBaseline(BASELINE_FILE, baseline.mergeBaseline(existingBaseline, run))
   return { run, breaches: comparison.breaches, outDir, errors }
 }
 
