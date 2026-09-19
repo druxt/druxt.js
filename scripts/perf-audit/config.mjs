@@ -25,10 +25,15 @@ export const config = {
   budgets: {
     // Backend requests per server render may not rise against the baseline.
     backendRequests: 'no-increase',
+    // API calls the browser makes after DOMContentLoaded may not rise: each one is a refetch of rendered data.
+    postLoadApiCalls: 'no-increase',
+    // Server-rendered Druxt nodes the browser throws away after hydration may not rise.
+    discardedNodes: 'no-increase',
     // Lighthouse performance may drop at most this many points (0 to 100).
     performanceDrop: 10,
     // The inline __NUXT__ payload may grow at most this much.
     payloadGrowthPercent: 10,
   },
+  hydration: { loads: 3 },
   unlighthouse: { version: '0.18.0', playwright: '1.62.1' },
 }
