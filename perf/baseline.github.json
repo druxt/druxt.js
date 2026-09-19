@@ -38,7 +38,7 @@
         "fcpMs": 1678,
         "requests": 46,
         "bytes": 995156,
-        "postLoadApiCalls": 0
+        "postLoadApiCalls": 6
       }
     },
     "/en/recipes": {
@@ -79,7 +79,7 @@
         "fcpMs": 1675,
         "requests": 49,
         "bytes": 1410764,
-        "postLoadApiCalls": 0
+        "postLoadApiCalls": 6
       }
     },
     "/en/recipes/deep-mediterranean-quiche": {
@@ -120,7 +120,7 @@
         "fcpMs": 1683,
         "requests": 40,
         "bytes": 410436,
-        "postLoadApiCalls": 0
+        "postLoadApiCalls": 8
       }
     },
     "/en/articles/give-it-a-go-and-grow-your-own-herbs": {
@@ -161,7 +161,7 @@
         "fcpMs": 1678,
         "requests": 40,
         "bytes": 524539,
-        "postLoadApiCalls": 0
+        "postLoadApiCalls": 8
       }
     },
     "/en/recipe-category/main-courses": {
@@ -202,7 +202,7 @@
         "fcpMs": 1526,
         "requests": 37,
         "bytes": 401662,
-        "postLoadApiCalls": 0
+        "postLoadApiCalls": 6
       }
     }
   },

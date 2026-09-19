@@ -49,7 +49,7 @@ async function findReports(dir, found = []) {
 function postLoadApiCalls(report) {
   const items = report.audits?.['network-requests']?.details?.items || []
   const loaded = report.audits?.metrics?.details?.items?.[0]?.observedDomContentLoaded ?? 0
-  return items.filter((item) => /\/(jsonapi|router)(\/|\?|$)/.test(new URL(item.url).pathname + '?') && item.startTime > loaded).length
+  return items.filter((item) => /\/(jsonapi|router)(\/|\?|$)/.test(new URL(item.url).pathname + '?') && item.networkRequestTime > loaded).length
 }
 
 export async function readUnlighthouseResults(outDir) {
