@@ -81,6 +81,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const file = process.argv[2]
   const target = detectTarget(process.env)
   if (!file) { console.error('usage: comment.mjs <report.json>'); process.exit(0) }
+  if (!target && process.env.CI_MERGE_REQUEST_IID) { console.log('PERF_AUDIT_GITLAB_TOKEN is not set; not commenting on the merge request'); process.exit(0) }
   if (!target) { console.log('no merge request or pull request target in the environment; not commenting'); process.exit(0) }
   readFile(file, 'utf8')
     .then((text) => postComment(target, summarise(JSON.parse(text))))

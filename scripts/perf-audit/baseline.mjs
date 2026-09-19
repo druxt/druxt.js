@@ -36,7 +36,7 @@ export function compare(run, baseline, budgets) {
         const current = read(entry, metric)
         const previous = base ? read(base, metric) : null
         const numeric = typeof current === 'number' && typeof previous === 'number'
-        rows.push({ example, route, metric, current, baseline: previous, delta: numeric ? current - previous : null, breach: breachFor(metric, current, previous, budgets) })
+        rows.push({ example, route, metric, current, baseline: previous, delta: numeric ? Number((current - previous).toFixed(3)) : null, breach: breachFor(metric, current, previous, budgets) })
       }
     }
   }
