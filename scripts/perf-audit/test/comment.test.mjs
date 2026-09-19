@@ -24,7 +24,7 @@ test('summarise renders the marker, the heading and one row per route', () => {
 })
 
 test('detectTarget picks gitlab, github, or nothing', () => {
-  assert.deepEqual(detectTarget({ CI_MERGE_REQUEST_IID: '88', CI_PROJECT_ID: '239', CI_API_V4_URL: 'http://gl/api/v4', PERF_AUDIT_GITLAB_TOKEN: 't' }),
+  assert.deepEqual(detectTarget({ CI_MERGE_REQUEST_IID: '88', CI_PROJECT_ID: '239', CI_API_V4_URL: 'http://gl/api/v4', GITLAB_API_TOKEN: 't' }),
     { host: 'gitlab', api: 'http://gl/api/v4', project: '239', iid: '88', token: 't' })
   assert.deepEqual(detectTarget({ GITHUB_TOKEN: 't', GITHUB_REPOSITORY: 'o/r', GITHUB_REF_NAME: 'feature/x' }),
     { host: 'github', repo: 'o/r', branch: 'feature/x', token: 't' })

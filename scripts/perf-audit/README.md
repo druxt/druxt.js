@@ -51,7 +51,7 @@ In CI the manual gitlab `perf:audit` job and the GitHub `Performance audit` work
 ## Comments on the merge request
 
 A run started from the pipeline of a merge request comments the summary on it, provided
-`PERF_AUDIT_GITLAB_TOKEN` is set as a masked project variable holding a project
-access token with `api` scope. A run on GitHub comments on the open pull request
+`GITLAB_API_TOKEN` is set as a masked CI variable holding a
+token with `api` scope, the same variable the other merge request comment scripts use. A run on GitHub comments on the open pull request
 for the branch, using the workflow's own token. Either way a later run edits the
 same comment instead of adding a new one. Commenting never fails the job.

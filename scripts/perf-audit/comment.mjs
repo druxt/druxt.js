@@ -32,8 +32,8 @@ export function summarise(report) {
 }
 
 export function detectTarget(env) {
-  if (env.CI_MERGE_REQUEST_IID && env.CI_PROJECT_ID && env.CI_API_V4_URL && env.PERF_AUDIT_GITLAB_TOKEN) {
-    return { host: 'gitlab', api: env.CI_API_V4_URL, project: env.CI_PROJECT_ID, iid: env.CI_MERGE_REQUEST_IID, token: env.PERF_AUDIT_GITLAB_TOKEN }
+  if (env.CI_MERGE_REQUEST_IID && env.CI_PROJECT_ID && env.CI_API_V4_URL && env.GITLAB_API_TOKEN) {
+    return { host: 'gitlab', api: env.CI_API_V4_URL, project: env.CI_PROJECT_ID, iid: env.CI_MERGE_REQUEST_IID, token: env.GITLAB_API_TOKEN }
   }
   const branch = env.GITHUB_HEAD_REF || env.GITHUB_REF_NAME
   if (env.GITHUB_TOKEN && env.GITHUB_REPOSITORY && branch) {
@@ -81,7 +81,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const file = process.argv[2]
   const target = detectTarget(process.env)
   if (!file) { console.error('usage: comment.mjs <report.json>'); process.exit(0) }
-  if (!target && process.env.CI_MERGE_REQUEST_IID) { console.log('PERF_AUDIT_GITLAB_TOKEN is not set; not commenting on the merge request'); process.exit(0) }
+  if (!target && process.env.CI_MERGE_REQUEST_IID) { console.log('GITLAB_API_TOKEN is not set; not commenting on the merge request'); process.exit(0) }
   if (!target) { console.log('no merge request or pull request target in the environment; not commenting'); process.exit(0) }
   readFile(file, 'utf8')
     .then((text) => postComment(target, summarise(JSON.parse(text))))
