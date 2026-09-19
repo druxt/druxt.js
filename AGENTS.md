@@ -70,6 +70,10 @@ yarn lint && yarn build && yarn test:unit
   Node-16-forced version, Nuxt module-string registration, JSON-config-file
   references. None of these are things knip's static analysis can trace).
 - `yarn bundlewatch`: bundle size guard (`packages/**/dist/*.js` ≤ 50kb)
+- `yarn perf:audit` / `yarn perf:audit:test`: the example performance audit and
+  its `node:test` units. Both run under Node 22, not the repository's Node 16
+  (`mise exec node@22 -- yarn perf:audit`). Not part of the gate above. The
+  audit needs the examples served first. See `scripts/perf-audit/README.md`.
 
 ### Dependency audit: production vs. full
 
@@ -181,7 +185,10 @@ stays as this repo's convention.) This is unrelated to commit-message
   "Dependency audit: production vs. full" above.
 - **CodeQL** (`.github/workflows/codeql-analysis.yml`): scans `develop` weekly.
 - **Performance audit**: manual/advisory on both hosts, run at release time
-  against `perf/baseline.<environment>.json`. See `scripts/perf-audit/README.md`.
+  against `perf/baseline.<environment>.json`. On GitHub the `perf-audit` label
+  on a pull request starts it. Counts (backend requests, API calls after load,
+  discarded nodes, payload) compare across machines. Lighthouse scores do not.
+  See `scripts/perf-audit/README.md`.
 
 ## examples/drupal local dev
 

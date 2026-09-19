@@ -11,7 +11,7 @@ Measures the example applications per route and compares each run with the basel
 
 ## Run it
 
-The audit needs Node 18 or later. The examples build under Node 16.
+The audit runs under Node 22. Node 18 also works with `--skip-hydration`. The examples build under Node 16, like the rest of the repository.
 
     examples/drupal/.devtools/start
     yarn build
@@ -27,13 +27,35 @@ Flags: `--example <name>` (repeatable), `--skip-lighthouse`, `--skip-hydration`,
 
 The Lighthouse and hydration layers need `CHROME_PATH`. The hydration layer also needs Node 22 for its WebSocket client.
 
-Reports are written to `.perf/<timestamp>/report.md` and `report.json`. Budgets are in `config.mjs`, and a breach exits 1.
+Reports are written to `.perf/<timestamp>/report.md` and `report.json`.
+
+## Budgets
+
+A breach exits 1. The CI jobs are advisory, so a breach marks the job and the comment without blocking a merge. The values are in `config.mjs`.
+
+| Budget                                   | Breach means                                                                   |
+| ---------------------------------------- | ------------------------------------------------------------------------------ |
+| Backend requests per render may not rise | a server render makes more calls to Drupal than the baseline did               |
+| API calls after load may not rise        | the browser fetches data again that the server already rendered                |
+| Discarded nodes may not rise             | the browser throws away server-rendered Druxt components and builds them again |
+| Performance may drop at most 10 points   | the Lighthouse score fell further than its run to run noise                    |
+| Inline payload may grow at most 10%      | the `__NUXT__` state in the HTML grew                                          |
+| Every route answers 200 with no error    | a route failed to render                                                       |
+
+## Reading the numbers
+
+- Backend requests, API calls after load, discarded nodes and payload bytes are counts. They came out the same on a laptop and on both CI runners, so a change in one of them is a change in the code.
+- The Lighthouse score, the paint timings and time to first byte depend on the machine and move between identical runs. Compare them only within one environment, and look for a change on several routes before trusting it.
+- Layout shift on druxt-site flips between runs of the same code until the hydration problem in [#837](https://github.com/druxt/druxt.js/issues/837) is fixed. It carries a quarter of the Lighthouse score, so the druxt-site performance budget can breach with no code change. Read the counts on those routes.
+- Warm equals cold on every route today. Nothing is cached between server renders.
 
 ## Each release
 
 1. Run the audit on the release candidate.
 2. Read the deltas against the previous release.
-3. `mise exec node@22 -- yarn perf:audit --update-baseline` and commit the baseline with the release.
+3. Refresh every baseline and commit them with the release:
+   - `perf/baseline.local.json`: `mise exec node@22 -- yarn perf:audit --update-baseline`.
+   - `perf/baseline.github.json` and `perf/baseline.gitlab.json`: run each CI job with its baseline update switched on (see below) and commit the file from its artifact.
 
 ## One baseline per environment
 
@@ -55,6 +77,8 @@ In CI the manual gitlab `perf:audit` job and the GitHub `Performance audit` work
 
 A run started from the pipeline of a merge request comments the summary on it, provided
 `GITLAB_API_TOKEN` is set as a masked CI variable holding a
-token with `api` scope, the same variable the other merge request comment scripts use. A run on GitHub comments on the open pull request
-for the branch, using the workflow's own token. Either way a later run edits the
+token with `api` scope, the same variable the other merge request comment scripts use. A run on GitHub comments on its pull request
+using the workflow's own token. A run started by the label takes the pull request number from its ref. A run started with `Run workflow` looks for an open pull request on the branch. Either way a later run edits the
 same comment instead of adding a new one. Commenting never fails the job.
+
+Every GitHub run also writes the summary to its run page. GitHub gives a run on a pull request from a fork a read-only token, so the comment is refused there and the run page is where to read the result.
