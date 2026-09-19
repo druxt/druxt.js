@@ -180,6 +180,8 @@ stays as this repo's convention.) This is unrelated to commit-message
   audit and knip block. The full audit is reporting-only. See
   "Dependency audit: production vs. full" above.
 - **CodeQL** (`.github/workflows/codeql-analysis.yml`): scans `develop` weekly.
+- **Performance audit**: manual/advisory on both hosts, run at release time
+  against `perf/baseline.<environment>.json`. See `scripts/perf-audit/README.md`.
 
 ## examples/drupal local dev
 

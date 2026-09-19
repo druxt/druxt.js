@@ -530,6 +530,56 @@ test:examples:
       - examples/$EXAMPLE/test/cypress/videos
     expire_in: 1 week
 
+# Manual, advisory. Builds and serves the examples in production mode against
+# the provisioned backend, then measures backend requests, server renders and
+# Lighthouse per route and compares them with perf/baseline.gitlab.json.
+# Play it with PERF_AUDIT_UPDATE_BASELINE=true to write the run into that file.
+perf:audit:
+  extends: .drupal-backend
+  stage: test
+  when: manual
+  allow_failure: true
+  timeout: 60m
+  variables:
+    UNLIGHTHOUSE_CONCURRENCY: '1'
+  script:
+    - !reference [.provision-backend, script]
+    - section_start "build" "Building the monorepo"
+    - yarn install --immutable
+    - yarn build
+    - section_end "build"
+    - section_start "serve" "Building and serving the examples"
+    - scripts/perf-audit/serve-examples.sh start
+    - section_end "serve"
+    - section_start "browser" "Installing Node 22 and Chromium for Unlighthouse"
+    # Node 22 for the audit only; the examples stay on the template's Node 16.
+    - . "$NVM_DIR/nvm.sh" && nvm install 22 >/dev/null && nvm use 16 >/dev/null
+    - NODE22="$(nvm which 22)"
+    - '"$NODE22" --test scripts/perf-audit/test/*.test.mjs'
+    # Node 22 on PATH: npx spawns the playwright binary with the `node` it finds there.
+    - PATH="$(dirname "$NODE22"):$PATH" npx --yes playwright@1.62.1 install --with-deps chromium
+    - export CHROME_PATH=$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)
+    - test -n "$CHROME_PATH" || { echo "No Playwright Chromium found" >&2; exit 1; }
+    - section_end "browser"
+    - section_start "audit" "Auditing"
+    - audit_rc=0
+    - if [ "${PERF_AUDIT_UPDATE_BASELINE:-}" = "true" ]; then audit_args="--update-baseline"; else audit_args=""; fi
+    - PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/index.mjs $audit_args || audit_rc=$?
+    # Comments on the merge request when PERF_AUDIT_GITLAB_TOKEN (masked, api scope) is set; never fails the job.
+    - PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/comment.mjs "$(ls -d .perf/*/ | tail -1)report.json"
+    - section_end "audit"
+    - exit "$audit_rc"
+  after_script:
+    - scripts/perf-audit/serve-examples.sh stop
+    - pkill -9 -f 'user-data-dir=/tmp/puppeteer' 2>/dev/null || true
+  artifacts:
+    when: always
+    paths:
+      - .perf/
+      - perf/
+    expire_in: 1 month
+    expose_as: 'Performance audit'
+
 # then watch its log for the https://*.trycloudflare.com URLs.
 #
 # Variables (all settable when triggering):

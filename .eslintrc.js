@@ -34,6 +34,11 @@ module.exports = {
       files: ['**/cypress/**/*.js'],
       env: { browser: true, mocha: true },
       globals: { cy: 'readonly', Cypress: 'readonly', expect: 'readonly' }
+    },
+    {
+      files: ['scripts/perf-audit/**/*.mjs'],
+      parserOptions: { sourceType: 'module', ecmaVersion: 2021 },
+      env: { node: true }
     }
   ]
 }

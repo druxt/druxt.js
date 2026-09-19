@@ -1,0 +1,14 @@
+{
+  "summary": { "score": 0.9 },
+  "routes": [
+    { "path": "/recipes", "score": 0.91,
+      "categories": { "performance": { "score": 0.88 }, "accessibility": { "score": 1 } },
+      "metrics": {
+        "largest-contentful-paint": { "numericValue": 1830.5, "displayValue": "1.8 s" },
+        "cumulative-layout-shift": { "numericValue": 0.012, "displayValue": "0.012" },
+        "total-blocking-time": { "numericValue": 120, "displayValue": "120 ms" },
+        "first-contentful-paint": { "numericValue": 900, "displayValue": "0.9 s" }
+      }
+    }
+  ]
+}

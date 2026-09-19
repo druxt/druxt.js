@@ -1,0 +1,122 @@
+name: Performance audit
+
+on:
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      examples:
+        description: Examples to audit (comma separated), empty for all
+        required: false
+        default: ''
+      skip_lighthouse:
+        description: Skip the Lighthouse layer
+        type: boolean
+        default: false
+      update_baseline:
+        description: Write the run into perf/baseline.github.json (download it from the artifact and commit it)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  perf-audit:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'perf-audit'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+      - run: yarn build
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, sqlite3
+
+      - name: Assemble, provision, and start the Drupal backend
+        working-directory: examples/drupal
+        run: |
+          .devtools/assemble
+          .devtools/provision
+          .devtools/start
+        env:
+          WEBSERVER_HOST: 127.0.0.1
+          WEBSERVER_PORT: 8888
+
+      - name: Build and serve the examples through the audit proxy
+        run: scripts/perf-audit/serve-examples.sh start
+        env:
+          BASE_URL: http://127.0.0.1:8888
+
+      # Node 22 for the audit only; the examples stay on Node 16.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - name: Unit tests
+        run: node --test scripts/perf-audit/test/*.test.mjs
+
+      - name: Install Chromium for Unlighthouse
+        run: |
+          npx --yes playwright@1.62.1 install --with-deps chromium
+          CHROME_PATH="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)"
+          test -n "$CHROME_PATH" || { echo "No Playwright Chromium found" >&2; exit 1; }
+          echo "CHROME_PATH=$CHROME_PATH" >> "$GITHUB_ENV"
+
+      - name: Audit
+        id: audit
+        env:
+          AUDIT_EXAMPLES: ${{ inputs.examples }}
+          AUDIT_SKIP_LIGHTHOUSE: ${{ inputs.skip_lighthouse }}
+          AUDIT_UPDATE_BASELINE: ${{ inputs.update_baseline }}
+        continue-on-error: true
+        run: |
+          args=()
+          IFS=',' read -ra examples <<< "$AUDIT_EXAMPLES"
+          for e in "${examples[@]}"; do
+            [ -n "$e" ] && args+=(--example "$e")
+          done
+          if [ "$AUDIT_SKIP_LIGHTHOUSE" = "true" ]; then args+=(--skip-lighthouse); fi
+          if [ "$AUDIT_UPDATE_BASELINE" = "true" ]; then args+=(--update-baseline); fi
+          node scripts/perf-audit/index.mjs "${args[@]}"
+
+      - name: Comment on the pull request
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/perf-audit/comment.mjs "$(ls -d .perf/*/ | tail -1)report.json"
+
+      - name: Stop the examples
+        if: always()
+        run: scripts/perf-audit/serve-examples.sh stop
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: perf-audit
+          path: |
+            .perf/
+            perf/
+          retention-days: 30
+          include-hidden-files: true
