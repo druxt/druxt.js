@@ -1,6 +1,9 @@
 import { join, resolve } from 'path'
 import DruxtViewsStorybook from './storybook'
 
+// @nuxt/components ignores a false isAsync on the directory.
+const extendComponent = (component) => ({ ...component, isAsync: false })
+
 /**
  * The Nuxt.js module function.
  *
@@ -42,8 +45,8 @@ const DruxtViewsNuxtModule = async function (moduleOptions = {}) {
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
-    dirs.push({ path: join(__dirname, 'components') })
-    dirs.push({ path: join(__dirname, 'components/blocks') })
+    dirs.push({ path: join(__dirname, 'components'), extendComponent })
+    dirs.push({ path: join(__dirname, 'components/blocks'), extendComponent })
   })
 
   // Add dependant modules.

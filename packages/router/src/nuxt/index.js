@@ -3,6 +3,9 @@ import { join, resolve } from 'path'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
 
+// @nuxt/components ignores a false isAsync on the directory.
+const extendComponent = (component) => ({ ...component, isAsync: false })
+
 /**
  * The Nuxt.js module function.
  *
@@ -55,7 +58,7 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {
-    dirs.push({ path: join(__dirname, '../dist/components') })
+    dirs.push({ path: join(__dirname, '../dist/components'), extendComponent })
   })
 
   // Add Druxt router custom wildcard route.
