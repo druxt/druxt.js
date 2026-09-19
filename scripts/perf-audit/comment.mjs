@@ -35,8 +35,9 @@ export function detectTarget(env) {
   if (env.CI_MERGE_REQUEST_IID && env.CI_PROJECT_ID && env.CI_API_V4_URL && env.PERF_AUDIT_GITLAB_TOKEN) {
     return { host: 'gitlab', api: env.CI_API_V4_URL, project: env.CI_PROJECT_ID, iid: env.CI_MERGE_REQUEST_IID, token: env.PERF_AUDIT_GITLAB_TOKEN }
   }
-  if (env.GITHUB_TOKEN && env.GITHUB_REPOSITORY && env.GITHUB_REF_NAME) {
-    return { host: 'github', repo: env.GITHUB_REPOSITORY, branch: env.GITHUB_REF_NAME, token: env.GITHUB_TOKEN }
+  const branch = env.GITHUB_HEAD_REF || env.GITHUB_REF_NAME
+  if (env.GITHUB_TOKEN && env.GITHUB_REPOSITORY && branch) {
+    return { host: 'github', repo: env.GITHUB_REPOSITORY, branch, token: env.GITHUB_TOKEN }
   }
   return null
 }
@@ -47,13 +48,20 @@ async function request(fetch, url, init, headers) {
   return response.json()
 }
 
+async function findMarked(fetch, base, headers) {
+  for (let page = 1; ; page++) {
+    const items = await request(fetch, `${base}?per_page=100&page=${page}`, {}, headers)
+    const found = items.find((item) => (item.body || '').startsWith(MARKER))
+    if (found || items.length < 100) return found || null
+  }
+}
+
 export async function postComment(target, body, { fetch: given } = {}) {
   const doFetch = given || fetch
   if (target.host === 'gitlab') {
     const headers = { 'PRIVATE-TOKEN': target.token }
     const base = `${target.api}/projects/${target.project}/merge_requests/${target.iid}/notes`
-    const notes = await request(doFetch, `${base}?per_page=100`, {}, headers)
-    const existing = notes.find((note) => (note.body || '').startsWith(MARKER))
+    const existing = await findMarked(doFetch, base, headers)
     if (existing) await request(doFetch, `${base}/${existing.id}`, { method: 'PUT', body: JSON.stringify({ body }) }, headers)
     else await request(doFetch, base, { method: 'POST', body: JSON.stringify({ body }) }, headers)
     return true
@@ -63,8 +71,7 @@ export async function postComment(target, body, { fetch: given } = {}) {
   const pulls = await request(doFetch, `https://api.github.com/repos/${target.repo}/pulls?state=open&head=${encodeURIComponent(`${owner}:${target.branch}`)}`, {}, headers)
   if (!pulls.length) { console.log(`no pull request for ${target.branch}`); return false }
   const base = `https://api.github.com/repos/${target.repo}/issues/${pulls[0].number}/comments`
-  const comments = await request(doFetch, `${base}?per_page=100`, {}, headers)
-  const existing = comments.find((comment) => (comment.body || '').startsWith(MARKER))
+  const existing = await findMarked(doFetch, base, headers)
   if (existing) await request(doFetch, `https://api.github.com/repos/${target.repo}/issues/comments/${existing.id}`, { method: 'PATCH', body: JSON.stringify({ body }) }, headers)
   else await request(doFetch, base, { method: 'POST', body: JSON.stringify({ body }) }, headers)
   return true

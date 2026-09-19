@@ -43,6 +43,7 @@ export function startProxy({ port, target, logFile, upstreamTimeoutMs = 30000 })
         headers,
       }, (upstreamRes) => {
         res.writeHead(upstreamRes.statusCode, upstreamRes.headers)
+        upstreamRes.on('error', () => res.destroy())
         upstreamRes.pipe(res)
       })
 

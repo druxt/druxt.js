@@ -94,7 +94,10 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
         await mkdir(dir, { recursive: true })
         await d.runUnlighthouse(example, dir)
         const results = await d.readUnlighthouseResults(join(dir, 'unlighthouse'))
-        for (const route of example.routes) run[example.name][route].lighthouse = results[route] || null
+        for (const route of example.routes) {
+          if (!results[route]) throw new Error(`${example.name} ${route}: no Lighthouse result`)
+          run[example.name][route].lighthouse = results[route]
+        }
       }
     } catch (err) {
       run[example.name] = run[example.name] || {}

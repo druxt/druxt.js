@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import http from 'node:http'
 import net from 'node:net'
-import { readFileSync, mkdtempSync } from 'node:fs'
+import { existsSync, readFileSync, mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { startProxy } from '../backend-proxy.mjs'
@@ -26,7 +26,7 @@ function startUpstream() {
 async function waitForLines(logFile, count, timeoutMs = 2000) {
   const started = Date.now()
   while (Date.now() - started < timeoutMs) {
-    const entries = parseLogLines(readFileSync(logFile, 'utf8'))
+    const entries = parseLogLines(existsSync(logFile) ? readFileSync(logFile, 'utf8') : '')
     if (entries.length >= count) return entries
     await new Promise((resolve) => setTimeout(resolve, 20))
   }

@@ -38,7 +38,7 @@ export async function logSize(file) {
 }
 
 export async function readNewLines(file, offset) {
-  const { size } = await stat(file)
+  const size = await logSize(file)
   if (size <= offset) return { text: '', offset }
   const handle = await open(file, 'r')
   try {

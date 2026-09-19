@@ -56,12 +56,13 @@ export async function readUnlighthouseResults(outDir) {
   const ci = JSON.parse(await readFile(join(outDir, 'ci-result.json'), 'utf8'))
   const byRoute = {}
   const reports = {}
-  for (const file of await findReports(outDir).catch(() => [])) {
+  for (const file of await findReports(outDir)) {
     const report = JSON.parse(await readFile(file, 'utf8'))
     reports[new URL(report.requestedUrl).pathname] = report
   }
   for (const route of ci.routes) {
-    const report = reports[route.path] || { audits: {} }
+    const report = reports[route.path]
+    if (!report) throw new Error(`no lighthouse.json for ${route.path} under ${outDir}`)
     const metric = (id) => route.metrics?.[id]?.numericValue
     byRoute[route.path] = {
       performance: Math.round((route.categories?.performance?.score ?? 0) * 100),

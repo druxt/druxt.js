@@ -14,6 +14,11 @@ test('flags', () => {
   assert.equal(opts.outDir, '/tmp/x')
 })
 
+test('a missing option value throws instead of eating the next flag', () => {
+  assert.throws(() => parseArgs(['--out', '--skip-lighthouse']), /Missing value for --out/)
+  assert.throws(() => parseArgs(['--example']), /Missing value for --example/)
+})
+
 test('unknown flag throws', () => {
   assert.throws(() => parseArgs(['--nope']), /Unknown option/)
 })

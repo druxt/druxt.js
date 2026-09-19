@@ -31,6 +31,11 @@ test('readNewLines returns only bytes past the offset', async () => {
   assert.equal(second.offset, first.offset + 'new line\n'.length)
 })
 
+test('readNewLines treats a missing file as empty', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
+  assert.deepEqual(await readNewLines(join(dir, 'missing.log'), 0), { text: '', offset: 0 })
+})
+
 test('logSize returns the current byte size, 0 when missing', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
   const file = join(dir, 'log')

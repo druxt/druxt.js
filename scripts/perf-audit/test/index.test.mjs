@@ -122,3 +122,24 @@ test('runAudit continues past a failing example and records the error', async ()
   const md = await readFile(join(outDir, 'report.md'), 'utf8')
   assert.match(md, /## druxt-site/)
 })
+
+test('runAudit records a route missing from the Lighthouse results as an error', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
+  const deps = {
+    now: () => new Date('2026-09-18T00:00:00Z'),
+    commit: () => 'abc1234',
+    checkServer: async () => true,
+    probe: async () => ({ status: 200, ttfbMs: 1, totalMs: 2, htmlBytes: 1, nuxtBytes: 1, fetchKeys: 0, errorState: null }),
+    logSize: async () => 0,
+    readNewLines: async () => ({ text: '', offset: 0 }),
+    waitForSettle: async () => 0,
+    runUnlighthouse: async () => {},
+    readUnlighthouseResults: async () => ({}),
+    loadBaseline: async () => ({}),
+    saveBaseline: async () => {},
+  }
+  const examples = [{ name: 'druxt-daisyui', port: 3201, routes: ['/'] }]
+  const result = await runAudit({ examples: null, skipLighthouse: false, updateBaseline: false, outDir: dir }, deps, examples)
+  assert.equal(result.errors.length, 1)
+  assert.match(result.errors[0].message, /druxt-daisyui \/: no Lighthouse result/)
+})

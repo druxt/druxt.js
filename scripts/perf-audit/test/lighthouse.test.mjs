@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile, mkdtemp } from 'node:fs/promises'
+import { readFile, mkdtemp, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { writeUnlighthouseConfig, runUnlighthouse, readUnlighthouseResults } from '../lighthouse.mjs'
@@ -35,4 +35,10 @@ test('readUnlighthouseResults merges scores, vitals and post-load API calls', as
     performance: 88, lcpMs: 1831, clsScore: 0.012, tbtMs: 120, fcpMs: 900,
     requests: 5, bytes: 165500, postLoadApiCalls: 2,
   })
+})
+
+test('readUnlighthouseResults fails when a route has no report', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
+  await writeFile(join(dir, 'ci-result.json'), JSON.stringify({ routes: [{ path: '/recipes' }] }))
+  await assert.rejects(readUnlighthouseResults(dir), /no lighthouse\.json for \/recipes/)
 })
