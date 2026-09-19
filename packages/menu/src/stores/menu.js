@@ -10,6 +10,9 @@ const DruxtMenuStore = ({ store }) => {
    */
   const namespace = 'druxtMenu'
 
+  // In-flight requests for this store, kept out of the reactive state.
+  const inFlight = new Map()
+
   /**
    * The druxtMenu Vuex module.
    *
@@ -28,7 +31,8 @@ const DruxtMenuStore = ({ store }) => {
      * Vuex State object.
      */
     state: () => ({
-      entities: {}
+      entities: {},
+      loaded: {}
     }),
 
     /**
@@ -54,6 +58,22 @@ const DruxtMenuStore = ({ store }) => {
       },
 
       /**
+       * @name addLoaded
+       * @mutator {object} addLoaded=loaded Records that a menu has been loaded into the Vuex state object.
+       * @param {State} state - The Vuex State object.
+       * @param {object} payload - The mutation payload.
+       * @param {string} payload.key - The menu name and settings key.
+       * @param {string} [payload.prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+       *
+       * @private
+       */
+      addLoaded (state, { key, prefix }) {
+        if (!state.loaded) Vue.set(state, 'loaded', {})
+        if (!state.loaded[prefix]) Vue.set(state.loaded, prefix, {})
+        Vue.set(state.loaded[prefix], key, true)
+      },
+
+      /**
        * @name flushEntities
        * @mutator {object} flushEntities=entities Removes JSON:API menu item entities from the Vuex state object.
        * @param {object} state - The Vuex state object.
@@ -66,6 +86,10 @@ const DruxtMenuStore = ({ store }) => {
       flushEntities (state, { prefix }) {
         if (!prefix || typeof state.entities !== 'object') Vue.set(state, 'entities', {})
         if (prefix) Vue.set(state.entities, prefix, {})
+
+        // Flushed menus must be fetched again.
+        if (!prefix || typeof state.loaded !== 'object') Vue.set(state, 'loaded', {})
+        if (prefix) Vue.set(state.loaded, prefix, {})
       },
     },
 
@@ -78,23 +102,41 @@ const DruxtMenuStore = ({ store }) => {
        *
        * - Fetches the menu items from the JSON:API endpoint.
        * - Commits the menu items to the Vuex state object.
+       * - Skips the request when the same menu, settings and prefix are already in the store.
        *
        * @name get
        * @action get=entities
        * @param {object} vuexContext - The Vuex action context.
        * @param {Function} vuexContext.commit - Commits mutations to the store.
+       * @param {object} vuexContext.state - The Vuex module state.
        * @param {string|object} context - The menu name, or an object containing the menu `name` and optional `settings` and `prefix` properties.
        *
        * @example @lang js
        * await this.$store.dispatch('druxtMenu/get', { name: 'main' })
        */
-      async get ({ commit }, context) {
+      async get ({ commit, state }, context) {
         const { name, settings, prefix } = typeof context === 'object'
           ? context
           : { name: context }
-        const { entities } = (await this.$druxtMenu.get(name, settings, prefix)) || {}
 
-        commit('addEntities', { entities, prefix })
+        // The menu is already in the store.
+        const key = JSON.stringify([name, settings || {}])
+        if (((state.loaded || {})[prefix] || {})[key]) return
+
+        // Identical concurrent dispatches share one request and one commit.
+        const requestKey = JSON.stringify([String(prefix), key])
+        if (!inFlight.has(requestKey)) {
+          const clear = () => inFlight.delete(requestKey)
+          const request = (async () => {
+            const { entities } = (await this.$druxtMenu.get(name, settings, prefix)) || {}
+            commit('addEntities', { entities, prefix })
+            commit('addLoaded', { key, prefix })
+          })()
+          inFlight.set(requestKey, request)
+          request.then(clear, clear)
+        }
+
+        return inFlight.get(requestKey)
       }
     },
 
@@ -138,6 +180,7 @@ export { DruxtMenuStore }
  *
  * @typedef {object} State
  * @property {object} entities - The Drupal JSON:API Menu Item entities.
+ * @property {object} loaded - The loaded menus, keyed by prefix, then by menu name and settings.
  */
 
 /**
