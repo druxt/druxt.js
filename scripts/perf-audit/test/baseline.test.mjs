@@ -86,3 +86,25 @@ test('mergeBaseline replaces lighthouse with a measured result', () => {
   const merged = mergeBaseline(existing, run)
   assert.deepEqual(merged['druxt-site']['/'].lighthouse, measured)
 })
+
+test('compare rounds a fractional delta to three places', () => {
+  const entry = (cls) => ({ backendCold: {}, backendWarm: {}, ssr: {}, lighthouse: { clsScore: cls } })
+  const { rows } = compare({ a: { '/': entry(0.405) } }, { a: { '/': entry(0.357) } }, {})
+  assert.equal(rows.find((row) => row.metric === 'lighthouse.clsScore').delta, 0.048)
+})
+
+test('compare breaches when the browser makes more API calls after load', () => {
+  const entry = (calls) => ({ backendCold: {}, backendWarm: {}, ssr: { status: 200 }, lighthouse: { postLoadApiCalls: calls } })
+  const budgets = { postLoadApiCalls: 'no-increase' }
+  assert.equal(compare({ a: { '/': entry(6) } }, { a: { '/': entry(0) } }, budgets).breaches, 1)
+  assert.equal(compare({ a: { '/': entry(0) } }, { a: { '/': entry(6) } }, budgets).breaches, 0)
+})
+
+test('compare breaches when more server-rendered nodes are discarded, and mergeBaseline keeps the layer', () => {
+  const entry = (discarded) => ({ backendCold: {}, backendWarm: {}, ssr: { status: 200 }, lighthouse: null, hydration: discarded === null ? null : { serverNodes: 129, discardedNodes: discarded, layoutShift: 0.2 } })
+  const budgets = { discardedNodes: 'no-increase' }
+  assert.equal(compare({ a: { '/': entry(117) } }, { a: { '/': entry(0) } }, budgets).breaches, 1)
+  assert.equal(compare({ a: { '/': entry(0) } }, { a: { '/': entry(117) } }, budgets).breaches, 0)
+  assert.equal(compare({ a: { '/': entry(117) } }, { a: { '/': entry(null) } }, budgets).breaches, 0)
+  assert.equal(mergeBaseline({ a: { '/': entry(117) } }, { a: { '/': entry(null) } }).a['/'].hydration.discardedNodes, 117)
+})
