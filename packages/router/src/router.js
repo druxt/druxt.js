@@ -45,6 +45,8 @@ class DruxtRouter {
    * @param {string} baseUrl - The Drupal base URL.
    * @param {object} [options] - Druxt Router options.
    * @param {object} [options.axios] - Axios instance settings.
+   * @param {DruxtClient} [options.druxtClient] - A DruxtClient to reuse. Without it the router
+   *   creates its own client. The Nuxt plugin passes `app.$druxt`.
    * @param {string} [options.endpoint=jsonapi] - The JSON:API endpoint.
    * @param {object[]} [options.types] - Druxt Router route type definitions. These are
    *   constructor-only: the Nuxt module's plugin does not forward a `types` option from
