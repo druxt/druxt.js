@@ -21,7 +21,7 @@ test('no baseline reports every metric as new without breaches', () => {
   assert.equal(rows.find((r) => r.metric === 'backendCold.total').current, 6)
 })
 
-test('breaches: more backend requests, performance drop, payload growth, error state', () => {
+test('breachFor flags every budget', () => {
   const baseline = { 'druxt-site': { '/': route() } }
   const run = { 'druxt-site': { '/': route({
     backendWarm: { total: 3 },

@@ -21,8 +21,7 @@ if (major < 18) {
   process.exit(2)
 }
 
-// A TCP connect, not an HTTP request: a route fetched here to check readiness
-// would count as the cold pass the audit is about to measure.
+// Readiness is a TCP connect because a route fetched here would count as the cold pass.
 export function checkServer(port, timeoutMs = 2000) {
   return new Promise((resolve) => {
     const socket = net.createConnection({ host: '127.0.0.1', port, timeout: timeoutMs })

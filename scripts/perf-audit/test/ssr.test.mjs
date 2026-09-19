@@ -15,7 +15,7 @@ test('analyseHtml measures the payload and counts fetch keys', () => {
   assert.equal(result.errorState, null)
 })
 
-test('analyseHtml surfaces the Nuxt error state', () => {
+test('analyseHtml reports the Nuxt error state', () => {
   const result = analyseHtml(errorPage)
   assert.match(result.errorState, /500/)
   assert.equal(result.fetchKeys, 0)

@@ -1,4 +1,4 @@
-// The committed baseline: load, compare a run against it, apply budgets, rewrite it.
+// Reads and rewrites the committed baseline and compares a run against it under the budgets.
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { dirname } from 'node:path'
 
