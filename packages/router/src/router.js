@@ -98,10 +98,12 @@ class DruxtRouter {
     /**
      * Instance of the Druxt Client.
      *
+     * Uses the injected `druxtClient` if provided, else creates a new instance.
+     *
      * @type {DruxtClient}
      * @see {@link https://druxtjs.org/api/packages/druxt/client}
      */
-    this.druxt = new DruxtClient(baseUrl, this.options)
+    this.druxt = options.druxtClient || new DruxtClient(baseUrl, this.options)
 
     this.axios = this.druxt.axios
   }

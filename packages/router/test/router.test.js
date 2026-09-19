@@ -23,6 +23,13 @@ describe('DruxtRouter', () => {
     expect(new DruxtRouter(baseUrl)).toBeInstanceOf(DruxtRouter)
   })
 
+  test('constructor - druxtClient', () => {
+    // Use an injected DruxtClient instance.
+    const druxtClient = new (require('druxt').DruxtClient)(baseUrl)
+    const mockRouter = new DruxtRouter(baseUrl, { druxtClient })
+    expect(mockRouter.druxt).toStrictEqual(druxtClient)
+  })
+
   // @deprecated
   test('constructor - axiosSettings', () => {
     const headers = { 'X-DruxtRouter': true }
