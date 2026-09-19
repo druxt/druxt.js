@@ -61,7 +61,7 @@
     "druxt-test-utils": "^0.2.15"
   },
   "peerDependencies": {
-    "axios": "0.28.0",
+    "axios": "0.34.0",
     "consola": "*"
   },
   "optionalDependencies": {
