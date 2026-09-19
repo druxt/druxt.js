@@ -32,7 +32,7 @@ Reports are written to `.perf/<timestamp>/report.md` and `report.json`. Budgets 
 2. Read the deltas against the previous release.
 3. `mise exec node@22 -- yarn perf:audit --update-baseline` and commit `perf/baseline.json` with the release.
 
-In CI the manual gitlab `perf:audit` job and the GitHub `Performance audit` workflow (`workflow_dispatch`, with optional example and skip-Lighthouse inputs) do the same and keep `.perf/` as an artifact.
+In CI the manual gitlab `perf:audit` job and the GitHub `Performance audit` workflow do the same and keep `.perf/` as an artifact. On GitHub, add the `perf-audit` label to a pull request to run it on that branch, or use `Run workflow` (with optional example and skip-Lighthouse inputs) once the workflow is on the default branch.
 
 ## Comments on the merge request
 

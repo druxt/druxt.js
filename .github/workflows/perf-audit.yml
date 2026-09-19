@@ -1,6 +1,8 @@
 name: Performance audit
 
 on:
+  pull_request:
+    types: [labeled]
   workflow_dispatch:
     inputs:
       examples:
@@ -18,6 +20,7 @@ permissions:
 
 jobs:
   perf-audit:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'perf-audit'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -84,10 +87,13 @@ jobs:
           AUDIT_SKIP_LIGHTHOUSE: ${{ inputs.skip_lighthouse }}
         continue-on-error: true
         run: |
-          args=""
-          for e in $(echo "$AUDIT_EXAMPLES" | tr ',' ' '); do args="$args --example $e"; done
-          if [ "$AUDIT_SKIP_LIGHTHOUSE" = "true" ]; then args="$args --skip-lighthouse"; fi
-          node scripts/perf-audit/index.mjs $args
+          args=()
+          IFS=',' read -ra examples <<< "$AUDIT_EXAMPLES"
+          for e in "${examples[@]}"; do
+            [ -n "$e" ] && args+=(--example "$e")
+          done
+          if [ "$AUDIT_SKIP_LIGHTHOUSE" = "true" ]; then args+=(--skip-lighthouse); fi
+          node scripts/perf-audit/index.mjs "${args[@]}"
 
       - name: Comment on the pull request
         if: always()
