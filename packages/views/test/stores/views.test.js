@@ -28,6 +28,8 @@ describe('DruxtViewsStore', () => {
     DruxtViewsStore({ store })
 
     store.$druxt = new DruxtClient('https://demo-api.druxtjs.org', { axios })
+    // Reset the shared JSON:API index cache.
+    Object.keys(store.$druxt.index).forEach((key) => delete store.$druxt.index[key])
 
     store.app = { context: { error: jest.fn() }, store }
   })
