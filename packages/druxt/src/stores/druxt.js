@@ -36,6 +36,18 @@ const DruxtStore = ({ store }) => {
    */
   const namespace = 'druxt'
 
+  // In-flight requests for this store, kept out of the reactive state.
+  const inFlight = new Map()
+  const share = (key, request) => {
+    if (!inFlight.has(key)) {
+      const clear = () => inFlight.delete(key)
+      const promise = request()
+      inFlight.set(key, promise)
+      promise.then(clear, clear)
+    }
+    return inFlight.get(key)
+  }
+
   /**
    * The DruxtStore Vuex module.
    *
@@ -237,13 +249,17 @@ const DruxtStore = ({ store }) => {
           }
         }
 
-        // Get the collection using the DruxtClient instance.
-        const collection = await this.$druxt.getCollection(type, query, prefix)
+        // Identical concurrent dispatches share one request and one commit.
+        const key = JSON.stringify(['collection', prefix, type, hash, queryObject])
+        return share(key, async () => {
+          // Get the collection using the DruxtClient instance.
+          const collection = await this.$druxt.getCollection(type, query, prefix)
 
-        // Store the collection in the DruxtStore.
-        commit('addCollection', { collection: { ...collection }, type, hash, prefix })
+          // Store the collection in the DruxtStore.
+          commit('addCollection', { collection: { ...collection }, type, hash, prefix })
 
-        return collection
+          return collection
+        })
       },
 
       /**
@@ -352,8 +368,13 @@ const DruxtStore = ({ store }) => {
         let resource
         if (bypassCache || !storedResource || fields) {
           try {
-            resource = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
-            commit('addResource', { prefix, resource: { ...resource } })
+            // Identical concurrent dispatches share one request and one commit.
+            const key = JSON.stringify(['resource', prefix, type, id, queryObject])
+            resource = await share(key, async () => {
+              const response = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
+              commit('addResource', { prefix, resource: { ...response } })
+              return response
+            })
           } catch(e) {
             // Do nothing, just don't error.
           }

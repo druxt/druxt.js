@@ -355,6 +355,107 @@ describe('DruxtStore', () => {
     expect(fresh.data.every((o) => o)).toBe(true)
   })
 
+  test('getCollection shares an in-flight request', async () => {
+    const type = 'node--page'
+    const mockCollectionPage = await getMockCollection(type)
+    const resolvers = []
+    store.$druxt.getCollection = jest.fn(() => new Promise((resolve) => resolvers.push(resolve)))
+
+    const requests = [1, 2, 3].map(() => store.dispatch('druxt/getCollection', { type, query: 'page[limit]=5' }))
+    await Promise.resolve()
+    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(1)
+
+    // A different query, include, type or prefix is a different request.
+    requests.push(
+      store.dispatch('druxt/getCollection', { type, query: 'page[limit]=10' }),
+      store.dispatch('druxt/getCollection', { type, query: 'page[limit]=5&include=uid' }),
+      store.dispatch('druxt/getCollection', { type: 'node--article', query: 'page[limit]=5' }),
+      store.dispatch('druxt/getCollection', { type, query: 'page[limit]=5', prefix: 'es' }),
+    )
+    await Promise.resolve()
+    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(5)
+
+    resolvers.forEach((resolve) => resolve(mockCollectionPage))
+    const results = await Promise.all(requests)
+    results.forEach((result) => expect(result.data).toStrictEqual(mockCollectionPage.data))
+  })
+
+  test('getCollection retries after a failed request', async () => {
+    const type = 'node--page'
+    const mockCollectionPage = await getMockCollection(type)
+    store.$druxt.getCollection = jest.fn(() => Promise.reject(new Error('Backend down')))
+
+    const failed = [1, 2].map(() => store.dispatch('druxt/getCollection', { type }))
+    await expect(failed[0]).rejects.toThrow('Backend down')
+    await expect(failed[1]).rejects.toThrow('Backend down')
+    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(1)
+
+    store.$druxt.getCollection.mockImplementation(() => Promise.resolve(mockCollectionPage))
+    const collection = await store.dispatch('druxt/getCollection', { type })
+    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(2)
+    expect(collection.data).toStrictEqual(mockCollectionPage.data)
+
+    // The settled request is stored, so the next dispatch is a cache hit.
+    await store.dispatch('druxt/getCollection', { type })
+    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(2)
+  })
+
+  test('getResource shares an in-flight request', async () => {
+    const mockPage = await getMockResource('node--page')
+    const { id, type } = mockPage.data
+    let resolve
+    store.$druxt.getResource = jest.fn(() => new Promise((r) => { resolve = r }))
+
+    const requests = [1, 2, 3].map(() => store.dispatch('druxt/getResource', { id, type }))
+    await Promise.resolve()
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(1)
+
+    resolve(mockPage)
+    const results = await Promise.all(requests)
+    results.forEach((result) => expect(result.data).toStrictEqual(mockPage.data))
+    // Each caller gets its own document.
+    expect(results[0]).not.toBe(results[1])
+
+    // A different id, prefix or field set is a different request.
+    store.$druxt.getResource = jest.fn(() => new Promise(() => {}))
+    store.commit('druxt/flushResource', {})
+    store.dispatch('druxt/getResource', { id, type })
+    store.dispatch('druxt/getResource', { id: 'another-uuid', type })
+    store.dispatch('druxt/getResource', { id, type, prefix: 'es' })
+    store.dispatch('druxt/getResource', { id, type, query: 'fields[node--page]=title' })
+    await Promise.resolve()
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(4)
+  })
+
+  test('getResource retries after a failed request', async () => {
+    const mockPage = await getMockResource('node--page')
+    const { id, type } = mockPage.data
+    store.$druxt.getResource = jest.fn(() => Promise.reject(new Error('Backend down')))
+
+    await Promise.all([1, 2].map(() => store.dispatch('druxt/getResource', { id, type })))
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(1)
+
+    store.$druxt.getResource.mockImplementation(() => Promise.resolve(mockPage))
+    const resource = await store.dispatch('druxt/getResource', { id, type })
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(2)
+    expect(resource.data).toStrictEqual(mockPage.data)
+  })
+
+  test('in-flight requests are not shared between stores', async () => {
+    const type = 'node--page'
+    const other = new Vuex.Store()
+    DruxtStore({ store: other })
+    store.$druxt = { getCollection: jest.fn(() => new Promise(() => {})) }
+    other.$druxt = { getCollection: jest.fn(() => new Promise(() => {})) }
+
+    store.dispatch('druxt/getCollection', { type })
+    other.dispatch('druxt/getCollection', { type })
+    await Promise.resolve()
+    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(1)
+    expect(other.$druxt.getCollection).toHaveBeenCalledTimes(1)
+    expect(Object.keys(store.state.druxt)).toStrictEqual(['collections', 'resources'])
+  })
+
   test('addCollection drops included when the response omits it', async () => {
     const type = 'node--page'
     const hash = '_default'
