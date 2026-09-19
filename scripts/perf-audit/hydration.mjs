@@ -38,17 +38,26 @@ export function summariseLoads(loads) {
 async function launchChrome(chromePath) {
   const userDataDir = await mkdtemp(join(tmpdir(), 'perf-audit-chrome-'))
   const child = spawn(chromePath, ['--headless=new', '--no-sandbox', '--disable-gpu', '--remote-debugging-port=0', `--user-data-dir=${userDataDir}`, 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] })
-  const endpoint = await new Promise((resolve, reject) => {
-    let stderr = ''
-    const timer = setTimeout(() => reject(new Error('Chrome did not report a DevTools endpoint')), 30000)
-    child.stderr.on('data', (chunk) => {
-      stderr += chunk
-      const match = /DevTools listening on (ws:\/\/\S+)/.exec(stderr)
-      if (match) { clearTimeout(timer); resolve(match[1]) }
+  const close = async () => { child.kill('SIGKILL'); await rm(userDataDir, { recursive: true, force: true }).catch(() => {}) }
+  try {
+    const endpoint = await new Promise((resolve, reject) => {
+      let stderr = ''
+      const timer = setTimeout(() => reject(new Error('Chrome did not report a DevTools endpoint')), 30000)
+      const fail = (err) => { clearTimeout(timer); reject(err) }
+      child.stderr.on('data', (chunk) => {
+        stderr += chunk
+        const match = /DevTools listening on (ws:\/\/\S+)/.exec(stderr)
+        if (match) { clearTimeout(timer); resolve(match[1]) }
+      })
+      // A path that cannot be spawned reports here, and an unheard error event would end the process.
+      child.once('error', (err) => fail(new Error(`Chrome did not start: ${err.message}`)))
+      child.once('exit', (code) => fail(new Error(`Chrome exited with ${code}`)))
     })
-    child.once('exit', (code) => { clearTimeout(timer); reject(new Error(`Chrome exited with ${code}`)) })
-  })
-  return { endpoint, close: async () => { child.kill('SIGKILL'); await rm(userDataDir, { recursive: true, force: true }).catch(() => {}) } }
+    return { endpoint, close }
+  } catch (err) {
+    await close()
+    throw err
+  }
 }
 
 async function connect(endpoint) {
