@@ -216,6 +216,58 @@ describe('DruxtModule component', () => {
     expect(wrapper.html()).toMatchSnapshot()
   })
 
+  test('pending - first fetch renders the bare wrapper', async () => {
+    const CustomModule = {
+      name: 'CustomModule',
+      extends: DruxtModule,
+      druxt: {
+        componentOptions: () => {},
+        propsData: () => ({ foo: 'bar' }),
+        slots: (h) => ({ default: () => h('div', ['test'] )}),
+      }
+    }
+
+    mocks.$fetchState.pending = true
+    const wrapper = mount(CustomModule, { localVue, mocks })
+    expect(wrapper.html()).toBe('<div></div>')
+  })
+
+  test('pending - refetch keeps the rendered content', async () => {
+    const CustomModule = {
+      name: 'CustomModule',
+      extends: DruxtModule,
+      druxt: {
+        componentOptions: () => {},
+        propsData: () => ({ foo: 'bar' }),
+        slots: (h) => ({ default: () => h('div', ['test'] )}),
+      }
+    }
+
+    const wrapper = mount(CustomModule, { localVue, mocks })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    await localVue.nextTick()
+    const resolved = wrapper.html()
+    expect(resolved).toContain('test')
+
+    // Start a refetch.
+    mocks.$fetchState.pending = true
+    wrapper.vm.$forceUpdate()
+    await localVue.nextTick()
+    expect(wrapper.html()).toBe(resolved)
+  })
+
+  test('pending - refetch does not keep an error', async () => {
+    const wrapper = mount(DruxtModule, { localVue, mocks, stubs: ['DruxtDebug'] })
+    wrapper.vm.error(new Error('test'), { component: { is: 'DruxtWrapper', options: [], settings: {} } })
+    await localVue.nextTick()
+    expect(wrapper.html()).toContain('druxtdebug')
+
+    mocks.$fetchState.pending = true
+    wrapper.vm.$forceUpdate()
+    await localVue.nextTick()
+    expect(wrapper.html()).toBe('<div></div>')
+  })
+
   test('custom module - wrapper', async () => {
     localVue.component('CustomModuleWrapper', {
       druxt: { foo: 'bar' },
