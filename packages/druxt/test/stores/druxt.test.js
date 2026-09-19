@@ -62,8 +62,12 @@ describe('DruxtStore', () => {
       expect.objectContaining({ id, type: 'node--page' })
     )
 
-    // Expect the collection be stored without included data.
-    expect(store.state.druxt.collections['node--page']._default[undefined].included).toBeFalsy()
+    // Expect the collection be stored with dehydrated (not dropped)
+    // included resources, so a later cache hit can re-hydrate `included`
+    // the same way it re-hydrates `data`.
+    expect(store.state.druxt.collections['node--page']._default[undefined].included[0]).toStrictEqual(
+      expect.objectContaining({ id: included[0].id, type: 'node--article' })
+    )
   })
 
   test('addResource', async () => {
@@ -297,6 +301,79 @@ describe('DruxtStore', () => {
 
     await store.dispatch('druxt/getCollection', { type: 'node--page', query: {} })
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
+  })
+
+  test('getCollection cache hit re-hydrates included data', async () => {
+    const mockCollectionPage = await getMockCollection('node--page')
+    const includedId = 'included-article-uuid'
+    store.commit('druxt/addCollection', {
+      collection: {
+        ...mockCollectionPage,
+        included: [{ type: 'node--article', id: includedId, attributes: { title: 'Included' } }],
+      },
+      type: 'node--page',
+      hash: '_default',
+    })
+
+    // A cache hit must return `included` the same way a fresh fetch would.
+    const cached = await store.dispatch('druxt/getCollection', { type: 'node--page' })
+    expect(cached.included).toHaveLength(1)
+    expect(cached.included[0]).toStrictEqual(
+      expect.objectContaining({ id: includedId, type: 'node--article' })
+    )
+    // The stored entry is a bare `{ id, type }` ref with no attributes, so
+    // a hydrated resource is the only thing that can satisfy this.
+    expect(cached.included[0].attributes).toStrictEqual({ title: 'Included' })
+  })
+
+  test('getCollection fetches again after flushResource', async () => {
+    const type = 'node--page'
+    const mockCollectionPage = await getMockCollection(type)
+    store.commit('druxt/addCollection', {
+      collection: {
+        ...mockCollectionPage,
+        included: [{ type: 'node--article', id: 'flushed-article-uuid', attributes: { title: 'Included' } }],
+      },
+      type,
+      hash: '_default',
+    })
+
+    // A cache hit while the resources are still stored doesn't request anything.
+    await store.dispatch('druxt/getCollection', { type })
+    expect(mockAxios.get).toHaveBeenCalledTimes(0)
+
+    // Every resource bucket goes, while the collection entry stays, so the
+    // next request is a fetch rather than a collection of undefined entries.
+    store.commit('druxt/flushResource', {})
+    const fresh = await store.dispatch('druxt/getCollection', { type })
+    // The JSON:API index request and the collection request.
+    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+    expect(fresh.data).toStrictEqual(mockCollectionPage.data)
+    expect(fresh.data.every((o) => o)).toBe(true)
+  })
+
+  test('addCollection drops included when the response omits it', async () => {
+    const type = 'node--page'
+    const hash = '_default'
+    const mockCollectionPage = await getMockCollection(type)
+
+    store.commit('druxt/addCollection', {
+      collection: {
+        ...mockCollectionPage,
+        included: [{ type: 'node--article', id: 'stale-article-uuid', attributes: { title: 'Included' } }],
+      },
+      type,
+      hash,
+    })
+    expect(store.state.druxt.collections[type][hash][undefined].included).toHaveLength(1)
+
+    // The hash ignores `include`, so the same slot takes a response from a
+    // query that asked for none. The previous refs must not survive it.
+    store.commit('druxt/addCollection', { collection: { ...mockCollectionPage }, type, hash })
+    expect(store.state.druxt.collections[type][hash][undefined].included).toBeUndefined()
+
+    const cached = await store.dispatch('druxt/getCollection', { type })
+    expect(cached.included).toBeUndefined()
   })
 
   test('flushCollection', async () => {
