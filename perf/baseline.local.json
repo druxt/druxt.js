@@ -39,6 +39,11 @@
         "requests": 47,
         "bytes": 995566,
         "postLoadApiCalls": 6
+      },
+      "hydration": {
+        "serverNodes": 129,
+        "discardedNodes": 117,
+        "layoutShift": 1.766
       }
     },
     "/en/recipes": {
@@ -80,6 +85,11 @@
         "requests": 49,
         "bytes": 1410831,
         "postLoadApiCalls": 6
+      },
+      "hydration": {
+        "serverNodes": 138,
+        "discardedNodes": 126,
+        "layoutShift": 1.085
       }
     },
     "/en/recipes/deep-mediterranean-quiche": {
@@ -121,6 +131,11 @@
         "requests": 40,
         "bytes": 410546,
         "postLoadApiCalls": 8
+      },
+      "hydration": {
+        "serverNodes": 113,
+        "discardedNodes": 101,
+        "layoutShift": 1.218
       }
     },
     "/en/articles/give-it-a-go-and-grow-your-own-herbs": {
@@ -162,6 +177,11 @@
         "requests": 40,
         "bytes": 524625,
         "postLoadApiCalls": 8
+      },
+      "hydration": {
+        "serverNodes": 85,
+        "discardedNodes": 73,
+        "layoutShift": 1.179
       }
     },
     "/en/recipe-category/main-courses": {
@@ -203,6 +223,11 @@
         "requests": 37,
         "bytes": 401759,
         "postLoadApiCalls": 6
+      },
+      "hydration": {
+        "serverNodes": 74,
+        "discardedNodes": 62,
+        "layoutShift": 0.535
       }
     }
   },
@@ -246,6 +271,11 @@
         "requests": 15,
         "bytes": 361770,
         "postLoadApiCalls": 0
+      },
+      "hydration": {
+        "serverNodes": 1,
+        "discardedNodes": 0,
+        "layoutShift": 0
       }
     }
   },
@@ -289,6 +319,11 @@
         "requests": 13,
         "bytes": 455145,
         "postLoadApiCalls": 0
+      },
+      "hydration": {
+        "serverNodes": 1,
+        "discardedNodes": 0,
+        "layoutShift": 0.046
       }
     }
   }

@@ -10,6 +10,7 @@ import { config, environment, baselinePath } from './config.mjs'
 import * as backendLog from './backend-log.mjs'
 import * as ssr from './ssr.mjs'
 import * as lighthouse from './lighthouse.mjs'
+import { probeHydration } from './hydration.mjs'
 import * as baseline from './baseline.mjs'
 import { toMarkdown, toJson } from './report.mjs'
 
@@ -37,6 +38,7 @@ const defaults = {
   waitForSettle: backendLog.waitForSettle,
   runUnlighthouse: lighthouse.runUnlighthouse,
   readUnlighthouseResults: lighthouse.readUnlighthouseResults,
+  probeHydration,
   loadBaseline: baseline.loadBaseline,
   saveBaseline: baseline.saveBaseline,
   checkServer,
@@ -70,7 +72,7 @@ async function measureRoute(example, route, deps) {
     const { text } = await deps.readNewLines(config.backendLog, start)
     backend.push(backendLog.groupByEndpoint(backendLog.parseLogLines(text)))
   }
-  return { backendCold: backend[0], backendWarm: backend[1], ssr: probed, lighthouse: null }
+  return { backendCold: backend[0], backendWarm: backend[1], ssr: probed, lighthouse: null, hydration: null }
 }
 
 export async function runAudit(opts, deps = {}, examples = config.examples) {
@@ -98,6 +100,9 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
           if (!results[route]) throw new Error(`${example.name} ${route}: no Lighthouse result`)
           run[example.name][route].lighthouse = results[route]
         }
+      }
+      if (!opts.skipHydration) {
+        for (const route of example.routes) run[example.name][route].hydration = await d.probeHydration(`http://localhost:${example.port}${route}`, config.hydration)
       }
     } catch (err) {
       run[example.name] = run[example.name] || {}

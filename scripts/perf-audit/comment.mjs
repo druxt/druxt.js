@@ -19,12 +19,12 @@ export function summarise(report) {
     MARKER,
     `**Performance audit** at ${report.meta.commit}: ${report.breaches} budget breach${report.breaches === 1 ? '' : 'es'}, ${errors.length} error${errors.length === 1 ? '' : 's'}.`,
     '',
-    '| Example | Route | Backend cold | Backend warm | Performance | Layout shift | API calls after load | `__NUXT__` bytes | Breach |',
-    '| --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+    '| Example | Route | Backend cold | Backend warm | Performance | Layout shift | Nodes discarded | API calls after load | `__NUXT__` bytes | Breach |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
   ]
   for (const { example, route, rows } of byRoute.values()) {
     const breach = Object.values(rows).map((r) => r.breach).filter(Boolean).join(', ')
-    lines.push(`| ${example} | ${route} | ${withDelta(rows['backendCold.total'])} | ${withDelta(rows['backendWarm.total'])} | ${withDelta(rows['lighthouse.performance'])} | ${withDelta(rows['lighthouse.clsScore'])} | ${withDelta(rows['lighthouse.postLoadApiCalls'])} | ${withDelta(rows['ssr.nuxtBytes'])} | ${breach} |`)
+    lines.push(`| ${example} | ${route} | ${withDelta(rows['backendCold.total'])} | ${withDelta(rows['backendWarm.total'])} | ${withDelta(rows['lighthouse.performance'])} | ${withDelta(rows['lighthouse.clsScore'])} | ${withDelta(rows['hydration.discardedNodes'])} | ${withDelta(rows['lighthouse.postLoadApiCalls'])} | ${withDelta(rows['ssr.nuxtBytes'])} | ${breach} |`)
   }
   for (const e of errors) lines.push('', `Error on ${e.example}: ${e.message}`)
   lines.push('', `Deltas are against \`${report.meta.baseline}\`. The full report is in the job artifact under \`.perf/\`.`)

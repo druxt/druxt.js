@@ -29,6 +29,7 @@ test('runAudit measures cold and warm per route and writes the report', async ()
     loadBaseline: async () => ({}),
     saveBaseline: async () => { throw new Error('should not save') },
     checkServer: async () => true,
+    probeHydration: async () => ({ serverNodes: 129, discardedNodes: 0, layoutShift: 0.2 }),
     now: () => new Date('2026-09-18T00:00:00Z'),
     commit: () => 'abc1234',
   }
@@ -55,6 +56,7 @@ test('runAudit saves the baseline when asked and skips lighthouse when asked', a
     loadBaseline: async () => ({}),
     saveBaseline: async (file, run) => { saved = run },
     checkServer: async () => true,
+    probeHydration: async () => ({ serverNodes: 129, discardedNodes: 0, layoutShift: 0.2 }),
     now: () => new Date('2026-09-18T00:00:00Z'),
     commit: () => 'abc1234',
   }
@@ -82,6 +84,7 @@ test('runAudit records a rejected probe instead of aborting the run', async () =
     loadBaseline: async () => ({}),
     saveBaseline: async () => {},
     checkServer: async () => true,
+    probeHydration: async () => ({ serverNodes: 129, discardedNodes: 0, layoutShift: 0.2 }),
     now: () => new Date('2026-09-18T00:00:00Z'),
     commit: () => 'abc1234',
   }
@@ -104,6 +107,7 @@ test('runAudit continues past a failing example and records the error', async ()
     loadBaseline: async () => ({}),
     saveBaseline: async () => {},
     checkServer: async () => true,
+    probeHydration: async () => ({ serverNodes: 129, discardedNodes: 0, layoutShift: 0.2 }),
     now: () => new Date('2026-09-18T00:00:00Z'),
     commit: () => 'abc1234',
   }
@@ -129,6 +133,7 @@ test('runAudit records a route missing from the Lighthouse results as an error',
     now: () => new Date('2026-09-18T00:00:00Z'),
     commit: () => 'abc1234',
     checkServer: async () => true,
+    probeHydration: async () => ({ serverNodes: 129, discardedNodes: 0, layoutShift: 0.2 }),
     probe: async () => ({ status: 200, ttfbMs: 1, totalMs: 2, htmlBytes: 1, nuxtBytes: 1, fetchKeys: 0, errorState: null }),
     logSize: async () => 0,
     readNewLines: async () => ({ text: '', offset: 0 }),
@@ -157,6 +162,7 @@ test('runAudit leaves the baseline alone when the audit recorded errors', async 
     loadBaseline: async () => ({}),
     saveBaseline: async (file, run) => { saved = run },
     checkServer: async () => true,
+    probeHydration: async () => ({ serverNodes: 129, discardedNodes: 0, layoutShift: 0.2 }),
     now: () => new Date('2026-09-18T00:00:00Z'),
     commit: () => 'abc1234',
   }
@@ -179,6 +185,7 @@ test('runAudit loads and saves the baseline of its environment', async () => {
     loadBaseline: async (file) => { files.push(file); return {} },
     saveBaseline: async (file) => { files.push(file) },
     checkServer: async () => true,
+    probeHydration: async () => ({ serverNodes: 129, discardedNodes: 0, layoutShift: 0.2 }),
     environment: () => 'github',
     now: () => new Date('2026-09-18T00:00:00Z'),
     commit: () => 'abc1234',
@@ -204,6 +211,7 @@ test('runAudit leaves the baseline alone when a route did not render cleanly', a
     loadBaseline: async () => ({}),
     saveBaseline: async (file, run) => { saved = run },
     checkServer: async () => true,
+    probeHydration: async () => ({ serverNodes: 129, discardedNodes: 0, layoutShift: 0.2 }),
     environment: () => 'local',
     now: () => new Date('2026-09-18T00:00:00Z'),
     commit: () => 'abc1234',
@@ -212,4 +220,31 @@ test('runAudit leaves the baseline alone when a route did not render cleanly', a
   const result = await runAudit({ examples: null, skipLighthouse: true, updateBaseline: true, outDir }, deps, examples)
   assert.equal(result.errors.length, 0)
   assert.equal(saved, null)
+})
+
+test('runAudit records the hydration layer per route and skips it when asked', async () => {
+  const deps = (calls) => ({
+    probe: async () => ({ status: 200, ttfbMs: 1, totalMs: 2, htmlBytes: 1, nuxtBytes: 1, fetchKeys: 0, errorState: null }),
+    logSize: async () => 0,
+    readNewLines: async () => ({ text: '', offset: 0 }),
+    waitForSettle: async () => 0,
+    runUnlighthouse: async () => {},
+    readUnlighthouseResults: async () => ({}),
+    probeHydration: async (url) => { calls.push(url); return { serverNodes: 129, discardedNodes: 117, layoutShift: 1.8 } },
+    loadBaseline: async () => ({}),
+    saveBaseline: async () => {},
+    checkServer: async () => true,
+    environment: () => 'local',
+    now: () => new Date('2026-09-18T00:00:00Z'),
+    commit: () => 'abc1234',
+  })
+  const examples = [{ name: 'druxt-site', port: 3200, routes: ['/'] }]
+  const measured = []
+  const result = await runAudit({ examples: null, skipLighthouse: true, skipHydration: false, updateBaseline: false, outDir: await mkdtemp(join(tmpdir(), 'perf-audit-')) }, deps(measured), examples)
+  assert.deepEqual(measured, ['http://localhost:3200/'])
+  assert.equal(result.run['druxt-site']['/'].hydration.discardedNodes, 117)
+  const skipped = []
+  const other = await runAudit({ examples: null, skipLighthouse: true, skipHydration: true, updateBaseline: false, outDir: await mkdtemp(join(tmpdir(), 'perf-audit-')) }, deps(skipped), examples)
+  assert.deepEqual(skipped, [])
+  assert.equal(other.run['druxt-site']['/'].hydration, null)
 })

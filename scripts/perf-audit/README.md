@@ -7,6 +7,7 @@ Measures the example applications per route and compares each run with the basel
 | Backend       | requests per server render, cold and warm, by endpoint                                               | the audit's own proxy log (`backend-proxy.mjs`), started by `serve-examples.sh` on port 8890; the examples are built with `BASE_URL` pointed at it, so every backend call in these timings includes one extra local hop |
 | Server render | time to first byte, HTML bytes, inline `__NUXT__` bytes, `data-fetch-key` count, status, error state | one fetch per route against `nuxt start`                                                                                                                                                                                |
 | Browser       | Lighthouse performance, LCP, CLS, TBT, FCP, requests, bytes, API calls after load                    | Unlighthouse CI                                                                                                                                                                                                         |
+| Hydration     | server-rendered Druxt nodes discarded after hydration, layout shift, median of three throttled loads | Chrome over the DevTools protocol, no extra dependency; counts `[data-fetch-key]` nodes present at DOMContentLoaded that are gone once the page settles                                                                 |
 
 ## Run it
 
@@ -22,7 +23,9 @@ The audit needs Node 18 or later. The examples build under Node 16.
 `examples/*/.nuxt` is built against the proxy port, not the real backend;
 rebuild the examples before using them for anything else.
 
-Flags: `--example <name>` (repeatable), `--skip-lighthouse`, `--update-baseline`, `--out <dir>`.
+Flags: `--example <name>` (repeatable), `--skip-lighthouse`, `--skip-hydration`, `--update-baseline`, `--out <dir>`.
+
+The Lighthouse and hydration layers need `CHROME_PATH`. The hydration layer also needs Node 22 for its WebSocket client.
 
 Reports are written to `.perf/<timestamp>/report.md` and `report.json`. Budgets are in `config.mjs`, and a breach exits 1.
 

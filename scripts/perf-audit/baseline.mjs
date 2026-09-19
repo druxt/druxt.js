@@ -8,6 +8,7 @@ export const METRICS = [
   'backendWarm.index', 'backendWarm.collections', 'backendWarm.resources', 'backendWarm.router', 'backendWarm.menu',
   'ssr.status', 'ssr.errorState', 'ssr.ttfbMs', 'ssr.nuxtBytes', 'ssr.fetchKeys',
   'lighthouse.performance', 'lighthouse.lcpMs', 'lighthouse.clsScore', 'lighthouse.tbtMs', 'lighthouse.postLoadApiCalls',
+  'hydration.serverNodes', 'hydration.discardedNodes', 'hydration.layoutShift',
 ]
 
 function read(entry, metric) {
@@ -23,6 +24,7 @@ function breachFor(metric, current, baseline, budgets) {
   // The no-increase budget applies to the two totals only; the endpoint group rows carry no budget.
   if (metric.endsWith('.total') && budgets.backendRequests === 'no-increase' && current > baseline) return 'more backend requests'
   if (metric === 'lighthouse.postLoadApiCalls' && budgets.postLoadApiCalls === 'no-increase' && current > baseline) return 'more API calls after load'
+  if (metric === 'hydration.discardedNodes' && budgets.discardedNodes === 'no-increase' && current > baseline) return 'more server-rendered nodes discarded'
   if (metric === 'lighthouse.performance' && baseline - current > budgets.performanceDrop) return `performance down ${baseline - current}`
   if (metric === 'ssr.nuxtBytes' && baseline > 0 && (current - baseline) / baseline * 100 > budgets.payloadGrowthPercent) return 'payload grew'
   return null
@@ -74,6 +76,7 @@ export function mergeBaseline(existing, run) {
         backendWarm: entry.backendWarm,
         ssr: entry.ssr,
         lighthouse: entry.lighthouse !== null ? entry.lighthouse : (previous.lighthouse ?? null),
+        hydration: entry.hydration ? entry.hydration : (previous.hydration ?? null),
       }
     }
     merged[example] = mergedRoutes
