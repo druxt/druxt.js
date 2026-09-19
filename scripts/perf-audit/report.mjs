@@ -2,7 +2,7 @@
 const cell = (value) => (value === null || value === undefined ? 'n/a' : String(value))
 
 export function toMarkdown({ rows, breaches }, meta) {
-  const lines = [`# Performance audit`, '', `Generated ${meta.generatedAt} at ${meta.commit}. ${breaches} budget breach${breaches === 1 ? '' : 'es'}.`, '']
+  const lines = [`# Performance audit`, '', `Generated ${meta.generatedAt} at ${meta.commit} against \`${meta.baseline}\`. ${breaches} budget breach${breaches === 1 ? '' : 'es'}.`, '']
   const examples = [...new Set(rows.map((row) => row.example))]
   for (const example of examples) {
     lines.push(`## ${example}`, '', '| Route | Metric | Current | Baseline | Delta | Breach |', '| --- | --- | --- | --- | --- | --- |')

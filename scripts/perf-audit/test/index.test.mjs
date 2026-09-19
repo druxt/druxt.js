@@ -165,3 +165,28 @@ test('runAudit leaves the baseline alone when the audit recorded errors', async 
   assert.equal(result.errors.length, 1)
   assert.equal(saved, null)
 })
+
+test('runAudit loads and saves the baseline of its environment', async () => {
+  const outDir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
+  const files = []
+  const deps = {
+    probe: async () => ({ status: 200, ttfbMs: 1, totalMs: 2, htmlBytes: 1, nuxtBytes: 1, fetchKeys: 0, errorState: null }),
+    logSize: async () => 0,
+    readNewLines: async () => ({ text: '', offset: 0 }),
+    waitForSettle: async () => 0,
+    runUnlighthouse: async () => {},
+    readUnlighthouseResults: async () => ({}),
+    loadBaseline: async (file) => { files.push(file); return {} },
+    saveBaseline: async (file) => { files.push(file) },
+    checkServer: async () => true,
+    environment: () => 'github',
+    now: () => new Date('2026-09-18T00:00:00Z'),
+    commit: () => 'abc1234',
+  }
+  const examples = [{ name: 'druxt-site', port: 3200, routes: ['/'] }]
+  await runAudit({ examples: null, skipLighthouse: true, updateBaseline: true, outDir }, deps, examples)
+  assert.equal(files.length, 2)
+  for (const file of files) assert.match(file, /perf\/baseline\.github\.json$/)
+  const json = JSON.parse(await readFile(join(outDir, 'report.json'), 'utf8'))
+  assert.equal(json.meta.baseline, 'perf/baseline.github.json')
+})

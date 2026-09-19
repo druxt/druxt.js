@@ -13,6 +13,10 @@ on:
         description: Skip the Lighthouse layer
         type: boolean
         default: false
+      update_baseline:
+        description: Write the run into perf/baseline.github.json (download it from the artifact and commit it)
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -85,6 +89,7 @@ jobs:
         env:
           AUDIT_EXAMPLES: ${{ inputs.examples }}
           AUDIT_SKIP_LIGHTHOUSE: ${{ inputs.skip_lighthouse }}
+          AUDIT_UPDATE_BASELINE: ${{ inputs.update_baseline }}
         continue-on-error: true
         run: |
           args=()
@@ -93,6 +98,7 @@ jobs:
             [ -n "$e" ] && args+=(--example "$e")
           done
           if [ "$AUDIT_SKIP_LIGHTHOUSE" = "true" ]; then args+=(--skip-lighthouse); fi
+          if [ "$AUDIT_UPDATE_BASELINE" = "true" ]; then args+=(--update-baseline); fi
           node scripts/perf-audit/index.mjs "${args[@]}"
 
       - name: Comment on the pull request
@@ -109,6 +115,8 @@ jobs:
         if: always()
         with:
           name: perf-audit
-          path: .perf/
+          path: |
+            .perf/
+            perf/
           retention-days: 30
           include-hidden-files: true

@@ -1,6 +1,15 @@
 // Examples, routes and budgets for the performance audit. Data only.
 import { resolve } from 'node:path'
 
+// Lighthouse scores depend on the machine, so each environment keeps its own baseline.
+export function environment(env = process.env) {
+  const name = env.PERF_AUDIT_ENV || (env.GITHUB_ACTIONS ? 'github' : env.GITLAB_CI ? 'gitlab' : 'local')
+  if (!/^[a-z0-9-]+$/.test(name)) throw new Error(`Invalid PERF_AUDIT_ENV: ${name}`)
+  return name
+}
+
+export const baselinePath = (name) => `perf/baseline.${name}.json`
+
 export const config = {
   // See backend-proxy.mjs for why the audit runs its own proxy.
   backendLog: process.env.PERF_AUDIT_BACKEND_LOG || resolve('.perf/backend-requests.log'),

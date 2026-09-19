@@ -532,7 +532,8 @@ test:examples:
 
 # Manual, advisory. Builds and serves the examples in production mode against
 # the provisioned backend, then measures backend requests, server renders and
-# Lighthouse per route and compares them with perf/baseline.json.
+# Lighthouse per route and compares them with perf/baseline.gitlab.json.
+# Play it with PERF_AUDIT_UPDATE_BASELINE=true to write the run into that file.
 perf:audit:
   extends: .drupal-backend
   stage: test
@@ -562,7 +563,8 @@ perf:audit:
     - section_end "browser"
     - section_start "audit" "Auditing"
     - audit_rc=0
-    - PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/index.mjs || audit_rc=$?
+    - if [ "${PERF_AUDIT_UPDATE_BASELINE:-}" = "true" ]; then audit_args="--update-baseline"; else audit_args=""; fi
+    - PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/index.mjs $audit_args || audit_rc=$?
     # Comments on the merge request when PERF_AUDIT_GITLAB_TOKEN (masked, api scope) is set; never fails the job.
     - PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/comment.mjs "$(ls -d .perf/*/ | tail -1)report.json"
     - section_end "audit"
@@ -574,6 +576,7 @@ perf:audit:
     when: always
     paths:
       - .perf/
+      - perf/
     expire_in: 1 month
     expose_as: 'Performance audit'
 

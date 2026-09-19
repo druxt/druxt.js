@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { summarise, detectTarget, postComment } from '../comment.mjs'
 
 const report = {
-  meta: { generatedAt: '2026-09-18T00:00:00Z', commit: 'abc1234' },
+  meta: { generatedAt: '2026-09-18T00:00:00Z', commit: 'abc1234', baseline: 'perf/baseline.github.json' },
   breaches: 1, errors: [],
   rows: [
     { example: 'druxt-site', route: '/', metric: 'backendCold.total', current: 10, baseline: 11, delta: -1, breach: null },
@@ -19,6 +19,7 @@ test('summarise renders the marker, the heading and one row per route', () => {
   assert.ok(md.startsWith('<!-- perf-audit -->'))
   assert.match(md, /abc1234/)
   assert.match(md, /1 budget breach/)
+  assert.match(md, /Deltas are against `perf\/baseline\.github\.json`/)
   assert.match(md, /\| druxt-site \| \/ \| 10 \(-1\) \| 10 \(-1\) \| 60 \(-16\) \| 220723 \(-4\) \| performance down 16 \|/)
 })
 

@@ -9,7 +9,8 @@ const rows = [
 ]
 
 test('toMarkdown renders one table per example with deltas and breaches', () => {
-  const md = toMarkdown({ rows, breaches: 1 }, { generatedAt: '2026-09-18T00:00:00Z', commit: 'abc1234' })
+  const md = toMarkdown({ rows, breaches: 1 }, { generatedAt: '2026-09-18T00:00:00Z', commit: 'abc1234', baseline: 'perf/baseline.local.json' })
+  assert.match(md, /against `perf\/baseline\.local\.json`/)
   assert.match(md, /^# Performance audit/m)
   assert.match(md, /## druxt-site/)
   assert.match(md, /\| \/ \| backendCold\.total \| 6 \| 9 \| -3 \| \|/)

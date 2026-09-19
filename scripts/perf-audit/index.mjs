@@ -6,14 +6,13 @@ import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import net from 'node:net'
 import { parseArgs } from './args.mjs'
-import { config } from './config.mjs'
+import { config, environment, baselinePath } from './config.mjs'
 import * as backendLog from './backend-log.mjs'
 import * as ssr from './ssr.mjs'
 import * as lighthouse from './lighthouse.mjs'
 import * as baseline from './baseline.mjs'
 import { toMarkdown, toJson } from './report.mjs'
 
-const BASELINE_FILE = resolve('perf/baseline.json')
 
 const major = Number(process.versions.node.split('.')[0])
 if (major < 18) {
@@ -41,6 +40,7 @@ const defaults = {
   loadBaseline: baseline.loadBaseline,
   saveBaseline: baseline.saveBaseline,
   checkServer,
+  environment,
   now: () => new Date(),
   commit: () => {
     try {
@@ -106,15 +106,17 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
     }
   }
 
-  const meta = { generatedAt: d.now().toISOString(), commit: d.commit() }
-  const existingBaseline = await d.loadBaseline(BASELINE_FILE)
+  const baselineName = baselinePath(d.environment())
+  const baselineFile = resolve(baselineName)
+  const meta = { generatedAt: d.now().toISOString(), commit: d.commit(), baseline: baselineName }
+  const existingBaseline = await d.loadBaseline(baselineFile)
   const comparison = baseline.compare(run, existingBaseline, config.budgets)
   const md = toMarkdown(comparison, meta)
   await writeFile(join(outDir, 'report.json'), JSON.stringify(toJson(run, comparison, meta, errors), null, 2))
   await writeFile(join(outDir, 'report.md'), md)
   console.log(md)
   if (opts.updateBaseline && errors.length) console.error('Baseline not updated: the audit recorded errors.')
-  else if (opts.updateBaseline) await d.saveBaseline(BASELINE_FILE, baseline.mergeBaseline(existingBaseline, run))
+  else if (opts.updateBaseline) await d.saveBaseline(baselineFile, baseline.mergeBaseline(existingBaseline, run))
   return { run, breaches: comparison.breaches, outDir, errors }
 }
 

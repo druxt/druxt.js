@@ -1,0 +1,295 @@
+{
+  "druxt-site": {
+    "/": {
+      "backendCold": {
+        "index": 3,
+        "collections": 4,
+        "resources": 0,
+        "router": 1,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 11
+      },
+      "backendWarm": {
+        "index": 3,
+        "collections": 4,
+        "resources": 0,
+        "router": 1,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 11
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 238,
+        "totalMs": 240,
+        "htmlBytes": 256264,
+        "nuxtBytes": 220723,
+        "fetchKeys": 129,
+        "errorState": null
+      },
+      "lighthouse": {
+        "performance": 76,
+        "lcpMs": 3752,
+        "clsScore": 0.198,
+        "tbtMs": 0,
+        "fcpMs": 2402,
+        "requests": 46,
+        "bytes": 995178,
+        "postLoadApiCalls": 0
+      }
+    },
+    "/en/recipes": {
+      "backendCold": {
+        "index": 3,
+        "collections": 2,
+        "resources": 0,
+        "router": 2,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 10
+      },
+      "backendWarm": {
+        "index": 3,
+        "collections": 2,
+        "resources": 0,
+        "router": 2,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 10
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 259,
+        "totalMs": 260,
+        "htmlBytes": 229286,
+        "nuxtBytes": 193791,
+        "fetchKeys": 138,
+        "errorState": null
+      },
+      "lighthouse": {
+        "performance": 56,
+        "lcpMs": 7361,
+        "clsScore": 0.357,
+        "tbtMs": 0,
+        "fcpMs": 2253,
+        "requests": 49,
+        "bytes": 1410755,
+        "postLoadApiCalls": 0
+      }
+    },
+    "/en/recipes/deep-mediterranean-quiche": {
+      "backendCold": {
+        "index": 3,
+        "collections": 1,
+        "resources": 0,
+        "router": 3,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 10
+      },
+      "backendWarm": {
+        "index": 3,
+        "collections": 1,
+        "resources": 0,
+        "router": 3,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 10
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 152,
+        "totalMs": 153,
+        "htmlBytes": 148561,
+        "nuxtBytes": 119654,
+        "fetchKeys": 113,
+        "errorState": null
+      },
+      "lighthouse": {
+        "performance": 70,
+        "lcpMs": 2402,
+        "clsScore": 1.19,
+        "tbtMs": 0,
+        "fcpMs": 2402,
+        "requests": 40,
+        "bytes": 410488,
+        "postLoadApiCalls": 0
+      }
+    },
+    "/en/articles/give-it-a-go-and-grow-your-own-herbs": {
+      "backendCold": {
+        "index": 3,
+        "collections": 1,
+        "resources": 0,
+        "router": 3,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 10
+      },
+      "backendWarm": {
+        "index": 3,
+        "collections": 1,
+        "resources": 0,
+        "router": 3,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 10
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 186,
+        "totalMs": 187,
+        "htmlBytes": 141933,
+        "nuxtBytes": 115581,
+        "fetchKeys": 85,
+        "errorState": null
+      },
+      "lighthouse": {
+        "performance": 70,
+        "lcpMs": 2403,
+        "clsScore": 1.19,
+        "tbtMs": 0,
+        "fcpMs": 2403,
+        "requests": 40,
+        "bytes": 524584,
+        "postLoadApiCalls": 0
+      }
+    },
+    "/en/recipe-category/main-courses": {
+      "backendCold": {
+        "index": 3,
+        "collections": 1,
+        "resources": 0,
+        "router": 3,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 10
+      },
+      "backendWarm": {
+        "index": 3,
+        "collections": 1,
+        "resources": 0,
+        "router": 3,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 10
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 166,
+        "totalMs": 167,
+        "htmlBytes": 121665,
+        "nuxtBytes": 99752,
+        "fetchKeys": 74,
+        "errorState": null
+      },
+      "lighthouse": {
+        "performance": 74,
+        "lcpMs": 2402,
+        "clsScore": 0.467,
+        "tbtMs": 0,
+        "fcpMs": 2402,
+        "requests": 37,
+        "bytes": 401717,
+        "postLoadApiCalls": 0
+      }
+    }
+  },
+  "druxt-daisyui": {
+    "/": {
+      "backendCold": {
+        "index": 2,
+        "collections": 0,
+        "resources": 0,
+        "router": 0,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 2
+      },
+      "backendWarm": {
+        "index": 2,
+        "collections": 0,
+        "resources": 0,
+        "router": 0,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 2
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 41,
+        "totalMs": 42,
+        "htmlBytes": 122131,
+        "nuxtBytes": 48794,
+        "fetchKeys": 1,
+        "errorState": null
+      },
+      "lighthouse": {
+        "performance": 96,
+        "lcpMs": 2409,
+        "clsScore": 0,
+        "tbtMs": 0,
+        "fcpMs": 2106,
+        "requests": 14,
+        "bytes": 361467,
+        "postLoadApiCalls": 0
+      }
+    }
+  },
+  "druxt-bootstrapvue": {
+    "/": {
+      "backendCold": {
+        "index": 4,
+        "collections": 0,
+        "resources": 0,
+        "router": 0,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 4
+      },
+      "backendWarm": {
+        "index": 4,
+        "collections": 0,
+        "resources": 0,
+        "router": 0,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 4
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 48,
+        "totalMs": 50,
+        "htmlBytes": 326714,
+        "nuxtBytes": 66481,
+        "fetchKeys": 1,
+        "errorState": null
+      },
+      "lighthouse": {
+        "performance": 94,
+        "lcpMs": 2405,
+        "clsScore": 0.047,
+        "tbtMs": 0,
+        "fcpMs": 2405,
+        "requests": 12,
+        "bytes": 454844,
+        "postLoadApiCalls": 0
+      }
+    }
+  }
+}

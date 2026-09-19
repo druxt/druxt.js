@@ -27,7 +27,7 @@ export function summarise(report) {
     lines.push(`| ${example} | ${route} | ${withDelta(rows['backendCold.total'])} | ${withDelta(rows['backendWarm.total'])} | ${withDelta(rows['lighthouse.performance'])} | ${withDelta(rows['ssr.nuxtBytes'])} | ${breach} |`)
   }
   for (const e of errors) lines.push('', `Error on ${e.example}: ${e.message}`)
-  lines.push('', 'Deltas are against `perf/baseline.json`. The full report is in the job artifact under `.perf/`.')
+  lines.push('', `Deltas are against \`${report.meta.baseline}\`. The full report is in the job artifact under \`.perf/\`.`)
   return lines.join('\n')
 }
 
