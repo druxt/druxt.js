@@ -10,6 +10,8 @@ const report = {
     { example: 'druxt-site', route: '/', metric: 'backendWarm.total', current: 10, baseline: 11, delta: -1, breach: null },
     { example: 'druxt-site', route: '/', metric: 'ssr.nuxtBytes', current: 220723, baseline: 220727, delta: -4, breach: null },
     { example: 'druxt-site', route: '/', metric: 'lighthouse.performance', current: 60, baseline: 76, delta: -16, breach: 'performance down 16' },
+    { example: 'druxt-site', route: '/', metric: 'lighthouse.clsScore', current: 0.2, baseline: 1.8, delta: -1.6, breach: null },
+    { example: 'druxt-site', route: '/', metric: 'lighthouse.postLoadApiCalls', current: 0, baseline: 6, delta: -6, breach: null },
   ],
   run: {},
 }
@@ -20,7 +22,7 @@ test('summarise renders the marker, the heading and one row per route', () => {
   assert.match(md, /abc1234/)
   assert.match(md, /1 budget breach/)
   assert.match(md, /Deltas are against `perf\/baseline\.github\.json`/)
-  assert.match(md, /\| druxt-site \| \/ \| 10 \(-1\) \| 10 \(-1\) \| 60 \(-16\) \| 220723 \(-4\) \| performance down 16 \|/)
+  assert.match(md, /\| druxt-site \| \/ \| 10 \(-1\) \| 10 \(-1\) \| 60 \(-16\) \| 0\.2 \(-1\.6\) \| 0 \(-6\) \| 220723 \(-4\) \| performance down 16 \|/)
 })
 
 test('detectTarget picks gitlab, github, or nothing', () => {

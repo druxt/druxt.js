@@ -22,6 +22,7 @@ function breachFor(metric, current, baseline, budgets) {
   if (current === null || baseline === null) return null
   // The no-increase budget applies to the two totals only; the endpoint group rows carry no budget.
   if (metric.endsWith('.total') && budgets.backendRequests === 'no-increase' && current > baseline) return 'more backend requests'
+  if (metric === 'lighthouse.postLoadApiCalls' && budgets.postLoadApiCalls === 'no-increase' && current > baseline) return 'more API calls after load'
   if (metric === 'lighthouse.performance' && baseline - current > budgets.performanceDrop) return `performance down ${baseline - current}`
   if (metric === 'ssr.nuxtBytes' && baseline > 0 && (current - baseline) / baseline * 100 > budgets.payloadGrowthPercent) return 'payload grew'
   return null

@@ -92,3 +92,10 @@ test('compare rounds a fractional delta to three places', () => {
   const { rows } = compare({ a: { '/': entry(0.405) } }, { a: { '/': entry(0.357) } }, {})
   assert.equal(rows.find((row) => row.metric === 'lighthouse.clsScore').delta, 0.048)
 })
+
+test('compare breaches when the browser makes more API calls after load', () => {
+  const entry = (calls) => ({ backendCold: {}, backendWarm: {}, ssr: { status: 200 }, lighthouse: { postLoadApiCalls: calls } })
+  const budgets = { postLoadApiCalls: 'no-increase' }
+  assert.equal(compare({ a: { '/': entry(6) } }, { a: { '/': entry(0) } }, budgets).breaches, 1)
+  assert.equal(compare({ a: { '/': entry(0) } }, { a: { '/': entry(6) } }, budgets).breaches, 0)
+})
