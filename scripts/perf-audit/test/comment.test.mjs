@@ -27,9 +27,9 @@ test('detectTarget picks gitlab, github, or nothing', () => {
   assert.deepEqual(detectTarget({ CI_MERGE_REQUEST_IID: '88', CI_PROJECT_ID: '239', CI_API_V4_URL: 'http://gl/api/v4', GITLAB_API_TOKEN: 't' }),
     { host: 'gitlab', api: 'http://gl/api/v4', project: '239', iid: '88', token: 't' })
   assert.deepEqual(detectTarget({ GITHUB_TOKEN: 't', GITHUB_REPOSITORY: 'o/r', GITHUB_REF_NAME: 'feature/x' }),
-    { host: 'github', repo: 'o/r', branch: 'feature/x', token: 't' })
-  assert.deepEqual(detectTarget({ GITHUB_TOKEN: 't', GITHUB_REPOSITORY: 'o/r', GITHUB_REF_NAME: '845/merge', GITHUB_HEAD_REF: 'feature/x' }),
-    { host: 'github', repo: 'o/r', branch: 'feature/x', token: 't' })
+    { host: 'github', repo: 'o/r', branch: 'feature/x', pull: null, token: 't' })
+  assert.deepEqual(detectTarget({ GITHUB_TOKEN: 't', GITHUB_REPOSITORY: 'o/r', GITHUB_REF: 'refs/pull/845/merge', GITHUB_REF_NAME: '845/merge', GITHUB_HEAD_REF: 'feature/x' }),
+    { host: 'github', repo: 'o/r', branch: 'feature/x', pull: '845', token: 't' })
   assert.equal(detectTarget({ CI_MERGE_REQUEST_IID: '88' }), null)
   assert.equal(detectTarget({}), null)
 })
@@ -80,4 +80,17 @@ test('postComment finds the marker past the first page of notes', async () => {
   await postComment(target, '<!-- perf-audit -->\nnew', { fetch })
   assert.equal(calls.at(-1).method, 'PUT')
   assert.match(calls.at(-1).url, /\/notes\/101$/)
+})
+
+test('postComment uses the pull request number from the ref without a branch lookup', async () => {
+  const calls = []
+  const fetch = async (url, init = {}) => {
+    calls.push({ url, method: init.method || 'GET' })
+    return { ok: true, status: 200, json: async () => [], text: async () => '' }
+  }
+  const target = { host: 'github', repo: 'o/r', branch: 'feature/on-a-fork', pull: '782', token: 't' }
+  assert.equal(await postComment(target, '<!-- perf-audit -->\nnew', { fetch }), true)
+  assert.ok(calls.every((call) => !call.url.includes('/pulls?')))
+  assert.match(calls.at(-1).url, /\/issues\/782\/comments$/)
+  assert.equal(calls.at(-1).method, 'POST')
 })

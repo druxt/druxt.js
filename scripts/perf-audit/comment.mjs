@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Posts the audit summary as one comment on the merge request or pull request the job belongs to.
-import { readFile } from 'node:fs/promises'
+import { readFile, appendFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 
 export const MARKER = '<!-- perf-audit -->'
@@ -37,7 +37,9 @@ export function detectTarget(env) {
   }
   const branch = env.GITHUB_HEAD_REF || env.GITHUB_REF_NAME
   if (env.GITHUB_TOKEN && env.GITHUB_REPOSITORY && branch) {
-    return { host: 'github', repo: env.GITHUB_REPOSITORY, branch, token: env.GITHUB_TOKEN }
+    // A pull request run names its number in the ref, which also covers a head branch on a fork.
+    const pull = /^refs\/pull\/(\d+)\//.exec(env.GITHUB_REF || '')?.[1] || null
+    return { host: 'github', repo: env.GITHUB_REPOSITORY, branch, pull, token: env.GITHUB_TOKEN }
   }
   return null
 }
@@ -67,25 +69,35 @@ export async function postComment(target, body, { fetch: given } = {}) {
     return true
   }
   const headers = { authorization: `Bearer ${target.token}`, accept: 'application/vnd.github+json' }
-  const [owner] = target.repo.split('/')
-  const pulls = await request(doFetch, `https://api.github.com/repos/${target.repo}/pulls?state=open&head=${encodeURIComponent(`${owner}:${target.branch}`)}`, {}, headers)
-  if (!pulls.length) { console.log(`no pull request for ${target.branch}`); return false }
-  const base = `https://api.github.com/repos/${target.repo}/issues/${pulls[0].number}/comments`
+  let number = target.pull
+  if (!number) {
+    const [owner] = target.repo.split('/')
+    const pulls = await request(doFetch, `https://api.github.com/repos/${target.repo}/pulls?state=open&head=${encodeURIComponent(`${owner}:${target.branch}`)}`, {}, headers)
+    if (!pulls.length) { console.log(`no pull request for ${target.branch}`); return false }
+    number = pulls[0].number
+  }
+  const base = `https://api.github.com/repos/${target.repo}/issues/${number}/comments`
   const existing = await findMarked(doFetch, base, headers)
   if (existing) await request(doFetch, `https://api.github.com/repos/${target.repo}/issues/comments/${existing.id}`, { method: 'PATCH', body: JSON.stringify({ body }) }, headers)
   else await request(doFetch, base, { method: 'POST', body: JSON.stringify({ body }) }, headers)
   return true
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+async function main(file, env) {
+  const body = summarise(JSON.parse(await readFile(file, 'utf8')))
+  // The run page always gets the summary, which covers a fork's read-only token.
+  if (env.GITHUB_STEP_SUMMARY) await appendFile(env.GITHUB_STEP_SUMMARY, `${body}\n`)
+  const target = detectTarget(env)
+  if (!target && env.CI_MERGE_REQUEST_IID) return console.log('GITLAB_API_TOKEN is not set; not commenting on the merge request')
+  if (!target) return console.log('no merge request or pull request target in the environment; not commenting')
+  const posted = await postComment(target, body)
+  console.log(posted ? `commented on the ${target.host === 'gitlab' ? 'merge request' : 'pull request'}` : 'nothing to comment on')
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const file = process.argv[2]
-  const target = detectTarget(process.env)
   if (!file) { console.error('usage: comment.mjs <report.json>'); process.exit(0) }
-  if (!target && process.env.CI_MERGE_REQUEST_IID) { console.log('GITLAB_API_TOKEN is not set; not commenting on the merge request'); process.exit(0) }
-  if (!target) { console.log('no merge request or pull request target in the environment; not commenting'); process.exit(0) }
-  readFile(file, 'utf8')
-    .then((text) => postComment(target, summarise(JSON.parse(text))))
-    .then((posted) => console.log(posted ? `commented on the ${target.host === 'gitlab' ? 'merge request' : 'pull request'}` : 'nothing to comment on'))
+  main(file, process.env)
     .catch((err) => console.error(`comment failed: ${err.message}`))
     .finally(() => process.exit(0))
 }
