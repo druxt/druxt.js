@@ -190,3 +190,26 @@ test('runAudit loads and saves the baseline of its environment', async () => {
   const json = JSON.parse(await readFile(join(outDir, 'report.json'), 'utf8'))
   assert.equal(json.meta.baseline, 'perf/baseline.github.json')
 })
+
+test('runAudit leaves the baseline alone when a route did not render cleanly', async () => {
+  const outDir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
+  let saved = null
+  const deps = {
+    probe: async () => { throw new Error('connect ECONNREFUSED') },
+    logSize: async () => 0,
+    readNewLines: async () => ({ text: '', offset: 0 }),
+    waitForSettle: async () => 0,
+    runUnlighthouse: async () => {},
+    readUnlighthouseResults: async () => ({}),
+    loadBaseline: async () => ({}),
+    saveBaseline: async (file, run) => { saved = run },
+    checkServer: async () => true,
+    environment: () => 'local',
+    now: () => new Date('2026-09-18T00:00:00Z'),
+    commit: () => 'abc1234',
+  }
+  const examples = [{ name: 'druxt-site', port: 3200, routes: ['/'] }]
+  const result = await runAudit({ examples: null, skipLighthouse: true, updateBaseline: true, outDir }, deps, examples)
+  assert.equal(result.errors.length, 0)
+  assert.equal(saved, null)
+})
