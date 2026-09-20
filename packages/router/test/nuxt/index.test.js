@@ -1,4 +1,7 @@
-import DruxtRouterNuxtModule from '../../nuxt'
+import DruxtRouterNuxtModule from '../../src/nuxt'
+
+// The source reads the manifest one level up, where the built module finds it.
+jest.mock('../../src/package.json', () => require('../../package.json'), { virtual: true })
 
 const mock = {
   addModule: jest.fn(),
@@ -52,4 +55,21 @@ test('Nuxt module', async () => {
   expect(mock.nuxt.hook).toHaveBeenCalledTimes(3)
   expect(mock.nuxt.options.build.createRoutes()).toStrictEqual([])
   jest.clearAllMocks()
+})
+
+test('Components register synchronously', async () => {
+  const dirs = []
+  const hook = jest.fn((name, fn) => name === 'components:dirs' && fn(dirs))
+  await DruxtRouterNuxtModule.call({
+    ...mock,
+    addModule: jest.fn(),
+    nuxt: { ...mock.nuxt, hook },
+    options: { buildDir: '', dir: { pages: 'pages' }, druxt: { baseUrl: 'https://demo-api.druxtjs.org' }, srcDir: __dirname },
+  })
+
+  // Expect every directory to mark its components as not async.
+  expect(dirs.length).toBeGreaterThan(0)
+  for (const dir of dirs) {
+    expect(dir.extendComponent({ isAsync: null })).toStrictEqual({ isAsync: false })
+  }
 })

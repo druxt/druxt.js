@@ -36,3 +36,20 @@ describe('DruxtJS Site module', () => {
     expect(mock.addModule).toHaveBeenCalledTimes(8)
   })
 })
+
+test('Components register synchronously', async () => {
+  const dirs = []
+  const hook = jest.fn((name, fn) => name === 'components:dirs' && fn(dirs))
+  await DruxtSiteNuxtModule.call({
+    ...mock,
+    addModule: jest.fn(),
+    nuxt: { ...mock.nuxt, hook },
+    options: { dir: { layouts: 'layouts' }, druxt: {}, srcDir: __dirname },
+  })
+
+  // Expect every directory to mark its components as not async.
+  expect(dirs.length).toBeGreaterThan(0)
+  for (const dir of dirs) {
+    expect(dir.extendComponent({ isAsync: null })).toStrictEqual({ isAsync: false })
+  }
+})

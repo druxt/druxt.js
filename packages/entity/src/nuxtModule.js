@@ -1,6 +1,9 @@
 import { join } from 'path'
 import DruxtEntityStorybook from './nuxtStorybook'
 
+// @nuxt/components ignores a false isAsync on the directory.
+const extendComponent = (component) => ({ ...component, isAsync: false })
+
 /**
  * The Nuxt.js module function.
  *
@@ -56,10 +59,11 @@ const DruxtEntityNuxtModule = async function (moduleOptions = {}) {
   this.nuxt.hook('components:dirs', dirs => {
     dirs.push({
       path: join(__dirname, 'components'),
-      ignore: ['fields']
+      ignore: ['fields'],
+      extendComponent
     })
     if (options.entity.components.fields) {
-      dirs.push({ path: join(__dirname, 'components/fields') })
+      dirs.push({ path: join(__dirname, 'components/fields'), extendComponent })
     }
   })
 
