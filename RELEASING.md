@@ -80,7 +80,7 @@ The build job ends by packing tarballs, and the publish job hands those tarballs
 
 Publishing uses npm trusted publishing, so there is no npm token to store or rotate. Until the setup is complete the workflow stops after packing: the tarballs it would have published are attached to the run as an artifact, and nothing reaches npm.
 
-1. On npmjs.com, open each published package, then **Settings**, then **Trusted publisher**. Choose GitHub Actions, and enter the organization `druxt`, the repository `druxt.js` and the workflow filename `release.yml`. Leave the environment empty.
+1. On npmjs.com, open each published package, then **Settings**, then **Trusted publisher**. Choose GitHub Actions, and enter the organization `druxt`, the repository `druxt.js` and the workflow filename `release.yml`. Leave the environment empty. Under **Allowed actions**, tick **Allow npm publish**: the workflow publishes directly, and a publisher limited to staged publishing refuses it.
 2. Create a GitHub App for the organization with read and write access to **Contents** and **Pull requests**, and install it on this repository. Store its ID as the repository variable `RELEASE_APP_ID` and its private key as the secret `RELEASE_APP_PRIVATE_KEY`. GitHub doesn't run checks on a pull request opened with the workflow's own token, and `develop` requires them.
 3. Set the repository variable `NPM_PUBLISH` to `true`.
 

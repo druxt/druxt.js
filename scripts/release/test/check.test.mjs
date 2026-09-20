@@ -86,6 +86,14 @@ test('files entries must exist and hold something', () => {
   fs.rmSync(root, { recursive: true })
 })
 
+test('a missing or empty files list is refused', () => {
+  for (const list of [undefined, []]) {
+    const packages = [pkg({ name: 'core', version: '1.0.0', files: list })]
+    assert.match(checkPackages({ packages })[0], /has no "files" list/)
+    assert.deepEqual(checkPackages({ packages, files: false }), [])
+  }
+})
+
 test('unpublished versions are listed, private packages left out', () => {
   const packages = [core('1.2.1'), pkg({ name: 'site', version: '2.0.0' }), pkg({ name: 'fresh', version: '0.1.0' }), pkg({ name: 'utils', version: '1.0.0', private: true })]
   const registry = { core: { latest: '1.2.0', versions: ['1.2.0'] }, site: { latest: '2.0.0', versions: ['2.0.0'] }, fresh: null }

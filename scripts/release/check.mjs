@@ -89,6 +89,10 @@ export function checkPackages({ packages, registry, files = true }) {
     }
 
     if (files) {
+      // Without a list npm packs the whole directory, and nothing here could say whether the build output is in it.
+      if (!Array.isArray(manifest.files) || manifest.files.length === 0) {
+        problems.push(`${name}: package.json has no "files" list to check the build by.`)
+      }
       for (const entry of manifest.files || []) {
         const target = path.join(dir, entry)
         if (!fs.existsSync(target)) {
