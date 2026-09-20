@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtSchema: content entity schema generation for displays and forms">
+<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/schema/banner.svg" alt="DruxtSchema: content entity schema generation for displays and forms">
 
 # DruxtSchema
 

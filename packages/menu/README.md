@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtMenu renders Drupal menus as Vue components">
+<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/menu/banner.svg" alt="DruxtMenu renders Drupal menus as Vue components">
 
 # DruxtMenu
 

@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtBlocks renders Drupal blocks and block regions in Nuxt">
+<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/blocks/banner.svg" alt="DruxtBlocks renders Drupal blocks and block regions in Nuxt">
 
 # DruxtBlocks
 

@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="Druxt: the core client, store and DruxtModule base">
+<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/druxt/banner.svg" alt="Druxt: the core client, store and DruxtModule base">
 
 # Druxt
 

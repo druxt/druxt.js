@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtViews renders Drupal Views with filters, pagination and sorting">
+<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/views/banner.svg" alt="DruxtViews renders Drupal Views with filters, pagination and sorting">
 
 # DruxtViews
 

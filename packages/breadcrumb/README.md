@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtBreadcrumb: breadcrumb trails from the Drupal decoupled router">
+<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/breadcrumb/banner.svg" alt="DruxtBreadcrumb: breadcrumb trails from the Drupal decoupled router">
 
 # DruxtBreadcrumb
 
