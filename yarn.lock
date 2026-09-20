@@ -14094,12 +14094,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"human-id@npm:^4.1.1":
-  version: 4.2.0
-  resolution: "human-id@npm:4.2.0"
+"human-id@npm:4.1.3":
+  version: 4.1.3
+  resolution: "human-id@npm:4.1.3"
   bin:
     human-id: dist/cli.js
-  checksum: 9eb7cf529acdf42999c3cd470e24fefad885806547420aa0f3d83e7ed3434055fe0c066040f16159e8036399d12f7073daf6ceef66b929ead32d8b3ec80ad42c
+  checksum: fcb32f5eb3116b6bb7c1975b07bc19c0b44bc7dbeee71fd8afdf72ef64ea4c90fab4fd25cbc42f885d68e83863d6cc1db627c64d67ebcd279451a87819e8c63d
   languageName: node
   linkType: hard
 
