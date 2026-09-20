@@ -88,14 +88,20 @@ const DruxtStore = ({ store }) => {
         // Store and dehydrate collection resources.
         collection.data = dehydrateResources({ commit: this.commit, prefix, queryObject, resources: collection.data })
 
-        // Extract and store included resources.
+        // Keep the dehydrated refs (don't delete) so a cache hit in
+        // getCollection can re-hydrate `included`, same as `data`.
         if (collection.included) {
           collection.included = dehydrateResources({ commit: this.commit, prefix, queryObject, resources: collection.included })
-          delete collection.included
         }
 
         // Recursively merge new collection data into stored collection.
+        // The hash ignores `include`, so queries that differ only by their
+        // includes share a slot. deepmerge keeps a key the incoming response
+        // does not carry, which would leave the previous query's `included`
+        // refs behind for getCollection to hydrate and return unasked for.
+        const hadIncluded = !!collection.included
         collection = merge(state.collections[type][hash][prefix] || {}, collection, { arrayMerge: (dst, src) => src })
+        if (!hadIncluded) delete collection.included
 
         Vue.set(state.collections[type][hash], prefix, collection)
       },
@@ -216,10 +222,18 @@ const DruxtStore = ({ store }) => {
 
         // If collection hash exists, re-hydrate and return the data.
         if (!bypassCache && ((state.collections[type] || {})[hash] || {})[prefix]) {
-          return {
-            ...state.collections[type][hash][prefix],
-            // Hydrate resource data.
-            data: state.collections[type][hash][prefix].data.map((o) => ((state.resources[o.type][o.id] || {})[prefix] || {}).data)
+          const cached = state.collections[type][hash][prefix]
+          const hydrate = (o) => (((state.resources[o.type] || {})[o.id] || {})[prefix] || {}).data
+          const data = cached.data.map(hydrate)
+          const included = cached.included ? cached.included.map(hydrate) : undefined
+          // A ref with no resource behind it means flushResource ran since the
+          // collection was stored; treat the hit as a miss and fetch again.
+          if (data.every((o) => o) && (included || []).every((o) => o)) {
+            return {
+              ...cached,
+              data,
+              ...(included ? { included } : {}),
+            }
           }
         }
 
