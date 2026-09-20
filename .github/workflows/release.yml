@@ -272,8 +272,9 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
+      # An exact version, and no install scripts: this job can publish.
       - name: Update npm
-        run: npm install --global npm@^11.5.1
+        run: npm install --global --ignore-scripts npm@11.19.1
 
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
@@ -290,7 +291,7 @@ jobs:
             if [ -n "$(npm view "$name@$version" version 2>/dev/null)" ]; then
               echo "$name@$version is already on npm."
             else
-              npm publish "release-packages/$file" --access public
+              npm publish "./release-packages/$file" --access public
             fi
             if ! gh release view "$name@$version" > /dev/null 2>&1; then
               gh release create "$name@$version" --target "$GITHUB_SHA" --title "$name@$version" --notes-file "release-packages/$file.md"
