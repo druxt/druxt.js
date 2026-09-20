@@ -134,18 +134,25 @@ const DruxtRouterStore = ({ store }) => {
        * @name get
        * @action get=route
        * @param {string} path The router path.
-       * @return {object} The route and redirect information.
+       * @return {object} The route and redirect information, or `{ error, route }` when the
+       *   route has an error with a status code, such as a 403 or 404. The active route and
+       *   redirect are not set in that case.
        *
        * @example @lang js
        * const { redirect, route } = await this.$store.dispatch('druxtRouter/get', '/')
+       *
+       * @example @lang js
+       * // A missing path returns the error, for the caller to render.
+       * const { error } = await this.$store.dispatch('druxtRouter/get', '/missing')
+       * if (error) this.$nuxt.error(error)
        */
       async get ({ commit, dispatch }, path) {
         // Get route by path from 'getRoute'.
         const route = await dispatch('getRoute', path)
 
-        // Handle route errors.
-        if (route.error && typeof route.error.statusCode !== 'undefined' && ((this.app || {}).context || {}).error) {
-          return this.app.context.error(route.error)
+        // Handle route errors. The middleware renders the Nuxt error page.
+        if (route.error && typeof route.error.statusCode !== 'undefined') {
+          return { error: route.error, route }
         }
 
         // Set active route.
