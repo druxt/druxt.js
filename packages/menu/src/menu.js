@@ -100,9 +100,16 @@ class DruxtMenu {
     const jsonApiMenuItems = !!this.options.menu.jsonApiMenuItems
     const cacheKey = JSON.stringify([prefix || '', menuName, settings || {}, jsonApiMenuItems])
     if (!cache.has(cacheKey)) {
-      const request = jsonApiMenuItems
-        ? this.getJsonApiMenuItems(menuName, settings, prefix)
-        : this.getMenuLinkContent(menuName, settings, prefix)
+      // A menu fetched by an earlier server request without credentials.
+      const shared = typeof this.druxt.processCache === 'function' ? this.druxt.processCache('menu') : null
+      const sharedKey = JSON.stringify([this.druxt.indexKey, cacheKey])
+      let request = shared && shared.get(sharedKey)
+      if (!request) {
+        request = jsonApiMenuItems
+          ? this.getJsonApiMenuItems(menuName, settings, prefix)
+          : this.getMenuLinkContent(menuName, settings, prefix)
+        if (shared) shared.set(sharedKey, request)
+      }
       cache.set(cacheKey, request)
       // A failed request is dropped so the next call retries.
       request.catch(() => cache.delete(cacheKey))

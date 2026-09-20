@@ -36,6 +36,11 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     ...(this.options || {}).druxt,
   }
 
+  // Share responses between server requests that carry no credentials, in production only.
+  if (options.cache !== false) {
+    options.cache = { ttl: this.options.dev ? 0 : 300, ...options.cache }
+  }
+
   // Normalize slashes.
   this.options.baseUrl = options.baseUrl = options.baseUrl.endsWith('/') ? options.baseUrl.slice(0, -1) : options.baseUrl
   this.options.endpoint = options.endpoint = options.endpoint.startsWith('/') ? options.endpoint : `/${options.endpoint}`
@@ -224,6 +229,12 @@ export { DruxtNuxtModule }
  * @property {object} [proxy] - Proxy settings object.
  * @property {boolean} [proxy.api] - Proxy the JSON:API.
  * @property {(boolean|string)} [proxy.files] - Proxy Drupal's site files directory. Provide String to specify multi-site path.
+ * @property {(object|boolean)} [cache] - Server-side cache of the JSON:API index and menus, shared between
+ *   requests that do not send an Authorization header, basic auth or a session cookie. `false` turns it off.
+ * @property {number} [cache.ttl=300] - Seconds a cached response lives. `0` turns the cache off. Defaults to
+ *   `0` under `nuxt dev`.
+ * @property {string} [cache.sessionCookie=S?SESS[0-9a-f]+] - A pattern for the name of the backend's session
+ *   cookie. A request with a matching cookie never uses the cache.
  *
  * @example @lang js
  * export default {

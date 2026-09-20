@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
+import { processCache } from './utils/processCache'
 
 // Shared JSON:API index cache. Keyed by the Axios instance, which carries the
 // credentials, then by base URL, endpoint and resource config, so clients on
@@ -106,6 +107,22 @@ class DruxtClient {
      * @type {object}
      */
     this.index = cache.index[indexKey] || (cache.index[indexKey] = {})
+  }
+
+  /**
+   * Get the process cache for a scope.
+   *
+   * The cache holds server-side responses between requests. It is off unless
+   * the `cache.ttl` option is set, and it is skipped for any request that
+   * sends an Authorization header, basic auth or a session cookie.
+   *
+   * @param {string} scope - The cache scope, e.g. 'index' or 'menu'.
+   *
+   * @returns {?object} The cache, or null when it must not be used.
+   */
+  processCache(scope) {
+    const { ttl, sessionCookie } = this.options.cache || {}
+    return processCache(scope, { axios: this.axios, ttl, sessionCookie })
   }
 
   /**
@@ -386,6 +403,14 @@ class DruxtClient {
    */
   async getIndex(resource, prefix) {
     if (!(this.index || {})[prefix]) {
+      // An index fetched by an earlier server request without credentials.
+      const shared = this.processCache('index')
+      const sharedKey = [this.indexKey, prefix || ''].join(':')
+      const stored = shared && shared.get(sharedKey)
+      if (stored) this.index[prefix] = stored
+    }
+
+    if (!(this.index || {})[prefix]) {
       // Concurrent callers, on this client or another sharing the index,
       // wait on one request. A failed request is dropped so the next call retries.
       const key = [this.indexKey, prefix || ''].join(':')
@@ -395,6 +420,9 @@ class DruxtClient {
       } finally {
         if (this.indexRequests[key] === request) delete this.indexRequests[key]
       }
+
+      const shared = this.processCache('index')
+      if (shared && this.index[prefix]) shared.set(key, this.index[prefix])
     }
 
     return resource ? this.index[prefix][resource] || false : this.index[prefix]
@@ -584,6 +612,10 @@ export { DruxtClient }
   * @typedef {object} DruxtClientOptions
   *
   * @param {object} [axios] - Axios instance settings.
+  * @param {object} [cache] - Server-side cache shared between requests that do not send credentials. Off by
+  *   default. The Nuxt module turns it on in production.
+  * @param {number} [cache.ttl] - Seconds a cached response lives.
+  * @param {string} [cache.sessionCookie=S?SESS[0-9a-f]+] - A pattern for the session cookie name.
   * @param {boolean} [debug=false] - Enable Debug mode for verbose console log messages.
   * @param {string} [endpoint=jsonapi] - The JSON:API endpoint.
   * @param {string} [jsonapiResourceConfig=jsonapi_resource_config--jsonapi_resource_config] -
