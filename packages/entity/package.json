@@ -27,7 +27,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/druxt/druxt.js"
+    "url": "git+https://github.com/druxt/druxt.js",
+    "directory": "packages/entity"
   },
   "license": "MIT",
   "author": "Stuart Clark <stuart@druxtjs.org>",
