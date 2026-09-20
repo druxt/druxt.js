@@ -1,0 +1,144 @@
+name: Release
+
+# Publishes the packages to npm.
+#
+# dev: every push to develop with a pending changeset publishes a snapshot of
+# all affected packages under the `dev` dist-tag. `latest` never moves, nothing
+# is committed and no git tag is made. Install one with `druxt-site@dev`.
+#
+# Building and publishing are separate jobs. The build job runs repository
+# code, install scripts included, so it holds no publishing rights: it ends by
+# packing tarballs. The publish job holds the OIDC permission and runs nothing
+# from the repository: it downloads those tarballs and hands them to npm.
+#
+# Publishing authenticates through npm trusted publishing (OIDC), so there is
+# no token. It stays off until the repository variable NPM_PUBLISH is `true`,
+# which is set once each package names this file as its trusted publisher on
+# npmjs.com. Until then the packed tarballs are the dry run.
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop, main, 'feature/**']
+    paths:
+      - .github/workflows/release.yml
+      - .changeset/config.json
+      - scripts/release/**
+      - packages/*/package.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never cancel a publish half way through a set.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # Runs on pull requests too, as a rehearsal. No id-token here: a lifecycle
+  # script in a pull request must not be able to reach npm.
+  snapshot:
+    if: github.repository == 'druxt/druxt.js'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      count: ${{ steps.pending.outputs.count }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+
+      - name: Test the release scripts
+        run: yarn release:check:test
+
+      - name: Count pending changesets
+        id: pending
+        run: |
+          count=$(find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md' | wc -l)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "Pending changesets: $count" >> "$GITHUB_STEP_SUMMARY"
+
+      # A snapshot cannot be cut in pre mode. The checkout is thrown away, so
+      # dropping the marker here changes nothing on the branch.
+      - name: Version the snapshot
+        if: steps.pending.outputs.count != '0'
+        run: |
+          rm -f .changeset/pre.json
+          yarn changeset version --snapshot dev
+
+      - name: Build
+        if: steps.pending.outputs.count != '0'
+        run: yarn build
+
+      - name: Check the release set
+        if: steps.pending.outputs.count != '0'
+        run: yarn release:check
+
+      - name: Pack the tarballs
+        if: steps.pending.outputs.count != '0'
+        run: |
+          node scripts/release/pack.mjs dev-packages
+          {
+            echo "| Package | Version |"
+            echo "| --- | --- |"
+            node -p "require('./dev-packages/manifest.json').map((p) => '| ' + p.name + ' | ' + p.version + ' |').join('\n')"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: steps.pending.outputs.count != '0'
+        with:
+          name: dev-packages
+          path: dev-packages
+          retention-days: 7
+          if-no-files-found: error
+
+  # No checkout and no install: nothing from the repository runs with the
+  # OIDC permission. Trusted publishing needs npm 11.5.1 or later, which needs
+  # a newer Node than the one the packages build on.
+  dev:
+    needs: snapshot
+    if: >-
+      github.event_name != 'pull_request' &&
+      github.ref == 'refs/heads/develop' &&
+      vars.NPM_PUBLISH == 'true' &&
+      needs.snapshot.outputs.count != '0'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Update npm
+        run: npm install --global npm@^11.5.1
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: dev-packages
+          path: dev-packages
+
+      - name: Publish under the dev tag
+        run: |
+          for file in $(node -p "require('./dev-packages/manifest.json').map((p) => p.file).join(' ')"); do
+            npm publish "dev-packages/$file" --tag dev --access public
+          done
+          echo "Published under the dev tag." >> "$GITHUB_STEP_SUMMARY"

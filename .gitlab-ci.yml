@@ -344,6 +344,32 @@ test:build:
       [ "$count" -gt 0 ] || { echo "yarn build produced no dist output" >&2; exit 1; }
     - section_end "verify"
 
+# Rehearses the GitHub release workflow's dev job up to the publish: cut a
+# snapshot, build it, and run the pre-publish gate against npm.
+test:release:
+  extends: .node
+  stage: test
+  interruptible: true
+  needs: []
+  script:
+    - section_start "release-tests" "Testing the release scripts"
+    - corepack enable
+    - yarn install --immutable
+    - yarn release:check:test
+    - section_end "release-tests"
+    - section_start "release-rehearsal" "Rehearsing a dev snapshot"
+    - |
+      set -euo pipefail
+      count=$(find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md' | wc -l)
+      echo "$count pending changeset(s)"
+      if [ "$count" -gt 0 ]; then
+        rm -f .changeset/pre.json
+        yarn changeset version --snapshot dev
+      fi
+      yarn build
+      yarn release:check
+    - section_end "release-rehearsal"
+
 # Mirrors the GitHub test-node-client job. No backend, so ungated.
 test:node-client:
   extends: .node
