@@ -610,12 +610,23 @@ perf:audit:
     - section_end "audit"
     - section_start "refresh" "Opening a merge request if the baseline changed"
     - |
+      # Timings and Lighthouse scores differ between runs of one commit, so the file
+      # alone is not the question: only a count, a state or a real byte change is.
+      committed="$CI_PROJECT_DIR/.perf/baseline-committed.json"
+      git show HEAD:perf/baseline.gitlab.json > "$committed" 2>/dev/null || echo '{}' > "$committed"
+      # A failed check reports itself rather than reading as "nothing moved".
+      check_rc=0
+      PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/baseline-changed.mjs "$committed" perf/baseline.gitlab.json > "$CI_PROJECT_DIR/.perf/baseline-moved.txt" || check_rc=$?
+      cat "$CI_PROJECT_DIR/.perf/baseline-moved.txt"
+      moved=$(tail -1 "$CI_PROJECT_DIR/.perf/baseline-moved.txt")
       if [ "${PERF_AUDIT_OPEN_MR:-}" != "true" ]; then
         echo "Not an automatic baseline run, nothing to open"
+      elif [ "$check_rc" != "0" ]; then
+        echo "Could not tell whether the baseline moved; refresh perf/baseline.gitlab.json by hand from this job's artifact"
       elif [ -z "${GITLAB_API_TOKEN:-}" ]; then
         echo "GITLAB_API_TOKEN is not set, cannot open a merge request"
-      elif git diff --quiet -- perf/baseline.gitlab.json; then
-        echo "Baseline unchanged, nothing to open"
+      elif [ "$moved" != "changed=true" ]; then
+        echo "Baseline moved on nothing but run to run noise, nothing to open"
       else
         branch="chore/perf-audit-baseline-${CI_PIPELINE_ID}"
         git config user.name "gitlab-ci"

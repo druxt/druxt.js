@@ -58,6 +58,13 @@ this, a fix already on `develop` keeps looking like an improvement made by whate
 request the audit next runs against, since the comment diffs against however old the committed
 baseline is.
 
+"The numbers moved" means a count, a state or a byte count past 1%, never a timing or a
+Lighthouse score. Those differ between runs of one commit, so refreshing on them would raise a
+pull request after every merge and say nothing. `baseline-changed.mjs` decides, and
+`baseline.mjs` lists which metric is which. A merge that shifts only timings leaves the
+committed timings where they are, so refresh the whole file by hand (see below) when those are
+the numbers being read.
+
 A refresh's own merge does not queue another refresh; the guard is the `chore(perf-audit):`
 commit prefix, so do not reuse it for anything else.
 

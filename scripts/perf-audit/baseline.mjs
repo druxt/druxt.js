@@ -11,6 +11,71 @@ export const METRICS = [
   'hydration.serverNodes', 'hydration.discardedNodes', 'hydration.layoutShift',
 ]
 
+// Counts and states. These move when the code moves, so a change in one is
+// worth recording in the baseline.
+export const COUNT_METRICS = [
+  'backendCold.total', 'backendWarm.total',
+  'backendCold.index', 'backendCold.collections', 'backendCold.resources', 'backendCold.router', 'backendCold.menu',
+  'backendWarm.index', 'backendWarm.collections', 'backendWarm.resources', 'backendWarm.router', 'backendWarm.menu',
+  'ssr.status', 'ssr.errorState', 'ssr.fetchKeys',
+  'lighthouse.postLoadApiCalls',
+  'hydration.serverNodes', 'hydration.discardedNodes',
+]
+
+// Byte counts drift by a few bytes between builds of the same commit, so they
+// count as moved only past a percentage, far below the payload budget.
+export const BYTE_METRICS = ['ssr.nuxtBytes']
+export const BYTE_TOLERANCE_PERCENT = 1
+
+// Timings, Lighthouse scores and layout shift differ between runs of the same
+// commit. Read them, never refresh on them.
+export const NOISY_METRICS = [
+  'ssr.ttfbMs',
+  'lighthouse.performance', 'lighthouse.lcpMs', 'lighthouse.clsScore', 'lighthouse.tbtMs',
+  'hydration.layoutShift',
+]
+
+/**
+ * The metrics that moved between two baselines, ignoring run to run noise.
+ *
+ * A baseline holds timings and Lighthouse scores that differ between runs of
+ * one commit. Refreshing on those would open a pull request after every merge,
+ * so only counts, states and a real byte change count as moved.
+ *
+ * @param {object} before - The committed baseline.
+ * @param {object} after - The baseline the run produced.
+ * @param {number} [bytesTolerancePercent] - How far a byte count may drift before it counts.
+ *
+ * @returns {Array<object>} One row per moved metric, with its example, route and both values.
+ */
+export function movedMetrics(before, after, bytesTolerancePercent = BYTE_TOLERANCE_PERCENT) {
+  const moved = []
+  for (const [example, routes] of Object.entries(after || {})) {
+    for (const [route, entry] of Object.entries(routes || {})) {
+      const previous = before?.[example]?.[route]
+      for (const metric of [...COUNT_METRICS, ...BYTE_METRICS]) {
+        const current = read(entry, metric)
+        const baseline = previous ? read(previous, metric) : null
+        if (current === baseline) continue
+
+        // A route or metric the committed baseline has never held is a change.
+        if (baseline === null || current === null) {
+          moved.push({ example, route, metric, before: baseline, after: current })
+          continue
+        }
+
+        if (BYTE_METRICS.includes(metric) && typeof current === 'number' && typeof baseline === 'number') {
+          const drift = baseline === 0 ? Infinity : Math.abs(current - baseline) / baseline * 100
+          if (drift <= bytesTolerancePercent) continue
+        }
+
+        moved.push({ example, route, metric, before: baseline, after: current })
+      }
+    }
+  }
+  return moved
+}
+
 function read(entry, metric) {
   const [group, key] = metric.split('.')
   const value = entry?.[group]?.[key]
