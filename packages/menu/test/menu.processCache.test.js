@@ -55,6 +55,20 @@ describe('DruxtMenu process cache', () => {
     expect(menuCalls).toBe(3)
   })
 
+  test('a client that withholds the cache once the request resolves does not fill it', async () => {
+    // As when the request turns out to have carried credentials an interceptor added.
+    let asked = 0
+    await requestMenu(() => (asked++ === 0 ? handle : null)).get('main')
+    expect(store.size).toBe(0)
+  })
+
+  test('only a resolved menu is stored, never the request', async () => {
+    await requestMenu().get('main')
+    const [stored] = [...store.values()]
+    expect(typeof stored.then).toBe('undefined')
+    expect(stored.entities.length).toBe(1)
+  })
+
   test('a client without processCache still works', async () => {
     await requestMenu(false).get('main')
     await requestMenu(false).get('main')

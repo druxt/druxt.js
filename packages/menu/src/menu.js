@@ -101,15 +101,19 @@ class DruxtMenu {
     const cacheKey = JSON.stringify([prefix || '', menuName, settings || {}, jsonApiMenuItems])
     if (!cache.has(cacheKey)) {
       // A menu fetched by an earlier server request without credentials.
-      const shared = typeof this.druxt.processCache === 'function' ? this.druxt.processCache('menu') : null
+      const processCache = (scope) => typeof this.druxt.processCache === 'function' ? this.druxt.processCache(scope) : null
       const sharedKey = JSON.stringify([this.druxt.indexKey, cacheKey])
-      let request = shared && shared.get(sharedKey)
-      if (!request) {
-        request = jsonApiMenuItems
-          ? this.getJsonApiMenuItems(menuName, settings, prefix)
-          : this.getMenuLinkContent(menuName, settings, prefix)
-        if (shared) shared.set(sharedKey, request)
-      }
+      const shared = processCache('menu')
+      const stored = shared && shared.get(sharedKey)
+      const request = stored ? Promise.resolve(stored) : (jsonApiMenuItems
+        ? this.getJsonApiMenuItems(menuName, settings, prefix)
+        : this.getMenuLinkContent(menuName, settings, prefix)
+      ).then((result) => {
+        // Asked again once resolved: the request may have shown credentials.
+        const after = processCache('menu')
+        if (after) after.set(sharedKey, result)
+        return result
+      })
       cache.set(cacheKey, request)
       // A failed request is dropped so the next call retries.
       request.catch(() => cache.delete(cacheKey))

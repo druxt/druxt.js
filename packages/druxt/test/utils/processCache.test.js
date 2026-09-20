@@ -1,4 +1,4 @@
-import { hasCredentials, processCache, resetProcessCache, runtime } from '../../src/utils/processCache'
+import { configHasCredentials, hasCredentials, processCache, resetProcessCache, runtime, watchCredentials } from '../../src/utils/processCache'
 
 const axios = (common = {}) => ({ defaults: { headers: { common } } })
 
@@ -52,13 +52,44 @@ describe('processCache', () => {
     now.mockRestore()
   })
 
-  test('drops a rejected promise so the next caller retries', async () => {
-    const cache = processCache('menu', { ttl: 300, axios: axios() })
-    const request = Promise.reject(new Error('nope'))
-    cache.set('key', request)
-    await request.catch(() => {})
-    await Promise.resolve()
-    await Promise.resolve()
-    expect(cache.get('key')).toBe(undefined)
+  test('the reader ttl applies to an entry written with a longer one', () => {
+    const now = jest.spyOn(Date, 'now')
+    now.mockReturnValue(1000)
+    processCache('index', { ttl: 300, axios: axios() }).set('key', 'value')
+    now.mockReturnValue(1000 + 61 * 1000)
+    expect(processCache('index', { ttl: 60, axios: axios() }).get('key')).toBe(undefined)
+    expect(processCache('index', { ttl: 300, axios: axios() }).get('key')).toBe('value')
+    now.mockRestore()
+  })
+
+  test('configHasCredentials reads the config as sent', () => {
+    expect(configHasCredentials(undefined)).toBe(false)
+    expect(configHasCredentials({ headers: { Accept: 'application/json' } })).toBe(false)
+    expect(configHasCredentials({ headers: { Authorization: 'Bearer token' } })).toBe(true)
+    expect(configHasCredentials({ headers: { common: { Authorization: 'Bearer token' } } })).toBe(true)
+    expect(configHasCredentials({ headers: { Cookie: 'SESS0123456789abcdef0123456789abcdef=abc' } })).toBe(true)
+    expect(configHasCredentials({ auth: { username: 'a', password: 'b' }, headers: {} })).toBe(true)
+  })
+
+  test('an instance seen sending credentials is refused from then on', async () => {
+    const handlers = []
+    const instance = { ...axios(), interceptors: { response: { use: (ok, fail) => handlers.push({ ok, fail }) } } }
+    watchCredentials(instance)
+    watchCredentials(instance)
+    expect(handlers.length).toBe(1)
+    expect(processCache('menu', { ttl: 300, axios: instance })).not.toBe(null)
+
+    // A response whose request left without credentials changes nothing.
+    const plain = { config: { headers: {} } }
+    expect(handlers[0].ok(plain)).toBe(plain)
+    expect(processCache('menu', { ttl: 300, axios: instance })).not.toBe(null)
+
+    // A token added by an interceptor shows in the config as sent, on success or failure.
+    const failed = { config: { headers: { Authorization: 'Bearer token' } } }
+    await expect(handlers[0].fail(failed)).rejects.toBe(failed)
+    expect(processCache('menu', { ttl: 300, axios: instance })).toBe(null)
+
+    // An instance without interceptors is left alone.
+    expect(() => watchCredentials({ defaults: {} })).not.toThrow()
   })
 })
