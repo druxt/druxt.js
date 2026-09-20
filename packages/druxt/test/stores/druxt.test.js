@@ -67,9 +67,10 @@ describe('DruxtStore', () => {
     // Expect the collection be stored with dehydrated (not dropped)
     // included resources, so a later cache hit can re-hydrate `included`
     // the same way it re-hydrates `data`.
-    expect(store.state.druxt.collections['node--page']._default[undefined].included[0]).toStrictEqual(
-      expect.objectContaining({ id: included[0].id, type: 'node--article' })
-    )
+    expect(store.state.druxt.collections['node--page']._default[undefined].included[0]).toStrictEqual({
+      id: included[0].id,
+      type: 'node--article',
+    })
   })
 
   test('addResource', async () => {
