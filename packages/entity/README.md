@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtEntity renders Display Mode powered Entity, Form and Field components">
+<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/entity/banner.svg" alt="DruxtEntity renders Display Mode powered Entity, Form and Field components">
 
 # DruxtEntity
 

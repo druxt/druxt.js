@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtRouter provides Drupal routing for Nuxt, via Decoupled Router">
+<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/router/banner.svg" alt="DruxtRouter provides Drupal routing for Nuxt, via Decoupled Router">
 
 # DruxtRouter
 

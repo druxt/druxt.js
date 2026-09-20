@@ -1,4 +1,4 @@
-<img src="./banner.svg" alt="DruxtSite: a decoupled Drupal site out of the box">
+<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/site/banner.svg" alt="DruxtSite: a decoupled Drupal site out of the box">
 
 # DruxtSite
 
