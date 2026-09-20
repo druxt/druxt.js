@@ -49,13 +49,28 @@ A breach exits 1. The CI jobs are advisory, so a breach marks the job and the co
 - Layout shift on druxt-site flips between runs of the same code until the hydration problem in [#837](https://github.com/druxt/druxt.js/issues/837) is fixed. It carries a quarter of the Lighthouse score, so the druxt-site performance budget can breach with no code change. Read the counts on those routes.
 - Warm equals cold on every route today. Nothing is cached between server renders.
 
+## Keeping the CI baselines current
+
+`perf/baseline.github.json` and `perf/baseline.gitlab.json` refresh themselves: a push to
+`develop` runs the audit with the baseline update switched on and, if the numbers moved, opens
+a pull/merge request with just that file changed. Merging it is the only manual step. Without
+this, a fix already on `develop` keeps looking like an improvement made by whatever pull
+request the audit next runs against, since the comment diffs against however old the committed
+baseline is.
+
+A refresh's own merge does not queue another refresh; the guard is the `chore(perf-audit):`
+commit prefix, so do not reuse it for anything else.
+
+`perf/baseline.local.json` has no CI runner behind it, so nothing refreshes it automatically.
+Update it yourself before a release, or after a change worth re-measuring locally:
+`mise exec node@22 -- yarn perf:audit --update-baseline`.
+
 ## Each release
 
 1. Run the audit on the release candidate.
 2. Read the deltas against the previous release.
-3. Refresh every baseline and commit them with the release:
-   - `perf/baseline.local.json`: `mise exec node@22 -- yarn perf:audit --update-baseline`.
-   - `perf/baseline.github.json` and `perf/baseline.gitlab.json`: run each CI job with its baseline update switched on (see below) and commit the file from its artifact.
+3. Merge any open baseline-refresh pull/merge request, and refresh
+   `perf/baseline.local.json` yourself (see above).
 
 ## One baseline per environment
 
@@ -69,9 +84,13 @@ Lighthouse scores and timings depend on the machine, so a run is only compared w
 
 `PERF_AUDIT_ENV` overrides the name, for a machine that needs its own baseline. An environment with no baseline yet reports its numbers without deltas or breaches.
 
-To update a CI baseline, run the GitHub workflow with `update_baseline` ticked, or play the gitlab job with `PERF_AUDIT_UPDATE_BASELINE=true`. The job keeps `perf/` in its artifact. Download the file and commit it.
+A push to `develop` refreshes the CI baselines on its own (see "Keeping the CI baselines
+current" above). To update one by hand instead, run the GitHub workflow with `update_baseline`
+ticked, or play the gitlab job with `PERF_AUDIT_UPDATE_BASELINE=true`. Either way the job keeps
+`perf/` in its artifact; download the file and commit it yourself if the automatic pull/merge
+request did not cover what you needed.
 
-In CI the manual gitlab `perf:audit` job and the GitHub `Performance audit` workflow do the same and keep `.perf/` as an artifact. On GitHub, add the `perf-audit` label to a pull request to run it on that branch, or use `Run workflow` (with optional example and skip-Lighthouse inputs) once the workflow is on the default branch.
+In CI the gitlab `perf:audit` job and the GitHub `Performance audit` workflow do the same and keep `.perf/` as an artifact. On GitHub, add the `perf-audit` label to a pull request to run it on that branch, or use `Run workflow` (with optional example and skip-Lighthouse inputs) once the workflow is on the default branch.
 
 ## Comments on the merge request
 
