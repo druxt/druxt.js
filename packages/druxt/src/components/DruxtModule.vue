@@ -471,7 +471,7 @@ export default {
 
     // Return only wrapper if fetch state is still pending and no earlier fetch
     // has resolved component options or slots.
-    if (this.$fetchState.pending && !this.component.options.length && !(this.component.slots || []).length) {
+    if (this.$fetchState.pending && !(this.component.options || []).length && !(this.component.slots || []).length) {
       return h((this.wrapper || {}).component || 'div', wrapperData)
     }
 

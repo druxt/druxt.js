@@ -268,6 +268,18 @@ describe('DruxtModule component', () => {
     expect(wrapper.html()).toBe('<div></div>')
   })
 
+  test('pending - an error with no component context renders the wrapper', async () => {
+    const wrapper = mount(DruxtModule, { localVue, mocks, stubs: ['DruxtDebug'] })
+    // A `fetchConfig` failure calls `error()` without the wrapper component data.
+    wrapper.vm.error(new Error('test'))
+    await localVue.nextTick()
+
+    mocks.$fetchState.pending = true
+    wrapper.vm.$forceUpdate()
+    await localVue.nextTick()
+    expect(wrapper.html()).toBe('<div></div>')
+  })
+
   test('custom module - wrapper', async () => {
     localVue.component('CustomModuleWrapper', {
       druxt: { foo: 'bar' },
