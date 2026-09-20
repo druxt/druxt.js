@@ -44,6 +44,16 @@ request.
 
 ---
 
+### Development releases
+
+Every change merged to `develop` is published under the `dev` tag:
+
+```sh
+npm i druxt-schema@dev
+```
+
+These are unreleased builds. See [development releases](https://druxtjs.org/how-to/use-development-releases) before using one.
+
 ## Settings
 
 ### Filter schemas

@@ -43,6 +43,16 @@ other Druxt component.
 
 ---
 
+### Development releases
+
+Every change merged to `develop` is published under the `dev` tag:
+
+```sh
+npm i druxt-breadcrumb@dev
+```
+
+These are unreleased builds. See [development releases](https://druxtjs.org/how-to/use-development-releases) before using one.
+
 ## Vue.js components
 
 ### DruxtBreadcrumb

@@ -44,6 +44,16 @@ on. It provides the three pieces the whole framework shares:
    [Troubleshooting](https://druxtjs.org/how-to/troubleshooting)
    if requests are failing after install.
 
+### Development releases
+
+Every change merged to `develop` is published under the `dev` tag:
+
+```sh
+npm i druxt@dev
+```
+
+These are unreleased builds. See [development releases](https://druxtjs.org/how-to/use-development-releases) before using one.
+
 ## Compatibility
 
 As of September 2026. See the [releases](https://github.com/druxt/druxt.js/releases) for the current version.
