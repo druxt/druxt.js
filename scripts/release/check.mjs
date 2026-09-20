@@ -16,6 +16,8 @@ import semver from 'semver'
 
 const DEPENDENCY_FIELDS = ['dependencies', 'peerDependencies', 'optionalDependencies']
 
+const REGISTRY_TIMEOUT = 15000
+
 // Specifiers that only resolve inside this repository or off the registry.
 const UNPUBLISHABLE = /^(workspace|link|file|portal|git|git\+ssh|git\+https|github|https?):/
 
@@ -109,7 +111,7 @@ export function fetchRecord(name) {
   const headers = { accept: 'application/vnd.npm.install-v1+json' }
 
   return new Promise((resolve, reject) => {
-    https.get(url, { headers }, (response) => {
+    const request = https.get(url, { headers, timeout: REGISTRY_TIMEOUT }, (response) => {
       if (response.statusCode === 404) {
         response.resume()
         return resolve(null)
@@ -126,7 +128,11 @@ export function fetchRecord(name) {
         const data = JSON.parse(body)
         resolve({ latest: data['dist-tags'].latest, versions: Object.keys(data.versions) })
       })
-    }).on('error', reject)
+    })
+
+    // Without this a stalled connection holds the job until its own timeout.
+    request.on('timeout', () => request.destroy(new Error(`npm registry did not answer for ${name} within ${REGISTRY_TIMEOUT / 1000}s.`)))
+    request.on('error', reject)
   })
 }
 
