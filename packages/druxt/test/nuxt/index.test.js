@@ -39,7 +39,28 @@ describe('DruxtJS Nuxt module', () => {
     DruxtNuxtModule.call(mock, options)
 
     // Expect addPlugin to have been called with options.
-    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
+    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options: expect.objectContaining(options) }))
+  })
+
+  test('Process cache defaults', async () => {
+    // The client plugin is the addPlugin call that carries the module options.
+    const pluginOptions = () => mock.addPlugin.mock.calls.map(([plugin]) => plugin.options).filter((o) => o && o.baseUrl).pop()
+
+    // On for five minutes in production.
+    await DruxtNuxtModule.call(mock, options)
+    expect(pluginOptions().cache).toStrictEqual({ ttl: 300 })
+
+    // Off in development, where a content edit must show at once.
+    mock.options.dev = true
+    await DruxtNuxtModule.call(mock, options)
+    expect(pluginOptions().cache).toStrictEqual({ ttl: 0 })
+    mock.options.dev = false
+
+    // A site can set its own, or turn it off.
+    await DruxtNuxtModule.call(mock, { ...options, cache: { ttl: 60, sessionCookie: 'sid' } })
+    expect(pluginOptions().cache).toStrictEqual({ ttl: 60, sessionCookie: 'sid' })
+    await DruxtNuxtModule.call(mock, { ...options, cache: false })
+    expect(pluginOptions().cache).toBe(false)
   })
 
   test('Root options', () => {
@@ -50,7 +71,7 @@ describe('DruxtJS Nuxt module', () => {
     DruxtNuxtModule.call(mock)
 
     // Expect addPlugin to have been called with options.
-    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options }))
+    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options: expect.objectContaining(options) }))
   })
 
   test('Default options', async () => {
