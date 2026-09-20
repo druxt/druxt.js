@@ -7,12 +7,16 @@ jest.mock('axios')
 
 // Each server request gets its own Axios instance from @nuxtjs/axios.
 let calls = 0
-const requestAxios = (common = {}) => {
+// `sent` is what a request interceptor adds on the way out, which the defaults never show.
+const requestAxios = (common = {}, sent = {}) => {
   const instance = jest.fn()
+  const handlers = []
   instance.defaults = { headers: { common } }
+  instance.interceptors = { response: { use: (ok) => handlers.push(ok) } }
   instance.get = jest.fn(async () => {
     calls += 1
-    return { data: { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } } }
+    const response = { config: { headers: { ...common, ...sent } }, data: { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } } }
+    return handlers.reduce((result, handler) => handler(result), response)
   })
   return instance
 }
@@ -58,6 +62,19 @@ describe('DruxtClient process cache', () => {
     const session = new DruxtClient(baseUrl, { axios: requestAxios({ cookie: 'SESS0123456789abcdef0123456789abcdef=abc' }), cache: { ttl: 300 } })
     await session.getIndex()
     expect(indexCalls()).toBe(3)
+  })
+
+  test('credentials added by an interceptor keep the response out of the cache', async () => {
+    const user = new DruxtClient(baseUrl, { axios: requestAxios({}, { Authorization: 'Bearer token' }), cache: { ttl: 300 } })
+    await user.getIndex()
+    expect(indexCalls()).toBe(1)
+
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: { ttl: 300 } }).getIndex()
+    expect(indexCalls()).toBe(2)
+
+    // The anonymous response above was stored, so the next one is served from it.
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: { ttl: 300 } }).getIndex()
+    expect(indexCalls()).toBe(2)
   })
 
   test('off by default, and per backend', async () => {
