@@ -1,0 +1,123 @@
+name: Release
+
+# Publishes the packages to npm.
+#
+# dev: every push to develop with a pending changeset publishes a snapshot of
+# all affected packages under the `dev` dist-tag. `latest` never moves, nothing
+# is committed and no git tag is made. Install one with `druxt-site@dev`.
+#
+# Publishing authenticates through npm trusted publishing (OIDC), so there is
+# no token. It stays a dry run until the repository variable NPM_PUBLISH is
+# `true`, which is set once each package names this file as its trusted
+# publisher on npmjs.com.
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop, main, 'feature/**']
+    paths:
+      - .github/workflows/release.yml
+      - .changeset/config.json
+      - scripts/release/**
+      - packages/*/package.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never cancel a publish half way through a set.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  dev:
+    if: github.repository == 'druxt/druxt.js'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      PUBLISH: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/develop' && vars.NPM_PUBLISH == 'true' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+
+      - name: Test the release scripts
+        run: yarn release:check:test
+
+      - name: Count pending changesets
+        id: pending
+        run: |
+          count=$(find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md' | wc -l)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "Pending changesets: $count" >> "$GITHUB_STEP_SUMMARY"
+
+      # A snapshot cannot be cut in pre mode. The checkout is thrown away, so
+      # dropping the marker here changes nothing on the branch.
+      - name: Version the snapshot
+        if: steps.pending.outputs.count != '0'
+        run: |
+          rm -f .changeset/pre.json
+          yarn changeset version --snapshot dev
+
+      - name: Build
+        if: steps.pending.outputs.count != '0'
+        run: yarn build
+
+      - name: Check the release set
+        if: steps.pending.outputs.count != '0'
+        run: yarn release:check
+
+      # Trusted publishing needs npm 11.5.1 or later, which needs a newer Node
+      # than the one the packages build on.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        if: steps.pending.outputs.count != '0'
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Update npm
+        if: steps.pending.outputs.count != '0'
+        run: npm install --global npm@^11.5.1
+
+      - name: Pack without publishing
+        if: steps.pending.outputs.count != '0' && env.PUBLISH != 'true'
+        run: |
+          for manifest in packages/*/package.json; do
+            dir=$(dirname "$manifest")
+            if [ "$(node -p "require('./$manifest').private === true")" = "true" ]; then continue; fi
+            (cd "$dir" && npm pack --dry-run)
+          done
+          echo "Dry run: nothing was published." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish under the dev tag
+        if: steps.pending.outputs.count != '0' && env.PUBLISH == 'true'
+        run: node node_modules/@changesets/cli/bin.js publish --tag dev --no-git-tag
+
+      - name: Summarise the versions
+        if: steps.pending.outputs.count != '0'
+        run: |
+          {
+            echo "| Package | Version |"
+            echo "| --- | --- |"
+            for manifest in packages/*/package.json; do
+              node -p "const p = require('./$manifest'); p.private ? '' : '| ' + p.name + ' | ' + p.version + ' |'"
+            done | grep .
+          } >> "$GITHUB_STEP_SUMMARY"
