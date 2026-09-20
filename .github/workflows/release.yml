@@ -6,12 +6,13 @@ name: Release
 # pending packages under the `dev` dist-tag. `latest` never moves, nothing is
 # committed and no git tag is made. Install one with `druxt-site@dev`.
 #
-# The trigger is scoped to .changeset/**, not every push: a changeset is how
-# this repository marks a package-affecting change (see CONTRIBUTING.md), so
-# a merge that only touches docs, CI or the performance baselines never cuts
-# a snapshot on its own. It still publishes every changeset pending at the
-# time, including ones left over from earlier merges, since the step that
-# counts them reads the whole directory, not just this push's diff.
+# The trigger is scoped to the changeset files themselves, not every push: a
+# changeset is how this repository marks a package-affecting change (see
+# CONTRIBUTING.md), so a merge that only touches docs, CI, the performance
+# baselines or the changesets tooling's own config never cuts a snapshot on
+# its own. It still publishes every changeset pending at the time, including
+# ones left over from earlier merges, since the step that counts them reads
+# the whole directory, not just this push's diff.
 #
 # Building and publishing are separate jobs. The build job runs repository
 # code, install scripts included, so it holds no publishing rights: it ends by
@@ -26,7 +27,8 @@ on:
   push:
     branches: [develop]
     paths:
-      - '.changeset/**'
+      - '.changeset/*.md'
+      - '!.changeset/README.md'
   pull_request:
     branches: [develop, main, 'feature/**']
     paths:
