@@ -2,7 +2,7 @@ import { DruxtMenu } from '../src/menu'
 
 const baseUrl = 'https://demo-api.druxtjs.org'
 
-// Stands in for the process cache DruxtClient.processCache('menu') returns.
+// A stub of the process cache that DruxtClient.processCache('menu') returns.
 const store = new Map()
 const handle = { get: (key) => store.get(key), set: (key, value) => store.set(key, value) }
 
