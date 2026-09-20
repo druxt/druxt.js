@@ -101,6 +101,42 @@ describe('DruxtEntity', () => {
     expect(wrapper.html()).toMatchSnapshot()
   })
 
+  test('an attribute crosses the module chain without the data leaking into the markup', async () => {
+    // A site sets an attribute on DruxtEntity. It has to reach the field
+    // components below, while the entity, fields and schema objects the
+    // modules pass each other stay out of the markup.
+    const mockPage = await getMockResource('node--page')
+    localVue.component('DruxtFieldTextDefault', { render: (h) => h('div', 'field') })
+
+    const wrapper = mount(DruxtEntity, {
+      localVue,
+      mocks,
+      propsData: { uuid: mockPage.data.id, type: 'node--page' },
+      attrs: { 'data-source': 'site', id: 'entity-root' },
+      store,
+      stubs: ['DruxtDebug'],
+    })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    await wrapper.vm.$nextTick()
+
+    const html = wrapper.html()
+
+    // Nothing the modules hand each other is markup.
+    expect(html).not.toContain('[object Object]')
+    for (const key of ['entity=', 'fields=', 'schema=', 'value=']) {
+      expect(html).not.toContain(key)
+    }
+
+    // The site's attribute is on the entity's root, and reached the field below.
+    expect(wrapper.element.getAttribute('data-source')).toBe('site')
+    const field = wrapper.findComponent({ name: 'DruxtField' })
+    expect(field.exists()).toBe(true)
+    expect(field.vm.$attrs['data-source']).toBe('site')
+
+    // Each module below renders it again: #142's remaining half, tracked separately.
+    expect(html.match(/id="entity-root"/g).length).toBeGreaterThan(1)
+  })
+
   test('wrapper component - filtered', async () => {
     const mockPage = await getMockResource('node--page')
 

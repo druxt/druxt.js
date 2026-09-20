@@ -45,17 +45,37 @@ describe('DruxtModule attributes', () => {
     }
   })
 
-  test('an attribute set on the module reaches the wrapper markup', async () => {
+  test('an attribute set on the module reaches the markup once, on the module', async () => {
     const { parent } = await mountModule({
       template: '<AttrsModule id="region" data-test="passed" aria-label="Region" />',
       propsData: {},
     })
 
-    // The wrapper's own element, not the module's root, which Vue gives these anyway.
+    // Vue puts a consumer's attributes on the component's root. The wrapper
+    // inside it repeating them would mean two elements with one id.
+    const root = parent.element
+    expect(root.getAttribute('id')).toBe('region')
+    expect(root.getAttribute('data-test')).toBe('passed')
+    expect(root.getAttribute('aria-label')).toBe('Region')
+
+    expect(parent.html().match(/id="region"/g)).toHaveLength(1)
+    expect(parent.html().match(/aria-label="Region"/g)).toHaveLength(1)
+
     const wrapper = parent.findComponent(DruxtWrapper).element
-    expect(wrapper.getAttribute('id')).toBe('region')
-    expect(wrapper.getAttribute('data-test')).toBe('passed')
-    expect(wrapper.getAttribute('aria-label')).toBe('Region')
+    expect(wrapper.getAttribute('id')).toBe(null)
+  })
+
+  test('propsData never reaches the markup, whatever its type', async () => {
+    const { parent } = await mountModule({
+      template: '<AttrsModule />',
+      propsData: { entity: { id: 'abc' }, fields: { body: {} }, label: 'plain' },
+    })
+
+    // An object stringifies to [object Object] when Vue writes it as an attribute.
+    expect(parent.html()).not.toContain('[object Object]')
+    expect(parent.html()).not.toContain('entity=')
+    expect(parent.html()).not.toContain('fields=')
+    expect(parent.html()).not.toContain('label=')
   })
 
   test('a class set on the module reaches its markup', async () => {

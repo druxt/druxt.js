@@ -37,7 +37,7 @@ exports[`DruxtEntity component defaults 2`] = `
 
 exports[`DruxtEntity missing schema 1`] = `
 "<div>
-  <div entity="[object Object]" value="[object Object]">
+  <div>
     <druxtdebug-stub summary="Missing display settings for resource type: 'file--file--default'">
       <div>
         <p>Create a Druxt theme component to render the entity.</p>
