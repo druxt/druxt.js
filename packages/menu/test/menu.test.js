@@ -47,6 +47,7 @@ describe('DruxtMenu class', () => {
   })
 
   test('get - getMenuLinkContent sets url from link.resolvable_uri', async () => {
+    const menu = new DruxtMenu(baseUrl, {})
     const { entities } = await menu.get('footer')
     expect(entities.map(({ attributes }) => [attributes.title, attributes.url])).toStrictEqual([
       ['Tutorials', '/tutorials'],
@@ -60,6 +61,7 @@ describe('DruxtMenu class', () => {
   })
 
   test('get - getMenuLinkContent keeps <nolink> empty', async () => {
+    const menu = new DruxtMenu(baseUrl, {})
     const { entities } = await menu.get('probe')
     expect(entities.map(({ attributes }) => [attributes.title, attributes.url])).toStrictEqual([
       ['Concepts', '/explanation'],
