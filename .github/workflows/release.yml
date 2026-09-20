@@ -6,10 +6,15 @@ name: Release
 # all affected packages under the `dev` dist-tag. `latest` never moves, nothing
 # is committed and no git tag is made. Install one with `druxt-site@dev`.
 #
+# Building and publishing are separate jobs. The build job runs repository
+# code, install scripts included, so it holds no publishing rights: it ends by
+# packing tarballs. The publish job holds the OIDC permission and runs nothing
+# from the repository: it downloads those tarballs and hands them to npm.
+#
 # Publishing authenticates through npm trusted publishing (OIDC), so there is
-# no token. It stays a dry run until the repository variable NPM_PUBLISH is
-# `true`, which is set once each package names this file as its trusted
-# publisher on npmjs.com.
+# no token. It stays off until the repository variable NPM_PUBLISH is `true`,
+# which is set once each package names this file as its trusted publisher on
+# npmjs.com. Until then the packed tarballs are the dry run.
 on:
   push:
     branches: [develop]
@@ -31,14 +36,15 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  dev:
+  # Runs on pull requests too, as a rehearsal. No id-token here: a lifecycle
+  # script in a pull request must not be able to reach npm.
+  snapshot:
     if: github.repository == 'druxt/druxt.js'
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
-    env:
-      PUBLISH: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/develop' && vars.NPM_PUBLISH == 'true' }}
+    outputs:
+      count: ${{ steps.pending.outputs.count }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -85,39 +91,54 @@ jobs:
         if: steps.pending.outputs.count != '0'
         run: yarn release:check
 
-      # Trusted publishing needs npm 11.5.1 or later, which needs a newer Node
-      # than the one the packages build on.
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - name: Pack the tarballs
         if: steps.pending.outputs.count != '0'
+        run: |
+          node scripts/release/pack.mjs dev-packages
+          {
+            echo "| Package | Version |"
+            echo "| --- | --- |"
+            node -p "require('./dev-packages/manifest.json').map((p) => '| ' + p.name + ' | ' + p.version + ' |').join('\n')"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: steps.pending.outputs.count != '0'
+        with:
+          name: dev-packages
+          path: dev-packages
+          retention-days: 7
+          if-no-files-found: error
+
+  # No checkout and no install: nothing from the repository runs with the
+  # OIDC permission. Trusted publishing needs npm 11.5.1 or later, which needs
+  # a newer Node than the one the packages build on.
+  dev:
+    needs: snapshot
+    if: >-
+      github.event_name != 'pull_request' &&
+      github.ref == 'refs/heads/develop' &&
+      vars.NPM_PUBLISH == 'true' &&
+      needs.snapshot.outputs.count != '0'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
       - name: Update npm
-        if: steps.pending.outputs.count != '0'
         run: npm install --global npm@^11.5.1
 
-      - name: Pack without publishing
-        if: steps.pending.outputs.count != '0' && env.PUBLISH != 'true'
-        run: |
-          for manifest in packages/*/package.json; do
-            dir=$(dirname "$manifest")
-            if [ "$(node -p "require('./$manifest').private === true")" = "true" ]; then continue; fi
-            (cd "$dir" && npm pack --dry-run)
-          done
-          echo "Dry run: nothing was published." >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: dev-packages
+          path: dev-packages
 
       - name: Publish under the dev tag
-        if: steps.pending.outputs.count != '0' && env.PUBLISH == 'true'
-        run: node node_modules/@changesets/cli/bin.js publish --tag dev --no-git-tag
-
-      - name: Summarise the versions
-        if: steps.pending.outputs.count != '0'
         run: |
-          {
-            echo "| Package | Version |"
-            echo "| --- | --- |"
-            for manifest in packages/*/package.json; do
-              node -p "const p = require('./$manifest'); p.private ? '' : '| ' + p.name + ' | ' + p.version + ' |'"
-            done | grep .
-          } >> "$GITHUB_STEP_SUMMARY"
+          for file in $(node -p "require('./dev-packages/manifest.json').map((p) => p.file).join(' ')"); do
+            npm publish "dev-packages/$file" --tag dev --access public
+          done
+          echo "Published under the dev tag." >> "$GITHUB_STEP_SUMMARY"
