@@ -19,31 +19,7 @@ npm install druxt-site@dev
 
 Nothing is committed, no git tag is made, and `latest` does not move.
 
-### Use a development release on a site
-
-1. Install with the `dev` tag. List only the packages the site imports. `druxt-site@dev` brings the others in.
-2. Remove any Druxt package the site pins to a stable version, or move it to `@dev` too. A stable pin installs a second copy beside the snapshot.
-3. A package from outside this repository, such as `druxt-auth`, asks for a stable `druxt`. A prerelease never satisfies a stable range, so force the one copy:
-
-   ```json
-   {
-     "overrides": {
-       "druxt": "$druxt"
-     }
-   }
-   ```
-
-   With Yarn, use `resolutions` and the exact snapshot version.
-
-4. To follow the channel, let Renovate track the tag:
-
-   ```json
-   {
-     "packageRules": [
-       { "matchPackagePatterns": ["^druxt"], "followTag": "dev" }
-     ]
-   }
-   ```
+To use one on a site, see [Use a development release](https://druxtjs.org/how-to/use-development-releases). It also explains how to keep one copy of `druxt` installed.
 
 ## Stable releases
 
