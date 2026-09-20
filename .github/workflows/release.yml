@@ -128,17 +128,20 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
+      # An exact version, and no install scripts: this job can publish.
       - name: Update npm
-        run: npm install --global npm@^11.5.1
+        run: npm install --global --ignore-scripts npm@11.19.1
 
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: dev-packages
           path: dev-packages
 
+      # The leading ./ matters: npm reads a bare "dir/file.tgz" as the GitHub
+      # shorthand "user/repo" and tries to clone it.
       - name: Publish under the dev tag
         run: |
           for file in $(node -p "require('./dev-packages/manifest.json').map((p) => p.file).join(' ')"); do
-            npm publish "dev-packages/$file" --tag dev --access public
+            npm publish "./dev-packages/$file" --tag dev --access public
           done
           echo "Published under the dev tag." >> "$GITHUB_STEP_SUMMARY"
