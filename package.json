@@ -54,6 +54,9 @@
     "test:unit": "NODE_OPTIONS=--unhandled-rejections=warn jest",
     "version": "changeset version && node scripts/changelog-dates.mjs"
   },
+  "resolutions": {
+    "human-id": "4.1.3"
+  },
   "devDependencies": {
     "@babel/core": "7.29.7",
     "@babel/preset-env": "7.29.7",
