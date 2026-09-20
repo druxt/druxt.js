@@ -2,9 +2,16 @@ name: Release
 
 # Publishes the packages to npm.
 #
-# dev: every push to develop with a pending changeset publishes a snapshot of
-# all affected packages under the `dev` dist-tag. `latest` never moves, nothing
-# is committed and no git tag is made. Install one with `druxt-site@dev`.
+# dev: a push to develop that changes a changeset publishes a snapshot of all
+# pending packages under the `dev` dist-tag. `latest` never moves, nothing is
+# committed and no git tag is made. Install one with `druxt-site@dev`.
+#
+# The trigger is scoped to .changeset/**, not every push: a changeset is how
+# this repository marks a package-affecting change (see CONTRIBUTING.md), so
+# a merge that only touches docs, CI or the performance baselines never cuts
+# a snapshot on its own. It still publishes every changeset pending at the
+# time, including ones left over from earlier merges, since the step that
+# counts them reads the whole directory, not just this push's diff.
 #
 # Building and publishing are separate jobs. The build job runs repository
 # code, install scripts included, so it holds no publishing rights: it ends by
@@ -18,6 +25,8 @@ name: Release
 on:
   push:
     branches: [develop]
+    paths:
+      - '.changeset/**'
   pull_request:
     branches: [develop, main, 'feature/**']
     paths:
