@@ -1,5 +1,3 @@
-/* global beforeEach, describe, expect, jest, test */
-
 import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { getMockResource } from 'druxt-test-utils'
@@ -35,7 +33,7 @@ const mocks = {
   $route: { meta: {} }
 }
 
-const mountComponent = async ({ data, entity, field, mode = 'default', options = {}, uuid, schema }) => {
+const mountComponent = async ({ data, entity, field, mode = 'default', options = {}, schema }) => {
   data = data || { ...entity.attributes, ...entity.relationships }
 
   if (!schema) {
@@ -200,6 +198,26 @@ describe('DruxtField', () => {
       'DruxtFieldDefault',
     ])
     expect(Object.keys(wrapper.vm.value)).toStrictEqual(['value', 'format', 'processed', 'summary'])
+  })
+
+  test('schema change swaps the field to its form widget without a refetch', async () => {
+    // A DruxtField re-rendered with the form schema kept the view schema its
+    // first fetch() built propsData from, so it rendered read-only output.
+    const mockPage = await getMockResource('node--page')
+    const wrapper = await mountComponent({
+      entity: mockPage.data,
+      field: 'body',
+    })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    expect(wrapper.vm.component.propsData.schema.type).toBe('text_default')
+
+    const formSchema = require('../../../../test/__fixtures__/schemas/node--page--default--form.json')
+    const formField = formSchema.fields.find((field) => field.id === 'body')
+    await wrapper.setProps({ schema: { config: formSchema.config, ...formField } })
+
+    expect(wrapper.vm.component.propsData.schema.type).toBe('text_textarea_with_summary')
+    expect(wrapper.vm.component.propsData.schema.config.schemaType).toBe('form')
+    expect(wrapper.vm.$fetchState.pending).toBe(false)
   })
 
   test('boolean - form', async () => {

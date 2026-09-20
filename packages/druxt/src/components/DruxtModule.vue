@@ -5,6 +5,31 @@ import Vue from 'vue'
 import DruxtWrapper from './DruxtWrapper.vue'
 
 /**
+ * Whether rebuilt propsData differs from what the wrapper already has.
+ *
+ * Values that cannot be compared count as changed, so a rebuild is skipped
+ * only when the two are known to match.
+ *
+ * @private
+ *
+ * @param {object} current - The propsData the wrapper holds.
+ * @param {object} next - The propsData the module's callback just produced.
+ *
+ * @returns {boolean} Whether the wrapper needs the new propsData.
+ */
+const hasChanged = (current = {}, next = {}) => {
+  const keys = [...new Set([...Object.keys(current), ...Object.keys(next)])]
+  return keys.some((key) => {
+    if (current[key] === next[key]) return false
+    try {
+      return JSON.stringify(current[key]) !== JSON.stringify(next[key])
+    } catch (err) {
+      return true
+    }
+  })
+}
+
+/**
  * The DruxtModule component renders a Druxt module; import and extend the
  * component to build your own module.
  *
@@ -100,6 +125,7 @@ export default {
    * @param {*} vm.value - The module component model value.
    * @property {ComponentData} component - The wrapper component and propsData to be rendered.
    * @property {*} model - The module component model value.
+   * @property {object} wrapperProps - Props registered by the wrapper component, kept so a prop change can rebuild propsData without a refetch.
    */
   data: ({ value }) => ({
     component: {
@@ -112,6 +138,7 @@ export default {
       slots: [],
     },
     model: value,
+    wrapperProps: {},
   }),
 
   /**
@@ -167,6 +194,7 @@ export default {
 
     // Get wrapper data.
     const wrapperData = await this.getWrapperData(component.is)
+    this.wrapperProps = wrapperData.props || {}
 
     // Build module settings.
     component.settings = wrapperData.druxt || {}
@@ -205,13 +233,44 @@ export default {
      * @param {object} vm.$route - The current route.
      * @return {string} The current language code.
      */
-    lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode
+    lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode,
+
+    /**
+     * The module's own propsData, tracked so a prop change rebuilds it.
+     *
+     * Reading it here registers whatever the module's `propsData()` callback
+     * reads, so each module declares its own dependencies by using them.
+     *
+     * @type {object}
+     */
+    modulePropsData() {
+      if (!(this.$options.druxt || {}).propsData) return null
+      return { langcode: this.lang, ...this.$options.druxt.propsData.call(this, this) }
+    }
   },
 
   watch: {
     lang(to, from) {
       if (to !== from) {
         this.$fetch()
+      }
+    },
+
+    // Nuxt 2 doesn't re-run fetch() when a component's own props change, so a
+    // reused instance would keep the propsData its first fetch() built. Rebuild
+    // it in place instead of refetching: the data is unchanged, the props are not.
+    modulePropsData: {
+      deep: true,
+      handler(to) {
+        // An errored module renders DruxtDebug with its own props; leave them.
+        if (!to || this.component.is === 'DruxtDebug' || !Object.keys(this.component.propsData || {}).length) {
+          return
+        }
+        if (!hasChanged(this.component.propsData, to)) {
+          return
+        }
+
+        this.component = { ...this.component, ...this.getModulePropsData(this.wrapperProps) }
       }
     },
 
