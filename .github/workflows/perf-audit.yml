@@ -3,6 +3,8 @@ name: Performance audit
 on:
   pull_request:
     types: [labeled]
+  push:
+    branches: [develop]
   workflow_dispatch:
     inputs:
       examples:
@@ -19,12 +21,21 @@ on:
         default: false
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
+
+concurrency:
+  group: perf-audit-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   perf-audit:
-    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'perf-audit'
+    # A push carrying a baseline refresh of its own is the previous run's PR landing; skip it so merging
+    # that PR does not queue another audit against numbers that have not moved since.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.label.name == 'perf-audit' ||
+      (github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'chore(perf-audit)'))
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -89,7 +100,9 @@ jobs:
         env:
           AUDIT_EXAMPLES: ${{ inputs.examples }}
           AUDIT_SKIP_LIGHTHOUSE: ${{ inputs.skip_lighthouse }}
-          AUDIT_UPDATE_BASELINE: ${{ inputs.update_baseline }}
+          # A push to develop is a just-merged PR; refresh the baseline so the next PR's audit
+          # is never diffed against numbers that already merged.
+          AUDIT_UPDATE_BASELINE: ${{ inputs.update_baseline || github.event_name == 'push' }}
         continue-on-error: true
         run: |
           args=()
@@ -106,6 +119,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/perf-audit/comment.mjs "$(ls -d .perf/*/ | tail -1)report.json"
+
+      - name: Open a pull request if the baseline changed
+        if: always() && github.event_name == 'push'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- perf/baseline.github.json; then
+            echo "Baseline unchanged, nothing to open"
+            exit 0
+          fi
+          branch="chore/perf-audit-baseline-${{ github.run_id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add perf/baseline.github.json
+          git commit -m "chore(perf-audit): refresh the github baseline"
+          # Never fails the job; a rejected push or PR call just means the refresh has to be done by hand.
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" "$branch" \
+            && gh pr create --base develop --head "$branch" \
+              --title "chore(perf-audit): refresh the github baseline" \
+              --body "Automatic refresh after $(git rev-parse --short HEAD~1) merged to develop. Compares the numbers before merging." \
+            || echo "Could not open the pull request; refresh perf/baseline.github.json by hand from this run's artifact"
 
       - name: Stop the examples
         if: always()

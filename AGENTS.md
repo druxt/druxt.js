@@ -184,11 +184,14 @@ stays as this repo's convention.) This is unrelated to commit-message
   audit and knip block. The full audit is reporting-only. See
   "Dependency audit: production vs. full" above.
 - **CodeQL** (`.github/workflows/codeql-analysis.yml`): scans `develop` weekly.
-- **Performance audit**: manual/advisory on both hosts, run at release time
-  against `perf/baseline.<environment>.json`. On GitHub the `perf-audit` label
-  on a pull request starts it. Counts (backend requests, API calls after load,
-  discarded nodes, payload) compare across machines. Lighthouse scores do not.
-  See `scripts/perf-audit/README.md`.
+- **Performance audit**: advisory on both hosts, compared against
+  `perf/baseline.<environment>.json`. On GitHub the `perf-audit` label on a
+  pull request starts it. A push to `develop` also runs it with the baseline
+  refresh switched on, and opens a pull/merge request when the numbers moved,
+  so a later pull request's audit is never diffed against a fix that already
+  merged. Counts (backend requests, API calls after load, discarded nodes,
+  payload) compare across machines. Lighthouse scores do not. See
+  `scripts/perf-audit/README.md`.
 
 ## examples/drupal local dev
 

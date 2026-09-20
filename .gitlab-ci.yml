@@ -556,16 +556,30 @@ test:examples:
       - examples/$EXAMPLE/test/cypress/videos
     expire_in: 1 week
 
-# Manual, advisory. Builds and serves the examples in production mode against
-# the provisioned backend, then measures backend requests, server renders and
+# Advisory. Builds and serves the examples in production mode against the
+# provisioned backend, then measures backend requests, server renders and
 # Lighthouse per route and compares them with perf/baseline.gitlab.json.
-# Play it with PERF_AUDIT_UPDATE_BASELINE=true to write the run into that file.
+# Runs on its own on a push to develop, with the baseline refresh switched
+# on, so a merge request's audit is never diffed against numbers that a
+# merge already shipped; it opens a merge request with the refreshed file
+# rather than pushing it straight to develop. Play it manually elsewhere
+# with PERF_AUDIT_UPDATE_BASELINE=true to write a run into that file yourself.
 perf:audit:
   extends: .drupal-backend
   stage: test
-  when: manual
   allow_failure: true
   timeout: 60m
+  resource_group: perf-audit
+  rules:
+    # A push carrying a baseline refresh of its own is the previous run's merge
+    # request landing; skip it so merging that MR does not queue another audit
+    # right behind it.
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop" && $CI_COMMIT_MESSAGE !~ /^chore\(perf-audit\):/'
+      when: on_success
+      variables:
+        PERF_AUDIT_UPDATE_BASELINE: 'true'
+        PERF_AUDIT_OPEN_MR: 'true'
+    - when: manual
   variables:
     UNLIGHTHOUSE_CONCURRENCY: '1'
   script:
@@ -594,6 +608,29 @@ perf:audit:
     # Comments on the merge request when GITLAB_API_TOKEN (masked, api scope) is set; never fails the job.
     - PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/comment.mjs "$(ls -d .perf/*/ | tail -1)report.json"
     - section_end "audit"
+    - section_start "refresh" "Opening a merge request if the baseline changed"
+    - |
+      if [ "${PERF_AUDIT_OPEN_MR:-}" != "true" ]; then
+        echo "Not an automatic baseline run, nothing to open"
+      elif [ -z "${GITLAB_API_TOKEN:-}" ]; then
+        echo "GITLAB_API_TOKEN is not set, cannot open a merge request"
+      elif git diff --quiet -- perf/baseline.gitlab.json; then
+        echo "Baseline unchanged, nothing to open"
+      else
+        branch="chore/perf-audit-baseline-${CI_PIPELINE_ID}"
+        git config user.name "gitlab-ci"
+        git config user.email "gitlab-ci@${CI_SERVER_HOST}"
+        git checkout -b "$branch"
+        git add perf/baseline.gitlab.json
+        git commit -m "chore(perf-audit): refresh the gitlab baseline"
+        # Never fails the job; a rejected push or API call just means the refresh has to be done by hand.
+        git push "${CI_SERVER_PROTOCOL}://oauth2:${GITLAB_API_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/${CI_PROJECT_PATH}.git" "$branch" \
+          && curl --silent --show-error --header "PRIVATE-TOKEN: ${GITLAB_API_TOKEN}" --header "Content-Type: application/json" \
+            --data "{\"source_branch\":\"$branch\",\"target_branch\":\"develop\",\"title\":\"chore(perf-audit): refresh the gitlab baseline\",\"remove_source_branch\":true}" \
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests" \
+          || echo "Could not open the merge request; refresh perf/baseline.gitlab.json by hand from this job's artifact"
+      fi
+    - section_end "refresh"
     - exit "$audit_rc"
   after_script:
     - scripts/perf-audit/serve-examples.sh stop

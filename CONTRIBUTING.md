@@ -191,7 +191,7 @@ yarn lint
 
 The performance audit builds the examples in production mode and measures each route: backend requests per server render, API calls after load, server-rendered components discarded after hydration, layout shift, inline payload and Lighthouse. It compares the run with a committed baseline.
 
-It does not run on every commit. A maintainer adds the `perf-audit` label to a pull request, and the run comments a summary on it. Ask for the label when a change touches a store, the client, a Nuxt module or how components fetch.
+It does not run on every pull request. A maintainer adds the `perf-audit` label, and the run comments a summary on it. Ask for the label when a change touches a store, the client, a Nuxt module or how components fetch. A merge to `develop` refreshes the committed baseline on its own, so the comment on your pull request never mixes in a fix that already merged.
 
 In the comment, a lower number is an improvement. The counts are the same on every machine. The Lighthouse score and layout shift are not, and both can move between runs of the same code, so treat a small move in either as noise.
 
