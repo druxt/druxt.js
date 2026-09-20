@@ -1,3 +1,7 @@
+// Resource collections, cached per client so backends never mix. Each entry
+// holds the request promise, so concurrent callers share one fetch.
+const resourceCache = new WeakMap()
+
 /**
  * The Schema generator utility.
  *
@@ -101,8 +105,19 @@ class Schema {
   async getResources(resource, query) {
     if (this.data[resource]) return this.data[resource]
 
-    this.data[resource] = await this.druxtSchema.druxt.getCollection(resource, query)
-    return this.data[resource]
+    const client = this.druxtSchema.druxt
+    if (!resourceCache.has(client)) resourceCache.set(client, new Map())
+    const cache = resourceCache.get(client)
+
+    const cacheKey = JSON.stringify([resource, query])
+    if (!cache.has(cacheKey)) {
+      const request = client.getCollection(resource, query)
+      cache.set(cacheKey, request)
+      // A failed request is dropped so the next call retries.
+      request.catch(() => cache.delete(cacheKey))
+    }
+
+    return cache.get(cacheKey)
   }
 
   /**
