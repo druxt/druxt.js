@@ -68,6 +68,16 @@ alongside it, so a custom page can take over any route.
 
 ---
 
+### Development releases
+
+Every change merged to `develop` is published under the `dev` tag:
+
+```sh
+npm i druxt-router@dev
+```
+
+These are unreleased builds. See [development releases](https://druxtjs.org/how-to/use-development-releases) before using one.
+
 ## Vue.js components
 
 ### DruxtRouter

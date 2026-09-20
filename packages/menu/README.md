@@ -52,6 +52,16 @@ menu item themes through the Druxt component suggestion system.
 
 ---
 
+### Development releases
+
+Every change merged to `develop` is published under the `dev` tag:
+
+```sh
+npm i druxt-menu@dev
+```
+
+These are unreleased builds. See [development releases](https://druxtjs.org/how-to/use-development-releases) before using one.
+
 ## Drupal requirements
 
 Rendering a menu needs data from the Drupal side, and where it comes from

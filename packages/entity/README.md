@@ -48,6 +48,16 @@ what shows where. Your Nuxt components decide how it looks.
 
 ---
 
+### Development releases
+
+Every change merged to `develop` is published under the `dev` tag:
+
+```sh
+npm i druxt-entity@dev
+```
+
+These are unreleased builds. See [development releases](https://druxtjs.org/how-to/use-development-releases) before using one.
+
 ## Vue.js Components
 
 ### DruxtEntity
