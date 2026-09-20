@@ -133,8 +133,11 @@ describe('DruxtEntity', () => {
     expect(field.exists()).toBe(true)
     expect(field.vm.$attrs['data-source']).toBe('site')
 
-    // Each module below renders it again: #142's remaining half, tracked separately.
-    expect(html.match(/id="entity-root"/g).length).toBeGreaterThan(1)
+    // id names one element, so it stays on the entity and is not repeated below.
+    expect(html.match(/id="entity-root"/g)).toHaveLength(1)
+
+    // Everything else still carries down the chain, which is what #632 added it for.
+    expect(html.match(/data-source="site"/g).length).toBeGreaterThan(1)
   })
 
   test('wrapper component - filtered', async () => {

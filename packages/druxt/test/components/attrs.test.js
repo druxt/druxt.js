@@ -162,6 +162,37 @@ describe('DruxtModule attributes', () => {
     expect(parent.html()).toContain('parent')
   })
 
+  test('the default slot gets the module attributes without the id', async () => {
+    // A module renders its children through this slot, so anything here lands
+    // on the next module down. An id repeated down the chain is invalid markup.
+    const Module = {
+      name: 'AttrsModule',
+      extends: DruxtModule,
+      druxt: { componentOptions: () => undefined, propsData: () => ({ label: 'plain' }) },
+    }
+    const Consumer = {
+      template: `
+        <AttrsModule id="anchor" data-source="site">
+          <template #default="slotProps"><span>{{ Object.keys(slotProps).join(',') }}</span></template>
+        </AttrsModule>
+      `,
+      components: { AttrsModule: Module },
+    }
+
+    const parent = mount(Consumer, { localVue, mocks })
+    const vm = parent.findComponent(Module).vm
+    await vm.$options.fetch.call(vm)
+    await parent.vm.$nextTick()
+
+    const keys = parent.find('span').text().split(',')
+    expect(keys).toContain('data-source')
+    expect(keys).toContain('label')
+    expect(keys).not.toContain('id')
+
+    // The id is still on the module itself.
+    expect(parent.element.getAttribute('id')).toBe('anchor')
+  })
+
   test('the fetch key stays on the module and is kept out of the wrapper', async () => {
     // Nuxt stamps data-fetch-key on the component that fetches. Passing it down
     // would put the same key on two elements.
