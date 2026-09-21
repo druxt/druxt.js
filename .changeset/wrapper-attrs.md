@@ -1,10 +1,19 @@
 ---
-'druxt': patch
+'druxt': minor
 ---
 
 The default wrapper no longer renders the attributes it is handed. A module gives its wrapper its own attributes and every propsData key the wrapper does not declare, so the wrapper can read them. Rendering them as well repeated the module's attributes on a second element and wrote objects into the markup: an entity rendered `<div entity="[object Object]" fields="[object Object]" schema="[object Object]" value="[object Object]">`, and a block region rendered its whole region list as an attribute.
 
-**This changes rendered markup.** Committed snapshots across druxt-entity and druxt-site recorded the old output, and this change updates them. Anything selecting on those attributes, in CSS, a test or a script, selects nothing now.
+**This changes rendered markup, and some of those attributes were being used.** A block region rendered `name="page_title"` and `theme="umami"`, a site rendered its whole region list, and this repository's own end to end tests selected regions by `div[name="page_title"]` until this change moved them off it. Committed snapshots across druxt-entity and druxt-site recorded the old output and are updated here. Anything selecting on those attributes, in CSS, a test or a script, selects nothing now.
+
+Target `data-fetch-key` instead, which Nuxt sets on the module itself and which this change leaves alone:
+
+```js
+// Was: div[name="page_title"]
+cy.get('[data-fetch-key^="DruxtBlockRegion:page_title"]');
+```
+
+A class of your own, set on the module or in a wrapper component, is the other stable option.
 
 What is unchanged: a wrapper still reads all of it from `$attrs`, byte for byte. Data still travels the chain and is still read back off it. An attribute set on the module still reaches the markup, on the module's own element, where Vue puts a component's attributes.
 
