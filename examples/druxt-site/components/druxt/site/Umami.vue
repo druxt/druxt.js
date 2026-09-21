@@ -3,9 +3,13 @@
     <div class="examples-bar">
       <NuxtLink to="/examples">DruxtJS pattern examples &rarr;</NuxtLink>
     </div>
+    <!-- A class names each region. Druxt passes its own data to wrappers as
+         attributes, which are not markup, so a class is what a stylesheet or a
+         test can rely on. -->
     <DruxtBlockRegion
       v-for="region of orderedRegions"
       :key="region"
+      :class="`region region-${region}`"
       v-bind="props[region]"
     />
   </div>
