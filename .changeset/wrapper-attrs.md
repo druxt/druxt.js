@@ -6,14 +6,18 @@ The default wrapper no longer renders the attributes it is handed. A module give
 
 **This changes rendered markup, and some of those attributes were being used.** A block region rendered `name="page_title"` and `theme="umami"`, a site rendered its whole region list, and this repository's own end to end tests selected regions by `div[name="page_title"]` until this change moved them off it. Committed snapshots across druxt-entity and druxt-site recorded the old output and are updated here. Anything selecting on those attributes, in CSS, a test or a script, selects nothing now.
 
-Target `data-fetch-key` instead, which Nuxt sets on the module itself and which this change leaves alone:
+Set a class and target that. Vue puts it on the module itself, on a server rendered visit and after a click alike:
+
+```vue
+<DruxtBlockRegion :class="`region region-${region}`" v-bind="props[region]" />
+```
 
 ```js
 // Was: div[name="page_title"]
-cy.get('[data-fetch-key^="DruxtBlockRegion:page_title"]');
+cy.get('.region-page_title');
 ```
 
-A class of your own, set on the module or in a wrapper component, is the other stable option.
+The druxt-site example does this now, and its end to end tests read the class. `data-fetch-key` looks like an alternative and is not one: it is absent on some render paths, so a selector built on it passes in the browser and fails on a server rendered visit.
 
 What is unchanged: a wrapper still reads all of it from `$attrs`, byte for byte. Data still travels the chain and is still read back off it. An attribute set on the module still reaches the markup, on the module's own element, where Vue puts a component's attributes.
 

@@ -24,7 +24,7 @@ describe('Multilingual', () => {
     cy.url().should('include', '/es')
 
     // The view route resolved in Spanish: translated title, not "Home".
-    cy.get('[data-fetch-key^="DruxtBlockRegion:page_title"]').should('contain.text', 'Inicio')
+    cy.get('.region-page_title').should('contain.text', 'Inicio')
   })
 
   it('serves the Spanish front page directly at /es', () => {
@@ -32,12 +32,12 @@ describe('Multilingual', () => {
     cy.url().should('include', '/es')
 
     // View config translations: title and the view header text.
-    cy.get('[data-fetch-key^="DruxtBlockRegion:page_title"]').should('contain.text', 'Inicio')
+    cy.get('.region-page_title').should('contain.text', 'Inicio')
     cy.contains('Explore recetas').should('exist')
 
     // Menu config translations: the main menu links are defined by views
     // menu settings and translated via the language.es collection.
-    cy.get('[data-fetch-key^="DruxtBlockRegion:header"]').within(() => {
+    cy.get('.region-header').within(() => {
       cy.contains('a', 'Inicio').should('exist')
       cy.contains('a', 'Artículos').should('exist')
       cy.contains('a', 'Recetas').should('exist')
@@ -57,10 +57,10 @@ describe('Multilingual', () => {
 
   it('keeps English behaviour intact at /en', () => {
     cy.visit('/en')
-    cy.get('[data-fetch-key^="DruxtBlockRegion:page_title"]').should('contain.text', 'Home')
+    cy.get('.region-page_title').should('contain.text', 'Home')
     cy.contains('Explore recipes').should('exist')
 
-    cy.get('[data-fetch-key^="DruxtBlockRegion:header"]').within(() => {
+    cy.get('.region-header').within(() => {
       cy.contains('a', 'Articles').should('exist')
       cy.contains('a', 'Recipes').should('exist')
     })
