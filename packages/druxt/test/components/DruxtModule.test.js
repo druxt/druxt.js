@@ -438,6 +438,55 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.$fetchState.pending).toBe(false)
   })
 
+  test('propsData JSON cannot compare rebuilds rather than assuming it matched', async () => {
+    // A function writes as undefined, a Map as {}, NaN as null. Comparing the
+    // text would call two different values the same and skip the rebuild.
+    const CallbackModule = {
+      name: 'CallbackModule',
+      extends: DruxtModule,
+      props: { step: { type: Number, default: 1 } },
+      druxt: {
+        componentOptions: () => {},
+        // Every difference here is invisible to JSON: a function writes as
+        // undefined and a Set as {}, so the text is identical either way.
+        propsData: ({ step }) => ({
+          onSelect: () => step,
+          meta: { tags: new Set([step]) },
+          label: 'same',
+        }),
+      },
+    }
+
+    const wrapper = mount(CallbackModule, { localVue, mocks, stubs: ['DruxtWrapper'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    const first = wrapper.vm.component.propsData
+
+    await wrapper.setProps({ step: 2 })
+    expect(wrapper.vm.component.propsData).not.toBe(first)
+    expect(wrapper.vm.component.propsData.onSelect()).toBe(2)
+    expect([...wrapper.vm.component.propsData.meta.tags]).toStrictEqual([2])
+  })
+
+  test('a rebuild is still skipped when the values are known to match', async () => {
+    const PlainModule = {
+      name: 'PlainModule',
+      extends: DruxtModule,
+      props: { step: { type: Number, default: 1 } },
+      druxt: {
+        componentOptions: () => {},
+        // Reads step, so the watcher runs, but never reports a different value.
+        propsData: ({ step }) => ({ label: step > 0 ? 'positive' : 'negative' }),
+      },
+    }
+
+    const wrapper = mount(PlainModule, { localVue, mocks, stubs: ['DruxtWrapper'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    const first = wrapper.vm.component.propsData
+
+    await wrapper.setProps({ step: 2 })
+    expect(wrapper.vm.component.propsData).toBe(first)
+  })
+
   test('a rebuild splits new propsData across the wrapper props and attributes', async () => {
     localVue.component('SchemaModuleWrapper', {
       druxt: {},

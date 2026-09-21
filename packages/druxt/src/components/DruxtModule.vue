@@ -5,6 +5,40 @@ import Vue from 'vue'
 import DruxtWrapper from './DruxtWrapper.vue'
 
 /**
+ * Whether JSON holds a value well enough to compare two of them.
+ *
+ * A function or a symbol writes as `undefined`, a Map or a Set as `{}`, and
+ * NaN as `null`, so two different values can write the same text. Anything
+ * JSON does not hold exactly is compared by identity instead.
+ *
+ * @private
+ *
+ * @param {*} value - The value to check.
+ * @param {WeakSet} [seen] - Objects already visited, so a cycle ends the walk.
+ *
+ * @returns {boolean} Whether JSON.stringify represents the value exactly.
+ */
+const isComparable = (value, seen = new WeakSet()) => {
+  if (value === null) return true
+
+  const type = typeof value
+  if (type === 'string' || type === 'boolean') return true
+  if (type === 'number') return Number.isFinite(value)
+  if (type !== 'object') return false
+
+  if (seen.has(value)) return false
+  seen.add(value)
+
+  if (Array.isArray(value)) return value.every((item) => isComparable(item, seen))
+
+  // A Map, a Set, a Date or any class instance writes as something other than itself.
+  const prototype = Object.getPrototypeOf(value)
+  if (prototype !== Object.prototype && prototype !== null) return false
+
+  return Object.values(value).every((item) => isComparable(item, seen))
+}
+
+/**
  * Whether rebuilt propsData differs from what the wrapper already has.
  *
  * Values that cannot be compared count as changed, so a rebuild is skipped
@@ -21,6 +55,7 @@ const hasChanged = (current = {}, next = {}) => {
   const keys = [...new Set([...Object.keys(current), ...Object.keys(next)])]
   return keys.some((key) => {
     if (current[key] === next[key]) return false
+    if (!isComparable(current[key]) || !isComparable(next[key])) return true
     try {
       return JSON.stringify(current[key]) !== JSON.stringify(next[key])
     } catch (err) {
