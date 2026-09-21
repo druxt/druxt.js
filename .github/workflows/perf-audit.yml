@@ -120,16 +120,23 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/perf-audit/comment.mjs "$(ls -d .perf/*/ | tail -1)report.json"
 
-      - name: Open a pull request if the baseline changed
+      # Timings and Lighthouse scores differ between runs of one commit, so the file
+      # alone is not the question: only a count, a state or a real byte change is.
+      - name: Check whether the baseline moved
+        id: baseline
         if: always() && github.event_name == 'push'
+        run: |
+          committed="$RUNNER_TEMP/baseline-committed.json"
+          # An environment with no committed baseline yet has everything to record.
+          git show HEAD:perf/baseline.github.json > "$committed" 2>/dev/null || echo '{}' > "$committed"
+          node scripts/perf-audit/baseline-changed.mjs "$committed" perf/baseline.github.json
+
+      - name: Open a pull request if the baseline changed
+        if: always() && github.event_name == 'push' && steps.baseline.outputs.changed == 'true'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet -- perf/baseline.github.json; then
-            echo "Baseline unchanged, nothing to open"
-            exit 0
-          fi
           branch="chore/perf-audit-baseline-${{ github.run_id }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
