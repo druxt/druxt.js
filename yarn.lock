@@ -10860,11 +10860,6 @@ __metadata:
   peerDependencies:
     vue: ^2.7.14
     vuex: ^3.6.2
-  peerDependenciesMeta:
-    vue:
-      optional: true
-    vuex:
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -10878,11 +10873,6 @@ __metadata:
   peerDependencies:
     vue: ^2.7.14
     vuex: ^3.6.2
-  peerDependenciesMeta:
-    vue:
-      optional: true
-    vuex:
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -10931,11 +10921,6 @@ __metadata:
   peerDependencies:
     vue: ^2.7.14
     vuex: ^3.6.2
-  peerDependenciesMeta:
-    vue:
-      optional: true
-    vuex:
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -10951,11 +10936,6 @@ __metadata:
     drupal-jsonapi-params: "*"
     vue: ^2.7.14
     vuex: ^3.6.2
-  peerDependenciesMeta:
-    vue:
-      optional: true
-    vuex:
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -10970,11 +10950,6 @@ __metadata:
   peerDependencies:
     vue: ^2.7.14
     vuex: ^3.6.2
-  peerDependenciesMeta:
-    vue:
-      optional: true
-    vuex:
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -10994,11 +10969,6 @@ __metadata:
   peerDependencies:
     vue: ^2.7.14
     vuex: ^3.6.2
-  peerDependenciesMeta:
-    vue:
-      optional: true
-    vuex:
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -11028,11 +10998,6 @@ __metadata:
   peerDependencies:
     vue: ^2.7.14
     vuex: ^3.6.2
-  peerDependenciesMeta:
-    vue:
-      optional: true
-    vuex:
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -11106,11 +11071,6 @@ __metadata:
     vuex: ^3.6.2
   dependenciesMeta:
     core-js:
-      optional: true
-  peerDependenciesMeta:
-    vue:
-      optional: true
-    vuex:
       optional: true
   languageName: unknown
   linkType: soft
