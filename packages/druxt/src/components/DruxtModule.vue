@@ -160,7 +160,6 @@ export default {
    * @param {*} vm.value - The module component model value.
    * @property {ComponentData} component - The wrapper component and propsData to be rendered.
    * @property {*} model - The module component model value.
-   * @property {object} wrapperProps - Props registered by the wrapper component, kept so a prop change can rebuild propsData without a refetch.
    */
   data: ({ value }) => ({
     component: {
@@ -173,7 +172,6 @@ export default {
       slots: [],
     },
     model: value,
-    wrapperProps: {},
   }),
 
   /**
@@ -229,6 +227,8 @@ export default {
 
     // Get wrapper data.
     const wrapperData = await this.getWrapperData(component.is)
+    // On the instance rather than in data(), so it is not copied into the
+    // server rendered payload once per module.
     this.wrapperProps = wrapperData.props || {}
 
     // Build module settings.
@@ -305,7 +305,10 @@ export default {
           return
         }
 
-        this.component = { ...this.component, ...this.getModulePropsData(this.wrapperProps) }
+        // After hydration this instance never ran fetch(), so read the resolved
+        // wrapper's props instead of the ones that fetch() put on the instance.
+        const resolved = ((this.$options.components || {})[this.component.is] || {}).options || {}
+        this.component = { ...this.component, ...this.getModulePropsData(this.wrapperProps || resolved.props || {}) }
       }
     },
 
