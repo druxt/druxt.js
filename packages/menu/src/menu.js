@@ -134,7 +134,8 @@ class DruxtMenu {
     const entities = []
     const collections = await this.druxt.getCollectionAll(resource, query, prefix)
     for (const collection of collections) {
-      for (const entity of collection.data) {
+      // getCollection() returns false for a resource missing from the index.
+      for (const entity of (collection || {}).data || []) {
         entities.push(entity)
       }
     }

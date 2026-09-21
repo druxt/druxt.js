@@ -65,6 +65,13 @@ describe('DruxtMenu class', () => {
     // expect((await jsonApiMenu.get('catalog', settings)).entities.length).toBe(3)
   })
 
+  test('get - getMenuLinkContent without the resource in the index', async () => {
+    const menu = new DruxtMenu(baseUrl, {})
+    jest.spyOn(menu.druxt, 'getIndex').mockResolvedValue(false)
+
+    expect((await menu.get('main')).entities).toStrictEqual([])
+  })
+
   test('get - concurrent requests share one fetch', async () => {
     const menu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
     menu.getJsonApiMenuItems = jest.fn()
