@@ -15,11 +15,20 @@ import { movedMetrics } from './baseline.mjs'
 
 const read = async (file) => {
   const contents = await readFile(file, 'utf8')
+  let baseline
   try {
-    return JSON.parse(contents)
+    baseline = JSON.parse(contents)
   } catch (err) {
     throw new Error(`${file} is not valid JSON: ${err.message}`)
   }
+
+  // null and an array both survive JSON.parse and then compare as no metrics
+  // at all, which would report a broken file as a run that moved nothing.
+  if (!baseline || typeof baseline !== 'object' || Array.isArray(baseline)) {
+    throw new Error(`${file} is not a baseline: expected an object, got ${Array.isArray(baseline) ? 'an array' : typeof baseline}`)
+  }
+
+  return baseline
 }
 
 export async function baselineChanged([committed, refreshed]) {

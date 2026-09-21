@@ -102,4 +102,18 @@ test('a missing or unreadable file fails instead of reporting no change', async 
   await assert.rejects(() => baselineChanged([join(dir, 'missing.json'), good]), /ENOENT/)
   await assert.rejects(() => baselineChanged([broken, good]), /not valid JSON/)
   await assert.rejects(() => baselineChanged([good]), /Usage/)
+
+  // Valid JSON that is not a baseline compares as no metrics at all, so it
+  // would otherwise report a broken file as a run that moved nothing.
+  for (const [name, contents] of [['null.json', 'null'], ['array.json', '[]'], ['number.json', '3']]) {
+    const file = join(dir, name)
+    await writeFile(file, contents)
+    await assert.rejects(() => baselineChanged([good, file]), /is not a baseline/)
+    await assert.rejects(() => baselineChanged([file, good]), /is not a baseline/)
+  }
+
+  // An empty baseline is a real one: an environment that has recorded nothing yet.
+  const empty = join(dir, 'empty.json')
+  await writeFile(empty, '{}')
+  assert.ok((await baselineChanged([empty, good])).length > 0)
 })
