@@ -53,6 +53,24 @@ test('startProxy forwards requests and logs each completed one', async () => {
   await new Promise((resolve) => upstream.close(resolve))
 })
 
+test('startProxy passes the client\'s Host so the backend links back through the proxy', async () => {
+  const upstream = http.createServer((req, res) => {
+    res.writeHead(200, { 'content-type': 'application/json' })
+    res.end(JSON.stringify({ host: req.headers.host }))
+  })
+  await new Promise((resolve) => upstream.listen(0, '127.0.0.1', resolve))
+  const dir = mkdtempSync(join(tmpdir(), 'perf-audit-proxy-'))
+  const proxy = await startProxy({ port: 0, target: `http://127.0.0.1:${upstream.address().port}`, logFile: join(dir, 'backend-requests.log') })
+
+  try {
+    const { host } = await (await fetch(`http://127.0.0.1:${proxy.port}/jsonapi`)).json()
+    assert.equal(host, `127.0.0.1:${proxy.port}`)
+  } finally {
+    await proxy.close()
+    await new Promise((resolve) => upstream.close(resolve))
+  }
+})
+
 test('startProxy answers 502 and logs it when the upstream is unreachable', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'perf-audit-proxy-'))
   const logFile = join(dir, 'backend-requests.log')
