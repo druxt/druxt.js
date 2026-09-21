@@ -10857,9 +10857,10 @@ __metadata:
     axios: 0.33.0
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
-    vue: ^2.7.16
+  peerDependencies:
+    vue: ^2.7.14
     vuex: ^3.6.2
-  dependenciesMeta:
+  peerDependenciesMeta:
     vue:
       optional: true
     vuex:
@@ -10874,9 +10875,10 @@ __metadata:
     druxt: ^0.24.0
     druxt-blocks: ^0.17.1
     druxt-router: ^0.31.0
-    vue: ^2.7.16
+  peerDependencies:
+    vue: ^2.7.14
     vuex: ^3.6.2
-  dependenciesMeta:
+  peerDependenciesMeta:
     vue:
       optional: true
     vuex:
@@ -10926,9 +10928,10 @@ __metadata:
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
     druxt-blocks: ^0.17.2
-    vue: ^2.7.16
+  peerDependencies:
+    vue: ^2.7.14
     vuex: ^3.6.2
-  dependenciesMeta:
+  peerDependenciesMeta:
     vue:
       optional: true
     vuex:
@@ -10943,12 +10946,12 @@ __metadata:
     axios: 0.33.0
     druxt: ^0.24.0
     url-parse: ^1.5.10
-    vue: ^2.7.16
     vue-router: ^3.6.5
-    vuex: ^3.6.2
   peerDependencies:
     drupal-jsonapi-params: "*"
-  dependenciesMeta:
+    vue: ^2.7.14
+    vuex: ^3.6.2
+  peerDependenciesMeta:
     vue:
       optional: true
     vuex:
@@ -10964,9 +10967,10 @@ __metadata:
     consola: ^2.15.3
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
-    vue: ^2.7.16
+  peerDependencies:
+    vue: ^2.7.14
     vuex: ^3.6.2
-  dependenciesMeta:
+  peerDependenciesMeta:
     vue:
       optional: true
     vuex:
@@ -10987,9 +10991,10 @@ __metadata:
     druxt-router: ^0.31.0
     druxt-schema: ^0.11.2
     druxt-views: ^0.22.0
-    vue: ^2.7.16
+  peerDependencies:
+    vue: ^2.7.14
     vuex: ^3.6.2
-  dependenciesMeta:
+  peerDependenciesMeta:
     vue:
       optional: true
     vuex:
@@ -11020,9 +11025,10 @@ __metadata:
     druxt-entity: ^0.28.0
     druxt-router: ^0.31.0
     md5: ^2.3.0
-    vue: ^2.7.16
+  peerDependencies:
+    vue: ^2.7.14
     vuex: ^3.6.2
-  dependenciesMeta:
+  peerDependenciesMeta:
     vue:
       optional: true
     vuex:
@@ -11093,14 +11099,15 @@ __metadata:
     md5: ^2.3.0
     querystring: ^0.2.1
     scule: ^0.3.2
-    vue: ^2.7.16
-    vuex: ^3.6.2
   peerDependencies:
     axios: 0.28.0
     consola: "*"
+    vue: ^2.7.14
+    vuex: ^3.6.2
   dependenciesMeta:
     core-js:
       optional: true
+  peerDependenciesMeta:
     vue:
       optional: true
     vuex:
@@ -23757,7 +23764,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:2.7.16, vue@npm:^2.7.16":
+"vue@npm:2.7.16":
   version: 2.7.16
   resolution: "vue@npm:2.7.16"
   dependencies:

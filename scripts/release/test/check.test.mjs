@@ -34,6 +34,17 @@ test('an exact pin on a snapshot sibling passes', () => {
   assert.deepEqual(checkPackages({ packages, files: false }), [])
 })
 
+test('vue and vuex are only accepted as peers', () => {
+  for (const field of ['dependencies', 'optionalDependencies']) {
+    const packages = [pkg({ name: 'site', version: '2.0.0', [field]: { vue: '^2.7.16', vuex: '^3.6.2' } })]
+    const problems = checkPackages({ packages, files: false })
+    assert.equal(problems.length, 2, field)
+    assert.match(problems[0], new RegExp(`site: ${field}\\.vue .*peerDependencies`))
+  }
+  const packages = [pkg({ name: 'site', version: '2.0.0', peerDependencies: { vue: '^2.7.14', vuex: '^3.6.2' } })]
+  assert.deepEqual(checkPackages({ packages, files: false }), [])
+})
+
 test('a dependency on a private sibling is refused', () => {
   const packages = [pkg({ name: 'utils', version: '1.0.0', private: true }), pkg({ name: 'site', version: '2.0.0', dependencies: { utils: '^1.0.0' } })]
   assert.match(checkPackages({ packages, files: false })[0], /names a private package/)

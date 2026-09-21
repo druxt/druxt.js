@@ -18,6 +18,9 @@ const DEPENDENCY_FIELDS = ['dependencies', 'peerDependencies', 'optionalDependen
 
 const REGISTRY_TIMEOUT = 15000
 
+// The application owns these; a package's own copy can differ from the application's vue-server-renderer.
+const HOST_OWNED = ['vue', 'vuex']
+
 // Specifiers that only resolve inside this repository or off the registry.
 const UNPUBLISHABLE = /^(workspace|link|file|portal|git|git\+ssh|git\+https|github|https?):/
 
@@ -61,6 +64,11 @@ export function checkPackages({ packages, registry, files = true }) {
       for (const [dep, range] of Object.entries(manifest[field] || {})) {
         if (UNPUBLISHABLE.test(range)) {
           problems.push(`${name}: ${field}.${dep} is "${range}", which does not resolve from npm.`)
+          continue
+        }
+
+        if (HOST_OWNED.includes(dep) && field !== 'peerDependencies') {
+          problems.push(`${name}: ${field}.${dep} lets the package install its own ${dep}. Declare it in peerDependencies so the application's copy is used.`)
           continue
         }
 

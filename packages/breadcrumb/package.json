@@ -50,9 +50,17 @@
     "druxt-blocks": "^0.17.1",
     "druxt-router": "^0.31.0"
   },
-  "optionalDependencies": {
-    "vue": "^2.7.16",
+  "peerDependencies": {
+    "vue": "^2.7.14",
     "vuex": "^3.6.2"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    },
+    "vuex": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public"

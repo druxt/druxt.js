@@ -56,9 +56,17 @@
     "druxt-schema": "^0.11.2",
     "druxt-views": "^0.22.0"
   },
-  "optionalDependencies": {
-    "vue": "^2.7.16",
+  "peerDependencies": {
+    "vue": "^2.7.14",
     "vuex": "^3.6.2"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    },
+    "vuex": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public"
