@@ -34,6 +34,32 @@ test('an exact pin on a snapshot sibling passes', () => {
   assert.deepEqual(checkPackages({ packages, files: false }), [])
 })
 
+test('an unbounded range on an outside package is refused', () => {
+  for (const range of ['*', '', 'x', 'latest']) {
+    for (const field of ['dependencies', 'peerDependencies']) {
+      const packages = [pkg({ name: 'site', version: '2.0.0', [field]: { consola: range } })]
+      const problems = checkPackages({ packages, files: false })
+      assert.equal(problems.length, 1, `${field} ${range}`)
+      assert.match(problems[0], new RegExp(`site: ${field}\\.consola .*any future release`))
+    }
+  }
+  const packages = [pkg({ name: 'site', version: '2.0.0', dependencies: { consola: '^2.15.3' } })]
+  assert.deepEqual(checkPackages({ packages, files: false }), [])
+})
+
+test('a sibling that depends on a version outside another sibling\'s peer range is refused', () => {
+  const packages = [
+    pkg({ name: 'core', version: '1.2.0', peerDependencies: { axios: '0.28.0' } }),
+    pkg({ name: 'views', version: '2.0.0', dependencies: { axios: '0.33.0' } }),
+  ]
+  const problems = checkPackages({ packages, files: false })
+  assert.equal(problems.length, 1)
+  assert.match(problems[0], /views: dependencies\.axios is "0\.33\.0", outside core's peerDependencies\.axios "0\.28\.0"/)
+
+  packages[0].manifest.peerDependencies.axios = '>=0.28.0 <1'
+  assert.deepEqual(checkPackages({ packages, files: false }), [])
+})
+
 test('a dependency on a private sibling is refused', () => {
   const packages = [pkg({ name: 'utils', version: '1.0.0', private: true }), pkg({ name: 'site', version: '2.0.0', dependencies: { utils: '^1.0.0' } })]
   assert.match(checkPackages({ packages, files: false })[0], /names a private package/)
