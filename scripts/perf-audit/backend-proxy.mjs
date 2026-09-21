@@ -32,8 +32,8 @@ export function startProxy({ port, target, logFile, upstreamTimeoutMs = 30000 })
       const method = req.method
       const pathWithQuery = req.url
       const remotePort = req.socket.remotePort
+      // Drupal builds absolute links from Host, so the client's Host keeps every followed link on this proxy.
       const headers = { ...req.headers }
-      delete headers.host
 
       const upstreamReq = http.request({
         hostname: targetUrl.hostname,
