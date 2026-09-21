@@ -88,9 +88,51 @@ class DruxtMenu {
   }
 
   /**
+   * Builds the query for the `menu_link_content` method.
+   *
+   * @private
+   *
+   * @param {string} menuName - The menu name.
+   * @param {object} settings - The Druxt Menu query settings object.
+   *
+   * @returns {DrupalJsonApiParams}
+   */
+  buildMenuLinkContentQuery(menuName, settings) {
+    const requiredFields = ['bundle', 'link', 'menu_name', 'parent', 'title', 'weight']
+    return this.buildQuery('menu_link_content--menu_link_content', menuName, requiredFields, settings)
+  }
+
+  /**
+   * Builds the query for the JSON:API Menu Items method.
+   *
+   * @private
+   *
+   * @param {string} menuName - The menu name.
+   * @param {object} settings - The Druxt Menu query settings object.
+   *
+   * @returns {DrupalJsonApiParams}
+   */
+  buildJsonApiMenuItemsQuery(menuName, settings) {
+    const requiredFields = ['menu_name', 'parent', 'title', 'url', 'weight']
+    const query = this.buildQuery('menu_link_content--menu_link_content', menuName, requiredFields, settings)
+
+    if ((settings || {}).max_depth) {
+      query.addFilter('max_depth', parseInt(settings.max_depth))
+    }
+    if ((settings || {}).min_depth) {
+      query.addFilter('min_depth', parseInt(settings.min_depth))
+    }
+    if ((settings || {}).parent) {
+      query.addFilter('parent', settings.parent)
+    }
+
+    return query
+  }
+
+  /**
    * Gets the menu items JSON:API resources using the configured method.
    *
-   * Results are cached per client and process, keyed by prefix, menu name, settings and method.
+   * Results are cached per client and process, keyed by prefix, method and the query the settings build.
    *
    * @example @lang js
    * const menu = await druxtMenu.get('main')
@@ -110,7 +152,10 @@ class DruxtMenu {
     }
 
     const jsonApiMenuItems = !!this.options.menu.jsonApiMenuItems
-    const cacheKey = JSON.stringify([prefix || '', menuName, settings || {}, jsonApiMenuItems])
+    const query = jsonApiMenuItems
+      ? this.buildJsonApiMenuItemsQuery(menuName, settings)
+      : this.buildMenuLinkContentQuery(menuName, settings)
+    const cacheKey = JSON.stringify([prefix || '', menuName, jsonApiMenuItems, query.getQueryString()])
     if (!cache.has(cacheKey)) {
       // A menu fetched by an earlier server request without credentials.
       const processCache = (scope) => typeof this.druxt.processCache === 'function' ? this.druxt.processCache(scope) : null
@@ -175,10 +220,7 @@ class DruxtMenu {
    */
   async getMenuLinkContent(menuName, settings, prefix) {
     const resource = 'menu_link_content--menu_link_content'
-    const requiredFields = ['bundle', 'link', 'menu_name', 'parent', 'title', 'weight']
-
-    // Build query.
-    const query = this.buildQuery(resource, menuName, requiredFields, settings)
+    const query = this.buildMenuLinkContentQuery(menuName, settings)
 
     const entities = []
     const collections = await this.druxt.getCollectionAll(resource, query, prefix)
@@ -213,8 +255,6 @@ class DruxtMenu {
    */
   async getJsonApiMenuItems(menuName, settings, prefix) {
     const menuItemsResource = `menu_items--${menuName}`
-    const resource = 'menu_link_content--menu_link_content'
-    const requiredFields = ['menu_name', 'parent', 'title', 'url', 'weight']
 
     // Add the JSON API Menu items resource to the index.
     await this.druxt.getIndex(undefined, prefix)
@@ -222,19 +262,7 @@ class DruxtMenu {
       this.druxt.index[prefix][menuItemsResource] = { href: `${prefix || ''}${this.druxt.options.endpoint}/menu_items/${menuName}` }
     }
 
-    // Build query.
-    const query = this.buildQuery(resource, menuName, requiredFields, settings)
-
-    // Apply filters.
-    if ((settings || {}).max_depth) {
-      query.addFilter('max_depth', parseInt(settings.max_depth))
-    }
-    if ((settings || {}).min_depth) {
-      query.addFilter('min_depth', parseInt(settings.min_depth))
-    }
-    if ((settings || {}).parent) {
-      query.addFilter('parent', settings.parent)
-    }
+    const query = this.buildJsonApiMenuItemsQuery(menuName, settings)
 
     const entities = []
     let collections = []
