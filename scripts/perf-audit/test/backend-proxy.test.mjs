@@ -60,13 +60,14 @@ test('startProxy passes the client\'s Host so the backend links back through the
   })
   await new Promise((resolve) => upstream.listen(0, '127.0.0.1', resolve))
   const dir = mkdtempSync(join(tmpdir(), 'perf-audit-proxy-'))
-  const proxy = await startProxy({ port: 0, target: `http://127.0.0.1:${upstream.address().port}`, logFile: join(dir, 'backend-requests.log') })
+  let proxy
 
   try {
+    proxy = await startProxy({ port: 0, target: `http://127.0.0.1:${upstream.address().port}`, logFile: join(dir, 'backend-requests.log') })
     const { host } = await (await fetch(`http://127.0.0.1:${proxy.port}/jsonapi`)).json()
     assert.equal(host, `127.0.0.1:${proxy.port}`)
   } finally {
-    await proxy.close()
+    if (proxy) await proxy.close()
     await new Promise((resolve) => upstream.close(resolve))
   }
 })
