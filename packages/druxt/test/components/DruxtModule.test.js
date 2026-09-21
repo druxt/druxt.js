@@ -414,4 +414,126 @@ describe('DruxtModule component', () => {
     await wrapper.setProps({ wrapper: true })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
   })
+
+  test('propsData follows a prop change without a refetch', async () => {
+    // Nuxt 2 doesn't re-run fetch() when a component's own props change, so a
+    // reused instance kept whatever propsData its first fetch() built. A
+    // DruxtField re-rendered with a form schema kept rendering the view one.
+    const SchemaModule = {
+      name: 'SchemaModule',
+      extends: DruxtModule,
+      props: { schema: { type: Object, default: () => ({ id: 'view' }) } },
+      druxt: {
+        componentOptions: () => {},
+        propsData: ({ schema }) => ({ schema }),
+      },
+    }
+
+    const wrapper = mount(SchemaModule, { localVue, mocks, stubs: ['DruxtWrapper'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    expect(wrapper.vm.component.propsData.schema).toStrictEqual({ id: 'view' })
+
+    await wrapper.setProps({ schema: { id: 'form' } })
+    expect(wrapper.vm.component.propsData.schema).toStrictEqual({ id: 'form' })
+    expect(wrapper.vm.$fetchState.pending).toBe(false)
+  })
+
+  test('propsData JSON cannot compare rebuilds rather than assuming it matched', async () => {
+    // A function writes as undefined, a Map as {}, NaN as null. Comparing the
+    // text would call two different values the same and skip the rebuild.
+    const CallbackModule = {
+      name: 'CallbackModule',
+      extends: DruxtModule,
+      props: { step: { type: Number, default: 1 } },
+      druxt: {
+        componentOptions: () => {},
+        // Every difference here is invisible to JSON: a function writes as
+        // undefined and a Set as {}, so the text is identical either way.
+        propsData: ({ step }) => ({
+          onSelect: () => step,
+          meta: { tags: new Set([step]) },
+          label: 'same',
+        }),
+      },
+    }
+
+    const wrapper = mount(CallbackModule, { localVue, mocks, stubs: ['DruxtWrapper'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    const first = wrapper.vm.component.propsData
+
+    await wrapper.setProps({ step: 2 })
+    expect(wrapper.vm.component.propsData).not.toBe(first)
+    expect(wrapper.vm.component.propsData.onSelect()).toBe(2)
+    expect([...wrapper.vm.component.propsData.meta.tags]).toStrictEqual([2])
+  })
+
+  test('a rebuild is still skipped when the values are known to match', async () => {
+    const PlainModule = {
+      name: 'PlainModule',
+      extends: DruxtModule,
+      props: { step: { type: Number, default: 1 } },
+      druxt: {
+        componentOptions: () => {},
+        // Reads step, so the watcher runs, but never reports a different value.
+        propsData: ({ step }) => ({ label: step > 0 ? 'positive' : 'negative' }),
+      },
+    }
+
+    const wrapper = mount(PlainModule, { localVue, mocks, stubs: ['DruxtWrapper'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    const first = wrapper.vm.component.propsData
+
+    await wrapper.setProps({ step: 2 })
+    expect(wrapper.vm.component.propsData).toBe(first)
+  })
+
+  test('a rebuild splits new propsData across the wrapper props and attributes', async () => {
+    localVue.component('SchemaModuleWrapper', {
+      druxt: {},
+      props: { schema: { type: Object, default: null } },
+      render: () => null
+    })
+
+    const SchemaModule = {
+      name: 'SchemaModule',
+      extends: DruxtModule,
+      props: { schema: { type: Object, default: () => ({ id: 'view' }) } },
+      druxt: {
+        componentOptions: () => ([['wrapper']]),
+        propsData: ({ schema }) => ({ schema, label: schema.id }),
+      },
+    }
+
+    const wrapper = mount(SchemaModule, { localVue, mocks })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    expect(wrapper.vm.component.is).toBe('SchemaModuleWrapper')
+
+    await wrapper.setProps({ schema: { id: 'form' } })
+    // A prop the wrapper registers stays a prop; the rest stay attributes.
+    expect(wrapper.vm.component.props.schema).toStrictEqual({ id: 'form' })
+    expect(wrapper.vm.component.$attrs.label).toBe('form')
+    expect(wrapper.vm.component.$attrs.schema).toBe(undefined)
+  })
+
+  test('an errored module keeps its debug props when a prop changes', async () => {
+    const BrokenModule = {
+      name: 'BrokenModule',
+      extends: DruxtModule,
+      props: { schema: { type: Object, default: () => ({ id: 'view' }) } },
+      druxt: {
+        componentOptions: () => {},
+        fetchData: () => { throw new Error('Backend down') },
+        propsData: ({ schema }) => ({ schema }),
+      },
+    }
+
+    const wrapper = mount(BrokenModule, { localVue, mocks, stubs: ['DruxtDebug'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    expect(wrapper.vm.component.is).toBe('DruxtDebug')
+    const errorProps = wrapper.vm.component.props
+
+    await wrapper.setProps({ schema: { id: 'form' } })
+    expect(wrapper.vm.component.is).toBe('DruxtDebug')
+    expect(wrapper.vm.component.props).toStrictEqual(errorProps)
+  })
 })

@@ -5,6 +5,66 @@ import Vue from 'vue'
 import DruxtWrapper from './DruxtWrapper.vue'
 
 /**
+ * Whether JSON holds a value well enough to compare two of them.
+ *
+ * A function or a symbol writes as `undefined`, a Map or a Set as `{}`, and
+ * NaN as `null`, so two different values can write the same text. Anything
+ * JSON does not hold exactly is compared by identity instead.
+ *
+ * @private
+ *
+ * @param {*} value - The value to check.
+ * @param {WeakSet} [seen] - Objects already visited, so a cycle ends the walk.
+ *
+ * @returns {boolean} Whether JSON.stringify represents the value exactly.
+ */
+const isComparable = (value, seen = new WeakSet()) => {
+  if (value === null) return true
+
+  const type = typeof value
+  if (type === 'string' || type === 'boolean') return true
+  if (type === 'number') return Number.isFinite(value)
+  if (type !== 'object') return false
+
+  if (seen.has(value)) return false
+  seen.add(value)
+
+  if (Array.isArray(value)) return value.every((item) => isComparable(item, seen))
+
+  // A Map, a Set, a Date or any class instance writes as something other than itself.
+  const prototype = Object.getPrototypeOf(value)
+  if (prototype !== Object.prototype && prototype !== null) return false
+
+  return Object.values(value).every((item) => isComparable(item, seen))
+}
+
+/**
+ * Whether rebuilt propsData differs from what the wrapper already has.
+ *
+ * Values that cannot be compared count as changed, so a rebuild is skipped
+ * only when the two are known to match.
+ *
+ * @private
+ *
+ * @param {object} current - The propsData the wrapper holds.
+ * @param {object} next - The propsData the module's callback just produced.
+ *
+ * @returns {boolean} Whether the wrapper needs the new propsData.
+ */
+const hasChanged = (current = {}, next = {}) => {
+  const keys = [...new Set([...Object.keys(current), ...Object.keys(next)])]
+  return keys.some((key) => {
+    if (current[key] === next[key]) return false
+    if (!isComparable(current[key]) || !isComparable(next[key])) return true
+    try {
+      return JSON.stringify(current[key]) !== JSON.stringify(next[key])
+    } catch (err) {
+      return true
+    }
+  })
+}
+
+/**
  * The DruxtModule component renders a Druxt module; import and extend the
  * component to build your own module.
  *
@@ -167,6 +227,9 @@ export default {
 
     // Get wrapper data.
     const wrapperData = await this.getWrapperData(component.is)
+    // On the instance rather than in data(), so it is not copied into the
+    // server rendered payload once per module.
+    this.wrapperProps = wrapperData.props || {}
 
     // Build module settings.
     component.settings = wrapperData.druxt || {}
@@ -205,13 +268,47 @@ export default {
      * @param {object} vm.$route - The current route.
      * @return {string} The current language code.
      */
-    lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode
+    lang: ({ langcode, $route }) => langcode || ($route.meta || {}).langcode,
+
+    /**
+     * The module's own propsData, tracked so a prop change rebuilds it.
+     *
+     * Reading it here registers whatever the module's `propsData()` callback
+     * reads, so each module declares its own dependencies by using them.
+     *
+     * @type {object}
+     */
+    modulePropsData() {
+      if (!(this.$options.druxt || {}).propsData) return null
+      return { langcode: this.lang, ...this.$options.druxt.propsData.call(this, this) }
+    }
   },
 
   watch: {
     lang(to, from) {
       if (to !== from) {
         this.$fetch()
+      }
+    },
+
+    // Nuxt 2 doesn't re-run fetch() when a component's own props change, so a
+    // reused instance would keep the propsData its first fetch() built. Rebuild
+    // it in place instead of refetching: the data is unchanged, the props are not.
+    modulePropsData: {
+      deep: true,
+      handler(to) {
+        // An errored module renders DruxtDebug with its own props; leave them.
+        if (!to || this.component.is === 'DruxtDebug' || !Object.keys(this.component.propsData || {}).length) {
+          return
+        }
+        if (!hasChanged(this.component.propsData, to)) {
+          return
+        }
+
+        // After hydration this instance never ran fetch(), so read the resolved
+        // wrapper's props instead of the ones that fetch() put on the instance.
+        const resolved = ((this.$options.components || {})[this.component.is] || {}).options || {}
+        this.component = { ...this.component, ...this.getModulePropsData(this.wrapperProps || resolved.props || {}) }
       }
     },
 
