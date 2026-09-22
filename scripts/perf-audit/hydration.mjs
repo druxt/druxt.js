@@ -125,16 +125,22 @@ export async function loadOnce(cdp, url, { settleMs, timeoutMs }) {
     await send('Emulation.setCPUThrottlingRate', { rate: 4 })
     await send('Page.addScriptToEvaluateOnNewDocument', { source: INIT_SCRIPT })
     await send('Page.navigate', { url })
+    const failIfCrashed = () => { if (crashed) throw new Error(`${url} crashed in Chrome`) }
     const started = Date.now()
     while (!(loaded && inFlight.size === 0 && Date.now() - lastActivity > 500)) {
-      if (crashed) throw new Error(`${url} crashed in Chrome`)
+      failIfCrashed()
       if (Date.now() - started > timeoutMs) {
         const waiting = loaded ? `${inFlight.size} request(s) still open: ${[...inFlight.values()].slice(0, 5).join(', ')}` : 'the load event never fired'
         throw new Error(`${url} did not settle within ${timeoutMs} ms; ${waiting}`)
       }
       await new Promise((resolve) => setTimeout(resolve, 100))
     }
-    await new Promise((resolve) => setTimeout(resolve, settleMs))
+    const settled = Date.now()
+    while (Date.now() - settled < settleMs) {
+      failIfCrashed()
+      await new Promise((resolve) => setTimeout(resolve, 100))
+    }
+    failIfCrashed()
     const { result } = await send('Runtime.evaluate', { expression: READ_SCRIPT, returnByValue: true })
     return result.value
   } finally {

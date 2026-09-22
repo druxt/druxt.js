@@ -88,3 +88,27 @@ test('a page that crashes in Chrome fails at once, not after the settle timeout'
   await assert.rejects(loadOnce(cdp, 'http://localhost:1/', { settleMs: 0, timeoutMs: 60000 }), /crashed/)
   assert.ok(Date.now() - started < 5000)
 })
+
+test('a page that crashes during the settle delay fails at once', async () => {
+  const listeners = new Set()
+  const emit = (method) => { for (const l of listeners) l({ sessionId: 'session', method }) }
+  const cdp = {
+    on: (listener) => { listeners.add(listener); return () => listeners.delete(listener) },
+    send: async (method) => {
+      if (method === 'Target.createBrowserContext') return { browserContextId: 'context' }
+      if (method === 'Target.createTarget') return { targetId: 'target' }
+      if (method === 'Target.attachToTarget') return { sessionId: 'session' }
+      if (method === 'Page.navigate') {
+        // Loaded and idle, then the renderer dies while the probe waits for the page to settle.
+        setTimeout(() => emit('Page.loadEventFired'), 10)
+        setTimeout(() => emit('Inspector.targetCrashed'), 1000)
+      }
+      if (method === 'Runtime.evaluate') return { result: { value: {} } }
+      return {}
+    },
+  }
+  const started = Date.now()
+  await assert.rejects(loadOnce(cdp, 'http://localhost:1/', { settleMs: 10000, timeoutMs: 60000 }), /crashed/)
+  assert.ok(Date.now() - started < 5000)
+})
+
