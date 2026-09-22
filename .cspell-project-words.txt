@@ -241,3 +241,5 @@ yarnpkg
 yarnrc
 zipfile
 ZRHGDGSD
+SESS
+SSESS
