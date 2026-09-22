@@ -160,4 +160,21 @@ describe('DruxtClient process cache', () => {
     expect(client.cacheLifetime({})).toBe(0)
     expect(client.cacheLifetime(false)).toBe(0)
   })
+
+  test('clearCache empties the index and the process cache', async () => {
+    const client = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
+    await client.getIndex()
+    expect(indexCalls()).toBe(1)
+    expect(client.cacheGeneration).toBe(0)
+
+    client.clearCache()
+    expect(client.cacheGeneration).toBe(1)
+    await client.getIndex()
+    expect(indexCalls()).toBe(2)
+
+    // Another request's client finds the process cache empty too.
+    client.clearCache()
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(3)
+  })
 })

@@ -238,6 +238,31 @@ const DruxtStore = ({ store }) => {
      */
     actions: {
       /**
+       * Clear every Druxt cache.
+       *
+       * Clears the DruxtClient's caches and the server's process cache, and
+       * flushes each registered Druxt store.
+       *
+       * @name clearCache
+       * @action clearCache
+       * @param {object} context - The Vuex action context.
+       * @param {Function} context.commit - Commits mutations to the store.
+       *
+       * @example @lang js
+       * await this.$store.dispatch('druxt/clearCache')
+       */
+      clearCache ({ commit }) {
+        if (this.$druxt && typeof this.$druxt.clearCache === 'function') this.$druxt.clearCache()
+
+        commit('flushCollection', {})
+        commit('flushResource', {})
+        // Stores from other Druxt modules, flushed only when the site uses them.
+        for (const mutation of ['druxt/views/flushResults', 'druxtMenu/flushEntities', 'druxtRouter/flushRoutes']) {
+          if (this._mutations[mutation]) commit(mutation, {}, { root: true })
+        }
+      },
+
+      /**
        * Get collection of resources.
        *
        * @name getCollection

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
-import { parseCacheLifetime, processCache, watchCredentials } from './utils/processCache'
+import { parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
 
 // Shared JSON:API index cache. Keyed by the Axios instance, which carries the
 // credentials, then by base URL, endpoint and resource config, so clients on
@@ -113,6 +113,28 @@ class DruxtClient {
      * @type {object}
      */
     this.index = cache.index[indexKey] || (cache.index[indexKey] = {})
+
+    /**
+     * Moves on each time `clearCache()` runs, so caches keyed by this client know to empty.
+     *
+     * @type {number}
+     */
+    this.cacheGeneration = 0
+  }
+
+  /**
+   * Clear the caches this client holds, and the server's process cache.
+   *
+   * Empties the JSON:API index and the process cache, and moves `cacheGeneration`
+   * on so results cached per client, such as menus, are fetched again.
+   *
+   * @example @lang js
+   * this.$druxt.clearCache()
+   */
+  clearCache() {
+    for (const prefix of Object.keys(this.index)) delete this.index[prefix]
+    resetProcessCache()
+    this.cacheGeneration += 1
   }
 
   /**

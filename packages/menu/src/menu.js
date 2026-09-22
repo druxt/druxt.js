@@ -102,6 +102,12 @@ class DruxtMenu {
   async get(menuName, settings, prefix) {
     if (!menuCache.has(this.druxt)) menuCache.set(this.druxt, new Map())
     const cache = menuCache.get(this.druxt)
+    // The client's clearCache() moves its generation on, which empties these results.
+    const generation = this.druxt.cacheGeneration || 0
+    if (cache.generation !== generation) {
+      cache.clear()
+      cache.generation = generation
+    }
 
     const jsonApiMenuItems = !!this.options.menu.jsonApiMenuItems
     const cacheKey = JSON.stringify([prefix || '', menuName, settings || {}, jsonApiMenuItems])

@@ -704,4 +704,27 @@ describe('DruxtStore', () => {
     await expect(store.dispatch('druxt/getResource', { type, id, prefix: 'en', query: { include: 'field_media_image' } })).resolves.toBeTruthy()
     expect(mockAxios.get).toHaveBeenCalled()
   })
+
+  test('clearCache clears the client and flushes every registered Druxt store', async () => {
+    const flushes = { flushResults: jest.fn(), flushEntities: jest.fn(), flushRoutes: jest.fn() }
+    store.registerModule(['druxt', 'views'], { namespaced: true, mutations: { flushResults: flushes.flushResults } })
+    store.registerModule('druxtMenu', { namespaced: true, mutations: { flushEntities: flushes.flushEntities } })
+    store.registerModule('druxtRouter', { namespaced: true, mutations: { flushRoutes: flushes.flushRoutes } })
+    store.$druxt.clearCache = jest.fn()
+
+    const collection = await getMockCollection('node--page')
+    store.commit('druxt/addCollection', { collection, type: 'node--page', hash: '_default', prefix: 'en' })
+
+    await store.dispatch('druxt/clearCache')
+    expect(store.$druxt.clearCache).toHaveBeenCalledTimes(1)
+    expect(store.state.druxt.collections).toStrictEqual({})
+    expect(store.state.druxt.resources).toStrictEqual({})
+    for (const flush of Object.values(flushes)) expect(flush).toHaveBeenCalledTimes(1)
+  })
+
+  test('clearCache skips stores that are not registered', async () => {
+    store.$druxt.clearCache = jest.fn()
+    await expect(store.dispatch('druxt/clearCache')).resolves.toBe(undefined)
+    expect(store.$druxt.clearCache).toHaveBeenCalledTimes(1)
+  })
 })
