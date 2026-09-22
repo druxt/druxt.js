@@ -263,6 +263,9 @@ const DruxtRouterStore = ({ store }) => {
           const statusCode = (err.response || {}).status || 500
           const message = ((err.response || {}).data || {}).message || err.message
           route = { error: { statusCode, message } }
+
+          // Store only a 4xx from the backend, so a transient failure is retried.
+          if (statusCode < 400 || statusCode >= 500 || !err.response) return route
         }
 
         commit('addRoute', { path, route })

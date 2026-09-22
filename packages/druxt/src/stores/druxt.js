@@ -26,6 +26,25 @@ const dehydrateResources = ({ commit, queryObject, resources, prefix }) => {
   })
 }
 
+// The key a collection is stored under: its query without the fields and includes.
+const collectionHash = (query) => {
+  if (!query) return '_default'
+  const queryObject = getDrupalJsonApiParams(query).getQueryObject()
+  return md5(JSON.stringify({ ...queryObject, fields: {}, include: [] }))
+}
+
+// Removes the entries a flush names from a keyed tree, and nothing when they were never stored.
+const flush = (tree, key, keys, leaf) => {
+  const byKey = tree[key]
+  if (!byKey) return
+  if (!keys.length && !leaf) return Vue.delete(tree, key)
+  for (const k of keys.length ? keys : Object.keys(byKey)) {
+    if (!byKey[k]) continue
+    if (leaf) Vue.delete(byKey[k], leaf)
+    else Vue.delete(byKey, k)
+  }
+}
+
 const DruxtStore = ({ store }) => {
   if (typeof store === 'undefined') {
     throw new TypeError('Vuex store not found.')
@@ -173,14 +192,16 @@ const DruxtStore = ({ store }) => {
        * // Flush all collections.
        * this.$store.commit('druxt/flushCollection', {})
        *
-       * // Flush target collection.
-       * this.$store.commit('druxt/flushCollection', { type, hash, prefix })
+       * // Flush target collection, by the query it was fetched with.
+       * this.$store.commit('druxt/flushCollection', { type, query, prefix })
+       *
+       * // Flush every collection of a type in one language.
+       * this.$store.commit('druxt/flushCollection', { type, prefix })
        */
-      flushCollection (state, { type, hash, prefix }) {
-        if (!type) Vue.set(state, 'collections', {})
-        else if (type && !hash && !prefix) Vue.set(state.collections, type, {})
-        else if (type && hash && !prefix) Vue.set(state.collections[type], hash, {})
-        else if (type && hash && prefix) Vue.set(state.collections[type][hash], prefix, {})
+      flushCollection (state, { type, hash, query, prefix } = {}) {
+        if (!type) return Vue.set(state, 'collections', {})
+        const key = hash || (query ? collectionHash(query) : undefined)
+        flush(state.collections, type, key ? [key] : [], prefix)
       },
 
       /**
@@ -196,11 +217,9 @@ const DruxtStore = ({ store }) => {
        * // Flush target resource.
        * this.$store.commit('druxt/flushResource', { id, type, prefix })
        */
-      flushResource (state, { type, id, prefix }) {
-        if (!type) Vue.set(state, 'resources', {})
-        else if (type && !id && !prefix) Vue.set(state.resources, type, {})
-        else if (type && id && !prefix) Vue.set(state.resources[type], id, {})
-        else if (type && id && prefix) Vue.set(state.resources[type][id], prefix, {})
+      flushResource (state, { type, id, prefix } = {}) {
+        if (!type) return Vue.set(state, 'resources', {})
+        flush(state.resources, type, id ? [id] : [], prefix)
       }
     },
 
@@ -228,9 +247,7 @@ const DruxtStore = ({ store }) => {
        * })
        */
       async getCollection ({ commit, state }, { type, query, prefix, bypassCache = false }) {
-        // Generate a hash using query data excluding the 'fields' and 'include' data.
-        const queryObject = getDrupalJsonApiParams(query).getQueryObject()
-        const hash = query ? md5(JSON.stringify({ ...queryObject, fields: {}, include: [] })) : '_default'
+        const hash = collectionHash(query)
 
         // If collection hash exists, re-hydrate and return the data.
         if (!bypassCache && ((state.collections[type] || {})[hash] || {})[prefix]) {
@@ -250,7 +267,7 @@ const DruxtStore = ({ store }) => {
         }
 
         // Identical concurrent dispatches share one request and one commit.
-        const key = JSON.stringify(['collection', prefix, type, hash, queryObject])
+        const key = JSON.stringify(['collection', prefix, type, hash, getDrupalJsonApiParams(query).getQueryObject()])
         return share(key, async () => {
           // Get the collection using the DruxtClient instance.
           const collection = await this.$druxt.getCollection(type, query, prefix)
@@ -307,9 +324,9 @@ const DruxtStore = ({ store }) => {
           ).filter((s) => s).join(',')
         }
 
-        // Hydrate included data based on the include query.
+        // Hydrate included data based on the include query. A bypass takes its includes from the fresh response.
         let included = []
-        if (queryObject.include && storedResource) {
+        if (queryObject.include && storedResource && !bypassCache) {
           // Request included resources from druxt/getResource.
           const resources =
             await Promise.all(queryObject.include.split(',')
@@ -351,7 +368,7 @@ const DruxtStore = ({ store }) => {
 
         // Determine if we have all the requested field data.
         let fields = isFull ? true : (queryObject.fields || {})[type]
-        if (storedResource && !isFull && fields) {
+        if (storedResource && !isFull && fields && !bypassCache) {
           const queryFields = fields.split(',')
           const resourceFields = [
             ...Object.keys(((storedResource || {}).data || {}).attributes || {}),
@@ -453,14 +470,15 @@ export { DruxtStore }
  *
  * @typedef {object} flushCollectionPayload
  *
- * @param {string} type - The JSON:API collection resource type.
- * @param {string} hash - An md5 hash of the query string.
- * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+ * @param {string} [type] - (Optional) The JSON:API collection resource type. Every collection when omitted.
+ * @param {DruxtClientQuery} [query] - (Optional) The query the collection was fetched with.
+ * @param {string} [hash] - (Optional) The stored key of one query, in place of `query`.
+ * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode. Every prefix when omitted.
  *
  * @example @lang js
  * {
  *   type: 'node--page',
- *   hash: '_default',
+ *   query: new DrupalJsonApiParams().addFilter('status', '1'),
  *   prefix: 'en'
  * }
  */
