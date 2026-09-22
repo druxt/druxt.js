@@ -25,7 +25,7 @@
     "deepmerge",
     // Registered by Nuxt module *name string*
     // (`this.addModule(['druxt', ...])` /
-    // `this.addModule(['druxt-router/nuxt', ...])` in
+    // `this.addModule(['druxt-router', ...])` in
     // packages/breadcrumb/src/nuxtModule.js, and the `modules: [...]` array
     // in packages/site/src/nuxtModule.js) rather than a static
     // import/require - knip's dependency graph never sees these as "used".
