@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
-import { processCache, watchCredentials } from './utils/processCache'
+import { parseCacheLifetime, processCache, watchCredentials } from './utils/processCache'
 
 // Shared JSON:API index cache. Keyed by the Axios instance, which carries the
 // credentials, then by base URL, endpoint and resource config, so clients on
@@ -9,6 +9,9 @@ import { processCache, watchCredentials } from './utils/processCache'
 // instance's index. Each bucket also holds the in-flight requests, so
 // concurrent clients share one fetch.
 const indexCache = new WeakMap()
+
+// How long each fetched document may be cached, from its Cache-Control header.
+const lifetimes = new WeakMap()
 
 /**
  * The Druxt JSON:API client.
@@ -91,7 +94,7 @@ class DruxtClient {
     }
 
     // See credentials an interceptor adds, so the process cache is withheld from this instance.
-    if ((this.options.cache || {}).ttl) watchCredentials(this.axios, this.options.cache.sessionCookie)
+    if (this.options.cache) watchCredentials(this.axios, this.options.cache.sessionCookie)
 
     // Share the index between clients on the same Axios instance, base URL,
     // endpoint and resource config.
@@ -115,17 +118,30 @@ class DruxtClient {
   /**
    * Get the process cache for a scope.
    *
-   * The cache holds server-side responses between requests. It is off unless
-   * the `cache.ttl` option is set, and it is skipped for any request that
-   * sends an Authorization header, basic auth or a session cookie.
+   * The cache holds server-side responses between requests, each for as long
+   * as its Cache-Control header allows. It is off unless the `cache` option is
+   * set, and it is skipped for any request that sends an Authorization header,
+   * basic auth or a session cookie.
    *
    * @param {string} scope - The cache scope, e.g. 'index' or 'menu'.
    *
    * @returns {?object} The cache, or null when it must not be used.
    */
   processCache(scope) {
-    const { ttl, sessionCookie } = this.options.cache || {}
+    if (!this.options.cache) return null
+    const { ttl, sessionCookie } = this.options.cache
     return processCache(scope, { axios: this.axios, ttl, sessionCookie })
+  }
+
+  /**
+   * How long a document this client fetched may be cached.
+   *
+   * @param {object} document - A JSON:API document returned by this client.
+   *
+   * @returns {number} Seconds, from the response's Cache-Control. 0 when it may not be cached or is unknown.
+   */
+  cacheLifetime(document) {
+    return (document && typeof document === 'object' && lifetimes.get(document)) || 0
   }
 
   /**
@@ -326,6 +342,7 @@ class DruxtClient {
   async get(url, options) {
     try {
       const res = await this.axios.get(url, options)
+      if (res && res.data && typeof res.data === 'object') lifetimes.set(res.data, parseCacheLifetime(res.headers))
 
       return res
     } catch(err) {
@@ -418,14 +435,15 @@ class DruxtClient {
       // wait on one request. A failed request is dropped so the next call retries.
       const key = [this.indexKey, prefix || ''].join(':')
       const request = this.indexRequests[key] || (this.indexRequests[key] = this.fetchIndex(prefix))
+      let lifetime
       try {
-        await request
+        lifetime = await request
       } finally {
         if (this.indexRequests[key] === request) delete this.indexRequests[key]
       }
 
       const shared = this.processCache('index')
-      if (shared && this.index[prefix]) shared.set(key, this.index[prefix])
+      if (shared && this.index[prefix]) shared.set(key, this.index[prefix], lifetime)
     }
 
     return resource ? this.index[prefix][resource] || false : this.index[prefix]
@@ -436,6 +454,8 @@ class DruxtClient {
    *
    * @private
    * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+   *
+   * @returns {number} Seconds the index may be cached, from its Cache-Control.
    */
   async fetchIndex(prefix) {
     const url = [prefix, this.options.endpoint].join('')
@@ -488,6 +508,8 @@ class DruxtClient {
 
     // Set index.
     this.index[prefix] = index
+
+    return this.cacheLifetime(data)
   }
 
   /**
@@ -615,9 +637,9 @@ export { DruxtClient }
   * @typedef {object} DruxtClientOptions
   *
   * @param {object} [axios] - Axios instance settings.
-  * @param {object} [cache] - Server-side cache shared between requests that do not send credentials. Off by
-  *   default. The Nuxt module turns it on in production.
-  * @param {number} [cache.ttl] - Seconds a cached response lives.
+  * @param {object} [cache] - Server-side cache shared between requests that do not send credentials, each
+  *   response kept for as long as its Cache-Control allows. Off by default. The Nuxt module turns it on in production.
+  * @param {number} [cache.ttl] - Seconds a cached response may live at most. It never extends Cache-Control.
   * @param {string} [cache.sessionCookie=S?SESS[0-9a-f]+] - A pattern for the session cookie name.
   * @param {boolean} [debug=false] - Enable Debug mode for verbose console log messages.
   * @param {string} [endpoint=jsonapi] - The JSON:API endpoint.

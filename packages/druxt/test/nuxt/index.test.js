@@ -46,17 +46,17 @@ describe('DruxtJS Nuxt module', () => {
     // The client plugin is the addPlugin call that carries the module options.
     const pluginOptions = () => mock.addPlugin.mock.calls.map(([plugin]) => plugin.options).filter((o) => o && o.baseUrl).pop()
 
-    // On for five minutes in production.
+    // On in production, for as long as Drupal's Cache-Control allows.
     await DruxtNuxtModule.call(mock, options)
-    expect(pluginOptions().cache).toStrictEqual({ ttl: 300 })
+    expect(pluginOptions().cache).toStrictEqual({})
 
     // Off in development, where a content edit must show at once.
     mock.options.dev = true
     await DruxtNuxtModule.call(mock, options)
-    expect(pluginOptions().cache).toStrictEqual({ ttl: 0 })
+    expect(pluginOptions().cache).toBe(false)
     mock.options.dev = false
 
-    // A site can set its own, or turn it off.
+    // A site can cap the lifetime and name its session cookie.
     await DruxtNuxtModule.call(mock, { ...options, cache: { ttl: 60, sessionCookie: 'sid' } })
     expect(pluginOptions().cache).toStrictEqual({ ttl: 60, sessionCookie: 'sid' })
     await DruxtNuxtModule.call(mock, { ...options, cache: false })

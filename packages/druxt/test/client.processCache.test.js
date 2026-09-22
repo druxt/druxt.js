@@ -8,14 +8,14 @@ jest.mock('axios')
 // Each server request gets its own Axios instance from @nuxtjs/axios.
 let calls = 0
 // `sent` is what a request interceptor adds on the way out, which the defaults never show.
-const requestAxios = (common = {}, sent = {}) => {
+const requestAxios = (common = {}, sent = {}, headers = { 'cache-control': 'public, max-age=300' }) => {
   const instance = jest.fn()
   const handlers = []
   instance.defaults = { headers: { common } }
   instance.interceptors = { response: { use: (ok) => handlers.push(ok) } }
   instance.get = jest.fn(async () => {
     calls += 1
-    const response = { config: { headers: { ...common, ...sent } }, data: { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } } }
+    const response = { config: { headers: { ...common, ...sent } }, headers, data: { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } } }
     return handlers.reduce((result, handler) => handler(result), response)
   })
   return instance
@@ -34,46 +34,46 @@ describe('DruxtClient process cache', () => {
 
   test('never used in a browser', async () => {
     runtime.isServer = () => false
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: { ttl: 300 } }).getIndex()
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: { ttl: 300 } }).getIndex()
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
     expect(indexCalls()).toBe(2)
   })
 
   test('the index survives between requests without credentials', async () => {
-    const first = new DruxtClient(baseUrl, { axios: requestAxios(), cache: { ttl: 300 } })
+    const first = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
     await first.getIndex()
     expect(indexCalls()).toBe(1)
 
-    const second = new DruxtClient(baseUrl, { axios: requestAxios({ cookie: '_ga=GA1.2.3' }), cache: { ttl: 300 } })
+    const second = new DruxtClient(baseUrl, { axios: requestAxios({ cookie: '_ga=GA1.2.3' }), cache: {} })
     const index = await second.getIndex()
     expect(indexCalls()).toBe(1)
     expect(Object.keys(index).length).toBeGreaterThan(0)
   })
 
   test('a request with credentials neither reads nor fills the shared index', async () => {
-    const user = new DruxtClient(baseUrl, { axios: requestAxios({ Authorization: 'Bearer token' }), cache: { ttl: 300 } })
+    const user = new DruxtClient(baseUrl, { axios: requestAxios({ Authorization: 'Bearer token' }), cache: {} })
     await user.getIndex()
     expect(indexCalls()).toBe(1)
 
-    const anonymous = new DruxtClient(baseUrl, { axios: requestAxios(), cache: { ttl: 300 } })
+    const anonymous = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
     await anonymous.getIndex()
     expect(indexCalls()).toBe(2)
 
-    const session = new DruxtClient(baseUrl, { axios: requestAxios({ cookie: 'SESS0123456789abcdef0123456789abcdef=abc' }), cache: { ttl: 300 } })
+    const session = new DruxtClient(baseUrl, { axios: requestAxios({ cookie: 'SESS0123456789abcdef0123456789abcdef=abc' }), cache: {} })
     await session.getIndex()
     expect(indexCalls()).toBe(3)
   })
 
   test('credentials added by an interceptor keep the response out of the cache', async () => {
-    const user = new DruxtClient(baseUrl, { axios: requestAxios({}, { Authorization: 'Bearer token' }), cache: { ttl: 300 } })
+    const user = new DruxtClient(baseUrl, { axios: requestAxios({}, { Authorization: 'Bearer token' }), cache: {} })
     await user.getIndex()
     expect(indexCalls()).toBe(1)
 
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: { ttl: 300 } }).getIndex()
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
     expect(indexCalls()).toBe(2)
 
     // The anonymous response above was stored, so the next one is served from it.
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: { ttl: 300 } }).getIndex()
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
     expect(indexCalls()).toBe(2)
   })
 
@@ -82,8 +82,44 @@ describe('DruxtClient process cache', () => {
     await new DruxtClient(baseUrl, { axios: requestAxios() }).getIndex()
     expect(indexCalls()).toBe(2)
 
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: { ttl: 300 } }).getIndex()
-    await new DruxtClient('https://other.example', { axios: requestAxios(), cache: { ttl: 300 } }).getIndex()
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    await new DruxtClient('https://other.example', { axios: requestAxios(), cache: {} }).getIndex()
     expect(indexCalls()).toBe(4)
+  })
+
+  test('follows the Cache-Control Drupal sent', async () => {
+    const now = jest.spyOn(Date, 'now')
+    now.mockReturnValue(1000)
+
+    // Drupal's default, and a response with no header, are never stored.
+    for (const headers of [{ 'cache-control': 'max-age=0, no-cache, must-revalidate' }, {}]) {
+      resetProcessCache()
+      calls = 0
+      await new DruxtClient(baseUrl, { axios: requestAxios({}, {}, headers), cache: {} }).getIndex()
+      await new DruxtClient(baseUrl, { axios: requestAxios({}, {}, headers), cache: {} }).getIndex()
+      expect(indexCalls()).toBe(2)
+    }
+
+    // A max-age is honoured, and a ttl only shortens it.
+    resetProcessCache()
+    calls = 0
+    const allowed = { 'cache-control': 'public, max-age=60' }
+    await new DruxtClient(baseUrl, { axios: requestAxios({}, {}, allowed), cache: { ttl: 600 } }).getIndex()
+    now.mockReturnValue(1000 + 59 * 1000)
+    await new DruxtClient(baseUrl, { axios: requestAxios({}, {}, allowed), cache: { ttl: 600 } }).getIndex()
+    expect(indexCalls()).toBe(1)
+    now.mockReturnValue(1000 + 61 * 1000)
+    await new DruxtClient(baseUrl, { axios: requestAxios({}, {}, allowed), cache: { ttl: 600 } }).getIndex()
+    expect(indexCalls()).toBe(2)
+
+    now.mockRestore()
+  })
+
+  test('cacheLifetime reads the lifetime of a document the client fetched', async () => {
+    const client = new DruxtClient(baseUrl, { axios: requestAxios({}, {}, { 'cache-control': 'public, max-age=120' }) })
+    const { data } = await client.get('/jsonapi')
+    expect(client.cacheLifetime(data)).toBe(120)
+    expect(client.cacheLifetime({})).toBe(0)
+    expect(client.cacheLifetime(false)).toBe(0)
   })
 })

@@ -1,5 +1,8 @@
+/* global globalThis */
 // Process-wide cache for server-side responses to requests that carry no credentials.
-const scopes = new Map()
+// Held on globalThis so every copy of this module in the process shares one cache.
+const SCOPES = Symbol.for('druxt.processCache')
+const scopes = globalThis[SCOPES] || (globalThis[SCOPES] = new Map())
 
 // Axios instances seen sending credentials, and instances already watched.
 const credentialed = new WeakSet()
@@ -77,38 +80,70 @@ export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) =
 }
 
 /**
+ * How long a shared cache may keep a response, from its headers.
+ *
+ * Follows Cache-Control as a shared cache must: `private`, `no-store` or
+ * `no-cache` forbid storing, `s-maxage` wins over `max-age`, time already spent
+ * in a cache in front of Drupal (`Age`) is taken off, and no directive means 0.
+ *
+ * @param {object} [headers] - The response headers.
+ *
+ * @returns {number} Seconds the response may be kept, 0 when it may not.
+ */
+export const parseCacheLifetime = (headers) => {
+  const header = (name) => {
+    const key = Object.keys(headers || {}).find((k) => k.toLowerCase() === name)
+    return key ? String(headers[key]) : ''
+  }
+
+  const directives = header('cache-control').toLowerCase().split(',').map((d) => d.trim())
+  if (directives.some((d) => ['private', 'no-store', 'no-cache'].includes(d))) return 0
+
+  const seconds = (name) => {
+    const directive = directives.find((d) => d.startsWith(`${name}=`))
+    return directive ? parseInt(directive.split('=')[1], 10) : NaN
+  }
+  const lifetime = Number.isNaN(seconds('s-maxage')) ? seconds('max-age') : seconds('s-maxage')
+  if (Number.isNaN(lifetime)) return 0
+
+  return Math.max(0, lifetime - (parseInt(header('age'), 10) || 0))
+}
+
+/**
  * Get the process cache for a scope.
  *
- * Returns null in a browser, without a ttl, or when the Axios instance sends
- * credentials, so a response built for one user is never stored or served.
+ * Returns null in a browser or when the Axios instance sends credentials, so a
+ * response built for one user is never stored or served. Each entry lives for
+ * the lifetime it is stored with, which comes from the response's Cache-Control.
  * Store a value only after its request has resolved, and ask for the cache
  * again at that point: the request may have shown the instance to be credentialed.
  *
  * @param {string} scope - The cache scope, e.g. 'index'.
  * @param {object} options - The cache options.
  * @param {object} options.axios - The Axios instance the request uses.
- * @param {number} [options.ttl] - Seconds an entry lives. Falsy disables the cache.
+ * @param {number} [options.ttl] - Seconds an entry may live at most. It shortens a lifetime, never extends one.
  * @param {string} [options.sessionCookie] - A pattern for the session cookie name.
  *
  * @returns {?{get: Function, set: Function}}
  */
 export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
-  if (!ttl || !runtime.isServer() || hasCredentials(axios, sessionCookie)) return null
+  if (!runtime.isServer() || hasCredentials(axios, sessionCookie)) return null
 
   if (!scopes.has(scope)) scopes.set(scope, new Map())
   const entries = scopes.get(scope)
+  const cap = (seconds) => (ttl > 0 ? Math.min(seconds, ttl) : seconds)
 
   return {
-    // The reader's ttl applies, so a shorter ttl never serves an older entry.
+    // The reader's cap applies too, so a shorter ttl never serves an older entry.
     get(key) {
       const entry = entries.get(key)
       if (!entry) return undefined
-      if (Date.now() - entry.created >= ttl * 1000) return undefined
+      if (Date.now() - entry.created >= cap(entry.seconds) * 1000) return undefined
       return entry.value
     },
 
-    set(key, value) {
-      entries.set(key, { value, created: Date.now() })
+    set(key, value, seconds) {
+      if (cap(seconds) > 0) entries.set(key, { value, seconds: cap(seconds), created: Date.now() })
       return value
     },
   }

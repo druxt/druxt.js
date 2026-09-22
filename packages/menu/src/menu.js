@@ -5,6 +5,9 @@ import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 // Each entry holds the request promise, so concurrent callers share one fetch.
 const menuCache = new WeakMap()
 
+// How long each menu result may be cached: the shortest Cache-Control lifetime of its pages.
+const lifetimes = new WeakMap()
+
 /**
  * DruxtMenu class.
  *
@@ -111,7 +114,7 @@ class DruxtMenu {
       ).then((result) => {
         // Asked again once resolved: the request may have shown credentials.
         const after = processCache('menu')
-        if (after) after.set(sharedKey, result)
+        if (after) after.set(sharedKey, result, lifetimes.get(result) || 0)
         return result
       })
       cache.set(cacheKey, request)
@@ -120,6 +123,22 @@ class DruxtMenu {
     }
 
     return cache.get(cacheKey)
+  }
+
+  /**
+   * Records how long a menu result may be cached.
+   *
+   * @private
+   *
+   * @param {object} result - The menu result.
+   * @param {object[]} collections - The JSON:API collections the result was built from.
+   *
+   * @returns {object} The result.
+   */
+  withLifetime(result, collections) {
+    const lifetime = (collection) => typeof this.druxt.cacheLifetime === 'function' ? this.druxt.cacheLifetime(collection) : 0
+    lifetimes.set(result, collections.length ? Math.min(...collections.map(lifetime)) : 0)
+    return result
   }
 
   /**
@@ -150,7 +169,7 @@ class DruxtMenu {
       }
     }
 
-    return { entities }
+    return this.withLifetime({ entities }, collections)
   }
 
   /**
@@ -220,7 +239,7 @@ class DruxtMenu {
       }
     }
 
-    return { entities }
+    return this.withLifetime({ entities }, collections)
   }
 }
 

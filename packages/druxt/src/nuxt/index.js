@@ -36,9 +36,9 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     ...(this.options || {}).druxt,
   }
 
-  // Share responses between server requests that carry no credentials, in production only.
+  // Share responses between server requests that carry no credentials, for as long as Drupal allows, in production only.
   if (options.cache !== false) {
-    options.cache = { ttl: this.options.dev ? 0 : 300, ...options.cache }
+    options.cache = this.options.dev ? false : { ...options.cache }
   }
 
   // Normalize slashes.
@@ -230,9 +230,11 @@ export { DruxtNuxtModule }
  * @property {boolean} [proxy.api] - Proxy the JSON:API.
  * @property {(boolean|string)} [proxy.files] - Proxy Drupal's site files directory. Provide String to specify multi-site path.
  * @property {(object|boolean)} [cache] - Server-side cache of the JSON:API index and menus, shared between
- *   requests that do not send an Authorization header, basic auth or a session cookie. `false` turns it off.
- * @property {number} [cache.ttl=300] - Seconds a cached response lives. `0` turns the cache off. Defaults to
- *   `0` under `nuxt dev`.
+ *   requests that do not send an Authorization header, basic auth or a session cookie. Each response is kept for
+ *   as long as Drupal's `Cache-Control` header allows, which is never on a site whose page cache max-age is 0.
+ *   Off under `nuxt dev`. `false` turns it off.
+ * @property {number} [cache.ttl] - Seconds a cached response may live at most. It shortens Drupal's lifetime,
+ *   never extends it.
  * @property {string} [cache.sessionCookie=S?SESS[0-9a-f]+] - A pattern for the name of the backend's session
  *   cookie. A request with a matching cookie never uses the cache.
  *
