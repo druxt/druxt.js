@@ -60,16 +60,24 @@ async function launchChrome(chromePath) {
   }
 }
 
-async function connect(endpoint) {
+// A command left unanswered would hold the audit forever, or end it silently once nothing else keeps Node alive.
+export async function connect(endpoint, { commandTimeoutMs = 30000 } = {}) {
   const socket = new WebSocket(endpoint)
   await new Promise((resolve, reject) => { socket.onopen = resolve; socket.onerror = () => reject(new Error('DevTools socket failed')) })
   let nextId = 0
   const pending = new Map()
   const listeners = new Set()
+  let closed = false
+  socket.onclose = () => {
+    closed = true
+    for (const { reject, timer } of pending.values()) { clearTimeout(timer); reject(new Error('DevTools socket closed')) }
+    pending.clear()
+  }
   socket.onmessage = ({ data }) => {
     const message = JSON.parse(data)
     if (message.id && pending.has(message.id)) {
-      const { resolve, reject } = pending.get(message.id)
+      const { resolve, reject, timer } = pending.get(message.id)
+      clearTimeout(timer)
       pending.delete(message.id)
       if (message.error) reject(new Error(message.error.message))
       else resolve(message.result)
@@ -77,8 +85,13 @@ async function connect(endpoint) {
   }
   return {
     send: (method, params = {}, sessionId) => new Promise((resolve, reject) => {
+      if (closed) return reject(new Error('DevTools socket closed'))
       const id = ++nextId
-      pending.set(id, { resolve, reject })
+      const timer = setTimeout(() => {
+        pending.delete(id)
+        reject(new Error(`${method} did not answer within ${commandTimeoutMs} ms`))
+      }, commandTimeoutMs)
+      pending.set(id, { resolve, reject, timer })
       socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }))
     }),
     on: (listener) => { listeners.add(listener); return () => listeners.delete(listener) },

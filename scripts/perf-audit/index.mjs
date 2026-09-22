@@ -126,8 +126,29 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
   return { run, breaches: comparison.breaches, outDir, errors }
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  runAudit(parseArgs(process.argv.slice(2)))
+/**
+ * Exits 1 if Node runs out of work before the promise settles.
+ *
+ * A promise that can never settle, with nothing else keeping Node alive, would
+ * otherwise end the process with code 0 and no report: a green that measured nothing.
+ *
+ * @param {Promise} promise - The audit run.
+ * @returns {Promise} The same promise.
+ */
+export function exitWhenDone(promise) {
+  let finished = false
+  process.once('beforeExit', () => {
+    if (finished) return
+    console.error('perf-audit stopped before it finished: a step never settled, so no report was written.')
+    process.exitCode = 1
+  })
+  const done = () => { finished = true }
+  promise.then(done, done)
+  return promise
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  exitWhenDone(runAudit(parseArgs(process.argv.slice(2))))
     .then(({ breaches, outDir, errors }) => { console.error(`Report written to ${outDir}`); process.exit(breaches || errors.length ? 1 : 0) })
     .catch((err) => { console.error(err.message); process.exit(1) })
 }
