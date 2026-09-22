@@ -1,0 +1,71 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.0",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "http://jsonapi.org/format/1.0/"
+          }
+        }
+      }
+    },
+    "errors": [
+      {
+        "title": "Not Found",
+        "status": "404",
+        "detail": "The \"entity\" parameter was not converted for the path \"/jsonapi/node/recipe/{entity}\" (route name: \"jsonapi.node--recipe.individual\")",
+        "links": {
+          "via": {
+            "href": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc?include=field_media_image"
+          },
+          "info": {
+            "href": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5"
+          }
+        }
+      }
+    ]
+  },
+  "status": 404,
+  "statusText": "Not Found",
+  "headers": {
+    "cache-control": "must-revalidate, no-cache, private",
+    "content-language": "en",
+    "content-type": "application/vnd.api+json",
+    "expires": "Sun, 19 Nov 1978 05:00:00 GMT"
+  },
+  "config": {
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "redact": [
+      "authorization",
+      "proxy-authorization",
+      "cookie",
+      "set-cookie",
+      "x-api-key",
+      "password"
+    ],
+    "env": {},
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org",
+    "method": "get",
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/node/recipe/9cd5cfab-fe24-4773-88e1-56123bcbc9bc?include=field_media_image"
+  },
+  "request": {}
+}
