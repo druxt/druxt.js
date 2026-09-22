@@ -37,7 +37,8 @@ export function summariseLoads(loads) {
 
 async function launchChrome(chromePath) {
   const userDataDir = await mkdtemp(join(tmpdir(), 'perf-audit-chrome-'))
-  const child = spawn(chromePath, ['--headless=new', '--no-sandbox', '--disable-gpu', '--remote-debugging-port=0', `--user-data-dir=${userDataDir}`, 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] })
+  // A container's /dev/shm (64 MB by default) is too small for a heavy page, and the renderer crashes.
+  const child = spawn(chromePath, ['--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--remote-debugging-port=0', `--user-data-dir=${userDataDir}`, 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] })
   const close = async () => { child.kill('SIGKILL'); await rm(userDataDir, { recursive: true, force: true }).catch(() => {}) }
   try {
     const endpoint = await new Promise((resolve, reject) => {
@@ -99,18 +100,20 @@ export async function connect(endpoint, { commandTimeoutMs = 30000 } = {}) {
   }
 }
 
-async function loadOnce(cdp, url, { settleMs, timeoutMs }) {
+export async function loadOnce(cdp, url, { settleMs, timeoutMs }) {
   const { browserContextId } = await cdp.send('Target.createBrowserContext')
   const { targetId } = await cdp.send('Target.createTarget', { url: 'about:blank', browserContextId })
   const { sessionId } = await cdp.send('Target.attachToTarget', { targetId, flatten: true })
   const send = (method, params) => cdp.send(method, params, sessionId)
   // Keyed by request id: a redirect reuses the id and never reports the first leg as finished.
-  const inFlight = new Set()
+  const inFlight = new Map()
   let lastActivity = Date.now()
   let loaded = false
+  let crashed = false
   const off = cdp.on((message) => {
     if (message.sessionId !== sessionId) return
-    if (message.method === 'Network.requestWillBeSent') { inFlight.add(message.params.requestId); lastActivity = Date.now() }
+    if (message.method === 'Inspector.targetCrashed') crashed = true
+    if (message.method === 'Network.requestWillBeSent') { inFlight.set(message.params.requestId, message.params.request.url); lastActivity = Date.now() }
     if (message.method === 'Network.loadingFinished' || message.method === 'Network.loadingFailed') { inFlight.delete(message.params.requestId); lastActivity = Date.now() }
     if (message.method === 'Page.loadEventFired') loaded = true
   })
@@ -124,7 +127,11 @@ async function loadOnce(cdp, url, { settleMs, timeoutMs }) {
     await send('Page.navigate', { url })
     const started = Date.now()
     while (!(loaded && inFlight.size === 0 && Date.now() - lastActivity > 500)) {
-      if (Date.now() - started > timeoutMs) throw new Error(`${url} did not settle within ${timeoutMs} ms`)
+      if (crashed) throw new Error(`${url} crashed in Chrome`)
+      if (Date.now() - started > timeoutMs) {
+        const waiting = loaded ? `${inFlight.size} request(s) still open: ${[...inFlight.values()].slice(0, 5).join(', ')}` : 'the load event never fired'
+        throw new Error(`${url} did not settle within ${timeoutMs} ms; ${waiting}`)
+      }
       await new Promise((resolve) => setTimeout(resolve, 100))
     }
     await new Promise((resolve) => setTimeout(resolve, settleMs))

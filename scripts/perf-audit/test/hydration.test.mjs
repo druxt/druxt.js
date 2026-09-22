@@ -1,9 +1,10 @@
 /* global globalThis */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readdir } from 'node:fs/promises'
+import { chmod, mkdtemp, readdir, readFile, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { tmpdir } from 'node:os'
-import { summariseLoads, probeHydration, connect, INIT_SCRIPT } from '../hydration.mjs'
+import { summariseLoads, probeHydration, connect, loadOnce, INIT_SCRIPT } from '../hydration.mjs'
 
 test('summariseLoads takes the median of each measure', () => {
   const loads = [
@@ -60,4 +61,30 @@ test('a command Chrome never answers is rejected after the command timeout', asy
   } finally {
     globalThis.WebSocket = original
   }
+})
+
+test('Chrome is started without /dev/shm, which is too small in containers', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'fake-chrome-'))
+  const chrome = join(dir, 'chrome')
+  await writeFile(chrome, `#!/bin/sh\necho "$@" > ${join(dir, 'args')}\nexit 1\n`)
+  await chmod(chrome, 0o755)
+  await assert.rejects(probeHydration('http://localhost:1/', { chromePath: chrome, loads: 1 }))
+  assert.match(await readFile(join(dir, 'args'), 'utf8'), /--disable-dev-shm-usage/)
+})
+
+test('a page that crashes in Chrome fails at once, not after the settle timeout', async () => {
+  const listeners = new Set()
+  const cdp = {
+    on: (listener) => { listeners.add(listener); return () => listeners.delete(listener) },
+    send: async (method) => {
+      if (method === 'Target.createBrowserContext') return { browserContextId: 'context' }
+      if (method === 'Target.createTarget') return { targetId: 'target' }
+      if (method === 'Target.attachToTarget') return { sessionId: 'session' }
+      if (method === 'Page.navigate') setTimeout(() => { for (const l of listeners) l({ sessionId: 'session', method: 'Inspector.targetCrashed' }) }, 10)
+      return {}
+    },
+  }
+  const started = Date.now()
+  await assert.rejects(loadOnce(cdp, 'http://localhost:1/', { settleMs: 0, timeoutMs: 60000 }), /crashed/)
+  assert.ok(Date.now() - started < 5000)
 })
