@@ -1,5 +1,6 @@
 import { DruxtClient } from 'druxt'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
+import { getMenuLinkUrl } from './utils/link.js'
 
 // Menu results, cached per client so backends and credentials never mix.
 // Each entry holds the request promise, so concurrent callers share one fetch.
@@ -116,6 +117,8 @@ class DruxtMenu {
    *
    * - This method can only retrieve user created menu items.
    * - This is the default method for the `get()` method.
+   * - Sets `attributes.url` from the link field: `link.resolvable_uri` on
+   *   Drupal 11.4 and later, or else `link.uri`.
    *
    * @example @lang js
    * const menu = await druxtMenu.getMenuLinkContent('menu')
@@ -135,7 +138,13 @@ class DruxtMenu {
     const collections = await this.druxt.getCollectionAll(resource, query, prefix)
     for (const collection of collections) {
       for (const entity of collection.data) {
-        entities.push(entity)
+        entities.push({
+          ...entity,
+          attributes: {
+            ...entity.attributes,
+            url: getMenuLinkUrl(entity.attributes),
+          },
+        })
       }
     }
 

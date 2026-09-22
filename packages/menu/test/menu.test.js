@@ -46,6 +46,47 @@ describe('DruxtMenu class', () => {
     expect((await menu.get('main')).entities.length).toBe(0)
   })
 
+  test('get - getMenuLinkContent sets url from link.resolvable_uri', async () => {
+    const menu = new DruxtMenu(baseUrl, {})
+    const { entities } = await menu.get('footer')
+    expect(entities.map(({ attributes }) => [attributes.title, attributes.url])).toStrictEqual([
+      ['Tutorials', '/tutorials'],
+      ['How-to guides', '/how-to'],
+      ['Modules', '/modules'],
+      ['API reference', '/api'],
+      ['GitHub', 'https://github.com/druxt/druxt.js'],
+      ['Discord', 'https://discord.druxtjs.org'],
+      ['Druxt on Drupal.org', 'https://www.drupal.org/project/druxt'],
+    ])
+  })
+
+  test('get - getMenuLinkContent keeps <nolink> empty', async () => {
+    const menu = new DruxtMenu(baseUrl, {})
+    const { entities } = await menu.get('probe')
+    expect(entities.map(({ attributes }) => [attributes.title, attributes.url])).toStrictEqual([
+      ['Concepts', '/explanation'],
+      ['Architecture', '/explanation/architecture'],
+      ['Draft child', '/node/39'],
+      ['API', '/api'],
+      ['Component resolution', '/explanation/component-resolution'],
+      ['GitHub', 'https://github.com/druxt/druxt.js'],
+      ['Section heading', ''],
+    ])
+  })
+
+  test('get - getJsonApiMenuItems keeps the url Drupal generated', async () => {
+    const jsonApiMenu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
+    const { entities } = await jsonApiMenu.get('probe')
+    expect(entities.map(({ attributes }) => [attributes.title, attributes.url])).toStrictEqual([
+      ['Concepts', '/explanation'],
+      ['Architecture', '/explanation/architecture'],
+      ['Component resolution', '/explanation/component-resolution'],
+      ['API', '/api'],
+      ['GitHub', 'https://github.com/druxt/druxt.js'],
+      ['Section heading', ''],
+    ])
+  })
+
   test('get - getJsonApiMenuItems', async () => {
     const jsonApiMenu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
 
