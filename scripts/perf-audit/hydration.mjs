@@ -37,7 +37,8 @@ export function summariseLoads(loads) {
 
 async function launchChrome(chromePath) {
   const userDataDir = await mkdtemp(join(tmpdir(), 'perf-audit-chrome-'))
-  const child = spawn(chromePath, ['--headless=new', '--no-sandbox', '--disable-gpu', '--remote-debugging-port=0', `--user-data-dir=${userDataDir}`, 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] })
+  // A container's /dev/shm (64 MB by default) is too small for a heavy page, and the renderer crashes.
+  const child = spawn(chromePath, ['--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--remote-debugging-port=0', `--user-data-dir=${userDataDir}`, 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] })
   const close = async () => { child.kill('SIGKILL'); await rm(userDataDir, { recursive: true, force: true }).catch(() => {}) }
   try {
     const endpoint = await new Promise((resolve, reject) => {
@@ -60,16 +61,24 @@ async function launchChrome(chromePath) {
   }
 }
 
-async function connect(endpoint) {
+// A command left unanswered would hold the audit forever, or end it silently once nothing else keeps Node alive.
+export async function connect(endpoint, { commandTimeoutMs = 30000 } = {}) {
   const socket = new WebSocket(endpoint)
   await new Promise((resolve, reject) => { socket.onopen = resolve; socket.onerror = () => reject(new Error('DevTools socket failed')) })
   let nextId = 0
   const pending = new Map()
   const listeners = new Set()
+  let closed = false
+  socket.onclose = () => {
+    closed = true
+    for (const { reject, timer } of pending.values()) { clearTimeout(timer); reject(new Error('DevTools socket closed')) }
+    pending.clear()
+  }
   socket.onmessage = ({ data }) => {
     const message = JSON.parse(data)
     if (message.id && pending.has(message.id)) {
-      const { resolve, reject } = pending.get(message.id)
+      const { resolve, reject, timer } = pending.get(message.id)
+      clearTimeout(timer)
       pending.delete(message.id)
       if (message.error) reject(new Error(message.error.message))
       else resolve(message.result)
@@ -77,8 +86,13 @@ async function connect(endpoint) {
   }
   return {
     send: (method, params = {}, sessionId) => new Promise((resolve, reject) => {
+      if (closed) return reject(new Error('DevTools socket closed'))
       const id = ++nextId
-      pending.set(id, { resolve, reject })
+      const timer = setTimeout(() => {
+        pending.delete(id)
+        reject(new Error(`${method} did not answer within ${commandTimeoutMs} ms`))
+      }, commandTimeoutMs)
+      pending.set(id, { resolve, reject, timer })
       socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }))
     }),
     on: (listener) => { listeners.add(listener); return () => listeners.delete(listener) },
@@ -86,18 +100,20 @@ async function connect(endpoint) {
   }
 }
 
-async function loadOnce(cdp, url, { settleMs, timeoutMs }) {
+export async function loadOnce(cdp, url, { settleMs, timeoutMs }) {
   const { browserContextId } = await cdp.send('Target.createBrowserContext')
   const { targetId } = await cdp.send('Target.createTarget', { url: 'about:blank', browserContextId })
   const { sessionId } = await cdp.send('Target.attachToTarget', { targetId, flatten: true })
   const send = (method, params) => cdp.send(method, params, sessionId)
   // Keyed by request id: a redirect reuses the id and never reports the first leg as finished.
-  const inFlight = new Set()
+  const inFlight = new Map()
   let lastActivity = Date.now()
   let loaded = false
+  let crashed = false
   const off = cdp.on((message) => {
     if (message.sessionId !== sessionId) return
-    if (message.method === 'Network.requestWillBeSent') { inFlight.add(message.params.requestId); lastActivity = Date.now() }
+    if (message.method === 'Inspector.targetCrashed') crashed = true
+    if (message.method === 'Network.requestWillBeSent') { inFlight.set(message.params.requestId, message.params.request.url); lastActivity = Date.now() }
     if (message.method === 'Network.loadingFinished' || message.method === 'Network.loadingFailed') { inFlight.delete(message.params.requestId); lastActivity = Date.now() }
     if (message.method === 'Page.loadEventFired') loaded = true
   })
@@ -109,12 +125,22 @@ async function loadOnce(cdp, url, { settleMs, timeoutMs }) {
     await send('Emulation.setCPUThrottlingRate', { rate: 4 })
     await send('Page.addScriptToEvaluateOnNewDocument', { source: INIT_SCRIPT })
     await send('Page.navigate', { url })
+    const failIfCrashed = () => { if (crashed) throw new Error(`${url} crashed in Chrome`) }
     const started = Date.now()
     while (!(loaded && inFlight.size === 0 && Date.now() - lastActivity > 500)) {
-      if (Date.now() - started > timeoutMs) throw new Error(`${url} did not settle within ${timeoutMs} ms`)
+      failIfCrashed()
+      if (Date.now() - started > timeoutMs) {
+        const waiting = loaded ? `${inFlight.size} request(s) still open: ${[...inFlight.values()].slice(0, 5).join(', ')}` : 'the load event never fired'
+        throw new Error(`${url} did not settle within ${timeoutMs} ms; ${waiting}`)
+      }
       await new Promise((resolve) => setTimeout(resolve, 100))
     }
-    await new Promise((resolve) => setTimeout(resolve, settleMs))
+    const settled = Date.now()
+    while (Date.now() - settled < settleMs) {
+      failIfCrashed()
+      await new Promise((resolve) => setTimeout(resolve, 100))
+    }
+    failIfCrashed()
     const { result } = await send('Runtime.evaluate', { expression: READ_SCRIPT, returnByValue: true })
     return result.value
   } finally {

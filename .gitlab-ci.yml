@@ -567,6 +567,8 @@ test:examples:
 perf:audit:
   extends: .drupal-backend
   stage: test
+  # Measures the examples, so it does not wait on lint.
+  needs: []
   allow_failure: true
   timeout: 60m
   resource_group: perf-audit

@@ -248,3 +248,15 @@ test('runAudit records the hydration layer per route and skips it when asked', a
   assert.deepEqual(skipped, [])
   assert.equal(other.run['druxt-site']['/'].hydration, null)
 })
+
+test('the audit exits 1 when it ends with a step still unsettled', async () => {
+  const { spawnSync } = await import('node:child_process')
+  const index = new URL('../index.mjs', import.meta.url).href
+  const script = `import { exitWhenDone } from ${JSON.stringify(index)}; exitWhenDone(new Promise(() => {}))`
+  const child = spawnSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8' })
+  assert.equal(child.status, 1)
+  assert.match(child.stderr, /stopped before it finished/)
+
+  const done = `import { exitWhenDone } from ${JSON.stringify(index)}; exitWhenDone(Promise.resolve())`
+  assert.equal(spawnSync(process.execPath, ['--input-type=module', '-e', done], { encoding: 'utf8' }).status, 0)
+})
