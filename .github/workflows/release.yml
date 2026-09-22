@@ -14,6 +14,11 @@ name: Release
 # ones left over from earlier merges, since the step that counts them reads
 # the whole directory, not just this push's diff.
 #
+# release: while changesets are pending, keeps a "version packages" pull
+# request open against develop. Merging it is the release decision: the push
+# that follows finds versions npm does not have, publishes them to `latest`,
+# and creates a tag and a GitHub Release for each.
+#
 # Building and publishing are separate jobs. The build job runs repository
 # code, install scripts included, so it holds no publishing rights: it ends by
 # packing tarballs. The publish job holds the OIDC permission and runs nothing
@@ -156,3 +161,140 @@ jobs:
             npm publish "./dev-packages/$file" --tag dev --access public
           done
           echo "Published under the dev tag." >> "$GITHUB_STEP_SUMMARY"
+
+  # Opens or updates the version pull request, and packs any version npm does
+  # not have yet. It runs repository code, so it holds no publishing rights.
+  version:
+    if: github.repository == 'druxt/druxt.js' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      unpublished: ${{ steps.unpublished.outputs.list }}
+    steps:
+      # GitHub runs no checks on a pull request opened with the workflow's own
+      # token, and develop requires them. An app token gets them run. Without
+      # the app the pull request still opens, and its checks need a manual run.
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app
+        if: vars.RELEASE_APP_ID != ''
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          # The install and the build run package code next. The pull request
+          # step below talks to the API with its own token, so git needs none.
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+
+      # No publish script: this step only opens or updates the pull request.
+      # The title is the squash commit's subject, so it has to be conventional.
+      - uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        id: changesets
+        with:
+          github-token: ${{ steps.app.outputs.token || github.token }}
+          version-script: yarn run version
+          pr-title: 'chore(release): version packages'
+          commit-message: 'chore(release): version packages'
+
+      - name: List the versions npm does not have
+        id: unpublished
+        if: steps.changesets.outputs.has-changesets == 'false'
+        run: |
+          list=$(node scripts/release/check.mjs --list-unpublished)
+          echo "$list"
+          {
+            echo 'list<<EOF'
+            echo "$list"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        if: steps.unpublished.outputs.list != ''
+        run: yarn build
+
+      - name: Check the release set
+        if: steps.unpublished.outputs.list != ''
+        run: yarn release:check
+
+      # The tarballs and the release notes travel together, so the publishing
+      # job needs nothing from the repository.
+      - name: Pack the tarballs and the release notes
+        if: steps.unpublished.outputs.list != ''
+        env:
+          UNPUBLISHED: ${{ steps.unpublished.outputs.list }}
+        run: |
+          # shellcheck disable=SC2086
+          node scripts/release/pack.mjs release-packages $UNPUBLISHED
+          for tag in $UNPUBLISHED; do
+            file=$(TAG="$tag" node -p "require('./release-packages/manifest.json').find((p) => p.name + '@' + p.version === process.env.TAG).file")
+            node scripts/release/notes.mjs "$tag" > "release-packages/$file.md"
+          done
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: steps.unpublished.outputs.list != ''
+        with:
+          name: release-packages
+          path: release-packages
+          retention-days: 30
+          if-no-files-found: error
+
+  # No checkout and no install: nothing from the repository runs with the
+  # OIDC permission. A rerun skips whatever an earlier attempt published.
+  release:
+    needs: version
+    if: needs.version.outputs.unpublished != '' && vars.NPM_PUBLISH == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # An exact version, and no install scripts: this job can publish.
+      - name: Update npm
+        run: npm install --global --ignore-scripts npm@11.19.1
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release-packages
+          path: release-packages
+
+      - name: Publish, tag and create the GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          node -p "require('./release-packages/manifest.json').map((p) => p.name + ' ' + p.version + ' ' + p.file).join('\n')" > entries.txt
+          while read -r name version file; do
+            if [ -n "$(npm view "$name@$version" version 2>/dev/null)" ]; then
+              echo "$name@$version is already on npm."
+            else
+              npm publish "./release-packages/$file" --access public
+            fi
+            if ! gh release view "$name@$version" > /dev/null 2>&1; then
+              gh release create "$name@$version" --target "$GITHUB_SHA" --title "$name@$version" --notes-file "release-packages/$file.md"
+            fi
+            echo "- $name@$version" >> "$GITHUB_STEP_SUMMARY"
+          done < entries.txt

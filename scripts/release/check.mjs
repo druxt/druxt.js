@@ -4,9 +4,12 @@
  * any `changeset publish`.
  *
  *   node scripts/release/check.mjs [--offline] [--skip-files]
+ *   node scripts/release/check.mjs --list-unpublished
  *
- * --offline     skip the npm registry comparison.
- * --skip-files  skip the built-files check (no build has run).
+ * --offline           skip the npm registry comparison.
+ * --skip-files        skip the built-files check (no build has run).
+ * --list-unpublished  print `name@version` for each package version npm
+ *                     does not have yet, and check nothing.
  */
 import fs from 'node:fs'
 import https from 'node:https'
@@ -86,6 +89,10 @@ export function checkPackages({ packages, registry, files = true }) {
     }
 
     if (files) {
+      // Without a list npm packs the whole directory, and nothing here could say whether the build output is in it.
+      if (!Array.isArray(manifest.files) || manifest.files.length === 0) {
+        problems.push(`${name}: package.json has no "files" list to check the build by.`)
+      }
       for (const entry of manifest.files || []) {
         const target = path.join(dir, entry)
         if (!fs.existsSync(target)) {
@@ -98,6 +105,21 @@ export function checkPackages({ packages, registry, files = true }) {
   }
 
   return problems
+}
+
+/**
+ * Lists the package versions the registry does not have yet.
+ *
+ * @param {object} options - The input.
+ * @param {object[]} options.packages - `{ dir, manifest }` entries.
+ * @param {object} options.registry - Package name to `{ latest, versions }`, or `null` when unpublished.
+ * @returns {string[]} One `name@version` per unpublished package version.
+ */
+export function listUnpublished({ packages, registry }) {
+  return packages
+    .filter(({ manifest }) => !manifest.private)
+    .filter(({ manifest }) => !registry[manifest.name] || !registry[manifest.name].versions.includes(manifest.version))
+    .map(({ manifest }) => `${manifest.name}@${manifest.version}`)
 }
 
 /**
@@ -138,7 +160,7 @@ export function fetchRecord(name) {
 
 async function main() {
   const args = process.argv.slice(2)
-  const unknown = args.filter((arg) => !['--offline', '--skip-files'].includes(arg))
+  const unknown = args.filter((arg) => !['--offline', '--skip-files', '--list-unpublished'].includes(arg))
   if (unknown.length) throw new Error(`Unknown option: ${unknown.join(', ')}`)
 
   const packages = readPackages(process.cwd())
@@ -148,6 +170,12 @@ async function main() {
     for (const { manifest } of packages.filter(({ manifest }) => !manifest.private)) {
       registry[manifest.name] = await fetchRecord(manifest.name)
     }
+  }
+
+  if (args.includes('--list-unpublished')) {
+    if (!registry) throw new Error('--list-unpublished needs the registry, so it cannot run with --offline.')
+    for (const entry of listUnpublished({ packages, registry })) console.log(entry)
+    return
   }
 
   const problems = checkPackages({ packages, registry, files: !args.includes('--skip-files') })
