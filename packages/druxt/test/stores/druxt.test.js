@@ -165,6 +165,9 @@ describe('DruxtStore', () => {
     const fallback = await store.dispatch('druxt/getResource', { ...mockPage.data, bypassCache: true })
     delete fallback._druxt_full
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    // The cached document is returned, and the failed refresh is reported with it.
+    expect(fallback.error).toStrictEqual({ statusCode: 500, message: '' })
+    delete fallback.error
     expect(fallback).toStrictEqual(bypassedResource)
   })
 
@@ -439,6 +442,76 @@ describe('DruxtStore', () => {
     const resource = await store.dispatch('druxt/getResource', { id, type })
     expect(store.$druxt.getResource).toHaveBeenCalledTimes(2)
     expect(resource.data).toStrictEqual(mockPage.data)
+  })
+
+  test('getResource reports the failure status', async () => {
+    const mockPage = await getMockResource('node--page')
+    const { id, type } = mockPage.data
+    const err = new Error('Unauthorized')
+    err.response = { status: 401, data: { message: 'Token expired' } }
+    store.$druxt.getResource = jest.fn(() => Promise.reject(err))
+
+    const result = await store.dispatch('druxt/getResource', { id, type })
+    expect(result.error).toStrictEqual({ statusCode: 401, message: 'Token expired' })
+    expect(result.data).toBeUndefined()
+  })
+
+  test('getResource reports the JSON:API error detail Drupal sends', async () => {
+    const mockPage = await getMockResource('node--page')
+    const { id, type } = mockPage.data
+    const err = new Error('403: Forbidden\n\nURL: https://example.com')
+    err.response = { status: 403, data: { errors: [{ detail: 'The current user is not allowed to GET the selected resource.' }] } }
+    store.$druxt.getResource = jest.fn(() => Promise.reject(err))
+
+    const result = await store.dispatch('druxt/getResource', { id, type })
+    expect(result.error).toStrictEqual({
+      statusCode: 403,
+      message: 'The current user is not allowed to GET the selected resource.',
+    })
+  })
+
+  test('getResource reports 500 when the request never reached Drupal', async () => {
+    const mockPage = await getMockResource('node--page')
+    const { id, type } = mockPage.data
+    store.$druxt.getResource = jest.fn(() => Promise.reject(new Error('Backend down')))
+
+    const result = await store.dispatch('druxt/getResource', { id, type })
+    expect(result.error).toStrictEqual({ statusCode: 500, message: 'Backend down' })
+  })
+
+  test('getResource reports the failure to every sharer', async () => {
+    const mockPage = await getMockResource('node--page')
+    const { id, type } = mockPage.data
+    let reject
+    store.$druxt.getResource = jest.fn(() => new Promise((_, r) => { reject = r }))
+
+    const requests = [1, 2, 3].map(() => store.dispatch('druxt/getResource', { id, type }))
+    await Promise.resolve()
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(1)
+
+    const err = new Error('Unauthorized')
+    err.response = { status: 401, data: { message: 'Token expired' } }
+    reject(err)
+
+    const results = await Promise.all(requests)
+    results.forEach((result) => {
+      expect(result.error).toStrictEqual({ statusCode: 401, message: 'Token expired' })
+    })
+  })
+
+  test('getResource reports a failed refresh beside the cached resource', async () => {
+    const mockPage = await getMockResource('node--page')
+    const { id, type } = mockPage.data
+    const cached = await store.dispatch('druxt/getResource', { id, type })
+    expect(cached.data).toStrictEqual(mockPage.data)
+
+    const err = new Error('Unauthorized')
+    err.response = { status: 401, data: { message: 'Token expired' } }
+    store.$druxt.getResource = jest.fn(() => Promise.reject(err))
+
+    const result = await store.dispatch('druxt/getResource', { id, type, bypassCache: true })
+    expect(result.data).toStrictEqual(mockPage.data)
+    expect(result.error).toStrictEqual({ statusCode: 401, message: 'Token expired' })
   })
 
   test('in-flight requests are not shared between stores', async () => {
