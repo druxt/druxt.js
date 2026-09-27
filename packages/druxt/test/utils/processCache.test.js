@@ -149,6 +149,13 @@ describe('processCache', () => {
     jest.isolateModules(() => { copy = require('../../src/utils/processCache') })
     copy.runtime.isServer = () => true
     expect(copy.processCache('index', { axios: axios() }).get('key')).toBe('value')
+
+    // The generation is shared too. A handle the original module took before
+    // a clear through the copy has its write refused after it.
+    const before = processCache('index', { axios: axios() })
+    copy.resetProcessCache()
+    processCache('index', { axios: axios() }).set('later', 'fetched before the clear', 300, before.generation)
+    expect(processCache('index', { axios: axios() }).get('later')).toBe(undefined)
   })
 
   test('configHasCredentials reads the config as sent', () => {
