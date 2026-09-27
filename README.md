@@ -121,3 +121,4 @@ and all dependencies installed on first open.
 ## License
 
 [MIT](https://github.com/druxt/druxt.js/blob/develop/LICENSE)
+
