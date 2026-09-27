@@ -1,13 +1,9 @@
+import { createHash, timingSafeEqual } from 'crypto'
 import { resetProcessCache } from '../utils/processCache'
 
-// Compares in time that does not depend on where the strings first differ.
-const safeEqual = (a, b) => {
-  let diff = a.length ^ b.length
-  for (let i = 0; i < Math.max(a.length, b.length); i++) {
-    diff |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0)
-  }
-  return diff === 0
-}
+// Compares fixed-size digests, so neither the secret's content nor its length shows in the time taken.
+const digest = (value) => createHash('sha256').update(String(value)).digest()
+const safeEqual = (a, b) => timingSafeEqual(digest(a), digest(b))
 
 /**
  * Server middleware that empties the process cache when Drupal asks.
