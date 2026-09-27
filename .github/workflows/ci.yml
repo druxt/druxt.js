@@ -4,12 +4,12 @@ on:
   push:
     branches: [develop, main]
   pull_request:
-    # feature/** so a stacked PR is actually checked. A PR based on another
-    # feature branch matched nothing here, so it ran no jobs at all: not build,
-    # lint, tests or the audit, and the PR showed no checks rather than showing
-    # them failing. Stacking is only useful if the upper PR is verified before
-    # its base merges.
-    branches: [develop, main, 'feature/**']
+    # No branch filter on purpose. The filter matches the pull request's base,
+    # so a stacked pull request based on anything unlisted ran no jobs at all,
+    # and showed no checks rather than failing ones. Listing prefixes only moved
+    # the hole: feature/** was checked while perf/** and fix/** were not.
+    # Stacking is only useful if the upper pull request is verified before its
+    # base merges, and that has to hold for every branch name.
 
 permissions:
   contents: read
