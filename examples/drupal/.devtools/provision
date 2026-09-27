@@ -141,7 +141,7 @@ TASK('Setting the admin account password.');
 drush('php-script %s', __DIR__ . '/set-admin-password.php');
 PASS('Admin (uid 1) password set to the documented example login.');
 
-// Drupal sends a max-age only above 0, and Druxt keeps a response between server requests for exactly that long.
+// Drupal sends a Cache-Control max-age only above 0, so a frontend that follows it stores nothing at the default.
 TASK('Allowing responses to be cached for five minutes.');
 drush('config:set system.performance cache.page.max_age %s --yes', '300');
 PASS('Page cache max age is 300 seconds, as a configured site would have it.');
