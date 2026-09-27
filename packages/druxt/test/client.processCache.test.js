@@ -115,6 +115,44 @@ describe('DruxtClient process cache', () => {
     now.mockRestore()
   })
 
+  test('the lifetime read later is what is left of it', async () => {
+    const now = jest.spyOn(Date, 'now')
+    now.mockReturnValue(1000)
+    const client = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
+    const { data } = await client.get('/jsonapi')
+    expect(client.cacheLifetime(data)).toBe(300)
+    now.mockReturnValue(1000 + 100 * 1000)
+    expect(client.cacheLifetime(data)).toBe(200)
+    now.mockReturnValue(1000 + 400 * 1000)
+    expect(client.cacheLifetime(data)).toBe(0)
+    now.mockRestore()
+  })
+
+  test('the merged index lives no longer than the resource config response allows', async () => {
+    // The index says 300 seconds, the resource config it is decorated with says no-store.
+    const configHref = `${baseUrl}/jsonapi/jsonapi_resource_config/jsonapi_resource_config`
+    const configured = () => {
+      const instance = requestAxios()
+      const get = instance.get
+      instance.get = jest.fn(async (url, options) => {
+        if (url === configHref) {
+          calls += 1
+          return { config: { headers: {} }, headers: { 'cache-control': 'no-store' }, data: { data: [{ attributes: { drupal_internal__id: 'node--page', resourceType: 'node--page', resourceFields: {} } }] } }
+        }
+        const response = await get(url, options)
+        response.data.links['jsonapi_resource_config--jsonapi_resource_config'] = { href: configHref }
+        return response
+      })
+      return instance
+    }
+    await new DruxtClient(baseUrl, { axios: configured(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(2)
+
+    // Nothing was stored, so the next request fetches both again.
+    await new DruxtClient(baseUrl, { axios: configured(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(4)
+  })
+
   test('cacheLifetime reads the lifetime of a document the client fetched', async () => {
     const client = new DruxtClient(baseUrl, { axios: requestAxios({}, {}, { 'cache-control': 'public, max-age=120' }) })
     const { data } = await client.get('/jsonapi')

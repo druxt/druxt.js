@@ -4,7 +4,8 @@ const baseUrl = 'https://demo-api.druxtjs.org'
 
 // A stub of the process cache that DruxtClient.processCache('menu') returns.
 const store = new Map()
-const handle = { get: (key) => store.get(key), set: (key, value, seconds) => { if (seconds > 0) store.set(key, value) } }
+// As the real cache does, a write that may not be kept removes the earlier entry.
+const handle = { get: (key) => store.get(key), set: (key, value, seconds) => { if (seconds > 0) store.set(key, value); else store.delete(key) } }
 
 // Each server request gets its own client. `processCache` is null when the
 // request carries credentials or the cache is off, and absent on an older druxt.
@@ -62,6 +63,20 @@ describe('DruxtMenu process cache', () => {
     let asked = 0
     await requestMenu(() => (asked++ === 0 ? handle : null)).get('main')
     expect(store.size).toBe(0)
+  })
+
+  test('a failed fetch leaves an earlier menu in place', async () => {
+    await requestMenu().get('main')
+    expect(store.size).toBe(1)
+
+    // A reader that misses the entry, as a shorter-capped one can, and whose
+    // fetch then fails, must not remove the entry others still read.
+    const missing = { get: () => undefined, set: handle.set }
+    const menu = requestMenu(() => missing)
+    menu.druxt.getCollectionAll = async () => { throw new Error('backend down') }
+    const result = await menu.get('main')
+    expect(result.entities).toStrictEqual([])
+    expect(store.size).toBe(1)
   })
 
   test('only a resolved menu is stored, never the request', async () => {

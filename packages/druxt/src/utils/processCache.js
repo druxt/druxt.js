@@ -101,7 +101,9 @@ export const parseCacheLifetime = (headers) => {
 
   const seconds = (name) => {
     const directive = directives.find((d) => d.startsWith(`${name}=`))
-    return directive ? parseInt(directive.split('=')[1], 10) : NaN
+    // The whole value must be digits: parseInt would read 300 from `300abc`.
+    const value = directive ? directive.slice(name.length + 1) : ''
+    return /^\d+$/.test(value) ? Number(value) : NaN
   }
   const lifetime = Number.isNaN(seconds('s-maxage')) ? seconds('max-age') : seconds('s-maxage')
   if (Number.isNaN(lifetime)) return 0
@@ -142,8 +144,11 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
       return entry.value
     },
 
+    // A value that may not be kept also removes what an earlier response
+    // stored under the key, so the cache follows Drupal's latest answer.
     set(key, value, seconds) {
       if (cap(seconds) > 0) entries.set(key, { value, seconds: cap(seconds), created: Date.now() })
+      else entries.delete(key)
       return value
     },
   }

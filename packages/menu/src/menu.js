@@ -114,7 +114,9 @@ class DruxtMenu {
       ).then((result) => {
         // Asked again once resolved: the request may have shown credentials.
         const after = processCache('menu')
-        if (after) after.set(sharedKey, result, lifetimes.get(result) || 0)
+        // No record means the fetch failed, so nothing is written and an
+        // earlier entry stays. A recorded 0 is Drupal refusing, which set() keeps.
+        if (after && lifetimes.has(result)) after.set(sharedKey, result, lifetimes.get(result))
         return result
       })
       cache.set(cacheKey, request)

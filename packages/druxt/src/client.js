@@ -141,7 +141,10 @@ class DruxtClient {
    * @returns {number} Seconds, from the response's Cache-Control. 0 when it may not be cached or is unknown.
    */
   cacheLifetime(document) {
-    return (document && typeof document === 'object' && lifetimes.get(document)) || 0
+    const record = document && typeof document === 'object' && lifetimes.get(document)
+    if (!record) return 0
+    // Counted from when the response arrived, not from when it is stored.
+    return Math.max(0, record.seconds - Math.floor((Date.now() - record.at) / 1000))
   }
 
   /**
@@ -342,7 +345,8 @@ class DruxtClient {
   async get(url, options) {
     try {
       const res = await this.axios.get(url, options)
-      if (res && res.data && typeof res.data === 'object') lifetimes.set(res.data, parseCacheLifetime(res.headers))
+      // Kept with its arrival time, so the lifetime read later is what is left of it.
+      if (res && res.data && typeof res.data === 'object') lifetimes.set(res.data, { seconds: parseCacheLifetime(res.headers), at: Date.now() })
 
       return res
     } catch(err) {
@@ -477,12 +481,16 @@ class DruxtClient {
 
     // Use JSON:API resource config to decorate the index.
     // @TODO - Add test coverage.
+    // The merged index lives no longer than any response it was built from.
+    const documents = [data]
     if (index[this.options.jsonapiResourceConfig]) {
       let resources = []
 
       // Get JSON:API resource config if permissions setup correctly.
       try {
-        resources = (await this.get(index[this.options.jsonapiResourceConfig].href)).data.data
+        const config = (await this.get(index[this.options.jsonapiResourceConfig].href)).data
+        resources = config.data
+        documents.push(config)
       } catch(err) {
         this.log.warn(err.message)
       }
@@ -509,7 +517,7 @@ class DruxtClient {
     // Set index.
     this.index[prefix] = index
 
-    return this.cacheLifetime(data)
+    return Math.min(...documents.map((document) => this.cacheLifetime(document)))
   }
 
   /**

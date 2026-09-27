@@ -40,6 +40,10 @@ describe('processCache', () => {
     // Time already spent in a cache in front of Drupal is taken off.
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', age: '100' })).toBe(200)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', age: '400' })).toBe(0)
+    // A value that is not all digits is not a lifetime, however it starts.
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300abc' })).toBe(0)
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age=' })).toBe(0)
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age="300"' })).toBe(0)
   })
 
   test('refused in a browser or with credentials', () => {
@@ -66,6 +70,10 @@ describe('processCache', () => {
     cache.set('short', 'value', 60)
     expect(cache.set('none', 'value', 0)).toBe('value')
     expect(cache.get('none')).toBe(undefined)
+    // A response that may not be kept also removes what an earlier one stored.
+    cache.set('replaced', 'earlier', 300)
+    cache.set('replaced', 'later', 0)
+    expect(cache.get('replaced')).toBe(undefined)
     now.mockReturnValue(1000 + 61 * 1000)
     expect(cache.get('short')).toBe(undefined)
     expect(cache.get('long')).toBe('value')
