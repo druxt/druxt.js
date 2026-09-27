@@ -93,10 +93,11 @@ export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) =
  * @returns {number} Seconds the response may be kept, 0 when it may not.
  */
 export const parseCacheLifetime = (headers) => {
-  const header = (name) => {
-    const key = Object.keys(headers || {}).find((k) => k.toLowerCase() === name)
-    return key ? String(headers[key]) : ''
-  }
+  // Every key that names the header, whatever its case, joined as a list header is.
+  const header = (name) => Object.entries(headers || {})
+    .filter(([key]) => key.toLowerCase() === name)
+    .map(([, value]) => String(value))
+    .join(', ')
 
   const directives = header('cache-control').toLowerCase().split(',').map((d) => d.trim())
   if (directives.some((d) => ['private', 'no-store', 'no-cache'].includes(d))) return 0

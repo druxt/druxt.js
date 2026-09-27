@@ -47,6 +47,7 @@ describe('DruxtJS Nuxt module', () => {
     const pluginOptions = () => mock.addPlugin.mock.calls.map(([plugin]) => plugin.options).filter((o) => o && o.baseUrl).pop()
 
     // On in production, for as long as Drupal's Cache-Control allows.
+    mock.options.dev = false
     await DruxtNuxtModule.call(mock, options)
     expect(pluginOptions().cache).toStrictEqual({})
 

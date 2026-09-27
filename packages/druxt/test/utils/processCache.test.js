@@ -53,6 +53,8 @@ describe('processCache', () => {
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Accept-Language' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Cookie, Accept-Language' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: '*' })).toBe(0)
+    // A header present under two spellings of its name is read as one list.
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Cookie', Vary: 'Accept-Language' })).toBe(0)
   })
 
   test('refused in a browser or with credentials', () => {
