@@ -37,10 +37,11 @@ const collectionHash = (query) => {
 const flush = (tree, key, keys, leaf) => {
   const byKey = tree[key]
   if (!byKey) return
-  if (!keys.length && !leaf) return Vue.delete(tree, key)
+  // An empty string is a real key, so only an omitted selector widens the flush.
+  if (!keys.length && leaf === undefined) return Vue.delete(tree, key)
   for (const k of keys.length ? keys : Object.keys(byKey)) {
     if (!byKey[k]) continue
-    if (leaf) Vue.delete(byKey[k], leaf)
+    if (leaf !== undefined) Vue.delete(byKey[k], leaf)
     else Vue.delete(byKey, k)
   }
 }
@@ -200,8 +201,8 @@ const DruxtStore = ({ store }) => {
        */
       flushCollection (state, { type, hash, query, prefix } = {}) {
         if (!type) return Vue.set(state, 'collections', {})
-        const key = hash || (query ? collectionHash(query) : undefined)
-        flush(state.collections, type, key ? [key] : [], prefix)
+        const key = hash !== undefined ? hash : (query !== undefined ? collectionHash(query) : undefined)
+        flush(state.collections, type, key !== undefined ? [key] : [], prefix)
       },
 
       /**
@@ -219,7 +220,7 @@ const DruxtStore = ({ store }) => {
        */
       flushResource (state, { type, id, prefix } = {}) {
         if (!type) return Vue.set(state, 'resources', {})
-        flush(state.resources, type, id ? [id] : [], prefix)
+        flush(state.resources, type, id !== undefined ? [id] : [], prefix)
       }
     },
 

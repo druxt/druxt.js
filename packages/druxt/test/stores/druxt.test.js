@@ -531,6 +531,34 @@ describe('DruxtStore', () => {
     expect(store.state.druxt.collections).toStrictEqual({})
   })
 
+  test('flushCollection treats an empty string as a selector, not as omitted', async () => {
+    const type = 'node--page'
+    const collection = await getMockCollection(type)
+    const add = (prefix, hash) => store.commit('druxt/addCollection', { collection: { ...collection }, type, prefix, hash })
+
+    // An empty query is stored under _default, so flushing it names that key only.
+    add('en', '_default')
+    add('en', 'a')
+    store.commit('druxt/flushCollection', { type, query: '', prefix: 'en' })
+    expect(store.state.druxt.collections[type]._default.en).toBe(undefined)
+    expect(store.state.druxt.collections[type].a.en).toBeTruthy()
+
+    // An empty prefix is the default language, not every language.
+    add('', 'a')
+    store.commit('druxt/flushCollection', { type, hash: 'a', prefix: '' })
+    expect(store.state.druxt.collections[type].a['']).toBe(undefined)
+    expect(store.state.druxt.collections[type].a.en).toBeTruthy()
+
+    // The same for a resource.
+    const resource = await getMockResource(type)
+    const id = resource.data.id
+    store.commit('druxt/addResource', { prefix: '', resource: { ...resource } })
+    store.commit('druxt/addResource', { prefix: 'en', resource: { ...resource } })
+    store.commit('druxt/flushResource', { type, id, prefix: '' })
+    expect(store.state.druxt.resources[type][id]['']).toBe(undefined)
+    expect(store.state.druxt.resources[type][id].en).toBeTruthy()
+  })
+
   test('flushCollection by type and prefix, by query, and for nothing stored', async () => {
     const type = 'node--page'
     const collection = await getMockCollection(type)
