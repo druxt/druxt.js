@@ -30,7 +30,8 @@ on:
       - '.changeset/*.md'
       - '!.changeset/README.md'
   pull_request:
-    branches: [develop, main, 'feature/**']
+    # No branch filter, for the reason given in ci.yml: it matches the base,
+    # so a stacked pull request that changes these paths ran no jobs.
     paths:
       - .github/workflows/release.yml
       - .changeset/config.json
