@@ -394,15 +394,16 @@ const DruxtStore = ({ store }) => {
 
         // Request the resource from the DruxtClient if required.
         let resource
+        const since = generation.value
         if (bypassCache || !storedResource || fields) {
           try {
             // Identical concurrent dispatches share one request and one commit.
             const key = JSON.stringify(['resource', prefix, type, id, queryObject])
             resource = await share(key, async () => {
-              const since = generation.value
+              const started = generation.value
               const response = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
               // Stored unless a flush happened meanwhile.
-              if (since === generation.value) commit('addResource', { prefix, resource: { ...response } })
+              if (started === generation.value) commit('addResource', { prefix, resource: { ...response } })
               return response
             })
           } catch(e) {
@@ -410,8 +411,10 @@ const DruxtStore = ({ store }) => {
           }
         }
 
-        // Build resource to be returned: the stored entry, or the response a flush kept out of the store.
-        const result = { ...(((state.resources[type] || {})[id] || {})[prefix] || resource) }
+        // Build resource to be returned: the stored entry, or the response when
+        // a flush during the wait kept it out of the store and may have left a stale entry.
+        const stored = ((state.resources[type] || {})[id] || {})[prefix]
+        const result = { ...(since === generation.value && stored ? stored : (resource || stored)) }
 
         // Merge included resources into resource.
         if (queryObject.include && ((resource || {}).included || (storedResource || {}).included)) {

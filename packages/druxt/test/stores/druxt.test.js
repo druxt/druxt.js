@@ -446,6 +446,16 @@ describe('DruxtStore', () => {
     await Promise.all(after)
     expect(store.state.druxt.collections[type]._default.undefined.data).toHaveLength(mockCollectionPage.data.length)
     expect(store.state.druxt.resources[type][id].undefined.data).toStrictEqual(mockPage.data)
+
+    // A bypass that resolves after an unrelated flush returns the fresh
+    // document, not the entry the flush left in the store.
+    const fresh = { ...mockPage, data: { ...mockPage.data, attributes: { ...mockPage.data.attributes, title: 'Fresh' } } }
+    const bypass = store.dispatch('druxt/getResource', { type, id, bypassCache: true })
+    await Promise.resolve()
+    store.commit('druxt/flushCollection', {})
+    resources[2](fresh)
+    expect((await bypass).data.attributes.title).toBe('Fresh')
+    expect(store.state.druxt.resources[type][id].undefined.data).toStrictEqual(mockPage.data)
   })
 
   test('getCollection retries after a failed request', async () => {
