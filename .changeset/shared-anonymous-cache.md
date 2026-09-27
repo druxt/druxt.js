@@ -12,14 +12,14 @@ A request with an Authorization header, basic auth or a Drupal session cookie ne
 export default {
   druxt: {
     cache: {
-      ttl: 60, // optional: keep a response at most this many seconds
+      ttl: 60, // optional: keep a response at most this many seconds, 0 keeps nothing
       sessionCookie: 'MY_CUSTOM_SESSION[0-9a-f]+',
     },
   },
 };
 ```
 
-A response whose `Vary` header names a request header other than the cookie is not kept, since the cache cannot tell such variants apart. Drupal itself sends only `Vary: Cookie`; a proxy or module in front of it may add `Accept-Language`, `Origin` or `User-Agent`, and those responses then stay uncached.
+A response whose `Vary` header names a request header the visitor's browser sends is not kept, since the cache cannot tell such variants apart. A Druxt backend sends `Vary: Cookie` and, from the consumers module, `Vary: X-Consumer-ID`, both of which are fine: neither is set by a browser. A proxy or module in front of Drupal may add `Accept-Language`, `Origin` or `User-Agent`, and those responses then stay uncached.
 
 `Vary: Cookie` is treated as Drupal's own page cache treats it: requests without a session cookie share one response, whatever other cookies they send. Modules that change a response by some other cookie, such as a consent or region cookie, are not covered. Name that cookie in `sessionCookie` so requests with it never read or fill the cache, or turn the cache off.
 

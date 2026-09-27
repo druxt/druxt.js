@@ -102,13 +102,15 @@ export const parseCacheLifetime = (headers) => {
   const directives = header('cache-control').toLowerCase().split(',').map((d) => d.trim())
   if (directives.some((d) => ['private', 'no-store', 'no-cache'].includes(d))) return 0
 
-  // The cache is keyed by URL alone, so a response that varies by a request
-  // header cannot be stored. Cookie is the exception, as Drupal puts it on every
-  // cacheable response and its page cache serves such a response to any request
-  // without a session cookie, which is the same rule the credentials gate applies.
-  // Accept-Encoding is harmless, since the decoded document is what is stored.
+  // The cache is keyed by URL alone, so a response that varies by a header the
+  // visitor's browser sends, such as Accept-Language, cannot be stored. A header
+  // the site's own client sends the same way on every request tells no variants
+  // apart, and Drupal names three of those on every cacheable response: Cookie,
+  // which its own page cache also ignores without a session; X-Consumer-ID,
+  // which the consumers module adds and which no browser sets; and
+  // Accept-Encoding, harmless since the decoded document is what is stored.
   const vary = header('vary').toLowerCase().split(',').map((v) => v.trim()).filter(Boolean)
-  if (vary.some((v) => !['cookie', 'accept-encoding'].includes(v))) return 0
+  if (vary.some((v) => !['cookie', 'x-consumer-id', 'accept-encoding'].includes(v))) return 0
 
   const seconds = (name) => {
     const directive = directives.find((d) => d.startsWith(`${name}=`))
@@ -120,7 +122,12 @@ export const parseCacheLifetime = (headers) => {
   const lifetime = directives.some((d) => d.startsWith('s-maxage=')) ? seconds('s-maxage') : seconds('max-age')
   if (Number.isNaN(lifetime)) return 0
 
-  return Math.max(0, lifetime - (parseInt(header('age'), 10) || 0))
+  // Age already spent before arrival. RFC 9111 takes the Age header, or the
+  // time since the response's Date if that is larger.
+  const date = Date.parse(header('date'))
+  const apparent = Number.isNaN(date) ? 0 : Math.max(0, Math.floor((Date.now() - date) / 1000))
+  const age = Math.max(parseInt(header('age'), 10) || 0, apparent)
+  return Math.max(0, lifetime - age)
 }
 
 /**
@@ -135,7 +142,7 @@ export const parseCacheLifetime = (headers) => {
  * @param {string} scope - The cache scope, e.g. 'index'.
  * @param {object} options - The cache options.
  * @param {object} options.axios - The Axios instance the request uses.
- * @param {number} [options.ttl] - Seconds an entry may live at most. It shortens a lifetime, never extends one.
+ * @param {number} [options.ttl] - Seconds an entry may live at most. It shortens a lifetime, never extends one, and 0 keeps nothing.
  * @param {string} [options.sessionCookie] - A pattern for the session cookie name.
  *
  * @returns {?{get: Function, set: Function}}
@@ -145,7 +152,8 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
 
   if (!scopes.has(scope)) scopes.set(scope, new Map())
   const entries = scopes.get(scope)
-  const cap = (seconds) => (ttl > 0 ? Math.min(seconds, ttl) : seconds)
+  // A ttl caps what may be kept, so 0 keeps nothing; without one, Drupal's lifetime stands.
+  const cap = (seconds) => (typeof ttl === 'number' ? Math.min(seconds, ttl) : seconds)
 
   return {
     // The reader's cap applies too, so a shorter ttl never serves an older entry.

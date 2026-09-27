@@ -40,6 +40,18 @@ describe('processCache', () => {
     // Time already spent in a cache in front of Drupal is taken off.
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', age: '100' })).toBe(200)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', age: '400' })).toBe(0)
+    // So is the time since the response was generated, when Date shows more
+    // than Age does, as when a cache in front of Drupal forgot to add Age.
+    const now = jest.spyOn(Date, 'now')
+    now.mockReturnValue(Date.parse('Sun, 27 Sep 2026 10:00:00 GMT'))
+    const stale = { 'cache-control': 'public, max-age=300', date: 'Sun, 27 Sep 2026 09:58:20 GMT' }
+    expect(parseCacheLifetime(stale)).toBe(200)
+    expect(parseCacheLifetime({ ...stale, age: '50' })).toBe(200)
+    expect(parseCacheLifetime({ ...stale, age: '250' })).toBe(50)
+    expect(parseCacheLifetime({ ...stale, date: 'Sun, 27 Sep 2026 09:50:00 GMT' })).toBe(0)
+    // A Date in the future, from a clock ahead of ours, counts as no age.
+    expect(parseCacheLifetime({ ...stale, date: 'Sun, 27 Sep 2026 10:05:00 GMT' })).toBe(300)
+    now.mockRestore()
     // A value that is not all digits is not a lifetime, however it starts.
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300abc' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=' })).toBe(0)
@@ -50,6 +62,8 @@ describe('processCache', () => {
     // already accounts for. A variation on anything else cannot be told apart.
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Cookie' })).toBe(300)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', Vary: 'Cookie, Accept-Encoding' })).toBe(300)
+    // A Druxt backend's consumers module varies every response by X-Consumer-ID.
+    expect(parseCacheLifetime({ 'cache-control': 'max-age=300, public', vary: 'Cookie, X-Consumer-ID' })).toBe(300)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Accept-Language' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Cookie, Accept-Language' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: '*' })).toBe(0)
@@ -91,6 +105,14 @@ describe('processCache', () => {
     now.mockReturnValue(1000 + 301 * 1000)
     expect(cache.get('long')).toBe(undefined)
     now.mockRestore()
+  })
+
+  test('a ttl of 0 keeps nothing and reads nothing', () => {
+    processCache('index', { axios: axios(), ttl: 0 }).set('key', 'value', 300)
+    expect(processCache('index', { axios: axios() }).get('key')).toBe(undefined)
+    processCache('index', { axios: axios() }).set('key', 'value', 300)
+    expect(processCache('index', { axios: axios(), ttl: 0 }).get('key')).toBe(undefined)
+    expect(processCache('index', { axios: axios() }).get('key')).toBe('value')
   })
 
   test('the ttl caps an entry, for the writer and the reader, and never extends one', () => {
