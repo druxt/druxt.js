@@ -177,7 +177,9 @@ describe('DruxtClient process cache', () => {
     await signedIn.getIndex()
     expect(indexCalls()).toBe(1)
 
-    // The next request finds nothing, so it fetches rather than reads that index.
+    // The next request finds nothing, so it fetches rather than reads that
+    // index. It is also the cross-user check: an anonymous client must never
+    // read what the signed-in request fetched.
     await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
     expect(indexCalls()).toBe(2)
   })
