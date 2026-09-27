@@ -2,42 +2,42 @@
   "druxt-site": {
     "/": {
       "backendCold": {
-        "index": 2,
+        "index": 1,
         "collections": 19,
         "resources": 49,
         "router": 1,
         "menu": 3,
         "files": 0,
         "other": 0,
-        "total": 74
+        "total": 73
       },
       "backendWarm": {
-        "index": 2,
+        "index": 0,
         "collections": 19,
         "resources": 49,
         "router": 1,
-        "menu": 3,
+        "menu": 0,
         "files": 0,
         "other": 0,
-        "total": 74
+        "total": 69
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 760,
-        "totalMs": 765,
-        "htmlBytes": 249404,
-        "nuxtBytes": 220505,
+        "ttfbMs": 717,
+        "totalMs": 721,
+        "htmlBytes": 249410,
+        "nuxtBytes": 220511,
         "fetchKeys": 129,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 78,
-        "lcpMs": 5867,
+        "performance": 81,
+        "lcpMs": 4902,
         "clsScore": 0,
-        "tbtMs": 41,
-        "fcpMs": 1685,
+        "tbtMs": 32,
+        "fcpMs": 1692,
         "requests": 28,
-        "bytes": 962728,
+        "bytes": 963255,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -48,42 +48,42 @@
     },
     "/en/recipes": {
       "backendCold": {
-        "index": 2,
+        "index": 0,
         "collections": 16,
         "resources": 70,
         "router": 2,
         "menu": 3,
         "files": 0,
         "other": 0,
-        "total": 93
+        "total": 91
       },
       "backendWarm": {
-        "index": 2,
+        "index": 0,
         "collections": 16,
         "resources": 70,
         "router": 2,
-        "menu": 3,
+        "menu": 0,
         "files": 0,
         "other": 0,
-        "total": 93
+        "total": 88
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 861,
-        "totalMs": 864,
-        "htmlBytes": 221131,
-        "nuxtBytes": 193645,
+        "ttfbMs": 803,
+        "totalMs": 806,
+        "htmlBytes": 221090,
+        "nuxtBytes": 193604,
         "fetchKeys": 138,
         "errorState": null
       },
       "lighthouse": {
         "performance": 75,
-        "lcpMs": 7450,
+        "lcpMs": 7448,
         "clsScore": 0,
-        "tbtMs": 38,
-        "fcpMs": 1691,
+        "tbtMs": 43,
+        "fcpMs": 1689,
         "requests": 30,
-        "bytes": 1378048,
+        "bytes": 1378537,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -94,42 +94,42 @@
     },
     "/en/recipes/deep-mediterranean-quiche": {
       "backendCold": {
-        "index": 2,
+        "index": 0,
         "collections": 15,
         "resources": 38,
         "router": 3,
-        "menu": 3,
+        "menu": 0,
         "files": 0,
         "other": 0,
-        "total": 61
+        "total": 56
       },
       "backendWarm": {
-        "index": 2,
+        "index": 0,
         "collections": 15,
         "resources": 38,
         "router": 3,
-        "menu": 3,
+        "menu": 0,
         "files": 0,
         "other": 0,
-        "total": 61
+        "total": 56
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 566,
-        "totalMs": 568,
-        "htmlBytes": 144371,
-        "nuxtBytes": 119509,
+        "ttfbMs": 503,
+        "totalMs": 506,
+        "htmlBytes": 144357,
+        "nuxtBytes": 119495,
         "fetchKeys": 113,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 99,
-        "lcpMs": 1833,
+        "performance": 100,
+        "lcpMs": 1531,
         "clsScore": 0,
-        "tbtMs": 27,
-        "fcpMs": 1683,
+        "tbtMs": 23,
+        "fcpMs": 1531,
         "requests": 19,
-        "bytes": 375206,
+        "bytes": 375678,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -140,88 +140,88 @@
     },
     "/en/articles/give-it-a-go-and-grow-your-own-herbs": {
       "backendCold": {
-        "index": 2,
+        "index": 0,
         "collections": 15,
         "resources": 39,
         "router": 3,
-        "menu": 3,
+        "menu": 0,
         "files": 0,
         "other": 0,
-        "total": 62
+        "total": 57
       },
       "backendWarm": {
-        "index": 2,
+        "index": 0,
         "collections": 15,
         "resources": 39,
         "router": 3,
-        "menu": 3,
+        "menu": 0,
         "files": 0,
         "other": 0,
-        "total": 62
+        "total": 57
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 586,
-        "totalMs": 587,
-        "htmlBytes": 137924,
-        "nuxtBytes": 115434,
+        "ttfbMs": 516,
+        "totalMs": 517,
+        "htmlBytes": 137921,
+        "nuxtBytes": 115431,
         "fetchKeys": 85,
         "errorState": null
       },
       "lighthouse": {
         "performance": 97,
-        "lcpMs": 2418,
+        "lcpMs": 2416,
         "clsScore": 0,
-        "tbtMs": 20,
-        "fcpMs": 1681,
+        "tbtMs": 17,
+        "fcpMs": 1678,
         "requests": 19,
-        "bytes": 489329,
+        "bytes": 489809,
         "postLoadApiCalls": 0
       },
       "hydration": {
         "serverNodes": 85,
         "discardedNodes": 0,
-        "layoutShift": 0.16
+        "layoutShift": 0.185
       }
     },
     "/en/recipe-category/main-courses": {
       "backendCold": {
-        "index": 2,
+        "index": 0,
         "collections": 15,
         "resources": 36,
         "router": 3,
-        "menu": 3,
+        "menu": 0,
         "files": 0,
         "other": 0,
-        "total": 59
+        "total": 54
       },
       "backendWarm": {
-        "index": 2,
+        "index": 0,
         "collections": 15,
         "resources": 36,
         "router": 3,
-        "menu": 3,
+        "menu": 0,
         "files": 0,
         "other": 0,
-        "total": 59
+        "total": 54
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 524,
-        "totalMs": 525,
-        "htmlBytes": 118285,
-        "nuxtBytes": 99593,
+        "ttfbMs": 483,
+        "totalMs": 485,
+        "htmlBytes": 118269,
+        "nuxtBytes": 99577,
         "fetchKeys": 74,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 99,
-        "lcpMs": 1834,
+        "performance": 95,
+        "lcpMs": 2742,
         "clsScore": 0,
-        "tbtMs": 25,
-        "fcpMs": 1684,
+        "tbtMs": 15,
+        "fcpMs": 1678,
         "requests": 18,
-        "bytes": 369143,
+        "bytes": 369636,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -244,32 +244,32 @@
         "total": 3
       },
       "backendWarm": {
-        "index": 1,
+        "index": 0,
         "collections": 2,
         "resources": 0,
         "router": 0,
         "menu": 0,
         "files": 0,
         "other": 0,
-        "total": 3
+        "total": 2
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 46,
-        "totalMs": 47,
-        "htmlBytes": 122434,
-        "nuxtBytes": 49201,
+        "ttfbMs": 38,
+        "totalMs": 42,
+        "htmlBytes": 122415,
+        "nuxtBytes": 49182,
         "fetchKeys": 1,
         "errorState": null
       },
       "lighthouse": {
         "performance": 93,
-        "lcpMs": 2767,
+        "lcpMs": 2770,
         "clsScore": 0,
-        "tbtMs": 11,
-        "fcpMs": 2444,
-        "requests": 13,
-        "bytes": 372181,
+        "tbtMs": 12,
+        "fcpMs": 2448,
+        "requests": 14,
+        "bytes": 373298,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -292,32 +292,32 @@
         "total": 5
       },
       "backendWarm": {
-        "index": 1,
+        "index": 0,
         "collections": 4,
         "resources": 0,
         "router": 0,
         "menu": 0,
         "files": 0,
         "other": 0,
-        "total": 5
+        "total": 4
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 82,
-        "totalMs": 90,
-        "htmlBytes": 326959,
-        "nuxtBytes": 66930,
+        "ttfbMs": 76,
+        "totalMs": 88,
+        "htmlBytes": 326952,
+        "nuxtBytes": 66918,
         "fetchKeys": 1,
         "errorState": null
       },
       "lighthouse": {
         "performance": 95,
-        "lcpMs": 2305,
+        "lcpMs": 2318,
         "clsScore": 0.047,
-        "tbtMs": 22,
-        "fcpMs": 2305,
-        "requests": 10,
-        "bytes": 456619,
+        "tbtMs": 19,
+        "fcpMs": 2318,
+        "requests": 11,
+        "bytes": 457690,
         "postLoadApiCalls": 0
       },
       "hydration": {
