@@ -122,11 +122,11 @@ export const parseCacheLifetime = (headers) => {
   const lifetime = directives.some((d) => d.startsWith('s-maxage=')) ? seconds('s-maxage') : seconds('max-age')
   if (Number.isNaN(lifetime)) return 0
 
-  // Age already spent before arrival. RFC 9111 takes the Age header, or the
-  // time since the response's Date if that is larger.
-  const date = Date.parse(header('date'))
-  const apparent = Number.isNaN(date) ? 0 : Math.max(0, Math.floor((Date.now() - date) / 1000))
-  const age = Math.max(parseInt(header('age'), 10) || 0, apparent)
+  // Age already spent in a cache in front of Drupal, from the Age header
+  // alone. Drupal's own page cache serves a stored response with its original
+  // Date and no Age, so an age read from Date would leave nothing to keep
+  // once that entry is five minutes old.
+  const age = parseInt(header('age'), 10) || 0
   return Math.max(0, lifetime - age)
 }
 

@@ -40,17 +40,11 @@ describe('processCache', () => {
     // Time already spent in a cache in front of Drupal is taken off.
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', age: '100' })).toBe(200)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', age: '400' })).toBe(0)
-    // So is the time since the response was generated, when Date shows more
-    // than Age does, as when a cache in front of Drupal forgot to add Age.
+    // The Date header is not an age: Drupal's page cache serves a stored
+    // response with its original Date and no Age, for as long as it holds it.
     const now = jest.spyOn(Date, 'now')
     now.mockReturnValue(Date.parse('Sun, 27 Sep 2026 10:00:00 GMT'))
-    const stale = { 'cache-control': 'public, max-age=300', date: 'Sun, 27 Sep 2026 09:58:20 GMT' }
-    expect(parseCacheLifetime(stale)).toBe(200)
-    expect(parseCacheLifetime({ ...stale, age: '50' })).toBe(200)
-    expect(parseCacheLifetime({ ...stale, age: '250' })).toBe(50)
-    expect(parseCacheLifetime({ ...stale, date: 'Sun, 27 Sep 2026 09:50:00 GMT' })).toBe(0)
-    // A Date in the future, from a clock ahead of ours, counts as no age.
-    expect(parseCacheLifetime({ ...stale, date: 'Sun, 27 Sep 2026 10:05:00 GMT' })).toBe(300)
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', date: 'Sun, 27 Sep 2026 09:00:00 GMT' })).toBe(300)
     now.mockRestore()
     // A value that is not all digits is not a lifetime, however it starts.
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300abc' })).toBe(0)
