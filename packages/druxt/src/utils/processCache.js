@@ -14,6 +14,17 @@ export const runtime = { isServer: () => typeof window === 'undefined' }
 // Drupal names its session cookie SESS or SSESS plus a hash.
 const DRUPAL_SESSION_COOKIE = 'S?SESS[0-9a-f]+'
 
+// The consumers module varies every response by X-Consumer-ID, so a client
+// sending one keeps entries of its own within a scope.
+const consumerId = (axios) => {
+  const headers = ((axios || {}).defaults || {}).headers || {}
+  for (const set of [headers, headers.common, headers.get]) {
+    const match = Object.entries(set || {}).find(([name]) => name.toLowerCase() === 'x-consumer-id')
+    if (match && match[1]) return String(match[1])
+  }
+  return ''
+}
+
 const headersHaveCredentials = (headers, sessionCookie) => {
   const session = new RegExp(`(?:^|;\\s*)(?:${sessionCookie})=`, 'i')
   return Object.entries(headers || {}).some(([name, value]) => {
@@ -107,7 +118,7 @@ export const parseCacheLifetime = (headers) => {
   // the site's own client sends the same way on every request tells no variants
   // apart, and Drupal names three of those on every cacheable response: Cookie,
   // which its own page cache also ignores without a session; X-Consumer-ID,
-  // which the consumers module adds and which no browser sets; and
+  // which no browser sets and which keys a client's own entries; and
   // Accept-Encoding, harmless since the decoded document is what is stored.
   const vary = header('vary').toLowerCase().split(',').map((v) => v.trim()).filter(Boolean)
   if (vary.some((v) => !['cookie', 'x-consumer-id', 'accept-encoding'].includes(v))) return 0
@@ -151,7 +162,10 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
   if (!runtime.isServer() || hasCredentials(axios, sessionCookie)) return null
 
   if (!scopes.has(scope)) scopes.set(scope, new Map())
-  const entries = scopes.get(scope)
+  const consumers = scopes.get(scope)
+  const consumer = consumerId(axios)
+  if (!consumers.has(consumer)) consumers.set(consumer, new Map())
+  const entries = consumers.get(consumer)
   // A ttl caps what may be kept, so 0 keeps nothing; without one, Drupal's lifetime stands.
   const cap = (seconds) => (typeof ttl === 'number' ? Math.min(seconds, ttl) : seconds)
 

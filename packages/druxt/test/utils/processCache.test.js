@@ -81,6 +81,24 @@ describe('processCache', () => {
     expect(menu.get('key')).toBe(undefined)
   })
 
+  test('a client sending X-Consumer-ID keeps entries of its own', () => {
+    const one = processCache('index', { axios: axios({ 'X-Consumer-ID': 'one' }) })
+    const same = processCache('index', { axios: axios({ 'x-consumer-id': 'one' }) })
+    const two = processCache('index', { axios: axios({ 'X-Consumer-ID': 'two' }) })
+    const none = processCache('index', { axios: axios() })
+    one.set('key', 'for one', 300)
+    expect(same.get('key')).toBe('for one')
+    expect(two.get('key')).toBe(undefined)
+    expect(none.get('key')).toBe(undefined)
+    // A header set for GET requests alone counts the same way.
+    processCache('index', { axios: { defaults: { headers: { get: { 'X-Consumer-ID': 'two' } } } } }).set('key', 'for two', 300)
+    expect(two.get('key')).toBe('for two')
+    // Emptying the scope empties every consumer's entries in it.
+    resetProcessCache('index')
+    expect(processCache('index', { axios: axios({ 'X-Consumer-ID': 'one' }) }).get('key')).toBe(undefined)
+    expect(processCache('index', { axios: axios({ 'X-Consumer-ID': 'two' }) }).get('key')).toBe(undefined)
+  })
+
   test('an entry lives for its own lifetime, and a lifetime of 0 stores nothing', () => {
     const now = jest.spyOn(Date, 'now')
     now.mockReturnValue(1000)
