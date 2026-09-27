@@ -1,9 +1,15 @@
-import { createHash, timingSafeEqual } from 'crypto'
 import { resetProcessCache } from '../utils/processCache'
 
-// Compares fixed-size digests, so neither the secret's content nor its length shows in the time taken.
-const digest = (value) => createHash('sha256').update(String(value)).digest()
-const safeEqual = (a, b) => timingSafeEqual(digest(a), digest(b))
+// Compares in time that depends on the caller's input alone: the loop runs its
+// length, and the secret's content and length only feed the accumulator. Node's
+// crypto is not used, as this file is part of the browser bundle too.
+const safeEqual = (input, secret) => {
+  let diff = input.length ^ secret.length
+  for (let i = 0; i < input.length; i++) {
+    diff |= input.charCodeAt(i) ^ secret.charCodeAt(i % secret.length)
+  }
+  return diff === 0
+}
 
 /**
  * Server middleware that empties the process cache when Drupal asks.
