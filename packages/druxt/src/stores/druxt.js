@@ -56,12 +56,19 @@ const DruxtStore = ({ store }) => {
    */
   const namespace = 'druxt'
 
-  // In-flight requests for this store, kept out of the reactive state.
+  // In-flight requests for this store, kept out of the reactive state. A flush
+  // drops them and moves the generation on, so a request started before it is
+  // neither joined by a later dispatch nor stored when it resolves.
   const inFlight = new Map()
+  const generation = { value: 0 }
+  const flushInFlight = () => {
+    inFlight.clear()
+    generation.value += 1
+  }
   const share = (key, request) => {
     if (!inFlight.has(key)) {
-      const clear = () => inFlight.delete(key)
       const promise = request()
+      const clear = () => { if (inFlight.get(key) === promise) inFlight.delete(key) }
       inFlight.set(key, promise)
       promise.then(clear, clear)
     }
@@ -200,6 +207,7 @@ const DruxtStore = ({ store }) => {
        * this.$store.commit('druxt/flushCollection', { type, prefix })
        */
       flushCollection (state, { type, hash, query, prefix } = {}) {
+        flushInFlight()
         if (!type) return Vue.set(state, 'collections', {})
         const key = hash !== undefined ? hash : (query !== undefined ? collectionHash(query) : undefined)
         flush(state.collections, type, key !== undefined ? [key] : [], prefix)
@@ -219,6 +227,7 @@ const DruxtStore = ({ store }) => {
        * this.$store.commit('druxt/flushResource', { id, type, prefix })
        */
       flushResource (state, { type, id, prefix } = {}) {
+        flushInFlight()
         if (!type) return Vue.set(state, 'resources', {})
         flush(state.resources, type, id !== undefined ? [id] : [], prefix)
       }
@@ -270,11 +279,12 @@ const DruxtStore = ({ store }) => {
         // Identical concurrent dispatches share one request and one commit.
         const key = JSON.stringify(['collection', prefix, type, hash, getDrupalJsonApiParams(query).getQueryObject()])
         return share(key, async () => {
+          const since = generation.value
           // Get the collection using the DruxtClient instance.
           const collection = await this.$druxt.getCollection(type, query, prefix)
 
-          // Store the collection in the DruxtStore.
-          commit('addCollection', { collection: { ...collection }, type, hash, prefix })
+          // Store the collection in the DruxtStore, unless a flush happened meanwhile.
+          if (since === generation.value) commit('addCollection', { collection: { ...collection }, type, hash, prefix })
 
           return collection
         })
@@ -389,8 +399,10 @@ const DruxtStore = ({ store }) => {
             // Identical concurrent dispatches share one request and one commit.
             const key = JSON.stringify(['resource', prefix, type, id, queryObject])
             resource = await share(key, async () => {
+              const since = generation.value
               const response = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
-              commit('addResource', { prefix, resource: { ...response } })
+              // Stored unless a flush happened meanwhile.
+              if (since === generation.value) commit('addResource', { prefix, resource: { ...response } })
               return response
             })
           } catch(e) {
@@ -398,8 +410,8 @@ const DruxtStore = ({ store }) => {
           }
         }
 
-        // Build resource to be returned.
-        const result = { ...((state.resources[type] || {})[id] || {})[prefix] }
+        // Build resource to be returned: the stored entry, or the response a flush kept out of the store.
+        const result = { ...(((state.resources[type] || {})[id] || {})[prefix] || resource) }
 
         // Merge included resources into resource.
         if (queryObject.include && ((resource || {}).included || (storedResource || {}).included)) {

@@ -404,6 +404,50 @@ describe('DruxtStore', () => {
     results.forEach((result) => expect(result.data).toStrictEqual(mockCollectionPage.data))
   })
 
+  test('a flush drops the requests in flight, for the store and for later dispatches', async () => {
+    const type = 'node--page'
+    const mockCollectionPage = await getMockCollection(type)
+    const mockPage = await getMockResource(type)
+    const { id } = mockPage.data
+    const collections = []
+    const resources = []
+    store.$druxt.getCollection = jest.fn(() => new Promise((resolve) => collections.push(resolve)))
+    store.$druxt.getResource = jest.fn(() => new Promise((resolve) => resources.push(resolve)))
+
+    const before = [
+      store.dispatch('druxt/getCollection', { type }),
+      store.dispatch('druxt/getResource', { type, id }),
+    ]
+    await Promise.resolve()
+    store.commit('druxt/flushCollection', {})
+    store.commit('druxt/flushResource', {})
+
+    // A dispatch after the flush starts its own request rather than joining the stale one.
+    const after = [
+      store.dispatch('druxt/getCollection', { type }),
+      store.dispatch('druxt/getResource', { type, id }),
+    ]
+    await Promise.resolve()
+    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(2)
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(2)
+
+    // The request started before the flush answers its callers and stores nothing.
+    collections[0](mockCollectionPage)
+    resources[0](mockPage)
+    const [collection, resource] = await Promise.all(before)
+    expect(collection.data).toStrictEqual(mockCollectionPage.data)
+    expect(resource.data).toStrictEqual(mockPage.data)
+    expect(store.state.druxt.collections).toStrictEqual({})
+    expect(store.state.druxt.resources).toStrictEqual({})
+
+    // The request started after it is stored as usual.
+    collections[1](mockCollectionPage)
+    resources[1](mockPage)
+    await Promise.all(after)
+    expect(store.state.druxt.collections[type]._default.undefined.data).toHaveLength(mockCollectionPage.data.length)
+    expect(store.state.druxt.resources[type][id].undefined.data).toStrictEqual(mockPage.data)
+  })
+
   test('getCollection retries after a failed request', async () => {
     const type = 'node--page'
     const mockCollectionPage = await getMockCollection(type)
