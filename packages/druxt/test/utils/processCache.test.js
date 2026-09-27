@@ -44,6 +44,15 @@ describe('processCache', () => {
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300abc' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age="300"' })).toBe(0)
+    // An s-maxage that is present but unusable makes the response stale for a shared cache.
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300, s-maxage=invalid' })).toBe(0)
+    // Drupal varies every cacheable response on Cookie, which the credentials gate
+    // already accounts for. A variation on anything else cannot be told apart.
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Cookie' })).toBe(300)
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', Vary: 'Cookie, Accept-Encoding' })).toBe(300)
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Accept-Language' })).toBe(0)
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Cookie, Accept-Language' })).toBe(0)
+    expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: '*' })).toBe(0)
   })
 
   test('refused in a browser or with credentials', () => {

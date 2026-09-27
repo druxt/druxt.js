@@ -19,4 +19,6 @@ export default {
 };
 ```
 
+A response that Drupal says varies by a request header other than the cookie, such as `Accept-Language` when browser language detection is on, is not kept. The cache cannot tell such variants apart.
+
 Set `druxt.cache: false` to turn it off. It is off under `nuxt dev`.

@@ -85,6 +85,8 @@ export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) =
  * Follows Cache-Control as a shared cache must: `private`, `no-store` or
  * `no-cache` forbid storing, `s-maxage` wins over `max-age`, time already spent
  * in a cache in front of Drupal (`Age`) is taken off, and no directive means 0.
+ * A `Vary` on any request header other than `Cookie` or `Accept-Encoding` also
+ * forbids storing, as the cache key holds nothing that could tell variants apart.
  *
  * @param {object} [headers] - The response headers.
  *
@@ -99,13 +101,22 @@ export const parseCacheLifetime = (headers) => {
   const directives = header('cache-control').toLowerCase().split(',').map((d) => d.trim())
   if (directives.some((d) => ['private', 'no-store', 'no-cache'].includes(d))) return 0
 
+  // The cache is keyed by URL alone, so a response that varies by a request
+  // header cannot be stored. Cookie is the exception, as Drupal puts it on every
+  // cacheable response and its page cache serves such a response to any request
+  // without a session cookie, which is the same rule the credentials gate applies.
+  // Accept-Encoding is harmless, since the decoded document is what is stored.
+  const vary = header('vary').toLowerCase().split(',').map((v) => v.trim()).filter(Boolean)
+  if (vary.some((v) => !['cookie', 'accept-encoding'].includes(v))) return 0
+
   const seconds = (name) => {
     const directive = directives.find((d) => d.startsWith(`${name}=`))
     // The whole value must be digits: parseInt would read 300 from `300abc`.
     const value = directive ? directive.slice(name.length + 1) : ''
     return /^\d+$/.test(value) ? Number(value) : NaN
   }
-  const lifetime = Number.isNaN(seconds('s-maxage')) ? seconds('max-age') : seconds('s-maxage')
+  // A present but unusable s-maxage means stale, not "use max-age instead".
+  const lifetime = directives.some((d) => d.startsWith('s-maxage=')) ? seconds('s-maxage') : seconds('max-age')
   if (Number.isNaN(lifetime)) return 0
 
   return Math.max(0, lifetime - (parseInt(header('age'), 10) || 0))
