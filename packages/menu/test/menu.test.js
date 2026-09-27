@@ -10,6 +10,8 @@ describe('DruxtMenu class', () => {
     jest.resetModules()
     mockAxios = require('axios').default
     DruxtMenu = require('../src').DruxtMenu
+    // These tests describe the server, where results are kept per client.
+    require('../src/menu').runtime.isServer = () => true
   })
 
   test('constructor', () => {
@@ -109,5 +111,30 @@ describe('DruxtMenu class', () => {
     const result = await jsonApiMenu.get('main')
     expect(result.entities.length).toBe(3)
     expect(mockAxios.get.mock.calls.length).toBe(calls)
+  })
+
+  test('get - in a browser, a menu is shared only while its request is in flight', async () => {
+    require('../src/menu').runtime.isServer = () => false
+    const menu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
+
+    // Components asking at once share one request.
+    await Promise.all([menu.get('main'), menu.get('main')])
+    const calls = mockAxios.get.mock.calls.length
+
+    // After a login the same client asks again, and gets the signed-in menu.
+    menu.druxt.axios.defaults.headers.common.Authorization = 'Bearer signed-in'
+    await menu.get('main')
+    expect(mockAxios.get.mock.calls.length).toBeGreaterThan(calls)
+  })
+
+  test('get - in a browser, a failed request is dropped without an unhandled rejection', async () => {
+    require('../src/menu').runtime.isServer = () => false
+    const menu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
+    menu.getJsonApiMenuItems = jest.fn()
+      .mockRejectedValueOnce(new Error('offline'))
+      .mockResolvedValue({ entities: [] })
+    await expect(menu.get('main')).rejects.toThrow('offline')
+    await menu.get('main')
+    expect(menu.getJsonApiMenuItems).toHaveBeenCalledTimes(2)
   })
 })

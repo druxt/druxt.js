@@ -297,6 +297,30 @@ describe('DruxtStore', () => {
     await store.dispatch('druxt/getResource', request)
   })
 
+  test('getResource - bypassCache returns only the includes the fresh response has', async () => {
+    const mockResource = await getMockResource('node--recipe')
+    const { id } = mockResource.data
+    const request = {
+      type: 'node--recipe',
+      id,
+      query: new DrupalJsonApiParams()
+        .addInclude(['field_media_image', 'field_media_image.field_media_image'])
+        .addFields('node--recipe', [])
+        .addFields('media--image', ['field_media_image'])
+        .addFields('file--file', ['uri'])
+    }
+
+    // A stored copy that still relates to media Drupal has since removed from the recipe.
+    const stale = { type: 'media--image', id: 'removed-media', attributes: {}, relationships: {} }
+    store.commit('druxt/addResource', { prefix: undefined, resource: { data: stale, links: { self: { href: '' } } } })
+    store.commit('druxt/addResource', { prefix: undefined, resource: { data: { ...mockResource.data, relationships: { field_media_image: { data: { type: 'media--image', id: 'removed-media' } } } }, links: { self: { href: '' } } } })
+
+    const resource = await store.dispatch('druxt/getResource', { ...request, bypassCache: true })
+    const included = (resource.included || []).map((o) => o.id)
+    expect(included.length).toBeGreaterThan(0)
+    expect(included).not.toContain('removed-media')
+  })
+
   test('getCollection', async () => {
     const collection = await store.dispatch('druxt/getCollection', { type: 'node--page', query: {} })
     expect(collection.data.length).toBe(1)
@@ -378,6 +402,60 @@ describe('DruxtStore', () => {
     resolvers.forEach((resolve) => resolve(mockCollectionPage))
     const results = await Promise.all(requests)
     results.forEach((result) => expect(result.data).toStrictEqual(mockCollectionPage.data))
+  })
+
+  test('a flush drops the requests in flight, for the store and for later dispatches', async () => {
+    const type = 'node--page'
+    const mockCollectionPage = await getMockCollection(type)
+    const mockPage = await getMockResource(type)
+    const { id } = mockPage.data
+    const collections = []
+    const resources = []
+    store.$druxt.getCollection = jest.fn(() => new Promise((resolve) => collections.push(resolve)))
+    store.$druxt.getResource = jest.fn(() => new Promise((resolve) => resources.push(resolve)))
+
+    const before = [
+      store.dispatch('druxt/getCollection', { type }),
+      store.dispatch('druxt/getResource', { type, id }),
+    ]
+    await Promise.resolve()
+    store.commit('druxt/flushCollection', {})
+    store.commit('druxt/flushResource', {})
+
+    // A dispatch after the flush starts its own request rather than joining the stale one.
+    const after = [
+      store.dispatch('druxt/getCollection', { type }),
+      store.dispatch('druxt/getResource', { type, id }),
+    ]
+    await Promise.resolve()
+    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(2)
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(2)
+
+    // The request started before the flush answers its callers and stores nothing.
+    collections[0](mockCollectionPage)
+    resources[0](mockPage)
+    const [collection, resource] = await Promise.all(before)
+    expect(collection.data).toStrictEqual(mockCollectionPage.data)
+    expect(resource.data).toStrictEqual(mockPage.data)
+    expect(store.state.druxt.collections).toStrictEqual({})
+    expect(store.state.druxt.resources).toStrictEqual({})
+
+    // The request started after it is stored as usual.
+    collections[1](mockCollectionPage)
+    resources[1](mockPage)
+    await Promise.all(after)
+    expect(store.state.druxt.collections[type]._default.undefined.data).toHaveLength(mockCollectionPage.data.length)
+    expect(store.state.druxt.resources[type][id].undefined.data).toStrictEqual(mockPage.data)
+
+    // A bypass that resolves after an unrelated flush returns the fresh
+    // document, not the entry the flush left in the store.
+    const fresh = { ...mockPage, data: { ...mockPage.data, attributes: { ...mockPage.data.attributes, title: 'Fresh' } } }
+    const bypass = store.dispatch('druxt/getResource', { type, id, bypassCache: true })
+    await Promise.resolve()
+    store.commit('druxt/flushCollection', {})
+    resources[2](fresh)
+    expect((await bypass).data.attributes.title).toBe('Fresh')
+    expect(store.state.druxt.resources[type][id].undefined.data).toStrictEqual(mockPage.data)
   })
 
   test('getCollection retries after a failed request', async () => {
@@ -487,21 +565,91 @@ describe('DruxtStore', () => {
 
     // Ensure that the results state is populated.
     const collection = await getMockCollection(type)
-    store.commit('druxt/addCollection', { collection, type, prefix, hash })
-    expect(store.state.druxt.collections[type][hash][prefix]).toStrictEqual(collection)
+    const add = (p = prefix, h = hash) => store.commit('druxt/addCollection', { collection: { ...collection }, type, prefix: p, hash: h })
+    add()
+    expect(store.state.druxt.collections[type][hash][prefix]).toBeTruthy()
 
     store.commit('druxt/flushCollection', { type, hash, prefix })
-    expect(store.state.druxt.collections[type][hash][prefix]).toStrictEqual({})
+    expect(store.state.druxt.collections[type][hash][prefix]).toBe(undefined)
 
+    add()
     store.commit('druxt/flushCollection', { type, hash })
-    expect(store.state.druxt.collections[type][hash]).toStrictEqual({})
+    expect(store.state.druxt.collections[type][hash]).toBe(undefined)
 
+    add()
     store.commit('druxt/flushCollection', { type })
-    expect(store.state.druxt.collections[type]).toStrictEqual({})
+    expect(store.state.druxt.collections[type]).toBe(undefined)
 
+    add()
     store.commit('druxt/flushCollection', {})
     expect(store.state.druxt.collections).toStrictEqual({})
+  })
 
+  test('flushCollection treats an empty string as a selector, not as omitted', async () => {
+    const type = 'node--page'
+    const collection = await getMockCollection(type)
+    const add = (prefix, hash) => store.commit('druxt/addCollection', { collection: { ...collection }, type, prefix, hash })
+
+    // An empty query is stored under _default, so flushing it names that key only.
+    add('en', '_default')
+    add('en', 'a')
+    store.commit('druxt/flushCollection', { type, query: '', prefix: 'en' })
+    expect(store.state.druxt.collections[type]._default.en).toBe(undefined)
+    expect(store.state.druxt.collections[type].a.en).toBeTruthy()
+
+    // An empty prefix is the default language, not every language.
+    add('', 'a')
+    store.commit('druxt/flushCollection', { type, hash: 'a', prefix: '' })
+    expect(store.state.druxt.collections[type].a['']).toBe(undefined)
+    expect(store.state.druxt.collections[type].a.en).toBeTruthy()
+
+    // The same for a resource.
+    const resource = await getMockResource(type)
+    const id = resource.data.id
+    store.commit('druxt/addResource', { prefix: '', resource: { ...resource } })
+    store.commit('druxt/addResource', { prefix: 'en', resource: { ...resource } })
+    store.commit('druxt/flushResource', { type, id, prefix: '' })
+    expect(store.state.druxt.resources[type][id]['']).toBe(undefined)
+    expect(store.state.druxt.resources[type][id].en).toBeTruthy()
+  })
+
+  test('flushCollection by type and prefix, by query, and for nothing stored', async () => {
+    const type = 'node--page'
+    const collection = await getMockCollection(type)
+    const add = (prefix, hash) => store.commit('druxt/addCollection', { collection: { ...collection }, type, prefix, hash })
+
+    // A prefix across every query of the type.
+    add('en', 'a')
+    add('en', 'b')
+    add('es', 'a')
+    store.commit('druxt/flushCollection', { type, prefix: 'en' })
+    expect(store.state.druxt.collections[type].a.en).toBe(undefined)
+    expect(store.state.druxt.collections[type].b.en).toBe(undefined)
+    expect(store.state.druxt.collections[type].a.es).toBeTruthy()
+
+    // The query a collection was fetched with, instead of its hash.
+    const query = new DrupalJsonApiParams().addFilter('status', '1')
+    mockAxios.reset()
+    await store.dispatch('druxt/getCollection', { type, query, prefix: 'en' })
+    const [stored] = Object.keys(store.state.druxt.collections[type]).filter((h) => !['a', 'b'].includes(h))
+    expect(store.state.druxt.collections[type][stored].en).toBeTruthy()
+    store.commit('druxt/flushCollection', { type, query, prefix: 'en' })
+    expect(store.state.druxt.collections[type][stored].en).toBe(undefined)
+
+    // A flush of keys never stored leaves the state as it was.
+    expect(() => store.commit('druxt/flushCollection', { type: 'node--never' })).not.toThrow()
+    expect(() => store.commit('druxt/flushCollection', { type: 'node--never', hash: 'x', prefix: 'en' })).not.toThrow()
+    expect(() => store.commit('druxt/flushCollection', { type, hash: 'missing' })).not.toThrow()
+  })
+
+  test('getCollection fetches again after the collection is flushed', async () => {
+    const type = 'node--page'
+    const query = new DrupalJsonApiParams().addFilter('status', '1')
+    await store.dispatch('druxt/getCollection', { type, query, prefix: 'en' })
+    store.commit('druxt/flushCollection', { type, query, prefix: 'en' })
+    mockAxios.reset()
+    await store.dispatch('druxt/getCollection', { type, query, prefix: 'en' })
+    expect(mockAxios.get).toHaveBeenCalled()
   })
 
   test('flushResource', async () => {
@@ -511,19 +659,49 @@ describe('DruxtStore', () => {
     // Ensure that the results state is populated.
     const resource = await getMockResource(type)
     const id = resource.data.id
-    store.commit('druxt/addResource', { prefix, resource })
-    expect(store.state.druxt.resources[type][id][prefix]).toStrictEqual(resource)
+    const add = (p = prefix) => store.commit('druxt/addResource', { prefix: p, resource: { ...resource } })
+    add()
+    expect(store.state.druxt.resources[type][id][prefix]).toBeTruthy()
 
     store.commit('druxt/flushResource', { type, id, prefix })
-    expect(store.state.druxt.resources[type][id][prefix]).toStrictEqual({})
+    expect(store.state.druxt.resources[type][id][prefix]).toBe(undefined)
 
+    add()
     store.commit('druxt/flushResource', { type, id })
-    expect(store.state.druxt.resources[type][id]).toStrictEqual({})
+    expect(store.state.druxt.resources[type][id]).toBe(undefined)
 
+    add()
     store.commit('druxt/flushResource', { type })
-    expect(store.state.druxt.resources[type]).toStrictEqual({})
+    expect(store.state.druxt.resources[type]).toBe(undefined)
 
+    add()
     store.commit('druxt/flushResource', {})
     expect(store.state.druxt.resources).toStrictEqual({})
+  })
+
+  test('flushResource by type and prefix, and for nothing stored', async () => {
+    const type = 'node--page'
+    const resource = await getMockResource(type)
+    const id = resource.data.id
+    store.commit('druxt/addResource', { prefix: 'en', resource: { ...resource } })
+    store.commit('druxt/addResource', { prefix: 'es', resource: { ...resource } })
+    store.commit('druxt/flushResource', { type, prefix: 'en' })
+    expect(store.state.druxt.resources[type][id].en).toBe(undefined)
+    expect(store.state.druxt.resources[type][id].es).toBeTruthy()
+
+    expect(() => store.commit('druxt/flushResource', { type: 'node--never', id: 'x' })).not.toThrow()
+    expect(() => store.commit('druxt/flushResource', { type: 'node--never', id: 'x', prefix: 'en' })).not.toThrow()
+    expect(() => store.commit('druxt/flushResource', { type, id: 'missing' })).not.toThrow()
+  })
+
+  test('getResource with an include fetches again after the resource is flushed', async () => {
+    const type = 'node--recipe'
+    const resource = await getMockResource(type)
+    const { id } = resource.data
+    await store.dispatch('druxt/getResource', { type, id, prefix: 'en' })
+    store.commit('druxt/flushResource', { type, id, prefix: 'en' })
+    mockAxios.reset()
+    await expect(store.dispatch('druxt/getResource', { type, id, prefix: 'en', query: { include: 'field_media_image' } })).resolves.toBeTruthy()
+    expect(mockAxios.get).toHaveBeenCalled()
   })
 })

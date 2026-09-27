@@ -1,6 +1,9 @@
 import { DruxtClient } from 'druxt'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
+// Where the code runs. Tests replace isServer, as jsdom always has a window.
+export const runtime = { isServer: () => typeof window === 'undefined' }
+
 // Menu results, cached per client so backends and credentials never mix.
 // Each entry holds the request promise, so concurrent callers share one fetch.
 const menuCache = new WeakMap()
@@ -122,6 +125,11 @@ class DruxtMenu {
       cache.set(cacheKey, request)
       // A failed request is dropped so the next call retries.
       request.catch(() => cache.delete(cacheKey))
+      // A browser keeps one client for the whole tab, so a result would outlive a login: share it only in flight.
+      if (!runtime.isServer()) {
+        const drop = () => { if (cache.get(cacheKey) === request) cache.delete(cacheKey) }
+        request.then(drop, drop)
+      }
     }
 
     return cache.get(cacheKey)

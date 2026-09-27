@@ -155,4 +155,26 @@ describe('DruxtRouterStore', () => {
     await store.dispatch('druxtRouter/getRoute', '/')
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
   })
+
+  test('getRoute - a failure without a 4xx is not stored', async () => {
+    const getRoute = jest.fn()
+      .mockRejectedValueOnce(new Error('connect ECONNREFUSED'))
+      .mockRejectedValueOnce({ message: 'Bad gateway', response: { status: 502, data: {} } })
+      .mockResolvedValue({ type: 'entity', props: {} })
+    store.$druxtRouter = () => ({ getRoute })
+
+    expect((await store.dispatch('druxtRouter/getRoute', '/about')).error.statusCode).toBe(500)
+    expect((await store.dispatch('druxtRouter/getRoute', '/about')).error.statusCode).toBe(502)
+    expect(await store.dispatch('druxtRouter/getRoute', '/about')).toStrictEqual({ type: 'entity', props: {} })
+    expect(getRoute).toHaveBeenCalledTimes(3)
+  })
+
+  test('getRoute - a 4xx is stored', async () => {
+    const getRoute = jest.fn().mockRejectedValue({ message: 'Not found', response: { status: 404, data: { message: 'Not found' } } })
+    store.$druxtRouter = () => ({ getRoute })
+
+    expect((await store.dispatch('druxtRouter/getRoute', '/missing')).error.statusCode).toBe(404)
+    await store.dispatch('druxtRouter/getRoute', '/missing')
+    expect(getRoute).toHaveBeenCalledTimes(1)
+  })
 })
