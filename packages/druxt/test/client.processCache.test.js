@@ -161,6 +161,24 @@ describe('DruxtClient process cache', () => {
     expect(client.cacheLifetime(false)).toBe(0)
   })
 
+  test('an index fetched before a clear is not stored after it', async () => {
+    // The cache is cleared while the index request is in flight, as it is when
+    // Drupal calls the clear endpoint because the content changed.
+    const axios = requestAxios()
+    const inFlight = axios.get
+    axios.get = jest.fn(async (...args) => {
+      const response = await inFlight(...args)
+      resetProcessCache()
+      return response
+    })
+    await new DruxtClient(baseUrl, { axios, cache: {} }).getIndex()
+    expect(indexCalls()).toBe(1)
+
+    // The pre-clear index must not be readable, so the next request fetches.
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(2)
+  })
+
   test('clearCache empties the index and the process cache', async () => {
     const client = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
     await client.getIndex()

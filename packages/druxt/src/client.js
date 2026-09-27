@@ -460,6 +460,8 @@ class DruxtClient {
       // Concurrent callers, on this client or another sharing the index,
       // wait on one request. A failed request is dropped so the next call retries.
       const key = [this.indexKey, prefix || ''].join(':')
+      const before = this.processCache('index')
+      const since = before ? before.generation : undefined
       const request = this.indexRequests[key] || (this.indexRequests[key] = this.fetchIndex(prefix))
       let lifetime
       try {
@@ -469,7 +471,9 @@ class DruxtClient {
       }
 
       const shared = this.processCache('index')
-      if (shared && this.index[prefix]) shared.set(key, this.index[prefix], lifetime)
+      // Dropped when the cache was cleared while the request was in flight:
+      // the index was fetched before the clear and predates it.
+      if (shared && this.index[prefix]) shared.set(key, this.index[prefix], lifetime, since)
     }
 
     return resource ? this.index[prefix][resource] || false : this.index[prefix]

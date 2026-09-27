@@ -179,4 +179,24 @@ describe('processCache', () => {
     // An instance without interceptors is left alone.
     expect(() => watchCredentials({ defaults: {} })).not.toThrow()
   })
+
+  test('a value fetched before a clear is not stored after it', () => {
+    const before = processCache('menu')
+    const since = before.generation
+
+    // The clear lands while the request is in flight.
+    resetProcessCache()
+    const after = processCache('menu')
+    expect(after.generation).not.toBe(since)
+
+    after.set('key', 'fetched before the clear', 300, since)
+    expect(after.get('key')).toBeUndefined()
+
+    // A value fetched after it is stored, and a caller that reports no
+    // generation is stored as before.
+    after.set('key', 'fetched after the clear', 300, after.generation)
+    expect(after.get('key')).toBe('fetched after the clear')
+    after.set('other', 'no generation reported', 300)
+    expect(after.get('other')).toBe('no generation reported')
+  })
 })

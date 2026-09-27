@@ -79,6 +79,32 @@ describe('DruxtMenu process cache', () => {
     expect(store.size).toBe(1)
   })
 
+  test('a menu fetched before a clear is not stored after it', async () => {
+    // A generation-aware handle, as the real process cache is: it refuses a
+    // write whose reported generation predates the last clear.
+    let generation = 0
+    const genHandle = () => ({
+      generation,
+      get: (key) => store.get(key),
+      set: (key, value, seconds, since) => {
+        if (since !== undefined && since !== generation) return
+        if (seconds > 0) store.set(key, value)
+      },
+    })
+
+    const menu = requestMenu(() => genHandle())
+    // The cache is cleared while the menu request is in flight.
+    const inFlight = menu.druxt.getCollectionAll.bind(menu.druxt)
+    menu.druxt.getCollectionAll = async (...args) => {
+      const collections = await inFlight(...args)
+      generation += 1
+      return collections
+    }
+
+    await menu.get('main')
+    expect(store.size).toBe(0)
+  })
+
   test('only a resolved menu is stored, never the request', async () => {
     await requestMenu().get('main')
     const [stored] = [...store.values()]
