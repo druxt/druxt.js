@@ -93,6 +93,19 @@ describe('DruxtMenu class', () => {
     expect(menu.getMenuLinkContent).toHaveBeenCalledTimes(2)
   })
 
+  test('get - the fetch sends the query the key was built from, whatever the settings become meanwhile', async () => {
+    const menu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
+    const settings = { requiredOnly: true }
+    const keyed = menu.buildJsonApiMenuItemsQuery('main', settings).getQueryString()
+    // The settings change while the fetch waits on the index.
+    menu.druxt.getIndex = jest.fn(async () => { menu.druxt.index[undefined] = {}; settings.max_depth = 5 })
+    menu.druxt.getCollectionAll = jest.fn(async () => [])
+
+    await menu.get('main', settings)
+    expect(menu.druxt.getCollectionAll).toHaveBeenCalledTimes(1)
+    expect(menu.druxt.getCollectionAll.mock.calls[0][1].getQueryString()).toBe(keyed)
+  })
+
   test('get - JSON:API Menu Items settings key on the filters they add', async () => {
     const menu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
     menu.getJsonApiMenuItems = jest.fn(async () => ({ entities: [] }))

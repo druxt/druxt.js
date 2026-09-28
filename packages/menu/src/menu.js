@@ -163,9 +163,10 @@ class DruxtMenu {
       const shared = processCache('menu')
       const stored = shared && shared.get(sharedKey)
       const since = shared ? shared.generation : undefined
+      // The fetch takes the query the key was built from, so settings changed meanwhile cannot part them.
       const request = stored ? Promise.resolve(stored) : (jsonApiMenuItems
-        ? this.getJsonApiMenuItems(menuName, settings, prefix)
-        : this.getMenuLinkContent(menuName, settings, prefix)
+        ? this.getJsonApiMenuItems(menuName, settings, prefix, query)
+        : this.getMenuLinkContent(menuName, settings, prefix, query)
       ).then((result) => {
         // Asked again once resolved: the request may have shown credentials.
         const after = processCache('menu')
@@ -217,10 +218,10 @@ class DruxtMenu {
    * @param {string} menuName - The menu name.
    * @param {object} settings - The Druxt Menu query settings object.
    * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {DrupalJsonApiParams} [query] - The query to send, built from the settings when omitted.
    */
-  async getMenuLinkContent(menuName, settings, prefix) {
+  async getMenuLinkContent(menuName, settings, prefix, query = this.buildMenuLinkContentQuery(menuName, settings)) {
     const resource = 'menu_link_content--menu_link_content'
-    const query = this.buildMenuLinkContentQuery(menuName, settings)
 
     const entities = []
     const collections = await this.druxt.getCollectionAll(resource, query, prefix)
@@ -252,8 +253,9 @@ class DruxtMenu {
    * @param {string} menuName - The menu name.
    * @param {object} settings - The Druxt Menu query settings object.
    * @param {string} prefix - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {DrupalJsonApiParams} [query] - The query to send, built from the settings when omitted.
    */
-  async getJsonApiMenuItems(menuName, settings, prefix) {
+  async getJsonApiMenuItems(menuName, settings, prefix, query = this.buildJsonApiMenuItemsQuery(menuName, settings)) {
     const menuItemsResource = `menu_items--${menuName}`
 
     // Add the JSON API Menu items resource to the index.
@@ -261,8 +263,6 @@ class DruxtMenu {
     if (!(this.druxt.index[prefix][menuItemsResource] || {}).href) {
       this.druxt.index[prefix][menuItemsResource] = { href: `${prefix || ''}${this.druxt.options.endpoint}/menu_items/${menuName}` }
     }
-
-    const query = this.buildJsonApiMenuItemsQuery(menuName, settings)
 
     const entities = []
     let collections = []
