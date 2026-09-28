@@ -2,7 +2,7 @@ import chalk from 'chalk'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { join, normalize, resolve } from 'path'
 import { DruxtClient } from '../client'
-import { cacheClearHandler } from './cacheClear'
+import { cacheClearHandler } from '../server-middleware/cacheClear'
 import meta from '../../package.json'
 
 // @nuxt/components ignores a false isAsync on the directory.
@@ -43,6 +43,7 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
   }
 
   // Let Drupal empty the process cache. The secret is taken out of the options, which the plugins send to the browser.
+  // The handler takes the secret, so it is registered as a function rather than by path like the template middleware.
   const { secret, ...cache } = options.cache || {}
   if (options.cache) options.cache = cache
   if (options.cache && secret) {

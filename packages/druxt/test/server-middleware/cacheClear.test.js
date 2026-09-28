@@ -1,4 +1,4 @@
-import { cacheClearHandler } from '../../src/nuxt/cacheClear'
+import { cacheClearHandler } from '../../src/server-middleware/cacheClear'
 import { processCache, resetProcessCache, runtime } from '../../src/utils/processCache'
 
 const axios = { defaults: { headers: { common: {} } } }
