@@ -102,6 +102,12 @@ class DruxtMenu {
   async get(menuName, settings, prefix) {
     if (!menuCache.has(this.druxt)) menuCache.set(this.druxt, new Map())
     const cache = menuCache.get(this.druxt)
+    // The client's clearCache() moves its generation on, which empties these results.
+    const generation = this.druxt.cacheGeneration || 0
+    if (cache.generation !== generation) {
+      cache.clear()
+      cache.generation = generation
+    }
 
     const jsonApiMenuItems = !!this.options.menu.jsonApiMenuItems
     const cacheKey = JSON.stringify([prefix || '', menuName, settings || {}, jsonApiMenuItems])
@@ -111,6 +117,7 @@ class DruxtMenu {
       const sharedKey = JSON.stringify([this.druxt.indexKey, cacheKey])
       const shared = processCache('menu')
       const stored = shared && shared.get(sharedKey)
+      const since = shared ? shared.generation : undefined
       const request = stored ? Promise.resolve(stored) : (jsonApiMenuItems
         ? this.getJsonApiMenuItems(menuName, settings, prefix)
         : this.getMenuLinkContent(menuName, settings, prefix)
@@ -119,7 +126,9 @@ class DruxtMenu {
         const after = processCache('menu')
         // No record means the fetch failed, so nothing is written and an
         // earlier entry stays. A recorded 0 is Drupal refusing, which set() keeps.
-        if (after && lifetimes.has(result)) after.set(sharedKey, result, lifetimes.get(result))
+        // The write is also dropped when the cache was cleared while the request
+        // was in flight: the result was fetched before the clear and predates it.
+        if (after && lifetimes.has(result)) after.set(sharedKey, result, lifetimes.get(result), since)
         return result
       })
       cache.set(cacheKey, request)

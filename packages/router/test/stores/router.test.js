@@ -177,4 +177,14 @@ describe('DruxtRouterStore', () => {
     await store.dispatch('druxtRouter/getRoute', '/missing')
     expect(getRoute).toHaveBeenCalledTimes(1)
   })
+
+  test('flushRoutes', async () => {
+    store.commit('druxtRouter/addRoute', { path: '/a', route: { type: 'entity' } })
+    store.commit('druxtRouter/addRoute', { path: '/b', route: { type: 'entity' } })
+    store.commit('druxtRouter/flushRoutes', { path: '/a' })
+    expect(Object.keys(store.state.druxtRouter.routes)).toStrictEqual(['/b'])
+    store.commit('druxtRouter/flushRoutes', { path: '/never' })
+    store.commit('druxtRouter/flushRoutes')
+    expect(store.state.druxtRouter.routes).toStrictEqual({})
+  })
 })

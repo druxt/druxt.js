@@ -2,6 +2,7 @@ import chalk from 'chalk'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { join, normalize, resolve } from 'path'
 import { DruxtClient } from '../client'
+import { cacheClearHandler } from '../server-middleware/cacheClear'
 import meta from '../../package.json'
 
 // @nuxt/components ignores a false isAsync on the directory.
@@ -39,6 +40,14 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
   // Share responses between server requests that carry no credentials, for as long as Drupal allows, in production only.
   if (options.cache !== false) {
     options.cache = this.options.dev ? false : { ...options.cache }
+  }
+
+  // Let Drupal empty the process cache. The secret is taken out of the options, which the plugins send to the browser.
+  // The handler takes the secret, so it is registered as a function rather than by path like the template middleware.
+  const { secret, ...cache } = options.cache || {}
+  if (options.cache) options.cache = cache
+  if (options.cache && secret) {
+    this.addServerMiddleware({ path: '/_druxt/cache/clear', handler: cacheClearHandler(secret) })
   }
 
   // Normalize slashes.
@@ -235,6 +244,8 @@ export { DruxtNuxtModule }
  *   Off under `nuxt dev`. `false` turns it off.
  * @property {number} [cache.ttl] - Seconds a cached response may live at most. It shortens Drupal's lifetime,
  *   never extends it.
+ * @property {string} [cache.secret] - Turns on `POST /_druxt/cache/clear`, which empties the cache when the
+ *   `X-Druxt-Secret` header matches. It stays on the server and is never sent to the browser.
  * @property {string} [cache.sessionCookie=S?SESS[0-9a-f]+] - A pattern for the name of the backend's session
  *   cookie. A request with a matching cookie never uses the cache.
  *

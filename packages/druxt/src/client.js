@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
-import { parseCacheLifetime, processCache, watchCredentials } from './utils/processCache'
+import { parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
 
 // Shared JSON:API index cache. Keyed by the Axios instance, which carries the
 // credentials, then by base URL, endpoint and resource config, so clients on
@@ -100,8 +100,10 @@ class DruxtClient {
     // endpoint and resource config.
     const indexKey = JSON.stringify([baseUrl, this.options.endpoint, this.options.jsonapiResourceConfig])
     this.indexKey = indexKey
-    if (!indexCache.has(this.axios)) indexCache.set(this.axios, { index: {}, requests: {} })
+    // The generation moves on each clear, so an index fetched before one is not kept.
+    if (!indexCache.has(this.axios)) indexCache.set(this.axios, { index: {}, requests: {}, generation: 0 })
     const cache = indexCache.get(this.axios)
+    this.indexCache = cache
     this.indexRequests = cache.requests
 
     /**
@@ -113,6 +115,31 @@ class DruxtClient {
      * @type {object}
      */
     this.index = cache.index[indexKey] || (cache.index[indexKey] = {})
+
+    /**
+     * Moves on each time `clearCache()` runs, so caches keyed by this client know to empty.
+     *
+     * @type {number}
+     */
+    this.cacheGeneration = 0
+  }
+
+  /**
+   * Clear the caches this client holds, and the server's process cache.
+   *
+   * Empties the JSON:API index and the process cache, and moves `cacheGeneration`
+   * on so results cached per client, such as menus, are fetched again.
+   *
+   * @example @lang js
+   * this.$druxt.clearCache()
+   */
+  clearCache() {
+    for (const prefix of Object.keys(this.index)) delete this.index[prefix]
+    // A request in flight predates the clear: later callers start their own.
+    for (const key of Object.keys(this.indexRequests)) delete this.indexRequests[key]
+    this.indexCache.generation += 1
+    resetProcessCache()
+    this.cacheGeneration += 1
   }
 
   /**
@@ -438,16 +465,25 @@ class DruxtClient {
       // Concurrent callers, on this client or another sharing the index,
       // wait on one request. A failed request is dropped so the next call retries.
       const key = [this.indexKey, prefix || ''].join(':')
+      const before = this.processCache('index')
+      const since = before ? before.generation : undefined
+      const started = this.indexCache.generation
       const request = this.indexRequests[key] || (this.indexRequests[key] = this.fetchIndex(prefix))
-      let lifetime
+      let fetched
       try {
-        lifetime = await request
+        fetched = await request
       } finally {
         if (this.indexRequests[key] === request) delete this.indexRequests[key]
       }
 
+      // An index fetched before a clear answers this call and is kept nowhere.
+      if (started !== this.indexCache.generation) {
+        return resource ? fetched.index[resource] || false : fetched.index
+      }
+      this.index[prefix] = fetched.index
       const shared = this.processCache('index')
-      if (shared && this.index[prefix]) shared.set(key, this.index[prefix], lifetime)
+      // Dropped when the process cache was cleared while the request was in flight.
+      if (shared) shared.set(key, fetched.index, fetched.lifetime, since)
     }
 
     return resource ? this.index[prefix][resource] || false : this.index[prefix]
@@ -459,7 +495,7 @@ class DruxtClient {
    * @private
    * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
-   * @returns {number} Seconds the index may be cached, from its Cache-Control.
+   * @returns {{index: object, lifetime: number}} The index, and the seconds it may be cached from its Cache-Control.
    */
   async fetchIndex(prefix) {
     const url = [prefix, this.options.endpoint].join('')
@@ -514,10 +550,7 @@ class DruxtClient {
       }
     }
 
-    // Set index.
-    this.index[prefix] = index
-
-    return Math.min(...documents.map((document) => this.cacheLifetime(document)))
+    return { index, lifetime: Math.min(...documents.map((document) => this.cacheLifetime(document))) }
   }
 
   /**

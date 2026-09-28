@@ -102,6 +102,21 @@ const DruxtRouterStore = ({ store }) => {
       },
 
       /**
+       * @name flushRoutes
+       * @mutator {object} flushRoutes=routes Removes routes from the Vuex state object.
+       * @param {object} state - The Vuex state object.
+       * @param {object} [payload] - The mutation payload.
+       * @param {string} [payload.path] - (Optional) The path to remove. Every route when omitted.
+       *
+       * @example @lang js
+       * this.$store.commit('druxtRouter/flushRoutes', { path: '/about' })
+       */
+      flushRoutes (state, { path } = {}) {
+        if (path) Vue.delete(state.routes, path)
+        else Vue.set(state, 'routes', {})
+      },
+
+      /**
        * @name setRoute
        * @mutator {string} setRoute=route Sets the active route by path.
        * @param {object} state - The Vuex state object.

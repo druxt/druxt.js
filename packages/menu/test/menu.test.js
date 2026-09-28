@@ -137,4 +137,15 @@ describe('DruxtMenu class', () => {
     await menu.get('main')
     expect(menu.getJsonApiMenuItems).toHaveBeenCalledTimes(2)
   })
+
+  test('get - fetches again after the client cache is cleared', async () => {
+    const menu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
+    menu.getJsonApiMenuItems = jest.fn(async () => ({ entities: [] }))
+    await menu.get('main')
+    await menu.get('main')
+    expect(menu.getJsonApiMenuItems).toHaveBeenCalledTimes(1)
+    menu.druxt.clearCache()
+    await menu.get('main')
+    expect(menu.getJsonApiMenuItems).toHaveBeenCalledTimes(2)
+  })
 })

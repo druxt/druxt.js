@@ -64,6 +64,25 @@ describe('DruxtJS Nuxt module', () => {
     expect(pluginOptions().cache).toBe(false)
   })
 
+  test('Cache clear endpoint', async () => {
+    const pluginOptions = () => mock.addPlugin.mock.calls.map(([plugin]) => plugin.options).filter((o) => o && o.baseUrl)
+    const endpoint = () => mock.addServerMiddleware.mock.calls.map(([m]) => m).find((m) => m.path === '/_druxt/cache/clear')
+
+    // Off without a secret.
+    await DruxtNuxtModule.call(mock, options)
+    expect(endpoint()).toBe(undefined)
+
+    // On with one, and the secret never reaches a plugin, which would send it to the browser.
+    mock.addPlugin.mockClear()
+    await DruxtNuxtModule.call(mock, { ...options, cache: { secret: 'correct-horse-battery', ttl: 60 } })
+    expect(typeof endpoint().handler).toBe('function')
+    expect(pluginOptions().length).toBeGreaterThan(0)
+    for (const pluginOption of pluginOptions()) {
+      expect(JSON.stringify(pluginOption)).not.toContain('correct-horse-battery')
+      expect(pluginOption.cache).toStrictEqual({ ttl: 60 })
+    }
+  })
+
   test('Root options', () => {
     // Set root options.
     mock.options.druxt = options

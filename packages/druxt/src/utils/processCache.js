@@ -4,6 +4,11 @@
 const SCOPES = Symbol.for('druxt.processCache')
 const scopes = globalThis[SCOPES] || (globalThis[SCOPES] = new Map())
 
+// Moves on each clear, so a write from a request that was in flight at the time
+// is refused. Shared like the scopes, so every copy of the module agrees.
+const GENERATION = Symbol.for('druxt.processCacheGeneration')
+const generation = globalThis[GENERATION] || (globalThis[GENERATION] = { value: 0 })
+
 // Axios instances seen sending credentials, and instances already watched.
 const credentialed = new WeakSet()
 const watched = new WeakSet()
@@ -168,8 +173,14 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
   const entries = consumers.get(consumer)
   // A ttl caps what may be kept, so 0 keeps nothing; without one, Drupal's lifetime stands.
   const cap = (seconds) => (typeof ttl === 'number' ? Math.min(seconds, ttl) : seconds)
+  const taken = generation.value
 
   return {
+    // The generation this handle was taken at. Compare a handle taken after a
+    // request resolves against one taken before it started: a difference means
+    // the cache was cleared while the request was in flight.
+    generation: taken,
+
     // The reader's cap applies too, so a shorter ttl never serves an older entry.
     get(key) {
       const entry = entries.get(key)
@@ -178,9 +189,21 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
       return entry.value
     },
 
-    // A value that may not be kept also removes what an earlier response
-    // stored under the key, so the cache follows Drupal's latest answer.
-    set(key, value, seconds) {
+    /**
+     * Store a value, unless a clear has happened since this handle was taken.
+     *
+     * A value that may not be kept also removes what an earlier response
+     * stored under the key, so the cache follows Drupal's latest answer.
+     *
+     * @param {string} key - The cache key.
+     * @param {*} value - The value to store.
+     * @param {number} seconds - Seconds the value may be kept.
+     * @param {number} [since] - A generation the value was fetched at. The value is dropped when a clear has happened since.
+     *
+     * @returns {*} The value, stored or not.
+     */
+    set(key, value, seconds, since) {
+      if (since !== undefined && since !== generation.value) return value
       if (cap(seconds) > 0) entries.set(key, { value, seconds: cap(seconds), created: Date.now() })
       else entries.delete(key)
       return value
@@ -196,4 +219,5 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
 export const resetProcessCache = (scope) => {
   if (scope) scopes.delete(scope)
   else scopes.clear()
+  generation.value += 1
 }

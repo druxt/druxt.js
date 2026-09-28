@@ -81,9 +81,48 @@ Translated routes also need a `decoupled_router` patch; see the
 | `endpoint`    | `string`          | `'/jsonapi'` | The JSON:API endpoint path.                                              |
 | `proxy.api`   | `boolean`         | `false`      | Proxy API requests via Nuxt ([guide](https://druxtjs.org/how-to/proxy)). |
 | `proxy.files` | `boolean\|string` | `false`      | Proxy Drupal files. A string sets the site.                              |
+| `cache`       | `boolean\|object` | `{}`         | The server cache, see below. `false` turns it off.                       |
 
 See the [Nuxt module API](https://druxtjs.org/api/packages/druxt/nuxt) for the full
 options list.
+
+## Server cache
+
+In production, the server keeps the JSON:API index and menus between requests
+for as long as Drupal's `Cache-Control` header allows. Drupal sets that header
+from the page cache maximum age (Administration > Configuration > Development >
+Performance). At the default of 0, nothing is kept. A request with an
+`Authorization` header or a Drupal session cookie never reads or fills the
+cache. The cache is off under `nuxt dev`.
+
+| Option                | Type     | Default             | Description                                                         |
+| --------------------- | -------- | ------------------- | ------------------------------------------------------------------- |
+| `cache.ttl`           | `number` |                     | Seconds a response may be kept at most. `0` keeps nothing.          |
+| `cache.secret`        | `string` |                     | Turns on `POST /_druxt/cache/clear`.                                |
+| `cache.sessionCookie` | `string` | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it. |
+
+Clear the cache from the app with `this.$store.dispatch('druxt/clearCache')`,
+or from Drupal by sending `POST /_druxt/cache/clear` with the secret in an
+`X-Druxt-Secret` header. Each Nuxt process has its own cache, so a site with
+several processes clears each one.
+
+### Clearing from Drupal with Purge
+
+The [Purge](https://www.drupal.org/project/purge) module can send that request
+whenever content changes. Enable `purge`, `purge_purger_http`,
+`purge_queuer_coretags` and a processor such as `purge_processor_lateruntime`,
+then add the bundled HTTP purger:
+
+```sh
+drush p:purger-add httpbundled
+```
+
+Give it the method `POST`, the Nuxt host and port, the path
+`/_druxt/cache/clear`, a header `X-Druxt-Secret` with the secret, and the
+invalidation type `tag`. One save then costs one request, whatever it
+invalidates, and a request refused for a wrong secret is sent again with the
+next batch. Keep the secret out of exported configuration: set it from
+`settings.php` as a `$config` override.
 
 ## DruxtClient
 

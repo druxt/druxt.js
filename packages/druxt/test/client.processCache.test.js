@@ -160,4 +160,64 @@ describe('DruxtClient process cache', () => {
     expect(client.cacheLifetime({})).toBe(0)
     expect(client.cacheLifetime(false)).toBe(0)
   })
+
+  test('an index fetched before a clear is not stored after it', async () => {
+    // The cache is cleared while the index request is in flight, as it is when
+    // Drupal calls the clear endpoint because the content changed.
+    const axios = requestAxios()
+    const inFlight = axios.get
+    axios.get = jest.fn(async (...args) => {
+      const response = await inFlight(...args)
+      resetProcessCache()
+      return response
+    })
+    await new DruxtClient(baseUrl, { axios, cache: {} }).getIndex()
+    expect(indexCalls()).toBe(1)
+
+    // The pre-clear index must not be readable, so the next request fetches.
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(2)
+  })
+
+  test('clearCache empties the index and the process cache', async () => {
+    const client = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
+    await client.getIndex()
+    expect(indexCalls()).toBe(1)
+    expect(client.cacheGeneration).toBe(0)
+
+    client.clearCache()
+    expect(client.cacheGeneration).toBe(1)
+    await client.getIndex()
+    expect(indexCalls()).toBe(2)
+
+    // Another request's client finds the process cache empty too.
+    client.clearCache()
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(3)
+  })
+
+  test('an index fetched before a clear answers its caller and is kept nowhere', async () => {
+    const axios = requestAxios()
+    const resolvers = []
+    const links = (name) => ({ headers: { 'cache-control': 'public, max-age=300' }, data: { links: { [name]: { href: `${baseUrl}/jsonapi/${name}` } } } })
+    axios.get = jest.fn(() => new Promise((resolve) => resolvers.push(resolve)))
+    const client = new DruxtClient(baseUrl, { axios, cache: {} })
+
+    const before = client.getIndex()
+    await Promise.resolve()
+    client.clearCache()
+    // A call after the clear starts its own request rather than joining the stale one.
+    const after = client.getIndex()
+    await Promise.resolve()
+    expect(axios.get).toHaveBeenCalledTimes(2)
+
+    resolvers[0](links('stale'))
+    expect(Object.keys(await before)).toStrictEqual(['stale'])
+    expect(client.index[undefined]).toBe(undefined)
+    expect(new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).processCache('index').get(`${client.indexKey}:`)).toBe(undefined)
+
+    resolvers[1](links('fresh'))
+    expect(Object.keys(await after)).toStrictEqual(['fresh'])
+    expect(Object.keys(client.index[undefined])).toStrictEqual(['fresh'])
+  })
 })
