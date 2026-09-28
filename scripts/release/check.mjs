@@ -65,7 +65,12 @@ export function checkPackages({ packages, registry, files = true }) {
         }
 
         const sibling = workspace.get(dep)
-        if (!sibling) continue
+        if (!sibling) {
+          if (range === 'latest' || semver.validRange(range) === '*') {
+            problems.push(`${name}: ${field}.${dep} is "${range}", which accepts any future release. State the range the package supports.`)
+          }
+          continue
+        }
 
         if (sibling.private) {
           problems.push(`${name}: ${field}.${dep} names a private package, so an install from npm cannot resolve it.`)
@@ -92,6 +97,20 @@ export function checkPackages({ packages, registry, files = true }) {
           problems.push(`${name}: files entry "${entry}" does not exist. Run yarn build first.`)
         } else if (fs.statSync(target).isDirectory() && fs.readdirSync(target).length === 0) {
           problems.push(`${name}: files entry "${entry}" is empty.`)
+        }
+      }
+    }
+  }
+
+  // Siblings install together, so one sibling's copy of an outside package must satisfy another's peer range.
+  for (const { manifest: peer } of published) {
+    for (const [dep, peerRange] of Object.entries(peer.peerDependencies || {})) {
+      if (workspace.has(dep) || !semver.validRange(peerRange)) continue
+      for (const { manifest: other } of published) {
+        const range = (other.dependencies || {})[dep]
+        if (other === peer || !range || !semver.validRange(range)) continue
+        if (!semver.intersects(range, peerRange)) {
+          problems.push(`${other.name}: dependencies.${dep} is "${range}", outside ${peer.name}'s peerDependencies.${dep} "${peerRange}".`)
         }
       }
     }
