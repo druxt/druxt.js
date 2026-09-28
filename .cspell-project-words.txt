@@ -36,6 +36,7 @@ consolas
 Contenta
 contentacms
 corepack
+coretags
 creds
 customisations
 cweagans
@@ -78,6 +79,7 @@ giget
 gruntfuggly
 homepath
 hrefs
+httpbundled
 humanises
 hverlin
 iconify
@@ -93,6 +95,7 @@ Knip
 Ksection
 labelledby
 langcode
+lateruntime
 libasound
 libfreetype
 libgbm
