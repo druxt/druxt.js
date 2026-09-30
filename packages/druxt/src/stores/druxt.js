@@ -241,7 +241,8 @@ const DruxtStore = ({ store }) => {
        * Clear every Druxt cache.
        *
        * Clears the DruxtClient's caches and the server's process cache, and
-       * flushes each registered Druxt store.
+       * flushes the stored collections, resources, routes, Views results and
+       * menu items. Schemas are built at build time and stay.
        *
        * @name clearCache
        * @action clearCache

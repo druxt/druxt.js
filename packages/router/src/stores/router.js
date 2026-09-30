@@ -10,6 +10,9 @@ const DruxtRouterStore = ({ store }) => {
    */
   const namespace = 'druxtRouter'
 
+  // Moved on by a flush, so a route fetched before it is not stored.
+  const generation = { value: 0 }
+
   /**
    * The druxtRouter Vuex module.
    *
@@ -112,6 +115,7 @@ const DruxtRouterStore = ({ store }) => {
        * this.$store.commit('druxtRouter/flushRoutes', { path: '/about' })
        */
       flushRoutes (state, { path } = {}) {
+        generation.value += 1
         if (path) Vue.delete(state.routes, path)
         else Vue.set(state, 'routes', {})
       },
@@ -267,6 +271,7 @@ const DruxtRouterStore = ({ store }) => {
           return state.routes[path]
         }
 
+        const since = generation.value
         let route
         try {
           route = await this.$druxtRouter().getRoute(path)
@@ -283,7 +288,8 @@ const DruxtRouterStore = ({ store }) => {
           if (statusCode < 400 || statusCode >= 500 || !err.response) return route
         }
 
-        commit('addRoute', { path, route })
+        // The route predates a flush that happened while it was fetched.
+        if (since === generation.value) commit('addRoute', { path, route })
 
         return route
       }

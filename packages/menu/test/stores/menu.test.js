@@ -34,6 +34,27 @@ describe('DruxtStore', () => {
     store.dispatch('druxtMenu/get', 'name')
   })
 
+  test('get - a flush during the request drops the menu', async () => {
+    const pending = []
+    store.$druxtMenu.get = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+
+    const before = store.dispatch('druxtMenu/get', 'main')
+    await Promise.resolve()
+    store.commit('druxtMenu/flushEntities', {})
+
+    // Nothing from before the flush is stored.
+    pending[0]({ entities: [{ id: 'stale' }] })
+    await before
+    expect(store.state.druxtMenu.entities).toStrictEqual({})
+
+    // A call after the flush is stored.
+    const after = store.dispatch('druxtMenu/get', 'main')
+    await Promise.resolve()
+    pending[1]({ entities: [{ id: 'fresh' }] })
+    await after
+    expect(Object.keys(store.state.druxtMenu.entities[undefined])).toStrictEqual(['fresh'])
+  })
+
   test('AddEntities', async () => {
     expect(store.state.druxtMenu.entities).toStrictEqual({})
     store.commit('druxtMenu/addEntities', { entities: [{ id: 'test' }] })

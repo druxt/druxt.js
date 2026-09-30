@@ -178,6 +178,29 @@ describe('DruxtRouterStore', () => {
     expect(getRoute).toHaveBeenCalledTimes(1)
   })
 
+  test('getRoute - a flush during the request drops the route, and the next call fetches again', async () => {
+    const pending = []
+    const getRoute = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+    store.$druxtRouter = () => ({ getRoute })
+
+    const before = store.dispatch('druxtRouter/getRoute', '/about')
+    await Promise.resolve()
+    store.commit('druxtRouter/flushRoutes')
+
+    // The caller gets its route, and nothing is stored.
+    pending[0]({ type: 'entity', props: {} })
+    expect(await before).toStrictEqual({ type: 'entity', props: {} })
+    expect(store.state.druxtRouter.routes).toStrictEqual({})
+
+    // A call after the flush fetches and stores.
+    const after = store.dispatch('druxtRouter/getRoute', '/about')
+    await Promise.resolve()
+    pending[1]({ type: 'entity', props: { fresh: true } })
+    await after
+    expect(store.state.druxtRouter.routes['/about'].props.fresh).toBe(true)
+    expect(getRoute).toHaveBeenCalledTimes(2)
+  })
+
   test('flushRoutes', async () => {
     store.commit('druxtRouter/addRoute', { path: '/a', route: { type: 'entity' } })
     store.commit('druxtRouter/addRoute', { path: '/b', route: { type: 'entity' } })
