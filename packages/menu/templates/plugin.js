@@ -12,6 +12,15 @@ export default ({ app }, inject) => {
   options.menu = <%= JSON.stringify(options.menu) %>
   <% } %>
 
+  <% if ((options.proxy || {}).api) { %>
+  // The browser sends its requests through the Nuxt proxy, as the druxt client does.
+  if (process.client) {
+    options.proxy = {
+      api: <%= options.proxy.api %>
+    }
+  }
+  <% } %>
+
   <% if (typeof options.axios === 'object') { %>
   // Axios settings.
   options.axios = <%= JSON.stringify(options.axios) %>
