@@ -53,4 +53,25 @@ describe('Component - DruxtBlockBlockContent', () => {
       'key', 'langcode', 'type', 'uuid',
     ])
   })
+
+  test('renders nothing while the store holds no resource, and again after a flush', async () => {
+    const query = new DrupalJsonApiParams().addFilter('settings.provider', 'block_content')
+    const mockBlock = await getMockResource('block--block', query)
+
+    // Mounted before anything is stored.
+    const wrapper = mountComponent(mockBlock.data)
+    expect(wrapper.vm.propsData).toBe(false)
+
+    store.commit('druxt/addResource', { resource: mockBlock })
+    expect(wrapper.vm.propsData.uuid).toBeDefined()
+
+    // The block is stored under another language only.
+    store.commit('druxt/flushResource', {})
+    store.commit('druxt/addResource', { resource: mockBlock, prefix: 'es' })
+    expect(wrapper.vm.propsData).toBe(false)
+
+    // A clear empties the store while the block is on the page.
+    store.commit('druxt/flushResource', {})
+    expect(wrapper.vm.propsData).toBe(false)
+  })
 })
