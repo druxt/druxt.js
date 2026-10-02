@@ -1,0 +1,25 @@
+[
+  { "query": "Open a PR for my druxt.js branch.", "should_trigger": true },
+  {
+    "query": "Write the pull request description for my druxt-views fix.",
+    "should_trigger": true
+  },
+  {
+    "query": "My druxt.js change is ready for review, submit it upstream.",
+    "should_trigger": true
+  },
+  {
+    "query": "What should my druxt.js PR title be for this router fix?",
+    "should_trigger": true
+  },
+  {
+    "query": "Reply to the review comments on my druxt.js pull request.",
+    "should_trigger": false
+  },
+  { "query": "Run the druxt.js unit tests.", "should_trigger": false },
+  {
+    "query": "Explain the GitFlow branches druxt.js uses.",
+    "should_trigger": false
+  },
+  { "query": "Reproduce the bug in issue #600.", "should_trigger": false }
+]

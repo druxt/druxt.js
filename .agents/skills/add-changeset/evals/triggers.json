@@ -1,0 +1,34 @@
+[
+  {
+    "query": "Write the changeset for my druxt-router fix.",
+    "should_trigger": true
+  },
+  {
+    "query": "Does this druxt.js PR need a changeset? It adds a new prop to DruxtBlock.",
+    "should_trigger": true
+  },
+  {
+    "query": "CI says my druxt.js change is missing a release note, add one.",
+    "should_trigger": true
+  },
+  {
+    "query": "Should my new druxt-views feature be a patch or minor bump?",
+    "should_trigger": true
+  },
+  {
+    "query": "Open a pull request for my druxt.js branch.",
+    "should_trigger": false
+  },
+  {
+    "query": "Why is the jest test for DruxtMenu failing?",
+    "should_trigger": false
+  },
+  {
+    "query": "Show me the CHANGELOG for druxt-entity 0.28.",
+    "should_trigger": false
+  },
+  {
+    "query": "Rename the helper function in packages/druxt/src/client.js.",
+    "should_trigger": false
+  }
+]

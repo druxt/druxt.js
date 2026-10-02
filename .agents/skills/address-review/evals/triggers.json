@@ -1,0 +1,25 @@
+[
+  {
+    "query": "There are review comments on my druxt.js PR, help me handle them.",
+    "should_trigger": true
+  },
+  {
+    "query": "CI is red on my druxt.js pull request, fix it.",
+    "should_trigger": true
+  },
+  {
+    "query": "The maintainer requested changes on my druxt-router PR.",
+    "should_trigger": true
+  },
+  {
+    "query": "A bot left findings on my druxt.js pull request, what should I do?",
+    "should_trigger": true
+  },
+  {
+    "query": "Open a pull request for my druxt.js branch.",
+    "should_trigger": false
+  },
+  { "query": "Start work on issue #700 in druxt.js.", "should_trigger": false },
+  { "query": "What does DruxtBreadcrumb render?", "should_trigger": false },
+  { "query": "Write a changeset for druxt-entity.", "should_trigger": false }
+]

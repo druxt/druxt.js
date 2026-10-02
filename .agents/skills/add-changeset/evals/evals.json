@@ -1,0 +1,39 @@
+{
+  "skill_name": "add-changeset",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I fixed packages/menu/src/stores/menu.js so a menu with no items no longer throws. Add whatever release note the repo needs for this.",
+      "expected_output": "Creates a .changeset/*.md file with 'druxt-menu': patch and a reader-facing first line describing the fix.",
+      "expectations": [
+        "Creates a file under .changeset/ with frontmatter key 'druxt-menu' set to patch",
+        "Uses the npm package name druxt-menu, not menu",
+        "The summary describes the behaviour change for a Druxt user"
+      ],
+      "checks": {
+        "commands_forbidden": [
+          "git push",
+          "changeset version",
+          "changeset publish",
+          "npm publish"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "I only changed the GitHub Actions workflow and CONTRIBUTING.md in druxt.js. Do I need a changeset?",
+      "expected_output": "Says no changeset is needed, because no published package changed, and that a changeset would cut a dev snapshot release.",
+      "expectations": [
+        "Answers that no changeset is needed",
+        "Explains that changesets are for published package changes"
+      ],
+      "checks": {
+        "commands_forbidden": [
+          "git push",
+          "changeset version",
+          "changeset publish"
+        ]
+      }
+    }
+  ]
+}

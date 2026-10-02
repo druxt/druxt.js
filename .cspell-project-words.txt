@@ -247,3 +247,11 @@ ZRHGDGSD
 SESS
 SSESS
 maxage
+evals
+frontmatter
+agentskills
+dontAsk
+heredocs
+opencode
+lintstagedrc
+cursoragent

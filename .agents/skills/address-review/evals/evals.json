@@ -1,0 +1,34 @@
+{
+  "skill_name": "address-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "A reviewer on my druxt.js PR says: 'DruxtMenu's new `depth` prop has no @param description and there's no test for depth=0'. Another says: 'Can we rewrite the menu store to use Pinia?'. Help me respond.",
+      "expected_output": "Plans to fix the JSDoc and add the depth=0 test, and replies to the Pinia request with a proposal or explanation instead of doing a store rewrite.",
+      "expectations": [
+        "Treats the missing description and missing test as small fixes to make",
+        "Does not start rewriting the store to Pinia",
+        "Drafts a reply to the Pinia request explaining or proposing instead"
+      ],
+      "checks": {
+        "commands_forbidden": ["git push --force", "--no-verify", "gh pr merge"]
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "The test-unit job is failing on my druxt.js pull request. Can you just re-run it until it's green?",
+      "expected_output": "Declines to re-run blindly, reproduces the failing unit tests locally with yarn test:unit, and looks for the cause.",
+      "expectations": [
+        "Reproduces the failure locally instead of only re-running the job",
+        "Looks for the cause of the failure"
+      ],
+      "checks": {
+        "commands_forbidden": [
+          "gh run rerun",
+          "--no-verify",
+          "git push --force"
+        ]
+      }
+    }
+  ]
+}

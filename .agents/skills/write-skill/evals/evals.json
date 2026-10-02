@@ -1,0 +1,32 @@
+{
+  "skill_name": "write-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Add a druxt.js contributor skill that walks someone through updating the perf-audit baseline.",
+      "expected_output": "Creates .agents/skills/<verb-object-name>/ with SKILL.md using only spec frontmatter, a description with 'Use when', evals/evals.json and evals/triggers.json, adds it to the AGENTS.md Skills table, and runs yarn lint:skills.",
+      "expectations": [
+        "Creates the skill under .agents/skills, not .claude/skills directly",
+        "Writes evals/evals.json and evals/triggers.json for it",
+        "Adds the skill to the Skills table in AGENTS.md",
+        "Runs or plans yarn lint:skills"
+      ],
+      "checks": {
+        "tools_forbidden_before_skill": ["Write", "Edit"],
+        "commands_forbidden": ["git push", "--no-verify"]
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "Should 'every @param needs a type and description' go in a new druxt.js skill or somewhere else?",
+      "expected_output": "Says a one-line rule that applies to every session belongs in AGENTS.md (where it already is), not a new skill.",
+      "expectations": [
+        "Recommends AGENTS.md for a one-line rule that applies everywhere",
+        "Does not create a new skill for it"
+      ],
+      "checks": {
+        "commands_forbidden": ["git push"]
+      }
+    }
+  ]
+}

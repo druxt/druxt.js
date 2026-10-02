@@ -1,0 +1,37 @@
+{
+  "skill_name": "open-pr",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "My druxt.js branch feature/412-empty-menu fixes issue #412 (DruxtMenu renders an empty <ul> with no items). Write the pull request title and description for me, but don't open it yet.",
+      "expected_output": "Drafts a Conventional Commits title scoped to menu and a description following the PR template with Types of changes, Description including Resolves: #412, Checklist and Screenshots/Media. Does not push or open the PR.",
+      "expectations": [
+        "The title is a Conventional Commits subject such as fix(menu): ...",
+        "The description follows the sections of .github/PULL_REQUEST_TEMPLATE.md",
+        "The description links the issue with Resolves: #412",
+        "Does not push or open the pull request"
+      ],
+      "checks": {
+        "tools_forbidden_before_skill": ["Write"],
+        "commands_forbidden": ["git push", "gh pr create", "gh pr merge"]
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "Open a druxt.js pull request for my druxt-router change. I haven't run any checks yet.",
+      "expected_output": "Runs or asks to run the verification gate before opening, and targets develop on druxt/druxt.js from the fork.",
+      "expectations": [
+        "Runs or requires the verification gate before the pull request is opened",
+        "Targets the develop branch, not main"
+      ],
+      "checks": {
+        "commands_forbidden": [
+          "gh pr merge",
+          "--base main",
+          "--no-verify",
+          "git push --force"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# The commits being pushed, read from this hook's stdin, so a commit made
+# without the commit-msg hook is still caught before it reaches GitHub.
+node scripts/commits/check.mjs --pre-push || exit 1
+
+# Fast repository-wide checks that CI blocks on. The full gate (build and
+# unit tests) is `yarn lint && yarn build && yarn test:unit`; see the
+# verify-change skill.
+yarn lint && yarn lint:skills && yarn lint:skills:test

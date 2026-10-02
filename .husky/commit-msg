@@ -1,4 +1,7 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+# Conventional Commits, then the commit identity: the author and committer
+# are the person contributing, and the message credits no AI tool.
 yarn lint:commit --edit $1
+node scripts/commits/check.mjs --message-file "$1"

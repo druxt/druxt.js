@@ -1,0 +1,31 @@
+[
+  {
+    "query": "Create a new druxt.js skill for running the e2e tests.",
+    "should_trigger": true
+  },
+  {
+    "query": "yarn lint:skills is failing on my SKILL.md, help.",
+    "should_trigger": true
+  },
+  {
+    "query": "Improve the description of the open-pr skill in druxt.js so it triggers more reliably.",
+    "should_trigger": true
+  },
+  {
+    "query": "Should this druxt.js guidance be a skill or go in AGENTS.md?",
+    "should_trigger": true
+  },
+  {
+    "query": "Open a pull request for my druxt.js branch.",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix the failing druxt-router unit test.",
+    "should_trigger": false
+  },
+  { "query": "Triage the new druxt.js issue.", "should_trigger": false },
+  {
+    "query": "Explain how druxt-site builds its pages.",
+    "should_trigger": false
+  }
+]
