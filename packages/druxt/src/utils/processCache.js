@@ -9,9 +9,9 @@ const scopes = globalThis[SCOPES] || (globalThis[SCOPES] = new Map())
 const GENERATION = Symbol.for('druxt.processCacheGeneration')
 const generation = globalThis[GENERATION] || (globalThis[GENERATION] = { value: 0 })
 
-// Axios instances seen sending credentials, and instances already watched.
+// Axios instances seen sending credentials, and the patterns watched on each.
 const credentialed = new WeakSet()
-const watched = new WeakSet()
+const watched = new WeakMap()
 
 // Where the code runs. Tests replace isServer, as jsdom always has a window.
 export const runtime = { isServer: () => typeof window === 'undefined' }
@@ -80,15 +80,33 @@ export const hasCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) => 
  * never show. The response holds the config as sent, so the instance is
  * marked there and the cache is withheld from it from then on.
  *
+ * Clients sharing an instance may each configure a different session cookie.
+ * One interceptor is registered, against every pattern registered on the
+ * instance, so a cookie only the second client would recognise is still seen.
+ *
  * @param {object} axios - The Axios instance.
  * @param {string} [sessionCookie] - A pattern for the session cookie name.
  */
 export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) => {
   const interceptors = ((axios || {}).interceptors || {}).response
-  if (!interceptors || typeof interceptors.use !== 'function' || watched.has(axios)) return
-  watched.add(axios)
+  if (!interceptors || typeof interceptors.use !== 'function') return
 
-  const mark = (config) => { if (configHasCredentials(config, sessionCookie)) credentialed.add(axios) }
+  const registered = watched.get(axios)
+  if (registered) {
+    registered.add(sessionCookie)
+    return
+  }
+  const patterns = new Set([sessionCookie])
+  watched.set(axios, patterns)
+
+  const mark = (config) => {
+    for (const pattern of patterns) {
+      if (configHasCredentials(config, pattern)) {
+        credentialed.add(axios)
+        return
+      }
+    }
+  }
   interceptors.use(
     (response) => { mark((response || {}).config); return response },
     (error) => { mark((error || {}).config); return Promise.reject(error) }
