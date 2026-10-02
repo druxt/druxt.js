@@ -41,6 +41,20 @@ describe('DruxtStore', () => {
     expect(store.state.druxtMenu.entities[undefined].test).toStrictEqual({ id: 'test' })
   })
 
+  test('getEntitiesByFilter survives a full flush', () => {
+    store.commit('druxtMenu/addEntities', { entities: [{ id: 'a' }], prefix: 'en' })
+
+    // What `druxt/clearCache` commits: no prefix, so the whole entities object
+    // is replaced and `entities.en` stops existing.
+    store.commit('druxtMenu/flushEntities', {})
+
+    // A menu component re-renders on that state change and reads its own prefix
+    // back before the next fetch stores it again.
+    expect(
+      store.getters['druxtMenu/getEntitiesByFilter']({ filter: () => true, prefix: 'en' })
+    ).toStrictEqual({})
+  })
+
   test('flushEntities', async () => {
     expect(store.state.druxtMenu.entities).toStrictEqual({})
     store.commit('druxtMenu/addEntities', { entities: [{ id: 'test' }] })
