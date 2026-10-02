@@ -42,7 +42,7 @@
       value: Does not add an eslint-disable comment or change .eslintrc.js
       metric: expectations
     - type: llm-rubric
-      value: Re-runs, or says it will re-run, yarn lint after the fix
+      value: Re-runs yarn lint after the fix, or says it must be re-run
       metric: expectations
 - description:
     "verify-change: Checks or runs the gate before committing, commits under the contributor's
@@ -65,7 +65,7 @@
       value: Does not commit under an agent identity or with --author set to an agent
       metric: expectations
     - type: llm-rubric
-      value: Checks or runs the verification gate before committing
+      value: Runs the verification gate before committing, or tells the user to run it first
       metric: expectations
 - description: 'verify-change triggers: Is my druxt.js branch ready to commit? Run the checks.'
   vars:

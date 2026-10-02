@@ -1,6 +1,6 @@
 ---
 name: triage-issue
-description: Sorts a druxt.js issue by type and package, and reproduces it against the example Drupal backend or with a failing unit test before writing up the findings. Use when a new or unclear druxt.js issue needs sorting, reproducing or a next step, or when asked whether a reported bug is real.
+description: Sorts a druxt.js issue by type and package, and reproduces it against the example Drupal backend or with a failing unit test before writing up the findings. Use when one or more new or unclear druxt.js issues need sorting, reproducing or a next step, or when asked whether a reported bug is real.
 ---
 
 # Triage an issue

@@ -1,6 +1,6 @@
 ---
 name: address-review
-description: Works through review comments and failing CI on a druxt.js pull request, fixing or answering each one until the pull request is green and every thread has a reply. Use when a druxt.js pull request has review comments, requested changes, bot findings or a failing check.
+description: Works through review comments and failing CI on a druxt.js pull request, fixing or answering each one until the pull request is green and every thread has a reply. Use when a druxt.js pull request has review comments, requested changes, bot findings or a failing check, including a request to re-run CI until it passes.
 ---
 
 # Address review

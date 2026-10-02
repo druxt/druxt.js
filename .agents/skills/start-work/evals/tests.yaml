@@ -35,7 +35,7 @@
     - type: skill-used
       value: start-work
     - type: llm-rubric
-      value: Looks for an existing issue or drafts one before writing code
+      value: Looks for an existing issue, drafts one, or says one is needed before writing code
       metric: expectations
     - type: llm-rubric
       value: Writes or proposes a spec that has an Out of scope section

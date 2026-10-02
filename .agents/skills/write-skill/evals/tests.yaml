@@ -18,7 +18,7 @@
       value: Writes or proposes an evals/tests.yaml for it, with prompts that should and should not load it
       metric: expectations
     - type: llm-rubric
-      value: Adds or proposes a row for the skill in the AGENTS.md Skills table, linked to its SKILL.md
+      value: Adds or proposes a row for the skill in the AGENTS.md Skills table
       metric: expectations
     - type: llm-rubric
       value: Runs or plans yarn lint:skills

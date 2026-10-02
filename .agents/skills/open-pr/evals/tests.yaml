@@ -5,8 +5,10 @@
     Does not push or open the PR.'
   vars:
     request:
-      "My druxt.js branch feature/412-empty-menu fixes issue #412 (DruxtMenu renders an empty <ul>
-      with no items). Write the pull request title and description for me, but don't open it yet."
+      "My druxt.js branch feature/412-empty-menu fixes issue #412: DruxtMenu rendered an empty
+      <ul> for a menu with no items, and now renders nothing. A new unit test in packages/menu/test covers
+      it, and yarn lint, yarn build and yarn test:unit pass. Write the pull request title and description
+      for me, but don't open it yet."
     forbidden:
       - git push
       - gh pr create
