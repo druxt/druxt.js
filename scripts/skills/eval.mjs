@@ -89,16 +89,17 @@ export function stripHeredocs(command) {
  *
  * @param {object[]} calls - The tool calls, from `toolCalls`.
  * @param {string} skill - The skill under test.
- * @param {object} [checks] - The case's checks. `skill_called` defaults to true.
+ * @param {object} [checks] - The case's checks. `skill_called` is true (the default), false, or
+ *   `"optional"` for a case that tests a rule `AGENTS.md` already carries.
  * @returns {string[]} One message per failed check. Empty when the case passes.
  */
 export function grade(calls, skill, checks = {}) {
   const failures = []
-  const expectSkill = checks.skill_called !== false
+  const expected = checks.skill_called === undefined ? true : checks.skill_called
   const first = calls.findIndex((call) => loadsSkill(call, skill))
 
-  if (expectSkill && first === -1) failures.push(`the ${skill} skill was not loaded`)
-  if (!expectSkill && first !== -1) failures.push(`the ${skill} skill was loaded, but this prompt should not load it`)
+  if (expected === true && first === -1) failures.push(`the ${skill} skill was not loaded`)
+  if (expected === false && first !== -1) failures.push(`the ${skill} skill was loaded, but this prompt should not load it`)
 
   const before = first === -1 ? calls : calls.slice(0, first)
   for (const tool of checks.tools_forbidden_before_skill || []) {

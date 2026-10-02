@@ -1,6 +1,6 @@
 ---
 name: verify-change
-description: Runs the druxt.js verification gate (lint, build, unit tests and the checks for whatever else changed) and reports the real results. Use when a druxt.js lint, build or test check fails, when about to commit or open or update a pull request, or before saying a change is done, fixed or passing.
+description: Runs the druxt.js verification gate (lint, build, unit tests and the checks for whatever else changed) and reports the real results. Use when a druxt.js lint, build or test check fails, when about to commit or open or update a pull request, or before saying a change is done, fixed or passing. For a failing skill check, use write-skill.
 ---
 
 # Verify a change

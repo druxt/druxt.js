@@ -49,6 +49,13 @@ test('a trigger query that should not load the skill fails when it does', () => 
   assert.deepEqual(grade([], 'open-pr', { skill_called: false }), [])
 })
 
+test('an optional skill is graded on behaviour alone', () => {
+  const calls = [{ name: 'Bash', input: { command: 'git status' } }]
+  assert.deepEqual(grade(calls, 'verify-change', { skill_called: 'optional', commands_forbidden: ['Co-Authored-By'] }), [])
+  const bad = [{ name: 'Bash', input: { command: 'git commit -m "x\n\nCo-Authored-By: Claude"' } }]
+  assert.equal(grade(bad, 'verify-change', { skill_called: 'optional', commands_forbidden: ['Co-Authored-By'] }).length, 1)
+})
+
 test('a tool that runs before the skill loads fails the case', () => {
   const calls = [
     { name: 'Edit', input: { file_path: 'a.js' } },

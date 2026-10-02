@@ -1,6 +1,6 @@
 ---
 name: write-skill
-description: Creates or changes a druxt.js contributor skill in .agents/skills, with its evals and the tests that gate it. Use when adding a skill, editing a SKILL.md or its evals, making a skill trigger more reliably, deciding whether guidance belongs in AGENTS.md or a skill, or when a skill check fails.
+description: Creates or changes a druxt.js contributor skill in .agents/skills, with its evals and the tests that gate it. Use when adding a skill, editing a SKILL.md or its evals, making a skill trigger more reliably, deciding whether guidance belongs in AGENTS.md or a skill, or when yarn lint:skills, yarn lint:skills:test or a skill eval fails.
 ---
 
 # Write a skill

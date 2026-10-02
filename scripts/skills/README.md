@@ -70,7 +70,9 @@ recorded in the transcript for the checks to catch.
 Each transcript is graded on:
 
 - whether the skill loaded, through the `Skill` tool or by reading its
-  `SKILL.md`, and for trigger queries whether that matches `should_trigger`
+  `SKILL.md`, and for trigger queries whether that matches `should_trigger`.
+  A case that tests a rule `AGENTS.md` already carries sets
+  `"skill_called": "optional"` and is graded on what the agent did
 - whether a tool in `tools_forbidden_before_skill` ran before the skill loaded
 - whether any shell command matched `commands_forbidden`, or none matched a
   `commands_required` pattern

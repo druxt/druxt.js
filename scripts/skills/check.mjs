@@ -264,7 +264,9 @@ export function checkChecks(checks) {
   for (const key of Object.keys(checks)) {
     if (!known.includes(key)) problems.push(`checks has an unknown key "${key}"`)
   }
-  if (checks.skill_called !== undefined && typeof checks.skill_called !== 'boolean') problems.push('checks.skill_called must be a boolean')
+  if (checks.skill_called !== undefined && typeof checks.skill_called !== 'boolean' && checks.skill_called !== 'optional') {
+    problems.push('checks.skill_called must be true, false or "optional"')
+  }
   for (const key of ['tools_forbidden_before_skill', 'commands_forbidden', 'commands_required']) {
     const value = checks[key]
     if (value === undefined) continue

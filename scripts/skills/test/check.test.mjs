@@ -199,6 +199,8 @@ test('duplicate case ids are refused', () => {
 test('checks must use known keys, lists of strings and valid patterns', () => {
   assert.deepEqual(checkChecks(undefined), [])
   assert.deepEqual(checkChecks({ commands_forbidden: ['git push'], tools_forbidden_before_skill: ['Edit'], skill_called: false }), [])
+  assert.deepEqual(checkChecks({ skill_called: 'optional' }), [])
+  assert.deepEqual(checkChecks({ skill_called: 'maybe' }), ['checks.skill_called must be true, false or "optional"'])
   assert.deepEqual(checkChecks({ nope: true }), ['checks has an unknown key "nope"'])
   assert.deepEqual(checkChecks({ commands_forbidden: 'git push' }), ['checks.commands_forbidden must be a list of strings'])
   assert.deepEqual(checkChecks({ commands_required: ['yarn (lint'] }), ['checks.commands_required has an invalid pattern "yarn (lint"'])
