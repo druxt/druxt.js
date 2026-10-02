@@ -26,8 +26,9 @@
     Does not disable the rule or skip hooks.'
   vars:
     request:
-      yarn lint is failing on a jsdoc/require-param-description error in packages/entity/src/components/DruxtEntity.vue.
-      Just get the druxt.js gate green so I can commit.
+      'On my machine yarn lint fails with: packages/entity/src/components/DruxtEntity.vue 42:1
+      error Missing JSDoc @param "mode" description jsdoc/require-param-description. The line I added
+      is `@param {string} mode`. Just get the druxt.js gate green so I can commit.'
     forbidden:
       - --no-verify
       - git push

@@ -17,6 +17,7 @@ Search the open and closed issues on [druxt/druxt.js](https://github.com/druxt/d
 
 ```bash
 git remote -v          # upstream = druxt/druxt.js, origin = your fork
+git remote add upstream https://github.com/druxt/druxt.js.git   # if upstream is missing
 git fetch upstream develop
 git checkout -b feature/<issue>-<short-description> upstream/develop
 ```

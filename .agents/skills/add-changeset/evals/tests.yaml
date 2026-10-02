@@ -85,9 +85,9 @@
   assert:
     - type: not-skill-used
       value: add-changeset
-- description: 'add-changeset does not trigger: Rename the helper function in packages/druxt/src/client.js.'
+- description: "add-changeset does not trigger: Fix the typo in the Jest section of druxt.js's CONTRIBUTING.md."
   vars:
-    request: Rename the helper function in packages/druxt/src/client.js.
+    request: Fix the typo in the Jest section of druxt.js's CONTRIBUTING.md.
   assert:
     - type: not-skill-used
       value: add-changeset

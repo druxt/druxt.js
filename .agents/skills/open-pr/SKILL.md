@@ -11,7 +11,7 @@ Pull requests go from a branch on your fork to `develop` on [druxt/druxt.js](htt
 
 1. The `verify-change` skill has passed in this session, and you have its output.
 2. A changeset is committed if a published package changed (see the `add-changeset` skill).
-3. The commits follow Conventional Commits, scoped by package name. The pre-commit and commit-msg hooks enforce this, so let them run.
+3. The commits follow Conventional Commits, scoped by the issue number when there is one and by the package name otherwise. The commit-msg hook enforces the format, so let it run.
 4. The branch is up to date with `develop`. Merge `upstream/develop` into it, then re-run the gate.
 5. The commits are authored and committed under your own git identity, with no AI attribution lines. `yarn lint:commit --from upstream/develop --to HEAD` checks the messages, and the `pre-push` hook checks the identity too.
 
@@ -42,7 +42,7 @@ Ask a maintainer for the `perf-audit` label when the change touches a store, the
 ```bash
 git push -u origin <branch>
 gh pr create --repo druxt/druxt.js --base develop --head <your-user>:<branch> \
-  --title "fix(menu): render nothing for a menu with no items" --body-file <description.md>
+  --title "fix(#412): render nothing for a menu with no items" --body-file <description.md>
 ```
 
 Without the `gh` CLI, open the compare page that `git push` prints.

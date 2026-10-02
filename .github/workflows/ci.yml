@@ -81,6 +81,17 @@ jobs:
 
       - run: yarn install --immutable
 
+      # A pull request cannot loosen the policy that checks its own commits:
+      # use the base branch's copy of each policy file, and the pull request's
+      # only where the base has none yet.
+      - name: Use the base branch's commit policy
+        run: |
+          for file in commitlint.config.js .husky/agent-identities; do
+            if git cat-file -e "$BASE:$file" 2>/dev/null; then
+              git show "$BASE:$file" > "$file"
+            fi
+          done
+
       # Conventional Commits and no AI attribution lines (commitlint.config.js).
       - name: Commit messages
         run: yarn lint:commit --from "$BASE" --to "$HEAD" --verbose

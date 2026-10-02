@@ -257,3 +257,4 @@ agnix
 commitlint
 promptfoo
 promptfooconfig
+oneline

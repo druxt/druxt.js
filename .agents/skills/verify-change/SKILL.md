@@ -31,7 +31,7 @@ yarn lint && yarn build && yarn test:unit
 | `scripts/release/`                 | `yarn release:check:test`                                       |
 | `scripts/perf-audit/`              | `yarn perf:audit:test` under Node 22                            |
 
-The end-to-end tests run in CI against a Drupal backend. To run them locally, start the backend with `cd examples/drupal && make build`, then run `yarn example:druxt-site:test`. See `examples/drupal/.devtools/README.md`.
+The end-to-end tests run in CI against a Drupal backend. To run them locally, start the backend with `(cd examples/drupal && make build)`, then run `yarn example:druxt-site:test` from the repository root. See `examples/drupal/.devtools/README.md`.
 
 ## Failing checks
 

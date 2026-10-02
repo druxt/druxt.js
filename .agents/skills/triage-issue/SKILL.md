@@ -30,7 +30,7 @@ Reproduce the bug on `develop`, in the smallest way available:
 2. The example apps against the local Drupal backend:
 
    ```bash
-   cd examples/drupal && make build
+   (cd examples/drupal && make build)   # from the repository root
    yarn example:druxt-site
    ```
 

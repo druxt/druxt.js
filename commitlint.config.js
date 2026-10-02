@@ -7,8 +7,18 @@ const AI_ATTRIBUTION = [
   /^\W*generated (with|by) \[?(claude|copilot|cursor|codex|gemini|aider).*$/im,
 ];
 
+const { default: isIgnored } = require('@commitlint/is-ignored');
+
+const hasAttribution = (message) =>
+  AI_ATTRIBUTION.some((pattern) => pattern.test(message || ''));
+
 module.exports = {
   extends: ['@commitlint/config-conventional'],
+  // commitlint skips merge-style messages ("Merge pull request …") before any
+  // rule runs, so a subject like that would hide an attribution line. Skip
+  // them only when they carry no attribution.
+  defaultIgnores: false,
+  ignores: [(message) => !hasAttribution(message) && isIgnored(message)],
   plugins: [
     {
       rules: {

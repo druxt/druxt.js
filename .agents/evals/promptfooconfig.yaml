@@ -33,10 +33,12 @@ providers:
         - Read
         - Grep
         - Glob
-        - Bash(git status:*)
-        - Bash(git log:*)
-        - Bash(git diff:*)
-        - Bash(git branch:*)
+        # Exact commands only: prefixes such as `git branch:*` would also
+        # allow `git branch -D`, and `git diff:*` allows `--output=<file>`.
+        - Bash(git status)
+        - Bash(git status --short)
+        - Bash(git branch --show-current)
+        - Bash(git log --oneline -20)
 
 defaultTest:
   options:

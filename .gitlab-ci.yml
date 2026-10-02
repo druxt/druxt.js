@@ -324,6 +324,14 @@ lint:commits:
     - section_start "commits" "Checking the merge request's commits"
     - corepack enable
     - yarn install --immutable
+    # Use the base branch's commit policy, so a merge request cannot loosen
+    # the rules that check its own commits.
+    - |
+      for file in commitlint.config.js .husky/agent-identities; do
+        if git cat-file -e "$CI_MERGE_REQUEST_DIFF_BASE_SHA:$file" 2>/dev/null; then
+          git show "$CI_MERGE_REQUEST_DIFF_BASE_SHA:$file" > "$file"
+        fi
+      done
     - yarn lint:commit --from "$CI_MERGE_REQUEST_DIFF_BASE_SHA" --to "$CI_COMMIT_SHA" --verbose
     - |
       if git log --format='%an <%ae>%n%cn <%ce>' "$CI_MERGE_REQUEST_DIFF_BASE_SHA..$CI_COMMIT_SHA" | grep -iEf .husky/agent-identities; then

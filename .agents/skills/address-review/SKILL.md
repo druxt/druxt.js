@@ -12,9 +12,10 @@ A pull request is ready to merge when CI is green on its latest commit and every
 ```bash
 gh pr view <number> --repo druxt/druxt.js --comments
 gh pr checks <number> --repo druxt/druxt.js
+gh api repos/druxt/druxt.js/pulls/<number>/comments --paginate
 ```
 
-Read inline comments, review summaries, bot findings and each failing check. A finding from a bot is a bug report like any other.
+`gh pr view` shows review summaries but not inline review comments, so the `gh api` call lists those, replies included. Read every inline comment, review summary, bot finding and failing check. A finding from a bot is a bug report like any other.
 
 ## 2. Fix CI first
 
