@@ -578,8 +578,9 @@ class DruxtClient {
     }
 
     let { href } = await this.getIndex(type, prefix)
+    // A type the index does not list, such as a View, is served under the prefix too.
     if (!href) {
-      href = this.options.endpoint + '/' + type.replace('--', '/')
+      href = [prefix, this.options.endpoint].join('').replace(/^\/*/, '/') + '/' + type.replace('--', '/')
     }
 
     const url = this.buildQueryUrl(`${href}/${id}/${related}`, query)
@@ -614,9 +615,9 @@ class DruxtClient {
     }
 
     let { href } = await this.getIndex(type, prefix)
-    // @TODO - Add test coverage.
+    // A type the index does not list, such as a View, is served under the prefix too.
     if (!href) {
-      href = this.options.endpoint + '/' + type.replace('--', '/')
+      href = [prefix, this.options.endpoint].join('').replace(/^\/*/, '/') + '/' + type.replace('--', '/')
     }
 
     const url = this.buildQueryUrl([href, id].join('/'), query)
