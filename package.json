@@ -44,7 +44,7 @@
     "lint:prose": "yarn lint:prose:install && .vale/bin/vale --config .vale.ini --glob='!{**/node_modules/**,**/dist/**,**/coverage/**,**/CHANGELOG.md,**/CODE_OF_CONDUCT.md,.changeset/README.md,**/.github/**,**/.yarn/**,**/.nuxt/**,**/.nuxt-storybook/**,examples/drupal/web/**,examples/drupal/vendor/**,examples/drupal/keys/**}' packages *.md examples .changeset .agents",
     "lint:prose:install": "bash scripts/install-vale.sh .vale/bin .vale/styles",
     "lint:renovate": "renovate-config-validator",
-    "lint:skills": "npx --yes agnix@0.56.1 .",
+    "lint:skills": "npx --yes agnix@0.56.1 --strict .",
     "package": "siroc run yarn pack --workspaces",
     "perf:audit": "node scripts/perf-audit/index.mjs",
     "perf:audit:test": "node --test scripts/perf-audit/test/*.test.mjs",
@@ -124,8 +124,8 @@
       "markdownlint-cli2",
       "cspell lint --no-progress --no-must-find-files"
     ],
-    "{AGENTS.md,.agents/skills/**/SKILL.md}": [
-      "npx --yes agnix@0.56.1"
+    "{AGENTS.md,.agnix.toml,.agents/skills/**/SKILL.md}": [
+      "npx --yes agnix@0.56.1 --strict"
     ]
   },
   "jest-junit": {

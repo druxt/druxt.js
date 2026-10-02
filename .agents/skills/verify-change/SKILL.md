@@ -28,8 +28,8 @@ yarn lint && yarn build && yarn test:unit
 | `examples/` manifests              | `yarn lint:examples`                                            |
 | Package output size                | `yarn bundlewatch`, after `yarn build`                          |
 | `.agents/skills/` or `AGENTS.md`   | `yarn lint:skills`                                              |
-| `scripts/release/`                 | `yarn release:check:test`                                       |
-| `scripts/perf-audit/`              | `yarn perf:audit:test` under Node 22                            |
+| `scripts/release`                  | `yarn release:check:test`                                       |
+| `scripts/perf-audit`               | `yarn perf:audit:test` under Node 22                            |
 
 The end-to-end tests run in CI against a Drupal backend. To run them locally, start the backend with `(cd examples/drupal && make build)`, then run `yarn example:druxt-site:test` from the repository root. See `examples/drupal/.devtools/README.md`.
 

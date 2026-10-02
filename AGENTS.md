@@ -1,6 +1,6 @@
 # AGENTS.md
 
-The `druxt.js` Nuxt/Vue monorepo, the fully decoupled Drupal frontend
+The druxt.js Nuxt/Vue monorepo, the fully decoupled Drupal frontend
 framework. Druxt = DRUpal + nUXT. Repository:
 [github.com/druxt/druxt.js](https://github.com/druxt/druxt.js).
 
@@ -11,18 +11,18 @@ other change: linted, tested, documented, reviewed, and merged through a pull
 request. CI is the gate, and a person is accountable for every change.
 
 - Work on a fork. Branch from `develop`, push to your fork, and open a pull
-  request against `develop` on `druxt/druxt.js`. The `start-work` and `open-pr`
+  request against `develop` on [druxt/druxt.js](https://github.com/druxt/druxt.js). The `start-work` and `open-pr`
   skills walk through it.
-- Write to `github.com/druxt*` (push, open pull requests or issues, comment)
-  only when the person you work for asks for that action. Maintainers review,
+- Write to the [druxt](https://github.com/druxt) GitHub organization (push,
+  open pull requests or issues, comment) only when the person you work for asks for that action. Maintainers review,
   label, merge and release.
-- Never bypass a gate: no skipped git hooks, no skipped or deleted tests, no
-  lowered thresholds, no `eslint-disable` to get past a rule. If a check is
-  wrong, fix the check in its own commit and say why in the pull request.
+- Pass every gate as it stands. Skipped git hooks, skipped or deleted tests,
+  lowered thresholds and `eslint-disable` comments are not allowed: if a check
+  is wrong, fix the check in its own commit and say why in the pull request.
 - Before calling work done, run the verification gate (the `verify-change`
   skill) and report its real output.
 - Commits are made by the person contributing them, under their own git
-  `user.name` and `user.email`. An agent never commits under its own
+  identity (`git config user.name` and `git config user.email`). An agent never commits under its own
   identity, and commit messages carry no AI attribution (no
   `Co-Authored-By: Claude`, session links or "Generated with" lines). The
   `commit-msg` and `pre-push` hooks and CI refuse both.
@@ -48,10 +48,11 @@ Or simply `make setup && make build`.
 `yarn build` is the regression gate. Every config/tooling change must keep it
 green. All 11 packages (`druxt`, `blocks`, `breadcrumb`, `entity`, `menu`,
 `router`, `schema`, `site`, `views`, `docgen`, `test-utils`) must produce their
-`dist/*.ssr.js` + `dist/*.esm.js` (docgen outputs `bin/druxt-docgen.js`).
+SSR and ESM bundles in `dist/` (docgen outputs
+`packages/docgen/bin/druxt-docgen.js`).
 
-Nuxt 2's esm config loader patches the module system: a `nuxt.config.js`
-build hook that `require`s a modern ESM-leaning package can die silently
+Nuxt 2's esm config loader patches the module system: a build hook in a Nuxt
+config file that `require`s a modern ESM-leaning package can die silently
 (no stack, exit 1 in CI). Spawn a clean child process for such work.
 
 The build stack (Node 16, Yarn 3, jest 29, eslint 7, Vue 2.7, Nuxt 2, siroc) is
@@ -86,7 +87,7 @@ yarn lint && yarn build && yarn test:unit
   for confirmed false positives (Vue SFC parsing isn't supported at this
   Node-16-forced version, Nuxt module-string registration, JSON-config-file
   references. None of these are things knip's static analysis can trace).
-- `yarn bundlewatch`: bundle size guard (`packages/**/dist/*.js` ≤ 50kb)
+- `yarn bundlewatch`: bundle size guard (each built file in a package's `dist/` ≤ 50kb)
 - `yarn perf:audit` / `yarn perf:audit:test`: the example performance audit and
   its `node:test` units. Both run under Node 22, not the repository's Node 16
   (`mise exec node@22 -- yarn perf:audit`). Not part of the gate above. The
@@ -114,7 +115,7 @@ this repo provides the generator). **The JSDoc you
 write is the public documentation, verbatim** - there's no separate editing
 pass, so a sloppy `@param` renders as a sloppy docs page.
 
-The rule, and the reason it exists: **every `@param` line must have both a
+The rule, and the reason it exists: **every `@param` line needs both a
 `{type}` and a `- description`, with no exceptions** (a `{typedef}` reference
 like `@param {addCollectionPayload} payload - The mutation payload.` counts -
 you don't have to re-enumerate a typedef's own properties inline). This is
@@ -150,7 +151,7 @@ site is the entire public-facing reference for the framework.
 
 The project workflow is written as skills in `.agents/skills/`, one directory
 per skill, in the [Agent Skills](https://agentskills.io/specification) format.
-**Before starting a task in this table, read the skill's `SKILL.md` and follow
+**Before starting a task in this table, open the skill linked below and follow
 it.** The path is the same in every tool:
 
 | Skill                                                      | Use it to                                                             |
@@ -163,17 +164,18 @@ it.** The path is the same in every tool:
 | [`triage-issue`](.agents/skills/triage-issue/SKILL.md)     | Classify, deduplicate and reproduce an issue, and write up the result |
 | [`write-skill`](.agents/skills/write-skill/SKILL.md)       | Add or change a skill, with its evals                                 |
 
-OpenCode, Codex, Cursor, Copilot and Gemini CLI also discover
-`.agents/skills/` on their own. Claude Code only discovers `.claude/skills/`,
-so that path is a symlink to `.agents/skills/`. Edit the skills in
-`.agents/skills/`.
+Claude Code, OpenCode, Codex, Cursor, Copilot and Gemini CLI all find them
+there (`CONTRIBUTING.md` explains how). Edit the skills in `.agents/skills/`.
 
 Skills are tested like code, with community tools:
 
 - `yarn lint:skills` runs [agnix](https://github.com/agent-sh/agnix) over the
   skills, this file and the agent config (spec fields, names, links). It
-  blocks in CI and runs on staged skills before each commit.
-- `yarn skills:eval` runs each skill's `evals/tests.yaml` through
+  runs with `--strict`, so a warning fails it too, and `.agnix.toml` lists
+  any rule turned off, with the reason. It blocks in CI and runs on staged
+  skills before each commit.
+- `yarn skills:eval` runs each skill's evals (such as
+  `.agents/skills/start-work/evals/tests.yaml`) through
   [promptfoo](https://www.promptfoo.dev/docs/guides/test-agent-skills/):
   prompts that should load the skill, prompts that should not, and behaviour
   cases. It spends model tokens, so it runs locally only, never in CI. It
@@ -183,7 +185,7 @@ Skills are tested like code, with community tools:
 
 Public Vue and Nuxt skills target Vue 3 and Nuxt 3/4 (Composition API,
 `<script setup>`, Nitro). Druxt is Vue 2.7 and Nuxt 2 with the Options API, so
-don't apply them here.
+follow the patterns in the existing packages instead.
 
 ## Package layout
 
@@ -198,7 +200,7 @@ don't apply them here.
 | `packages/schema`     | `druxt-schema`     | Schema generation                          |
 | `packages/site`       | `druxt-site`       | Site integration (tome/preview)            |
 | `packages/views`      | `druxt-views`      | Views components                           |
-| `packages/docgen`     | `druxt-docgen`     | Private CLI (`bin/druxt-docgen.js`)        |
+| `packages/docgen`     | `druxt-docgen`     | Private CLI (`bin/druxt-docgen`)           |
 | `packages/test-utils` | `druxt-test-utils` | Shared test helpers (private)              |
 
 Drupal-side counterparts (`druxt`, `decoupled_router`, `jsonapi_menu_items`,
@@ -241,7 +243,7 @@ stays as this repo's convention.) This is unrelated to commit-message
   "Dependency audit: production vs. full" above.
 - **CodeQL** (`.github/workflows/codeql-analysis.yml`): scans `develop` weekly.
 - **Performance audit**: advisory on both hosts, compared against
-  `perf/baseline.<environment>.json`. On GitHub the `perf-audit` label on a
+  `perf/baseline.github.json` or `perf/baseline.gitlab.json`. On GitHub the `perf-audit` label on a
   pull request starts it. A push to `develop` also runs it with the baseline
   refresh switched on, and opens a pull/merge request when the numbers moved,
   so a later pull request's audit is never diffed against a fix that already
@@ -255,9 +257,10 @@ stays as this repo's convention.) This is unrelated to commit-message
 Druxt stack, `/en`+`/es`, the examples' OAuth consumer). Its local/CI
 workflow is Docker-free: PHP's built-in server plus a throwaway SQLite
 database (`examples/drupal/.devtools/`, `make build`); a
-`.ddev/config.yaml` provides the DDEV alternative locally. `test-e2e`
+`examples/drupal/.ddev/config.yaml` provides the DDEV alternative locally. `test-e2e`
 uses the Docker-free path, pinned to PHP 8.3. `demo_umami` provisions
-its demo content in English and Spanish, and `multilingual.cy.js` runs
+its demo content in English and Spanish, and
+`examples/druxt-site/test/cypress/e2e/nuxt/multilingual.cy.js` runs
 against this backend in CI. Provision checks that the translations landed
 (a note locally, fatal under CI, `REQUIRE_TRANSLATIONS` overrides either);
 the provisioned database is per-checkout, override with `DB_FILE`. See `examples/drupal/.devtools/README.md` for how the SQLite
