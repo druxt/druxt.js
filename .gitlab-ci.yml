@@ -332,9 +332,13 @@ lint:commits:
           git show "$CI_MERGE_REQUEST_DIFF_BASE_SHA:$file" > "$file"
         fi
       done
-    - yarn lint:commit --from "$CI_MERGE_REQUEST_DIFF_BASE_SHA" --to "$CI_COMMIT_SHA" --verbose
+    # In a merged-results pipeline CI_COMMIT_SHA is a temporary merge commit,
+    # and a range ending there takes in the target branch's newer commits too.
+    # End at the source branch's head, which GitLab sets only in that case.
+    - HEAD_SHA="${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA:-$CI_COMMIT_SHA}"
+    - yarn lint:commit --from "$CI_MERGE_REQUEST_DIFF_BASE_SHA" --to "$HEAD_SHA" --verbose
     - |
-      if git log --format='%an <%ae>%n%cn <%ce>' "$CI_MERGE_REQUEST_DIFF_BASE_SHA..$CI_COMMIT_SHA" | grep -iEf .husky/agent-identities; then
+      if git log --format='%an <%ae>%n%cn <%ce>' "$CI_MERGE_REQUEST_DIFF_BASE_SHA..$HEAD_SHA" | grep -iEf .husky/agent-identities; then
         echo "A commit above is made under an AI agent's identity. See AGENTS.md."
         exit 1
       fi
