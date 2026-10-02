@@ -116,7 +116,9 @@ const DruxtMenuStore = ({ store }) => {
        * })
        */
       getEntitiesByFilter: (state) => ({ filter, prefix }) => {
-        const keys = Object.keys((state.entities || {})[prefix]).filter(key => filter(key))
+        // A flush without a prefix replaces the whole object, so the prefix
+        // stops existing until the next fetch stores it again.
+        const keys = Object.keys((state.entities || {})[prefix] || {}).filter(key => filter(key))
         if (!keys.length) return {}
 
         return Object.assign(
