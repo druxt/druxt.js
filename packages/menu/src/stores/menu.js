@@ -84,6 +84,16 @@ const DruxtMenuStore = ({ store }) => {
        * this.$store.commit('druxtMenu/flushEntities', {})
        */
       flushEntities (state, { prefix }) {
+        // A menu already being fetched is flushed too: it must not be stored,
+        // and a get after the flush starts its own request rather than joining
+        // one that is about to be thrown away.
+        for (const [requestKey, request] of inFlight) {
+          if (!prefix || request.prefix === String(prefix)) {
+            request.stale = true
+            inFlight.delete(requestKey)
+          }
+        }
+
         if (!prefix || typeof state.entities !== 'object') Vue.set(state, 'entities', {})
         if (prefix) Vue.set(state.entities, prefix, {})
 
@@ -125,18 +135,29 @@ const DruxtMenuStore = ({ store }) => {
 
         // Identical concurrent dispatches share one request and one commit.
         const requestKey = JSON.stringify([String(prefix), key])
-        if (!inFlight.has(requestKey)) {
-          const clear = () => inFlight.delete(requestKey)
-          const request = (async () => {
+        let request = inFlight.get(requestKey)
+        if (!request) {
+          request = { prefix: String(prefix), stale: false, promise: null }
+          request.promise = (async () => {
             const { entities } = (await this.$druxtMenu.get(name, settings, prefix)) || {}
+
+            // A flush named this menu while it was being fetched.
+            if (request.stale) return
+
             commit('addEntities', { entities, prefix })
             commit('addLoaded', { key, prefix })
           })()
           inFlight.set(requestKey, request)
-          request.then(clear, clear)
+
+          // Only this request may clear its own entry, never a replacement that
+          // a flush made room for.
+          const clear = () => {
+            if (inFlight.get(requestKey) === request) inFlight.delete(requestKey)
+          }
+          request.promise.then(clear, clear)
         }
 
-        return inFlight.get(requestKey)
+        return request.promise
       }
     },
 

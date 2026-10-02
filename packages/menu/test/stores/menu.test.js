@@ -89,6 +89,96 @@ describe('DruxtStore', () => {
     expect(store.state.druxtMenu.entities.en.test).toStrictEqual({ id: 'test' })
   })
 
+  test('get does not store a menu fetched before a flush', async () => {
+    const pending = []
+    store.$druxtMenu.get = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+
+    const before = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    store.commit('druxtMenu/flushEntities', { prefix: 'en' })
+
+    // The flushed request stores nothing and marks nothing loaded, so no
+    // stale menu is left behind to serve for good.
+    pending[0]({ entities: [{ id: 'stale' }] })
+    await before
+    expect(store.state.druxtMenu.entities.en).toStrictEqual({})
+    expect(store.state.druxtMenu.loaded.en).toStrictEqual({})
+
+    // A get after the flush fetches rather than joining the flushed request.
+    const after = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
+
+    pending[1]({ entities: [{ id: 'fresh' }] })
+    await after
+    expect(store.state.druxtMenu.entities.en.fresh).toStrictEqual({ id: 'fresh' })
+    expect(store.state.druxtMenu.entities.en.stale).toBeUndefined()
+  })
+
+  test('get during a flushed request does not join it', async () => {
+    const pending = []
+    store.$druxtMenu.get = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+
+    const before = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    store.commit('druxtMenu/flushEntities', { prefix: 'en' })
+
+    // The flushed request has not settled yet. Joining it would mean waiting on
+    // a result that is already being thrown away.
+    const after = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
+
+    pending[1]({ entities: [{ id: 'fresh' }] })
+    await after
+    expect(store.state.druxtMenu.entities.en.fresh).toStrictEqual({ id: 'fresh' })
+
+    // The flushed request settling last does not undo the fresh menu.
+    pending[0]({ entities: [{ id: 'stale' }] })
+    await before
+    expect(store.state.druxtMenu.entities.en.stale).toBeUndefined()
+    expect(store.state.druxtMenu.entities.en.fresh).toStrictEqual({ id: 'fresh' })
+  })
+
+  test('get keeps a request a flush for another prefix does not name', async () => {
+    const pending = []
+    store.$druxtMenu.get = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+
+    const request = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    store.commit('druxtMenu/flushEntities', { prefix: 'es' })
+
+    pending[0]({ entities: [{ id: 'test' }] })
+    await request
+    expect(store.state.druxtMenu.entities.en.test).toStrictEqual({ id: 'test' })
+    expect(store.state.druxtMenu.loaded.en[JSON.stringify(['main', {}])]).toBe(true)
+  })
+
+  test('get keeps the replacement when the flushed request settles last', async () => {
+    const pending = []
+    store.$druxtMenu.get = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+
+    const before = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    store.commit('druxtMenu/flushEntities', { prefix: 'en' })
+
+    // The replacement is in flight when the flushed request settles, so the
+    // flushed request must not clear the replacement's entry.
+    const after = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    pending[0]({ entities: [{ id: 'stale' }] })
+    await before
+
+    // A third dispatch still joins the replacement rather than fetching again.
+    const third = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
+
+    pending[1]({ entities: [{ id: 'fresh' }] })
+    await Promise.all([after, third])
+    expect(store.state.druxtMenu.entities.en.fresh).toStrictEqual({ id: 'fresh' })
+  })
+
   test('get retries after a failed request', async () => {
     store.$druxtMenu.get = jest.fn(() => Promise.reject(new Error('Backend down')))
 
