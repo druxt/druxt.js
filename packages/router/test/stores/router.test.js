@@ -201,6 +201,47 @@ describe('DruxtRouterStore', () => {
     expect(getRoute).toHaveBeenCalledTimes(2)
   })
 
+  test('get - a flush during the request still sets the active route', async () => {
+    const pending = []
+    const getRoute = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+    store.$druxtRouter = () => ({ getRoute, getRedirect: () => false })
+
+    // An earlier route is active, so a stale value is visible if the fresh one
+    // is not set.
+    store.commit('druxtRouter/addRoute', { path: '/old', route: { type: 'entity', label: 'Old' } })
+    store.commit('druxtRouter/setRoute', '/old')
+
+    const request = store.dispatch('druxtRouter/get', '/about')
+    await Promise.resolve()
+    store.commit('druxtRouter/flushRoutes')
+
+    pending[0]({ type: 'entity', label: 'About', props: {} })
+    const { route } = await request
+
+    // The route is not cached, because it was fetched before the flush.
+    expect(store.state.druxtRouter.routes['/about']).toBeUndefined()
+
+    // The active route is the one that was fetched, not the previous one.
+    expect(route.label).toBe('About')
+    expect(store.state.druxtRouter.route.label).toBe('About')
+  })
+
+  test('setRoute - a route object sets the active route without the cache', () => {
+    expect(store.state.druxtRouter.route).toStrictEqual({})
+
+    // A payload that doesn't carry a route is ignored.
+    store.commit('druxtRouter/setRoute', {})
+    store.commit('druxtRouter/setRoute', { path: '/about' })
+    store.commit('druxtRouter/setRoute', { route: { type: 'entity' } })
+    expect(store.state.druxtRouter.route).toStrictEqual({})
+
+    // The route is used as given, and is not stored.
+    const route = { type: 'entity', label: 'About' }
+    store.commit('druxtRouter/setRoute', { path: '/about', route })
+    expect(store.state.druxtRouter.route).toBe(route)
+    expect(store.state.druxtRouter.routes).toStrictEqual({})
+  })
+
   test('flushRoutes', async () => {
     store.commit('druxtRouter/addRoute', { path: '/a', route: { type: 'entity' } })
     store.commit('druxtRouter/addRoute', { path: '/b', route: { type: 'entity' } })

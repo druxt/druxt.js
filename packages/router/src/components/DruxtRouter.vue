@@ -239,7 +239,9 @@ export default {
       // This is also done when via the middleware if in use.
       const setActiveRoute = path === this.$route.fullPath
       if (setActiveRoute) {
-        this.$store.commit('druxtRouter/setRoute', path)
+        // A flush while the route was fetched keeps it out of the cache, so set
+        // the active route from the route itself rather than by path.
+        this.$store.commit('druxtRouter/setRoute', { path, route })
       }
     },
 

@@ -122,20 +122,29 @@ const DruxtRouterStore = ({ store }) => {
 
       /**
        * @name setRoute
-       * @mutator {string} setRoute=route Sets the active route by path.
+       * @mutator {object} setRoute=route Sets the active route by path, or from a route object.
        * @param {object} state - The Vuex state object.
-       * @param {string} path - The route path
+       * @param {string|object} payload - The route path, or an object with the `path` and its `route`.
        *
        * @example @lang js
        * this.$store.commit('druxtRouter/setRoute', '/')
+       *
+       * @example @lang js
+       * // A route the cache does not hold, such as one fetched before a flush.
+       * this.$store.commit('druxtRouter/setRoute', { path, route })
        */
-      setRoute (state, path) {
-        if (typeof path !== 'string' || typeof state.routes[path] === 'undefined') {
+      setRoute (state, payload) {
+        // A path on its own names a route the cache must already hold.
+        const { path, route } = typeof payload === 'string'
+          ? { path: payload, route: state.routes[payload] }
+          : (payload || {})
+
+        if (typeof path !== 'string' || typeof route === 'undefined') {
           // @TODO - Error?
           return
         }
 
-        state.route = state.routes[path]
+        state.route = route
       }
     },
 
@@ -174,8 +183,9 @@ const DruxtRouterStore = ({ store }) => {
           return { error: route.error, route }
         }
 
-        // Set active route.
-        commit('setRoute', path)
+        // Set active route. A flush while the route was fetched keeps it out of
+        // the cache, so set it from the route itself rather than by path.
+        commit('setRoute', { path, route })
 
         // Set active redirect.
         const redirect = this.$druxtRouter().getRedirect(path, route)
