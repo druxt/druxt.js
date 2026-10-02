@@ -1,4 +1,6 @@
 <script>
+import { getMenuLinkUrl, resolveMenuLink } from 'druxt-menu'
+
 /**
  * Used by the DruxtMenu component to render individual Druxt Wrapper themeable
  * menu items.
@@ -43,6 +45,25 @@ export default {
     },
 
     /**
+     * The frontend URL. Absolute menu links to this host use the frontend
+     * router.
+     *
+     * Read from the request headers during server rendering, and from the
+     * window location in the browser.
+     *
+     * @type {string|undefined}
+     */
+    frontendUrl: ({ $ssrContext }) => {
+      const { headers } = ($ssrContext || {}).req || {}
+      if (headers) {
+        const host = String(headers['x-forwarded-host'] || headers.host || '').split(',')[0].trim()
+        return host ? `//${host}` : undefined
+      }
+
+      return typeof window !== 'undefined' ? window.location.origin : undefined
+    },
+
+    /**
      * The parent DruxtMenu component, if present.
      *
      * @type {object|boolean}
@@ -69,18 +90,29 @@ export default {
     template: ({ item }) => (item.children || []).length ? 'parent' : 'item',
 
     /**
-     * The `to` attribute for the menu item.
+     * The `to` attribute for the menu item, or `false` if the menu item is
+     * not a frontend route.
      *
-     * @type {object}
+     * @type {object|boolean}
      */
-    to: ({ item }) =>
-      ((item.entity.attributes.link || {}).uri || '').startsWith('internal:')
-      && (!item.entity.attributes.route || item.entity.attributes.route.name)
-        ? { path: item.entity.attributes.link.uri.split(':')[1] }
-        : false
+    to: ({ item, resolveLink }) => resolveLink(item.entity).to || false
   },
 
   methods: {
+    /**
+     * Resolves how a menu item entity links to its URL.
+     *
+     * @param {object} [entity] - The menu item entity.
+     *
+     * @returns {object} The link: `to` for the frontend router, `href` for a plain link, or neither for text.
+     */
+    resolveLink(entity) {
+      return resolveMenuLink(getMenuLinkUrl((entity || {}).attributes), {
+        baseUrl: ((this.$druxt || {}).settings || {}).baseUrl,
+        frontendUrl: this.frontendUrl,
+      })
+    },
+
     /**
      * Returns a menu link component.
      *
@@ -90,19 +122,20 @@ export default {
     getLink(h, entity = {}) {
       if (!entity.attributes) return false
 
-      // Render external links.
-      if (!this.to) {
-        return h('a',
-          { domProps: { href: entity.attributes.url || (entity.attributes.link || {}).uri }},
-          entity.attributes.title
-        )
-      }
+      const { href, to } = this.resolveLink(entity)
 
       // Render internal links.
-      return h('nuxt-link',
-        { props: { to: this.to } },
-        entity.attributes.title
-      )
+      if (to) {
+        return h('nuxt-link', { props: { to } }, entity.attributes.title)
+      }
+
+      // Render external links and Drupal files.
+      if (href) {
+        return h('a', { domProps: { href } }, entity.attributes.title)
+      }
+
+      // Render menu items without a URL, such as <nolink>, as text.
+      return h('span', entity.attributes.title)
     },
 
     /**

@@ -97,6 +97,31 @@ Renders a Drupal menu using either the default Drupal content menus, or the full
 
 - For more details, refer to the [DruxtMenu API documentation](https://druxtjs.org/api/packages/menu/components/DruxtMenu).
 
+### Menu links
+
+Each menu item links by its URL, not by its Drupal route name:
+
+| Menu item URL                                               | Renders as                                          |
+| ----------------------------------------------------------- | --------------------------------------------------- |
+| A path, such as `/api`                                      | A `<nuxt-link>`, even if Drupal has no route for it |
+| An absolute URL on the Drupal host or the frontend host     | A `<nuxt-link>` to its path, query and hash         |
+| A Drupal file, under `/sites/*/files/` or `/system/files/`  | A plain `<a>`                                       |
+| Any other absolute URL                                      | A plain `<a>`                                       |
+| No URL, from a `<nolink>`, `<none>` or `<button>` menu link | A `<span>` with the menu item title                 |
+
+A path that only the Nuxt frontend serves, such as `/api`, opens without a
+full page reload. The scheme of an absolute URL does not matter, so `http:`
+and `https:` links to the same host both use the frontend router.
+
+With `menu.jsonApiMenuItems: false`, menus come from core JSON:API
+`menu_link_content` resources. Drupal 11.4 and later include the aliased path
+as `link.resolvable_uri`, and the menu item links to it. Older cores give only
+the link URI, so an `entity:node/33` link goes to the Drupal system path,
+`/node/33`, not its alias.
+
+A custom menu wrapper can apply the same rules with `getMenuLinkUrl` and
+`resolveMenuLink` from `druxt-menu`.
+
 ---
 
 ## Settings

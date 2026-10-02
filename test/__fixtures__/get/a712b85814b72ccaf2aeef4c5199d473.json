@@ -1,0 +1,399 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.1",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "https://jsonapi.org/format/1.1/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "3c33cc68-68a3-4f2f-aa5a-50318b229d6a",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/3c33cc68-68a3-4f2f-aa5a-50318b229d6a?resourceVersion=id%3A1"
+          },
+          "working-copy": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/3c33cc68-68a3-4f2f-aa5a-50318b229d6a?resourceVersion=rel%3Aworking-copy"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": 1,
+          "drupal_internal__revision_id": 1,
+          "langcode": "en",
+          "bundle": "menu_link_content",
+          "revision_created": "2026-09-10T22:47:48+00:00",
+          "revision_log_message": null,
+          "enabled": true,
+          "title": "Concepts",
+          "description": null,
+          "menu_name": "probe",
+          "link": {
+            "uri": "entity:node/aed81db3-eb95-586d-8f04-fdac6bfa3482",
+            "resolvable_uri": "/explanation",
+            "title": null,
+            "options": []
+          },
+          "external": false,
+          "rediscover": false,
+          "weight": 0,
+          "expanded": true,
+          "parent": null,
+          "changed": "2026-09-10T22:47:48+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": true
+        },
+        "relationships": {
+          "revision_user": {
+            "data": null,
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/3c33cc68-68a3-4f2f-aa5a-50318b229d6a/revision_user?resourceVersion=id%3A1"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/3c33cc68-68a3-4f2f-aa5a-50318b229d6a/relationships/revision_user?resourceVersion=id%3A1"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "8b45cf9f-e6c6-4958-b0de-33a23e000afa",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/8b45cf9f-e6c6-4958-b0de-33a23e000afa?resourceVersion=id%3A2"
+          },
+          "working-copy": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/8b45cf9f-e6c6-4958-b0de-33a23e000afa?resourceVersion=rel%3Aworking-copy"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": 2,
+          "drupal_internal__revision_id": 2,
+          "langcode": "en",
+          "bundle": "menu_link_content",
+          "revision_created": "2026-09-10T22:47:48+00:00",
+          "revision_log_message": null,
+          "enabled": true,
+          "title": "Architecture",
+          "description": null,
+          "menu_name": "probe",
+          "link": {
+            "uri": "entity:node/87ae1335-aaa2-55fa-8470-e935f88b6ae4",
+            "resolvable_uri": "/explanation/architecture",
+            "title": null,
+            "options": []
+          },
+          "external": false,
+          "rediscover": false,
+          "weight": 0,
+          "expanded": true,
+          "parent": "menu_link_content:3c33cc68-68a3-4f2f-aa5a-50318b229d6a",
+          "changed": "2026-09-10T22:47:48+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": true
+        },
+        "relationships": {
+          "revision_user": {
+            "data": null,
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/8b45cf9f-e6c6-4958-b0de-33a23e000afa/revision_user?resourceVersion=id%3A2"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/8b45cf9f-e6c6-4958-b0de-33a23e000afa/relationships/revision_user?resourceVersion=id%3A2"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "75785834-6fcc-45bf-bc80-d1a200634e30",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/75785834-6fcc-45bf-bc80-d1a200634e30?resourceVersion=id%3A3"
+          },
+          "working-copy": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/75785834-6fcc-45bf-bc80-d1a200634e30?resourceVersion=rel%3Aworking-copy"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": 3,
+          "drupal_internal__revision_id": 3,
+          "langcode": "en",
+          "bundle": "menu_link_content",
+          "revision_created": "2026-09-10T22:47:48+00:00",
+          "revision_log_message": null,
+          "enabled": true,
+          "title": "Draft child",
+          "description": null,
+          "menu_name": "probe",
+          "link": {
+            "uri": "entity:node/75ddfcb5-e7f8-4777-8ab3-b42a088a384a",
+            "resolvable_uri": "/node/39",
+            "title": null,
+            "options": []
+          },
+          "external": false,
+          "rediscover": false,
+          "weight": 1,
+          "expanded": true,
+          "parent": "menu_link_content:3c33cc68-68a3-4f2f-aa5a-50318b229d6a",
+          "changed": "2026-09-10T22:47:48+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": true
+        },
+        "relationships": {
+          "revision_user": {
+            "data": null,
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/75785834-6fcc-45bf-bc80-d1a200634e30/revision_user?resourceVersion=id%3A3"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/75785834-6fcc-45bf-bc80-d1a200634e30/relationships/revision_user?resourceVersion=id%3A3"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "727bb7b6-9223-4cb2-b0b6-877a4a783d6c",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/727bb7b6-9223-4cb2-b0b6-877a4a783d6c?resourceVersion=id%3A5"
+          },
+          "working-copy": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/727bb7b6-9223-4cb2-b0b6-877a4a783d6c?resourceVersion=rel%3Aworking-copy"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": 5,
+          "drupal_internal__revision_id": 5,
+          "langcode": "en",
+          "bundle": "menu_link_content",
+          "revision_created": "2026-09-10T22:47:48+00:00",
+          "revision_log_message": null,
+          "enabled": true,
+          "title": "API",
+          "description": null,
+          "menu_name": "probe",
+          "link": {
+            "uri": "internal:/api",
+            "resolvable_uri": "/api",
+            "title": null,
+            "options": []
+          },
+          "external": false,
+          "rediscover": true,
+          "weight": 1,
+          "expanded": true,
+          "parent": null,
+          "changed": "2026-09-10T22:47:48+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": true
+        },
+        "relationships": {
+          "revision_user": {
+            "data": null,
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/727bb7b6-9223-4cb2-b0b6-877a4a783d6c/revision_user?resourceVersion=id%3A5"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/727bb7b6-9223-4cb2-b0b6-877a4a783d6c/relationships/revision_user?resourceVersion=id%3A5"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "dcc6f3c5-e1bf-4e2e-b13b-1bc74d02ed98",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/dcc6f3c5-e1bf-4e2e-b13b-1bc74d02ed98?resourceVersion=id%3A4"
+          },
+          "working-copy": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/dcc6f3c5-e1bf-4e2e-b13b-1bc74d02ed98?resourceVersion=rel%3Aworking-copy"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": 4,
+          "drupal_internal__revision_id": 4,
+          "langcode": "en",
+          "bundle": "menu_link_content",
+          "revision_created": "2026-09-10T22:47:48+00:00",
+          "revision_log_message": null,
+          "enabled": true,
+          "title": "Component resolution",
+          "description": null,
+          "menu_name": "probe",
+          "link": {
+            "uri": "entity:node/d4f16e89-7225-50de-97aa-d684c37596bd",
+            "resolvable_uri": "/explanation/component-resolution",
+            "title": null,
+            "options": []
+          },
+          "external": false,
+          "rediscover": false,
+          "weight": 2,
+          "expanded": true,
+          "parent": "menu_link_content:3c33cc68-68a3-4f2f-aa5a-50318b229d6a",
+          "changed": "2026-09-10T22:47:48+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": true
+        },
+        "relationships": {
+          "revision_user": {
+            "data": null,
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/dcc6f3c5-e1bf-4e2e-b13b-1bc74d02ed98/revision_user?resourceVersion=id%3A4"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/dcc6f3c5-e1bf-4e2e-b13b-1bc74d02ed98/relationships/revision_user?resourceVersion=id%3A4"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "f18bce4c-d1d5-4037-a576-07743cf5a2e4",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/f18bce4c-d1d5-4037-a576-07743cf5a2e4?resourceVersion=id%3A6"
+          },
+          "working-copy": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/f18bce4c-d1d5-4037-a576-07743cf5a2e4?resourceVersion=rel%3Aworking-copy"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": 6,
+          "drupal_internal__revision_id": 6,
+          "langcode": "en",
+          "bundle": "menu_link_content",
+          "revision_created": "2026-09-10T22:47:48+00:00",
+          "revision_log_message": null,
+          "enabled": true,
+          "title": "GitHub",
+          "description": null,
+          "menu_name": "probe",
+          "link": {
+            "uri": "https://github.com/druxt/druxt.js",
+            "resolvable_uri": "https://github.com/druxt/druxt.js",
+            "title": null,
+            "options": {
+              "attributes": {
+                "target": "_blank",
+                "rel": "noopener",
+                "class": [
+                  "external"
+                ]
+              }
+            }
+          },
+          "external": false,
+          "rediscover": false,
+          "weight": 2,
+          "expanded": true,
+          "parent": null,
+          "changed": "2026-09-10T22:47:48+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": true
+        },
+        "relationships": {
+          "revision_user": {
+            "data": null,
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/f18bce4c-d1d5-4037-a576-07743cf5a2e4/revision_user?resourceVersion=id%3A6"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/f18bce4c-d1d5-4037-a576-07743cf5a2e4/relationships/revision_user?resourceVersion=id%3A6"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "f707f45e-7134-416f-92fc-e80789869cea",
+        "links": {
+          "self": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/f707f45e-7134-416f-92fc-e80789869cea?resourceVersion=id%3A8"
+          },
+          "working-copy": {
+            "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/f707f45e-7134-416f-92fc-e80789869cea?resourceVersion=rel%3Aworking-copy"
+          }
+        },
+        "attributes": {
+          "drupal_internal__id": 8,
+          "drupal_internal__revision_id": 8,
+          "langcode": "en",
+          "bundle": "menu_link_content",
+          "revision_created": "2026-09-10T22:47:48+00:00",
+          "revision_log_message": null,
+          "enabled": true,
+          "title": "Section heading",
+          "description": null,
+          "menu_name": "probe",
+          "link": {
+            "uri": "route:<nolink>",
+            "resolvable_uri": "",
+            "title": null,
+            "options": []
+          },
+          "external": false,
+          "rediscover": false,
+          "weight": 4,
+          "expanded": true,
+          "parent": null,
+          "changed": "2026-09-10T22:47:48+00:00",
+          "default_langcode": true,
+          "revision_translation_affected": true
+        },
+        "relationships": {
+          "revision_user": {
+            "data": null,
+            "links": {
+              "related": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/f707f45e-7134-416f-92fc-e80789869cea/revision_user?resourceVersion=id%3A8"
+              },
+              "self": {
+                "href": "https://demo-api.druxtjs.org/jsonapi/menu_link_content/menu_link_content/f707f45e-7134-416f-92fc-e80789869cea/relationships/revision_user?resourceVersion=id%3A8"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/en/jsonapi/menu_link_content/menu_link_content?filter%5Benabled%5D=1&filter%5Bmenu_name%5D=probe"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json"
+  },
+  "config": {
+    "url": "https://demo-api.druxtjs.org/en/jsonapi/menu_link_content/menu_link_content?filter%5Benabled%5D=1&filter%5Bmenu_name%5D=probe",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org"
+  }
+}
