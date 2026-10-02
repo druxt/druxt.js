@@ -48,8 +48,8 @@ Or simply `make setup && make build`.
 `yarn build` is the regression gate. Every config/tooling change must keep it
 green. All 11 packages (`druxt`, `blocks`, `breadcrumb`, `entity`, `menu`,
 `router`, `schema`, `site`, `views`, `docgen`, `test-utils`) must produce their
-SSR and ESM bundles in `dist/` (docgen outputs
-`packages/docgen/bin/druxt-docgen.js`).
+SSR and ESM bundles in `dist/` (docgen builds its `druxt-docgen` CLI into
+`bin/` instead).
 
 Nuxt 2's esm config loader patches the module system: a build hook in a Nuxt
 config file that `require`s a modern ESM-leaning package can die silently
