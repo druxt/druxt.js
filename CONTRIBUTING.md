@@ -121,6 +121,8 @@ yarn changeset
 
 Be sure to commit your changeset file alongside your changes.
 
+A merged changeset publishes a development release straight away, and a stable release once the pull request that versions the packages is merged. See [Releasing](https://github.com/druxt/druxt.js/blob/develop/RELEASING.md).
+
 ### Codecov
 
 Codecov.io is used as part of the automated testing process to ensure that changes don't inadvertently reduce the overall code coverage of the project.
