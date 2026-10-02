@@ -10,6 +10,9 @@ const DruxtMenuStore = ({ store }) => {
    */
   const namespace = 'druxtMenu'
 
+  // Moved on by a flush, so a menu fetched before it is not stored.
+  const generation = { value: 0 }
+
   /**
    * The druxtMenu Vuex module.
    *
@@ -64,6 +67,7 @@ const DruxtMenuStore = ({ store }) => {
        * this.$store.commit('druxtMenu/flushEntities', {})
        */
       flushEntities (state, { prefix }) {
+        generation.value += 1
         if (!prefix || typeof state.entities !== 'object') Vue.set(state, 'entities', {})
         if (prefix) Vue.set(state.entities, prefix, {})
       },
@@ -92,9 +96,11 @@ const DruxtMenuStore = ({ store }) => {
         const { name, settings, prefix } = typeof context === 'object'
           ? context
           : { name: context }
+        const since = generation.value
         const { entities } = (await this.$druxtMenu.get(name, settings, prefix)) || {}
 
-        commit('addEntities', { entities, prefix })
+        // The menu predates a flush that happened while it was fetched.
+        if (since === generation.value) commit('addEntities', { entities, prefix })
       }
     },
 

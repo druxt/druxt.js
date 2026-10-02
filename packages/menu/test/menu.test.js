@@ -79,6 +79,46 @@ describe('DruxtMenu class', () => {
     expect(menu.getJsonApiMenuItems).toHaveBeenCalledTimes(2)
   })
 
+  test('get - settings that build the same query share one fetch', async () => {
+    const menu = new DruxtMenu(baseUrl, {})
+    menu.getMenuLinkContent = jest.fn(async () => ({ entities: [] }))
+
+    // Depth and parent settings don't filter a menu_link_content query.
+    await menu.get('docs', { requiredOnly: true })
+    await menu.get('docs', { requiredOnly: true, max_depth: 0, min_depth: 0, parent: null })
+    await menu.get('docs', { requiredOnly: true, max_depth: 2 })
+    expect(menu.getMenuLinkContent).toHaveBeenCalledTimes(1)
+
+    await menu.get('docs', { fields: ['title'] })
+    expect(menu.getMenuLinkContent).toHaveBeenCalledTimes(2)
+  })
+
+  test('get - the fetch sends the query the key was built from, whatever the settings become meanwhile', async () => {
+    const menu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
+    const settings = { requiredOnly: true }
+    const keyed = menu.buildJsonApiMenuItemsQuery('main', settings).getQueryString()
+    // The settings change while the fetch waits on the index.
+    menu.druxt.getIndex = jest.fn(async () => { menu.druxt.index[undefined] = {}; settings.max_depth = 5 })
+    menu.druxt.getCollectionAll = jest.fn(async () => [])
+
+    await menu.get('main', settings)
+    expect(menu.druxt.getCollectionAll).toHaveBeenCalledTimes(1)
+    expect(menu.druxt.getCollectionAll.mock.calls[0][1].getQueryString()).toBe(keyed)
+  })
+
+  test('get - JSON:API Menu Items settings key on the filters they add', async () => {
+    const menu = new DruxtMenu(baseUrl, { menu: { jsonApiMenuItems: true } })
+    menu.getJsonApiMenuItems = jest.fn(async () => ({ entities: [] }))
+
+    await menu.get('main', { requiredOnly: true })
+    await menu.get('main', { requiredOnly: true, max_depth: 0, min_depth: 0, parent: null })
+    expect(menu.getJsonApiMenuItems).toHaveBeenCalledTimes(1)
+
+    await menu.get('main', { requiredOnly: true, max_depth: 2 })
+    await menu.get('main', { requiredOnly: true, max_depth: '2' })
+    expect(menu.getJsonApiMenuItems).toHaveBeenCalledTimes(2)
+  })
+
   test('get - cached per client and method', async () => {
     const druxtClient = new (require('druxt').DruxtClient)(baseUrl)
     const menuA = new DruxtMenu(baseUrl, { druxtClient, menu: { jsonApiMenuItems: true } })

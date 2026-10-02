@@ -77,6 +77,28 @@ describe('DruxtViewsStore', () => {
     expect(store.state['druxt/views'].results).toStrictEqual({})
   })
 
+  test('getResults - a flush during the request drops the results', async () => {
+    const pending = []
+    store.$druxt.getResource = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+
+    const before = store.dispatch('druxt/views/getResults', { viewId, displayId })
+    await Promise.resolve()
+    store.commit('druxt/views/flushResults', {})
+
+    // The caller gets its results, and nothing is stored.
+    pending[0]({ data: [] })
+    expect(await before).toStrictEqual({ data: [] })
+    expect(store.state['druxt/views'].results).toStrictEqual({})
+
+    // A call after the flush fetches and stores.
+    const after = store.dispatch('druxt/views/getResults', { viewId, displayId })
+    await Promise.resolve()
+    pending[1]({ data: [{ id: 'fresh' }] })
+    await after
+    expect(store.state['druxt/views'].results[viewId][displayId][undefined]._default.data[0].id).toBe('fresh')
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(2)
+  })
+
   test('getResults', async () => {
     const query = { viewId, displayId, query: {} }
     const results = await store.dispatch('druxt/views/getResults', query)

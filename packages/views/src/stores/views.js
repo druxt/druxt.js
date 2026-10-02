@@ -11,6 +11,9 @@ const DruxtViewsStore = ({ store }) => {
    */
   const namespace = 'druxt/views'
 
+  // Moved on by a flush, so results fetched before it are not stored.
+  const generation = { value: 0 }
+
   /**
    * The druxt/views Vuex module.
    *
@@ -71,6 +74,7 @@ const DruxtViewsStore = ({ store }) => {
        * this.$store.commit('druxt/views/flushResults', { viewId, displayId, prefix, hash })
        */
       flushResults (state, { viewId, displayId, prefix, hash }) {
+        generation.value += 1
         if (!viewId) Vue.set(state, 'results', {})
         else if (viewId && !displayId && !prefix && !hash) Vue.set(state.results, viewId, {})
         else if (viewId && displayId && !prefix && !hash) Vue.set(state.results[viewId], displayId, {})
@@ -115,9 +119,11 @@ const DruxtViewsStore = ({ store }) => {
           if (!bypassCache) return cache
         }
 
+        const since = generation.value
         try {
           const results = await this.$druxt.getResource(`views--${viewId}`, displayId, query, prefix)
-          commit('addResults', { results, viewId, displayId, prefix, hash })
+          // The results predate a flush that happened while they were fetched.
+          if (since === generation.value) commit('addResults', { results, viewId, displayId, prefix, hash })
           return results
         }
         catch(e) {

@@ -10,6 +10,9 @@ const DruxtRouterStore = ({ store }) => {
    */
   const namespace = 'druxtRouter'
 
+  // Moved on by a flush, so a route fetched before it is not stored.
+  const generation = { value: 0 }
+
   /**
    * The druxtRouter Vuex module.
    *
@@ -112,26 +115,36 @@ const DruxtRouterStore = ({ store }) => {
        * this.$store.commit('druxtRouter/flushRoutes', { path: '/about' })
        */
       flushRoutes (state, { path } = {}) {
+        generation.value += 1
         if (path) Vue.delete(state.routes, path)
         else Vue.set(state, 'routes', {})
       },
 
       /**
        * @name setRoute
-       * @mutator {string} setRoute=route Sets the active route by path.
+       * @mutator {object} setRoute=route Sets the active route by path, or from a route object.
        * @param {object} state - The Vuex state object.
-       * @param {string} path - The route path
+       * @param {string|object} payload - The route path, or an object with the `path` and its `route`.
        *
        * @example @lang js
        * this.$store.commit('druxtRouter/setRoute', '/')
+       *
+       * @example @lang js
+       * // A route the cache does not hold, such as one fetched before a flush.
+       * this.$store.commit('druxtRouter/setRoute', { path, route })
        */
-      setRoute (state, path) {
-        if (typeof path !== 'string' || typeof state.routes[path] === 'undefined') {
+      setRoute (state, payload) {
+        // A path on its own names a route the cache must already hold.
+        const { path, route } = typeof payload === 'string'
+          ? { path: payload, route: state.routes[payload] }
+          : (payload || {})
+
+        if (typeof path !== 'string' || typeof route === 'undefined') {
           // @TODO - Error?
           return
         }
 
-        state.route = state.routes[path]
+        state.route = route
       }
     },
 
@@ -170,8 +183,9 @@ const DruxtRouterStore = ({ store }) => {
           return { error: route.error, route }
         }
 
-        // Set active route.
-        commit('setRoute', path)
+        // Set active route. A flush while the route was fetched keeps it out of
+        // the cache, so set it from the route itself rather than by path.
+        commit('setRoute', { path, route })
 
         // Set active redirect.
         const redirect = this.$druxtRouter().getRedirect(path, route)
@@ -267,6 +281,7 @@ const DruxtRouterStore = ({ store }) => {
           return state.routes[path]
         }
 
+        const since = generation.value
         let route
         try {
           route = await this.$druxtRouter().getRoute(path)
@@ -283,7 +298,8 @@ const DruxtRouterStore = ({ store }) => {
           if (statusCode < 400 || statusCode >= 500 || !err.response) return route
         }
 
-        commit('addRoute', { path, route })
+        // The route predates a flush that happened while it was fetched.
+        if (since === generation.value) commit('addRoute', { path, route })
 
         return route
       }
