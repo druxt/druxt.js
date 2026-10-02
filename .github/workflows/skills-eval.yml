@@ -1,0 +1,111 @@
+name: Skills eval
+
+# Live evals for the contributor skills in .agents/skills: each eval prompt
+# runs through a headless Claude Code session and the transcript is graded by
+# scripts/skills/eval.mjs. See scripts/skills/README.md.
+#
+# Manual only. A run calls the Anthropic API, so it needs the
+# ANTHROPIC_API_KEY repository secret and costs money, and a judged agent
+# result varies between runs, which makes it a poor pull request gate. The
+# static checks (yarn lint:skills) gate every pull request in ci.yml.
+on:
+  workflow_dispatch:
+    inputs:
+      skills:
+        description: Space-separated skill names. Empty runs every skill.
+        required: false
+        default: ''
+      mode:
+        description: Which evals to run.
+        type: choice
+        options: [all, cases, triggers]
+        default: all
+      model:
+        description: Model alias or id. Empty uses the CLI default.
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: skills-eval-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - name: Check for the API key
+        id: key
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "ANTHROPIC_API_KEY is not set, so there is nothing to run." >> "$GITHUB_STEP_SUMMARY"
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        if: steps.key.outputs.present == 'true'
+        with:
+          persist-credentials: false
+
+      # Dependencies install on the repository's Node, like every other job.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        if: steps.key.outputs.present == 'true'
+        with:
+          node-version: 16.20.1
+
+      - if: steps.key.outputs.present == 'true'
+        run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        if: steps.key.outputs.present == 'true'
+        with:
+          path: .yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - if: steps.key.outputs.present == 'true'
+        run: yarn install --immutable
+
+      # The Claude Code CLI needs Node 22. The eval script itself is plain
+      # Node and runs on either.
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        if: steps.key.outputs.present == 'true'
+        with:
+          node-version: 22
+
+      # An exact version, so a CLI release never changes a result unannounced.
+      # Its postinstall links the platform binary, so install scripts stay on.
+      - name: Install Claude Code
+        if: steps.key.outputs.present == 'true'
+        run: npm install --global @anthropic-ai/claude-code@2.1.285
+
+      - name: Run the evals
+        if: steps.key.outputs.present == 'true'
+        env:
+          SKILLS: ${{ inputs.skills }}
+          MODE: ${{ inputs.mode }}
+          MODEL: ${{ inputs.model }}
+        run: |
+          set -o pipefail
+          args=()
+          for skill in $SKILLS; do args+=("$skill"); done
+          [ "$MODE" = "all" ] || args+=("--$MODE")
+          [ -z "$MODEL" ] || args+=(--model "$MODEL")
+          node scripts/skills/eval.mjs "${args[@]}" | tee eval.log
+          { echo '```'; cat eval.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always() && steps.key.outputs.present == 'true'
+        with:
+          name: skills-eval-transcripts
+          path: .artifacts/skills-eval
+          retention-days: 14
+          if-no-files-found: ignore

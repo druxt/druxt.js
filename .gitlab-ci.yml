@@ -297,6 +297,40 @@ lint:knip:
     - yarn lint:knip
     - section_end "knip"
 
+# Mirrors the GitHub lint job's skills steps: static checks for the
+# contributor skills in .agents/skills, and the tests for the checker and the
+# eval grader. Neither needs a build or credentials.
+lint:skills:
+  extends: .node
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "skills" "Checking the contributor skills"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:skills
+    - yarn lint:skills:test
+    - section_end "skills"
+
+# Mirrors the GitHub commits job for merge requests: Conventional Commits,
+# made by the person contributing them, with no AI attribution.
+lint:commits:
+  extends: .node
+  stage: lint
+  interruptible: true
+  variables:
+    GIT_DEPTH: 0
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  script:
+    - section_start "commits" "Checking the merge request's commits"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:commit --from "$CI_MERGE_REQUEST_DIFF_BASE_SHA" --to "$CI_COMMIT_SHA" --verbose
+    - node scripts/commits/check.mjs --range "$CI_MERGE_REQUEST_DIFF_BASE_SHA..$CI_COMMIT_SHA"
+    - yarn lint:commits:test
+    - section_end "commits"
+
 #
 # --- Test Stage ---
 #

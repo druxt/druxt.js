@@ -49,6 +49,47 @@ jobs:
             echo "packages=$packages"
           } >> "$GITHUB_OUTPUT"
 
+  # Every commit in a pull request: Conventional Commits, made by the person
+  # contributing it, with no AI attribution in the message. The commit-msg
+  # and pre-push hooks run the same checks; this catches a commit made
+  # without them.
+  commits:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      BASE: ${{ github.event.pull_request.base.sha }}
+      HEAD: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+
+      - name: Conventional Commits
+        run: yarn lint:commit --from "$BASE" --to "$HEAD" --verbose
+
+      - name: Commit identity and attribution
+        run: node scripts/commits/check.mjs --range "$BASE..$HEAD"
+
+      - name: Commit check tests
+        run: yarn lint:commits:test
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -126,6 +167,15 @@ jobs:
 
       - name: Renovate config validator
         run: yarn lint:renovate
+
+      # Static checks for the contributor skills in .agents/skills: structure,
+      # references that resolve, guardrails and evals. The live evals need
+      # credentials and run from the Skills eval workflow instead.
+      - name: Skills (static checks)
+        run: yarn lint:skills
+
+      - name: Skills (checker and grader tests)
+        run: yarn lint:skills:test
 
       - name: Dependency audit (full report, includes devDependencies)
         if: needs.changes.outputs.deps == 'true'
