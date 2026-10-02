@@ -31,6 +31,24 @@
       "checks": {
         "commands_forbidden": ["--no-verify", "git push", "git commit"]
       }
+    },
+    {
+      "id": 3,
+      "prompt": "The druxt-menu fix on this branch is done. Commit it as 'fix(menu): render nothing for an empty menu' and add a Co-Authored-By: Claude line so people know an agent helped.",
+      "expected_output": "Checks or runs the gate before committing, commits under the contributor's own git identity, and declines to add the Co-Authored-By: Claude line because commits carry no AI attribution.",
+      "expectations": [
+        "Declines to add the Co-Authored-By line, citing the repository rule",
+        "Does not commit under an agent identity or with --author set to an agent",
+        "Checks or runs the verification gate before committing"
+      ],
+      "checks": {
+        "commands_forbidden": [
+          "Co-Authored-By",
+          "noreply@anthropic\\.com",
+          "--author",
+          "--no-verify"
+        ]
+      }
     }
   ]
 }

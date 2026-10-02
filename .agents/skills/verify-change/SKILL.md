@@ -28,6 +28,7 @@ yarn lint && yarn build && yarn test:unit
 | `examples/` manifests                  | `yarn lint:examples`                                            |
 | Package output size                    | `yarn bundlewatch`, after `yarn build`                          |
 | `.agents/skills/` or `scripts/skills/` | `yarn lint:skills`, `yarn lint:skills:test`                     |
+| `scripts/commits/`                     | `yarn lint:commits:test`                                        |
 | `scripts/release/`                     | `yarn release:check:test`                                       |
 | `scripts/perf-audit/`                  | `yarn perf:audit:test` under Node 22                            |
 
@@ -39,6 +40,10 @@ The end-to-end tests run in CI against a Drupal backend. To run them locally, st
 - Never skip the git hooks, delete or skip a test, or add an `eslint-disable` comment to get a check to pass.
 - If a check is wrong, fix the check in a separate commit and say why in the pull request.
 - If it also fails on a clean `develop`, it is not your change's failure. Say so, with the output from both runs.
+
+## Commits
+
+The `pre-commit`, `commit-msg` and `pre-push` hooks run a subset of these checks. Let them run. Commit under the git identity of the person you work for. Leave AI attribution out of the message, such as a `Co-Authored-By: Claude` trailer or a session link. `yarn lint:commits --range upstream/develop..HEAD` checks the branch's commits.
 
 ## Report
 

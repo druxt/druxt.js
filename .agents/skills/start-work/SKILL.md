@@ -23,6 +23,8 @@ git checkout -b feature/<issue>-<short-description> upstream/develop
 
 On a clone of druxt/druxt.js itself there is no fork, so use `origin` in place of `upstream`. The branch prefix is `feature/` for fixes and features alike, never `feat/`.
 
+Check that `git config user.name` and `git config user.email` are those of the person you work for. Commits are made under their identity, never an agent's, and the hooks refuse an agent's.
+
 ## 3. Write the spec
 
 Skip this for a one-line fix. For anything larger, write a spec in the issue or the pull request description and get it signed off before writing code:

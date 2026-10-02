@@ -1,6 +1,6 @@
 ---
 name: write-skill
-description: Creates or changes a druxt.js contributor skill in .agents/skills, with its evals and the tests that gate it. Use when adding a skill, editing an existing SKILL.md, deciding whether guidance belongs in AGENTS.md or a skill, or when a skill check fails.
+description: Creates or changes a druxt.js contributor skill in .agents/skills, with its evals and the tests that gate it. Use when adding a skill, editing a SKILL.md or its evals, making a skill trigger more reliably, deciding whether guidance belongs in AGENTS.md or a skill, or when a skill check fails.
 ---
 
 # Write a skill
@@ -47,4 +47,4 @@ yarn skills:eval <name> # live evals through the claude CLI, run by hand
 yarn lint:md && yarn lint:prose && yarn lint:cspell
 ```
 
-Add the skill to the table in the Skills section of `AGENTS.md`. `yarn lint:skills` fails until it is listed. `scripts/skills/README.md` documents the checks and the eval format.
+Add the skill to the Skills table in `AGENTS.md`, with its name linked to its `SKILL.md` (`.agents/skills/<name>/SKILL.md`). Agents without skill discovery of their own find skills through that link. `yarn lint:skills` fails until the row is there. `scripts/skills/README.md` documents the checks and the eval format.

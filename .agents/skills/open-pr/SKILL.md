@@ -1,6 +1,6 @@
 ---
 name: open-pr
-description: Prepares and opens a druxt.js pull request from a contributor's fork against develop, with a Conventional Commits title and the repository's template filled in. Use when a druxt.js change is ready for review, or when asked to push a branch, open a pull request or write a pull request description.
+description: Prepares and opens a druxt.js pull request from a contributor's fork against develop, with a Conventional Commits title and the repository's template filled in. Use when a druxt.js change is ready for review, or when asked to open a pull request or to write its title or description.
 ---
 
 # Open a pull request
@@ -13,6 +13,7 @@ Pull requests go from a branch on your fork to `develop` on [druxt/druxt.js](htt
 2. A changeset is committed if a published package changed (see the `add-changeset` skill).
 3. The commits follow Conventional Commits, scoped by package name. The pre-commit and commit-msg hooks enforce this, so let them run.
 4. The branch is up to date with `develop`. Merge `upstream/develop` into it, then re-run the gate.
+5. The commits are authored and committed under your own git identity, with no AI attribution lines. `yarn lint:commits --range upstream/develop..HEAD` checks the branch, and the `pre-push` hook checks it again.
 
 ## Title
 
@@ -33,8 +34,6 @@ Fill in every section of `.github/PULL_REQUEST_TEMPLATE.md`:
 - **Description**: what changed and why, with a `Resolves: #123` line for the issue. Include the spec when there is one, and list the commands you ran to verify the change with their results.
 - **Checklist**: tick only what is true. If a box does not apply, say why.
 - **Screenshots/Media**: add these for anything visible in a browser.
-
-If an agent wrote some or all of the change, say so in one line. Review works the same either way.
 
 Ask a maintainer for the `perf-audit` label when the change touches a store, the Druxt client, a Nuxt module or how components fetch data. The audit then posts its numbers on the pull request.
 
