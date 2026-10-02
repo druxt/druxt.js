@@ -39,7 +39,7 @@ alongside it, so a custom page can take over any route.
 
    ```js
    export default {
-     modules: ['druxt-router/nuxt'],
+     modules: ['druxt-router'],
    };
    ```
 
