@@ -35,25 +35,22 @@
     "lint:audit": "yarn npm audit --recursive --environment production --severity high",
     "lint:audit:full": "yarn npm audit --recursive",
     "lint:commit": "commitlint",
-    "lint:commits": "node scripts/commits/check.mjs",
-    "lint:commits:test": "node --test scripts/commits/test/*.test.mjs",
     "lint:cspell": "cspell lint --no-progress --no-must-find-files --gitignore --dot \"**/*.{js,vue,json,md,yml,yaml}\" \"scripts/**/*.{mjs,sh}\"",
     "lint:examples": "node scripts/check-examples.js",
     "lint:format": "prettier --check \"**/*.{js,vue,json,md,yml,yaml}\"",
     "lint:format:fix": "prettier --write \"**/*.{js,vue,json,md,yml,yaml}\"",
     "lint:knip": "knip --include dependencies,unlisted --no-config-hints",
     "lint:md": "markdownlint-cli2 \"**/*.md\"",
-    "lint:prose": "yarn lint:prose:install && .vale/bin/vale --config .vale.ini --glob='!{**/node_modules/**,**/dist/**,**/coverage/**,**/CHANGELOG.md,**/CODE_OF_CONDUCT.md,.changeset/README.md,**/.github/**,**/.yarn/**,**/.nuxt/**,**/.nuxt-storybook/**,examples/drupal/web/**,examples/drupal/vendor/**,examples/drupal/keys/**}' packages *.md examples .changeset .agents scripts/skills",
+    "lint:prose": "yarn lint:prose:install && .vale/bin/vale --config .vale.ini --glob='!{**/node_modules/**,**/dist/**,**/coverage/**,**/CHANGELOG.md,**/CODE_OF_CONDUCT.md,.changeset/README.md,**/.github/**,**/.yarn/**,**/.nuxt/**,**/.nuxt-storybook/**,examples/drupal/web/**,examples/drupal/vendor/**,examples/drupal/keys/**}' packages *.md examples .changeset .agents",
     "lint:prose:install": "bash scripts/install-vale.sh .vale/bin .vale/styles",
     "lint:renovate": "renovate-config-validator",
-    "lint:skills": "node scripts/skills/check.mjs",
-    "lint:skills:test": "node --test scripts/skills/test/*.test.mjs",
+    "lint:skills": "npx --yes agnix@0.56.1 .",
     "package": "siroc run yarn pack --workspaces",
     "perf:audit": "node scripts/perf-audit/index.mjs",
     "perf:audit:test": "node --test scripts/perf-audit/test/*.test.mjs",
     "release:check": "node scripts/release/check.mjs",
     "release:check:test": "node --test scripts/release/test/*.test.mjs",
-    "skills:eval": "node scripts/skills/eval.mjs",
+    "skills:eval": "cd .agents/evals && npm install --no-audit --no-fund && npx promptfoo eval -c promptfooconfig.yaml",
     "postinstall": "husky install",
     "test": "yarn test:unit && yarn test:e2e",
     "test:e2e": "yarn example:druxt-site:test && yarn example:druxt-site:storybook:test",
@@ -89,7 +86,6 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-junit": "16.0.0",
     "jest-mock-axios": "4.9.0",
-    "js-yaml": "^3.14.2",
     "knip": "2.43.0",
     "lint-staged": "^14.0.1",
     "markdownlint-cli2": "^0.13.0",
@@ -109,6 +105,27 @@
   "engines": {
     "node": "16.20.1",
     "yarn": "3.8.7"
+  },
+  "lint-staged": {
+    "*.{js,vue}": [
+      "eslint --fix --fix-type problem,layout,suggestion",
+      "cspell lint --no-progress --no-must-find-files"
+    ],
+    "*.mjs": [
+      "cspell lint --no-progress --no-must-find-files"
+    ],
+    "*.{json,yml,yaml}": [
+      "prettier --write",
+      "cspell lint --no-progress --no-must-find-files"
+    ],
+    "*.md": [
+      "prettier --write",
+      "markdownlint-cli2",
+      "cspell lint --no-progress --no-must-find-files"
+    ],
+    "{AGENTS.md,.agents/skills/**/SKILL.md}": [
+      "npx --yes agnix@0.56.1"
+    ]
   },
   "jest-junit": {
     "outputDirectory": "reports/junit",

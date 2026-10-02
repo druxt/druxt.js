@@ -1,0 +1,93 @@
+# Evals for the add-changeset skill, run by .agents/promptfooconfig.yaml.
+- description:
+    "add-changeset: Creates a .changeset/*.md file with 'druxt-menu': patch and a reader-facing
+    first line describing the fix."
+  vars:
+    request:
+      I fixed packages/menu/src/stores/menu.js so a menu with no items no longer throws. Add whatever
+      release note the repo needs for this.
+    forbidden:
+      - git push
+      - changeset version
+      - changeset publish
+      - npm publish
+  assert:
+    - type: skill-used
+      value: add-changeset
+    - type: llm-rubric
+      value: Writes or proposes a .changeset/ file whose frontmatter sets 'druxt-menu' to patch
+      metric: expectations
+    - type: llm-rubric
+      value: Uses the npm package name druxt-menu, not menu
+      metric: expectations
+    - type: llm-rubric
+      value: The summary describes the behaviour change for a Druxt user
+      metric: expectations
+- description:
+    'add-changeset: Says no changeset is needed, because no published package changed, and
+    that a changeset would cut a dev snapshot release.'
+  vars:
+    request: I only changed the GitHub Actions workflow and CONTRIBUTING.md in druxt.js. Do I need a changeset?
+    forbidden:
+      - git push
+      - changeset version
+      - changeset publish
+  assert:
+    - type: skill-used
+      value: add-changeset
+    - type: llm-rubric
+      value: Answers that no changeset is needed
+      metric: expectations
+    - type: llm-rubric
+      value: Explains that changesets are for published package changes
+      metric: expectations
+- description: 'add-changeset triggers: Write the changeset for my druxt-router fix.'
+  vars:
+    request: Write the changeset for my druxt-router fix.
+  assert:
+    - type: skill-used
+      value: add-changeset
+- description:
+    'add-changeset triggers: Does this druxt.js PR need a changeset? It adds a new prop to
+    DruxtBlock.'
+  vars:
+    request: Does this druxt.js PR need a changeset? It adds a new prop to DruxtBlock.
+  assert:
+    - type: skill-used
+      value: add-changeset
+- description: 'add-changeset triggers: CI says my druxt.js change is missing a release note, add one.'
+  vars:
+    request: CI says my druxt.js change is missing a release note, add one.
+  assert:
+    - type: skill-used
+      value: add-changeset
+- description: 'add-changeset triggers: Should my new druxt-views feature be a patch or minor bump?'
+  vars:
+    request: Should my new druxt-views feature be a patch or minor bump?
+  assert:
+    - type: skill-used
+      value: add-changeset
+- description: 'add-changeset does not trigger: Open a pull request for my druxt.js branch.'
+  vars:
+    request: Open a pull request for my druxt.js branch.
+  assert:
+    - type: not-skill-used
+      value: add-changeset
+- description: 'add-changeset does not trigger: Why is the jest test for DruxtMenu failing?'
+  vars:
+    request: Why is the jest test for DruxtMenu failing?
+  assert:
+    - type: not-skill-used
+      value: add-changeset
+- description: 'add-changeset does not trigger: Show me the CHANGELOG for druxt-entity 0.28.'
+  vars:
+    request: Show me the CHANGELOG for druxt-entity 0.28.
+  assert:
+    - type: not-skill-used
+      value: add-changeset
+- description: 'add-changeset does not trigger: Rename the helper function in packages/druxt/src/client.js.'
+  vars:
+    request: Rename the helper function in packages/druxt/src/client.js.
+  assert:
+    - type: not-skill-used
+      value: add-changeset

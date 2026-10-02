@@ -251,7 +251,9 @@ evals
 frontmatter
 agentskills
 dontAsk
-heredocs
 opencode
-lintstagedrc
-cursoragent
+Pinia
+agnix
+commitlint
+promptfoo
+promptfooconfig

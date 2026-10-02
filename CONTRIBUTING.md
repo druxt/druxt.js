@@ -72,7 +72,7 @@ A few things to know:
 - **Workflow plugins are optional.** [superpowers](https://github.com/obra/superpowers) adds planning, test-driven development and review skills. Install it at user scope if you want it, since the repository does not depend on it.
 - **Commits are yours.** Commit under your own git `user.name` and `user.email`, with no AI attribution lines in the message. The `commit-msg` and `pre-push` hooks and CI refuse a commit made under an agent's identity (Claude, Cursor, Copilot, Codex) or crediting one. `.claude/settings.json` turns off Claude Code's own commit and pull request attribution.
 - **OpenCode** finds the skills in both `.agents/skills/` and the `.claude/skills` symlink, and logs a duplicate-name warning for each. Set `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1` to have it read `.agents/skills/` only.
-- **Skills are tested.** `yarn lint:skills` and `yarn lint:skills:test` run in CI. To add or change a skill, see [`scripts/skills/README.md`](scripts/skills/README.md).
+- **Skills are tested.** `yarn lint:skills` ([agnix](https://github.com/agent-sh/agnix)) runs in CI and before each commit that changes a skill. `yarn skills:eval` ([promptfoo](https://www.promptfoo.dev)) runs each skill's evals with your own Claude login, locally only, so CI spends no model tokens. The `write-skill` skill covers adding or changing one.
 
 ## Example projects
 
@@ -199,9 +199,9 @@ Code styles and standards are enforced by linting tools, including **ESLint**.
 
 **Husky** runs git hooks so problems are caught before they reach GitHub:
 
-- `pre-commit` lints the staged files (`.lintstagedrc.cjs`): ESLint, Prettier, markdownlint, CSpell, the prose lint, and the skill checks when a skill changes.
+- `pre-commit` lints the staged files with lint-staged (configured in `package.json`): ESLint, Prettier, markdownlint, CSpell, and agnix when a skill changes.
 - `commit-msg` checks the message against Conventional Commits, and checks the commit is made under your own identity with no AI attribution.
-- `pre-push` checks the commits being pushed the same way, then runs ESLint and the skill checks.
+- `pre-push` checks the commits being pushed the same way, then runs ESLint and the prose lint.
 
 You can also manually run linting using the following command:
 

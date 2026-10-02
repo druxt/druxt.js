@@ -51,7 +51,7 @@ jobs:
 
   # Every commit in a pull request: Conventional Commits, made by the person
   # contributing it, with no AI attribution in the message. The commit-msg
-  # and pre-push hooks run the same checks; this catches a commit made
+  # and pre-push hooks run the same checks. This catches a commit made
   # without them.
   commits:
     if: github.event_name == 'pull_request'
@@ -81,14 +81,17 @@ jobs:
 
       - run: yarn install --immutable
 
-      - name: Conventional Commits
+      # Conventional Commits and no AI attribution lines (commitlint.config.js).
+      - name: Commit messages
         run: yarn lint:commit --from "$BASE" --to "$HEAD" --verbose
 
-      - name: Commit identity and attribution
-        run: node scripts/commits/check.mjs --range "$BASE..$HEAD"
-
-      - name: Commit check tests
-        run: yarn lint:commits:test
+      # Author and committer are the contributor, not an AI agent.
+      - name: Commit identity
+        run: |
+          if git log --format='%an <%ae>%n%cn <%ce>' "$BASE..$HEAD" | grep -iEf .husky/agent-identities; then
+            echo "::error::A commit above is made under an AI agent's identity. See AGENTS.md."
+            exit 1
+          fi
 
   build:
     runs-on: ubuntu-latest
@@ -168,14 +171,11 @@ jobs:
       - name: Renovate config validator
         run: yarn lint:renovate
 
-      # Static checks for the contributor skills in .agents/skills: structure,
-      # references that resolve, guardrails and evals. The live evals need
-      # credentials and run from the Skills eval workflow instead.
-      - name: Skills (static checks)
+      # The contributor skills, AGENTS.md and agent config, checked by agnix
+      # (spec fields, names, links). The live skill evals spend model tokens,
+      # so they run locally only (yarn skills:eval), never in CI.
+      - name: Skills (agnix)
         run: yarn lint:skills
-
-      - name: Skills (checker and grader tests)
-        run: yarn lint:skills:test
 
       - name: Dependency audit (full report, includes devDependencies)
         if: needs.changes.outputs.deps == 'true'

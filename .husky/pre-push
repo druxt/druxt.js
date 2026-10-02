@@ -1,11 +1,27 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# The commits being pushed, read from this hook's stdin, so a commit made
-# without the commit-msg hook is still caught before it reaches GitHub.
-node scripts/commits/check.mjs --pre-push || exit 1
+# The commits being pushed get the same checks as commit-msg, so a commit
+# made without the hooks is still caught before it leaves this machine.
+zero=0000000000000000000000000000000000000000
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$zero" ] && continue
+  if [ "$remote_sha" = "$zero" ]; then
+    range="$local_sha --not --remotes"
+  else
+    range="$remote_sha..$local_sha"
+  fi
+  # shellcheck disable=SC2086
+  if git log --format='%an <%ae>%n%cn <%ce>' $range | grep -iEf .husky/agent-identities; then
+    echo "✖ A commit above is made under an AI agent's identity. See AGENTS.md." >&2
+    exit 1
+  fi
+  # shellcheck disable=SC2086
+  for sha in $(git rev-list --no-merges $range); do
+    git log -1 --format=%B "$sha" | yarn lint:commit || exit 1
+  done
+done
 
 # Fast repository-wide checks that CI blocks on. The full gate (build and
-# unit tests) is `yarn lint && yarn build && yarn test:unit`; see the
-# verify-change skill.
-yarn lint && yarn lint:skills && yarn lint:skills:test
+# unit tests) is `yarn lint && yarn build && yarn test:unit`.
+yarn lint && yarn lint:prose

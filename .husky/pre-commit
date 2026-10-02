@@ -1,6 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Staged-file checks: see .lintstagedrc.cjs. Run one task list at a time,
-# because the prose lint reads files the formatters rewrite.
-npx --no -- lint-staged --concurrent false
+npx --no -- lint-staged

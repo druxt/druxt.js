@@ -26,8 +26,10 @@ request. CI is the gate, and a person is accountable for every change.
   identity, and commit messages carry no AI attribution (no
   `Co-Authored-By: Claude`, session links or "Generated with" lines). The
   `commit-msg` and `pre-push` hooks and CI refuse both.
-- Use [Conventional Commits](https://www.conventionalcommits.org); scope is the
-  package name (e.g. `fix(router): …`).
+- Use [Conventional Commits](https://www.conventionalcommits.org). The scope
+  is the issue number when there is one (`fix(#123): …`, `feat(#123): …`),
+  and the package name otherwise (`fix(router): …`). The changelog links the
+  issue from the scope.
 
 ## Reproducible toolchain
 
@@ -166,10 +168,18 @@ OpenCode, Codex, Cursor, Copilot and Gemini CLI also discover
 so that path is a symlink to `.agents/skills/`. Edit the skills in
 `.agents/skills/`.
 
-Skills are tested like code. `yarn lint:skills` (static checks) and
-`yarn lint:skills:test` block in CI. `yarn skills:eval` runs live transcript
-evals through the `claude` CLI, by hand or from the "Skills eval" workflow.
-See `scripts/skills/README.md`.
+Skills are tested like code, with community tools:
+
+- `yarn lint:skills` runs [agnix](https://github.com/agent-sh/agnix) over the
+  skills, this file and the agent config (spec fields, names, links). It
+  blocks in CI and runs on staged skills before each commit.
+- `yarn skills:eval` runs each skill's `evals/tests.yaml` through
+  [promptfoo](https://www.promptfoo.dev/docs/guides/test-agent-skills/):
+  prompts that should load the skill, prompts that should not, and behaviour
+  cases. It spends model tokens, so it runs locally only, never in CI. It
+  needs Node 22 (`mise exec node@22 -- yarn skills:eval`) and your Claude
+  Code login or `ANTHROPIC_API_KEY`. The config is
+  `.agents/evals/promptfooconfig.yaml`.
 
 Public Vue and Nuxt skills target Vue 3 and Nuxt 3/4 (Composition API,
 `<script setup>`, Nitro). Druxt is Vue 2.7 and Nuxt 2 with the Options API, so
@@ -208,7 +218,7 @@ This repo uses GitFlow:
 When starting work, branch from `develop`:
 
 ```bash
-git checkout develop && git pull && git checkout -b feature/<short-desc>
+git checkout develop && git pull && git checkout -b feature/<issue>-<short-desc>
 ```
 
 Branch prefix is `feature/`, not `feat/`. (The docs site's Lagoon project

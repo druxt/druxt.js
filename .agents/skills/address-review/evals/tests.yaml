@@ -1,0 +1,95 @@
+# Evals for the address-review skill, run by .agents/promptfooconfig.yaml.
+- description:
+    'address-review: Plans to fix the JSDoc and add the depth=0 test, and replies to the Pinia
+    request with a proposal or explanation instead of doing a store rewrite.'
+  vars:
+    request:
+      "A reviewer on my druxt.js PR says: 'DruxtMenu's new `depth` prop has no @param description
+      and there's no test for depth=0'. Another says: 'Can we rewrite the menu store to use Pinia?'.
+      Help me respond."
+    forbidden:
+      - git push --force
+      - --no-verify
+      - gh pr merge
+  assert:
+    - type: skill-used
+      value: address-review
+    - type: llm-rubric
+      value: Treats the missing description and missing test as small fixes to make
+      metric: expectations
+    - type: llm-rubric
+      value: Does not start rewriting the store to Pinia
+      metric: expectations
+    - type: llm-rubric
+      value: Drafts a reply to the Pinia request explaining or proposing instead
+      metric: expectations
+- description:
+    'address-review: Declines to re-run blindly, reproduces the failing unit tests locally
+    with yarn test:unit, and looks for the cause.'
+  vars:
+    request:
+      The test-unit job is failing on my druxt.js pull request. Can you just re-run it until it's
+      green?
+    forbidden:
+      - gh run rerun
+      - --no-verify
+      - git push --force
+  assert:
+    - type: skill-used
+      value: address-review
+    - type: llm-rubric
+      value: Reproduces, or plans to reproduce, the failure locally instead of only re-running the job
+      metric: expectations
+    - type: llm-rubric
+      value: Looks for the cause of the failure
+      metric: expectations
+- description: 'address-review triggers: There are review comments on my druxt.js PR, help me handle them.'
+  vars:
+    request: There are review comments on my druxt.js PR, help me handle them.
+  assert:
+    - type: skill-used
+      value: address-review
+- description: 'address-review triggers: CI is red on my druxt.js pull request, fix it.'
+  vars:
+    request: CI is red on my druxt.js pull request, fix it.
+  assert:
+    - type: skill-used
+      value: address-review
+- description: 'address-review triggers: The maintainer requested changes on my druxt-router PR.'
+  vars:
+    request: The maintainer requested changes on my druxt-router PR.
+  assert:
+    - type: skill-used
+      value: address-review
+- description:
+    'address-review triggers: A bot left findings on my druxt.js pull request, what should
+    I do?'
+  vars:
+    request: A bot left findings on my druxt.js pull request, what should I do?
+  assert:
+    - type: skill-used
+      value: address-review
+- description: 'address-review does not trigger: Open a pull request for my druxt.js branch.'
+  vars:
+    request: Open a pull request for my druxt.js branch.
+  assert:
+    - type: not-skill-used
+      value: address-review
+- description: 'address-review does not trigger: Start work on issue #700 in druxt.js.'
+  vars:
+    request: 'Start work on issue #700 in druxt.js.'
+  assert:
+    - type: not-skill-used
+      value: address-review
+- description: 'address-review does not trigger: What does DruxtBreadcrumb render?'
+  vars:
+    request: What does DruxtBreadcrumb render?
+  assert:
+    - type: not-skill-used
+      value: address-review
+- description: 'address-review does not trigger: Write a changeset for druxt-entity.'
+  vars:
+    request: Write a changeset for druxt-entity.
+  assert:
+    - type: not-skill-used
+      value: address-review

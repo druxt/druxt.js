@@ -60,6 +60,3 @@ Temporary Items
 
 .vale/bin/
 .vale/styles/
-
-# Agent and skill-eval output (transcripts from yarn skills:eval)
-.artifacts/

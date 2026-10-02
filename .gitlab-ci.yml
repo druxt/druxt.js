@@ -297,9 +297,8 @@ lint:knip:
     - yarn lint:knip
     - section_end "knip"
 
-# Mirrors the GitHub lint job's skills steps: static checks for the
-# contributor skills in .agents/skills, and the tests for the checker and the
-# eval grader. Neither needs a build or credentials.
+# Mirrors the GitHub lint job's skills step: agnix over the contributor
+# skills, AGENTS.md and agent config. No build, credentials or model tokens.
 lint:skills:
   extends: .node
   stage: lint
@@ -309,7 +308,6 @@ lint:skills:
     - corepack enable
     - yarn install --immutable
     - yarn lint:skills
-    - yarn lint:skills:test
     - section_end "skills"
 
 # Mirrors the GitHub commits job for merge requests: Conventional Commits,
@@ -327,8 +325,11 @@ lint:commits:
     - corepack enable
     - yarn install --immutable
     - yarn lint:commit --from "$CI_MERGE_REQUEST_DIFF_BASE_SHA" --to "$CI_COMMIT_SHA" --verbose
-    - node scripts/commits/check.mjs --range "$CI_MERGE_REQUEST_DIFF_BASE_SHA..$CI_COMMIT_SHA"
-    - yarn lint:commits:test
+    - |
+      if git log --format='%an <%ae>%n%cn <%ce>' "$CI_MERGE_REQUEST_DIFF_BASE_SHA..$CI_COMMIT_SHA" | grep -iEf .husky/agent-identities; then
+        echo "A commit above is made under an AI agent's identity. See AGENTS.md."
+        exit 1
+      fi
     - section_end "commits"
 
 #

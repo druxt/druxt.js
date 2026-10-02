@@ -1,0 +1,95 @@
+# Evals for the open-pr skill, run by .agents/promptfooconfig.yaml.
+- description:
+    'open-pr: Drafts a Conventional Commits title scoped to menu and a description following
+    the PR template with Types of changes, Description including Resolves: #412, Checklist and Screenshots/Media.
+    Does not push or open the PR.'
+  vars:
+    request:
+      "My druxt.js branch feature/412-empty-menu fixes issue #412 (DruxtMenu renders an empty <ul>
+      with no items). Write the pull request title and description for me, but don't open it yet."
+    forbidden:
+      - git push
+      - gh pr create
+      - gh pr merge
+  assert:
+    - type: skill-used
+      value: open-pr
+    - type: llm-rubric
+      value: 'The title is a Conventional Commits subject such as fix(menu): ...'
+      metric: expectations
+    - type: llm-rubric
+      value: The description follows the sections of .github/PULL_REQUEST_TEMPLATE.md
+      metric: expectations
+    - type: llm-rubric
+      value: 'The description links the issue with Resolves: #412'
+      metric: expectations
+    - type: llm-rubric
+      value: Does not push or open the pull request
+      metric: expectations
+- description:
+    'open-pr: Runs or asks to run the verification gate before opening, and targets develop
+    on druxt/druxt.js from the fork.'
+  vars:
+    request: Open a druxt.js pull request for my druxt-router change. I haven't run any checks yet.
+    forbidden:
+      - gh pr merge
+      - --base main
+      - --no-verify
+      - git push --force
+  assert:
+    - type: skill-used
+      value: open-pr
+    - type: llm-rubric
+      value: Runs or requires the verification gate before the pull request is opened
+      metric: expectations
+    - type: llm-rubric
+      value: Targets the develop branch, not main
+      metric: expectations
+- description: 'open-pr triggers: Open a PR for my druxt.js branch.'
+  vars:
+    request: Open a PR for my druxt.js branch.
+  assert:
+    - type: skill-used
+      value: open-pr
+- description: 'open-pr triggers: Write the pull request description for my druxt-views fix.'
+  vars:
+    request: Write the pull request description for my druxt-views fix.
+  assert:
+    - type: skill-used
+      value: open-pr
+- description: 'open-pr triggers: My druxt.js change is ready for review, submit it upstream.'
+  vars:
+    request: My druxt.js change is ready for review, submit it upstream.
+  assert:
+    - type: skill-used
+      value: open-pr
+- description: 'open-pr triggers: What should my druxt.js PR title be for this router fix?'
+  vars:
+    request: What should my druxt.js PR title be for this router fix?
+  assert:
+    - type: skill-used
+      value: open-pr
+- description: 'open-pr does not trigger: Reply to the review comments on my druxt.js pull request.'
+  vars:
+    request: Reply to the review comments on my druxt.js pull request.
+  assert:
+    - type: not-skill-used
+      value: open-pr
+- description: 'open-pr does not trigger: Run the druxt.js unit tests.'
+  vars:
+    request: Run the druxt.js unit tests.
+  assert:
+    - type: not-skill-used
+      value: open-pr
+- description: 'open-pr does not trigger: Explain the GitFlow branches druxt.js uses.'
+  vars:
+    request: Explain the GitFlow branches druxt.js uses.
+  assert:
+    - type: not-skill-used
+      value: open-pr
+- description: 'open-pr does not trigger: Reproduce the bug in issue #600.'
+  vars:
+    request: 'Reproduce the bug in issue #600.'
+  assert:
+    - type: not-skill-used
+      value: open-pr

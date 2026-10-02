@@ -19,18 +19,17 @@ yarn lint && yarn build && yarn test:unit
 
 ## Checks for what changed
 
-| What changed                           | Also run                                                        |
-| -------------------------------------- | --------------------------------------------------------------- |
-| Any Markdown, including changesets     | `yarn lint:md`, `yarn lint:prose`, `yarn lint:cspell`           |
-| Source comments or JSDoc               | `yarn lint:prose`, `yarn lint:cspell`                           |
-| `package.json` or `yarn.lock`          | `yarn install --immutable`, `yarn lint:knip`, `yarn lint:audit` |
-| `renovate.json`                        | `yarn lint:renovate`                                            |
-| `examples/` manifests                  | `yarn lint:examples`                                            |
-| Package output size                    | `yarn bundlewatch`, after `yarn build`                          |
-| `.agents/skills/` or `scripts/skills/` | `yarn lint:skills`, `yarn lint:skills:test`                     |
-| `scripts/commits/`                     | `yarn lint:commits:test`                                        |
-| `scripts/release/`                     | `yarn release:check:test`                                       |
-| `scripts/perf-audit/`                  | `yarn perf:audit:test` under Node 22                            |
+| What changed                       | Also run                                                        |
+| ---------------------------------- | --------------------------------------------------------------- |
+| Any Markdown, including changesets | `yarn lint:md`, `yarn lint:prose`, `yarn lint:cspell`           |
+| Source comments or JSDoc           | `yarn lint:prose`, `yarn lint:cspell`                           |
+| `package.json` or `yarn.lock`      | `yarn install --immutable`, `yarn lint:knip`, `yarn lint:audit` |
+| `renovate.json`                    | `yarn lint:renovate`                                            |
+| `examples/` manifests              | `yarn lint:examples`                                            |
+| Package output size                | `yarn bundlewatch`, after `yarn build`                          |
+| `.agents/skills/` or `AGENTS.md`   | `yarn lint:skills`                                              |
+| `scripts/release/`                 | `yarn release:check:test`                                       |
+| `scripts/perf-audit/`              | `yarn perf:audit:test` under Node 22                            |
 
 The end-to-end tests run in CI against a Drupal backend. To run them locally, start the backend with `cd examples/drupal && make build`, then run `yarn example:druxt-site:test`. See `examples/drupal/.devtools/README.md`.
 
@@ -43,7 +42,7 @@ The end-to-end tests run in CI against a Drupal backend. To run them locally, st
 
 ## Commits
 
-The `pre-commit`, `commit-msg` and `pre-push` hooks run a subset of these checks. Let them run. Commit under the git identity of the person you work for. Leave AI attribution out of the message, such as a `Co-Authored-By: Claude` trailer or a session link. `yarn lint:commits --range upstream/develop..HEAD` checks the branch's commits.
+The `pre-commit`, `commit-msg` and `pre-push` hooks run a subset of these checks. Let them run. Commit under the git identity of the person you work for. Leave AI attribution out of the message, such as a `Co-Authored-By: Claude` trailer or a session link. `yarn lint:commit --from upstream/develop --to HEAD` checks the messages on the branch.
 
 ## Report
 

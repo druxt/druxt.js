@@ -13,18 +13,18 @@ Pull requests go from a branch on your fork to `develop` on [druxt/druxt.js](htt
 2. A changeset is committed if a published package changed (see the `add-changeset` skill).
 3. The commits follow Conventional Commits, scoped by package name. The pre-commit and commit-msg hooks enforce this, so let them run.
 4. The branch is up to date with `develop`. Merge `upstream/develop` into it, then re-run the gate.
-5. The commits are authored and committed under your own git identity, with no AI attribution lines. `yarn lint:commits --range upstream/develop..HEAD` checks the branch, and the `pre-push` hook checks it again.
+5. The commits are authored and committed under your own git identity, with no AI attribution lines. `yarn lint:commit --from upstream/develop --to HEAD` checks the messages, and the `pre-push` hook checks the identity too.
 
 ## Title
 
 Pull requests are squash merged, and the title becomes the commit on `develop`. Write it as a Conventional Commits subject that says what changes for a Druxt user:
 
 ```text
-fix(menu): render nothing for a menu with no items
+fix(#412): render nothing for a menu with no items
 feat(router): resolve paths with a trailing slash
 ```
 
-The scope is the package directory name (`menu`, `router`, `druxt`). Leave the scope out for a change across several packages.
+The scope is the issue number when there is one (`fix(#412): …`), and otherwise the package directory name (`menu`, `router`, `druxt`). Leave the scope out for a change across several packages with no issue.
 
 ## Description
 

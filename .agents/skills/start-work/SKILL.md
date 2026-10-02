@@ -61,7 +61,7 @@ A test that passes before the fix does not test the fix.
 
 - The toolchain is pinned to Node 16, Yarn 3, Vue 2.7, Nuxt 2, jest 29 and eslint 7. Leave it alone unless the issue is the upgrade itself.
 - Druxt components use the Vue 2 Options API. Advice written for Vue 3 or Nuxt 3/4 (`<script setup>`, composables, Nitro) does not apply here.
-- Commits follow Conventional Commits, scoped by package name: `fix(router): …`.
+- Commits follow Conventional Commits. The scope is the issue number when there is one (`fix(#412): …`, `feat(#412): …`), and otherwise the package name (`fix(router): …`).
 - Every `@param` in JSDoc needs a `{type}` and a `- description`. The JSDoc is the published API reference.
 
 Next, write the change, then use the `add-changeset` skill if a published package changed, and the `verify-change` skill before opening a pull request.

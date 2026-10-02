@@ -1,6 +1,6 @@
 ---
 name: add-changeset
-description: Writes the changeset that versions a druxt.js package change and becomes its changelog entry. Use when a change touches a published package under packages/, when a pull request is missing a changeset, or when asked which version bump a change needs.
+description: Writes the changeset that versions a druxt.js package change and becomes its changelog entry. Use when a change touches a published package under packages/, when a pull request is missing a changeset, or when asked whether a change needs a changeset or which version bump it needs.
 ---
 
 # Add a changeset
@@ -32,7 +32,7 @@ Sites that added a redirect to strip the slash can remove it.
 
 - Use `patch` for a fix and `minor` for a feature. Every package is still `0.x`. For a breaking change, ask a maintainer which level to use and add a `BREAKING CHANGE:` line, which the changelog marks as breaking.
 - List each published package whose behaviour changes. Packages that only depend on a changed one are bumped automatically.
-- The first line becomes the changelog bullet. `.changeset/changelog.cjs` turns a leading verb such as "fix" into the past tense and links `#123` issue references. Later paragraphs are indented beneath it.
+- The first line becomes the changelog bullet. A leading `fix(#412):` prefix becomes an issue link, and a leading verb such as "fix" becomes past tense (`.changeset/changelog.cjs`). Later paragraphs are indented beneath it.
 - Write for someone upgrading Druxt. Say what changed for them and what they can do now, with a code sample when there is a new option. Leave out internal function names and how the fix works.
 
 `yarn changeset` prompts for the same details and writes a file with a random name. Either way works.
