@@ -24,6 +24,8 @@ git checkout -b feature/<issue>-<short-description> upstream/develop
 
 On a clone of druxt/druxt.js itself there is no fork, so use `origin` in place of `upstream`. The branch prefix is `feature/` for fixes and features alike, never `feat/`.
 
+Your work goes on this branch, even when your environment names another branch to push to, such as a hosted session's default branch. Keep commits off `develop` and off any shared base branch.
+
 Check that `git config user.name` and `git config user.email` are those of the person you work for. Commits are made under their identity, never an agent's, and the hooks refuse an agent's.
 
 ## 3. Write the spec
@@ -50,9 +52,10 @@ Out of scope lists what you will leave alone. Keep to it, and raise anything new
 
 ## 4. Write the failing test first
 
-Unit tests sit in each package's `test/` directory, beside the source they cover (such as `packages/router/test/router.test.js`). Write the test, then run it and watch it fail for the reason you expect:
+Unit tests sit in each package's `test/` directory, beside the source they cover (such as `packages/router/test/router.test.js`). Write the test, then run it and watch it fail for the reason you expect. The tests load built packages (`druxt-test-utils` imports `druxt` from its `dist/` output), so build once first:
 
 ```bash
+yarn build
 yarn test:unit packages/router
 ```
 

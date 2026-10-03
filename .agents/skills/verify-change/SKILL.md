@@ -36,6 +36,8 @@ The end-to-end tests run in CI against a Drupal backend. To run them locally, st
 ## Failing checks
 
 - Fix the cause. Leave the check, its configuration and its threshold as they are.
+- When a test fails because behaviour changed, fix the code, not the test. Change an assertion only for a change that is meant to happen, and confirm that first: read the whole commit message, and ask its author when the change isn't yours.
+- Leave uncommitted work you didn't make in place. Ask before running `git restore`, `git checkout -- .` or `git clean` on it, and wait for the answer.
 - Never skip the git hooks, delete or skip a test, or add an `eslint-disable` comment to get a check to pass.
 - If a check is wrong, fix the check in a separate commit and say why in the pull request.
 - If it also fails on a clean `develop`, it is not your change's failure. Say so, with the output from both runs.

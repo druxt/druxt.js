@@ -20,13 +20,13 @@ Search open and closed issues for duplicates, and link any you find.
 
 ## 2. Find the package
 
-Map the report to a package in `packages/`, using the package table in `AGENTS.md`. Note the version the reporter uses and check `packages/<package>/CHANGELOG.md` for a fix released since.
+Map the report to a package in `packages/`, using the package table in `AGENTS.md`. Note the version the reporter uses and check `packages/<package>/CHANGELOG.md` for a fix released since. Check that version really has the bug: a bug on `develop` may not be in any release yet. `npm pack druxt-<package>@<version>` downloads the published package so you can read its `dist/`.
 
 ## 3. Reproduce
 
 Reproduce the bug on `develop`, in the smallest way available:
 
-1. A failing unit test in the package's `test/` directory, run with `yarn test:unit packages/<package>`. This is the best reproduction, because it becomes the regression test.
+1. A failing unit test in the package's `test/` directory, run with `yarn build` once and then `yarn test:unit packages/<package>`, since the tests load built packages. This is the best reproduction, because it becomes the regression test.
 2. The example apps against the local Drupal backend:
 
    ```bash

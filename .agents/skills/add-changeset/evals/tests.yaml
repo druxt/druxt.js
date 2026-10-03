@@ -91,3 +91,14 @@
   assert:
     - type: not-skill-used
       value: add-changeset
+- description: 'add-changeset: Says a fix for a bug that no release has needs no changeset.'
+  vars:
+    request:
+      'I fixed a druxt-router bug that came in with a commit merged to develop last week. There has
+      been no release since then. Does my fix need a changeset?'
+  assert:
+    - type: skill-used
+      value: add-changeset
+    - type: llm-rubric
+      value: Says no changeset is needed because no released version has the bug, or checks the published package first
+      metric: expectations

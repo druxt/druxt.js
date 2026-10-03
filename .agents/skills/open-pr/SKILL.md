@@ -49,4 +49,4 @@ Without the `gh` CLI, open the compare page that `git push` prints.
 
 ## After opening
 
-CI runs on the pull request. A red check is yours to fix before review starts, using the `address-review` skill. Maintainers review, label and merge, so do not merge, label or request reviewers on their behalf.
+CI runs on the pull request. A red check is yours to fix before review starts, using the `address-review` skill. Maintainers review, label and merge. Never merge a pull request, even when asked: a maintainer does that. Leave labels and reviewer requests to them too.
