@@ -66,6 +66,13 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
+      # A pull request cannot loosen the policy that checks its own commits.
+      # commitlint runs from a worktree of the base commit, with the base's
+      # package.json, lockfile and commitlint.config.js, so the pull request
+      # can't swap the script, the dependencies or the rules.
+      - name: Check out the base branch's commit policy
+        run: git worktree add .policy "$BASE"
+
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 16.20.1
@@ -74,32 +81,26 @@ jobs:
 
       - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
-          path: .yarn/cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          path: .policy/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('.policy/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
 
       - run: yarn install --immutable
-
-      # A pull request cannot loosen the policy that checks its own commits:
-      # use the base branch's copy of each policy file, and the pull request's
-      # only where the base has none yet.
-      - name: Use the base branch's commit policy
-        run: |
-          for file in commitlint.config.js .husky/agent-identities; do
-            if git cat-file -e "$BASE:$file" 2>/dev/null; then
-              git show "$BASE:$file" > "$file"
-            fi
-          done
+        working-directory: .policy
 
       # Conventional Commits and no AI attribution lines (commitlint.config.js).
       - name: Commit messages
         run: yarn lint:commit --from "$BASE" --to "$HEAD" --verbose
+        working-directory: .policy
 
-      # Author and committer are the contributor, not an AI agent.
+      # Author and committer are the contributor, not an AI agent. The pull
+      # request's list is used only where the base has none yet.
       - name: Commit identity
         run: |
-          if git log --format='%an <%ae>%n%cn <%ce>' "$BASE..$HEAD" | grep -iEf .husky/agent-identities; then
+          identities=.policy/.husky/agent-identities
+          [ -f "$identities" ] || identities=.husky/agent-identities
+          if git log --format='%an <%ae>%n%cn <%ce>' "$BASE..$HEAD" | grep -iEf "$identities"; then
             echo "::error::A commit above is made under an AI agent's identity. See AGENTS.md."
             exit 1
           fi

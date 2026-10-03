@@ -6,18 +6,25 @@
 zero=0000000000000000000000000000000000000000
 while read -r local_ref local_sha remote_ref remote_sha; do
   [ "$local_sha" = "$zero" ] && continue
-  if [ "$remote_sha" = "$zero" ]; then
+  # A new branch, or a remote commit this clone doesn't have (the branch
+  # moved elsewhere): check every commit no remote branch has yet.
+  if [ "$remote_sha" = "$zero" ] || ! git cat-file -e "$remote_sha^{commit}" 2>/dev/null; then
     range="$local_sha --not --remotes"
   else
     range="$remote_sha..$local_sha"
   fi
+  # Fail rather than pass when git can't list the commits.
   # shellcheck disable=SC2086
-  if git log --format='%an <%ae>%n%cn <%ce>' $range | grep -iEf .husky/agent-identities; then
+  identities=$(git log --format='%an <%ae>%n%cn <%ce>' $range) || exit 1
+  if printf '%s\n' "$identities" | grep -iEf .husky/agent-identities; then
     echo "✖ A commit above is made under an AI agent's identity. See AGENTS.md." >&2
     exit 1
   fi
+  # Merge commits too: commitlint.config.js skips a merge message only when
+  # it carries no AI attribution.
   # shellcheck disable=SC2086
-  for sha in $(git rev-list --no-merges $range); do
+  shas=$(git rev-list $range) || exit 1
+  for sha in $shas; do
     git log -1 --format=%B "$sha" | yarn lint:commit || exit 1
   done
 done

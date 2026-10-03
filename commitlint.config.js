@@ -4,7 +4,7 @@ const AI_ATTRIBUTION = [
   /^co-authored-by:.*\b(claude|anthropic|copilot|cursor ?agent|codex|openai|gemini|aider)\b.*$/im,
   /^claude-session:.*$/im,
   /^\S*https:\/\/claude\.ai\/code\/session_.*$/im,
-  /^\W*generated (with|by) \[?(claude|copilot|cursor|codex|gemini|aider).*$/im,
+  /^\W*generated (with|by) \[?(claude|anthropic|copilot|cursor|codex|openai|gemini|aider).*$/im,
 ];
 
 const { default: isIgnored } = require('@commitlint/is-ignored');

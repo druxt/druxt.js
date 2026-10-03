@@ -1,5 +1,4 @@
 <(noreply|claude-code)@anthropic\.com>
-^claude( code)? <
 <cursoragent@cursor\.com>
 \+copilot@users\.noreply\.github\.com>
 <[^>]*codex[^>]*@openai\.com>
