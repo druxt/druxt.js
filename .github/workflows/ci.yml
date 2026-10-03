@@ -275,8 +275,12 @@ jobs:
           name: test-results
           path: ./reports/junit/
 
+      # A pull request from a fork gets no secrets, so the token is empty there.
+      # Codecov accepts uploads without a token for pull requests into a public
+      # repository, so upload for those too. A fork's own pushes, with no token
+      # and no upstream pull request, skip the upload rather than fail.
       - name: Upload coverage to Codecov
-        if: ${{ env.CODECOV_TOKEN != '' }}
+        if: ${{ env.CODECOV_TOKEN != '' || github.event.pull_request.base.repo.full_name == 'druxt/druxt.js' }}
         uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
