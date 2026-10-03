@@ -258,3 +258,4 @@ commitlint
 promptfoo
 promptfooconfig
 oneline
+unshallow

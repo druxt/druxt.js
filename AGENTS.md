@@ -16,6 +16,8 @@ request. CI is the gate, and a person is accountable for every change.
 - Write to the [druxt](https://github.com/druxt) GitHub organization (push,
   open pull requests or issues, comment) only when the person you work for asks for that action. Maintainers review,
   label, merge and release.
+- Leave merging to a maintainer: an agent never merges a pull request, even
+  when asked.
 - Pass every gate as it stands. Skipped git hooks, skipped or deleted tests,
   lowered thresholds and `eslint-disable` comments are not allowed: if a check
   is wrong, fix the check in its own commit and say why in the pull request.
@@ -92,6 +94,13 @@ yarn lint && yarn build && yarn test:unit
   its `node:test` units. Both run under Node 22, not the repository's Node 16
   (`mise exec node@22 -- yarn perf:audit`). Not part of the gate above. The
   audit needs the examples served first. See `scripts/perf-audit/README.md`.
+
+Before running an unfamiliar script, read it in `package.json`. Yarn 3 passes
+any extra arguments to the script, so `yarn version --help` runs the real
+`version` script. Releases are cut by GitHub CI, so leave the `version`,
+`changeset` and `release:*` scripts to it. A hosted session may start from a
+shallow clone: run `git fetch --unshallow` before drawing conclusions from the
+history, such as a merge base or the commit that added a file.
 
 ### Dependency audit: production vs. full
 
@@ -233,7 +242,7 @@ stays as this repo's convention.) This is unrelated to commit-message
 
 - **GitHub Actions** (`.github/workflows/ci.yml`): canonical CI, on Node
   16.20.1. Jobs: `build`, `lint`, `test-unit` (coverage uploaded to Codecov),
-  `test-e2e` (Drupal backend + Cypress). Runs on push/PR to `develop`/`main`.
+  `test-e2e` (Drupal backend + Cypress). Runs on push to `develop`/`main`, and on every pull request whatever its base branch.
   Replaces CircleCI, which is no longer used.
 - **GitLab CI** (`.gitlab-ci.yml`): additive pipeline (lint + test +
   `secret-detection` + `preview` stages).
