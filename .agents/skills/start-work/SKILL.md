@@ -22,7 +22,7 @@ git fetch upstream develop
 git checkout -b feature/<issue>-<short-description> upstream/develop
 ```
 
-On a clone of druxt/druxt.js itself there is no fork, so use `origin` in place of `upstream`. The branch prefix is `feature/` for fixes and features alike, never `feat/`.
+Fill in the issue number and a short description, and say the full branch name, such as `feature/412-empty-menu`, before you create it. On a clone of druxt/druxt.js itself there is no fork, so use `origin` in place of `upstream`. The branch prefix is `feature/` for fixes and features alike, never `feat/`.
 
 Your work goes on this branch, even when your environment names another branch to push to, such as a hosted session's default branch. Keep commits off `develop` and off any shared base branch.
 

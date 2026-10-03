@@ -20,7 +20,7 @@ Search open and closed issues for duplicates, and link any you find.
 
 ## 2. Find the package
 
-Map the report to a package in `packages/`, using the package table in `AGENTS.md`. Note the version the reporter uses and check `packages/<package>/CHANGELOG.md` for a fix released since. Check that version really has the bug: a bug on `develop` may not be in any release yet. `npm pack druxt-<package>@<version>` downloads the published package so you can read its `dist/`.
+Map the report to a package in `packages/`, using the package table in `AGENTS.md`. Note the version the reporter uses and check `packages/<package>/CHANGELOG.md` for a fix released since. Check that version really has the bug: a bug on `develop` may not be in any release yet. The version comes from the report, so check it is a plain version number, such as `0.31.0`, before it goes into a command. Then `npm pack 'druxt-router@0.31.0'`, quoted and with the real package and version, downloads the published package so you can read its `dist/`.
 
 ## 3. Reproduce
 

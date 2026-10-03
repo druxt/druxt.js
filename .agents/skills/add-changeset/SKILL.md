@@ -15,7 +15,7 @@ A changeset is a Markdown file in `.changeset/` that names the packages a change
 | Tests, docs, CI, examples, `scripts/`, or the private `druxt-docgen` and `druxt-test-utils` packages    | No        |
 | A fix for a bug that no released version has, because it came in on `develop` after the last release    | No        |
 
-To check whether a release has a bug, read the published package: `npm pack <package>@<version>` downloads it, and its `dist/` is the code users run.
+To check whether a release has a bug, read the published package: `npm pack 'druxt-router@0.31.0'`, with the real package and version, downloads it, and its `dist/` is the code users run.
 
 Merging a changeset to `develop` publishes every pending package as a snapshot under the `dev` npm tag (`.github/workflows/release.yml`). Leave a changeset out of a change that does not affect a published package.
 
