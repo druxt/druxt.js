@@ -100,5 +100,5 @@
     - type: skill-used
       value: add-changeset
     - type: llm-rubric
-      value: Says no changeset is needed because no released version has the bug, or checks the published package first
+      value: Concludes that no changeset is needed because no released version has the bug. Checking the published package along the way is fine.
       metric: expectations

@@ -10,10 +10,10 @@ Pull requests go from a branch on your fork to `develop` on [druxt/druxt.js](htt
 ## Before opening
 
 1. The `verify-change` skill has passed in this session, and you have its output.
-2. A changeset is committed if a published package changed (see the `add-changeset` skill).
+2. A changeset is committed when the `add-changeset` skill says the change needs one. A fix for a bug that no release has needs none, even in a published package.
 3. The commits follow Conventional Commits, scoped by the issue number when there is one and by the package name otherwise. The commit-msg hook enforces the format, so let it run.
 4. The branch is up to date with `develop`. Merge `upstream/develop` into it, then re-run the gate.
-5. The commits are authored and committed under your own git identity, with no AI attribution lines. `yarn lint:commit --from upstream/develop --to HEAD` checks the messages, and the `pre-push` hook checks the identity too.
+5. The commits are authored and committed under the git identity of the person you work for, not an agent's. Their messages carry no AI attribution lines. `yarn lint:commit --from upstream/develop --to HEAD` checks the messages, and the `pre-push` hook checks the identity too.
 
 ## Title
 
