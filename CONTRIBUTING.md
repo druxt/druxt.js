@@ -56,6 +56,25 @@ To resolve an issue or propose an improvement, use the following process to crea
 5. Make and commit your changes.
 6. Create a Pull request: https://github.com/druxt/druxt.js/compare
 
+## AI-assisted contributions
+
+Druxt welcomes contributions written with AI coding agents. They go through the same process as any other change: an issue, a branch from `develop`, linting, tests, documentation, a pull request and review. CI checks every pull request the same way, and the person who opens the pull request is accountable for it.
+
+The repository is set up for agents:
+
+- [`AGENTS.md`](AGENTS.md) holds the project instructions. Claude Code (v2.1.277 or later), Codex, Cursor, Gemini CLI, Copilot and OpenCode read it directly.
+- Contributor skills in [`.agents/skills/`](.agents/skills) cover the project workflow: starting work, changesets, verification, pull requests, review and issue triage. `.claude/skills` links to the same directory for Claude Code. The table in `AGENTS.md` lists them.
+
+A few things to know:
+
+- **Claude Code reads `AGENTS.md` only when the project has no `CLAUDE.md` or `CLAUDE.local.md`.** If you keep a personal `CLAUDE.local.md`, or run a Claude Code version older than v2.1.277, put `@AGENTS.md` on its first line.
+- **On Windows**, `.claude/skills` is a symlink. Clone with `git clone -c core.symlinks=true` (which needs Developer Mode or an administrator shell), or Claude Code finds no skills.
+- **Workflow plugins are optional.** [superpowers](https://github.com/obra/superpowers) adds planning, test-driven development and review skills. Install it at user scope if you want it, since the repository does not depend on it.
+- **Commits are yours.** Commit under your own git `user.name` and `user.email`, with no AI attribution lines in the message. The `commit-msg` and `pre-push` hooks and CI refuse a commit made under an agent's identity (Claude, Cursor, Copilot, Codex) or crediting one. `.claude/settings.json` turns off Claude Code's own commit and pull request attribution.
+- **Claude Code on the web** runs `.claude/hooks/session-start.sh` when a session starts. It installs the pinned Node and Yarn (Yarn from the npm registry, because hosted sessions can't reach corepack's download host), runs `yarn install`, which also installs the git hooks, and builds the packages so the unit tests can run. On your own machine the hook does nothing: use `mise install` and `make setup`.
+- **OpenCode** finds the skills in both `.agents/skills/` and the `.claude/skills` symlink, and logs a duplicate-name warning for each. Set `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1` to have it read `.agents/skills/` only.
+- **Skills are tested.** `yarn lint:skills` ([agnix](https://github.com/agent-sh/agnix)) runs in CI and before each commit that changes a skill. `yarn skills:eval` ([promptfoo](https://www.promptfoo.dev)) runs each skill's evals with your own Claude login, locally only, so CI spends no model tokens. The `write-skill` skill covers adding or changing one.
+
 ## Example projects
 
 The Druxt monorepo contains a collection of example projects inside the `examples/` directory.
@@ -179,7 +198,11 @@ Test files are located within the relevant packages `test` directories. E.g., `p
 
 Code styles and standards are enforced by linting tools, including **ESLint**.
 
-**Husky** is used to trigger linting via a `pre-commit` git hook to ensure all issues are flagged before they are committed.
+**Husky** runs git hooks so problems are caught before they reach GitHub:
+
+- `pre-commit` lints the staged files with lint-staged (configured in `package.json`): ESLint, Prettier, markdownlint, CSpell, and agnix when a skill changes.
+- `commit-msg` checks the message against Conventional Commits, and checks the commit is made under your own identity with no AI attribution.
+- `pre-push` checks the commits being pushed the same way, then runs ESLint and the prose lint.
 
 You can also manually run linting using the following command:
 

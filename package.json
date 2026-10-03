@@ -41,14 +41,16 @@
     "lint:format:fix": "prettier --write \"**/*.{js,vue,json,md,yml,yaml}\"",
     "lint:knip": "knip --include dependencies,unlisted --no-config-hints",
     "lint:md": "markdownlint-cli2 \"**/*.md\"",
-    "lint:prose": "yarn lint:prose:install && .vale/bin/vale --config .vale.ini --glob='!{**/node_modules/**,**/dist/**,**/coverage/**,**/CHANGELOG.md,**/CODE_OF_CONDUCT.md,.changeset/README.md,**/.github/**,**/.yarn/**,**/.nuxt/**,**/.nuxt-storybook/**,examples/drupal/web/**,examples/drupal/vendor/**,examples/drupal/keys/**}' packages *.md examples .changeset",
+    "lint:prose": "yarn lint:prose:install && .vale/bin/vale --config .vale.ini --glob='!{**/node_modules/**,**/dist/**,**/coverage/**,**/CHANGELOG.md,**/CODE_OF_CONDUCT.md,.changeset/README.md,**/.github/**,**/.yarn/**,**/.nuxt/**,**/.nuxt-storybook/**,examples/drupal/web/**,examples/drupal/vendor/**,examples/drupal/keys/**}' packages *.md examples .changeset .agents",
     "lint:prose:install": "bash scripts/install-vale.sh .vale/bin .vale/styles",
     "lint:renovate": "renovate-config-validator",
+    "lint:skills": "npx --yes agnix@0.56.1 --strict . && node scripts/skills/check-descriptions.mjs",
     "package": "siroc run yarn pack --workspaces",
     "perf:audit": "node scripts/perf-audit/index.mjs",
     "perf:audit:test": "node --test scripts/perf-audit/test/*.test.mjs",
     "release:check": "node scripts/release/check.mjs",
     "release:check:test": "node --test scripts/release/test/*.test.mjs",
+    "skills:eval": "cd .agents/evals && npm install --no-audit --no-fund && npx promptfoo eval -c promptfooconfig.yaml",
     "postinstall": "husky install",
     "test": "yarn test:unit && yarn test:e2e",
     "test:e2e": "yarn example:druxt-site:test && yarn example:druxt-site:storybook:test",
@@ -65,6 +67,7 @@
     "@changesets/cli": "2.31.1",
     "@commitlint/cli": "16.0",
     "@commitlint/config-conventional": "16.0",
+    "@commitlint/is-ignored": "^16.2.4",
     "@vue/test-utils": "1.3.6",
     "babel-core": "7.0.0-bridge.0",
     "bundlewatch": "0.4.2",
@@ -105,12 +108,11 @@
     "yarn": "3.8.7"
   },
   "lint-staged": {
-    "*.js": [
+    "*.{js,vue}": [
       "eslint --fix --fix-type problem,layout,suggestion",
       "cspell lint --no-progress --no-must-find-files"
     ],
-    "*.vue": [
-      "eslint --fix --fix-type problem,layout,suggestion",
+    "*.mjs": [
       "cspell lint --no-progress --no-must-find-files"
     ],
     "*.{json,yml,yaml}": [
@@ -121,6 +123,10 @@
       "prettier --write",
       "markdownlint-cli2",
       "cspell lint --no-progress --no-must-find-files"
+    ],
+    "{AGENTS.md,.agnix.toml,.agents/skills/**/SKILL.md}": [
+      "npx --yes agnix@0.56.1 --strict",
+      "node scripts/skills/check-descriptions.mjs"
     ]
   },
   "jest-junit": {

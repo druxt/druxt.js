@@ -1,0 +1,99 @@
+# Evals for the triage-issue skill, run by .agents/promptfooconfig.yaml.
+- description:
+    'triage-issue: Classifies it as a possible bug in druxt-menu, checks the CHANGELOG and
+    existing issues, plans a reproduction with a failing unit test or the example backend, and writes
+    the triage report without posting it.'
+  vars:
+    request:
+      "New druxt.js issue: 'After upgrading druxt-menu to 0.21.0 my main menu shows no items,
+      but the JSON:API endpoint /jsonapi/menu_items/main returns data.' Triage it."
+    forbidden:
+      - gh issue comment
+      - gh issue edit
+      - gh issue close
+      - gh label
+  assert:
+    - type: skill-used
+      value: triage-issue
+    - type: llm-rubric
+      value: Identifies druxt-menu as the package
+      metric: expectations
+    - type: llm-rubric
+      value: Plans a reproduction with a unit test or the examples/drupal backend
+      metric: expectations
+    - type: llm-rubric
+      value: Produces a report with type, package, reproduced and next step
+      metric: expectations
+    - type: llm-rubric
+      value: Does not post comments or change labels on GitHub
+      metric: expectations
+- description:
+    'triage-issue: Recognizes the problem is likely on the Drupal side (decoupled_router on
+    drupal.org) and recommends redirecting it, with the information to ask for.'
+  vars:
+    request:
+      Someone opened a druxt.js issue saying the decoupled_router module returns a 500 for every
+      path on their Drupal 10 site. What do we do with it?
+    forbidden:
+      - gh issue close
+      - gh issue comment
+      - gh issue edit
+  assert:
+    - type: skill-used
+      value: triage-issue
+    - type: llm-rubric
+      value: Identifies decoupled_router as a Drupal module maintained on drupal.org
+      metric: expectations
+    - type: llm-rubric
+      value: Recommends where the issue belongs and what information is missing
+      metric: expectations
+- description: 'triage-issue triggers: Triage the latest druxt.js issue.'
+  vars:
+    request: Triage the latest druxt.js issue.
+  assert:
+    - type: skill-used
+      value: triage-issue
+- description: 'triage-issue triggers: Is this druxt-views bug report real? Can you reproduce it?'
+  vars:
+    request: Is this druxt-views bug report real? Can you reproduce it?
+  assert:
+    - type: skill-used
+      value: triage-issue
+- description: 'triage-issue triggers: Sort through the new druxt.js issues and tell me what each needs.'
+  vars:
+    request: Sort through the new druxt.js issues and tell me what each needs.
+  assert:
+    - type: skill-used
+      value: triage-issue
+- description:
+    'triage-issue triggers: Someone reported DruxtBreadcrumb is broken in druxt.js, look into
+    the issue.'
+  vars:
+    request: Someone reported DruxtBreadcrumb is broken in druxt.js, look into the issue.
+  assert:
+    - type: skill-used
+      value: triage-issue
+- description: 'triage-issue does not trigger: Open a pull request for my fix.'
+  vars:
+    request: Open a pull request for my fix.
+  assert:
+    - type: not-skill-used
+      value: triage-issue
+- description: 'triage-issue does not trigger: Add a changeset for druxt-menu.'
+  vars:
+    request: Add a changeset for druxt-menu.
+  assert:
+    - type: not-skill-used
+      value: triage-issue
+- description: 'triage-issue does not trigger: Run yarn build for druxt.js.'
+  vars:
+    request: Run yarn build for druxt.js.
+  assert:
+    - type: not-skill-used
+      value: triage-issue
+- description: 'triage-issue does not trigger: Write a new skill for releasing druxt.js.'
+  vars:
+    request: Write a new skill for releasing druxt.js.
+  assert:
+    - type: not-skill-used
+      value: triage-issue

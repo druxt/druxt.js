@@ -1,0 +1,34 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# The commits being pushed get the same checks as commit-msg, so a commit
+# made without the hooks is still caught before it leaves this machine.
+zero=0000000000000000000000000000000000000000
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$zero" ] && continue
+  # A new branch, or a remote commit this clone doesn't have (the branch
+  # moved elsewhere): check every commit no remote branch has yet.
+  if [ "$remote_sha" = "$zero" ] || ! git cat-file -e "$remote_sha^{commit}" 2>/dev/null; then
+    range="$local_sha --not --remotes"
+  else
+    range="$remote_sha..$local_sha"
+  fi
+  # Fail rather than pass when git can't list the commits.
+  # shellcheck disable=SC2086
+  identities=$(git log --format='%an <%ae>%n%cn <%ce>' $range) || exit 1
+  if printf '%s\n' "$identities" | grep -iEf .husky/agent-identities; then
+    echo "✖ A commit above is made under an AI agent's identity. See AGENTS.md." >&2
+    exit 1
+  fi
+  # Merge commits too: commitlint.config.js skips a merge message only when
+  # it carries no AI attribution.
+  # shellcheck disable=SC2086
+  shas=$(git rev-list $range) || exit 1
+  for sha in $shas; do
+    git log -1 --format=%B "$sha" | yarn lint:commit || exit 1
+  done
+done
+
+# Fast repository-wide checks that CI blocks on. The full gate (build and
+# unit tests) is `yarn lint && yarn build && yarn test:unit`.
+yarn lint && yarn lint:prose

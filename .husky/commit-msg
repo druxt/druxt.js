@@ -1,4 +1,15 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-yarn lint:commit --edit $1
+# Conventional Commits and no AI attribution lines (commitlint.config.js).
+yarn lint:commit --edit "$1"
+
+# The commit is made under the contributor's own identity, not an AI agent's
+# (patterns in .husky/agent-identities).
+for ident in "$(git var GIT_AUTHOR_IDENT)" "$(git var GIT_COMMITTER_IDENT)"; do
+  if printf '%s\n' "$ident" | grep -qiEf .husky/agent-identities; then
+    echo "✖ The commit identity is an AI agent's: $(printf '%s' "$ident" | sed 's/ [0-9]* [-+][0-9]*$//')" >&2
+    echo "  Commit under your own git user.name and user.email. See AGENTS.md." >&2
+    exit 1
+  fi
+done

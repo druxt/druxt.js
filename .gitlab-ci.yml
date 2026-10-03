@@ -297,6 +297,62 @@ lint:knip:
     - yarn lint:knip
     - section_end "knip"
 
+# Mirrors the GitHub lint job's skills step: agnix over the contributor
+# skills, AGENTS.md and agent config. No build, credentials or model tokens.
+lint:skills:
+  extends: .node
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "skills" "Checking the contributor skills"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:skills
+    - section_end "skills"
+
+# Mirrors the GitHub commits job for merge requests: Conventional Commits,
+# made by the person contributing them, with no AI attribution.
+lint:commits:
+  extends: .node
+  stage: lint
+  interruptible: true
+  variables:
+    GIT_DEPTH: 0
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  script:
+    - section_start "commits" "Checking the merge request's commits"
+    # In a merged-results pipeline CI_COMMIT_SHA is a temporary merge commit,
+    # and a range ending there takes in the target branch's newer commits too.
+    # End at the source branch's head, which GitLab sets only in that case.
+    - HEAD_SHA="${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA:-$CI_COMMIT_SHA}"
+    # A merge request cannot loosen the policy that checks its own commits.
+    # Take the policy from the target branch's current tip (the diff base can
+    # be older), fetched with the job token, and fall back to the diff base
+    # if the fetch fails. commitlint runs from a worktree of that commit, with
+    # its package.json, lockfile and commitlint.config.js.
+    - |
+      POLICY_SHA="$CI_MERGE_REQUEST_DIFF_BASE_SHA"
+      if git fetch --quiet "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_MERGE_REQUEST_PROJECT_PATH}.git" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
+        POLICY_SHA="$(git rev-parse FETCH_HEAD)"
+      else
+        echo "Could not fetch the target branch; using the diff base's commit policy."
+      fi
+      git worktree add .policy "$POLICY_SHA"
+    - corepack enable
+    - (cd .policy && yarn install --immutable)
+    - (cd .policy && yarn lint:commit --from "$CI_MERGE_REQUEST_DIFF_BASE_SHA" --to "$HEAD_SHA" --verbose)
+    # The merge request's identity list is used only where the policy commit
+    # has none yet.
+    - |
+      identities=.policy/.husky/agent-identities
+      [ -f "$identities" ] || identities=.husky/agent-identities
+      if git log --format='%an <%ae>%n%cn <%ce>' "$CI_MERGE_REQUEST_DIFF_BASE_SHA..$HEAD_SHA" | grep -iEf "$identities"; then
+        echo "A commit above is made under an AI agent's identity. See AGENTS.md."
+        exit 1
+      fi
+    - section_end "commits"
+
 #
 # --- Test Stage ---
 #

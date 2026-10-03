@@ -1,0 +1,8 @@
+# agnix (yarn lint:skills) validates the skills, AGENTS.md and agent config.
+# It runs with --strict, so a warning fails the check like an error.
+
+[rules]
+# AGM-003 caps AGENTS.md at Windsurf's 12,000 characters. The contributor docs
+# support Claude Code, OpenCode, Codex, Cursor, Copilot and Gemini CLI, none
+# of which has that limit.
+disabled_rules = ["AGM-003"]

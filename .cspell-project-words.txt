@@ -247,3 +247,15 @@ ZRHGDGSD
 SESS
 SSESS
 maxage
+evals
+frontmatter
+agentskills
+dontAsk
+opencode
+Pinia
+agnix
+commitlint
+promptfoo
+promptfooconfig
+oneline
+unshallow

@@ -49,6 +49,62 @@ jobs:
             echo "packages=$packages"
           } >> "$GITHUB_OUTPUT"
 
+  # Every commit in a pull request: Conventional Commits, made by the person
+  # contributing it, with no AI attribution in the message. The commit-msg
+  # and pre-push hooks run the same checks. This catches a commit made
+  # without them.
+  commits:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      BASE: ${{ github.event.pull_request.base.sha }}
+      HEAD: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      # A pull request cannot loosen the policy that checks its own commits.
+      # commitlint runs from a worktree of the base commit, with the base's
+      # package.json, lockfile and commitlint.config.js, so the pull request
+      # can't swap the script, the dependencies or the rules.
+      - name: Check out the base branch's commit policy
+        run: git worktree add .policy "$BASE"
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .policy/.yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('.policy/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+        working-directory: .policy
+
+      # Conventional Commits and no AI attribution lines (commitlint.config.js).
+      - name: Commit messages
+        run: yarn lint:commit --from "$BASE" --to "$HEAD" --verbose
+        working-directory: .policy
+
+      # Author and committer are the contributor, not an AI agent. The pull
+      # request's list is used only where the base has none yet.
+      - name: Commit identity
+        run: |
+          identities=.policy/.husky/agent-identities
+          [ -f "$identities" ] || identities=.husky/agent-identities
+          if git log --format='%an <%ae>%n%cn <%ce>' "$BASE..$HEAD" | grep -iEf "$identities"; then
+            echo "::error::A commit above is made under an AI agent's identity. See AGENTS.md."
+            exit 1
+          fi
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -126,6 +182,12 @@ jobs:
 
       - name: Renovate config validator
         run: yarn lint:renovate
+
+      # The contributor skills, AGENTS.md and agent config, checked by agnix
+      # (spec fields, names, links). The live skill evals spend model tokens,
+      # so they run locally only (yarn skills:eval), never in CI.
+      - name: Skills (agnix)
+        run: yarn lint:skills
 
       - name: Dependency audit (full report, includes devDependencies)
         if: needs.changes.outputs.deps == 'true'
@@ -214,8 +276,12 @@ jobs:
           name: test-results
           path: ./reports/junit/
 
+      # A pull request from a fork gets no secrets, so the token is empty there.
+      # Codecov accepts uploads without a token for pull requests into a public
+      # repository, so upload for those too. A fork's own pushes, with no token
+      # and no upstream pull request, skip the upload rather than fail.
       - name: Upload coverage to Codecov
-        if: ${{ env.CODECOV_TOKEN != '' }}
+        if: ${{ env.CODECOV_TOKEN != '' || github.event.pull_request.base.repo.full_name == 'druxt/druxt.js' }}
         uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

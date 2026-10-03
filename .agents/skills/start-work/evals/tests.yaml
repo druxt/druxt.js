@@ -1,0 +1,97 @@
+# Evals for the start-work skill, run by .agents/promptfooconfig.yaml.
+- description:
+    'start-work: Checks the issue, proposes a feature/412-... branch from upstream develop,
+    and plans a failing unit test in packages/menu/test before any code change.'
+  vars:
+    request:
+      "I'd like to fix issue #412 in druxt.js: DruxtMenu renders an empty <ul> when the menu has
+      no items. Get me set up to start on it."
+    forbidden:
+      - git push
+      - gh pr create
+      - --no-verify
+  assert:
+    - type: skill-used
+      value: start-work
+    - type: llm-rubric
+      value: Proposes a branch named feature/<issue>-<description> created from develop
+      metric: expectations
+    - type: llm-rubric
+      value: Plans a failing unit test in packages/menu/test before changing source
+      metric: expectations
+    - type: llm-rubric
+      value: Does not edit any source file before the branch and test plan exist
+      metric: expectations
+- description:
+    'start-work: Looks for or drafts an issue, branches from develop with the feature/ prefix,
+    and writes a spec with Goal, Acceptance criteria, In scope and Out of scope sections before code.'
+  vars:
+    request: Add a `prefetch` prop to DruxtRouter so links can be prefetched. Start the work on this.
+    forbidden:
+      - git push
+      - gh pr create
+      - git checkout -b feat/
+  assert:
+    - type: skill-used
+      value: start-work
+    - type: llm-rubric
+      value: Looks for an existing issue, drafts one, or says one is needed before writing code
+      metric: expectations
+    - type: llm-rubric
+      value: Writes or proposes a spec that has an Out of scope section
+      metric: expectations
+    - type: llm-rubric
+      value: Uses the feature/ branch prefix, not feat/
+      metric: expectations
+- description:
+    "start-work triggers: Let's start on the druxt.js issue about the breadcrumb missing the
+    home link."
+  vars:
+    request: Let's start on the druxt.js issue about the breadcrumb missing the home link.
+  assert:
+    - type: skill-used
+      value: start-work
+- description:
+    'start-work triggers: I want to contribute a fix to druxt-views pagination, where do I
+    begin?'
+  vars:
+    request: I want to contribute a fix to druxt-views pagination, where do I begin?
+  assert:
+    - type: skill-used
+      value: start-work
+- description: 'start-work triggers: Pick up issue #530 in druxt.js and get a branch ready.'
+  vars:
+    request: 'Pick up issue #530 in druxt.js and get a branch ready.'
+  assert:
+    - type: skill-used
+      value: start-work
+- description: 'start-work triggers: Begin work on adding a loading slot to DruxtEntity.'
+  vars:
+    request: Begin work on adding a loading slot to DruxtEntity.
+  assert:
+    - type: skill-used
+      value: start-work
+- description: 'start-work does not trigger: What does the druxt-router package do?'
+  vars:
+    request: What does the druxt-router package do?
+  assert:
+    - type: not-skill-used
+      value: start-work
+- description: 'start-work does not trigger: Run the unit tests for druxt-menu.'
+  vars:
+    request: Run the unit tests for druxt-menu.
+  assert:
+    - type: not-skill-used
+      value: start-work
+- description: 'start-work does not trigger: Write a changeset for the router fix I just made.'
+  vars:
+    request: Write a changeset for the router fix I just made.
+  assert:
+    - type: not-skill-used
+      value: start-work
+- description: 'start-work does not trigger: Explain how DruxtModule fetches its data.'
+  vars:
+    request: Explain how DruxtModule fetches its data.
+  assert:
+    - type: not-skill-used
+      value: start-work

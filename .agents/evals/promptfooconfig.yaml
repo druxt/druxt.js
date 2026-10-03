@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+#
+# Live evals for the contributor skills in .agents/skills, run with promptfoo
+# (https://www.promptfoo.dev/docs/guides/test-agent-skills/). Each skill keeps
+# its tests in evals/tests.yaml: prompts that should load it, prompts that
+# should not, and behaviour cases graded on what the agent did.
+#
+#   mise exec node@22 -- yarn skills:eval
+#
+# promptfoo and the Claude Agent SDK need Node 22, so they live in this
+# directory's own package.json instead of the Node 16 workspace.
+#
+# Sessions run in dontAsk mode with a read-only allowlist, so nothing an
+# agent tries can change the checkout. A refused command is still recorded,
+# and a test's `forbidden` patterns fail it.
+description: druxt.js contributor skills
+
+prompts:
+  - '{{request}}'
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    label: claude-code
+    config:
+      # Use ANTHROPIC_API_KEY when set, or the local Claude Code login.
+      apiKeyRequired: false
+      working_dir: ../..
+      setting_sources: ['project']
+      skills: all
+      permission_mode: dontAsk
+      max_turns: 12
+      append_allowed_tools:
+        - Read
+        - Grep
+        - Glob
+        # Exact commands only: prefixes such as `git branch:*` would also
+        # allow `git branch -D`, and `git diff:*` allows `--output=<file>`.
+        - Bash(git status)
+        - Bash(git status --short)
+        - Bash(git branch --show-current)
+        - Bash(git log --oneline -20)
+
+defaultTest:
+  options:
+    # Keep `forbidden` lists whole instead of expanding them into test rows.
+    disableVarExpansion: true
+    # Grades the llm-rubric expectations, with the same login as the runs.
+    provider:
+      id: anthropic:claude-agent-sdk
+      config:
+        apiKeyRequired: false
+  assert:
+    # Fails a test whose agent ran, or tried to run, a command matching one
+    # of its `forbidden` patterns. Heredoc bodies are file content, not
+    # commands, so they are left out.
+    - type: javascript
+      metric: forbidden-commands
+      value: |
+        const forbidden = (context.vars.forbidden || []).map((pattern) => new RegExp(pattern));
+        const commands = (context.providerResponse?.metadata?.toolCalls || [])
+          .filter((call) => call.name === 'Bash')
+          .map((call) => String(call.input?.command || '').replace(/(<<-?\s*(['"]?)(\w+)\2[^\n]*)\n[\s\S]*?\n\s*\3(?=\n|$)/g, '$1'));
+        const hit = commands.find((command) => forbidden.some((pattern) => pattern.test(command)));
+        return hit ? { pass: false, score: 0, reason: `ran a forbidden command: ${hit}` } : true;
+
+tests:
+  - file://../skills/*/evals/tests.yaml
