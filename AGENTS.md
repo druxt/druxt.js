@@ -181,7 +181,10 @@ Skills are tested like code, with community tools:
 - `yarn lint:skills` runs [agnix](https://github.com/agent-sh/agnix) over the
   skills, this file and the agent config (spec fields, names, links). It
   runs with `--strict`, so a warning fails it too, and `.agnix.toml` lists
-  any rule turned off, with the reason. It blocks in CI and runs on staged
+  any rule turned off, with the reason. agnix doesn't check that a
+  description says when to load the skill, so
+  `scripts/skills/check-descriptions.mjs` fails any description without a
+  "Use when" sentence. It blocks in CI and runs on staged
   skills before each commit.
 - `yarn skills:eval` runs each skill's evals (such as
   `.agents/skills/start-work/evals/tests.yaml`) through

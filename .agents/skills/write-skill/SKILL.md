@@ -55,7 +55,7 @@ Follow the order in [superpowers' writing-skills](https://github.com/obra/superp
 ## Gates
 
 ```bash
-yarn lint:skills                       # agnix, in CI and before each commit
+yarn lint:skills                       # agnix and the "Use when" check, in CI and before each commit
 mise exec node@22 -- yarn skills:eval  # promptfoo, locally only (spends model tokens)
 yarn lint:md && yarn lint:prose && yarn lint:cspell
 ```
