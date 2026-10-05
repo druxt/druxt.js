@@ -281,12 +281,19 @@ jobs:
       # repository, so upload for those too. A fork's own pushes, with no token
       # and no upstream pull request, skip the upload rather than fail.
       - name: Upload coverage to Codecov
+        id: codecov
         if: ${{ env.CODECOV_TOKEN != '' || github.event.pull_request.base.repo.full_name == 'druxt/druxt.js' }}
+        # A Codecov outage warns through the next step instead of failing the job.
+        continue-on-error: true
         uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
           directory: ./coverage
+
+      - name: Report a failed coverage upload
+        if: ${{ steps.codecov.outcome == 'failure' }}
+        run: echo "::warning title=Coverage not uploaded::The Codecov upload failed, so this run has no coverage report. See the Upload coverage to Codecov step."
 
   # The three themed showcase examples (daisyui, tailwind, bootstrapvue) run
   # as a parallel matrix - each gets its own backend and dev server, which
