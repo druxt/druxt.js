@@ -34,26 +34,34 @@ describe('DruxtStore', () => {
     store.dispatch('druxtMenu/get', 'name')
   })
 
-  test('get - a flush during the request drops the menu', async () => {
+  test('get - a flush during the request fetches the menu again', async () => {
     const pending = []
     store.$druxtMenu.get = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
 
-    const before = store.dispatch('druxtMenu/get', 'main')
+    const request = store.dispatch('druxtMenu/get', 'main')
     await Promise.resolve()
     store.commit('druxtMenu/flushEntities', {})
 
-    // Nothing from before the flush is stored.
+    // The response from before the flush is neither stored nor returned.
     pending[0]({ entities: [{ id: 'stale' }] })
-    // The caller still gets what it fetched.
-    expect(await before).toStrictEqual([{ id: 'stale' }])
+    await new Promise((resolve) => setTimeout(resolve))
     expect(store.state.druxtMenu.entities).toStrictEqual({})
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
 
-    // A call after the flush is stored.
-    const after = store.dispatch('druxtMenu/get', 'main')
-    await Promise.resolve()
     pending[1]({ entities: [{ id: 'fresh' }] })
-    await after
+    expect(await request).toStrictEqual([{ id: 'fresh' }])
     expect(Object.keys(store.state.druxtMenu.entities[undefined])).toStrictEqual(['fresh'])
+  })
+
+  test('get - a flush during every attempt stores and returns nothing', async () => {
+    store.$druxtMenu.get = jest.fn(async () => {
+      store.commit('druxtMenu/flushEntities', {})
+      return { entities: [{ id: 'stale' }] }
+    })
+
+    expect(await store.dispatch('druxtMenu/get', 'main')).toBe(undefined)
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(3)
+    expect(store.state.druxtMenu.entities).toStrictEqual({})
   })
 
   test('AddEntities', async () => {
