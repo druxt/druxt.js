@@ -5,7 +5,7 @@
 
 In production, the server now keeps the JSON:API index and menus between requests for as long as Drupal's `Cache-Control` header allows. Drupal only allows it when the page cache max-age is set (Administration > Configuration > Development > Performance). At the default of 0, nothing is kept.
 
-A signed-in request never reads or fills the cache. Druxt recognizes one by an Authorization header, basic auth or Drupal's session cookie, and never stores a response Drupal marks `no-cache`, as Drupal does for every signed-in response. Credentials sent in another header, such as an API key, are not recognized. If a proxy renames the session cookie, set `sessionCookie` to match it:
+A request never reads or fills the cache when its Axios instance sends an Authorization header, basic auth or Drupal's session cookie, and Druxt never stores a response Drupal marks `no-cache`, as Drupal does for every signed-in response. Credentials added by a request interceptor are seen only once a response comes back, so an instance's first lookup can still read a stored entry. Credentials sent in another header, such as an API key, are not recognized. If a proxy renames the session cookie, set `sessionCookie` to match it:
 
 ```js
 // nuxt.config.js
