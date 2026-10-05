@@ -241,8 +241,9 @@ const DruxtStore = ({ store }) => {
        * Clear every Druxt cache.
        *
        * Clears the DruxtClient's caches and the server's process cache, and
-       * flushes the stored collections, resources, routes, Views results and
-       * menu items. Schemas are built at build time and stay.
+       * flushes the stored collections, resources, routes, Views results, menu
+       * items and schemas. Each flushed schema loads again, regenerated from
+       * Drupal with `druxt.schema.refresh` or else from the build.
        *
        * @name clearCache
        * @action clearCache
@@ -258,7 +259,7 @@ const DruxtStore = ({ store }) => {
         commit('flushCollection', {})
         commit('flushResource', {})
         // Stores from other Druxt modules, flushed only when the site uses them.
-        for (const mutation of ['druxt/views/flushResults', 'druxtMenu/flushEntities', 'druxtRouter/flushRoutes']) {
+        for (const mutation of ['druxt/views/flushResults', 'druxtMenu/flushEntities', 'druxtRouter/flushRoutes', 'druxtSchema/flushSchemas']) {
           if (this._mutations[mutation]) commit(mutation, {}, { root: true })
         }
       },

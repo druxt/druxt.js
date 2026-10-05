@@ -80,6 +80,26 @@ export default {
 };
 ```
 
+### Refresh schemas without a rebuild
+
+Schemas are generated at build time, so a change to a display in Drupal needs a new build to show. Set `druxt.schema.refresh` to regenerate them on the Nuxt server instead:
+
+```js
+export default {
+  modules: ['druxt-schema'],
+  druxt: {
+    cache: { secret: process.env.DRUXT_CACHE_SECRET },
+    schema: { refresh: true },
+  },
+};
+```
+
+- The server regenerates a schema the first time a page needs it, and holds it until the next cache clear, `POST /_druxt/cache/clear` or `druxt/clearCache`. Have Drupal call the clear when configuration changes, as for content.
+- The browser asks the server for a schema at `/_druxt/schema/<id>` and never reads Drupal's configuration itself. The server generates with the same access the build uses.
+- Regeneration only covers schemas the build could generate. When it fails, the schema from the build is used.
+- The hold is per server process, so a site with several instances needs each one cleared.
+- A static site (`nuxt generate`) has no server and keeps the schemas from its build.
+
 ---
 
 ## API
@@ -105,9 +125,10 @@ These options are available to all Druxt modules.
 
 These options are specific to this module.
 
-| Option          | Type    | Required | Default | Description                                                    |
-| --------------- | ------- | -------- | ------- | -------------------------------------------------------------- |
-| `schema.filter` | `array` | No       | `[]`    | Array of regular expression rules to filter generated schemas. |
+| Option           | Type      | Required | Default | Description                                                                  |
+| ---------------- | --------- | -------- | ------- | ---------------------------------------------------------------------------- |
+| `schema.filter`  | `array`   | No       | `[]`    | Array of regular expression rules to filter generated schemas.               |
+| `schema.refresh` | `boolean` | No       | `false` | Regenerate schemas on the Nuxt server after each cache clear, with no build. |
 
 ## Links
 

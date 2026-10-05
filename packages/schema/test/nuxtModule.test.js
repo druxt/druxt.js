@@ -7,6 +7,7 @@ describe('Nuxt module', () => {
   beforeEach(() => {
     mock = {
       addPlugin: jest.fn(),
+      addServerMiddleware: jest.fn(),
       addTemplate: jest.fn(),
       nuxt: {
         hook: async (hook, fn) => await fn()
@@ -41,5 +42,25 @@ describe('Nuxt module', () => {
     }))
     await DruxtSchemaNuxtModule.call(mock)
     expect(mock.addTemplate).toHaveBeenCalledTimes(0)
+  })
+  test('Refresh', async () => {
+    const refresh = Symbol.for('druxt.schemaRefresh')
+    delete process[refresh]
+    DruxtSchema.mockImplementation(() => ({
+      get: () => ({ schemas: { 'node--page--default--view': {} } }),
+      getSchemaById: jest.fn(async (id) => ({ id }))
+    }))
+
+    await DruxtSchemaNuxtModule.call(mock)
+    expect(mock.addServerMiddleware).not.toHaveBeenCalled()
+    expect(process[refresh]).toBe(undefined)
+
+    mock.options.druxt.schema = { refresh: true }
+    await DruxtSchemaNuxtModule.call(mock)
+    expect(mock.addServerMiddleware).toHaveBeenCalledWith({ path: '/_druxt/schema', handler: expect.any(Function) })
+    expect(await process[refresh]('node--page--default--view')).toStrictEqual({ id: 'node--page--default--view' })
+    // Generation runs without the API proxy, as the build does.
+    expect(DruxtSchema).toHaveBeenLastCalledWith('https://demo-api.druxtjs.org', expect.objectContaining({ proxy: { api: false } }))
+    delete process[refresh]
   })
 })

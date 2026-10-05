@@ -2,6 +2,7 @@ import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
 
 import { Schema } from './utils/schema'
+import { parseSchemaId } from './utils/hold'
 
 /**
  * Druxt Schema configuration object.
@@ -106,6 +107,31 @@ class DruxtSchema {
     )
 
     return { index, schemas }
+  }
+
+  /**
+   * Generates one schema by its ID.
+   *
+   * The ID's entity type and bundle must be a resource type in the JSON:API index,
+   * so only schemas the build could have generated are generated.
+   *
+   * @example @lang js
+   * const schema = await this.$druxtSchema.getSchemaById('node--page--default--view')
+   *
+   * @param {string} id - The schema ID, `<entity type>--<bundle>--<mode>--<view|form>`.
+   *
+   * @returns {Promise<object|boolean>} The schema, or false when the ID or its display is unavailable.
+   */
+  async getSchemaById(id) {
+    const parts = parseSchemaId(id)
+    if (!parts) return false
+
+    const index = await this.druxt.getIndex()
+    const resource = index[[parts.entityType, parts.bundle].join('--')]
+    if (!resource) return false
+
+    const schema = await this.getSchema({ ...parts, filter: this.options.schema.filter, ...resource })
+    return (schema && schema.schema) || false
   }
 
   /**

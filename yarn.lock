@@ -10948,6 +10948,7 @@ __metadata:
     consola: ^2.15.3
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
+    lodash: ^4.17.21
   peerDependencies:
     vue: ^2.7.14
     vuex: ^3.6.2

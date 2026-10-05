@@ -38,6 +38,24 @@ describe('DruxtSchema', () => {
     expect(schemas).toMatchSnapshot()
   })
 
+  test('getSchemaById', async () => {
+    const { schemas } = await schema.get()
+    const built = schemas['node--page--default--view']
+
+    expect(await schema.getSchemaById('node--page--default--view')).toStrictEqual(built)
+  })
+
+  test('getSchemaById - only IDs the index can build', async () => {
+    schema.druxt.getIndex = jest.fn(schema.druxt.getIndex.bind(schema.druxt))
+
+    expect(await schema.getSchemaById('../../etc/passwd')).toBe(false)
+    expect(await schema.getSchemaById('node--page--default--edit')).toBe(false)
+    expect(schema.druxt.getIndex).not.toHaveBeenCalled()
+
+    expect(await schema.getSchemaById('node--missing--default--view')).toBe(false)
+    expect(await schema.getSchemaById('node--page--missing--view')).toBe(false)
+  })
+
   test('get - mock error', async () => {
     const mock = {
       druxt: {

@@ -2,6 +2,8 @@ import consola from 'consola'
 import { resolve } from 'path'
 
 import { DruxtSchema } from './schema'
+import { schemaHandler } from './server-middleware/schema'
+import { getHeldSchema } from './utils/hold'
 
 /**
  * The Nuxt.js module function.
@@ -9,6 +11,7 @@ import { DruxtSchema } from './schema'
  * - Adds the Schema plugin to Nuxt.js.
  * - Adds the Schema Vuex store to Nuxt.js.
  * - Builds the Schema data via the `builder:prepared` hook.
+ * - With `druxt.schema.refresh`, regenerates schemas on the server after each cache clear.
  *
  * The module function should not be used directly, but rather installed via your Nuxt.js configuration file.
  *
@@ -61,6 +64,17 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
     fileName: 'store/druxt-schema.js',
     options
   })
+
+  if (options.schema.refresh) {
+    // Schemas are generated with the same access the build uses.
+    const createDruxtSchema = () => new DruxtSchema(options.baseUrl, {
+      ...options,
+      proxy: { ...options.proxy || {}, api: false },
+    })
+    this.addServerMiddleware({ path: '/_druxt/schema', handler: schemaHandler(createDruxtSchema) })
+    // Nuxt runs the server bundle in a new context under `nuxt dev`, sharing process but not globalThis.
+    process[Symbol.for('druxt.schemaRefresh')] = (id) => getHeldSchema(createDruxtSchema, id)
+  }
 
   // Generate schemas.
   this.nuxt.hook('builder:prepared', async () => {
