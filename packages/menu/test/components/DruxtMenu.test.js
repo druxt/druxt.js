@@ -128,6 +128,28 @@ describe('DruxtMenu', () => {
     expect(wrapper.vm.model).toStrictEqual([{ entity: item('fresh'), children: [] }])
   })
 
+  test('a menu unmounted during a flushed fetch builds no model', async () => {
+    const item = { id: 'main.home', attributes: { menu_name: 'main', parent: null } }
+    const pending = []
+    store.$druxtMenu = { get: jest.fn(() => new Promise((resolve) => pending.push(resolve))) }
+
+    const first = mountComponent()
+    const fetched = first.vm.$options.fetch.call(first.vm)
+    await new Promise((resolve) => setTimeout(resolve))
+    store.commit('druxtMenu/flushEntities', {})
+    await new Promise((resolve) => setTimeout(resolve))
+    first.destroy()
+    // This flush replaces the store object the unmounted menu last read.
+    store.commit('druxtMenu/flushEntities', {})
+    pending.shift()({ entities: [item] })
+    await new Promise((resolve) => setTimeout(resolve))
+    pending.shift()({ entities: [item] })
+    await fetched
+
+    expect(first.vm.component.is).not.toBe('DruxtDebug')
+    expect(first.vm.model).toBe(null)
+  })
+
   test('getEntitiesByFilter', async() => {
     const mock = {
       entities: {
