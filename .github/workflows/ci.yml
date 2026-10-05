@@ -293,7 +293,9 @@ jobs:
 
       - name: Report a failed coverage upload
         if: ${{ steps.codecov.outcome == 'failure' }}
-        run: echo "::warning title=Coverage not uploaded::The Codecov upload failed, so this run has no coverage report. See the Upload coverage to Codecov step."
+        run: |
+          echo "::warning title=Coverage not uploaded::The Codecov upload failed, so this run has no coverage report. See the Upload coverage to Codecov step."
+          echo "Coverage not uploaded: the Codecov upload failed, so this run has no coverage report." >> "$GITHUB_STEP_SUMMARY"
 
   # The three themed showcase examples (daisyui, tailwind, bootstrapvue) run
   # as a parallel matrix - each gets its own backend and dev server, which
