@@ -59,10 +59,7 @@ describe('DruxtClient process cache', () => {
     await anonymous.getIndex()
     expect(indexCalls()).toBe(2)
 
-    // A cookie shaped like Drupal's session cookie but carrying another site's
-    // hash is anonymous at Drupal. Drupal answers `public`, so the response
-    // could be stored. The gate matches on shape alone and withholds it. Here
-    // the gate, not Drupal, keeps the response out of the store.
+    // A cookie shaped like Drupal's session cookie is withheld by the gate, whatever Drupal answers.
     const session = new DruxtClient(baseUrl, { axios: requestAxios({ cookie: 'SESS0123456789abcdef0123456789abcdef=abc' }), cache: {} })
     expect(session.processCache('index')).toBe(null)
     await session.getIndex()
@@ -167,19 +164,14 @@ describe('DruxtClient process cache', () => {
   })
 
   test('a response Drupal marks no-cache is never stored, even when the request gate passes', async () => {
-    // A cookie under a name the gate does not know passes it, as an unrecognised
-    // name is anonymous at Drupal too. What decides the write is Drupal's answer:
-    // it forces `no-cache, must-revalidate` on every response to a signed-in
-    // request, so nothing fetched for a signed-in user is ever stored.
+    // An unknown cookie passes the gate, and Drupal's no-cache keeps the response out.
     const cookie = { cookie: 'proxy_session=0123456789abcdef' }
     const signedIn = new DruxtClient(baseUrl, { axios: requestAxios(cookie, {}, { 'cache-control': 'no-cache, must-revalidate' }), cache: {} })
     expect(signedIn.processCache('index')).not.toBe(null)
     await signedIn.getIndex()
     expect(indexCalls()).toBe(1)
 
-    // The next request finds nothing, so it fetches rather than reads that
-    // index. It is also the cross-user check: an anonymous client must never
-    // read what the signed-in request fetched.
+    // An anonymous client fetches again rather than reading the signed-in response.
     await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
     expect(indexCalls()).toBe(2)
   })

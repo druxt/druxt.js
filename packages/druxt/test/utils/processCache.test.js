@@ -150,8 +150,7 @@ describe('processCache', () => {
     copy.runtime.isServer = () => true
     expect(copy.processCache('index', { axios: axios() }).get('key')).toBe('value')
 
-    // The generation is shared too. A handle the original module took before
-    // a clear through the copy has its write refused after it.
+    // The generation is shared, so a clear through the copy refuses an older handle's write.
     const before = processCache('index', { axios: axios() })
     copy.resetProcessCache()
     processCache('index', { axios: axios() }).set('later', 'fetched before the clear', 300, before.generation)

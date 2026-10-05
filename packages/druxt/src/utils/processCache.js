@@ -167,15 +167,10 @@ export const parseCacheLifetime = (headers) => {
 /**
  * Get the process cache for a scope.
  *
- * Drupal forces `no-cache` on every response to a signed-in request, for a
- * session cookie and for an OAuth token alike. An entry with no lifetime is
- * never stored. So nothing fetched for a signed-in user is kept, whether or
- * not this file knows the cookie by name, as long as the credentials travel
- * as Drupal's session cookie or an Authorization header. A module that signs
- * a user in by another header is seen by neither Drupal's policy nor this
- * gate. This also returns null in a browser or when the Axios instance sends
- * credentials, so a signed-in request never reads a stored response either. Each entry lives for the
- * lifetime it is stored with, which comes from the response's Cache-Control.
+ * Returns null in a browser or when the Axios instance sends credentials. An
+ * entry with no lifetime, such as a response Drupal marks `no-cache`, is never
+ * stored. Each entry lives for the lifetime it is stored with, which comes from
+ * the response's Cache-Control.
  * Store a value only after its request has resolved, and ask for the cache
  * again at that point: the request may have shown the instance to be credentialed.
  *
