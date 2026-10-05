@@ -1,17 +1,16 @@
-import { getHeldSchema, parseSchemaId } from '../utils/hold'
+import { parseSchemaId } from '../utils/hold'
 
 /**
  * Server middleware that serves a schema regenerated from Drupal.
  *
- * Mounted at `/_druxt/schema`, it answers `GET /_druxt/schema/<id>` with the schema
- * held since the last cache clear, generating it first when none is held. It
- * serves only what the build already puts in the browser bundle as schema files.
+ * Mounted at `/_druxt/schema`, it answers `GET /_druxt/schema/<id>`. It serves
+ * only what the build already puts in the browser bundle as schema files.
  *
- * @param {Function} createDruxtSchema - Returns a new schema generator.
+ * @param {Function} getSchema - Returns a promise of the schema for an ID, or of false when there is none.
  *
  * @returns {Function} A Connect handler.
  */
-export const schemaHandler = (createDruxtSchema) => async (req, res) => {
+export const schemaHandler = (getSchema) => async (req, res) => {
   if (req.method !== 'GET') {
     res.statusCode = 405
     res.setHeader('Allow', 'GET')
@@ -31,7 +30,7 @@ export const schemaHandler = (createDruxtSchema) => async (req, res) => {
 
   let schema
   try {
-    schema = await getHeldSchema(createDruxtSchema, id)
+    schema = await getSchema(id)
   } catch (err) {
     res.statusCode = 502
     return res.end()

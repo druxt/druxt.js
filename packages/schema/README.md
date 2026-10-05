@@ -98,6 +98,7 @@ export default {
 - The browser asks the server for a schema at `/_druxt/schema/<id>` and never reads Drupal's configuration itself. The server generates with the same access the build uses.
 - Regeneration only covers schemas the build could generate. When it fails, the schema from the build is used.
 - The hold is per server process, so a site with several instances needs each one cleared.
+- Under `nuxt dev` there is no cache to clear, so each request regenerates the schemas it uses.
 - A static site (`nuxt generate`) has no server and keeps the schemas from its build.
 
 ---
