@@ -199,4 +199,20 @@ describe('processCache', () => {
     after.set('other', 'no generation reported', 300)
     expect(after.get('other')).toBe('no generation reported')
   })
+
+  test('a shared instance is watched for every session cookie registered on it', () => {
+    const handlers = []
+    const instance = { ...axios(), interceptors: { response: { use: (ok, fail) => handlers.push({ ok, fail }) } } }
+
+    // Each client sharing the instance registers its own session cookie name.
+    watchCredentials(instance, 'FIRST[0-9a-f]+')
+    watchCredentials(instance, 'SECOND[0-9a-f]+')
+    expect(handlers.length).toBe(1)
+    expect(processCache('menu', { axios: instance })).not.toBe(null)
+
+    // A cookie only the second client would recognise still refuses the cache.
+    const response = { config: { headers: { cookie: 'SECOND0f=1' } } }
+    expect(handlers[0].ok(response)).toBe(response)
+    expect(processCache('menu', { axios: instance })).toBe(null)
+  })
 })
