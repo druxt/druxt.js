@@ -2,6 +2,8 @@
 
 # DruxtRouter
 
+[![npm](https://badgen.net/npm/v/druxt-router)](https://www.npmjs.com/package/druxt-router)
+[![dev](https://badgen.net/npm/v/druxt-router/dev)](https://www.npmjs.com/package/druxt-router/v/dev)
 [![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)

@@ -5,6 +5,7 @@
 # DruxtJS
 
 [![npm](https://badgen.net/npm/v/druxt)](https://www.npmjs.com/package/druxt)
+[![dev](https://badgen.net/npm/v/druxt/dev)](https://www.npmjs.com/package/druxt/v/dev)
 [![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
 [![Cypress](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/w4vd6v/develop&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/w4vd6v/runs)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
