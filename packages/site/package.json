@@ -30,6 +30,7 @@
   "license": "MIT",
   "author": "Stuart Clark <stuart@druxtjs.org>",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
       "require": "./dist/druxt-site.ssr.js",
       "import": "./dist/druxt-site.esm.js"

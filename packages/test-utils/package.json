@@ -9,6 +9,7 @@
     "test"
   ],
   "exports": {
+    "./package.json": "./package.json",
     ".": {
       "require": "./dist/druxt-test-utils.ssr.js",
       "import": "./dist/druxt-test-utils.esm.js"
