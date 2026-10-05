@@ -82,15 +82,17 @@ const DruxtMenuStore = ({ store }) => {
        *
        * - Fetches the menu items from the JSON:API endpoint.
        * - Commits the menu items to the Vuex state object.
+       * - Returns the menu items, including when a flush during the request kept them out of the store.
        *
        * @name get
        * @action get=entities
        * @param {object} vuexContext - The Vuex action context.
        * @param {Function} vuexContext.commit - Commits mutations to the store.
        * @param {string|object} context - The menu name, or an object containing the menu `name` and optional `settings` and `prefix` properties.
+       * @returns {object[]} The fetched menu items.
        *
        * @example @lang js
-       * await this.$store.dispatch('druxtMenu/get', { name: 'main' })
+       * const entities = await this.$store.dispatch('druxtMenu/get', { name: 'main' })
        */
       async get ({ commit }, context) {
         const { name, settings, prefix } = typeof context === 'object'
@@ -101,6 +103,7 @@ const DruxtMenuStore = ({ store }) => {
 
         // The menu predates a flush that happened while it was fetched.
         if (since === generation.value) commit('addEntities', { entities, prefix })
+        return entities
       }
     },
 

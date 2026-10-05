@@ -112,6 +112,21 @@ describe('DruxtMenu', () => {
     })
   })
 
+  test('a flush during the fetch still renders the fetched menu', async () => {
+    const item = { id: 'main.home', attributes: { menu_name: 'main', parent: null } }
+    store.$druxtMenu = {
+      get: jest.fn(async () => {
+        store.commit('druxtMenu/flushEntities', {})
+        return { entities: [item] }
+      })
+    }
+    const wrapper = mountComponent()
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(store.state.druxtMenu.entities).toStrictEqual({})
+    expect(wrapper.vm.model).toStrictEqual([{ entity: item, children: [] }])
+  })
+
   test('getEntitiesByFilter', async() => {
     const mock = {
       entities: {

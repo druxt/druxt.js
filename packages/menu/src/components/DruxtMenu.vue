@@ -241,8 +241,9 @@ export default {
      *
      * @param {object} [entity] - Current menu item entity.
      * @param {number} [position] - Current position in the menu tree,
+     * @param {object[]} [source] - Menu items to build from instead of the Vuex store.
      */
-    getMenuItems(entity = null, position = 0) {
+    getMenuItems(entity = null, position = 0, source = null) {
       const items = []
       position += 1
 
@@ -257,16 +258,16 @@ export default {
           }
         }
 
-        const entities = this.getEntitiesByFilter({
-          filter: (key) => {
-            return this.entities[this.lang][key].attributes.menu_name === this.name && this.entities[this.lang][key].attributes.parent === parent
-          },
-          prefix: this.lang
-        })
+        const matches = (item) => item.attributes.menu_name === this.name && item.attributes.parent === parent
+        const entities = source
+          ? source.filter(matches)
+          : Object.values(this.getEntitiesByFilter({
+            filter: (key) => matches(this.entities[this.lang][key]),
+            prefix: this.lang
+          }) || {})
 
-        for (const key in entities) {
-          const entity = entities[key]
-          items.push({ entity, children: this.getMenuItems(entity, position)})
+        for (const entity of entities) {
+          items.push({ entity, children: this.getMenuItems(entity, position, source) })
         }
       }
 
@@ -302,12 +303,14 @@ export default {
      */
     async fetchData(settings) {
       if (!this.value) {
-        await this.getMenu({
+        const entities = await this.getMenu({
           name: this.name,
           settings: settings.query,
           prefix: this.lang
         })
         this.model = this.getMenuItems()
+        // A flush during the request kept the menu out of the store.
+        if (!this.model.length && Array.isArray(entities)) this.model = this.getMenuItems(null, 0, entities)
       }
     },
 

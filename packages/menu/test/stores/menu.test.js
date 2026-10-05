@@ -44,7 +44,8 @@ describe('DruxtStore', () => {
 
     // Nothing from before the flush is stored.
     pending[0]({ entities: [{ id: 'stale' }] })
-    await before
+    // The caller still gets what it fetched.
+    expect(await before).toStrictEqual([{ id: 'stale' }])
     expect(store.state.druxtMenu.entities).toStrictEqual({})
 
     // A call after the flush is stored.
