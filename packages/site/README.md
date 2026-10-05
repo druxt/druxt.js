@@ -6,6 +6,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 [![npm](https://badgen.net/npm/v/druxt-site)](https://www.npmjs.com/package/druxt-site)
+[![dev](https://badgen.net/npm/v/druxt-site/dev)](https://www.npmjs.com/package/druxt-site/v/dev)
 
 > Out-of-the-box decoupled Drupal sites with DruxtSite, wiring layout, blocks, menus and content together from one Nuxt module.
 
