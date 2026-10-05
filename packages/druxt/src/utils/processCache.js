@@ -167,9 +167,10 @@ export const parseCacheLifetime = (headers) => {
 /**
  * Get the process cache for a scope.
  *
- * Returns null in a browser or when the Axios instance sends credentials, so a
- * response built for one user is never stored or served. Each entry lives for
- * the lifetime it is stored with, which comes from the response's Cache-Control.
+ * Returns null in a browser or when the Axios instance sends credentials. An
+ * entry with no lifetime, such as a response Drupal marks `no-cache`, is never
+ * stored. Each entry lives for the lifetime it is stored with, which comes from
+ * the response's Cache-Control.
  * Store a value only after its request has resolved, and ask for the cache
  * again at that point: the request may have shown the instance to be credentialed.
  *

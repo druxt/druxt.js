@@ -31,6 +31,8 @@ describe('processCache', () => {
     expect(parseCacheLifetime({ 'Cache-Control': 'public, max-age=300' })).toBe(300)
     // Drupal's default when the page cache max-age is 0.
     expect(parseCacheLifetime({ 'cache-control': 'max-age=0, no-cache, must-revalidate' })).toBe(0)
+    // What Drupal forces on every response to a signed-in request, whatever the max-age.
+    expect(parseCacheLifetime({ 'cache-control': 'no-cache, must-revalidate' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'no-cache' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300, no-store' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'private, max-age=300' })).toBe(0)
@@ -147,6 +149,12 @@ describe('processCache', () => {
     jest.isolateModules(() => { copy = require('../../src/utils/processCache') })
     copy.runtime.isServer = () => true
     expect(copy.processCache('index', { axios: axios() }).get('key')).toBe('value')
+
+    // The generation is shared, so a clear through the copy refuses an older handle's write.
+    const before = processCache('index', { axios: axios() })
+    copy.resetProcessCache()
+    processCache('index', { axios: axios() }).set('later', 'fetched before the clear', 300, before.generation)
+    expect(processCache('index', { axios: axios() }).get('later')).toBe(undefined)
   })
 
   test('configHasCredentials reads the config as sent', () => {

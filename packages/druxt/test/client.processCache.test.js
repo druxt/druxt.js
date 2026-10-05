@@ -59,7 +59,9 @@ describe('DruxtClient process cache', () => {
     await anonymous.getIndex()
     expect(indexCalls()).toBe(2)
 
+    // A cookie shaped like Drupal's session cookie is withheld by the gate, whatever Drupal answers.
     const session = new DruxtClient(baseUrl, { axios: requestAxios({ cookie: 'SESS0123456789abcdef0123456789abcdef=abc' }), cache: {} })
+    expect(session.processCache('index')).toBe(null)
     await session.getIndex()
     expect(indexCalls()).toBe(3)
   })
@@ -159,6 +161,19 @@ describe('DruxtClient process cache', () => {
     expect(client.cacheLifetime(data)).toBe(120)
     expect(client.cacheLifetime({})).toBe(0)
     expect(client.cacheLifetime(false)).toBe(0)
+  })
+
+  test('a response Drupal marks no-cache is never stored, even when the request gate passes', async () => {
+    // An unknown cookie passes the gate, and Drupal's no-cache keeps the response out.
+    const cookie = { cookie: 'proxy_session=0123456789abcdef' }
+    const signedIn = new DruxtClient(baseUrl, { axios: requestAxios(cookie, {}, { 'cache-control': 'no-cache, must-revalidate' }), cache: {} })
+    expect(signedIn.processCache('index')).not.toBe(null)
+    await signedIn.getIndex()
+    expect(indexCalls()).toBe(1)
+
+    // An anonymous client fetches again rather than reading the signed-in response.
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(2)
   })
 
   test('an index fetched before a clear is not stored after it', async () => {
