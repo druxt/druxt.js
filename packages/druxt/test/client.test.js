@@ -325,6 +325,35 @@ describe('DruxtClient', () => {
     }
   })
 
+  test('getResource and getRelated keep the prefix for a type the index does not list', async () => {
+    // A Views resource is never in the index, so the URL is built from the type.
+    druxt.index.es = {}
+    druxt.index[undefined] = {}
+    druxt.get = jest.fn(async () => ({ data: {} }))
+
+    await druxt.getResource('views--recipes', 'block', undefined, 'es')
+    await druxt.getRelated('views--recipes', 'block', 'field', undefined, 'es')
+    await druxt.getResource('views--recipes', 'block')
+    druxt.index['/es'] = {}
+    await druxt.getResource('views--recipes', 'block', undefined, '/es')
+    expect(druxt.get.mock.calls.map(([url]) => url)).toStrictEqual([
+      '/es/jsonapi/views/recipes/block',
+      '/es/jsonapi/views/recipes/block/field',
+      '/jsonapi/views/recipes/block',
+      '/es/jsonapi/views/recipes/block',
+    ])
+  })
+
+  test('an endpoint given without a leading slash still joins the prefix', async () => {
+    const client = new DruxtClient(baseUrl, { endpoint: 'api' })
+    expect(client.options.endpoint).toBe('/api')
+
+    client.index.es = {}
+    client.get = jest.fn(async () => ({ data: {} }))
+    await client.getResource('views--recipes', 'block', undefined, 'es')
+    expect(client.get.mock.calls[0][0]).toBe('/es/api/views/recipes/block')
+  })
+
   test('getResource', async () => {
     const mockArticle = await getMockResource('node--article')
     const entity = await druxt.getResource(mockArticle.data.type, mockArticle.data.id)

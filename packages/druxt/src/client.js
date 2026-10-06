@@ -92,6 +92,8 @@ class DruxtClient {
 
       ...options
     }
+    // A leading slash, so a prefix joins the endpoint as `/es/api` however it was given.
+    this.options.endpoint = `/${String(this.options.endpoint).replace(/^\/+/, '')}`
 
     // See credentials an interceptor adds, so the process cache is withheld from this instance.
     if (this.options.cache) watchCredentials(this.axios, this.options.cache.sessionCookie)
@@ -578,8 +580,9 @@ class DruxtClient {
     }
 
     let { href } = await this.getIndex(type, prefix)
+    // A type the index does not list, such as a View, is served under the prefix too.
     if (!href) {
-      href = this.options.endpoint + '/' + type.replace('--', '/')
+      href = [prefix, this.options.endpoint].join('').replace(/^\/*/, '/') + '/' + type.replace('--', '/')
     }
 
     const url = this.buildQueryUrl(`${href}/${id}/${related}`, query)
@@ -614,9 +617,9 @@ class DruxtClient {
     }
 
     let { href } = await this.getIndex(type, prefix)
-    // @TODO - Add test coverage.
+    // A type the index does not list, such as a View, is served under the prefix too.
     if (!href) {
-      href = this.options.endpoint + '/' + type.replace('--', '/')
+      href = [prefix, this.options.endpoint].join('').replace(/^\/*/, '/') + '/' + type.replace('--', '/')
     }
 
     const url = this.buildQueryUrl([href, id].join('/'), query)
