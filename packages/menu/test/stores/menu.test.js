@@ -211,6 +211,21 @@ describe('DruxtStore', () => {
     expect(store.state.druxtMenu.entities[undefined].test).toStrictEqual({ id: 'test' })
   })
 
+  test('get keeps the fields each menu asked for when items are shared', async () => {
+    store.$druxtMenu.get = jest.fn(async (name, settings) => ({
+      entities: [{ id: 'home', attributes: settings.fields.includes('title') ? { title: 'Home' } : { url: '/' } }],
+    }))
+
+    const titles = await store.dispatch('druxtMenu/get', { name: 'main', settings: { fields: ['title'] }, prefix: 'en' })
+    await store.dispatch('druxtMenu/get', { name: 'main', settings: { fields: ['url'] }, prefix: 'en' })
+
+    // The repeat is answered from the store, with the title the first call fetched.
+    const repeat = await store.dispatch('druxtMenu/get', { name: 'main', settings: { fields: ['title'] }, prefix: 'en' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
+    expect(repeat[0].attributes.title).toBe(titles[0].attributes.title)
+    expect(store.state.druxtMenu.entities.en.home.attributes).toStrictEqual({ title: 'Home', url: '/' })
+  })
+
   test('AddEntities', async () => {
     expect(store.state.druxtMenu.entities).toStrictEqual({})
     store.commit('druxtMenu/addEntities', { entities: [{ id: 'test' }] })

@@ -53,7 +53,16 @@ const DruxtMenuStore = ({ store }) => {
 
         for (const index in entities) {
           const entity = entities[index]
-          Vue.set(state.entities[prefix], entity.id, entity)
+          // Menus asking for different fields share items, so each keeps the fields the others fetched.
+          const stored = state.entities[prefix][entity.id]
+          Vue.set(state.entities[prefix], entity.id, stored
+            ? {
+                ...stored,
+                ...entity,
+                attributes: { ...stored.attributes, ...entity.attributes },
+                relationships: { ...stored.relationships, ...entity.relationships },
+              }
+            : entity)
         }
       },
 
