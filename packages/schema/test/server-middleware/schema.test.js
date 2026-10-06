@@ -31,7 +31,9 @@ describe('schemaHandler', () => {
     const handler = schemaHandler(getSchemaById)
 
     for (const url of ['/', '/node--page', `/..${encodeURIComponent('/')}node--page--default--view`, '/%E0%A4%A', '/node--page--default--view/extra']) {
-      expect((await request(handler, url)).statusCode).toBe(404)
+      const res = await request(handler, url)
+      expect(res.statusCode).toBe(404)
+      expect(res.headers['X-Druxt-Schema']).toBe(undefined)
     }
     expect(getSchemaById).not.toHaveBeenCalled()
   })
@@ -40,7 +42,11 @@ describe('schemaHandler', () => {
     const getSchemaById = jest.fn().mockResolvedValueOnce(false).mockRejectedValueOnce(new Error('down'))
     const handler = schemaHandler(getSchemaById)
 
-    expect((await request(handler, '/node--page--teaser--view')).statusCode).toBe(404)
-    expect((await request(handler, '/node--page--teaser--view')).statusCode).toBe(502)
+    const missing = await request(handler, '/node--page--teaser--view')
+    expect(missing.statusCode).toBe(404)
+    expect(missing.headers['X-Druxt-Schema']).toBe('missing')
+    const failed = await request(handler, '/node--page--teaser--view')
+    expect(failed.statusCode).toBe(502)
+    expect(failed.headers['X-Druxt-Schema']).toBe(undefined)
   })
 })

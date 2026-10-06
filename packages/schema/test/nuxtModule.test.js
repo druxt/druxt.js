@@ -65,6 +65,9 @@ describe('Nuxt module', () => {
     // Generation runs without the API proxy, as the build does.
     expect(DruxtSchema).toHaveBeenLastCalledWith('https://demo-api.druxtjs.org', expect.objectContaining({ proxy: { api: false } }))
 
+    // An ID it cannot parse uses the built file.
+    expect(await process[refresh]('not a schema id')).toBe(null)
+
     // Held in production.
     await process[refresh]('node--page--default--view')
     expect(getSchemaById).toHaveBeenCalledTimes(1)

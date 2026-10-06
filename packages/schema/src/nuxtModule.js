@@ -3,7 +3,7 @@ import { resolve } from 'path'
 
 import { DruxtSchema } from './schema'
 import { schemaHandler } from './server-middleware/schema'
-import { getHeldSchema } from './utils/hold'
+import { getHeldSchema, parseSchemaId } from './utils/hold'
 
 /**
  * The Nuxt.js module function.
@@ -77,7 +77,8 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
       : (id) => getHeldSchema(createDruxtSchema, id)
     this.addServerMiddleware({ path: '/_druxt/schema', handler: schemaHandler(getSchema) })
     // Nuxt runs the server bundle in a new context under `nuxt dev`, sharing process but not globalThis.
-    process[Symbol.for('druxt.schemaRefresh')] = getSchema
+    // An ID it cannot parse resolves to null, so the server render uses the built file for it.
+    process[Symbol.for('druxt.schemaRefresh')] = (id) => (parseSchemaId(id) ? getSchema(id) : Promise.resolve(null))
   }
 
   // Generate schemas.

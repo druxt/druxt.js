@@ -37,7 +37,9 @@ export const schemaHandler = (getSchema) => async (req, res) => {
   }
 
   if (!schema) {
+    // Tells a browser that Drupal has no such schema, as against a host without this route.
     res.statusCode = 404
+    res.setHeader('X-Druxt-Schema', 'missing')
     return res.end()
   }
 
