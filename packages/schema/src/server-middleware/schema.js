@@ -11,6 +11,9 @@ import { parseSchemaId } from '../utils/hold'
  * @returns {Function} A Connect handler.
  */
 export const schemaHandler = (getSchema) => async (req, res) => {
+  // Every answer, a missing schema included, can change with the next clear, so none is cached.
+  res.setHeader('Cache-Control', 'no-store')
+
   if (req.method !== 'GET') {
     res.statusCode = 405
     res.setHeader('Allow', 'GET')
@@ -45,7 +48,5 @@ export const schemaHandler = (getSchema) => async (req, res) => {
 
   res.statusCode = 200
   res.setHeader('Content-Type', 'application/json')
-  // A schema changes with each clear, so the browser must not keep its own copy.
-  res.setHeader('Cache-Control', 'no-store')
   res.end(JSON.stringify(schema))
 }
