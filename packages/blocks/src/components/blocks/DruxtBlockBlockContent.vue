@@ -58,7 +58,9 @@ export default {
     propsData: ({ $fetchState, $store, block, langcode }) => {
       if ($fetchState.pending) return false
 
-      const { data } = $store.state.druxt.resources[block.type][block.id][langcode]
+      // The store may not hold the resource yet, or hold it no longer.
+      const stored = ((($store.state.druxt.resources || {})[block.type] || {})[block.id] || {})[langcode]
+      const data = (stored || {}).data
       if (!((data || {}).attributes || {}).dependencies) return false
 
       const parts = data.attributes.dependencies.content[0].split(':')
