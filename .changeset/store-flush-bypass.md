@@ -2,8 +2,10 @@
 'druxt': patch
 ---
 
-`druxt/flushCollection` and `druxt/flushResource` now remove what they name, accept a type with a prefix, take the collection's `query` in place of its `hash`, and do nothing for data that was never stored. Before, some combinations did nothing, an unknown type threw, and a flushed resource read with `include` threw.
+`druxt/flushCollection` and `druxt/flushResource` now delete the data they name. Some payloads removed nothing at all.
 
-`druxt/getResource` with `bypassCache` now fetches every requested field and returns only the included resources in the fresh response.
+- Pass a `prefix` with a `type` to flush that prefix for every stored query of the type.
+- Pass the collection's `query` in place of its `hash`. Druxt hashes it the way `getCollection` does.
+- Flushing a type that holds nothing is a no-op, where it used to throw.
 
-A flush also drops the store's requests in flight. Code that dispatched before the flush still gets its document, but nothing from it is stored. A dispatch made after the flush fetches afresh.
+`druxt/getResource` with `bypassCache` now fetches every requested field and returns the included resources from the fresh response. Reading a flushed resource with `include` used to throw.

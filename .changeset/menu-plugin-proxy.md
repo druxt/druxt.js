@@ -2,4 +2,4 @@
 'druxt-menu': patch
 ---
 
-The druxt-menu plugin keeps `proxy.api` on in the browser, so a menu client built without the shared druxt client sends its requests through the Nuxt proxy, as the router does.
+With `proxy.api`, browser menu requests go through the Nuxt proxy, as other Druxt requests do.

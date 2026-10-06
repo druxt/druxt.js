@@ -1,5 +1,5 @@
 ---
-"druxt-router": patch
+'druxt-router': patch
 ---
 
-fix(router): prevent the home path "/" redirecting to "/<langcode>"
+fix(router): prevent the home path `/` redirecting to `/<langcode>`
