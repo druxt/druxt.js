@@ -6,11 +6,12 @@ const source = readFileSync(resolve(__dirname, '../../templates/plugin.js'), 'ut
 
 // Renders the plugin as Nuxt does, then runs it with the given globals in place of webpack's.
 const plugin = ({ refresh, server, files = {}, fetch, hook }) => {
-  const rendered = template(source, { interpolate: /<%=([\s\S]+?)%>/g })({ options: { schema: { refresh } } })
+  const rendered = template(source, { interpolate: /<%=([\s\S]+?)%>/g })({ options: { baseUrl: 'https://example.com', schema: { refresh } } })
     .replace('export default ', 'return ')
     .split('import(`./schemas/${id}.json`)').join('__file(id)')
   const process = { server: !!server }
-  if (hook) process[Symbol.for('druxt.schemaRefresh')] = hook
+  // The module registers its refresh under the site's base URL.
+  if (hook) process[Symbol.for('druxt.schemaRefresh')] = new Map([['https://example.com', hook], ['https://other.example.com', async () => ({ v: 'other site' })]])
   const file = (id) => (id in files ? Promise.resolve({ default: files[id] }) : Promise.reject(new Error(`No file ${id}`)))
   const create = new Function('process', 'fetch', '__file', rendered)
   const install = create(process, fetch, file)

@@ -53,7 +53,16 @@ describe('DruxtSchema', () => {
     expect(schema.druxt.getIndex).not.toHaveBeenCalled()
 
     expect(await schema.getSchemaById('node--missing--default--view')).toBe(false)
-    expect(await schema.getSchemaById('node--page--missing--view')).toBe(false)
+  })
+
+  test('getSchemaById - an invented or disabled mode never reaches Drupal', async () => {
+    await schema.getSchemaById('node--page--default--view')
+    const getCollection = jest.spyOn(schema.druxt, 'getCollection')
+
+    for (let i = 0; i < 5; i++) {
+      expect(await schema.getSchemaById(`node--page--invented_${i}--view`)).toBe(false)
+    }
+    expect(getCollection).not.toHaveBeenCalled()
   })
 
   test('get - mock error', async () => {

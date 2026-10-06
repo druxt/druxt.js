@@ -1,5 +1,4 @@
 import { createSchemaRefresh, DruxtSchema } from '../src'
-import { clearSchemaHold } from '../src/utils/hold'
 
 jest.mock('../src/schema')
 
@@ -13,7 +12,6 @@ const get = async (handler, id) => {
 describe('createSchemaRefresh', () => {
   let getSchemaById
   beforeEach(() => {
-    clearSchemaHold()
     getSchemaById = jest.fn(async (id) => ({ id, call: getSchemaById.mock.calls.length }))
     DruxtSchema.mockImplementation(() => ({ getSchemaById }))
   })
@@ -50,5 +48,14 @@ describe('createSchemaRefresh', () => {
     await getSchema('node--page--default--view')
     await getSchema('node--page--default--view')
     expect(getSchemaById).toHaveBeenCalledTimes(2)
+  })
+
+  test('refreshes for different sites never share a schema', async () => {
+    DruxtSchema.mockImplementation((baseUrl) => ({ getSchemaById: async (id) => ({ id, baseUrl }) }))
+    const a = createSchemaRefresh('https://a.example.com')
+    const b = createSchemaRefresh('https://b.example.com')
+
+    expect(await a.getSchema('node--page--default--view')).toStrictEqual({ id: 'node--page--default--view', baseUrl: 'https://a.example.com' })
+    expect(await b.getSchema('node--page--default--view')).toStrictEqual({ id: 'node--page--default--view', baseUrl: 'https://b.example.com' })
   })
 })

@@ -1,10 +1,5 @@
 /* global globalThis */
-// Schemas regenerated on the server, held until the next cache clear.
-// Held on globalThis so every copy of this module in the process shares them.
-const HOLD = Symbol.for('druxt.schemaHold')
-const hold = globalThis[HOLD] || (globalThis[HOLD] = { generation: undefined, generator: null, schemas: new Map(), pending: new Map() })
-
-// The generation druxt moves on each cache clear, shared through the same symbol.
+// The generation druxt moves on each cache clear, shared across module copies through this symbol.
 const GENERATION = Symbol.for('druxt.processCacheGeneration')
 const clears = () => (globalThis[GENERATION] || { value: 0 }).value
 
@@ -23,54 +18,52 @@ export const parseSchemaId = (id) => {
 }
 
 /**
- * Get a schema regenerated from Drupal, held until the next cache clear.
+ * A hold for schemas regenerated from one Drupal site, kept until the next cache clear.
  *
- * Each clear starts a new generator, as a generator keeps the configuration it
- * has read. Concurrent calls for one ID share one generation. A schema generated
- * across a clear is returned to its callers but not held. A failed or empty
- * generation is not held, so the next call tries again.
+ * Each hold has its own schemas and generator, so refreshes for different sites
+ * never share them. Each clear starts a new generator, as a generator keeps the
+ * configuration it has read. Concurrent calls for one ID share one generation.
+ * A schema generated across a clear is returned to its callers but not held. A
+ * failed or empty generation is not held, so the next call tries again.
  *
- * @param {Function} createDruxtSchema - Returns a new schema generator.
- * @param {string} id - The schema ID.
+ * @param {Function} createDruxtSchema - Returns a new schema generator for the site.
  *
- * @returns {Promise<object|boolean>} The schema, or false when Drupal has no such display.
+ * @returns {{ get: Function, clear: Function }} `get(id)` resolves to the schema, or false when Drupal has none; `clear()` empties the hold.
  */
-export const getHeldSchema = (createDruxtSchema, id) => {
-  const now = clears()
-  if (hold.generation !== now) {
+export const createHold = (createDruxtSchema) => {
+  const hold = { generation: undefined, generator: null, schemas: new Map(), pending: new Map() }
+
+  const clear = () => {
     hold.schemas.clear()
     hold.pending.clear()
     hold.generator = null
-    hold.generation = now
+    hold.generation = undefined
   }
 
-  if (hold.schemas.has(id)) return Promise.resolve(hold.schemas.get(id))
+  const get = (id) => {
+    const now = clears()
+    if (hold.generation !== now) {
+      clear()
+      hold.generation = now
+    }
 
-  if (!hold.pending.has(id)) {
-    if (!hold.generator) hold.generator = createDruxtSchema()
-    const request = hold.generator.getSchemaById(id)
-      .then((schema) => {
-        if (schema && hold.generation === now && clears() === now) hold.schemas.set(id, schema)
-        return schema
-      })
-      .finally(() => {
-        if (hold.pending.get(id) === request) hold.pending.delete(id)
-      })
-    hold.pending.set(id, request)
+    if (hold.schemas.has(id)) return Promise.resolve(hold.schemas.get(id))
+
+    if (!hold.pending.has(id)) {
+      if (!hold.generator) hold.generator = createDruxtSchema()
+      const request = hold.generator.getSchemaById(id)
+        .then((schema) => {
+          if (schema && hold.generation === now && clears() === now) hold.schemas.set(id, schema)
+          return schema
+        })
+        .finally(() => {
+          if (hold.pending.get(id) === request) hold.pending.delete(id)
+        })
+      hold.pending.set(id, request)
+    }
+
+    return hold.pending.get(id)
   }
 
-  return hold.pending.get(id)
-}
-
-/**
- * Empties the held schemas, so each is regenerated when next asked for.
- *
- * Druxt's `/_druxt/cache/clear` already does this. A server that handles Drupal's
- * purge itself calls it there. A generation in flight at the time is not held.
- */
-export const clearSchemaHold = () => {
-  hold.schemas.clear()
-  hold.pending.clear()
-  hold.generator = null
-  hold.generation = undefined
+  return { get, clear }
 }

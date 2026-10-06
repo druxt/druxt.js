@@ -71,8 +71,10 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
     const { getSchema, handler } = createSchemaRefresh(options.baseUrl, options, { hold: !this.options.dev })
     this.addServerMiddleware({ path: '/_druxt/schema', handler })
     // Nuxt runs the server bundle in a new context under `nuxt dev`, sharing process but not globalThis.
+    // Keyed by base URL, so apps for different sites in one process never share a refresh.
     // An ID it cannot parse resolves to null, so the server render uses the built file for it.
-    process[Symbol.for('druxt.schemaRefresh')] = (id) => (parseSchemaId(id) ? getSchema(id) : Promise.resolve(null))
+    const refreshes = process[Symbol.for('druxt.schemaRefresh')] || (process[Symbol.for('druxt.schemaRefresh')] = new Map())
+    refreshes.set(options.baseUrl, (id) => (parseSchemaId(id) ? getSchema(id) : Promise.resolve(null)))
   }
 
   // Generate schemas.

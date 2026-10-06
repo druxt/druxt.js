@@ -1,6 +1,6 @@
 import { DruxtSchema } from './schema'
 import { schemaHandler } from './server-middleware/schema'
-import { clearSchemaHold, getHeldSchema } from './utils/hold'
+import { createHold } from './utils/hold'
 
 /**
  * Schema refresh for any Node server.
@@ -29,9 +29,9 @@ export const createSchemaRefresh = (baseUrl, options = {}, { hold = true } = {})
     ...options,
     proxy: { ...options.proxy || {}, api: false },
   })
-  const getSchema = hold
-    ? (id) => getHeldSchema(createDruxtSchema, id)
-    : (id) => createDruxtSchema().getSchemaById(id)
+  // A hold per refresh, so refreshes for different sites never share schemas.
+  const held = createHold(createDruxtSchema)
+  const getSchema = hold ? held.get : (id) => createDruxtSchema().getSchemaById(id)
 
-  return { getSchema, handler: schemaHandler(getSchema), clear: clearSchemaHold }
+  return { getSchema, handler: schemaHandler(getSchema), clear: held.clear }
 }

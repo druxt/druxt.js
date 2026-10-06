@@ -15,7 +15,7 @@ const MISSING = {}
 const refreshed = async (id) => {
   try {
     if (process.server) {
-      const refresh = process[Symbol.for('druxt.schemaRefresh')]
+      const refresh = (process[Symbol.for('druxt.schemaRefresh')] || new Map()).get(<%= JSON.stringify(options.baseUrl) %>)
       const schema = refresh ? await refresh(id) : null
       return schema === false ? MISSING : schema || null
     }
