@@ -1,7 +1,8 @@
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 
-import { DruxtMenuStore } from '../../src'
+import { DruxtMenu, DruxtMenuStore } from '../../src'
+import { runtime } from '../../src/menu'
 
 jest.mock('axios')
 
@@ -34,25 +35,57 @@ describe('DruxtStore', () => {
     store.dispatch('druxtMenu/get', 'name')
   })
 
-  test('get - a flush during the request drops the menu', async () => {
+  test('get - a flush during the request fetches the menu again', async () => {
     const pending = []
     store.$druxtMenu.get = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
 
-    const before = store.dispatch('druxtMenu/get', 'main')
+    const request = store.dispatch('druxtMenu/get', 'main')
     await Promise.resolve()
     store.commit('druxtMenu/flushEntities', {})
 
-    // Nothing from before the flush is stored.
+    // The response from before the flush is neither stored nor returned.
     pending[0]({ entities: [{ id: 'stale' }] })
-    await before
+    await new Promise((resolve) => setTimeout(resolve))
     expect(store.state.druxtMenu.entities).toStrictEqual({})
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
 
-    // A call after the flush is stored.
-    const after = store.dispatch('druxtMenu/get', 'main')
-    await Promise.resolve()
     pending[1]({ entities: [{ id: 'fresh' }] })
-    await after
+    expect(await request).toStrictEqual([{ id: 'fresh' }])
     expect(Object.keys(store.state.druxtMenu.entities[undefined])).toStrictEqual(['fresh'])
+  })
+
+  test('get - a clear during the request fetches past the real menu cache', async () => {
+    const isServer = runtime.isServer
+    runtime.isServer = () => true
+    const menu = new DruxtMenu('https://demo-api.druxtjs.org', { menu: { jsonApiMenuItems: true } })
+    const pending = []
+    menu.getJsonApiMenuItems = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+    store.$druxtMenu = menu
+
+    const request = store.dispatch('druxtMenu/get', 'main')
+    await new Promise((resolve) => setTimeout(resolve))
+    // The order druxt/clearCache uses: the client cache, then the store.
+    menu.druxt.clearCache()
+    store.commit('druxtMenu/flushEntities', {})
+    pending[0]({ entities: [{ id: 'stale' }] })
+    await new Promise((resolve) => setTimeout(resolve))
+    expect(menu.getJsonApiMenuItems).toHaveBeenCalledTimes(2)
+
+    pending[1]({ entities: [{ id: 'fresh' }] })
+    expect(await request).toStrictEqual([{ id: 'fresh' }])
+    expect(Object.keys(store.state.druxtMenu.entities[undefined])).toStrictEqual(['fresh'])
+    runtime.isServer = isServer
+  })
+
+  test('get - a flush during every attempt stores and returns nothing', async () => {
+    store.$druxtMenu.get = jest.fn(async () => {
+      store.commit('druxtMenu/flushEntities', {})
+      return { entities: [{ id: 'stale' }] }
+    })
+
+    expect(await store.dispatch('druxtMenu/get', 'main')).toBe(undefined)
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(3)
+    expect(store.state.druxtMenu.entities).toStrictEqual({})
   })
 
   test('AddEntities', async () => {

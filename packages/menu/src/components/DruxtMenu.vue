@@ -307,6 +307,8 @@ export default {
           settings: settings.query,
           prefix: this.lang
         })
+        // A menu unmounted during the request no longer tracks the store.
+        if (this._isDestroyed) return
         this.model = this.getMenuItems()
       }
     },
