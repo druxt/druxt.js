@@ -344,6 +344,16 @@ describe('DruxtClient', () => {
     ])
   })
 
+  test('an endpoint given without a leading slash still joins the prefix', async () => {
+    const client = new DruxtClient(baseUrl, { endpoint: 'api' })
+    expect(client.options.endpoint).toBe('/api')
+
+    client.index.es = {}
+    client.get = jest.fn(async () => ({ data: {} }))
+    await client.getResource('views--recipes', 'block', undefined, 'es')
+    expect(client.get.mock.calls[0][0]).toBe('/es/api/views/recipes/block')
+  })
+
   test('getResource', async () => {
     const mockArticle = await getMockResource('node--article')
     const entity = await druxt.getResource(mockArticle.data.type, mockArticle.data.id)

@@ -92,6 +92,8 @@ class DruxtClient {
 
       ...options
     }
+    // A leading slash, so a prefix joins the endpoint as `/es/api` however it was given.
+    this.options.endpoint = `/${String(this.options.endpoint).replace(/^\/+/, '')}`
 
     // See credentials an interceptor adds, so the process cache is withheld from this instance.
     if (this.options.cache) watchCredentials(this.axios, this.options.cache.sessionCookie)
