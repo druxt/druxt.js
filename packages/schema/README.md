@@ -80,6 +80,48 @@ export default {
 };
 ```
 
+### Refresh schemas without a rebuild
+
+Schemas are generated at build time, so a change to a display in Drupal needs a new build to show. Set `druxt.schema.refresh` to regenerate them on the Nuxt server instead:
+
+```js
+export default {
+  modules: ['druxt-schema'],
+  druxt: {
+    cache: { secret: process.env.DRUXT_CACHE_SECRET },
+    schema: { refresh: true },
+  },
+};
+```
+
+- The server regenerates a schema the first time a page needs it, and holds it until the next cache clear, `POST /_druxt/cache/clear` or `druxt/clearCache`. Have Drupal call the clear when configuration changes, as for content.
+- The browser asks the server for a schema at `/_druxt/schema/<id>` and never reads Drupal's configuration itself. The server generates with the same access the build uses.
+- Regeneration only covers schemas the build could generate. When it fails, the schema from the build is used.
+- The hold is per server process, so a site with several instances needs each one cleared.
+- Under `nuxt dev` there is no cache to clear, so each request regenerates the schemas it uses.
+- A static site (`nuxt generate`) has no server and keeps the schemas from its build.
+
+#### On your own server
+
+A static site served by its own Node server can offer the same refresh. Serve the route the browser asks, and clear the held schemas where the server handles Drupal's purge:
+
+```js
+const { createSchemaRefresh } = require('druxt-schema');
+
+const schemas = createSchemaRefresh('https://example.com');
+
+// In the request handler.
+if (pathname.startsWith('/_druxt/schema/')) {
+  req.url = pathname.slice('/_druxt/schema'.length);
+  return schemas.handler(req, res);
+}
+
+// Where the server handles Drupal's purge.
+schemas.clear();
+```
+
+Create the refresh once and keep it. A `DruxtSchema` instance keeps the configuration it has read for as long as it lives, so one held by your own code never shows a renamed field. The refresh starts a new instance on each clear.
+
 ---
 
 ## API
@@ -105,9 +147,10 @@ These options are available to all Druxt modules.
 
 These options are specific to this module.
 
-| Option          | Type    | Required | Default | Description                                                    |
-| --------------- | ------- | -------- | ------- | -------------------------------------------------------------- |
-| `schema.filter` | `array` | No       | `[]`    | Array of regular expression rules to filter generated schemas. |
+| Option           | Type      | Required | Default | Description                                                                  |
+| ---------------- | --------- | -------- | ------- | ---------------------------------------------------------------------------- |
+| `schema.filter`  | `array`   | No       | `[]`    | Array of regular expression rules to filter generated schemas.               |
+| `schema.refresh` | `boolean` | No       | `false` | Regenerate schemas on the Nuxt server after each cache clear, with no build. |
 
 ## Links
 

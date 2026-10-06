@@ -2,6 +2,7 @@ import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
 
 import { Schema } from './utils/schema'
+import { parseSchemaId } from './utils/hold'
 
 /**
  * Druxt Schema configuration object.
@@ -106,6 +107,58 @@ class DruxtSchema {
     )
 
     return { index, schemas }
+  }
+
+  /**
+   * The IDs of every enabled display, as the build reads them.
+   *
+   * Read once for the life of this instance, which the schema refresh replaces on
+   * each cache clear.
+   *
+   * @returns {Promise<Set<string>>} Schema IDs, `<entity type>--<bundle>--<mode>--<view|form>`.
+   */
+  getDisplayIds() {
+    if (!this.displayIds) {
+      this.displayIds = Promise.all(['view', 'form'].map(async (schemaType) => {
+        const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
+        const query = new DrupalJsonApiParams().addSort('drupal_internal__id')
+        const result = await this.druxt.getCollectionAll(resourceType, query)
+        return result.flatMap((collection) => (collection.data || [])
+          .filter((data) => !!data.attributes.status)
+          .map((data) => [data.attributes.targetEntityType, data.attributes.bundle, data.attributes.mode, schemaType].join('--')))
+      })).then((ids) => new Set(ids.flat()))
+      // A failed read is not kept, so the next call tries again.
+      this.displayIds.catch(() => { this.displayIds = null })
+    }
+    return this.displayIds
+  }
+
+  /**
+   * Generates one schema by its ID.
+   *
+   * The ID's entity type and bundle must be a resource type in the JSON:API index,
+   * so only schemas the build could have generated are generated.
+   *
+   * @example @lang js
+   * const schema = await this.$druxtSchema.getSchemaById('node--page--default--view')
+   *
+   * @param {string} id - The schema ID, `<entity type>--<bundle>--<mode>--<view|form>`.
+   *
+   * @returns {Promise<object|boolean>} The schema, or false when the ID or its display is unavailable.
+   */
+  async getSchemaById(id) {
+    const parts = parseSchemaId(id)
+    if (!parts) return false
+
+    const index = await this.druxt.getIndex()
+    const resource = index[[parts.entityType, parts.bundle].join('--')]
+    if (!resource) return false
+
+    // Only a display that exists and is enabled, so an invented mode never reaches Drupal.
+    if (!(await this.getDisplayIds()).has(id)) return false
+
+    const schema = await this.getSchema({ ...parts, filter: this.options.schema.filter, ...resource })
+    return (schema && schema.schema) || false
   }
 
   /**

@@ -706,10 +706,11 @@ describe('DruxtStore', () => {
   })
 
   test('clearCache clears the client and flushes every registered Druxt store', async () => {
-    const flushes = { flushResults: jest.fn(), flushEntities: jest.fn(), flushRoutes: jest.fn() }
+    const flushes = { flushResults: jest.fn(), flushEntities: jest.fn(), flushRoutes: jest.fn(), flushSchemas: jest.fn() }
     store.registerModule(['druxt', 'views'], { namespaced: true, mutations: { flushResults: flushes.flushResults } })
     store.registerModule('druxtMenu', { namespaced: true, mutations: { flushEntities: flushes.flushEntities } })
     store.registerModule('druxtRouter', { namespaced: true, mutations: { flushRoutes: flushes.flushRoutes } })
+    store.registerModule('druxtSchema', { namespaced: true, mutations: { flushSchemas: flushes.flushSchemas } })
     store.$druxt.clearCache = jest.fn()
 
     const collection = await getMockCollection('node--page')

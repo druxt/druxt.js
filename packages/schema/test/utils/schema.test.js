@@ -14,6 +14,14 @@ describe('Schema', () => {
     druxtSchema = new DruxtSchema(baseURL, options)
   })
 
+  test('a disabled display has no schema', async () => {
+    for (const schemaType of ['view', 'form']) {
+      const data = { type: `entity_${schemaType}_display--entity_${schemaType}_display`, attributes: { status: false } }
+      const schema = new Schema({ entityType: 'node', bundle: 'page', schemaType }, { druxtSchema, data })
+      expect(await schema.generate()).toBe(false)
+    }
+  })
+
   test('generate:view', async () => {
     const config = {
       entityType: 'node',

@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 const DruxtSchemaStore = ({ store }) => {
   if (typeof store === 'undefined') {
     throw new TypeError('Vuex store not found.')
@@ -7,6 +9,9 @@ const DruxtSchemaStore = ({ store }) => {
    * @namespace
    */
   const namespace = 'druxtSchema'
+
+  // Moved on by a flush, so a schema loaded before it is not stored.
+  const generation = { value: 0 }
 
   /**
    * The druxtSchema Vuex module.
@@ -45,7 +50,20 @@ const DruxtSchemaStore = ({ store }) => {
        * this.$store.commit('druxtSchema/addSchema', { id, schema })
        */
       addSchema(state, { id, schema }) {
-        state.schemas[id] = schema
+        Vue.set(state.schemas, id, schema)
+      },
+
+      /**
+       * @name flushSchemas
+       * @mutator {object} flushSchemas=schemas Removes the stored schemas, so each is loaded again.
+       * @param {state} state - The Vuex State object.
+       *
+       * @example @lang js
+       * this.$store.commit('druxtSchema/flushSchemas')
+       */
+      flushSchemas(state) {
+        generation.value += 1
+        Vue.set(state, 'schemas', {})
       }
     },
 
@@ -90,13 +108,21 @@ const DruxtSchemaStore = ({ store }) => {
           return false
         }
 
-        // Only load if we don't have this schema in the store.
-        if (!state.schemas[resource.id]) {
-          const schema = await this.$druxtSchema.import(resource.id)
-          commit('addSchema', { id: resource.id, schema })
+        if (state.schemas[resource.id]) return state.schemas[resource.id]
+
+        // A schema loaded across a flush may be stale, so it is loaded again.
+        let schema
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          const since = generation.value
+          schema = await this.$druxtSchema.import(resource.id)
+          if (since === generation.value) {
+            commit('addSchema', { id: resource.id, schema })
+            return state.schemas[resource.id]
+          }
         }
 
-        return state.schemas[resource.id]
+        // Flushed during every attempt: the last schema is used but not stored.
+        return schema
       }
     }
   }

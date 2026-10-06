@@ -127,7 +127,8 @@ class Schema {
    */
   async form() {
     const entityFormDisplay = await this.getResources('entity_form_display--entity_form_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res.data) ? res.data[0] : res)
-    if (!entityFormDisplay) return false
+    // A disabled display has no schema, as the build skips it too.
+    if (!entityFormDisplay || (entityFormDisplay.attributes || {}).status === false) return false
 
     const fieldConfig = await this.getResources('field_config--field_config', { 'filter[entity_type]': this.config.entityType, 'filter[bundle]': this.config.bundle })
     if (!fieldConfig) return false
@@ -209,7 +210,8 @@ class Schema {
    */
   async view() {
     const entityViewDisplay = await this.getResources('entity_view_display--entity_view_display', { 'filter[drupal_internal__id]': this.displayId }).then(res => Array.isArray(res.data) ? res.data[0] : res)
-    if (!entityViewDisplay) return false
+    // A disabled display has no schema, as the build skips it too.
+    if (!entityViewDisplay || (entityViewDisplay.attributes || {}).status === false) return false
 
     const fieldConfig = await this.getResources('field_config--field_config', { 'filter[entity_type]': this.config.entityType, 'filter[bundle]': this.config.bundle })
     if (!fieldConfig) return false
