@@ -2,8 +2,8 @@ import consola from 'consola'
 import { resolve } from 'path'
 
 import { DruxtSchema } from './schema'
-import { schemaHandler } from './server-middleware/schema'
-import { getHeldSchema, parseSchemaId } from './utils/hold'
+import { createSchemaRefresh } from './refresh'
+import { parseSchemaId } from './utils/hold'
 
 /**
  * The Nuxt.js module function.
@@ -66,16 +66,10 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
   })
 
   if (options.schema.refresh) {
-    // Schemas are generated with the same access the build uses.
-    const createDruxtSchema = () => new DruxtSchema(options.baseUrl, {
-      ...options,
-      proxy: { ...options.proxy || {}, api: false },
-    })
-    // Under `nuxt dev` there is no cache or clear, so each request regenerates.
-    const getSchema = this.options.dev
-      ? (id) => createDruxtSchema().getSchemaById(id)
-      : (id) => getHeldSchema(createDruxtSchema, id)
-    this.addServerMiddleware({ path: '/_druxt/schema', handler: schemaHandler(getSchema) })
+    // Schemas are generated with the same access the build uses. Under `nuxt dev`
+    // there is no cache or clear, so each request regenerates.
+    const { getSchema, handler } = createSchemaRefresh(options.baseUrl, options, { hold: !this.options.dev })
+    this.addServerMiddleware({ path: '/_druxt/schema', handler })
     // Nuxt runs the server bundle in a new context under `nuxt dev`, sharing process but not globalThis.
     // An ID it cannot parse resolves to null, so the server render uses the built file for it.
     process[Symbol.for('druxt.schemaRefresh')] = (id) => (parseSchemaId(id) ? getSchema(id) : Promise.resolve(null))

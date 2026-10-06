@@ -1,5 +1,5 @@
 /* global globalThis */
-import { getHeldSchema, parseSchemaId, resetSchemaHold } from '../../src/utils/hold'
+import { getHeldSchema, parseSchemaId, clearSchemaHold } from '../../src/utils/hold'
 
 const generation = Symbol.for('druxt.processCacheGeneration')
 const clear = () => { globalThis[generation] = { value: ((globalThis[generation] || {}).value || 0) + 1 } }
@@ -10,7 +10,7 @@ const generator = (getSchemaById) => {
 }
 
 describe('schema hold', () => {
-  beforeEach(() => resetSchemaHold())
+  beforeEach(() => clearSchemaHold())
 
   test('parseSchemaId', () => {
     expect(parseSchemaId('node--page--default--view')).toStrictEqual({ entityType: 'node', bundle: 'page', mode: 'default', schemaType: 'view' })

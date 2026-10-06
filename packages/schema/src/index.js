@@ -55,6 +55,16 @@ export { DruxtSchemaMixin } from './mixins/schema'
 export { DruxtSchemaStore } from './stores/schema'
 
 /**
+ * Schema refresh for a server Druxt's Nuxt module does not run, such as a static site's own.
+ *
+ * @type {Function}
+ * @exports createSchemaRefresh
+ * @name createSchemaRefresh
+ * @see {@link /api/packages/schema/refresh|createSchemaRefresh}
+ */
+export { createSchemaRefresh } from './refresh'
+
+/**
  * The Nuxt.js module function.
  *
  * Installs the module functionality in a Nuxt.js frontend.

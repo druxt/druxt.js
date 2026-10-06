@@ -101,6 +101,27 @@ export default {
 - Under `nuxt dev` there is no cache to clear, so each request regenerates the schemas it uses.
 - A static site (`nuxt generate`) has no server and keeps the schemas from its build.
 
+#### On your own server
+
+A static site served by its own Node server can offer the same refresh. Serve the route the browser asks, and clear the held schemas where the server handles Drupal's purge:
+
+```js
+const { createSchemaRefresh } = require('druxt-schema');
+
+const schemas = createSchemaRefresh('https://example.com');
+
+// In the request handler.
+if (pathname.startsWith('/_druxt/schema/')) {
+  req.url = pathname.slice('/_druxt/schema'.length);
+  return schemas.handler(req, res);
+}
+
+// Where the server handles Drupal's purge.
+schemas.clear();
+```
+
+Create the refresh once and keep it. A `DruxtSchema` instance keeps the configuration it has read for as long as it lives, so one held by your own code never shows a renamed field. The refresh starts a new instance on each clear.
+
 ---
 
 ## API

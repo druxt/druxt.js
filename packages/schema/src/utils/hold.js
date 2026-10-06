@@ -63,9 +63,12 @@ export const getHeldSchema = (createDruxtSchema, id) => {
 }
 
 /**
- * Empties the held schemas. For tests; a cache clear does this in production.
+ * Empties the held schemas, so each is regenerated when next asked for.
+ *
+ * Druxt's `/_druxt/cache/clear` already does this. A server that handles Drupal's
+ * purge itself calls it there. A generation in flight at the time is not held.
  */
-export const resetSchemaHold = () => {
+export const clearSchemaHold = () => {
   hold.schemas.clear()
   hold.pending.clear()
   hold.generator = null

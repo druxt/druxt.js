@@ -1,5 +1,5 @@
 import DruxtSchemaNuxtModule, { DruxtSchema } from '../src'
-import { resetSchemaHold } from '../src/utils/hold'
+import { clearSchemaHold } from '../src/utils/hold'
 
 jest.mock('../src/schema')
 let mock
@@ -47,7 +47,7 @@ describe('Nuxt module', () => {
   test('Refresh', async () => {
     const refresh = Symbol.for('druxt.schemaRefresh')
     delete process[refresh]
-    resetSchemaHold()
+    clearSchemaHold()
     const getSchemaById = jest.fn(async (id) => ({ id }))
     DruxtSchema.mockImplementation(() => ({
       get: () => ({ schemas: { 'node--page--default--view': {} } }),
