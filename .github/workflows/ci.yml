@@ -2,7 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [develop, main]
+    # A release line is <major>.x or <major>.<minor>.x, so '*.x' matches
+    # both shapes: * matches dots. develop and main stay listed until the
+    # branches are renamed.
+    branches: [develop, main, '*.x']
   pull_request:
     # No branch filter on purpose. The filter matches the pull request's base,
     # so a stacked pull request based on anything unlisted ran no jobs at all,

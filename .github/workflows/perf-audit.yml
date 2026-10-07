@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [labeled]
   push:
-    branches: [develop]
+    branches: [develop, '*.x']
   workflow_dispatch:
     inputs:
       examples:
@@ -100,7 +100,7 @@ jobs:
         env:
           AUDIT_EXAMPLES: ${{ inputs.examples }}
           AUDIT_SKIP_LIGHTHOUSE: ${{ inputs.skip_lighthouse }}
-          # A push to develop is a just-merged PR; refresh the baseline so the next PR's audit
+          # A push to a release line is a just-merged PR; refresh the baseline so the next PR's audit
           # is never diffed against numbers that already merged.
           AUDIT_UPDATE_BASELINE: ${{ inputs.update_baseline || github.event_name == 'push' }}
         continue-on-error: true
@@ -145,9 +145,9 @@ jobs:
           git commit -m "chore(perf-audit): refresh the github baseline"
           # Never fails the job; a rejected push or PR call just means the refresh has to be done by hand.
           git push "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" "$branch" \
-            && gh pr create --base develop --head "$branch" \
+            && gh pr create --base "$GITHUB_REF_NAME" --head "$branch" \
               --title "chore(perf-audit): refresh the github baseline" \
-              --body "Automatic refresh after $(git rev-parse --short HEAD~1) merged to develop. Compares the numbers before merging." \
+              --body "Automatic refresh after $(git rev-parse --short HEAD~1) merged to $GITHUB_REF_NAME. Compares the numbers before merging." \
             || echo "Could not open the pull request; refresh perf/baseline.github.json by hand from this run's artifact"
 
       - name: Stop the examples
