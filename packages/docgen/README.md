@@ -47,4 +47,4 @@ monorepo AGENTS.md for the rules and their rationale.
 
 ## License
 
-[MIT](https://github.com/druxt/druxt.js/blob/develop/LICENSE)
+[MIT](https://github.com/druxt/druxt.js/blob/HEAD/LICENSE)
