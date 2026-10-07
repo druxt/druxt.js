@@ -33,8 +33,7 @@
         "@commitlint/config-conventional",
         "@nuxtjs/storybook",
         "@tailwindcss/typography",
-        "markdownlint-cli2",
-        "renovate"
+        "markdownlint-cli2"
       ],
       "enabled": false
     },
@@ -126,9 +125,19 @@
       ]
     },
     {
-      "description": "druxt-test-utils is private, so its dependencies are test tooling.",
+      "description": "druxt-test-utils is private, so its test packages join test tooling. Its other dependencies follow the published packages' one PR per dependency.",
       "matchFileNames": ["packages/test-utils/package.json"],
-      "groupName": "test tooling"
+      "groupName": "test tooling",
+      "matchPackageNames": [
+        "jest-*",
+        "@jest/*",
+        "babel-jest",
+        "esbuild-jest",
+        "vue-jest",
+        "@vue/test-utils",
+        "cypress",
+        "start-server-and-test"
+      ]
     }
   ]
 }
