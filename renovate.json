@@ -45,10 +45,90 @@
       "enabled": false
     },
     {
-      "description": "Group all remaining updates into a single PR.",
-      "matchPackageNames": ["*"],
-      "groupName": "all dependencies",
-      "groupSlug": "all"
+      "description": "GitHub Actions in one PR.",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "description": "Root tooling not covered by a narrower group below.",
+      "matchFileNames": ["package.json"],
+      "matchDepTypes": ["devDependencies", "resolutions"],
+      "groupName": "dev tooling"
+    },
+    {
+      "description": "Test tooling, kept together so the runner and its helpers move as one.",
+      "matchFileNames": ["package.json"],
+      "matchDepTypes": ["devDependencies"],
+      "matchPackageNames": [
+        "jest-*",
+        "@jest/*",
+        "babel-jest",
+        "esbuild-jest",
+        "vue-jest",
+        "@vue/test-utils",
+        "cypress",
+        "start-server-and-test"
+      ],
+      "groupName": "test tooling"
+    },
+    {
+      "description": "Lint and commit tooling.",
+      "matchFileNames": ["package.json"],
+      "matchDepTypes": ["devDependencies"],
+      "matchPackageNames": [
+        "eslint-*",
+        "@commitlint/*",
+        "cspell",
+        "knip",
+        "lint-staged",
+        "husky",
+        "prettier"
+      ],
+      "groupName": "lint tooling"
+    },
+    {
+      "description": "Release tooling.",
+      "matchFileNames": ["package.json"],
+      "matchDepTypes": ["devDependencies", "resolutions"],
+      "matchPackageNames": [
+        "@changesets/*",
+        "bundlewatch",
+        "semver",
+        "human-id"
+      ],
+      "groupName": "release tooling"
+    },
+    {
+      "description": "The agent evaluation harness, which ships nowhere.",
+      "matchFileNames": [".agents/**"],
+      "groupName": "agent evals"
+    },
+    {
+      "description": "Example sites, which ship nowhere.",
+      "matchFileNames": ["examples/**"],
+      "groupName": "examples"
+    },
+    {
+      "description": "Packages get one PR per dependency, so its title names the package and version, and every package's use of it moves together.",
+      "matchFileNames": [
+        "packages/*/package.json",
+        "!packages/test-utils/package.json"
+      ],
+      "matchDepTypes": [
+        "dependencies",
+        "peerDependencies",
+        "optionalDependencies"
+      ],
+      "semanticCommitType": "fix",
+      "addLabels": ["published"],
+      "prBodyNotes": [
+        "This dependency ships to every site that installs the package. Add a changeset saying what changes for a site, if anything."
+      ]
+    },
+    {
+      "description": "druxt-test-utils is private, so its dependencies are test tooling.",
+      "matchFileNames": ["packages/test-utils/package.json"],
+      "groupName": "test tooling"
     }
   ]
 }
