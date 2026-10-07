@@ -105,16 +105,22 @@ const rewrite = (summary) => {
   return { text, issues, breaking }
 }
 
+// A `Commit: <sha>` line names the change when the changeset file was added later.
+const COMMIT = /^Commit:\s*([0-9a-f]{7,40})\s*$/i
+
 const getReleaseLine = async (changeset) => {
-  const [first, ...rest] = changeset.summary.split('\n')
+  const [first, ...lines] = changeset.summary.split('\n')
+  const override = lines.map((line) => COMMIT.exec(line.trim())).find(Boolean)
+  const rest = lines.filter((line) => !COMMIT.test(line.trim()))
+  const commit = override ? override[1] : changeset.commit
   const result = rewrite(first)
   const { text, issues } = result
   // Conventional commits also declare breakage in a footer.
   const breaking = result.breaking || rest.some((line) => /^BREAKING[ -]CHANGE:/.test(line.trim()))
 
   const refs = issues.map((n) => `[#${n}](${REPO}/issues/${n})`)
-  if (changeset.commit) {
-    refs.push(`[\`${changeset.commit.slice(0, 7)}\`](${REPO}/commit/${changeset.commit})`)
+  if (commit) {
+    refs.push(`[\`${commit.slice(0, 7)}\`](${REPO}/commit/${commit})`)
   }
 
   let line = `- ${breaking ? '**Breaking:** ' : ''}${text}${refs.length ? ` (${refs.join(', ')})` : ''}`
