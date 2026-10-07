@@ -11,10 +11,10 @@ import vueDocs from 'vue-docgen-api'
 const cwd = path.join(__dirname, '..')
 
 // The git ref the generated source links point at. HEAD follows whatever the
-// repository's default branch is, so a release branch rename needs no edit
-// here. A versioned docs build sets DRUXT_DOCS_REF to its own line. CI's own
-// ref variables are deliberately not consulted: on a pull request they hold
-// a merge ref like "906/merge", which would generate a dead link.
+// repository's default branch is, so this survives a release branch rename.
+// A versioned docs build sets DRUXT_DOCS_REF to its own line. CI's own ref
+// variables are deliberately not consulted: on a pull request they hold a
+// merge ref like "906/merge", which would generate a dead link.
 const defaultRef = () => process.env.DRUXT_DOCS_REF || 'HEAD'
 
 /**

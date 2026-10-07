@@ -553,7 +553,7 @@ export default {
       else process.env.DRUXT_DOCS_REF = original
     })
 
-    test('the ref is HEAD, so renaming the release branch needs no edit here', () => {
+    test('the ref is HEAD, so it survives a release branch rename', () => {
       delete process.env.DRUXT_DOCS_REF
       expect(defaultRef()).toBe('HEAD')
       expect(new DruxtDocgen().ref).toBe('HEAD')
