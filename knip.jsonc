@@ -13,6 +13,9 @@
     // Native-module build tool - invoked implicitly by npm/node-gyp-build
     // during install (e.g. for `re2`), never imported by name.
     "node-gyp",
+    // `lint:renovate` runs a pinned Renovate through `npx --package`, since
+    // Renovate needs a newer Node than the toolchain installs.
+    "renovate",
     // Used by packages/druxt/templates/stories/*.stories.mdx - MDX-level
     // Storybook addon usage isn't traced by this knip version.
     "@storybook/addon-docs",
