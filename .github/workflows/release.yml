@@ -25,7 +25,7 @@ name: Release
 # npmjs.com. Until then the packed tarballs are the dry run.
 on:
   push:
-    branches: [develop, '*.x']
+    branches: ['*.x']
     paths:
       - '.changeset/*.md'
       - '!.changeset/README.md'
@@ -131,7 +131,7 @@ jobs:
     if: >-
       github.event_name != 'pull_request' &&
       startsWith(github.ref, 'refs/heads/') &&
-      (github.ref == 'refs/heads/develop' || endsWith(github.ref, '.x')) &&
+      endsWith(github.ref, '.x') &&
       vars.NPM_PUBLISH == 'true' &&
       needs.snapshot.outputs.count != '0'
     runs-on: ubuntu-latest

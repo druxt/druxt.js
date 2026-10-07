@@ -333,11 +333,19 @@ lint:commits:
     # its package.json, lockfile and commitlint.config.js.
     - |
       POLICY_SHA="$CI_MERGE_REQUEST_DIFF_BASE_SHA"
-      if git fetch --quiet "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_MERGE_REQUEST_PROJECT_PATH}.git" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
+      # Protocol and port from the server, not hardcoded: an http instance
+      # refused every https fetch on 443, so the policy above silently fell
+      # back to the diff base on every run and never took effect.
+      if git fetch --quiet "${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/${CI_MERGE_REQUEST_PROJECT_PATH}.git" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
         POLICY_SHA="$(git rev-parse FETCH_HEAD)"
       else
         echo "Could not fetch the target branch; using the diff base's commit policy."
       fi
+      # The runner reuses its build directory. Its clean removes .policy/ but
+      # not .git/worktrees/.policy, so the next run's add hits a registration
+      # whose directory is gone. Clear the dead entry rather than forcing past
+      # the check.
+      git worktree prune
       git worktree add .policy "$POLICY_SHA"
     - corepack enable
     - (cd .policy && yarn install --immutable)
@@ -555,7 +563,7 @@ test:node-client:
 test:e2e:packages:
   extends: .cypress
   rules:
-    - if: $CI_COMMIT_BRANCH == 'develop' || $CI_COMMIT_BRANCH == 'main' || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
+    - if: $CI_COMMIT_BRANCH == 'main' || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       changes:
         - packages/**/*
@@ -586,7 +594,7 @@ test:examples:
     matrix:
       - EXAMPLE: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
   rules:
-    - if: $CI_COMMIT_BRANCH == 'develop' || $CI_COMMIT_BRANCH == 'main' || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
+    - if: $CI_COMMIT_BRANCH == 'main' || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       changes:
         - packages/**/*
@@ -632,7 +640,7 @@ perf:audit:
     # A push carrying a baseline refresh of its own is the previous run's merge
     # request landing; skip it so merging that MR does not queue another audit
     # right behind it.
-    - if: '$CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/) && $CI_COMMIT_MESSAGE !~ /^chore\(perf-audit\):/'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/ && $CI_COMMIT_MESSAGE !~ /^chore\(perf-audit\):/'
       when: on_success
       variables:
         PERF_AUDIT_UPDATE_BASELINE: 'true'
