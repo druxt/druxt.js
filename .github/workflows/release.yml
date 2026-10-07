@@ -126,8 +126,11 @@ jobs:
   # a newer Node than the one the packages build on.
   dev:
     needs: snapshot
+    # workflow_dispatch takes no branch filter and can target a tag, so a tag
+    # named like a release line would otherwise pass the suffix test.
     if: >-
       github.event_name != 'pull_request' &&
+      startsWith(github.ref, 'refs/heads/') &&
       (github.ref == 'refs/heads/develop' || endsWith(github.ref, '.x')) &&
       vars.NPM_PUBLISH == 'true' &&
       needs.snapshot.outputs.count != '0'
