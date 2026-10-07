@@ -333,11 +333,19 @@ lint:commits:
     # its package.json, lockfile and commitlint.config.js.
     - |
       POLICY_SHA="$CI_MERGE_REQUEST_DIFF_BASE_SHA"
-      if git fetch --quiet "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_MERGE_REQUEST_PROJECT_PATH}.git" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
+      # Protocol and port from the server, not hardcoded: an http instance
+      # refused every https fetch on 443, so the policy above silently fell
+      # back to the diff base on every run and never took effect.
+      if git fetch --quiet "${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/${CI_MERGE_REQUEST_PROJECT_PATH}.git" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
         POLICY_SHA="$(git rev-parse FETCH_HEAD)"
       else
         echo "Could not fetch the target branch; using the diff base's commit policy."
       fi
+      # The runner reuses its build directory. Its clean removes .policy/ but
+      # not .git/worktrees/.policy, so the next run's add hits a registration
+      # whose directory is gone. Clear the dead entry rather than forcing past
+      # the check.
+      git worktree prune
       git worktree add .policy "$POLICY_SHA"
     - corepack enable
     - (cd .policy && yarn install --immutable)
