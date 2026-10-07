@@ -6,7 +6,7 @@ import ncp from 'ncp'
 import vueDocs from 'vue-docgen-api'
 import dmd from 'dmd'
 
-import { DruxtDocgen } from '../src'
+import { DruxtDocgen, defaultRef } from '../src'
 
 jest.mock('fs', () => ({
   writeFileSync: jest.fn(),
@@ -542,6 +542,44 @@ export default {
       )
       const [, content] = fs.writeFileSync.mock.calls[0]
       expect(content).not.toContain('## Deep')
+    })
+  })
+
+  describe('source links', () => {
+    const original = process.env.DRUXT_DOCS_REF
+
+    afterEach(() => {
+      if (original === undefined) delete process.env.DRUXT_DOCS_REF
+      else process.env.DRUXT_DOCS_REF = original
+    })
+
+    test('the ref is HEAD, so renaming the release branch needs no edit here', () => {
+      delete process.env.DRUXT_DOCS_REF
+      expect(defaultRef()).toBe('HEAD')
+      expect(new DruxtDocgen().ref).toBe('HEAD')
+    })
+
+    test('a versioned docs build takes its ref from the environment', () => {
+      process.env.DRUXT_DOCS_REF = '1.0.x'
+      expect(defaultRef()).toBe('1.0.x')
+      expect(new DruxtDocgen().ref).toBe('1.0.x')
+    })
+
+    test('constructor honors a caller-provided ref', () => {
+      expect(new DruxtDocgen({ ref: '2.0.x' }).ref).toBe('2.0.x')
+    })
+
+    test('the generated note links to the ref rather than a branch name', () => {
+      const pinned = new DruxtDocgen({ ref: '1.0.x' })
+      pinned.components = [
+        { file: 'packages/druxt/src/components/Druxt.vue', templateData: [{ name: 'Druxt', description: 'The Druxt component.' }] }
+      ]
+
+      pinned.generateComponentsList()
+
+      const [, content] = fs.writeFileSync.mock.calls[0]
+      expect(content).toContain('/tree/1.0.x/packages/docgen')
+      expect(content).not.toContain('/tree/develop/')
     })
   })
 
