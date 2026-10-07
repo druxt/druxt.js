@@ -2,7 +2,7 @@ name: Release
 
 # Publishes the packages to npm.
 #
-# dev: a push to develop that changes a changeset publishes a snapshot of all
+# dev: a push to a release line that changes a changeset publishes a snapshot of all
 # pending packages under the `dev` dist-tag. `latest` never moves, nothing is
 # committed and no git tag is made. Install one with `druxt-site@dev`.
 #
@@ -25,7 +25,7 @@ name: Release
 # npmjs.com. Until then the packed tarballs are the dry run.
 on:
   push:
-    branches: [develop]
+    branches: [develop, '*.x']
     paths:
       - '.changeset/*.md'
       - '!.changeset/README.md'
@@ -128,7 +128,7 @@ jobs:
     needs: snapshot
     if: >-
       github.event_name != 'pull_request' &&
-      github.ref == 'refs/heads/develop' &&
+      (github.ref == 'refs/heads/develop' || endsWith(github.ref, '.x')) &&
       vars.NPM_PUBLISH == 'true' &&
       needs.snapshot.outputs.count != '0'
     runs-on: ubuntu-latest

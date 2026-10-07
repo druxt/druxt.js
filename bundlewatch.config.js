@@ -1,10 +1,15 @@
+const base = process.env.GITHUB_BASE_REF || process.env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+const current = process.env.GITHUB_REF_NAME || process.env.CI_COMMIT_BRANCH
+
 module.exports = {
   files: [{
     path: './packages/**/dist/*.js',
     maxSize: '50kb',
   }],
   ci: {
-    repoBranchBase: process.env.CI_PULL_REQUEST ? 'develop' : 'main',
-    trackBranches: ['main', 'develop'],
+    // Derived, so a new release line needs no edit here. trackBranches
+    // takes no pattern, so the current branch adds itself.
+    repoBranchBase: base || current || 'develop',
+    trackBranches: [...new Set(['main', 'develop', current].filter(Boolean))],
   }
 }
