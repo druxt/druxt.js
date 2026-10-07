@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [labeled]
   push:
-    branches: [develop, '*.x']
+    branches: ['*.x']
   workflow_dispatch:
     inputs:
       examples:

@@ -563,7 +563,7 @@ test:node-client:
 test:e2e:packages:
   extends: .cypress
   rules:
-    - if: $CI_COMMIT_BRANCH == 'develop' || $CI_COMMIT_BRANCH == 'main' || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
+    - if: $CI_COMMIT_BRANCH == 'main' || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       changes:
         - packages/**/*
@@ -594,7 +594,7 @@ test:examples:
     matrix:
       - EXAMPLE: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
   rules:
-    - if: $CI_COMMIT_BRANCH == 'develop' || $CI_COMMIT_BRANCH == 'main' || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
+    - if: $CI_COMMIT_BRANCH == 'main' || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       changes:
         - packages/**/*
@@ -640,7 +640,7 @@ perf:audit:
     # A push carrying a baseline refresh of its own is the previous run's merge
     # request landing; skip it so merging that MR does not queue another audit
     # right behind it.
-    - if: '$CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/) && $CI_COMMIT_MESSAGE !~ /^chore\(perf-audit\):/'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/ && $CI_COMMIT_MESSAGE !~ /^chore\(perf-audit\):/'
       when: on_success
       variables:
         PERF_AUDIT_UPDATE_BASELINE: 'true'
