@@ -6,7 +6,7 @@
 [![dev](https://badgen.net/npm/v/druxt-breadcrumb/dev)](https://www.npmjs.com/package/druxt-breadcrumb/v/dev)
 [![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
-[![codecov](https://codecov.io/gh/druxt/druxt.js/branch/develop/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
+[![codecov](https://codecov.io/gh/druxt/druxt.js/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 
 > Render a breadcrumb trail in Nuxt from the Drupal decoupled router, with the DruxtBreadcrumb component and its theming options.
 
