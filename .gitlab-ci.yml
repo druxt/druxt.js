@@ -657,7 +657,7 @@ test:node-client:
 test:e2e:packages:
   extends: .cypress
   rules:
-    - if: $CI_COMMIT_BRANCH == 'main' || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       changes:
         - packages/**/*
@@ -688,7 +688,7 @@ test:examples:
     matrix:
       - EXAMPLE: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
   rules:
-    - if: $CI_COMMIT_BRANCH == 'main' || $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       changes:
         - packages/**/*
