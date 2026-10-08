@@ -298,6 +298,12 @@ jobs:
     needs: version
     if: needs.version.outputs.unpublished != '' && vars.NPM_PUBLISH == 'true'
     runs-on: ubuntu-latest
+    # Pauses for a required reviewer before anything reaches npm. Only this
+    # job: the dev channel publishes snapshots on every changeset push and
+    # gating those would defeat the point. npm's trusted publisher keeps its
+    # environment field empty for the same reason, since it holds one value
+    # per package and both jobs publish through it.
+    environment: release
     permissions:
       id-token: write
       contents: write
