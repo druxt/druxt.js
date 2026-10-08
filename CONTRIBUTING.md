@@ -140,7 +140,7 @@ yarn changeset
 
 Be sure to commit your changeset file alongside your changes.
 
-A merged changeset publishes a development release straight away, and a stable release once the pull request that versions the packages is merged. See [Releasing](https://github.com/druxt/druxt.js/blob/develop/RELEASING.md).
+A merged changeset publishes a development release once it reaches a release line such as `0.x`, and a stable release once the pull request that versions the packages is merged. See [Releasing](RELEASING.md).
 
 ### Codecov
 

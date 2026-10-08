@@ -240,11 +240,18 @@ jobs:
         run: |
           list=$(node scripts/release/check.mjs --list-unpublished)
           echo "$list"
-          {
-            echo 'list<<EOF'
-            echo "$list"
-            echo 'EOF'
-          } >> "$GITHUB_OUTPUT"
+          # Only write the output when there is something to publish. An
+          # unconditional heredoc writes one blank line, which Actions reads as
+          # a value rather than as empty, so every `!= ''` guard below passes
+          # and pack.mjs receives no filter: it then packs every package and
+          # the publish loop tags the lot.
+          if [ -n "$list" ]; then
+            {
+              echo 'list<<EOF'
+              echo "$list"
+              echo 'EOF'
+            } >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Build
         if: steps.unpublished.outputs.list != ''
