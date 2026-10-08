@@ -182,9 +182,6 @@ jobs:
         run: |
           ! grep -rn "\xe2\x80\x94" packages/druxt/README.md packages/docgen/README.md packages/test-utils/README.md CONTRIBUTING.md --include='*.md' --include='*.vue' --include='*.js' --include='*.mjs' --include='*.css'
 
-      - name: Renovate config validator
-        run: yarn lint:renovate
-
       # The contributor skills, AGENTS.md and agent config, checked by agnix
       # (spec fields, names, links). The live skill evals spend model tokens,
       # so they run locally only (yarn skills:eval), never in CI.
@@ -238,6 +235,23 @@ jobs:
         with:
           name: lint-results
           path: ./reports/junit/
+
+  # Renovate itself needs a current Node, so its validator runs apart from lint.
+  renovate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
+      - name: Renovate config validator
+        run: npm run lint:renovate
 
   test-unit:
     needs: build

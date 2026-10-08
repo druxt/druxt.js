@@ -106,14 +106,13 @@ history, such as a merge base or the commit that added a file.
 
 `yarn lint:audit` (production-only) is the blocking gate and is currently
 clean - keep it that way. `yarn lint:audit:full` also covers
-devDependencies. As of this writing it reports ~50 advisories, almost all
-inherited transitively through `renovate` (used only for `yarn
-lint:renovate`) and other build/lint/test tooling. This isn't neglect: the
-patched versions of `renovate`, `jest`, `eslint`, etc. all require Node 18+,
-which conflicts with the Node 16 toolchain freeze above - `renovate` itself is
-effectively frozen for the same reason `vue`/`nuxt`/`jest` are, even though
-it's not in `renovate.json`'s explicit freeze list. Don't chase these
-piecemeal. They resolve together whenever the Node 16 → 18+ upgrade happens.
+devDependencies, which report advisories inherited through build, lint and
+test tooling. This isn't neglect: the patched versions of `jest`, `eslint`,
+etc. require Node 18+, which conflicts with the Node 16 toolchain freeze
+above. Don't chase these piecemeal. They resolve together whenever the Node
+16 → 18+ upgrade happens. `renovate` is not a devDependency: `yarn
+lint:renovate` runs a pinned version through `npx`, on Node 24 in its own CI
+job, because Renovate needs a current Node.
 
 ## Inline documentation (JSDoc) → API docs
 
