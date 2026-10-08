@@ -226,17 +226,26 @@ jobs:
 
       # No publish script: this step only opens or updates the pull request.
       # The title is the squash commit's subject, so it has to be conventional.
-      - uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+      # v1, not v2: the v2 action throws on startup when the repository's
+      # @changesets/cli is major 2, and this repository pins 2.31.1. Its own
+      # error says to use action v1 for CLI v2. Moving to CLI v3 is the
+      # alternative and is not a change to make beside a release.
+      - uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         id: changesets
         with:
           github-token: ${{ steps.app.outputs.token || github.token }}
-          version-script: yarn run version
-          pr-title: 'chore(release): version packages'
-          commit-message: 'chore(release): version packages'
+          # v1 input names. Actions ignores an unknown input rather than
+          # failing, so v2's version-script, pr-title and commit-message would
+          # have silently fallen back to `changeset version` and a "Version
+          # Packages" title, which is not a Conventional Commits subject and
+          # breaks lint:commit on the squash.
+          version: yarn run version
+          title: 'chore(release): version packages'
+          commit: 'chore(release): version packages'
 
       - name: List the versions npm does not have
         id: unpublished
-        if: steps.changesets.outputs.has-changesets == 'false'
+        if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
           list=$(node scripts/release/check.mjs --list-unpublished)
           echo "$list"

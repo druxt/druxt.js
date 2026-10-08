@@ -4,12 +4,12 @@ The packages publish to npm from `.github/workflows/release.yml`. Nobody runs `n
 
 | Channel | npm dist-tag | When it publishes | What it is for |
 | ------- | ------------ | ----------------- | -------------- |
-| Development | `dev` | Every push to a release line with a pending changeset | Trying unreleased work on a real site |
+| Development | `dev` | A push to a release line that adds or edits a changeset | Trying unreleased work on a real site |
 | Stable | `latest` | When you merge the pull request that versions the packages | Everyone else |
 
 ## Development releases
 
-A push to a release line, `0.x` today, cuts a snapshot of every package with a pending changeset, and of every package that depends on one. Almost everything depends on `druxt`, so a change to the core republishes the whole set.
+A push to a release line, `0.x` today, cuts a snapshot of every package with a pending changeset, and of every package that depends on one. The trigger is the changeset files themselves, so a push that changes package code without touching `.changeset/*.md` publishes nothing. A snapshot is cut from whatever changesets are pending at that moment, including ones left from earlier merges. Almost everything depends on `druxt`, so a change to the core republishes the whole set.
 
 A snapshot version reads `0.24.1-dev.20260920004838`: the version the pending changesets add up to, then the tag and a timestamp. Each package pins its sibling packages to the exact snapshot published beside it. One install brings in one coherent set:
 
