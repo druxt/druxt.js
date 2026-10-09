@@ -114,6 +114,15 @@ above. Don't chase these piecemeal. They resolve together whenever the Node
 lint:renovate` runs a pinned version through `npx`, on Node 24 in its own CI
 job, because Renovate needs a current Node.
 
+The bot itself needs one too, so `renovate.json` sets its `node` constraint to 22.
+Left to itself Renovate reads `.nvmrc` and installs Node 16, then runs its own
+corepack under it; that corepack calls `canParse` on `URL`, which Node 16 does not
+have, and so it dies before Yarn is ever invoked. The pull request still gets
+raised, with `package.json` changed and `yarn.lock` untouched, and every
+`--immutable` install in CI then fails with YN0028. The constraint governs
+Renovate's own sandbox only: the repository, CI and the build-stack freeze stay
+on Node 16.
+
 ## Inline documentation (JSDoc) → API docs
 
 Every JS/Vue source file's JSDoc is scraped by `packages/docgen` into
