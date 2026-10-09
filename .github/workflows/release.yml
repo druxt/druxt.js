@@ -243,6 +243,21 @@ jobs:
           title: 'chore(release): version packages'
           commit: 'chore(release): version packages'
 
+      # The publish path below runs only once no changesets are pending. That is
+      # correct rather than a limitation: a changeset still pending means its
+      # work is in the current milestone and the milestone is not finished, so
+      # there is nothing to release yet. Without this step the run simply goes
+      # quiet, which reads as a failure when it is a refusal.
+      - name: Say why nothing will publish
+        if: steps.changesets.outputs.hasChangesets == 'true'
+        run: |
+          {
+            echo "### No publish this run"
+            echo
+            echo "Changesets are still pending, so the version pull request has been"
+            echo "opened or updated instead. Merging that pull request is what releases."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: List the versions npm does not have
         id: unpublished
         if: steps.changesets.outputs.hasChangesets == 'false'
