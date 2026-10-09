@@ -76,8 +76,15 @@ const describeDepChanges = (changes) =>
  * Changesets rewrites every internal dependency range when it versions
  * packages, so the release would otherwise fail the shipped-dependency rule,
  * and a gate that blocks releases is worse than no gate at all.
+ *
+ * A branch name is not evidence, because anyone can pick one, so this also
+ * wants a changelog write, which only versioning produces. Even then it waives
+ * the dependency rule alone: a branch named like a release still answers for
+ * the source it changes.
  */
-const isVersionPullRequest = (headBranch) => (headBranch ?? '').startsWith('changeset-release/')
+const isVersionPullRequest = (headBranch, files) =>
+  (headBranch ?? '').startsWith('changeset-release/') &&
+  files.some((file) => /^packages\/[^/]+\/CHANGELOG\.md$/.test(file))
 
 /** A changeset, ignoring the directory's own README. */
 export const hasChangeset = (files) =>
@@ -109,8 +116,7 @@ export const currentMilestone = (openTitles, branch) => {
  * the difference between a refusal someone acts on and one they argue with.
  */
 export const checkPlan = ({ files, manifests, milestone, issues, openMilestones, baseBranch, headBranch, dirs }) => {
-  if (isVersionPullRequest(headBranch)) return []
-  const deps = shippedDepChanges(manifests ?? [], dirs)
+  const deps = isVersionPullRequest(headBranch, files) ? [] : shippedDepChanges(manifests ?? [], dirs)
   const source = altersPublished(files, dirs)
   if (!source && deps.length === 0) return []
   const problems = []
@@ -119,7 +125,7 @@ export const checkPlan = ({ files, manifests, milestone, issues, openMilestones,
     problems.push({
       code: 'no-changeset',
       message: source
-        ? 'changes a published package but adds no changeset, so it would never reach a release.'
+        ? `changes a published package${deps.length ? `, and what one installs for consumers in ${describeDepChanges(deps)},` : ''} but adds no changeset, so it would never reach a release.`
         : `changes what a published package installs for consumers, in ${describeDepChanges(deps)}, but adds no changeset, so it would never reach a release.`,
     })
   }

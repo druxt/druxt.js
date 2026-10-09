@@ -339,7 +339,16 @@ lint:plan:
       auth="PRIVATE-TOKEN: ${GITLAB_API_TOKEN}"
       iid="$CI_MERGE_REQUEST_IID"
       git fetch --quiet origin "$CI_MERGE_REQUEST_DIFF_BASE_SHA" 2>/dev/null || true
-      git diff --name-only "$CI_MERGE_REQUEST_DIFF_BASE_SHA"...HEAD | jq -Rsc 'split("\n")|map(select(length>0))' > files.json
+      # Piping the diff into jq hid the diff's own exit status, so an
+      # unreachable base turned into an empty file list and the gate passed on
+      # a change it had never read. Check the base first, then keep git's
+      # status on its own line.
+      if ! git cat-file -e "${CI_MERGE_REQUEST_DIFF_BASE_SHA}^{commit}" 2>/dev/null; then
+        echo "The merge request's diff base is not reachable, so the changed files cannot be read. Skipping rather than passing on an empty list."
+        exit 0
+      fi
+      git diff --name-only "$CI_MERGE_REQUEST_DIFF_BASE_SHA"...HEAD > files.txt
+      jq -Rsc 'split("\n")|map(select(length>0))' < files.txt > files.json
       curl -sfS --header "$auth" "$api/merge_requests/$iid" > mr.json
       curl -sfS --header "$auth" "$api/merge_requests/$iid/closes_issues" | jq -c '[.[].iid]' > issues.json
       # GitHub is the source of truth for anything merging into a release
@@ -353,13 +362,8 @@ lint:plan:
       fi
       # Every changed package manifest, before and after. A bumped range
       # reaches consumers with no source file moving, so the file list alone
-      # cannot see it. Without the base every dependency reads as newly
-      # added, so refuse to judge rather than report false positives.
+      # cannot see it. The base is known reachable by now, checked above.
       jq -r '.[] | select(test("^packages/[^/]+/package\\.json$"))' files.json > manifests.txt
-      if ! git cat-file -e "${CI_MERGE_REQUEST_DIFF_BASE_SHA}^{commit}" 2>/dev/null; then
-        echo "The diff base is not reachable, so the shipped-dependency rule is skipped."
-        : > manifests.txt
-      fi
       {
         printf '['
         sep=''

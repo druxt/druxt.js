@@ -114,23 +114,58 @@ describe('checkPlan and shipped dependencies', () => {
     assert.deepEqual(checkPlan({ ...depBump, files: [...depBump.files, '.changeset/brave-moons-wave.md'] }), [])
   })
 
+  const versionManifests = [
+    {
+      path: 'packages/blocks/package.json',
+      before: { dependencies: { druxt: '^0.24.0' } },
+      after: { dependencies: { druxt: '^0.25.0' } },
+    },
+  ]
+
   it("leaves the release's own version pull request alone, whose internal ranges all move", () => {
-    const manifests = [
-      {
-        path: 'packages/blocks/package.json',
-        before: { dependencies: { druxt: '^0.24.0' } },
-        after: { dependencies: { druxt: '^0.25.0' } },
-      },
-    ]
     const problems = checkPlan({
       ...depBump,
       files: ['packages/blocks/package.json', 'packages/blocks/CHANGELOG.md'],
-      manifests,
+      manifests: versionManifests,
       milestone: null,
       issues: [],
       headBranch: 'changeset-release/0.x',
     })
     assert.deepEqual(problems, [])
+  })
+
+  it('wants a changelog too, so that naming a branch is not enough to be waived', () => {
+    const problems = checkPlan({
+      ...depBump,
+      files: ['packages/blocks/package.json'],
+      manifests: versionManifests,
+      milestone: null,
+      issues: [],
+      headBranch: 'changeset-release/0.x',
+    })
+    assert.deepEqual(
+      problems.map((problem) => problem.code),
+      ['no-changeset', 'no-issue', 'no-milestone']
+    )
+  })
+
+  it('still answers for source, however the branch is named', () => {
+    const problems = checkPlan({
+      ...depBump,
+      files: ['packages/druxt/src/client.js', 'packages/blocks/package.json', 'packages/blocks/CHANGELOG.md'],
+      manifests: versionManifests,
+      headBranch: 'changeset-release/0.x',
+    })
+    assert.deepEqual(
+      problems.map((problem) => problem.code),
+      ['no-changeset']
+    )
+  })
+
+  it('names the dependency changes even when source moved as well', () => {
+    const problems = checkPlan({ ...depBump, files: ['packages/druxt/src/client.js', 'packages/druxt/package.json'] })
+    assert.match(problems[0].message, /changes a published package, and what one installs for consumers in/)
+    assert.match(problems[0].message, /peerDependencies: axios 0\.28\.0 -> 0\.34\.0/)
   })
 
   it('is silent when no manifest is passed at all', () => {
