@@ -1,0 +1,100 @@
+name: Plan
+
+# Checks that a change altering a published package is part of the plan: a
+# changeset so it reaches a release, a linked issue so the work is tracked, and
+# the milestone the target line is working towards so it reaches the release it
+# was planned for.
+#
+# Nothing else is gated. Documentation, CI, tests and private packages pass
+# untouched, because a gate that catches work it has no business catching is a
+# gate people learn to route around.
+#
+# Advisory until the repository variable PLAN_GATE is `block`. Until then it
+# reports and passes, so its verdicts can be read against real pull requests
+# before anything depends on them.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, milestoned, demilestoned]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+concurrency:
+  group: plan-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  plan:
+    if: github.repository == 'druxt/druxt.js'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      # The closing references rather than the body: a `Closes #123` can fail
+      # to create the link, and the link is what the rule is about.
+      - name: Gather the pull request's plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          gh pr view "$PR" --json files,milestone \
+            --jq '{files: [.files[].path], milestone: (.milestone.title // null)}' > pr.json
+          gh api graphql -f query="
+            { repository(owner: \"${GITHUB_REPOSITORY%/*}\", name: \"${GITHUB_REPOSITORY#*/}\") {
+                pullRequest(number: $PR) {
+                  closingIssuesReferences(first: 20) { nodes { number } } } } }" \
+            --jq '[.data.repository.pullRequest.closingIssuesReferences.nodes[].number]' > issues.json
+          gh api repos/"$GITHUB_REPOSITORY"/milestones --paginate -X GET -f state=open -f per_page=100 \
+            --jq '[.[].title]' > milestones.json
+          jq -n --slurpfile pr pr.json --slurpfile issues issues.json \
+                --slurpfile milestones milestones.json --arg base "$BASE" \
+            '{files: $pr[0].files, milestone: $pr[0].milestone, issues: $issues[0],
+              openMilestones: $milestones[0], baseBranch: $base}' > plan-input.json
+
+      - name: Check it against the plan
+        id: check
+        continue-on-error: true
+        env:
+          PLAN_INPUT: plan-input.json
+          PLAN_PROBLEMS: plan-problems.json
+        run: node scripts/release/plan.mjs
+
+      - name: Report
+        env:
+          OUTCOME: ${{ steps.check.outcome }}
+          MODE: ${{ vars.PLAN_GATE }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if [ "$OUTCOME" = "success" ]; then
+            echo "In the plan, or not the kind of change the plan covers." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          {
+            echo "### Not in the plan"
+            echo
+            echo 'This pull request changes a published package, so it needs a changeset, a'
+            echo 'linked issue and the milestone its target line is working towards.'
+            echo
+            PLAN_PROBLEMS=plan-problems.json \
+            PLAN_HOST=github \
+            PLAN_REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            PLAN_TITLE="$PR_TITLE" \
+            PLAN_BODY="Raised from $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/pull/$PR_NUMBER" \
+            PLAN_NUMBER="$PR_NUMBER" \
+            node scripts/release/plan-help.mjs
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$MODE" = "block" ]; then
+            echo "::error title=Not in the plan::See the job summary."
+            exit 1
+          fi
+          echo "::warning title=Not in the plan::Advisory while PLAN_GATE is not 'block'. See the job summary."

@@ -312,6 +312,71 @@ lint:skills:
 
 # Mirrors the GitHub commits job for merge requests: Conventional Commits,
 # made by the person contributing them, with no AI attribution.
+# The same plan conformance check GitHub runs, so merging here cannot bypass
+# it. The logic is shared: scripts/release/plan.mjs is host agnostic and this
+# job only gathers the inputs.
+#
+# The merge request's own milestone and issue links come from GitLab, because
+# they belong to this merge request. The list of open milestones comes from
+# GitHub, because that is the source of truth for anything merging into a
+# release line and the two hosts drift.
+#
+# Advisory until PLAN_GATE is "block", matching the GitHub side.
+lint:plan:
+  extends: .node
+  stage: lint
+  interruptible: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  script:
+    - section_start "plan" "Checking the merge request is in the plan"
+    - |
+      if [ -z "${GITLAB_API_TOKEN:-}" ]; then
+        echo "GITLAB_API_TOKEN is not set, so the milestone and issue links cannot be read. Skipping."
+        exit 0
+      fi
+      api="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}"
+      auth="PRIVATE-TOKEN: ${GITLAB_API_TOKEN}"
+      iid="$CI_MERGE_REQUEST_IID"
+      git fetch --quiet origin "$CI_MERGE_REQUEST_DIFF_BASE_SHA" 2>/dev/null || true
+      git diff --name-only "$CI_MERGE_REQUEST_DIFF_BASE_SHA"...HEAD | jq -Rsc 'split("\n")|map(select(length>0))' > files.json
+      curl -sfS --header "$auth" "$api/merge_requests/$iid" > mr.json
+      curl -sfS --header "$auth" "$api/merge_requests/$iid/closes_issues" | jq -c '[.[].iid]' > issues.json
+      # GitHub is the source of truth for anything merging into a release
+      # line, and this project's milestones drift between the two hosts, so
+      # read the plan from GitHub rather than from the mirror. The repository
+      # is public, so this needs no token.
+      if ! curl -sfS "https://api.github.com/repos/druxt/druxt.js/milestones?state=open&per_page=100" \
+           | jq -c '[.[].title]' > milestones.json; then
+        echo "Could not read the milestones from GitHub, which is the source of truth here. Skipping rather than judging against the mirror."
+        exit 0
+      fi
+      jq -n --slurpfile files files.json --slurpfile mr mr.json \
+            --slurpfile issues issues.json --slurpfile milestones milestones.json \
+            --arg base "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" \
+        '{files: $files[0], milestone: ($mr[0].milestone.title // null), issues: $issues[0],
+          openMilestones: $milestones[0], baseBranch: $base}' > plan-input.json
+    - |
+      rc=0
+      PLAN_INPUT=plan-input.json PLAN_PROBLEMS=plan-problems.json node scripts/release/plan.mjs || rc=$?
+      if [ "$rc" = "0" ]; then
+        section_end "plan"
+        exit 0
+      fi
+      echo "How to put it in the plan:"
+      mid=$(jq -r '.milestone.id // empty' mr.json)
+      PLAN_PROBLEMS=plan-problems.json \
+      PLAN_HOST=gitlab \
+      PLAN_REPO_URL="${CI_PROJECT_URL}" \
+      PLAN_TITLE="$CI_MERGE_REQUEST_TITLE" \
+      PLAN_BODY="Raised from ${CI_PROJECT_URL}/-/merge_requests/${iid}" \
+      PLAN_NUMBER="$iid" \
+      PLAN_MILESTONE_ID="$mid" \
+      node scripts/release/plan-help.mjs
+      section_end "plan"
+      if [ "${PLAN_GATE:-}" = "block" ]; then exit 1; fi
+      echo "Advisory: set PLAN_GATE to block to enforce this."
+
 lint:commits:
   extends: .node
   stage: lint

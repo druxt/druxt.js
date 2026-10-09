@@ -259,3 +259,7 @@ promptfoo
 promptfooconfig
 oneline
 unshallow
+milestoned
+demilestoned
+slurpfile
+retarget
