@@ -9303,7 +9303,7 @@ __metadata:
     lint-staged: ^14.0.1
     markdownlint-cli2: ^0.13.0
     node-gyp: ^9.4.1
-    prettier: ^3.9.6
+    prettier: ^3.9.9
     regenerator-runtime: 0.14.1
     rimraf: 5.0.10
     semver: ^7.6.3
@@ -16927,12 +16927,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.9.6":
-  version: 3.9.6
-  resolution: "prettier@npm:3.9.6"
+"prettier@npm:^3.9.9":
+  version: 3.9.9
+  resolution: "prettier@npm:3.9.9"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 3fb6a3b6462b05afb825697a3fdcdd9bd1480c11d10d655b7ddbcaf2560beb695caffbe155b5020466005aa06bff74a61ba9c16e602bff849331b62f5db26cdf
+  checksum: fbd41978e758c07ce493728c73c9011400446281aca707024e58f7b6ea5ad1dd2f12f8cc51ff76ceb7c7749947db876f6074030a5ec333d8e4084c29455ea948
   languageName: node
   linkType: hard
 
