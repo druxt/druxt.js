@@ -65,12 +65,15 @@ jobs:
         continue-on-error: true
         env:
           PLAN_INPUT: plan-input.json
+          PLAN_PROBLEMS: plan-problems.json
         run: node scripts/release/plan.mjs
 
       - name: Report
         env:
           OUTCOME: ${{ steps.check.outcome }}
           MODE: ${{ vars.PLAN_GATE }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           if [ "$OUTCOME" = "success" ]; then
             echo "In the plan, or not the kind of change the plan covers." >> "$GITHUB_STEP_SUMMARY"
@@ -82,7 +85,13 @@ jobs:
             echo 'This pull request changes a published package, so it needs a changeset, a'
             echo 'linked issue and the milestone its target line is working towards.'
             echo
-            PLAN_INPUT=plan-input.json node scripts/release/plan.mjs 2>&1 | sed 's/^/- /' || true
+            PLAN_PROBLEMS=plan-problems.json \
+            PLAN_HOST=github \
+            PLAN_REPO_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            PLAN_TITLE="$PR_TITLE" \
+            PLAN_BODY="Raised from $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/pull/$PR_NUMBER" \
+            PLAN_NUMBER="$PR_NUMBER" \
+            node scripts/release/plan-help.mjs
           } >> "$GITHUB_STEP_SUMMARY"
           if [ "$MODE" = "block" ]; then
             echo "::error title=Not in the plan::See the job summary."

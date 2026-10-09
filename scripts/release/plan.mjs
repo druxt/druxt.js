@@ -56,28 +56,45 @@ export const currentMilestone = (openTitles, branch) => {
   return candidates[0] ?? null
 }
 
-/** Problems with a pull request, as plain sentences. Empty means it conforms. */
+/**
+ * Problems with a change, as `{ code, message }`. Empty means it conforms.
+ *
+ * The code lets each host offer the right help, because a pre-filled link is
+ * the difference between a refusal someone acts on and one they argue with.
+ */
 export const checkPlan = ({ files, milestone, issues, openMilestones, baseBranch, dirs }) => {
   if (!altersPublished(files, dirs)) return []
   const problems = []
+  const current = currentMilestone(openMilestones, baseBranch)
   if (!hasChangeset(files)) {
-    problems.push('changes a published package but adds no changeset, so it would never reach a release.')
+    problems.push({
+      code: 'no-changeset',
+      message: 'changes a published package but adds no changeset, so it would never reach a release.',
+    })
   }
   if (!issues || issues.length === 0) {
-    problems.push('has no linked issue. Add a closing keyword such as "Closes #123" to the description.')
+    problems.push({
+      code: 'no-issue',
+      current,
+      message: 'has no linked issue. Add a closing keyword such as "Closes #123" to the description.',
+    })
   }
-  const current = currentMilestone(openMilestones, baseBranch)
   if (!milestone) {
-    problems.push(
-      current
+    problems.push({
+      code: 'no-milestone',
+      current,
+      message: current
         ? `has no milestone. The ${baseBranch} line is working towards ${current}.`
-        : `has no milestone, and no open milestone matches the ${baseBranch} line.`
-    )
+        : `has no milestone, and no open milestone matches the ${baseBranch} line.`,
+    })
   } else if (current && milestone !== current) {
-    problems.push(
-      `is milestoned ${milestone}, but ${baseBranch} is working towards ${current}. ` +
-        `Merging it now would ship it in ${current} instead. Move the issue, or hold the pull request.`
-    )
+    problems.push({
+      code: 'wrong-milestone',
+      current,
+      message:
+        `is milestoned ${milestone}, but ${baseBranch} is working towards ${current}. ` +
+        `Merging it now would put it in ${current} instead. Move the issue, or hold the change.`,
+    })
   }
   return problems
 }
@@ -98,11 +115,12 @@ const main = () => {
     baseBranch: input.baseBranch,
     dirs: publishedDirs(root),
   })
+  if (process.env.PLAN_PROBLEMS) fs.writeFileSync(process.env.PLAN_PROBLEMS, JSON.stringify(problems))
   if (problems.length === 0) {
-    console.log('Plan conformance: this pull request is in the plan, or does not need to be.')
+    console.log('Plan conformance: this change is in the plan, or does not need to be.')
     return
   }
-  for (const problem of problems) console.error(`plan: this pull request ${problem}`)
+  for (const problem of problems) console.error(`plan: this change ${problem.message}`)
   process.exitCode = 1
 }
 
