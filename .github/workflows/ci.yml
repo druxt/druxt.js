@@ -349,7 +349,7 @@ jobs:
       # Same docker-free backend as test-e2e: PHP built-in server + SQLite,
       # not DDEV. See examples/drupal/README.md and .devtools/.
       - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: '8.3'
           extensions: pdo_sqlite, sqlite3
@@ -436,7 +436,7 @@ jobs:
       # Docker-free: PHP built-in server + SQLite, not DDEV. See
       # examples/drupal/README.md and .devtools/ for the reasoning.
       - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: '8.3'
           extensions: pdo_sqlite, sqlite3
