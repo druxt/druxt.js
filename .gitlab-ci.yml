@@ -339,7 +339,16 @@ lint:plan:
       auth="PRIVATE-TOKEN: ${GITLAB_API_TOKEN}"
       iid="$CI_MERGE_REQUEST_IID"
       git fetch --quiet origin "$CI_MERGE_REQUEST_DIFF_BASE_SHA" 2>/dev/null || true
-      git diff --name-only "$CI_MERGE_REQUEST_DIFF_BASE_SHA"...HEAD | jq -Rsc 'split("\n")|map(select(length>0))' > files.json
+      # Piping the diff into jq hid the diff's own exit status, so an
+      # unreachable base turned into an empty file list and the gate passed on
+      # a change it had never read. Check the base first, then keep git's
+      # status on its own line.
+      if ! git cat-file -e "${CI_MERGE_REQUEST_DIFF_BASE_SHA}^{commit}" 2>/dev/null; then
+        echo "The merge request's diff base is not reachable, so the changed files cannot be read. Skipping rather than passing on an empty list."
+        exit 0
+      fi
+      git diff --name-only "$CI_MERGE_REQUEST_DIFF_BASE_SHA"...HEAD > files.txt
+      jq -Rsc 'split("\n")|map(select(length>0))' < files.txt > files.json
       curl -sfS --header "$auth" "$api/merge_requests/$iid" > mr.json
       curl -sfS --header "$auth" "$api/merge_requests/$iid/closes_issues" | jq -c '[.[].iid]' > issues.json
       # GitHub is the source of truth for anything merging into a release
@@ -351,11 +360,31 @@ lint:plan:
         echo "Could not read the milestones from GitHub, which is the source of truth here. Skipping rather than judging against the mirror."
         exit 0
       fi
+      # Every changed package manifest, before and after. A bumped range
+      # reaches consumers with no source file moving, so the file list alone
+      # cannot see it. The base is known reachable by now, checked above.
+      jq -r '.[] | select(test("^packages/[^/]+/package\\.json$"))' files.json > manifests.txt
+      {
+        printf '['
+        sep=''
+        while read -r file; do
+          before=$(git show "${CI_MERGE_REQUEST_DIFF_BASE_SHA}:${file}" 2>/dev/null || echo null)
+          after=$(cat "$file" 2>/dev/null || echo null)
+          printf '%s' "$sep"
+          jq -n --arg path "$file" --argjson before "$before" --argjson after "$after" \
+            '{path: $path, before: $before, after: $after}'
+          sep=','
+        done < manifests.txt
+        printf ']'
+      } > manifests.json
       jq -n --slurpfile files files.json --slurpfile mr mr.json \
             --slurpfile issues issues.json --slurpfile milestones milestones.json \
+            --slurpfile manifests manifests.json \
             --arg base "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" \
+            --arg head "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" \
         '{files: $files[0], milestone: ($mr[0].milestone.title // null), issues: $issues[0],
-          openMilestones: $milestones[0], baseBranch: $base}' > plan-input.json
+          openMilestones: $milestones[0], baseBranch: $base, headBranch: $head,
+          manifests: $manifests[0]}' > plan-input.json
     - |
       rc=0
       PLAN_INPUT=plan-input.json PLAN_PROBLEMS=plan-problems.json node scripts/release/plan.mjs || rc=$?
