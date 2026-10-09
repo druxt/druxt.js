@@ -124,9 +124,7 @@ export const checkPlan = ({ files, manifests, milestone, issues, openMilestones,
   if (!hasChangeset(files)) {
     problems.push({
       code: 'no-changeset',
-      message: source
-        ? `changes a published package${deps.length ? `, and what one installs for consumers in ${describeDepChanges(deps)},` : ''} but adds no changeset, so it would never reach a release.`
-        : `changes what a published package installs for consumers, in ${describeDepChanges(deps)}, but adds no changeset, so it would never reach a release.`,
+      message: 'changes a published package but adds no changeset, so it would never reach a release.',
     })
   }
   if (!issues || issues.length === 0) {
@@ -151,6 +149,17 @@ export const checkPlan = ({ files, manifests, milestone, issues, openMilestones,
       message:
         `is milestoned ${milestone}, but ${baseBranch} is working towards ${current}. ` +
         `Merging it now would put it in ${current} instead. Move the issue, or hold the change.`,
+    })
+  }
+  if (problems.length === 0) return []
+  // What tripped the gate, named once ahead of the refusals. A dependency
+  // range moves no source file, so without this a refusal over a missing
+  // issue reads as though it arrived from nowhere. It is deliberately not a
+  // problem of its own: a dependency change carrying all three stays silent.
+  if (deps.length) {
+    problems.unshift({
+      code: 'shipped-deps',
+      message: `alters what a published package installs for consumers: ${describeDepChanges(deps)}.`,
     })
   }
   return problems

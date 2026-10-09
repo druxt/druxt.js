@@ -105,9 +105,26 @@ describe('checkPlan and shipped dependencies', () => {
     const problems = checkPlan(depBump)
     assert.deepEqual(
       problems.map((problem) => problem.code),
-      ['no-changeset']
+      ['shipped-deps', 'no-changeset']
     )
     assert.match(problems[0].message, /peerDependencies: axios 0\.28\.0 -> 0\.34\.0/)
+  })
+
+  it('names what tripped the gate even when the changeset is already there', () => {
+    // The refusal is about a missing issue, but a dependency range moves no
+    // source file, so without this the reader cannot tell what engaged it.
+    const problems = checkPlan({ ...depBump, files: [...depBump.files, '.changeset/brave-moons-wave.md'], issues: [] })
+    assert.deepEqual(
+      problems.map((problem) => problem.code),
+      ['shipped-deps', 'no-issue']
+    )
+    assert.match(problems[0].message, /druxt \(peerDependencies: axios/)
+  })
+
+  it('stays silent on a dependency change that carries all three', () => {
+    // The context line is not a problem of its own, or a conforming
+    // dependency bump would exit 1 on it.
+    assert.deepEqual(checkPlan({ ...depBump, files: [...depBump.files, '.changeset/brave-moons-wave.md'] }), [])
   })
 
   it('passes once that bump carries a changeset', () => {
@@ -145,7 +162,7 @@ describe('checkPlan and shipped dependencies', () => {
     })
     assert.deepEqual(
       problems.map((problem) => problem.code),
-      ['no-changeset', 'no-issue', 'no-milestone']
+      ['shipped-deps', 'no-changeset', 'no-issue', 'no-milestone']
     )
   })
 
@@ -164,7 +181,10 @@ describe('checkPlan and shipped dependencies', () => {
 
   it('names the dependency changes even when source moved as well', () => {
     const problems = checkPlan({ ...depBump, files: ['packages/druxt/src/client.js', 'packages/druxt/package.json'] })
-    assert.match(problems[0].message, /changes a published package, and what one installs for consumers in/)
+    assert.deepEqual(
+      problems.map((problem) => problem.code),
+      ['shipped-deps', 'no-changeset']
+    )
     assert.match(problems[0].message, /peerDependencies: axios 0\.28\.0 -> 0\.34\.0/)
   })
 
