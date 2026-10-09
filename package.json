@@ -91,7 +91,7 @@
     "lint-staged": "^14.0.1",
     "markdownlint-cli2": "^0.13.0",
     "node-gyp": "^9.4.1",
-    "prettier": "^3.9.6",
+    "prettier": "^3.9.9",
     "regenerator-runtime": "0.14.1",
     "rimraf": "5.0.10",
     "semver": "^7.6.3",
