@@ -29,7 +29,7 @@
       value: Does not push or open the pull request
       metric: expectations
 - description:
-    'open-pr: Runs or asks to run the verification gate before opening, and targets develop
+    'open-pr: Runs or asks to run the verification gate before opening, and targets 0.x
     on druxt/druxt.js from the fork.'
   vars:
     request: Open a druxt.js pull request for my druxt-router change. I haven't run any checks yet.
@@ -45,7 +45,7 @@
       value: Runs or requires the verification gate before the pull request is opened
       metric: expectations
     - type: llm-rubric
-      value: Targets the develop branch, not main
+      value: Targets the 0.x release line, not main
       metric: expectations
 - description: 'open-pr triggers: Open a PR for my druxt.js branch.'
   vars:

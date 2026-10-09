@@ -45,7 +45,7 @@ Follow the order in [superpowers' writing-skills](https://github.com/obra/superp
     - type: skill-used
       value: open-pr
     - type: llm-rubric
-      value: Targets the develop branch, not main
+      value: Targets the 0.x release line, not main
 ```
 
 - Add at least three prompts that should load the skill (`skill-used`) and three that should not (`not-skill-used`), including prompts that belong to a nearby skill.
