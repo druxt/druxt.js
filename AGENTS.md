@@ -10,8 +10,9 @@ Druxt welcomes AI-assisted contributions. They meet the same standards as any
 other change: linted, tested, documented, reviewed, and merged through a pull
 request. CI is the gate, and a person is accountable for every change.
 
-- Work on a fork. Branch from `develop`, push to your fork, and open a pull
-  request against `develop` on [druxt/druxt.js](https://github.com/druxt/druxt.js). The `start-work` and `open-pr`
+- Work on a fork. Branch from the release line you are targeting, 0.x today,
+  push to your fork, and open a pull request against that line on
+  [druxt/druxt.js](https://github.com/druxt/druxt.js). The `start-work` and `open-pr`
   skills walk through it.
 - Write to the [druxt](https://github.com/druxt) GitHub organization (push,
   open pull requests or issues, comment) only when the person you work for asks for that action. Maintainers review,
@@ -176,7 +177,7 @@ it.** The path is the same in every tool:
 | [`start-work`](.agents/skills/start-work/SKILL.md)         | Go from an issue to a `feature/` branch, a spec and a failing test    |
 | [`add-changeset`](.agents/skills/add-changeset/SKILL.md)   | Version a published package change and write its changelog entry      |
 | [`verify-change`](.agents/skills/verify-change/SKILL.md)   | Run the gate and the checks for what changed, and report the results  |
-| [`open-pr`](.agents/skills/open-pr/SKILL.md)               | Open a pull request from a fork against `develop`                     |
+| [`open-pr`](.agents/skills/open-pr/SKILL.md)               | Open a pull request from a fork against the release line              |
 | [`address-review`](.agents/skills/address-review/SKILL.md) | Fix failing CI and answer every review comment                        |
 | [`triage-issue`](.agents/skills/triage-issue/SKILL.md)     | Classify, deduplicate and reproduce an issue, and write up the result |
 | [`write-skill`](.agents/skills/write-skill/SKILL.md)       | Add or change a skill, with its evals                                 |
@@ -262,7 +263,7 @@ stays as this repo's convention.) This is unrelated to commit-message
 
 - **GitHub Actions** (`.github/workflows/ci.yml`): canonical CI, on Node
   16.20.1. Jobs: `build`, `lint`, `test-unit` (coverage uploaded to Codecov),
-  `test-e2e` (Drupal backend + Cypress). Runs on push to `develop`/`main`, and on every pull request whatever its base branch.
+  `test-e2e` (Drupal backend + Cypress). Runs on push to a release line, and on every pull request whatever its base branch.
   Replaces CircleCI, which is no longer used.
 - **GitLab CI** (`.gitlab-ci.yml`): additive pipeline (lint + test +
   `secret-detection` + `preview` stages).
@@ -270,13 +271,14 @@ stays as this repo's convention.) This is unrelated to commit-message
   a third-party action) and `knip`, run in both CI systems. Production-only
   audit and knip block. The full audit is reporting-only. See
   "Dependency audit: production vs. full" above.
-- **CodeQL** (`.github/workflows/codeql-analysis.yml`): scans `develop` weekly.
+- **CodeQL** (`.github/workflows/codeql-analysis.yml`): scans each release line on push and pull request, and weekly on a schedule.
 - **Performance audit**: advisory on both hosts, compared against
   `perf/baseline.github.json` or `perf/baseline.gitlab.json`. On GitHub the `perf-audit` label on a
-  pull request starts it. A push to `develop` also runs it with the baseline
+  pull request starts it. A push to a release line also runs it with the baseline
   refresh switched on, and opens a pull/merge request when the numbers moved,
   so a later pull request's audit is never diffed against a fix that already
-  merged. Counts (backend requests, API calls after load, discarded nodes,
+  merged. Both hosts skip a push whose message starts `chore(perf-audit)`,
+  which is the refresh's own commit, so it cannot set itself off again. Counts (backend requests, API calls after load, discarded nodes,
   payload) compare across machines. Lighthouse scores do not. See
   `scripts/perf-audit/README.md`.
 
