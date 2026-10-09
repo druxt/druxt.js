@@ -226,21 +226,30 @@ follow the patterns in the existing packages instead.
 Drupal-side counterparts (`druxt`, `decoupled_router`, `jsonapi_menu_items`,
 `jsonapi_views`, …) are separate drupal.org projects, not part of this repo.
 
-## Branching (GitFlow)
+## Branching
 
-This repo uses GitFlow:
+Each release line has its own branch, named for the minor it works towards:
 
-- **`develop`** is the integration branch. Feature branches and dependency PRs
+- **0.x** is the current line. Feature branches and dependency pull requests
   start here and merge back here.
-- **`main`** receives release merges only (`release/*` → `main`, then merge-back
-  to `develop`).
-- Renovate (`baseBranches: ["develop"]`) and changesets (`baseBranch: develop`)
-  target `develop`. CodeQL scans `develop`.
+- 1.0.x and 2.0.x take the same shape once cut. A release is a tag on its
+  line, not a branch, so there is no integration branch and nothing merges
+  back.
+- Renovate matches every release line at once
+  (`baseBranches: ["/^\\d+(\\.\\d+)?\\.x$/"]`). Changesets cannot. Its
+  `baseBranch` in `.changeset/config.json` reaches `git merge-base`, which
+  wants one ref, so a glob is rejected and both \*.x and 0.\* fail. Each
+  release line sets its own, and the value here is the remote-tracking ref
+  origin/0.x rather than a bare 0.x, because branching straight off the remote
+  ref doesn't create a local branch and only the remote-tracking ref still
+  resolves. A line still naming another branch fails on `changeset status` and
+  on the interactive `yarn changeset` alike, with "Failed to find where HEAD
+  diverged".
 
-When starting work, branch from `develop`:
+When starting work, branch from the line you are targeting:
 
 ```bash
-git checkout develop && git pull && git checkout -b feature/<issue>-<short-desc>
+git checkout 0.x && git pull && git checkout -b feature/<issue>-<short-desc>
 ```
 
 Branch prefix is `feature/`, not `feat/`. (The docs site's Lagoon project
