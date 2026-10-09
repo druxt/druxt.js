@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { altersPublished, checkPlan, currentMilestone, hasChangeset } from '../plan.mjs'
+import { altersPublished, checkPlan, currentMilestone, hasChangeset, shippedDepChanges } from '../plan.mjs'
 import { helpFor } from '../plan-help.mjs'
 
 const dirs = ['blocks', 'druxt', 'menu', 'router']
@@ -30,6 +30,111 @@ describe('altersPublished', () => {
   it('is false for tests, CI and documentation', () => {
     const files = ['packages/menu/test/index.test.js', '.github/workflows/ci.yml', 'RELEASING.md']
     assert.equal(altersPublished(files, dirs), false)
+  })
+})
+
+describe('shippedDepChanges', () => {
+  const one = (path, before, after) => [{ path, before, after }]
+
+  it('reports a bumped dependency of a published package', () => {
+    const changes = shippedDepChanges(
+      one('packages/menu/package.json', { dependencies: { axios: '0.33.0' } }, { dependencies: { axios: '0.34.0' } }),
+      dirs
+    )
+    assert.deepEqual(changes, [{ pkg: 'menu', section: 'dependencies', name: 'axios', from: '0.33.0', to: '0.34.0' }])
+  })
+
+  it('reports a moved peer range, the axios pin that drifted twice', () => {
+    const changes = shippedDepChanges(
+      one(
+        'packages/druxt/package.json',
+        { peerDependencies: { axios: '0.28.0', consola: '*' } },
+        { peerDependencies: { axios: '0.34.0', consola: '*' } }
+      ),
+      dirs
+    )
+    assert.equal(changes.length, 1)
+    assert.equal(changes[0].section, 'peerDependencies')
+  })
+
+  it('ignores devDependencies, which never reach an install', () => {
+    const changes = shippedDepChanges(
+      one('packages/menu/package.json', { devDependencies: { lodash: '^4.17.21' } }, { devDependencies: { lodash: '^4.18.1' } }),
+      dirs
+    )
+    assert.deepEqual(changes, [])
+  })
+
+  it('ignores a private package and the root manifest', () => {
+    const priv = one('packages/docgen/package.json', { dependencies: { yargs: '1' } }, { dependencies: { yargs: '2' } })
+    assert.deepEqual(shippedDepChanges(priv, dirs), [])
+    const root = one('package.json', { dependencies: { semver: '1' } }, { dependencies: { semver: '2' } })
+    assert.deepEqual(shippedDepChanges(root, dirs), [])
+  })
+
+  it('reports an added and a removed dependency', () => {
+    const added = shippedDepChanges(one('packages/menu/package.json', {}, { dependencies: { axios: '0.34.0' } }), dirs)
+    assert.deepEqual(added, [{ pkg: 'menu', section: 'dependencies', name: 'axios', from: null, to: '0.34.0' }])
+    const gone = shippedDepChanges(one('packages/menu/package.json', { dependencies: { axios: '0.34.0' } }, {}), dirs)
+    assert.deepEqual(gone, [{ pkg: 'menu', section: 'dependencies', name: 'axios', from: '0.34.0', to: null }])
+  })
+
+  it('treats a missing side as an empty contract rather than throwing', () => {
+    assert.deepEqual(shippedDepChanges(one('packages/menu/package.json', null, null), dirs), [])
+  })
+})
+
+describe('checkPlan and shipped dependencies', () => {
+  const depBump = {
+    files: ['packages/druxt/package.json', 'yarn.lock'],
+    manifests: [
+      {
+        path: 'packages/druxt/package.json',
+        before: { peerDependencies: { axios: '0.28.0' } },
+        after: { peerDependencies: { axios: '0.34.0' } },
+      },
+    ],
+    milestone: '0.25.0',
+    issues: [838],
+    openMilestones: open,
+    baseBranch: '0.x',
+    dirs,
+  }
+
+  it('wants a changeset for a dependency bump that moves no source file', () => {
+    const problems = checkPlan(depBump)
+    assert.deepEqual(
+      problems.map((problem) => problem.code),
+      ['no-changeset']
+    )
+    assert.match(problems[0].message, /peerDependencies: axios 0\.28\.0 -> 0\.34\.0/)
+  })
+
+  it('passes once that bump carries a changeset', () => {
+    assert.deepEqual(checkPlan({ ...depBump, files: [...depBump.files, '.changeset/brave-moons-wave.md'] }), [])
+  })
+
+  it("leaves the release's own version pull request alone, whose internal ranges all move", () => {
+    const manifests = [
+      {
+        path: 'packages/blocks/package.json',
+        before: { dependencies: { druxt: '^0.24.0' } },
+        after: { dependencies: { druxt: '^0.25.0' } },
+      },
+    ]
+    const problems = checkPlan({
+      ...depBump,
+      files: ['packages/blocks/package.json', 'packages/blocks/CHANGELOG.md'],
+      manifests,
+      milestone: null,
+      issues: [],
+      headBranch: 'changeset-release/0.x',
+    })
+    assert.deepEqual(problems, [])
+  })
+
+  it('is silent when no manifest is passed at all', () => {
+    assert.deepEqual(checkPlan({ ...depBump, files: ['RELEASING.md'], manifests: undefined }), [])
   })
 })
 

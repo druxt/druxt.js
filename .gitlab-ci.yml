@@ -351,11 +351,36 @@ lint:plan:
         echo "Could not read the milestones from GitHub, which is the source of truth here. Skipping rather than judging against the mirror."
         exit 0
       fi
+      # Every changed package manifest, before and after. A bumped range
+      # reaches consumers with no source file moving, so the file list alone
+      # cannot see it. Without the base every dependency reads as newly
+      # added, so refuse to judge rather than report false positives.
+      jq -r '.[] | select(test("^packages/[^/]+/package\\.json$"))' files.json > manifests.txt
+      if ! git cat-file -e "${CI_MERGE_REQUEST_DIFF_BASE_SHA}^{commit}" 2>/dev/null; then
+        echo "The diff base is not reachable, so the shipped-dependency rule is skipped."
+        : > manifests.txt
+      fi
+      {
+        printf '['
+        sep=''
+        while read -r file; do
+          before=$(git show "${CI_MERGE_REQUEST_DIFF_BASE_SHA}:${file}" 2>/dev/null || echo null)
+          after=$(cat "$file" 2>/dev/null || echo null)
+          printf '%s' "$sep"
+          jq -n --arg path "$file" --argjson before "$before" --argjson after "$after" \
+            '{path: $path, before: $before, after: $after}'
+          sep=','
+        done < manifests.txt
+        printf ']'
+      } > manifests.json
       jq -n --slurpfile files files.json --slurpfile mr mr.json \
             --slurpfile issues issues.json --slurpfile milestones milestones.json \
+            --slurpfile manifests manifests.json \
             --arg base "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" \
+            --arg head "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" \
         '{files: $files[0], milestone: ($mr[0].milestone.title // null), issues: $issues[0],
-          openMilestones: $milestones[0], baseBranch: $base}' > plan-input.json
+          openMilestones: $milestones[0], baseBranch: $base, headBranch: $head,
+          manifests: $manifests[0]}' > plan-input.json
     - |
       rc=0
       PLAN_INPUT=plan-input.json PLAN_PROBLEMS=plan-problems.json node scripts/release/plan.mjs || rc=$?

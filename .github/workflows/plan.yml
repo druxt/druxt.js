@@ -30,9 +30,12 @@ jobs:
     if: github.repository == 'druxt/druxt.js'
     runs-on: ubuntu-latest
     steps:
+      # The full history: the shipped-dependency rule compares each changed
+      # manifest against the base branch, so the base has to be reachable.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
@@ -45,6 +48,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
           BASE: ${{ github.event.pull_request.base.ref }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
           gh pr view "$PR" --json files,milestone \
             --jq '{files: [.files[].path], milestone: (.milestone.title // null)}' > pr.json
@@ -55,10 +59,35 @@ jobs:
             --jq '[.data.repository.pullRequest.closingIssuesReferences.nodes[].number]' > issues.json
           gh api repos/"$GITHUB_REPOSITORY"/milestones --paginate -X GET -f state=open -f per_page=100 \
             --jq '[.[].title]' > milestones.json
+          # Every changed package manifest, before and after. A bumped range
+          # reaches consumers with no source file moving, so the file list
+          # alone cannot see it.
+          jq -r '.files[] | select(test("^packages/[^/]+/package\\.json$"))' pr.json > manifests.txt
+          # Without the base, every dependency reads as newly added, so refuse
+          # to judge rather than report a manifest's worth of false positives.
+          if ! git rev-parse --verify --quiet "origin/$BASE^{commit}" >/dev/null; then
+            echo "The base branch origin/$BASE is not reachable, so the shipped-dependency rule is skipped."
+            : > manifests.txt
+          fi
+          {
+            printf '['
+            sep=''
+            while read -r file; do
+              before=$(git show "origin/$BASE:$file" 2>/dev/null || echo null)
+              after=$(cat "$file" 2>/dev/null || echo null)
+              printf '%s' "$sep"
+              jq -n --arg path "$file" --argjson before "$before" --argjson after "$after" \
+                '{path: $path, before: $before, after: $after}'
+              sep=','
+            done < manifests.txt
+            printf ']'
+          } > manifests.json
           jq -n --slurpfile pr pr.json --slurpfile issues issues.json \
-                --slurpfile milestones milestones.json --arg base "$BASE" \
+                --slurpfile milestones milestones.json --slurpfile manifests manifests.json \
+                --arg base "$BASE" --arg head "$HEAD_REF" \
             '{files: $pr[0].files, milestone: $pr[0].milestone, issues: $issues[0],
-              openMilestones: $milestones[0], baseBranch: $base}' > plan-input.json
+              openMilestones: $milestones[0], baseBranch: $base, headBranch: $head,
+              manifests: $manifests[0]}' > plan-input.json
 
       - name: Check it against the plan
         id: check
@@ -82,8 +111,9 @@ jobs:
           {
             echo "### Not in the plan"
             echo
-            echo 'This pull request changes a published package, so it needs a changeset, a'
-            echo 'linked issue and the milestone its target line is working towards.'
+            echo 'This pull request changes a published package, or what one installs for'
+            echo 'its consumers, so it needs a changeset, a linked issue and the milestone'
+            echo 'its target line is working towards.'
             echo
             PLAN_PROBLEMS=plan-problems.json \
             PLAN_HOST=github \

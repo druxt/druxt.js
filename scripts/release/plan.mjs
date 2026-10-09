@@ -33,6 +33,52 @@ export const publishedDirs = (root) =>
 export const altersPublished = (files, dirs) =>
   files.some((file) => dirs.some((dir) => file.startsWith(`packages/${dir}/src/`)))
 
+/** Dependency sections whose contents reach a consumer's install. */
+const shippedSections = ['dependencies', 'peerDependencies', 'optionalDependencies']
+
+/**
+ * Shipped dependency changes in published packages, as
+ * `[{ pkg, section, name, from, to }]`.
+ *
+ * A bumped range reaches consumers without a single source file moving, so a
+ * path check cannot see it. devDependencies are deliberately absent: they never
+ * reach an install, which is why a bumped linter is not a release.
+ *
+ * `manifests` carries each changed package.json as `{ path, before, after }`,
+ * either side being null where the file did not exist.
+ */
+export const shippedDepChanges = (manifests, dirs) => {
+  const changes = []
+  for (const { path: file, before, after } of manifests) {
+    const dir = /^packages\/([^/]+)\/package\.json$/.exec(file)?.[1]
+    if (dir === undefined || !dirs.includes(dir)) continue
+    for (const section of shippedSections) {
+      const from = before?.[section] ?? {}
+      const to = after?.[section] ?? {}
+      for (const name of new Set([...Object.keys(from), ...Object.keys(to)])) {
+        if (from[name] === to[name]) continue
+        changes.push({ pkg: dir, section, name, from: from[name] ?? null, to: to[name] ?? null })
+      }
+    }
+  }
+  return changes
+}
+
+/** `druxt (peerDependencies: axios 0.28.0 -> 0.34.0)`, for a refusal worth acting on. */
+const describeDepChanges = (changes) =>
+  changes
+    .map(({ pkg, section, name, from, to }) => `${pkg} (${section}: ${name} ${from ?? 'absent'} -> ${to ?? 'absent'})`)
+    .join(', ')
+
+/**
+ * Whether this is the release's own version pull request.
+ *
+ * Changesets rewrites every internal dependency range when it versions
+ * packages, so the release would otherwise fail the shipped-dependency rule,
+ * and a gate that blocks releases is worse than no gate at all.
+ */
+const isVersionPullRequest = (headBranch) => (headBranch ?? '').startsWith('changeset-release/')
+
 /** A changeset, ignoring the directory's own README. */
 export const hasChangeset = (files) =>
   files.some((file) => file.startsWith('.changeset/') && file.endsWith('.md') && !file.endsWith('/README.md'))
@@ -62,14 +108,19 @@ export const currentMilestone = (openTitles, branch) => {
  * The code lets each host offer the right help, because a pre-filled link is
  * the difference between a refusal someone acts on and one they argue with.
  */
-export const checkPlan = ({ files, milestone, issues, openMilestones, baseBranch, dirs }) => {
-  if (!altersPublished(files, dirs)) return []
+export const checkPlan = ({ files, manifests, milestone, issues, openMilestones, baseBranch, headBranch, dirs }) => {
+  if (isVersionPullRequest(headBranch)) return []
+  const deps = shippedDepChanges(manifests ?? [], dirs)
+  const source = altersPublished(files, dirs)
+  if (!source && deps.length === 0) return []
   const problems = []
   const current = currentMilestone(openMilestones, baseBranch)
   if (!hasChangeset(files)) {
     problems.push({
       code: 'no-changeset',
-      message: 'changes a published package but adds no changeset, so it would never reach a release.',
+      message: source
+        ? 'changes a published package but adds no changeset, so it would never reach a release.'
+        : `changes what a published package installs for consumers, in ${describeDepChanges(deps)}, but adds no changeset, so it would never reach a release.`,
     })
   }
   if (!issues || issues.length === 0) {
@@ -109,10 +160,12 @@ const main = () => {
   const input = JSON.parse(fs.readFileSync(read('PLAN_INPUT'), 'utf8'))
   const problems = checkPlan({
     files: input.files,
+    manifests: input.manifests,
     milestone: input.milestone,
     issues: input.issues,
     openMilestones: input.openMilestones,
     baseBranch: input.baseBranch,
+    headBranch: input.headBranch,
     dirs: publishedDirs(root),
   })
   if (process.env.PLAN_PROBLEMS) fs.writeFileSync(process.env.PLAN_PROBLEMS, JSON.stringify(problems))
