@@ -286,6 +286,14 @@ jobs:
         env:
           NODE_OPTIONS: --max_old_space_size=8192
 
+      # Here rather than only in GitLab's test:release, because Renovate
+      # raises pull requests on GitHub and no merge request on GitLab, so a
+      # dependency that breaks the release toolchain reached neither gate.
+      # This job's Node is the one the release runs on, which matters: Node 22
+      # and later load an ES module from `require` without complaint.
+      - name: Test the release scripts
+        run: yarn release:check:test
+
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:

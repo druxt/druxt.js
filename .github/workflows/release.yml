@@ -37,6 +37,12 @@ on:
       - .changeset/config.json
       - scripts/release/**
       - packages/*/package.json
+      # The root manifest and the lockfile: `resolutions` and the changesets
+      # packages themselves live here, so a change to either can stop the
+      # release starting. #922 moved the human-id resolution and matched none
+      # of the paths above, so this job never ran on it.
+      - package.json
+      - yarn.lock
   workflow_dispatch:
 
 permissions:

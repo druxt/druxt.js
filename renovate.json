@@ -41,6 +41,12 @@
       "enabled": false
     },
     {
+      "description": "Freeze human-id. It is a resolutions pin rather than a dependency this repository uses: `@changesets/write` requires it, and human-id 4.2.0 added `type: module` with no exports map, so that require throws ERR_REQUIRE_ESM and `changeset version` dies before it starts. #850 pinned 4.1.3 to keep changesets running on Node 16; #922 bumped it inside `@changesets/write`'s own `^4.1.1` range and broke the snapshot publish.",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["human-id"],
+      "enabled": false
+    },
+    {
       "description": "Disable all major-version bumps — majors require manual review, not automated merging.",
       "matchManagers": ["npm", "github-actions"],
       "matchUpdateTypes": ["major"],
