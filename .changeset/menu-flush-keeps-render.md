@@ -2,4 +2,4 @@
 'druxt-menu': patch
 ---
 
-A menu still renders when its cache is cleared while it loads. The store drops a menu fetched before a flush, so the component rendered an empty menu until the next fetch. The `druxtMenu/get` action now fetches the menu again when the store is flushed during its request, and returns the menu items it stored.
+A menu no longer renders empty when the cache is cleared while it loads. `druxtMenu/get` fetches it again, and returns the menu items it stored.

@@ -1,5 +1,5 @@
 ---
-"druxt-entity": minor
+'druxt-entity': minor
 ---
 
-chore(#517): removed deprecated entity component fields by default
+The deprecated `DruxtField` components are no longer registered by default. Set `druxt.entity.components.fields: true` to keep them (#517).
