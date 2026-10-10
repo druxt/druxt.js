@@ -4,7 +4,7 @@ on:
   push:
     # A release line is <major>.x or <major>.<minor>.x, so '*.x' matches
     # both shapes: * matches dots.
-    branches: [main, '*.x']
+    branches: ['*.x']
   pull_request:
     # No branch filter on purpose. The filter matches the pull request's base,
     # so a stacked pull request based on anything unlisted ran no jobs at all,
@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   # Classifies what a pull request touches, so the slow jobs and steps run
-  # only when their subject changed. Push events (a release line or main,
+  # only when their subject changed. Push events (a release line, the
   # production path) report everything as changed, so full coverage always
   # holds where it matters. If the file listing fails, everything defaults
   # to changed: fail open, never silently skip.
