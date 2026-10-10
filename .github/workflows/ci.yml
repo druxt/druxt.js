@@ -3,7 +3,8 @@ name: CI
 on:
   push:
     # A release line is <major>.x or <major>.<minor>.x, so '*.x' matches
-    # both shapes: * matches dots.
+    # both shapes: * matches dots. Releases are tags, so there is no
+    # release branch to list here.
     branches: ['*.x']
   pull_request:
     # No branch filter on purpose. The filter matches the pull request's base,

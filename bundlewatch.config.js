@@ -10,6 +10,6 @@ module.exports = {
     // Derived, so a new release line needs no edit here. trackBranches
     // takes no pattern, so the current branch adds itself.
     repoBranchBase: base || current || '0.x',
-    trackBranches: [...new Set(['main', current].filter(Boolean))],
+    trackBranches: [...new Set([current].filter(Boolean))],
   }
 }
