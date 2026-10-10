@@ -119,13 +119,12 @@ describe('DruxtStore', () => {
     store.registerModule('auth', { namespaced: true, state: () => ({ loggedIn: false }), mutations: { SET: (state, value) => { state.loggedIn = value } } })
 
     await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    // The next read follows the login at once, with no tick in between.
     store.commit('auth/SET', true)
-    await localVue.nextTick()
     await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
     expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
 
     store.commit('auth/SET', false)
-    await localVue.nextTick()
     await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
     expect(store.$druxtMenu.get).toHaveBeenCalledTimes(3)
   })

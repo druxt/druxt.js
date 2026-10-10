@@ -204,11 +204,12 @@ const DruxtMenuStore = ({ store }) => {
   })
 
   // A browser tab keeps its store across a login or logout, so loaded menus would show the previous user's links.
+  // Synchronous, so a read straight after the login never sees the previous user's menu.
   if (!runtime.isServer()) {
     store.watch((state) => (state.auth || {}).loggedIn, (loggedIn, before) => {
       // The auth module registering is not a login.
       if (typeof before === 'boolean') store.commit(`${namespace}/flushEntities`, {})
-    })
+    }, { sync: true })
   }
 }
 
