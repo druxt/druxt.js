@@ -51,7 +51,7 @@
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
-    "axios": "0.34.0",
+    "axios": "1.20.0",
     "vue-router": "^3.6.5"
   },
   "peerDependencies": {
