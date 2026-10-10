@@ -9171,7 +9171,7 @@ __metadata:
     querystring: ^0.2.1
     scule: ^0.3.2
   peerDependencies:
-    axios: 0.28.0
+    axios: ">=0.28.0"
     consola: "*"
     vue: ^2.7.14
     vuex: ^3.6.2

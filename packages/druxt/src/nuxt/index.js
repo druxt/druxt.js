@@ -128,7 +128,7 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     this.addModule('@nuxtjs/axios')
   }
 
-  // Transpile axios: a hoisted axios >= 1 is ESM-first and breaks the Nuxt 2 SSR require chain (#658).
+  // Transpile axios: 1.0 to 1.13 publish an ESM main that vue-server-renderer require()s, breaking SSR (#658).
   this.options.build = this.options.build || {}
   this.options.build.transpile = this.options.build.transpile || []
   if (!this.options.build.transpile.includes('axios')) {
