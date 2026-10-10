@@ -1,8 +1,5 @@
 ---
 'druxt-schema': minor
-'druxt': patch
 ---
 
-Schemas can follow display changes in Drupal without a rebuild. With `druxt.schema.refresh`, the Nuxt server regenerates a schema the first time a page needs it and holds it until the next cache clear. The browser fetches it from the server at `/_druxt/schema/<id>`, and the schema from the build is used whenever regeneration fails. Under `nuxt dev` each request regenerates, as there is no cache to clear. A static site keeps the schemas from its build, unless its own Node server serves the route with `createSchemaRefresh`.
-
-`druxt/clearCache` now also flushes the stored schemas.
+Schemas can follow display changes in Drupal without a rebuild. Set `druxt.schema.refresh`, and the Nuxt server regenerates them after each cache clear. The [druxt-schema README](https://github.com/druxt/druxt.js/tree/HEAD/packages/schema#refresh-schemas-without-a-rebuild) covers it, including `createSchemaRefresh` for a static site's own Node server.
