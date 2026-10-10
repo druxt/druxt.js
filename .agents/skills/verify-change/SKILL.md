@@ -40,11 +40,11 @@ The end-to-end tests run in CI against a Drupal backend. To run them locally, st
 - Leave uncommitted work you didn't make in place. Ask before running `git restore`, `git checkout -- .` or `git clean` on it, and wait for the answer.
 - Never skip the git hooks, delete or skip a test, or add an `eslint-disable` comment to get a check to pass.
 - If a check is wrong, fix the check in a separate commit and say why in the pull request.
-- If it also fails on a clean `develop`, it is not your change's failure. Say so, with the output from both runs.
+- If it also fails on a clean release line, it is not your change's failure. Say so, with the output from both runs.
 
 ## Commits
 
-The `pre-commit`, `commit-msg` and `pre-push` hooks run a subset of these checks. Let them run. Commit under the git identity of the person you work for. Leave AI attribution out of the message, such as a `Co-Authored-By: Claude` trailer or a session link. `yarn lint:commit --from upstream/develop --to HEAD` checks the messages on the branch.
+The `pre-commit`, `commit-msg` and `pre-push` hooks run a subset of these checks. Let them run. Commit under the git identity of the person you work for. Leave AI attribution out of the message, such as a `Co-Authored-By: Claude` trailer or a session link. `yarn lint:commit --from upstream/0.x --to HEAD` checks the messages on the branch.
 
 ## Report
 

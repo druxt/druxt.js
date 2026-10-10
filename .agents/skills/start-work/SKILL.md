@@ -1,6 +1,6 @@
 ---
 name: start-work
-description: Sets up a druxt.js change before the first edit, from the issue to a feature branch off develop, a short spec and a failing test. Use when starting work on an issue, bug or feature in druxt.js, or when asked to change package code and no branch or issue exists yet.
+description: Sets up a druxt.js change before the first edit, from the issue to a feature branch off the release line, a short spec and a failing test. Use when starting work on an issue, bug or feature in druxt.js, or when asked to change package code and no branch or issue exists yet.
 ---
 
 # Start work
@@ -11,20 +11,22 @@ Every change to druxt.js goes through the same steps, whoever writes it. Do them
 
 Search the open and closed issues on [druxt/druxt.js](https://github.com/druxt/druxt.js/issues) for the problem first. If one exists, work from it. If none does, draft one from the matching template in `.github/ISSUE_TEMPLATE/` and ask the person you work for to open it, or open it yourself when they have asked you to.
 
-## 2. Branch from develop
+## 2. Branch from the release line
 
-`develop` is the integration branch. `main` takes release merges only.
+Each release line has its own branch, named for the minor it works towards, and
+0.x is the current one. A release is a tag on its line, so there is no
+integration branch and nothing merges back.
 
 ```bash
 git remote -v          # upstream = druxt/druxt.js, origin = your fork
 git remote add upstream https://github.com/druxt/druxt.js.git   # if upstream is missing
-git fetch upstream develop
-git checkout -b feature/<issue>-<short-description> upstream/develop
+git fetch upstream 0.x
+git checkout -b feature/<issue>-<short-description> upstream/0.x
 ```
 
 Fill in the issue number and a short description, and say the full branch name, such as `feature/412-empty-menu`, before you create it. On a clone of druxt/druxt.js itself there is no fork, so use `origin` in place of `upstream`. The branch prefix is `feature/` for fixes and features alike, never `feat/`.
 
-Your work goes on this branch, even when your environment names another branch to push to, such as a hosted session's default branch. Keep commits off `develop` and off any shared base branch.
+Your work goes on this branch, even when your environment names another branch to push to, such as a hosted session's default branch. Keep commits off the release line and off any shared base branch.
 
 Check that `git config user.name` and `git config user.email` are those of the person you work for. Commits are made under their identity, never an agent's, and the hooks refuse an agent's.
 

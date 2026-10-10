@@ -19,7 +19,7 @@ gh api repos/druxt/druxt.js/pulls/<number>/comments --paginate
 
 ## 2. Fix CI first
 
-For each failing check, reproduce it locally with the same command CI runs (the `verify-change` skill lists them), find the cause and fix it. When a test fails because of a behaviour change in a commit you didn't write, read the whole commit message and ask its author whether the change is meant to happen before you touch the test. Until they answer, treat the code as the thing to fix. Re-running a job until it passes is not a fix. If the check also fails on `develop`, say so on the pull request with the evidence and leave it to the maintainers.
+For each failing check, reproduce it locally with the same command CI runs (the `verify-change` skill lists them), find the cause and fix it. When a test fails because of a behaviour change in a commit you didn't write, read the whole commit message and ask its author whether the change is meant to happen before you touch the test. Until they answer, treat the code as the thing to fix. Re-running a job until it passes is not a fix. If the check also fails on the release line, say so on the pull request with the evidence and leave it to the maintainers.
 
 ## 3. Answer every comment
 

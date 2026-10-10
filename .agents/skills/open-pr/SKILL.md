@@ -1,23 +1,23 @@
 ---
 name: open-pr
-description: Prepares and opens a druxt.js pull request from a contributor's fork against develop, with a Conventional Commits title and the repository's template filled in. Use when a druxt.js change is ready for review, or when asked to open a pull request or to write its title or description.
+description: Prepares and opens a druxt.js pull request from a contributor's fork against the release line, with a Conventional Commits title and the repository's template filled in. Use when a druxt.js change is ready for review, or when asked to open a pull request or to write its title or description.
 ---
 
 # Open a pull request
 
-Pull requests go from a branch on your fork to `develop` on [druxt/druxt.js](https://github.com/druxt/druxt.js). Push and open one only when the person you work for asks you to.
+Pull requests go from a branch on your fork to the release line you are targeting, 0.x today, on [druxt/druxt.js](https://github.com/druxt/druxt.js). Push and open one only when the person you work for asks you to.
 
 ## Before opening
 
 1. The `verify-change` skill has passed in this session, and you have its output.
 2. A changeset is committed when the `add-changeset` skill says the change needs one. A fix for a bug that no release has needs none, even in a published package.
 3. The commits follow Conventional Commits, scoped by the issue number when there is one and by the package name otherwise. The commit-msg hook enforces the format, so let it run.
-4. The branch is up to date with `develop`. Merge `upstream/develop` into it, then re-run the gate.
-5. The commits are authored and committed under the git identity of the person you work for, not an agent's. Their messages carry no AI attribution lines. `yarn lint:commit --from upstream/develop --to HEAD` checks the messages, and the `pre-push` hook checks the identity too.
+4. The branch is up to date with its release line. Rebase it onto `upstream/0.x`, then re-run the gate.
+5. The commits are authored and committed under the git identity of the person you work for, not an agent's. Their messages carry no AI attribution lines. `yarn lint:commit --from upstream/0.x --to HEAD` checks the messages, and the `pre-push` hook checks the identity too.
 
 ## Title
 
-Pull requests are squash merged, and the title becomes the commit on `develop`. Write it as a Conventional Commits subject that says what changes for a Druxt user:
+Pull requests are squash merged, and the title becomes the commit on the release line. Write it as a Conventional Commits subject that says what changes for a Druxt user:
 
 ```text
 fix(#412): render nothing for a menu with no items
@@ -41,7 +41,7 @@ Ask a maintainer for the `perf-audit` label when the change touches a store, the
 
 ```bash
 git push -u origin <branch>
-gh pr create --repo druxt/druxt.js --base develop --head <your-user>:<branch> \
+gh pr create --repo druxt/druxt.js --base 0.x --head <your-user>:<branch> \
   --title "fix(#412): render nothing for a menu with no items" --body-file <description.md>
 ```
 
