@@ -7,9 +7,11 @@ module.exports = {
     maxSize: '50kb',
   }],
   ci: {
-    // Derived, so a new release line needs no edit here. trackBranches
-    // takes no pattern, so the current branch adds itself.
+    // Derived, so a new release line needs no edit here. trackBranches takes
+    // no pattern, so the current branch adds itself: a push to a release line
+    // stores that line's baseline, and a later pull request is measured
+    // against it.
     repoBranchBase: base || current || '0.x',
-    trackBranches: [...new Set(['main', current].filter(Boolean))],
+    trackBranches: [current].filter(Boolean),
   }
 }
