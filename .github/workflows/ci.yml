@@ -282,8 +282,11 @@ jobs:
       - run: yarn install --immutable
       - run: yarn build
 
+      # Both reporters: jest-junit on its own replaces the default, so a
+      # failing test printed nothing to the log and had to be read out of the
+      # uploaded XML.
       - name: Run unit tests
-        run: yarn test:unit --reporters=jest-junit --runInBand
+        run: yarn test:unit --reporters=default --reporters=jest-junit --runInBand
         env:
           NODE_OPTIONS: --max_old_space_size=8192
 

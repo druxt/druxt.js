@@ -63,11 +63,15 @@ describe('Published axios constraints', () => {
     expect(semver.satisfies(installed, range)).toBe(true)
   })
 
-  test('the druxt peer range keeps its floor below the CVE-era releases', () => {
+  test('the druxt peer range keeps the CVE-era releases out', () => {
     // Expect:
-    // - 0.27.2 and earlier refused, since the floor is 0.28.0 (#704).
+    // - 0.27.2 and earlier refused, and the floor at or above 0.28.0 (#704).
+    //
+    // The floor is asserted as a lower bound rather than as the exact value,
+    // because raising it is a safe decision and freezing it here would fail
+    // the bump that raises it, which is what happened to #923.
     const range = manifests.find((manifest) => manifest.name === 'druxt').peerDependencies.axios
     expect(semver.satisfies('0.27.2', range)).toBe(false)
-    expect(semver.satisfies('0.28.0', range)).toBe(true)
+    expect(semver.gte(semver.minVersion(range), '0.28.0')).toBe(true)
   })
 })

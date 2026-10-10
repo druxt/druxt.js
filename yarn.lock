@@ -6196,14 +6196,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:0.33.0":
-  version: 0.33.0
-  resolution: "axios@npm:0.33.0"
+"axios@npm:0.34.0":
+  version: 0.34.0
+  resolution: "axios@npm:0.34.0"
   dependencies:
     follow-redirects: ^1.15.4
     form-data: ^4.0.4
     proxy-from-env: ^1.1.0
-  checksum: 4699b045c25488f0a6b8b321fdd9265d700042ca73dcfa5554b3c6f9218779cfbf361f7df17870a8723dd3be2e4d9ff14b461a2c6874987243bd632bb6c04ef1
+  checksum: 888345cbaf63c84bd3d50fb514d2b2e70658b7802eb5fd763507b475737b72eff66079c915e69d26c776d8b7d1d9b57df8d12a61550b829e047a395183583a1a
   languageName: node
   linkType: hard
 
@@ -8958,7 +8958,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-blocks@workspace:packages/blocks"
   dependencies:
-    axios: 0.33.0
+    axios: 0.34.0
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
   peerDependencies:
@@ -9017,7 +9017,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-menu@workspace:packages/menu"
   dependencies:
-    axios: 0.33.0
+    axios: 0.34.0
     deepmerge: ^4.3.1
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
@@ -9033,7 +9033,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-router@workspace:packages/router"
   dependencies:
-    axios: 0.33.0
+    axios: 0.34.0
     druxt: ^0.24.0
     url-parse: ^1.5.10
     vue-router: ^3.6.5
@@ -9048,7 +9048,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-schema@workspace:packages/schema"
   dependencies:
-    axios: 0.33.0
+    axios: 0.34.0
     consola: ^2.15.3
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
@@ -9093,7 +9093,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-views@workspace:packages/views"
   dependencies:
-    axios: 0.33.0
+    axios: 0.34.0
     deepmerge: ^4.3.1
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.24.0
@@ -9171,7 +9171,7 @@ __metadata:
     querystring: ^0.2.1
     scule: ^0.3.2
   peerDependencies:
-    axios: ">=0.28.0"
+    axios: ">=0.34.0"
     consola: "*"
     vue: ^2.7.14
     vuex: ^3.6.2
