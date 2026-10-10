@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { runtime } from '../menu'
 
 const DruxtMenuStore = ({ store }) => {
   if (typeof store === 'undefined') {
@@ -201,6 +202,14 @@ const DruxtMenuStore = ({ store }) => {
   store.registerModule(namespace, module, {
     preserveState: Boolean(store.state[namespace])
   })
+
+  // A browser tab keeps its store across a login or logout, so loaded menus would show the previous user's links.
+  if (!runtime.isServer()) {
+    store.watch((state) => (state.auth || {}).loggedIn, (loggedIn, before) => {
+      // The auth module registering is not a login.
+      if (typeof before === 'boolean') store.commit(`${namespace}/flushEntities`, {})
+    })
+  }
 }
 
 export { DruxtMenuStore }

@@ -113,6 +113,39 @@ describe('DruxtStore', () => {
     expect(store.$druxtMenu.get).toHaveBeenCalledTimes(5)
   })
 
+  test('get fetches again after a login or logout in the browser', async () => {
+    store.$druxtMenu.get = jest.fn(() => Promise.resolve({ entities: [{ id: 'test' }] }))
+    // @nuxtjs/auth-next registers its module after the menu store.
+    store.registerModule('auth', { namespaced: true, state: () => ({ loggedIn: false }), mutations: { SET: (state, value) => { state.loggedIn = value } } })
+
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    store.commit('auth/SET', true)
+    await localVue.nextTick()
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
+
+    store.commit('auth/SET', false)
+    await localVue.nextTick()
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(3)
+  })
+
+  test('get keeps a loaded menu through a login during a server render', async () => {
+    const isServer = runtime.isServer
+    runtime.isServer = () => true
+    store = new Vuex.Store()
+    DruxtMenuStore({ store })
+    runtime.isServer = isServer
+    store.$druxtMenu = { get: jest.fn(() => Promise.resolve({ entities: [{ id: 'test' }] })) }
+    store.registerModule('auth', { namespaced: true, state: () => ({ loggedIn: false }), mutations: { SET: (state, value) => { state.loggedIn = value } } })
+
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    store.commit('auth/SET', true)
+    await localVue.nextTick()
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(1)
+  })
+
   test('get fetches again after flushEntities', async () => {
     store.$druxtMenu.get = jest.fn(() => Promise.resolve({ entities: [{ id: 'test' }] }))
 
