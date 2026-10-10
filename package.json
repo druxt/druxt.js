@@ -56,7 +56,7 @@
     "test:e2e": "yarn example:druxt-site:test && yarn example:druxt-site:storybook:test",
     "test:node-client": "jest --config examples/node-client/jest.config.js",
     "test:unit": "NODE_OPTIONS=--unhandled-rejections=warn jest",
-    "version": "changeset version && node scripts/changelog-dates.mjs"
+    "version": "changeset version && node scripts/changelog-dates.mjs && yarn install --mode=update-lockfile"
   },
   "resolutions": {
     "human-id": "4.1.3"
