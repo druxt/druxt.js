@@ -1,5 +1,41 @@
 # druxt-router
 
+## 0.32.0 - 2026-10-10
+
+### Minor Changes
+
+- Clear every Druxt cache with `this.$store.dispatch('druxt/clearCache')`, or clear the client's caches with `this.$druxt.clearCache()`. The new `druxtRouter/flushRoutes` mutation removes one stored route, or all of them. ([`75b3768`](https://github.com/druxt/druxt.js/commit/75b37680976671879b03eaf2eb046d799456f5ef))
+  Drupal can empty the server cache when content changes. Set a secret:
+
+  ```js
+  // nuxt.config.js
+  export default {
+    druxt: {
+      cache: { secret: process.env.DRUXT_CACHE_SECRET },
+    },
+  };
+  ```
+
+  Then send `POST /_druxt/cache/clear` with the secret in an `X-Druxt-Secret` header. The secret stays on the server. Each Nuxt process has a separate cache, so a site with several processes needs each one cleared. The package README shows how to send it from Drupal with the Purge module.
+
+- Vue and Vuex are now peer dependencies, so the packages use the site's own copy instead of installing one beside it. A second Vue that differs from the site's `vue-server-renderer` stops Nuxt at startup with a version mismatch. ([`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+
+### Patch Changes
+
+- Druxt components no longer flicker on the first load of a production build. Each module now registers its components as synchronous imports, so a server-rendered block or field is kept after hydration and does not fetch its data a second time. Sites that added a `components:extend` hook to work around this can remove it. ([`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- A request that was already in flight when the cache was cleared no longer stores what it fetched before the clear. Clearing the cache because content changed in Drupal could leave the old content served for the rest of its lifetime. ([`75b3768`](https://github.com/druxt/druxt.js/commit/75b37680976671879b03eaf2eb046d799456f5ef))
+  The same holds for the client's JSON:API index and the store: an index or store request in flight during a clear is not kept, and a call made after the clear fetches afresh instead of joining it. The router, Views and menu stores drop a route, result or menu fetched before a flush in the same way.
+
+  A route dropped that way is still the route being rendered, so it is now the active route even though the cache does not hold it. The page title, breadcrumb and block regions follow the page in front of the visitor instead of the one before it. `druxtRouter/setRoute` takes `{ path, route }` as well as a path, and a route the cache never stored, such as one behind a `500`, is now the active route where it used to leave the previous route in place.
+
+- Each package exports its own `package.json`, so `require('druxt/package.json').version` works. The exports map refused the path before. ([`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- The README banner renders on npm. `repository.directory` only changes the Repository link on the npm page, so npm's registry still resolved a relative image path against the monorepo root, where the banner does not exist. Each package's banner is now an absolute URL naming its own directory. ([`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- The README banner now renders on npm. Each package's `repository` field names its own directory in the monorepo, so npm resolves the banner image against `packages/<name>` instead of the repository root, where it did not exist. ([`a8f4ed6`](https://github.com/druxt/druxt.js/commit/a8f4ed6ce6c0630e59ba7ffa9e5b666b1f32a821))
+- Route errors such as 403 and 404 are now returned by the `druxtRouter/get` action and rendered by the Router middleware via the Nuxt `error()` function. The Nuxt plugin also reuses the `app.$druxt` client when available instead of creating a second DruxtClient. ([`4be5c92`](https://github.com/druxt/druxt.js/commit/4be5c921a5b9cc01e1fd9a9e6d73751b5b38e79a))
+- Prevented the home path "/" redirecting to "/<langcode>". ([`27e7c50`](https://github.com/druxt/druxt.js/commit/27e7c50321f52fba55997589c39b71411b28e839))
+- A route lookup that fails without a 4xx from Drupal, such as a network error, is no longer stored, so the next visit to that path asks again. ([`e485374`](https://github.com/druxt/druxt.js/commit/e485374a23630c314fc03a0abb0f04edb1c5f2fe))
+- Updated dependencies: druxt@0.25.0.
+
 ## 0.31.0 - 2023-11-02
 
 ### Patch Changes

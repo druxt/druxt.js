@@ -1,5 +1,22 @@
 # druxt-blocks
 
+## 0.18.0 - 2026-10-10
+
+### Minor Changes
+
+- Vue and Vuex are now peer dependencies, so the packages use the site's own copy instead of installing one beside it. A second Vue that differs from the site's `vue-server-renderer` stops Nuxt at startup with a version mismatch. ([`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+
+### Patch Changes
+
+- Take axios 0.34.0, the current release of the 0.x line. ([`6998f56`](https://github.com/druxt/druxt.js/commit/6998f56d9d18abf0ea7d9d308366d79b7b938b80))
+- A block content block whose resource is not in the store, or was flushed from it, renders nothing instead of throwing during render. It threw whenever the store lacked the entry, so a cache clear while the block was on the page emptied it for good. ([`ad82c1f`](https://github.com/druxt/druxt.js/commit/ad82c1f231765d22148ba2df08bc7ee2ccdbf52c))
+- Druxt components no longer flicker on the first load of a production build. Each module now registers its components as synchronous imports, so a server-rendered block or field is kept after hydration and does not fetch its data a second time. Sites that added a `components:extend` hook to work around this can remove it. ([`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- Each package exports its own `package.json`, so `require('druxt/package.json').version` works. The exports map refused the path before. ([`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- Updated dependencies. ([#698](https://github.com/druxt/druxt.js/issues/698), [`a1d6708`](https://github.com/druxt/druxt.js/commit/a1d6708030851bfbde74a1986e4f4cd918793917))
+- The README banner renders on npm. `repository.directory` only changes the Repository link on the npm page, so npm's registry still resolved a relative image path against the monorepo root, where the banner does not exist. Each package's banner is now an absolute URL naming its own directory. ([`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- The README banner now renders on npm. Each package's `repository` field names its own directory in the monorepo, so npm resolves the banner image against `packages/<name>` instead of the repository root, where it did not exist. ([`a8f4ed6`](https://github.com/druxt/druxt.js/commit/a8f4ed6ce6c0630e59ba7ffa9e5b666b1f32a821))
+- Updated dependencies: druxt@0.25.0.
+
 ## 0.17.3 - 2023-07-25
 
 ### Patch Changes
@@ -91,7 +108,7 @@
 - Added DruxtBlocksRegionMixin. ([#112](https://github.com/druxt/druxt.js/issues/112), [`6d763ce`](https://github.com/druxt/druxt.js/commit/6d763ce))
 
   ```js
-  import { DruxtBlocksRegionMixin } from "druxt-blocks";
+  import { DruxtBlocksRegionMixin } from 'druxt-blocks';
   export default {
     mixins: [DruxtBlocksRegionMixin],
   };

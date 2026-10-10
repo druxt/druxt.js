@@ -1,5 +1,11 @@
 # druxt-test-utils
 
+## 0.2.16 - 2026-10-10
+
+### Patch Changes
+
+- Each package exports its own `package.json`, so `require('druxt/package.json').version` works. The exports map refused the path before. ([`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+
 ## 0.2.15 - 2023-07-06
 
 ### Patch Changes
