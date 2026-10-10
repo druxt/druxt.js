@@ -1,5 +1,67 @@
 # druxt-menu
 
+## 0.22.0 - 2026-10-10
+
+### Minor Changes
+
+- Vue and Vuex are now peer dependencies, so the packages use the site's own copy instead of installing one beside it. A second Vue that differs from the site's `vue-server-renderer` stops Nuxt at startup with a version mismatch. ([`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+
+### Patch Changes
+
+- Druxt components no longer flicker on the first load of a production build. Each module now registers its components as synchronous imports, so a server-rendered block or field is kept after hydration and does not fetch its data a second time. Sites that added a `components:extend` hook to work around this can remove it. ([`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- A request that was already in flight when the cache was cleared no longer stores what it fetched before the clear. Clearing the cache because content changed in Drupal could leave the old content served for the rest of its lifetime. ([`75b3768`](https://github.com/druxt/druxt.js/commit/75b37680976671879b03eaf2eb046d799456f5ef))
+  The same holds for the client's JSON:API index and the store: an index or store request in flight during a clear is not kept, and a call made after the clear fetches afresh instead of joining it. The router, Views and menu stores drop a route, result or menu fetched before a flush in the same way.
+
+  A route dropped that way is still the route being rendered, so it is now the active route even though the cache does not hold it. The page title, breadcrumb and block regions follow the page in front of the visitor instead of the one before it. `druxtRouter/setRoute` takes `{ path, route }` as well as a path, and a route the cache never stored, such as one behind a `500`, is now the active route where it used to leave the previous route in place.
+
+- Clear every Druxt cache with `this.$store.dispatch('druxt/clearCache')`, or clear the client's caches with `this.$druxt.clearCache()`. The new `druxtRouter/flushRoutes` mutation removes one stored route, or all of them. ([`75b3768`](https://github.com/druxt/druxt.js/commit/75b37680976671879b03eaf2eb046d799456f5ef))
+  Drupal can empty the server cache when content changes. Set a secret:
+
+  ```js
+  // nuxt.config.js
+  export default {
+    druxt: {
+      cache: { secret: process.env.DRUXT_CACHE_SECRET },
+    },
+  };
+  ```
+
+  Then send `POST /_druxt/cache/clear` with the secret in an `X-Druxt-Secret` header. The secret stays on the server. Each Nuxt process has a separate cache, so a site with several processes needs each one cleared. The package README shows how to send it from Drupal with the Purge module.
+
+- Each package exports its own `package.json`, so `require('druxt/package.json').version` works. The exports map refused the path before. ([`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- Updated dependencies. ([#698](https://github.com/druxt/druxt.js/issues/698), [`a1d6708`](https://github.com/druxt/druxt.js/commit/a1d6708030851bfbde74a1986e4f4cd918793917))
+- In the browser, a menu request is now shared only while it is in flight, so a menu fetched before a login is fetched again after it instead of showing the signed-out menu. ([`e485374`](https://github.com/druxt/druxt.js/commit/e485374a23630c314fc03a0abb0f04edb1c5f2fe))
+- A menu still renders when its cache is cleared while it loads. The store drops a menu fetched before a flush, so the component rendered an empty menu until the next fetch. The `druxtMenu/get` action now fetches the menu again when the store is flushed during its request, and returns the menu items it stored. ([`599c870`](https://github.com/druxt/druxt.js/commit/599c8707d4f86d8b736c7db8237afdfc57409671))
+- A menu renders again after `druxt/clearCache`, where it used to throw. The clear empties every prefix at once, and the getter then read a prefix that was no longer there, so a page with a menu failed to render until its next fetch. ([`d270d3d`](https://github.com/druxt/druxt.js/commit/d270d3d0f84858dd1555adbc88a06cb7f58ff201))
+- The druxt-menu plugin keeps `proxy.api` on in the browser, so a menu client built without the shared druxt client sends its requests through the Nuxt proxy, as the router does. ([`c4867af`](https://github.com/druxt/druxt.js/commit/c4867af5f6cbf67e969b3b6270ffef6e4105e6f2))
+- The README banner renders on npm. `repository.directory` only changes the Repository link on the npm page, so npm's registry still resolved a relative image path against the monorepo root, where the banner does not exist. Each package's banner is now an absolute URL naming its own directory. ([`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- The README banner now renders on npm. Each package's `repository` field names its own directory in the monorepo, so npm resolves the banner image against `packages/<name>` instead of the repository root, where it did not exist. ([`a8f4ed6`](https://github.com/druxt/druxt.js/commit/a8f4ed6ce6c0630e59ba7ffa9e5b666b1f32a821))
+- In production, the server now keeps the JSON:API index and menus between requests for as long as Drupal's `Cache-Control` header allows. Drupal only allows it when the page cache max-age is set (Administration > Configuration > Development > Performance). At the default of 0, nothing is kept. ([`a47115e`](https://github.com/druxt/druxt.js/commit/a47115e1e22283073fe9fe2ecadba7f132a764dc))
+  A request never reads or fills the cache when its Axios instance sends an Authorization header, basic auth or Drupal's session cookie, and Druxt never stores a response Drupal marks `no-cache`, as Drupal does for every signed-in response. Credentials added by a request interceptor are seen only once a response comes back, so an instance's first lookup can still read a stored entry. Credentials sent in another header, such as an API key, are not recognized. If a proxy renames the session cookie, set `sessionCookie` to match it:
+
+  ```js
+  // nuxt.config.js
+  export default {
+    druxt: {
+      cache: {
+        ttl: 60, // optional: keep a response at most this many seconds, 0 keeps nothing
+        sessionCookie: 'MY_CUSTOM_SESSION[0-9a-f]+',
+      },
+    },
+  };
+  ```
+
+  A response whose `Vary` header names a request header the visitor's browser sends is not kept, since the cache cannot tell such variants apart. A Druxt backend sends `Vary: Cookie` and, from the consumers module, `Vary: X-Consumer-ID`, both of which are fine: neither is set by a browser, and a client that sends `X-Consumer-ID` keeps entries of its own. A proxy or module in front of Drupal may add `Accept-Language`, `Origin` or `User-Agent`, and those responses then stay uncached.
+
+  `Vary: Cookie` is treated as Drupal's own page cache treats it: requests without a session cookie share one response, whatever other cookies they send. Modules that change a response by some other cookie, such as a consent or region cookie, are not covered. Name that cookie in `sessionCookie` so requests with it never read or fill the cache, or turn the cache off.
+
+  Menus are kept between requests only with druxt 0.25.0 or later, which this release of druxt-menu requires.
+
+  Set `druxt.cache: false` to turn it off. It is off under `nuxt dev`.
+
+- Menu results are now cached per client and process, requests for one menu that build the same query share a fetch, and the Nuxt plugin reuses the `app.$druxt` client when available instead of creating a second DruxtClient. ([`43ddd7b`](https://github.com/druxt/druxt.js/commit/43ddd7b7b59be0a76fd98a715857fd64f60be9b4))
+- Updated dependencies: druxt-blocks@0.18.0, druxt@0.25.0.
+
 ## 0.21.0 - 2024-01-08
 
 ### Minor Changes

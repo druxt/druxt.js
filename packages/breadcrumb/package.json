@@ -1,6 +1,6 @@
 {
   "name": "druxt-breadcrumb",
-  "version": "0.17.2",
+  "version": "0.18.0",
   "description": "Decoupled Router based Breadcrumb Druxt component.",
   "keywords": [
     "breadcrumb",
@@ -47,9 +47,9 @@
     "banner.svg"
   ],
   "dependencies": {
-    "druxt": "^0.24.0",
-    "druxt-blocks": "^0.17.1",
-    "druxt-router": "^0.31.0"
+    "druxt": "^0.25.0",
+    "druxt-blocks": "^0.18.0",
+    "druxt-router": "^0.32.0"
   },
   "peerDependencies": {
     "vue": "^2.7.14",
