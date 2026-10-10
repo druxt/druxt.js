@@ -88,6 +88,176 @@ describe('DruxtStore', () => {
     expect(store.state.druxtMenu.entities).toStrictEqual({})
   })
 
+  test('get skips the request for a loaded menu', async () => {
+    const entities = [{ id: 'test' }]
+    store.$druxtMenu.get = jest.fn(() => Promise.resolve({ entities }))
+
+    const fresh = await store.dispatch('druxtMenu/get', { name: 'main', settings: { test: true }, prefix: 'en' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(1)
+    expect(store.state.druxtMenu.entities.en.test).toStrictEqual({ id: 'test' })
+
+    // An identical repeat returns the same items without a request.
+    const repeat = await store.dispatch('druxtMenu/get', { name: 'main', settings: { test: true }, prefix: 'en' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(1)
+    expect(repeat).toStrictEqual(fresh)
+
+    // A different name, settings or prefix still fetches.
+    await store.dispatch('druxtMenu/get', { name: 'footer', settings: { test: true }, prefix: 'en' })
+    await store.dispatch('druxtMenu/get', { name: 'main', settings: { test: false }, prefix: 'en' })
+    await store.dispatch('druxtMenu/get', { name: 'main', settings: { test: true }, prefix: 'es' })
+    await store.dispatch('druxtMenu/get', 'main')
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(5)
+
+    // The string form and the object form are the same menu.
+    await store.dispatch('druxtMenu/get', { name: 'main' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(5)
+  })
+
+  test('get fetches again after a login or logout in the browser', async () => {
+    store.$druxtMenu.get = jest.fn(() => Promise.resolve({ entities: [{ id: 'test' }] }))
+    // @nuxtjs/auth-next registers its module after the menu store.
+    store.registerModule('auth', { namespaced: true, state: () => ({ loggedIn: false }), mutations: { SET: (state, value) => { state.loggedIn = value } } })
+
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    // The next read follows the login at once, with no tick in between.
+    store.commit('auth/SET', true)
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
+
+    store.commit('auth/SET', false)
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(3)
+  })
+
+  test('get keeps a loaded menu through a login during a server render', async () => {
+    const isServer = runtime.isServer
+    runtime.isServer = () => true
+    store = new Vuex.Store()
+    DruxtMenuStore({ store })
+    runtime.isServer = isServer
+    store.$druxtMenu = { get: jest.fn(() => Promise.resolve({ entities: [{ id: 'test' }] })) }
+    store.registerModule('auth', { namespaced: true, state: () => ({ loggedIn: false }), mutations: { SET: (state, value) => { state.loggedIn = value } } })
+
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    store.commit('auth/SET', true)
+    await localVue.nextTick()
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(1)
+  })
+
+  test('get fetches again after flushEntities', async () => {
+    store.$druxtMenu.get = jest.fn(() => Promise.resolve({ entities: [{ id: 'test' }] }))
+
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'es' })
+    store.commit('druxtMenu/flushEntities', { prefix: 'en' })
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'es' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(3)
+    expect(store.state.druxtMenu.entities.en.test).toStrictEqual({ id: 'test' })
+
+    store.commit('druxtMenu/flushEntities', {})
+    await store.dispatch('druxtMenu/get', { name: 'main', prefix: 'es' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(4)
+  })
+
+  test('get shares an in-flight request', async () => {
+    let resolve
+    store.$druxtMenu.get = jest.fn(() => new Promise((r) => { resolve = r }))
+
+    const requests = [1, 2, 3].map(() => store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' }))
+    await Promise.resolve()
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(1)
+
+    resolve({ entities: [{ id: 'test' }] })
+    await Promise.all(requests)
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(1)
+    expect(store.state.druxtMenu.entities.en.test).toStrictEqual({ id: 'test' })
+  })
+
+  test('get stores only the menu fetched after a flush of its prefix', async () => {
+    const pending = []
+    store.$druxtMenu.get = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+
+    const request = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    store.commit('druxtMenu/flushEntities', { prefix: 'en' })
+
+    // The response from before the flush is neither stored nor marked loaded.
+    pending[0]({ entities: [{ id: 'stale' }] })
+    await new Promise((resolve) => setTimeout(resolve))
+    expect(store.state.druxtMenu.entities.en).toStrictEqual({})
+    expect(store.state.druxtMenu.loaded.en).toStrictEqual({})
+
+    pending[1]({ entities: [{ id: 'fresh' }] })
+    expect(await request).toStrictEqual([{ id: 'fresh' }])
+    expect(store.state.druxtMenu.entities.en.fresh).toStrictEqual({ id: 'fresh' })
+    expect(store.state.druxtMenu.entities.en.stale).toBeUndefined()
+  })
+
+  test('get during a flushed request joins its retry', async () => {
+    const pending = []
+    store.$druxtMenu.get = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+
+    const before = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    store.commit('druxtMenu/flushEntities', { prefix: 'en' })
+    const after = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+
+    // One request is retried for both callers, not a second request started.
+    pending[0]({ entities: [{ id: 'stale' }] })
+    await new Promise((resolve) => setTimeout(resolve))
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
+
+    pending[1]({ entities: [{ id: 'fresh' }] })
+    expect(await Promise.all([before, after])).toStrictEqual([[{ id: 'fresh' }], [{ id: 'fresh' }]])
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
+  })
+
+  test('get keeps a request a flush for another prefix does not name', async () => {
+    const pending = []
+    store.$druxtMenu.get = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+
+    const request = store.dispatch('druxtMenu/get', { name: 'main', prefix: 'en' })
+    await Promise.resolve()
+    store.commit('druxtMenu/flushEntities', { prefix: 'es' })
+
+    pending[0]({ entities: [{ id: 'test' }] })
+    await request
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(1)
+    expect(store.state.druxtMenu.entities.en.test).toStrictEqual({ id: 'test' })
+    expect(store.state.druxtMenu.loaded.en[JSON.stringify(['main', {}])]).toStrictEqual(['test'])
+  })
+
+  test('get retries after a failed request', async () => {
+    store.$druxtMenu.get = jest.fn(() => Promise.reject(new Error('Backend down')))
+
+    const failed = [1, 2].map(() => store.dispatch('druxtMenu/get', 'main'))
+    await expect(failed[0]).rejects.toThrow('Backend down')
+    await expect(failed[1]).rejects.toThrow('Backend down')
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(1)
+
+    store.$druxtMenu.get.mockImplementation(() => Promise.resolve({ entities: [{ id: 'test' }] }))
+    await store.dispatch('druxtMenu/get', 'main')
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
+    expect(store.state.druxtMenu.entities[undefined].test).toStrictEqual({ id: 'test' })
+  })
+
+  test('get keeps the fields each menu asked for when items are shared', async () => {
+    store.$druxtMenu.get = jest.fn(async (name, settings) => ({
+      entities: [{ id: 'home', attributes: settings.fields.includes('title') ? { title: 'Home' } : { url: '/' } }],
+    }))
+
+    const titles = await store.dispatch('druxtMenu/get', { name: 'main', settings: { fields: ['title'] }, prefix: 'en' })
+    await store.dispatch('druxtMenu/get', { name: 'main', settings: { fields: ['url'] }, prefix: 'en' })
+
+    // The repeat is answered from the store, with the title the first call fetched.
+    const repeat = await store.dispatch('druxtMenu/get', { name: 'main', settings: { fields: ['title'] }, prefix: 'en' })
+    expect(store.$druxtMenu.get).toHaveBeenCalledTimes(2)
+    expect(repeat[0].attributes.title).toBe(titles[0].attributes.title)
+    expect(store.state.druxtMenu.entities.en.home.attributes).toStrictEqual({ title: 'Home', url: '/' })
+  })
+
   test('AddEntities', async () => {
     expect(store.state.druxtMenu.entities).toStrictEqual({})
     store.commit('druxtMenu/addEntities', { entities: [{ id: 'test' }] })
