@@ -1,5 +1,36 @@
 # druxt
 
+## 0.25.0 - 2026-10-11
+
+### Minor Changes
+
+- Clear every Druxt cache with `druxt/clearCache`, or let Drupal clear it when content changes: set `druxt.cache.secret` and send `POST /_druxt/cache/clear` with the secret in an `X-Druxt-Secret` header. The [druxt README](https://github.com/druxt/druxt.js/tree/HEAD/packages/druxt#clearing-from-drupal-with-purge) shows the Drupal Purge setup. ([`75b3768`](https://github.com/druxt/druxt.js/commit/75b37680976671879b03eaf2eb046d799456f5ef))
+- In production, the server keeps the JSON:API index and menus between requests for as long as Drupal's `Cache-Control` allows, so set a page cache max-age in Drupal to use it. Signed-in responses are never kept. Set `druxt.cache: false` to turn it off. The [druxt README](https://github.com/druxt/druxt.js/tree/HEAD/packages/druxt#server-cache) covers `ttl`, `sessionCookie` and which responses are kept. ([`a47115e`](https://github.com/druxt/druxt.js/commit/a47115e1e22283073fe9fe2ecadba7f132a764dc))
+- Vue and Vuex are now peer dependencies, so the packages use the site's own copy. A second copy stopped Nuxt at startup with a version mismatch. ([`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+- Wrapper components no longer render module data as HTML attributes, such as `entity="[object Object]"`. Wrappers still read it from `$attrs`. An `id` set on a module no longer repeats on the modules below it. ([`b9bc480`](https://github.com/druxt/druxt.js/commit/b9bc480692dd7bebf8b9c318a1b64d6b78adb491))
+
+### Patch Changes
+
+- Druxt components no longer flicker or fetch their data again on the first load of a production build. Remove any `components:extend` hook added to work around it. ([`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- Concurrent requests for the same resource or collection share one backend request. A failed request isn't kept, so the next call tries again. ([`8e16305`](https://github.com/druxt/druxt.js/commit/8e16305a68bb443759136d28b32c1f8ffaffa102))
+- Druxt components keep their content while they fetch again, so a page no longer jumps after a refetch. ([`716eab0`](https://github.com/druxt/druxt.js/commit/716eab019a1b86046ad2b421c31e277c8517d1a4))
+- A request in flight when the cache is cleared no longer stores what it fetched, so a clear can't leave old content in place. This covers the JSON:API index and the store. ([`75b3768`](https://github.com/druxt/druxt.js/commit/75b37680976671879b03eaf2eb046d799456f5ef))
+- Views, and other types the JSON:API index doesn't list, are fetched in the requested language, not the default language. A `DruxtClient` endpoint given without a leading slash, such as `api`, now works with a language prefix. ([`e929d3f`](https://github.com/druxt/druxt.js/commit/e929d3fd115ec52baa5fb4cb4e35319eeae29657))
+- Each package exports its `package.json`, so `require('druxt/package.json')` works. ([`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- `getCollection` returns full resources in `included` on a cache hit, as a fresh fetch does. A resource removed with `flushResource` is fetched again. ([#781](https://github.com/druxt/druxt.js/issues/781), [`56929b7`](https://github.com/druxt/druxt.js/commit/56929b77735fec84418231b7c1fb32e36f8ce977))
+- Package READMEs show their banner on npm. ([`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- `DruxtClient` instances on the same Axios instance, base URL, endpoint and resource config share one JSON:API index fetch. ([`43ddd7b`](https://github.com/druxt/druxt.js/commit/43ddd7b7b59be0a76fd98a715857fd64f60be9b4))
+- `druxt/clearCache` also flushes stored schemas. ([`b07a3e3`](https://github.com/druxt/druxt.js/commit/b07a3e3b4e1521a97ba4d5187c260432dadf47ac))
+- Every `sessionCookie` pattern on a shared Axios instance is now checked, so clients sharing one instance can't keep a signed-in response in the server cache for anonymous visitors. ([`d3ea0ae`](https://github.com/druxt/druxt.js/commit/d3ea0ae0da1db6fe62e52cce92e32250a57bae49))
+- An ESM axios hoisted into the site no longer breaks the dev server, because the Nuxt module adds axios to `build.transpile`. Sites need axios 0.34.0 or later. ([#658](https://github.com/druxt/druxt.js/issues/658), [`11c5516`](https://github.com/druxt/druxt.js/commit/11c5516875ccadfd00cd61cc644b474b1607d056))
+- A module rebuilds its wrapper's props when its own props change, without fetching again, so a reused `DruxtField` given a form schema renders the form. ([`17811be`](https://github.com/druxt/druxt.js/commit/17811bec3bed6e47ee44d8616d5ef9503ed5df34))
+- `druxt/flushCollection` and `druxt/flushResource` now delete the data they name. Some payloads removed nothing at all. ([`e485374`](https://github.com/druxt/druxt.js/commit/e485374a23630c314fc03a0abb0f04edb1c5f2fe))
+  - Pass a `prefix` with a `type` to flush that prefix for every stored query of the type.
+  - Pass the collection's `query` in place of its `hash`. Druxt hashes it the way `getCollection` does.
+  - Flushing a type that holds nothing is a no-op, where it used to throw.
+
+  `druxt/getResource` with `bypassCache` now fetches every requested field and returns the included resources from the fresh response. Reading a flushed resource with `include` used to throw.
+
 ## 0.24.0 - 2023-11-02
 
 - No package changes; version alignment release.
@@ -65,7 +96,7 @@
 - Added langcode / prefix support to DruxtClient methods. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
 
   ```js
-  const data = await druxt.getResource("node--article", id, undefined, "en");
+  const data = await druxt.getResource('node--article', id, undefined, 'en');
   ```
 
 - Added langcode-suffixed component options for multilingual templates. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
@@ -196,7 +227,7 @@
   export default {
     druxt: {
       proxy: {
-        files: "default",
+        files: 'default',
       },
     },
   };
@@ -376,9 +407,9 @@ Thanks to [d34dman](https://github.com/d34dman)
 
   ```vue
   <script>
-  import { DruxtModule } from "druxt";
+  import { DruxtModule } from 'druxt';
   export default {
-    name: "MyCustomDruxtModule",
+    name: 'MyCustomDruxtModule',
     extends: DruxtModule,
   };
   </script>
@@ -430,8 +461,8 @@ Thanks to [d34dman](https://github.com/d34dman)
     }),
 
     async fetch() {
-      const resource = await this.$store.dispatch("druxt/getResource", {
-        type: "node--article",
+      const resource = await this.$store.dispatch('druxt/getResource', {
+        type: 'node--article',
         id: uuid,
         query,
       });

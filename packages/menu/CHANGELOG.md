@@ -1,5 +1,25 @@
 # druxt-menu
 
+## 0.22.0 - 2026-10-11
+
+### Minor Changes
+
+- Vue and Vuex are now peer dependencies, so the packages use the site's own copy. A second copy stopped Nuxt at startup with a version mismatch. ([`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+
+### Patch Changes
+
+- Druxt components no longer flicker or fetch their data again on the first load of a production build. Remove any `components:extend` hook added to work around it. ([`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- Each package exports its `package.json`, so `require('druxt/package.json')` works. ([`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- Modules require the current `druxt` and `druxt-router`, where some still required versions from 2023, so a site no longer installs an older copy of either beside its own. ([`a1d6708`](https://github.com/druxt/druxt.js/commit/a1d6708030851bfbde74a1986e4f4cd918793917))
+- A menu no longer renders empty when the cache is cleared while it loads. `druxtMenu/get` fetches it again, and returns the menu items it stored. ([`599c870`](https://github.com/druxt/druxt.js/commit/599c8707d4f86d8b736c7db8237afdfc57409671))
+- A page with a menu no longer fails to render after `druxt/clearCache`. ([`d270d3d`](https://github.com/druxt/druxt.js/commit/d270d3d0f84858dd1555adbc88a06cb7f58ff201))
+- With `proxy.api`, browser menu requests go through the Nuxt proxy, as other Druxt requests do. ([`c4867af`](https://github.com/druxt/druxt.js/commit/c4867af5f6cbf67e969b3b6270ffef6e4105e6f2))
+- Package READMEs show their banner on npm. ([`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- Menus are kept between server requests by druxt 0.25.0's process cache. ([`a47115e`](https://github.com/druxt/druxt.js/commit/a47115e1e22283073fe9fe2ecadba7f132a764dc))
+- Requests for one menu that build the same query share a fetch, and the plugin reuses the site's `$druxt` client when it has one. ([`43ddd7b`](https://github.com/druxt/druxt.js/commit/43ddd7b7b59be0a76fd98a715857fd64f60be9b4))
+- A menu the store already holds is no longer fetched again, so a menu mounted in the browser renders without a request. Clearing the cache, or a login or logout in the browser, makes the next call fetch. ([`7367b77`](https://github.com/druxt/druxt.js/commit/7367b77d2ec3d894b0fc5f63d6f637bfb708cb70))
+- Updated dependencies: druxt-blocks@0.18.0, druxt@0.25.0.
+
 ## 0.21.0 - 2024-01-08
 
 ### Minor Changes
