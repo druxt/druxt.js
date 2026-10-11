@@ -1,5 +1,6 @@
 import { join, resolve } from 'path'
 import DruxtViewsStorybook from './storybook'
+import { routeName } from '../utils/pages'
 
 // @nuxt/components ignores a false isAsync on the directory.
 const extendComponent = (component) => ({ ...component, isAsync: false })
@@ -30,6 +31,8 @@ const extendComponent = (component) => ({ ...component, isAsync: false })
  * }
  *
  * @param {object} moduleOptions - Nuxt module options object.
+ * @param {object} [moduleOptions.pages] - Views pages by route pattern: `{ viewId,
+ *   displayId, arguments, filters, page, sort, history, aliases }`. See DruxtViewsPage.
  */
 const DruxtViewsNuxtModule = async function (moduleOptions = {}) {
   // Set default options.
@@ -55,6 +58,28 @@ const DruxtViewsNuxtModule = async function (moduleOptions = {}) {
   for (const module of modules) {
     await this.addModule([module, { baseUrl: options.baseUrl }])
   }
+
+  // Views pages: one route per pattern, in front of the router's wildcard,
+  // and the pages map for the runtime.
+  const pages = options.views.pages || {}
+  if (Object.keys(pages).length) {
+    this.extendRoutes((routes) => {
+      for (const pattern of Object.keys(pages).reverse()) {
+        routes.unshift({
+          name: routeName(pattern),
+          path: pattern,
+          component: resolve(__dirname, 'components/DruxtViewsPage.vue'),
+          chunkName: 'druxt-views-page',
+          meta: { druxtViewsPage: pattern },
+        })
+      }
+    })
+  }
+  this.addPlugin({
+    src: resolve(__dirname, '../templates/pages.js'),
+    fileName: 'druxt-views-pages.js',
+    options: { pages },
+  })
 
   // Add Vuex plugin.
   this.addPlugin({
