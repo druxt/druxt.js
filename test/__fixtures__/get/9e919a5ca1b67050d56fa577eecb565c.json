@@ -1,0 +1,193 @@
+{
+  "data": {
+    "jsonapi": {
+      "version": "1.1",
+      "meta": {
+        "links": {
+          "self": {
+            "href": "https://jsonapi.org/format/1.1/"
+          }
+        }
+      }
+    },
+    "data": [
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:3c33cc68-68a3-4f2f-aa5a-50318b229d6a",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": true,
+          "menu_name": "probe",
+          "meta": {
+            "entity_id": "1"
+          },
+          "options": [],
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "entity.node.canonical",
+            "parameters": {
+              "node": "1"
+            }
+          },
+          "title": "Concepts",
+          "url": "/explanation",
+          "weight": 0,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:8b45cf9f-e6c6-4958-b0de-33a23e000afa",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": true,
+          "menu_name": "probe",
+          "meta": {
+            "entity_id": "2"
+          },
+          "options": [],
+          "parent": "menu_link_content:3c33cc68-68a3-4f2f-aa5a-50318b229d6a",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "entity.node.canonical",
+            "parameters": {
+              "node": "2"
+            }
+          },
+          "title": "Architecture",
+          "url": "/explanation/architecture",
+          "weight": 0,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:dcc6f3c5-e1bf-4e2e-b13b-1bc74d02ed98",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": true,
+          "menu_name": "probe",
+          "meta": {
+            "entity_id": "4"
+          },
+          "options": [],
+          "parent": "menu_link_content:3c33cc68-68a3-4f2f-aa5a-50318b229d6a",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "entity.node.canonical",
+            "parameters": {
+              "node": "3"
+            }
+          },
+          "title": "Component resolution",
+          "url": "/explanation/component-resolution",
+          "weight": 2,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:727bb7b6-9223-4cb2-b0b6-877a4a783d6c",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": true,
+          "menu_name": "probe",
+          "meta": {
+            "entity_id": "5"
+          },
+          "options": [],
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "",
+            "parameters": []
+          },
+          "title": "API",
+          "url": "/api",
+          "weight": 1,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:f18bce4c-d1d5-4037-a576-07743cf5a2e4",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": true,
+          "menu_name": "probe",
+          "meta": {
+            "entity_id": "6"
+          },
+          "options": {
+            "attributes": {
+              "target": "_blank",
+              "rel": "noopener",
+              "class": [
+                "external"
+              ]
+            },
+            "external": true
+          },
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "",
+            "parameters": []
+          },
+          "title": "GitHub",
+          "url": "https://github.com/druxt/druxt.js",
+          "weight": 2,
+          "langcode": "en"
+        }
+      },
+      {
+        "type": "menu_link_content--menu_link_content",
+        "id": "menu_link_content:f707f45e-7134-416f-92fc-e80789869cea",
+        "attributes": {
+          "description": null,
+          "enabled": true,
+          "expanded": true,
+          "menu_name": "probe",
+          "meta": {
+            "entity_id": "8"
+          },
+          "options": [],
+          "parent": "",
+          "provider": "menu_link_content",
+          "route": {
+            "name": "<nolink>",
+            "parameters": []
+          },
+          "title": "Section heading",
+          "url": "",
+          "weight": 4,
+          "langcode": "en"
+        }
+      }
+    ],
+    "links": {
+      "self": {
+        "href": "https://demo-api.druxtjs.org/jsonapi/menu_items/probe?filter%5Benabled%5D=1&filter%5Bmenu_name%5D=probe"
+      }
+    }
+  },
+  "status": 200,
+  "statusText": "OK",
+  "headers": {
+    "content-type": "application/vnd.api+json"
+  },
+  "config": {
+    "url": "/jsonapi/menu_items/probe?filter%5Benabled%5D=1&filter%5Bmenu_name%5D=probe",
+    "method": "get",
+    "headers": {
+      "Accept": "application/json, text/plain, */*"
+    },
+    "baseURL": "https://demo-api.druxtjs.org"
+  }
+}
