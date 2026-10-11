@@ -89,4 +89,23 @@ describe('DruxtViewsPager', () => {
       'DruxtViewsPagerDefault'
     ])
   })
+
+  test('takes its route from a providing page', async () => {
+    const link = jest.fn(({ page }) => ({ path: '/shop/women', query: { brand: 'centarro', page: String(page) } }))
+    const wrapper = mount(DruxtViewsPager, {
+      localVue,
+      mocks: {
+        $fetch: jest.fn(),
+        $fetchState: { pending: true },
+        $nuxt: { context: { isDev: false } },
+        $route: { query: { brand: 'centarro' } },
+      },
+      propsData: { type: 'full' },
+      provide: { druxtViewsPage: { link } },
+      store,
+    })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    expect(wrapper.vm.getRoute({ href: '?page=2' })).toStrictEqual({ path: '/shop/women', query: { brand: 'centarro', page: '2' } })
+    expect(link).toHaveBeenCalledWith({ page: 2 })
+  })
 })

@@ -9,6 +9,11 @@ export default {
 
   extends: DruxtModule,
 
+  /** A Views page that owns the route provides its links. */
+  inject: {
+    druxtViewsPage: { default: null },
+  },
+
   /** */
   props: {
     /**
@@ -92,6 +97,7 @@ export default {
      */
     getRoute(link) {
       const query = this.getQuery(link)
+      if (this.druxtViewsPage) return this.druxtViewsPage.link({ page: query.page })
       return { query: { ...this.$route.query, page: query.page } }
     },
 
