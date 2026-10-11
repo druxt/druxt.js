@@ -110,6 +110,52 @@ The DruxtViews module provides a **DruxtRouterView** component that is used by t
 
 ---
 
+## Views pages
+
+A Views page whose URL is its state. Declare the page's route pattern under `druxt.views.pages`, and the module registers a route for it ahead of the Druxt router's wildcard, rendered by the **DruxtViewsPage** component. The route gives the view its contextual arguments, exposed filters, sort and page, and every change the view reports is written back to the URL through the router. Back and forward replay as model changes, and nothing reloads.
+
+```js
+// nuxt.config.js
+export default {
+  druxt: {
+    views: {
+      pages: {
+        '/shop/:collection?': {
+          viewId: 'products',
+          displayId: 'page_1',
+          arguments: ['collection'],
+          filters: { brand: { query: 'brand' } },
+          page: 'page',
+          sort: 'sort',
+          history: 'replace',
+          aliases: {
+            collection: { women: '12', books: '11+12+13' },
+            brand: { centarro: '3' },
+          },
+        },
+      },
+    },
+  },
+};
+```
+
+| Key         | Default   | What it does                                                                                                          |
+| ----------- | --------- | --------------------------------------------------------------------------------------------------------------------- |
+| `viewId`    |           | The View ID.                                                                                                          |
+| `displayId` | `default` | The View display ID.                                                                                                  |
+| `arguments` | `[]`      | Route parameter names, in `views-argument` order. A missing optional parameter is sent as `all`.                      |
+| `filters`   | `{}`      | Exposed filter identifier to `{ param }` (a route parameter) or `{ query }` (a query key, the identifier by default). |
+| `page`      | `page`    | The query key for the page.                                                                                           |
+| `sort`      | `sort`    | The query key for the exposed sort.                                                                                   |
+| `history`   | `replace` | `replace` or `push`, how a change reaches the browser's history.                                                      |
+| `aliases`   | `{}`      | Per argument or filter, the word the URL uses for each id. An id with no word is written as itself.                   |
+
+`/shop/women?brand=centarro&page=2` renders the view with `views-argument[0]=12`, `views-filter[brand]=3` and `page=2`. Picking another brand replaces the URL and makes one request. The pager's links keep the pattern. A `DruxtView` given a `value` prop uses it instead of the route and emits `input` on every model change, which is how the page drives it. Without a value nothing changes.
+
+The `aliases` map is static. The 2.0.0 version of this module should take slugs from the JSON:API Views resource instead.
+
+---
+
 ## Storybook
 
 DruxtViews provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.
