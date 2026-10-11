@@ -288,4 +288,56 @@ describe('DruxtView', () => {
       expect.any(Array)
     )
   })
+
+  test('takes its model from a value and emits input on change', async () => {
+    const value = { filter: { brand: '3' }, page: 2, sort: 'created' }
+    // A stable arguments array: a re-render with the default factory would
+    // give a new one and fire that watcher instead.
+    const wrapper = mountComponent({ viewId: 'test', displayId: 'page_1', value, arguments: [] })
+    expect(wrapper.vm.model).toEqual(value)
+
+    // A model change emits a copy.
+    wrapper.vm.model.page = 3
+    await wrapper.vm.$nextTick()
+    const emitted = wrapper.emitted('input')
+    expect(emitted[emitted.length - 1][0]).toEqual({ filter: { brand: '3' }, page: 3, sort: 'created' })
+    expect(emitted[emitted.length - 1][0]).not.toBe(wrapper.vm.model)
+
+    // The same value again does not touch the model; a new one sets it.
+    const spy = jest.spyOn(wrapper.vm, 'refetch')
+    await wrapper.setProps({ value: { filter: { brand: '3' }, page: 3, sort: 'created' } })
+    await wrapper.vm.$nextTick()
+    expect(spy).not.toHaveBeenCalled()
+    await wrapper.setProps({ value: { filter: {}, page: null, sort: null } })
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.model).toEqual({ filter: {}, page: null, sort: null })
+    expect(spy).toHaveBeenCalled()
+  })
+
+  test('with a value, an empty route query does not reset the model', async () => {
+    const value = { filter: { brand: '3' }, page: null, sort: null }
+    const wrapper = mountComponent({ viewId: 'test', value })
+    // Extended components hold watchers as arrays.
+    const routeQuery = (vm) =>
+      [].concat(vm.$options.watch['$route.query']).forEach((w) => (w.handler || w).call(vm, {}))
+    routeQuery(wrapper.vm)
+    expect(wrapper.vm.model.filter).toEqual({ brand: '3' })
+    // Without a value the reset still applies.
+    const plain = mountComponent({ viewId: 'test' })
+    plain.vm.model.filter = { brand: '3' }
+    routeQuery(plain.vm)
+    expect(plain.vm.model.filter).toEqual({})
+  })
+
+  test('refetch waits out a running fetch', async () => {
+    const wrapper = mountComponent({ viewId: 'test' })
+    let release
+    wrapper.vm._fetchPromise = new Promise((resolve) => { release = resolve })
+    const calls = wrapper.vm.$fetch.mock.calls.length
+    const pending = wrapper.vm.refetch()
+    expect(wrapper.vm.$fetch.mock.calls.length).toBe(calls)
+    release()
+    await pending
+    expect(wrapper.vm.$fetch.mock.calls.length).toBe(calls + 1)
+  })
 })

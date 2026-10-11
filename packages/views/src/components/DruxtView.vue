@@ -126,7 +126,21 @@ export default {
     viewId: {
       type: String,
       default: null,
-    }
+    },
+
+    /**
+     * The model, when a parent owns the route, as a Views page does:
+     * `{ filter, page, sort }`. Without it the model comes from the route.
+     *
+     * @type {object}
+     *
+     * @example
+     * <DruxtView view-id="products" :value="{ filter: { brand: '3' }, page: null, sort: null }" @input="onInput" />
+     */
+    value: {
+      type: Object,
+      default: null,
+    },
   },
 
   /**
@@ -135,8 +149,9 @@ export default {
    * @property {object} view - The View JSON:API resource.
    */
   data() {
-    // Stringify and parse the query object to fix nested objects.
-    const model = parse(stringify(this.$route.query))
+    // A parent that owns the route gives the model; otherwise the query is
+    // stringified and parsed to fix nested objects.
+    const model = this.value || parse(stringify(this.$route.query))
 
     return {
       model: {
@@ -294,6 +309,8 @@ export default {
 
   watch: {
     '$route.query'(to) {
+      // A parent that owns the route sets `value` instead.
+      if (this.value) return
       if (!Object.entries(to || {}).length) {
         this.model = {
           filter: {},
@@ -301,6 +318,23 @@ export default {
           sort: null,
         }
       }
+    },
+
+    value: {
+      deep: true,
+      handler(to) {
+        if (!to) return
+        const next = {
+          filter: to.filter || {},
+          page: parseInt(to.page) || null,
+          sort: to.sort || null,
+        }
+        // DruxtModule's own watcher has set `model` to the prop object by
+        // now; a copy keeps later edits off the parent's value.
+        if (this.model === to || JSON.stringify(next) !== JSON.stringify(this.model)) {
+          this.model = next
+        }
+      },
     },
 
     arguments() {
@@ -317,19 +351,24 @@ export default {
         if (!Object.entries(to || {}).length && !Object.entries(from || {}).length) {
           return
         }
-        this.$fetch()
+        // A new object with the same filters is not a change.
+        if (JSON.stringify(to) === JSON.stringify(from)) return
+        this.emitModel()
+        this.refetch()
       },
     },
 
     'model.page'(to, from) {
       if (to !== from) {
-        this.$fetch()
+        this.emitModel()
+        this.refetch()
       }
     },
 
     'model.sort'(to, from) {
       if (to !== from) {
-        this.$fetch()
+        this.emitModel()
+        this.refetch()
       }
     },
 
@@ -405,6 +444,22 @@ export default {
       }
 
       return query
+    },
+
+    /**
+     * The model, copied, for a parent that owns the route.
+     */
+    emitModel() {
+      this.$emit('input', JSON.parse(JSON.stringify(this.model)))
+    },
+
+    /**
+     * Fetch again, after a running fetch: Nuxt 2's $fetch returns the running
+     * promise, so a second call during one is lost.
+     */
+    async refetch() {
+      if (this._fetchPromise) await this._fetchPromise
+      this.$fetch()
     },
 
     /**
