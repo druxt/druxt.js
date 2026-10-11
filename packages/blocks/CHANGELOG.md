@@ -1,5 +1,21 @@
 # druxt-blocks
 
+## 0.18.0 - 2026-10-11
+
+### Minor Changes
+
+- Vue and Vuex are now peer dependencies, so the packages use the site's own copy. A second copy stopped Nuxt at startup with a version mismatch. ([`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+
+### Patch Changes
+
+- Uses axios 0.34.0, the current 0.x release. ([`6998f56`](https://github.com/druxt/druxt.js/commit/6998f56d9d18abf0ea7d9d308366d79b7b938b80))
+- A `DruxtBlockBlockContent` block renders nothing while the store has no resource for it, where it threw. A cache clear with the block on the page no longer breaks the page. ([`ad82c1f`](https://github.com/druxt/druxt.js/commit/ad82c1f231765d22148ba2df08bc7ee2ccdbf52c))
+- Druxt components no longer flicker or fetch their data again on the first load of a production build. Remove any `components:extend` hook added to work around it. ([`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- Each package exports its `package.json`, so `require('druxt/package.json')` works. ([`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- Modules require the current `druxt` and `druxt-router`, where some still required versions from 2023, so a site no longer installs an older copy of either beside its own. ([`a1d6708`](https://github.com/druxt/druxt.js/commit/a1d6708030851bfbde74a1986e4f4cd918793917))
+- Package READMEs show their banner on npm. ([`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- Updated dependencies: druxt@0.25.0.
+
 ## 0.17.3 - 2023-07-25
 
 ### Patch Changes
@@ -91,7 +107,7 @@
 - Added DruxtBlocksRegionMixin. ([#112](https://github.com/druxt/druxt.js/issues/112), [`6d763ce`](https://github.com/druxt/druxt.js/commit/6d763ce))
 
   ```js
-  import { DruxtBlocksRegionMixin } from "druxt-blocks";
+  import { DruxtBlocksRegionMixin } from 'druxt-blocks';
   export default {
     mixins: [DruxtBlocksRegionMixin],
   };

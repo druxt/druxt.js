@@ -1,5 +1,19 @@
 # druxt-entity
 
+## 0.29.0 - 2026-10-11
+
+### Minor Changes
+
+- The deprecated `DruxtField` components are no longer registered by default. Set `druxt.entity.components.fields: true` to keep them ([#517](https://github.com/druxt/druxt.js/issues/517)). ([`8e4d246`](https://github.com/druxt/druxt.js/commit/8e4d24600a8c1c18db3fd7dc622e4ae6fa13762f))
+
+### Patch Changes
+
+- Druxt components no longer flicker or fetch their data again on the first load of a production build. Remove any `components:extend` hook added to work around it. ([`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- Each package exports its `package.json`, so `require('druxt/package.json')` works. ([`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- Modules require the current `druxt` and `druxt-router`, where some still required versions from 2023, so a site no longer installs an older copy of either beside its own. ([`a1d6708`](https://github.com/druxt/druxt.js/commit/a1d6708030851bfbde74a1986e4f4cd918793917))
+- Package READMEs show their banner on npm. ([`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- Updated dependencies: druxt@0.25.0, druxt-router@0.32.0, druxt-schema@0.12.0.
+
 ## 0.28.1 - 2023-07-25
 
 ### Patch Changes
@@ -66,11 +80,7 @@
   example:
 
   ```jsx
-  <DruxtEntity
-    type="node--recipe"
-    uuid="16268720-a0fa-4243-8bdc-491d8857eb26"
-    langcode="es"
-  />
+  <DruxtEntity type="node--recipe" uuid="16268720-a0fa-4243-8bdc-491d8857eb26" langcode="es" />
   ```
 
 - Added langcode to component mixins. ([`be21952`](https://github.com/druxt/druxt.js/commit/be21952))
@@ -177,10 +187,10 @@
   export default {
     druxt: {
       query: {
-        include: ["field_media_image", "field_media_image.field_media_image"],
+        include: ['field_media_image', 'field_media_image.field_media_image'],
         fields: [
-          ["file--file", ["uri"]],
-          ["media--image", []],
+          ['file--file', ['uri']],
+          ['media--image', []],
         ],
       },
     },
@@ -191,11 +201,7 @@
 
   ```vue
   <template>
-    <DruxtEntity
-      :settings="{ query: { include: ['uid'] } }"
-      type="node--page"
-      :uuid="uuid"
-    />
+    <DruxtEntity :settings="{ query: { include: ['uid'] } }" type="node--page" :uuid="uuid" />
   </template>
   ```
 

@@ -1,5 +1,23 @@
 # druxt-router
 
+## 0.32.0 - 2026-10-11
+
+### Minor Changes
+
+- The new `druxtRouter/flushRoutes` mutation removes one stored route, or all of them. `druxt/clearCache` uses it. ([`75b3768`](https://github.com/druxt/druxt.js/commit/75b37680976671879b03eaf2eb046d799456f5ef))
+- Vue and Vuex are now peer dependencies, so the packages use the site's own copy. A second copy stopped Nuxt at startup with a version mismatch. ([`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+
+### Patch Changes
+
+- Druxt components no longer flicker or fetch their data again on the first load of a production build. Remove any `components:extend` hook added to work around it. ([`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- A route fetched across a flush is no longer stored, but the page still renders it, so the title, breadcrumb and block regions follow the page shown. `druxtRouter/setRoute` also takes `{ path, route }`. ([`75b3768`](https://github.com/druxt/druxt.js/commit/75b37680976671879b03eaf2eb046d799456f5ef))
+- Each package exports its `package.json`, so `require('druxt/package.json')` works. ([`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- Package READMEs show their banner on npm. ([`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- Route errors such as 403 and 404 render through Nuxt's `error()`, and the plugin reuses the site's `$druxt` client, when it has one, instead of creating another. ([`4be5c92`](https://github.com/druxt/druxt.js/commit/4be5c921a5b9cc01e1fd9a9e6d73751b5b38e79a))
+- The home path `/` no longer redirects to `/<langcode>`. ([`27e7c50`](https://github.com/druxt/druxt.js/commit/27e7c50321f52fba55997589c39b71411b28e839))
+- A route lookup that fails without a 4xx, such as a network error, is no longer stored, so the next visit tries again. ([`e485374`](https://github.com/druxt/druxt.js/commit/e485374a23630c314fc03a0abb0f04edb1c5f2fe))
+- Updated dependencies: druxt@0.25.0.
+
 ## 0.31.0 - 2023-11-02
 
 ### Patch Changes

@@ -1,5 +1,22 @@
 # druxt-views
 
+## 0.23.0 - 2026-10-11
+
+### Minor Changes
+
+- Vue and Vuex are now peer dependencies, so the packages use the site's own copy. A second copy stopped Nuxt at startup with a version mismatch. ([`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+
+### Patch Changes
+
+- Uses axios 0.34.0, the current 0.x release. ([`6998f56`](https://github.com/druxt/druxt.js/commit/6998f56d9d18abf0ea7d9d308366d79b7b938b80))
+- Druxt components no longer flicker or fetch their data again on the first load of a production build. Remove any `components:extend` hook added to work around it. ([`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- View results fetched across a flush are no longer stored. ([`75b3768`](https://github.com/druxt/druxt.js/commit/75b37680976671879b03eaf2eb046d799456f5ef))
+- Each package exports its `package.json`, so `require('druxt/package.json')` works. ([`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- Modules require the current `druxt` and `druxt-router`, where some still required versions from 2023, so a site no longer installs an older copy of either beside its own. ([`a1d6708`](https://github.com/druxt/druxt.js/commit/a1d6708030851bfbde74a1986e4f4cd918793917))
+- Package READMEs show their banner on npm. ([`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- Fixed the internal `ref` name of View attachments. Only code reading `this.$refs` on a `DruxtView` is affected. ([`7d560a6`](https://github.com/druxt/druxt.js/commit/7d560a67116d333dca9329557364e518e9e602cc))
+- Updated dependencies: druxt-blocks@0.18.0, druxt@0.25.0, druxt-entity@0.29.0, druxt-router@0.32.0.
+
 ## 0.22.2 - 2023-07-25
 
 ### Patch Changes
@@ -159,11 +176,7 @@
 - Added support for Contextual filters (arguments). ([`c769243`](https://github.com/druxt/druxt.js/commit/c769243))
 
   ```vue
-  <DruxtView
-    :arguments="[1, 2, 3]"
-    displayid="block_1"
-    view-id="articles_aside"
-  />
+  <DruxtView :arguments="[1, 2, 3]" displayid="block_1" view-id="articles_aside" />
   ```
 
 ### Patch Changes
