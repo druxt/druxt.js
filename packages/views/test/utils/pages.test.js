@@ -12,7 +12,7 @@ const page = normalizePage(pattern, {
   viewId: 'products',
   displayId: 'page_1',
   arguments: ['collection'],
-  filters: { brand: { query: 'brand' }, colour: { param: 'colour' } },
+  filters: { brand: { query: 'brand' }, colour: { param: 'colour', multiple: true } },
   aliases: {
     collection: { women: '12', books: '11+12+13' },
     brand: { centarro: '3' },
@@ -52,14 +52,23 @@ describe('routeToModel', () => {
   test('reads arguments, filters, page and sort through the aliases', () => {
     expect(
       routeToModel(page, {
-        params: { collection: 'women', colour: 'red' },
+        params: { collection: 'women', colour: 'red+blue' },
         query: { brand: 'centarro', sort: 'created', page: '2' },
       })
     ).toEqual({
       arguments: ['12'],
-      filter: { brand: '3', colour: 'red' },
+      filter: { brand: '3', colour: ['red', 'blue'] },
       page: 2,
       sort: 'created',
+    })
+  })
+
+  test('a path filter of all is absent', () => {
+    expect(routeToModel(page, { params: { collection: 'all', colour: 'all' }, query: {} })).toEqual({
+      arguments: ['all'],
+      filter: {},
+      page: null,
+      sort: null,
     })
   })
 
@@ -94,15 +103,18 @@ describe('modelToLocation', () => {
     ).toEqual({ path: '/shop/women', query: { brand: 'centarro', page: '2' } })
   })
 
-  test('an all argument leaves the segment out, page 0 is dropped, a param filter is written', () => {
+  test('a later segment keeps its place with all before it, several values join, page 0 is dropped', () => {
     expect(
       modelToLocation(page, pattern, {
         arguments: ['all'],
-        filter: { colour: 'red' },
+        filter: { colour: ['red', 'blue'] },
         page: 0,
         sort: 'created',
       })
-    ).toEqual({ path: '/shop/red', query: { sort: 'created' } })
+    ).toEqual({ path: '/shop/all/red+blue', query: { sort: 'created' } })
+    expect(
+      modelToLocation(page, pattern, { arguments: ['12'], filter: {}, page: null, sort: null })
+    ).toEqual({ path: '/shop/women', query: {} })
   })
 
   test('keeps query keys the page does not own and an array value', () => {

@@ -46,17 +46,32 @@ export const toAlias = (config, name, id) => {
 
 const mapValue = (fn, value) => (Array.isArray(value) ? value.map(fn) : fn(value))
 
+/** Several values in one path segment are joined with this. */
+export const MULTI = '+'
+
 /**
- * An exposed filter's place in the URL, a param or a query key.
+ * An exposed filter's place in the URL, a param or a query key, and whether
+ * it takes several values.
  *
  * @param {object} config - A normalized page config.
  * @param {string} identifier - The exposed filter identifier.
- * @returns {object} `{ param }` or `{ query }`.
+ * @returns {object} `{ param, multiple }` or `{ query, multiple }`.
  */
 const place = (config, identifier) => {
   const where = config.filters[identifier] || {}
-  return where.param ? { param: where.param } : { query: where.query || identifier }
+  const multiple = !!where.multiple
+  return where.param
+    ? { param: where.param, multiple }
+    : { query: where.query || identifier, multiple }
 }
+
+/**
+ * The names of the pattern's parameters, in order.
+ *
+ * @param {string} pattern - The route pattern.
+ * @returns {string[]} The parameter names.
+ */
+const paramNames = (pattern) => [...pattern.matchAll(/\/:([A-Za-z0-9_]+)\??/g)].map((m) => m[1])
 
 const empty = (value) =>
   value === undefined || value === null || value === '' || (Array.isArray(value) && !value.length)
@@ -79,9 +94,14 @@ export const routeToModel = (config, route) => {
   const filter = {}
   for (const identifier of Object.keys(config.filters)) {
     const at = place(config, identifier)
-    const raw = at.param ? params[at.param] : query[at.query]
+    let raw = at.param ? params[at.param] : query[at.query]
+    // A filter in the path reads `all` as absent, the way an argument does,
+    // and splits several values on the join character.
+    if (at.param && raw === 'all') raw = undefined
+    if (at.param && at.multiple && typeof raw === 'string') raw = raw.split(MULTI)
     if (empty(raw)) continue
-    filter[identifier] = mapValue((v) => fromAlias(config, identifier, v), raw)
+    const values = mapValue((v) => fromAlias(config, identifier, v), raw)
+    filter[identifier] = at.multiple ? [].concat(values) : values
   }
   return {
     arguments: args,
@@ -114,7 +134,11 @@ export const modelToLocation = (config, pattern, model, route = {}) => {
     const at = place(config, identifier)
     const value = (model.filter || {})[identifier]
     if (at.param) {
-      if (!empty(value)) params[at.param] = toAlias(config, identifier, value)
+      if (!empty(value)) {
+        params[at.param] = [].concat(value)
+          .map((v) => toAlias(config, identifier, v))
+          .join(MULTI)
+      }
       continue
     }
     owned.add(at.query)
@@ -125,11 +149,18 @@ export const modelToLocation = (config, pattern, model, route = {}) => {
   for (const [key, value] of Object.entries(route.query || {})) {
     if (!owned.has(key) && !(key in query)) query[key] = value
   }
+  // An earlier optional segment with no value is written as `all` when a
+  // later one has a value, so the later value keeps its place.
+  const names = paramNames(pattern)
+  const last = names.reduce((found, name, i) => (params[name] === undefined ? found : i), -1)
+  names.forEach((name, i) => {
+    if (i < last && params[name] === undefined) params[name] = 'all'
+  })
   // Optional segments with no value fall away, and a trailing slash with them.
   const path =
     pattern
       .replace(/\/:([A-Za-z0-9_]+)\??/g, (match, name) =>
-        params[name] === undefined ? '' : `/${encodeURIComponent(params[name])}`
+        params[name] === undefined ? '' : `/${encodeURIComponent(params[name]).replace(/%2B/g, MULTI)}`
       )
       .replace(/\/+$/, '') || '/'
   return { path, query }
