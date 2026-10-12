@@ -35,6 +35,19 @@ export default {
     return { druxtViewsPage: { link: this.link } }
   },
 
+  data: () => ({
+    // The location last asked of the router, until the route catches up.
+    // DruxtView and its wrapper both report a change, and a second
+    // navigation to the same place would cancel the first.
+    pending: '',
+  }),
+
+  watch: {
+    $route() {
+      this.pending = ''
+    },
+  },
+
   /** */
   computed: {
     /**
@@ -97,7 +110,12 @@ export default {
         location.path === this.$route.path &&
         JSON.stringify(location.query) === JSON.stringify(this.$route.query || {})
       if (same) return
-      this.$router[this.config.history](location)
+      const key = JSON.stringify(location)
+      if (key === this.pending) return
+      this.pending = key
+      const navigation = this.$router[this.config.history](location)
+      // Vue Router rejects a navigation another one replaces; it is not an error here.
+      if (navigation && navigation.catch) navigation.catch(() => {})
     },
   },
 

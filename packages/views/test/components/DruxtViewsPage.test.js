@@ -111,6 +111,20 @@ describe('DruxtViewsPage', () => {
     expect($router.replace).not.toHaveBeenCalled()
   })
 
+  test('asks the router once while a navigation is pending, and again after the route moved', async () => {
+    const { wrapper, $route, $router } = mountPage({ path: '/shop/women', params: { collection: 'women' } })
+    $router.replace.mockReturnValue(Promise.reject(new Error('cancelled')))
+    view(wrapper).$emit('input', { filter: { brand: '3' }, page: null, sort: null })
+    view(wrapper).$emit('input', { filter: { brand: '3' }, page: null, sort: null })
+    await wrapper.vm.$nextTick()
+    expect($router.replace).toHaveBeenCalledTimes(1)
+    $route.query = { brand: 'centarro' }
+    await wrapper.vm.$nextTick()
+    view(wrapper).$emit('input', { filter: {}, page: null, sort: null })
+    await wrapper.vm.$nextTick()
+    expect($router.replace).toHaveBeenCalledTimes(2)
+  })
+
   test('pushes when configured, and clears a filter from the URL', async () => {
     const { wrapper, $router } = mountPage(
       {
