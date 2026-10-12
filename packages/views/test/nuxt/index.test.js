@@ -58,6 +58,9 @@ test('registers a route per Views page ahead of the wildcard, and the pages plug
   }
   await DruxtViewsNuxtModule.call(local)
   expect(routes.map((r) => r.path)).toStrictEqual(['/shop/:collection?', '/blog', '*'])
+  // A second run of the module, as a second dependant causes, adds nothing.
+  await DruxtViewsNuxtModule.call(local)
+  expect(routes.map((r) => r.path)).toStrictEqual(['/shop/:collection?', '/blog', '*'])
   expect(routes[0]).toMatchObject({
     name: 'druxt-views-page-shop-collection',
     meta: { druxtViewsPage: '/shop/:collection?' },

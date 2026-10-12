@@ -65,6 +65,9 @@ const DruxtViewsNuxtModule = async function (moduleOptions = {}) {
   if (Object.keys(pages).length) {
     this.extendRoutes((routes) => {
       for (const pattern of Object.keys(pages).reverse()) {
+        // Every Druxt module that requires this one runs it again, and each
+        // run adds this callback, so a pattern is registered once.
+        if (routes.some((route) => route.name === routeName(pattern))) continue
         routes.unshift({
           name: routeName(pattern),
           path: pattern,
