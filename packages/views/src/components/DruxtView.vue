@@ -560,6 +560,8 @@ export default {
       mode: vm.mode,
       pager: vm.pager,
       results: vm.results,
+      // The model, which DruxtViewsViewMixin takes as `value` and emits back.
+      value: vm.model,
       view: vm.view
     }),
 
