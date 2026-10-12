@@ -42,12 +42,6 @@ export default {
     pending: '',
   }),
 
-  watch: {
-    $route() {
-      this.pending = ''
-    },
-  },
-
   /** */
   computed: {
     /**
@@ -73,6 +67,12 @@ export default {
      * @type {object}
      */
     model: ({ config, $route }) => (config ? routeToModel(config, $route) : null),
+  },
+
+  watch: {
+    $route() {
+      this.pending = ''
+    },
   },
 
   /** */
