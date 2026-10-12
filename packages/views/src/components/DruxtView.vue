@@ -450,7 +450,7 @@ export default {
     /**
      * The model, copied, for a parent that writes the route. One emit per
      * tick, because a replaced model fires every model watcher at once, and
-     * a page that wrote the route for each would cancel its own navigations.
+     * a page that wrote the route for each would cancel its own route changes.
      */
     emitModel() {
       if (this.emitting) return
