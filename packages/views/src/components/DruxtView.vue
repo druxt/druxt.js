@@ -154,6 +154,7 @@ export default {
     const model = this.value || parse(stringify(this.$route.query))
 
     return {
+      emitting: false,
       model: {
         filter: model.filter || {},
         page: parseInt(model.page) || null,
@@ -447,10 +448,17 @@ export default {
     },
 
     /**
-     * The model, copied, for a parent that writes the route.
+     * The model, copied, for a parent that writes the route. One emit per
+     * tick, because a replaced model fires every model watcher at once, and
+     * a page that wrote the route for each would cancel its own navigations.
      */
     emitModel() {
-      this.$emit('input', JSON.parse(JSON.stringify(this.model)))
+      if (this.emitting) return
+      this.emitting = true
+      this.$nextTick(() => {
+        this.emitting = false
+        this.$emit('input', JSON.parse(JSON.stringify(this.model)))
+      })
     },
 
     /**

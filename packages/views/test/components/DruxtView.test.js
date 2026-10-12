@@ -296,16 +296,18 @@ describe('DruxtView', () => {
     const wrapper = mountComponent({ viewId: 'test', displayId: 'page_1', value, arguments: [] })
     expect(wrapper.vm.model).toEqual(value)
 
-    // A model change emits a copy.
-    wrapper.vm.model.page = 3
+    // A replaced model emits one copy, however many watchers it fires.
+    // DruxtModule's own model watcher emits the model object itself as well.
+    wrapper.vm.model = { filter: { brand: '4' }, page: 3, sort: 'title' }
     await wrapper.vm.$nextTick()
-    const emitted = wrapper.emitted('input')
-    expect(emitted[emitted.length - 1][0]).toEqual({ filter: { brand: '3' }, page: 3, sort: 'created' })
-    expect(emitted[emitted.length - 1][0]).not.toBe(wrapper.vm.model)
+    await wrapper.vm.$nextTick()
+    const copies = wrapper.emitted('input').filter(([v]) => v !== wrapper.vm.model)
+    expect(copies).toHaveLength(1)
+    expect(copies[0][0]).toEqual({ filter: { brand: '4' }, page: 3, sort: 'title' })
 
     // The same value again does not touch the model; a new one sets it.
     const spy = jest.spyOn(wrapper.vm, 'refetch')
-    await wrapper.setProps({ value: { filter: { brand: '3' }, page: 3, sort: 'created' } })
+    await wrapper.setProps({ value: { filter: { brand: '4' }, page: 3, sort: 'title' } })
     await wrapper.vm.$nextTick()
     expect(spy).not.toHaveBeenCalled()
     await wrapper.setProps({ value: { filter: {}, page: null, sort: null } })
