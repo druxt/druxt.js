@@ -55,7 +55,7 @@ export default {
         : null,
 
     /**
-     * The model the route describes: arguments, filter, page and sort.
+     * The arguments, filter, page and sort the route describes.
      *
      * @type {object}
      */
@@ -65,9 +65,10 @@ export default {
   /** */
   methods: {
     /**
-     * The location for a model, with the current route's other keys kept.
+     * A router location for a model. Query keys the page does not own are
+     * kept from the current route.
      *
-     * @param {object} model - The view's model, with `arguments`.
+     * @param {object} model - The view's model, including `arguments`.
      * @returns {object} A router location.
      */
     locationFor(model) {

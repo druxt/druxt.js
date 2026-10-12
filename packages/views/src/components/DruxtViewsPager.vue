@@ -9,7 +9,7 @@ export default {
 
   extends: DruxtModule,
 
-  /** A Views page that owns the route provides its links. */
+  /** A Views page that writes the route provides its links. */
   inject: {
     druxtViewsPage: { default: null },
   },

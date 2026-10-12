@@ -291,8 +291,8 @@ describe('DruxtView', () => {
 
   test('takes its model from a value and emits input on change', async () => {
     const value = { filter: { brand: '3' }, page: 2, sort: 'created' }
-    // A stable arguments array: a re-render with the default factory would
-    // give a new one and fire that watcher instead.
+    // A stable arguments array, since a re-render with the default factory
+    // would give a new one and fire that watcher instead.
     const wrapper = mountComponent({ viewId: 'test', displayId: 'page_1', value, arguments: [] })
     expect(wrapper.vm.model).toEqual(value)
 

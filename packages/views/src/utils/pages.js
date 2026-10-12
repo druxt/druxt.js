@@ -47,7 +47,7 @@ export const toAlias = (config, name, id) => {
 const mapValue = (fn, value) => (Array.isArray(value) ? value.map(fn) : fn(value))
 
 /**
- * Where an exposed filter lives in the URL: a param or a query key.
+ * An exposed filter's place in the URL, a param or a query key.
  *
  * @param {object} config - A normalized page config.
  * @param {string} identifier - The exposed filter identifier.
@@ -92,8 +92,9 @@ export const routeToModel = (config, route) => {
 }
 
 /**
- * The location for a model: params from arguments and param filters, the
- * rest as query. Query keys the page does not own are kept.
+ * A router location for a model. Arguments and param filters become params,
+ * everything else becomes query, and query keys the page does not own are
+ * kept from the current route.
  *
  * @param {object} config - A normalized page config.
  * @param {string} pattern - The route pattern.

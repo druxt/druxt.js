@@ -129,7 +129,7 @@ export default {
     },
 
     /**
-     * The model, when a parent owns the route, as a Views page does:
+     * The model, when a parent writes the route, as a Views page does:
      * `{ filter, page, sort }`. Without it the model comes from the route.
      *
      * @type {object}
@@ -149,7 +149,7 @@ export default {
    * @property {object} view - The View JSON:API resource.
    */
   data() {
-    // A parent that owns the route gives the model; otherwise the query is
+    // A parent that writes the route gives the model. Otherwise the query is
     // stringified and parsed to fix nested objects.
     const model = this.value || parse(stringify(this.$route.query))
 
@@ -309,7 +309,7 @@ export default {
 
   watch: {
     '$route.query'(to) {
-      // A parent that owns the route sets `value` instead.
+      // A parent that writes the route sets `value` instead.
       if (this.value) return
       if (!Object.entries(to || {}).length) {
         this.model = {
@@ -447,7 +447,7 @@ export default {
     },
 
     /**
-     * The model, copied, for a parent that owns the route.
+     * The model, copied, for a parent that writes the route.
      */
     emitModel() {
       this.$emit('input', JSON.parse(JSON.stringify(this.model)))
