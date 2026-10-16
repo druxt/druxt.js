@@ -77,7 +77,9 @@ export function checkPackages({ packages, registry, files = true }) {
 
         const sibling = workspace.get(dep)
         if (!sibling) {
-          if (range === 'latest' || semver.validRange(range) === '*') {
+          // A dist-tag such as `latest` or `dev` is no range at all. Aliases (`npm:`) are left alone.
+          const valid = semver.validRange(range)
+          if (valid === '*' || (valid === null && !range.startsWith('npm:'))) {
             problems.push(`${name}: ${field}.${dep} is "${range}", which accepts any future release. State the range the package supports.`)
           }
           continue
