@@ -76,7 +76,12 @@ export function checkPackages({ packages, registry, files = true }) {
         }
 
         const sibling = workspace.get(dep)
-        if (!sibling) continue
+        if (!sibling) {
+          if (range === 'latest' || semver.validRange(range) === '*') {
+            problems.push(`${name}: ${field}.${dep} is "${range}", which accepts any future release. State the range the package supports.`)
+          }
+          continue
+        }
 
         if (sibling.private) {
           problems.push(`${name}: ${field}.${dep} names a private package, so an install from npm cannot resolve it.`)
