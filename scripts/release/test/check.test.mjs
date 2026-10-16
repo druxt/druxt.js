@@ -46,7 +46,7 @@ test('vue and vuex are only accepted as peers', () => {
 })
 
 test('an unbounded range on an outside package is refused', () => {
-  for (const range of ['*', '', 'x', 'latest']) {
+  for (const range of ['*', '', 'x', 'latest', 'next', 'dev']) {
     for (const field of ['dependencies', 'peerDependencies']) {
       const packages = [pkg({ name: 'site', version: '2.0.0', [field]: { consola: range } })]
       const problems = checkPackages({ packages, files: false })
