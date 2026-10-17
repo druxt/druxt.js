@@ -76,7 +76,14 @@ export function checkPackages({ packages, registry, files = true }) {
         }
 
         const sibling = workspace.get(dep)
-        if (!sibling) continue
+        if (!sibling) {
+          // A dist-tag such as `latest` or `dev` is no range at all. Aliases (`npm:`) are left alone.
+          const valid = semver.validRange(range)
+          if (valid === '*' || (valid === null && !range.startsWith('npm:'))) {
+            problems.push(`${name}: ${field}.${dep} is "${range}", which accepts any future release. State the range the package supports.`)
+          }
+          continue
+        }
 
         if (sibling.private) {
           problems.push(`${name}: ${field}.${dep} names a private package, so an install from npm cannot resolve it.`)

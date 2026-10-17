@@ -45,6 +45,19 @@ test('vue and vuex are only accepted as peers', () => {
   assert.deepEqual(checkPackages({ packages, files: false }), [])
 })
 
+test('an unbounded range on an outside package is refused', () => {
+  for (const range of ['*', '', 'x', 'latest', 'next', 'dev']) {
+    for (const field of ['dependencies', 'peerDependencies']) {
+      const packages = [pkg({ name: 'site', version: '2.0.0', [field]: { consola: range } })]
+      const problems = checkPackages({ packages, files: false })
+      assert.equal(problems.length, 1, `${field} ${range}`)
+      assert.match(problems[0], new RegExp(`site: ${field}\\.consola .*any future release`))
+    }
+  }
+  const packages = [pkg({ name: 'site', version: '2.0.0', dependencies: { consola: '^2.15.3' }, peerDependencies: { axios: '>=0.34.0' } })]
+  assert.deepEqual(checkPackages({ packages, files: false }), [])
+})
+
 test('a dependency on a private sibling is refused', () => {
   const packages = [pkg({ name: 'utils', version: '1.0.0', private: true }), pkg({ name: 'site', version: '2.0.0', dependencies: { utils: '^1.0.0' } })]
   assert.match(checkPackages({ packages, files: false })[0], /names a private package/)

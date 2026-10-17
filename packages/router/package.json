@@ -47,6 +47,7 @@
     "banner.svg"
   ],
   "dependencies": {
+    "drupal-jsonapi-params": "^2.3.2",
     "druxt": "^0.24.0",
     "url-parse": "^1.5.10"
   },
@@ -55,7 +56,6 @@
     "vue-router": "^3.6.5"
   },
   "peerDependencies": {
-    "drupal-jsonapi-params": "*",
     "vue": "^2.7.14",
     "vuex": "^3.6.2"
   },
