@@ -1,12 +1,21 @@
 describe('druxt-router entry point', () => {
-  test('loads without fs, as a client bundle must', () => {
-    // A client build has no fs. The Nuxt module imported it at the top level,
-    // so the module had to be registered as 'druxt-router/nuxt' rather than by
-    // the package name like every other Druxt module.
+  // doMock outlives isolateModules, so restore the real builtins even when a test throws.
+  afterEach(() => {
+    jest.unmock('fs')
+    jest.unmock('path')
+  })
+
+  test('loads without fs or path, as a client bundle must', () => {
+    // A client build has no fs, and a Vite build has no path. The Nuxt module
+    // imported fs at the top level, so the module had to be registered as
+    // 'druxt-router/nuxt' rather than by the package name like every other
+    // Druxt module.
     jest.isolateModules(() => {
-      jest.doMock('fs', () => {
-        throw new Error("Cannot find module 'fs'")
-      })
+      for (const builtin of ['fs', 'path']) {
+        jest.doMock(builtin, () => {
+          throw new Error(`Cannot find module '${builtin}'`)
+        })
+      }
       // druxt is external to the bundle and has its own browser build, so
       // only druxt-router's own module graph is under test here.
       jest.doMock('druxt', () => ({}))

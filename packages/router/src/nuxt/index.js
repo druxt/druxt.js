@@ -1,4 +1,3 @@
-import { join, resolve } from 'path'
 import meta from '../../package.json'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
@@ -41,7 +40,8 @@ const extendComponent = (component) => ({ ...component, isAsync: false })
  *   resolved route.
  */
 const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
-  // fs is loaded at call time via the Nuxt resolver, so client bundles never see it (#545).
+  // Node builtins are loaded at call time via the Nuxt resolver, so client bundles never see them (#545).
+  const { join, resolve } = this.nuxt.resolver.requireModule('path')
   const { existsSync } = this.nuxt.resolver.requireModule('fs')
 
   // Set default options.

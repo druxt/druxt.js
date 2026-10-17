@@ -10,4 +10,4 @@
 modules: ['druxt-router']
 ```
 
-`'druxt-router/nuxt'` still works. The module was split out under that name because it read the filesystem to look for a `pages/` directory, which pulled Node's `fs` into client bundles. Both it and `druxt-site` now load `fs` through the Nuxt resolver, so importing either package in the browser no longer breaks the build, and `DruxtSiteMixin` can be imported client side (#545).
+`'druxt-router/nuxt'` still works. The module was split out under that name because it read the filesystem to look for a `pages/` directory, which pulled Node's `fs` into client bundles. Both it and `druxt-site` now load `fs` through the Nuxt resolver, so importing either package in a Nuxt client bundle no longer breaks the build, and `DruxtSiteMixin` can be imported client side (#545). `druxt-router` loads Node's `path` the same way, so its browser bundle doesn't import a Node builtin at all.
