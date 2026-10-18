@@ -27,6 +27,14 @@ const HOST_OWNED = ['vue', 'vuex']
 // Specifiers that only resolve inside this repository or off the registry.
 const UNPUBLISHABLE = /^(workspace|link|file|portal|git|git\+ssh|git\+https|github|https?):/
 
+// The range in an `npm:<package>@<range>` alias, or '' when it names none. A scoped
+// package starts with '@', so only an '@' after the first character opens the range.
+const aliasRange = (range) => {
+  const target = range.slice('npm:'.length)
+  const at = target.lastIndexOf('@')
+  return at > 0 ? target.slice(at + 1) : ''
+}
+
 /**
  * Reads every package manifest under a packages directory.
  *
@@ -77,9 +85,11 @@ export function checkPackages({ packages, registry, files = true }) {
 
         const sibling = workspace.get(dep)
         if (!sibling) {
-          // A dist-tag such as `latest` or `dev` is no range at all. Aliases (`npm:`) are left alone.
-          const valid = semver.validRange(range)
-          if (valid === '*' || (valid === null && !range.startsWith('npm:'))) {
+          // A dist-tag such as `latest` or `dev` is no range at all. An alias,
+          // `npm:<package>@<range>`, is judged by its range; with none it installs `latest`.
+          const spec = range.startsWith('npm:') ? aliasRange(range) : range
+          const valid = semver.validRange(spec)
+          if (valid === '*' || valid === null) {
             problems.push(`${name}: ${field}.${dep} is "${range}", which accepts any future release. State the range the package supports.`)
           }
           continue

@@ -46,7 +46,8 @@ test('vue and vuex are only accepted as peers', () => {
 })
 
 test('an unbounded range on an outside package is refused', () => {
-  for (const range of ['*', '', 'x', 'latest', 'next', 'dev']) {
+  const aliases = ['npm:consola@*', 'npm:consola@latest', 'npm:consola', 'npm:@scope/consola@*', 'npm:@scope/consola']
+  for (const range of ['*', '', 'x', 'latest', 'next', 'dev', ...aliases]) {
     for (const field of ['dependencies', 'peerDependencies']) {
       const packages = [pkg({ name: 'site', version: '2.0.0', [field]: { consola: range } })]
       const problems = checkPackages({ packages, files: false })
@@ -56,6 +57,10 @@ test('an unbounded range on an outside package is refused', () => {
   }
   const packages = [pkg({ name: 'site', version: '2.0.0', dependencies: { consola: '^2.15.3' }, peerDependencies: { axios: '>=0.34.0' } })]
   assert.deepEqual(checkPackages({ packages, files: false }), [])
+  for (const range of ['npm:consola@^2.15.3', 'npm:@scope/consola@^2.15.3']) {
+    const aliased = [pkg({ name: 'site', version: '2.0.0', dependencies: { consola: range } })]
+    assert.deepEqual(checkPackages({ packages: aliased, files: false }), [], range)
+  }
 })
 
 test('a dependency on a private sibling is refused', () => {
