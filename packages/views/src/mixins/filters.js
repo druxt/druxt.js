@@ -28,6 +28,16 @@ const DruxtViewsFiltersMixin = {
     },
 
     /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * The Exposed form options.
      *
      * @type {object}
