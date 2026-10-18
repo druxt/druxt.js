@@ -13,6 +13,26 @@ import { DruxtMenuNuxtModule } from './nuxtModule'
 export { DruxtMenu } from './menu.js'
 
 /**
+ * Gets the URL of a menu item.
+ *
+ * @type {Function}
+ * @exports getMenuLinkUrl
+ * @name getMenuLinkUrl
+ * @see {@link ./utils/link|Menu links}
+ */
+export { getMenuLinkUrl } from './utils/link.js'
+
+/**
+ * Resolves how a menu item links to its URL.
+ *
+ * @type {Function}
+ * @exports resolveMenuLink
+ * @name resolveMenuLink
+ * @see {@link ./utils/link|Menu links}
+ */
+export { resolveMenuLink } from './utils/link.js'
+
+/**
  * The DruxtMenu vuex store.
  *
  * @type {object}
