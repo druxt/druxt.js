@@ -28,6 +28,16 @@ const DruxtViewsFilterMixin = {
     },
 
     /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * The DruxtViewFilter model value.
      *
      * @type {*}

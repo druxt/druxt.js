@@ -35,6 +35,16 @@ const DruxtBreadcrumbMixin = {
     langcode: {
       type: String,
       default: undefined,
+    },
+
+    /**
+     * The Breadcrumbs, as the module's `value`. The same data as `crumbs`.
+     *
+     * @type {object[]}
+     */
+    value: {
+      type: Array,
+      default: undefined,
     }
   },
 }

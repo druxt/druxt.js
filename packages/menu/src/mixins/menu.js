@@ -45,6 +45,16 @@ const DruxtMenuMixin = {
     parentId: {
       type: String,
       default: null,
+    },
+
+    /**
+     * The Menu items, as the module's `value`. The same data as `items`.
+     *
+     * @type {object[]}
+     */
+    value: {
+      type: Array,
+      default: undefined,
     }
   },
 }

@@ -28,6 +28,16 @@ const DruxtViewsPagerMixin = {
     },
 
     /**
+     * The JSON:API resource language code.
+     *
+     * @type {string}
+     */
+    langcode: {
+      type: String,
+      default: undefined,
+    },
+
+    /**
      * The Pager options.
      *
      * @type {object}
