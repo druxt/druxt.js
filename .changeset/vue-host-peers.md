@@ -9,4 +9,4 @@
 'druxt-views': minor
 ---
 
-Vue and Vuex are now peer dependencies, so the packages use the site's own copy. A second copy stopped Nuxt at startup with a version mismatch.
+fix(#875): `vue` and `vuex` are now peer dependencies, so the packages use the site's own copy. A second copy stopped Nuxt at startup with a version mismatch.

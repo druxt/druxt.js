@@ -9,4 +9,4 @@
 'druxt-views': patch
 ---
 
-Druxt components no longer flicker or fetch their data again on the first load of a production build. Remove any `components:extend` hook added to work around it.
+fix(#854): components no longer flicker or fetch their data again on the first load of a production build. Remove any `components:extend` hook added to work around it.

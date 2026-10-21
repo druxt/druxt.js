@@ -11,4 +11,4 @@
 'druxt-test-utils': patch
 ---
 
-Each package exports its `package.json`, so `require('druxt/package.json')` works.
+fix(#835): each package exports its `package.json`, so `require('druxt/package.json')` works.

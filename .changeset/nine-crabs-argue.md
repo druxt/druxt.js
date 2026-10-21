@@ -10,4 +10,4 @@
 'druxt-views': patch
 ---
 
-Package READMEs show their banner on npm.
+fix(#863): package READMEs show their banner on npm.
