@@ -12,7 +12,8 @@ let sent = []
 
 // Each server request gets its own Axios instance from @nuxtjs/axios.
 // `added` is what a request interceptor adds on the way out, which the defaults never show.
-const requestAxios = ({ common = {}, added = {}, headers = PUBLIC, status = 200 } = {}) => {
+// `pad` adds that many characters to each document, to give it a size.
+const requestAxios = ({ common = {}, added = {}, headers = PUBLIC, status = 200, pad = 0 } = {}) => {
   const instance = jest.fn()
   const handlers = []
   instance.defaults = { headers: { common } }
@@ -21,7 +22,7 @@ const requestAxios = ({ common = {}, added = {}, headers = PUBLIC, status = 200 
     sent.push(url)
     const data = url.endsWith('/jsonapi')
       ? { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } }
-      : { data: { id: uuid, type: 'node--page', attributes: { title: 'Fresh', sent: sent.length } } }
+      : { data: { id: uuid, type: 'node--page', attributes: { title: 'Fresh', sent: sent.length, ...(pad ? { body: 'x'.repeat(pad) } : {}) } } }
     const response = { status, config: { ...config, headers: { ...common, ...added } }, headers, data }
     return handlers.reduce((result, handler) => handler(result), response)
   })
@@ -195,22 +196,29 @@ describe('DruxtClient content cache', () => {
     expect(fetches()).toBe(2)
   })
 
-  test('1000 entries are kept when cache.max is not set', async () => {
-    const urls = Array.from({ length: 1001 }, (_, i) => `/jsonapi/node/page/${i}`)
-    for (const url of urls) await client().get(url)
-    // The first is the least recently used, so it went when the 1001st arrived.
-    await client().get(urls[0])
+  test('50 MB of documents are kept when cache.maxSize is not set', async () => {
+    // Just under 1 MB each, so 50 fit and the 51st pushes out the least recently used.
+    const big = () => requestAxios({ pad: 1024 * 1024 - 1000 })
+    const urls = Array.from({ length: 51 }, (_, i) => `/jsonapi/node/page/${i}`)
+    for (const url of urls) await client(big()).get(url)
+    await client(big()).get(urls[1])
+    expect(fetches(urls[1])).toBe(1)
+    await client(big()).get(urls[0])
     expect(fetches(urls[0])).toBe(2)
-    await client().get(urls[1000])
-    expect(fetches(urls[1000])).toBe(1)
   })
 
-  test('cache.max bounds the entries kept', async () => {
-    const bounded = { content: true, max: 1 }
+  test('cache.maxSize bounds what is kept, by the size of the stored documents', async () => {
+    // One small document is about 115 characters of JSON, so one fits and two do not.
+    const bounded = { content: true, maxSize: 150 }
     await client(requestAxios(), bounded).get('/jsonapi/node/page/a')
     await client(requestAxios(), bounded).get('/jsonapi/node/page/b')
     await client(requestAxios(), bounded).get('/jsonapi/node/page/a')
     expect(fetches('/jsonapi/node/page/a')).toBe(2)
+
+    // A document larger than the whole limit is never kept.
+    await client(requestAxios({ pad: 500 }), bounded).get('/jsonapi/node/page/big')
+    await client(requestAxios({ pad: 500 }), bounded).get('/jsonapi/node/page/big')
+    expect(fetches('/jsonapi/node/page/big')).toBe(2)
   })
 
   test('getResource and getCollection read it, and pass a bypass through', async () => {

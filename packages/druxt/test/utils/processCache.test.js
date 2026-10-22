@@ -224,56 +224,96 @@ describe('processCache', () => {
     expect(processCache('menu', { axios: instance })).toBe(null)
   })
 
-  test('a scope keeps at most max entries, dropping the least recently used', () => {
-    const cache = processCache('bounded', { axios: axios(), max: 2 })
-    cache.set('a', 1, 60)
-    cache.set('b', 2, 60)
+  // Each value below is a string, which counts as its length against maxSize.
+  test('a scope keeps at most maxSize, dropping the least recently used', () => {
+    const cache = processCache('bounded', { axios: axios(), maxSize: 8 })
+    cache.set('a', 'aaaa', 60)
+    cache.set('b', 'bbbb', 60)
     // Reading a makes b the oldest.
-    expect(cache.get('a')).toBe(1)
-    cache.set('c', 3, 60)
+    expect(cache.get('a')).toBe('aaaa')
+    cache.set('c', 'cccc', 60)
     expect(cache.get('b')).toBe(undefined)
-    expect(cache.get('a')).toBe(1)
-    expect(cache.get('c')).toBe(3)
+    expect(cache.get('a')).toBe('aaaa')
+    expect(cache.get('c')).toBe('cccc')
 
-    // Writing a key again moves it to the newest end and keeps one entry for it.
-    cache.set('a', 4, 60)
-    cache.set('d', 5, 60)
-    expect(cache.get('c')).toBe(undefined)
-    expect(cache.get('a')).toBe(4)
-    expect(cache.get('d')).toBe(5)
+    // Writing a key again replaces its size rather than adding to it.
+    cache.set('a', 'aa', 60)
+    cache.set('d', 'dd', 60)
+    expect(cache.get('a')).toBe('aa')
+    expect(cache.get('c')).toBe('cccc')
+    expect(cache.get('d')).toBe('dd')
+
+    // One large value pushes out as many older ones as it needs.
+    cache.set('e', 'eeeeeeee', 60)
+    expect([cache.get('a'), cache.get('c'), cache.get('d')]).toStrictEqual([undefined, undefined, undefined])
+    expect(cache.get('e')).toBe('eeeeeeee')
+  })
+
+  test('a value larger than maxSize is not stored and leaves the scope as it was', () => {
+    const cache = processCache('bounded', { axios: axios(), maxSize: 4 })
+    cache.set('a', 'aaaa', 60)
+    cache.set('big', 'bbbbb', 60)
+    expect(cache.get('big')).toBe(undefined)
+    expect(cache.get('a')).toBe('aaaa')
+  })
+
+  test('values are measured by their JSON unless sizeOf is given', () => {
+    const json = processCache('bounded', { axios: axios(), maxSize: 10 })
+    // {"n":1} is 7 characters, so a second one does not fit beside it.
+    json.set('a', { n: 1 }, 60)
+    json.set('b', { n: 2 }, 60)
+    expect(json.get('a')).toBe(undefined)
+    expect(json.get('b')).toStrictEqual({ n: 2 })
+
+    resetProcessCache()
+    const measured = processCache('bounded', { axios: axios(), maxSize: 10, sizeOf: (value) => value.size })
+    measured.set('a', { size: 5 }, 60)
+    measured.set('b', { size: 5 }, 60)
+    expect(measured.get('a')).toStrictEqual({ size: 5 })
+    expect(measured.get('b')).toStrictEqual({ size: 5 })
   })
 
   test('expired entries go before live ones when a scope is full', () => {
     const now = jest.spyOn(Date, 'now')
     now.mockReturnValue(1000)
-    const cache = processCache('bounded', { axios: axios(), max: 2 })
-    cache.set('live', 1, 600)
-    cache.set('short', 2, 10)
+    const cache = processCache('bounded', { axios: axios(), maxSize: 8 })
+    cache.set('live', 'llll', 600)
+    cache.set('short', 'ssss', 10)
     now.mockReturnValue(1000 + 20 * 1000)
     // The oldest entry is live, the newer one has expired, so the expired one goes.
-    cache.set('new', 3, 600)
-    expect(cache.get('live')).toBe(1)
-    expect(cache.get('new')).toBe(3)
+    cache.set('new', 'nnnn', 600)
+    expect(cache.get('live')).toBe('llll')
+    expect(cache.get('new')).toBe('nnnn')
     now.mockRestore()
   })
 
-  test('an expired entry is removed when it is read', () => {
+  test('an expired entry is removed when it is read, and its size with it', () => {
     const now = jest.spyOn(Date, 'now')
     now.mockReturnValue(1000)
-    const cache = processCache('bounded', { axios: axios(), max: 1 })
-    cache.set('a', 1, 10)
+    const cache = processCache('bounded', { axios: axios(), maxSize: 8 })
+    cache.set('a', 'aaaa', 10)
+    cache.set('b', 'bbbb', 600)
     now.mockReturnValue(1000 + 11 * 1000)
     expect(cache.get('a')).toBe(undefined)
-    // Nothing is left, so a later entry is stored without evicting anything.
-    cache.set('b', 2, 10)
-    expect(cache.get('b')).toBe(2)
+    // The room a held is free again, so a later entry is stored without evicting b.
+    cache.set('c', 'cccc', 600)
+    expect(cache.get('b')).toBe('bbbb')
+    expect(cache.get('c')).toBe('cccc')
     now.mockRestore()
   })
 
-  test('without max a scope is unbounded', () => {
+  test('without maxSize a scope is unbounded', () => {
     const cache = processCache('unbounded', { axios: axios() })
-    for (let i = 0; i < 50; i++) cache.set(String(i), i, 60)
-    expect(cache.get('0')).toBe(0)
-    expect(cache.get('49')).toBe(49)
+    for (let i = 0; i < 50; i++) cache.set(String(i), 'x'.repeat(1000), 60)
+    expect(cache.get('0')).toBe('x'.repeat(1000))
+    expect(cache.get('49')).toBe('x'.repeat(1000))
+  })
+
+  test('a clear empties the sizes with the entries', () => {
+    const cache = () => processCache('bounded', { axios: axios(), maxSize: 8 })
+    cache().set('a', 'aaaaaaaa', 60)
+    resetProcessCache()
+    cache().set('b', 'bbbbbbbb', 60)
+    expect(cache().get('b')).toBe('bbbbbbbb')
   })
 })

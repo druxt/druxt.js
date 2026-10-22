@@ -9,6 +9,18 @@ const scopes = globalThis[SCOPES] || (globalThis[SCOPES] = new Map())
 const GENERATION = Symbol.for('druxt.processCacheGeneration')
 const generation = globalThis[GENERATION] || (globalThis[GENERATION] = { value: 0 })
 
+// The running size of a consumer's entries, held on its map of entries.
+const SIZE = Symbol.for('druxt.processCacheSize')
+
+// The size a value counts for against `maxSize`, as the length of its JSON.
+const jsonSize = (value) => {
+  try {
+    return (typeof value === 'string' ? value : JSON.stringify(value) || '').length
+  } catch (err) {
+    return 0
+  }
+}
+
 // Axios instances seen sending credentials, and the patterns watched on each.
 const credentialed = new WeakSet()
 const watched = new WeakMap()
@@ -179,11 +191,12 @@ export const parseCacheLifetime = (headers) => {
  * @param {object} options.axios - The Axios instance the request uses.
  * @param {number} [options.ttl] - Seconds an entry may live at most. It shortens a lifetime, never extends one, and 0 keeps nothing.
  * @param {string} [options.sessionCookie] - A pattern for the session cookie name.
- * @param {number} [options.max] - Entries the scope keeps per consumer at most. Past it, expired entries go first, then the least recently used.
+ * @param {number} [options.maxSize] - The size the scope keeps per consumer at most, in characters of stored JSON, roughly bytes. Past it, expired entries go first, then the least recently used, and a value larger than the whole limit is not stored.
+ * @param {Function} [options.sizeOf] - Measures a value for `maxSize`. The length of its JSON by default.
  *
  * @returns {?{get: Function, set: Function}}
  */
-export const processCache = (scope, { axios, ttl, sessionCookie, max } = {}) => {
+export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize } = {}) => {
   if (!runtime.isServer() || hasCredentials(axios, sessionCookie)) return null
 
   if (!scopes.has(scope)) scopes.set(scope, new Map())
@@ -196,13 +209,22 @@ export const processCache = (scope, { axios, ttl, sessionCookie, max } = {}) => 
   const taken = generation.value
 
   const expired = (entry) => Date.now() - entry.created >= entry.seconds * 1000
-  // Keeps the scope within `max`: expired entries go first, then the least recently used.
+  // The running size of the entries, kept on the map so every handle and copy of the module agrees.
+  const total = () => entries[SIZE] || 0
+  const remove = (key) => {
+    const entry = entries.get(key)
+    if (!entry) return
+    entries[SIZE] = total() - entry.size
+    entries.delete(key)
+  }
+  const bounded = typeof maxSize === 'number'
+  // Keeps the scope within `maxSize`: expired entries go first, then the least recently used.
   const bound = () => {
-    if (typeof max !== 'number' || entries.size <= max) return
-    for (const [key, entry] of entries) if (expired(entry)) entries.delete(key)
+    if (!bounded || total() <= maxSize) return
+    for (const [key, entry] of entries) if (expired(entry)) remove(key)
     for (const key of entries.keys()) {
-      if (entries.size <= max) break
-      entries.delete(key)
+      if (total() <= maxSize) break
+      remove(key)
     }
   }
 
@@ -218,7 +240,7 @@ export const processCache = (scope, { axios, ttl, sessionCookie, max } = {}) => 
       if (!entry) return undefined
       // Past its own lifetime the entry is no use to any reader, so it goes.
       if (expired(entry)) {
-        entries.delete(key)
+        remove(key)
         return undefined
       }
       if (Date.now() - entry.created >= cap(entry.seconds) * 1000) return undefined
@@ -243,9 +265,13 @@ export const processCache = (scope, { axios, ttl, sessionCookie, max } = {}) => 
      */
     set(key, value, seconds, since) {
       if (since !== undefined && since !== generation.value) return value
-      entries.delete(key)
+      remove(key)
       if (cap(seconds) > 0) {
-        entries.set(key, { value, seconds: cap(seconds), created: Date.now() })
+        const size = sizeOf(value)
+        // A value larger than the whole limit would empty the scope and still not fit.
+        if (bounded && size > maxSize) return value
+        entries.set(key, { value, seconds: cap(seconds), created: Date.now(), size })
+        entries[SIZE] = total() + size
         bound()
       }
       return value

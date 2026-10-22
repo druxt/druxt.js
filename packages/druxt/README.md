@@ -99,7 +99,7 @@ cache. The cache is off under `nuxt dev`.
 | Option                | Type      | Default             | Description                                                         |
 | --------------------- | --------- | ------------------- | ------------------------------------------------------------------- |
 | `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.           |
-| `cache.max`           | `number`  | `1000`              | Responses kept per cache area at most. The least recently used go.  |
+| `cache.maxSize`       | `number`  | `52428800` (50 MB)  | Bytes of responses kept per cache area. The least recently used go. |
 | `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.          |
 | `cache.secret`        | `string`  |                     | Turns on `POST /_druxt/cache/clear`.                                |
 | `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it. |
@@ -131,9 +131,10 @@ page published after a visitor saw a 404 appears straight away. A
 `bypassCache` dispatch to the Druxt store also skips this cache and stores the
 fresh response.
 
-`cache.max` counts responses, not bytes, and applies to each cache area and
-consumer. Size it from your largest responses: a full cache of 1000 view pages
-of 100 KB each holds about 300 MB of server memory.
+`cache.maxSize` measures the stored JSON, so it is close to the bytes Drupal
+sent, and it applies to each cache area and consumer. Server memory runs to
+about three times that: on druxtjs.org, 105 MB of stored view pages held about
+300 MB of heap. A response larger than the whole limit is not kept.
 
 ### Clearing from Drupal with Purge
 

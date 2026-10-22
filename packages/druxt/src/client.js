@@ -13,8 +13,8 @@ const indexCache = new WeakMap()
 // How long each fetched document may be cached, from its Cache-Control header.
 const lifetimes = new WeakMap()
 
-// Entries a process cache scope keeps per consumer when `cache.max` is not set.
-const DEFAULT_MAX_ENTRIES = 1000
+// The size a process cache scope keeps per consumer when `cache.maxSize` is not set: 50 MB of stored JSON.
+const DEFAULT_MAX_SIZE = 50 * 1024 * 1024
 
 // Request options that never change the response, so a request with only these may use the content cache.
 const KEYLESS_OPTIONS = ['validateStatus', 'timeout']
@@ -170,9 +170,11 @@ class DruxtClient {
    */
   processCache(scope) {
     if (!this.options.cache) return null
-    const { ttl, sessionCookie, max = DEFAULT_MAX_ENTRIES, content } = this.options.cache
+    const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE, content } = this.options.cache
     if (scope === 'content' && !content) return null
-    return processCache(scope, { axios: this.axios, ttl, sessionCookie, max })
+    // A content entry holds its document as text already, so its size is that text's length.
+    const sizeOf = scope === 'content' ? (value) => value.body.length : undefined
+    return processCache(scope, { axios: this.axios, ttl, sessionCookie, maxSize, sizeOf })
   }
 
   /**

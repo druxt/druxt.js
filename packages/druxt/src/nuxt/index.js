@@ -244,7 +244,8 @@ export { DruxtNuxtModule }
  *   Off under `nuxt dev`. `false` turns it off.
  * @property {boolean} [cache.content=false] - Also keep entities, collections, views and route lookups, under the
  *   same rules. Pair it with a clear from Drupal, as content changes far more often than menus.
- * @property {number} [cache.max=1000] - Responses each cache area keeps at most. The least recently used go first.
+ * @property {number} [cache.maxSize=52428800] - Bytes of responses each cache area keeps, measured as stored JSON.
+ *   Past it the least recently used go first, and a response larger than the limit is not kept.
  * @property {number} [cache.ttl] - Seconds a cached response may live at most. It shortens Drupal's lifetime,
  *   never extends it.
  * @property {string} [cache.secret] - Turns on `POST /_druxt/cache/clear`, which empties the cache when the
