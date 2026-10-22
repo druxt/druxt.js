@@ -373,14 +373,14 @@ class DruxtClient {
   /**
    * Execute an Axios GET request, with permission checking and error handling.
    *
-   * @example @lang js
-   * const res = await this.$druxt.get('/jsonapi/node/article')
-   *
-   * @param {string} url - The URL to GET.
    * With `cache.content` set, a response to a request without credentials is
    * kept in the process cache for as long as its Cache-Control allows, and
    * the next server request for the same URL is answered from it.
    *
+   * @example @lang js
+   * const res = await this.$druxt.get('/jsonapi/node/article')
+   *
+   * @param {string} url - The URL to GET.
    * @param {object} [options] - An Axios options object.
    * @param {boolean} [options.bypassCache] - Fetch from Drupal even when the process cache holds the URL, and store the fresh response.
    *
