@@ -8,9 +8,10 @@ describe('include helpers', () => {
     expect(includePaths('')).toStrictEqual([])
   })
 
-  test('topIncludes keeps the relationships named directly', () => {
+  test('topIncludes gives the first relationship of each path, once each', () => {
     expect(topIncludes('media,media.image,uid')).toStrictEqual(['media', 'uid'])
-    expect(topIncludes('media.image')).toStrictEqual([])
+    // A nested path includes the relationships along it.
+    expect(topIncludes('media.image')).toStrictEqual(['media'])
   })
 
   test('subIncludes gives the paths below a relationship, relative to it', () => {
@@ -22,6 +23,7 @@ describe('include helpers', () => {
 
   test('fieldsWithIncludes adds the included relationships to a fieldset, once each', () => {
     expect(fieldsWithIncludes('title,uid', 'uid,field_media,field_media.image')).toStrictEqual('title,uid,field_media')
+    expect(fieldsWithIncludes('title', 'field_content.field_media')).toStrictEqual('title,field_content')
     expect(fieldsWithIncludes('title,', '')).toStrictEqual('title')
   })
 

@@ -552,6 +552,25 @@ describe('DruxtStore', () => {
     expect(decodeURIComponent(sent.getQueryString())).not.toMatch(/include=/)
   })
 
+  test('a nested include path rebuilds the relationships along it', async () => {
+    const fields = {
+      'node--page': 'title,field_content',
+      'paragraph--image': 'field_media',
+      'media--image': 'name',
+    }
+    const href = (type, id) => `${baseUrl}/jsonapi/${type.replace('--', '/')}/${id}?fields[${type}]=${fields[type]}`
+    const add = (data) => store.commit('druxt/addResource', { resource: { data, links: { self: { href: href(data.type, data.id) } } } })
+    add({ type: 'node--page', id: 'n1', attributes: { title: 'Page' }, relationships: { field_content: { data: [{ type: 'paragraph--image', id: 'i1' }] } } })
+    add({ type: 'paragraph--image', id: 'i1', relationships: { field_media: { data: { type: 'media--image', id: 'm1' } } } })
+    add({ type: 'media--image', id: 'm1', attributes: { name: 'Image' } })
+
+    store.$druxt.getResource = jest.fn(async () => { throw new Error('nothing should be fetched') })
+    // Only the nested path is given; JSON:API includes field_content along it.
+    const page = await store.dispatch('druxt/getResource', { type: 'node--page', id: 'n1', query: { include: 'field_content.field_media', fields } })
+    expect(store.$druxt.getResource).not.toHaveBeenCalled()
+    expect(page.included.map(({ type, id }) => `${type}:${id}`).sort()).toStrictEqual(['media--image:m1', 'paragraph--image:i1'])
+  })
+
   test('a related resource whose fields name an include it lacks is still fetched', async () => {
     const fields = { 'node--page': 'title,field_content', 'paragraph--image': 'field_media' }
     const href = (type, id) => `${baseUrl}/jsonapi/${type.replace('--', '/')}/${id}?fields[${type}]=${fields[type]}`

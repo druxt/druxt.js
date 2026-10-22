@@ -13,16 +13,19 @@ export const includePaths = (include) =>
     .filter((path) => path)
 
 /**
- * The relationships an include names directly, leaving out nested paths.
+ * The relationships of the resource itself that an include reaches.
+ *
+ * A nested path includes every relationship along it, so `media.image` names
+ * `media` too.
  *
  * @example @lang js
- * topIncludes('media,media.image,uid') // ['media', 'uid']
+ * topIncludes('media.image,uid') // ['media', 'uid']
  *
  * @param {string|string[]} [include] - The include.
  *
- * @returns {string[]} The top-level relationship names.
+ * @returns {string[]} The first relationship of each path, once each.
  */
-export const topIncludes = (include) => includePaths(include).filter((path) => !path.includes('.'))
+export const topIncludes = (include) => Array.from(new Set(includePaths(include).map((path) => path.split('.')[0])))
 
 /**
  * The paths below one relationship, relative to it.
