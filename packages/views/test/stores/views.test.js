@@ -114,8 +114,12 @@ describe('DruxtViewsStore', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(2)
 
     // Bypass cache
+    const getResource = jest.spyOn(store.$druxt, 'getResource')
     const cache = await store.dispatch('druxt/views/getResults', { ...query, bypassCache: true })
     expect(mockAxios.get).toHaveBeenCalledTimes(3)
+    // The bypass reaches the client, so the server's process cache is skipped too.
+    expect(getResource.mock.calls[0][4]).toStrictEqual({ bypassCache: true })
+    getResource.mockRestore()
 
     // Fallback to cache
     store.$druxt.getResource = jest.fn(() => { throw new Error() })

@@ -238,10 +238,14 @@ export { DruxtNuxtModule }
  * @property {object} [proxy] - Proxy settings object.
  * @property {boolean} [proxy.api] - Proxy the JSON:API.
  * @property {(boolean|string)} [proxy.files] - Proxy Drupal's site files directory. Provide String to specify multi-site path.
- * @property {(object|boolean)} [cache] - Server-side cache of the JSON:API index and menus, shared between
+ * @property {(object|boolean)} [cache] - Server-side cache of the JSON:API index and menus, and with `cache.content` every other response, shared between
  *   requests that do not send an Authorization header, basic auth or a session cookie. Each response is kept for
  *   as long as Drupal's `Cache-Control` header allows, which is never on a site whose page cache max-age is 0.
  *   Off under `nuxt dev`. `false` turns it off.
+ * @property {boolean} [cache.content=false] - Also keep entities, collections, views and route lookups, under the
+ *   same rules. Pair it with a clear from Drupal, as content changes far more often than menus.
+ * @property {number} [cache.maxSize=52428800] - Bytes of responses each cache area keeps, measured as stored JSON.
+ *   Past it the least recently used go first, and a response larger than the limit is not kept.
  * @property {number} [cache.ttl] - Seconds a cached response may live at most. It shortens Drupal's lifetime,
  *   never extends it.
  * @property {string} [cache.secret] - Turns on `POST /_druxt/cache/clear`, which empties the cache when the

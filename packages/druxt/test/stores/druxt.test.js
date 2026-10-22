@@ -458,6 +458,65 @@ describe('DruxtStore', () => {
     expect(store.state.druxt.resources[type][id].undefined.data).toStrictEqual(mockPage.data)
   })
 
+  test('a bypass reaches the client, so the server process cache is skipped too', async () => {
+    const type = 'node--page'
+    const mockCollectionPage = await getMockCollection(type)
+    const mockPage = await getMockResource(type)
+    const { id } = mockPage.data
+    const pending = []
+    store.$druxt.getCollection = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+    store.$druxt.getResource = jest.fn(async () => mockPage)
+
+    // A bypass dispatched while an ordinary request is in flight starts its own,
+    // as the ordinary one may be answered from the process cache.
+    const ordinary = store.dispatch('druxt/getCollection', { type })
+    const bypass = store.dispatch('druxt/getCollection', { type, bypassCache: true })
+    await Promise.resolve()
+    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(2)
+    expect(store.$druxt.getCollection.mock.calls[0]).toStrictEqual([type, undefined, undefined, { bypassCache: false }])
+    expect(store.$druxt.getCollection.mock.calls[1]).toStrictEqual([type, undefined, undefined, { bypassCache: true }])
+    pending.forEach((resolve) => resolve(mockCollectionPage))
+    await Promise.all([ordinary, bypass])
+
+    await store.dispatch('druxt/getResource', { type, id: 'other' })
+    expect(store.$druxt.getResource.mock.calls[0][4]).toStrictEqual({ bypassCache: false })
+    await store.dispatch('druxt/getResource', { type, id, bypassCache: true })
+    expect(store.$druxt.getResource.mock.calls[1][4]).toStrictEqual({ bypassCache: true })
+  })
+
+  test('an ordinary request that resolves after a bypass does not replace its answer', async () => {
+    const type = 'node--page'
+    const mockCollectionPage = await getMockCollection(type)
+    const mockPage = await getMockResource(type)
+    const { id } = mockPage.data
+    const titled = (title) => ({ ...mockPage, data: { ...mockPage.data, attributes: { ...mockPage.data.attributes, title } } })
+
+    const collections = []
+    store.$druxt.getCollection = jest.fn(() => new Promise((resolve) => collections.push(resolve)))
+    const ordinaryCollection = store.dispatch('druxt/getCollection', { type })
+    const bypassCollection = store.dispatch('druxt/getCollection', { type, bypassCache: true })
+    await Promise.resolve()
+    const fresh = { ...mockCollectionPage, meta: { fresh: true } }
+    collections[1](fresh)
+    await bypassCollection
+    collections[0]({ ...mockCollectionPage, meta: { fresh: false } })
+    await ordinaryCollection
+    expect(store.state.druxt.collections[type]._default.undefined.meta).toStrictEqual({ fresh: true })
+
+    // The collection stored its resources, so flush them for the ordinary dispatch to fetch.
+    store.commit('druxt/flushResource', {})
+    const resources = []
+    store.$druxt.getResource = jest.fn(() => new Promise((resolve) => resources.push(resolve)))
+    const ordinaryResource = store.dispatch('druxt/getResource', { type, id })
+    const bypassResource = store.dispatch('druxt/getResource', { type, id, bypassCache: true })
+    await Promise.resolve()
+    resources[1](titled('Fresh'))
+    await bypassResource
+    resources[0](titled('Stale'))
+    await ordinaryResource
+    expect(store.state.druxt.resources[type][id].undefined.data.attributes.title).toBe('Fresh')
+  })
+
   test('getCollection retries after a failed request', async () => {
     const type = 'node--page'
     const mockCollectionPage = await getMockCollection(type)

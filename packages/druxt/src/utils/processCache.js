@@ -9,6 +9,55 @@ const scopes = globalThis[SCOPES] || (globalThis[SCOPES] = new Map())
 const GENERATION = Symbol.for('druxt.processCacheGeneration')
 const generation = globalThis[GENERATION] || (globalThis[GENERATION] = { value: 0 })
 
+// Numbers requests in the order they start, shared like the scopes so every
+// copy of the module counts on one sequence.
+const SEQUENCE = Symbol.for('druxt.processCacheSequence')
+const sequence = globalThis[SEQUENCE] || (globalThis[SEQUENCE] = { value: 0 })
+
+/**
+ * The next number in the order requests start in, unique within the process.
+ *
+ * @returns {number}
+ */
+export const nextRequest = () => ++sequence.value
+
+// The running size of a consumer's entries, held on its map of entries.
+const SIZE = Symbol.for('druxt.processCacheSize')
+
+/**
+ * The size of a string in UTF-8 bytes.
+ *
+ * Counted from its UTF-16 code units rather than with Buffer, which webpack
+ * would otherwise polyfill into the browser bundle this file is part of.
+ *
+ * @param {string} text - The text to measure.
+ *
+ * @returns {number} Bytes.
+ */
+export const byteSize = (text) => {
+  let bytes = 0
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i)
+    if (code < 0x80) bytes += 1
+    else if (code < 0x800) bytes += 2
+    // A high surrogate and the low one after it are one four-byte character.
+    else if (code >= 0xd800 && code <= 0xdbff && i + 1 < text.length) {
+      bytes += 4
+      i++
+    } else bytes += 3
+  }
+  return bytes
+}
+
+// The size a value counts for against `maxSize`, as the bytes of its JSON.
+const jsonSize = (value) => {
+  try {
+    return byteSize(typeof value === 'string' ? value : JSON.stringify(value) || '')
+  } catch (err) {
+    return 0
+  }
+}
+
 // Axios instances seen sending credentials, and the patterns watched on each.
 const credentialed = new WeakSet()
 const watched = new WeakMap()
@@ -179,10 +228,12 @@ export const parseCacheLifetime = (headers) => {
  * @param {object} options.axios - The Axios instance the request uses.
  * @param {number} [options.ttl] - Seconds an entry may live at most. It shortens a lifetime, never extends one, and 0 keeps nothing.
  * @param {string} [options.sessionCookie] - A pattern for the session cookie name.
+ * @param {number} [options.maxSize] - The size the scope keeps per consumer at most, in bytes of stored JSON. Past it, expired entries go first, then the least recently used, and a value larger than the whole limit is not stored.
+ * @param {Function} [options.sizeOf] - Measures a value for `maxSize`. The bytes of its JSON by default.
  *
  * @returns {?{get: Function, set: Function}}
  */
-export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
+export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize } = {}) => {
   if (!runtime.isServer() || hasCredentials(axios, sessionCookie)) return null
 
   if (!scopes.has(scope)) scopes.set(scope, new Map())
@@ -194,6 +245,27 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
   const cap = (seconds) => (typeof ttl === 'number' ? Math.min(seconds, ttl) : seconds)
   const taken = generation.value
 
+  const expired = (entry, now = Date.now()) => now - entry.created >= entry.seconds * 1000
+  // The running size of the entries, kept on the map so every handle and copy of the module agrees.
+  const total = () => entries[SIZE] || 0
+  const remove = (key) => {
+    const entry = entries.get(key)
+    if (!entry) return
+    entries[SIZE] = total() - entry.size
+    entries.delete(key)
+  }
+  const bounded = typeof maxSize === 'number'
+  // Keeps the scope within `maxSize`: expired entries go first, then the least recently used.
+  const bound = () => {
+    if (!bounded || total() <= maxSize) return
+    const now = Date.now()
+    for (const [key, entry] of entries) if (expired(entry, now)) remove(key)
+    for (const key of entries.keys()) {
+      if (total() <= maxSize) break
+      remove(key)
+    }
+  }
+
   return {
     // The generation this handle was taken at. Compare a handle taken after a
     // request resolves against one taken before it started: a difference means
@@ -204,7 +276,15 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
     get(key) {
       const entry = entries.get(key)
       if (!entry) return undefined
+      // Past its own lifetime the entry is no use to any reader, so it goes.
+      if (expired(entry)) {
+        remove(key)
+        return undefined
+      }
       if (Date.now() - entry.created >= cap(entry.seconds) * 1000) return undefined
+      // A Map keeps insertion order, so moving a read entry to the end keeps the oldest first.
+      entries.delete(key)
+      entries.set(key, entry)
       return entry.value
     },
 
@@ -223,8 +303,15 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
      */
     set(key, value, seconds, since) {
       if (since !== undefined && since !== generation.value) return value
-      if (cap(seconds) > 0) entries.set(key, { value, seconds: cap(seconds), created: Date.now() })
-      else entries.delete(key)
+      remove(key)
+      if (cap(seconds) > 0) {
+        const size = sizeOf(value)
+        // A value larger than the whole limit would empty the scope and still not fit.
+        if (bounded && size > maxSize) return value
+        entries.set(key, { value, seconds: cap(seconds), created: Date.now(), size })
+        entries[SIZE] = total() + size
+        bound()
+      }
       return value
     },
   }

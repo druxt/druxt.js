@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
-import { parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
+import { byteSize, nextRequest, parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
 
 // Shared JSON:API index cache. Keyed by the Axios instance, which carries the
 // credentials, then by base URL, endpoint and resource config, so clients on
@@ -12,6 +12,15 @@ const indexCache = new WeakMap()
 
 // How long each fetched document may be cached, from its Cache-Control header.
 const lifetimes = new WeakMap()
+
+// The size a process cache scope keeps per consumer when `cache.maxSize` is not set: 50 MB of stored JSON.
+const DEFAULT_MAX_SIZE = 50 * 1024 * 1024
+
+// Request options that never change the response, so a request with only these may use the content cache.
+const CACHE_SAFE_OPTIONS = ['validateStatus', 'timeout']
+
+// The extra get() argument a bypass needs, and none otherwise.
+const requestOptions = ({ bypassCache } = {}) => (bypassCache ? [{ bypassCache: true }] : [])
 
 /**
  * The Druxt JSON:API client.
@@ -152,14 +161,20 @@ class DruxtClient {
    * set, and it is skipped for any request that sends an Authorization header,
    * basic auth or a session cookie.
    *
-   * @param {string} scope - The cache scope, e.g. 'index' or 'menu'.
+   * The `content` scope, which holds every other GET response, is also off
+   * unless `cache.content` is set.
+   *
+   * @param {string} scope - The cache scope, e.g. 'index', 'menu' or 'content'.
    *
    * @returns {?object} The cache, or null when it must not be used.
    */
   processCache(scope) {
     if (!this.options.cache) return null
-    const { ttl, sessionCookie } = this.options.cache
-    return processCache(scope, { axios: this.axios, ttl, sessionCookie })
+    const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE, content } = this.options.cache
+    if (scope === 'content' && !content) return null
+    // A content entry holds its document as text already, so its size is that text's bytes.
+    const sizeOf = scope === 'content' ? (value) => byteSize(value.body) : undefined
+    return processCache(scope, { axios: this.axios, ttl, sessionCookie, maxSize, sizeOf })
   }
 
   /**
@@ -363,19 +378,55 @@ class DruxtClient {
   /**
    * Execute an Axios GET request, with permission checking and error handling.
    *
+   * With `cache.content` set, a response to a request without credentials is
+   * kept in the process cache for as long as its Cache-Control allows, and
+   * the next server request for the same URL is answered from it.
+   *
    * @example @lang js
    * const res = await this.$druxt.get('/jsonapi/node/article')
    *
    * @param {string} url - The URL to GET.
-   * @param {object} options - An Axios options object.
+   * @param {object} [options] - An Axios options object.
+   * @param {boolean} [options.bypassCache] - Fetch from Drupal even when the process cache holds the URL, and store the fresh response.
    *
    * @returns {object} The Axios response.
    */
   async get(url, options) {
+    const { bypassCache, ...config } = options || {}
+
+    // The key is the backend and the URL alone, so a request whose own options
+    // could change the response, such as headers, auth, params or a baseURL,
+    // is never read from or stored. It may carry credentials, or ask for a
+    // variant such as another language, consumer, query or backend.
+    // Only a 200 is stored, so a caller whose validateStatus refuses one goes to Drupal.
+    const cacheable = Object.keys(config).every((option) => CACHE_SAFE_OPTIONS.includes(option)) &&
+      (typeof config.validateStatus !== 'function' || config.validateStatus(200))
+    const before = cacheable ? this.processCache('content') : null
+    const key = JSON.stringify([this.indexKey, url])
+    if (before && !bypassCache) {
+      const stored = before.get(key)
+      if (stored) return this.storedResponse(stored)
+    }
+
     try {
-      const res = await this.axios.get(url, options)
+      // Its place in the order requests started in, which a timestamp cannot give two requests in one millisecond.
+      const started = nextRequest()
+      const res = await this.axios.get(url, options ? config : undefined)
+      const seconds = parseCacheLifetime((res || {}).headers)
+      const at = Date.now()
       // Kept with its arrival time, so the lifetime read later is what is left of it.
-      if (res && res.data && typeof res.data === 'object') lifetimes.set(res.data, { seconds: parseCacheLifetime(res.headers), at: Date.now() })
+      if (res && res.data && typeof res.data === 'object') lifetimes.set(res.data, { seconds, at })
+
+      // Asked again once resolved, as the request may have shown the instance to be credentialed.
+      // Only a 200 is kept: a stored 404 would hide a page published after it.
+      const after = before && this.processCache('content')
+      // A request that started later, such as a bypass, may have stored its fresher answer already.
+      const current = after && after.get(key)
+      if (after && !(current && current.started > started) && res && res.status === 200 && res.data && typeof res.data === 'object') {
+        // Stored as text, so no caller can change what the next request reads.
+        const value = { body: JSON.stringify(res.data), headers: { ...res.headers }, seconds, at, started }
+        after.set(key, value, seconds, before.generation)
+      }
 
       return res
     } catch(err) {
@@ -385,11 +436,28 @@ class DruxtClient {
   }
 
   /**
+   * Builds a response from a process cache entry.
+   *
+   * @private
+   * @param {object} stored - The stored entry.
+   *
+   * @returns {object} A response with a fresh copy of the stored document.
+   */
+  storedResponse(stored) {
+    const data = JSON.parse(stored.body)
+    lifetimes.set(data, { seconds: stored.seconds, at: stored.at })
+    // Only a 200 is stored.
+    return { data, status: 200, headers: { ...stored.headers } }
+  }
+
+  /**
    * Get a collection of resources from the JSON:API server.
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {object} [options] - (Optional) Request options.
+   * @param {boolean} [options.bypassCache] - Fetch from Drupal even when the process cache holds the collection.
    *
    * @returns {object} The JSON:API collection response.
    *
@@ -400,7 +468,7 @@ class DruxtClient {
    *   'en'
    * )
    */
-  async getCollection(type, query, prefix) {
+  async getCollection(type, query, prefix, options = {}) {
     const { href } = await this.getIndex(type, prefix)
     if (!href) {
       return false
@@ -408,7 +476,7 @@ class DruxtClient {
 
     const url = this.buildQueryUrl(href, query)
 
-    const { data } = await this.get(url)
+    const { data } = await this.get(url, ...requestOptions(options))
     return data
   }
 
@@ -419,6 +487,8 @@ class DruxtClient {
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
+   * @param {object} [options] - (Optional) Request options, as `getCollection()` takes them, used for every page.
+   *
    * @returns {object[]} An array of JSON:API collections.
    *
    * @example @lang js
@@ -428,15 +498,15 @@ class DruxtClient {
    *   'en'
    * )
    */
-  async getCollectionAll(type, query, prefix) {
+  async getCollectionAll(type, query, prefix, options = {}) {
     const collections = []
 
-    let res = await this.getCollection(type, query, prefix)
+    let res = await this.getCollection(type, query, prefix, options)
     collections.push(res)
 
     while (((res.links || {}).next || {}).href) {
       query = res.links.next.href.split('?')[1]
-      res = await this.getCollection(type, query, prefix)
+      res = await this.getCollection(type, query, prefix, options)
       collections.push(res)
     }
 
@@ -605,13 +675,15 @@ class DruxtClient {
    * @param {string} id - The Drupal resource UUID.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {object} [options] - (Optional) Request options.
+   * @param {boolean} [options.bypassCache] - Fetch from Drupal even when the process cache holds the resource.
    *
    * @returns {object|boolean} The full JSON:API document; the requested resource is on the
    *   `data` property, e.g. `result.data.attributes`. Returns `false` if either `type` or
    *   `id` is missing.
    * @todo update method to take a context object instead of 4 parameters.
    */
-  async getResource(type, id, query, prefix) {
+  async getResource(type, id, query, prefix, options = {}) {
     if (!id || !type) {
       return false
     }
@@ -623,7 +695,7 @@ class DruxtClient {
     }
 
     const url = this.buildQueryUrl([href, id].join('/'), query)
-    const { data } = await this.get(url)
+    const { data } = await this.get(url, ...requestOptions(options))
     return data
   }
 
@@ -683,6 +755,8 @@ export { DruxtClient }
   * @param {object} [axios] - Axios instance settings.
   * @param {object} [cache] - Server-side cache shared between requests that do not send credentials, each
   *   response kept for as long as its Cache-Control allows. Off by default. The Nuxt module turns it on in production.
+  * @param {boolean} [cache.content=false] - Also keep entities, collections, views and route lookups, not only the index and menus.
+  * @param {number} [cache.maxSize=52428800] - Bytes of responses each cache area keeps, measured as stored JSON.
   * @param {number} [cache.ttl] - Seconds a cached response may live at most. It never extends Cache-Control.
   * @param {string} [cache.sessionCookie=S?SESS[0-9a-f]+] - A pattern for the session cookie name.
   * @param {boolean} [debug=false] - Enable Debug mode for verbose console log messages.
