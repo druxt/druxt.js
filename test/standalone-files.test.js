@@ -23,9 +23,13 @@ const sources = (directory) => fs.readdirSync(directory, { withFileTypes: true }
   return /\.(js|mjs|vue)$/.test(entry.name) ? [file] : []
 })
 
-const relativeImports = (file) => [...fs.readFileSync(file, 'utf8')
-  .matchAll(/(?:\bfrom\s*|\bimport\s*\(?\s*|\brequire\s*\(\s*)['"](\.{1,2}\/[^'"]+)['"]/g)]
+// Static imports, and import() or require() calls, which may carry a comment
+// such as webpack's chunk name before the path.
+const relativeSpecifiers = (source) => [...source
+  .matchAll(/(?:\bfrom\s*|\bimport\s*|\b(?:import|require)\s*\(\s*(?:\/\*[\s\S]*?\*\/\s*)*)['"](\.{1,2}\/[^'"]+)['"]/g)]
   .map((match) => match[1])
+
+const relativeImports = (file) => relativeSpecifiers(fs.readFileSync(file, 'utf8'))
 
 describe('files copied outside the bundle', () => {
   const directories = looseDirectories()
@@ -36,6 +40,19 @@ describe('files copied outside the bundle', () => {
       path.join('druxt', 'src', 'server-middleware'),
       path.join('druxt', 'src', 'components'),
     ]))
+  })
+
+  test('every form of relative import is read', () => {
+    const source = [
+      "import a from './a'",
+      "import './b'",
+      "export { c } from '../c'",
+      "const d = () => import('./d')",
+      "const e = () => import(/* webpackChunkName: \"e\" */ '../e')",
+      "const f = require( /* a */ /* b */ './f')",
+      "import g from 'g'",
+    ].join('\n')
+    expect(relativeSpecifiers(source)).toStrictEqual(['./a', './b', '../c', './d', '../e', './f'])
   })
 
   test('import nothing from outside their own directory', () => {
