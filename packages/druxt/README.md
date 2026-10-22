@@ -111,6 +111,10 @@ or from Drupal by sending `POST /_druxt/cache/clear` with the secret in an
 `X-Druxt-Secret` header. Each Nuxt process has its own cache, so a site with
 several processes clears each one.
 
+The endpoint is server middleware, so list Druxt, or the module that adds it
+such as `druxt-site`, under `modules`. Nuxt runs `buildModules` only while it
+builds, so under `nuxt start` the endpoint would answer 404.
+
 ### Caching content
 
 `cache.content` extends the cache to every other request Druxt sends Drupal:
