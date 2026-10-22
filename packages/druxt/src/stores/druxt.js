@@ -3,6 +3,7 @@ import md5 from 'md5'
 import Vue from 'vue'
 
 import { getDrupalJsonApiParams } from '../utils/getDrupalJsonApiParams'
+import { fieldsWithIncludes, includesFor, subIncludes, topIncludes } from '../utils/includes'
 
 const dehydrateResources = ({ commit, queryObject, resources, prefix }) => {
   return (resources || []).map((data) => {
@@ -372,32 +373,17 @@ const DruxtStore = ({ store }) => {
 
         // Ensure that includes are in the fields filter.
         if (queryObject.include && typeof (queryObject.fields || {})[type] === 'string') {
-          const fields = queryObject.fields[type].split(',').filter((s) => s)
-          const includes = queryObject.include.split(',').filter((s) => s && !s.includes('.'))
-          queryObject.fields[type] = Array.from(
-            new Set([...fields, ...includes])
-          ).filter((s) => s).join(',')
+          queryObject.fields[type] = fieldsWithIncludes(queryObject.fields[type], queryObject.include)
         }
 
         // The sub-includes a related resource can take. One relationship can hold
         // several types, such as paragraphs, and each takes only the includes its
-        // type has: Drupal answers 400 to an include a type lacks. When the query
-        // lists a type's fields, as schema mode lists the fields its display
-        // renders, an include those fields don't name is dropped for it, unless
-        // its stored copy has that relationship. A related resource that was
-        // flushed has no stored copy, so its listed fields decide alone.
+        // type has. Its stored copy shows the relationships it has; a related
+        // resource that was flushed has none, so its listed fields decide alone.
         const includeFor = (related, include) => {
-          const listed = (queryObject.fields || {})[related.type]
-          if (!include || typeof listed !== 'string') return include
           const stored = ((state.resources[related.type] || {})[related.id] || {})[prefix]
-          const fields = listed.split(',')
           const relationships = Object.keys(((stored || {}).data || {}).relationships || {})
-          return include.split(',')
-            .filter((path) => {
-              const key = path.split('.')[0]
-              return fields.includes(key) || relationships.includes(key)
-            })
-            .join(',')
+          return includesFor(include, (queryObject.fields || {})[related.type], relationships)
         }
 
         // Hydrate included data based on the include query. A bypass takes its includes from the fresh response.
@@ -405,17 +391,14 @@ const DruxtStore = ({ store }) => {
         if (queryObject.include && storedResource && !bypassCache) {
           // Request included resources from druxt/getResource.
           const resources =
-            await Promise.all(queryObject.include.split(',')
+            await Promise.all(topIncludes(queryObject.include)
               .filter((s) => Object.keys((storedResource.data.relationships || {})).includes(s))
               .map((key) => {
                 let { data } = storedResource.data.relationships[key]
                 data = Array.isArray(data) ? data : [data]
 
                 // Get any sub-includes, e.g., `media,media.image` becomes `image`.
-                const include = queryObject.include.split(',')
-                  .filter((s) => s.startsWith(`${key}.`))
-                  .map((s) => s.slice(key.length + 1))
-                  .join(',')
+                const include = subIncludes(queryObject.include, key)
 
                 return data.filter((o) => typeof o === 'object' && o).map((o) => {
                   return dispatch('getResource', {
