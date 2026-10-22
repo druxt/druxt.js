@@ -396,7 +396,9 @@ class DruxtClient {
     // could change the response, such as headers, auth, params or a baseURL,
     // is never read from or stored. It may carry credentials, or ask for a
     // variant such as another language, consumer, query or backend.
-    const cacheable = Object.keys(config).every((option) => KEYLESS_OPTIONS.includes(option))
+    // Only a 200 is stored, so a caller whose validateStatus refuses one goes to Drupal.
+    const cacheable = Object.keys(config).every((option) => KEYLESS_OPTIONS.includes(option)) &&
+      (typeof config.validateStatus !== 'function' || config.validateStatus(200))
     const before = cacheable ? this.processCache('content') : null
     const key = JSON.stringify([this.indexKey, url])
     if (before && !bypassCache) {

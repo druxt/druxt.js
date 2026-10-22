@@ -131,6 +131,10 @@ describe('DruxtClient content cache', () => {
     // The anonymous entry is untouched by those, and options that cannot change the response still use it.
     await client().get(page, { validateStatus: () => true, timeout: 1000 })
     expect(fetches()).toBe(7)
+
+    // A status check that refuses a 200 never gets the stored one.
+    await client().get(page, { validateStatus: (status) => status !== 200 }).catch(() => {})
+    expect(fetches()).toBe(8)
   })
 
   test('only a 200 is stored', async () => {
