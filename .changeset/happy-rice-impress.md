@@ -8,4 +8,4 @@
 'druxt-views': patch
 ---
 
-Modules require the current `druxt` and `druxt-router`, where some still required versions from 2023, so a site no longer installs an older copy of either beside its own.
+chore(#698): modules require the current `druxt` and `druxt-router`, where some still required versions from 2023, so a site no longer installs an older copy of either beside its own.
