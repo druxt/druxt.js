@@ -23,10 +23,12 @@ const sources = (directory) => fs.readdirSync(directory, { withFileTypes: true }
   return /\.(js|mjs|vue)$/.test(entry.name) ? [file] : []
 })
 
-// Static imports, and import() or require() calls, which may carry a comment
-// such as webpack's chunk name before the path.
+// Static imports, and import() or require() calls. Block comments go first, so
+// one such as webpack's chunk name before the path does not hide it, and the
+// match itself has no nested repetition to backtrack over.
 const relativeSpecifiers = (source) => [...source
-  .matchAll(/(?:\bfrom\s*|\bimport\s*|\b(?:import|require)\s*\(\s*(?:\/\*[\s\S]*?\*\/\s*)*)['"](\.{1,2}\/[^'"]+)['"]/g)]
+  .replace(/\/\*[\s\S]*?\*\//g, ' ')
+  .matchAll(/(?:\bfrom|\bimport|\b(?:import|require)\s*\()\s*['"](\.{1,2}\/[^'"]+)['"]/g)]
   .map((match) => match[1])
 
 const relativeImports = (file) => relativeSpecifiers(fs.readFileSync(file, 'utf8'))
