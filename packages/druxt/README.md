@@ -89,8 +89,10 @@ options list.
 
 ## Server cache
 
-In production, the server keeps the JSON:API index and menus between requests
-for as long as Drupal's `Cache-Control` header allows. Drupal sets that header
+In production, the server keeps Drupal's responses between requests for as
+long as Drupal's `Cache-Control` header allows. It keeps the JSON:API index and
+menus, and with `cache.content` every other response Druxt fetches, as
+[Caching content](#caching-content) describes. Drupal sets that header
 from the page cache maximum age (Administration > Configuration > Development >
 Performance). At the default of 0, nothing is kept. A request with an
 `Authorization` header or a Drupal session cookie never reads or fills the

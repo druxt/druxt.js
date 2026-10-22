@@ -2,4 +2,4 @@
 'druxt-views': patch
 ---
 
-fix(#639): a `bypassCache` view query now also skips the server's process cache, so a refreshed view always comes from Drupal.
+feat(#639): a `bypassCache` view query goes past druxt 0.25.0's server cache as well as the store, so a refreshed view comes from Drupal.

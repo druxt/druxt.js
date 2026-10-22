@@ -750,6 +750,8 @@ export { DruxtClient }
   * @param {object} [axios] - Axios instance settings.
   * @param {object} [cache] - Server-side cache shared between requests that do not send credentials, each
   *   response kept for as long as its Cache-Control allows. Off by default. The Nuxt module turns it on in production.
+  * @param {boolean} [cache.content=false] - Also keep entities, collections, views and route lookups, not only the index and menus.
+  * @param {number} [cache.maxSize=52428800] - Bytes of responses each cache area keeps, measured as stored JSON.
   * @param {number} [cache.ttl] - Seconds a cached response may live at most. It never extends Cache-Control.
   * @param {string} [cache.sessionCookie=S?SESS[0-9a-f]+] - A pattern for the session cookie name.
   * @param {boolean} [debug=false] - Enable Debug mode for verbose console log messages.
