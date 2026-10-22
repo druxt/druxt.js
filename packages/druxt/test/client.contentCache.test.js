@@ -1,4 +1,3 @@
-import mockAxios from 'jest-mock-axios'
 import { DruxtClient } from '../src'
 import { resetProcessCache, runtime } from '../src/utils/processCache'
 
@@ -36,7 +35,6 @@ const fetches = (url = page) => sent.filter((s) => s === url).length
 describe('DruxtClient content cache', () => {
   const { isServer } = runtime
   beforeEach(() => {
-    mockAxios.reset()
     resetProcessCache()
     sent = []
     runtime.isServer = () => true
@@ -115,6 +113,20 @@ describe('DruxtClient content cache', () => {
     expect(fetches()).toBe(6)
   })
 
+  test('a request with headers of its own is never read or stored, as the key cannot tell its variants apart', async () => {
+    await client().get(page)
+    // Another language through a request header would be answered with the English document.
+    await client().get(page, { headers: { 'Accept-Language': 'es' } })
+    expect(fetches()).toBe(2)
+    await client().get(page, { headers: { 'X-Consumer-ID': 'other' } })
+    await client().get(page, { auth: { username: 'a', password: 'b' } })
+    expect(fetches()).toBe(4)
+
+    // The anonymous entry is untouched by those, and options without headers still use it.
+    await client().get(page, { validateStatus: () => true })
+    expect(fetches()).toBe(4)
+  })
+
   test('only a 200 is stored', async () => {
     const options = { validateStatus: (status) => status < 500 }
     await client(requestAxios({ status: 404 })).get(page, options)
@@ -173,6 +185,16 @@ describe('DruxtClient content cache', () => {
     expect(fetches()).toBe(2)
   })
 
+  test('1000 entries are kept when cache.max is not set', async () => {
+    const urls = Array.from({ length: 1001 }, (_, i) => `/jsonapi/node/page/${i}`)
+    for (const url of urls) await client().get(url)
+    // The first is the least recently used, so it went when the 1001st arrived.
+    await client().get(urls[0])
+    expect(fetches(urls[0])).toBe(2)
+    await client().get(urls[1000])
+    expect(fetches(urls[1000])).toBe(1)
+  })
+
   test('cache.max bounds the entries kept', async () => {
     const bounded = { content: true, max: 1 }
     await client(requestAxios(), bounded).get('/jsonapi/node/page/a')
@@ -196,5 +218,9 @@ describe('DruxtClient content cache', () => {
     expect(fetches(collection)).toBe(1)
     await client().getCollection('node--page', undefined, undefined, { bypassCache: true })
     expect(fetches(collection)).toBe(2)
+    await client().getCollectionAll('node--page')
+    expect(fetches(collection)).toBe(2)
+    await client().getCollectionAll('node--page', undefined, undefined, { bypassCache: true })
+    expect(fetches(collection)).toBe(3)
   })
 })

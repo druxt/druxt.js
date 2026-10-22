@@ -131,6 +131,10 @@ page published after a visitor saw a 404 appears straight away. A
 `bypassCache` dispatch to the Druxt store also skips this cache and stores the
 fresh response.
 
+`cache.max` counts responses, not bytes, and applies to each cache area and
+consumer. Size it from your largest responses: a full cache of 1000 view pages
+of 100 KB each holds about 300 MB of server memory.
+
 ### Clearing from Drupal with Purge
 
 The [Purge](https://www.drupal.org/project/purge) module can send that request

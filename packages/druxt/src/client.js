@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
-import { configHasCredentials, parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
+import { parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
 
 // Shared JSON:API index cache. Keyed by the Axios instance, which carries the
 // credentials, then by base URL, endpoint and resource config, so clients on
@@ -389,9 +389,11 @@ class DruxtClient {
   async get(url, options) {
     const { bypassCache, ...config } = options || {}
 
-    // Credentials given for this request alone are not on the instance, so the cache cannot see them.
-    const sessionCookie = (this.options.cache || {}).sessionCookie
-    const before = configHasCredentials(config, sessionCookie) ? null : this.processCache('content')
+    // Headers given for this request alone are not in the key, so a request with
+    // any is never read from or stored: it may carry credentials, or ask for a
+    // variant such as another language or consumer.
+    const uncacheable = Object.keys(config.headers || {}).length > 0 || config.auth
+    const before = uncacheable ? null : this.processCache('content')
     const key = JSON.stringify([this.indexKey, url, config.params || null])
     if (before && !bypassCache) {
       const stored = before.get(key)
@@ -472,6 +474,8 @@ class DruxtClient {
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
    *
+   * @param {object} [options] - (Optional) Request options, as `getCollection()` takes them, used for every page.
+   *
    * @returns {object[]} An array of JSON:API collections.
    *
    * @example @lang js
@@ -481,15 +485,15 @@ class DruxtClient {
    *   'en'
    * )
    */
-  async getCollectionAll(type, query, prefix) {
+  async getCollectionAll(type, query, prefix, options = {}) {
     const collections = []
 
-    let res = await this.getCollection(type, query, prefix)
+    let res = await this.getCollection(type, query, prefix, options)
     collections.push(res)
 
     while (((res.links || {}).next || {}).href) {
       query = res.links.next.href.split('?')[1]
-      res = await this.getCollection(type, query, prefix)
+      res = await this.getCollection(type, query, prefix, options)
       collections.push(res)
     }
 
