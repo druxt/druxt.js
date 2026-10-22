@@ -113,7 +113,7 @@ describe('DruxtClient content cache', () => {
     expect(fetches()).toBe(6)
   })
 
-  test('a request with headers of its own is never read or stored, as the key cannot tell its variants apart', async () => {
+  test('a request with options that change the response is never read or stored, as the key cannot tell its variants apart', async () => {
     await client().get(page)
     // Another language through a request header would be answered with the English document.
     await client().get(page, { headers: { 'Accept-Language': 'es' } })
@@ -122,9 +122,15 @@ describe('DruxtClient content cache', () => {
     await client().get(page, { auth: { username: 'a', password: 'b' } })
     expect(fetches()).toBe(4)
 
-    // The anonymous entry is untouched by those, and options without headers still use it.
-    await client().get(page, { validateStatus: () => true })
-    expect(fetches()).toBe(4)
+    // Params and a baseURL change the request Drupal sees, and are not in the key either.
+    await client().get(page, { params: new URLSearchParams('page=1') })
+    await client().get(page, { params: new URLSearchParams('page=2') })
+    await client().get(page, { baseURL: 'https://other.example' })
+    expect(fetches()).toBe(7)
+
+    // The anonymous entry is untouched by those, and options that cannot change the response still use it.
+    await client().get(page, { validateStatus: () => true, timeout: 1000 })
+    expect(fetches()).toBe(7)
   })
 
   test('only a 200 is stored', async () => {

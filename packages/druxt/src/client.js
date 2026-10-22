@@ -16,6 +16,9 @@ const lifetimes = new WeakMap()
 // Entries a process cache scope keeps per consumer when `cache.max` is not set.
 const DEFAULT_MAX_ENTRIES = 1000
 
+// Request options that never change the response, so a request with only these may use the content cache.
+const KEYLESS_OPTIONS = ['validateStatus', 'timeout']
+
 // The extra get() argument a bypass needs, and none otherwise.
 const requestOptions = ({ bypassCache } = {}) => (bypassCache ? [{ bypassCache: true }] : [])
 
@@ -389,12 +392,13 @@ class DruxtClient {
   async get(url, options) {
     const { bypassCache, ...config } = options || {}
 
-    // Headers given for this request alone are not in the key, so a request with
-    // any is never read from or stored: it may carry credentials, or ask for a
-    // variant such as another language or consumer.
-    const uncacheable = Object.keys(config.headers || {}).length > 0 || config.auth
-    const before = uncacheable ? null : this.processCache('content')
-    const key = JSON.stringify([this.indexKey, url, config.params || null])
+    // The key is the backend and the URL alone, so a request whose own options
+    // could change the response, such as headers, auth, params or a baseURL,
+    // is never read from or stored. It may carry credentials, or ask for a
+    // variant such as another language, consumer, query or backend.
+    const cacheable = Object.keys(config).every((option) => KEYLESS_OPTIONS.includes(option))
+    const before = cacheable ? this.processCache('content') : null
+    const key = JSON.stringify([this.indexKey, url])
     if (before && !bypassCache) {
       const stored = before.get(key)
       if (stored) return this.storedResponse(stored)
