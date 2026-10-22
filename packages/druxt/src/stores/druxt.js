@@ -63,8 +63,20 @@ const DruxtStore = ({ store }) => {
   const generation = { value: 0 }
   const flushInFlight = () => {
     inFlight.clear()
+    bypassed.clear()
     generation.value += 1
   }
+  // The newest bypass to store each slot, by the order requests started in. A
+  // response from a request that started before it is not stored, so an
+  // ordinary request that resolves after a bypass cannot replace its answer.
+  let requests = 0
+  const bypassed = new Map()
+  const fresh = (slot, ticket, bypass) => {
+    if ((bypassed.get(slot) || 0) > ticket) return false
+    if (bypass) bypassed.set(slot, ticket)
+    return true
+  }
+
   const share = (key, request) => {
     if (!inFlight.has(key)) {
       const promise = request()
@@ -308,12 +320,15 @@ const DruxtStore = ({ store }) => {
         const key = JSON.stringify(['collection', prefix, type, hash, getDrupalJsonApiParams(query).getQueryObject(), bypassCache])
         return share(key, async () => {
           const since = generation.value
+          const ticket = ++requests
           // Get the collection using the DruxtClient instance.
           // A bypass also skips the server's process cache.
           const collection = await this.$druxt.getCollection(type, query, prefix, { bypassCache })
 
           // Store the collection in the DruxtStore, unless a flush happened meanwhile.
-          if (since === generation.value) commit('addCollection', { collection: { ...collection }, type, hash, prefix })
+          if (since === generation.value && fresh(JSON.stringify(['collection', type, hash, prefix]), ticket, bypassCache)) {
+            commit('addCollection', { collection: { ...collection }, type, hash, prefix })
+          }
 
           return collection
         })
@@ -430,10 +445,13 @@ const DruxtStore = ({ store }) => {
             const key = JSON.stringify(['resource', prefix, type, id, queryObject, bypassCache])
             resource = await share(key, async () => {
               const started = generation.value
+              const ticket = ++requests
               // A bypass also skips the server's process cache.
               const response = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix, { bypassCache })
               // Stored unless a flush happened meanwhile.
-              if (started === generation.value) commit('addResource', { prefix, resource: { ...response } })
+              if (started === generation.value && fresh(JSON.stringify(['resource', type, id, prefix]), ticket, bypassCache)) {
+                commit('addResource', { prefix, resource: { ...response } })
+              }
               return response
             })
           } catch(e) {

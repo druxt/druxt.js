@@ -137,8 +137,8 @@ page published after a visitor saw a 404 appears straight away. A
 `bypassCache` dispatch to the Druxt store also skips this cache and stores the
 fresh response.
 
-`cache.maxSize` measures the stored JSON, so it is close to the bytes Drupal
-sent, and it applies to each cache area and consumer. Server memory runs to
+`cache.maxSize` counts the bytes of the stored JSON, and it applies to each
+cache area and consumer. Server memory runs to
 about three times that: on druxtjs.org, 105 MB of stored view pages held about
 300 MB of heap. A response larger than the whole limit is not kept.
 

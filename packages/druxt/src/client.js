@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
-import { parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
+import { byteSize, parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
 
 // Shared JSON:API index cache. Keyed by the Axios instance, which carries the
 // credentials, then by base URL, endpoint and resource config, so clients on
@@ -172,8 +172,8 @@ class DruxtClient {
     if (!this.options.cache) return null
     const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE, content } = this.options.cache
     if (scope === 'content' && !content) return null
-    // A content entry holds its document as text already, so its size is that text's length.
-    const sizeOf = scope === 'content' ? (value) => value.body.length : undefined
+    // A content entry holds its document as text already, so its size is that text's bytes.
+    const sizeOf = scope === 'content' ? (value) => byteSize(value.body) : undefined
     return processCache(scope, { axios: this.axios, ttl, sessionCookie, maxSize, sizeOf })
   }
 
@@ -409,6 +409,7 @@ class DruxtClient {
     }
 
     try {
+      const started = Date.now()
       const res = await this.axios.get(url, options ? config : undefined)
       const seconds = parseCacheLifetime((res || {}).headers)
       const at = Date.now()
@@ -418,9 +419,11 @@ class DruxtClient {
       // Asked again once resolved, as the request may have shown the instance to be credentialed.
       // Only a 200 is kept: a stored 404 would hide a page published after it.
       const after = before && this.processCache('content')
-      if (after && res && res.status === 200 && res.data && typeof res.data === 'object') {
+      // A request that started later, such as a bypass, may have stored its fresher answer already.
+      const current = after && after.get(key)
+      if (after && !(current && current.started > started) && res && res.status === 200 && res.data && typeof res.data === 'object') {
         // Stored as text, so no caller can change what the next request reads.
-        const value = { body: JSON.stringify(res.data), headers: { ...res.headers }, seconds, at }
+        const value = { body: JSON.stringify(res.data), headers: { ...res.headers }, seconds, at, started }
         after.set(key, value, seconds, before.generation)
       }
 

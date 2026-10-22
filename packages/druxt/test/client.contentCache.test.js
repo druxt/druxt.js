@@ -164,6 +164,32 @@ describe('DruxtClient content cache', () => {
     expect(read.data.data.attributes.sent).toBe(2)
   })
 
+  test('an older request that resolves after a bypass does not replace its fresher document', async () => {
+    // An ordinary request and a bypass in flight at once, answered in the opposite order to the one they started in.
+    const pending = []
+    const deferred = () => {
+      const axios = requestAxios()
+      const answer = axios.get
+      axios.get = jest.fn((...args) => new Promise((resolve) => pending.push(() => resolve(answer(...args)))))
+      return axios
+    }
+    const now = jest.spyOn(Date, 'now')
+    now.mockReturnValue(1000)
+    const ordinary = client(deferred()).get(page)
+    now.mockReturnValue(2000)
+    const bypass = client(deferred()).get(page, { bypassCache: true })
+    await Promise.resolve()
+
+    pending[1]()
+    expect((await bypass).data.data.attributes.sent).toBe(1)
+    pending[0]()
+    expect((await ordinary).data.data.attributes.sent).toBe(2)
+
+    // The bypass started later, so its answer stays.
+    expect((await client().get(page)).data.data.attributes.sent).toBe(1)
+    now.mockRestore()
+  })
+
   test('the bypass flag is not sent to Axios', async () => {
     const axios = requestAxios()
     await client(axios).get(page, { bypassCache: true, validateStatus: () => true })

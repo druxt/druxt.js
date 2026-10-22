@@ -12,10 +12,35 @@ const generation = globalThis[GENERATION] || (globalThis[GENERATION] = { value: 
 // The running size of a consumer's entries, held on its map of entries.
 const SIZE = Symbol.for('druxt.processCacheSize')
 
-// The size a value counts for against `maxSize`, as the length of its JSON.
+/**
+ * The size of a string in UTF-8 bytes.
+ *
+ * Counted from its UTF-16 code units rather than with Buffer, which webpack
+ * would otherwise polyfill into the browser bundle this file is part of.
+ *
+ * @param {string} text - The text to measure.
+ *
+ * @returns {number} Bytes.
+ */
+export const byteSize = (text) => {
+  let bytes = 0
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i)
+    if (code < 0x80) bytes += 1
+    else if (code < 0x800) bytes += 2
+    // A high surrogate and the low one after it are one four-byte character.
+    else if (code >= 0xd800 && code <= 0xdbff && i + 1 < text.length) {
+      bytes += 4
+      i++
+    } else bytes += 3
+  }
+  return bytes
+}
+
+// The size a value counts for against `maxSize`, as the bytes of its JSON.
 const jsonSize = (value) => {
   try {
-    return (typeof value === 'string' ? value : JSON.stringify(value) || '').length
+    return byteSize(typeof value === 'string' ? value : JSON.stringify(value) || '')
   } catch (err) {
     return 0
   }
@@ -191,8 +216,8 @@ export const parseCacheLifetime = (headers) => {
  * @param {object} options.axios - The Axios instance the request uses.
  * @param {number} [options.ttl] - Seconds an entry may live at most. It shortens a lifetime, never extends one, and 0 keeps nothing.
  * @param {string} [options.sessionCookie] - A pattern for the session cookie name.
- * @param {number} [options.maxSize] - The size the scope keeps per consumer at most, in characters of stored JSON, roughly bytes. Past it, expired entries go first, then the least recently used, and a value larger than the whole limit is not stored.
- * @param {Function} [options.sizeOf] - Measures a value for `maxSize`. The length of its JSON by default.
+ * @param {number} [options.maxSize] - The size the scope keeps per consumer at most, in bytes of stored JSON. Past it, expired entries go first, then the least recently used, and a value larger than the whole limit is not stored.
+ * @param {Function} [options.sizeOf] - Measures a value for `maxSize`. The bytes of its JSON by default.
  *
  * @returns {?{get: Function, set: Function}}
  */

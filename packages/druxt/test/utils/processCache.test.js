@@ -1,4 +1,4 @@
-import { configHasCredentials, hasCredentials, parseCacheLifetime, processCache, resetProcessCache, runtime, watchCredentials } from '../../src/utils/processCache'
+import { byteSize, configHasCredentials, hasCredentials, parseCacheLifetime, processCache, resetProcessCache, runtime, watchCredentials } from '../../src/utils/processCache'
 
 const axios = (common = {}) => ({ defaults: { headers: { common } } })
 
@@ -300,6 +300,19 @@ describe('processCache', () => {
     expect(cache.get('b')).toBe('bbbb')
     expect(cache.get('c')).toBe('cccc')
     now.mockRestore()
+  })
+
+  test('sizes are UTF-8 bytes', () => {
+    expect([byteSize(''), byteSize('a'), byteSize('é'), byteSize('€'), byteSize('😀')]).toStrictEqual([0, 1, 2, 3, 4])
+    expect(byteSize('a€😀é')).toBe(Buffer.byteLength('a€😀é'))
+
+    // 'éé' is four bytes, so it fills a limit of four, and 'ééé' does not fit.
+    const cache = processCache('bounded', { axios: axios(), maxSize: 4 })
+    cache.set('a', 'éé', 60)
+    expect(cache.get('a')).toBe('éé')
+    cache.set('b', 'ééé', 60)
+    expect(cache.get('b')).toBe(undefined)
+    expect(cache.get('a')).toBe('éé')
   })
 
   test('without maxSize a scope is unbounded', () => {
