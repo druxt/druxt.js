@@ -25,9 +25,12 @@ const sources = (directory) => fs.readdirSync(directory, { withFileTypes: true }
 
 // Static imports, and import() or require() calls. Block comments go first, so
 // one such as webpack's chunk name before the path does not hide it, and the
-// match itself has no nested repetition to backtrack over.
+// match itself has no nested repetition to backtrack over. A line that is only
+// a comment goes too, so a commented-out import is not read. A `//` later in a
+// line stays, as it may be part of a URL in a string.
 const relativeSpecifiers = (source) => [...source
   .replace(/\/\*[\s\S]*?\*\//g, ' ')
+  .replace(/^[ \t]*\/\/.*$/gm, '')
   .matchAll(/(?:\bfrom|\bimport|\b(?:import|require)\s*\()\s*['"](\.{1,2}\/[^'"]+)['"]/g)]
   .map((match) => match[1])
 
@@ -55,6 +58,8 @@ describe('files copied outside the bundle', () => {
       "import g from /* note */ '../g'",
       "import /* side effect */ './h'",
       "import i from 'i'",
+      "// import j from '../j'",
+      "  // const k = require('../k')",
     ].join('\n')
     expect(relativeSpecifiers(source)).toStrictEqual(['./a', './b', '../c', './d', '../e', './f', '../g', './h'])
   })
