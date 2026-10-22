@@ -310,7 +310,7 @@ const DruxtStore = ({ store }) => {
           const since = generation.value
           // Get the collection using the DruxtClient instance.
           // A bypass also skips the server's process cache.
-          const collection = await this.$druxt.getCollection(type, query, prefix, ...(bypassCache ? [{ bypassCache }] : []))
+          const collection = await this.$druxt.getCollection(type, query, prefix, { bypassCache })
 
           // Store the collection in the DruxtStore, unless a flush happened meanwhile.
           if (since === generation.value) commit('addCollection', { collection: { ...collection }, type, hash, prefix })
@@ -431,7 +431,7 @@ const DruxtStore = ({ store }) => {
             resource = await share(key, async () => {
               const started = generation.value
               // A bypass also skips the server's process cache.
-              const response = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix, ...(bypassCache ? [{ bypassCache }] : []))
+              const response = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix, { bypassCache })
               // Stored unless a flush happened meanwhile.
               if (started === generation.value) commit('addResource', { prefix, resource: { ...response } })
               return response

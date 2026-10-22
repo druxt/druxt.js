@@ -122,7 +122,7 @@ const DruxtViewsStore = ({ store }) => {
         const since = generation.value
         try {
           // A bypass also skips the server's process cache.
-          const results = await this.$druxt.getResource(`views--${viewId}`, displayId, query, prefix, ...(bypassCache ? [{ bypassCache }] : []))
+          const results = await this.$druxt.getResource(`views--${viewId}`, displayId, query, prefix, { bypassCache })
           // The results predate a flush that happened while they were fetched.
           if (since === generation.value) commit('addResults', { results, viewId, displayId, prefix, hash })
           return results

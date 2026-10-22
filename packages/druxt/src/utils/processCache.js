@@ -208,7 +208,7 @@ export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf
   const cap = (seconds) => (typeof ttl === 'number' ? Math.min(seconds, ttl) : seconds)
   const taken = generation.value
 
-  const expired = (entry) => Date.now() - entry.created >= entry.seconds * 1000
+  const expired = (entry, now = Date.now()) => now - entry.created >= entry.seconds * 1000
   // The running size of the entries, kept on the map so every handle and copy of the module agrees.
   const total = () => entries[SIZE] || 0
   const remove = (key) => {
@@ -221,7 +221,8 @@ export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf
   // Keeps the scope within `maxSize`: expired entries go first, then the least recently used.
   const bound = () => {
     if (!bounded || total() <= maxSize) return
-    for (const [key, entry] of entries) if (expired(entry)) remove(key)
+    const now = Date.now()
+    for (const [key, entry] of entries) if (expired(entry, now)) remove(key)
     for (const key of entries.keys()) {
       if (total() <= maxSize) break
       remove(key)

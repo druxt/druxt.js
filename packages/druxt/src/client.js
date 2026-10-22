@@ -17,7 +17,7 @@ const lifetimes = new WeakMap()
 const DEFAULT_MAX_SIZE = 50 * 1024 * 1024
 
 // Request options that never change the response, so a request with only these may use the content cache.
-const KEYLESS_OPTIONS = ['validateStatus', 'timeout']
+const CACHE_SAFE_OPTIONS = ['validateStatus', 'timeout']
 
 // The extra get() argument a bypass needs, and none otherwise.
 const requestOptions = ({ bypassCache } = {}) => (bypassCache ? [{ bypassCache: true }] : [])
@@ -399,7 +399,7 @@ class DruxtClient {
     // is never read from or stored. It may carry credentials, or ask for a
     // variant such as another language, consumer, query or backend.
     // Only a 200 is stored, so a caller whose validateStatus refuses one goes to Drupal.
-    const cacheable = Object.keys(config).every((option) => KEYLESS_OPTIONS.includes(option)) &&
+    const cacheable = Object.keys(config).every((option) => CACHE_SAFE_OPTIONS.includes(option)) &&
       (typeof config.validateStatus !== 'function' || config.validateStatus(200))
     const before = cacheable ? this.processCache('content') : null
     const key = JSON.stringify([this.indexKey, url])
@@ -420,7 +420,7 @@ class DruxtClient {
       const after = before && this.processCache('content')
       if (after && res && res.status === 200 && res.data && typeof res.data === 'object') {
         // Stored as text, so no caller can change what the next request reads.
-        const value = { body: JSON.stringify(res.data), status: res.status, headers: { ...res.headers }, seconds, at }
+        const value = { body: JSON.stringify(res.data), headers: { ...res.headers }, seconds, at }
         after.set(key, value, seconds, before.generation)
       }
 
@@ -442,7 +442,8 @@ class DruxtClient {
   storedResponse(stored) {
     const data = JSON.parse(stored.body)
     lifetimes.set(data, { seconds: stored.seconds, at: stored.at })
-    return { data, status: stored.status, headers: { ...stored.headers } }
+    // Only a 200 is stored.
+    return { data, status: 200, headers: { ...stored.headers } }
   }
 
   /**
