@@ -138,9 +138,9 @@ page published after a visitor saw a 404 appears straight away. A
 fresh response.
 
 `cache.maxSize` counts the bytes of the stored JSON, and it applies to each
-cache area and consumer. Server memory runs to
-about three times that: on druxtjs.org, 105 MB of stored view pages held about
-300 MB of heap. A response larger than the whole limit is not kept.
+cache area and consumer. A full cache can take about three times that in server
+memory, so size it against the memory each Nuxt process has. A response larger
+than the whole limit is not kept.
 
 ### Clearing from Drupal with Purge
 
