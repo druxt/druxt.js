@@ -223,4 +223,57 @@ describe('processCache', () => {
     expect(handlers[0].ok(response)).toBe(response)
     expect(processCache('menu', { axios: instance })).toBe(null)
   })
+
+  test('a scope keeps at most max entries, dropping the least recently used', () => {
+    const cache = processCache('bounded', { axios: axios(), max: 2 })
+    cache.set('a', 1, 60)
+    cache.set('b', 2, 60)
+    // Reading a makes b the oldest.
+    expect(cache.get('a')).toBe(1)
+    cache.set('c', 3, 60)
+    expect(cache.get('b')).toBe(undefined)
+    expect(cache.get('a')).toBe(1)
+    expect(cache.get('c')).toBe(3)
+
+    // Writing a key again moves it to the newest end and keeps one entry for it.
+    cache.set('a', 4, 60)
+    cache.set('d', 5, 60)
+    expect(cache.get('c')).toBe(undefined)
+    expect(cache.get('a')).toBe(4)
+    expect(cache.get('d')).toBe(5)
+  })
+
+  test('expired entries go before live ones when a scope is full', () => {
+    const now = jest.spyOn(Date, 'now')
+    now.mockReturnValue(1000)
+    const cache = processCache('bounded', { axios: axios(), max: 2 })
+    cache.set('live', 1, 600)
+    cache.set('short', 2, 10)
+    now.mockReturnValue(1000 + 20 * 1000)
+    // The oldest entry is live, the newer one has expired, so the expired one goes.
+    cache.set('new', 3, 600)
+    expect(cache.get('live')).toBe(1)
+    expect(cache.get('new')).toBe(3)
+    now.mockRestore()
+  })
+
+  test('an expired entry is removed when it is read', () => {
+    const now = jest.spyOn(Date, 'now')
+    now.mockReturnValue(1000)
+    const cache = processCache('bounded', { axios: axios(), max: 1 })
+    cache.set('a', 1, 10)
+    now.mockReturnValue(1000 + 11 * 1000)
+    expect(cache.get('a')).toBe(undefined)
+    // Nothing is left, so a later entry is stored without evicting anything.
+    cache.set('b', 2, 10)
+    expect(cache.get('b')).toBe(2)
+    now.mockRestore()
+  })
+
+  test('without max a scope is unbounded', () => {
+    const cache = processCache('unbounded', { axios: axios() })
+    for (let i = 0; i < 50; i++) cache.set(String(i), i, 60)
+    expect(cache.get('0')).toBe(0)
+    expect(cache.get('49')).toBe(49)
+  })
 })

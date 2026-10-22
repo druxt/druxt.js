@@ -304,11 +304,13 @@ const DruxtStore = ({ store }) => {
         }
 
         // Identical concurrent dispatches share one request and one commit.
-        const key = JSON.stringify(['collection', prefix, type, hash, getDrupalJsonApiParams(query).getQueryObject()])
+        // A bypass never joins a request that may be answered from the process cache.
+        const key = JSON.stringify(['collection', prefix, type, hash, getDrupalJsonApiParams(query).getQueryObject(), bypassCache])
         return share(key, async () => {
           const since = generation.value
           // Get the collection using the DruxtClient instance.
-          const collection = await this.$druxt.getCollection(type, query, prefix)
+          // A bypass also skips the server's process cache.
+          const collection = await this.$druxt.getCollection(type, query, prefix, ...(bypassCache ? [{ bypassCache }] : []))
 
           // Store the collection in the DruxtStore, unless a flush happened meanwhile.
           if (since === generation.value) commit('addCollection', { collection: { ...collection }, type, hash, prefix })
@@ -425,10 +427,11 @@ const DruxtStore = ({ store }) => {
         if (bypassCache || !storedResource || fields) {
           try {
             // Identical concurrent dispatches share one request and one commit.
-            const key = JSON.stringify(['resource', prefix, type, id, queryObject])
+            const key = JSON.stringify(['resource', prefix, type, id, queryObject, bypassCache])
             resource = await share(key, async () => {
               const started = generation.value
-              const response = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix)
+              // A bypass also skips the server's process cache.
+              const response = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix, ...(bypassCache ? [{ bypassCache }] : []))
               // Stored unless a flush happened meanwhile.
               if (started === generation.value) commit('addResource', { prefix, resource: { ...response } })
               return response

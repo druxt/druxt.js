@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
-import { parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
+import { configHasCredentials, parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
 
 // Shared JSON:API index cache. Keyed by the Axios instance, which carries the
 // credentials, then by base URL, endpoint and resource config, so clients on
@@ -12,6 +12,12 @@ const indexCache = new WeakMap()
 
 // How long each fetched document may be cached, from its Cache-Control header.
 const lifetimes = new WeakMap()
+
+// Entries a process cache scope keeps per consumer when `cache.max` is not set.
+const DEFAULT_MAX_ENTRIES = 1000
+
+// The extra get() argument a bypass needs, and none otherwise.
+const requestOptions = ({ bypassCache } = {}) => (bypassCache ? [{ bypassCache: true }] : [])
 
 /**
  * The Druxt JSON:API client.
@@ -152,14 +158,18 @@ class DruxtClient {
    * set, and it is skipped for any request that sends an Authorization header,
    * basic auth or a session cookie.
    *
-   * @param {string} scope - The cache scope, e.g. 'index' or 'menu'.
+   * The `content` scope, which holds every other GET response, is also off
+   * unless `cache.content` is set.
+   *
+   * @param {string} scope - The cache scope, e.g. 'index', 'menu' or 'content'.
    *
    * @returns {?object} The cache, or null when it must not be used.
    */
   processCache(scope) {
     if (!this.options.cache) return null
-    const { ttl, sessionCookie } = this.options.cache
-    return processCache(scope, { axios: this.axios, ttl, sessionCookie })
+    const { ttl, sessionCookie, max = DEFAULT_MAX_ENTRIES, content } = this.options.cache
+    if (scope === 'content' && !content) return null
+    return processCache(scope, { axios: this.axios, ttl, sessionCookie, max })
   }
 
   /**
@@ -367,15 +377,42 @@ class DruxtClient {
    * const res = await this.$druxt.get('/jsonapi/node/article')
    *
    * @param {string} url - The URL to GET.
-   * @param {object} options - An Axios options object.
+   * With `cache.content` set, a response to a request without credentials is
+   * kept in the process cache for as long as its Cache-Control allows, and
+   * the next server request for the same URL is answered from it.
+   *
+   * @param {object} [options] - An Axios options object.
+   * @param {boolean} [options.bypassCache] - Fetch from Drupal even when the process cache holds the URL, and store the fresh response.
    *
    * @returns {object} The Axios response.
    */
   async get(url, options) {
+    const { bypassCache, ...config } = options || {}
+
+    // Credentials given for this request alone are not on the instance, so the cache cannot see them.
+    const sessionCookie = (this.options.cache || {}).sessionCookie
+    const before = configHasCredentials(config, sessionCookie) ? null : this.processCache('content')
+    const key = JSON.stringify([this.indexKey, url, config.params || null])
+    if (before && !bypassCache) {
+      const stored = before.get(key)
+      if (stored) return this.storedResponse(stored)
+    }
+
     try {
-      const res = await this.axios.get(url, options)
+      const res = await this.axios.get(url, options ? config : undefined)
+      const seconds = parseCacheLifetime((res || {}).headers)
+      const at = Date.now()
       // Kept with its arrival time, so the lifetime read later is what is left of it.
-      if (res && res.data && typeof res.data === 'object') lifetimes.set(res.data, { seconds: parseCacheLifetime(res.headers), at: Date.now() })
+      if (res && res.data && typeof res.data === 'object') lifetimes.set(res.data, { seconds, at })
+
+      // Asked again once resolved, as the request may have shown the instance to be credentialed.
+      // Only a 200 is kept: a stored 404 would hide a page published after it.
+      const after = before && this.processCache('content')
+      if (after && res && res.status === 200 && res.data && typeof res.data === 'object') {
+        // Stored as text, so no caller can change what the next request reads.
+        const value = { body: JSON.stringify(res.data), status: res.status, headers: { ...res.headers }, seconds, at }
+        after.set(key, value, seconds, before.generation)
+      }
 
       return res
     } catch(err) {
@@ -385,11 +422,27 @@ class DruxtClient {
   }
 
   /**
+   * Builds a response from a process cache entry.
+   *
+   * @private
+   * @param {object} stored - The stored entry.
+   *
+   * @returns {object} A response with a fresh copy of the stored document.
+   */
+  storedResponse(stored) {
+    const data = JSON.parse(stored.body)
+    lifetimes.set(data, { seconds: stored.seconds, at: stored.at })
+    return { data, status: stored.status, headers: { ...stored.headers } }
+  }
+
+  /**
    * Get a collection of resources from the JSON:API server.
    *
    * @param {string} type - The JSON:API Resource type.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {object} [options] - (Optional) Request options.
+   * @param {boolean} [options.bypassCache] - Fetch from Drupal even when the process cache holds the collection.
    *
    * @returns {object} The JSON:API collection response.
    *
@@ -400,7 +453,7 @@ class DruxtClient {
    *   'en'
    * )
    */
-  async getCollection(type, query, prefix) {
+  async getCollection(type, query, prefix, options = {}) {
     const { href } = await this.getIndex(type, prefix)
     if (!href) {
       return false
@@ -408,7 +461,7 @@ class DruxtClient {
 
     const url = this.buildQueryUrl(href, query)
 
-    const { data } = await this.get(url)
+    const { data } = await this.get(url, ...requestOptions(options))
     return data
   }
 
@@ -605,13 +658,15 @@ class DruxtClient {
    * @param {string} id - The Drupal resource UUID.
    * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
    * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {object} [options] - (Optional) Request options.
+   * @param {boolean} [options.bypassCache] - Fetch from Drupal even when the process cache holds the resource.
    *
    * @returns {object|boolean} The full JSON:API document; the requested resource is on the
    *   `data` property, e.g. `result.data.attributes`. Returns `false` if either `type` or
    *   `id` is missing.
    * @todo update method to take a context object instead of 4 parameters.
    */
-  async getResource(type, id, query, prefix) {
+  async getResource(type, id, query, prefix, options = {}) {
     if (!id || !type) {
       return false
     }
@@ -623,7 +678,7 @@ class DruxtClient {
     }
 
     const url = this.buildQueryUrl([href, id].join('/'), query)
-    const { data } = await this.get(url)
+    const { data } = await this.get(url, ...requestOptions(options))
     return data
   }
 

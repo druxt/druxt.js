@@ -96,16 +96,40 @@ Performance). At the default of 0, nothing is kept. A request with an
 `Authorization` header or a Drupal session cookie never reads or fills the
 cache. The cache is off under `nuxt dev`.
 
-| Option                | Type     | Default             | Description                                                         |
-| --------------------- | -------- | ------------------- | ------------------------------------------------------------------- |
-| `cache.ttl`           | `number` |                     | Seconds a response may be kept at most. `0` keeps nothing.          |
-| `cache.secret`        | `string` |                     | Turns on `POST /_druxt/cache/clear`.                                |
-| `cache.sessionCookie` | `string` | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it. |
+| Option                | Type      | Default             | Description                                                         |
+| --------------------- | --------- | ------------------- | ------------------------------------------------------------------- |
+| `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.           |
+| `cache.max`           | `number`  | `1000`              | Responses kept per cache area at most. The least recently used go.  |
+| `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.          |
+| `cache.secret`        | `string`  |                     | Turns on `POST /_druxt/cache/clear`.                                |
+| `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it. |
 
 Clear the cache from the app with `this.$store.dispatch('druxt/clearCache')`,
 or from Drupal by sending `POST /_druxt/cache/clear` with the secret in an
 `X-Druxt-Secret` header. Each Nuxt process has its own cache, so a site with
 several processes clears each one.
+
+### Caching content
+
+`cache.content` extends the cache to every other request Druxt sends Drupal:
+entities, collections, views and route lookups. A second visitor to a page
+then costs Drupal nothing until the page's lifetime runs out.
+
+```js
+// nuxt.config.js
+export default {
+  druxt: {
+    cache: { content: true, secret: process.env.DRUXT_CACHE_SECRET },
+  },
+};
+```
+
+Content changes far more often than menus, so pair it with a clear from
+Drupal, below. Without one, an edit reaches anonymous visitors only once the
+page cache maximum age has passed. Only successful responses are kept, so a
+page published after a visitor saw a 404 appears straight away. A
+`bypassCache` dispatch to the Druxt store also skips this cache and stores the
+fresh response.
 
 ### Clearing from Drupal with Purge
 

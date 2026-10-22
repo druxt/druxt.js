@@ -179,10 +179,11 @@ export const parseCacheLifetime = (headers) => {
  * @param {object} options.axios - The Axios instance the request uses.
  * @param {number} [options.ttl] - Seconds an entry may live at most. It shortens a lifetime, never extends one, and 0 keeps nothing.
  * @param {string} [options.sessionCookie] - A pattern for the session cookie name.
+ * @param {number} [options.max] - Entries the scope keeps per consumer at most. Past it, expired entries go first, then the least recently used.
  *
  * @returns {?{get: Function, set: Function}}
  */
-export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
+export const processCache = (scope, { axios, ttl, sessionCookie, max } = {}) => {
   if (!runtime.isServer() || hasCredentials(axios, sessionCookie)) return null
 
   if (!scopes.has(scope)) scopes.set(scope, new Map())
@@ -194,6 +195,17 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
   const cap = (seconds) => (typeof ttl === 'number' ? Math.min(seconds, ttl) : seconds)
   const taken = generation.value
 
+  const expired = (entry) => Date.now() - entry.created >= entry.seconds * 1000
+  // Keeps the scope within `max`: expired entries go first, then the least recently used.
+  const bound = () => {
+    if (typeof max !== 'number' || entries.size <= max) return
+    for (const [key, entry] of entries) if (expired(entry)) entries.delete(key)
+    for (const key of entries.keys()) {
+      if (entries.size <= max) break
+      entries.delete(key)
+    }
+  }
+
   return {
     // The generation this handle was taken at. Compare a handle taken after a
     // request resolves against one taken before it started: a difference means
@@ -204,7 +216,15 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
     get(key) {
       const entry = entries.get(key)
       if (!entry) return undefined
+      // Past its own lifetime the entry is no use to any reader, so it goes.
+      if (expired(entry)) {
+        entries.delete(key)
+        return undefined
+      }
       if (Date.now() - entry.created >= cap(entry.seconds) * 1000) return undefined
+      // A Map keeps insertion order, so moving a read entry to the end keeps the oldest first.
+      entries.delete(key)
+      entries.set(key, entry)
       return entry.value
     },
 
@@ -223,8 +243,11 @@ export const processCache = (scope, { axios, ttl, sessionCookie } = {}) => {
      */
     set(key, value, seconds, since) {
       if (since !== undefined && since !== generation.value) return value
-      if (cap(seconds) > 0) entries.set(key, { value, seconds: cap(seconds), created: Date.now() })
-      else entries.delete(key)
+      entries.delete(key)
+      if (cap(seconds) > 0) {
+        entries.set(key, { value, seconds: cap(seconds), created: Date.now() })
+        bound()
+      }
       return value
     },
   }
