@@ -52,9 +52,11 @@ describe('files copied outside the bundle', () => {
       "const d = () => import('./d')",
       "const e = () => import(/* webpackChunkName: \"e\" */ '../e')",
       "const f = require( /* a */ /* b */ './f')",
-      "import g from 'g'",
+      "import g from /* note */ '../g'",
+      "import /* side effect */ './h'",
+      "import i from 'i'",
     ].join('\n')
-    expect(relativeSpecifiers(source)).toStrictEqual(['./a', './b', '../c', './d', '../e', './f'])
+    expect(relativeSpecifiers(source)).toStrictEqual(['./a', './b', '../c', './d', '../e', './f', '../g', './h'])
   })
 
   test('import nothing from outside their own directory', () => {
