@@ -9,6 +9,18 @@ const scopes = globalThis[SCOPES] || (globalThis[SCOPES] = new Map())
 const GENERATION = Symbol.for('druxt.processCacheGeneration')
 const generation = globalThis[GENERATION] || (globalThis[GENERATION] = { value: 0 })
 
+// Numbers requests in the order they start, shared like the scopes so every
+// copy of the module counts on one sequence.
+const SEQUENCE = Symbol.for('druxt.processCacheSequence')
+const sequence = globalThis[SEQUENCE] || (globalThis[SEQUENCE] = { value: 0 })
+
+/**
+ * The next number in the order requests start in, unique within the process.
+ *
+ * @returns {number}
+ */
+export const nextRequest = () => ++sequence.value
+
 // The running size of a consumer's entries, held on its map of entries.
 const SIZE = Symbol.for('druxt.processCacheSize')
 

@@ -173,10 +173,10 @@ describe('DruxtClient content cache', () => {
       axios.get = jest.fn((...args) => new Promise((resolve) => pending.push(() => resolve(answer(...args)))))
       return axios
     }
+    // Both start in the same millisecond, so only their order tells them apart.
     const now = jest.spyOn(Date, 'now')
     now.mockReturnValue(1000)
     const ordinary = client(deferred()).get(page)
-    now.mockReturnValue(2000)
     const bypass = client(deferred()).get(page, { bypassCache: true })
     await Promise.resolve()
 

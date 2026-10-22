@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
-import { byteSize, parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
+import { byteSize, nextRequest, parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
 
 // Shared JSON:API index cache. Keyed by the Axios instance, which carries the
 // credentials, then by base URL, endpoint and resource config, so clients on
@@ -409,7 +409,8 @@ class DruxtClient {
     }
 
     try {
-      const started = Date.now()
+      // Its place in the order requests started in, which a timestamp cannot give two requests in one millisecond.
+      const started = nextRequest()
       const res = await this.axios.get(url, options ? config : undefined)
       const seconds = parseCacheLifetime((res || {}).headers)
       const at = Date.now()
