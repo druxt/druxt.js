@@ -1,4 +1,5 @@
 ---
+'druxt': patch
 ---
 
-The standalone copy of the cache clear handler that this removes has not been released, so there is nothing to tell a site.
+fix(#950): every file `druxt/server-middleware/*` exports loads on its own. The cache clear handler is part of the Nuxt module's bundle, so `template.mjs` is the one file in that directory.
