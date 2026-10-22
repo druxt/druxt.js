@@ -2,7 +2,7 @@ import chalk from 'chalk'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { join, normalize, resolve } from 'path'
 import { DruxtClient } from '../client'
-import { cacheClearHandler } from '../server-middleware/cacheClear'
+import { cacheClearHandler } from './cacheClear'
 import meta from '../../package.json'
 
 // @nuxt/components ignores a false isAsync on the directory.

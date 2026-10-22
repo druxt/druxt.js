@@ -1,3 +1,5 @@
+// Bundled into the Nuxt module, which registers it as a function. A file under
+// server-middleware/ is copied into dist/ on its own and could not import the process cache.
 import { resetProcessCache } from '../utils/processCache'
 
 // Compares in time that depends on the caller's input alone: the loop runs its
