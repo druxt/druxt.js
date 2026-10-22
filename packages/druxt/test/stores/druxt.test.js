@@ -541,6 +541,15 @@ describe('DruxtStore', () => {
     // is never asked for the field_media it does not have.
     expect(store.$druxt.getResource).not.toHaveBeenCalled()
     expect(page.included.map(({ type, id }) => `${type}:${id}`).sort()).toStrictEqual(['media--image:m1', 'paragraph--image:i1', 'paragraph--text:t1'])
+
+    // A flushed text paragraph is fetched again, without the include its listed fields don't name.
+    store.commit('druxt/flushResource', { type: 'paragraph--text', id: 't1' })
+    store.$druxt.getResource = jest.fn(async () => ({ data: { type: 'paragraph--text', id: 't1', attributes: { field_text: 'Text' } } }))
+    await store.dispatch('druxt/getResource', { type: 'node--page', id: 'n1', query })
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(1)
+    const [type, id, sent] = store.$druxt.getResource.mock.calls[0]
+    expect([type, id]).toStrictEqual(['paragraph--text', 't1'])
+    expect(decodeURIComponent(sent.getQueryString())).not.toMatch(/include=/)
   })
 
   test('a related resource whose fields name an include it lacks is still fetched', async () => {

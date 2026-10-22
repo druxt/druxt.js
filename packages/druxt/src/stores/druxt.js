@@ -381,16 +381,17 @@ const DruxtStore = ({ store }) => {
 
         // The sub-includes a related resource can take. One relationship can hold
         // several types, such as paragraphs, and each takes only the includes its
-        // type has: Drupal answers 400 to an include a type lacks. A type whose
-        // fields the query lists, and whose stored copy lacks the relationship,
-        // does not have it, so that include is dropped for it.
+        // type has: Drupal answers 400 to an include a type lacks. When the query
+        // lists a type's fields, as schema mode lists the fields its display
+        // renders, an include those fields don't name is dropped for it, unless
+        // its stored copy has that relationship. A related resource that was
+        // flushed has no stored copy, so its listed fields decide alone.
         const includeFor = (related, include) => {
           const listed = (queryObject.fields || {})[related.type]
           if (!include || typeof listed !== 'string') return include
           const stored = ((state.resources[related.type] || {})[related.id] || {})[prefix]
-          if (!stored) return include
           const fields = listed.split(',')
-          const relationships = Object.keys((stored.data || {}).relationships || {})
+          const relationships = Object.keys(((stored || {}).data || {}).relationships || {})
           return include.split(',')
             .filter((path) => {
               const key = path.split('.')[0]
