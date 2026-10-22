@@ -315,6 +315,20 @@ describe('processCache', () => {
     expect(cache.get('a')).toBe('éé')
   })
 
+  test('a value JSON cannot hold is kept and counts for nothing', () => {
+    const cache = processCache('bounded', { axios: axios(), maxSize: 4 })
+    const circular = {}
+    circular.self = circular
+    const handler = () => {}
+    cache.set('circular', circular, 60)
+    // JSON.stringify gives undefined for a function.
+    cache.set('handler', handler, 60)
+    cache.set('a', 'aaaa', 60)
+    expect(cache.get('circular')).toBe(circular)
+    expect(cache.get('handler')).toBe(handler)
+    expect(cache.get('a')).toBe('aaaa')
+  })
+
   test('without maxSize a scope is unbounded', () => {
     const cache = processCache('unbounded', { axios: axios() })
     for (let i = 0; i < 50; i++) cache.set(String(i), 'x'.repeat(1000), 60)
