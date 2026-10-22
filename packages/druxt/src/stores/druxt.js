@@ -379,6 +379,26 @@ const DruxtStore = ({ store }) => {
           ).filter((s) => s).join(',')
         }
 
+        // The sub-includes a related resource can take. One relationship can hold
+        // several types, such as paragraphs, and each takes only the includes its
+        // type has: Drupal answers 400 to an include a type lacks. A type whose
+        // fields the query lists, and whose stored copy lacks the relationship,
+        // does not have it, so that include is dropped for it.
+        const includeFor = (related, include) => {
+          const listed = (queryObject.fields || {})[related.type]
+          if (!include || typeof listed !== 'string') return include
+          const stored = ((state.resources[related.type] || {})[related.id] || {})[prefix]
+          if (!stored) return include
+          const fields = listed.split(',')
+          const relationships = Object.keys((stored.data || {}).relationships || {})
+          return include.split(',')
+            .filter((path) => {
+              const key = path.split('.')[0]
+              return fields.includes(key) || relationships.includes(key)
+            })
+            .join(',')
+        }
+
         // Hydrate included data based on the include query. A bypass takes its includes from the fresh response.
         let included = []
         if (queryObject.include && storedResource && !bypassCache) {
@@ -401,7 +421,7 @@ const DruxtStore = ({ store }) => {
                     id: o.id,
                     prefix,
                     type: o.type,
-                    query: { ...queryObject, include },
+                    query: { ...queryObject, include: includeFor(o, include) },
                   })
                 })
               })
