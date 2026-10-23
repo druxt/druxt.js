@@ -103,19 +103,20 @@ export default {
 };
 ```
 
-| Option                | Type      | Default             | Description                                                         |
-| --------------------- | --------- | ------------------- | ------------------------------------------------------------------- |
-| `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.           |
-| `cache.maxSize`       | `number`  | `52428800` (50 MB)  | Bytes of responses kept per cache area. The least recently used go. |
-| `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.          |
-| `cache.secret`        | `string`  |                     | Turns on `POST /_druxt/cache/clear`.                                |
-| `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it. |
+| Option                | Type      | Default             | Description                                                                      |
+| --------------------- | --------- | ------------------- | -------------------------------------------------------------------------------- |
+| `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.                        |
+| `cache.maxSize`       | `number`  | `52428800` (50 MB)  | Bytes of responses kept per cache area and consumer. The least recently used go. |
+| `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.                       |
+| `cache.secret`        | `string`  |                     | Turns on `POST /_druxt/cache/clear`.                                             |
+| `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it.              |
 
 - A request with an `Authorization` header or a Drupal session cookie skips
   the cache, and `nuxt dev` runs without it.
 - Only successful responses are kept. A `bypassCache` dispatch fetches afresh
   and stores the result.
-- A full cache takes about three times `cache.maxSize` in server memory.
+- A full cache area takes about three times `cache.maxSize` in server memory,
+  and a response larger than the limit is not kept.
 - Clear it with `druxt/clearCache`, or from Drupal with
   `POST /_druxt/cache/clear` and the secret in an `X-Druxt-Secret` header.
   Each Nuxt process has its own cache to clear.
@@ -127,8 +128,9 @@ more depth.
 
 ### Clearing from Drupal with Purge
 
-With `cache.content` on, an edit reaches anonymous visitors only once the page
-cache maximum age has passed, unless Drupal clears the cache. The
+With `cache.content` on, an edit can take up to the page cache maximum age, or
+`cache.ttl` if that is shorter, to reach anonymous visitors, unless Drupal
+clears the cache. The
 [Purge](https://www.drupal.org/project/purge) module can send that request on
 every save. Enable `purge`, `purge_purger_http`, `purge_queuer_coretags` and
 `purge_processor_lateruntime`, then add the bundled HTTP purger:
@@ -137,8 +139,9 @@ every save. Enable `purge`, `purge_purger_http`, `purge_queuer_coretags` and
 drush p:purger-add httpbundled
 ```
 
-Point it at `/_druxt/cache/clear` with the method `POST`, the `X-Druxt-Secret`
-header and the invalidation type `tag`. Set the secret from `settings.php` as
+Point it at the Nuxt server's host and port, as Drupal reaches it, with the
+path `/_druxt/cache/clear`, the method `POST`, the `X-Druxt-Secret` header and
+the invalidation type `tag`. Set the secret from `settings.php` as
 a `$config` override, not in exported configuration.
 
 ## DruxtClient
