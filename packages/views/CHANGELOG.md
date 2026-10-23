@@ -1,5 +1,24 @@
 # druxt-views
 
+## 0.23.0 - 2026-10-23
+
+### Minor Changes
+
+- `vue` and `vuex` are now peer dependencies, so the packages use the site's own copy. A second copy stopped Nuxt at startup with a version mismatch. ([#875](https://github.com/druxt/druxt.js/issues/875), [`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+
+### Patch Changes
+
+- Uses axios 0.34.0, the current 0.x release. ([#923](https://github.com/druxt/druxt.js/issues/923), [`6998f56`](https://github.com/druxt/druxt.js/commit/6998f56d9d18abf0ea7d9d308366d79b7b938b80))
+- Components no longer flicker or fetch their data again on the first load of a production build. Remove any `components:extend` hook added to work around it. ([#854](https://github.com/druxt/druxt.js/issues/854), [`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- View results fetched across a flush are no longer stored. ([#885](https://github.com/druxt/druxt.js/issues/885), [`75b3768`](https://github.com/druxt/druxt.js/commit/75b37680976671879b03eaf2eb046d799456f5ef))
+- Each package exports its `package.json`, so `require('druxt/package.json')` works. ([#835](https://github.com/druxt/druxt.js/issues/835), [`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- Modules require the current `druxt` and `druxt-router`, where some still required versions from 2023, so a site no longer installs an older copy of either beside its own. ([#698](https://github.com/druxt/druxt.js/issues/698), [`a1d6708`](https://github.com/druxt/druxt.js/commit/a1d6708030851bfbde74a1986e4f4cd918793917))
+- Themes built on the menu, breadcrumb and views mixins no longer render module data as HTML attributes, such as `value="[object Object]"` or `langcode="en"`. A theme that read `value` or `langcode` from `$attrs` reads it from the prop. ([#945](https://github.com/druxt/druxt.js/issues/945), [`15ed58f`](https://github.com/druxt/druxt.js/commit/15ed58fff66205e0216b988e636b1c4904ef3de6))
+- Package READMEs show their banner on npm. ([#863](https://github.com/druxt/druxt.js/issues/863), [`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- A `bypassCache` view query goes past druxt 0.25.0's server cache as well as the store, so a refreshed view comes from Drupal. ([#639](https://github.com/druxt/druxt.js/issues/639), [`80a84d9`](https://github.com/druxt/druxt.js/commit/80a84d9ece6177035eba0e0e6a9a4c1ff2fa8807))
+- View attachments use their intended `ref` name. Only code reading `this.$refs` on a `DruxtView` is affected. ([#758](https://github.com/druxt/druxt.js/issues/758), [`7d560a6`](https://github.com/druxt/druxt.js/commit/7d560a67116d333dca9329557364e518e9e602cc))
+- Updated dependencies: druxt-blocks@0.18.0, druxt@0.25.0, druxt-entity@0.29.0, druxt-router@0.32.0.
+
 ## 0.22.2 - 2023-07-25
 
 ### Patch Changes
@@ -159,11 +178,7 @@
 - Added support for Contextual filters (arguments). ([`c769243`](https://github.com/druxt/druxt.js/commit/c769243))
 
   ```vue
-  <DruxtView
-    :arguments="[1, 2, 3]"
-    displayid="block_1"
-    view-id="articles_aside"
-  />
+  <DruxtView :arguments="[1, 2, 3]" displayid="block_1" view-id="articles_aside" />
   ```
 
 ### Patch Changes

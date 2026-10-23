@@ -1,5 +1,0 @@
----
-'druxt-menu': patch
----
-
-fix(#899): a menu no longer renders empty when the store is flushed while it loads. `druxtMenu/get` fetches it again, and returns the menu items it stored.

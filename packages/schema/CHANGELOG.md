@@ -1,5 +1,28 @@
 # druxt-schema
 
+## 0.12.0 - 2026-10-23
+
+### Minor Changes
+
+- Schemas can follow display changes in Drupal without a rebuild. Set `druxt.schema.refresh`, and the Nuxt server regenerates them after each cache clear. A server that serves one site does so even when it starts with a different `baseUrl` from its build, as a container often does. The [druxt-schema README](https://github.com/druxt/druxt.js/tree/HEAD/packages/schema#refresh-schemas-without-a-rebuild) covers it, including `createSchemaRefresh` for a static site's own Node server. ([#127](https://github.com/druxt/druxt.js/issues/127), [`b07a3e3`](https://github.com/druxt/druxt.js/commit/b07a3e3b4e1521a97ba4d5187c260432dadf47ac))
+  ```js
+  // nuxt.config.js
+  export default {
+    druxt: {
+      schema: { refresh: true },
+    },
+  };
+  ```
+- `vue` and `vuex` are now peer dependencies, so the packages use the site's own copy. A second copy stopped Nuxt at startup with a version mismatch. ([#875](https://github.com/druxt/druxt.js/issues/875), [`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+
+### Patch Changes
+
+- Each package exports its `package.json`, so `require('druxt/package.json')` works. ([#835](https://github.com/druxt/druxt.js/issues/835), [`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- Modules require the current `druxt` and `druxt-router`, where some still required versions from 2023, so a site no longer installs an older copy of either beside its own. ([#698](https://github.com/druxt/druxt.js/issues/698), [`a1d6708`](https://github.com/druxt/druxt.js/commit/a1d6708030851bfbde74a1986e4f4cd918793917))
+- Schema generation shares and caches its configuration requests, so a build makes fewer of them. ([#843](https://github.com/druxt/druxt.js/issues/843), [`43ddd7b`](https://github.com/druxt/druxt.js/commit/43ddd7b7b59be0a76fd98a715857fd64f60be9b4))
+- Package READMEs show their banner on npm. ([#863](https://github.com/druxt/druxt.js/issues/863), [`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- Updated dependencies: druxt@0.25.0.
+
 ## 0.11.3 - 2023-07-25
 
 ### Patch Changes
