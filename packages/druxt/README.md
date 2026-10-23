@@ -90,36 +90,9 @@ options list.
 ## Server cache
 
 In production, the server keeps Drupal's responses between requests for as
-long as Drupal's `Cache-Control` header allows. It keeps the JSON:API index and
-menus, and with `cache.content` every other response Druxt fetches, as
-[Caching content](#caching-content) describes. Drupal sets that header
-from the page cache maximum age (Administration > Configuration > Development >
-Performance). At the default of 0, nothing is kept. A request with an
-`Authorization` header or a Drupal session cookie never reads or fills the
-cache. The cache is off under `nuxt dev`.
-
-| Option                | Type      | Default             | Description                                                         |
-| --------------------- | --------- | ------------------- | ------------------------------------------------------------------- |
-| `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.           |
-| `cache.maxSize`       | `number`  | `52428800` (50 MB)  | Bytes of responses kept per cache area. The least recently used go. |
-| `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.          |
-| `cache.secret`        | `string`  |                     | Turns on `POST /_druxt/cache/clear`.                                |
-| `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it. |
-
-Clear the cache from the app with `this.$store.dispatch('druxt/clearCache')`,
-or from Drupal by sending `POST /_druxt/cache/clear` with the secret in an
-`X-Druxt-Secret` header. Each Nuxt process has its own cache, so a site with
-several processes clears each one.
-
-The endpoint is server middleware, so list Druxt, or the module that adds it
-such as `druxt-site`, under `modules`. Nuxt runs `buildModules` only while it
-builds, so under `nuxt start` the endpoint would answer 404.
-
-### Caching content
-
-`cache.content` extends the cache to every other request Druxt sends Drupal:
-entities, collections, views and route lookups. A second visitor to a page
-then costs Drupal nothing until the page's lifetime runs out.
+long as Drupal's `Cache-Control` header allows: the JSON:API index and menus,
+and with `cache.content` every other response. Drupal sets that header from
+its page cache maximum age, so at the default of 0 nothing is kept.
 
 ```js
 // nuxt.config.js
@@ -130,35 +103,40 @@ export default {
 };
 ```
 
-Content changes far more often than menus, so pair it with a clear from
-Drupal, below. Without one, an edit reaches anonymous visitors only once the
-page cache maximum age has passed. Only successful responses are kept, so a
-page published after a visitor saw a 404 appears straight away. A
-`bypassCache` dispatch to the Druxt store also skips this cache and stores the
-fresh response.
+| Option                | Type      | Default             | Description                                                         |
+| --------------------- | --------- | ------------------- | ------------------------------------------------------------------- |
+| `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.           |
+| `cache.maxSize`       | `number`  | `52428800` (50 MB)  | Bytes of responses kept per cache area. The least recently used go. |
+| `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.          |
+| `cache.secret`        | `string`  |                     | Turns on `POST /_druxt/cache/clear`.                                |
+| `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it. |
 
-`cache.maxSize` counts the bytes of the stored JSON, and it applies to each
-cache area and consumer. A full cache can take about three times that in server
-memory, so size it against the memory each Nuxt process has. A response larger
-than the whole limit is not kept.
+- A request with an `Authorization` header or a Drupal session cookie skips
+  the cache, and `nuxt dev` runs without it.
+- Only successful responses are kept. A `bypassCache` dispatch fetches afresh
+  and stores the result.
+- A full cache takes about three times `cache.maxSize` in server memory.
+- Clear it with `druxt/clearCache`, or from Drupal with
+  `POST /_druxt/cache/clear` and the secret in an `X-Druxt-Secret` header.
+  Each Nuxt process has its own cache to clear.
+- The clear endpoint is server middleware, so list Druxt, or `druxt-site`,
+  under `modules`. Nuxt skips `buildModules` under `nuxt start`.
 
 ### Clearing from Drupal with Purge
 
-The [Purge](https://www.drupal.org/project/purge) module can send that request
-whenever content changes. Enable `purge`, `purge_purger_http`,
-`purge_queuer_coretags` and a processor such as `purge_processor_lateruntime`,
-then add the bundled HTTP purger:
+With `cache.content` on, an edit reaches anonymous visitors only once the page
+cache maximum age has passed, unless Drupal clears the cache. The
+[Purge](https://www.drupal.org/project/purge) module can send that request on
+every save. Enable `purge`, `purge_purger_http`, `purge_queuer_coretags` and
+`purge_processor_lateruntime`, then add the bundled HTTP purger:
 
 ```sh
 drush p:purger-add httpbundled
 ```
 
-Give it the method `POST`, the Nuxt host and port, the path
-`/_druxt/cache/clear`, a header `X-Druxt-Secret` with the secret, and the
-invalidation type `tag`. One save then costs one request, whatever it
-invalidates, and a request refused for a wrong secret is sent again with the
-next batch. Keep the secret out of exported configuration: set it from
-`settings.php` as a `$config` override.
+Point it at `/_druxt/cache/clear` with the method `POST`, the `X-Druxt-Secret`
+header and the invalidation type `tag`. Set the secret from `settings.php` as
+a `$config` override, not in exported configuration.
 
 ## DruxtClient
 
