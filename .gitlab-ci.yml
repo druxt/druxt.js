@@ -748,9 +748,10 @@ perf:audit:
     - yarn install --immutable
     - yarn build
     - section_end "build"
-    - section_start "serve" "Building and serving the examples"
-    - scripts/perf-audit/serve-examples.sh start
-    - section_end "serve"
+    # The browser goes in before the examples start. Each example keeps the
+    # JSON:API index it fetches at startup for Drupal's max-age (300 seconds in
+    # the provisioned backend), so a slow download between start and audit let
+    # it expire and added a request to the cold pass.
     - section_start "browser" "Installing Node 22 and Chromium for Unlighthouse"
     # Node 22 for the audit only; the examples stay on the template's Node 16.
     - . "$NVM_DIR/nvm.sh" && nvm install 22 >/dev/null && nvm use 16 >/dev/null
@@ -761,6 +762,9 @@ perf:audit:
     - export CHROME_PATH=$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)
     - test -n "$CHROME_PATH" || { echo "No Playwright Chromium found" >&2; exit 1; }
     - section_end "browser"
+    - section_start "serve" "Building and serving the examples"
+    - scripts/perf-audit/serve-examples.sh start
+    - section_end "serve"
     - section_start "audit" "Auditing"
     - audit_rc=0
     - if [ "${PERF_AUDIT_UPDATE_BASELINE:-}" = "true" ]; then audit_args="--update-baseline"; else audit_args=""; fi
