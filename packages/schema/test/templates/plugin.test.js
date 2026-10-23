@@ -5,13 +5,14 @@ import template from 'lodash/template'
 const source = readFileSync(resolve(__dirname, '../../templates/plugin.js'), 'utf8')
 
 // Renders the plugin as Nuxt does, then runs it with the given globals in place of webpack's.
-const plugin = ({ refresh, server, files = {}, fetch, hook }) => {
+const plugin = ({ refresh, server, files = {}, fetch, hook, refreshes }) => {
   const rendered = template(source, { interpolate: /<%=([\s\S]+?)%>/g })({ options: { baseUrl: 'https://example.com', schema: { refresh } } })
     .replace('export default ', 'return ')
     .split('import(`./schemas/${id}.json`)').join('__file(id)')
   const process = { server: !!server }
   // The module registers its refresh under the site's base URL.
   if (hook) process[Symbol.for('druxt.schemaRefresh')] = new Map([['https://example.com', hook], ['https://other.example.com', async () => ({ v: 'other site' })]])
+  if (refreshes) process[Symbol.for('druxt.schemaRefresh')] = refreshes
   const file = (id) => (id in files ? Promise.resolve({ default: files[id] }) : Promise.reject(new Error(`No file ${id}`)))
   const create = new Function('process', 'fetch', '__file', rendered)
   const install = create(process, fetch, file)
@@ -35,6 +36,17 @@ describe('druxt-schema plugin template', () => {
 
     expect(await druxtSchema.import('node--page--default--view')).toStrictEqual({ v: 'held' })
     expect(await druxtSchema.import('node--article--default--view')).toStrictEqual({ v: 'built article' })
+  })
+
+  test('a server started with another base URL than the build still refreshes', async () => {
+    const files = { 'node--page--default--view': { v: 'built' } }
+    // Built against https://example.com, started against a service name.
+    const started = new Map([['http://drupal:8080', async () => ({ v: 'held' })]])
+    expect(await plugin({ refresh: true, server: true, files, refreshes: started }).import('node--page--default--view')).toStrictEqual({ v: 'held' })
+
+    // With several sites in the process and none on the built base URL, none is guessed.
+    const several = new Map([['http://a.example', async () => ({ v: 'a' })], ['http://b.example', async () => ({ v: 'b' })]])
+    expect(await plugin({ refresh: true, server: true, files, refreshes: several }).import('node--page--default--view')).toStrictEqual({ v: 'built' })
   })
 
   test('in the browser, the server route under the router base, else the built file', async () => {
