@@ -2,14 +2,14 @@
   "druxt-site": {
     "/": {
       "backendCold": {
-        "index": 2,
+        "index": 1,
         "collections": 19,
         "resources": 49,
         "router": 1,
         "menu": 3,
         "files": 0,
         "other": 0,
-        "total": 74
+        "total": 73
       },
       "backendWarm": {
         "index": 0,
@@ -23,21 +23,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 693,
-        "totalMs": 698,
-        "htmlBytes": 249659,
-        "nuxtBytes": 220784,
+        "ttfbMs": 549,
+        "totalMs": 553,
+        "htmlBytes": 249670,
+        "nuxtBytes": 220795,
         "fetchKeys": 129,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 78,
-        "lcpMs": 5869,
+        "performance": 77,
+        "lcpMs": 6237,
         "clsScore": 0,
-        "tbtMs": 47,
-        "fcpMs": 1686,
+        "tbtMs": 18,
+        "fcpMs": 1526,
         "requests": 27,
-        "bytes": 967699,
+        "bytes": 967812,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -69,21 +69,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 833,
-        "totalMs": 836,
-        "htmlBytes": 221311,
-        "nuxtBytes": 193865,
+        "ttfbMs": 597,
+        "totalMs": 603,
+        "htmlBytes": 221317,
+        "nuxtBytes": 193871,
         "fetchKeys": 138,
         "errorState": null
       },
       "lighthouse": {
         "performance": 75,
-        "lcpMs": 7451,
+        "lcpMs": 7442,
         "clsScore": 0,
-        "tbtMs": 38,
-        "fcpMs": 1842,
+        "tbtMs": 14,
+        "fcpMs": 1681,
         "requests": 30,
-        "bytes": 1383176,
+        "bytes": 1383401,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -115,21 +115,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 498,
-        "totalMs": 500,
-        "htmlBytes": 144526,
-        "nuxtBytes": 119720,
+        "ttfbMs": 388,
+        "totalMs": 391,
+        "htmlBytes": 144546,
+        "nuxtBytes": 119740,
         "fetchKeys": 113,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 99,
-        "lcpMs": 1679,
+        "performance": 95,
+        "lcpMs": 2413,
         "clsScore": 0,
-        "tbtMs": 33,
-        "fcpMs": 1679,
+        "tbtMs": 5,
+        "fcpMs": 2413,
         "requests": 19,
-        "bytes": 380339,
+        "bytes": 380534,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -161,21 +161,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 505,
-        "totalMs": 507,
-        "htmlBytes": 138100,
-        "nuxtBytes": 115666,
+        "ttfbMs": 378,
+        "totalMs": 379,
+        "htmlBytes": 138120,
+        "nuxtBytes": 115686,
         "fetchKeys": 85,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 97,
-        "lcpMs": 2410,
-        "clsScore": 0,
-        "tbtMs": 23,
-        "fcpMs": 1676,
+        "performance": 81,
+        "lcpMs": 2413,
+        "clsScore": 0.335,
+        "tbtMs": 4,
+        "fcpMs": 1524,
         "requests": 19,
-        "bytes": 494513,
+        "bytes": 494710,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -207,21 +207,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 476,
-        "totalMs": 478,
-        "htmlBytes": 118486,
-        "nuxtBytes": 99834,
+        "ttfbMs": 362,
+        "totalMs": 364,
+        "htmlBytes": 118503,
+        "nuxtBytes": 99851,
         "fetchKeys": 74,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 99,
-        "lcpMs": 1828,
-        "clsScore": 0,
-        "tbtMs": 20,
-        "fcpMs": 1678,
+        "performance": 92,
+        "lcpMs": 2864,
+        "clsScore": 0.036,
+        "tbtMs": 4,
+        "fcpMs": 2414,
         "requests": 18,
-        "bytes": 374346,
+        "bytes": 374527,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -255,21 +255,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 39,
-        "totalMs": 41,
-        "htmlBytes": 122426,
-        "nuxtBytes": 49193,
+        "ttfbMs": 32,
+        "totalMs": 33,
+        "htmlBytes": 122406,
+        "nuxtBytes": 49173,
         "fetchKeys": 1,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 97,
-        "lcpMs": 2459,
+        "performance": 95,
+        "lcpMs": 2450,
         "clsScore": 0,
-        "tbtMs": 9,
-        "fcpMs": 1540,
+        "tbtMs": 1,
+        "fcpMs": 2133,
         "requests": 13,
-        "bytes": 377418,
+        "bytes": 377599,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -303,21 +303,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 79,
-        "totalMs": 94,
-        "htmlBytes": 326942,
-        "nuxtBytes": 66931,
+        "ttfbMs": 57,
+        "totalMs": 71,
+        "htmlBytes": 326911,
+        "nuxtBytes": 66899,
         "fetchKeys": 1,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 99,
-        "lcpMs": 1552,
+        "performance": 94,
+        "lcpMs": 2438,
         "clsScore": 0.047,
-        "tbtMs": 18,
-        "fcpMs": 1552,
-        "requests": 11,
-        "bytes": 461120,
+        "tbtMs": 5,
+        "fcpMs": 2438,
+        "requests": 10,
+        "bytes": 461034,
         "postLoadApiCalls": 0
       },
       "hydration": {
