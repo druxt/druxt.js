@@ -15,7 +15,13 @@ const MISSING = {}
 const refreshed = async (id) => {
   try {
     if (process.server) {
-      const refresh = (process[Symbol.for('druxt.schemaRefresh')] || new Map()).get(<%= JSON.stringify(options.baseUrl) %>)
+      // The module registers the refresh under the base URL the server starts
+      // with, which can differ from the one the app was built with, as when a
+      // container builds against one host and runs against another. One refresh
+      // in the process is this app's; with several, only the built base URL decides.
+      const refreshes = process[Symbol.for('druxt.schemaRefresh')] || new Map()
+      const refresh = refreshes.get(<%= JSON.stringify(options.baseUrl) %>) ||
+        (refreshes.size === 1 ? refreshes.values().next().value : undefined)
       const schema = refresh ? await refresh(id) : null
       return schema === false ? MISSING : schema || null
     }
