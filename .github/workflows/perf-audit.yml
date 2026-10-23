@@ -75,12 +75,7 @@ jobs:
           WEBSERVER_HOST: 127.0.0.1
           WEBSERVER_PORT: 8888
 
-      - name: Build and serve the examples through the audit proxy
-        run: scripts/perf-audit/serve-examples.sh start
-        env:
-          BASE_URL: http://127.0.0.1:8888
-
-      # Node 22 for the audit only; the examples stay on Node 16.
+      # Node 22 for the audit's own tools; the examples stay on Node 16.
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
@@ -88,12 +83,29 @@ jobs:
       - name: Unit tests
         run: node --test scripts/perf-audit/test/*.test.mjs
 
+      # The browser goes in before the examples start. Each example keeps the
+      # JSON:API index it fetches at startup for Drupal's max-age (300 seconds in
+      # the provisioned backend), so a slow download between start and audit let
+      # it expire and added a request to the cold pass.
       - name: Install Chromium for Unlighthouse
         run: |
           npx --yes playwright@1.62.1 install --with-deps chromium
           CHROME_PATH="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)"
           test -n "$CHROME_PATH" || { echo "No Playwright Chromium found" >&2; exit 1; }
           echo "CHROME_PATH=$CHROME_PATH" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - name: Build and serve the examples through the audit proxy
+        run: scripts/perf-audit/serve-examples.sh start
+        env:
+          BASE_URL: http://127.0.0.1:8888
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
 
       - name: Audit
         id: audit
