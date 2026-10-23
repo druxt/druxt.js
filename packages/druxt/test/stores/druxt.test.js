@@ -517,6 +517,76 @@ describe('DruxtStore', () => {
     expect(store.state.druxt.resources[type][id].undefined.data.attributes.title).toBe('Fresh')
   })
 
+  test('a revisit takes from each related resource only the includes its type has', async () => {
+    // A page's paragraphs share one include path, as a page query asks for
+    // `field_content.field_media` across every paragraph type.
+    const fields = {
+      'node--page': 'title,field_content',
+      'paragraph--text': 'field_text',
+      'paragraph--image': 'field_media',
+      'media--image': 'name',
+    }
+    const href = (type, id) => `${baseUrl}/jsonapi/${type.replace('--', '/')}/${id}?fields[${type}]=${fields[type]}`
+    const add = (data) => store.commit('druxt/addResource', { resource: { data, links: { self: { href: href(data.type, data.id) } } } })
+    add({ type: 'node--page', id: 'n1', attributes: { title: 'Page' }, relationships: { field_content: { data: [{ type: 'paragraph--text', id: 't1' }, { type: 'paragraph--image', id: 'i1' }] } } })
+    add({ type: 'paragraph--text', id: 't1', attributes: { field_text: 'Text' } })
+    add({ type: 'paragraph--image', id: 'i1', relationships: { field_media: { data: { type: 'media--image', id: 'm1' } } } })
+    add({ type: 'media--image', id: 'm1', attributes: { name: 'Image' } })
+
+    store.$druxt.getResource = jest.fn(async () => { throw new Error('Drupal answers 400') })
+    const query = { include: 'field_content,field_content.field_media', fields }
+    const page = await store.dispatch('druxt/getResource', { type: 'node--page', id: 'n1', query })
+
+    // Everything is in the store, so nothing is fetched, and the text paragraph
+    // is never asked for the field_media it does not have.
+    expect(store.$druxt.getResource).not.toHaveBeenCalled()
+    expect(page.included.map(({ type, id }) => `${type}:${id}`).sort()).toStrictEqual(['media--image:m1', 'paragraph--image:i1', 'paragraph--text:t1'])
+
+    // A flushed text paragraph is fetched again, without the include its listed fields don't name.
+    store.commit('druxt/flushResource', { type: 'paragraph--text', id: 't1' })
+    store.$druxt.getResource = jest.fn(async () => ({ data: { type: 'paragraph--text', id: 't1', attributes: { field_text: 'Text' } } }))
+    await store.dispatch('druxt/getResource', { type: 'node--page', id: 'n1', query })
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(1)
+    const [type, id, sent] = store.$druxt.getResource.mock.calls[0]
+    expect([type, id]).toStrictEqual(['paragraph--text', 't1'])
+    expect(decodeURIComponent(sent.getQueryString())).not.toMatch(/include=/)
+  })
+
+  test('a nested include path rebuilds the relationships along it', async () => {
+    const fields = {
+      'node--page': 'title,field_content',
+      'paragraph--image': 'field_media',
+      'media--image': 'name',
+    }
+    const href = (type, id) => `${baseUrl}/jsonapi/${type.replace('--', '/')}/${id}?fields[${type}]=${fields[type]}`
+    const add = (data) => store.commit('druxt/addResource', { resource: { data, links: { self: { href: href(data.type, data.id) } } } })
+    add({ type: 'node--page', id: 'n1', attributes: { title: 'Page' }, relationships: { field_content: { data: [{ type: 'paragraph--image', id: 'i1' }] } } })
+    add({ type: 'paragraph--image', id: 'i1', relationships: { field_media: { data: { type: 'media--image', id: 'm1' } } } })
+    add({ type: 'media--image', id: 'm1', attributes: { name: 'Image' } })
+
+    store.$druxt.getResource = jest.fn(async () => { throw new Error('nothing should be fetched') })
+    // Only the nested path is given; JSON:API includes field_content along it.
+    const page = await store.dispatch('druxt/getResource', { type: 'node--page', id: 'n1', query: { include: 'field_content.field_media', fields } })
+    expect(store.$druxt.getResource).not.toHaveBeenCalled()
+    expect(page.included.map(({ type, id }) => `${type}:${id}`).sort()).toStrictEqual(['media--image:m1', 'paragraph--image:i1'])
+  })
+
+  test('a related resource whose fields name an include it lacks is still fetched', async () => {
+    const fields = { 'node--page': 'title,field_content', 'paragraph--image': 'field_media' }
+    const href = (type, id) => `${baseUrl}/jsonapi/${type.replace('--', '/')}/${id}?fields[${type}]=${fields[type]}`
+    const add = (data) => store.commit('druxt/addResource', { resource: { data, links: { self: { href: href(data.type, data.id) } } } })
+    add({ type: 'node--page', id: 'n1', attributes: { title: 'Page' }, relationships: { field_content: { data: [{ type: 'paragraph--image', id: 'i1' }] } } })
+    // Stored without the relationship its fields ask for, so it has to be fetched.
+    add({ type: 'paragraph--image', id: 'i1', attributes: {} })
+
+    store.$druxt.getResource = jest.fn(async () => ({ data: { type: 'paragraph--image', id: 'i1', relationships: { field_media: { data: null } } } }))
+    await store.dispatch('druxt/getResource', { type: 'node--page', id: 'n1', query: { include: 'field_content,field_content.field_media', fields } })
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(1)
+    const [type, id, query] = store.$druxt.getResource.mock.calls[0]
+    expect([type, id]).toStrictEqual(['paragraph--image', 'i1'])
+    expect(query.getQueryObject().include).toBe('field_media')
+  })
+
   test('getCollection retries after a failed request', async () => {
     const type = 'node--page'
     const mockCollectionPage = await getMockCollection(type)
