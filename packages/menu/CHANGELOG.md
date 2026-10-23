@@ -1,5 +1,26 @@
 # druxt-menu
 
+## 0.22.0 - 2026-10-23
+
+### Minor Changes
+
+- `vue` and `vuex` are now peer dependencies, so the packages use the site's own copy. A second copy stopped Nuxt at startup with a version mismatch. ([#875](https://github.com/druxt/druxt.js/issues/875), [`46e77f7`](https://github.com/druxt/druxt.js/commit/46e77f7adc61e35d5a4c43595ca2ba8b647f17cb))
+
+### Patch Changes
+
+- Components no longer flicker or fetch their data again on the first load of a production build. Remove any `components:extend` hook added to work around it. ([#854](https://github.com/druxt/druxt.js/issues/854), [`8b47d6f`](https://github.com/druxt/druxt.js/commit/8b47d6f9a446405a5aa9dd619cbd2cdc8b7f05f8))
+- Each package exports its `package.json`, so `require('druxt/package.json')` works. ([#835](https://github.com/druxt/druxt.js/issues/835), [`14dca08`](https://github.com/druxt/druxt.js/commit/14dca0820203f9b1e7bec186f47f379cc245375f))
+- Modules require the current `druxt` and `druxt-router`, where some still required versions from 2023, so a site no longer installs an older copy of either beside its own. ([#698](https://github.com/druxt/druxt.js/issues/698), [`a1d6708`](https://github.com/druxt/druxt.js/commit/a1d6708030851bfbde74a1986e4f4cd918793917))
+- A menu no longer renders empty when the store is flushed while it loads. `druxtMenu/get` fetches it again, and returns the menu items it stored. ([#899](https://github.com/druxt/druxt.js/issues/899), [`599c870`](https://github.com/druxt/druxt.js/commit/599c8707d4f86d8b736c7db8237afdfc57409671))
+- A menu now renders empty instead of throwing `collection.data is not iterable` when the backend's JSON:API index has no `menu_link_content--menu_link_content` resource. ([#878](https://github.com/druxt/druxt.js/issues/878), [`0a7f430`](https://github.com/druxt/druxt.js/commit/0a7f430df0692656032fb658d5e04e9668578cc2))
+- With `proxy.api`, browser menu requests go through the Nuxt proxy, as other Druxt requests do. ([#892](https://github.com/druxt/druxt.js/issues/892), [`c4867af`](https://github.com/druxt/druxt.js/commit/c4867af5f6cbf67e969b3b6270ffef6e4105e6f2))
+- Themes built on the menu, breadcrumb and views mixins no longer render module data as HTML attributes, such as `value="[object Object]"` or `langcode="en"`. A theme that read `value` or `langcode` from `$attrs` reads it from the prop. ([#945](https://github.com/druxt/druxt.js/issues/945), [`15ed58f`](https://github.com/druxt/druxt.js/commit/15ed58fff66205e0216b988e636b1c4904ef3de6))
+- Package READMEs show their banner on npm. ([#863](https://github.com/druxt/druxt.js/issues/863), [`d963bcb`](https://github.com/druxt/druxt.js/commit/d963bcb01735d539fb29deb436ab65ef875f2b1e))
+- Menus are kept between server requests by druxt 0.25.0's process cache. ([#848](https://github.com/druxt/druxt.js/issues/848), [`a47115e`](https://github.com/druxt/druxt.js/commit/a47115e1e22283073fe9fe2ecadba7f132a764dc))
+- Requests for one menu that build the same query share a fetch, and the plugin reuses the site's `$druxt` client when it has one. ([#843](https://github.com/druxt/druxt.js/issues/843), [`43ddd7b`](https://github.com/druxt/druxt.js/commit/43ddd7b7b59be0a76fd98a715857fd64f60be9b4))
+- A menu the store already holds is no longer fetched again, so a menu mounted in the browser renders without a request. Clearing the cache, or a login or logout in the browser, makes the next call fetch. ([#838](https://github.com/druxt/druxt.js/issues/838), [`7367b77`](https://github.com/druxt/druxt.js/commit/7367b77d2ec3d894b0fc5f63d6f637bfb708cb70))
+- Updated dependencies: druxt-blocks@0.18.0, druxt@0.25.0.
+
 ## 0.21.0 - 2024-01-08
 
 ### Minor Changes
