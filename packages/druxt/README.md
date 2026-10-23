@@ -122,6 +122,9 @@ export default {
 - The clear endpoint is server middleware, so list Druxt, or `druxt-site`,
   under `modules`. Nuxt skips `buildModules` under `nuxt start`.
 
+The [caching guide](https://druxtjs.org/how-to/caching) covers the cache in
+more depth.
+
 ### Clearing from Drupal with Purge
 
 With `cache.content` on, an edit reaches anonymous visitors only once the page
