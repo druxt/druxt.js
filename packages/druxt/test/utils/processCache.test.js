@@ -60,6 +60,8 @@ describe('processCache', () => {
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', Vary: 'Cookie, Accept-Encoding' })).toBe(300)
     // A Druxt backend's consumers module varies every response by X-Consumer-ID.
     expect(parseCacheLifetime({ 'cache-control': 'max-age=300, public', vary: 'Cookie, X-Consumer-ID' })).toBe(300)
+    // Drupal's CORS adds Origin to every response while it is on; the site's server never sends one.
+    expect(parseCacheLifetime({ 'cache-control': 'max-age=300, public', vary: 'Cookie, Accept-Encoding, Origin' })).toBe(300)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Accept-Language' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Cookie, Accept-Language' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: '*' })).toBe(0)

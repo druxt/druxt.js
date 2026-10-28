@@ -168,8 +168,9 @@ export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) =
  * Follows Cache-Control as a shared cache must: `private`, `no-store` or
  * `no-cache` forbid storing, `s-maxage` wins over `max-age`, time already spent
  * in a cache in front of Drupal (`Age`) is taken off, and no directive means 0.
- * A `Vary` on any request header other than `Cookie` or `Accept-Encoding` also
- * forbids storing, as the cache key holds nothing that could tell variants apart.
+ * A `Vary` on any request header other than `Cookie`, `X-Consumer-ID`,
+ * `Accept-Encoding` or `Origin` also forbids storing, as the cache key holds
+ * nothing that could tell variants apart.
  *
  * @param {object} [headers] - The response headers.
  *
@@ -188,12 +189,14 @@ export const parseCacheLifetime = (headers) => {
   // The cache is keyed by URL alone, so a response that varies by a header the
   // visitor's browser sends, such as Accept-Language, cannot be stored. A header
   // the site's own client sends the same way on every request tells no variants
-  // apart, and Drupal names three of those on every cacheable response: Cookie,
+  // apart, and Drupal names four of those on cacheable responses: Cookie,
   // which its own page cache also ignores without a session; X-Consumer-ID,
-  // which no browser sets and which keys a client's own entries; and
-  // Accept-Encoding, harmless since the decoded document is what is stored.
+  // which no browser sets and which keys a client's own entries;
+  // Accept-Encoding, harmless since the decoded document is what is stored; and
+  // Origin, which Drupal's CORS adds whenever it is on and which the site's
+  // server never sends, so every answer is the one for no origin.
   const vary = header('vary').toLowerCase().split(',').map((v) => v.trim()).filter(Boolean)
-  if (vary.some((v) => !['cookie', 'x-consumer-id', 'accept-encoding'].includes(v))) return 0
+  if (vary.some((v) => !['cookie', 'x-consumer-id', 'accept-encoding', 'origin'].includes(v))) return 0
 
   const seconds = (name) => {
     const directive = directives.find((d) => d.startsWith(`${name}=`))
