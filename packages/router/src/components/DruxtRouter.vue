@@ -280,10 +280,11 @@ export default {
       const scopedSlots = {}
 
       // Provide default error message.
-      if (this.model.error) {
+      const { error } = this.model || {}
+      if (error) {
         scopedSlots.default = () => h('div', [
-          h('h1', [`Error ${this.model.error.statusCode}`]),
-          h('p', [this.model.error.message]),
+          h('h1', [`Error ${error.statusCode}`]),
+          h('p', [error.message]),
         ])
       }
 
