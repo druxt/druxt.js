@@ -191,6 +191,19 @@ describe('DruxtJS Nuxt module', () => {
     })
   })
 
+  test('Proxy - disabled', async () => {
+    // Neither the API nor the files proxy is enabled.
+    for (const proxy of [{ api: false }, { api: false, files: false }]) {
+      mock.addModule.mockClear()
+      delete mock.options.proxy
+      mock.options.druxt = { ...options, proxy }
+      await DruxtNuxtModule.call(mock)
+
+      expect(mock.addModule).not.toHaveBeenCalledWith('@nuxtjs/proxy')
+      expect(mock.options.proxy).toBeUndefined()
+    }
+  })
+
   test('Proxy - merge options', async () => {
     // Enable API Proxy.
     mock.options.druxt = {
