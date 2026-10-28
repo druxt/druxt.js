@@ -248,15 +248,15 @@ describe('DruxtClient content cache', () => {
   })
 
   test('getResource and getCollection read it, and pass a bypass through', async () => {
-    // Without baseUrl in its options the client keeps the index's absolute links.
-    const resource = `${baseUrl}${page}`
+    // The client strips its base URL from the index's links.
+    const resource = page
     await client().getResource('node--page', uuid)
     await client().getResource('node--page', uuid)
     expect(fetches(resource)).toBe(1)
     await client().getResource('node--page', uuid, undefined, undefined, { bypassCache: true })
     expect(fetches(resource)).toBe(2)
 
-    const collection = `${baseUrl}/jsonapi/node/page`
+    const collection = '/jsonapi/node/page'
     await client().getCollection('node--page')
     await client().getCollection('node--page')
     expect(fetches(collection)).toBe(1)

@@ -24,8 +24,8 @@ const mockData = async (request, file) => {
 
   // If the file still isn't present, error.
   if (!fs.existsSync(file)) {
-    console.warn(`Missing mock data: ${file} ${url}`)
-    return { data: { file, url }, status: 404 }
+    console.warn(`Missing mock data: ${file} ${request.url}`)
+    return { data: { file, url: request.url }, status: 404 }
   }
 
   response = response ? response : require(file)
@@ -40,23 +40,31 @@ const mockData = async (request, file) => {
   return response
 }
 
+// Resolves a fixture by URL, falling back to the absolute URL's fixture for a
+// path, as the client strips the base URL from the JSON:API index's links.
+const fixture = (dir, url, name) => {
+  const file = (url) => path.resolve('./test/__fixtures__', dir, ...(name ? [md5(url), name] : [md5(url) + '.json']))
+  const absolute = url.startsWith('/') && file(`https://demo-api.druxtjs.org${url}`)
+  return !fs.existsSync(file(url)) && absolute && fs.existsSync(absolute) ? absolute : file(url)
+}
+
 // Mock 'get' requests.
 mockAxios.get = jest.fn((url, options) => {
-  const file = path.resolve('./test/__fixtures__/get', md5(url) + '.json')
+  const file = fixture('get', url)
   const request = { method: 'get', url, options }
   return mockData(request, file)
 })
 
 // Mock 'patch' requests.
 mockAxios.patch = jest.fn((url, data, options) => {
-  const file = path.resolve('./test/__fixtures__/patch', md5(url), md5(JSON.stringify(data)) + '.json')
+  const file = fixture('patch', url, md5(JSON.stringify(data)) + '.json')
   const request = { data, method: 'patch', options, url }
   return mockData(request, file)
 })
 
 // Mock 'post' requests.
 mockAxios.post = jest.fn((url, data, options) => {
-  const file = path.resolve('./test/__fixtures__/post', md5(url), md5(JSON.stringify(data)) + '.json')
+  const file = fixture('post', url, md5(JSON.stringify(data)) + '.json')
   const request = { data, method: 'post', options, url }
   return mockData(request, file)
 })
