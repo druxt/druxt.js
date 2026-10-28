@@ -169,7 +169,7 @@ class DruxtSchema {
    * @param {string} config.bundle - The Entity bundle.
    * @param {object} [options] - (Optional) Additional Schema generation options, e.g. preloaded JSON:API resource data.
    *
-   * @returns {Schema} The generated Schema.
+   * @returns {Schema|boolean} The generated Schema, or false when the configuration is invalid or has no display.
    *
    * @example @lang js
    * const config = {
@@ -187,7 +187,11 @@ class DruxtSchema {
       return false
     }
 
-    await schema.generate()
+    // No display for the bundle and mode.
+    if (!(await schema.generate())) {
+      return false
+    }
+
     return schema
   }
 }
