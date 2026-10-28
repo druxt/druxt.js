@@ -17,7 +17,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: <%= options.description ? devalue(options.description) : `"Renders the **${options.label}** view."` %> + '\n\n```jsx\n\n<DruxtView view-id="<%= options.viewId %>" />\n```'
+        component: <%= options.description ? devalue(options.description) : JSON.stringify(`Renders the **${options.label}** view.`) %> + '\n\n```jsx\n\n<DruxtView view-id="<%= options.viewId %>" />\n```'
       }
     }
   }
@@ -34,7 +34,7 @@ export const <%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %> = T
   displayId: '<%= display.id %>',
   viewId: '<%= options.viewId %>',
 }
-<%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %>.storyName = '<%= display.display_title %>'
+<%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %>.storyName = <%= JSON.stringify(display.display_title) %>
 <%= display.id.charAt(0).toUpperCase() + display.id.slice(1) %>.parameters = {
   docs: {
     source: {

@@ -14,7 +14,7 @@ export default {
       options: [<%= (options.menus || []).map((menu) => `'${menu.attributes.drupal_internal__id}'`).join(', ') %>],
       control: {
         type: 'select',
-        labels: Object.fromEntries([<%= (options.menus || []).map((o) => `['${o.attributes.drupal_internal__id}', "${o.attributes.label}"]`).join(', ') %>])
+        labels: Object.fromEntries([<%= (options.menus || []).map((o) => `['${o.attributes.drupal_internal__id}', ${JSON.stringify(o.attributes.label)}]`).join(', ') %>])
       }
     },
   }

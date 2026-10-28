@@ -9,6 +9,10 @@ module.exports = {
     'plugin:yml/recommended',
     'prettier'
   ],
+  // Story templates are lodash templates that Nuxt renders into JavaScript, not
+  // JavaScript themselves, so they do not parse until they are rendered.
+  // test/storyTemplates.test.js renders and runs them instead.
+  ignorePatterns: ['packages/*/templates/*.stories.js'],
   plugins: ['jsdoc'],
   rules: {
     'jsdoc/require-returns': 'off',

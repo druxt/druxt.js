@@ -1,7 +1,7 @@
 import DruxtBlockRegion from 'druxt-blocks/dist/components/DruxtBlockRegion.vue'
 
 export default {
-  title: '<%= options.title %>',
+  title: <%= JSON.stringify(options.title) %>,
   component: DruxtBlockRegion,
   argTypes: {
     name: {
