@@ -81,6 +81,11 @@ describe('processCache', () => {
     expect(processCache('index', { axios: axios({ Origin: 'https://example.com' }) })).toBe(null)
     expect(processCache('index', { axios: { defaults: { headers: { get: { origin: 'https://example.com' } } } } })).toBe(null)
     expect(configHasCredentials({ headers: { Origin: 'https://example.com' } })).toBe(true)
+    // Axios takes an array for a header value too.
+    expect(processCache('index', { axios: axios({ Origin: ['https://example.com'] }) })).toBe(null)
+    expect(hasCredentials(axios({ Authorization: ['Bearer token'] }))).toBe(true)
+    expect(hasCredentials(axios({ Cookie: ['_ga=1', 'SESS0123456789abcdef0123456789abcdef=abc'] }))).toBe(true)
+    expect(hasCredentials(axios({ Origin: [] }))).toBe(false)
 
     // One added by an interceptor shows in the config as sent.
     const handlers = []

@@ -81,7 +81,9 @@ const consumerId = (axios) => {
 
 const headersHaveCredentials = (headers, sessionCookie) => {
   const session = new RegExp(`(?:^|;\\s*)(?:${sessionCookie})=`, 'i')
-  return Object.entries(headers || {}).some(([name, value]) => {
+  return Object.entries(headers || {}).some(([name, raw]) => {
+    // Axios takes an array for a value; other objects are the per-method maps.
+    const value = Array.isArray(raw) ? raw.join('; ') : raw
     if (!value || typeof value === 'object') return false
     const header = name.toLowerCase()
     // An Origin counts too: Drupal varies by it, and the cache key holds none.
