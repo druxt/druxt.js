@@ -84,12 +84,14 @@ const headersHaveCredentials = (headers, sessionCookie) => {
   return Object.entries(headers || {}).some(([name, value]) => {
     if (!value || typeof value === 'object') return false
     const header = name.toLowerCase()
-    return header === 'authorization' || (header === 'cookie' && session.test(String(value)))
+    // An Origin counts too: Drupal varies by it, and the cache key holds none.
+    return header === 'authorization' || header === 'origin' || (header === 'cookie' && session.test(String(value)))
   })
 }
 
 /**
- * Whether a request config, as sent, carries credentials.
+ * Whether a request config, as sent, carries credentials, or an Origin the
+ * cache key cannot tell apart.
  *
  * @param {object} config - The Axios request config.
  * @param {string} [sessionCookie] - A pattern for the session cookie name.
@@ -106,7 +108,7 @@ export const configHasCredentials = (config, sessionCookie = DRUPAL_SESSION_COOK
 }
 
 /**
- * Whether an Axios instance sends credentials with its requests.
+ * Whether an Axios instance sends credentials, or an Origin, with its requests.
  *
  * True when its defaults hold credentials, or when a watched request was seen
  * leaving with credentials that an interceptor added.
@@ -194,7 +196,8 @@ export const parseCacheLifetime = (headers) => {
   // which no browser sets and which keys a client's own entries;
   // Accept-Encoding, harmless since the decoded document is what is stored; and
   // Origin, which Drupal's CORS adds whenever it is on and which the site's
-  // server never sends, so every answer is the one for no origin.
+  // server does not send, so every answer is the one for no origin. A client
+  // that does send one doesn't use the cache at all (see hasCredentials).
   const vary = header('vary').toLowerCase().split(',').map((v) => v.trim()).filter(Boolean)
   if (vary.some((v) => !['cookie', 'x-consumer-id', 'accept-encoding', 'origin'].includes(v))) return 0
 

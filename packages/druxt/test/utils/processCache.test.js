@@ -76,6 +76,20 @@ describe('processCache', () => {
     expect(processCache('index', { axios: axios() })).toBe(null)
   })
 
+  test('refused to an instance that sends an Origin', async () => {
+    // Drupal varies by Origin, and the key doesn't hold one, so a client sending one would share the no-origin entries.
+    expect(processCache('index', { axios: axios({ Origin: 'https://example.com' }) })).toBe(null)
+    expect(processCache('index', { axios: { defaults: { headers: { get: { origin: 'https://example.com' } } } } })).toBe(null)
+    expect(configHasCredentials({ headers: { Origin: 'https://example.com' } })).toBe(true)
+
+    // One added by an interceptor shows in the config as sent.
+    const handlers = []
+    const instance = { ...axios(), interceptors: { response: { use: (ok, fail) => handlers.push({ ok, fail }) } } }
+    watchCredentials(instance)
+    handlers[0].ok({ config: { headers: { Origin: 'https://example.com' } } })
+    expect(processCache('index', { axios: instance })).toBe(null)
+  })
+
   test('shares values between handles in the same scope only', () => {
     const one = processCache('index', { axios: axios() })
     const two = processCache('index', { axios: axios() })
