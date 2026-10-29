@@ -87,7 +87,13 @@ describe('DruxtClient', () => {
       .toBe('url?fields%5Bnode--page%5D=title&page[limit]=5')
     expect(druxt.buildQueryUrl('url', { filter: { title: 'A & B' } })).toBe('url?filter[title]=A%20%26%20B')
     expect(druxt.buildQueryUrl('url', { page: {}, include: 'uid' })).toBe('url?include=uid')
-    expect(druxt.buildQueryUrl('url', { filter: { title: null } })).toBe('url?filter[title]=')
+    // A top-level array serializes as before.
+    expect(druxt.buildQueryUrl('url', { include: ['uid', 'field_tags'] })).toBe('url?include=uid&include=field_tags')
+    // A nested null is left out, so an `IS NULL` condition has no value.
+    expect(druxt.buildQueryUrl('url', {
+      filter: { empty: { condition: { path: 'field_tags', operator: 'IS NULL', value: null } } },
+    })).toBe('url?filter[empty][condition][path]=field_tags&filter[empty][condition][operator]=IS%20NULL')
+    expect(druxt.buildQueryUrl('url', { filter: { title: null } })).toBe('url')
 
     expect(druxt.buildQueryUrl('url', {})).toBe('url')
     expect(druxt.buildQueryUrl('url', [])).toBe('url')

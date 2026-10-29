@@ -43,12 +43,14 @@ const isNested = (value) => value !== null && typeof value === 'object'
  */
 const stringifyNested = (value, name) => Object.entries(value)
   .map(([key, item]) => {
-    // A top-level value is serialized as before, nested ones in bracket notation.
-    if (!name && !isNested(item)) return stringify({ [key]: item })
+    // A top-level value or array is serialized as before, nested ones in bracket notation.
+    if (!name && (!isNested(item) || Array.isArray(item))) return stringify({ [key]: item })
+    // A nested null is left out, as an `IS NULL` condition must have no value.
+    if (item === null || typeof item === 'undefined') return ''
     const nested = name ? `${name}[${encodeURIComponent(key)}]` : encodeURIComponent(key)
     return isNested(item)
       ? stringifyNested(item, nested)
-      : `${nested}=${encodeURIComponent(item ?? '')}`
+      : `${nested}=${encodeURIComponent(item)}`
   })
   .filter((part) => part)
   .join('&')
