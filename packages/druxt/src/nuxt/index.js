@@ -60,8 +60,8 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     proxy: { ...options.proxy || {}, api: false },
   })
 
-  // Nuxt proxy integration.
-  if (options.proxy) {
+  // Nuxt proxy integration, when the API or the files proxy is enabled.
+  if ((options.proxy || {}).api || (options.proxy || {}).files) {
     const proxies = {}
 
     // Enable proxying of the API endpoint.
