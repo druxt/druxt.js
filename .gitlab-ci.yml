@@ -791,6 +791,13 @@ perf:audit:
         echo "GITLAB_API_TOKEN is not set, cannot open a merge request"
       elif [ "$moved" != "changed=true" ]; then
         echo "Baseline moved on nothing but run to run noise, nothing to open"
+      # The branch is shared, so only a job on the release line's current tip may write it: a
+      # retry of an older pipeline measures older code and would overwrite a newer refresh.
+      elif ! remote="${CI_SERVER_PROTOCOL}://oauth2:${GITLAB_API_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/${CI_PROJECT_PATH}.git" \
+        || ! tip=$(git ls-remote "$remote" "refs/heads/${CI_COMMIT_BRANCH}" | cut -f1) || [ -z "$tip" ]; then
+        echo "Could not read the ${CI_COMMIT_BRANCH} tip; refresh perf/baseline.gitlab.json by hand from this job's artifact"
+      elif [ "$tip" != "$CI_COMMIT_SHA" ]; then
+        echo "${CI_COMMIT_BRANCH} has moved on to ${tip:0:8} since this pipeline's commit; the pipeline for it refreshes the baseline"
       else
         # One branch and one merge request per release line: each refresh replaces the last.
         branch="chore/perf-audit-baseline/${CI_COMMIT_BRANCH}"
@@ -800,7 +807,7 @@ perf:audit:
         git add perf/baseline.gitlab.json
         git commit -m "chore(perf-audit): refresh the gitlab baseline"
         # Never fails the job; a rejected push or API call just means the refresh has to be done by hand.
-        if git push --force "${CI_SERVER_PROTOCOL}://oauth2:${GITLAB_API_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/${CI_PROJECT_PATH}.git" "$branch"; then
+        if git push --force "$remote" "$branch"; then
           # --fail makes an API error a failed call rather than a body that reads as "none open".
           if ! found=$(curl --fail --silent --show-error --header "PRIVATE-TOKEN: ${GITLAB_API_TOKEN}" \
             "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests?state=opened&source_branch=${branch//\//%2F}&target_branch=${CI_COMMIT_BRANCH}"); then

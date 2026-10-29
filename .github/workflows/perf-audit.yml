@@ -152,6 +152,17 @@ jobs:
           # One branch and one pull request per release line: each refresh replaces the last, so
           # merges that move the numbers in turn never stack up refresh PRs.
           branch="chore/perf-audit-baseline/$GITHUB_REF_NAME"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          # The branch is shared, so only a run of the release line's current tip may write it: a
+          # re-run of an older push measures older code and would overwrite a newer refresh.
+          tip=$(git ls-remote "$remote" "refs/heads/$GITHUB_REF_NAME" | cut -f1) || tip=""
+          if [ -z "$tip" ]; then
+            echo "Could not read the $GITHUB_REF_NAME tip; refresh perf/baseline.github.json by hand from this run's artifact"
+            exit 0
+          elif [ "$tip" != "$GITHUB_SHA" ]; then
+            echo "$GITHUB_REF_NAME has moved on to ${tip:0:8} since this run's commit; the run for it refreshes the baseline"
+            exit 0
+          fi
           body="Automatic refresh after $(git rev-parse --short HEAD) merged to $GITHUB_REF_NAME. Compares the numbers before merging."
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -159,7 +170,7 @@ jobs:
           git add perf/baseline.github.json
           git commit -m "chore(perf-audit): refresh the github baseline"
           # Never fails the job; a rejected push or PR call just means the refresh has to be done by hand.
-          if git push --force "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" "$branch"; then
+          if git push --force "$remote" "$branch"; then
             # `// empty` prints nothing for no match, where `.[0].number` alone prints null.
             replaced=false
             if open=$(gh pr list --base "$GITHUB_REF_NAME" --head "$branch" --state open --json number --jq '.[0].number // empty'); then
@@ -174,7 +185,7 @@ jobs:
             # Refresh PRs from before the fixed branch, one per run, are superseded by this one,
             # but only once it is open, so a failed create never leaves no refresh at all.
             if [ "$replaced" = true ]; then
-              gh pr list --base "$GITHUB_REF_NAME" --state open --json number,headRefName \
+              gh pr list --base "$GITHUB_REF_NAME" --state open --limit 500 --json number,headRefName \
                 --jq '.[] | select(.headRefName | startswith("chore/perf-audit-baseline-")) | .number' |
                 while read -r stale; do
                   gh pr close "$stale" --delete-branch --comment "Superseded by the refresh on \`$branch\`." || true
