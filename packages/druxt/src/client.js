@@ -97,7 +97,7 @@ class DruxtClient {
      */
     this.options = {
       // Without a trailing slash, so it strips cleanly from the index's links.
-      baseUrl: baseUrl.replace(/\/+$/, ''),
+      baseUrl: baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl,
       endpoint: '/jsonapi',
       jsonapiResourceConfig: 'jsonapi_resource_config--jsonapi_resource_config',
 
