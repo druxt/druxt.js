@@ -1,7 +1,7 @@
 import DruxtMenu from 'druxt-menu/dist/components/DruxtMenu.vue'
 
 export default {
-  title: '<%= options.title %>',
+  title: <%= JSON.stringify(options.title) %>,
   component: DruxtMenu,
   argTypes: {
     name: { table: { disable: true } },
@@ -9,7 +9,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: '<%= options.description || " " %>'
+        component: <%= JSON.stringify(options.description || ' ') %>
       }
     }
   }
@@ -21,7 +21,7 @@ export const Default = (args, { argTypes }) => {
     template: '<DruxtMenu v-bind="$props" v-on="$props" />',
   }
 }
-Default.storyName = '<%= options.label %>'
+Default.storyName = <%= JSON.stringify(options.label) %>
 Default.args = {
   name: '<%= options.name %>',
 }

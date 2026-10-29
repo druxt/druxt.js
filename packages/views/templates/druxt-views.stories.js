@@ -14,14 +14,14 @@ export default {
       options: [<%= (Object.values(options.views) || []).map((o) => `'${o.uuid}'`).join(', ') %>],
       control: {
         type: 'select',
-        labels: Object.fromEntries([<%= (Object.values(options.views) || []).map((o) => `['${o.uuid}', "${o.label} (${o.uuid})"]`).join(', ') %>])
+        labels: Object.fromEntries([<%= (Object.values(options.views) || []).map((o) => `['${o.uuid}', ${JSON.stringify(`${o.label} (${o.uuid})`)}]`).join(', ') %>])
       },
     },
     viewId: {
       options: [<%= (Object.keys(options.views) || []).map((s) => `'${s}'`).join(', ') %>],
       control: {
         type: 'select',
-        labels: Object.fromEntries([<%= (Object.values(options.views) || []).map((o) => `['${o.viewId}', "${o.label} (${o.viewId})"]`).join(', ') %>])
+        labels: Object.fromEntries([<%= (Object.values(options.views) || []).map((o) => `['${o.viewId}', ${JSON.stringify(`${o.label} (${o.viewId})`)}]`).join(', ') %>])
       },
     }
   }

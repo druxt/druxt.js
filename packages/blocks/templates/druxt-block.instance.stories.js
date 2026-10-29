@@ -3,7 +3,7 @@ import DruxtBlock from 'druxt-blocks/dist/components/DruxtBlock.vue'
 const code = '<DruxtBlock id="<%= options.block.attributes.drupal_internal__id %>" />'
 
 export default {
-  title: '<%= options.title %>',
+  title: <%= JSON.stringify(options.title) %>,
   component: DruxtBlock,
   argTypes: {
     id: {
@@ -16,7 +16,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Renders the **<%= options.block.attributes.settings.label || options.block.attributes.drupal_internal__id %>** block.\n\n```jsx\n\n' + code + '\n```'
+        component: <%= JSON.stringify(`Renders the **${options.block.attributes.settings.label || options.block.attributes.drupal_internal__id}** block.`) %> + '\n\n```jsx\n\n' + code + '\n```'
       },
     },
   },

@@ -1,7 +1,7 @@
 import DruxtEntity from 'druxt-entity/dist/components/DruxtEntity.vue'
 
 export default {
-  title: '<%= options.title %>',
+  title: <%= JSON.stringify(options.title) %>,
   component: DruxtEntity,
   argTypes: {
     input: {
@@ -32,7 +32,7 @@ export default {
       options: [<%= (options.entities || []).map((o) => `'${o.id}'`).join(', ') %>],
       control: {
         type: 'select',
-        labels: Object.fromEntries([<%= (options.entities || []).map((o) => `['${o.id}', '${o.title.replace(/\'/g, "\\'")} (${o.id})']`).join(', ') %>])
+        labels: Object.fromEntries([<%= (options.entities || []).map((o) => `['${o.id}', ${JSON.stringify(`${o.title} (${o.id})`)}]`).join(', ') %>])
       },
       type: {
         required: true,

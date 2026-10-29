@@ -1,7 +1,7 @@
 import DruxtSite from 'druxt-site/dist/components/DruxtSite.vue'
 
 export default {
-  title: '<%= options.title %>',
+  title: <%= JSON.stringify(options.title) %>,
   component: DruxtSite,
   argTypes: {
     theme: {
