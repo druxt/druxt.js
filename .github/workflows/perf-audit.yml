@@ -160,19 +160,28 @@ jobs:
           git commit -m "chore(perf-audit): refresh the github baseline"
           # Never fails the job; a rejected push or PR call just means the refresh has to be done by hand.
           if git push --force "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" "$branch"; then
-            open=$(gh pr list --base "$GITHUB_REF_NAME" --head "$branch" --state open --json number --jq '.[0].number')
-            if [ -n "$open" ]; then
-              gh pr edit "$open" --body "$body" || true
-            else
-              gh pr create --base "$GITHUB_REF_NAME" --head "$branch" \
-                --title "chore(perf-audit): refresh the github baseline" --body "$body" || true
+            # `// empty` prints nothing for no match, where `.[0].number` alone prints null.
+            replaced=false
+            if open=$(gh pr list --base "$GITHUB_REF_NAME" --head "$branch" --state open --json number --jq '.[0].number // empty'); then
+              if [ -n "$open" ]; then
+                gh pr edit "$open" --body "$body" || true
+                replaced=true
+              elif gh pr create --base "$GITHUB_REF_NAME" --head "$branch" \
+                --title "chore(perf-audit): refresh the github baseline" --body "$body"; then
+                replaced=true
+              fi
             fi
-            # Refresh PRs from before the fixed branch, one per run, are superseded by this one.
-            gh pr list --base "$GITHUB_REF_NAME" --state open --json number,headRefName \
-              --jq '.[] | select(.headRefName | startswith("chore/perf-audit-baseline-")) | .number' |
-              while read -r stale; do
-                gh pr close "$stale" --delete-branch --comment "Superseded by the refresh on \`$branch\`." || true
-              done
+            # Refresh PRs from before the fixed branch, one per run, are superseded by this one,
+            # but only once it is open, so a failed create never leaves no refresh at all.
+            if [ "$replaced" = true ]; then
+              gh pr list --base "$GITHUB_REF_NAME" --state open --json number,headRefName \
+                --jq '.[] | select(.headRefName | startswith("chore/perf-audit-baseline-")) | .number' |
+                while read -r stale; do
+                  gh pr close "$stale" --delete-branch --comment "Superseded by the refresh on \`$branch\`." || true
+                done
+            else
+              echo "Could not open the refresh pull request; refresh perf/baseline.github.json by hand from this run's artifact"
+            fi
           else
             echo "Could not push the refresh; refresh perf/baseline.github.json by hand from this run's artifact"
           fi
