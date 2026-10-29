@@ -188,6 +188,14 @@ describe('DruxtRouterComponent', () => {
     expect(mock.$createElement).toBeCalledWith('p', ['Unable to resolve path /error.'])
   })
 
+  test('Slots - no model', () => {
+    // A router without a route yet returns an empty slots object instead of throwing.
+    const mock = { model: undefined, $createElement: jest.fn() }
+    const slots = DruxtRouterComponent.druxt.slots.call(mock, mock.$createElement)
+
+    expect(slots).toStrictEqual({})
+  })
+
   test('Metatags', () => {
     const mock = {
       route: { canonical: undefined },
