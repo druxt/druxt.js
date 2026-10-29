@@ -4,14 +4,15 @@ import md5 from 'md5'
 import path from 'path'
 import mockAxios from 'jest-mock-axios'
 
+// The backend the fixtures are recorded from.
+const baseURL = 'https://demo-api.druxtjs.org'
+
 const mockData = async (request, file) => {
   let response
 
   // If the file isn't present, try to get it.
   if (!fs.existsSync(file)) {
-    const axiosClient = axios.create({
-      baseURL: 'https://demo-api.druxtjs.org'
-    })
+    const axiosClient = axios.create({ baseURL })
     console.log(`Attempting to create mock: ${file}`)
     try {
       response = await axiosClient(request)
@@ -44,7 +45,7 @@ const mockData = async (request, file) => {
 // path, as the client strips the base URL from the JSON:API index's links.
 const fixture = (dir, url, name) => {
   const file = (url) => path.resolve('./test/__fixtures__', dir, ...(name ? [md5(url), name] : [md5(url) + '.json']))
-  const absolute = url.startsWith('/') && file(`https://demo-api.druxtjs.org${url}`)
+  const absolute = url.startsWith('/') && file(`${baseURL}${url}`)
   return !fs.existsSync(file(url)) && absolute && fs.existsSync(absolute) ? absolute : file(url)
 }
 
