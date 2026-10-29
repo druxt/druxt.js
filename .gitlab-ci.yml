@@ -792,18 +792,29 @@ perf:audit:
       elif [ "$moved" != "changed=true" ]; then
         echo "Baseline moved on nothing but run to run noise, nothing to open"
       else
-        branch="chore/perf-audit-baseline-${CI_PIPELINE_ID}"
+        # One branch and one merge request per release line: each refresh replaces the last.
+        branch="chore/perf-audit-baseline/${CI_COMMIT_BRANCH}"
         git config user.name "gitlab-ci"
         git config user.email "gitlab-ci@${CI_SERVER_HOST}"
         git checkout -b "$branch"
         git add perf/baseline.gitlab.json
         git commit -m "chore(perf-audit): refresh the gitlab baseline"
         # Never fails the job; a rejected push or API call just means the refresh has to be done by hand.
-        git push "${CI_SERVER_PROTOCOL}://oauth2:${GITLAB_API_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/${CI_PROJECT_PATH}.git" "$branch" \
-          && curl --silent --show-error --header "PRIVATE-TOKEN: ${GITLAB_API_TOKEN}" --header "Content-Type: application/json" \
-            --data "{\"source_branch\":\"$branch\",\"target_branch\":\"$CI_COMMIT_BRANCH\",\"title\":\"chore(perf-audit): refresh the gitlab baseline\",\"remove_source_branch\":true}" \
-            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests" \
-          || echo "Could not open the merge request; refresh perf/baseline.gitlab.json by hand from this job's artifact"
+        if git push --force "${CI_SERVER_PROTOCOL}://oauth2:${GITLAB_API_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/${CI_PROJECT_PATH}.git" "$branch"; then
+          open=$(curl --silent --show-error --header "PRIVATE-TOKEN: ${GITLAB_API_TOKEN}" \
+            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests?state=opened&source_branch=${branch//\//%2F}&target_branch=${CI_COMMIT_BRANCH}" \
+            | grep -o '"iid":[0-9]*' | head -1)
+          if [ -n "$open" ]; then
+            echo "Updated the open refresh merge request (${open#\"iid\":})"
+          else
+            curl --silent --show-error --header "PRIVATE-TOKEN: ${GITLAB_API_TOKEN}" --header "Content-Type: application/json" \
+              --data "{\"source_branch\":\"$branch\",\"target_branch\":\"$CI_COMMIT_BRANCH\",\"title\":\"chore(perf-audit): refresh the gitlab baseline\",\"remove_source_branch\":true}" \
+              "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests" \
+              || echo "Could not open the merge request; refresh perf/baseline.gitlab.json by hand from this job's artifact"
+          fi
+        else
+          echo "Could not push the refresh; refresh perf/baseline.gitlab.json by hand from this job's artifact"
+        fi
       fi
     - section_end "refresh"
     - exit "$audit_rc"
