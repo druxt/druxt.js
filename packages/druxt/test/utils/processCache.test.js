@@ -60,6 +60,8 @@ describe('processCache', () => {
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', Vary: 'Cookie, Accept-Encoding' })).toBe(300)
     // A Druxt backend's consumers module varies every response by X-Consumer-ID.
     expect(parseCacheLifetime({ 'cache-control': 'max-age=300, public', vary: 'Cookie, X-Consumer-ID' })).toBe(300)
+    // Drupal's CORS adds Origin to every response while it is on; the site's server never sends one.
+    expect(parseCacheLifetime({ 'cache-control': 'max-age=300, public', vary: 'Cookie, Accept-Encoding, Origin' })).toBe(300)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Accept-Language' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: 'Cookie, Accept-Language' })).toBe(0)
     expect(parseCacheLifetime({ 'cache-control': 'public, max-age=300', vary: '*' })).toBe(0)
@@ -72,6 +74,25 @@ describe('processCache', () => {
     expect(processCache('index', { axios: axios({ Authorization: 'Bearer token' }) })).toBe(null)
     runtime.isServer = () => false
     expect(processCache('index', { axios: axios() })).toBe(null)
+  })
+
+  test('refused to an instance that sends an Origin', async () => {
+    // Drupal varies by Origin, and the key doesn't hold one, so a client sending one would share the no-origin entries.
+    expect(processCache('index', { axios: axios({ Origin: 'https://example.com' }) })).toBe(null)
+    expect(processCache('index', { axios: { defaults: { headers: { get: { origin: 'https://example.com' } } } } })).toBe(null)
+    expect(configHasCredentials({ headers: { Origin: 'https://example.com' } })).toBe(true)
+    // Axios takes an array for a header value too.
+    expect(processCache('index', { axios: axios({ Origin: ['https://example.com'] }) })).toBe(null)
+    expect(hasCredentials(axios({ Authorization: ['Bearer token'] }))).toBe(true)
+    expect(hasCredentials(axios({ Cookie: ['_ga=1', 'SESS0123456789abcdef0123456789abcdef=abc'] }))).toBe(true)
+    expect(hasCredentials(axios({ Origin: [] }))).toBe(false)
+
+    // One added by an interceptor shows in the config as sent.
+    const handlers = []
+    const instance = { ...axios(), interceptors: { response: { use: (ok, fail) => handlers.push({ ok, fail }) } } }
+    watchCredentials(instance)
+    handlers[0].ok({ config: { headers: { Origin: 'https://example.com' } } })
+    expect(processCache('index', { axios: instance })).toBe(null)
   })
 
   test('shares values between handles in the same scope only', () => {
