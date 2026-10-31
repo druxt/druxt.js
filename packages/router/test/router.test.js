@@ -234,18 +234,18 @@ describe('DruxtRouter', () => {
   // @deprecated
   test('getResources', async () => {
     const resources = await router.getResources('node--page')
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page`, undefined)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/page`, undefined)
     expect(resources.length).toBe(1)
 
     await router.getResources('node--page', { 'filter[status]': 1 })
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page?filter%5Bstatus%5D=1`, undefined)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/page?filter%5Bstatus%5D=1`, undefined)
 
     const noResource = await router.getResources()
     expect(noResource).toBe(false)
 
     const query = new DrupalJsonApiParams().addFields('node--recipe', []).addPageLimit(5)
     await router.getResources('node--recipe', query, { all: true })
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`, undefined)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`, undefined)
   })
 
   test('getResourceByRoute', async () => {

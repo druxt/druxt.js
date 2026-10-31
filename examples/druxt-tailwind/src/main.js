@@ -39,18 +39,7 @@ const baseUrl = __BASE_URL__
  * that doesn't route or browse generically doesn't need to wire up the
  * modules that do.
  */
-// `baseUrl` is repeated inside the options object on purpose: DruxtClient's
-// constructor uses the first positional argument to configure axios, but
-// only ever stores `this.options.baseUrl` from the options object itself -
-// never from that positional argument. Without it here, getIndex()'s own
-// `href.replace(this.options.baseUrl, '')` silently no-ops against
-// `undefined`, leaving Drupal's absolute (proxy-internal) URLs untouched
-// for every subsequent request. The Nuxt module works around the same gap
-// the same way (see DruxtNuxtModule's own `new DruxtClient(...)` call) -
-// this app just has to do it by hand since there's no Nuxt module wiring
-// it up automatically. See druxt/workspace#51 for the real fix.
-const druxtOptions = { baseUrl, proxy: { api: true } }
-const druxt = new DruxtClient(baseUrl, druxtOptions)
+const druxt = new DruxtClient(baseUrl, { proxy: { api: true } })
 
 // With `proxy.api`, DruxtClient leaves axios's baseURL undefined and builds
 // langcode-prefixed JSON:API URLs *relative* (`en/jsonapi`), expecting the

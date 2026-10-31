@@ -145,7 +145,7 @@ describe('DruxtClient', () => {
       expect(err.response.data.errors.length).toBe(2)
     }
     expect(mockAxios.post).toHaveBeenCalledWith(
-      `${baseUrl}/en/jsonapi/contact_message/feedback`,
+      `/en/jsonapi/contact_message/feedback`,
       { data },
       { headers }
     )
@@ -158,7 +158,7 @@ describe('DruxtClient', () => {
     }
     response = await druxt.createResource(data)
     expect(mockAxios.post).toHaveBeenCalledWith(
-      `${baseUrl}/en/jsonapi/contact_message/feedback`,
+      `/en/jsonapi/contact_message/feedback`,
       { data },
       { headers }
     )
@@ -173,7 +173,7 @@ describe('DruxtClient', () => {
       await druxt.createResource(response.data.data)
     } catch(err) {
       expect(mockAxios.patch).toHaveBeenCalledWith(
-        `${baseUrl}/en/jsonapi/contact_message/feedback/${response.data.data.id}`,
+        `/en/jsonapi/contact_message/feedback/${response.data.data.id}`,
         { data: response.data.data },
         { headers }
       )
@@ -228,12 +228,12 @@ describe('DruxtClient', () => {
   test('getCollection', async () => {
     // Get a collection of 'node--page' resources.
     const collection = await druxt.getCollection('node--page')
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page`, undefined)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/page`, undefined)
     expect(collection.data.length).toBe(1)
 
     // Get a filtered collection of 'node--page' resources.
     await druxt.getCollection('node--page', { 'filter[status]': 1 })
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/page?filter%5Bstatus%5D=1`, undefined)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/page?filter%5Bstatus%5D=1`, undefined)
 
     // Get a collection with headers set.
     // await druxt.getCollection('node--page', {}, { headers: { 'X-Druxt': true }})
@@ -248,7 +248,7 @@ describe('DruxtClient', () => {
     // Get all of the 'test--all' resources.
     const query = new DrupalJsonApiParams().addFields('node--recipe', []).addPageLimit(5)
     await druxt.getCollectionAll('node--recipe', query)
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`${baseUrl}/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`, undefined)
+    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`, undefined)
   })
 
   test('getIndex', async () => {
@@ -272,6 +272,17 @@ describe('DruxtClient', () => {
     } catch(err) {
       expect(err.response).toMatchSnapshot()
     }
+  })
+
+  test('getIndex - strips the positional base URL', async () => {
+    const client = new DruxtClient(`${baseUrl}/`)
+    expect(client.options.baseUrl).toBe(baseUrl)
+
+    const resourceIndex = await client.getIndex('node--page')
+    expect(resourceIndex.href).toBe('/en/jsonapi/node/page')
+
+    // An explicit `baseUrl` option still wins.
+    expect(new DruxtClient(baseUrl, { baseUrl: 'https://example.com' }).options.baseUrl).toBe('https://example.com')
   })
 
   test('getIndex - resource', async () => {
@@ -340,7 +351,7 @@ describe('DruxtClient', () => {
 
     const { type, id } = mockArticle.data
     const related = await druxt.getRelated(type, id, 'field_media_image')
-    expect(mockAxios.get).toHaveBeenCalledWith(`${baseUrl}/en/jsonapi/node/article/${id}/field_media_image`, undefined)
+    expect(mockAxios.get).toHaveBeenCalledWith(`/en/jsonapi/node/article/${id}/field_media_image`, undefined)
     expect(related.data).toHaveProperty('type')
 
     try {
@@ -389,7 +400,7 @@ describe('DruxtClient', () => {
     } catch(err) {
       expect(err.response.data.errors[0]).toMatchSnapshot()
     }
-    expect(mockAxios.get).toHaveBeenCalledWith(`${baseUrl}/en/jsonapi/node/article/missing`, undefined)
+    expect(mockAxios.get).toHaveBeenCalledWith(`/en/jsonapi/node/article/missing`, undefined)
 
     const empty = await druxt.getResource()
     expect(empty).toBe(false)

@@ -132,12 +132,14 @@ describe('DruxtClient process cache', () => {
 
   test('the merged index lives no longer than the resource config response allows', async () => {
     // The index says 300 seconds, the resource config it is decorated with says no-store.
-    const configHref = `${baseUrl}/jsonapi/jsonapi_resource_config/jsonapi_resource_config`
+    // The client strips its base URL from the link before it fetches it.
+    const configPath = '/jsonapi/jsonapi_resource_config/jsonapi_resource_config'
+    const configHref = `${baseUrl}${configPath}`
     const configured = () => {
       const instance = requestAxios()
       const get = instance.get
       instance.get = jest.fn(async (url, options) => {
-        if (url === configHref) {
+        if (url === configPath) {
           calls += 1
           return { config: { headers: {} }, headers: { 'cache-control': 'no-store' }, data: { data: [{ attributes: { drupal_internal__id: 'node--page', resourceType: 'node--page', resourceFields: {} } }] } }
         }

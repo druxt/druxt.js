@@ -129,6 +129,8 @@ class DruxtClient {
      * @private
      */
     this.options = {
+      // Without a trailing slash, so it strips cleanly from the index's links.
+      baseUrl: baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl,
       endpoint: '/jsonapi',
       jsonapiResourceConfig: 'jsonapi_resource_config--jsonapi_resource_config',
 
@@ -387,7 +389,8 @@ class DruxtClient {
       (err.response || {}).status,
       (err.response || {}).statusText || err.message
     ].filter((s) => s).join(': ')
-    const meta = { url: url && [this.options.baseUrl, url].join('') }
+    // A path is shown with the base URL, an absolute URL as it is.
+    const meta = { url: url && (/^https?:\/\//.test(url) ? url : [this.options.baseUrl, url].join('')) }
 
     // Build message.
     let message = [title]
