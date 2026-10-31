@@ -243,6 +243,21 @@ jobs:
           title: 'chore(release): version packages'
           commit: 'chore(release): version packages'
 
+      # The action writes a body that names each release, but it finds a
+      # release's changelog section by a heading reading exactly the version,
+      # and scripts/changelog-dates.mjs dates every heading. It found none and
+      # left every changelog out. The working tree is the version commit here,
+      # so the body is rebuilt from its changelogs.
+      - name: Put each release's changelog in the version pull request
+        if: steps.changesets.outputs.pullRequestNumber != ''
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ steps.changesets.outputs.pullRequestNumber }}
+        run: |
+          node scripts/release/pr-body.mjs "$GITHUB_SHA" > "$RUNNER_TEMP/version-pr.md"
+          gh pr edit "$PR" --body-file "$RUNNER_TEMP/version-pr.md"
+
       # The publish path below runs only once no changesets are pending. That is
       # correct rather than a limitation: a changeset still pending means its
       # work is in the current milestone and the milestone is not finished, so
