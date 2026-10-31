@@ -2,6 +2,6 @@
 'druxt': patch
 ---
 
-Fix a `DruxtClient` created with only its base URL argument, which kept the backend host in every resource URL from the JSON:API index.
+fix(#966): a `DruxtClient` created with only its base URL argument strips the backend host from the JSON:API index's links, as passing `baseUrl` in the options did. Requests follow the Axios `baseURL` or the proxy, where they went straight to the backend.
 
-`new DruxtClient(baseUrl)` now uses the base URL for the index links, as passing `baseUrl` in the options did, so requests follow the Axios `baseURL` or the proxy. Sites that passed `baseUrl` in both places can drop the option.
+Sites that passed `baseUrl` in both places can drop the option.
