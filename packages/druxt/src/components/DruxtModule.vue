@@ -11,6 +11,10 @@ import DruxtWrapper from './DruxtWrapper.vue'
  * NaN as `null`, so two different values can write the same text. Anything
  * JSON does not hold exactly is compared by identity instead.
  *
+ * `undefined` is comparable. JSON leaves out an undefined property, as a prop
+ * does, which makes `{ included: undefined }` the same propsData as `{}`. In
+ * an array it writes as `null`, so there it is not.
+ *
  * @private
  *
  * @param {*} value - The value to check.
@@ -19,7 +23,7 @@ import DruxtWrapper from './DruxtWrapper.vue'
  * @returns {boolean} Whether JSON.stringify represents the value exactly.
  */
 const isComparable = (value, seen = new WeakSet()) => {
-  if (value === null) return true
+  if (value === null || value === undefined) return true
 
   const type = typeof value
   if (type === 'string' || type === 'boolean') return true
@@ -29,7 +33,7 @@ const isComparable = (value, seen = new WeakSet()) => {
   if (seen.has(value)) return false
   seen.add(value)
 
-  if (Array.isArray(value)) return value.every((item) => isComparable(item, seen))
+  if (Array.isArray(value)) return value.every((item) => item !== undefined && isComparable(item, seen))
 
   // A Map, a Set, a Date or any class instance writes as something other than itself.
   const prototype = Object.getPrototypeOf(value)
