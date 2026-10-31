@@ -487,6 +487,49 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.component.propsData).toBe(first)
   })
 
+  test('an undefined property compares, so an echoed value does not rebuild', async () => {
+    // DruxtEntity's propsData carries `included: undefined` for a resource
+    // fetched without includes. When undefined counted as "cannot compare",
+    // every echo of a wrapper's own input rebuilt it, and a wrapper that emits
+    // from an entity watcher looped until the tab crashed.
+    const EntityModule = {
+      name: 'EntityModule',
+      extends: DruxtModule,
+      props: { step: { type: Number, default: 1 } },
+      druxt: {
+        componentOptions: () => {},
+        propsData: ({ step }) => ({ entity: { title: 'same', included: undefined, step: step > 0 } }),
+      },
+    }
+
+    const wrapper = mount(EntityModule, { localVue, mocks, stubs: ['DruxtWrapper'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    const first = wrapper.vm.component.propsData
+
+    await wrapper.setProps({ step: 2 })
+    expect(wrapper.vm.component.propsData).toBe(first)
+  })
+
+  test('an undefined array item still rebuilds, because JSON writes it as null', async () => {
+    const ListModule = {
+      name: 'ListModule',
+      extends: DruxtModule,
+      props: { step: { type: Number, default: 1 } },
+      druxt: {
+        componentOptions: () => {},
+        propsData: ({ step }) => ({ items: [step === 1 ? null : undefined] }),
+      },
+    }
+
+    const wrapper = mount(ListModule, { localVue, mocks, stubs: ['DruxtWrapper'] })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    const first = wrapper.vm.component.propsData
+
+    await wrapper.setProps({ step: 2 })
+    expect(wrapper.vm.component.propsData).not.toBe(first)
+    expect(wrapper.vm.component.propsData.items).toStrictEqual([undefined])
+  })
+
   test('a rebuild splits new propsData across the wrapper props and attributes', async () => {
     localVue.component('SchemaModuleWrapper', {
       druxt: {},
