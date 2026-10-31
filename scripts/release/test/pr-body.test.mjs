@@ -20,3 +20,7 @@ test('a body too long for GitHub keeps every release and links the rest', () => 
   assert.match(body, /\[The whole 0\.25\.1 section\]\(https:\/\/example\.com\/druxt\/CHANGELOG\.md\) is too long/)
   assert.match(body, /## druxt-menu@0\.25\.1\n\n### Patch Changes\n\n- Short\./)
 })
+
+test('says that merging publishes only while publishing is on', () => {
+  assert.match(buildBody([release('druxt', '- A.')]), /while the repository variable `NPM_PUBLISH` is `true`/)
+})

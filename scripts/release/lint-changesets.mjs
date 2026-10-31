@@ -48,22 +48,52 @@ const OWNERS = [
  * Splits a changeset into its releases and its summary.
  *
  * @param {string} source - The changeset file.
- * @returns {{ releases: object, summary: string }|null} `null` when it has no frontmatter.
+ * @returns {{ releases: object, duplicates: string[], summary: string }|null} `null` when it has no frontmatter.
  */
 export function parseChangeset(source) {
   const match = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(source.replace(/\r\n/g, '\n'))
   if (!match) return null
   const releases = {}
+  // Changesets refuses a file that names a package twice, at `changeset version`.
+  const duplicates = []
   for (const line of match[1].split('\n').filter((l) => l.trim())) {
     const entry = /^\s*['"]?([^'":]+)['"]?\s*:\s*['"]?(\w+)['"]?\s*$/.exec(line)
-    releases[entry ? entry[1] : line.trim()] = entry ? entry[2] : null
+    const name = entry ? entry[1] : line.trim()
+    if (name in releases) duplicates.push(name)
+    releases[name] = entry ? entry[2] : null
   }
-  return { releases, summary: match[2].trim() }
+  return { releases, duplicates, summary: match[2].trim() }
+}
+
+/**
+ * Splits a summary into the lines outside its code blocks and the info
+ * strings of the blocks, as CommonMark reads fences: three or more backticks
+ * or tildes, closed only by the same character at least as long.
+ *
+ * @param {string} text - The summary.
+ * @returns {{ outside: string[], infos: string[] }} The lines outside code, and each block's info string.
+ */
+export function scanFences(text) {
+  const outside = []
+  const infos = []
+  let open = null
+  for (const line of text.split('\n')) {
+    const fence = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line)
+    if (open) {
+      if (fence && fence[1][0] === open[0] && fence[1].length >= open.length && !fence[2].trim()) open = null
+    } else if (fence && !(fence[1][0] === '`' && fence[2].includes('`'))) {
+      open = fence[1]
+      infos.push(fence[2].trim())
+    } else {
+      outside.push(line)
+    }
+  }
+  return { outside, infos }
 }
 
 // The prose of a summary with its code removed, so a rule about wording
 // never fires on an identifier or a code sample.
-const prose = (text) => text.replace(/```[\s\S]*?```/g, '').replace(/`[^`]*`/g, '`code`')
+const prose = (text) => scanFences(text).outside.join('\n').replace(/`[^`]*`/g, '`code`')
 
 /**
  * Checks one changeset.
@@ -75,9 +105,11 @@ const prose = (text) => text.replace(/```[\s\S]*?```/g, '').replace(/`[^`]*`/g, 
 export function lintChangeset(source, packages) {
   const parsed = parseChangeset(source)
   if (!parsed) return ['has no frontmatter naming the packages it releases.']
-  const { releases, summary } = parsed
+  const { releases, duplicates, summary } = parsed
   const problems = []
   const names = Object.keys(releases)
+
+  for (const name of new Set(duplicates)) problems.push(`names "${name}" more than once, which changesets refuses.`)
 
   if (!names.length) problems.push('releases no package. Remove it, or name the packages it changes.')
   for (const name of names) {
@@ -111,14 +143,13 @@ export function lintChangeset(source, packages) {
     }
   }
 
-  // Headings would end the release's section in the changelog.
-  const outsideCode = summary.replace(/```[\s\S]*?```/g, '')
-  if (/^#{1,6} /m.test(outsideCode)) problems.push('has a Markdown heading, which would cut the changelog section short. Use a paragraph or a list.')
-  // Opening fences alternate with closing ones, and only an opening one names a language.
-  const openings = (summary.match(/^\s*```.*$/gm) || []).filter((fence, index) => index % 2 === 0)
-  if (openings.some((fence) => fence.trim() === '```')) {
-    problems.push('has a code block without a language, such as ```js.')
+  // Headings would end the release's section in the changelog. A tab, or
+  // nothing at all, after the hashes makes a heading as a space does.
+  const { outside, infos } = scanFences(summary)
+  if (outside.some((line) => /^ {0,3}#{1,6}(?:[ \t]|$)/.test(line))) {
+    problems.push('has a Markdown heading, which would cut the changelog section short. Use a paragraph or a list.')
   }
+  if (infos.some((info) => !info)) problems.push('has a code block without a language, such as ```js.')
   if (META.test(prose(summary))) {
     problems.push('talks about the change itself ("this PR", "we"). Write for someone upgrading: what changed for their site.')
   }

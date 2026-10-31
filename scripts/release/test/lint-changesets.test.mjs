@@ -77,3 +77,24 @@ test('a changeset for several packages reads correctly in each changelog', () =>
   assert.deepEqual(lint('fix(#1): `DruxtClient` sends a quoted label.', both), [])
   assert.deepEqual(lint('fix(#1): `DruxtMenu` renders a quoted label.', "'druxt-menu': patch"), [])
 })
+
+test('a package named twice is refused, as changesets refuses it', () => {
+  assert.match(lint('fix(#1): a.', "'druxt': patch\n'druxt': minor").join('\n'), /names "druxt" more than once/)
+})
+
+test('reads fences as Markdown does: tildes, and a closing fence at least as long', () => {
+  // A heading-like line inside a tilde block is code.
+  assert.deepEqual(lint('fix(#1): a.\n\n~~~js\n# not a heading\n~~~'), [])
+  assert.match(lint('fix(#1): a.\n\n~~~\nconst a = 1\n~~~').join('\n'), /without a language/)
+  // A shorter fence inside a longer one does not close it.
+  assert.deepEqual(lint('fix(#1): a.\n\n````md\n```\n# still code\n```\n````'), [])
+  // Once the block closes, a heading after it counts.
+  assert.match(lint('fix(#1): a.\n\n```js\na()\n```\n\n# After').join('\n'), /Markdown heading/)
+})
+
+test('a heading after a tab, or with no text, is still a heading', () => {
+  assert.match(lint('fix(#1): a.\n\n##\tUpgrading').join('\n'), /Markdown heading/)
+  assert.match(lint('fix(#1): a.\n\n###').join('\n'), /Markdown heading/)
+  // A hash with no space is a tag, not a heading.
+  assert.deepEqual(lint('fix(#1): a.\n\n#hashtag in a sentence.'), [])
+})

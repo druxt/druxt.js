@@ -20,7 +20,7 @@ import { extractNotes } from './notes.mjs'
 const LIMIT = 60000
 
 const INTRO = [
-  'This pull request versions the packages with pending changesets. Merging it releases them: the release job publishes each version below to npm and creates its GitHub Release from the same notes.',
+  'This pull request versions the packages with pending changesets. Merging it releases them: while the repository variable `NPM_PUBLISH` is `true`, the release job publishes each version below to npm and creates its GitHub Release from the same notes. Otherwise the run packs them as a dry run and publishes nothing.',
   '',
   'It is kept up to date while changesets are pending, so merge it last.',
 ].join('\n')
