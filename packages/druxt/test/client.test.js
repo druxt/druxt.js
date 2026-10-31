@@ -70,6 +70,31 @@ describe('DruxtClient', () => {
     expect(druxt.buildQueryUrl('url', { getQueryString: () => 'query' })).toBe('url?query')
     expect(druxt.buildQueryUrl('url', { query: 'string' })).toBe('url?query=string')
 
+    // A nested object uses bracket notation, as Drupal's JSON:API expects.
+    expect(druxt.buildQueryUrl('url', { filter: { drupal_internal__format: 'basic_html' } }))
+      .toBe('url?filter[drupal_internal__format]=basic_html')
+    expect(druxt.buildQueryUrl('url', {
+      filter: { status: { condition: { path: 'nid', operator: 'IN', value: [1, 2] } } },
+      include: 'uid,field_tags',
+    })).toBe([
+      'url?filter[status][condition][path]=nid',
+      'filter[status][condition][operator]=IN',
+      'filter[status][condition][value][0]=1',
+      'filter[status][condition][value][1]=2',
+      'include=uid%2Cfield_tags',
+    ].join('&'))
+    expect(druxt.buildQueryUrl('url', { 'fields[node--page]': 'title', page: { limit: 5 } }))
+      .toBe('url?fields%5Bnode--page%5D=title&page[limit]=5')
+    expect(druxt.buildQueryUrl('url', { filter: { title: 'A & B' } })).toBe('url?filter[title]=A%20%26%20B')
+    expect(druxt.buildQueryUrl('url', { page: {}, include: 'uid' })).toBe('url?include=uid')
+    // A top-level array serializes as before.
+    expect(druxt.buildQueryUrl('url', { include: ['uid', 'field_tags'] })).toBe('url?include=uid&include=field_tags')
+    // A nested null is left out, so an `IS NULL` condition has no value.
+    expect(druxt.buildQueryUrl('url', {
+      filter: { empty: { condition: { path: 'field_tags', operator: 'IS NULL', value: null } } },
+    })).toBe('url?filter[empty][condition][path]=field_tags&filter[empty][condition][operator]=IS%20NULL')
+    expect(druxt.buildQueryUrl('url', { filter: { title: null } })).toBe('url')
+
     expect(druxt.buildQueryUrl('url', {})).toBe('url')
     expect(druxt.buildQueryUrl('url', [])).toBe('url')
     expect(druxt.buildQueryUrl('url', Boolean)).toBe('url')

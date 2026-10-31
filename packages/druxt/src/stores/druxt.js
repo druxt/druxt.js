@@ -617,5 +617,8 @@ export { DruxtStore }
  * @example @lang js
  * new DrupalJsonApiParams().addPageLimit(5)
  *
+ * @example @lang js
+ * { filter: { status: 1 }, page: { limit: 5 } }
+ *
  * @see {@link https://www.npmjs.com/package/drupal-jsonapi-params}
  */

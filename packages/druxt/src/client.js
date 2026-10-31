@@ -23,6 +23,39 @@ const CACHE_SAFE_OPTIONS = ['validateStatus', 'timeout']
 const requestOptions = ({ bypassCache } = {}) => (bypassCache ? [{ bypassCache: true }] : [])
 
 /**
+ * Whether a query value is an object or array to serialize in bracket notation.
+ *
+ * @param {*} value - The query value.
+ *
+ * @returns {boolean} True for an object or array.
+ * @private
+ */
+const isNested = (value) => value !== null && typeof value === 'object'
+
+/**
+ * Serializes a query object, with nested values in bracket notation, such as `filter[status]=1`.
+ *
+ * @param {object|Array} value - The query object, or a nested value.
+ * @param {string} [name] - The encoded parameter name a nested value belongs to.
+ *
+ * @returns {string} The query string, or an empty string when the object holds nothing.
+ * @private
+ */
+const stringifyNested = (value, name) => Object.entries(value)
+  .map(([key, item]) => {
+    // A top-level value or array is serialized as before, nested ones in bracket notation.
+    if (!name && (!isNested(item) || Array.isArray(item))) return stringify({ [key]: item })
+    // A nested null is left out, as an `IS NULL` condition must have no value.
+    if (item === null || typeof item === 'undefined') return ''
+    const nested = name ? `${name}[${encodeURIComponent(key)}]` : encodeURIComponent(key)
+    return isNested(item)
+      ? stringifyNested(item, nested)
+      : `${nested}=${encodeURIComponent(item)}`
+  })
+  .filter((part) => part)
+  .join('&')
+
+/**
  * The Druxt JSON:API client.
  *
  * Communicates with the Drupal JSON:API to fetch, create and update resources.
@@ -237,9 +270,9 @@ class DruxtClient {
       return [url, query].join('?')
     }
 
-    // If query is object...
-    if (typeof query === 'object' && Object.keys(query).length) {
-      return [url, stringify(query)].join('?')
+    // If query is object, nested values in bracket notation...
+    if (typeof query === 'object' && (query = stringifyNested(query))) {
+      return [url, query].join('?')
     }
 
     // Else...
@@ -790,6 +823,9 @@ export { DruxtClient }
  *
  * @example @lang js
  * new DrupalJsonApiParams().addPageLimit(5)
+ *
+ * @example @lang js
+ * { filter: { status: 1 }, page: { limit: 5 } }
  *
  * @see {@link https://www.npmjs.com/package/drupal-jsonapi-params}
  */
