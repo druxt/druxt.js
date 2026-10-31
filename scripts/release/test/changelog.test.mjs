@@ -22,3 +22,11 @@ test('the rest of the body stays when a Commit line is removed', async () => {
   const line = await getReleaseLine({ summary: `Routes are kept.\n\nThe store too.\nCommit: ${SHA}`, commit: LATER })
   assert.match(line, /\n {2}The store too\.$/)
 })
+
+test('the body is a paragraph of its own, so the links close the first one', async () => {
+  const line = await getReleaseLine({ summary: 'fix(#962): a query reaches Drupal.\n\nIt was sent empty.\n\n```js\nget()\n```', commit: LATER })
+  // Joined straight under the bullet, the body ran into the first paragraph
+  // and left the links in the middle of it.
+  assert.match(line, /\/commit\/773a7b76[^)]*\)\)\n\n {2}It was sent empty\.\n\n {2}```js\n {2}get\(\)\n {2}```$/)
+  assert.doesNotMatch(line, /^ +$/m)
+})

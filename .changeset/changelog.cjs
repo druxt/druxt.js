@@ -124,8 +124,10 @@ const getReleaseLine = async (changeset) => {
   }
 
   let line = `- ${breaking ? '**Breaking:** ' : ''}${text}${refs.length ? ` (${refs.join(', ')})` : ''}`
+  // A paragraph of its own under the bullet. Joined straight beneath it, the
+  // body ran into the first paragraph and left the links in its middle.
   const body = rest.join('\n').trim()
-  if (body) line += '\n' + body.replace(/^/gm, '  ')
+  if (body) line += '\n\n' + body.replace(/^(?=.)/gm, '  ')
   return line
 }
 
