@@ -179,6 +179,11 @@ jobs:
       - name: Vale (AI-tell prose lint)
         run: yarn lint:prose
 
+      # The shape and the wording rules of .changeset/*.md, so the version
+      # pull request needs no clean-up pass before a release.
+      - name: Changesets
+        run: yarn lint:changesets --preview
+
       - name: Em-dash check (hand-authored prose)
         run: |
           ! grep -rn "\xe2\x80\x94" packages/druxt/README.md packages/docgen/README.md packages/test-utils/README.md CONTRIBUTING.md --include='*.md' --include='*.vue' --include='*.js' --include='*.mjs' --include='*.css'

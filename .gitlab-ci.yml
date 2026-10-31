@@ -297,6 +297,19 @@ lint:knip:
     - yarn lint:knip
     - section_end "knip"
 
+# Mirrors the GitHub lint job's changesets step: the shape and the wording
+# rules of .changeset/*.md, with a preview of each package's changelog.
+lint:changesets:
+  extends: .node
+  stage: lint
+  interruptible: true
+  script:
+    - section_start "changesets" "Checking the pending changesets"
+    - corepack enable
+    - yarn install --immutable
+    - yarn lint:changesets --preview
+    - section_end "changesets"
+
 # Mirrors the GitHub lint job's skills step: agnix over the contributor
 # skills, AGENTS.md and agent config. No build, credentials or model tokens.
 lint:skills:

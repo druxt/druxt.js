@@ -138,7 +138,7 @@ If your changes are substantial, it is recommended to include a changeset. To do
 yarn changeset
 ```
 
-Be sure to commit your changeset file alongside your changes.
+Be sure to commit your changeset file alongside your changes. `yarn lint:changesets` checks it against the project style, which the [add-changeset skill](.agents/skills/add-changeset/SKILL.md) describes, and `yarn lint:changesets --preview` prints the changelog it will produce.
 
 A merged changeset publishes a development release once it reaches a release line such as `0.x`, and a stable release once the pull request that versions the packages is merged. See [Releasing](RELEASING.md).
 
