@@ -101,4 +101,8 @@ describe('DruxtSchema', () => {
     config.filter = ['node--article--default--view']
     expect(await schema.getSchema(config)).toBe(false)
   })
+
+  test('getSchema - a bundle with no display', async () => {
+    expect(await schema.getSchema({ entityType: 'node', bundle: 'page', mode: 'missing' })).toBe(false)
+  })
 })
