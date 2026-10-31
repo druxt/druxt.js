@@ -1,5 +1,13 @@
 # druxt-schema
 
+## 0.12.1 - 2026-10-31
+
+### Patch Changes
+
+- `getSchema()` resolves `false` when the bundle has no display for the requested mode, as it does for an invalid configuration, instead of a schema with no `schema` data. ([#836](https://github.com/druxt/druxt.js/issues/836), [`c924e65`](https://github.com/druxt/druxt.js/commit/c924e65aed54e69e58bfc58548128e99e8ca85a3))
+  Code that checks the result of `getSchema()` no longer needs to test `.schema` as well.
+- Updated dependencies: druxt@0.25.1.
+
 ## 0.12.0 - 2026-10-23
 
 ### Minor Changes

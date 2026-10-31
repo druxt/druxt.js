@@ -1,5 +1,32 @@
 # druxt
 
+## 0.25.1 - 2026-10-31
+
+### Patch Changes
+
+- Fixed a query object with nested values, such as a `filter`, which reached Drupal empty. ([`5f69058`](https://github.com/druxt/druxt.js/commit/5f6905886b7de19e2504fe1ff42b1f437a1b2950))
+  `getCollection()`, `getResource()` and `getRelated()` given a plain object now send nested values in bracket notation, as Drupal's JSON:API expects, where Drupal answered 400 before.
+
+  ```js
+  await this.$druxt.getCollection('node--page', {
+    filter: { status: 1 },
+    page: { limit: 5 },
+  });
+  // /jsonapi/node/page?filter[status]=1&page[limit]=5
+  ```
+
+- Fixed a `DruxtClient` created with only its base URL argument, which kept the backend host in every resource URL from the JSON:API index. ([`3fb3b0d`](https://github.com/druxt/druxt.js/commit/3fb3b0d2fa12aeca41e341cf2cfacd3ceb43d28f))
+  `new DruxtClient(baseUrl)` now uses the base URL for the index links, as passing `baseUrl` in the options did, so requests follow the Axios `baseURL` or the proxy. Sites that passed `baseUrl` in both places can drop the option.
+- Fixed the Nuxt module adding `@nuxtjs/proxy` when `proxy` is set with neither `api` nor `files` enabled, such as `proxy: { api: false }`. ([`80f633e`](https://github.com/druxt/druxt.js/commit/80f633e2f160122fa04fa7c1e87b447fc1ccbff3))
+  The proxy module, and its proxy table, are now added only when one of them is on.
+- Fixed a browser tab locking up when a wrapper emits `input` from a watcher on its `entity` prop, a pattern that worked on 0.24. ([`6976985`](https://github.com/druxt/druxt.js/commit/69769857c450c989404aeec15ff6818430975be7))
+  Since 0.25.0 a module rebuilds its wrapper's props when they change, and a value the wrapper emits comes back to it as `entity`. For a resource fetched without `include`, every one of those echoes counted as a change, so the wrapper and the module fed each other until the tab ran out of memory. An echo that matches what the wrapper already has now leaves it alone.
+
+  A wrapper that kept its own copy of `entity` to work around this can drop it.
+
+- The process cache keeps a response Drupal varies by `Origin`. Drupal's CORS adds `Vary: Origin` to every response while it is on, which decoupled sites have, so the cache kept nothing on them, the JSON:API index included. The site's server never sends an `Origin` header, so every answer it gets is the one for no origin, and `Origin` tells no variants apart, as `Cookie` does not. ([`d3d0458`](https://github.com/druxt/druxt.js/commit/d3d0458aeb2e7e67e7b01f6cb3ccb1388088a144))
+  The process cache isn't used for a client that sends its own `Origin` header, such as one set with `addHeaders()`. That matches how it treats a client sending credentials.
+
 ## 0.25.0 - 2026-10-23
 
 ### Minor Changes

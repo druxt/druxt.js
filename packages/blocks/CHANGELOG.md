@@ -1,5 +1,13 @@
 # druxt-blocks
 
+## 0.18.1 - 2026-10-31
+
+### Patch Changes
+
+- Generated Storybook stories load when a Drupal label, title or description holds a quote. ([#905](https://github.com/druxt/druxt.js/issues/905), [`2c3ccf0`](https://github.com/druxt/druxt.js/commit/2c3ccf01bd31df7b01a678c884f75e3fd161ae06))
+  A menu, view, block or entity name such as "The documentation's sections" stopped Storybook from compiling its story. Sites that reworded the text in Drupal to avoid the error can change it back.
+- Updated dependencies: druxt@0.25.1.
+
 ## 0.18.0 - 2026-10-23
 
 ### Minor Changes
