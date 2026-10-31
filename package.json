@@ -35,6 +35,7 @@
     "lint:audit": "yarn npm audit --recursive --environment production --severity high",
     "lint:audit:full": "yarn npm audit --recursive",
     "lint:commit": "commitlint",
+    "lint:changesets": "node scripts/release/lint-changesets.mjs",
     "lint:cspell": "cspell lint --no-progress --no-must-find-files --gitignore --dot \"**/*.{js,vue,json,md,yml,yaml}\" \"scripts/**/*.{mjs,sh}\"",
     "lint:examples": "node scripts/check-examples.js",
     "lint:format": "prettier --check \"**/*.{js,vue,json,md,yml,yaml}\"",
