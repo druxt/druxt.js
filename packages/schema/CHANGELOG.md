@@ -1,5 +1,15 @@
 # druxt-schema
 
+## 0.12.1 - 2026-11-01
+
+### Patch Changes
+
+- `this.$druxtSchema.getSchema()` resolves `false` when the bundle has no view or form display for the requested mode, as it does for an invalid configuration. ([#836](https://github.com/druxt/druxt.js/issues/836), [`c924e65`](https://github.com/druxt/druxt.js/commit/c924e65aed54e69e58bfc58548128e99e8ca85a3))
+
+  It resolved a schema object whose `schema` property was `undefined`. Check the result for `false` before reading from it. The `druxtSchema/get` store action, and the mixin's `getSchema()` that maps to it, are unchanged.
+
+- Updated dependencies: druxt@0.25.1.
+
 ## 0.12.0 - 2026-10-23
 
 ### Minor Changes

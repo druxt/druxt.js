@@ -1,5 +1,15 @@
 # druxt-menu
 
+## 0.22.1 - 2026-11-01
+
+### Patch Changes
+
+- Generated Storybook stories compile when a Drupal label, title or description contains a quote mark or a backslash. ([#905](https://github.com/druxt/druxt.js/issues/905), [`2c3ccf0`](https://github.com/druxt/druxt.js/commit/2c3ccf01bd31df7b01a678c884f75e3fd161ae06))
+
+  Text such as "The documentation's sections" stopped Storybook compiling the story. Text reworded in Drupal to avoid the error can be changed back.
+
+- Updated dependencies: druxt@0.25.1, druxt-blocks@0.18.1.
+
 ## 0.22.0 - 2026-10-23
 
 ### Minor Changes
