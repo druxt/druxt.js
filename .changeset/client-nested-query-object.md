@@ -2,9 +2,9 @@
 'druxt': patch
 ---
 
-fix(#962): a query object with nested values, such as a `filter`, reaches Drupal in bracket notation. It was sent empty, and Drupal answered 400.
+fix(#962): a query object with nested values, such as a `filter`, reaches Drupal as `filter[status]=1`. It was sent as `filter=`, and Drupal answered 400.
 
-`getCollection()`, `getResource()` and `getRelated()` take a plain object with nested values, as Drupal's JSON:API expects.
+`getCollection()`, `getCollectionAll()`, `getResource()` and `getRelated()` all send it this way. A nested `null` or `undefined` value is left out, and top-level values are sent as before.
 
 ```js
 await this.$druxt.getCollection('node--page', {
