@@ -1,5 +1,15 @@
 # druxt-router
 
+## 0.32.1 - 2026-11-01
+
+### Patch Changes
+
+- `DruxtRouter` no longer throws `Cannot read properties of undefined (reading 'error')` when it renders before its route arrives. ([#963](https://github.com/druxt/druxt.js/issues/963), [`3835edb`](https://github.com/druxt/druxt.js/commit/3835edbd89488ba46772b6f6952f3ee7e34ae0d3))
+
+  Until the route arrives, it renders without the default error slot.
+
+- Updated dependencies: druxt@0.25.1.
+
 ## 0.32.0 - 2026-10-23
 
 ### Minor Changes

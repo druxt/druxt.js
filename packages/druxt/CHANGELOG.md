@@ -1,5 +1,37 @@
 # druxt
 
+## 0.25.1 - 2026-11-01
+
+### Patch Changes
+
+- A query object with nested values, such as a `filter`, reaches Drupal as `filter[status]=1`. It was sent as `filter=`, and Drupal answered 400. ([#962](https://github.com/druxt/druxt.js/issues/962), [`5f69058`](https://github.com/druxt/druxt.js/commit/5f6905886b7de19e2504fe1ff42b1f437a1b2950))
+
+  `getCollection()`, `getCollectionAll()`, `getResource()` and `getRelated()` all send it this way. A nested `null` or `undefined` value is left out, and top-level values are sent as before.
+
+  ```js
+  await this.$druxt.getCollection('node--page', {
+    filter: { status: 1 },
+    page: { limit: 5 },
+  });
+  // /jsonapi/node/page?filter[status]=1&page[limit]=5
+  ```
+
+- `new DruxtClient(baseUrl)` sends requests through the Axios `baseURL` or the proxy, as passing `{ baseUrl }` in the options already did. Before, requests went straight to the Drupal host, because the links read from the JSON:API index still included it. ([#966](https://github.com/druxt/druxt.js/issues/966), [`3fb3b0d`](https://github.com/druxt/druxt.js/commit/3fb3b0d2fa12aeca41e341cf2cfacd3ceb43d28f))
+
+  `DruxtRouter`, `DruxtSchema` and `DruxtMenu` created with a base URL alone change the same way. The Nuxt module passes the base URL both ways, so sites that only use the module are unaffected. A custom `axios` instance in the options now needs its own `baseURL`, and code that passed the base URL both ways can drop the option.
+
+- The Nuxt module loads `@nuxtjs/proxy` only when the `api` or `files` proxy is on. ([#964](https://github.com/druxt/druxt.js/issues/964), [`80f633e`](https://github.com/druxt/druxt.js/commit/80f633e2f160122fa04fa7c1e87b447fc1ccbff3))
+
+  With both off, as with `proxy: { api: false }`, it loaded `@nuxtjs/proxy` with nothing to proxy, so the package had to be installed. A site that relied on that for its own `proxy` entries now adds `@nuxtjs/proxy` to its `modules`.
+
+- A wrapper component that emits `input` from a watcher on its `entity` prop no longer freezes the browser tab. This worked on 0.24 and broke in 0.25.0. ([#973](https://github.com/druxt/druxt.js/issues/973), [`6976985`](https://github.com/druxt/druxt.js/commit/69769857c450c989404aeec15ff6818430975be7))
+
+  Since 0.25.0, a Druxt module such as `DruxtEntity` rebuilds its wrapper's props when they change, and the value the wrapper emits comes back to it as `entity`. For a resource fetched without `include`, each round trip counted as a change, so the wrapper and the module updated each other until the tab ran out of memory. A value that matches what the wrapper already has no longer counts as a change.
+
+- The server cache keeps Drupal's responses on a site whose CORS sends `Vary: Origin`. Before, it kept none of them, not even the JSON:API index. ([#961](https://github.com/druxt/druxt.js/issues/961), [`d3d0458`](https://github.com/druxt/druxt.js/commit/d3d0458aeb2e7e67e7b01f6cb3ccb1388088a144))
+
+  Drupal's CORS adds `Vary: Origin` to every response when it allows more than one origin. The Nuxt server sends no `Origin` header, so its requests all get the same answer and can share one cached copy. A request that sets its own `Origin` header, such as with `addHeaders()`, or that sends credentials, still skips the cache. `druxt.cache: false` turns the cache off.
+
 ## 0.25.0 - 2026-10-23
 
 ### Minor Changes
