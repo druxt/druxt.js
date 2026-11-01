@@ -213,6 +213,7 @@ uncacheable
 ungated
 unjs
 unlighthouse
+unmock
 unrecognised
 unregisters
 Unsets
