@@ -2,6 +2,6 @@
 'druxt': patch
 ---
 
-fix(#961): the server cache keeps a response Drupal varies by `Origin`, so it works on a site with Drupal's CORS on. It kept nothing there, the JSON:API index included.
+fix(#961): the server cache keeps Drupal's responses on a site whose CORS sends `Vary: Origin`. Before, it kept none of them, not even the JSON:API index.
 
-Drupal's CORS adds `Vary: Origin` to every response, and the site's server never sends an `Origin` header, so every answer it gets is the one for no origin. A client that sends its own `Origin` header, such as one set with `addHeaders()`, doesn't use the cache, as one that sends credentials doesn't.
+Drupal's CORS adds `Vary: Origin` to every response when it allows more than one origin. The Nuxt server sends no `Origin` header, so its requests all get the same answer and can share one cached copy. A request that sets its own `Origin` header, such as with `addHeaders()`, or that sends credentials, still skips the cache. `druxt.cache: false` turns the cache off.
