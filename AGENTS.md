@@ -34,6 +34,13 @@ request. CI is the gate, and a person is accountable for every change.
   and the package name otherwise (`fix(router): …`). The changelog links the
   issue from the scope.
 
+## Druxt docs
+
+Read the Druxt docs rather than relying on memory. The MCP server at
+`https://druxtjs.org/mcp` is configured here for Claude Code, VS Code, Cursor
+and OpenCode. Where a tool has no MCP support, use
+`https://druxtjs.org/llms.txt`.
+
 ## Reproducible toolchain
 
 Node and Yarn are pinned in `.mise.toml` and `package.json` `engines`. From a
