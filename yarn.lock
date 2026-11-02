@@ -8632,6 +8632,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"decoupled-drupal-mock-umami@file:./test/.mock-packages/decoupled-drupal-mock-umami.tgz::locator=druxt.js%40workspace%3A.":
+  version: 1.0.0-alpha.0
+  resolution: "decoupled-drupal-mock-umami@file:./test/.mock-packages/decoupled-drupal-mock-umami.tgz::locator=druxt.js%40workspace%3A."
+  peerDependencies:
+    decoupled-drupal-mock: ^1.0.0-alpha.0
+  checksum: 0fdf36c11ab7b3584b78854258046f05ca99ca99dffd192908384ff67b1f04ac15adcea84796f92f21000f52774c5fe775838f48ede619d66c3637f1ff3633af
+  languageName: node
+  linkType: hard
+
+"decoupled-drupal-mock@file:./test/.mock-packages/decoupled-drupal-mock.tgz::locator=druxt.js%40workspace%3A.":
+  version: 1.0.0-alpha.0
+  resolution: "decoupled-drupal-mock@file:./test/.mock-packages/decoupled-drupal-mock.tgz::locator=druxt.js%40workspace%3A."
+  bin:
+    decoupled-drupal-mock: ./dist/cli.js
+  checksum: 0f836626f329f33b1739ecdf4cc157cb0171021063b3d0af1ee79f804c28cdd3b5381992b0f36ed108c702df260036a63dcba3672d6b986f1522d007af183202
+  languageName: node
+  linkType: hard
+
 "dedent@npm:^1.0.0, dedent@npm:^1.6.0":
   version: 1.7.2
   resolution: "dedent@npm:1.7.2"
@@ -9122,6 +9140,8 @@ __metadata:
     bundlewatch: 0.4.2
     cspell: ^7.3.9
     cypress: ^13.17.0
+    decoupled-drupal-mock: "file:./test/.mock-packages/decoupled-drupal-mock.tgz"
+    decoupled-drupal-mock-umami: "file:./test/.mock-packages/decoupled-drupal-mock-umami.tgz"
     esbuild: 0.28.2
     esbuild-jest: 0.5.0
     eslint: 7.32.0
