@@ -154,8 +154,8 @@ describe('DruxtEntityForm', () => {
     expect(wrapper.vm.submitting).toBe(false)
   })
 
-  // Only meaningful against a backend that enforces permissions. The recorded
-  // fixtures replay a success whatever the credentials, so this is skipped
+  // This one needs a backend that enforces permissions. The recorded fixtures
+  // answer a write with a success whatever the credentials, so it is skipped
   // there and runs against the mock engine.
   const permissionTest = mockAxios.__drupal ? test : test.skip
   permissionTest('create - refused while signed out', async () => {
