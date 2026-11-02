@@ -31,6 +31,7 @@ module.exports = {
   // this config found 0 of 72 test files and exited 1. It also blocked the
   // docs site's own pure modules from ever being tested.
   modulePathIgnorePatterns: ['<rootDir>/examples/'],
+  setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['<rootDir>/examples/'],
   transform: {
