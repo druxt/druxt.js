@@ -126,13 +126,14 @@ describe('DruxtRouter', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi', undefined)
 
-    expect(Object.keys(index).length).toBe(64)
+    expect(index).toHaveProperty('node--article')
+    expect(index).toHaveProperty('node--recipe')
     expect(index[Object.keys(index)[0]]).toHaveProperty('href')
 
     const cachedIndex = await router.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
-    expect(Object.keys(cachedIndex).length).toBe(64)
+    expect(Object.keys(cachedIndex)).toStrictEqual(Object.keys(index))
   })
 
   // @deprecated

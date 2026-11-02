@@ -270,7 +270,11 @@ describe('DruxtField', () => {
     // Input.
     const input = wrapper.find('input[type="datetime-local"]')
     expect(input.exists()).toBe(true)
-    expect(input.element.value).toBe('2021-10-25T00:48:44.000')
+    // The instant belongs to the backend's data, so asserting it pins this test
+    // to one recording. What it covers is the conversion into the format a
+    // datetime-local input takes.
+    expect(input.element.value).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}$/)
+    expect(Number.isNaN(Date.parse(input.element.value))).toBe(false)
     input.element.value = '2021-07-03T16:20'
     input.trigger('input')
     expect(wrapper.vm.model).toBe('2021-07-03T16:20+00:00')

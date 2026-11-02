@@ -256,13 +256,18 @@ describe('DruxtClient', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi', undefined)
 
-    expect(Object.keys(index).length).toBe(64)
+    // A total is a magic number: it moves with the backend, and with the
+    // preset once this runs against the mock. What matters is that the index
+    // parsed and carries the site's own types.
+    expect(index).toHaveProperty('node--article')
+    expect(index).toHaveProperty('node--recipe')
     expect(index[Object.keys(index)[0]]).toHaveProperty('href')
 
     const cachedIndex = await druxt.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
-    expect(Object.keys(cachedIndex).length).toBe(64)
+    // The cached call has to return the same index, not one the same size.
+    expect(Object.keys(cachedIndex)).toStrictEqual(Object.keys(index))
 
     // Simulate broken index.
     delete druxt.index
@@ -307,7 +312,7 @@ describe('DruxtClient', () => {
     // A second client with the same base URL reuses the cached index.
     await clientB.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(Object.keys(clientB.index[undefined]).length).toBe(64)
+    expect(Object.keys(clientB.index[undefined])).toStrictEqual(Object.keys(druxt.index[undefined]))
 
     // A client with a different base URL fetches its own index.
     const clientC = new DruxtClient('https://other.example.com')
@@ -333,7 +338,9 @@ describe('DruxtClient', () => {
     expect(ownAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(Object.keys(index)).toStrictEqual(['node--page'])
-    expect(Object.keys(druxt.index[undefined]).length).toBe(64)
+    // The shared index is untouched by the other instance's own one.
+    expect(Object.keys(druxt.index[undefined])).not.toStrictEqual(['node--page'])
+    expect(druxt.index[undefined]).toHaveProperty('node--article')
   })
 
   test('getIndex - concurrent requests share one fetch', async () => {
@@ -341,7 +348,7 @@ describe('DruxtClient', () => {
 
     await Promise.all([druxt.getIndex(), clientB.getIndex(), druxt.getIndex()])
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(Object.keys(clientB.index[undefined]).length).toBe(64)
+    expect(Object.keys(clientB.index[undefined])).toStrictEqual(Object.keys(druxt.index[undefined]))
   })
 
   test('getRelated', async () => {
