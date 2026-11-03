@@ -74,7 +74,7 @@
     "bundlewatch": "0.4.2",
     "cspell": "^7.3.9",
     "cypress": "^13.17.0",
-    "decoupled-drupal-mock": "file:./test/.mock-packages/decoupled-drupal-mock-f8923ef.tgz",
+    "decoupled-drupal-mock": "1.0.0-alpha.1",
     "decoupled-drupal-mock-umami": "file:./test/.mock-packages/decoupled-drupal-mock-umami-f8923ef.tgz",
     "esbuild": "0.28.2",
     "esbuild-jest": "0.5.0",
