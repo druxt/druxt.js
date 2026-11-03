@@ -8632,12 +8632,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decoupled-drupal-mock-umami@file:./test/.mock-packages/decoupled-drupal-mock-umami-f8923ef.tgz::locator=druxt.js%40workspace%3A.":
-  version: 1.0.0-alpha.0
-  resolution: "decoupled-drupal-mock-umami@file:./test/.mock-packages/decoupled-drupal-mock-umami-f8923ef.tgz::locator=druxt.js%40workspace%3A."
+"decoupled-drupal-mock-umami@npm:1.0.0-alpha.1":
+  version: 1.0.0-alpha.1
+  resolution: "decoupled-drupal-mock-umami@npm:1.0.0-alpha.1"
   peerDependencies:
-    decoupled-drupal-mock: ^1.0.0-alpha.0
-  checksum: 4f38b1e9ca0cd857ca99dafa415ff4b1926d71ddaffc004ccba8093c391a5f6c35f2a7796f845d94264536c770ba58052c34c69176f91e5874e521ad48438b90
+    decoupled-drupal-mock: ^1.0.0-alpha.1
+  checksum: 93df6bacc48db29aa02e650d282f3ff623c5429e92feb1de5c64d0ff08515ff4984c2a775447340fd8d0cb1d2deb3fd9dffbbbbf90de8a9c901706d1d9b98d7c
   languageName: node
   linkType: hard
 
@@ -9141,7 +9141,7 @@ __metadata:
     cspell: ^7.3.9
     cypress: ^13.17.0
     decoupled-drupal-mock: 1.0.0-alpha.1
-    decoupled-drupal-mock-umami: "file:./test/.mock-packages/decoupled-drupal-mock-umami-f8923ef.tgz"
+    decoupled-drupal-mock-umami: 1.0.0-alpha.1
     esbuild: 0.28.2
     esbuild-jest: 0.5.0
     eslint: 7.32.0
