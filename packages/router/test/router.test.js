@@ -133,10 +133,15 @@ describe('DruxtRouter', () => {
     expect(Object.keys(index)).toStrictEqual(Object.keys(data.links))
     expect(Object.values(index).filter((entry) => typeof entry.href !== 'string')).toStrictEqual([])
 
+    // The cached call hands back the stored object itself, so take the keys
+    // before it runs. Comparing the two returned values afterwards reads one
+    // object twice.
+    const keys = Object.keys(index)
+
     const cachedIndex = await router.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
-    expect(Object.keys(cachedIndex)).toStrictEqual(Object.keys(index))
+    expect(Object.keys(cachedIndex)).toStrictEqual(keys)
   })
 
   // @deprecated
