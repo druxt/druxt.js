@@ -66,6 +66,11 @@
     // flagging it as an unused dependency and failing the now-blocking
     // lint:knip gate. Verified real usage via grep before adding.
     "yargs",
+    // Resolved by name at runtime, never imported: the engine's presetDir()
+    // calls require.resolve('decoupled-drupal-mock-umami/package.json') when
+    // test/drupal.js asks it for the 'umami' preset. Nothing in the tree
+    // mentions the package by name, so knip reads it as unused.
+    "decoupled-drupal-mock-umami",
     // examples/node-client isn't a declared yarn workspace (only
     // `packages/*` is in the root package.json's `workspaces` field), so
     // knip checks its files against the root package.json's dependencies,
