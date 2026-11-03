@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "druxt": {
+      "type": "http",
+      "url": "https://druxtjs.org/mcp"
+    }
+  }
+}
