@@ -257,13 +257,13 @@ describe('DruxtClient', () => {
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi', undefined)
 
     // A total is a magic number: it moves with the backend, and with the
-    // preset once this runs against the mock. Naming a type is the same
-    // mistake one step smaller. What holds for any backend is the shape. Each
-    // entry has the href the client reads, the index's own `self` link among
-    // them, and the keys are resource types.
-    const keys = Object.keys(index)
+    // preset once this runs against the mock. The index is the endpoint's own
+    // links with the base URL stripped, so the source says what belongs in it.
+    // Reading it from the call the client already made keeps the call count
+    // above true. A shape check alone would pass a truncated index.
+    const { data } = await mockAxios.get.mock.results[0].value
+    expect(Object.keys(index)).toStrictEqual(Object.keys(data.links))
     expect(Object.values(index).filter((entry) => typeof entry.href !== 'string')).toStrictEqual([])
-    expect(keys.filter((key) => /^[a-z0-9_]+--[a-z0-9_]+$/.test(key)).length).toBeGreaterThan(0)
 
     const cachedIndex = await druxt.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
@@ -333,6 +333,8 @@ describe('DruxtClient', () => {
 
     // Another Axios instance carries its own credentials, so its client
     // fetches its own index rather than reusing the shared one.
+    const sharedBefore = { ...druxt.index[undefined] }
+
     const ownAxios = jest.fn()
     ownAxios.get = jest.fn(async () => ({ data: { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } } }))
     const clientE = new DruxtClient(baseUrl, { axios: ownAxios })
@@ -340,10 +342,10 @@ describe('DruxtClient', () => {
     expect(ownAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(Object.keys(index)).toStrictEqual(['node--page'])
-    // The shared index is untouched by the other instance's own one, which
-    // held exactly the one type it asked for.
-    expect(Object.keys(druxt.index[undefined])).not.toStrictEqual(['node--page'])
-    expect(Object.keys(druxt.index[undefined]).length).toBeGreaterThan(1)
+    // The shared index is untouched by the other instance's own one. Comparing
+    // it with the copy taken above says that, where a count or a difference
+    // from the other index would also pass had entries been dropped.
+    expect(druxt.index[undefined]).toStrictEqual(sharedBefore)
   })
 
   test('getIndex - concurrent requests share one fetch', async () => {

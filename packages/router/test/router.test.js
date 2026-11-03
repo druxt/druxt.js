@@ -126,11 +126,12 @@ describe('DruxtRouter', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi', undefined)
 
-    // Not a total, and not a named type either. Each entry has an href, the
-    // index's own `self` link among them, and the keys are resource types.
-    const keys = Object.keys(index)
+    // Not a total: the index is the endpoint's own links, so compare the keys
+    // with the source the client already fetched. A shape check alone would
+    // pass a truncated index.
+    const { data } = await mockAxios.get.mock.results[0].value
+    expect(Object.keys(index)).toStrictEqual(Object.keys(data.links))
     expect(Object.values(index).filter((entry) => typeof entry.href !== 'string')).toStrictEqual([])
-    expect(keys.filter((key) => /^[a-z0-9_]+--[a-z0-9_]+$/.test(key)).length).toBeGreaterThan(0)
 
     const cachedIndex = await router.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
