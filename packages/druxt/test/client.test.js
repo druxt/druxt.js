@@ -258,9 +258,9 @@ describe('DruxtClient', () => {
 
     // A total is a magic number: it moves with the backend, and with the
     // preset once this runs against the mock. Naming a type is the same
-    // mistake one step smaller. The invariant is the shape: every entry
-    // carries the href the client reads, the index's own `self` link
-    // included, and the rest are keyed by resource type.
+    // mistake one step smaller. What holds for any backend is the shape. Each
+    // entry has the href the client reads, the index's own `self` link among
+    // them, and the keys are resource types.
     const keys = Object.keys(index)
     expect(Object.values(index).filter((entry) => typeof entry.href !== 'string')).toStrictEqual([])
     expect(keys.filter((key) => /^[a-z0-9_]+--[a-z0-9_]+$/.test(key)).length).toBeGreaterThan(0)
