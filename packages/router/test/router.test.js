@@ -126,9 +126,8 @@ describe('DruxtRouter', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi', undefined)
 
-    // Not a total, and not a named type either. Every entry carries an href,
-    // the index's own `self` link included, and the rest are keyed by
-    // resource type.
+    // Not a total, and not a named type either. Each entry has an href, the
+    // index's own `self` link among them, and the keys are resource types.
     const keys = Object.keys(index)
     expect(Object.values(index).filter((entry) => typeof entry.href !== 'string')).toStrictEqual([])
     expect(keys.filter((key) => /^[a-z0-9_]+--[a-z0-9_]+$/.test(key)).length).toBeGreaterThan(0)

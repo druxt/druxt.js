@@ -26,7 +26,7 @@ describe('DruxtSchema', () => {
     const { schemas } = await schema.get()
 
     // Not a total: the number of schemas moves with the site's display modes.
-    // Nor a named type, which moves with the site too. Every schema carries a
+    // Nor a named type, which moves with the site too. Each schema has a
     // resource type of the shape the client builds its requests from.
     expect(Object.keys(schemas).length).toBeGreaterThan(0)
     expect(Object.values(schemas).filter((s) => !/^[a-z0-9_]+--[a-z0-9_]+$/.test(s.resourceType))).toStrictEqual([])
