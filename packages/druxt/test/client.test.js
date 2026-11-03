@@ -265,11 +265,16 @@ describe('DruxtClient', () => {
     expect(Object.keys(index)).toStrictEqual(Object.keys(data.links))
     expect(Object.values(index).filter((entry) => typeof entry.href !== 'string')).toStrictEqual([])
 
+    // The cached call hands back the stored object itself, so the keys have to
+    // be taken now. Comparing the two returned values after the second call
+    // reads one object twice, and passes whatever the call did to it.
+    const keys = Object.keys(index)
+
     const cachedIndex = await druxt.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
     // The cached call has to return the same index, not one the same size.
-    expect(Object.keys(cachedIndex)).toStrictEqual(Object.keys(index))
+    expect(Object.keys(cachedIndex)).toStrictEqual(keys)
 
     // Simulate broken index.
     delete druxt.index
@@ -311,10 +316,14 @@ describe('DruxtClient', () => {
     await druxt.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
+    // Both clients end up holding the one cached object, so the copy to
+    // compare against has to be taken before the second client asks for it.
+    const shared = { ...druxt.index[undefined] }
+
     // A second client with the same base URL reuses the cached index.
     await clientB.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(Object.keys(clientB.index[undefined])).toStrictEqual(Object.keys(druxt.index[undefined]))
+    expect(clientB.index[undefined]).toStrictEqual(shared)
 
     // A client with a different base URL fetches its own index.
     const clientC = new DruxtClient('https://other.example.com')
@@ -353,7 +362,10 @@ describe('DruxtClient', () => {
 
     await Promise.all([druxt.getIndex(), clientB.getIndex(), druxt.getIndex()])
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(Object.keys(clientB.index[undefined])).toStrictEqual(Object.keys(druxt.index[undefined]))
+    // The clients share the one object, so the other client's index is not an
+    // independent source. The response the fetch returned is.
+    const { data } = await mockAxios.get.mock.results[0].value
+    expect(Object.keys(clientB.index[undefined])).toStrictEqual(Object.keys(data.links))
   })
 
   test('getRelated', async () => {
