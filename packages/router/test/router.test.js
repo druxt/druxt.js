@@ -126,9 +126,12 @@ describe('DruxtRouter', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenLastCalledWith('/jsonapi', undefined)
 
-    expect(index).toHaveProperty('node--article')
-    expect(index).toHaveProperty('node--recipe')
-    expect(index[Object.keys(index)[0]]).toHaveProperty('href')
+    // Not a total, and not a named type either. Every entry carries an href,
+    // the index's own `self` link included, and the rest are keyed by
+    // resource type.
+    const keys = Object.keys(index)
+    expect(Object.values(index).filter((entry) => typeof entry.href !== 'string')).toStrictEqual([])
+    expect(keys.filter((key) => /^[a-z0-9_]+--[a-z0-9_]+$/.test(key)).length).toBeGreaterThan(0)
 
     const cachedIndex = await router.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)

@@ -13,11 +13,14 @@ release. It comes from
 `2549aa9e245a089cc0d6e557e05cb858406842676c1b71e1bae07f5211ee6aa9`, which is
 what that repository's own `manifest.json` records for it.
 
-It is not optional decoration. Stock Decoupled Router answers the front page
-without a langcode, and `getRedirect` reads that field as a URL prefix, so the
-test for the redirect middleware passes against the stock preset and fails
-against this overlay. The overlay is the only thing in the suite that makes the defect fail
-rather than hide.
+The file is not decoration. Stock Decoupled Router leaves the langcode out of
+the front page's answer, so the redirect middleware test used to expect `/` for
+a request to `/en/node`: with no langcode there was no prefix to redirect to.
+Against this overlay the langcode is there, and the answer is `/en`, which is
+what `packages/router/test/router.test.js` pins for every path but the home
+path itself. So the overlay is what makes the suite assert the behaviour a
+patched Decoupled Router actually produces, rather than the behaviour that
+happens to hold while the field is absent.
 
 Replace it by rebuilding from a Drupal with the two patches applied, as the
 mock's `docs/overlays.md` describes. Nothing here is edited by hand.
