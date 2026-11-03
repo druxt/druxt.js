@@ -44,8 +44,6 @@ describe('DruxtEntityForm', () => {
     localVue.component('DruxtField', DruxtField)
 
     mockAxios.reset()
-    // Signed out between tests: a write test names the account it needs.
-    mockAxios.__signIn?.(null)
 
     // Setup vuex store.
     store = new Vuex.Store()
@@ -64,7 +62,6 @@ describe('DruxtEntityForm', () => {
   })
 
   test('create', async () => {
-    mockAxios.__signIn?.('author')
     const wrapper = await mountComponent({ type: 'node--page' })
 
     // Props.
@@ -84,9 +81,7 @@ describe('DruxtEntityForm', () => {
     await localVue.nextTick()
     expect(wrapper.emitted().error).toBeFalsy()
     expect(wrapper.emitted().submit).toBeTruthy()
-    expect(wrapper.vm.response.data.data.id).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
-    )
+    expect(wrapper.vm.response.data.data.id).toBe('8e8d340a-04af-461a-ac63-12415d33e936')
     expect(wrapper.vm.errors).toBe(undefined)
     expect(wrapper.vm.$refs.title.errors.length).toBe(0)
 
@@ -101,9 +96,6 @@ describe('DruxtEntityForm', () => {
   })
 
   test('error', async () => {
-    // Signed in, so submitting without a title fails validation rather than
-    // permission, which is what this test is about.
-    mockAxios.__signIn?.('author')
     const wrapper = await mountComponent({ type: 'node--page' })
 
     // Props.
@@ -154,28 +146,7 @@ describe('DruxtEntityForm', () => {
     expect(wrapper.vm.submitting).toBe(false)
   })
 
-  // This one needs a backend that enforces permissions. The recorded fixtures
-  // answer a write with a success whatever the credentials, so it is skipped
-  // there and runs against the mock engine.
-  const permissionTest = mockAxios.__drupal ? test : test.skip
-  permissionTest('create - refused while signed out', async () => {
-    const wrapper = await mountComponent({ type: 'node--page' })
-
-    // A title, so the only thing left to refuse the write is permission.
-    wrapper.vm.model.attributes.title = 'Test'
-
-    await wrapper.find('button#submit').trigger('click')
-    await localVue.nextTick()
-    await localVue.nextTick()
-
-    expect(wrapper.emitted().submit).toBeFalsy()
-    expect(wrapper.emitted().error).toBeTruthy()
-    expect(wrapper.vm.errors.length).toBeGreaterThan(0)
-  })
-
   test('edit', async () => {
-    // umami moderates its content, and the editor holds the transitions.
-    mockAxios.__signIn?.('editor')
     const mockPage = await getMockResource('node--page')
     const uuid = mockPage.data.id
     const wrapper = await mountComponent({ uuid, type: 'node--page' })

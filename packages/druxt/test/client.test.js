@@ -257,11 +257,13 @@ describe('DruxtClient', () => {
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi', undefined)
 
     // A total is a magic number: it moves with the backend, and with the
-    // preset once this runs against the mock. What matters is that the index
-    // parsed and carries the site's own types.
-    expect(index).toHaveProperty('node--article')
-    expect(index).toHaveProperty('node--recipe')
-    expect(index[Object.keys(index)[0]]).toHaveProperty('href')
+    // preset once this runs against the mock. Naming a type is the same
+    // mistake one step smaller. The invariant is the shape: every entry
+    // carries the href the client reads, the index's own `self` link
+    // included, and the rest are keyed by resource type.
+    const keys = Object.keys(index)
+    expect(Object.values(index).filter((entry) => typeof entry.href !== 'string')).toStrictEqual([])
+    expect(keys.filter((key) => /^[a-z0-9_]+--[a-z0-9_]+$/.test(key)).length).toBeGreaterThan(0)
 
     const cachedIndex = await druxt.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
@@ -338,9 +340,10 @@ describe('DruxtClient', () => {
     expect(ownAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(Object.keys(index)).toStrictEqual(['node--page'])
-    // The shared index is untouched by the other instance's own one.
+    // The shared index is untouched by the other instance's own one, which
+    // held exactly the one type it asked for.
     expect(Object.keys(druxt.index[undefined])).not.toStrictEqual(['node--page'])
-    expect(druxt.index[undefined]).toHaveProperty('node--article')
+    expect(Object.keys(druxt.index[undefined]).length).toBeGreaterThan(1)
   })
 
   test('getIndex - concurrent requests share one fetch', async () => {
