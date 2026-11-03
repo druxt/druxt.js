@@ -8632,21 +8632,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"decoupled-drupal-mock-umami@file:./test/.mock-packages/decoupled-drupal-mock-umami.tgz::locator=druxt.js%40workspace%3A.":
+"decoupled-drupal-mock-umami@file:./test/.mock-packages/decoupled-drupal-mock-umami-f8923ef.tgz::locator=druxt.js%40workspace%3A.":
   version: 1.0.0-alpha.0
-  resolution: "decoupled-drupal-mock-umami@file:./test/.mock-packages/decoupled-drupal-mock-umami.tgz::locator=druxt.js%40workspace%3A."
+  resolution: "decoupled-drupal-mock-umami@file:./test/.mock-packages/decoupled-drupal-mock-umami-f8923ef.tgz::locator=druxt.js%40workspace%3A."
   peerDependencies:
     decoupled-drupal-mock: ^1.0.0-alpha.0
-  checksum: 0fdf36c11ab7b3584b78854258046f05ca99ca99dffd192908384ff67b1f04ac15adcea84796f92f21000f52774c5fe775838f48ede619d66c3637f1ff3633af
+  checksum: 4f38b1e9ca0cd857ca99dafa415ff4b1926d71ddaffc004ccba8093c391a5f6c35f2a7796f845d94264536c770ba58052c34c69176f91e5874e521ad48438b90
   languageName: node
   linkType: hard
 
-"decoupled-drupal-mock@file:./test/.mock-packages/decoupled-drupal-mock.tgz::locator=druxt.js%40workspace%3A.":
+"decoupled-drupal-mock@file:./test/.mock-packages/decoupled-drupal-mock-f8923ef.tgz::locator=druxt.js%40workspace%3A.":
   version: 1.0.0-alpha.0
-  resolution: "decoupled-drupal-mock@file:./test/.mock-packages/decoupled-drupal-mock.tgz::locator=druxt.js%40workspace%3A."
+  resolution: "decoupled-drupal-mock@file:./test/.mock-packages/decoupled-drupal-mock-f8923ef.tgz::locator=druxt.js%40workspace%3A."
   bin:
     decoupled-drupal-mock: ./dist/cli.js
-  checksum: 0f836626f329f33b1739ecdf4cc157cb0171021063b3d0af1ee79f804c28cdd3b5381992b0f36ed108c702df260036a63dcba3672d6b986f1522d007af183202
+  checksum: ef716d36c0ecf9d69605181c9a0eb040615e62c425e4a8a919d5f6d5ada9bd2ddf5e6b8c88d73629669b052bf278f16e8050d37c72efb5d9b62d62284171aeab
   languageName: node
   linkType: hard
 
@@ -9140,8 +9140,8 @@ __metadata:
     bundlewatch: 0.4.2
     cspell: ^7.3.9
     cypress: ^13.17.0
-    decoupled-drupal-mock: "file:./test/.mock-packages/decoupled-drupal-mock.tgz"
-    decoupled-drupal-mock-umami: "file:./test/.mock-packages/decoupled-drupal-mock-umami.tgz"
+    decoupled-drupal-mock: "file:./test/.mock-packages/decoupled-drupal-mock-f8923ef.tgz"
+    decoupled-drupal-mock-umami: "file:./test/.mock-packages/decoupled-drupal-mock-umami-f8923ef.tgz"
     esbuild: 0.28.2
     esbuild-jest: 0.5.0
     eslint: 7.32.0
