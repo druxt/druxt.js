@@ -30,7 +30,7 @@ test('Nuxt module', async () => {
   mock.options = {
     buildDir: '',
     dir: { pages: 'pages' },
-    druxt: { baseUrl: 'https://demo-api.druxtjs.org' },
+    druxt: { baseUrl: 'https://api.umami.demo.druxtjs.org' },
     srcDir: __dirname,
   }
 
@@ -64,7 +64,7 @@ test('Components register synchronously', async () => {
     ...mock,
     addModule: jest.fn(),
     nuxt: { ...mock.nuxt, hook },
-    options: { buildDir: '', dir: { pages: 'pages' }, druxt: { baseUrl: 'https://demo-api.druxtjs.org' }, srcDir: __dirname },
+    options: { buildDir: '', dir: { pages: 'pages' }, druxt: { baseUrl: 'https://api.umami.demo.druxtjs.org' }, srcDir: __dirname },
   })
 
   // Expect every directory to mark its components as not async.

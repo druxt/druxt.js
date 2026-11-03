@@ -1,6 +1,6 @@
 import { DruxtMenu } from '../src/menu'
 
-const baseUrl = 'https://demo-api.druxtjs.org'
+const baseUrl = 'https://api.umami.demo.druxtjs.org'
 
 // A stub of the process cache that DruxtClient.processCache('menu') returns.
 const store = new Map()

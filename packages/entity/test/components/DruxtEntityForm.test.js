@@ -14,7 +14,7 @@ import DruxtField from '../../src/components/DruxtField.vue'
 let localVue
 let store
 
-const $druxt = new DruxtClient('https://demo-api.druxtjs.org')
+const $druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
 $druxt.settings = {}
 
 const mocks = {

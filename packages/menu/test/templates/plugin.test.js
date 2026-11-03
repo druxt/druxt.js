@@ -7,7 +7,7 @@ import { DruxtMenu } from '../../src'
 
 jest.mock('axios')
 
-const baseUrl = 'https://demo-api.druxtjs.org'
+const baseUrl = 'https://api.umami.demo.druxtjs.org'
 
 // Renders the plugin template as Nuxt does and returns its default export.
 const plugin = (options, client) => {

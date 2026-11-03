@@ -30,7 +30,7 @@ describe('Component - DruxtBlockPageTitleBlock', () => {
     store = new Vuex.Store()
 
     DruxtRouterStore({ store })
-    store.$druxtRouter = () => new DruxtRouter('https://demo-api.druxtjs.org')
+    store.$druxtRouter = () => new DruxtRouter('https://api.umami.demo.druxtjs.org')
 
     store.app = { context: { error: jest.fn() }, store }
   })

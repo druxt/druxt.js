@@ -53,7 +53,7 @@ describe('DruxtEntity', () => {
     store = new Vuex.Store()
 
     DruxtStore({ store })
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+    store.$druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
 
     DruxtSchemaStore({ store })
     store.$druxtSchema = {

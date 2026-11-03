@@ -36,7 +36,7 @@ describe('Component - DruxtBlockBlockContent', () => {
     store = new Vuex.Store()
 
     DruxtStore({ store })
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+    store.$druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
 
     store.app = { context: { error: jest.fn() }, store }
   })

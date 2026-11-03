@@ -8,7 +8,7 @@ import { DruxtRouter } from '../src'
 // Each router gets its own Axios instance below; the shared mock loads the browser build, which needs a window.
 jest.mock('axios', () => ({ create: jest.fn() }))
 
-const baseUrl = 'https://demo-api.druxtjs.org'
+const baseUrl = 'https://api.umami.demo.druxtjs.org'
 
 let lookups = []
 

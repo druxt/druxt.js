@@ -1,7 +1,7 @@
 import { DruxtClient } from '../src'
 import { resetProcessCache, runtime } from '../src/utils/processCache'
 
-const baseUrl = 'https://demo-api.druxtjs.org'
+const baseUrl = 'https://api.umami.demo.druxtjs.org'
 jest.mock('axios')
 
 const PUBLIC = { 'cache-control': 'public, max-age=300' }

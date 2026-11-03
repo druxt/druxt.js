@@ -5,7 +5,7 @@ import { DruxtRouter, DruxtRouterStore } from 'druxt-router'
 
 import { DruxtEntityComponentSuggestionMixin } from '../../src/mixins/componentSuggestion'
 
-const baseURL = 'https://demo-api.druxtjs.org'
+const baseURL = 'https://api.umami.demo.druxtjs.org'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
