@@ -2,9 +2,9 @@
 
 The Umami preset publishes the stock site, as released modules answer it. An
 overlay is a recording of the same site with one change, kept as the difference
-from that baseline, and a consumer that needs one carries its own copy.
+from that baseline, and a consumer that needs one keeps its own copy.
 
-`language-routing-patches.json.gz` is this repository's:
+`language-routing-patches.json.gz` is this repository's. It records
 [Decoupled Router #3111456](https://www.drupal.org/i/3111456) and
 [Druxt #3273228](https://www.drupal.org/i/3273228), neither of which is in a
 release. It comes from
@@ -15,9 +15,9 @@ what that repository's own `manifest.json` records for it.
 
 It is not optional decoration. Stock Decoupled Router answers the front page
 without a langcode, and `getRedirect` reads that field as a URL prefix, so the
-redirect middleware test passes against the stock preset and fails against this
-overlay. The overlay is the only thing in the suite that makes the defect fail
+test for the redirect middleware passes against the stock preset and fails
+against this overlay. The overlay is the only thing in the suite that makes the defect fail
 rather than hide.
 
-Replace it by rebuilding from a Drupal that carries the two patches, as the
+Replace it by rebuilding from a Drupal with the two patches applied, as the
 mock's `docs/overlays.md` describes. Nothing here is edited by hand.
