@@ -59,7 +59,7 @@ exports[`DruxtEntity missing schema 1`] = `
   "id": "7adbf02c-6e41-40ae-9124-8b4781f9c160",
   "links": {
     "self": {
-      "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/7adbf02c-6e41-40ae-9124-8b4781f9c160"
+      "href": "https://api.umami.demo.druxtjs.org/en/jsonapi/file/file/7adbf02c-6e41-40ae-9124-8b4781f9c160"
     }
   },
   "attributes": {
@@ -81,10 +81,10 @@ exports[`DruxtEntity missing schema 1`] = `
       "data": null,
       "links": {
         "related": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/7adbf02c-6e41-40ae-9124-8b4781f9c160/uid"
+          "href": "https://api.umami.demo.druxtjs.org/en/jsonapi/file/file/7adbf02c-6e41-40ae-9124-8b4781f9c160/uid"
         },
         "self": {
-          "href": "https://demo-api.druxtjs.org/en/jsonapi/file/file/7adbf02c-6e41-40ae-9124-8b4781f9c160/relationships/uid"
+          "href": "https://api.umami.demo.druxtjs.org/en/jsonapi/file/file/7adbf02c-6e41-40ae-9124-8b4781f9c160/relationships/uid"
         }
       }
     }

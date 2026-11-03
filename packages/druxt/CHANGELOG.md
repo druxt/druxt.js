@@ -507,7 +507,7 @@ Thanks to [d34dman](https://github.com/d34dman)
 
   ```js
   import { DruxtClient } from 'druxt'
-  const druxt = new DruxtClient('https://demo-api.druxtjs.org')
+  const druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
   druxt.getResource('node--page', uuid, query).then((resource) => {
     console.log('getResource', resource)
   }))

@@ -4,7 +4,7 @@ import { DruxtSchema } from '../src'
 
 jest.mock('axios')
 
-const baseUrl = 'https://demo-api.druxtjs.org'
+const baseUrl = 'https://api.umami.demo.druxtjs.org'
 const options = { axios }
 
 let schema

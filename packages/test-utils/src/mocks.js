@@ -2,7 +2,7 @@ import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
 import mockAxios from 'jest-mock-axios'
 
-export const baseUrl = 'https://demo-api.druxtjs.org'
+export const baseUrl = 'https://api.umami.demo.druxtjs.org'
 
 const druxt = new DruxtClient(baseUrl)
 

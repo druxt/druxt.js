@@ -57,7 +57,7 @@ describe('DruxtStore', () => {
   test('get - a clear during the request fetches past the real menu cache', async () => {
     const isServer = runtime.isServer
     runtime.isServer = () => true
-    const menu = new DruxtMenu('https://demo-api.druxtjs.org', { menu: { jsonApiMenuItems: true } })
+    const menu = new DruxtMenu('https://api.umami.demo.druxtjs.org', { menu: { jsonApiMenuItems: true } })
     const pending = []
     menu.getJsonApiMenuItems = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
     store.$druxtMenu = menu

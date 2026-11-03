@@ -10,7 +10,7 @@ import DruxtMenuItemComponent from '../../src/components/DruxtMenuItem.vue'
 
 jest.mock('axios')
 
-const baseUrl = 'https://demo-api.druxtjs.org'
+const baseUrl = 'https://api.umami.demo.druxtjs.org'
 
 // Setup local vue instance.
 const localVue = createLocalVue()

@@ -7,7 +7,7 @@ const mock = {
   options: {
     buildDir: '',
     druxt: {
-      baseUrl: 'https://demo-api.druxtjs.org',
+      baseUrl: 'https://api.umami.demo.druxtjs.org',
       menu: {
         jsonApiMenuItems: true
       }

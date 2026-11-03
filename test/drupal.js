@@ -7,7 +7,7 @@ const { axiosVerbs, loadPreset } = require('decoupled-drupal-mock/jest')
 
 // The recorded fixtures came from this origin and the tests still name it, so
 // the engine answers for the same site rather than a sentinel host.
-const baseUrl = 'https://demo-api.druxtjs.org'
+const baseUrl = 'https://api.umami.demo.druxtjs.org'
 
 // The preset publishes the stock site, so the two language-routing patches
 // Druxt needs come from an overlay this repository carries itself, named by

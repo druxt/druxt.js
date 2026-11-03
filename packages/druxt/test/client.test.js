@@ -4,7 +4,7 @@ import mockAxios from 'jest-mock-axios'
 
 import { DruxtClient } from '../src/client'
 
-const baseUrl = 'https://demo-api.druxtjs.org'
+const baseUrl = 'https://api.umami.demo.druxtjs.org'
 
 jest.mock('axios')
 
