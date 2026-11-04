@@ -2346,9 +2346,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxtjs/auth-next@npm:^5.0.0-1643791578.532b3d6":
-  version: 5.0.0-1648802546.c9880dc
-  resolution: "@nuxtjs/auth-next@npm:5.0.0-1648802546.c9880dc"
+"@nuxtjs/auth-next@npm:^5.0.0-1667386184.dfbbb54":
+  version: 5.0.0-1667386184.dfbbb54
+  resolution: "@nuxtjs/auth-next@npm:5.0.0-1667386184.dfbbb54"
   dependencies:
     "@nuxtjs/axios": ^5.13.6
     axios: ^0.26.1
@@ -2361,7 +2361,7 @@ __metadata:
     requrl: ^3.0.2
   peerDependencies:
     vue: "*"
-  checksum: 832dc08d435a34b16447bd9a8ea1eea7f042ff693cb69a3ca290cc584831d7e9a9f0cb78dbc007ad7055ec2e2bda1857626acd1ef28b12961fcadf43b56d40c4
+  checksum: 610a98d0673106d3b031cb36f145b0db2349880e63ac4752c1a35def508c734e8ef7c99a90d5dcac26edfad4d9a3c4b46e1b81190dcaa22974d0950277a04091
   languageName: node
   linkType: hard
 
@@ -7295,12 +7295,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"druxt-auth@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "druxt-auth@npm:0.1.0"
+"druxt-auth@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "druxt-auth@npm:0.5.1"
   dependencies:
-    "@nuxtjs/auth-next": ^5.0.0-1643791578.532b3d6
-  checksum: 2f8d1df7fb105255c4c53086875cb68fc993bfa9bd00e50269595e45afc65752a14e3d3c3ae6c59d23006c3de61e84a67fd4f7252c9a91cabe8335ee3f614782
+    "@nuxtjs/auth-next": ^5.0.0-1667386184.dfbbb54
+    http-proxy-middleware: ^1.0.6
+  peerDependencies:
+    axios: ">=0.27.2 <1"
+    body-parser: ^1.20.2
+  checksum: 42e4bd4ff9a12c829b8b7638354a85a460c32f832bffdb679994361555bf5d727d91586762bdefbe5c45b2985be81847d883ba71c21a9191925becddeff169d0
   languageName: node
   linkType: hard
 
@@ -7317,7 +7321,7 @@ __metadata:
     "@nuxt/postcss8": 1.1.3
     "@nuxtjs/storybook": 4.3.2
     drupal-jsonapi-params: ^2.3.1
-    druxt-auth: ^0.1.0
+    druxt-auth: ^0.5.1
     druxt-site: "link:../../packages/site"
     nuxt: 2.15.8
     postcss: 8.4.31
