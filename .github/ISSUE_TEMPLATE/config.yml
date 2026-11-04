@@ -14,4 +14,4 @@ contact_links:
     about: Private disclosure. Please do not open a public issue.
   - name: Report a Drupal module issue
     url: https://www.drupal.org/project/issues/druxt
-    about: The Druxt Drupal module is maintained on drupal.org, as are Decoupled Router, JSON:API Views and JSON:API Menu Items.
+    about: The Druxt Drupal module's queue. Decoupled Router, JSON:API Views and JSON:API Menu Items each have their own queue on drupal.org.
