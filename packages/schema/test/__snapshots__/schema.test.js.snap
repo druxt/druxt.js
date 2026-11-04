@@ -321,7 +321,7 @@ exports[`DruxtSchema get 1`] = `
       {
         "cardinality": 1,
         "description": "",
-        "id": "body",
+        "id": "field_body",
         "label": {
           "position": null,
           "text": "Body",
@@ -329,19 +329,16 @@ exports[`DruxtSchema get 1`] = `
         "required": false,
         "settings": {
           "config": {
-            "display_summary": false,
-            "required_summary": false,
+            "allowed_formats": [],
           },
           "display": {
             "placeholder": "",
             "rows": 9,
-            "show_summary": false,
-            "summary_rows": 3,
           },
           "storage": [],
         },
         "thirdPartySettings": [],
-        "type": "text_textarea_with_summary",
+        "type": "text_textarea",
         "weight": -4,
       },
       {
@@ -399,7 +396,7 @@ exports[`DruxtSchema get 1`] = `
     "fields": [
       {
         "description": "",
-        "id": "body",
+        "id": "field_body",
         "label": {
           "position": "hidden",
           "text": "Body",
@@ -407,8 +404,7 @@ exports[`DruxtSchema get 1`] = `
         "required": false,
         "settings": {
           "config": {
-            "display_summary": false,
-            "required_summary": false,
+            "allowed_formats": [],
           },
           "display": [],
         },
@@ -500,7 +496,9 @@ exports[`DruxtSchema get 1`] = `
         },
         "required": false,
         "settings": {
-          "config": [],
+          "config": {
+            "allowed_formats": [],
+          },
           "display": {
             "placeholder": "",
             "rows": 5,
@@ -521,7 +519,9 @@ exports[`DruxtSchema get 1`] = `
         },
         "required": false,
         "settings": {
-          "config": [],
+          "config": {
+            "allowed_formats": [],
+          },
           "display": {
             "placeholder": "",
             "rows": 5,
@@ -556,7 +556,9 @@ exports[`DruxtSchema get 1`] = `
         },
         "required": false,
         "settings": {
-          "config": [],
+          "config": {
+            "allowed_formats": [],
+          },
           "display": [],
         },
         "thirdPartySettings": [],
@@ -572,7 +574,9 @@ exports[`DruxtSchema get 1`] = `
         },
         "required": false,
         "settings": {
-          "config": [],
+          "config": {
+            "allowed_formats": [],
+          },
           "display": [],
         },
         "thirdPartySettings": [],
@@ -869,137 +873,6 @@ exports[`DruxtSchema get 1`] = `
     "id": "block_content--footer_promo_block--default--view",
     "resourceType": "block_content--footer_promo_block",
   },
-  "contact_message--feedback--default--form": {
-    "config": {
-      "bundle": "feedback",
-      "entityType": "contact_message",
-      "filter": [],
-      "href": "/en/jsonapi/contact_message/feedback",
-      "mode": "default",
-      "schemaType": "form",
-    },
-    "fields": [
-      {
-        "cardinality": null,
-        "description": null,
-        "id": "name",
-        "label": {
-          "position": null,
-          "text": null,
-        },
-        "required": false,
-        "settings": {
-          "config": {},
-          "display": [],
-          "storage": {},
-        },
-        "thirdPartySettings": [],
-        "type": null,
-        "weight": 0,
-      },
-      {
-        "cardinality": null,
-        "description": null,
-        "id": "mail",
-        "label": {
-          "position": null,
-          "text": null,
-        },
-        "required": false,
-        "settings": {
-          "config": {},
-          "display": [],
-          "storage": {},
-        },
-        "thirdPartySettings": [],
-        "type": null,
-        "weight": 1,
-      },
-      {
-        "cardinality": null,
-        "description": null,
-        "id": "langcode",
-        "label": {
-          "position": null,
-          "text": null,
-        },
-        "required": false,
-        "settings": {
-          "config": {},
-          "display": {
-            "include_locked": true,
-          },
-          "storage": {},
-        },
-        "thirdPartySettings": [],
-        "type": "language_select",
-        "weight": 2,
-      },
-      {
-        "cardinality": null,
-        "description": null,
-        "id": "subject",
-        "label": {
-          "position": null,
-          "text": null,
-        },
-        "required": false,
-        "settings": {
-          "config": {},
-          "display": {
-            "placeholder": "",
-            "size": 60,
-          },
-          "storage": {},
-        },
-        "thirdPartySettings": [],
-        "type": "string_textfield",
-        "weight": 2,
-      },
-      {
-        "cardinality": null,
-        "description": null,
-        "id": "message",
-        "label": {
-          "position": null,
-          "text": null,
-        },
-        "required": false,
-        "settings": {
-          "config": {},
-          "display": {
-            "placeholder": "",
-            "rows": 12,
-          },
-          "storage": {},
-        },
-        "thirdPartySettings": [],
-        "type": "string_textarea",
-        "weight": 3,
-      },
-      {
-        "cardinality": null,
-        "description": null,
-        "id": "copy",
-        "label": {
-          "position": null,
-          "text": null,
-        },
-        "required": false,
-        "settings": {
-          "config": {},
-          "display": [],
-          "storage": {},
-        },
-        "thirdPartySettings": [],
-        "type": null,
-        "weight": 4,
-      },
-    ],
-    "groups": [],
-    "id": "contact_message--feedback--default--form",
-    "resourceType": "contact_message--feedback",
-  },
   "media--audio--default--form": {
     "config": {
       "bundle": "audio",
@@ -1189,6 +1062,57 @@ exports[`DruxtSchema get 1`] = `
     "id": "media--audio--default--view",
     "resourceType": "media--audio",
   },
+  "media--audio--media_library--form": {
+    "config": {
+      "bundle": "audio",
+      "entityType": "media",
+      "filter": [],
+      "href": "/en/jsonapi/media/audio",
+      "mode": "media_library",
+      "schemaType": "form",
+    },
+    "fields": [],
+    "groups": [],
+    "id": "media--audio--media_library--form",
+    "resourceType": "media--audio",
+  },
+  "media--audio--media_library--view": {
+    "config": {
+      "bundle": "audio",
+      "entityType": "media",
+      "filter": [],
+      "href": "/en/jsonapi/media/audio",
+      "mode": "media_library",
+      "schemaType": "view",
+    },
+    "fields": [
+      {
+        "description": null,
+        "id": "thumbnail",
+        "label": {
+          "position": "hidden",
+          "text": null,
+        },
+        "required": false,
+        "settings": {
+          "config": {},
+          "display": {
+            "image_link": "",
+            "image_loading": {
+              "attribute": "lazy",
+            },
+            "image_style": "thumbnail",
+          },
+        },
+        "thirdPartySettings": [],
+        "type": "image",
+        "weight": 0,
+      },
+    ],
+    "groups": [],
+    "id": "media--audio--media_library--view",
+    "resourceType": "media--audio",
+  },
   "media--document--default--form": {
     "config": {
       "bundle": "document",
@@ -1373,6 +1297,57 @@ exports[`DruxtSchema get 1`] = `
     "id": "media--document--default--view",
     "resourceType": "media--document",
   },
+  "media--document--media_library--form": {
+    "config": {
+      "bundle": "document",
+      "entityType": "media",
+      "filter": [],
+      "href": "/en/jsonapi/media/document",
+      "mode": "media_library",
+      "schemaType": "form",
+    },
+    "fields": [],
+    "groups": [],
+    "id": "media--document--media_library--form",
+    "resourceType": "media--document",
+  },
+  "media--document--media_library--view": {
+    "config": {
+      "bundle": "document",
+      "entityType": "media",
+      "filter": [],
+      "href": "/en/jsonapi/media/document",
+      "mode": "media_library",
+      "schemaType": "view",
+    },
+    "fields": [
+      {
+        "description": null,
+        "id": "thumbnail",
+        "label": {
+          "position": "hidden",
+          "text": null,
+        },
+        "required": false,
+        "settings": {
+          "config": {},
+          "display": {
+            "image_link": "",
+            "image_loading": {
+              "attribute": "lazy",
+            },
+            "image_style": "thumbnail",
+          },
+        },
+        "thirdPartySettings": [],
+        "type": "image",
+        "weight": 0,
+      },
+    ],
+    "groups": [],
+    "id": "media--document--media_library--view",
+    "resourceType": "media--document",
+  },
   "media--image--default--form": {
     "config": {
       "bundle": "image",
@@ -1425,7 +1400,7 @@ exports[`DruxtSchema get 1`] = `
               "width": null,
             },
             "file_directory": "[date:custom:Y]-[date:custom:m]",
-            "file_extensions": "png gif jpg jpeg",
+            "file_extensions": "png gif jpg jpeg webp",
             "handler": "default:file",
             "handler_settings": [],
             "max_filesize": "",
@@ -1608,7 +1583,7 @@ exports[`DruxtSchema get 1`] = `
               "width": null,
             },
             "file_directory": "[date:custom:Y]-[date:custom:m]",
-            "file_extensions": "png gif jpg jpeg",
+            "file_extensions": "png gif jpg jpeg webp",
             "handler": "default:file",
             "handler_settings": [],
             "max_filesize": "",
@@ -1619,6 +1594,9 @@ exports[`DruxtSchema get 1`] = `
           },
           "display": {
             "image_link": "",
+            "image_loading": {
+              "attribute": "lazy",
+            },
             "responsive_image_style": "3_2_image",
           },
         },
@@ -1629,6 +1607,110 @@ exports[`DruxtSchema get 1`] = `
     ],
     "groups": [],
     "id": "media--image--default--view",
+    "resourceType": "media--image",
+  },
+  "media--image--media_library--form": {
+    "config": {
+      "bundle": "image",
+      "entityType": "media",
+      "filter": [],
+      "href": "/en/jsonapi/media/image",
+      "mode": "media_library",
+      "schemaType": "form",
+    },
+    "fields": [
+      {
+        "cardinality": 1,
+        "description": "",
+        "id": "field_media_image",
+        "label": {
+          "position": null,
+          "text": "Image",
+        },
+        "required": true,
+        "settings": {
+          "config": {
+            "alt_field": true,
+            "alt_field_required": true,
+            "default_image": {
+              "alt": "",
+              "height": null,
+              "title": "",
+              "uuid": null,
+              "width": null,
+            },
+            "file_directory": "[date:custom:Y]-[date:custom:m]",
+            "file_extensions": "png gif jpg jpeg webp",
+            "handler": "default:file",
+            "handler_settings": [],
+            "max_filesize": "",
+            "max_resolution": "",
+            "min_resolution": "",
+            "title_field": false,
+            "title_field_required": false,
+          },
+          "display": {
+            "preview_image_style": "thumbnail",
+            "progress_indicator": "throbber",
+          },
+          "storage": {
+            "default_image": {
+              "alt": "",
+              "height": null,
+              "title": "",
+              "uuid": null,
+              "width": null,
+            },
+            "display_default": false,
+            "display_field": false,
+            "target_type": "file",
+            "uri_scheme": "public",
+          },
+        },
+        "thirdPartySettings": [],
+        "type": "image_image",
+        "weight": 0,
+      },
+    ],
+    "groups": [],
+    "id": "media--image--media_library--form",
+    "resourceType": "media--image",
+  },
+  "media--image--media_library--view": {
+    "config": {
+      "bundle": "image",
+      "entityType": "media",
+      "filter": [],
+      "href": "/en/jsonapi/media/image",
+      "mode": "media_library",
+      "schemaType": "view",
+    },
+    "fields": [
+      {
+        "description": null,
+        "id": "thumbnail",
+        "label": {
+          "position": "hidden",
+          "text": null,
+        },
+        "required": false,
+        "settings": {
+          "config": {},
+          "display": {
+            "image_link": "",
+            "image_loading": {
+              "attribute": "lazy",
+            },
+            "image_style": "medium",
+          },
+        },
+        "thirdPartySettings": [],
+        "type": "image",
+        "weight": 0,
+      },
+    ],
+    "groups": [],
+    "id": "media--image--media_library--view",
     "resourceType": "media--image",
   },
   "media--image--medium_8_7--view": {
@@ -1661,7 +1743,7 @@ exports[`DruxtSchema get 1`] = `
               "width": null,
             },
             "file_directory": "[date:custom:Y]-[date:custom:m]",
-            "file_extensions": "png gif jpg jpeg",
+            "file_extensions": "png gif jpg jpeg webp",
             "handler": "default:file",
             "handler_settings": [],
             "max_filesize": "",
@@ -1672,6 +1754,9 @@ exports[`DruxtSchema get 1`] = `
           },
           "display": {
             "image_link": "",
+            "image_loading": {
+              "attribute": "lazy",
+            },
             "image_style": "medium_8_7",
           },
         },
@@ -1698,7 +1783,7 @@ exports[`DruxtSchema get 1`] = `
         "description": "",
         "id": "field_media_image",
         "label": {
-          "position": "visually_hidden",
+          "position": "hidden",
           "text": "Image",
         },
         "required": true,
@@ -1714,7 +1799,7 @@ exports[`DruxtSchema get 1`] = `
               "width": null,
             },
             "file_directory": "[date:custom:Y]-[date:custom:m]",
-            "file_extensions": "png gif jpg jpeg",
+            "file_extensions": "png gif jpg jpeg webp",
             "handler": "default:file",
             "handler_settings": [],
             "max_filesize": "",
@@ -1725,6 +1810,9 @@ exports[`DruxtSchema get 1`] = `
           },
           "display": {
             "image_link": "",
+            "image_loading": {
+              "attribute": "lazy",
+            },
             "responsive_image_style": "3_2_image",
           },
         },
@@ -1751,7 +1839,7 @@ exports[`DruxtSchema get 1`] = `
         "description": "",
         "id": "field_media_image",
         "label": {
-          "position": "visually_hidden",
+          "position": "hidden",
           "text": "Image",
         },
         "required": true,
@@ -1767,7 +1855,7 @@ exports[`DruxtSchema get 1`] = `
               "width": null,
             },
             "file_directory": "[date:custom:Y]-[date:custom:m]",
-            "file_extensions": "png gif jpg jpeg",
+            "file_extensions": "png gif jpg jpeg webp",
             "handler": "default:file",
             "handler_settings": [],
             "max_filesize": "",
@@ -1778,11 +1866,14 @@ exports[`DruxtSchema get 1`] = `
           },
           "display": {
             "image_link": "",
-            "image_style": "scale_crop_7_3_large",
+            "image_loading": {
+              "attribute": "eager",
+            },
+            "responsive_image_style": "hero",
           },
         },
         "thirdPartySettings": [],
-        "type": "image",
+        "type": "responsive_image",
         "weight": 1,
       },
     ],
@@ -1820,7 +1911,7 @@ exports[`DruxtSchema get 1`] = `
               "width": null,
             },
             "file_directory": "[date:custom:Y]-[date:custom:m]",
-            "file_extensions": "png gif jpg jpeg",
+            "file_extensions": "png gif jpg jpeg webp",
             "handler": "default:file",
             "handler_settings": [],
             "max_filesize": "",
@@ -1831,6 +1922,9 @@ exports[`DruxtSchema get 1`] = `
           },
           "display": {
             "image_link": "",
+            "image_loading": {
+              "attribute": "lazy",
+            },
             "responsive_image_style": "square",
           },
         },
@@ -2003,6 +2097,9 @@ exports[`DruxtSchema get 1`] = `
         "settings": {
           "config": [],
           "display": {
+            "loading": {
+              "attribute": "lazy",
+            },
             "max_height": 0,
             "max_width": 0,
           },
@@ -2014,6 +2111,57 @@ exports[`DruxtSchema get 1`] = `
     ],
     "groups": [],
     "id": "media--remote_video--default--view",
+    "resourceType": "media--remote_video",
+  },
+  "media--remote_video--media_library--form": {
+    "config": {
+      "bundle": "remote_video",
+      "entityType": "media",
+      "filter": [],
+      "href": "/en/jsonapi/media/remote_video",
+      "mode": "media_library",
+      "schemaType": "form",
+    },
+    "fields": [],
+    "groups": [],
+    "id": "media--remote_video--media_library--form",
+    "resourceType": "media--remote_video",
+  },
+  "media--remote_video--media_library--view": {
+    "config": {
+      "bundle": "remote_video",
+      "entityType": "media",
+      "filter": [],
+      "href": "/en/jsonapi/media/remote_video",
+      "mode": "media_library",
+      "schemaType": "view",
+    },
+    "fields": [
+      {
+        "description": null,
+        "id": "thumbnail",
+        "label": {
+          "position": "hidden",
+          "text": null,
+        },
+        "required": false,
+        "settings": {
+          "config": {},
+          "display": {
+            "image_link": "",
+            "image_loading": {
+              "attribute": "lazy",
+            },
+            "image_style": "medium",
+          },
+        },
+        "thirdPartySettings": [],
+        "type": "image",
+        "weight": 0,
+      },
+    ],
+    "groups": [],
+    "id": "media--remote_video--media_library--view",
     "resourceType": "media--remote_video",
   },
   "media--video--default--form": {
@@ -2196,6 +2344,7 @@ exports[`DruxtSchema get 1`] = `
             "loop": false,
             "multiple_file_display_type": "tags",
             "muted": false,
+            "playsinline": false,
             "width": 640,
           },
         },
@@ -2206,6 +2355,57 @@ exports[`DruxtSchema get 1`] = `
     ],
     "groups": [],
     "id": "media--video--default--view",
+    "resourceType": "media--video",
+  },
+  "media--video--media_library--form": {
+    "config": {
+      "bundle": "video",
+      "entityType": "media",
+      "filter": [],
+      "href": "/en/jsonapi/media/video",
+      "mode": "media_library",
+      "schemaType": "form",
+    },
+    "fields": [],
+    "groups": [],
+    "id": "media--video--media_library--form",
+    "resourceType": "media--video",
+  },
+  "media--video--media_library--view": {
+    "config": {
+      "bundle": "video",
+      "entityType": "media",
+      "filter": [],
+      "href": "/en/jsonapi/media/video",
+      "mode": "media_library",
+      "schemaType": "view",
+    },
+    "fields": [
+      {
+        "description": null,
+        "id": "thumbnail",
+        "label": {
+          "position": "hidden",
+          "text": null,
+        },
+        "required": false,
+        "settings": {
+          "config": {},
+          "display": {
+            "image_link": "",
+            "image_loading": {
+              "attribute": "lazy",
+            },
+            "image_style": "thumbnail",
+          },
+        },
+        "thirdPartySettings": [],
+        "type": "image",
+        "weight": 0,
+      },
+    ],
+    "groups": [],
+    "id": "media--video--media_library--view",
     "resourceType": "media--video",
   },
   "node--article--card--view": {
@@ -2380,89 +2580,6 @@ exports[`DruxtSchema get 1`] = `
       {
         "cardinality": 1,
         "description": "",
-        "id": "body",
-        "label": {
-          "position": null,
-          "text": "Body",
-        },
-        "required": false,
-        "settings": {
-          "config": {
-            "display_summary": true,
-            "required_summary": false,
-          },
-          "display": {
-            "placeholder": "",
-            "rows": 9,
-            "show_summary": false,
-            "summary_rows": 3,
-          },
-          "storage": [],
-        },
-        "thirdPartySettings": [],
-        "type": "text_textarea_with_summary",
-        "weight": 1,
-      },
-      {
-        "cardinality": null,
-        "description": null,
-        "id": "langcode",
-        "label": {
-          "position": null,
-          "text": null,
-        },
-        "required": false,
-        "settings": {
-          "config": {},
-          "display": {
-            "include_locked": true,
-          },
-          "storage": {},
-        },
-        "thirdPartySettings": [],
-        "type": "language_select",
-        "weight": 2,
-      },
-      {
-        "cardinality": -1,
-        "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
-        "id": "field_tags",
-        "label": {
-          "position": null,
-          "text": "Tags",
-        },
-        "required": false,
-        "settings": {
-          "config": {
-            "handler": "default:taxonomy_term",
-            "handler_settings": {
-              "auto_create": true,
-              "auto_create_bundle": "",
-              "sort": {
-                "field": "_none",
-              },
-              "target_bundles": {
-                "tags": "tags",
-              },
-            },
-          },
-          "display": {
-            "match_limit": 10,
-            "match_operator": "CONTAINS",
-            "placeholder": "",
-            "size": 60,
-          },
-          "storage": {
-            "target_type": "taxonomy_term",
-          },
-        },
-        "thirdPartySettings": [],
-        "type": "entity_reference_autocomplete_tags",
-        "weight": 3,
-      },
-      {
-        "cardinality": 1,
-        "description": "",
         "id": "field_media_image",
         "label": {
           "position": null,
@@ -2492,7 +2609,86 @@ exports[`DruxtSchema get 1`] = `
         },
         "thirdPartySettings": [],
         "type": "media_library_widget",
-        "weight": 5,
+        "weight": 1,
+      },
+      {
+        "cardinality": 1,
+        "description": "",
+        "id": "field_body",
+        "label": {
+          "position": null,
+          "text": "Body",
+        },
+        "required": false,
+        "settings": {
+          "config": {
+            "allowed_formats": [],
+          },
+          "display": {
+            "placeholder": "",
+            "rows": 9,
+          },
+          "storage": [],
+        },
+        "thirdPartySettings": [],
+        "type": "text_textarea",
+        "weight": 2,
+      },
+      {
+        "cardinality": null,
+        "description": null,
+        "id": "langcode",
+        "label": {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": {
+          "config": {},
+          "display": {
+            "include_locked": true,
+          },
+          "storage": {},
+        },
+        "thirdPartySettings": [],
+        "type": "language_select",
+        "weight": 3,
+      },
+      {
+        "cardinality": -1,
+        "description": "Enter a comma-separated list. For example: Vegetarian, Chocolate brownies, Appetizers",
+        "id": "field_tags",
+        "label": {
+          "position": null,
+          "text": "Tags",
+        },
+        "required": false,
+        "settings": {
+          "config": {
+            "handler": "default:taxonomy_term",
+            "handler_settings": {
+              "auto_create": true,
+              "sort": {
+                "field": "_none",
+              },
+              "target_bundles": {
+                "tags": "tags",
+              },
+            },
+          },
+          "display": {
+            "match_limit": 10,
+            "match_operator": "CONTAINS",
+            "placeholder": "",
+            "size": 60,
+          },
+          "storage": {
+            "target_type": "taxonomy_term",
+          },
+        },
+        "thirdPartySettings": [],
+        "type": "entity_reference_autocomplete_tags",
+        "weight": 4,
       },
       {
         "cardinality": null,
@@ -2677,7 +2873,6 @@ exports[`DruxtSchema get 1`] = `
             "handler": "default:taxonomy_term",
             "handler_settings": {
               "auto_create": true,
-              "auto_create_bundle": "",
               "sort": {
                 "field": "_none",
               },
@@ -2727,7 +2922,7 @@ exports[`DruxtSchema get 1`] = `
       },
       {
         "description": "",
-        "id": "body",
+        "id": "field_body",
         "label": {
           "position": "hidden",
           "text": "Body",
@@ -2735,8 +2930,7 @@ exports[`DruxtSchema get 1`] = `
         "required": false,
         "settings": {
           "config": {
-            "display_summary": true,
-            "required_summary": false,
+            "allowed_formats": [],
           },
           "display": [],
         },
@@ -2788,7 +2982,6 @@ exports[`DruxtSchema get 1`] = `
             "handler": "default:taxonomy_term",
             "handler_settings": {
               "auto_create": true,
-              "auto_create_bundle": "",
               "sort": {
                 "field": "_none",
               },
@@ -2838,7 +3031,7 @@ exports[`DruxtSchema get 1`] = `
       },
       {
         "description": "",
-        "id": "body",
+        "id": "field_body",
         "label": {
           "position": "hidden",
           "text": "Body",
@@ -2846,8 +3039,7 @@ exports[`DruxtSchema get 1`] = `
         "required": false,
         "settings": {
           "config": {
-            "display_summary": true,
-            "required_summary": false,
+            "allowed_formats": [],
           },
           "display": [],
         },
@@ -2966,7 +3158,7 @@ exports[`DruxtSchema get 1`] = `
       },
       {
         "description": "",
-        "id": "body",
+        "id": "field_body",
         "label": {
           "position": "hidden",
           "text": "Body",
@@ -2974,15 +3166,14 @@ exports[`DruxtSchema get 1`] = `
         "required": false,
         "settings": {
           "config": {
-            "display_summary": true,
-            "required_summary": false,
+            "allowed_formats": [],
           },
           "display": {
             "trim_length": 600,
           },
         },
         "thirdPartySettings": [],
-        "type": "text_summary_or_trimmed",
+        "type": "text_trimmed",
         "weight": 2,
       },
       {
@@ -2998,7 +3189,6 @@ exports[`DruxtSchema get 1`] = `
             "handler": "default:taxonomy_term",
             "handler_settings": {
               "auto_create": true,
-              "auto_create_bundle": "",
               "sort": {
                 "field": "_none",
               },
@@ -3131,46 +3321,6 @@ exports[`DruxtSchema get 1`] = `
       {
         "cardinality": null,
         "description": null,
-        "id": "promote",
-        "label": {
-          "position": null,
-          "text": null,
-        },
-        "required": false,
-        "settings": {
-          "config": {},
-          "display": {
-            "display_label": true,
-          },
-          "storage": {},
-        },
-        "thirdPartySettings": [],
-        "type": "boolean_checkbox",
-        "weight": 3,
-      },
-      {
-        "cardinality": null,
-        "description": null,
-        "id": "sticky",
-        "label": {
-          "position": null,
-          "text": null,
-        },
-        "required": false,
-        "settings": {
-          "config": {},
-          "display": {
-            "display_label": true,
-          },
-          "storage": {},
-        },
-        "thirdPartySettings": [],
-        "type": "boolean_checkbox",
-        "weight": 4,
-      },
-      {
-        "cardinality": null,
-        "description": null,
         "id": "path",
         "label": {
           "position": null,
@@ -3189,7 +3339,7 @@ exports[`DruxtSchema get 1`] = `
       {
         "cardinality": 1,
         "description": "",
-        "id": "body",
+        "id": "field_body",
         "label": {
           "position": null,
           "text": "Body",
@@ -3197,19 +3347,16 @@ exports[`DruxtSchema get 1`] = `
         "required": false,
         "settings": {
           "config": {
-            "display_summary": true,
-            "required_summary": false,
+            "allowed_formats": [],
           },
           "display": {
             "placeholder": "",
             "rows": 9,
-            "show_summary": false,
-            "summary_rows": 3,
           },
           "storage": [],
         },
         "thirdPartySettings": [],
-        "type": "text_textarea_with_summary",
+        "type": "text_textarea",
         "weight": 6,
       },
       {
@@ -3268,6 +3415,33 @@ exports[`DruxtSchema get 1`] = `
         "type": null,
         "weight": 10,
       },
+      {
+        "cardinality": 1,
+        "description": "",
+        "id": "body",
+        "label": {
+          "position": null,
+          "text": "Body",
+        },
+        "required": false,
+        "settings": {
+          "config": {
+            "allowed_formats": [],
+            "display_summary": true,
+            "required_summary": false,
+          },
+          "display": {
+            "placeholder": "",
+            "rows": 9,
+            "show_summary": false,
+            "summary_rows": 3,
+          },
+          "storage": [],
+        },
+        "thirdPartySettings": [],
+        "type": "text_textarea_with_summary",
+        "weight": 26,
+      },
     ],
     "groups": [],
     "id": "node--page--default--form",
@@ -3285,7 +3459,7 @@ exports[`DruxtSchema get 1`] = `
     "fields": [
       {
         "description": "",
-        "id": "body",
+        "id": "field_body",
         "label": {
           "position": "hidden",
           "text": "Body",
@@ -3293,8 +3467,92 @@ exports[`DruxtSchema get 1`] = `
         "required": false,
         "settings": {
           "config": {
+            "allowed_formats": [],
+          },
+          "display": [],
+        },
+        "thirdPartySettings": [],
+        "type": "text_default",
+        "weight": 0,
+      },
+      {
+        "description": null,
+        "id": "links",
+        "label": {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": {
+          "config": {},
+          "display": [],
+        },
+        "thirdPartySettings": [],
+        "type": null,
+        "weight": 1,
+      },
+      {
+        "description": null,
+        "id": "content_moderation_control",
+        "label": {
+          "position": null,
+          "text": null,
+        },
+        "required": false,
+        "settings": {
+          "config": {},
+          "display": [],
+        },
+        "thirdPartySettings": [],
+        "type": null,
+        "weight": 2,
+      },
+      {
+        "description": "",
+        "id": "body",
+        "label": {
+          "position": "above",
+          "text": "Body",
+        },
+        "required": false,
+        "settings": {
+          "config": {
+            "allowed_formats": [],
             "display_summary": true,
             "required_summary": false,
+          },
+          "display": [],
+        },
+        "thirdPartySettings": [],
+        "type": "text_default",
+        "weight": 3,
+      },
+    ],
+    "groups": [],
+    "id": "node--page--default--view",
+    "resourceType": "node--page",
+  },
+  "node--page--full--view": {
+    "config": {
+      "bundle": "page",
+      "entityType": "node",
+      "filter": [],
+      "href": "/en/jsonapi/node/page",
+      "mode": "full",
+      "schemaType": "view",
+    },
+    "fields": [
+      {
+        "description": "",
+        "id": "field_body",
+        "label": {
+          "position": "hidden",
+          "text": "Body",
+        },
+        "required": false,
+        "settings": {
+          "config": {
+            "allowed_formats": [],
           },
           "display": [],
         },
@@ -3336,7 +3594,7 @@ exports[`DruxtSchema get 1`] = `
       },
     ],
     "groups": [],
-    "id": "node--page--default--view",
+    "id": "node--page--full--view",
     "resourceType": "node--page",
   },
   "node--page--teaser--view": {
@@ -3351,7 +3609,7 @@ exports[`DruxtSchema get 1`] = `
     "fields": [
       {
         "description": "",
-        "id": "body",
+        "id": "field_body",
         "label": {
           "position": "hidden",
           "text": "Body",
@@ -3359,15 +3617,14 @@ exports[`DruxtSchema get 1`] = `
         "required": false,
         "settings": {
           "config": {
-            "display_summary": true,
-            "required_summary": false,
+            "allowed_formats": [],
           },
           "display": {
             "trim_length": 600,
           },
         },
         "thirdPartySettings": [],
-        "type": "text_summary_or_trimmed",
+        "type": "text_trimmed",
         "weight": 100,
       },
       {
@@ -3729,18 +3986,13 @@ exports[`DruxtSchema get 1`] = `
               },
             },
           },
-          "display": {
-            "match_limit": 10,
-            "match_operator": "CONTAINS",
-            "placeholder": "",
-            "size": 60,
-          },
+          "display": [],
           "storage": {
             "target_type": "taxonomy_term",
           },
         },
         "thirdPartySettings": [],
-        "type": "entity_reference_autocomplete_tags",
+        "type": "options_buttons",
         "weight": 6,
       },
       {
@@ -3757,7 +4009,6 @@ exports[`DruxtSchema get 1`] = `
             "handler": "default:taxonomy_term",
             "handler_settings": {
               "auto_create": true,
-              "auto_create_bundle": "",
               "sort": {
                 "direction": "asc",
                 "field": "name",
@@ -3825,7 +4076,9 @@ exports[`DruxtSchema get 1`] = `
         },
         "required": true,
         "settings": {
-          "config": [],
+          "config": {
+            "allowed_formats": [],
+          },
           "display": {
             "placeholder": "",
             "rows": 5,
@@ -3885,11 +4138,13 @@ exports[`DruxtSchema get 1`] = `
         "id": "field_recipe_instruction",
         "label": {
           "position": null,
-          "text": "Recipe instruction",
+          "text": "Directions",
         },
         "required": true,
         "settings": {
-          "config": [],
+          "config": {
+            "allowed_formats": [],
+          },
           "display": {
             "placeholder": "",
             "rows": 5,
@@ -4037,24 +4292,6 @@ exports[`DruxtSchema get 1`] = `
         "type": "moderation_state_default",
         "weight": 20,
       },
-      {
-        "cardinality": 1,
-        "description": "",
-        "id": "layout_builder__layout",
-        "label": {
-          "position": null,
-          "text": "Layout",
-        },
-        "required": false,
-        "settings": {
-          "config": [],
-          "display": [],
-          "storage": [],
-        },
-        "thirdPartySettings": [],
-        "type": null,
-        "weight": 26,
-      },
     ],
     "groups": [],
     "id": "node--recipe--default--form",
@@ -4079,7 +4316,9 @@ exports[`DruxtSchema get 1`] = `
         },
         "required": true,
         "settings": {
-          "config": [],
+          "config": {
+            "allowed_formats": [],
+          },
           "display": [],
         },
         "thirdPartySettings": [],
@@ -4130,7 +4369,6 @@ exports[`DruxtSchema get 1`] = `
             "handler": "default:taxonomy_term",
             "handler_settings": {
               "auto_create": true,
-              "auto_create_bundle": "",
               "sort": {
                 "direction": "asc",
                 "field": "name",
@@ -4290,11 +4528,13 @@ exports[`DruxtSchema get 1`] = `
         "id": "field_recipe_instruction",
         "label": {
           "position": "above",
-          "text": "Recipe instruction",
+          "text": "Directions",
         },
         "required": true,
         "settings": {
-          "config": [],
+          "config": {
+            "allowed_formats": [],
+          },
           "display": [],
         },
         "thirdPartySettings": [],
@@ -4341,7 +4581,9 @@ exports[`DruxtSchema get 1`] = `
         },
         "required": true,
         "settings": {
-          "config": [],
+          "config": {
+            "allowed_formats": [],
+          },
           "display": [],
         },
         "thirdPartySettings": [],
@@ -4392,7 +4634,6 @@ exports[`DruxtSchema get 1`] = `
             "handler": "default:taxonomy_term",
             "handler_settings": {
               "auto_create": true,
-              "auto_create_bundle": "",
               "sort": {
                 "direction": "asc",
                 "field": "name",
@@ -4521,11 +4762,13 @@ exports[`DruxtSchema get 1`] = `
         "id": "field_recipe_instruction",
         "label": {
           "position": "above",
-          "text": "Recipe instruction",
+          "text": "Directions",
         },
         "required": true,
         "settings": {
-          "config": [],
+          "config": {
+            "allowed_formats": [],
+          },
           "display": [],
         },
         "thirdPartySettings": [],
@@ -4676,7 +4919,7 @@ exports[`DruxtSchema get 1`] = `
               "width": null,
             },
             "file_directory": "pictures/[date:custom:Y]-[date:custom:m]",
-            "file_extensions": "png gif jpg jpeg",
+            "file_extensions": "png gif jpg jpeg webp",
             "handler": "default:file",
             "handler_settings": [],
             "max_filesize": "",
@@ -4687,6 +4930,9 @@ exports[`DruxtSchema get 1`] = `
           },
           "display": {
             "image_link": "content",
+            "image_loading": {
+              "attribute": "lazy",
+            },
             "image_style": "thumbnail",
           },
         },
@@ -4748,7 +4994,7 @@ exports[`DruxtSchema get 1`] = `
               "width": null,
             },
             "file_directory": "pictures/[date:custom:Y]-[date:custom:m]",
-            "file_extensions": "png gif jpg jpeg",
+            "file_extensions": "png gif jpg jpeg webp",
             "handler": "default:file",
             "handler_settings": [],
             "max_filesize": "",
@@ -4868,7 +5114,7 @@ exports[`DruxtSchema get 1`] = `
               "width": null,
             },
             "file_directory": "pictures/[date:custom:Y]-[date:custom:m]",
-            "file_extensions": "png gif jpg jpeg",
+            "file_extensions": "png gif jpg jpeg webp",
             "handler": "default:file",
             "handler_settings": [],
             "max_filesize": "",
@@ -4879,6 +5125,9 @@ exports[`DruxtSchema get 1`] = `
           },
           "display": {
             "image_link": "content",
+            "image_loading": {
+              "attribute": "lazy",
+            },
             "image_style": "thumbnail",
           },
         },
