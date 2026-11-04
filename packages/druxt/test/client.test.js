@@ -256,13 +256,25 @@ describe('DruxtClient', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi', undefined)
 
-    expect(Object.keys(index).length).toBe(64)
-    expect(index[Object.keys(index)[0]]).toHaveProperty('href')
+    // A total is a magic number: it moves with the backend, and with the
+    // preset once this runs against the mock. The index is the endpoint's own
+    // links with the base URL stripped, so the source says what belongs in it.
+    // Reading it from the call the client already made keeps the call count
+    // above true. A shape check alone would pass a truncated index.
+    const { data } = await mockAxios.get.mock.results[0].value
+    expect(Object.keys(index)).toStrictEqual(Object.keys(data.links))
+    expect(Object.values(index).filter((entry) => typeof entry.href !== 'string')).toStrictEqual([])
+
+    // The cached call hands back the stored object itself, so the keys have to
+    // be taken now. Comparing the two returned values after the second call
+    // reads one object twice, and passes whatever the call did to it.
+    const keys = Object.keys(index)
 
     const cachedIndex = await druxt.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
-    expect(Object.keys(cachedIndex).length).toBe(64)
+    // The cached call has to return the same index, not one the same size.
+    expect(Object.keys(cachedIndex)).toStrictEqual(keys)
 
     // Simulate broken index.
     delete druxt.index
@@ -304,10 +316,14 @@ describe('DruxtClient', () => {
     await druxt.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
 
+    // Both clients end up holding the one cached object, so the copy to
+    // compare against has to be taken before the second client asks for it.
+    const shared = { ...druxt.index[undefined] }
+
     // A second client with the same base URL reuses the cached index.
     await clientB.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(Object.keys(clientB.index[undefined]).length).toBe(64)
+    expect(clientB.index[undefined]).toStrictEqual(shared)
 
     // A client with a different base URL fetches its own index.
     const clientC = new DruxtClient('https://other.example.com')
@@ -326,6 +342,8 @@ describe('DruxtClient', () => {
 
     // Another Axios instance carries its own credentials, so its client
     // fetches its own index rather than reusing the shared one.
+    const sharedBefore = { ...druxt.index[undefined] }
+
     const ownAxios = jest.fn()
     ownAxios.get = jest.fn(async () => ({ data: { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } } }))
     const clientE = new DruxtClient(baseUrl, { axios: ownAxios })
@@ -333,7 +351,10 @@ describe('DruxtClient', () => {
     expect(ownAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(Object.keys(index)).toStrictEqual(['node--page'])
-    expect(Object.keys(druxt.index[undefined]).length).toBe(64)
+    // The shared index is untouched by the other instance's own one. Comparing
+    // it with the copy taken above says that, where a count or a difference
+    // from the other index would also pass had entries been dropped.
+    expect(druxt.index[undefined]).toStrictEqual(sharedBefore)
   })
 
   test('getIndex - concurrent requests share one fetch', async () => {
@@ -341,7 +362,10 @@ describe('DruxtClient', () => {
 
     await Promise.all([druxt.getIndex(), clientB.getIndex(), druxt.getIndex()])
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(Object.keys(clientB.index[undefined]).length).toBe(64)
+    // The clients share the one object, so the other client's index is not an
+    // independent source. The response the fetch returned is.
+    const { data } = await mockAxios.get.mock.results[0].value
+    expect(Object.keys(clientB.index[undefined])).toStrictEqual(Object.keys(data.links))
   })
 
   test('getRelated', async () => {
