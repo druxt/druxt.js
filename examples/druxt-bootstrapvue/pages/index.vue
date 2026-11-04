@@ -359,7 +359,7 @@ export default {
         'changed',
         'field_difficulty',
         'field_preparation_time',
-        'field_summary',
+        'field_recipe_instruction',
         'field_recipe_category',
       ])
       .addInclude(['field_recipe_category'])
@@ -368,7 +368,7 @@ export default {
 
     const articleParams = new DrupalJsonApiParams()
       .addFilter('status', '1')
-      .addFields('node--article', ['title', 'changed', 'body', 'field_tags'])
+      .addFields('node--article', ['title', 'changed', 'field_body', 'field_tags'])
       .addInclude(['field_tags'])
       .addFields('taxonomy_term--tags', ['name'])
       .addPageLimit(50)
@@ -459,7 +459,7 @@ export default {
             category,
             difficulty: r.attributes.field_difficulty || '',
             prep: r.attributes.field_preparation_time,
-            words: words(r.attributes.field_summary),
+            words: words((r.attributes.field_recipe_instruction || {}).value),
             changed: r.attributes.changed,
             updated: this.fmtDate(r.attributes.changed),
             editable: true,
@@ -473,7 +473,7 @@ export default {
           category: (this.names(a.relationships.field_tags) || []).filter(Boolean).join(', '),
           difficulty: null,
           prep: null,
-          words: words((a.attributes.body || {}).value),
+          words: words((a.attributes.field_body || {}).value),
           changed: a.attributes.changed,
           updated: this.fmtDate(a.attributes.changed),
           editable: false,
