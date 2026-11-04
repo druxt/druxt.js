@@ -1,0 +1,64 @@
+name: Feature request
+description: Something you would like Druxt to do that it can't today.
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Feature requests are read and triaged. The 0.x line is scoped to stability, so new
+        features are planned for 2.x. See
+        [support and versioning](https://druxtjs.org/explanation/support-and-versioning).
+
+        Before you ask, check whether Druxt already does it. An AI tool connected to the
+        [Druxt docs MCP server](https://druxtjs.org/mcp) can search the documentation for you.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: The Druxt package it belongs in, if you know.
+      multiple: true
+      options:
+        - druxt
+        - druxt-blocks
+        - druxt-breadcrumb
+        - druxt-entity
+        - druxt-menu
+        - druxt-router
+        - druxt-schema
+        - druxt-site
+        - druxt-views
+        - A new package
+        - Not sure
+    validations:
+      required: false
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: >
+        What are you trying to do that you can't do today? Describe the situation rather than
+        the solution you have in mind.
+      placeholder: As a site builder, I want to ... so that ...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like
+      description: How you imagine it working. A code sample of the component or option you'd use helps.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you have tried instead
+      description: Workarounds, a custom wrapper component, another module.
+    validations:
+      required: false
+  - type: textarea
+    id: drupal
+    attributes:
+      label: Drupal side
+      description: Does it need a Drupal module, a patch, or configuration? Link the drupal.org project or issue.
+    validations:
+      required: false

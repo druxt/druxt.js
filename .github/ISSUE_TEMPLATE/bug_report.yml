@@ -1,0 +1,112 @@
+name: Bug report
+description: A Druxt package does not work the way its documentation says, or the way a previous release did.
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. For a security problem, do not use this form. Report it privately at
+        https://github.com/druxt/druxt.js/security/advisories/new instead.
+
+        **Not sure it's a Druxt bug?** It may be configuration, or a Drupal module such as
+        `druxt`, `decoupled_router`, `jsonapi_views` or `jsonapi_menu_items`, which are on
+        [drupal.org](https://www.drupal.org/project/issues/druxt). An AI tool connected to the
+        [Druxt docs MCP server](https://druxtjs.org/mcp) can help you tell. Paste it this prompt,
+        with what you see in place of the last line:
+
+        ```text
+        I'm using Druxt, the decoupled Drupal and Nuxt framework. Using the Druxt docs MCP
+        server, help me work out whether this is a bug in a Druxt package, a configuration
+        problem, or an issue in a Drupal module. Tell me which package it belongs to, and
+        help me find the smallest steps that reproduce it. Then draft a bug report with what
+        happened, what I expected, the steps, the versions of the Druxt packages, Nuxt,
+        Drupal, the Drupal modules and Node, and any errors.
+
+        Here is what I see: ...
+        ```
+
+        Check the report it drafts against what you actually saw before you submit it.
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: The Druxt package the problem shows up in. Pick "Not sure" if you can't tell.
+      multiple: true
+      options:
+        - druxt
+        - druxt-blocks
+        - druxt-breadcrumb
+        - druxt-entity
+        - druxt-menu
+        - druxt-router
+        - druxt-schema
+        - druxt-site
+        - druxt-views
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw. Include the component or store action involved if you know it.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: What should have happened, and where that behaviour is documented or worked before.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: >
+        The smallest set of steps that shows the problem. A repository or a starter kit that
+        reproduces it is the fastest route to a fix. Include the Druxt part of your
+        `nuxt.config.js` if it matters.
+      placeholder: |
+        1. Install ...
+        2. Add to nuxt.config.js ...
+        3. Visit ...
+        4. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: versions
+    attributes:
+      label: Versions
+      description: >
+        The Druxt packages, Nuxt, Drupal, the Drupal modules Druxt uses, Node and the package
+        manager. `npm ls --depth=0` and `drush pm:list --status=enabled` list most of them.
+      placeholder: |
+        druxt: 0.25.1
+        druxt-site: 0.15.1
+        nuxt: 2.18.1
+        drupal/core: 11.2.5
+        drupal/druxt: 1.3.1
+        drupal/decoupled_router: 2.0.7
+        node: 16.20.2
+        npm: 8.19.4
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or errors
+      description: Browser console, Nuxt server output, or the Drupal log. The JSON:API response involved helps too.
+      render: shell
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I searched the open and closed issues and found no report of this.
+          required: true
+        - label: An AI tool helped write this report, and I checked it against what I saw.
+          required: false
