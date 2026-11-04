@@ -6,7 +6,7 @@
     <SchemaComponent
       type="node--page"
       :data="{
-        body: 'This body text comes from a plain JavaScript object. DruxtSchemaMixin only needs display-mode configuration and a data source, not JSON:API.',
+        field_body: 'This body text comes from a plain JavaScript object. DruxtSchemaMixin only needs display-mode configuration and a data source, not JSON:API.',
         links: ['https://druxtjs.org']
       }"
     />
