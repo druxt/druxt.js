@@ -8,24 +8,21 @@ body:
         Thanks for reporting. For a security problem, do not use this form. Report it privately at
         https://github.com/druxt/druxt.js/security/advisories/new instead.
 
-        **Not sure it's a Druxt bug?** It may be configuration, or a Drupal module such as
-        `druxt`, `decoupled_router`, `jsonapi_views` or `jsonapi_menu_items`, which are on
-        [drupal.org](https://www.drupal.org/project/issues/druxt). An AI tool connected to the
-        [Druxt docs MCP server](https://druxtjs.org/mcp) can help you tell. Paste it this prompt,
-        with what you see in place of the last line:
+        **Not sure it's a Druxt bug?** Many reports turn out to be configuration, or a Drupal
+        module such as `decoupled_router`, which is fixed on drupal.org instead. To check first,
+        connect your AI tool to the [Druxt docs MCP server](https://druxtjs.org/mcp) and paste:
 
         ```text
-        I'm using Druxt, the decoupled Drupal and Nuxt framework. Using the Druxt docs MCP
-        server, help me work out whether this is a bug in a Druxt package, a configuration
-        problem, or an issue in a Drupal module. Tell me which package it belongs to, and
-        help me find the smallest steps that reproduce it. Then draft a bug report with what
-        happened, what I expected, the steps, the versions of the Druxt packages, Nuxt,
-        Drupal, the Drupal modules and Node, and any errors.
+        Check this against the Druxt docs before I report it as a bug.
+        1. Is it documented behaviour or a configuration mistake? Link the page.
+        2. If not, which Druxt package, or which Drupal module, does it belong to?
+        3. What are the smallest steps that reproduce it?
+        Ask me for anything you need. Be brief. Don't write the issue.
 
-        Here is what I see: ...
+        What I see:
         ```
 
-        Check the report it drafts against what you actually saw before you submit it.
+        Then fill in this form yourself, with what you saw.
   - type: dropdown
     id: package
     attributes:
@@ -108,5 +105,5 @@ body:
       options:
         - label: I searched the open and closed issues and found no report of this.
           required: true
-        - label: An AI tool helped write this report, and I checked it against what I saw.
+        - label: I used an AI tool to look into this, and I have checked every detail in this report myself.
           required: false
