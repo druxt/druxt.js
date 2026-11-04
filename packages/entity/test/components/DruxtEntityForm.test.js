@@ -170,7 +170,9 @@ describe('DruxtEntityForm', () => {
 
     expect(wrapper.emitted().submit).toBeFalsy()
     expect(wrapper.emitted().error).toBeTruthy()
-    expect(wrapper.vm.errors.length).toBeGreaterThan(0)
+    // The status, not the count: a missing required field is also an error
+    // with a non-empty list, and this test is about the refusal.
+    expect(wrapper.vm.errors.map((error) => error.status)).toStrictEqual(['403'])
   })
 
   test('edit', async () => {
