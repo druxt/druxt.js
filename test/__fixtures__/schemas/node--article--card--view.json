@@ -41,6 +41,6 @@
   "mode": "card",
   "schemaType": "view",
   "filter": [],
-  "href": "http://demo-api-druxtjs-org.lndo.site/en/jsonapi/node/article"
+  "href": "/en/jsonapi/node/article"
  }
 }

@@ -1,5 +1,6 @@
 import 'regenerator-runtime/runtime'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
@@ -49,6 +50,13 @@ describe('DruxtView', () => {
   })
 
   test('featured_articles', async () => {
+    // One of the component names below is built from the view's uuid, which
+    // belongs to the install. It is read here, before the component fetches,
+    // and taken out of the snapshot.
+    const viewQuery = new DrupalJsonApiParams().addFilter('drupal_internal__id', 'featured_articles')
+    const mockView = await getMockResource('view--view', viewQuery)
+    const viewUuid = mockView.data.id.replace(/-/g, '')
+
     const wrapper = mountComponent({
       displayId: 'page_1',
       viewId: 'featured_articles'
@@ -104,7 +112,7 @@ describe('DruxtView', () => {
 
     // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
-    expect(wrapper.vm.component.options).toMatchSnapshot()
+    expect(wrapper.vm.component.options.map((option) => option.replace(new RegExp(viewUuid, 'i'), '{uuid}'))).toMatchSnapshot()
 
     // Query.
     await wrapper.setProps({ arguments: [1, 2, 3] })
@@ -228,7 +236,7 @@ describe('DruxtView', () => {
   })
 
   test('v-model', () => {
-    const h = jest.fn((tag, options, children) => {
+    const h = jest.fn((tag, options) => {
       options.on.input.call(mock, options.attrs.mock)
     })
     const mock = {

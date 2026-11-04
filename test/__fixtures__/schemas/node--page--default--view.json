@@ -3,7 +3,7 @@
  "resourceType": "node--page",
  "fields": [
   {
-   "id": "body",
+   "id": "field_body",
    "description": "",
    "label": {
     "text": "Body",
@@ -14,8 +14,7 @@
    "weight": 0,
    "settings": {
     "config": {
-     "display_summary": true,
-     "required_summary": false
+     "allowed_formats": []
     },
     "display": []
    },
@@ -52,6 +51,26 @@
     "display": []
    },
    "thirdPartySettings": []
+  },
+  {
+   "id": "body",
+   "description": "",
+   "label": {
+    "text": "Body",
+    "position": "above"
+   },
+   "required": false,
+   "type": "text_default",
+   "weight": 3,
+   "settings": {
+    "config": {
+     "display_summary": true,
+     "required_summary": false,
+     "allowed_formats": []
+    },
+    "display": []
+   },
+   "thirdPartySettings": []
   }
  ],
  "groups": [],
@@ -61,6 +80,6 @@
   "mode": "default",
   "schemaType": "view",
   "filter": [],
-  "href": "http://demo-api-druxtjs-org.lndo.site/en/jsonapi/node/page"
+  "href": "/en/jsonapi/node/page"
  }
 }

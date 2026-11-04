@@ -128,7 +128,6 @@ describe('DruxtClient', () => {
   })
 
   test('createResource', async () => {
-    let response
     const headers = {
       'Content-Type': 'application/vnd.api+json'
     }
@@ -136,48 +135,50 @@ describe('DruxtClient', () => {
     // Expect invalid resource to return false.
     expect((await druxt.createResource({}))).toBe(false)
 
-    // Create a Feedback Contact message resource without require data.
-    const data = { type: 'contact_message--feedback' }
+    // The stock umami this runs against has no contact form, so the writes go
+    // through a node, and the engine enforces the permission for one.
+    mockAxios.__signIn('author')
+
+    // Create a node without the data it requires.
+    const data = { type: 'node--page' }
+    let error
     try {
       await druxt.createResource(data)
     } catch(err) {
-      expect(err.response.data.errors[0]).toMatchSnapshot()
-      expect(err.response.data.errors.length).toBe(2)
+      error = err
     }
+    // Asserted outside the catch, so a create that unexpectedly succeeded
+    // fails the test rather than skipping it.
+    expect(error).toBeDefined()
+    expect(error.response.status).toBe(422)
+    expect(error.response.data.errors[0].detail).toMatchSnapshot()
     expect(mockAxios.post).toHaveBeenCalledWith(
-      `/en/jsonapi/contact_message/feedback`,
+      `/en/jsonapi/node/page`,
       { data },
       { headers }
     )
     mockAxios.reset()
 
     // Create resource with required data.
-    data.attributes = {
-      subject: 'Subject',
-      message: 'Test'
-    }
-    response = await druxt.createResource(data)
+    data.attributes = { title: 'Test' }
+    const response = await druxt.createResource(data)
     expect(mockAxios.post).toHaveBeenCalledWith(
-      `/en/jsonapi/contact_message/feedback`,
+      `/en/jsonapi/node/page`,
       { data },
       { headers }
     )
     expect(response.errors).toBe(undefined)
-    expect(response.status).toBe(200)
-    expect(response.data.data.attributes.subject).toBe(data.attributes.subject)
-    expect(response.data.data.attributes.message).toBe(data.attributes.message)
+    expect(response.status).toBe(201)
+    expect(response.data.data.attributes.title).toBe(data.attributes.title)
     mockAxios.reset()
 
-    // Update resource.
-    try {
-      await druxt.createResource(response.data.data)
-    } catch(err) {
-      expect(mockAxios.patch).toHaveBeenCalledWith(
-        `/en/jsonapi/contact_message/feedback/${response.data.data.id}`,
-        { data: response.data.data },
-        { headers }
-      )
-    }
+    // A resource that already has an id is sent as an update.
+    await druxt.createResource(response.data.data).catch(() => {})
+    expect(mockAxios.patch).toHaveBeenCalledWith(
+      `/en/jsonapi/node/page/${response.data.data.id}`,
+      { data: response.data.data },
+      { headers }
+    )
   })
 
   test('error', () => {
@@ -422,7 +423,12 @@ describe('DruxtClient', () => {
     try {
       await druxt.getResource('node--article', 'missing')
     } catch(err) {
-      expect(err.response.data.errors[0]).toMatchSnapshot()
+      const [error] = err.response.data.errors
+      // Drupal's own wording for a parameter it could not convert, and a link
+      // back to the request. A snapshot of the whole error also pinned the RFC
+      // link in `links.info`, which moves with the Drupal version.
+      expect(error.detail).toMatchSnapshot()
+      expect(error.links.via.href).toBe(`${baseUrl}/en/jsonapi/node/article/missing`)
     }
     expect(mockAxios.get).toHaveBeenCalledWith(`/en/jsonapi/node/article/missing`, undefined)
 

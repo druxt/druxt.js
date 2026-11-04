@@ -292,13 +292,36 @@ describe('DruxtRouter', () => {
       expect(err.response.data.message).toBe('Unable to resolve path /error.')
     }
 
-    // Test against a backend without the Decoupled Router installed.
-    // Note: Test data has was created against a modified backend.
-    const brokenRouter = new DruxtRouter('https://example.com', {})
+    // A backend without the Decoupled Router installed answers the router path
+    // with Drupal's own HTML 404 rather than a router document, and the client
+    // says so instead of passing the page on. The stub states that case
+    // directly: the recording it used to read carried one site's rendering of
+    // that page, and the engine answers the path like any other 404.
+    //
+    // The response resolves rather than rejects, because the router asks for
+    // anything under 500, and it is handed over inside a client, because the
+    // router's own `axios` option is settings for an instance it creates. The
+    // client takes an instance only when it is a function.
+    const brokenAxios = jest.fn()
+    brokenAxios.get = jest.fn(async () => ({
+      status: 404,
+      statusText: 'Not Found',
+      headers: { 'content-type': 'text/html; charset=UTF-8' },
+      data: '<html><body>The requested page could not be found.</body></html>',
+    }))
+    const brokenRouter = new DruxtRouter('https://example.com', {
+      druxtClient: new (require('druxt').DruxtClient)('https://example.com', { axios: brokenAxios }),
+    })
+    let brokenError
     try {
       await brokenRouter.getRoute('/broken-router')
     } catch(err) {
-      expect(err.response).toMatchSnapshot()
+      brokenError = err
     }
+    expect(brokenAxios.get).toHaveBeenCalled()
+    expect(brokenError).toBeDefined()
+    expect(brokenError.response.status).toBe(404)
+    expect(brokenError.response.data.errors[0].detail)
+      .toBe('Please ensure the Decoupled Router module is installed and configured correctly.')
   })
 })
