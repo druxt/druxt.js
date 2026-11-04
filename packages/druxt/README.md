@@ -66,7 +66,7 @@ As of September 2026. See the [releases](https://github.com/druxt/druxt.js/relea
 | Node          | 16, the tested version. Node 16 is past upstream end of life. The 1.x line targets it deliberately. 17 and later need `NODE_OPTIONS=--openssl-legacy-provider` to build.                                              |
 | Drupal core   | 10 or 11. `drupal/druxt` 1.2.2 declares `^10 \|\| ^11 \|\| ^12` and ended 8 and 9 support. 12 is declared but waits on Decoupled Router and JSON:API Menu Items. Tested against 10 and 11.                            |
 | Drupal module | `drupal/druxt` ^1.2.2, which brings `decoupled_router`, `jsonapi_menu_items` and `jsonapi_views`. Earlier 1.2.x releases are incompatible with Decoupled Router 2.0.7 ([#3618675](https://www.drupal.org/i/3618675)). |
-| Known pins    | `@nuxtjs/storybook` 4.2.0 (later majors need Nuxt 3). Axios 0.x, or add it to `build.transpile`                                                                                                                       |
+| Known pins    | `@nuxtjs/storybook` 4.2.0 (later majors need Nuxt 3). Axios 0.34.0 or later, which the site installs as a peer                                                                                                        |
 
 What these bounds promise over time is stated in the
 [support and versioning policy](https://druxtjs.org/explanation/support-and-versioning).
