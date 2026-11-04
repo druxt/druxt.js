@@ -151,12 +151,30 @@ describe('DruxtClient', () => {
     // fails the test rather than skipping it.
     expect(error).toBeDefined()
     expect(error.response.status).toBe(422)
-    expect(error.response.data.errors[0].detail).toMatchSnapshot()
+    const [violation] = error.response.data.errors
+    expect(violation.detail).toMatchSnapshot()
+    expect(violation.source.pointer).toBe('/data/attributes/title')
+    // Not the reason phrase: RFC 9110 renamed 422 from "Unprocessable Entity"
+    // to "Unprocessable Content", so it follows the Drupal version.
+    expect(violation.status).toBe('422')
     expect(mockAxios.post).toHaveBeenCalledWith(
       `/en/jsonapi/node/page`,
       { data },
       { headers }
     )
+    mockAxios.reset()
+
+    // A resource missing several required fields reports each violation, not
+    // just the first. umami's recipe has enough of them to show that; the
+    // count itself belongs to the content type, so only the plural matters.
+    let violations
+    try {
+      await druxt.createResource({ type: 'node--recipe' })
+    } catch(err) {
+      violations = err.response.data.errors
+    }
+    expect(violations.length).toBeGreaterThan(1)
+    expect(violations.filter((item) => !(item.source || {}).pointer)).toStrictEqual([])
     mockAxios.reset()
 
     // Create resource with required data.
