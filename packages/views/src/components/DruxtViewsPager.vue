@@ -65,6 +65,11 @@ export default {
   watch: {
     model(to, from) {
       if (to !== from) {
+        /**
+         * Emitted with the new page number when the reader changes page, so `v-model` stays in step.
+         *
+         * @type {number}
+         */
         this.$emit('input', this.model)
       }
     }

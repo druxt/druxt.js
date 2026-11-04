@@ -245,6 +245,70 @@ describe('DruxtDocgen', () => {
       expect(templateData.map((o) => o.id)).toContain('module:DruxtTest.props')
     })
 
+    test('injects events from vue-docgen-api under an events container', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [],
+        events: [
+          { name: 'submit', description: 'Emitted on submit.', type: { names: ['object'] } },
+          { name: 'reset', description: 'Emitted on reset.' },
+          { name: 'input', type: { names: ['undefined'] }, properties: [{ name: 'value', description: 'The value.', type: { names: ['string'] } }] },
+        ]
+      })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData.find((item) => item.id === 'module:DruxtTest.events')).toMatchObject({
+        kind: 'member',
+        scope: 'static',
+        memberof: 'module:DruxtTest',
+      })
+      expect(templateData.find((item) => item.id === 'module:DruxtTest.events.submit')).toMatchObject({
+        name: 'submit',
+        kind: 'member',
+        scope: 'static',
+        description: 'Emitted on submit.',
+        memberof: 'module:DruxtTest.events',
+        type: { names: ['object'] },
+      })
+      // No payload, and an undocumented payload, both render untyped.
+      expect(templateData.find((item) => item.id === 'module:DruxtTest.events.reset').type).toBeUndefined()
+      const input = templateData.find((item) => item.id === 'module:DruxtTest.events.input')
+      expect(input.type).toBeUndefined()
+      expect(input.properties).toStrictEqual([{ name: 'value', description: 'The value.', type: { names: ['string'] } }])
+    })
+
+    test('does not duplicate events already present in templateData', async () => {
+      vueDocs.parse.mockResolvedValueOnce({
+        displayName: 'DruxtTest',
+        props: [],
+        events: [{ name: 'submit', description: 'Emitted on submit.' }]
+      })
+
+      const templateData = [
+        { id: 'module:DruxtTest', memberof: null },
+        { id: 'module:DruxtTest.events', name: 'events' },
+        { id: 'module:DruxtTest.events.submit', name: 'submit' }
+      ]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData.filter((item) => item.id === 'module:DruxtTest.events.submit')).toHaveLength(1)
+      expect(templateData.filter((item) => item.id === 'module:DruxtTest.events')).toHaveLength(1)
+    })
+
+    test('adds no events container for a component that emits nothing', async () => {
+      vueDocs.parse.mockResolvedValueOnce({ displayName: 'DruxtTest', props: [] })
+
+      const templateData = [{ id: 'module:DruxtTest', memberof: null }]
+
+      await docgen.processVue('src/components/DruxtTest.vue', templateData)
+
+      expect(templateData.map((o) => o.id)).not.toContain('module:DruxtTest.events')
+    })
+
     test('injects inherited members from resolved extends/mixins sources', async () => {
       vueDocs.parse.mockResolvedValueOnce({ displayName: 'DruxtTest', props: [] })
       fs.existsSync.mockReturnValueOnce(true)

@@ -43,7 +43,21 @@ export default {
             on: {
               click: (e) => {
                 e.preventDefault()
-                this.$emit(button, this.model)
+                if (button === 'submit') {
+                  /**
+                   * Emitted with the form's current value when the Submit button is pressed.
+                   *
+                   * @type {object}
+                   */
+                  this.$emit('submit', this.model)
+                } else {
+                  /**
+                   * Emitted with the form's current value when the Reset button is pressed.
+                   *
+                   * @type {object}
+                   */
+                  this.$emit('reset', this.model)
+                }
               }
             }
           },

@@ -100,6 +100,9 @@ export default {
     onReset() {
       this.model = JSON.parse(JSON.stringify(this.entity)),
       this.response = undefined
+      /**
+       * Emitted after the form is put back to the stored entity.
+       */
       this.$emit('reset')
     },
 
@@ -123,10 +126,20 @@ export default {
         const resource = this.response.data.data
         // Update the Vuex store.
         this.$store.commit('druxt/addResource', { resource })
+        /**
+         * Emitted with the saved JSON:API resource once Drupal accepts the submission.
+         *
+         * @type {object}
+         */
         this.$emit('submit', resource)
       } catch (err) {
         // Network-level failures reject without a response object.
         this.response = (err.response || {}).data
+        /**
+         * Emitted when the submission fails, with Drupal's JSON:API error document, or `undefined` when no response arrived.
+         *
+         * @type {object}
+         */
         this.$emit('error', this.response)
       }
 
