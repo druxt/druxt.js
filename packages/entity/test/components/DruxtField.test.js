@@ -79,7 +79,7 @@ describe('DruxtField', () => {
     const mockPage = await getMockResource('node--page')
     const wrapper = await mountComponent({
       entity: mockPage.data,
-      field: 'body',
+      field: 'field_body',
       uuid: mockPage.data.id,
     })
 
@@ -91,7 +91,7 @@ describe('DruxtField', () => {
     expect(wrapper.vm.value).toStrictEqual(expect.any(Object))
 
     // Fetch key.
-    expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:body:0')
+    expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:field_body:0')
 
     // Data.
     expect(wrapper.vm.model).toStrictEqual(wrapper.vm.value)
@@ -159,7 +159,7 @@ describe('DruxtField', () => {
     slots.default({})
   })
 
-  test('body - view', async () => {
+  test('field_body - view', async () => {
     // Register custom wrapper component.
     localVue.component('DruxtFieldTextDefault', {
       render(h) {
@@ -170,12 +170,12 @@ describe('DruxtField', () => {
     const mockPage = await getMockResource('node--page')
     const wrapper = await mountComponent({
       entity: mockPage.data,
-      field: 'body',
+      field: 'field_body',
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:body:0')
+    expect(DruxtField.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtField:field_body:0')
 
     // Computed props.
     expect(wrapper.vm.data).toStrictEqual(wrapper.vm.model)
@@ -190,14 +190,14 @@ describe('DruxtField', () => {
     // DruxtModule.
     expect(wrapper.vm.component.is).toBe('DruxtFieldTextDefault')
     expect(wrapper.vm.component.options).toStrictEqual([
-      'DruxtFieldTextDefaultBodyView',
-      'DruxtFieldTextDefaultBody',
+      'DruxtFieldTextDefaultFieldBodyView',
+      'DruxtFieldTextDefaultFieldBody',
       'DruxtFieldTextDefaultView',
       'DruxtFieldDefaultView',
       'DruxtFieldTextDefault',
       'DruxtFieldDefault',
     ])
-    expect(Object.keys(wrapper.vm.value)).toStrictEqual(['value', 'format', 'processed', 'summary'])
+    expect(Object.keys(wrapper.vm.value)).toStrictEqual(['value', 'format', 'processed'])
   })
 
   test('schema change swaps the field to its form widget without a refetch', async () => {
@@ -206,16 +206,16 @@ describe('DruxtField', () => {
     const mockPage = await getMockResource('node--page')
     const wrapper = await mountComponent({
       entity: mockPage.data,
-      field: 'body',
+      field: 'field_body',
     })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
     expect(wrapper.vm.component.propsData.schema.type).toBe('text_default')
 
     const formSchema = require('../../../../test/__fixtures__/schemas/node--page--default--form.json')
-    const formField = formSchema.fields.find((field) => field.id === 'body')
+    const formField = formSchema.fields.find((field) => field.id === 'field_body')
     await wrapper.setProps({ schema: { config: formSchema.config, ...formField } })
 
-    expect(wrapper.vm.component.propsData.schema.type).toBe('text_textarea_with_summary')
+    expect(wrapper.vm.component.propsData.schema.type).toBe('text_textarea')
     expect(wrapper.vm.component.propsData.schema.config.schemaType).toBe('form')
     expect(wrapper.vm.$fetchState.pending).toBe(false)
   })
@@ -265,7 +265,10 @@ describe('DruxtField', () => {
 
     // Rendered element.
     expect(wrapper.vm.isDateTime).toBe(true)
-    expect(wrapper.html()).toMatchSnapshot()
+    // The instant is the entity's own, so it is taken out of the markup before
+    // the snapshot and asserted against the entity below. A snapshot of the
+    // whole thing would pin the test to the day the preset was recorded.
+    expect(wrapper.html().split(mockPage.data.attributes.created).join('{created}')).toMatchSnapshot()
 
     // Input.
     const input = wrapper.find('input[type="datetime-local"]')
@@ -443,11 +446,9 @@ describe('DruxtField', () => {
     // Input.
     const textarea = wrapper.find('textarea')
     expect(textarea.exists()).toBe(true)
-    expect(wrapper.vm.model).toStrictEqual({
-      alias: '/about-umami',
-      langcode: 'en',
-      pid: 101,
-    })
+    // `pid` is a serial the install assigns, so the entity's own value is the
+    // only stable thing to compare the model with.
+    expect(wrapper.vm.model).toStrictEqual(mockPage.data.attributes.path)
     textarea.element.value = 'Test'
     textarea.trigger('input')
     expect(wrapper.vm.model).toBe('Test')
