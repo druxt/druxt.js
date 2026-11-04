@@ -101,7 +101,7 @@ export default {
       this.model = JSON.parse(JSON.stringify(this.entity)),
       this.response = undefined
       /**
-       * Emitted after the form is put back to the stored entity.
+       * Emitted when the form is reset, after the last submission's response is cleared.
        */
       this.$emit('reset')
     },

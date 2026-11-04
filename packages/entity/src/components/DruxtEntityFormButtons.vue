@@ -45,16 +45,12 @@ export default {
                 e.preventDefault()
                 if (button === 'submit') {
                   /**
-                   * Emitted with the form's current value when the Submit button is pressed.
-                   *
-                   * @type {object}
+                   * Emitted when the Submit button is pressed, with the buttons' own `value`. DruxtEntityForm binds none, so there it is `null`.
                    */
                   this.$emit('submit', this.model)
                 } else {
                   /**
-                   * Emitted with the form's current value when the Reset button is pressed.
-                   *
-                   * @type {object}
+                   * Emitted when the Reset button is pressed, with the buttons' own `value`. DruxtEntityForm binds none, so there it is `null`.
                    */
                   this.$emit('reset', this.model)
                 }
