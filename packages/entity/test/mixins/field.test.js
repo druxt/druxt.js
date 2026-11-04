@@ -56,9 +56,9 @@ describe('DruxtFieldMixin', () => {
     const propsData = {
       schema: {
         config: schema.config,
-        ...schema.fields.find((o) => o.id === 'body'),
+        ...schema.fields.find((o) => o.id === 'field_body'),
       },
-      value: entity.attributes.body,
+      value: entity.attributes.field_body,
     }
     const wrapper = mount(component, { localVue, propsData })
 
