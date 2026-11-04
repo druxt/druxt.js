@@ -1,6 +1,7 @@
 name: Bug report
 description: A Druxt package does not work the way its documentation says, or the way a previous release did.
-labels: ['bug']
+labels: ['bug', 'needs triage']
+type: Bug
 body:
   - type: markdown
     attributes:

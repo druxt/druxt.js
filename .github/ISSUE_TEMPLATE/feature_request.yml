@@ -1,6 +1,7 @@
 name: Feature request
 description: Something you would like Druxt to do that it can't today.
-labels: ['enhancement']
+labels: ['enhancement', 'needs triage']
+type: Feature
 body:
   - type: markdown
     attributes:
