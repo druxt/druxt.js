@@ -82,6 +82,35 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.$refs.module.value).toStrictEqual({ test: true })
   })
 
+  test('v-model - emits once per inner input and never echoes the parent', async () => {
+    const Component = {
+      template: "<DruxtModule v-model='model' ref='module' />",
+      components: { DruxtModule },
+      data: () => ({ model: null })
+    }
+    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtDebug'] })
+    const module = wrapper.findComponent(DruxtModule)
+
+    // A value the parent set is not emitted back to it.
+    await wrapper.setData({ model: { test: true } })
+    await localVue.nextTick()
+    expect(module.emitted().input).toBeUndefined()
+
+    // An input from the wrapper reaches the parent once, not again from the
+    // model watcher.
+    wrapper.vm.$refs.module.$refs.component.$emit('input', { test: false })
+    await localVue.nextTick()
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toStrictEqual({ test: false })
+    expect(module.emitted().input).toHaveLength(1)
+
+    // A value the module sets itself, as after a fetch, still reaches the parent.
+    wrapper.vm.$refs.module.model = { fetched: true }
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toStrictEqual({ fetched: true })
+    expect(module.emitted().input).toHaveLength(2)
+  })
+
   test('watch - lang', async () => {
     // Setup component.
     const wrapper = mount(DruxtModule, { localVue, mocks })

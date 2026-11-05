@@ -1,6 +1,7 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 
 import Druxt from '../../src/components/Druxt.vue'
+import DruxtModule from '../../src/components/DruxtModule.vue'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -95,6 +96,35 @@ describe('Druxt component', () => {
 
     expect(wrapper.emitted().input).toHaveLength(3)
     expect(wrapper.emitted().input.every(([emitted]) => emitted === value)).toBe(true)
+  })
+
+  test('v-model with a DruxtModule emits once per inner input and never echoes the parent', async () => {
+    const DruxtTestModule = { name: 'DruxtTestModule', extends: DruxtModule }
+    const Component = {
+      template: "<Druxt v-model='model' ref='druxt' module='test-module' />",
+      components: { Druxt },
+      data: () => ({ model: null })
+    }
+    const mocks = {
+      $fetchState: { pending: false },
+      $nuxt: { context: { isDev: false } },
+      $route: { meta: {} },
+    }
+    const wrapper = mount(Component, { localVue, mocks, stubs: { DruxtTestModule, DruxtDebug: true } })
+    const druxt = wrapper.findComponent(Druxt)
+
+    // A value the parent set goes down to the module and is not emitted back.
+    await wrapper.setData({ model: { test: true } })
+    await localVue.nextTick()
+    expect(wrapper.vm.$refs.druxt.$refs.module.model).toStrictEqual({ test: true })
+    expect(druxt.emitted().input).toBeUndefined()
+
+    // One input from the module's inner component is one input from Druxt.
+    wrapper.vm.$refs.druxt.$refs.module.$refs.component.$emit('input', { test: false })
+    await localVue.nextTick()
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toStrictEqual({ test: false })
+    expect(druxt.emitted().input).toHaveLength(1)
   })
 
   test('missing module', async () => {

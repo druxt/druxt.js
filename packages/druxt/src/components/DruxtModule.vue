@@ -320,8 +320,11 @@ export default {
       if (this.component.props && this.component.props.value !== this.model) {
         this.component.props.value = this.model
 
-        // Only emit 'input' if using the default 'DruxtWrapper' component.
-        if (this.component.is === 'DruxtWrapper') {
+        // Only emit 'input' if using the default 'DruxtWrapper' component, and
+        // only for a value the parent does not hold yet: a value it set itself
+        // would come back to it as an echo, and an input the wrapper emitted
+        // has already been emitted below and reached it through v-model.
+        if (this.component.is === 'DruxtWrapper' && this.model !== this.value) {
           this.$emit('input', this.model)
         }
       }
