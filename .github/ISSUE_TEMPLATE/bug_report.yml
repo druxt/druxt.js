@@ -89,7 +89,7 @@ body:
         browser: Chrome 142 on macOS 15
       render: text
     validations:
-      required: true
+      required: false
   - type: textarea
     id: logs
     attributes:
@@ -106,6 +106,6 @@ body:
       label: Before you submit
       options:
         - label: I searched the open and closed issues and found no report of this.
-          required: true
+          required: false
         - label: I used an AI tool to look into this, and I have checked every detail in this report myself.
           required: false
