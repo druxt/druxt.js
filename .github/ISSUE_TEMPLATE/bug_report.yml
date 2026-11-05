@@ -11,11 +11,12 @@ body:
         **Not sure it's a Druxt bug?** Many reports turn out to be configuration, or a Drupal module, which is fixed in its own queue on drupal.org: [druxt](https://www.drupal.org/project/issues/druxt), [decoupled_router](https://www.drupal.org/project/issues/decoupled_router), [jsonapi_views](https://www.drupal.org/project/issues/jsonapi_views) or [jsonapi_menu_items](https://www.drupal.org/project/issues/jsonapi_menu_items). The [documentation](https://druxtjs.org) is the place to check. If you use an AI tool, you can connect it to the [Druxt docs MCP server](https://druxtjs.org/mcp) and paste:
 
         ```text
-        Check this against the Druxt docs before I report it as a bug.
-        1. Is it documented behaviour or a configuration mistake? Link the page.
-        2. If not, which Druxt package, or which Drupal module, does it belong to?
+        Check this against the Druxt docs before I report a bug.
+        1. Documented behaviour or a configuration mistake?
+           Link the page.
+        2. If not, which Druxt package or Drupal module is it?
         3. What are the smallest steps that reproduce it?
-        Ask me for anything you need. Be brief. Don't write the issue.
+        Ask me for what you need. Be brief. Don't write the issue.
 
         What I see:
         ```
