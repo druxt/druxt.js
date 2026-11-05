@@ -75,6 +75,28 @@ describe('Druxt component', () => {
     expect(wrapper.vm.model).toStrictEqual({ test: 'module' })
   })
 
+  test('v-model follows repeated inputs of the same object', async () => {
+    const value = { count: 0 }
+    const DruxtTestModule = {
+      props: ['value'],
+      render(h) {
+        // As DruxtEntity does: edit the model in place and emit it again.
+        return h('button', { on: { click: () => { value.count += 1; this.$emit('input', value) } } })
+      },
+    }
+    const wrapper = mount(Druxt, { localVue, propsData: { module: 'test-module' }, stubs: { DruxtTestModule } })
+
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+
+    expect(wrapper.emitted().input).toHaveLength(3)
+    expect(wrapper.emitted().input.every(([emitted]) => emitted === value)).toBe(true)
+  })
+
   test('missing module', async () => {
     const wrapper = mountWrapper({ module: 'test-missing-module' })
     expect(wrapper.vm.component.is).toBe(undefined)

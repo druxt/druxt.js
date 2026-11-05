@@ -150,9 +150,15 @@ export default {
         ...this.$attrs,
         value: this.model,
       },
-      // The module's own `input` reaches `model`, which the watcher emits.
+      // The module's own `input` reaches `model`, which the watcher emits. A
+      // module that edits its model in place emits the same object, which
+      // does not trigger the watcher, so that one is emitted here.
       on: {
         input: (value) => {
+          if (value === this.model) {
+            this.$emit('input', value)
+            return
+          }
           this.model = value
         },
       },
