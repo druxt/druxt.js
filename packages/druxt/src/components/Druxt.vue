@@ -150,6 +150,12 @@ export default {
         ...this.$attrs,
         value: this.model,
       },
+      // The module's own `input` reaches `model`, which the watcher emits.
+      on: {
+        input: (value) => {
+          this.model = value
+        },
+      },
       ref: 'module',
     })
 

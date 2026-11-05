@@ -55,6 +55,26 @@ describe('Druxt component', () => {
     expect(wrapper.vm.$refs.druxt.value).toStrictEqual({ test: false })
   })
 
+  test('v-model follows an input from the module component', async () => {
+    const DruxtTestModule = {
+      props: ['value'],
+      render(h) {
+        return h('button', { on: { click: () => this.$emit('input', { test: 'module' }) } })
+      },
+    }
+    const Component = {
+      template: "<Druxt v-model='model' ref='druxt' module='test-module' />",
+      components: { Druxt },
+      data: () => ({ model: null })
+    }
+    const wrapper = mount(Component, { localVue, stubs: { DruxtTestModule } })
+
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+    expect(wrapper.vm.$refs.druxt.model).toStrictEqual({ test: 'module' })
+    expect(wrapper.vm.model).toStrictEqual({ test: 'module' })
+  })
+
   test('missing module', async () => {
     const wrapper = mountWrapper({ module: 'test-missing-module' })
     expect(wrapper.vm.component.is).toBe(undefined)
