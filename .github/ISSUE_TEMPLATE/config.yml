@@ -9,9 +9,6 @@ contact_links:
   - name: Read the documentation
     url: https://druxtjs.org
     about: Tutorials, how-to guides, explanation and API reference.
-  - name: Report a security vulnerability
-    url: https://github.com/druxt/druxt.js/security/advisories/new
-    about: Private disclosure. Please do not open a public issue.
   - name: Report a Drupal module issue
     url: https://www.drupal.org/project/issues/druxt
     about: The Druxt Drupal module's queue. Decoupled Router, JSON:API Views and JSON:API Menu Items each have their own queue on drupal.org.
