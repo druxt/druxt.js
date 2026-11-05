@@ -6,12 +6,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Feature requests are read and triaged. The 0.x line is scoped to stability, so new
-        features are planned for 2.x. See
-        [support and versioning](https://druxtjs.org/explanation/support-and-versioning).
+        Feature requests are read and triaged. The 0.x line is scoped to stability, so new features are planned for 2.x. See [support and versioning](https://druxtjs.org/explanation/support-and-versioning).
 
-        Before you ask, check whether Druxt already does it. An AI tool connected to the
-        [Druxt docs MCP server](https://druxtjs.org/mcp) can search the documentation for you.
+        Before you ask, check whether Druxt already does it. An AI tool connected to the [Druxt docs MCP server](https://druxtjs.org/mcp) can search the documentation for you.
   - type: dropdown
     id: package
     attributes:

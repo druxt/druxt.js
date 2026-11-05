@@ -6,17 +6,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting. For a security problem, do not use this form. Report it privately at
-        https://github.com/druxt/druxt.js/security/advisories/new instead.
+        Thanks for reporting. For a security problem, do not use this form. Report it privately at https://github.com/druxt/druxt.js/security/advisories/new instead.
 
-        **Not sure it's a Druxt bug?** Many reports turn out to be configuration, or a Drupal
-        module, which is fixed in its own queue on drupal.org:
-        [druxt](https://www.drupal.org/project/issues/druxt),
-        [decoupled_router](https://www.drupal.org/project/issues/decoupled_router),
-        [jsonapi_views](https://www.drupal.org/project/issues/jsonapi_views) or
-        [jsonapi_menu_items](https://www.drupal.org/project/issues/jsonapi_menu_items).
-        To check first, connect your AI tool to the
-        [Druxt docs MCP server](https://druxtjs.org/mcp) and paste:
+        **Not sure it's a Druxt bug?** Many reports turn out to be configuration, or a Drupal module, which is fixed in its own queue on drupal.org: [druxt](https://www.drupal.org/project/issues/druxt), [decoupled_router](https://www.drupal.org/project/issues/decoupled_router), [jsonapi_views](https://www.drupal.org/project/issues/jsonapi_views) or [jsonapi_menu_items](https://www.drupal.org/project/issues/jsonapi_menu_items). To check first, connect your AI tool to the [Druxt docs MCP server](https://druxtjs.org/mcp) and paste:
 
         ```text
         Check this against the Druxt docs before I report it as a bug.
@@ -28,8 +20,7 @@ body:
         What I see:
         ```
 
-        Then fill in this form yourself, with what you saw. Remove credentials, tokens and
-        private hostnames from anything you paste into an AI tool or into this form.
+        Then fill in this form yourself, with what you saw. Remove credentials, tokens and private hostnames from anything you paste into an AI tool or into this form.
   - type: dropdown
     id: package
     attributes:
