@@ -35,8 +35,7 @@
       "require": "./dist/druxt-views.ssr.js",
       "import": "./dist/druxt-views.esm.js"
     },
-    "./components/*": "./dist/components/*",
-    "./utils/*.js": "./dist/utils/*.js"
+    "./components/*": "./dist/components/*"
   },
   "main": "dist/druxt-views.ssr.js",
   "module": "dist/druxt-views.esm.js",

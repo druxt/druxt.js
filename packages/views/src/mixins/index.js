@@ -21,6 +21,15 @@ export { DruxtViewsFilterMixin } from './filter'
 export { DruxtViewsFiltersMixin } from './filters'
 
 /**
+ * Vue.js mixin for a Views page, a View whose URL is its state.
+ *
+ * @type {object}
+ * @exports DruxtViewsPageMixin
+ * @see {@link ./page|DruxtViewsPageMixin}
+ */
+export { DruxtViewsPageMixin } from './page'
+
+/**
  * Vue.js mixin for DruxtViewsPager slot themable components.
  *
  * @type {object}

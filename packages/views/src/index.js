@@ -31,8 +31,18 @@ export { DruxtViewsStore } from './stores/views'
  * @see {@link ./mixins|DruxtViewsMixins}
  * @see {@link ./mixins/filter|DruxtViewsFilterMixin}
  * @see {@link ./mixins/filters|DruxtViewsFiltersMixin}
+ * @see {@link ./mixins/page|DruxtViewsPageMixin}
  * @see {@link ./mixins/pager|DruxtViewsPagerMixin}
  * @see {@link ./mixins/sorts|DruxtViewsSortsMixin}
  * @see {@link ./mixins/view|DruxtViewsViewMixin}
  */
 export * from './mixins'
+
+/**
+ * Views page helpers: a page's config with defaults, and the view's model
+ * from a route and back.
+ *
+ * @type {Function}
+ * @see {@link ./utils/pages|Views pages}
+ */
+export { modelToLocation, normalizePage, routeToModel } from './utils/pages'
