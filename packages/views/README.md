@@ -139,20 +139,36 @@ export default {
 };
 ```
 
-| Key         | Default   | What it does                                                                                                          |
-| ----------- | --------- | --------------------------------------------------------------------------------------------------------------------- |
-| `viewId`    |           | The View ID.                                                                                                          |
-| `displayId` | `default` | The View display ID.                                                                                                  |
-| `arguments` | `[]`      | Route parameter names, in `views-argument` order. A missing optional parameter is sent as `all`.                      |
+| Key         | Default   | What it does                                                                                                                                                                                    |
+| ----------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `viewId`    |           | The View ID.                                                                                                                                                                                    |
+| `displayId` | `default` | The View display ID.                                                                                                                                                                            |
+| `arguments` | `[]`      | Route parameter names, in `views-argument` order. A missing optional parameter is sent as `all`.                                                                                                |
 | `filters`   | `{}`      | Exposed filter identifier to `{ param }` (a route parameter) or `{ query }` (a query key, the identifier by default). `multiple: true` takes several values, joined with `+` in a path segment. |
-| `page`      | `page`    | The query key for the page.                                                                                           |
-| `sort`      | `sort`    | The query key for the exposed sort.                                                                                   |
-| `history`   | `replace` | `replace` or `push`, how a change reaches the browser's history.                                                      |
-| `aliases`   | `{}`      | Per argument or filter, the word the URL uses for each id. An id with no word is written as itself.                   |
+| `page`      | `page`    | The query key for the page.                                                                                                                                                                     |
+| `sort`      | `sort`    | The query key for the exposed sort.                                                                                                                                                             |
+| `history`   | `replace` | `replace` or `push`, how a change reaches the browser's history.                                                                                                                                |
+| `aliases`   | `{}`      | Per argument or filter, the word the URL uses for each id. An id with no word is written as itself.                                                                                             |
 
 `/shop/women?brand=centarro&page=2` renders the view with `views-argument[0]=12`, `views-filter[brand]=3` and `page=2`. Picking another brand replaces the URL and makes one request. With `filters: { brand: { param: 'brand', multiple: true } }` and the pattern `/shop/:collection?/:brand?`, the same page is `/shop/women/centarro`, two brands are `/shop/women/centarro+centorium`, and a brand with no collection is `/shop/all/centarro`: an earlier empty segment is written as `all`, which Views reads as its exception value. The pager's links keep the pattern. A `DruxtView` given a `value` prop uses it instead of the route and emits `input` on every model change, which is how the page drives it. Without a value nothing changes.
 
 The `aliases` map is static. The 2.0.0 version of this module should take slugs from the JSON:API Views resource instead.
+
+### A views page inside your own page
+
+A view can keep its state in the URL of a page you route yourself, such as a list inside a page from Drupal. Give **DruxtViewsPage** the same config in its `page` prop, with the pattern your own route matches, and leave the pattern out of `druxt.views.pages` so the module doesn't register a route for it:
+
+```vue
+<DruxtViewsPage
+  :page="{
+    pattern: '/how-to/troubleshooting/:issue?',
+    viewId: 'docs_issues',
+    filters: { area: { query: 'area' } },
+  }"
+/>
+```
+
+A param in the pattern that is neither an argument nor a filter belongs to your page and stays as the route has it. On `/how-to/troubleshooting/cors-errors`, picking an area goes to `/how-to/troubleshooting/cors-errors?area=backend`. To render the view yourself, use `DruxtViewsPageMixin` from `druxt-views`: it gives your component the same `page` prop, a `viewProps` object for `DruxtView` and an `onInput` handler for its `input` event.
 
 ---
 
