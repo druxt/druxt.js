@@ -136,6 +136,21 @@ describe('modelToLocation', () => {
     })
   })
 
+  test('keeps a route param the page does not own', () => {
+    const issues = normalizePage('/how-to/troubleshooting/:issue?', {
+      viewId: 'docs_issues',
+      filters: { area: { query: 'area' } },
+    })
+    const route = { params: { issue: 'cors-errors' }, query: {} }
+    expect(
+      modelToLocation(issues, issues.pattern, { arguments: [], filter: { area: 'backend' } }, route)
+    ).toEqual({ path: '/how-to/troubleshooting/cors-errors', query: { area: 'backend' } })
+    expect(modelToLocation(issues, issues.pattern, { arguments: [], filter: {} }, { params: {} })).toEqual({
+      path: '/how-to/troubleshooting',
+      query: {},
+    })
+  })
+
   test('a pattern with nothing left is the root', () => {
     expect(
       modelToLocation(normalizePage('/:a?', { arguments: ['a'] }), '/:a?', {

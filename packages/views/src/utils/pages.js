@@ -113,8 +113,8 @@ export const routeToModel = (config, route) => {
 
 /**
  * A router location for a model. Arguments and param filters become params,
- * everything else becomes query, and query keys the page does not own are
- * kept from the current route.
+ * everything else becomes query, and params and query keys the page does not
+ * own are kept from the current route.
  *
  * @param {object} config - A normalized page config.
  * @param {string} pattern - The route pattern.
@@ -148,6 +148,18 @@ export const modelToLocation = (config, pattern, model, route = {}) => {
   if (model.sort) query[config.sort] = model.sort
   for (const [key, value] of Object.entries(route.query || {})) {
     if (!owned.has(key) && !(key in query)) query[key] = value
+  }
+  // A param the pattern has but the page does not own, such as the item a
+  // page around the view opens, stays as the route has it.
+  const ownedParams = new Set([
+    ...config.arguments,
+    ...Object.keys(config.filters)
+      .map((identifier) => place(config, identifier).param)
+      .filter(Boolean),
+  ])
+  for (const name of paramNames(pattern)) {
+    const value = (route.params || {})[name]
+    if (!ownedParams.has(name) && !empty(value)) params[name] = value
   }
   // An earlier optional segment with no value is written as `all` when a
   // later one has a value, so the later value keeps its place.
