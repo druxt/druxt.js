@@ -19,7 +19,6 @@
     "packages/site/",
     "packages/views/",
     "test/mixins.test.js",
-    "test/standalone/backend.ts",
     "**/CHANGELOG.md",
     "**/__fixtures__/**",
     "**/node_modules/",

@@ -13,7 +13,6 @@
     "packages/site/**",
     "packages/views/**",
     "test/mixins.test.js",
-    "test/standalone/backend.ts",
     // 1.x examples, run on the 1.x line.
     "examples/**",
     "test/__fixtures__/**"

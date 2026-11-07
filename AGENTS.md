@@ -71,14 +71,17 @@ when it is ported. Until then, its 1.x source stays in place, unbuilt.
 The full local verification gate, in order:
 
 ```bash
-yarn lint && yarn build && yarn test
+yarn lint && yarn build && yarn typecheck && yarn test
 ```
-
-<!-- The test harness adds yarn typecheck to the gate after yarn build, and the standalone tests to yarn test. -->
 
 - `yarn build`: every `@druxt/*` workspace, topologically. With no workspace
   yet it builds nothing.
-- `yarn test`: vitest. With no test file yet it passes with nothing to run.
+- `yarn typecheck`: vue-tsc over the sources, strict
+- `yarn test`: vitest's unit and component tests. It doesn't need a backend
+- `yarn test:standalone`: the standalone tests, against a Drupal at
+  `DRUXT_BASE_URL`, such as `examples/drupal`
+
+<!-- The module ports add each module's standalone test, a real Nuxt 4 app per module. -->
 - `yarn lint`: eslint, `@nuxt/eslint-config`
 - `yarn lint:md` / `yarn lint:cspell` / `yarn lint:format`: markdownlint / cspell / prettier
 - `yarn lint:renovate`: validate `renovate.json`

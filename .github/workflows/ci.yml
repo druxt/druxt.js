@@ -9,11 +9,12 @@
 #
 # It mirrors the GitLab jobs of the same names in .gitlab-ci.yml that apply on
 # GitHub: lint:js, lint:markdown, lint:cspell, lint:knip, lint:commits,
-# test:unit and test:release. Secret detection, the dependency audit and the
-# preview jobs stay on GitLab. Only the release script tests of test:release
-# run here; its rehearsal half (snapshot version, build, release:check) returns
-# with the packages. Later changes on this line add the jobs for tools this
-# tree does not have yet.
+# test:unit, test:typecheck and test:release. Secret detection, the dependency
+# audit and the preview jobs stay on GitLab. Only the release script tests of
+# test:release run here; its rehearsal half (snapshot version, build,
+# release:check) returns with the packages. test:standalone waits for a
+# backend this workflow can start, the mock-backed standalone suite. Later
+# changes on this line add the jobs for tools this tree does not have yet.
 #
 # lint-commits runs the GitLab job's commands: the identity check, and
 # commitlint under the base tip's commitlint.config.js, so a pull request
@@ -178,7 +179,23 @@ jobs:
       - run: yarn install --immutable
       # The tests import the workspaces through their dist, as on GitLab.
       - run: yarn build
-      - run: yarn test
+      # The unit and component projects: the standalone one needs a Drupal backend.
+      - run: yarn vitest run --project unit --project nuxt
+
+  typecheck:
+    name: Test (typecheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: yarn typecheck
 
   release-check:
     name: Test (release scripts)
