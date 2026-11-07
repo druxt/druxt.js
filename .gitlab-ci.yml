@@ -1,10 +1,15 @@
 ---
-# GitLab CI for the druxt.js monorepo: lint → test → secret-detection → preview,
+# GitLab CI for the druxt.js monorepo, 2.0.x line: lint → test → secret-detection,
 # with collapsible section helpers and a per-file JSON/shell/YAML sweep.
 #
-# GitHub Actions (.github/workflows/ci.yml) is the canonical CI; this pipeline
-# is additive, giving any GitLab mirror of this repo a real pipeline with
-# secret-detection coverage and on-demand examples previews.
+# On 2.0.x GitHub runs .github/workflows/ci.yml, which mirrors the lint, unit
+# test and release jobs here, and codeql-analysis.yml, which reads the tree.
+# The other GitHub workflows are 1.x's; release.yml is kept off 2.0.x until
+# the 2.x release flow returns.
+# Of test:release only the release script tests run there; the rehearsal half
+# (snapshot version, build, release:check) returns with the packages. The 1.x
+# example, end-to-end, performance and preview jobs return as 2.x versions
+# once the examples are ported.
 
 stages:
   - lint
@@ -156,12 +161,12 @@ default:
 # different Node version. enableGlobalCache: false in .yarnrc.yml keeps the
 # cache in .yarn/cache/ (project-local, CI-cacheable).
 .node:
-  image: node:16.20.1
+  image: node:24.18.0
   cache:
     - key:
         files:
           - yarn.lock
-        prefix: node-16.20.1
+        prefix: node-24.18.0
       paths:
         - .yarn/cache/
         - node_modules/
@@ -171,6 +176,8 @@ default:
 # --- Lint Stage ---
 #
 
+# tsconfig files are JSON with comments, which TypeScript reads and this
+# strict parser does not, so they are left to the typecheck.
 lint:json:
   stage: lint
   interruptible: true
@@ -187,7 +194,8 @@ lint:json:
           rc=1
         fi
       done < <(find . -name '*.json' -not -path '*/.git/*' -not -path '*/node_modules/*' \
-        -not -path '*/dist/*' -not -path '*/.vscode/*' -not -path '*/.devcontainer/*' -not -path '*/templates/*' -print0)
+        -not -path '*/dist/*' -not -path '*/.vscode/*' -not -path '*/.devcontainer/*' -not -path '*/templates/*' \
+        -not -name 'tsconfig*.json' -print0)
       echo "--- $count JSON file(s) checked ---"
       exit "$rc"
     - section_end "json-lint"
@@ -268,9 +276,7 @@ lint:js:
     - section_end "eslint"
 
 # Two-tier: the full recursive audit (including devDependencies) is reporting
-# only - most of its findings live behind the Node 16/Yarn 3 toolchain freeze
-# (see AGENTS.md) and aren't fixable without that separate, deliberate
-# upgrade. The production-only gate is what actually blocks the pipeline -
+# only. The production-only gate is what actually blocks the pipeline -
 # shipped runtime dependencies must stay clean.
 lint:dependency-audit:
   extends: .node
@@ -297,8 +303,8 @@ lint:knip:
     - yarn lint:knip
     - section_end "knip"
 
-# Mirrors the GitHub lint job's changesets step: the shape and the wording
-# rules of .changeset/*.md, with a preview of each package's changelog.
+# The same lint as yarn lint:changesets: the shape and the wording rules of
+# .changeset/*.md, with a preview of each package's changelog.
 lint:changesets:
   extends: .node
   stage: lint
@@ -325,100 +331,6 @@ lint:skills:
 
 # Mirrors the GitHub commits job for merge requests: Conventional Commits,
 # made by the person contributing them, with no AI attribution.
-# The same plan conformance check GitHub runs, so merging here cannot bypass
-# it. The logic is shared: scripts/release/plan.mjs is host agnostic and this
-# job only gathers the inputs.
-#
-# The merge request's own milestone and issue links come from GitLab, because
-# they belong to this merge request. The list of open milestones comes from
-# GitHub, because that is the source of truth for anything merging into a
-# release line and the two hosts drift.
-#
-# Advisory until PLAN_GATE is "block", matching the GitHub side.
-lint:plan:
-  extends: .node
-  stage: lint
-  interruptible: true
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  script:
-    - section_start "plan" "Checking the merge request is in the plan"
-    - |
-      if [ -z "${GITLAB_API_TOKEN:-}" ]; then
-        echo "GITLAB_API_TOKEN is not set, so the milestone and issue links cannot be read. Skipping."
-        exit 0
-      fi
-      api="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}"
-      auth="PRIVATE-TOKEN: ${GITLAB_API_TOKEN}"
-      iid="$CI_MERGE_REQUEST_IID"
-      git fetch --quiet origin "$CI_MERGE_REQUEST_DIFF_BASE_SHA" 2>/dev/null || true
-      # Piping the diff into jq hid the diff's own exit status, so an
-      # unreachable base turned into an empty file list and the gate passed on
-      # a change it had never read. Check the base first, then keep git's
-      # status on its own line.
-      if ! git cat-file -e "${CI_MERGE_REQUEST_DIFF_BASE_SHA}^{commit}" 2>/dev/null; then
-        echo "The merge request's diff base is not reachable, so the changed files cannot be read. Skipping rather than passing on an empty list."
-        exit 0
-      fi
-      git diff --name-only "$CI_MERGE_REQUEST_DIFF_BASE_SHA"...HEAD > files.txt
-      jq -Rsc 'split("\n")|map(select(length>0))' < files.txt > files.json
-      curl -sfS --header "$auth" "$api/merge_requests/$iid" > mr.json
-      curl -sfS --header "$auth" "$api/merge_requests/$iid/closes_issues" | jq -c '[.[].iid]' > issues.json
-      # GitHub is the source of truth for anything merging into a release
-      # line, and this project's milestones drift between the two hosts, so
-      # read the plan from GitHub rather than from the mirror. The repository
-      # is public, so this needs no token.
-      if ! curl -sfS "https://api.github.com/repos/druxt/druxt.js/milestones?state=open&per_page=100" \
-           | jq -c '[.[].title]' > milestones.json; then
-        echo "Could not read the milestones from GitHub, which is the source of truth here. Skipping rather than judging against the mirror."
-        exit 0
-      fi
-      # Every changed package manifest, before and after. A bumped range
-      # reaches consumers with no source file moving, so the file list alone
-      # cannot see it. The base is known reachable by now, checked above.
-      jq -r '.[] | select(test("^packages/[^/]+/package\\.json$"))' files.json > manifests.txt
-      {
-        printf '['
-        sep=''
-        while read -r file; do
-          before=$(git show "${CI_MERGE_REQUEST_DIFF_BASE_SHA}:${file}" 2>/dev/null || echo null)
-          after=$(cat "$file" 2>/dev/null || echo null)
-          printf '%s' "$sep"
-          jq -n --arg path "$file" --argjson before "$before" --argjson after "$after" \
-            '{path: $path, before: $before, after: $after}'
-          sep=','
-        done < manifests.txt
-        printf ']'
-      } > manifests.json
-      jq -n --slurpfile files files.json --slurpfile mr mr.json \
-            --slurpfile issues issues.json --slurpfile milestones milestones.json \
-            --slurpfile manifests manifests.json \
-            --arg base "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" \
-            --arg head "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" \
-        '{files: $files[0], milestone: ($mr[0].milestone.title // null), issues: $issues[0],
-          openMilestones: $milestones[0], baseBranch: $base, headBranch: $head,
-          manifests: $manifests[0]}' > plan-input.json
-    - |
-      rc=0
-      PLAN_INPUT=plan-input.json PLAN_PROBLEMS=plan-problems.json node scripts/release/plan.mjs || rc=$?
-      if [ "$rc" = "0" ]; then
-        section_end "plan"
-        exit 0
-      fi
-      echo "How to put it in the plan:"
-      mid=$(jq -r '.milestone.id // empty' mr.json)
-      PLAN_PROBLEMS=plan-problems.json \
-      PLAN_HOST=gitlab \
-      PLAN_REPO_URL="${CI_PROJECT_URL}" \
-      PLAN_TITLE="$CI_MERGE_REQUEST_TITLE" \
-      PLAN_BODY="Raised from ${CI_PROJECT_URL}/-/merge_requests/${iid}" \
-      PLAN_NUMBER="$iid" \
-      PLAN_MILESTONE_ID="$mid" \
-      node scripts/release/plan-help.mjs
-      section_end "plan"
-      if [ "${PLAN_GATE:-}" = "block" ]; then exit 1; fi
-      echo "Advisory: set PLAN_GATE to block to enforce this."
-
 lint:commits:
   extends: .node
   stage: lint
@@ -440,18 +352,17 @@ lint:commits:
     # its package.json, lockfile and commitlint.config.js.
     - |
       POLICY_SHA="$CI_MERGE_REQUEST_DIFF_BASE_SHA"
-      # Protocol and port from the server, not hardcoded: an http instance
-      # refused every https fetch on 443, so the policy above silently fell
+      # Fetch from the runner's own origin, which already carries the server's
+      # protocol, host, port and the job's credentials. A hand-built https URL
+      # was refused on every http instance, so the policy above silently fell
       # back to the diff base on every run and never took effect.
-      if git fetch --quiet "${CI_SERVER_PROTOCOL}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/${CI_MERGE_REQUEST_PROJECT_PATH}.git" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
+      if git fetch --quiet origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
         POLICY_SHA="$(git rev-parse FETCH_HEAD)"
       else
         echo "Could not fetch the target branch; using the diff base's commit policy."
       fi
-      # The runner reuses its build directory. Its clean removes .policy/ but
-      # not .git/worktrees/.policy, so the next run's add hits a registration
-      # whose directory is gone. Clear the dead entry rather than forcing past
-      # the check.
+      # A reused runner checkout can still list an earlier run's worktree.
+      git worktree remove --force .policy 2>/dev/null || true
       git worktree prune
       git worktree add .policy "$POLICY_SHA"
     - corepack enable
@@ -468,30 +379,7 @@ lint:commits:
       fi
     - section_end "commits"
 
-#
-# --- Test Stage ---
-#
-
-test:unit:
-  extends: .node
-  stage: test
-  interruptible: true
-  needs: []
-  script:
-    - section_start "jest" "Running unit tests"
-    - corepack enable
-    - yarn install --immutable
-    - yarn build
-    - NODE_OPTIONS="--max_old_space_size=8192" yarn test:unit --reporters=jest-junit --runInBand
-    - section_end "jest"
-  artifacts:
-    when: always
-    paths:
-      - reports/junit/
-    reports:
-      junit: reports/junit/junit.xml
-
-# Mirrors the GitHub build job. Nothing here needs Drupal, so it is ungated:
+# Nothing here needs Drupal, so it is ungated:
 # a package that does not build is worth knowing about on every pipeline, and
 # it is the cheapest signal in the file.
 test:build:
@@ -505,18 +393,55 @@ test:build:
     - yarn install --immutable
     - yarn build
     - section_end "build"
-    # A build that produces nothing still exits zero. Assert the artefacts
-    # exist, or this job passes on an empty dist.
+    # A build that produces nothing still exits zero. Assert every workspace
+    # with a build script built something, or this job passes on an empty dist.
     - section_start "verify" "Checking the build produced artefacts"
     - |
       set -euo pipefail
-      count=$(find packages -mindepth 3 -path '*/dist/*.js' | wc -l)
-      echo "$count built file(s) under packages/*/dist"
-      [ "$count" -gt 0 ] || { echo "yarn build produced no dist output" >&2; exit 1; }
+      # Yarn drops an empty workspaces list, so a tree with no package yet has
+      # no key at all, and passes. Once the key is there, checking nothing fails.
+      if ! node -e 'process.exit("workspaces" in require("./package.json") ? 0 : 1)'; then
+        echo "no workspaces yet"
+      else
+        checked=0
+        # Parsed as JSON, so a change in the line's shape fails here rather
+        # than matching nothing.
+        dirs=$(yarn workspaces list --json | node -e '
+          const lines = require("fs").readFileSync(0, "utf8").trim().split("\n")
+          for (const line of lines) {
+            const { location } = JSON.parse(line)
+            if (location !== ".") console.log(location)
+          }')
+        for dir in $dirs; do
+          # The published packages only: the example apps build with `nuxt build`, into .output.
+          node -e 'const p = require("./" + process.argv[1] + "/package.json"); process.exit(p.name?.startsWith("@druxt/") && p.scripts?.build ? 0 : 1)' "$dir" || continue
+          count=$( (find "$dir/dist" -type f 2>/dev/null || true) | wc -l)
+          echo "$dir: $count built file(s)"
+          [ "$count" -gt 0 ] || { echo "$dir built no dist output" >&2; exit 1; }
+          checked=$((checked + 1))
+        done
+        echo "$checked workspace(s) checked"
+        [ "$checked" -gt 0 ] || { echo "package.json declares workspaces, but no @druxt/* workspace with a build script was checked" >&2; exit 1; }
+      fi
     - section_end "verify"
 
-# Rehearses the GitHub release workflow's dev job up to the publish: cut a
-# snapshot, build it, and run the pre-publish gate against npm.
+# The unit tests need no Drupal, so they are ungated. They import the
+# workspaces through their dist, so the packages build first.
+test:unit:
+  extends: .node
+  stage: test
+  interruptible: true
+  needs: []
+  script:
+    - section_start "unit" "Running the unit tests"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn vitest run --passWithNoTests
+    - section_end "unit"
+
+# Rehearses a release up to the publish: cut a snapshot, build it, and run
+# the pre-publish gate against npm.
 test:release:
   extends: .node
   stage: test
@@ -541,28 +466,6 @@ test:release:
       yarn release:check
     - section_end "release-rehearsal"
 
-# Mirrors the GitHub test-node-client job. No backend, so ungated.
-test:node-client:
-  extends: .node
-  stage: test
-  interruptible: true
-  needs: []
-  script:
-    - section_start "node-client" "Running the node client tests"
-    - corepack enable
-    - yarn install --immutable
-    - yarn build
-    - yarn test:node-client
-    - section_end "node-client"
-
-#
-# --- Preview Stage ---
-#
-# examples:preview (manual, below) provisions the examples backend and the
-# example apps behind Cloudflare quick tunnels.
-#
-# Manual: provisions examples/drupal + the example apps and exposes each over
-# Cloudflare quick tunnel for as long as the job runs. Click "Run" on this job,
 #
 # --- Drupal-backed jobs ---
 #
@@ -591,7 +494,7 @@ test:node-client:
     - key:
         files:
           - yarn.lock
-        prefix: php83-node16
+        prefix: php83-node24
       paths:
         - .yarn/cache/
         - node_modules/
@@ -640,493 +543,47 @@ test:node-client:
       curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null
     - section_end "backend"
 
-# Cypress on top of the backend. The browser packages and the install are the
-# only difference; the runner is known to support this, because
-# packages/quickstart runs blocking Cypress on it today.
-.cypress:
-  extends: .drupal-backend
-  stage: test
-  needs: []
-  variables:
-    CYPRESS_APT_PACKAGES: 'libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb'
-    # The examples backend is the umami install with its Spanish
-    # translations; specs asserting the curated druxtjs.org site content
-    # (homepage banners, devel templates) gate on this and skip here. The
-    # site repo's pipeline runs them in full.
-    CYPRESS_backendVariant: minimal
-  before_script:
-    - !reference [.drupal-backend, before_script]
-    - apt-get install -yqq $CYPRESS_APT_PACKAGES
-  artifacts:
-    when: on_failure
-    paths:
-      - examples/druxt-site/test/cypress/screenshots
-      - examples/druxt-site/test/cypress/videos
-    expire_in: 1 week
-
-# The two examples/druxt-site suites. These exercise the packages against the
-# real backend, and are what caught the decoupled_router isHomePath
-# regression that a green GitLab pipeline had missed.
-test:e2e:packages:
-  extends: .cypress
-  rules:
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      changes:
-        - packages/**/*
-        - examples/druxt-site/**/*
-        - examples/drupal/**/*
-        - yarn.lock
-        # A change to the pipeline re-runs the jobs the pipeline defines.
-        - .gitlab-ci.yml
-  script:
-    - !reference [.provision-backend, script]
-    - section_start "build" "Building the monorepo"
-    - yarn install --immutable
-    - yarn build
-    - section_end "build"
-    - section_start "cypress-nuxt" "DruxtSite against the backend"
-    - npx cypress install
-    - yarn example:druxt-site:test
-    - section_end "cypress-nuxt"
-    - section_start "cypress-storybook" "DruxtSite Storybook"
-    - yarn example:druxt-site:storybook:test
-    - section_end "cypress-storybook"
-
-# Mirrors the GitHub test-examples matrix. Same path rule as the packages
-# suites: these break for the same reasons.
-test:examples:
-  extends: .cypress
-  parallel:
-    matrix:
-      - EXAMPLE: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
-  rules:
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-      changes:
-        - packages/**/*
-        - examples/druxt-site/**/*
-        - examples/drupal/**/*
-        - yarn.lock
-        # A change to the pipeline re-runs the jobs the pipeline defines.
-        - .gitlab-ci.yml
-  script:
-    - !reference [.provision-backend, script]
-    - section_start "build" "Building the monorepo"
-    - yarn install --immutable
-    - yarn build
-    - section_end "build"
-    - section_start "example" "Testing $EXAMPLE against the backend"
-    - npx cypress install
-    - yarn "example:${EXAMPLE}:test"
-    - section_end "example"
-  artifacts:
-    when: on_failure
-    paths:
-      - examples/$EXAMPLE/test/cypress/screenshots
-      - examples/$EXAMPLE/test/cypress/videos
-    expire_in: 1 week
-
-# Advisory. Builds and serves the examples in production mode against the
-# provisioned backend, then measures backend requests, server renders and
-# Lighthouse per route and compares them with perf/baseline.gitlab.json.
-# Runs on its own on a push to a release line, with the baseline refresh switched
-# on, so a merge request's audit is never diffed against numbers that a
-# merge already shipped; it opens a merge request with the refreshed file
-# rather than pushing it straight to the branch. Play it manually elsewhere
-# with PERF_AUDIT_UPDATE_BASELINE=true to write a run into that file yourself.
-perf:audit:
-  extends: .drupal-backend
-  stage: test
-  # Measures the examples, so it does not wait on lint.
-  needs: []
-  allow_failure: true
-  timeout: 60m
-  resource_group: perf-audit
-  rules:
-    # A push carrying a baseline refresh of its own is the previous run's merge
-    # request landing; skip it so merging that MR does not queue another audit
-    # right behind it.
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH =~ /^[0-9]+(\.[0-9]+)?\.x$/ && $CI_COMMIT_MESSAGE !~ /^chore\(perf-audit\):/'
-      when: on_success
-      variables:
-        PERF_AUDIT_UPDATE_BASELINE: 'true'
-        PERF_AUDIT_OPEN_MR: 'true'
-    - when: manual
-  variables:
-    UNLIGHTHOUSE_CONCURRENCY: '1'
-  script:
-    - !reference [.provision-backend, script]
-    - section_start "build" "Building the monorepo"
-    - yarn install --immutable
-    - yarn build
-    - section_end "build"
-    # The browser goes in before the examples start. Each example keeps the
-    # JSON:API index it fetches at startup for Drupal's max-age (300 seconds in
-    # the provisioned backend), so a slow download between start and audit let
-    # it expire and added a request to the cold pass.
-    - section_start "browser" "Installing Node 22 and Chromium for Unlighthouse"
-    # Node 22 for the audit only; the examples stay on the template's Node 16.
-    - . "$NVM_DIR/nvm.sh" && nvm install 22 >/dev/null && nvm use 16 >/dev/null
-    - NODE22="$(nvm which 22)"
-    - '"$NODE22" --test scripts/perf-audit/test/*.test.mjs'
-    # Node 22 on PATH: npx spawns the playwright binary with the `node` it finds there.
-    - PATH="$(dirname "$NODE22"):$PATH" npx --yes playwright@1.62.1 install --with-deps chromium
-    - export CHROME_PATH=$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path "*chrome-linux*" | head -1)
-    - test -n "$CHROME_PATH" || { echo "No Playwright Chromium found" >&2; exit 1; }
-    - section_end "browser"
-    - section_start "serve" "Building and serving the examples"
-    - scripts/perf-audit/serve-examples.sh start
-    - section_end "serve"
-    - section_start "audit" "Auditing"
-    - audit_rc=0
-    - if [ "${PERF_AUDIT_UPDATE_BASELINE:-}" = "true" ]; then audit_args="--update-baseline"; else audit_args=""; fi
-    - PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/index.mjs $audit_args || audit_rc=$?
-    # Comments on the merge request when GITLAB_API_TOKEN (masked, api scope) is set; never fails the job.
-    - PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/comment.mjs "$(ls -d .perf/*/ | tail -1)report.json"
-    - section_end "audit"
-    - section_start "refresh" "Opening a merge request if the baseline changed"
-    - |
-      # Timings and Lighthouse scores differ between runs of one commit, so the file
-      # alone is not the question: only a count, a state or a real byte change is.
-      committed="$CI_PROJECT_DIR/.perf/baseline-committed.json"
-      git show HEAD:perf/baseline.gitlab.json > "$committed" 2>/dev/null || echo '{}' > "$committed"
-      # A failed check reports itself rather than reading as "nothing moved".
-      check_rc=0
-      PATH="$(dirname "$NODE22"):$PATH" node scripts/perf-audit/baseline-changed.mjs "$committed" perf/baseline.gitlab.json > "$CI_PROJECT_DIR/.perf/baseline-moved.txt" || check_rc=$?
-      cat "$CI_PROJECT_DIR/.perf/baseline-moved.txt"
-      moved=$(tail -1 "$CI_PROJECT_DIR/.perf/baseline-moved.txt")
-      if [ "${PERF_AUDIT_OPEN_MR:-}" != "true" ]; then
-        echo "Not an automatic baseline run, nothing to open"
-      elif [ "$check_rc" != "0" ]; then
-        echo "Could not tell whether the baseline moved; refresh perf/baseline.gitlab.json by hand from this job's artifact"
-      elif [ -z "${GITLAB_API_TOKEN:-}" ]; then
-        echo "GITLAB_API_TOKEN is not set, cannot open a merge request"
-      elif [ "$moved" != "changed=true" ]; then
-        echo "Baseline moved on nothing but run to run noise, nothing to open"
-      # The branch is shared, so only a job on the release line's current tip may write it: a
-      # retry of an older pipeline measures older code and would overwrite a newer refresh.
-      elif ! remote="${CI_SERVER_PROTOCOL}://oauth2:${GITLAB_API_TOKEN}@${CI_SERVER_HOST}:${CI_SERVER_PORT}/${CI_PROJECT_PATH}.git" \
-        || ! tip=$(git ls-remote "$remote" "refs/heads/${CI_COMMIT_BRANCH}" | cut -f1) || [ -z "$tip" ]; then
-        echo "Could not read the ${CI_COMMIT_BRANCH} tip; refresh perf/baseline.gitlab.json by hand from this job's artifact"
-      elif [ "$tip" != "$CI_COMMIT_SHA" ]; then
-        echo "${CI_COMMIT_BRANCH} has moved on to ${tip:0:8} since this pipeline's commit; the pipeline for it refreshes the baseline"
-      else
-        # One branch and one merge request per release line: each refresh replaces the last.
-        branch="chore/perf-audit-baseline/${CI_COMMIT_BRANCH}"
-        git config user.name "gitlab-ci"
-        git config user.email "gitlab-ci@${CI_SERVER_HOST}"
-        git checkout -b "$branch"
-        git add perf/baseline.gitlab.json
-        git commit -m "chore(perf-audit): refresh the gitlab baseline"
-        # Never fails the job; a rejected push or API call just means the refresh has to be done by hand.
-        if git push --force "$remote" "$branch"; then
-          # --fail makes an API error a failed call rather than a body that reads as "none open".
-          if ! found=$(curl --fail --silent --show-error --header "PRIVATE-TOKEN: ${GITLAB_API_TOKEN}" \
-            "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests?state=opened&source_branch=${branch//\//%2F}&target_branch=${CI_COMMIT_BRANCH}"); then
-            echo "Could not look up the refresh merge request; refresh perf/baseline.gitlab.json by hand from this job's artifact"
-          elif open=$(printf '%s' "$found" | grep -o '"iid":[0-9]*' | head -1 || true); [ -n "$open" ]; then
-            echo "Updated the open refresh merge request (${open#\"iid\":})"
-          else
-            curl --fail --silent --show-error --header "PRIVATE-TOKEN: ${GITLAB_API_TOKEN}" --header "Content-Type: application/json" \
-              --data "{\"source_branch\":\"$branch\",\"target_branch\":\"$CI_COMMIT_BRANCH\",\"title\":\"chore(perf-audit): refresh the gitlab baseline\",\"remove_source_branch\":true}" \
-              "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests" \
-              || echo "Could not open the merge request; refresh perf/baseline.gitlab.json by hand from this job's artifact"
-          fi
-        else
-          echo "Could not push the refresh; refresh perf/baseline.gitlab.json by hand from this job's artifact"
-        fi
-      fi
-    - section_end "refresh"
-    - exit "$audit_rc"
-  after_script:
-    - scripts/perf-audit/serve-examples.sh stop
-    - pkill -9 -f 'user-data-dir=/tmp/puppeteer' 2>/dev/null || true
-  artifacts:
-    when: always
-    paths:
-      - .perf/
-      - perf/
-    expire_in: 1 month
-    expose_as: 'Performance audit'
-
-# then watch its log for the https://*.trycloudflare.com URLs.
 #
-# Variables (all settable when triggering):
-# - PREVIEW_EXAMPLES: CSV subset of site,daisyui,tailwind,bootstrapvue
-#   (default: all four)
-# - PREVIEW_MODE: dev (default) | prod | both. Dev = `yarn dev` on the app's
-#   port (3001-3004; bootstrapvue is 3004 - its OAuth consumer's committed
-#   redirect URI). Prod = `yarn build && yarn start` - in "both" mode prod
-#   uses port+200 (3201-3204) so the dev and prod servers can coexist.
-# - PREVIEW_DURATION_SECONDS: how long to keep the preview alive
-#   (default 3600, clamped to 18000 - keep under the job timeout).
+# --- VS Code tunnel (manual) ---
 #
-# code-server (VS Code in the browser) and the one-time Drupal login link
-# are owner conveniences that only make sense with authentication: job logs
-# can be readable by more people than you think, so both are skipped unless
-# PREVIEW_CODE_PASSWORD is set. With it set, code-server requires that
-# password (--auth password).
+# An editor and a terminal on the runner, holding this branch's checkout, for
+# when a failure only reproduces in CI. Separate from examples:preview because
+# that job provisions Drupal and the example apps first: this one gives a shell
+# in the job's own environment and nothing else, so it starts in a minute
+# rather than in twenty.
 #
-# Known limitation: the Content Ops Console (bootstrapvue) can't complete
-# OAuth login through a random quick-tunnel hostname - its redirect is
-# committed to localhost:3004/callback. That app is read-only over tunnels;
-# use the devcontainer (or a local checkout) for its login flow.
-examples:preview:
-  # Same backend template as the e2e jobs, so there is one provisioner in this
-  # file rather than three copies drifting apart.
-  extends: .drupal-backend
+# Manual and never automatic. It is an interactive shell with the job's
+# variables, so it exists only when someone asked for it.
+#
+# Authentication, by the script rather than by this job:
+# - CLOUDFLARE_TUNNEL_TOKEN set: a named tunnel, with a Cloudflare Access
+#   policy in front. Set VSCODE_TUNNEL_HOSTNAME to match.
+# - otherwise: a Quick Tunnel behind a generated password, printed in this
+#   job's log and nowhere else. The script refuses to generate one on a public
+#   project, where that log is world-readable, and names VSCODE_TUNNEL_PASSWORD
+#   as the masked variable to set instead.
+#
+# allow_failure, so a tunnel nobody started does not hold the pipeline, and
+# interruptible: false, so a push to the branch does not close the session
+# someone is working in.
+#
+# On 2.0.x it runs on the Node 24 template, with the packages installed and
+# built before the tunnel opens, so the editor's terminal can run the
+# examples and checks straight away. A failed build still opens the tunnel.
+vscode:tunnel:
+  extends: .node
   stage: preview
   interruptible: false
   when: manual
   needs: []
   allow_failure: true
-  resource_group: examples-preview
-  timeout: 6h
+  resource_group: vscode-tunnel
+  timeout: 1h
   variables:
-    PREVIEW_EXAMPLES: 'site,daisyui,tailwind,bootstrapvue'
-    PREVIEW_MODE: 'dev'
-    PREVIEW_DURATION_SECONDS: '3600'
-    # code-server's own install.sh prefixes "v" itself to build both the
-    # release tag and asset filename - this was double-prefixed to "vv...",
-    # 404ing every time (only surfaced once PREVIEW_CODE_PASSWORD started
-    # reaching the job - it was unprotected before that, so this whole
-    # branch never ran).
-    CODE_SERVER_VERSION: '4.132.0'
-    # WEBSERVER_HOST, WEBSERVER_PORT, PHP_APT_PACKAGES and PHP_EXTENSIONS come
-    # from .drupal-backend.
-  cache:
-    - key:
-        files:
-          - yarn.lock
-        prefix: php83-node16
-      paths:
-        - .yarn/cache/
-        - node_modules/
-      policy: pull-push
-    - key:
-        files:
-          - examples/drupal/composer.lock
-        prefix: php83
-      paths:
-        - examples/drupal/vendor/
-      policy: pull-push
-    # Static key: lockfile churn just costs one cold run, and CI's
-    # files-key limit is 2 - not enough for the four example lockfiles.
-    - key: examples-php83-node16
-      paths:
-        - examples/*/node_modules/
-      policy: pull-push
-  before_script:
-    - !reference [.drupal-backend, before_script]
-    # cloudflared is preview-only, so it stays here rather than in the shared
-    # template. Checksums are per architecture and pinned: an unverified binary
-    # that opens a public tunnel to this build is not something to fetch on
-    # trust, and this runner may be either.
-    - |
-      cf_version="2026.7.3"
-      arch="$(uname -m)"
-      case "$arch" in
-        aarch64|arm64)
-          cf_arch=arm64
-          cf_sha256=65259e652a7bea08bf5df603233ab22b8bf3116af8df9f9206209af6a1b955c0
-          ;;
-        x86_64)
-          cf_arch=amd64
-          cf_sha256=9d71c677db00134c1bd4144b7783486b654ad281b1ea62b4972098d19f770f17
-          ;;
-        *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
-      esac
-      curl -sL "https://github.com/cloudflare/cloudflared/releases/download/${cf_version}/cloudflared-linux-${cf_arch}" -o /usr/local/bin/cloudflared
-      echo "${cf_sha256}  /usr/local/bin/cloudflared" | sha256sum -c - || { echo "cloudflared checksum mismatch" >&2; exit 1; }
-      chmod +x /usr/local/bin/cloudflared
+    GIT_DEPTH: '0'
+    VSCODE_TUNNEL_KEEP_ALIVE_MINUTES: '55'
   script:
-    - !reference [.provision-backend, script]
-    - section_start "frontend" "Building the monorepo and starting the example apps"
-    - |
-      set -euo pipefail
-      yarn install --immutable
-      yarn build
-    - |
-      # Start helper: $1=variant $2=app $3=port. tailwind is a plain Vite
-      # app (vite / vite preview --port); the others are Nuxt 2
-      # (nuxt dev/start -p, which also overrides bootstrapvue's committed
-      # config port when prod runs on port+200).
-      run_variant() {
-        variant="$1" app="$2" port="$3"
-        dir="examples/druxt-$app"
-        log="/tmp/${variant}-${app}.log"
-        if [ "$variant" = prod ]; then (cd "$dir" && yarn install && yarn build) || exit 1; fi
-        if [ "$app" = tailwind ]; then
-          if [ "$variant" = dev ]; then
-            (cd "$dir" && nohup yarn vite --port "$port" --strictPort > "$log" 2>&1 &)
-          else
-            (cd "$dir" && nohup yarn vite preview --port "$port" --strictPort > "$log" 2>&1 &)
-          fi
-        else
-          if [ "$variant" = dev ]; then
-            (cd "$dir" && nohup yarn dev -p "$port" > "$log" 2>&1 &)
-          else
-            (cd "$dir" && nohup yarn start -p "$port" > "$log" 2>&1 &)
-          fi
-        fi
-      }
-      # Deps first - the examples cache may be cold.
-      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
-      for app in "${EXAMPLES[@]}"; do (cd "examples/druxt-$app" && yarn install); done
-      for app in "${EXAMPLES[@]}"; do
-        case "$app" in
-          site) port=3001 ;;
-          daisyui) port=3002 ;;
-          tailwind) port=3003 ;;
-          bootstrapvue) port=3004 ;;
-          *) echo "unknown example: $app (expected site|daisyui|tailwind|bootstrapvue)" >&2; exit 1 ;;
-        esac
-        [ "$PREVIEW_MODE" = "prod" ] || run_variant dev "$app" "$port"
-        [ "$PREVIEW_MODE" = "dev" ] || run_variant prod "$app" "$((port + 200))"
-      done
-    - |
-      # Wait for each port to accept TCP - dev servers listen before their
-      # first compile finishes, and the tunnel doesn't care either way.
-      wait_port() {
-        for i in $(seq 1 120); do
-          (echo > "/dev/tcp/127.0.0.1/$1") 2>/dev/null && return 0
-          sleep 5
-        done
-        echo "port $1 never opened" >&2; return 1
-      }
-      rc=0
-      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
-      for app in "${EXAMPLES[@]}"; do
-        case "$app" in site) p=3001 ;; daisyui) p=3002 ;; tailwind) p=3003 ;; bootstrapvue) p=3004 ;; esac
-        [ "$PREVIEW_MODE" = "prod" ] || wait_port "$p" || rc=1
-        [ "$PREVIEW_MODE" = "dev" ] || wait_port "$((p + 200))" || rc=1
-      done
-      # Not "exit $rc": script items share one shell, a bare exit ends
-      # the job and skips the tunnel steps below.
-      if [ "$rc" -ne 0 ]; then
-        echo "one or more app ports never opened" >&2
-        exit 1
-      fi
-    - section_end "frontend"
-    - section_start "tunnels" "Opening Cloudflare quick tunnels"
-    - |
-      nohup cloudflared tunnel --url "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}" --no-autoupdate > /tmp/tunnel-backend.log 2>&1 &
-      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
-      for app in "${EXAMPLES[@]}"; do
-        case "$app" in site) p=3001 ;; daisyui) p=3002 ;; tailwind) p=3003 ;; bootstrapvue) p=3004 ;; esac
-        [ "$PREVIEW_MODE" = "prod" ] || nohup cloudflared tunnel --url "http://localhost:${p}" --no-autoupdate > "/tmp/tunnel-${app}-dev.log" 2>&1 &
-        [ "$PREVIEW_MODE" = "dev" ] || nohup cloudflared tunnel --url "http://localhost:$((p + 200))" --no-autoupdate > "/tmp/tunnel-${app}-prod.log" 2>&1 &
-      done
-    - |
-      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
-      for i in $(seq 1 30); do
-        ready=1
-        [ -n "$(tunnel_url /tmp/tunnel-backend.log)" ] || ready=0
-        IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
-        for app in "${EXAMPLES[@]}"; do
-          case "$app" in site) p=3001 ;; daisyui) p=3002 ;; tailwind) p=3003 ;; bootstrapvue) p=3004 ;; esac
-          if [ "$PREVIEW_MODE" != "prod" ] && [ -z "$(tunnel_url "/tmp/tunnel-${app}-dev.log")" ]; then ready=0; fi
-          if [ "$PREVIEW_MODE" != "dev" ] && [ -z "$(tunnel_url "/tmp/tunnel-${app}-prod.log")" ]; then ready=0; fi
-        done
-        [ "$ready" -eq 1 ] && break
-        sleep 2
-      done
-    - section_end "tunnels"
-    - |
-      set -euo pipefail
-      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
-      FAILED=0
-      BACKEND_URL="$(tunnel_url /tmp/tunnel-backend.log)"
-      [ -n "$BACKEND_URL" ] || { echo "backend tunnel not ready"; tail -n 20 /tmp/tunnel-backend.log || true; FAILED=1; }
-      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
-      for app in "${EXAMPLES[@]}"; do
-        for variant in dev prod; do
-          [ "$PREVIEW_MODE" = "both" ] || [ "$PREVIEW_MODE" = "$variant" ] || continue
-          log="/tmp/tunnel-${app}-${variant}.log"
-          url="$(tunnel_url "$log")"
-          [ -n "$url" ] || { echo "$app ($variant) tunnel not ready"; tail -n 20 "$log" || true; FAILED=1; }
-        done
-      done
-      [ "$FAILED" -eq 0 ] || exit 1
-    - |
-      # Content Ops Console's OAuth2 login computes its own redirect_uri
-      # from whatever origin it's served from, so it works over the tunnel
-      # too - as long as Drupal has that exact URI registered. The tunnel
-      # hostname is random per run, so point the consumer's (single-value)
-      # redirect field at it here instead of committing it. If both dev and
-      # prod variants are running, the last one wins - the field can only
-      # hold one URI.
-      set -euo pipefail
-      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
-      if [[ ",${PREVIEW_EXAMPLES}," == *",bootstrapvue,"* ]]; then
-        for variant in dev prod; do
-          [ "$PREVIEW_MODE" = "both" ] || [ "$PREVIEW_MODE" = "$variant" ] || continue
-          url="$(tunnel_url "/tmp/tunnel-bootstrapvue-${variant}.log")"
-          [ -n "$url" ] || continue
-          CONSUMER_REDIRECT_URI="${url}/callback" \
-            bash -c 'cd examples/drupal && PHPRC=.devtools/etc/php.ini vendor/bin/drush -y php-script .devtools/consumer-set-redirect.php'
-        done
-      fi
-    - |
-      set -euo pipefail
-      tunnel_url() { grep -oE 'https://[a-zA-Z0-9-]+\.trycloudflare\.com' "$1" 2>/dev/null | head -1 || true; }
-      CODE_ENABLED=false
-      LOGIN_LINK=""
-      if [ -n "${PREVIEW_CODE_PASSWORD:-}" ]; then
-        curl -fsSL https://code-server.dev/install.sh | sh -s -- --version "$CODE_SERVER_VERSION"
-        # code-server defaults to Open VSX, not the Microsoft Marketplace -
-        # same recommendations as .devcontainer/devcontainer.json, so a
-        # reviewer editing here gets the same PHP/Vue/lint tooling.
-        for ext in \
-          redhat.vscode-yaml \
-          bmewburn.vscode-intelephense-client \
-          ValeryanM.vscode-phpsab \
-          SanderRonde.phpstan-vscode \
-          Stanislav.vscode-drupal \
-          Vue.volar \
-          dbaeumer.vscode-eslint \
-          bradlc.vscode-tailwindcss \
-          antfu.iconify \
-          vitest.explorer \
-          davidanson.vscode-markdownlint \
-          streetsidesoftware.code-spell-checker \
-          EditorConfig.EditorConfig; do
-          code-server --install-extension "$ext" || true
-        done
-        PASSWORD="$PREVIEW_CODE_PASSWORD" nohup code-server --auth password --bind-addr 0.0.0.0:8080 "$CI_PROJECT_DIR" > /tmp/code-server.log 2>&1 &
-        nohup cloudflared tunnel --url http://localhost:8080 --no-autoupdate > /tmp/tunnel-code.log 2>&1 &
-        for i in $(seq 1 30); do [ -n "$(tunnel_url /tmp/tunnel-code.log)" ] && break; sleep 2; done
-        CODE_ENABLED=true
-        BACKEND_URL="$(tunnel_url /tmp/tunnel-backend.log)"
-        LOGIN_LINK="$(cd examples/drupal && PHPRC=.devtools/etc/php.ini vendor/bin/drush -y uli --uri="$BACKEND_URL" 2>/dev/null || true)"
-      fi
-      echo "=================================================="
-      echo " Examples preview - live until this job is stopped"
-      echo "=================================================="
-      IFS=',' read -ra EXAMPLES <<< "${PREVIEW_EXAMPLES}"
-      for app in "${EXAMPLES[@]}"; do
-        case "$app" in
-          site) label="druxt-site" ;;
-          daisyui) label="Recipe Box (daisyui)" ;;
-          tailwind) label="Meal Planner (tailwind)" ;;
-          bootstrapvue) label="Content Ops Console (bootstrapvue)" ;;
-        esac
-        if [ "$PREVIEW_MODE" != "prod" ]; then
-          echo " $label (dev):  $(tunnel_url "/tmp/tunnel-${app}-dev.log")"
-        fi
-        if [ "$PREVIEW_MODE" != "dev" ]; then
-          echo " $label (prod): $(tunnel_url "/tmp/tunnel-${app}-prod.log")"
-        fi
-      done
-      echo " Backend:      $(tunnel_url /tmp/tunnel-backend.log)"
-      if [ "$CODE_ENABLED" = "true" ]; then
-        echo " Login link:   ${LOGIN_LINK:-not ready}"
-        echo " Code:         $(tunnel_url /tmp/tunnel-code.log) (password: your PREVIEW_CODE_PASSWORD variable)"
-      else
-        echo " (code-server + login link skipped - set PREVIEW_CODE_PASSWORD to enable)"
-      fi
-      echo "=================================================="
-      DURATION="$PREVIEW_DURATION_SECONDS"
-      [ "$DURATION" -le 18000 ] || DURATION=18000
-      sleep "$DURATION"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build || echo "The build failed; the tunnel opens anyway."
+    - bash .gitlab/scripts/run-vscode-tunnel.sh
