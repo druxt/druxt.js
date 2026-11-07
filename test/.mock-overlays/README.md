@@ -10,8 +10,11 @@ from that baseline, and a consumer that needs one keeps its own copy.
 release. It comes from
 [decoupled-drupal-mock](https://github.com/Decipher/decoupled-drupal-mock)'s
 `examples/overlays/`, and its SHA-256 is
-`2549aa9e245a089cc0d6e557e05cb858406842676c1b71e1bae07f5211ee6aa9`, which is
-what that repository's own `manifest.json` records for it.
+`c0cf8e2d2323a981ea53bf6703672f3fac6be678f9ff823457ee15d00c72089f`, which is
+what that repository's own `manifest.json` records for it. It was recorded
+against the preset's 1.0.0-alpha.3 build, and it must match the preset
+`package.json` pins: every UUID in the preset changed at alpha.3, so an
+overlay from another build names resources the preset does not have.
 
 The file is not decoration. Stock Decoupled Router leaves the langcode out of
 the front page's answer, so the redirect middleware test used to expect `/` for
