@@ -1,3 +1,5 @@
+<!-- The router port restores the full wording, with the router's /es standalone tests. -->
+
 # Overlay
 
 The Umami preset publishes the stock site, as released modules answer it. An
@@ -12,17 +14,20 @@ release. It comes from
 `examples/overlays/`, and its SHA-256 is
 `c0cf8e2d2323a981ea53bf6703672f3fac6be678f9ff823457ee15d00c72089f`, which is
 what that repository's own `manifest.json` records for it. It was recorded
-against the preset's 1.0.0-alpha.3 build, and it must match the preset
-`package.json` pins: every UUID in the preset changed at alpha.3, so an
-overlay from another build names resources the preset does not have.
+against the preset's 1.0.0-alpha.3 build, and every UUID in the preset changed
+at alpha.3, so an overlay from another build names resources the preset does
+not have.
 
-The file is not decoration. Stock Decoupled Router leaves the langcode out of
-the front page's answer, and with no langcode there is no prefix for the
-redirect middleware to send a request for `/en/node` to. With this overlay the
-langcode is there, and the answer is `/en`, which is what
-`packages/router/test/router.test.js` pins for every path but the home path
-itself. So the overlay is what lets the suite assert the behaviour a patched
-Decoupled Router produces.
+Nothing in this tree loads the overlay yet. The standalone suite here holds one
+check, that `/jsonapi` answers JSON:API at `DRUXT_BASE_URL`: the examples/drupal
+backend the CI job provisions, or the mock a merge request's Try it section
+starts, `decoupled-drupal-mock-umami@alpha`.
+
+The standalone `/es` tests that assert what a patched Decoupled Router answers
+arrive with the module ports: router, menu, breadcrumb, blocks and site. They
+need this overlay against the mock, and the mock must then send
+`Content-Language` as well, which is an open issue on the mock. Until then the
+file is kept here so those ports find it.
 
 Replace it by rebuilding from a Drupal with the two patches applied, as the
 mock's `docs/overlays.md` describes. Nothing here is edited by hand.

@@ -11,15 +11,9 @@
     "packages/router/**",
     "packages/schema/**",
     "packages/site/**",
-    "packages/test-utils/**",
     "packages/views/**",
-    "test/exports.test.js",
     "test/mixins.test.js",
-    "test/nuxt/setup.ts",
     "test/standalone/backend.ts",
-    "test/standalone-files.test.js",
-    "test/storyTemplates.test.js",
-    "test/__mocks__/**",
     // 1.x examples, run on the 1.x line.
     "examples/**",
     "test/__fixtures__/**"
@@ -27,6 +21,9 @@
   "workspaces": {
     ".": {
       "entry": [
+        // The component tests' Nuxt app.
+        "test/nuxt/app/app.vue",
+        "test/nuxt/setup.ts",
         // Run by the test:nuxt-floor CI job.
         "scripts/nuxt-floor.mjs"
       ],
@@ -36,7 +33,14 @@
     }
   },
   // Nuxt's virtual modules, and the build templates the Druxt modules alias as #druxt/*.
-  "ignoreUnresolved": ["#app", "#imports", "#build/.*", "#druxt/.*"],
+  "ignoreUnresolved": [
+    "#app",
+    "#imports",
+    "#build/.*",
+    "#druxt/.*",
+    // The fake Drupal's fetch type, from @druxt/client: it leaves this list in the client's port.
+    "../../packages/client/src"
+  ],
   // A helper a script exports and also calls itself, for its tests' sake.
   "ignoreExportsUsedInFile": true,
   // The workflows are 1.x's; 2.0.x runs on GitLab CI alone for now.
