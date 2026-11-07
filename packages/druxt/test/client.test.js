@@ -135,8 +135,8 @@ describe('DruxtClient', () => {
     // Expect invalid resource to return false.
     expect((await druxt.createResource({}))).toBe(false)
 
-    // The stock umami this runs against has no contact form, so the writes go
-    // through a node, and the engine enforces the permission for one.
+    // Creating a node takes an account with the permission. Signed out, the
+    // write is refused with a 403 before validation runs.
     mockAxios.__signIn('author')
 
     // Create a node without the data it requires.
@@ -275,9 +275,9 @@ describe('DruxtClient', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi', undefined)
 
-    // A total is a magic number: it moves with the backend, and with the
-    // preset once this runs against the mock. The index is the endpoint's own
-    // links with the base URL stripped, so the source says what belongs in it.
+    // A total is a magic number that moves with the backend. The index is the
+    // endpoint's own links with the base URL stripped, so the source says what
+    // belongs in it.
     // Reading it from the call the client already made keeps the call count
     // above true. A shape check alone would pass a truncated index.
     const { data } = await mockAxios.get.mock.results[0].value

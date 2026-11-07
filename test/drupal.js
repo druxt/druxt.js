@@ -5,8 +5,8 @@ const { resolve } = require('path')
 
 const { axiosVerbs, loadPreset } = require('decoupled-drupal-mock/jest')
 
-// The recorded fixtures came from this origin and the tests still name it, so
-// the engine answers for the same site rather than a sentinel host.
+// The tests name this origin, so the engine answers for it rather than for a
+// sentinel host.
 const baseUrl = 'https://api.umami.demo.druxtjs.org'
 
 // The preset publishes the stock site, so the two language-routing patches
@@ -29,12 +29,10 @@ const drupal = global.__decoupledDrupalMock
 
 const verbs = axiosVerbs(drupal, baseUrl)
 
-// Requests are anonymous unless a test signs in. The recorded fixtures were
-// captured with a privileged account and replayed for every request, so the
-// write tests passed without ever sending credentials. The engine enforces
-// Drupal's permissions, so the account a test needs is named by the test. No
-// single account does everything here: umami's author creates content and its
-// editor holds the moderation transitions.
+// Requests are anonymous unless a test signs in. The engine enforces Drupal's
+// permissions, so a test that writes names the account it needs. No single
+// account does everything here: umami's author creates content and its editor
+// holds the moderation transitions.
 //
 // The name is held, not the token. reset() revokes every token it issued, so a
 // token minted once and kept would be answered 401 from the next test onward,

@@ -267,7 +267,7 @@ describe('DruxtField', () => {
     expect(wrapper.vm.isDateTime).toBe(true)
     // The instant is the entity's own, so it is taken out of the markup before
     // the snapshot and asserted against the entity below. A snapshot of the
-    // whole thing would pin the test to the day the preset was recorded.
+    // whole thing would pin the test to one recording of the backend.
     expect(wrapper.html().split(mockPage.data.attributes.created).join('{created}')).toMatchSnapshot()
 
     // Input.

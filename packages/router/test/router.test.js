@@ -295,8 +295,7 @@ describe('DruxtRouter', () => {
     // A backend without the Decoupled Router installed answers the router path
     // with Drupal's own HTML 404 rather than a router document, and the client
     // says so instead of passing the page on. The stub states that case
-    // directly: the recording it used to read carried one site's rendering of
-    // that page, and the engine answers the path like any other 404.
+    // directly, since the mock answers the path like any other 404.
     //
     // The response resolves rather than rejects, because the router asks for
     // anything under 500, and it is handed over inside a client, because the
