@@ -154,11 +154,7 @@ describe('DruxtEntityForm', () => {
     expect(wrapper.vm.submitting).toBe(false)
   })
 
-  // This one needs a backend that enforces permissions. The recorded fixtures
-  // answer a write with a success whatever the credentials, so it is skipped
-  // there and runs against the mock engine.
-  const permissionTest = mockAxios.__drupal ? test : test.skip
-  permissionTest('create - refused while signed out', async () => {
+  test('create - refused while signed out', async () => {
     const wrapper = await mountComponent({ type: 'node--page' })
 
     // A title, so the only thing left to refuse the write is permission.

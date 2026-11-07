@@ -17,13 +17,12 @@ against the preset's 1.0.0-alpha.3 build, and it must match the preset
 overlay from another build names resources the preset does not have.
 
 The file is not decoration. Stock Decoupled Router leaves the langcode out of
-the front page's answer, so the redirect middleware test used to expect `/` for
-a request to `/en/node`: with no langcode there was no prefix to redirect to.
-Against this overlay the langcode is there, and the answer is `/en`, which is
-what `packages/router/test/router.test.js` pins for every path but the home
-path itself. So the overlay is what makes the suite assert the behaviour a
-patched Decoupled Router actually produces, rather than the behaviour that
-happens to hold while the field is absent.
+the front page's answer, and with no langcode there is no prefix for the
+redirect middleware to send a request for `/en/node` to. With this overlay the
+langcode is there, and the answer is `/en`, which is what
+`packages/router/test/router.test.js` pins for every path but the home path
+itself. So the overlay is what lets the suite assert the behaviour a patched
+Decoupled Router produces.
 
 Replace it by rebuilding from a Drupal with the two patches applied, as the
 mock's `docs/overlays.md` describes. Nothing here is edited by hand.

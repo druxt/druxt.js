@@ -1,11 +1,8 @@
 import mockAxios from 'jest-mock-axios'
-import { drupal, signIn, verbs, withToken } from '../drupal'
+import { signIn, verbs, withToken } from '../drupal'
 
 /** Signs in as a named account from the preset, or signs out when given nothing. */
 mockAxios.__signIn = signIn
-
-/** The engine itself, for a test that needs to seed or inspect the site. */
-mockAxios.__drupal = drupal
 
 // The spies stay spies: the ~60 assertions on calls keep working, and the
 // arguments they record are the caller's, not the ones carrying the token.
