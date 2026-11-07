@@ -1,5 +1,3 @@
-/* global beforeEach, describe, expect, jest, test */
-
 import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
@@ -7,6 +5,8 @@ import mockAxios from 'jest-mock-axios'
 
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import DruxtBlock from '../../src/components/DruxtBlock.vue'
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
+
 import { getMockResource } from '../../../test-utils/src'
 
 // Setup local vue instance.
@@ -46,7 +46,7 @@ describe('Component - DruxtBlock', () => {
     store = new Vuex.Store()
 
     DruxtStore({ store })
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+    store.$druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
 
     store.app = { context: { error: jest.fn() }, store }
   })
@@ -71,12 +71,16 @@ describe('Component - DruxtBlock', () => {
   })
 
   test('uuid - pluginId', async () => {
-    // TODO : Update test to use getMockResource instead of a hardcoded UUID.
-    const wrapper = mountComponent({ uuid: '06251689-406e-4dc4-aab1-5fcf0e5f9ecb' })
+    // The block config's own uuid belongs to the install. Its plugin names the
+    // block_content it renders, which is what the component names below are
+    // built from, so the block is looked up by that.
+    const blockQuery = new DrupalJsonApiParams().addFilter('plugin', 'block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf')
+    const mockBlock = await getMockResource('block--block', blockQuery)
+    const wrapper = mountComponent({ uuid: mockBlock.data.id })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtBlock.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtBlock:06251689-406e-4dc4-aab1-5fcf0e5f9ecb:0')
+    expect(DruxtBlock.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe(`DruxtBlock:${mockBlock.data.id}:0`)
 
     // DruxtModule
     expect(wrapper.vm.component.options.length).toBe(9)

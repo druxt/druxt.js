@@ -85,46 +85,6 @@
    "thirdPartySettings": []
   },
   {
-   "id": "promote",
-   "description": null,
-   "label": {
-    "text": null,
-    "position": null
-   },
-   "cardinality": null,
-   "required": false,
-   "type": "boolean_checkbox",
-   "weight": 3,
-   "settings": {
-    "config": {},
-    "display": {
-     "display_label": true
-    },
-    "storage": {}
-   },
-   "thirdPartySettings": []
-  },
-  {
-   "id": "sticky",
-   "description": null,
-   "label": {
-    "text": null,
-    "position": null
-   },
-   "cardinality": null,
-   "required": false,
-   "type": "boolean_checkbox",
-   "weight": 4,
-   "settings": {
-    "config": {},
-    "display": {
-     "display_label": true
-    },
-    "storage": {}
-   },
-   "thirdPartySettings": []
-  },
-  {
    "id": "path",
    "description": null,
    "label": {
@@ -143,7 +103,7 @@
    "thirdPartySettings": []
   },
   {
-   "id": "body",
+   "id": "field_body",
    "description": "",
    "label": {
     "text": "Body",
@@ -151,18 +111,15 @@
    },
    "cardinality": 1,
    "required": false,
-   "type": "text_textarea_with_summary",
+   "type": "text_textarea",
    "weight": 6,
    "settings": {
     "config": {
-     "display_summary": true,
-     "required_summary": false
+     "allowed_formats": []
     },
     "display": {
      "rows": 9,
-     "summary_rows": 3,
-     "placeholder": "",
-     "show_summary": false
+     "placeholder": ""
     },
     "storage": []
    },
@@ -223,6 +180,33 @@
     "storage": {}
    },
    "thirdPartySettings": []
+  },
+  {
+   "id": "body",
+   "description": "",
+   "label": {
+    "text": "Body",
+    "position": null
+   },
+   "cardinality": 1,
+   "required": false,
+   "type": "text_textarea_with_summary",
+   "weight": 26,
+   "settings": {
+    "config": {
+     "display_summary": true,
+     "required_summary": false,
+     "allowed_formats": []
+    },
+    "display": {
+     "rows": 9,
+     "summary_rows": 3,
+     "placeholder": "",
+     "show_summary": false
+    },
+    "storage": []
+   },
+   "thirdPartySettings": []
   }
  ],
  "groups": [],
@@ -232,6 +216,6 @@
   "mode": "default",
   "schemaType": "form",
   "filter": [],
-  "href": "http://demo-api-druxtjs-org.lndo.site/en/jsonapi/node/page"
+  "href": "/en/jsonapi/node/page"
  }
 }

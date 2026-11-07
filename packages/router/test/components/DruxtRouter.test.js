@@ -116,7 +116,11 @@ describe('DruxtRouterComponent', () => {
     await DruxtRouterComponent.middleware({ $druxt: wrapper.vm.$druxt, store: wrapper.vm.$store, redirect, route: wrapper.vm.$route })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    expect(redirect).toBeCalledWith('/')
+    // The front page comes back with its langcode, as a Decoupled Router with
+    // #3111456 applied answers it, and the request was for /en/node. The unit
+    // test in packages/router/test/router.test.js pins that case: anything but
+    // the home path itself redirects to the prefixed home path.
+    expect(redirect).toBeCalledWith('/en')
   })
 
   test('Middleware - Error', async () => {

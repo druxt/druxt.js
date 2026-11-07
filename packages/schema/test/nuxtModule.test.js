@@ -14,7 +14,7 @@ describe('Nuxt module', () => {
       },
       options: {
         druxt: {
-          baseUrl: 'https://demo-api.druxtjs.org',
+          baseUrl: 'https://api.umami.demo.druxtjs.org',
         },
       },
       DruxtSchemaNuxtModule
@@ -59,10 +59,10 @@ describe('Nuxt module', () => {
     mock.options.druxt.schema = { refresh: true }
     await DruxtSchemaNuxtModule.call(mock)
     expect(mock.addServerMiddleware).toHaveBeenCalledWith({ path: '/_druxt/schema', handler: expect.any(Function) })
-    const site = (id) => process[refresh].get('https://demo-api.druxtjs.org')(id)
+    const site = (id) => process[refresh].get('https://api.umami.demo.druxtjs.org')(id)
     expect(await site('node--page--default--view')).toStrictEqual({ id: 'node--page--default--view' })
     // Generation runs without the API proxy, as the build does.
-    expect(DruxtSchema).toHaveBeenLastCalledWith('https://demo-api.druxtjs.org', expect.objectContaining({ proxy: { api: false } }))
+    expect(DruxtSchema).toHaveBeenLastCalledWith('https://api.umami.demo.druxtjs.org', expect.objectContaining({ proxy: { api: false } }))
 
     // An ID it cannot parse uses the built file.
     expect(await site('not a schema id')).toBe(null)
@@ -81,7 +81,7 @@ describe('Nuxt module', () => {
     // Another site in the same process gets its own refresh.
     mock.options.druxt.baseUrl = 'https://other.example.com'
     await DruxtSchemaNuxtModule.call(mock)
-    expect([...process[refresh].keys()]).toStrictEqual(['https://demo-api.druxtjs.org', 'https://other.example.com'])
+    expect([...process[refresh].keys()]).toStrictEqual(['https://api.umami.demo.druxtjs.org', 'https://other.example.com'])
     delete process[refresh]
   })
 })

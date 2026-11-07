@@ -8632,6 +8632,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"decoupled-drupal-mock-umami@npm:1.0.0-alpha.3":
+  version: 1.0.0-alpha.3
+  resolution: "decoupled-drupal-mock-umami@npm:1.0.0-alpha.3"
+  peerDependencies:
+    decoupled-drupal-mock: ^1.0.0-alpha.3
+  bin:
+    decoupled-drupal-mock-umami: bin.js
+  checksum: 94c127a00a2f40ab272b1badeda272a596b2cfa4d84e32459c82514951c12fea02d710c219ca16f08cd527f61ecc38098f0fdeef4225c1daab460380f3a7ebc4
+  languageName: node
+  linkType: hard
+
+"decoupled-drupal-mock@npm:1.0.0-alpha.3":
+  version: 1.0.0-alpha.3
+  resolution: "decoupled-drupal-mock@npm:1.0.0-alpha.3"
+  bin:
+    decoupled-drupal-mock: dist/cli.js
+  checksum: e46807f4b8ad41a3017ed2ffa63c04b17aeacc3e9a2ea932df980efc9a49de139ae422b75d99fe696ffdb9cf7f24c8ca8556d17b05c562309abd8579b2ce1bea
+  languageName: node
+  linkType: hard
+
 "dedent@npm:^1.0.0, dedent@npm:^1.6.0":
   version: 1.7.2
   resolution: "dedent@npm:1.7.2"
@@ -9122,6 +9142,8 @@ __metadata:
     bundlewatch: 0.4.2
     cspell: ^7.3.9
     cypress: ^13.17.0
+    decoupled-drupal-mock: 1.0.0-alpha.3
+    decoupled-drupal-mock-umami: 1.0.0-alpha.3
     esbuild: 0.28.2
     esbuild-jest: 0.5.0
     eslint: 7.32.0

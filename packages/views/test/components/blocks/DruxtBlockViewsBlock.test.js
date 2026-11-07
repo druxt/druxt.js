@@ -34,13 +34,14 @@ describe('Component - DruxtBlockViewsBlock', () => {
     store = new Vuex.Store()
 
     DruxtStore({ store })
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+    store.$druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
 
     store.app = { context: { error: jest.fn() }, store }
   })
 
   test('default', async () => {
-    const blockQuery = new DrupalJsonApiParams().addFilter('drupal_internal__id', 'views_block__promoted_items_block_1')
+    // The block's own id carries the theme name, so it is found by its plugin.
+    const blockQuery = new DrupalJsonApiParams().addFilter('plugin', 'views_block:promoted_items-block_1')
     const mockBlock = await getMockResource('block--block', blockQuery)
     const viewQuery = new DrupalJsonApiParams().addFilter('drupal_internal__id', 'promoted_items')
     const mockView = await getMockResource('view--view', viewQuery)

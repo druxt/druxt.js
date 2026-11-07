@@ -31,7 +31,7 @@ describe('DruxtSite component', () => {
     store = new Vuex.Store()
 
     DruxtStore({ store })
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+    store.$druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
 
     store.app = { context: { error: jest.fn() }, store }
   })
@@ -41,7 +41,9 @@ describe('DruxtSite component', () => {
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.theme).toBe('umami')
-    expect(wrapper.vm.regions).toStrictEqual([
+    // The regions come from the theme's blocks, in the order the backend
+    // lists them, so the set is what this pins and not the order.
+    expect([...wrapper.vm.regions].sort()).toStrictEqual([
       'breadcrumbs',
       'highlighted',
       'pre_header',
@@ -53,7 +55,7 @@ describe('DruxtSite component', () => {
       'tabs',
       'page_title',
       'content_bottom'
-    ])
+    ].sort())
     expect(Object.keys(wrapper.vm.$refs)).toStrictEqual(['component', ...wrapper.vm.regions])
 
     // Druxt Component mixin.

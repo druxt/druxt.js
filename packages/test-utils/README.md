@@ -42,7 +42,7 @@ Available helpers:
 | `getMockResource(resourceType, query)`   | A mocked JSON:API resource (fetches a real one's shape from the demo backend structure). |
 | `getMockCollection(resourceType, query)` | A mocked JSON:API collection.                                                            |
 | `getMockRoute(path)`                     | A mocked decoupled router `translate-path` response.                                     |
-| `baseUrl`                                | The mock backend base URL (`https://demo-api.druxtjs.org`).                              |
+| `baseUrl`                                | The mock backend base URL (`https://api.umami.demo.druxtjs.org`).                       |
 
 See the packages' `test/` directories (`packages/druxt`,
 `packages/entity`, …) for real-world usage, and the druxt.js monorepo

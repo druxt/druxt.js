@@ -4,7 +4,7 @@ import mockAxios from 'jest-mock-axios'
 
 import { DruxtClient } from '../src/client'
 
-const baseUrl = 'https://demo-api.druxtjs.org'
+const baseUrl = 'https://api.umami.demo.druxtjs.org'
 
 jest.mock('axios')
 
@@ -128,7 +128,6 @@ describe('DruxtClient', () => {
   })
 
   test('createResource', async () => {
-    let response
     const headers = {
       'Content-Type': 'application/vnd.api+json'
     }
@@ -136,48 +135,68 @@ describe('DruxtClient', () => {
     // Expect invalid resource to return false.
     expect((await druxt.createResource({}))).toBe(false)
 
-    // Create a Feedback Contact message resource without require data.
-    const data = { type: 'contact_message--feedback' }
+    // Creating a node takes an account with the permission. Signed out, the
+    // write is refused with a 403 before validation runs.
+    mockAxios.__signIn('author')
+
+    // Create a node without the data it requires.
+    const data = { type: 'node--page' }
+    let error
     try {
       await druxt.createResource(data)
     } catch(err) {
-      expect(err.response.data.errors[0]).toMatchSnapshot()
-      expect(err.response.data.errors.length).toBe(2)
+      error = err
     }
+    // Asserted outside the catch, so a create that unexpectedly succeeded
+    // fails the test rather than skipping it.
+    expect(error).toBeDefined()
+    expect(error.response.status).toBe(422)
+    const [violation] = error.response.data.errors
+    expect(violation.detail).toMatchSnapshot()
+    expect(violation.source.pointer).toBe('/data/attributes/title')
+    // Not the reason phrase: RFC 9110 renamed 422 from "Unprocessable Entity"
+    // to "Unprocessable Content", so it follows the Drupal version.
+    expect(violation.status).toBe('422')
     expect(mockAxios.post).toHaveBeenCalledWith(
-      `/en/jsonapi/contact_message/feedback`,
+      `/en/jsonapi/node/page`,
       { data },
       { headers }
     )
     mockAxios.reset()
 
-    // Create resource with required data.
-    data.attributes = {
-      subject: 'Subject',
-      message: 'Test'
+    // A resource missing several required fields reports each violation, not
+    // just the first. umami's recipe has enough of them to show that; the
+    // count itself belongs to the content type, so only the plural matters.
+    let violations
+    try {
+      await druxt.createResource({ type: 'node--recipe' })
+    } catch(err) {
+      violations = err.response.data.errors
     }
-    response = await druxt.createResource(data)
+    expect(violations.length).toBeGreaterThan(1)
+    expect(violations.filter((item) => !(item.source || {}).pointer)).toStrictEqual([])
+    mockAxios.reset()
+
+    // Create resource with required data.
+    data.attributes = { title: 'Test' }
+    const response = await druxt.createResource(data)
     expect(mockAxios.post).toHaveBeenCalledWith(
-      `/en/jsonapi/contact_message/feedback`,
+      `/en/jsonapi/node/page`,
       { data },
       { headers }
     )
     expect(response.errors).toBe(undefined)
-    expect(response.status).toBe(200)
-    expect(response.data.data.attributes.subject).toBe(data.attributes.subject)
-    expect(response.data.data.attributes.message).toBe(data.attributes.message)
+    expect(response.status).toBe(201)
+    expect(response.data.data.attributes.title).toBe(data.attributes.title)
     mockAxios.reset()
 
-    // Update resource.
-    try {
-      await druxt.createResource(response.data.data)
-    } catch(err) {
-      expect(mockAxios.patch).toHaveBeenCalledWith(
-        `/en/jsonapi/contact_message/feedback/${response.data.data.id}`,
-        { data: response.data.data },
-        { headers }
-      )
-    }
+    // A resource that already has an id is sent as an update.
+    await druxt.createResource(response.data.data).catch(() => {})
+    expect(mockAxios.patch).toHaveBeenCalledWith(
+      `/en/jsonapi/node/page/${response.data.data.id}`,
+      { data: response.data.data },
+      { headers }
+    )
   })
 
   test('error', () => {
@@ -256,9 +275,9 @@ describe('DruxtClient', () => {
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
     expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi', undefined)
 
-    // A total is a magic number: it moves with the backend, and with the
-    // preset once this runs against the mock. The index is the endpoint's own
-    // links with the base URL stripped, so the source says what belongs in it.
+    // A total is a magic number that moves with the backend. The index is the
+    // endpoint's own links with the base URL stripped, so the source says what
+    // belongs in it.
     // Reading it from the call the client already made keeps the call count
     // above true. A shape check alone would pass a truncated index.
     const { data } = await mockAxios.get.mock.results[0].value
@@ -422,7 +441,12 @@ describe('DruxtClient', () => {
     try {
       await druxt.getResource('node--article', 'missing')
     } catch(err) {
-      expect(err.response.data.errors[0]).toMatchSnapshot()
+      const [error] = err.response.data.errors
+      // Drupal's own wording for a parameter it could not convert, and a link
+      // back to the request. A snapshot of the whole error also pinned the RFC
+      // link in `links.info`, which moves with the Drupal version.
+      expect(error.detail).toMatchSnapshot()
+      expect(error.links.via.href).toBe(`${baseUrl}/en/jsonapi/node/article/missing`)
     }
     expect(mockAxios.get).toHaveBeenCalledWith(`/en/jsonapi/node/article/missing`, undefined)
 

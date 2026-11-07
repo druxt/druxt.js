@@ -53,7 +53,7 @@ describe('DruxtEntity', () => {
     store = new Vuex.Store()
 
     DruxtStore({ store })
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+    store.$druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
 
     DruxtSchemaStore({ store })
     store.$druxtSchema = {
@@ -93,7 +93,7 @@ describe('DruxtEntity', () => {
     ])
 
     expect(Object.keys(wrapper.vm.entity)).toStrictEqual(['type', 'id', 'links', 'attributes', 'relationships'])
-    expect(Object.keys(wrapper.vm.fields)).toStrictEqual(['body'])
+    expect(Object.keys(wrapper.vm.fields)).toStrictEqual(['field_body'])
     expect(Object.keys(wrapper.vm.schema)).toStrictEqual([
       'id', 'resourceType', 'fields', 'groups', 'config'
     ])
@@ -169,7 +169,9 @@ describe('DruxtEntity', () => {
     expect(Object.keys(wrapper.vm.entity)).toStrictEqual(['type', 'id', 'links', 'attributes'])
 
     // Methods.
-    expect(wrapper.vm.getQuery(wrapper.vm.component.settings).data.fields['node--page']).toBe('body,links,content_moderation_control,title')
+    const viewSchema = require('../../../../test/__fixtures__/schemas/node--page--default--view.json')
+    expect(wrapper.vm.getQuery(wrapper.vm.component.settings).data.fields['node--page'])
+      .toBe([...viewSchema.fields.map((field) => field.id), 'title'].join(','))
   })
 
   test('wrapper component - includes', async () => {
@@ -205,7 +207,9 @@ describe('DruxtEntity', () => {
     ])
 
     // Methods.
-    expect(wrapper.vm.getQuery(wrapper.vm.component.settings).data.fields['node--page']).toBe('body,links,content_moderation_control,title')
+    const viewSchema = require('../../../../test/__fixtures__/schemas/node--page--default--view.json')
+    expect(wrapper.vm.getQuery(wrapper.vm.component.settings).data.fields['node--page'])
+      .toBe([...viewSchema.fields.map((field) => field.id), 'title'].join(','))
   })
 
   test('component - query settings', async () => {
@@ -239,7 +243,7 @@ describe('DruxtEntity', () => {
     const mockData = {
       ...model,
       attributes: {
-        body: {
+        field_body: {
           value: 'Test'
         }
       }
@@ -257,8 +261,8 @@ describe('DruxtEntity', () => {
 
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-    wrapper.vm.$refs.body.$emit('input', 'test')
-    expect(wrapper.vm.model.attributes.body).toBe('test')
+    wrapper.vm.$refs.field_body.$emit('input', 'test')
+    expect(wrapper.vm.model.attributes.field_body).toBe('test')
   })
 
   test('watch - props $fetch', async () => {
@@ -276,12 +280,19 @@ describe('DruxtEntity', () => {
 
   test('missing schema', async () => {
     mocks.$nuxt.context.isDev = true
-    // TODO : Update test to use { getMockResource } from 'druxt-test-utils'?
-    const wrapper = mountComponent({ uuid: '7adbf02c-6e41-40ae-9124-8b4781f9c160', type: 'file--file' })
+    const mockFile = await getMockResource('file--file')
+    const wrapper = mountComponent({ uuid: mockFile.data.id, type: 'file--file' })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     expect(wrapper.vm.schema).toBe(null)
-    expect(wrapper.html()).toMatchSnapshot()
+
+    // In dev the module renders the resource it could not build a schema for.
+    // The resource's own values belong to the backend, so the markup is
+    // compared without them and the entity is named from its own data.
+    const html = wrapper.html()
+    expect(html).toContain(mockFile.data.id)
+    expect(html).toContain('file--file')
+    expect(html.replace(/<code>[\s\S]*?<\/code>/, '<code>{resource}</code>')).toMatchSnapshot()
   })
 
   // test('deprecated', () => {

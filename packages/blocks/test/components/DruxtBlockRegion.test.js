@@ -38,10 +38,10 @@ describe('Component - DruxtBlockRegion', () => {
     store = new Vuex.Store()
 
     DruxtStore({ store })
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org')
+    store.$druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
 
     DruxtRouterStore({ store })
-    store.$druxtRouter = () => new DruxtRouter('https://demo-api.druxtjs.org')
+    store.$druxtRouter = () => new DruxtRouter('https://api.umami.demo.druxtjs.org')
     store.state.druxtRouter.route = {
       isHomePath: true,
       resolvedPath: '/en/node',

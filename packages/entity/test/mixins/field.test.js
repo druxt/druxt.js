@@ -1,7 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import { getMockResource } from 'druxt-test-utils'
 
-import DruxtField from '../../src/components/DruxtField.vue'
 import { DruxtFieldMixin } from '../../src/mixins/field'
 
 // Setup local vue instance.
@@ -21,12 +20,12 @@ describe('DruxtFieldMixin', () => {
     const propsData = {
       schema: {
         config: schema.config,
-        ...schema.fields.find((o) => o.id === 'body'),
+        ...schema.fields.find((o) => o.id === 'field_body'),
       },
-      value: entity.attributes.body,
+      value: entity.attributes.field_body,
     }
     const wrapper = mount(component, { localVue, propsData })
-    expect(wrapper.vm.items).toStrictEqual([entity.attributes.body])
+    expect(wrapper.vm.items).toStrictEqual([entity.attributes.field_body])
     expect(wrapper.vm.items.length).toBe(1)
   })
 
@@ -57,9 +56,9 @@ describe('DruxtFieldMixin', () => {
     const propsData = {
       schema: {
         config: schema.config,
-        ...schema.fields.find((o) => o.id === 'body'),
+        ...schema.fields.find((o) => o.id === 'field_body'),
       },
-      value: entity.attributes.body,
+      value: entity.attributes.field_body,
     }
     const wrapper = mount(component, { localVue, propsData })
 

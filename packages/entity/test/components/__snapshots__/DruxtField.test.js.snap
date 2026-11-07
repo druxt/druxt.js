@@ -8,9 +8,9 @@ exports[`DruxtField boolean - form 1`] = `
 `;
 
 exports[`DruxtField datetime - form 1`] = `
-"<div data="2021-10-25T00:48:44+00:00">
-  <div><label><strong data="2021-10-25T00:48:44+00:00">Created:</strong><br>
-      <div><input data="2021-10-25T00:48:44+00:00" type="datetime-local"></div></label></div>
+"<div data="{created}">
+  <div><label><strong data="{created}">Created:</strong><br>
+      <div><input data="{created}" type="datetime-local"></div></label></div>
 </div>"
 `;
 

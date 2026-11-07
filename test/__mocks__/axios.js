@@ -1,73 +1,14 @@
-import axios from 'axios/dist/axios'
-import fs from 'fs'
-import md5 from 'md5'
-import path from 'path'
 import mockAxios from 'jest-mock-axios'
+import { signIn, verbs, withToken } from '../drupal'
 
-// The backend the fixtures are recorded from.
-const baseURL = 'https://demo-api.druxtjs.org'
+/** Signs in as a named account from the preset, or signs out when given nothing. */
+mockAxios.__signIn = signIn
 
-const mockData = async (request, file) => {
-  let response
-
-  // If the file isn't present, try to get it.
-  if (!fs.existsSync(file)) {
-    const axiosClient = axios.create({ baseURL })
-    console.log(`Attempting to create mock: ${file}`)
-    try {
-      response = await axiosClient(request)
-      await fs.writeFileSync(file, JSON.stringify(response, null, '  '))
-    } catch (err) {
-      await fs.writeFileSync(file, JSON.stringify(err.response, null, '  '))
-    }
-    mockAxios.reset()
-  }
-
-  // If the file still isn't present, error.
-  if (!fs.existsSync(file)) {
-    console.warn(`Missing mock data: ${file} ${request.url}`)
-    return { data: { file, url: request.url }, status: 404 }
-  }
-
-  response = response ? response : require(file)
-
-  // Throw error if error data is present.
-  if (response.data.errors || (!(response.status >= 200 && response.status < 300) && (!(request.options || {}).validateStatus || !(request.options || {}).validateStatus(response.status)))) {
-    const error = new Error()
-    error.response = response
-    throw error
-  }
-
-  return response
-}
-
-// Resolves a fixture by URL, falling back to the absolute URL's fixture for a
-// path, as the client strips the base URL from the JSON:API index's links.
-const fixture = (dir, url, name) => {
-  const file = (url) => path.resolve('./test/__fixtures__', dir, ...(name ? [md5(url), name] : [md5(url) + '.json']))
-  const absolute = url.startsWith('/') && file(`${baseURL}${url}`)
-  return !fs.existsSync(file(url)) && absolute && fs.existsSync(absolute) ? absolute : file(url)
-}
-
-// Mock 'get' requests.
-mockAxios.get = jest.fn((url, options) => {
-  const file = fixture('get', url)
-  const request = { method: 'get', url, options }
-  return mockData(request, file)
-})
-
-// Mock 'patch' requests.
-mockAxios.patch = jest.fn((url, data, options) => {
-  const file = fixture('patch', url, md5(JSON.stringify(data)) + '.json')
-  const request = { data, method: 'patch', options, url }
-  return mockData(request, file)
-})
-
-// Mock 'post' requests.
-mockAxios.post = jest.fn((url, data, options) => {
-  const file = fixture('post', url, md5(JSON.stringify(data)) + '.json')
-  const request = { data, method: 'post', options, url }
-  return mockData(request, file)
-})
+// The spies stay spies: the ~60 assertions on calls keep working, and the
+// arguments they record are the caller's, not the ones carrying the token.
+mockAxios.get = jest.fn((url, config) => verbs.get(url, withToken(config)))
+mockAxios.patch = jest.fn((url, data, config) => verbs.patch(url, data, withToken(config)))
+mockAxios.post = jest.fn((url, data, config) => verbs.post(url, data, withToken(config)))
+mockAxios.delete = jest.fn((url, config) => verbs.delete(url, withToken(config)))
 
 export default mockAxios

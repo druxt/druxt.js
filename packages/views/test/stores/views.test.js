@@ -27,7 +27,7 @@ describe('DruxtViewsStore', () => {
     DruxtStore({ store })
     DruxtViewsStore({ store })
 
-    store.$druxt = new DruxtClient('https://demo-api.druxtjs.org', { axios })
+    store.$druxt = new DruxtClient('https://api.umami.demo.druxtjs.org', { axios })
     // Reset the shared JSON:API index cache.
     Object.keys(store.$druxt.index).forEach((key) => delete store.$druxt.index[key])
 

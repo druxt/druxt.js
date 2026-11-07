@@ -27,7 +27,7 @@ describe('DruxtComponentMixin', () => {
       localVue,
       stubs: { DruxtTestModuleWrapper },
       mocks: {
-        $druxt: new DruxtClass('https://demo-api.druxtjs.org')
+        $druxt: new DruxtClass('https://api.umami.demo.druxtjs.org')
       }
     })
   })
