@@ -17,7 +17,7 @@ giving you `https://github.com/USER/druxt.js` to work from.
 
 ### Dev container
 
-`.devcontainer/devcontainer.json` provides a ready environment with Node 16 and Yarn via corepack. Monorepo dependencies install on first open.
+`.devcontainer/devcontainer.json` provides a ready environment with Node 24 and Yarn via corepack. Monorepo dependencies install on first open.
 
 [![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/druxt/druxt.js)
 
@@ -35,9 +35,9 @@ The container covers package development, unit tests and linting. It does not pr
 2. Set up the development environment: `make setup` (enables corepack and installs dependencies)
 3. Build packages: `yarn build`
 4. Start a Drupal backend (PHP 8.3 + SQLite, no Docker): `cd examples/drupal && make build` (or `.devtools/assemble && .devtools/provision && .devtools/start`)
-5. Run DruxtSite example: `yarn example:druxt-site`
+5. Run the tests against it: `DRUXT_BASE_URL=http://127.0.0.1:8888 yarn test`
 
-> If `make` is not available, run `corepack enable && yarn install` manually instead of `make setup`. This project uses [Yarn Berry](https://yarnpkg.com/) via [corepack](https://nodejs.org/api/corepack.html), which requires Node 16.9 or later.
+> If `make` is not available, run `corepack enable && yarn install` manually instead of `make setup`. This project uses [Yarn](https://yarnpkg.com/) 4 via [corepack](https://nodejs.org/api/corepack.html), on Node 24.
 
 ## Bug reports, feature requests
 
@@ -79,7 +79,7 @@ A few things to know:
 
 The Druxt monorepo contains a collection of example projects inside the `examples/` directory.
 
-The example projects run against the locally built codebase, for testing during development.
+The example projects run against the locally built codebase, for testing during development. They are not ported to the 2.x line yet, so the root `example:*` scripts that started each one are gone until they are.
 
 All examples use the Drupal instance located at `examples/drupal` (`cd examples/drupal && make build`), a minimal Umami install. The full druxtjs.org site backend (translations, Tome content) lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org).
 
@@ -87,25 +87,17 @@ All examples use the Drupal instance located at `examples/drupal` (`cd examples/
 
 An unstyled DruxtSite pattern index, including an eleven page `/examples/*` demonstration suite.
 
-`yarn example:druxt-site`
-
 ### druxt-daisyui
 
 A daisyUI-themed DruxtSite.
-
-`yarn example:druxt-daisyui`
 
 ### druxt-tailwind
 
 A Tailwind-themed DruxtSite.
 
-`yarn example:druxt-tailwind`
-
 ### druxt-bootstrapvue
 
 The Content Ops Console is a BootstrapVue editorial app with authenticated JSON:API writes.
-
-`yarn example:druxt-bootstrapvue`
 
 ### node-client
 
@@ -120,13 +112,12 @@ The Druxt repository is setup with tools and automated processes to help with de
 - [Changesets](#changesets) - Changelog and versioning
 - [Codecov](#codecov) - Automated code coverage
 - [Conventional commits](#conventional-commits) - Standardised commit messages
-- [Cypress](#cypress) - Automated end-to-end testing
 - [Dev container](#dev-container) - Ready-made development environment
-- [Docgen](#docgen) - Documentation generator
-- [Jest](#jest) - Automated unit testing
+- [API docs](#api-docs) - Documentation generator
 - [Linting](#linting) - Coding styles and standards
+- [Module builder](#module-builder) - Package builds
 - [Performance audit](#performance-audit) - Backend requests, hydration and Lighthouse per example route
-- [Siroc](#siroc) - Zero-config build tools
+- [Vitest](#vitest) - Automated testing
 
 ### Changesets
 
@@ -140,17 +131,13 @@ yarn changeset
 
 Be sure to commit your changeset file alongside your changes. `yarn lint:changesets` checks it against the project style, which the [add-changeset skill](.agents/skills/add-changeset/SKILL.md) describes, and `yarn lint:changesets --preview` prints the changelog it will produce.
 
-A merged changeset publishes a development release once it reaches a release line such as `0.x`, and a stable release once the pull request that versions the packages is merged. See [Releasing](RELEASING.md).
+The pull request that versions the packages publishes the release line's packages once it is merged. On `0.x`, each merged changeset also publishes a development release. The 2.0.x release flow is switched on before alpha.1. See [Releasing](RELEASING.md).
 
 ### Codecov
 
 Codecov.io is used as part of the automated testing process to ensure that changes don't inadvertently reduce the overall code coverage of the project.
 
-The coverage report is generated as part of the [Jest](#jest) testing:
-
-```sh
-yarn test:unit
-```
+Coverage is not reported on the 2.x line yet.
 
 - For more details, refer to the [Druxt Codecov.io report](https://app.codecov.io/gh/druxt/druxt.js)
 
@@ -164,37 +151,15 @@ A **husky** git hook is used to ensure the standard is enforced, and will explai
 
 - For more details, refer to the [Conventional Commits documentation](https://www.conventionalcommits.org/).
 
-### Cypress
+### API docs
 
-Automated end-to-end testing is implemented using Cypress:
-
-```sh
-yarn test:e2e
-```
-
-- For more details, refer to the [Cypress documentation](https://docs.cypress.io/guides).
-
-### Docgen
-
-Druxt uses a custom Docgen module (`packages/docgen`) to generate API
-documentation from the package source code, using a combination of **JSDoc**
-and the **Vue Docgen API**. The documentation website that renders the output
-lives in [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org); this repo
-provides the generator, not the site.
-
-### Jest
-
-Automated testing is implemented using Jest.
-
-It is recommended to run Jest in **watch** mode when making changes:
-
-```sh
-yarn test:unit --watch
-```
-
-Test files are located within the relevant packages `test` directories. E.g., `packages/druxt/test`
-
-- For more details, refer to the [Jest documentation](https://jestjs.io/docs/getting-started).
+The API reference is generated from the package source code by the scripts in
+`scripts/docs`: **TypeDoc** renders the exported API from the **TSDoc**
+comments and **vue-component-meta** documents the components. Run
+`yarn build:docs` to write it into `docs/nuxt/content`. The documentation
+website that renders the output is at
+[druxt/druxtjs.org](https://github.com/druxt/druxtjs.org); this repo provides
+the generators, not the site.
 
 ### Linting
 
@@ -212,7 +177,17 @@ You can also manually run linting using the following command:
 yarn lint
 ```
 
+### Module builder
+
+Each Nuxt module builds with [`@nuxt/module-builder`](https://github.com/nuxt/module-builder), and `@druxt/client` with unbuild:
+
+```sh
+yarn build
+```
+
 ### Performance audit
+
+The audit runs on the 1.x line. It returns to 2.x with the ported examples.
 
 The performance audit builds the examples in production mode and measures each route: backend requests per server render, API calls after load, server-rendered components discarded after hydration, layout shift, inline payload and Lighthouse. It compares the run with a committed baseline.
 
@@ -222,16 +197,12 @@ In the comment, a lower number is an improvement. The counts are the same on eve
 
 - For running it locally, the budgets and how to read the numbers, refer to the [Performance audit README](scripts/perf-audit/README.md).
 
-### Siroc
+### Vitest
 
-> Zero Config Build Tool
-
-Siroc is the build tool used for the Druxt mono-repo, used to compile the source code and build the required packages.
-
-To build your changes, run Siroc using the following command:
+Each module has a test that builds a real Nuxt 4 app with that module alone and renders Drupal content through it, so a module that only works when another installs it fails. The tests need a Drupal backend, such as `examples/drupal`:
 
 ```sh
-yarn build --watch
+DRUXT_BASE_URL=http://127.0.0.1:8888 yarn test
 ```
 
-_Note: currently Siroc does not watch the Vue components for changes, you will need to manually re-run the command as required._
+- For more details, refer to the [Vitest documentation](https://vitest.dev/guide/) and [Nuxt's testing guide](https://nuxt.com/docs/getting-started/testing).

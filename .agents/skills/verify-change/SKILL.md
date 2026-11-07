@@ -12,7 +12,7 @@ A change is done when the checks CI runs have passed on your machine, in this se
 Run it from the repository root, in this order, for every change:
 
 ```bash
-yarn lint && yarn build && yarn test:unit
+yarn lint && yarn build && yarn test
 ```
 
 `yarn build` must produce `dist/` output for every package. CI builds before it runs the unit tests, so do the same.
@@ -25,13 +25,11 @@ yarn lint && yarn build && yarn test:unit
 | Source comments or JSDoc           | `yarn lint:prose`, `yarn lint:cspell`                           |
 | `package.json` or `yarn.lock`      | `yarn install --immutable`, `yarn lint:knip`, `yarn lint:audit` |
 | `renovate.json`                    | `yarn lint:renovate`                                            |
-| `examples/` manifests              | `yarn lint:examples`                                            |
-| Package output size                | `yarn bundlewatch`, after `yarn build`                          |
 | `.agents/skills/` or `AGENTS.md`   | `yarn lint:skills`                                              |
 | `scripts/release`                  | `yarn release:check:test`                                       |
-| `scripts/perf-audit`               | `yarn perf:audit:test` under Node 22                            |
+| `scripts/perf-audit`               | `(cd scripts/perf-audit && node --test test/*.test.mjs)`        |
 
-The end-to-end tests run in CI against a Drupal backend. To run them locally, start the backend with `(cd examples/drupal && make build)`, then run `yarn example:druxt-site:test` from the repository root. See `examples/drupal/.devtools/README.md`.
+The examples are not ported to the 2.x line yet, so no end-to-end test runs, in CI or locally, until they are.
 
 ## Failing checks
 

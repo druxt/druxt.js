@@ -1,4 +1,4 @@
-.PHONY: help setup build dev test lint lint-all clean
+.PHONY: help setup build test lint lint-all clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -10,11 +10,8 @@ setup: ## Enable corepack and install dependencies (run this first)
 build: ## Build all packages
 	yarn build
 
-dev: ## Start the DruxtSite development server
-	yarn example:druxt-site
-
-test: ## Run unit tests
-	yarn test:unit
+test: ## Run the tests (needs DRUXT_BASE_URL, a Drupal backend)
+	yarn test
 
 lint: ## Run ESLint
 	yarn lint
