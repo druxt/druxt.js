@@ -31,7 +31,8 @@
     "version": "changeset version && node scripts/changelog-dates.mjs && yarn install --mode=update-lockfile",
     "typecheck": "yarn prepare:types && vue-tsc -p tsconfig.runtime.json && vue-tsc -p tsconfig.node.json && vue-tsc -p tsconfig.test.json",
     "prepare:types": "nuxt prepare test/types",
-    "test": "vitest run --project unit --project nuxt"
+    "test": "vitest run --project unit --project nuxt",
+    "test:standalone": "vitest run --project standalone"
   },
   "resolutions": {
     "human-id": "4.1.3",
