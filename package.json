@@ -98,7 +98,7 @@
     "prettier": "^3.9.9",
     "regenerator-runtime": "0.14.1",
     "rimraf": "5.0.10",
-    "semver": "^7.8.5",
+    "semver": "^7.8.6",
     "siroc": "0.16.0",
     "start-server-and-test": "^2.1.5",
     "vue": "2.7.16",
