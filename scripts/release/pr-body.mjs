@@ -19,6 +19,12 @@ import { extractNotes } from './notes.mjs'
 // GitHub refuses a body over 65,536 characters. The rest is kept for the intro.
 const LIMIT = 60000
 
+// What git says when a path is not in the ref it is asked about.
+const MISSING_PATH = /does not exist in|exists on disk, but not in/
+
+/** Runs git in a directory, returning its output and keeping its errors on the thrown error. */
+const git = (cwd) => (args) => execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
+
 const INTRO = [
   'This pull request versions the packages with pending changesets. Merging it releases them: while the repository variable `NPM_PUBLISH` is `true`, the release job publishes each version below to npm and creates its GitHub Release from the same notes. Otherwise the run packs them as a dry run and publishes nothing.',
   '',
@@ -38,11 +44,18 @@ export function buildBody(releases, limit = LIMIT) {
   if (full.length <= limit) return `${full}\n`
 
   // Too long to show whole: each release keeps an equal share, and links the rest.
-  const share = Math.floor((limit - INTRO.length) / Math.max(releases.length, 1)) - 200
+  // The share leaves out the intro, the Releases heading, the trailing newline
+  // and the blank line before each section; a trimmed section also spends its
+  // own heading and link out of it.
+  const fixed = `${INTRO}\n\n# Releases`.length + 1
+  const share = Math.floor((limit - fixed) / Math.max(releases.length, 1)) - 2
   const trimmed = releases.map((release) => {
     if (section(release).length <= share) return section(release)
-    const cut = release.notes.slice(0, Math.max(share, 0)).replace(/\n[^\n]*$/, '')
-    return `## ${release.name}@${release.version}\n\n${cut}\n\n[The whole ${release.version} section](${release.changelog}) is too long for this description.`
+    const heading = `## ${release.name}@${release.version}\n\n`
+    const suffix = `\n\n[The whole ${release.version} section](${release.changelog}) is too long for this description.`
+    const room = share - heading.length - suffix.length
+    const cut = release.notes.slice(0, Math.max(room, 0)).replace(/\n[^\n]*$/, '')
+    return `${heading}${cut}${suffix}`
   })
   return `${[INTRO, '# Releases', ...trimmed].join('\n\n')}\n`
 }
@@ -53,20 +66,31 @@ export function buildBody(releases, limit = LIMIT) {
  * @param {string} root - The repository root.
  * @param {string} base - The ref the version commit was made on.
  * @param {string} blob - The URL prefix of a file on the version branch.
+ * @param {(args: string[]) => string} [run] - Runs git in `root` and returns its output. Tests pass their own.
  * @returns {object[]} `{ name, version, notes, changelog }` entries.
  */
-export function readReleases(root, base, blob) {
+export function readReleases(root, base, blob, run = git(root)) {
+  // A mistyped or absent base would make every package look new.
+  try {
+    run(['rev-parse', '--verify', '--quiet', `${base}^{commit}`])
+  } catch (error) {
+    // Git's own error stays on as the cause, as a failure here need not be a missing ref.
+    throw new Error(`The base ref ${base} does not name a commit here.`, { cause: error })
+  }
   return readPackages(root)
     .filter(({ manifest }) => !manifest.private)
     .filter(({ dir }) => {
       const file = path.relative(root, path.join(dir, 'package.json'))
+      let shown
       try {
-        const before = JSON.parse(execFileSync('git', ['show', `${base}:${file}`], { cwd: root, encoding: 'utf8' }))
-        return before.version !== JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')).version
+        shown = run(['show', `${base}:${file}`])
       } catch (error) {
-        // A package the base does not have is new, so it is a release.
-        return true
+        // A package the base does not have is new, so it is a release. Any
+        // other failure is not an answer, so it stops the script.
+        if (MISSING_PATH.test(String(error.stderr || error.message))) return true
+        throw error
       }
+      return JSON.parse(shown).version !== JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')).version
     })
     .map(({ dir, manifest }) => {
       const changelog = path.join(dir, 'CHANGELOG.md')
