@@ -41,16 +41,13 @@ You don't need Docker, just PHP 8.3, Composer, and SQLite. See
 
 ## Quick start
 
+The examples are not ported to the 2.x line yet, so the root `example:*`
+scripts that ran them are gone. They return with the examples' port.
+
 ```bash
 # From the monorepo root:
 yarn install
-yarn build        # once, or `yarn dev` to watch-rebuild packages/*/dist
-
-# Then any example (BASE_URL defaults to http://127.0.0.1:8888):
-yarn example:druxt-site         # :3000, Nuxt + druxt-site
-yarn example:druxt-daisyui      # :3001, Nuxt + DaisyUI
-yarn example:druxt-bootstrapvue # :3004, Nuxt + BootstrapVue
-yarn example:druxt-tailwind     # :3002, Vite (no Nuxt)
+yarn build
 
 # The CLI (no dev server):
 cd examples/node-client && node bin/druxt-inspect.js --help
@@ -58,24 +55,9 @@ cd examples/node-client && node bin/druxt-inspect.js --help
 
 ## Tests
 
-Each app example includes Cypress specs (runnable against a live backend):
-
-```bash
-yarn example:druxt-site:test
-yarn example:druxt-daisyui:test
-yarn example:druxt-tailwind:test
-yarn example:druxt-bootstrapvue:test
-```
-
-`node-client` runs backend-free:
-
-```bash
-yarn test:node-client
-```
-
-CI runs all of the above (`.github/workflows/ci.yml`: `test-e2e` covers
-`druxt-site` + Storybook + docs; `test-examples` runs the three themed apps
-as a matrix; `test-node-client` runs the CLI suite).
+Each app example includes Cypress specs, written for a live backend. Until
+the examples are ported, no script or CI job runs them, or the
+`node-client` suite.
 
 ## Docs
 
