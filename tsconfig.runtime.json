@@ -1,0 +1,11 @@
+{
+  // Runtime code: Nuxt's app config, with its aliases, auto-imports and
+  // global component types, from the prepared typecheck app.
+  "extends": "./test/types/.nuxt/tsconfig.app.json",
+  "compilerOptions": {
+    "allowJs": false,
+    // Typecheck the sources, not the built packages.
+    "customConditions": ["source"]
+  },
+  "include": ["./test/types/.nuxt/nuxt.d.ts"]
+}
