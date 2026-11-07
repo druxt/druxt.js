@@ -22,7 +22,6 @@ export default createConfigForNuxt({
       'packages/site/**',
       'packages/views/**',
       'test/mixins.test.js',
-      'test/unit/runtime-imports.test.ts',
       // 1.x examples and tooling, run on the 1.x line.
       'examples/**',
       'test/__fixtures__/**',

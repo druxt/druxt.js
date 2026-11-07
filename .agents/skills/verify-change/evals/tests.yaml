@@ -1,6 +1,6 @@
 # Evals for the verify-change skill, run by .agents/promptfooconfig.yaml.
 - description:
-    "verify-change: Runs or plans yarn lint, yarn build and yarn test:unit in that order, adds
+    "verify-change: Runs or plans yarn lint, yarn build, yarn typecheck and yarn test in that order, adds
     checks matching the changed files, and reports each command's actual result."
   vars:
     request: I've finished the druxt-router change on this branch. Check it's ready before I open a PR.
@@ -13,7 +13,7 @@
     - type: skill-used
       value: verify-change
     - type: llm-rubric
-      value: Runs or lists yarn lint, yarn build and yarn test:unit
+      value: Runs or lists yarn lint, yarn build, yarn typecheck and yarn test
       metric: expectations
     - type: llm-rubric
       value: Does not claim the change passes without command output

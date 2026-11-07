@@ -1,6 +1,6 @@
 ---
 name: verify-change
-description: Runs the druxt.js verification gate (lint, build, unit tests and the checks for whatever else changed) and reports the real results. Use when a druxt.js lint, build or test check fails or when asked what to check after a change. Also use it before a commit, before opening or updating a pull request, and before saying a change is done. For a failing skill check, use write-skill.
+description: Runs the druxt.js verification gate (lint, build, typecheck, tests and the checks for whatever else changed) and reports the real results. Use when a druxt.js lint, build or test check fails or when asked what to check after a change. Also use it before a commit, before opening or updating a pull request, and before saying a change is done. For a failing skill check, use write-skill.
 ---
 
 # Verify a change
@@ -12,7 +12,7 @@ A change is done when the checks CI runs have passed on your machine, in this se
 Run it from the repository root, in this order, for every change:
 
 ```bash
-yarn lint && yarn build && yarn test
+yarn lint && yarn build && yarn typecheck && yarn test
 ```
 
 `yarn build` must produce `dist/` output for every package. CI builds before it runs the unit tests, so do the same.
