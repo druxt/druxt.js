@@ -1,0 +1,16 @@
+{
+  // Nuxt modules and other build-time code: Nuxt's node config.
+  "extends": "./test/types/.nuxt/tsconfig.node.json",
+  "compilerOptions": {
+    "allowJs": false,
+    // Typecheck the sources, not the built packages.
+    "customConditions": ["source"],
+    "types": ["node"]
+  },
+  "include": [
+    "./test/types/.nuxt/nuxt.node.d.ts",
+    "./packages/*/src/module.ts",
+    "./test/standalone/*.ts",
+    "./vitest.config.ts"
+  ]
+}

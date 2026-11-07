@@ -1,5 +1,5 @@
 [tools]
-node = "16.20.1"
+node = "24.18.0"
 
 [env]
 MISE_WORKSPACE = "druxtjs"
