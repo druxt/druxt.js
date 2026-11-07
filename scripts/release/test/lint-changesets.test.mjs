@@ -1,14 +1,19 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lintChangeset, parseChangeset } from '../lint-changesets.mjs'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { lintChangeset, parseChangeset, workspacePackages } from '../lint-changesets.mjs'
 
 const packages = new Map([
-  ['druxt', { version: '0.25.0' }],
-  ['druxt-menu', { version: '0.22.0' }],
-  ['druxt-views', { version: '0.23.0' }],
+  ['@druxt/core', { version: '2.0.0-alpha.0' }],
+  ['@druxt/menu', { version: '2.0.0-alpha.0' }],
+  ['@druxt/views', { version: '2.0.0-alpha.0' }],
+  ['@druxt/entity', { version: '2.0.0-alpha.0' }],
+  ['@druxt/router', { version: '2.0.0-alpha.0' }],
 ])
 
-const changeset = (summary, releases = "'druxt': patch") => `---\n${releases}\n---\n\n${summary}\n`
+const changeset = (summary, releases = "'@druxt/core': patch") => `---\n${releases}\n---\n\n${summary}\n`
 const lint = (...args) => lintChangeset(changeset(...args), packages)
 
 test('passes a changeset in the project style', () => {
@@ -17,7 +22,7 @@ test('passes a changeset in the project style', () => {
 })
 
 test('parses quoted and bare frontmatter', () => {
-  assert.deepEqual(parseChangeset("---\n'druxt': patch\ndruxt-menu: minor\n---\n\nfix(#1): a.").releases, { druxt: 'patch', 'druxt-menu': 'minor' })
+  assert.deepEqual(parseChangeset("---\n'@druxt/core': patch\n@druxt/router: minor\n---\n\nfix(#1): a.").releases, { '@druxt/core': 'patch', '@druxt/router': 'minor' })
   assert.equal(parseChangeset('fix(#1): no frontmatter.'), null)
 })
 
@@ -38,16 +43,21 @@ test('says what is true now, not that something was fixed', () => {
   }
 })
 
-test('refuses a package that is not published here, a bad bump and a major on 0.x', () => {
-  assert.match(lint('fix(#1): a.', "'druxt-docgen': patch").join('\n'), /not a published package/)
-  assert.match(lint('fix(#1): a.', "'druxt': tiny").join('\n'), /bump "tiny"/)
-  assert.match(lint('fix(#1)!: a.', "'druxt': major").join('\n'), /publishes 1\.0\.0/)
+test('refuses a package that is not a workspace package here and a bad bump', () => {
+  assert.match(lint('fix(#1): a.', "'@druxt/docgen': patch").join('\n'), /not a workspace package here/)
+  assert.match(lint('fix(#1): a.', "'@druxt/core': tiny").join('\n'), /bump "tiny"/)
 })
 
-test('a breaking change is not a patch', () => {
+test('a breaking change is a major, and a major is a breaking change', () => {
   assert.match(lint('fix(#1)!: the store renames `get`.').join('\n'), /breaking but releases a patch/)
+  assert.match(lint('fix(#1)!: the store renames `get`.', "'@druxt/core': minor").join('\n'), /breaking but releases a minor/)
   assert.match(lint('fix(#1): the store renames `get`.\n\nBREAKING CHANGE: rename the call.').join('\n'), /breaking but releases a patch/)
-  assert.deepEqual(lint('fix(#1)!: the store renames `get`.', "'druxt': minor"), [])
+  // Indented, or in a list item, the changelog still marks it breaking, so the lint reads it too.
+  assert.match(lint('fix(#1): the store renames `get`.\n\n  BREAKING CHANGE: rename the call.').join('\n'), /breaking but releases a patch/)
+  assert.deepEqual(lint('fix(#1): the store renames `get`.\n\n  BREAKING CHANGE: rename the call.', "'@druxt/core': major"), [])
+  assert.deepEqual(lint('fix(#1)!: the store renames `get`.', "'@druxt/core': major"), [])
+  assert.deepEqual(lint('fix(#1): the store renames `get`.\n\nBREAKING CHANGE: rename the call.', "'@druxt/core': major"), [])
+  assert.match(lint('feat(#1): the store renames `get`.', "'@druxt/core': major").join('\n'), /major without marking it breaking/)
 })
 
 test('keeps headings and bare code blocks out of the changelog', () => {
@@ -65,21 +75,25 @@ test('writes for the person upgrading, not about the change', () => {
 })
 
 test('a changeset for several packages reads correctly in each changelog', () => {
-  const both = "'druxt-menu': patch\n'druxt-views': patch"
+  const both = "'@druxt/menu': patch\n'@druxt/views': patch"
   assert.deepEqual(lint('fix(#905): generated stories load when a label holds a quote.', both), [])
   assert.match(lint('fix(#1): this package loads stories with quotes.', both).join('\n'), /says "this package"/)
 
   const owned = lint('fix(#1): `DruxtMenu` renders a quoted label.', both).join('\n')
-  assert.match(owned, /`DruxtMenu` from druxt-menu, which reads as off-topic in the changelogs of druxt-views/)
-  assert.deepEqual(lint('fix(#1): in `druxt-menu`, `DruxtMenu` renders a quoted label.', both), [])
+  assert.match(owned, /`DruxtMenu` from @druxt\/menu, which reads as off-topic in the changelogs of @druxt\/views/)
+  assert.deepEqual(lint('fix(#1): in `@druxt/menu`, `DruxtMenu` renders a quoted label.', both), [])
 
   // Core components are shared, and one package alone has no other changelog.
   assert.deepEqual(lint('fix(#1): `DruxtClient` sends a quoted label.', both), [])
-  assert.deepEqual(lint('fix(#1): `DruxtMenu` renders a quoted label.', "'druxt-menu': patch"), [])
+  assert.deepEqual(lint('fix(#1): `DruxtMenu` renders a quoted label.', "'@druxt/menu': patch"), [])
+
+  // A router entity is the entity module's, not the router's.
+  const routed = lint('fix(#1): `DruxtRouterEntity` renders a quoted label.', "'@druxt/entity': patch\n'@druxt/router': patch").join('\n')
+  assert.match(routed, /`DruxtRouterEntity` from @druxt\/entity/)
 })
 
 test('a package named twice is refused, as changesets refuses it', () => {
-  assert.match(lint('fix(#1): a.', "'druxt': patch\n'druxt': minor").join('\n'), /names "druxt" more than once/)
+  assert.match(lint('fix(#1): a.', "'@druxt/core': patch\n'@druxt/core': minor").join('\n'), /names "@druxt\/core" more than once/)
 })
 
 test('reads fences as Markdown does: tildes, and a closing fence at least as long', () => {
@@ -97,4 +111,18 @@ test('a heading after a tab, or with no text, is still a heading', () => {
   assert.match(lint('fix(#1): a.\n\n###').join('\n'), /Markdown heading/)
   // A hash with no space is a tag, not a heading.
   assert.deepEqual(lint('fix(#1): a.\n\n#hashtag in a sentence.'), [])
+})
+
+test('a private workspace package counts, and an absent one is refused', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'lint-changesets-'))
+  try {
+    fs.mkdirSync(path.join(root, 'packages/core'), { recursive: true })
+    fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ workspaces: ['packages/core'] }))
+    fs.writeFileSync(path.join(root, 'packages/core/package.json'), JSON.stringify({ name: '@druxt/core', version: '2.0.0-alpha.0', private: true }))
+    const workspace = workspacePackages(root)
+    assert.deepEqual(lintChangeset(changeset('fix(#1): a.'), workspace), [])
+    assert.match(lintChangeset(changeset('fix(#1): a.', "'@druxt/absent': patch"), workspace).join('\n'), /"@druxt\/absent", which is not a workspace package here/)
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true })
+  }
 })

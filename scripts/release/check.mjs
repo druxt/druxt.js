@@ -36,17 +36,34 @@ const aliasRange = (range) => {
 }
 
 /**
- * Reads every package manifest under a packages directory.
+ * Reads every package manifest of the repository's workspaces, or under
+ * `packages/` when there is no root manifest. A 1.x package not yet ported
+ * to the 2.x line is no workspace, so it is not part of a release.
+ *
+ * A root manifest without a `workspaces` key has no package yet, since Yarn
+ * drops an empty list, and gives an empty set. A key that resolves to no
+ * package manifest is an error, so a mistyped entry cannot pass as an empty
+ * release.
  *
  * @param {string} root - The repository root.
  * @returns {object[]} One `{ dir, manifest }` entry per package.
  */
 export function readPackages(root) {
-  const base = path.join(root, 'packages')
-  return fs.readdirSync(base)
-    .map((name) => path.join(base, name))
+  const rootManifest = path.join(root, 'package.json')
+  const workspaces = fs.existsSync(rootManifest) ? JSON.parse(fs.readFileSync(rootManifest, 'utf8')).workspaces || null : undefined
+  if (workspaces === null) return []
+  const dirs = Array.isArray(workspaces)
+    ? workspaces.flatMap((entry) => entry.endsWith('/*')
+      ? fs.readdirSync(path.join(root, entry.slice(0, -2))).map((name) => path.join(root, entry.slice(0, -2), name))
+      : [path.join(root, entry)])
+    : fs.readdirSync(path.join(root, 'packages')).map((name) => path.join(root, 'packages', name))
+  const packages = dirs
     .filter((dir) => fs.existsSync(path.join(dir, 'package.json')))
     .map((dir) => ({ dir, manifest: JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')) }))
+  if (Array.isArray(workspaces) && packages.length === 0) {
+    throw new Error('package.json declares workspaces, but none of them holds a package.json.')
+  }
+  return packages
 }
 
 /**
@@ -189,6 +206,11 @@ async function main() {
   if (unknown.length) throw new Error(`Unknown option: ${unknown.join(', ')}`)
 
   const packages = readPackages(process.cwd())
+  if (packages.length === 0) {
+    console.log('release-check: no workspaces yet, so there is nothing to check.')
+    return
+  }
+
   let registry
   if (!args.includes('--offline')) {
     registry = {}

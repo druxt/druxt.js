@@ -13,6 +13,7 @@
     "lint:audit": "yarn npm audit --all --recursive --environment production --severity high",
     "lint:audit:full": "yarn npm audit --all --recursive",
     "lint:commit": "commitlint",
+    "lint:changesets": "node scripts/release/lint-changesets.mjs",
     "lint:cspell": "cspell lint --no-progress --no-must-find-files --gitignore --dot \"**/*.{js,mjs,ts,vue,json,md,yml,yaml}\" \"scripts/**/*.sh\"",
     "lint:cspell:worktree": "sh scripts/check-cspell.sh",
     "lint:format": "prettier --check \"**/*.{json,md,yml,yaml}\"",
