@@ -3,6 +3,11 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
 /**
  * Used by the DruxtView component to render a Druxt Wrapper themeable pager.
+ *
+ * The Views Infinite Scroll pager, `infinite_scroll`, renders a link that
+ * loads the next page below the results, with the module's button text.
+ * With its "Automatically load content" option the next page loads as the
+ * link scrolls into view instead. The link still works without JavaScript.
  */
 export default {
   name: 'DruxtViewsPager',
@@ -67,12 +72,39 @@ export default {
     }
   },
 
+  data: () => ({ intersecting: false }),
+
+  computed: {
+    /**
+     * The Views Infinite Scroll options, for its pager.
+     *
+     * @type {object|false}
+     */
+    infiniteScroll() {
+      return this.type === 'infinite_scroll' && ((this.options || {}).views_infinite_scroll || {})
+    },
+  },
+
   watch: {
     model(to, from) {
       if (to !== from) {
         this.$emit('input', this.model)
       }
-    }
+    },
+
+    // A page that left the link in view loads the next one too.
+    resource() {
+      this.observe()
+      this.$nextTick(() => this.loadNext())
+    },
+  },
+
+  mounted() {
+    this.observe()
+  },
+
+  beforeDestroy() {
+    if (this.observer) this.observer.disconnect()
   },
 
   /** */
@@ -109,6 +141,27 @@ export default {
     setPage(link) {
       const query = this.getQuery(link)
       this.model = query.page
+    },
+
+    /**
+     * Loads the next page, while an automatically loading pager is in view.
+     */
+    loadNext() {
+      const next = ((this.resource || {}).links || {}).next
+      if (this.observer && this.intersecting && next) this.setPage(next)
+    },
+
+    /**
+     * Watches whether an automatically loading pager is in view.
+     */
+    observe() {
+      if (this.observer || !(this.infiniteScroll || {}).automatically_load_content) return
+      if (typeof IntersectionObserver === 'undefined' || !this.$el || this.$el.nodeType !== 1) return
+      this.observer = new IntersectionObserver(([entry]) => {
+        this.intersecting = entry.isIntersecting
+        this.loadNext()
+      }, { rootMargin: '200px' })
+      this.observer.observe(this.$el)
     }
   },
 
@@ -152,6 +205,21 @@ export default {
      */
     slots(h) {
       const self = this
+      const next = ((self.resource || {}).links || {}).next
+      if (self.infiniteScroll) {
+        return {
+          default: () => h('div', [
+            next && h('NuxtLink', {
+              nativeOn: {
+                click() {
+                  self.setPage(next)
+                },
+              },
+              props: { to: self.getRoute(next) },
+            }, [self.infiniteScroll.button_text || 'Load more']),
+          ]),
+        }
+      }
       return {
         default: () => h('ul', [
           // Next.

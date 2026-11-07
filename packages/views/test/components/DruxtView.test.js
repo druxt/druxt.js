@@ -228,7 +228,7 @@ describe('DruxtView', () => {
   })
 
   test('v-model', () => {
-    const h = jest.fn((tag, options, children) => {
+    const h = jest.fn((tag, options) => {
       options.on.input.call(mock, options.attrs.mock)
     })
     const mock = {
@@ -329,6 +329,92 @@ describe('DruxtView', () => {
     plain.vm.model.filter = { brand: '3' }
     routeQuery(plain.vm)
     expect(plain.vm.model.filter).toEqual({})
+  })
+
+  test('load more appends each page, up to the one asked for', async () => {
+    const page = (id, next) => ({ data: [{ id }], links: next ? { next: { href: `?page=${next}` } } : {} })
+    const responses = { '': page('a', 1), 'page=1': page('b', 2), 'page=2': page('c') }
+    const getResults = jest.fn(async ({ query }) => responses[query] || page(`filtered:${query}`))
+    const vm = {
+      displayId: 'default',
+      getResults,
+      lang: 'en',
+      loaded: { key: null, pages: [] },
+      model: { filter: {}, page: 2, sort: null },
+      pager: { type: 'infinite_scroll' },
+      viewId: 'recipes',
+    }
+    vm.getQuery = (settings) => DruxtView.methods.getQuery.call({ arguments: [], model: vm.model }, settings)
+    const fetch = () => DruxtView.druxt.fetchData.call(vm, {})
+    const ids = () => DruxtView.computed.results.call(vm).map((result) => result.id)
+    const queries = () => getResults.mock.calls.splice(0).map(([payload]) => payload.query)
+
+    // A page in the URL loads every page up to it.
+    await fetch()
+    expect(queries()).toStrictEqual(['', 'page=1', 'page=2'])
+    expect(ids()).toStrictEqual(['a', 'b', 'c'])
+    expect(vm.resource).toBe(responses['page=2'])
+
+    // Going back a page keeps the pages before it.
+    vm.model.page = 1
+    await fetch()
+    expect(queries()).toStrictEqual(['page=1'])
+    expect(ids()).toStrictEqual(['a', 'b'])
+
+    // The next page is the only request.
+    vm.model.page = 2
+    await fetch()
+    expect(queries()).toStrictEqual(['page=2'])
+    expect(ids()).toStrictEqual(['a', 'b', 'c'])
+
+    // Another filter starts again from the first page.
+    vm.model = { filter: { q: 'soup' }, page: null, sort: null }
+    await fetch()
+    expect(queries()).toStrictEqual(['views-filter%5Bq%5D=soup'])
+    expect(ids()).toStrictEqual(['filtered:views-filter%5Bq%5D=soup'])
+  })
+
+  test('load more with "Initially load all pages" asks for the page once', async () => {
+    const getResults = jest.fn(async ({ query }) => ({ data: query ? [{ id: 'a' }, { id: 'b' }] : [{ id: 'a' }] }))
+    const vm = {
+      displayId: 'default',
+      getResults,
+      lang: 'en',
+      loaded: { key: null, pages: [] },
+      model: { filter: {}, page: 1, sort: null },
+      pager: { type: 'infinite_scroll', options: { views_infinite_scroll: { initially_load_all_pages: true } } },
+      viewId: 'recipes',
+    }
+    vm.getQuery = (settings) => DruxtView.methods.getQuery.call({ arguments: [], model: vm.model }, settings)
+    await DruxtView.druxt.fetchData.call(vm, {})
+    expect(getResults.mock.calls.map(([payload]) => payload.query)).toStrictEqual(['page=1'])
+    expect(DruxtView.computed.results.call(vm).map((result) => result.id)).toStrictEqual(['a', 'b'])
+  })
+
+  test('the loadMore setting overrides the display pager', async () => {
+    const getResults = jest.fn(async () => ({ data: [{ id: 'a' }] }))
+    const vm = { displayId: 'default', getResults, lang: 'en', loaded: { key: null, pages: [] }, model: { filter: {}, page: 1, sort: null }, viewId: 'recipes' }
+    vm.getQuery = (settings) => DruxtView.methods.getQuery.call({ arguments: [], model: vm.model }, settings)
+
+    vm.pager = { type: 'infinite_scroll' }
+    await DruxtView.druxt.fetchData.call(vm, { pager: { loadMore: false } })
+    expect(vm.loadMore).toBe(false)
+    expect(getResults).toHaveBeenCalledTimes(1)
+
+    vm.pager = { type: 'mini' }
+    await DruxtView.druxt.fetchData.call(vm, { pager: { loadMore: true } })
+    expect(vm.loadMore).toBe(true)
+    expect(getResults).toHaveBeenCalledTimes(3)
+    expect(DruxtView.computed.results.call(vm)).toHaveLength(2)
+
+    // Its pager is the load more pager.
+    vm.showPager = true
+    vm.count = 2
+    vm.resource = {}
+    vm.$scopedSlots = {}
+    const h = jest.fn((tag, options) => options)
+    const slots = DruxtView.druxt.slots.call({ ...vm, attachments_after: false, attachments_before: false, headers: [], results: [], display: {}, showSorts: false, filters: [] }, h)
+    expect(slots.pager({}).props.type).toBe('infinite_scroll')
   })
 
   test('refetch waits out a running fetch', async () => {

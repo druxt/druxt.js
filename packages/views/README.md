@@ -170,6 +170,18 @@ A view can keep its state in the URL of a page you route yourself, such as a lis
 
 A param in the pattern that is neither an argument nor a filter belongs to your page and stays as the route has it. On `/how-to/troubleshooting/cors-errors`, picking an area goes to `/how-to/troubleshooting/cors-errors?area=backend`. To render the view yourself, use `DruxtViewsPageMixin` from `druxt-views`: it gives your component the same `page` prop, a `viewProps` object for `DruxtView` and an `onInput` handler for its `input` event.
 
+### Load more
+
+A display with the [Views Infinite Scroll](https://www.drupal.org/project/views_infinite_scroll) pager loads more instead of paging: each page is added below the results before it, under a link with the pager's button text. With the pager's "Automatically load content" option, the next page loads as the link scrolls into view. The link still works without JavaScript.
+
+The page stays in the URL. `?page=2` renders the first three pages, so a shared or reloaded URL lists what the reader had loaded. Changing a filter or the sort starts again from the first page.
+
+To load more on a display with another pager, or to page through an infinite scroll display, set `pager.loadMore` in the `druxt.views` settings, on a wrapper component's `druxt` object, or on the component:
+
+```vue
+<DruxtView view-id="recipes" :settings="{ pager: { loadMore: true } }" />
+```
+
 ---
 
 ## Storybook

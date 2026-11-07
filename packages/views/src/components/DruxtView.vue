@@ -33,6 +33,9 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtViewsViewMixin]
  * }
  *
+ * @example <caption>Load more, without Views Infinite Scroll on the display</caption> @lang vue
+ * <DruxtView view-id="recipes" :settings="{ pager: { loadMore: true } }" />
+ *
  * @example <caption>default slot (template injection)</caption> @lang vue
  * <DruxtView>
  *   <template #default="{ results }">
@@ -155,6 +158,10 @@ export default {
 
     return {
       emitting: false,
+      // Load more keeps the results of every page loaded so far. The key is
+      // their query without its page.
+      loaded: { key: null, pages: [] },
+      loadMore: false,
       model: {
         filter: model.filter || {},
         page: parseInt(model.page) || null,
@@ -272,11 +279,12 @@ export default {
     },
 
     /**
-     * The JSON:API Views results.
+     * The JSON:API Views results. With load more, every page loaded so far.
      *
      * @type {object[]}
      */
     results() {
+      if (this.loadMore) return [].concat(...this.loaded.pages)
       return (this.resource || {}).data || []
     },
 
@@ -544,15 +552,45 @@ export default {
 
         // Build query.
         const query = this.getQuery(settings)
-
-        // Execute the request.
-        this.resource = await this.getResults({
+        const request = (query) => this.getResults({
           displayId: this.displayId,
           prefix: this.lang,
           query: stringify(query),
           viewId,
           bypassCache
         })
+
+        // Views Infinite Scroll's pager, or the loadMore setting, appends each
+        // page to the ones before. A page in the URL loads every page up to
+        // it, so a shared or server-rendered URL lists what the reader saw.
+        const loadMore = (settings.pager || {}).loadMore
+        this.loadMore = typeof loadMore === 'boolean' ? loadMore : this.pager.type === 'infinite_scroll'
+        if (!this.loadMore) {
+          this.resource = await request(query)
+          return
+        }
+
+        const { page, ...base } = query
+        const key = stringify(base)
+        // With "Initially load all pages", Drupal answers a page with every
+        // page up to it, so that one response is the whole list.
+        const cumulative = this.pager.type === 'infinite_scroll'
+          && !!(((this.pager.options || {}).views_infinite_scroll || {}).initially_load_all_pages)
+        // Otherwise pages already loaded for this query are kept, and the page
+        // asked for is fetched again for its links, which the store usually holds.
+        const pages = key === this.loaded.key && !cumulative ? this.loaded.pages.slice(0, page || 0) : []
+        if (cumulative) {
+          this.resource = await request(query)
+          this.loaded = { key, pages: [(this.resource || {}).data || []] }
+          return
+        }
+        let resource
+        for (let index = pages.length; index <= (page || 0); index++) {
+          resource = await request(index ? { ...base, page: index } : base)
+          pages.push((resource || {}).data || [])
+        }
+        this.resource = resource
+        this.loaded = { key, pages }
       }
     },
 
@@ -595,6 +633,7 @@ export default {
       }
 
       return {
+        pager: mergedSettings.pager || {},
         query: mergedSettings.query || {},
       }
     },
@@ -732,6 +771,8 @@ export default {
             resource: this.resource,
             value: this.model.page,
             ...this.pager,
+            // A load more setting on another pager loads more all the same.
+            type: this.loadMore ? 'infinite_scroll' : (this.pager || {}).type,
           }
         })
       }
@@ -811,6 +852,8 @@ export default {
  * or the wrapper component `druxt` object.
  *
  * @typedef {object} ModuleSettings
+ * @param {object} pager - Pager settings:
+ * @param {boolean} pager.loadMore - Whether each page adds to the results before it, rather than replacing them. Defaults to whether the display uses the Views Infinite Scroll pager.
  * @param {object} query - View results query settings:
  * @param {(boolean|function)} query.bypassCache - Whether to pull the data from the Vuex store or from the JSON:API.
  * @param {boolean} query.bundleFilter - Whether to automatically detect Resource types to filter, based on the View `bundle` filter.

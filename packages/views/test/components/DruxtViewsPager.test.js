@@ -90,6 +90,53 @@ describe('DruxtViewsPager', () => {
     ])
   })
 
+  test('infinite_scroll: a load more link, and the next page while in view', async () => {
+    const next = { href: '?page=1' }
+    const wrapper = mountComponent({
+      type: 'infinite_scroll',
+      options: { views_infinite_scroll: { button_text: 'More recipes', automatically_load_content: true } },
+      resource: { links: { next } },
+    })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    const slot = wrapper.vm.getScopedSlots().default.call(wrapper.vm)
+    expect(slot.tag).toBe('div')
+    expect(slot.children[0].children[0].text).toBe('More recipes')
+    slot.children[0].data.nativeOn.click()
+    expect(wrapper.vm.model).toBe(1)
+
+    // Without a next page there is nothing to load.
+    await wrapper.setProps({ resource: { links: {} } })
+    expect(wrapper.vm.getScopedSlots().default.call(wrapper.vm).children[0]).toBeFalsy()
+
+    // Loads the next page only while observed in view.
+    wrapper.vm.model = 0
+    await wrapper.setProps({ resource: { links: { next: { href: '?page=2' } } } })
+    wrapper.vm.loadNext()
+    expect(wrapper.vm.model).toBe(0)
+    let callback
+    const observe = jest.fn()
+    global.IntersectionObserver = jest.fn((cb) => { callback = cb; return { observe, disconnect: jest.fn() } })
+    wrapper.vm.observe()
+    expect(observe).toHaveBeenCalledWith(wrapper.vm.$el)
+    callback([{ isIntersecting: false }])
+    expect(wrapper.vm.model).toBe(0)
+    callback([{ isIntersecting: true }])
+    expect(wrapper.vm.model).toBe(2)
+    wrapper.destroy()
+    delete global.IntersectionObserver
+  })
+
+  test('infinite_scroll: the default button text, and no observer unless it loads automatically', async () => {
+    global.IntersectionObserver = jest.fn(() => ({ observe: jest.fn(), disconnect: jest.fn() }))
+    const wrapper = mountComponent({ type: 'infinite_scroll', resource: { links: { next: { href: '?page=1' } } } })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    expect(wrapper.vm.getScopedSlots().default.call(wrapper.vm).children[0].children[0].text).toBe('Load more')
+    wrapper.vm.observe()
+    expect(global.IntersectionObserver).not.toHaveBeenCalled()
+    delete global.IntersectionObserver
+  })
+
   test('takes its route from a providing page', async () => {
     const link = jest.fn(({ page }) => ({ path: '/shop/women', query: { brand: 'centarro', page: String(page) } }))
     const wrapper = mount(DruxtViewsPager, {
