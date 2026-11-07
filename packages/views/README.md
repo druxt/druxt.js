@@ -110,6 +110,80 @@ The DruxtViews module provides a **DruxtRouterView** component that is used by t
 
 ---
 
+## Views pages
+
+A Views page whose URL is its state. Declare the page's route pattern under `druxt.views.pages`, and the module registers a route for it ahead of the Druxt router's wildcard, rendered by the **DruxtViewsPage** component. The route gives the view its contextual arguments, exposed filters, sort and page, and every change the view reports is written back to the URL through the router. Back and forward replay as model changes, and nothing reloads.
+
+```js
+// nuxt.config.js
+export default {
+  druxt: {
+    views: {
+      pages: {
+        '/shop/:collection?': {
+          viewId: 'products',
+          displayId: 'page_1',
+          arguments: ['collection'],
+          filters: { brand: { query: 'brand' } },
+          page: 'page',
+          sort: 'sort',
+          history: 'replace',
+          aliases: {
+            collection: { women: '12', books: '11+12+13' },
+            brand: { centarro: '3' },
+          },
+        },
+      },
+    },
+  },
+};
+```
+
+| Key         | Default   | What it does                                                                                                                                                                                    |
+| ----------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `viewId`    |           | The View ID.                                                                                                                                                                                    |
+| `displayId` | `default` | The View display ID.                                                                                                                                                                            |
+| `arguments` | `[]`      | Route parameter names, in `views-argument` order. A missing optional parameter is sent as `all`.                                                                                                |
+| `filters`   | `{}`      | Exposed filter identifier to `{ param }` (a route parameter) or `{ query }` (a query key, the identifier by default). `multiple: true` takes several values, joined with `+` in a path segment. |
+| `page`      | `page`    | The query key for the page.                                                                                                                                                                     |
+| `sort`      | `sort`    | The query key for the exposed sort.                                                                                                                                                             |
+| `history`   | `replace` | `replace` or `push`, how a change reaches the browser's history.                                                                                                                                |
+| `aliases`   | `{}`      | Per argument or filter, the word the URL uses for each id. An id with no word is written as itself.                                                                                             |
+
+`/shop/women?brand=centarro&page=2` renders the view with `views-argument[0]=12`, `views-filter[brand]=3` and `page=2`. Picking another brand replaces the URL and makes one request. With `filters: { brand: { param: 'brand', multiple: true } }` and the pattern `/shop/:collection?/:brand?`, the same page is `/shop/women/centarro`, two brands are `/shop/women/centarro+centorium`, and a brand with no collection is `/shop/all/centarro`: an earlier empty segment is written as `all`, which Views reads as its exception value. The pager's links keep the pattern. A `DruxtView` given a `value` prop uses it instead of the route and emits `input` on every model change, which is how the page drives it. Without a value nothing changes.
+
+The `aliases` map is static. The 2.0.0 version of this module should take slugs from the JSON:API Views resource instead.
+
+### A views page inside your own page
+
+A view can keep its state in the URL of a page you route yourself, such as a list inside a page from Drupal. Give **DruxtViewsPage** the same config in its `page` prop, with the pattern your own route matches, and leave the pattern out of `druxt.views.pages` so the module doesn't register a route for it:
+
+```vue
+<DruxtViewsPage
+  :page="{
+    pattern: '/how-to/troubleshooting/:issue?',
+    viewId: 'docs_issues',
+    filters: { area: { query: 'area' } },
+  }"
+/>
+```
+
+A param in the pattern that is neither an argument nor a filter belongs to your page and stays as the route has it. On `/how-to/troubleshooting/cors-errors`, picking an area goes to `/how-to/troubleshooting/cors-errors?area=backend`. To render the view yourself, use `DruxtViewsPageMixin` from `druxt-views`: it gives your component the same `page` prop, a `viewProps` object for `DruxtView` and an `onInput` handler for its `input` event.
+
+### Load more
+
+A display with the [Views Infinite Scroll](https://www.drupal.org/project/views_infinite_scroll) pager loads more instead of paging: each page is added below the results before it, under a link with the pager's button text. With the pager's "Automatically load content" option, the next page loads as the link scrolls into view. The link still works without JavaScript.
+
+The page stays in the URL. `?page=2` renders the first three pages, so a shared or reloaded URL lists what the reader had loaded. Changing a filter or the sort starts again from the first page.
+
+To load more on a display with another pager, or to page through an infinite scroll display, set `pager.loadMore` in the `druxt.views` settings, on a wrapper component's `druxt` object, or on the component:
+
+```vue
+<DruxtView view-id="recipes" :settings="{ pager: { loadMore: true } }" />
+```
+
+---
+
 ## Storybook
 
 DruxtViews provides zero-config, auto-generated Storybook integration with a live data connection to your Druxt backend.

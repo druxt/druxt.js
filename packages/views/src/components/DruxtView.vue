@@ -33,6 +33,9 @@ import { mapActions } from 'vuex'
  *   mixins: [DruxtViewsViewMixin]
  * }
  *
+ * @example <caption>Load more, without Views Infinite Scroll on the display</caption> @lang vue
+ * <DruxtView view-id="recipes" :settings="{ pager: { loadMore: true } }" />
+ *
  * @example <caption>default slot (template injection)</caption> @lang vue
  * <DruxtView>
  *   <template #default="{ results }">
@@ -126,7 +129,21 @@ export default {
     viewId: {
       type: String,
       default: null,
-    }
+    },
+
+    /**
+     * The model, when a parent writes the route, as a Views page does:
+     * `{ filter, page, sort }`. Without it the model comes from the route.
+     *
+     * @type {object}
+     *
+     * @example
+     * <DruxtView view-id="products" :value="{ filter: { brand: '3' }, page: null, sort: null }" @input="onInput" />
+     */
+    value: {
+      type: Object,
+      default: null,
+    },
   },
 
   /**
@@ -135,10 +152,16 @@ export default {
    * @property {object} view - The View JSON:API resource.
    */
   data() {
-    // Stringify and parse the query object to fix nested objects.
-    const model = parse(stringify(this.$route.query))
+    // A parent that writes the route gives the model. Otherwise the query is
+    // stringified and parsed to fix nested objects.
+    const model = this.value || parse(stringify(this.$route.query))
 
     return {
+      emitting: false,
+      // Load more keeps the results of every page loaded so far. The key is
+      // their query without its page.
+      loaded: { key: null, pages: [] },
+      loadMore: false,
       model: {
         filter: model.filter || {},
         page: parseInt(model.page) || null,
@@ -256,11 +279,12 @@ export default {
     },
 
     /**
-     * The JSON:API Views results.
+     * The JSON:API Views results. With load more, every page loaded so far.
      *
      * @type {object[]}
      */
     results() {
+      if (this.loadMore) return [].concat(...this.loaded.pages)
       return (this.resource || {}).data || []
     },
 
@@ -294,6 +318,8 @@ export default {
 
   watch: {
     '$route.query'(to) {
+      // A parent that writes the route sets `value` instead.
+      if (this.value) return
       if (!Object.entries(to || {}).length) {
         this.model = {
           filter: {},
@@ -301,6 +327,23 @@ export default {
           sort: null,
         }
       }
+    },
+
+    value: {
+      deep: true,
+      handler(to) {
+        if (!to) return
+        const next = {
+          filter: to.filter || {},
+          page: parseInt(to.page) || null,
+          sort: to.sort || null,
+        }
+        // DruxtModule's own watcher has set `model` to the prop object by
+        // now; a copy keeps later edits off the parent's value.
+        if (this.model === to || JSON.stringify(next) !== JSON.stringify(this.model)) {
+          this.model = next
+        }
+      },
     },
 
     arguments() {
@@ -317,19 +360,24 @@ export default {
         if (!Object.entries(to || {}).length && !Object.entries(from || {}).length) {
           return
         }
-        this.$fetch()
+        // A new object with the same filters is not a change.
+        if (JSON.stringify(to) === JSON.stringify(from)) return
+        this.emitModel()
+        this.refetch()
       },
     },
 
     'model.page'(to, from) {
       if (to !== from) {
-        this.$fetch()
+        this.emitModel()
+        this.refetch()
       }
     },
 
     'model.sort'(to, from) {
       if (to !== from) {
-        this.$fetch()
+        this.emitModel()
+        this.refetch()
       }
     },
 
@@ -408,6 +456,29 @@ export default {
     },
 
     /**
+     * The model, copied, for a parent that writes the route. One emit per
+     * tick, because a replaced model fires every model watcher at once, and
+     * a page that wrote the route for each would cancel its own route changes.
+     */
+    emitModel() {
+      if (this.emitting) return
+      this.emitting = true
+      this.$nextTick(() => {
+        this.emitting = false
+        this.$emit('input', JSON.parse(JSON.stringify(this.model)))
+      })
+    },
+
+    /**
+     * Fetch again, after a running fetch: Nuxt 2's $fetch returns the running
+     * promise, so a second call during one is lost.
+     */
+    async refetch() {
+      if (this._fetchPromise) await this._fetchPromise
+      this.$fetch()
+    },
+
+    /**
      * Filters update event handler.
      */
     onFiltersUpdate() {
@@ -481,15 +552,45 @@ export default {
 
         // Build query.
         const query = this.getQuery(settings)
-
-        // Execute the request.
-        this.resource = await this.getResults({
+        const request = (query) => this.getResults({
           displayId: this.displayId,
           prefix: this.lang,
           query: stringify(query),
           viewId,
           bypassCache
         })
+
+        // Views Infinite Scroll's pager, or the loadMore setting, appends each
+        // page to the ones before. A page in the URL loads every page up to
+        // it, so a shared or server-rendered URL lists what the reader saw.
+        const loadMore = (settings.pager || {}).loadMore
+        this.loadMore = typeof loadMore === 'boolean' ? loadMore : this.pager.type === 'infinite_scroll'
+        if (!this.loadMore) {
+          this.resource = await request(query)
+          return
+        }
+
+        const { page, ...base } = query
+        const key = stringify(base)
+        // With "Initially load all pages", Drupal answers a page with every
+        // page up to it, so that one response is the whole list.
+        const cumulative = this.pager.type === 'infinite_scroll'
+          && !!(((this.pager.options || {}).views_infinite_scroll || {}).initially_load_all_pages)
+        // Otherwise pages already loaded for this query are kept, and the page
+        // asked for is fetched again for its links, which the store usually holds.
+        const pages = key === this.loaded.key && !cumulative ? this.loaded.pages.slice(0, page || 0) : []
+        if (cumulative) {
+          this.resource = await request(query)
+          this.loaded = { key, pages: [(this.resource || {}).data || []] }
+          return
+        }
+        let resource
+        for (let index = pages.length; index <= (page || 0); index++) {
+          resource = await request(index ? { ...base, page: index } : base)
+          pages.push((resource || {}).data || [])
+        }
+        this.resource = resource
+        this.loaded = { key, pages }
       }
     },
 
@@ -505,6 +606,8 @@ export default {
       mode: vm.mode,
       pager: vm.pager,
       results: vm.results,
+      // The model, which DruxtViewsViewMixin takes as `value` and emits back.
+      value: vm.model,
       view: vm.view
     }),
 
@@ -530,6 +633,7 @@ export default {
       }
 
       return {
+        pager: mergedSettings.pager || {},
         query: mergedSettings.query || {},
       }
     },
@@ -667,6 +771,8 @@ export default {
             resource: this.resource,
             value: this.model.page,
             ...this.pager,
+            // A load more setting on another pager loads more all the same.
+            type: this.loadMore ? 'infinite_scroll' : (this.pager || {}).type,
           }
         })
       }
@@ -746,6 +852,8 @@ export default {
  * or the wrapper component `druxt` object.
  *
  * @typedef {object} ModuleSettings
+ * @param {object} pager - Pager settings:
+ * @param {boolean} pager.loadMore - Whether each page adds to the results before it, rather than replacing them. Defaults to whether the display uses the Views Infinite Scroll pager.
  * @param {object} query - View results query settings:
  * @param {(boolean|function)} query.bypassCache - Whether to pull the data from the Vuex store or from the JSON:API.
  * @param {boolean} query.bundleFilter - Whether to automatically detect Resource types to filter, based on the View `bundle` filter.
