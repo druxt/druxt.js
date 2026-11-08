@@ -1,6 +1,7 @@
 // cspell:ignore parity
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
-import { join, resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 // The 1.x test cases of each ported package, mapped to the 2.x tests that cover them in test/parity/<package>.json.
@@ -9,7 +10,7 @@ import { describe, expect, it } from 'vitest'
 // `{ reason }`, with the case count in CASES; the entity package keeps a `baseline` and a `cases` list, each case
 // with its `to` tests, or `removed` or `changed`, and `see` for the tests of a removed case's behaviour.
 
-const root = resolve(__dirname, '../..')
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const dir = join(root, 'test/parity')
 
 /** The case titles a test file declares, as written, with escaped quotes read as quotes. */

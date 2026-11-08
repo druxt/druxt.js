@@ -18,10 +18,13 @@ const runtimeFiles = (base = root): string[] => runtimeDirs(base)
     .filter((entry) => entry.isFile() && /\.(?:ts|vue)$/.test(entry.name))
     .map((entry) => join(entry.parentPath, entry.name)))
 
-/** The names a source imports from `#imports`. */
+/**
+ * The names a source imports or re-exports from `#imports`. A type-only import or re-export is left out: it
+ * leaves nothing in the emitted code.
+ */
 const fromImports = (source: string): string[] =>
-  [...source.matchAll(/import\s*\{([^}]*)\}\s*from\s*['"]#imports['"]/g)]
-    .flatMap(([, names]) => names!.split(',').map((name) => name.trim().split(/\s+as\s+/)[0]!).filter(Boolean))
+  [...source.matchAll(/\b(?:import|export)\s*\{([^}]*)\}\s*from\s*['"]#imports['"]/g)]
+    .flatMap(([, names]) => names!.split(',').map((name) => name.trim().split(/\s+as\s+/)[0]!).filter((name) => name && !/^type\s/.test(name)))
 
 // `$fetch` is a global, not one of `#imports`' exports. Nuxt 4.4's auto-import resolver fails a production client build on it.
 const GLOBALS = ['$fetch']
@@ -51,5 +54,14 @@ describe('runtime imports', () => {
 
   it('reads the names from an aliased import too', () => {
     expect(fromImports("import { $fetch as get, useRoute } from '#imports'")).toEqual(['$fetch', 'useRoute'])
+  })
+
+  it('reads the names a value re-export takes from #imports', () => {
+    expect(fromImports("export { $fetch, useRoute as route } from '#imports'")).toEqual(['$fetch', 'useRoute'])
+  })
+
+  it('skips a type-only import or re-export', () => {
+    expect(fromImports("import type { $fetch } from '#imports'\nexport type { $fetch } from '#imports'")).toEqual([])
+    expect(fromImports("export { type $fetch, useRoute } from '#imports'")).toEqual(['useRoute'])
   })
 })
