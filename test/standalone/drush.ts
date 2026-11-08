@@ -3,7 +3,10 @@ import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
-const command = (process.env.DRUXT_DRUSH || `${root}examples/drupal/vendor/bin/drush -r ${root}examples/drupal/web`).split(' ')
+// The default is built as arguments, so a checkout path with a space stays one argument. Only the override is split.
+const command: string[] = process.env.DRUXT_DRUSH
+  ? process.env.DRUXT_DRUSH.split(' ')
+  : [`${root}examples/drupal/vendor/bin/drush`, '-r', `${root}examples/drupal/web`]
 
 /** Whether Drush for the example backend is available to the standalone tests. */
 export const hasDrush = existsSync(command[0]!)
