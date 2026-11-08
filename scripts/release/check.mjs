@@ -207,7 +207,8 @@ async function main() {
 
   const packages = readPackages(process.cwd())
   if (packages.length === 0) {
-    console.log('release-check: no workspaces yet, so there is nothing to check.')
+    // On stderr, so --list-unpublished prints nothing for the caller to filter by.
+    console.error('release-check: no workspaces yet, so there is nothing to check.')
     return
   }
 
