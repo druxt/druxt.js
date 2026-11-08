@@ -153,11 +153,12 @@ A **husky** git hook is used to ensure the standard is enforced, and will explai
 
 ### API docs
 
-The API reference is generated from the package source code by the scripts in
-`scripts/docs`: **TypeDoc** renders the exported API from the **TSDoc**
-comments and **vue-component-meta** documents the components. Run
-`yarn build:docs` to write it into `docs/nuxt/content`. The documentation
-website that renders the output is at
+The API reference is generated from the package source code: **TypeDoc**
+renders the exported API from the **TSDoc** comments and
+**vue-component-meta** documents the components. The generator arrives with
+the port of the docs package, and so does the command that runs it; there is
+nothing to run on this line until then. The documentation website that
+renders the output is at
 [druxt/druxtjs.org](https://github.com/druxt/druxtjs.org); this repo provides
 the generators, not the site.
 
