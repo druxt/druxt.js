@@ -616,7 +616,9 @@ vscode:tunnel:
   needs: []
   allow_failure: true
   resource_group: vscode-tunnel
-  timeout: 1h
+  # The install and build count against the timeout too, so it leaves room
+  # above the 55 minute hold for them and for the cleanup that deletes the note.
+  timeout: 90m
   variables:
     GIT_DEPTH: '0'
     VSCODE_TUNNEL_KEEP_ALIVE_MINUTES: '55'

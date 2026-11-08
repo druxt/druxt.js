@@ -26,6 +26,8 @@ auth="${3:-password}"
 
 marker="<!-- vscode-tunnel -->"
 body_file="$(mktemp)"
+# Removed on every exit, a failed post included.
+trap 'rm -f "$body_file"' EXIT
 {
   echo "$marker"
   echo "### VS Code server at \`${CI_COMMIT_SHORT_SHA:-unknown}\`"
@@ -45,6 +47,5 @@ body_file="$(mktemp)"
 } > "$body_file"
 
 bash "$script_dir/upsert-mr-note.sh" "$marker" "$body_file"
-rm -f "$body_file"
 
 echo "Posted VS Code server URL: ${url}"

@@ -36,6 +36,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The shell this opens can read .git/config, and nothing here needs
+          # the token after the checkout.
+          persist-credentials: false
 
       - name: Require a password
         # Checked before the 220MB download, so a fork that has not set the

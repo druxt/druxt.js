@@ -99,8 +99,6 @@ commit that added a file.
 
 ## Inline documentation (JSDoc) → API docs
 
-<!-- The docs port brings scripts/docs and restores its path here. -->
-
 Every TypeScript and Vue source file's JSDoc is rendered by the docs generator (TypeDoc and
 vue-component-meta, not on this line yet) into
 Markdown that the [druxtjs.org](https://druxtjs.org) API reference renders
@@ -130,8 +128,6 @@ undocumented param gets its `@param` line scaffolded automatically - and the
 type/description errors then block the commit until the line says something.
 A `@param` that exists but says nothing is strictly worse than a missing
 one - it looks intentional and finished when it isn't.
-
-<!-- The core port restores the path of core's runtime types, the blocks port the DruxtBlockRegion path. -->
 
 If a param is legitimately hard to give a real one-line description, prefer a
 type alias or interface (see `DruxtModuleSettings` and siblings in the module
@@ -244,27 +240,16 @@ stays as this repo's convention.) This is unrelated to commit-message
 
 ## CI
 
-- **GitHub Actions** (`.github/workflows/ci.yml`): canonical CI, on Node
-  16.20.1. Jobs: `build`, `lint`, `test-unit` (coverage uploaded to Codecov),
-  `test-e2e` (Drupal backend + Cypress). Runs on push to a release line, and on every pull request whatever its base branch.
-  Replaces CircleCI, which is no longer used.
-- **GitLab CI** (`.gitlab-ci.yml`): pipeline (lint + test +
-  `secret-detection` stages). On 2.0.x it is the only CI: the
-  GitHub workflows are 1.x's and do not run there yet.
-- **Dependency/security auditing**: `yarn npm audit` (native Yarn Berry, not
-  a third-party action) and `knip`, run in both CI systems. Production-only
-  audit and knip block. The full audit is reporting-only, for the reason given
-  above the `lint:dependency-audit` job in `.gitlab-ci.yml`.
-- **CodeQL** (`.github/workflows/codeql-analysis.yml`): scans each release line on push and pull request, and weekly on a schedule.
-- **Performance audit**: advisory on both hosts, compared against
-  `perf/baseline.github.json` or `perf/baseline.gitlab.json`. On GitHub the `perf-audit` label on a
-  pull request starts it. A push to a release line also runs it with the baseline
-  refresh switched on, and opens a pull/merge request when the numbers moved,
-  so a later pull request's audit is never diffed against a fix that already
-  merged. Both hosts skip a push whose message starts `chore(perf-audit)`,
-  which is the refresh's own commit, so it cannot set itself off again. Counts (backend requests, API calls after load, discarded nodes,
-  payload) compare across machines. Lighthouse scores do not. See
-  `scripts/perf-audit/README.md`.
+GitHub Actions (`.github/workflows/ci.yml`) runs on Node 24, on a push to 2.0.x and on a pull
+request based on 2.0.x or on a 2.0.x feature branch. Its jobs are `lint`, `lint-markdown`,
+`lint-cspell`, `lint-knip`, `lint-changesets`, `lint-commits`, `test` (the unit tests, after
+`yarn build`) and `release-check` (the release script tests). GitLab CI (`.gitlab-ci.yml`) runs
+the same checks under its own job names, and adds the JSON, shell, YAML, prose and skills lints,
+the dependency audit (`yarn npm audit`, blocking for production dependencies and reporting only
+for the full tree, for the reason given above `lint:dependency-audit`), gitleaks secret
+detection and the manual `vscode:tunnel` job. CodeQL (`.github/workflows/codeql-analysis.yml`)
+scans each release line on push and pull request, and weekly. The performance audit and release
+workflows are 1.x's and are kept off 2.0.x.
 
 ## examples/drupal local dev
 
@@ -275,8 +260,6 @@ database (`examples/drupal/.devtools/`, `make build`); a
 `examples/drupal/.ddev/config.yaml` provides the DDEV alternative locally. `test-e2e`
 uses the Docker-free path, pinned to PHP 8.3. `demo_umami` provisions
 its demo content in English and Spanish, and
-<!-- The examples port restores the path of the compat example's test and its CI job. With the test harness, the CI tests run against the mock backend. -->
-
 a standalone test of the compat example, which comes with the examples' port,
 renders the druxt-site example's English and Spanish front pages against this
 backend. Provision checks that the translations landed

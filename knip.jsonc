@@ -23,7 +23,7 @@
         // The component tests' Nuxt app.
         "test/nuxt/app/app.vue",
         "test/nuxt/setup.ts",
-        // Run by the test:nuxt-floor CI job.
+        // Not run by any CI job yet: the core port adds the job that runs it.
         "scripts/nuxt-floor.mjs"
       ],
       // pinia: the packages that use it declare it. The unit tests of their stores import it too.
