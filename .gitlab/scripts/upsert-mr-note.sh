@@ -13,7 +13,7 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=scaffold/standards/gitlab-scripts/mr-note-lib.sh
+# shellcheck source-path=SCRIPTDIR source=mr-note-lib.sh
 . "$script_dir/mr-note-lib.sh"
 
 marker="${1:?usage: upsert-mr-note.sh <marker> <body-file>}"

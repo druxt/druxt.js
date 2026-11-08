@@ -70,7 +70,8 @@ cleanup() {
   [ -n "$work_dir" ] && rm -rf "$work_dir" 2>/dev/null || true
 }
 trap cleanup EXIT
-trap 'cleanup; exit' INT TERM
+# A cancelled job exits non-zero, not with cleanup's status.
+trap 'cleanup; exit 143' INT TERM
 
 if [ ! -d "$tunnel_dir" ]; then
   echo "Nothing to open: ${tunnel_dir} does not exist." >&2
@@ -164,7 +165,12 @@ umask 077
 {
   echo "bind-addr: 127.0.0.1:${tunnel_port}"
   echo "auth: ${auth}"
-  [ "$auth" = "password" ] && echo "password: ${password}"
+  if [ "$auth" = "password" ]; then
+    # A single-quoted YAML scalar, with any quote in a supplied password
+    # doubled, so `: `, ` #` or a leading `*` cannot change what is read.
+    q="'"
+    echo "password: '${password//$q/$q$q}'"
+  fi
   echo "cert: false"
 } > "$config_file"
 
@@ -224,7 +230,9 @@ else
   tunnel_pid=$!
   url=""
   for _ in $(seq 1 60); do
-    url="$(grep -om1 'https://[a-z0-9-]*\.trycloudflare\.com' "$tunnel_log" || true)"
+    # cloudflared also logs its own API host, which is not the tunnel.
+    url="$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' "$tunnel_log" \
+      | grep -vx 'https://api\.trycloudflare\.com' | head -n1 || true)"
     [ -n "$url" ] && break
     sleep 2
   done
@@ -261,4 +269,8 @@ echo "  Closes in ${keep_alive_minutes} minutes, or when this job is cancelled."
 echo "================================================"
 echo
 
-sleep "$(( keep_alive_minutes * 60 ))"
+# In the background, so a cancel runs the INT TERM trap at once: bash runs a
+# trap only after the foreground command ends, and the runner may kill the
+# job before a long sleep does.
+sleep "$(( keep_alive_minutes * 60 ))" &
+wait $!
