@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# Pull requests on the 2.0.x line are stacked on each other, so their base is
+# 2.0.x or another 2.0.x branch, not the default branch CodeRabbit reviews on
+# its own. The patterns are regular expressions.
+reviews:
+  auto_review:
+    base_branches:
+      - "^2\\.0\\.x$"
+      - "^feature/2\\.0\\.x-"
