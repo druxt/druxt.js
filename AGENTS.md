@@ -125,10 +125,7 @@ A `@param` that exists but says nothing is strictly worse than a missing
 one - it looks intentional and finished when it isn't.
 
 If a param is legitimately hard to give a real one-line description, prefer a
-type alias or interface (see `DruxtModuleSettings` and siblings in the module
-contract types in core's runtime, or the `DruxtBlockVisibilityContext` that the
-blocks module's `DruxtBlockRegion` component builds) over a half-documented
-inline breakdown. Consistency matters here more than most repos: the docs
+type alias or interface over a half-documented inline breakdown. Consistency matters here more than most repos: the docs
 site is the entire public-facing reference for the framework.
 
 ## Skills
