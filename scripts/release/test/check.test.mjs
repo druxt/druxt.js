@@ -164,7 +164,8 @@ test('a tree with no workspaces yet passes the command and says so', () => {
   const script = fileURLToPath(new URL('../check.mjs', import.meta.url))
   const result = spawnSync(process.execPath, [script, '--offline'], { cwd: root, encoding: 'utf8' })
   assert.equal(result.status, 0, result.stderr)
-  assert.match(result.stdout, /no workspaces yet/)
+  assert.match(result.stderr, /no workspaces yet/)
+  assert.equal(result.stdout, '')
 
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ workspaces: ['packages/core'] }))
   const missing = spawnSync(process.execPath, [script, '--offline'], { cwd: root, encoding: 'utf8' })
