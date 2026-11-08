@@ -39,7 +39,7 @@
   "ignoreUnresolved": ["#app", "#imports", "#build/.*", "#druxt/.*"],
   // A helper a script exports and also calls itself, for its tests' sake.
   "ignoreExportsUsedInFile": true,
-  // The workflows are 1.x's; 2.0.x runs on GitLab CI alone for now.
+  // Off: the workflows run yarn scripts, which knip already reads from package.json.
   "github-actions": false,
   // `npx promptfoo eval -c promptfooconfig.yaml`, read as two binaries.
   "ignoreBinaries": ["promptfooconfig.yaml"]
