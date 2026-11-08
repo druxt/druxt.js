@@ -257,8 +257,7 @@ Druxt stack, `/en`+`/es`, the examples' OAuth consumer). Its local/CI
 workflow is Docker-free: PHP's built-in server plus a throwaway SQLite
 database (`examples/drupal/.devtools/`, `make build`); a
 `examples/drupal/.ddev/config.yaml` provides the DDEV alternative locally. In CI the
-standalone tests, which the test harness adds, provision it the Docker-free way, pinned to
-PHP 8.3. `demo_umami` provisions
+`test:standalone` job provisions it the Docker-free way, pinned to PHP 8.3. `demo_umami` provisions
 its demo content in English and Spanish, and
 a standalone test of the compat example, which comes with the examples' port,
 renders the druxt-site example's English and Spanish front pages against this
