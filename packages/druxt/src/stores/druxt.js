@@ -415,8 +415,10 @@ const DruxtStore = ({ store }) => {
             )
 
           // Merge all nested, included resources.
+          // A refused include has no data, so it is left out, as Drupal leaves
+          // it out of a fresh response.
           for (const include of resources) {
-            included = [...included, include.data, ...include.included || []]
+            included = [...included, ...include.data ? [include.data] : [], ...include.included || []]
           }
           storedResource.included = included
         }

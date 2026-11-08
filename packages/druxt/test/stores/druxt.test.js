@@ -721,6 +721,28 @@ describe('DruxtStore', () => {
     expect(result.error).toStrictEqual({ statusCode: 401, message: 'Token expired' })
   })
 
+  test('getResource leaves a failed include out of a cached resource', async () => {
+    const mockRecipe = await getMockResource('node--recipe')
+    const { id, type } = mockRecipe.data
+    await store.dispatch('druxt/getResource', { id, type })
+
+    const err = new Error('Forbidden')
+    err.response = { status: 403, data: { errors: [{ detail: 'The current user is not allowed to GET the selected resource.' }] } }
+    store.$druxt.getResource = jest.fn(() => Promise.reject(err))
+
+    const query = new DrupalJsonApiParams().addInclude(['field_media_image'])
+    const result = await store.dispatch('druxt/getResource', { id, type, query })
+
+    // The include was requested and refused.
+    expect(store.$druxt.getResource).toHaveBeenCalled()
+    // The store leaves it out, so `included` doesn't contain an undefined value.
+    expect(result.included).toStrictEqual([])
+    // The recipe itself was served, so it carries no error. A fresh request
+    // agrees: Drupal answers 200 and lists a refused include in meta.omitted.
+    expect(result.error).toBeUndefined()
+    expect(result.data).toStrictEqual(mockRecipe.data)
+  })
+
   test('in-flight requests are not shared between stores', async () => {
     const type = 'node--page'
     const other = new Vuex.Store()
