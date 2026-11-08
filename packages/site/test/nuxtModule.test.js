@@ -15,6 +15,9 @@ const mock = {
       }
       return fn(arg[hook])
     }),
+    resolver: {
+      requireModule: jest.fn((id) => require(id)),
+    },
   },
   DruxtSiteNuxtModule
 }
