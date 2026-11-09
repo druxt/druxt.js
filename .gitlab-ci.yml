@@ -356,16 +356,21 @@ lint:commits:
       # fork, whose branch of the same name can carry a weaker policy. The
       # project URL carries the server's own protocol, host and port (a
       # hand-built https URL was refused on every http instance), and the job
-      # token goes in front of the host, as in origin. Then origin, which is
-      # the target project for a branch in the same project.
+      # token goes in front of the host, as in origin. Then origin, but only
+      # when origin is the target project: never a fork's own branch.
       target_url="${CI_MERGE_REQUEST_PROJECT_URL%%://*}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_MERGE_REQUEST_PROJECT_URL#*://}.git"
-      if git fetch --quiet "$target_url" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" 2>/dev/null; then
+      if fetch_err="$(git fetch --quiet "$target_url" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" 2>&1)"; then
         POLICY_SHA="$(git rev-parse FETCH_HEAD)"
-      elif git fetch --quiet origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
-        POLICY_SHA="$(git rev-parse FETCH_HEAD)"
-        echo "Could not fetch from the target project; using origin's $CI_MERGE_REQUEST_TARGET_BRANCH_NAME."
       else
-        echo "Could not fetch the target branch; using the diff base's commit policy."
+        # The failure reason, with the job token taken out.
+        printf '%s\n' "$fetch_err" | sed "s|${CI_JOB_TOKEN}|[token]|g" >&2
+        if [ "$CI_PROJECT_URL" = "$CI_MERGE_REQUEST_PROJECT_URL" ] \
+          && git fetch --quiet origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
+          POLICY_SHA="$(git rev-parse FETCH_HEAD)"
+          echo "Could not fetch from the target project; using origin's $CI_MERGE_REQUEST_TARGET_BRANCH_NAME."
+        else
+          echo "Could not fetch the target branch; using the diff base's commit policy."
+        fi
       fi
       # A reused runner checkout can still list an earlier run's worktree.
       git worktree remove --force .policy 2>/dev/null || true
