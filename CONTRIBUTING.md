@@ -208,4 +208,6 @@ Each module also has a standalone test that builds a real Nuxt 4 app with that m
 DRUXT_BASE_URL=http://127.0.0.1:8888 yarn test:standalone
 ```
 
+On this branch `yarn test:standalone` runs only the backend's `/jsonapi` check, so a pass says the backend answers JSON:API, not that a module works alone. The module tests arrive with the packages.
+
 - For more details, refer to the [Vitest documentation](https://vitest.dev/guide/) and [Nuxt's testing guide](https://nuxt.com/docs/getting-started/testing).
