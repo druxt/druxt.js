@@ -12,6 +12,8 @@
     "storybook": "nuxt storybook"
   },
   "dependencies": {
+    "axios": "^0.34.0",
+    "body-parser": "^1.20.2",
     "drupal-jsonapi-params": "^2.3.1",
     "druxt-auth": "^0.5.1",
     "druxt-site": "link:../../packages/site",

@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@fontsource/source-sans-3": "^5.3.0",
+    "axios": "^0.34.0",
+    "body-parser": "^1.20.2",
     "bootstrap": "4.6.2",
     "bootstrap-vue": "2.23.1",
     "drupal-jsonapi-params": "^2.3.1",
