@@ -42,7 +42,7 @@
   ],
   // A helper a script exports and also calls itself, for its tests' sake.
   "ignoreExportsUsedInFile": true,
-  // Off: the workflows run yarn scripts, which knip already reads from package.json.
+  // Off: every script the workflows run is reached from package.json or a test.
   "github-actions": false,
   // `npx promptfoo eval -c promptfooconfig.yaml`, read as two binaries.
   "ignoreBinaries": ["promptfooconfig.yaml"]

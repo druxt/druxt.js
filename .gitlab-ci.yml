@@ -352,12 +352,18 @@ lint:commits:
     # its package.json, lockfile and commitlint.config.js.
     - |
       POLICY_SHA="$CI_MERGE_REQUEST_DIFF_BASE_SHA"
-      # Fetch from the runner's own origin, which already carries the server's
-      # protocol, host, port and the job's credentials. A hand-built https URL
-      # was refused on every http instance, so the policy above silently fell
-      # back to the diff base on every run and never took effect.
-      if git fetch --quiet origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
+      # From the target project first. In a fork's merge request origin is the
+      # fork, whose branch of the same name can carry a weaker policy. The
+      # project URL carries the server's own protocol, host and port (a
+      # hand-built https URL was refused on every http instance), and the job
+      # token goes in front of the host, as in origin. Then origin, which is
+      # the target project for a branch in the same project.
+      target_url="${CI_MERGE_REQUEST_PROJECT_URL%%://*}://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_MERGE_REQUEST_PROJECT_URL#*://}.git"
+      if git fetch --quiet "$target_url" "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" 2>/dev/null; then
         POLICY_SHA="$(git rev-parse FETCH_HEAD)"
+      elif git fetch --quiet origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
+        POLICY_SHA="$(git rev-parse FETCH_HEAD)"
+        echo "Could not fetch from the target project; using origin's $CI_MERGE_REQUEST_TARGET_BRANCH_NAME."
       else
         echo "Could not fetch the target branch; using the diff base's commit policy."
       fi
