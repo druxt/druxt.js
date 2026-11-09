@@ -7,3 +7,9 @@ reviews:
     base_branches:
       - "^2\\.0\\.x$"
       - "^feature/2\\.0\\.x-"
+  # cspell:ignore docstrings (CodeRabbit's key)
+  # Docstring coverage is not a standard this repository holds code to: the
+  # comments explain why, and the types say what.
+  pre_merge_checks:
+    docstrings:
+      mode: "off"

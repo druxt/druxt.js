@@ -24,9 +24,14 @@
 #                                Set it as a masked CI variable on any project
 #                                whose job logs are readable by people who
 #                                should not get a shell.
-#   VSCODE_TUNNEL_AUTH           optional. `none` disables the password, and
-#                                is honoured ONLY in named mode, where Access
-#                                is doing the authenticating.
+#   VSCODE_TUNNEL_AUTH           optional. `none` asks for no password. It is
+#                                refused in quick mode, and in named mode it is
+#                                honoured ONLY with the variable below too.
+#   VSCODE_TUNNEL_ACCESS_POLICY  optional. `confirmed` says a Cloudflare Access
+#                                policy covers VSCODE_TUNNEL_HOSTNAME. Nothing
+#                                here can check that, so a named tunnel alone
+#                                is not taken as proof: without this the
+#                                script warns and keeps the password.
 #   VSCODE_TUNNEL_DIR            directory to open. Default: the checkout.
 #   VSCODE_TUNNEL_PORT           local port. Default: 8443
 #   VSCODE_TUNNEL_KEEP_ALIVE_MINUTES  how long to hold it. Default: 55
@@ -91,10 +96,7 @@ fi
 # that cannot be protected fails immediately rather than after a 220MB fetch.
 password=""
 auth="password"
-if [ -n "${VSCODE_TUNNEL_PASSWORD:-}" ]; then
-  password="$VSCODE_TUNNEL_PASSWORD"
-  echo "Using the supplied VSCODE_TUNNEL_PASSWORD."
-elif [ "${VSCODE_TUNNEL_AUTH:-}" = "none" ]; then
+if [ -z "${VSCODE_TUNNEL_PASSWORD:-}" ] && [ "${VSCODE_TUNNEL_AUTH:-}" = "none" ]; then
   # Only ever reachable behind Access. A Quick Tunnel URL is public internet,
   # and an unauthenticated editor on one is a shell for whoever finds it.
   if [ "$mode" != "named" ]; then
@@ -102,18 +104,32 @@ elif [ "${VSCODE_TUNNEL_AUTH:-}" = "none" ]; then
     echo "Set CLOUDFLARE_TUNNEL_TOKEN, or set VSCODE_TUNNEL_PASSWORD." >&2
     exit 1
   fi
-  auth="none"
-  echo "Password disabled: Cloudflare Access is authenticating."
-elif [ "${CI_PROJECT_VISIBILITY:-}" = "public" ]; then
-  # A generated password is only ever shown in the job log, and on a public
-  # project that log is public, which would publish the way in.
-  echo "This project is public, so a generated password would be printed" >&2
-  echo "into a world-readable job log. Set VSCODE_TUNNEL_PASSWORD as a" >&2
-  echo "masked CI variable instead." >&2
-  exit 1
-else
-  password="$(head -c 18 /dev/urandom | base64 | tr -d '/+=' | head -c 24)"
-  echo "Generated a one-off password; it is printed below and nowhere else."
+  # A named tunnel routes the hostname whether or not a policy covers it, so
+  # the password goes only when the operator says one does. Fail closed.
+  if [ "${VSCODE_TUNNEL_ACCESS_POLICY:-}" = "confirmed" ]; then
+    auth="none"
+    echo "Password disabled: VSCODE_TUNNEL_ACCESS_POLICY says Cloudflare Access is in front."
+  else
+    echo "WARNING: VSCODE_TUNNEL_AUTH=none is ignored, and the password stays." >&2
+    echo "Set VSCODE_TUNNEL_ACCESS_POLICY=confirmed once a Cloudflare Access" >&2
+    echo "policy covers ${VSCODE_TUNNEL_HOSTNAME}." >&2
+  fi
+fi
+if [ "$auth" = "password" ]; then
+  if [ -n "${VSCODE_TUNNEL_PASSWORD:-}" ]; then
+    password="$VSCODE_TUNNEL_PASSWORD"
+    echo "Using the supplied VSCODE_TUNNEL_PASSWORD."
+  elif [ "${CI_PROJECT_VISIBILITY:-}" = "public" ]; then
+    # A generated password is only ever shown in the job log, and on a public
+    # project that log is public, which would publish the way in.
+    echo "This project is public, so a generated password would be printed" >&2
+    echo "into a world-readable job log. Set VSCODE_TUNNEL_PASSWORD as a" >&2
+    echo "masked CI variable instead." >&2
+    exit 1
+  else
+    password="$(head -c 18 /dev/urandom | base64 | tr -d '/+=' | head -c 24)"
+    echo "Generated a one-off password; it is printed below and nowhere else."
+  fi
 fi
 
 # Checksums are per architecture and pinned. An unverified binary that opens a
