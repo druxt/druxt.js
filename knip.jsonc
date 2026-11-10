@@ -32,14 +32,7 @@
     }
   },
   // Nuxt's virtual modules, and the build templates the Druxt modules alias as #druxt/*.
-  "ignoreUnresolved": [
-    "#app",
-    "#imports",
-    "#build/.*",
-    "#druxt/.*",
-    // The fake Drupal's fetch type, from @druxt/client: it leaves this list in the client's port.
-    "../../packages/client/src"
-  ],
+  "ignoreUnresolved": ["#app", "#imports", "#build/.*", "#druxt/.*"],
   // A helper a script exports and also calls itself, for its tests' sake.
   "ignoreExportsUsedInFile": true,
   // Off: every script the workflows run is reached from package.json or a test.

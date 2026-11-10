@@ -1,240 +1,261 @@
-import mockAxios from 'jest-mock-axios'
-import { DruxtClient } from '../src'
-import { resetProcessCache, runtime } from '../src/utils/processCache'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { byteSize, forgetProcessCache, headersHaveCredentials, lifetimeLeft, nextRequest, parseCacheLifetime, processCache, processCacheGeneration, rememberLifetime, resetProcessCache } from '../../packages/client/src/processCache'
+import { DruxtClient } from '../../packages/client/src'
+import { BASE_URL, drupal, json } from './fake-drupal'
 
-const baseUrl = 'https://api.umami.demo.druxtjs.org'
-jest.mock('axios')
+afterEach(() => {
+  vi.useRealTimers()
+})
 
-// Each server request gets its own Axios instance from @nuxtjs/axios.
-let calls = 0
-// `sent` is what a request interceptor adds on the way out, which the defaults never show.
-const requestAxios = (common = {}, sent = {}, headers = { 'cache-control': 'public, max-age=300' }) => {
-  const instance = jest.fn()
-  const handlers = []
-  instance.defaults = { headers: { common } }
-  instance.interceptors = { response: { use: (ok) => handlers.push(ok) } }
-  instance.get = jest.fn(async () => {
-    calls += 1
-    const response = { config: { headers: { ...common, ...sent } }, headers, data: { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } } }
-    return handlers.reduce((result, handler) => handler(result), response)
-  })
-  return instance
-}
-const indexCalls = () => calls
+describe('parseCacheLifetime()', () => {
+  const headers = (value: string, age?: string) => new Headers({ 'Cache-Control': value, ...(age ? { Age: age } : {}) })
 
-describe('DruxtClient process cache', () => {
-  const { isServer } = runtime
-  beforeEach(() => {
-    mockAxios.reset()
-    resetProcessCache()
-    calls = 0
-    runtime.isServer = () => true
-  })
-  afterAll(() => { runtime.isServer = isServer })
-
-  test('never used in a browser', async () => {
-    runtime.isServer = () => false
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
-    expect(indexCalls()).toBe(2)
+  it('reads max-age, prefers s-maxage, and takes the Age off', () => {
+    expect(parseCacheLifetime(headers('max-age=300'))).toBe(300)
+    expect(parseCacheLifetime(headers('max-age=300, s-maxage=60'))).toBe(60)
+    expect(parseCacheLifetime(headers('max-age=300', '100'))).toBe(200)
   })
 
-  test('the index survives between requests without credentials', async () => {
-    const first = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
-    await first.getIndex()
-    expect(indexCalls()).toBe(1)
-
-    const second = new DruxtClient(baseUrl, { axios: requestAxios({ cookie: '_ga=GA1.2.3' }), cache: {} })
-    const index = await second.getIndex()
-    expect(indexCalls()).toBe(1)
-    expect(Object.keys(index).length).toBeGreaterThan(0)
+  it('keeps a response Drupal varies by Origin, Cookie, X-Consumer-ID or Accept-Encoding, and refuses one varied by any other header', () => {
+    const vary = (value: string) => new Headers({ 'Cache-Control': 'public, max-age=300', Vary: value })
+    // Drupal's CORS names Origin on every response while it is on, and the site's server sends none.
+    expect(parseCacheLifetime(vary('Cookie, X-Consumer-ID, Origin'))).toBe(300)
+    expect(parseCacheLifetime(vary('Accept-Encoding'))).toBe(300)
+    expect(parseCacheLifetime(vary('Accept-Language'))).toBe(0)
+    expect(parseCacheLifetime(vary('Cookie, Authorization'))).toBe(0)
   })
 
-  test('a request with credentials neither reads nor fills the shared index', async () => {
-    const user = new DruxtClient(baseUrl, { axios: requestAxios({ Authorization: 'Bearer token' }), cache: {} })
-    await user.getIndex()
-    expect(indexCalls()).toBe(1)
-
-    const anonymous = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
-    await anonymous.getIndex()
-    expect(indexCalls()).toBe(2)
-
-    // A cookie shaped like Drupal's session cookie is withheld by the gate, whatever Drupal answers.
-    const session = new DruxtClient(baseUrl, { axios: requestAxios({ cookie: 'SESS0123456789abcdef0123456789abcdef=abc' }), cache: {} })
-    expect(session.processCache('index')).toBe(null)
-    await session.getIndex()
-    expect(indexCalls()).toBe(3)
-  })
-
-  test('credentials added by an interceptor keep the response out of the cache', async () => {
-    const user = new DruxtClient(baseUrl, { axios: requestAxios({}, { Authorization: 'Bearer token' }), cache: {} })
-    await user.getIndex()
-    expect(indexCalls()).toBe(1)
-
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
-    expect(indexCalls()).toBe(2)
-
-    // The anonymous response above was stored, so the next one is served from it.
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
-    expect(indexCalls()).toBe(2)
-  })
-
-  test('off by default, and per backend', async () => {
-    await new DruxtClient(baseUrl, { axios: requestAxios() }).getIndex()
-    await new DruxtClient(baseUrl, { axios: requestAxios() }).getIndex()
-    expect(indexCalls()).toBe(2)
-
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
-    await new DruxtClient('https://other.example', { axios: requestAxios(), cache: {} }).getIndex()
-    expect(indexCalls()).toBe(4)
-  })
-
-  test('follows the Cache-Control Drupal sent', async () => {
-    const now = jest.spyOn(Date, 'now')
-    now.mockReturnValue(1000)
-
-    // Drupal's default, and a response with no header, are never stored.
-    for (const headers of [{ 'cache-control': 'max-age=0, no-cache, must-revalidate' }, {}]) {
-      resetProcessCache()
-      calls = 0
-      await new DruxtClient(baseUrl, { axios: requestAxios({}, {}, headers), cache: {} }).getIndex()
-      await new DruxtClient(baseUrl, { axios: requestAxios({}, {}, headers), cache: {} }).getIndex()
-      expect(indexCalls()).toBe(2)
+  it('forbids storing for private, no-store, no-cache and no directive', () => {
+    for (const value of ['private, max-age=300', 'no-store', 'no-cache, max-age=300', '']) {
+      expect(parseCacheLifetime(headers(value))).toBe(0)
     }
+    expect(parseCacheLifetime(undefined)).toBe(0)
+  })
+})
 
-    // A max-age is honoured, and a ttl only shortens it.
+describe('rememberLifetime() and lifetimeLeft()', () => {
+  it('remembers a document\'s lifetime from its arrival, and counts it down', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-10-17T00:00:00Z'))
+    const document = { data: [] }
+    rememberLifetime(document, new Headers({ 'Cache-Control': 'max-age=300' }))
+    expect(lifetimeLeft(document)).toBe(300)
+    vi.setSystemTime(new Date('2026-10-17T00:02:00Z'))
+    expect(lifetimeLeft(document)).toBe(180)
+    vi.setSystemTime(new Date('2026-10-17T00:10:00Z'))
+    expect(lifetimeLeft(document)).toBe(0)
+  })
+
+  it('is 0 for a document it never saw, or that is not an object', () => {
+    expect(lifetimeLeft({ data: [] })).toBe(0)
+    expect(lifetimeLeft(null)).toBe(0)
+    expect(lifetimeLeft('text')).toBe(0)
+    rememberLifetime('text', new Headers({ 'Cache-Control': 'max-age=300' }))
+    expect(lifetimeLeft('text')).toBe(0)
+  })
+})
+
+describe('processCacheGeneration()', () => {
+  it('moves on when resetProcessCache() empties the cache', () => {
+    const before = processCacheGeneration()
     resetProcessCache()
-    calls = 0
-    const allowed = { 'cache-control': 'public, max-age=60' }
-    await new DruxtClient(baseUrl, { axios: requestAxios({}, {}, allowed), cache: { ttl: 600 } }).getIndex()
-    now.mockReturnValue(1000 + 59 * 1000)
-    await new DruxtClient(baseUrl, { axios: requestAxios({}, {}, allowed), cache: { ttl: 600 } }).getIndex()
-    expect(indexCalls()).toBe(1)
+    expect(processCacheGeneration()).toBe(before + 1)
+  })
+})
+
+describe('headersHaveCredentials()', () => {
+  it('sees a Bearer Authorization header and a session Cookie header', () => {
+    expect(headersHaveCredentials({ Authorization: 'Bearer token' })).toBe(true)
+    expect(headersHaveCredentials(new Headers({ Cookie: 'SSESS0123abcd=value' }))).toBe(true)
+    expect(headersHaveCredentials({ Cookie: 'theme=dark' })).toBe(false)
+  })
+
+  it('counts an Origin, which Drupal varies by and the cache key holds none of', () => {
+    expect(headersHaveCredentials({ Origin: 'https://example.com' })).toBe(true)
+    expect(headersHaveCredentials(new Headers({ origin: 'https://example.com' }))).toBe(true)
+  })
+
+  it('reads an array value as the header it joins into', () => {
+    // A header object such as Node's takes an array for a value.
+    expect(headersHaveCredentials({ Origin: ['https://example.com'] })).toBe(true)
+    expect(headersHaveCredentials({ Authorization: ['Bearer token'] })).toBe(true)
+    expect(headersHaveCredentials({ Cookie: ['_ga=1', 'SESS0123456789abcdef0123456789abcdef=abc'] })).toBe(true)
+    expect(headersHaveCredentials({ Origin: [] })).toBe(false)
+  })
+
+  it('refused to an instance that sends an Origin', async () => {
+    // Drupal varies by Origin, and the key doesn't hold one, so a client sending one would share the no-origin entries.
+    expect(new DruxtClient(BASE_URL, { cache: {}, headers: { Origin: 'https://example.com' } }).processCache('index')).toBeUndefined()
+    expect(new DruxtClient(BASE_URL, { cache: {}, headers: { Origin: ['https://example.com'] as unknown as string } }).processCache('index')).toBeUndefined()
+    // One added to a single request withholds the cache from the client after it.
+    const client = new DruxtClient(BASE_URL, { cache: {}, fetch: drupal({ 'GET /file': () => json({}) }).fetch })
+    await client.request('/file', { headers: { Origin: 'https://example.com' } })
+    expect(client.processCache('index')).toBeUndefined()
+  })
+})
+
+describe('the bounded process cache', () => {
+  const handle = (options: Record<string, unknown> = {}) => processCache('test', { maxSize: 100, sizeOf: (value) => String(value).length, ...options })!
+  beforeEach(() => resetProcessCache())
+
+  it('keeps a scope within maxSize: expired entries go first, then the least recently used', () => {
+    const now = vi.spyOn(Date, 'now')
+    now.mockReturnValue(1000)
+    const cache = handle()
+    cache.set('a', 'x'.repeat(40), 1)
+    cache.set('b', 'x'.repeat(40), 300)
+    // Reading a moves it to the most recently used end.
+    expect(cache.get('a')).toBeDefined()
+    now.mockReturnValue(1500)
+    cache.set('c', 'x'.repeat(40), 300)
+    // a, b and c are 120 bytes and none has expired yet, so the least recently used goes: b, as a was read after it.
+    expect([cache.get('a'), cache.get('b'), cache.get('c')].map((value) => !!value)).toEqual([true, false, true])
+    // Past its lifetime a is gone whatever the size, so an expired entry is evicted before a live one.
+    now.mockReturnValue(1000)
+    const second = handle()
+    second.set('a', 'x'.repeat(40), 1)
+    second.set('b', 'x'.repeat(40), 300)
+    now.mockReturnValue(2500)
+    second.set('c', 'x'.repeat(40), 300)
+    expect([second.get('a'), second.get('b'), second.get('c')].map((value) => !!value)).toEqual([false, true, true])
+    now.mockRestore()
+  })
+
+  it('never stores a value larger than the whole limit, and an unbounded scope keeps everything', () => {
+    const cache = handle()
+    cache.set('big', 'x'.repeat(101), 300)
+    expect(cache.get('big')).toBeUndefined()
+    const unbounded = processCache('free', { sizeOf: (value) => String(value).length })!
+    for (let i = 0; i < 20; i++) unbounded.set(`k${i}`, 'x'.repeat(1000), 300)
+    expect(unbounded.get('k0')).toBeDefined()
+  })
+
+  it('forgets the entries a test names, for every consumer, without moving the generation', () => {
+    const anonymous = processCache('content')!
+    const consumer = processCache('content', { consumer: 'abc' })!
+    anonymous.set('["a","/jsonapi/node/page/1"]', 'one', 300)
+    anonymous.set('["a","/jsonapi/node/page/2"]', 'two', 300)
+    consumer.set('["a","/jsonapi/node/page/1"]', 'one', 300)
+    const before = anonymous.generation
+    expect(forgetProcessCache('content', (key) => key.includes('/page/1'))).toBe(2)
+    expect(anonymous.get('["a","/jsonapi/node/page/1"]')).toBeUndefined()
+    expect(anonymous.get('["a","/jsonapi/node/page/2"]')).toBe('two')
+    expect(consumer.get('["a","/jsonapi/node/page/1"]')).toBeUndefined()
+    expect(processCache('content')!.generation).toBe(before)
+  })
+
+  it('numbers requests in the order they start, and measures text in UTF-8 bytes', () => {
+    const first = nextRequest()
+    expect(nextRequest()).toBe(first + 1)
+    expect(byteSize('abc')).toBe(3)
+    expect(byteSize('é')).toBe(2)
+    expect(byteSize('€')).toBe(3)
+    expect(byteSize('😀')).toBe(4)
+  })
+
+  it('counts Druxt\'s token cookie as credentials, with Drupal\'s session cookie', () => {
+    expect(headersHaveCredentials({ cookie: 'druxt.auth.access_token=abc' })).toBe(true)
+    expect(headersHaveCredentials({ cookie: 'druxt.auth.session=1700000000' })).toBe(false)
+    expect(headersHaveCredentials({ cookie: 'SESS0123456789abcdef0123456789abcdef=abc' })).toBe(true)
+  })
+
+  it('counts Druxt\'s token cookies whatever the site\'s session cookie pattern', () => {
+    expect(headersHaveCredentials({ cookie: 'druxt.auth.access_token=abc' }, 'site_session_[a-f0-9]+')).toBe(true)
+    expect(headersHaveCredentials({ cookie: 'theme=dark; druxt.auth.refresh_token=abc' }, 'site_session_[a-f0-9]+')).toBe(true)
+    expect(headersHaveCredentials({ cookie: 'site_session_abc=1' }, 'site_session_[a-f0-9]+')).toBe(true)
+    // The custom pattern replaces Drupal's default session cookie name, and the session marker is no credential.
+    expect(headersHaveCredentials({ cookie: 'SESS0123456789abcdef=abc' }, 'site_session_[a-f0-9]+')).toBe(false)
+    expect(headersHaveCredentials({ cookie: 'druxt.auth.session=1700000000' }, 'site_session_[a-f0-9]+')).toBe(false)
+  })
+})
+
+describe('the process cache handle', () => {
+  beforeEach(() => resetProcessCache())
+
+  it('keeps nothing and reads nothing with a ttl of 0', () => {
+    processCache('index', { ttl: 0 })!.set('key', 'value', 300)
+    expect(processCache('index')!.get('key')).toBeUndefined()
+    processCache('index')!.set('key', 'value', 300)
+    expect(processCache('index', { ttl: 0 })!.get('key')).toBeUndefined()
+    expect(processCache('index')!.get('key')).toBe('value')
+  })
+
+  it('caps an entry by the ttl, for the writer and the reader, and never extends one', () => {
+    const now = vi.spyOn(Date, 'now')
+    now.mockReturnValue(1000)
+    processCache('index', { ttl: 60 })!.set('capped', 'value', 300)
+    processCache('index', { ttl: 600 })!.set('short', 'value', 30)
+    processCache('index')!.set('uncapped', 'value', 300)
     now.mockReturnValue(1000 + 61 * 1000)
-    await new DruxtClient(baseUrl, { axios: requestAxios({}, {}, allowed), cache: { ttl: 600 } }).getIndex()
-    expect(indexCalls()).toBe(2)
-
+    expect(processCache('index')!.get('capped')).toBeUndefined()
+    expect(processCache('index')!.get('short')).toBeUndefined()
+    expect(processCache('index', { ttl: 60 })!.get('uncapped')).toBeUndefined()
+    expect(processCache('index')!.get('uncapped')).toBe('value')
     now.mockRestore()
   })
 
-  test('the lifetime read later is what is left of it', async () => {
-    const now = jest.spyOn(Date, 'now')
+  it('is one cache per process, whichever copy of the module wrote it', async () => {
+    processCache('index')!.set('key', 'value', 300)
+    vi.resetModules()
+    const copy = await import('../../packages/client/src/processCache')
+    expect(copy.processCache).not.toBe(processCache)
+    expect(copy.processCache('index')!.get('key')).toBe('value')
+    // The generation is shared, so a clear through the copy refuses an older handle's write.
+    const before = processCache('index')!
+    copy.resetProcessCache()
+    processCache('index')!.set('later', 'fetched before the clear', 300, before.generation)
+    expect(processCache('index')!.get('later')).toBeUndefined()
+  })
+
+  it('measures values by their JSON unless sizeOf is given', () => {
+    const json = processCache('bounded', { maxSize: 10 })!
+    // {"n":1} is 7 bytes, so a second one does not fit beside it.
+    json.set('a', { n: 1 }, 60)
+    json.set('b', { n: 2 }, 60)
+    expect(json.get('a')).toBeUndefined()
+    expect(json.get('b')).toEqual({ n: 2 })
+    resetProcessCache()
+    const measured = processCache('bounded', { maxSize: 10, sizeOf: (value) => (value as { size: number }).size })!
+    measured.set('a', { size: 5 }, 60)
+    measured.set('b', { size: 5 }, 60)
+    expect(measured.get('a')).toEqual({ size: 5 })
+    expect(measured.get('b')).toEqual({ size: 5 })
+  })
+
+  it('removes an expired entry when it is read, and its size with it', () => {
+    const now = vi.spyOn(Date, 'now')
     now.mockReturnValue(1000)
-    const client = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
-    const { data } = await client.get('/jsonapi')
-    expect(client.cacheLifetime(data)).toBe(300)
-    now.mockReturnValue(1000 + 100 * 1000)
-    expect(client.cacheLifetime(data)).toBe(200)
-    now.mockReturnValue(1000 + 400 * 1000)
-    expect(client.cacheLifetime(data)).toBe(0)
+    const cache = processCache('bounded', { maxSize: 8 })!
+    cache.set('a', 'aaaa', 10)
+    cache.set('b', 'bbbb', 600)
+    now.mockReturnValue(1000 + 11 * 1000)
+    expect(cache.get('a')).toBeUndefined()
+    // The room a held is free again, so a later entry is stored without evicting b.
+    cache.set('c', 'cccc', 600)
+    expect(cache.get('b')).toBe('bbbb')
+    expect(cache.get('c')).toBe('cccc')
     now.mockRestore()
   })
 
-  test('the merged index lives no longer than the resource config response allows', async () => {
-    // The index says 300 seconds, the resource config it is decorated with says no-store.
-    // The client strips its base URL from the link before it fetches it.
-    const configPath = '/jsonapi/jsonapi_resource_config/jsonapi_resource_config'
-    const configHref = `${baseUrl}${configPath}`
-    const configured = () => {
-      const instance = requestAxios()
-      const get = instance.get
-      instance.get = jest.fn(async (url, options) => {
-        if (url === configPath) {
-          calls += 1
-          return { config: { headers: {} }, headers: { 'cache-control': 'no-store' }, data: { data: [{ attributes: { drupal_internal__id: 'node--page', resourceType: 'node--page', resourceFields: {} } }] } }
-        }
-        const response = await get(url, options)
-        response.data.links['jsonapi_resource_config--jsonapi_resource_config'] = { href: configHref }
-        return response
-      })
-      return instance
-    }
-    await new DruxtClient(baseUrl, { axios: configured(), cache: {} }).getIndex()
-    expect(indexCalls()).toBe(2)
-
-    // Nothing was stored, so the next request fetches both again.
-    await new DruxtClient(baseUrl, { axios: configured(), cache: {} }).getIndex()
-    expect(indexCalls()).toBe(4)
+  it('keeps a value JSON cannot hold, counting it for nothing', () => {
+    const cache = processCache('bounded', { maxSize: 4 })!
+    const circular: Record<string, unknown> = {}
+    circular.self = circular
+    const handler = () => {}
+    cache.set('circular', circular, 60)
+    // JSON.stringify gives undefined for a function.
+    cache.set('handler', handler, 60)
+    cache.set('a', 'aaaa', 60)
+    expect(cache.get('circular')).toBe(circular)
+    expect(cache.get('handler')).toBe(handler)
+    expect(cache.get('a')).toBe('aaaa')
   })
 
-  test('cacheLifetime reads the lifetime of a document the client fetched', async () => {
-    const client = new DruxtClient(baseUrl, { axios: requestAxios({}, {}, { 'cache-control': 'public, max-age=120' }) })
-    const { data } = await client.get('/jsonapi')
-    expect(client.cacheLifetime(data)).toBe(120)
-    expect(client.cacheLifetime({})).toBe(0)
-    expect(client.cacheLifetime(false)).toBe(0)
-  })
-
-  test('a response Drupal marks no-cache is never stored, even when the request gate passes', async () => {
-    // An unknown cookie passes the gate, and Drupal's no-cache keeps the response out.
-    const cookie = { cookie: 'proxy_session=0123456789abcdef' }
-    const signedIn = new DruxtClient(baseUrl, { axios: requestAxios(cookie, {}, { 'cache-control': 'no-cache, must-revalidate' }), cache: {} })
-    expect(signedIn.processCache('index')).not.toBe(null)
-    await signedIn.getIndex()
-    expect(indexCalls()).toBe(1)
-
-    // An anonymous client fetches again rather than reading the signed-in response.
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
-    expect(indexCalls()).toBe(2)
-  })
-
-  test('an index fetched before a clear is not stored after it', async () => {
-    // The cache is cleared while the index request is in flight, as it is when
-    // Drupal calls the clear endpoint because the content changed.
-    const axios = requestAxios()
-    const inFlight = axios.get
-    axios.get = jest.fn(async (...args) => {
-      const response = await inFlight(...args)
-      resetProcessCache()
-      return response
-    })
-    await new DruxtClient(baseUrl, { axios, cache: {} }).getIndex()
-    expect(indexCalls()).toBe(1)
-
-    // The pre-clear index must not be readable, so the next request fetches.
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
-    expect(indexCalls()).toBe(2)
-  })
-
-  test('clearCache empties the index and the process cache', async () => {
-    const client = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
-    await client.getIndex()
-    expect(indexCalls()).toBe(1)
-    expect(client.cacheGeneration).toBe(0)
-
-    client.clearCache()
-    expect(client.cacheGeneration).toBe(1)
-    await client.getIndex()
-    expect(indexCalls()).toBe(2)
-
-    // Another request's client finds the process cache empty too.
-    client.clearCache()
-    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
-    expect(indexCalls()).toBe(3)
-  })
-
-  test('an index fetched before a clear answers its caller and is kept nowhere', async () => {
-    const axios = requestAxios()
-    const resolvers = []
-    const links = (name) => ({ headers: { 'cache-control': 'public, max-age=300' }, data: { links: { [name]: { href: `${baseUrl}/jsonapi/${name}` } } } })
-    axios.get = jest.fn(() => new Promise((resolve) => resolvers.push(resolve)))
-    const client = new DruxtClient(baseUrl, { axios, cache: {} })
-
-    const before = client.getIndex()
-    await Promise.resolve()
-    client.clearCache()
-    // A call after the clear starts its own request rather than joining the stale one.
-    const after = client.getIndex()
-    await Promise.resolve()
-    expect(axios.get).toHaveBeenCalledTimes(2)
-
-    resolvers[0](links('stale'))
-    expect(Object.keys(await before)).toStrictEqual(['stale'])
-    expect(client.index[undefined]).toBe(undefined)
-    expect(new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).processCache('index').get(`${client.indexKey}:`)).toBe(undefined)
-
-    resolvers[1](links('fresh'))
-    expect(Object.keys(await after)).toStrictEqual(['fresh'])
-    expect(Object.keys(client.index[undefined])).toStrictEqual(['fresh'])
+  it('empties the sizes with the entries on a clear', () => {
+    const cache = () => processCache('bounded', { maxSize: 8 })!
+    cache().set('a', 'aaaaaaaa', 60)
+    resetProcessCache()
+    cache().set('b', 'bbbbbbbb', 60)
+    expect(cache().get('b')).toBe('bbbbbbbb')
   })
 })
