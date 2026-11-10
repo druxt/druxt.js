@@ -1,460 +1,758 @@
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-import { getMockResource } from 'druxt-test-utils'
-import mockAxios from 'jest-mock-axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { DruxtClient, resetProcessCache } from '../../packages/client/src'
+import type { DruxtFetch } from '../../packages/client/src'
+import { BASE_URL, drupal, index, json, requested } from './fake-drupal'
 
-import { DruxtClient } from '../src/client'
+const article = { type: 'node--article', id: 'a1', attributes: { title: 'Hello' } }
 
-const baseUrl = 'https://api.umami.demo.druxtjs.org'
+afterEach(() => {
+  vi.restoreAllMocks()
+  vi.unstubAllGlobals()
+  resetProcessCache()
+  // The omitted-resources warnings are kept per site for the process: each test starts with none.
+  new DruxtClient(BASE_URL).clearCache()
+})
 
-jest.mock('axios')
-
-let druxt
-
-describe('DruxtClient', () => {
-  beforeEach(() => {
-    mockAxios.reset()
-    druxt = new DruxtClient(baseUrl)
-    // Reset the shared JSON:API index cache.
-    Object.keys(druxt.index).forEach((key) => delete druxt.index[key])
+describe('the client', () => {
+  it('requires a base URL', () => {
+    expect(() => new DruxtClient('')).toThrow('The \'baseUrl\' parameter is required.')
   })
 
-  test('constructor', () => {
-    // Instantiate client without baseUrl.
-    expect(() => { return new DruxtClient() }).toThrow('The \'baseUrl\' parameter is required.')
-
-    // Instantiate client with required parameters.
-    expect(new DruxtClient(baseUrl)).toBeInstanceOf(DruxtClient)
-    expect(mockAxios.create).toHaveBeenCalledWith({ baseURL: baseUrl })
-
-    // Instantiate client with axios headers.
-    const headers = { 'X-Druxt': true }
-    expect(new DruxtClient(baseUrl, { axios: { headers } })).toBeInstanceOf(DruxtClient)
-    expect(mockAxios.create).toHaveBeenCalledWith({ baseURL: baseUrl, headers })
-
-    // Instantiate client with custom axios instance.
-    const axios = jest.fn()
-    const client = new DruxtClient(baseUrl, { axios })
-    expect(client).toBeInstanceOf(DruxtClient)
-    expect(client.axios).toStrictEqual(axios)
+  it('lets a baseUrl in the options win over the argument, as 1.x did, and requests from it', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index() })
+    const client = new DruxtClient('https://ignored.test', { fetch, baseUrl: `${BASE_URL}/` })
+    expect(client.options.baseUrl).toBe(BASE_URL)
+    await client.getIndex()
+    expect(calls.map((call) => call.url)).toEqual([`${BASE_URL}/jsonapi`])
+    // Without one in the options, the argument is the base URL.
+    expect(new DruxtClient(`${BASE_URL}/`, { baseUrl: undefined }).options.baseUrl).toBe(BASE_URL)
   })
 
-  test('debug', () => {
-    const axios = jest.fn()
-    axios.interceptors = {
-      request: {
-        use: jest.fn((callback, err) => {
-          if (typeof callback === 'function') {
-            callback({ url: 'test' })
-          }
-          if (typeof err === 'function') {
-            err(new Error('test'))
-          }
-        })
-      }
+  it('turns auth on only with a clientId', () => {
+    expect(new DruxtClient(BASE_URL).auth).toBeUndefined()
+    expect(new DruxtClient(BASE_URL, { auth: { type: false } }).auth).toBeUndefined()
+    expect(new DruxtClient(BASE_URL, { auth: { clientId: 'druxt' } }).auth).toBeDefined()
+  })
+})
+
+describe('URL building', () => {
+  const client = new DruxtClient(BASE_URL)
+
+  it('resolves a path against the base URL', () => {
+    expect(client.url('/jsonapi/node/article')).toBe(`${BASE_URL}/jsonapi/node/article`)
+    expect(client.url('es/jsonapi')).toBe(`${BASE_URL}/es/jsonapi`)
+    expect(new DruxtClient(`${BASE_URL}/`).url('/jsonapi')).toBe(`${BASE_URL}/jsonapi`)
+    expect(client.url('https://cdn.test/image.jpg')).toBe('https://cdn.test/image.jpg')
+  })
+
+  it('drops a trailing slash from the base URL', () => {
+    expect(new DruxtClient(`${BASE_URL}//`).options.baseUrl).toBe(BASE_URL)
+  })
+
+  it('resolves a path against this origin when the API is proxied', () => {
+    vi.stubGlobal('location', { origin: 'https://site.test' })
+    expect(new DruxtClient(BASE_URL, { proxy: { api: true } }).url('/jsonapi')).toBe('https://site.test/jsonapi')
+  })
+
+  it('leaves the URL alone without a query', () => {
+    expect(client.buildQueryUrl('/jsonapi/node/article')).toBe('/jsonapi/node/article')
+    expect(client.buildQueryUrl('/jsonapi/node/article', '')).toBe('/jsonapi/node/article')
+    expect(client.buildQueryUrl('/jsonapi/node/article', {})).toBe('/jsonapi/node/article')
+    expect(client.buildQueryUrl('/jsonapi/node/article', new DrupalJsonApiParams())).toBe('/jsonapi/node/article')
+  })
+
+  it('appends a query string, with or without its question mark', () => {
+    expect(client.buildQueryUrl('/jsonapi/node/article', 'page[limit]=5')).toBe('/jsonapi/node/article?page[limit]=5')
+    expect(client.buildQueryUrl('/jsonapi/node/article', '?page[limit]=5')).toBe('/jsonapi/node/article?page[limit]=5')
+  })
+
+  it('joins a query to a URL that already has one with an ampersand', () => {
+    const url = '/jsonapi/node/article?page[limit]=5'
+    expect(client.buildQueryUrl(url, 'page[offset]=5')).toBe(`${url}&page[offset]=5`)
+    expect(client.buildQueryUrl(url, '?page[offset]=5')).toBe(`${url}&page[offset]=5`)
+    expect(client.buildQueryUrl(url, { sort: 'title' })).toBe(`${url}&sort=title`)
+    expect(client.buildQueryUrl(url, new DrupalJsonApiParams().addSort('title'))).toBe(`${url}&sort=title`)
+  })
+
+  it('appends drupal-jsonapi-params\' query string', () => {
+    const query = new DrupalJsonApiParams().addFilter('status', '1').addPageLimit(5)
+    expect(client.buildQueryUrl('/jsonapi/node/article', query)).toBe('/jsonapi/node/article?filter%5Bstatus%5D=1&page%5Blimit%5D=5')
+  })
+
+  it('encodes a nested object in bracket form', () => {
+    expect(decodeURIComponent(client.buildQueryUrl('/jsonapi/node/article', { filter: { status: 1 } }))).toBe('/jsonapi/node/article?filter[status]=1')
+    // A nested null is left out: an IS NULL condition must have no value.
+    expect(decodeURIComponent(client.buildQueryUrl('/jsonapi/node/article', { filter: { draft: { condition: { path: 'field_x', operator: 'IS NULL', value: null } } } })))
+      .toBe('/jsonapi/node/article?filter[draft][condition][path]=field_x&filter[draft][condition][operator]=IS NULL')
+    expect(client.buildQueryUrl('/jsonapi/node/article', { filter: {} })).toBe('/jsonapi/node/article')
+  })
+
+  it('encodes an object as drupal-jsonapi-params does, at any depth', () => {
+    const params = new DrupalJsonApiParams()
+      .addFilter('status', '1')
+      .addFilter('drupal_internal__nid', ['1', '2'], 'IN')
+      .addGroup('either', 'OR')
+      .addFilter('title', 'Druxt', 'CONTAINS', 'either')
+      .addFilter('field_tags', null, 'IS NULL', 'either')
+      .addFields('node--article', ['title', 'body'])
+      .addInclude(['uid', 'field_image'])
+      .addSort('created', 'DESC')
+      .addPageLimit(5)
+    const url = client.buildQueryUrl('/jsonapi/node/article', params.getQueryObject())
+    expect(decodeURIComponent(url)).toBe(`/jsonapi/node/article?${decodeURIComponent(params.getQueryString())}`)
+  })
+
+  it('encodes an object, repeating the key for each value of an array', () => {
+    expect(client.buildQueryUrl('/jsonapi/node/article', { 'page[limit]': 5, 'include': ['uid', 'field_image'], 'filter[status]': true }))
+      .toBe('/jsonapi/node/article?page%5Blimit%5D=5&include=uid&include=field_image&filter%5Bstatus%5D=true')
+  })
+})
+
+describe('the language prefix', () => {
+  const site = () => drupal({
+    'GET /jsonapi': index(),
+    'GET /es/jsonapi': index('/es'),
+    'GET /es/jsonapi/node/article/a1': { data: article },
+    'GET /es/jsonapi/node/article?page[limit]=1': { data: [article] },
+    'GET /es/jsonapi/node/recipe/r1': { data: { type: 'node--recipe', id: 'r1' } },
+    'GET /es/jsonapi/node/recipe/r1/uid': { data: { type: 'user--user', id: 'u1' } },
+    'GET /jsonapi/node/recipe/r1': { data: { type: 'node--recipe', id: 'r1' } },
+    'GET /jsonapi/node/recipe/r1/uid': { data: { type: 'user--user', id: 'u1' } },
+  })
+
+  it('fetches the prefixed index, its links keeping the prefix', async () => {
+    const { fetch, calls } = site()
+    const client = new DruxtClient(BASE_URL, { fetch })
+    expect(await client.getIndex('node--article', '/es')).toEqual({ href: '/es/jsonapi/node/article' })
+    expect(await client.getIndex('node--article')).toEqual({ href: '/jsonapi/node/article' })
+    expect(requested(calls)).toEqual(['GET /es/jsonapi', 'GET /jsonapi'])
+  })
+
+  it('prefixes resource and collection URLs', async () => {
+    const { fetch, calls } = site()
+    const client = new DruxtClient(BASE_URL, { fetch })
+    await client.getResource('node--article', 'a1', undefined, '/es')
+    await client.getCollection('node--article', 'page[limit]=1', '/es')
+    expect(requested(calls)).toEqual(['GET /es/jsonapi', 'GET /es/jsonapi/node/article/a1', 'GET /es/jsonapi/node/article?page[limit]=1'])
+  })
+
+  it('builds the conventional URL for a type the index does not list', async () => {
+    const { fetch, calls } = site()
+    const client = new DruxtClient(BASE_URL, { fetch })
+    expect(await client.getResource('node--recipe', 'r1')).toEqual({ data: { type: 'node--recipe', id: 'r1' } })
+    expect(requested(calls)).toEqual(['GET /jsonapi', 'GET /jsonapi/node/recipe/r1'])
+  })
+
+  it('keeps the prefix in the fallback resource URL', async () => {
+    const { fetch, calls } = site()
+    const client = new DruxtClient(BASE_URL, { fetch })
+    await client.getResource('node--recipe', 'r1', undefined, '/es')
+    expect(requested(calls)).toEqual(['GET /es/jsonapi', 'GET /es/jsonapi/node/recipe/r1'])
+  })
+
+  it('keeps the prefix in the fallback related URL', async () => {
+    const { fetch, calls } = site()
+    const client = new DruxtClient(BASE_URL, { fetch })
+    await client.getRelated('node--recipe', 'r1', 'uid', undefined, '/es')
+    expect(requested(calls)).toEqual(['GET /es/jsonapi', 'GET /es/jsonapi/node/recipe/r1/uid'])
+  })
+
+  it('keeps the prefix in the fallback collection URL', async () => {
+    const { fetch, calls } = drupal({ 'GET /es/jsonapi': index('/es'), 'GET /es/jsonapi/node/recipe?page[limit]=1': { data: [] } })
+    expect(await new DruxtClient(BASE_URL, { fetch }).getCollection('node--recipe', 'page[limit]=1', '/es')).toEqual({ data: [] })
+    expect(requested(calls)).toEqual(['GET /es/jsonapi', 'GET /es/jsonapi/node/recipe?page[limit]=1'])
+  })
+})
+
+describe('getIndex', () => {
+  it('fetches the index once and strips the base URL from its links', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index() })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const whole = await client.getIndex()
+    expect(whole['node--page']).toEqual({ href: '/jsonapi/node/page' })
+    expect(await client.getIndex('node--article')).toEqual({ href: '/jsonapi/node/article' })
+    expect(await client.getIndex('node--missing')).toBeUndefined()
+    expect(requested(calls)).toEqual(['GET /jsonapi'])
+  })
+
+  it('shares one request between concurrent callers', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index() })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    await Promise.all([client.getIndex(), client.getIndex('node--article'), client.getIndex('node--page')])
+    expect(calls).toHaveLength(1)
+  })
+
+  it('reads the index from a custom endpoint', async () => {
+    const { fetch, calls } = drupal({ 'GET /api': { links: { 'node--article': { href: `${BASE_URL}/api/node/article` } } } })
+    const client = new DruxtClient(BASE_URL, { fetch, endpoint: '/api' })
+    expect(await client.getIndex('node--article')).toEqual({ href: '/api/node/article' })
+    expect(requested(calls)).toEqual(['GET /api'])
+  })
+
+  it('takes a bare endpoint, as 1.x did, and joins a prefix to it with a slash', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index(), 'GET /spanish/jsonapi': index('/spanish') })
+    const client = new DruxtClient(BASE_URL, { fetch, endpoint: 'jsonapi', prefixes: { es: 'spanish' } })
+    expect(await client.getIndex('node--article', 'es')).toEqual({ href: '/spanish/jsonapi/node/article' })
+    expect(await client.getIndex('node--article')).toEqual({ href: '/jsonapi/node/article' })
+    expect(requested(calls)).toEqual(['GET /spanish/jsonapi', 'GET /jsonapi'])
+    expect(client.options.endpoint).toBe('/jsonapi')
+  })
+
+  it('drops a trailing slash from the endpoint, so a type the index lacks gets one slash in its URL', async () => {
+    // The index answers with and without the slash, so the fallback URL is what the test reads.
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index(), 'GET /jsonapi/': index(), 'GET /jsonapi/node/recipe': { data: [] } })
+    const client = new DruxtClient(BASE_URL, { fetch, endpoint: '/jsonapi/' })
+    await client.getCollection('node--recipe')
+    expect(requested(calls)).toEqual(['GET /jsonapi', 'GET /jsonapi/node/recipe'])
+    expect(client.options.endpoint).toBe('/jsonapi')
+  })
+
+  it('retries after a failed request instead of caching the failure', async () => {
+    let attempt = 0
+    const { fetch, calls } = drupal({ 'GET /jsonapi': () => (attempt++ ? json(index()) : json({ errors: [{ title: 'Internal Server Error' }] }, 500)) })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    await expect(client.getIndex()).rejects.toThrow('500: Internal Server Error')
+    expect(await client.getIndex('node--article')).toEqual({ href: '/jsonapi/node/article' })
+    expect(calls).toHaveLength(2)
+  })
+
+  it('refuses a response that is not a JSON:API index', async () => {
+    const { fetch } = drupal({ 'GET /jsonapi': { data: [] } })
+    await expect(new DruxtClient(BASE_URL, { fetch }).getIndex()).rejects.toThrow(`Invalid JSON:API endpoint\n\nURL: ${BASE_URL}/jsonapi`)
+  })
+
+  it('adds JSON:API Extras\' resource config to the index', async () => {
+    const resourceFields = { title: { publicName: 'heading', fieldName: 'title' } }
+    const { fetch } = drupal({
+      'GET /jsonapi': index('', ['node--article', 'jsonapi_resource_config--jsonapi_resource_config']),
+      'GET /jsonapi/jsonapi_resource_config/jsonapi_resource_config': {
+        data: [{ type: 'jsonapi_resource_config--jsonapi_resource_config', id: 'c1', attributes: { drupal_internal__id: 'node--article', resourceType: 'node--article', resourceFields } }],
+      },
+    })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    expect(await client.getIndex('node--article')).toEqual({ href: '/jsonapi/node/article', resourceType: 'node--article', entityType: 'node', bundle: 'article', resourceFields })
+  })
+
+  it('fetches the index again after clearCache()', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index() })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    await client.getIndex()
+    client.clearCache()
+    await client.getIndex()
+    expect(calls).toHaveLength(2)
+    expect(client.cacheGeneration).toBe(1)
+  })
+
+  it('fetches the unprefixed index once, whether the prefix is undefined or empty', async () => {
+    const { fetch, calls } = drupal({
+      'GET /jsonapi': index(),
+      'GET /jsonapi/node/article/a1': { data: article },
+      'GET /jsonapi/node/article/a1/uid': { data: { type: 'user--user', id: 'u1' } },
+      'GET /jsonapi/node/article': { data: [article] },
+      'PATCH /jsonapi/node/article/a1': { data: article },
+    })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    await client.getResource('node--article', 'a1')
+    await client.getRelated('node--article', 'a1', 'uid')
+    await client.getCollection('node--article')
+    await client.createResource(article)
+    await client.getIndex(null, '')
+    expect(requested(calls).filter((call) => call === 'GET /jsonapi')).toHaveLength(1)
+  })
+})
+
+describe('index links', () => {
+  // A fetch that records URLs and answers the index with the links given.
+  const answer = (links: Record<string, string>) => {
+    const urls: string[] = []
+    const fetch: DruxtFetch = async (url) => {
+      urls.push(url)
+      return url.endsWith('/jsonapi') ? json({ links: Object.fromEntries(Object.entries(links).map(([type, href]) => [type, { href }])) }) : json({ data: [] })
     }
+    return { fetch, urls }
+  }
 
-    const druxt = new DruxtClient(baseUrl, { debug: true, axios })
-    expect(druxt.axios.interceptors.request.use).toHaveBeenCalled()
+  it('strips a base URL with a trailing slash, keeping the leading slash', async () => {
+    const { fetch, urls } = answer({ 'node--article': `${BASE_URL}/jsonapi/node/article` })
+    const client = new DruxtClient(`${BASE_URL}/`, { fetch })
+    expect(await client.getIndex('node--article')).toEqual({ href: '/jsonapi/node/article' })
+    await client.getCollection('node--article')
+    expect(urls).toEqual([`${BASE_URL}/jsonapi`, `${BASE_URL}/jsonapi/node/article`])
   })
 
-  test('addHeaders', () => {
-    expect(druxt.addHeaders()).toBe(false)
-
-    druxt.addHeaders({ 'X-Druxt': true })
-    expect(druxt.axios.defaults.headers.common['X-Druxt']).toBe(true)
+  it('strips the base URL only as a prefix', async () => {
+    const { fetch, urls } = answer({ 'node--article': `${BASE_URL}.internal/jsonapi/node/article` })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    expect(await client.getIndex('node--article')).toEqual({ href: '/jsonapi/node/article' })
+    await client.getCollection('node--article')
+    expect(urls[1]).toBe(`${BASE_URL}/jsonapi/node/article`)
   })
 
-  test('buildQueryUrl', () => {
-    expect(druxt.buildQueryUrl('url', 'query')).toBe('url?query')
-    expect(druxt.buildQueryUrl('url', '?query')).toBe('url?query')
-    expect(druxt.buildQueryUrl('url', { getQueryString: () => 'query' })).toBe('url?query')
-    expect(druxt.buildQueryUrl('url', { query: 'string' })).toBe('url?query=string')
-
-    // A nested object uses bracket notation, as Drupal's JSON:API expects.
-    expect(druxt.buildQueryUrl('url', { filter: { drupal_internal__format: 'basic_html' } }))
-      .toBe('url?filter[drupal_internal__format]=basic_html')
-    expect(druxt.buildQueryUrl('url', {
-      filter: { status: { condition: { path: 'nid', operator: 'IN', value: [1, 2] } } },
-      include: 'uid,field_tags',
-    })).toBe([
-      'url?filter[status][condition][path]=nid',
-      'filter[status][condition][operator]=IN',
-      'filter[status][condition][value][0]=1',
-      'filter[status][condition][value][1]=2',
-      'include=uid%2Cfield_tags',
-    ].join('&'))
-    expect(druxt.buildQueryUrl('url', { 'fields[node--page]': 'title', page: { limit: 5 } }))
-      .toBe('url?fields%5Bnode--page%5D=title&page[limit]=5')
-    expect(druxt.buildQueryUrl('url', { filter: { title: 'A & B' } })).toBe('url?filter[title]=A%20%26%20B')
-    expect(druxt.buildQueryUrl('url', { page: {}, include: 'uid' })).toBe('url?include=uid')
-    // A top-level array serializes as before.
-    expect(druxt.buildQueryUrl('url', { include: ['uid', 'field_tags'] })).toBe('url?include=uid&include=field_tags')
-    // A nested null is left out, so an `IS NULL` condition has no value.
-    expect(druxt.buildQueryUrl('url', {
-      filter: { empty: { condition: { path: 'field_tags', operator: 'IS NULL', value: null } } },
-    })).toBe('url?filter[empty][condition][path]=field_tags&filter[empty][condition][operator]=IS%20NULL')
-    expect(druxt.buildQueryUrl('url', { filter: { title: null } })).toBe('url')
-
-    expect(druxt.buildQueryUrl('url', {})).toBe('url')
-    expect(druxt.buildQueryUrl('url', [])).toBe('url')
-    expect(druxt.buildQueryUrl('url', Boolean)).toBe('url')
-    expect(druxt.buildQueryUrl('url')).toBe('url')
+  it('moves a link on an internal host to the base URL, keeping its path and query', async () => {
+    const { fetch, urls } = answer({ 'node--article': 'http://drupal:8080/jsonapi/node/article?resourceVersion=id%3A1' })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    expect(await client.getIndex('node--article')).toEqual({ href: '/jsonapi/node/article?resourceVersion=id%3A1' })
+    await client.getCollection('node--article')
+    expect(urls[1]).toBe(`${BASE_URL}/jsonapi/node/article?resourceVersion=id%3A1`)
   })
 
-  test('checkPermissions', () => {
-    const res = {
-      data: {
-        meta: {
-          omitted: {
-            detail: 'Some resources have been omitted because of insufficient authorization.',
-            links: {
-              help: null,
-              item: {
-                meta: {
-                  detail: 'The current user is not allowed to GET the selected resource. The \'administer node fields\' permission is required.'
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+  it('keeps a base URL\'s path', async () => {
+    const base = 'https://example.test/drupal'
+    const { fetch, urls } = answer({
+      'node--article': `${base}/jsonapi/node/article`,
+      'node--page': 'http://drupal:8080/drupal/jsonapi/node/page',
+      'node--tag': '/jsonapi/node/tag',
+    })
+    const client = new DruxtClient(base, { fetch })
+    expect(await client.getIndex()).toEqual({ 'node--article': { href: '/jsonapi/node/article' }, 'node--page': { href: '/jsonapi/node/page' }, 'node--tag': { href: '/jsonapi/node/tag' } })
+    await client.getCollection('node--article')
+    await client.getCollection('node--page')
+    expect(urls).toEqual([`${base}/jsonapi`, `${base}/jsonapi/node/article`, `${base}/jsonapi/node/page`])
+  })
+})
 
-    try {
-      druxt.checkPermissions(res)
-    } catch(err) {
-      expect(err.response.data.errors[0]).toMatchSnapshot()
-    }
+describe('the process cache', () => {
+  const cacheable = () => drupal({ 'GET /jsonapi': () => json(index(), 200, { 'Cache-Control': 'max-age=300, public' }) })
+
+  it('shares an index Drupal lets be cached between clients', async () => {
+    const first = cacheable()
+    const second = cacheable()
+    await new DruxtClient(BASE_URL, { fetch: first.fetch, cache: {} }).getIndex()
+    expect(await new DruxtClient(BASE_URL, { fetch: second.fetch, cache: {} }).getIndex('node--article')).toEqual({ href: '/jsonapi/node/article' })
+    expect(second.calls).toHaveLength(0)
   })
 
-  test('createResource', async () => {
-    const headers = {
-      'Content-Type': 'application/vnd.api+json'
-    }
-
-    // Expect invalid resource to return false.
-    expect((await druxt.createResource({}))).toBe(false)
-
-    // Creating a node takes an account with the permission. Signed out, the
-    // write is refused with a 403 before validation runs.
-    mockAxios.__signIn('author')
-
-    // Create a node without the data it requires.
-    const data = { type: 'node--page' }
-    let error
-    try {
-      await druxt.createResource(data)
-    } catch(err) {
-      error = err
-    }
-    // Asserted outside the catch, so a create that unexpectedly succeeded
-    // fails the test rather than skipping it.
-    expect(error).toBeDefined()
-    expect(error.response.status).toBe(422)
-    const [violation] = error.response.data.errors
-    expect(violation.detail).toMatchSnapshot()
-    expect(violation.source.pointer).toBe('/data/attributes/title')
-    // Not the reason phrase: RFC 9110 renamed 422 from "Unprocessable Entity"
-    // to "Unprocessable Content", so it follows the Drupal version.
-    expect(violation.status).toBe('422')
-    expect(mockAxios.post).toHaveBeenCalledWith(
-      `/en/jsonapi/node/page`,
-      { data },
-      { headers }
-    )
-    mockAxios.reset()
-
-    // A resource missing several required fields reports each violation, not
-    // just the first. umami's recipe has enough of them to show that; the
-    // count itself belongs to the content type, so only the plural matters.
-    let violations
-    try {
-      await druxt.createResource({ type: 'node--recipe' })
-    } catch(err) {
-      violations = err.response.data.errors
-    }
-    expect(violations.length).toBeGreaterThan(1)
-    expect(violations.filter((item) => !(item.source || {}).pointer)).toStrictEqual([])
-    mockAxios.reset()
-
-    // Create resource with required data.
-    data.attributes = { title: 'Test' }
-    const response = await druxt.createResource(data)
-    expect(mockAxios.post).toHaveBeenCalledWith(
-      `/en/jsonapi/node/page`,
-      { data },
-      { headers }
-    )
-    expect(response.errors).toBe(undefined)
-    expect(response.status).toBe(201)
-    expect(response.data.data.attributes.title).toBe(data.attributes.title)
-    mockAxios.reset()
-
-    // A resource that already has an id is sent as an update.
-    await druxt.createResource(response.data.data).catch(() => {})
-    expect(mockAxios.patch).toHaveBeenCalledWith(
-      `/en/jsonapi/node/page/${response.data.data.id}`,
-      { data: response.data.data },
-      { headers }
-    )
+  it('is withheld from a client that sends credentials', async () => {
+    const first = cacheable()
+    const second = cacheable()
+    await new DruxtClient(BASE_URL, { fetch: first.fetch, cache: {} }).getIndex()
+    await new DruxtClient(BASE_URL, { fetch: second.fetch, cache: {}, headers: { Authorization: 'Basic ZWRpdG9yOnNlY3JldA==' } }).getIndex()
+    expect(second.calls).toHaveLength(1)
   })
 
-  test('error', () => {
-    let mockErr
-    const url = [baseUrl, 'test/error'].join('/')
-
-    // Test basic error.
-    mockErr = new Error('Test error')
-    try {
-      druxt.error(mockErr)
-    } catch(err) {
-      expect(err.message).toMatchSnapshot()
-    }
-
-    // Test Axios error.
-    mockErr = {
-      response: {
-        config: { url },
-        status: '500',
-        statusText: 'Test error'
-      }
-    }
-    try {
-      druxt.error(mockErr)
-    } catch(err) {
-      expect(err.message).toMatchSnapshot()
-    }
-
-    // Test error with URL context and details.
-    mockErr = {
-      response: {
-        status: '500',
-        statusText: 'Test error',
-        data: {
-          errors: [{
-            detail: 'Test error details.'
-          }]
-        }
-      }
-    }
-    try {
-      druxt.error(mockErr, { url })
-    } catch(err) {
-      expect(err.message).toMatchSnapshot()
-    }
+  it('is off without the cache option', async () => {
+    const first = cacheable()
+    const second = cacheable()
+    await new DruxtClient(BASE_URL, { fetch: first.fetch }).getIndex()
+    await new DruxtClient(BASE_URL, { fetch: second.fetch }).getIndex()
+    expect(second.calls).toHaveLength(1)
   })
 
-  test('getCollection', async () => {
-    // Get a collection of 'node--page' resources.
-    const collection = await druxt.getCollection('node--page')
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/page`, undefined)
-    expect(collection.data.length).toBe(1)
+  it('keeps entries of its own for each X-Consumer-ID a client sends, whatever the case of the header', async () => {
+    const one = cacheable()
+    await new DruxtClient(BASE_URL, { fetch: one.fetch, cache: {}, headers: { 'X-Consumer-ID': 'one' } }).getIndex()
+    const same = cacheable()
+    await new DruxtClient(BASE_URL, { fetch: same.fetch, cache: {}, headers: { 'x-consumer-id': 'one' } }).getIndex()
+    expect(same.calls).toHaveLength(0)
+    const two = cacheable()
+    await new DruxtClient(BASE_URL, { fetch: two.fetch, cache: {}, headers: { 'X-Consumer-ID': 'two' } }).getIndex()
+    expect(two.calls).toHaveLength(1)
+    const none = cacheable()
+    await new DruxtClient(BASE_URL, { fetch: none.fetch, cache: {} }).getIndex()
+    expect(none.calls).toHaveLength(1)
 
-    // Get a filtered collection of 'node--page' resources.
-    await druxt.getCollection('node--page', { 'filter[status]': 1 })
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/page?filter%5Bstatus%5D=1`, undefined)
-
-    // Get a collection with headers set.
-    // await druxt.getCollection('node--page', {}, { headers: { 'X-Druxt': true }})
-    // expect(druxt.axios.defaults.headers.common['X-Druxt']).toBe(true)
-
-    // Get collection of nothing.
-    const noResource = await druxt.getCollection()
-    expect(noResource).toBe(false)
-  })
-
-  test('getCollectionAll', async () => {
-    // Get all of the 'test--all' resources.
-    const query = new DrupalJsonApiParams().addFields('node--recipe', []).addPageLimit(5)
-    await druxt.getCollectionAll('node--recipe', query)
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/recipe?page%5Boffset%5D=5&page%5Blimit%5D=5&fields%5Bnode--recipe%5D=`, undefined)
-  })
-
-  test('getIndex', async () => {
-    const index = await druxt.getIndex()
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi', undefined)
-
-    // A total is a magic number that moves with the backend. The index is the
-    // endpoint's own links with the base URL stripped, so the source says what
-    // belongs in it.
-    // Reading it from the call the client already made keeps the call count
-    // above true. A shape check alone would pass a truncated index.
-    const { data } = await mockAxios.get.mock.results[0].value
-    expect(Object.keys(index)).toStrictEqual(Object.keys(data.links))
-    expect(Object.values(index).filter((entry) => typeof entry.href !== 'string')).toStrictEqual([])
-
-    // The cached call hands back the stored object itself, so the keys have to
-    // be taken now. Comparing the two returned values after the second call
-    // reads one object twice, and passes whatever the call did to it.
-    const keys = Object.keys(index)
-
-    const cachedIndex = await druxt.getIndex()
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-
-    // The cached call has to return the same index, not one the same size.
-    expect(Object.keys(cachedIndex)).toStrictEqual(keys)
-
-    // Simulate broken index.
-    delete druxt.index
-    druxt.get = () => ({ data: {} })
-    try {
-      await druxt.getIndex()
-    } catch(err) {
-      expect(err.response).toMatchSnapshot()
-    }
-  })
-
-  test('getIndex - strips the positional base URL', async () => {
-    const client = new DruxtClient(`${baseUrl}/`)
-    expect(client.options.baseUrl).toBe(baseUrl)
-
-    const resourceIndex = await client.getIndex('node--page')
-    expect(resourceIndex.href).toBe('/en/jsonapi/node/page')
-
-    // An explicit `baseUrl` option still wins.
-    expect(new DruxtClient(baseUrl, { baseUrl: 'https://example.com' }).options.baseUrl).toBe('https://example.com')
-  })
-
-  test('getIndex - resource', async () => {
-    const resourceIndex = await druxt.getIndex('node--page')
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(mockAxios.get).toHaveBeenCalledWith('/jsonapi', undefined)
-
-    expect(resourceIndex).toHaveProperty('href')
-
-    const cachedResourceIndex = await druxt.getIndex('node--page')
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-
-    expect(cachedResourceIndex).toHaveProperty('href')
-  })
-
-  test('getIndex - shared between clients', async () => {
-    const clientB = new DruxtClient(baseUrl)
-
-    await druxt.getIndex()
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-
-    // Both clients end up holding the one cached object, so the copy to
-    // compare against has to be taken before the second client asks for it.
-    const shared = { ...druxt.index[undefined] }
-
-    // A second client with the same base URL reuses the cached index.
-    await clientB.getIndex()
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(clientB.index[undefined]).toStrictEqual(shared)
-
-    // A client with a different base URL fetches its own index.
-    const clientC = new DruxtClient('https://other.example.com')
-    await clientC.getIndex()
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
-
-    // A client with a different resource config decorates its own index.
-    const clientD = new DruxtClient(baseUrl, { jsonapiResourceConfig: 'other--config' })
-    await clientD.getIndex()
-    expect(mockAxios.get).toHaveBeenCalledTimes(3)
-  })
-
-  test('getIndex - not shared across Axios instances', async () => {
-    await druxt.getIndex()
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-
-    // Another Axios instance carries its own credentials, so its client
-    // fetches its own index rather than reusing the shared one.
-    const sharedBefore = { ...druxt.index[undefined] }
-
-    const ownAxios = jest.fn()
-    ownAxios.get = jest.fn(async () => ({ data: { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } } }))
-    const clientE = new DruxtClient(baseUrl, { axios: ownAxios })
-    const index = await clientE.getIndex()
-    expect(ownAxios.get).toHaveBeenCalledTimes(1)
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(Object.keys(index)).toStrictEqual(['node--page'])
-    // The shared index is untouched by the other instance's own one. Comparing
-    // it with the copy taken above says that, where a count or a difference
-    // from the other index would also pass had entries been dropped.
-    expect(druxt.index[undefined]).toStrictEqual(sharedBefore)
-  })
-
-  test('getIndex - concurrent requests share one fetch', async () => {
-    const clientB = new DruxtClient(baseUrl)
-
-    await Promise.all([druxt.getIndex(), clientB.getIndex(), druxt.getIndex()])
-    expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    // The clients share the one object, so the other client's index is not an
-    // independent source. The response the fetch returned is.
-    const { data } = await mockAxios.get.mock.results[0].value
-    expect(Object.keys(clientB.index[undefined])).toStrictEqual(Object.keys(data.links))
-  })
-
-  test('getRelated', async () => {
-    expect((await druxt.getRelated())).toBe(false)
-
-    const mockArticle = await getMockResource('node--article')
-
-    const { type, id } = mockArticle.data
-    const related = await druxt.getRelated(type, id, 'field_media_image')
-    expect(mockAxios.get).toHaveBeenCalledWith(`/en/jsonapi/node/article/${id}/field_media_image`, undefined)
-    expect(related.data).toHaveProperty('type')
-
-    try {
-      await druxt.getRelated('node--fake', id, 'field_media_image')
-    } catch(err) {
-      expect(mockAxios.get).toHaveBeenCalledWith(`/jsonapi/node/fake/${id}/field_media_image`, undefined)
+    // A reset empties every consumer's entries.
+    resetProcessCache()
+    for (const consumer of ['one', 'two']) {
+      const after = cacheable()
+      await new DruxtClient(BASE_URL, { fetch: after.fetch, cache: {}, headers: { 'X-Consumer-ID': consumer } }).getIndex()
+      expect(after.calls).toHaveLength(1)
     }
   })
 
-  test('getResource and getRelated keep the prefix for a type the index does not list', async () => {
-    // A Views resource is never in the index, so the URL is built from the type.
-    druxt.index.es = {}
-    druxt.index[undefined] = {}
-    druxt.get = jest.fn(async () => ({ data: {} }))
+  it('keeps the merged index no longer than the resource config response allows', async () => {
+    // The index says 300 seconds, the resource config it is decorated with says no-store.
+    const configured = () => drupal({
+      'GET /jsonapi': () => json(index('', ['node--page', 'jsonapi_resource_config--jsonapi_resource_config']), 200, { 'Cache-Control': 'max-age=300, public' }),
+      'GET /jsonapi/jsonapi_resource_config/jsonapi_resource_config': () => json({
+        data: [{ type: 'jsonapi_resource_config--jsonapi_resource_config', id: 'c1', attributes: { drupal_internal__id: 'node--page', resourceType: 'node--page', resourceFields: {} } }],
+      }, 200, { 'Cache-Control': 'no-store' }),
+    })
+    const first = configured()
+    await new DruxtClient(BASE_URL, { fetch: first.fetch, cache: {} }).getIndex()
+    expect(first.calls).toHaveLength(2)
+    // Nothing was stored, so the next client fetches both again.
+    const second = configured()
+    await new DruxtClient(BASE_URL, { fetch: second.fetch, cache: {} }).getIndex()
+    expect(second.calls).toHaveLength(2)
+  })
 
-    await druxt.getResource('views--recipes', 'block', undefined, 'es')
-    await druxt.getRelated('views--recipes', 'block', 'field', undefined, 'es')
-    await druxt.getResource('views--recipes', 'block')
-    druxt.index['/es'] = {}
-    await druxt.getResource('views--recipes', 'block', undefined, '/es')
-    expect(druxt.get.mock.calls.map(([url]) => url)).toStrictEqual([
-      '/es/jsonapi/views/recipes/block',
-      '/es/jsonapi/views/recipes/block/field',
-      '/jsonapi/views/recipes/block',
-      '/es/jsonapi/views/recipes/block',
+  it('gives undefined, not null, when the cache must not be used', () => {
+    expect(new DruxtClient(BASE_URL).processCache('index')).toBeUndefined()
+    expect(new DruxtClient(BASE_URL, { cache: {}, headers: { Authorization: 'Basic ZWRpdG9yOnNlY3JldA==' } }).processCache('index')).toBeUndefined()
+    expect(new DruxtClient(BASE_URL, { cache: {} }).processCache('index')).toBeDefined()
+  })
+})
+
+describe('reading resources', () => {
+  it('gets a resource with a query, as the whole document', async () => {
+    const document = { data: article, included: [{ type: 'user--user', id: 'u1' }] }
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index(), 'GET /jsonapi/node/article/a1?include=uid': document })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    expect(await client.getResource('node--article', 'a1', { include: 'uid' })).toEqual(document)
+    expect(calls[1]).toMatchObject({ method: 'GET', body: undefined, headers: { Accept: 'application/vnd.api+json, application/json;q=0.9, */*;q=0.8' } })
+  })
+
+  it('throws on an empty required argument, naming it', async () => {
+    const { fetch, calls } = drupal({})
+    const client = new DruxtClient(BASE_URL, { fetch })
+    await expect(client.getResource('node--page', '')).rejects.toThrow(TypeError)
+    await expect(client.getResource('node--page', '')).rejects.toThrow('getResource() needs an id')
+    await expect(client.getResource('', 'uuid')).rejects.toThrow('getResource() needs a type')
+    await expect(client.getRelated('', 'uuid', 'uid')).rejects.toThrow('getRelated() needs a type')
+    await expect(client.getRelated('node--page', '', 'uid')).rejects.toThrow('getRelated() needs an id')
+    await expect(client.getRelated('node--page', 'uuid', '')).rejects.toThrow('getRelated() needs a related field name')
+    await expect(client.updateResource({ type: '', id: 'u' } as never)).rejects.toThrow('updateResource() needs a type')
+    await expect(client.updateResource({ type: 'node--page', id: '' } as never)).rejects.toThrow('updateResource() needs an id')
+    await expect(client.createResource({ type: '' })).rejects.toThrow('createResource() needs a type')
+    await expect(client.getCollection('')).rejects.toThrow('getCollection() needs a type')
+    await expect(client.getCollectionAll('')).rejects.toThrow('getCollectionAll() needs a type')
+    expect(calls).toHaveLength(0)
+  })
+
+  it('gets a collection with a query', async () => {
+    const document = { data: [article], links: {} }
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index(), 'GET /jsonapi/node/article?filter%5Bstatus%5D=1': document })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    expect(await client.getCollection('node--article', new DrupalJsonApiParams().addFilter('status', '1'))).toEqual(document)
+    expect(requested(calls)).toEqual(['GET /jsonapi', 'GET /jsonapi/node/article?filter%5Bstatus%5D=1'])
+  })
+
+  it('gets a collection the index does not list from its conventional URL', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index(), 'GET /jsonapi/node/recipe': { data: [{ type: 'node--recipe', id: 'r1' }] } })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    expect(await client.getCollection('node--recipe')).toEqual({ data: [{ type: 'node--recipe', id: 'r1' }] })
+    expect(await client.getCollectionAll('node--recipe')).toEqual([{ data: [{ type: 'node--recipe', id: 'r1' }] }])
+    expect(requested(calls)).toEqual(['GET /jsonapi', 'GET /jsonapi/node/recipe', 'GET /jsonapi/node/recipe'])
+  })
+
+  it('follows links.next across every page of a collection', async () => {
+    const page = (offset: number, next?: number) => ({
+      data: [{ type: 'node--article', id: `a${offset}` }],
+      links: next === undefined ? {} : { next: { href: `${BASE_URL}/jsonapi/node/article?page%5Blimit%5D=1&page%5Boffset%5D=${next}` } },
+    })
+    const { fetch, calls } = drupal({
+      'GET /jsonapi': index(),
+      'GET /jsonapi/node/article?page[limit]=1': page(0, 1),
+      'GET /jsonapi/node/article?page%5Blimit%5D=1&page%5Boffset%5D=1': page(1, 2),
+      'GET /jsonapi/node/article?page%5Blimit%5D=1&page%5Boffset%5D=2': page(2),
+    })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const collections = await client.getCollectionAll('node--article', 'page[limit]=1')
+    expect(collections.map((collection) => collection.data[0]?.id)).toEqual(['a0', 'a1', 'a2'])
+    expect(calls).toHaveLength(4)
+  })
+
+  it('gets related resources, with the index\'s URL or the conventional one', async () => {
+    const { fetch, calls } = drupal({
+      'GET /jsonapi': index(),
+      'GET /jsonapi/node/article/a1/uid?fields[user--user]=name': { data: { type: 'user--user', id: 'u1' } },
+      'GET /jsonapi/node/recipe/r1/field_tags': { data: [] },
+    })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    expect(await client.getRelated('node--article', 'a1', 'uid', 'fields[user--user]=name')).toEqual({ data: { type: 'user--user', id: 'u1' } })
+    expect(await client.getRelated('node--recipe', 'r1', 'field_tags')).toEqual({ data: [] })
+    expect(requested(calls)).toEqual(['GET /jsonapi', 'GET /jsonapi/node/article/a1/uid?fields[user--user]=name', 'GET /jsonapi/node/recipe/r1/field_tags'])
+  })
+})
+
+describe('writing resources', () => {
+  it('creates a resource with a JSON:API POST', async () => {
+    const created = { data: { ...article, id: 'new' } }
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index(), 'POST /jsonapi/node/article': () => json(created, 201) })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const resource = { type: 'node--article', attributes: { title: 'Hello' } }
+    const response = await client.createResource(resource)
+    expect(response).toMatchObject({ status: 201, statusText: 'Created', data: created, url: `${BASE_URL}/jsonapi/node/article` })
+    expect(calls[1]).toMatchObject({ method: 'POST', headers: { 'Content-Type': 'application/vnd.api+json' } })
+    expect(JSON.parse(String(calls[1]?.body))).toEqual({ data: resource })
+  })
+
+  it('creates under the prefix', async () => {
+    const { fetch, calls } = drupal({ 'GET /es/jsonapi': index('/es'), 'POST /es/jsonapi/node/article': () => json({ data: article }, 201) })
+    await new DruxtClient(BASE_URL, { fetch }).createResource({ type: 'node--article' }, '/es')
+    expect(requested(calls)).toEqual(['GET /es/jsonapi', 'POST /es/jsonapi/node/article'])
+  })
+
+  it('updates a resource with a JSON:API PATCH', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index(), 'PATCH /jsonapi/node/article/a1': { data: article } })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const response = await client.updateResource(article)
+    expect(response).toMatchObject({ status: 200, data: { data: article } })
+    expect(calls[1]).toMatchObject({ method: 'PATCH', headers: { 'Content-Type': 'application/vnd.api+json' } })
+    expect(JSON.parse(String(calls[1]?.body))).toEqual({ data: article })
+  })
+
+  it('updates rather than creates a resource that has an id', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index(), 'PATCH /jsonapi/node/article/a1': { data: article } })
+    await new DruxtClient(BASE_URL, { fetch }).createResource(article)
+    expect(requested(calls)).toEqual(['GET /jsonapi', 'PATCH /jsonapi/node/article/a1'])
+  })
+
+  it('answers undefined for a resource type the index does not list', async () => {
+    const { fetch } = drupal({ 'GET /jsonapi': index() })
+    expect(await new DruxtClient(BASE_URL, { fetch }).getIndex('nothing--here')).toBeUndefined()
+  })
+
+  it('creates and updates through the conventional URL for a type the index does not list', async () => {
+    const { fetch } = drupal({
+      'GET /jsonapi': index(),
+      'POST /jsonapi/node/unlisted': () => json({ data: { type: 'node--unlisted', id: 'u1' } }, 201),
+      'PATCH /jsonapi/node/unlisted/u1': { data: { type: 'node--unlisted', id: 'u1' } },
+    })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    expect((await client.createResource({ type: 'node--unlisted', attributes: {} })).data.data.type).toBe('node--unlisted')
+    expect((await client.updateResource({ type: 'node--unlisted', id: 'u1', attributes: {} } as never)).data.data.id).toBe('u1')
+  })
+
+  it('deletes through request(), resolving an empty body to undefined', async () => {
+    const { fetch, calls } = drupal({ 'DELETE /jsonapi/node/article/a1': () => new Response(null, { status: 204 }) })
+    const response = await new DruxtClient(BASE_URL, { fetch }).request('/jsonapi/node/article/a1', { method: 'DELETE' })
+    expect(response).toMatchObject({ status: 204, data: undefined })
+    expect(requested(calls)).toEqual(['DELETE /jsonapi/node/article/a1'])
+  })
+})
+
+describe('request()', () => {
+  it('sends a string or URLSearchParams body as it is', async () => {
+    const { fetch, calls } = drupal({ 'POST /form': { ok: true } })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const params = new URLSearchParams({ a: '1' })
+    await client.request('/form', { method: 'POST', body: 'raw' })
+    await client.request('/form', { method: 'POST', body: params })
+    expect(calls.map((call) => call.body)).toEqual(['raw', params])
+    expect(calls.map((call) => call.headers['Content-Type'])).toEqual([undefined, undefined])
+  })
+
+  it('keeps a body that is not JSON as text', async () => {
+    const { fetch } = drupal({ 'GET /robots.txt': () => new Response('User-agent: *') })
+    expect((await new DruxtClient(BASE_URL, { fetch }).request('/robots.txt')).data).toBe('User-agent: *')
+  })
+
+  it('resolves the statuses validateStatus accepts', async () => {
+    const { fetch } = drupal({})
+    const response = await new DruxtClient(BASE_URL, { fetch }).request('/missing', { validateStatus: (status) => status < 500 })
+    expect(response.status).toBe(404)
+  })
+})
+
+describe('the request hook', () => {
+  it('tells listeners each request\'s method and URL as it starts, then its status and timing, with no headers or body', async () => {
+    const { fetch } = drupal({ 'POST /form': { ok: true } })
+    const events: unknown[] = []
+    const client = new DruxtClient(BASE_URL, { fetch, headers: { 'X-Secret': 'no' }, onRequest: (event) => { events.push(event) } })
+    await client.request('/form', { method: 'POST', body: { secret: 'no' } })
+    await client.request('/missing', { validateStatus: () => true })
+    expect(events).toEqual([
+      { type: 'start', id: 1, method: 'POST', url: `${BASE_URL}/form` },
+      { type: 'end', id: 1, method: 'POST', url: `${BASE_URL}/form`, status: 200, duration: expect.any(Number) },
+      { type: 'start', id: 2, method: 'GET', url: `${BASE_URL}/missing` },
+      { type: 'end', id: 2, method: 'GET', url: `${BASE_URL}/missing`, status: 404, duration: expect.any(Number) },
+    ])
+    expect(JSON.stringify(events)).not.toMatch(/secret/i)
+  })
+
+  // Not parsed and written again: a URL written again would encode the quote and the space, and change what is logged.
+  it('passes a URL with no query, or with no secret key in it, to a listener exactly as sent', async () => {
+    const fetch = vi.fn(async () => new Response('{}', { status: 200 }))
+    const urls: string[] = []
+    const client = new DruxtClient(BASE_URL, { fetch, onRequest: (event) => { if (event.type === 'start') urls.push(event.url) } })
+    await client.request('/jsonapi/node/page', { validateStatus: () => true })
+    await client.request("/jsonapi/node/page?filter[title]=Druxt's guide&sort=-created", { validateStatus: () => true })
+    expect(urls).toEqual([`${BASE_URL}/jsonapi/node/page`, `${BASE_URL}/jsonapi/node/page?filter[title]=Druxt's guide&sort=-created`])
+  })
+
+  it('empties the values of secret query keys in the URL a listener sees, and passes the others as sent', async () => {
+    const { fetch } = drupal({})
+    const urls: string[] = []
+    const client = new DruxtClient(BASE_URL, { fetch, onRequest: (event) => { if (event.type === 'start') urls.push(event.url) } })
+    await client.request('/oauth/callback?code=abc&state=xyz&Access_Token=t1&password=p&client_secret=s&token=t2&page=2', { validateStatus: () => true })
+    expect(urls).toEqual([`${BASE_URL}/oauth/callback?code=&state=xyz&Access_Token=&password=&client_secret=&token=&page=2`])
+  })
+
+  it('marks a response Drupal omitted resources from, with Drupal\'s reason, in the listener\'s end event', async () => {
+    const detail = 'Some resources have been omitted because of insufficient authorization.'
+    const { fetch } = drupal({ 'GET /jsonapi/view/view': { data: [], meta: { omitted: { detail, links: {} } } }, 'GET /jsonapi/node/page': { data: [] } })
+    const ends: unknown[] = []
+    const client = new DruxtClient(BASE_URL, { fetch, logger: { info: () => {}, warn: () => {} }, onRequest: (event) => { if (event.type === 'end') ends.push(event) } })
+    await client.request('/jsonapi/view/view')
+    await client.request('/jsonapi/node/page')
+    expect(ends).toEqual([
+      expect.objectContaining({ url: `${BASE_URL}/jsonapi/view/view`, status: 200, omitted: detail }),
+      expect.not.objectContaining({ omitted: expect.anything() }),
     ])
   })
 
-  test('an endpoint given without a leading slash still joins the prefix', async () => {
-    const client = new DruxtClient(baseUrl, { endpoint: 'api' })
-    expect(client.options.endpoint).toBe('/api')
-
-    client.index.es = {}
-    client.get = jest.fn(async () => ({ data: {} }))
-    await client.getResource('views--recipes', 'block', undefined, 'es')
-    expect(client.get.mock.calls[0][0]).toBe('/es/api/views/recipes/block')
+  it('warns once per resource type, when asked, naming the type and quoting Drupal\'s reason', async () => {
+    const detail = 'Some resources have been omitted because of insufficient authorization.'
+    const omitted = { data: [], meta: { omitted: { detail, links: {} } } }
+    const { fetch } = drupal({ 'GET /jsonapi': index('', ['view--view', 'block--block', 'node--article']), 'GET /jsonapi/view/view': omitted, 'GET /jsonapi/block/block': omitted, 'GET /jsonapi/node/article': { data: [] } })
+    const warn = vi.fn()
+    const client = new DruxtClient(BASE_URL, { fetch, logger: { info: () => {}, warn }, warnOmitted: true })
+    await client.getCollection('view--view')
+    await client.getCollection('view--view')
+    await client.getCollection('node--article')
+    await client.getCollection('block--block')
+    expect(warn).toHaveBeenCalledTimes(2)
+    expect(warn.mock.calls[0]!.join(' ')).toContain('DRUXT_E01001')
+    expect(warn.mock.calls[0]!.join(' ')).toContain('view--view')
+    expect(warn.mock.calls[0]!.join(' ')).toContain(`"${detail}"`)
+    expect(warn.mock.calls[1]!.join(' ')).toContain('block--block')
+    // Not asked, as in production: silent.
+    const quiet = vi.fn()
+    await new DruxtClient(BASE_URL, { fetch, logger: { info: () => {}, warn: quiet } }).getCollection('view--view')
+    expect(quiet).not.toHaveBeenCalled()
   })
 
-  test('getResource', async () => {
-    const mockArticle = await getMockResource('node--article')
-    const entity = await druxt.getResource(mockArticle.data.type, mockArticle.data.id)
-    expect(entity.data).toHaveProperty('type', mockArticle.data.type)
-
-    try {
-      await druxt.getResource('node--article', 'missing')
-    } catch(err) {
-      const [error] = err.response.data.errors
-      // Drupal's own wording for a parameter it could not convert, and a link
-      // back to the request. A snapshot of the whole error also pinned the RFC
-      // link in `links.info`, which moves with the Drupal version.
-      expect(error.detail).toMatchSnapshot()
-      expect(error.links.via.href).toBe(`${baseUrl}/en/jsonapi/node/article/missing`)
-    }
-    expect(mockAxios.get).toHaveBeenCalledWith(`/en/jsonapi/node/article/missing`, undefined)
-
-    const empty = await druxt.getResource()
-    expect(empty).toBe(false)
+  it('warns once per resource type for two clients of one site, and again after either\'s clearCache()', async () => {
+    const omitted = { data: [], meta: { omitted: { detail: 'Denied.', links: {} } } }
+    const { fetch } = drupal({ 'GET /jsonapi': index('', ['view--view']), 'GET /jsonapi/view/view': omitted })
+    const warn = vi.fn()
+    const one = new DruxtClient(BASE_URL, { fetch, logger: { info: () => {}, warn }, warnOmitted: true })
+    const two = new DruxtClient(BASE_URL, { fetch, logger: { info: () => {}, warn }, warnOmitted: true })
+    await one.getCollection('view--view')
+    await two.getCollection('view--view')
+    expect(warn).toHaveBeenCalledTimes(1)
+    one.clearCache()
+    await two.getCollection('view--view')
+    expect(warn).toHaveBeenCalledTimes(2)
+    await one.getCollection('view--view')
+    expect(warn).toHaveBeenCalledTimes(2)
+    two.clearCache()
+    await one.getCollection('view--view')
+    expect(warn).toHaveBeenCalledTimes(3)
   })
 
-  test('updateResource', async () => {
-    expect((await druxt.updateResource({}))).toBe(false)
+  it('warns separately for two sites', async () => {
+    const other = 'https://other.test'
+    const omitted = { data: [], meta: { omitted: { detail: 'Denied.', links: {} } } }
+    const here = drupal({ 'GET /jsonapi': index('', ['view--view']), 'GET /jsonapi/view/view': omitted })
+    const there = vi.fn(async (input: unknown) => json(String(input) === `${other}/jsonapi` ? { links: { 'view--view': { href: `${other}/jsonapi/view/view` } } } : omitted))
+    const warn = vi.fn()
+    const one = new DruxtClient(BASE_URL, { fetch: here.fetch, logger: { info: () => {}, warn }, warnOmitted: true })
+    const two = new DruxtClient(other, { fetch: there as DruxtFetch, logger: { info: () => {}, warn }, warnOmitted: true })
+    await one.getCollection('view--view')
+    await two.getCollection('view--view')
+    expect(warn).toHaveBeenCalledTimes(2)
+    one.clearCache()
+    await two.getCollection('view--view')
+    expect(warn).toHaveBeenCalledTimes(2)
+    two.clearCache()
+  })
+
+  it('names the type Drupal omitted, read from each omitted item\'s link, beside the type asked for', async () => {
+    const omitted = { data: [], meta: { omitted: { detail: 'Denied.', links: { 'item--a': { href: `${BASE_URL}/jsonapi/user/user/u9`, meta: { rel: 'item' } }, 'item--b': { href: `${BASE_URL}/jsonapi/taxonomy_term/secret_tags/t9`, meta: { rel: 'item' } } } } } }
+    const { fetch } = drupal({ 'GET /jsonapi': index('', ['node--event']), 'GET /jsonapi/node/event': omitted })
+    const warn = vi.fn()
+    await new DruxtClient(BASE_URL, { fetch, logger: { info: () => {}, warn }, warnOmitted: true }).getCollection('node--event')
+    const lines = warn.mock.calls.map((args) => args.join(' '))
+    expect(lines).toHaveLength(2)
+    expect(lines[0]).toContain('user--user')
+    expect(lines[1]).toContain('taxonomy_term--secret_tags')
+  })
+
+  it('catches a listener whose promise rejects', async () => {
+    const { fetch } = drupal({ 'GET /x': { ok: true } })
+    const warn = vi.fn()
+    const client = new DruxtClient(BASE_URL, { fetch, logger: { info: () => {}, warn } })
+    client.onRequest(async () => { throw new Error('async listener') })
+    await client.request('/x')
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(warn).toHaveBeenCalledWith('A request listener failed:', expect.objectContaining({ message: 'async listener' }))
+  })
+
+  it('adds and removes listeners, marks a request that got no response, and survives a listener that throws', async () => {
+    const fetch: DruxtFetch = vi.fn(async () => { throw new TypeError('fetch failed') })
+    const client = new DruxtClient('https://user:pass@drupal.test', { fetch, logger: { info: () => {}, warn: () => {} } })
+    const ends: unknown[] = []
+    client.onRequest(() => { throw new Error('listener') })
+    const stop = client.onRequest((event) => { if (event.type === 'end') ends.push(event) })
+    await expect(client.request('/x')).rejects.toThrow('fetch failed')
+    stop()
+    await expect(client.request('/x')).rejects.toThrow('fetch failed')
+    expect(ends).toEqual([{ type: 'end', id: 1, method: 'GET', url: 'https://drupal.test/x', duration: expect.any(Number), failed: true }])
+  })
+})
+
+describe('headers', () => {
+  it('sends the headers option with every request', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index() })
+    await new DruxtClient(BASE_URL, { fetch, headers: { 'X-Consumer-ID': 'site' } }).getIndex()
+    expect(calls[0]?.headers['X-Consumer-ID']).toBe('site')
+  })
+
+  it('ignores an axios option, 1.x\'s Axios settings: its headers are not sent', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index() })
+    const options = { fetch, axios: { headers: { 'X-One': 'axios', 'X-Two': 'axios' } }, headers: { 'X-Two': 'headers' } }
+    await new DruxtClient(BASE_URL, options as ConstructorParameters<typeof DruxtClient>[1]).getIndex()
+    expect(calls[0]?.headers['X-Two']).toBe('headers')
+    expect(calls[0]?.headers).not.toHaveProperty('X-One')
+  })
+
+  it('adds headers to every later request with addHeaders()', async () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index(), 'GET /jsonapi/node/article/a1': { data: article } })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    await client.getIndex()
+    expect(client.addHeaders({ 'Accept-Language': 'es' })).toBeUndefined()
+    expect(client.addHeaders()).toBeUndefined()
+    await client.getResource('node--article', 'a1')
+    expect(calls.map((call) => call.headers['Accept-Language'])).toEqual([undefined, 'es'])
+  })
+
+  it('overrides and removes a header whatever the case of its name', async () => {
+    const { fetch, calls } = drupal({ 'GET /file': { ok: true } })
+    const client = new DruxtClient(BASE_URL, { fetch, headers: { 'Authorization': 'Basic ZWRpdG9yOnNlY3JldA==', 'X-Consumer-ID': 'site', 'accept': 'application/json' } })
+    await client.request('/file', { headers: { 'authorization': undefined, 'x-consumer-id': 'other' } })
+    expect(calls[0]?.headers).toEqual({ 'x-consumer-id': 'other', 'accept': 'application/json' })
+  })
+
+  it('lets one request override or remove a header', async () => {
+    const { fetch, calls } = drupal({ 'GET /file': { ok: true } })
+    const client = new DruxtClient(BASE_URL, { fetch, headers: { 'X-Consumer-ID': 'site' } })
+    await client.request('/file', { headers: { 'X-Consumer-ID': 'other', 'Accept': undefined } })
+    expect(calls[0]?.headers).toEqual({ 'X-Consumer-ID': 'other' })
+  })
+})
+
+describe('the logger', () => {
+  // An index whose resource config Drupal refuses: the client warns and carries on.
+  const forbiddenConfig = () => drupal({
+    'GET /jsonapi': index('', ['node--article', 'jsonapi_resource_config--jsonapi_resource_config']),
+    'GET /jsonapi/jsonapi_resource_config/jsonapi_resource_config': () => json({ errors: [{ title: 'Forbidden' }] }, 403),
+  })
+
+  it('sends warnings to the logger given, not to the console', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const logger = { info: vi.fn(), warn: vi.fn() }
+    const client = new DruxtClient(BASE_URL, { fetch: forbiddenConfig().fetch, logger })
+    expect(await client.getIndex('node--article')).toEqual({ href: '/jsonapi/node/article' })
+    expect(logger.warn).toHaveBeenCalledOnce()
+    expect(logger.warn.mock.calls[0]?.[0]).toMatch(/^403: Forbidden\n\nURL: https:\/\/drupal\.test\/jsonapi\/jsonapi_resource_config/)
+    expect(warn).not.toHaveBeenCalled()
+  })
+
+  it('takes the console as a logger', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    await new DruxtClient(BASE_URL, { fetch: forbiddenConfig().fetch, logger: console }).getIndex()
+    expect(warn).toHaveBeenCalledOnce()
+    expect(warn.mock.calls[0]?.[0]).toMatch(/^403: Forbidden/)
+  })
+
+  it('warns to the console, tagged, without a logger', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    await new DruxtClient(BASE_URL, { fetch: forbiddenConfig().fetch }).getIndex()
+    expect(warn).toHaveBeenCalledOnce()
+    expect(warn.mock.calls[0]?.[0]).toBe('[DruxtClient]')
+    expect(warn.mock.calls[0]?.[1]).toMatch(/^403: Forbidden/)
+  })
+
+  it('logs each request URL to the logger in debug mode', async () => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => {})
+    const logger = { info: vi.fn(), warn: vi.fn() }
+    const { fetch } = drupal({ 'GET /jsonapi': index(), 'GET /jsonapi/node/article/a1': { data: article } })
+    await new DruxtClient(BASE_URL, { fetch, logger, debug: true }).getResource('node--article', 'a1')
+    expect(logger.info.mock.calls).toEqual([[`${BASE_URL}/jsonapi`], [`${BASE_URL}/jsonapi/node/article/a1`]])
+    expect(info).not.toHaveBeenCalled()
   })
 })

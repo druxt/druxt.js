@@ -5,6 +5,9 @@
     "type": "git",
     "url": "git+https://github.com/druxt/druxt.js"
   },
+  "workspaces": [
+    "packages/client"
+  ],
   "scripts": {
     "build": "yarn workspaces foreach -A -t --include '@druxt/*' run build",
     "changeset": "changeset",
@@ -29,7 +32,7 @@
     "skills:eval": "cd .agents/evals && npm install --no-audit --no-fund && npx promptfoo eval -c promptfooconfig.yaml",
     "postinstall": "husky install",
     "version": "changeset version && node scripts/changelog-dates.mjs && yarn install --mode=update-lockfile",
-    "typecheck": "yarn prepare:types && vue-tsc -p tsconfig.runtime.json && vue-tsc -p tsconfig.node.json && vue-tsc -p tsconfig.test.json",
+    "typecheck": "yarn prepare:types && vue-tsc -p tsconfig.runtime.json && vue-tsc -p tsconfig.node.json && tsc -p packages/client/tsconfig.json && vue-tsc -p tsconfig.test.json",
     "prepare:types": "nuxt prepare test/types",
     "test": "vitest run --project unit --project nuxt",
     "test:standalone": "vitest run --project standalone"

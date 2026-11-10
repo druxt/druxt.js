@@ -1,59 +1,48 @@
-import axios from 'axios'
-import { stringify } from 'querystring'
-import consola from 'consola'
-import { byteSize, nextRequest, parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
+import { DruxtAuth, refreshRefused } from './auth'
+import { JsonApiIndexCache } from './jsonApiIndex'
+import type { FetchedIndex } from './jsonApiIndex'
+import { byteSize, headersHaveCredentials, lifetimeLeft, nextRequest, parseCacheLifetime, processCache, rememberLifetime, rememberLifetimeFrom, resetProcessCache } from './processCache'
+import type { ProcessCacheHandle } from './processCache'
+import { DruxtPermissionsError } from './errors'
+import type { ErrorLike, RequestError } from './errors'
+import { indexPath, resourceTypeOf, setHeader } from './utils/href'
+import { listenerUrl, prefixed } from './utils/listener'
+import { omittedResources, warnedOmitted } from './omitted'
+import type { DruxtOmitted } from './omitted'
+import { stringify, withQuery } from './utils/query'
+import { CACHE_SAFE_OPTIONS, DEFAULT_MAX_SIZE, parse, readOptions } from './utils/contentCache'
+import type { StoredResponse } from './utils/contentCache'
+import type {
+  DruxtAuthOptions,
+  DruxtClientOptions,
+  DruxtClientQuery,
+  DruxtError,
+  DruxtFetch,
+  DruxtLogger,
+  DruxtRequestEvent,
+  DruxtRequestListener,
+  DruxtRequestOptions,
+  DruxtResponse,
+  JsonApiCollection,
+  JsonApiDocument,
+  JsonApiIndex,
+  JsonApiIndexEntry,
+  JsonApiResource,
+  ProcessCacheOptions,
+  DruxtReadOptions,
+} from './types'
 
-// Shared JSON:API index cache. Keyed by the Axios instance, which carries the
-// credentials, then by base URL, endpoint and resource config, so clients on
-// one instance fetch the index once per process and never see another
-// instance's index. Each bucket also holds the in-flight requests, so
-// concurrent clients share one fetch.
-const indexCache = new WeakMap()
+/** The methods safe to repeat as the anonymous visitor once the session has ended: reads. */
+const READS = new Set(['GET', 'HEAD'])
 
-// How long each fetched document may be cached, from its Cache-Control header.
-const lifetimes = new WeakMap()
-
-// The size a process cache scope keeps per consumer when `cache.maxSize` is not set: 50 MB of stored JSON.
-const DEFAULT_MAX_SIZE = 50 * 1024 * 1024
-
-// Request options that never change the response, so a request with only these may use the content cache.
-const CACHE_SAFE_OPTIONS = ['validateStatus', 'timeout']
-
-// The extra get() argument a bypass needs, and none otherwise.
-const requestOptions = ({ bypassCache } = {}) => (bypassCache ? [{ bypassCache: true }] : [])
-
-/**
- * Whether a query value is an object or array to serialize in bracket notation.
- *
- * @param {*} value - The query value.
- *
- * @returns {boolean} True for an object or array.
- * @private
- */
-const isNested = (value) => value !== null && typeof value === 'object'
-
-/**
- * Serializes a query object, with nested values in bracket notation, such as `filter[status]=1`.
- *
- * @param {object|Array} value - The query object, or a nested value.
- * @param {string} [name] - The encoded parameter name a nested value belongs to.
- *
- * @returns {string} The query string, or an empty string when the object holds nothing.
- * @private
- */
-const stringifyNested = (value, name) => Object.entries(value)
-  .map(([key, item]) => {
-    // A top-level value or array is serialized as before, nested ones in bracket notation.
-    if (!name && (!isNested(item) || Array.isArray(item))) return stringify({ [key]: item })
-    // A nested null is left out, as an `IS NULL` condition must have no value.
-    if (item === null || typeof item === 'undefined') return ''
-    const nested = name ? `${name}[${encodeURIComponent(key)}]` : encodeURIComponent(key)
-    return isNested(item)
-      ? stringifyNested(item, nested)
-      : `${nested}=${encodeURIComponent(item)}`
-  })
-  .filter((part) => part)
-  .join('&')
+/** Whether two URLs share an origin, a relative URL resolving against the same one. */
+const sameOrigin = (a: string, b: string): boolean => {
+  try {
+    return new URL(a, 'http://localhost').origin === new URL(b, 'http://localhost').origin
+  } catch {
+    return false
+  }
+}
 
 /**
  * The Druxt JSON:API client.
@@ -61,131 +50,115 @@ const stringifyNested = (value, name) => Object.entries(value)
  * Communicates with the Drupal JSON:API to fetch, create and update resources.
  *
  * @see {@link https://druxtjs.org/modules/druxt|Druxt module guide}
+ *
+ * @example @lang js
+ * import { DruxtClient } from '@druxt/client'
+ *
+ * const druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
+ * const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 })
  */
-class DruxtClient {
+export class DruxtClient {
+  /** Where debug and warning messages go, `console` by default. */
+  log: DruxtLogger
+  /** The fetch requests are sent with. */
+  fetch: DruxtFetch
+  /** Headers sent with every request. */
+  headers: Record<string, string>
+  /** The request listeners, from the `onRequest` option and `onRequest()`. */
+  private requestListeners: Set<DruxtRequestListener>
+  /** The last request's id. */
+  private requestCount: number
+  /** Set once a request has gone out with credentials, so the process cache is withheld. */
+  credentialed: boolean
+  options: DruxtClientOptions & { baseUrl: string, endpoint: string, jsonapiResourceConfig: string }
+  /** OAuth against Drupal's Simple OAuth, when the `auth` option has a clientId. */
+  auth: DruxtAuth | undefined
+  /** What this site's index is keyed by in the process cache. */
+  indexKey: string
+  /** The JSON:API index per prefix, fetched once and shared between callers. */
+  indexCache: JsonApiIndexCache
+  /** Moves on each time `clearCache()` runs, so caches keyed by this client know to empty. */
+  cacheGeneration: number
   /**
-   * DruxtClient constructor.
+   * Creates a client for one Drupal site's JSON:API.
    *
-   * - Validates module options.
-   * - Sets up Axios instance.
-   * - Sets up options.
+   * Requires the base URL, sets up the options, and turns on auth when the
+   * `auth` option has a clientId.
+   *
+   * @param baseUrl - The Drupal base URL.
+   * @param options - The DruxtClient options.
    *
    * @example @lang js
-   * const DruxtClient = require('druxt').DruxtClient
+   * import { DruxtClient } from '@druxt/client'
    * const druxt = new DruxtClient('https://api.umami.demo.druxtjs.org', {})
-   *
-   * @param {string} baseUrl - The Drupal base URL.
-   * @param {DruxtClientOptions} [options] - The DruxtClient options object.
    */
-  constructor(baseUrl, options = {}) {
-    // Consola logger.
-    this.log = consola.create({ defaults: {
-      tag: 'DruxtClient'
-    }})
+  constructor(baseUrl: string, options: DruxtClientOptions = {}) {
+    this.log = options.logger || prefixed(console)
 
-    // Check for URL.
     if (!baseUrl) {
       throw new Error('The \'baseUrl\' parameter is required.')
     }
 
-    /**
-     * The Axios instance.
-     *
-     * @see {@link https://github.com/axios/axios#instance-methods}
-     * @type {object}
-     */
-    this.axios = {}
-    // Use Axios instance if provided.
-    if (typeof options.axios === 'function') {
-      this.axios = options.axios
-    }
+    // Bound, as a browser's fetch throws when called on another object.
+    this.fetch = options.fetch || ((input, init) => globalThis.fetch(input, init))
+    this.headers = {}
+    this.requestListeners = new Set(options.onRequest ? [options.onRequest] : [])
+    this.requestCount = 0
+    this.addHeaders({ ...options.headers })
+    this.credentialed = false
 
-    // Else, setup new instance of Axios.
-    else {
-      this.axios = axios.create({
-        ...options.axios || {},
-        // Set baseURL if proxy is not enabled.
-        baseURL: baseUrl && !(options.proxy || {}).api ? baseUrl : undefined
-      })
-    }
-
-    // If Debug mode is enabled, add an Axios interceptor to log out all
-    // requests and errors.
-    if (options.debug) {
-      const log = this.log
-      // @TODO - Add test coverage.
-      this.axios.interceptors.request.use((config) => {
-        log.info(config.url)
-        return config
-      }, (error) => {
-        log.error(error)
-        return Promise.reject(error)
-      })
-    }
-
-    /**
-     * Druxt base options.
-     * @type {object}
-     * @private
-     */
     this.options = {
-      // Without a trailing slash, so it strips cleanly from the index's links.
-      baseUrl: baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl,
       endpoint: '/jsonapi',
       jsonapiResourceConfig: 'jsonapi_resource_config--jsonapi_resource_config',
-
-      ...options
+      ...options,
+      // As in 1.x, a baseUrl in the options wins over the argument. Without a trailing slash, so it strips cleanly
+      // from the index's links.
+      baseUrl: (options.baseUrl || baseUrl).replace(/\/+$/, ''),
     }
-    // A leading slash, so a prefix joins the endpoint as `/es/api` however it was given.
-    this.options.endpoint = `/${String(this.options.endpoint).replace(/^\/+/, '')}`
+    // A leading slash and no trailing one, so a prefix joins the endpoint as `/es/api` however it was given.
+    this.options.endpoint = `/${String(this.options.endpoint).replace(/^\/+/, '').replace(/\/+$/, '')}`
 
-    // See credentials an interceptor adds, so the process cache is withheld from this instance.
-    if (this.options.cache) watchCredentials(this.axios, this.options.cache.sessionCookie)
+    // Keyed on a clientId: 1.x code passes other `auth` shapes, such as the schema generator's `{ type: false }`.
+    const auth = this.options.auth as Partial<DruxtAuthOptions> | undefined
+    this.auth = auth && auth.clientId ? new DruxtAuth(this, auth as DruxtAuthOptions) : undefined
 
-    // Share the index between clients on the same Axios instance, base URL,
-    // endpoint and resource config.
-    const indexKey = JSON.stringify([baseUrl, this.options.endpoint, this.options.jsonapiResourceConfig])
-    this.indexKey = indexKey
-    // The generation moves on each clear, so an index fetched before one is not kept.
-    if (!indexCache.has(this.axios)) indexCache.set(this.axios, { index: {}, requests: {}, generation: 0 })
-    const cache = indexCache.get(this.axios)
-    this.indexCache = cache
-    this.indexRequests = cache.requests
+    // The process cache keys the index by base URL, endpoint and resource config.
+    this.indexKey = JSON.stringify([this.options.baseUrl, this.options.endpoint, this.options.jsonapiResourceConfig])
+    this.indexCache = new JsonApiIndexCache({
+      key: this.indexKey,
+      fetchIndex: (prefix) => this.fetchIndex(prefix),
+      // Asked for afresh each time: a request may have shown the client to be credentialed since.
+      shared: () => this.processCache('index'),
+    })
 
-    /**
-     * JSON:API Index.
-     *
-     * Shared between clients on the same Axios instance with the same base
-     * URL, endpoint and resource config.
-     *
-     * @type {object}
-     */
-    this.index = cache.index[indexKey] || (cache.index[indexKey] = {})
-
-    /**
-     * Moves on each time `clearCache()` runs, so caches keyed by this client know to empty.
-     *
-     * @type {number}
-     */
     this.cacheGeneration = 0
+  }
+
+  /** JSON:API index per prefix, as fetched so far. */
+  get index(): Record<string, JsonApiIndex> {
+    return this.indexCache.indexes
+  }
+
+  /** Index fetches in flight, shared between concurrent callers. */
+  get indexRequests(): Record<string, Promise<FetchedIndex> | undefined> {
+    return this.indexCache.requests
   }
 
   /**
    * Clear the caches this client holds, and the server's process cache.
    *
-   * Empties the JSON:API index and the process cache, and moves `cacheGeneration`
-   * on so results cached per client, such as menus, are fetched again.
+   * Empties the JSON:API index and the process cache, moves `cacheGeneration`
+   * on so results cached per client, such as menus, are fetched again, and lets
+   * `warnOmitted` warn again about each resource type on this client's site.
    *
    * @example @lang js
    * this.$druxt.clearCache()
    */
-  clearCache() {
-    for (const prefix of Object.keys(this.index)) delete this.index[prefix]
-    // A request in flight predates the clear: later callers start their own.
-    for (const key of Object.keys(this.indexRequests)) delete this.indexRequests[key]
-    this.indexCache.generation += 1
+  clearCache(): void {
+    this.indexCache.clear()
     resetProcessCache()
     this.cacheGeneration += 1
+    warnedOmitted.delete(this.options.baseUrl)
   }
 
   /**
@@ -194,467 +167,548 @@ class DruxtClient {
    * The cache holds server-side responses between requests, each for as long
    * as its Cache-Control header allows. It is off unless the `cache` option is
    * set, and it is skipped for any request that sends an Authorization header,
-   * basic auth or a session cookie.
+   * basic auth, a session cookie or an Origin.
    *
-   * The `content` scope, which holds every other GET response, is also off
-   * unless `cache.content` is set.
-   *
-   * @param {string} scope - The cache scope, e.g. 'index', 'menu' or 'content'.
-   *
-   * @returns {?object} The cache, or null when it must not be used.
+   * @param scope - The cache scope, e.g. 'index' or 'menu'.
+   * @returns The cache, or undefined when it must not be used.
    */
-  processCache(scope) {
-    if (!this.options.cache) return null
-    const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE, content } = this.options.cache
-    if (scope === 'content' && !content) return null
-    // A content entry holds its document as text already, so its size is that text's bytes.
-    const sizeOf = scope === 'content' ? (value) => byteSize(value.body) : undefined
-    return processCache(scope, { axios: this.axios, ttl, sessionCookie, maxSize, sizeOf })
+  processCache(scope: string): ProcessCacheHandle | undefined {
+    if (!this.options.cache) return undefined
+    const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE } = this.options.cache as ProcessCacheOptions
+    const credentialed = this.credentialed || !!this.auth?.accessToken || headersHaveCredentials(this.headers, sessionCookie)
+    const consumer = Object.entries(this.headers).find(([name]) => name.toLowerCase() === 'x-consumer-id')?.[1] || ''
+    // A stored response counts as the bytes of its body.
+    const sizeOf = scope === 'content' ? (value: unknown) => byteSize((value as StoredResponse).body) : undefined
+    return processCache(scope, { credentialed, consumer, ttl, maxSize, sizeOf })
   }
 
   /**
    * How long a document this client fetched may be cached.
    *
-   * @param {object} document - A JSON:API document returned by this client.
-   *
-   * @returns {number} Seconds, from the response's Cache-Control. 0 when it may not be cached or is unknown.
+   * @param document - A JSON:API document returned by this client.
+   * @returns Seconds, from the response's Cache-Control. 0 when it may not be cached or is unknown.
    */
-  cacheLifetime(document) {
-    const record = document && typeof document === 'object' && lifetimes.get(document)
-    if (!record) return 0
-    // Counted from when the response arrived, not from when it is stored.
-    return Math.max(0, record.seconds - Math.floor((Date.now() - record.at) / 1000))
+  cacheLifetime(document: unknown): number {
+    return lifetimeLeft(document)
   }
 
   /**
-   * Add headers to the Axios instance.
+   * Add headers to every request.
+   *
+   * @param headers - HTTP headers.
    *
    * @example @lang js
-   * this.$druxt.addHeaders({ 'Authorization': `Basic ${token}` })
-   *
-   * @param {object} headers - An object containing HTTP headers.
+   * this.$druxt.addHeaders({ Authorization: `Basic ${token}` })
    */
-  addHeaders (headers) {
-    if (typeof headers === 'undefined') {
-      return false
+  addHeaders(headers?: Record<string, string>): void {
+    if (typeof headers === 'undefined') return
+    for (const [name, value] of Object.entries(headers)) setHeader(this.headers, name, value)
+  }
+
+  /**
+   * The absolute URL for a path: against Drupal, or this origin when the API is proxied.
+   *
+   * @param url - A path, with or without its leading slash, or an absolute URL.
+   *
+   * @example @lang js
+   * // 'https://api.umami.demo.druxtjs.org/en/jsonapi/node/article'
+   * const url = this.$druxt.url('en/jsonapi/node/article')
+   */
+  url(url: string): string {
+    if (/^https?:\/\//.test(url)) return url
+    const base = this.options.proxy?.api ? (globalThis.location?.origin || '') : this.options.baseUrl || ''
+    return `${base.replace(/\/$/, '')}/${url.replace(/^\//, '')}`
+  }
+
+  /**
+   * Send a request, as the signed-in user when there is one.
+   *
+   * An expired token is refreshed first. A 401 is refreshed and retried once,
+   * for a token Drupal revoked that still looks unexpired here. When Drupal
+   * refuses the refresh token, the session ends and a read is repeated as the
+   * anonymous visitor it now is; a write is not, as it was meant to be made as
+   * the user. A refresh that fails otherwise, such as a timeout, keeps the
+   * session, and the 401 stands. A read Drupal refuses for a token with no
+   * refresh token to try ends the session the same way, and is repeated as
+   * the anonymous visitor, unless it went to another host.
+   *
+   * @param url - A path or an absolute URL.
+   * @param options - The request options.
+   * @returns The response, its body parsed.
+   *
+   * @example @lang js
+   * const { data, status } = await this.$druxt.request('/jsonapi/node/page', {
+   *   method: 'POST',
+   *   body: { data: { type: 'node--page', attributes: { title: 'About' } } },
+   * })
+   */
+  async request<T = unknown>(url: string, options: DruxtRequestOptions = {}): Promise<DruxtResponse<T>> {
+    const auth = options.auth === false ? undefined : this.auth
+    // The site's proxy adds the session's credentials unless asked not to, as a request without auth must be anonymous.
+    const anonymous = (given: DruxtRequestOptions): DruxtRequestOptions => (this.auth?.session ? { ...given, headers: { ...given.headers, 'X-Druxt-Auth': 'none' } } : given)
+    if (options.auth === false) options = anonymous(options)
+    if (auth?.expired && auth.canRefresh) await auth.refresh().catch(() => {})
+
+    const read = READS.has((options.method || 'GET').toUpperCase())
+    // The session the request is sent for, and whether it carries one: a token, or with `session` on, the proxy's.
+    const sent = auth?.held()
+    const carried = !!auth && (auth.session ? auth.loggedIn : !!auth.accessToken)
+    let response = await this.send<T>(url, options, auth?.accessToken)
+    if (response.status === 401 && auth?.canRefresh) {
+      try {
+        await auth.refresh()
+        response = await this.send<T>(url, options, auth.accessToken)
+      } catch (error) {
+        if (refreshRefused(error) && read) response = await this.send<T>(url, anonymous(options))
+      }
+    } else if (response.status === 401 && auth && carried && sent !== undefined && read && sameOrigin(this.url(url), this.url('/'))) {
+      // Nothing to refresh with, or another read's refused refresh ended the session first: what the read was sent
+      // with decides. Another host's 401 says nothing about Drupal's token.
+      auth.drop(sent)
+      response = await this.send<T>(url, anonymous(options))
     }
 
-    for (const name in headers) {
-      this.axios.defaults.headers.common[name] = headers[name]
+    if (!(options.validateStatus || ((status: number) => status >= 200 && status < 300))(response.status)) {
+      const error = new Error(`Request failed with status code ${response.status}`) as RequestError
+      error.response = response
+      throw error
+    }
+    return response
+  }
+
+  /**
+   * Listens to the requests this client sends: each one's method and URL as it starts, then its status and timing as it
+   * ends. No headers, body or credentials are passed. Useful for logging and metrics.
+   *
+   * @param listener - Called with each start and end.
+   * @returns The function that stops listening.
+   *
+   * @example @lang js
+   * const stop = druxt.onRequest((event) => {
+   *   if (event.type === 'end') console.log(event.method, event.url, event.status, `${Math.round(event.duration)} ms`)
+   * })
+   */
+  onRequest(listener: DruxtRequestListener): () => void {
+    this.requestListeners.add(listener)
+    return () => { this.requestListeners.delete(listener) }
+  }
+
+  /** Tells the request listeners, and keeps a listener's failure from failing the request. */
+  private notify(event: DruxtRequestEvent): void {
+    const failed = (error: unknown) => this.log.warn('A request listener failed:', error)
+    for (const listener of [...this.requestListeners]) {
+      try {
+        // A listener may be async: its rejection is caught too.
+        const result: unknown = listener(event)
+        if (result && typeof (result as Promise<unknown>).then === 'function') (result as Promise<unknown>).then(undefined, failed)
+      } catch (error) {
+        failed(error)
+      }
     }
   }
 
   /**
-   * Build query URL.
+   * Send one request.
+   *
+   * @param url - A path or an absolute URL.
+   * @param options - The request options.
+   * @param token - An access token to send.
+   */
+  async send<T>(url: string, options: DruxtRequestOptions, token?: string): Promise<DruxtResponse<T>> {
+    const headers: Record<string, string> = { Accept: 'application/vnd.api+json, application/json;q=0.9, */*;q=0.8' }
+    for (const [name, value] of Object.entries(this.headers)) setHeader(headers, name, value)
+    if (token) setHeader(headers, 'Authorization', `Bearer ${token}`)
+    let body = options.body as BodyInit | undefined
+    if (body !== undefined && typeof body === 'object' && !(body instanceof URLSearchParams)) {
+      setHeader(headers, 'Content-Type', 'application/vnd.api+json')
+      body = JSON.stringify(body)
+    }
+    for (const [name, value] of Object.entries(options.headers || {})) setHeader(headers, name, value)
+
+    // Once a request carries credentials, the process cache is withheld from this client.
+    if (headersHaveCredentials(headers, (this.options.cache || undefined)?.sessionCookie)) this.credentialed = true
+
+    const href = this.url(url)
+    if (this.options.debug) this.log.info(href)
+    const method = options.method || 'GET'
+    const event = { id: ++this.requestCount, method, url: listenerUrl(href) }
+    const now = () => globalThis.performance?.now() ?? Date.now()
+    const started = now()
+    if (this.requestListeners.size) this.notify({ type: 'start', ...event })
+    let res: Response
+    try {
+      res = await this.fetch(href, { method, headers, body })
+    } catch (error) {
+      if (this.requestListeners.size) this.notify({ type: 'end', ...event, duration: now() - started, failed: true })
+      throw error
+    }
+    const duration = now() - started
+    const data = parse(await res.text()) as T
+    const omitted = omittedResources(data, this.options.endpoint)
+    if (omitted && this.options.warnOmitted) this.warnOmitted(href, omitted)
+    if (this.requestListeners.size) this.notify({ type: 'end', ...event, status: res.status, duration, ...(omitted ? { omitted: omitted.detail } : {}) })
+    return { data, status: res.status, statusText: res.statusText, headers: res.headers, url: href }
+  }
+
+  /**
+   * Warns, once per omitted resource type for the site until a client of it runs `clearCache()`, that Drupal omitted
+   * resources from a response: each type its omitted items' links name, else the type the request read.
+   *
+   * @param href - The request's URL.
+   * @param omitted - What Drupal omitted.
+   */
+  private warnOmitted(href: string, { detail, resources }: DruxtOmitted): void {
+    const asked = resourceTypeOf(href, this.options.endpoint)
+    const types = resources.length ? [...new Set(resources.map((resource) => resource.type))] : [asked]
+    let warned = warnedOmitted.get(this.options.baseUrl)
+    if (!warned) warnedOmitted.set(this.options.baseUrl, (warned = new Set()))
+    for (const type of types) {
+      if (warned.has(type)) continue
+      warned.add(type)
+      const from = type === asked ? '' : ` in a read of ${asked}`
+      this.log.warn(`DRUXT_E01001: Drupal omitted ${type} resources from a response${from}: "${detail}". What renders from it is incomplete. Read it as a user who may see them, such as with the build credentials on the server.`)
+    }
+  }
+
+  /**
+   * Build a query URL.
+   *
+   * @param url - The base query URL.
+   * @param query - A JSON:API query string or object.
+   * @returns The URL with its query string.
    *
    * @example @lang js
    * const query = new DrupalJsonApiParams()
    * query.addFilter('status', '1')
    * const queryUrl = this.$druxt.buildQueryUrl(resourceUrl, query)
-   *
-   * @param {string} url - The base query URL.
-   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
-   *
-   * @return {string} The URL with query string.
    */
-  buildQueryUrl (url, query) {
+  buildQueryUrl(url: string, query?: DruxtClientQuery): string {
     if (!query) {
       return url
     }
 
-    // If Query is string...
     if (typeof query === 'string') {
-      return query.charAt(0) === '?' ? url + query : [url, query].join('?')
+      return withQuery(url, query.replace(/^\?/, ''))
     }
 
-    // If Query is object with 'getQueryString' function, (e.g., drupal-jsonapi-params)...
-    if (typeof query === 'object' && typeof query.getQueryString === 'function' && (query = query.getQueryString())) {
-      return [url, query].join('?')
+    // An object with `getQueryString`, such as drupal-jsonapi-params.
+    if (typeof query.getQueryString === 'function') {
+      return withQuery(url, (query.getQueryString as () => string)())
     }
 
-    // If query is object, nested values in bracket notation...
-    if (typeof query === 'object' && (query = stringifyNested(query))) {
-      return [url, query].join('?')
-    }
-
-    // Else...
-    return url
+    return withQuery(url, stringify(query as Record<string, unknown>))
   }
 
   /**
-   * Check response for permissions.
+   * Throws when Drupal omitted resources for lack of permissions.
    *
-   * @todo - Move this to utils?
+   * The error names each permission Drupal reported, and links Drupal's help
+   * on omitted resources when the response carries it.
    *
-   * @param {object} res - Axios GET request response object.
-   *
-   * @private
+   * @param res - The response to check.
    */
-  checkPermissions (res) {
-    // Error handling: Required permissions.
-    if (res.data.meta && res.data.meta.omitted) {
-      const permissions = {}
+  checkPermissions(res: { data: JsonApiDocument<unknown> }): void {
+    const omitted = res.data.meta?.omitted
+    if (!omitted) return
 
-      delete res.data.meta.omitted.links.help
-      for (const key in res.data.meta.omitted.links) {
-        const link = res.data.meta.omitted.links[key]
-        const match = link.meta.detail.match(/'(.*?)'/)
-        if (match && match[1]) {
-          permissions[match[1]] = true
-        }
-      }
-
-      if (Object.keys(permissions).length) {
-        const err = {
-          response: {
-            statusText: res.data.meta.omitted.detail,
-            data: {
-              errors: [{ detail: `Required permissions:\n - ${Object.keys(permissions).join('\n - ')}` }]
-            }
-          }
-        }
-        throw err
-      }
+    const permissions = new Set<string>()
+    for (const [key, link] of Object.entries(omitted.links || {}) as [string, { meta?: { detail?: string } }][]) {
+      if (key === 'help') continue
+      const match = link?.meta?.detail?.match(/'(.*?)'/)
+      if (match?.[1]) permissions.add(match[1])
     }
+    if (!permissions.size) return
+
+    throw new DruxtPermissionsError(omitted.detail, [...permissions], omitted.links?.help?.href)
   }
 
   /**
-   * Create a JSON:API resource.
+   * Create a JSON:API resource, or update it when it has an id.
+   *
+   * @param resource - The JSON:API resource.
+   * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @returns The response.
    *
    * @example @lang js
    * await this.$druxt.createResource(
    *   {
    *     type: 'node--page',
    *     attributes: {},
-   *     relationships: {}
+   *     relationships: {},
    *   },
-   *   'en'
+   *   'en',
    * )
-   *
-   * @param {object} resource - The JSON:API resource object
-   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
-   *
-   * @returns {object} The response data
    */
-  async createResource(resource, prefix = '') {
+  async createResource(resource: Partial<JsonApiResource> & { type: string }, prefix = ''): Promise<DruxtResponse<JsonApiDocument<JsonApiResource>>> {
     if (resource.id) {
-      return this.updateResource(resource, prefix)
+      return this.updateResource(resource as JsonApiResource, prefix)
     }
 
-    const { href } = await this.getIndex(resource.type, prefix)
-    if (!href) {
-      return false
-    }
+    if (!resource.type) throw new TypeError('createResource() needs a type')
 
-    let response
+    const href = await this.resourceHref(resource.type, prefix)
     try {
-      response = await this.axios.post(
-        href,
-        { data: resource },
-        {
-          headers: {
-            'Content-Type': 'application/vnd.api+json'
-          }
-        }
-      )
+      return await this.request<JsonApiDocument<JsonApiResource>>(href, { method: 'POST', body: { data: resource } })
     } catch (err) {
-      this.error(err, { url: href })
+      this.error(err as ErrorLike, { url: href })
     }
-
-    return response
   }
 
   /**
    * Throw a formatted error.
    *
+   * @param err - The error.
+   * @param context - The error context; the requested URL.
+   *
    * @example @lang js
    * try {
-   *   await this.$druxt.axios.get(url)
+   *   await this.$druxt.request(url)
    * } catch (err) {
    *   this.$druxt.error(err, { url })
    * }
-   *
-   * @param {object} err - The error object
-   * @param {object} context - The error context; the requested URL.
-   *
-   * @throws {Error} A formatted error.
    */
-  error(err, context = {}) {
+  error(err: ErrorLike, context: { url?: string } = {}): never {
     let { url } = context
-    if (!url && ((err.response || {}).config || {}).url) {
-      url = err.response.config.url
+    if (!url && err.response && 'url' in err.response && err.response.url) {
+      url = err.response.url
     }
 
     const title = [
-      (err.response || {}).status,
-      (err.response || {}).statusText || err.message
+      err.response?.status,
+      err.response?.statusText || err.message,
     ].filter((s) => s).join(': ')
-    // A path is shown with the base URL, an absolute URL as it is.
-    const meta = { url: url && (/^https?:\/\//.test(url) ? url : [this.options.baseUrl, url].join('')) }
+    const meta = { url: url && this.url(url) }
 
-    // Build message.
-    let message = [title]
+    const message = [title]
 
-    // Add meta information.
     if (Object.values(meta).filter((o) => o).length) {
       message.push(Object.entries(meta).filter(([, v]) => v).map(([key, value]) => `${key.toUpperCase()}: ${value}`).join('\n'))
     }
 
-    // Add main error details.
-    if (((((err.response || {}).data || {}).errors || [])[0] || {}).detail) {
-      message.push(err.response.data.errors[0].detail)
+    const data = err.response?.data as { errors?: { detail?: string }[] } | undefined
+    const detail = data?.errors?.[0]?.detail
+    if (detail) {
+      message.push(detail)
     }
 
-    const error = Error(message.join('\n\n'))
+    const error = new Error(message.join('\n\n')) as DruxtError
     error.response = err.response
     error.druxt = context
     throw error
   }
 
   /**
-   * Execute an Axios GET request, with permission checking and error handling.
+   * A GET request, recording the response's cache lifetime, with error handling.
    *
-   * With `cache.content` set, a response to a request without credentials is
-   * kept in the process cache for as long as its Cache-Control allows, and
-   * the next server request for the same URL is answered from it.
+   * It returns the HTTP response, not the document: the JSON:API document is
+   * its `data`. The resource methods, such as `getCollection()`, return the
+   * document itself.
+   *
+   * @param url - The URL to GET.
+   * @param options - Request options.
+   * @returns The response, whose `data` is the JSON:API document.
    *
    * @example @lang js
-   * const res = await this.$druxt.get('/jsonapi/node/article')
+   * // get() is the raw request: it returns the HTTP response.
+   * const res = await druxt.get('/jsonapi/node/article')
+   * res.data        // the JSON:API document
+   * res.data.data   // the resources
    *
-   * @param {string} url - The URL to GET.
-   * @param {object} [options] - An Axios options object.
-   * @param {boolean} [options.bypassCache] - Fetch from Drupal even when the process cache holds the URL, and store the fresh response.
-   *
-   * @returns {object} The Axios response.
+   * // The resource methods return the parsed document.
+   * const col = await druxt.getCollection('node--article')
+   * col.data        // the resources
    */
-  async get(url, options) {
-    const { bypassCache, ...config } = options || {}
-
-    // The key is the backend and the URL alone, so a request whose own options
-    // could change the response, such as headers, auth, params or a baseURL,
-    // is never read from or stored. It may carry credentials, or ask for a
-    // variant such as another language, consumer, query or backend.
-    // Only a 200 is stored, so a caller whose validateStatus refuses one goes to Drupal.
-    const cacheable = Object.keys(config).every((option) => CACHE_SAFE_OPTIONS.includes(option)) &&
-      (typeof config.validateStatus !== 'function' || config.validateStatus(200))
-    const before = cacheable ? this.processCache('content') : null
+  async get<T = JsonApiDocument>(url: string, options?: DruxtRequestOptions): Promise<DruxtResponse<T>> {
+    const { bypassCache, ...request } = options || {}
+    // With `cache.content`, a response to a request without credentials is kept in the process cache for as long as
+    // its Cache-Control allows, and the next server request for the same URL is answered from it. The key is the
+    // backend and the URL alone, so a request whose own options could change the response, such as headers or a
+    // body, is never read from or stored. Only a 200 is stored, so a caller whose validateStatus refuses one goes to
+    // Drupal.
+    const cacheable = !!(this.options.cache || undefined)?.content
+      && Object.keys(options || {}).every((option) => CACHE_SAFE_OPTIONS.has(option))
+      && (typeof request.validateStatus !== 'function' || request.validateStatus(200))
+    const before = cacheable ? this.processCache('content') : undefined
     const key = JSON.stringify([this.indexKey, url])
     if (before && !bypassCache) {
-      const stored = before.get(key)
-      if (stored) return this.storedResponse(stored)
+      const stored = before.get<StoredResponse>(key)
+      if (stored) return this.storedResponse<T>(stored, url)
     }
-
     try {
       // Its place in the order requests started in, which a timestamp cannot give two requests in one millisecond.
       const started = nextRequest()
-      const res = await this.axios.get(url, options ? config : undefined)
-      const seconds = parseCacheLifetime((res || {}).headers)
-      const at = Date.now()
-      // Kept with its arrival time, so the lifetime read later is what is left of it.
-      if (res && res.data && typeof res.data === 'object') lifetimes.set(res.data, { seconds, at })
-
-      // Asked again once resolved, as the request may have shown the instance to be credentialed.
-      // Only a 200 is kept: a stored 404 would hide a page published after it.
+      const res = await this.request<T>(url, options && Object.keys(request).length ? request : undefined)
+      rememberLifetime(res?.data, res?.headers)
+      // Asked again once resolved, as the request may have shown the client to be credentialed.
       const after = before && this.processCache('content')
       // A request that started later, such as a bypass, may have stored its fresher answer already.
-      const current = after && after.get(key)
-      if (after && !(current && current.started > started) && res && res.status === 200 && res.data && typeof res.data === 'object') {
-        // Stored as text, so no caller can change what the next request reads.
-        const value = { body: JSON.stringify(res.data), headers: { ...res.headers }, seconds, at, started }
-        after.set(key, value, seconds, before.generation)
+      const current = after?.get<StoredResponse>(key)
+      if (after && !(current && current.started > started) && res.status === 200 && res.data && typeof res.data === 'object') {
+        const seconds = parseCacheLifetime(res.headers)
+        const value: StoredResponse = { body: JSON.stringify(res.data), status: res.status, statusText: res.statusText, headers: Object.fromEntries(res.headers.entries()), seconds, at: Date.now(), started }
+        after.set(key, value, seconds, before!.generation)
       }
-
       return res
-    } catch(err) {
-      // Throw formatted error.
-      this.error(err, { url })
+    } catch (err) {
+      this.error(err as ErrorLike, { url })
     }
   }
 
   /**
-   * Builds a response from a process cache entry.
+   * A response from a content cache entry: a fresh copy of the stored document, with what is left of its lifetime.
    *
-   * @private
-   * @param {object} stored - The stored entry.
-   *
-   * @returns {object} A response with a fresh copy of the stored document.
+   * @param stored - The entry.
+   * @param url - The URL it was stored for.
    */
-  storedResponse(stored) {
-    const data = JSON.parse(stored.body)
-    lifetimes.set(data, { seconds: stored.seconds, at: stored.at })
-    // Only a 200 is stored.
-    return { data, status: 200, headers: { ...stored.headers } }
+  private storedResponse<T>(stored: StoredResponse, url: string): DruxtResponse<T> {
+    const data = JSON.parse(stored.body) as T
+    rememberLifetimeFrom(data, stored.seconds, stored.at)
+    return { data, status: stored.status, statusText: stored.statusText, headers: new Headers(stored.headers), url: this.url(url) }
   }
 
   /**
-   * Get a collection of resources from the JSON:API server.
+   * Get a collection of resources.
    *
-   * @param {string} type - The JSON:API Resource type.
-   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
-   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
-   * @param {object} [options] - (Optional) Request options.
-   * @param {boolean} [options.bypassCache] - Fetch from Drupal even when the process cache holds the collection.
-   *
-   * @returns {object} The JSON:API collection response.
+   * @param type - The JSON:API resource type.
+   * @param query - A JSON:API query string or object.
+   * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @returns The collection, from the conventional URL for a type the index does not list.
    *
    * @example @lang js
    * const collection = await this.$druxt.getCollection(
    *   'node--recipe',
    *   undefined,
-   *   'en'
+   *   'en',
    * )
    */
-  async getCollection(type, query, prefix, options = {}) {
-    const { href } = await this.getIndex(type, prefix)
-    if (!href) {
-      return false
-    }
+  async getCollection(type: string, query?: DruxtClientQuery, prefix = '', options?: DruxtReadOptions): Promise<JsonApiCollection> {
+    if (!type) throw new TypeError('getCollection() needs a type')
 
-    const url = this.buildQueryUrl(href, query)
-
-    const { data } = await this.get(url, ...requestOptions(options))
+    const href = await this.resourceHref(type, prefix)
+    const { data } = await this.get<JsonApiCollection>(this.buildQueryUrl(href, query), readOptions(options))
     return data
   }
 
   /**
-   * Get all resources of a collection.
+   * Get every page of a collection.
    *
-   * @param {string} type - The JSON:API Resource type.
-   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
-   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
-   *
-   * @param {object} [options] - (Optional) Request options, as `getCollection()` takes them, used for every page.
-   *
-   * @returns {object[]} An array of JSON:API collections.
+   * @param type - The JSON:API resource type.
+   * @param query - A JSON:API query string or object.
+   * @param prefix - The JSON:API endpoint prefix or langcode.
    *
    * @example @lang js
    * const collections = await this.$druxt.getCollectionAll(
    *   'node--recipe',
    *   'fields[node--recipe]=title',
-   *   'en'
+   *   'en',
    * )
    */
-  async getCollectionAll(type, query, prefix, options = {}) {
-    const collections = []
+  async getCollectionAll(type: string, query?: DruxtClientQuery, prefix = '', options?: DruxtReadOptions): Promise<JsonApiCollection[]> {
+    if (!type) throw new TypeError('getCollectionAll() needs a type')
 
     let res = await this.getCollection(type, query, prefix, options)
-    collections.push(res)
+    const collections = [res]
 
-    while (((res.links || {}).next || {}).href) {
-      query = res.links.next.href.split('?')[1]
-      res = await this.getCollection(type, query, prefix, options)
+    let next = res.links?.next?.href
+    while (next) {
+      res = await this.getCollection(type, next.split('?')[1], prefix, options)
       collections.push(res)
+      next = res.links?.next?.href
     }
 
     return collections
   }
 
   /**
-   * Get index of all available resources, or the optionally specified resource.
+   * Get the index of available resources, or one resource's entry.
+   *
+   * Without a resource type, the whole index for the prefix; with one, that
+   * type's entry, or undefined when the index has none. Two signatures, so each
+   * call is typed by what it asks for.
+   *
+   * @param resource - A resource type, or nothing for the whole index.
+   * @param prefix - The JSON:API endpoint prefix or langcode.
    *
    * @example @lang js
-   * const { href } = await this.$druxt.getIndex('node--article', 'en')
+   * const entry = await this.$druxt.getIndex('node--article', 'en')
+   * const href = entry ? entry.href : undefined
    *
-   * @param {string} [resource] - (Optional) A specific resource to query.
-   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
-   *
-   * @returns {object} The resource index object or the specified resource.
+   * @example @lang js
+   * const index = await this.$druxt.getIndex(null, 'en')
    */
-  async getIndex(resource, prefix) {
-    if (!(this.index || {})[prefix]) {
-      // An index fetched by an earlier server request without credentials.
-      const shared = this.processCache('index')
-      const sharedKey = [this.indexKey, prefix || ''].join(':')
-      const stored = shared && shared.get(sharedKey)
-      if (stored) this.index[prefix] = stored
-    }
-
-    if (!(this.index || {})[prefix]) {
-      // Concurrent callers, on this client or another sharing the index,
-      // wait on one request. A failed request is dropped so the next call retries.
-      const key = [this.indexKey, prefix || ''].join(':')
-      const before = this.processCache('index')
-      const since = before ? before.generation : undefined
-      const started = this.indexCache.generation
-      const request = this.indexRequests[key] || (this.indexRequests[key] = this.fetchIndex(prefix))
-      let fetched
-      try {
-        fetched = await request
-      } finally {
-        if (this.indexRequests[key] === request) delete this.indexRequests[key]
-      }
-
-      // An index fetched before a clear answers this call and is kept nowhere.
-      if (started !== this.indexCache.generation) {
-        return resource ? fetched.index[resource] || false : fetched.index
-      }
-      this.index[prefix] = fetched.index
-      const shared = this.processCache('index')
-      // Dropped when the process cache was cleared while the request was in flight.
-      if (shared) shared.set(key, fetched.index, fetched.lifetime, since)
-    }
-
-    return resource ? this.index[prefix][resource] || false : this.index[prefix]
+  async getIndex(resource?: null, prefix?: string): Promise<JsonApiIndex>
+  async getIndex(resource: string, prefix?: string): Promise<JsonApiIndexEntry | undefined>
+  async getIndex(resource?: string | null, prefix = ''): Promise<JsonApiIndex | JsonApiIndexEntry | undefined> {
+    const index = await this.indexCache.get(this.urlPrefix(prefix))
+    return resource ? index[resource] : index
   }
 
   /**
-   * Fetches and stores the JSON:API index for a prefix.
+   * The URL prefix a `prefix` argument stands for: a langcode's configured prefix from `prefixes`, such as `spanish`
+   * for `es`, else the argument itself, a prefix given as such or a langcode the map lacks.
    *
-   * @private
-   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param prefix - A langcode or a URL prefix, empty for none.
+   * @returns The URL prefix, with no slash.
    *
-   * @returns {{index: object, lifetime: number}} The index, and the seconds it may be cached from its Cache-Control.
+   * @example @lang js
+   * // With prefixes { en: '', es: 'spanish' }:
+   * druxt.urlPrefix('es') // 'spanish'
+   * druxt.urlPrefix('en') // ''
+   * druxt.urlPrefix('fr') // 'fr'
    */
-  async fetchIndex(prefix) {
+  urlPrefix(prefix = ''): string {
+    const prefixes = this.options.prefixes
+    return prefixes && Object.prototype.hasOwnProperty.call(prefixes, prefix) ? prefixes[prefix]! : prefix
+  }
+
+  /**
+   * Fetches the JSON:API index for a prefix.
+   *
+   * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @returns The index, and the seconds it may be cached from its Cache-Control.
+   */
+  async fetchIndex(prefix = ''): Promise<FetchedIndex> {
     const url = [prefix, this.options.endpoint].join('')
-    const { data } = await this.get(url)
-    let index = data.links
+    const { data } = await this.get<{ links?: JsonApiIndex }>(url)
 
     // Throw error if index is invalid.
-    if (typeof index !== 'object') {
-      const err = { response: { statusText: 'Invalid JSON:API endpoint' }}
-      this.error(err, { url })
+    if (typeof data.links !== 'object') {
+      this.error({ response: { statusText: 'Invalid JSON:API endpoint' } }, { url })
     }
 
-    // Remove Base URL from the resource URL.
-    const baseUrl = this.options.baseUrl
-    index = Object.fromEntries(Object.entries(index).map(([key, value]) => {
-      value.href = value.href.replace(baseUrl, '')
+    const baseUrl = this.options.baseUrl || ''
+    const index: JsonApiIndex = Object.fromEntries(Object.entries(data.links).map(([key, value]) => {
+      value.href = indexPath(value.href, baseUrl)
       return [key, value]
     }))
 
     // Use JSON:API resource config to decorate the index.
-    // @TODO - Add test coverage.
     // The merged index lives no longer than any response it was built from.
-    const documents = [data]
-    if (index[this.options.jsonapiResourceConfig]) {
-      let resources = []
+    const documents: object[] = [data]
+    const resourceConfig = index[this.options.jsonapiResourceConfig]
+    if (resourceConfig) {
+      let resources: JsonApiResource[] = []
 
-      // Get JSON:API resource config if permissions setup correctly.
+      // Get JSON:API resource config if permissions are set up correctly.
       try {
-        const config = (await this.get(index[this.options.jsonapiResourceConfig].href)).data
+        const config = (await this.get<JsonApiCollection>(resourceConfig.href)).data
         resources = config.data
         documents.push(config)
-      } catch(err) {
-        this.log.warn(err.message)
+      } catch (err) {
+        this.log.warn((err as Error).message)
       }
 
-      for (const resourceType in resources) {
-        const resource = resources[resourceType]
-        const internal = resource.attributes.drupal_internal__id.split('--')
-
+      for (const resource of resources) {
+        const internal = String(resource.attributes?.drupal_internal__id).split('--')
         const item = {
-          resourceType: resource.attributes.resourceType,
+          resourceType: resource.attributes?.resourceType,
           entityType: internal[0],
           bundle: internal[1],
-          resourceFields: resource.attributes.resourceFields
+          resourceFields: resource.attributes?.resourceFields,
         }
 
         const id = [item.entityType, item.bundle].join('--')
-        index[id] = {
-          ...item,
-          ...index[id]
-        }
+        index[id] = { ...item, ...index[id] } as JsonApiIndexEntry
       }
     }
 
@@ -662,81 +716,68 @@ class DruxtClient {
   }
 
   /**
-   * Get the related resources from a specified JSON:API resource.
+   * Get the related resources of a resource.
+   *
+   * @param type - The JSON:API resource type.
+   * @param id - The resource UUID.
+   * @param related - The relationship name.
+   * @param query - A JSON:API query string or object.
+   * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @param options - How the read goes to Drupal, such as `bypassCache`.
    *
    * @example @lang js
-   * const related = this.$druxt.getRelated(
+   * const related = await this.$druxt.getRelated(
    *   'node--page',
-   *   id, 'uid',
+   *   id,
+   *   'uid',
    *   undefined,
-   *   'en'
+   *   'en',
    * )
-   *
-   * @param {string} type - The JSON:API Resource type.
-   * @param {string} id - The Drupal resource UUID.
-   * @param {string} related - The relationship name.
-   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
-   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
-   *
-   * @returns {object} The related JSON:API resource(s).
    */
-  async getRelated(type, id, related, query, prefix = '') {
-    if (!id || !type || !related) {
-      return false
-    }
+  async getRelated(type: string, id: string, related: string, query?: DruxtClientQuery, prefix = '', options?: DruxtReadOptions): Promise<JsonApiDocument> {
+    if (!type) throw new TypeError('getRelated() needs a type')
+    if (!id) throw new TypeError('getRelated() needs an id')
+    if (!related) throw new TypeError('getRelated() needs a related field name')
 
-    let { href } = await this.getIndex(type, prefix)
-    // A type the index does not list, such as a View, is served under the prefix too.
-    if (!href) {
-      href = [prefix, this.options.endpoint].join('').replace(/^\/*/, '/') + '/' + type.replace('--', '/')
-    }
+    const href = await this.resourceHref(type, prefix)
 
-    const url = this.buildQueryUrl(`${href}/${id}/${related}`, query)
-    const { data } = await this.get(url)
+    const { data } = await this.get(this.buildQueryUrl(`${href}/${id}/${related}`, query), readOptions(options))
     return data
   }
 
   /**
-   * Get a JSON:API resource by type and ID.
+   * Get a resource by type and ID.
+   *
+   * @param type - The JSON:API resource type.
+   * @param id - The resource UUID.
+   * @param query - A JSON:API query string or object.
+   * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @returns The document.
    *
    * @example @lang js
-   * const data = await this.$druxt.getResource(
+   * const document = await this.$druxt.getResource(
    *   'node--article',
    *   id,
    *   undefined,
-   *   'en'
+   *   'en',
    * )
-   *
-   * @param {string} type - The JSON:API Resource type.
-   * @param {string} id - The Drupal resource UUID.
-   * @param {DruxtClientQuery} [query] - A correctly formatted JSON:API query string or object.
-   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
-   * @param {object} [options] - (Optional) Request options.
-   * @param {boolean} [options.bypassCache] - Fetch from Drupal even when the process cache holds the resource.
-   *
-   * @returns {object|boolean} The full JSON:API document; the requested resource is on the
-   *   `data` property, e.g. `result.data.attributes`. Returns `false` if either `type` or
-   *   `id` is missing.
-   * @todo update method to take a context object instead of 4 parameters.
    */
-  async getResource(type, id, query, prefix, options = {}) {
-    if (!id || !type) {
-      return false
-    }
+  async getResource(type: string, id: string, query?: DruxtClientQuery, prefix = '', options?: DruxtReadOptions): Promise<JsonApiDocument<JsonApiResource>> {
+    if (!type) throw new TypeError('getResource() needs a type')
+    if (!id) throw new TypeError('getResource() needs an id')
 
-    let { href } = await this.getIndex(type, prefix)
-    // A type the index does not list, such as a View, is served under the prefix too.
-    if (!href) {
-      href = [prefix, this.options.endpoint].join('').replace(/^\/*/, '/') + '/' + type.replace('--', '/')
-    }
+    const href = await this.resourceHref(type, prefix)
 
-    const url = this.buildQueryUrl([href, id].join('/'), query)
-    const { data } = await this.get(url, ...requestOptions(options))
+    const { data } = await this.get<JsonApiDocument<JsonApiResource>>(this.buildQueryUrl([href, id].join('/'), query), readOptions(options))
     return data
   }
 
   /**
-   * Update a JSON:API resource.
+   * Update a resource.
+   *
+   * @param resource - The JSON:API resource.
+   * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @returns The response.
    *
    * @example @lang js
    * await this.$druxt.updateResource(
@@ -744,91 +785,31 @@ class DruxtClient {
    *     type: 'node--page',
    *     id,
    *     attributes: {},
-   *     relationships: {}
+   *     relationships: {},
    *   },
-   *   'en'
+   *   'en',
    * )
-   *
-   * @param {object} resource - The JSON:API resource object
-   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
-   *
-   * @returns {object} The response data
    */
-   async updateResource(resource, prefix) {
-    const { href } = await this.getIndex(resource.type, prefix)
-    if (!href) {
-      return false
-    }
-    const url = [href, resource.id].join('/')
+  async updateResource(resource: JsonApiResource, prefix = ''): Promise<DruxtResponse<JsonApiDocument<JsonApiResource>>> {
+    if (!resource.type) throw new TypeError('updateResource() needs a type')
+    if (!resource.id) throw new TypeError('updateResource() needs an id')
 
-    let response
+    const url = [await this.resourceHref(resource.type, prefix), resource.id].join('/')
     try {
-      response = await this.axios.patch(
-        url,
-        { data: resource },
-        {
-          headers: {
-            'Content-Type': 'application/vnd.api+json'
-          }
-        }
-      )
+      return await this.request<JsonApiDocument<JsonApiResource>>(url, { method: 'PATCH', body: { data: resource } })
     } catch (err) {
-      this.error(err)
+      this.error(err as ErrorLike, { url })
     }
+  }
 
-    // @TODO - Add test coverage.
-    return response
+  /**
+   * A resource type's URL: the index's, or the conventional one for a type the index does not list.
+   *
+   * @param type - The JSON:API resource type.
+   * @param prefix - The JSON:API endpoint prefix or langcode.
+   */
+  private async resourceHref(type: string, prefix: string): Promise<string> {
+    const entry = await this.getIndex(type, prefix)
+    return (entry && entry.href) || `${this.urlPrefix(prefix)}${this.options.endpoint}/${type.replace('--', '/')}`
   }
 }
-
-export { DruxtClient }
-
- /**
-  * DruxtClient options object.
-  *
-  * @typedef {object} DruxtClientOptions
-  *
-  * @param {object} [axios] - Axios instance settings.
-  * @param {object} [cache] - Server-side cache shared between requests that do not send credentials, each
-  *   response kept for as long as its Cache-Control allows. Off by default. The Nuxt module turns it on in production.
-  * @param {boolean} [cache.content=false] - Also keep entities, collections, views and route lookups, not only the index and menus.
-  * @param {number} [cache.maxSize=52428800] - Bytes of responses each cache area keeps, measured as stored JSON.
-  * @param {number} [cache.ttl] - Seconds a cached response may live at most. It never extends Cache-Control.
-  * @param {string} [cache.sessionCookie=S?SESS[0-9a-f]+] - A pattern for the session cookie name.
-  * @param {boolean} [debug=false] - Enable Debug mode for verbose console log messages.
-  * @param {string} [endpoint=jsonapi] - The JSON:API endpoint.
-  * @param {string} [jsonapiResourceConfig=jsonapi_resource_config--jsonapi_resource_config] -
-  *   The JSON:API resource config type, used for [JSON:API Extras](https://www.drupal.org/project/jsonapi_extras) support.
-  *
-  * @see {@link https://github.com/axios/axios#request-config}
-  *
-  * @example @lang js
-  * {
-  *   // Axios instance settings.
-  *   axios: {
-  *     // Set axios headers.
-  *     headers: { 'X-Custom-Header': true },
-  *   },
-  *   // Enable debug console log messages.
-  *   debug: true,
-  *   // JSON:API endpoint.
-  *   endpoint: 'api',
-  * }
-  */
-
-/**
- * A correctly formatted JSON:API query string or object.
- *
- * @typedef {string|object} DruxtClientQuery
- *
- * @example @lang js
- * 'page[limit]=5&page[offset]=5'
- *
- * @example @lang js
- * new DrupalJsonApiParams().addPageLimit(5)
- *
- * @example @lang js
- * { filter: { status: 1 }, page: { limit: 5 } }
- *
- * @see {@link https://www.npmjs.com/package/drupal-jsonapi-params}
- */

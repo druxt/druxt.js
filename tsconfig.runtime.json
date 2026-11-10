@@ -7,5 +7,5 @@
     // Typecheck the sources, not the built packages.
     "customConditions": ["source"]
   },
-  "include": ["./test/types/.nuxt/nuxt.d.ts"]
+  "include": ["./test/types/.nuxt/nuxt.d.ts", "./packages/client/src/**/*.ts"]
 }
