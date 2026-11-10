@@ -21,7 +21,12 @@ export default createConfigForNuxt({
       'packages/schema/**',
       'packages/site/**',
       'packages/views/**',
+      'packages/client/src/client.ts',
+      'packages/client/src/processCache.ts',
       'test/mixins.test.js',
+      'test/unit/client.test.ts',
+      'test/unit/client-content-cache.test.ts',
+      'test/unit/process-cache.test.ts',
       // 1.x examples and tooling, run on the 1.x line.
       'examples/**',
       'test/__fixtures__/**',
