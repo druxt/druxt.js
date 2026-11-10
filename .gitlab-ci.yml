@@ -365,10 +365,12 @@ lint:commits:
         # The failure reason, with the job token taken out.
         printf '%s\n' "$fetch_err" | sed "s|${CI_JOB_TOKEN}|[token]|g" >&2
         if [ "$CI_PROJECT_URL" = "$CI_MERGE_REQUEST_PROJECT_URL" ] \
-          && git fetch --quiet origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"; then
+          && origin_err="$(git fetch --quiet origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" 2>&1)"; then
           POLICY_SHA="$(git rev-parse FETCH_HEAD)"
           echo "Could not fetch from the target project; using origin's $CI_MERGE_REQUEST_TARGET_BRANCH_NAME."
         else
+          # Origin's URL carries the job token too.
+          [ -n "${origin_err:-}" ] && printf '%s\n' "$origin_err" | sed "s|${CI_JOB_TOKEN}|[token]|g" >&2
           echo "Could not fetch the target branch; using the diff base's commit policy."
         fi
       fi
