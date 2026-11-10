@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 import { checkPackages, listUnpublished, readPackages } from '../check.mjs'
 
 const pkg = (manifest, dir = '/nowhere') => ({ dir, manifest })
@@ -55,9 +57,9 @@ test('an unbounded range on an outside package is refused', () => {
       assert.match(problems[0], new RegExp(`site: ${field}\\.consola .*any future release`))
     }
   }
-  const packages = [pkg({ name: 'site', version: '2.0.0', dependencies: { consola: '^2.15.3' }, peerDependencies: { axios: '>=0.34.0' } })]
+  const packages = [pkg({ name: 'site', version: '2.0.0', dependencies: { consola: '^3.4.2' }, peerDependencies: { vue: '^3.5.0' } })]
   assert.deepEqual(checkPackages({ packages, files: false }), [])
-  for (const range of ['npm:consola@^2.15.3', 'npm:@scope/consola@^2.15.3']) {
+  for (const range of ['npm:consola@^3.4.2', 'npm:@scope/consola@^3.4.2']) {
     const aliased = [pkg({ name: 'site', version: '2.0.0', dependencies: { consola: range } })]
     assert.deepEqual(checkPackages({ packages: aliased, files: false }), [], range)
   }
@@ -127,4 +129,47 @@ test('unpublished versions are listed, private packages left out', () => {
   const packages = [core('1.2.1'), pkg({ name: 'site', version: '2.0.0' }), pkg({ name: 'fresh', version: '0.1.0' }), pkg({ name: 'utils', version: '1.0.0', private: true })]
   const registry = { core: { latest: '1.2.0', versions: ['1.2.0'] }, site: { latest: '2.0.0', versions: ['2.0.0'] }, fresh: null }
   assert.deepEqual(listUnpublished({ packages, registry }), ['core@1.2.1', 'fresh@0.1.0'])
+})
+
+test('only the root workspaces are read when it names them', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'release-check-'))
+  for (const name of ['core', 'legacy']) {
+    fs.mkdirSync(path.join(root, 'packages', name), { recursive: true })
+    fs.writeFileSync(path.join(root, 'packages', name, 'package.json'), JSON.stringify({ name, version: '1.0.0' }))
+  }
+  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ workspaces: ['packages/core'] }))
+  assert.deepEqual(readPackages(root).map(({ manifest }) => manifest.name), ['core'])
+
+  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ workspaces: ['packages/*'] }))
+  assert.deepEqual(readPackages(root).map(({ manifest }) => manifest.name).sort(), ['core', 'legacy'])
+
+  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ name: 'root' }))
+  assert.deepEqual(readPackages(root), [])
+  fs.rmSync(root, { recursive: true })
+})
+
+test('workspaces that resolve to no package are refused', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'release-check-'))
+  fs.mkdirSync(path.join(root, 'packages', 'core'), { recursive: true })
+  for (const workspaces of [['packages/cor'], ['packages/*'], []]) {
+    fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ workspaces }))
+    assert.throws(() => readPackages(root), /declares workspaces, but none of them holds a package\.json/, JSON.stringify(workspaces))
+  }
+  fs.rmSync(root, { recursive: true })
+})
+
+test('a tree with no workspaces yet passes the command and says so', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'release-check-'))
+  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ name: 'root' }))
+  const script = fileURLToPath(new URL('../check.mjs', import.meta.url))
+  const result = spawnSync(process.execPath, [script, '--offline'], { cwd: root, encoding: 'utf8' })
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(result.stderr, /no workspaces yet/)
+  assert.equal(result.stdout, '')
+
+  fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ workspaces: ['packages/core'] }))
+  const missing = spawnSync(process.execPath, [script, '--offline'], { cwd: root, encoding: 'utf8' })
+  assert.equal(missing.status, 1)
+  assert.match(missing.stderr, /declares workspaces, but none/)
+  fs.rmSync(root, { recursive: true })
 })

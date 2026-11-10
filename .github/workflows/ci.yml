@@ -1,18 +1,36 @@
+# GitHub CI for the 2.0.x line.
+#
+# The workflows split the repository by line. The 1.x workflows run on the
+# 0.x and *.x release lines, and this file runs on the 2.0.x line and on pull
+# requests based on it or on a stacked 2.0.x feature branch. Two others still
+# run on this line: codeql-analysis.yml, since CodeQL reads the tree rather
+# than the toolchain, and release.yml, whose triggers keep it off 2.0.x until
+# the 2.x release flow returns.
+#
+# It mirrors the GitLab jobs of the same names in .gitlab-ci.yml that apply on
+# GitHub: lint:js, lint:markdown, lint:cspell, lint:knip, lint:commits,
+# test:unit and test:release. Secret detection, the dependency audit and the
+# preview jobs stay on GitLab. Only the release script tests of test:release
+# run here; its rehearsal half (snapshot version, build, release:check) returns
+# with the packages. Later changes on this line add the jobs for tools this
+# tree does not have yet.
+#
+# lint-commits runs the GitLab job's commands: the identity check, and
+# commitlint under the base tip's commitlint.config.js, so a pull request
+# cannot loosen the policy that checks it. The commitlint packages and plugins
+# that config loads are still the head's, installed from its lockfile; GitLab
+# installs the base tip's in a worktree.
+
 name: CI
 
 on:
   push:
-    # A release line is <major>.x or <major>.<minor>.x, so '*.x' matches
-    # both shapes: * matches dots. Releases are tags, so there is no
-    # release branch to list here.
-    branches: ['*.x']
+    branches: ['2.0.x']
   pull_request:
-    # No branch filter on purpose. The filter matches the pull request's base,
-    # so a stacked pull request based on anything unlisted ran no jobs at all,
-    # and showed no checks rather than failing ones. Listing prefixes only moved
-    # the hole: feature/** was checked while perf/** and fix/** were not.
-    # Stacking is only useful if the upper pull request is verified before its
-    # base merges, and that has to hold for every branch name.
+    # The filter matches the pull request's base, and pull requests on this
+    # line are stacked on each other, so the feature branches are listed too.
+    branches: ['2.0.x', 'feature/2.0.x-**']
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -22,477 +40,171 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Classifies what a pull request touches, so the slow jobs and steps run
-  # only when their subject changed. Push events (a release line, the
-  # production path) report everything as changed, so full coverage always
-  # holds where it matters. If the file listing fails, everything defaults
-  # to changed: fail open, never silently skip.
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      deps: ${{ steps.classify.outputs.deps }}
-      packages: ${{ steps.classify.outputs.packages }}
-    steps:
-      - id: classify
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          deps=true; packages=true
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            if files=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --paginate --jq '.[].filename'); then
-              deps=false; packages=false
-              echo "$files" | grep -qE '(^|/)(yarn\.lock|package\.json|\.yarnrc\.yml)$' && deps=true
-              echo "$files" | grep -qE '^packages/' && packages=true
-            else
-              echo "file listing failed; running everything" >&2
-            fi
-          fi
-          {
-            echo "deps=$deps"
-            echo "packages=$packages"
-          } >> "$GITHUB_OUTPUT"
-
-  # Every commit in a pull request: Conventional Commits, made by the person
-  # contributing it, with no AI attribution in the message. The commit-msg
-  # and pre-push hooks run the same checks. This catches a commit made
-  # without them.
-  commits:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    env:
-      BASE: ${{ github.event.pull_request.base.sha }}
-      HEAD: ${{ github.event.pull_request.head.sha }}
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      # A pull request cannot loosen the policy that checks its own commits.
-      # commitlint runs from a worktree of the base commit, with the base's
-      # package.json, lockfile and commitlint.config.js, so the pull request
-      # can't swap the script, the dependencies or the rules.
-      - name: Check out the base branch's commit policy
-        run: git worktree add .policy "$BASE"
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 16.20.1
-
-      - run: corepack enable
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: .policy/.yarn/cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('.policy/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - run: yarn install --immutable
-        working-directory: .policy
-
-      # Conventional Commits and no AI attribution lines (commitlint.config.js).
-      - name: Commit messages
-        run: yarn lint:commit --from "$BASE" --to "$HEAD" --verbose
-        working-directory: .policy
-
-      # Author and committer are the contributor, not an AI agent. The pull
-      # request's list is used only where the base has none yet.
-      - name: Commit identity
-        run: |
-          identities=.policy/.husky/agent-identities
-          [ -f "$identities" ] || identities=.husky/agent-identities
-          if git log --format='%an <%ae>%n%cn <%ce>' "$BASE..$HEAD" | grep -iEf "$identities"; then
-            echo "::error::A commit above is made under an AI agent's identity. See AGENTS.md."
-            exit 1
-          fi
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 16.20.1
-
-      - run: corepack enable
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: .yarn/cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - run: yarn install --immutable
-      - run: yarn build
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: build-output
-          path: |
-            packages/*/dist
-            packages/*/CHANGELOG.md
-          retention-days: 1
-
   lint:
-    needs: [build, changes]
+    name: Lint (ESLint)
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      statuses: write # Bundlewatch posts a commit status via the Statuses API.
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 16.20.1
-
       - run: corepack enable
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      - uses: actions/setup-node@v4
         with:
-          path: .yarn/cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
+          node-version-file: .nvmrc
+          cache: yarn
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
+      - run: yarn lint
 
-      - name: ESLint
-        run: yarn lint --format ./node_modules/eslint-junit/index.js
-        env:
-          ESLINT_JUNIT_OUTPUT: ./reports/junit/eslint.xml
+  lint-markdown:
+    name: Lint (Markdown)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - run: yarn install --immutable
+      - run: yarn lint:md
 
-      - name: markdownlint
-        run: yarn lint:md
+  lint-cspell:
+    name: Lint (cspell)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - run: yarn install --immutable
+      - run: yarn lint:cspell
 
-      - name: CSpell
-        run: yarn lint:cspell
+  lint-knip:
+    name: Lint (knip)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - run: yarn install --immutable
+      - run: yarn lint:knip
 
-      - name: Vale (AI-tell prose lint)
-        run: yarn lint:prose
-
+  lint-changesets:
+    name: Lint (changesets)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - run: yarn install --immutable
       # The shape and the wording rules of .changeset/*.md, so the version
       # pull request needs no clean-up pass before a release.
       - name: Changesets
         run: yarn lint:changesets --preview
 
-      - name: Em-dash check (hand-authored prose)
-        run: |
-          ! grep -rn "\xe2\x80\x94" packages/druxt/README.md packages/docgen/README.md packages/test-utils/README.md CONTRIBUTING.md --include='*.md' --include='*.vue' --include='*.js' --include='*.mjs' --include='*.css'
-
-      # The contributor skills, AGENTS.md and agent config, checked by agnix
-      # (spec fields, names, links). The live skill evals spend model tokens,
-      # so they run locally only (yarn skills:eval), never in CI.
-      - name: Skills (agnix)
-        run: yarn lint:skills
-
-      - name: Dependency audit (full report, includes devDependencies)
-        if: needs.changes.outputs.deps == 'true'
-        env:
-          YARN_HTTP_TIMEOUT: '180000'
-        run: yarn lint:audit:full
-        continue-on-error: true
-
-      # The registry's audit endpoint times out often enough to matter, so the
-      # blocking pass retries before it fails anyone's pipeline.
-      - name: Dependency audit (production, blocking)
-        if: needs.changes.outputs.deps == 'true'
-        env:
-          YARN_HTTP_TIMEOUT: '180000'
-        run: |
-          for attempt in 1 2 3; do
-            yarn lint:audit && exit 0
-            status=$?
-            if [ "$attempt" -lt 3 ]; then
-              echo "audit attempt $attempt failed (exit $status); retrying in 30s" >&2
-              sleep 30
-            fi
-          done
-          exit "$status"
-
-      - name: Knip (unused/unlisted dependencies)
-        if: needs.changes.outputs.deps == 'true'
-        run: yarn lint:knip
-
-      - if: needs.changes.outputs.deps == 'true' || needs.changes.outputs.packages == 'true'
-        run: yarn build
-
-      - name: Bundlewatch
-        if: needs.changes.outputs.deps == 'true' || needs.changes.outputs.packages == 'true'
-        run: yarn bundlewatch
-        env:
-          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # GITHUB_SHA on a pull_request event is a synthetic merge commit, not
-          # the PR's actual head commit - a status posted against it never
-          # shows up on the PR. Force bundlewatch onto the real head SHA.
-          CI_COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        continue-on-error: true
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        if: always()
-        with:
-          name: lint-results
-          path: ./reports/junit/
-
-  # Renovate itself needs a current Node, so its validator runs apart from lint.
-  renovate:
+  lint-commits:
+    name: Lint (commit messages)
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           persist-credentials: false
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 24
-
-      - name: Renovate config validator
-        run: npm run lint:renovate
-
-  test-unit:
-    needs: build
-    runs-on: ubuntu-latest
-    env:
-      # Job-level, not step-level: a step's `if:` can't see env set within
-      # that same step, so the Codecov step's own `if:` needs this here.
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 16.20.1
-
       - run: corepack enable
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      - uses: actions/setup-node@v4
         with:
-          path: .yarn/cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
+          node-version-file: .nvmrc
+          cache: yarn
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
-      - run: yarn build
-
-      # Both reporters: jest-junit on its own replaces the default, so a
-      # failing test printed nothing to the log and had to be read out of the
-      # uploaded XML.
-      - name: Run unit tests
-        run: yarn test:unit --reporters=default --reporters=jest-junit --runInBand
+      - name: Commit identity
+        if: github.event_name == 'pull_request'
         env:
-          NODE_OPTIONS: --max_old_space_size=8192
-
-      # Here rather than only in GitLab's test:release, because Renovate
-      # raises pull requests on GitHub and no merge request on GitLab, so a
-      # dependency that breaks the release toolchain reached neither gate.
-      # This job's Node is the one the release runs on, which matters: Node 22
-      # and later load an ES module from `require` without complaint.
-      - name: Test the release scripts
-        run: yarn release:check:test
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        if: always()
-        with:
-          name: test-results
-          path: ./reports/junit/
-
-      # A pull request from a fork gets no secrets, so the token is empty there.
-      # Codecov accepts uploads without a token for pull requests into a public
-      # repository, so upload for those too. A fork's own pushes, with no token
-      # and no upstream pull request, skip the upload rather than fail.
-      - name: Upload coverage to Codecov
-        id: codecov
-        if: ${{ env.CODECOV_TOKEN != '' || github.event.pull_request.base.repo.full_name == 'druxt/druxt.js' }}
-        # A Codecov outage warns through the next step instead of failing the job.
-        continue-on-error: true
-        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          directory: ./coverage
-
-      - name: Report a failed coverage upload
-        if: ${{ steps.codecov.outcome == 'failure' }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          echo "::warning title=Coverage not uploaded::The Codecov upload failed, so this run has no coverage report. See the Upload coverage to Codecov step."
-          echo "Coverage not uploaded: the Codecov upload failed, so this run has no coverage report." >> "$GITHUB_STEP_SUMMARY"
-
-  # The three themed showcase examples (daisyui, tailwind, bootstrapvue) run
-  # as a parallel matrix - each gets its own backend and dev server, which
-  # keeps any single app's failure attributable and the wall time down.
-  # druxt-site's e2e stays in test-e2e below alongside Storybook and the
-  # docs site; it was running there before this suite existed.
-  test-examples:
-    needs: build
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        example: [druxt-daisyui, druxt-tailwind, druxt-bootstrapvue]
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-        with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 16.20.1
-
-      - run: corepack enable
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: .yarn/cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - run: yarn install --immutable
-      - run: yarn build
-
-      # Same docker-free backend as test-e2e: PHP built-in server + SQLite,
-      # not DDEV. See examples/drupal/README.md and .devtools/.
-      - name: Setup PHP
-        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
-        with:
-          php-version: '8.3'
-          extensions: pdo_sqlite, sqlite3
-
-      - name: Assemble, provision, and start the Drupal backend
-        working-directory: examples/drupal
+          # From the base tip, as the commitlint config below: a pull request
+          # must not loosen the policy that checks it. A base tip without the
+          # list fails here rather than passing as "no identities found".
+          git show "$BASE_SHA:.husky/agent-identities" > .agent-identities
+          if git log --format='%an <%ae>%n%cn <%ce>' "$BASE_SHA..$HEAD_SHA" \
+            | grep -iEf .agent-identities; then
+            echo "::error::A commit above is made under an AI agent's identity. See AGENTS.md."
+            exit 1
+          fi
+      - name: Lint the pull request's commits
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          .devtools/assemble
-          .devtools/provision
-          .devtools/start
+          # Written into the checkout, not a temporary directory, so the
+          # modules it requires resolve from this node_modules.
+          git show "$BASE_SHA:commitlint.config.js" > .commitlint-base.config.js
+          yarn lint:commit --config .commitlint-base.config.js --from "$BASE_SHA" --to "$HEAD_SHA"
+      - name: Lint the pushed commits
+        if: github.event_name != 'pull_request'
         env:
-          WEBSERVER_HOST: 127.0.0.1
-          WEBSERVER_PORT: 8888
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          # A new branch, or a manual run, has no previous tip to start from.
+          case "$BEFORE" in
+            '' | 0000000000000000000000000000000000000000) BEFORE="$AFTER~1" ;;
+          esac
+          yarn lint:commit --from "$BEFORE" --to "$AFTER"
 
-      - run: npx cypress install
-
-      - name: ${{ matrix.example }} e2e
-        env:
-          BASE_URL: http://127.0.0.1:8888
-        run: yarn example:${{ matrix.example }}:test
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        if: failure()
-        with:
-          name: cypress-${{ matrix.example }}
-          path: |
-            examples/${{ matrix.example }}/test/cypress/screenshots
-            examples/${{ matrix.example }}/test/cypress/videos
-
-  # Backend-free: the druxt-inspect CLI suite replays recorded JSON:API
-  # fixtures (examples/node-client/test/adapter.js), so it needs neither the
-  # Drupal backend nor Cypress - just the built workspace packages.
-  test-node-client:
-    needs: build
+  test:
+    name: Test (unit)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 16.20.1
-
       - run: corepack enable
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      - uses: actions/setup-node@v4
         with:
-          path: .yarn/cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
+          node-version-file: .nvmrc
+          cache: yarn
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
+      # The tests import the workspaces through their dist, as on GitLab.
       - run: yarn build
+      - run: yarn test
 
-      - name: druxt-inspect CLI tests
-        run: yarn test:node-client
-
-  test-e2e:
-    needs: build
+  release-check:
+    name: Test (release scripts)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
-
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: 16.20.1
-
       - run: corepack enable
-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+      - uses: actions/setup-node@v4
         with:
-          path: .yarn/cache
-          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
+          node-version-file: .nvmrc
+          cache: yarn
+          cache-dependency-path: yarn.lock
       - run: yarn install --immutable
-      - run: yarn build
-
-      # Docker-free: PHP built-in server + SQLite, not DDEV. See
-      # examples/drupal/README.md and .devtools/ for the reasoning.
-      - name: Setup PHP
-        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
-        with:
-          php-version: '8.3'
-          extensions: pdo_sqlite, sqlite3
-
-      - name: Assemble, provision, and start the Drupal backend
-        working-directory: examples/drupal
-        run: |
-          .devtools/assemble
-          .devtools/provision
-          .devtools/start
-        env:
-          WEBSERVER_HOST: 127.0.0.1
-          WEBSERVER_PORT: 8888
-
-      - run: npx cypress install
-
-      - name: DruxtSite e2e
-        env:
-          BASE_URL: http://127.0.0.1:8888
-          # The examples backend ships no translated demo content (see
-          # examples/drupal/README.md) - the specs that assert translated
-          # content skip on this variant and run against the full
-          # druxtjs.org site backend's own pipeline instead.
-          CYPRESS_backendVariant: minimal
-        run: |
-          yarn start-server-and-test 'yarn example:druxt-site' http://localhost:3000 \
-            'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/nuxt/**/*.cy.js"'
-
-      - name: DruxtSite Storybook e2e
-        env:
-          BASE_URL: http://127.0.0.1:8888
-        run: |
-          yarn start-server-and-test 'yarn example:druxt-site:storybook --port 3000' http://localhost:3000 \
-            'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/storybook/*.cy.js"'
-
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        if: failure()
-        with:
-          name: cypress-screenshots-videos
-          path: |
-            examples/druxt-site/test/cypress/screenshots
-            examples/druxt-site/test/cypress/videos
+      - run: yarn release:check:test

@@ -9,7 +9,7 @@
  * Repo-agnostic: the link base comes from the root package.json repository
  * field, so the same file serves every Druxt repository.
  */
-const path = require('path')
+const path = require('node:path')
 
 const REPO = (() => {
   try {
@@ -94,7 +94,7 @@ const rewrite = (summary) => {
     text = text.slice(prefix[0].length).trim()
   }
 
-  const verb = text.match(/^([A-Za-z]+)\b/)
+  const verb = text.match(/^([a-z]+)\b/i)
   if (verb && VERBS[verb[1].toLowerCase()]) {
     text = VERBS[verb[1].toLowerCase()] + text.slice(verb[1].length)
   } else {

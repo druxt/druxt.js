@@ -99,3 +99,11 @@ id = "generic-api-key"
     # plants exactly that case and asserts it is still found.
     '\.yarn/releases/yarn-[0-9.]+\.cjs$',
   ]
+  # The example backend's public PKCE Consumer ID, provisioned by
+  # examples/drupal/.devtools/consumer-set-redirect.php. A client ID is public
+  # by design; this rule fires on it in `process.env.X || '<id>'`. Matched by
+  # its exact value, anchored, so any other string in that shape is still
+  # reported, and so is a credential that starts with the ID.
+  regexes = [
+    '^c6e3275c-05cb-45f0-a3c3-c037bf730963$',
+  ]

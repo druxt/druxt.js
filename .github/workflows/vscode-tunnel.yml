@@ -1,0 +1,77 @@
+# An editor and a terminal on the runner, for debugging a failure that only
+# reproduces in CI.
+#
+# Forks only, and manual only. The `if` on the job means this never runs on
+# druxt/druxt.js itself, so it costs the main repository no minutes and cannot
+# be triggered by a pull request. A fork owner enables Actions on their fork
+# and runs it from the Actions tab, on their own minutes.
+#
+# Required before it will start: a VSCODE_TUNNEL_PASSWORD secret on the fork.
+# A fork of a public repository has public job logs, so the generated-password
+# path the GitLab job uses would publish the way in. The secret is masked and
+# never printed; set it under Settings, Secrets and variables, Actions.
+---
+name: VS Code tunnel
+
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: How long to hold the tunnel open, in minutes
+        required: false
+        default: '55'
+
+permissions:
+  contents: read
+
+jobs:
+  tunnel:
+    # Never on the upstream repository. A fork has a different full name, so
+    # this is false there and the job is skipped before it consumes anything.
+    if: github.repository != 'druxt/druxt.js'
+    runs-on: ubuntu-latest
+    # Above the 55 minute default hold, so the tunnel closes on its own terms
+    # and the cleanup runs rather than being killed by the runner.
+    timeout-minutes: 70
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The shell this opens can read .git/config, and nothing here needs
+          # the token after the checkout.
+          persist-credentials: false
+
+      - name: Require a password
+        # Checked before the 220MB download, so a fork that has not set the
+        # secret fails in seconds with the reason rather than after a fetch.
+        env:
+          VSCODE_TUNNEL_PASSWORD: ${{ secrets.VSCODE_TUNNEL_PASSWORD }}
+        run: |
+          if [ -z "${VSCODE_TUNNEL_PASSWORD}" ]; then
+            echo "::error::Set a VSCODE_TUNNEL_PASSWORD secret on this fork first."
+            echo "This fork's job logs are public, so the tunnel needs a"
+            echo "password that is never printed into them."
+            exit 1
+          fi
+
+      - name: Check the hold time
+        # The script sleeps for minutes * 60 after the banner, so anything but
+        # a positive whole number would tear the tunnel down as it opens.
+        env:
+          MINUTES: ${{ inputs.minutes }}
+        run: |
+          case "${MINUTES}" in
+            '' | *[!0-9]* | 0*)
+              echo "::error::minutes must be a positive whole number, not '${MINUTES}'."
+              exit 1
+              ;;
+          esac
+
+      - name: Open the tunnel
+        env:
+          VSCODE_TUNNEL_PASSWORD: ${{ secrets.VSCODE_TUNNEL_PASSWORD }}
+          VSCODE_TUNNEL_KEEP_ALIVE_MINUTES: ${{ inputs.minutes }}
+          # The script posts to a merge request when this is set. There is no
+          # merge request here, so it prints the URL to the log instead.
+          GITLAB_API_TOKEN: ''
+        run: bash .gitlab/scripts/run-vscode-tunnel.sh

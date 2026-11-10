@@ -28,15 +28,15 @@ name: Release
 # no token. It stays off until the repository variable NPM_PUBLISH is `true`,
 # which is set once each package names this file as its trusted publisher on
 # npmjs.com. Until then the packed tarballs are the dry run.
+# Kept off 2.0.x, whose 2.x release flow returns before alpha.1.
 on:
   push:
-    branches: ['*.x']
+    branches: ['*.x', '!2.0.x']
     paths:
       - '.changeset/*.md'
       - '!.changeset/README.md'
   pull_request:
-    # No branch filter, for the reason given in ci.yml: it matches the base,
-    # so a stacked pull request that changes these paths ran no jobs.
+    branches-ignore: ['2.0.x', 'feature/2.0.x-**']
     paths:
       - .github/workflows/release.yml
       - .changeset/config.json
@@ -62,7 +62,7 @@ jobs:
   # Runs on pull requests too, as a rehearsal. No id-token here: a lifecycle
   # script in a pull request must not be able to reach npm.
   snapshot:
-    if: github.repository == 'druxt/druxt.js'
+    if: github.repository == 'druxt/druxt.js' && github.ref != 'refs/heads/2.0.x'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -139,8 +139,11 @@ jobs:
     needs: snapshot
     # workflow_dispatch takes no branch filter and can target a tag, so a tag
     # named like a release line would otherwise pass the suffix test.
+    # The ref test here and on snapshot keeps a manual run off 2.0.x, as the
+    # triggers keep pushes off.
     if: >-
       github.event_name != 'pull_request' &&
+      github.ref != 'refs/heads/2.0.x' &&
       startsWith(github.ref, 'refs/heads/') &&
       endsWith(github.ref, '.x') &&
       vars.NPM_PUBLISH == 'true' &&
@@ -242,21 +245,6 @@ jobs:
           version: yarn run version
           title: 'chore(release): version packages'
           commit: 'chore(release): version packages'
-
-      # The action writes a body that names each release, but it finds a
-      # release's changelog section by a heading reading exactly the version,
-      # and scripts/changelog-dates.mjs dates every heading. It found none and
-      # left every changelog out. The working tree is the version commit here,
-      # so the body is rebuilt from its changelogs.
-      - name: Put each release's changelog in the version pull request
-        if: steps.changesets.outputs.pullRequestNumber != ''
-        env:
-          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
-          GH_REPO: ${{ github.repository }}
-          PR: ${{ steps.changesets.outputs.pullRequestNumber }}
-        run: |
-          node scripts/release/pr-body.mjs "$GITHUB_SHA" > "$RUNNER_TEMP/version-pr.md"
-          gh pr edit "$PR" --body-file "$RUNNER_TEMP/version-pr.md"
 
       # The publish path below runs only once no changesets are pending. That is
       # correct rather than a limitation: a changeset still pending means its
