@@ -118,10 +118,7 @@
     },
     {
       "description": "Packages get one PR per dependency, so its title names the package and version, and every package's use of it moves together.",
-      "matchFileNames": [
-        "packages/*/package.json",
-        "!packages/test-utils/package.json"
-      ],
+      "matchFileNames": ["packages/*/package.json"],
       "matchDepTypes": [
         "dependencies",
         "peerDependencies",
@@ -131,21 +128,6 @@
       "addLabels": ["published"],
       "prBodyNotes": [
         "This dependency ships to every site that installs the package. Add a changeset saying what changes for a site, if anything."
-      ]
-    },
-    {
-      "description": "druxt-test-utils is private, so its test packages join test tooling. Its other dependencies follow the published packages' one PR per dependency.",
-      "matchFileNames": ["packages/test-utils/package.json"],
-      "groupName": "test tooling",
-      "matchPackageNames": [
-        "jest-*",
-        "@jest/*",
-        "babel-jest",
-        "esbuild-jest",
-        "vue-jest",
-        "@vue/test-utils",
-        "cypress",
-        "start-server-and-test"
       ]
     }
   ]

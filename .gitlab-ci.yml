@@ -450,7 +450,7 @@ test:unit:
     - corepack enable
     - yarn install --immutable
     - yarn build
-    - yarn vitest run --passWithNoTests
+    - yarn vitest run --project unit --project nuxt
     - section_end "unit"
 
 # Rehearses a release up to the publish: cut a snapshot, build it, and run
@@ -555,6 +555,44 @@ test:release:
       # assert once more and fail rather than continue against no backend.
       curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null
     - section_end "backend"
+
+# The sources against Nuxt's generated types. The typecheck app lists no
+# module yet, so this checks the test harness and the configs; the core port
+# adds @druxt/core, whose dist preparing the app then loads, which is why the
+# packages build first. The consumer check against the built declarations,
+# typecheck:dist, returns with the packages.
+test:typecheck:
+  extends: .node
+  stage: test
+  interruptible: true
+  needs: []
+  script:
+    - section_start "typecheck" "Typechecking the sources"
+    - corepack enable
+    - yarn install --immutable
+    - yarn build
+    - yarn typecheck
+    - section_end "typecheck"
+
+# The standalone suite against the provisioned backend. For now it holds one
+# check, that the backend answers /jsonapi as JSON:API. The module ports add
+# each module alone in a real Nuxt 4 app, built and served, rendering the
+# backend's content with nothing of Nuxt stubbed.
+test:standalone:
+  extends: .drupal-backend
+  stage: test
+  needs: []
+  script:
+    - !reference [.provision-backend, script]
+    # The backend's address, from the variables the provision step serves it on.
+    - export DRUXT_BASE_URL="http://${WEBSERVER_HOST}:${WEBSERVER_PORT}"
+    - section_start "build" "Building the packages"
+    - yarn install --immutable
+    - yarn build
+    - section_end "build"
+    - section_start "standalone" "Each module installed alone"
+    - yarn test:standalone
+    - section_end "standalone"
 
 #
 # --- VS Code tunnel (manual) ---

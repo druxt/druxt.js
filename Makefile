@@ -1,4 +1,4 @@
-.PHONY: help setup build test lint lint-all clean
+.PHONY: help setup build test test-standalone lint lint-all clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -10,8 +10,11 @@ setup: ## Enable corepack and install dependencies (run this first)
 build: ## Build all packages
 	yarn build
 
-test: ## Run the tests (needs DRUXT_BASE_URL, a Drupal backend)
+test: ## Run the unit and component tests (no backend needed)
 	yarn test
+
+test-standalone: ## Run the standalone tests (needs DRUXT_BASE_URL, a Drupal backend)
+	yarn test:standalone
 
 lint: ## Run ESLint
 	yarn lint

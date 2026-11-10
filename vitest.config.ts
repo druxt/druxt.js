@@ -1,10 +1,27 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
+import { defineVitestProject } from '@nuxt/test-utils/config'
 
-// The nuxt project returns with the test harness and its component tests' app, test/nuxt/app.
-export default defineConfig({
+// Async factory, not top-level await: this .ts config loads as CommonJS (no "type": "module").
+export default defineConfig(async () => ({
   test: {
     projects: [
       { test: { name: 'unit', include: ['test/unit/*.test.ts'] } },
+      await defineVitestProject({
+        test: {
+          name: 'nuxt',
+          include: ['test/nuxt/*.test.ts'],
+          environment: 'nuxt',
+          environmentOptions: {
+            nuxt: {
+              rootDir: fileURLToPath(new URL('./test/nuxt/app', import.meta.url)),
+              // import.meta.dev otherwise reads false in this environment.
+              overrides: { dev: true },
+            },
+          },
+          setupFiles: ['test/nuxt/setup.ts'],
+        },
+      }),
       {
         test: {
           name: 'standalone',
@@ -27,4 +44,4 @@ export default defineConfig({
       },
     ],
   },
-})
+}))
