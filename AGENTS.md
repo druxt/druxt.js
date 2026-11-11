@@ -194,6 +194,21 @@ the 1.x line, so the two never share an npm package.
 | `packages/site`       | `@druxt/site`       | The whole site from Drupal                                            |
 | `packages/views`      | `@druxt/views`      | Views components                                                      |
 
+A source file's path says who may import it. What a consumer reaches,
+through the exports map, a build entry, a barrel's value re-export or
+what the Nuxt module registers, sits outside any `utils/`. What only the
+package imports sits in a `utils/`. A plain library keeps its public
+modules in `src/` and its helpers in `src/utils/`. A Nuxt module keeps
+build-time helpers in `src/utils/`, its public runtime at the top of
+`src/runtime/`, and the files Nuxt loads by path in `components/`,
+`pages/`, `plugins/`, `middleware/` and `assets/`. `runtime/server/` has
+`routes/`, `plugins/` and `utils/`. An entry point with modules of its
+own, such as `runtime/devel/` or `@druxt/menu/tree`, is a folder with its
+own `utils/`. A type a barrel re-exports belongs in the package's types
+file, such as `packages/client/src/types.ts`. Druxt registers
+each auto-import by name, so `server/utils/` is not auto-imported as it
+is in a Nuxt app. `test/unit/layout.test.ts` checks every package.
+
 Drupal-side counterparts (`druxt`, `decoupled_router`, `jsonapi_menu_items`,
 `jsonapi_views`, …) are separate drupal.org projects, not part of this repo.
 
