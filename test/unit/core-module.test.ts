@@ -1,275 +1,74 @@
-import DruxtNuxtModule from '../../src'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { loadNuxt } from 'nuxt/kit'
+import type { Nuxt } from 'nuxt/schema'
+import { afterAll, describe, expect, it, vi } from 'vitest'
 
-const options = {
-  baseUrl: 'https://api.umami.demo.druxtjs.org',
-  endpoint: '/jsonapi',
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+const loaded: Nuxt[] = []
+
+/** Loads @druxt/core with these `druxt.auth` options, and returns the app and the auto-imports it registered. */
+const load = async (auth?: Record<string, unknown>) => {
+  const nuxt = await loadNuxt({
+    cwd: join(root, 'test/unit/fixtures/core-module'),
+    ready: true,
+    overrides: { _prepare: true, ...(auth ? { druxt: { baseUrl: 'https://drupal.test', auth } } : {}) } as Record<string, unknown>,
+  })
+  loaded.push(nuxt)
+  const imports: Array<{ name: string }> = []
+  await nuxt.callHook('imports:extend', imports as never)
+  const routes = nuxt.options.serverHandlers.map((handler) => handler.route)
+  const publicAuth = (nuxt.options.runtimeConfig.public.druxt as { auth?: { password?: boolean } }).auth
+  return { routes, imports: imports.map((entry) => entry.name), password: publicAuth?.password }
 }
 
-let mock
+afterAll(async () => {
+  for (const nuxt of loaded) await nuxt.close()
+})
 
-describe('DruxtJS Nuxt module', () => {
-  beforeEach(() => {
-    mock = {
-      addModule: jest.fn(),
-      addPlugin: jest.fn(),
-      addServerMiddleware: jest.fn(),
-      addTemplate: jest.fn(),
-      nuxt: {
-        hook: jest.fn((hook, fn) => {
-          const arg = {
-            'components:dirs': [],
-            'storybook:config': { stories: [] }
-          }
-          return fn(arg[hook])
-        }),
-      },
-      options: {
-        buildDir: 'build',
-        druxt: options,
-        cli: {
-          badgeMessages: [],
-        }
-      },
-      DruxtNuxtModule
+describe('the core module\'s browser sign-in', () => {
+  // On Simple OAuth 6, a token holds the roles its scopes name and no others: with none, a signed-in editor reads less
+  // than an anonymous visitor.
+  it('warns at build with DRUXT_E01004 when browser sign-in names no scope, and not when it names one', async () => {
+    const written: string[] = []
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
+    const stdout = vi.spyOn(process.stdout, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
+    try {
+      await load({ clientId: 'site' })
+      expect(written.filter((line) => line.includes('DRUXT_E01004'))).toHaveLength(1)
+      expect(written.join('')).toContain('druxt.auth.scope')
+      written.length = 0
+      await load({ clientId: 'site', scope: 'editor' })
+      await load()
+      expect(written.join('')).not.toContain('DRUXT_E01004')
+    } finally {
+      stderr.mockRestore()
+      stdout.mockRestore()
     }
-  })
+  }, 120_000)
+})
 
-  test('Module options', () => {
-    // Call Druxt module with module options.
-    DruxtNuxtModule.call(mock, options)
-
-    // Expect addPlugin to have been called with options.
-    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options: expect.objectContaining(options) }))
-  })
-
-  test('Process cache defaults', async () => {
-    // The client plugin is the addPlugin call that carries the module options.
-    const pluginOptions = () => mock.addPlugin.mock.calls.map(([plugin]) => plugin.options).filter((o) => o && o.baseUrl).pop()
-
-    // On in production, for as long as Drupal's Cache-Control allows.
-    mock.options.dev = false
-    await DruxtNuxtModule.call(mock, options)
-    expect(pluginOptions().cache).toStrictEqual({})
-
-    // Off in development, where a content edit must show at once.
-    mock.options.dev = true
-    await DruxtNuxtModule.call(mock, options)
-    expect(pluginOptions().cache).toBe(false)
-    mock.options.dev = false
-
-    // A site can cap the lifetime and name its session cookie.
-    await DruxtNuxtModule.call(mock, { ...options, cache: { ttl: 60, sessionCookie: 'sid' } })
-    expect(pluginOptions().cache).toStrictEqual({ ttl: 60, sessionCookie: 'sid' })
-    await DruxtNuxtModule.call(mock, { ...options, cache: false })
-    expect(pluginOptions().cache).toBe(false)
-  })
-
-  test('Cache clear endpoint', async () => {
-    const pluginOptions = () => mock.addPlugin.mock.calls.map(([plugin]) => plugin.options).filter((o) => o && o.baseUrl)
-    const endpoint = () => mock.addServerMiddleware.mock.calls.map(([m]) => m).find((m) => m.path === '/_druxt/cache/clear')
-
-    // Off without a secret.
-    await DruxtNuxtModule.call(mock, options)
-    expect(endpoint()).toBe(undefined)
-
-    // On with one, and the secret never reaches a plugin, which would send it to the browser.
-    mock.addPlugin.mockClear()
-    await DruxtNuxtModule.call(mock, { ...options, cache: { secret: 'correct-horse-battery', ttl: 60 } })
-    expect(typeof endpoint().handler).toBe('function')
-    expect(pluginOptions().length).toBeGreaterThan(0)
-    for (const pluginOption of pluginOptions()) {
-      expect(JSON.stringify(pluginOption)).not.toContain('correct-horse-battery')
-      expect(pluginOption.cache).toStrictEqual({ ttl: 60 })
-    }
-  })
-
-  test('Root options', () => {
-    // Set root options.
-    mock.options.druxt = options
-
-    // Call Druxt module.
-    DruxtNuxtModule.call(mock)
-
-    // Expect addPlugin to have been called with options.
-    expect(mock.addPlugin).toHaveBeenCalledWith(expect.objectContaining({ options: expect.objectContaining(options) }))
-  })
-
-  test('Default options', async () => {
-    // Expect:
-    // - Components enabled.
-    // - Vuex store enabled.
-    await DruxtNuxtModule.call(mock)
-    expect(mock.options.components).toBe(true)
-    expect(mock.options.store).toBe(true)
-
-    // Expect:
-    // - Components disabled.
-    mock.options.components = false
-    await DruxtNuxtModule.call(mock)
-    expect(mock.options.components).toBe(false)
-  })
-
-  test('Axios transpile', async () => {
-    // Expect:
-    // - axios added to build.transpile, once only.
-    await DruxtNuxtModule.call(mock)
-    expect(mock.options.build.transpile).toContain('axios')
-
-    await DruxtNuxtModule.call(mock)
-    expect(mock.options.build.transpile.filter((o) => o === 'axios')).toHaveLength(1)
-  })
-
-  test('Plugin order', async () => {
-    // Expect:
-    // - extendPlugins to be a function.
-    await DruxtNuxtModule.call(mock)
-    expect(typeof mock.options.extendPlugins).toBe('function')
-
-    // Expect:
-    // - The plugins should have the $druxt plugin first.
-    const plugins = [
-      { src: `${mock.options.buildDir}/foobar.js` },
-      { src: `${mock.options.buildDir}/druxt.js` },
-      { src: `${mock.options.buildDir}/axios.js` }
-    ]
-    let sorted = mock.options.extendPlugins(plugins)
-    expect(sorted[0].src).toBe(`${mock.options.buildDir}/axios.js`)
-    expect(sorted[1].src).toBe(`${mock.options.buildDir}/druxt.js`)
-  })
-
-  test('@nuxtjs/axios module', async () => {
-    mock.options.extendPlugins = jest.fn((o) => o)
-
-    await DruxtNuxtModule.call(mock)
-
-    // Expect addModule to have been called to install @nuxtjs/axios.
-    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/axios')
-  })
-
-  test('API Proxy', async () => {
-    // Enable API Proxy.
-    mock.options.druxt = {
-      ...options,
-      proxy: {
-        api: true,
-      }
-    }
-    await DruxtNuxtModule.call(mock)
-
-    // Ensure Nuxt proxy is enabled.
-    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
-    // Ensure proxies are set.
-    expect(mock.options.proxy).toStrictEqual({
-      [`/en${options.endpoint}`]: options.baseUrl,
-      [`/es${options.endpoint}`]: options.baseUrl,
-      [options.endpoint]: options.baseUrl,
-      '/router/translate-path': options.baseUrl
+describe('the core module\'s cache options', () => {
+  it('puts content and maxSize in the public config, and keeps the secret private', async () => {
+    const nuxt = await loadNuxt({
+      cwd: join(root, 'test/unit/fixtures/core-module'),
+      ready: true,
+      overrides: { _prepare: true, druxt: { baseUrl: 'https://drupal.test', cache: { content: true, maxSize: 1024, ttl: 60, secret: 'shared' } } } as Record<string, unknown>,
     })
-  })
+    loaded.push(nuxt)
+    expect((nuxt.options.runtimeConfig.public.druxt as { cache?: unknown }).cache).toEqual({ content: true, maxSize: 1024, ttl: 60 })
+    expect((nuxt.options.runtimeConfig.druxt as { cache?: { secret?: string } }).cache?.secret).toBe('shared')
+  }, 120_000)
 
-  test('File Proxy', async () => {
-    // Enable File proxy.
-    mock.options.druxt = {
-      ...options,
-      proxy: {
-        files: true,
-      }
-    }
-    await DruxtNuxtModule.call(mock)
-
-    expect(mock.options.proxy).toStrictEqual({
-      '/sites/default/files': options.baseUrl
+  it('gives the proxy the session cookie pattern in development, where the cache is off', async () => {
+    const nuxt = await loadNuxt({
+      cwd: join(root, 'test/unit/fixtures/core-module'),
+      dev: true,
+      ready: true,
+      overrides: { _prepare: true, druxt: { baseUrl: 'https://drupal.test', cache: { sessionCookie: 'site_session' } } } as Record<string, unknown>,
     })
-
-    // Use custom files directory.
-    delete mock.options.proxy
-    mock.options.druxt.proxy.files = 'druxtjs.org'
-    await DruxtNuxtModule.call(mock)
-
-    expect(mock.options.proxy).toStrictEqual({
-      '/sites/druxtjs.org/files': options.baseUrl
-    })
-  })
-
-  test('Proxy - disabled', async () => {
-    // Neither the API nor the files proxy is enabled.
-    for (const proxy of [{ api: false }, { api: false, files: false }]) {
-      mock.addModule.mockClear()
-      delete mock.options.proxy
-      mock.options.druxt = { ...options, proxy }
-      await DruxtNuxtModule.call(mock)
-
-      expect(mock.addModule).not.toHaveBeenCalledWith('@nuxtjs/proxy')
-      expect(mock.options.proxy).toBeUndefined()
-    }
-  })
-
-  test('Proxy - merge options', async () => {
-    // Enable API Proxy.
-    mock.options.druxt = {
-      ...options,
-      proxy: {
-        api: true,
-      }
-    }
-
-    // Set array proxy settings.
-    mock.options.proxy = [`${options.baseUrl}/array-test`]
-
-    await DruxtNuxtModule.call(mock)
-
-    // Ensure Nuxt proxy is enabled.
-    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
-    // Ensure proxies are set.
-    expect(mock.options.proxy).toStrictEqual([
-      `${options.baseUrl}/array-test`,
-      `${options.baseUrl}${options.endpoint}`,
-      `${options.baseUrl}/en${options.endpoint}`,
-      `${options.baseUrl}/es${options.endpoint}`,
-      `${options.baseUrl}/router/translate-path`,
-    ])
-
-    // Set object proxy settings.
-    mock.options.proxy = { '/object-test': options.baseUrl }
-
-    await DruxtNuxtModule.call(mock)
-
-    // Ensure Nuxt proxy is enabled.
-    expect(mock.addModule).toHaveBeenCalledWith('@nuxtjs/proxy')
-    // Ensure proxies are set.
-    expect(mock.options.proxy).toStrictEqual({
-      '/object-test': options.baseUrl,
-      [`/en${options.endpoint}`]: options.baseUrl,
-      [`/es${options.endpoint}`]: options.baseUrl,
-      [options.endpoint]: options.baseUrl,
-      '/router/translate-path': options.baseUrl
-    })
-  })
-
-  test('Devel - Server middleware', () => {
-    // Enable development mode.
-    mock.options.dev = true
-    DruxtNuxtModule.call(mock)
-    expect(mock.addServerMiddleware).toHaveBeenCalledWith({
-      handler: 'druxt/dist/server-middleware/template.mjs',
-      path: '/_druxt/template'
-    })
-  })
-
-  test('Components register synchronously', async () => {
-    const dirs = []
-    const hook = jest.fn((name, fn) => name === 'components:dirs' && fn(dirs))
-    await DruxtNuxtModule.call({
-      ...mock,
-      addModule: jest.fn(),
-      nuxt: { ...mock.nuxt, hook },
-      options: mock.options,
-    })
-
-    // Expect every directory to mark its components as not async.
-    expect(dirs.length).toBeGreaterThan(0)
-    for (const dir of dirs) {
-      expect(dir.extendComponent({ isAsync: null })).toStrictEqual({ isAsync: false })
-    }
-  })
+    loaded.push(nuxt)
+    expect((nuxt.options.runtimeConfig.public.druxt as { cache?: unknown }).cache).toBe(false)
+    expect((nuxt.options.runtimeConfig.druxt as { proxy?: { sessionCookie?: string } }).proxy?.sessionCookie).toBe('site_session')
+  }, 120_000)
 })

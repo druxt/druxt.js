@@ -23,7 +23,7 @@
         // The component tests' Nuxt app.
         "test/nuxt/app/app.vue",
         "test/nuxt/setup.ts",
-        // Not run by any CI job yet: the core port adds the job that runs it.
+        // Run by the test:nuxt-floor CI job.
         "scripts/nuxt-floor.mjs",
         // Run by hand: node scripts/bench/process-cache.mjs.
         "scripts/bench/*.mjs"
@@ -31,6 +31,17 @@
       // pinia: the packages that use it declare it. The unit tests of their stores import it too.
       // vue-router: Nuxt's own, which a unit test builds a router with.
       "ignoreDependencies": ["pinia", "vue-router"]
+    },
+    "packages/*": {
+      // A Nuxt module registers its runtime files by path, through
+      // addPlugin(), addComponent() and the like, which no import names.
+      "entry": ["src/runtime/**/*.{ts,vue}"]
+    },
+    "packages/core": {
+      // build.config.ts: unbuild's, read by nuxt-module-build for the kit entry.
+      "entry": ["src/module.ts", "src/runtime/**/*.{ts,vue}", "build.config.ts"],
+      // @pinia/nuxt: installed by name, with installModule().
+      "ignoreDependencies": ["@pinia/nuxt"]
     }
   },
   // Nuxt's virtual modules, and the build templates the Druxt modules alias as #druxt/*.

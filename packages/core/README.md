@@ -1,22 +1,23 @@
-<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/druxt/banner.svg" alt="Druxt: the core client, store and DruxtModule base">
+<img src="https://raw.githubusercontent.com/druxt/druxt.js/HEAD/packages/core/banner.svg" alt="Druxt: the core module, client, store and module contract">
 
-# Druxt
+# @druxt/core
 
-[![npm](https://badgen.net/npm/v/druxt)](https://www.npmjs.com/package/druxt)
-[![dev](https://badgen.net/npm/v/druxt/dev)](https://www.npmjs.com/package/druxt/v/dev)
+[![npm](https://badgen.net/npm/v/@druxt/core)](https://www.npmjs.com/package/@druxt/core)
+[![dev](https://badgen.net/npm/v/@druxt/core/dev)](https://www.npmjs.com/package/@druxt/core/v/dev)
 [![CI](https://github.com/druxt/druxt.js/actions/workflows/ci.yml/badge.svg)](https://github.com/druxt/druxt.js/actions/workflows/ci.yml)
 [![Known Vulnerabilities](https://snyk.io/test/github/druxt/druxt.js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/druxt/druxt.js?targetFile=package.json)
 [![codecov](https://codecov.io/gh/druxt/druxt.js/graph/badge.svg)](https://codecov.io/gh/druxt/druxt.js)
 
-> The core module, DruxtClient, DruxtStore and the DruxtModule base component.
+> The Druxt module for Nuxt 4: the configured client, the store and the module contract.
 
-The core `druxt` package is the foundation every other Druxt module builds
-on. It provides the three pieces the whole framework shares:
+`@druxt/core` is the Nuxt module every other Druxt module builds on. It
+provides the three pieces the whole framework shares:
 
-- **[DruxtClient](#druxtclient)**: the Drupal JSON:API communication layer.
-- **[DruxtStore](#druxtstore)**: the Vuex module caching resources and
-  collections for all modules.
-- **[DruxtModule](#druxtmodule)**: the base component behind the
+- **[DruxtClient](#druxtclient)**: the `@druxt/client` JSON:API client,
+  configured from `druxt` and given to components by `useDruxtClient()`.
+- **[DruxtStore](#druxtstore)**: the Pinia store caching resources and
+  collections for all modules, from `useDruxtStore()`.
+- **DruxtModule**: `useDruxtModule()`, the contract behind the
   theme-component suggestion system.
 
 ## Installation
@@ -24,15 +25,18 @@ on. It provides the three pieces the whole framework shares:
 1. Install the package:
 
    ```sh
-   npm i druxt
+   npm i @druxt/core
    ```
 
-2. Add the module and your backend URL to `nuxt.config.js`:
+2. Add the module and your backend URL to `nuxt.config.ts`:
 
-   ```js
-   export default {
-     modules: [['druxt', { baseUrl: 'https://api.umami.demo.druxtjs.org' }]],
-   };
+   ```ts
+   export default defineNuxtConfig({
+     modules: ['@druxt/core'],
+     druxt: {
+       baseUrl: 'https://api.umami.demo.druxtjs.org',
+     },
+   });
    ```
 
    \* _Replace `https://api.umami.demo.druxtjs.org` with your own
@@ -47,26 +51,28 @@ on. It provides the three pieces the whole framework shares:
 
 ### Development releases
 
-Every change merged to `develop` is published under the `dev` tag:
+Every change merged to a release line is published under the `dev` tag:
 
 ```sh
-npm i druxt@dev
+npm i @druxt/core@dev
 ```
 
 These are unreleased builds. See [development releases](https://druxtjs.org/how-to/use-development-releases) before using one.
 
-## Compatibility
+## Requirements
 
-As of November 2026. See the [releases](https://github.com/druxt/druxt.js/releases) for the current version.
+Nuxt 4.4.4 or later in the 4.x line, and Vue 3.5. Nuxt 4.4 is the last minor on vite 7. Nuxt 4.5 and later need vite 8, so an integration that caps vite at 7 holds a site on Nuxt 4.4.
+
+## Compatibility
 
 |               | Supported                                                                                                                                                                                                             |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Nuxt          | 2.15 or later (Nuxt 2 line). Nuxt 3 is not supported.                                                                                                                                                                 |
-| Vue           | 2.7                                                                                                                                                                                                                   |
-| Node          | 16, the tested version. Node 16 is past upstream end of life. The 1.x line targets it deliberately. 17 and later need `NODE_OPTIONS=--openssl-legacy-provider` to build.                                              |
+| Nuxt          | 4.4.4 or later in the 4.x line. CI tests 4.4.4 and the workspace's own Nuxt.                                                                                                                                          |
+| Vue           | 3.5                                                                                                                                                                                                                   |
+| Vite          | 7 on Nuxt 4.4, 8 on Nuxt 4.5 and later, as Nuxt requires.                                                                                                                                                             |
+| Node          | What Nuxt requires: 22.12 or 24.11 and later on Nuxt 4.4. Tested on 24.                                                                                                                                               |
 | Drupal core   | 10 or 11. `drupal/druxt` 1.2.2 declares `^10 \|\| ^11 \|\| ^12` and ended 8 and 9 support. 12 is declared but waits on Decoupled Router and JSON:API Menu Items. Tested against 10 and 11.                            |
 | Drupal module | `drupal/druxt` ^1.2.2, which brings `decoupled_router`, `jsonapi_menu_items` and `jsonapi_views`. Earlier 1.2.x releases are incompatible with Decoupled Router 2.0.7 ([#3618675](https://www.drupal.org/i/3618675)). |
-| Known pins    | `@nuxtjs/storybook` 4.2.0 (later majors need Nuxt 3). Axios 0.35.0 or later, which the site installs as a peer                                                                                                        |
 
 What these bounds promise over time is stated in the
 [support and versioning policy](https://druxtjs.org/explanation/support-and-versioning).
@@ -74,84 +80,23 @@ What these bounds promise over time is stated in the
 Translated routes also need a `decoupled_router` patch; see the
 [multilingual guide](https://druxtjs.org/how-to/multilingual).
 
-## Settings
-
-| Option        | Type              | Default      | Description                                                              |
-| ------------- | ----------------- | ------------ | ------------------------------------------------------------------------ |
-| `baseUrl`     | `string`          |              | The Drupal backend URL. **Required.**                                    |
-| `endpoint`    | `string`          | `'/jsonapi'` | The JSON:API endpoint path.                                              |
-| `proxy.api`   | `boolean`         | `false`      | Proxy API requests via Nuxt ([guide](https://druxtjs.org/how-to/proxy)). |
-| `proxy.files` | `boolean\|string` | `false`      | Proxy Drupal files. A string sets the site.                              |
-| `cache`       | `boolean\|object` | `{}`         | The server cache, see below. `false` turns it off.                       |
-
-See the [Nuxt module API](https://druxtjs.org/api/packages/druxt/nuxt) for the full
-options list.
-
-## Server cache
-
-In production, the server keeps Drupal's responses between requests for as
-long as Drupal's `Cache-Control` header allows: the JSON:API index and menus,
-and with `cache.content` every other response. Drupal sets that header from
-its page cache maximum age, so at the default of 0 nothing is kept.
-
-```js
-// nuxt.config.js
-export default {
-  druxt: {
-    cache: { content: true, secret: process.env.DRUXT_CACHE_SECRET },
-  },
-};
-```
-
-| Option                | Type      | Default             | Description                                                                      |
-| --------------------- | --------- | ------------------- | -------------------------------------------------------------------------------- |
-| `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.                        |
-| `cache.maxSize`       | `number`  | `52428800` (50 MB)  | Bytes of responses kept per cache area and consumer. The least recently used go. |
-| `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.                       |
-| `cache.secret`        | `string`  |                     | Turns on `POST /_druxt/cache/clear`.                                             |
-| `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it.              |
-
-- A request with an `Authorization` header or a Drupal session cookie skips
-  the cache, and `nuxt dev` runs without it.
-- Only successful responses are kept. A `bypassCache` dispatch fetches afresh
-  and stores the result.
-- A full cache area takes about three times `cache.maxSize` in server memory,
-  and a response larger than the limit is not kept.
-- Clear it with `druxt/clearCache`, or from Drupal with
-  `POST /_druxt/cache/clear` and the secret in an `X-Druxt-Secret` header.
-  Each Nuxt process has its own cache to clear.
-- The clear endpoint is server middleware, so list Druxt, or `druxt-site`,
-  under `modules`. Nuxt skips `buildModules` under `nuxt start`.
-
-The [caching guide](https://druxtjs.org/how-to/caching) covers the cache in
-more depth.
-
-### Clearing from Drupal with Purge
-
-With `cache.content` on, an edit can take up to the page cache maximum age, or
-`cache.ttl` if that is shorter, to reach anonymous visitors, unless Drupal
-clears the cache. The
-[Purge](https://www.drupal.org/project/purge) module can send that request on
-every save. Enable `purge`, `purge_purger_http`, `purge_queuer_coretags` and
-`purge_processor_lateruntime`, then add the bundled HTTP purger:
-
-```sh
-drush p:purger-add httpbundled
-```
-
-Point it at the Nuxt server's host and port, as Drupal reaches it, with the
-path `/_druxt/cache/clear`, the method `POST`, the `X-Druxt-Secret` header and
-the invalidation type `tag`. Set the secret from `settings.php` as
-a `$config` override, not in exported configuration.
-
 ## DruxtClient
 
 The client is the communication layer between your application and Drupal's
 JSON:API: resources, collections, indexing and authentication all flow
 through it.
 
-```js
-import { DruxtClient } from 'druxt';
+In a component, `useDruxtClient()` gives the client the module configured:
+
+```ts
+const client = useDruxtClient();
+const collection = await client.getCollection('node--article');
+```
+
+Outside Nuxt, construct one from `@druxt/client`:
+
+```ts
+import { DruxtClient } from '@druxt/client';
 
 const client = new DruxtClient('https://api.umami.demo.druxtjs.org');
 const collection = await client.getCollection('node--article');
@@ -159,35 +104,31 @@ const collection = await client.getCollection('node--article');
 
 - [Use the Druxt client directly](https://druxtjs.org/how-to/use-the-druxt-client): practical
   guide, including non-Nuxt usage.
-- [DruxtClient API](https://druxtjs.org/api/packages/druxt/client): full method reference.
+- [DruxtClient API](https://druxtjs.org/api/packages/client/client): full method reference.
 
 ## DruxtStore
 
-The Vuex module that all Druxt modules share: request deduplication, the
-resource/collection cache, and include handling.
+The Pinia store that all Druxt modules share: request deduplication, the
+resource/collection cache, and include handling. `useDruxtStore()` is
+auto-imported.
 
-```js
-const resource = await this.$store.dispatch('druxt/getResource', {
+```ts
+const store = useDruxtStore();
+const resource = await store.getResource({
   type: 'node--article',
   id: 'd8dfd355-7f2f-4fc3-a149-288e4e293bdd',
 });
 ```
 
+A module that has resources from a request of its own seeds the store with `addResource({ resource, partial })` or `addCollection({ collection, type, hash, partial })`. With `partial: true`, such as for a view's rows, a resource holds only the fields it came with, its own attribute and relationship keys, so a later read of another field fetches it. A resource with no self link is stored by its type and id. An included resource, at any depth, holds every field, so a later read of it, sparse or not, comes from the store. The store doesn't keep Drupal's `links`, on a resource, its relationships or a collection, so the page payload doesn't name a backend URL. It records partial or full when it adds a resource, so a hydrated page tells them apart too.
+
+`clearCache()` empties the client's caches and every Druxt store. The edit store's drafts are unsaved edits, so they stay. `clearCache({ drafts: true })` closes them too, and a sign-in and a sign-out call it that way, so one user's unsaved edits never reach the next.
+
 - [The DruxtStore concept page](https://druxtjs.org/explanation/druxt-store): how it works
   and why it exists.
-- [DruxtStore API](https://druxtjs.org/api/packages/druxt/stores/druxt): mutations and
-  actions.
+- [DruxtStore API](https://druxtjs.org/api/packages/core/runtime/store): its state
+  and actions.
 - [Deprecations](https://druxtjs.org/modules/druxt/deprecations): retired signatures.
-
-## DruxtModule
-
-The base component for all Druxt components: it turns a `druxt()` options
-object (component suggestions, props, slots) into themeable rendering.
-Building on it is covered by the
-[custom module tutorial](https://druxtjs.org/tutorials/first-custom-module), and the mechanism
-by [Component resolution](https://druxtjs.org/explanation/component-resolution).
-
-- [DruxtModule API](https://druxtjs.org/api/packages/druxt/components/DruxtModule).
 
 ## Where to go next
 
@@ -198,14 +139,14 @@ by [Component resolution](https://druxtjs.org/explanation/component-resolution).
 
 ## Modules
 
-- [druxt-blocks](https://druxtjs.org/modules/blocks) - Decoupled Blocks and Regions
-- [druxt-breadcrumb](https://druxtjs.org/modules/breadcrumb) - Router based Breadcrumbs
-- [druxt-entity](https://druxtjs.org/modules/entity) - Decoupled Content entities, forms and fields
-- [druxt-menu](https://druxtjs.org/modules/menu) - Decoupled Menus
-- [druxt-router](https://druxtjs.org/modules/router) - Decoupled Router
-- [druxt-schema](https://druxtjs.org/modules/schema) - Drupal Display mode schemas
-- [druxt-site](https://druxtjs.org/modules/site) - Out-of-the-box decoupled Drupal Site
-- [druxt-views](https://druxtjs.org/modules/views) - Decoupled Views
+- [@druxt/blocks](https://druxtjs.org/modules/blocks) - Decoupled Blocks and Regions
+- [@druxt/breadcrumb](https://druxtjs.org/modules/breadcrumb) - Router based Breadcrumbs
+- [@druxt/entity](https://druxtjs.org/modules/entity) - Decoupled Content entities, forms and fields
+- [@druxt/menu](https://druxtjs.org/modules/menu) - Decoupled Menus
+- [@druxt/router](https://druxtjs.org/modules/router) - Decoupled Router
+- [@druxt/schema](https://druxtjs.org/modules/schema) - Drupal Display mode schemas
+- [@druxt/site](https://druxtjs.org/modules/site) - A decoupled Drupal site from one module
+- [@druxt/views](https://druxtjs.org/modules/views) - Decoupled Views
 
 ---
 
@@ -235,6 +176,10 @@ Find support or get involved in building Druxt via the community channels:
 [![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://github.com/druxt/druxt.js)
 
 See the [Contributing guide](https://github.com/druxt/druxt.js/blob/HEAD/CONTRIBUTING.md).
+
+Before a change to a runtime option is done:
+
+- Prove a runtime option by changing it after the build, not only by its presence in config.
 
 ---
 
