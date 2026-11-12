@@ -230,7 +230,9 @@ export class DruxtClient {
    * the user. A refresh that fails otherwise, such as a timeout, keeps the
    * session, and the 401 stands. A read Drupal refuses for a token with no
    * refresh token to try ends the session the same way, and is repeated as
-   * the anonymous visitor, unless it went to another host.
+   * the anonymous visitor. The token goes only to Drupal's origin, or this
+   * one when the API is proxied: a request to another host carries none, and
+   * its 401 is returned as it is.
    *
    * @param url - A path or an absolute URL.
    * @param options - The request options.
@@ -247,23 +249,27 @@ export class DruxtClient {
     // The site's proxy adds the session's credentials unless asked not to, as a request without auth must be anonymous.
     const anonymous = (given: DruxtRequestOptions): DruxtRequestOptions => (this.auth?.session ? { ...given, headers: { ...given.headers, 'X-Druxt-Auth': 'none' } } : given)
     if (options.auth === false) options = anonymous(options)
-    if (auth?.expired && auth.canRefresh) await auth.refresh().catch(() => {})
+    // The token goes only to the origin the client sends Drupal's requests to, as druxt-auth's `targetsBackend` keeps
+    // it. Another host gets no token, and its 401 says nothing about Drupal's: no refresh, retry or anonymous repeat.
+    const own = sameOrigin(this.url(url), this.url('/'))
+    const token = () => (own ? auth?.accessToken : undefined)
+    if (own && auth?.expired && auth.canRefresh) await auth.refresh().catch(() => {})
 
     const read = READS.has((options.method || 'GET').toUpperCase())
     // The session the request is sent for, and whether it carries one: a token, or with `session` on, the proxy's.
     const sent = auth?.held()
-    const carried = !!auth && (auth.session ? auth.loggedIn : !!auth.accessToken)
-    let response = await this.send<T>(url, options, auth?.accessToken)
-    if (response.status === 401 && auth?.canRefresh) {
+    const carried = own && !!auth && (auth.session ? auth.loggedIn : !!auth.accessToken)
+    let response = await this.send<T>(url, options, token())
+    if (response.status === 401 && own && auth?.canRefresh) {
       try {
         await auth.refresh()
-        response = await this.send<T>(url, options, auth.accessToken)
+        response = await this.send<T>(url, options, token())
       } catch (error) {
         if (refreshRefused(error) && read) response = await this.send<T>(url, anonymous(options))
       }
-    } else if (response.status === 401 && auth && carried && sent !== undefined && read && sameOrigin(this.url(url), this.url('/'))) {
+    } else if (response.status === 401 && auth && carried && sent !== undefined && read) {
       // Nothing to refresh with, or another read's refused refresh ended the session first: what the read was sent
-      // with decides. Another host's 401 says nothing about Drupal's token.
+      // with decides.
       auth.drop(sent)
       response = await this.send<T>(url, anonymous(options))
     }

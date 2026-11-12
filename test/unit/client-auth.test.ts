@@ -258,6 +258,30 @@ describe('refresh and retry', () => {
     expect(client.auth.accessToken).toBe('access-1')
   })
 
+  it('sends no bearer token to another host', async () => {
+    const elsewhere = 'https://cdn.example/file.json'
+    const { fetch, calls } = drupal({ [`GET ${elsewhere}`]: { ok: true }, [`GET ${ARTICLE}`]: article })
+    const client = signedIn(fetch)
+    await client.request(elsewhere)
+    await client.request(`${BASE_URL}${ARTICLE}`)
+    expect(calls.map((call) => call.headers.Authorization)).toEqual([undefined, 'Bearer access-1'])
+  })
+
+  it('neither refreshes nor replays another host\'s 401', async () => {
+    const elsewhere = 'https://cdn.example/file.json'
+    const { fetch, calls } = drupal({
+      [`GET ${elsewhere}`]: () => json({}, 401),
+      'POST /oauth/token': () => json({ access_token: 'access-2', refresh_token: 'refresh-2', expires_in: 300 }),
+    })
+    const client = signedIn(fetch)
+    await expect(client.request(elsewhere)).rejects.toMatchObject({ response: { status: 401 } })
+    // Nor is an expired token refreshed for a request that will not carry it.
+    expire(client)
+    expect((await client.request(elsewhere, { validateStatus: () => true })).status).toBe(401)
+    expect(requested(calls)).toEqual([`GET ${elsewhere}`, `GET ${elsewhere}`])
+    expect([client.auth.accessToken, client.auth.refreshToken]).toEqual(['access-1', 'refresh-1'])
+  })
+
   it('repeats every read refused together with a dropped token anonymously, and ends the session once', async () => {
     const { fetch, calls } = simpleOauth((authorization) => !authorization)
     const client = new DruxtClient(BASE_URL, { fetch, auth: { clientId: 'druxt' } }) as DruxtClient & { auth: DruxtAuth }
