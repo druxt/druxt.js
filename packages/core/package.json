@@ -25,6 +25,11 @@
       "types": "./dist/classes.d.mts",
       "import": "./dist/classes.mjs"
     },
+    "./markup": {
+      "source": "./src/markup/index.ts",
+      "types": "./dist/markup.d.mts",
+      "import": "./dist/markup.mjs"
+    },
     "./files": {
       "source": "./src/files/index.ts",
       "types": "./dist/files.d.mts",
@@ -34,6 +39,16 @@
       "source": "./src/routes/index.ts",
       "types": "./dist/routes.d.mts",
       "import": "./dist/routes.mjs"
+    },
+    "./fields": {
+      "source": "./src/fields/index.ts",
+      "types": "./dist/fields.d.mts",
+      "import": "./dist/fields.mjs"
+    },
+    "./edit": {
+      "source": "./src/edit/index.ts",
+      "types": "./dist/edit.d.mts",
+      "import": "./dist/edit.mjs"
     },
     "./runtime": {
       "source": "./src/runtime/index.ts",

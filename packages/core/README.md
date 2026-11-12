@@ -125,6 +125,8 @@ A server route reads them with `useDruxtServerSettings(event)`, which adds the s
 
 `druxt.classes` decides which of Druxt's classes the default output has: `true` for every class, the default, `false` for none, or the parts and modifiers to keep, such as `{ items: false, modifiers: ['field'] }`. A plugin rewrites them with `defineDruxtClasses((classes, ctx) => classes)`, which runs on the server and in the browser alike, so it must return the same list for the same input. The entity module's README lists every class and the policy's parts. The naming rules and `resolveDruxtClasses()` are in `@druxt/core/classes`, which doesn't import a framework.
 
+`filterFieldMarkup(html)`, from `@druxt/core/markup`, filters the markup a field's settings hold, such as its description, as Drupal's `FieldFilteredMarkup` does. The tags it keeps are `a abbr b big code del em i ins pre q small span strong sub sup tt ol ul li p br img`. A `<script>` or `<style>` goes with its content, and any other tag goes with its text left. On a kept tag, only `href`, `title`, `alt`, `src` and `class` stay, `href` and `src` only for an `http`, `https` or `mailto` URL or a path relative to the site, never a protocol-relative `//host` one. The result is safe to set as `innerHTML`. It doesn't import a framework or use a DOM.
+
 ### Anchors
 
 The default output names the entities and fields it renders with data attributes, for an inline editor, a diff view or the site's tests to find again. `@druxt/core/anchors` holds the contract, which doesn't import a framework:

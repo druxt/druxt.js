@@ -11,11 +11,14 @@
     "./test/types/.nuxt/nuxt.d.ts",
     "./packages/client/src/**/*.ts",
     "./packages/*/src/runtime/**/*",
-    // The framework-free subpaths, @druxt/core/classes, @druxt/core/anchors, @druxt/core/files and
-    // @druxt/core/routes.
+    // The framework-free subpaths, @druxt/core/classes, @druxt/core/anchors, @druxt/core/markup,
+    // @druxt/core/files, @druxt/core/fields, @druxt/core/routes and @druxt/core/edit.
     "./packages/core/src/anchors/**/*",
     "./packages/core/src/classes/**/*",
+    "./packages/core/src/markup/**/*",
     "./packages/core/src/files/**/*",
-    "./packages/core/src/routes/**/*"
+    "./packages/core/src/fields/**/*",
+    "./packages/core/src/routes/**/*",
+    "./packages/core/src/edit/**/*"
   ]
 }
