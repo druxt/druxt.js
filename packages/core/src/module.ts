@@ -1,4 +1,4 @@
-import { addImports, addPlugin, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
+import { addImports, addPlugin, addServerHandler, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
 import { clientOptions } from '@druxt/client'
 import type { DruxtClient, DruxtConfig, DruxtConnectionConfig } from '@druxt/client'
 import { defu } from 'defu'
@@ -7,6 +7,7 @@ import { splitDruxtConfig } from './utils/config'
 import { addPrebundle, corePrebundle, DRUXT_DEFAULTS_IMPORT, druxtDefaults } from './kit'
 import type { DruxtAnchorsSetting } from './anchors'
 import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
+import { DRUXT_API_BASE } from './routes'
 
 /** Credentials for build-time requests; see createBuildClient. */
 export interface DruxtBuildAuthOptions {
@@ -555,5 +556,16 @@ export default defineNuxtModule<DruxtOptions>({
       addImports({ name, from: resolve('./runtime/settings') })
     }
     addPlugin(resolve('./runtime/plugins/pinia'))
+
+    const auth = options.auth
+    if (auth) {
+      // Registered whenever the password grant is offered, or the server holds the session, whose sign-in, refresh and
+      // sign-out run through it. The secret, if any, is read at runtime.
+      const session = (auth as { session?: boolean }).session
+      if (auth.password || session) {
+        addServerHandler({ route: `${DRUXT_API_BASE}/auth/token`, method: 'post', handler: resolve('./runtime/server/routes/token') })
+      }
+      if (session) addServerHandler({ route: `${DRUXT_API_BASE}/auth/logout`, method: 'post', handler: resolve('./runtime/server/routes/logout') })
+    }
   },
 })

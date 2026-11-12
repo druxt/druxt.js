@@ -2243,6 +2243,7 @@ __metadata:
     "@nuxt/schema": "npm:^4.4.4"
     "@pinia/nuxt": "npm:^1.0.2"
     consola: "npm:^3.4.2"
+    cookie-es: "npm:^1.2.3"
     defu: "npm:^6.1.4"
     drupal-jsonapi-params: "npm:^2.3.2"
     h3: "npm:^1.15.11"
