@@ -1,6 +1,6 @@
 import { describe, expect, expectTypeOf, it } from 'vitest'
 import { DRUXT_CLIENT_KEYS, DruxtClient, clientOptions, connectionsFrom, mergeDeep, resolveDruxtSettings } from '../../packages/client/src'
-import type { DruxtClientOptions, DruxtConfig, DruxtConnectionConfig } from '../../packages/client/src'
+import type { DruxtClientOptions, DruxtConfig, DruxtConnectionConfig, DruxtPublicAuthOptions } from '../../packages/client/src'
 import { BASE_URL } from './fake-drupal'
 
 describe('clientOptions', () => {
@@ -161,8 +161,13 @@ describe('clientOptions from a connection', () => {
   })
 
   it('fills a missing clientId from the Consumer', () => {
-    const picked = clientOptions({ baseUrl: BASE_URL, consumer: { id: 'c' }, browser: { scope: 'read', password: false } as never })
-    expect(picked.auth).toEqual({ clientId: 'c', scope: 'read', password: false })
+    // A connection's browser may leave its clientId out, so this compiles with no cast.
+    const connection: DruxtConnectionConfig = { baseUrl: BASE_URL, consumer: { id: 'c' }, browser: { scope: 'read', password: false, login: '/login', callback: '/callback' } }
+    const picked = clientOptions(connection)
+    expect(picked.auth).toEqual({ clientId: 'c', scope: 'read', password: false, login: '/login', callback: '/callback' })
+    // The browser's own auth options keep it required.
+    expectTypeOf<DruxtPublicAuthOptions['clientId']>().toEqualTypeOf<string>()
+    expectTypeOf<NonNullable<DruxtConnectionConfig['browser']>['clientId']>().toEqualTypeOf<string | undefined>()
     const flat = clientOptions({ baseUrl: BASE_URL, auth: { scope: 'read' } as never, build: { auth: { clientId: 'b' } } })
     expect(flat.auth).toEqual({ scope: 'read', clientId: 'b' })
   })
