@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DruxtClient, forgetProcessCache, resetProcessCache } from '../../packages/client/src'
+import { MAX_PARTITIONS } from '../../packages/client/src/processCache'
 import type { DruxtFetch } from '../../packages/client/src'
 import { BASE_URL, json } from './fake-drupal'
 
@@ -100,6 +101,23 @@ describe('the content cache', () => {
     expect(fetches()).toBe(6)
   })
 
+  it('withholds the process cache from a signed-in session-mode client', async () => {
+    // Built on the server, as nothing stops a site doing: its requests carry the session a proxy adds.
+    const session = () => client(drupal(), { content: true }, { auth: { clientId: 'druxt', session: true } })
+    const signedOut = session()
+    expect(signedOut.processCache('content')).toBeDefined()
+    await client().get(page)
+    const signedIn = session()
+    signedIn.auth!.setTokens({ access_token: 'held by the site', expires_in: 300 })
+    expect(signedIn.processCache('content')).toBeUndefined()
+    expect(signedIn.processCache('index')).toBeUndefined()
+    // It neither reads the stored answer nor stores its own.
+    await signedIn.get(page, { bypassCache: true })
+    await signedIn.get(page)
+    expect(fetches()).toBe(3)
+    expect((await client().get<{ data: { attributes: { sent: number } } }>(page)).data.data.attributes.sent).toBe(1)
+  })
+
   it('keeps Druxt\'s token cookie out under a custom session cookie pattern', async () => {
     const custom = { content: true, sessionCookie: 'site_session_[a-f0-9]+' }
     await client(drupal(), custom, { headers: { cookie: 'druxt.auth.access_token=abc' } }).get(page)
@@ -141,10 +159,53 @@ describe('the content cache', () => {
     expect(fetches()).toBe(2)
   })
 
+  it('stores no response under headers added while it was in flight', async () => {
+    let answer = () => {}
+    const fetch: DruxtFetch = async (input, init) => {
+      sent.push(new URL(String(input)).pathname)
+      const lang = (init?.headers as Record<string, string>)['Accept-Language']
+      const response = json({ data: { id: uuid, type: 'node--page', attributes: { lang } } }, 200, PUBLIC)
+      if (sent.length === 1) await new Promise<void>((resolve) => { answer = resolve })
+      return response
+    }
+    const shared = client(fetch, { content: true }, { headers: { 'Accept-Language': 'en' } })
+    const read = shared.get(page)
+    await vi.waitFor(() => expect(sent).toHaveLength(1))
+    shared.addHeaders({ 'Accept-Language': 'es' })
+    answer()
+    await read
+    // Neither under the headers the client has now, which may pick another variant, nor under the ones it had.
+    const spanish = await client(fetch, { content: true }, { headers: { 'Accept-Language': 'es' } }).get<{ data: { attributes: { lang: string } } }>(page)
+    expect(spanish.data.data.attributes.lang).toBe('es')
+    await client(fetch, { content: true }, { headers: { 'Accept-Language': 'en' } }).get(page)
+    expect(fetches()).toBe(3)
+  })
+
   it('shares entries between clients with the same headers in any case', async () => {
     await client(drupal(), { content: true }, { headers: { 'Accept-Language': 'es', 'X-Site': 'a' } }).get(page)
     await client(drupal(), { content: true }, { headers: { 'x-site': 'a', 'accept-language': 'es' } }).get(page)
     expect(fetches()).toBe(1)
+  })
+
+  it('holds MAX_PARTITIONS times maxSize at most, however many header sets and consumer ids clients send', async () => {
+    const maxSize = 1000
+    // The bytes each scope holds, read from the cache the process keeps on globalThis.
+    const stored = () => {
+      const scopes = (globalThis as Record<symbol, unknown>)[Symbol.for('druxt.processCache')] as Map<string, Map<string, Record<symbol, number>>>
+      const size = Symbol.for('druxt.processCacheSize')
+      return [...scopes.values()].map((consumers) => [...consumers.values()].reduce((sum, entries) => sum + (entries[size] || 0), 0))
+    }
+    for (let i = 0; i < 200; i++) {
+      const headers = i % 2 ? { 'Accept-Language': `l${i}` } : { 'X-Consumer-ID': `c${i}` }
+      await client(drupal({ pad: 300 }), { content: true, maxSize }, { headers }).get(`/jsonapi/node/page/${i % 7}`)
+      for (const bytes of stored()) expect(bytes).toBeLessThanOrEqual(MAX_PARTITIONS * maxSize)
+    }
+    // The most recent header set still reads what it stored, and the first one's entries are gone.
+    const before = sent.length
+    await client(drupal({ pad: 300 }), { content: true, maxSize }, { headers: { 'Accept-Language': 'l199' } }).get(`/jsonapi/node/page/${199 % 7}`)
+    expect(sent.length).toBe(before)
+    await client(drupal({ pad: 300 }), { content: true, maxSize }, { headers: { 'X-Consumer-ID': 'c0' } }).get('/jsonapi/node/page/0')
+    expect(sent.length).toBeGreaterThan(before)
   })
 
   it('stores only a 200', async () => {
@@ -159,6 +220,29 @@ describe('the content cache', () => {
     await client(drupal({ headers: { 'cache-control': 'max-age=0, no-cache, must-revalidate' } })).get(page, { bypassCache: true })
     await client().get(page)
     expect(fetches()).toBe(3)
+  })
+
+  it('drops the entry when a bypass is answered with a 404', async () => {
+    await client().get(page)
+    await expect(client(drupal({ status: 404 })).get(page, { bypassCache: true })).rejects.toMatchObject({ response: { status: 404 } })
+    await client().get(page)
+    expect(fetches()).toBe(3)
+  })
+
+  it('drops the entry when a bypass is answered with anything but a 200 its caller accepts', async () => {
+    await client().get(page)
+    const answered = await client(drupal({ status: 403 })).get(page, { bypassCache: true, validateStatus: () => true })
+    expect(answered.status).toBe(403)
+    await client().get(page)
+    expect(fetches()).toBe(3)
+  })
+
+  it('keeps the entry when a bypass never reaches Drupal', async () => {
+    await client().get(page)
+    const down: DruxtFetch = async () => { throw new TypeError('fetch failed') }
+    await expect(client(down).get(page, { bypassCache: true })).rejects.toThrow('fetch failed')
+    await client().get(page)
+    expect(fetches()).toBe(1)
   })
 
   it('a bypass goes to Drupal and stores the fresh document', async () => {

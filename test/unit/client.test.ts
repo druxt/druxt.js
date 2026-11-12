@@ -554,6 +554,40 @@ describe('request()', () => {
     expect(calls.map((call) => call.headers['Content-Type'])).toEqual([undefined, undefined, undefined, undefined])
   })
 
+  it('sends a stream body with duplex half, as fetch requires', async () => {
+    const bytes = new TextEncoder().encode('bytes')
+    async function* chunks() { yield bytes }
+    const stream = () => new ReadableStream({ start(controller) { controller.enqueue(bytes); controller.close() } })
+    const received: string[] = []
+    const duplex: unknown[] = []
+    // Node's own Request, as its fetch builds one: it refuses a stream body without duplex.
+    const fetch: DruxtFetch = async (url, init) => {
+      duplex.push((init as { duplex?: string }).duplex)
+      received.push(await new Request(url, init as RequestInit).text())
+      return json({}, 201)
+    }
+    const client = new DruxtClient(BASE_URL, { fetch })
+    for (const body of [stream(), chunks(), 'raw', new Blob([bytes])]) {
+      await client.request('/jsonapi/file/upload', { method: 'POST', body: body as BodyInit })
+    }
+    expect(received).toEqual(['bytes', 'bytes', 'raw', 'bytes'])
+    // Only a stream needs it.
+    expect(duplex).toEqual(['half', 'half', undefined, undefined])
+  })
+
+  it('sends a stream from another realm with duplex half, telling it by its shape', async () => {
+    const { fetch, calls } = drupal({ 'POST /jsonapi/file/upload': () => json({}, 201) })
+    const duplex: unknown[] = []
+    const client = new DruxtClient(BASE_URL, { fetch: (url, init) => { duplex.push((init as { duplex?: string }).duplex); return fetch(url, init) } })
+    // A stream another realm's ReadableStream made, which this realm's instanceof does not know.
+    class ForeignStream { locked = false; getReader() { return new ReadableStream().getReader() } }
+    const body = new ForeignStream()
+    expect(body instanceof ReadableStream).toBe(false)
+    await client.request('/jsonapi/file/upload', { method: 'POST', body })
+    expect(duplex).toEqual(['half'])
+    expect(calls[0]?.body).toBe(body)
+  })
+
   it('sends a plain object, an object with no prototype and an array as JSON:API', async () => {
     const { fetch, calls } = drupal({ 'POST /jsonapi/node/article': () => json({}, 201) })
     const client = new DruxtClient(BASE_URL, { fetch })

@@ -92,6 +92,15 @@ describe('the access token', () => {
     expect(calls[0]?.headers.Authorization).toBeUndefined()
   })
 
+  it('is forgotten at once by logout(), with no request, outside session mode', async () => {
+    const { fetch, calls } = simpleOauth(() => true)
+    const client = signedIn(fetch, { logoutUrl: `${BASE_URL}/api/_druxt/auth/logout` })
+    const logout = client.auth.logout()
+    expect([client.auth.loggedIn, client.auth.accessToken, client.auth.refreshToken]).toEqual([false, undefined, undefined])
+    await expect(logout).resolves.toBeUndefined()
+    expect(calls).toHaveLength(0)
+  })
+
   it('is no longer sent after logout()', async () => {
     const { fetch, calls } = simpleOauth(() => true)
     const client = signedIn(fetch)
@@ -184,6 +193,89 @@ describe('refresh and retry', () => {
     expect(client.auth.loggedIn).toBe(false)
   })
 
+  /** Drupal answering each method on the article, anonymously or with a token, and a token endpoint that refuses or fails. */
+  const expiredSite = (token: () => Response | Promise<Response>) => drupal({
+    'POST /oauth/token': token,
+    ...Object.fromEntries(['GET', 'HEAD', 'POST', 'PATCH', 'DELETE'].map((method) => [`${method} ${ARTICLE}`, (call: Call) => (call.headers.Authorization ? json({ errors: [{ title: 'Unauthorized' }] }, 401) : json(article))])),
+  })
+
+  for (const method of ['GET', 'HEAD']) {
+    it(`sends a ${method} whose expired token's refresh is refused as the anonymous visitor`, async () => {
+      const { fetch, calls } = expiredSite(() => json({ error: 'invalid_grant' }, 400))
+      const client = signedIn(fetch)
+      expire(client)
+      expect((await client.request(ARTICLE, { method })).status).toBe(200)
+      expect(requested(calls)).toEqual(['POST /oauth/token', `${method} ${ARTICLE}`])
+      expect(calls[1]?.headers.Authorization).toBeUndefined()
+      expect(client.auth.loggedIn).toBe(false)
+    })
+  }
+
+  for (const method of ['POST', 'PATCH', 'DELETE']) {
+    it(`does not send a ${method} whose expired token's refresh is refused, and rejects with the refusal`, async () => {
+      for (const status of [400, 401]) {
+        const { fetch, calls } = expiredSite(() => json({ error: 'invalid_grant' }, status))
+        const client = signedIn(fetch)
+        expire(client)
+        const write = client.request(ARTICLE, { method, body: { data: { type: 'node--article', id: 'a1' } } })
+        await expect(write).rejects.toMatchObject({ response: { status } })
+        expect(isSuperseded(await write.catch((error: unknown) => error))).toBe(false)
+        expect(requested(calls)).toEqual(['POST /oauth/token'])
+        expect(client.auth.loggedIn).toBe(false)
+      }
+    })
+  }
+
+  it('sends a request whose expired token\'s refresh fails otherwise as the session, and reports its 401', async () => {
+    for (const method of ['GET', 'POST']) {
+      const { fetch, calls } = expiredSite(() => json({ error: 'server_error' }, 503))
+      const client = signedIn(fetch)
+      expire(client)
+      await expect(client.request(ARTICLE, { method })).rejects.toMatchObject({ response: { status: 401 } })
+      // The 401 path then decides, as for a token Drupal revoked: its refresh fails too, and the 401 stands.
+      expect(requested(calls)).toEqual(['POST /oauth/token', `${method} ${ARTICLE}`, 'POST /oauth/token'])
+      expect(calls[1]?.headers.Authorization).toBe('Bearer access-1')
+      expect([client.auth.accessToken, client.auth.refreshToken]).toEqual(['access-1', 'refresh-1'])
+    }
+  })
+
+  /** A stream body and an async iterable one, each new, which a first send consumes. */
+  const streams = () => {
+    const bytes = new TextEncoder().encode('{"data":{}}')
+    async function* chunks() { yield bytes }
+    return [new ReadableStream({ start(controller) { controller.enqueue(bytes); controller.close() } }), chunks()]
+  }
+
+  it('refreshes on a 401 to a stream body but does not send it again, returning the 401 for the caller to retry', async () => {
+    for (const body of streams()) {
+      const { fetch, calls } = drupal({
+        'POST /oauth/token': () => json({ access_token: 'access-2', refresh_token: 'refresh-2', expires_in: 300 }),
+        'POST /jsonapi/file/upload': (call) => (call.headers.Authorization === 'Bearer access-2' ? json({}, 201) : json({ errors: [{ title: 'Unauthorized' }] }, 401)),
+      })
+      const client = signedIn(fetch)
+      await expect(client.request('/jsonapi/file/upload', { method: 'POST', body })).rejects.toMatchObject({ response: { status: 401 } })
+      expect(requested(calls)).toEqual(['POST /jsonapi/file/upload', 'POST /oauth/token'])
+      // The session is refreshed, so the caller's retry with a fresh stream goes as it.
+      expect(client.auth.accessToken).toBe('access-2')
+    }
+  })
+
+  it('does not repeat a read with a stream body anonymously, after a refused refresh or with no refresh token', async () => {
+    for (const refreshToken of ['refresh-1', undefined]) {
+      for (const body of streams()) {
+        const { fetch, calls } = drupal({
+          'POST /oauth/token': () => json({ error: 'invalid_grant' }, 400),
+          [`GET ${ARTICLE}`]: (call) => (call.headers.Authorization ? json({ errors: [{ title: 'Unauthorized' }] }, 401) : json(article)),
+        })
+        const client = new DruxtClient(BASE_URL, { fetch, auth: { clientId: 'druxt' } }) as DruxtClient & { auth: DruxtAuth }
+        client.auth.setTokens({ access_token: 'access-1', refresh_token: refreshToken, expires_in: 300 }, 'druxt')
+        await expect(client.request(ARTICLE, { body })).rejects.toMatchObject({ response: { status: 401 } })
+        expect(requested(calls)).toEqual(refreshToken ? [`GET ${ARTICLE}`, 'POST /oauth/token'] : [`GET ${ARTICLE}`])
+        expect(client.auth.loggedIn).toBe(false)
+      }
+    }
+  })
+
   it('repeats every read refused together anonymously, after their one refused refresh', async () => {
     const { fetch, calls } = simpleOauth((authorization) => !authorization, 400)
     const client = signedIn(fetch)
@@ -241,6 +333,26 @@ describe('refresh and retry', () => {
     expect(client.auth.accessToken).toBe('access-1')
   })
 
+  it('returns the 401 of a read with no refresh token answered after a newer client credentials session signed in', async () => {
+    let refuse = () => {}
+    const { fetch, calls } = drupal({
+      'POST /oauth/token': () => json({ token_type: 'Bearer', access_token: 'machine', expires_in: 300 }),
+      [`GET ${ARTICLE}`]: (call) => (call.headers.Authorization
+        ? new Promise<Response>((resolve) => { refuse = () => resolve(json({ errors: [{ title: 'Unauthorized' }] }, 401)) })
+        : json(article)),
+    })
+    const client = new DruxtClient(BASE_URL, { fetch, auth: { clientId: 'druxt', clientSecret: 'secret' } }) as DruxtClient & { auth: DruxtAuth }
+    client.auth.setTokens({ access_token: 'access-1', expires_in: 300 }, 'druxt')
+    const read = client.request(ARTICLE)
+    await vi.waitFor(() => expect(calls).toHaveLength(1))
+    // A grant that issues no refresh token, so the newer session has none to refresh with either.
+    await client.auth.loginWithClientCredentials({ scope: 'druxt_build' })
+    refuse()
+    await expect(read).rejects.toMatchObject({ response: { status: 401 } })
+    expect(requested(calls)).toEqual([`GET ${ARTICLE}`, 'POST /oauth/token'])
+    expect([client.auth.accessToken, client.auth.loggedIn]).toEqual(['machine', true])
+  })
+
   it('repeats nothing for a 401 to a read sent without a token, as there is none to drop', async () => {
     const { fetch, calls } = simpleOauth(() => false)
     const client = new DruxtClient(BASE_URL, { fetch, auth: { clientId: 'druxt' } })
@@ -275,6 +387,107 @@ describe('refresh and retry', () => {
     expect([client.auth.accessToken, client.auth.refreshToken]).toEqual(['access-b', 'refresh-b'])
   })
 
+  it('does not send a request that waited on a refresh as a session signed in meanwhile', async () => {
+    let issue = () => {}
+    const { fetch, calls } = drupal({
+      'POST /oauth/token': (call) => (form(call).grant_type === 'refresh_token'
+        ? new Promise<Response>((resolve) => { issue = () => resolve(json({ access_token: 'access-2', refresh_token: 'refresh-2', expires_in: 300 })) })
+        : json({ access_token: 'access-b', refresh_token: 'refresh-b', expires_in: 300 })),
+      'POST /jsonapi/node/article': () => json(article, 201),
+    })
+    const client = signedIn(fetch)
+    expire(client)
+    const write = client.request('/jsonapi/node/article', { method: 'POST', body: { data: { type: 'node--article' } } })
+    await vi.waitFor(() => expect(requested(calls)).toContain('POST /oauth/token'))
+    // Another user signs in while the first one's refresh runs.
+    await client.auth.loginWithPassword({ username: 'b', password: 'b' })
+    issue()
+    const error = await write.catch((reason: unknown) => reason)
+    expect(isSuperseded(error)).toBe(true)
+    expect(requested(calls)).toEqual(['POST /oauth/token', 'POST /oauth/token'])
+    expect([client.auth.accessToken, client.auth.refreshToken]).toEqual(['access-b', 'refresh-b'])
+  })
+
+  it('rejects a get() that waited on a refresh as a session signed in meanwhile as superseded', async () => {
+    let issue = () => {}
+    const { fetch, calls } = drupal({
+      'POST /oauth/token': (call) => (form(call).grant_type === 'refresh_token'
+        ? new Promise<Response>((resolve) => { issue = () => resolve(json({ access_token: 'access-2', refresh_token: 'refresh-2', expires_in: 300 })) })
+        : json({ access_token: 'access-b', refresh_token: 'refresh-b', expires_in: 300 })),
+      [`GET ${ARTICLE}`]: article,
+    })
+    const client = signedIn(fetch)
+    expire(client)
+    const read = client.get(ARTICLE)
+    await vi.waitFor(() => expect(requested(calls)).toContain('POST /oauth/token'))
+    await client.auth.loginWithPassword({ username: 'b', password: 'b' })
+    issue()
+    expect(isSuperseded(await read.catch((reason: unknown) => reason))).toBe(true)
+    expect(requested(calls)).not.toContain(`GET ${ARTICLE}`)
+  })
+
+  it('sends a request that waited on a refresh without a token once a sign-out ended its session', async () => {
+    let issue = () => {}
+    const { fetch, calls } = drupal({
+      'POST /oauth/token': () => new Promise<Response>((resolve) => { issue = () => resolve(json({ access_token: 'access-2', refresh_token: 'refresh-2', expires_in: 300 })) }),
+      [`GET ${ARTICLE}`]: article,
+    })
+    const client = signedIn(fetch)
+    expire(client)
+    const read = client.request(ARTICLE)
+    await vi.waitFor(() => expect(requested(calls)).toContain('POST /oauth/token'))
+    // A signed-out client sends its requests without a token, as one made after the sign-out would be.
+    await client.auth.logout()
+    issue()
+    expect((await read).status).toBe(200)
+    expect(requested(calls)).toEqual(['POST /oauth/token', `GET ${ARTICLE}`])
+    expect(calls[1]?.headers.Authorization).toBeUndefined()
+    expect(client.auth.loggedIn).toBe(false)
+  })
+
+  it('neither refreshes nor retries a 401 answered after another session signed in', async () => {
+    let refuse = () => {}
+    let posts = 0
+    const { fetch, calls } = drupal({
+      'POST /oauth/token': (call) => (form(call).grant_type === 'refresh_token'
+        ? json({ access_token: 'access-b2', refresh_token: 'refresh-b2', expires_in: 300 })
+        : json({ access_token: 'access-b', refresh_token: 'refresh-b', expires_in: 300 })),
+      'POST /jsonapi/node/article': () => (++posts === 1
+        ? new Promise<Response>((resolve) => { refuse = () => resolve(json({ errors: [{ title: 'Unauthorized' }] }, 401)) })
+        : json(article, 201)),
+    })
+    const client = signedIn(fetch)
+    const write = client.request('/jsonapi/node/article', { method: 'POST', body: { data: { type: 'node--article' } } })
+    await vi.waitFor(() => expect(posts).toBe(1))
+    // Another user signs in before the first one's 401 arrives.
+    await client.auth.loginWithPassword({ username: 'b', password: 'b' })
+    refuse()
+    await expect(write).rejects.toMatchObject({ response: { status: 401 } })
+    expect(requested(calls)).toEqual(['POST /jsonapi/node/article', 'POST /oauth/token'])
+    expect(calls[0]?.headers.Authorization).toBe('Bearer access-1')
+    expect([client.auth.accessToken, client.auth.refreshToken]).toEqual(['access-b', 'refresh-b'])
+  })
+
+  it('retries a 401 answered after a refresh of its own session, with the refreshed token', async () => {
+    let refuse = () => {}
+    let posts = 0
+    const { fetch, calls } = drupal({
+      'POST /oauth/token': () => json({ access_token: 'access-2', refresh_token: 'refresh-2', expires_in: 300 }),
+      'POST /jsonapi/node/article': () => (++posts === 1
+        ? new Promise<Response>((resolve) => { refuse = () => resolve(json({ errors: [{ title: 'Unauthorized' }] }, 401)) })
+        : json(article, 201)),
+    })
+    const client = signedIn(fetch)
+    const write = client.request('/jsonapi/node/article', { method: 'POST', body: { data: { type: 'node--article' } } })
+    await vi.waitFor(() => expect(posts).toBe(1))
+    // A refresh keeps the session: the write is still the session's.
+    await client.auth.refresh()
+    refuse()
+    expect((await write).status).toBe(201)
+    expect(requested(calls)).toEqual(['POST /jsonapi/node/article', 'POST /oauth/token', 'POST /jsonapi/node/article'])
+    expect(calls[2]?.headers.Authorization).toBe('Bearer access-2')
+  })
+
   it('sends no bearer token to another host', async () => {
     const elsewhere = 'https://cdn.example/file.json'
     const { fetch, calls } = drupal({ [`GET ${elsewhere}`]: { ok: true }, [`GET ${ARTICLE}`]: article })
@@ -282,6 +495,34 @@ describe('refresh and retry', () => {
     await client.request(elsewhere)
     await client.request(`${BASE_URL}${ARTICLE}`)
     expect(calls.map((call) => call.headers.Authorization)).toEqual([undefined, 'Bearer access-1'])
+  })
+
+  it('sends no client Authorization, Proxy-Authorization or Cookie header to another host', async () => {
+    const elsewhere = 'https://cdn.example/file.json'
+    const credentials = { authorization: 'Basic ZWRpdG9yOnNlY3JldA==', 'PROXY-Authorization': 'Basic proxy-credentials', Cookie: 'SESSabc=1' }
+    for (const set of ['option', 'addHeaders'] as const) {
+      const { fetch, calls } = drupal({ [`GET ${elsewhere}`]: { ok: true }, [`GET ${ARTICLE}`]: article })
+      const client = new DruxtClient(BASE_URL, { fetch, ...(set === 'option' ? { headers: credentials } : {}) })
+      if (set === 'addHeaders') client.addHeaders(credentials)
+      await client.request(elsewhere)
+      await client.request(ARTICLE)
+      const sent = calls.map((call) => Object.keys(call.headers).map((name) => name.toLowerCase()))
+      expect(sent[0]).not.toEqual(expect.arrayContaining(['authorization']))
+      expect(sent[0]).not.toEqual(expect.arrayContaining(['proxy-authorization']))
+      expect(sent[0]).not.toEqual(expect.arrayContaining(['cookie']))
+      // Drupal's origin gets each of them.
+      expect(sent[1]).toEqual(expect.arrayContaining(['authorization', 'proxy-authorization', 'cookie']))
+    }
+  })
+
+  it('sends other client headers to another host, and a request\'s own headers as given', async () => {
+    const elsewhere = 'https://cdn.example/file.json'
+    const { fetch, calls } = drupal({ [`GET ${elsewhere}`]: { ok: true } })
+    const client = new DruxtClient(BASE_URL, { fetch, headers: { 'Accept-Language': 'es', Authorization: 'Basic ZWRpdG9yOnNlY3JldA==' } })
+    await client.request(elsewhere)
+    await client.request(elsewhere, { headers: { authorization: 'Bearer for-the-cdn', cookie: 'cdn=1', 'Proxy-Authorization': 'Basic proxy-credentials' } })
+    expect(calls[0]?.headers).toEqual(expect.objectContaining({ 'Accept-Language': 'es' }))
+    expect(calls[1]?.headers).toEqual(expect.objectContaining({ 'Accept-Language': 'es', authorization: 'Bearer for-the-cdn', cookie: 'cdn=1', 'Proxy-Authorization': 'Basic proxy-credentials' }))
   })
 
   it('neither refreshes nor replays another host\'s 401', async () => {
@@ -312,7 +553,7 @@ describe('refresh and retry', () => {
     expect(client.auth.loggedIn).toBe(false)
   })
 
-  it('keeps a session signed in again while a read with a dropped token was pending, and repeats the read without it', async () => {
+  it('keeps a session signed in again while a read with a dropped token was pending, and returns the read\'s 401', async () => {
     let refuse = () => {}
     const { fetch, calls } = drupal({
       [`GET ${ARTICLE}`]: (call) => (call.headers.Authorization
@@ -326,10 +567,10 @@ describe('refresh and retry', () => {
     // A sign-in that completes while the read is pending is a session of its own.
     client.auth.setTokens({ access_token: 'access-new' })
     refuse()
-    expect((await read).status).toBe(200)
+    // The read belonged to the old session: its 401 stands, as it is never repeated as the new one, nor anonymously.
+    await expect(read).rejects.toMatchObject({ response: { status: 401 } })
     expect(client.auth.accessToken).toBe('access-new')
-    // The read belonged to the old session: it is repeated anonymously, never as the new one.
-    expect(calls.map((call) => call.headers.Authorization)).toEqual(['Bearer access-1', undefined])
+    expect(calls.map((call) => call.headers.Authorization)).toEqual(['Bearer access-1'])
   })
 
   it('shares one refresh between concurrent requests', async () => {
@@ -536,6 +777,37 @@ describe('DruxtAuth', () => {
     await expect(refreshes[1]).rejects.toMatchObject({ superseded: true })
     expect(owner.auth.accessToken).toBe('access-2')
     expect([joined.auth.accessToken, joined.auth.refreshToken]).toEqual(['access-new', 'refresh-new'])
+  })
+
+  it('refreshes a session signed in while the last session\'s refresh was pending, on its own', async () => {
+    for (const share of [undefined, sharing().share]) {
+      const answer: Record<string, () => void> = {}
+      const { fetch, calls } = drupal({
+        'POST /oauth/token': (call) => {
+          const fields = form(call)
+          if (fields.grant_type === 'password') return json({ access_token: 'access-b', refresh_token: 'refresh-b', expires_in: 300 })
+          const next = fields.refresh_token === 'refresh-1' ? '2' : 'b2'
+          return new Promise<Response>((resolve) => { answer[fields.refresh_token!] = () => resolve(json({ access_token: `access-${next}`, refresh_token: `refresh-${next}`, expires_in: 300 })) })
+        },
+        [`GET ${ARTICLE}`]: (call) => (call.headers.Authorization === 'Bearer access-b2' ? json(article) : json({ errors: [{ title: 'Unauthorized' }] }, 401)),
+      })
+      const client = signedIn(fetch, share ? { refresh: { share } } : {})
+      const last = client.auth.refresh().catch((reason: unknown) => reason)
+      await vi.waitFor(() => expect(answer['refresh-1']).toBeDefined())
+      await client.auth.loginWithPassword({ username: 'b', password: 'b' })
+      // The new session's 401 starts a refresh of its own, rather than waiting on the last session's.
+      const read = client.request(ARTICLE)
+      await vi.waitFor(() => expect(answer['refresh-b']).toBeDefined())
+      answer['refresh-1']!()
+      expect(isSuperseded(await last)).toBe(true)
+      // The last session's refresh, answering first, leaves the new session's as the one in flight, which a caller joins.
+      const joined = client.auth.refresh()
+      answer['refresh-b']!()
+      expect((await read).status).toBe(200)
+      await expect(joined).resolves.toMatchObject({ access_token: 'access-b2' })
+      expect(calls.filter((call) => call.method === 'POST').map((call) => form(call).refresh_token ?? form(call).grant_type)).toEqual(['refresh-1', 'password', 'refresh-b'])
+      expect([client.auth.accessToken, client.auth.refreshToken]).toEqual(['access-b2', 'refresh-b2'])
+    }
   })
 
   it('keeps a logout made while a sign-in was pending', async () => {
@@ -759,6 +1031,45 @@ describe('a session the site\'s server holds', () => {
     expect(client.auth.loggedIn).toBe(true)
   })
 
+  /** A site whose token route refuses or fails, and whose article answers each method, anonymously only when asked. */
+  const expiredSite = (token: () => Response) => drupal({
+    'POST /api/_druxt/auth/token': token,
+    ...Object.fromEntries(['GET', 'HEAD', 'POST', 'PATCH', 'DELETE'].map((method) => [`${method} ${ARTICLE}`, (call: Call) => (call.headers['X-Druxt-Auth'] === 'none' ? json(article) : json({ errors: [{ title: 'Unauthorized' }] }, 401))])),
+  })
+
+  for (const method of ['GET', 'HEAD']) {
+    it(`sends a ${method} whose expired session's refresh is refused as the anonymous visitor, asking the proxy for no credentials`, async () => {
+      const { fetch, calls } = expiredSite(() => json({ error: 'invalid_grant' }, 400))
+      const client = sessionClient(fetch, marker(String(Date.now() - 1000)).storage)
+      expect((await client.request(ARTICLE, { method })).status).toBe(200)
+      expect(requested(calls)).toEqual(['POST /api/_druxt/auth/token', `${method} ${ARTICLE}`])
+      expect(calls[1]?.headers['X-Druxt-Auth']).toBe('none')
+      expect(client.auth.loggedIn).toBe(false)
+    })
+  }
+
+  for (const method of ['POST', 'PATCH', 'DELETE']) {
+    it(`does not send a ${method} whose expired session's refresh is refused, and rejects with the refusal`, async () => {
+      const { fetch, calls } = expiredSite(() => json({ error: 'invalid_grant' }, 401))
+      const client = sessionClient(fetch, marker(String(Date.now() - 1000)).storage)
+      await expect(client.request(ARTICLE, { method, body: { data: { type: 'node--article', id: 'a1' } } })).rejects.toMatchObject({ response: { status: 401 } })
+      expect(requested(calls)).toEqual(['POST /api/_druxt/auth/token'])
+      expect(client.auth.loggedIn).toBe(false)
+    })
+  }
+
+  it('sends a request whose expired session\'s refresh fails otherwise as the session, and reports its 401', async () => {
+    for (const method of ['GET', 'POST']) {
+      const { fetch, calls } = expiredSite(() => json({ error: 'server_error' }, 503))
+      const { values, storage } = marker(String(Date.now() - 1000))
+      const client = sessionClient(fetch, storage)
+      await expect(client.request(ARTICLE, { method })).rejects.toMatchObject({ response: { status: 401 } })
+      expect(requested(calls)).toEqual(['POST /api/_druxt/auth/token', `${method} ${ARTICLE}`, 'POST /api/_druxt/auth/token'])
+      expect(calls[1]?.headers['X-Druxt-Auth']).toBeUndefined()
+      expect(values.has(AUTH_STORAGE_KEYS.session)).toBe(true)
+    }
+  })
+
   it('signs out through the site\'s logout route, which clears the cookies the browser cannot', async () => {
     const { fetch, calls } = server()
     const { storage } = marker('on')
@@ -793,9 +1104,8 @@ describe('a session the site\'s server holds', () => {
     return { answers, fetch, calls }
   }
 
-  it('keeps a sign-in completed while its logout route ran, and resolves', async () => {
+  it('forgets a sign-in completed while its logout route ran, and resolves', async () => {
     const { answers, fetch, calls } = parked()
-    // Both sessions store the same `on` marker: a token route that answers without expires_in.
     const { values, storage } = marker('on')
     const client = sessionClient(fetch, storage)
     const logout = client.auth.logout()
@@ -803,10 +1113,11 @@ describe('a session the site\'s server holds', () => {
     await client.auth.loginWithPassword({ username: 'b', password: 'pw' })
     answers.logout()
     await expect(logout).resolves.toBeUndefined()
-    expect([client.auth.loggedIn, values.get(AUTH_STORAGE_KEYS.session)]).toEqual([true, 'on'])
+    // The route deleted the session cookies as it answered: a logout that succeeds leaves no session.
+    expect([client.auth.loggedIn, values.size]).toEqual([false, 0])
   })
 
-  it('keeps a sign-in started while its logout route ran and answered after it', async () => {
+  it('supersedes a sign-in started while its logout route ran and still pending when it answers', async () => {
     const { answers, fetch, calls } = parked('later')
     const { values, storage } = marker('on')
     const client = sessionClient(fetch, storage)
@@ -816,25 +1127,72 @@ describe('a session the site\'s server holds', () => {
     await vi.waitFor(() => expect(calls).toHaveLength(2))
     answers.logout()
     await expect(logout).resolves.toBeUndefined()
-    // The session the logout ended is gone, while the sign-in is still waiting on its answer.
-    expect(client.auth.loggedIn).toBe(false)
     answers.token()
-    await expect(signIn).resolves.toMatchObject({ token_type: 'Bearer' })
-    expect([client.auth.loggedIn, values.get(AUTH_STORAGE_KEYS.session)]).toEqual([true, 'on'])
+    await expect(signIn).rejects.toMatchObject({ superseded: true })
+    expect([client.auth.loggedIn, values.size]).toEqual([false, 0])
   })
 
-  it('forgets the ended session when a sign-in started while its logout route ran is refused', async () => {
-    const { answers, fetch, calls } = parked('later', true)
-    const client = sessionClient(fetch, marker('on').storage)
+  it('supersedes a refresh still pending when its logout route answers', async () => {
+    const answers: { logout: () => void, token: () => void } = { logout: () => {}, token: () => {} }
+    const { fetch, calls } = drupal({
+      'POST /api/_druxt/auth/logout': () => new Promise<Response>((resolve) => { answers.logout = () => resolve(new Response(null, { status: 204 })) }),
+      'POST /api/_druxt/auth/token': () => new Promise<Response>((resolve) => { answers.token = () => resolve(json({ token_type: 'Bearer', expires_in: 300 })) }),
+    })
+    const { values, storage } = marker('on')
+    const client = sessionClient(fetch, storage)
+    const refresh = client.auth.refresh()
+    await vi.waitFor(() => expect(calls).toHaveLength(1))
+    const logout = client.auth.logout()
+    await vi.waitFor(() => expect(calls).toHaveLength(2))
+    answers.logout()
+    await expect(logout).resolves.toBeUndefined()
+    answers.token()
+    await expect(refresh).rejects.toMatchObject({ superseded: true })
+    expect([client.auth.loggedIn, values.size]).toEqual([false, 0])
+  })
+
+  it('signs in after a logout as a first sign-in', async () => {
+    const { answers, fetch, calls } = parked('later')
+    const { values, storage } = marker('on')
+    const client = sessionClient(fetch, storage)
     const logout = client.auth.logout()
     await vi.waitFor(() => expect(calls).toHaveLength(1))
-    const signIn = client.auth.loginWithPassword({ username: 'b', password: 'wrong' })
+    const early = client.auth.loginWithPassword({ username: 'b', password: 'pw' })
     await vi.waitFor(() => expect(calls).toHaveLength(2))
     answers.logout()
     await logout
     answers.token()
-    await expect(signIn).rejects.toMatchObject({ response: { status: 400 } })
-    expect(client.auth.loggedIn).toBe(false)
+    expect(isSuperseded(await early.catch((error: unknown) => error))).toBe(true)
+    const signIn = client.auth.loginWithPassword({ username: 'b', password: 'pw' })
+    await vi.waitFor(() => expect(calls).toHaveLength(3))
+    answers.token()
+    const answered = await signIn.catch((error: unknown) => error)
+    expect(isSuperseded(answered)).toBe(false)
+    expect(answered).toMatchObject({ token_type: 'Bearer' })
+    expect([client.auth.loggedIn, values.get(AUTH_STORAGE_KEYS.session)]).toEqual([true, 'on'])
+  })
+
+  it('keeps the session, and a sign-in made meanwhile, when the logout route fails', async () => {
+    const { fetch } = drupal({
+      'POST /api/_druxt/auth/logout': () => json({ error: 'server_error' }, 500),
+      'POST /api/_druxt/auth/token': () => json({ token_type: 'Bearer' }),
+    })
+    const { values, storage } = marker('on')
+    const client = sessionClient(fetch, storage)
+    const logout = client.auth.logout()
+    await client.auth.loginWithPassword({ username: 'b', password: 'pw' })
+    await expect(logout).rejects.toMatchObject({ response: { status: 500 } })
+    expect([client.auth.loggedIn, values.get(AUTH_STORAGE_KEYS.session)]).toEqual([true, 'on'])
+  })
+
+  it('forgets the session at once, with no request, when no logout route is set', async () => {
+    const { fetch, calls } = server()
+    const { values, storage } = marker('on')
+    const client = new DruxtClient(BASE_URL, { fetch, auth: { clientId: 'druxt', session: true, tokenUrl: TOKEN_ROUTE, storage } }) as DruxtClient & { auth: DruxtAuth }
+    const logout = client.auth.logout()
+    expect([client.auth.loggedIn, values.size]).toEqual([false, 0])
+    await expect(logout).resolves.toBeUndefined()
+    expect(calls).toHaveLength(0)
   })
 
   it('supersedes a sign-in still pending when its logout route answers, started before the logout', async () => {

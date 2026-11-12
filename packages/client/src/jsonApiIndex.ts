@@ -35,6 +35,8 @@ export class JsonApiIndexCache {
   generation = 0
   /** Each fetch's place in the order requests started in, so the process cache drops one a forget came after. */
   private readonly numbers = new WeakMap<Promise<FetchedIndex>, number>()
+  /** The process cache consumer each fetch started as, the client's headers then, so it is stored under no other. */
+  private readonly consumers = new WeakMap<Promise<FetchedIndex>, string | undefined>()
 
   private readonly key: string
   private readonly fetchIndex: (prefix: string) => Promise<FetchedIndex>
@@ -71,6 +73,7 @@ export class JsonApiIndexCache {
       const number = nextRequest()
       request = this.requests[requestKey] = this.fetchIndex(key)
       this.numbers.set(request, number)
+      this.consumers.set(request, before?.consumer)
     }
     let fetched: FetchedIndex
     try {
@@ -84,8 +87,9 @@ export class JsonApiIndexCache {
 
     this.indexes[key] = fetched.index
     // Dropped by the handle when the process cache was cleared, or its index scope forgotten, while the request was
-    // in flight.
-    this.shared()?.set(requestKey, fetched.index, fetched.lifetime, since, this.numbers.get(request))
+    // in flight. Headers changed since the fetch started may pick another variant: it is stored under neither set.
+    const after = this.shared()
+    if (after && after.consumer === this.consumers.get(request)) after.set(requestKey, fetched.index, fetched.lifetime, since, this.numbers.get(request))
     return fetched.index
   }
 

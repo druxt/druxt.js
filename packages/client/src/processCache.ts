@@ -9,6 +9,12 @@ const shared = globalThis as typeof globalThis & Record<symbol, unknown>
 // The running size of a consumer's entries, held on its map of entries.
 const SIZE: unique symbol = Symbol.for('druxt.processCacheSize') as never
 
+/**
+ * The consumers each scope keeps entries for at most, such as the sets of headers its clients send. Past it the least
+ * recently used consumer goes, entries and all, so a scope holds this many times `maxSize` at most.
+ */
+export const MAX_PARTITIONS = 32
+
 const SCOPES = Symbol.for('druxt.processCache')
 const scopes = (shared[SCOPES] || (shared[SCOPES] = new Map())) as Scopes
 
@@ -191,6 +197,8 @@ export const lifetimeLeft = (document: unknown): number => {
 export interface ProcessCacheHandle {
   /** The generation this handle was taken at. */
   generation: number
+  /** The consumer whose entries it reads and writes: compare a handle taken after a request with one taken before. */
+  consumer: string
   get<T = unknown>(key: string): T | undefined
   set<T>(key: string, value: T, seconds: number, since?: number, started?: number): T
 }
@@ -204,7 +212,8 @@ export interface ProcessCacheHandleOptions {
   ttl?: number
   /**
    * The size the scope keeps per consumer at most, in bytes of stored JSON. Past it, expired entries go first, then
-   * the least recently used, and a value larger than the whole limit is not stored.
+   * the least recently used, and a value larger than the whole limit is not stored. A scope keeps `MAX_PARTITIONS`
+   * consumers at most, so it holds that many times `maxSize` at most.
    */
   maxSize?: number
   /** Measures a value for `maxSize`. The bytes of its JSON by default. */
@@ -231,30 +240,43 @@ export const processCache = (scope: string, { credentialed = false, consumer = '
 
   if (!scopes.has(scope)) scopes.set(scope, new Map())
   const consumers = scopes.get(scope)!
-  if (!consumers.has(consumer)) consumers.set(consumer, new Map())
-  const entries = consumers.get(consumer)!
+  // The consumer's entries, made the scope's most recently used, past MAX_PARTITIONS evicting the least recently used.
+  // A read finds none it does not hold, so a miss makes no partition.
+  const partition = (create: boolean): Entries | undefined => {
+    const held = consumers.get(consumer)
+    if (!held && !create) return undefined
+    const entries: Entries = held || new Map()
+    // A Map keeps insertion order, so moving the consumer to the end keeps the least recently used first.
+    consumers.delete(consumer)
+    consumers.set(consumer, entries)
+    for (const key of consumers.keys()) {
+      if (consumers.size <= MAX_PARTITIONS) break
+      consumers.delete(key)
+    }
+    return entries
+  }
   // A ttl caps what may be kept, so 0 keeps nothing; without one, Drupal's lifetime stands.
   const cap = (seconds: number) => (typeof ttl === 'number' ? Math.min(seconds, ttl) : seconds)
   const taken = generation.value
 
   const expired = (entry: Entry, now = Date.now()) => now - entry.created >= entry.seconds * 1000
   // The running size of the entries, kept on the map so every handle and copy of the module agrees.
-  const total = () => entries[SIZE] || 0
-  const remove = (key: string) => {
+  const total = (entries: Entries) => entries[SIZE] || 0
+  const remove = (entries: Entries, key: string) => {
     const entry = entries.get(key)
     if (!entry) return
-    entries[SIZE] = total() - entry.size
+    entries[SIZE] = total(entries) - entry.size
     entries.delete(key)
   }
   const bounded = typeof maxSize === 'number'
-  // Keeps the scope within `maxSize`: expired entries go first, then the least recently used.
-  const bound = () => {
-    if (!bounded || total() <= maxSize) return
+  // Keeps the consumer's entries within `maxSize`: expired entries go first, then the least recently used.
+  const bound = (entries: Entries) => {
+    if (!bounded || total(entries) <= maxSize) return
     const now = Date.now()
-    for (const [key, entry] of entries) if (expired(entry, now)) remove(key)
+    for (const [key, entry] of entries) if (expired(entry, now)) remove(entries, key)
     for (const key of entries.keys()) {
-      if (total() <= maxSize) break
-      remove(key)
+      if (total(entries) <= maxSize) break
+      remove(entries, key)
     }
   }
 
@@ -263,14 +285,16 @@ export const processCache = (scope: string, { credentialed = false, consumer = '
     // request resolves against one taken before it started: a difference means
     // the cache was cleared while the request was in flight.
     generation: taken,
+    consumer,
 
     // The reader's cap applies too, so a shorter ttl never serves an older entry.
     get<T = unknown>(key: string): T | undefined {
-      const entry = entries.get(key)
-      if (!entry) return undefined
+      const entries = partition(false)
+      const entry = entries?.get(key)
+      if (!entries || !entry) return undefined
       // Past its own lifetime the entry is no use to any reader, so it goes.
       if (expired(entry)) {
-        remove(key)
+        remove(entries, key)
         return undefined
       }
       if (Date.now() - entry.created >= cap(entry.seconds) * 1000) return undefined
@@ -298,14 +322,17 @@ export const processCache = (scope: string, { credentialed = false, consumer = '
     set<T>(key: string, value: T, seconds: number, since?: number, started?: number): T {
       if (since !== undefined && since !== generation.value) return value
       if (started !== undefined && started <= (forgotten.get(scope) ?? 0)) return value
-      remove(key)
-      if (cap(seconds) > 0) {
+      const keep = cap(seconds) > 0
+      // Only a value to keep makes a partition: one that may not be kept has only an earlier answer to remove.
+      const entries = partition(keep)
+      if (entries) remove(entries, key)
+      if (entries && keep) {
         const size = sizeOf(value)
-        // A value larger than the whole limit would empty the scope and still not fit.
+        // A value larger than the whole limit would empty the partition and still not fit.
         if (bounded && size > maxSize) return value
         entries.set(key, { value, seconds: cap(seconds), created: Date.now(), size })
-        entries[SIZE] = total() + size
-        bound()
+        entries[SIZE] = total(entries) + size
+        bound(entries)
       }
       return value
     },

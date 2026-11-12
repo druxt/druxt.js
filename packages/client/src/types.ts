@@ -90,7 +90,8 @@ export interface ProcessCacheOptions {
   content?: boolean
   /**
    * Bytes of stored JSON each cache area keeps per set of client headers, 50 MB by default. Past it the least recently
-   * used go, and a response larger than it is not kept. A header that differs per visitor multiplies it.
+   * used go, and a response larger than it is not kept. An area keeps 32 sets of headers at most, the least recently
+   * used going first, so it holds 32 times this at most.
    */
   maxSize?: number
   /** Seconds an entry may live at most. It never extends Cache-Control. */
@@ -196,7 +197,10 @@ export interface DruxtRequestOptions {
   headers?: Record<string, string | undefined>
   /**
    * A plain object or an array is sent as JSON:API JSON. Anything else, such as a string, `URLSearchParams`, a `Blob`,
-   * a buffer or `FormData`, is sent as it is.
+   * a buffer, `FormData` or a stream, is sent as it is. A `ReadableStream` or an async iterable goes with
+   * `duplex: 'half'`, which fetch requires for a stream body. A stream is consumed as it is sent, so it is never sent
+   * twice: a 401 to it still refreshes the session, but it is neither sent again nor repeated anonymously. The 401
+   * stands, for the caller to retry with a new stream.
    */
   body?: unknown
   /** Which statuses resolve rather than throw: 2xx by default. */
@@ -267,7 +271,7 @@ export interface DruxtClientOptions {
   logger?: DruxtLogger
   /** The fetch to send requests with, `globalThis.fetch` by default. */
   fetch?: DruxtFetch
-  /** Headers sent with every request. */
+  /** Headers sent with every request. `Authorization`, `Proxy-Authorization` and `Cookie` go only to Drupal's origin. */
   headers?: Record<string, string>
   /**
    * Warn, once per resource type for the site until a client of it runs `clearCache()`, when Drupal omits resources

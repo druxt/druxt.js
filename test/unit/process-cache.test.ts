@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { byteSize, forgetProcessCache, headersHaveCredentials, lifetimeLeft, nextRequest, parseCacheLifetime, processCache, processCacheGeneration, rememberLifetime, resetProcessCache } from '../../packages/client/src/processCache'
+import { MAX_PARTITIONS, byteSize, forgetProcessCache, headersHaveCredentials, lifetimeLeft, nextRequest, parseCacheLifetime, processCache, processCacheGeneration, rememberLifetime, resetProcessCache } from '../../packages/client/src/processCache'
 import { DruxtClient } from '../../packages/client/src'
 import { BASE_URL, drupal, json } from './fake-drupal'
 
@@ -182,6 +182,42 @@ describe('the bounded process cache', () => {
     // The custom pattern replaces Drupal's default session cookie name, and the session marker is no credential.
     expect(headersHaveCredentials({ cookie: 'SESS0123456789abcdef=abc' }, 'site_session_[a-f0-9]+')).toBe(false)
     expect(headersHaveCredentials({ cookie: 'druxt.auth.session=1700000000' }, 'site_session_[a-f0-9]+')).toBe(false)
+  })
+})
+
+describe('the partitions of a scope', () => {
+  // A partition per consumer, each holding one value.
+  const fill = (from: number, to: number) => {
+    for (let i = from; i < to; i++) processCache('test', { consumer: `c${i}` })!.set('key', `value ${i}`, 300)
+  }
+  const held = (i: number) => processCache('test', { consumer: `c${i}` })!.get('key')
+  beforeEach(() => resetProcessCache())
+
+  it('keeps MAX_PARTITIONS consumers at most, the least recently used going first', () => {
+    fill(0, MAX_PARTITIONS + 1)
+    expect(held(0)).toBeUndefined()
+    expect(held(1)).toBe('value 1')
+    expect(held(MAX_PARTITIONS)).toBe(`value ${MAX_PARTITIONS}`)
+  })
+
+  it('makes a consumer the most recently used when it is read', () => {
+    fill(0, MAX_PARTITIONS)
+    expect(held(0)).toBe('value 0')
+    fill(MAX_PARTITIONS, MAX_PARTITIONS + 1)
+    expect(held(0)).toBe('value 0')
+    expect(held(1)).toBeUndefined()
+  })
+
+  it('makes no partition for a read of a consumer it does not hold', () => {
+    fill(0, MAX_PARTITIONS)
+    for (let i = 0; i < MAX_PARTITIONS; i++) expect(processCache('test', { consumer: `absent ${i}` })!.get('key')).toBeUndefined()
+    expect(held(0)).toBe('value 0')
+  })
+
+  it('keeps each scope\'s consumers apart', () => {
+    processCache('other', { consumer: 'c0' })!.set('key', 'other', 300)
+    fill(0, MAX_PARTITIONS + 1)
+    expect(processCache('other', { consumer: 'c0' })!.get('key')).toBe('other')
   })
 })
 

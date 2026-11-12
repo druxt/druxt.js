@@ -3,13 +3,14 @@ import { JsonApiIndexCache } from './jsonApiIndex'
 import type { FetchedIndex } from './jsonApiIndex'
 import { byteSize, headersHaveCredentials, lifetimeLeft, nextRequest, parseCacheLifetime, processCache, rememberLifetime, rememberLifetimeFrom, resetProcessCache } from './processCache'
 import type { ProcessCacheHandle } from './processCache'
-import { DruxtPermissionsError } from './errors'
+import { DruxtPermissionsError, isSuperseded } from './errors'
 import type { ErrorLike, RequestError } from './errors'
 import { indexPath, resourceTypeOf, setHeader, trimEnd, trimStart } from './utils/href'
 import { listenerUrl, prefixed } from './utils/listener'
 import { omittedResources, warnedOmitted } from './omitted'
 import type { DruxtOmitted } from './omitted'
 import { stringify, withQuery } from './utils/query'
+import { supersededError } from './utils/superseded'
 import { CACHE_SAFE_OPTIONS, DEFAULT_MAX_SIZE, parse, readOptions } from './utils/contentCache'
 import type { StoredResponse } from './utils/contentCache'
 import type {
@@ -44,6 +45,17 @@ const sameOrigin = (a: string, b: string): boolean => {
   }
 }
 
+/** The client headers that carry credentials, sent only to the origin the client sends Drupal's requests to. */
+const CREDENTIAL_HEADERS = new Set(['authorization', 'proxy-authorization', 'cookie'])
+
+/**
+ * Whether a body is sent as it streams: a `ReadableStream`, told by its shape so one from another realm counts, or an
+ * async iterable. Fetch sends it with `duplex`, and it is consumed as it is sent, so it cannot be sent again.
+ */
+const streamed = (body: unknown): boolean => !!body && typeof body === 'object' && (
+  (typeof (body as ReadableStream).getReader === 'function' && typeof (body as ReadableStream).locked === 'boolean')
+  || typeof (body as { [Symbol.asyncIterator]?: unknown })[Symbol.asyncIterator] === 'function')
+
 /**
  * The Druxt JSON:API client.
  *
@@ -62,7 +74,7 @@ export class DruxtClient {
   log: DruxtLogger
   /** The fetch requests are sent with. */
   fetch: DruxtFetch
-  /** Headers sent with every request. */
+  /** Headers sent with every request, its credential headers only to Drupal's origin. */
   headers: Record<string, string>
   /** The request listeners, from the `onRequest` option and `onRequest()`. */
   private requestListeners: Set<DruxtRequestListener>
@@ -167,8 +179,9 @@ export class DruxtClient {
    * The cache holds server-side responses between requests, each for as long
    * as its Cache-Control header allows. It is off unless the `cache` option is
    * set, and it is skipped for any request that sends an Authorization header,
-   * basic auth, a session cookie or an Origin. Clients whose headers differ
-   * keep their entries apart.
+   * basic auth, a session cookie or an Origin, and for a session-mode client
+   * while it is signed in. Clients whose headers differ keep their entries
+   * apart.
    *
    * @param scope - The cache scope, e.g. 'index' or 'menu'.
    * @returns The cache, or undefined when it must not be used.
@@ -176,7 +189,10 @@ export class DruxtClient {
   processCache(scope: string): ProcessCacheHandle | undefined {
     if (!this.options.cache) return undefined
     const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE } = this.options.cache as ProcessCacheOptions
-    const credentialed = this.credentialed || !!this.auth?.accessToken || headersHaveCredentials(this.headers, sessionCookie)
+    // A signed-in session-mode client holds no token, but its requests carry the session the site's proxy adds,
+    // wherever it runs.
+    const session = !!this.auth?.session && this.auth.loggedIn
+    const credentialed = this.credentialed || session || !!this.auth?.accessToken || headersHaveCredentials(this.headers, sessionCookie)
     // Each set of client headers keeps its own entries, X-Consumer-ID among them: a header may pick a variant Drupal
     // names in no Vary, such as an Accept-Language. Names are compared in any case.
     const headers = Object.entries(this.headers).map(([name, value]): [string, string] => [name.toLowerCase(), value]).sort(([a], [b]) => (a < b ? -1 : 1))
@@ -197,7 +213,9 @@ export class DruxtClient {
   }
 
   /**
-   * Add headers to every request.
+   * Add headers to every request. `Authorization`, `Proxy-Authorization` and
+   * `Cookie` go only to the origin the client sends Drupal's requests to, as
+   * the access token does; a request to another host is sent without them.
    *
    * @param headers - HTTP headers.
    *
@@ -231,12 +249,22 @@ export class DruxtClient {
    * for a token Drupal revoked that still looks unexpired here. When Drupal
    * refuses the refresh token, the session ends and a read is repeated as the
    * anonymous visitor it now is; a write is not, as it was meant to be made as
-   * the user. A refresh that fails otherwise, such as a timeout, keeps the
-   * session, and the 401 stands. A read Drupal refuses for a token with no
-   * refresh token to try ends the session the same way, and is repeated as
-   * the anonymous visitor. The token goes only to Drupal's origin, or this
+   * the user. Refused before a write is sent, the write is not sent at all,
+   * and rejects with the refusal: the token request's error, its status a 400
+   * or a 401. A refresh that fails otherwise, such as a timeout, keeps the
+   * session: the request is sent as it, and a 401 stands. A read Drupal
+   * refuses for a token with no refresh token to try ends the session the
+   * same way, and is repeated as the anonymous visitor; a write's 401 stands,
+   * and the session is kept. A stream body is sent once: a 401 to it still
+   * refreshes, and stands. The token goes only to Drupal's origin, or this
    * one when the API is proxied: a request to another host is sent without
    * it, and its 401 is returned as it is.
+   *
+   * A request is sent, refreshed and retried only as the session it was made
+   * for. One still waiting on a refresh when another session signs in rejects
+   * with an error `isSuperseded()` tells, and is not sent; one whose session a
+   * sign-out ended is sent without a token, as a signed-out client's are. A
+   * 401 answered after another session signed in is returned as it is.
    *
    * @param url - A path or an absolute URL.
    * @param options - The request options.
@@ -257,27 +285,54 @@ export class DruxtClient {
     // it. Another host gets no token, and its 401 says nothing about Drupal's: no refresh, retry or anonymous repeat.
     const own = sameOrigin(this.url(url), this.url('/'))
     const token = () => (own ? auth?.accessToken : undefined)
-    if (own && auth?.expired && auth.canRefresh) await auth.refresh().catch(() => {})
+    // The session the request is made for: a sign-in or a sign-out moves it on, a refresh does not.
+    const epoch = auth?.epoch
+    // A refusal ends the session; any other failure keeps it, and the request is sent as it, for its 401 to decide.
+    let refused: unknown
+    if (own && auth?.expired && auth.canRefresh) await auth.refresh().catch((error: unknown) => { if (refreshRefused(error)) refused = error })
+    // Another session signed in while the request waited: it is not sent as that one. A session that only ended, by a
+    // sign-out or a refused refresh, leaves a signed-out client, whose requests go without a token.
+    if (auth && auth.epoch !== epoch && auth.loggedIn) throw supersededError()
 
     const read = READS.has((options.method || 'GET').toUpperCase())
+    // As on a 401: a read goes on as the anonymous visitor, and a write, meant for the user, is not sent.
+    if (refused) {
+      if (!read) throw refused
+      return this.checked(await this.send<T>(url, anonymous(options)), options)
+    }
     // The session the request is sent for, and whether it carries one: a token, or with `session` on, the proxy's.
     const sent = auth?.held()
     const carried = own && !!auth && (auth.session ? auth.loggedIn : !!auth.accessToken)
+    // A stream the first send consumed cannot be sent again: its 401 stands, for the caller to retry with a new one.
+    const once = streamed(options.body)
     let response = await this.send<T>(url, options, token())
     if (response.status === 401 && own && auth?.canRefresh) {
-      try {
-        await auth.refresh()
-        response = await this.send<T>(url, options, token())
-      } catch (error) {
-        if (refreshRefused(error) && read) response = await this.send<T>(url, anonymous(options))
+      // Unless another session signed in after it was sent: its 401 then stands, with no refresh or retry as that one.
+      if (auth.epoch === epoch) {
+        try {
+          // Refreshed even for a stream, so the caller's retry goes as the refreshed session.
+          await auth.refresh()
+          if (!once) response = await this.send<T>(url, options, token())
+        } catch (error) {
+          if (refreshRefused(error) && read && !once) response = await this.send<T>(url, anonymous(options))
+        }
       }
     } else if (response.status === 401 && auth && carried && sent !== undefined && read) {
       // Nothing to refresh with, or another read's refused refresh ended the session first: what the read was sent
-      // with decides.
+      // with decides. Only a client signed out by then repeats it anonymously: another session's 401 stands.
       auth.drop(sent)
-      response = await this.send<T>(url, anonymous(options))
+      if (!auth.loggedIn && !once) response = await this.send<T>(url, anonymous(options))
     }
+    return this.checked(response, options)
+  }
 
+  /**
+   * The response, or the error for a status the request's `validateStatus` refuses: any but a 2xx by default.
+   *
+   * @param response - The response.
+   * @param options - The request options.
+   */
+  private checked<T>(response: DruxtResponse<T>, options: DruxtRequestOptions): DruxtResponse<T> {
     if (!(options.validateStatus || ((status: number) => status >= 200 && status < 300))(response.status)) {
       const error = new Error(`Request failed with status code ${response.status}`) as RequestError
       error.response = response
@@ -326,7 +381,12 @@ export class DruxtClient {
    */
   async send<T>(url: string, options: DruxtRequestOptions, token?: string): Promise<DruxtResponse<T>> {
     const headers: Record<string, string> = { Accept: 'application/vnd.api+json, application/json;q=0.9, */*;q=0.8' }
-    for (const [name, value] of Object.entries(this.headers)) setHeader(headers, name, value)
+    // The client's credentials go only to Drupal's origin, as its token does, and as fetch drops an Authorization on a
+    // redirect to another one. A request's own headers are sent as given.
+    const own = sameOrigin(this.url(url), this.url('/'))
+    for (const [name, value] of Object.entries(this.headers)) {
+      if (own || !CREDENTIAL_HEADERS.has(name.toLowerCase())) setHeader(headers, name, value)
+    }
     if (token) setHeader(headers, 'Authorization', `Bearer ${token}`)
     let body = options.body as BodyInit | undefined
     const proto: unknown = body !== null && typeof body === 'object' ? Object.getPrototypeOf(body) : undefined
@@ -350,7 +410,10 @@ export class DruxtClient {
     if (this.requestListeners.size) this.notify({ type: 'start', ...event })
     let res: Response
     try {
-      res = await this.fetch(href, { method, headers, body })
+      const init: RequestInit & { duplex?: 'half' } = { method, headers, body }
+      // Fetch refuses a stream body, or an async iterable one, without it.
+      if (streamed(body)) init.duplex = 'half'
+      res = await this.fetch(href, init)
     } catch (error) {
       if (this.requestListeners.size) this.notify({ type: 'end', ...event, duration: now() - started, failed: true })
       throw error
@@ -481,6 +544,8 @@ export class DruxtClient {
    * }
    */
   error(err: ErrorLike, context: { url?: string } = {}): never {
+    // A request a newer session replaced was never sent: there is nothing to format, and `isSuperseded()` must tell it.
+    if (isSuperseded(err)) throw err
     let { url } = context
     if (!url && err.response && 'url' in err.response && err.response.url) {
       url = err.response.url
@@ -537,7 +602,7 @@ export class DruxtClient {
     // its Cache-Control allows, and the next server request for the same URL is answered from it. The key is the
     // backend and the URL alone, so a request whose own options could change the response, such as headers or a
     // body, is never read from or stored. Only a 200 is stored, so a caller whose validateStatus refuses one goes to
-    // Drupal.
+    // Drupal. Any other answer from Drupal removes what an earlier one stored, so the cache follows its latest answer.
     const cacheable = !!(this.options.cache || undefined)?.content
       && Object.keys(options || {}).every((option) => CACHE_SAFE_OPTIONS.has(option))
       && (typeof request.validateStatus !== 'function' || request.validateStatus(200))
@@ -547,20 +612,36 @@ export class DruxtClient {
       const stored = before.get<StoredResponse>(key)
       if (stored) return this.storedResponse<T>(stored, url)
     }
-    try {
-      // Its place in the order requests started in, which a timestamp cannot give two requests in one millisecond.
-      const started = nextRequest()
-      const res = await this.request<T>(url, options && Object.keys(request).length ? request : undefined)
-      rememberLifetime(res?.data, res?.headers)
-      // Asked again once resolved, as the request may have shown the client to be credentialed.
+    // Its place in the order requests started in, which a timestamp cannot give two requests in one millisecond.
+    const started = nextRequest()
+    // Drupal's answer: kept when it may be, and otherwise removing what an earlier answer stored under the key.
+    const settle = (res: DruxtResponse<T>) => {
+      // Asked again once resolved, as the request may have shown the client to be credentialed. Headers changed while
+      // it was in flight may pick another variant, and it may have been sent with either set: it is stored under
+      // neither, and removes nothing.
       const after = before && this.processCache('content')
+      if (!after || after.consumer !== before!.consumer) return
       // A request that started later, such as a bypass, may have stored its fresher answer already.
-      const current = after?.get<StoredResponse>(key)
-      if (after && !(current && current.started > started) && res.status === 200 && res.data && typeof res.data === 'object') {
+      const current = after.get<StoredResponse>(key)
+      if (current && current.started > started) return
+      if (res.status === 200 && res.data && typeof res.data === 'object') {
         const seconds = parseCacheLifetime(res.headers)
         const value: StoredResponse = { body: JSON.stringify(res.data), status: res.status, statusText: res.statusText, headers: Object.fromEntries(res.headers.entries()), seconds, at: Date.now(), started }
         after.set(key, value, seconds, before!.generation, started)
+      } else after.set(key, undefined, 0, before!.generation, started)
+    }
+    try {
+      let res: DruxtResponse<T>
+      try {
+        res = await this.request<T>(url, options && Object.keys(request).length ? request : undefined)
+      } catch (error) {
+        // An answer the caller refused is still Drupal's latest. A request that never reached Drupal has none.
+        const answered = (error as RequestError).response
+        if (answered) settle(answered as DruxtResponse<T>)
+        throw error
       }
+      rememberLifetime(res?.data, res?.headers)
+      settle(res)
       return res
     } catch (err) {
       this.error(err as ErrorLike, { url })

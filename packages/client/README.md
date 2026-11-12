@@ -10,7 +10,7 @@ const druxt = new DruxtClient('https://demo-api.druxtjs.org');
 const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
 ```
 
-**`get()`, `request()`, `createResource()` and `updateResource()` return the HTTP response, whose `data` is the JSON:API document. The read methods return the document itself.**
+**`get()`, `request()`, `createResource()` and `updateResource()` return the HTTP response, whose `data` is the JSON:API document. The read methods return the document itself, and `getCollectionAll()` an array of them, one per page.**
 
 - **Resources:** `getResource`, `getCollection`, `getCollectionAll`,
   `getRelated`, `createResource` and `updateResource`. A method given an empty
@@ -21,20 +21,45 @@ const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
 - **Process cache:** off unless the `cache` option is set. On a server it then
   keeps the JSON:API index, fetched without credentials, between requests for
   as long as its `Cache-Control` allows. With `cache: { content: true }` it also
-  keeps each `get()` answered with a 200 that `Cache-Control` lets a shared
-  cache store, for a request without credentials or options that could change
+  keeps each `get()` answered with a 200 whose body is a JSON document and
+  that `Cache-Control` lets a shared cache store, for a request without credentials or options that could change
   the response, such as headers or a body. A `bypassCache` request goes to
-  Drupal and stores its fresh answer. `cache: { ttl }` caps the lifetime, and
-  `clearCache()` empties it.
+  Drupal, and its answer replaces the entry when it may be stored and removes
+  it otherwise, as a 404 does. A request that never reaches Drupal leaves the
+  entry. `cache: { ttl }` caps the lifetime, and
+  `clearCache()` empties it. Each set of client headers keeps its own entries,
+  and an answer to a request in flight when the client's headers changed is
+  stored under neither set. Each set keeps up to `cache.maxSize` bytes, and
+  each cache area keeps 32 sets at most, the least recently used going first,
+  so an area never holds more than 32 times `cache.maxSize`: 1.6 GB with the
+  50 MB default.
 - **Auth:** with `auth: { clientId }`, Simple OAuth's authorization code
-  (PKCE), password and client credentials grants, with refresh. A 401 is
-  refreshed and retried once. A sign-in or refresh that a later sign-in or a
-  sign-out replaced while it ran stores nothing and rejects, and
-  `isSuperseded(error)` tells that rejection from a failure. A sign-in that
-  fails ends the session held before it, as druxt-auth 0.x did.
+  (PKCE), password and client credentials grants, with refresh. An expired
+  token is refreshed before the request is sent, and a 401 from Drupal's
+  origin is refreshed and the request sent again once, as the same session.
+  When Drupal refuses the refresh token, the session ends, and a read is
+  repeated anonymously while a write is not. A write refused that way before
+  it is sent isn't sent at all, and rejects with the refusal. With no refresh
+  token to try, a 401 to a read ends the session and the read is repeated
+  anonymously, while a write's 401 does neither. A refresh that fails
+  otherwise, such as a timeout, keeps the session, and the 401 stands. A
+  stream body is never sent twice: a 401 to it still refreshes, and stands for
+  the caller to retry with a new stream. Another host's 401 is returned as it
+  is, as is one answered after another session signed in. A sign-in or
+  refresh that a later sign-in or a sign-out replaced while it ran stores
+  nothing. It rejects with an error `isSuperseded(error)` tells from a failure
+  when it succeeded, and with its own error when it failed, as does a request
+  still waiting on a refresh when another session signs in. A sign-in that
+  fails ends the session held before it, as druxt-auth 0.x did. A `logout()`
+  that succeeds ends the session, even one a sign-in stored while the site's
+  logout route ran, so the next sign-in starts afresh. When that route fails,
+  it rejects and the session is kept.
 - **Transport:** `fetch` and `headers` options, with `globalThis.fetch` by
   default. 1.x's Axios instance and its `axios` options are gone, and an
-  `axios` option is ignored: set headers in `headers`.
+  `axios` option is ignored: set headers in `headers`. Client headers set there
+  or with `addHeaders()` go with every request, except `Authorization`,
+  `Proxy-Authorization` and `Cookie`, which go only to Drupal's origin, as the
+  access token does. A header passed to the request itself is sent as given.
 - **Request hook:** the `onRequest` option, or `client.onRequest(listener)`,
   is told each request's method and URL as it starts, then its status and
   duration as it ends. It never sees headers or bodies, the URL has no user name

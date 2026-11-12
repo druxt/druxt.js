@@ -64,7 +64,7 @@ const entries = (pkg: string): string[] => {
   return [...sources, ...built]
 }
 
-interface Layout { files: string[], public: string[], internal: string[], unresolved: string[] }
+interface Layout { public: string[], internal: string[], unresolved: string[] }
 
 /** A package's source files, split into what a consumer can reach and what only the package imports. */
 const layout = (name: string): Layout => {
@@ -104,7 +104,6 @@ const layout = (name: string): Layout => {
 
   const rel = (file: string) => relative(src, file)
   return {
-    files: files.map(rel).sort(),
     public: [...reached].map(rel).sort(),
     internal: files.filter((file) => !reached.has(file)).map(rel).sort(),
     unresolved,
