@@ -1,10 +1,10 @@
-import { addImports, addPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, tryUseNuxt, useLogger } from '@nuxt/kit'
+import { addImports, addPlugin, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
 import { clientOptions } from '@druxt/client'
 import type { DruxtClient, DruxtConfig, DruxtConnectionConfig } from '@druxt/client'
 import { defu } from 'defu'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { splitDruxtConfig } from './utils/config'
-import { addPrebundle, corePrebundle } from './kit'
+import { addPrebundle, corePrebundle, DRUXT_DEFAULTS_IMPORT, druxtDefaults } from './kit'
 import type { DruxtAnchorsSetting } from './anchors'
 import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
 
@@ -472,6 +472,29 @@ export default defineNuxtModule<DruxtOptions>({
     const publicConfig = nuxt.options.runtimeConfig.public as Record<string, unknown>
     publicConfig.druxt = defu(publicConfig.druxt as object | undefined, split.public)
 
+    // The modules' default settings, written into the build, so the app and the server resolve them below Drupal's
+    // settings and the site's config. Not the public runtime config, which outranks Drupal and which environment
+    // variables change. Read when written, after every module has registered its own.
+    const defaults = addTemplate({
+      filename: 'druxt/defaults.mjs',
+      write: true,
+      getContents: () => `export default ${JSON.stringify(druxtDefaults(nuxt))}\n`,
+    })
+    nuxt.options.alias[DRUXT_DEFAULTS_IMPORT] = defaults.dst
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.alias = { ...nitroConfig.alias, [DRUXT_DEFAULTS_IMPORT]: defaults.dst }
+    })
+    addTypeTemplate({
+      filename: 'types/druxt-defaults.d.ts',
+      getContents: () => [
+        `declare module '${DRUXT_DEFAULTS_IMPORT}' {`,
+        '  const defaults: Record<string, unknown>',
+        '  export default defaults',
+        '}',
+        '',
+      ].join('\n'),
+    }, { nuxt: true, nitro: true })
+
     // The site's languages, read once for the app's map and the proxy's prefixes, so the two agree. A read that fails
     // stops a production build, which would otherwise be a site with one language and only a warning to say so. In
     // development it warns once and reads as none, so the site still starts while Drupal is away: no default language
@@ -509,6 +532,16 @@ export default defineNuxtModule<DruxtOptions>({
       ].join('\n'),
     }, { nuxt: true, nitro: true })
 
+    // Where Druxt's server routes keep what they hold between requests. Memory
+    // by default: a site shares it across instances by mounting a driver of its own.
+    nuxt.options.nitro.storage = defu(nuxt.options.nitro.storage, { druxt: { driver: 'memory' } })
+    // Settings from Drupal, as a decoupled-settings fetcher stores them: read once per request, on demand.
+    addServerPlugin(await resolvePath(resolve('./runtime/server/plugins/druxt')))
+    addServerImports([
+      { name: 'useDruxtServerSettings', from: resolve('./runtime/server/settings') },
+      { name: 'storeDrupalSettings', from: resolve('./runtime/server/storage') },
+    ])
+
     await addPrebundle(nuxt, corePrebundle())
 
     if (!hasNuxtModule('@pinia/nuxt')) {
@@ -518,6 +551,9 @@ export default defineNuxtModule<DruxtOptions>({
     addPlugin(resolve('./runtime/plugins/druxt'))
     addImports({ name: 'useDruxtClient', from: resolve('./runtime/composables') })
     addImports({ name: 'useDruxtStore', from: resolve('./runtime/store') })
+    for (const name of ['useDruxtSettings', 'setDrupalSettings']) {
+      addImports({ name, from: resolve('./runtime/settings') })
+    }
     addPlugin(resolve('./runtime/plugins/pinia'))
   },
 })
