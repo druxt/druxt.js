@@ -2,7 +2,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadNuxt } from 'nuxt/kit'
 import type { Nuxt } from 'nuxt/schema'
-import { afterAll, describe, expect, it, vi } from 'vitest'
+import { afterAll, afterEach, describe, expect, it, vi } from 'vitest'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const loaded: Nuxt[] = []
@@ -104,5 +104,51 @@ describe('the core module\'s cache options', () => {
     loaded.push(nuxt)
     expect((nuxt.options.runtimeConfig.public.druxt as { cache?: unknown }).cache).toBe(false)
     expect((nuxt.options.runtimeConfig.druxt as { proxy?: { sessionCookie?: string } }).proxy?.sessionCookie).toBe('site_session')
+  }, 120_000)
+})
+
+describe('the core module\'s proxy, when the site\'s languages cannot be read', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.unstubAllEnvs()
+  })
+
+  // Drupal lists its languages to a visitor, and refuses the build's credentials, so the build cannot read them.
+  it('warns once, naming the prefixed paths it loses, and proxies only the unprefixed endpoint', async () => {
+    vi.stubEnv('DRUXT_BUILD_CLIENT_ID', 'build')
+    vi.stubEnv('DRUXT_BUILD_CLIENT_SECRET', 'wrong-secret')
+    const reply = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/vnd.api+json', 'content-language': 'en' } })
+    vi.stubGlobal('fetch', vi.fn(async (input: string | URL | Request) => {
+      const path = new URL(input instanceof Request ? input.url : String(input)).pathname
+      if (path === '/oauth/token') return reply({ error: 'invalid_client', message: 'Client authentication failed' }, 401)
+      if (path === '/jsonapi') {
+        return reply({ links: { 'self': { href: 'https://drupal.test/jsonapi' }, 'configurable_language--configurable_language': { href: 'https://drupal.test/jsonapi/configurable_language/configurable_language' } } })
+      }
+      return reply({}, 404)
+    }))
+    const written: string[] = []
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
+    const stdout = vi.spyOn(process.stdout, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
+    try {
+      const nuxt = await loadNuxt({
+        cwd: join(root, 'test/unit/fixtures/core-module'),
+        ready: true,
+        overrides: { druxt: { baseUrl: 'https://drupal.test', proxy: { api: true } } } as Record<string, unknown>,
+      })
+      loaded.push(nuxt)
+      const proxied = (nuxt.options as unknown as { _druxtProxy?: string[] })._druxtProxy || []
+      expect(proxied.filter((path) => path.endsWith('/jsonapi/**'))).toEqual(['/jsonapi/**'])
+      // The app's languages, from the same read: none, with no second warning.
+      const template = nuxt.options.build.templates.find((entry) => entry.filename === 'druxt/languages.mjs')!
+      const contents = await (template.getContents as (data: unknown) => Promise<string>)({ nuxt, app: {}, options: {} })
+      expect(contents).toBe('export const languages = []\n')
+      const warnings = written.filter((line) => line.includes('languages could not be read'))
+      expect(warnings).toHaveLength(1)
+      expect(warnings[0]).toContain('language-prefixed')
+      expect(warnings[0]).toContain('/jsonapi')
+    } finally {
+      stderr.mockRestore()
+      stdout.mockRestore()
+    }
   }, 120_000)
 })

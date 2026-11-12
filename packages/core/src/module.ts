@@ -4,10 +4,11 @@ import type { DruxtClient, DruxtConfig, DruxtConnectionConfig } from '@druxt/cli
 import { defu } from 'defu'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { splitDruxtConfig } from './utils/config'
-import { addPrebundle, corePrebundle, DRUXT_DEFAULTS_IMPORT, druxtDefaults } from './kit'
+import { addDruxtProxy, addPrebundle, corePrebundle, DRUXT_DEFAULTS_IMPORT, druxtDefaults, druxtProxyRoutes } from './kit'
 import type { DruxtAnchorsSetting } from './anchors'
 import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
 import { DRUXT_API_BASE } from './routes'
+import { druxtApiConflict } from './utils/routes'
 
 /** Credentials for build-time requests; see createBuildClient. */
 export interface DruxtBuildAuthOptions {
@@ -404,6 +405,10 @@ export default defineNuxtModule<DruxtOptions>({
     options.baseUrl = options.baseUrl.replace(/\/$/, '')
     if (options.siteUrl) options.siteUrl = options.siteUrl.replace(/\/+$/, '')
     options.endpoint = options.endpoint.startsWith('/') ? options.endpoint : `/${options.endpoint}`
+    // Drupal's paths on the site stay clear of Druxt's own routes. Each language's prefix is checked once it is read.
+    const filesPath = options.proxy?.files ? `/sites/${typeof options.proxy.files === 'string' ? options.proxy.files : 'default'}/files` : undefined
+    const conflict = druxtApiConflict({ endpoints: [options.endpoint], files: filesPath ? [filesPath] : [] })
+    if (conflict) throw new Error(`[druxt] ${conflict}`)
 
     // Keep the JSON:API index between server requests that carry no credentials, in production only. The proxy still
     // reads the session cookie's pattern in development.
@@ -543,6 +548,45 @@ export default defineNuxtModule<DruxtOptions>({
       { name: 'storeDrupalSettings', from: resolve('./runtime/server/storage') },
     ])
 
+    // Proxy Drupal through Nitro, which replaces @nuxtjs/proxy: the JSON:API under each language's configured prefix,
+    // and the files directory, `sites/default/files` unless a site is named.
+    // Druxt's own routes, under DRUXT_API_BASE, answer before the proxy, so a JSON:API at `/api` leaves them in place.
+    if (options.proxy?.api) {
+      const read = nuxt.options._prepare ? [] : await readSiteLanguages()
+      const prefixes = ['', ...read.filter((language) => language.prefix).map((language) => `/${language.prefix}`)]
+      const prefixed = druxtApiConflict({ endpoints: prefixes.map((prefix) => `${prefix}${options.endpoint}`) })
+      if (prefixed) throw new Error(`[druxt] ${prefixed}`)
+      for (const prefix of prefixes) addDruxtProxy(nuxt, `${prefix}${options.endpoint}/**`)
+    }
+    if (filesPath) addDruxtProxy(nuxt, `${filesPath}/**`)
+    // One handler for every proxied path, which reads the base URL at request time, so a runtime
+    // NUXT_PUBLIC_DRUXT_BASE_URL moves the browser's requests with the server's. Registered once every module is in,
+    // as the router adds its own path.
+    const proxyRoutes = addTemplate({
+      filename: 'druxt/proxy-routes.mjs',
+      write: true,
+      getContents: () => `export default ${JSON.stringify(druxtProxyRoutes(nuxt))}\n`,
+    })
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.alias = { ...nitroConfig.alias, '#druxt/proxy-routes': proxyRoutes.dst }
+    })
+    addTypeTemplate({
+      filename: 'types/druxt-proxy-routes.d.ts',
+      getContents: () => [
+        `declare module '#druxt/proxy-routes' {`,
+        '  const routes: string[]',
+        '  export default routes',
+        '}',
+        '',
+      ].join('\n'),
+    }, { nuxt: true, nitro: true })
+    const proxyHandler = resolve('./runtime/server/routes/proxy')
+    nuxt.hook('modules:done', () => {
+      // A route ending in `/**` matches below its path, so the path itself, such as the JSON:API index, is added too.
+      const routes = druxtProxyRoutes(nuxt).flatMap((route) => route.endsWith('/**') ? [route.slice(0, -3), route] : [route])
+      for (const route of new Set(routes)) addServerHandler({ route, handler: proxyHandler })
+    })
+
     await addPrebundle(nuxt, corePrebundle())
 
     if (!hasNuxtModule('@pinia/nuxt')) {
@@ -559,6 +603,10 @@ export default defineNuxtModule<DruxtOptions>({
 
     const auth = options.auth
     if (auth) {
+      // The browser's token requests and userinfo, on this origin.
+      if (options.proxy?.api) {
+        for (const path of ['/oauth/token', '/oauth/userinfo']) addDruxtProxy(nuxt, path)
+      }
       // Registered whenever the password grant is offered, or the server holds the session, whose sign-in, refresh and
       // sign-out run through it. The secret, if any, is read at runtime.
       const session = (auth as { session?: boolean }).session
