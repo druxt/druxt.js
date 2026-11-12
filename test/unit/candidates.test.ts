@@ -1,88 +1,36 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { getModuleComponents } from '../../packages/core/src/runtime/candidates'
 
-import { DruxtClass } from '../src/class'
+const sets = [['node--article', 'default'], ['default']]
+const names = (lang?: string, registered: string[] = []) =>
+  getModuleComponents('DruxtEntity', sets, lang, (name) => registered.includes(name))
 
-// Setup local vue instance.
-const localVue = createLocalVue()
-
-const componentOptions = [
-  ['one', 'two', 'three'],
-  ['one', 'three']
-]
-
-// Mock Druxt module.
-const DruxtTestModule = {
-  render: () => ({}),
-  druxt: () => ({
-    componentOptions,
-    propsData: {}
-  })
-}
-
-// Mock Druxt module wrapper.
-const DruxtTestModuleOneTwoThree = { render: () => ({}) }
-
-let druxt
-let wrapper
-
-describe('DruxtJS Class', () => {
-  beforeEach(() => {
-    druxt = new DruxtClass()
-
-    // Mount vm.
-    wrapper = mount(DruxtTestModule, { localVue, stubs: { DruxtTestModuleOneTwoThree } })
-    wrapper.vm.$options.druxt = DruxtTestModule.druxt
+describe('wrapper candidate names', () => {
+  it('lists the most specific first', () => {
+    expect(names().map((c) => c.name)).toEqual(['DruxtEntityNodeArticleDefault', 'DruxtEntityNodeArticle', 'DruxtEntityDefault'])
   })
 
-  test('getComponents', () => {
-    let components
-
-    // Get global matches, expect 0 results.
-    expect(druxt.getComponents(wrapper.vm, componentOptions).length).toBe(0)
-
-    // Get all matches, expect 4 results.
-    components = druxt.getComponents(wrapper.vm, componentOptions, true)
-    expect(components.length).toBe(4)
-    expect(components[0].pascal).toBe('OneTwoThree')
-    expect(components[1].pascal).toBe('OneTwo')
-    expect(components[2].pascal).toBe('OneThree')
-    expect(components[3].pascal).toBe('One')
-
-    // Get all matches with custom prefix, expect 4 results.
-    components = druxt.getComponents(wrapper.vm, componentOptions, true, 'custom-prefix')
-    expect(components.length).toBe(4)
-    expect(components[0].prefix).toBe('custom-prefix')
-    expect(components[0].pascal).toBe('CustomPrefixOneTwoThree')
-
-    // Get global matches with module name prefix, expect 1 result.
-    wrapper.vm.$options.name = 'DruxtTestModule'
-    components = druxt.getComponents(wrapper.vm, componentOptions)
-    expect(components.length).toBe(1)
-    expect(components[0]).toStrictEqual({
-      global: true,
-      kebab: 'druxt-test-module-one-two-three',
-      parts: ['one', 'two', 'three'],
-      pascal: 'DruxtTestModuleOneTwoThree',
-      prefix: 'druxt-test-module'
-    })
+  it('adds a langcode variant of each name ahead of it', () => {
+    expect(names('en').map((c) => c.name)).toEqual([
+      'DruxtEntityNodeArticleDefaultEn',
+      'DruxtEntityNodeArticleEn',
+      'DruxtEntityNodeArticleDefault',
+      'DruxtEntityDefaultEn',
+      'DruxtEntityNodeArticle',
+      'DruxtEntityDefault',
+    ])
   })
 
-  test('getModuleData', async () => {
-    // Invoke with no vm.
-    expect(await druxt.getModuleData()).toBe(false)
+  it('marks the registered names', () => {
+    expect(names(undefined, ['DruxtEntityDefault']).filter((c) => c.global).map((c) => c.name)).toEqual(['DruxtEntityDefault'])
+  })
 
-    // Invoke with vm.
-    expect(await druxt.getModuleData(wrapper.vm)).toStrictEqual({
-      componentOptions: [
-        ['one', 'two', 'three'],
-        ['one', 'three']
-      ],
-      propsData: {}
-    })
+  it('skips empty parts and lists a name once', () => {
+    const candidates = getModuleComponents('DruxtMenu', [['main', null, false, undefined], ['main']], undefined, () => false)
+    expect(candidates.map((c) => c.name)).toEqual(['DruxtMenuMain'])
+  })
 
-    // Invoke with vm name set.
-    wrapper.vm.$options.name = 'DruxtTestModule'
-    const moduleData = await druxt.getModuleData(wrapper.vm)
-    expect(moduleData.name).toBe('druxt-test-module')
+  it('has no candidates without option sets', () => {
+    expect(getModuleComponents('DruxtEntity', [], 'en', () => true)).toEqual([])
   })
 })
