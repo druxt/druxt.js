@@ -1,6 +1,7 @@
 import { join } from 'node:path'
-import { addComponent, addDevServerHandler, addImports, addPlugin, addServerHandler, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
+import { addComponent, addDevServerHandler, addImports, addPlugin, addRouteMiddleware, addServerHandler, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
 import { defineEventHandler, setResponseHeader } from 'h3'
+import type { NuxtPage } from '@nuxt/schema'
 import { clientOptions } from '@druxt/client'
 import type { DruxtClient, DruxtConfig, DruxtConnectionConfig } from '@druxt/client'
 import { defu } from 'defu'
@@ -676,6 +677,23 @@ export default defineNuxtModule<DruxtOptions>({
         addServerHandler({ route: `${DRUXT_API_BASE}/auth/token`, method: 'post', handler: resolve('./runtime/server/routes/token') })
       }
       if (session) addServerHandler({ route: `${DRUXT_API_BASE}/auth/logout`, method: 'post', handler: resolve('./runtime/server/routes/logout') })
+
+      // With the name of the error its sign-ins reject with while signed in, so a site tells the refusal apart.
+      for (const name of ['useDruxtAuth', 'DRUXT_AUTH_SIGNED_IN']) addImports({ name, from: resolve('./runtime/auth') })
+      addRouteMiddleware({ name: 'druxt-auth', path: resolve('./runtime/middleware/auth') })
+      addComponent({ name: 'DruxtAuthLogin', filePath: await resolvePath(resolve('./runtime/components/DruxtAuthLogin')), global: true })
+
+      // The callback and login routes, unless the site has its own.
+      nuxt.options.pages = true
+      nuxt.hook('pages:extend', async (pages) => {
+        const routes: NuxtPage[] = [
+          { name: 'druxt-auth-callback', path: auth.callback || '/callback', file: await resolvePath(resolve('./runtime/pages/DruxtAuthCallback')) },
+        ]
+        if (auth.login) routes.push({ name: 'druxt-auth-login', path: auth.login, file: await resolvePath(resolve('./runtime/pages/DruxtAuthLoginPage')) })
+        for (const route of routes) {
+          if (!pages.some((page) => page.path.toLowerCase() === route.path.toLowerCase())) pages.unshift(route)
+        }
+      })
     }
 
     // DruxtWrapper is registered sync: it renders on nearly every page, so loading it lazily buys nothing and wraps

@@ -269,6 +269,169 @@ Every settings function takes a connection name, `default` unless named. Other c
 
 Core has no option for the Consumer whose decoupled settings are read, since not every site uses them. A module that integrates Drupal's decoupled settings registers its own option with `addDruxtDefaults()` from `@druxt/core/kit`, such as `druxt.site.settingsConsumerId`. When the site leaves it unset, the module falls back to the connection's Consumer, which the client exposes as `consumer.id`. The module writes what it reads with `storeDrupalSettings()`, as above.
 
+## Signing in
+
+`druxt.auth` signs visitors in to Drupal through Simple OAuth, with
+`useDruxtAuth()` and the `DruxtAuthLogin` component:
+
+```ts
+export default defineNuxtConfig({
+  druxt: {
+    baseUrl: 'https://drupal.example',
+    auth: { clientId: 'my-site', password: true },
+  },
+});
+```
+
+`password` offers the username and password sign-in, through the
+`POST /api/_druxt/auth/token` route. Left unset, it is on when `auth.clientSecret`
+or `auth.passwordClientId` is set at build. Set `password: true` when the
+Consumer's secret arrives only at runtime, in `NUXT_DRUXT_AUTH_CLIENT_SECRET`,
+or when the Consumer is public and has no secret. The route adds the secret
+when one is set, and otherwise lets Drupal decide. `password: false` turns the
+password sign-in off. With `proxy.api` on, the route stays for the
+authorization code grant and the refresh, and refuses the password grant with
+a 400.
+
+### Signed-in pages
+
+The build adds a login page at `auth.login`, `/user/login` by default, and the
+authorization code grant's callback page at `auth.callback`, `/callback` by
+default. A page the site already has at either path wins. A page that only a
+signed-in visitor may see names the `druxt-auth` route middleware:
+
+```ts
+definePageMeta({ middleware: 'druxt-auth' });
+```
+
+A signed-out visitor goes to the login page instead, with the page they asked
+for in the `redirect` query, and comes back there once signed in.
+`auth.login: false` leaves the login page out, and the middleware sends a
+signed-out visitor to `/login`, as druxt-auth 0.x did, so the site's own page
+there signs them in. For a login page of the site's at another path, set
+`auth.login` to that path.
+
+### The sign-in form
+
+`DruxtAuthLogin` signs a visitor in with a username and password, when
+`password` is on, or through Drupal's own sign-in page. While the visitor is
+signed in, it shows who is signed in and a **Sign out** button in place of the
+form, and signs no one in: a visitor signs out before signing in as someone
+else. The server render reads the session's cookies, so a signed-in visitor
+never sees the form, not even before the page hydrates. Signing out reloads the
+page the visitor is on, which then shows the form.
+
+```html
+<div class="druxt-auth-login druxt-auth-login--signed-in">
+  <p class="druxt-auth-login__user">Signed in as Editor.</p>
+  <button type="button" class="druxt-auth-login__sign-out">Sign out</button>
+</div>
+```
+
+A `DruxtAuthLoginDefault` wrapper replaces the form, and a
+`DruxtAuthLoginSignedIn` wrapper the signed-in state. Each takes the props it
+declares of `busy`, `capabilities`, `credentials`, `error`, `loggedIn`, `user`,
+`submit`, `signInWithDrupal` and `signOut`. A template in the component's
+default slot gets them all and renders both states. `submit()` and
+`signInWithDrupal()` do nothing while the visitor is signed in, whatever markup
+calls them.
+
+The login page sends a visitor who is already signed in on to the page in its
+`redirect` query, from the server. The callback page sends them on to the page
+the sign-in was for, and exchanges no code.
+
+`useDruxtAuth()` keeps the same rule wherever a site calls it. While the
+visitor is signed in, `loginWithPassword()` and `loginWithDrupal()` send
+nothing to the token route or to Drupal, and the session and `user` stay as
+they are. They reject with an error whose `name` is `DRUXT_AUTH_SIGNED_IN`, a
+constant the build auto-imports with `useDruxtAuth()`, so a site tells the
+refusal from a failed sign-in by the name, never the message:
+
+```ts
+const auth = useDruxtAuth();
+try {
+  await auth.loginWithPassword({ username, password });
+} catch (error) {
+  if ((error as Error).name !== DRUXT_AUTH_SIGNED_IN) throw error;
+}
+```
+
+To sign in as someone else, sign out first.
+`await useDruxtAuth().logout('/user/login')` signs out and reloads the login
+page, which then shows the form.
+
+### Scope
+
+Set `auth.scope` to the scopes a signed-in visitor needs, separated by spaces.
+On Simple OAuth 6, a token holds the roles its scopes name, and no others:
+each scope grants one role, so the scope list is the role list. A sign-in with
+no scope gets a token with no roles, and Drupal then refuses the signed-in
+editor what it gives an anonymous visitor, so the site can go blank with a 403.
+The build warns with `DRUXT_E01004` when browser sign-in is on and
+`auth.scope` is empty. In development, after a sign-in, a read Drupal refuses
+the editor and gives an anonymous visitor adds a note to the Druxt DevTools tab
+that names `druxt.auth.scope`.
+
+### Token cookies
+
+With `proxy.api` on, the browser never holds a token. The token route keeps the
+access and refresh tokens in `httpOnly` cookies, which no script on the page
+can read, and the proxy turns the access token into the `Authorization` header
+on each request it sends to Drupal. The browser reads only
+`druxt.auth.session`, which holds the access token's expiry and no token.
+`useDruxtAuth()` gives the signed-in state and the user, as before.
+
+- The cookies are on the site's own host, under the app's `baseURL`, with
+  `SameSite=Lax`. They are `Secure` when `druxt.siteUrl` is https, or when the
+  request came over https, which a front proxy names with
+  `proxy.trustForwarded`. A development server on plain http sets no `Secure`.
+- The password grant, the authorization code grant and the refresh all go
+  through `POST /api/_druxt/auth/token`. A refresh uses the refresh token from its
+  cookie, which only the server reads, and a refused refresh ends the session.
+- `useDruxtAuth()` doesn't start a sign-in while the browser has a session.
+  A sign-in through the client itself, `$druxt.auth.loginWithPassword()`, ends
+  the session the browser had as it asks Drupal, as druxt-auth 0.x did. A
+  sign-in that Drupal refuses leaves the browser signed out, never signed in
+  as the user before.
+- Signing out goes through `POST /api/_druxt/auth/logout`, which clears the
+  cookies. A refresh rotates the refresh token. A test script that keeps a
+  copy of the browser's cookies from before a refresh finds that copy refused.
+- A server render reads the same cookies, so a signed-in page renders signed
+  in. A session cookie that doesn't decode, such as a bare `%`, counts as none,
+  for the proxy, the token route and the server render alike.
+- A browser keeps at most 4096 bytes of one cookie, counting its name, value
+  and attributes, and drops a larger one without a word. When a token would
+  make its cookie larger, the token route sets none of the new session's
+  cookies, so a sign-in leaves the browser signed out. It answers 502 with
+  `DRUXT_E01007`, which names the token and its size, and logs the same line
+  on the server. A refresh that answers such a token ends the session. Make
+  Drupal's token smaller: fewer scopes or shorter-lived claims in the Simple
+  OAuth token, or a smaller signing key.
+
+A module that calls Drupal directly from the browser, outside the proxy, needs
+the token in the browser. `auth.exposeToken: true` keeps the tokens in cookies
+the page's scripts can read, as druxt-auth 0.x did. It's a weaker setting: any
+script on the page can read the tokens. Without `proxy.api`, the browser calls
+Drupal itself, so the tokens are kept that way too.
+
+### Beside nuxt-auth-utils
+
+A site can sign visitors in with [nuxt-auth-utils](https://github.com/atinux/nuxt-auth-utils) as well as with
+`druxt.auth`. Each keeps its own session. Neither reads the other's cookies, and signing out of one leaves the other
+signed in.
+
+|               | Druxt                                                                                        | nuxt-auth-utils                                               |
+| ------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Routes        | `POST /api/_druxt/auth/token`, `POST /api/_druxt/auth/logout`, and the rest of `/api/_druxt` | `GET` and `DELETE /api/_auth/session`, and its OAuth handlers |
+| Cookies       | `druxt.auth.*`, with the tokens `httpOnly` and the expiry in `druxt.auth.session`            | `nuxt-session`, sealed with `NUXT_SESSION_PASSWORD`           |
+| In the app    | `useDruxtAuth()`, `DruxtAuthLogin`                                                           | `useUserSession()`, `AuthState`                               |
+| On the server | The proxy adds the `Authorization` header                                                    | `getUserSession()`, `setUserSession()` and the other helpers  |
+
+The names don't overlap, so the build registers both modules' auto-imports. With `proxy.api` on and Drupal's JSON:API
+at `/api`, both modules' routes answer before the proxy. A request with a method a route doesn't take, such as a `GET`
+to a `POST`-only route of the site's, goes through the proxy to Drupal. The proxy sends Drupal only Drupal's own session
+cookie, so `nuxt-session` never reaches Drupal.
+
 ## Server cache
 
 In production, the server keeps Drupal's responses between requests for as

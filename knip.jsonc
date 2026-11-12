@@ -33,7 +33,8 @@
       ],
       // pinia: the packages that use it declare it. The unit tests of their stores import it too.
       // vue-router: Nuxt's own, which a unit test builds a router with.
-      "ignoreDependencies": ["pinia", "vue-router"]
+      // nuxt-auth-utils: a module the auth-utils standalone fixture lists by name, beside @druxt/core.
+      "ignoreDependencies": ["pinia", "vue-router", "nuxt-auth-utils"]
     },
     "packages/*": {
       // A Nuxt module registers its runtime files by path, through
