@@ -26,6 +26,40 @@ afterAll(async () => {
   for (const nuxt of loaded) await nuxt.close()
 })
 
+describe('the core module', () => {
+  it('registers the password route for password: true with no secret at build', async () => {
+    const { routes, password } = await load({ clientId: 'site', password: true })
+    expect(password).toBe(true)
+    expect(routes).toContain('/api/_druxt/auth/token')
+  }, 120_000)
+
+  it('registers nothing for password: false, even with a build secret', async () => {
+    const { routes, password } = await load({ clientId: 'site', clientSecret: 'secret', password: false })
+    expect(password).toBe(false)
+    expect(routes).not.toContain('/api/_druxt/auth/token')
+  }, 120_000)
+
+  it('registers the token and logout routes for a session the server holds, whatever password says', async () => {
+    for (const password of [true, false, undefined]) {
+      const nuxt = await loadNuxt({
+        cwd: join(root, 'test/unit/fixtures/core-module'),
+        ready: true,
+        overrides: { _prepare: true, druxt: { baseUrl: 'https://drupal.test', proxy: { api: true }, auth: { clientId: 'site', scope: 'editor', ...(password === undefined ? {} : { password }) } } } as Record<string, unknown>,
+      })
+      loaded.push(nuxt)
+      const routes = nuxt.options.serverHandlers.map((handler) => handler.route)
+      expect(routes, String(password)).toEqual(expect.arrayContaining(['/api/_druxt/auth/token', '/api/_druxt/auth/logout']))
+      const auth = (nuxt.options.runtimeConfig.public.druxt as { auth?: { password?: boolean, session?: boolean } }).auth
+      expect(auth, String(password)).toMatchObject({ session: true, password: password ?? false })
+    }
+  }, 120_000)
+
+  it('derives the password grant from a build secret or a Consumer of its own when unset', async () => {
+    expect((await load({ clientId: 'site' })).routes).not.toContain('/api/_druxt/auth/token')
+    expect((await load({ clientId: 'site', passwordClientId: 'site-password' })).routes).toContain('/api/_druxt/auth/token')
+  }, 120_000)
+})
+
 describe('the core module\'s browser sign-in', () => {
   // On Simple OAuth 6, a token holds the roles its scopes name and no others: with none, a signed-in editor reads less
   // than an anonymous visitor.
