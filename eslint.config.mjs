@@ -21,7 +21,9 @@ export default createConfigForNuxt({
       'packages/schema/**',
       'packages/site/**',
       'packages/views/**',
+      'packages/core/src/runtime/server/routes/cacheClear.ts',
       'test/mixins.test.js',
+      'test/unit/cache-clear.test.ts',
       // 1.x examples and tooling, run on the 1.x line.
       'examples/**',
       'test/__fixtures__/**',
