@@ -5,7 +5,7 @@ import { byteSize, headersHaveCredentials, lifetimeLeft, nextRequest, parseCache
 import type { ProcessCacheHandle } from './processCache'
 import { DruxtPermissionsError } from './errors'
 import type { ErrorLike, RequestError } from './errors'
-import { indexPath, resourceTypeOf, setHeader } from './utils/href'
+import { indexPath, resourceTypeOf, setHeader, trimEnd, trimStart } from './utils/href'
 import { listenerUrl, prefixed } from './utils/listener'
 import { omittedResources, warnedOmitted } from './omitted'
 import type { DruxtOmitted } from './omitted'
@@ -113,10 +113,10 @@ export class DruxtClient {
       ...options,
       // As in 1.x, a baseUrl in the options wins over the argument. Without a trailing slash, so it strips cleanly
       // from the index's links.
-      baseUrl: (options.baseUrl || baseUrl).replace(/\/+$/, ''),
+      baseUrl: trimEnd(options.baseUrl || baseUrl),
     }
     // A leading slash and no trailing one, so a prefix joins the endpoint as `/es/api` however it was given.
-    this.options.endpoint = `/${String(this.options.endpoint).replace(/^\/+/, '').replace(/\/+$/, '')}`
+    this.options.endpoint = `/${trimEnd(trimStart(String(this.options.endpoint)))}`
 
     // Keyed on a clientId: 1.x code passes other `auth` shapes, such as the schema generator's `{ type: false }`.
     const auth = this.options.auth as Partial<DruxtAuthOptions> | undefined

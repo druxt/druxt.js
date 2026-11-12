@@ -1,5 +1,19 @@
-// Headers and JSON:API URLs: a header by any spelling of its name, an index link under the base URL,
-// and the resource type and id a URL names.
+// Headers and JSON:API URLs: trimming slashes, a header by any spelling of its name, an index link under the base
+// URL, and the resource type and id a URL names.
+
+/** The value without the run of `char` at its end. Linear, where `/x+$/` is quadratic on a long run. */
+export const trimEnd = (value: string, char = '/'): string => {
+  let end = value.length
+  while (end > 0 && value[end - 1] === char) end--
+  return value.slice(0, end)
+}
+
+/** The value without the run of `char` at its start. */
+export const trimStart = (value: string, char = '/'): string => {
+  let start = 0
+  while (start < value.length && value[start] === char) start++
+  return value.slice(start)
+}
 
 /** Sets a header over any other spelling of its name, or removes it when the value is undefined. */
 export const setHeader = (headers: Record<string, string>, name: string, value?: string): void => {

@@ -2,6 +2,7 @@ import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { DruxtClient, resetProcessCache } from '../../packages/client/src'
 import type { DruxtFetch } from '../../packages/client/src'
+import { trimEnd, trimStart } from '../../packages/client/src/utils/href'
 import { BASE_URL, drupal, index, json, requested } from './fake-drupal'
 
 const article = { type: 'node--article', id: 'a1', attributes: { title: 'Hello' } }
@@ -48,6 +49,23 @@ describe('URL building', () => {
 
   it('drops a trailing slash from the base URL', () => {
     expect(new DruxtClient(`${BASE_URL}//`).options.baseUrl).toBe(BASE_URL)
+  })
+
+  it('trims every trailing slash from baseUrl and endpoint, in linear time', () => {
+    const client = new DruxtClient(`${BASE_URL}///`, { endpoint: '//jsonapi//' })
+    expect([client.options.baseUrl, client.options.endpoint]).toEqual([BASE_URL, '/jsonapi'])
+    expect(new DruxtClient(BASE_URL, { endpoint: '/' }).options.endpoint).toBe('/')
+    expect(new DruxtClient(BASE_URL, { endpoint: '' }).options.endpoint).toBe('/')
+    // A run of slashes before another character took seconds to trim with /\/+$/.
+    const slashes = '/'.repeat(100_000)
+    const started = performance.now()
+    expect(new DruxtClient(`${BASE_URL}${slashes}x`, { endpoint: `${slashes}x${slashes}x` }).options.baseUrl).toBe(`${BASE_URL}${slashes}x`)
+    expect(performance.now() - started).toBeLessThan(50)
+  })
+
+  it('trims a run of slashes from either end of a string, and nothing else', () => {
+    expect(['', '///', 'a', '/a/', '//a//b//'].map((value) => [trimStart(value), trimEnd(value)]))
+      .toEqual([['', ''], ['', ''], ['a', 'a'], ['a/', '/a'], ['a//b//', '//a//b']])
   })
 
   it('resolves a path against this origin when the API is proxied', () => {
