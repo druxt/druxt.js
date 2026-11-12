@@ -7,7 +7,7 @@ import { splitDruxtConfig } from './utils/config'
 import { addDruxtProxy, addPrebundle, corePrebundle, DRUXT_DEFAULTS_IMPORT, druxtDefaults, druxtProxyRoutes } from './kit'
 import type { DruxtAnchorsSetting } from './anchors'
 import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
-import { DRUXT_API_BASE } from './routes'
+import { DRUXT_API_BASE, normalEndpoint, trimEndSlashes } from './routes'
 import { druxtApiConflict } from './utils/routes'
 
 /**
@@ -415,8 +415,9 @@ export default defineNuxtModule<DruxtOptions>({
       throw new Error('[druxt] The `druxt.baseUrl` option is required.')
     }
     options.baseUrl = options.baseUrl.replace(/\/$/, '')
-    if (options.siteUrl) options.siteUrl = options.siteUrl.replace(/\/+$/, '')
-    options.endpoint = options.endpoint.startsWith('/') ? options.endpoint : `/${options.endpoint}`
+    if (options.siteUrl) options.siteUrl = trimEndSlashes(options.siteUrl)
+    // One spelling, for the proxy's paths, the language read and the app's runtime config.
+    options.endpoint = normalEndpoint(options.endpoint)
     // Drupal's paths on the site stay clear of Druxt's own routes. Each language's prefix is checked once it is read.
     const filesPath = options.proxy?.files ? `/sites/${typeof options.proxy.files === 'string' ? options.proxy.files : 'default'}/files` : undefined
     const conflict = druxtApiConflict({ endpoints: [options.endpoint], files: filesPath ? [filesPath] : [] })
@@ -513,10 +514,11 @@ export default defineNuxtModule<DruxtOptions>({
       ].join('\n'),
     }, { nuxt: true, nitro: true })
 
-    // The site's languages, read once for the app's map and the proxy's prefixes, so the two agree. A read that fails
-    // stops a production build, which would otherwise be a site with one language and only a warning to say so. In
-    // development it warns once and reads as none, so the site still starts while Drupal is away: no default language
-    // is known, and the proxy serves only the unprefixed endpoint.
+    // The site's languages, read once for the app's map and the proxy's prefixes, so the two agree. A read Drupal
+    // refuses, as with the wrong build credentials, stops a production build: the site would otherwise be one with
+    // one language and only a warning to say so, from a mistake a rebuild will not mend. A read with no answer, as
+    // when the build has no way to Drupal, warns once and reads as none, and so does any failure in development: no
+    // default language is known, and the proxy serves only the unprefixed endpoint.
     let siteLanguages: Promise<DruxtLanguage[]> | undefined
     const readSiteLanguages = () => siteLanguages ||= getLanguages(options).catch((error: unknown) => {
       const proxied = options.proxy?.api ? `, and the proxy serves only the unprefixed ${options.endpoint}, not its language-prefixed paths, until a build reads them` : ''
@@ -552,6 +554,10 @@ export default defineNuxtModule<DruxtOptions>({
         '',
       ].join('\n'),
     }, { nuxt: true, nitro: true })
+
+    if (options.cache) {
+      addServerHandler({ route: `${DRUXT_API_BASE}/cache/clear`, handler: resolve('./runtime/server/routes/cacheClear') })
+    }
 
     // Where Druxt's server routes keep what they hold between requests. Memory
     // by default: a site shares it across instances by mounting a driver of its own.

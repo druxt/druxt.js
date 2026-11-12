@@ -1,41 +1,52 @@
-// Bundled into the Nuxt module, which registers it as a function. A file under
-// server-middleware/ is copied into dist/ on its own and could not import the process cache.
-import { resetProcessCache } from '../utils/processCache'
+import { createHash, timingSafeEqual } from 'node:crypto'
+import { defineEventHandler, getRequestHeader, setResponseHeader, setResponseStatus } from 'h3'
+import { resetProcessCache } from '@druxt/client'
+import { useNitroApp } from 'nitropack/runtime'
+import { useRuntimeConfig } from '#imports'
+import type { DruxtPrivateConfig } from '../../types'
+import { clearServerClients } from '../signIn'
 
-// Compares in time that depends on the caller's input alone: the loop runs its
-// length, and the secret's content and length only feed the accumulator. Node's
-// crypto is not used, as this file is part of the browser bundle too.
-const safeEqual = (input, secret) => {
-  let diff = input.length ^ secret.length
-  for (let i = 0; i < input.length; i++) {
-    diff |= input.charCodeAt(i) ^ secret.charCodeAt(i % secret.length)
-  }
-  return diff === 0
-}
+// Digests first, so the comparison takes the same time whatever either length.
+const digest = (value: string) => createHash('sha256').update(value).digest()
 
 /**
- * Server middleware that empties the process cache when Drupal asks.
+ * POST /api/_druxt/cache/clear: empties the process cache and the server clients'
+ * caches when Drupal asks, then tells the modules through `druxt:cache:clear`.
  *
- * Accepts `POST` with the secret in the `X-Druxt-Secret` header, never in the URL,
- * so it stays out of access logs.
- *
- * @param {string} secret - The shared secret, from `druxt.cache.secret`.
- *
- * @returns {Function} A Connect handler.
+ * The secret comes in the `X-Druxt-Secret` header, never the URL, so it stays
+ * out of access logs. As 1.x's server middleware.
  */
-export const cacheClearHandler = (secret) => (req, res) => {
-  if (req.method !== 'POST') {
-    res.statusCode = 405
-    res.setHeader('Allow', 'POST')
-    return res.end()
+export default defineEventHandler(async (event) => {
+  const secret = (useRuntimeConfig(event).druxt as Partial<DruxtPrivateConfig> | undefined)?.cache?.secret
+  // Registered while the secret may still arrive at runtime: without one, there is no route.
+  if (!secret) {
+    setResponseStatus(event, 404)
+    return ''
   }
 
-  if (!safeEqual(String(req.headers['x-druxt-secret'] || ''), String(secret))) {
-    res.statusCode = 401
-    return res.end()
+  if (event.method !== 'POST') {
+    setResponseHeader(event, 'Allow', 'POST')
+    setResponseStatus(event, 405)
+    return ''
+  }
+
+  if (!timingSafeEqual(digest(getRequestHeader(event, 'x-druxt-secret') || ''), digest(secret))) {
+    setResponseStatus(event, 401)
+    return ''
   }
 
   resetProcessCache()
-  res.statusCode = 204
-  res.end()
+  // The server routes' clients keep a JSON:API index each.
+  await clearServerClients()
+  // The modules' own holds, such as regenerated schemas, go with it.
+  await useNitroApp().hooks.callHook('druxt:cache:clear')
+  setResponseStatus(event, 204)
+  return ''
+})
+
+declare module 'nitropack' {
+  interface NitroRuntimeHooks {
+    /** Druxt's caches were cleared through `/api/_druxt/cache/clear`. */
+    'druxt:cache:clear': () => void | Promise<void>
+  }
 }
