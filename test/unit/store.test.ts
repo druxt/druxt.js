@@ -1,860 +1,458 @@
-import { createLocalVue } from '@vue/test-utils'
-import axios from 'axios'
-import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-import { getMockCollection, getMockResource } from 'druxt-test-utils'
-import mockAxios from 'jest-mock-axios'
-import Vuex from 'vuex'
+// cspell:ignore fieldsets (JSON:API's sparse fieldsets)
+import { describe, expect, it, vi } from 'vitest'
+import { createApp, markRaw } from 'vue'
+import { createPinia, setActivePinia } from 'pinia'
+import { DruxtClient } from '../../packages/client/src'
+import { useDruxtStore } from '../../packages/core/src/runtime/store'
+import { BASE_URL, drupal, index, individual, json, requested } from './fake-drupal'
 
-import { DruxtClient, DruxtStore } from '../../src'
+const page = { type: 'node--page', id: 'p1', attributes: { title: 'About' }, relationships: { uid: { data: { type: 'user--user', id: 'u1' } } } }
+const user = { type: 'user--user', id: 'u1', attributes: { name: 'editor' } }
 
-jest.mock('axios')
+const storeFor = () => {
+  const { fetch, calls } = drupal({
+    'GET /jsonapi': index('', ['node--page', 'user--user']),
+    'GET /jsonapi/node/page/p1': { data: page },
+    'GET /jsonapi/node/page/p1?include=uid': { data: page, included: [user] },
+  })
+  const client = new DruxtClient(BASE_URL, { fetch })
+  const pinia = createPinia()
+  // Core's Pinia plugin gives every store the client as `this.$druxt`.
+  pinia.use(() => ({ $druxt: markRaw(client) }))
+  createApp({}).use(pinia)
+  setActivePinia(pinia)
+  return { calls, store: useDruxtStore() }
+}
 
-// Setup local vue instance.
-const localVue = createLocalVue()
-localVue.use(Vuex)
-
-let store
-
-const baseUrl = 'https://api.umami.demo.druxtjs.org'
-
-describe('DruxtStore', () => {
-  beforeEach(() => {
-    mockAxios.reset()
-
-    // Setup vuex store.
-    store = new Vuex.Store()
-    store.app = { context: { error: jest.fn() } }
-    DruxtStore({ store })
-
-    store.$druxt = new DruxtClient(baseUrl, { axios })
-    // Reset the shared JSON:API index cache.
-    Object.keys(store.$druxt.index).forEach((key) => delete store.$druxt.index[key])
+describe('useDruxtStore().getResource()', () => {
+  it('throws on an empty type or id, naming it, before any request', async () => {
+    const { calls, store } = storeFor()
+    await expect(store.getResource({ type: 'node--page', id: '' })).rejects.toThrow(TypeError)
+    await expect(store.getResource({ type: 'node--page', id: '' })).rejects.toThrow('getResource() needs an id')
+    await expect(store.getResource({ type: '', id: 'p1' })).rejects.toThrow('getResource() needs a type')
+    expect(calls).toHaveLength(0)
   })
 
-  test('init', () => {
-    expect(() => { DruxtStore({}) }).toThrow('Vuex store not found.')
-  })
-
-  test('addCollection', async () => {
-    const mockCollectionPage = await getMockCollection('node--page')
-
-    // expect(collection).toBe(1)
-    const id = mockCollectionPage.data[0].id
-
-    // Ensure that the collection and resource stores are empty.
-    expect(store.state.druxt.collections).toStrictEqual({})
-
-    // Commit the mock data with included mock data.
-    const included = [{
-      type: 'node--article',
-      id: expect.any(String),
-      attributes: {}
-    }]
-    store.commit('druxt/addCollection', {
-      collection: {
-        ...mockCollectionPage,
-        included,
-      },
-      type: 'node--page',
-      hash: '_default',
-    })
-
-    // Expect the collection be stored with dehydrated resources.
-    expect(store.state.druxt.collections['node--page']._default[undefined].data[0]).toStrictEqual(
-      expect.objectContaining({ id, type: 'node--page' })
-    )
-
-    // Expect the collection be stored with dehydrated (not dropped)
-    // included resources, so a later cache hit can re-hydrate `included`
-    // the same way it re-hydrates `data`.
-    expect(store.state.druxt.collections['node--page']._default[undefined].included[0]).toStrictEqual({
-      id: included[0].id,
-      type: 'node--article',
-    })
-  })
-
-  test('addResource', async () => {
-    const mockPage = await getMockResource('node--page')
-    const mockArticle = await getMockResource('node--article')
-
-    // Ensure that the resources store is empty.
-    expect(store.state.druxt.resources).toStrictEqual({})
-
-    // Ensure that bad data does not get committed to state.
-    store.commit('druxt/addResource', {})
-    expect(store.state.druxt.resources).toStrictEqual({})
-
-    // Ensure that good data is committed to state.
-    store.commit('druxt/addResource', {
-      resource: {
-        ...mockPage,
-        included: [mockArticle.data],
-      }
-    })
-    expect(store.state.druxt.resources[mockPage.data.type][mockPage.data.id][undefined])
-      .toStrictEqual({
-        _druxt_full: expect.anything(),
-        ...mockPage,
-      })
-    const expected = { ...mockArticle }
-    delete expected.jsonapi
-    expect(store.state.druxt.resources[mockArticle.data.type][mockArticle.data.id][undefined])
-      .toStrictEqual({
-        _druxt_full: expect.anything(),
-        ...expected,
-        links: {
-          self: {
-            href: expect.any(String)
-          }
-        }
-      })
-
-    // Test deprecated hash argument.
-    const spy = jest.spyOn(console, 'warn').mockImplementation()
-    store.commit('druxt/addResource', { resource: mockArticle, hash: 'deprecated' })
-    expect(console.warn).toHaveBeenCalledWith('[druxt] The `hash` argument for `druxt/addResource` has been deprecated, see https://druxtjs.org/modules/druxt/deprecations#druxtstore-addresource-hash');
-    spy.mockRestore()
-  })
-
-  test('getResource', async () => {
-    const mockPage = await getMockResource('node--page')
-    mockAxios.reset()
-
-    // Assert that:
-    // - Resource store is empty.
-    // - No get requests have been executed.
-    expect(store.state.druxt.resources).toStrictEqual({})
-    expect(mockAxios.get).toHaveBeenCalledTimes(0)
-
-    // Get full resource
-    const resource = await store.dispatch('druxt/getResource', mockPage.data)
-
-    // Assert that:
-    // - The request url is correct.
-    // - Only 2 get requests are executed.
-    //   - Index
-    //   - Resource
-    // - Returned expected data with `_druxt_full` flag.
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/page/${mockPage.data.id}`, undefined)
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
-    const expected = {
-      _druxt_full: expect.anything(),
-      ...mockPage
-    }
-    expect(resource).toStrictEqual(expected)
-
-    // Assert that:
-    // - The suite doesn't execute additional get requests.
-    // - Rehydrated resource gives the same results.
-    const storedResource = await store.dispatch('druxt/getResource', mockPage.data)
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
-    expect(storedResource).toStrictEqual(resource)
-    expect(storedResource).toStrictEqual(expected)
-
-    // Assert that:
-    // - Cache is bypassed
-    const bypassedResource = await store.dispatch('druxt/getResource', { ...mockPage.data, bypassCache: true })
-    delete resource._druxt_full
-    delete bypassedResource._druxt_full
-    expect(mockAxios.get).toHaveBeenCalledTimes(3)
-    expect(bypassedResource).toStrictEqual(resource)
-
-    // Assert that:
-    // - When bypassing cache, in case live data is unavailable, fallback to cache.
-    store.$druxt.getResource = jest.fn(() => { throw new Error() })
-    const fallback = await store.dispatch('druxt/getResource', { ...mockPage.data, bypassCache: true })
-    delete fallback._druxt_full
-    expect(mockAxios.get).toHaveBeenCalledTimes(3)
-    expect(fallback).toStrictEqual(bypassedResource)
-  })
-
-  test('getResource - filter', async () => {
-    const mockRecipe = await getMockResource('node--recipe', new DrupalJsonApiParams().addFields('node--recipe', []))
-    mockAxios.reset()
-
-    // Assert that:
-    // - Resource store is empty.
-    // - No get requests have been executed.
-    expect(store.state.druxt.resources).toStrictEqual({})
-    expect(mockAxios.get).toHaveBeenCalledTimes(0)
-
-    // Get resource with no fields.
-    const request = {
-      type: 'node--recipe',
-      id: mockRecipe.data.id,
-      query: new DrupalJsonApiParams()
-        .addFields('node--recipe', [])
-    }
-
-    // Assert that:
-    // - The request url is correct.
-    // - Only 3 get requests are executed.
-    // - Returned expected data with `_druxt_partial` flag.
-    // - There's no attributes or relationships.
-    const resource = await store.dispatch('druxt/getResource', request)
-    const expected = {
-      _druxt_partial: expect.anything(),
-      ...mockRecipe
-    }
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/recipe/${mockRecipe.data.id}?fields%5Bnode--recipe%5D=`, undefined)
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
-    expect(resource).toStrictEqual(expected)
-    expect(resource.data.attributes).toBe(undefined)
-    expect(resource.data.relationships).toBe(undefined)
-
-    // Get the same resource but with one field.
-    const partialResource = await store.dispatch('druxt/getResource', {
-      ...request,
-      query: new DrupalJsonApiParams()
-        .addFields('node--recipe', ['title'])
-    })
-
-    // Assert that:
-    // - The request url is correct.
-    // - One additional get request executed for missing field data.
-    // - The additional data is present.
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/recipe/${mockRecipe.data.id}?fields%5Bnode--recipe%5D=title`, undefined)
-    expect(mockAxios.get).toHaveBeenCalledTimes(3)
-    expect(Object.keys(partialResource.data.attributes)).toStrictEqual(['title'])
-
-    // Get the same resource but with a missing and existing field.
-    const mixedResource = await store.dispatch('druxt/getResource', {
-      ...request,
-      query: new DrupalJsonApiParams()
-        .addFields('node--recipe', ['title', 'path'])
-    })
-
-    // Assert that:
-    // - The request url is correct.
-    // - One additional get request executed for only the missing field.
-    // - All required data is present.
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/recipe/${mockRecipe.data.id}?fields%5Bnode--recipe%5D=path`, undefined)
-    expect(mockAxios.get).toHaveBeenCalledTimes(4)
-    expect(Object.keys(mixedResource.data.attributes)).toStrictEqual(['title', 'path'])
-
-    // Get the initial request again.
-    await store.dispatch('druxt/getResource', request)
-
-    // Assert that:
-    // - The suite didn't make additional get requests.
-    expect(mockAxios.get).toHaveBeenCalledTimes(4)
-  })
-
-  test('getResource - includes', async () => {
-    const mockResource = await getMockResource('node--recipe')
-    mockAxios.reset()
-
-    // Assert that:
-    // - Resource store is empty.
-    // - No get requests have been executed.
-    expect(store.state.druxt.resources).toStrictEqual({})
-    expect(mockAxios.get).toHaveBeenCalledTimes(0)
-
-    // Get filtered resource with includes.
-    const request = {
-      type: 'node--recipe',
-      id: mockResource.data.id,
-      query: new DrupalJsonApiParams()
-        .addInclude(['field_media_image', 'field_media_image.field_media_image'])
-        .addFields('node--recipe', [])
-        // @todo This field should be automatically included.
-        .addFields('media--image', ['field_media_image'])
-        .addFields('file--file', ['uri'])
-    }
-    const resource = await store.dispatch('druxt/getResource', request)
-
-    // Assert that:
-    // - The request url is correct.
-    // - Only 3 get requests are executed.
-    // - Returned expected data with `_druxt_partial` flag.
-    // - Included resources are stored.
-    expect(mockAxios.get).toHaveBeenLastCalledWith(`/en/jsonapi/node/recipe/${mockResource.data.id}?include=field_media_image%2Cfield_media_image.field_media_image&fields%5Bnode--recipe%5D=field_media_image&fields%5Bmedia--image%5D=field_media_image&fields%5Bfile--file%5D=uri`, undefined)
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
-    expect(resource).toStrictEqual({
-      _druxt_partial: expect.anything(),
-      ...resource
-    })
-    expect(Object.keys(store.state.druxt.resources)).toStrictEqual([
-      'node--recipe',
-      'media--image',
-      'file--file'
+  it('answers a sparse request from a full request for the same resource still in flight, with no second request', async () => {
+    const { calls, store } = storeFor()
+    const [full, sparse] = await Promise.all([
+      store.getResource({ type: 'node--page', id: 'p1' }),
+      store.getResource({ type: 'node--page', id: 'p1', query: { fields: { 'node--page': 'title' } } }),
     ])
+    expect(requested(calls).filter((r) => !r.endsWith('/jsonapi'))).toEqual(['GET /jsonapi/node/page/p1'])
+    expect(sparse.data?.attributes).toEqual(full.data?.attributes)
+  })
 
-    // Get same resource with include to test re-hydration.
-    const storedResource = await store.dispatch('druxt/getResource', request)
+  /** A store on a fake Drupal that answers sparse fieldsets as Drupal does. */
+  const sparseStoreFor = (reply = individual(page, [user])) => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index('', ['node--page', 'user--user']), 'GET /jsonapi/node/page/p1': reply })
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(new DruxtClient(BASE_URL, { fetch })) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    return { calls, store: useDruxtStore(), resources: () => requested(calls).filter((r) => !r.endsWith('/jsonapi')).map(decodeURIComponent) }
+  }
 
-    // Assert that:
-    // - The suite doesn't execute additional get requests.
-    // - Rehydrated resource gives the same results.
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
-    expect(storedResource).toStrictEqual({
-      _druxt_partial: expect.anything(),
-      ...resource
+  it('shares one failed request between readers with the same query, and repeats it for neither', async () => {
+    const { store, resources } = sparseStoreFor(() => json({ errors: [{ status: '500', title: 'Internal Server Error' }] }, 500))
+    const query = { fields: { 'node--page': 'title' } }
+    const [first, second] = await Promise.all([store.getResource({ type: 'node--page', id: 'p1', query }), store.getResource({ type: 'node--page', id: 'p1', query })])
+    expect(first.error?.statusCode).toBe(500)
+    expect(second.error?.statusCode).toBe(500)
+    expect(resources()).toEqual(['GET /jsonapi/node/page/p1?fields[node--page]=title'])
+  })
+
+  it('waits on a sparse request in flight, then asks only for the fields it lacks', async () => {
+    const { store, resources } = sparseStoreFor()
+    const [, both] = await Promise.all([
+      store.getResource({ type: 'node--page', id: 'p1', query: { fields: { 'node--page': 'title' } } }),
+      store.getResource({ type: 'node--page', id: 'p1', query: { fields: { 'node--page': 'title,uid' } } }),
+    ])
+    expect(resources()).toEqual(['GET /jsonapi/node/page/p1?fields[node--page]=title', 'GET /jsonapi/node/page/p1?fields[node--page]=uid'])
+    expect(both.data?.attributes).toEqual({ title: 'About' })
+    expect(Object.keys(both.data?.relationships || {})).toEqual(['uid'])
+  })
+
+  it('does not wait on a request in flight when the store already holds what it asks for', async () => {
+    const { store, resources } = sparseStoreFor()
+    await store.getResource({ type: 'node--page', id: 'p1', query: { fields: { 'node--page': 'title' } } })
+    const pending = store.getResource({ type: 'node--page', id: 'p1', query: { fields: { 'node--page': 'uid' } } })
+    const held = store.getResource({ type: 'node--page', id: 'p1', query: { fields: { 'node--page': 'title' } } })
+    // Answered from the store before the request in flight for another field settles.
+    expect(await Promise.race([held.then(() => 'held'), pending.then(() => 'pending')])).toBe('held')
+    expect((await held).data?.attributes).toEqual({ title: 'About' })
+    await pending
+    expect(resources()).toHaveLength(2)
+  })
+
+  it('reports a refused or missing resource as error, with no data, and does not store it', async () => {
+    const { fetch } = drupal({
+      'GET /jsonapi': index('', ['node--page']),
+      'GET /jsonapi/node/page/denied': () => json({ errors: [{ status: '403', title: 'Forbidden', detail: 'Secret backend detail.' }] }, 403),
+      'GET /jsonapi/node/page/p1': { data: page },
     })
-
-    // Ensure no data normalization issues.
-    request.query = new DrupalJsonApiParams().addInclude([])
-    await store.dispatch('druxt/getResource', request)
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(new DruxtClient(BASE_URL, { fetch })) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    const store = useDruxtStore()
+    const denied = await store.getResource({ type: 'node--page', id: 'denied' })
+    expect(denied.error?.statusCode).toBe(403)
+    expect(denied.error?.message).toBe('Forbidden')
+    expect(denied.error?.message).not.toContain('http')
+    expect(JSON.stringify(denied.error)).not.toContain('Secret')
+    expect(denied.data).toBeUndefined()
+    const missing = await store.getResource({ type: 'node--page', id: 'gone' })
+    expect(missing.error?.statusCode).toBe(404)
+    expect(missing.data).toBeUndefined()
+    expect(store.resources['node--page']?.denied).toBeUndefined()
+    expect((await store.getResource({ type: 'node--page', id: 'p1' })).error).toBeUndefined()
   })
 
-  test('getResource - bypassCache returns only the includes the fresh response has', async () => {
-    const mockResource = await getMockResource('node--recipe')
-    const { id } = mockResource.data
-    const request = {
-      type: 'node--recipe',
-      id,
-      query: new DrupalJsonApiParams()
-        .addInclude(['field_media_image', 'field_media_image.field_media_image'])
-        .addFields('node--recipe', [])
-        .addFields('media--image', ['field_media_image'])
-        .addFields('file--file', ['uri'])
-    }
-
-    // A stored copy that still relates to media Drupal has since removed from the recipe.
-    const stale = { type: 'media--image', id: 'removed-media', attributes: {}, relationships: {} }
-    store.commit('druxt/addResource', { prefix: undefined, resource: { data: stale, links: { self: { href: '' } } } })
-    store.commit('druxt/addResource', { prefix: undefined, resource: { data: { ...mockResource.data, relationships: { field_media_image: { data: { type: 'media--image', id: 'removed-media' } } } }, links: { self: { href: '' } } } })
-
-    const resource = await store.dispatch('druxt/getResource', { ...request, bypassCache: true })
-    const included = (resource.included || []).map((o) => o.id)
-    expect(included.length).toBeGreaterThan(0)
-    expect(included).not.toContain('removed-media')
+  it('returns data with no error once a later request for the same id succeeds', async () => {
+    let allowed = false
+    const { fetch } = drupal({
+      'GET /jsonapi': index('', ['node--page']),
+      'GET /jsonapi/node/page/p1': () => allowed ? json({ data: page }) : json({ errors: [{ title: 'Forbidden' }] }, 403),
+    })
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(new DruxtClient(BASE_URL, { fetch })) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    const store = useDruxtStore()
+    expect((await store.getResource({ type: 'node--page', id: 'p1' })).error?.statusCode).toBe(403)
+    allowed = true
+    const retry = await store.getResource({ type: 'node--page', id: 'p1' })
+    expect(retry.error).toBeUndefined()
+    expect(retry.data).toEqual(page)
   })
 
-  test('getCollection', async () => {
-    const collection = await store.dispatch('druxt/getCollection', { type: 'node--page', query: {} })
-    expect(collection.data.length).toBe(1)
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
-
-    await store.dispatch('druxt/getCollection', { type: 'node--page', query: {} })
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
+  it('loads a resource with its includes', async () => {
+    const { calls, store } = storeFor()
+    const resource = await store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid' } })
+    expect(resource.data).toEqual(page)
+    expect(resource.included).toEqual([user])
+    expect(requested(calls)).toContain('GET /jsonapi/node/page/p1?include=uid')
   })
+})
 
-  test('getCollection cache hit re-hydrates included data', async () => {
-    const mockCollectionPage = await getMockCollection('node--page')
-    const includedId = 'included-article-uuid'
-    store.commit('druxt/addCollection', {
-      collection: {
-        ...mockCollectionPage,
-        included: [{ type: 'node--article', id: includedId, attributes: { title: 'Included' } }],
-      },
+describe('useDruxtStore() merging', () => {
+  it('merges a resource into the stored one: the newer value wins, arrays are replaced and null overrides', () => {
+    const { store } = storeFor()
+    const first = {
       type: 'node--page',
-      hash: '_default',
-    })
-
-    // A cache hit must return `included` the same way a fresh fetch would.
-    const cached = await store.dispatch('druxt/getCollection', { type: 'node--page' })
-    expect(cached.included).toHaveLength(1)
-    expect(cached.included[0]).toStrictEqual(
-      expect.objectContaining({ id: includedId, type: 'node--article' })
-    )
-    // The stored entry is a bare `{ id, type }` ref with no attributes, so
-    // a hydrated resource is the only thing that can satisfy this.
-    expect(cached.included[0].attributes).toStrictEqual({ title: 'Included' })
-  })
-
-  test('getCollection fetches again after flushResource', async () => {
-    const type = 'node--page'
-    const mockCollectionPage = await getMockCollection(type)
-    store.commit('druxt/addCollection', {
-      collection: {
-        ...mockCollectionPage,
-        included: [{ type: 'node--article', id: 'flushed-article-uuid', attributes: { title: 'Included' } }],
-      },
-      type,
-      hash: '_default',
-    })
-
-    // A cache hit while the resources are still stored doesn't request anything.
-    await store.dispatch('druxt/getCollection', { type })
-    expect(mockAxios.get).toHaveBeenCalledTimes(0)
-
-    // Every resource bucket goes, while the collection entry stays, so the
-    // next request is a fetch rather than a collection of undefined entries.
-    store.commit('druxt/flushResource', {})
-    const fresh = await store.dispatch('druxt/getCollection', { type })
-    // The JSON:API index request and the collection request.
-    expect(mockAxios.get).toHaveBeenCalledTimes(2)
-    expect(fresh.data).toStrictEqual(mockCollectionPage.data)
-    expect(fresh.data.every((o) => o)).toBe(true)
-  })
-
-  test('getCollection shares an in-flight request', async () => {
-    const type = 'node--page'
-    const mockCollectionPage = await getMockCollection(type)
-    const resolvers = []
-    store.$druxt.getCollection = jest.fn(() => new Promise((resolve) => resolvers.push(resolve)))
-
-    const requests = [1, 2, 3].map(() => store.dispatch('druxt/getCollection', { type, query: 'page[limit]=5' }))
-    await Promise.resolve()
-    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(1)
-
-    // A different query, include, type or prefix is a different request.
-    requests.push(
-      store.dispatch('druxt/getCollection', { type, query: 'page[limit]=10' }),
-      store.dispatch('druxt/getCollection', { type, query: 'page[limit]=5&include=uid' }),
-      store.dispatch('druxt/getCollection', { type: 'node--article', query: 'page[limit]=5' }),
-      store.dispatch('druxt/getCollection', { type, query: 'page[limit]=5', prefix: 'es' }),
-    )
-    await Promise.resolve()
-    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(5)
-
-    resolvers.forEach((resolve) => resolve(mockCollectionPage))
-    const results = await Promise.all(requests)
-    results.forEach((result) => expect(result.data).toStrictEqual(mockCollectionPage.data))
-  })
-
-  test('a flush drops the requests in flight, for the store and for later dispatches', async () => {
-    const type = 'node--page'
-    const mockCollectionPage = await getMockCollection(type)
-    const mockPage = await getMockResource(type)
-    const { id } = mockPage.data
-    const collections = []
-    const resources = []
-    store.$druxt.getCollection = jest.fn(() => new Promise((resolve) => collections.push(resolve)))
-    store.$druxt.getResource = jest.fn(() => new Promise((resolve) => resources.push(resolve)))
-
-    const before = [
-      store.dispatch('druxt/getCollection', { type }),
-      store.dispatch('druxt/getResource', { type, id }),
-    ]
-    await Promise.resolve()
-    store.commit('druxt/flushCollection', {})
-    store.commit('druxt/flushResource', {})
-
-    // A dispatch after the flush starts its own request rather than joining the stale one.
-    const after = [
-      store.dispatch('druxt/getCollection', { type }),
-      store.dispatch('druxt/getResource', { type, id }),
-    ]
-    await Promise.resolve()
-    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(2)
-    expect(store.$druxt.getResource).toHaveBeenCalledTimes(2)
-
-    // The request started before the flush answers its callers and stores nothing.
-    collections[0](mockCollectionPage)
-    resources[0](mockPage)
-    const [collection, resource] = await Promise.all(before)
-    expect(collection.data).toStrictEqual(mockCollectionPage.data)
-    expect(resource.data).toStrictEqual(mockPage.data)
-    expect(store.state.druxt.collections).toStrictEqual({})
-    expect(store.state.druxt.resources).toStrictEqual({})
-
-    // The request started after it is stored as usual.
-    collections[1](mockCollectionPage)
-    resources[1](mockPage)
-    await Promise.all(after)
-    expect(store.state.druxt.collections[type]._default.undefined.data).toHaveLength(mockCollectionPage.data.length)
-    expect(store.state.druxt.resources[type][id].undefined.data).toStrictEqual(mockPage.data)
-
-    // A bypass that resolves after an unrelated flush returns the fresh
-    // document, not the entry the flush left in the store.
-    const fresh = { ...mockPage, data: { ...mockPage.data, attributes: { ...mockPage.data.attributes, title: 'Fresh' } } }
-    const bypass = store.dispatch('druxt/getResource', { type, id, bypassCache: true })
-    await Promise.resolve()
-    store.commit('druxt/flushCollection', {})
-    resources[2](fresh)
-    expect((await bypass).data.attributes.title).toBe('Fresh')
-    expect(store.state.druxt.resources[type][id].undefined.data).toStrictEqual(mockPage.data)
-  })
-
-  test('a bypass reaches the client, so the server process cache is skipped too', async () => {
-    const type = 'node--page'
-    const mockCollectionPage = await getMockCollection(type)
-    const mockPage = await getMockResource(type)
-    const { id } = mockPage.data
-    const pending = []
-    store.$druxt.getCollection = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
-    store.$druxt.getResource = jest.fn(async () => mockPage)
-
-    // A bypass dispatched while an ordinary request is in flight starts its own,
-    // as the ordinary one may be answered from the process cache.
-    const ordinary = store.dispatch('druxt/getCollection', { type })
-    const bypass = store.dispatch('druxt/getCollection', { type, bypassCache: true })
-    await Promise.resolve()
-    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(2)
-    expect(store.$druxt.getCollection.mock.calls[0]).toStrictEqual([type, undefined, undefined, { bypassCache: false }])
-    expect(store.$druxt.getCollection.mock.calls[1]).toStrictEqual([type, undefined, undefined, { bypassCache: true }])
-    pending.forEach((resolve) => resolve(mockCollectionPage))
-    await Promise.all([ordinary, bypass])
-
-    await store.dispatch('druxt/getResource', { type, id: 'other' })
-    expect(store.$druxt.getResource.mock.calls[0][4]).toStrictEqual({ bypassCache: false })
-    await store.dispatch('druxt/getResource', { type, id, bypassCache: true })
-    expect(store.$druxt.getResource.mock.calls[1][4]).toStrictEqual({ bypassCache: true })
-  })
-
-  test('an ordinary request that resolves after a bypass does not replace its answer', async () => {
-    const type = 'node--page'
-    const mockCollectionPage = await getMockCollection(type)
-    const mockPage = await getMockResource(type)
-    const { id } = mockPage.data
-    const titled = (title) => ({ ...mockPage, data: { ...mockPage.data, attributes: { ...mockPage.data.attributes, title } } })
-
-    const collections = []
-    store.$druxt.getCollection = jest.fn(() => new Promise((resolve) => collections.push(resolve)))
-    const ordinaryCollection = store.dispatch('druxt/getCollection', { type })
-    const bypassCollection = store.dispatch('druxt/getCollection', { type, bypassCache: true })
-    await Promise.resolve()
-    const fresh = { ...mockCollectionPage, meta: { fresh: true } }
-    collections[1](fresh)
-    await bypassCollection
-    collections[0]({ ...mockCollectionPage, meta: { fresh: false } })
-    await ordinaryCollection
-    expect(store.state.druxt.collections[type]._default.undefined.meta).toStrictEqual({ fresh: true })
-
-    // The collection stored its resources, so flush them for the ordinary dispatch to fetch.
-    store.commit('druxt/flushResource', {})
-    const resources = []
-    store.$druxt.getResource = jest.fn(() => new Promise((resolve) => resources.push(resolve)))
-    const ordinaryResource = store.dispatch('druxt/getResource', { type, id })
-    const bypassResource = store.dispatch('druxt/getResource', { type, id, bypassCache: true })
-    await Promise.resolve()
-    resources[1](titled('Fresh'))
-    await bypassResource
-    resources[0](titled('Stale'))
-    await ordinaryResource
-    expect(store.state.druxt.resources[type][id].undefined.data.attributes.title).toBe('Fresh')
-  })
-
-  test('a revisit takes from each related resource only the includes its type has', async () => {
-    // A page's paragraphs share one include path, as a page query asks for
-    // `field_content.field_media` across every paragraph type.
-    const fields = {
-      'node--page': 'title,field_content',
-      'paragraph--text': 'field_text',
-      'paragraph--image': 'field_media',
-      'media--image': 'name',
+      id: 'p2',
+      attributes: { title: 'Old', tags: ['a', 'b'], body: { value: 'Text', format: 'basic_html' }, summary: 'Kept' },
+      relationships: { uid: { data: { type: 'user--user', id: 'u1' } } },
     }
-    const href = (type, id) => `${baseUrl}/jsonapi/${type.replace('--', '/')}/${id}?fields[${type}]=${fields[type]}`
-    const add = (data) => store.commit('druxt/addResource', { resource: { data, links: { self: { href: href(data.type, data.id) } } } })
+    const second = {
+      type: 'node--page',
+      id: 'p2',
+      attributes: { title: 'New', tags: ['c'], body: { value: 'Changed' } },
+      relationships: { uid: { data: null } },
+    }
+    store.addResource({ resource: { data: first as never } })
+    store.addResource({ resource: { data: second as never } })
+    const { data } = store.resources['node--page']!.p2!.undefined!
+    expect(data.attributes).toEqual({ title: 'New', tags: ['c'], body: { value: 'Changed', format: 'basic_html' }, summary: 'Kept' })
+    expect(data.relationships).toEqual({ uid: { data: null } })
+  })
+
+  it('does not share nested objects with the resource it was given', () => {
+    const { store } = storeFor()
+    const resource = { data: { type: 'node--page', id: 'p3', attributes: { body: { value: 'Text' } } } }
+    store.addResource({ resource: resource as never })
+    resource.data.attributes.body.value = 'Mutated'
+    expect(store.resources['node--page']!.p3!.undefined!.data.attributes).toEqual({ body: { value: 'Text' } })
+  })
+
+  it('replaces a stored collection\'s data, not appending to it', () => {
+    const { store } = storeFor()
+    const collection = (ids: string[]) => ({ data: ids.map((id) => ({ type: 'node--page', id })), links: { self: { href: `${BASE_URL}/jsonapi/node/page` } } })
+    store.addCollection({ type: 'node--page', hash: '_default', collection: collection(['p1', 'p2']) as never })
+    store.addCollection({ type: 'node--page', hash: '_default', collection: collection(['p3']) as never })
+    expect(store.collections['node--page']!._default!.undefined!.data).toEqual([{ type: 'node--page', id: 'p3' }])
+  })
+
+  it('stores a collection under a stable key for its query, ignoring fields and includes', async () => {
+    const { fetch } = drupal({
+      'GET /jsonapi': index('', ['node--page']),
+      'GET /jsonapi/node/page?filter%5Bstatus%5D=1': { data: [], links: { self: { href: `${BASE_URL}/jsonapi/node/page?filter%5Bstatus%5D=1` } } },
+      'GET /jsonapi/node/page?filter%5Bstatus%5D=1&fields%5Bnode--page%5D=title': { data: [], links: { self: { href: `${BASE_URL}/jsonapi/node/page?filter%5Bstatus%5D=1` } } },
+    })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(client) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    const store = useDruxtStore()
+    await store.getCollection({ type: 'node--page', query: { filter: { status: '1' } } })
+    await store.getCollection({ type: 'node--page', query: { filter: { status: '1' }, fields: { 'node--page': 'title' } } })
+    const keys = Object.keys(store.collections['node--page']!)
+    expect(keys).toHaveLength(1)
+    // ohash's digest() of the query's JSON, pinned so a change of format is seen.
+    // cspell:disable-next-line
+    expect(keys[0]).toBe('vVRjH5QpwekARUuNPy9PHBwxO9fJWTqatv9NvCik2wQ')
+    store.flushCollection({ type: 'node--page', query: { filter: { status: '1' } } })
+    expect(store.collections['node--page']).toEqual({})
+  })
+})
+
+describe('useDruxtStore().peekResource() and peekResources()', () => {
+  it('reads a held resource under its prefix with no request, and undefined for one the store does not hold', async () => {
+    const { calls, store } = storeFor()
+    await store.getResource({ type: 'node--page', id: 'p1', query: 'include=uid' })
+    const before = calls.length
+    expect(store.peekResource({ type: 'node--page', id: 'p1' })).toMatchObject({ id: 'p1', attributes: { title: 'About' } })
+    // An included resource is held too.
+    expect(store.peekResource({ type: 'user--user', id: 'u1' })).toMatchObject({ attributes: { name: 'editor' } })
+    expect(store.peekResource({ type: 'node--page', id: 'p1', prefix: 'es' })).toBeUndefined()
+    expect(store.peekResource({ type: 'node--page', id: 'missing' })).toBeUndefined()
+    expect(calls).toHaveLength(before)
+  })
+
+  it('lists every held resource of a type, under the prefix or else under the one it is held under', () => {
+    const { store } = storeFor()
+    store.addResource({ prefix: 'en', resource: { data: { type: 'user--user', id: 'u1', attributes: { name: 'English' } } as never } })
+    store.addResource({ prefix: 'es', resource: { data: { type: 'user--user', id: 'u1', attributes: { name: 'Spanish' } } as never } })
+    store.addResource({ prefix: 'es', resource: { data: { type: 'user--user', id: 'u2', attributes: { name: 'Only Spanish' } } as never } })
+    expect(store.peekResources({ type: 'user--user', prefix: 'en' }).map((user) => user.attributes?.name)).toEqual(['English', 'Only Spanish'])
+    expect(store.peekResources({ type: 'node--page' })).toEqual([])
+  })
+})
+
+describe('useDruxtStore() seeding and links', () => {
+  const pageWithLinks = {
+    type: 'node--page',
+    id: 'p1',
+    links: { self: { href: `${BASE_URL}/jsonapi/node/page/p1` } },
+    attributes: { title: 'About' },
+    relationships: { uid: { data: { type: 'user--user', id: 'u1' }, links: { self: { href: `${BASE_URL}/jsonapi/node/page/p1/relationships/uid` }, related: { href: `${BASE_URL}/jsonapi/node/page/p1/uid` } } } },
+  }
+
+  /** A store on a fake Drupal that answers sparse fieldsets, with its resource requests. */
+  const sparseSite = () => {
+    const { fetch, calls } = drupal({
+      'GET /jsonapi': index('', ['node--page', 'user--user', 'media--image', 'file--file', 'taxonomy_term--tags']),
+      'GET /jsonapi/node/page/p1': individual({ ...page, attributes: { title: 'About', body: { value: 'Body' } } }, [user]),
+    })
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(new DruxtClient(BASE_URL, { fetch })) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    return { store: useDruxtStore(), pinia, resources: () => requested(calls).filter((r) => !r.endsWith('/jsonapi')).map(decodeURIComponent) }
+  }
+
+  it('records a resource seeded as partial by its own fields: a read of another field fetches, a seeded one does not', async () => {
+    const { store, resources } = sparseSite()
+    // A view's row: a bare self link, and only the fields the view selected.
+    store.addResource({ resource: { data: { type: 'node--page', id: 'p1', links: { self: { href: `${BASE_URL}/jsonapi/node/page/p1` } }, attributes: { title: 'About' } } as never }, partial: true })
+    expect((await store.getResource({ type: 'node--page', id: 'p1', query: { fields: { 'node--page': 'title' } } })).data?.attributes?.title).toBe('About')
+    expect(resources()).toEqual([])
+    const body = await store.getResource({ type: 'node--page', id: 'p1', query: { fields: { 'node--page': 'body' } } })
+    expect(resources()).toEqual(['GET /jsonapi/node/page/p1?fields[node--page]=body'])
+    expect(body.data?.attributes).toEqual({ title: 'About', body: { value: 'Body' } })
+  })
+
+  it('stores a partial resource with no self link, keyed by its type and id', async () => {
+    const { store, resources } = sparseSite()
+    store.addResource({ resource: { data: { type: 'node--page', id: 'p1', attributes: { title: 'About' } } as never }, partial: true })
+    expect(store.peekResource({ type: 'node--page', id: 'p1' })?.attributes).toEqual({ title: 'About' })
+    await store.getResource({ type: 'node--page', id: 'p1' })
+    expect(resources()).toEqual(['GET /jsonapi/node/page/p1'])
+  })
+
+  it('seeds a collection\'s rows as partial, and its includes at any depth as full, whatever its self link\'s query', async () => {
+    const { store, resources } = sparseSite()
+    const media = { type: 'media--image', id: 'm1', attributes: { name: 'Borscht' }, relationships: { field_media_image: { data: { type: 'file--file', id: 'f1' } } } }
+    const file = { type: 'file--file', id: 'f1', attributes: { uri: { url: '/files/borscht.jpg' } } }
+    const term = { type: 'taxonomy_term--tags', id: 't1', attributes: { name: 'Soup', path: { alias: '/tags/soup' } } }
+    const row = { type: 'node--page', id: 'p1', attributes: { title: 'About' }, relationships: { field_media: { data: { type: 'media--image', id: 'm1' } }, field_tags: { data: [{ type: 'taxonomy_term--tags', id: 't1' }] } } }
+    store.addCollection({ type: 'node--page', hash: 'view', partial: true, collection: { data: [row], included: [media, file, term], links: { self: { href: `${BASE_URL}/jsonapi/views/recipes/page_1?include=field_media.field_media_image,field_tags&fields[file--file]=uri&fields[taxonomy_term--tags]=name` } } } as never })
+
+    // The second-level include, through the first, and a label formatter's sparse read of a term: from the store.
+    const read = await store.getResource({ type: 'media--image', id: 'm1', query: { include: 'field_media_image' } })
+    expect(read.included).toEqual([file])
+    expect((await store.getResource({ type: 'file--file', id: 'f1' })).data).toEqual(file)
+    expect((await store.getResource({ type: 'taxonomy_term--tags', id: 't1', query: { fields: { 'taxonomy_term--tags': 'name,path' } } })).data).toEqual(term)
+    expect(resources()).toEqual([])
+    // The row is partial: a field the view did not select is fetched.
+    await store.getResource({ type: 'node--page', id: 'p1', query: { fields: { 'node--page': 'body' } } })
+    expect(resources()).toEqual(['GET /jsonapi/node/page/p1?fields[node--page]=body'])
+  })
+
+  it('keeps no backend link on a resource, its relationships or a collection, so the payload names no backend', async () => {
+    const { store } = sparseSite()
+    await store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid' } })
+    store.addResource({ resource: { data: pageWithLinks as never, links: { self: { href: `${BASE_URL}/jsonapi/node/page/p1` } }, jsonapi: { version: '1.1', meta: { links: { self: { href: 'https://jsonapi.org/format/1.1/' } } } } } as never })
+    store.addCollection({ type: 'node--page', hash: '_default', collection: { data: [pageWithLinks], included: [{ ...user, links: { self: { href: `${BASE_URL}/jsonapi/user/user/u1` } } }], links: { self: { href: `${BASE_URL}/jsonapi/node/page` }, next: { href: `${BASE_URL}/jsonapi/node/page?page%5Boffset%5D=50` } } } as never })
+    const payload = JSON.stringify(store.$state)
+    expect(payload).not.toContain(BASE_URL)
+    expect(payload).not.toContain('"links"')
+    // Positive control: the content is there.
+    expect(payload).toContain('About')
+    expect(store.peekResource({ type: 'node--page', id: 'p1' })?.relationships?.uid).toEqual({ data: { type: 'user--user', id: 'u1' } })
+  })
+
+  it('keeps what Drupal omitted, as its reason and the types and ids, without the links that name the backend', () => {
+    const { store } = sparseSite()
+    const omitted = { detail: 'Some resources have been omitted because of insufficient authorization.', links: { help: { href: 'https://www.drupal.org/docs/8/modules/json-api/filtering' }, 'item--a': { href: `${BASE_URL}/en/jsonapi/taxonomy_term/tags/t9`, meta: { rel: 'item', detail: 'The \'access content\' permission is required.' } } } }
+    store.addResource({ resource: { data: { type: 'node--page', id: 'p1', attributes: { title: 'About' } }, meta: { omitted } } as never })
+    store.addCollection({ type: 'node--page', hash: '_default', collection: { data: [{ type: 'node--page', id: 'p1' }], meta: { count: 1, omitted } } as never })
+    const payload = JSON.stringify(store.$state)
+    expect(payload).not.toContain(BASE_URL)
+    expect(payload).not.toContain('drupal.org')
+    const expected = { detail: omitted.detail, resources: [{ type: 'taxonomy_term--tags', id: 't9' }] }
+    expect(store.resources['node--page']!.p1!.undefined!.meta).toEqual({ omitted: expected })
+    expect(store.collections['node--page']!._default!.undefined!.meta).toEqual({ count: 1, omitted: expected })
+  })
+
+  it('reads what Drupal omitted against the client\'s own JSON:API path, and gives it through peekMeta()', () => {
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(new DruxtClient(BASE_URL, { endpoint: '/api', fetch: drupal({}).fetch })) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    const store = useDruxtStore()
+    const omitted = { detail: 'Denied.', links: { 'item--a': { href: `${BASE_URL}/en/api/taxonomy_term/tags/t9` } } }
+    store.addResource({ resource: { data: { type: 'node--page', id: 'p1', attributes: {} }, meta: { omitted } } as never, prefix: 'en' })
+    expect(store.peekMeta({ type: 'node--page', id: 'p1', prefix: 'en' })).toEqual({ omitted: { detail: 'Denied.', resources: [{ type: 'taxonomy_term--tags', id: 't9' }] } })
+    expect(store.peekMeta({ type: 'node--page', id: 'p1' })).toBeUndefined()
+  })
+
+  it('reads no include Drupal already denied when it answers a stored resource\'s includes', async () => {
+    const { store, resources } = sparseSite()
+    const omitted = { detail: 'Denied.', links: { 'item--a': { href: `${BASE_URL}/jsonapi/user/user/u1` } } }
+    store.addResource({ resource: { data: { ...page, attributes: { title: 'About' } }, meta: { omitted } } as never })
+    await store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid', fields: { 'node--page': 'title,uid' } } })
+    expect(resources().filter((r) => r.includes('/user/user/'))).toEqual([])
+  })
+
+  it('returns the stored shape, without links, from a read a flush overtook', async () => {
+    const { store } = sparseSite()
+    const read = store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid' } })
+    store.flushResource({})
+    const result = await read
+    expect(result.data?.attributes?.title).toBe('About')
+    expect(JSON.stringify(result)).not.toContain(BASE_URL)
+    expect(result).not.toHaveProperty('links')
+  })
+
+  it('tells partial from full after the payload is restored into a new store', async () => {
+    const seeded = sparseSite()
+    seeded.store.addResource({ resource: { data: { type: 'node--page', id: 'p1', attributes: { title: 'About' } } as never }, partial: true })
+    seeded.store.addResource({ resource: { data: { type: 'user--user', id: 'u1', attributes: { name: 'editor' } } as never } })
+    const state = JSON.parse(JSON.stringify(seeded.store.$state))
+
+    const restored = sparseSite()
+    restored.store.$patch(state)
+    await restored.store.getResource({ type: 'user--user', id: 'u1', query: { fields: { 'user--user': 'name,mail' } } })
+    expect(restored.resources()).toEqual([])
+    await restored.store.getResource({ type: 'node--page', id: 'p1', query: { fields: { 'node--page': 'title,body' } } })
+    expect(restored.resources()).toEqual(['GET /jsonapi/node/page/p1?fields[node--page]=body'])
+  })
+})
+
+describe('useDruxtStore() bypassCache and the process cache', () => {
+  const recipe = { type: 'node--recipe', id: 'r1', attributes: { title: 'Quiche' }, relationships: { field_media_image: { data: { type: 'media--image', id: 'm1' } } } }
+  const media = { type: 'media--image', id: 'm1', attributes: { name: 'Fresh media' } }
+
+  /** A store whose client answers the recipe, and records the read options its reads were given. */
+  const bypassStoreFor = (answers: Array<() => Promise<Response>> = []) => {
+    const { fetch, calls } = drupal({
+      'GET /jsonapi': index('', ['node--recipe', 'media--image']),
+      'GET /jsonapi/node/recipe/r1': individual(recipe, [media]),
+    })
+    let turn = 0
+    const deferred = async (input: string, init?: RequestInit) => (answers.length && !String(input).endsWith('/jsonapi') ? answers[turn++ % answers.length]!() : fetch(input, init))
+    const client = new DruxtClient(BASE_URL, { fetch: deferred })
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(client) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    return { calls, client, store: useDruxtStore() }
+  }
+
+  it('a bypass reaches the client, so the server process cache is skipped too, and is its own request', async () => {
+    const { client, store } = bypassStoreFor()
+    const read = vi.spyOn(client, 'getResource')
+    const list = vi.spyOn(client, 'getCollection')
+    await store.getResource({ type: 'node--recipe', id: 'r1' })
+    await store.getResource({ type: 'node--recipe', id: 'r1', bypassCache: true })
+    expect(read).toHaveBeenCalledTimes(2)
+    expect(read.mock.calls[0]![4]).toEqual({ bypassCache: false })
+    expect(read.mock.calls[1]![4]).toEqual({ bypassCache: true })
+    await store.getCollection({ type: 'node--recipe', bypassCache: true }).catch(() => undefined)
+    expect(list.mock.calls[0]![3]).toEqual({ bypassCache: true })
+  })
+
+  it('an ordinary request that resolves after a bypass does not replace its answer', async () => {
+    // An ordinary read and a bypass in flight at once, answered in the opposite order to the one they started in.
+    const pending: Array<() => void> = []
+    const answer = (title: string) => () => new Promise<Response>((resolve) => pending.push(() => resolve(json({ data: { ...recipe, attributes: { title } } }))))
+    const { store } = bypassStoreFor([answer('Stale'), answer('Fresh')])
+    const ordinary = store.getResource({ type: 'node--recipe', id: 'r1' })
+    const bypass = store.getResource({ type: 'node--recipe', id: 'r1', bypassCache: true })
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(pending).toHaveLength(2)
+    pending[1]!()
+    expect((await bypass).data?.attributes?.title).toBe('Fresh')
+    pending[0]!()
+    await ordinary
+    expect(store.peekResource({ type: 'node--recipe', id: 'r1' })?.attributes?.title).toBe('Fresh')
+  })
+
+  it('a bypass returns only the includes the fresh response has', async () => {
+    const { store } = bypassStoreFor()
+    // A stored copy that still relates to media Drupal has since removed from the recipe.
+    store.addResource({ resource: { data: { type: 'media--image', id: 'removed', attributes: {} } as never } })
+    store.addResource({ resource: { data: { ...recipe, relationships: { field_media_image: { data: { type: 'media--image', id: 'removed' } } } } as never } })
+    const resource = await store.getResource({ type: 'node--recipe', id: 'r1', query: { include: 'field_media_image' }, bypassCache: true })
+    expect((resource.included || []).map((item) => item.id)).toEqual(['m1'])
+  })
+})
+
+describe('useDruxtStore() rebuilding includes from stored resources', () => {
+  const fields = { 'node--page': 'title,field_content', 'paragraph--text': 'field_text', 'paragraph--image': 'field_media', 'media--image': 'name' }
+  const seeded = () => {
+    const { fetch, calls } = drupal({ 'GET /jsonapi': index('', ['node--page', 'paragraph--text', 'paragraph--image', 'media--image']) })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(client) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    const store = useDruxtStore()
+    const add = (data: Record<string, unknown>) => store.addResource({ resource: { data } as never, query: { fields: { [data.type as string]: fields[data.type as keyof typeof fields] } } })
     add({ type: 'node--page', id: 'n1', attributes: { title: 'Page' }, relationships: { field_content: { data: [{ type: 'paragraph--text', id: 't1' }, { type: 'paragraph--image', id: 'i1' }] } } })
     add({ type: 'paragraph--text', id: 't1', attributes: { field_text: 'Text' } })
     add({ type: 'paragraph--image', id: 'i1', relationships: { field_media: { data: { type: 'media--image', id: 'm1' } } } })
     add({ type: 'media--image', id: 'm1', attributes: { name: 'Image' } })
+    return { calls, client, store }
+  }
 
-    store.$druxt.getResource = jest.fn(async () => { throw new Error('Drupal answers 400') })
+  it('takes from each related resource only the includes its type has, and asks a flushed one for none its fields lack', async () => {
+    const { client, store } = seeded()
+    const read = vi.spyOn(client, 'getResource').mockRejectedValue(new Error('Drupal answers 400'))
     const query = { include: 'field_content,field_content.field_media', fields }
-    const page = await store.dispatch('druxt/getResource', { type: 'node--page', id: 'n1', query })
-
-    // Everything is in the store, so nothing is fetched, and the text paragraph
-    // is never asked for the field_media it does not have.
-    expect(store.$druxt.getResource).not.toHaveBeenCalled()
-    expect(page.included.map(({ type, id }) => `${type}:${id}`).sort()).toStrictEqual(['media--image:m1', 'paragraph--image:i1', 'paragraph--text:t1'])
+    const page = await store.getResource({ type: 'node--page', id: 'n1', query })
+    // Everything is in the store, so nothing is fetched, and the text paragraph is never asked for a field_media it lacks.
+    expect(read).not.toHaveBeenCalled()
+    expect((page.included || []).map(({ type, id }) => `${type}:${id}`).sort()).toEqual(['media--image:m1', 'paragraph--image:i1', 'paragraph--text:t1'])
 
     // A flushed text paragraph is fetched again, without the include its listed fields don't name.
-    store.commit('druxt/flushResource', { type: 'paragraph--text', id: 't1' })
-    store.$druxt.getResource = jest.fn(async () => ({ data: { type: 'paragraph--text', id: 't1', attributes: { field_text: 'Text' } } }))
-    await store.dispatch('druxt/getResource', { type: 'node--page', id: 'n1', query })
-    expect(store.$druxt.getResource).toHaveBeenCalledTimes(1)
-    const [type, id, sent] = store.$druxt.getResource.mock.calls[0]
-    expect([type, id]).toStrictEqual(['paragraph--text', 't1'])
-    expect(decodeURIComponent(sent.getQueryString())).not.toMatch(/include=/)
+    store.flushResource({ type: 'paragraph--text', id: 't1' })
+    read.mockResolvedValue({ data: { type: 'paragraph--text', id: 't1', attributes: { field_text: 'Text' } } } as never)
+    await store.getResource({ type: 'node--page', id: 'n1', query })
+    expect(read).toHaveBeenCalledTimes(1)
+    const [type, id, sent] = read.mock.calls[0]!
+    expect([type, id]).toEqual(['paragraph--text', 't1'])
+    expect(decodeURIComponent((sent as { getQueryString: () => string }).getQueryString())).not.toMatch(/include=/)
   })
 
-  test('a nested include path rebuilds the relationships along it', async () => {
-    const fields = {
-      'node--page': 'title,field_content',
-      'paragraph--image': 'field_media',
-      'media--image': 'name',
-    }
-    const href = (type, id) => `${baseUrl}/jsonapi/${type.replace('--', '/')}/${id}?fields[${type}]=${fields[type]}`
-    const add = (data) => store.commit('druxt/addResource', { resource: { data, links: { self: { href: href(data.type, data.id) } } } })
-    add({ type: 'node--page', id: 'n1', attributes: { title: 'Page' }, relationships: { field_content: { data: [{ type: 'paragraph--image', id: 'i1' }] } } })
-    add({ type: 'paragraph--image', id: 'i1', relationships: { field_media: { data: { type: 'media--image', id: 'm1' } } } })
-    add({ type: 'media--image', id: 'm1', attributes: { name: 'Image' } })
-
-    store.$druxt.getResource = jest.fn(async () => { throw new Error('nothing should be fetched') })
-    // Only the nested path is given; JSON:API includes field_content along it.
-    const page = await store.dispatch('druxt/getResource', { type: 'node--page', id: 'n1', query: { include: 'field_content.field_media', fields } })
-    expect(store.$druxt.getResource).not.toHaveBeenCalled()
-    expect(page.included.map(({ type, id }) => `${type}:${id}`).sort()).toStrictEqual(['media--image:m1', 'paragraph--image:i1'])
-  })
-
-  test('a related resource whose fields name an include it lacks is still fetched', async () => {
-    const fields = { 'node--page': 'title,field_content', 'paragraph--image': 'field_media' }
-    const href = (type, id) => `${baseUrl}/jsonapi/${type.replace('--', '/')}/${id}?fields[${type}]=${fields[type]}`
-    const add = (data) => store.commit('druxt/addResource', { resource: { data, links: { self: { href: href(data.type, data.id) } } } })
-    add({ type: 'node--page', id: 'n1', attributes: { title: 'Page' }, relationships: { field_content: { data: [{ type: 'paragraph--image', id: 'i1' }] } } })
-    // Stored without the relationship its fields ask for, so it has to be fetched.
-    add({ type: 'paragraph--image', id: 'i1', attributes: {} })
-
-    store.$druxt.getResource = jest.fn(async () => ({ data: { type: 'paragraph--image', id: 'i1', relationships: { field_media: { data: null } } } }))
-    await store.dispatch('druxt/getResource', { type: 'node--page', id: 'n1', query: { include: 'field_content,field_content.field_media', fields } })
-    expect(store.$druxt.getResource).toHaveBeenCalledTimes(1)
-    const [type, id, query] = store.$druxt.getResource.mock.calls[0]
-    expect([type, id]).toStrictEqual(['paragraph--image', 'i1'])
-    expect(query.getQueryObject().include).toBe('field_media')
-  })
-
-  test('getCollection retries after a failed request', async () => {
-    const type = 'node--page'
-    const mockCollectionPage = await getMockCollection(type)
-    store.$druxt.getCollection = jest.fn(() => Promise.reject(new Error('Backend down')))
-
-    const failed = [1, 2].map(() => store.dispatch('druxt/getCollection', { type }))
-    await expect(failed[0]).rejects.toThrow('Backend down')
-    await expect(failed[1]).rejects.toThrow('Backend down')
-    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(1)
-
-    store.$druxt.getCollection.mockImplementation(() => Promise.resolve(mockCollectionPage))
-    const collection = await store.dispatch('druxt/getCollection', { type })
-    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(2)
-    expect(collection.data).toStrictEqual(mockCollectionPage.data)
-
-    // The settled request is stored, so the next dispatch is a cache hit.
-    await store.dispatch('druxt/getCollection', { type })
-    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(2)
-  })
-
-  test('getResource shares an in-flight request', async () => {
-    const mockPage = await getMockResource('node--page')
-    const { id, type } = mockPage.data
-    let resolve
-    store.$druxt.getResource = jest.fn(() => new Promise((r) => { resolve = r }))
-
-    const requests = [1, 2, 3].map(() => store.dispatch('druxt/getResource', { id, type }))
-    await Promise.resolve()
-    expect(store.$druxt.getResource).toHaveBeenCalledTimes(1)
-
-    resolve(mockPage)
-    const results = await Promise.all(requests)
-    results.forEach((result) => expect(result.data).toStrictEqual(mockPage.data))
-    // Each caller gets its own document.
-    expect(results[0]).not.toBe(results[1])
-
-    // A different id, prefix or field set is a different request.
-    store.$druxt.getResource = jest.fn(() => new Promise(() => {}))
-    store.commit('druxt/flushResource', {})
-    store.dispatch('druxt/getResource', { id, type })
-    store.dispatch('druxt/getResource', { id: 'another-uuid', type })
-    store.dispatch('druxt/getResource', { id, type, prefix: 'es' })
-    store.dispatch('druxt/getResource', { id, type, query: 'fields[node--page]=title' })
-    await Promise.resolve()
-    expect(store.$druxt.getResource).toHaveBeenCalledTimes(4)
-  })
-
-  test('getResource retries after a failed request', async () => {
-    const mockPage = await getMockResource('node--page')
-    const { id, type } = mockPage.data
-    store.$druxt.getResource = jest.fn(() => Promise.reject(new Error('Backend down')))
-
-    await Promise.all([1, 2].map(() => store.dispatch('druxt/getResource', { id, type })))
-    expect(store.$druxt.getResource).toHaveBeenCalledTimes(1)
-
-    store.$druxt.getResource.mockImplementation(() => Promise.resolve(mockPage))
-    const resource = await store.dispatch('druxt/getResource', { id, type })
-    expect(store.$druxt.getResource).toHaveBeenCalledTimes(2)
-    expect(resource.data).toStrictEqual(mockPage.data)
-  })
-
-  test('in-flight requests are not shared between stores', async () => {
-    const type = 'node--page'
-    const other = new Vuex.Store()
-    DruxtStore({ store: other })
-    store.$druxt = { getCollection: jest.fn(() => new Promise(() => {})) }
-    other.$druxt = { getCollection: jest.fn(() => new Promise(() => {})) }
-
-    store.dispatch('druxt/getCollection', { type })
-    other.dispatch('druxt/getCollection', { type })
-    await Promise.resolve()
-    expect(store.$druxt.getCollection).toHaveBeenCalledTimes(1)
-    expect(other.$druxt.getCollection).toHaveBeenCalledTimes(1)
-    expect(Object.keys(store.state.druxt)).toStrictEqual(['collections', 'resources'])
-  })
-
-  test('addCollection drops included when the response omits it', async () => {
-    const type = 'node--page'
-    const hash = '_default'
-    const mockCollectionPage = await getMockCollection(type)
-
-    store.commit('druxt/addCollection', {
-      collection: {
-        ...mockCollectionPage,
-        included: [{ type: 'node--article', id: 'stale-article-uuid', attributes: { title: 'Included' } }],
-      },
-      type,
-      hash,
-    })
-    expect(store.state.druxt.collections[type][hash][undefined].included).toHaveLength(1)
-
-    // The hash ignores `include`, so the same slot takes a response from a
-    // query that asked for none. The previous refs must not survive it.
-    store.commit('druxt/addCollection', { collection: { ...mockCollectionPage }, type, hash })
-    expect(store.state.druxt.collections[type][hash][undefined].included).toBeUndefined()
-
-    const cached = await store.dispatch('druxt/getCollection', { type })
-    expect(cached.included).toBeUndefined()
-  })
-
-  test('flushCollection', async () => {
-    const type = 'node--page'
-    const hash ='_default'
-    const prefix = 'en'
-
-    // Ensure that the results state is populated.
-    const collection = await getMockCollection(type)
-    const add = (p = prefix, h = hash) => store.commit('druxt/addCollection', { collection: { ...collection }, type, prefix: p, hash: h })
-    add()
-    expect(store.state.druxt.collections[type][hash][prefix]).toBeTruthy()
-
-    store.commit('druxt/flushCollection', { type, hash, prefix })
-    expect(store.state.druxt.collections[type][hash][prefix]).toBe(undefined)
-
-    add()
-    store.commit('druxt/flushCollection', { type, hash })
-    expect(store.state.druxt.collections[type][hash]).toBe(undefined)
-
-    add()
-    store.commit('druxt/flushCollection', { type })
-    expect(store.state.druxt.collections[type]).toBe(undefined)
-
-    add()
-    store.commit('druxt/flushCollection', {})
-    expect(store.state.druxt.collections).toStrictEqual({})
-  })
-
-  test('flushCollection treats an empty string as a selector, not as omitted', async () => {
-    const type = 'node--page'
-    const collection = await getMockCollection(type)
-    const add = (prefix, hash) => store.commit('druxt/addCollection', { collection: { ...collection }, type, prefix, hash })
-
-    // An empty query is stored under _default, so flushing it names that key only.
-    add('en', '_default')
-    add('en', 'a')
-    store.commit('druxt/flushCollection', { type, query: '', prefix: 'en' })
-    expect(store.state.druxt.collections[type]._default.en).toBe(undefined)
-    expect(store.state.druxt.collections[type].a.en).toBeTruthy()
-
-    // An empty prefix is the default language, not every language.
-    add('', 'a')
-    store.commit('druxt/flushCollection', { type, hash: 'a', prefix: '' })
-    expect(store.state.druxt.collections[type].a['']).toBe(undefined)
-    expect(store.state.druxt.collections[type].a.en).toBeTruthy()
-
-    // The same for a resource.
-    const resource = await getMockResource(type)
-    const id = resource.data.id
-    store.commit('druxt/addResource', { prefix: '', resource: { ...resource } })
-    store.commit('druxt/addResource', { prefix: 'en', resource: { ...resource } })
-    store.commit('druxt/flushResource', { type, id, prefix: '' })
-    expect(store.state.druxt.resources[type][id]['']).toBe(undefined)
-    expect(store.state.druxt.resources[type][id].en).toBeTruthy()
-  })
-
-  test('flushCollection by type and prefix, by query, and for nothing stored', async () => {
-    const type = 'node--page'
-    const collection = await getMockCollection(type)
-    const add = (prefix, hash) => store.commit('druxt/addCollection', { collection: { ...collection }, type, prefix, hash })
-
-    // A prefix across every query of the type.
-    add('en', 'a')
-    add('en', 'b')
-    add('es', 'a')
-    store.commit('druxt/flushCollection', { type, prefix: 'en' })
-    expect(store.state.druxt.collections[type].a.en).toBe(undefined)
-    expect(store.state.druxt.collections[type].b.en).toBe(undefined)
-    expect(store.state.druxt.collections[type].a.es).toBeTruthy()
-
-    // The query a collection was fetched with, instead of its hash.
-    const query = new DrupalJsonApiParams().addFilter('status', '1')
-    mockAxios.reset()
-    await store.dispatch('druxt/getCollection', { type, query, prefix: 'en' })
-    const [stored] = Object.keys(store.state.druxt.collections[type]).filter((h) => !['a', 'b'].includes(h))
-    expect(store.state.druxt.collections[type][stored].en).toBeTruthy()
-    store.commit('druxt/flushCollection', { type, query, prefix: 'en' })
-    expect(store.state.druxt.collections[type][stored].en).toBe(undefined)
-
-    // A flush of keys never stored leaves the state as it was.
-    expect(() => store.commit('druxt/flushCollection', { type: 'node--never' })).not.toThrow()
-    expect(() => store.commit('druxt/flushCollection', { type: 'node--never', hash: 'x', prefix: 'en' })).not.toThrow()
-    expect(() => store.commit('druxt/flushCollection', { type, hash: 'missing' })).not.toThrow()
-  })
-
-  test('getCollection fetches again after the collection is flushed', async () => {
-    const type = 'node--page'
-    const query = new DrupalJsonApiParams().addFilter('status', '1')
-    await store.dispatch('druxt/getCollection', { type, query, prefix: 'en' })
-    store.commit('druxt/flushCollection', { type, query, prefix: 'en' })
-    mockAxios.reset()
-    await store.dispatch('druxt/getCollection', { type, query, prefix: 'en' })
-    expect(mockAxios.get).toHaveBeenCalled()
-  })
-
-  test('flushResource', async () => {
-    const type = 'node--page'
-    const prefix = 'en'
-
-    // Ensure that the results state is populated.
-    const resource = await getMockResource(type)
-    const id = resource.data.id
-    const add = (p = prefix) => store.commit('druxt/addResource', { prefix: p, resource: { ...resource } })
-    add()
-    expect(store.state.druxt.resources[type][id][prefix]).toBeTruthy()
-
-    store.commit('druxt/flushResource', { type, id, prefix })
-    expect(store.state.druxt.resources[type][id][prefix]).toBe(undefined)
-
-    add()
-    store.commit('druxt/flushResource', { type, id })
-    expect(store.state.druxt.resources[type][id]).toBe(undefined)
-
-    add()
-    store.commit('druxt/flushResource', { type })
-    expect(store.state.druxt.resources[type]).toBe(undefined)
-
-    add()
-    store.commit('druxt/flushResource', {})
-    expect(store.state.druxt.resources).toStrictEqual({})
-  })
-
-  test('flushResource by type and prefix, and for nothing stored', async () => {
-    const type = 'node--page'
-    const resource = await getMockResource(type)
-    const id = resource.data.id
-    store.commit('druxt/addResource', { prefix: 'en', resource: { ...resource } })
-    store.commit('druxt/addResource', { prefix: 'es', resource: { ...resource } })
-    store.commit('druxt/flushResource', { type, prefix: 'en' })
-    expect(store.state.druxt.resources[type][id].en).toBe(undefined)
-    expect(store.state.druxt.resources[type][id].es).toBeTruthy()
-
-    expect(() => store.commit('druxt/flushResource', { type: 'node--never', id: 'x' })).not.toThrow()
-    expect(() => store.commit('druxt/flushResource', { type: 'node--never', id: 'x', prefix: 'en' })).not.toThrow()
-    expect(() => store.commit('druxt/flushResource', { type, id: 'missing' })).not.toThrow()
-  })
-
-  test('getResource with an include fetches again after the resource is flushed', async () => {
-    const type = 'node--recipe'
-    const resource = await getMockResource(type)
-    const { id } = resource.data
-    await store.dispatch('druxt/getResource', { type, id, prefix: 'en' })
-    store.commit('druxt/flushResource', { type, id, prefix: 'en' })
-    mockAxios.reset()
-    await expect(store.dispatch('druxt/getResource', { type, id, prefix: 'en', query: { include: 'field_media_image' } })).resolves.toBeTruthy()
-    expect(mockAxios.get).toHaveBeenCalled()
-  })
-
-  test('clearCache clears the client and flushes every registered Druxt store', async () => {
-    const flushes = { flushResults: jest.fn(), flushEntities: jest.fn(), flushRoutes: jest.fn(), flushSchemas: jest.fn() }
-    store.registerModule(['druxt', 'views'], { namespaced: true, mutations: { flushResults: flushes.flushResults } })
-    store.registerModule('druxtMenu', { namespaced: true, mutations: { flushEntities: flushes.flushEntities } })
-    store.registerModule('druxtRouter', { namespaced: true, mutations: { flushRoutes: flushes.flushRoutes } })
-    store.registerModule('druxtSchema', { namespaced: true, mutations: { flushSchemas: flushes.flushSchemas } })
-    store.$druxt.clearCache = jest.fn()
-
-    const collection = await getMockCollection('node--page')
-    store.commit('druxt/addCollection', { collection, type: 'node--page', hash: '_default', prefix: 'en' })
-
-    await store.dispatch('druxt/clearCache')
-    expect(store.$druxt.clearCache).toHaveBeenCalledTimes(1)
-    expect(store.state.druxt.collections).toStrictEqual({})
-    expect(store.state.druxt.resources).toStrictEqual({})
-    for (const flush of Object.values(flushes)) expect(flush).toHaveBeenCalledTimes(1)
-  })
-
-  test('clearCache skips stores that are not registered', async () => {
-    store.$druxt.clearCache = jest.fn()
-    await expect(store.dispatch('druxt/clearCache')).resolves.toBe(undefined)
-    expect(store.$druxt.clearCache).toHaveBeenCalledTimes(1)
+  it('rebuilds the relationships along a nested include path', async () => {
+    const { client, store } = seeded()
+    const read = vi.spyOn(client, 'getResource').mockRejectedValue(new Error('Drupal answers 400'))
+    const page = await store.getResource({ type: 'node--page', id: 'n1', query: { include: 'field_content.field_media', fields } })
+    expect(read).not.toHaveBeenCalled()
+    expect((page.included || []).map(({ type, id }) => `${type}:${id}`).sort()).toEqual(['media--image:m1', 'paragraph--image:i1', 'paragraph--text:t1'])
   })
 })

@@ -21,13 +21,7 @@ export default createConfigForNuxt({
       'packages/schema/**',
       'packages/site/**',
       'packages/views/**',
-      'packages/core/src/runtime/plugins/pinia.ts',
-      'packages/core/src/runtime/store.ts',
-      'packages/core/src/runtime/utils/getDrupalJsonApiParams.ts',
       'test/mixins.test.js',
-      'test/unit/drupal-jsonapi-params.test.ts',
-      'test/unit/store-includes.test.ts',
-      'test/unit/store.test.ts',
       // 1.x examples and tooling, run on the 1.x line.
       'examples/**',
       'test/__fixtures__/**',
