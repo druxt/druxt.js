@@ -1,203 +1,233 @@
-import { createLocalVue, mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { enableAutoUnmount } from '@vue/test-utils'
+import { defineAsyncComponent, defineComponent, h, ref, resolveComponent } from 'vue'
+import type { Component, FunctionalComponent } from 'vue'
+import { druxtModuleEmits, druxtModuleProps, useDruxtModule } from '@druxt/core/runtime'
+import { nest, settle } from './helpers'
 
-import Druxt from '../../src/components/Druxt.vue'
-import DruxtModule from '../../src/components/DruxtModule.vue'
+// Unmounting runs Nuxt's onScopeDispose for useAsyncData, which purges the
+// key's cached data; without it, tests sharing this file's one Vue app and
+// mountSuspended()'s per-mount useId() reset would answer each other's keys.
+enableAutoUnmount(afterEach)
 
-// Setup local vue instance.
-const localVue = createLocalVue()
+const Module = defineComponent({
+  name: 'DruxtTest',
+  props: druxtModuleProps,
+  emits: [...druxtModuleEmits],
+  setup: (p) => useDruxtModule(p, { componentOptions: () => [['default']], propsData: () => ({ title: 'Hi' }) }),
+})
 
-const mountWrapper = (propsData) => {
-  return mount(Druxt, { localVue, propsData, stubs: ['DruxtTestModule'] })
-}
-
-describe('Druxt component', () => {
-  test('defaults', async () => {
-    const wrapper = mountWrapper({ module: 'test-module' })
-
-    // Props.
-    expect(wrapper.vm.module).toBe('test-module')
-    expect(wrapper.vm.propsData).toStrictEqual({})
-    expect(wrapper.vm.wrapper.component).toBe('div')
-    expect(wrapper.vm.inner.component).toBe('div')
-
-    // Data.
-    expect(wrapper.vm.component.is).toBe('DruxtTestModule')
-    expect(wrapper.vm.component.propsData).toStrictEqual({})
-
-    // HTML snapshot.
-    expect(wrapper.html()).toMatchSnapshot()
+describe('Druxt core components', () => {
+  it('DruxtWrapper renders an element only for the module\'s own class', async () => {
+    const plain = await mountSuspended(nest(Module), { slots: { default: (d: { title: string }) => h('span', d.title) } })
+    await settle(() => expect(plain.html()).toBe('<span>Hi</span>'))
+    const classed = await mountSuspended(nest(Module), { attrs: { class: 'teaser' }, slots: { default: (d: { title: string }) => h('span', d.title) } })
+    await settle(() => expect(classed.html()).toBe('<div class="teaser"><span>Hi</span></div>'))
   })
 
-  test('defaults - v-model', async () => {
-    const Component = {
-      template: "<Druxt v-model='model' ref='druxt' module='test-module' />",
-      components: { Druxt },
-      data: () => ({ model: null })
-    }
-    const wrapper = mount(Component, { localVue, stubs: ['DruxtTestModule'] })
-
-    // Default state.
-    expect(wrapper.vm.model).toStrictEqual(null)
-    expect(wrapper.vm.$refs.druxt.model).toStrictEqual(null)
-    expect(wrapper.vm.$refs.druxt.value).toStrictEqual(null)
-
-    // Change model value.
-    await wrapper.setData({ model: { test: true }})
-
-    expect(wrapper.vm.model).toStrictEqual({ test: true })
-    expect(wrapper.vm.$refs.druxt.model).toStrictEqual({ test: true })
-    expect(wrapper.vm.$refs.druxt.value).toStrictEqual({ test: true })
-
-    // Change Druxt component model value.
-    wrapper.vm.$refs.druxt.model = { test: false }
-    await localVue.nextTick()
-    expect(wrapper.vm.model).toStrictEqual({ test: false })
-    expect(wrapper.vm.$refs.druxt.model).toStrictEqual({ test: false })
-    expect(wrapper.vm.$refs.druxt.value).toStrictEqual({ test: false })
-  })
-
-  test('v-model follows an input from the module component', async () => {
-    const DruxtTestModule = {
-      props: ['value'],
-      render(h) {
-        return h('button', { on: { click: () => this.$emit('input', { test: 'module' }) } })
-      },
-    }
-    const Component = {
-      template: "<Druxt v-model='model' ref='druxt' module='test-module' />",
-      components: { Druxt },
-      data: () => ({ model: null })
-    }
-    const wrapper = mount(Component, { localVue, stubs: { DruxtTestModule } })
-
-    await wrapper.find('button').trigger('click')
-    await localVue.nextTick()
-    expect(wrapper.vm.$refs.druxt.model).toStrictEqual({ test: 'module' })
-    expect(wrapper.vm.model).toStrictEqual({ test: 'module' })
-  })
-
-  test('v-model follows repeated inputs of the same object', async () => {
-    const value = { count: 0 }
-    const DruxtTestModule = {
-      props: ['value'],
-      render(h) {
-        // As DruxtEntity does: edit the model in place and emit it again.
-        return h('button', { on: { click: () => { value.count += 1; this.$emit('input', value) } } })
-      },
-    }
-    const wrapper = mount(Druxt, { localVue, propsData: { module: 'test-module' }, stubs: { DruxtTestModule } })
-
-    await wrapper.find('button').trigger('click')
-    await localVue.nextTick()
-    await wrapper.find('button').trigger('click')
-    await localVue.nextTick()
-    await wrapper.find('button').trigger('click')
-    await localVue.nextTick()
-
-    expect(wrapper.emitted().input).toHaveLength(3)
-    expect(wrapper.emitted().input.every(([emitted]) => emitted === value)).toBe(true)
-  })
-
-  test('a module input does not come back to the module as its value', async () => {
-    const DruxtTestModule = {
-      name: 'DruxtTestModule',
-      props: ['value'],
-      render(h) {
-        return h('button', { on: { click: () => this.$emit('input', { fetched: true }) } })
-      },
-    }
-    const wrapper = mount(Druxt, { localVue, propsData: { module: 'test-module' }, stubs: { DruxtTestModule } })
-
-    await wrapper.find('button').trigger('click')
-    await localVue.nextTick()
-
-    // With no parent binding, the module keeps fetching for itself: a value
-    // would tell DruxtEntity to skip its request.
-    expect(wrapper.emitted().input).toStrictEqual([[{ fetched: true }]])
-    expect(wrapper.findComponent(DruxtTestModule).props('value')).toBeNull()
-  })
-
-  test('each module input reaches @input, in order, within one tick', async () => {
-    const DruxtTestModule = {
-      props: ['value'],
-      render(h) {
-        return h('button', { on: { click: () => { this.$emit('input', 'B'); this.$emit('input', 'C') } } })
-      },
-    }
-    const wrapper = mount(Druxt, { localVue, propsData: { module: 'test-module' }, stubs: { DruxtTestModule } })
-
-    await wrapper.find('button').trigger('click')
-    await localVue.nextTick()
-
-    expect(wrapper.emitted().input).toStrictEqual([['B'], ['C']])
-  })
-
-  test('v-model with a DruxtModule emits once per inner input and never echoes the parent', async () => {
-    const DruxtTestModule = { name: 'DruxtTestModule', extends: DruxtModule }
-    const Component = {
-      template: "<Druxt v-model='model' ref='druxt' module='test-module' />",
-      components: { Druxt },
-      data: () => ({ model: null })
-    }
-    const mocks = {
-      $fetchState: { pending: false },
-      $nuxt: { context: { isDev: false } },
-      $route: { meta: {} },
-    }
-    const wrapper = mount(Component, { localVue, mocks, stubs: { DruxtTestModule, DruxtDebug: true } })
-    const druxt = wrapper.findComponent(Druxt)
-
-    // A value the parent set goes down to the module and is not emitted back.
-    await wrapper.setData({ model: { test: true } })
-    await localVue.nextTick()
-    expect(wrapper.vm.$refs.druxt.$refs.module.model).toStrictEqual({ test: true })
-    expect(druxt.emitted().input).toBeUndefined()
-
-    // One input from the module's inner component is one input from Druxt.
-    wrapper.vm.$refs.druxt.$refs.module.$refs.component.$emit('input', { test: false })
-    await localVue.nextTick()
-    await localVue.nextTick()
-    expect(wrapper.vm.model).toStrictEqual({ test: false })
-    expect(druxt.emitted().input).toHaveLength(1)
-  })
-
-  test('value - an empty string stays an empty string', () => {
-    const wrapper = mountWrapper({ module: 'test-module', value: '' })
-    expect(wrapper.vm.value).toBe('')
-  })
-
-  test('missing module', async () => {
-    const wrapper = mountWrapper({ module: 'test-missing-module' })
-    expect(wrapper.vm.component.is).toBe(undefined)
-  })
-
-  test('wrapper', () => {
-    const wrapper = mountWrapper({
-      module: 'test-module',
-      wrapper: {
-        component: 'span'
-      }
+  it('DruxtWrapper keeps the element for a class set on itself, even around nothing', async () => {
+    const Card = defineComponent({ setup: () => () => h(resolveComponent('DruxtWrapper'), { class: 'card' }) })
+    const CardModule = defineComponent({
+      name: 'DruxtCardProbe',
+      props: druxtModuleProps,
+      emits: [...druxtModuleEmits],
+      setup: (p) => useDruxtModule(p, { componentOptions: () => [['default']] }),
     })
-
-    // Props.
-    expect(wrapper.vm.wrapper.component).toBe('span')
-    expect(wrapper.vm.inner.component).toBe('div')
-
-    // HTML snapshot.
-    expect(wrapper.html()).toMatchSnapshot()
+    const wrapper = await mountSuspended(nest(CardModule), { global: { components: { DruxtCardProbeDefault: Card } } })
+    await settle(() => expect(wrapper.html()).toBe('<div class="card"></div>'))
   })
 
-  test('unwrapped', () => {
-    const wrapper = mountWrapper({
-      module: 'test-module',
-      wrapper: false
+  // The precedence wrapperAttrs() documents: classes join, an id and a style the site sets replace the module's.
+  it('DruxtWrapper joins the module\'s classes to the site\'s, and takes the site\'s id and style whole', async () => {
+    const Owned = defineComponent({
+      name: 'DruxtOwnedProbe',
+      props: druxtModuleProps,
+      emits: [...druxtModuleEmits],
+      setup: (p) => useDruxtModule(p, {
+        componentOptions: () => [['default']],
+        slots: () => ({ default: () => h('span', 'Hi') }),
+        wrapperAttrs: () => ({ id: 'own', class: 'own', style: { color: 'red' } }),
+      }),
     })
+    const alone = await mountSuspended(nest(Owned))
+    await settle(() => expect(alone.find('div').exists()).toBe(true))
+    expect(alone.find('div').attributes()).toMatchObject({ id: 'own', class: 'own', style: 'color: red;' })
+    const site = await mountSuspended(nest(Owned), { attrs: { id: 'site', class: 'site', style: { margin: '0px' } } })
+    await settle(() => expect(site.find('div').exists()).toBe(true))
+    expect(site.find('div').attributes()).toMatchObject({ id: 'site', class: 'own site', style: 'margin: 0px;' })
+    // Set on the module and on the site's DruxtWrapper, the module's wins.
+    const Card = defineComponent({ setup: () => () => h(resolveComponent('DruxtWrapper'), { id: 'card', class: 'card', style: { padding: '1px' } }, () => h('span', 'Hi')) })
+    const both = await mountSuspended(nest(Module), { attrs: { id: 'module', class: 'module', style: { margin: '0px' } }, global: { components: { DruxtTestDefault: Card } } })
+    await settle(() => expect(both.find('div').exists()).toBe(true))
+    expect(both.find('div').attributes()).toMatchObject({ id: 'module', class: 'card module', style: 'margin: 0px;' })
+  })
 
-    // Props.
-    expect(wrapper.vm.wrapper).toBe(false)
-    expect(wrapper.vm.inner.component).toBe('div')
+  it('<Druxt> renders a module by name, with modelValue only', async () => {
+    const wrapper = await mountSuspended(defineComponent({ setup: () => () => h(resolveComponent('Druxt'), { module: 'test', modelValue: 'm' }) }), {
+      global: { components: { DruxtTest: Module, DruxtTestDefault: defineComponent({ props: { modelValue: String }, setup: (p) => () => h('p', p.modelValue) }) } },
+    })
+    await settle()
+    expect(wrapper.text()).toBe('m')
+  })
 
-    // HTML snapshot.
-    expect(wrapper.html()).toMatchSnapshot()
+  it('declares no value prop and no input event', () => {
+    expect(Object.keys(druxtModuleProps)).not.toContain('value')
+    expect(druxtModuleEmits).not.toContain('input')
+  })
+
+  // The three tests below pin <Druxt>'s own contract (distinct from the
+  // generic druxtModuleProps/Emits checked above, which Druxt.ts doesn't
+  // use): they go red if `value` or `input` are ever restored to Druxt.ts.
+  it('<Druxt>\'s own definition declares no value prop and no input emit', async () => {
+    let resolved: unknown
+    await mountSuspended(defineComponent({
+      setup: () => {
+        resolved = resolveComponent('Druxt')
+        return () => h('div')
+      },
+    }))
+    // Core registers Druxt sync, so the registry holds its definition. Were it an async wrapper, its loader gives it.
+    const asyncLoader = (resolved as { __asyncLoader?: () => Promise<unknown> }).__asyncLoader
+    expect(asyncLoader).toBeUndefined()
+    const definition = resolved as Record<string, unknown>
+    expect(Object.keys(definition.props as Record<string, unknown>)).not.toContain('value')
+    expect(definition.emits as string[]).not.toContain('input')
+  })
+
+  it('ignores a bare `value` attribute: only modelValue reaches the module as its model', async () => {
+    // A module of its own, named to match its own wrapper candidate: reusing
+    // `Module` (named DruxtTest) would resolve test 2's DruxtTestDefault instead.
+    const ValueProbeModule = defineComponent({
+      name: 'DruxtValueProbe',
+      props: druxtModuleProps,
+      emits: [...druxtModuleEmits],
+      setup: (p) => useDruxtModule(p, { componentOptions: () => [['default']] }),
+    })
+    const wrapper = await mountSuspended(defineComponent({ setup: () => () => h(resolveComponent('Druxt'), { module: 'value-probe', value: 'v' }) }), {
+      global: {
+        components: {
+          DruxtValueProbe: ValueProbeModule,
+          DruxtValueProbeDefault: defineComponent({ props: { modelValue: String }, setup: (p) => () => h('p', p.modelValue === undefined ? 'no-model' : p.modelValue) }),
+        },
+      },
+    })
+    await settle()
+    await vi.waitFor(() => expect(wrapper.text()).toBe('no-model'))
+  })
+
+  it('emits update:modelValue only, never input, when the wrapper updates the model', async () => {
+    const onUpdateModelValue = vi.fn()
+    const onInput = vi.fn()
+    const EmitProbeModule = defineComponent({
+      name: 'DruxtEmitProbe',
+      props: druxtModuleProps,
+      emits: [...druxtModuleEmits],
+      setup: (p) => useDruxtModule(p, { componentOptions: () => [['default']] }),
+    })
+    const Wrapper = defineComponent({
+      props: { modelValue: { type: String, default: '' } },
+      emits: ['update:modelValue'],
+      setup: (p, { emit }) => () => h('button', { onClick: () => emit('update:modelValue', 'changed') }, p.modelValue),
+    })
+    const wrapper = await mountSuspended(defineComponent({
+      setup: () => () => h(resolveComponent('Druxt'), { module: 'emit-probe', modelValue: 'start', 'onUpdate:modelValue': onUpdateModelValue, onInput }),
+    }), {
+      global: { components: { DruxtEmitProbe: EmitProbeModule, DruxtEmitProbeDefault: Wrapper } },
+    })
+    await settle()
+    await vi.waitFor(() => expect(wrapper.find('button').exists()).toBe(true))
+    await wrapper.find('button').trigger('click')
+    expect(onUpdateModelValue).toHaveBeenCalledWith('changed')
+    expect(onInput).not.toHaveBeenCalled()
+  })
+})
+
+// A module with nothing to render, such as an empty menu or a silent block, says so from its data: it renders no
+// wrapper and no element, whatever the site bound.
+describe('an empty module root', () => {
+  afterEach(() => vi.restoreAllMocks())
+
+  /** A module with a root of its own, from wrapperAttrs, empty while `empty` says so. */
+  const rooted = (name: string, empty: () => boolean, extra: Record<string, unknown> = {}) => defineComponent({
+    name,
+    props: druxtModuleProps,
+    emits: [...druxtModuleEmits],
+    setup: (p) => useDruxtModule(p, {
+      componentOptions: () => [['default']],
+      propsData: () => ({ title: 'Hi' }),
+      wrapperAttrs: () => ({ class: 'druxt-root-probe' }),
+      empty,
+      ...extra,
+    }),
+  })
+
+  /** What Vue warned about. */
+  const vueWarnings = (warn: { mock: { calls: unknown[][] } }) => warn.mock.calls.map((call) => String(call[0])).filter((message) => message.includes('[Vue warn]'))
+  /** Markup that holds nothing but comments. */
+  const nothing = /^(?:\s*<!--[\s\S]*?-->)*\s*$/
+
+  it('leaves no element and no warning, and renders no wrapper, while the hook says the module is empty', async () => {
+    const warn = vi.spyOn(console, 'warn')
+    const render = vi.fn(() => h('p', 'wrapper'))
+    const wrapper = await mountSuspended(nest(rooted('DruxtEmptyWrapperProbe', () => true)), {
+      global: { components: { DruxtEmptyWrapperProbeDefault: defineComponent({ setup: () => render }) } },
+    })
+    await settle()
+    expect(wrapper.html()).toMatch(nothing)
+    expect(render).not.toHaveBeenCalled()
+    expect(vueWarnings(warn)).toEqual([])
+  })
+
+  it.each([
+    ['a class', { attrs: { class: 'hero' } }],
+    ['an id and a style', { attrs: { id: 'top', style: 'color: red' } }],
+    ['a wrapper option', { props: { wrapper: { component: 'section', class: 'hero' } } }],
+  ])('leaves no element for %s the site set on an empty module', async (_, options) => {
+    const warn = vi.spyOn(console, 'warn')
+    const wrapper = await mountSuspended(nest(rooted('DruxtSilentSiteProbe', () => true, { wrapperTag: 'nav', slots: () => ({ default: () => h('p', 'content') }) })), options)
+    await settle()
+    expect(wrapper.html()).toMatch(nothing)
+    expect(vueWarnings(warn)).toEqual([])
+  })
+
+  it('follows the data the hook reads', async () => {
+    const empty = ref(true)
+    const wrapper = await mountSuspended(nest(rooted('DruxtToggleEmptyProbe', () => empty.value, { slots: () => ({ default: () => h('p', 'line') }) })))
+    await settle()
+    expect(wrapper.html()).toMatch(nothing)
+    empty.value = false
+    await settle(() => expect(wrapper.html()).toBe('<div class="druxt-root-probe">\n  <p>line</p>\n</div>'))
+    empty.value = true
+    await settle(() => expect(wrapper.html()).toMatch(nothing))
+  })
+
+  // One render function, as a functional and as a stateful wrapper, each registered sync and async: the markup is the
+  // same, so it never depends on how a wrapper is written or registered.
+  it('renders the same markup for a functional and a stateful wrapper, registered sync or async', async () => {
+    const warn = vi.spyOn(console, 'warn')
+    const render = (props: { title?: string }) => h('section', props.title)
+    const functional: FunctionalComponent<{ title?: string }> = (props) => render(props)
+    functional.props = ['title']
+    const stateful = defineComponent({ props: { title: { type: String, default: undefined } }, setup: (p) => () => render(p) })
+    const registrations: Record<string, Component> = {
+      'functional, sync': functional as Component,
+      'stateful, sync': stateful,
+      'functional, async': defineAsyncComponent(async () => functional as Component),
+      'stateful, async': defineAsyncComponent(async () => stateful),
+    }
+    const markup: Record<string, string> = {}
+    for (const [label, component] of Object.entries(registrations)) {
+      const wrapper = await mountSuspended(nest(rooted('DruxtRegistrationProbe', () => false)), {
+        attrs: { class: 'hero' },
+        global: { components: { DruxtRegistrationProbeDefault: component } },
+      })
+      await settle(() => expect(wrapper.find('section').exists()).toBe(true))
+      markup[label] = wrapper.html()
+      wrapper.unmount()
+    }
+    expect(new Set(Object.values(markup)).size).toBe(1)
+    expect(markup['functional, sync']).toBe('<section class="druxt-root-probe hero">Hi</section>')
+    expect(vueWarnings(warn)).toEqual([])
   })
 })

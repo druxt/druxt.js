@@ -21,14 +21,11 @@ export default createConfigForNuxt({
       'packages/schema/**',
       'packages/site/**',
       'packages/views/**',
-      'packages/core/src/runtime/components/Druxt.ts',
       'packages/core/src/runtime/components/DruxtDebug.vue',
       'packages/core/src/runtime/components/DruxtDevelTemplate.vue',
-      'packages/core/src/runtime/components/DruxtWrapper.vue',
       'packages/core/src/runtime/devel/utils/vue-devtools.ts',
       'packages/core/src/runtime/utils/template.ts',
       'test/mixins.test.js',
-      'test/nuxt/wrapper.test.ts',
       // Compat's copy of the 1.x sources, kept as 1.x laid them out.
       'packages/compat/src/legacy/**',
       // 1.x examples and tooling, run on the 1.x line.
