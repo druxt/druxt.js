@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { JsonApiIndexCache } from '../../packages/client/src/jsonApiIndex'
 import type { FetchedIndex } from '../../packages/client/src/jsonApiIndex'
+import { forgetProcessCache, processCache, resetProcessCache } from '../../packages/client/src/processCache'
 import type { ProcessCacheHandle } from '../../packages/client/src/processCache'
 
 const fetched = (prefix: string, lifetime = 0): FetchedIndex => ({ index: { 'node--page': { href: `${prefix}/jsonapi/node/page` } }, lifetime })
@@ -98,5 +99,35 @@ describe('JsonApiIndexCache', () => {
     await index.get()
     expect(shared).toHaveBeenCalled()
     expect(index.indexes['']).toEqual(fetched('').index)
+  })
+
+  describe('with the process cache', () => {
+    /** A fetch the test answers, and a cache on the real `index` scope. */
+    const pending = () => {
+      resetProcessCache()
+      let answer = () => {}
+      const fetchIndex = vi.fn((prefix: string) => new Promise<FetchedIndex>((resolve) => { answer = () => resolve(fetched(prefix, 60)) }))
+      const index = new JsonApiIndexCache({ key: 'site', fetchIndex, shared: () => processCache('index') })
+      return { index, answer: () => answer() }
+    }
+
+    it('stores a fetched index for the next client', async () => {
+      const { index, answer } = pending()
+      const first = index.get()
+      answer()
+      await first
+      expect(processCache('index')!.get('site:')).toEqual(fetched('').index)
+    })
+
+    it('does not store an index that was in flight when the index scope was forgotten, nor for a caller who joined after', async () => {
+      const { index, answer } = pending()
+      const first = index.get()
+      // A module that adds resource types is enabled, and the site forgets its index, while the fetch is answered.
+      forgetProcessCache('index', () => true)
+      const joined = index.get()
+      answer()
+      await Promise.all([first, joined])
+      expect(processCache('index')!.get('site:')).toBeUndefined()
+    })
   })
 })
