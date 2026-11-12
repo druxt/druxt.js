@@ -125,18 +125,18 @@ describe('the content cache', () => {
 
   it('keeps a client\'s entries apart from a client with other headers', async () => {
     // A Drupal that answers in the language the request asks for, with no Vary to say so.
-    const localised: DruxtFetch = async (input, init = {}) => {
+    const localized: DruxtFetch = async (input, init = {}) => {
       sent.push(new URL(String(input)).pathname)
       const lang = (init.headers as Record<string, string>)['Accept-Language'] || 'en'
       return json({ data: { id: uuid, type: 'node--page', attributes: { lang } } }, 200, PUBLIC)
     }
-    const spanish = client(localised)
+    const spanish = client(localized)
     spanish.addHeaders({ 'Accept-Language': 'es' })
     await spanish.get(page)
-    const plain = await client(localised).get(page)
+    const plain = await client(localized).get(page)
     expect(fetches()).toBe(2)
     expect(plain.data).toMatchObject({ data: { attributes: { lang: 'en' } } })
-    const again = client(localised, { content: true }, { headers: { 'Accept-Language': 'es' } })
+    const again = client(localized, { content: true }, { headers: { 'Accept-Language': 'es' } })
     expect((await again.get(page)).data).toMatchObject({ data: { attributes: { lang: 'es' } } })
     expect(fetches()).toBe(2)
   })
