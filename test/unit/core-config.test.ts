@@ -1,9 +1,10 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { H3Event } from 'h3'
 import { hidesBaseUrl, splitDruxtConfig } from '../../packages/core/src/utils/config'
 import { browserBaseUrl, hiddenBaseUrl, stripBaseUrl } from '../../packages/core/src/runtime/utils/origin'
 import type { DruxtOptions } from '../../packages/core/src/module'
 import { druxtClientOptions } from '../../packages/core/src/runtime/utils/client-options'
-import { DRUXT_SETTINGS_DRUPAL_KEY, configSource, connectionName, settingsOnly } from '../../packages/core/src/runtime/utils/drupal-settings'
+import { DRUXT_SETTINGS_DRUPAL_KEY, configSource, connectionName, settingsOnly, writeRequestTiers } from '../../packages/core/src/runtime/utils/drupal-settings'
 import type { DruxtPublicConfig } from '../../packages/core/src/runtime/types'
 
 const runtime = vi.hoisted(() => ({ config: {} as Record<string, unknown>, defaults: {} as Record<string, unknown> }))
@@ -215,5 +216,63 @@ describe('connectionName()', () => {
 
   it('names the state key per connection', () => {
     expect(DRUXT_SETTINGS_DRUPAL_KEY()).toBe('druxt:settings:drupal:default')
+  })
+})
+
+describe('the server tier', () => {
+  const event = () => ({ path: '/', context: {} }) as unknown as H3Event
+
+  beforeEach(() => {
+    storage.clear()
+    runtime.config = {
+      druxt: { auth: { clientSecret: 'auth-secret' }, cache: { secret: '' }, build: { auth: { clientId: '', scope: '' } } },
+      public: { druxt: { baseUrl: 'https://drupal.test', siteUrl: '', router: { wildcard: false } } },
+    }
+  })
+
+  it('resolves only the defaults and the config without a fetcher', async () => {
+    const { useDruxtServerSettings } = await import('../../packages/core/src/runtime/server/settings')
+    const { storedDrupalSettings } = await import('../../packages/core/src/runtime/server/storage')
+    const e = event()
+    e.context.druxtStoredSettings = storedDrupalSettings(e)
+    // No client options, and no credentials: those are not settings.
+    expect(await useDruxtServerSettings(e)).toEqual({ develMessages: 'devtools', router: { wildcard: false } })
+  })
+
+  it('stores both tiers at server start, then resolves the public tier, the server tier and the config in order', async () => {
+    const { useDruxtServerSettings } = await import('../../packages/core/src/runtime/server/settings')
+    const { storeDrupalSettings, storedDrupalSettings } = await import('../../packages/core/src/runtime/server/storage')
+    await storeDrupalSettings('default', { public: { siteUrl: 'https://from-drupal.test', router: { wildcard: true, canonical: false }, shared: 'public' } })
+    await storeDrupalSettings('default', { server: { apiKey: 'drupal-key', shared: 'server', proxy: { api: true } } })
+    expect(storage.get('settings:default')).toEqual({
+      public: { siteUrl: 'https://from-drupal.test', router: { wildcard: true, canonical: false }, shared: 'public' },
+      server: { apiKey: 'drupal-key', shared: 'server', proxy: { api: true } },
+    })
+
+    const e = event()
+    e.context.druxtStoredSettings = storedDrupalSettings(e)
+    const settings = await useDruxtServerSettings(e)
+    // An empty siteUrl in the config does not erase Drupal's.
+    expect(settings.siteUrl).toBe('https://from-drupal.test')
+    // The config wins over Drupal, and the server tier over the public tier.
+    expect(settings.router).toEqual({ wildcard: false, canonical: false })
+    expect(settings).toMatchObject({ apiKey: 'drupal-key', shared: 'server' })
+    // Drupal cannot set how the client reaches it.
+    expect(settings).not.toHaveProperty('proxy')
+    expect(secretKeys(settings)).toEqual([])
+  })
+
+  it('puts a request\'s own tiers in place of the stored ones, and stores nothing for a request', async () => {
+    const { useDruxtServerSettings } = await import('../../packages/core/src/runtime/server/settings')
+    const { storeDrupalSettings } = await import('../../packages/core/src/runtime/server/storage')
+    const e = event()
+    e.context.druxtStoredSettings = async () => ({ public: { a: 'stored', c: 'stored' }, server: { b: 'stored', d: 'stored' } })
+    await storeDrupalSettings('default', { server: { b: 'request' } }, e)
+    writeRequestTiers(e.context, 'default', { public: { a: 'request' } })
+    const settings = await useDruxtServerSettings(e)
+    expect(settings).toMatchObject({ a: 'request', b: 'request' })
+    expect(settings).not.toHaveProperty('c')
+    expect(settings).not.toHaveProperty('d')
+    expect(storage.size).toBe(0)
   })
 })

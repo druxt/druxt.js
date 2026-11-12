@@ -40,6 +40,11 @@
       "types": "./dist/runtime/types.d.ts",
       "import": "./dist/runtime/types.js"
     },
+    "./settings": {
+      "source": "./src/runtime/settings.ts",
+      "types": "./dist/runtime/settings.d.ts",
+      "import": "./dist/runtime/settings.js"
+    },
     "./server": {
       "source": "./src/runtime/server/index.ts",
       "types": "./dist/runtime/server/index.d.ts",

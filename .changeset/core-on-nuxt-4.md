@@ -8,7 +8,11 @@ The store runs on Pinia, and `useDruxtClient()` gives a component the configured
 
 The store's `getResource()` throws a `TypeError` naming an empty type or id. 1.x returned an empty object. Server renders for one browser that need a refresh at once, such as tabs opening together after Drupal revoked the visitor's access token, share one refresh within the server process, as Simple OAuth accepts a refresh token once.
 
-The module splits `druxt` once. Secrets move to the private `runtimeConfig.druxt`, and the rest is public at `runtimeConfig.public.druxt`.
+`druxt.siteUrl` names the site's public origin for links a page emits about itself. It defaults to an empty string, so `NUXT_PUBLIC_DRUXT_SITE_URL` can set it on a site that does not declare it in `nuxt.config.ts`.
+
+The module splits `druxt` once. Secrets move to the private `runtimeConfig.druxt`, and the rest is public at `runtimeConfig.public.druxt`. Read settings with `useDruxtSettings()`, and on the server with `useDruxtServerSettings(event)`. A decoupled-settings fetcher hands settings from Drupal to `storeDrupalSettings()` or `setDrupalSettings()`, and the config wins over them. A fetcher module names the Consumer it reads for in an option of its own, such as `druxt.site.settingsConsumerId`. Core has none. `setDrupalSettings()` merges the public tier over the stored one, so a runtime fetcher keeps what the server stored at start, and `{ replace: true }` replaces it instead. Module settings are no longer client options.
+
+A Druxt module registers its default settings with `addDruxtDefaults()` from `@druxt/core/kit`. The build holds them, and neither an environment variable nor the public runtime config changes them. They resolve after core's defaults and before the settings Drupal publishes and the site's config, so Drupal can change a module's default too.
 
 Under pnpm, `nuxt dev` works without adding the module's CommonJS libraries to your own dependencies.
 

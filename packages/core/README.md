@@ -80,6 +80,104 @@ What these bounds promise over time is stated in the
 Translated routes also need a `decoupled_router` patch; see the
 [multilingual guide](https://druxtjs.org/how-to/multilingual).
 
+## Settings
+
+| Option        | Type              | Default      | Description                                                                          |
+| ------------- | ----------------- | ------------ | ------------------------------------------------------------------------------------ |
+| `baseUrl`     | `string`          |              | The Drupal backend URL. **Required.**                                                |
+| `endpoint`    | `string`          | `'/jsonapi'` | The JSON:API endpoint path.                                                          |
+| `proxy.api`   | `boolean`         | `false`      | Proxy API requests via Nuxt ([guide](https://druxtjs.org/how-to/proxy)).             |
+| `proxy.files` | `boolean\|string` | `false`      | Proxy Drupal files. A string sets the site.                                          |
+| `cache`       | `boolean\|object` | `{}`         | The server cache, see below. `false` turns it off.                                   |
+| `siteUrl`     | `string`          | `''`         | The site's public origin, for its canonical link. Also `NUXT_PUBLIC_DRUXT_SITE_URL`. |
+
+See the [Nuxt module API](https://druxtjs.org/api/packages/core/module) for the full
+options list.
+
+A page in a build without the Druxt modules reaches the client through `useNuxtApp().$druxt`. Auto-imports such as `useDruxtClient()` exist only when the module is registered.
+
+## Configuration
+
+The `druxt` block in `nuxt.config.ts` stays one flat object. The module splits it once, when the app builds, into three objects, each with one owner:
+
+| Object           | Holds                                                                                  | Where it lives                                                                               |
+| ---------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Client options   | How to reach Drupal: `baseUrl`, `endpoint`, `proxy`, `cache` and the public `auth`     | Built for each side from the public config. The browser uses the proxy, the server does not. |
+| Settings         | What modules read: `siteUrl`, `develMessages` and one key per module, such as `router` | `runtimeConfig.public.druxt`, read resolved through `useDruxtSettings()`                     |
+| Private settings | `auth.clientSecret`, `cache.secret` and `build.auth.*`                                 | `runtimeConfig.druxt`, on the server only                                                    |
+
+No secret reaches the public config, the client bundle or the payload. Read the settings with `useDruxtSettings()`, never `useRuntimeConfig().public.druxt`. They leave out the client options and the credentials. The client's options are on `useNuxtApp().$druxt.options`:
+
+```ts
+const settings = useDruxtSettings();
+if (settings.develMessages === 'inline') {
+  // ...
+}
+```
+
+`build.auth.clientSecret`, when written in `nuxt.config`, stays in the build-time options for the build client. Other modules can read it at build time, so prefer the `NUXT_DRUXT_BUILD_AUTH_CLIENT_SECRET` environment variable.
+
+A server route reads them with `useDruxtServerSettings(event)`, which adds the settings Drupal marks server only. A route that needs a secret reads the private `runtimeConfig.druxt`.
+
+### Environment variables
+
+Set secrets at runtime, never in `nuxt.config.ts`, where they are part of the build.
+
+| Variable                                                                                          | Sets                                      |
+| ------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `NUXT_PUBLIC_DRUXT_SITE_URL`                                                                      | `siteUrl`                                 |
+| `NUXT_DRUXT_AUTH_CLIENT_SECRET`                                                                   | The confidential Consumer's secret        |
+| `NUXT_DRUXT_CACHE_SECRET`                                                                         | The `POST /api/_druxt/cache/clear` secret |
+| `NUXT_DRUXT_PROXY_TRUST_FORWARDED`                                                                | `proxy.trustForwarded`                    |
+| `NUXT_DRUXT_BUILD_AUTH_CLIENT_ID`                                                                 | The server's own Consumer                 |
+| `NUXT_DRUXT_BUILD_AUTH_CLIENT_SECRET`                                                             | The server's own Consumer's secret        |
+| `NUXT_DRUXT_BUILD_AUTH_USERNAME`, `NUXT_DRUXT_BUILD_AUTH_PASSWORD`, `NUXT_DRUXT_BUILD_AUTH_SCOPE` | The server's password grant and scope     |
+
+`DRUXT_AUTH_CLIENT_SECRET` and the `DRUXT_BUILD_*` variables still work when they are present at runtime.
+
+### Settings from Drupal
+
+A decoupled-settings module can publish settings from Drupal for a frontend's Consumer. Core does not fetch them. A fetcher module hands them to core in two tiers:
+
+- **Public**: settings for the browser. `useDruxtSettings()` reads them from Nuxt state, so they reach the payload.
+- **Server**: settings Drupal marks server only. They stay in Nitro's `druxt` storage and on the request, and never reach the browser.
+
+`useDruxtSettings()` resolves the defaults, then the public tier, then the config, so `nuxt.config.ts` and the environment always win over Drupal. A config key left `undefined` or empty does not erase a value from Drupal. Without a fetcher, both tiers are empty and nothing changes.
+
+A fetcher stores both tiers at server start, and while `nuxt generate` builds static pages, from a Nitro plugin:
+
+```ts
+// server/plugins/drupal-settings.ts
+import { useDruxtServerClient } from '@druxt/core/server';
+// The fetcher's own reader, which splits what Drupal returns into the two tiers.
+import { readDrupalSettings } from './read-drupal-settings';
+
+export default defineNitroPlugin(async () => {
+  const client = await useDruxtServerClient();
+  const { publicSettings, serverSettings } = await readDrupalSettings(client);
+  await storeDrupalSettings('default', { public: publicSettings, server: serverSettings });
+});
+```
+
+To set them for one request during a server render, it calls `setDrupalSettings()` from a server-only plugin. The public tier is merged over the stored one, so a key stored at server start stays unless the request's tier sets it. Objects merge key by key, and arrays are replaced. The server tier goes on the request, in place of the stored one:
+
+```ts
+// plugins/drupal-settings.server.ts
+export default defineNuxtPlugin(async () => {
+  // Fresh values for this request, over what the Nitro plugin above stored.
+  const { publicSettings, serverSettings } = await readDrupalSettings(useDruxtClient());
+  setDrupalSettings('default', { public: publicSettings, server: serverSettings });
+});
+```
+
+Pass `{ replace: true }` as the third argument to replace the stored public tier instead. Pass a server tier only from a server-only plugin or `storeDrupalSettings()`. A universal plugin's source is bundled for the browser, server tier and all, even though the browser drops the value.
+
+Every settings function takes a connection name, `default` unless named. Other connections, in `druxt.connections`, are reserved for a later release: the module warns about any other name and uses the flat keys.
+
+### Writing a settings fetcher
+
+Core has no option for the Consumer whose decoupled settings are read, since not every site uses them. A module that integrates Drupal's decoupled settings registers its own option with `addDruxtDefaults()` from `@druxt/core/kit`, such as `druxt.site.settingsConsumerId`. When the site leaves it unset, the module falls back to the connection's Consumer, which the client exposes as `consumer.id`. The module writes what it reads with `storeDrupalSettings()`, as above.
+
 ## DruxtClient
 
 The client is the communication layer between your application and Drupal's
