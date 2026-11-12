@@ -23,7 +23,6 @@ export default createConfigForNuxt({
       'packages/views/**',
       'packages/core/src/runtime/components/DruxtDebug.vue',
       'packages/core/src/runtime/components/DruxtDevelTemplate.vue',
-      'packages/core/src/runtime/devel/utils/vue-devtools.ts',
       'packages/core/src/runtime/utils/template.ts',
       'test/mixins.test.js',
       // Compat's copy of the 1.x sources, kept as 1.x laid them out.

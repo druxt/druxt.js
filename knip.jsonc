@@ -45,7 +45,8 @@
       // build.config.ts: unbuild's, read by nuxt-module-build for the kit entry.
       "entry": ["src/module.ts", "src/runtime/**/*.{ts,vue}", "build.config.ts"],
       // @pinia/nuxt: installed by name, with installModule(). nitropack: Nuxt's own server runtime, imported for useNitroApp().
-      "ignoreDependencies": ["@pinia/nuxt", "nitropack"]
+      // @nuxt/devtools-kit: an optional peer, imported by name through loadDruxtTools() in development only.
+      "ignoreDependencies": ["@pinia/nuxt", "nitropack", "@nuxt/devtools-kit"]
     }
   },
   // Nuxt's virtual modules, and the build templates the Druxt modules alias as #druxt/*.

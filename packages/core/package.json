@@ -45,6 +45,11 @@
       "types": "./dist/runtime/settings.d.ts",
       "import": "./dist/runtime/settings.js"
     },
+    "./devel": {
+      "source": "./src/runtime/devel/index.ts",
+      "types": "./dist/runtime/devel/index.d.ts",
+      "import": "./dist/runtime/devel/index.js"
+    },
     "./server": {
       "source": "./src/runtime/server/index.ts",
       "types": "./dist/runtime/server/index.d.ts",
@@ -74,10 +79,18 @@
   },
   "peerDependencies": {
     "@druxt/devtools": "workspace:^",
+    "@nuxt/devtools-kit": "^3.4.3",
+    "@vue/devtools-api": "^8.2.1",
     "nuxt": "^4.4.4"
   },
   "peerDependenciesMeta": {
     "@druxt/devtools": {
+      "optional": true
+    },
+    "@nuxt/devtools-kit": {
+      "optional": true
+    },
+    "@vue/devtools-api": {
       "optional": true
     }
   },
@@ -89,6 +102,8 @@
   "license": "MIT",
   "devDependencies": {
     "@druxt/devtools": "workspace:^",
-    "@nuxt/schema": "^4.4.4"
+    "@nuxt/devtools-kit": "^3.4.3",
+    "@nuxt/schema": "^4.4.4",
+    "@vue/devtools-api": "^8.2.1"
   }
 }
