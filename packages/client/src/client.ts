@@ -559,7 +559,7 @@ export class DruxtClient {
       if (after && !(current && current.started > started) && res.status === 200 && res.data && typeof res.data === 'object') {
         const seconds = parseCacheLifetime(res.headers)
         const value: StoredResponse = { body: JSON.stringify(res.data), status: res.status, statusText: res.statusText, headers: Object.fromEntries(res.headers.entries()), seconds, at: Date.now(), started }
-        after.set(key, value, seconds, before!.generation)
+        after.set(key, value, seconds, before!.generation, started)
       }
       return res
     } catch (err) {

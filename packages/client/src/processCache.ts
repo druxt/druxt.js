@@ -21,6 +21,11 @@ const generation = (shared[GENERATION] || (shared[GENERATION] = { value: 0 })) a
 const SEQUENCE = Symbol.for('druxt.processCacheSequence')
 const sequence = (shared[SEQUENCE] || (shared[SEQUENCE] = { value: 0 })) as { value: number }
 
+// The last request number each scope's forget saw, shared like the scopes: a request started before it may hold what
+// the forget dropped, so its answer is not stored.
+const FORGOTTEN = Symbol.for('druxt.processCacheForgotten')
+const forgotten = (shared[FORGOTTEN] || (shared[FORGOTTEN] = new Map())) as Map<string, number>
+
 /** The next number in the order requests start in, unique within the process. */
 export const nextRequest = (): number => ++sequence.value
 
@@ -187,7 +192,7 @@ export interface ProcessCacheHandle {
   /** The generation this handle was taken at. */
   generation: number
   get<T = unknown>(key: string): T | undefined
-  set<T>(key: string, value: T, seconds: number, since?: number): T
+  set<T>(key: string, value: T, seconds: number, since?: number, started?: number): T
 }
 
 export interface ProcessCacheHandleOptions {
@@ -276,7 +281,8 @@ export const processCache = (scope: string, { credentialed = false, consumer = '
     },
 
     /**
-     * Store a value, unless a clear has happened since this handle was taken.
+     * Store a value, unless a clear has happened since this handle was taken, or a forget of the scope since its
+     * request started.
      *
      * A value that may not be kept also removes what an earlier response
      * stored under the key, so the cache follows Drupal's latest answer.
@@ -285,10 +291,13 @@ export const processCache = (scope: string, { credentialed = false, consumer = '
      * @param value - The value to store.
      * @param seconds - Seconds the value may be kept.
      * @param since - A generation the value was fetched at. The value is dropped when a clear has happened since.
+     * @param started - The request's number from `nextRequest()`. The value is dropped when it started before the
+     * scope's last forget, which it may predate.
      * @returns The value, stored or not.
      */
-    set<T>(key: string, value: T, seconds: number, since?: number): T {
+    set<T>(key: string, value: T, seconds: number, since?: number, started?: number): T {
       if (since !== undefined && since !== generation.value) return value
+      if (started !== undefined && started <= (forgotten.get(scope) ?? 0)) return value
       remove(key)
       if (cap(seconds) > 0) {
         const size = sizeOf(value)
@@ -313,13 +322,15 @@ export const processCacheGeneration = (): number => generation.value
 
 /**
  * Drops the entries of a scope a test names, for every consumer, such as the responses that held a resource an
- * editor just saved. The generation does not move: a request in flight keeps its answer.
+ * editor just saved. The generation does not move, but no answer to a request of the scope in flight now is stored:
+ * it may hold what was dropped.
  *
  * @param scope - The scope.
  * @param test - Called with each key.
  * @returns How many entries went.
  */
 export const forgetProcessCache = (scope: string, test: (key: string) => boolean): number => {
+  forgotten.set(scope, sequence.value)
   let dropped = 0
   for (const entries of scopes.get(scope)?.values() || []) {
     for (const [key, entry] of [...entries]) {

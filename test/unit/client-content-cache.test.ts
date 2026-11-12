@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { DruxtClient, resetProcessCache } from '../../packages/client/src'
+import { DruxtClient, forgetProcessCache, resetProcessCache } from '../../packages/client/src'
 import type { DruxtFetch } from '../../packages/client/src'
 import { BASE_URL, json } from './fake-drupal'
 
@@ -188,6 +188,26 @@ describe('the content cache', () => {
     expect((await ordinary).data.data.attributes.sent).toBe(2)
     // The bypass started later, so its answer stays.
     expect((await client().get<{ data: { attributes: { sent: number } } }>(page)).data.data.attributes.sent).toBe(1)
+  })
+
+  it('does not store an answer to a read that was in flight when its entry was forgotten', async () => {
+    let answer = () => {}
+    let version = 'old'
+    const fetch: DruxtFetch = async (input) => {
+      sent.push(new URL(String(input)).pathname)
+      const body = { data: { id: uuid, type: 'node--page', attributes: { version } } }
+      if (sent.length > 1) return json(body, 200, PUBLIC)
+      return new Promise<Response>((resolve) => { answer = () => resolve(json(body, 200, PUBLIC)) })
+    }
+    const inflight = client(fetch).get(page)
+    await vi.waitFor(() => expect(fetches()).toBe(1))
+    // An editor's save lands, and the proxy forgets the resource, while the read is answered.
+    forgetProcessCache('content', (key) => key.includes(page))
+    answer()
+    await inflight
+    version = 'new'
+    expect((await client(fetch).get(page)).data).toMatchObject({ data: { attributes: { version: 'new' } } })
+    expect(fetches()).toBe(2)
   })
 
   it('a document fetched before a clear is not stored after it', async () => {

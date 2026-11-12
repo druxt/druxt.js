@@ -144,6 +144,22 @@ describe('the bounded process cache', () => {
     expect(processCache('content')!.generation).toBe(before)
   })
 
+  it('refuses a value started before the last forget, and stores one started after', () => {
+    const cache = processCache('content')!
+    const before = nextRequest()
+    forgetProcessCache('content', () => true)
+    cache.set('stale', 'old', 300, undefined, before)
+    expect(cache.get('stale')).toBeUndefined()
+    const after = nextRequest()
+    cache.set('fresh', 'new', 300, undefined, after)
+    expect(cache.get('fresh')).toBe('new')
+    // A forget of another scope says nothing about this one.
+    const other = nextRequest()
+    forgetProcessCache('menu', () => true)
+    cache.set('other', 'kept', 300, undefined, other)
+    expect(cache.get('other')).toBe('kept')
+  })
+
   it('numbers requests in the order they start, and measures text in UTF-8 bytes', () => {
     const first = nextRequest()
     expect(nextRequest()).toBe(first + 1)
