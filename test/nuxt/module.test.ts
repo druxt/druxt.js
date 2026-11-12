@@ -9,6 +9,7 @@ import type { DruxtModuleContext, DruxtModuleContract, DruxtModuleProps } from '
 import { useDruxtStore } from '@druxt/core/store'
 import { matchAnyPath, nest, payloadKeys, settle } from './helpers'
 import DruxtTestScriptSetup from './components/DruxtTestScriptSetup.vue'
+import DruxtTestLanguages from './components/DruxtTestLanguages.vue'
 
 // Unmounting runs Nuxt's onScopeDispose for useAsyncData, which purges the
 // key's cached data; without it, tests sharing this file's one Vue app and
@@ -765,5 +766,12 @@ describe('useDruxtLanguages(), from @druxt/core/runtime', () => {
       },
     }))
     expect(JSON.parse(wrapper.text())).toEqual({ languages: [{ langcode: 'en', prefix: '' }, { langcode: 'es', prefix: 'es' }], defaultLangcode: 'en' })
+  })
+
+  // Auto-imported, as useDruxtClient() and its siblings are: test/nuxt/components/DruxtTestLanguages.vue imports nothing.
+  it('is auto-imported, and gives no default language when every language is prefixed', async () => {
+    useState(DRUXT_LANGUAGES_STATE).value = [{ langcode: 'en', prefix: 'en' }, { langcode: 'es', prefix: 'es' }]
+    const wrapper = await mountSuspended(DruxtTestLanguages)
+    expect(JSON.parse(wrapper.text())).toEqual({ languages: [{ langcode: 'en', prefix: 'en' }, { langcode: 'es', prefix: 'es' }], defaultLangcode: null })
   })
 })

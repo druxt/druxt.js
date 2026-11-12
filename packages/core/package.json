@@ -35,6 +35,11 @@
       "types": "./dist/routes.d.mts",
       "import": "./dist/routes.mjs"
     },
+    "./runtime": {
+      "source": "./src/runtime/index.ts",
+      "types": "./dist/runtime/index.d.ts",
+      "import": "./dist/runtime/index.js"
+    },
     "./store": {
       "source": "./src/runtime/store.ts",
       "types": "./dist/runtime/store.d.ts",

@@ -636,6 +636,10 @@ export default defineNuxtModule<DruxtOptions>({
     }
     addImports({ name: 'useDruxtAnchors', from: resolve('./runtime/anchors') })
     addImports({ name: 'useDruxtFileUrl', from: resolve('./runtime/files') })
+    // What a site's own modules and wrappers are built from, and the languages the build read.
+    for (const name of ['useDruxtModule', 'useDruxtModuleContext', 'druxtModuleProps', 'druxtModuleEmits', 'useDruxtDevtools', 'useDruxtPageTitle', 'useDruxtLanguages']) {
+      addImports({ name, from: resolve('./runtime/index') })
+    }
     addPlugin(resolve('./runtime/plugins/pinia'))
 
     const auth = options.auth
