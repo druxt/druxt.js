@@ -16,6 +16,18 @@ import { templateRoute } from './utils/template-route'
 
 import { DRUXT_DEVTOOLS_ICON_ROUTE, DRUXT_DEVTOOLS_ROUTE, devtoolsPage, devtoolsTab, loadDruxtTools, missingToolsMessages } from './utils/devtools'
 
+/**
+ * Whether Drupal answered a request and refused it, with a 4xx, as it does the wrong credentials or a role that may
+ * not read. A request with no answer, or a 5xx, is Drupal being away, which another build may not meet.
+ */
+const refusedByDrupal = (error: unknown): boolean => {
+  for (let at = error as { response?: { status?: number }, cause?: unknown } | undefined, depth = 0; at && depth < 5; at = at.cause as typeof at, depth++) {
+    const status = at.response?.status
+    if (typeof status === 'number') return status >= 400 && status < 500
+  }
+  return false
+}
+
 /** Credentials for build-time requests; see createBuildClient. */
 export interface DruxtBuildAuthOptions {
   clientId?: string
@@ -641,6 +653,10 @@ export default defineNuxtModule<DruxtOptions>({
     }
     addImports({ name: 'useDruxtAnchors', from: resolve('./runtime/anchors') })
     addImports({ name: 'useDruxtFileUrl', from: resolve('./runtime/files') })
+    // What a site's own modules and wrappers are built from, and the languages the build read.
+    for (const name of ['useDruxtModule', 'useDruxtModuleContext', 'druxtModuleProps', 'druxtModuleEmits', 'useDruxtDevtools', 'useDruxtPageTitle', 'useDruxtLanguages']) {
+      addImports({ name, from: resolve('./runtime/index') })
+    }
     addPlugin(resolve('./runtime/plugins/pinia'))
 
     const auth = options.auth

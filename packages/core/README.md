@@ -215,6 +215,12 @@ Druxt's own server routes sit under `/api/_druxt`, such as `/api/_druxt/cache/cl
 
 The JSON:API is proxied under each language's URL prefix as Drupal is configured, such as `/english/jsonapi` for `en`. The build reads the prefixes from Drupal. The default language's comes from the unprefixed index and each other language's from a probe at its langcode. When the decoupled_settings module publishes `language.negotiation` to visitors, the build reads every prefix from it, which is the one way to learn a prefix that is neither. A default language with no prefix is served unprefixed. A prefix the build cannot read is taken to be the langcode, with a warning. When Drupal refuses a production build's read of the languages, such as with the wrong build credentials, the build stops with `DRUXT_E01008`, as the site would otherwise route and proxy only its default language. When Drupal doesn't answer, as in a build that can't reach it, the build warns once and goes on with none. So does any failure in development, so the site starts while Drupal is away. The proxy then serves only the unprefixed endpoint, and a request under a language prefix misses it until a build reads them. The prefixes are read at build, so rebuild after changing them in Drupal. The client gets the same map, so a module's language reaches Drupal under the prefix it is served at.
 
+In the app, `useDruxtLanguages()`, which is auto-imported, gives the same languages with their prefixes, and `defaultLangcode`, the language served with no prefix. It's `undefined` when every language has a prefix.
+
+```ts
+const { languages, defaultLangcode } = useDruxtLanguages();
+```
+
 ### Settings from Drupal
 
 A decoupled-settings module can publish settings from Drupal for a frontend's Consumer. Core does not fetch them. A fetcher module hands them to core in two tiers:
