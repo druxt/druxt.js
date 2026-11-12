@@ -33,18 +33,20 @@ export class DruxtPermissionsError extends Error {
 }
 
 /**
- * What a sign-in or refresh rejects with when a later sign-in or a sign-out replaced its session while it ran. It
- * stored nothing, and the session that replaced it is kept.
+ * What a sign-in or refresh that succeeded rejects with when a later sign-in or a sign-out replaced its session while
+ * it ran, and what a request rejects with when another session signed in before it was sent. Nothing was stored or
+ * sent, and the session that replaced it is kept.
  */
 export interface DruxtSupersededError extends Error {
   superseded: true
 }
 
 /**
- * Whether a sign-in or refresh rejected because a later sign-in or a sign-out replaced its session while it ran,
- * rather than because it failed.
+ * Whether a sign-in, a refresh or a request rejected because its session was replaced, rather than because it failed:
+ * a sign-in or refresh by a later sign-in or a sign-out while it ran, and a request by another session signed in
+ * while it waited on a refresh, so it was never sent.
  *
- * @param error - What the sign-in or refresh rejected with.
+ * @param error - What the sign-in, refresh or request rejected with.
  *
  * @example @lang js
  * try {

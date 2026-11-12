@@ -3,6 +3,9 @@ import { JsonApiIndexCache } from '../../packages/client/src/jsonApiIndex'
 import type { FetchedIndex } from '../../packages/client/src/jsonApiIndex'
 import { forgetProcessCache, processCache, resetProcessCache } from '../../packages/client/src/processCache'
 import type { ProcessCacheHandle } from '../../packages/client/src/processCache'
+import { DruxtClient } from '../../packages/client/src'
+import type { DruxtFetch } from '../../packages/client/src'
+import { BASE_URL, index as drupalIndex, json } from './fake-drupal'
 
 const fetched = (prefix: string, lifetime = 0): FetchedIndex => ({ index: { 'node--page': { href: `${prefix}/jsonapi/node/page` } }, lifetime })
 
@@ -11,6 +14,7 @@ const handle = (entries = new Map<string, unknown>(), state = { generation: 0 })
   const writes: Array<[string, number, number | undefined]> = []
   const shared = (): ProcessCacheHandle => ({
     generation: state.generation,
+    consumer: '',
     get: <T>(key: string) => entries.get(key) as T | undefined,
     set: <T>(key: string, value: T, seconds: number, since?: number) => {
       writes.push([key, seconds, since])
@@ -117,6 +121,23 @@ describe('JsonApiIndexCache', () => {
       answer()
       await first
       expect(processCache('index')!.get('site:')).toEqual(fetched('').index)
+    })
+
+    it('stores no index under headers added while it was in flight', async () => {
+      resetProcessCache()
+      let answer = () => {}
+      const fetch: DruxtFetch = () => new Promise<Response>((resolve) => { answer = () => resolve(json(drupalIndex(), 200, { 'cache-control': 'public, max-age=300' })) })
+      const client = new DruxtClient(BASE_URL, { fetch, cache: {}, headers: { 'Accept-Language': 'en' } })
+      const first = client.getIndex()
+      await vi.waitFor(() => expect(client.indexRequests).not.toEqual({}))
+      client.addHeaders({ 'Accept-Language': 'es' })
+      // A caller who joins the fetch now shares its answer, sent with the headers the client had before.
+      const joined = client.getIndex()
+      answer()
+      await Promise.all([first, joined])
+      for (const lang of ['en', 'es']) {
+        expect(new DruxtClient(BASE_URL, { cache: {}, headers: { 'Accept-Language': lang } }).processCache('index')!.get(client.indexKey + ':')).toBeUndefined()
+      }
     })
 
     it('does not store an index that was in flight when the index scope was forgotten, nor for a caller who joined after', async () => {

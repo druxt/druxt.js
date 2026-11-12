@@ -5,8 +5,8 @@
 // druxt-auth 0.x's behaviour from its @nuxtjs/auth-next schemes and its
 // refresh plugin.
 import type { DruxtClient } from './client'
-import type { DruxtSupersededError } from './errors'
 import type { AuthStorage, DruxtAuthOptions } from './types'
+import { supersededError } from './utils/superseded'
 
 /** The storage keys, exported so a framework can prepare storage for them up front. */
 export const KEYS = {
@@ -71,12 +71,6 @@ export const refreshRefused = (error: unknown): boolean => {
   return status === 400 || status === 401
 }
 
-/** What a sign-in or refresh rejects with when a later sign-in or a sign-out replaced its session while it ran. */
-const supersededError = (): DruxtSupersededError => Object.assign(
-  new Error('DruxtAuth: a later sign-in or sign-out replaced the session this was for.'),
-  { superseded: true as const },
-)
-
 type Options = DruxtAuthOptions & Required<Pick<DruxtAuthOptions, 'tokenUrl' | 'authorizeUrl' | 'userInfoUrl' | 'storage'>> & {
   refresh: { grace: number, limit: number, window: number, share?: NonNullable<DruxtAuthOptions['refresh']>['share'] }
 }
@@ -95,8 +89,8 @@ export class DruxtAuth {
    * was replaced. {@link DruxtAuth.held} catches another client writing the same storage, which this cannot.
    */
   private generation = 0
-  /** The generation of the last sign-in that stored its tokens. */
-  private stored = 0
+  /** The generation the refresh in flight was started for. */
+  private refreshingFor = 0
 
   /**
    * @param client - The DruxtClient.
@@ -120,6 +114,15 @@ export class DruxtAuth {
     this.refreshing = null
     this.refreshedAt = 0
     this.attempts = []
+  }
+
+  /**
+   * Which session this client is on: it moves on when a sign-in starts and when the session is forgotten, by a
+   * sign-out or a refresh Drupal refused, and never on a refresh. A request compares it before it is sent as the
+   * session, so it never goes as one that replaced its own.
+   */
+  get epoch(): number {
+    return this.generation
   }
 
   /** Whether the site's server holds the tokens, and this client only the session marker. */
@@ -200,19 +203,15 @@ export class DruxtAuth {
   /** Forgets the tokens. */
   clearTokens(): void {
     this.generation++
-    this.removeTokens()
-  }
-
-  /** Removes the tokens from storage, leaving a sign-in in flight to store its own. */
-  private removeTokens(): void {
     for (const key of Object.values(KEYS)) this.storage.remove(key)
   }
 
   /**
    * Posts a sign-in grant to the token endpoint and stores its tokens. A sign-in started later, or a sign-out, while
-   * it runs replaces it: it then stores nothing and rejects with an error whose `superseded` is true, which
-   * `isSuperseded()` tells. A sign-in that fails ends the session held before it, as druxt-auth 0.x did, unless a
-   * later sign-in or a sign-out replaced it first.
+   * it runs replaces it: it then stores nothing. Once Drupal has issued its tokens, it rejects with an error whose
+   * `superseded` is true, which `isSuperseded()` tells; one that failed rejects with its own error. A sign-in that
+   * fails ends the session held before it, as druxt-auth 0.x did, unless a later sign-in or a sign-out replaced it
+   * first.
    *
    * @param fields - The grant's fields.
    * @param clientId - The Consumer, `clientId` by default.
@@ -229,7 +228,6 @@ export class DruxtAuth {
     }
     if (this.generation !== mine) throw supersededError()
     this.setTokens(data, clientId)
-    this.stored = mine
     return data
   }
 
@@ -329,8 +327,12 @@ export class DruxtAuth {
    * Refreshes the tokens. Concurrent callers share one request; one that
    * succeeded within `grace` is reused; at most `limit` run per `window`.
    * With `refresh.share`, clients holding the same refresh token share it too.
+   * A refresh in flight for a session a sign-in or a sign-out has since
+   * replaced is that session's alone: the session now held starts its own.
    */
   refresh(): Promise<TokenResponse | undefined> {
+    // Its own callers keep it, and still get its superseded rejection.
+    if (this.refreshing && this.refreshingFor !== this.generation) this.refreshing = null
     if (!this.refreshing && this.refreshedAt && Date.now() - this.refreshedAt < this.options.refresh.grace) {
       return Promise.resolve(undefined)
     }
@@ -356,7 +358,7 @@ export class DruxtAuth {
       // only clients of one session share.
       const { share, grace } = this.options.refresh
       const pending = share && refreshToken ? share(JSON.stringify([issuer, refreshToken, this.accessToken ?? null]), start, grace) : start()
-      this.refreshing = pending
+      const refreshing: Promise<TokenResponse> = pending
         .then((data) => {
           // The answer is the session's it was for: a sign-in or sign-out made while it ran is newer, and kept. A
           // request waiting on it must not be sent again as that session, so it rejects.
@@ -370,7 +372,10 @@ export class DruxtAuth {
           if (refreshRefused(error) && current()) this.clearTokens()
           throw error
         })
-        .finally(() => { this.refreshing = null })
+        // A newer session's refresh may be the one in flight by now, and stays.
+        .finally(() => { if (this.refreshing === refreshing) this.refreshing = null })
+      this.refreshing = refreshing
+      this.refreshingFor = started
     }
     return this.refreshing
   }
@@ -388,20 +393,16 @@ export class DruxtAuth {
   }
 
   /**
-   * Signs out. Simple OAuth has no revocation endpoint to call, so the tokens are forgotten. With `session` on, the
-   * site's server clears the cookies it set, which the browser cannot, through `logoutUrl` first: when that route
-   * answers with anything but a 2xx, the session is kept and the promise rejects with the request's error, so a
-   * sign-out the server did not make is never reported, and calling `logout()` again retries it.
-   *
-   * A sign-in started while that route runs is newer than the session it ends, and kept: the promise resolves, and
-   * only the session it was asked to end is forgotten. A sign-in started before `logout()` is replaced by it, and
-   * rejects with `superseded`.
+   * Signs out. Simple OAuth has no revocation endpoint to call, so the tokens are forgotten at once. With `session`
+   * on and a `logoutUrl`, the site's server first clears the cookies it set, which the browser cannot, through that
+   * route. When it answers with a 2xx, the session is forgotten and the promise resolves: no session is left, even
+   * one a sign-in stored while the route ran, and a sign-in or refresh still waiting rejects with `superseded` and
+   * stores nothing. A sign-in after that starts a new session. When the route answers with anything else, the
+   * session is kept and the promise rejects with the request's error, so a sign-out the server did not make is never
+   * reported, and calling `logout()` again retries it.
    */
   async logout(): Promise<void> {
-    const began = this.generation
     if (this.session && this.options.logoutUrl) await this.client.request(this.options.logoutUrl, { method: 'POST', auth: false })
-    if (this.generation === began) this.clearTokens()
-    // A sign-in started since: keep the session it stored, or, while it runs, forget only the one that ended.
-    else if (this.stored <= began) this.removeTokens()
+    this.clearTokens()
   }
 }
