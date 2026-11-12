@@ -694,4 +694,18 @@ describe('a session the site\'s server holds', () => {
     await sessionClient(fetch, storage).auth.logout()
     expect(requested(calls)).toEqual(['POST /api/_druxt/auth/logout'])
   })
+
+  it('keeps the session and rejects when the logout route fails', async () => {
+    let status = 500
+    const { fetch, calls } = drupal({ 'POST /api/_druxt/auth/logout': () => (status === 204 ? new Response(null, { status }) : json({ error: 'server_error' }, status)) })
+    const { values, storage } = marker('on')
+    const client = sessionClient(fetch, storage)
+    await expect(client.auth.logout()).rejects.toMatchObject({ response: { status: 500 } })
+    expect([client.auth.loggedIn, values.get(AUTH_STORAGE_KEYS.session)]).toEqual([true, 'on'])
+    // Signing out again retries it.
+    status = 204
+    await client.auth.logout()
+    expect(client.auth.loggedIn).toBe(false)
+    expect(requested(calls)).toEqual(['POST /api/_druxt/auth/logout', 'POST /api/_druxt/auth/logout'])
+  })
 })
