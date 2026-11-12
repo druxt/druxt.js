@@ -10,7 +10,7 @@ const druxt = new DruxtClient('https://demo-api.druxtjs.org');
 const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
 ```
 
-**`get()` and `request()` return the HTTP response, whose `data` is the JSON:API document. The resource methods return the document itself.**
+**`get()`, `request()`, `createResource()` and `updateResource()` return the HTTP response, whose `data` is the JSON:API document. The read methods return the document itself.**
 
 - **Resources:** `getResource`, `getCollection`, `getCollectionAll`,
   `getRelated`, `createResource` and `updateResource`. A method given an empty
@@ -18,11 +18,12 @@ const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
   `undefined`.
 - **Index:** the JSON:API index is fetched once, decorated with JSON:API
   Extras' resource config when it is readable.
-- **Process cache:** on a server, the JSON:API index, fetched without
-  credentials, is kept between requests for as long as its `Cache-Control`
-  allows. Resources and collections are not kept unless `cache: { content:
-true }` is set, which keeps every `get()` response made without credentials
-  the same way. `cache: { ttl }` caps that, and `clearCache()` empties it.
+- **Process cache:** off unless the `cache` option is set. On a server it then
+  keeps the JSON:API index, fetched without credentials, between requests for
+  as long as its `Cache-Control` allows. With `cache: { content: true }` it also
+  keeps each `get()` answered with a 200 that `Cache-Control` lets a shared
+  cache store, for a request without credentials or options of its own.
+  `cache: { ttl }` caps the lifetime, and `clearCache()` empties it.
 - **Auth:** with `auth: { clientId }`, Simple OAuth's authorization code
   (PKCE), password and client credentials grants, with refresh. A 401 is
   refreshed and retried once.

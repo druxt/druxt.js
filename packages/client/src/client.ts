@@ -235,8 +235,8 @@ export class DruxtClient {
    * session, and the 401 stands. A read Drupal refuses for a token with no
    * refresh token to try ends the session the same way, and is repeated as
    * the anonymous visitor. The token goes only to Drupal's origin, or this
-   * one when the API is proxied: a request to another host carries none, and
-   * its 401 is returned as it is.
+   * one when the API is proxied: a request to another host is sent without
+   * it, and its 401 is returned as it is.
    *
    * @param url - A path or an absolute URL.
    * @param options - The request options.
@@ -585,6 +585,7 @@ export class DruxtClient {
    * @param type - The JSON:API resource type.
    * @param query - A JSON:API query string or object.
    * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @param options - How the read goes to Drupal, such as `bypassCache`.
    * @returns The collection, from the conventional URL for a type the index does not list.
    *
    * @example @lang js
@@ -608,6 +609,7 @@ export class DruxtClient {
    * @param type - The JSON:API resource type.
    * @param query - A JSON:API query string or object.
    * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @param options - How the read goes to Drupal, such as `bypassCache`.
    *
    * @example @lang js
    * const collections = await this.$druxt.getCollectionAll(
@@ -765,6 +767,7 @@ export class DruxtClient {
    * @param id - The resource UUID.
    * @param query - A JSON:API query string or object.
    * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @param options - How the read goes to Drupal, such as `bypassCache`.
    * @returns The document.
    *
    * @example @lang js
