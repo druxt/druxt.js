@@ -13,7 +13,7 @@ const SKIPPED = ['packages/compat/src/legacy/']
  *
  * @param files - Absolute paths.
  */
-const unskipped = (files: string[]): string[] => files.filter((file) => !SKIPPED.some((skipped) => file.startsWith(join(root, skipped))))
+const outsideSkipped = (files: string[]): string[] => files.filter((file) => !SKIPPED.some((skipped) => file.startsWith(join(root, skipped))))
 
 /** Every file below a directory, as absolute paths. */
 const filesBelow = (dir: string): string[] => existsSync(dir)
@@ -70,7 +70,7 @@ interface Layout { files: string[], public: string[], internal: string[], unreso
 const layout = (name: string): Layout => {
   const pkg = join(root, 'packages', name)
   const src = join(pkg, 'src')
-  const files = unskipped(filesBelow(src))
+  const files = outsideSkipped(filesBelow(src))
   const known = new Set(files)
   const reached = new Set<string>()
   const queue: string[] = []
@@ -121,7 +121,7 @@ const inUtils = (path: string) => /(?:^|\/)utils\//.test(path)
  * @param files - Every file below the package's `src/`.
  */
 const isPorted = (files: string[]): boolean => {
-  const kept = unskipped(files)
+  const kept = outsideSkipped(files)
   return kept.length > 0 && !kept.some((file) => file.endsWith('.js'))
 }
 
