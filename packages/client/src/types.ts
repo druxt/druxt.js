@@ -309,7 +309,7 @@ export interface DruxtConnectionConfig extends DruxtClientOptions {
    * The browser's sign-in, when it is on. A different client than the Consumer, such as a PKCE client with no secret,
    * or the Consumer's own client with a `clientId` left out. `secret` is a confidential client's, server side only.
    */
-  browser?: DruxtPublicAuthOptions & { secret?: string }
+  browser?: Omit<DruxtPublicAuthOptions, 'clientId'> & { clientId?: string, secret?: string }
 }
 
 /** What `DruxtClient.error()` throws. */
