@@ -123,6 +123,30 @@ describe('the content cache', () => {
     expect(fetches()).toBe(4)
   })
 
+  it('keeps a client\'s entries apart from a client with other headers', async () => {
+    // A Drupal that answers in the language the request asks for, with no Vary to say so.
+    const localised: DruxtFetch = async (input, init = {}) => {
+      sent.push(new URL(String(input)).pathname)
+      const lang = (init.headers as Record<string, string>)['Accept-Language'] || 'en'
+      return json({ data: { id: uuid, type: 'node--page', attributes: { lang } } }, 200, PUBLIC)
+    }
+    const spanish = client(localised)
+    spanish.addHeaders({ 'Accept-Language': 'es' })
+    await spanish.get(page)
+    const plain = await client(localised).get(page)
+    expect(fetches()).toBe(2)
+    expect(plain.data).toMatchObject({ data: { attributes: { lang: 'en' } } })
+    const again = client(localised, { content: true }, { headers: { 'Accept-Language': 'es' } })
+    expect((await again.get(page)).data).toMatchObject({ data: { attributes: { lang: 'es' } } })
+    expect(fetches()).toBe(2)
+  })
+
+  it('shares entries between clients with the same headers in any case', async () => {
+    await client(drupal(), { content: true }, { headers: { 'Accept-Language': 'es', 'X-Site': 'a' } }).get(page)
+    await client(drupal(), { content: true }, { headers: { 'x-site': 'a', 'accept-language': 'es' } }).get(page)
+    expect(fetches()).toBe(1)
+  })
+
   it('stores only a 200', async () => {
     const options = { validateStatus: (status: number) => status < 500 }
     await client(drupal({ status: 404 })).get(page, options)

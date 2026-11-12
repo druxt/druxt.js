@@ -193,7 +193,7 @@ export interface ProcessCacheHandle {
 export interface ProcessCacheHandleOptions {
   /** Whether the client sends credentials. */
   credentialed?: boolean
-  /** The X-Consumer-ID the client sends: Drupal varies by it, so each keeps its own entries. */
+  /** What keeps a client's entries apart from another's, such as the headers it sends: each value keeps its own. */
   consumer?: string
   /** Seconds an entry may live at most. It shortens a lifetime, never extends one, and 0 keeps nothing. */
   ttl?: number
@@ -218,7 +218,7 @@ export interface ProcessCacheHandleOptions {
  * @param scope - The cache scope, e.g. 'index'.
  * @param options - The cache options.
  * @param options.credentialed - Whether the client sends credentials.
- * @param options.consumer - The X-Consumer-ID the client sends: Drupal varies by it, so each keeps its own entries.
+ * @param options.consumer - What keeps a client's entries apart, such as the headers it sends: each value keeps its own.
  * @param options.ttl - Seconds an entry may live at most. It shortens a lifetime, never extends one, and 0 keeps nothing.
  */
 export const processCache = (scope: string, { credentialed = false, consumer = '', ttl, maxSize, sizeOf = jsonSize }: ProcessCacheHandleOptions = {}): ProcessCacheHandle | undefined => {
