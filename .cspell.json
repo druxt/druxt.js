@@ -19,6 +19,7 @@
     "packages/site/",
     "packages/views/",
     "test/mixins.test.js",
+    "packages/compat/src/legacy/",
     "**/CHANGELOG.md",
     "**/__fixtures__/**",
     "**/node_modules/",
