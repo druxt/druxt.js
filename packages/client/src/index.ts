@@ -1,5 +1,6 @@
 export { DruxtClient } from './client'
-export { DruxtPermissionsError } from './errors'
+export { DruxtPermissionsError, isSuperseded } from './errors'
+export type { DruxtSupersededError } from './errors'
 export { omittedResources } from './omitted'
 export type { DruxtOmitted } from './omitted'
 export { DruxtAuth, KEYS as AUTH_STORAGE_KEYS, createPkce, memoryStorage } from './auth'

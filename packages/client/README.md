@@ -28,7 +28,9 @@ const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
   `clearCache()` empties it.
 - **Auth:** with `auth: { clientId }`, Simple OAuth's authorization code
   (PKCE), password and client credentials grants, with refresh. A 401 is
-  refreshed and retried once.
+  refreshed and retried once. A sign-in or refresh that a later sign-in or a
+  sign-out replaced while it ran stores nothing and rejects, and
+  `isSuperseded(error)` tells that rejection from a failure.
 - **Transport:** `fetch` and `headers` options, with `globalThis.fetch` by
   default. 1.x's Axios instance and its `axios` options are gone, and an
   `axios` option is ignored: set headers in `headers`.
