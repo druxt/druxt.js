@@ -299,6 +299,17 @@ describe('refresh and retry', () => {
     expect(requested(calls).filter((call) => call === 'POST /oauth/token')).toHaveLength(1)
   })
 
+  it('refreshes without a scope, keeping the one granted', async () => {
+    const { fetch, calls } = simpleOauth((authorization) => authorization === 'Bearer access-3')
+    const client = new DruxtClient(BASE_URL, { fetch, auth: { clientId: 'druxt', scope: 'read write' } })
+    await client.auth!.loginWithPassword({ username: 'editor', password: 'correct horse', scope: 'read' })
+    expire(client)
+    await client.request(ARTICLE)
+    expect(requested(calls)).toEqual(['POST /oauth/token', 'POST /oauth/token', `GET ${ARTICLE}`])
+    expect(form(calls[0])).toMatchObject({ grant_type: 'password', scope: 'read' })
+    expect(form(calls[1])).toEqual({ grant_type: 'refresh_token', refresh_token: 'refresh-2', client_id: 'druxt' })
+  })
+
   it('refreshes with the Consumer that issued the tokens', async () => {
     const { fetch, calls } = drupal({
       'POST /api/password-token': () => json({ access_token: 'access-2', refresh_token: 'refresh-2', expires_in: 300 }),
