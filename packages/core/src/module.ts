@@ -6,8 +6,9 @@ import type { DruxtClient, DruxtConfig, DruxtConnectionConfig } from '@druxt/cli
 import { defu } from 'defu'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { splitDruxtConfig } from './utils/config'
-import { addDruxtProxy, addPrebundle, corePrebundle, DRUXT_DEFAULTS_IMPORT, druxtDefaults, druxtProxyRoutes } from './kit'
+import { addDruxtDefaults, addDruxtProxy, addPrebundle, corePrebundle, DRUXT_DEFAULTS_IMPORT, druxtAnchors, druxtDefaults, druxtProxyRoutes } from './kit'
 import type { DruxtAnchorsSetting } from './anchors'
+import type { DruxtClassPolicy } from './classes'
 import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
 import { DRUXT_API_BASE, normalEndpoint, trimEndSlashes } from './routes'
 import { druxtApiConflict } from './utils/routes'
@@ -101,6 +102,12 @@ export interface DruxtOptions {
    */
   cache?: false | { content?: boolean, maxSize?: number, ttl?: number, sessionCookie?: string, secret?: string }
   auth?: DruxtAuthModuleOptions
+  /**
+   * Which of Druxt's classes the default output carries: `true` for every class (the default), `false` for none, or
+   * the parts to keep, such as `{ items: false, modifiers: ['field'] }`. A plugin rewrites them with
+   * `defineDruxtClasses()`.
+   */
+  classes?: DruxtClassPolicy
   /**
    * Whether the default output names its entities and fields with `data-druxt-*` attributes, for an editor, a diff view
    * or the site's tests to find: `'dev'`, in development only, when not set. A module that needs them in production
@@ -421,6 +428,15 @@ export default defineNuxtModule<DruxtOptions>({
       logger.warn(`\`druxt.develMessages\` is ${JSON.stringify(develMessages)}, which is not a valid value: use 'devtools' or 'inline'. The development tools are used.`)
     }
 
+    // The site's anchors setting: modules that require anchors settle against it once every module is in.
+    const anchorsSetting: unknown = options.anchors
+    if (anchorsSetting !== undefined && anchorsSetting !== true && anchorsSetting !== false && anchorsSetting !== 'dev') {
+      logger.warn(`\`druxt.anchors\` is ${JSON.stringify(anchorsSetting)}, which is not a valid value: use true, false or 'dev'. 'dev' is used.`)
+    }
+    const anchors = druxtAnchors(nuxt)
+    const siteAnchors = anchorsSetting === true || anchorsSetting === false || anchorsSetting === 'dev'
+    anchors.setting = siteAnchors ? anchorsSetting : 'dev'
+
     // Keep the JSON:API index between server requests that carry no credentials, in production only. The proxy still
     // reads the session cookie's pattern in development.
     const sessionCookie = (options.cache || undefined)?.sessionCookie
@@ -618,6 +634,13 @@ export default defineNuxtModule<DruxtOptions>({
     for (const name of ['useDruxtSettings', 'setDrupalSettings']) {
       addImports({ name, from: resolve('./runtime/settings') })
     }
+    // The class policy: every class unless the site or Drupal says otherwise. A plugin rewrites them with a hook.
+    addDruxtDefaults(nuxt, { classes: true })
+    for (const name of ['defineDruxtClasses', 'useDruxtClasses']) {
+      addImports({ name, from: resolve('./runtime/classes') })
+    }
+    addImports({ name: 'useDruxtAnchors', from: resolve('./runtime/anchors') })
+    addImports({ name: 'useDruxtFileUrl', from: resolve('./runtime/files') })
     addPlugin(resolve('./runtime/plugins/pinia'))
 
     const auth = options.auth
@@ -668,6 +691,23 @@ export default defineNuxtModule<DruxtOptions>({
         '',
       ].join('\n'),
     })
+    // Whether the default output carries the anchors, and the modules that required them, settled once every module is in.
+    addTemplate({
+      filename: 'druxt/anchors.mjs',
+      // `site`, for the development tools: whether the site set `druxt.anchors` itself.
+      getContents: () => `export default ${JSON.stringify(anchors.state)}\nexport const site = ${siteAnchors}\n`,
+    })
+    addTypeTemplate({
+      filename: 'types/druxt-anchors.d.ts',
+      getContents: () => [
+        `declare module '#build/druxt/anchors.mjs' {`,
+        '  const anchors: { enabled: boolean, requiredBy: string[], disabledBy?: \'site\' }',
+        '  export default anchors',
+        '  export const site: boolean',
+        '}',
+        '',
+      ].join('\n'),
+    }, { nuxt: true })
     addTypeTemplate({
       filename: 'types/druxt-devtools.d.ts',
       getContents: () => [

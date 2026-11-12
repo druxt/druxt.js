@@ -20,6 +20,16 @@
       "types": "./dist/anchors.d.mts",
       "import": "./dist/anchors.mjs"
     },
+    "./classes": {
+      "source": "./src/classes/index.ts",
+      "types": "./dist/classes.d.mts",
+      "import": "./dist/classes.mjs"
+    },
+    "./files": {
+      "source": "./src/files/index.ts",
+      "types": "./dist/files.d.mts",
+      "import": "./dist/files.mjs"
+    },
     "./routes": {
       "source": "./src/routes/index.ts",
       "types": "./dist/routes.d.mts",

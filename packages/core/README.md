@@ -90,6 +90,8 @@ Translated routes also need a `decoupled_router` patch; see the
 | `proxy.files` | `boolean\|string` | `false`      | Proxy Drupal files. A string sets the site.                                          |
 | `cache`       | `boolean\|object` | `{}`         | The server cache, see below. `false` turns it off.                                   |
 | `siteUrl`     | `string`          | `''`         | The site's public origin, for its canonical link. Also `NUXT_PUBLIC_DRUXT_SITE_URL`. |
+| `classes`     | `boolean\|object` | `true`       | Which of Druxt's classes the default output has, see below.                          |
+| `anchors`     | `boolean\|'dev'`  | `'dev'`      | Whether the default output has its anchors, see below. Read at build.                |
 
 See the [Nuxt module API](https://druxtjs.org/api/packages/core/module) for the full
 options list.
@@ -118,6 +120,59 @@ if (settings.develMessages === 'inline') {
 `build.auth.clientSecret`, when written in `nuxt.config`, stays in the build-time options for the build client. Other modules can read it at build time, so prefer the `NUXT_DRUXT_BUILD_AUTH_CLIENT_SECRET` environment variable.
 
 A server route reads them with `useDruxtServerSettings(event)`, which adds the settings Drupal marks server only. A route that needs a secret reads the private `runtimeConfig.druxt`.
+
+### Classes
+
+`druxt.classes` decides which of Druxt's classes the default output has: `true` for every class, the default, `false` for none, or the parts and modifiers to keep, such as `{ items: false, modifiers: ['field'] }`. A plugin rewrites them with `defineDruxtClasses((classes, ctx) => classes)`, which runs on the server and in the browser alike, so it must return the same list for the same input. The entity module's README lists every class and the policy's parts. The naming rules and `resolveDruxtClasses()` are in `@druxt/core/classes`, which doesn't import a framework.
+
+### Anchors
+
+The default output names the entities and fields it renders with data attributes, for an inline editor, a diff view or the site's tests to find again. `@druxt/core/anchors` holds the contract, which doesn't import a framework:
+
+| Attribute             | Holds                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------- |
+| `data-druxt-entity`   | The entity's id, exactly as JSON:API returned it                                            |
+| `data-druxt-type`     | The resource type, such as `node--recipe`                                                   |
+| `data-druxt-langcode` | The entity's language, on an entity's root and a standalone field's, when Drupal returns it |
+| `data-druxt-field`    | The field's public name, on each item                                                       |
+| `data-druxt-delta`    | The item's index, on each item of a multi-value field                                       |
+
+`entityAnchors()` and `fieldAnchors()` write them, and `findAnchor()` finds an element again, or gives `null`, never an error, where there is nothing to search:
+
+```ts
+import { findAnchor } from '@druxt/core/anchors';
+
+const item = findAnchor(document, { entity: uuid, field: 'field_tags', delta: 1 });
+```
+
+`druxt.anchors` is `'dev'` by default: on in development, off in production. `true` turns them on everywhere, and `false` off everywhere. A module that needs them, such as an inline editor, turns them on in production with `requireDruxtAnchors()` from `@druxt/core/kit`:
+
+```ts
+import { requireDruxtAnchors } from '@druxt/core/kit';
+
+const anchors = requireDruxtAnchors(nuxt, {
+  module: '@druxt-contrib/fae',
+  reason: 'it finds the fields an editor edits',
+});
+nuxt.hook('modules:done', () => {
+  if (!anchors.enabled)
+    logger.warn('Front-end editing is off: this site turned Druxt anchors off.');
+});
+```
+
+A site that sets `anchors: false` keeps them off: explicit config wins over a module. The build then warns once for each requiring module, naming it and its reason. The state settles once every module is in, so the order modules run in does not matter. A module reads it in a `modules:done` hook, as above. The `druxt:anchors` hook receives it too, as `{ enabled, requiredBy, disabledBy }`. In the app, `useDruxtAnchors()` gives the same state, so a module can tell its users:
+
+```vue
+<script setup lang="ts">
+const { enabled } = useDruxtAnchors();
+</script>
+
+<template>
+  <p v-if="!enabled">Front-end editing is off because this site disabled Druxt anchors.</p>
+</template>
+```
+
+The Settings section of the development tools shows the state and the modules that required it. Drupal's settings cannot change it.
 
 ### Environment variables
 
@@ -148,6 +203,13 @@ With `proxy.api`, the browser reaches Drupal through the site's own origin: the 
 - The response's encoding and length headers are recomputed, and the others come back as Drupal sent them.
 
 Behind a front proxy, such as a hosting platform's nginx, Drupal sees that proxy as every visitor, which its flood control counts as one. Set `proxy.trustForwarded`, or `NUXT_DRUXT_PROXY_TRUST_FORWARDED=true` at runtime, to pass the front proxy's headers on: the visitor's address is added to its `X-Forwarded-For` chain, and its `X-Forwarded-Host`, `X-Forwarded-Proto` and the other forwarding headers pass through. It is safe only when a front proxy the site trusts sets those headers on every request, since otherwise a browser can forge them. It is server only, in the private runtime config.
+
+Drupal gives a file's URL as a path on its own origin, such as `/sites/default/files/logo.png`. The default output resolves it with `resolveFileUrl()`, from `@druxt/core/files`, which doesn't import a framework:
+
+- With `proxy.files` on, a path in the proxied files directory stays on the site.
+- With it off, or for a path outside that directory, the path is made absolute on `druxt.filesUrl`, the origin Drupal's files are served from, such as a CDN's, or else on `druxt.baseUrl`. `NUXT_PUBLIC_DRUXT_FILES_URL` sets `filesUrl` at runtime.
+
+In development, a field notes a rewritten URL in the Druxt DevTools tab. A wrapper resolves a file URL the same way with `useDruxtFileUrl()`, which is auto-imported. `resolveFileUrlsInHtml(html, resolve)` resolves each `src` and `href` under `/sites/<site>/files/` or `/system/files/` inside markup, such as an editor's inline image, and leaves the rest byte for byte.
 
 Druxt's own server routes sit under `/api/_druxt`, such as `/api/_druxt/cache/clear` and `/api/_druxt/auth/token`, in Nitro's `/api` namespace. Many Drupal sites serve JSON:API at `/api`. Set `endpoint: '/api'` with `proxy.api` on, and the proxy takes `/api/**` while Druxt's routes and the site's own `server/api` routes answer first, so Drupal never sees them. A route answers only its own methods, so a request to a route of the site's, or of another module, with a method that route doesn't take goes through the proxy to Drupal, such as a `GET` to a `POST`-only `server/api/login.post.ts`. Only Druxt's own paths answer 404 for one. A JSON:API endpoint at or under `/api/_druxt`, with or without a language prefix, fails the build with `DRUXT_E01006`. Modules read the path from `DRUXT_API_BASE`, in `@druxt/core/routes` and `@druxt/core/kit`.
 
