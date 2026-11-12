@@ -8465,6 +8465,7 @@ __metadata:
     vitest: "npm:^5.0.3"
     vitest-environment-nuxt: "npm:^2.0.0"
     vue: "npm:^3.5.43"
+    vue-router: "npm:^5.4.0"
     vue-tsc: "npm:^3.3.12"
   languageName: unknown
   linkType: soft
