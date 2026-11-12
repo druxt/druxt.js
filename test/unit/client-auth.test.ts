@@ -395,6 +395,39 @@ describe('DruxtAuth', () => {
     expect([client.auth.accessToken, client.auth.refreshToken]).toEqual(['access-2', 'refresh-1'])
   })
 
+  // As druxt-auth 0.x, whose password sign-in forgot the stored tokens before it asked Drupal: a visitor who tried to
+  // sign in as someone else is never left signed in as the first user.
+  it.each([400, 401, 500])('forgets the session it had when a password sign-in fails with a %i', async (status) => {
+    const client = signedIn(simpleOauth(() => true, status).fetch)
+    await expect(client.auth.loginWithPassword({ username: 'other', password: 'wrong' })).rejects.toMatchObject({ response: { status } })
+    expect([client.auth.loggedIn, client.auth.accessToken, client.auth.refreshToken]).toEqual([false, undefined, undefined])
+  })
+
+  it('forgets the session it had when the code exchange is refused', async () => {
+    const client = signedIn(simpleOauth(() => true, 400).fetch)
+    await expect(client.auth.exchangeCode({ code: 'c', verifier: 'v', redirectUri: 'https://site.test/callback' })).rejects.toMatchObject({ response: { status: 400 } })
+    expect(client.auth.loggedIn).toBe(false)
+  })
+
+  it('keeps a later sign-in when an earlier one fails after it', async () => {
+    const answers: Record<string, () => void> = {}
+    const { fetch } = drupal({
+      'POST /oauth/token': (call) => new Promise<Response>((resolve) => {
+        const user = form(call).username!
+        answers[user] = () => resolve(user === 'a' ? json({ error: 'invalid_grant' }, 400) : json({ access_token: `access-${user}`, refresh_token: `refresh-${user}`, expires_in: 300 }))
+      }),
+    })
+    const client = new DruxtClient(BASE_URL, { fetch, auth: { clientId: 'druxt' } }) as DruxtClient & { auth: DruxtAuth }
+    const first = client.auth.loginWithPassword({ username: 'a', password: 'wrong' })
+    const second = client.auth.loginWithPassword({ username: 'b', password: 'pw' })
+    await vi.waitFor(() => expect(Object.keys(answers)).toHaveLength(2))
+    answers.b!()
+    await second
+    answers.a!()
+    await expect(first).rejects.toMatchObject({ response: { status: 400 } })
+    expect([client.auth.accessToken, client.auth.refreshToken]).toEqual(['access-b', 'refresh-b'])
+  })
+
   it('signs in with client credentials', async () => {
     const { fetch, calls } = simpleOauth(() => true)
     const client = new DruxtClient(BASE_URL, { fetch, auth: { clientId: 'druxt-build', clientSecret: 'secret' } })
