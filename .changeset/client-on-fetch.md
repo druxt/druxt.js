@@ -37,3 +37,5 @@ A request listener's `end` event carries `omitted`, Drupal's reason, when Drupal
 `prefixes` maps each langcode to the URL prefix Drupal serves it under, `{ en: '', es: 'spanish' }`, so a method's `prefix` argument takes a langcode as well as a prefix. A langcode the map lacks is used as the prefix itself, as before. `urlPrefix()` gives the mapping.
 
 A nested null in a query object is left out of the query string, as an `IS NULL` condition must have no value.
+
+A request body that is a plain object or an array is sent as JSON:API JSON. A `Blob`, a buffer, a typed array, `FormData` or a stream is sent as it is, as 1.x's Axios sent it, for a file upload.

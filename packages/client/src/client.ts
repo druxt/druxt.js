@@ -319,7 +319,10 @@ export class DruxtClient {
     for (const [name, value] of Object.entries(this.headers)) setHeader(headers, name, value)
     if (token) setHeader(headers, 'Authorization', `Bearer ${token}`)
     let body = options.body as BodyInit | undefined
-    if (body !== undefined && typeof body === 'object' && !(body instanceof URLSearchParams)) {
+    const proto: unknown = body !== null && typeof body === 'object' ? Object.getPrototypeOf(body) : undefined
+    // Only a plain object or an array is a JSON:API document. A Blob, a buffer, FormData, URLSearchParams or a
+    // stream goes to fetch as given.
+    if (Array.isArray(body) || proto === Object.prototype || proto === null) {
       setHeader(headers, 'Content-Type', 'application/vnd.api+json')
       body = JSON.stringify(body)
     }

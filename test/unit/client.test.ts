@@ -525,6 +525,28 @@ describe('request()', () => {
     expect(calls.map((call) => call.headers['Content-Type'])).toEqual([undefined, undefined])
   })
 
+  it('sends a Blob, an ArrayBuffer, a Uint8Array and FormData as given, with no JSON:API content type', async () => {
+    const { fetch, calls } = drupal({ 'POST /jsonapi/node/article/field_image': () => json({}, 201) })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const form = new FormData()
+    form.append('file', new Blob([new Uint8Array([1, 2, 3])]))
+    const bodies = [new Blob([new Uint8Array([1, 2, 3])]), new ArrayBuffer(3), new Uint8Array([1, 2, 3]), form]
+    for (const body of bodies) await client.request('/jsonapi/node/article/field_image', { method: 'POST', body })
+    expect(calls.map((call) => call.body)).toEqual(bodies)
+    expect(calls.map((call) => call.headers['Content-Type'])).toEqual([undefined, undefined, undefined, undefined])
+  })
+
+  it('sends a plain object, an object with no prototype and an array as JSON:API', async () => {
+    const { fetch, calls } = drupal({ 'POST /jsonapi/node/article': () => json({}, 201) })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const bare = Object.assign(Object.create(null) as object, { data: { type: 'node--article' } })
+    for (const body of [{ data: { type: 'node--article' } }, bare, [{ op: 'add' }]]) {
+      await client.request('/jsonapi/node/article', { method: 'POST', body })
+    }
+    expect(calls.map((call) => call.body)).toEqual(['{"data":{"type":"node--article"}}', '{"data":{"type":"node--article"}}', '[{"op":"add"}]'])
+    expect(calls.map((call) => call.headers['Content-Type'])).toEqual(Array(3).fill('application/vnd.api+json'))
+  })
+
   it('keeps a body that is not JSON as text', async () => {
     const { fetch } = drupal({ 'GET /robots.txt': () => new Response('User-agent: *') })
     expect((await new DruxtClient(BASE_URL, { fetch }).request('/robots.txt')).data).toBe('User-agent: *')
