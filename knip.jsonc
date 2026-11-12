@@ -20,6 +20,8 @@
   "workspaces": {
     ".": {
       "entry": [
+        "test/standalone/fixtures/*/app/app.vue",
+        "test/standalone/fixtures/*/app/pages/*.vue",
         // The component tests' Nuxt app.
         "test/nuxt/app/app.vue",
         "test/nuxt/setup.ts",
