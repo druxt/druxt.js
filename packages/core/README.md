@@ -82,16 +82,17 @@ Translated routes also need a `decoupled_router` patch; see the
 
 ## Settings
 
-| Option        | Type              | Default      | Description                                                                          |
-| ------------- | ----------------- | ------------ | ------------------------------------------------------------------------------------ |
-| `baseUrl`     | `string`          |              | The Drupal backend URL. **Required.**                                                |
-| `endpoint`    | `string`          | `'/jsonapi'` | The JSON:API endpoint path.                                                          |
-| `proxy.api`   | `boolean`         | `false`      | Proxy API requests via Nuxt ([guide](https://druxtjs.org/how-to/proxy)).             |
-| `proxy.files` | `boolean\|string` | `false`      | Proxy Drupal files. A string sets the site.                                          |
-| `cache`       | `boolean\|object` | `{}`         | The server cache, see below. `false` turns it off.                                   |
-| `siteUrl`     | `string`          | `''`         | The site's public origin, for its canonical link. Also `NUXT_PUBLIC_DRUXT_SITE_URL`. |
-| `classes`     | `boolean\|object` | `true`       | Which of Druxt's classes the default output has, see below.                          |
-| `anchors`     | `boolean\|'dev'`  | `'dev'`      | Whether the default output has its anchors, see below. Read at build.                |
+| Option        | Type              | Default      | Description                                                                           |
+| ------------- | ----------------- | ------------ | ------------------------------------------------------------------------------------- |
+| `baseUrl`     | `string`          |              | The Drupal backend URL. **Required.**                                                 |
+| `endpoint`    | `string`          | `'/jsonapi'` | The JSON:API endpoint path.                                                           |
+| `proxy.api`   | `boolean`         | `false`      | Proxy API requests via Nuxt ([guide](https://druxtjs.org/how-to/proxy)).              |
+| `proxy.files` | `boolean\|string` | `false`      | Proxy Drupal files. A string sets the site.                                           |
+| `cache`       | `boolean\|object` | `{}`         | The server cache, see below. `false` turns it off.                                    |
+| `siteUrl`     | `string`          | `''`         | The site's public origin, for its canonical link. Also `NUXT_PUBLIC_DRUXT_SITE_URL`.  |
+| `classes`     | `boolean\|object` | `true`       | Which of Druxt's classes the default output has, see below.                           |
+| `anchors`     | `boolean\|'dev'`  | `'dev'`      | Whether the default output has its anchors, see below. Read at build.                 |
+| `editing`     | `object`          | see below    | Whether the site offers editing, and where a draft saves to, see [Editing](#editing). |
 
 See the [Nuxt module API](https://druxtjs.org/api/packages/core/module) for the full
 options list.
@@ -395,6 +396,105 @@ A module that has resources from a request of its own seeds the store with `addR
   and actions.
 - [Deprecations](https://druxtjs.org/modules/druxt/deprecations): retired signatures.
 
+## Editing
+
+Editing is core's: every editor of a Drupal entity, `DruxtEntityForm`, an inline editor, an overlay tool or an admin screen, shares one draft per entity and language, in the edit store. The entity module's README has the design note, what core owns and what a module adds.
+
+### The draft model
+
+`@druxt/core/edit` holds the drafts' model, which doesn't import a framework, so a later adapter for another framework keeps the same drafts. A draft is plain data:
+
+| Key           | Holds                                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `key`         | `draftKey({ type, id, langcode })`, or a new entity's `local` name in place of its id                              |
+| `pristine`    | The entity as it was loaded or last saved, field values only                                                       |
+| `edits`       | The changed attributes and relationships, by field, a relationship as `{ data }`                                   |
+| `dirty`       | The changed fields' ids, in the order they changed                                                                 |
+| `errors`      | The last save's or check's JSON:API errors, keyed by `source.pointer`, with `''` for one that doesn't name a field |
+| `status`      | `idle`, `saving`, `saved`, `failed`, or `staged` when the destination took the change elsewhere                    |
+| `pending`     | The write in flight, its destination and payload, or `null`                                                        |
+| `fields`      | The fields a save may send, such as a form display's, or every field when unset                                    |
+| `destination` | The destination its save goes to, `druxt.editing.destination` when unset                                           |
+
+A draft never holds a token, a credential, Drupal's links or its meta. Pure functions build on it: `editDraft()` sets a field, and a value equal to the pristine one is clean again, `draftPayload()` builds the write, the changed fields of a saved entity or every field of a new one, `applySaved()` takes the saved resource back as pristine, keeping an edit made while the write ran, and `draftField()` gives a field's pristine and edited values, whether it changed and its errors. `findDraft(drafts, { entity, type, langcode, field, delta })` finds the draft an element's anchors name, and `anchorOf(element)` reads those anchors from an element and the elements around it, so a click inside a rendered field names its draft and its item.
+
+### The edit store
+
+`useDruxtEditStore()` is a Pinia store over that model, auto-imported. Drafts live in the browser's app, so they survive navigation. The store keeps them out of its serialized state, so none reaches the payload.
+
+```ts
+const edits = useDruxtEditStore();
+const key = edits.open({ type: 'node--page', id, langcode: 'en' }, entity, { prefix: 'en' });
+edits.edit(key, 'title', 'About us');
+const { ok, errors } = await edits.save(key, { client: useDruxtClient() });
+```
+
+`open()` keeps a draft's edits, over a newer pristine copy, unless `reset` is `true`. `edit()` and `update()` change it, `discard()` drops its edits and errors, and `close()` forgets it. `save()` sends one draft and `saveAll()` every changed draft, one after another, each through its destination. An editor calls `hold()` while it shows a draft and `release()` when it stops, and `saveAll()` never sends a new entity's draft that no editor holds. `fromAnchor()` and `fromElement()` find the draft an inline editor opens on, and `dirty` lists the changed drafts, for a save-all control or an unsaved-changes prompt.
+
+### Destinations
+
+A save goes to a destination. The default, `jsonapi`, POSTs a new entity to Drupal's JSON:API, or PATCHes the changed fields of a saved one, with the client it's given, so Drupal saves as that client's user, through the site's proxy when it has one. The resource Drupal answers becomes the draft's pristine copy and goes into the core store, so every module reading the entity renders it.
+
+An editing module can add a destination of its own, such as one that opens a change for review:
+
+```ts
+import { defineDruxtEditDestination } from '@druxt/core/edit';
+
+useDruxtEditStore().addDestination(
+  defineDruxtEditDestination({
+    name: 'review',
+    canSave: (draft) => draft.dirty.length > 0,
+    async save(draft, { payload }) {
+      await openChangeRequest(draft.key, payload);
+    },
+  }),
+);
+```
+
+A destination that answers no resource leaves the draft's edits in place, as Drupal doesn't hold them. The draft is then `staged`, and `saveAll()` skips it until it changes again. `canSave()` may answer with a promise. A draft names its destination when it is opened, or `druxt.editing.destination` names the default. A save to a destination no module added doesn't run, and development logs `DRUXT_E01003`.
+
+### Hooks
+
+The store fires three app hooks, whichever editor or destination acted:
+
+| Hook                | When                                                                       | Receives                                                                               |
+| ------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `druxt:edit:start`  | A draft's first change, or an editor's `start(key, field)`                 | `{ key, entity: { type, id, langcode }, fields }`                                      |
+| `druxt:edit:save`   | A save ended, through whichever destination ran, or `canSave()` refused it | The same, with `destination`, `payload`, `ok`, `status`, `reason`, `data` and `errors` |
+| `druxt:edit:cancel` | A draft's edits were discarded, as a form's reset does                     | The same as `druxt:edit:start`, its changed fields                                     |
+
+```ts
+export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.hook('druxt:edit:save', ({ entity, ok }) => {
+    if (ok) console.log(`Saved ${entity.type} ${entity.id}`);
+  });
+});
+```
+
+`ok` says whether the save went through, and `save()` answers the same shape. A destination that took the change elsewhere and answered no resource is `ok` with `status: 'staged'`, as Drupal doesn't hold the change yet, and the form's status reads `Staged`. A save whose `canSave()` said no is not `ok`, with `reason: 'refused'`, and nothing was sent.
+
+### Permission and controls
+
+`useDruxtEditing()` says whether the current session can edit. Editing turned off, or no user signed in through the browser's client, is `denied`. An entity whose links carry an `update` or `edit-form` relation, which a module such as JSON:API Hypermedia adds only for a user who may update it, is `allowed`. Without such a signal it is `unknown`, and an editor offers the edit, tries the save and reports Drupal's answer. The core store doesn't keep links, so the links come from the editor that read them.
+
+```vue
+<script setup lang="ts">
+const { permission } = useDruxtEditing();
+</script>
+
+<template>
+  <button v-if="permission !== 'denied'" type="button">Edit</button>
+</template>
+```
+
+`DruxtEditControls` is where an editing module renders its controls. `DruxtEntity` and `DruxtField` render it first when their `editing` prop is set, given the entity's type, id and language and the field's id, and a wrapper places it with its `editControls` slot. Core's renders its default slot, with the draft, the field's state in it, whether it changed and the permission, and nothing without a slot. A module registers its own `DruxtEditControls` with a higher priority to replace it on every entity and field.
+
+| Setting                 | Default     | Description                                                                                                                                    |
+| ----------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `editing.enabled`       | `true`      | Whether the site offers editing. `false` makes the permission `denied`.                                                                        |
+| `editing.destination`   | `'jsonapi'` | The destination a draft saves to when it names none.                                                                                           |
+| `editing.persistDrafts` | `true`      | Whether a saved entity's draft outlives its form. `false` closes it when the form unmounts. `DruxtEntityForm`, from `@druxt/entity`, reads it. |
+
 ## DruxtModule
 
 A Druxt module turns a contract (wrapper candidates, data, props and slots)
@@ -645,6 +745,7 @@ A development error Druxt reports names its code, `DRUXT_E` and five digits, so 
 | Code           | Meaning and what to do                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `DRUXT_E01001` | Drupal omitted resources of a type from a response, quoting its reason, such as missing permissions, so what renders from it is incomplete. Read it as a user who may see them, such as through the server client with the build credentials. In development, the Druxt DevTools tab marks the request as partial.                                                                                                                               |
+| `DRUXT_E01003` | A draft saved to a destination no module added, so it didn't save. Add the destination with `useDruxtEditStore().addDestination()`, or set `druxt.editing.destination`, or the draft's own, to one that exists.                                                                                                                                                                                                                                  |
 | `DRUXT_E01004` | Browser sign-in is on, with `druxt.auth`, and `druxt.auth.scope` is empty. On Simple OAuth 6 a token holds only the roles its scopes name, so a signed-in editor reads less than an anonymous visitor. Set `druxt.auth.scope` to the scopes of the roles your editors need. In development, the Druxt DevTools tab names a read the scope refused.                                                                                               |
 | `DRUXT_E01006` | The build stopped, as `druxt.endpoint`, with or without a language prefix, is at or under `/api/_druxt`, where Druxt's own server routes are, or `druxt.proxy.files` overlaps it. Set `druxt.endpoint` to the path Drupal serves JSON:API at, such as `/jsonapi` or `/api`, outside `/api/_druxt`.                                                                                                                                               |
 | `DRUXT_E01007` | The token route refused a sign-in, or ended a session on a refresh, as Drupal's access or refresh token would make its cookie larger than the 4096 bytes a browser keeps of one cookie, which the browser would drop. It answers 502, and the browser is signed out. The server's log names the token and its size, never its value. Give the Simple OAuth token fewer scopes or shorter-lived claims, or sign it with a smaller key, in Drupal. |

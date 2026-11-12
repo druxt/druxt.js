@@ -643,6 +643,10 @@ export default defineNuxtModule<DruxtOptions>({
     addPlugin(resolve('./runtime/plugins/druxt'))
     addImports({ name: 'useDruxtClient', from: resolve('./runtime/composables') })
     addImports({ name: 'useDruxtStore', from: resolve('./runtime/store') })
+    // Editing: the drafts every editor shares, and whether the session may edit. On unless the site turns it off.
+    addImports({ name: 'useDruxtEditStore', from: resolve('./runtime/edit-store') })
+    addImports({ name: 'useDruxtEditing', from: resolve('./runtime/editing') })
+    addDruxtDefaults(nuxt, { editing: { enabled: true, destination: 'jsonapi', persistDrafts: true } })
     for (const name of ['useDruxtSettings', 'setDrupalSettings']) {
       addImports({ name, from: resolve('./runtime/settings') })
     }
@@ -766,6 +770,9 @@ export default defineNuxtModule<DruxtOptions>({
     for (const name of ['Druxt']) {
       addComponent({ name, filePath: await resolvePath(resolve(`./runtime/components/${name}`)), global: 'sync' })
     }
+    // Where an editing module renders its controls, on entities and fields with `editing` set. Lazy, as few pages edit,
+    // and below a module's own: an editing module registers DruxtEditControls with a higher priority to replace it.
+    addComponent({ name: 'DruxtEditControls', filePath: await resolvePath(resolve('./runtime/components/DruxtEditControls')), global: true })
 
     // Wrapper resolution looks components up by name at runtime, so every
     // Druxt* component, including the site's own, has to be registered globally.
