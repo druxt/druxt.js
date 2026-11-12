@@ -314,7 +314,9 @@ export class DruxtAuth {
       const before = this.held()
       // With `session` on, the site's server adds the refresh token it holds.
       const refreshToken = this.refreshToken
-      const start = () => this.postToken({ grant_type: 'refresh_token', refresh_token: refreshToken, scope: this.options.scope }, issuer)
+      // No scope: RFC 6749 section 6 keeps the one granted, which a sign-in may have narrowed. A scope beyond it is
+      // refused with a 400, which would end the session.
+      const start = () => this.postToken({ grant_type: 'refresh_token', refresh_token: refreshToken }, issuer)
       // Shared only for a refresh token of this client's own, and keyed on the access token and the Consumer too, so
       // only clients of one session share.
       const { share, grace } = this.options.refresh
