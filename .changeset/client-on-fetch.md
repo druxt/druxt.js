@@ -22,6 +22,8 @@ A `baseUrl` in the options wins over the constructor's argument, as in 1.x, and 
 
 A refresh token Drupal refuses, with a 400 or a 401, ends the session, and a read refused with it is repeated as the anonymous visitor, asking the proxy for no credentials under `auth.session`, while a write is not. Other refresh failures, such as a timeout, keep the session. An access token Drupal refuses with a 401, with no refresh token to try, ends the session the same way, and a read sent with it is repeated anonymously, while a write and another host's 401 are not. The session of a sign-in made while a refused refresh or read was pending is kept.
 
+The access token goes only to the origin the client sends Drupal's requests to: the base URL's, or the page's own when the API is proxied. A request to another host carries no token, and its 401 is returned as it is, with no refresh or retry. Headers set with `headers` or `addHeaders()` are still sent to every host.
+
 `auth` is `undefined`, not `null`, when auth is off. `processCache()` answers `undefined`, not `null`, when the cache must not be used.
 
 BREAKING CHANGE: `DruxtClient` is imported from `@druxt/client`, and the Axios instance and every `axios` option are gone, `axios.headers` among them: set headers in `headers`.
