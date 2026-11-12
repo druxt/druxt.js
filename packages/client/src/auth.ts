@@ -371,10 +371,12 @@ export class DruxtAuth {
 
   /**
    * Signs out. Simple OAuth has no revocation endpoint to call, so the tokens are forgotten. With `session` on, the
-   * site's server clears the cookies it set, which the browser cannot, through `logoutUrl`.
+   * site's server clears the cookies it set, which the browser cannot, through `logoutUrl` first: when that route
+   * answers with anything but a 2xx, the session is kept and the promise rejects with the request's error, so a
+   * sign-out the server did not make is never reported, and calling `logout()` again retries it.
    */
   async logout(): Promise<void> {
+    if (this.session && this.options.logoutUrl) await this.client.request(this.options.logoutUrl, { method: 'POST', auth: false })
     this.clearTokens()
-    if (this.session && this.options.logoutUrl) await this.client.request(this.options.logoutUrl, { method: 'POST', auth: false, validateStatus: () => true })
   }
 }
