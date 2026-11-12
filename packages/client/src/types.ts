@@ -191,7 +191,10 @@ export interface DruxtRequestOptions {
   method?: string
   /** Headers for this request, over the client's. An `undefined` value removes one. */
   headers?: Record<string, string | undefined>
-  /** An object is sent as JSON:API JSON; a string or `URLSearchParams` as it is. */
+  /**
+   * A plain object or an array is sent as JSON:API JSON. Anything else, such as a string, `URLSearchParams`, a `Blob`,
+   * a buffer or `FormData`, is sent as it is.
+   */
   body?: unknown
   /** Which statuses resolve rather than throw: 2xx by default. */
   validateStatus?: (status: number) => boolean
