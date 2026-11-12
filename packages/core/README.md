@@ -467,6 +467,116 @@ data through its wrapper or `ctx`, not the parent's own markup.
 
 - [DruxtModule API](https://druxtjs.org/api/packages/core/runtime/useDruxtModule).
 
+## Development tools
+
+Add the tools as a dev dependency:
+
+```sh
+npm install --save-dev @druxt/devtools
+```
+
+With it installed, Druxt adds a Druxt tab to Nuxt DevTools. Its sections are
+Missing wrappers, Quiet errors, Modules, Requests and Settings. A module that
+rendered Druxt's default output is listed with the wrapper names it looked for,
+and the tab offers to create one, on localhost only. Vue DevTools gets a Druxt
+inspector of the page's modules and a Druxt requests timeline layer. The
+console prints a summary when the page settles. Nothing is added to the page,
+and a production build has none of it.
+
+The Druxt tab is one of Nuxt DevTools' app tabs. When the window is too short
+for every tab, it moves to the overflow menu at the bottom of the sidebar. Pin
+it under Nuxt DevTools' Settings > Tabs to keep it at the top, or make the
+sidebar scrollable under Settings > Appearance.
+
+Without it, development prints one line saying so, and nothing else changes.
+The Nuxt DevTools tab also needs `@nuxt/devtools-kit`, and Vue DevTools needs
+`@vue/devtools-api`. Nuxt and Vue Router install both, and development says
+which is missing when Nuxt DevTools is on.
+
+All three are optional peer dependencies of `@druxt/core`. With pnpm's strict
+layout, core finds one only when the site lists it, so add each to the site's
+own dev dependencies rather than relying on another package to bring it.
+
+Set `develMessages: 'inline'` for 1.x's inline messages in the page instead.
+
+The tab is a `<druxt-devtools>` custom element, fed by a model with no Vue or
+Nuxt dependency, both in `@druxt/devtools`.
+
+### Extending the tools from a module
+
+A Druxt module adds its own section, timeline events and actions to the tools
+with `useDruxtDevtools()`, from a client plugin it registers with
+`addDruxtDevtoolsPlugin()` from `@druxt/core/kit`. The plugin is registered in
+development only, and every call does nothing without the tools, so a module
+never imports `@druxt/devtools` and never checks for it.
+
+- `section({ id, label }, provider)` adds a tab in Nuxt DevTools, a node in Vue
+  DevTools' Druxt inspector and lines in the console summary. The provider
+  returns data, never markup: `pairs` (keys and values), `table` (columns and
+  rows) and `tree` (any JSON value). It is read again on each page and as
+  modules report, or on `refresh()`.
+- `event(label, detail)` adds an event to the timeline beside the requests.
+- `action({ id, label, section }, handler)` offers a button whose handler runs
+  in the app.
+- `note()` and `removeNote()` add and clear a note on a module, as
+  `addModuleNote()` and `removeModuleNote()` do.
+
+The router's Route section is built this way:
+
+```ts
+// In the module's setup.
+addDruxtDevtoolsPlugin(nuxt, await resolvePath(resolve('./runtime/plugins/devtools')));
+```
+
+```ts
+// runtime/plugins/devtools.ts
+export default defineNuxtPlugin(() => {
+  const route = useRoute();
+  const store = useDruxtRouterStore();
+  const section = useDruxtDevtools().section({ id: 'route', label: 'Route' }, () => [
+    {
+      type: 'pairs',
+      items: {
+        path: route.path,
+        'entity type': store.route.props?.type ?? '',
+        'entity uuid': store.route.entity?.uuid ?? '',
+        // The URL's language prefix: empty for the unprefixed default language.
+        'language prefix': route.meta.langcode ?? '',
+      },
+    },
+  ]);
+  watch(
+    () => [route.path, route.meta.langcode, store.route],
+    () => section.refresh(),
+    { deep: true },
+  );
+});
+```
+
+## Error codes
+
+A development error Druxt reports names its code, `DRUXT_E` and five digits, so it can be found here. Each package has a code space of its own, its first two digits:
+
+| Package             | Codes |
+| ------------------- | ----- |
+| `@druxt/core`       | 01xxx |
+| `@druxt/schema`     | 02xxx |
+| `@druxt/router`     | 03xxx |
+| `@druxt/entity`     | 04xxx |
+| `@druxt/views`      | 05xxx |
+| Druxt auth          | 06xxx |
+| `@druxt/devtools`   | 07xxx |
+| `@druxt/blocks`     | 08xxx |
+| `@druxt/menu`       | 09xxx |
+| `@druxt/breadcrumb` | 10xxx |
+
+| Code           | Meaning and what to do                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `DRUXT_E01001` | Drupal omitted resources of a type from a response, quoting its reason, such as missing permissions, so what renders from it is incomplete. Read it as a user who may see them, such as through the server client with the build credentials. In development, the Druxt DevTools tab marks the request as partial.                                                                                                                               |
+| `DRUXT_E01004` | Browser sign-in is on, with `druxt.auth`, and `druxt.auth.scope` is empty. On Simple OAuth 6 a token holds only the roles its scopes name, so a signed-in editor reads less than an anonymous visitor. Set `druxt.auth.scope` to the scopes of the roles your editors need. In development, the Druxt DevTools tab names a read the scope refused.                                                                                               |
+| `DRUXT_E01006` | The build stopped, as `druxt.endpoint`, with or without a language prefix, is at or under `/api/_druxt`, where Druxt's own server routes are, or `druxt.proxy.files` overlaps it. Set `druxt.endpoint` to the path Drupal serves JSON:API at, such as `/jsonapi` or `/api`, outside `/api/_druxt`.                                                                                                                                               |
+| `DRUXT_E01007` | The token route refused a sign-in, or ended a session on a refresh, as Drupal's access or refresh token would make its cookie larger than the 4096 bytes a browser keeps of one cookie, which the browser would drop. It answers 502, and the browser is signed out. The server's log names the token and its size, never its value. Give the Simple OAuth token fewer scopes or shorter-lived claims, or sign it with a smaller key, in Drupal. |
+
 ## Where to go next
 
 - New to Druxt? Start with the [Getting started tutorial](https://druxtjs.org/tutorials/getting-started).

@@ -1,4 +1,5 @@
-import { addComponent, addImports, addPlugin, addServerHandler, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
+import { addComponent, addDevServerHandler, addImports, addPlugin, addServerHandler, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
+import { defineEventHandler, setResponseHeader } from 'h3'
 import { clientOptions } from '@druxt/client'
 import type { DruxtClient, DruxtConfig, DruxtConnectionConfig } from '@druxt/client'
 import { defu } from 'defu'
@@ -9,6 +10,8 @@ import type { DruxtAnchorsSetting } from './anchors'
 import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
 import { DRUXT_API_BASE } from './routes'
 import { druxtApiConflict } from './utils/routes'
+
+import { DRUXT_DEVTOOLS_ICON_ROUTE, DRUXT_DEVTOOLS_ROUTE, devtoolsPage, devtoolsTab, loadDruxtTools, missingToolsMessages } from './utils/devtools'
 
 /** Credentials for build-time requests; see createBuildClient. */
 export interface DruxtBuildAuthOptions {
@@ -409,6 +412,11 @@ export default defineNuxtModule<DruxtOptions>({
     const filesPath = options.proxy?.files ? `/sites/${typeof options.proxy.files === 'string' ? options.proxy.files : 'default'}/files` : undefined
     const conflict = druxtApiConflict({ endpoints: [options.endpoint], files: filesPath ? [filesPath] : [] })
     if (conflict) throw new Error(`[druxt] ${conflict}`)
+    // An unknown value, such as 1.x's removed 'indicator', falls back to the development tools, so it is named once.
+    const develMessages: unknown = options.develMessages
+    if (develMessages !== undefined && develMessages !== 'devtools' && develMessages !== 'inline') {
+      logger.warn(`\`druxt.develMessages\` is ${JSON.stringify(develMessages)}, which is not a valid value: use 'devtools' or 'inline'. The development tools are used.`)
+    }
 
     // Keep the JSON:API index between server requests that carry no credentials, in production only. The proxy still
     // reads the session cookie's pattern in development.
@@ -623,6 +631,58 @@ export default defineNuxtModule<DruxtOptions>({
     // DruxtWrapper is registered sync: it renders on nearly every page, so loading it lazily buys nothing and wraps
     // each one in an async wrapper instance. DruxtDebug renders on few pages, so it stays lazy and out of the entry.
     addComponent({ name: 'DruxtWrapper', filePath: resolve('./runtime/components/DruxtWrapper.vue'), global: 'sync' })
+    // The development tools, in development only, from optional packages: @druxt/devtools for the model, the element
+    // and the console summary, @nuxt/devtools-kit for the Nuxt DevTools tab, @vue/devtools-api for Vue DevTools. Each
+    // is imported here, never by a file a production build reads, and a missing one is skipped.
+    const tools = nuxt.options.dev ? await loadDruxtTools((name) => import(name), logger) : undefined
+    const hasNuxtDevtools = () => hasNuxtModule('@nuxt/devtools', nuxt) || hasNuxtModule('@nuxt/devtools-nightly', nuxt)
+    if (tools) nuxt.hook('modules:done', () => { for (const message of missingToolsMessages(tools, hasNuxtDevtools())) logger.info(message) })
+    // What development may load: Nuxt DevTools in the app, read once every module is in, Vue DevTools' API, and the tools.
+    addTemplate({
+      filename: 'druxt/devtools.mjs',
+      getContents: () => [
+        `export const nuxtDevtools = ${!!tools?.kit && hasNuxtDevtools()}`,
+        `export const vueDevtools = ${!!tools?.vue}`,
+        `export const druxtDevtools = ${!!tools?.druxt}`,
+        '',
+      ].join('\n'),
+    })
+    addTypeTemplate({
+      filename: 'types/druxt-devtools.d.ts',
+      getContents: () => [
+        `declare module '#build/druxt/devtools.mjs' {`,
+        '  export const nuxtDevtools: boolean',
+        '  export const vueDevtools: boolean',
+        '  export const druxtDevtools: boolean',
+        '}',
+        '',
+      ].join('\n'),
+    }, { nuxt: true })
+    if (nuxt.options.dev) {
+      if (tools?.druxt) {
+        // A Druxt tab in Nuxt DevTools, an inspector and timeline in Vue DevTools, and a console summary. Nothing
+        // floats over the page, and a production build has none of it.
+        addPlugin({ src: resolve('./runtime/plugins/devel'), mode: 'client' })
+        addPlugin({ src: resolve('./runtime/plugins/devel-requests'), mode: 'server' })
+        if (tools.kit) tools.kit.addCustomTab(devtoolsTab(), nuxt as never)
+        // The icon first: a dev server handler's route is a prefix, so the page's would answer for it too.
+        const icon = tools.druxt.druxtTabIconSvg()
+        addDevServerHandler({
+          route: DRUXT_DEVTOOLS_ICON_ROUTE,
+          handler: defineEventHandler((event) => {
+            setResponseHeader(event, 'content-type', 'image/svg+xml')
+            return icon
+          }),
+        })
+        addDevServerHandler({
+          route: DRUXT_DEVTOOLS_ROUTE,
+          handler: defineEventHandler((event) => {
+            setResponseHeader(event, 'content-type', 'text/html; charset=utf-8')
+            return devtoolsPage()
+          }),
+        })
+      }
+    }
 
     for (const name of ['Druxt']) {
       addComponent({ name, filePath: await resolvePath(resolve(`./runtime/components/${name}`)), global: 'sync' })
