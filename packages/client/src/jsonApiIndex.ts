@@ -1,3 +1,4 @@
+import { nextRequest } from './processCache'
 import type { ProcessCacheHandle } from './processCache'
 import type { JsonApiIndex } from './types'
 
@@ -32,6 +33,8 @@ export class JsonApiIndexCache {
   readonly requests: Record<string, Promise<FetchedIndex> | undefined> = {}
   /** Moves on each clear, so an index fetched before one is not kept. */
   generation = 0
+  /** Each fetch's place in the order requests started in, so the process cache drops one a forget came after. */
+  private readonly numbers = new WeakMap<Promise<FetchedIndex>, number>()
 
   private readonly key: string
   private readonly fetchIndex: (prefix: string) => Promise<FetchedIndex>
@@ -62,7 +65,13 @@ export class JsonApiIndexCache {
     const before = this.shared()
     const since = before?.generation
     const started = this.generation
-    const request = this.requests[requestKey] || (this.requests[requestKey] = this.fetchIndex(key))
+    let request = this.requests[requestKey]
+    if (!request) {
+      // Numbered when the fetch starts: a caller who joins it later shares its answer, and its number.
+      const number = nextRequest()
+      request = this.requests[requestKey] = this.fetchIndex(key)
+      this.numbers.set(request, number)
+    }
     let fetched: FetchedIndex
     try {
       fetched = await request
@@ -74,8 +83,9 @@ export class JsonApiIndexCache {
     if (started !== this.generation) return fetched.index
 
     this.indexes[key] = fetched.index
-    // Dropped by the handle when the process cache was cleared while the request was in flight.
-    this.shared()?.set(requestKey, fetched.index, fetched.lifetime, since)
+    // Dropped by the handle when the process cache was cleared, or its index scope forgotten, while the request was
+    // in flight.
+    this.shared()?.set(requestKey, fetched.index, fetched.lifetime, since, this.numbers.get(request))
     return fetched.index
   }
 
