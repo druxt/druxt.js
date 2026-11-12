@@ -30,7 +30,8 @@ const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
   (PKCE), password and client credentials grants, with refresh. A 401 is
   refreshed and retried once. A sign-in or refresh that a later sign-in or a
   sign-out replaced while it ran stores nothing and rejects, and
-  `isSuperseded(error)` tells that rejection from a failure.
+  `isSuperseded(error)` tells that rejection from a failure. A sign-in that
+  fails ends the session held before it, as druxt-auth 0.x did.
 - **Transport:** `fetch` and `headers` options, with `globalThis.fetch` by
   default. 1.x's Axios instance and its `axios` options are gone, and an
   `axios` option is ignored: set headers in `headers`.

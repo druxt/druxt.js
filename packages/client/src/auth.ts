@@ -211,14 +211,22 @@ export class DruxtAuth {
   /**
    * Posts a sign-in grant to the token endpoint and stores its tokens. A sign-in started later, or a sign-out, while
    * it runs replaces it: it then stores nothing and rejects with an error whose `superseded` is true, which
-   * `isSuperseded()` tells.
+   * `isSuperseded()` tells. A sign-in that fails ends the session held before it, as druxt-auth 0.x did, unless a
+   * later sign-in or a sign-out replaced it first.
    *
    * @param fields - The grant's fields.
    * @param clientId - The Consumer, `clientId` by default.
    */
   async requestToken(fields: Record<string, string | undefined>, clientId: string = this.options.clientId): Promise<TokenResponse> {
     const mine = ++this.generation
-    const data = await this.postToken(fields, clientId)
+    let data: TokenResponse
+    try {
+      data = await this.postToken(fields, clientId)
+    } catch (error) {
+      // A visitor who tried to sign in as someone else is never left signed in as the user before.
+      if (this.generation === mine) this.clearTokens()
+      throw error
+    }
     if (this.generation !== mine) throw supersededError()
     this.setTokens(data, clientId)
     this.stored = mine
