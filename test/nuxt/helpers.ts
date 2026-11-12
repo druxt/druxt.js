@@ -1,5 +1,8 @@
 import { vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
+import { defineComponent, h } from 'vue'
+import type { Component } from 'vue'
+import { druxtModuleEmits, druxtModuleProps } from '@druxt/core/runtime'
 import { useNuxtApp, useRouter } from '#imports'
 
 /**
@@ -25,6 +28,29 @@ export const settle = async (until?: () => unknown) => {
 }
 
 /**
+ * mountSuspended() clones and renames the component it is given directly
+ * (to "MountSuspendedComponent"), so a module under test never sees its own
+ * name or a stable useId(). Nesting it one level deeper gives it a real,
+ * separate instance; props, attrs and slots fall through automatically, and
+ * `update:modelValue` is forwarded explicitly since fallthrough does not
+ * carry a child's own emit.
+ */
+// Typed as any component: the props it is given are the inner module's, which fall through as attrs.
+export const nest = (inner: Component): Component => defineComponent({
+  props: druxtModuleProps,
+  emits: [...druxtModuleEmits],
+  // attrs before props: mountSuspended's own cloning hands this component a
+  // stale attrs snapshot that happens to include declared prop keys too, so
+  // props (the real, reactive ones) must win when a key is in both.
+  // modelValue only when given, as <Druxt> passes it: Vue's useModel() treats a module given both
+  // modelValue and the listener as bound by its parent, which this one is not.
+  setup: (props, { attrs, slots, emit }) => () => {
+    const { modelValue, ...rest } = { ...attrs, ...props }
+    return h(inner, { ...rest, ...(modelValue === undefined ? {} : { modelValue }), 'onUpdate:modelValue': (value: unknown) => emit('update:modelValue', value) }, slots)
+  },
+})
+
+/**
  * The keys of the payload's data that hold a value. Nuxt 4.4 clears an unused
  * entry to `undefined` and keeps its key, where 4.5 deletes it, so a cleared
  * entry is left out on either.
@@ -45,8 +71,7 @@ export const matchAnyPath = (): void => {
 
 /**
  * Markup without Druxt's anchors, the `data-druxt-*` attributes development writes by default, for a test of other
- * output. No module writes them yet: the core port brings them with @druxt/core, and test/nuxt/anchors.test.ts,
- * which tests the anchors themselves.
+ * output. test/nuxt/anchors.test.ts tests the anchors themselves.
  *
  * @param html - The markup.
  */

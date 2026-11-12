@@ -17,7 +17,7 @@ provides the three pieces the whole framework shares:
   configured from `druxt` and given to components by `useDruxtClient()`.
 - **[DruxtStore](#druxtstore)**: the Pinia store caching resources and
   collections for all modules, from `useDruxtStore()`.
-- **DruxtModule**: `useDruxtModule()`, the contract behind the
+- **[DruxtModule](#druxtmodule)**: `useDruxtModule()`, the contract behind the
   theme-component suggestion system.
 
 ## Installation
@@ -322,6 +322,150 @@ A module that has resources from a request of its own seeds the store with `addR
 - [DruxtStore API](https://druxtjs.org/api/packages/core/runtime/store): its state
   and actions.
 - [Deprecations](https://druxtjs.org/modules/druxt/deprecations): retired signatures.
+
+## DruxtModule
+
+A Druxt module turns a contract (wrapper candidates, data, props and slots)
+into themeable rendering, through `useDruxtModule(props, contract)`. Building
+one is covered by the
+[custom module tutorial](https://druxtjs.org/tutorials/first-custom-module), and the mechanism
+by [Component resolution](https://druxtjs.org/explanation/component-resolution).
+
+A module's name is what its wrapper candidates are built from. In
+`defineComponent()`, set `name` and return the render function from `setup()`:
+
+```ts
+export default defineComponent({
+  name: 'DruxtRecipes',
+  props: { ...druxtModuleProps, limit: Number },
+  emits: druxtModuleEmits,
+  setup(props) {
+    const recipes = ref([]);
+    return useDruxtModule(props, {
+      componentOptions: () => [['default']],
+      async fetchData(ctx) {
+        const query = { 'page[limit]': String(props.limit || 3) };
+        recipes.value = (
+          await ctx.client.getCollection('node--recipe', query, ctx.lang.value)
+        ).data;
+      },
+      propsData: () => ({ recipes: recipes.value }),
+      state: { recipes },
+      watch: () => [props.limit],
+    });
+  },
+});
+```
+
+In `<script setup>`, the name comes from the file name, so set
+`defineOptions({ name: 'DruxtRecipes' })` unless the file name is the full
+module name. Nuxt names `components/druxt/Recipes.vue` `DruxtRecipes`, but the
+file gives `Recipes`, and development warns about the difference. Render the
+render function as a component:
+
+```vue
+<script setup lang="ts">
+const props = defineProps(druxtModuleProps);
+defineEmits(druxtModuleEmits);
+const Module = useDruxtModule(props, { componentOptions: () => [['default']] });
+</script>
+
+<template>
+  <Module />
+</template>
+```
+
+A `<script setup>` module passes only `class`, `style` and listeners through to
+its wrapper. A `defineComponent()` module passes its other attributes too, such
+as `id` and `data-*`.
+
+A wrapper, the component a module resolves and hands its data, is an ordinary
+component, and `<script setup>` suits it.
+
+A wrapper with no root element of its own, as Druxt's bundled block wrappers
+are, declares `druxtRootless: true`. The module then renders its element around
+the wrapper, and puts its classes and anchors, and a class the site sets, on
+that one element. A contract hook reads the wrapper the module resolved from
+`ctx.wrapper`.
+
+A module's `state` holds references into the stores, such as a menu's store
+key, never values that depend on the page's route. Under shared prerender data
+another page reads the same entry, which a server's read again on a miss
+leaves as it was.
+
+A module with nothing to render says so through its contract's `empty()`
+hook, from its data, such as a menu with no links. While the hook answers
+`true`, the module renders no wrapper and no element, even for a class the site
+set on it. A default slot the site passes still renders, with the module's
+props, so the slot decides what an empty state shows.
+
+The page renders one `h1`. A component that renders the page's title calls
+`useDruxtPageTitle()` in `setup()` and renders the `h1` only while
+`claim(owner)` answers `true`. The first claim on a page wins, so the page
+title block and the route's full-mode `DruxtEntity` never both render one. When
+the route names an entity, only that entity claims it. On a route with none,
+the first full `DruxtEntity` does, unless its `page-title` is `false`. A
+claimant claims for its own page's route, and lets the claim go when it
+unmounts or is deactivated, so a functional component can't be one.
+
+Druxt's components that render on nearly every page, `Druxt`,
+`DruxtWrapper`, `DruxtRouter`, `DruxtEntity` and `DruxtField`, register
+globally and sync. The rest, such as `DruxtDebug`, `DruxtEntityForm` and
+`DruxtAuthLogin`, register globally and lazily, as a site's own `Druxt*`
+components do, so each loads with the page that uses it, and still resolves by
+name. A module
+renders its default output in place, as `DruxtWrapper` rendered it, when the
+site gives it neither a wrapper nor attributes and it has no root attributes of
+its own. The markup is the same either way.
+
+The hooks run outside the Nuxt context once they await, so a composable such as
+`useDruxtClient()` throws there. Use `ctx.client`, `ctx.store` and `ctx.lang`,
+or read anything else in `setup()` first.
+
+Every instance with the same inputs shares one request and one payload entry,
+and each renders all of it. A hook sets its data on the refs in `state`, and an
+instance that did not fetch gets them restored, then `restore()` called.
+
+Core runs `fetchData` whether or not the parent gives a model through
+`v-model`. Skipping the fetch when the parent gives one is the module's
+choice. Keep what the module set itself, so its own model is not read back as
+the parent's:
+
+```ts
+let fetched: unknown;
+const given = ref(0);
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (value && toRaw(value) !== toRaw(fetched)) given.value++;
+  },
+);
+
+return useDruxtModule(props, {
+  async fetchData(ctx) {
+    const value = ctx.model.value;
+    if (value && toRaw(value) !== toRaw(fetched)) {
+      item.value = value; // Given by the parent: no request.
+      return;
+    }
+    item.value = fetched = await load(ctx);
+    ctx.model.value = item.value;
+  },
+  restore(ctx) {
+    const own = !ctx.model.value || toRaw(ctx.model.value) === toRaw(fetched);
+    fetched = item.value;
+    if (own) ctx.model.value = item.value;
+  },
+  state: { item },
+  watch: () => [props.id, given.value],
+});
+```
+
+During a server render, a parent bound to an empty ref sees the model only
+after its next render, which never comes on the server. Render the module's
+data through its wrapper or `ctx`, not the parent's own markup.
+
+- [DruxtModule API](https://druxtjs.org/api/packages/core/runtime/useDruxtModule).
 
 ## Where to go next
 

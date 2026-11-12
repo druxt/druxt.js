@@ -2249,6 +2249,7 @@ __metadata:
     h3: "npm:^1.15.11"
     ohash: "npm:^2.0.11"
     pinia: "npm:^4.0.3"
+    scule: "npm:^1.3.0"
     unstorage: "npm:^1.17.5"
   peerDependencies:
     "@druxt/devtools": "workspace:^"

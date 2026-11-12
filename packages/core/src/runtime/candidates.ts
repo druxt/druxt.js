@@ -1,110 +1,48 @@
+import { pascalCase, splitByCase } from 'scule'
+import type { DruxtComponentOptionSets } from './types'
+
 /**
- * Druxt utility class.
+ * A candidate wrapper component: its name, naming parts, and whether it is registered.
  *
- * @deprecated in druxt:0.17.0 and is removed from druxt:2.0.0.
- *   Use DruxtModule instead.
- * @see https://druxtjs.org/modules/druxt/deprecations
- * @private
+ * @example @lang js
+ * { global: true, name: 'DruxtRouterEntityFront', parts: ['Entity', 'Front'] }
  */
-class DruxtClass {
-  /**
-   * Class constructor.
-   *
-   * @example @lang js
-   * import { DruxtClass } from 'druxt'
-   * const druxt = new DruxtClass()
-   */
-  constructor() {}
-
-  /**
-   * Get component data from available options.
-   *
-   * @param {object} vm - The DruxtJS module Vue.js component.
-   * @param {string[]} options - The component naming options.
-   * @param {boolean} [all=false] - Returns all options if true, else only globally registered options.
-   * @param {string} [prefix] - A string to prefix all components.
-   *
-   * @returns {WrapperComponents}
-   */
-  getComponents(vm, options, all = false, prefix) {
-    const results = []
-    const unique = {}
-
-    options
-      // Filter out incorrectly typed items.
-      .filter(item => Array.isArray(item))
-
-      // Process each item.
-      .map(item => {
-        const variants = []
-
-        item.map(string => {
-          const parts = variants.length ? [...variants[0].parts] : []
-          parts.push(string)
-          const clone = [...parts]
-
-          // Attach prefix as required.
-          if (typeof prefix !== 'string' && (prefix !== false || typeof prefix === 'undefined') && ((vm || {}).$options || {}).name) {
-            prefix = vm.$options.name.match(/[A-Z][a-z]+/g).map(word => word.toLowerCase()).join('-')
-          }
-
-          if (prefix) {
-            clone.unshift(prefix)
-          }
-
-          // Generate component name values.
-          const kebab = clone.map(string => string.toLowerCase().replace(/--|_/g, '-')).join('-')
-          const pascal = kebab.replace(/((\b|[^a-zA-Z0-9]+)[a-zA-Z0-9])/gi, (match, p1, p2) => match.toUpperCase().replace(p2, ''))
-
-          // Check if component is globally registered.
-          let global = false
-          for (const name of [kebab, pascal]) {
-            if (typeof (((vm || {}).$options || {}).components || {})[name] !== 'undefined') {
-              global = true
-              break
-            }
-          }
-
-          variants.unshift({ global, kebab, parts, pascal, prefix })
-        })
-
-        // Add variants to results.
-        variants.map(variant => {
-          // Ensure unique results.
-          if (unique[variant.pascal]) {
-            return
-          }
-          unique[variant.pascal] = true
-
-          results.push(variant)
-        })
-      })
-
-    // Return globally registered components or all.
-    return results
-      .filter(option => option.global || !!all)
-      .sort((a, b) => b.parts.length - a.parts.length)
-  }
-
-  /**
-   * Get the Druxt module data from the referenced component.
-   *
-   * @param {object} vm - The Druxt module component ViewModel.
-   * @returns {ModuleData}
-   */
-  async getModuleData(vm) {
-    if (typeof ((vm || {}).$options || {}).druxt !== 'function') {
-      return false
-    }
-
-    const moduleData = await vm.$options.druxt({ vm })
-
-    if ((vm.$options || {}).name) {
-      moduleData.name = vm.$options.name.match(/[A-Z][a-z]+/g).map(word => word.toLowerCase()).join('-')
-    }
-
-    return moduleData
-  }
+export interface ComponentCandidate {
+  global: boolean
+  name: string
+  parts: string[]
 }
 
-export { DruxtClass }
+/**
+ * A module's wrapper candidates, most specific first. Each option set adds a
+ * name per part, built on the parts before it, with a langcode variant of
+ * each when a language is set.
+ *
+ * @param moduleName - The module's component name, such as DruxtEntity.
+ * @param sets - The module's `componentOptions`.
+ * @param lang - The current language code.
+ * @param isRegistered - Whether a component is registered under a name.
+ */
+export const getModuleComponents = (moduleName: string, sets: DruxtComponentOptionSets, lang: string | undefined, isRegistered: (name: string) => boolean): ComponentCandidate[] => {
+  const components: ComponentCandidate[] = []
+  for (const set of sets.filter((s): s is Array<string | null | undefined | false> => Array.isArray(s))) {
+    const variants: { name: string, parts: string[] }[] = []
+    for (const item of set.filter((o): o is string => !!o)) {
+      const parts = variants.length ? [...variants[0]!.parts] : []
+      parts.push(pascalCase(splitByCase(item)))
+      const name = pascalCase([moduleName, ...parts].filter((part): part is string => !!part))
+      variants.unshift({ name, parts })
+
+      if (lang) {
+        const langcodeName = pascalCase([moduleName, ...parts, lang].filter((part): part is string => !!part))
+        components.push({ global: isRegistered(langcodeName), name: langcodeName, parts: [...parts, lang] })
+      }
+      components.push({ global: isRegistered(name), name, parts })
+    }
+  }
+
+  const seen = new Set<string>()
+  return components
+    .filter((o) => !seen.has(o.name) && !!seen.add(o.name))
+    .sort((a, b) => b.parts.length - a.parts.length)
+}
