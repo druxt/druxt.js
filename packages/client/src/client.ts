@@ -167,7 +167,8 @@ export class DruxtClient {
    * The cache holds server-side responses between requests, each for as long
    * as its Cache-Control header allows. It is off unless the `cache` option is
    * set, and it is skipped for any request that sends an Authorization header,
-   * basic auth, a session cookie or an Origin.
+   * basic auth, a session cookie or an Origin. Clients whose headers differ
+   * keep their entries apart.
    *
    * @param scope - The cache scope, e.g. 'index' or 'menu'.
    * @returns The cache, or undefined when it must not be used.
@@ -176,7 +177,10 @@ export class DruxtClient {
     if (!this.options.cache) return undefined
     const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE } = this.options.cache as ProcessCacheOptions
     const credentialed = this.credentialed || !!this.auth?.accessToken || headersHaveCredentials(this.headers, sessionCookie)
-    const consumer = Object.entries(this.headers).find(([name]) => name.toLowerCase() === 'x-consumer-id')?.[1] || ''
+    // Each set of client headers keeps its own entries, X-Consumer-ID among them: a header may pick a variant Drupal
+    // names in no Vary, such as an Accept-Language. Names are compared in any case.
+    const headers = Object.entries(this.headers).map(([name, value]): [string, string] => [name.toLowerCase(), value]).sort(([a], [b]) => (a < b ? -1 : 1))
+    const consumer = headers.length ? JSON.stringify(headers) : ''
     // A stored response counts as the bytes of its body.
     const sizeOf = scope === 'content' ? (value: unknown) => byteSize((value as StoredResponse).body) : undefined
     return processCache(scope, { credentialed, consumer, ttl, maxSize, sizeOf })

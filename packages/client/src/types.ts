@@ -88,7 +88,10 @@ export type DruxtClientQuery = string | QueryStringSource | Record<string, unkno
 export interface ProcessCacheOptions {
   /** Also keep entities, collections, views and route lookups, every GET through `get()`, not only the index. Off by default. */
   content?: boolean
-  /** Bytes of stored JSON each cache area keeps per consumer, 50 MB by default. Past it the least recently used go, and a response larger than it is not kept. */
+  /**
+   * Bytes of stored JSON each cache area keeps per set of client headers, 50 MB by default. Past it the least recently
+   * used go, and a response larger than it is not kept. A header that differs per visitor multiplies it.
+   */
   maxSize?: number
   /** Seconds an entry may live at most. It never extends Cache-Control. */
   ttl?: number
