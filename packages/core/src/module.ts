@@ -1,3 +1,4 @@
+import { join } from 'node:path'
 import { addComponent, addDevServerHandler, addImports, addPlugin, addServerHandler, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
 import { defineEventHandler, setResponseHeader } from 'h3'
 import { clientOptions } from '@druxt/client'
@@ -10,6 +11,7 @@ import type { DruxtAnchorsSetting } from './anchors'
 import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
 import { DRUXT_API_BASE } from './routes'
 import { druxtApiConflict } from './utils/routes'
+import { templateRoute } from './utils/template-route'
 
 import { DRUXT_DEVTOOLS_ICON_ROUTE, DRUXT_DEVTOOLS_ROUTE, devtoolsPage, devtoolsTab, loadDruxtTools, missingToolsMessages } from './utils/devtools'
 
@@ -631,6 +633,20 @@ export default defineNuxtModule<DruxtOptions>({
     // DruxtWrapper is registered sync: it renders on nearly every page, so loading it lazily buys nothing and wraps
     // each one in an async wrapper instance. DruxtDebug renders on few pages, so it stays lazy and out of the entry.
     addComponent({ name: 'DruxtWrapper', filePath: resolve('./runtime/components/DruxtWrapper.vue'), global: 'sync' })
+    addComponent({ name: 'DruxtDebug', filePath: resolve('./runtime/components/DruxtDebug.vue'), global: true })
+    // The development template tool: creates a wrapper component file from the
+    // module a developer is looking at. Development only, and only for this
+    // machine: the Host must be loopback, which a tunnel's public host is not.
+    if (nuxt.options.dev) {
+      const componentsDir = join(nuxt.options.srcDir, 'components')
+      addDevServerHandler({ route: `${DRUXT_API_BASE}/template`, handler: templateRoute(componentsDir) })
+    }
+    // A production build gets a DruxtDevelTemplate that renders nothing, so none of the tool's markup ships.
+    addComponent({
+      name: 'DruxtDevelTemplate',
+      filePath: nuxt.options.dev ? resolve('./runtime/components/DruxtDevelTemplate.vue') : await resolvePath(resolve('./runtime/components/DruxtDevelTemplateProduction')),
+      global: true,
+    })
     // The development tools, in development only, from optional packages: @druxt/devtools for the model, the element
     // and the console summary, @nuxt/devtools-kit for the Nuxt DevTools tab, @vue/devtools-api for Vue DevTools. Each
     // is imported here, never by a file a production build reads, and a missing one is skipped.
@@ -682,6 +698,8 @@ export default defineNuxtModule<DruxtOptions>({
           }),
         })
       }
+      // The tokens and the tools' styles. Through the app's CSS, in development only, so a production build has none.
+      nuxt.options.css.push(resolve('./runtime/assets/druxt.css'))
     }
 
     for (const name of ['Druxt']) {

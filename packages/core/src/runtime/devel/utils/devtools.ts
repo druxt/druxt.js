@@ -1,6 +1,6 @@
 import type { ComponentInternalInstance } from 'vue'
 import type { DruxtDevtoolsSetting, DruxtDevtoolsTemplate } from '@druxt/devtools'
-import { renderTemplate, templatePath } from '../../utils/template'
+import { isTemplateName, renderTemplate, templatePath } from '../../utils/template'
 import type { DruxtTemplateRequest } from '../../utils/template'
 import type { DruxtTemplateConfig } from '../../types'
 import type { DruxtAnchorsState } from '@druxt/core/anchors'
@@ -57,13 +57,13 @@ export interface ModuleTemplateInput {
 }
 
 /**
- * The files the create action can write for a module: one per candidate, past the module's own name and a langcode
- * variant's base, with its path and starter as the dev server writes them.
+ * The files the create action can write for a module: one per candidate the dev server accepts, with its path and
+ * starter as the dev server writes them.
  *
  * @param input - The module, its candidates and what a wrapper starts with.
  */
 export const moduleTemplates = ({ component, candidates, props, slots, template }: ModuleTemplateInput): DruxtDevtoolsTemplate[] =>
-  candidates.filter((name) => name !== component && /^[a-z0-9]+$/i.test(name)).map((name) => {
+  candidates.filter((name) => isTemplateName(component, name)).map((name) => {
     const request: DruxtTemplateRequest = { component, name, props, slots, template }
     return { name, path: `components/${templatePath(request)}`, starter: renderTemplate(request), request }
   })
