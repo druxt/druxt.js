@@ -21,7 +21,6 @@ export default createConfigForNuxt({
       'packages/schema/**',
       'packages/site/**',
       'packages/views/**',
-      'packages/core/src/runtime/plugins/druxt.ts',
       'packages/core/src/runtime/plugins/pinia.ts',
       'packages/core/src/runtime/store.ts',
       'packages/core/src/runtime/utils/getDrupalJsonApiParams.ts',
