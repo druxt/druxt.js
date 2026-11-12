@@ -1,4 +1,4 @@
-import { addImports, addPlugin, addServerHandler, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
+import { addComponent, addImports, addPlugin, addServerHandler, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
 import { clientOptions } from '@druxt/client'
 import type { DruxtClient, DruxtConfig, DruxtConnectionConfig } from '@druxt/client'
 import { defu } from 'defu'
@@ -619,5 +619,23 @@ export default defineNuxtModule<DruxtOptions>({
       }
       if (session) addServerHandler({ route: `${DRUXT_API_BASE}/auth/logout`, method: 'post', handler: resolve('./runtime/server/routes/logout') })
     }
+
+    // DruxtWrapper is registered sync: it renders on nearly every page, so loading it lazily buys nothing and wraps
+    // each one in an async wrapper instance. DruxtDebug renders on few pages, so it stays lazy and out of the entry.
+    addComponent({ name: 'DruxtWrapper', filePath: resolve('./runtime/components/DruxtWrapper.vue'), global: 'sync' })
+
+    for (const name of ['Druxt']) {
+      addComponent({ name, filePath: await resolvePath(resolve(`./runtime/components/${name}`)), global: 'sync' })
+    }
+
+    // Wrapper resolution looks components up by name at runtime, so every
+    // Druxt* component, including the site's own, has to be registered globally.
+    // A site's own stay lazy, so each loads with the page that uses it. Druxt's
+    // own, registered sync, stay sync.
+    nuxt.hook('components:extend', (components) => {
+      for (const component of components) {
+        if (component.pascalName.startsWith('Druxt') && component.global !== 'sync') component.global = true
+      }
+    })
   },
 })
