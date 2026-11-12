@@ -8,6 +8,13 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 /** Compat's copy of the 1.x sources, kept as 1.x laid them out. */
 const SKIPPED = ['packages/compat/src/legacy/']
 
+/**
+ * Files outside the skipped folders.
+ *
+ * @param files - Absolute paths.
+ */
+const unskipped = (files: string[]): string[] => files.filter((file) => !SKIPPED.some((skipped) => file.startsWith(join(root, skipped))))
+
 /** Every file below a directory, as absolute paths. */
 const filesBelow = (dir: string): string[] => existsSync(dir)
   ? readdirSync(dir, { recursive: true, withFileTypes: true })
@@ -57,13 +64,13 @@ const entries = (pkg: string): string[] => {
   return [...sources, ...built]
 }
 
-interface Layout { files: string[], public: string[], internal: string[] }
+interface Layout { files: string[], public: string[], internal: string[], unresolved: string[] }
 
 /** A package's source files, split into what a consumer can reach and what only the package imports. */
 const layout = (name: string): Layout => {
   const pkg = join(root, 'packages', name)
   const src = join(pkg, 'src')
-  const files = filesBelow(src).filter((file) => !SKIPPED.some((skipped) => file.startsWith(join(root, skipped))))
+  const files = unskipped(filesBelow(src))
   const known = new Set(files)
   const reached = new Set<string>()
   const queue: string[] = []
@@ -74,7 +81,12 @@ const layout = (name: string): Layout => {
     }
   }
 
-  for (const entry of entries(pkg)) reach(resolveSpecifier(pkg, entry, known))
+  const unresolved: string[] = []
+  for (const entry of entries(pkg)) {
+    const file = resolveSpecifier(pkg, entry, known)
+    if (!file) unresolved.push(entry)
+    reach(file)
+  }
   const module = join(src, 'module.ts')
   if (known.has(module)) {
     const registered = registeredPaths(readFileSync(module, 'utf8'))
@@ -95,19 +107,28 @@ const layout = (name: string): Layout => {
     files: files.map(rel).sort(),
     public: [...reached].map(rel).sort(),
     internal: files.filter((file) => !reached.has(file)).map(rel).sort(),
+    unresolved,
   }
 }
 
 /** Whether a source path sits in a `utils/` folder. */
 const inUtils = (path: string) => /(?:^|\/)utils\//.test(path)
 
-/** The packages ported to TypeScript: a 1.x package still holds `.js` sources. */
+/**
+ * Whether a package's sources, as absolute paths, are ported to TypeScript: a 1.x package still holds `.js` sources
+ * outside the skipped folders.
+ *
+ * @param files - Every file below the package's `src/`.
+ */
+const isPorted = (files: string[]): boolean => {
+  const kept = unskipped(files)
+  return kept.length > 0 && !kept.some((file) => file.endsWith('.js'))
+}
+
+/** The packages ported to TypeScript. */
 const ported = readdirSync(join(root, 'packages'))
   .filter((name) => statSync(join(root, 'packages', name)).isDirectory())
-  .filter((name) => {
-    const files = filesBelow(join(root, 'packages', name, 'src'))
-    return files.length > 0 && !files.some((file) => file.endsWith('.js'))
-  })
+  .filter((name) => isPorted(filesBelow(join(root, 'packages', name, 'src'))))
   .sort()
 
 describe('package layout', () => {
@@ -117,11 +138,11 @@ describe('package layout', () => {
 
   for (const name of ported) {
     describe(`@druxt/${name}`, () => {
-      const { files, public: reachable, internal } = layout(name)
+      const { public: reachable, internal, unresolved } = layout(name)
 
       it('reaches its entry points', () => {
+        expect(unresolved).toEqual([])
         expect(reachable.length).toBeGreaterThan(0)
-        expect(files.length).toBe(reachable.length + internal.length)
       })
 
       it('keeps nothing a consumer can reach in a utils/ folder', () => {
@@ -136,6 +157,13 @@ describe('package layout', () => {
 })
 
 describe('layout reading', () => {
+  it('reads a package whose .js sources sit only in a skipped folder as ported', () => {
+    const compat = join(root, 'packages/compat/src')
+    expect(isPorted([join(compat, 'module.ts'), join(compat, 'legacy/druxt.js')])).toBe(true)
+    expect(isPorted([join(compat, 'legacy/druxt.js')])).toBe(false)
+    expect(isPorted([join(compat, 'module.ts'), join(compat, 'other/druxt.js')])).toBe(false)
+  })
+
   it('follows a value re-export and skips a type-only one', () => {
     expect(publicReExports("export * from './a'\nexport { b, type C } from './b'\nexport type { D } from './d'\nexport { type E } from './e'\nexport type * from './f'")).toEqual(['./a', './b'])
   })
