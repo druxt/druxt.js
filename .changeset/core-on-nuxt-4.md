@@ -14,11 +14,13 @@ The module splits `druxt` once. Secrets move to the private `runtimeConfig.druxt
 
 A Druxt module registers its default settings with `addDruxtDefaults()` from `@druxt/core/kit`. The build holds them, and neither an environment variable nor the public runtime config changes them. They resolve after core's defaults and before the settings Drupal publishes and the site's config, so Drupal can change a module's default too.
 
+`cache.content` keeps every server response in the process cache, not only the index: entities, collections, views and route lookups, for as long as Drupal's `Cache-Control` allows, each area bounded by `cache.maxSize` bytes across its consumers, 50 MB by default, the least recently used going first. A request with credentials, the site's own token cookie among them, skips it. A store read with `bypassCache` skips it too and fetches afresh. Its answer replaces the stored entry when it may be kept. A 404 or any other answer removes it. An older request resolving later never replaces the fresher one. An editor's write through the proxy drops the entries for the saved resource, its type's collections, every JSON:API Views result, as a listing doesn't name the entities it shows, and the route lookups on that process. The clear route stays bundled, at `POST /api/_druxt/cache/clear`, and `druxt:cache:clear` still reaches every hold. The parity half of 0.25.0's server cache.
+
 `useDruxtAnonymousClient()`, from `@druxt/core/server`, gives a server route a client that reads Drupal as a visitor.
 
 Under pnpm, `nuxt dev` works without adding the module's CommonJS libraries to your own dependencies.
 
-BREAKING CHANGE: install `@druxt/core` in place of `druxt`. The module runs on Nuxt 4 and Vue 3 only, the store is Pinia, and the options-API `DruxtModule` and the mixins are gone from core. The private runtime config keys `druxtAuth`, `druxtCache` and `druxtBuild` are now `druxt.auth`, `druxt.cache` and `druxt.build`, and the environment variable names are unchanged.
+BREAKING CHANGE: install `@druxt/core` in place of `druxt`. The module runs on Nuxt 4 and Vue 3 only, the store is Pinia, and the options-API `DruxtModule` and the mixins are gone from core. The private runtime config keys `druxtAuth`, `druxtCache` and `druxtBuild` are now `druxt.auth`, `druxt.cache` and `druxt.build`, and the environment variable names are unchanged. The cache clear route moved from `/_druxt/cache/clear` to `/api/_druxt/cache/clear`, so a Drupal Purge purger, or anything else that sends the clear, needs the new path.
 
 `getResource()` waits for a request already in flight for the same resource with another query, unless the store already answers, so a second reader of one entity, such as a standalone field beside its entity, is answered from the store. A request with the same query is shared, its failure included.
 

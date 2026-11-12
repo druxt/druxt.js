@@ -196,6 +196,83 @@ Every settings function takes a connection name, `default` unless named. Other c
 
 Core has no option for the Consumer whose decoupled settings are read, since not every site uses them. A module that integrates Drupal's decoupled settings registers its own option with `addDruxtDefaults()` from `@druxt/core/kit`, such as `druxt.site.settingsConsumerId`. When the site leaves it unset, the module falls back to the connection's Consumer, which the client exposes as `consumer.id`. The module writes what it reads with `storeDrupalSettings()`, as above.
 
+## Server cache
+
+In production, the server keeps Drupal's responses between requests for as
+long as Drupal's `Cache-Control` header allows: the JSON:API index, and with
+`cache.content` every other response. Drupal sets that header from its page
+cache maximum age (Administration > Configuration > Development > Performance),
+so at the default of 0 nothing is kept.
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  druxt: {
+    cache: { content: true, secret: process.env.DRUXT_CACHE_SECRET },
+  },
+});
+```
+
+| Option                | Type      | Default             | Description                                                                                                             |
+| --------------------- | --------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.                                                               |
+| `cache.maxSize`       | `number`  | `52428800` (50 MB)  | Bytes of responses kept per cache area, across its consumers. The least recently used go.                               |
+| `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.                                                              |
+| `cache.secret`        | `string`  |                     | Turns on `POST /api/_druxt/cache/clear`.                                                                                |
+| `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it. The proxy sends Drupal only the cookies it matches. |
+
+- A request with an `Authorization` header, a Drupal session cookie or the
+  site's own `druxt.auth.*` token cookie skips the cache, so a signed-in render
+  reads Drupal, and `nuxt dev` runs without it.
+- Only successful responses are kept, each as text, and every reader gets a
+  fresh copy. A read with `bypassCache` fetches afresh, stores the result, and
+  an older request that resolves after it never replaces it.
+- A full cache area takes about three times `cache.maxSize` in server memory,
+  and a response larger than the limit is not kept.
+- A write Drupal accepts through the proxy, an editor's save, drops the entries
+  for that resource, its type's collections and the route lookups on this
+  process, so the next anonymous render reads the saved entity. It drops every
+  JSON:API Views result too, under every language prefix, as a listing doesn't
+  name the entities it shows: any accepted `POST`, `PATCH` or `DELETE` to a
+  JSON:API resource drops every cached view. A write Drupal refuses drops
+  nothing. Another process's cache waits for Drupal's clear.
+- The modules' holds beside the cache, such as the schema, the date formats and
+  the languages, are config: small, unbounded by `maxSize` and `ttl`, and
+  dropped by the same clear.
+- A static build, as `nuxt generate` makes it, has no server, so none of this
+  applies to it. The prerender manifest route is never cached.
+- Clear it with `useDruxtStore().clearCache()`, or from Drupal with
+  `POST /api/_druxt/cache/clear` and the secret in an `X-Druxt-Secret` header, which
+  the module bundles. Each Nuxt process has its own cache to clear.
+
+The [caching guide](https://druxtjs.org/how-to/caching) covers the cache in
+more depth.
+
+### Clearing from Drupal with Purge
+
+With `cache.content` on, an edit can take up to the page cache maximum age, or
+`cache.ttl` if that is shorter, to reach anonymous visitors on another process,
+unless Drupal clears the cache. The
+[Purge](https://www.drupal.org/project/purge) module can send that request on
+every save. Enable `purge`, `purge_purger_http`, `purge_queuer_coretags` and
+a processor such as `purge_processor_lateruntime`, then add the bundled HTTP
+purger:
+
+```sh
+drush p:purger-add httpbundled
+```
+
+Give it the method `POST`, the Nuxt host and port, the path
+`/api/_druxt/cache/clear`, a header `X-Druxt-Secret` with the secret, and the
+invalidation type `tag`. One save then costs one request, whatever it
+invalidates, and a request refused for a wrong secret is sent again with the
+next batch. Keep the secret out of exported configuration: set it from
+`settings.php` as a `$config` override.
+
+A purger set up for a 1.x site sends `/_druxt/cache/clear`. Change its path
+to `/api/_druxt/cache/clear` when the site moves to 2.x, or the clear
+answers 404.
+
 ## DruxtClient
 
 The client is the communication layer between your application and Drupal's

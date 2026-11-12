@@ -107,6 +107,30 @@ describe('the core module\'s cache options', () => {
   }, 120_000)
 })
 
+describe('the core module\'s own routes', () => {
+  const loadWith = async (druxt: Record<string, unknown>) => {
+    const nuxt = await loadNuxt({
+      cwd: join(root, 'test/unit/fixtures/core-module'),
+      ready: true,
+      overrides: { _prepare: true, druxt: { baseUrl: 'https://drupal.test', ...druxt } } as Record<string, unknown>,
+    })
+    loaded.push(nuxt)
+    return nuxt.options.serverHandlers.map((handler) => handler.route)
+  }
+
+  it('registers them under /api/_druxt, beside a proxy for a JSON:API Drupal serves at /api', async () => {
+    const routes = await loadWith({ endpoint: '/api', proxy: { api: true }, cache: { secret: 'shared' }, auth: { clientId: 'site', scope: 'editor' } })
+    expect(routes).toEqual(expect.arrayContaining(['/api/_druxt/cache/clear', '/api/_druxt/auth/token', '/api/_druxt/auth/logout', '/api', '/api/**']))
+    expect(routes.filter((route) => route?.startsWith('/_druxt'))).toEqual([])
+  }, 120_000)
+
+  it('fails the build with DRUXT_E01006 for a JSON:API endpoint at or under /api/_druxt', async () => {
+    for (const endpoint of ['/api/_druxt', 'api/_druxt/', '/api/_druxt/jsonapi']) {
+      await expect(loadWith({ endpoint, proxy: { api: true } }), endpoint).rejects.toThrow(/DRUXT_E01006: Drupal's JSON:API is at \/api\/_druxt/)
+    }
+  }, 120_000)
+})
+
 describe('the core module\'s proxy, when the site\'s languages cannot be read', () => {
   afterEach(() => {
     vi.unstubAllGlobals()
@@ -114,7 +138,7 @@ describe('the core module\'s proxy, when the site\'s languages cannot be read', 
   })
 
   // Drupal lists its languages to a visitor, and refuses the build's credentials, so the build cannot read them.
-  it('warns once, naming the prefixed paths it loses, and proxies only the unprefixed endpoint', async () => {
+  const refusing = () => {
     vi.stubEnv('DRUXT_BUILD_CLIENT_ID', 'build')
     vi.stubEnv('DRUXT_BUILD_CLIENT_SECRET', 'wrong-secret')
     const reply = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/vnd.api+json', 'content-language': 'en' } })
@@ -126,6 +150,10 @@ describe('the core module\'s proxy, when the site\'s languages cannot be read', 
       }
       return reply({}, 404)
     }))
+  }
+
+  it('warns once in development, naming the prefixed paths it loses, and proxies only the unprefixed endpoint', async () => {
+    refusing()
     const written: string[] = []
     const stderr = vi.spyOn(process.stderr, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
     const stdout = vi.spyOn(process.stdout, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
@@ -133,6 +161,7 @@ describe('the core module\'s proxy, when the site\'s languages cannot be read', 
       const nuxt = await loadNuxt({
         cwd: join(root, 'test/unit/fixtures/core-module'),
         ready: true,
+        dev: true,
         overrides: { druxt: { baseUrl: 'https://drupal.test', proxy: { api: true } } } as Record<string, unknown>,
       })
       loaded.push(nuxt)
@@ -146,6 +175,24 @@ describe('the core module\'s proxy, when the site\'s languages cannot be read', 
       expect(warnings).toHaveLength(1)
       expect(warnings[0]).toContain('language-prefixed')
       expect(warnings[0]).toContain('/jsonapi')
+    } finally {
+      stderr.mockRestore()
+      stdout.mockRestore()
+    }
+  }, 120_000)
+
+  it('stops a production build, naming what the site would lose and what to check', async () => {
+    refusing()
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
+    const stdout = vi.spyOn(process.stdout, 'write').mockImplementation(() => true)
+    try {
+      const load = loadNuxt({
+        cwd: join(root, 'test/unit/fixtures/core-module'),
+        ready: true,
+        overrides: { druxt: { baseUrl: 'https://drupal.test', proxy: { api: true } } } as Record<string, unknown>,
+      })
+      load.then((nuxt) => loaded.push(nuxt), () => {})
+      await expect(load).rejects.toThrow(/DRUXT_E01008: The site's languages could not be read, so the build stops.*https:\/\/drupal\.test/)
     } finally {
       stderr.mockRestore()
       stdout.mockRestore()

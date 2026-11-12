@@ -538,6 +538,10 @@ export default defineNuxtModule<DruxtOptions>({
       ].join('\n'),
     }, { nuxt: true, nitro: true })
 
+    if (options.cache) {
+      addServerHandler({ route: `${DRUXT_API_BASE}/cache/clear`, handler: resolve('./runtime/server/routes/cacheClear') })
+    }
+
     // Where Druxt's server routes keep what they hold between requests. Memory
     // by default: a site shares it across instances by mounting a driver of its own.
     nuxt.options.nitro.storage = defu(nuxt.options.nitro.storage, { druxt: { driver: 'memory' } })
