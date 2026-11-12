@@ -22,8 +22,10 @@ const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
   keeps the JSON:API index, fetched without credentials, between requests for
   as long as its `Cache-Control` allows. With `cache: { content: true }` it also
   keeps each `get()` answered with a 200 that `Cache-Control` lets a shared
-  cache store, for a request without credentials or options of its own.
-  `cache: { ttl }` caps the lifetime, and `clearCache()` empties it.
+  cache store, for a request without credentials or options that could change
+  the response, such as headers or a body. A `bypassCache` request goes to
+  Drupal and stores its fresh answer. `cache: { ttl }` caps the lifetime, and
+  `clearCache()` empties it.
 - **Auth:** with `auth: { clientId }`, Simple OAuth's authorization code
   (PKCE), password and client credentials grants, with refresh. A 401 is
   refreshed and retried once.
