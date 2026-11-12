@@ -1,4 +1,5 @@
-import { join } from 'node:path'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { dirname, join } from 'node:path'
 import { addComponent, addDevServerHandler, addImports, addPlugin, addRouteMiddleware, addServerHandler, addServerImports, addServerPlugin, addTemplate, addTypeTemplate, createResolver, defineNuxtModule, hasNuxtModule, installModule, resolvePath, tryUseNuxt, useLogger } from '@nuxt/kit'
 import { defineEventHandler, setResponseHeader } from 'h3'
 import type { NuxtPage } from '@nuxt/schema'
@@ -6,7 +7,7 @@ import { clientOptions } from '@druxt/client'
 import type { DruxtClient, DruxtConfig, DruxtConnectionConfig } from '@druxt/client'
 import { defu } from 'defu'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-import { splitDruxtConfig } from './utils/config'
+import { hidesBaseUrl, splitDruxtConfig } from './utils/config'
 import { addDruxtDefaults, addDruxtProxy, addPrebundle, corePrebundle, DRUXT_DEFAULTS_IMPORT, druxtAnchors, druxtDefaults, druxtProxyRoutes } from './kit'
 import type { DruxtAnchorsSetting } from './anchors'
 import type { DruxtClassPolicy } from './classes'
@@ -14,12 +15,21 @@ import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
 import { DRUXT_API_BASE, normalEndpoint, trimEndSlashes } from './routes'
 import { druxtApiConflict } from './utils/routes'
 import { templateRoute } from './utils/template-route'
+import { DRUXT_PRERENDER_MANIFEST, copyFiles, fileCollector, prerenderCollector, prerenderPaths, readPrerenderPages, resolveStatic } from './utils/static'
+import type { DruxtStaticState } from './utils/static'
+import type { DruxtStaticOptions } from './runtime/types'
 
 import { DRUXT_DEVTOOLS_ICON_ROUTE, DRUXT_DEVTOOLS_ROUTE, devtoolsPage, devtoolsTab, loadDruxtTools, missingToolsMessages } from './utils/devtools'
 
+export type { DruxtPrerenderManifest, DruxtStaticOptions } from './runtime/types'
+
 /**
- * Whether Drupal answered a request and refused it, with a 4xx, as it does the wrong credentials or a role that may
- * not read. A request with no answer, or a 5xx, is Drupal being away, which another build may not meet.
+ * Whether Drupal answered a request and refused it, with a 4xx.
+ *
+ * Drupal refuses the wrong credentials this way, and a role that may not read. A request with no answer, or a 5xx,
+ * means Drupal is away. Another build may not meet that, so it is not a refusal.
+ *
+ * The status is read from the error, or from one of its causes, up to five errors deep.
  */
 const refusedByDrupal = (error: unknown): boolean => {
   for (let at = error as { response?: { status?: number }, cause?: unknown } | undefined, depth = 0; at && depth < 5; at = at.cause as typeof at, depth++) {
@@ -29,7 +39,7 @@ const refusedByDrupal = (error: unknown): boolean => {
   return false
 }
 
-/** Credentials for build-time requests; see createBuildClient. */
+/** The credentials for build-time requests. See `createBuildClient()`. */
 export interface DruxtBuildAuthOptions {
   clientId?: string
   clientSecret?: string
@@ -38,38 +48,51 @@ export interface DruxtBuildAuthOptions {
   scope?: string
 }
 
-/** `druxt.auth` in nuxt.config: druxt-auth 0.x's option names. */
+/** The `druxt.auth` options in nuxt.config. The option names are those of druxt-auth 0.x. */
 export interface DruxtAuthModuleOptions {
   clientId: string
   passwordClientId?: string
-  /** Prefer NUXT_DRUXT_AUTH_CLIENT_SECRET at runtime: a secret here is in the config. */
+  /**
+   * The Consumer's secret. Prefer NUXT_DRUXT_AUTH_CLIENT_SECRET at runtime, because a secret set here is in the config.
+   */
   clientSecret?: string
   scope?: string
   authorizeUrl?: string
   /**
-   * The login page Druxt adds, `/user/login` by default, where the `druxt-auth` middleware sends a signed-out visitor.
-   * `false` adds none, and the middleware sends the visitor to `/login`, as druxt-auth 0.x did, for the site's own page.
+   * The path of the login page Druxt adds, `/user/login` by default.
+   *
+   * The `druxt-auth` middleware sends a signed-out visitor to it. With `false`, Druxt adds no page, and the middleware
+   * sends the visitor to `/login`, as druxt-auth 0.x did. The site provides that page itself.
    */
   login?: string | false
+  /** The path of the callback page Druxt adds, `/callback` by default. */
   callback?: string
   /**
-   * Keeps the access and refresh tokens in cookies the browser's scripts can read, as 0.x did, for a module that
-   * calls Drupal directly from the browser, outside the proxy. A weaker setting: any script on the page can read the
-   * tokens. Off by default, when the proxy is on: the site's server keeps them in httpOnly cookies, and the proxy adds
-   * the Authorization header.
+   * Keeps the access and refresh tokens in cookies that the browser's scripts can read, as 0.x did.
+   *
+   * It is for a module that calls Drupal directly from the browser, outside the proxy. It is the weaker setting,
+   * because any script on the page can read the tokens.
+   *
+   * Off by default. When it is off and the proxy is on, the site's server keeps the tokens in httpOnly cookies, and the
+   * proxy adds the `Authorization` header.
    */
   exposeToken?: boolean
   /**
-   * Whether the password grant, and its `/api/_druxt/auth/token` route, are offered. Unset, they are when `clientSecret`
-   * or `passwordClientId` is set at build. Set `true` for a secret that arrives only at runtime, or for a public
-   * Consumer, which signs in with no secret. `false` offers neither: the browser gets no password route, and the route,
-   * which a session the server holds keeps for its code grant and refresh, refuses the password grant.
+   * Whether the password grant, and its `/api/_druxt/auth/token` route, are offered.
+   *
+   * - Unset: they are offered when `clientSecret` or `passwordClientId` is set at build.
+   * - `true`: they are offered. Use it for a secret that arrives only at runtime, or for a public Consumer, which signs
+   *   in with no secret.
+   * - `false`: neither is offered, and the browser gets no password route. A session the server holds keeps the route
+   *   for its code grant and refresh, and the route then refuses the password grant.
    */
   password?: boolean
 }
 
 /**
- * The `druxt` options in nuxt.config. Each Druxt module reads its own key, such as `menu`.
+ * The `druxt` options in nuxt.config.
+ *
+ * Each Druxt module reads its own key, such as `menu`.
  *
  * @example @lang js
  * export default defineNuxtConfig({
@@ -85,82 +108,139 @@ export interface DruxtAuthModuleOptions {
  * })
  */
 export interface DruxtOptions {
-  /** The Base URL of the Drupal JSON:API backend. */
+  /** The base URL of the Drupal JSON:API backend. Required. */
   baseUrl: string
-  /** The site's own origin, for links a page emits about itself, such as the canonical. Unset, the request's origin is used. Set it in production, in nuxt.config or as NUXT_PUBLIC_DRUXT_SITE_URL: the request origin, with forwarded headers, is the fallback for development and for a proxy the site trusts. An empty string counts as unset. */
+  /**
+   * The site's own origin, for links a page emits about itself, such as the canonical.
+   *
+   * Unset, the request's origin is used. An empty string counts as unset.
+   *
+   * Set it in production, in nuxt.config or as NUXT_PUBLIC_DRUXT_SITE_URL. The request's origin, with forwarded
+   * headers, is the fallback for development and for a proxy the site trusts.
+   */
   siteUrl?: string
   /** The JSON:API endpoint path, `/jsonapi` by default. */
   endpoint: string
   /**
-   * Proxy settings: `api` proxies the JSON:API, and `files` Drupal's site
-   * files directory, given as a string to name a multi-site's directory.
-   * `trustForwarded` passes on the forwarding headers a front proxy sets,
-   * which is safe only behind a proxy that sets them. It is server only, and
-   * NUXT_DRUXT_PROXY_TRUST_FORWARDED sets it at runtime.
+   * The proxy settings.
+   *
+   * - `api` proxies the JSON:API.
+   * - `files` proxies Drupal's site files directory. A string names a multi-site's directory.
+   * - `trustForwarded` passes on the forwarding headers a front proxy sets. That is safe only behind a proxy that sets
+   *   them. It is read on the server only, and NUXT_DRUXT_PROXY_TRUST_FORWARDED sets it at runtime.
    */
   proxy?: { api?: boolean, files?: boolean | string, trustForwarded?: boolean }
   /**
-   * The origin Drupal's files are served from, such as a CDN's, when not Drupal's own. A file URL the default output
-   * makes absolute, with `proxy.files` off or on a static build, is made absolute on it, else on `baseUrl`.
+   * The origin Drupal's files are served from, such as a CDN's, when it is not Drupal's own.
+   *
+   * The default output makes a file URL absolute when `proxy.files` is off, and on a static build. The URL is made
+   * absolute on this origin, or on `baseUrl` when this is unset.
    */
   filesUrl?: string
   /**
-   * The process cache, on in production unless false. It keeps the JSON:API
-   * index between server requests made without credentials, for as long as
-   * Drupal's `Cache-Control` allows and at most `ttl` seconds, and with
-   * `content` every other response too: entities, collections, views and route
-   * lookups, each area bounded by `maxSize` bytes across its consumers, 50 MB by
-   * default. A `secret` turns on `POST /api/_druxt/cache/clear`. Prefer
-   * NUXT_DRUXT_CACHE_SECRET at runtime.
+   * The process cache. It is on in production unless this is `false`.
+   *
+   * It keeps the JSON:API index between server requests made without credentials. An entry is kept for as long as
+   * Drupal's `Cache-Control` allows, and at most `ttl` seconds.
+   *
+   * - `content` also keeps every other response: entities, collections, views and route lookups.
+   * - `maxSize` bounds each cache area, in bytes, across its consumers. It is 50 MB by default.
+   * - `secret` turns on `POST /api/_druxt/cache/clear`. Prefer NUXT_DRUXT_CACHE_SECRET at runtime.
    */
   cache?: false | { content?: boolean, maxSize?: number, ttl?: number, sessionCookie?: string, secret?: string }
+  /** Sign-in through Drupal's Simple OAuth. See `DruxtAuthModuleOptions`. */
   auth?: DruxtAuthModuleOptions
   /**
-   * Which of Druxt's classes the default output carries: `true` for every class (the default), `false` for none, or
-   * the parts to keep, such as `{ items: false, modifiers: ['field'] }`. A plugin rewrites them with
-   * `defineDruxtClasses()`.
+   * Which of Druxt's classes the default output carries.
+   *
+   * - `true`, the default, keeps every class.
+   * - `false` keeps none.
+   * - An object names the parts to keep, such as `{ items: false, modifiers: ['field'] }`.
+   *
+   * A plugin rewrites the classes with `defineDruxtClasses()`.
    */
   classes?: DruxtClassPolicy
   /**
-   * Whether the default output names its entities and fields with `data-druxt-*` attributes, for an editor, a diff view
-   * or the site's tests to find: `'dev'`, in development only, when not set. A module that needs them in production
-   * turns them on, unless this is `false`. Read at build.
+   * Whether the default output names its entities and fields with `data-druxt-*` attributes.
+   *
+   * An editor, a diff view or the site's tests find the output by them. Unset, it is `'dev'`: on in development only. A
+   * module that needs them in production turns them on, unless this is `false`.
+   *
+   * Read at build.
    */
   anchors?: DruxtAnchorsSetting
-  /** Where development tells you a module has no wrapper: the Druxt tab in Nuxt DevTools and Vue DevTools, with a console summary (the default), or 1.x's inline messages. */
+  /**
+   * Where development tells you a module has no wrapper.
+   *
+   * - `'devtools'`, the default: the Druxt tab in Nuxt DevTools and Vue DevTools, with a console summary.
+   * - `'inline'`: 1.x's inline messages.
+   */
   develMessages?: 'devtools' | 'inline'
-  /** Build credentials, read at build only. The server's own routes read theirs at runtime, from NUXT_DRUXT_BUILD_AUTH_* or DRUXT_BUILD_*, and the browser never does. */
+  /**
+   * The static mode, for a site served with no Drupal at run time, as `nuxt generate` makes it.
+   *
+   * Unset, it follows `nitro.static`. It switches three things together:
+   *
+   * - File URLs are absolute on `filesUrl` or `baseUrl`, or on the site with `files`.
+   * - The build writes the prerender manifest, `/api/_druxt/prerender.json`.
+   * - The public config has the static flags, which `useDruxtStaticBuild()` reads.
+   *
+   * `@druxt/router` reads the manifest. Client navigation then never asks Drupal, and a page that was not built is a
+   * 404. With `hybrid`, the router asks Drupal about such a page instead.
+   *
+   * - `routes`, on by default, prerenders Drupal's published pages, through the `druxt:prerender` hook.
+   * - `files` keeps a public file's URL on the site, and copies the file into the output.
+   */
+  static?: boolean | DruxtStaticOptions
+  /**
+   * The build credentials, read at build only.
+   *
+   * The server's own routes read theirs at runtime, from NUXT_DRUXT_BUILD_AUTH_* or DRUXT_BUILD_*. The browser never
+   * reads them.
+   */
   build?: { auth?: DruxtBuildAuthOptions }
-  /** Reserved for a later release: other Drupal sites by name. 2.0 uses the flat keys, the `default` connection, and warns about any other name. */
+  /**
+   * Reserved for a later release: other Drupal sites by name.
+   *
+   * 2.0 uses the flat keys, which are the `default` connection, and warns about any other name.
+   */
   connections?: Record<string, DruxtConnectionConfig>
   [module: string]: unknown
 }
 
-// One signed-in build client per backend, endpoint and credentials, so a build signs in once.
+// One signed-in build client for each backend, endpoint and set of credentials, so a build signs in once.
 const buildClients = new Map<string, Promise<DruxtClient>>()
 
 /**
- * The client for build-time requests: schemas, languages. With build
- * credentials it signs in first, so a build can read what anonymous cannot,
- * such as restricted display configuration.
+ * Gets the client for build-time requests, such as the schemas and the languages.
  *
- * `druxt.build.auth` takes `clientId` and `clientSecret` for Simple OAuth's
- * client credentials grant, or adds `username` and `password` for the password
- * grant. Each falls back to DRUXT_BUILD_CLIENT_ID, DRUXT_BUILD_CLIENT_SECRET,
- * DRUXT_BUILD_USERNAME and DRUXT_BUILD_PASSWORD. They stay in the build: the
- * server's own routes read theirs at runtime, from the private runtime config
- * or the same variables.
+ * With build credentials it signs in first. A build can then read what an anonymous visitor cannot, such as restricted
+ * display configuration.
+ *
+ * `druxt.build.auth` takes:
+ *
+ * - `clientId` and `clientSecret`, for Simple OAuth's client credentials grant.
+ * - `username` and `password` as well, for the password grant.
+ *
+ * Each falls back to its variable: DRUXT_BUILD_CLIENT_ID, DRUXT_BUILD_CLIENT_SECRET, DRUXT_BUILD_USERNAME and
+ * DRUXT_BUILD_PASSWORD.
+ *
+ * The credentials stay in the build. The server's own routes read theirs at runtime, from the private runtime config or
+ * the same variables.
  *
  * @param options - The druxt options.
+ * @returns The client. One client is shared for each backend, endpoint and set of credentials.
  */
 export const createBuildClient = (options: DruxtOptions): Promise<DruxtClient> =>
   signedInClient(buildClients, options.baseUrl, clientOptions(options as unknown as DruxtConfig) as Record<string, unknown>, buildAuth(options))
 
 /**
- * The build's credentials: `druxt.build.auth`, each key falling back to its
- * `DRUXT_BUILD_*` variable at build.
+ * Gets the build's credentials.
+ *
+ * They come from `druxt.build.auth`. Each key falls back to its `DRUXT_BUILD_*` variable, read at build.
  *
  * @param options - The druxt options.
+ * @returns The credentials. A key with no value is undefined.
  */
 export const buildAuth = (options: DruxtOptions): DruxtBuildAuthOptions => {
   const env = process.env
@@ -175,27 +255,29 @@ export const buildAuth = (options: DruxtOptions): DruxtBuildAuthOptions => {
 }
 
 /**
- * What to tell a site whose build read too little from Drupal, from the
- * build's credentials and the error, if any. Drupal omits what the build may
- * not read, and names the permissions it needs, which the error's message
- * keeps.
+ * Writes the hint for a site whose build read too little from Drupal.
+ *
+ * Drupal omits what the build may not read, and names the permissions it needs. The error's message keeps those names.
+ *
+ * The hint depends on the build's credentials and on the error, if any:
  *
  * - With no credentials, it names them, the scope among them.
- * - With credentials and no scope, it names the scope: a Simple OAuth token
- *   carries no roles unless a scope is requested.
- * - With credentials and a scope, and Drupal omitting resources, it names the
- *   scope's roles.
+ * - With credentials and no scope, it names the scope. A Simple OAuth token carries no roles unless a scope is
+ *   requested.
+ * - With credentials and a scope, and Drupal omitting resources, it names the scope's roles.
  * - Otherwise it is empty.
  *
  * @param auth - The build's credentials, from `buildAuth()`.
  * @param error - The build's error, when it failed.
+ * @returns The hint, or an empty string.
  *
  * @example @lang ts
  * logger.error(`Druxt schemas could not be generated: ${error.message} ${buildCredentialsHint(buildAuth(options), error)}`)
  */
 export const buildCredentialsHint = (auth: DruxtBuildAuthOptions, error?: Error): string => {
-  // DruxtPermissionsError (@druxt/client) puts Drupal's omission in its message as "Required permissions:" and a list,
-  // and DruxtClient.error() keeps it as the message's detail. Matching that text detects the omission either way.
+  // `DruxtPermissionsError`, from @druxt/client, puts Drupal's omission in its message as "Required permissions:" and a
+  // list. `DruxtClient.error()` keeps that as the detail of its own message. So matching the text detects the omission
+  // in either error.
   const omitted = /Required permissions/.test(error?.message || '')
   if (!serverAuthOptions(auth)) {
     return 'If display configuration is restricted, set build credentials in druxt.build.auth, or DRUXT_BUILD_CLIENT_ID with DRUXT_BUILD_CLIENT_SECRET, or with DRUXT_BUILD_USERNAME and DRUXT_BUILD_PASSWORD. Set DRUXT_BUILD_SCOPE to a scope that grants a role with the permissions Drupal names.'
@@ -207,24 +289,28 @@ export const buildCredentialsHint = (auth: DruxtBuildAuthOptions, error?: Error)
   return ''
 }
 
-/** A Drupal language and the URL prefix Drupal serves it under, empty for none. */
+/** A Drupal language, and the URL prefix Drupal serves it under. The prefix is empty when it has none. */
 export interface DruxtLanguage {
   langcode: string
   prefix: string
-  /** Set on the default language: the one Drupal answers in at the unprefixed endpoint. */
+  /** Set on the default language, the one Drupal answers in at the unprefixed endpoint. */
   default?: true
   /**
-   * The language's label, as Drupal names it in its own language, such as `Spanish`. Drupal's configurable language
-   * holds no native name, such as `Español`, so a switcher that wants one maps it from the langcode.
+   * The language's label, as Drupal names it in its own language, such as `Spanish`.
+   *
+   * Drupal's configurable language holds no native name, such as `Español`. A switcher that wants one maps it from the
+   * langcode.
    */
   label?: string
 }
 
-// One read per build, shared by core, the router and the entity module, by backend and endpoint. Outside a build,
-// such as in a test, one read per process.
+// The language reads, one for each backend and endpoint. In a build, core, the router and the entity module share one
+// read. Outside a build, such as in a test, the process shares one.
 const buildLanguageReads = new WeakMap<object, Map<string, Promise<DruxtLanguage[]>>>()
 const processLanguageReads = new Map<string, Promise<DruxtLanguage[]>>()
-// Warned once per process, though core, the router and the entity module each read the languages.
+
+// The messages already warned. Core, the router and the entity module each read the languages, so each message is
+// warned once in a process.
 const warned = new Set<string>()
 const warnOnce = (message: string): void => {
   if (warned.has(message)) return
@@ -233,24 +319,22 @@ const warnOnce = (message: string): void => {
 }
 
 /**
- * Drupal's languages and their URL prefixes, read at build through the build
- * client. Drupal keeps the prefixes in `language.negotiation`, which no
- * JSON:API resource holds, so they are read from Drupal's own answers, asked
- * for without credentials, so no negotiator by user or session takes part:
+ * Reads Drupal's languages and their URL prefixes, at build, through the build client.
  *
- * - An unprefixed request is answered in the default language, which Drupal
- *   names in its `Content-Language` header, and the index's `self` link
- *   carries that language's prefix, empty when it has none.
- * - Each other language is asked for under its langcode, and Drupal answers
- *   in it, with its index at that prefix, when the langcode is its prefix.
+ * Drupal keeps the prefixes in `language.negotiation`, which no JSON:API resource holds. So they are read from Drupal's
+ * own answers. The questions are asked without credentials, so no negotiator by user or session takes part:
  *
- * - A language's configured prefix comes from decoupled settings when Drupal
- *   publishes `language.negotiation` to a visitor, which reads a prefix that is
- *   neither the langcode nor the default language's.
+ * - An unprefixed request is answered in the default language, which Drupal names in its `Content-Language` header. The
+ *   index's `self` link carries that language's prefix, which is empty when it has none.
+ * - When Drupal publishes `language.negotiation` to a visitor, through decoupled settings, a language's configured
+ *   prefix is read from it. Only this reads a prefix that is neither the langcode nor the default language's.
+ * - Each other language is asked for under its langcode. When the langcode is its prefix, Drupal answers in that
+ *   language, with its index at that prefix.
  *
- * A language whose prefix cannot be read, from an answer that does not match
- * or a failed request, keeps its langcode as its prefix, with a build warning,
- * as 1.x assumed for every language. One build reads once, for every module.
+ * A language whose prefix cannot be read keeps its langcode as its prefix, with a build warning. That happens when an
+ * answer does not match, and when a request fails. 1.x assumed the langcode for every language.
+ *
+ * One build reads once, for every module. A read that fails is forgotten, so the next call reads again.
  *
  * @param options - The druxt options.
  * @returns The languages, without `und` and `zxx`.
@@ -276,14 +360,15 @@ export const getLanguages = (options: DruxtOptions): Promise<DruxtLanguage[]> =>
   return read
 }
 
+/** Reads the languages from Drupal. `getLanguages()` shares one call of this between its callers. */
 const readLanguages = async (options: DruxtOptions): Promise<DruxtLanguage[]> => {
   const endpoint = normalEndpoint(options.endpoint)
   const type = 'configurable_language--configurable_language'
   // The probes ask as a visitor, through a client that never signs in.
   const anonymous = await signedInClient(buildClients, options.baseUrl, clientOptions(options as unknown as DruxtConfig) as Record<string, unknown>, {})
 
-  // The language Drupal answers an anonymous request at `path` in, the path its index names itself at, and the resource
-  // types it lists. Nothing, for a failed request.
+  // Asks Drupal for `path` as a visitor. The answer has the language Drupal answered in, the path the index names
+  // itself at, under the base URL, and the resource types the index lists. A failed request gives none of them.
   const answer = async (path: string): Promise<{ langcode?: string, self?: string, types?: string[] }> => {
     try {
       const response = await anonymous.request<{ links?: Record<string, { href?: string }> }>(path, { auth: false, validateStatus: () => true })
@@ -302,26 +387,30 @@ const readLanguages = async (options: DruxtOptions): Promise<DruxtLanguage[]> =>
     }
   }
 
-  // The prefix of an index at `/<prefix><endpoint>`, or empty at the endpoint itself. Any other path is not trusted.
+  // The prefix of an index at `/<prefix><endpoint>`. It is empty for the endpoint itself. Any other path is not
+  // trusted, and gives undefined.
   const prefixOf = (self?: string): string | undefined => {
     if (!self?.endsWith(endpoint)) return undefined
     const prefix = self.slice(0, -endpoint.length)
     if (!prefix) return ''
     return /^\/[^/]+$/.test(prefix) ? prefix.slice(1) : undefined
   }
-  // The unprefixed index first, as a visitor. Not listing the language type, the language module is not installed, so
-  // the site has one language and no prefixes, and nothing more is read: no sign-in, no other request. The index lists
-  // every resource type, whatever the reader may see.
+
+  // The unprefixed index is read first, as a visitor. The index lists every resource type, whatever the reader may see.
+  //
+  // When it does not list the language type, the language module is not installed. The site then has one language and
+  // no prefixes, and nothing more is read: no sign-in, and no other request.
+  //
   // A residual risk: core's JSON:API lists every resource type to every reader, but a contrib module could change the
-  // entry point by role, and hide the language type from a visitor while the build's account may see it. That site
-  // would read as having one language. None known does so.
+  // entry point by role. It could hide the language type from a visitor while the build's account may see it. That site
+  // would read as having one language. No known module does so.
   const unprefixed = await answer(endpoint)
   if (unprefixed.types && !unprefixed.types.includes(type)) return []
 
-  // The languages, through the build's client, signed in when it has credentials.
+  // The languages are read through the build's client, which is signed in when it has credentials.
   const druxt = await createBuildClient(options)
   if (!unprefixed.types) {
-    // The anonymous index failed: the build's own says whether the language module is installed.
+    // The anonymous index failed, so the build's own index says whether the language module is installed.
     const entry = await druxt.getIndex(type)
     if (!entry || !entry.href) return []
   }
@@ -339,8 +428,8 @@ const readLanguages = async (options: DruxtOptions): Promise<DruxtLanguage[]> =>
   }
   const defaultPrefix = unprefixed.langcode ? prefixOf(unprefixed.self) : undefined
 
-  // Drupal's configured prefixes, when the decoupled_settings module publishes `language.negotiation` to a visitor:
-  // the one way to read a prefix that is neither the langcode nor the default language's. Nothing, otherwise.
+  // Drupal's configured prefixes, when the decoupled_settings module publishes `language.negotiation` to a visitor.
+  // Only this reads a prefix that is neither the langcode nor the default language's. Undefined otherwise.
   const configured = await (async (): Promise<Record<string, string> | undefined> => {
     try {
       const response = await anonymous.request<{ data?: { attributes?: { settings?: Record<string, { url?: { prefixes?: unknown } } | undefined> } } }>(`${endpoint}/decoupled/settings`, { auth: false, validateStatus: () => true })
@@ -353,7 +442,7 @@ const readLanguages = async (options: DruxtOptions): Promise<DruxtLanguage[]> =>
     }
   })()
 
-  // Each other language's probe at once.
+  // The other languages are probed at the same time.
   const prefixes = await Promise.all(langcodes.map(async (langcode): Promise<string> => {
     if (langcode === unprefixed.langcode && defaultPrefix !== undefined) return defaultPrefix
     if (configured && typeof configured[langcode] === 'string') return configured[langcode]
@@ -370,9 +459,10 @@ const readLanguages = async (options: DruxtOptions): Promise<DruxtLanguage[]> =>
 }
 
 /**
- * The URL prefixes Drupal serves its languages under, from `getLanguages()`:
- * Drupal's configured prefixes, such as `/english` for `en`. A language with
- * no prefix, usually the default, is served unprefixed and is left out.
+ * Gets the URL prefixes Drupal serves its languages under, from `getLanguages()`.
+ *
+ * They are Drupal's configured prefixes, such as `/english` for `en`. A language with no prefix is served unprefixed,
+ * and is left out. That is usually the default language.
  *
  * @param options - The module options.
  * @returns Prefixes such as `/en`.
@@ -383,9 +473,12 @@ export const getLanguagePrefixes = async (options: DruxtOptions): Promise<string
 /**
  * The Druxt core Nuxt module.
  *
- * Provides the `$druxt` client, the Pinia store the Druxt modules share, the
- * DruxtWrapper and DruxtDebug components, and global registration of every
- * `Druxt*` component so a site overrides rendering by naming a component.
+ * It provides:
+ *
+ * - The `$druxt` client.
+ * - The Pinia store the Druxt modules share.
+ * - The DruxtWrapper and DruxtDebug components.
+ * - Global registration of every `Druxt*` component, so a site overrides rendering by naming a component.
  *
  * @example <caption>Installing the Druxt module</caption> @lang js
  * // nuxt.config.ts
@@ -412,9 +505,10 @@ export default defineNuxtModule<DruxtOptions>({
 
   defaults: {
     baseUrl: '',
-    // Present, so NUXT_PUBLIC_DRUXT_SITE_URL can set it: Nuxt applies the environment only to keys that exist.
+    // The key is present so NUXT_PUBLIC_DRUXT_SITE_URL can set it. Nuxt applies the environment only to keys that
+    // exist.
     siteUrl: '',
-    // Present, so NUXT_PUBLIC_DRUXT_FILES_URL can set it.
+    // The key is present so NUXT_PUBLIC_DRUXT_FILES_URL can set it.
     filesUrl: '',
     endpoint: '/jsonapi',
     proxy: { api: false },
@@ -429,19 +523,24 @@ export default defineNuxtModule<DruxtOptions>({
     }
     options.baseUrl = options.baseUrl.replace(/\/$/, '')
     if (options.siteUrl) options.siteUrl = trimEndSlashes(options.siteUrl)
-    // One spelling, for the proxy's paths, the language read and the app's runtime config.
+
+    // One spelling of the endpoint, for the proxy's paths, the language read and the app's runtime config.
     options.endpoint = normalEndpoint(options.endpoint)
-    // Drupal's paths on the site stay clear of Druxt's own routes. Each language's prefix is checked once it is read.
+
+    // Drupal's paths on the site must stay clear of Druxt's own routes. Each language's prefix is checked later, once
+    // it is read.
     const filesPath = options.proxy?.files ? `/sites/${typeof options.proxy.files === 'string' ? options.proxy.files : 'default'}/files` : undefined
     const conflict = druxtApiConflict({ endpoints: [options.endpoint], files: filesPath ? [filesPath] : [] })
     if (conflict) throw new Error(`[druxt] ${conflict}`)
-    // An unknown value, such as 1.x's removed 'indicator', falls back to the development tools, so it is named once.
+
+    // An unknown value, such as 1.x's removed 'indicator', falls back to the development tools. The warning names it
+    // once.
     const develMessages: unknown = options.develMessages
     if (develMessages !== undefined && develMessages !== 'devtools' && develMessages !== 'inline') {
       logger.warn(`\`druxt.develMessages\` is ${JSON.stringify(develMessages)}, which is not a valid value: use 'devtools' or 'inline'. The development tools are used.`)
     }
 
-    // The site's anchors setting: modules that require anchors settle against it once every module is in.
+    // The site's anchors setting. Modules that require anchors are settled against it once every module is installed.
     const anchorsSetting: unknown = options.anchors
     if (anchorsSetting !== undefined && anchorsSetting !== true && anchorsSetting !== false && anchorsSetting !== 'dev') {
       logger.warn(`\`druxt.anchors\` is ${JSON.stringify(anchorsSetting)}, which is not a valid value: use true, false or 'dev'. 'dev' is used.`)
@@ -450,42 +549,45 @@ export default defineNuxtModule<DruxtOptions>({
     const siteAnchors = anchorsSetting === true || anchorsSetting === false || anchorsSetting === 'dev'
     anchors.setting = siteAnchors ? anchorsSetting : 'dev'
 
-    // Keep the JSON:API index between server requests that carry no credentials, in production only. The proxy still
-    // reads the session cookie's pattern in development.
+    // The process cache keeps the JSON:API index between server requests that carry no credentials. It is on in
+    // production only. The session cookie's pattern is read first, because the proxy still reads it in development.
     const sessionCookie = (options.cache || undefined)?.sessionCookie
     if (options.cache !== false) {
       options.cache = nuxt.options.dev ? false : { ...options.cache }
     }
 
-    // Auth, which druxt-auth 0.x added on @nuxtjs/auth-next.
+    // Auth, which druxt-auth 0.x built on @nuxtjs/auth-next.
     if (options.auth) {
       if (!options.auth.clientId) throw new Error('[druxt] `druxt.auth` requires a clientId.')
       options.auth = {
         login: '/user/login',
         callback: '/callback',
         ...options.auth,
-        // Whether the password grant is offered. An explicit true or false wins, for a secret that arrives only at
-        // runtime or a public Consumer with none. Unset, a build secret or a Consumer of its own offers it.
+        // Whether the password grant is offered. An explicit `true` or `false` wins. `true` is for a secret that
+        // arrives only at runtime, or for a public Consumer with no secret. Unset, the grant is offered when the build
+        // has a secret, or the grant has a Consumer of its own.
         password: options.auth.password ?? !!(options.auth.clientSecret || options.auth.passwordClientId),
-        // The site's server holds the session, with the tokens out of the browser's reach, wherever the proxy carries
-        // the browser's requests to Drupal.
+        // The site's server holds the session wherever the proxy carries the browser's requests to Drupal. The tokens
+        // are then out of the browser's reach.
         session: !!options.proxy?.api && !options.auth.exposeToken,
       } as typeof options.auth
-      // On Simple OAuth 6 a token holds the roles its scopes name, and none without one.
+
+      // On Simple OAuth 6, a token holds the roles its scopes name. With no scope it holds none.
       if (!options.auth.scope) {
         logger.warn('DRUXT_E01004: druxt.auth signs visitors in with no druxt.auth.scope. On Simple OAuth 6 a token holds only the roles its scopes name, so a signed-in editor reads less than an anonymous visitor, and Drupal refuses what anonymous may read. Set druxt.auth.scope to the scopes of the roles your editors need, separated by spaces.')
       }
     }
 
-    // The options, split once: the secrets into the private runtime config,
-    // on the server only, and everything else into the public one, which
-    // reaches the browser. Each private key exists, empty unless set, so
-    // NUXT_DRUXT_AUTH_CLIENT_SECRET, NUXT_DRUXT_CACHE_SECRET and
-    // NUXT_DRUXT_BUILD_AUTH_* set them at runtime. A secret is never read from
-    // the build's environment, which would bake it into the output.
+    // The options are split once. The secrets go into the private runtime config, on the server only. Everything else
+    // goes into the public one, which reaches the browser.
+    //
+    // Each private key exists, and is empty unless set. So NUXT_DRUXT_AUTH_CLIENT_SECRET, NUXT_DRUXT_CACHE_SECRET and
+    // NUXT_DRUXT_BUILD_AUTH_* set them at runtime. A secret is never read from the build's environment, because that
+    // would bake it into the output.
     const split = splitDruxtConfig(options, sessionCookie)
-    // Out of the options other modules and the devtools read too. The build's
-    // own credentials stay, for modules that read Drupal at build time.
+
+    // The secrets are also taken out of the options, which other modules and the devtools read. The build's own
+    // credentials stay, for modules that read Drupal at build time.
     const given = (nuxt.options as unknown as { druxt?: DruxtOptions }).druxt
     if (given?.auth?.clientSecret) {
       const { clientSecret, ...auth } = given.auth
@@ -497,7 +599,8 @@ export default defineNuxtModule<DruxtOptions>({
       void secret
       given.cache = cache
     }
-    // The ignored connections carry credentials too: they are not read, and not left in the options either.
+
+    // The ignored connections carry credentials too. They are not read, and they are not left in the options either.
     const connections = (given as { connections?: Record<string, Record<string, Record<string, unknown> | undefined>> } | undefined)?.connections
     // `connections.default` is the flat keys, so an entry for it is not read either.
     const stripped = [...split.ignored, ...(connections && 'default' in connections ? ['default'] : [])]
@@ -514,13 +617,17 @@ export default defineNuxtModule<DruxtOptions>({
       logger.warn(`\`druxt.connections.${name}\` is ignored: named connections are reserved for a later release, and the flat \`druxt\` keys are the default connection.`)
     }
     nuxt.options.runtimeConfig.druxt = defu(nuxt.options.runtimeConfig.druxt as object | undefined, split.private)
-    // Through a plain record: Nuxt types the public config from whichever app was prepared.
+
+    // The public config is written through a plain record, because Nuxt types it from whichever app was prepared.
     const publicConfig = nuxt.options.runtimeConfig.public as Record<string, unknown>
     publicConfig.druxt = defu(publicConfig.druxt as object | undefined, split.public)
 
-    // The modules' default settings, written into the build, so the app and the server resolve them below Drupal's
-    // settings and the site's config. Not the public runtime config, which outranks Drupal and which environment
-    // variables change. Read when written, after every module has registered its own.
+    // The modules' default settings are written into the build. The app and the server resolve them below Drupal's
+    // settings and the site's config.
+    //
+    // They are not put in the public runtime config, because that outranks Drupal, and environment variables change it.
+    //
+    // The template reads the defaults when it is written, after every module has registered its own.
     const defaults = addTemplate({
       filename: 'druxt/defaults.mjs',
       write: true,
@@ -541,11 +648,14 @@ export default defineNuxtModule<DruxtOptions>({
       ].join('\n'),
     }, { nuxt: true, nitro: true })
 
-    // The site's languages, read once for the app's map and the proxy's prefixes, so the two agree. A read Drupal
-    // refuses, as with the wrong build credentials, stops a production build: the site would otherwise be one with
-    // one language and only a warning to say so, from a mistake a rebuild will not mend. A read with no answer, as
-    // when the build has no way to Drupal, warns once and reads as none, and so does any failure in development: no
-    // default language is known, and the proxy serves only the unprefixed endpoint.
+    // The site's languages are read once, for the app's map and the proxy's prefixes, so the two agree.
+    //
+    // - A read that Drupal refuses, as with the wrong build credentials, stops a production build. Otherwise the site
+    //   would be built with one language and only a warning to say so, from a mistake a rebuild does not mend.
+    // - A read with no answer, as when the build cannot reach Drupal, warns once and reads as no languages.
+    // - Any failure in development does the same.
+    //
+    // With no languages read, no default language is known, and the proxy serves only the unprefixed endpoint.
     let siteLanguages: Promise<DruxtLanguage[]> | undefined
     const readSiteLanguages = () => siteLanguages ||= getLanguages(options).catch((error: unknown) => {
       const proxied = options.proxy?.api ? `, and the proxy serves only the unprefixed ${options.endpoint}, not its language-prefixed paths, until a build reads them` : ''
@@ -554,12 +664,13 @@ export default defineNuxtModule<DruxtOptions>({
       useLogger('@druxt/core').warn(`The site's languages could not be read, so no default language is known${proxied}: ${reason}`)
       return []
     })
-    // Read now in a production build, so a refusal stops it here with its own message, not as a template that
-    // could not be written.
+
+    // A production build reads now. A refusal then stops the build here, with its own message, and not as a template
+    // that could not be written.
     if (!nuxt.options._prepare && !nuxt.options.dev) await readSiteLanguages()
 
-    // The site's languages and their prefixes, read at build, for the app and the server: the language served
-    // unprefixed is the default, the language of every unprefixed page.
+    // The site's languages and their prefixes, as read at build, for the app and the server. The language served
+    // unprefixed is the default: the language of every unprefixed page.
     const languages = addTemplate({
       filename: 'druxt/languages.mjs',
       write: true,
@@ -586,19 +697,23 @@ export default defineNuxtModule<DruxtOptions>({
       addServerHandler({ route: `${DRUXT_API_BASE}/cache/clear`, handler: resolve('./runtime/server/routes/cacheClear') })
     }
 
-    // Where Druxt's server routes keep what they hold between requests. Memory
-    // by default: a site shares it across instances by mounting a driver of its own.
+    // Where Druxt's server routes keep what they hold between requests. It is memory by default. A site shares it
+    // across instances by mounting a driver of its own.
     nuxt.options.nitro.storage = defu(nuxt.options.nitro.storage, { druxt: { driver: 'memory' } })
-    // Settings from Drupal, as a decoupled-settings fetcher stores them: read once per request, on demand.
+
+    // Settings from Drupal, as a decoupled-settings fetcher stores them. They are read once for each request, on
+    // demand.
     addServerPlugin(await resolvePath(resolve('./runtime/server/plugins/druxt')))
+    addServerPlugin(await resolvePath(resolve('./runtime/server/plugins/origin')))
     addServerImports([
       { name: 'useDruxtServerSettings', from: resolve('./runtime/server/settings') },
       { name: 'storeDrupalSettings', from: resolve('./runtime/server/storage') },
     ])
 
-    // Proxy Drupal through Nitro, which replaces @nuxtjs/proxy: the JSON:API under each language's configured prefix,
-    // and the files directory, `sites/default/files` unless a site is named.
-    // Druxt's own routes, under DRUXT_API_BASE, answer before the proxy, so a JSON:API at `/api` leaves them in place.
+    // Drupal is proxied through Nitro, which replaces @nuxtjs/proxy. The JSON:API is proxied under each language's
+    // configured prefix. The files directory is `sites/default/files` unless a site is named.
+    //
+    // Druxt's own routes, under DRUXT_API_BASE, answer before the proxy. So a JSON:API at `/api` leaves them in place.
     if (options.proxy?.api) {
       const read = nuxt.options._prepare ? [] : await readSiteLanguages()
       const prefixes = ['', ...read.filter((language) => language.prefix).map((language) => `/${language.prefix}`)]
@@ -607,9 +722,11 @@ export default defineNuxtModule<DruxtOptions>({
       for (const prefix of prefixes) addDruxtProxy(nuxt, `${prefix}${options.endpoint}/**`)
     }
     if (filesPath) addDruxtProxy(nuxt, `${filesPath}/**`)
-    // One handler for every proxied path, which reads the base URL at request time, so a runtime
-    // NUXT_PUBLIC_DRUXT_BASE_URL moves the browser's requests with the server's. Registered once every module is in,
-    // as the router adds its own path.
+
+    // One handler serves every proxied path. It reads the base URL at request time, so a runtime
+    // NUXT_PUBLIC_DRUXT_BASE_URL moves the browser's requests along with the server's.
+    //
+    // The handler is registered once every module is installed, because the router adds a path of its own.
     const proxyRoutes = addTemplate({
       filename: 'druxt/proxy-routes.mjs',
       write: true,
@@ -629,8 +746,73 @@ export default defineNuxtModule<DruxtOptions>({
       ].join('\n'),
     }, { nuxt: true, nitro: true })
     const proxyHandler = resolve('./runtime/server/routes/proxy')
+
+    // A static build, as `nuxt generate` makes it, has no server to proxy Drupal's files. So the default output makes
+    // their URLs absolute. The browser reads the static flag from the public config, so hydration renders the same
+    // URLs.
+    let staticState: DruxtStaticState = { enabled: false, routes: false, files: false, hybrid: false }
     nuxt.hook('modules:done', () => {
-      // A route ending in `/**` matches below its path, so the path itself, such as the JSON:API index, is added too.
+      staticState = resolveStatic(options.static, !!((nuxt.options as { _generate?: boolean })._generate || nuxt.options.nitro?.static))
+      // Drupal's address stays out of the pages when nothing in the browser uses it.
+      if (hidesBaseUrl(options, staticState)) (publicConfig.druxt as Record<string, unknown>).baseUrlHidden = true
+      if (!staticState.enabled) return
+      ;(publicConfig.druxt as Record<string, unknown>).staticBuild = true
+      // With `static.files`, a public file's URL stays on the site, where the build copies the file.
+      if (staticState.files) (publicConfig.druxt as Record<string, unknown>).staticFiles = true
+      // With `static.hybrid`, a page the build did not generate is still asked of Drupal.
+      if (staticState.hybrid) (publicConfig.druxt as Record<string, unknown>).staticHybrid = true
+      if (options.proxy?.files && !staticState.files) {
+        logger.warn(`DRUXT_E01002: druxt.proxy.files applies only to a server deployment. A static build has no proxy, so Drupal's file URLs are absolute on ${options.filesUrl || options.baseUrl}. Set druxt.static.files to copy the files into the build.`)
+      }
+    })
+
+    // The pages a static build prerenders. They are Drupal's published pages under each language's prefix, and then
+    // whatever the `druxt:prerender` hook adds or removes. Nitro's own routes, and the links it crawls, are added as
+    // usual.
+    nuxt.hook('nitro:config', async (nitroConfig) => {
+      if (!staticState.enabled || nuxt.options._prepare) return
+      const routes = new Set<string>()
+      // A read of the pages that fails stops the build, and names what it could not list. A static site that is missing
+      // those pages is worse. The languages are the ones the app and the proxy read, so the three agree.
+      if (staticState.routes) {
+        const languages = await readSiteLanguages()
+        for (const path of prerenderPaths(languages, await readPrerenderPages(await createBuildClient(options), languages, staticState.types))) routes.add(path)
+      }
+      await nuxt.callHook('druxt:prerender', routes)
+      if (!routes.size) return
+      nitroConfig.prerender ||= {}
+      nitroConfig.prerender.routes = [...new Set([...(nitroConfig.prerender.routes || []), ...routes])]
+    })
+
+    // The prerender manifest lists the pages the build generated and the redirect pages it wrote. It is for the
+    // browser. There, @druxt/router follows a redirect page from it, and answers a page that was not built with a 404.
+    //
+    // With `static.files`, the files the pages name are found in each page's HTML and payload, as they are written.
+    // They are copied into the output once the prerender is done.
+    nuxt.hook('nitro:init', (nitro) => {
+      if (!staticState.enabled) return
+      const collect = prerenderCollector()
+      const files = fileCollector(nuxt.options.app.baseURL)
+      nitro.hooks.hook('prerender:generate', (route) => {
+        collect.add(route)
+        if (staticState.files && !route.error && /\.(?:html|json)$/.test(route.fileName || '')) {
+          const contents = route.contents
+          if (typeof contents === 'string') files.scan(contents)
+        }
+      })
+      nitro.hooks.hook('prerender:done', async () => {
+        if (staticState.files) {
+          const copied = await copyFiles(files.files, { origin: options.filesUrl || options.baseUrl, publicDir: nitro.options.output.publicDir, warn: (message) => logger.warn(message) })
+          logger.info(`Copied ${copied} of ${files.files.length} files the pages name from Drupal into the static build.`)
+        }
+        const file = join(nitro.options.output.publicDir, DRUXT_PRERENDER_MANIFEST)
+        await mkdir(dirname(file), { recursive: true })
+        await writeFile(file, `${JSON.stringify(collect.manifest())}\n`)
+      })
+    })
+    nuxt.hook('modules:done', () => {
+      // A route ending in `/**` matches the paths below it. So the path itself, such as the JSON:API index, is added as
+      // a route too.
       const routes = druxtProxyRoutes(nuxt).flatMap((route) => route.endsWith('/**') ? [route.slice(0, -3), route] : [route])
       for (const route of new Set(routes)) addServerHandler({ route, handler: proxyHandler })
     })
@@ -642,22 +824,27 @@ export default defineNuxtModule<DruxtOptions>({
     }
 
     addPlugin(resolve('./runtime/plugins/druxt'))
+    addPlugin({ src: resolve('./runtime/plugins/origin.server'), mode: 'server' })
     addImports({ name: 'useDruxtClient', from: resolve('./runtime/composables') })
     addImports({ name: 'useDruxtStore', from: resolve('./runtime/store') })
-    // Editing: the drafts every editor shares, and whether the session may edit. On unless the site turns it off.
+
+    // Editing: the drafts every editor shares, and whether the session may edit. It is on unless the site turns it off.
     addImports({ name: 'useDruxtEditStore', from: resolve('./runtime/edit-store') })
     addImports({ name: 'useDruxtEditing', from: resolve('./runtime/editing') })
     addDruxtDefaults(nuxt, { editing: { enabled: true, destination: 'jsonapi', persistDrafts: true } })
     for (const name of ['useDruxtSettings', 'setDrupalSettings']) {
       addImports({ name, from: resolve('./runtime/settings') })
     }
-    // The class policy: every class unless the site or Drupal says otherwise. A plugin rewrites them with a hook.
+
+    // The class policy: every class, unless the site or Drupal says otherwise. A plugin rewrites the classes with a
+    // hook.
     addDruxtDefaults(nuxt, { classes: true })
     for (const name of ['defineDruxtClasses', 'useDruxtClasses']) {
       addImports({ name, from: resolve('./runtime/classes') })
     }
     addImports({ name: 'useDruxtAnchors', from: resolve('./runtime/anchors') })
     addImports({ name: 'useDruxtFileUrl', from: resolve('./runtime/files') })
+
     // What a site's own modules and wrappers are built from, and the languages the build read.
     for (const name of ['useDruxtModule', 'useDruxtModuleContext', 'druxtModuleProps', 'druxtModuleEmits', 'useDruxtDevtools', 'useDruxtPageTitle', 'useDruxtLanguages']) {
       addImports({ name, from: resolve('./runtime/index') })
@@ -666,19 +853,21 @@ export default defineNuxtModule<DruxtOptions>({
 
     const auth = options.auth
     if (auth) {
-      // The browser's token requests and userinfo, on this origin.
+      // The browser's token and userinfo requests, proxied on this origin.
       if (options.proxy?.api) {
         for (const path of ['/oauth/token', '/oauth/userinfo']) addDruxtProxy(nuxt, path)
       }
-      // Registered whenever the password grant is offered, or the server holds the session, whose sign-in, refresh and
-      // sign-out run through it. The secret, if any, is read at runtime.
+
+      // The token route is registered when the password grant is offered, or when the server holds the session. A
+      // session's sign-in, refresh and sign-out run through it. The secret, if any, is read at runtime.
       const session = (auth as { session?: boolean }).session
       if (auth.password || session) {
         addServerHandler({ route: `${DRUXT_API_BASE}/auth/token`, method: 'post', handler: resolve('./runtime/server/routes/token') })
       }
       if (session) addServerHandler({ route: `${DRUXT_API_BASE}/auth/logout`, method: 'post', handler: resolve('./runtime/server/routes/logout') })
 
-      // With the name of the error its sign-ins reject with while signed in, so a site tells the refusal apart.
+      // `DRUXT_AUTH_SIGNED_IN` is the name of the error a sign-in rejects with while signed in. A site tells that
+      // refusal apart by it.
       for (const name of ['useDruxtAuth', 'DRUXT_AUTH_SIGNED_IN']) addImports({ name, from: resolve('./runtime/auth') })
       addRouteMiddleware({ name: 'druxt-auth', path: resolve('./runtime/middleware/auth') })
       addComponent({ name: 'DruxtAuthLogin', filePath: await resolvePath(resolve('./runtime/components/DruxtAuthLogin')), global: true })
@@ -696,30 +885,38 @@ export default defineNuxtModule<DruxtOptions>({
       })
     }
 
-    // DruxtWrapper is registered sync: it renders on nearly every page, so loading it lazily buys nothing and wraps
+    // DruxtWrapper is registered sync. It renders on nearly every page, so loading it lazily gains nothing, and wraps
     // each one in an async wrapper instance. DruxtDebug renders on few pages, so it stays lazy and out of the entry.
     addComponent({ name: 'DruxtWrapper', filePath: resolve('./runtime/components/DruxtWrapper.vue'), global: 'sync' })
     addComponent({ name: 'DruxtDebug', filePath: resolve('./runtime/components/DruxtDebug.vue'), global: true })
-    // The development template tool: creates a wrapper component file from the
-    // module a developer is looking at. Development only, and only for this
-    // machine: the Host must be loopback, which a tunnel's public host is not.
+
+    // The development template tool creates a wrapper component file from the module a developer is looking at. It is
+    // for development only, and only for this machine: the Host must be loopback, which a tunnel's public host is not.
     if (nuxt.options.dev) {
       const componentsDir = join(nuxt.options.srcDir, 'components')
       addDevServerHandler({ route: `${DRUXT_API_BASE}/template`, handler: templateRoute(componentsDir) })
     }
+
     // A production build gets a DruxtDevelTemplate that renders nothing, so none of the tool's markup ships.
     addComponent({
       name: 'DruxtDevelTemplate',
       filePath: nuxt.options.dev ? resolve('./runtime/components/DruxtDevelTemplate.vue') : await resolvePath(resolve('./runtime/components/DruxtDevelTemplateProduction')),
       global: true,
     })
-    // The development tools, in development only, from optional packages: @druxt/devtools for the model, the element
-    // and the console summary, @nuxt/devtools-kit for the Nuxt DevTools tab, @vue/devtools-api for Vue DevTools. Each
-    // is imported here, never by a file a production build reads, and a missing one is skipped.
+
+    // The development tools come from optional packages, in development only:
+    //
+    // - @druxt/devtools, for the model, the element and the console summary.
+    // - @nuxt/devtools-kit, for the Nuxt DevTools tab.
+    // - @vue/devtools-api, for Vue DevTools.
+    //
+    // Each is imported here, and never by a file a production build reads. A missing one is skipped.
     const tools = nuxt.options.dev ? await loadDruxtTools((name) => import(name), logger) : undefined
     const hasNuxtDevtools = () => hasNuxtModule('@nuxt/devtools', nuxt) || hasNuxtModule('@nuxt/devtools-nightly', nuxt)
     if (tools) nuxt.hook('modules:done', () => { for (const message of missingToolsMessages(tools, hasNuxtDevtools())) logger.info(message) })
-    // What development may load: Nuxt DevTools in the app, read once every module is in, Vue DevTools' API, and the tools.
+
+    // What development may load: Nuxt DevTools in the app, Vue DevTools' API, and the Druxt tools. Whether the app has
+    // Nuxt DevTools is read once every module is installed.
     addTemplate({
       filename: 'druxt/devtools.mjs',
       getContents: () => [
@@ -729,7 +926,9 @@ export default defineNuxtModule<DruxtOptions>({
         '',
       ].join('\n'),
     })
-    // Whether the default output carries the anchors, and the modules that required them, settled once every module is in.
+
+    // Whether the default output carries the anchors, and the modules that required them. Both are settled once every
+    // module is installed.
     addTemplate({
       filename: 'druxt/anchors.mjs',
       // `site`, for the development tools: whether the site set `druxt.anchors` itself.
@@ -759,12 +958,14 @@ export default defineNuxtModule<DruxtOptions>({
     }, { nuxt: true })
     if (nuxt.options.dev) {
       if (tools?.druxt) {
-        // A Druxt tab in Nuxt DevTools, an inspector and timeline in Vue DevTools, and a console summary. Nothing
+        // A Druxt tab in Nuxt DevTools, an inspector and a timeline in Vue DevTools, and a console summary. Nothing
         // floats over the page, and a production build has none of it.
         addPlugin({ src: resolve('./runtime/plugins/devel'), mode: 'client' })
         addPlugin({ src: resolve('./runtime/plugins/devel-requests'), mode: 'server' })
         if (tools.kit) tools.kit.addCustomTab(devtoolsTab(), nuxt as never)
-        // The icon first: a dev server handler's route is a prefix, so the page's would answer for it too.
+
+        // The icon's route is registered first. A dev server handler's route is a prefix, so the page's handler would
+        // answer for the icon too.
         const icon = tools.druxt.druxtTabIconSvg()
         addDevServerHandler({
           route: DRUXT_DEVTOOLS_ICON_ROUTE,
@@ -781,21 +982,25 @@ export default defineNuxtModule<DruxtOptions>({
           }),
         })
       }
-      // The tokens and the tools' styles. Through the app's CSS, in development only, so a production build has none.
+
+      // The tokens and the tools' styles. They go through the app's CSS in development only, so a production build has
+      // none.
       nuxt.options.css.push(resolve('./runtime/assets/druxt.css'))
     }
 
     for (const name of ['Druxt']) {
       addComponent({ name, filePath: await resolvePath(resolve(`./runtime/components/${name}`)), global: 'sync' })
     }
-    // Where an editing module renders its controls, on entities and fields with `editing` set. Lazy, as few pages edit,
-    // and below a module's own: an editing module registers DruxtEditControls with a higher priority to replace it.
+
+    // Where an editing module renders its controls, on entities and fields with `editing` set. It is lazy, because few
+    // pages edit. Its priority is below a module's own: an editing module registers DruxtEditControls with a higher
+    // priority to replace it.
     addComponent({ name: 'DruxtEditControls', filePath: await resolvePath(resolve('./runtime/components/DruxtEditControls')), global: true })
 
-    // Wrapper resolution looks components up by name at runtime, so every
-    // Druxt* component, including the site's own, has to be registered globally.
-    // A site's own stay lazy, so each loads with the page that uses it. Druxt's
-    // own, registered sync, stay sync.
+    // Wrapper resolution looks components up by name at runtime. So every `Druxt*` component, the site's own included,
+    // must be registered globally.
+    //
+    // A site's own stay lazy, so each loads with the page that uses it. Druxt's own, registered sync, stay sync.
     nuxt.hook('components:extend', (components) => {
       for (const component of components) {
         if (component.pascalName.startsWith('Druxt') && component.global !== 'sync') component.global = true

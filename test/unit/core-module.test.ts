@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { loadNuxt } from 'nuxt/kit'
 import type { Nuxt } from 'nuxt/schema'
 import { afterAll, afterEach, describe, expect, it, vi } from 'vitest'
+import { BASE_URL, drupal, index, json } from './fake-drupal'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const loaded: Nuxt[] = []
@@ -94,6 +95,139 @@ describe('the core module\'s browser sign-in', () => {
     } finally {
       stderr.mockRestore()
       stdout.mockRestore()
+    }
+  }, 120_000)
+})
+
+describe('the core module on a static build', () => {
+  const loadStatic = async (druxt: Record<string, unknown>, generate: boolean) => {
+    const nuxt = await loadNuxt({
+      cwd: join(root, 'test/unit/fixtures/core-module'),
+      ready: true,
+      overrides: { _prepare: true, _generate: generate, druxt: { baseUrl: 'https://drupal.test', ...druxt } } as Record<string, unknown>,
+    })
+    loaded.push(nuxt)
+    return nuxt.options.runtimeConfig.public.druxt as { staticBuild?: boolean, staticFiles?: boolean }
+  }
+
+  it('marks the build static, so file URLs are absolute, and warns once that proxy.files needs a server', async () => {
+    const written: string[] = []
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
+    const stdout = vi.spyOn(process.stdout, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
+    try {
+      expect((await loadStatic({ proxy: { files: true } }, true)).staticBuild).toBe(true)
+      expect(written.filter((line) => line.includes('DRUXT_E01002'))).toHaveLength(1)
+      expect(written.join('')).toContain('druxt.proxy.files applies only to a server deployment')
+      written.length = 0
+      // A static build without the files proxy has nothing to warn about, and a server build is not static.
+      expect((await loadStatic({}, true)).staticBuild).toBe(true)
+      expect((await loadStatic({ proxy: { files: true } }, false)).staticBuild).toBeUndefined()
+      expect(written.join('')).not.toContain('DRUXT_E01002')
+      // With static.files the build copies the files, so the proxy's absence is no warning, and the browser is told.
+      const files = await loadStatic({ proxy: { files: true }, static: { files: true } }, true)
+      expect(files).toMatchObject({ staticBuild: true, staticFiles: true })
+      expect(written.join('')).not.toContain('DRUXT_E01002')
+      expect((await loadStatic({}, true)).staticFiles).toBeUndefined()
+    } finally {
+      stderr.mockRestore()
+      stdout.mockRestore()
+    }
+  }, 120_000)
+
+  it('fails the build when it cannot list a type\'s published pages, rather than leave them out', async () => {
+    const nuxt = await loadNuxt({
+      cwd: join(root, 'test/unit/fixtures/core-module'),
+      ready: true,
+      overrides: { _prepare: true, _generate: true, druxt: { baseUrl: BASE_URL } } as Record<string, unknown>,
+    })
+    loaded.push(nuxt)
+    // The prerender's routes are read for a build, never for `nuxt prepare`.
+    nuxt.options._prepare = false
+    vi.stubGlobal('fetch', drupal({
+      'GET /jsonapi': index('', ['node--page', 'node--recipe']),
+      'GET /jsonapi/node/page': () => json({ data: [{ type: 'node--page', id: 'p1', attributes: { langcode: 'en', path: { alias: '/about' }, drupal_internal__nid: 1 } }] }),
+      'GET /jsonapi/node/recipe': () => json({ errors: [{ status: '502', title: 'Bad Gateway' }] }, 502),
+    }).fetch)
+    try {
+      // What Nuxt's own nitro:config hooks write to, beside the prerender's routes.
+      const nitroConfig: { prerender?: { routes?: string[] }, virtual: Record<string, unknown> } = { virtual: {} }
+      await expect(nuxt.callHook('nitro:config', nitroConfig as never)).rejects.toThrow('node--recipe, unprefixed')
+      expect(nitroConfig.prerender?.routes).toBeUndefined()
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  }, 120_000)
+  it('lists only the pages of the types druxt.static.routes names', async () => {
+    const baseUrl = 'https://static-types.test'
+    const nuxt = await loadNuxt({
+      cwd: join(root, 'test/unit/fixtures/core-module'),
+      ready: true,
+      overrides: { _prepare: true, _generate: true, druxt: { baseUrl, static: { routes: ['node--page'] } } } as Record<string, unknown>,
+    })
+    loaded.push(nuxt)
+    nuxt.options._prepare = false
+    const page = (type: string, alias: string) => () => json({ data: [{ type, id: alias, attributes: { langcode: 'en', path: { alias }, drupal_internal__nid: 1 } }] })
+    const { fetch, calls } = drupal({
+      [`GET ${baseUrl}/jsonapi`]: { data: [], links: { self: { href: `${baseUrl}/jsonapi` }, 'node--page': { href: `${baseUrl}/jsonapi/node/page` }, 'node--recipe': { href: `${baseUrl}/jsonapi/node/recipe` } } },
+      [`GET ${baseUrl}/jsonapi/node/page`]: page('node--page', '/about'),
+      [`GET ${baseUrl}/jsonapi/node/recipe`]: page('node--recipe', '/recipes/soup'),
+    })
+    vi.stubGlobal('fetch', fetch)
+    try {
+      const nitroConfig: { prerender?: { routes?: string[] }, virtual: Record<string, unknown> } = { virtual: {} }
+      await nuxt.callHook('nitro:config', nitroConfig as never)
+      expect(nitroConfig.prerender?.routes).toEqual(['/', '/about'])
+      expect(calls.some((call) => call.url.includes('/jsonapi/node/recipe'))).toBe(false)
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  }, 120_000)
+})
+
+describe('the core module\'s language read on a static build', () => {
+  // Its own Drupal, as one process reads a Drupal's languages once.
+  const loadStatic = async (baseUrl: string, languages: () => Response) => {
+    const nuxt = await loadNuxt({
+      cwd: join(root, 'test/unit/fixtures/core-module'),
+      ready: true,
+      overrides: { _prepare: true, _generate: true, druxt: { baseUrl } } as Record<string, unknown>,
+    })
+    loaded.push(nuxt)
+    nuxt.options._prepare = false
+    const types = ['configurable_language--configurable_language', 'node--page']
+    vi.stubGlobal('fetch', drupal({
+      [`GET ${baseUrl}/jsonapi`]: { data: [], links: { self: { href: `${baseUrl}/jsonapi` }, ...Object.fromEntries(types.map((type) => [type, { href: `${baseUrl}/jsonapi/${type.replace('--', '/')}` }])) } },
+      [`GET ${baseUrl}/jsonapi/configurable_language/configurable_language`]: languages,
+      [`GET ${baseUrl}/jsonapi/node/page`]: () => json({ data: [{ type: 'node--page', id: 'p1', attributes: { langcode: 'en', path: { alias: '/about' }, drupal_internal__nid: 1 } }] }),
+    }).fetch)
+    return nuxt
+  }
+
+  it('lists the pages with no language prefix, with a warning, when the languages fail to read with no refusal', async () => {
+    const written: string[] = []
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
+    const stdout = vi.spyOn(process.stdout, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
+    try {
+      const nuxt = await loadStatic('https://languages-down.test', () => json({ errors: [{ status: '502', title: 'Bad Gateway' }] }, 502))
+      const nitroConfig: { prerender?: { routes?: string[] }, virtual: Record<string, unknown> } = { virtual: {} }
+      await nuxt.callHook('nitro:config', nitroConfig as never)
+      expect(nitroConfig.prerender?.routes).toEqual(['/', '/about'])
+      expect(written.join('')).toContain('The site\'s languages could not be read')
+    } finally {
+      stderr.mockRestore()
+      stdout.mockRestore()
+      vi.unstubAllGlobals()
+    }
+  }, 120_000)
+
+  it('stops with DRUXT_E01008 when Drupal refuses the languages', async () => {
+    try {
+      const nuxt = await loadStatic('https://languages-refused.test', () => json({ errors: [{ status: '403', title: 'Forbidden' }] }, 403))
+      const nitroConfig: { prerender?: { routes?: string[] }, virtual: Record<string, unknown> } = { virtual: {} }
+      await expect(nuxt.callHook('nitro:config', nitroConfig as never)).rejects.toThrow('DRUXT_E01008')
+      expect(nitroConfig.prerender?.routes).toBeUndefined()
+    } finally {
+      vi.unstubAllGlobals()
     }
   }, 120_000)
 })
