@@ -5,6 +5,7 @@
 // druxt-auth 0.x's behaviour from its @nuxtjs/auth-next schemes and its
 // refresh plugin.
 import type { DruxtClient } from './client'
+import type { DruxtSupersededError } from './errors'
 import type { AuthStorage, DruxtAuthOptions } from './types'
 
 /** The storage keys, exported so a framework can prepare storage for them up front. */
@@ -71,7 +72,7 @@ export const refreshRefused = (error: unknown): boolean => {
 }
 
 /** What a sign-in or refresh rejects with when a later sign-in or a sign-out replaced its session while it ran. */
-const supersededError = (): Error & { superseded: true } => Object.assign(
+const supersededError = (): DruxtSupersededError => Object.assign(
   new Error('DruxtAuth: a later sign-in or sign-out replaced the session this was for.'),
   { superseded: true as const },
 )
@@ -209,7 +210,8 @@ export class DruxtAuth {
 
   /**
    * Posts a sign-in grant to the token endpoint and stores its tokens. A sign-in started later, or a sign-out, while
-   * it runs replaces it: it then stores nothing and rejects with an error whose `superseded` is true.
+   * it runs replaces it: it then stores nothing and rejects with an error whose `superseded` is true, which
+   * `isSuperseded()` tells.
    *
    * @param fields - The grant's fields.
    * @param clientId - The Consumer, `clientId` by default.

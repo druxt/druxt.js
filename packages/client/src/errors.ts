@@ -32,6 +32,30 @@ export class DruxtPermissionsError extends Error {
   }
 }
 
+/**
+ * What a sign-in or refresh rejects with when a later sign-in or a sign-out replaced its session while it ran. It
+ * stored nothing, and the session that replaced it is kept.
+ */
+export interface DruxtSupersededError extends Error {
+  superseded: true
+}
+
+/**
+ * Whether a sign-in or refresh rejected because a later sign-in or a sign-out replaced its session while it ran,
+ * rather than because it failed.
+ *
+ * @param error - What the sign-in or refresh rejected with.
+ *
+ * @example @lang js
+ * try {
+ *   await this.$druxt.auth.loginWithPassword({ username, password })
+ * } catch (error) {
+ *   if (!isSuperseded(error)) throw error
+ * }
+ */
+export const isSuperseded = (error: unknown): error is DruxtSupersededError =>
+  error instanceof Error && (error as Partial<DruxtSupersededError>).superseded === true
+
 export interface ErrorLike {
   message?: string
   response?: DruxtError['response'] & { url?: string }

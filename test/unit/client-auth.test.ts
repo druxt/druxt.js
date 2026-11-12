@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { AUTH_STORAGE_KEYS, DruxtAuth, DruxtClient, createPkce } from '../../packages/client/src'
+import { AUTH_STORAGE_KEYS, DruxtAuth, DruxtClient, createPkce, isSuperseded } from '../../packages/client/src'
 import type { AuthStorage, DruxtAuthOptions, DruxtFetch } from '../../packages/client/src'
 import { BASE_URL, drupal, json, requested } from './fake-drupal'
 import type { Call } from './fake-drupal'
@@ -536,6 +536,44 @@ describe('DruxtAuth', () => {
     answers.a!()
     await expect(first).rejects.toMatchObject({ superseded: true })
     expect([client.auth.accessToken, client.auth.refreshToken]).toEqual(['access-b', 'refresh-b'])
+  })
+
+  it('tells a superseded rejection from any other with isSuperseded()', async () => {
+    const answers: Record<string, () => void> = {}
+    let refreshed: (() => void) | undefined
+    const { fetch } = drupal({
+      'POST /oauth/token': (call) => new Promise<Response>((resolve) => {
+        const answer = () => resolve(json({ access_token: 'access-2', refresh_token: 'refresh-2', expires_in: 300 }))
+        if (form(call).grant_type === 'refresh_token') refreshed = answer
+        else answers[form(call).username!] = answer
+      }),
+    })
+    // A sign-in a later sign-in replaced.
+    const client = new DruxtClient(BASE_URL, { fetch, auth: { clientId: 'druxt' } }) as DruxtClient & { auth: DruxtAuth }
+    const first = client.auth.loginWithPassword({ username: 'a', password: 'pw' }).catch((error: unknown) => error)
+    const second = client.auth.loginWithPassword({ username: 'b', password: 'pw' })
+    await vi.waitFor(() => expect(Object.keys(answers)).toHaveLength(2))
+    answers.b!()
+    await second
+    answers.a!()
+    expect(isSuperseded(await first)).toBe(true)
+    // A sign-in a sign-out replaced.
+    const signIn = client.auth.loginWithPassword({ username: 'c', password: 'pw' }).catch((error: unknown) => error)
+    await vi.waitFor(() => expect(answers.c).toBeDefined())
+    await client.auth.logout()
+    answers.c!()
+    expect(isSuperseded(await signIn)).toBe(true)
+    // A refresh a sign-in replaced.
+    const refreshing = signedIn(fetch)
+    const refresh = refreshing.auth.refresh().catch((error: unknown) => error)
+    await vi.waitFor(() => expect(refreshed).toBeDefined())
+    refreshing.auth.setTokens({ access_token: 'access-b', refresh_token: 'refresh-b', expires_in: 300 }, 'druxt')
+    refreshed!()
+    expect(isSuperseded(await refresh)).toBe(true)
+    // Anything else is not.
+    for (const other of [new Error('superseded'), { superseded: true }, Object.assign(new Error('x'), { superseded: 'yes' }), undefined, null, 'superseded']) {
+      expect(isSuperseded(other)).toBe(false)
+    }
   })
 
   it('refuses more refreshes than the limit allows in a window', async () => {
