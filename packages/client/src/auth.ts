@@ -94,6 +94,8 @@ export class DruxtAuth {
    * was replaced. {@link DruxtAuth.held} catches another client writing the same storage, which this cannot.
    */
   private generation = 0
+  /** The generation of the last sign-in that stored its tokens. */
+  private stored = 0
 
   /**
    * @param client - The DruxtClient.
@@ -197,6 +199,11 @@ export class DruxtAuth {
   /** Forgets the tokens. */
   clearTokens(): void {
     this.generation++
+    this.removeTokens()
+  }
+
+  /** Removes the tokens from storage, leaving a sign-in in flight to store its own. */
+  private removeTokens(): void {
     for (const key of Object.values(KEYS)) this.storage.remove(key)
   }
 
@@ -212,6 +219,7 @@ export class DruxtAuth {
     const data = await this.postToken(fields, clientId)
     if (this.generation !== mine) throw supersededError()
     this.setTokens(data, clientId)
+    this.stored = mine
     return data
   }
 
@@ -374,9 +382,16 @@ export class DruxtAuth {
    * site's server clears the cookies it set, which the browser cannot, through `logoutUrl` first: when that route
    * answers with anything but a 2xx, the session is kept and the promise rejects with the request's error, so a
    * sign-out the server did not make is never reported, and calling `logout()` again retries it.
+   *
+   * A sign-in started while that route runs is newer than the session it ends, and kept: the promise resolves, and
+   * only the session it was asked to end is forgotten. A sign-in started before `logout()` is replaced by it, and
+   * rejects with `superseded`.
    */
   async logout(): Promise<void> {
+    const began = this.generation
     if (this.session && this.options.logoutUrl) await this.client.request(this.options.logoutUrl, { method: 'POST', auth: false })
-    this.clearTokens()
+    if (this.generation === began) this.clearTokens()
+    // A sign-in started since: keep the session it stored, or, while it runs, forget only the one that ended.
+    else if (this.stored <= began) this.removeTokens()
   }
 }

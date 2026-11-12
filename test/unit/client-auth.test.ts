@@ -708,4 +708,75 @@ describe('a session the site\'s server holds', () => {
     expect(client.auth.loggedIn).toBe(false)
     expect(requested(calls)).toEqual(['POST /api/_druxt/auth/logout', 'POST /api/_druxt/auth/logout'])
   })
+
+  /** A site whose logout route answers when the test says, and whose token route answers at once or when told. */
+  const parked = (token: 'now' | 'later' = 'now', refuse = false) => {
+    const answers: { logout: () => void, token: () => void } = { logout: () => {}, token: () => {} }
+    const tokenReply = () => (refuse ? json({ error: 'invalid_grant' }, 400) : json({ token_type: 'Bearer' }))
+    const { fetch, calls } = drupal({
+      'POST /api/_druxt/auth/logout': () => new Promise<Response>((resolve) => { answers.logout = () => resolve(new Response(null, { status: 204 })) }),
+      'POST /api/_druxt/auth/token': () => (token === 'now'
+        ? tokenReply()
+        : new Promise<Response>((resolve) => { answers.token = () => resolve(tokenReply()) })),
+    })
+    return { answers, fetch, calls }
+  }
+
+  it('keeps a sign-in completed while its logout route ran, and resolves', async () => {
+    const { answers, fetch, calls } = parked()
+    // Both sessions store the same `on` marker: a token route that answers without expires_in.
+    const { values, storage } = marker('on')
+    const client = sessionClient(fetch, storage)
+    const logout = client.auth.logout()
+    await vi.waitFor(() => expect(calls).toHaveLength(1))
+    await client.auth.loginWithPassword({ username: 'b', password: 'pw' })
+    answers.logout()
+    await expect(logout).resolves.toBeUndefined()
+    expect([client.auth.loggedIn, values.get(AUTH_STORAGE_KEYS.session)]).toEqual([true, 'on'])
+  })
+
+  it('keeps a sign-in started while its logout route ran and answered after it', async () => {
+    const { answers, fetch, calls } = parked('later')
+    const { values, storage } = marker('on')
+    const client = sessionClient(fetch, storage)
+    const logout = client.auth.logout()
+    await vi.waitFor(() => expect(calls).toHaveLength(1))
+    const signIn = client.auth.loginWithPassword({ username: 'b', password: 'pw' })
+    await vi.waitFor(() => expect(calls).toHaveLength(2))
+    answers.logout()
+    await expect(logout).resolves.toBeUndefined()
+    // The session the logout ended is gone, while the sign-in is still waiting on its answer.
+    expect(client.auth.loggedIn).toBe(false)
+    answers.token()
+    await expect(signIn).resolves.toMatchObject({ token_type: 'Bearer' })
+    expect([client.auth.loggedIn, values.get(AUTH_STORAGE_KEYS.session)]).toEqual([true, 'on'])
+  })
+
+  it('forgets the ended session when a sign-in started while its logout route ran is refused', async () => {
+    const { answers, fetch, calls } = parked('later', true)
+    const client = sessionClient(fetch, marker('on').storage)
+    const logout = client.auth.logout()
+    await vi.waitFor(() => expect(calls).toHaveLength(1))
+    const signIn = client.auth.loginWithPassword({ username: 'b', password: 'wrong' })
+    await vi.waitFor(() => expect(calls).toHaveLength(2))
+    answers.logout()
+    await logout
+    answers.token()
+    await expect(signIn).rejects.toMatchObject({ response: { status: 400 } })
+    expect(client.auth.loggedIn).toBe(false)
+  })
+
+  it('supersedes a sign-in still pending when its logout route answers, started before the logout', async () => {
+    const { answers, fetch, calls } = parked('later')
+    const client = sessionClient(fetch, marker('on').storage)
+    const signIn = client.auth.loginWithPassword({ username: 'b', password: 'pw' })
+    await vi.waitFor(() => expect(calls).toHaveLength(1))
+    const logout = client.auth.logout()
+    await vi.waitFor(() => expect(calls).toHaveLength(2))
+    answers.logout()
+    await expect(logout).resolves.toBeUndefined()
+    answers.token()
+    await expect(signIn).rejects.toMatchObject({ superseded: true })
+    expect(client.auth.loggedIn).toBe(false)
+  })
 })
