@@ -70,6 +70,12 @@ export const refreshRefused = (error: unknown): boolean => {
   return status === 400 || status === 401
 }
 
+/** What a sign-in or refresh rejects with when a later sign-in or a sign-out replaced its session while it ran. */
+const supersededError = (): Error & { superseded: true } => Object.assign(
+  new Error('DruxtAuth: a later sign-in or sign-out replaced the session this was for.'),
+  { superseded: true as const },
+)
+
 type Options = DruxtAuthOptions & Required<Pick<DruxtAuthOptions, 'tokenUrl' | 'authorizeUrl' | 'userInfoUrl' | 'storage'>> & {
   refresh: { grace: number, limit: number, window: number, share?: NonNullable<DruxtAuthOptions['refresh']>['share'] }
 }
@@ -83,6 +89,11 @@ export class DruxtAuth {
   refreshing: Promise<TokenResponse> | null
   refreshedAt: number
   attempts: number[]
+  /**
+   * Moves on with each sign-in started and each time the tokens are forgotten, so a late answer can tell its session
+   * was replaced. {@link DruxtAuth.held} catches another client writing the same storage, which this cannot.
+   */
+  private generation = 0
 
   /**
    * @param client - The DruxtClient.
@@ -185,18 +196,22 @@ export class DruxtAuth {
 
   /** Forgets the tokens. */
   clearTokens(): void {
+    this.generation++
     for (const key of Object.values(KEYS)) this.storage.remove(key)
   }
 
   /**
-   * Posts a grant to the token endpoint.
+   * Posts a sign-in grant to the token endpoint and stores its tokens. A sign-in started later, or a sign-out, while
+   * it runs replaces it: it then stores nothing and rejects with an error whose `superseded` is true.
    *
    * @param fields - The grant's fields.
    * @param clientId - The Consumer, `clientId` by default.
    */
   async requestToken(fields: Record<string, string | undefined>, clientId: string = this.options.clientId): Promise<TokenResponse> {
+    const mine = ++this.generation
     const data = await this.postToken(fields, clientId)
-    this.setTokens(data, clientId, fields.grant_type === 'refresh_token')
+    if (this.generation !== mine) throw supersededError()
+    this.setTokens(data, clientId)
     return data
   }
 
@@ -312,6 +327,8 @@ export class DruxtAuth {
       const issuer = String(this.storage.get(KEYS.clientId) || this.options.clientId)
       // The session this refresh is for, taken before it runs.
       const before = this.held()
+      const started = this.generation
+      const current = () => this.held() === before && this.generation === started
       // With `session` on, the site's server adds the refresh token it holds.
       const refreshToken = this.refreshToken
       // No scope: RFC 6749 section 6 keeps the one granted, which a sign-in may have narrowed. A scope beyond it is
@@ -323,15 +340,16 @@ export class DruxtAuth {
       const pending = share && refreshToken ? share(JSON.stringify([issuer, refreshToken, this.accessToken ?? null]), start, grace) : start()
       this.refreshing = pending
         .then((data) => {
-          // The answer is the session's it was for: a sign-in stored while it ran is newer, and kept.
-          if (this.held() === before) this.setTokens(data, issuer, true)
+          // The answer is the session's it was for: a sign-in or sign-out made while it ran is newer, and kept. A
+          // request waiting on it must not be sent again as that session, so it rejects.
+          if (!current()) throw supersededError()
+          this.setTokens(data, issuer, true)
           this.refreshedAt = Date.now()
           return data
-        })
-        .catch((error: unknown) => {
+        }, (error: unknown) => {
           // A refresh token Drupal refused is spent; signing in again is the only way back. Only the session it was
           // for ends: a sign-in that stored another while it ran is kept.
-          if (refreshRefused(error) && this.held() === before) this.clearTokens()
+          if (refreshRefused(error) && current()) this.clearTokens()
           throw error
         })
         .finally(() => { this.refreshing = null })
