@@ -588,6 +588,31 @@ describe('request()', () => {
     expect(calls[0]?.body).toBe(body)
   })
 
+  it('sends an async iterable that is a plain object as it streams, never as JSON', async () => {
+    const bytes = new TextEncoder().encode('bytes')
+    const received: string[] = []
+    const duplex: unknown[] = []
+    const fetch: DruxtFetch = async (url, init) => {
+      duplex.push((init as { duplex?: string }).duplex)
+      received.push(await new Request(url, init as RequestInit).text())
+      return json({}, 201)
+    }
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const body = { async *[Symbol.asyncIterator]() { yield bytes } }
+    await client.request('/jsonapi/file/upload', { method: 'POST', body: body as never })
+    expect(received).toEqual(['bytes'])
+    expect(duplex).toEqual(['half'])
+  })
+
+  it('sends a JSON document with getReader and locked members as JSON:API, as a stream has methods', async () => {
+    const { fetch, calls } = drupal({ 'POST /jsonapi/node/article': () => json({}, 201) })
+    const client = new DruxtClient(BASE_URL, { fetch })
+    const body = { data: { type: 'node--article' }, getReader: 'reader', locked: false }
+    await client.request('/jsonapi/node/article', { method: 'POST', body })
+    expect(calls[0]?.body).toBe(JSON.stringify(body))
+    expect(calls[0]?.headers['Content-Type']).toBe('application/vnd.api+json')
+  })
+
   it('sends a plain object, an object with no prototype and an array as JSON:API', async () => {
     const { fetch, calls } = drupal({ 'POST /jsonapi/node/article': () => json({}, 201) })
     const client = new DruxtClient(BASE_URL, { fetch })

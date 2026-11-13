@@ -75,22 +75,27 @@ type Options = DruxtAuthOptions & Required<Pick<DruxtAuthOptions, 'tokenUrl' | '
   refresh: { grace: number, limit: number, window: number, share?: NonNullable<DruxtAuthOptions['refresh']>['share'] }
 }
 
-/** The OAuth side of a DruxtClient. */
+/**
+ * The OAuth side of a DruxtClient.
+ *
+ * One session at a time, and {@link DruxtAuth.epoch} names it. It moves when the session held ends, by a sign-out,
+ * a refresh Drupal refused, or a sign-in starting, which ends the session held then rather than when its own tokens
+ * arrive, and it moves again when a sign-in stores its tokens. A refresh keeps the session and the number. Whatever
+ * is done for a session belongs to the number it was done for: a refresh's answer, its grace and the refresh in flight
+ * that callers join, a request's refresh and retry after a 401, and a sign-in's tokens. Once the number has moved,
+ * that work stores nothing and is not done again as the session now held. {@link DruxtAuth.held} does the same for
+ * another client writing the same storage, which the number cannot see.
+ */
 export class DruxtAuth {
   client: DruxtClient
   options: Options
   storage: AuthStorage
-  /** A refresh in flight, the last one, and recent attempts: druxt-auth's limits. */
+  /** The session's refresh in flight, its last one, and recent attempts: druxt-auth's limits. */
   refreshing: Promise<TokenResponse> | null
   refreshedAt: number
   attempts: number[]
-  /**
-   * Moves on with each sign-in started and each time the tokens are forgotten, so a late answer can tell its session
-   * was replaced. {@link DruxtAuth.held} catches another client writing the same storage, which this cannot.
-   */
+  /** The session's number, {@link DruxtAuth.epoch}. */
   private generation = 0
-  /** The generation the refresh in flight was started for. */
-  private refreshingFor = 0
 
   /**
    * @param client - The DruxtClient.
@@ -117,9 +122,9 @@ export class DruxtAuth {
   }
 
   /**
-   * Which session this client is on: it moves on when a sign-in starts and when the session is forgotten, by a
-   * sign-out or a refresh Drupal refused, and never on a refresh. A request compares it before it is sent as the
-   * session, so it never goes as one that replaced its own.
+   * Which session this client is on: it moves when the session ends, by a sign-out, a refused refresh or a sign-in
+   * starting, and when a sign-in stores its tokens, and never on a refresh. A request is refreshed, sent and retried
+   * only while it is the number the request was made in.
    */
   get epoch(): number {
     return this.generation
@@ -200,33 +205,32 @@ export class DruxtAuth {
     if (this.held() === sent) this.clearTokens()
   }
 
-  /** Forgets the tokens. */
+  /** Ends the session: forgets the tokens, and the refresh in flight and the grace that were the session's. */
   clearTokens(): void {
     this.generation++
+    this.refreshing = null
+    this.refreshedAt = 0
     for (const key of Object.values(KEYS)) this.storage.remove(key)
   }
 
   /**
-   * Posts a sign-in grant to the token endpoint and stores its tokens. A sign-in started later, or a sign-out, while
-   * it runs replaces it: it then stores nothing. Once Drupal has issued its tokens, it rejects with an error whose
-   * `superseded` is true, which `isSuperseded()` tells; one that failed rejects with its own error. A sign-in that
-   * fails ends the session held before it, as druxt-auth 0.x did, unless a later sign-in or a sign-out replaced it
-   * first.
+   * Posts a sign-in grant to the token endpoint and stores its tokens. It ends the session held as it starts, so a
+   * sign-in that fails leaves none, as druxt-auth 0.x did, and nothing is sent as the last user while it runs. A
+   * sign-in started later, or a sign-out, while it runs replaces it: it then stores nothing. Once Drupal has issued
+   * its tokens, it rejects with an error whose `superseded` is true, which `isSuperseded()` tells; one that failed
+   * rejects with its own error.
    *
    * @param fields - The grant's fields.
    * @param clientId - The Consumer, `clientId` by default.
    */
   async requestToken(fields: Record<string, string | undefined>, clientId: string = this.options.clientId): Promise<TokenResponse> {
-    const mine = ++this.generation
-    let data: TokenResponse
-    try {
-      data = await this.postToken(fields, clientId)
-    } catch (error) {
-      // A visitor who tried to sign in as someone else is never left signed in as the user before.
-      if (this.generation === mine) this.clearTokens()
-      throw error
-    }
+    // A visitor signing in as someone else is no longer the user before, whatever Drupal answers.
+    this.clearTokens()
+    const mine = this.generation
+    const data = await this.postToken(fields, clientId)
     if (this.generation !== mine) throw supersededError()
+    // A new session, so nothing begun while none was held is done again as it.
+    this.generation++
     this.setTokens(data, clientId)
     return data
   }
@@ -327,12 +331,10 @@ export class DruxtAuth {
    * Refreshes the tokens. Concurrent callers share one request; one that
    * succeeded within `grace` is reused; at most `limit` run per `window`.
    * With `refresh.share`, clients holding the same refresh token share it too.
-   * A refresh in flight for a session a sign-in or a sign-out has since
-   * replaced is that session's alone: the session now held starts its own.
+   * The refresh in flight and the grace belong to the session they were for,
+   * so a session signed in since starts its own.
    */
   refresh(): Promise<TokenResponse | undefined> {
-    // Its own callers keep it, and still get its superseded rejection.
-    if (this.refreshing && this.refreshingFor !== this.generation) this.refreshing = null
     if (!this.refreshing && this.refreshedAt && Date.now() - this.refreshedAt < this.options.refresh.grace) {
       return Promise.resolve(undefined)
     }
@@ -372,10 +374,10 @@ export class DruxtAuth {
           if (refreshRefused(error) && current()) this.clearTokens()
           throw error
         })
-        // A newer session's refresh may be the one in flight by now, and stays.
+        // A newer session's refresh may be the one in flight by now, and stays. The session's own callers keep this
+        // one, and its superseded rejection.
         .finally(() => { if (this.refreshing === refreshing) this.refreshing = null })
       this.refreshing = refreshing
-      this.refreshingFor = started
     }
     return this.refreshing
   }

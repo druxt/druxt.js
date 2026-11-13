@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DruxtClient, forgetProcessCache, resetProcessCache } from '../../packages/client/src'
-import { MAX_PARTITIONS } from '../../packages/client/src/processCache'
 import type { DruxtFetch } from '../../packages/client/src'
 import { BASE_URL, json } from './fake-drupal'
 
@@ -187,7 +186,7 @@ describe('the content cache', () => {
     expect(fetches()).toBe(1)
   })
 
-  it('holds MAX_PARTITIONS times maxSize at most, however many header sets and consumer ids clients send', async () => {
+  it('holds maxSize at most in each cache area, however many header sets and consumer ids clients send', async () => {
     const maxSize = 1000
     // The bytes each scope holds, read from the cache the process keeps on globalThis.
     const stored = () => {
@@ -198,7 +197,7 @@ describe('the content cache', () => {
     for (let i = 0; i < 200; i++) {
       const headers = i % 2 ? { 'Accept-Language': `l${i}` } : { 'X-Consumer-ID': `c${i}` }
       await client(drupal({ pad: 300 }), { content: true, maxSize }, { headers }).get(`/jsonapi/node/page/${i % 7}`)
-      for (const bytes of stored()) expect(bytes).toBeLessThanOrEqual(MAX_PARTITIONS * maxSize)
+      for (const bytes of stored()) expect(bytes).toBeLessThanOrEqual(maxSize)
     }
     // The most recent header set still reads what it stored, and the first one's entries are gone.
     const before = sent.length
@@ -272,6 +271,25 @@ describe('the content cache', () => {
     expect((await ordinary).data.data.attributes.sent).toBe(2)
     // The bypass started later, so its answer stays.
     expect((await client().get<{ data: { attributes: { sent: number } } }>(page)).data.data.attributes.sent).toBe(1)
+  })
+
+  it('an older request that resolves after a bypass answered with a 404 stores nothing', async () => {
+    // As above, but the later bypass's answer removes the entry, and the older request's 200 comes after it.
+    const pending: Array<() => void> = []
+    const deferred = (status: number): DruxtFetch => {
+      const answer = drupal({ status })
+      return (...args) => new Promise((resolve) => pending.push(() => resolve(answer(...args))))
+    }
+    const ordinary = client(deferred(200)).get(page)
+    const bypass = client(deferred(404)).get(page, { bypassCache: true })
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    pending[1]!()
+    await expect(bypass).rejects.toMatchObject({ response: { status: 404 } })
+    pending[0]!()
+    expect((await ordinary).status).toBe(200)
+    // The 404 started later, so the older 200 is not kept: the next read goes to Drupal.
+    await client(drupal({ status: 404 })).get(page).catch(() => {})
+    expect(fetches()).toBe(3)
   })
 
   it('does not store an answer to a read that was in flight when its entry was forgotten', async () => {

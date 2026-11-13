@@ -50,7 +50,8 @@ const CREDENTIAL_HEADERS = new Set(['authorization', 'proxy-authorization', 'coo
 
 /**
  * Whether a body is sent as it streams: a `ReadableStream`, told by its shape so one from another realm counts, or an
- * async iterable. Fetch sends it with `duplex`, and it is consumed as it is sent, so it cannot be sent again.
+ * async iterable, a plain object among them. Its shape is methods, which no JSON document has. Fetch sends it with
+ * `duplex`, and it is consumed as it is sent, so it cannot be sent again, and it is never sent as JSON.
  */
 const streamed = (body: unknown): boolean => !!body && typeof body === 'object' && (
   (typeof (body as ReadableStream).getReader === 'function' && typeof (body as ReadableStream).locked === 'boolean')
@@ -263,8 +264,10 @@ export class DruxtClient {
    * A request is sent, refreshed and retried only as the session it was made
    * for. One still waiting on a refresh when another session signs in rejects
    * with an error `isSuperseded()` tells, and is not sent; one whose session a
-   * sign-out ended is sent without a token, as a signed-out client's are. A
-   * 401 answered after another session signed in is returned as it is.
+   * sign-out ended, or a sign-in that has not stored its tokens yet, is sent
+   * without a token, as a signed-out client's are. A 401 answered after
+   * another session signed in is returned as it is, whether the request was
+   * sent as the session before or while the sign-in ran.
    *
    * @param url - A path or an absolute URL.
    * @param options - The request options.
@@ -291,7 +294,8 @@ export class DruxtClient {
     let refused: unknown
     if (own && auth?.expired && auth.canRefresh) await auth.refresh().catch((error: unknown) => { if (refreshRefused(error)) refused = error })
     // Another session signed in while the request waited: it is not sent as that one. A session that only ended, by a
-    // sign-out or a refused refresh, leaves a signed-out client, whose requests go without a token.
+    // sign-out, a refused refresh or a sign-in still running, leaves a signed-out client, whose requests go without a
+    // token.
     if (auth && auth.epoch !== epoch && auth.loggedIn) throw supersededError()
 
     const read = READS.has((options.method || 'GET').toUpperCase())
@@ -391,8 +395,9 @@ export class DruxtClient {
     let body = options.body as BodyInit | undefined
     const proto: unknown = body !== null && typeof body === 'object' ? Object.getPrototypeOf(body) : undefined
     // Only a plain object or an array is a JSON:API document. A Blob, a buffer, FormData, URLSearchParams or a
-    // stream goes to fetch as given.
-    if (Array.isArray(body) || proto === Object.prototype || proto === null) {
+    // stream goes to fetch as given, as does a plain object that is an async iterable.
+    const stream = streamed(body)
+    if (!stream && (Array.isArray(body) || proto === Object.prototype || proto === null)) {
       setHeader(headers, 'Content-Type', 'application/vnd.api+json')
       body = JSON.stringify(body)
     }
@@ -412,7 +417,7 @@ export class DruxtClient {
     try {
       const init: RequestInit & { duplex?: 'half' } = { method, headers, body }
       // Fetch refuses a stream body, or an async iterable one, without it.
-      if (streamed(body)) init.duplex = 'half'
+      if (stream) init.duplex = 'half'
       res = await this.fetch(href, init)
     } catch (error) {
       if (this.requestListeners.size) this.notify({ type: 'end', ...event, duration: now() - started, failed: true })
@@ -621,12 +626,10 @@ export class DruxtClient {
       // neither, and removes nothing.
       const after = before && this.processCache('content')
       if (!after || after.consumer !== before!.consumer) return
-      // A request that started later, such as a bypass, may have stored its fresher answer already.
-      const current = after.get<StoredResponse>(key)
-      if (current && current.started > started) return
+      // The handle refuses it when a request that started later, such as a bypass, has stored or removed the entry.
       if (res.status === 200 && res.data && typeof res.data === 'object') {
         const seconds = parseCacheLifetime(res.headers)
-        const value: StoredResponse = { body: JSON.stringify(res.data), status: res.status, statusText: res.statusText, headers: Object.fromEntries(res.headers.entries()), seconds, at: Date.now(), started }
+        const value: StoredResponse = { body: JSON.stringify(res.data), status: res.status, statusText: res.statusText, headers: Object.fromEntries(res.headers.entries()), seconds, at: Date.now() }
         after.set(key, value, seconds, before!.generation, started)
       } else after.set(key, undefined, 0, before!.generation, started)
     }

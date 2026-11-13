@@ -1,7 +1,7 @@
 // The content cache's stored responses, the options that may use it, and a response body read as JSON or text.
 import type { DruxtReadOptions, DruxtRequestOptions } from '../types'
 
-// The size a process cache scope keeps per consumer when `cache.maxSize` is not set: 50 MB of stored JSON.
+// The size a process cache scope keeps across its consumers when `cache.maxSize` is not set: 50 MB of stored JSON.
 export const DEFAULT_MAX_SIZE = 50 * 1024 * 1024
 
 // Request options that never change the response, so a request with only these may use the content cache.
@@ -15,7 +15,6 @@ export interface StoredResponse {
   headers: Record<string, string>
   seconds: number
   at: number
-  started: number
 }
 
 /** The `get()` options a resource read needs: the bypass when asked, and none otherwise. */

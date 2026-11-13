@@ -26,13 +26,16 @@ const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
   the response, such as headers or a body. A `bypassCache` request goes to
   Drupal, and its answer replaces the entry when it may be stored and removes
   it otherwise, as a 404 does. A request that never reaches Drupal leaves the
-  entry. `cache: { ttl }` caps the lifetime, and
+  entry. An answer to a read that started before the one whose answer was
+  stored, or removed the entry, isn't kept. `cache: { ttl }` caps the
+  lifetime, and
   `clearCache()` empties it. Each set of client headers keeps its own entries,
   and an answer to a request in flight when the client's headers changed is
-  stored under neither set. Each set keeps up to `cache.maxSize` bytes, and
-  each cache area keeps 32 sets at most, the least recently used going first,
-  so an area never holds more than 32 times `cache.maxSize`: 1.6 GB with the
-  50 MB default.
+  stored under neither set. `cache.maxSize` bounds each cache area across all
+  its sets: an area holds one kind of answer, such as the content or a
+  module's menus. Past it the area's least recently used entries go,
+  whichever set holds them. An area also keeps a fixed number of sets, the
+  least recently used going first.
 - **Auth:** with `auth: { clientId }`, Simple OAuth's authorization code
   (PKCE), password and client credentials grants, with refresh. An expired
   token is refreshed before the request is sent, and a 401 from Drupal's
@@ -49,8 +52,11 @@ const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
   refresh that a later sign-in or a sign-out replaced while it ran stores
   nothing. It rejects with an error `isSuperseded(error)` tells from a failure
   when it succeeded, and with its own error when it failed, as does a request
-  still waiting on a refresh when another session signs in. A sign-in that
-  fails ends the session held before it, as druxt-auth 0.x did. A `logout()`
+  still waiting on a refresh when another session signs in. A sign-in ends
+  the session held as it starts, so one that fails leaves none, as
+  druxt-auth 0.x did, and nothing is sent as the user before while it runs.
+  A session signed in since the last refresh refreshes on its own, within
+  the grace too. A `logout()`
   that succeeds ends the session, even one a sign-in stored while the site's
   logout route ran, so the next sign-in starts afresh. When that route fails,
   it rejects and the session is kept.
