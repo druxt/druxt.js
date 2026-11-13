@@ -1,17 +1,32 @@
 // Process-wide cache for server-side responses to requests that carry no credentials.
 // Held on globalThis so every copy of this module in the process shares one cache.
-interface Entry { value: unknown, seconds: number, created: number, size: number }
+
+/** A place in a scope's order of use, which runs from its least recently used entry, `next`, round to its most, `prev`. */
+interface Link { prev: Link, next: Link }
+/** A stored value, or with none, the trace of a numbered answer that removed one. */
+interface Entry extends Link { value: unknown, seconds: number, created: number, size: number, key: string, consumer: string, started?: number }
 /** A consumer's entries, with their running size. */
 type Entries = Map<string, Entry> & { [SIZE]?: number }
-type Scopes = Map<string, Map<string, Entries>>
+/** A scope's order of use across all its consumers' entries, with their running size and count. */
+interface Order extends Link {
+  size: number
+  count: number
+  /** Values stored since expired entries were last swept out. */
+  writes: number
+}
+/** A scope: its consumers' entries, the least recently used consumer first, and the order of use across them. */
+type Consumers = Map<string, Entries> & { [ORDER]?: Order }
+type Scopes = Map<string, Consumers>
 const shared = globalThis as typeof globalThis & Record<symbol, unknown>
 
 // The running size of a consumer's entries, held on its map of entries.
 const SIZE: unique symbol = Symbol.for('druxt.processCacheSize') as never
+// A scope's order of use, held on its map of consumers.
+const ORDER: unique symbol = Symbol.for('druxt.processCacheOrder') as never
 
 /**
  * The consumers each scope keeps entries for at most, such as the sets of headers its clients send. Past it the least
- * recently used consumer goes, entries and all, so a scope holds this many times `maxSize` at most.
+ * recently used consumer goes, entries and all. `maxSize` bounds the scope whatever its consumers.
  */
 export const MAX_PARTITIONS = 32
 
@@ -31,6 +46,45 @@ const sequence = (shared[SEQUENCE] || (shared[SEQUENCE] = { value: 0 })) as { va
 // the forget dropped, so its answer is not stored.
 const FORGOTTEN = Symbol.for('druxt.processCacheForgotten')
 const forgotten = (shared[FORGOTTEN] || (shared[FORGOTTEN] = new Map())) as Map<string, number>
+
+/** A scope's consumers, made with an empty order of use the first time it is asked for. */
+const scopeOf = (scope: string): Consumers => {
+  let consumers = scopes.get(scope)
+  if (!consumers) scopes.set(scope, consumers = new Map())
+  if (!consumers[ORDER]) {
+    const order = { size: 0, count: 0, writes: 0 } as Order
+    order.prev = order.next = order
+    consumers[ORDER] = order
+  }
+  return consumers
+}
+
+/** Takes an entry out of its scope's order of use. */
+const unlink = (entry: Link) => {
+  entry.prev.next = entry.next
+  entry.next.prev = entry.prev
+}
+
+/** Makes an entry its scope's most recently used. */
+const use = (order: Order, entry: Entry) => {
+  entry.prev = order.prev
+  entry.next = order
+  order.prev.next = entry
+  order.prev = entry
+}
+
+/** Removes an entry from its scope, and its consumer with it once that holds nothing. */
+const drop = (consumers: Consumers, entry: Entry) => {
+  const order = consumers[ORDER]!
+  unlink(entry)
+  order.size -= entry.size
+  order.count--
+  const entries = consumers.get(entry.consumer)
+  if (!entries) return
+  entries.delete(entry.key)
+  entries[SIZE] = (entries[SIZE] || 0) - entry.size
+  if (!entries.size) consumers.delete(entry.consumer)
+}
 
 /** The next number in the order requests start in, unique within the process. */
 export const nextRequest = (): number => ++sequence.value
@@ -211,9 +265,9 @@ export interface ProcessCacheHandleOptions {
   /** Seconds an entry may live at most. It shortens a lifetime, never extends one, and 0 keeps nothing. */
   ttl?: number
   /**
-   * The size the scope keeps per consumer at most, in bytes of stored JSON. Past it, expired entries go first, then
-   * the least recently used, and a value larger than the whole limit is not stored. A scope keeps `MAX_PARTITIONS`
-   * consumers at most, so it holds that many times `maxSize` at most.
+   * The size the scope keeps at most, in bytes of stored JSON, across all its consumers. Past it, expired entries go
+   * first, then the scope's least recently used, whichever consumer holds it, and a value larger than the whole limit
+   * is not stored.
    */
   maxSize?: number
   /** Measures a value for `maxSize`. The bytes of its JSON by default. */
@@ -238,21 +292,24 @@ export interface ProcessCacheHandleOptions {
 export const processCache = (scope: string, { credentialed = false, consumer = '', ttl, maxSize, sizeOf = jsonSize }: ProcessCacheHandleOptions = {}): ProcessCacheHandle | undefined => {
   if (!runtime.isServer() || credentialed) return undefined
 
-  if (!scopes.has(scope)) scopes.set(scope, new Map())
-  const consumers = scopes.get(scope)!
-  // The consumer's entries, made the scope's most recently used, past MAX_PARTITIONS evicting the least recently used.
-  // A read finds none it does not hold, so a miss makes no partition.
+  const consumers = scopeOf(scope)
+  const order = consumers[ORDER]!
+  // The consumer's entries, made the scope's most recently used consumer. A new one past MAX_PARTITIONS evicts the
+  // least recently used, entries and all. A read finds none it does not hold, so a miss makes no partition.
   const partition = (create: boolean): Entries | undefined => {
     const held = consumers.get(consumer)
     if (!held && !create) return undefined
     const entries: Entries = held || new Map()
     // A Map keeps insertion order, so moving the consumer to the end keeps the least recently used first.
     consumers.delete(consumer)
-    consumers.set(consumer, entries)
-    for (const key of consumers.keys()) {
-      if (consumers.size <= MAX_PARTITIONS) break
-      consumers.delete(key)
+    if (!held) {
+      for (const [key, evicted] of consumers) {
+        if (consumers.size < MAX_PARTITIONS) break
+        for (const entry of evicted.values()) drop(consumers, entry)
+        consumers.delete(key)
+      }
     }
+    consumers.set(consumer, entries)
     return entries
   }
   // A ttl caps what may be kept, so 0 keeps nothing; without one, Drupal's lifetime stands.
@@ -260,24 +317,22 @@ export const processCache = (scope: string, { credentialed = false, consumer = '
   const taken = generation.value
 
   const expired = (entry: Entry, now = Date.now()) => now - entry.created >= entry.seconds * 1000
-  // The running size of the entries, kept on the map so every handle and copy of the module agrees.
-  const total = (entries: Entries) => entries[SIZE] || 0
-  const remove = (entries: Entries, key: string) => {
-    const entry = entries.get(key)
-    if (!entry) return
-    entries[SIZE] = total(entries) - entry.size
-    entries.delete(key)
-  }
   const bounded = typeof maxSize === 'number'
-  // Keeps the consumer's entries within `maxSize`: expired entries go first, then the least recently used.
-  const bound = (entries: Entries) => {
-    if (!bounded || total(entries) <= maxSize) return
-    const now = Date.now()
-    for (const [key, entry] of entries) if (expired(entry, now)) remove(entries, key)
-    for (const key of entries.keys()) {
-      if (total(entries) <= maxSize) break
-      remove(entries, key)
+  // Keeps the scope within `maxSize`: expired entries go first, then the least recently used, whoever holds them.
+  // The sweep for expired entries reads them all, so it runs once the scope has stored as many values as it holds
+  // since the last one, which keeps a write's cost the same however many entries the scope holds.
+  const bound = () => {
+    if (!bounded || order.size <= maxSize) return
+    if (order.writes >= order.count) {
+      order.writes = 0
+      const now = Date.now()
+      for (let link = order.next; link !== order;) {
+        const entry = link as Entry
+        link = link.next
+        if (expired(entry, now)) drop(consumers, entry)
+      }
     }
+    while (order.size > maxSize && order.next !== order) drop(consumers, order.next as Entry)
   }
 
   return {
@@ -289,51 +344,65 @@ export const processCache = (scope: string, { credentialed = false, consumer = '
 
     // The reader's cap applies too, so a shorter ttl never serves an older entry.
     get<T = unknown>(key: string): T | undefined {
-      const entries = partition(false)
-      const entry = entries?.get(key)
-      if (!entries || !entry) return undefined
+      const entry = partition(false)?.get(key)
+      if (!entry) return undefined
       // Past its own lifetime the entry is no use to any reader, so it goes.
       if (expired(entry)) {
-        remove(entries, key)
+        drop(consumers, entry)
         return undefined
       }
+      if (entry.value === undefined) return undefined
       if (Date.now() - entry.created >= cap(entry.seconds) * 1000) return undefined
-      // A Map keeps insertion order, so moving a read entry to the end keeps the oldest first.
-      entries.delete(key)
-      entries.set(key, entry)
+      unlink(entry)
+      use(order, entry)
       return entry.value as T
     },
 
     /**
-     * Store a value, unless a clear has happened since this handle was taken, or a forget of the scope since its
-     * request started.
+     * Store a value, unless a clear has happened since this handle was taken, a forget of the scope since its
+     * request started, or a request that started later has stored or removed the entry.
      *
      * A value that may not be kept also removes what an earlier response
-     * stored under the key, so the cache follows Drupal's latest answer.
+     * stored under the key, so the cache follows Drupal's latest answer. With a
+     * request number, it leaves that number in the entry's place, holding no
+     * value, as a stored value does: the trace counts as the bytes of its key,
+     * and goes as an entry does.
      *
      * @param key - The cache key.
      * @param value - The value to store.
      * @param seconds - Seconds the value may be kept.
      * @param since - A generation the value was fetched at. The value is dropped when a clear has happened since.
      * @param started - The request's number from `nextRequest()`. The value is dropped when it started before the
-     * scope's last forget, which it may predate.
+     * scope's last forget, which it may predate, or before the request whose answer the entry holds or removed.
      * @returns The value, stored or not.
      */
     set<T>(key: string, value: T, seconds: number, since?: number, started?: number): T {
       if (since !== undefined && since !== generation.value) return value
       if (started !== undefined && started <= (forgotten.get(scope) ?? 0)) return value
-      const keep = cap(seconds) > 0
-      // Only a value to keep makes a partition: one that may not be kept has only an earlier answer to remove.
-      const entries = partition(keep)
-      if (entries) remove(entries, key)
-      if (entries && keep) {
-        const size = sizeOf(value)
-        // A value larger than the whole limit would empty the partition and still not fit.
-        if (bounded && size > maxSize) return value
-        entries.set(key, { value, seconds: cap(seconds), created: Date.now(), size })
-        entries[SIZE] = total(entries) + size
-        bound(entries)
+      const earlier = consumers.get(consumer)?.get(key)
+      if (earlier && started !== undefined && (earlier.started ?? 0) > started) return value
+      if (earlier) drop(consumers, earlier)
+      let kept: unknown = value
+      let lifetime = cap(seconds)
+      let size = lifetime > 0 ? sizeOf(value) : 0
+      // A value larger than the whole limit would empty the scope and still not fit, so it is not kept either. Only
+      // what is kept makes a partition.
+      if (lifetime <= 0 || (bounded && size > maxSize)) {
+        if (started === undefined) return value
+        kept = undefined
+        lifetime = cap(Infinity)
+        size = byteSize(key)
+        if (lifetime <= 0 || (bounded && size > maxSize)) return value
       }
+      const entries = partition(true)!
+      const entry = { value: kept, seconds: lifetime, created: Date.now(), size, key, consumer, started } as Entry
+      entries.set(key, entry)
+      entries[SIZE] = (entries[SIZE] || 0) + size
+      use(order, entry)
+      order.size += size
+      order.count++
+      order.writes++
+      bound()
       return value
     },
   }
@@ -359,11 +428,12 @@ export const processCacheGeneration = (): number => generation.value
 export const forgetProcessCache = (scope: string, test: (key: string) => boolean): number => {
   forgotten.set(scope, sequence.value)
   let dropped = 0
-  for (const entries of scopes.get(scope)?.values() || []) {
-    for (const [key, entry] of [...entries]) {
-      if (!test(key)) continue
-      entries[SIZE] = (entries[SIZE] || 0) - entry.size
-      entries.delete(key)
+  const consumers = scopes.get(scope)
+  if (!consumers) return 0
+  for (const entries of [...consumers.values()]) {
+    for (const entry of [...entries.values()]) {
+      if (!test(entry.key)) continue
+      drop(consumers, entry)
       dropped++
     }
   }

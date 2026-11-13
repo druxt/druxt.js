@@ -24,7 +24,9 @@
         "test/nuxt/app/app.vue",
         "test/nuxt/setup.ts",
         // Not run by any CI job yet: the core port adds the job that runs it.
-        "scripts/nuxt-floor.mjs"
+        "scripts/nuxt-floor.mjs",
+        // Run by hand: node scripts/bench/process-cache.mjs.
+        "scripts/bench/*.mjs"
       ],
       // pinia: the packages that use it declare it. The unit tests of their stores import it too.
       // vue-router: Nuxt's own, which a unit test builds a router with.

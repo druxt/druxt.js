@@ -89,9 +89,9 @@ export interface ProcessCacheOptions {
   /** Also keep entities, collections, views and route lookups, every GET through `get()`, not only the index. Off by default. */
   content?: boolean
   /**
-   * Bytes of stored JSON each cache area keeps per set of client headers, 50 MB by default. Past it the least recently
-   * used go, and a response larger than it is not kept. An area keeps 32 sets of headers at most, the least recently
-   * used going first, so it holds 32 times this at most.
+   * Bytes of stored JSON each cache area keeps across all its sets of client headers, 50 MB by default. An area holds
+   * one kind of answer, such as the content or a module's menus. Past it the area's least recently used entries go,
+   * whichever set holds them, and a response larger than it is not kept.
    */
   maxSize?: number
   /** Seconds an entry may live at most. It never extends Cache-Control. */
