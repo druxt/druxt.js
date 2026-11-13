@@ -21,7 +21,7 @@ const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
 - **Process cache:** off unless the `cache` option is set. On a server it then
   keeps the JSON:API index, fetched without credentials, between requests for
   as long as its `Cache-Control` allows. With `cache: { content: true }` it also
-  keeps each `get()` answered with a 200 whose body is a JSON document and
+  keeps each `get()` answered with a 200 whose body is a JSON object or array and
   that `Cache-Control` lets a shared cache store, for a request without credentials or options that could change
   the response, such as headers or a body. A `bypassCache` request goes to
   Drupal, and its answer replaces the entry when it may be stored and removes
@@ -51,10 +51,15 @@ const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
   is, as is one answered after another session signed in. A sign-in or
   refresh that a later sign-in or a sign-out replaced while it ran stores
   nothing. It rejects with an error `isSuperseded(error)` tells from a failure
-  when it succeeded, and with its own error when it failed, as does a request
-  still waiting on a refresh when another session signs in. A sign-in ends
-  the session held as it starts, so one that fails leaves none, as
-  druxt-auth 0.x did, and nothing is sent as the user before while it runs.
+  when it succeeded, and with its own error when it failed. A request still
+  waiting on a refresh when another session signs in rejects with that
+  superseded error, whether the refresh succeeded or failed, and is not sent.
+  A sign-in ends the session held as it starts, so one that fails leaves
+  none, as druxt-auth 0.x did. A client that stores its own tokens sends
+  nothing as the user before while a sign-in runs. Under `auth.session` that
+  session is in the site's cookies, which the site's proxy adds until the
+  sign-in at `tokenUrl` answers. Druxt's Nuxt module doesn't start a sign-in
+  while a session is held.
   A session signed in since the last refresh refreshes on its own, within
   the grace too. A `logout()`
   that succeeds ends the session, even one a sign-in stored while the site's

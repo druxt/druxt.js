@@ -182,7 +182,9 @@ export class DruxtClient {
    * set, and it is skipped for any request that sends an Authorization header,
    * basic auth, a session cookie or an Origin, and for a session-mode client
    * while it is signed in. Clients whose headers differ keep their entries
-   * apart.
+   * apart. A handle is for one request: ask for a new one after
+   * `clearCache()` or `resetProcessCache()`, as one kept across a clear still
+   * reads what it held, and its writes are dropped.
    *
    * @param scope - The cache scope, e.g. 'index' or 'menu'.
    * @returns The cache, or undefined when it must not be used.
@@ -606,8 +608,9 @@ export class DruxtClient {
     // With `cache.content`, a response to a request without credentials is kept in the process cache for as long as
     // its Cache-Control allows, and the next server request for the same URL is answered from it. The key is the
     // backend and the URL alone, so a request whose own options could change the response, such as headers or a
-    // body, is never read from or stored. Only a 200 is stored, so a caller whose validateStatus refuses one goes to
-    // Drupal. Any other answer from Drupal removes what an earlier one stored, so the cache follows its latest answer.
+    // body, is never read from or stored. Only a 200 whose body is a JSON object or array is stored, so a caller
+    // whose validateStatus refuses one goes to Drupal. Any other answer from Drupal removes what an earlier one stored,
+    // so the cache follows its latest answer.
     const cacheable = !!(this.options.cache || undefined)?.content
       && Object.keys(options || {}).every((option) => CACHE_SAFE_OPTIONS.has(option))
       && (typeof request.validateStatus !== 'function' || request.validateStatus(200))
