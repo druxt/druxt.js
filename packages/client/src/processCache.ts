@@ -248,6 +248,10 @@ export const lifetimeLeft = (document: unknown): number => {
   return Math.max(0, record.seconds - Math.floor((Date.now() - record.at) / 1000))
 }
 
+/**
+ * The process cache of one scope, for one request. Ask for a new handle after `clearCache()` or
+ * `resetProcessCache()`: one kept across a clear still reads what it held, and its writes are dropped.
+ */
 export interface ProcessCacheHandle {
   /** The generation this handle was taken at. */
   generation: number
@@ -282,6 +286,8 @@ export interface ProcessCacheHandleOptions {
  * the lifetime it is stored with, which comes from the response's Cache-Control.
  * Store a value only after its request has resolved, and ask for the cache
  * again at that point: the request may have shown the client to be credentialed.
+ * A handle is for one request. Ask for a new one after a clear: one kept across
+ * it still reads what it held, and its writes are dropped.
  *
  * @param scope - The cache scope, e.g. 'index'.
  * @param options - The cache options.

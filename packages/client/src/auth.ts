@@ -215,7 +215,9 @@ export class DruxtAuth {
 
   /**
    * Posts a sign-in grant to the token endpoint and stores its tokens. It ends the session held as it starts, so a
-   * sign-in that fails leaves none, as druxt-auth 0.x did, and nothing is sent as the last user while it runs. A
+   * sign-in that fails leaves none, as druxt-auth 0.x did. A client that stores its own tokens sends nothing as the
+   * last user while it runs. With `session` on, that session is in the site's cookies, which the site's proxy adds
+   * until the sign-in at `tokenUrl` answers; Druxt's Nuxt module doesn't start a sign-in while a session is held. A
    * sign-in started later, or a sign-out, while it runs replaces it: it then stores nothing. Once Drupal has issued
    * its tokens, it rejects with an error whose `superseded` is true, which `isSuperseded()` tells; one that failed
    * rejects with its own error.
