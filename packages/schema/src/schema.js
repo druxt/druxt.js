@@ -66,7 +66,9 @@ class DruxtSchema {
    * it is read again filtered by entity type, and by bundle for an entity type
    * with more than one page of displays, so that every request asks for a
    * first page. Drupal Canvas 1.12.0 answers 500 to any page of a
-   * configuration collection after the first.
+   * configuration collection after the first. A bundle with more than one
+   * page of displays of its own is still read to its last page, so on such a
+   * site it fails the build rather than leaving displays out.
    *
    * @param {string} resourceType - The display resource type, such as `entity_view_display--entity_view_display`.
    * @param {object} index - The JSON:API resource index.
@@ -97,10 +99,10 @@ class DruxtSchema {
       )
       if (!((byType.links || {}).next || {}).href) return [byType]
 
-      return Promise.all(bundles[entityType].map((bundle) => this.druxt.getCollection(
+      return (await Promise.all(bundles[entityType].map((bundle) => this.druxt.getCollectionAll(
         resourceType,
         query().addFilter('targetEntityType', entityType).addFilter('bundle', bundle)
-      )))
+      )))).flat()
     }))).flat()
   }
 

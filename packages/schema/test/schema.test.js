@@ -47,7 +47,7 @@ describe('DruxtSchema', () => {
     // Drupal Canvas 1.12.0 does: its config entity query takes JSON:API's page
     // offset as a string under strict types. This site has one more page of
     // displays than it can serve, and more than one page of node displays.
-    const pagedSite = () => {
+    const pagedSite = ({ pagedBundle } = {}) => {
       const real = schema.druxt.getCollection.bind(schema.druxt)
       const requests = []
       jest.spyOn(schema.druxt, 'getCollection').mockImplementation(async (type, query, ...rest) => {
@@ -66,13 +66,15 @@ describe('DruxtSchema', () => {
         const entityType = (/filter\[targetEntityType\]=([^&]+)/.exec(q) || [])[1]
         const bundle = (/filter\[bundle\]=([^&]+)/.exec(q) || [])[1]
         const res = await real(type, new DrupalJsonApiParams().addSort('drupal_internal__id'), ...rest)
-        const next = { next: { href: `${baseUrl}/jsonapi/${type.replace('--', '/')}?page[offset]=50` } }
+        // Drupal's next link keeps the request's filters and sort.
+        const next = { next: { href: `${baseUrl}/jsonapi/${type.replace('--', '/')}?${q}&page[offset]=50` } }
         if (!entityType) return { ...res, links: { ...res.links, ...next } }
 
         const data = res.data.filter((display) =>
           display.attributes.targetEntityType === entityType &&
           (!bundle || display.attributes.bundle === bundle))
-        return { ...res, data, links: entityType === 'node' && !bundle ? next : {} }
+        const paged = entityType === 'node' && (!bundle || bundle === pagedBundle)
+        return { ...res, data, links: paged ? next : {} }
       })
       return requests
     }
@@ -89,6 +91,14 @@ describe('DruxtSchema', () => {
       expect(requests.filter((q) => q.includes('page[offset]'))).toHaveLength(2)
       // Node displays were read by bundle.
       expect(requests.some((q) => q.includes('filter[targetEntityType]=node') && q.includes('filter[bundle]=page'))).toBe(true)
+    })
+
+    test('fails, rather than leave displays out, when one bundle has more than a page', async () => {
+      const requests = pagedSite({ pagedBundle: 'page' })
+
+      await expect(schema.get()).rejects.toThrow('500')
+      // The bundle's next page was asked for.
+      expect(requests.some((q) => q.includes('filter[bundle]=page') && q.includes('page[offset]'))).toBe(true)
     })
 
     test('still fails when the first page fails', async () => {
