@@ -38,6 +38,11 @@ const mountComponent = (propsData = {}, options = {}, mocks = {}) => {
   return mount(DruxtBlock, { localVue, mocks, propsData, store, stubs: ['DruxtDebug'], ...options })
 }
 
+// The block config's own uuid belongs to the install. Its plugin names the
+// block_content it renders, which is stable, so tests look the block up by that.
+const bannerBlockQuery = () => new DrupalJsonApiParams()
+  .addFilter('plugin', 'block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf')
+
 describe('Component - DruxtBlock', () => {
   beforeEach(() => {
     mockAxios.reset()
@@ -71,11 +76,8 @@ describe('Component - DruxtBlock', () => {
   })
 
   test('uuid - pluginId', async () => {
-    // The block config's own uuid belongs to the install. Its plugin names the
-    // block_content it renders, which is what the component names below are
-    // built from, so the block is looked up by that.
-    const blockQuery = new DrupalJsonApiParams().addFilter('plugin', 'block_content:9aadf4a1-ded6-4017-a10d-a5e043396edf')
-    const mockBlock = await getMockResource('block--block', blockQuery)
+    // The component names below are built from the block's plugin.
+    const mockBlock = await getMockResource('block--block', bannerBlockQuery())
     const wrapper = mountComponent({ uuid: mockBlock.data.id })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
@@ -128,12 +130,13 @@ describe('Component - DruxtBlock', () => {
         },
       },
     }
-    const wrapper = mountComponent({ uuid: '9d3d3a23-69f5-4c2d-9a00-287492a52987' }, {}, mocks)
+    const mockBlock = await getMockResource('block--block', bannerBlockQuery())
+    const wrapper = mountComponent({ uuid: mockBlock.data.id }, {}, mocks)
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
-
     // Fetch key.
-    expect(DruxtBlock.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtBlock:9d3d3a23-69f5-4c2d-9a00-287492a52987:0')
+    expect(DruxtBlock.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe(`DruxtBlock:${mockBlock.data.id}:0`)
+    expect(wrapper.vm.block).toMatchObject({ id: mockBlock.data.id, type: 'block--block' })
 
     // Default slot.
     const slot = wrapper.vm.getScopedSlots().default()
@@ -142,12 +145,14 @@ describe('Component - DruxtBlock', () => {
 
   test('custom default slot', async () => {
     const scopedSlots = { default: jest.fn() }
-    const wrapper = mountComponent({ uuid: '06251689-406e-4dc4-aab1-5fcf0e5f9ecb' }, { scopedSlots })
+    const mockBlock = await getMockResource('block--block', bannerBlockQuery())
+    const wrapper = mountComponent({ uuid: mockBlock.data.id }, { scopedSlots })
     await wrapper.vm.$options.fetch.call(wrapper.vm)
 
     // Fetch key.
-    expect(DruxtBlock.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe('DruxtBlock:06251689-406e-4dc4-aab1-5fcf0e5f9ecb:0')
+    expect(DruxtBlock.fetchKey.call(wrapper.vm, jest.fn(() => 0))).toBe(`DruxtBlock:${mockBlock.data.id}:0`)
 
+    expect(wrapper.vm.block).toMatchObject({ id: mockBlock.data.id, type: 'block--block' })
     wrapper.vm.getScopedSlots().default.call()
     expect(scopedSlots.default).toHaveBeenCalledWith({
       block: wrapper.vm.block,
