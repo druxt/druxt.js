@@ -4,6 +4,9 @@
   "private": true,
   "description": "The Druxt JSON:API client, with no Vue or Nuxt dependency.",
   "type": "module",
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0 || >=26.0.0"
+  },
   "exports": {
     ".": {
       "source": "./src/index.ts",
