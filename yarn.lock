@@ -6196,14 +6196,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:0.34.0":
-  version: 0.34.0
-  resolution: "axios@npm:0.34.0"
+"axios@npm:0.35.0":
+  version: 0.35.0
+  resolution: "axios@npm:0.35.0"
   dependencies:
     follow-redirects: ^1.15.4
     form-data: ^4.0.4
     proxy-from-env: ^1.1.0
-  checksum: 888345cbaf63c84bd3d50fb514d2b2e70658b7802eb5fd763507b475737b72eff66079c915e69d26c776d8b7d1d9b57df8d12a61550b829e047a395183583a1a
+  checksum: 8ea50d742025371943f2dbe9b4a556245942fe5ec8fdceb43541f312148d9405259e4d531c0e29482ecca2904498b30fc4bb5b1e2e57bb53235303e49fbfff88
   languageName: node
   linkType: hard
 
@@ -8978,7 +8978,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-blocks@workspace:packages/blocks"
   dependencies:
-    axios: 0.34.0
+    axios: 0.35.0
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.25.1
   peerDependencies:
@@ -9037,7 +9037,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-menu@workspace:packages/menu"
   dependencies:
-    axios: 0.34.0
+    axios: 0.35.0
     deepmerge: ^4.3.1
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.25.1
@@ -9053,7 +9053,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-router@workspace:packages/router"
   dependencies:
-    axios: 0.34.0
+    axios: 0.35.0
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.25.1
     url-parse: ^1.5.10
@@ -9068,7 +9068,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-schema@workspace:packages/schema"
   dependencies:
-    axios: 0.34.0
+    axios: 0.35.0
     consola: ^2.15.3
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.25.1
@@ -9113,7 +9113,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "druxt-views@workspace:packages/views"
   dependencies:
-    axios: 0.34.0
+    axios: 0.35.0
     deepmerge: ^4.3.1
     drupal-jsonapi-params: ^2.3.2
     druxt: ^0.25.1
@@ -9195,7 +9195,7 @@ __metadata:
     querystring: ^0.2.1
     scule: ^0.3.2
   peerDependencies:
-    axios: ">=0.34.0"
+    axios: ">=0.35.0"
     vue: ^2.7.14
     vuex: ^3.6.2
   dependenciesMeta:
