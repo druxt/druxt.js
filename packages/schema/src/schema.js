@@ -60,6 +60,51 @@ class DruxtSchema {
   }
 
   /**
+   * Reads every display of one kind: entity view or entity form displays.
+   *
+   * The collection is read page by page. When a page after the first fails,
+   * it is read again filtered by entity type, and by bundle for an entity type
+   * with more than one page of displays, so that every request asks for a
+   * first page. Drupal Canvas 1.12.0 answers 500 to any page of a
+   * configuration collection after the first.
+   *
+   * @param {string} resourceType - The display resource type, such as `entity_view_display--entity_view_display`.
+   * @param {object} index - The JSON:API resource index.
+   *
+   * @returns {object[]} The collection responses.
+   */
+  async getDisplays(resourceType, index) {
+    const query = () => new DrupalJsonApiParams().addSort('drupal_internal__id')
+
+    try {
+      return await this.druxt.getCollectionAll(resourceType, query())
+    } catch (err) {
+      // A first page that fails is an error of its own, such as a permission
+      // the site has not granted, and it is thrown from here.
+      await this.druxt.getCollection(resourceType, query())
+    }
+
+    const bundles = {}
+    for (const key of Object.keys(index || {})) {
+      const [entityType, bundle] = key.split('--')
+      if (entityType && bundle) (bundles[entityType] = bundles[entityType] || []).push(bundle)
+    }
+
+    return (await Promise.all(Object.keys(bundles).map(async (entityType) => {
+      const byType = await this.druxt.getCollection(
+        resourceType,
+        query().addFilter('targetEntityType', entityType)
+      )
+      if (!((byType.links || {}).next || {}).href) return [byType]
+
+      return Promise.all(bundles[entityType].map((bundle) => this.druxt.getCollection(
+        resourceType,
+        query().addFilter('targetEntityType', entityType).addFilter('bundle', bundle)
+      )))
+    }))).flat()
+  }
+
+  /**
    * Gets all available schemas for Entity Views and Form modes.
    *
    * @returns {object} The JSON:API Resource index and processed schemas.
@@ -75,8 +120,7 @@ class DruxtSchema {
     const displays = (await Promise.all([
       ...['view', 'form'].map(async (schemaType) => {
         const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
-        const query = new DrupalJsonApiParams().addSort('drupal_internal__id')
-        const result = await this.druxt.getCollectionAll(resourceType, query)
+        const result = await this.getDisplays(resourceType, index)
 
         // Check permissions.
         try {
@@ -121,8 +165,7 @@ class DruxtSchema {
     if (!this.displayIds) {
       this.displayIds = Promise.all(['view', 'form'].map(async (schemaType) => {
         const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
-        const query = new DrupalJsonApiParams().addSort('drupal_internal__id')
-        const result = await this.druxt.getCollectionAll(resourceType, query)
+        const result = await this.getDisplays(resourceType, await this.druxt.getIndex())
         return result.flatMap((collection) => (collection.data || [])
           .filter((data) => !!data.attributes.status)
           .map((data) => [data.attributes.targetEntityType, data.attributes.bundle, data.attributes.mode, schemaType].join('--')))
