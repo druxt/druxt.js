@@ -264,8 +264,8 @@ export class DruxtClient {
    * it, and its 401 is returned as it is.
    *
    * A request is sent, refreshed and retried only as the session it was made
-   * for. One still waiting on a refresh when another session signs in rejects
-   * with an error `isSuperseded()` tells, and is not sent; one whose session a
+   * for. One not yet sent, waiting on a refresh when another session signs in,
+   * rejects with an error `isSuperseded()` tells, and is not sent; one whose session a
    * sign-out ended, or a sign-in that has not stored its tokens yet, is sent
    * without a token, as a signed-out client's are. A 401 answered after
    * another session signed in is returned as it is, whether the request was
