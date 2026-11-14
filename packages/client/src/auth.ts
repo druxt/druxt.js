@@ -90,7 +90,10 @@ export class DruxtAuth {
   client: DruxtClient
   options: Options
   storage: AuthStorage
-  /** The session's refresh in flight, its last one, and recent attempts: druxt-auth's limits. */
+  /**
+   * The session's refresh in flight and its last one, and the client's recent attempts: druxt-auth's limits. The
+   * attempts outlast a session, so a loop of sign-ins is held to the same limit.
+   */
   refreshing: Promise<TokenResponse> | null
   refreshedAt: number
   attempts: number[]

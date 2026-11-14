@@ -51,9 +51,10 @@ const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
   is, as is one answered after another session signed in. A sign-in or
   refresh that a later sign-in or a sign-out replaced while it ran stores
   nothing. It rejects with an error `isSuperseded(error)` tells from a failure
-  when it succeeded, and with its own error when it failed. A request still
-  waiting on a refresh when another session signs in rejects with that
-  superseded error, whether the refresh succeeded or failed, and is not sent.
+  when it succeeded, and with its own error when it failed. A request not
+  yet sent, waiting on a refresh when another session signs in, rejects with
+  that superseded error, whether the refresh succeeded or failed, and is not
+  sent.
   A sign-in ends the session held as it starts, so one that fails leaves
   none, as druxt-auth 0.x did. A client that stores its own tokens sends
   nothing as the user before while a sign-in runs. Under `auth.session` that
