@@ -11,6 +11,8 @@
  */
 const path = require('path')
 
+const MarkdownIt = require('markdown-it')
+
 const REPO = (() => {
   try {
     // Changesets runs from the repository root.
@@ -73,89 +75,45 @@ const VERBS = {
   restored: 'Restored',
 }
 
-const linkPlainIssues = (text) => text.replace(/(^|[^[])#(\d+)\b/g, `$1[#$2](${REPO}/issues/$2)`)
+// CommonMark, so a summary is read the way it renders. An escape stays a
+// token of its own, so an escaped `\#123` never reads as plain text.
+const md = new MarkdownIt('commonmark').disable('text_join')
 
-/**
- * Where the bracket that closes the one at `start` is, past escapes and
- * nested pairs.
- *
- * @param {string} text - The text to scan.
- * @param {number} start - The index of the opening bracket.
- * @param {string} open - The opening bracket.
- * @param {string} close - The closing bracket.
- * @returns {number} The index of the closing bracket, or -1.
- */
-const closing = (text, start, open, close) => {
+// Each `#123` is tagged with a character from the private use area before
+// parsing, so the tokens show which refs are plain text and which sit in a
+// link, an autolink, code or HTML.
+const MARK = 0xe000
+
+const linkIssues = (text, env) => {
+  const refs = [...text.matchAll(/#(\d+)\b/g)]
+  if (!refs.length) return text
+  let tagged = ''
+  let last = 0
+  refs.forEach((ref, i) => {
+    tagged += text.slice(last, ref.index + 1) + String.fromCharCode(MARK + i)
+    last = ref.index + 1
+  })
+  tagged += text.slice(last)
+
+  const plain = new Set()
   let depth = 0
-  for (let i = start; i < text.length; i++) {
-    if (text[i] === '\\') i++
-    else if (text[i] === open) depth++
-    else if (text[i] === close && --depth === 0) return i
-  }
-  return -1
-}
-
-/**
- * Where the literal text that starts at `i` ends: an escape, a code span, an
- * autolink, or a link with its label and its destination or reference.
- *
- * @param {string} text - The text to scan.
- * @param {number} i - The index to look at.
- * @returns {number} The index after the literal, or `i` when none starts there.
- */
-const literalEnd = (text, i) => {
-  if (text[i] === '\\') return Math.min(i + 2, text.length)
-  if (text[i] === '`') {
-    // A code span closes on a run of exactly as many backticks.
-    const run = (j) => {
-      let end = j
-      while (text[end] === '`') end++
-      return end
+  for (const token of md.parseInline(tagged, env)[0].children) {
+    if (token.type === 'link_open') depth++
+    else if (token.type === 'link_close') depth--
+    else if (token.type === 'text' && !depth) {
+      for (const tag of token.content.matchAll(/#([-])/g)) plain.add(tag[1].charCodeAt(0) - MARK)
     }
-    const open = run(i)
-    for (let j = open; j < text.length; ) {
-      if (text[j] !== '`') {
-        j++
-        continue
-      }
-      const end = run(j)
-      if (end - j === open - i) return end
-      j = end
-    }
-    return open
   }
-  if (text[i] === '<') {
-    const autolink = /^<[^<>\s]+>/.exec(text.slice(i))
-    return autolink ? i + autolink[0].length : i
-  }
-  const start = text[i] === '!' ? i + 1 : i
-  if (text[start] !== '[') return i
-  const label = closing(text, start, '[', ']')
-  if (label < 0) return i
-  const next = text[label + 1]
-  if (next === '(' || next === '[') {
-    const end = closing(text, label + 1, next, next === '(' ? ')' : ']')
-    if (end >= 0) return end + 1
-  }
-  return label + 1
-}
 
-// Code spans, links and autolinks keep their text as written, so a `#123`
-// in a URL, a link label or code is not turned into an issue link.
-const linkIssues = (text) => {
   let out = ''
-  let plain = ''
-  for (let i = 0; i < text.length; ) {
-    const end = literalEnd(text, i)
-    if (end > i) {
-      out += linkPlainIssues(plain) + text.slice(i, end)
-      plain = ''
-      i = end
-    } else {
-      plain += text[i++]
-    }
-  }
-  return out + linkPlainIssues(plain)
+  last = 0
+  refs.forEach((ref, i) => {
+    // `[#123]` reads as a label someone meant to write.
+    if (!plain.has(i) || text[ref.index - 1] === '[') return
+    out += text.slice(last, ref.index) + `[#${ref[1]}](${REPO}/issues/${ref[1]})`
+    last = ref.index + ref[0].length
+  })
+  return out + text.slice(last)
 }
 
 // The Conventional Commits types. Any other word before a colon, such as
@@ -167,10 +125,12 @@ const PREFIX = new RegExp(`^(${TYPES})(?:\\(([^)]*)\\))?(!)?:\\s*`)
  * One changeset summary line to one changelog sentence.
  *
  * @param {string} summary - The changeset's first line.
+ * @param {object} [env] - The markdown-it environment the rest of the summary
+ *   was parsed in, so a reference link defined there resolves.
  * @returns {{ text: string, issues: string[], breaking: boolean }} The
  *   rewritten sentence plus any issue refs found in the prefix.
  */
-const rewrite = (summary) => {
+const rewrite = (summary, env = {}) => {
   let text = summary.trim()
   const issues = []
   let breaking = false
@@ -189,7 +149,7 @@ const rewrite = (summary) => {
     text = text.charAt(0).toUpperCase() + text.slice(1)
   }
 
-  text = linkIssues(text).replace(/\.+$/, '') + '.'
+  text = linkIssues(text, env).replace(/\.+$/, '') + '.'
   return { text, issues, breaking }
 }
 
@@ -203,35 +163,28 @@ const BREAKING = /^ {0,3}BREAKING[ -]CHANGE:/
  * or a breaking-change footer stays an example.
  *
  * @param {string[]} lines - The summary's lines after the first.
+ * @param {object} env - Collects the link reference definitions found.
  * @returns {boolean[]} True for each line outside a fenced or indented code
- *   block.
+ *   block or an HTML block.
  */
-const proseLines = (lines) => {
-  let fence = null
-  return lines.map((line) => {
-    if (fence) {
-      if (fence.test(line)) fence = null
-      return false
+const proseLines = (lines, env) => {
+  const prose = lines.map(() => true)
+  for (const token of md.parse(lines.join('\n'), env)) {
+    if (['fence', 'code_block', 'html_block'].includes(token.type) && token.map) {
+      for (let i = token.map[0]; i < token.map[1]; i++) prose[i] = false
     }
-    // A fence may open a list item, as in `- ~~~`. A backtick fence's info
-    // string holds no backticks, so a line such as ```a``` is a code span.
-    const open = line.match(/^(?: *(?:[-+*]|\d{1,9}[.)]) +| {0,3})(`{3,}|~{3,})(.*)$/)
-    if (open && !(open[1][0] === '`' && open[2].includes('`'))) {
-      // It closes at any indent, so a fence in a list item closes too.
-      fence = new RegExp(`^\\s*${open[1][0]}{${open[1].length},}\\s*$`)
-      return false
-    }
-    return !/^(?: {4}|\t)/.test(line)
-  })
+  }
+  return prose
 }
 
 const getReleaseLine = async (changeset) => {
   const [first, ...lines] = changeset.summary.split('\n')
-  const prose = proseLines(lines)
+  const env = {}
+  const prose = proseLines(lines, env)
   const override = lines.map((line, i) => prose[i] && COMMIT.exec(line)).find(Boolean)
   const rest = lines.filter((line, i) => !(prose[i] && COMMIT.test(line)))
   const commit = override ? override[1] : changeset.commit
-  const result = rewrite(first)
+  const result = rewrite(first, env)
   const { text, issues } = result
   const breaking = result.breaking || lines.some((line, i) => prose[i] && BREAKING.test(line))
 
