@@ -80,6 +80,201 @@ What these bounds promise over time is stated in the
 Translated routes also need a `decoupled_router` patch; see the
 [multilingual guide](https://druxtjs.org/how-to/multilingual).
 
+## Settings
+
+| Option        | Type              | Default      | Description                                                                          |
+| ------------- | ----------------- | ------------ | ------------------------------------------------------------------------------------ |
+| `baseUrl`     | `string`          |              | The Drupal backend URL. **Required.**                                                |
+| `endpoint`    | `string`          | `'/jsonapi'` | The JSON:API endpoint path.                                                          |
+| `proxy.api`   | `boolean`         | `false`      | Proxy API requests via Nuxt ([guide](https://druxtjs.org/how-to/proxy)).             |
+| `proxy.files` | `boolean\|string` | `false`      | Proxy Drupal files. A string sets the site.                                          |
+| `cache`       | `boolean\|object` | `{}`         | The server cache, see below. `false` turns it off.                                   |
+| `siteUrl`     | `string`          | `''`         | The site's public origin, for its canonical link. Also `NUXT_PUBLIC_DRUXT_SITE_URL`. |
+
+See the [Nuxt module API](https://druxtjs.org/api/packages/core/module) for the full
+options list.
+
+A page in a build without the Druxt modules reaches the client through `useNuxtApp().$druxt`. Auto-imports such as `useDruxtClient()` exist only when the module is registered.
+
+## Configuration
+
+The `druxt` block in `nuxt.config.ts` stays one flat object. The module splits it once, when the app builds, into three objects, each with one owner:
+
+| Object           | Holds                                                                                  | Where it lives                                                                               |
+| ---------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Client options   | How to reach Drupal: `baseUrl`, `endpoint`, `proxy`, `cache` and the public `auth`     | Built for each side from the public config. The browser uses the proxy, the server does not. |
+| Settings         | What modules read: `siteUrl`, `develMessages` and one key per module, such as `router` | `runtimeConfig.public.druxt`, read resolved through `useDruxtSettings()`                     |
+| Private settings | `auth.clientSecret`, `cache.secret` and `build.auth.*`                                 | `runtimeConfig.druxt`, on the server only                                                    |
+
+No secret reaches the public config, the client bundle or the payload. Read the settings with `useDruxtSettings()`, never `useRuntimeConfig().public.druxt`. They leave out the client options and the credentials. The client's options are on `useNuxtApp().$druxt.options`:
+
+```ts
+const settings = useDruxtSettings();
+if (settings.develMessages === 'inline') {
+  // ...
+}
+```
+
+`build.auth.clientSecret`, when written in `nuxt.config`, stays in the build-time options for the build client. Other modules can read it at build time, so prefer the `NUXT_DRUXT_BUILD_AUTH_CLIENT_SECRET` environment variable.
+
+A server route reads them with `useDruxtServerSettings(event)`, which adds the settings Drupal marks server only. A route that needs a secret reads the private `runtimeConfig.druxt`.
+
+### Environment variables
+
+Set secrets at runtime, never in `nuxt.config.ts`, where they are part of the build.
+
+| Variable                                                                                          | Sets                                      |
+| ------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `NUXT_PUBLIC_DRUXT_SITE_URL`                                                                      | `siteUrl`                                 |
+| `NUXT_DRUXT_AUTH_CLIENT_SECRET`                                                                   | The confidential Consumer's secret        |
+| `NUXT_DRUXT_CACHE_SECRET`                                                                         | The `POST /api/_druxt/cache/clear` secret |
+| `NUXT_DRUXT_PROXY_TRUST_FORWARDED`                                                                | `proxy.trustForwarded`                    |
+| `NUXT_DRUXT_BUILD_AUTH_CLIENT_ID`                                                                 | The server's own Consumer                 |
+| `NUXT_DRUXT_BUILD_AUTH_CLIENT_SECRET`                                                             | The server's own Consumer's secret        |
+| `NUXT_DRUXT_BUILD_AUTH_USERNAME`, `NUXT_DRUXT_BUILD_AUTH_PASSWORD`, `NUXT_DRUXT_BUILD_AUTH_SCOPE` | The server's password grant and scope     |
+
+`DRUXT_AUTH_CLIENT_SECRET` and the `DRUXT_BUILD_*` variables still work when they are present at runtime.
+
+### Proxy
+
+With `proxy.api`, the browser reaches Drupal through the site's own origin: the JSON:API, `/oauth/token`, `/oauth/userinfo` and the router's `/router/translate-path`. `proxy.files` adds the files directory. One server handler serves them all and reads the base URL for each request, so `NUXT_PUBLIC_DRUXT_BASE_URL` set after the build moves the browser's requests and the server's together.
+
+- The method and the headers pass through, and the body streams through. `Host`, `Accept` and `Accept-Encoding` are not forwarded, so Drupal sees its own host. Nor is `Connection`, a header it names, or another header for one hop only, such as `TE` and `Proxy-Authorization`.
+- `X-Forwarded-For`, `X-Forwarded-Host` and `X-Forwarded-Proto` are set from the site's own view of the request. Any forwarding header the browser sent is dropped, along with `Forwarded`, `X-Forwarded-Port`, `X-Forwarded-Server` and `X-Real-IP`.
+- A path under `/api/_druxt` never reaches Drupal. One no Druxt route takes, such as a `GET` to the `POST` token route, answers 404, where a proxy at `/api/**` would otherwise take it.
+- A redirect passes through to the browser. A `Location` on Drupal's base URL becomes the same path on the site, always a path that starts with one `/`. A `Location` on another host is left as it is, as any reverse proxy leaves it, so the browser follows Drupal's redirect off the site.
+- A cookie Drupal sets for its own host is set for the site's host.
+- Of the browser's cookies, Drupal gets only its own session cookie, `SESS` or `SSESS` and a hash, or the one `cache.sessionCookie` matches. Druxt's `druxt.auth.*` cookies, another module's, such as nuxt-auth-utils' `nuxt-session`, and the site's own never reach Drupal, and a request with none of Drupal's sends no `Cookie` header. When the site's server holds the sign-in, the proxy sends the access token from its cookie as the `Authorization` header. A request that sends its own header keeps it, and the proxy doesn't add credentials to one that sends `X-Druxt-Auth: none`. A token cookie that doesn't decode, such as a bare `%`, counts as none, and the request goes to Drupal anonymously.
+- The response's encoding and length headers are recomputed, and the others come back as Drupal sent them.
+
+Behind a front proxy, such as a hosting platform's nginx, Drupal sees that proxy as every visitor, which its flood control counts as one. Set `proxy.trustForwarded`, or `NUXT_DRUXT_PROXY_TRUST_FORWARDED=true` at runtime, to pass the front proxy's headers on: the visitor's address is added to its `X-Forwarded-For` chain, and its `X-Forwarded-Host`, `X-Forwarded-Proto` and the other forwarding headers pass through. It is safe only when a front proxy the site trusts sets those headers on every request, since otherwise a browser can forge them. It is server only, in the private runtime config.
+
+Druxt's own server routes sit under `/api/_druxt`, such as `/api/_druxt/cache/clear` and `/api/_druxt/auth/token`, in Nitro's `/api` namespace. Many Drupal sites serve JSON:API at `/api`. Set `endpoint: '/api'` with `proxy.api` on, and the proxy takes `/api/**` while Druxt's routes and the site's own `server/api` routes answer first, so Drupal never sees them. A route answers only its own methods, so a request to a route of the site's, or of another module, with a method that route doesn't take goes through the proxy to Drupal, such as a `GET` to a `POST`-only `server/api/login.post.ts`. Only Druxt's own paths answer 404 for one. A JSON:API endpoint at or under `/api/_druxt`, with or without a language prefix, fails the build with `DRUXT_E01006`. Modules read the path from `DRUXT_API_BASE`, in `@druxt/core/routes` and `@druxt/core/kit`.
+
+The JSON:API is proxied under each language's URL prefix as Drupal is configured, such as `/english/jsonapi` for `en`. The build reads the prefixes from Drupal. The default language's comes from the unprefixed index and each other language's from a probe at its langcode. When the decoupled_settings module publishes `language.negotiation` to visitors, the build reads every prefix from it, which is the one way to learn a prefix that is neither. A default language with no prefix is served unprefixed. A prefix the build cannot read is taken to be the langcode, with a warning. When Drupal refuses a production build's read of the languages, such as with the wrong build credentials, the build stops with `DRUXT_E01008`, as the site would otherwise route and proxy only its default language. When Drupal doesn't answer, as in a build that can't reach it, the build warns once and goes on with none. So does any failure in development, so the site starts while Drupal is away. The proxy then serves only the unprefixed endpoint, and a request under a language prefix misses it until a build reads them. The prefixes are read at build, so rebuild after changing them in Drupal. The client gets the same map, so a module's language reaches Drupal under the prefix it is served at.
+
+### Settings from Drupal
+
+A decoupled-settings module can publish settings from Drupal for a frontend's Consumer. Core does not fetch them. A fetcher module hands them to core in two tiers:
+
+- **Public**: settings for the browser. `useDruxtSettings()` reads them from Nuxt state, so they reach the payload.
+- **Server**: settings Drupal marks server only. They stay in Nitro's `druxt` storage and on the request, and never reach the browser.
+
+`useDruxtSettings()` resolves the defaults, then the public tier, then the config, so `nuxt.config.ts` and the environment always win over Drupal. A config key left `undefined` or empty does not erase a value from Drupal. Without a fetcher, both tiers are empty and nothing changes.
+
+A fetcher stores both tiers at server start, and while `nuxt generate` builds static pages, from a Nitro plugin:
+
+```ts
+// server/plugins/drupal-settings.ts
+import { useDruxtServerClient } from '@druxt/core/server';
+// The fetcher's own reader, which splits what Drupal returns into the two tiers.
+import { readDrupalSettings } from './read-drupal-settings';
+
+export default defineNitroPlugin(async () => {
+  const client = await useDruxtServerClient();
+  const { publicSettings, serverSettings } = await readDrupalSettings(client);
+  await storeDrupalSettings('default', { public: publicSettings, server: serverSettings });
+});
+```
+
+A call with one tier keeps the other. Calls for one connection write one after another, so two that overlap, such as one per tier, keep both. That holds within one server process: instances that share a storage driver each write on their own, so store both tiers in one call there.
+
+To set them for one request during a server render, it calls `setDrupalSettings()` from a server-only plugin. The public tier is merged over the stored one, so a key stored at server start stays unless the request's tier sets it. Objects merge key by key, and arrays are replaced. The server tier goes on the request, in place of the stored one:
+
+```ts
+// plugins/drupal-settings.server.ts
+export default defineNuxtPlugin(async () => {
+  // Fresh values for this request, over what the Nitro plugin above stored.
+  const { publicSettings, serverSettings } = await readDrupalSettings(useDruxtClient());
+  setDrupalSettings('default', { public: publicSettings, server: serverSettings });
+});
+```
+
+Pass `{ replace: true }` as the third argument to replace the stored public tier instead. Pass a server tier only from a server-only plugin or `storeDrupalSettings()`. A universal plugin's source is bundled for the browser, server tier and all, even though the browser drops the value.
+
+Every settings function takes a connection name, `default` unless named. Other connections, in `druxt.connections`, are reserved for a later release: the module warns about any other name and uses the flat keys.
+
+### Writing a settings fetcher
+
+Core has no option for the Consumer whose decoupled settings are read, since not every site uses them. A module that integrates Drupal's decoupled settings registers its own option with `addDruxtDefaults()` from `@druxt/core/kit`, such as `druxt.site.settingsConsumerId`. When the site leaves it unset, the module falls back to the connection's Consumer, which the client exposes as `consumer.id`. The module writes what it reads with `storeDrupalSettings()`, as above.
+
+## Server cache
+
+In production, the server keeps Drupal's responses between requests for as
+long as Drupal's `Cache-Control` header allows: the JSON:API index, and with
+`cache.content` every other response. Drupal sets that header from its page
+cache maximum age (Administration > Configuration > Development > Performance),
+so at the default of 0 nothing is kept.
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  druxt: {
+    cache: { content: true, secret: process.env.DRUXT_CACHE_SECRET },
+  },
+});
+```
+
+| Option                | Type      | Default             | Description                                                                                                             |
+| --------------------- | --------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.                                                               |
+| `cache.maxSize`       | `number`  | `52428800` (50 MB)  | Bytes of responses kept per cache area, across its consumers. The least recently used go.                               |
+| `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.                                                              |
+| `cache.secret`        | `string`  |                     | Turns on `POST /api/_druxt/cache/clear`.                                                                                |
+| `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it. The proxy sends Drupal only the cookies it matches. |
+
+- A request with an `Authorization` header, a Drupal session cookie or the
+  site's own `druxt.auth.*` token cookie skips the cache, so a signed-in render
+  reads Drupal, and `nuxt dev` runs without it.
+- Only successful responses are kept, each as text, and every reader gets a
+  fresh copy. A read with `bypassCache` fetches afresh, stores the result, and
+  an older request that resolves after it never replaces it.
+- A full cache area takes about three times `cache.maxSize` in server memory,
+  and a response larger than the limit is not kept.
+- A write Drupal accepts through the proxy, an editor's save, drops the entries
+  for that resource, its type's collections and the route lookups on this
+  process, so the next anonymous render reads the saved entity. It drops every
+  JSON:API Views result too, under every language prefix, as a listing doesn't
+  name the entities it shows: any accepted `POST`, `PATCH` or `DELETE` to a
+  JSON:API resource drops every cached view. A write Drupal refuses drops
+  nothing. Another process's cache waits for Drupal's clear.
+- The modules' holds beside the cache, such as the schema, the date formats and
+  the languages, are config: small, unbounded by `maxSize` and `ttl`, and
+  dropped by the same clear.
+- A static build, as `nuxt generate` makes it, has no server, so none of this
+  applies to it. The prerender manifest route is never cached.
+- Clear it with `useDruxtStore().clearCache()`, or from Drupal with
+  `POST /api/_druxt/cache/clear` and the secret in an `X-Druxt-Secret` header, which
+  the module bundles. Each Nuxt process has its own cache to clear.
+
+The [caching guide](https://druxtjs.org/how-to/caching) covers the cache in
+more depth.
+
+### Clearing from Drupal with Purge
+
+With `cache.content` on, an edit can take up to the page cache maximum age, or
+`cache.ttl` if that is shorter, to reach anonymous visitors on another process,
+unless Drupal clears the cache. The
+[Purge](https://www.drupal.org/project/purge) module can send that request on
+every save. Enable `purge`, `purge_purger_http`, `purge_queuer_coretags` and
+a processor such as `purge_processor_lateruntime`, then add the bundled HTTP
+purger:
+
+```sh
+drush p:purger-add httpbundled
+```
+
+Give it the method `POST`, the Nuxt host and port, the path
+`/api/_druxt/cache/clear`, a header `X-Druxt-Secret` with the secret, and the
+invalidation type `tag`. One save then costs one request, whatever it
+invalidates, and a request refused for a wrong secret is sent again with the
+next batch. Keep the secret out of exported configuration: set it from
+`settings.php` as a `$config` override.
+
+A purger set up for a 1.x site sends `/_druxt/cache/clear`. Change its path
+to `/api/_druxt/cache/clear` when the site moves to 2.x, or the clear
+answers 404.
+
 ## DruxtClient
 
 The client is the communication layer between your application and Drupal's
@@ -122,7 +317,7 @@ const resource = await store.getResource({
 
 A module that has resources from a request of its own seeds the store with `addResource({ resource, partial })` or `addCollection({ collection, type, hash, partial })`. With `partial: true`, such as for a view's rows, a resource holds only the fields it came with, its own attribute and relationship keys, so a later read of another field fetches it. A resource with no self link is stored by its type and id. An included resource, at any depth, holds every field, so a later read of it, sparse or not, comes from the store. The store doesn't keep Drupal's `links`, on a resource, its relationships or a collection, so the page payload doesn't name a backend URL. It records partial or full when it adds a resource, so a hydrated page tells them apart too.
 
-`clearCache()` empties the client's caches and every Druxt store. The edit store's drafts are unsaved edits, so they stay. `clearCache({ drafts: true })` closes them too, and a sign-in and a sign-out call it that way, so one user's unsaved edits never reach the next.
+`clearCache()` empties the client's caches and every Druxt store. It also forgets which resources Drupal denied, so an include Drupal grants later is read again. The edit store's drafts are unsaved edits, so they stay. `clearCache({ drafts: true })` closes them too, and a sign-in and a sign-out call it that way, so one user's unsaved edits never reach the next.
 
 - [The DruxtStore concept page](https://druxtjs.org/explanation/druxt-store): how it works
   and why it exists.
