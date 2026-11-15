@@ -10,3 +10,23 @@
  * $fetch(`${DRUXT_API_BASE}/date-formats/-`)
  */
 export const DRUXT_API_BASE = '/api/_druxt'
+
+/**
+ * A URL or path without the slashes at its end, such as a base URL before a path is joined to it. Linear, where a
+ * regular expression that ends in `/+$` backtracks on a long run of slashes.
+ *
+ * @example @lang ts
+ * trimEndSlashes('https://example.com//') // 'https://example.com'
+ */
+export const trimEndSlashes = (value: string): string => {
+  let end = value.length
+  while (end > 0 && value[end - 1] === '/') end--
+  return value.slice(0, end)
+}
+
+/** A path without the slashes at its start. */
+export const trimStartSlashes = (value: string): string => {
+  let start = 0
+  while (start < value.length && value[start] === '/') start++
+  return value.slice(start)
+}
