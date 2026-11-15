@@ -22,6 +22,8 @@ export default createConfigForNuxt({
       'packages/site/**',
       'packages/views/**',
       'test/mixins.test.js',
+      // Compat's copy of the 1.x sources, kept as 1.x laid them out.
+      'packages/compat/src/legacy/**',
       // 1.x examples and tooling, run on the 1.x line.
       'examples/**',
       'test/__fixtures__/**',

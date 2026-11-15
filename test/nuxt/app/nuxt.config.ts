@@ -15,6 +15,8 @@ export default defineNuxtConfig({
   // No app manifest: the test environment never builds one, so #app-manifest would point at a missing file in a fresh checkout.
   experimental: { appManifest: false },
   modules: ['@druxt/core'],
+  // A router with routes, so a test can navigate to any path. The router port's module turns pages on itself.
+  pages: true,
   druxt: {
     baseUrl: 'https://drupal.test',
   },
