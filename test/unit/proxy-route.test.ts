@@ -1,4 +1,6 @@
-import { createApp, createRouter, toWebHandler } from 'h3'
+import { PassThrough } from 'node:stream'
+import { ServerResponse } from 'node:http'
+import { createApp, createEvent, createRouter, toWebHandler } from 'h3'
 import type { EventHandler } from 'h3'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -48,6 +50,24 @@ describe('the proxy route', () => {
     expect(response.status).toBe(200)
     expect(sent).toHaveLength(1)
     expect(sent[0]!.has('authorization')).toBe(false)
+  })
+
+  it('sends Drupal neither the Connection header nor a header it names', async () => {
+    runtime.config = { public: { druxt: { baseUrl: 'http://drupal.test' } }, druxt: {} }
+    const sent: Headers[] = []
+    vi.stubGlobal('fetch', vi.fn(async (_url: string, init: RequestInit) => {
+      sent.push(new Headers(init.headers))
+      return new Response('{}', { status: 200, headers: { 'content-type': 'application/vnd.api+json' } })
+    }))
+    const handler = (await import('../../packages/core/src/runtime/server/routes/proxy')).default as EventHandler
+    // The request as Node hands it over: a web Request refuses a Connection header.
+    const headers = { 'host': 'site.test', 'connection': 'keep-alive, X-Private-Hop', 'x-private-hop': 'secret', 'x-kept': 'yes', 'te': 'trailers' }
+    const req = Object.assign(new PassThrough(), { method: 'GET', url: '/jsonapi/node/page', headers, socket: { remoteAddress: '10.0.0.1' } })
+    const res = new ServerResponse(req as never)
+    await handler(createEvent(req as never, res))
+    expect(sent).toHaveLength(1)
+    expect([...sent[0]!.keys()].filter((name) => ['connection', 'x-private-hop', 'te'].includes(name))).toEqual([])
+    expect(sent[0]!.get('x-kept')).toBe('yes')
   })
 
   // A JSON:API Drupal serves at /api: the proxy takes /api/**, and a request a Druxt route does not answer, such as a

@@ -92,6 +92,9 @@ export interface ProxyClient {
   protocol: string
 }
 
+/** The headers for one hop that h3 leaves in a proxied request, lower case. */
+const HOP_HEADERS = ['te', 'trailer', 'proxy-authorization', 'proxy-authenticate', 'proxy-connection']
+
 /**
  * The headers to send Drupal: the request's own, without any forwarding header the browser sent, which it could
  * forge, and with `X-Forwarded-For`, `X-Forwarded-Host` and `X-Forwarded-Proto` from the site's own view of the
@@ -99,19 +102,26 @@ export interface ProxyClient {
  * trusts, `trustForwarded` keeps the inbound `X-Forwarded-For` chain and adds the client to it, keeps those three, and
  * the caller passes the inbound host and protocol in `client`. `Forwarded` is dropped either way.
  *
+ * A header for this hop alone stops here, as a proxy's must: each one the request's `Connection` header names, and
+ * `TE`, `Trailer`, `Proxy-Authorization`, `Proxy-Authenticate` and `Proxy-Connection`. h3 drops `Connection` itself,
+ * and `Keep-Alive`, `Transfer-Encoding` and `Upgrade`, before the headers reach here.
+ *
  * @param headers - The request's headers, as h3 passes them on to a proxy.
  * @param client - The client's address, and the host and protocol the site was reached on.
  * @param trustForwarded - Whether a trusted front proxy set the inbound forwarding headers.
+ * @param connection - The request's `Connection` header, which h3 has dropped from `headers`.
  *
  * @example @lang ts
  * forwardedHeaders({ 'x-forwarded-for': '1.2.3.4' }, { ip: '10.0.0.1', host: 'site.test', protocol: 'https' })
  * // { 'x-forwarded-for': '10.0.0.1', 'x-forwarded-host': 'site.test', 'x-forwarded-proto': 'https' }
  */
-export const forwardedHeaders = (headers: Record<string, string | undefined>, client: ProxyClient, trustForwarded = false): Record<string, string> => {
+export const forwardedHeaders = (headers: Record<string, string | undefined>, client: ProxyClient, trustForwarded = false, connection?: string): Record<string, string> => {
   const sent: Record<string, string> = {}
+  const hop = new Set([...HOP_HEADERS, ...(connection || '').split(',').map((name) => name.trim().toLowerCase()).filter(Boolean)])
   let chain: string | undefined
   for (const [name, value] of Object.entries(headers)) {
     if (value === undefined) continue
+    if (hop.has(name.toLowerCase())) continue
     if (/^x-forwarded-for$/i.test(name)) chain = value
     if (/^(?:x-forwarded-(?:for|host|proto)|forwarded)$/i.test(name)) continue
     if (!trustForwarded && /^(?:x-forwarded-(?:port|server)|x-real-ip)$/i.test(name)) continue

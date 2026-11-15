@@ -1,4 +1,4 @@
-import { deleteCookie, getRequestHeader, getRequestProtocol, setCookie } from 'h3'
+import { createError, deleteCookie, getRequestHeader, getRequestHost, getRequestProtocol, setCookie } from 'h3'
 import type { H3Event } from 'h3'
 import { parse, serialize } from 'cookie-es'
 import { AUTH_STORAGE_KEYS, byteSize } from '@druxt/client'
@@ -33,6 +33,48 @@ export const sessionCookieOptions = (event: H3Event, httpOnly: boolean) => {
   const trust = (config.druxt as Partial<DruxtPrivateConfig> | undefined)?.proxy?.trustForwarded === true
   const secure = secureSite(druxt.siteUrl, getRequestProtocol(event, { xForwardedProto: trust }))
   return { path: (config.app as { baseURL?: string } | undefined)?.baseURL || '/', sameSite: 'lax' as const, secure, httpOnly, maxAge: MAX_AGE }
+}
+
+/** The host of a URL, lower case with its port, or undefined for none or one that does not parse, such as `null`. */
+const hostOf = (url: string | undefined): string | undefined => {
+  try {
+    return (url && new URL(url).host.toLowerCase()) || undefined
+  }
+  catch {
+    return undefined
+  }
+}
+
+/**
+ * Whether the site's own pages sent the request, by the headers a browser sets and a page's script cannot. A request
+ * with an `Origin` is the site's when that origin's host is the request's own, the forwarded one behind a front proxy
+ * named with `trustForwarded`, or `siteUrl`'s when set. One with no `Origin` is the site's unless its `Sec-Fetch-Site`
+ * names another site. One with neither header is no browser's cross-site request, so it passes.
+ *
+ * @param event - The request.
+ */
+export const sameOrigin = (event: H3Event): boolean => {
+  const origin = getRequestHeader(event, 'origin')
+  if (origin === undefined) {
+    const site = getRequestHeader(event, 'sec-fetch-site')
+    return site === undefined || site === 'same-origin' || site === 'none'
+  }
+  const host = hostOf(origin)
+  if (!host) return false
+  const config = useRuntimeConfig(event)
+  const trust = (config.druxt as Partial<DruxtPrivateConfig> | undefined)?.proxy?.trustForwarded === true
+  const siteUrl = (config.public.druxt as unknown as DruxtPublicConfig | undefined)?.siteUrl
+  return host === getRequestHost(event, { xForwardedHost: trust }).toLowerCase() || host === hostOf(siteUrl)
+}
+
+/**
+ * Refuses a request another site sent with a 403, before a route sets or clears the session's cookies: `SameSite=Lax`
+ * limits when a cookie is sent, not whether the answer to a cross-site form post may set one.
+ *
+ * @param event - The request.
+ */
+export const requireSameOrigin = (event: H3Event): void => {
+  if (!sameOrigin(event)) throw createError({ statusCode: 403, statusMessage: 'Cross-site request refused' })
 }
 
 /** A token response, as Simple OAuth answers it. */

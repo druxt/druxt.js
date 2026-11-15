@@ -1,4 +1,4 @@
-import { createError, defineEventHandler, getProxyRequestHeaders, getRequestHost, getRequestIP, getRequestProtocol, getRequestWebStream, getResponseHeader, sendProxy, setResponseHeader } from 'h3'
+import { createError, defineEventHandler, getProxyRequestHeaders, getRequestHeader, getRequestHost, getRequestIP, getRequestProtocol, getRequestWebStream, getResponseHeader, sendProxy, setResponseHeader } from 'h3'
 import routes from '#druxt/proxy-routes'
 import { useRuntimeConfig } from '#imports'
 import type { DruxtPrivateConfig } from '../../types'
@@ -16,6 +16,8 @@ const payloadMethods = new Set(['PATCH', 'POST', 'PUT', 'DELETE'])
  *
  * - The method and the headers pass through, and the body streams through unbuffered. `Host`, `Accept`
  *   and `Accept-Encoding` are not passed, as with Nitro's proxy route rules, so Drupal sees its own host.
+ * - A header for the hop to the site stops at the site: `Connection`, each header it names, and the hop-by-hop
+ *   headers such as `TE` and `Proxy-Authorization`.
  * - Forwarding headers the browser sent are dropped, and `X-Forwarded-For`, `X-Forwarded-Host` and
  *   `X-Forwarded-Proto` are set from the site's own view of the request. With the private
  *   `druxt.proxy.trustForwarded`, for a front proxy that sets them, the client is added to the inbound
@@ -58,7 +60,7 @@ export default defineEventHandler((event) => {
     ip: getRequestIP(event),
     host,
     protocol: getRequestProtocol(event, { xForwardedProto: trust }),
-  }, trust), holdsSession(event) && !event.path.startsWith('/oauth/token'), proxy?.sessionCookie)
+  }, trust, getRequestHeader(event, 'connection')), holdsSession(event) && !event.path.startsWith('/oauth/token'), proxy?.sessionCookie)
   const stream = payloadMethods.has(event.method)
   const site = hostname(host)
   return sendProxy(event, target, {
