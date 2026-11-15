@@ -298,6 +298,45 @@ describe('a module\'s section', () => {
     expect(text($(element, '.dt-action [role="alert"]'))).toBe('No route.')
   })
 
+  it('starts each connection with its actions idle, and shows nothing from an action the last one started', async () => {
+    const first = setup()
+    let finish: (value: string) => void = () => {}
+    first.registerAction({ id: 'route:reload', label: 'Fetch again', section: 'route' }, () => new Promise<string>((resolve) => { finish = resolve }))
+    const element = mount(first, 'x-route')
+    $(element, '.dt-action button')!.click()
+    await frame()
+    expect($(element, '.dt-action')!.dataset.state).toBe('busy')
+
+    // Another app's channel, with an action of the same id.
+    const second = setup()
+    second.registerAction({ id: 'route:reload', label: 'Fetch again', section: 'route' }, () => 'Second.')
+    element.connect(second)
+    expect($(element, '.dt-action')!.dataset.state).toBe('idle')
+    expect($(element, '.dt-action button')!.hasAttribute('disabled')).toBe(false)
+
+    // The first channel's action answers late: nothing of it shows.
+    finish('First.')
+    await frame()
+    expect($(element, '.dt-action')!.dataset.state).toBe('idle')
+    expect($(element, '.dt-action .dt-result')).toBeNull()
+  })
+
+  it('keeps a list where it was scrolled to as events arrive, and starts another section\'s at the top', async () => {
+    const channel = setup()
+    const element = mount(channel, 'x-route')
+    $(element, '.dt-list')!.scrollTop = 120
+    $(element, '.dt-list')!.scrollLeft = 8
+    const before = $(element, '.dt-list')
+    channel.emit({ type: 'request', request: request('1') })
+    await frame()
+    expect($(element, '.dt-list')).not.toBe(before)
+    expect($(element, '.dt-list')!.scrollTop).toBe(120)
+    expect($(element, '.dt-list')!.scrollLeft).toBe(8)
+    element.section = 'requests'
+    await frame()
+    expect($(element, '.dt-list')!.scrollTop).toBe(0)
+  })
+
   it('takes a withdrawn action away', async () => {
     const channel = setup()
     const withdraw = channel.registerAction({ id: 'route:reload', label: 'Fetch again', section: 'route' }, () => {})

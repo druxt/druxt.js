@@ -154,6 +154,22 @@ describe('the model\'s module extensions', () => {
     expect(devtools.snapshot().sections.map((section) => section.id)).toEqual(['route'])
   })
 
+  it('keeps an action registered again with the same handler when the first registration is withdrawn', async () => {
+    const devtools = createDruxtDevtools()
+    devtools.emit({ type: 'section', section: { id: 'views', label: 'Views', blocks: [] } })
+    const action = { id: 'views:clear', label: 'Clear the cache', section: 'views' }
+    // One function shared by two registrations, as two instances of a component hand in a store's action.
+    const handler = vi.fn(() => 'Cleared.')
+    const first = devtools.registerAction(action, handler)
+    const second = devtools.registerAction(action, handler)
+    first()
+    expect(devtools.snapshot().sections[0]!.actions).toEqual([action])
+    expect(await devtools.runAction('views:clear')).toBe('Cleared.')
+    second()
+    expect(devtools.snapshot().sections[0]!.actions).toEqual([])
+    await expect(devtools.runAction('views:clear')).rejects.toThrow('No Druxt devtools action "views:clear".')
+  })
+
   it('keeps a page\'s timeline events until the next page', () => {
     const devtools = createDruxtDevtools()
     devtools.emit({ type: 'page', path: '/one' })
@@ -190,6 +206,23 @@ describe('the console summary', () => {
     devtools.emit({ type: 'module:missing', module: module('2') })
     vi.advanceTimersByTime(1000)
     expect(console.groupCollapsed).toHaveBeenCalledOnce()
+  })
+
+  it('prints the quiet errors again when one changes, the count staying the same', () => {
+    const devtools = createDruxtDevtools()
+    const console = out()
+    watchDruxtDevtoolsSummary(devtools, { console })
+    devtools.emit({ type: 'page', path: '/recipes' })
+    devtools.emit({ type: 'quiet', error: { id: 'a', component: 'DruxtField', summary: '403: Forbidden' } })
+    vi.advanceTimersByTime(1000)
+    devtools.emit({ type: 'quiet', error: { id: 'a', component: 'DruxtField', summary: '500: Internal Server Error' } })
+    vi.advanceTimersByTime(1000)
+    expect(console.group).toHaveBeenCalledTimes(2)
+    expect(console.log.mock.calls).toEqual([['DruxtField failed quietly: 403 Forbidden'], ['DruxtField failed quietly: 500 Internal Server Error']])
+    // The same error reported again prints nothing more.
+    devtools.emit({ type: 'quiet', error: { id: 'a', component: 'DruxtField', summary: '500: Internal Server Error' } })
+    vi.advanceTimersByTime(1000)
+    expect(console.group).toHaveBeenCalledTimes(2)
   })
 
   it('leaves out the quiet errors\' group when there are none', () => {

@@ -26,4 +26,19 @@ describe('getDrupalJsonApiParams()', () => {
     expect(result).toBeInstanceOf(DrupalJsonApiParams)
     expect(result.getQueryString()).toBe('')
   })
+
+  it('reads an array include or sort as the comma list Drupal takes, from an object or a query string', () => {
+    expect(getDrupalJsonApiParams({ include: ['uid', 'field_tags'] }).getQueryObject()).toMatchObject({ include: 'uid,field_tags' })
+    expect(getDrupalJsonApiParams({ sort: ['-created', 'title'] }).getQueryObject()).toMatchObject({ sort: '-created,title' })
+    expect(getDrupalJsonApiParams({ include: ['uid'], sort: ['-created'], fields: { 'node--page': 'title' } }).getQueryObject())
+      .toMatchObject({ include: 'uid', sort: '-created', fields: { 'node--page': 'title' } })
+    expect(getDrupalJsonApiParams('include[]=uid&include[]=field_tags&sort[]=-created').getQueryObject()).toMatchObject({ include: 'uid,field_tags', sort: '-created' })
+    expect(getDrupalJsonApiParams('include[0]=uid').getQueryObject()).toMatchObject({ include: 'uid' })
+  })
+
+  it('leaves the query it was given as it was', () => {
+    const query = { include: ['uid'], sort: ['-created'] }
+    getDrupalJsonApiParams(query)
+    expect(query).toEqual({ include: ['uid'], sort: ['-created'] })
+  })
 })
