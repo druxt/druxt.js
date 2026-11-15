@@ -74,8 +74,9 @@ const VERBS = {
 }
 
 // Code spans, links and autolinks keep their text as written, so a `#123`
-// in a URL or in code is not turned into an issue link.
-const LITERAL = /(`+)[\s\S]*?\1|!?\[[^\]]*\]\([^)]*\)|<[^>\s]+>/g
+// in a URL or in code is not turned into an issue link. A link's destination
+// may hold balanced parentheses, as in `[guide](guide(v2)#123)`.
+const LITERAL = /(`+)[\s\S]*?\1|!?\[[^\]]*\]\((?:[^()]|\([^()]*\))*\)|<[^>\s]+>/g
 
 const linkPlainIssues = (text) => text.replace(/(^|[^[])#(\d+)\b/g, `$1[#$2](${REPO}/issues/$2)`)
 
@@ -125,17 +126,43 @@ const rewrite = (summary) => {
 }
 
 // A `Commit: <sha>` line names the change when the changeset file was added later.
-const COMMIT = /^Commit:\s*([0-9a-f]{7,40})\s*$/i
+const COMMIT = /^ {0,3}Commit:\s*([0-9a-f]{7,40})\s*$/i
+// Conventional commits also declare breakage in a footer.
+const BREAKING = /^ {0,3}BREAKING[ -]CHANGE:/
+
+/**
+ * Which lines are prose rather than code, so an example of a `Commit:` line
+ * or a breaking-change footer stays an example.
+ *
+ * @param {string[]} lines - The summary's lines after the first.
+ * @returns {boolean[]} True for each line outside a fenced or indented code
+ *   block.
+ */
+const proseLines = (lines) => {
+  let fence = null
+  return lines.map((line) => {
+    if (fence) {
+      if (fence.test(line)) fence = null
+      return false
+    }
+    const open = line.match(/^ {0,3}(`{3,}|~{3,})/)
+    if (open) {
+      fence = new RegExp(`^ {0,3}${open[1][0]}{${open[1].length},}\\s*$`)
+      return false
+    }
+    return !/^(?: {4}|\t)/.test(line)
+  })
+}
 
 const getReleaseLine = async (changeset) => {
   const [first, ...lines] = changeset.summary.split('\n')
-  const override = lines.map((line) => COMMIT.exec(line.trim())).find(Boolean)
-  const rest = lines.filter((line) => !COMMIT.test(line.trim()))
+  const prose = proseLines(lines)
+  const override = lines.map((line, i) => prose[i] && COMMIT.exec(line)).find(Boolean)
+  const rest = lines.filter((line, i) => !(prose[i] && COMMIT.test(line)))
   const commit = override ? override[1] : changeset.commit
   const result = rewrite(first)
   const { text, issues } = result
-  // Conventional commits also declare breakage in a footer.
-  const breaking = result.breaking || rest.some((line) => /^BREAKING[ -]CHANGE:/.test(line.trim()))
+  const breaking = result.breaking || lines.some((line, i) => prose[i] && BREAKING.test(line))
 
   const refs = issues.map((n) => `[#${n}](${REPO}/issues/${n})`)
   if (commit) {

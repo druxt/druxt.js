@@ -48,3 +48,27 @@ test('an indented code block that opens the body keeps its indent', async () => 
   const line = await getReleaseLine({ summary: 'fix: keep the slot.\n\n    const a = 1\n    const b = 2', commit: LATER })
   assert.match(line, /\n\n {6}const a = 1\n {6}const b = 2$/)
 })
+
+test('a link whose destination holds parentheses stays as written', async () => {
+  const line = await getReleaseLine({ summary: 'fix: see [the guide](https://example.org/guide(v2)#123) for #45', commit: LATER })
+  assert.match(line, /\[the guide\]\(https:\/\/example\.org\/guide\(v2\)#123\)/)
+  assert.match(line, /\[#45\]\(.*\/issues\/45\)/)
+})
+
+test('a Commit line in a code example stays in the example', async () => {
+  const fenced = await getReleaseLine({ summary: `docs: show the metadata.\n\n\`\`\`\nCommit: ${SHA}\n\`\`\``, commit: LATER })
+  const indented = await getReleaseLine({ summary: `docs: show the metadata.\n\n    Commit: ${SHA}`, commit: LATER })
+  for (const line of [fenced, indented]) {
+    assert.match(line, /\/commit\/773a7b76/)
+    assert.match(line, new RegExp(`\\n {2}(?: {4})?Commit: ${SHA}`))
+  }
+})
+
+test('a breaking-change footer in a code example does not mark the entry', async () => {
+  const fenced = await getReleaseLine({ summary: 'docs: show the footer.\n\n~~~\nBREAKING CHANGE: remove the old API\n~~~', commit: LATER })
+  const indented = await getReleaseLine({ summary: 'docs: show the footer.\n\n    BREAKING CHANGE: remove the old API', commit: LATER })
+  const footer = await getReleaseLine({ summary: 'fix: drop the old API.\n\nBREAKING CHANGE: use the new one.', commit: LATER })
+  assert.doesNotMatch(fenced, /\*\*Breaking/)
+  assert.doesNotMatch(indented, /\*\*Breaking/)
+  assert.match(footer, /^- \*\*Breaking/)
+})
