@@ -164,8 +164,16 @@ describe('an empty module root', () => {
 
   /** What Vue warned about. */
   const vueWarnings = (warn: { mock: { calls: unknown[][] } }) => warn.mock.calls.map((call) => String(call[0])).filter((message) => message.includes('[Vue warn]'))
-  /** Markup that holds nothing but comments. */
-  const nothing = /^(?:\s*<!--[\s\S]*?-->)*\s*$/
+  /** Whether markup holds nothing but comments: what is left once each is cut out is white space. */
+  const onlyComments = (html: string): boolean => {
+    let rest = html
+    for (let start = rest.indexOf('<!--'); start !== -1; start = rest.indexOf('<!--')) {
+      const end = rest.indexOf('-->', start + 4)
+      if (end === -1) return false
+      rest = rest.slice(0, start) + rest.slice(end + 3)
+    }
+    return rest.trim() === ''
+  }
 
   it('leaves no element and no warning, and renders no wrapper, while the hook says the module is empty', async () => {
     const warn = vi.spyOn(console, 'warn')
@@ -174,7 +182,7 @@ describe('an empty module root', () => {
       global: { components: { DruxtEmptyWrapperProbeDefault: defineComponent({ setup: () => render }) } },
     })
     await settle()
-    expect(wrapper.html()).toMatch(nothing)
+    expect(onlyComments(wrapper.html())).toBe(true)
     expect(render).not.toHaveBeenCalled()
     expect(vueWarnings(warn)).toEqual([])
   })
@@ -187,7 +195,7 @@ describe('an empty module root', () => {
     const warn = vi.spyOn(console, 'warn')
     const wrapper = await mountSuspended(nest(rooted('DruxtSilentSiteProbe', () => true, { wrapperTag: 'nav', slots: () => ({ default: () => h('p', 'content') }) })), options)
     await settle()
-    expect(wrapper.html()).toMatch(nothing)
+    expect(onlyComments(wrapper.html())).toBe(true)
     expect(vueWarnings(warn)).toEqual([])
   })
 
@@ -195,11 +203,11 @@ describe('an empty module root', () => {
     const empty = ref(true)
     const wrapper = await mountSuspended(nest(rooted('DruxtToggleEmptyProbe', () => empty.value, { slots: () => ({ default: () => h('p', 'line') }) })))
     await settle()
-    expect(wrapper.html()).toMatch(nothing)
+    expect(onlyComments(wrapper.html())).toBe(true)
     empty.value = false
     await settle(() => expect(wrapper.html()).toBe('<div class="druxt-root-probe">\n  <p>line</p>\n</div>'))
     empty.value = true
-    await settle(() => expect(wrapper.html()).toMatch(nothing))
+    await settle(() => expect(onlyComments(wrapper.html())).toBe(true))
   })
 
   // One render function, as a functional and as a stateful wrapper, each registered sync and async: the markup is the

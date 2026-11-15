@@ -7,9 +7,13 @@ import { module } from './devtools-fixtures'
 
 /** Loads the tab's page into this window, as the DevTools frame would, and runs its script. */
 const load = () => {
-  const page = devtoolsPage()
-  document.body.innerHTML = /<body>([\s\S]*)<script>/.exec(page)![1]!
-  new Function(/<script>([\s\S]*)<\/script>/.exec(page)![1]!)()
+  // Parsed, not matched: the page's body without its script, then the script's own text.
+  const parsed = new DOMParser().parseFromString(devtoolsPage(), 'text/html')
+  const script = parsed.querySelector('script')!
+  const source = script.textContent || ''
+  script.remove()
+  document.body.innerHTML = parsed.body.innerHTML
+  new Function(source)()
 }
 
 /** The client Nuxt DevTools gives a custom tab's frame. */

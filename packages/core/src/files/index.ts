@@ -1,3 +1,5 @@
+import { trimEndSlashes } from '../routes'
+
 // @druxt/core/files: where a Drupal file's URL points from the site. Framework free: nothing here imports Vue, Nuxt or
 // h3, so it runs on the server and in the browser alike.
 
@@ -54,7 +56,7 @@ export function resolveFileUrl(url: string, { baseUrl, filesUrl, proxyFiles, sta
   if (!url.startsWith('/') || url.startsWith('//')) return { url, rewritten: false }
   // The static build copied the file to the same path on the site.
   if (isStatic && staticFiles && PUBLIC_FILES.test(url)) {
-    const base = (appBaseURL || '/').replace(/\/+$/, '')
+    const base = trimEndSlashes(appBaseURL || '/')
     return { url: `${base}${url}`, rewritten: base !== '' }
   }
   const site = typeof proxyFiles === 'string' ? proxyFiles : 'default'

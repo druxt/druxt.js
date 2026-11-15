@@ -122,7 +122,7 @@ export function renderTemplate({ props = [], slots = [], template = {} }: DruxtT
   // What the template's expressions read: the debug expression, and the value the repeated slots loop over. A slot's
   // name, such as `label`, is not an expression.
   const expressions = [debug, loop ? repeat!.over : ''].join(' ')
-  const used = (name: string) => new RegExp(`(?:^|[^\\w$])${name.replace(/\$/g, '\\$')}(?![\\w$])`).test(expressions)
+  const used = (name: string) => new RegExp(`(?:^|[^\\w$])${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w$])`).test(expressions)
   const use = (template.composable?.use || []).filter(used)
 
   const script: string[] = []
