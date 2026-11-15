@@ -75,44 +75,40 @@ const VERBS = {
   restored: 'Restored',
 }
 
-// CommonMark, so a summary is read the way it renders. An escape stays a
-// token of its own, so an escaped `\#123` never reads as plain text.
-const md = new MarkdownIt('commonmark').disable('text_join')
+// CommonMark, so a summary is read the way it renders.
+const md = new MarkdownIt('commonmark')
 
-// Each `#123` is tagged with a character from the private use area before
-// parsing, so the tokens show which refs are plain text and which sit in a
-// link, an autolink, code or HTML.
-const MARK = 0xe000
+// Records each `#123` the inline parser reaches as plain text, with its
+// offset. It runs after every built-in rule, so links, autolinks, code spans,
+// HTML, entities and escapes consume their own text first, and a ref inside
+// one of them never gets here.
+md.inline.ruler.push('issue_ref', (state, silent) => {
+  const ref = /^#(\d+)\b/.exec(state.src.slice(state.pos, state.posMax))
+  if (!ref) return false
+  if (!silent) {
+    const token = state.push('issue_ref', '', 0)
+    token.content = ref[1]
+    token.meta = { start: state.pos, end: state.pos + ref[0].length }
+  }
+  state.pos += ref[0].length
+  return true
+})
 
 const linkIssues = (text, env) => {
-  const refs = [...text.matchAll(/#(\d+)\b/g)]
-  if (!refs.length) return text
-  let tagged = ''
-  let last = 0
-  refs.forEach((ref, i) => {
-    tagged += text.slice(last, ref.index + 1) + String.fromCharCode(MARK + i)
-    last = ref.index + 1
-  })
-  tagged += text.slice(last)
-
-  const plain = new Set()
+  const refs = []
   let depth = 0
-  for (const token of md.parseInline(tagged, env)[0].children) {
+  for (const token of md.parseInline(text, env)[0].children) {
     if (token.type === 'link_open') depth++
     else if (token.type === 'link_close') depth--
-    else if (token.type === 'text' && !depth) {
-      for (const tag of token.content.matchAll(/#([-])/g)) plain.add(tag[1].charCodeAt(0) - MARK)
-    }
-  }
-
-  let out = ''
-  last = 0
-  refs.forEach((ref, i) => {
     // `[#123]` reads as a label someone meant to write.
-    if (!plain.has(i) || text[ref.index - 1] === '[') return
-    out += text.slice(last, ref.index) + `[#${ref[1]}](${REPO}/issues/${ref[1]})`
-    last = ref.index + ref[0].length
-  })
+    else if (token.type === 'issue_ref' && !depth && text[token.meta.start - 1] !== '[') refs.push(token)
+  }
+  let out = ''
+  let last = 0
+  for (const ref of refs) {
+    out += text.slice(last, ref.meta.start) + `[#${ref.content}](${REPO}/issues/${ref.content})`
+    last = ref.meta.end
+  }
   return out + text.slice(last)
 }
 
