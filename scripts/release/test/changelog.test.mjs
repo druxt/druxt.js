@@ -30,3 +30,21 @@ test('the body is a paragraph of its own, so the links close the first one', asy
   assert.match(line, /\/commit\/773a7b76[^)]*\)\)\n\n {2}It was sent empty\.\n\n {2}```js\n {2}get\(\)\n {2}```$/)
   assert.doesNotMatch(line, /^ +$/m)
 })
+
+test('an issue ref in a link, a URL or code stays as written', async () => {
+  const line = await getReleaseLine({ summary: 'fix: see [the guide](https://example.org/#123), `#9` and <https://example.org/#7> for #45', commit: LATER })
+  assert.match(line, /\(https:\/\/example\.org\/#123\)/)
+  assert.match(line, /`#9`/)
+  assert.match(line, /<https:\/\/example\.org\/#7>/)
+  assert.match(line, /\[#45\]\(.*\/issues\/45\)/)
+})
+
+test('only a Conventional Commits type is taken as a prefix', async () => {
+  const line = await getReleaseLine({ summary: 'Windows: fix path resolution', commit: LATER })
+  assert.match(line, /^- Windows: fix path resolution\. /)
+})
+
+test('an indented code block that opens the body keeps its indent', async () => {
+  const line = await getReleaseLine({ summary: 'fix: keep the slot.\n\n    const a = 1\n    const b = 2', commit: LATER })
+  assert.match(line, /\n\n {6}const a = 1\n {6}const b = 2$/)
+})

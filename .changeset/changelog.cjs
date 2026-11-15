@@ -73,7 +73,26 @@ const VERBS = {
   restored: 'Restored',
 }
 
-const linkIssues = (text) => text.replace(/(^|[^[])#(\d+)\b/g, `$1[#$2](${REPO}/issues/$2)`)
+// Code spans, links and autolinks keep their text as written, so a `#123`
+// in a URL or in code is not turned into an issue link.
+const LITERAL = /(`+)[\s\S]*?\1|!?\[[^\]]*\]\([^)]*\)|<[^>\s]+>/g
+
+const linkPlainIssues = (text) => text.replace(/(^|[^[])#(\d+)\b/g, `$1[#$2](${REPO}/issues/$2)`)
+
+const linkIssues = (text) => {
+  let out = ''
+  let last = 0
+  for (const match of text.matchAll(LITERAL)) {
+    out += linkPlainIssues(text.slice(last, match.index)) + match[0]
+    last = match.index + match[0].length
+  }
+  return out + linkPlainIssues(text.slice(last))
+}
+
+// The Conventional Commits types. Any other word before a colon, such as
+// "Windows: ", is part of the sentence.
+const TYPES = 'build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test'
+const PREFIX = new RegExp(`^(${TYPES})(?:\\(([^)]*)\\))?(!)?:\\s*`)
 
 /**
  * One changeset summary line to one changelog sentence.
@@ -87,7 +106,7 @@ const rewrite = (summary) => {
   const issues = []
   let breaking = false
 
-  const prefix = text.match(/^(\w+)(?:\(([^)]*)\))?(!)?:\s*/)
+  const prefix = text.match(PREFIX)
   if (prefix) {
     breaking = Boolean(prefix[3])
     for (const ref of (prefix[2] || '').match(/#\d+/g) || []) issues.push(ref.slice(1))
@@ -126,7 +145,9 @@ const getReleaseLine = async (changeset) => {
   let line = `- ${breaking ? '**Breaking:** ' : ''}${text}${refs.length ? ` (${refs.join(', ')})` : ''}`
   // A paragraph of its own under the bullet. Joined straight beneath it, the
   // body ran into the first paragraph and left the links in its middle.
-  const body = rest.join('\n').trim()
+  // Only the blank lines before the body go, so an indented code block that
+  // opens it keeps its indent.
+  const body = rest.join('\n').replace(/^(?:[ \t]*\n)+/, '').trimEnd()
   if (body) line += '\n\n' + body.replace(/^(?=.)/gm, '  ')
   return line
 }
