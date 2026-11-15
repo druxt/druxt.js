@@ -60,6 +60,36 @@ describe('signedInClient()', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
+  it('keeps one client per endpoint, scope and secret, as a client keeps those of its first caller', async () => {
+    stubTokens(300)
+    const clients = new Map()
+    const first = await signedInClient(clients, 'https://drupal.test', {}, { ...credentials, scope: 'reader' })
+    expect(await signedInClient(clients, 'https://drupal.test', {}, { ...credentials, scope: 'reader' })).toBe(first)
+    // The endpoint however it is written.
+    expect(await signedInClient(clients, 'https://drupal.test', { endpoint: 'jsonapi/' }, { ...credentials, scope: 'reader' })).toBe(first)
+    const scoped = await signedInClient(clients, 'https://drupal.test', {}, { ...credentials, scope: 'editor' })
+    expect(scoped).not.toBe(first)
+    expect(scoped.options.auth).toMatchObject({ scope: 'editor' })
+    const moved = await signedInClient(clients, 'https://drupal.test', { endpoint: '/api' }, { ...credentials, scope: 'reader' })
+    expect(moved).not.toBe(first)
+    expect(moved.options.endpoint).toBe('/api')
+    const rotated = await signedInClient(clients, 'https://drupal.test', {}, { clientId: 'build', clientSecret: 'rotated', scope: 'reader' })
+    expect(rotated).not.toBe(first)
+    expect(rotated.options.auth).toMatchObject({ clientSecret: 'rotated' })
+    const password = { clientId: 'build', username: 'bot', password: 'pw' }
+    const bot = await signedInClient(clients, 'https://drupal.test', {}, password)
+    expect(await signedInClient(clients, 'https://drupal.test', {}, { ...password, password: 'changed' })).not.toBe(bot)
+    expect(clients.size).toBe(6)
+  })
+
+  it('names no secret or password in a client\'s key', async () => {
+    stubTokens(300)
+    const clients = new Map<string, Promise<unknown>>()
+    await signedInClient(clients as never, 'https://drupal.test', {}, { clientId: 'build', clientSecret: 'hunter2-secret', scope: 'reader' })
+    await signedInClient(clients as never, 'https://drupal.test', {}, { clientId: 'build', username: 'bot', password: 'hunter2-password' })
+    expect([...clients.keys()].join(' ')).not.toMatch(/hunter2/)
+  })
+
   it('forgets a sign-in that failed, so the next call tries again', async () => {
     const fetchMock = stubTokens(300, true)
     const clients = new Map()

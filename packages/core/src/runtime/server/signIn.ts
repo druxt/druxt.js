@@ -1,16 +1,10 @@
 import { DruxtClient } from '@druxt/client'
 import type { DruxtClientOptions } from '@druxt/client'
+import { digest } from 'ohash'
+import { trimEndSlashes, trimStartSlashes } from '@druxt/core/routes'
+import type { DruxtServerAuthConfig } from '../types'
 
 // No #imports here: the build and the server routes both use this file.
-
-/** The build credentials as a config holds them: a key nothing set is '' or undefined. */
-export interface DruxtServerAuthConfig {
-  clientId?: string
-  clientSecret?: string
-  username?: string
-  password?: string
-  scope?: string
-}
 
 /**
  * The credentials a client signs in with, or undefined for anonymous.
@@ -59,7 +53,25 @@ const login = async (client: DruxtClient, auth: Credentials): Promise<void> => {
 const needsLogin = (client: DruxtClient): boolean => !!client.auth && client.auth.expired && !client.auth.refreshToken
 
 /**
- * One signed-in client per backend and credentials, kept in `clients`: direct
+ * The key a client is kept under: everything it holds from its first caller, so a caller with another endpoint, scope
+ * or secret gets a client of its own. The endpoint is keyed as the client reads it, and the secret and the password
+ * as a digest, so no key holds either.
+ *
+ * @param baseUrl - The Drupal backend.
+ * @param endpoint - The JSON:API endpoint, as the caller's options have it.
+ * @param auth - The credentials, or none for an anonymous client.
+ */
+const clientKey = (baseUrl: string, endpoint: unknown, auth: Credentials | undefined): string => JSON.stringify([
+  baseUrl,
+  `/${trimEndSlashes(trimStartSlashes(String(endpoint ?? '/jsonapi')))}`,
+  auth?.clientId,
+  auth?.username,
+  auth?.scope,
+  auth && digest(JSON.stringify([auth.clientSecret, auth.password])),
+])
+
+/**
+ * One signed-in client per backend, endpoint and credentials, kept in `clients`: direct
  * to Drupal, with no process cache. It signs in on first use, signs in again
  * once its token has expired without a refresh token to renew it, and forgets
  * a sign-in that failed so the next call tries again.
@@ -71,7 +83,7 @@ const needsLogin = (client: DruxtClient): boolean => !!client.auth && client.aut
  */
 export const signedInClient = (clients: Map<string, Promise<DruxtClient>>, baseUrl: string, options: Record<string, unknown>, config: DruxtServerAuthConfig): Promise<DruxtClient> => {
   const auth = serverAuthOptions(config)
-  const key = JSON.stringify([baseUrl, auth?.clientId, auth?.username])
+  const key = clientKey(baseUrl, options.endpoint, auth)
   const proxy = options.proxy as object | undefined
   const existing = clients.get(key)
   // Chained, so callers arriving together share one sign-in.

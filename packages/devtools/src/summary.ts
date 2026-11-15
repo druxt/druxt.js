@@ -68,8 +68,10 @@ export function watchDruxtDevtoolsSummary(channel: DruxtDevtoolsChannel, options
     const snapshot = channel.snapshot()
     const counts = summaryCounts(snapshot)
     const sections = (snapshot.sections || []).filter((section) => section.blocks.length)
-    // A tool's line repeats only for a new count. A grouped summary repeats for a new page or new section data too.
-    const signature = options.open ? counts : JSON.stringify([snapshot.page, counts, sections.map((section) => [section.label, section.blocks])])
+    // A tool's line repeats only for a new count. A grouped summary repeats for a new page, new section data or a quiet
+    // error that changed too, as it prints each error.
+    const quiet = snapshot.quiet.map((error) => [error.component, error.status, error.detail])
+    const signature = options.open ? counts : JSON.stringify([snapshot.page, counts, sections.map((section) => [section.label, section.blocks]), quiet])
     if (signature === printed) return
     printed = signature
     // Sections alone are not something to report: they show in the tab and the inspector.

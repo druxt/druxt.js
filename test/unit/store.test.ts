@@ -43,6 +43,13 @@ describe('useDruxtStore().getResource()', () => {
     expect(sparse.data?.attributes).toEqual(full.data?.attributes)
   })
 
+  it('reads an include given as an array, as its query type allows', async () => {
+    const { calls, store } = storeFor()
+    const result = await store.getResource({ type: 'node--page', id: 'p1', query: { include: ['uid'] } })
+    expect(requested(calls).filter((r) => !r.endsWith('/jsonapi'))).toEqual(['GET /jsonapi/node/page/p1?include=uid'])
+    expect(result.included?.map((resource) => resource.id)).toEqual(['u1'])
+  })
+
   /** A store on a fake Drupal that answers sparse fieldsets as Drupal does. */
   const sparseStoreFor = (reply = individual(page, [user])) => {
     const { fetch, calls } = drupal({ 'GET /jsonapi': index('', ['node--page', 'user--user']), 'GET /jsonapi/node/page/p1': reply })
@@ -325,6 +332,43 @@ describe('useDruxtStore() seeding and links', () => {
     store.addResource({ resource: { data: { ...page, attributes: { title: 'About' } }, meta: { omitted } } as never })
     await store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid', fields: { 'node--page': 'title,uid' } } })
     expect(resources().filter((r) => r.includes('/user/user/'))).toEqual([])
+  })
+
+  /** A store on a Drupal that denies the page's author until `grant()`. */
+  const deniedSite = () => {
+    let granted = false
+    const omitted = { detail: 'Denied.', links: { 'item--a': { href: `${BASE_URL}/jsonapi/user/user/u1` } } }
+    const { fetch } = drupal({
+      'GET /jsonapi': index('', ['node--page', 'user--user']),
+      'GET /jsonapi/node/page/p1': () => json(granted ? { data: page, included: [user] } : { data: page, meta: { omitted } }),
+      'GET /jsonapi/user/user/u1': () => json({ data: user }),
+    })
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(new DruxtClient(BASE_URL, { fetch })) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    const store = useDruxtStore()
+    const authors = async () => (await store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid' } })).included?.map((resource) => resource.id) ?? []
+    return { store, authors, grant: () => { granted = true } }
+  }
+
+  it('forgets what Drupal denied when the cache is cleared, so an include since granted is answered from the store too', async () => {
+    const { store, authors, grant } = deniedSite()
+    expect(await authors()).toEqual([])
+    grant()
+    store.clearCache()
+    expect(await authors()).toEqual(['u1'])
+    // The same read again, from the store.
+    expect(await authors()).toEqual(['u1'])
+  })
+
+  it('forgets a denial once the resource itself is stored, and keeps it through a flush of another resource', async () => {
+    const { store, authors } = deniedSite()
+    expect(await authors()).toEqual([])
+    store.flushResource({ type: 'node--article' })
+    expect(await authors()).toEqual([])
+    store.addResource({ resource: { data: user } as never })
+    expect(await authors()).toEqual(['u1'])
   })
 
   it('returns the stored shape, without links, from a read a flush overtook', async () => {
