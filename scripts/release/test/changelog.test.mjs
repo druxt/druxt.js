@@ -149,3 +149,10 @@ test('a fence in a list item does not close on a line indented four spaces past 
   assert.doesNotMatch(line, /\*\*Breaking/)
   assert.match(line, /\/commit\/773a7b76/)
 })
+
+test('a Commit line or a breaking-change footer in an HTML block stays an example', async () => {
+  const line = await getReleaseLine({ summary: `docs: show the footers.\n\n<pre>\nCommit: ${SHA}\nBREAKING CHANGE: migrate\n</pre>`, commit: LATER })
+  assert.doesNotMatch(line, /\*\*Breaking/)
+  assert.match(line, /\/commit\/773a7b76/)
+  assert.ok(line.includes(`Commit: ${SHA}`), line)
+})
