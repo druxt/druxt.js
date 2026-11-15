@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { splitDruxtConfig } from '../../packages/core/src/utils/config'
+import { hidesBaseUrl, splitDruxtConfig } from '../../packages/core/src/utils/config'
+import { browserBaseUrl, hiddenBaseUrl, stripBaseUrl } from '../../packages/core/src/runtime/utils/origin'
 import type { DruxtOptions } from '../../packages/core/src/module'
 import { druxtClientOptions } from '../../packages/core/src/runtime/utils/client-options'
 import { DRUXT_SETTINGS_DRUPAL_KEY, configSource, connectionName, settingsOnly } from '../../packages/core/src/runtime/utils/drupal-settings'
@@ -87,6 +88,57 @@ describe('splitDruxtConfig()', () => {
     expect(split.ignored).toEqual(['other'])
     expect(split.public).not.toHaveProperty('connections')
     expect(splitDruxtConfig(options()).ignored).toEqual([])
+  })
+})
+
+describe('hidesBaseUrl()', () => {
+  const server = { enabled: false, files: false, hybrid: false }
+  const generated = { enabled: true, files: true, hybrid: false }
+
+  it('hides Drupal\'s address on a static build that copies its files and signs nobody in', () => {
+    expect(hidesBaseUrl({}, generated)).toBe(true)
+    expect(hidesBaseUrl({ filesUrl: 'https://files.example.com' }, { ...generated, files: false })).toBe(true)
+  })
+
+  it('keeps it on a static build whose browser still uses it', () => {
+    // File URLs are made on it, a page that was not built is asked of it, and a sign-in goes to it.
+    expect(hidesBaseUrl({}, { ...generated, files: false })).toBe(false)
+    expect(hidesBaseUrl({}, { ...generated, hybrid: true })).toBe(false)
+    expect(hidesBaseUrl({ auth: { clientId: 'a', authorizeUrl: 'https://id.example.com/authorize' } }, generated)).toBe(false)
+  })
+
+  it('hides it on a server that proxies the API and the files, with no sign-in or one of the site\'s own address', () => {
+    expect(hidesBaseUrl({ proxy: { api: true, files: true } }, server)).toBe(true)
+    expect(hidesBaseUrl({ proxy: { api: true }, filesUrl: 'https://files.example.com' }, server)).toBe(true)
+    expect(hidesBaseUrl({ proxy: { api: true, files: true }, auth: { clientId: 'a', authorizeUrl: 'https://id.example.com/authorize' } }, server)).toBe(true)
+  })
+
+  it('keeps it on a server whose browser reaches Drupal, takes its files from it, or is sent to it to sign in', () => {
+    expect(hidesBaseUrl({}, server)).toBe(false)
+    expect(hidesBaseUrl({ proxy: { files: true } }, server)).toBe(false)
+    expect(hidesBaseUrl({ proxy: { api: true } }, server)).toBe(false)
+    expect(hidesBaseUrl({ proxy: { api: true, files: true }, auth: { clientId: 'a' } }, server)).toBe(false)
+  })
+})
+
+describe('hiddenBaseUrl() and browserBaseUrl()', () => {
+  it('gives a page the path Drupal is served under, and no host', () => {
+    expect(hiddenBaseUrl('https://drupal.example.com')).toBe('')
+    expect(hiddenBaseUrl('http://127.0.0.1:8888/')).toBe('')
+    expect(hiddenBaseUrl('https://example.com/drupal/')).toBe('/drupal')
+    expect(hiddenBaseUrl('not a url')).toBe('')
+  })
+
+  it('takes the address out of the config script of a page with no server render', () => {
+    const script = '<script>window.__NUXT__={};window.__NUXT__.config={public:{druxt:{baseUrl:"https://drupal.example.com/d",endpoint:"/jsonapi"}}}</script>'
+    expect(stripBaseUrl(script, 'https://drupal.example.com/d')).toBe('<script>window.__NUXT__={};window.__NUXT__.config={public:{druxt:{baseUrl:"/d",endpoint:"/jsonapi"}}}</script>')
+    // Markup that is not Nuxt's config is left byte for byte.
+    expect(stripBaseUrl('<a href="https://drupal.example.com/d">baseUrl:"https://drupal.example.com/d"</a>', 'https://drupal.example.com/d')).toContain('baseUrl:"https://drupal.example.com/d"')
+  })
+
+  it('gives the browser the site\'s own origin, with that path', () => {
+    expect(browserBaseUrl('', 'https://site.example.com')).toBe('https://site.example.com')
+    expect(browserBaseUrl('/drupal', 'https://site.example.com')).toBe('https://site.example.com/drupal')
   })
 })
 

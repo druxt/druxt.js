@@ -4,6 +4,7 @@ import type { DruxtClient, DruxtConfig, DruxtConnectionConfig } from '@druxt/cli
 import { defu } from 'defu'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { splitDruxtConfig } from './utils/config'
+import { trimEndSlashes } from './routes'
 import { addPrebundle, corePrebundle } from './kit'
 import type { DruxtAnchorsSetting } from './anchors'
 import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
@@ -239,7 +240,7 @@ export const getLanguages = (options: DruxtOptions): Promise<DruxtLanguage[]> =>
     reads = buildLanguageReads.get(nuxt) || new Map()
     buildLanguageReads.set(nuxt, reads)
   }
-  const key = `${options.baseUrl.replace(/\/+$/, '')} ${options.endpoint || '/jsonapi'}`
+  const key = `${trimEndSlashes(options.baseUrl)} ${options.endpoint || '/jsonapi'}`
   let read = reads.get(key)
   if (!read) {
     read = readLanguages(options)
@@ -264,7 +265,7 @@ const readLanguages = async (options: DruxtOptions): Promise<DruxtLanguage[]> =>
       const href = response.data?.links?.self?.href
       let self: string | undefined
       if (href) {
-        const root = `${options.baseUrl.replace(/\/+$/, '')}/`
+        const root = `${trimEndSlashes(options.baseUrl)}/`
         const base = new URL(root).pathname
         const pathname = new URL(href, root).pathname
         self = pathname.startsWith(base) ? `/${pathname.slice(base.length)}` : pathname
@@ -401,7 +402,7 @@ export default defineNuxtModule<DruxtOptions>({
       throw new Error('[druxt] The `druxt.baseUrl` option is required.')
     }
     options.baseUrl = options.baseUrl.replace(/\/$/, '')
-    if (options.siteUrl) options.siteUrl = options.siteUrl.replace(/\/+$/, '')
+    if (options.siteUrl) options.siteUrl = trimEndSlashes(options.siteUrl)
     options.endpoint = options.endpoint.startsWith('/') ? options.endpoint : `/${options.endpoint}`
 
     // Keep the JSON:API index between server requests that carry no credentials, in production only. The proxy still

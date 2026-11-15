@@ -1,3 +1,4 @@
+import { trimEndSlashes } from '@druxt/core/routes'
 // No #imports here: the plugins and the unit tests both use this file.
 
 /**
@@ -9,7 +10,7 @@
  */
 export const hiddenBaseUrl = (baseUrl: string): string => {
   try {
-    return new URL(baseUrl).pathname.replace(/\/+$/, '')
+    return trimEndSlashes(new URL(baseUrl).pathname)
   } catch {
     return ''
   }
