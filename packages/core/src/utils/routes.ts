@@ -1,8 +1,8 @@
-import { DRUXT_API_BASE } from '../routes'
+import { DRUXT_API_BASE, trimEndSlashes } from '../routes'
 
 /** Whether `path` is `base` or a path below it, segment by segment. */
 const within = (path: string, base: string): boolean => {
-  const trim = (value: string) => value.replace(/\/+$/, '') || '/'
+  const trim = (value: string) => trimEndSlashes(value) || '/'
   const [inner, outer] = [trim(path), trim(base)]
   return inner === outer || inner.startsWith(`${outer === '/' ? '' : outer}/`)
 }
