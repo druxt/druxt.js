@@ -116,6 +116,10 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
     private opened = new Map<string, boolean>()
     private creates = new Map<string, CreateUi>()
     private actionUi = new Map<string, ActionUi>()
+    // Counts the sources connected, so an action one source started says nothing once another is connected.
+    private connection = 0
+    // The section last rendered, whose list keeps its scroll position through the next render.
+    private rendered: string | undefined
     // The tab keys in order, the built-in sections then the modules', as last rendered.
     private keys: string[] = [...DRUXT_DEVTOOLS_SECTIONS]
     private root: ShadowRoot
@@ -153,6 +157,8 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
     connect(source: DruxtDevtoolsSource): void {
       this.disconnect()
       this.source = source
+      this.connection += 1
+      this.actionUi.clear()
       this.unsubscribe = source.subscribe?.(() => this.schedule())
       this.render()
     }
@@ -204,9 +210,20 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       const focusKey = active?.dataset?.focus
       const caret = active instanceof this.ownerDocument.defaultView!.HTMLInputElement ? [active.selectionStart ?? null, active.selectionEnd ?? null] as const : undefined
 
+      // Where the section's list was scrolled to, put back when the same section renders again.
+      const list = this.root.querySelector<HTMLElement>('.dt-list')
+      const scroll = list && this.rendered === this.section ? [list.scrollTop, list.scrollLeft] as const : undefined
+
       const style = this.h('style', {}, DRUXT_DEVTOOLS_CSS)
       const body = snapshot ? this.layout(snapshot) : this.h('p', { class: 'dt-waiting', role: 'status' }, this.waitingText)
       this.root.replaceChildren(style, body)
+      this.rendered = this.section
+
+      const next = scroll && this.root.querySelector<HTMLElement>('.dt-list')
+      if (next) {
+        next.scrollTop = scroll[0]
+        next.scrollLeft = scroll[1]
+      }
 
       if (focusKey) {
         const target = this.root.querySelector<HTMLElement>(`[data-focus="${cssEscape(this.ownerDocument.defaultView, focusKey)}"]`)
@@ -338,14 +355,19 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
     /** Runs a module's action through the host, and says how it went. */
     private async run(id: string): Promise<void> {
       if (!this.source?.runAction) return
+      const connection = this.connection
       this.actionUi.set(id, { state: 'busy', message: '' })
       this.render()
+      let ui: ActionUi
       try {
         const result = await this.source.runAction(id)
-        this.actionUi.set(id, { state: 'done', message: typeof result === 'string' ? result : 'Done.' })
+        ui = { state: 'done', message: typeof result === 'string' ? result : 'Done.' }
       } catch (error) {
-        this.actionUi.set(id, { state: 'failed', message: (error as Error)?.message || 'The action failed.' })
+        ui = { state: 'failed', message: (error as Error)?.message || 'The action failed.' }
       }
+      // Another source was connected meanwhile: the answer is not its action's.
+      if (connection !== this.connection) return
+      this.actionUi.set(id, ui)
       this.render()
     }
 

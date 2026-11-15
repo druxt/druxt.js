@@ -30,3 +30,18 @@ export const trimStartSlashes = (value: string): string => {
   while (start < value.length && value[start] === '/') start++
   return value.slice(start)
 }
+
+/**
+ * `druxt.endpoint` as every reader spells it: one leading slash and no trailing one, as the client itself reads it, and
+ * `/jsonapi` for none. A proxied path, a language's probe and the key of a shared read are all built from it, so two
+ * spellings of one endpoint are one endpoint.
+ *
+ * @param endpoint - The endpoint as the site wrote it, such as `api` or `/jsonapi/`.
+ *
+ * @example @lang ts
+ * normalEndpoint('api/') // '/api'
+ */
+export const normalEndpoint = (endpoint?: string): string => {
+  const path = trimEndSlashes(trimStartSlashes(endpoint || ''))
+  return path ? `/${path}` : '/jsonapi'
+}

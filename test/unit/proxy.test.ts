@@ -88,6 +88,16 @@ describe('forwardedHeaders()', () => {
     expect(forwardedHeaders({ 'x-forwarded-for': '203.0.113.7' }, client)['x-forwarded-for']).toBe('10.0.0.1')
   })
 
+  it('drops the headers the Connection header names, and the hop-by-hop ones, which are for the site alone', () => {
+    const client = { ip: '10.0.0.1', host: 'site.test', protocol: 'http' }
+    const inbound = { 'X-Private-Hop': 'a', 'x-other': 'b', 'TE': 'trailers', 'trailer': 'Expires', 'proxy-authorization': 'Basic abc', 'proxy-connection': 'keep-alive', 'cookie': 'SESS1=abc' }
+    expect(forwardedHeaders(inbound, client, false, 'close, x-private-hop , X-Other')).toEqual({ 'cookie': 'SESS1=abc', 'x-forwarded-for': '10.0.0.1', 'x-forwarded-host': 'site.test', 'x-forwarded-proto': 'http' })
+    // With no Connection header, a header no one named passes.
+    expect(forwardedHeaders(inbound, client)).toMatchObject({ 'x-private-hop': 'a', 'x-other': 'b' })
+    // The headers the proxy sets are its own, whatever Connection names.
+    expect(forwardedHeaders({}, client, false, 'x-forwarded-host, x-forwarded-for')).toMatchObject({ 'x-forwarded-for': '10.0.0.1', 'x-forwarded-host': 'site.test' })
+  })
+
   it('sends no X-Forwarded-For without an address', () => {
     expect(forwardedHeaders({ 'x-forwarded-for': '1.2.3.4' }, { host: 'site.test', protocol: 'https' })).not.toHaveProperty('x-forwarded-for')
   })

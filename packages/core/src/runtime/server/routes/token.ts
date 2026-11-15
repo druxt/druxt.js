@@ -3,7 +3,7 @@ import { consola } from 'consola'
 import { AUTH_STORAGE_KEYS } from '@druxt/client'
 import { useRuntimeConfig } from '#imports'
 import type { DruxtPrivateConfig, DruxtPublicConfig } from '../../types'
-import { COOKIE_LIMIT, DRUXT_E_TOKEN_COOKIE, clearSession, holdsSession, sessionCookie, setSession } from '../utils/session'
+import { COOKIE_LIMIT, DRUXT_E_TOKEN_COOKIE, clearSession, holdsSession, requireSameOrigin, sessionCookie, setSession } from '../utils/session'
 import type { DruxtOversizedCookie, DruxtSessionTokens } from '../utils/session'
 
 const logger = consola.withTag('druxt')
@@ -47,12 +47,16 @@ const GRANTS = new Map<string, string[]>([
  * When the site's server holds the session, as behind the proxy with `exposeToken` off, the route also makes the
  * authorization code grant, keeps the tokens in httpOnly cookies on the site and answers none of them, and refreshes
  * with the refresh token and the Consumer its cookies hold. A refused refresh clears the session. A sign-in, by
- * password or code, ends the session the browser had as it asks Drupal, so one that fails leaves none.
+ * password or code, ends the session the browser had as it asks Drupal, so one that fails leaves none. As its answer
+ * sets the session, the route then takes requests from the site's own pages only: one whose `Origin`, or
+ * `Sec-Fetch-Site` with no `Origin`, names another site answers 403, with Drupal not asked and no cookie changed.
  *
  * A token too large for a browser's cookie, past 4096 bytes, sets no cookie: the route answers 502 with
  * `DRUXT_E01007`, as the deployment's Drupal issued a token the site cannot keep, and a refresh ends the session.
  */
 export default defineEventHandler(async (event) => {
+  const session = holdsSession(event)
+  if (session) requireSameOrigin(event)
   const body = ((await readBody(event)) || {}) as Record<string, string | undefined>
   const fields = GRANTS.get(String(body.grant_type))
   if (!fields) throw createError({ statusCode: 400, statusMessage: 'Unsupported grant type' })
@@ -67,7 +71,6 @@ export default defineEventHandler(async (event) => {
   // any secret is attached.
   if (body.grant_type === 'password' && auth.password === false) throw createError({ statusCode: 400, statusMessage: 'Unsupported grant type' })
   const secret = (config.druxt as Partial<DruxtPrivateConfig> | undefined)?.auth?.clientSecret || process.env.DRUXT_AUTH_CLIENT_SECRET
-  const session = holdsSession(event)
   // The code grant is the browser's own, which only a session the server holds sends here.
   if (body.grant_type === 'authorization_code' && !session) throw createError({ statusCode: 400, statusMessage: 'Unsupported grant type' })
 

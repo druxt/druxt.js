@@ -9,6 +9,9 @@ const warn = (message: string) => {
   if (import.meta.dev) logger.warn(message)
 }
 
+/** The last write to each storage key, settled or not, which the next write to that key waits for. */
+const writes = new Map<string, Promise<void>>()
+
 /**
  * Stores a connection's settings from Drupal on the server, for every request.
  *
@@ -19,6 +22,10 @@ const warn = (message: string) => {
  * `useDruxtServerSettings()` reads the server tier. With an `event`, the
  * tiers are for that request only, each taking the place of the stored
  * one, and nothing is stored.
+ *
+ * Calls for one connection write in the order they were made, each after the one before, so two that overlap, such
+ * as one per tier, keep both tiers. That holds within one server process only: two instances that share a storage
+ * driver each read, merge and write on their own, and the later write replaces the earlier.
  *
  * @param connection - The connection, `default` unless named.
  * @param tiers - The public tier, the server tier, or both. A tier left out is kept.
@@ -34,11 +41,23 @@ export const storeDrupalSettings = async (connection: string, tiers: DrupalSetti
   if (event) return writeRequestTiers(event.context, name, tiers)
   const storage = useStorage('druxt')
   const key = drupalSettingsStorageKey(name)
-  const current = (await storage.getItem<DrupalSettingsTiers>(key)) || {}
-  const next: DrupalSettingsTiers = { ...current }
-  if (tiers.public) next.public = tiers.public
-  if (tiers.server) next.server = tiers.server
-  await storage.setItem(key, next)
+  const write = async (): Promise<void> => {
+    const current = (await storage.getItem<DrupalSettingsTiers>(key)) || {}
+    const next: DrupalSettingsTiers = { ...current }
+    if (tiers.public) next.public = tiers.public
+    if (tiers.server) next.server = tiers.server
+    await storage.setItem(key, next)
+  }
+  // After the write before it, whether that one stored or failed.
+  const turn = (writes.get(key) || Promise.resolve()).then(write, write)
+  const settled = turn.catch(() => {})
+  writes.set(key, settled)
+  try {
+    await turn
+  }
+  finally {
+    if (writes.get(key) === settled) writes.delete(key)
+  }
 }
 
 /**

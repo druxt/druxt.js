@@ -10,11 +10,23 @@ import { addDruxtDefaults, addDruxtProxy, addPrebundle, corePrebundle, DRUXT_DEF
 import type { DruxtAnchorsSetting } from './anchors'
 import type { DruxtClassPolicy } from './classes'
 import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
-import { DRUXT_API_BASE, trimEndSlashes } from './routes'
+import { DRUXT_API_BASE, normalEndpoint, trimEndSlashes } from './routes'
 import { druxtApiConflict } from './utils/routes'
 import { templateRoute } from './utils/template-route'
 
 import { DRUXT_DEVTOOLS_ICON_ROUTE, DRUXT_DEVTOOLS_ROUTE, devtoolsPage, devtoolsTab, loadDruxtTools, missingToolsMessages } from './utils/devtools'
+
+/**
+ * Whether Drupal answered a request and refused it, with a 4xx, as it does the wrong credentials or a role that may
+ * not read. A request with no answer, or a 5xx, is Drupal being away, which another build may not meet.
+ */
+const refusedByDrupal = (error: unknown): boolean => {
+  for (let at = error as { response?: { status?: number }, cause?: unknown } | undefined, depth = 0; at && depth < 5; at = at.cause as typeof at, depth++) {
+    const status = at.response?.status
+    if (typeof status === 'number') return status >= 400 && status < 500
+  }
+  return false
+}
 
 /** Credentials for build-time requests; see createBuildClient. */
 export interface DruxtBuildAuthOptions {
@@ -123,7 +135,7 @@ export interface DruxtOptions {
   [module: string]: unknown
 }
 
-// One signed-in build client per backend and credentials, so a build signs in once.
+// One signed-in build client per backend, endpoint and credentials, so a build signs in once.
 const buildClients = new Map<string, Promise<DruxtClient>>()
 
 /**
@@ -253,7 +265,7 @@ export const getLanguages = (options: DruxtOptions): Promise<DruxtLanguage[]> =>
     reads = buildLanguageReads.get(nuxt) || new Map()
     buildLanguageReads.set(nuxt, reads)
   }
-  const key = `${trimEndSlashes(options.baseUrl)} ${options.endpoint || '/jsonapi'}`
+  const key = `${trimEndSlashes(options.baseUrl)} ${normalEndpoint(options.endpoint)}`
   let read = reads.get(key)
   if (!read) {
     read = readLanguages(options)
@@ -264,7 +276,7 @@ export const getLanguages = (options: DruxtOptions): Promise<DruxtLanguage[]> =>
 }
 
 const readLanguages = async (options: DruxtOptions): Promise<DruxtLanguage[]> => {
-  const endpoint = options.endpoint || '/jsonapi'
+  const endpoint = normalEndpoint(options.endpoint)
   const type = 'configurable_language--configurable_language'
   // The probes ask as a visitor, through a client that never signs in.
   const anonymous = await signedInClient(buildClients, options.baseUrl, clientOptions(options as unknown as DruxtConfig) as Record<string, unknown>, {})
@@ -416,7 +428,8 @@ export default defineNuxtModule<DruxtOptions>({
     }
     options.baseUrl = options.baseUrl.replace(/\/$/, '')
     if (options.siteUrl) options.siteUrl = trimEndSlashes(options.siteUrl)
-    options.endpoint = options.endpoint.startsWith('/') ? options.endpoint : `/${options.endpoint}`
+    // One spelling, for the proxy's paths, the language read and the app's runtime config.
+    options.endpoint = normalEndpoint(options.endpoint)
     // Drupal's paths on the site stay clear of Druxt's own routes. Each language's prefix is checked once it is read.
     const filesPath = options.proxy?.files ? `/sites/${typeof options.proxy.files === 'string' ? options.proxy.files : 'default'}/files` : undefined
     const conflict = druxtApiConflict({ endpoints: [options.endpoint], files: filesPath ? [filesPath] : [] })
@@ -527,18 +540,22 @@ export default defineNuxtModule<DruxtOptions>({
       ].join('\n'),
     }, { nuxt: true, nitro: true })
 
-    // The site's languages, read once for the app's map and the proxy's prefixes, so the two agree. A read that fails
-    // stops a production build, which would otherwise be a site with one language and only a warning to say so. In
-    // development it warns once and reads as none, so the site still starts while Drupal is away: no default language
-    // is known, and the proxy serves only the unprefixed endpoint.
+    // The site's languages, read once for the app's map and the proxy's prefixes, so the two agree. A read Drupal
+    // refuses, as with the wrong build credentials, stops a production build: the site would otherwise be one with
+    // one language and only a warning to say so, from a mistake a rebuild will not mend. A read with no answer, as
+    // when the build has no way to Drupal, warns once and reads as none, and so does any failure in development: no
+    // default language is known, and the proxy serves only the unprefixed endpoint.
     let siteLanguages: Promise<DruxtLanguage[]> | undefined
     const readSiteLanguages = () => siteLanguages ||= getLanguages(options).catch((error: unknown) => {
       const proxied = options.proxy?.api ? `, and the proxy serves only the unprefixed ${options.endpoint}, not its language-prefixed paths, until a build reads them` : ''
       const reason = (error as Error)?.message || error
-      if (!nuxt.options.dev) throw new Error(`[druxt] DRUXT_E01008: The site's languages could not be read, so the build stops: it would route and proxy no language prefix. Check that Drupal answers at ${options.baseUrl}, and the build's credentials if they are set: ${reason}`, { cause: error })
+      if (!nuxt.options.dev && refusedByDrupal(error)) throw new Error(`[druxt] DRUXT_E01008: Drupal at ${options.baseUrl} refused the read of the site's languages, so the build stops: it would route and proxy no language prefix. Check the build's credentials and what their role may read: ${reason}`, { cause: error })
       useLogger('@druxt/core').warn(`The site's languages could not be read, so no default language is known${proxied}: ${reason}`)
       return []
     })
+    // Read now in a production build, so a refusal stops it here with its own message, not as a template that
+    // could not be written.
+    if (!nuxt.options._prepare && !nuxt.options.dev) await readSiteLanguages()
 
     // The site's languages and their prefixes, read at build, for the app and the server: the language served
     // unprefixed is the default, the language of every unprefixed page.

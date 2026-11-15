@@ -140,6 +140,21 @@ describe('the core module\'s own routes', () => {
     expect(routes.filter((route) => route?.startsWith('/_druxt'))).toEqual([])
   }, 120_000)
 
+  it('proxies one path for an endpoint however it is written, and gives the app that spelling', async () => {
+    for (const [endpoint, served] of [['/jsonapi/', '/jsonapi'], ['jsonapi', '/jsonapi'], ['api', '/api'], [undefined, '/jsonapi']] as const) {
+      const nuxt = await loadNuxt({
+        cwd: join(root, 'test/unit/fixtures/core-module'),
+        ready: true,
+        overrides: { _prepare: true, druxt: { baseUrl: 'https://drupal.test', proxy: { api: true }, ...(endpoint ? { endpoint } : {}) } } as Record<string, unknown>,
+      })
+      loaded.push(nuxt)
+      const routes = nuxt.options.serverHandlers.map((handler) => handler.route)
+      expect(routes, String(endpoint)).toEqual(expect.arrayContaining([served, `${served}/**`]))
+      expect(routes.filter((route) => route?.includes('//')), String(endpoint)).toEqual([])
+      expect((nuxt.options.runtimeConfig.public.druxt as { endpoint?: string }).endpoint, String(endpoint)).toBe(served)
+    }
+  }, 120_000)
+
   it('fails the build with DRUXT_E01006 for a JSON:API endpoint at or under /api/_druxt', async () => {
     for (const endpoint of ['/api/_druxt', 'api/_druxt/', '/api/_druxt/jsonapi']) {
       await expect(loadWith({ endpoint, proxy: { api: true } }), endpoint).rejects.toThrow(/DRUXT_E01006: Drupal's JSON:API is at \/api\/_druxt/)
@@ -197,7 +212,7 @@ describe('the core module\'s proxy, when the site\'s languages cannot be read', 
     }
   }, 120_000)
 
-  it('stops a production build, naming what the site would lose and what to check', async () => {
+  it('stops a production build Drupal refused, naming what the site would lose and what to check', async () => {
     refusing()
     const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
     const stdout = vi.spyOn(process.stdout, 'write').mockImplementation(() => true)
@@ -208,7 +223,33 @@ describe('the core module\'s proxy, when the site\'s languages cannot be read', 
         overrides: { druxt: { baseUrl: 'https://drupal.test', proxy: { api: true } } } as Record<string, unknown>,
       })
       load.then((nuxt) => loaded.push(nuxt), () => {})
-      await expect(load).rejects.toThrow(/DRUXT_E01008: The site's languages could not be read, so the build stops.*https:\/\/drupal\.test/)
+      await expect(load).rejects.toThrow(/DRUXT_E01008: Drupal at https:\/\/drupal\.test refused the read of the site's languages, so the build stops/)
+    } finally {
+      stderr.mockRestore()
+      stdout.mockRestore()
+    }
+  }, 120_000)
+
+  // A build with no way to Drupal, as in a container, is not a mistake in the site: it builds, and says what it lacks.
+  it('builds in production with a warning when Drupal gives no answer', async () => {
+    // With build credentials, so the build signs in before it reads, and that request is the one with no answer.
+    vi.stubEnv('DRUXT_BUILD_CLIENT_ID', 'build')
+    vi.stubEnv('DRUXT_BUILD_CLIENT_SECRET', 'secret')
+    vi.stubGlobal('fetch', vi.fn(async () => { throw new TypeError('fetch failed') }))
+    const written: string[] = []
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
+    const stdout = vi.spyOn(process.stdout, 'write').mockImplementation((chunk: string | Uint8Array) => { written.push(String(chunk)); return true })
+    try {
+      const nuxt = await loadNuxt({
+        cwd: join(root, 'test/unit/fixtures/core-module'),
+        ready: true,
+        overrides: { druxt: { baseUrl: 'https://drupal.test', proxy: { api: true } } } as Record<string, unknown>,
+      })
+      loaded.push(nuxt)
+      const proxied = (nuxt.options as unknown as { _druxtProxy?: string[] })._druxtProxy || []
+      expect(proxied.filter((path) => path.endsWith('/jsonapi/**'))).toEqual(['/jsonapi/**'])
+      expect(written.filter((line) => line.includes('languages could not be read'))).toHaveLength(1)
+      expect(written.some((line) => line.includes('DRUXT_E01008'))).toBe(false)
     } finally {
       stderr.mockRestore()
       stdout.mockRestore()

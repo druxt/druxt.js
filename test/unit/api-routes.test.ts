@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DRUXT_API_BASE, trimEndSlashes, trimStartSlashes } from '../../packages/core/src/routes'
+import { DRUXT_API_BASE, normalEndpoint, trimEndSlashes, trimStartSlashes } from '../../packages/core/src/routes'
 import { druxtApiConflict } from '../../packages/core/src/utils/routes'
 
 describe('Druxt\'s own routes', () => {
@@ -41,5 +41,16 @@ describe('trimEndSlashes() and trimStartSlashes()', () => {
     expect(trimEndSlashes(run)).toBe(run)
     expect(trimEndSlashes(`a${'/'.repeat(200_000)}`)).toBe('a')
     expect(performance.now() - start).toBeLessThan(250)
+  })
+})
+
+describe('normalEndpoint()', () => {
+  it('gives an endpoint one spelling, however the site writes it', () => {
+    expect(normalEndpoint('/jsonapi/')).toBe('/jsonapi')
+    expect(normalEndpoint('jsonapi')).toBe('/jsonapi')
+    expect(normalEndpoint('api//')).toBe('/api')
+    expect(normalEndpoint('/a/b')).toBe('/a/b')
+    expect(normalEndpoint('')).toBe('/jsonapi')
+    expect(normalEndpoint()).toBe('/jsonapi')
   })
 })

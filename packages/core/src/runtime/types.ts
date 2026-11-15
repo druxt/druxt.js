@@ -102,6 +102,15 @@ export interface DruxtPrivateConfig {
   build: { auth: { clientId: string, clientSecret: string, username: string, password: string, scope: string } }
 }
 
+/** The build credentials as a config holds them: a key nothing set is '' or undefined. */
+export interface DruxtServerAuthConfig {
+  clientId?: string
+  clientSecret?: string
+  username?: string
+  password?: string
+  scope?: string
+}
+
 /** The settings modules read, and the flat config a site writes, from `@druxt/client`. */
 export type { DruxtConfig, DruxtSettings }
 

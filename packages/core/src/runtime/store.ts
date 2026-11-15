@@ -49,7 +49,8 @@ const readQuery = (query?: DruxtClientQuery | QueryObject): QueryObject =>
 // In-flight requests and the flush generation, per store and so per request,
 // kept out of the state so they never reach the payload.
 // The resources Drupal denied in a response, by prefix and `type:id`, so a stored resource's includes are not fetched
-// one by one for resources Drupal already refused.
+// one by one for resources Drupal already refused. A resource leaves the record when it is stored, and the record is
+// emptied when every resource is flushed.
 interface Runtime {
   inFlight: Map<string, Promise<unknown>>
   generation: number
@@ -406,6 +407,8 @@ export const useDruxtStore = defineStore('druxt', {
 
       if (resource.included) dehydrateResources(this, resource.included, includedPartial(query), prefix)
 
+      // Drupal has given the resource, so it is denied no longer.
+      getRuntime(this).omitted.get(slot(prefix))?.delete(`${type}:${id}`)
       const meta = resource.meta ? storedMeta(resource as { meta?: Record<string, unknown> }, this.$druxt?.options?.endpoint) : undefined
       noteOmitted(this, meta, prefix)
       const stored: StoredResource = {
@@ -478,6 +481,9 @@ export const useDruxtStore = defineStore('druxt', {
       flushInFlight(this)
       if (!type) {
         this.resources = {}
+        // What Drupal denied goes with every resource: it may have granted it since. A flush of some resources keeps
+        // the record, so a denied include is not asked for again on every read.
+        getRuntime(this).omitted.clear()
         return
       }
       flush(this.resources, type, id !== undefined ? [id] : [], prefix === undefined ? undefined : slot(prefix))
