@@ -1,16 +1,20 @@
 {
-  // The unit tests, so their type assertions are compiled: Nuxt's app config, as for the runtime code they import.
+  // The unit, nuxt and docs tests, so their type assertions are compiled: Nuxt's app config, as for the runtime code
+  // they import.
   "extends": "./test/types/.nuxt/tsconfig.app.json",
   "compilerOptions": {
-    // The docs tests import the docs scripts, plain JavaScript read for its types, not checked.
+    // The docs tests, and the unit tests of the docs scripts, import those scripts: plain JavaScript read for its
+    // types, not checked.
     "allowJs": true,
     "checkJs": false,
     // Typecheck the sources, not the built packages.
     "customConditions": ["source"],
     "types": ["node"]
   },
-  "include": ["./test/types/.nuxt/nuxt.d.ts", "./test/unit/*.ts"],
-  // fake-drupal.ts takes its types from @druxt/client, which the client port brings. The nuxt tests wait for the client
-  // port too, as their setup imports the fake.
-  "exclude": ["./test/unit/fake-drupal.ts"]
+  "include": [
+    "./test/types/.nuxt/nuxt.d.ts",
+    "./test/unit/*.ts",
+    "./test/nuxt/*.ts",
+    "./test/docs/**/*.ts"
+  ]
 }

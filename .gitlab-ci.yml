@@ -300,6 +300,7 @@ lint:knip:
     - section_start "knip" "Checking for unused/unlisted dependencies"
     - corepack enable
     - yarn install --immutable
+    - yarn build
     - yarn lint:knip
     - section_end "knip"
 
@@ -557,10 +558,10 @@ test:release:
     - section_end "backend"
 
 # The sources against Nuxt's generated types. The typecheck app lists no
-# module yet, so this checks the test harness and the configs; the core port
-# adds @druxt/core, whose dist preparing the app then loads, which is why the
-# packages build first. The consumer check against the built declarations,
-# typecheck:dist, returns with the packages.
+# module yet, so this checks packages/client, the test harness and the
+# configs; the core port adds @druxt/core, whose dist preparing the app then
+# loads, which is why the packages build first. The consumer check against the
+# built declarations, typecheck:dist, returns with the packages.
 test:typecheck:
   extends: .node
   stage: test
