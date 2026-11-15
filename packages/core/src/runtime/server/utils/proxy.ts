@@ -1,5 +1,5 @@
 import { headersHaveCredentials } from '@druxt/client'
-import { DRUXT_API_BASE } from '@druxt/core/routes'
+import { DRUXT_API_BASE, trimEndSlashes } from '@druxt/core/routes'
 import { decodeCookie } from '../../utils/session'
 
 /** A request path as a URL resolves it, with encoded slashes and dot segments resolved, or undefined for none. */
@@ -55,7 +55,7 @@ export const proxyTarget = (path: string, baseUrl: string, routes: readonly stri
     return pathname === base || pathname.startsWith(`${base}/`)
   })
   if (!matched) return undefined
-  return `${baseUrl.replace(/\/+$/, '')}${path}`
+  return `${trimEndSlashes(baseUrl)}${path}`
 }
 
 /**
@@ -73,7 +73,7 @@ export const proxyLocation = (location: string, baseUrl: string): string => {
   let base: URL
   let url: URL
   try {
-    base = new URL(`${baseUrl.replace(/\/+$/, '')}/`)
+    base = new URL(`${trimEndSlashes(baseUrl)}/`)
     url = new URL(location, base)
   } catch {
     return location
