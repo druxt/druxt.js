@@ -3,9 +3,8 @@ import { clientOptions } from '@druxt/client'
 import type { DruxtClient, DruxtConfig } from '@druxt/client'
 import { useRuntimeConfig } from '#imports'
 import { languages } from '#druxt/languages'
-import type { DruxtPrivateConfig } from '../types'
+import type { DruxtPrivateConfig, DruxtServerAuthConfig } from '../types'
 import { serverAuthConfig, serverClients, signedInClient } from './signIn'
-import type { DruxtServerAuthConfig } from './signIn'
 
 /**
  * The server clients' options, from the public config. In development, a read Drupal omits resources from warns once

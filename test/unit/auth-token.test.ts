@@ -8,6 +8,8 @@ const state = vi.hoisted(() => ({
   // route set, by name: undefined for a cleared one.
   cookies: {} as Record<string, string>,
   cookieHeader: undefined as string | undefined,
+  // The other headers the request carried, such as Host and Origin.
+  headers: {} as Record<string, string>,
   set: {} as Record<string, { value?: string, options: Record<string, unknown> }>,
   protocol: 'http',
   // What the routes logged.
@@ -46,7 +48,7 @@ const request = async (answer: { status: number, body: Record<string, unknown> }
   }))
   const { default: handler } = await import('../../packages/core/src/runtime/server/routes/token')
   const cookie = state.cookieHeader ?? Object.entries(state.cookies).map(([name, value]) => `${name}=${encodeURIComponent(value)}`).join('; ')
-  const event = { context: {}, node: { req: { headers: cookie ? { cookie } : {} } } }
+  const event = { context: {}, node: { req: { headers: { ...state.headers, ...(cookie ? { cookie } : {}) } } } }
   const result = await (handler as unknown as (event: unknown) => Promise<unknown>)(event)
   return { sent: sent[0] ? Object.fromEntries(sent[0]) : undefined, result }
 }
@@ -57,6 +59,7 @@ beforeEach(() => {
   state.config = { public: publicConfig, druxt: { auth: { clientSecret: '' } } }
   state.cookies = {}
   state.cookieHeader = undefined
+  state.headers = {}
   state.set = {}
   state.protocol = 'http'
   state.logged = []
@@ -223,6 +226,86 @@ describe('POST /api/_druxt/auth/token, holding the session', () => {
 })
 
 // `auth.password: false` offers no password grant, though the route stays for the session's code grant and refresh.
+// A response to a cross-site form post may set cookies, so the route that sets the session's checks who asks.
+describe('POST /api/_druxt/auth/token, asked from another site', () => {
+  const sessionConfig = (siteUrl = '', trustForwarded = false) => ({
+    app: { baseURL: '/' },
+    public: { druxt: { ...publicConfig.druxt, siteUrl, auth: { ...publicConfig.druxt.auth, session: true } } },
+    druxt: { auth: { clientSecret: '' }, proxy: { trustForwarded } },
+  })
+  const tokens = { status: 200, body: { token_type: 'Bearer', access_token: 'access-secret', refresh_token: 'refresh-secret', expires_in: 300 } }
+
+  /** Asserts the route answered 403, asked Drupal nothing, and neither set nor cleared a cookie. */
+  const expectRefused = async () => {
+    await expect(request(tokens)).rejects.toMatchObject({ statusCode: 403 })
+    expect(fetch).not.toHaveBeenCalled()
+    expect(state.set).toEqual({})
+  }
+
+  beforeEach(() => {
+    state.config = sessionConfig()
+    state.headers = { host: 'site.test' }
+  })
+
+  it('refuses a request whose Origin is another site, asking Drupal nothing and touching no cookie', async () => {
+    state.cookies = { 'druxt.auth.access_token': 'visitor' }
+    state.headers = { host: 'site.test', origin: 'https://evil.test' }
+    await expectRefused()
+  })
+
+  it('refuses an opaque Origin, as a sandboxed frame sends', async () => {
+    state.headers = { host: 'site.test', origin: 'null' }
+    await expectRefused()
+  })
+
+  it('signs in a request from the site\'s own origin', async () => {
+    state.headers = { host: 'site.test', origin: 'http://site.test' }
+    const { result } = await request(tokens)
+    expect(result).toEqual({ token_type: 'Bearer', expires_in: 300 })
+    expect(state.set['druxt.auth.access_token']?.value).toBe('access-secret')
+  })
+
+  it('takes the site\'s host from siteUrl when the request names another, as behind a front proxy', async () => {
+    state.config = sessionConfig('https://www.site.test')
+    state.headers = { host: 'internal:3000', origin: 'https://www.site.test' }
+    expect((await request(tokens)).result).toEqual({ token_type: 'Bearer', expires_in: 300 })
+    state.set = {}
+    state.headers = { host: 'internal:3000', origin: 'https://evil.test' }
+    await expectRefused()
+  })
+
+  it('takes the forwarded host only with proxy.trustForwarded', async () => {
+    state.headers = { 'host': 'internal:3000', 'x-forwarded-host': 'www.site.test', 'origin': 'https://www.site.test' }
+    await expectRefused()
+    state.config = sessionConfig('', true)
+    expect((await request(tokens)).result).toEqual({ token_type: 'Bearer', expires_in: 300 })
+  })
+
+  it('falls back to Sec-Fetch-Site when the request has no Origin', async () => {
+    state.headers = { 'host': 'site.test', 'sec-fetch-site': 'cross-site' }
+    await expectRefused()
+    state.headers = { 'host': 'site.test', 'sec-fetch-site': 'same-site' }
+    await expectRefused()
+    for (const site of ['same-origin', 'none']) {
+      state.set = {}
+      state.headers = { 'host': 'site.test', 'sec-fetch-site': site }
+      expect((await request(tokens)).result, site).toEqual({ token_type: 'Bearer', expires_in: 300 })
+    }
+  })
+
+  it('signs in a request with neither header, as a script outside a browser sends', async () => {
+    expect((await request(tokens)).result).toEqual({ token_type: 'Bearer', expires_in: 300 })
+  })
+
+  it('ignores the Origin when the browser holds the session, as the route sets no cookie', async () => {
+    state.config = { public: publicConfig, druxt: { auth: { clientSecret: '' } } }
+    state.headers = { host: 'site.test', origin: 'https://evil.test' }
+    const { result } = await request()
+    expect(result).toEqual({ access_token: 'token' })
+    expect(state.set).toEqual({})
+  })
+})
+
 describe('POST /api/_druxt/auth/token, by auth.password', () => {
   const grants = {
     password: credentials,
@@ -352,10 +435,19 @@ describe('POST /api/_druxt/auth/logout', () => {
   it('clears every session cookie', async () => {
     state.config = { app: { baseURL: '/app/' }, public: { druxt: { ...publicConfig.druxt, auth: { ...publicConfig.druxt.auth, session: true } } } }
     const { default: handler } = await import('../../packages/core/src/runtime/server/routes/logout')
-    await (handler as unknown as (event: unknown) => Promise<unknown>)({ context: {} })
+    await (handler as unknown as (event: unknown) => Promise<unknown>)({ context: {}, node: { req: { headers: { host: 'site.test', origin: 'http://site.test' } } } })
     for (const name of ['druxt.auth.access_token', 'druxt.auth.refresh_token', 'druxt.auth.client_id', 'druxt.auth.expires_at', 'druxt.auth.session']) {
       expect(state.set[name]).toEqual({ options: expect.objectContaining({ path: '/app/' }) })
     }
     expect(state.status).toBe(204)
+  })
+
+  it('refuses a request from another site, clearing no cookie', async () => {
+    state.config = { app: { baseURL: '/' }, public: { druxt: { ...publicConfig.druxt, auth: { ...publicConfig.druxt.auth, session: true } } } }
+    const { default: handler } = await import('../../packages/core/src/runtime/server/routes/logout')
+    const event = { context: {}, node: { req: { headers: { host: 'site.test', origin: 'https://evil.test' } } } }
+    expect(() => (handler as unknown as (event: unknown) => unknown)(event)).toThrow(expect.objectContaining({ statusCode: 403 }))
+    expect(state.set).toEqual({})
+    expect(state.status).toBe(0)
   })
 })

@@ -27,13 +27,15 @@ interface StubOptions {
   labels?: Record<string, string>
   /** `language.negotiation` url.prefixes, published by decoupled_settings to a visitor. */
   decoupled?: Record<string, string>
+  /** The path Drupal serves JSON:API at, `/jsonapi` unless the site moved it. */
+  endpoint?: string
 }
 
 /**
  * A Drupal whose default language is `defaultLangcode`, under `defaultPrefix`, and whose other languages answer under
  * their langcode only when listed in `prefixed`. It issues a token to any client credentials.
  */
-const stubDrupal = (base: string, { defaultLangcode = 'en', defaultPrefix = '', langcodes = ['en', 'es', 'und', 'zxx'], prefixed = ['es'], contentLanguage = true, unreachable = [], listed = true, labels = {}, decoupled }: StubOptions = {}) => {
+const stubDrupal = (base: string, { defaultLangcode = 'en', defaultPrefix = '', langcodes = ['en', 'es', 'und', 'zxx'], prefixed = ['es'], contentLanguage = true, unreachable = [], listed = true, labels = {}, decoupled, endpoint = '/jsonapi' }: StubOptions = {}) => {
   const fetchMock = vi.fn(async (input: string, _init?: RequestInit) => {
     const url = new URL(input)
     const path = url.pathname.slice(new URL(base).pathname.replace(/\/$/, '').length)
@@ -42,19 +44,19 @@ const stubDrupal = (base: string, { defaultLangcode = 'en', defaultPrefix = '', 
       headers: { 'content-type': 'application/vnd.api+json', ...(langcode && contentLanguage ? { 'content-language': langcode } : {}) },
     })
     if (path === '/oauth/token') return reply({ access_token: 'build-token', token_type: 'Bearer', expires_in: 300 })
-    if (path === '/jsonapi/decoupled/settings') {
+    if (path === `${endpoint}/decoupled/settings`) {
       if (!decoupled) return new Response('{}', { status: 404 })
       return reply({ data: { type: 'decoupled-settings', id: 'decoupled-settings', attributes: { consumer: null, settings: { 'language.negotiation': { url: { source: 'path_prefix', prefixes: decoupled } } } } } })
     }
     const at = defaultPrefix ? `/${defaultPrefix}` : ''
-    if (path === '/jsonapi') {
-      const links = { self: { href: `${base}${at}/jsonapi` }, ...(listed ? { [type]: { href: `${base}${at}/jsonapi/configurable_language/configurable_language` } } : {}) }
+    if (path === endpoint) {
+      const links = { self: { href: `${base}${at}${endpoint}` }, ...(listed ? { [type]: { href: `${base}${at}${endpoint}/configurable_language/configurable_language` } } : {}) }
       return reply({ links }, defaultLangcode)
     }
-    if (path === `${at}/jsonapi/configurable_language/configurable_language`) {
+    if (path === `${at}${endpoint}/configurable_language/configurable_language`) {
       return reply({ data: langcodes.map((langcode) => ({ type, id: langcode, attributes: { drupal_internal__id: langcode, ...(labels[langcode] ? { label: labels[langcode] } : {}) } })), links: {} })
     }
-    const match = /^\/([^/]+)\/jsonapi$/.exec(path)
+    const match = path.endsWith(endpoint) ? /^\/([^/]+)$/.exec(path.slice(0, -endpoint.length)) : null
     if (match && unreachable.includes(match[1]!)) throw new TypeError('fetch failed')
     if (match && prefixed.includes(match[1]!)) return reply({ links: { self: { href: `${base}${path}` } } }, match[1])
     return new Response('{}', { status: 404 })
@@ -97,6 +99,29 @@ describe('getLanguages()', () => {
     stubDrupal('https://unprefixed.test')
     expect(await getLanguages(options('https://unprefixed.test'))).toEqual([{ langcode: 'en', prefix: '', default: true }, { langcode: 'es', prefix: 'es' }])
     expect(await getLanguagePrefixes(options('https://unprefixed.test'))).toEqual(['/es'])
+  })
+
+  // One spelling of the endpoint for every reader: core hands in its own options, the router and the entity module the
+  // site's, as written.
+  it.each([
+    ['/jsonapi/', '/jsonapi', 'slash'],
+    ['jsonapi', '/jsonapi', 'bare'],
+    ['api', '/api', 'api'],
+    ['/api/', '/api', 'api-slash'],
+    [undefined, '/jsonapi', 'unset'],
+  ])('reads the same languages for the endpoint %j as for %s', async (endpoint, served, host) => {
+    const fetchMock = stubDrupal(`https://${host}.test`, { endpoint: served })
+    const given = { baseUrl: `https://${host}.test`, ...(endpoint === undefined ? {} : { endpoint }) } as DruxtOptions
+    expect(await getLanguages(given)).toEqual([{ langcode: 'en', prefix: '', default: true }, { langcode: 'es', prefix: 'es' }])
+    expect(await getLanguagePrefixes(given)).toEqual(['/es'])
+    expect(warn).not.toHaveBeenCalled()
+    // Every request under the endpoint as Drupal serves it, and the other spelling shares the one read.
+    const paths = fetchMock.mock.calls.map(([input]) => new URL(input).pathname).filter((path) => path !== '/oauth/token')
+    expect(paths.filter((path) => !path.startsWith(served) && path !== `/es${served}`)).toEqual([])
+    expect(paths.filter((path) => path.includes('//'))).toEqual([])
+    const calls = fetchMock.mock.calls.length
+    await getLanguages({ baseUrl: `https://${host}.test`, endpoint: served })
+    expect(fetchMock.mock.calls.length).toBe(calls)
   })
 
   it('reads the prefix under a base URL with a path', async () => {

@@ -262,6 +262,29 @@ describe('the server tier', () => {
     expect(secretKeys(settings)).toEqual([])
   })
 
+  it('keeps both tiers of two writes that overlap, one tier each', async () => {
+    const { storeDrupalSettings } = await import('../../packages/core/src/runtime/server/storage')
+    await Promise.all([
+      storeDrupalSettings('default', { public: { siteUrl: 'https://from-drupal.test' } }),
+      storeDrupalSettings('default', { server: { apiKey: 'drupal-key' } }),
+      storeDrupalSettings('default', { public: { siteUrl: 'https://later.test' } }),
+    ])
+    expect(storage.get('settings:default')).toEqual({ public: { siteUrl: 'https://later.test' }, server: { apiKey: 'drupal-key' } })
+  })
+
+  it('writes after a write that failed, which rejects for its own caller alone', async () => {
+    const { storeDrupalSettings } = await import('../../packages/core/src/runtime/server/storage')
+    const circular: Record<string, unknown> = {}
+    circular.self = circular
+    const [failed, stored] = await Promise.allSettled([
+      storeDrupalSettings('default', { public: circular }),
+      storeDrupalSettings('default', { server: { apiKey: 'drupal-key' } }),
+    ])
+    expect(failed.status).toBe('rejected')
+    expect(stored.status).toBe('fulfilled')
+    expect(storage.get('settings:default')).toEqual({ server: { apiKey: 'drupal-key' } })
+  })
+
   it('puts a request\'s own tiers in place of the stored ones, and stores nothing for a request', async () => {
     const { useDruxtServerSettings } = await import('../../packages/core/src/runtime/server/settings')
     const { storeDrupalSettings } = await import('../../packages/core/src/runtime/server/storage')
