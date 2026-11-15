@@ -1,8 +1,8 @@
 import type { StoreDefinition } from 'pinia'
 import { useDruxtStore } from './store'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyStoreDefinition = StoreDefinition<string, any, any, any>
+/** A store definition of any id, state, getters and actions: Pinia's own defaults for the four. */
+type AnyStoreDefinition = StoreDefinition
 
 // Store definitions by their 1.x Vuex namespace. Definitions, not instances, so one registry serves every request.
 const registry: Record<string, AnyStoreDefinition> = { druxt: useDruxtStore }

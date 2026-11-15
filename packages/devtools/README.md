@@ -56,7 +56,8 @@ once the page settles. With `open`, it prints one line pointing to that tool,
 such as `Druxt: 4 defaults in use. Open Nuxt DevTools > Druxt.`. Without it,
 each page gets a collapsed group, `Druxt: 4 defaults in use on /path`, with
 each default's candidate names, and, only when there are any, an open group of
-quiet errors.
+quiet errors. The groups print again for a new page, a new count, or a quiet
+error whose status or detail changed.
 
 ## Module extensions
 
@@ -68,7 +69,8 @@ it:
   data, which the element renders, never markup.
 - A `timeline` event adds a labelled event beside the requests.
 - `registerAction(action, handler)` offers a button. The handler runs in the
-  host, and `runAction(id)` runs it.
+  host, and `runAction(id)` runs it. It returns a function that withdraws
+  that registration, and does nothing once the same id is registered again.
 
 ```ts
 devtools.emit({

@@ -316,6 +316,8 @@ export function createDruxtDevtools(): DruxtDevtoolsChannel {
   const sections = new Map<string, Omit<DruxtDevtoolsModuleSection, 'actions'>>()
   const actions = new Map<string, DruxtDevtoolsAction>()
   const handlers = new Map<string, () => unknown>()
+  // Each action's current registration, which only its own disposer withdraws.
+  const registrations = new Map<string, object>()
   let timeline: DruxtDevtoolsTimelineEvent[] = []
   const listeners = new Set<DruxtDevtoolsListener>()
 
@@ -378,6 +380,7 @@ export function createDruxtDevtools(): DruxtDevtoolsChannel {
       case 'action:removed':
         actions.delete(event.id)
         handlers.delete(event.id)
+        registrations.delete(event.id)
         break
       case 'timeline':
         timeline = [...timeline, copy(event.event)].slice(-MAX_REQUESTS)
@@ -403,10 +406,13 @@ export function createDruxtDevtools(): DruxtDevtoolsChannel {
       return copy({ page, modules: list, missing: groupMissing(list), quiet: [...quiet.values()], requests, settings, sections: withActions, timeline })
     },
     registerAction(action, handler) {
+      // This registration's own mark: a later one under the same id may hand in the same function.
+      const registration = {}
       handlers.set(action.id, handler)
+      registrations.set(action.id, registration)
       this.emit({ type: 'action', action })
       return () => {
-        if (handlers.get(action.id) === handler) this.emit({ type: 'action:removed', id: action.id })
+        if (registrations.get(action.id) === registration) this.emit({ type: 'action:removed', id: action.id })
       }
     },
     async runAction(id) {
