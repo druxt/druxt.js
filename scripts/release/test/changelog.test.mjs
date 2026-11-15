@@ -50,8 +50,21 @@ test('an indented code block that opens the body keeps its indent', async () => 
 })
 
 test('a link whose destination holds parentheses stays as written', async () => {
-  const line = await getReleaseLine({ summary: 'fix: see [the guide](https://example.org/guide(v2)#123) for #45', commit: LATER })
-  assert.match(line, /\[the guide\]\(https:\/\/example\.org\/guide\(v2\)#123\)/)
+  for (const link of [
+    '[the guide](https://example.org/guide(v2)#123)',
+    '[the guide](https://example.org/a(b(c))#123)',
+    '[the guide](https://example.org/guide\\(v2#123)',
+    '[issue #123][guide]',
+  ]) {
+    const line = await getReleaseLine({ summary: `fix: see ${link} for #45`, commit: LATER })
+    assert.ok(line.includes(link), line)
+    assert.match(line, /\[#45\]\(.*\/issues\/45\)/)
+  }
+})
+
+test('a code span ends on a run of as many backticks as opened it', async () => {
+  const line = await getReleaseLine({ summary: 'fix: show `foo ``` #9` for #45', commit: LATER })
+  assert.ok(line.includes('`foo ``` #9`'), line)
   assert.match(line, /\[#45\]\(.*\/issues\/45\)/)
 })
 
@@ -71,4 +84,12 @@ test('a breaking-change footer in a code example does not mark the entry', async
   assert.doesNotMatch(fenced, /\*\*Breaking/)
   assert.doesNotMatch(indented, /\*\*Breaking/)
   assert.match(footer, /^- \*\*Breaking/)
+})
+
+test('a code span or a fence in a list item does not hide the footers after it', async () => {
+  for (const example of ['```example```', '- ~~~text\n  example\n  ~~~']) {
+    const line = await getReleaseLine({ summary: `fix: drop the old API.\n\n${example}\n\nCommit: ${SHA}\nBREAKING CHANGE: use the new one.`, commit: LATER })
+    assert.match(line, /^- \*\*Breaking/)
+    assert.match(line, /\/commit\/75b37680/)
+  }
 })
