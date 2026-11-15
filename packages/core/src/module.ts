@@ -10,7 +10,7 @@ import { addDruxtDefaults, addDruxtProxy, addPrebundle, corePrebundle, DRUXT_DEF
 import type { DruxtAnchorsSetting } from './anchors'
 import type { DruxtClassPolicy } from './classes'
 import { serverAuthOptions, signedInClient } from './runtime/server/signIn'
-import { DRUXT_API_BASE } from './routes'
+import { DRUXT_API_BASE, trimEndSlashes } from './routes'
 import { druxtApiConflict } from './utils/routes'
 import { templateRoute } from './utils/template-route'
 
@@ -253,7 +253,7 @@ export const getLanguages = (options: DruxtOptions): Promise<DruxtLanguage[]> =>
     reads = buildLanguageReads.get(nuxt) || new Map()
     buildLanguageReads.set(nuxt, reads)
   }
-  const key = `${options.baseUrl.replace(/\/+$/, '')} ${options.endpoint || '/jsonapi'}`
+  const key = `${trimEndSlashes(options.baseUrl)} ${options.endpoint || '/jsonapi'}`
   let read = reads.get(key)
   if (!read) {
     read = readLanguages(options)
@@ -278,7 +278,7 @@ const readLanguages = async (options: DruxtOptions): Promise<DruxtLanguage[]> =>
       const href = response.data?.links?.self?.href
       let self: string | undefined
       if (href) {
-        const root = `${options.baseUrl.replace(/\/+$/, '')}/`
+        const root = `${trimEndSlashes(options.baseUrl)}/`
         const base = new URL(root).pathname
         const pathname = new URL(href, root).pathname
         self = pathname.startsWith(base) ? `/${pathname.slice(base.length)}` : pathname
@@ -415,7 +415,7 @@ export default defineNuxtModule<DruxtOptions>({
       throw new Error('[druxt] The `druxt.baseUrl` option is required.')
     }
     options.baseUrl = options.baseUrl.replace(/\/$/, '')
-    if (options.siteUrl) options.siteUrl = options.siteUrl.replace(/\/+$/, '')
+    if (options.siteUrl) options.siteUrl = trimEndSlashes(options.siteUrl)
     options.endpoint = options.endpoint.startsWith('/') ? options.endpoint : `/${options.endpoint}`
     // Drupal's paths on the site stay clear of Druxt's own routes. Each language's prefix is checked once it is read.
     const filesPath = options.proxy?.files ? `/sites/${typeof options.proxy.files === 'string' ? options.proxy.files : 'default'}/files` : undefined
