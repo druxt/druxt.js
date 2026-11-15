@@ -79,13 +79,14 @@ const VERBS = {
 const md = new MarkdownIt('commonmark')
 
 // Records each `#123` the inline parser reaches as plain text, with its
-// offset. It runs after every built-in rule, so links, autolinks, code spans,
-// HTML, entities and escapes consume their own text first, and a ref inside
-// one of them never gets here.
+// offset. It runs after every built-in rule, so autolinks, code spans, HTML,
+// entities and escapes consume their own text first, and a ref inside one of
+// them never gets here. A ref in the text of a Markdown link or an HTML `<a>`
+// is reached, but with `linkLevel` raised, so it is skipped.
 md.inline.ruler.push('issue_ref', (state, silent) => {
   const ref = /^#(\d+)\b/.exec(state.src.slice(state.pos, state.posMax))
   if (!ref) return false
-  if (!silent) {
+  if (!silent && !state.linkLevel) {
     const token = state.push('issue_ref', '', 0)
     token.content = ref[1]
     token.meta = { start: state.pos, end: state.pos + ref[0].length }
@@ -95,14 +96,10 @@ md.inline.ruler.push('issue_ref', (state, silent) => {
 })
 
 const linkIssues = (text, env) => {
-  const refs = []
-  let depth = 0
-  for (const token of md.parseInline(text, env)[0].children) {
-    if (token.type === 'link_open') depth++
-    else if (token.type === 'link_close') depth--
-    // `[#123]` reads as a label someone meant to write.
-    else if (token.type === 'issue_ref' && !depth && text[token.meta.start - 1] !== '[') refs.push(token)
-  }
+  // `[#123]` reads as a label someone meant to write.
+  const refs = md
+    .parseInline(text, env)[0]
+    .children.filter((token) => token.type === 'issue_ref' && text[token.meta.start - 1] !== '[')
   let out = ''
   let last = 0
   for (const ref of refs) {

@@ -156,3 +156,9 @@ test('a Commit line or a breaking-change footer in an HTML block stays an exampl
   assert.match(line, /\/commit\/773a7b76/)
   assert.ok(line.includes(`Commit: ${SHA}`), line)
 })
+
+test('an issue ref inside an HTML link stays as written', async () => {
+  const line = await getReleaseLine({ summary: 'fix: see <a href="/guide">#123</a> for #45', commit: LATER })
+  assert.ok(line.includes('<a href="/guide">#123</a>'), line)
+  assert.match(line, /\[#45\]\(.*\/issues\/45\)/)
+})
