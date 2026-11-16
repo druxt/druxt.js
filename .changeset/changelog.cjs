@@ -97,9 +97,13 @@ md.inline.ruler.push('issue_ref', (state, silent) => {
 
 const linkIssues = (text, env) => {
   // A bare URL, such as `https://example.org/guide#123`, is text to CommonMark,
-  // so its refs are found with linkify-it, which markdown-it bundles.
-  const urls = md.linkify.match(text) || []
-  const inUrl = (start) => urls.some((url) => url.index <= start && start < url.lastIndex)
+  // so its refs are found with linkify-it, which markdown-it bundles. Each one
+  // runs on to the next space, past any parentheses linkify-it leaves out.
+  const urls = (md.linkify.match(text) || []).map((url) => {
+    const rest = text.slice(url.lastIndex).search(/\s/)
+    return [url.index, rest < 0 ? text.length : url.lastIndex + rest]
+  })
+  const inUrl = (start) => urls.some(([from, to]) => from <= start && start < to)
   // `[#123]` reads as a label someone meant to write.
   const refs = md
     .parseInline(text, env)[0]
