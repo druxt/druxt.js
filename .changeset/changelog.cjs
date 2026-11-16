@@ -96,10 +96,16 @@ md.inline.ruler.push('issue_ref', (state, silent) => {
 })
 
 const linkIssues = (text, env) => {
+  // A bare URL, such as `https://example.org/guide#123`, is text to CommonMark,
+  // so its refs are found with linkify-it, which markdown-it bundles.
+  const urls = md.linkify.match(text) || []
+  const inUrl = (start) => urls.some((url) => url.index <= start && start < url.lastIndex)
   // `[#123]` reads as a label someone meant to write.
   const refs = md
     .parseInline(text, env)[0]
-    .children.filter((token) => token.type === 'issue_ref' && text[token.meta.start - 1] !== '[')
+    .children.filter(
+      (token) => token.type === 'issue_ref' && text[token.meta.start - 1] !== '[' && !inUrl(token.meta.start),
+    )
   let out = ''
   let last = 0
   for (const ref of refs) {
