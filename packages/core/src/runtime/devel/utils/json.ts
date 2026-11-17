@@ -2,14 +2,20 @@ import { defineComponent, h, nextTick, reactive } from 'vue'
 import type { PropType, VNode } from 'vue'
 import { isTree, size } from './size'
 
-// Strings past this many characters fold to their first FOLDED_AT, with a button for the rest.
+// A string longer than `LONG` characters folds to its first `FOLDED_AT` characters, with a button for the rest.
 const LONG = 80
 const FOLDED_AT = 40
 
 /**
- * JSON, indented and coloured, for DruxtDebug in development. Strings over 80 characters, and objects past the second
- * level or holding one, fold to a button that expands them in place. An expanded value keeps a button that folds it
- * again, and focus stays on that value's button.
+ * JSON, indented and coloured, for DruxtDebug in development.
+ *
+ * These values fold to a button that expands them in place:
+ *
+ * - A string over 80 characters.
+ * - An object or array past the second level.
+ * - An object or array at the second level that holds another object or array.
+ *
+ * An expanded value keeps a button that folds it again. Focus stays on that value's button.
  */
 export default defineComponent({
   name: 'DruxtDebugJson',
@@ -20,7 +26,7 @@ export default defineComponent({
     const toggle = async (path: string): Promise<void> => {
       if (expanded.has(path)) expanded.delete(path)
       else expanded.add(path)
-      // The button is replaced by its counterpart, so focus follows it.
+      // The button is replaced by its counterpart, so focus is moved to the new button.
       await nextTick()
       buttons.get(path)?.focus()
     }

@@ -1,13 +1,17 @@
 /*
- * Druxt's development stylesheet: the tokens, the field, entity and form defaults, the inline create action and
- * DruxtDebug.
- * The DevTools tab styles itself, in its own shadow root.
- * Core loads it in development only, so a production build has none of it.
+ * Druxt's development stylesheet.
+ *
+ * It holds the tokens, the field, entity and form defaults, the inline create action and DruxtDebug. The DevTools
+ * tab styles itself, in its own shadow root.
+ *
+ * Core loads this file in development only, so a production build has none of it.
  */
 
-/* Zero specificity: a site's own :root wins in any order. Each colour follows the page's colour scheme where it is
-   used: light unless the page declares color-scheme: dark, whatever the reader's system prefers, so the defaults never
-   go dark on a light page. A deviation from the design, which followed prefers-color-scheme. */
+/* The tokens have zero specificity, so a site's own :root wins in any order.
+
+   Each colour follows the page's colour scheme where it is used. It is light unless the page declares
+   color-scheme: dark, whatever the reader's system prefers. So the defaults never go dark on a light page. This is a
+   deviation from the design, which followed prefers-color-scheme. */
 :where(:root) {
   --druxt-ink: light-dark(#16212b, #e5ecf1);
   --druxt-surface: light-dark(#fff, #15202a);
@@ -20,8 +24,8 @@
   --druxt-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --druxt-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
-/* Derived, private: multiples of --druxt-space, the rule between values, and a form control's edge and a fieldset's
-   line. The rule mixes currentColor where it is used, so it follows the site's own text colour. */
+/* Derived, private values: multiples of --druxt-space, the rule between values, a form control's edge and a
+   fieldset's line. The rule mixes currentColor where it is used, so it follows the site's own text colour. */
 :where(:root) {
   --_1: calc(var(--druxt-space) * .5);
   --_3: calc(var(--druxt-space) * 1.5);
@@ -33,9 +37,13 @@
 }
 
 /*
- * Field, entity and form defaults. Every rule sits in the "druxt" cascade layer, so any rule the site writes outside a
- * layer wins, whatever its specificity or order. Field rules mix currentColor, not --druxt-ink, so rules and muted
- * text follow the site's text colour. Links keep the site's own colours.
+ * Field, entity and form defaults.
+ *
+ * Every rule sits in the "druxt" cascade layer. So any rule the site writes outside a layer wins, whatever its
+ * specificity or order.
+ *
+ * Field rules mix currentColor, not --druxt-ink, so rules and muted text follow the site's text colour. Links keep
+ * the site's own colours.
  */
 @layer druxt {
   /* A page that marks a dark theme with data-theme, on any ancestor, without declaring color-scheme itself. */
@@ -89,8 +97,8 @@
     margin-top: var(--_1);
   }
 
-  /* --reference-label, --list: several run on one line, separated by a dot. A single value stays a block, so it
-     never runs into the next field. */
+  /* --reference-label, --list: several values run on one line, separated by a dot. A single value stays a block, so
+     it never runs into the next field. */
   .druxt-field__item--multiple:is(.druxt-field__item--reference-label, .druxt-field__item--list) { display: inline; }
   .druxt-field__items:has(> :is(.druxt-field__item--reference-label, .druxt-field__item--list)) { display: inline; }
   .druxt-field__item--multiple:is(.druxt-field__item--reference-label, .druxt-field__item--list) + .druxt-field__item--multiple::before {
@@ -170,12 +178,12 @@
   /* second label in a fieldset, such as the link widget's title */
   fieldset.druxt-form__widget input + label { margin-top: var(--_4); }
 
-  /* Required: the control carries required, and the label shows a mark that
-     screen readers skip, since they announce "required" already. A fieldset's
-     legend shows it for a required field of several values or controls.
-     Deviation from the design: its checkbox selector, [type=checkbox]:required
-     + label, is scoped to the checkbox widget, so a site's own checkbox is
-     never marked */
+  /* Required: the control carries required, and the label shows a mark. Screen readers skip the mark, as they
+     announce "required" already. A fieldset's legend shows the mark for a required field of several values or
+     controls.
+
+     A deviation from the design: its checkbox selector, [type=checkbox]:required + label, is scoped to the checkbox
+     widget, so a site's own checkbox is never marked. */
   :is(.druxt-form__widget label:has(+ :required), .druxt-form__widget--checkbox [type=checkbox]:required + label, fieldset.druxt-form__widget:has(> :required, > div > :required) > legend)::after {
     content: " *" / "";
     color: var(--druxt-danger);
@@ -226,8 +234,8 @@
     font-size: .875rem;
   }
 
-  /* Description, and the field error. The control points at both with
-     aria-describedby, and an invalid control has aria-invalid="true" */
+  /* Description, and the field error. The control points at both with aria-describedby. An invalid control has
+     aria-invalid="true". */
   .druxt-form__description, .druxt-form__error {
     margin-block: var(--_1) 0;
     font-size: .875em;
@@ -268,9 +276,8 @@
   /* Submitting: the form has aria-busy="true", both buttons are disabled */
   .druxt-entity-form > button:disabled { opacity: .6; }
 
-  /* Status: always present beside the buttons, role="status", so saving,
-     saved and reset are announced and never move the layout. While
-     submitting it reads "Saving…", with no spinner, so nothing animates */
+  /* Status: always present beside the buttons, with role="status". So saving, saved and reset are announced, and
+     never move the layout. While submitting it reads "Saving…", with no spinner, so nothing animates. */
   .druxt-form__status { line-height: 2.5rem; }
   .druxt-form__status--saved {
     color: var(--druxt-success);
@@ -278,8 +285,8 @@
   }
 }
 
-/* A hidden label stays for screen readers. Outside the layer, with its class's specificity, so no layered rule, and
-   no site rule that only sets its display, can reveal it. */
+/* A hidden label stays for screen readers. Its rule is outside the layer, with its class's specificity. So no
+   layered rule can reveal it, and no site rule that only sets its display can either. */
 .druxt-field__label--hidden {
   position: absolute;
   width: 1px;
@@ -290,9 +297,10 @@
 }
 
 /*
- * The tools. Every rule is scoped to a tool's own class, and each tool resets
- * what a site commonly sets globally, so neither reaches the other. The
- * derived values are private, and follow the tokens.
+ * The tools.
+ *
+ * Every rule is scoped to a tool's own class. Each tool resets what a site commonly sets globally, so neither
+ * reaches the other. The derived values are private, and follow the tokens.
  */
 .druxt-devel-template, .druxt-debug {
   --_muted: color-mix(in srgb, var(--druxt-ink) 70%, transparent);
@@ -517,7 +525,8 @@
 
 /*
  * The one focus ring: 2px of surface, then 2px of focus, outside the control.
- * Last, so it wins over each tool's own shadow. The outline shows in forced colours.
+ *
+ * It comes last, so it wins over each tool's own shadow. The outline shows in forced colours.
  */
 :is(.druxt-devel-template, .druxt-debug) :focus-visible {
   outline: 2px solid transparent;

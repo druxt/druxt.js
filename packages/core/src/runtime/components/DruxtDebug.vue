@@ -18,20 +18,23 @@ import type { ComponentPublicInstance, PropType } from 'vue'
 import { isTree, size } from '../devel/utils/size'
 import { useDruxtSettings } from '../settings'
 
-// The folding JSON view, in development only: a production build has none of it, and prints plain JSON.
+// The folding JSON view. It is loaded in development only. A production build has none of it, and prints plain JSON.
 const jsonView = import.meta.dev ? defineAsyncComponent(() => import('../devel/utils/json')) : undefined
 
 /**
- * Renders debug details, in development. A production build renders nothing, whatever `visible` says, so no error
- * path shows a visitor a debug panel. Long strings and deep objects in `json` fold to a button that expands them in
- * place.
+ * Renders debug details, in development.
+ *
+ * A production build renders nothing, whatever `visible` says. So no error path shows a visitor a debug panel.
+ *
+ * Long strings and deep objects in `json` fold to a button that expands them in place.
  *
  * @example @lang vue
  * <DruxtDebug :json="entity">Debug information</DruxtDebug>
  */
 export default defineComponent({
   name: 'DruxtDebug',
-  // A `title` names the summary, as `summary` does, rather than reaching the root as a tooltip and accessible name.
+  // A `title` attribute names the summary, as `summary` does. It does not reach the root, where it would be a
+  // tooltip and an accessible name.
   inheritAttrs: false,
 
   props: {
@@ -51,21 +54,25 @@ export default defineComponent({
     summary: { type: String, default: 'Debug' },
     /** Whether to render in development. A production build renders nothing, whatever this says. */
     visible: { type: Boolean, default: import.meta.dev },
-    /** A missing-wrapper message, routed to the development tools unless the site asks for 1.x's inline messages. */
+    /**
+     * Set to `missing` for a missing-wrapper message. Such a message goes to the development tools, unless the site
+     * asks for 1.x's inline messages.
+     */
     kind: { type: String as PropType<'missing' | undefined>, default: undefined },
   },
 
   setup() {
     const settings = useDruxtSettings()
-    // 1.x's inline messages, when the site asks for them. The development tools otherwise.
+    // The site can ask for 1.x's inline messages. Otherwise messages go to the development tools.
     return { inline: computed(() => settings.develMessages === 'inline'), jsonView }
   },
 
   /** The module the message is about, and what to show. */
   computed: {
     /**
-     * The Druxt module that rendered this message: the nearest parent named
-     * Druxt*, past DruxtWrapper and Nuxt's async component wrappers.
+     * The Druxt module that rendered this message.
+     *
+     * It is the nearest parent named `Druxt*`, past DruxtWrapper and Nuxt's async component wrappers.
      */
     module(): ComponentPublicInstance | null {
       let parent = this.$parent
@@ -77,13 +84,13 @@ export default defineComponent({
       return null
     },
 
-    /** The summary, prefixed with the module's name when there is one: `[DruxtEntity] Missing display settings`. */
+    /** The summary, with the module's name before it when there is one: `[DruxtEntity] Missing display settings`. */
     title(): string {
       const name = this.module?.$options.name
       return name ? `[${name}] ${this.summary}` : this.summary
     },
 
-    /** The JSON's JSON:API type, if it has one, and its size, shown beside the summary. */
+    /** The text shown beside the summary. It is the JSON's size, after its JSON:API type when it has one. */
     meta(): string {
       const json = this.json
       if (!isTree(json)) return ''
@@ -91,23 +98,32 @@ export default defineComponent({
       return [typeof type === 'string' ? type : '', size(json)].filter(Boolean).join(' · ')
     },
 
-    /** A missing-wrapper message goes to the development tools, unless the site is configured for 1.x's inline messages. */
+    /**
+     * Whether the message renders.
+     *
+     * A missing-wrapper message goes to the development tools, unless the site is configured for 1.x's inline
+     * messages.
+     */
     shown(): boolean {
-      // Development's alone, so a production build renders no markup for it on any path.
+      // Development only, so a production build renders no markup for it on any path.
       if (!import.meta.dev || !this.visible) return false
       return this.kind !== 'missing' || this.inline
     },
   },
 
   methods: {
-    /** The title, with a `title` attribute as an alias of `summary`. A method, since attributes are not reactive in a computed. */
+    /**
+     * The title, with a `title` attribute as an alias of `summary`.
+     *
+     * It is a method because attributes are not reactive in a computed.
+     */
     label(): string {
       const alias = this.$attrs.title
       if (typeof alias !== 'string') return this.title
       const name = this.module?.$options.name
       return name ? `[${name}] ${alias}` : alias
     },
-    /** The attributes for the root, past `title`. */
+    /** The attributes for the root, without `title`. */
     rootAttrs(): Record<string, unknown> {
       const { title, ...rest } = this.$attrs
       void title

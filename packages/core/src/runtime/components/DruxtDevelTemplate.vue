@@ -58,18 +58,19 @@ import { isTemplateName, renderTemplate, templatePath } from '../utils/template'
 import type { DruxtTemplateRequest } from '../utils/template'
 import type { DruxtTemplateConfig } from '../types'
 
-// Why the dev server refuses a host that is not this machine, in the words a developer acts on.
+// Why the dev server refuses a host other than this machine, in words a developer can act on.
 const REFUSED_HOST = 'Wrapper files are only written when the dev server runs on localhost.'
 
 /**
- * In development, offers to create a wrapper component for the module
- * rendering it. The developer picks one of its candidate names and sees the
- * file's path and starter. The file is then written to `components/druxt/...`
- * and opened in the editor. DruxtDebug shows it inline when no wrapper is found and the site
- * asks for inline messages. The DevTools tab offers the same action. Done is announced as a status, refused as an alert.
+ * In development, offers to create a wrapper component for the module that renders it.
  *
- * Only for this machine: the endpoint refuses any host but localhost, so it
- * does nothing through a tunnel.
+ * The developer picks one of the module's candidate names, and sees the file's path and starter. The file is then
+ * written to `components/druxt/...` and opened in the editor.
+ *
+ * DruxtDebug shows this tool inline when no wrapper is found and the site asks for inline messages. The DevTools tab
+ * offers the same action. A created file is announced as a status, and a refusal as an alert.
+ *
+ * It works on this machine only. The endpoint refuses any host but localhost, so it does nothing through a tunnel.
  *
  * @example @lang vue
  * <DruxtDevelTemplate
@@ -83,7 +84,7 @@ export default defineComponent({
 
   /** The module, its wrapper names, and what a wrapper starts with. */
   props: {
-    /** The module component, such as DruxtEntity. */
+    /** The module component, such as `DruxtEntity`. */
     component: { type: String, required: true },
     /** The module's candidate wrapper names, most specific first. */
     options: { type: Array as PropType<string[]>, default: () => [] },
@@ -103,7 +104,7 @@ export default defineComponent({
    * @property name - The wrapper name to create.
    * @property state - Idle, busy while a request is in flight, then done or refused.
    * @property message - The dev server's reason for refusing the request.
-   * @property byHand - Whether the developer can create the file by hand: not for a name that exists or a bad request.
+   * @property byHand - Whether the developer can create the file by hand. Not for a name that exists, or a bad request.
    * @property copied - Whether the path and starter were copied, or are shown selected for copying by hand.
    */
   data() {
@@ -112,7 +113,7 @@ export default defineComponent({
 
   /** The names that can be created. */
   computed: {
-    /** Development only. */
+    /** Whether this is a development build. */
     dev: () => import.meta.dev,
     /** The candidate names the dev server accepts. */
     names(): string[] {
@@ -122,11 +123,11 @@ export default defineComponent({
     request(): DruxtTemplateRequest {
       return { component: this.component, name: this.name, props: this.props, slots: this.slots, template: this.template }
     },
-    /** The file's path, from the app's root, as the dev server writes it. */
+    /** The file's path from the app's root, as the dev server writes it. */
     path(): string {
       return `components/${templatePath(this.request)}`
     },
-    /** The copy button's words, for each outcome. */
+    /** The copy button's label, for each outcome. */
     copyLabel(): string {
       return { idle: 'Copy path and starter', copied: 'Copied', manual: 'Copy unavailable: select and copy below' }[this.copied]
     },
@@ -137,7 +138,7 @@ export default defineComponent({
   },
 
   watch: {
-    // Another name is another file: back to its preview.
+    // Another name is another file, so the tool goes back to that file's preview.
     name() {
       this.state = 'idle'
       this.copied = 'idle'
@@ -157,20 +158,23 @@ export default defineComponent({
       try {
         const { file } = await $fetch<{ file: string }>(`${DRUXT_API_BASE}/template`, { method: 'POST', body: this.request })
         this.state = 'done'
-        // Vite's open-in-editor endpoint; nothing is lost if there is none.
+        // Vite's open-in-editor endpoint. Nothing is lost if there is none.
         await fetch(`/__open-in-editor?file=${encodeURIComponent(file)}`).catch(() => {})
       } catch (error) {
         const { statusCode, statusMessage, message } = error as { statusCode?: number, statusMessage?: string, message?: string }
         this.message = statusCode === 403 && !/origin/i.test(statusMessage || '') ? REFUSED_HOST : statusMessage || message || ''
-        // Refused for the host, or never answered: the file can still be made by hand. A 409 or 400 cannot help.
+        // The file can still be made by hand when the request was refused for the host, or was never answered. Not
+        // after a 409 or a 400: the name exists, or the request is bad.
         this.byHand = !statusCode || statusCode === 403
         this.copied = 'idle'
         this.state = 'refused'
       }
     },
     /**
-     * Copies the path and the starter, for creating the file by hand. Where the clipboard is missing or refuses, as on
-     * an origin that is not secure, it shows the starter selected instead.
+     * Copies the path and the starter, for creating the file by hand.
+     *
+     * The clipboard may be missing or may refuse, as on an origin that is not secure. The starter is then shown
+     * selected instead.
      */
     async copy(): Promise<void> {
       try {

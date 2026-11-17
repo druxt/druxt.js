@@ -4,10 +4,15 @@ import type { DruxtClient } from '@druxt/client'
 export const DRUXT_E_AUTH_SCOPE = 'DRUXT_E01004'
 
 /**
- * Watches for the sign-in's scope gap: a read Drupal refused the signed-in visitor with a 403 that it gives an
- * anonymous visitor. On Simple OAuth 6 a token holds only the roles its scopes name, so a sign-in with no
- * `druxt.auth.scope` reads less than anonymous. Each refused path is read again once, without credentials, and
- * reported when that read succeeds. Development only: the caller is the development plugin.
+ * Watches for the sign-in's scope gap.
+ *
+ * The gap is a read that Drupal refuses the signed-in visitor with a 403, and gives an anonymous visitor. On Simple
+ * OAuth 6 a token holds only the roles its scopes name. So a sign-in with no `druxt.auth.scope` reads less than an
+ * anonymous visitor.
+ *
+ * Each refused path is read again once, without credentials. It is reported when that read succeeds.
+ *
+ * Development only: the caller is the development plugin.
  *
  * @param client - The browser's client.
  * @param report - Called with the path, without its origin, of each read the scope refused.

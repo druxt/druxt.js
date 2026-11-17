@@ -5,23 +5,28 @@ import type { DruxtTemplateRequest } from '../../utils/template'
 import type { DruxtTemplateConfig } from '../../types'
 import type { DruxtAnchorsState } from '@druxt/core/anchors'
 
-// The module instances on the page, by id, so Vue DevTools can point at the component. Created on first use.
+// The module instances on the page, by id. Vue DevTools uses them to point at the component. Created on first use.
 let instances: Map<string, ComponentInternalInstance> | undefined
 
-/** The module instances the development tools know, by id. Development, in the browser, only. */
+/** The module instances the development tools know, by id. Only in development, in the browser. */
 export const moduleInstances = (): Map<string, ComponentInternalInstance> => (instances ||= new Map())
 
-// Each module context's id, so a note given the context attaches to its module. Created on first use.
+// Each module context's id. A note given the context then attaches to its module. Created on first use.
 let contexts: WeakMap<object, string> | undefined
 
-/** The module contexts the development tools know, with their module's id. Development, in the browser, only. */
+/** The module contexts the development tools know, each with its module's id. Only in development, in the browser. */
 export const moduleContexts = (): WeakMap<object, string> => (contexts ||= new WeakMap())
 
 const isPlain = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value)
 
 /**
- * A value as the tools list it: plain values as they are, a long string cut, and an object or array by its size. A
- * JSON:API resource is named by its type and id.
+ * A value as the tools list it.
+ *
+ * - A plain value is listed as it is.
+ * - A string over 80 characters is cut.
+ * - An object or array is listed by its size.
+ * - A JSON:API resource is named by its type and id.
+ * - A function is listed as `function`.
  *
  * @param value - The value.
  */
@@ -40,7 +45,7 @@ export const summariseValue = (value: unknown): unknown => {
 }
 
 /**
- * An object's keys with each value summarized, for the tools' key and value lists.
+ * An object's keys with each value summarized, for the tools' key and value lists. Undefined values are left out.
  *
  * @param values - The object, such as a module's props.
  */
@@ -57,8 +62,9 @@ export interface ModuleTemplateInput {
 }
 
 /**
- * The files the create action can write for a module: one per candidate the dev server accepts, with its path and
- * starter as the dev server writes them.
+ * The files the create action can write for a module.
+ *
+ * There is one per candidate the dev server accepts. Each has its path and starter, as the dev server writes them.
  *
  * @param input - The module, its candidates and what a wrapper starts with.
  */
@@ -74,12 +80,12 @@ export const moduleTemplates = ({ component, candidates, props, slots, template 
  * @param state - The module's declared state.
  */
 export const schemaId = (state: Record<string, unknown> | undefined): string | undefined => {
-  // A module holding its schema by reference, as DruxtEntity does, names it under `display`.
+  // A module that holds its schema by reference, as DruxtEntity does, names it under `display`.
   const schema = state?.schema ?? state?.display
   return isPlain(schema) && typeof schema.id === 'string' ? schema.id : undefined
 }
 
-/** A settings object's values by dotted key, down to anything that is not a plain object. */
+/** A settings object's values by dotted key. It goes down to anything that is not a plain object. */
 const flatten = (value: unknown, prefix = ''): [string, unknown][] =>
   isPlain(value) && Object.keys(value).length
     ? Object.entries(value).flatMap(([key, child]) => flatten(child, prefix ? `${prefix}.${key}` : key))
@@ -94,8 +100,9 @@ export interface SettingsSources {
 }
 
 /**
- * The resolved settings by dotted key, each with the tier it came from: the site's config wins over Drupal, and Drupal
- * over a module's default.
+ * The resolved settings by dotted key, each with the tier it came from.
+ *
+ * The site's config wins over Drupal, and Drupal wins over a module's default.
  *
  * @param resolved - The resolved settings.
  * @param sources - What they resolved from.
@@ -108,9 +115,10 @@ export const settingsWithTiers = (resolved: unknown, sources: SettingsSources): 
 }
 
 /**
- * The anchors state as settings, for the Settings section: whether the output carries them, the modules that required
- * them, and the site's `false` when it overruled them. The build settles it, so it is listed apart from the settings
- * Drupal could change.
+ * The anchors state as settings, for the Settings section.
+ *
+ * It lists whether the output carries the anchors, the modules that required them, and the site's `false` when it
+ * overruled them. The build settles this state, so it is listed apart from the settings Drupal could change.
  *
  * @param state - The anchors state, as `useDruxtAnchors()` gives it.
  * @param site - Whether the site set `druxt.anchors` itself.

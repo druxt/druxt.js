@@ -1,14 +1,20 @@
-// The Nuxt DevTools tab's page. Development only: the dev server serves it, and no build has it.
+// The Nuxt DevTools tab's page. It is for development only: the dev server serves it, and no build has it.
 
 /** Where the dev server serves the tab's page. */
 export const DRUXT_DEVTOOLS_ROUTE = '/__druxt/devtools'
 
-/** Where the dev server serves the tab's icon: a path, as Nuxt DevTools shows an image only from a path or a URL. */
+/**
+ * Where the dev server serves the tab's icon.
+ *
+ * It is a path, because Nuxt DevTools shows an image only from a path or a URL.
+ */
 export const DRUXT_DEVTOOLS_ICON_ROUTE = `${DRUXT_DEVTOOLS_ROUTE}/icon.svg`
 
 /**
- * The Druxt tab, as core registers it with Nuxt DevTools: the page in a frame, under the icon's route. In the `app`
- * category, Nuxt DevTools' default, where a site with many tabs finds it in the overflow menu until it pins it.
+ * The Druxt tab, as core registers it with Nuxt DevTools.
+ *
+ * The tab shows the page in a frame, and its icon is the icon's route. It is in the `app` category, which is Nuxt
+ * DevTools' default. A site with many tabs finds it in the overflow menu until it pins it.
  */
 export const devtoolsTab = () => ({
   name: 'druxt',
@@ -21,10 +27,13 @@ export const devtoolsTab = () => ({
 /**
  * The script the tab's page runs.
  *
- * Nuxt DevTools gives a custom tab's frame its client as `window.__NUXT_DEVTOOLS__`, the bridge
- * `@nuxt/devtools-kit/iframe-client` reads, whose `host.nuxt` is the app. The app's development plugin provides
- * `$druxtDevtools`: the channel, and the function that defines `<druxt-devtools>` in this frame's window. The section
- * is kept in the frame's URL, so a reload returns to it, and the theme follows DevTools' colour mode.
+ * Nuxt DevTools gives a custom tab's frame its client as `window.__NUXT_DEVTOOLS__`. That is the bridge
+ * `@nuxt/devtools-kit/iframe-client` reads, and its `host.nuxt` is the app.
+ *
+ * The app's development plugin provides `$druxtDevtools`. It has the channel, and the function that defines
+ * `<druxt-devtools>` in this frame's window.
+ *
+ * The section is kept in the frame's URL, so a reload returns to it. The theme follows DevTools' colour mode.
  */
 const script = `
 (() => {
@@ -64,7 +73,7 @@ const script = `
 })()
 `
 
-/** The tab's page: the element, mounted once DevTools connects the frame to the app. */
+/** The tab's page. It mounts the element once DevTools connects the frame to the app. */
 export const devtoolsPage = (): string => `<!doctype html>
 <html lang="en">
 <head>
@@ -90,7 +99,7 @@ interface DevtoolsKitPackage {
   addCustomTab: (tab: ReturnType<typeof devtoolsTab>, nuxt?: never) => void
 }
 
-/** The optional development tools found, each undefined or false when it is not installed. */
+/** The optional development tools that were found. Each is undefined or false when it is not installed. */
 export interface DruxtTools {
   /** `@druxt/devtools`: the model, the element and the console summary. */
   druxt?: DruxtToolsPackage
@@ -100,18 +109,23 @@ export interface DruxtTools {
   vue: boolean
 }
 
-/** Where `loadDruxtTools()` reports: Nuxt's logger. */
+/** Where `loadDruxtTools()` reports. It is Nuxt's logger. */
 interface ToolsLogger {
   error: (...args: unknown[]) => void
 }
 
 /**
- * The specifier a failed import could not find, or `undefined` for any other failure. Node's native loader throws
- * `ERR_MODULE_NOT_FOUND` with "Cannot find package '<name>' imported from <importer>", and jiti, which loads a module
- * in development, throws `MODULE_NOT_FOUND` with "Cannot find module '<name>'". The importer is left out, since it
- * names the package itself when what is missing is one of its own dependencies.
+ * Gets the specifier a failed import could not find, or `undefined` for any other failure.
+ *
+ * Two loaders report a missing package:
+ *
+ * - Node's native loader throws `ERR_MODULE_NOT_FOUND`, with "Cannot find package '<name>' imported from <importer>".
+ * - jiti, which loads a module in development, throws `MODULE_NOT_FOUND`, with "Cannot find module '<name>'".
+ *
+ * The importer is not read. It names the package itself when what is missing is one of the package's own dependencies.
  *
  * @param error - What the import threw.
+ * @returns The specifier, or `undefined`.
  * @internal
  */
 export const missingSpecifier = (error: unknown): string | undefined => {
@@ -121,8 +135,10 @@ export const missingSpecifier = (error: unknown): string | undefined => {
 }
 
 /**
- * Imports the optional development tools. A package that is not installed is skipped. Any other failure to load one is
- * logged as an error, and that package is skipped too.
+ * Imports the optional development tools.
+ *
+ * A package that is not installed is skipped. Any other failure to load a package is logged as an error, and that
+ * package is skipped too.
  *
  * @param importer - Imports a package by name: `(name) => import(name)`, or a stand-in in a test.
  * @param logger - Where a failure is logged.
@@ -133,8 +149,8 @@ export const loadDruxtTools = async (importer: (name: string) => Promise<unknown
     try {
       return await importer(name) as T
     } catch (error) {
-      // Not installed: the one failure that is expected. A package that is installed but fails is worth an error, a
-      // dependency of it that is missing included.
+      // A package that is not installed is the one failure that is expected. A package that is installed but fails to
+      // load is worth an error. That includes one whose own dependency is missing.
       if (missingSpecifier(error) !== name) logger.error(`${name} could not be loaded:`, error)
       return undefined
     }
@@ -144,8 +160,10 @@ export const loadDruxtTools = async (importer: (name: string) => Promise<unknown
 }
 
 /**
- * What development says about the tools that are missing: one line for `@druxt/devtools`, else one each for what
- * Nuxt DevTools in the app would use but cannot.
+ * Writes what development says about the tools that are missing.
+ *
+ * When `@druxt/devtools` is missing, that is one line. Otherwise there is one line for each package that Nuxt DevTools
+ * in the app would use but that is missing.
  *
  * @param tools - The packages found.
  * @param nuxtDevtools - Whether Nuxt DevTools is in the app.

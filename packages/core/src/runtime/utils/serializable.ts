@@ -1,5 +1,7 @@
 /**
- * A copy for the Nuxt payload, without functions, which it cannot serialize.
+ * A copy of a value for the Nuxt payload, without functions, which the payload cannot serialize.
+ *
+ * Functions are removed from arrays and plain objects, at every depth. Any other value is returned as it is.
  *
  * @param value - The value.
  */

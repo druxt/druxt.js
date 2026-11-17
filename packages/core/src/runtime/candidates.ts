@@ -2,7 +2,7 @@ import { pascalCase, splitByCase } from 'scule'
 import type { DruxtComponentOptionSets } from './types'
 
 /**
- * A candidate wrapper component: its name, naming parts, and whether it is registered.
+ * A candidate wrapper component: its name, its naming parts, and whether a component is registered under the name.
  *
  * @example @lang js
  * { global: true, name: 'DruxtRouterEntityFront', parts: ['Entity', 'Front'] }
@@ -14,14 +14,16 @@ export interface ComponentCandidate {
 }
 
 /**
- * A module's wrapper candidates, most specific first. Each option set adds a
- * name per part, built on the parts before it, with a langcode variant of
- * each when a language is set.
+ * Gets a module's wrapper candidates, most specific first.
  *
- * @param moduleName - The module's component name, such as DruxtEntity.
+ * Each option set adds one name per part. Each name is built on the parts before it. When a language is set, each
+ * name also gets a langcode variant.
+ *
+ * @param moduleName - The module's component name, such as `DruxtEntity`.
  * @param sets - The module's `componentOptions`.
  * @param lang - The current language code.
  * @param isRegistered - Whether a component is registered under a name.
+ * @returns The candidates, each name once.
  */
 export const getModuleComponents = (moduleName: string, sets: DruxtComponentOptionSets, lang: string | undefined, isRegistered: (name: string) => boolean): ComponentCandidate[] => {
   const components: ComponentCandidate[] = []

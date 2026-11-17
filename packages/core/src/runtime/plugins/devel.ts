@@ -15,8 +15,8 @@ import type { DruxtDevtoolsAction, DruxtDevtoolsBlock, DruxtDevtoolsNote } from 
 import { settingsOnly } from '../utils/drupal-settings'
 import { useDruxtSettings, useDruxtSettingsTiers } from '../settings'
 
-// Core's own copies of the tools' types, for its public API, match @druxt/devtools' in both directions: a change to one
-// that the other does not make fails the typecheck here.
+// Core has its own copies of the tools' types, for its public API. They must match `@druxt/devtools`' in both
+// directions. A change to one that the other does not make fails the typecheck here.
 type Same<A, B> = [A] extends [B] ? ([B] extends [A] ? true : never) : never
 const typesMatch: [Same<DruxtDevtoolsBlock, ToolsBlock>, Same<DruxtDevtoolsAction, ToolsAction>, Same<DruxtDevtoolsNote, ToolsNote>] = [true, true, true]
 void typesMatch
@@ -34,9 +34,17 @@ export interface DruxtDevtoolsHost {
 }
 
 /**
- * The development tools, in the browser, in development only, and only with `@druxt/devtools` installed: the channel
- * the Nuxt DevTools tab reads, the Vue DevTools inspector and timeline, the requests, the resolved settings, and a
- * console summary. Nothing is added to the page.
+ * The development tools plugin.
+ *
+ * It runs in the browser, in development only, and only with `@druxt/devtools` installed. It sets up:
+ *
+ * - The channel the Nuxt DevTools tab reads.
+ * - The Vue DevTools inspector and timeline.
+ * - The requests.
+ * - The resolved settings.
+ * - A console summary.
+ *
+ * Nothing is added to the page.
  */
 export default defineNuxtPlugin({
   name: 'druxt-devel',
@@ -46,8 +54,9 @@ export default defineNuxtPlugin({
     setDruxtDevtools(channel)
     const client = nuxtApp.$druxt
 
-    // The page, then the server render's requests from the payload, then the browser's as they come. The server rendered
-    // this page, so its requests all show now. Later, they show again only on the page each was made for.
+    // The page is emitted first, then the server render's requests from the payload, then the browser's as they
+    // come. The server rendered this page, so its requests all show now. Later, they show again only on the page
+    // each was made for.
     channel.emit({ type: 'page', path: window.location.pathname + window.location.search })
     const serverRequests = useState<DruxtDevtoolsRequest[]>(DRUXT_DEVTOOLS_REQUESTS_KEY, () => [])
     const replayServerRequests = (page?: string) => {
@@ -56,7 +65,7 @@ export default defineNuxtPlugin({
       }
     }
     replayServerRequests()
-    // The page's start on the browser's clock: the latest navigation's.
+    // The page's start on the browser's clock. It is the start of the latest navigation.
     let origin = performance.now()
     setDevtoolsOrigin(origin)
     let count = 0
@@ -64,7 +73,8 @@ export default defineNuxtPlugin({
       channel.emit({ type: 'request', request: { id: `browser:${++count}`, side: 'browser', start: performance.now() - origin, duration: 0, ...record } })
     })
     captureRequests(client, () => origin)
-    // A read the sign-in's scope refused, which an anonymous visitor may make: named once, with the setting to fix it.
+    // A read that the sign-in's scope refused, and that an anonymous visitor may make. It is named once in the
+    // console, with the setting that fixes it.
     let scopeNoted = false
     watchScopeRefusals(client, (path) => {
       const summary = `${DRUXT_E_AUTH_SCOPE}: Drupal refused ${path} to the signed-in visitor, and gives it to an anonymous one. On Simple OAuth 6 a token holds only the roles its scopes name: set druxt.auth.scope to the scopes of the roles your editors need.`
@@ -72,13 +82,13 @@ export default defineNuxtPlugin({
       if (!scopeNoted) console.warn(`[druxt] ${summary}`)
       scopeNoted = true
     })
-    // From the first navigation after hydration to another page: hydration's own, and a navigation to the page already
-    // shown, such as to a hash in it, keep the server render's requests. The page shown is the router's, read once
-    // mounted, so the app's base URL is not part of it.
+    // The guard reports a new page from the first navigation after hydration that goes to another page. Hydration's
+    // own navigation keeps the server render's requests. So does a navigation to the page already shown, such as
+    // to a hash in it. The page shown is the router's, read once mounted, so the app's base URL is not part of it.
     let isNewPage: ReturnType<typeof createPageGuard> | undefined
     nuxtApp.hook('app:mounted', () => { isNewPage = createPageGuard(nuxtApp.$router.currentRoute.value.fullPath) })
-    // A new page starts its own list. The server render's requests show on the page they were made for, so a
-    // navigation back to it, by the visitor or the app, shows them again, and any other page never does.
+    // A new page starts its own list. The server render's requests show on the page they were made for. A
+    // navigation back to it, by the visitor or the app, shows them again. Any other page never does.
     nuxtApp.$router.beforeEach((to) => {
       const path = isNewPage?.(to.fullPath)
       if (!path) return
@@ -87,15 +97,15 @@ export default defineNuxtPlugin({
       channel.emit({ type: 'page', path })
       replayServerRequests(path)
     })
-    // Module sections read their data again on each page and as modules report.
+    // Module sections read their data again on each page, and as modules report.
     let pending: ReturnType<typeof setTimeout> | undefined
     channel.subscribe((event) => {
       if (event.type !== 'page' && !event.type.startsWith('module:')) return
       clearTimeout(pending)
       pending = setTimeout(() => refreshDevtoolsSections(channel), 100)
     })
-    // The schema and date format routes are the site's own, fetched with $fetch, not the client: read from the
-    // browser's resource timing.
+    // The schema and date format routes are the site's own. They are fetched with `$fetch`, not the client, so they
+    // are read from the browser's resource timing.
     if (typeof PerformanceObserver === 'function') {
       const observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries() as PerformanceResourceTiming[]) {
@@ -111,23 +121,24 @@ export default defineNuxtPlugin({
       }
     }
 
-    // The resolved settings, each with the tier it came from, again whenever Drupal's tier changes, then the anchors
-    // state the build settled and the modules that required it.
+    // The resolved settings, each with the tier it came from. They are emitted again whenever Drupal's tier changes.
+    // After them come the anchors state the build settled, and the modules that required it.
     const settings = useDruxtSettings()
     const { drupal, site } = useDruxtSettingsTiers()
     watch(drupal, () => {
       channel.emit({ type: 'settings', settings: [...settingsWithTiers({ ...settings }, { drupal: settingsOnly(toRaw(drupal.value)), site }), ...anchorsSettings(anchors, siteAnchors)] })
     }, { immediate: true, deep: true })
 
-    // Vue DevTools, when its API is installed: loaded on demand, without holding the app up. It reads what was reported
-    // before it loaded from the snapshot.
+    // Vue DevTools, when its API is installed. It is loaded on demand, without holding the app up. It reads what was
+    // reported before it loaded from the snapshot.
     if (vueDevtools) {
       import('../devel/utils/vue-devtools')
         .then(({ setupDruxtVueDevtools }) => setupDruxtVueDevtools(nuxtApp.vueApp, channel, moduleInstances()))
         .catch((error) => console.warn('[druxt] Vue DevTools could not be set up:', error))
     }
 
-    // Without DevTools, or alongside it, the console says what the tools would. Inline messages say it in the page.
+    // Without DevTools, or alongside it, the console says what the tools would. With inline messages, the page says
+    // it instead.
     if (settings.develMessages !== 'inline') watchDruxtDevtoolsSummary(channel, nuxtDevtools ? { open: 'Nuxt DevTools > Druxt' } : {})
 
     const host: DruxtDevtoolsHost = {

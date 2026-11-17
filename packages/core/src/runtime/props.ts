@@ -8,24 +8,24 @@ export interface WrapperOption {
   propsData?: Record<string, unknown>
 }
 
-/** The props every Druxt module shares, as useDruxtModule() reads them. */
+/** The props every Druxt module shares, as `useDruxtModule()` reads them. */
 export interface DruxtModuleProps {
   langcode?: string
   modelValue?: unknown
   wrapper?: boolean | WrapperOption
 }
 
-/** The props every Druxt module shares; spread them into a module's own. */
+/** The props every Druxt module shares. Spread them into a module's own props. */
 export const druxtModuleProps = {
   /**
-   * The resource langcode; the route's langcode when not set.
+   * The resource langcode. The route's langcode when not set.
    *
    * @example @lang vue
    * <DruxtRouter path="/node/1" langcode="es" />
    */
   langcode: { type: String, default: undefined },
   /**
-   * The module's v-model. A default of `undefined` keeps Vue from casting it to `false`.
+   * The module's `v-model`. The default of `undefined` keeps Vue from casting it to `false`.
    *
    * @example @lang vue
    * <DruxtRouter v-model="route" />

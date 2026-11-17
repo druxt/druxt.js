@@ -1,55 +1,61 @@
-// The development template tool: turns a request from DruxtDevelTemplate into
-// a wrapper component file. The dev server checks each part of the request,
-// which comes from a browser, before it reaches the file. DruxtDevelTemplate
-// renders the same path and source as its preview.
+// The development template tool. It turns a request from DruxtDevelTemplate into a wrapper component file.
+//
+// The request comes from a browser, so the dev server checks each part of it before it reaches the file.
+// DruxtDevelTemplate renders the same path and source as its preview.
 
 import type { DruxtTemplateConfig } from '../types'
 
 /** What DruxtDevelTemplate sends. */
 export interface DruxtTemplateRequest {
-  /** The module component, such as DruxtEntity. */
+  /** The module component, such as `DruxtEntity`. */
   component: string
-  /** The wrapper to create, one of the module's candidate names. */
+  /** The wrapper to create. It is one of the module's candidate names. */
   name: string
   /** The props the module hands its wrapper. */
   props?: string[]
   /** The module's slot names. */
   slots?: string[]
+  /** The module's `template` settings. */
   template?: DruxtTemplateConfig
 }
 
+// What each part of a request must match.
 const IDENTIFIER = /^[a-z_$][\w$]*$/i
 const COMPONENT = /^Druxt[A-Za-z0-9]+$/
 const SLOT = /^[\w-]+$/
 const SPECIFIER = /^(?:@[a-z0-9-]+\/)?[a-z0-9-]+(?:\/[a-z0-9-]+)*$/
 const DEBUG = /^[\w$.,{}[\] ]+$/
-// A settings path: names joined by dots, the last of which may start `//`.
+// A settings path: names joined by dots. The last name may start with `//`.
 const PATH = /^(?:[a-z_$][\w$]*\.)*(?:\/\/)?[a-z_$][\w$]*$/i
-// A name an object inherits, such as `__proto__` or `toString`, or a function's `prototype`.
+// Whether a name is one an object inherits, such as `__proto__` or `toString`, or is a function's `prototype`.
 const inherited = (key: string): boolean => key in Object.prototype || key === 'prototype'
 
 /** A request that fails a check. */
 export class DruxtTemplateError extends Error {}
 
+// Throws a `DruxtTemplateError`.
 const fail = (message: string): never => {
   throw new DruxtTemplateError(message)
 }
 
 /**
- * Whether a candidate name is a wrapper the tool can create for a module: letters and digits only, past the module's
- * own name, which it starts with. DruxtDevelTemplate and the DevTools tab offer these names, and the dev server
- * refuses any other.
+ * Whether a candidate name is a wrapper the tool can create for a module.
  *
- * @param component - The module component, such as DruxtEntity.
+ * The name must hold letters and digits only. It must start with the module's own name, and go past it.
+ * DruxtDevelTemplate and the DevTools tab offer these names, and the dev server refuses any other.
+ *
+ * @param component - The module component, such as `DruxtEntity`.
  * @param name - The candidate name.
  */
 export const isTemplateName = (component: string, name: string): boolean =>
   /^[a-z0-9]+$/i.test(name) && name.startsWith(component) && name !== component
 
 /**
- * Checks a request; throws DruxtTemplateError on the first part that fails.
+ * Checks a request.
  *
  * @param request - The request body, as received.
+ * @returns The checked request.
+ * @throws A `DruxtTemplateError` on the first part that fails.
  */
 export function validateTemplateRequest(request: unknown): DruxtTemplateRequest {
   const body = (request && typeof request === 'object' ? request : {}) as Record<string, unknown>
@@ -74,10 +80,10 @@ export function validateTemplateRequest(request: unknown): DruxtTemplateRequest 
   if (template.druxt !== undefined && (!template.druxt || typeof template.druxt !== 'object' || Array.isArray(template.druxt))) fail('Unsupported druxt settings.')
   const keys = Object.keys(template.druxt || {}).map((path) => path.split('.').map((part) => part.replace(/^\/\//, '')).join('.'))
   for (const [path, value] of Object.entries(template.druxt || {})) {
-    // A value in a .vue file must not close its script block, and a name must not reach an object's prototype.
+    // A value in a `.vue` file must not close its script block. A name must not reach an object's prototype.
     if (!PATH.test(path) || path.split('.').some((part) => inherited(part.replace(/^\/\//, ''))) || JSON.stringify(value)?.includes('<')) fail('Unsupported druxt settings.')
   }
-  // A path is a value or holds others, never both.
+  // A path is a value or the parent of others, never both.
   for (const key of keys) {
     if (keys.some((other) => other.startsWith(`${key}.`))) fail(`Unsupported druxt settings: ${key} is both a value and a parent.`)
   }
@@ -85,9 +91,10 @@ export function validateTemplateRequest(request: unknown): DruxtTemplateRequest 
 }
 
 /**
- * The wrapper's file path, under the components directory: DruxtEntity's
- * `DruxtEntityNodePageDefaultView` is `druxt/entity/NodePageDefaultView.vue`,
- * which Nuxt names DruxtEntityNodePageDefaultView again.
+ * The wrapper's file path, under the components directory.
+ *
+ * DruxtEntity's `DruxtEntityNodePageDefaultView` is `druxt/entity/NodePageDefaultView.vue`. Nuxt names that file
+ * `DruxtEntityNodePageDefaultView` again.
  *
  * @param request - A checked request.
  */
@@ -97,14 +104,17 @@ export function templatePath({ component, name }: DruxtTemplateRequest): string 
 }
 
 /**
- * The wrapper component's source: `<script setup>`, with the module's props
- * object and composable when it has them.
+ * The wrapper component's source.
+ *
+ * It is a `<script setup>` component, with the module's props object and composable when the module has them.
  *
  * @param request - A checked request.
  */
 export function renderTemplate({ props = [], slots = [], template = {} }: DruxtTemplateRequest): string {
-  // The template first: the script declares only the names it uses, so the file lints clean.
-  // Named slots, past the default and the debug ones, unless the module wants none.
+  // The template is built first. The script then declares only the names the template uses, so the file lints clean.
+  //
+  // The named slots are written, without the default slot and the debug slot. None is written when the module wants
+  // none.
   const slotNames = template.slots === false ? [] : (slots.length > 1 ? slots.filter((s) => s !== 'default') : slots).filter((s) => s !== 'debug')
   const debug = template.debug || '$props'
   const repeat = template.repeat
@@ -113,10 +123,11 @@ export function renderTemplate({ props = [], slots = [], template = {} }: DruxtT
   const loop = repeat && template.slots !== false ? `    <slot v-for="i in ${repeat.over}.length" :key="i" :name="\`${repeat.prefix}\${i - 1}\`" />` : undefined
   for (const s of slotNames) {
     if (!repeated(s)) slotLines.push(`    <slot name="${s}" />`)
-    // One for every value, at the first value's place.
+    // The loop is written once, for every value, at the place of the first value's slot.
     else if (s === slotNames.find(repeated)) slotLines.push(loop!)
   }
-  // The loop even when the instance had no value: the wrapper serves every instance, and another may have several.
+  // The loop is written even when this instance had no value. The wrapper serves every instance, and another may have
+  // several values.
   if (loop && !slotLines.includes(loop)) slotLines.push(loop)
   const markup = [`    <DruxtDebug :json="${debug}" />`, ...slotLines].join('\n')
   // What the template's expressions read: the debug expression, and the value the repeated slots loop over. A slot's
@@ -130,10 +141,11 @@ export function renderTemplate({ props = [], slots = [], template = {} }: DruxtT
   const imported = [template.props, use.length ? template.composable!.name : undefined].filter((name): name is string => !!name)
   if (template.from && imported.length) script.push(`import { ${imported.join(', ')} } from '${template.from}'`, '')
 
-  // Settings by dotted path, nested; a part marked `//` is written commented out.
+  // The settings are nested by their dotted paths. A part marked `//` is written commented out.
   const settings = Object.entries(template.druxt || {})
   if (settings.length) {
-    // Without a prototype, and read by own keys only, so no path reaches Object.prototype, whatever it names.
+    // The tree has no prototype and is read by own keys only. So no path reaches `Object.prototype`, whatever it
+    // names.
     const tree: Record<string, unknown> = Object.create(null)
     for (const [path, value] of settings) {
       const parts = path.split('.')
@@ -153,8 +165,9 @@ export function renderTemplate({ props = [], slots = [], template = {} }: DruxtT
     script.push('defineOptions({', '  druxt: {', ...write(tree, 2), '  },', '})', '')
   }
 
-  // defineModel() declares modelValue itself, so it never goes through defineProps.
-  // A name is assigned only when something reads it: the composable reads `props`, the template reads `model`.
+  // `defineModel()` declares `modelValue` itself, so it never goes through `defineProps`.
+  //
+  // A name is assigned only when something reads it. The composable reads `props`, and the template reads `model`.
   const named = props.filter((p) => p !== 'modelValue')
   const composable = use.length && template.from ? template.composable!.name : undefined
   const propsName = composable && template.props ? 'const props = ' : ''

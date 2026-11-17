@@ -21,11 +21,15 @@ export interface MissingWrapperGroup extends Omit<MissingWrapper, 'uid'> {
   count: number
 }
 
-// The instances in each group, by uid. Mutated only by registerMissing()/unregisterMissing() below.
+// The group each instance is in, by uid. Only `registerMissing()` and `unregisterMissing()` below change it.
 const instances = new Map<number, string>()
 const registry = reactive(new Map<string, MissingWrapperGroup>())
 
-/** The modules missing a wrapper, one entry per component and candidate list, with a count. Development, in the browser, only. */
+/**
+ * The modules missing a wrapper. There is one entry per component and candidate list, with a count.
+ *
+ * Only in development, in the browser.
+ */
 export const missingWrappers: ReadonlyMap<string, MissingWrapperGroup> = registry
 
 /**
@@ -60,7 +64,7 @@ export const unregisterMissing = (uid: number): void => {
   else registry.delete(key)
 }
 
-/** A module that failed quietly: it rendered nothing in place of its error, and reports it here. */
+/** A module that failed quietly. It rendered nothing in place of its error, and reports the error here. */
 export interface DevelNote {
   uid: number
   component: string
@@ -69,7 +73,7 @@ export interface DevelNote {
 
 const notes = reactive(new Map<number, DevelNote>())
 
-/** The modules that failed quietly, by instance uid. Development, in the browser, only. */
+/** The modules that failed quietly, by instance uid. Only in development, in the browser. */
 export const develNotes: ReadonlyMap<number, DevelNote> = notes
 
 /**
@@ -98,7 +102,9 @@ export const unregisterNote = (uid: number): void => {
 export type DruxtNoteTarget = DruxtModuleContext | ComponentInternalInstance | number
 
 /**
- * The module a note target belongs to, by id: a context's module, or the nearest module at or above an instance, so a
+ * The id of the module a note target belongs to.
+ *
+ * For a context, it is the context's module. For an instance, it is the nearest module at or above it. So a
  * wrapper's own instance attaches to the module that rendered it.
  *
  * @param target - The note's target.
@@ -113,12 +119,15 @@ const targetId = (target: DruxtNoteTarget): string | undefined => {
 }
 
 /**
- * Adds a note to a module in the development tools, such as a fallback it took. A module keeps one note per key, its
- * kind unless given, so a later note with the same key replaces it, and a refresh of the module keeps it. Safe to call
- * anywhere: outside development in the browser it does nothing.
+ * Adds a note to a module in the development tools, such as a fallback it took.
  *
- * @param target - The module's context from `useDruxtModuleContext()`, a component instance inside the module, such as
- * its wrapper's, or the module instance's uid.
+ * A module keeps one note per key. The key is the note's kind unless one is given. A later note with the same key
+ * replaces the earlier one, and a refresh of the module keeps it.
+ *
+ * It is safe to call anywhere. Outside development in the browser it does nothing.
+ *
+ * @param target - The module's context from `useDruxtModuleContext()`, a component instance inside the module, such
+ * as its wrapper's, or the module instance's uid.
  * @param note - The note: its kind, an optional key, a one-line title and any detail.
  *
  * @example
@@ -132,11 +141,12 @@ export const addModuleNote = (target: DruxtNoteTarget, note: DruxtDevtoolsNote):
 }
 
 /**
- * Clears a module's note in the development tools, once it no longer applies. Safe to call anywhere: outside
- * development in the browser it does nothing.
+ * Clears a module's note in the development tools, once it no longer applies.
+ *
+ * It is safe to call anywhere. Outside development in the browser it does nothing.
  *
  * @param target - As for `addModuleNote()`.
- * @param key - The note's key, its kind unless it was given one.
+ * @param key - The note's key. It is the note's kind unless the note was given a key.
  *
  * @example
  * if (ctx) removeModuleNote(ctx, 'layout-builder-fallback')

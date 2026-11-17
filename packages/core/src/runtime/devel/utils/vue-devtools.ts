@@ -3,9 +3,10 @@ import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import type { DruxtDevtoolsBlock, DruxtDevtoolsChannel, DruxtDevtoolsModule, DruxtDevtoolsRequest, DruxtDevtoolsTimelineEvent } from '@druxt/devtools'
 import { describeCandidate } from '@druxt/devtools'
 
-/** The inspector's and the timeline layer's id. */
+/** The id of the inspector and of the timeline layer. */
 export const DRUXT_VUE_DEVTOOLS_ID = 'druxt'
 
+// The words a request's kind is shown with, and the tag colour of each module status.
 const KINDS = { 'jsonapi': 'JSON:API', 'schema': 'Schema', 'date-formats': 'Date format', 'other': 'Request' } as const
 const TONES = { ready: 0x0C7565, default: 0x1A6CA8, error: 0xB3261E } as const
 
@@ -18,7 +19,9 @@ interface Node {
 }
 
 /**
- * The modules as a tree: each under the nearest module it renders within.
+ * The modules as a tree. Each module sits under the nearest module it renders within.
+ *
+ * With a filter, the tree is flat.
  *
  * @param modules - The page's modules.
  * @param instances - Their component instances, by id.
@@ -40,13 +43,14 @@ const tree = (modules: DruxtDevtoolsModule[], instances: Map<string, ComponentIn
     else roots.push(node)
   }
   if (!query) return roots
-  // Filtered, the tree is flat: every module whose name or wrapper matches.
+  // With a filter, the tree is flat. It lists every module whose name, wrapper or candidate names match.
   return modules.filter((module) => [module.component, module.wrapper || '', ...module.candidates].some((text) => text.toLowerCase().includes(query))).map((module) => ({ ...nodes.get(module.id)!, children: [] }))
 }
 
+// An object as inspector state: a list of keys and values.
 const entries = (values: Record<string, unknown>) => Object.entries(values).map(([key, value]) => ({ key, value }))
 
-// A module section's node in the inspector tree, apart from the modules' by its prefix.
+// The id prefix of a module section's node in the inspector tree. It tells a section's node from a module's.
 const SECTION = 'section:'
 
 /** A module section's blocks as inspector state: a list's keys, a table's rows, or a tree's value. */
@@ -57,9 +61,13 @@ const blockState = (block: DruxtDevtoolsBlock) => {
 }
 
 /**
- * Adds Druxt to Vue DevTools: a "Druxt" inspector, a tree of the page's modules, and a "Druxt requests" timeline layer
- * for fetches and restores. Selecting a module shows its candidates, wrapper, data key, props, state and settings, and
- * highlights its component in the page. Development only.
+ * Adds Druxt to Vue DevTools. Development only.
+ *
+ * It adds a "Druxt" inspector, with a tree of the page's modules, and a "Druxt requests" timeline layer for fetches
+ * and restores.
+ *
+ * Selecting a module shows its candidates, wrapper, data key, props, state and settings. It also highlights the
+ * module's component in the page.
  *
  * @param app - The Vue app.
  * @param channel - The development tools' channel.
@@ -80,7 +88,7 @@ export function setupDruxtVueDevtools(app: App, channel: DruxtDevtoolsChannel, i
     api.on.getInspectorTree((payload) => {
       if (payload.inspectorId !== DRUXT_VUE_DEVTOOLS_ID) return
       const snapshot = channel.snapshot()
-      // The modules, then the sections modules added.
+      // The modules come first, then the sections that modules added.
       payload.rootNodes = [
         ...tree(snapshot.modules, instances, payload.filter),
         ...snapshot.sections.map((section) => ({ id: `${SECTION}${section.id}`, label: section.label, tags: [{ label: 'section', textColor: 0x16212B, backgroundColor: 0xE8EEF3 }], children: [] })),
@@ -104,14 +112,15 @@ export function setupDruxtVueDevtools(app: App, channel: DruxtDevtoolsChannel, i
         'Settings': entries(module.settings),
         ...module.notes.length ? { Notes: module.notes.map((note) => ({ key: note.kind, value: note.detail ? `${note.title} ${note.detail}` : note.title })) } : {},
       }
-      // Vue DevTools' own component inspector holds the rest: point at the component in the page, once per selection,
-      // not on every refresh of the state.
+      // Vue DevTools' own component inspector holds the rest. So the component is pointed at in the page, once per
+      // selection, and not on every refresh of the state.
       if (payload.nodeId === selected) return
       selected = payload.nodeId as string
       const instance = instances.get(module.id)
       if (instance) void api.highlightElement(instance)
     })
 
+    // Sends the tree and the state again, at most once every 100 ms.
     let pending = false
     const refresh = () => {
       if (pending) return
@@ -127,7 +136,8 @@ export function setupDruxtVueDevtools(app: App, channel: DruxtDevtoolsChannel, i
       api.addTimelineEvent({
         layerId: DRUXT_VUE_DEVTOOLS_ID,
         event: {
-          // Placed when the browser heard of it. A server render's request keeps its own clock in its data and title.
+          // The event is placed at the time the browser heard of it. A server render's request keeps its own clock
+          // in its data and title.
           time: api.now(),
           title: `${request.side === 'server' ? `Server render, ${Math.round(request.start)} ms: ` : ''}${KINDS[request.kind]} ${request.path}`,
           subtitle: request.source === 'store' ? 'store' : `${request.status ?? ''} ${Math.round(request.duration)} ms`.trim(),
@@ -141,7 +151,8 @@ export function setupDruxtVueDevtools(app: App, channel: DruxtDevtoolsChannel, i
       api.addTimelineEvent({ layerId: DRUXT_VUE_DEVTOOLS_ID, event: { time: api.now(), title: event.source ? `${event.source}: ${event.label}` : event.label, subtitle: event.detail, data: { ...event } } })
     }
 
-    // The requests and events reported before this ran, such as the server render's from the payload, then each as it comes.
+    // The requests and events reported before this ran are added first, such as the server render's from the
+    // payload. Then each is added as it comes.
     const before = channel.snapshot()
     for (const request of before.requests) addRequest(request)
     for (const event of before.timeline) addEvent(event)

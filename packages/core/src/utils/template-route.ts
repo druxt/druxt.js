@@ -4,7 +4,9 @@ import { dirname, join } from 'node:path'
 import { createError, defineEventHandler, getRequestHeader, readBody } from 'h3'
 import { DruxtTemplateError, renderTemplate, templatePath, validateTemplateRequest } from '../runtime/utils/template'
 
-/** An `Origin` header's host, or undefined for one that doesn't parse, such as a sandboxed frame's `null`. */
+/**
+ * Gets an `Origin` header's host. It is undefined for a header that does not parse, such as a sandboxed frame's `null`.
+ */
 const originHost = (origin: string): string | undefined => {
   try {
     return new URL(origin).host
@@ -14,12 +16,18 @@ const originHost = (origin: string): string | undefined => {
 }
 
 /**
- * The development template tool's route: writes the wrapper component a checked request describes under
- * `componentsDir`, and answers with its path. It answers a `POST` from this machine only: the Host must be loopback,
- * which a tunnel's public host is not, and an `Origin`, when sent, must name the same host:
- * one that doesn't parse, such as `null`, is another origin.
+ * Makes the development template tool's route.
+ *
+ * The route writes the wrapper component a checked request describes, under `componentsDir`, and answers with its path.
+ *
+ * It answers a `POST` from this machine only:
+ *
+ * - The `Host` must be loopback, which a tunnel's public host is not.
+ * - An `Origin`, when sent, must name the same host. One that does not parse, such as `null`, counts as another origin.
  *
  * @param componentsDir - The site's components directory.
+ * @returns The event handler. It answers 405 for another method, 403 for another machine or origin, 400 for a request
+ * that fails the check, and 409 when the file exists already.
  */
 export const templateRoute = (componentsDir: string) => defineEventHandler(async (event) => {
   if (event.method !== 'POST') throw createError({ statusCode: 405 })
