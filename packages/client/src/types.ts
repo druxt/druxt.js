@@ -19,8 +19,10 @@ export interface JsonApiRelationship {
 }
 
 /**
- * A JSON:API resource. Attributes are whatever the entity's fields hold, so
- * they are `any` by design: narrowing them is the site's job, per bundle.
+ * A JSON:API resource.
+ *
+ * Its attributes are whatever the entity's fields hold, so they are typed `any`. Narrowing them is the site's job,
+ * for each bundle.
  */
 export interface JsonApiResource {
   type: string
@@ -86,23 +88,31 @@ export interface QueryStringSource {
 export type DruxtClientQuery = string | QueryStringSource | Record<string, unknown>
 
 export interface ProcessCacheOptions {
-  /** Also keep entities, collections, views and route lookups, every GET through `get()`, not only the index. Off by default. */
+  /**
+   * Also keeps every GET made through `get()`: entities, collections, views and route lookups. Without it, only the
+   * index is kept. Off by default.
+   */
   content?: boolean
   /**
-   * Bytes of stored JSON each cache area keeps across all its sets of client headers, 50 MB by default. An area holds
-   * one kind of answer, such as the content or a module's menus. Past it the area's least recently used entries go,
-   * whichever set holds them, and a response larger than it is not kept.
+   * The bytes of stored JSON each cache area keeps, 50 MB by default.
+   *
+   * An area holds one kind of answer, such as the content or a module's menus, across every set of client headers.
+   * Past the limit, the area's least recently used entries go, whichever set holds them. A response larger than the
+   * limit is not kept.
    */
   maxSize?: number
-  /** Seconds an entry may live at most. It never extends Cache-Control. */
+  /** The most seconds an entry may live. It never extends `Cache-Control`. */
   ttl?: number
-  /** A pattern for the session cookie name, `S?SESS[0-9a-f]+` by default. Druxt's token cookies count as credentials whatever it is. */
+  /**
+   * A pattern for the session cookie's name, `S?SESS[0-9a-f]+` by default. Druxt's token cookies count as credentials
+   * whatever it is.
+   */
   sessionCookie?: string
 }
 
 /** How a resource read goes to Drupal. */
 export interface DruxtReadOptions {
-  /** Fetch from Drupal even when the process cache holds the URL, and store the fresh response. */
+  /** Fetches from Drupal even when the process cache holds the URL, and stores the fresh response. */
   bypassCache?: boolean
 }
 
@@ -120,33 +130,50 @@ export interface DruxtAuthOptions {
   passwordClientId?: string
   /** A confidential Consumer's secret. Never set it in a browser. */
   clientSecret?: string
+  /** The OAuth scope to ask for. */
   scope?: string
+  /** The token endpoint, `/oauth/token` by default. */
   tokenUrl?: string
-  /** The confidential Consumer's token URL, when not `tokenUrl`. */
+  /** The confidential Consumer's token URL, when it is not `tokenUrl`. */
   passwordTokenUrl?: string
+  /** The authorization endpoint, `/oauth/authorize` by default. */
   authorizeUrl?: string
+  /** The OpenID Connect userinfo endpoint, `/oauth/userinfo` by default. */
   userInfoUrl?: string
+  /** Where the tokens are kept. In memory by default. */
   storage?: AuthStorage
   refresh?: {
+    /** The milliseconds a successful refresh is reused for, 5000 by default. */
     grace?: number
+    /** The most refreshes that start in one window, 3 by default. */
     limit?: number
+    /** The window's length in milliseconds, 30000 by default. */
     window?: number
     /**
-     * Shares a refresh between clients holding one session, as a server's renders for one browser do: each render
-     * has a client of its own, and Simple OAuth accepts a refresh token once. Called with a key naming the session,
-     * which holds its tokens, so never log it; the refresh to start; and `grace`. Resolves with the token response of
-     * the refresh it started or joined. Each client stores the answer while it still holds that session.
+     * Shares one refresh between clients that hold one session.
+     *
+     * A server's renders for one browser are such clients. Each render has a client of its own, and Simple OAuth
+     * accepts a refresh token once.
+     *
+     * It is called with a key that names the session, the function that starts the refresh, and `grace`. The key
+     * holds the session's tokens, so never log it. It resolves with the token response of the refresh it started
+     * or joined. Each client stores the answer while it still holds that session.
      */
     share?: <T>(session: string, start: () => Promise<T>, grace: number) => Promise<T>
   }
   /**
-   * Whether the site's server holds the tokens, in httpOnly cookies, and a proxy adds the Authorization header, as
-   * Druxt's does in a browser. The client then holds only the session marker, `druxt.auth.session`, sends no
-   * Authorization header, refreshes through `tokenUrl` with no refresh token of its own, and signs out through
-   * `logoutUrl`.
+   * Turns on session mode. The site's server holds the tokens, in httpOnly cookies, and a proxy adds the
+   * `Authorization` header, as Druxt's proxy does in a browser.
+   *
+   * The client then:
+   *
+   * - Holds only the session marker, `druxt.auth.session`.
+   * - Sends no `Authorization` header.
+   * - Refreshes through `tokenUrl`, with no refresh token of its own.
+   * - Signs out through `logoutUrl`.
    */
   session?: boolean
-  /** With `session` on, the site's route that clears the session's cookies. */
+  /** In session mode, the site's route that clears the session's cookies. */
   logoutUrl?: string
 }
 
@@ -161,22 +188,22 @@ export interface DruxtPublicAuthOptions {
   login: string | false
   callback: string
   /**
-   * Whether the site's server holds the session in httpOnly cookies, so the browser never holds a token: on with the
-   * proxy, unless `exposeToken` is set. Set by Druxt's core module.
+   * Whether the site's server holds the session in httpOnly cookies, so the browser never holds a token. It is on
+   * with the proxy, unless `exposeToken` is set. Druxt's core module sets it.
    */
   session?: boolean
-  /** Keeps the tokens in cookies the browser's scripts can read, for a direct call outside the proxy. Weaker. */
+  /** Keeps the tokens in cookies the browser's scripts can read, for a direct call outside the proxy. It is weaker. */
   exposeToken?: boolean
 }
 
 /**
  * A connection's Consumer: the Simple OAuth client entity the frontend acts as.
  *
- * It signs the server's reads in (the build client, restricted schemas, the
- * server routes) and, unless overridden, identifies the frontend to decoupled
- * settings. It is also the browser's client when browser sign-in is on and
- * names no other client. `secret` is typed here but never belongs in
- * public config or in the browser.
+ * - It signs in the server's reads: the build client, restricted schemas and the server routes.
+ * - It identifies the frontend to decoupled settings, unless that is overridden.
+ * - It is the browser's client too, when browser sign-in is on and names no other client.
+ *
+ * `secret` is typed here, but never belongs in public config or in the browser.
  */
 export interface DruxtConsumer {
   /** The Consumer's client ID. */
@@ -192,22 +219,26 @@ export type DruxtFetch = (input: string, init?: RequestInit) => Promise<Response
 
 /** A request through `DruxtClient.request()`. */
 export interface DruxtRequestOptions {
+  /** The HTTP method, `GET` by default. */
   method?: string
-  /** Headers for this request, over the client's. An `undefined` value removes one. */
+  /** Headers for this request, which win over the client's. An `undefined` value removes a header. */
   headers?: Record<string, string | undefined>
   /**
-   * A plain object or an array is sent as JSON:API JSON. Anything else, such as a string, `URLSearchParams`, a `Blob`,
-   * a buffer, `FormData` or a stream, is sent as it is. A `ReadableStream` or an async iterable goes with
-   * `duplex: 'half'`, which fetch requires for a stream body. A stream is consumed as it is sent, so it is never sent
-   * twice: a 401 to it still refreshes the session, but it is neither sent again nor repeated anonymously. The 401
-   * stands, for the caller to retry with a new stream.
+   * The request body.
+   *
+   * - A plain object or an array is sent as JSON:API JSON.
+   * - Anything else is sent as it is: a string, `URLSearchParams`, a `Blob`, a buffer, `FormData` or a stream.
+   * - A `ReadableStream` or an async iterable is sent with `duplex: 'half'`, which fetch requires for a stream body.
+   *
+   * A stream is consumed as it is sent, so it is never sent twice. A 401 to it still refreshes the session, but the
+   * request is not sent again, and is not repeated anonymously. The caller retries with a new stream.
    */
   body?: unknown
-  /** Which statuses resolve rather than throw: 2xx by default. */
+  /** Decides which statuses resolve and which throw. Only a 2xx resolves by default. */
   validateStatus?: (status: number) => boolean
-  /** False sends the request without the signed-in user's token, refresh or retry. */
+  /** Set to false to send the request without the signed-in user's token, and with no refresh or retry. */
   auth?: false
-  /** Fetch from Drupal even when the process cache holds the URL, and store the fresh response. `get()` only. */
+  /** Fetches from Drupal even when the process cache holds the URL, and stores the fresh response. `get()` only. */
   bypassCache?: boolean
 }
 
@@ -228,10 +259,12 @@ export interface DruxtLogger {
 }
 
 /**
- * A request the client sends, as an `onRequest` listener sees it: its method and URL when it starts, then its status
- * and timing when it ends. It never carries headers or a body. The URL has no user name or password, and the values of
- * the query keys `token`, `access_token`, `code`, `password` and `client_secret` are emptied. Other query values pass as
- * sent.
+ * A request the client sends, as an `onRequest` listener sees it.
+ *
+ * A `start` event has the request's method and URL. An `end` event adds its status and timing.
+ *
+ * An event never carries headers or a body. Its URL has no user name or password. The values of the query keys
+ * `token`, `access_token`, `code`, `password` and `client_secret` are emptied. Other query values pass as sent.
  */
 export type DruxtRequestEvent =
   | { type: 'start', id: number, method: string, url: string }
@@ -267,57 +300,82 @@ export type DruxtRequestListener = (event: DruxtRequestEvent) => void | Promise<
  * }
  */
 export interface DruxtClientOptions {
-  /** Where debug and warning messages go: `console`, tagged, by default. Druxt's Nuxt module passes consola. */
+  /**
+   * Where debug and warning messages go. By default it is `console`, with each message tagged `[DruxtClient]`.
+   * Druxt's Nuxt module passes consola.
+   */
   logger?: DruxtLogger
   /** The fetch to send requests with, `globalThis.fetch` by default. */
   fetch?: DruxtFetch
   /** Headers sent with every request. `Authorization`, `Proxy-Authorization` and `Cookie` go only to Drupal's origin. */
   headers?: Record<string, string>
   /**
-   * Warn, once per resource type for the site until a client of it runs `clearCache()`, when Drupal omits resources
-   * from a response, naming the type and quoting Drupal's reason. Off by default. Druxt's Nuxt module turns it on in
-   * development.
+   * Warns when Drupal omits resources from a response. The warning names the resource type and quotes Drupal's
+   * reason.
+   *
+   * Each type is warned about once for the site, until a client of the site runs `clearCache()`. Off by default.
+   * Druxt's Nuxt module turns it on in development.
    */
   warnOmitted?: boolean
   /** Called as each request starts and ends, for logging and metrics. `client.onRequest()` adds more listeners. */
   onRequest?: DruxtRequestListener
   /**
-   * OAuth. Only a `clientId` turns it on: 1.x code passes other shapes, such
-   * as the schema generator's `{ type: false }`.
+   * The OAuth options. Only a `clientId` turns auth on. 1.x code passes other shapes, such as the schema generator's
+   * `{ type: false }`.
    */
   auth?: DruxtAuthOptions | { type: false }
+  /** The Drupal base URL. It wins over the constructor's argument. */
   baseUrl?: string
-  /** The process cache, off unless set: it keeps the JSON:API index between server requests made without credentials. */
+  /**
+   * The process cache. It is off unless set. When on, it keeps the JSON:API index between server requests made
+   * without credentials.
+   */
   cache?: ProcessCacheOptions | false
+  /** Logs each request's URL. */
   debug?: boolean
+  /** The JSON:API endpoint's path, `/jsonapi` by default. */
   endpoint?: string
+  /**
+   * The resource type of JSON:API Extras' resource config, `jsonapi_resource_config--jsonapi_resource_config` by
+   * default.
+   */
   jsonapiResourceConfig?: string
   /**
-   * The URL prefix each langcode is served under, as Drupal's URL language negotiation configures it: `{ en: '', es:
-   * 'spanish' }`. A method's `prefix` argument then takes a langcode as well as a prefix, and a langcode the map lacks
-   * is used as the prefix itself, as before. Druxt's core module fills it from the build's read of the languages.
+   * The URL prefix each langcode is served under, as Drupal's URL language negotiation configures it:
+   * `{ en: '', es: 'spanish' }`.
+   *
+   * With it, a method's `prefix` argument takes a langcode as well as a prefix. A langcode the map lacks is used as
+   * the prefix itself. Druxt's core module fills it from the build's read of the languages.
    */
   prefixes?: Record<string, string>
+  /** The proxy settings. With `api` on, a path resolves against this page's origin, not the base URL. */
   proxy?: { api?: boolean, files?: boolean | string }
   [key: string]: unknown
 }
 
 /**
- * One Drupal site as one frontend sees it: the client's options and its
- * Consumer. The flat keys of a site's config are the `default` connection.
+ * One Drupal site as one frontend sees it: the client's options and its Consumer.
+ *
+ * The flat keys of a site's config are the `default` connection.
  */
 export interface DruxtConnectionConfig extends DruxtClientOptions {
-  /** The connection's Consumer, used for server reads, and as the browser's client when browser sign-in is on and names no other client. */
+  /**
+   * The connection's Consumer. It is used for server reads. It is the browser's client too, when browser sign-in is
+   * on and names no other client.
+   */
   consumer?: DruxtConsumer
   /**
-   * The browser's sign-in, when it is on. A different client than the Consumer, such as a PKCE client with no secret,
-   * or the Consumer's own client with a `clientId` left out. `secret` is a confidential client's, server side only.
+   * The browser's sign-in, when it is on.
+   *
+   * It can name a different client than the Consumer, such as a PKCE client with no secret. With `clientId` left
+   * out, it is the Consumer's own client. `secret` is a confidential client's, and stays on the server.
    */
   browser?: Omit<DruxtPublicAuthOptions, 'clientId'> & { clientId?: string, secret?: string }
 }
 
 /** What `DruxtClient.error()` throws. */
 export interface DruxtError extends Error {
-  response?: Partial<DruxtResponse<JsonApiDocument | undefined>> | { status?: number, statusText?: string, data?: { errors?: JsonApiError[] } }
+  response?: Partial<DruxtResponse<JsonApiDocument | undefined>>
+    | { status?: number, statusText?: string, data?: { errors?: JsonApiError[] } }
   druxt?: { url?: string }
 }

@@ -1,8 +1,7 @@
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { DruxtClient, resetProcessCache } from '../../packages/client/src'
+import { DruxtClient, normalEndpoint, resetProcessCache, trimEndSlashes, trimStartSlashes } from '../../packages/client/src'
 import type { DruxtFetch } from '../../packages/client/src'
-import { trimEnd, trimStart } from '../../packages/client/src/utils/href'
 import { BASE_URL, drupal, index, json, requested } from './fake-drupal'
 
 const article = { type: 'node--article', id: 'a1', attributes: { title: 'Hello' } }
@@ -54,8 +53,6 @@ describe('URL building', () => {
   it('trims every trailing slash from baseUrl and endpoint, in linear time', () => {
     const client = new DruxtClient(`${BASE_URL}///`, { endpoint: '//jsonapi//' })
     expect([client.options.baseUrl, client.options.endpoint]).toEqual([BASE_URL, '/jsonapi'])
-    expect(new DruxtClient(BASE_URL, { endpoint: '/' }).options.endpoint).toBe('/')
-    expect(new DruxtClient(BASE_URL, { endpoint: '' }).options.endpoint).toBe('/')
     // A run of slashes before another character took seconds to trim with /\/+$/.
     const slashes = '/'.repeat(100_000)
     const started = performance.now()
@@ -64,8 +61,24 @@ describe('URL building', () => {
   })
 
   it('trims a run of slashes from either end of a string, and nothing else', () => {
-    expect(['', '///', 'a', '/a/', '//a//b//'].map((value) => [trimStart(value), trimEnd(value)]))
+    expect(['', '///', 'a', '/a/', '//a//b//'].map((value) => [trimStartSlashes(value), trimEndSlashes(value)]))
       .toEqual([['', ''], ['', ''], ['a', 'a'], ['a/', '/a'], ['a//b//', '//a//b']])
+  })
+
+  it('gives an endpoint one spelling, and /jsonapi for none', () => {
+    expect(['/jsonapi/', 'jsonapi', 'api//', '//a/b//'].map((endpoint) => normalEndpoint(endpoint))).toEqual(['/jsonapi', '/jsonapi', '/api', '/a/b'])
+    expect([undefined, '', '/', '///'].map((endpoint) => normalEndpoint(endpoint))).toEqual(['/jsonapi', '/jsonapi', '/jsonapi', '/jsonapi'])
+  })
+
+  // Drupal refuses a JSON:API base path of `/`, so an endpoint with no path names none: the default stands.
+  it('reads an endpoint that is empty, a slash or undefined as /jsonapi', async () => {
+    for (const endpoint of ['', '/', undefined]) {
+      const { fetch, calls } = drupal({ 'GET /jsonapi': index() })
+      const client = new DruxtClient(BASE_URL, { fetch, endpoint })
+      expect(client.options.endpoint, String(endpoint)).toBe('/jsonapi')
+      await client.getIndex()
+      expect(requested(calls)).toEqual(['GET /jsonapi'])
+    }
   })
 
   it('resolves a path against this origin when the API is proxied', () => {

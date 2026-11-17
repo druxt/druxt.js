@@ -1,92 +1,153 @@
 # @druxt/client
 
-The Druxt JSON:API client for Drupal, with no Vue or Nuxt dependency. It runs
-in Node, a browser or any framework, on the Fetch API.
+The Druxt JSON:API client for Drupal. It reads, creates and updates resources, and signs in through Drupal's Simple OAuth module. It has no Vue or Nuxt dependency, so it runs in Node, a browser or any framework that has the Fetch API.
 
-```ts
+## Install
+
+```sh
+npm i @druxt/client
+```
+
+It needs Node `^22.19.0`, `^24.11.0` or `>=26.0.0`.
+
+## Quick start
+
+```js
 import { DruxtClient } from '@druxt/client';
 
 const druxt = new DruxtClient('https://demo-api.druxtjs.org');
 const recipes = await druxt.getCollection('node--recipe', { 'page[limit]': 3 });
+
+for (const recipe of recipes.data) {
+  console.log(recipe.attributes.title);
+}
 ```
 
-**`get()`, `request()`, `createResource()` and `updateResource()` return the HTTP response, whose `data` is the JSON:API document. The read methods return the document itself, and `getCollectionAll()` an array of them, one per page.**
+`getCollection()` returns the JSON:API document, so the resources are in `recipes.data`.
 
-- **Resources:** `getResource`, `getCollection`, `getCollectionAll`,
-  `getRelated`, `createResource` and `updateResource`. A method given an empty
-  required argument throws a `TypeError`. A method that can find nothing answers
-  `undefined`.
-- **Index:** the JSON:API index is fetched once, decorated with JSON:API
-  Extras' resource config when it is readable.
-- **Process cache:** off unless the `cache` option is set. On a server it then
-  keeps the JSON:API index, fetched without credentials, between requests for
-  as long as its `Cache-Control` allows. With `cache: { content: true }` it also
-  keeps each `get()` answered with a 200 whose body is a JSON object or array and
-  that `Cache-Control` lets a shared cache store, for a request without credentials or options that could change
-  the response, such as headers or a body. A `bypassCache` request goes to
-  Drupal, and its answer replaces the entry when it may be stored and removes
-  it otherwise, as a 404 does. A request that never reaches Drupal leaves the
-  entry. An answer to a read that started before the one whose answer was
-  stored, or removed the entry, isn't kept. `cache: { ttl }` caps the
-  lifetime, and
-  `clearCache()` empties it. Each set of client headers keeps its own entries,
-  and an answer to a request in flight when the client's headers changed is
-  stored under neither set. `cache.maxSize` bounds each cache area across all
-  its sets: an area holds one kind of answer, such as the content or a
-  module's menus. Past it the area's least recently used entries go,
-  whichever set holds them. An area also keeps a fixed number of sets, the
-  least recently used going first.
-- **Auth:** with `auth: { clientId }`, Simple OAuth's authorization code
-  (PKCE), password and client credentials grants, with refresh. An expired
-  token is refreshed before the request is sent, and a 401 from Drupal's
-  origin is refreshed and the request sent again once, as the same session.
-  When Drupal refuses the refresh token, the session ends, and a read is
-  repeated anonymously while a write is not. A write refused that way before
-  it is sent isn't sent at all, and rejects with the refusal. With no refresh
-  token to try, a 401 to a read ends the session and the read is repeated
-  anonymously, while a write's 401 does neither. A refresh that fails
-  otherwise, such as a timeout, keeps the session, and the 401 stands. A
-  stream body is never sent twice: a 401 to it still refreshes, and stands for
-  the caller to retry with a new stream. Another host's 401 is returned as it
-  is, as is one answered after another session signed in. A sign-in or
-  refresh that a later sign-in or a sign-out replaced while it ran stores
-  nothing. It rejects with an error `isSuperseded(error)` tells from a failure
-  when it succeeded, and with its own error when it failed. A request not
-  yet sent, waiting on a refresh when another session signs in, rejects with
-  that superseded error, whether the refresh succeeded or failed, and is not
-  sent.
-  A sign-in ends the session held as it starts, so one that fails leaves
-  none, as druxt-auth 0.x did. A client that stores its own tokens sends
-  nothing as the user before while a sign-in runs. Under `auth.session` that
-  session is in the site's cookies, which the site's proxy adds until the
-  sign-in at `tokenUrl` answers. Druxt's Nuxt module doesn't start a sign-in
-  while a session is held.
-  A session signed in since the last refresh refreshes on its own, within
-  the grace too. A `logout()`
-  that succeeds ends the session, even one a sign-in stored while the site's
-  logout route ran, so the next sign-in starts afresh. When that route fails,
-  it rejects and the session is kept.
-- **Transport:** `fetch` and `headers` options, with `globalThis.fetch` by
-  default. 1.x's Axios instance and its `axios` options are gone, and an
-  `axios` option is ignored: set headers in `headers`. Client headers set there
-  or with `addHeaders()` go with every request, except `Authorization`,
-  `Proxy-Authorization` and `Cookie`, which go only to Drupal's origin, as the
-  access token does. A header passed to the request itself is sent as given.
-- **Request hook:** the `onRequest` option, or `client.onRequest(listener)`,
-  is told each request's method and URL as it starts, then its status and
-  duration as it ends. It never sees headers or bodies, the URL has no user name
-  or password, and the values of `token`, `access_token`, `code`, `password` and
-  `client_secret` query keys are emptied. Other query values pass as sent. It
-  suits logging and metrics.
-- **Omitted resources:** when Drupal omits resources from a response, as for
-  lack of permission, the listener's `end` event carries `omitted`, Drupal's
-  reason. With `warnOmitted`, the client warns once per resource type for
-  each site until `clearCache()`, with `DRUXT_E01001`, naming each omitted
-  type and quoting the reason. Druxt's Nuxt module turns it on in
-  development, for the page's client and the server's. `omittedResources(document)` reads what a document omitted: the
-  reason and each omitted type and id, without the links.
-- **Logging:** a `logger` option takes consola, or anything with `info` and
-  `warn`. Without one, the client logs to `console`. Druxt's Nuxt module
-  passes consola.
+## Methods
 
-Public modules, the ones `src/index.ts` re-exports, live in `src/`, and internal helpers in `src/utils/`.
+Create a client with `new DruxtClient(baseUrl, options)`. The base URL is required.
+
+| Method                                                     | What it does                                                    | Returns                                  |
+| ---------------------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------- |
+| `getResource(type, id, query?, prefix?, options?)`         | Reads one resource.                                             | The JSON:API document                    |
+| `getCollection(type, query?, prefix?, options?)`           | Reads one page of a collection.                                 | The JSON:API document                    |
+| `getCollectionAll(type, query?, prefix?, options?)`        | Reads every page of a collection.                               | An array of documents, one for each page |
+| `getRelated(type, id, related, query?, prefix?, options?)` | Reads the resources of one relationship.                        | The JSON:API document                    |
+| `getIndex(type?, prefix?)`                                 | Reads the JSON:API index, or one resource type's entry.         | The index, the entry, or `undefined`     |
+| `createResource(resource, prefix?)`                        | Creates a resource. A resource with an `id` is updated.         | The HTTP response                        |
+| `updateResource(resource, prefix?)`                        | Updates a resource.                                             | The HTTP response                        |
+| `get(url, options?)`                                       | Sends a GET request. It uses the process cache when that is on. | The HTTP response                        |
+| `request(url, options?)`                                   | Sends any request, as the signed-in user when there is one.     | The HTTP response                        |
+| `buildQueryUrl(url, query?)`                               | Adds a query to a URL.                                          | The URL                                  |
+| `url(path)`                                                | Joins a path to the Drupal base URL.                            | The absolute URL                         |
+| `urlPrefix(prefix?)`                                       | Gets the URL prefix for a langcode, from the `prefixes` option. | The prefix                               |
+| `addHeaders(headers)`                                      | Adds headers to every request.                                  | Nothing                                  |
+| `onRequest(listener)`                                      | Listens to the start and end of each request.                   | A function that stops listening          |
+| `clearCache()`                                             | Empties the index and the process cache.                        | Nothing                                  |
+| `cacheLifetime(document)`                                  | Tells how long a fetched document may still be cached.          | Seconds, or `0`                          |
+| `checkPermissions(response)`                               | Throws when Drupal omitted resources for lack of permissions.   | Nothing                                  |
+| `error(error, context?)`                                   | Throws a formatted error for a failed request.                  | Never returns                            |
+
+The arguments mean the same in every method:
+
+- `type` is a JSON:API resource type, such as `node--recipe`.
+- `query` is a query string, a plain object, or an object with `getQueryString()`, such as [drupal-jsonapi-params](https://www.npmjs.com/package/drupal-jsonapi-params).
+- `prefix` is the URL prefix of a language, such as `es`. With the `prefixes` option, it can be a langcode.
+- `options` on a read method is `{ bypassCache: true }`. The read then goes to Drupal even when the process cache holds the answer.
+
+The HTTP response is `{ data, status, statusText, headers, url }`. Its `data` is the JSON:API document, or the body's text when the body is not JSON.
+
+A method throws a `TypeError` when a required argument, such as `type` or `id`, is empty.
+
+## Options
+
+| Option                  | Type                                           | Default                                            | Description                                                           |
+| ----------------------- | ---------------------------------------------- | -------------------------------------------------- | --------------------------------------------------------------------- |
+| `baseUrl`               | `string`                                       | The constructor's argument                         | The Drupal base URL. It wins over the argument.                       |
+| `endpoint`              | `string`                                       | `/jsonapi`                                         | The JSON:API endpoint's path. `api`, `/api` and `/api/` are the same. |
+| `headers`               | `Record<string, string>`                       | None                                               | Headers sent with every request.                                      |
+| `fetch`                 | `(input, init?) => Promise<Response>`          | `globalThis.fetch`                                 | The fetch function requests are sent with.                            |
+| `auth`                  | `DruxtAuthOptions`                             | Off                                                | Simple OAuth sign-in. A `clientId` turns it on. See [Auth](#auth).    |
+| `cache`                 | `ProcessCacheOptions \| false`                 | Off                                                | The server-side cache. See [Process cache](#process-cache).           |
+| `prefixes`              | `Record<string, string>`                       | None                                               | The URL prefix of each langcode, such as `{ en: '', es: 'spanish' }`. |
+| `proxy`                 | `{ api?: boolean, files?: boolean \| string }` | None                                               | With `api`, a path is joined to the page's origin, not to `baseUrl`.  |
+| `onRequest`             | `(event) => void`                              | None                                               | Called as each request starts and ends.                               |
+| `warnOmitted`           | `boolean`                                      | `false`                                            | Warns when Drupal omits resources. See [Errors](#errors).             |
+| `logger`                | `{ info, warn }`                               | `console`                                          | Where debug and warning messages go. It takes consola.                |
+| `debug`                 | `boolean`                                      | `false`                                            | Logs each request's URL.                                              |
+| `jsonapiResourceConfig` | `string`                                       | `jsonapi_resource_config--jsonapi_resource_config` | The resource type of JSON:API Extras' resource config.                |
+
+Notes on the options:
+
+- The client's `Authorization`, `Proxy-Authorization` and `Cookie` headers are sent only to Drupal's origin, as the access token is. A header passed to one request, in its own options, is sent as given.
+- An `onRequest` listener gets each request's method and URL when it starts, and its status and duration when it ends. It never gets headers or a body. The URL has no user name or password, and the values of the `token`, `access_token`, `code`, `password` and `client_secret` query keys are emptied.
+- The Axios instance of 1.x is gone. An `axios` option is ignored, so set headers in `headers`.
+
+## JSON:API index
+
+The client reads Drupal's JSON:API index to find the URL of each resource type.
+
+- The index is fetched once for each prefix. Concurrent calls share one fetch.
+- Each link is used as a path under `baseUrl`, whatever host Drupal reports. No request goes to an internal host that Drupal reports from behind a proxy.
+- A type the index does not list is read from its conventional URL, such as `/jsonapi/node/recipe`.
+- When JSON:API Extras' resource config can be read, each entry also has its `resourceType`, `entityType`, `bundle` and `resourceFields`. When it cannot be read, the client logs a warning and uses the index as it is.
+
+`getIndex()` returns the whole index. `getIndex('node--recipe')` returns that type's entry, or `undefined` when the index has none.
+
+## Process cache
+
+The process cache keeps responses on a server between requests. It is off unless the `cache` option is set, and it is never used in a browser. `clearCache()` empties it.
+
+| Option                | Type      | Default           | Description                                                              |
+| --------------------- | --------- | ----------------- | ------------------------------------------------------------------------ |
+| `cache.content`       | `boolean` | `false`           | Also keeps the responses to `get()`. Without it, only the index is kept. |
+| `cache.ttl`           | `number`  | None              | The most seconds an entry may live. It never extends `Cache-Control`.    |
+| `cache.maxSize`       | `number`  | 50 MB             | The bytes of stored JSON each cache area keeps.                          |
+| `cache.sessionCookie` | `string`  | `S?SESS[0-9a-f]+` | A pattern for the name of the session cookie.                            |
+
+- Only a response to a request without credentials is kept. A client that sends an `Authorization` header, a session cookie or an `Origin` header, or that is signed in, does not use the cache.
+- A response is kept for as long as its `Cache-Control` lets a shared cache keep it.
+- With `cache.content`, a `get()` is kept when Drupal answers with a 200 whose body is a JSON object or array. A request with its own headers or body is not kept, because they could change the response.
+- A read with `bypassCache` goes to Drupal. Its answer replaces the entry when it may be kept. Any other answer removes the entry, as a 404 does. A request that never reaches Drupal leaves the entry.
+- A cache area holds one kind of answer, such as the content or a module's menus. Each set of client headers keeps its own entries in it, for up to 32 sets. Past `cache.maxSize`, the area's least recently used entries go first.
+
+## Auth
+
+With `auth: { clientId }`, the client signs in through Drupal's [Simple OAuth](https://www.drupal.org/project/simple_oauth) module. The auth methods are on `druxt.auth`.
+
+| Method                                                                             | Grant                              |
+| ---------------------------------------------------------------------------------- | ---------------------------------- |
+| `authorize({ redirectUri })`, then `exchangeCode({ code, verifier, redirectUri })` | Authorization code, with PKCE      |
+| `loginWithPassword({ username, password })`                                        | Password                           |
+| `loginWithClientCredentials({ scope })`                                            | Client credentials                 |
+| `refresh()`                                                                        | Refresh token                      |
+| `getUser()`                                                                        | None. It reads the signed-in user. |
+| `logout()`                                                                         | None. It ends the session.         |
+
+`request()` sends each request as the signed-in user, and keeps the session alive:
+
+- An expired token is refreshed before the request is sent.
+- A 401 from Drupal's origin is refreshed, and the request is sent again once. A 401 from another host is returned as it is.
+- When Drupal refuses the refresh token, the session ends and a read is repeated as the anonymous visitor. A write is never repeated, and one that was waiting on the refresh is not sent.
+- With no refresh token, a 401 to a read ends the session and the read is repeated as the anonymous visitor. A 401 to a write does neither.
+- A refresh that fails any other way, such as a timeout, keeps the session, and the 401 is returned.
+- A stream body is never sent twice. A 401 to it still refreshes the session, and the caller sends a new stream.
+
+A sign-in ends the session held as it starts, so the client is signed out after a sign-in that fails. A later sign-in, or a sign-out, replaces a sign-in or a refresh that is still running. The replaced one stores nothing, and rejects with an error that `isSuperseded(error)` tells from a failure. A request that waits on a refresh while another session signs in rejects the same way, and is not sent.
+
+With `auth.session`, the site's server holds the tokens in httpOnly cookies and the client holds none. `logout()` then calls the site's `auth.logoutUrl` route first, when one is set. When that route fails, `logout()` rejects and the session is kept.
+
+## Errors
+
+- `get()` and the resource methods throw a formatted error when a request fails. Its message has the status, the URL and the detail of Drupal's first JSON:API error. The response is on `error.response`.
+- `request()` throws for any status but a 2xx. Pass `validateStatus` in its options to choose which statuses throw.
+- `checkPermissions(response)` throws a `DruxtPermissionsError` when Drupal omitted resources for lack of permissions. Its `permissions` lists the permissions Drupal named.
+- `isSuperseded(error)` tells an error for a replaced session from a failure. See [Auth](#auth).
+
+Drupal can omit resources from a response without an error, as it does for lack of permission:
+
+- `omittedResources(document)` returns Drupal's reason, and the type and id of each omitted resource.
+- An `onRequest` listener's `end` event has Drupal's reason as `omitted`.
+- With the `warnOmitted` option, the client logs a warning with the code `DRUXT_E01001`. The warning names each omitted type and quotes the reason. Each type is warned about once for each site, until `clearCache()`. Druxt's Nuxt module turns it on in development.

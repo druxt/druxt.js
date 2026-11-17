@@ -1,11 +1,22 @@
 import { DruxtAuth, refreshRefused } from './auth'
 import { JsonApiIndexCache } from './jsonApiIndex'
 import type { FetchedIndex } from './jsonApiIndex'
-import { byteSize, headersHaveCredentials, lifetimeLeft, nextRequest, parseCacheLifetime, processCache, rememberLifetime, rememberLifetimeFrom, resetProcessCache } from './processCache'
+import {
+  byteSize,
+  headersHaveCredentials,
+  lifetimeLeft,
+  nextRequest,
+  parseCacheLifetime,
+  processCache,
+  rememberLifetime,
+  rememberLifetimeFrom,
+  resetProcessCache,
+} from './processCache'
 import type { ProcessCacheHandle } from './processCache'
 import { DruxtPermissionsError, isSuperseded } from './errors'
 import type { ErrorLike, RequestError } from './errors'
-import { indexPath, resourceTypeOf, setHeader, trimEnd, trimStart } from './utils/href'
+import { indexPath, resourceTypeOf, setHeader } from './utils/href'
+import { normalEndpoint, trimEndSlashes } from './paths'
 import { listenerUrl, prefixed } from './utils/listener'
 import { omittedResources, warnedOmitted } from './omitted'
 import type { DruxtOmitted } from './omitted'
@@ -33,10 +44,14 @@ import type {
   DruxtReadOptions,
 } from './types'
 
-/** The methods safe to repeat as the anonymous visitor once the session has ended: reads. */
+/** The read methods. Only a read is repeated as the anonymous visitor after the session ends. */
 const READS = new Set(['GET', 'HEAD'])
 
-/** Whether two URLs share an origin, a relative URL resolving against the same one. */
+/**
+ * Whether two URLs share an origin.
+ *
+ * A relative URL is resolved against a placeholder origin, so two relative URLs match.
+ */
 const sameOrigin = (a: string, b: string): boolean => {
   try {
     return new URL(a, 'http://localhost').origin === new URL(b, 'http://localhost').origin
@@ -45,13 +60,16 @@ const sameOrigin = (a: string, b: string): boolean => {
   }
 }
 
-/** The client headers that carry credentials, sent only to the origin the client sends Drupal's requests to. */
+/** The client headers that carry credentials. They are sent only to the origin Drupal's requests go to. */
 const CREDENTIAL_HEADERS = new Set(['authorization', 'proxy-authorization', 'cookie'])
 
 /**
- * Whether a body is sent as it streams: a `ReadableStream`, told by its shape so one from another realm counts, or an
- * async iterable, a plain object among them. Its shape is methods, which no JSON document has. Fetch sends it with
- * `duplex`, and it is consumed as it is sent, so it cannot be sent again, and it is never sent as JSON.
+ * Whether a request body is a stream: a `ReadableStream` or an async iterable.
+ *
+ * A `ReadableStream` is identified by its methods, not by `instanceof`, so a stream from another realm counts. No
+ * JSON document has those methods.
+ *
+ * Fetch sends a stream with `duplex` and consumes it as it sends it. So a stream is sent once only, and never as JSON.
  */
 const streamed = (body: unknown): boolean => !!body && typeof body === 'object' && (
   (typeof (body as ReadableStream).getReader === 'function' && typeof (body as ReadableStream).locked === 'boolean')
@@ -60,9 +78,9 @@ const streamed = (body: unknown): boolean => !!body && typeof body === 'object' 
 /**
  * The Druxt JSON:API client.
  *
- * Communicates with the Drupal JSON:API to fetch, create and update resources.
+ * It reads, creates and updates resources through Drupal's JSON:API.
  *
- * @see {@link https://druxtjs.org/modules/druxt|Druxt module guide}
+ * @see {@link https://druxtjs.org/api/packages/druxt/client|DruxtClient API reference}
  *
  * @example @lang js
  * import { DruxtClient } from '@druxt/client'
@@ -73,33 +91,45 @@ const streamed = (body: unknown): boolean => !!body && typeof body === 'object' 
 export class DruxtClient {
   /** Where debug and warning messages go, `console` by default. */
   log: DruxtLogger
-  /** The fetch requests are sent with. */
+
+  /** The fetch function requests are sent with. */
   fetch: DruxtFetch
-  /** Headers sent with every request, its credential headers only to Drupal's origin. */
+
+  /** Headers sent with every request. Its credential headers go only to Drupal's origin. */
   headers: Record<string, string>
+
   /** The request listeners, from the `onRequest` option and `onRequest()`. */
   private requestListeners: Set<DruxtRequestListener>
-  /** The last request's id. */
+
+  /** The id of the last request sent. */
   private requestCount: number
-  /** Set once a request has gone out with credentials, so the process cache is withheld. */
+
+  /** True once a request has gone out with credentials. The process cache is then withheld from this client. */
   credentialed: boolean
+
+  /** The options, with the defaults applied. `baseUrl` has no trailing slash, and `endpoint` has one spelling. */
   options: DruxtClientOptions & { baseUrl: string, endpoint: string, jsonapiResourceConfig: string }
-  /** OAuth against Drupal's Simple OAuth, when the `auth` option has a clientId. */
+
+  /** OAuth against Drupal's Simple OAuth. Set when the `auth` option has a `clientId`. */
   auth: DruxtAuth | undefined
-  /** What this site's index is keyed by in the process cache. */
+
+  /** The key of this site's index in the process cache. */
   indexKey: string
-  /** The JSON:API index per prefix, fetched once and shared between callers. */
+
+  /** The JSON:API index for each prefix. Each is fetched once and shared between callers. */
   indexCache: JsonApiIndexCache
-  /** Moves on each time `clearCache()` runs, so caches keyed by this client know to empty. */
+
+  /** A counter that `clearCache()` moves on. A cache keyed by this client compares it to know when to empty. */
   cacheGeneration: number
+
   /**
    * Creates a client for one Drupal site's JSON:API.
    *
-   * Requires the base URL, sets up the options, and turns on auth when the
-   * `auth` option has a clientId.
+   * Auth is turned on when the `auth` option has a `clientId`.
    *
    * @param baseUrl - The Drupal base URL.
    * @param options - The DruxtClient options.
+   * @throws When `baseUrl` is empty.
    *
    * @example @lang js
    * import { DruxtClient } from '@druxt/client'
@@ -112,7 +142,7 @@ export class DruxtClient {
       throw new Error('The \'baseUrl\' parameter is required.')
     }
 
-    // Bound, as a browser's fetch throws when called on another object.
+    // Called through a wrapper: a browser's fetch throws when it is called as a method of another object.
     this.fetch = options.fetch || ((input, init) => globalThis.fetch(input, init))
     this.headers = {}
     this.requestListeners = new Set(options.onRequest ? [options.onRequest] : [])
@@ -124,45 +154,50 @@ export class DruxtClient {
       endpoint: '/jsonapi',
       jsonapiResourceConfig: 'jsonapi_resource_config--jsonapi_resource_config',
       ...options,
-      // As in 1.x, a baseUrl in the options wins over the argument. Without a trailing slash, so it strips cleanly
-      // from the index's links.
-      baseUrl: trimEnd(options.baseUrl || baseUrl),
+      // A `baseUrl` option wins over the argument, as in 1.x. Its trailing slashes are removed, so the base URL strips
+      // cleanly from the index's links.
+      baseUrl: trimEndSlashes(options.baseUrl || baseUrl),
     }
-    // A leading slash and no trailing one, so a prefix joins the endpoint as `/es/api` however it was given.
-    this.options.endpoint = `/${trimEnd(trimStart(String(this.options.endpoint)))}`
 
-    // Keyed on a clientId: 1.x code passes other `auth` shapes, such as the schema generator's `{ type: false }`.
+    // One spelling, so a prefix joins the endpoint as `/es/api` however it was given.
+    this.options.endpoint = normalEndpoint(this.options.endpoint)
+
+    // Only a `clientId` turns auth on. 1.x code passes other `auth` shapes, such as the schema generator's
+    // `{ type: false }`.
     const auth = this.options.auth as Partial<DruxtAuthOptions> | undefined
     this.auth = auth && auth.clientId ? new DruxtAuth(this, auth as DruxtAuthOptions) : undefined
 
-    // The process cache keys the index by base URL, endpoint and resource config.
+    // The process cache keys this site's index by base URL, endpoint and resource config.
     this.indexKey = JSON.stringify([this.options.baseUrl, this.options.endpoint, this.options.jsonapiResourceConfig])
     this.indexCache = new JsonApiIndexCache({
       key: this.indexKey,
       fetchIndex: (prefix) => this.fetchIndex(prefix),
-      // Asked for afresh each time: a request may have shown the client to be credentialed since.
+      // Asked for on each use. A request sent since the last one may have shown that the client sends credentials.
       shared: () => this.processCache('index'),
     })
 
     this.cacheGeneration = 0
   }
 
-  /** JSON:API index per prefix, as fetched so far. */
+  /** The JSON:API index for each prefix, as fetched so far. */
   get index(): Record<string, JsonApiIndex> {
     return this.indexCache.indexes
   }
 
-  /** Index fetches in flight, shared between concurrent callers. */
+  /** The index fetches in flight. Concurrent callers share them. */
   get indexRequests(): Record<string, Promise<FetchedIndex> | undefined> {
     return this.indexCache.requests
   }
 
   /**
-   * Clear the caches this client holds, and the server's process cache.
+   * Clears the caches this client holds, and the server's process cache.
    *
-   * Empties the JSON:API index and the process cache, moves `cacheGeneration`
-   * on so results cached per client, such as menus, are fetched again, and lets
-   * `warnOmitted` warn again about each resource type on this client's site.
+   * It does four things:
+   *
+   * - Empties the JSON:API index.
+   * - Empties the process cache.
+   * - Moves `cacheGeneration` on, so results cached per client, such as menus, are fetched again.
+   * - Lets `warnOmitted` warn again about each resource type on this client's site.
    *
    * @example @lang js
    * this.$druxt.clearCache()
@@ -175,52 +210,68 @@ export class DruxtClient {
   }
 
   /**
-   * Get the process cache for a scope.
+   * Gets the process cache for a scope.
    *
-   * The cache holds server-side responses between requests, each for as long
-   * as its Cache-Control header allows. It is off unless the `cache` option is
-   * set, and it is skipped for any request that sends an Authorization header,
-   * basic auth, a session cookie or an Origin, and for a session-mode client
-   * while it is signed in. Clients whose headers differ keep their entries
-   * apart. A handle is for one request: ask for a new one after
-   * `clearCache()` or `resetProcessCache()`, as one kept across a clear still
-   * reads what it held, and its writes are dropped.
+   * The process cache keeps server-side responses between requests. Each response is kept for as long as its
+   * `Cache-Control` header allows.
    *
-   * @param scope - The cache scope, e.g. 'index' or 'menu'.
+   * The cache must not be used, and this returns undefined, when:
+   *
+   * - The `cache` option is not set.
+   * - The code runs in a browser.
+   * - The client sends credentials: an `Authorization` header, a session cookie, an `Origin` header, a signed-in
+   *   user's token, or a session the site's server holds.
+   *
+   * Clients whose headers differ keep separate entries.
+   *
+   * A handle is for one request. Ask for a new one after `clearCache()` or `resetProcessCache()`. A handle kept
+   * across a clear still reads what it held, and its writes are dropped.
+   *
+   * @param scope - The cache scope, such as `index` or `menu`.
    * @returns The cache, or undefined when it must not be used.
    */
   processCache(scope: string): ProcessCacheHandle | undefined {
     if (!this.options.cache) return undefined
     const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE } = this.options.cache as ProcessCacheOptions
-    // A signed-in session-mode client holds no token, but its requests carry the session the site's proxy adds,
-    // wherever it runs.
+
+    // A signed-in client in session mode holds no token. Its requests still carry credentials, because the site's
+    // proxy adds the session to them.
     const session = !!this.auth?.session && this.auth.loggedIn
-    const credentialed = this.credentialed || session || !!this.auth?.accessToken || headersHaveCredentials(this.headers, sessionCookie)
-    // Each set of client headers keeps its own entries, X-Consumer-ID among them: a header may pick a variant Drupal
-    // names in no Vary, such as an Accept-Language. Names are compared in any case.
-    const headers = Object.entries(this.headers).map(([name, value]): [string, string] => [name.toLowerCase(), value]).sort(([a], [b]) => (a < b ? -1 : 1))
+    const credentialed = this.credentialed
+      || session
+      || !!this.auth?.accessToken
+      || headersHaveCredentials(this.headers, sessionCookie)
+
+    // Each set of client headers keeps its own entries, `X-Consumer-ID` included. A header may pick a variant that
+    // Drupal names in no `Vary`, such as `Accept-Language`. Header names are compared in lower case.
+    const headers = Object.entries(this.headers)
+      .map(([name, value]): [string, string] => [name.toLowerCase(), value])
+      .sort(([a], [b]) => (a < b ? -1 : 1))
     const consumer = headers.length ? JSON.stringify(headers) : ''
-    // A stored response counts as the bytes of its body.
+
+    // The content scope stores each response's body as text, so an entry's size is the bytes of that text.
     const sizeOf = scope === 'content' ? (value: unknown) => byteSize((value as StoredResponse).body) : undefined
+
     return processCache(scope, { credentialed, consumer, ttl, maxSize, sizeOf })
   }
 
   /**
-   * How long a document this client fetched may be cached.
+   * Gets how long a document this client fetched may still be cached.
    *
    * @param document - A JSON:API document returned by this client.
-   * @returns Seconds, from the response's Cache-Control. 0 when it may not be cached or is unknown.
+   * @returns The seconds left, from the response's `Cache-Control`. 0 when it may not be cached, or is unknown.
    */
   cacheLifetime(document: unknown): number {
     return lifetimeLeft(document)
   }
 
   /**
-   * Add headers to every request. `Authorization`, `Proxy-Authorization` and
-   * `Cookie` go only to the origin the client sends Drupal's requests to, as
-   * the access token does; a request to another host is sent without them.
+   * Adds headers to every request.
    *
-   * @param headers - HTTP headers.
+   * `Authorization`, `Proxy-Authorization` and `Cookie` are sent only to the origin Drupal's requests go to, as the
+   * access token is. A request to another host goes without them.
+   *
+   * @param headers - The HTTP headers.
    *
    * @example @lang js
    * this.$druxt.addHeaders({ Authorization: `Basic ${token}` })
@@ -231,9 +282,13 @@ export class DruxtClient {
   }
 
   /**
-   * The absolute URL for a path: against Drupal, or this origin when the API is proxied.
+   * Gets the absolute URL for a path.
    *
-   * @param url - A path, with or without its leading slash, or an absolute URL.
+   * The path is joined to the Drupal base URL. When the API is proxied, with the `proxy.api` option, it is joined to
+   * this page's origin instead. On a server there is no page origin, so a proxied path stays a path.
+   *
+   * @param url - A path, with or without its leading slash, or an absolute URL, which is returned as it is.
+   * @returns The URL.
    *
    * @example @lang js
    * // 'https://api.umami.demo.druxtjs.org/en/jsonapi/node/article'
@@ -246,34 +301,46 @@ export class DruxtClient {
   }
 
   /**
-   * Send a request, as the signed-in user when there is one.
+   * Sends a request, as the signed-in user when there is one.
    *
-   * An expired token is refreshed first. A 401 is refreshed and retried once,
-   * for a token Drupal revoked that still looks unexpired here. When Drupal
-   * refuses the refresh token, the session ends and a read is repeated as the
-   * anonymous visitor it now is; a write is not, as it was meant to be made as
-   * the user. Refused before a write is sent, the write is not sent at all,
-   * and rejects with the refusal: the token request's error, its status a 400
-   * or a 401. A refresh that fails otherwise, such as a timeout, keeps the
-   * session: the request is sent as it, and a 401 stands. A read Drupal
-   * refuses for a token with no refresh token to try ends the session the
-   * same way, and is repeated as the anonymous visitor; a write's 401 stands,
-   * and the session is kept. A stream body is sent once: a 401 to it still
-   * refreshes, and stands. The token goes only to Drupal's origin, or this
-   * one when the API is proxied: a request to another host is sent without
-   * it, and its 401 is returned as it is.
+   * Without a signed-in user, or with `auth: false` in the options, the request is sent once.
    *
-   * A request is sent, refreshed and retried only as the session it was made
-   * for. One not yet sent, waiting on a refresh when another session signs in,
-   * rejects with an error `isSuperseded()` tells, and is not sent; one whose session a
-   * sign-out ended, or a sign-in that has not stored its tokens yet, is sent
-   * without a token, as a signed-out client's are. A 401 answered after
-   * another session signed in is returned as it is, whether the request was
-   * sent as the session before or while the sign-in ran.
+   * With a signed-in user:
+   *
+   * - An expired token is refreshed before the request is sent.
+   * - A 401 is answered with one refresh and one retry. This recovers from a token that Drupal revoked before it
+   *   expired.
+   * - The token goes only to Drupal's origin, or to this origin when the API is proxied. A request to another host is
+   *   sent without it, and its 401 is returned as it is.
+   *
+   * When Drupal refuses the refresh token, with a 400 or a 401, the session ends:
+   *
+   * - A read, a `GET` or a `HEAD`, is repeated as the anonymous visitor.
+   * - A write is not repeated, because it was meant to be made as the user.
+   * - A write whose refresh was refused before it was sent is not sent at all. It rejects with the token request's
+   *   error.
+   *
+   * A refresh that fails any other way, such as a timeout, keeps the session. The request is sent with the token it
+   * has, and its 401 is not retried.
+   *
+   * A session with no refresh token cannot refresh. A 401 to its read ends the session, and the read is repeated as
+   * the anonymous visitor. A 401 to its write is not retried, and the session is kept.
+   *
+   * A stream body is sent once. A 401 to it still refreshes the session, but the request is not sent again.
+   *
+   * A request belongs to the session it was made for:
+   *
+   * - When another session signs in while the request waits on a refresh, the request is not sent. It rejects with an
+   *   error that `isSuperseded()` identifies.
+   * - When the session ended while the request waited, the request is sent without a token. A sign-out ends it, and
+   *   so does a sign-in that has not stored its tokens yet.
+   * - A 401 that arrives after another session signed in is not refreshed or retried.
    *
    * @param url - A path or an absolute URL.
    * @param options - The request options.
-   * @returns The response, its body parsed.
+   * @returns The response, with its body parsed.
+   * @throws When the status fails `validateStatus`, which accepts only a 2xx by default. The error's `response` is
+   * the response.
    *
    * @example @lang js
    * const { data, status } = await this.$druxt.request('/jsonapi/node/page', {
@@ -283,40 +350,60 @@ export class DruxtClient {
    */
   async request<T = unknown>(url: string, options: DruxtRequestOptions = {}): Promise<DruxtResponse<T>> {
     const auth = options.auth === false ? undefined : this.auth
-    // The site's proxy adds the session's credentials unless asked not to, as a request without auth must be anonymous.
-    const anonymous = (given: DruxtRequestOptions): DruxtRequestOptions => (this.auth?.session ? { ...given, headers: { ...given.headers, 'X-Druxt-Auth': 'none' } } : given)
+
+    // In session mode the site's proxy adds the session's credentials to every request. This header tells it not to,
+    // so a request without auth is anonymous.
+    const anonymous = (given: DruxtRequestOptions): DruxtRequestOptions => (
+      this.auth?.session ? { ...given, headers: { ...given.headers, 'X-Druxt-Auth': 'none' } } : given
+    )
     if (options.auth === false) options = anonymous(options)
-    // The token goes only to the origin the client sends Drupal's requests to, as druxt-auth's `targetsBackend` keeps
-    // it. Another host gets no token, and its 401 says nothing about Drupal's: no refresh, retry or anonymous repeat.
+
+    // The token goes only to the origin Drupal's requests go to. Another host gets no token. Its 401 says nothing
+    // about Drupal's session, so it causes no refresh, retry or anonymous repeat.
     const own = sameOrigin(this.url(url), this.url('/'))
     const token = () => (own ? auth?.accessToken : undefined)
-    // The session the request is made for: a sign-in or a sign-out moves it on, a refresh does not.
+
+    // The session this request is made for. A sign-in or a sign-out changes the epoch. A refresh does not.
     const epoch = auth?.epoch
-    // A refusal ends the session; any other failure keeps it, and the request is sent as it, for its 401 to decide.
+
+    // An expired token is refreshed first. Only a refusal is kept, as it ends the session. Any other failure keeps
+    // the session, and the request is sent with the token it has, so its 401 decides.
     let refused: unknown
-    if (own && auth?.expired && auth.canRefresh) await auth.refresh().catch((error: unknown) => { if (refreshRefused(error)) refused = error })
-    // Another session signed in while the request waited: it is not sent as that one. A session that only ended, by a
-    // sign-out, a refused refresh or a sign-in still running, leaves a signed-out client, whose requests go without a
-    // token.
+    if (own && auth?.expired && auth.canRefresh) {
+      await auth.refresh().catch((error: unknown) => {
+        if (refreshRefused(error)) refused = error
+      })
+    }
+
+    // Another session signed in while the request waited, so it is not sent as that session. A session that only
+    // ended leaves a signed-out client, and its requests go without a token. A sign-out, a refused refresh and a
+    // sign-in still running all end a session that way.
     if (auth && auth.epoch !== epoch && auth.loggedIn) throw supersededError()
 
     const read = READS.has((options.method || 'GET').toUpperCase())
-    // As on a 401: a read goes on as the anonymous visitor, and a write, meant for the user, is not sent.
+
+    // The refresh token was refused. A read goes on as the anonymous visitor. A write is not sent.
     if (refused) {
       if (!read) throw refused
       return this.checked(await this.send<T>(url, anonymous(options)), options)
     }
-    // The session the request is sent for, and whether it carries one: a token, or with `session` on, the proxy's.
+
+    // What the storage holds as the request is sent, and whether the request carries a session. A session is a
+    // token, or in session mode, the credentials the proxy adds.
     const sent = auth?.held()
     const carried = own && !!auth && (auth.session ? auth.loggedIn : !!auth.accessToken)
-    // A stream the first send consumed cannot be sent again: its 401 stands, for the caller to retry with a new one.
+
+    // The first send consumes a stream, so a stream is never sent again. The caller retries with a new one.
     const once = streamed(options.body)
+
     let response = await this.send<T>(url, options, token())
+
     if (response.status === 401 && own && auth?.canRefresh) {
-      // Unless another session signed in after it was sent: its 401 then stands, with no refresh or retry as that one.
+      // When another session signed in after the request was sent, the 401 is returned with no refresh or retry.
       if (auth.epoch === epoch) {
         try {
-          // Refreshed even for a stream, so the caller's retry goes as the refreshed session.
+          // The refresh runs for a stream too. The stream is not sent again, but the caller's own retry then goes out
+          // as the refreshed session.
           await auth.refresh()
           if (!once) response = await this.send<T>(url, options, token())
         } catch (error) {
@@ -324,19 +411,25 @@ export class DruxtClient {
         }
       }
     } else if (response.status === 401 && auth && carried && sent !== undefined && read) {
-      // Nothing to refresh with, or another read's refused refresh ended the session first: what the read was sent
-      // with decides. Only a client signed out by then repeats it anonymously: another session's 401 stands.
+      // A read got a 401, and there is nothing to refresh with. Either the session has no refresh token, or another
+      // read's refused refresh ended it first. The session the read was sent with ends, unless another was stored
+      // since. The read is repeated as the anonymous visitor only when the client is signed out by then.
       auth.drop(sent)
       if (!auth.loggedIn && !once) response = await this.send<T>(url, anonymous(options))
     }
+
     return this.checked(response, options)
   }
 
   /**
-   * The response, or the error for a status the request's `validateStatus` refuses: any but a 2xx by default.
+   * Returns the response, or throws for a status that `validateStatus` refuses.
+   *
+   * Without a `validateStatus` option, any status but a 2xx is refused.
    *
    * @param response - The response.
    * @param options - The request options.
+   * @returns The response.
+   * @throws An error whose `response` is the response.
    */
   private checked<T>(response: DruxtResponse<T>, options: DruxtRequestOptions): DruxtResponse<T> {
     if (!(options.validateStatus || ((status: number) => status >= 200 && status < 300))(response.status)) {
@@ -348,8 +441,10 @@ export class DruxtClient {
   }
 
   /**
-   * Listens to the requests this client sends: each one's method and URL as it starts, then its status and timing as it
-   * ends. No headers, body or credentials are passed. Useful for logging and metrics.
+   * Listens to the requests this client sends.
+   *
+   * The listener is called when a request starts, with its method and URL. It is called again when the request ends,
+   * with its status and duration. It never receives headers, a body or credentials. It suits logging and metrics.
    *
    * @param listener - Called with each start and end.
    * @returns The function that stops listening.
@@ -364,14 +459,22 @@ export class DruxtClient {
     return () => { this.requestListeners.delete(listener) }
   }
 
-  /** Tells the request listeners, and keeps a listener's failure from failing the request. */
+  /**
+   * Calls each request listener.
+   *
+   * A listener that throws or rejects is logged as a warning. It never fails the request.
+   *
+   * @param event - The request's start or end.
+   */
   private notify(event: DruxtRequestEvent): void {
     const failed = (error: unknown) => this.log.warn('A request listener failed:', error)
     for (const listener of [...this.requestListeners]) {
       try {
-        // A listener may be async: its rejection is caught too.
+        // A listener may be async, so its rejection is caught too.
         const result: unknown = listener(event)
-        if (result && typeof (result as Promise<unknown>).then === 'function') (result as Promise<unknown>).then(undefined, failed)
+        if (result && typeof (result as Promise<unknown>).then === 'function') {
+          (result as Promise<unknown>).then(undefined, failed)
+        }
       } catch (error) {
         failed(error)
       }
@@ -379,25 +482,33 @@ export class DruxtClient {
   }
 
   /**
-   * Send one request.
+   * Sends one request, with no refresh and no retry.
+   *
+   * `request()` calls it. It builds the headers, sends a plain object or an array as JSON:API JSON, tells the request
+   * listeners, and parses the response.
    *
    * @param url - A path or an absolute URL.
    * @param options - The request options.
-   * @param token - An access token to send.
+   * @param token - An access token to send as a Bearer token.
+   * @returns The response. Its `data` is the parsed JSON body, or the text when the body is not JSON.
    */
   async send<T>(url: string, options: DruxtRequestOptions, token?: string): Promise<DruxtResponse<T>> {
     const headers: Record<string, string> = { Accept: 'application/vnd.api+json, application/json;q=0.9, */*;q=0.8' }
-    // The client's credentials go only to Drupal's origin, as its token does, and as fetch drops an Authorization on a
-    // redirect to another one. A request's own headers are sent as given.
+
+    // The client's credential headers go only to Drupal's origin, as its token does. Fetch follows the same rule
+    // when it drops an `Authorization` header on a redirect to another origin. Headers given for this one request
+    // are sent as given.
     const own = sameOrigin(this.url(url), this.url('/'))
     for (const [name, value] of Object.entries(this.headers)) {
       if (own || !CREDENTIAL_HEADERS.has(name.toLowerCase())) setHeader(headers, name, value)
     }
     if (token) setHeader(headers, 'Authorization', `Bearer ${token}`)
+
     let body = options.body as BodyInit | undefined
     const proto: unknown = body !== null && typeof body === 'object' ? Object.getPrototypeOf(body) : undefined
+
     // Only a plain object or an array is a JSON:API document. A Blob, a buffer, FormData, URLSearchParams or a
-    // stream goes to fetch as given, as does a plain object that is an async iterable.
+    // stream goes to fetch as given. So does a plain object that is an async iterable.
     const stream = streamed(body)
     if (!stream && (Array.isArray(body) || proto === Object.prototype || proto === null)) {
       setHeader(headers, 'Content-Type', 'application/vnd.api+json')
@@ -410,32 +521,47 @@ export class DruxtClient {
 
     const href = this.url(url)
     if (this.options.debug) this.log.info(href)
+
     const method = options.method || 'GET'
     const event = { id: ++this.requestCount, method, url: listenerUrl(href) }
     const now = () => globalThis.performance?.now() ?? Date.now()
     const started = now()
     if (this.requestListeners.size) this.notify({ type: 'start', ...event })
+
     let res: Response
     try {
       const init: RequestInit & { duplex?: 'half' } = { method, headers, body }
-      // Fetch refuses a stream body, or an async iterable one, without it.
+      // Fetch refuses a stream body, or an async iterable one, without `duplex`.
       if (stream) init.duplex = 'half'
       res = await this.fetch(href, init)
     } catch (error) {
       if (this.requestListeners.size) this.notify({ type: 'end', ...event, duration: now() - started, failed: true })
       throw error
     }
+
     const duration = now() - started
     const data = parse(await res.text()) as T
+
     const omitted = omittedResources(data, this.options.endpoint)
     if (omitted && this.options.warnOmitted) this.warnOmitted(href, omitted)
-    if (this.requestListeners.size) this.notify({ type: 'end', ...event, status: res.status, duration, ...(omitted ? { omitted: omitted.detail } : {}) })
+    if (this.requestListeners.size) {
+      this.notify({
+        type: 'end',
+        ...event,
+        status: res.status,
+        duration,
+        ...(omitted ? { omitted: omitted.detail } : {}),
+      })
+    }
+
     return { data, status: res.status, statusText: res.statusText, headers: res.headers, url: href }
   }
 
   /**
-   * Warns, once per omitted resource type for the site until a client of it runs `clearCache()`, that Drupal omitted
-   * resources from a response: each type its omitted items' links name, else the type the request read.
+   * Warns that Drupal omitted resources from a response.
+   *
+   * Each resource type is warned about once per site, until a client of that site runs `clearCache()`. The types come
+   * from the links of the omitted items. When the links name no type, the type is the one the request read.
    *
    * @param href - The request's URL.
    * @param omitted - What Drupal omitted.
@@ -443,8 +569,10 @@ export class DruxtClient {
   private warnOmitted(href: string, { detail, resources }: DruxtOmitted): void {
     const asked = resourceTypeOf(href, this.options.endpoint)
     const types = resources.length ? [...new Set(resources.map((resource) => resource.type))] : [asked]
+
     let warned = warnedOmitted.get(this.options.baseUrl)
     if (!warned) warnedOmitted.set(this.options.baseUrl, (warned = new Set()))
+
     for (const type of types) {
       if (warned.has(type)) continue
       warned.add(type)
@@ -454,11 +582,12 @@ export class DruxtClient {
   }
 
   /**
-   * Build a query URL.
+   * Adds a query to a URL.
    *
-   * @param url - The base query URL.
-   * @param query - A JSON:API query string or object.
-   * @returns The URL with its query string.
+   * @param url - The URL to add the query to.
+   * @param query - A JSON:API query: a string, an object with `getQueryString()` such as drupal-jsonapi-params, or a
+   * plain object.
+   * @returns The URL with its query string, or the URL alone when there is no query.
    *
    * @example @lang js
    * const query = new DrupalJsonApiParams()
@@ -474,7 +603,6 @@ export class DruxtClient {
       return withQuery(url, query.replace(/^\?/, ''))
     }
 
-    // An object with `getQueryString`, such as drupal-jsonapi-params.
     if (typeof query.getQueryString === 'function') {
       return withQuery(url, (query.getQueryString as () => string)())
     }
@@ -485,10 +613,11 @@ export class DruxtClient {
   /**
    * Throws when Drupal omitted resources for lack of permissions.
    *
-   * The error names each permission Drupal reported, and links Drupal's help
-   * on omitted resources when the response carries it.
+   * The error lists each permission Drupal named. It links Drupal's help on omitted resources when the response has
+   * the link. Nothing is thrown when no resource was omitted, or when Drupal named no permission.
    *
    * @param res - The response to check.
+   * @throws A `DruxtPermissionsError`.
    */
   checkPermissions(res: { data: JsonApiDocument<unknown> }): void {
     const omitted = res.data.meta?.omitted
@@ -506,11 +635,14 @@ export class DruxtClient {
   }
 
   /**
-   * Create a JSON:API resource, or update it when it has an id.
+   * Creates a JSON:API resource.
+   *
+   * A resource that has an `id` is updated instead, through `updateResource()`.
    *
    * @param resource - The JSON:API resource.
    * @param prefix - The JSON:API endpoint prefix or langcode.
    * @returns The response.
+   * @throws A `TypeError` when the resource has no type, and a formatted error when the request fails.
    *
    * @example @lang js
    * await this.$druxt.createResource(
@@ -522,7 +654,10 @@ export class DruxtClient {
    *   'en',
    * )
    */
-  async createResource(resource: Partial<JsonApiResource> & { type: string }, prefix = ''): Promise<DruxtResponse<JsonApiDocument<JsonApiResource>>> {
+  async createResource(
+    resource: Partial<JsonApiResource> & { type: string },
+    prefix = '',
+  ): Promise<DruxtResponse<JsonApiDocument<JsonApiResource>>> {
     if (resource.id) {
       return this.updateResource(resource as JsonApiResource, prefix)
     }
@@ -538,10 +673,14 @@ export class DruxtClient {
   }
 
   /**
-   * Throw a formatted error.
+   * Throws a formatted error for a failed request.
+   *
+   * The message holds the status and its text, the URL, and the detail of Drupal's first JSON:API error when there
+   * is one. The error carries the response as `response` and the context as `druxt`.
    *
    * @param err - The error.
-   * @param context - The error context; the requested URL.
+   * @param context - The error context: the requested URL.
+   * @throws The formatted error, always. A superseded error is thrown as it is.
    *
    * @example @lang js
    * try {
@@ -551,8 +690,10 @@ export class DruxtClient {
    * }
    */
   error(err: ErrorLike, context: { url?: string } = {}): never {
-    // A request a newer session replaced was never sent: there is nothing to format, and `isSuperseded()` must tell it.
+    // A request that a newer session replaced was never sent, so there is nothing to format. It is thrown unchanged,
+    // so `isSuperseded()` still identifies it.
     if (isSuperseded(err)) throw err
+
     let { url } = context
     if (!url && err.response && 'url' in err.response && err.response.url) {
       url = err.response.url
@@ -567,7 +708,9 @@ export class DruxtClient {
     const message = [title]
 
     if (Object.values(meta).filter((o) => o).length) {
-      message.push(Object.entries(meta).filter(([, v]) => v).map(([key, value]) => `${key.toUpperCase()}: ${value}`).join('\n'))
+      message.push(
+        Object.entries(meta).filter(([, v]) => v).map(([key, value]) => `${key.toUpperCase()}: ${value}`).join('\n'),
+      )
     }
 
     const data = err.response?.data as { errors?: { detail?: string }[] } | undefined
@@ -583,15 +726,18 @@ export class DruxtClient {
   }
 
   /**
-   * A GET request, recording the response's cache lifetime, with error handling.
+   * Sends a GET request and returns the HTTP response.
    *
-   * It returns the HTTP response, not the document: the JSON:API document is
-   * its `data`. The resource methods, such as `getCollection()`, return the
+   * The JSON:API document is the response's `data`. The resource methods, such as `getCollection()`, return the
    * document itself.
    *
+   * It records the response's cache lifetime, which `cacheLifetime()` reads. With the `cache.content` option, it also
+   * reads from the process cache and writes to it.
+   *
    * @param url - The URL to GET.
-   * @param options - Request options.
+   * @param options - The request options.
    * @returns The response, whose `data` is the JSON:API document.
+   * @throws A formatted error, from `error()`, when the request fails.
    *
    * @example @lang js
    * // get() is the raw request: it returns the HTTP response.
@@ -605,43 +751,62 @@ export class DruxtClient {
    */
   async get<T = JsonApiDocument>(url: string, options?: DruxtRequestOptions): Promise<DruxtResponse<T>> {
     const { bypassCache, ...request } = options || {}
-    // With `cache.content`, a response to a request without credentials is kept in the process cache for as long as
-    // its Cache-Control allows, and the next server request for the same URL is answered from it. The key is the
-    // backend and the URL alone, so a request whose own options could change the response, such as headers or a
-    // body, is never read from or stored. Only a 200 whose body is a JSON object or array is stored, so a caller
-    // whose validateStatus refuses one goes to Drupal. Any other answer from Drupal removes what an earlier one stored,
-    // so the cache follows its latest answer.
+
+    // The content cache, on with `cache.content`. It keeps a response to a request without credentials for as long
+    // as its `Cache-Control` allows. The next server request for the same URL is answered from it.
+    //
+    // - The key is the backend and the URL alone. So a request whose own options could change the response, such as
+    //   headers or a body, is never read from the cache and never stored.
+    // - Only a 200 whose body is a JSON object or array is stored. So a caller whose `validateStatus` refuses a 200
+    //   always goes to Drupal.
+    // - Any other answer from Drupal removes what an earlier answer stored. The cache follows Drupal's latest answer.
     const cacheable = !!(this.options.cache || undefined)?.content
       && Object.keys(options || {}).every((option) => CACHE_SAFE_OPTIONS.has(option))
       && (typeof request.validateStatus !== 'function' || request.validateStatus(200))
     const before = cacheable ? this.processCache('content') : undefined
     const key = JSON.stringify([this.indexKey, url])
+
     if (before && !bypassCache) {
       const stored = before.get<StoredResponse>(key)
       if (stored) return this.storedResponse<T>(stored, url)
     }
-    // Its place in the order requests started in, which a timestamp cannot give two requests in one millisecond.
+
+    // The request's place in the order requests started in. A timestamp cannot order two requests that start in the
+    // same millisecond.
     const started = nextRequest()
-    // Drupal's answer: kept when it may be, and otherwise removing what an earlier answer stored under the key.
+
+    // Records Drupal's answer. An answer that may be kept is stored. Any other removes what an earlier answer stored
+    // under the key.
     const settle = (res: DruxtResponse<T>) => {
-      // Asked again once resolved, as the request may have shown the client to be credentialed. Headers changed while
-      // it was in flight may pick another variant, and it may have been sent with either set: it is stored under
-      // neither, and removes nothing.
+      // The cache is asked for again now the request has resolved, as it may have shown that the client sends
+      // credentials. The client's headers may also have changed while the request was in flight. The answer could
+      // then be either set's variant, so it is stored under neither, and removes nothing.
       const after = before && this.processCache('content')
       if (!after || after.consumer !== before!.consumer) return
-      // The handle refuses it when a request that started later, such as a bypass, has stored or removed the entry.
+
+      // The handle refuses the write when a request that started later, such as a bypass, has already stored or
+      // removed the entry.
       if (res.status === 200 && res.data && typeof res.data === 'object') {
         const seconds = parseCacheLifetime(res.headers)
-        const value: StoredResponse = { body: JSON.stringify(res.data), status: res.status, statusText: res.statusText, headers: Object.fromEntries(res.headers.entries()), seconds, at: Date.now() }
+        const value: StoredResponse = {
+          body: JSON.stringify(res.data),
+          status: res.status,
+          statusText: res.statusText,
+          headers: Object.fromEntries(res.headers.entries()),
+          seconds,
+          at: Date.now(),
+        }
         after.set(key, value, seconds, before!.generation, started)
       } else after.set(key, undefined, 0, before!.generation, started)
     }
+
     try {
       let res: DruxtResponse<T>
       try {
         res = await this.request<T>(url, options && Object.keys(request).length ? request : undefined)
       } catch (error) {
-        // An answer the caller refused is still Drupal's latest. A request that never reached Drupal has none.
+        // A response the caller refused is still Drupal's latest answer, so it is recorded. A request that never
+        // reached Drupal has no answer to record.
         const answered = (error as RequestError).response
         if (answered) settle(answered as DruxtResponse<T>)
         throw error
@@ -655,25 +820,38 @@ export class DruxtClient {
   }
 
   /**
-   * A response from a content cache entry: a fresh copy of the stored document, with what is left of its lifetime.
+   * Builds a response from a content cache entry.
+   *
+   * The document is a fresh copy of the stored one, so a caller cannot change what the next caller reads. Its cache
+   * lifetime is what is left of the entry's.
    *
    * @param stored - The entry.
    * @param url - The URL it was stored for.
+   * @returns The response.
    */
   private storedResponse<T>(stored: StoredResponse, url: string): DruxtResponse<T> {
     const data = JSON.parse(stored.body) as T
     rememberLifetimeFrom(data, stored.seconds, stored.at)
-    return { data, status: stored.status, statusText: stored.statusText, headers: new Headers(stored.headers), url: this.url(url) }
+    return {
+      data,
+      status: stored.status,
+      statusText: stored.statusText,
+      headers: new Headers(stored.headers),
+      url: this.url(url),
+    }
   }
 
   /**
-   * Get a collection of resources.
+   * Gets a collection of resources.
+   *
+   * A type the index does not list is read from its conventional URL, such as `/jsonapi/node/recipe`.
    *
    * @param type - The JSON:API resource type.
    * @param query - A JSON:API query string or object.
    * @param prefix - The JSON:API endpoint prefix or langcode.
    * @param options - How the read goes to Drupal, such as `bypassCache`.
-   * @returns The collection, from the conventional URL for a type the index does not list.
+   * @returns The collection document.
+   * @throws A `TypeError` when `type` is empty, and a formatted error when the request fails.
    *
    * @example @lang js
    * const collection = await this.$druxt.getCollection(
@@ -682,7 +860,12 @@ export class DruxtClient {
    *   'en',
    * )
    */
-  async getCollection(type: string, query?: DruxtClientQuery, prefix = '', options?: DruxtReadOptions): Promise<JsonApiCollection> {
+  async getCollection(
+    type: string,
+    query?: DruxtClientQuery,
+    prefix = '',
+    options?: DruxtReadOptions,
+  ): Promise<JsonApiCollection> {
     if (!type) throw new TypeError('getCollection() needs a type')
 
     const href = await this.resourceHref(type, prefix)
@@ -691,12 +874,16 @@ export class DruxtClient {
   }
 
   /**
-   * Get every page of a collection.
+   * Gets every page of a collection.
+   *
+   * It follows each page's `next` link until there is none.
    *
    * @param type - The JSON:API resource type.
    * @param query - A JSON:API query string or object.
    * @param prefix - The JSON:API endpoint prefix or langcode.
    * @param options - How the read goes to Drupal, such as `bypassCache`.
+   * @returns One collection document per page, in order.
+   * @throws A `TypeError` when `type` is empty, and a formatted error when a request fails.
    *
    * @example @lang js
    * const collections = await this.$druxt.getCollectionAll(
@@ -705,7 +892,12 @@ export class DruxtClient {
    *   'en',
    * )
    */
-  async getCollectionAll(type: string, query?: DruxtClientQuery, prefix = '', options?: DruxtReadOptions): Promise<JsonApiCollection[]> {
+  async getCollectionAll(
+    type: string,
+    query?: DruxtClientQuery,
+    prefix = '',
+    options?: DruxtReadOptions,
+  ): Promise<JsonApiCollection[]> {
     if (!type) throw new TypeError('getCollectionAll() needs a type')
 
     let res = await this.getCollection(type, query, prefix, options)
@@ -722,14 +914,16 @@ export class DruxtClient {
   }
 
   /**
-   * Get the index of available resources, or one resource's entry.
+   * Gets the index of available resources, or one resource type's entry.
    *
-   * Without a resource type, the whole index for the prefix; with one, that
-   * type's entry, or undefined when the index has none. Two signatures, so each
-   * call is typed by what it asks for.
+   * Without a resource type, it returns the whole index for the prefix. With one, it returns that type's entry, or
+   * undefined when the index has none.
+   *
+   * The index is fetched once for each prefix, and concurrent callers share the fetch.
    *
    * @param resource - A resource type, or nothing for the whole index.
    * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @returns The index, or the entry.
    *
    * @example @lang js
    * const entry = await this.$druxt.getIndex('node--article', 'en')
@@ -746,8 +940,10 @@ export class DruxtClient {
   }
 
   /**
-   * The URL prefix a `prefix` argument stands for: a langcode's configured prefix from `prefixes`, such as `spanish`
-   * for `es`, else the argument itself, a prefix given as such or a langcode the map lacks.
+   * Gets the URL prefix that a `prefix` argument stands for.
+   *
+   * A langcode in the `prefixes` option gives its configured prefix, such as `spanish` for `es`. Any other value is
+   * returned as it is: a prefix given as such, or a langcode the option lacks.
    *
    * @param prefix - A langcode or a URL prefix, empty for none.
    * @returns The URL prefix, with no slash.
@@ -764,16 +960,19 @@ export class DruxtClient {
   }
 
   /**
-   * Fetches the JSON:API index for a prefix.
+   * Fetches the JSON:API index for a prefix from Drupal.
+   *
+   * `getIndex()` calls it and holds the result. Each link in the index becomes a path under the base URL. When JSON:API
+   * Extras' resource config can be read, each entry also gets its resource type, entity type, bundle and fields.
    *
    * @param prefix - The JSON:API endpoint prefix or langcode.
-   * @returns The index, and the seconds it may be cached from its Cache-Control.
+   * @returns The index, and the seconds it may be cached, from the `Cache-Control` of its responses.
+   * @throws A formatted error when the endpoint does not answer with a JSON:API index.
    */
   async fetchIndex(prefix = ''): Promise<FetchedIndex> {
     const url = [prefix, this.options.endpoint].join('')
     const { data } = await this.get<{ links?: JsonApiIndex }>(url)
 
-    // Throw error if index is invalid.
     if (typeof data.links !== 'object') {
       this.error({ response: { statusText: 'Invalid JSON:API endpoint' } }, { url })
     }
@@ -784,14 +983,15 @@ export class DruxtClient {
       return [key, value]
     }))
 
-    // Use JSON:API resource config to decorate the index.
-    // The merged index lives no longer than any response it was built from.
+    // Every response the index is built from. The merged index may be cached no longer than the shortest-lived one.
     const documents: object[] = [data]
+
     const resourceConfig = index[this.options.jsonapiResourceConfig]
     if (resourceConfig) {
       let resources: JsonApiResource[] = []
 
-      // Get JSON:API resource config if permissions are set up correctly.
+      // Reading the resource config needs a permission. Without it the index is used as it is, and the failure is
+      // logged as a warning.
       try {
         const config = (await this.get<JsonApiCollection>(resourceConfig.href)).data
         resources = config.data
@@ -818,7 +1018,7 @@ export class DruxtClient {
   }
 
   /**
-   * Get the related resources of a resource.
+   * Gets the related resources of a resource.
    *
    * @param type - The JSON:API resource type.
    * @param id - The resource UUID.
@@ -826,6 +1026,8 @@ export class DruxtClient {
    * @param query - A JSON:API query string or object.
    * @param prefix - The JSON:API endpoint prefix or langcode.
    * @param options - How the read goes to Drupal, such as `bypassCache`.
+   * @returns The document of related resources.
+   * @throws A `TypeError` when `type`, `id` or `related` is empty, and a formatted error when the request fails.
    *
    * @example @lang js
    * const related = await this.$druxt.getRelated(
@@ -836,7 +1038,14 @@ export class DruxtClient {
    *   'en',
    * )
    */
-  async getRelated(type: string, id: string, related: string, query?: DruxtClientQuery, prefix = '', options?: DruxtReadOptions): Promise<JsonApiDocument> {
+  async getRelated(
+    type: string,
+    id: string,
+    related: string,
+    query?: DruxtClientQuery,
+    prefix = '',
+    options?: DruxtReadOptions,
+  ): Promise<JsonApiDocument> {
     if (!type) throw new TypeError('getRelated() needs a type')
     if (!id) throw new TypeError('getRelated() needs an id')
     if (!related) throw new TypeError('getRelated() needs a related field name')
@@ -848,7 +1057,7 @@ export class DruxtClient {
   }
 
   /**
-   * Get a resource by type and ID.
+   * Gets a resource by type and ID.
    *
    * @param type - The JSON:API resource type.
    * @param id - The resource UUID.
@@ -856,6 +1065,7 @@ export class DruxtClient {
    * @param prefix - The JSON:API endpoint prefix or langcode.
    * @param options - How the read goes to Drupal, such as `bypassCache`.
    * @returns The document.
+   * @throws A `TypeError` when `type` or `id` is empty, and a formatted error when the request fails.
    *
    * @example @lang js
    * const document = await this.$druxt.getResource(
@@ -865,22 +1075,32 @@ export class DruxtClient {
    *   'en',
    * )
    */
-  async getResource(type: string, id: string, query?: DruxtClientQuery, prefix = '', options?: DruxtReadOptions): Promise<JsonApiDocument<JsonApiResource>> {
+  async getResource(
+    type: string,
+    id: string,
+    query?: DruxtClientQuery,
+    prefix = '',
+    options?: DruxtReadOptions,
+  ): Promise<JsonApiDocument<JsonApiResource>> {
     if (!type) throw new TypeError('getResource() needs a type')
     if (!id) throw new TypeError('getResource() needs an id')
 
     const href = await this.resourceHref(type, prefix)
 
-    const { data } = await this.get<JsonApiDocument<JsonApiResource>>(this.buildQueryUrl([href, id].join('/'), query), readOptions(options))
+    const { data } = await this.get<JsonApiDocument<JsonApiResource>>(
+      this.buildQueryUrl([href, id].join('/'), query),
+      readOptions(options),
+    )
     return data
   }
 
   /**
-   * Update a resource.
+   * Updates a resource.
    *
-   * @param resource - The JSON:API resource.
+   * @param resource - The JSON:API resource, with its `type` and `id`.
    * @param prefix - The JSON:API endpoint prefix or langcode.
    * @returns The response.
+   * @throws A `TypeError` when the resource has no type or no id, and a formatted error when the request fails.
    *
    * @example @lang js
    * await this.$druxt.updateResource(
@@ -893,7 +1113,10 @@ export class DruxtClient {
    *   'en',
    * )
    */
-  async updateResource(resource: JsonApiResource, prefix = ''): Promise<DruxtResponse<JsonApiDocument<JsonApiResource>>> {
+  async updateResource(
+    resource: JsonApiResource,
+    prefix = '',
+  ): Promise<DruxtResponse<JsonApiDocument<JsonApiResource>>> {
     if (!resource.type) throw new TypeError('updateResource() needs a type')
     if (!resource.id) throw new TypeError('updateResource() needs an id')
 
@@ -906,10 +1129,14 @@ export class DruxtClient {
   }
 
   /**
-   * A resource type's URL: the index's, or the conventional one for a type the index does not list.
+   * Gets a resource type's URL.
+   *
+   * The index's link is used. A type the index does not list gets the conventional URL: the prefix, the endpoint,
+   * then the entity type and bundle, such as `/jsonapi/node/recipe`.
    *
    * @param type - The JSON:API resource type.
    * @param prefix - The JSON:API endpoint prefix or langcode.
+   * @returns The URL, as a path.
    */
   private async resourceHref(type: string, prefix: string): Promise<string> {
     const entry = await this.getIndex(type, prefix)

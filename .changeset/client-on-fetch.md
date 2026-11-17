@@ -41,3 +41,5 @@ A request listener's `end` event carries `omitted`, Drupal's reason, when Drupal
 A nested null in a query object is left out of the query string, as an `IS NULL` condition must have no value.
 
 A request body that is a plain object or an array is sent as JSON:API JSON. A `Blob`, a buffer, a typed array, `FormData` or a stream is sent as it is, as 1.x's Axios sent it, for a file upload. A `ReadableStream` or an async iterable, a plain object with a `Symbol.asyncIterator` method too, goes with `duplex: 'half'`, which fetch requires for a stream body, and needs a fetch that can upload a stream, as Node's can and some browsers' can't. A stream is consumed as it is sent, so it's never sent twice. A 401 to it still refreshes the session, and the 401 stands for the caller to retry with a new stream.
+
+An `endpoint` option that is empty, `/` or undefined is read as the default, `/jsonapi`, and the endpoint is kept with one leading slash and no trailing one. `normalEndpoint()`, `trimEndSlashes()` and `trimStartSlashes()` are exported for a package that joins paths the same way.

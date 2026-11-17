@@ -1,45 +1,44 @@
-// Headers and JSON:API URLs: trimming slashes, a header by any spelling of its name, an index link under the base
-// URL, and the resource type and id a URL names.
+// Headers and JSON:API URLs: a header by any spelling of its name, an index link under the base URL, and the resource
+// type and id a URL names.
 
-/** The value without the run of `char` at its end. Linear, where `/x+$/` is quadratic on a long run. */
-export const trimEnd = (value: string, char = '/'): string => {
-  let end = value.length
-  while (end > 0 && value[end - 1] === char) end--
-  return value.slice(0, end)
-}
-
-/** The value without the run of `char` at its start. */
-export const trimStart = (value: string, char = '/'): string => {
-  let start = 0
-  while (start < value.length && value[start] === char) start++
-  return value.slice(start)
-}
-
-/** Sets a header over any other spelling of its name, or removes it when the value is undefined. */
+/** Sets a header, replacing any other spelling of its name. An undefined value removes the header. */
 export const setHeader = (headers: Record<string, string>, name: string, value?: string): void => {
   for (const key of Object.keys(headers)) if (key.toLowerCase() === name.toLowerCase()) delete headers[key]
   if (value !== undefined) headers[name] = value
 }
 
 /**
- * An index link as a path under the base URL, whatever host Drupal put in it,
- * so no request goes to an internal host Drupal reports from behind a proxy.
+ * Turns an index link into a path under the base URL, whatever host Drupal put in it.
+ *
+ * Behind a proxy, Drupal can report an internal host in its links. Using the path alone means no request goes to
+ * that host.
  *
  * @param href - The link Drupal sent.
  * @param baseUrl - The base URL, without a trailing slash.
+ * @returns The link's path and query.
  */
 export const indexPath = (href: string, baseUrl: string): string => {
-  // A path is already on the base URL.
+  // A link that is already a path is already under the base URL.
   if (!/^(?:https?:)?\/\//.test(href)) return href
+
   const base = new URL(`${baseUrl}/`, 'http://localhost')
   const link = new URL(href, base)
   const root = base.pathname
-  if (link.pathname.startsWith(root) || `${link.pathname}/` === root) return `/${link.pathname.slice(root.length)}${link.search}`
-  // Outside the base URL's path: the same path on the base URL's host.
+  if (link.pathname.startsWith(root) || `${link.pathname}/` === root) {
+    return `/${link.pathname.slice(root.length)}${link.search}`
+  }
+
+  // The link is outside the base URL's path, so it keeps its own path on the base URL's host.
   return `${/^https?:\/\//.test(baseUrl) ? base.origin : ''}${link.pathname}${link.search}`
 }
 
-/** The parts of a JSON:API URL: the resource type it reads and the id it names, or nothing. */
+/**
+ * Reads the resource a JSON:API URL names.
+ *
+ * @param href - The URL.
+ * @param endpoint - The JSON:API endpoint's path.
+ * @returns The resource type the URL reads, and the id when it names one. Empty when it reads no resource type.
+ */
 export const resourceOf = (href: string, endpoint = '/jsonapi'): { type?: string, id?: string } => {
   const path = new URL(href, 'http://druxt.invalid').pathname
   const at = path.indexOf(`${endpoint}/`)
@@ -48,9 +47,12 @@ export const resourceOf = (href: string, endpoint = '/jsonapi'): { type?: string
 }
 
 /**
- * The resource type a JSON:API URL reads, such as `view--view` for `/jsonapi/view/view`, or its path when it reads none.
+ * Reads the resource type a JSON:API URL reads, such as `view--view` for `/jsonapi/view/view`.
  *
  * @param href - The URL.
  * @param endpoint - The JSON:API endpoint's path.
+ * @returns The resource type, or the URL's path when it reads none.
  */
-export const resourceTypeOf = (href: string, endpoint = '/jsonapi'): string => resourceOf(href, endpoint).type || new URL(href, 'http://druxt.invalid').pathname
+export const resourceTypeOf = (href: string, endpoint = '/jsonapi'): string => (
+  resourceOf(href, endpoint).type || new URL(href, 'http://druxt.invalid').pathname
+)
