@@ -1,12 +1,14 @@
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import type { DruxtClientQuery } from '@druxt/client'
 
-/** A list as the comma list JSON:API takes, such as `uid,field_tags`. Anything else is returned as it came. */
+/** A list as the comma list JSON:API takes, such as `uid,field_tags`. Any other value is returned as it came. */
 const commaList = (value: unknown): unknown => Array.isArray(value) ? value.join(',') : value
 
 /**
- * The params that read `include` and `sort` as a comma list or as a list: the library reads a comma list only, and
- * throws on a list, which a query object may hold and a query string such as `include[]=uid` parses to.
+ * Params that read `include` and `sort` as a comma list or as a list.
+ *
+ * The library reads a comma list only, and throws on a list. A query object may hold a list, and a query string
+ * such as `include[]=uid` parses to one.
  */
 class ListParams extends DrupalJsonApiParams {
   override initializeWithQueryObject(input: Record<string, unknown>): this {
@@ -19,8 +21,10 @@ class ListParams extends DrupalJsonApiParams {
 }
 
 /**
- * A JSON:API query as `DrupalJsonApiParams`, from a query string, a query object or another params object. An
- * `include` or `sort` given as a list reads as its comma list.
+ * A JSON:API query as `DrupalJsonApiParams`.
+ *
+ * The query can be a query string, a query object or another params object. An `include` or `sort` given as a list
+ * reads as its comma list.
  *
  * @param query - The query, or nothing for an empty one.
  *

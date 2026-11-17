@@ -1,6 +1,8 @@
-// The development tools' model: what a page's Druxt modules, requests and settings look like to a tool, and the
-// channel a host feeds. It imports nothing from Vue, Nuxt or h3, so any host can feed it: Druxt's Nuxt module does,
-// and a React or Next.js host can emit the same events.
+// The development tools' model. It describes a page's Druxt modules, requests and settings as a tool sees them, and
+// it has the channel a host feeds.
+//
+// It imports nothing from Vue, Nuxt or h3, so any host can feed it. Druxt's Nuxt module does. A React or Next.js host
+// can emit the same events.
 
 /** A section of the tools, as the `section` attribute names it. */
 export type DruxtDevtoolsSection = 'missing' | 'quiet' | 'modules' | 'requests' | 'settings'
@@ -9,13 +11,19 @@ export type DruxtDevtoolsSection = 'missing' | 'quiet' | 'modules' | 'requests' 
 export const DRUXT_DEVTOOLS_SECTIONS: readonly DruxtDevtoolsSection[] = ['missing', 'quiet', 'modules', 'requests', 'settings']
 
 /**
- * A note a module adds about itself, shown with the module. A module adds its own kinds, such as a Layout Builder
- * fallback.
+ * A note a module adds about itself. It is shown with the module.
+ *
+ * A module adds its own kinds of note, such as a Layout Builder fallback.
  */
 export interface DruxtDevtoolsNote {
   /** What the note is about, such as `layout-builder-fallback`. */
   kind: string
-  /** The note's identity on its module, its kind unless given. A module keeps one note per key, so a later note replaces it and `module:note:removed` clears it. */
+  /**
+   * The note's identity on its module. The default is its kind.
+   *
+   * A module keeps one note for each key. A later note with the same key replaces it, and `module:note:removed`
+   * clears it.
+   */
   key?: string
   /** The note, in one line. */
   title: string
@@ -35,66 +43,88 @@ export interface DruxtDevtoolsTemplate {
   request: unknown
 }
 
-/** How a module rendered: with a wrapper of the site's own, with Druxt's default, or failing. */
+/**
+ * How a module rendered.
+ *
+ * - `ready`: with a wrapper of the site's own.
+ * - `default`: with Druxt's default output.
+ * - `error`: it failed.
+ */
 export type DruxtDevtoolsStatus = 'ready' | 'default' | 'error'
 
 /** A Druxt module on the page. */
 export interface DruxtDevtoolsModule {
-  /** The instance, unique on the page. */
+  /** The instance's id. It is unique on the page. */
   id: string
   /** The module component, such as `DruxtEntity`. */
   component: string
   /** The wrapper candidates, most specific first. */
   candidates: string[]
-  /** The wrapper it resolved, or null for Druxt's default or none asked for. */
+  /** The wrapper it resolved. It is null when the module renders Druxt's default, or asked for no wrapper. */
   wrapper: string | null
   /** The key its data is held under. */
   key?: string
+  /** How it rendered. */
   status: DruxtDevtoolsStatus
   /** The failure's HTTP status, when it failed. */
   statusCode?: number
   /** The failure, in one line, without a URL. */
   error?: string
-  /** Whether the module fails quietly: it renders nothing in place of its error. */
+  /** Whether the module fails quietly. A quiet module renders nothing in place of its error. */
   quiet?: boolean
-  /** What the module hands its wrapper, summarized. */
+  /** A summary of what the module hands its wrapper. */
   props: Record<string, unknown>
-  /** Its declared state, summarized. */
+  /** A summary of its declared state. */
   state: Record<string, unknown>
   /** Its settings, from the wrapper. */
   settings: Record<string, unknown>
-  /** The schema it rendered with, by id. */
+  /** The id of the schema it rendered with. */
   schema?: string
   /** Notes the module adds about itself. */
   notes: DruxtDevtoolsNote[]
-  /** The files the create action can write, for a module rendering Druxt's default. */
+  /** The files the create action can write. Only a module that renders Druxt's default has them. */
   templates?: DruxtDevtoolsTemplate[]
 }
 
-/** A module rendering Druxt's default output, and the modules like it: one entry per component and candidate list. */
+/**
+ * The modules that render Druxt's default output for one component and one candidate list.
+ *
+ * Modules with the same component and the same candidates share one entry.
+ */
 export interface DruxtDevtoolsMissingEntry {
-  /** The component and candidates, joined. */
+  /** The entry's identity: the component and the candidates, joined. */
   key: string
+  /** The module component, such as `DruxtEntity`. */
   component: string
+  /** The wrapper candidates, most specific first. */
   candidates: string[]
-  /** The most specific candidate past the component's name, in words: DruxtEntityNodeArticleFull is `node · article · full`. */
+  /**
+   * The most specific candidate in words, without the component's name.
+   *
+   * For `DruxtEntityNodeArticleFull` it is `node · article · full`.
+   */
   meta: string
-  /** How many instances on the page. */
+  /** How many instances the page has. */
   count: number
+  /** The files the create action can write. */
   templates: DruxtDevtoolsTemplate[]
 }
 
 /** The missing wrappers of one module component. */
 export interface DruxtDevtoolsMissingGroup {
+  /** The module component. */
   component: string
+  /** Its entries, one for each candidate list. */
   entries: DruxtDevtoolsMissingEntry[]
 }
 
 /** A module that failed quietly. */
 export interface DruxtDevtoolsQuietError {
+  /** The id of the instance that failed. */
   id: string
+  /** The component that failed. */
   component: string
-  /** The HTTP status, when the failure starts with one. */
+  /** The HTTP status, when the failure's summary starts with one. */
   status?: string
   /** The failure, without its status or a URL. */
   detail: string
@@ -105,23 +135,25 @@ export type DruxtDevtoolsRequestKind = 'jsonapi' | 'schema' | 'date-formats' | '
 
 /** A request a module made, or one the store answered without the network. */
 export interface DruxtDevtoolsRequest {
+  /** The request's id. */
   id: string
+  /** What the request was for. */
   kind: DruxtDevtoolsRequestKind
   /** The path, without the origin. */
   path: string
   /** The HTTP status, for a network request. */
   status?: number
-  /** When it started, in milliseconds from the page's start on its side. */
+  /** When it started, in milliseconds from the start of the page on its side. */
   start: number
-  /** How long it took, in milliseconds. Zero for the store. */
+  /** How long it took, in milliseconds. It is zero when the store answered. */
   duration: number
-  /** Whether it went to the network or the store already held it. */
+  /** Whether it went to the network, or the store already held the answer. */
   source: 'network' | 'store'
-  /** Where it ran: the server render, or the browser. */
+  /** Where it ran: in the server render, or in the browser. */
   side: 'server' | 'browser'
-  /** For a server render's request, the page it rendered: its path and query, without a hash. */
+  /** The page a server render's request was made for: the page's path and query, without a hash. */
   page?: string
-  /** Drupal's reason, when it answered only partly and omitted resources, as for lack of permission. */
+  /** Drupal's reason, when its answer was partial. Drupal omits resources, as it does for lack of permission. */
   partial?: string
 }
 
@@ -130,14 +162,18 @@ export type DruxtDevtoolsTier = 'site' | 'drupal' | 'default'
 
 /** One resolved setting, by its dotted key. */
 export interface DruxtDevtoolsSetting {
+  /** The dotted key. */
   key: string
+  /** The resolved value. */
   value: unknown
+  /** Where the value came from. */
   tier: DruxtDevtoolsTier
 }
 
 /**
- * A piece of a module's section, as data the element renders: a list of keys and values, a table, or a tree. A module
- * never supplies markup.
+ * A piece of a module's section: a list of keys and values, a table, or a tree.
+ *
+ * A block is data, and the element renders it. A module never supplies markup.
  */
 export type DruxtDevtoolsBlock =
   | { type: 'pairs', title?: string, items: Record<string, unknown> }
@@ -146,26 +182,33 @@ export type DruxtDevtoolsBlock =
 
 /** A named action a module offers, such as clearing a cache. Its handler runs in the app. */
 export interface DruxtDevtoolsAction {
+  /** The action's id. */
   id: string
+  /** The text on its button. */
   label: string
-  /** The section it shows in, by id. */
+  /** The id of the section it shows in. */
   section?: string
 }
 
 /** A section a module adds to the tools, with its data and actions. */
 export interface DruxtDevtoolsModuleSection {
+  /** The section's id. */
   id: string
+  /** The section's name, shown on its tab. */
   label: string
+  /** The section's data. */
   blocks: DruxtDevtoolsBlock[]
+  /** The actions whose `section` is this section's id. */
   actions: DruxtDevtoolsAction[]
 }
 
 /** A labelled event a module adds to the timeline, beside the requests. */
 export interface DruxtDevtoolsTimelineEvent {
+  /** The event's id. */
   id: string
   /** What happened, such as `views refetch`. */
   label: string
-  /** Why, or more about it, such as `filter changed`. */
+  /** Why it happened, or more about it, such as `filter changed`. */
   detail?: string
   /** Who added it, such as the module's name. */
   source?: string
@@ -173,7 +216,7 @@ export interface DruxtDevtoolsTimelineEvent {
   time: number
 }
 
-/** Everything the tools show, at one moment. JSON-serializable. */
+/** Everything the tools show, at one moment. It is JSON-serializable. */
 export interface DruxtDevtoolsSnapshot {
   /** The current page's path. */
   page: string
@@ -181,8 +224,11 @@ export interface DruxtDevtoolsSnapshot {
   modules: DruxtDevtoolsModule[]
   /** The missing wrappers, grouped by module component. */
   missing: DruxtDevtoolsMissingGroup[]
+  /** The quiet failures. */
   quiet: DruxtDevtoolsQuietError[]
+  /** The current page's requests. Only the latest 500 are kept. */
   requests: DruxtDevtoolsRequest[]
+  /** The resolved settings. */
   settings: DruxtDevtoolsSetting[]
   /** The sections modules added, in the order they were added. */
   sections: DruxtDevtoolsModuleSection[]
@@ -192,9 +238,11 @@ export interface DruxtDevtoolsSnapshot {
 
 /** A quiet failure that is not a module's own, such as a standalone field the display does not show. */
 export interface DruxtDevtoolsQuietEvent {
+  /** The id of the instance that failed. */
   id: string
+  /** The component that failed. */
   component: string
-  /** The failure in one line, or null once it has recovered. */
+  /** The failure in one line. Null once it has recovered. */
   summary: string | null
 }
 
@@ -205,7 +253,7 @@ export type DruxtDevtoolsEvent =
   | { type: 'module:missing', module: DruxtDevtoolsModule }
   | { type: 'module:removed', id: string }
   | { type: 'module:note', id: string, note: DruxtDevtoolsNote }
-  /** Clears a module's note by its key, its kind unless the note had a key, once it no longer applies. */
+  /** Clears a module's note once it no longer applies. The `key` is the note's key, or its kind when it had no key. */
   | { type: 'module:note:removed', id: string, key: string }
   | { type: 'quiet', error: DruxtDevtoolsQuietEvent }
   | { type: 'request', request: DruxtDevtoolsRequest }
@@ -213,44 +261,55 @@ export type DruxtDevtoolsEvent =
   /** A module adds or updates a section. */
   | { type: 'section', section: Omit<DruxtDevtoolsModuleSection, 'actions'> }
   | { type: 'section:removed', id: string }
-  /** A module offers an action. The channel's `registerAction()` emits it, with the handler kept on the host. */
+  /** A module offers an action. The channel's `registerAction()` emits it, and keeps the handler on the host. */
   | { type: 'action', action: DruxtDevtoolsAction }
   | { type: 'action:removed', id: string }
   | { type: 'timeline', event: DruxtDevtoolsTimelineEvent }
-  /** A module took its data from a payload it did not fetch: the server's, or another instance's. The snapshot keeps no record of it. */
+  /**
+   * A module took its data from a payload it did not fetch: the server's, or another instance's.
+   *
+   * The snapshot keeps no record of it.
+   */
   | { type: 'module:restored', id: string, component: string, key?: string }
 
-/** A subscriber: called with each event, after the snapshot has it. */
+/** A subscriber. It is called with each event, after the snapshot has the event. */
 export type DruxtDevtoolsListener = (event: DruxtDevtoolsEvent) => void
 
 /** The channel between a host and its tools. */
 export interface DruxtDevtoolsChannel {
-  /** Reports an event to the snapshot and every subscriber. */
+  /** Reports an event to the snapshot and to every subscriber. */
   emit: (event: DruxtDevtoolsEvent) => void
-  /** Listens for events. Returns the function that stops listening. */
+  /** Listens for events. It returns a function that stops listening. */
   subscribe: (listener: DruxtDevtoolsListener) => () => void
-  /** Everything reported so far. */
+  /** Gets everything reported so far, as a copy. */
   snapshot: () => DruxtDevtoolsSnapshot
-  /** Offers an action whose handler runs in the host. Returns the function that withdraws it. */
+  /** Offers an action whose handler runs in the host. It returns a function that withdraws the action. */
   registerAction: (action: DruxtDevtoolsAction, handler: () => unknown) => () => void
-  /** Runs an action's handler, as a tool's button does. Resolves with what the handler returns. */
+  /** Runs an action's handler, as a tool's button does. It resolves with what the handler returns. */
   runAction: (id: string) => Promise<unknown>
 }
 
-// The longest list of requests kept: a long session in development keeps the latest.
+/** The most requests kept, and the most timeline events. A long session in development keeps the latest. */
 const MAX_REQUESTS = 500
-// The most modules whose notes are held before they report: a note for a module that never reports is dropped first.
+
+/**
+ * The most modules whose notes are held before the module reports.
+ *
+ * Past it, the notes of the module that has waited longest are dropped. So a note for a module that never reports is
+ * dropped first.
+ */
 const MAX_PENDING = 100
 
 /**
- * A note's identity on its module: its key, else its kind.
+ * Gets a note's identity on its module.
  *
  * @param note - The note.
+ * @returns The note's key, or its kind when it has no key.
  */
 export const noteKey = (note: DruxtDevtoolsNote): string => note.key ?? note.kind
 
 /**
- * A module name's most specific candidate, past the module's own name, in words.
+ * Describes a module's most specific candidate in words, without the component's name.
  *
  * @param component - The module component, such as `DruxtEntity`.
  * @param candidates - Its candidates, most specific first.
@@ -260,9 +319,11 @@ export const describeCandidate = (component: string, candidates: readonly string
   (candidates[0] || '').replace(component, '').split(/(?=[A-Z])/).filter(Boolean).map((part) => part.toLowerCase()).join(' · ')
 
 /**
- * A failure's status code, when its summary starts with one, and the rest.
+ * Splits a failure's summary into its status code and the rest.
  *
  * @param summary - The failure in one line, such as `403: Forbidden`.
+ * @returns The `status`, when the summary starts with three digits, and the `detail`. Without a status, the detail
+ * is the whole summary.
  */
 export const splitStatus = (summary: string): { status?: string, detail: string } => {
   const status = /^\d{3}\b/.exec(summary)?.[0]
@@ -270,9 +331,13 @@ export const splitStatus = (summary: string): { status?: string, detail: string 
 }
 
 /**
- * The missing wrappers among the modules, one entry per component and candidate list, grouped by component.
+ * Gets the missing wrappers among the modules, grouped by component.
+ *
+ * Only a module with the `default` status counts. Modules with the same component and the same candidates share one
+ * entry, and the entry counts them.
  *
  * @param modules - The page's modules.
+ * @returns The groups, one for each component.
  */
 export const groupMissing = (modules: readonly DruxtDevtoolsModule[]): DruxtDevtoolsMissingGroup[] => {
   const entries = new Map<string, DruxtDevtoolsMissingEntry>()
@@ -283,16 +348,19 @@ export const groupMissing = (modules: readonly DruxtDevtoolsModule[]): DruxtDevt
     if (entry) entry.count += 1
     else entries.set(key, { key, component: module.component, candidates: module.candidates, meta: describeCandidate(module.component, module.candidates), count: 1, templates: module.templates || [] })
   }
+
   const groups = new Map<string, DruxtDevtoolsMissingEntry[]>()
   for (const entry of entries.values()) groups.set(entry.component, [...groups.get(entry.component) || [], entry])
   return [...groups].map(([component, list]) => ({ component, entries: list }))
 }
 
-/** A copy that a subscriber cannot change the channel through. */
+/** Copies a value through JSON, so a subscriber cannot change the channel's state through it. */
 const copy = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T
 
 /**
- * Creates a channel and the snapshot it keeps.
+ * Creates a channel, and the snapshot it keeps.
+ *
+ * @returns The channel.
  *
  * @example
  * const devtools = createDruxtDevtools()
@@ -303,31 +371,36 @@ const copy = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T
 export function createDruxtDevtools(): DruxtDevtoolsChannel {
   let page = ''
   const modules = new Map<string, DruxtDevtoolsModule>()
-  // Notes that arrive before their module does, oldest module first.
+
+  // The notes that arrived before their module did, with the module that has waited longest first.
   const notes = new Map<string, DruxtDevtoolsNote[]>()
+
+  // Holds a module's notes until it reports. The module moves to the end of the queue, and an empty list is not held.
   const hold = (id: string, list: DruxtDevtoolsNote[]): void => {
     notes.delete(id)
     if (list.length) notes.set(id, list)
     while (notes.size > MAX_PENDING) notes.delete(notes.keys().next().value!)
   }
+
   const quiet = new Map<string, DruxtDevtoolsQuietError>()
   let requests: DruxtDevtoolsRequest[] = []
   let settings: DruxtDevtoolsSetting[] = []
   const sections = new Map<string, Omit<DruxtDevtoolsModuleSection, 'actions'>>()
   const actions = new Map<string, DruxtDevtoolsAction>()
   const handlers = new Map<string, () => unknown>()
-  // Each action's current registration, which only its own disposer withdraws.
+  // Each action's current registration. Only that registration's own disposer withdraws the action.
   const registrations = new Map<string, object>()
   let timeline: DruxtDevtoolsTimelineEvent[] = []
   const listeners = new Set<DruxtDevtoolsListener>()
 
+  // Adds a note to a list. It replaces a note with the same key.
   const addNote = (list: DruxtDevtoolsNote[], note: DruxtDevtoolsNote): DruxtDevtoolsNote[] => [...list.filter((n) => noteKey(n) !== noteKey(note)), note]
 
   const apply = (event: DruxtDevtoolsEvent): void => {
     switch (event.type) {
       case 'page':
-        // A new page: its requests start afresh. Modules leave as they unmount.
-        // Notes held for a module of the last page that never reported go too.
+        // A new page starts with no requests and no timeline events. Its modules are not cleared here, because each
+        // leaves as it unmounts. The notes held for a module of the last page that never reported are dropped.
         if (event.path !== page) {
           requests = []
           timeline = []
@@ -337,8 +410,8 @@ export function createDruxtDevtools(): DruxtDevtoolsChannel {
         break
       case 'module:resolved':
       case 'module:missing': {
-        // A report again keeps the notes the module had, then the event's, then those held for it: a host reports a
-        // module afresh on each refresh, and its notes come from elsewhere.
+        // A host reports a module again on each refresh, and the module's notes come from elsewhere. So a new report
+        // keeps the notes the module had, then adds the event's notes, then the notes held for it.
         const module = copy(event.module)
         module.notes = [...module.notes || [], ...notes.get(module.id) || []].reduce(addNote, modules.get(module.id)?.notes || [])
         notes.delete(module.id)
@@ -406,7 +479,8 @@ export function createDruxtDevtools(): DruxtDevtoolsChannel {
       return copy({ page, modules: list, missing: groupMissing(list), quiet: [...quiet.values()], requests, settings, sections: withActions, timeline })
     },
     registerAction(action, handler) {
-      // This registration's own mark: a later one under the same id may hand in the same function.
+      // An object marks this registration. The handler cannot, because a later registration under the same id may
+      // pass the same function.
       const registration = {}
       handlers.set(action.id, handler)
       registrations.set(action.id, registration)

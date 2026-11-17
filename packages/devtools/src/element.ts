@@ -6,32 +6,55 @@ import { DRUXT_DEVTOOLS_CSS } from './utils/styles'
 /** The element's tag. */
 export const DRUXT_DEVTOOLS_TAG = 'druxt-devtools'
 
-/** The event the element dispatches when its section changes, so a host can keep it in the tab's URL. */
+/** The event the element dispatches when its section changes. A host can use it to keep the section in the tab's URL. */
 export const DRUXT_DEVTOOLS_SECTION_EVENT = 'druxt-devtools-section'
 
-/** What the element reads: a channel, or a fixed snapshot with no updates. Without `runAction`, actions are not offered. */
+/**
+ * What the element reads: a channel, or a fixed snapshot.
+ *
+ * Without `subscribe`, the element gets no updates. Without `runAction`, it offers no actions.
+ */
 export type DruxtDevtoolsSource = Pick<DruxtDevtoolsChannel, 'snapshot'> & Partial<Pick<DruxtDevtoolsChannel, 'subscribe' | 'runAction'>>
 
-/** A module section's tab key: its id, prefixed, so it never clashes with the built-in sections. */
+/**
+ * Gets the tab key of a module's section.
+ *
+ * The key is the section's id with an `x-` prefix, so it never clashes with a built-in section.
+ *
+ * @param id - The section's id.
+ * @returns The key.
+ */
 export const moduleSectionKey = (id: string): string => `x-${id}`
 
 /** The element's public interface. */
 export interface DruxtDevtoolsElement extends HTMLElement {
-  /** The section shown, as the `section` attribute sets it: a built-in section, or a module section's key, `x-<id>`. */
+  /**
+   * The section shown, as the `section` attribute sets it.
+   *
+   * It is a built-in section, or the key of a module's section, `x-<id>`. Any other value reads as `missing`.
+   */
   section: string
-  /** Where the create action posts a file's request. Without one, the element offers the starter to copy. */
+  /**
+   * The URL the create action posts a file's request to.
+   *
+   * Without one, the element has no Create button. It shows the file's path and starter, to copy by hand.
+   */
   createEndpoint: string | null
   /** Opens a created file in the developer's editor, when the host can. */
   openInEditor: ((file: string) => void) | null
-  /** What the element says before a host connects it, as the `waiting-text` attribute sets it. */
+  /** The text the element shows before a host connects it, as the `waiting-text` attribute sets it. */
   waitingText: string
-  /** Documentation links: `wrappers` explains wrapper names, `quiet` explains quiet failures. A link left out is not shown. */
+  /**
+   * The documentation links. `wrappers` explains wrapper names, and `quiet` explains quiet failures.
+   *
+   * A link that is left out is not shown.
+   */
   links: { wrappers?: string, quiet?: string }
   /** Reads a channel, and renders again on each of its events. */
   connect: (source: DruxtDevtoolsSource) => void
   /** Stops reading the channel. */
   disconnect: () => void
-  /** Renders now, in place of on the next frame. */
+  /** Renders now, without waiting for the next frame. */
   render: () => void
 }
 
@@ -50,17 +73,19 @@ const LABELS: Record<DruxtDevtoolsSection, [long: string, short: string]> = {
 const KINDS: Record<DruxtDevtoolsRequest['kind'], string> = { 'jsonapi': 'JSON:API', 'schema': 'Schema', 'date-formats': 'Date format', 'other': 'Other' }
 const TIERS: Record<DruxtDevtoolsTier, string> = { site: 'site config', drupal: 'Drupal', default: 'module default' }
 const REFUSED_HOST = 'Wrapper files are only written when the dev server runs on localhost.'
-// Past this many entries, a list offers a filter.
+
+/** A list with more entries than this offers a filter. */
 const MANY = 6
 
 const plural = (count: number, one: string, many: string): string => `${count} ${count === 1 ? one : many}`
 const isSection = (value: unknown): value is DruxtDevtoolsSection => DRUXT_DEVTOOLS_SECTIONS.includes(value as DruxtDevtoolsSection)
-/** A string as a CSS identifier or string, with the window's `CSS.escape` where there is one. */
+
+/** Escapes a string for use in a CSS selector. It uses the window's `CSS.escape` when the window has one. */
 const cssEscape = (win: (Window & typeof globalThis) | null, value: string): string =>
   win?.CSS?.escape ? win.CSS.escape(value) : value.replace(/[^\w-]/g, (character) => `\\${character}`)
 const isTree = (value: unknown): value is Record<string, unknown> | unknown[] => !!value && typeof value === 'object'
 
-/** A value in one line, for a key and value list. */
+/** Shows a value in one line, for a list of keys and values. JSON longer than 120 characters is cut short. */
 const show = (value: unknown): string => {
   if (typeof value === 'string') return value
   if (value === undefined) return 'undefined'
@@ -75,18 +100,22 @@ const icons = {
   spinner: '<svg class="dt-spinner" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="8" cy="8" r="5.5" opacity="0.35"/><path d="M8 2.5a5.5 5.5 0 0 1 5.5 5.5" stroke-linecap="round"/></svg>',
   check: '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>',
   alert: '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5M8 11h0"/></svg>',
-  // The coloured mark for the title: its blue and green are fixed, and its ink follows the theme.
+  // The coloured mark, for the title. Its blue and green are fixed, and its ink follows the theme.
   mark: `<svg viewBox="0 0 452 342" width="20" height="15" aria-hidden="true"><path fill="#3498db" d="${DRUXT_MARK_PATHS[0]}"/><path fill="#108775" d="${DRUXT_MARK_PATHS[1]}"/><path fill="var(--druxt-mark-ink)" d="${DRUXT_MARK_PATHS[2]}"/></svg>`,
 }
 
 /**
- * Defines `<druxt-devtools>` in a window, once, and returns its class.
+ * Defines `<druxt-devtools>` in a window, and returns its class.
  *
- * The element is plain DOM in an open shadow root: no framework, so any host embeds it. It takes a channel through
- * `connect()`, and renders the five sections from its snapshot. A host passes the window to define it in, such as a
- * DevTools frame's, since each window has its own element registry.
+ * The element is defined once for each window. A second call returns the class already defined.
  *
- * @param win - The window to define it in, the current one unless given.
+ * The element is plain DOM in an open shadow root. It uses no framework, so any host can embed it. It takes a channel
+ * through `connect()`, and renders the five sections from the channel's snapshot.
+ *
+ * Each window has its own element registry. So a host passes the window to define the element in, such as a DevTools
+ * frame's window.
+ *
+ * @param win - The window to define it in. The default is the current window.
  * @returns The element's class.
  *
  * @example
@@ -112,15 +141,16 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
     private unsubscribe: (() => void) | undefined
     private scheduled = false
     private filters: Partial<Record<DruxtDevtoolsSection, string>> = {}
-    // Which entries are open, by section and key. An entry not listed takes its default.
+    // Which entries are open, by section and key. An entry that is not listed is open or closed by its default.
     private opened = new Map<string, boolean>()
     private creates = new Map<string, CreateUi>()
     private actionUi = new Map<string, ActionUi>()
-    // Counts the sources connected, so an action one source started says nothing once another is connected.
+    // The number of sources connected so far. An action's result is dropped when another source was connected while
+    // the action ran.
     private connection = 0
-    // The section last rendered, whose list keeps its scroll position through the next render.
+    // The section last rendered. Its list keeps its scroll position when the same section renders again.
     private rendered: string | undefined
-    // The tab keys in order, the built-in sections then the modules', as last rendered.
+    // The tab keys as last rendered, in order: the built-in sections, then the modules' sections.
     private keys: string[] = [...DRUXT_DEVTOOLS_SECTIONS]
     private root: ShadowRoot
 
@@ -172,7 +202,8 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       if (this.scheduled) return
       this.scheduled = true
       const view = this.ownerDocument.defaultView
-      // An element out of the page renders again when it is put back.
+
+      // An element that is out of the page is not rendered here. It renders when it is put back.
       const run = () => {
         this.scheduled = false
         if (this.isConnected) this.render()
@@ -181,7 +212,14 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       else Promise.resolve().then(run)
     }
 
-    /** An element in this element's document, with attributes and children. A string attribute value of `false` or null is left out. */
+    /**
+     * Creates an element in this element's document, with attributes and children.
+     *
+     * - An attribute whose value is `false`, null or undefined is left out.
+     * - A function is added as an event listener. Its key names the event, so `onClick` listens for `click`.
+     * - The `html` key sets the element's inner HTML.
+     * - `true` sets an empty attribute.
+     */
     private h(tag: string, attrs: Record<string, string | number | boolean | null | undefined | ((event: Event) => void)> = {}, ...children: Child[]): HTMLElement {
       const element = this.ownerDocument.createElement(tag)
       for (const [key, value] of Object.entries(attrs)) {
@@ -199,18 +237,20 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       return element
     }
 
+    /** Wraps SVG source in a span that takes no box of its own. */
     private svg(source: string): HTMLElement {
       return this.h('span', { 'html': source, 'style': 'display:contents' })
     }
 
     render(): void {
       const snapshot = this.source?.snapshot()
-      // The focused control and its caret, put back after the content is replaced.
+
+      // The focused control and its caret. Both are put back after the content is replaced.
       const active = this.root.activeElement as HTMLElement | null
       const focusKey = active?.dataset?.focus
       const caret = active instanceof this.ownerDocument.defaultView!.HTMLInputElement ? [active.selectionStart ?? null, active.selectionEnd ?? null] as const : undefined
 
-      // Where the section's list was scrolled to, put back when the same section renders again.
+      // Where the section's list was scrolled to. It is put back when the same section renders again.
       const list = this.root.querySelector<HTMLElement>('.dt-list')
       const scroll = list && this.rendered === this.section ? [list.scrollTop, list.scrollLeft] as const : undefined
 
@@ -232,6 +272,7 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       }
     }
 
+    /** The count shown on each built-in section's tab. Settings has none. */
     private counts(snapshot: DruxtDevtoolsSnapshot): Record<DruxtDevtoolsSection, number | undefined> {
       return {
         missing: snapshot.missing.reduce((sum, group) => sum + group.entries.length, 0),
@@ -242,10 +283,12 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       }
     }
 
+    /** Builds the navigation, with its tabs, and the panel of the section shown. */
     private layout(snapshot: DruxtDevtoolsSnapshot): HTMLElement {
       const custom = new Map((snapshot.sections || []).map((item) => [moduleSectionKey(item.id), item]))
       this.keys = [...DRUXT_DEVTOOLS_SECTIONS, ...custom.keys()]
-      // A module's section that has gone falls back to the first.
+
+      // When the section shown is a module's section that has gone, the first section is shown.
       const section = this.keys.includes(this.section) ? this.section : 'missing'
       const counts = this.counts(snapshot)
       const label = (key: string): [string, string] => isSection(key) ? LABELS[key] : [custom.get(key)!.label, custom.get(key)!.label]
@@ -271,6 +314,7 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       return this.h('div', { class: 'dt' }, nav, panel)
     }
 
+    /** Shows a section, and dispatches the section event when it changed. With `focus`, its tab takes the focus. */
     private select(section: string, focus = false): void {
       if (section !== this.section) {
         this.section = section
@@ -280,7 +324,12 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       if (focus) this.root.querySelector<HTMLElement>(`#${cssEscape(this.ownerDocument.defaultView, `dt-tab-${section}`)}`)?.focus()
     }
 
-    /** The ARIA tabs pattern, either way round: the arrows move between tabs, Home and End jump. */
+    /**
+     * Handles the keys of the ARIA tabs pattern.
+     *
+     * The arrow keys move to the next or the last tab, and wrap at either end. Home and End jump to the first and the
+     * last tab. Both the horizontal and the vertical arrows work.
+     */
     private keyTabs(event: KeyboardEvent): void {
       const at = Math.max(0, this.keys.indexOf(this.section))
       const last = this.keys.length - 1
@@ -290,14 +339,17 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       this.select(this.keys[(to + last + 1) % (last + 1)]!, true)
     }
 
+    /** A section's heading and its one line of explanation. */
     private head(title: string, lede: string): HTMLElement {
       return this.h('header', { class: 'dt-head' }, this.h('h2', {}, title), this.h('p', { class: 'dt-lede' }, lede))
     }
 
+    /** What a section shows when it has nothing to list. */
     private empty(title: string, line: string): HTMLElement {
       return this.h('div', { class: 'dt-empty' }, this.svg(druxtMonoMark(24)), this.h('p', { class: 'dt-empty-title' }, title), this.h('p', {}, line))
     }
 
+    /** A section's filter input, and a live region that tells a screen reader how many entries are shown. */
     private filter(section: DruxtDevtoolsSection, total: number, [one, many]: [string, string], shown: number): HTMLElement[] {
       const query = this.filters[section] || ''
       return [
@@ -316,19 +368,24 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       ]
     }
 
+    /** Whether any of the texts contains the section's filter query, in any case. An empty query matches. */
     private match(section: DruxtDevtoolsSection, ...texts: string[]): boolean {
       const query = (this.filters[section] || '').trim().toLowerCase()
       return !query || texts.some((text) => text.toLowerCase().includes(query))
     }
 
-    /** A disclosure that keeps its open state across renders. */
+    /** A disclosure that stays open or closed across renders. */
     private details(key: string, open: boolean, className: string, summary: Child[], body: Child[]): HTMLElement {
       const element = this.h('details', { class: className, open: this.opened.get(key) ?? open }, this.h('summary', { 'data-focus': `summary-${key}` }, summary), body)
       element.addEventListener('toggle', () => this.opened.set(key, (element as HTMLDetailsElement).open))
       return element
     }
 
-    /** A value as a tree: an object or array opens to its children, a plain value shows as it is. */
+    /**
+     * Shows a value as a tree.
+     *
+     * An object or an array opens to its children, and the first level starts open. A plain value shows in one line.
+     */
     private tree(value: unknown, depth = 0): HTMLElement {
       if (!isTree(value)) return this.h('span', { class: 'dt-tree-value' }, show(value))
       const entries = Object.entries(value)
@@ -340,7 +397,7 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       )))
     }
 
-    /** A module's block of data: a key and value list, a table or a tree. */
+    /** Renders a module's block of data: a list of keys and values, a table or a tree. */
     private block(block: DruxtDevtoolsBlock): HTMLElement {
       const title = block.title ? this.h('h3', { class: 'dt-caption' }, block.title) : null
       if (block.type === 'pairs') return this.h('div', { class: 'dt-block' }, title, this.pairs(block.items))
@@ -352,12 +409,17 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       return this.h('div', { class: 'dt-block' }, title, this.tree(block.value))
     }
 
-    /** Runs a module's action through the host, and says how it went. */
+    /**
+     * Runs a module's action through the host, and shows how it went.
+     *
+     * A string the handler returns is shown as the result. Any other result shows `Done.`.
+     */
     private async run(id: string): Promise<void> {
       if (!this.source?.runAction) return
       const connection = this.connection
       this.actionUi.set(id, { state: 'busy', message: '' })
       this.render()
+
       let ui: ActionUi
       try {
         const result = await this.source.runAction(id)
@@ -365,13 +427,14 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       } catch (error) {
         ui = { state: 'failed', message: (error as Error)?.message || 'The action failed.' }
       }
-      // Another source was connected meanwhile: the answer is not its action's.
+
+      // Another source was connected while the action ran. The result belongs to the old source, so it is dropped.
       if (connection !== this.connection) return
       this.actionUi.set(id, ui)
       this.render()
     }
 
-    /** A section a module added: its blocks, as data, and its actions. */
+    /** Renders a section a module added: its actions, then its blocks. Without `runAction`, no action shows. */
     private moduleSection(section: DruxtDevtoolsModuleSection): Child[] {
       const head = this.h('header', { class: 'dt-head' }, this.h('h2', {}, section.label))
       const actions = this.source?.runAction ? section.actions : []
@@ -387,6 +450,7 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       )]
     }
 
+    /** The Missing wrappers section. The first entry starts open, unless the list is long enough to have a filter. */
     private missing(snapshot: DruxtDevtoolsSnapshot): Child[] {
       const entries = snapshot.missing.flatMap((group) => group.entries)
       const head = this.head('Missing wrappers', 'These rendered Druxt\'s default output. A wrapper of your own replaces it.')
@@ -426,6 +490,7 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       ]
     }
 
+    /** The create action's state for an entry. It starts again when the chosen candidate is no longer offered. */
     private ui(key: string, templates: DruxtDevtoolsTemplate[]): CreateUi {
       let ui = this.creates.get(key)
       if (!ui || !templates.some((template) => template.name === ui!.name)) {
@@ -435,7 +500,13 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       return ui
     }
 
-    /** The create action: a candidate to pick, then idle, busy, done or refused, in one slot. */
+    /**
+     * Renders the create action.
+     *
+     * It has a candidate to pick, and one slot that shows the state: idle, busy, done or refused. The Create button
+     * shows only when `createEndpoint` is set. After a refusal that the developer can work around, it offers the path
+     * and the starter to copy.
+     */
     private create(key: string, templates: DruxtDevtoolsTemplate[]): HTMLElement {
       const ui = this.ui(key, templates)
       const template = templates.find((t) => t.name === ui.name)!
@@ -477,11 +548,20 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       )
     }
 
+    /**
+     * Posts a file's request to the create endpoint, and records the answer.
+     *
+     * - A success opens the created file in the editor, when the answer names the file and the host can.
+     * - A 403 is a refusal the developer can work around, so the file is offered to make by hand. Unless its reason
+     *   names the origin, the message says that files are written only on localhost.
+     * - Any other refusal shows the server's reason.
+     */
     private async post(key: string, template: DruxtDevtoolsTemplate): Promise<void> {
       if (!this.createEndpoint) return
       const ui = this.creates.get(key)!
       this.creates.set(key, { ...ui, state: 'busy', message: '' })
       this.render()
+
       const view = this.ownerDocument.defaultView!
       let next: Partial<CreateUi>
       try {
@@ -495,14 +575,18 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
           next = { state: 'refused', message: response.status === 403 && !/origin/i.test(reason) ? REFUSED_HOST : reason, byHand: response.status === 403 }
         }
       } catch {
-        // Never answered: the file can still be made by hand.
+        // The server never answered. The file can still be made by hand.
         next = { state: 'refused', message: 'The dev server did not answer.', byHand: true }
       }
       this.creates.set(key, { ...this.creates.get(key)!, copied: 'idle', ...next })
       this.render()
     }
 
-    /** Copies the path and starter. Where the clipboard is missing or refuses, it shows the starter selected instead. */
+    /**
+     * Copies the path and the starter to the clipboard.
+     *
+     * When the clipboard is missing or refuses, it shows the starter with its text selected, to copy by hand.
+     */
     private async copy(key: string, template: DruxtDevtoolsTemplate): Promise<void> {
       const view = this.ownerDocument.defaultView!
       let copied: CreateUi['copied'] = 'copied'
@@ -514,6 +598,7 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       }
       this.creates.set(key, { ...this.creates.get(key)!, copied })
       this.render()
+
       const pre = this.root.querySelector<HTMLElement>('pre[data-select]')
       if (copied === 'manual' && pre) {
         pre.focus()
@@ -524,6 +609,7 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       }
     }
 
+    /** The Quiet errors section. */
     private quiet(snapshot: DruxtDevtoolsSnapshot): Child[] {
       const head = this.head('Quiet errors', 'References to content this visitor cannot see. Druxt renders nothing in their place, which is usually right.')
       if (!snapshot.quiet.length) return [head, this.empty('No quiet errors', 'Every reference on this page resolved for this visitor.')]
@@ -537,17 +623,20 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       )]
     }
 
+    /** A list of keys and values, or `None` when there are no keys. */
     private pairs(values: Record<string, unknown>): HTMLElement {
       const entries = Object.entries(values)
       if (!entries.length) return this.h('p', { class: 'dt-none' }, 'None')
       return this.h('dl', { class: 'dt-pairs' }, entries.map(([key, value]) => [this.h('dt', {}, key), this.h('dd', {}, show(value))]))
     }
 
+    /** A module's status. A failed module shows its HTTP status code, when it has one. */
     private moduleStatus(module: DruxtDevtoolsModule): HTMLElement {
       const text = module.status === 'error' ? String(module.statusCode || 'error') : module.status
       return this.h('span', { class: `dt-state dt-tone-${module.status}` }, this.h('span', { class: 'dt-dot' }), text)
     }
 
+    /** The Modules section. */
     private modules(snapshot: DruxtDevtoolsSnapshot): Child[] {
       const head = this.head('Modules', 'Every Druxt module on this page, in render order.')
       const all = snapshot.modules
@@ -583,6 +672,7 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       ]
     }
 
+    /** The Requests section: the requests of each side on a time axis, then the modules' timeline events. */
     private requests(snapshot: DruxtDevtoolsSnapshot): Child[] {
       const head = this.head('Requests', 'Requests Druxt made for this page. Store hits made no network call.')
       const all = snapshot.requests
@@ -599,12 +689,12 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       return [
         head,
         this.h('div', { class: 'dt-list' }, sides.map(({ side, list }) => {
-          // Each side keeps its own clock: the server's render and the browser's page.
+          // Each side has its own clock. The server's starts with its render, and the browser's with its page.
           const from = Math.min(...list.map((request) => request.start))
           const span = Math.max(1, ...list.map((request) => request.start + request.duration - from))
           return [
-            // Labelled even alone: a first load the server rendered lists its requests under the server render, of the
-            // page they were made for.
+            // The heading shows even when there is only one side. On a first load that the server rendered, the
+            // requests are listed under the server render, with the page they were made for.
             this.h('h3', { class: 'dt-group' }, side === 'server' ? (list[0]!.page ? `Server render of ${list[0]!.page}` : 'Server render') : 'Browser'),
             this.h('div', { 'class': 'dt-axis', 'aria-hidden': 'true' }, this.h('span', {}, '0 ms'), this.h('span', {}, String(Math.round(span / 2))), this.h('span', {}, `${Math.round(span)} ms`)),
             list.map((request) => {
@@ -625,6 +715,7 @@ export function defineDruxtDevtoolsElement(win: Window & typeof globalThis = win
       ]
     }
 
+    /** The Settings section: each setting, and how many came from each tier. */
     private settings(snapshot: DruxtDevtoolsSnapshot): Child[] {
       const count = (tier: DruxtDevtoolsTier) => snapshot.settings.filter((setting) => setting.tier === tier).length
       return [

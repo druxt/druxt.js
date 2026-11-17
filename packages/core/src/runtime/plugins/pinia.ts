@@ -2,9 +2,10 @@ import { markRaw } from 'vue'
 import type { DruxtClient } from '@druxt/client'
 import { defineNuxtPlugin } from '#app'
 
-// Gives every store the Druxt services, `this.$druxt` and the modules' own,
-// as 1.x's Vuex stores had them. Read when a store is created, after all plugins ran;
-// Nuxt provides are non-enumerable getters, hence getOwnPropertyNames.
+// Gives every store the Druxt services: `this.$druxt` and the modules' own, as 1.x's Vuex stores had them.
+//
+// They are read when a store is created, after all plugins ran. Nuxt provides are non-enumerable getters, so they
+// are found with `getOwnPropertyNames`.
 export default defineNuxtPlugin({
   name: 'druxt-pinia',
   dependsOn: ['pinia', 'druxt'],

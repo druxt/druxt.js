@@ -1,8 +1,9 @@
-// No #imports here: the app plugin and the unit tests both use this file.
+// This file imports nothing from `#imports`, because the app plugin and the unit tests both use it.
 
 /**
- * The refreshes running or just ended in this server process, by a digest of the session that spends them, never the
- * session's tokens themselves.
+ * The refreshes running or just ended in this server process.
+ *
+ * They are keyed by a digest of the session that spends them, never by the session's tokens themselves.
  */
 const shared = new Map<string, { promise: Promise<unknown>, settledAt: number }>()
 
@@ -11,14 +12,20 @@ const digest = async (session: string): Promise<string> => [...new Uint8Array(aw
   .map((byte) => byte.toString(16).padStart(2, '0')).join('')
 
 /**
- * Shares one refresh between the server renders of one browser, as the client's `auth.refresh.share`.
+ * Shares one refresh between the server renders of one browser. It is the client's `auth.refresh.share`.
  *
- * Nuxt builds the app, and its client, once per server render, so a client's own shared refresh and grace period are
- * one render's. Several renders for one browser, such as tabs opening at once after Drupal revoked the access token,
- * hold the same refresh token, and Simple OAuth accepts it once: one render's refresh succeeds and the rest are
- * refused. Here a refresh lives for the server process, and every render of the same session takes its answer, while
- * it runs and for `grace` after it ends, a refused one too. Entries past their grace period go on the next refresh.
- * Sharing in memory covers one server process: a site running several still sees the race across them.
+ * The problem: Nuxt builds the app, and its client, once per server render. So a client's own shared refresh and
+ * grace period cover one render. Several renders for one browser, such as tabs opening at once after Drupal revoked
+ * the access token, hold the same refresh token. Simple OAuth accepts that token once. One render's refresh
+ * succeeds, and the rest are refused.
+ *
+ * Here a refresh lives for the server process:
+ *
+ * - Every render of the same session takes its answer, while it runs and for `grace` after it ends.
+ * - A refused refresh is shared the same way.
+ * - Entries past their grace period are removed on the next refresh.
+ *
+ * Sharing in memory covers one server process. A site that runs several still sees the race across them.
  *
  * @param session - The session's key, from the client, which holds its tokens.
  * @param start - Starts the refresh.

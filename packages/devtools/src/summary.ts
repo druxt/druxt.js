@@ -1,28 +1,35 @@
 import type { DruxtDevtoolsBlock, DruxtDevtoolsChannel, DruxtDevtoolsModuleSection, DruxtDevtoolsSnapshot } from './model'
 
-/** Where the summary prints: the console by default. */
+/** Where the summary prints. It is the console by default. */
 export type DruxtDevtoolsConsole = Pick<Console, 'info' | 'group' | 'groupCollapsed' | 'groupEnd' | 'log'>
 
 /** How the console summary prints. */
 export interface DruxtDevtoolsSummaryOptions {
   /**
-   * The tool the developer opens, such as `Nuxt DevTools > Druxt`. Given, one line points to it. Without one, each page
-   * prints a grouped summary with the candidate names.
+   * The tool the developer opens, such as `Nuxt DevTools > Druxt`.
+   *
+   * When it is given, the summary is one line that points to the tool. Without it, each page prints a grouped summary
+   * with the candidate names.
    */
   open?: string
-  /** Where it prints. */
+
+  /** Where the summary prints. The default is `console`. */
   console?: DruxtDevtoolsConsole
-  /** How long the page stays quiet before it prints, in milliseconds. */
+
+  /** How long the page must stay quiet before the summary prints, in milliseconds. The default is 1000. */
   delay?: number
 }
 
+/** A count with its noun, such as `1 quiet error` or `2 quiet errors`. */
 const plural = (count: number, one: string, many: string): string => `${count} ${count === 1 ? one : many}`
 
 /**
- * The counts in words, such as `4 defaults in use, 2 quiet errors`. Empty when there is nothing to report. Defaults
- * count entries, one per module and candidate list, not instances.
+ * Gets the counts in words, such as `4 defaults in use, 2 quiet errors`.
+ *
+ * The defaults are counted by entry, not by instance. An entry is one module component with one candidate list.
  *
  * @param snapshot - The tools' snapshot.
+ * @returns The counts, or an empty string when there is nothing to report.
  */
 export const summaryCounts = (snapshot: DruxtDevtoolsSnapshot): string => {
   const entries = snapshot.missing.reduce((sum, group) => sum + group.entries.length, 0)
@@ -32,7 +39,13 @@ export const summaryCounts = (snapshot: DruxtDevtoolsSnapshot): string => {
   ].filter(Boolean).join(', ')
 }
 
-/** A block as plain data for the console: a list's object, a table's rows as objects, or a tree's value. */
+/**
+ * Gets a block as plain data for the console.
+ *
+ * - A `pairs` block gives its object of keys and values.
+ * - A `table` block gives its rows, each as an object keyed by column.
+ * - A `tree` block gives its value.
+ */
 const blockData = (block: DruxtDevtoolsBlock): unknown => {
   if (block.type === 'pairs') return block.items
   if (block.type === 'table') return block.rows.map((row) => Object.fromEntries(block.columns.map((column, index) => [column, row[index]])))
@@ -40,9 +53,13 @@ const blockData = (block: DruxtDevtoolsBlock): unknown => {
 }
 
 /**
- * A module section's data for the console: its one block's, or each block's by title.
+ * Gets a module section's data for the console.
+ *
+ * A section with one block gives that block's data. A section with more gives an object with each block's data under
+ * the block's title. A block without a title is under its position, counted from 1.
  *
  * @param section - The section.
+ * @returns The data.
  */
 export const sectionData = (section: Pick<DruxtDevtoolsModuleSection, 'blocks'>): unknown =>
   section.blocks.length === 1 ? blockData(section.blocks[0]!) : Object.fromEntries(section.blocks.map((block, index) => [block.title || String(index + 1), blockData(block)]))
@@ -50,14 +67,20 @@ export const sectionData = (section: Pick<DruxtDevtoolsModuleSection, 'blocks'>)
 /**
  * Prints what the tools would show to the console, once the page settles.
  *
- * With a tool to open, it prints one line, such as `Druxt: 4 defaults in use. Open Nuxt DevTools > Druxt.`, again only
- * when the counts change. Without one, it prints per page a collapsed group, `Druxt: 4 defaults in use on /path`, with
- * each default's candidate names and the modules' sections, and, only when there are any, an open group of the quiet
- * errors, `Druxt: 2 quiet errors on /path`. Nothing prints when there is nothing to report.
+ * With the `open` option, it prints one line, such as `Druxt: 4 defaults in use. Open Nuxt DevTools > Druxt.`. The
+ * line prints again only when the counts change.
+ *
+ * Without the `open` option, it prints up to two groups for each page:
+ *
+ * - A collapsed group, `Druxt: 4 defaults in use on /path`. It holds each default's candidate names and the modules'
+ *   sections.
+ * - An open group, `Druxt: 2 quiet errors on /path`. It holds the quiet errors, and prints only when there are any.
+ *
+ * Nothing prints when there is nothing to report.
  *
  * @param channel - The channel to listen to.
  * @param options - The tool to point to, the console, and the delay.
- * @returns The function that stops it.
+ * @returns A function that stops the printing.
  */
 export function watchDruxtDevtoolsSummary(channel: DruxtDevtoolsChannel, options: DruxtDevtoolsSummaryOptions = {}): () => void {
   const out = options.console || console
@@ -68,22 +91,27 @@ export function watchDruxtDevtoolsSummary(channel: DruxtDevtoolsChannel, options
     const snapshot = channel.snapshot()
     const counts = summaryCounts(snapshot)
     const sections = (snapshot.sections || []).filter((section) => section.blocks.length)
-    // A tool's line repeats only for a new count. A grouped summary repeats for a new page, new section data or a quiet
-    // error that changed too, as it prints each error.
+
+    // The signature decides whether to print again. The one line for a tool repeats only for a new count. A grouped
+    // summary also repeats for a new page, for new section data, and for a quiet error that changed, because it prints
+    // each error.
     const quiet = snapshot.quiet.map((error) => [error.component, error.status, error.detail])
     const signature = options.open ? counts : JSON.stringify([snapshot.page, counts, sections.map((section) => [section.label, section.blocks]), quiet])
     if (signature === printed) return
     printed = signature
-    // Sections alone are not something to report: they show in the tab and the inspector.
+
+    // Sections alone are nothing to report. They show in the tab and the inspector.
     if (!counts) return
+
     if (options.open) {
       out.info(`Druxt: ${counts}. Open ${options.open}.`)
       return
     }
     const on = snapshot.page ? ` on ${snapshot.page}` : ''
     const defaults = snapshot.missing.reduce((sum, group) => sum + group.entries.length, 0)
-    // Defaults are Druxt working as designed, so their group is collapsed, with the modules' sections. Quiet errors are
-    // worth a look, so theirs is not.
+
+    // A default is Druxt working as designed, so the defaults' group is collapsed, and the modules' sections go in it.
+    // A quiet error is worth a look, so the quiet errors' group is open.
     if (defaults) {
       out.groupCollapsed(`Druxt: ${plural(defaults, 'default in use', 'defaults in use')}${on}`)
       for (const group of snapshot.missing) {
@@ -94,6 +122,7 @@ export function watchDruxtDevtoolsSummary(channel: DruxtDevtoolsChannel, options
       for (const section of sections) out.log(`${section.label}:`, sectionData(section))
       out.groupEnd()
     }
+
     if (snapshot.quiet.length) {
       out.group(`Druxt: ${plural(snapshot.quiet.length, 'quiet error', 'quiet errors')}${on}`)
       for (const error of snapshot.quiet) out.log(`${error.component} failed quietly: ${[error.status, error.detail].filter(Boolean).join(' ')}`)
@@ -101,11 +130,14 @@ export function watchDruxtDevtoolsSummary(channel: DruxtDevtoolsChannel, options
     }
   }
 
+  // Each event restarts the delay, so the summary prints once the page is quiet. These four event types change
+  // nothing the summary reports, so they do not restart it.
   const unsubscribe = channel.subscribe((event) => {
     if (event.type === 'request' || event.type === 'settings' || event.type === 'module:restored' || event.type === 'timeline') return
     clearTimeout(timer)
     timer = setTimeout(print, options.delay ?? 1000)
   })
+
   return () => {
     clearTimeout(timer)
     unsubscribe()

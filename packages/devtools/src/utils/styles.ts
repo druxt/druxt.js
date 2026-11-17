@@ -1,6 +1,8 @@
-// The tools' stylesheet, scoped to the element's shadow root, so nothing reaches the host page and nothing of the
-// page's reaches in. `all: initial` resets inherited properties, and custom properties still inherit, so a site's own
-// `--druxt-*` values flow in through the fallbacks below. The derived values are private.
+// The tools' stylesheet. It is scoped to the element's shadow root, so none of it reaches the host page, and none of
+// the page's styles reach in.
+//
+// `all: initial` resets the inherited properties. Custom properties still inherit, so a site's own `--druxt-*` values
+// come in through the fallbacks below. The derived values are private.
 
 export const DRUXT_DEVTOOLS_CSS = `
 :host {

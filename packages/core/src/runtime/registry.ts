@@ -1,10 +1,11 @@
 import type { StoreDefinition } from 'pinia'
 import { useDruxtStore } from './store'
 
-/** A store definition of any id, state, getters and actions: Pinia's own defaults for the four. */
+/** A store definition of any id, state, getters and actions. It uses Pinia's own defaults for the four. */
 type AnyStoreDefinition = StoreDefinition
 
-// Store definitions by their 1.x Vuex namespace. Definitions, not instances, so one registry serves every request.
+// The store definitions, by their 1.x Vuex namespace. They are definitions, not instances, so one registry serves
+// every request.
 const registry: Record<string, AnyStoreDefinition> = { druxt: useDruxtStore }
 
 /**

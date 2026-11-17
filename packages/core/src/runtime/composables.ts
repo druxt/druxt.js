@@ -1,5 +1,5 @@
 import type { DruxtClient } from '@druxt/client'
 import { useNuxtApp } from '#imports'
 
-/** The Druxt client, as `$druxt` is on a component. */
+/** Gets the Druxt client. It is the same client as `$druxt` on a component. */
 export const useDruxtClient = (): DruxtClient => useNuxtApp().$druxt

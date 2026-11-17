@@ -1,21 +1,24 @@
-// @druxt/core/anchors: how a rendered entity and field name themselves in the page, so a diff view, an inline editor, a
-// canvas or a site's own tests can find the same element again. Framework free: nothing here imports Vue, Nuxt or h3,
-// so a later adapter for another framework reuses it as it is.
+// @druxt/core/anchors: how a rendered entity and field name themselves in the page. A diff view, an inline editor, a
+// canvas or a site's own tests can then find the same element again.
+//
+// It is framework free. Nothing here imports Vue, Nuxt or h3, so a later adapter for another framework reuses it as it
+// is.
 
-/** The attribute naming a rendered entity: its id, exactly as JSON:API returned it. Frozen. */
+/** The attribute that names a rendered entity. Its value is the id, exactly as JSON:API returned it. Frozen. */
 export const ENTITY = 'data-druxt-entity'
-/** The attribute naming a rendered entity's JSON:API resource type, such as `node--recipe`. Frozen. */
+/** The attribute that names a rendered entity's JSON:API resource type, such as `node--recipe`. Frozen. */
 export const TYPE = 'data-druxt-type'
-/** The attribute naming a rendered field: its public JSON:API name. Frozen. */
+/** The attribute that names a rendered field. Its value is the field's public JSON:API name. Frozen. */
 export const FIELD = 'data-druxt-field'
-/** The attribute naming an item's index in a field that allows several values. Frozen. */
+/** The attribute that names an item's index in a field that allows several values. Frozen. */
 export const DELTA = 'data-druxt-delta'
-/** The attribute naming a rendered entity's language, its `langcode`. */
+/** The attribute that names a rendered entity's language, its `langcode`. */
 export const LANGCODE = 'data-druxt-langcode'
 
 /**
- * The attributes that name a rendered entity: its id and its type, with its language when given. Nothing without an
- * id, as an anchor nothing can address is worse than none.
+ * Gets the attributes that name a rendered entity: its id and its type, with its language when given.
+ *
+ * Without an id it gives none, because an anchor nothing can address is worse than no anchor.
  *
  * @param type - The JSON:API resource type, such as `node--recipe`.
  * @param id - The entity's id, exactly as JSON:API returned it.
@@ -32,9 +35,10 @@ export function entityAnchors(type: string | null | undefined, id: string | null
 }
 
 /**
- * The attributes that name a rendered field, or one item of it. The delta is written whenever it is a number, zero
- * included, as a string, as an attribute's value is in the page. Druxt writes it only on an item of a field that
- * allows several values.
+ * Gets the attributes that name a rendered field, or one item of it.
+ *
+ * The delta is written whenever it is a number, zero included. It is written as a string, as an attribute's value is in
+ * the page. Druxt writes it only on an item of a field that allows several values.
  *
  * @param name - The field's public JSON:API name, such as `field_tags`.
  * @param delta - The item's index in the field.
@@ -49,7 +53,9 @@ export function fieldAnchors(name: string | null | undefined, delta?: number): R
 }
 
 /**
- * An attribute value escaped for a selector's quoted string. `CSS.escape` is missing outside a browser.
+ * Escapes an attribute value for a selector's quoted string.
+ *
+ * `CSS.escape` is missing outside a browser, so this is used in its place.
  *
  * @param value - The value.
  * @returns The value, with each `"` and `\` escaped.
@@ -73,8 +79,10 @@ export interface DruxtAnchorRoot {
 }
 
 /**
- * The first element under `root` that carries every anchor described, or `null`. An empty description finds nothing,
- * rather than the whole page, and a root that cannot be searched, such as during a server render, gives `null`.
+ * Finds the first element under `root` that carries every anchor described, or `null`.
+ *
+ * An empty description finds nothing, and not the whole page. A root that cannot be searched, such as during a server
+ * render, gives `null`.
  *
  * @param root - Where to search, such as `document`.
  * @param descriptor - The anchors to match.
@@ -97,7 +105,10 @@ export function findAnchor<R extends DruxtAnchorRoot>(root: R | null | undefined
   return (root.querySelector(parts) ?? null) as NonNullable<ReturnType<R['querySelector']>> | null
 }
 
-/** `druxt.anchors`: on, off, or `'dev'`, on in development only (the default). */
+/**
+ * The `druxt.anchors` option: `true` for on, `false` for off, or `'dev'` for on in development only. `'dev'` is the
+ * default.
+ */
 export type DruxtAnchorsSetting = boolean | 'dev'
 
 /**
@@ -117,7 +128,7 @@ export interface DruxtAnchorsState {
 
 /** What `resolveDruxtAnchors()` takes. */
 export interface DruxtAnchorsInput {
-  /** The site's `druxt.anchors`, unset for the default, `'dev'`. */
+  /** The site's `druxt.anchors`. Unset, the default, `'dev'`, is used. */
   setting?: unknown
   /** Whether the app runs in development. */
   dev: boolean
@@ -126,8 +137,10 @@ export interface DruxtAnchorsInput {
 }
 
 /**
- * Whether Druxt writes its anchors: the site's explicit `true` or `false` wins, and otherwise they are on in
- * development, and in production when a module requires them. An unknown value counts as unset.
+ * Works out whether Druxt writes its anchors.
+ *
+ * The site's explicit `true` or `false` wins. Otherwise the anchors are on in development, and on in production when a
+ * module requires them. An unknown value counts as unset.
  *
  * @param input - The site's setting, whether the app runs in development, and the modules that required anchors.
  * @returns The state.

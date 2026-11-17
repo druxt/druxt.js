@@ -4,16 +4,20 @@ import type { DruxtOptions } from '../module'
 import type { DruxtPrivateConfig, DruxtPublicConfig } from '../runtime/types'
 
 /**
- * Whether the pages can leave Drupal's address out: nothing in the browser uses it. That needs all three of these.
+ * Whether the pages can leave Drupal's address out, because nothing in the browser uses it.
  *
- * - No request goes from the browser to Drupal: a static build that is not `hybrid`, or `proxy.api`.
- * - No file URL is made on it: `filesUrl` is set, a static build copies the files with `static.files`, or a server
+ * That needs all three of these:
+ *
+ * - No request goes from the browser to Drupal. The site is a static build that is not `hybrid` and has no `auth`, or a
+ *   server with `proxy.api`.
+ * - No file URL is made on it. `filesUrl` is set, or a static build copies the files with `static.files`, or a server
  *   proxies them with `proxy.files`.
- * - No visitor is sent to it to sign in: no `auth`, or an `auth.authorizeUrl` of the site's own choosing. A static
- *   build's sign-in goes from the browser to Drupal, so it keeps the address whatever `authorizeUrl` says.
+ * - No visitor is sent to it to sign in. There is no `auth`, or `auth.authorizeUrl` is of the site's own choosing. A
+ *   static build's sign-in goes from the browser to Drupal, so it keeps the address whatever `authorizeUrl` says.
  *
  * @param options - The module's options, normalised.
  * @param staticBuild - The static mode, resolved.
+ * @returns Whether the address can be left out.
  * @internal
  */
 export const hidesBaseUrl = (options: Pick<DruxtOptions, 'proxy' | 'filesUrl' | 'auth'>, staticBuild: { enabled: boolean, files: boolean, hybrid: boolean }): boolean => {
@@ -24,16 +28,21 @@ export const hidesBaseUrl = (options: Pick<DruxtOptions, 'proxy' | 'filesUrl' | 
 }
 
 /**
- * Splits the site's `druxt` options once: every secret, and the server's
- * `proxy.trustForwarded`, into the private runtime config, and everything
- * else into the public one. The proxy's pattern for Drupal's session cookie,
- * `cache.sessionCookie`, goes to the private config too, as the proxy reads it
- * with the cache off, as in development.
+ * Splits the site's `druxt` options once, into the public and the private runtime config.
  *
- * The private keys all exist, empty unless set, so Nuxt can set each from its
- * environment variable at runtime. The build's credentials stay in the build:
- * only `build.auth.scope` reaches the private config, and the server's own
- * come from `NUXT_DRUXT_BUILD_AUTH_*` or `DRUXT_BUILD_*` at runtime.
+ * The private config gets:
+ *
+ * - Every secret.
+ * - The server's `proxy.trustForwarded`.
+ * - The proxy's pattern for Drupal's session cookie, `cache.sessionCookie`. The proxy reads it with the cache off too,
+ *   as in development.
+ *
+ * Everything else goes into the public config.
+ *
+ * The private keys all exist, and are empty unless set, so Nuxt can set each from its environment variable at runtime.
+ *
+ * The build's credentials stay in the build. Only `build.auth.scope` reaches the private config. The server's own
+ * credentials come from `NUXT_DRUXT_BUILD_AUTH_*` or `DRUXT_BUILD_*` at runtime.
  *
  * @param options - The module's options, normalised.
  * @param sessionCookie - The site's `cache.sessionCookie`, read before development turns the cache off.
@@ -44,7 +53,7 @@ export const splitDruxtConfig = (options: DruxtOptions, sessionCookie = (options
   const { build, connections, auth, cache, ...rest } = options
   void connections
   const out: Record<string, unknown> = { ...rest }
-  // A deployment's trust in its front proxy is the server's alone: it never reaches the browser.
+  // A deployment's trust in its front proxy is the server's alone. It never reaches the browser.
   let trustForwarded = false
   if (options.proxy) {
     const { trustForwarded: trust, ...publicProxy } = options.proxy

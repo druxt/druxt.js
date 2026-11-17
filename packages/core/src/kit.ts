@@ -1,5 +1,5 @@
-// Build-time helpers for Druxt modules, from `@druxt/core/kit`. They are for
-// the Druxt modules that build on core, not for a site's own nuxt.config.
+// Build-time helpers for Druxt modules, from `@druxt/core/kit`. They are for the Druxt modules that build on core, not
+// for a site's own nuxt.config.
 
 import { addPlugin, directoryToURL, tryResolveModule, useLogger } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
@@ -12,32 +12,38 @@ export { DRUXT_API_BASE } from './routes'
 declare module '@nuxt/schema' {
   interface NuxtHooks {
     /**
-     * Druxt's anchors state, once it is final at `modules:done`: whether the default output carries the anchors, the
-     * modules that required them, and `disabledBy: 'site'` when the site turned them off although a module required
-     * them. Called again for a module that requires anchors later.
+     * Called with Druxt's anchors state, once it is final at `modules:done`.
+     *
+     * The state says whether the default output carries the anchors, and which modules required them. It has
+     * `disabledBy: 'site'` when the site turned the anchors off although a module required them.
+     *
+     * It is called again for a module that requires anchors later.
      */
     'druxt:anchors': (state: DruxtAnchorsState) => void | Promise<void>
     /**
-     * The paths a static build prerenders, before Nitro gets them: Drupal's published pages under each language's
-     * prefix when `druxt.static.routes` is on, else none. A module or the site adds paths to the set or removes
-     * them. Nitro's own `prerender.routes` and the links it crawls are added as usual.
+     * Called with the paths a static build prerenders, before Nitro gets them.
+     *
+     * The set holds Drupal's published pages under each language's prefix when `druxt.static.routes` is on. Otherwise
+     * it is empty. A module or the site adds paths to the set, or removes them.
+     *
+     * Nitro's own `prerender.routes`, and the links it crawls, are added as usual.
      */
     'druxt:prerender': (routes: Set<string>) => void | Promise<void>
   }
 }
 
-// The CommonJS packages core's browser runtime imports. Vite's development
-// server pre-bundles a dependency its scan finds, but pnpm does not hoist one
-// that only @druxt/core depends on, so the scan never finds it.
+// The CommonJS packages that core's browser runtime imports. Vite's development server pre-bundles a dependency its
+// scan finds. pnpm does not hoist a dependency that only @druxt/core depends on, so the scan never finds it.
 const coreCommonJs = ['drupal-jsonapi-params']
 
 /**
  * Adds entries to Vite's development pre-bundle, `vite.optimizeDeps.include`, once each.
  *
- * Vite resolves a nested entry from the app's root, starting with its first
- * package, and warns on every start about one it cannot resolve. An entry whose
- * first package the app cannot resolve, such as `@druxt/core` in a pnpm app that
- * lists only `@druxt/router`, is left out. This is for Druxt modules, not for a site.
+ * Vite resolves a nested entry from the app's root, starting with its first package. It warns on every start about an
+ * entry it cannot resolve. So an entry whose first package the app cannot resolve is left out. `@druxt/core` is such a
+ * package in a pnpm app that lists only `@druxt/router`.
+ *
+ * This is for Druxt modules, not for a site.
  *
  * @param nuxt - The Nuxt instance.
  * @param entries - Package names, or nested names such as `@druxt/core > drupal-jsonapi-params`.
@@ -56,14 +62,16 @@ export const addPrebundle = async (nuxt: Nuxt, entries: string[]): Promise<void>
 }
 
 /**
- * The pre-bundle entries for core's CommonJS browser dependencies, reached through `parent`.
+ * Gets the pre-bundle entries for core's CommonJS browser dependencies, reached through `parent`.
  *
- * Under pnpm an app that lists only a module which installs core, such as
- * `@druxt/router`, cannot resolve `@druxt/core` from its root. That module adds
- * the chain through itself, such as `@druxt/router > @druxt/core > drupal-jsonapi-params`,
- * which resolves. This is for Druxt modules, not for a site.
+ * Under pnpm, an app that lists only a module which installs core, such as `@druxt/router`, cannot resolve
+ * `@druxt/core` from its root. That module adds the chain through itself, such as `@druxt/router > @druxt/core >
+ * drupal-jsonapi-params`. That chain resolves.
+ *
+ * This is for Druxt modules, not for a site.
  *
  * @param parent - The module that depends on core, or none for core itself.
+ * @returns The entries, for `addPrebundle()`.
  *
  * @example @lang ts
  * await addPrebundle(nuxt, corePrebundle('@druxt/router'))
@@ -80,9 +88,12 @@ interface WithDefaults {
 }
 
 /**
- * Registers a Druxt module's development tools plugin: a client plugin that adds the module's sections, timeline events
- * and actions with `useDruxtDevtools()`. Registered in development only, so a production build has none of it, and it
- * runs after core's own. This is for Druxt modules, not for a site.
+ * Registers a Druxt module's development tools plugin.
+ *
+ * The plugin is a client plugin. It adds the module's sections, timeline events and actions with `useDruxtDevtools()`.
+ * It is registered in development only, so a production build has none of it. It runs after core's own.
+ *
+ * This is for Druxt modules, not for a site.
  *
  * @param nuxt - The Nuxt instance.
  * @param src - The plugin's path.
@@ -97,10 +108,14 @@ export const addDruxtDevtoolsPlugin = (nuxt: Nuxt, src: string): void => {
 /**
  * Registers a Druxt module's default settings, such as `{ entity: { label: true } }`.
  *
- * The defaults are written into the build, read through `#druxt/defaults`, and resolved after core's own defaults
- * and before the settings Drupal publishes and the site's `druxt` config, so both can change them. They never go into
- * the public runtime config, where they would outrank Drupal, and no environment variable changes them. A module
- * still copies the site's own options into the public config. This is for Druxt modules, not for a site.
+ * The defaults are written into the build, and read through `#druxt/defaults`. They are resolved after core's own
+ * defaults. They are resolved before the settings Drupal publishes and the site's `druxt` config, so both can change
+ * them.
+ *
+ * They never go into the public runtime config, where they would outrank Drupal. No environment variable changes them.
+ * A module still copies the site's own options into the public config.
+ *
+ * This is for Druxt modules, not for a site.
  *
  * @param nuxt - The Nuxt instance.
  * @param defaults - The defaults, by settings key. A later call fills only what an earlier one left unset.
@@ -114,9 +129,10 @@ export const addDruxtDefaults = (nuxt: Nuxt, defaults: Record<string, unknown>):
 }
 
 /**
- * The default settings the modules registered with `addDruxtDefaults()`.
+ * Gets the default settings the modules registered with `addDruxtDefaults()`.
  *
  * @param nuxt - The Nuxt instance.
+ * @returns The defaults, by settings key.
  * @internal
  */
 export const druxtDefaults = (nuxt: Nuxt): Record<string, unknown> => (nuxt.options as unknown as WithDefaults)._druxtDefaults || {}
@@ -129,16 +145,25 @@ interface WithProxy {
 /**
  * Proxies a Drupal path through the site's own origin, for the browser, when the site sets `druxt.proxy.api`.
  *
- * Core serves each path from one Nitro handler that reads `runtimeConfig.public.druxt.baseUrl` at request time, so a
- * runtime `NUXT_PUBLIC_DRUXT_BASE_URL` moves the browser's requests along with the server's. The method, the
- * streamed body, the headers and the cookies pass through, except `Host`, `Accept` and `Accept-Encoding`. Forwarding
- * headers are set from the site's own view of the request, never from the browser's. A redirect passes to the
- * browser, with a location on Drupal's base URL moved to this site, and a cookie for Drupal's host is set for this
- * site's. The response's encoding and length headers are recomputed. Call it before every module is in, as core
- * registers the paths then. This is for Druxt modules, not for a site.
+ * Core serves every path from one Nitro handler. The handler reads `runtimeConfig.public.druxt.baseUrl` at request
+ * time, so a runtime `NUXT_PUBLIC_DRUXT_BASE_URL` moves the browser's requests along with the server's.
+ *
+ * What the proxy passes on:
+ *
+ * - The method, the streamed body, the headers and the cookies pass through, except `Host`, `Accept` and
+ *   `Accept-Encoding`.
+ * - Forwarding headers are set from the site's own view of the request, never from the browser's.
+ * - A redirect passes to the browser. A location on Drupal's base URL is moved to this site.
+ * - A cookie for Drupal's host is set for this site's host.
+ * - The response's encoding and length headers are recomputed.
+ *
+ * Call it before every module is installed, because core registers the paths then.
+ *
+ * This is for Druxt modules, not for a site.
  *
  * @param nuxt - The Nuxt instance.
- * @param path - The path on both sides, such as `/router/translate-path`, or ending in `/**` for everything below it.
+ * @param path - The path on both sides, such as `/router/translate-path`. A path ending in `/**` proxies everything
+ * below it.
  *
  * @example @lang ts
  * if (options.proxy?.api) addDruxtProxy(nuxt, '/router/translate-path')
@@ -149,22 +174,27 @@ export const addDruxtProxy = (nuxt: Nuxt, path: string): void => {
 }
 
 /**
- * The paths the modules proxy with `addDruxtProxy()`.
+ * Gets the paths the modules proxy with `addDruxtProxy()`.
  *
  * @param nuxt - The Nuxt instance.
+ * @returns A copy of the paths.
  * @internal
  */
 export const druxtProxyRoutes = (nuxt: Nuxt): string[] => [...((nuxt.options as unknown as WithProxy)._druxtProxy || [])]
 
 /** What a module that requires Druxt's anchors says about itself. */
 export interface DruxtAnchorsRequirement {
-  /** The module's name, such as `@druxt-contrib/fae`, which the build's warning and the development tools show. */
+  /** The module's name, such as `@druxt-contrib/fae`. The build's warning and the development tools show it. */
   module: string
   /** Why it needs them, such as `it finds the fields an editor edits`. */
   reason: string
 }
 
-/** A build's anchors: what the site set, the modules that required them, and the state, one object kept up to date. */
+/**
+ * A build's anchors: what the site set, the modules that required them, and the state.
+ *
+ * It is one object, kept up to date.
+ */
 interface DruxtAnchorsRecord {
   setting?: unknown
   requirements: DruxtAnchorsRequirement[]
@@ -173,12 +203,16 @@ interface DruxtAnchorsRecord {
   final: boolean
 }
 
-/** Where a build keeps its anchors record: on the options, as the defaults are, so every copy of core shares it. */
+/**
+ * Where a build keeps its anchors record.
+ *
+ * It is on the options, as the defaults are, so every copy of core shares it.
+ */
 interface WithAnchors {
   _druxtAnchors?: DruxtAnchorsRecord
 }
 
-/** Works the state out again, in place, so every holder of it sees the change. */
+/** Works the anchors state out again. It changes the state object in place, so every holder of it sees the change. */
 const updateAnchors = (nuxt: Nuxt, record: DruxtAnchorsRecord): void => {
   const setting = record.setting ?? (nuxt.options as unknown as { druxt?: { anchors?: unknown } }).druxt?.anchors
   const next = resolveDruxtAnchors({ setting, dev: nuxt.options.dev, requiredBy: record.requirements.map((requirement) => requirement.module) })
@@ -188,7 +222,11 @@ const updateAnchors = (nuxt: Nuxt, record: DruxtAnchorsRecord): void => {
   else delete record.state.disabledBy
 }
 
-/** Warns once for each requiring module the site's `false` overrules, then tells the build the state. */
+/**
+ * Tells the build the anchors state, through the `druxt:anchors` hook.
+ *
+ * First, when the site's `false` overrules the modules, it warns once for each module that required anchors.
+ */
 const announceAnchors = async (nuxt: Nuxt, record: DruxtAnchorsRecord): Promise<void> => {
   updateAnchors(nuxt, record)
   if (record.state.disabledBy) {
@@ -202,9 +240,10 @@ const announceAnchors = async (nuxt: Nuxt, record: DruxtAnchorsRecord): Promise<
 }
 
 /**
- * A build's anchors record, made on first use, which settles at `modules:done`.
+ * Gets a build's anchors record. It is made on first use, and settles at `modules:done`.
  *
  * @param nuxt - The Nuxt instance.
+ * @returns The record.
  * @internal
  */
 export const druxtAnchors = (nuxt: Nuxt): DruxtAnchorsRecord => {
@@ -224,18 +263,23 @@ export const druxtAnchors = (nuxt: Nuxt): DruxtAnchorsRecord => {
 
 /**
  * Turns Druxt's anchors on for a module that needs them, such as an inline editor or a diff view, in production too.
- * The anchors are the `data-druxt-*` attributes the default output names its entities and fields with, and
- * `findAnchor()` from `@druxt/core/anchors` finds them again. This is for Druxt modules, not for a site.
  *
- * A site that sets `druxt.anchors: false` keeps them off: explicit config beats a module. The build then warns once for
- * each requiring module, naming it and its reason. The state returned is the build's own, kept up to date until every
- * module is in, so the order modules run in does not matter: read it in a `modules:done` hook, or listen for the
- * `druxt:anchors` hook. In the app, `useDruxtAnchors()` gives the same state.
+ * The anchors are the `data-druxt-*` attributes the default output names its entities and fields with. `findAnchor()`
+ * from `@druxt/core/anchors` finds them again.
+ *
+ * A site that sets `druxt.anchors: false` keeps them off, because explicit config beats a module. The build then warns
+ * once for each requiring module, naming it and its reason.
+ *
+ * The state returned is the build's own. It is kept up to date until every module is installed, so the order modules
+ * run in does not matter. Read it in a `modules:done` hook, or listen for the `druxt:anchors` hook. In the app,
+ * `useDruxtAnchors()` gives the same state.
+ *
+ * This is for Druxt modules, not for a site.
  *
  * @param nuxt - The Nuxt instance.
  * @param requirement - The module's name, and why it needs anchors.
  * @returns The anchors state: `enabled`, the modules that required them, and `disabledBy: 'site'` when the site's
- *   `false` overruled them.
+ * `false` overruled them.
  *
  * @example @lang ts
  * const anchors = requireDruxtAnchors(nuxt, { module: '@druxt-contrib/fae', reason: 'it finds the fields an editor edits' })
@@ -247,7 +291,7 @@ export const requireDruxtAnchors = (nuxt: Nuxt, requirement: DruxtAnchorsRequire
   const record = druxtAnchors(nuxt)
   if (!record.requirements.some((known) => known.module === requirement.module)) record.requirements.push({ ...requirement })
   updateAnchors(nuxt, record)
-  // A module that requires anchors after every module is in: the state changes, and the build hears it again.
+  // A module may require anchors after every module is installed. The state changes then, so the build is told again.
   if (record.final) void announceAnchors(nuxt, record)
   return record.state
 }

@@ -1,4 +1,4 @@
-// The Druxt mark, from druxtjs.org's logo: three paths. Never redrawn.
+// The Druxt mark. Its three paths are copied from druxtjs.org's logo, and must never be redrawn.
 
 /** The mark's three paths: blue, green, then ink. */
 export const DRUXT_MARK_PATHS = [
@@ -11,22 +11,31 @@ export const DRUXT_MARK_PATHS = [
 export const DRUXT_MARK_RATIO = 452 / 342
 
 /**
- * The mono mark, one colour, as SVG source.
+ * Gets the mark in one colour, as SVG source.
  *
- * @param size - The width in pixels: 16 or 20 for a tab icon.
- * @param fill - The colour, `currentColor` unless given.
+ * @param size - The width in pixels. Use 16 or 20 for a tab icon.
+ * @param fill - The colour. The default is `currentColor`.
+ * @returns The SVG source.
  */
 export const druxtMonoMark = (size = 16, fill = 'currentColor'): string =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452 342" width="${size}" height="${Math.round(size / DRUXT_MARK_RATIO)}" fill="${fill}" aria-hidden="true">${DRUXT_MARK_PATHS.map((d) => `<path d="${d}"/>`).join('')}</svg>`
 
 /**
- * The tab icon as SVG source, for a DevTools rail that shows an image: the rail's grey, lighter in a dark scheme. Nuxt
- * DevTools shows an image only from a URL that starts with `/` or `http`, so core serves this from a route of its own.
+ * Gets the tab icon as SVG source, for a DevTools rail that shows an image.
+ *
+ * The icon is the rail's grey, and a lighter grey in a dark colour scheme.
+ *
+ * Nuxt DevTools shows an image only from a URL that starts with `/` or `http`. So core serves this source from a
+ * route of its own.
+ *
+ * @returns The SVG source.
  */
 export const druxtTabIconSvg = (): string =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452 342"><style>path{fill:#4a5560}@media (prefers-color-scheme:dark){path{fill:#a9b6c1}}</style>${DRUXT_MARK_PATHS.map((d) => `<path d="${d}"/>`).join('')}</svg>`
 
 /**
- * The tab icon as a data URL, for a rail that takes one.
+ * Gets the tab icon as a data URL, for a rail that takes one.
+ *
+ * @returns The data URL.
  */
 export const druxtTabIcon = (): string => `data:image/svg+xml,${encodeURIComponent(druxtTabIconSvg())}`

@@ -3,7 +3,7 @@ import type { DruxtAuthOptions, DruxtClientOptions, DruxtConfig } from '@druxt/c
 import { DRUXT_API_BASE } from '@druxt/core/routes'
 import type { DruxtPublicConfig } from '../types'
 
-// No #imports here: the plugin and the unit tests both use this file.
+// This file imports nothing from `#imports`, because the plugin and the unit tests both use it.
 
 /** Which side the client is for, and what that side adds. */
 export type DruxtClientSide =
@@ -13,10 +13,10 @@ export type DruxtClientSide =
 /**
  * The client's options for one side, from the public config.
  *
- * The browser goes through the proxy when `proxy.api` is on, and the server
- * talks to Drupal directly. On the server, auth gets the secret from the
- * private config. In the browser, the password grant goes through the
- * server route that holds it. Module settings never reach the client.
+ * - The browser goes through the proxy when `proxy.api` is on. The server talks to Drupal directly.
+ * - On the server, auth gets the secret from the private config.
+ * - In the browser, the password grant goes through the server route that holds the secret.
+ * - Module settings never reach the client.
  *
  * @param config - The public `druxt` config.
  * @param side - The side, and its secret or origin.
@@ -29,13 +29,14 @@ export const druxtClientOptions = (config: DruxtPublicConfig, side: DruxtClientS
   if (auth && options.auth) {
     options.auth = {
       ...options.auth,
-      // The browser leaves for Drupal's own origin to sign in there.
+      // To sign in at Drupal, the browser leaves for Drupal's own origin.
       authorizeUrl: auth.authorizeUrl || `${options.baseUrl}/oauth/authorize`,
       ...(side.server
-        // Straight to Drupal, with the secret, which stays on the server, which holds the tokens.
+        // The server goes straight to Drupal with the secret. The secret stays on the server, which holds the
+        // tokens.
         ? { clientSecret: side.clientSecret, session: false }
-        // The server holds the session: every grant and the sign-out go through its routes, which keep the tokens. The
-        // password grant only when it is offered.
+        // The server holds the session. Every grant and the sign-out go through its routes, which keep the tokens.
+        // The password grant goes through them only when it is offered.
         : auth.session
           ? {
               session: true,
