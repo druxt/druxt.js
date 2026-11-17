@@ -168,3 +168,15 @@ test('an issue ref in a bare URL stays as written', async () => {
   assert.ok(line.includes('https://example.org/guide#123, www.example.org/a#7 and https://example.org/a(b(c))#8 for'), line)
   assert.match(line, /\[#45\]\(.*\/issues\/45\)/)
 })
+
+test('a bare URL ends at the bracket or parenthesis that closes it', async () => {
+  for (const [summary, kept, linked] of [
+    ['fix: see <https://example.org/a>(#45) for #46', '<https://example.org/a>', ['45', '46']],
+    ['fix: see [x](https://example.org/b)#45 for #46', '[x](https://example.org/b)', ['45', '46']],
+    ['fix: (see https://example.org/c)#45 for #46', 'https://example.org/c)', ['45', '46']],
+  ]) {
+    const line = await getReleaseLine({ summary, commit: LATER })
+    assert.ok(line.includes(kept), line)
+    for (const n of linked) assert.match(line, new RegExp(`\\[#${n}\\]\\(.*\\/issues\\/${n}\\)`), line)
+  }
+})

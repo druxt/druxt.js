@@ -95,14 +95,37 @@ md.inline.ruler.push('issue_ref', (state, silent) => {
   return true
 })
 
+/**
+ * Where a URL linkify-it found really ends. linkify-it stops at nested
+ * parentheses, as in `https://example.org/a(b(c))#123`, so the URL runs on
+ * past them, but never past a space, a `<` or `>`, or a `)` it did not open:
+ * the `)` that closes a Markdown link, or the `>` that closes an autolink.
+ *
+ * @param {string} text - The text the URL was found in.
+ * @param {{ index: number, lastIndex: number }} url - linkify-it's match.
+ * @returns {number} The index after the URL's last character.
+ */
+const urlEnd = (text, url) => {
+  let depth = 0
+  for (const char of text.slice(url.index, url.lastIndex)) {
+    if (char === '(') depth++
+    else if (char === ')') depth--
+  }
+  let end = url.lastIndex
+  for (; end < text.length && !/[\s<>]/.test(text[end]); end++) {
+    if (text[end] === '(') depth++
+    else if (text[end] === ')') {
+      if (depth <= 0) break
+      depth--
+    }
+  }
+  return end
+}
+
 const linkIssues = (text, env) => {
   // A bare URL, such as `https://example.org/guide#123`, is text to CommonMark,
-  // so its refs are found with linkify-it, which markdown-it bundles. Each one
-  // runs on to the next space, past any parentheses linkify-it leaves out.
-  const urls = (md.linkify.match(text) || []).map((url) => {
-    const rest = text.slice(url.lastIndex).search(/\s/)
-    return [url.index, rest < 0 ? text.length : url.lastIndex + rest]
-  })
+  // so its refs are found with linkify-it, which markdown-it bundles.
+  const urls = (md.linkify.match(text) || []).map((url) => [url.index, urlEnd(text, url)])
   const inUrl = (start) => urls.some(([from, to]) => from <= start && start < to)
   // `[#123]` reads as a label someone meant to write.
   const refs = md
