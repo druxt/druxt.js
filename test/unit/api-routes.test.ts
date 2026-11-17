@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import * as client from '@druxt/client'
 import { DRUXT_API_BASE, normalEndpoint, trimEndSlashes, trimStartSlashes } from '../../packages/core/src/routes'
 import { druxtApiConflict } from '../../packages/core/src/utils/routes'
 
@@ -26,6 +27,12 @@ describe('Druxt\'s own routes', () => {
 })
 
 describe('trimEndSlashes() and trimStartSlashes()', () => {
+  it('are the client\'s, as normalEndpoint() is, so core and the client read one endpoint alike', () => {
+    expect(trimEndSlashes).toBe(client.trimEndSlashes)
+    expect(trimStartSlashes).toBe(client.trimStartSlashes)
+    expect(normalEndpoint).toBe(client.normalEndpoint)
+  })
+
   it('cut the slashes from one end, and nothing else', () => {
     expect(trimEndSlashes('https://example.com//')).toBe('https://example.com')
     expect(trimEndSlashes('/a/b/')).toBe('/a/b')
