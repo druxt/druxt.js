@@ -5,27 +5,32 @@ import { connectionName, drupalSettingsStorageKey, writeRequestTiers } from '../
 import type { DrupalSettingsTiers } from '../utils/drupal-settings'
 
 const logger = consola.withTag('druxt')
+// Warns in development only.
 const warn = (message: string) => {
   if (import.meta.dev) logger.warn(message)
 }
 
-/** The last write to each storage key, settled or not, which the next write to that key waits for. */
+/** The last write to each storage key, settled or not. The next write to that key waits for it. */
 const writes = new Map<string, Promise<void>>()
 
 /**
  * Stores a connection's settings from Drupal on the server, for every request.
  *
- * A decoupled-settings fetcher calls it from a Nitro plugin, which runs at
- * server start and while `nuxt generate` builds static pages. Both tiers go to Nitro's
- * `druxt` storage. Each request's render puts the public tier in the Nuxt
- * state `useDruxtSettings()` reads, and so in the payload, and
- * `useDruxtServerSettings()` reads the server tier. With an `event`, the
- * tiers are for that request only, each taking the place of the stored
- * one, and nothing is stored.
+ * A decoupled-settings fetcher calls it from a Nitro plugin. The plugin runs at server start, and while
+ * `nuxt generate` builds static pages.
  *
- * Calls for one connection write in the order they were made, each after the one before, so two that overlap, such
- * as one per tier, keep both tiers. That holds within one server process only: two instances that share a storage
- * driver each read, merge and write on their own, and the later write replaces the earlier.
+ * Both tiers go to Nitro's `druxt` storage:
+ *
+ * - Each request's render puts the public tier in the Nuxt state that `useDruxtSettings()` reads, and so in the
+ *   payload.
+ * - `useDruxtServerSettings()` reads the server tier.
+ *
+ * With an `event`, the tiers are for that request only. Each takes the place of the stored one, and nothing is
+ * stored.
+ *
+ * Calls for one connection write in the order they were made, each after the one before. So two calls that overlap,
+ * such as one per tier, keep both tiers. That holds within one server process only. Two instances that share a
+ * storage driver each read, merge and write on their own, and the later write replaces the earlier.
  *
  * @param connection - The connection, `default` unless named.
  * @param tiers - The public tier, the server tier, or both. A tier left out is kept.
@@ -48,7 +53,7 @@ export const storeDrupalSettings = async (connection: string, tiers: DrupalSetti
     if (tiers.server) next.server = tiers.server
     await storage.setItem(key, next)
   }
-  // After the write before it, whether that one stored or failed.
+  // This write runs after the write before it, whether that one stored or failed.
   const turn = (writes.get(key) || Promise.resolve()).then(write, write)
   const settled = turn.catch(() => {})
   writes.set(key, settled)
@@ -61,8 +66,9 @@ export const storeDrupalSettings = async (connection: string, tiers: DrupalSetti
 }
 
 /**
- * Reads a connection's stored tiers, once per request. A failed read is
- * logged and counts as none, so a storage outage leaves the config in force.
+ * Reads a connection's stored tiers, once per request.
+ *
+ * A failed read is logged and counts as no tiers, so a storage outage leaves the config in force.
  *
  * @param event - The request.
  * @internal

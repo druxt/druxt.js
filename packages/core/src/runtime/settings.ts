@@ -12,19 +12,22 @@ export { DRUXT_SETTINGS_DRUPAL_KEY }
 export type { DrupalSettingsTiers }
 
 const logger = consola.withTag('druxt')
+// Warns in development only.
 const warn = (message: string) => {
   if (import.meta.dev) logger.warn(message)
 }
 
-// The public tier, as Nuxt state: the server fills it, the payload carries it to the browser.
+// The public tier, as Nuxt state. The server fills it, and the payload carries it to the browser.
 const drupalTier = (connection: string): Ref<Partial<DruxtSettings>> =>
   useState<Partial<DruxtSettings>>(DRUXT_SETTINGS_DRUPAL_KEY(connection), () => ({}))
 
+// The read-only views already made, per app and then per connection.
 const views = new WeakMap<object, Map<string, DruxtSettings>>()
 
 /**
- * A read-only view of resolved settings: each read goes through `resolved`,
- * so a holder sees a tier set after it took the view.
+ * A read-only view of resolved settings.
+ *
+ * Each read goes through `resolved`, so a holder sees a tier that was set after it took the view.
  *
  * @param resolved - The resolved settings.
  */
@@ -34,7 +37,7 @@ const readOnlyView = (resolved: ComputedRef<DruxtSettings>): DruxtSettings => ne
   ownKeys: () => Reflect.ownKeys(resolved.value),
   getOwnPropertyDescriptor: (_, key) => {
     const descriptor = Reflect.getOwnPropertyDescriptor(resolved.value, key)
-    // Configurable, as a proxy must report a key its empty target lacks.
+    // A proxy must report a key that its empty target lacks as configurable.
     return descriptor && { ...descriptor, configurable: true, writable: false }
   },
   set: () => false,
@@ -43,24 +46,29 @@ const readOnlyView = (resolved: ComputedRef<DruxtSettings>): DruxtSettings => ne
 })
 
 /**
- * The settings Druxt's modules read, resolved for a connection.
+ * Gets the settings Druxt's modules read, resolved for a connection.
  *
- * Resolves core's defaults, then the defaults the Druxt modules register
- * with `addDruxtDefaults()`, then the settings Drupal published for the browser
- * (the public tier a decoupled-settings fetcher wrote with
- * `setDrupalSettings()`), then the `druxt` config from `nuxt.config` or the
- * environment, so code and environment win over Drupal. A config key left
- * `undefined` or empty does not erase a Drupal value. The client's options,
- * such as `baseUrl`, `proxy` and `auth`, are not settings: read those from
+ * The sources are resolved in this order, so code and environment win over Drupal:
+ *
+ * 1. Core's defaults.
+ * 2. The defaults the Druxt modules register with `addDruxtDefaults()`.
+ * 3. The settings Drupal published for the browser. This is the public tier that a decoupled-settings fetcher wrote
+ *    with `setDrupalSettings()`.
+ * 4. The `druxt` config, from `nuxt.config` or the environment.
+ *
+ * A config key left `undefined` or empty does not erase a Drupal value.
+ *
+ * The client's options, such as `baseUrl`, `proxy` and `auth`, are not settings. Read those from
  * `useNuxtApp().$druxt.options`.
  *
- * Synchronous, and the same on both sides: the browser reads the state the
- * server rendered with, from the payload. The result is a read-only view,
- * one per app and connection, that resolves again when a tier changes, so a
- * component that took it early still reads a tier set later in the render.
+ * It is synchronous, and the same on both sides: the browser reads the state the server rendered with, from the
+ * payload.
  *
- * @param connection - The connection, `default` unless named. 2.0 has only
- * `default`, and any other name resolves to it, with a warning in development.
+ * The result is a read-only view, one per app and connection. It resolves again when a tier changes. So a component
+ * that took it early still reads a tier set later in the render.
+ *
+ * @param connection - The connection, `default` unless named. 2.0 has only `default`. Any other name resolves to it,
+ * with a warning in development.
  * @returns The resolved settings, read-only.
  *
  * @example
@@ -75,9 +83,9 @@ export const useDruxtSettings = (connection = 'default'): DruxtSettings => {
   let view = byConnection.get(name)
   if (!view) {
     const tier = drupalTier(name)
-    // Read once on purpose: runtime config is fixed after startup, so only the Drupal tier changes.
+    // The config is read once on purpose. Runtime config is fixed after startup, so only the Drupal tier changes.
     const config = useRuntimeConfig()
-    // Detached, so the computed outlives the component that first asked.
+    // The scope is detached, so the computed outlives the component that first asked.
     const resolved = effectScope(true).run(() => computed(() => resolveDruxtSettings(
       DRUXT_SETTINGS_DEFAULTS,
       settingsOnly(moduleDefaults),
@@ -90,8 +98,10 @@ export const useDruxtSettings = (connection = 'default'): DruxtSettings => {
 }
 
 /**
- * The tiers above the defaults that a connection's settings resolve from: the public tier from Drupal, as state, and
- * the site's config. The development tools read it to say where each setting came from.
+ * The tiers above the defaults that a connection's settings resolve from.
+ *
+ * They are the public tier from Drupal, as state, and the site's config. The development tools read them to say
+ * where each setting came from.
  *
  * @param connection - The connection, `default` unless named.
  * @internal
@@ -101,17 +111,21 @@ export const useDruxtSettingsTiers = (connection = 'default'): { drupal: Ref<Par
   site: configSource(settingsOnly(toRaw(useRuntimeConfig().public.druxt))),
 })
 
-/** Whether the build is static, in `druxt.static` mode, and whether it serves Drupal's files under the app's base URL. */
+/** The static mode a build resolved, from `druxt.static`. */
 export interface DruxtStaticBuild {
+  /** Whether the build is static. */
   enabled: boolean
+  /** Whether the build serves Drupal's files under the app's base URL. */
   files: boolean
-  /** Whether `@druxt/router` still asks Drupal about a page the build did not generate, `druxt.static.hybrid`. */
+  /** Whether `@druxt/router` still asks Drupal about a page the build did not generate. Set by `druxt.static.hybrid`. */
   hybrid: boolean
 }
 
 /**
- * The static mode, `druxt.static`, as the build resolved it: on for a static build, as `nuxt generate` makes it, unless
- * the site turns it off. Read at build, so a module reads it, never Drupal's settings.
+ * Gets the static mode, `druxt.static`, as the build resolved it.
+ *
+ * It is on for a static build, as `nuxt generate` makes it, unless the site turns it off. It is read at build. So
+ * a module reads it from here, and never from Drupal's settings.
  *
  * @example @lang ts
  * if (useDruxtStaticBuild().enabled) console.log('No Drupal at run time')
@@ -123,28 +137,31 @@ export const useDruxtStaticBuild = (): DruxtStaticBuild => {
 
 /** What `setDrupalSettings()` takes besides the tiers. */
 export interface SetDrupalSettingsOptions {
-  /** Replace the public tier with the one given, in place of merging it over the current one. */
+  /** Replaces the public tier with the one given, instead of merging it over the current one. */
   replace?: boolean
 }
 
 /**
- * Sets a connection's settings from Drupal, during a server render or in
- * the browser. A decoupled-settings fetcher calls it with the settings it
- * read for the connection's Consumer.
+ * Sets a connection's settings from Drupal, during a server render or in the browser.
  *
- * The public tier is merged over the one the Nuxt state holds, so a key the
- * build or server start stored with `storeDrupalSettings()` is kept unless
- * the new tier sets it. Objects merge key by key, and an array is replaced.
- * `{ replace: true }` replaces the public tier instead. It goes to the state
- * `useDruxtSettings()` reads, and so to the payload.
+ * A decoupled-settings fetcher calls it with the settings it read for the connection's Consumer.
  *
- * During a server render, the server tier goes on the request, in place of
- * the stored one, where `useDruxtServerSettings()` reads it, and never into
- * state or the payload. In the browser, a server tier is dropped. Pass a
- * server tier only from a server-only plugin (`.server.ts`) or a Nitro
- * plugin's `storeDrupalSettings()`: a universal plugin's source is bundled
- * for the browser, the server tier's values with it, even though the value
- * is dropped at runtime.
+ * The public tier:
+ *
+ * - It is merged over the tier the Nuxt state holds. A key that the build or server start stored with
+ *   `storeDrupalSettings()` is kept unless the new tier sets it.
+ * - Objects merge key by key, and an array is replaced.
+ * - `{ replace: true }` replaces the public tier instead.
+ * - It goes to the state `useDruxtSettings()` reads, and so to the payload.
+ *
+ * The server tier:
+ *
+ * - During a server render, it goes on the request, in place of the stored one. `useDruxtServerSettings()` reads it
+ *   there. It never goes into state or the payload.
+ * - In the browser, it is dropped.
+ * - Pass a server tier only from a server-only plugin (`.server.ts`), or from a Nitro plugin's
+ *   `storeDrupalSettings()`. A universal plugin's source is bundled for the browser, with the server tier's values
+ *   in it, even though the value is dropped at runtime.
  *
  * @param connection - The connection, `default` unless named.
  * @param tiers - The public tier, the server tier, or both. A tier left out is kept.

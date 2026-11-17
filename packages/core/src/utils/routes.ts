@@ -8,15 +8,20 @@ const within = (path: string, base: string): boolean => {
 }
 
 /**
- * Why the site's Drupal paths clash with Druxt's own routes under {@link DRUXT_API_BASE}, or undefined when they don't:
- * a JSON:API endpoint, under a language's prefix or none, at or below the base path, or the base path at or below a
- * proxied files directory. A JSON:API endpoint above the base path, such as `/api`, is not a clash: Druxt's routes
- * answer before the proxy.
+ * Says why the site's Drupal paths clash with Druxt's own routes, under {@link DRUXT_API_BASE}.
+ *
+ * There are two clashes:
+ *
+ * - A JSON:API endpoint, under a language's prefix or none, is at or below the base path.
+ * - The base path is at or below a proxied files directory, or the directory is at or below the base path.
+ *
+ * A JSON:API endpoint above the base path, such as `/api`, is not a clash, because Druxt's routes answer before the
+ * proxy.
  *
  * @param paths - The JSON:API endpoint under each language prefix, and the proxied files directories, without `/**`.
  * @param paths.endpoints - The JSON:API endpoint, with and without each language's prefix, such as `/es/jsonapi`.
  * @param paths.files - The files directories the proxy serves, such as `/sites/default/files`.
- * @returns The build error's message, with its code.
+ * @returns The build error's message, with its code, or undefined when nothing clashes.
  */
 export const druxtApiConflict = (paths: { endpoints: string[], files?: string[] }): string | undefined => {
   const endpoint = paths.endpoints.find((path) => within(path, DRUXT_API_BASE))
