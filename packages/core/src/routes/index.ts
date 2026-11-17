@@ -11,37 +11,6 @@
  */
 export const DRUXT_API_BASE = '/api/_druxt'
 
-/**
- * A URL or path without the slashes at its end, such as a base URL before a path is joined to it. Linear, where a
- * regular expression that ends in `/+$` backtracks on a long run of slashes.
- *
- * @example @lang ts
- * trimEndSlashes('https://example.com//') // 'https://example.com'
- */
-export const trimEndSlashes = (value: string): string => {
-  let end = value.length
-  while (end > 0 && value[end - 1] === '/') end--
-  return value.slice(0, end)
-}
-
-/** A path without the slashes at its start. */
-export const trimStartSlashes = (value: string): string => {
-  let start = 0
-  while (start < value.length && value[start] === '/') start++
-  return value.slice(start)
-}
-
-/**
- * `druxt.endpoint` as every reader spells it: one leading slash and no trailing one, as the client itself reads it, and
- * `/jsonapi` for none. A proxied path, a language's probe and the key of a shared read are all built from it, so two
- * spellings of one endpoint are one endpoint.
- *
- * @param endpoint - The endpoint as the site wrote it, such as `api` or `/jsonapi/`.
- *
- * @example @lang ts
- * normalEndpoint('api/') // '/api'
- */
-export const normalEndpoint = (endpoint?: string): string => {
-  const path = trimEndSlashes(trimStartSlashes(endpoint || ''))
-  return path ? `/${path}` : '/jsonapi'
-}
+// The slash helpers and the endpoint's one spelling live in @druxt/client, which stores its own `endpoint` with them.
+// Core re-exports them, so its modules read an endpoint as the client does.
+export { normalEndpoint, trimEndSlashes, trimStartSlashes } from '@druxt/client'
