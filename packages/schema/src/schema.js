@@ -71,11 +71,10 @@ class DruxtSchema {
    * site it fails the build rather than leaving displays out.
    *
    * @param {string} resourceType - The display resource type, such as `entity_view_display--entity_view_display`.
-   * @param {object} index - The JSON:API resource index.
    *
    * @returns {object[]} The collection responses.
    */
-  async getDisplays(resourceType, index) {
+  async getDisplays(resourceType) {
     const query = () => new DrupalJsonApiParams().addSort('drupal_internal__id')
 
     try {
@@ -86,6 +85,7 @@ class DruxtSchema {
       await this.druxt.getCollection(resourceType, query())
     }
 
+    const index = await this.druxt.getIndex()
     const bundles = {}
     for (const key of Object.keys(index || {})) {
       const [entityType, bundle] = key.split('--')
@@ -122,7 +122,7 @@ class DruxtSchema {
     const displays = (await Promise.all([
       ...['view', 'form'].map(async (schemaType) => {
         const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
-        const result = await this.getDisplays(resourceType, index)
+        const result = await this.getDisplays(resourceType)
 
         // Check permissions.
         try {
@@ -167,7 +167,7 @@ class DruxtSchema {
     if (!this.displayIds) {
       this.displayIds = Promise.all(['view', 'form'].map(async (schemaType) => {
         const resourceType = `entity_${schemaType}_display--entity_${schemaType}_display`
-        const result = await this.getDisplays(resourceType, await this.druxt.getIndex())
+        const result = await this.getDisplays(resourceType)
         return result.flatMap((collection) => (collection.data || [])
           .filter((data) => !!data.attributes.status)
           .map((data) => [data.attributes.targetEntityType, data.attributes.bundle, data.attributes.mode, schemaType].join('--')))
