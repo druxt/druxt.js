@@ -1,3 +1,28 @@
+import DruxtRouterNuxtModule from './nuxt'
+
+/**
+ * Nuxt module.
+ *
+ * Registers the DruxtRouter plugin, store and components.
+ *
+ * @type {Function}
+ * @exports default
+ * @name DruxtRouterNuxtModule
+ * @see {@link ./nuxt|DruxtRouterNuxtModule}
+ *
+ * @example @lang js
+ * // nuxt.config.js
+ * module.exports = {
+ *   modules: [
+ *     'druxt-router'
+ *   ],
+ *   druxt: {
+ *     baseUrl: 'https://demo-api.druxtjs.org'
+ *   }
+ * }
+ */
+export default DruxtRouterNuxtModule
+
 /**
  * The DruxtRouter class.
  *
