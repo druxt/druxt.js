@@ -171,7 +171,6 @@ const recipes = { displayId: 'page_1', viewId: 'recipes' }
 const difficulty = (value) => `views-filter${encodeURIComponent('[difficulty]')}=${value}`
 const easy = difficulty('easy')
 const medium = difficulty('medium')
-const cleared = difficulty('')
 
 // Umami's recipes by node ID, newest first: nodes 3, 4, 5 and 9 are easy, the
 // rest medium.
@@ -222,9 +221,6 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
     })
 
-    // Pins today's behaviour: a cleared filter comes back up from
-    // DruxtViewsFilter as an empty value, which Drupal answers with no results.
-    // #1005 changes this.
     test('back to any', async () => {
       const { wrapper, requests, flush } = await mountView({ propsData: recipes })
       await flush()
@@ -234,8 +230,9 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       setFilter(wrapper, undefined)
       await flush()
 
-      expect(requests().slice(2)).toStrictEqual([{ search: cleared, status: 200 }])
-      expect(wrapper.vm.resource.data).toStrictEqual([])
+      // The unfiltered first page is still in the store from the first request.
+      expect(requests().slice(2)).toStrictEqual([])
+      expect(nodeIds(wrapper)).toStrictEqual(allFirstPage)
     })
   })
 
@@ -284,8 +281,7 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       expect(inputs).toStrictEqual([])
     })
 
-    // Pins today's behaviour, as 'back to any' does. #1005 changes this.
-    test('clearing the URL sends one request, with the filter empty', async () => {
+    test('clearing the URL sends one request with no filter', async () => {
       const { wrapper, requests, inputs, flush, setQuery } = await mountView({
         propsData: recipes,
         query: fromUrl,
@@ -295,12 +291,12 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       setQuery({})
       await flush()
 
-      expect(requests().slice(1)).toStrictEqual([{ search: cleared, status: 200 }])
-      expect(wrapper.vm.resource.data).toStrictEqual([])
+      expect(requests().slice(1)).toStrictEqual([{ search: '', status: 200 }])
+      expect(nodeIds(wrapper)).toStrictEqual(allFirstPage)
       // DruxtView's own model is reset, and it emits it to its parent.
       expect(inputs).toStrictEqual([{ filter: {}, page: null, sort: null }])
-      // Then the cleared filter comes back up from DruxtViewsFilter as null.
-      expect(wrapper.vm.model.filter).toStrictEqual({ difficulty: null })
+      // And no null comes back up from DruxtViewsFilter.
+      expect(wrapper.vm.model.filter).toStrictEqual({})
     })
   })
 
@@ -333,10 +329,8 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
     await root.setData({ model: { difficulty: 'easy' } })
     await flush()
 
-    // Pins today's behaviour: the parent hears its own value back twice, once
-    // from DruxtViewsFilters and once more when the DruxtViewsFilter it passed
-    // the value down to emits it up again. #1005 changes this.
-    expect(inputs).toStrictEqual([{ difficulty: 'easy' }, { difficulty: 'easy' }])
+    // The parent set the value, so it does not hear it back.
+    expect(inputs).toStrictEqual([])
     // The value reached the filter it belongs to.
     expect(root.findComponent({ name: 'DruxtViewsFilter' }).vm.model).toBe('easy')
   })
