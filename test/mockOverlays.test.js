@@ -5,8 +5,6 @@ import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { gunzipSync } from 'zlib'
 
-import { stringify } from 'qs'
-
 const { comparable, loadPreset } = require('decoupled-drupal-mock/jest')
 
 const { baseUrl, drupal } = require('./drupal')
@@ -38,7 +36,7 @@ describe('views-recipes-difficulty overlay', () => {
   })
 
   test('answers a filtered recipes query', () => {
-    const request = `/en/jsonapi/views/recipes/page_1?${stringify({ 'views-filter': { difficulty: 'easy' } })}`
+    const request = `/en/jsonapi/views/recipes/page_1?views-filter${encodeURIComponent('[difficulty]')}=easy`
     const answer = drupal.handle('GET', request)
     expect(answer.status).toBe(200)
     expect(answer.body.data.map(({ attributes }) => attributes.field_difficulty)).toStrictEqual(['easy', 'easy', 'easy', 'easy'])

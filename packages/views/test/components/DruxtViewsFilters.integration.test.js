@@ -1,5 +1,4 @@
 import 'regenerator-runtime/runtime'
-import { parse, stringify } from 'qs'
 
 import { mountView } from '../utils/mountView'
 import DruxtViewsFiltersBasic from './fixtures/DruxtViewsFiltersBasic.vue'
@@ -11,7 +10,7 @@ const { drupal } = require('../../../../test/drupal')
 const recipes = { displayId: 'page_1', viewId: 'recipes' }
 
 // The query DruxtView sends for each Difficulty value, as qs writes it.
-const difficulty = (value) => stringify({ 'views-filter': { difficulty: value } })
+const difficulty = (value) => `views-filter${encodeURIComponent('[difficulty]')}=${value}`
 const easy = difficulty('easy')
 const medium = difficulty('medium')
 const cleared = difficulty('')
@@ -95,10 +94,14 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
   })
 
   describe('filters from the URL', () => {
+    // /recipes?filter[difficulty]=easy, as Vue Router parses it: flat, for
+    // DruxtView to nest.
+    const fromUrl = { 'filter[difficulty]': 'easy' }
+
     test('the first request carries the filter, and the parent sees no input', async () => {
       const { wrapper, requests, inputs, flush } = await mountView({
         propsData: recipes,
-        query: parse('filter[difficulty]=easy'),
+        query: fromUrl,
       })
       await flush()
 
@@ -111,7 +114,7 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
     test('clearing the URL sends one request, with the filter empty', async () => {
       const { wrapper, requests, inputs, flush, setQuery } = await mountView({
         propsData: recipes,
-        query: parse('filter[difficulty]=easy'),
+        query: fromUrl,
       })
       await flush()
 
@@ -139,7 +142,7 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
   })
 
   test('a parent binding DruxtViewsFilters with v-model', async () => {
-    const view = drupal.handle('GET', `/en/jsonapi/view/view?${stringify({ filter: { drupal_internal__id: 'recipes' } })}`)
+    const view = drupal.handle('GET', `/en/jsonapi/view/view?filter${encodeURIComponent('[drupal_internal__id]')}=recipes`)
     const filter = view.body.data[0].attributes.display.default.display_options.filters.field_difficulty_value
 
     const { root, inputs, flush } = await mountView({
