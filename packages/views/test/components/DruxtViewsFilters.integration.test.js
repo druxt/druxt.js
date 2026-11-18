@@ -162,5 +162,7 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
     // from DruxtViewsFilters and once more when the DruxtViewsFilter it passed
     // the value down to emits it up again. #1005 changes this.
     expect(inputs).toStrictEqual([{ difficulty: 'easy' }, { difficulty: 'easy' }])
+    // The value reached the filter it belongs to.
+    expect(root.findComponent({ name: 'DruxtViewsFilter' }).vm.model).toBe('easy')
   })
 })
