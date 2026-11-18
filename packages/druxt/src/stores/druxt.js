@@ -350,7 +350,9 @@ const DruxtStore = ({ store }) => {
        * @param {object} context.state - The Vuex module state.
        * @param {getResourceContext} payload - The action parameters.
        * @return {object} The full JSON:API document for the resource; the resource itself is
-       *   on the `data` property, e.g. `resource.data.attributes`.
+       *   on the `data` property, e.g. `resource.data.attributes`. A failed request adds an
+       *   `error` property, `{ statusCode, message }`, leaving the caller to decide what to
+       *   render; a request that never reached Drupal reports a `statusCode` of 500.
        *
        * @example @lang js
        * const resource = await this.$store.dispatch('druxt/getResource', {
@@ -413,8 +415,10 @@ const DruxtStore = ({ store }) => {
             )
 
           // Merge all nested, included resources.
+          // A refused include has no data, so it is left out, as Drupal leaves
+          // it out of a fresh response.
           for (const include of resources) {
-            included = [...included, include.data, ...include.included || []]
+            included = [...included, ...include.data ? [include.data] : [], ...include.included || []]
           }
           storedResource.included = included
         }
@@ -441,6 +445,7 @@ const DruxtStore = ({ store }) => {
         }
 
         // Request the resource from the DruxtClient if required.
+        let error
         let resource
         const since = generation.value
         if (bypassCache || !storedResource || fields) {
@@ -458,8 +463,17 @@ const DruxtStore = ({ store }) => {
               }
               return response
             })
-          } catch(e) {
-            // Do nothing, just don't error.
+          } catch(err) {
+            // Without the status an empty document is the only signal, so a 401
+            // reads as a resource that does not exist. A failure with no HTTP
+            // response (backend unreachable, timeout, connection reset) has no
+            // status, so report 500, as the router store does.
+            const response = err.response || {}
+            const data = response.data || {}
+            error = {
+              statusCode: response.status || 500,
+              message: ((data.errors || [])[0] || {}).detail || data.message || err.message,
+            }
           }
         }
 
@@ -476,6 +490,12 @@ const DruxtStore = ({ store }) => {
           ]
           result.included = Array.from(new Set(included.filter((o) => (o || {}).id).map((o) => o.id)))
             .map((id) => included.find((o) => o.id === id))
+        }
+
+        // Report a failed request beside whatever the store holds, so the
+        // caller can tell an authentication failure from a missing resource.
+        if (error) {
+          result.error = error
         }
 
         return result
