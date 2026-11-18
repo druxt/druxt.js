@@ -1,13 +1,5 @@
 ---
 'druxt-site': patch
-'druxt-router': minor
 ---
 
-`druxt-router` is now registered like every other Druxt module:
-
-```js
-// nuxt.config.js
-modules: ['druxt-router']
-```
-
-`'druxt-router/nuxt'` still works. Neither `druxt-router` nor `druxt-site` pulls Node's `fs` into client bundles any more, so `DruxtSiteMixin` can be imported client side (#545).
+fix(#545): `DruxtSiteMixin` can be imported in client-side code. Importing anything from `druxt-site` no longer pulls Node's `fs` into the client bundle, which made webpack fail with "This dependency was not found: fs".

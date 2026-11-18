@@ -41,7 +41,7 @@ const DruxtBreadcrumbModule = async function (moduleOptions = {}) {
 
   // Add dependent module.
   await this.addModule(['druxt', options])
-  await this.addModule(['druxt-router', options])
+  await this.addModule(['druxt-router/nuxt', options])
 
   // Register components directories.
   this.nuxt.hook('components:dirs', dirs => {

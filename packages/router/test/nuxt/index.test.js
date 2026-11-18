@@ -1,5 +1,8 @@
 import DruxtRouterNuxtModule from '../../src/nuxt'
 
+// The source reads the manifest one level up, where the built module finds it.
+jest.mock('../../src/package.json', () => require('../../package.json'), { virtual: true })
+
 const mock = {
   addModule: jest.fn(),
   addPlugin: jest.fn(),
@@ -18,10 +21,7 @@ const mock = {
       }
       return fn(arg[hook])
     }),
-    options: { build: {} },
-    resolver: {
-      requireModule: jest.fn((id) => require(id)),
-    },
+    options: { build: {} }
   },
   DruxtRouterNuxtModule
 }

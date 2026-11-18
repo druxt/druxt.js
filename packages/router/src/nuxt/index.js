@@ -1,4 +1,5 @@
-import meta from '../../package.json'
+import { existsSync } from 'fs'
+import { join, resolve } from 'path'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtClient } from 'druxt'
 
@@ -24,7 +25,7 @@ const extendComponent = (component) => ({ ...component, isAsync: false })
  * @example @lang js
  * // `nuxt.config.js`
  * module.exports = {
- *   buildModules: ['druxt-router'],
+ *   buildModules: ['druxt-router/nuxt'],
  *   druxt: {
  *     baseUrl: 'https://api.umami.demo.druxtjs.org'
  *   }
@@ -40,10 +41,6 @@ const extendComponent = (component) => ({ ...component, isAsync: false })
  *   resolved route.
  */
 const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
-  // Node builtins are loaded at call time via the Nuxt resolver, so client bundles never see them (#545).
-  const { join, resolve } = this.nuxt.resolver.requireModule('path')
-  const { existsSync } = this.nuxt.resolver.requireModule('fs')
-
   // Set default options.
   const options = {
     baseUrl: moduleOptions.baseUrl,
@@ -144,6 +141,6 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
   })
 }
 
-DruxtRouterNuxtModule.meta = meta
+DruxtRouterNuxtModule.meta = require('../package.json')
 
 export default DruxtRouterNuxtModule
