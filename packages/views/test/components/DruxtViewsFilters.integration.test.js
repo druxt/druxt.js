@@ -49,8 +49,9 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
     })
 
-    // Pins today's behaviour: a cleared filter is sent as an empty value, which
-    // Drupal answers with no results. See #ISSUE_CLEARED.
+    // Pins today's behaviour: a cleared filter comes back up from
+    // DruxtViewsFilter as an empty value, which Drupal answers with no results.
+    // #1005 changes this.
     test('back to any', async () => {
       const { wrapper, requests, flush } = await mountView({ propsData: recipes })
       await flush()
@@ -110,7 +111,7 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       expect(inputs).toStrictEqual([])
     })
 
-    // Pins today's behaviour, as 'back to any' does. See #ISSUE_CLEARED.
+    // Pins today's behaviour, as 'back to any' does. #1005 changes this.
     test('clearing the URL sends one request, with the filter empty', async () => {
       const { wrapper, requests, inputs, flush, setQuery } = await mountView({
         propsData: recipes,
@@ -157,9 +158,9 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
     await root.setData({ model: { difficulty: 'easy' } })
     await flush()
 
-    // The parent hears its own value back twice: once from DruxtViewsFilters,
-    // and once more when the DruxtViewsFilter it passed the value down to
-    // emits it up again.
+    // Pins today's behaviour: the parent hears its own value back twice, once
+    // from DruxtViewsFilters and once more when the DruxtViewsFilter it passed
+    // the value down to emits it up again. #1005 changes this.
     expect(inputs).toStrictEqual([{ difficulty: 'easy' }, { difficulty: 'easy' }])
   })
 })
