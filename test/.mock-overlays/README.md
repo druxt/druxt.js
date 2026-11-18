@@ -26,3 +26,44 @@ Decoupled Router produces.
 
 Replace it by rebuilding from a Drupal with the two patches applied, as the
 mock's `docs/overlays.md` describes. Nothing here is edited by hand.
+
+## views-recipes-difficulty
+
+`views-recipes-difficulty.json.gz` records one View change, for the views
+filter tests in `packages/views/test/components/DruxtViewsFilters.integration.test.js`.
+No View in the preset has an exposed filter an anonymous visitor can use, so
+nothing else lets those tests run a filter through to Drupal and back.
+
+The change is to the `recipes` view's default display, which its `page_1`
+display inherits:
+
+- An exposed filter on the Difficulty field, `field_difficulty_value`, with the
+  identifier `difficulty`, the label "Difficulty", one value at a time, and
+  "- Any -". Umami's recipes are 4 easy and 6 medium, with no hard ones.
+- Four recipes to a page instead of 12, so the medium recipes span two pages.
+
+`views.view.recipes.yml` is the View as the site exported it, and
+`views-recipes-difficulty.queries.txt` lists the requests the build sent on
+top of the preset's own `oracle.txt`.
+
+The mock's build records each View's routes without a query string, so the
+filtered and paged answers are in the overlay's oracle,
+`oracle/views-recipes-difficulty.json.gz`, rather than in the overlay itself.
+`test/drupal.js` answers those requests from the oracle, as Drupal answered
+them, and `test/mockOverlays.test.js` replays the rest of the oracle against the
+preset with this overlay.
+
+Its SHA-256 is
+`6020a8a5a178ff90db167117fde6669fe3dbce48946062430242f13e6ea050af`, and its
+oracle's is
+`a5bc9ecbdbaf68d17968c3dab1e08da59f6a3759117aa9beeac5b8690d79b7bc`, as the
+overlay tool's `manifest.json` recorded them. It was recorded against the
+preset's 1.0.0-alpha.3 build, from a site stood up with the mock's own
+`presets/umami/site.sh`, with the View change applied and the preset's
+`build.json` less its `writesFile`.
+
+To record it again, stand up that site, import `views.view.recipes.yml`, build
+with the preset's `oracle.txt` and the queries file appended, and run
+`yarn overlay` against the preset's dump, as the mock's `docs/overlays.md`
+describes. After a preset rebuild, move it to the new dump with
+`yarn overlay realign` instead.
