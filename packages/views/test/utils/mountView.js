@@ -79,7 +79,10 @@ export const mountView = async ({ propsData, query = {}, components = {}, parent
 
   const $route = Vue.observable({ meta: {}, query })
 
+  // Each payload as it was when emitted: DruxtView emits its own model object,
+  // and changes it afterwards.
   const inputs = []
+  const snapshot = (value) => (value === undefined ? value : JSON.parse(JSON.stringify(value)))
   const Parent = parent || {
     template: '<DruxtView v-bind="props" @input="onInput" />',
   }
@@ -87,7 +90,7 @@ export const mountView = async ({ propsData, query = {}, components = {}, parent
   const root = mount({
     ...Parent,
     data: () => ({ ...(Parent.data ? Parent.data() : {}), props: propsData }),
-    methods: { ...(Parent.methods || {}), onInput: (value) => inputs.push(value) },
+    methods: { ...(Parent.methods || {}), onInput: (value) => inputs.push(snapshot(value)) },
   }, {
     localVue,
     mocks: {

@@ -65,5 +65,11 @@ preset's 1.0.0-alpha.3 build, from a site stood up with the mock's own
 To record it again, stand up that site, import `views.view.recipes.yml`, build
 with the preset's `oracle.txt` and the queries file appended, and run
 `yarn overlay` against the preset's dump, as the mock's `docs/overlays.md`
-describes. After a preset rebuild, move it to the new dump with
-`yarn overlay realign` instead.
+describes.
+
+A preset rebuild gives every resource a new UUID. Keep a copy of the old dump
+before updating the preset, then move the overlay onto the new one from the
+mock's checkout with `yarn overlay realign <old dump> <new dump>
+views-recipes-difficulty <dir>`, which moves the oracle with it. That changes
+UUIDs and install times only and records nothing new, so compare the result with
+a fresh recording and record the overlay again where they differ.

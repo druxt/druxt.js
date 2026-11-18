@@ -1,6 +1,7 @@
 import 'regenerator-runtime/runtime'
 
 import { mountView } from '../utils/mountView'
+import DruxtViewsFilterFieldDifficultyValue from './fixtures/DruxtViewsFilterFieldDifficultyValue.vue'
 import DruxtViewsFiltersBasic from './fixtures/DruxtViewsFiltersBasic.vue'
 
 const { drupal } = require('../../../../test/drupal')
@@ -22,8 +23,9 @@ const allFirstPage = [10, 9, 8, 7]
 const easyRecipes = [9, 5, 4, 3]
 const mediumFirstPage = [10, 8, 7, 6]
 
-// Sets a filter the way a visitor does: the filter's own component emits
-// `input`, and DruxtViewsFilters takes it from there.
+// Sets a filter as the filter's wrapper would: DruxtViewsFilter emits `input`,
+// and DruxtViewsFilters takes it from there. 'through a select' drives a real
+// wrapper's select instead, to show the two agree.
 const setFilter = (wrapper, value) => wrapper
   .findComponent({ name: 'DruxtViewsFilter' })
   .vm.$emit('input', value)
@@ -49,6 +51,20 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
     })
 
+    test('through a select', async () => {
+      const { wrapper, requests, flush } = await mountView({
+        propsData: recipes,
+        components: { DruxtViewsFilterFieldDifficultyValue },
+      })
+      await flush()
+
+      await wrapper.find('[data-test=difficulty]').setValue('easy')
+      await flush()
+
+      expect(requests().slice(1)).toStrictEqual([{ search: easy, status: 200 }])
+      expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
+    })
+
     // Pins today's behaviour: a cleared filter comes back up from
     // DruxtViewsFilter as an empty value, which Drupal answers with no results.
     // #1005 changes this.
@@ -62,7 +78,7 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       await flush()
 
       expect(requests().slice(2)).toStrictEqual([{ search: cleared, status: 200 }])
-      expect(nodeIds(wrapper)).toStrictEqual([])
+      expect(wrapper.vm.resource.data).toStrictEqual([])
     })
   })
 
@@ -123,9 +139,11 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       await flush()
 
       expect(requests().slice(1)).toStrictEqual([{ search: cleared, status: 200 }])
-      expect(nodeIds(wrapper)).toStrictEqual([])
+      expect(wrapper.vm.resource.data).toStrictEqual([])
       // DruxtView's own model is reset, and it emits it to its parent.
-      expect(inputs).toStrictEqual([{ filter: { difficulty: null }, page: null, sort: null }])
+      expect(inputs).toStrictEqual([{ filter: {}, page: null, sort: null }])
+      // Then the cleared filter comes back up from DruxtViewsFilter as null.
+      expect(wrapper.vm.model.filter).toStrictEqual({ difficulty: null })
     })
   })
 
@@ -139,7 +157,7 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
     await flush()
 
     expect(requests().slice(1)).toStrictEqual([{ search: `page=1&${easy}`, status: 200 }])
-    expect(nodeIds(wrapper)).toStrictEqual([])
+    expect(wrapper.vm.resource.data).toStrictEqual([])
   })
 
   test('a parent binding DruxtViewsFilters with v-model', async () => {
