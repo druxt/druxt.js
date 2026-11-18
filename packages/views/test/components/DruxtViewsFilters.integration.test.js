@@ -130,7 +130,7 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
   })
 
   // Pins today's behaviour: a filter change keeps the page, so it asks for a
-  // page the filtered results do not reach. See #ISSUE_PAGE.
+  // page the filtered results do not reach. See #1032.
   test('a filter change on page 2', async () => {
     const { wrapper, requests, flush } = await mountView({ propsData: recipes, query: { page: '1' } })
     await flush()
