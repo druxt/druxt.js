@@ -477,6 +477,11 @@ export default {
               else if (this.model[type][id]) {
                 delete this.model[type][id]
               }
+              /**
+               * Emitted with the updated entity when one of its fields changes, so `v-model` stays in step.
+               *
+               * @type {object}
+               */
               this.$emit('input', this.model)
             }
           },

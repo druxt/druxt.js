@@ -322,6 +322,11 @@ export default {
 
         // Only emit 'input' if using the default 'DruxtWrapper' component.
         if (this.component.is === 'DruxtWrapper') {
+          /**
+           * Emitted with the new value when the wrapper component changes it, so `v-model` stays in step.
+           *
+           * @type {*}
+           */
           this.$emit('input', this.model)
         }
       }

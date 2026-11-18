@@ -61,4 +61,19 @@ describe('DruxtEntityFormButtons', () => {
       slots: ['submit', 'reset', 'default'],
     })
   })
+
+  test('each button emits its own event with the form value', async () => {
+    const schema = store.$druxtSchema.import('node--page--default--form')
+    const wrapper = await mountComponent({ schema, value: { id: 'test' } })
+    const slots = wrapper.vm.getScopedSlots()
+
+    for (const button of ['submit', 'reset']) {
+      const preventDefault = jest.fn()
+      slots[button]({}).data.on.click({ preventDefault })
+      expect(preventDefault).toHaveBeenCalled()
+    }
+
+    expect(wrapper.emitted().submit).toStrictEqual([[{ id: 'test' }]])
+    expect(wrapper.emitted().reset).toStrictEqual([[{ id: 'test' }]])
+  })
 })

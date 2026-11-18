@@ -52,6 +52,11 @@ export default {
   watch: {
     model(to, from) {
       if (to !== from) {
+        /**
+         * Emitted with the selected sort ID when the reader picks a sort, so `v-model` stays in step.
+         *
+         * @type {string}
+         */
         this.$emit('input', this.model)
       }
     }

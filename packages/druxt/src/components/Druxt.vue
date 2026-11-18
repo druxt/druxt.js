@@ -111,6 +111,11 @@ export default {
   watch: {
     model() {
       if (this.value !== this.model) {
+        /**
+         * Emitted with the new value when the module component changes it, so `v-model` stays in step.
+         *
+         * @type {*}
+         */
         this.$emit('input', this.model)
       }
     },
