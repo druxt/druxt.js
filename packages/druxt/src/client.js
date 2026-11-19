@@ -33,6 +33,40 @@ const requestOptions = ({ bypassCache } = {}) => (bypassCache ? [{ bypassCache: 
 const isNested = (value) => value !== null && typeof value === 'object'
 
 /**
+ * The path of an absolute URL, without a trailing slash, such as `/drupal`.
+ *
+ * @param {string} url - An absolute URL.
+ *
+ * @returns {string} The path, or an empty string for a URL at the root or one that does not parse.
+ * @private
+ */
+const urlPath = (url) => {
+  try {
+    return new URL(url).pathname.replace(/\/$/, '')
+  } catch {
+    return ''
+  }
+}
+
+/**
+ * Cuts the scheme and host from an absolute URL, and the base URL's own path
+ * after them, leaving the rest. A relative URL is returned as it is.
+ *
+ * @param {string} href - The URL.
+ * @param {string} basePath - The base URL's path, from `urlPath()`.
+ *
+ * @returns {string} The URL's path, query and fragment.
+ * @private
+ */
+const stripOrigin = (href, basePath) => {
+  if (!/^[a-z][a-z\d+.-]*:\/\//i.test(href || '')) return href
+  const url = new URL(href)
+  const path = basePath && url.pathname.startsWith(`${basePath}/`) ? url.pathname.slice(basePath.length) : url.pathname
+  // One leading slash: `//jsonapi` would be a URL on the host `jsonapi`.
+  return `${path.replace(/^\/{2,}/, '/')}${url.search}${url.hash}`
+}
+
+/**
  * Serializes a query object, with nested values in bracket notation, such as `filter[status]=1`.
  *
  * @param {object|Array} value - The query object, or a nested value.
@@ -616,10 +650,12 @@ class DruxtClient {
       this.error(err, { url })
     }
 
-    // Remove Base URL from the resource URL.
-    const baseUrl = this.options.baseUrl
+    // Keep the path of each resource URL. Drupal builds them on the scheme and
+    // host it saw, which behind TLS or a proxy is not the base URL, so they
+    // are cut by path rather than by the base URL's text.
+    const basePath = urlPath(this.options.baseUrl)
     index = Object.fromEntries(Object.entries(index).map(([key, value]) => {
-      value.href = value.href.replace(baseUrl, '')
+      value.href = stripOrigin(value.href, basePath)
       return [key, value]
     }))
 
