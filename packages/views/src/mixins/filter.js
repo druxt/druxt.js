@@ -43,7 +43,8 @@ const DruxtViewsFilterMixin = {
      * @type {*}
      */
     value: {
-      type: [Array, Boolean, Number, String],
+      // String before Boolean, or Vue reads an empty string as `true`.
+      type: [Array, String, Boolean, Number],
       default: undefined,
     },
   },

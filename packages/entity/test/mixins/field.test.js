@@ -79,4 +79,9 @@ describe('DruxtFieldMixin', () => {
     DruxtFieldMixin.watch.value.call(mock)
     expect(mock.model).toBe(mock.value)
   })
+
+  test('value - an empty string stays an empty string', () => {
+    const wrapper = mount(component, { localVue, propsData: { schema: { config: {} }, value: '' } })
+    expect(wrapper.vm.value).toBe('')
+  })
 })
