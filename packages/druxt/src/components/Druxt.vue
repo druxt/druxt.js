@@ -150,17 +150,11 @@ export default {
         ...this.$attrs,
         value: this.model,
       },
-      // The module's own `input` reaches `model`, which the watcher emits. A
-      // module that edits its model in place emits the same object, which
-      // does not trigger the watcher, so that one is emitted here.
+      // Each module input goes straight to the parent. A bound parent sends it
+      // back down through `value`. Without a binding, `model` stays as it was,
+      // so a module that fetched its own value keeps fetching for itself.
       on: {
-        input: (value) => {
-          if (value === this.model) {
-            this.$emit('input', value)
-            return
-          }
-          this.model = value
-        },
+        input: (value) => this.$emit('input', value),
       },
       ref: 'module',
     })

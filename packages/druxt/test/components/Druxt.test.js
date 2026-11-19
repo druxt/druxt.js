@@ -98,6 +98,40 @@ describe('Druxt component', () => {
     expect(wrapper.emitted().input.every(([emitted]) => emitted === value)).toBe(true)
   })
 
+  test('a module input does not come back to the module as its value', async () => {
+    const DruxtTestModule = {
+      name: 'DruxtTestModule',
+      props: ['value'],
+      render(h) {
+        return h('button', { on: { click: () => this.$emit('input', { fetched: true }) } })
+      },
+    }
+    const wrapper = mount(Druxt, { localVue, propsData: { module: 'test-module' }, stubs: { DruxtTestModule } })
+
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+
+    // With no parent binding, the module keeps fetching for itself: a value
+    // would tell DruxtEntity to skip its request.
+    expect(wrapper.emitted().input).toStrictEqual([[{ fetched: true }]])
+    expect(wrapper.findComponent(DruxtTestModule).props('value')).toBeNull()
+  })
+
+  test('each module input reaches @input, in order, within one tick', async () => {
+    const DruxtTestModule = {
+      props: ['value'],
+      render(h) {
+        return h('button', { on: { click: () => { this.$emit('input', 'B'); this.$emit('input', 'C') } } })
+      },
+    }
+    const wrapper = mount(Druxt, { localVue, propsData: { module: 'test-module' }, stubs: { DruxtTestModule } })
+
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+
+    expect(wrapper.emitted().input).toStrictEqual([['B'], ['C']])
+  })
+
   test('v-model with a DruxtModule emits once per inner input and never echoes the parent', async () => {
     const DruxtTestModule = { name: 'DruxtTestModule', extends: DruxtModule }
     const Component = {

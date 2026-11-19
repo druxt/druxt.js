@@ -111,6 +111,24 @@ describe('DruxtModule component', () => {
     expect(module.emitted().input).toHaveLength(2)
   })
 
+  test('v-model - a parent that normalizes the value hears the input once', async () => {
+    const Component = {
+      template: "<DruxtModule :value='model' @input='model = $event.trim()' ref='module' />",
+      components: { DruxtModule },
+      data: () => ({ model: null })
+    }
+    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtDebug'] })
+    const module = wrapper.findComponent(DruxtModule)
+
+    wrapper.vm.$refs.module.$refs.component.$emit('input', ' new ')
+    await localVue.nextTick()
+    await localVue.nextTick()
+
+    expect(module.emitted().input).toStrictEqual([[' new ']])
+    expect(wrapper.vm.model).toBe('new')
+    expect(wrapper.vm.$refs.module.model).toBe('new')
+  })
+
   test('watch - lang', async () => {
     // Setup component.
     const wrapper = mount(DruxtModule, { localVue, mocks })

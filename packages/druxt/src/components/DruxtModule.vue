@@ -317,14 +317,17 @@ export default {
     },
 
     model() {
+      const emitted = this.emittedInput
+      this.emittedInput = undefined
+
       if (this.component.props && this.component.props.value !== this.model) {
         this.component.props.value = this.model
 
         // Only emit 'input' if using the default 'DruxtWrapper' component, and
-        // only for a value the parent does not hold yet: a value it set itself
-        // would come back to it as an echo, and an input the wrapper emitted
-        // has already been emitted below and reached it through v-model.
-        if (this.component.is === 'DruxtWrapper' && this.model !== this.value) {
+        // only for a value the parent has not heard yet. Skip a value the
+        // parent set itself. Skip a wrapper input too: the handler below
+        // emitted it already, and the parent may have stored it changed.
+        if (this.component.is === 'DruxtWrapper' && this.model !== this.value && this.model !== emitted) {
           this.$emit('input', this.model)
         }
       }
@@ -594,6 +597,7 @@ export default {
         attrs,
         on: {
           input(value) {
+            self.emittedInput = value
             self.model = value
             self.$emit('input', value)
           }

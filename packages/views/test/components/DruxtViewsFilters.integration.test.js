@@ -226,12 +226,14 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       await flush()
       setFilter(wrapper, 'easy')
       await flush()
+      expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
+      const before = requests()
 
       setFilter(wrapper, undefined)
       await flush()
 
       // The unfiltered first page is still in the store from the first request.
-      expect(requests().slice(2)).toStrictEqual([])
+      expect(requests()).toStrictEqual(before)
       expect(nodeIds(wrapper)).toStrictEqual(allFirstPage)
     })
   })
@@ -287,6 +289,8 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
         query: fromUrl,
       })
       await flush()
+      expect(requests()).toStrictEqual([{ search: easy, status: 200 }])
+      expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
 
       setQuery({})
       await flush()
@@ -323,6 +327,7 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
         template: '<DruxtViewsFilters v-model="model" v-bind="props" @input="onInput" />',
         data: () => ({ model: {} }),
       },
+      components: { DruxtViewsFilterFieldDifficultyValue },
     })
     await flush()
 
@@ -331,7 +336,7 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
 
     // The parent set the value, so it does not hear it back.
     expect(inputs).toStrictEqual([])
-    // The value reached the filter it belongs to.
-    expect(root.findComponent({ name: 'DruxtViewsFilter' }).vm.model).toBe('easy')
+    // The value reached the control of the filter it belongs to.
+    expect(root.find('[data-test=difficulty]').element.value).toBe('easy')
   })
 })
