@@ -1,7 +1,9 @@
 // The engine the whole suite answers from, in a module of its own, as
 // decoupled-drupal-mock's docs/test-runners.md describes for Jest. The tests
 // and the manual mock of axios both require it from here.
+const { readFileSync } = require('fs')
 const { resolve } = require('path')
+const { gunzipSync } = require('zlib')
 
 const { axiosVerbs, loadPreset } = require('decoupled-drupal-mock/jest')
 
@@ -14,6 +16,34 @@ const baseUrl = 'https://api.umami.demo.druxtjs.org'
 // path. test/.mock-overlays/README.md says why it is here.
 const overlay = resolve(__dirname, '.mock-overlays/language-routing-patches.json.gz')
 
+// The recipes view with its Difficulty field exposed as a filter, four to a
+// page, for the views filter tests. test/.mock-overlays/README.md says how it
+// was recorded.
+const recipesDifficulty = resolve(__dirname, '.mock-overlays/views-recipes-difficulty.json.gz')
+
+// The mock's build records each View's routes without a query, so a filtered
+// or paged recipes request has no recording in the overlay itself. The build
+// did ask Drupal those queries, and kept its answers in the overlay's oracle,
+// so this extension answers them from there: Drupal's own answers, not ones
+// written here. Anything else falls through to the mock.
+const recipesQueries = new Map(
+  JSON.parse(gunzipSync(readFileSync(resolve(__dirname, '.mock-overlays/oracle/views-recipes-difficulty.json.gz'))))
+    .filter(({ request }) => /^(\/en)?\/jsonapi\/views\/recipes\/[^/?]+\?/.test(request))
+    .map((entry) => [entry.request, entry])
+)
+const recordedViewsQueries = {
+  name: 'recorded-views-queries',
+  answer: ({ method, url }, next) => {
+    const { pathname, search } = new URL(url, baseUrl)
+    const entry = method === 'GET' && recipesQueries.get(`${pathname}${search}`)
+    if (!entry) return next()
+    // The build writes a placeholder for the site's address, as the mock does
+    // for its own recordings.
+    const body = JSON.parse(JSON.stringify(entry.body).split('https://drupal.invalid').join(baseUrl))
+    return { status: entry.status, headers: entry.headers, body }
+  }
+}
+
 // Read once per worker, not once per test file. Jest clears the module registry
 // between files, so this module runs again for each one; the worker's global
 // outlives the registry.
@@ -23,7 +53,11 @@ const overlay = resolve(__dirname, '.mock-overlays/language-routing-patches.json
 // and `env: { es6: true }` declares only ES2015 globals, so `globalThis` is
 // undeclared. Node 16 runs both; eslint is what refuses them.
 if (!global.__decoupledDrupalMock) {
-  global.__decoupledDrupalMock = loadPreset('umami', { baseUrl, overlays: [overlay] })
+  global.__decoupledDrupalMock = loadPreset('umami', {
+    baseUrl,
+    extensions: [recordedViewsQueries],
+    overlays: [overlay, recipesDifficulty],
+  })
 }
 const drupal = global.__decoupledDrupalMock
 

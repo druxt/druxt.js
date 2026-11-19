@@ -1,0 +1,21 @@
+# The recipes view's results, as DruxtView asks for them: each Difficulty value, the empty value a cleared filter sends, and the second page.
+/jsonapi/views/recipes/page_1
+/jsonapi/views/recipes/page_1?views-filter%5Bdifficulty%5D=
+/jsonapi/views/recipes/page_1?views-filter%5Bdifficulty%5D=easy
+/jsonapi/views/recipes/page_1?views-filter%5Bdifficulty%5D=medium
+/jsonapi/views/recipes/page_1?views-filter%5Bdifficulty%5D=hard
+/jsonapi/views/recipes/page_1?page=1
+/jsonapi/views/recipes/page_1?page=1&views-filter%5Bdifficulty%5D=
+/jsonapi/views/recipes/page_1?page=1&views-filter%5Bdifficulty%5D=easy
+/jsonapi/views/recipes/page_1?page=1&views-filter%5Bdifficulty%5D=medium
+/jsonapi/views/recipes/page_1?page=1&views-filter%5Bdifficulty%5D=hard
+/en/jsonapi/views/recipes/page_1
+/en/jsonapi/views/recipes/page_1?views-filter%5Bdifficulty%5D=
+/en/jsonapi/views/recipes/page_1?views-filter%5Bdifficulty%5D=easy
+/en/jsonapi/views/recipes/page_1?views-filter%5Bdifficulty%5D=medium
+/en/jsonapi/views/recipes/page_1?views-filter%5Bdifficulty%5D=hard
+/en/jsonapi/views/recipes/page_1?page=1
+/en/jsonapi/views/recipes/page_1?page=1&views-filter%5Bdifficulty%5D=
+/en/jsonapi/views/recipes/page_1?page=1&views-filter%5Bdifficulty%5D=easy
+/en/jsonapi/views/recipes/page_1?page=1&views-filter%5Bdifficulty%5D=medium
+/en/jsonapi/views/recipes/page_1?page=1&views-filter%5Bdifficulty%5D=hard
