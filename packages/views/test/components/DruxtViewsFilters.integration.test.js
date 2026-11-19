@@ -347,6 +347,23 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
     })
 
+    test('a URL cleared after the view wrote it still resets the view', async () => {
+      const { wrapper, route, flush, setQuery } = await mountView({ propsData: recipes, query: { page: '1' } })
+      await flush()
+      setFilter(wrapper, 'easy')
+      await flush()
+      expect(route.query).toStrictEqual({})
+
+      // Another navigation, then the bare URL again: a link to the page.
+      setQuery({ utm_source: 'news' })
+      await flush()
+      setQuery({})
+      await flush()
+
+      expect(wrapper.vm.model.filter).toStrictEqual({})
+      expect(nodeIds(wrapper)).toStrictEqual(allFirstPage)
+    })
+
     test('a filter the URL holds follows the filter, and the page goes', async () => {
       const { wrapper, route, flush } = await mountView({
         propsData: recipes,

@@ -294,8 +294,11 @@ export default {
 
   watch: {
     '$route.query'(to) {
-      // A URL the view wrote itself is not a reset.
-      if (stringify(to || {}) === this.routeQuery) return
+      // A URL the view wrote itself is not a reset. The marker covers the next
+      // change only, which is either that navigation or one that replaced it.
+      const own = stringify(to || {}) === this.routeQuery
+      this.routeQuery = undefined
+      if (own) return
 
       if (!Object.entries(to || {}).length) {
         this.model = {
