@@ -1,6 +1,16 @@
-import { byteSize, configHasCredentials, hasCredentials, parseCacheLifetime, processCache, resetProcessCache, runtime, watchCredentials } from '../../src/utils/processCache'
+import { byteSize, configHasCredentials, hasCredentials, isProbe, parseCacheLifetime, processCache, resetProcessCache, runtime, watchCredentials } from '../../src/utils/processCache'
 
 const axios = (common = {}) => ({ defaults: { headers: { common } } })
+
+// An instance with request interceptors, kept as Axios keeps them. Axios runs
+// the last one added first.
+const intercepted = (...handlers) => {
+  const list = handlers.map((h) => (typeof h === 'function' ? { fulfilled: h } : h))
+  return {
+    ...axios(),
+    interceptors: { request: { handlers: list, forEach: (fn) => list.forEach((h) => h && fn(h)) } },
+  }
+}
 
 describe('processCache', () => {
   const { isServer } = runtime
@@ -22,6 +32,45 @@ describe('processCache', () => {
     expect(hasCredentials({ defaults: { auth: { username: 'a', password: 'b' }, headers: { common: {} } } })).toBe(true)
     // A site can name its own session cookie.
     expect(hasCredentials(axios({ cookie: 'sid=abc' }), 'sid')).toBe(true)
+  })
+
+  test('hasCredentials - credentials a request interceptor adds count from the first call', () => {
+    const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
+    const instance = intercepted(bearer)
+
+    expect(hasCredentials(instance)).toBe(true)
+    expect(processCache('index', { axios: instance })).toBeNull()
+    // The probe runs on a copy: the instance's own defaults are left as they were.
+    expect(instance.defaults.headers.common).toStrictEqual({})
+  })
+
+  test('hasCredentials - an interceptor that adds nothing leaves the cache on', () => {
+    const seen = []
+    const instance = intercepted((config) => { seen.push(isProbe(config)); config.headers['X-Trace'] = '1'; return config })
+
+    expect(hasCredentials(instance)).toBe(false)
+    expect(processCache('index', { axios: instance })).not.toBeNull()
+    // The interceptor can tell a probe from a request.
+    expect(seen).toStrictEqual([true, true])
+    expect(instance.defaults.headers.common).toStrictEqual({})
+  })
+
+  test('hasCredentials - an interceptor the probe cannot run synchronously keeps the cache off', () => {
+    let called = false
+    const asyncInterceptor = async (config) => { called = true; return config }
+    // An async function is not called at all, as running it may send requests.
+    expect(hasCredentials(intercepted({ fulfilled: asyncInterceptor }))).toBe(true)
+    // One that returns a promise is not waited for.
+    expect(hasCredentials(intercepted((config) => Promise.resolve(config)))).toBe(true)
+    // One that throws on the probe cannot say what it would add.
+    expect(hasCredentials(intercepted(() => { throw new Error('no') }))).toBe(true)
+    expect(called).toBe(false)
+  })
+
+  test('hasCredentials - an interceptor whose runWhen declines is skipped', () => {
+    const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
+    expect(hasCredentials(intercepted({ fulfilled: bearer, runWhen: () => false }))).toBe(false)
+    expect(hasCredentials(intercepted({ fulfilled: bearer, runWhen: () => true }))).toBe(true)
   })
 
   test('parseCacheLifetime reads Cache-Control as a shared cache', () => {

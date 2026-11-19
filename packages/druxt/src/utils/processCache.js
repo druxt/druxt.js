@@ -123,7 +123,67 @@ export const configHasCredentials = (config, sessionCookie = DRUPAL_SESSION_COOK
 export const hasCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) => {
   if (!axios) return false
   if (credentialed.has(axios)) return true
-  return configHasCredentials(axios.defaults, sessionCookie)
+  return configHasCredentials(axios.defaults, sessionCookie) || interceptorsAddCredentials(axios, sessionCookie)
+}
+
+/** Marks a probe config, so an interceptor can tell it from a request. */
+const PROBE = Symbol.for('druxt.processCache.probe')
+
+/**
+ * Whether a request config is the process cache's probe rather than a request.
+ *
+ * An interceptor with side effects, such as logging, can leave a probe alone.
+ *
+ * @param {object} config - The Axios request config.
+ *
+ * @returns {boolean}
+ */
+export const isProbe = (config) => !!(config && config[PROBE])
+
+/**
+ * Whether an instance's request interceptors add credentials to a request.
+ *
+ * Runs them, last added first as Axios does, on a copy of the defaults. The
+ * probe can't tell what an async function, a returned promise or a throw would
+ * add, so any of those counts as credentials. An async function is never
+ * called, as running it may send requests of its own.
+ *
+ * @param {object} axios - The Axios instance.
+ * @param {string} [sessionCookie] - A pattern for the session cookie name.
+ *
+ * @returns {boolean}
+ * @private
+ */
+const interceptorsAddCredentials = (axios, sessionCookie) => {
+  const manager = ((axios || {}).interceptors || {}).request
+  if (!manager || typeof manager.forEach !== 'function') return false
+  const handlers = []
+  manager.forEach((handler) => {
+    if (handler && typeof handler.fulfilled === 'function') handlers.unshift(handler)
+  })
+  if (!handlers.length) return false
+
+  const defaults = axios.defaults || {}
+  const headers = Object.fromEntries(Object.entries(defaults.headers || {})
+    .map(([key, value]) => [key, value && typeof value === 'object' && !Array.isArray(value) ? { ...value } : value]))
+  let config = { ...defaults, headers, method: 'get', url: '', [PROBE]: true }
+
+  for (const { fulfilled, runWhen } of handlers) {
+    if (typeof runWhen === 'function' && !runWhen(config)) continue
+    if (fulfilled.constructor && fulfilled.constructor.name === 'AsyncFunction') return true
+    let next
+    try {
+      next = fulfilled(config)
+    } catch {
+      return true
+    }
+    if (next && typeof next.then === 'function') {
+      next.then(undefined, () => {})
+      return true
+    }
+    if (next) config = next
+  }
+  return configHasCredentials(config, sessionCookie)
 }
 
 /**
