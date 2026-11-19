@@ -62,7 +62,8 @@ const stripOrigin = (href, basePath) => {
   if (!/^[a-z][a-z\d+.-]*:\/\//i.test(href || '')) return href
   const url = new URL(href)
   const path = basePath && url.pathname.startsWith(`${basePath}/`) ? url.pathname.slice(basePath.length) : url.pathname
-  return `${path}${url.search}${url.hash}`
+  // One leading slash: `//jsonapi` would be a URL on the host `jsonapi`.
+  return `${path.replace(/^\/{2,}/, '/')}${url.search}${url.hash}`
 }
 
 /**

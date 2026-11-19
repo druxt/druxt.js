@@ -334,6 +334,15 @@ describe('DruxtClient', () => {
     expect(index['node--recipe'].href).toBe('/jsonapi/node/recipe')
   })
 
+  test('getIndex - a path with a doubled slash stays a path', async () => {
+    // `//jsonapi/...` would be a URL on the host `jsonapi`, bypassing `baseUrl`.
+    const ownAxios = jest.fn()
+    ownAxios.get = jest.fn(async () => ({ data: { links: { 'node--page': { href: 'http://backend.internal//jsonapi/node/page' } } } }))
+    const index = await new DruxtClient(baseUrl, { axios: ownAxios }).getIndex()
+
+    expect(index['node--page'].href).toBe('/jsonapi/node/page')
+  })
+
   test('getIndex - strips a base URL with a path', async () => {
     const ownAxios = jest.fn()
     ownAxios.get = jest.fn(async () => ({ data: { links: { 'node--page': { href: 'https://example.com/drupal/jsonapi/node/page' } } } }))
