@@ -319,6 +319,30 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
     expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
   })
 
+  // A parent bound with v-model that changes only the page, in a new model
+  // object, keeps the page: the filter is unchanged.
+  test('a parent changing the page alone keeps the filter and the page', async () => {
+    const { root, requests, flush } = await mountView({
+      propsData: recipes,
+      parent: {
+        template: '<DruxtView v-model="model" v-bind="props" @input="onInput" />',
+        data: () => ({ model: undefined }),
+      },
+    })
+    await flush()
+
+    root.vm.model = { filter: { difficulty: 'medium' }, page: null, sort: null }
+    await flush()
+    root.vm.model = { ...root.vm.model, page: 1 }
+    await flush()
+
+    expect(requests().slice(1)).toStrictEqual([
+      { search: medium, status: 200 },
+      { search: `page=1&${medium}`, status: 200 },
+    ])
+    expect(root.findComponent({ name: 'DruxtView' }).vm.model.page).toBe(1)
+  })
+
   test('a parent binding DruxtViewsFilters with v-model', async () => {
     const view = drupal.handle('GET', `/en/jsonapi/view/view?filter${encodeURIComponent('[drupal_internal__id]')}=recipes`)
     const filter = view.body.data[0].attributes.display.default.display_options.filters.field_difficulty_value

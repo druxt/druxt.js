@@ -313,10 +313,13 @@ export default {
 
     'model.filter': {
       deep: true,
-      handler(to, from) {
-        if (!Object.entries(to || {}).length && !Object.entries(from || {}).length) {
-          return
-        }
+      handler(to) {
+        // The watcher also runs when a parent replaces the model, even with the
+        // same filter, so compare what the filter holds.
+        const filter = JSON.stringify(to || {})
+        if (filter === this.lastFilter) return
+        this.lastFilter = filter
+
         // A filter change goes back to the first page, as a Drupal-rendered
         // view does when its exposed form is submitted. The page watcher's
         // $fetch() then joins this one.
@@ -344,6 +347,11 @@ export default {
     viewId() {
       this.$fetch()
     },
+  },
+
+  created() {
+    // The filter last fetched for, kept off the reactive data.
+    this.lastFilter = JSON.stringify(this.model.filter || {})
   },
 
   mounted() {
