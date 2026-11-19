@@ -294,6 +294,9 @@ export default {
 
   watch: {
     '$route.query'(to) {
+      // A URL the view wrote itself is not a reset.
+      if (stringify(to || {}) === this.routeQuery) return
+
       if (!Object.entries(to || {}).length) {
         this.model = {
           filter: {},
@@ -324,18 +327,21 @@ export default {
         // view does when its exposed form is submitted. The page watcher's
         // $fetch() then joins this one.
         this.model.page = null
+        this.updateRoute()
         this.$fetch()
       },
     },
 
     'model.page'(to, from) {
       if (to !== from) {
+        this.updateRoute()
         this.$fetch()
       }
     },
 
     'model.sort'(to, from) {
       if (to !== from) {
+        this.updateRoute()
         this.$fetch()
       }
     },
@@ -363,6 +369,39 @@ export default {
   },
 
   methods: {
+    /**
+     * Updates the filter, page and sort the URL holds to the model's values.
+     *
+     * The model starts from the URL, so a URL that still names page 2 after a
+     * filter change would open page 2 again on reload. Each of the three keys
+     * the URL holds is changed to the model's value, or removed when the model
+     * has none. A key the URL does not hold is never added, and the rest of the
+     * query is kept as it is.
+     */
+    updateRoute() {
+      if (!this.$router || !this.$route) return
+
+      const current = this.$route.query || {}
+      const keys = ['filter', 'page', 'sort']
+      const owned = (key) => keys.some((name) => key === name || key.startsWith(`${name}[`))
+      const held = keys.filter((name) => Object.keys(current).some((key) => key === name || key.startsWith(`${name}[`)))
+      if (!held.length) return
+
+      const query = Object.fromEntries(Object.entries(current).filter(([key]) => !owned(key)))
+      const values = Object.fromEntries(held.map((key) => [key, this.model[key]]))
+      // Flat, as Vue Router writes it: filter[difficulty]=easy.
+      for (const pair of stringify(values, { skipNulls: true }).split('&').filter((o) => o)) {
+        const [key, value] = pair.split('=').map(decodeURIComponent)
+        if (value !== '') query[key] = value
+      }
+
+      if (stringify(query) === stringify(current)) return
+      this.routeQuery = stringify(query)
+      const navigation = this.$router.replace({ hash: this.$route.hash, query })
+      // A newer navigation can cancel this one, which is not an error here.
+      if (navigation && navigation.catch) navigation.catch(() => {})
+    },
+
     /**
      * Builds the query for the JSON:API request.
      *

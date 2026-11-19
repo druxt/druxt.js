@@ -61,7 +61,7 @@ const NuxtFetch = {
  * @param {object} [options.query] - The starting $route.query.
  * @param {object} [options.components] - Wrapper components to register globally, by name.
  * @param {object} [options.parent] - A parent component to mount instead of the default, given `props` and `onInput`.
- * @return {Promise<object>} `wrapper` (the DruxtView), `root`, `requests`, `inputs`, `setQuery` and `flush`.
+ * @return {Promise<object>} `wrapper` (the DruxtView), `root`, `requests`, `inputs`, `route`, `router`, `setQuery` and `flush`.
  */
 const mountView = async ({ propsData, query = {}, components = {}, parent } = {}) => {
   const localVue = createLocalVue()
@@ -81,6 +81,14 @@ const mountView = async ({ propsData, query = {}, components = {}, parent } = {}
   store.app = { context: { error: () => {}, isStatic: false }, store }
 
   const $route = Vue.observable({ meta: {}, query })
+  // Vue Router's replace, for the query alone, with which DruxtView updates
+  // the filter, page and sort the URL holds.
+  const $router = {
+    replace: jest.fn(({ query: to }) => {
+      $route.query = to
+      return Promise.resolve()
+    }),
+  }
 
   // Each payload as it was when emitted: DruxtView emits its own model object,
   // and changes it afterwards.
@@ -100,6 +108,7 @@ const mountView = async ({ propsData, query = {}, components = {}, parent } = {}
       $druxt: { settings: {} },
       $nuxt: { context: { isDev: false } },
       $route,
+      $router,
     },
     store,
     stubs: ['DruxtDebug', 'DruxtEntity', 'DruxtViewsPager'],
@@ -124,6 +133,8 @@ const mountView = async ({ propsData, query = {}, components = {}, parent } = {}
     inputs,
     requests,
     root,
+    route: $route,
+    router: $router,
     setQuery,
     flush,
     get wrapper() { return root.findComponent({ name: 'DruxtView' }) },
@@ -317,6 +328,78 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
     expect(requests().slice(1)).toStrictEqual([{ search: easy, status: 200 }])
     expect(wrapper.vm.model.page).toBeNull()
     expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
+  })
+
+  // The URL a view was opened with keeps up with it: each of the filter, page
+  // and sort the URL holds changes with the view, and none is added.
+  describe('the URL', () => {
+    test('a filter change on page 2 drops the page from the URL, and keeps the filter', async () => {
+      const { wrapper, requests, route, flush } = await mountView({ propsData: recipes, query: { page: '1' } })
+      await flush()
+
+      setFilter(wrapper, 'easy')
+      await flush()
+
+      expect(route.query).toStrictEqual({})
+      // The emptied URL is not a reset: the filter stays, with no more requests.
+      expect(wrapper.vm.model.filter).toStrictEqual({ difficulty: 'easy' })
+      expect(requests().slice(1)).toStrictEqual([{ search: easy, status: 200 }])
+      expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
+    })
+
+    test('a filter the URL holds follows the filter, and the page goes', async () => {
+      const { wrapper, route, flush } = await mountView({
+        propsData: recipes,
+        query: { 'filter[difficulty]': 'medium', page: '1', utm_source: 'news' },
+      })
+      await flush()
+
+      setFilter(wrapper, 'easy')
+      await flush()
+
+      expect(route.query).toStrictEqual({ 'filter[difficulty]': 'easy', utm_source: 'news' })
+      expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
+    })
+
+    test('back to any drops the filter from the URL', async () => {
+      const { wrapper, requests, route, flush } = await mountView({
+        propsData: recipes,
+        query: { 'filter[difficulty]': 'easy' },
+      })
+      await flush()
+
+      setFilter(wrapper, undefined)
+      await flush()
+
+      expect(route.query).toStrictEqual({})
+      expect(requests().slice(1)).toStrictEqual([{ search: '', status: 200 }])
+      expect(nodeIds(wrapper)).toStrictEqual(allFirstPage)
+    })
+
+    test('the page the URL holds follows the pager', async () => {
+      const { wrapper, route, flush } = await mountView({ propsData: recipes, query: { page: '1' } })
+      await flush()
+
+      wrapper.vm.model.page = 2
+      await flush()
+      expect(route.query).toStrictEqual({ page: '2' })
+
+      wrapper.vm.model.page = null
+      await flush()
+      expect(route.query).toStrictEqual({})
+    })
+
+    test('a URL without the view\'s keys is left alone', async () => {
+      const { wrapper, router, flush } = await mountView({ propsData: recipes, query: { utm_source: 'news' } })
+      await flush()
+
+      setFilter(wrapper, 'easy')
+      await flush()
+      wrapper.vm.model.page = 1
+      await flush()
+
+      expect(router.replace).not.toHaveBeenCalled()
+    })
   })
 
   // A parent bound with v-model that changes only the page, in a new model
