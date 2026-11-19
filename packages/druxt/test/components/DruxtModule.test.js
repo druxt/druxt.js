@@ -129,6 +129,33 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.$refs.module.model).toBe('new')
   })
 
+  test('v-model - a value the module clears reaches the parent', async () => {
+    const Component = {
+      template: "<DruxtModule v-model='model' ref='module' />",
+      components: { DruxtModule },
+      data: () => ({ model: null })
+    }
+    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtDebug'] })
+    const module = wrapper.findComponent(DruxtModule)
+
+    // An input from the wrapper, so the module holds a value to clear.
+    wrapper.vm.$refs.module.$refs.component.$emit('input', 'typed')
+    await localVue.nextTick()
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toBe('typed')
+    expect(module.emitted().input).toHaveLength(1)
+
+    // DruxtField writes a cleared field as undefined, and assigns the model
+    // directly rather than going through a wrapper input. "No input recorded"
+    // must not read as an input of undefined, or the parent keeps 'typed'.
+    wrapper.vm.$refs.module.model = undefined
+    await localVue.nextTick()
+
+    expect(module.emitted().input).toHaveLength(2)
+    expect(module.emitted().input[1]).toStrictEqual([undefined])
+    expect(wrapper.vm.model).toBe(undefined)
+  })
+
   test('watch - lang', async () => {
     // Setup component.
     const wrapper = mount(DruxtModule, { localVue, mocks })
