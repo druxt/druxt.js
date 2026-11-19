@@ -161,6 +161,25 @@ describe('DruxtField', () => {
     slots.default({})
   })
 
+  test('fetch key - finds its entity through slots', () => {
+    // A component that renders whatever it is given in its slot, as a theme or
+    // component library's layout does.
+    const Slotted = { name: 'Slotted', render(h) { return h('div', this.$slots.default) } }
+    // The field is in two nested slots, three levels below the component
+    // that holds the entity.
+    const Entity = {
+      data: () => ({ entity: { id: 'abc', type: 'node--page' } }),
+      render(h) {
+        return h(Slotted, [h(Slotted, [h(DruxtField, { props: { schema: { config: { schemaType: 'view' }, id: 'title', settings: { display: {} }, type: 'string' } } })])])
+      },
+    }
+    const wrapper = mount(Entity, { localVue, mocks, store, stubs: ['DruxtDebug'] })
+    const field = wrapper.findComponent(DruxtField)
+
+    expect(field.vm.$parent.$parent.$parent).toBe(wrapper.vm)
+    expect(DruxtField.fetchKey.call(field.vm, jest.fn(() => 0))).toBe('DruxtField:node--page:abc:title:0')
+  })
+
   test('field_body - view', async () => {
     // Register custom wrapper component.
     localVue.component('DruxtFieldTextDefault', {

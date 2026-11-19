@@ -83,7 +83,15 @@ export default {
   },
 
   fetchKey(getCounter) {
-    const parent = (this.$parent || {}).entity || ((this.$parent || {}).$parent || {}).entity || {}
+    // The closest component above that holds an entity. A field rendered in
+    // another component's slot is a child of that component, not its entity.
+    let parent = {}
+    for (let vm = this.$parent; vm; vm = vm.$parent) {
+      if (vm.entity) {
+        parent = vm.entity
+        break
+      }
+    }
     const parts = ['DruxtField', parent.type, parent.id, this.schema.id].filter((o) => o)
     return [...parts, getCounter(parts.join(':'))].join(':')
   },
