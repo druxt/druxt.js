@@ -118,6 +118,7 @@ describe('DruxtViewsFilters', () => {
     expect(wrapper.vm.$refs.module.component.props.value).toStrictEqual({ test: true })
     expect(wrapper.vm.$refs.module.value).toStrictEqual({ test: true })
     expect(wrapper.vm.$refs.module.model).toStrictEqual({ test: true })
-    expect(Component.methods.onInput).toHaveBeenCalledWith({ test: true })
+    // The parent set the value, so it does not hear it back.
+    expect(Component.methods.onInput).not.toHaveBeenCalled()
   })
 })

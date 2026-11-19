@@ -82,6 +82,80 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.$refs.module.value).toStrictEqual({ test: true })
   })
 
+  test('v-model - emits once per inner input and never echoes the parent', async () => {
+    const Component = {
+      template: "<DruxtModule v-model='model' ref='module' />",
+      components: { DruxtModule },
+      data: () => ({ model: null })
+    }
+    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtDebug'] })
+    const module = wrapper.findComponent(DruxtModule)
+
+    // A value the parent set is not emitted back to it.
+    await wrapper.setData({ model: { test: true } })
+    await localVue.nextTick()
+    expect(module.emitted().input).toBeUndefined()
+
+    // An input from the wrapper reaches the parent once, not again from the
+    // model watcher.
+    wrapper.vm.$refs.module.$refs.component.$emit('input', { test: false })
+    await localVue.nextTick()
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toStrictEqual({ test: false })
+    expect(module.emitted().input).toHaveLength(1)
+
+    // A value the module sets itself, as after a fetch, still reaches the parent.
+    wrapper.vm.$refs.module.model = { fetched: true }
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toStrictEqual({ fetched: true })
+    expect(module.emitted().input).toHaveLength(2)
+  })
+
+  test('v-model - a parent that normalizes the value hears the input once', async () => {
+    const Component = {
+      template: "<DruxtModule :value='model' @input='model = $event.trim()' ref='module' />",
+      components: { DruxtModule },
+      data: () => ({ model: null })
+    }
+    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtDebug'] })
+    const module = wrapper.findComponent(DruxtModule)
+
+    wrapper.vm.$refs.module.$refs.component.$emit('input', ' new ')
+    await localVue.nextTick()
+    await localVue.nextTick()
+
+    expect(module.emitted().input).toStrictEqual([[' new ']])
+    expect(wrapper.vm.model).toBe('new')
+    expect(wrapper.vm.$refs.module.model).toBe('new')
+  })
+
+  test('v-model - a value the module clears reaches the parent', async () => {
+    const Component = {
+      template: "<DruxtModule v-model='model' ref='module' />",
+      components: { DruxtModule },
+      data: () => ({ model: null })
+    }
+    const wrapper = mount(Component, { localVue, mocks, stubs: ['DruxtDebug'] })
+    const module = wrapper.findComponent(DruxtModule)
+
+    // An input from the wrapper, so the module holds a value to clear.
+    wrapper.vm.$refs.module.$refs.component.$emit('input', 'typed')
+    await localVue.nextTick()
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toBe('typed')
+    expect(module.emitted().input).toHaveLength(1)
+
+    // DruxtField writes a cleared field as undefined, and assigns the model
+    // directly rather than going through a wrapper input. "No input recorded"
+    // must not read as an input of undefined, or the parent keeps 'typed'.
+    wrapper.vm.$refs.module.model = undefined
+    await localVue.nextTick()
+
+    expect(module.emitted().input).toHaveLength(2)
+    expect(module.emitted().input[1]).toStrictEqual([undefined])
+    expect(wrapper.vm.model).toBe(undefined)
+  })
+
   test('watch - lang', async () => {
     // Setup component.
     const wrapper = mount(DruxtModule, { localVue, mocks })

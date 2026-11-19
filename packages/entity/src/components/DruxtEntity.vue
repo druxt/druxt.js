@@ -361,6 +361,10 @@ export default {
       }
 
       if (this.uuid && !this.value) {
+        // A value the parent sets while the request is pending wins over the
+        // response.
+        const value = this.value
+
         // Check if we need to bypass cache.
         let bypassCache = false
         if (typeof (settings.query || {}).bypassCache === 'boolean') {
@@ -378,6 +382,8 @@ export default {
           query,
           bypassCache
         })
+        if (this.value !== value) return
+
         const entity = { ...(resource.data || {}) }
         entity.included = resource.included
         this.model = JSON.parse(JSON.stringify(entity || {}))

@@ -1,6 +1,7 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 
 import Druxt from '../../src/components/Druxt.vue'
+import DruxtModule from '../../src/components/DruxtModule.vue'
 
 // Setup local vue instance.
 const localVue = createLocalVue()
@@ -53,6 +54,111 @@ describe('Druxt component', () => {
     expect(wrapper.vm.model).toStrictEqual({ test: false })
     expect(wrapper.vm.$refs.druxt.model).toStrictEqual({ test: false })
     expect(wrapper.vm.$refs.druxt.value).toStrictEqual({ test: false })
+  })
+
+  test('v-model follows an input from the module component', async () => {
+    const DruxtTestModule = {
+      props: ['value'],
+      render(h) {
+        return h('button', { on: { click: () => this.$emit('input', { test: 'module' }) } })
+      },
+    }
+    const Component = {
+      template: "<Druxt v-model='model' ref='druxt' module='test-module' />",
+      components: { Druxt },
+      data: () => ({ model: null })
+    }
+    const wrapper = mount(Component, { localVue, stubs: { DruxtTestModule } })
+
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+    expect(wrapper.vm.$refs.druxt.model).toStrictEqual({ test: 'module' })
+    expect(wrapper.vm.model).toStrictEqual({ test: 'module' })
+  })
+
+  test('v-model follows repeated inputs of the same object', async () => {
+    const value = { count: 0 }
+    const DruxtTestModule = {
+      props: ['value'],
+      render(h) {
+        // As DruxtEntity does: edit the model in place and emit it again.
+        return h('button', { on: { click: () => { value.count += 1; this.$emit('input', value) } } })
+      },
+    }
+    const wrapper = mount(Druxt, { localVue, propsData: { module: 'test-module' }, stubs: { DruxtTestModule } })
+
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+
+    expect(wrapper.emitted().input).toHaveLength(3)
+    expect(wrapper.emitted().input.every(([emitted]) => emitted === value)).toBe(true)
+  })
+
+  test('a module input does not come back to the module as its value', async () => {
+    const DruxtTestModule = {
+      name: 'DruxtTestModule',
+      props: ['value'],
+      render(h) {
+        return h('button', { on: { click: () => this.$emit('input', { fetched: true }) } })
+      },
+    }
+    const wrapper = mount(Druxt, { localVue, propsData: { module: 'test-module' }, stubs: { DruxtTestModule } })
+
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+
+    // With no parent binding, the module keeps fetching for itself: a value
+    // would tell DruxtEntity to skip its request.
+    expect(wrapper.emitted().input).toStrictEqual([[{ fetched: true }]])
+    expect(wrapper.findComponent(DruxtTestModule).props('value')).toBeNull()
+  })
+
+  test('each module input reaches @input, in order, within one tick', async () => {
+    const DruxtTestModule = {
+      props: ['value'],
+      render(h) {
+        return h('button', { on: { click: () => { this.$emit('input', 'B'); this.$emit('input', 'C') } } })
+      },
+    }
+    const wrapper = mount(Druxt, { localVue, propsData: { module: 'test-module' }, stubs: { DruxtTestModule } })
+
+    await wrapper.find('button').trigger('click')
+    await localVue.nextTick()
+
+    expect(wrapper.emitted().input).toStrictEqual([['B'], ['C']])
+  })
+
+  test('v-model with a DruxtModule emits once per inner input and never echoes the parent', async () => {
+    const DruxtTestModule = { name: 'DruxtTestModule', extends: DruxtModule }
+    const Component = {
+      template: "<Druxt v-model='model' ref='druxt' module='test-module' />",
+      components: { Druxt },
+      data: () => ({ model: null })
+    }
+    const mocks = {
+      $fetchState: { pending: false },
+      $nuxt: { context: { isDev: false } },
+      $route: { meta: {} },
+    }
+    const wrapper = mount(Component, { localVue, mocks, stubs: { DruxtTestModule, DruxtDebug: true } })
+    const druxt = wrapper.findComponent(Druxt)
+
+    // A value the parent set goes down to the module and is not emitted back.
+    await wrapper.setData({ model: { test: true } })
+    await localVue.nextTick()
+    expect(wrapper.vm.$refs.druxt.$refs.module.model).toStrictEqual({ test: true })
+    expect(druxt.emitted().input).toBeUndefined()
+
+    // One input from the module's inner component is one input from Druxt.
+    wrapper.vm.$refs.druxt.$refs.module.$refs.component.$emit('input', { test: false })
+    await localVue.nextTick()
+    await localVue.nextTick()
+    expect(wrapper.vm.model).toStrictEqual({ test: false })
+    expect(druxt.emitted().input).toHaveLength(1)
   })
 
   test('missing module', async () => {

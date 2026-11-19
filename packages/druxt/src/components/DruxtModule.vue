@@ -317,11 +317,27 @@ export default {
     },
 
     model() {
+      // Whether the wrapper emitted an input is tracked apart from the value it
+      // emitted, because a field clears to `undefined` and that has to stay
+      // distinguishable from having emitted nothing at all.
+      const hadInput = this.hasEmittedInput
+      const emitted = this.emittedInput
+      this.hasEmittedInput = false
+      this.emittedInput = undefined
+
       if (this.component.props && this.component.props.value !== this.model) {
         this.component.props.value = this.model
 
-        // Only emit 'input' if using the default 'DruxtWrapper' component.
-        if (this.component.is === 'DruxtWrapper') {
+        // Only emit 'input' if using the default 'DruxtWrapper' component, and
+        // only for a value the parent has not heard yet. Skip a value the
+        // parent set itself, and skip the value the wrapper just emitted: the
+        // handler below sent it already, and the parent may have stored it
+        // changed.
+        if (
+          this.component.is === 'DruxtWrapper' &&
+          this.model !== this.value &&
+          !(hadInput && this.model === emitted)
+        ) {
           this.$emit('input', this.model)
         }
       }
@@ -591,6 +607,8 @@ export default {
         attrs,
         on: {
           input(value) {
+            self.hasEmittedInput = true
+            self.emittedInput = value
             self.model = value
             self.$emit('input', value)
           }
