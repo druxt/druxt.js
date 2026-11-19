@@ -145,8 +145,13 @@ export const isProbe = (config) => !!(config && config[PROBE])
  *
  * Runs them, last added first as Axios does, on a copy of the defaults. The
  * probe can't tell what an async function, a returned promise or a throw would
- * add, so any of those counts as credentials. An async function is never
+ * add, so it passes over each of those and goes on with the config it has. The
+ * response-side watch sees anything they add. An async function is never
  * called, as running it may send requests of its own.
+ *
+ * Counting them as credentials would turn the cache off for every visitor on a
+ * site using @nuxtjs/auth-next, which adds an async interceptor to refresh
+ * tokens whether or not anyone is signed in. Its token goes on the defaults.
  *
  * @param {object} axios - The Axios instance.
  * @param {string} [sessionCookie] - A pattern for the session cookie name.
@@ -170,16 +175,16 @@ const interceptorsAddCredentials = (axios, sessionCookie) => {
 
   for (const { fulfilled, runWhen } of handlers) {
     if (typeof runWhen === 'function' && !runWhen(config)) continue
-    if (fulfilled.constructor && fulfilled.constructor.name === 'AsyncFunction') return true
+    if (fulfilled.constructor && fulfilled.constructor.name === 'AsyncFunction') continue
     let next
     try {
       next = fulfilled(config)
     } catch {
-      return true
+      continue
     }
     if (next && typeof next.then === 'function') {
       next.then(undefined, () => {})
-      return true
+      continue
     }
     if (next) config = next
   }

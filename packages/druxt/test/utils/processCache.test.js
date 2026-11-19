@@ -55,16 +55,34 @@ describe('processCache', () => {
     expect(instance.defaults.headers.common).toStrictEqual({})
   })
 
-  test('hasCredentials - an interceptor the probe cannot run synchronously keeps the cache off', () => {
+  test('hasCredentials - an interceptor the probe cannot run synchronously is left to the response', () => {
     let called = false
     const asyncInterceptor = async (config) => { called = true; return config }
     // An async function is not called at all, as running it may send requests.
-    expect(hasCredentials(intercepted({ fulfilled: asyncInterceptor }))).toBe(true)
+    expect(hasCredentials(intercepted({ fulfilled: asyncInterceptor }))).toBe(false)
     // One that returns a promise is not waited for.
-    expect(hasCredentials(intercepted((config) => Promise.resolve(config)))).toBe(true)
+    expect(hasCredentials(intercepted((config) => Promise.resolve(config)))).toBe(false)
     // One that throws on the probe cannot say what it would add.
-    expect(hasCredentials(intercepted(() => { throw new Error('no') }))).toBe(true)
+    expect(hasCredentials(intercepted(() => { throw new Error('no') }))).toBe(false)
     expect(called).toBe(false)
+  })
+
+  test('hasCredentials - the probe runs past an interceptor it skips', () => {
+    const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
+    // Axios runs the last one added first: the async one, then bearer.
+    expect(hasCredentials(intercepted(bearer, { fulfilled: async (config) => config }))).toBe(true)
+  })
+
+  test('hasCredentials - an @nuxtjs/auth-next refresh interceptor leaves the cache on', () => {
+    // auth-next adds an async request interceptor when $auth starts, on the
+    // server too and whether or not anyone is signed in. Its token goes on the
+    // defaults, which the cache reads already.
+    const refresh = async (config) => config
+    const instance = intercepted(refresh)
+    expect(processCache('index', { axios: instance })).not.toBeNull()
+
+    instance.defaults.headers.common.Authorization = 'Bearer token'
+    expect(processCache('index', { axios: instance })).toBeNull()
   })
 
   test('hasCredentials - an interceptor whose runWhen declines is skipped', () => {
