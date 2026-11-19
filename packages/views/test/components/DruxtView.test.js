@@ -114,6 +114,11 @@ describe('DruxtView', () => {
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
     expect(wrapper.vm.component.options.map((option) => option.replace(new RegExp(viewUuid, 'i'), '{uuid}'))).toMatchSnapshot()
 
+    // A URL holding a filter, which is cleared below. A query that holds
+    // nothing new does not reset the view.
+    wrapper.vm.$route.query = { 'filter[test]': '1' }
+    await localVue.nextTick()
+
     // Query.
     await wrapper.setProps({ arguments: [1, 2, 3] })
     wrapper.vm.model = {
@@ -136,6 +141,7 @@ describe('DruxtView', () => {
     expect(wrapper.vm.model.page).toBe(null)
     expect(wrapper.vm.model.sort).toBe(null)
 
+    // The URL that held a filter, cleared.
     wrapper.vm.$route.query = {}
     await wrapper.setProps({ arguments: [] })
     await localVue.nextTick()

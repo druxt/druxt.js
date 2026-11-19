@@ -364,6 +364,23 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       expect(nodeIds(wrapper)).toStrictEqual(allFirstPage)
     })
 
+    test('a link that changes only the hash keeps the filter', async () => {
+      // Vue Router gives each navigation a new query object, even an empty one.
+      for (const query of [{ page: '1' }, {}]) {
+        const { wrapper, requests, flush, setQuery } = await mountView({ propsData: recipes, query })
+        await flush()
+        setFilter(wrapper, 'easy')
+        await flush()
+        const before = requests()
+
+        setQuery({})
+        await flush()
+
+        expect(wrapper.vm.model.filter).toStrictEqual({ difficulty: 'easy' })
+        expect(requests()).toStrictEqual(before)
+      }
+    })
+
     test('a filter the URL holds follows the filter, and the page goes', async () => {
       const { wrapper, route, flush } = await mountView({
         propsData: recipes,

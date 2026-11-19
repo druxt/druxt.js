@@ -293,12 +293,16 @@ export default {
   },
 
   watch: {
-    '$route.query'(to) {
+    '$route.query'(to, from) {
       // A URL the view wrote itself is not a reset. The marker covers the next
       // change only, which is either that navigation or one that replaced it.
       const own = stringify(to || {}) === this.routeQuery
       this.routeQuery = undefined
       if (own) return
+
+      // Each navigation brings a new query object, even one that changes only
+      // the hash, so compare what the query holds.
+      if (stringify(to || {}) === stringify(from || {})) return
 
       if (!Object.entries(to || {}).length) {
         this.model = {
