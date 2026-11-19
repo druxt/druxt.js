@@ -253,6 +253,47 @@ describe('DruxtEntity', () => {
     expect(wrapper.vm.model).toStrictEqual(mockData)
   })
 
+  describe('v-model - a fetch that is still pending', () => {
+    // Mounts a v-model parent with no value, starts the entity's fetch and
+    // holds its request until `respond` is called.
+    const startFetch = () => {
+      const Component = {
+        template: "<DruxtEntity v-model='model' type='node--page' uuid='abc' ref='entity' />",
+        components: { DruxtEntity },
+        data: () => ({ model: undefined }),
+      }
+      const wrapper = mount(Component, { localVue, mocks, store, stubs })
+      const entity = wrapper.vm.$refs.entity
+      let respond
+      entity.getResource = () => new Promise((resolve) => { respond = resolve })
+      const fetching = entity.$options.druxt.fetchData.call(entity, { query: {} })
+      const fetched = { data: { type: 'node--page', id: 'abc', attributes: { title: 'Fetched' }, relationships: {} } }
+      return { entity, fetching, respond: () => respond(fetched), wrapper }
+    }
+
+    test('leaves a value the parent set meanwhile in place', async () => {
+      const { entity, fetching, respond, wrapper } = startFetch()
+
+      const draft = { type: 'node--page', attributes: { title: 'Draft' }, relationships: {} }
+      await wrapper.setData({ model: draft })
+      respond()
+      await fetching
+      await localVue.nextTick()
+
+      expect(entity.model.attributes.title).toBe('Draft')
+      expect(wrapper.vm.model).toBe(draft)
+    })
+
+    test('applies the response when the parent set nothing', async () => {
+      const { entity, fetching, respond } = startFetch()
+
+      respond()
+      await fetching
+
+      expect(entity.model.attributes.title).toBe('Fetched')
+    })
+  })
+
   test('v-model - fields', async () => {
     const mockPage = await getMockResource('node--page')
 
