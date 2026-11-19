@@ -316,6 +316,32 @@ describe('DruxtClient', () => {
     expect(new DruxtClient(baseUrl, { baseUrl: 'https://example.com' }).options.baseUrl).toBe('https://example.com')
   })
 
+  test('getIndex - strips the backend from links on another scheme or host', async () => {
+    // Drupal builds its links on the host and scheme it saw, which behind TLS
+    // or a proxy is not the `baseUrl` the client was given.
+    const href = (path) => ({ href: path })
+    const links = {
+      'node--page': href('https://api.umami.demo.druxtjs.org:8443/jsonapi/node/page'),
+      'node--article': href('http://backend.internal/jsonapi/node/article?resourceVersion=id%3A1'),
+      'node--recipe': href('/jsonapi/node/recipe'),
+    }
+    const ownAxios = jest.fn()
+    ownAxios.get = jest.fn(async () => ({ data: { links: JSON.parse(JSON.stringify(links)) } }))
+    const index = await new DruxtClient(baseUrl, { axios: ownAxios }).getIndex()
+
+    expect(index['node--page'].href).toBe('/jsonapi/node/page')
+    expect(index['node--article'].href).toBe('/jsonapi/node/article?resourceVersion=id%3A1')
+    expect(index['node--recipe'].href).toBe('/jsonapi/node/recipe')
+  })
+
+  test('getIndex - strips a base URL with a path', async () => {
+    const ownAxios = jest.fn()
+    ownAxios.get = jest.fn(async () => ({ data: { links: { 'node--page': { href: 'https://example.com/drupal/jsonapi/node/page' } } } }))
+    const index = await new DruxtClient('http://example.com/drupal', { axios: ownAxios }).getIndex()
+
+    expect(index['node--page'].href).toBe('/jsonapi/node/page')
+  })
+
   test('getIndex - resource', async () => {
     const resourceIndex = await druxt.getIndex('node--page')
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
