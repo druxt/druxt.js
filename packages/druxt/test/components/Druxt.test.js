@@ -161,6 +161,11 @@ describe('Druxt component', () => {
     expect(druxt.emitted().input).toHaveLength(1)
   })
 
+  test('value - an empty string stays an empty string', () => {
+    const wrapper = mountWrapper({ module: 'test-module', value: '' })
+    expect(wrapper.vm.value).toBe('')
+  })
+
   test('missing module', async () => {
     const wrapper = mountWrapper({ module: 'test-missing-module' })
     expect(wrapper.vm.component.is).toBe(undefined)

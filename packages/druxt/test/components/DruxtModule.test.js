@@ -156,6 +156,11 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.model).toBe(undefined)
   })
 
+  test('value - an empty string stays an empty string', () => {
+    const wrapper = mount(DruxtModule, { localVue, mocks, propsData: { value: '' }, stubs: ['DruxtDebug'] })
+    expect(wrapper.vm.value).toBe('')
+  })
+
   test('watch - lang', async () => {
     // Setup component.
     const wrapper = mount(DruxtModule, { localVue, mocks })

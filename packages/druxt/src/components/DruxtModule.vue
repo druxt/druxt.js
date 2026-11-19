@@ -133,7 +133,8 @@ export default {
      * @model
      */
     value: {
-      type: [Array, Boolean, Date, Number, Object, String],
+      // String before Boolean, or Vue reads an empty string as `true`.
+      type: [Array, String, Boolean, Date, Number, Object],
       default: null,
     },
 

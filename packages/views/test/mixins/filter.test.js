@@ -21,3 +21,8 @@ test('DruxtViewsFilterMixin', async () => {
   await wrapper.vm.$nextTick()
   expect(wrapper.emitted().input[0]).toStrictEqual(['test'])
 })
+
+test('DruxtViewsFilterMixin - an empty string value stays an empty string', () => {
+  const wrapper = mount(component, { localVue, propsData: { value: '' } })
+  expect(wrapper.vm.value).toBe('')
+})

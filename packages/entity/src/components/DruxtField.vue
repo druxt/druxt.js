@@ -1,10 +1,6 @@
 <script>
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
-// Extract the DruxtModule model watch.
-const modelWatch = DruxtModule.watch.model
-delete DruxtModule.watch.model
-
 /**
  * Renders a Drupal field using a component chosen by the field type and
  * formatter settings.
@@ -80,7 +76,8 @@ export default {
      * @model
      */
     value: {
-      type: [Array, Boolean, Number, String, Object],
+      // String before Boolean, or Vue reads an empty string as `true`.
+      type: [Array, String, Boolean, Number, Object],
       default: undefined,
     },
   },
@@ -178,14 +175,6 @@ export default {
     errors() {
       this.component.props.errors = this.errors
       this.component.propsData.errors = this.errors
-    },
-
-    model() {
-      // Sanitize empty string based fields.
-      if (this.model === '') { this.model = undefined }
-
-      // Invoke the DruxtModule model watch callback.
-      modelWatch.call(this)
     },
   },
 

@@ -81,7 +81,8 @@ const DruxtFieldMixin = {
      * @type {(array|boolean|number|object|string)}
      */
      value: {
-      type: [Array, Boolean, Number, String, Object],
+      // String before Boolean, or Vue reads an empty string as `true`.
+      type: [Array, String, Boolean, Number, Object],
       default: undefined,
     },
 

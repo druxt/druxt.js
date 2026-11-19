@@ -4,6 +4,8 @@ import { getMockResource } from 'druxt-test-utils'
 import Vuex from 'vuex'
 import mockAxios from 'jest-mock-axios'
 
+import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import { DruxtSchemaStore } from '../../../schema/src'
 import DruxtEntity from '../../src/components/DruxtEntity.vue'
@@ -388,6 +390,54 @@ describe('DruxtField', () => {
     input.element.value = 'Test'
     input.trigger('input')
     expect(wrapper.vm.model).toBe('Test')
+  })
+
+  test('text - form: an emptied field stays empty through v-model', async () => {
+    const mockPage = await getMockResource('node--page')
+    const schema = {
+      config: { schemaType: 'form' },
+      id: 'title',
+      settings: { display: {} },
+      type: 'string_textfield',
+    }
+    const Parent = {
+      template: "<DruxtField v-model='model' :schema='schema' :data='model' ref='field' />",
+      components: { DruxtField },
+      data: () => ({ model: mockPage.data.attributes.title, schema }),
+    }
+    const wrapper = mount(Parent, { localVue, mocks, store })
+    const field = wrapper.vm.$refs.field
+    await field.$options.fetch.call(field)
+
+    // A site's own field component emits '' when its input is emptied, as
+    // the contact form's did in #552. The '' goes up to the parent and comes
+    // back down as the field's value, where a Boolean-typed prop read it as
+    // `true`.
+    field.$refs.component.$emit('input', '')
+    await localVue.nextTick()
+    await localVue.nextTick()
+
+    expect(wrapper.vm.model).toBe('')
+    expect(field.value).toBe('')
+    expect(field.model).toBe('')
+  })
+
+  test('leaves the model watch of every other module in place', async () => {
+    expect(typeof DruxtModule.watch.model).toBe('function')
+
+    // A module the parent binds with v-model still reports its own changes.
+    const DruxtTestModule = { name: 'DruxtTestModule', extends: DruxtModule }
+    const Parent = {
+      template: "<DruxtTestModule v-model='model' ref='module' />",
+      components: { DruxtTestModule },
+      data: () => ({ model: null }),
+    }
+    const wrapper = mount(Parent, { localVue, mocks, store, stubs: ['DruxtDebug'] })
+
+    wrapper.vm.$refs.module.model = { fetched: true }
+    await localVue.nextTick()
+
+    expect(wrapper.vm.model).toStrictEqual({ fetched: true })
   })
 
   test('relationship - view', async () => {
