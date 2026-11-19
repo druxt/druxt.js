@@ -201,16 +201,17 @@ class DruxtClient {
    * unless `cache.content` is set.
    *
    * @param {string} scope - The cache scope, e.g. 'index', 'menu' or 'content'.
+   * @param {string} [url] - The URL of the request the cache is asked for. The JSON:API endpoint by default.
    *
    * @returns {?object} The cache, or null when it must not be used.
    */
-  processCache(scope) {
+  processCache(scope, url = this.options.endpoint) {
     if (!this.options.cache) return null
     const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE, content } = this.options.cache
     if (scope === 'content' && !content) return null
     // A content entry holds its document as text already, so its size is that text's bytes.
     const sizeOf = scope === 'content' ? (value) => byteSize(value.body) : undefined
-    return processCache(scope, { axios: this.axios, ttl, sessionCookie, maxSize, sizeOf })
+    return processCache(scope, { axios: this.axios, ttl, sessionCookie, maxSize, sizeOf, url })
   }
 
   /**
@@ -438,7 +439,7 @@ class DruxtClient {
     // Only a 200 is stored, so a caller whose validateStatus refuses one goes to Drupal.
     const cacheable = Object.keys(config).every((option) => CACHE_SAFE_OPTIONS.includes(option)) &&
       (typeof config.validateStatus !== 'function' || config.validateStatus(200))
-    const before = cacheable ? this.processCache('content') : null
+    const before = cacheable ? this.processCache('content', url) : null
     const key = JSON.stringify([this.indexKey, url])
     if (before && !bypassCache) {
       const stored = before.get(key)
@@ -456,7 +457,7 @@ class DruxtClient {
 
       // Asked again once resolved, as the request may have shown the instance to be credentialed.
       // Only a 200 is kept: a stored 404 would hide a page published after it.
-      const after = before && this.processCache('content')
+      const after = before && this.processCache('content', url)
       // A request that started later, such as a bypass, may have stored its fresher answer already.
       const current = after && after.get(key)
       if (after && !(current && current.started > started) && res && res.status === 200 && res.data && typeof res.data === 'object') {
@@ -562,9 +563,11 @@ class DruxtClient {
    * @returns {object} The resource index object or the specified resource.
    */
   async getIndex(resource, prefix) {
+    // The URL fetchIndex() asks for, which the cache probes with.
+    const url = [prefix, this.options.endpoint].join('')
     if (!(this.index || {})[prefix]) {
       // An index fetched by an earlier server request without credentials.
-      const shared = this.processCache('index')
+      const shared = this.processCache('index', url)
       const sharedKey = [this.indexKey, prefix || ''].join(':')
       const stored = shared && shared.get(sharedKey)
       if (stored) this.index[prefix] = stored
@@ -574,7 +577,7 @@ class DruxtClient {
       // Concurrent callers, on this client or another sharing the index,
       // wait on one request. A failed request is dropped so the next call retries.
       const key = [this.indexKey, prefix || ''].join(':')
-      const before = this.processCache('index')
+      const before = this.processCache('index', url)
       const since = before ? before.generation : undefined
       const started = this.indexCache.generation
       const request = this.indexRequests[key] || (this.indexRequests[key] = this.fetchIndex(prefix))
@@ -590,7 +593,7 @@ class DruxtClient {
         return resource ? fetched.index[resource] || false : fetched.index
       }
       this.index[prefix] = fetched.index
-      const shared = this.processCache('index')
+      const shared = this.processCache('index', url)
       // Dropped when the process cache was cleared while the request was in flight.
       if (shared) shared.set(key, fetched.index, fetched.lifetime, since)
     }
