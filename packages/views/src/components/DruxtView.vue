@@ -317,6 +317,10 @@ export default {
         if (!Object.entries(to || {}).length && !Object.entries(from || {}).length) {
           return
         }
+        // A filter change goes back to the first page, as a Drupal-rendered
+        // view does when its exposed form is submitted. The page watcher's
+        // $fetch() then joins this one.
+        this.model.page = null
         this.$fetch()
       },
     },

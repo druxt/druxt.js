@@ -304,17 +304,19 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
     })
   })
 
-  // Pins today's behaviour: a filter change keeps the page, so it asks for a
-  // page the filtered results do not reach. See #1032.
-  test('a filter change on page 2', async () => {
+  // A filter change goes back to the first page, as a Drupal-rendered view does
+  // when its exposed form is submitted, with one request.
+  test('a filter change on page 2 returns to the first page', async () => {
     const { wrapper, requests, flush } = await mountView({ propsData: recipes, query: { page: '1' } })
     await flush()
+    expect(requests()).toStrictEqual([{ search: 'page=1', status: 200 }])
 
     setFilter(wrapper, 'easy')
     await flush()
 
-    expect(requests().slice(1)).toStrictEqual([{ search: `page=1&${easy}`, status: 200 }])
-    expect(wrapper.vm.resource.data).toStrictEqual([])
+    expect(requests().slice(1)).toStrictEqual([{ search: easy, status: 200 }])
+    expect(wrapper.vm.model.page).toBeNull()
+    expect(nodeIds(wrapper)).toStrictEqual(easyRecipes)
   })
 
   test('a parent binding DruxtViewsFilters with v-model', async () => {
