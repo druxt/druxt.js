@@ -156,6 +156,16 @@ describe('processCache', () => {
     expect(older.defaults.headers.common).toStrictEqual({})
   })
 
+  test('hasCredentials - header names merge without regard to case, as Axios merges them', () => {
+    const bearer = { fulfilled: (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } }), runWhen: (config) => config.headers.get('Accept') === 'application/json' }
+    const instance = intercepted(bearer)
+    instance.defaults.headers = { common: { Accept: 'text/plain' }, get: { accept: 'application/json' } }
+    expect(hasCredentials(instance)).toBe(true)
+    // With a warm entry, that instance is still refused the cache.
+    processCache('index', { axios: axios() }).set('key', 'anonymous', 60)
+    expect(processCache('index', { axios: instance })).toBeNull()
+  })
+
   test('hasCredentials - a runWhen that throws on the probe never fails the request', () => {
     const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
     const instance = intercepted({ fulfilled: bearer, runWhen: () => { throw new Error('probe') } })

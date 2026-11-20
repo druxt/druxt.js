@@ -156,7 +156,15 @@ const copy = (value) => {
 const METHODS = ['delete', 'get', 'head', 'post', 'put', 'patch', 'options']
 const flattenHeaders = (headers) => {
   const own = Object.fromEntries(Object.entries(headers).filter(([name]) => name !== 'common' && !METHODS.includes(name)))
-  const flat = { ...(headers.common || {}), ...(headers.get || {}), ...own }
+  // Names are merged without regard to case, as Axios merges them.
+  const flat = {}
+  for (const layer of [headers.common, headers.get, own]) {
+    for (const [name, value] of Object.entries(layer || {})) {
+      const key = Object.keys(flat).find((item) => item.toLowerCase() === name.toLowerCase())
+      if (key !== undefined) delete flat[key]
+      flat[name] = value
+    }
+  }
   if (headers.common && typeof headers.common === 'object') flat.common = headers.common
   return flat
 }

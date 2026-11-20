@@ -160,7 +160,7 @@ class DruxtMenu {
       const request = (async () => {
         // A menu fetched by an earlier server request without credentials. The
         // cache is asked with the URL the menu comes from, which an interceptor may look at.
-        const url = typeof this.druxt.processCache === 'function' ? await this.menuUrl(menuName, prefix, jsonApiMenuItems) : undefined
+        const url = typeof this.druxt.processCache === 'function' ? await this.menuUrl(menuName, prefix, jsonApiMenuItems, query) : undefined
         const processCache = (scope) => typeof this.druxt.processCache === 'function' ? this.druxt.processCache(scope, url) : null
         const sharedKey = JSON.stringify([this.druxt.indexKey, cacheKey])
         const shared = processCache('menu')
@@ -194,25 +194,29 @@ class DruxtMenu {
   }
 
   /**
-   * The URL a menu's items are fetched from, without the query.
+   * The URL a menu's first page is fetched from, with its query.
    *
    * @private
    *
    * @param {string} menuName - The menu name.
    * @param {string} prefix - The JSON:API endpoint prefix or langcode.
    * @param {boolean} jsonApiMenuItems - Whether the menu comes from the JSON:API Menu Items module.
+   * @param {DrupalJsonApiParams} query - The query the menu is fetched with.
    *
    * @returns {string} The URL, or the JSON:API endpoint when the index has none.
    */
-  async menuUrl(menuName, prefix, jsonApiMenuItems) {
+  async menuUrl(menuName, prefix, jsonApiMenuItems, query) {
     const endpoint = `${prefix || ''}${this.druxt.options.endpoint}`
+    let href
     if (jsonApiMenuItems) {
       // getJsonApiMenuItems() adds the resource to the index with this href when the index has none.
       const index = (await this.druxt.getIndex(undefined, prefix)) || {}
-      return (index[`menu_items--${menuName}`] || {}).href || `${endpoint}/menu_items/${menuName}`
+      href = (index[`menu_items--${menuName}`] || {}).href || `${endpoint}/menu_items/${menuName}`
+    } else {
+      href = ((await this.druxt.getIndex('menu_link_content--menu_link_content', prefix)) || {}).href
     }
-    const { href } = (await this.druxt.getIndex('menu_link_content--menu_link_content', prefix)) || {}
-    return href || endpoint
+    if (!href) return endpoint
+    return typeof this.druxt.buildQueryUrl === 'function' ? this.druxt.buildQueryUrl(href, query) : href
   }
 
   /**

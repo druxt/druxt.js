@@ -25,6 +25,7 @@ const requestMenu = (processCache = () => handle, lifetimes = [300]) => {
       return lifetimes.map((lifetime) => ({ lifetime, data: [{ id: 'a', attributes: { url: '/', title: 'Home' } }] }))
     },
     cacheLifetime: (collection) => (collection || {}).lifetime || 0,
+    buildQueryUrl: (href, query) => `${href}?${typeof query === 'string' ? query : query.getQueryString()}`,
   }
   if (processCache) druxtClient.processCache = jest.fn(processCache)
   return new DruxtMenu(baseUrl, { druxtClient, menu: { jsonApiMenuItems: true } })
@@ -39,7 +40,7 @@ describe('DruxtMenu process cache', () => {
   test('a menu survives between requests', async () => {
     const menu = requestMenu()
     const first = await menu.get('main')
-    expect(menu.druxt.processCache).toHaveBeenCalledWith('menu', '/jsonapi/menu_items/main')
+    expect(menu.druxt.processCache).toHaveBeenCalledWith('menu', expect.stringMatching(/^\/jsonapi\/menu_items\/main\?/))
     const second = await requestMenu().get('main')
     expect(menuCalls).toBe(1)
     expect(second).toStrictEqual(first)
@@ -142,10 +143,14 @@ describe('DruxtMenu process cache', () => {
     await requestMenu().get('main')
     await requestMenu(signsMenus).get('main')
     expect(menuCalls).toBe(2)
+    // One that signs only requests with a query is seen too.
+    const signsQueries = (scope, url) => (url || '').includes('?') ? null : handle
+    await requestMenu(signsQueries).get('main')
+    expect(menuCalls).toBe(3)
 
     const linkContent = requestMenu()
     linkContent.options.menu.jsonApiMenuItems = false
     await linkContent.get('main', undefined, '/es')
-    expect(linkContent.druxt.processCache).toHaveBeenCalledWith('menu', '/es/jsonapi/menu_link_content/menu_link_content')
+    expect(linkContent.druxt.processCache).toHaveBeenCalledWith('menu', expect.stringMatching(/^\/es\/jsonapi\/menu_link_content\/menu_link_content\?filter/))
   })
 })
