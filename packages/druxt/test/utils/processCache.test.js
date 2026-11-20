@@ -1,6 +1,16 @@
-import { byteSize, configHasCredentials, hasCredentials, parseCacheLifetime, processCache, resetProcessCache, runtime, watchCredentials } from '../../src/utils/processCache'
+import { byteSize, configHasCredentials, hasCredentials, isProbe, parseCacheLifetime, processCache, resetProcessCache, runtime, watchCredentials } from '../../src/utils/processCache'
 
 const axios = (common = {}) => ({ defaults: { headers: { common } } })
+
+// An instance with request interceptors, kept as Axios keeps them. Axios runs
+// the last one added first.
+const intercepted = (...handlers) => {
+  const list = handlers.map((h) => (typeof h === 'function' ? { fulfilled: h } : h))
+  return {
+    ...axios(),
+    interceptors: { request: { handlers: list, forEach: (fn) => list.forEach((h) => h && fn(h)) } },
+  }
+}
 
 describe('processCache', () => {
   const { isServer } = runtime
@@ -22,6 +32,156 @@ describe('processCache', () => {
     expect(hasCredentials({ defaults: { auth: { username: 'a', password: 'b' }, headers: { common: {} } } })).toBe(true)
     // A site can name its own session cookie.
     expect(hasCredentials(axios({ cookie: 'sid=abc' }), 'sid')).toBe(true)
+  })
+
+  test('hasCredentials - credentials a request interceptor adds count from the first call', () => {
+    const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
+    const instance = intercepted(bearer)
+
+    expect(hasCredentials(instance)).toBe(true)
+    expect(processCache('index', { axios: instance })).toBeNull()
+    // The probe runs on a copy: the instance's own defaults are left as they were.
+    expect(instance.defaults.headers.common).toStrictEqual({})
+  })
+
+  test('hasCredentials - an interceptor that adds nothing leaves the cache on', () => {
+    const seen = []
+    const instance = intercepted((config) => { seen.push(isProbe(config)); config.headers['X-Trace'] = '1'; return config })
+
+    expect(hasCredentials(instance)).toBe(false)
+    expect(processCache('index', { axios: instance })).not.toBeNull()
+    // The interceptor can tell a probe from a request.
+    expect(seen).toStrictEqual([true, true])
+    expect(instance.defaults.headers.common).toStrictEqual({})
+  })
+
+  test('hasCredentials - an interceptor the probe cannot run synchronously is left to the response', () => {
+    let called = false
+    const asyncInterceptor = async (config) => { called = true; return config }
+    // An async function is not called at all, as running it may send requests.
+    expect(hasCredentials(intercepted({ fulfilled: asyncInterceptor }))).toBe(false)
+    // One that returns a promise is not waited for.
+    expect(hasCredentials(intercepted((config) => Promise.resolve(config)))).toBe(false)
+    // One that throws on the probe cannot say what it would add.
+    expect(hasCredentials(intercepted(() => { throw new Error('no') }))).toBe(false)
+    expect(called).toBe(false)
+  })
+
+  test('hasCredentials - the probe runs past an interceptor it skips', () => {
+    const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
+    // Axios runs the last one added first: the async one, then bearer.
+    expect(hasCredentials(intercepted(bearer, { fulfilled: async (config) => config }))).toBe(true)
+  })
+
+  test('hasCredentials - an @nuxtjs/auth-next refresh interceptor leaves the cache on', () => {
+    // auth-next adds an async request interceptor when $auth starts, on the
+    // server too and whether or not anyone is signed in. Its token goes on the
+    // defaults, which the cache reads already.
+    const refresh = async (config) => config
+    const instance = intercepted(refresh)
+    expect(processCache('index', { axios: instance })).not.toBeNull()
+
+    instance.defaults.headers.common.Authorization = 'Bearer token'
+    expect(processCache('index', { axios: instance })).toBeNull()
+  })
+
+  test('hasCredentials - an interceptor whose runWhen declines is skipped', () => {
+    const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
+    expect(hasCredentials(intercepted({ fulfilled: bearer, runWhen: () => false }))).toBe(false)
+    expect(hasCredentials(intercepted({ fulfilled: bearer, runWhen: () => true }))).toBe(true)
+  })
+
+  test('hasCredentials - an interceptor setting headers as Axios 1 does', () => {
+    // Axios 1 hands interceptors an AxiosHeaders object, with set() and friends.
+    expect(hasCredentials(intercepted((config) => { config.headers.set('Authorization', 'Bearer token'); return config }))).toBe(true)
+    expect(hasCredentials(intercepted((config) => { config.headers.setAuthorization('Bearer token'); return config }))).toBe(true)
+    expect(hasCredentials(intercepted((config) => { config.headers.set({ Authorization: 'Bearer token' }); return config }))).toBe(true)
+    const seen = []
+    hasCredentials(intercepted((config) => { seen.push(config.headers.has('X-Trace'), config.headers.get('x-trace')); return config }))
+    expect(seen).toStrictEqual([false, undefined])
+  })
+
+  test('hasCredentials - the probe carries the request URL', () => {
+    const jsonapiOnly = (config) => (config.url || '').startsWith('/jsonapi')
+      ? { ...config, headers: { ...config.headers, Authorization: 'Bearer token' } }
+      : config
+    const instance = intercepted(jsonapiOnly)
+
+    expect(hasCredentials(instance, undefined, '/jsonapi/node/page')).toBe(true)
+    expect(hasCredentials(instance, undefined, '/elsewhere')).toBe(false)
+    expect(processCache('content', { axios: instance, url: '/jsonapi/node/page' })).toBeNull()
+  })
+
+  test('hasCredentials - the probe leaves nested defaults alone', () => {
+    const instance = intercepted((config) => {
+      config.headers.Authorization = `Bearer ${config.params.access_token}`
+      delete config.params.access_token
+      return config
+    })
+    instance.defaults.params = { access_token: 'token' }
+
+    expect(hasCredentials(instance)).toBe(true)
+    expect(instance.defaults.params).toStrictEqual({ access_token: 'token' })
+  })
+
+  test('hasCredentials - runWhen is asked before any interceptor runs, in the order they were added', () => {
+    const bearer = { fulfilled: (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } }), runWhen: (config) => !config.headers['X-Skip-Auth'] }
+    const skip = (config) => ({ ...config, headers: { ...config.headers, 'X-Skip-Auth': '1' } })
+    // Axios picks bearer on the config as it starts, then runs skip, then bearer.
+    expect(hasCredentials(intercepted(bearer, skip))).toBe(true)
+  })
+
+  test('hasCredentials - only a runWhen of false skips an interceptor', () => {
+    const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
+    expect(hasCredentials(intercepted({ fulfilled: bearer, runWhen: () => undefined }))).toBe(true)
+  })
+
+  test('hasCredentials - the probe flattens the default headers as Axios 1 does', () => {
+    const bearer = { fulfilled: (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } }), runWhen: (config) => config.headers.get('Accept').includes('json') }
+    const instance = intercepted(bearer)
+    instance.defaults.headers = { common: { Accept: 'application/json, text/plain' }, get: { Accept: 'application/vnd.api+json' }, post: { 'Content-Type': 'text/plain' } }
+
+    expect(hasCredentials(instance)).toBe(true)
+    // A method's headers win over the common ones, and the instance's own win over both.
+    let seen
+    const flat = intercepted((config) => { seen = config.headers; return config })
+    flat.defaults.headers = { common: { Accept: 'a', 'X-One': '1' }, get: { Accept: 'b' }, 'X-One': '2' }
+    hasCredentials(flat)
+    expect(seen.get('Accept')).toBe('b')
+    expect(seen.get('X-One')).toBe('2')
+    expect(seen.post).toBeUndefined()
+    // Axios 0.x hands interceptors the common headers, and they stay for one that writes there.
+    const older = intercepted((config) => { config.headers.common.Authorization = 'Bearer token'; return config })
+    expect(hasCredentials(older)).toBe(true)
+    expect(older.defaults.headers.common).toStrictEqual({})
+  })
+
+  test('hasCredentials - header names merge without regard to case, as Axios merges them', () => {
+    const bearer = { fulfilled: (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } }), runWhen: (config) => config.headers.get('Accept') === 'application/json' }
+    const instance = intercepted(bearer)
+    instance.defaults.headers = { common: { Accept: 'text/plain' }, get: { accept: 'application/json' } }
+    expect(hasCredentials(instance)).toBe(true)
+    // With a warm entry, that instance is still refused the cache.
+    processCache('index', { axios: axios() }).set('key', 'anonymous', 60)
+    expect(processCache('index', { axios: instance })).toBeNull()
+  })
+
+  test('hasCredentials - a header keeps its first spelling, and a false value stays', () => {
+    let seen
+    const instance = intercepted((config) => { seen = config.headers; return config })
+    instance.defaults.headers = { common: { Accept: 'text/plain', 'X-Public': false }, get: { accept: 'application/json', 'x-public': 'yes' } }
+    hasCredentials(instance)
+    // As AxiosHeaders sets them: the first name is kept with the later value, and false is not replaced.
+    expect(seen.Accept).toBe('application/json')
+    expect(seen.accept).toBeUndefined()
+    expect(seen.get('X-Public')).toBe(false)
+  })
+
+  test('hasCredentials - a runWhen that throws on the probe never fails the request', () => {
+    const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
+    const instance = intercepted({ fulfilled: bearer, runWhen: () => { throw new Error('probe') } })
+    expect(() => hasCredentials(instance)).not.toThrow()
+    expect(hasCredentials(instance)).toBe(true)
   })
 
   test('parseCacheLifetime reads Cache-Control as a shared cache', () => {

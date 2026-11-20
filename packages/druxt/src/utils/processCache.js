@@ -117,13 +117,157 @@ export const configHasCredentials = (config, sessionCookie = DRUPAL_SESSION_COOK
  *
  * @param {object} axios - The Axios instance.
  * @param {string} [sessionCookie] - A pattern for the session cookie name.
+ * @param {string} [url] - The URL of the request about to be made, which an interceptor may look at.
  *
  * @returns {boolean}
  */
-export const hasCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) => {
+export const hasCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE, url = '') => {
   if (!axios) return false
   if (credentialed.has(axios)) return true
-  return configHasCredentials(axios.defaults, sessionCookie)
+  return configHasCredentials(axios.defaults, sessionCookie) || interceptorsAddCredentials(axios, sessionCookie, url)
+}
+
+/** Marks a probe config, so an interceptor can tell it from a request. */
+const PROBE = Symbol.for('druxt.processCache.probe')
+
+/**
+ * Whether a request config is the process cache's probe rather than a request.
+ *
+ * An interceptor with side effects, such as logging, can leave a probe alone.
+ *
+ * @param {object} config - The Axios request config.
+ *
+ * @returns {boolean}
+ */
+export const isProbe = (config) => !!(config && config[PROBE])
+
+// A copy of plain objects and arrays, so the probe cannot change the defaults.
+// Anything else, such as a function or an agent, is shared as it is.
+const copy = (value) => {
+  if (Array.isArray(value)) return value.map(copy)
+  if (!value || typeof value !== 'object' || Object.getPrototypeOf(value) !== Object.prototype) return value
+  return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, copy(item)]))
+}
+
+// The headers a GET request starts with, as Axios 1 hands them to its
+// interceptors. GET headers win over common ones, and the instance's own
+// headers win over both. The per-method maps go, apart from the common one,
+// which Axios 0.x hands to interceptors as it is.
+const METHODS = ['delete', 'get', 'head', 'post', 'put', 'patch', 'options']
+const flattenHeaders = (headers) => {
+  const own = Object.fromEntries(Object.entries(headers).filter(([name]) => name !== 'common' && !METHODS.includes(name)))
+  // Names are merged without regard to case, as AxiosHeaders sets them: a
+  // name keeps its first spelling, and a false value is not replaced by a
+  // name spelt another way.
+  const flat = {}
+  for (const layer of [headers.common, headers.get, own]) {
+    for (const [name, value] of Object.entries(layer || {})) {
+      const key = Object.keys(flat).find((item) => item.toLowerCase() === name.toLowerCase())
+      if (key === undefined || key === name) flat[name] = value
+      else if (flat[key] !== false) flat[key] = value
+    }
+  }
+  if (headers.common && typeof headers.common === 'object') flat.common = headers.common
+  return flat
+}
+
+// The probe's headers, with the methods of Axios 1's AxiosHeaders for an
+// interceptor that uses them. The methods are not enumerable, so the headers
+// still read as a plain object. Names are matched without regard to case.
+const probeHeaders = (headers) => {
+  const find = (name) => Object.keys(headers).find((key) => key.toLowerCase() === String(name).toLowerCase())
+  const methods = {
+    set(name, value) {
+      if (name && typeof name === 'object') {
+        for (const [key, item] of Object.entries(name)) methods.set(key, item)
+      } else if (value !== undefined && value !== false) {
+        const key = find(name)
+        if (key && key !== name) delete headers[key]
+        headers[name] = value
+      }
+      return headers
+    },
+    get: (name) => { const key = find(name); return key ? headers[key] : undefined },
+    has: (name) => !!find(name),
+    delete: (name) => { const key = find(name); if (key) delete headers[key]; return !!key },
+    toJSON: () => ({ ...headers }),
+  }
+  for (const name of ['Authorization', 'Content-Type', 'Accept']) {
+    const suffix = name.replace('-', '')
+    methods[`set${suffix}`] = (value) => methods.set(name, value)
+    methods[`get${suffix}`] = () => methods.get(name)
+    methods[`has${suffix}`] = () => methods.has(name)
+  }
+  for (const [name, fn] of Object.entries(methods)) {
+    Object.defineProperty(headers, name, { value: fn, enumerable: false, configurable: true, writable: true })
+  }
+  return headers
+}
+
+/**
+ * Whether an instance's request interceptors add credentials to a request.
+ *
+ * Runs them on a copy of the defaults, with the request's URL, as Axios does:
+ * each `runWhen` is asked first, on the config as it starts and in the order
+ * the interceptors were added, and those it does not refuse run last added
+ * first.
+ *
+ * The probe can't tell what an async function, a returned promise or a throw
+ * would add, so it passes over each of those and goes on with the config it
+ * has. The response-side watch sees anything they add. An async function is
+ * never called, as running it may send requests of its own.
+ *
+ * Counting them as credentials would turn the cache off for every visitor on a
+ * site using @nuxtjs/auth-next, which adds an async interceptor to refresh
+ * tokens whether or not anyone is signed in. Its token goes on the defaults.
+ *
+ * @param {object} axios - The Axios instance.
+ * @param {string} sessionCookie - A pattern for the session cookie name.
+ * @param {string} url - The URL of the request about to be made.
+ *
+ * @returns {boolean}
+ * @private
+ */
+const interceptorsAddCredentials = (axios, sessionCookie, url) => {
+  const manager = ((axios || {}).interceptors || {}).request
+  if (!manager || typeof manager.forEach !== 'function') return false
+
+  const defaults = copy({ ...(axios.defaults || {}) })
+  // Own properties only, so headers held in a class are copied too.
+  const headers = probeHeaders(flattenHeaders(copy({ ...((axios.defaults || {}).headers || {}) })))
+  let config = { ...defaults, headers, method: 'get', url, [PROBE]: true }
+
+  const handlers = []
+  manager.forEach((handler) => {
+    if (!handler || typeof handler.fulfilled !== 'function') return
+    if (typeof handler.runWhen === 'function') {
+      // A predicate that throws here is kept, so the probe never fails a request.
+      let refused = false
+      try {
+        refused = handler.runWhen(config) === false
+      } catch {
+        refused = false
+      }
+      if (refused) return
+    }
+    handlers.unshift(handler)
+  })
+
+  for (const { fulfilled } of handlers) {
+    if (fulfilled.constructor && fulfilled.constructor.name === 'AsyncFunction') continue
+    let next
+    try {
+      next = fulfilled(config)
+    } catch {
+      continue
+    }
+    if (next && typeof next.then === 'function') {
+      next.then(undefined, () => {})
+      continue
+    }
+    if (next) config = next
+  }
+  return configHasCredentials(config, sessionCookie)
 }
 
 /**
@@ -238,11 +382,12 @@ export const parseCacheLifetime = (headers) => {
  * @param {string} [options.sessionCookie] - A pattern for the session cookie name.
  * @param {number} [options.maxSize] - The size the scope keeps per consumer at most, in bytes of stored JSON. Past it, expired entries go first, then the least recently used, and a value larger than the whole limit is not stored.
  * @param {Function} [options.sizeOf] - Measures a value for `maxSize`. The bytes of its JSON by default.
+ * @param {string} [options.url] - The URL of the request the cache is asked for, which the request interceptors are probed with.
  *
  * @returns {?{get: Function, set: Function}}
  */
-export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize } = {}) => {
-  if (!runtime.isServer() || hasCredentials(axios, sessionCookie)) return null
+export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize, url } = {}) => {
+  if (!runtime.isServer() || hasCredentials(axios, sessionCookie, url)) return null
 
   if (!scopes.has(scope)) scopes.set(scope, new Map())
   const consumers = scopes.get(scope)

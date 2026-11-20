@@ -114,6 +114,21 @@ describe('DruxtClient content cache', () => {
     expect(fetches()).toBe(6)
   })
 
+  test('an interceptor that signs only some URLs is probed with the URL asked for', async () => {
+    await client().get(page)
+    expect(fetches()).toBe(1)
+
+    // Signs JSON:API resource requests only, as a site's own interceptor might.
+    const signed = requestAxios()
+    const list = [{ fulfilled: (config) => (config.url || '').startsWith('/jsonapi/node')
+      ? { ...config, headers: { ...config.headers, Authorization: 'Bearer token' } }
+      : config }]
+    signed.interceptors.request = { handlers: list, forEach: (fn) => list.forEach(fn) }
+
+    await client(signed).get(page)
+    expect(fetches()).toBe(2)
+  })
+
   test('a request with options that change the response is never read or stored, as the key cannot tell its variants apart', async () => {
     await client().get(page)
     // Another language through a request header would be answered with the English document.
