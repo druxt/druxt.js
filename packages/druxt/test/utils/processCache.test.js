@@ -166,6 +166,17 @@ describe('processCache', () => {
     expect(processCache('index', { axios: instance })).toBeNull()
   })
 
+  test('hasCredentials - a header keeps its first spelling, and a false value stays', () => {
+    let seen
+    const instance = intercepted((config) => { seen = config.headers; return config })
+    instance.defaults.headers = { common: { Accept: 'text/plain', 'X-Public': false }, get: { accept: 'application/json', 'x-public': 'yes' } }
+    hasCredentials(instance)
+    // As AxiosHeaders sets them: the first name is kept with the later value, and false is not replaced.
+    expect(seen.Accept).toBe('application/json')
+    expect(seen.accept).toBeUndefined()
+    expect(seen.get('X-Public')).toBe(false)
+  })
+
   test('hasCredentials - a runWhen that throws on the probe never fails the request', () => {
     const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
     const instance = intercepted({ fulfilled: bearer, runWhen: () => { throw new Error('probe') } })
