@@ -2,4 +2,4 @@
 'druxt-entity': patch
 ---
 
-fix(#1020): a field rendered in another component's slot finds its entity for its fetch key. Before, fields with the same name on one page could share fetched data, so an edit form's field could render the view's formatter instead of its widget.
+fix(#1020): fields with the same name in different entities on one page no longer share fetched data. Before, a field rendered in another component's slot could pick up another entity's data, so an edit form's field could show the display formatter instead of its widget.

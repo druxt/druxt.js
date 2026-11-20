@@ -1,8 +1,9 @@
 ---
 'druxt': patch
-'druxt-menu': patch
 ---
 
-fix(#1018): a site whose Axios instance adds credentials in a synchronous request interceptor no longer reads the shared process cache from its first request, unless the interceptor adds them only from state an `async` interceptor sets first. Before, it could read an entry stored for anonymous visitors until a response showed the credentials.
+fix(#1018): a signed-in request no longer gets a response cached for anonymous visitors on a site that adds credentials in a synchronous Axios request interceptor. Before, the server cache could serve such an entry until a response showed the credentials.
 
-The cache runs the instance's request interceptors on a probe before each lookup, with the request's URL, the headers a GET request starts with, and in the order Axios runs them, with Axios 1's header methods such as `config.headers.set()`. Menus are probed with the URL and query their first page is fetched with. An interceptor that is `async`, returns a promise or throws on the probe is passed over, and what it adds is seen once a response comes back, as before. The probe can then miss credentials a synchronous interceptor adds from state the `async` one sets, so its first request can still read an anonymous entry. Sites using `@nuxtjs/auth-next`, which adds an `async` interceptor, keep the cache for anonymous visitors. An interceptor that logs can leave the probe alone by checking `config[Symbol.for('druxt.processCache.probe')]`.
+Before each cache lookup, Druxt now runs the site's request interceptors on a copy of the request to see whether it would carry credentials. An interceptor that is `async`, returns a promise or throws is skipped, and anything it adds is seen once a response arrives, as before. That includes credentials a synchronous interceptor adds only from state an `async` one sets, so on such a site the first request can still read an anonymous entry.
+
+Sites using `@nuxtjs/auth-next` keep the cache for anonymous visitors, and a signed-in user's token, which auth-next puts on the Axios defaults, still turns the cache off as in 0.25.1. An interceptor with side effects, such as logging, can leave the check alone by testing `config[Symbol.for('druxt.processCache.probe')]`.
