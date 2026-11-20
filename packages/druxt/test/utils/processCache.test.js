@@ -136,6 +136,33 @@ describe('processCache', () => {
     expect(hasCredentials(intercepted({ fulfilled: bearer, runWhen: () => undefined }))).toBe(true)
   })
 
+  test('hasCredentials - the probe flattens the default headers as Axios 1 does', () => {
+    const bearer = { fulfilled: (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } }), runWhen: (config) => config.headers.get('Accept').includes('json') }
+    const instance = intercepted(bearer)
+    instance.defaults.headers = { common: { Accept: 'application/json, text/plain' }, get: { Accept: 'application/vnd.api+json' }, post: { 'Content-Type': 'text/plain' } }
+
+    expect(hasCredentials(instance)).toBe(true)
+    // A method's headers win over the common ones, and the instance's own win over both.
+    let seen
+    const flat = intercepted((config) => { seen = config.headers; return config })
+    flat.defaults.headers = { common: { Accept: 'a', 'X-One': '1' }, get: { Accept: 'b' }, 'X-One': '2' }
+    hasCredentials(flat)
+    expect(seen.get('Accept')).toBe('b')
+    expect(seen.get('X-One')).toBe('2')
+    expect(seen.post).toBeUndefined()
+    // Axios 0.x hands interceptors the common headers, and they stay for one that writes there.
+    const older = intercepted((config) => { config.headers.common.Authorization = 'Bearer token'; return config })
+    expect(hasCredentials(older)).toBe(true)
+    expect(older.defaults.headers.common).toStrictEqual({})
+  })
+
+  test('hasCredentials - a runWhen that throws on the probe never fails the request', () => {
+    const bearer = (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } })
+    const instance = intercepted({ fulfilled: bearer, runWhen: () => { throw new Error('probe') } })
+    expect(() => hasCredentials(instance)).not.toThrow()
+    expect(hasCredentials(instance)).toBe(true)
+  })
+
   test('parseCacheLifetime reads Cache-Control as a shared cache', () => {
     expect(parseCacheLifetime(undefined)).toBe(0)
     expect(parseCacheLifetime({})).toBe(0)

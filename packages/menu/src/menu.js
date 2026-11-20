@@ -157,17 +157,20 @@ class DruxtMenu {
       : this.buildMenuLinkContentQuery(menuName, settings)
     const cacheKey = JSON.stringify([prefix || '', menuName, jsonApiMenuItems, query.getQueryString()])
     if (!cache.has(cacheKey)) {
-      // A menu fetched by an earlier server request without credentials.
-      const processCache = (scope) => typeof this.druxt.processCache === 'function' ? this.druxt.processCache(scope) : null
-      const sharedKey = JSON.stringify([this.druxt.indexKey, cacheKey])
-      const shared = processCache('menu')
-      const stored = shared && shared.get(sharedKey)
-      const since = shared ? shared.generation : undefined
-      // The fetch takes the query the key was built from, so settings changed meanwhile cannot part them.
-      const request = stored ? Promise.resolve(stored) : (jsonApiMenuItems
-        ? this.getJsonApiMenuItems(menuName, settings, prefix, query)
-        : this.getMenuLinkContent(menuName, settings, prefix, query)
-      ).then((result) => {
+      const request = (async () => {
+        // A menu fetched by an earlier server request without credentials. The
+        // cache is asked with the URL the menu comes from, which an interceptor may look at.
+        const url = typeof this.druxt.processCache === 'function' ? await this.menuUrl(menuName, prefix, jsonApiMenuItems) : undefined
+        const processCache = (scope) => typeof this.druxt.processCache === 'function' ? this.druxt.processCache(scope, url) : null
+        const sharedKey = JSON.stringify([this.druxt.indexKey, cacheKey])
+        const shared = processCache('menu')
+        const stored = shared && shared.get(sharedKey)
+        if (stored) return stored
+        const since = shared ? shared.generation : undefined
+        // The fetch takes the query the key was built from, so settings changed meanwhile cannot part them.
+        const result = await (jsonApiMenuItems
+          ? this.getJsonApiMenuItems(menuName, settings, prefix, query)
+          : this.getMenuLinkContent(menuName, settings, prefix, query))
         // Asked again once resolved: the request may have shown credentials.
         const after = processCache('menu')
         // No record means the fetch failed, so nothing is written and an
@@ -176,7 +179,7 @@ class DruxtMenu {
         // was in flight: the result was fetched before the clear and predates it.
         if (after && lifetimes.has(result)) after.set(sharedKey, result, lifetimes.get(result), since)
         return result
-      })
+      })()
       cache.set(cacheKey, request)
       // A failed request is dropped so the next call retries.
       request.catch(() => cache.delete(cacheKey))
@@ -188,6 +191,28 @@ class DruxtMenu {
     }
 
     return cache.get(cacheKey)
+  }
+
+  /**
+   * The URL a menu's items are fetched from, without the query.
+   *
+   * @private
+   *
+   * @param {string} menuName - The menu name.
+   * @param {string} prefix - The JSON:API endpoint prefix or langcode.
+   * @param {boolean} jsonApiMenuItems - Whether the menu comes from the JSON:API Menu Items module.
+   *
+   * @returns {string} The URL, or the JSON:API endpoint when the index has none.
+   */
+  async menuUrl(menuName, prefix, jsonApiMenuItems) {
+    const endpoint = `${prefix || ''}${this.druxt.options.endpoint}`
+    if (jsonApiMenuItems) {
+      // getJsonApiMenuItems() adds the resource to the index with this href when the index has none.
+      const index = (await this.druxt.getIndex(undefined, prefix)) || {}
+      return (index[`menu_items--${menuName}`] || {}).href || `${endpoint}/menu_items/${menuName}`
+    }
+    const { href } = (await this.druxt.getIndex('menu_link_content--menu_link_content', prefix)) || {}
+    return href || endpoint
   }
 
   /**

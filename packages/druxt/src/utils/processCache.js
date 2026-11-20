@@ -149,6 +149,18 @@ const copy = (value) => {
   return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, copy(item)]))
 }
 
+// The headers a GET request starts with, as Axios 1 hands them to its
+// interceptors. GET headers win over common ones, and the instance's own
+// headers win over both. The per-method maps go, apart from the common one,
+// which Axios 0.x hands to interceptors as it is.
+const METHODS = ['delete', 'get', 'head', 'post', 'put', 'patch', 'options']
+const flattenHeaders = (headers) => {
+  const own = Object.fromEntries(Object.entries(headers).filter(([name]) => name !== 'common' && !METHODS.includes(name)))
+  const flat = { ...(headers.common || {}), ...(headers.get || {}), ...own }
+  if (headers.common && typeof headers.common === 'object') flat.common = headers.common
+  return flat
+}
+
 // The probe's headers, with the methods of Axios 1's AxiosHeaders for an
 // interceptor that uses them. The methods are not enumerable, so the headers
 // still read as a plain object. Names are matched without regard to case.
@@ -212,13 +224,22 @@ const interceptorsAddCredentials = (axios, sessionCookie, url) => {
 
   const defaults = copy({ ...(axios.defaults || {}) })
   // Own properties only, so headers held in a class are copied too.
-  const headers = probeHeaders(copy({ ...((axios.defaults || {}).headers || {}) }))
+  const headers = probeHeaders(flattenHeaders(copy({ ...((axios.defaults || {}).headers || {}) })))
   let config = { ...defaults, headers, method: 'get', url, [PROBE]: true }
 
   const handlers = []
   manager.forEach((handler) => {
     if (!handler || typeof handler.fulfilled !== 'function') return
-    if (typeof handler.runWhen === 'function' && handler.runWhen(config) === false) return
+    if (typeof handler.runWhen === 'function') {
+      // A predicate that throws here is kept, so the probe never fails a request.
+      let refused = false
+      try {
+        refused = handler.runWhen(config) === false
+      } catch {
+        refused = false
+      }
+      if (refused) return
+    }
     handlers.unshift(handler)
   })
 
