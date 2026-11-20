@@ -9,7 +9,7 @@ The packages publish to npm from `.github/workflows/release.yml`. Nobody runs `n
 
 ## Development releases
 
-A push to a release line, `0.x` today, cuts a snapshot of every package with a pending changeset, and of every package whose version that changes. A package the changesets leave at its released version is not published again. The trigger is the changeset files themselves, so a push that changes package code without touching `.changeset/*.md` publishes nothing. A snapshot is cut from whatever changesets are pending at that moment, including ones left from earlier merges. Almost everything depends on `druxt`, so a change to the core republishes the whole set.
+A push to a release line, `0.x` today, cuts a snapshot of every package with a pending changeset, and of every package that depends on one of those. A dependent doesn't need a changeset of its own: its released range leaves a snapshot out, so it is rebuilt to pin the snapshot beside it. A package outside that set keeps its released version and is not published again. The trigger is the changeset files themselves, so a push that changes package code without touching `.changeset/*.md` publishes nothing. A snapshot is cut from whatever changesets are pending at that moment, including ones left from earlier merges. Almost everything depends on `druxt`, so a change to the core republishes the whole set.
 
 A snapshot version reads `0.24.1-dev.20260920004838`: the version the pending changesets add up to, then the tag and a timestamp. Each package pins its sibling packages to the exact snapshot published beside it. One install brings in one coherent set:
 

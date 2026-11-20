@@ -97,7 +97,9 @@ export function checkPackages({ packages, registry, files = true }) {
 
         if (sibling.private) {
           problems.push(`${name}: ${field}.${dep} names a private package, so an install from npm cannot resolve it.`)
-        } else if (!semver.satisfies(sibling.version, range, { includePrerelease: true })) {
+        // No includePrerelease: npm keeps a snapshot out of a range that does not
+        // name one, and installs a second, released copy of the sibling instead.
+        } else if (!semver.satisfies(sibling.version, range)) {
           problems.push(`${name}: ${field}.${dep} is "${range}", but this release carries ${dep}@${sibling.version}.`)
         }
       }

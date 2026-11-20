@@ -99,11 +99,13 @@ jobs:
           echo "Pending changesets: $count" >> "$GITHUB_STEP_SUMMARY"
 
       # A snapshot cannot be cut in pre mode. The checkout is thrown away, so
-      # dropping the marker here changes nothing on the branch.
+      # dropping the marker here changes nothing on the branch. Neither does
+      # the changeset the first script writes for the dependents.
       - name: Version the snapshot
         if: steps.pending.outputs.count != '0'
         run: |
           rm -f .changeset/pre.json
+          node scripts/release/snapshot.mjs
           yarn changeset version --snapshot dev
 
       - name: Build
@@ -116,9 +118,9 @@ jobs:
 
       - name: Pack the tarballs
         if: steps.pending.outputs.count != '0'
-        # Only the versions npm does not have. A package with no pending
-        # changeset keeps its released version, which npm refuses, and one
-        # refusal stops the dev job's loop before the packages after it.
+        # Only the versions npm does not have. A package outside the snapshot
+        # keeps its released version, which npm refuses, and one refusal
+        # stops the dev job's loop before the packages after it.
         run: |
           unpublished=$(node scripts/release/check.mjs --list-unpublished)
           if [ -z "$unpublished" ]; then
