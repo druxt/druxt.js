@@ -2,14 +2,14 @@
 
 The packages publish to npm from `.github/workflows/release.yml`. Nobody runs `npm publish` by hand, with one exception: a package that does not exist on npm yet needs a first publish by hand before trusted publishing can be set up for it. See [One-time setup](#one-time-setup).
 
-| Channel | npm dist-tag | When it publishes | What it is for |
-| ------- | ------------ | ----------------- | -------------- |
-| Development | `dev` | A push to a release line that adds or edits a changeset | Trying unreleased work on a real site |
-| Stable | `latest` | When you merge the pull request that versions the packages | Everyone else |
+| Channel     | npm dist-tag | When it publishes                                          | What it is for                        |
+| ----------- | ------------ | ---------------------------------------------------------- | ------------------------------------- |
+| Development | `dev`        | A push to a release line that adds or edits a changeset    | Trying unreleased work on a real site |
+| Stable      | `latest`     | When you merge the pull request that versions the packages | Everyone else                         |
 
 ## Development releases
 
-A push to a release line, `0.x` today, cuts a snapshot of every package with a pending changeset, and of every package that depends on one. The trigger is the changeset files themselves, so a push that changes package code without touching `.changeset/*.md` publishes nothing. A snapshot is cut from whatever changesets are pending at that moment, including ones left from earlier merges. Almost everything depends on `druxt`, so a change to the core republishes the whole set.
+A push to a release line, `0.x` today, cuts a snapshot of every package with a pending changeset, and of every package that depends on one of those. A dependent doesn't need a changeset of its own: its released range leaves a snapshot out, so it is rebuilt to pin the snapshot beside it. A package outside that set keeps its released version and is not published again. The trigger is the changeset files themselves, so a push that changes package code without touching `.changeset/*.md` publishes nothing. A snapshot is cut from whatever changesets are pending at that moment, including ones left from earlier merges. Almost everything depends on `druxt`, so a change to the core republishes the whole set.
 
 A snapshot version reads `0.24.1-dev.20260920004838`: the version the pending changesets add up to, then the tag and a timestamp. Each package pins its sibling packages to the exact snapshot published beside it. One install brings in one coherent set:
 
@@ -41,10 +41,10 @@ A release is the tags and the npm versions. There is no release branch to merge 
 
 Each channel runs as a build job followed by a publish job.
 
-| Job | Runs repository code | Can publish to npm |
-| --- | -------------------- | ------------------ |
-| Build | Yes, install scripts included | No |
-| Publish | No, it checks out nothing | Yes |
+| Job     | Runs repository code          | Can publish to npm |
+| ------- | ----------------------------- | ------------------ |
+| Build   | Yes, install scripts included | No                 |
+| Publish | No, it checks out nothing     | Yes                |
 
 The build job ends by packing tarballs, and the publish job hands those tarballs to npm. A pull request rehearses the build job only, so code in a pull request never runs with publishing rights.
 

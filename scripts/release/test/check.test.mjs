@@ -128,3 +128,10 @@ test('unpublished versions are listed, private packages left out', () => {
   const registry = { core: { latest: '1.2.0', versions: ['1.2.0'] }, site: { latest: '2.0.0', versions: ['2.0.0'] }, fresh: null }
   assert.deepEqual(listUnpublished({ packages, registry }), ['core@1.2.1', 'fresh@0.1.0'])
 })
+
+test('a range that leaves out a snapshot sibling is refused', () => {
+  // npm keeps a prerelease out of a range that does not name one, so the
+  // install would bring in a second, released copy of the sibling.
+  const packages = [core('0.25.2-dev.20261120034438'), pkg({ name: 'breadcrumb', version: '0.18.0', dependencies: { core: '^0.25.0' } })]
+  assert.match(checkPackages({ packages, files: false })[0], /but this release carries core@0\.25\.2-dev\.20261120034438/)
+})
