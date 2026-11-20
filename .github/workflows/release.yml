@@ -116,8 +116,18 @@ jobs:
 
       - name: Pack the tarballs
         if: steps.pending.outputs.count != '0'
+        # Only the versions npm does not have. A package with no pending
+        # changeset keeps its released version, which npm refuses, and one
+        # refusal stops the dev job's loop before the packages after it.
         run: |
-          node scripts/release/pack.mjs dev-packages
+          unpublished=$(node scripts/release/check.mjs --list-unpublished)
+          if [ -z "$unpublished" ]; then
+            echo "Pending changesets, yet npm has every version." >&2
+            exit 1
+          fi
+          # Word splitting is the point: one name@version per argument.
+          # shellcheck disable=SC2086
+          node scripts/release/pack.mjs dev-packages $unpublished
           {
             echo "| Package | Version |"
             echo "| --- | --- |"
