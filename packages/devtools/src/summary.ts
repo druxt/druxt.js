@@ -93,10 +93,11 @@ export function watchDruxtDevtoolsSummary(channel: DruxtDevtoolsChannel, options
     const sections = (snapshot.sections || []).filter((section) => section.blocks.length)
 
     // The signature decides whether to print again. The one line for a tool repeats only for a new count. A grouped
-    // summary also repeats for a new page, for new section data, and for a quiet error that changed, because it prints
-    // each error.
+    // summary also repeats for a new page, for new section data, and for a default or a quiet error that changed,
+    // because it prints each one.
     const quiet = snapshot.quiet.map((error) => [error.component, error.status, error.detail])
-    const signature = options.open ? counts : JSON.stringify([snapshot.page, counts, sections.map((section) => [section.label, section.blocks]), quiet])
+    const missing = snapshot.missing.map((group) => group.entries.map((entry) => [entry.component, entry.meta, entry.candidates]))
+    const signature = options.open ? counts : JSON.stringify([snapshot.page, counts, missing, sections.map((section) => [section.label, section.blocks]), quiet])
     if (signature === printed) return
     printed = signature
 

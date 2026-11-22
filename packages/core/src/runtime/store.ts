@@ -821,9 +821,13 @@ export const useDruxtStore = defineStore('druxt', {
           ...storedResource?.included || [],
         ]
         // Each is returned as the store holds it, without links, so a fresh read and a stored read have one shape.
-        result.included = Array.from(new Set(included.filter((o) => o?.id).map((o) => o.id)))
-          .map((included_id) => included.find((o) => o.id === included_id)!)
-          .map((o) => (this.resources[o.type]?.[o.id]?.[slot(prefix)]?.data as JsonApiResource | undefined) ?? withoutLinks(o))
+        // A read that a flush overtook stored nothing. Its includes are its own, not what a later read stored.
+        const overtaken = since !== getRuntime(this).generation
+        // Each is told apart by its type and id. Two types can share an id that a client supplied.
+        const named = new Map(included.filter((o) => o?.id).reverse().map((o) => [`${o.type}:${o.id}`, o]))
+        result.included = Array.from(new Set(included.filter((o) => o?.id).map((o) => `${o.type}:${o.id}`)))
+          .map((key) => named.get(key)!)
+          .map((o) => (overtaken ? undefined : this.resources[o.type]?.[o.id]?.[slot(prefix)]?.data as JsonApiResource | undefined) ?? withoutLinks(o))
       }
 
       if (error) result.error = error

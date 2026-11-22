@@ -225,6 +225,19 @@ describe('the console summary', () => {
     expect(console.group).toHaveBeenCalledTimes(2)
   })
 
+  it('prints the defaults again when a default\'s candidate names change, the count staying the same', () => {
+    const devtools = createDruxtDevtools()
+    const console = out()
+    watchDruxtDevtoolsSummary(devtools, { console })
+    devtools.emit({ type: 'page', path: '/recipes' })
+    devtools.emit({ type: 'module:missing', module: module('1', { candidates: ['DruxtEntityNodeRecipe'] }) })
+    vi.advanceTimersByTime(1000)
+    devtools.emit({ type: 'module:missing', module: module('1', { candidates: ['DruxtEntityNodeRecipeTeaser'] }) })
+    vi.advanceTimersByTime(1000)
+    expect(console.groupCollapsed).toHaveBeenCalledTimes(2)
+    expect(String(console.log.mock.calls.at(-1)![0])).toContain('DruxtEntityNodeRecipeTeaser')
+  })
+
   it('leaves out the quiet errors\' group when there are none', () => {
     const devtools = createDruxtDevtools()
     const console = out()

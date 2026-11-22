@@ -381,6 +381,34 @@ describe('useDruxtStore() seeding and links', () => {
     expect(result).not.toHaveProperty('links')
   })
 
+  // Drupal takes a UUID a client supplies, and checks it within the entity type alone.
+  it('tells two included resources that share an id apart by their type', async () => {
+    const media = { type: 'media--image', id: 'shared', attributes: { name: 'Borscht' } }
+    const term = { type: 'taxonomy_term--tags', id: 'shared', attributes: { name: 'Soup' } }
+    const both = { type: 'node--page', id: 'p9', attributes: { title: 'Both' }, relationships: { field_media: { data: { type: 'media--image', id: 'shared' } }, field_tags: { data: [{ type: 'taxonomy_term--tags', id: 'shared' }] } } }
+    const { fetch } = drupal({
+      'GET /jsonapi': index('', ['node--page', 'media--image', 'taxonomy_term--tags']),
+      'GET /jsonapi/node/page/p9': individual(both as never, [media, term] as never),
+    })
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(new DruxtClient(BASE_URL, { fetch })) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    const read = await useDruxtStore().getResource({ type: 'node--page', id: 'p9', query: { include: 'field_media,field_tags' } })
+    expect(read.included?.map((o) => [o.type, o.attributes?.name])).toEqual([['media--image', 'Borscht'], ['taxonomy_term--tags', 'Soup']])
+  })
+
+  it('returns an overtaken read\'s own includes, not what a later read stored', async () => {
+    const { store } = sparseSite()
+    const read = store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid' } })
+    store.flushResource({})
+    store.addResource({ resource: { data: { type: 'user--user', id: 'u1', attributes: { display_name: 'Renamed since' } } as never } })
+    const result = await read
+    expect(result.included).toHaveLength(1)
+    expect(result.included![0]!.attributes).not.toEqual({ display_name: 'Renamed since' })
+    expect(JSON.stringify(result)).not.toContain(BASE_URL)
+  })
+
   it('tells partial from full after the payload is restored into a new store', async () => {
     const seeded = sparseSite()
     seeded.store.addResource({ resource: { data: { type: 'node--page', id: 'p1', attributes: { title: 'About' } } as never }, partial: true })
