@@ -93,6 +93,12 @@ describe('URL building', () => {
     expect(client.buildQueryUrl('/jsonapi/node/article', new DrupalJsonApiParams())).toBe('/jsonapi/node/article')
   })
 
+  // Drupal reads one `include` and one `sort`, each a comma-separated list. A repeated parameter keeps the last alone.
+  it('joins an include and a sort given as a list into the one value Drupal reads', () => {
+    const url = client.buildQueryUrl('/jsonapi/node/article', { include: ['uid', 'field_tags'], sort: ['title', '-created'], 'page[limit]': 5 })
+    expect(Object.fromEntries(new URL(url, 'https://site.test').searchParams)).toEqual({ 'include': 'uid,field_tags', 'sort': 'title,-created', 'page[limit]': '5' })
+  })
+
   it('appends a query string, with or without its question mark', () => {
     expect(client.buildQueryUrl('/jsonapi/node/article', 'page[limit]=5')).toBe('/jsonapi/node/article?page[limit]=5')
     expect(client.buildQueryUrl('/jsonapi/node/article', '?page[limit]=5')).toBe('/jsonapi/node/article?page[limit]=5')
@@ -135,8 +141,8 @@ describe('URL building', () => {
   })
 
   it('encodes an object, repeating the key for each value of an array', () => {
-    expect(client.buildQueryUrl('/jsonapi/node/article', { 'page[limit]': 5, 'include': ['uid', 'field_image'], 'filter[status]': true }))
-      .toBe('/jsonapi/node/article?page%5Blimit%5D=5&include=uid&include=field_image&filter%5Bstatus%5D=true')
+    expect(client.buildQueryUrl('/jsonapi/node/article', { 'page[limit]': 5, 'views-argument': ['2026', '11'], 'filter[status]': true }))
+      .toBe('/jsonapi/node/article?page%5Blimit%5D=5&views-argument=2026&views-argument=11&filter%5Bstatus%5D=true')
   })
 })
 

@@ -607,7 +607,12 @@ export class DruxtClient {
       return withQuery(url, (query.getQueryString as () => string)())
     }
 
-    return withQuery(url, stringify(query as Record<string, unknown>))
+    // Drupal reads one `include` and one `sort`, each a comma-separated list, so a list is joined into one value.
+    const params: Record<string, unknown> = { ...query }
+    for (const name of ['include', 'sort']) {
+      if (Array.isArray(params[name])) params[name] = (params[name] as unknown[]).join(',')
+    }
+    return withQuery(url, stringify(params))
   }
 
   /**
