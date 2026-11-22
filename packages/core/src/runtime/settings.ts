@@ -41,7 +41,9 @@ const readOnly = <T>(value: T): T => {
   if (!Array.isArray(value) && prototype !== Object.prototype && prototype !== null) return value
   let view = nested.get(value)
   if (!view) {
-    view = new Proxy(value, {
+    // A frozen value is read through a copy. A proxy must answer a frozen target's own value, never a view of it.
+    const target = Object.isFrozen(value) ? (Array.isArray(value) ? [...value] : { ...value }) as typeof value : value
+    view = new Proxy(target, {
       get: (target, key, receiver) => readOnly(Reflect.get(target, key, receiver)),
       getOwnPropertyDescriptor: (target, key) => {
         const descriptor = Reflect.getOwnPropertyDescriptor(target, key)
@@ -51,6 +53,7 @@ const readOnly = <T>(value: T): T => {
       set: () => false,
       deleteProperty: () => false,
       defineProperty: () => false,
+      preventExtensions: () => false,
     })
     nested.set(value, view)
   }
@@ -76,6 +79,8 @@ const readOnlyView = (resolved: ComputedRef<DruxtSettings>): DruxtSettings => ne
   set: () => false,
   deleteProperty: () => false,
   defineProperty: () => false,
+  // The target is empty. Sealed, it could report none of the settings' keys.
+  preventExtensions: () => false,
 })
 
 /**

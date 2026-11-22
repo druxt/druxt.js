@@ -72,12 +72,14 @@ interface Redeemed {
   data: Record<string, unknown>
 }
 
-// How long a redeemed refresh token's answer is kept for a refresh that was sent before the browser had the new one.
+// How long a redeemed refresh token's answer is kept, from when Drupal gave it, for a refresh that was sent before
+// the browser had the new one.
 const REDEEMED_FOR = 10_000
 
-// The refresh tokens being redeemed or just redeemed, by a digest, with Drupal's answer. Kept in this process only:
-// with several processes, two refreshes that reach different ones are not joined.
-const redeeming = new Map<string, { at: number, answer: Promise<Redeemed> }>()
+// The refresh tokens being redeemed or just redeemed, by a digest, with Drupal's answer. `settled` is when Drupal
+// answered, and is unset until it does. Kept in this process only: with several processes, two refreshes that reach
+// different ones are not joined.
+const redeeming = new Map<string, { settled?: number, answer: Promise<Redeemed> }>()
 
 /**
  * Redeems a refresh token once, for every request that asks within a short time.
@@ -85,22 +87,31 @@ const redeeming = new Map<string, { at: number, answer: Promise<Redeemed> }>()
  * Drupal takes a refresh token once. Two requests with one token would otherwise get one new session and one refusal,
  * and the refusal would clear the cookies the other had set.
  *
+ * A request joins one that Drupal has not answered yet, however long that takes. The answer is then kept for ten
+ * seconds when it decided the token: a new session, or a refusal with a 400 or a 401. Any other answer redeemed
+ * nothing, such as a 503, and so does a request that never reached Drupal. Neither is kept, and the next request asks
+ * again.
+ *
  * @param key - A digest that names the Drupal, the Consumer and the refresh token.
  * @param redeem - Asks Drupal.
  */
 const redeemOnce = (key: string, redeem: () => Promise<Redeemed>): Promise<Redeemed> => {
   const now = Date.now()
-  for (const [held, { at }] of redeeming) {
-    if (now - at > REDEEMED_FOR) redeeming.delete(held)
+  for (const [held, { settled }] of redeeming) {
+    if (settled !== undefined && now - settled > REDEEMED_FOR) redeeming.delete(held)
   }
   const held = redeeming.get(key)
   if (held) return held.answer
   const answer = redeem()
-  redeeming.set(key, { at: now, answer })
-  // A request that failed to reach Drupal redeemed nothing, so the next one asks again.
-  answer.catch(() => {
-    if (redeeming.get(key)?.answer === answer) redeeming.delete(key)
-  })
+  const entry: { settled?: number, answer: Promise<Redeemed> } = { answer }
+  redeeming.set(key, entry)
+  const forget = () => {
+    if (redeeming.get(key) === entry) redeeming.delete(key)
+  }
+  answer.then((redeemed) => {
+    if (redeemed.ok || redeemed.status === 400 || redeemed.status === 401) entry.settled = Date.now()
+    else forget()
+  }, forget)
   return answer
 }
 
@@ -108,7 +119,8 @@ export default defineEventHandler(async (event) => {
   const session = holdsSession(event)
   if (session) requireSameOrigin(event)
   const body = ((await readBody(event)) || {}) as Record<string, string | undefined>
-  const fields = GRANTS.get(String(body.grant_type))
+  // The grant is a string. A list of one would read as its item here, and then match none of the checks below.
+  const fields = typeof body.grant_type === 'string' ? GRANTS.get(body.grant_type) : undefined
   if (!fields) throw createError({ statusCode: 400, statusMessage: 'Unsupported grant type' })
   if (body.grant_type === 'password' && (!body.username || !body.password)) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid username or password' })
@@ -154,7 +166,13 @@ export default defineEventHandler(async (event) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: params,
+      // A redirect that keeps the method would send the body, with its secret, password or refresh token, on to its
+      // target. None is followed.
+      redirect: 'manual',
     })
+    if (answer.status >= 300 && answer.status < 400) {
+      return { status: 502, ok: false, data: { error: 'server_error', error_description: 'The token endpoint answered with a redirect, which is not followed.' } }
+    }
     return { status: answer.status, ok: answer.ok, data: (await answer.json().catch(() => ({}))) as Record<string, unknown> }
   }
   // A session's refresh token is redeemed once. Refreshes that overlap, as two tabs send, share Drupal's one answer.
@@ -174,6 +192,11 @@ export default defineEventHandler(async (event) => {
     }
     // The browser learns when the session expires. It never gets a token.
     return Object.fromEntries(Object.entries({ token_type: data.token_type, expires_in: data.expires_in }).filter(([, value]) => value !== undefined))
+  }
+  // A 200 with no token, such as an HTML page, signed nobody in.
+  if (response.ok && session) {
+    setResponseStatus(event, 502)
+    return { error: 'server_error', message: 'The token endpoint answered with no access token.' }
   }
   if (response.ok) return data
   // A refresh token that Drupal refused is spent, so the session ends.

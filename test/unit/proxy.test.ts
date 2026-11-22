@@ -19,6 +19,17 @@ describe('proxyTarget()', () => {
   })
 })
 
+describe('proxyTarget(), for a Drupal below a base path', () => {
+  // The route check reads the path with its dot segments resolved, and the URL sent would resolve them after the base.
+  it('refuses a path whose dot segments would leave the base path', () => {
+    const routes = ['/jsonapi/**']
+    expect(proxyTarget('/jsonapi/../../jsonapi/node/page', 'https://drupal.test/cms', routes)).toBeUndefined()
+    expect(proxyTarget('/jsonapi/..%2f..%2fjsonapi/node/page', 'https://drupal.test/cms/', routes)).toBeUndefined()
+    expect(proxyTarget('/jsonapi/node/../node/page', 'https://drupal.test/cms', routes)).toBe('https://drupal.test/cms/jsonapi/node/../node/page')
+    expect(proxyTarget('/jsonapi/node/page', 'https://drupal.test/cms', routes)).toBe('https://drupal.test/cms/jsonapi/node/page')
+  })
+})
+
 describe('proxyTarget(), for a Drupal at /api', () => {
   const routes = ['/api/**', '/api']
 

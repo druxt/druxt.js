@@ -68,6 +68,15 @@ export const proxyTarget = (path: string, baseUrl: string, routes: readonly stri
     return pathname === base || pathname.startsWith(`${base}/`)
   })
   if (!matched) return undefined
+  // The URL sent resolves the path's dot segments after Drupal's base path, so a path could leave it. It must resolve
+  // to the base path with the checked path after it.
+  let basePath: string
+  try {
+    basePath = trimEndSlashes(new URL(baseUrl).pathname)
+  } catch {
+    basePath = ''
+  }
+  if (basePath && resolvedPath(`${basePath}${path}`) !== `${basePath}${pathname}`) return undefined
   return `${trimEndSlashes(baseUrl)}${path}`
 }
 
@@ -306,7 +315,7 @@ export const writtenResource = (path: string, endpoint: string): ((key: string) 
     if (stored.includes('/router/translate-path') || stored.includes(`${endpoint}/views/`)) return true
     if (id && url.includes(id)) return true
     // A response read with an include may hold the written resource in its `included`, which no URL names.
-    if (id && /[?&]include=/.test(url)) return true
+    if (id && new URLSearchParams((url.split('#')[0] || '').split('?')[1] || '').has('include')) return true
     // The type's collections go, under any prefix. Another resource's document stays.
     return stored.endsWith(collection)
   }

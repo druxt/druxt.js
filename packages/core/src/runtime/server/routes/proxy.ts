@@ -92,8 +92,9 @@ export default defineEventHandler((event) => {
       }
       // A header for the hop from Drupal stops here. h3 has copied each one to the response by now.
       for (const name of responseHopHeaders(response.headers.get('connection'))) removeResponseHeader(event, name)
-      const location = response.headers.get('location')
-      if (location) setResponseHeader(event, 'location', proxyLocation(location, baseUrl))
+      // The `Location` is read from the response as it stands, so one that was just removed stays out.
+      const location = getResponseHeader(event, 'location')
+      if (location) setResponseHeader(event, 'location', proxyLocation(String(location), baseUrl))
       const cookies = getResponseHeader(event, 'set-cookie')
       if (cookies) setResponseHeader(event, 'set-cookie', (Array.isArray(cookies) ? cookies : [String(cookies)]).map((cookie) => proxyCookie(cookie, backend, site)))
     },

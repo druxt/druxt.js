@@ -82,6 +82,15 @@ describe('the proxy route', () => {
     expect(response.headers.get('x-kept')).toBe('yes')
   })
 
+  it('rewrites a redirect\'s Location, and leaves out one that Drupal\'s Connection header names', async () => {
+    runtime.config = { public: { druxt: { baseUrl: 'http://drupal.test' } }, druxt: {} }
+    const handle = await serve('/jsonapi/**', '../../packages/core/src/runtime/server/routes/proxy')
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 302, headers: { location: 'http://drupal.test/jsonapi/node/article' } })))
+    expect((await handle(new Request('http://site.test/jsonapi/node/page'))).headers.get('location')).toBe('/jsonapi/node/article')
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(null, { status: 302, headers: { location: 'http://drupal.test/jsonapi/node/article', connection: 'Location' } })))
+    expect((await handle(new Request('http://site.test/jsonapi/node/page'))).headers.has('location')).toBe(false)
+  })
+
   // A JSON:API Drupal serves at /api: the proxy takes /api/**, and a request a Druxt route does not answer, such as a
   // method it does not take, falls through to it.
   it('answers 404, never Drupal, for a path at or under /api/_druxt when mounted at /api/**', async () => {

@@ -26,6 +26,9 @@ describe('writtenResource()', () => {
     expect(stale(key(`https://drupal.test/jsonapi/node/article/${RECIPE}?include=uid`))).toBe(true)
     expect(stale(key('https://drupal.test/es/jsonapi/node/article?page%5Blimit%5D=10&include=uid%2Cfield_tags'))).toBe(true)
     expect(stale(key(`https://drupal.test/jsonapi/node/article/${RECIPE}?fields%5Bnode--article%5D=title`))).toBe(false)
+    // Drupal reads an encoded key as the key, and one that only ends the same is another key.
+    expect(stale(key(`https://drupal.test/jsonapi/node/article/${RECIPE}?%69nclude=uid`))).toBe(true)
+    expect(stale(key(`https://drupal.test/jsonapi/node/article/${RECIPE}?noinclude=uid#include=uid`))).toBe(false)
     const created = writtenResource('/jsonapi/user/user', '/jsonapi')!
     expect(created(key(`https://drupal.test/jsonapi/node/article/${RECIPE}?include=uid`))).toBe(false)
   })

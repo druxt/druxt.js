@@ -65,6 +65,25 @@ describe('useDruxtSettings()', () => {
     expect(settings.nested).toBe(settings.nested)
   })
 
+  it('reads a frozen list of objects, still read-only', () => {
+    setDrupalSettings('default', { public: { testFrozen: Object.freeze([Object.freeze({ on: true })]) } })
+    const settings = useDruxtSettings() as unknown as { testFrozen: Array<{ on: boolean }> }
+    expect(settings.testFrozen[0]).toEqual({ on: true })
+    expect(settings.testFrozen.map((item) => item.on)).toEqual([true])
+    expect(() => settings.testFrozen.push({ on: false })).toThrow(TypeError)
+    expect(() => { settings.testFrozen[0]!.on = false }).toThrow(TypeError)
+  })
+
+  it('cannot be made non-extensible, so its keys still read after a tier is set', () => {
+    const settings = useDruxtSettings()
+    expect(Reflect.preventExtensions(settings)).toBe(false)
+    setDrupalSettings('default', { public: { nested: { list: ['a'] }, afterwards: true } })
+    expect(Object.keys(settings)).toContain('afterwards')
+    const nested = (settings as unknown as { nested: object }).nested
+    expect(Reflect.preventExtensions(nested)).toBe(false)
+    expect(Object.keys(nested)).toEqual(['list'])
+  })
+
   it('renders again when a tier is set after the component read its settings', async () => {
     const Reader = defineComponent({
       setup() {

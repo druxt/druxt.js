@@ -65,6 +65,8 @@ beforeEach(() => {
   state.set = {}
   state.protocol = 'http'
   state.logged = []
+  // A secret in the developer's own environment is not the fixture's.
+  vi.stubEnv('DRUXT_AUTH_CLIENT_SECRET', '')
 })
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -192,6 +194,79 @@ describe('POST /api/_druxt/auth/token, holding the session', () => {
     expect(await call()).toEqual({ token_type: 'Bearer', expires_in: 300 })
     expect(drupal).toHaveBeenCalledTimes(1)
     expect(state.set['druxt.auth.access_token']?.value).toBe('next-access')
+  })
+
+  describe('with a refresh token being redeemed', () => {
+    const refreshing = (token: string) => {
+      state.config = { public: { druxt: { ...publicConfig.druxt, auth: { ...publicConfig.druxt.auth, session: true } } }, druxt: { auth: { clientSecret: '' } } }
+      state.headers = { host: 'site.test' }
+      state.body = { grant_type: 'refresh_token' }
+      return () => ({ context: {}, node: { req: { headers: { host: 'site.test', cookie: `druxt.auth.refresh_token=${token}; druxt.auth.client_id=site` } } } })
+    }
+    const next = () => new Response(JSON.stringify({ token_type: 'Bearer', access_token: 'next-access', refresh_token: 'next-refresh', expires_in: 300 }), { status: 200, headers: { 'Content-Type': 'application/json' } })
+
+    it('joins a refresh that Drupal has not answered yet, however long it takes, and keeps the answer ten seconds from then', async () => {
+      const event = refreshing('slow-to-redeem')
+      const clock = vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
+      let answer!: (response: Response) => void
+      const drupal = vi.fn(() => new Promise<Response>((resolve) => { answer = resolve }))
+      vi.stubGlobal('fetch', drupal)
+      const handler = (await import('../../packages/core/src/runtime/server/routes/token')).default as unknown as (event: unknown) => Promise<unknown>
+      const first = handler(event())
+      await vi.waitFor(() => expect(drupal).toHaveBeenCalledTimes(1))
+      clock.mockReturnValue(1_011_000)
+      const second = handler(event())
+      await new Promise((resolve) => setTimeout(resolve, 5))
+      expect(drupal).toHaveBeenCalledTimes(1)
+      answer(next())
+      expect(await Promise.all([first, second])).toEqual([{ token_type: 'Bearer', expires_in: 300 }, { token_type: 'Bearer', expires_in: 300 }])
+      clock.mockReturnValue(1_020_000)
+      expect(await handler(event())).toEqual({ token_type: 'Bearer', expires_in: 300 })
+      expect(drupal).toHaveBeenCalledTimes(1)
+      clock.mockReturnValue(1_022_000)
+      void handler(event())
+      await vi.waitFor(() => expect(drupal).toHaveBeenCalledTimes(2))
+      answer(next())
+      clock.mockRestore()
+    })
+
+    it('asks Drupal again after an answer that redeemed nothing, such as a 503', async () => {
+      const event = refreshing('drupal-was-away')
+      const drupal = vi.fn(async () => new Response('{}', { status: 503, headers: { 'Content-Type': 'application/json' } }))
+      vi.stubGlobal('fetch', drupal)
+      const handler = (await import('../../packages/core/src/runtime/server/routes/token')).default as unknown as (event: unknown) => Promise<unknown>
+      await handler(event())
+      expect(state.status).toBe(503)
+      expect(state.set).toEqual({})
+      drupal.mockImplementation(async () => next())
+      expect(await handler(event())).toEqual({ token_type: 'Bearer', expires_in: 300 })
+      expect(drupal).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  // A list coerces to its one item as a string, and would pass for the grant while skipping every check on it.
+  it.each([[['password']], [{ toString: 'password' }], [7]])('refuses a grant type that is not a string, %j, before any secret is attached', async (grant) => {
+    state.config = { public: { druxt: { ...publicConfig.druxt, auth: { ...publicConfig.druxt.auth, password: false } } }, druxt: { auth: { clientSecret: 'runtime-secret' } } }
+    state.body = { ...credentials, grant_type: grant as never }
+    await expect(request()).rejects.toMatchObject({ statusCode: 400 })
+    expect(fetch).not.toHaveBeenCalled()
+  })
+
+  // A redirect that keeps the method would send the secret, the password or the refresh token on to its target.
+  it('follows no redirect from the token endpoint, and answers 502', async () => {
+    const { result } = await request({ status: 307, body: {} })
+    expect((vi.mocked(fetch).mock.calls[0]![1] as RequestInit).redirect).toBe('manual')
+    expect(state.status).toBe(502)
+    expect(result).toEqual({ error: 'server_error', message: expect.stringContaining('redirect') })
+  })
+
+  it('answers 502 for a session\'s sign-in that Drupal answered 200 without a token', async () => {
+    state.config = { public: { druxt: { ...publicConfig.druxt, auth: { ...publicConfig.druxt.auth, session: true } } }, druxt: { auth: { clientSecret: '' } } }
+    state.headers = { host: 'site.test' }
+    const { result } = await request({ status: 200, body: {} })
+    expect(state.status).toBe(502)
+    expect(result).toEqual({ error: 'server_error', message: expect.stringContaining('no access token') })
+    expect(state.set['druxt.auth.access_token']?.value).toBeUndefined()
   })
 
   it('asks Drupal again for a refresh token whose last request failed on the network', async () => {
@@ -333,6 +408,17 @@ describe('POST /api/_druxt/auth/token, asked from another site', () => {
   it('passes the site\'s host over https when the request reads as http', async () => {
     state.headers = { host: 'site.test', origin: 'https://site.test' }
     expect((await request(tokens)).result).toEqual({ token_type: 'Bearer', expires_in: 300 })
+  })
+
+  // A front proxy may forward the host with its default port, which a browser's Origin never carries.
+  it('reads a forwarded host with the scheme\'s default port as the host alone, and still refuses another port', async () => {
+    state.config = sessionConfig('', true)
+    state.protocol = 'https'
+    state.headers = { 'host': 'internal:3000', 'x-forwarded-host': 'www.site.test:443', 'origin': 'https://www.site.test' }
+    expect((await request(tokens)).result).toEqual({ token_type: 'Bearer', expires_in: 300 })
+    state.set = {}
+    state.headers = { 'host': 'internal:3000', 'x-forwarded-host': 'www.site.test:443', 'origin': 'https://www.site.test:8443' }
+    await expectRefused()
   })
 
   it('takes the forwarded host only with proxy.trustForwarded', async () => {

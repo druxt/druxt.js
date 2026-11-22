@@ -93,7 +93,10 @@ export const sameOrigin = (event: H3Event): boolean => {
   const siteUrl = (config.public.druxt as unknown as DruxtPublicConfig | undefined)?.siteUrl
   const scheme = schemeOf(origin)
   if (host === hostOf(siteUrl)) return scheme === schemeOf(siteUrl)
-  if (host !== getRequestHost(event, { xForwardedHost: trust }).toLowerCase()) return false
+  // A front proxy may forward the host with the scheme's default port, which an `Origin` never carries.
+  const requested = getRequestHost(event, { xForwardedHost: trust }).toLowerCase()
+  const port = scheme === 'https:' ? ':443' : scheme === 'http:' ? ':80' : undefined
+  if (host !== (port && requested.endsWith(port) ? requested.slice(0, -port.length) : requested)) return false
   return getRequestProtocol(event, { xForwardedProto: trust }) !== 'https' || scheme === 'https:'
 }
 

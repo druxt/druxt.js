@@ -22,6 +22,13 @@ export interface DruxtConfigHoldOptions<T> {
   failureMaxAge?: number
 }
 
+/**
+ * A value as a hold answers it.
+ *
+ * A read of `undefined` is held, and answered, as `null`. Any other value is answered as it was read.
+ */
+export type DruxtHeld<T> = undefined extends T ? Exclude<T, undefined> | null : T
+
 /** A read of a value, and how long to hold it: until a clear, or for `maxAge` seconds. */
 export interface DruxtConfigRead<T> {
   value: T
@@ -48,7 +55,7 @@ export interface DruxtConfigHold<T> {
    * The held value is returned. When there is none, the value is read once and held. A read with a `maxAge` is held
    * only for that long. A failure stands for `failureMaxAge` seconds.
    */
-  get(key?: string): Promise<T>
+  get(key?: string): Promise<DruxtHeld<T>>
   /** Drops every value this hold keeps, for every build. The next render reads them again. */
   clear(): Promise<void>
 }
@@ -87,18 +94,21 @@ export interface DruxtConfigHold<T> {
  */
 export const createDruxtConfigHold = <T>({ storage, buildId, name, read, failureMaxAge = 0 }: DruxtConfigHoldOptions<T>): DruxtConfigHold<T> => {
   // unstorage drivers read a colon and a slash as separators, so a name with either would join another hold's keys.
-  if (!name || /[:/]/.test(name)) throw new TypeError(`[druxt] createDruxtConfigHold() needs a name with no colon or slash, such as 'date-formats', not '${name}'.`)
-  // The empty key is held as a dash, and a key that starts with a dash gains one, so no two keys share an entry.
-  const storageKey = (key: string) => `${name}:${buildId}:${key === '' || key.startsWith('-') ? `-${key}` : key}`
+  // Nor may it hold a character a driver reads as more than itself, such as a question mark.
+  if (!/^[\w.-]+$/.test(name || '')) throw new TypeError(`[druxt] createDruxtConfigHold() needs a name of letters, digits, dots, dashes and underscores, such as 'date-formats', not '${name}'.`)
+  // One part of a storage key. The empty part is held as a dash, and a part that starts with a dash gains one. Any
+  // character a driver reads as a separator, or drops, is encoded. So no two parts share an entry.
+  const part = (text: string) => encodeURIComponent(text === '' || text.startsWith('-') ? `-${text}` : text)
+  const storageKey = (key: string) => `${name}:${part(buildId)}:${part(key)}`
   // Each clear moves this on, so a read that started before the clear is not held.
   let generation = 0
-  const pending = new Map<string, Promise<T>>()
+  const pending = new Map<string, Promise<DruxtHeld<T>>>()
   // Each key's last failed read, and when it stops standing. Kept in this process only.
   const failures = new Map<string, { error: unknown, until: number }>()
 
   // Reads a key: from storage, else from a failure that still stands, else from Drupal.
-  const fetch = async (key: string, since: number): Promise<T> => {
-    const held = await storage.getItem<Held<T>>(storageKey(key))
+  const fetch = async (key: string, since: number): Promise<DruxtHeld<T>> => {
+    const held = await storage.getItem<Held<DruxtHeld<T>>>(storageKey(key))
     if (held && typeof held === 'object' && 'value' in held && (held.expires === undefined || held.expires > Date.now())) return held.value
     const failed = failures.get(key)
     if (failed && failed.until > Date.now()) throw failed.error
@@ -112,8 +122,8 @@ export const createDruxtConfigHold = <T>({ storage, buildId, name, read, failure
     failures.delete(key)
     const { maxAge } = result
     // `undefined` is held as null, so a JSON driver keeps the key and the entry counts as held.
-    const value = (result.value === undefined ? null : result.value) as T
-    if (since === generation) await storage.setItem<Held<T>>(storageKey(key), { value, ...(maxAge ? { expires: Date.now() + maxAge * 1000 } : {}) })
+    const value = (result.value === undefined ? null : result.value) as DruxtHeld<T>
+    if (since === generation) await storage.setItem<Held<DruxtHeld<T>>>(storageKey(key), { value, ...(maxAge ? { expires: Date.now() + maxAge * 1000 } : {}) })
     return value
   }
 

@@ -30,6 +30,25 @@ describe('createDruxtConfigHold()', () => {
     }
   })
 
+  // unstorage reads a slash as a colon, and drops a question mark and what follows it.
+  it('holds apart keys and build ids that a driver would read as one', async () => {
+    const read = vi.fn(async (key: string) => ({ value: [{ ...FORMATS[0]!, id: `for:${key}` }] }))
+    const storage = createStorage()
+    const hold = createDateFormatHold({ storage, buildId: 'b1', read })
+    for (const key of ['olivero/en', 'olivero:en', 'olivero?en', 'olivero']) expect((await hold.get(key))[0]!.id).toBe(`for:${key}`)
+    expect(read).toHaveBeenCalledTimes(4)
+    const other = createDateFormatHold({ storage, buildId: 'b1:olivero', read })
+    expect((await other.get('en'))[0]!.id).toBe('for:en')
+    expect(read).toHaveBeenCalledTimes(5)
+  })
+
+  it('refuses a name that would reach past its own entries', () => {
+    for (const name of ['?', 'a?b', 'a b', '*', '']) {
+      expect(() => createDruxtConfigHold({ storage: createStorage(), buildId: 'b1', name, read: async () => ({ value: [] }) }), name).toThrow(TypeError)
+    }
+    expect(() => createDruxtConfigHold({ storage: createStorage(), buildId: 'b1', name: 'date-formats_2.x', read: async () => ({ value: [] }) })).not.toThrow()
+  })
+
   it('shares one read between concurrent renders', async () => {
     const read = vi.fn(async () => ({ value: FORMATS }))
     const hold = createDateFormatHold({ storage: createStorage(), buildId: 'b1', read })
@@ -128,7 +147,7 @@ describe('createDruxtConfigHold()', () => {
     const blocks = createDruxtConfigHold<string[]>({ storage, buildId: 'b1', name: 'blocks', read: async (key) => ({ value: [key] }) })
     await formats.get('en')
     expect(await blocks.get('olivero:en')).toEqual(['olivero:en'])
-    expect((await storage.getKeys()).sort()).toEqual(['blocks:b1:olivero:en', 'date-formats:b1:en'])
+    expect((await storage.getKeys()).sort()).toEqual(['blocks:b1:olivero%3Aen', 'date-formats:b1:en'])
     await blocks.clear()
     expect(await storage.getKeys()).toEqual(['date-formats:b1:en'])
   })
