@@ -142,6 +142,18 @@ const HOP_HEADERS = ['te', 'trailer', 'proxy-authorization', 'proxy-authenticate
  * forwardedHeaders({ 'x-forwarded-for': '1.2.3.4' }, { ip: '10.0.0.1', host: 'site.test', protocol: 'https' })
  * // { 'x-forwarded-for': '10.0.0.1', 'x-forwarded-host': 'site.test', 'x-forwarded-proto': 'https' }
  */
+/**
+ * The headers of Drupal's response that stop at the proxy.
+ *
+ * They are the headers for one hop: `Connection` and each header it names, and `Keep-Alive`, `Proxy-Authenticate`,
+ * `Proxy-Connection`, `TE`, `Trailer`, `Transfer-Encoding` and `Upgrade`.
+ *
+ * @param connection - The response's `Connection` header.
+ * @returns The names, in lower case.
+ */
+export const responseHopHeaders = (connection?: string | null): string[] =>
+  [...new Set(['connection', 'keep-alive', 'transfer-encoding', 'upgrade', ...HOP_HEADERS, ...(connection || '').split(',').map((name) => name.trim().toLowerCase()).filter(Boolean)])]
+
 export const forwardedHeaders = (headers: Record<string, string | undefined>, client: ProxyClient, trustForwarded = false, connection?: string): Record<string, string> => {
   const sent: Record<string, string> = {}
   const hop = new Set([...HOP_HEADERS, ...(connection || '').split(',').map((name) => name.trim().toLowerCase()).filter(Boolean)])
@@ -293,6 +305,8 @@ export const writtenResource = (path: string, endpoint: string): ((key: string) 
     // every route lookup.
     if (stored.includes('/router/translate-path') || stored.includes(`${endpoint}/views/`)) return true
     if (id && url.includes(id)) return true
+    // A response read with an include may hold the written resource in its `included`, which no URL names.
+    if (id && /[?&]include=/.test(url)) return true
     // The type's collections go, under any prefix. Another resource's document stays.
     return stored.endsWith(collection)
   }

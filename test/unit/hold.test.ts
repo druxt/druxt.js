@@ -20,6 +20,16 @@ describe('createDruxtConfigHold()', () => {
     expect(await storage.getItem('date-formats:b1:en')).toEqual({ value: FORMATS })
   })
 
+  it('holds the empty key and a key of dashes apart', async () => {
+    for (const order of [['', '-', '--'], ['--', '-', '']]) {
+      const read = vi.fn(async (key: string) => ({ value: [{ ...FORMATS[0]!, id: `for:${key}` }] }))
+      const hold = createDateFormatHold({ storage: createStorage(), buildId: 'b1', read })
+      for (const key of order) expect((await hold.get(key))[0]!.id).toBe(`for:${key}`)
+      for (const key of order) expect((await hold.get(key))[0]!.id).toBe(`for:${key}`)
+      expect(read).toHaveBeenCalledTimes(3)
+    }
+  })
+
   it('shares one read between concurrent renders', async () => {
     const read = vi.fn(async () => ({ value: FORMATS }))
     const hold = createDateFormatHold({ storage: createStorage(), buildId: 'b1', read })

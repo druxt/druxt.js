@@ -54,6 +54,8 @@ const request = async (answer: { status: number, body: Record<string, unknown> }
 }
 
 beforeEach(() => {
+  // The route keeps the refresh tokens it has just redeemed, so each test takes the route afresh.
+  vi.resetModules()
   state.body = { ...credentials }
   state.status = 0
   state.config = { public: publicConfig, druxt: { auth: { clientSecret: '' } } }
@@ -166,6 +168,45 @@ describe('POST /api/_druxt/auth/token, holding the session', () => {
     expect(Object.keys(state.set)).toContain('druxt.auth.session')
   })
 
+  // Two tabs refresh one expired session, each with its own client. Drupal takes a refresh token once, so the second
+  // request would be refused and would clear the cookies the first had just set.
+  it('redeems a refresh token once for refreshes that overlap, and gives each the new session', async () => {
+    state.config = { public: { druxt: { ...publicConfig.druxt, auth: { ...publicConfig.druxt.auth, session: true } } }, druxt: { auth: { clientSecret: '' } } }
+    state.headers = { host: 'site.test' }
+    state.cookies = { 'druxt.auth.refresh_token': 'shared-by-two-tabs', 'druxt.auth.client_id': 'site' }
+    state.body = { grant_type: 'refresh_token' }
+    let answer!: (response: Response) => void
+    const drupal = vi.fn(() => new Promise<Response>((resolve) => { answer = resolve }))
+    vi.stubGlobal('fetch', drupal)
+    const { default: handler } = await import('../../packages/core/src/runtime/server/routes/token')
+    const call = () => (handler as unknown as (event: unknown) => Promise<unknown>)({ context: {}, node: { req: { headers: { ...state.headers, cookie: Object.entries(state.cookies).map(([name, value]) => `${name}=${value}`).join('; ') } } } })
+    const first = call()
+    const second = call()
+    await vi.waitFor(() => expect(drupal).toHaveBeenCalled())
+    answer(new Response(JSON.stringify({ token_type: 'Bearer', access_token: 'next-access', refresh_token: 'next-refresh', expires_in: 300 }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+    expect(await Promise.all([first, second])).toEqual([{ token_type: 'Bearer', expires_in: 300 }, { token_type: 'Bearer', expires_in: 300 }])
+    expect(drupal).toHaveBeenCalledTimes(1)
+    expect(state.set['druxt.auth.refresh_token']?.value).toBe('next-refresh')
+    // A tab that asks a moment later with the token just spent gets the same session, not a refusal.
+    state.set = {}
+    expect(await call()).toEqual({ token_type: 'Bearer', expires_in: 300 })
+    expect(drupal).toHaveBeenCalledTimes(1)
+    expect(state.set['druxt.auth.access_token']?.value).toBe('next-access')
+  })
+
+  it('asks Drupal again for a refresh token whose last request failed on the network', async () => {
+    state.config = { public: { druxt: { ...publicConfig.druxt, auth: { ...publicConfig.druxt.auth, session: true } } }, druxt: { auth: { clientSecret: '' } } }
+    state.headers = { host: 'site.test' }
+    state.cookies = { 'druxt.auth.refresh_token': 'retried-after-a-failure', 'druxt.auth.client_id': 'site' }
+    state.body = { grant_type: 'refresh_token' }
+    vi.stubGlobal('fetch', vi.fn(async () => { throw new TypeError('fetch failed') }))
+    const { default: handler } = await import('../../packages/core/src/runtime/server/routes/token')
+    const event = () => ({ context: {}, node: { req: { headers: { ...state.headers, cookie: 'druxt.auth.refresh_token=retried-after-a-failure; druxt.auth.client_id=site' } } } })
+    await expect((handler as unknown as (event: unknown) => Promise<unknown>)(event())).rejects.toThrow('fetch failed')
+    expect(state.set).toEqual({})
+    expect((await request({ status: 200, body: { token_type: 'Bearer', access_token: 'a', refresh_token: 'r', expires_in: 300 } })).result).toEqual({ token_type: 'Bearer', expires_in: 300 })
+  })
+
   // As druxt-auth 0.x, whose password sign-in forgot the stored tokens before it asked Drupal: a visitor who tried to
   // sign in as someone else is never left signed in as the first user.
   const signedIn = { 'druxt.auth.access_token': 'first-access', 'druxt.auth.refresh_token': 'first-refresh', 'druxt.auth.client_id': 'site', 'druxt.auth.session': 'on' }
@@ -272,6 +313,26 @@ describe('POST /api/_druxt/auth/token, asked from another site', () => {
     state.set = {}
     state.headers = { host: 'internal:3000', origin: 'https://evil.test' }
     await expectRefused()
+  })
+
+  // The same host over plain http is another origin. A page there, which someone on the network can serve, is refused
+  // when the site is known to be https: by `siteUrl`, or by the request's own protocol.
+  it('refuses the site\'s host over http when the site is https', async () => {
+    state.config = sessionConfig('https://www.site.test')
+    state.headers = { host: 'internal:3000', origin: 'http://www.site.test' }
+    await expectRefused()
+    state.config = sessionConfig()
+    state.protocol = 'https'
+    state.headers = { host: 'site.test', origin: 'http://site.test' }
+    await expectRefused()
+    state.headers = { host: 'site.test', origin: 'https://site.test' }
+    expect((await request(tokens)).result).toEqual({ token_type: 'Bearer', expires_in: 300 })
+  })
+
+  // TLS that ends at a front proxy the site was not told to trust: the request reads as http, so the scheme is unknown.
+  it('passes the site\'s host over https when the request reads as http', async () => {
+    state.headers = { host: 'site.test', origin: 'https://site.test' }
+    expect((await request(tokens)).result).toEqual({ token_type: 'Bearer', expires_in: 300 })
   })
 
   it('takes the forwarded host only with proxy.trustForwarded', async () => {

@@ -51,6 +51,20 @@ describe('useDruxtSettings()', () => {
     expect(settings.replaced).toBe(true)
   })
 
+  // A nested value is shared: a module's default is one object for every request the server answers.
+  it('refuses a write below the top level, through a read or a descriptor', () => {
+    setDrupalSettings('default', { public: { nested: { list: ['a', 'b'], deep: { on: true } } } })
+    const settings = useDruxtSettings() as unknown as { nested: { list: string[], deep: { on: boolean } } }
+    expect(() => settings.nested.list.reverse()).toThrow(TypeError)
+    expect(() => { settings.nested.deep.on = false }).toThrow(TypeError)
+    expect(Reflect.deleteProperty(settings.nested, 'deep')).toBe(false)
+    const described = Object.getOwnPropertyDescriptor(settings, 'nested')!.value as typeof settings.nested
+    expect(() => described.list.push('c')).toThrow(TypeError)
+    expect(settings.nested).toEqual({ list: ['a', 'b'], deep: { on: true } })
+    expect(settings.nested.list.map((item) => item.toUpperCase())).toEqual(['A', 'B'])
+    expect(settings.nested).toBe(settings.nested)
+  })
+
   it('renders again when a tier is set after the component read its settings', async () => {
     const Reader = defineComponent({
       setup() {

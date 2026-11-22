@@ -70,6 +70,18 @@ describe('the proxy route', () => {
     expect(sent[0]!.get('x-kept')).toBe('yes')
   })
 
+  it('sends the browser neither Drupal\'s Connection header nor a header it names', async () => {
+    runtime.config = { public: { druxt: { baseUrl: 'http://drupal.test' } }, druxt: {} }
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 200, headers: {
+      'content-type': 'application/vnd.api+json', 'connection': 'keep-alive, X-Backend-Hop', 'x-backend-hop': 'internal', 'keep-alive': 'timeout=5', 'proxy-authenticate': 'Basic', 'x-kept': 'yes',
+    } })))
+    const handle = await serve('/jsonapi/**', '../../packages/core/src/runtime/server/routes/proxy')
+    const response = await handle(new Request('http://site.test/jsonapi/node/page'))
+    expect(response.status).toBe(200)
+    expect([...response.headers.keys()].filter((name) => ['connection', 'x-backend-hop', 'keep-alive', 'proxy-authenticate'].includes(name))).toEqual([])
+    expect(response.headers.get('x-kept')).toBe('yes')
+  })
+
   // A JSON:API Drupal serves at /api: the proxy takes /api/**, and a request a Druxt route does not answer, such as a
   // method it does not take, falls through to it.
   it('answers 404, never Drupal, for a path at or under /api/_druxt when mounted at /api/**', async () => {

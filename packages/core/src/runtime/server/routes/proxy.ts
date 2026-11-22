@@ -1,9 +1,9 @@
-import { createError, defineEventHandler, getProxyRequestHeaders, getRequestHeader, getRequestHost, getRequestIP, getRequestProtocol, getRequestWebStream, getResponseHeader, sendProxy, setResponseHeader } from 'h3'
+import { createError, defineEventHandler, getProxyRequestHeaders, getRequestHeader, getRequestHost, getRequestIP, getRequestProtocol, getRequestWebStream, getResponseHeader, removeResponseHeader, sendProxy, setResponseHeader } from 'h3'
 import routes from '#druxt/proxy-routes'
 import { useRuntimeConfig } from '#imports'
 import type { DruxtPrivateConfig } from '../../types'
 import { forgetProcessCache } from '@druxt/client'
-import { forwardedHeaders, hostname, isDruxtRoute, proxyCookie, proxyLocation, proxyTarget, sessionHeaders, writtenResource } from '../utils/proxy'
+import { forwardedHeaders, hostname, isDruxtRoute, proxyCookie, proxyLocation, proxyTarget, responseHopHeaders, sessionHeaders, writtenResource } from '../utils/proxy'
 import { holdsSession } from '../utils/session'
 
 /** The methods that send a body. Their body is streamed to Drupal. */
@@ -90,6 +90,8 @@ export default defineEventHandler((event) => {
         const stale = writtenResource(event.path, String((useRuntimeConfig(event).public.druxt as { endpoint?: string } | undefined)?.endpoint || '/jsonapi'))
         if (stale) forgetProcessCache('content', stale)
       }
+      // A header for the hop from Drupal stops here. h3 has copied each one to the response by now.
+      for (const name of responseHopHeaders(response.headers.get('connection'))) removeResponseHeader(event, name)
       const location = response.headers.get('location')
       if (location) setResponseHeader(event, 'location', proxyLocation(location, baseUrl))
       const cookies = getResponseHeader(event, 'set-cookie')

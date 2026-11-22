@@ -20,6 +20,16 @@ describe('writtenResource()', () => {
     expect(stale('not json')).toBe(false)
   })
 
+  // A response read with an include may hold the written resource in its `included`, which its URL does not name.
+  it('names every response read with an include for a write to one resource, and not for a new one', () => {
+    const stale = writtenResource('/jsonapi/user/user/00000000-0000-4000-8000-000000000002', '/jsonapi')!
+    expect(stale(key(`https://drupal.test/jsonapi/node/article/${RECIPE}?include=uid`))).toBe(true)
+    expect(stale(key('https://drupal.test/es/jsonapi/node/article?page%5Blimit%5D=10&include=uid%2Cfield_tags'))).toBe(true)
+    expect(stale(key(`https://drupal.test/jsonapi/node/article/${RECIPE}?fields%5Bnode--article%5D=title`))).toBe(false)
+    const created = writtenResource('/jsonapi/user/user', '/jsonapi')!
+    expect(created(key(`https://drupal.test/jsonapi/node/article/${RECIPE}?include=uid`))).toBe(false)
+  })
+
   it('names a type\'s collections for a POST to the collection, and nothing for a path outside the JSON:API', () => {
     const created = writtenResource('/jsonapi/node/recipe', '/jsonapi')!
     expect(created(key('https://drupal.test/jsonapi/node/recipe?sort=-created'))).toBe(true)

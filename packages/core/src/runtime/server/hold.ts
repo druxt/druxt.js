@@ -88,7 +88,8 @@ export interface DruxtConfigHold<T> {
 export const createDruxtConfigHold = <T>({ storage, buildId, name, read, failureMaxAge = 0 }: DruxtConfigHoldOptions<T>): DruxtConfigHold<T> => {
   // unstorage drivers read a colon and a slash as separators, so a name with either would join another hold's keys.
   if (!name || /[:/]/.test(name)) throw new TypeError(`[druxt] createDruxtConfigHold() needs a name with no colon or slash, such as 'date-formats', not '${name}'.`)
-  const storageKey = (key: string) => `${name}:${buildId}:${key || '-'}`
+  // The empty key is held as a dash, and a key that starts with a dash gains one, so no two keys share an entry.
+  const storageKey = (key: string) => `${name}:${buildId}:${key === '' || key.startsWith('-') ? `-${key}` : key}`
   // Each clear moves this on, so a read that started before the clear is not held.
   let generation = 0
   const pending = new Map<string, Promise<T>>()

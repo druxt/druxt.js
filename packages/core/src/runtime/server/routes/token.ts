@@ -1,5 +1,6 @@
 import { createError, defineEventHandler, readBody, setResponseStatus } from 'h3'
 import { consola } from 'consola'
+import { digest } from 'ohash'
 import { AUTH_STORAGE_KEYS } from '@druxt/client'
 import { useRuntimeConfig } from '#imports'
 import type { DruxtPrivateConfig, DruxtPublicConfig } from '../../types'
@@ -64,6 +65,45 @@ const GRANTS = new Map<string, string[]>([
  * `DRUXT_E01007`, because the deployment's Drupal issued a token the site cannot keep. An oversized refresh ends
  * the session.
  */
+/** Drupal's answer to a token request. */
+interface Redeemed {
+  status: number
+  ok: boolean
+  data: Record<string, unknown>
+}
+
+// How long a redeemed refresh token's answer is kept for a refresh that was sent before the browser had the new one.
+const REDEEMED_FOR = 10_000
+
+// The refresh tokens being redeemed or just redeemed, by a digest, with Drupal's answer. Kept in this process only:
+// with several processes, two refreshes that reach different ones are not joined.
+const redeeming = new Map<string, { at: number, answer: Promise<Redeemed> }>()
+
+/**
+ * Redeems a refresh token once, for every request that asks within a short time.
+ *
+ * Drupal takes a refresh token once. Two requests with one token would otherwise get one new session and one refusal,
+ * and the refusal would clear the cookies the other had set.
+ *
+ * @param key - A digest that names the Drupal, the Consumer and the refresh token.
+ * @param redeem - Asks Drupal.
+ */
+const redeemOnce = (key: string, redeem: () => Promise<Redeemed>): Promise<Redeemed> => {
+  const now = Date.now()
+  for (const [held, { at }] of redeeming) {
+    if (now - at > REDEEMED_FOR) redeeming.delete(held)
+  }
+  const held = redeeming.get(key)
+  if (held) return held.answer
+  const answer = redeem()
+  redeeming.set(key, { at: now, answer })
+  // A request that failed to reach Drupal redeemed nothing, so the next one asks again.
+  answer.catch(() => {
+    if (redeeming.get(key)?.answer === answer) redeeming.delete(key)
+  })
+  return answer
+}
+
 export default defineEventHandler(async (event) => {
   const session = holdsSession(event)
   if (session) requireSameOrigin(event)
@@ -109,13 +149,18 @@ export default defineEventHandler(async (event) => {
     ...(secret && clientId === confidential ? { client_secret: secret } : {}),
   })
 
-  const response = await fetch(`${baseUrl}/oauth/token`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params,
-  })
+  const redeem = async (): Promise<Redeemed> => {
+    const answer = await fetch(`${baseUrl}/oauth/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params,
+    })
+    return { status: answer.status, ok: answer.ok, data: (await answer.json().catch(() => ({}))) as Record<string, unknown> }
+  }
+  // A session's refresh token is redeemed once. Refreshes that overlap, as two tabs send, share Drupal's one answer.
+  const response = await (session && body.grant_type === 'refresh_token' ? redeemOnce(digest(JSON.stringify([baseUrl, clientId, given.refresh_token])), redeem) : redeem())
   setResponseStatus(event, response.status)
-  const data = (await response.json().catch(() => ({}))) as Record<string, unknown>
+  const { data } = response
   if (response.ok && session && typeof data.access_token === 'string') {
     const oversized = setSession(event, data as unknown as DruxtSessionTokens, clientId)
     if (oversized) {

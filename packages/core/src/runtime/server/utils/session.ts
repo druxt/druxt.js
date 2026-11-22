@@ -55,6 +55,16 @@ const hostOf = (url: string | undefined): string | undefined => {
   }
 }
 
+// The scheme of a URL with its colon, such as `https:`. Undefined for no URL, or for one that does not parse.
+const schemeOf = (url: string | undefined): string | undefined => {
+  try {
+    return (url && new URL(url).protocol) || undefined
+  }
+  catch {
+    return undefined
+  }
+}
+
 /**
  * Whether the site's own pages sent the request.
  *
@@ -62,6 +72,9 @@ const hostOf = (url: string | undefined): string | undefined => {
  *
  * - A request with an `Origin` is the site's when that origin's host is one of: the request's own host, the forwarded
  *   host behind a front proxy named with `trustForwarded`, or the host of `siteUrl` when it is set.
+ * - The origin's scheme must be the site's too, when the site's is known. `siteUrl` gives it for its own host. For
+ *   the request's host, a request over https gives it. A request that reads as http may be https at a front proxy
+ *   the site was not told to trust, so it decides nothing.
  * - A request with no `Origin` is the site's unless its `Sec-Fetch-Site` names another site.
  * - A request with neither header is no browser's cross-site request, so it passes.
  *
@@ -78,7 +91,10 @@ export const sameOrigin = (event: H3Event): boolean => {
   const config = useRuntimeConfig(event)
   const trust = (config.druxt as Partial<DruxtPrivateConfig> | undefined)?.proxy?.trustForwarded === true
   const siteUrl = (config.public.druxt as unknown as DruxtPublicConfig | undefined)?.siteUrl
-  return host === getRequestHost(event, { xForwardedHost: trust }).toLowerCase() || host === hostOf(siteUrl)
+  const scheme = schemeOf(origin)
+  if (host === hostOf(siteUrl)) return scheme === schemeOf(siteUrl)
+  if (host !== getRequestHost(event, { xForwardedHost: trust }).toLowerCase()) return false
+  return getRequestProtocol(event, { xForwardedProto: trust }) !== 'https' || scheme === 'https:'
 }
 
 /**

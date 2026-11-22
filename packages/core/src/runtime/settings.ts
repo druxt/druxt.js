@@ -24,6 +24,39 @@ const drupalTier = (connection: string): Ref<Partial<DruxtSettings>> =>
 // The read-only views already made, per app and then per connection.
 const views = new WeakMap<object, Map<string, DruxtSettings>>()
 
+// The read-only views of nested values already made, so one value always reads as the same view.
+const nested = new WeakMap<object, object>()
+
+/**
+ * A read-only view of a value below the top level, at any depth.
+ *
+ * A nested value is shared: a module's default is one object for every request the server answers. So a write through
+ * the settings is refused at every depth, not only at the top.
+ *
+ * @param value - The value. Only a plain object or an array is wrapped.
+ */
+const readOnly = <T>(value: T): T => {
+  if (value === null || typeof value !== 'object') return value
+  const prototype = Object.getPrototypeOf(value) as unknown
+  if (!Array.isArray(value) && prototype !== Object.prototype && prototype !== null) return value
+  let view = nested.get(value)
+  if (!view) {
+    view = new Proxy(value, {
+      get: (target, key, receiver) => readOnly(Reflect.get(target, key, receiver)),
+      getOwnPropertyDescriptor: (target, key) => {
+        const descriptor = Reflect.getOwnPropertyDescriptor(target, key)
+        // A property that cannot be configured must be reported as it is.
+        return descriptor && descriptor.configurable && 'value' in descriptor ? { ...descriptor, value: readOnly(descriptor.value as unknown) } : descriptor
+      },
+      set: () => false,
+      deleteProperty: () => false,
+      defineProperty: () => false,
+    })
+    nested.set(value, view)
+  }
+  return view as T
+}
+
 /**
  * A read-only view of resolved settings.
  *
@@ -32,13 +65,13 @@ const views = new WeakMap<object, Map<string, DruxtSettings>>()
  * @param resolved - The resolved settings.
  */
 const readOnlyView = (resolved: ComputedRef<DruxtSettings>): DruxtSettings => new Proxy({} as DruxtSettings, {
-  get: (_, key) => Reflect.get(resolved.value, key),
+  get: (_, key) => readOnly(Reflect.get(resolved.value, key)),
   has: (_, key) => Reflect.has(resolved.value, key),
   ownKeys: () => Reflect.ownKeys(resolved.value),
   getOwnPropertyDescriptor: (_, key) => {
     const descriptor = Reflect.getOwnPropertyDescriptor(resolved.value, key)
     // A proxy must report a key that its empty target lacks as configurable.
-    return descriptor && { ...descriptor, configurable: true, writable: false }
+    return descriptor && { ...descriptor, ...('value' in descriptor ? { value: readOnly(descriptor.value as unknown) } : {}), configurable: true, writable: false }
   },
   set: () => false,
   deleteProperty: () => false,
