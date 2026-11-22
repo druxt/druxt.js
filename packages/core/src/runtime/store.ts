@@ -724,7 +724,7 @@ export const useDruxtStore = defineStore('druxt', {
         }
       }
       const existing = this.resources[type]?.[id]?.[slot(prefix)]
-      const storedResource: StoredResource | null = existing ? { ...existing } : null
+      let storedResource: StoredResource | null = existing ? { ...existing } : null
 
       // The sub-includes a related resource can take. One relationship can hold several types, such as paragraphs,
       // and each takes only the includes its type has. The stored copy shows the relationships it has. A related
@@ -747,8 +747,12 @@ export const useDruxtStore = defineStore('druxt', {
             const items = Array.isArray(related) ? related : [related]
             const nested = subIncludes(include, key)
             // Skipped: a resource Drupal already denied, and one Drupal gives no entity for.
+            // A restored store has no record of the denials, so the parent's own list counts too, for a resource the
+            // store does not hold.
             const denied = getRuntime(this).omitted.get(slot(prefix))
-            return items.filter((o): o is JsonApiResourceIdentifier => typeof o === 'object' && !!o && o.id !== 'missing' && o.id !== 'virtual' && !denied?.has(`${o.type}:${o.id}`)).map((o) => this.getResource({
+            const listed = new Set(((storedResource?.meta?.omitted as { resources?: Array<{ type: string, id?: string }> } | undefined)?.resources || []).map((o) => `${o.type}:${o.id}`))
+            const skipped = (o: JsonApiResourceIdentifier) => denied?.has(`${o.type}:${o.id}`) || (listed.has(`${o.type}:${o.id}`) && !this.resources[o.type]?.[o.id]?.[slot(prefix)])
+            return items.filter((o): o is JsonApiResourceIdentifier => typeof o === 'object' && !!o && o.id !== 'missing' && o.id !== 'virtual' && !skipped(o)).map((o) => this.getResource({
               id: o.id,
               prefix,
               type: o.type,
@@ -760,6 +764,9 @@ export const useDruxtStore = defineStore('druxt', {
           if (result.data) included = [...included, result.data, ...result.included || []]
         }
         storedResource.included = included
+        // A flush during that wait emptied the store. The copy then shows fields the store no longer holds, so the
+        // read goes on as one of a resource that is not stored, and asks for every field.
+        if (!this.resources[type]?.[id]?.[slot(prefix)]) storedResource = null
       }
 
       if (!bypassCache && storedResource?._druxt_full) {

@@ -404,9 +404,47 @@ describe('useDruxtStore() seeding and links', () => {
     store.flushResource({})
     store.addResource({ resource: { data: { type: 'user--user', id: 'u1', attributes: { display_name: 'Renamed since' } } as never } })
     const result = await read
-    expect(result.included).toHaveLength(1)
-    expect(result.included![0]!.attributes).not.toEqual({ display_name: 'Renamed since' })
+    expect(result.included).toEqual([user])
     expect(JSON.stringify(result)).not.toContain(BASE_URL)
+  })
+
+  // The read waits for its includes. A flush in that wait empties the store, so the fields it holds decide nothing.
+  it('asks for every field it was asked for when a flush empties the store while it waits for its includes', async () => {
+    const { fetch, calls } = drupal({
+      'GET /jsonapi': index('', ['node--page', 'user--user']),
+      'GET /jsonapi/node/page/p1': individual({ ...page, attributes: { title: 'About', body: { value: 'Body' } } }, [user]),
+      'GET /jsonapi/user/user/u1': individual(user),
+    })
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(new DruxtClient(BASE_URL, { fetch })) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    const store = useDruxtStore()
+    store.addResource({ resource: { data: { type: 'node--page', id: 'p1', attributes: { title: 'About' }, relationships: { uid: { data: { type: 'user--user', id: 'u1' } } } } as never }, partial: true })
+    const read = store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid', fields: { 'node--page': 'title,uid,body' } } })
+    store.flushResource({})
+    const result = await read
+    const asked = requested(calls).map(decodeURIComponent).filter((r) => r.includes('/node/page/p1'))
+    expect(asked).toHaveLength(1)
+    expect(asked[0]).toContain('fields[node--page]=title,uid,body')
+    expect(Object.keys(result.data?.attributes || {}).sort()).toEqual(['body', 'title'])
+  })
+
+  // A restored store has no record of what Drupal denied, but the parent's own `meta.omitted` still names it.
+  it('asks for no include that a restored parent lists as omitted, and reads one that is stored', async () => {
+    const seeded = sparseSite()
+    const parent = { type: 'node--page', id: 'p1', attributes: { title: 'About' }, relationships: { uid: { data: { type: 'user--user', id: 'u1' } } } }
+    seeded.store.addResource({ resource: { data: parent as never, meta: { omitted: { detail: 'Some resources have been omitted because of insufficient authorization.', links: { 'item--a': { href: `${BASE_URL}/jsonapi/user/user/u1`, meta: { detail: 'Denied.' } } } } } } as never })
+    const state = JSON.parse(JSON.stringify(seeded.store.$state))
+    expect(JSON.stringify(state)).toContain('"omitted"')
+
+    const restored = sparseSite()
+    restored.store.$patch(state)
+    await restored.store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid' } })
+    await restored.store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid' } })
+    expect(restored.resources().filter((r) => r.includes('/user/'))).toEqual([])
+    restored.store.addResource({ resource: { data: user as never } })
+    expect((await restored.store.getResource({ type: 'node--page', id: 'p1', query: { include: 'uid' } })).included).toEqual([user])
   })
 
   it('tells partial from full after the payload is restored into a new store', async () => {
