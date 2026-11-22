@@ -106,7 +106,13 @@ export default {
 
 A view writes its exposed filters, its page and its sort to the URL query as they change, in the format it reads when it opens, such as `/recipes?filter[difficulty]=easy&page=1`. Reloading the page or opening a copied link shows the same results. A value that goes back to its default is removed. The rest of the query stays as it is, and the browser history doesn't get an entry for each change.
 
-On a page with more than one view, turn this off for all but one of them, so that only one writes `page`:
+Views on one page share the URL query as they do on a page Drupal renders. Each view reads and writes only what it owns:
+
+- Its page, in its pager's place in `page`. Drupal keeps every pager on a page in one value, in pager ID order, so `?page=0,2` is page 2 of the view whose pager ID is 1. Give each view's pager its own ID in the view's pager settings.
+- Its exposed filters, by their identifiers. Views whose filters have the same identifier share its value, so a search box in one view can filter another.
+- Its sort, when it exposes sorts.
+
+When another view or a link changes what a view owns, the view follows it. To keep a view out of the URL, turn the setting off for it:
 
 ```vue
 <DruxtView view-id="recipes" display-id="block_1" :settings="{ route: false }" />

@@ -6,6 +6,34 @@ import { parse, stringify } from 'qs'
 import { mapActions } from 'vuex'
 
 /**
+ * Reads one pager's page from a `page` query value.
+ *
+ * Drupal keeps every pager on a page in one value, comma separated in pager ID
+ * order, so `0,2` is page 2 for pager 1 and the first page for pager 0.
+ *
+ * @param {string} [value] - The `page` query value.
+ * @param {number} id - The pager ID.
+ * @return {number|null} The page, or `null` for the first page.
+ */
+const readPage = (value, id) => parseInt(String(value === undefined || value === null ? '' : value).split(',')[id]) || null
+
+/**
+ * Writes one pager's page into a `page` query value, keeping the others.
+ *
+ * @param {string} [value] - The `page` query value.
+ * @param {number} id - The pager ID.
+ * @param {number|null} page - The page, or `null` for the first page.
+ * @return {string|undefined} The new value, or `undefined` when every pager is on its first page.
+ */
+const writePage = (value, id, page) => {
+  const pages = value === undefined || value === null || value === '' ? [] : String(value).split(',')
+  while (pages.length <= id) pages.push('0')
+  pages[id] = String(page || 0)
+  while (pages.length && !parseInt(pages[pages.length - 1])) pages.pop()
+  return pages.length ? pages.join(',') : undefined
+}
+
+/**
  * The DruxtView component renders Drupal Views using configuration and
  * results provided by the Drupal View and the JSON:API Views module.
  *
@@ -223,6 +251,26 @@ export default {
     },
 
     /**
+     * The URL query keys of the exposed filters: each filter's identifier, its
+     * operator's when the operator is exposed, and a grouped filter's.
+     *
+     * Views on a page with the same identifier share its value, as they do
+     * on a page Drupal renders.
+     *
+     * @type {string[]}
+     */
+    filterKeys() {
+      return this.filters.reduce((keys, filter) => {
+        const expose = filter.expose || {}
+        return keys.concat([
+          expose.identifier,
+          expose.use_operator && expose.operator_id,
+          filter.is_grouped && (filter.group_info || {}).identifier,
+        ].filter((key) => key))
+      }, [])
+    },
+
+    /**
      * The View Headers data.
      *
      * @type {object[]}
@@ -253,6 +301,15 @@ export default {
      */
     pager() {
       return ((this.display || {}).display_options || {}).pager || false
+    },
+
+    /**
+     * The pager ID, which is this view's place in the `page` URL query.
+     *
+     * @type {number}
+     */
+    pagerId() {
+      return parseInt(((this.pager || {}).options || {}).id) || 0
     },
 
     /**
@@ -289,7 +346,16 @@ export default {
      */
     sorts() {
       return Object.values(((this.display || {}).display_options || {}).sorts || {}).filter(sort => sort.exposed)
-    }
+    },
+
+    /**
+     * The IDs of the exposed sorts.
+     *
+     * @type {string[]}
+     */
+    sortIds() {
+      return this.sorts.map((sort) => sort.id)
+    },
   },
 
   watch: {
@@ -303,6 +369,13 @@ export default {
       // Each navigation brings a new query object, even one that changes only
       // the hash, so compare what the query holds.
       if (stringify(to || {}) === stringify(from || {})) return
+
+      // Another view or a link changed the URL. A view that writes the URL
+      // takes what it owns of it, such as a filter identifier it shares.
+      if ((this.component.settings || {}).route !== false && this.view) {
+        if (this.applyRoute(to, true)) this.$fetch()
+        return
+      }
 
       if (!Object.entries(to || {}).length) {
         this.model = {
@@ -377,37 +450,109 @@ export default {
 
   methods: {
     /**
+     * Sets the model to what this view owns of a URL query.
+     *
+     * @param {object} query - The URL query.
+     * @param {boolean} [replace=false] - Whether to replace the model object, so a parent bound with `v-model` hears the change, rather than set its values.
+     * @return {boolean} Whether the model changed.
+     */
+    applyRoute(query, replace = false) {
+      const { filter, page, sort } = this.fromRoute(query)
+      const json = JSON.stringify(filter)
+      const changed = {
+        filter: json !== JSON.stringify(this.model.filter || {}),
+        page: page !== this.model.page,
+        sort: sort !== this.model.sort,
+      }
+      if (!Object.values(changed).some((o) => o)) return false
+
+      // The URL says which page goes with the filter, so the filter watcher
+      // must not go back to the first one.
+      this.lastFilter = json
+      if (replace) {
+        this.model = { ...this.model, filter, page, sort }
+        return true
+      }
+      if (changed.filter) this.model.filter = filter
+      if (changed.page) this.model.page = page
+      if (changed.sort) this.model.sort = sort
+      return true
+    },
+
+    /**
+     * Reads what this view owns of a URL query, as Drupal does for a view on a
+     * page it renders. The page is in the pager's place in `page`, and a filter
+     * value or sort counts only when the view exposes it.
+     *
+     * @param {object} query - The URL query.
+     * @return {object} The `filter`, `page` and `sort` for the model.
+     */
+    fromRoute(query) {
+      // Stringify and parse the query object to fix nested objects.
+      const model = parse(stringify(query || {}))
+      const filterKeys = this.filterKeys || []
+      const sortIds = this.sortIds || []
+
+      return {
+        filter: Object.fromEntries(Object.entries(model.filter || {}).filter(([key]) => filterKeys.includes(key))),
+        page: this.showPager ? readPage(model.page, this.pagerId || 0) : null,
+        sort: sortIds.includes(model.sort) ? model.sort : null,
+      }
+    },
+
+    /**
      * Writes the model's filter, page and sort to the URL query.
      *
      * The model starts from the URL, so writing it back means a reload or a
-     * copied link opens the view as it is now. Each key the view exposes, as
-     * well as any the URL already holds, is set to the model's value, or
-     * removed when the model has none. The rest of the query is kept as it is,
-     * and `router.replace` keeps the browser history to one entry.
+     * copied link opens the view as it is now. The view writes only what it
+     * owns: its page, in its pager's place in `page` (`page=0,2` is page 2 of
+     * pager 1), the values of its exposed filters, and its sort when it exposes
+     * sorts. A value back at its default is removed. The rest of the query,
+     * including other views' keys, is kept as it is, and `router.replace` keeps
+     * the browser history to one entry.
      *
-     * The `route` setting turns this off, such as for all but one of several
-     * views on a page.
+     * The `route` setting turns this off.
      */
     updateRoute() {
       if (!this.$router || !this.$route) return
       if ((this.component.settings || {}).route === false) return
 
       const current = this.$route.query || {}
-      const keys = ['filter', 'page', 'sort']
-      const owned = (key) => keys.some((name) => key === name || key.startsWith(`${name}[`))
-      const exposed = { filter: !!this.filters.length, page: !!this.showPager, sort: !!this.showSorts }
-      const written = keys.filter((name) => exposed[name] || Object.keys(current).some((key) => key === name || key.startsWith(`${name}[`)))
-      if (!written.length) return
+      const query = { ...current }
 
-      const query = Object.fromEntries(Object.entries(current).filter(([key]) => !owned(key)))
-      const values = Object.fromEntries(written.map((key) => [key, this.model[key]]))
-      // Flat, as Vue Router writes it: filter[difficulty]=easy.
-      for (const pair of stringify(values, { skipNulls: true }).split('&').filter((o) => o)) {
-        const [key, value] = pair.split('=').map(decodeURIComponent)
-        if (value !== '') query[key] = value
+      if (this.showPager) {
+        const page = writePage(current.page, this.pagerId || 0, this.model.page)
+        if (page === undefined) delete query.page
+        else query.page = page
       }
 
-      if (stringify(query) === stringify(current)) return
+      const filterKeys = this.filterKeys || []
+      if (filterKeys.length) {
+        // Flat, as Vue Router writes it: filter[difficulty]=easy.
+        const flat = (values) => stringify(values, { skipNulls: true }).split('&').filter((o) => o)
+          .map((pair) => pair.split('=').map(decodeURIComponent))
+          .filter(([, value]) => value !== '')
+        if (query.filter && typeof query.filter === 'object') {
+          for (const [key, value] of flat({ filter: query.filter })) query[key] = value
+          delete query.filter
+        }
+
+        const owned = (key) => filterKeys.some((id) => key === `filter[${id}]` || key.startsWith(`filter[${id}][`))
+        for (const key of Object.keys(query)) {
+          if (owned(key)) delete query[key]
+        }
+        const filter = Object.fromEntries(Object.entries(this.model.filter || {}).filter(([key]) => filterKeys.includes(key)))
+        for (const [key, value] of flat({ filter })) query[key] = value
+      }
+
+      const sortIds = this.sortIds || []
+      if (sortIds.length) {
+        if (sortIds.includes(this.model.sort)) query.sort = this.model.sort
+        else if (sortIds.includes(current.sort)) delete query.sort
+      }
+
+      const sorted = { sort: (a, b) => a.localeCompare(b) }
+      if (stringify(query, sorted) === stringify(current, sorted)) return
       this.routeQuery = stringify(query)
       const navigation = this.$router.replace({ hash: this.$route.hash, query })
       // A newer navigation can cancel this one, which is not an error here.
@@ -445,9 +590,10 @@ export default {
         }
       }
 
-      // Pagination.
-      if (this.model.page) {
-        query.page = this.model.page
+      // Pagination, in the pager's place: page 2 of pager 1 is `page=0,2`.
+      const page = writePage(undefined, this.pagerId || 0, this.model.page)
+      if (page !== undefined) {
+        query.page = page
       }
 
       // Contextual filters.
@@ -457,13 +603,15 @@ export default {
         }
       }
 
-      // Exposed filters.
-      if (Object.entries(this.model.filter || {}).length) {
-        query['views-filter'] = this.model.filter
+      // Exposed filters, the view's own.
+      const filterKeys = this.filterKeys || []
+      const filter = Object.fromEntries(Object.entries(this.model.filter || {}).filter(([key]) => filterKeys.includes(key)))
+      if (Object.entries(filter).length) {
+        query['views-filter'] = filter
       }
 
-      // Exposed sorts.
-      if (this.model.sort) {
+      // Exposed sorts, the view's own.
+      if (this.model.sort && (this.sortIds || []).includes(this.model.sort)) {
         query['views-sort[sort_by]'] = this.model.sort
       }
 
@@ -525,6 +673,10 @@ export default {
           })
           this.view = { data: collection.data[0] }
         }
+
+        // With the display known, the view keeps only what it owns of the URL
+        // it opened with.
+        if (this.$route) this.applyRoute(this.$route.query)
       }
     },
 

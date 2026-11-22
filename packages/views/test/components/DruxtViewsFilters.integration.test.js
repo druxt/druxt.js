@@ -547,6 +547,61 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
 
   // A parent bound with v-model that changes only the page, in a new model
   // object, keeps the page: the filter is unchanged.
+  describe('two views on one page', () => {
+    // A parent rendering recipes page_1 twice. Both have the Difficulty
+    // filter's identifier and pager 0, so Drupal would give them the same keys.
+    const twice = {
+      template: '<div><DruxtView v-bind="props" /><DruxtView v-bind="props" /></div>',
+    }
+
+    test('a filter one changes reaches the other', async () => {
+      const { root, route, flush } = await mountView({ propsData: recipes, parent: twice })
+      await flush()
+      const [first, second] = root.findAllComponents({ name: 'DruxtView' }).wrappers
+
+      setFilter(first, 'easy')
+      await flush()
+
+      expect(route.query).toStrictEqual({ 'filter[difficulty]': 'easy' })
+      expect(second.vm.model.filter).toStrictEqual({ difficulty: 'easy' })
+      expect(nodeIds(second)).toStrictEqual(easyRecipes)
+    })
+
+    test('a view with the route setting off keeps its own values', async () => {
+      const { root, route, flush } = await mountView({
+        propsData: recipes,
+        parent: {
+          template: '<div><DruxtView v-bind="props" /><DruxtView v-bind="props" :settings="{ route: false }" /></div>',
+        },
+      })
+      await flush()
+      const [first, second] = root.findAllComponents({ name: 'DruxtView' }).wrappers
+      second.vm.model.page = 1
+      await flush()
+
+      setFilter(first, 'easy')
+      await flush()
+
+      expect(route.query).toStrictEqual({ 'filter[difficulty]': 'easy' })
+      expect(second.vm.model).toStrictEqual({ filter: {}, page: 1, sort: null })
+    })
+  })
+
+  test('a view leaves the keys it does not own', async () => {
+    // Another view's filter, and a sort recipes does not expose.
+    const { wrapper, route, requests, flush } = await mountView({ propsData: recipes, query: { 'filter[other]': 'x', sort: 'title' } })
+    await flush()
+
+    // Neither goes to Drupal.
+    expect(requests()).toStrictEqual([{ search: '', status: 200 }])
+
+    setFilter(wrapper, 'easy')
+    await flush()
+
+    expect(route.query).toStrictEqual({ 'filter[difficulty]': 'easy', 'filter[other]': 'x', sort: 'title' })
+    expect(requests()[1]).toStrictEqual({ search: easy, status: 200 })
+  })
+
   test('a parent changing the page alone keeps the filter and the page', async () => {
     const { root, requests, flush } = await mountView({
       propsData: recipes,
