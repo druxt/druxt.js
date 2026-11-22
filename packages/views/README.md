@@ -102,6 +102,18 @@ export default {
 | `query.fields`        | `string[]` | No       | `[]`    | An array of fields to filter from the JSON:API Views Resource types.                         |
 | `query.resourceTypes` | `string[]` | No       | `[]`    | An array of Resource types to be used by the Fields filter.                                  |
 
+### The URL query
+
+A view writes its exposed filters, its page and its sort to the URL query as they change, in the format it reads when it opens, such as `/recipes?filter[difficulty]=easy&page=1`. Reloading the page or opening a copied link shows the same results. A value that goes back to its default is removed. The rest of the query stays as it is, and the browser history doesn't get an entry for each change.
+
+On a page with more than one view, turn this off for all but one of them, so that only one writes `page`:
+
+```vue
+<DruxtView view-id="recipes" display-id="block_1" :settings="{ route: false }" />
+```
+
+Set `views.route: false` in `nuxt.config.js` to turn it off for every view.
+
 ---
 
 ## Router support
@@ -131,6 +143,7 @@ These options are specific to this module.
 | `views.query.bundleFilter`  | `boolean`  | No       | `false` | Whether to automatically detect Resource types to filter, based on the View `bundle` filter. |
 | `views.query.fields`        | `string[]` | No       | `[]`    | An array of fields to filter from the JSON:API Views Resource types.                         |
 | `views.query.resourceTypes` | `string[]` | No       | `[]`    | An array of Resource types to be used by the Fields filter.                                  |
+| `views.route`               | `boolean`  | No       | `true`  | Whether views write their filter, page and sort to the URL query as they change.             |
 
 ### Base Druxt options
 

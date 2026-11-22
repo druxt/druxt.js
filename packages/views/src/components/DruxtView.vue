@@ -377,25 +377,30 @@ export default {
 
   methods: {
     /**
-     * Updates the filter, page and sort the URL holds to the model's values.
+     * Writes the model's filter, page and sort to the URL query.
      *
-     * The model starts from the URL, so a URL that still names page 2 after a
-     * filter change would open page 2 again on reload. Each of the three keys
-     * the URL holds is changed to the model's value, or removed when the model
-     * has none. A key the URL does not hold is never added, and the rest of the
-     * query is kept as it is.
+     * The model starts from the URL, so writing it back means a reload or a
+     * copied link opens the view as it is now. Each key the view exposes, as
+     * well as any the URL already holds, is set to the model's value, or
+     * removed when the model has none. The rest of the query is kept as it is,
+     * and `router.replace` keeps the browser history to one entry.
+     *
+     * The `route` setting turns this off, such as for all but one of several
+     * views on a page.
      */
     updateRoute() {
       if (!this.$router || !this.$route) return
+      if ((this.component.settings || {}).route === false) return
 
       const current = this.$route.query || {}
       const keys = ['filter', 'page', 'sort']
       const owned = (key) => keys.some((name) => key === name || key.startsWith(`${name}[`))
-      const held = keys.filter((name) => Object.keys(current).some((key) => key === name || key.startsWith(`${name}[`)))
-      if (!held.length) return
+      const exposed = { filter: !!this.filters.length, page: !!this.showPager, sort: !!this.showSorts }
+      const written = keys.filter((name) => exposed[name] || Object.keys(current).some((key) => key === name || key.startsWith(`${name}[`)))
+      if (!written.length) return
 
       const query = Object.fromEntries(Object.entries(current).filter(([key]) => !owned(key)))
-      const values = Object.fromEntries(held.map((key) => [key, this.model[key]]))
+      const values = Object.fromEntries(written.map((key) => [key, this.model[key]]))
       // Flat, as Vue Router writes it: filter[difficulty]=easy.
       for (const pair of stringify(values, { skipNulls: true }).split('&').filter((o) => o)) {
         const [key, value] = pair.split('=').map(decodeURIComponent)
@@ -589,6 +594,7 @@ export default {
 
       return {
         query: mergedSettings.query || {},
+        route: mergedSettings.route !== false,
       }
     },
 
@@ -809,6 +815,7 @@ export default {
  * @param {boolean} query.bundleFilter - Whether to automatically detect Resource types to filter, based on the View `bundle` filter.
  * @param {string[]} query.fields - An array of fields to filter from the JSON:API Views Resource types.
  * @param {string[]} query.resourceTypes - An array of Resource types to be used by the Fields filter.
+ * @param {boolean} [route=true] - Whether the view writes its filter, page and sort to the URL query as they change.
  *
  * @example <caption>DruxtView Wrapper component</caption> @lang vue
  * <script>
