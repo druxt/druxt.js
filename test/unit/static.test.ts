@@ -22,6 +22,8 @@ describe('the prerender manifest', () => {
     expect(redirectOf('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/en"></head></html>')).toBe('/en')
     expect(redirectOf('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/en/a%20b?x=1&amp;y=2"></head></html>')).toBe('/en/a%20b?x=1&y=2')
     expect(redirectOf('<html><head><title>Page</title></head><body>url=/en</body></html>')).toBeUndefined()
+    // Each reference is decoded once: an escaped ampersand before `lt;` is an ampersand, not a `<`.
+    expect(redirectOf('<meta http-equiv="refresh" content="0; url=/en?q=&amp;lt;b&amp;gt;&quot;&#39;&lt;">')).toBe('/en?q=&lt;b&gt;"\'<')
   })
 
   it('lists the pages it generated and the redirects it wrote, without the fallbacks, payloads or failures', () => {

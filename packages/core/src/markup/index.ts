@@ -17,15 +17,70 @@ const DROPPED = new Set(['script', 'style'])
 /** The allowed tags, as a set. */
 const TAGS = new Set(FIELD_MARKUP_TAGS)
 
-// One token of the markup, split as Drupal's `Xss::filter()` splits it. A token is one of:
-//
-// - A comment.
-// - A declaration.
-// - A `<` that starts no tag.
-// - A tag, up to its `>` or the end of the markup. Its quoted values are taken whole, so a `>` inside an attribute's
-//   quotes never ends the tag.
-// - A stray `>`.
-const TOKEN = /<!--[\s\S]*?(?:-->|$)|<![^>]*(?:>|$)|<(?=[^a-z/])|<\/?[a-z](?:[^>"']|"[^"]*"|'[^']*')*(?:>|$)|>/gi
+// Whether a character is a letter a tag's name can start with.
+const letter = (character: string | undefined): boolean => character !== undefined && ((character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z'))
+
+/**
+ * Splits markup into its tokens, as Drupal's `Xss::filter()` splits it, each with where it starts. The text between
+ * them is not a token.
+ *
+ * - A comment, up to its `-->` or the end of the markup.
+ * - A declaration, up to its `>` or the end of the markup.
+ * - A `<` that starts no tag.
+ * - A tag, up to its `>` or the end of the markup. Its quoted values are taken whole, so a `>` inside an attribute's
+ *   quotes never ends the tag. A quote that never closes takes the rest of the markup, as a browser reads it.
+ * - A stray `>`.
+ *
+ * It reads each character once, so markup built to be slow to read costs no more than its length.
+ *
+ * @param source - The markup.
+ */
+const tokens = function* (source: string): Generator<[index: number, token: string]> {
+  const end = source.length
+  let at = 0
+  while (at < end) {
+    const character = source[at]
+    if (character === '>') {
+      yield [at, '>']
+      at += 1
+      continue
+    }
+    if (character !== '<') {
+      at += 1
+      continue
+    }
+    const start = at
+    const next = source[at + 1]
+    if (next === '!') {
+      const comment = source.startsWith('<!--', at)
+      const close = comment ? source.indexOf('-->', at + 4) : source.indexOf('>', at + 2)
+      at = close < 0 ? end : close + (comment ? 3 : 1)
+      yield [start, source.slice(start, at)]
+      continue
+    }
+    if (!letter(next) && !(next === '/' && letter(source[at + 2]))) {
+      // A `<` before anything but a letter or a slash is a token of its own. Any other `<` is text.
+      if (next !== undefined && next !== '/') yield [at, '<']
+      at += 1
+      continue
+    }
+    at += next === '/' ? 3 : 2
+    while (at < end) {
+      const inside = source[at]
+      if (inside === '>') {
+        at += 1
+        break
+      }
+      if (inside === '"' || inside === '\'') {
+        const close = source.indexOf(inside, at + 1)
+        at = close < 0 ? end : close + 1
+      } else {
+        at += 1
+      }
+    }
+    yield [start, source.slice(start, at)]
+  }
+}
 
 // A tag's name, at the start of what follows its `<` or `</`.
 const NAME = /^[a-z][a-z\d]*/i
@@ -123,10 +178,9 @@ export function filterFieldMarkup(html: string | null | undefined): string {
   let last = 0
   // The element whose content is being dropped, until its closing tag.
   let dropping: string | undefined
-  for (const match of source.matchAll(TOKEN)) {
-    const token = match[0]
-    if (!dropping) out += escapeText(source.slice(last, match.index))
-    last = match.index! + token.length
+  for (const [index, token] of tokens(source)) {
+    if (!dropping) out += escapeText(source.slice(last, index))
+    last = index + token.length
     const tag = readTag(token)
     if (dropping) {
       if (tag?.closing && tag.name === dropping) dropping = undefined

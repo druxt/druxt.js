@@ -48,6 +48,9 @@ export const resolveStatic = (setting: boolean | DruxtStaticOptions | undefined,
  */
 export const DRUXT_PRERENDER_MANIFEST = `${DRUXT_API_BASE.slice(1)}/prerender.json`
 
+// The character references Nuxt writes into a redirect page's target.
+const REFERENCES: Record<string, string> = { 'amp': '&', 'quot': '"', '#39': '\'', 'lt': '<', 'gt': '>' }
+
 /**
  * Gets the target of a prerendered redirect page.
  *
@@ -60,7 +63,8 @@ export const DRUXT_PRERENDER_MANIFEST = `${DRUXT_API_BASE.slice(1)}/prerender.js
 export const redirectOf = (html: string): string | undefined => {
   if (html.length > 2048) return undefined
   const target = /<meta http-equiv="refresh" content="\d+;\s*url=([^"]*)"/i.exec(html)?.[1]
-  return target === undefined ? undefined : target.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, '\'').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+  // Each reference is decoded once, in one pass, so an escaped ampersand never forms a second reference.
+  return target?.replace(/&(amp|quot|#39|lt|gt);/g, (_, name: string) => REFERENCES[name]!)
 }
 
 /** A route Nitro prerendered, as its `prerender:generate` hook gives it. */

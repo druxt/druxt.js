@@ -41,6 +41,19 @@ describe('filterFieldMarkup()', () => {
     expect(filterFieldMarkup('<img src="/files/x.png" alt="a">')).toBe('<img src="/files/x.png" alt="a">')
   })
 
+  it('drops a tag whose quote never closes, with what follows it, as a browser reads it', () => {
+    expect(filterFieldMarkup('before <a title="x>y</a> after')).toBe('before ')
+    expect(filterFieldMarkup('before <a title=\'x>y</a> after')).toBe('before ')
+    expect(filterFieldMarkup('before <a title="x">y</a> after')).toBe('before <a title="x">y</a> after')
+  })
+
+  // Each character is read once, however the markup is built.
+  it.each(['<a', '<a"', '<a\'', '<!--', '<!', '</'])('reads %s repeated many times in good time', (piece) => {
+    const started = Date.now()
+    filterFieldMarkup(piece.repeat(40_000))
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
   it('escapes what nested, malformed or encoded markup leaves', () => {
     expect(filterFieldMarkup('<<script>script>alert(1)<</script>/script>')).toBe('&lt;/script&gt;')
     expect(filterFieldMarkup('<a href="/x>y" title=\'a>b\'>t</a>')).toBe('<a href="/x&gt;y" title="a&gt;b">t</a>')
