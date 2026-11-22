@@ -1,5 +1,23 @@
 # druxt-views
 
+## 0.23.2 - 2026-11-22
+
+### Patch Changes
+
+- `druxt` needs axios 0.35.0 or later, the version `druxt-blocks` and `druxt-views` now install. ([#1029](https://github.com/druxt/druxt.js/issues/1029), [`ce4f9d4`](https://github.com/druxt/druxt.js/commit/ce4f9d4fa45f9bd19f1ce79be809b7dc4c72e331))
+
+  A site that pins axios 0.34.0 should move to 0.35.0, so its bundle holds one copy.
+
+- An empty string passed as the `value` of a module, a field or an exposed Views filter stays an empty string. Before, Vue read it as `true`. ([#1037](https://github.com/druxt/druxt.js/issues/1037), [`37a7d7e`](https://github.com/druxt/druxt.js/commit/37a7d7e85927749c943e3dd0849b86354d4570f8))
+
+  A custom field component that emits `''` now passes `''` to its parent, where it used to arrive as `undefined`. Code that checks for `undefined` to spot a cleared field should check for `''` too. Druxt's built-in text input still sends `undefined`.
+
+- Changing an exposed filter on a later page of a view goes back to the first page, as a Drupal-rendered view does. Before, it asked for the same page of the filtered results, which was often empty. ([#1032](https://github.com/druxt/druxt.js/issues/1032), [`0dbf7f6`](https://github.com/druxt/druxt.js/commit/0dbf7f60dcbe24d3a24c7f211995f855d3b6766c))
+
+  A view opened with `page`, `filter` or `sort` in the URL keeps those keys up to date without adding to the browser history, and drops `page` when a filter changes. A key that wasn't in the URL when the view opened isn't added, so that choice is lost on reload. Views on one page share these keys, and a second view keeps its own values until the page reloads.
+
+- Updated dependencies: druxt@0.25.2, druxt-blocks@0.18.2, druxt-entity@0.29.2.
+
 ## 0.23.1 - 2026-11-01
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # druxt-schema
 
+## 0.12.2 - 2026-11-22
+
+### Patch Changes
+
+- The schema build no longer stops when Drupal's JSON:API fails on a later page of the entity view or form displays, as it does on every site with Drupal Canvas 1.12.0 installed. ([#1022](https://github.com/druxt/druxt.js/issues/1022), [`56c843c`](https://github.com/druxt/druxt.js/commit/56c843ced78aa34b7352a49fe3de49ae9d6fba20))
+
+  Druxt reads those displays again in smaller requests, filtered by entity type and bundle. A Composer patch to Canvas added for `nuxt build` to pass can stay or go. A bundle with more than 50 view or form displays of its own still stops the build on such a site.
+
+- Updated dependencies: druxt@0.25.2.
+
 ## 0.12.1 - 2026-11-01
 
 ### Patch Changes

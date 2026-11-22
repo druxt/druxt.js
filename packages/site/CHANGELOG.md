@@ -1,5 +1,12 @@
 # druxt-site
 
+## 0.15.2 - 2026-11-22
+
+### Patch Changes
+
+- `DruxtSiteMixin` can be imported in client-side code. Importing anything from `druxt-site` no longer pulls Node's `fs` into the client bundle, which made webpack fail with "This dependency was not found: fs". ([#545](https://github.com/druxt/druxt.js/issues/545), [`74e046c`](https://github.com/druxt/druxt.js/commit/74e046c6df4039d0f25441f56733776761ee2fcc))
+- Updated dependencies: druxt@0.25.2, druxt-blocks@0.18.2, druxt-views@0.23.2, druxt-entity@0.29.2, druxt-menu@0.22.2, druxt-schema@0.12.2.
+
 ## 0.15.1 - 2026-11-01
 
 ### Patch Changes
