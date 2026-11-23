@@ -1,5 +1,12 @@
 # druxt-menu
 
+## 0.22.2 - 2026-11-22
+
+### Patch Changes
+
+- Menus get the same credentials check against their own URL, so an interceptor that adds credentials only to menu requests also turns the server cache off. ([#1018](https://github.com/druxt/druxt.js/issues/1018), [`8127f5c`](https://github.com/druxt/druxt.js/commit/8127f5c97ecc600f1bd41420b0dece6d30067e98))
+- Updated dependencies: druxt@0.25.2, druxt-blocks@0.18.2.
+
 ## 0.22.1 - 2026-11-01
 
 ### Patch Changes
