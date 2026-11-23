@@ -277,6 +277,8 @@ export default {
     // Follow the entity's resource in the store.
     this.$watch('storedEntity', (to, from) => {
       if (to === from) return
+      // After a language switch the lang watcher fetches that translation.
+      if (this._druxtPristineLang !== undefined && this._druxtPristineLang !== this.lang) return
       // Flushed: keep showing the copy and fetch again.
       if (!to) {
         if (from) this.fetchAgain()
@@ -338,6 +340,41 @@ export default {
      */
     setPristine(data) {
       this._druxtPristine = pristineOf(data)
+      this._druxtPristineLang = this.lang
+    },
+
+    /**
+     * Puts away the previous language's unsaved edits and brings back the
+     * current language's, when the language has changed since the copy edits
+     * are compared with was taken. Each language keeps its own edits.
+     */
+    switchLanguage() {
+      const from = this._druxtPristineLang
+      if (from === undefined || from === this.lang || (this.model || {}).id !== this.uuid) return
+
+      const drafts = this._druxtDrafts || (this._druxtDrafts = {})
+      if (this.hasEdits()) drafts[from] = { model: this.model, pristine: this._druxtPristine }
+
+      const draft = drafts[this.lang]
+      delete drafts[this.lang]
+      this._druxtPristineLang = this.lang
+      if (draft) {
+        this._druxtPristine = draft.pristine
+        this.model = draft.model
+      } else {
+        this._druxtPristine = undefined
+      }
+    },
+
+    /**
+     * Whether the model differs from the copy last taken, read now rather
+     * than from the cached `dirty`, which can't see that copy change.
+     *
+     * @return {boolean} `true` when the model holds unsaved edits.
+     */
+    hasEdits() {
+      if ((this.value !== undefined && this.value !== null) || typeof this._druxtPristine !== 'string') return false
+      return pristineOf(this.model) !== this._druxtPristine
     },
 
     /**
@@ -476,6 +513,10 @@ export default {
       }
 
       if (this.uuid && !this.value) {
+        // Edits belong to one entity: another entity starts with none.
+        if ((this.model || {}).id && this.model.id !== this.uuid) this._druxtDrafts = {}
+        this.switchLanguage()
+
         // A value the parent sets while the request is pending wins over the
         // response.
         const value = this.value
@@ -521,7 +562,7 @@ export default {
 
         // Unsaved edits to this entity stay, as across a flip of the schema
         // type or a flush.
-        if (this.dirty && (this.model || {}).id === this.uuid) return
+        if (this.hasEdits() && (this.model || {}).id === this.uuid) return
 
         const entity = { ...(resource.data || {}) }
         entity.included = resource.included

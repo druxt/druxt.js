@@ -36,7 +36,8 @@ const mountView = async () => {
   store.app = { context: { error: () => {}, isStatic: false }, store }
 
   const root = mount({
-    template: '<DruxtView ref="view" view-id="recipes" display-id="page_1" langcode="en" />',
+    data: () => ({ langcode: 'en' }),
+    template: '<DruxtView ref="view" view-id="recipes" display-id="page_1" :langcode="langcode" />',
   }, {
     localVue,
     mocks: {
@@ -52,7 +53,7 @@ const mountView = async () => {
 
   const view = root.vm.$refs.view
   const rows = () => root.findAllComponents({ name: 'DruxtEntity' }).wrappers.map((w) => w.vm)
-  return { localVue, store, view, rows }
+  return { localVue, store, root, view, rows }
 }
 
 describe('DruxtView follows the store', () => {
@@ -79,5 +80,17 @@ describe('DruxtView follows the store', () => {
     store.commit('druxt/addResource', { resource: { data }, prefix: 'en' })
     await settle(localVue)
     expect(rows()[0].model.attributes.title).toBe('Saved')
+  })
+
+  test('a language switch fetches the results once', async () => {
+    const { localVue, root, view } = await mountView()
+    const before = resultsRequests()
+    // A second fetch is answered from the store, which counting requests misses.
+    const fetches = jest.spyOn(view, '$fetch')
+
+    root.vm.langcode = 'es'
+    await settle(localVue)
+    expect(fetches).toHaveBeenCalledTimes(1)
+    expect(resultsRequests()).toBe(before + 1)
   })
 })

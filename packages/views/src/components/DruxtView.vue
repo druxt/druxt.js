@@ -381,9 +381,15 @@ export default {
 
     // A flush of the results, such as `druxt/clearCache` on a sign-out, makes
     // the view fetch them again.
+    // A change of view, display or language empties the slot it reads as
+    // well, and their own watchers fetch for that.
     if (!this.$isServer) {
+      const slot = () => [this.viewId, this.displayId, this.lang].join(':')
+      this._druxtResultsSlot = slot()
       this.$watch('hasStoredResults', (to, from) => {
-        if (from && !to) this.fetchAgain()
+        const same = slot() === this._druxtResultsSlot
+        this._druxtResultsSlot = slot()
+        if (same && from && !to) this.fetchAgain()
       })
     }
   },

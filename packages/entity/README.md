@@ -115,7 +115,7 @@ export default {
 </script>
 ```
 
-The component's `dirty` property says whether it holds edits that aren't saved. A save stores what Drupal returns and clears them, and so does a Reset. A component bound with `v-model` shows its parent's value and doesn't follow the store.
+The component's `dirty` property says whether it holds edits that aren't saved. Each language keeps its own edits, so the first language's edits are still there after you switch to another language and back. Saving writes the current language only and stores what Drupal returns. Saving or Reset clears that language's edits. A component bound with `v-model` shows its parent's value and doesn't follow the store.
 
 ---
 

@@ -344,11 +344,37 @@ describe('DruxtEntity renders from the store', () => {
           <DruxtEntityForm ref="form" type="node--page" :uuid="id" :langcode="langcode" />
           <DruxtEntity ref="b" type="node--page" :uuid="id" :langcode="langcode" />
         </div>`,
-        computed: { id: () => pages[0].id, langcode: () => langcode },
+        data: () => ({ langcode }),
+        computed: { id: () => pages[0].id },
       }, { localVue, store: s, mocks: { ...mocks, $druxt }, stubs: ['DruxtDebug', 'DruxtEntityFormButtons'] })
       await settle(localVue)
-      return { localVue, store: s, form: root.vm.$refs.form, b: root.vm.$refs.b }
+      return { localVue, store: s, root, form: root.vm.$refs.form, b: root.vm.$refs.b }
     }
+
+    test('a save writes the current language and keeps the others', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, root, form } = await mountForm()
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'English edit' } }
+      root.vm.langcode = 'es'
+      await settle(localVue)
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Spanish edit' } }
+      root.vm.langcode = 'en'
+      await settle(localVue)
+      expect(titleOf(form)).toBe('English edit')
+
+      mockAxios.patch.mockClear()
+      await form.onSubmit()
+      await settle(localVue)
+      expect(mockAxios.patch).toHaveBeenCalledTimes(1)
+      expect(decodeURIComponent(mockAxios.patch.mock.calls[0][0])).toContain('/en/jsonapi/')
+      expect(mockAxios.patch.mock.calls[0][1].data.attributes.title).toBe('English edit')
+      expect(form.dirty).toBe(false)
+
+      root.vm.langcode = 'es'
+      await settle(localVue)
+      expect(titleOf(form)).toBe('Spanish edit')
+      expect(form.dirty).toBe(true)
+    })
 
     const storedTitle = (s) => s.state.druxt.resources['node--page'][pages[0].id].en.data.attributes.title
 
@@ -414,6 +440,66 @@ describe('DruxtEntity renders from the store', () => {
       delete model.included
       expect(model).toStrictEqual(JSON.parse(JSON.stringify(s.state.druxt.resources['node--page'][pages[0].id].en.data)))
       expect(form.dirty).toBe(false)
+    })
+  })
+
+  describe('edits per language', () => {
+    const pageRequests = (id) => mockAxios.get.mock.calls.filter(([url]) => decodeURIComponent(url).includes(`/node/page/${id}`))
+
+    test("a language switch shows that language, not the other's edits", async () => {
+      const { localVue, root, a } = await mountPair()
+      a.model = { ...a.model, attributes: { ...a.model.attributes, title: 'English edit' } }
+
+      root.vm.langcode = 'es'
+      await settle(localVue)
+      expect(a.model.attributes.langcode).toBe('es')
+      expect(titleOf(a)).not.toBe('English edit')
+      expect(a.dirty).toBe(false)
+    })
+
+    test('each language keeps its own edits', async () => {
+      const { localVue, root, a } = await mountPair()
+      a.model = { ...a.model, attributes: { ...a.model.attributes, title: 'English edit' } }
+      root.vm.langcode = 'es'
+      await settle(localVue)
+      a.model = { ...a.model, attributes: { ...a.model.attributes, title: 'Spanish edit' } }
+
+      root.vm.langcode = 'en'
+      await settle(localVue)
+      expect(titleOf(a)).toBe('English edit')
+      expect(a.dirty).toBe(true)
+
+      root.vm.langcode = 'es'
+      await settle(localVue)
+      expect(titleOf(a)).toBe('Spanish edit')
+      expect(a.dirty).toBe(true)
+    })
+
+    test('a language switch fetches the entity once', async () => {
+      const { localVue, root, a } = await mountPair()
+      mockAxios.get.mockClear()
+      // A second fetch is answered from the store, which counting requests misses.
+      const fetches = jest.spyOn(a, '$fetch')
+
+      root.vm.langcode = 'es'
+      await settle(localVue)
+      expect(fetches).toHaveBeenCalledTimes(1)
+      expect(pageRequests(pages[0].id)).toHaveLength(1)
+    })
+
+    test("a uuid change drops every language's edits", async () => {
+      const { localVue, root, a } = await mountPair({ type: 'node--recipe' })
+      a.model = { ...a.model, attributes: { ...a.model.attributes, title: 'English edit' } }
+      root.vm.langcode = 'es'
+      await settle(localVue)
+
+      root.vm.uuid = recipes[1].id
+      await settle(localVue)
+      root.vm.langcode = 'en'
+      await settle(localVue)
+      expect(a.model.id).toBe(recipes[1].id)
+      expect(titleOf(a)).toBe(recipes[1].attributes.title)
+      expect(a.dirty).toBe(false)
     })
   })
 })
