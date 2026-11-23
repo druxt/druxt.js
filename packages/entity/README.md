@@ -91,6 +91,18 @@ Renders a Drupal Content Entity form with submission and validation support.
 
 - For more details, refer to the [DruxtEntityForm component API documentation](https://druxtjs.org/api/packages/entity/components/DruxtEntityForm).
 
+### v-model
+
+`DruxtEntity` and `DruxtEntityForm` take the entity through `v-model`, and emit `input` each time a field changes. Through the `Druxt` component:
+
+```vue
+<Druxt v-model="entity" module="entity-form" :props-data="{ type: 'node--page', uuid }" />
+```
+
+- A value set through `v-model` while the entity is loading is kept when the request finishes.
+- A component doesn't send back a value its parent set, so the parent sees each change once.
+- A custom field component that emits `''` passes `''` to its parent. Druxt's built-in text input sends `undefined` for a cleared field, so check for both.
+
 ---
 
 ## Settings
