@@ -119,7 +119,8 @@ export default {
       }
 
       try {
-        this.response = await this.$druxt[method](this.model)
+        // The request goes to the form's language, where its answer is stored.
+        this.response = await this.$druxt[method](this.model, this.lang)
         const resource = this.response.data.data
         // Store Drupal's answer, so every component showing the entity shows
         // what was saved, and take it as the model.

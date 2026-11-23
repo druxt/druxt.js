@@ -8,4 +8,4 @@ Unsaved edits stay on the entity that holds them, and nothing else on the page s
 
 A wrapper's own changes to its props in view mode are now lost when the stored resource changes. Keep that state in the wrapper's own data.
 
-After `druxt/clearCache`, a mounted entity keeps showing its content while it fetches again. Sites that fetched again or called `$forceUpdate()` after a save to update the page can remove that.
+After `druxt/clearCache`, a mounted entity keeps showing its content while it fetches again. If Drupal then refuses it, as after a sign-out, the entity shows its error state. Sites that fetched again or called `$forceUpdate()` after a save to update the page can remove that.

@@ -213,6 +213,34 @@ describe('DruxtEntity renders from the store', () => {
     expect(titleOf(wrapper.vm)).toBe('Stored')
   })
 
+  test('a hydrated entity keeps its edits', async () => {
+    // Nuxt 2 restores a fetch's data in a created hook it adds after the
+    // component's own, so the component's created() sees the default model.
+    const { localVue, store: s } = setup({ fetch: false })
+    store(s, pages[0], pages[0].attributes.title)
+    const model = copy(s.state.druxt.resources['node--page'][pages[0].id].en.data)
+    const Hydrated = {
+      extends: DruxtEntity,
+      created() { this.model = copy(model) },
+    }
+
+    const wrapper = mount(Hydrated, {
+      localVue,
+      store: s,
+      mocks: { ...mocks, $fetchState: { pending: false } },
+      propsData: { type: 'node--page', uuid: pages[0].id, langcode: 'en' },
+      stubs: ['DruxtDebug'],
+    })
+    await localVue.nextTick()
+    expect(wrapper.vm.dirty).toBe(false)
+
+    wrapper.vm.model.attributes.title = 'Edited'
+    expect(wrapper.vm.dirty).toBe(true)
+    store(s, pages[0], 'Stored')
+    await localVue.nextTick()
+    expect(titleOf(wrapper.vm)).toBe('Edited')
+  })
+
   test("a parent's value is kept", async () => {
     const { localVue, store: s } = setup()
     const value = { ...copy(pages[0]), included: undefined }
@@ -271,6 +299,26 @@ describe('DruxtEntity renders from the store', () => {
       expect(a.storedEntity).toBeTruthy()
     })
 
+    test('a refetch Drupal refuses shows the error state, not an empty entity', async () => {
+      const { localVue, store: s, a } = await mountPair()
+      const title = titleOf(a)
+
+      // After a sign-out, Drupal refuses the page.
+      const get = mockAxios.get.getMockImplementation()
+      mockAxios.get.mockImplementation((url, config) => {
+        if (!decodeURIComponent(url).includes(`/node/page/${pages[0].id}`)) return get(url, config)
+        const err = new Error('Request failed with status code 403')
+        err.response = { status: 403, statusText: 'Forbidden', data: { errors: [{ status: '403', title: 'Forbidden' }] } }
+        return Promise.reject(err)
+      })
+      s.dispatch('druxt/clearCache')
+      await settle(localVue)
+      mockAxios.get.mockImplementation(get)
+
+      expect(a.component.is).toBe('DruxtDebug')
+      expect(titleOf(a)).toBe(title)
+    })
+
     test('a flush keeps unsaved edits', async () => {
       const { localVue, store: s, a, b } = await mountPair()
       const title = titleOf(b)
@@ -286,17 +334,17 @@ describe('DruxtEntity renders from the store', () => {
 
   describe('a save', () => {
     // A form for the page, beside a view of it.
-    const mountForm = async () => {
+    const mountForm = async ({ langcode = 'en' } = {}) => {
       const { localVue, store: s } = setup()
       localVue.component('DruxtEntityForm', DruxtEntityForm)
       const $druxt = s.$druxt
       $druxt.settings = {}
       const root = mount({
         template: `<div>
-          <DruxtEntityForm ref="form" type="node--page" :uuid="id" langcode="en" />
-          <DruxtEntity ref="b" type="node--page" :uuid="id" langcode="en" />
+          <DruxtEntityForm ref="form" type="node--page" :uuid="id" :langcode="langcode" />
+          <DruxtEntity ref="b" type="node--page" :uuid="id" :langcode="langcode" />
         </div>`,
-        computed: { id: () => pages[0].id },
+        computed: { id: () => pages[0].id, langcode: () => langcode },
       }, { localVue, store: s, mocks: { ...mocks, $druxt }, stubs: ['DruxtDebug', 'DruxtEntityFormButtons'] })
       await settle(localVue)
       return { localVue, store: s, form: root.vm.$refs.form, b: root.vm.$refs.b }
@@ -323,6 +371,22 @@ describe('DruxtEntity renders from the store', () => {
       const model = { ...form.model }
       delete model.included
       expect(model).toStrictEqual(JSON.parse(JSON.stringify(form.response.data.data)))
+    })
+
+    test('a save in another language goes to that translation', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, store: s, form, b } = await mountForm({ langcode: 'es' })
+      const english = s.state.druxt.resources['node--page'][pages[0].id].en
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved in Spanish' } }
+
+      await form.onSubmit()
+      await settle(localVue)
+
+      expect(decodeURIComponent(mockAxios.patch.mock.calls[0][0])).toContain('/es/jsonapi/')
+      expect(s.state.druxt.resources['node--page'][pages[0].id].es.data.attributes.title).toBe('Saved in Spanish')
+      expect(s.state.druxt.resources['node--page'][pages[0].id].es.data.attributes.langcode).toBe('es')
+      expect(s.state.druxt.resources['node--page'][pages[0].id].en).toBe(english)
+      expect(titleOf(b)).toBe('Saved in Spanish')
     })
 
     test('a failed save leaves the store and the edits', async () => {

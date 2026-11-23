@@ -274,12 +274,6 @@ export default {
   created() {
     if (this.$isServer || (this.value !== undefined && this.value !== null)) return
 
-    // A server-rendered entity doesn't fetch on the client: the model it was
-    // hydrated with is the copy to compare edits with.
-    if (typeof this._druxtPristine !== 'string' && (this.model || {}).id) {
-      this.setPristine(this.model)
-    }
-
     // Follow the entity's resource in the store.
     this.$watch('storedEntity', (to, from) => {
       if (to === from) return
@@ -291,6 +285,16 @@ export default {
       if ((this.value !== undefined && this.value !== null) || this.dirty) return
       this.setModelFromStore({ ...to, included: (this.model || {}).included })
     })
+  },
+
+  beforeMount() {
+    // A server-rendered entity doesn't fetch on the client: the model it was
+    // hydrated with is the copy to compare edits with. Nuxt restores that
+    // model in a created hook that runs after this component's own.
+    if (this.$isServer || (this.value !== undefined && this.value !== null)) return
+    if (typeof this._druxtPristine !== 'string' && (this.model || {}).id) {
+      this.setPristine(this.model)
+    }
   },
 
   mounted() {
@@ -494,6 +498,14 @@ export default {
           bypassCache
         })
         if (this.value !== value) return
+
+        // Drupal refused an entity this component already shows, as after a
+        // sign-out: show the error state rather than an empty entity.
+        if (resource.error && !resource.data && (this.model || {}).id === this.uuid) {
+          const err = new Error(resource.error.message)
+          err.response = { status: resource.error.statusCode }
+          throw err
+        }
 
         // A flush while the request ran keeps the store from storing its
         // answer, which may be from before the flush, such as a signed-in
