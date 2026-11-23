@@ -71,6 +71,12 @@ Fields are rendered as [DruxtField](https://druxtjs.org/api/packages/entity/comp
 <DruxtEntity :type="resourceType" :uuid="uuid" :mode="displayMode" />
 ```
 
+An entity renders from the Vuex store, so a newer copy stored anywhere, such as a save, shows everywhere it renders, the rows of a view included. Unsaved edits stay on the component that holds them. Flip a `DruxtEntityForm`'s `schemaType` between `form` and `view` to preview them, and its `dirty` property says whether there are any:
+
+```vue
+<DruxtEntityForm :type="type" :uuid="uuid" :schema-type="mode" />
+```
+
 - For more details, refer to the [DruxtEntity component API documentation](https://druxtjs.org/api/packages/entity/components/DruxtEntity).
 
 ### DruxtEntityForm
@@ -90,32 +96,6 @@ Renders a Drupal Content Entity form with submission and validation support.
 ![Example DruxtEntityForm component](https://druxtjs.org/images/druxt-entity-form.png)
 
 - For more details, refer to the [DruxtEntityForm component API documentation](https://druxtjs.org/api/packages/entity/components/DruxtEntityForm).
-
-### The store, edits and previews
-
-An entity follows its resource in the Vuex store. When anything stores a newer copy, such as a save or a preview, every `DruxtEntity` showing that entity renders it, the rows of a view included.
-
-Edits stay on the component that holds them until they're saved. Flip `schemaType` to edit an entity in place, and flip it back to view your edits as a preview before you save:
-
-```vue
-<template>
-  <div>
-    <button @click="mode = mode === 'view' ? 'form' : 'view'">
-      {{ mode === 'view' ? 'Edit' : 'Preview' }}
-    </button>
-    <DruxtEntityForm :type="type" :uuid="uuid" :schema-type="mode" />
-  </div>
-</template>
-
-<script>
-export default {
-  props: ['type', 'uuid'],
-  data: () => ({ mode: 'view' }),
-};
-</script>
-```
-
-The component's `dirty` property says whether it holds edits that aren't saved. Each language keeps its own edits, so the first language's edits are still there after you switch to another language and back. Saving writes the current language only and stores what Drupal returns. Saving or Reset clears that language's edits. A component bound with `v-model` shows its parent's value and doesn't follow the store.
 
 ---
 
