@@ -68,6 +68,8 @@ Renders a Drupal View using DruxtEntity components, using data provided by the D
 <DruxtView :display-id="displayId" :view-id="viewId" />
 ```
 
+Changing an exposed filter goes back to the first page. A view opened with `page`, `filter` or `sort` in the URL query keeps those keys up to date without adding history entries, but doesn't add a key that wasn't there when it opened.
+
 - For more details, refer to the [DruxtView API documentation](https://druxtjs.org/api/packages/views/components/DruxtView).
 
 ---
@@ -99,16 +101,6 @@ export default {
 | `query.bundleFilter`  | `boolean`  | No       | `false` | Whether to automatically detect Resource types to filter, based on the View `bundle` filter. |
 | `query.fields`        | `string[]` | No       | `[]`    | An array of fields to filter from the JSON:API Views Resource types.                         |
 | `query.resourceTypes` | `string[]` | No       | `[]`    | An array of Resource types to be used by the Fields filter.                                  |
-
-### Exposed filters, the pager and the URL
-
-By default, an exposed filter filters the results as its value changes, on sites that load `druxt-entity` too. An empty string in a filter stays an empty string.
-
-Changing a filter on a later page goes back to the first page, as Drupal does.
-
-A view opened with `page`, `filter` or `sort` in the URL query, such as `/recipes?filter[difficulty]=easy&page=1`, keeps those keys up to date as they change, without adding to the browser history. A filter change drops `page`. A key that wasn't in the URL when the view opened isn't added, so that choice is lost on reload.
-
-Views on one page share these keys. A second view keeps its own values until the page reloads.
 
 ---
 
