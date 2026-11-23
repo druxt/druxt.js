@@ -6,6 +6,7 @@ import mockAxios from 'jest-mock-axios'
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import { DruxtSchemaStore } from '../../../schema/src'
 import DruxtEntity from '../../src/components/DruxtEntity.vue'
+import DruxtEntityForm from '../../src/components/DruxtEntityForm.vue'
 import DruxtField from '../../src/components/DruxtField.vue'
 
 const { baseUrl } = require('../../../../test/drupal')
@@ -280,6 +281,75 @@ describe('DruxtEntity renders from the store', () => {
       expect(titleOf(a)).toBe('Edited in A')
       expect(a.dirty).toBe(true)
       expect(titleOf(b)).toBe(title)
+    })
+  })
+
+  describe('a save', () => {
+    // A form for the page, beside a view of it.
+    const mountForm = async () => {
+      const { localVue, store: s } = setup()
+      localVue.component('DruxtEntityForm', DruxtEntityForm)
+      const $druxt = s.$druxt
+      $druxt.settings = {}
+      const root = mount({
+        template: `<div>
+          <DruxtEntityForm ref="form" type="node--page" :uuid="id" langcode="en" />
+          <DruxtEntity ref="b" type="node--page" :uuid="id" langcode="en" />
+        </div>`,
+        computed: { id: () => pages[0].id },
+      }, { localVue, store: s, mocks: { ...mocks, $druxt }, stubs: ['DruxtDebug', 'DruxtEntityFormButtons'] })
+      await settle(localVue)
+      return { localVue, store: s, form: root.vm.$refs.form, b: root.vm.$refs.b }
+    }
+
+    const storedTitle = (s) => s.state.druxt.resources['node--page'][pages[0].id].en.data.attributes.title
+
+    afterEach(() => mockAxios.__signIn(null))
+
+    test('a save reaches the store and the page', async () => {
+      // umami's editor may edit any page.
+      mockAxios.__signIn('editor')
+      const { localVue, store: s, form, b } = await mountForm()
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
+      expect(form.dirty).toBe(true)
+
+      await form.onSubmit()
+      await settle(localVue)
+
+      expect(form.errors).toBeUndefined()
+      expect(storedTitle(s)).toBe('Saved')
+      expect(titleOf(b)).toBe('Saved')
+      expect(form.dirty).toBe(false)
+      const model = { ...form.model }
+      delete model.included
+      expect(model).toStrictEqual(JSON.parse(JSON.stringify(form.response.data.data)))
+    })
+
+    test('a failed save leaves the store and the edits', async () => {
+      const { localVue, store: s, form } = await mountForm()
+      const title = storedTitle(s)
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Not saved' } }
+
+      await form.onSubmit()
+      await settle(localVue)
+
+      expect(form.response).toBeTruthy()
+      expect(storedTitle(s)).toBe(title)
+      expect(titleOf(form)).toBe('Not saved')
+      expect(form.dirty).toBe(true)
+    })
+
+    test('Reset returns to the stored resource', async () => {
+      const { localVue, store: s, form } = await mountForm()
+      form.model.attributes.title = 'Changed'
+      expect(form.dirty).toBe(true)
+
+      form.onReset()
+      await localVue.nextTick()
+      const model = { ...form.model }
+      delete model.included
+      expect(model).toStrictEqual(JSON.parse(JSON.stringify(s.state.druxt.resources['node--page'][pages[0].id].en.data)))
+      expect(form.dirty).toBe(false)
     })
   })
 })

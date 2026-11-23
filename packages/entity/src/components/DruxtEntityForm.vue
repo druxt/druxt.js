@@ -93,12 +93,12 @@ export default {
   methods: {
     /**
      * Reset event handler:
-     * - Sets `model` back to `entity` value.
+     * - Sets `model` back to the stored entity.
      * - Unsets `response` data.
      * - Emits `reset`.
      */
     onReset() {
-      this.model = JSON.parse(JSON.stringify(this.entity)),
+      this.setModelFromStore(this.entity)
       this.response = undefined
       this.$emit('reset')
     },
@@ -121,8 +121,11 @@ export default {
       try {
         this.response = await this.$druxt[method](this.model)
         const resource = this.response.data.data
-        // Update the Vuex store.
-        this.$store.commit('druxt/addResource', { resource })
+        // Store Drupal's answer, so every component showing the entity shows
+        // what was saved, and take it as the model.
+        this.$store.commit('druxt/addResource', { resource: { ...this.response.data }, prefix: this.lang })
+        const stored = (((this.$store.state.druxt.resources[resource.type] || {})[resource.id] || {})[this.lang] || {}).data
+        this.setModelFromStore({ ...(stored || resource), included: this.model.included })
         this.$emit('submit', resource)
       } catch (err) {
         // Network-level failures reject without a response object.
