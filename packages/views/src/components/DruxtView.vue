@@ -385,12 +385,13 @@ export default {
     // A change of view, display or language empties the slot it reads as
     // well, and their own watchers fetch for that.
     if (!this.$isServer) {
+      // The view's own fetch replaces its results when it bypasses the cache.
+      // That isn't a flush, so the watcher ignores changes while a fetch runs,
+      // and fetchData checks for a flush when the fetch ends.
       const slot = () => [this.viewId, this.displayId, this.lang].join(':')
-      this._druxtResultsSlot = slot()
-      this.$watch('hasStoredResults', (to, from) => {
-        const same = slot() === this._druxtResultsSlot
-        this._druxtResultsSlot = slot()
-        if (same && from && !to) this.fetchAgain()
+      this.$watch(() => [slot(), this.hasStoredResults], ([to, stored], [from, wasStored]) => {
+        if (this._fetchPromise) return
+        if (to === from && wasStored && !stored) this.fetchAgain()
       })
     }
   },
@@ -589,6 +590,18 @@ export default {
           viewId,
           bypassCache
         })
+
+        // A flush while the request ran keeps the store from storing its
+        // answer, which may be from before the flush, such as a signed-in
+        // copy after a sign-out. Fetch once more, after this fetch settles.
+        if (!this.$isServer && this.resource && !this.hasStoredResults) {
+          if (!this._druxtFetchedAgain) {
+            this._druxtFetchedAgain = true
+            this.$nextTick(() => this.fetchAgain())
+          }
+        } else {
+          this._druxtFetchedAgain = false
+        }
       }
     },
 

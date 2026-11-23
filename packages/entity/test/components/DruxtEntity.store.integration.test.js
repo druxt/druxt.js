@@ -82,6 +82,26 @@ const mountPair = async ({ langcode = 'en', type = 'node--page' } = {}) => {
   return { localVue, store, root, a: root.vm.$refs.a, b: root.vm.$refs.b }
 }
 
+// Holds back the first request matching `match` until `release()`, so a test
+// can act while it is pending. `hit` resolves once the request is made.
+const hold = (method, match) => {
+  const impl = mockAxios[method].getMockImplementation()
+  let release
+  let reached
+  const opened = new Promise((resolve) => { release = resolve })
+  const hit = new Promise((resolve) => { reached = resolve })
+  mockAxios[method].mockImplementation(async (url, ...args) => {
+    if (reached && match(decodeURIComponent(url))) {
+      const reach = reached
+      reached = null
+      reach()
+      await opened
+    }
+    return impl(url, ...args)
+  })
+  return { hit, release: () => { release(); mockAxios[method].mockImplementation(impl) } }
+}
+
 // Writes a page into the store with a title, as a save or a preview does.
 const store = (s, page, title, prefix = 'en') => {
   const resource = { data: copy(page) }
@@ -387,6 +407,35 @@ describe('DruxtEntity renders from the store', () => {
 
     afterEach(() => mockAxios.__signIn(null))
 
+    test('a language change during a save keeps the answer in the saved language', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, store: s, root, form } = await mountForm()
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
+      const save = hold('patch', () => true)
+      let saving
+      try {
+        saving = form.onSubmit()
+        await save.hit
+        root.vm.langcode = 'es'
+        await settle(localVue)
+      } finally {
+        save.release()
+      }
+      await saving
+      await settle(localVue)
+
+      expect(storedTitle(s)).toBe('Saved')
+      expect(s.state.druxt.resources['node--page'][pages[0].id].es.data.attributes.title).not.toBe('Saved')
+      expect(form.model.attributes.langcode).toBe('es')
+      expect(titleOf(form)).not.toBe('Saved')
+
+      // The saved language shows what was saved, not the edits before it.
+      root.vm.langcode = 'en'
+      await settle(localVue)
+      expect(titleOf(form)).toBe('Saved')
+      expect(form.dirty).toBe(false)
+    })
+
     test('a save reaches the store and the page', async () => {
       // umami's editor may edit any page.
       mockAxios.__signIn('editor')
@@ -492,6 +541,45 @@ describe('DruxtEntity renders from the store', () => {
       await settle(localVue)
       expect(fetches).toHaveBeenCalledTimes(1)
       expect(pageRequests(pages[0].id)).toHaveLength(1)
+    })
+
+    const spanishPage = (url) => url.includes(`/es/jsonapi/node/page/${pages[0].id}`)
+
+    test('an edit while the next language loads stays out of the kept edits', async () => {
+      const { localVue, root, a } = await mountPair()
+      a.model = { ...a.model, attributes: { ...a.model.attributes, title: 'English edit' } }
+      const es = hold('get', spanishPage)
+      try {
+        root.vm.langcode = 'es'
+        await es.hit
+        a.model.attributes.title = 'Typed while loading'
+      } finally {
+        es.release()
+      }
+      await settle(localVue)
+
+      root.vm.langcode = 'en'
+      await settle(localVue)
+      expect(titleOf(a)).toBe('English edit')
+    })
+
+    test('switching back while the other language loads keeps this language', async () => {
+      const { localVue, root, a } = await mountPair()
+      a.model = { ...a.model, attributes: { ...a.model.attributes, title: 'English edit' } }
+      const es = hold('get', spanishPage)
+      try {
+        root.vm.langcode = 'es'
+        await es.hit
+        root.vm.langcode = 'en'
+        await localVue.nextTick()
+      } finally {
+        es.release()
+      }
+      await settle(localVue)
+
+      expect(a.model.attributes.langcode).toBe('en')
+      expect(titleOf(a)).toBe('English edit')
+      expect(a.dirty).toBe(true)
     })
 
     test("a uuid change drops every language's edits", async () => {

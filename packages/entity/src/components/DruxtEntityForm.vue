@@ -118,15 +118,26 @@ export default {
         method = 'updateResource'
       }
 
+      // The language the form showed when it was submitted, which may change
+      // while the request runs.
+      const lang = this.lang
+
       try {
         // The request goes to the form's language, where its answer is stored.
-        this.response = await this.$druxt[method](this.model, this.lang)
+        this.response = await this.$druxt[method](this.model, lang)
         const resource = this.response.data.data
         // Store Drupal's answer, so every component showing the entity shows
-        // what was saved, and take it as the model.
-        this.$store.commit('druxt/addResource', { resource: { ...this.response.data }, prefix: this.lang })
-        const stored = (((this.$store.state.druxt.resources[resource.type] || {})[resource.id] || {})[this.lang] || {}).data
-        this.setModelFromStore({ ...(stored || resource), included: this.model.included })
+        // what was saved.
+        this.$store.commit('druxt/addResource', { resource: { ...this.response.data }, prefix: lang })
+        if (this.lang === lang) {
+          // Take the answer as the model.
+          const stored = (((this.$store.state.druxt.resources[resource.type] || {})[resource.id] || {})[lang] || {}).data
+          this.setModelFromStore({ ...(stored || resource), included: this.model.included })
+        } else if (this._druxtDrafts) {
+          // The form shows another language now: the saved language's edits
+          // are saved, so it shows what was saved when it comes back.
+          delete this._druxtDrafts[lang]
+        }
         this.$emit('submit', resource)
       } catch (err) {
         // Network-level failures reject without a response object.

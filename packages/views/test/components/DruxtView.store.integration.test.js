@@ -1,6 +1,7 @@
 import 'regenerator-runtime/runtime'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
+import mockAxios from 'jest-mock-axios'
 
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
 import DruxtWrapper from '../../../druxt/src/components/DruxtWrapper.vue'
@@ -18,7 +19,10 @@ const { NuxtFetch, settle } = require('../../../../test/nuxt-fetch')
 const resultsPath = /\/jsonapi\/views\/recipes\/page_1$/
 const resultsRequests = () => drupal.requests().filter(({ path }) => resultsPath.test(path)).length
 
-const mountView = async () => {
+// The store mountView() made last, for a test that flushes it mid-request.
+let lastStore
+
+const mountView = async ({ settings = {} } = {}) => {
   const localVue = createLocalVue()
   localVue.use(Vuex)
   localVue.mixin(NuxtFetch)
@@ -34,10 +38,11 @@ const mountView = async () => {
   // The rows' displays aren't among the fixtures; a row renders without one.
   store.$druxtSchema = { import: () => { throw new Error('No schema fixture') } }
   store.app = { context: { error: () => {}, isStatic: false }, store }
+  lastStore = store
 
   const root = mount({
-    data: () => ({ langcode: 'en' }),
-    template: '<DruxtView ref="view" view-id="recipes" display-id="page_1" :langcode="langcode" />',
+    data: () => ({ langcode: 'en', settings }),
+    template: '<DruxtView ref="view" view-id="recipes" display-id="page_1" :langcode="langcode" :settings="settings" />',
   }, {
     localVue,
     mocks: {
@@ -91,6 +96,51 @@ describe('DruxtView follows the store', () => {
     expect(resultsRequests()).toBe(before + 1)
     expect(view.hasStoredResults).toBe(true)
     expect(rows().map((row) => row.uuid)).toStrictEqual(ids)
+  })
+
+  test('a flush while the results load fetches them again', async () => {
+    const get = mockAxios.get.getMockImplementation()
+    let flushed = false
+    mockAxios.get.mockImplementation(async (url, config) => {
+      const response = await get(url, config)
+      if (!flushed && decodeURIComponent(url).includes('/jsonapi/views/recipes/page_1')) {
+        flushed = true
+        lastStore.commit('druxt/views/flushResults', {})
+      }
+      return response
+    })
+    let view
+    try {
+      ({ view } = await mountView())
+    } finally {
+      mockAxios.get.mockImplementation(get)
+    }
+
+    expect(flushed).toBe(true)
+    expect(view.hasStoredResults).toBe(true)
+  })
+
+  test('a view that bypasses the cache fetches once per fetch', async () => {
+    const { localVue, view } = await mountView({ settings: { query: { bypassCache: true } } })
+    const before = resultsRequests()
+
+    view.$fetch()
+    await settle(localVue)
+    expect(resultsRequests()).toBe(before + 1)
+    expect(view.hasStoredResults).toBe(true)
+  })
+
+  test('a flush after switching languages and back fetches again', async () => {
+    const { localVue, root, store } = await mountView()
+    root.vm.langcode = 'es'
+    await settle(localVue)
+    root.vm.langcode = 'en'
+    await settle(localVue)
+    const before = resultsRequests()
+
+    store.dispatch('druxt/clearCache')
+    await settle(localVue)
+    expect(resultsRequests()).toBe(before + 1)
   })
 
   test('a row follows a stored change', async () => {

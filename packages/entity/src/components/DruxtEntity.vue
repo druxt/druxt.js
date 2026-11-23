@@ -353,7 +353,8 @@ export default {
       if (from === undefined || from === this.lang || (this.model || {}).id !== this.uuid) return
 
       const drafts = this._druxtDrafts || (this._druxtDrafts = {})
-      if (this.hasEdits()) drafts[from] = { model: this.model, pristine: this._druxtPristine }
+      // A copy, so an edit made while the next language loads stays out of it.
+      if (this.hasEdits()) drafts[from] = { model: JSON.parse(JSON.stringify(this.model)), pristine: this._druxtPristine }
 
       const draft = drafts[this.lang]
       delete drafts[this.lang]
@@ -516,6 +517,7 @@ export default {
         // Edits belong to one entity: another entity starts with none.
         if ((this.model || {}).id && this.model.id !== this.uuid) this._druxtDrafts = {}
         this.switchLanguage()
+        const lang = this.lang
 
         // A value the parent sets while the request is pending wins over the
         // response.
@@ -539,6 +541,13 @@ export default {
           bypassCache
         })
         if (this.value !== value) return
+
+        // The language changed while the request ran, so its answer is for
+        // another language. Fetch this one once this fetch settles.
+        if (this.lang !== lang) {
+          this.$nextTick(() => this.fetchAgain())
+          return
+        }
 
         // Drupal refused an entity this component already shows, as after a
         // sign-out: show the error state rather than an empty entity.
