@@ -6,6 +6,19 @@ import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 import { mapActions } from 'vuex'
 
 /**
+ * The JSON of entity data without its included resources, which is what an
+ * edit is compared with.
+ *
+ * @param {object} data - The JSON:API resource data.
+ * @return {string} The JSON.
+ */
+const pristineOf = (data) => {
+  const rest = { ...(data || {}) }
+  delete rest.included
+  return JSON.stringify(rest)
+}
+
+/**
  * The DruxtEntity component renders a Drupal Content Entity by JSON:API
  * resource type, UUID, view mode and schema type.
  *
@@ -143,13 +156,55 @@ export default {
   /** */
   computed: {
     /**
+     * Whether the model holds edits that aren't saved.
+     *
+     * The model is compared with the copy last taken from the store, a fetch or
+     * a save, so an assignment equal to that copy isn't an edit. A component
+     * whose parent passes `value` holds its parent's data and is never dirty.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.model - The model object.
+     * @param {object} vm.value - The Vue.js v-model value.
+     * @return {boolean} `true` when the model differs from the copy last taken.
+     */
+    dirty(vm) {
+      const { model, value } = vm
+      if ((value !== undefined && value !== null) || typeof vm._druxtPristine !== 'string') return false
+      return pristineOf(model) !== vm._druxtPristine
+    },
+
+    /**
      * The Entity object.
      *
      * @param {object} vm - The component ViewModel.
      * @param {object} vm.model - The model object.
-     * @return {object} A copy of the entity model, containing the JSON:API attributes, relationships and included resource data.
+     * @param {object} vm.storedEntity - The entity's resource in the store.
+     * @param {object} vm.value - The Vue.js v-model value.
+     * @return {object} A copy of the stored entity, with the model's included resource data, or a copy of the model when nothing is stored or the parent passes `value`.
      */
-    entity: ({ model }) => ({ ...model }),
+    entity: ({ model, storedEntity, value }) => {
+      if ((value !== undefined && value !== null) || !storedEntity) return { ...model }
+      const entity = JSON.parse(JSON.stringify(storedEntity))
+      if ((model || {}).included !== undefined) entity.included = model.included
+      return entity
+    },
+
+    /**
+     * The entity's resource data in the store, under the entity's language.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.$store - The Vuex store.
+     * @param {string} vm.lang - The current language code.
+     * @param {object} vm.model - The model object.
+     * @param {string} vm.type - The JSON:API resource type.
+     * @param {(boolean|string)} vm.uuid - The entity UUID.
+     * @return {object} The stored JSON:API resource data, or `undefined`.
+     */
+    storedEntity: ({ $store, lang, model, type, uuid }) => {
+      const id = uuid || (model || {}).id
+      if (!id) return undefined
+      return ((((($store.state.druxt || {}).resources || {})[type] || {})[id] || {})[lang] || {}).data
+    },
 
     /**
      * Entity fields based on Display mode.
@@ -216,6 +271,28 @@ export default {
     },
   },
 
+  created() {
+    if (this.$isServer || (this.value !== undefined && this.value !== null)) return
+
+    // A server-rendered entity doesn't fetch on the client: the model it was
+    // hydrated with is the copy to compare edits with.
+    if (typeof this._druxtPristine !== 'string' && (this.model || {}).id) {
+      this.setPristine(this.model)
+    }
+
+    // Follow the entity's resource in the store.
+    this.$watch('storedEntity', (to, from) => {
+      if (to === from) return
+      // Flushed: keep showing the copy and fetch again.
+      if (!to) {
+        if (from) this.fetchAgain()
+        return
+      }
+      if ((this.value !== undefined && this.value !== null) || this.dirty) return
+      this.setModelFromStore({ ...to, included: (this.model || {}).included })
+    })
+  },
+
   mounted() {
     // If static, re-fetch data allowing for cache-bypass.
     // @TODO - Don't re-fetch in serverless configuration.
@@ -225,6 +302,38 @@ export default {
   },
 
   methods: {
+    /**
+     * Fetches again once a running fetch settles, as after a flush. A running
+     * fetch may have read the store before the flush emptied it.
+     *
+     * @return {Promise} The fetch.
+     */
+    async fetchAgain() {
+      if (this._fetchPromise) await this._fetchPromise
+      return this.$fetch()
+    },
+
+    /**
+     * Sets the model to a copy of entity data from the store, a fetch or a
+     * save, and makes that copy the one edits are compared with.
+     *
+     * @param {object} data - The JSON:API resource data, with any included resource data.
+     */
+    setModelFromStore(data) {
+      this.setPristine(data)
+      this.model = JSON.parse(JSON.stringify(data || {}))
+    },
+
+    /**
+     * Keeps the JSON of the copy edits are compared with, on the instance and
+     * outside `data`, so it stays out of the page payload.
+     *
+     * @param {object} data - The JSON:API resource data.
+     */
+    setPristine(data) {
+      this._druxtPristine = pristineOf(data)
+    },
+
     /**
      * Builds the query for the JSON:API request.
      *
@@ -384,9 +493,13 @@ export default {
         })
         if (this.value !== value) return
 
+        // Unsaved edits to this entity stay, as across a flip of the schema
+        // type or a flush.
+        if (this.dirty && (this.model || {}).id === this.uuid) return
+
         const entity = { ...(resource.data || {}) }
         entity.included = resource.included
-        this.model = JSON.parse(JSON.stringify(entity || {}))
+        this.setModelFromStore(entity)
       }
     },
 
