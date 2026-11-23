@@ -89,6 +89,8 @@ Renders a Drupal Content Entity form with submission and validation support.
 
 ![Example DruxtEntityForm component](https://druxtjs.org/images/druxt-entity-form.png)
 
+`v-model` works through the `Druxt` component too: `<Druxt v-model="entity" module="entity-form" :props-data="{ type, uuid }" />`.
+
 - For more details, refer to the [DruxtEntityForm component API documentation](https://druxtjs.org/api/packages/entity/components/DruxtEntityForm).
 
 ---

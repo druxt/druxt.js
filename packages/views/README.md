@@ -68,6 +68,8 @@ Renders a Drupal View using DruxtEntity components, using data provided by the D
 <DruxtView :display-id="displayId" :view-id="viewId" />
 ```
 
+Changing an exposed filter goes back to the first page. A view opened with `page`, `filter` or `sort` in the URL query keeps those keys up to date without adding history entries, but doesn't add a key that wasn't there when it opened.
+
 - For more details, refer to the [DruxtView API documentation](https://druxtjs.org/api/packages/views/components/DruxtView).
 
 ---
