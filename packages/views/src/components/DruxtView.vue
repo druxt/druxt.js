@@ -157,6 +157,19 @@ export default {
   /** */
   computed: {
     /**
+     * Whether the store holds results for this view and display, in its
+     * language. A flush empties them.
+     *
+     * @type {boolean}
+     */
+    hasStoredResults() {
+      const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
+      // The views store is registered as one module named `druxt/views`.
+      const results = ((((this.$store.state['druxt/views'] || {}).results || {})[viewId] || {})[this.displayId]) || {}
+      return !!results[this.lang]
+    },
+
+    /**
      * IDs of displays to be attached after the view.
      *
      * @type {string[]}
@@ -365,6 +378,14 @@ export default {
   created() {
     // The filter last fetched for, kept off the reactive data.
     this.lastFilter = JSON.stringify(this.model.filter || {})
+
+    // A flush of the results, such as `druxt/clearCache` on a sign-out, makes
+    // the view fetch them again.
+    if (!this.$isServer) {
+      this.$watch('hasStoredResults', (to, from) => {
+        if (from && !to) this.fetchAgain()
+      })
+    }
   },
 
   mounted() {
@@ -376,6 +397,19 @@ export default {
   },
 
   methods: {
+    /**
+     * Fetches again once a running fetch settles, as after a flush. A running
+     * fetch may have read the store before the flush emptied it.
+     *
+     * @return {Promise} The fetch.
+     */
+    async fetchAgain() {
+      // Only Nuxt's fetch can fetch again.
+      if (typeof this.$fetch !== 'function') return
+      if (this._fetchPromise) await this._fetchPromise
+      return this.$fetch()
+    },
+
     /**
      * Updates the filter, page and sort the URL holds to the model's values.
      *
