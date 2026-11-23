@@ -763,7 +763,8 @@ export const useDruxtStore = defineStore('druxt', {
         for (const result of resources) {
           if (result.data) included = [...included, result.data, ...result.included || []]
         }
-        storedResource.included = included
+        // Drupal leaves `included` out of a document that includes nothing, and so does a read from the store.
+        if (included.length) storedResource.included = included
         // A flush during that wait emptied the store. The copy then shows fields the store no longer holds, so the
         // read goes on as one of a resource that is not stored, and asks for every field.
         if (!this.resources[type]?.[id]?.[slot(prefix)]) storedResource = null
@@ -822,7 +823,7 @@ export const useDruxtStore = defineStore('druxt', {
       const fresh = resource?.data ? { data: withoutLinks(resource.data), ...(resource.meta ? { meta: storedMeta(resource as { meta?: Record<string, unknown> }, this.$druxt?.options?.endpoint) } : {}) } : undefined
       const result: Partial<StoredResource> & { error?: ResourceError } = { ...(since === getRuntime(this).generation && stored ? stored : fresh ?? stored) }
 
-      if (include && (resource?.included || storedResource?.included)) {
+      if (include && (resource?.included?.length || storedResource?.included?.length)) {
         included = [
           ...resource?.included || [],
           ...storedResource?.included || [],

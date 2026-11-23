@@ -381,6 +381,26 @@ describe('useDruxtStore() seeding and links', () => {
     expect(result).not.toHaveProperty('links')
   })
 
+  // Drupal leaves `included` out of a document that includes nothing. A read from the store has the same shape, so
+  // a page rendered on the server from a fresh read hydrates from a stored one without a difference.
+  it('leaves included out of a read that includes nothing, fresh or stored', async () => {
+    const lone = { type: 'node--page', id: 'p8', attributes: { title: 'Alone' }, relationships: { field_tags: { data: [] } } }
+    const { fetch } = drupal({
+      'GET /jsonapi': index('', ['node--page', 'taxonomy_term--tags']),
+      'GET /jsonapi/node/page/p8': individual(lone as never, []),
+    })
+    const pinia = createPinia()
+    pinia.use(() => ({ $druxt: markRaw(new DruxtClient(BASE_URL, { fetch })) }))
+    createApp({}).use(pinia)
+    setActivePinia(pinia)
+    const store = useDruxtStore()
+    const fresh = await store.getResource({ type: 'node--page', id: 'p8', query: { include: 'field_tags' } })
+    const stored = await store.getResource({ type: 'node--page', id: 'p8', query: { include: 'field_tags' } })
+    expect('included' in fresh).toBe(false)
+    expect('included' in stored).toBe(false)
+    expect(JSON.stringify(stored)).toBe(JSON.stringify(fresh))
+  })
+
   // Drupal takes a UUID a client supplies, and checks it within the entity type alone.
   it('tells two included resources that share an id apart by their type', async () => {
     const media = { type: 'media--image', id: 'shared', attributes: { name: 'Borscht' } }
