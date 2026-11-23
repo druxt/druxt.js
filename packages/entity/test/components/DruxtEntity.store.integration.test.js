@@ -31,6 +31,9 @@ beforeAll(async () => {
 // The renders of the page's view wrapper, by entity.
 let renders
 
+// The store setup() made last, for a test that flushes it mid-request.
+let lastStore
+
 const setup = ({ fetch = true } = {}) => {
   const localVue = createLocalVue()
   localVue.use(Vuex)
@@ -49,6 +52,7 @@ const setup = ({ fetch = true } = {}) => {
   localVue.component('DruxtEntityNodeRecipeDefaultView', Wrapper)
 
   const store = new Vuex.Store()
+  lastStore = store
   DruxtStore({ store })
   store.$druxt = new DruxtClient(baseUrl)
   DruxtSchemaStore({ store })
@@ -223,5 +227,59 @@ describe('DruxtEntity renders from the store', () => {
     await settle(localVue)
     expect(titleOf(root.vm.$refs.a)).toBe('Parent')
     expect(root.vm.$refs.a.dirty).toBe(false)
+  })
+
+  describe('when the store empties', () => {
+    const pageRequests = (id) => mockAxios.get.mock.calls.filter(([url]) => decodeURIComponent(url).includes(`/node/page/${id}`))
+
+    test('clearCache keeps the content and fetches again', async () => {
+      const { localVue, store: s, a, b } = await mountPair()
+      const title = titleOf(a)
+      mockAxios.get.mockClear()
+
+      s.dispatch('druxt/clearCache')
+      await localVue.nextTick()
+      expect(titleOf(a)).toBe(title)
+
+      await settle(localVue)
+      expect(pageRequests(pages[0].id)).toHaveLength(1)
+      expect(a.storedEntity).toBeTruthy()
+      expect(titleOf(a)).toBe(title)
+      expect(titleOf(b)).toBe(title)
+    })
+
+    test('a flush during a running fetch fetches after it', async () => {
+      // The first answer for the page arrives just after a flush, so the store
+      // drops it, as it drops anything fetched before a flush.
+      const get = mockAxios.get.getMockImplementation()
+      let flushed = false
+      mockAxios.get.mockImplementation(async (url, config) => {
+        const response = await get(url, config)
+        if (!flushed && decodeURIComponent(url).includes(`/node/page/${pages[0].id}`)) {
+          flushed = true
+          lastStore.commit('druxt/flushResource', {})
+        }
+        return response
+      })
+
+      const { a } = await mountPair()
+      mockAxios.get.mockImplementation(get)
+
+      expect(flushed).toBe(true)
+      expect(pageRequests(pages[0].id)).toHaveLength(2)
+      expect(a.storedEntity).toBeTruthy()
+    })
+
+    test('a flush keeps unsaved edits', async () => {
+      const { localVue, store: s, a, b } = await mountPair()
+      const title = titleOf(b)
+      a.model = { ...a.model, attributes: { ...a.model.attributes, title: 'Edited in A' } }
+
+      s.dispatch('druxt/clearCache')
+      await settle(localVue)
+      expect(titleOf(a)).toBe('Edited in A')
+      expect(a.dirty).toBe(true)
+      expect(titleOf(b)).toBe(title)
+    })
   })
 })

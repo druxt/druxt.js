@@ -309,6 +309,8 @@ export default {
      * @return {Promise} The fetch.
      */
     async fetchAgain() {
+      // Only Nuxt's fetch can fetch again.
+      if (typeof this.$fetch !== 'function') return
       if (this._fetchPromise) await this._fetchPromise
       return this.$fetch()
     },
@@ -492,6 +494,18 @@ export default {
           bypassCache
         })
         if (this.value !== value) return
+
+        // A flush while the request ran keeps the store from storing its
+        // answer, which may be from before the flush, such as a signed-in
+        // copy after a sign-out. Fetch once more, after this fetch settles.
+        if (!this.storedEntity && (resource.data || {}).id && !resource.error) {
+          if (!this._druxtFetchedAgain) {
+            this._druxtFetchedAgain = true
+            this.$nextTick(() => this.fetchAgain())
+          }
+        } else {
+          this._druxtFetchedAgain = false
+        }
 
         // Unsaved edits to this entity stay, as across a flip of the schema
         // type or a flush.
