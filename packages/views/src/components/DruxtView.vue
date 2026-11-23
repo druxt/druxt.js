@@ -157,16 +157,17 @@ export default {
   /** */
   computed: {
     /**
-     * Whether the store holds results for this view and display, in its
-     * language. A flush empties them.
+     * Whether the store still holds the results this view shows. A flush of
+     * them, at any level, removes them.
      *
      * @type {boolean}
      */
     hasStoredResults() {
+      if (!this.resource) return false
       const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
       // The views store is registered as one module named `druxt/views`.
-      const results = ((((this.$store.state['druxt/views'] || {}).results || {})[viewId] || {})[this.displayId]) || {}
-      return !!results[this.lang]
+      const results = ((((this.$store.state['druxt/views'] || {}).results || {})[viewId] || {})[this.displayId] || {})[this.lang] || {}
+      return Object.values(results).includes(this.resource)
     },
 
     /**

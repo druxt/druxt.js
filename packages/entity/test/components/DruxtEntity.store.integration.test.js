@@ -291,8 +291,12 @@ describe('DruxtEntity renders from the store', () => {
         return response
       })
 
-      const { a } = await mountPair()
-      mockAxios.get.mockImplementation(get)
+      let a
+      try {
+        ({ a } = await mountPair())
+      } finally {
+        mockAxios.get.mockImplementation(get)
+      }
 
       expect(flushed).toBe(true)
       expect(pageRequests(pages[0].id)).toHaveLength(2)
@@ -311,9 +315,12 @@ describe('DruxtEntity renders from the store', () => {
         err.response = { status: 403, statusText: 'Forbidden', data: { errors: [{ status: '403', title: 'Forbidden' }] } }
         return Promise.reject(err)
       })
-      s.dispatch('druxt/clearCache')
-      await settle(localVue)
-      mockAxios.get.mockImplementation(get)
+      try {
+        s.dispatch('druxt/clearCache')
+        await settle(localVue)
+      } finally {
+        mockAxios.get.mockImplementation(get)
+      }
 
       expect(a.component.is).toBe('DruxtDebug')
       expect(titleOf(a)).toBe(title)

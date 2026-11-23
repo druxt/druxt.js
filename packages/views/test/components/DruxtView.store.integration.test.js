@@ -71,6 +71,28 @@ describe('DruxtView follows the store', () => {
     expect(rows().map((row) => row.uuid)).toStrictEqual(ids)
   })
 
+  test('a flush of its language fetches the results again', async () => {
+    const { localVue, store } = await mountView()
+    const before = resultsRequests()
+
+    store.commit('druxt/views/flushResults', { viewId: 'recipes', displayId: 'page_1', prefix: 'en' })
+    await settle(localVue)
+    expect(resultsRequests()).toBe(before + 1)
+  })
+
+  test('a flush of its query fetches the results again', async () => {
+    const { localVue, store, view, rows } = await mountView()
+    const ids = rows().map((row) => row.uuid)
+    const before = resultsRequests()
+    const [hash] = Object.keys(store.state['druxt/views'].results.recipes.page_1.en)
+
+    store.commit('druxt/views/flushResults', { viewId: 'recipes', displayId: 'page_1', prefix: 'en', hash })
+    await settle(localVue)
+    expect(resultsRequests()).toBe(before + 1)
+    expect(view.hasStoredResults).toBe(true)
+    expect(rows().map((row) => row.uuid)).toStrictEqual(ids)
+  })
+
   test('a row follows a stored change', async () => {
     const { localVue, store, rows } = await mountView()
     const row = rows()[0]

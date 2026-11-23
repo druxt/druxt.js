@@ -62,10 +62,16 @@ describe('DruxtViewsStore', () => {
     expect(store.state['druxt/views'].results[viewId][displayId][prefix]._default).toBe(results)
 
     store.commit('druxt/views/flushResults', { viewId, displayId, prefix, hash: '_default'})
-    expect(store.state['druxt/views'].results[viewId][displayId][prefix]._default).toStrictEqual({})
-
-    store.commit('druxt/views/flushResults', { viewId, displayId, prefix})
     expect(store.state['druxt/views'].results[viewId][displayId][prefix]).toStrictEqual({})
+
+    store.commit('druxt/views/addResults', { results, viewId, displayId, prefix, hash: '_default' })
+    store.commit('druxt/views/flushResults', { viewId, displayId, prefix})
+    expect(store.state['druxt/views'].results[viewId][displayId]).toStrictEqual({})
+
+    // A flush of results that aren't stored changes nothing.
+    store.commit('druxt/views/flushResults', { viewId, displayId, prefix, hash: '_default'})
+    store.commit('druxt/views/flushResults', { viewId: 'missing', displayId, prefix})
+    expect(store.state['druxt/views'].results[viewId][displayId]).toStrictEqual({})
 
     store.commit('druxt/views/flushResults', { viewId, displayId })
     expect(store.state['druxt/views'].results[viewId][displayId]).toStrictEqual({})
@@ -75,6 +81,15 @@ describe('DruxtViewsStore', () => {
 
     store.commit('druxt/views/flushResults', {})
     expect(store.state['druxt/views'].results).toStrictEqual({})
+  })
+
+  test('getResults - a flushed query is fetched again', async () => {
+    store.$druxt.getResource = jest.fn(async () => ({ data: [] }))
+    await store.dispatch('druxt/views/getResults', { viewId, displayId, prefix: 'en' })
+    store.commit('druxt/views/flushResults', { viewId, displayId, prefix: 'en', hash: '_default' })
+
+    expect(await store.dispatch('druxt/views/getResults', { viewId, displayId, prefix: 'en' })).toStrictEqual({ data: [] })
+    expect(store.$druxt.getResource).toHaveBeenCalledTimes(2)
   })
 
   test('getResults - a flush during the request drops the results', async () => {

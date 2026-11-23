@@ -35,7 +35,8 @@ const NuxtFetch = {
 }
 
 /**
- * Waits until no fetch is running and Vue has rendered, for at most 20 rounds.
+ * Waits until no fetch is running and Vue has rendered. Throws when fetches
+ * still run after 20 rounds, as a fetch that keeps starting another would.
  *
  * @param {object} localVue - The test's Vue constructor.
  * @return {Promise<void>}
@@ -45,8 +46,9 @@ const settle = async (localVue) => {
     await Promise.all([...inFlight])
     await localVue.nextTick()
     await new Promise((resolve) => setTimeout(resolve, 0))
-    if (!inFlight.size) break
+    if (!inFlight.size) return
   }
+  throw new Error(`${inFlight.size} fetches still running after 20 rounds`)
 }
 
 module.exports = { NuxtFetch, inFlight, settle }

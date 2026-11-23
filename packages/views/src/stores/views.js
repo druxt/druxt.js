@@ -78,8 +78,10 @@ const DruxtViewsStore = ({ store }) => {
         if (!viewId) Vue.set(state, 'results', {})
         else if (viewId && !displayId && !prefix && !hash) Vue.set(state.results, viewId, {})
         else if (viewId && displayId && !prefix && !hash) Vue.set(state.results[viewId], displayId, {})
-        else if (viewId && displayId && prefix && !hash) Vue.set(state.results[viewId][displayId], prefix, {})
-        else if (viewId && displayId && (prefix || prefix === undefined) && hash) Vue.set(state.results[viewId][displayId][prefix], hash, {})
+        // A language or a query is removed, not emptied: an empty object left
+        // under a query would be returned as its cached results.
+        else if (viewId && displayId && prefix && !hash) Vue.delete((state.results[viewId] || {})[displayId] || {}, prefix)
+        else if (viewId && displayId && (prefix || prefix === undefined) && hash) Vue.delete(((state.results[viewId] || {})[displayId] || {})[prefix] || {}, hash)
       },
     },
 
