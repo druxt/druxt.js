@@ -91,6 +91,32 @@ Renders a Drupal Content Entity form with submission and validation support.
 
 - For more details, refer to the [DruxtEntityForm component API documentation](https://druxtjs.org/api/packages/entity/components/DruxtEntityForm).
 
+### The store, edits and previews
+
+An entity follows its resource in the Vuex store. When anything stores a newer copy, such as a save or a preview, every `DruxtEntity` showing that entity renders it, the rows of a view included.
+
+Edits stay on the component that holds them until they're saved. Flip `schemaType` to edit an entity in place, and flip it back to view your edits as a preview before you save:
+
+```vue
+<template>
+  <div>
+    <button @click="mode = mode === 'view' ? 'form' : 'view'">
+      {{ mode === 'view' ? 'Edit' : 'Preview' }}
+    </button>
+    <DruxtEntityForm :type="type" :uuid="uuid" :schema-type="mode" />
+  </div>
+</template>
+
+<script>
+export default {
+  props: ['type', 'uuid'],
+  data: () => ({ mode: 'view' }),
+};
+</script>
+```
+
+The component's `dirty` property says whether it holds edits that aren't saved. A save stores what Drupal returns and clears them, and so does a Reset. A component bound with `v-model` shows its parent's value and doesn't follow the store.
+
 ---
 
 ## Settings

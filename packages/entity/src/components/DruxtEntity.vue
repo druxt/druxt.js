@@ -316,8 +316,8 @@ export default {
     },
 
     /**
-     * Sets the model to a copy of entity data from the store, a fetch or a
-     * save, and makes that copy the one edits are compared with.
+     * Sets the model to a copy of stored entity data, and makes that copy the
+     * one edits are compared with.
      *
      * @param {object} data - The JSON:API resource data, with any included resource data.
      */
