@@ -656,6 +656,29 @@ class DruxtClient {
   }
 
   /**
+   * Puts a resource URL from an index under the prefix the index was asked at, when it names another language's.
+   *
+   * With a default language that has no prefix, Drupal's Dynamic Page Cache can give `/es/jsonapi` the links of
+   * `/jsonapi`. Those links lead to English. Only a known language's prefix is replaced, so it needs the `prefixes`
+   * option.
+   *
+   * @private
+   * @param {string} href - The resource URL, without the origin.
+   * @param {string} [prefix] - The URL prefix the index was asked at.
+   * @return {string} The URL, under that prefix.
+   */
+  atPrefix(href, prefix) {
+    if (!this.options.prefixes || typeof href !== 'string') return href
+    const wanted = String(prefix || '').replace(/^\/+/, '')
+    const known = new Set(Object.values(this.options.prefixes).filter((o) => o))
+    const endpoint = this.options.endpoint
+    const at = href.startsWith(endpoint) ? '' : href.slice(1).split('/')[0]
+    const rest = at ? href.slice(at.length + 1) : href
+    if (at === wanted || !rest.startsWith(endpoint) || (at && !known.has(at))) return href
+    return `${wanted ? `/${wanted}` : ''}${rest}`
+  }
+
+  /**
    * Fetches and stores the JSON:API index for a prefix.
    *
    * @private
@@ -679,7 +702,7 @@ class DruxtClient {
     // are cut by path rather than by the base URL's text.
     const basePath = urlPath(this.options.baseUrl)
     index = Object.fromEntries(Object.entries(index).map(([key, value]) => {
-      value.href = stripOrigin(value.href, basePath)
+      value.href = this.atPrefix(stripOrigin(value.href, basePath), prefix)
       return [key, value]
     }))
 

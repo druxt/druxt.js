@@ -105,8 +105,6 @@ const readLanguages = async (druxt, endpoint, warned) => {
     return []
   }
 
-  const defaultPrefix = unprefixed.langcode ? prefixOf(unprefixed.self) : undefined
-
   // The prefixes Decoupled Settings publishes, when it does.
   let configured
   try {
@@ -118,12 +116,26 @@ const readLanguages = async (druxt, endpoint, warned) => {
     configured = undefined
   }
 
+  // Whether Drupal answers at the prefix in the language. Drupal names the language of each answer, and an index's
+  // own links can't be trusted: with a default language that has no prefix, Drupal's Dynamic Page Cache gives
+  // `/es/jsonapi` the links of `/jsonapi`. Without the header, the index's link to itself decides.
+  const answersIn = async (prefix, langcode) => {
+    const answered = await answer(`/${prefix}${endpoint}`)
+    if (answered.langcode) return answered.langcode === langcode
+    return prefixOf(answered.self) === prefix
+  }
+
+  // The default language has a prefix of its own when Drupal answers there in it, and none otherwise.
+  const defaultLangcode = unprefixed.langcode
+  const named = prefixOf(unprefixed.self)
+  const defaultPrefix = defaultLangcode
+    ? (named && await answersIn(named, defaultLangcode) ? named : '')
+    : undefined
+
   const prefixes = await Promise.all(langcodes.map(async (langcode) => {
-    if (langcode === unprefixed.langcode && defaultPrefix !== undefined) return defaultPrefix
     if (configured && typeof configured[langcode] === 'string') return configured[langcode]
-    const prefixed = await answer(`/${langcode}${endpoint}`)
-    // Drupal names the language it answered in, where it sends Content-Language.
-    if ((!prefixed.langcode || prefixed.langcode === langcode) && prefixOf(prefixed.self) === langcode) return langcode
+    if (langcode === defaultLangcode && defaultPrefix !== undefined) return defaultPrefix
+    if (await answersIn(langcode, langcode)) return langcode
     warnOnce(`The URL prefix of the language '${langcode}' on ${baseUrl} couldn't be read, so '/${langcode}' is assumed. Set it in the \`prefixes\` option if Drupal serves it under another prefix.`)
     return langcode
   }))
@@ -131,6 +143,6 @@ const readLanguages = async (druxt, endpoint, warned) => {
   return langcodes.map((langcode, index) => ({
     langcode,
     prefix: prefixes[index],
-    ...(langcode === unprefixed.langcode && defaultPrefix !== undefined ? { default: true } : {}),
+    ...(langcode === defaultLangcode ? { default: true } : {}),
   }))
 }

@@ -43,6 +43,21 @@ describe('getLanguages()', () => {
     expect(site.urls()).not.toContain('/es/jsonapi')
   })
 
+  test('an index cached with another prefix\'s links still reads each prefix', async () => {
+    const warn = jest.spyOn(consola, 'warn').mockImplementation(() => {})
+    // The unprefixed index cached from /es/jsonapi, and /es/jsonapi's from /jsonapi.
+    site = stubLanguages({ baseUrl, prefixes: { en: '', es: 'es' }, cachedAs: { '': 'es', es: '' } })
+    try {
+      expect(await read()).toStrictEqual([
+        { langcode: 'en', prefix: '', default: true },
+        { langcode: 'es', prefix: 'es' },
+      ])
+      expect(warn).not.toHaveBeenCalled()
+    } finally {
+      warn.mockRestore()
+    }
+  })
+
   test('a prefix that cannot be read is taken to be the langcode, with a warning', async () => {
     const warn = jest.spyOn(consola, 'warn').mockImplementation(() => {})
     site = stubLanguages({ baseUrl, prefixes: { en: '', es: 'spanish' } })

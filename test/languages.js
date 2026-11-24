@@ -16,9 +16,12 @@ const languageType = 'configurable_language--configurable_language'
  * @param {boolean} [site.contentLanguage=true] - Whether Drupal names the language of an answer in `Content-Language`.
  * @param {boolean} [site.multilingual=true] - Whether the language module is installed.
  * @param {boolean} [site.down=false] - Whether nothing answers at the endpoint.
+ * @param {object} [site.cachedAs] - Indexes Drupal's Dynamic Page Cache answers with another prefix's links, as it does
+ *   for a default language without a prefix, by the prefix asked for: `{ es: '' }` gives `/es/jsonapi` the links of
+ *   `/jsonapi`, still in Spanish.
  * @return {object} `urls()`, the paths requested, and `restore()`.
  */
-const stubLanguages = ({ baseUrl, prefixes, decoupled = false, contentLanguage = true, multilingual = true, down = false }) => {
+const stubLanguages = ({ baseUrl, prefixes, decoupled = false, contentLanguage = true, multilingual = true, down = false, cachedAs = {} }) => {
   const get = mockAxios.get.getMockImplementation()
   const urls = []
   const langcodes = Object.keys(prefixes)
@@ -26,12 +29,16 @@ const stubLanguages = ({ baseUrl, prefixes, decoupled = false, contentLanguage =
     const headers = langcode && contentLanguage ? { 'content-language': langcode } : {}
     return Promise.resolve({ data, headers, status })
   }
-  const index = (prefix, langcode) => reply({
-    links: {
-      self: { href: `${baseUrl}${prefix ? `/${prefix}` : ''}/jsonapi` },
-      ...(multilingual ? { [languageType]: { href: `${baseUrl}${prefix ? `/${prefix}` : ''}/jsonapi/configurable_language/configurable_language` } } : {}),
-    },
-  }, langcode)
+  const index = (asked, langcode) => {
+    const prefix = Object.prototype.hasOwnProperty.call(cachedAs, asked) ? cachedAs[asked] : asked
+    const at = `${baseUrl}${prefix ? `/${prefix}` : ''}/jsonapi`
+    return reply({
+      links: {
+        self: { href: at },
+        ...(multilingual ? { [languageType]: { href: `${at}/configurable_language/configurable_language` } } : {}),
+      },
+    }, langcode)
+  }
 
   mockAxios.get.mockImplementation((url, config = {}) => {
     const path = `/${String(url).replace(baseUrl, '').replace(/^\/+/, '')}`

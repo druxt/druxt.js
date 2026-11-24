@@ -7,6 +7,8 @@ const baseUrl = 'https://languages.test'
 describe('a client with the languages\' prefixes', () => {
   let site
   afterEach(() => site.restore())
+  // Clients on one Axios instance share the index, so each test starts without the last one's site.
+  beforeEach(() => new DruxtClient(baseUrl).clearCache())
 
   test('a langcode reaches Drupal under its configured prefix', async () => {
     site = stubLanguages({ baseUrl, prefixes: { en: '', es: 'spanish' } })
@@ -37,6 +39,13 @@ describe('a client with the languages\' prefixes', () => {
       '/spanish/jsonapi/views/recipes/block/field',
       '/jsonapi/views/recipes/block',
     ])
+  })
+
+  test('an index cached with another prefix\'s links keeps to the prefix it was asked at', async () => {
+    // Drupal's Dynamic Page Cache gives /es/jsonapi the links of /jsonapi.
+    site = stubLanguages({ baseUrl, prefixes: { en: '', es: 'es' }, cachedAs: { es: '' } })
+    const druxt = new DruxtClient(baseUrl, { prefixes: { en: '', es: 'es' } })
+    expect((await druxt.getIndex('configurable_language--configurable_language', 'es')).href).toBe('/es/jsonapi/configurable_language/configurable_language')
   })
 
   test('without the map, a langcode is the prefix, as before', async () => {
