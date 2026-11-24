@@ -65,6 +65,17 @@ describe('useDruxtSettings()', () => {
     expect(settings.nested).toBe(settings.nested)
   })
 
+  // The view's target is the shared value, so a new prototype would reach every reader.
+  it('refuses a new prototype below the top level, so a shared list keeps its methods', () => {
+    const list = ['a', 'b']
+    setDrupalSettings('default', { public: { testPrototype: { list } } })
+    const settings = useDruxtSettings() as unknown as { testPrototype: { list: string[] } }
+    expect(Reflect.setPrototypeOf(settings.testPrototype.list, null)).toBe(false)
+    expect(Reflect.setPrototypeOf(settings.testPrototype, null)).toBe(false)
+    expect(Object.getPrototypeOf(list)).toBe(Array.prototype)
+    expect(settings.testPrototype.list.map((item) => item.toUpperCase())).toEqual(['A', 'B'])
+  })
+
   it('reads a frozen list of objects, still read-only', () => {
     setDrupalSettings('default', { public: { testFrozen: Object.freeze([Object.freeze({ on: true })]) } })
     const settings = useDruxtSettings() as unknown as { testFrozen: Array<{ on: boolean }> }

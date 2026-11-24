@@ -3,7 +3,7 @@ import routes from '#druxt/proxy-routes'
 import { useRuntimeConfig } from '#imports'
 import type { DruxtPrivateConfig } from '../../types'
 import { forgetProcessCache } from '@druxt/client'
-import { forwardedHeaders, hostname, isDruxtRoute, proxyCookie, proxyLocation, proxyTarget, responseHopHeaders, sessionHeaders, writtenResource } from '../utils/proxy'
+import { forwardedHeaders, hostname, isDruxtRoute, proxyCookie, proxyLocation, proxyTarget, responseHopHeaders, sendProxyBody, sessionHeaders, writtenResource } from '../utils/proxy'
 import { holdsSession } from '../utils/session'
 
 /** The methods that send a body. Their body is streamed to Drupal. */
@@ -44,7 +44,10 @@ const payloadMethods = new Set(['PATCH', 'POST', 'PUT', 'DELETE'])
  * - A redirect reaches the browser and is never followed here. A `Location` on Drupal's base URL is moved to this
  *   site.
  * - A cookie for Drupal's host is set for this site's host.
+ * - A cookie for a path below Drupal's base path is set for the same path on this site.
  * - The response's encoding and length headers are recomputed. The rest come back as Drupal sent them.
+ * - The body is written no faster than the browser takes it. So a large file is not queued in memory for a slow
+ *   browser.
  * - A write that Drupal accepts, a `POST`, `PATCH` or `DELETE` to a JSON:API resource, drops entries from the
  *   content cache: those for that resource, its type's collections, every Views result and the route lookups. An
  *   anonymous render after an editor's save then reads the saved entity, in a listing too. Other processes' caches
@@ -54,8 +57,9 @@ export default defineEventHandler((event) => {
   const baseUrl = String((useRuntimeConfig(event).public.druxt as { baseUrl?: string } | undefined)?.baseUrl || '')
   // A base URL that does not parse is the deployment's fault, not the request's, so the answer is a 502.
   let backend: string
+  let basePath: string
   try {
-    backend = new URL(baseUrl).hostname
+    ({ hostname: backend, pathname: basePath } = new URL(baseUrl))
   } catch {
     throw createError({ statusCode: 502, statusMessage: 'Bad Gateway', message: 'The Drupal base URL is not a valid URL.' })
   }
@@ -85,7 +89,7 @@ export default defineEventHandler((event) => {
       redirect: 'manual',
       ...(stream ? { body: getRequestWebStream(event), duplex: 'half' } : {}),
     } as RequestInit,
-    onResponse: (event, response) => {
+    onResponse: async (event, response) => {
       if (stream && response.ok) {
         const stale = writtenResource(event.path, String((useRuntimeConfig(event).public.druxt as { endpoint?: string } | undefined)?.endpoint || '/jsonapi'))
         if (stale) forgetProcessCache('content', stale)
@@ -96,7 +100,10 @@ export default defineEventHandler((event) => {
       const location = getResponseHeader(event, 'location')
       if (location) setResponseHeader(event, 'location', proxyLocation(String(location), baseUrl))
       const cookies = getResponseHeader(event, 'set-cookie')
-      if (cookies) setResponseHeader(event, 'set-cookie', (Array.isArray(cookies) ? cookies : [String(cookies)]).map((cookie) => proxyCookie(cookie, backend, site)))
+      if (cookies) setResponseHeader(event, 'set-cookie', (Array.isArray(cookies) ? cookies : [String(cookies)]).map((cookie) => proxyCookie(cookie, backend, site, basePath)))
+      // The headers are final by now. h3 would write the body without waiting for the browser. So the body is written
+      // and the response ended here, and h3 then sends nothing more.
+      await sendProxyBody(event.node.res, response.body as AsyncIterable<Uint8Array> | null)
     },
   })
 })

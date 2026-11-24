@@ -165,11 +165,12 @@ export const cookieBytes = (name: string, value: string, options: Parameters<typ
  * @param event - The request.
  * @param tokens - Simple OAuth's token response.
  * @param clientId - The Consumer that issued them, for a refresh.
+ * @param at - When Drupal issued them, in milliseconds. The access token's expiry counts from then. Now, by default.
  * @returns The first cookie too large to set, or undefined once every cookie is set.
  */
-export const setSession = (event: H3Event, tokens: DruxtSessionTokens, clientId: string): DruxtOversizedCookie | undefined => {
+export const setSession = (event: H3Event, tokens: DruxtSessionTokens, clientId: string, at = Date.now()): DruxtOversizedCookie | undefined => {
   const hidden = sessionCookieOptions(event, true)
-  const expiresAt = tokens.expires_in ? String(Date.now() + tokens.expires_in * 1000) : undefined
+  const expiresAt = tokens.expires_in ? String(at + tokens.expires_in * 1000) : undefined
   const cookies: [string, string, ReturnType<typeof sessionCookieOptions>][] = [
     [AUTH_STORAGE_KEYS.accessToken, tokens.access_token, hidden],
     ...(tokens.refresh_token ? [[AUTH_STORAGE_KEYS.refreshToken, tokens.refresh_token, hidden] as [string, string, typeof hidden]] : []),

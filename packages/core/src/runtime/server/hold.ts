@@ -119,7 +119,8 @@ export const createDruxtConfigHold = <T>({ storage, buildId, name, read, failure
       if (failureMaxAge && since === generation) failures.set(key, { error, until: Date.now() + failureMaxAge * 1000 })
       throw error
     }
-    failures.delete(key)
+    // A read from before a clear leaves a failure since the clear standing.
+    if (since === generation) failures.delete(key)
     const { maxAge } = result
     // `undefined` is held as null, so a JSON driver keeps the key and the entry counts as held.
     const value = (result.value === undefined ? null : result.value) as DruxtHeld<T>

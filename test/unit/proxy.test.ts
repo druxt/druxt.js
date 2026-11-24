@@ -76,6 +76,20 @@ describe('proxyLocation()', () => {
   })
 })
 
+describe('proxyLocation(), for a Drupal below a base path', () => {
+  it('moves a location written from the root, below the base path, to its path on the site', () => {
+    expect(proxyLocation('/cms/jsonapi/node/page?page[limit]=1#top', 'https://drupal.test/cms')).toBe('/jsonapi/node/page?page[limit]=1#top')
+    expect(proxyLocation('/cms', 'https://drupal.test/cms/')).toBe('/')
+    expect(proxyLocation('/cms//elsewhere.test/x', 'https://drupal.test/cms')).toBe('/elsewhere.test/x')
+  })
+
+  it('leaves a location written from the root as it is when it is outside the base path, or names a host', () => {
+    for (const location of ['/jsonapi/node/page', '/cmsx/node/1', '/\\drupal.test/cms/node/1', 'cms/node/1']) {
+      expect(proxyLocation(location, 'https://drupal.test/cms'), location).toBe(location)
+    }
+  })
+})
+
 describe('forwardedHeaders()', () => {
   it('drops the browser\'s forwarding headers and sets the site\'s own', () => {
     const headers = forwardedHeaders(
@@ -135,5 +149,20 @@ describe('proxyCookie()', () => {
     expect(proxyCookie('s=1; Domain=.elsewhere.test; Path=/', 'drupal.test', 'site.test')).toBe('s=1; Domain=.elsewhere.test; Path=/')
     expect(proxyCookie('s=1; Domain=sub.drupal.test', 'drupal.test', 'site.test')).toBe('s=1; Domain=sub.drupal.test')
     expect(proxyCookie('s=1; Path=/', 'drupal.test', 'site.test')).toBe('s=1; Path=/')
+  })
+
+  // The browser asks the site for `/jsonapi`, so a cookie for `/cms` would never come back.
+  it('moves a path below Drupal\'s base path to the same path on the site', () => {
+    expect(proxyCookie('s=1; Domain=drupal.test; Path=/cms; HttpOnly', 'drupal.test', 'site.test', '/cms')).toBe('s=1; Domain=site.test; Path=/; HttpOnly')
+    expect(proxyCookie('s=1; path=/cms/', 'drupal.test', 'site.test', '/cms')).toBe('s=1; path=/')
+    expect(proxyCookie('s=1; Path=/cms/jsonapi', 'drupal.test', 'site.test', '/cms')).toBe('s=1; Path=/jsonapi')
+  })
+
+  it('leaves a path outside the base path, or with no base path, as it is', () => {
+    for (const cookie of ['s=1; Path=/', 's=1; Path=/cmsx', 's=1; Path=/other/cms', 's=1']) {
+      expect(proxyCookie(cookie, 'drupal.test', 'site.test', '/cms'), cookie).toBe(cookie)
+    }
+    expect(proxyCookie('s=1; Path=/cms', 'drupal.test', 'site.test')).toBe('s=1; Path=/cms')
+    expect(proxyCookie('s=1; Path=/cms', 'drupal.test', 'site.test', '')).toBe('s=1; Path=/cms')
   })
 })

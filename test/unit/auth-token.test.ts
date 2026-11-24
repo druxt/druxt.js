@@ -11,6 +11,8 @@ const state = vi.hoisted(() => ({
   // The other headers the request carried, such as Host and Origin.
   headers: {} as Record<string, string>,
   set: {} as Record<string, { value?: string, options: Record<string, unknown> }>,
+  // The same, for each request apart, by its event.
+  setBy: new Map<unknown, Record<string, { value?: string, options: Record<string, unknown> }>>(),
   protocol: 'http',
   // What the routes logged.
   logged: [] as string[],
@@ -21,14 +23,21 @@ vi.mock('consola', () => {
   const logger = { error: (message: string) => { state.logged.push(message) }, warn: (message: string) => { state.logged.push(message) } }
   return { consola: { withTag: () => logger } }
 })
-vi.mock('h3', async (original) => ({
-  ...await original<typeof import('h3')>(),
-  readBody: async () => state.body,
-  setResponseStatus: (_event: unknown, status: number) => { state.status = status },
-  setCookie: (_event: unknown, name: string, value: string, options: Record<string, unknown>) => { state.set[name] = { value, options } },
-  deleteCookie: (_event: unknown, name: string, options: Record<string, unknown>) => { state.set[name] = { options } },
-  getRequestProtocol: () => state.protocol,
-}))
+vi.mock('h3', async (original) => {
+  const record = (event: unknown, name: string, cookie: { value?: string, options: Record<string, unknown> }) => {
+    state.set[name] = cookie
+    if (!state.setBy.has(event)) state.setBy.set(event, {})
+    state.setBy.get(event)![name] = cookie
+  }
+  return {
+    ...await original<typeof import('h3')>(),
+    readBody: async () => state.body,
+    setResponseStatus: (_event: unknown, status: number) => { state.status = status },
+    setCookie: (event: unknown, name: string, value: string, options: Record<string, unknown>) => record(event, name, { value, options }),
+    deleteCookie: (event: unknown, name: string, options: Record<string, unknown>) => record(event, name, { options }),
+    getRequestProtocol: () => state.protocol,
+  }
+})
 
 const publicConfig = { druxt: { baseUrl: 'https://drupal.test', auth: { clientId: 'site', passwordClientId: 'site-password' } } }
 const credentials = { grant_type: 'password', username: 'editor', password: 'pw' }
@@ -63,6 +72,7 @@ beforeEach(() => {
   state.cookieHeader = undefined
   state.headers = {}
   state.set = {}
+  state.setBy.clear()
   state.protocol = 'http'
   state.logged = []
   // A secret in the developer's own environment is not the fixture's.
@@ -181,19 +191,29 @@ describe('POST /api/_druxt/auth/token, holding the session', () => {
     const drupal = vi.fn(() => new Promise<Response>((resolve) => { answer = resolve }))
     vi.stubGlobal('fetch', drupal)
     const { default: handler } = await import('../../packages/core/src/runtime/server/routes/token')
-    const call = () => (handler as unknown as (event: unknown) => Promise<unknown>)({ context: {}, node: { req: { headers: { ...state.headers, cookie: Object.entries(state.cookies).map(([name, value]) => `${name}=${value}`).join('; ') } } } })
-    const first = call()
-    const second = call()
+    const tab = () => ({ context: {}, node: { req: { headers: { ...state.headers, cookie: Object.entries(state.cookies).map(([name, value]) => `${name}=${value}`).join('; ') } } } })
+    const call = (event: unknown) => (handler as unknown as (event: unknown) => Promise<unknown>)(event)
+    // Each response sets the new session, so each is checked by its own request's cookies.
+    const expectSession = (event: unknown) => {
+      const set = state.setBy.get(event)
+      expect(set?.['druxt.auth.access_token']?.value).toBe('next-access')
+      expect(set?.['druxt.auth.refresh_token']?.value).toBe('next-refresh')
+      expect(set?.['druxt.auth.client_id']?.value).toBe('site')
+      expect(Number(set?.['druxt.auth.session']?.value)).toBeGreaterThan(Date.now())
+    }
+    const tabs = [tab(), tab()]
+    const first = call(tabs[0])
+    const second = call(tabs[1])
     await vi.waitFor(() => expect(drupal).toHaveBeenCalled())
     answer(new Response(JSON.stringify({ token_type: 'Bearer', access_token: 'next-access', refresh_token: 'next-refresh', expires_in: 300 }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
     expect(await Promise.all([first, second])).toEqual([{ token_type: 'Bearer', expires_in: 300 }, { token_type: 'Bearer', expires_in: 300 }])
     expect(drupal).toHaveBeenCalledTimes(1)
-    expect(state.set['druxt.auth.refresh_token']?.value).toBe('next-refresh')
+    for (const event of tabs) expectSession(event)
     // A tab that asks a moment later with the token just spent gets the same session, not a refusal.
-    state.set = {}
-    expect(await call()).toEqual({ token_type: 'Bearer', expires_in: 300 })
+    const later = tab()
+    expect(await call(later)).toEqual({ token_type: 'Bearer', expires_in: 300 })
     expect(drupal).toHaveBeenCalledTimes(1)
-    expect(state.set['druxt.auth.access_token']?.value).toBe('next-access')
+    expectSession(later)
   })
 
   describe('with a refresh token being redeemed', () => {
@@ -228,6 +248,27 @@ describe('POST /api/_druxt/auth/token, holding the session', () => {
       await vi.waitFor(() => expect(drupal).toHaveBeenCalledTimes(2))
       answer(next())
       clock.mockRestore()
+    })
+
+    // The marker says when the access token expires. A kept answer is no newer than when Drupal gave it.
+    it('sets a kept answer\'s expiry from when Drupal answered, not from when it is given again', async () => {
+      const event = refreshing('redeemed-a-while-ago')
+      const clock = vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
+      try {
+        const drupal = vi.fn(async () => new Response(JSON.stringify({ token_type: 'Bearer', access_token: 'next-access', refresh_token: 'next-refresh', expires_in: 5 }), { status: 200, headers: { 'Content-Type': 'application/json' } }))
+        vi.stubGlobal('fetch', drupal)
+        const handler = (await import('../../packages/core/src/runtime/server/routes/token')).default as unknown as (event: unknown) => Promise<unknown>
+        await handler(event())
+        expect(state.set['druxt.auth.session']?.value).toBe('1005000')
+        state.set = {}
+        clock.mockReturnValue(1_006_000)
+        expect(await handler(event())).toEqual({ token_type: 'Bearer', expires_in: 5 })
+        expect(drupal).toHaveBeenCalledTimes(1)
+        expect(state.set['druxt.auth.session']?.value).toBe('1005000')
+        expect(state.set['druxt.auth.expires_at']?.value).toBe('1005000')
+      } finally {
+        clock.mockRestore()
+      }
     })
 
     it('asks Drupal again after an answer that redeemed nothing, such as a 503', async () => {
@@ -267,6 +308,23 @@ describe('POST /api/_druxt/auth/token, holding the session', () => {
     expect(state.status).toBe(502)
     expect(result).toEqual({ error: 'server_error', message: expect.stringContaining('no access token') })
     expect(state.set['druxt.auth.access_token']?.value).toBeUndefined()
+  })
+
+  // JSON that parses but is no object, such as `null`, has no fields to read.
+  it.each([null, 'text', 7])('reads a token response of %j as one with no fields', async (body) => {
+    state.config = { public: { druxt: { ...publicConfig.druxt, auth: { ...publicConfig.druxt.auth, session: true } } }, druxt: { auth: { clientSecret: '' } } }
+    state.headers = { host: 'site.test' }
+    const signIn = await request({ status: 200, body: body as never })
+    expect(state.status).toBe(502)
+    expect(signIn.result).toEqual({ error: 'server_error', message: expect.stringContaining('no access token') })
+    // A refused refresh keeps Drupal's status, and still ends the session.
+    state.set = {}
+    state.cookies = { 'druxt.auth.refresh_token': 'spent' }
+    state.body = { grant_type: 'refresh_token' }
+    const refresh = await request({ status: 401, body: body as never })
+    expect(state.status).toBe(401)
+    expect(refresh.result).toEqual({})
+    expectNoSession()
   })
 
   it('asks Drupal again for a refresh token whose last request failed on the network', async () => {

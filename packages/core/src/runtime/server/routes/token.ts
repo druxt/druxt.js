@@ -70,6 +70,8 @@ interface Redeemed {
   status: number
   ok: boolean
   data: Record<string, unknown>
+  /** When Drupal answered, in milliseconds. A token's `expires_in` counts from then. */
+  at: number
 }
 
 // How long a redeemed refresh token's answer is kept, from when Drupal gave it, for a refresh that was sent before
@@ -170,17 +172,21 @@ export default defineEventHandler(async (event) => {
       // target. None is followed.
       redirect: 'manual',
     })
+    const at = Date.now()
     if (answer.status >= 300 && answer.status < 400) {
-      return { status: 502, ok: false, data: { error: 'server_error', error_description: 'The token endpoint answered with a redirect, which is not followed.' } }
+      return { status: 502, ok: false, data: { error: 'server_error', error_description: 'The token endpoint answered with a redirect, which is not followed.' }, at }
     }
-    return { status: answer.status, ok: answer.ok, data: (await answer.json().catch(() => ({}))) as Record<string, unknown> }
+    // JSON that is no object, such as `null`, has no fields. It is read as an answer with none.
+    const data = await answer.json().catch(() => ({})) as unknown
+    return { status: answer.status, ok: answer.ok, data: (data && typeof data === 'object' ? data : {}) as Record<string, unknown>, at }
   }
   // A session's refresh token is redeemed once. Refreshes that overlap, as two tabs send, share Drupal's one answer.
   const response = await (session && body.grant_type === 'refresh_token' ? redeemOnce(digest(JSON.stringify([baseUrl, clientId, given.refresh_token])), redeem) : redeem())
   setResponseStatus(event, response.status)
   const { data } = response
   if (response.ok && session && typeof data.access_token === 'string') {
-    const oversized = setSession(event, data as unknown as DruxtSessionTokens, clientId)
+    // The expiry counts from Drupal's answer. A kept answer, given again, is that much nearer its expiry.
+    const oversized = setSession(event, data as unknown as DruxtSessionTokens, clientId, response.at)
     if (oversized) {
       const refresh = body.grant_type === 'refresh_token'
       // The session ends. Its old cookies would pair a spent refresh token with a stale access token.

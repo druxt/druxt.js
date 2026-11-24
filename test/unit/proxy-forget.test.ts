@@ -42,6 +42,17 @@ describe('writtenResource()', () => {
     expect(writtenResource('/jsonapi/node', '/jsonapi')).toBeUndefined()
   })
 
+  // Drupal gets the path as a URL resolves it, so the write is to that resource.
+  it('reads the written path as a URL resolves it, so a dot segment is never the resource', () => {
+    for (const written of [`/jsonapi/node/recipe/./${RECIPE}`, `/jsonapi/node/article/../recipe/${RECIPE}`, `/jsonapi/node/recipe/%2e/${RECIPE}?x=1`]) {
+      const stale = writtenResource(written, '/jsonapi')!
+      expect(stale(key(`https://drupal.test/jsonapi/node/recipe/${RECIPE}`)), written).toBe(true)
+      expect(stale(key('https://drupal.test/jsonapi/node/recipe')), written).toBe(true)
+      // A dot is in every absolute URL. It names no resource.
+      expect(stale(key('https://drupal.test/jsonapi/node/article/other')), written).toBe(false)
+    }
+  })
+
   // A Views result names no entity, so any accepted write may change any listing: every one goes, under any prefix.
   it('names every Views result, under any prefix or query, for a write to any resource, and no other type\'s entity', () => {
     for (const written of [`/jsonapi/taxonomy_term/tags/${RECIPE}`, '/es/jsonapi/node/article', `/jsonapi/media/image/${RECIPE}`]) {

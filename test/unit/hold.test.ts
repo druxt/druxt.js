@@ -141,6 +141,24 @@ describe('createDruxtConfigHold()', () => {
     expect(await hold.get('en')).toEqual(FORMATS)
   })
 
+  // A read from before a clear answers late. It must not undo what a read since the clear found.
+  it('keeps a failure since a clear standing when a read from before the clear answers', async () => {
+    let finish: (read: { value: typeof FORMATS }) => void = () => {}
+    const read = vi.fn<(prefix: string) => Promise<{ value: typeof FORMATS }>>()
+      .mockImplementationOnce(() => new Promise((resolve) => { finish = resolve }))
+      .mockRejectedValueOnce(new Error('503'))
+      .mockResolvedValue({ value: FORMATS })
+    const hold = createDateFormatHold({ storage: createStorage(), buildId: 'b1', read, failureMaxAge: 60 })
+    const spanning = hold.get('en')
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    await hold.clear()
+    await expect(hold.get('en')).rejects.toThrow('503')
+    finish({ value: FORMATS })
+    expect(await spanning).toEqual(FORMATS)
+    await expect(hold.get('en')).rejects.toThrow('503')
+    expect(read).toHaveBeenCalledTimes(2)
+  })
+
   it('keeps two named holds apart on one storage, and clears only its own', async () => {
     const storage = createStorage()
     const formats = createDateFormatHold({ storage, buildId: 'b1', read: async () => ({ value: FORMATS }) })

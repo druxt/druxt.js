@@ -83,8 +83,9 @@ export const proxyTarget = (path: string, baseUrl: string, routes: readonly stri
 /**
  * A redirect's `Location` as the browser should follow it.
  *
- * A URL on Drupal's base URL becomes the same path on this site, which the proxy or the site answers. Any other
- * location is left as Drupal sent it.
+ * A URL on Drupal's base URL becomes the same path on this site, which the proxy or the site answers. So does a path
+ * from the root, such as `/cms/node/1`, below the base path of a Drupal that has one. Any other location is left as
+ * Drupal sent it.
  *
  * @param location - The `Location` Drupal sent.
  * @param baseUrl - Drupal's base URL.
@@ -102,9 +103,11 @@ export const proxyLocation = (location: string, baseUrl: string): string => {
   } catch {
     return location
   }
-    // Only a location written as an absolute URL is rewritten. A relative one also resolves on Drupal's host here,
-    // but it is left as Drupal sent it.
-  if (!/^[a-z][a-z\d+.-]*:|^\/\//i.test(location)) return location
+  // A path from the root is Drupal's own. Below Drupal's base path, it is not the path on this site.
+  const rooted = base.pathname !== '/' && /^\/(?![/\\])/.test(location)
+  // Any other location is rewritten only when written as an absolute URL. A relative one also resolves on Drupal's
+  // host here, but it is left as Drupal sent it.
+  if (!rooted && !/^[a-z][a-z\d+.-]*:|^\/\//i.test(location)) return location
   if (url.origin !== base.origin || !(`${url.pathname}/`.startsWith(base.pathname))) return location
   // The path keeps one leading slash. A path such as `//elsewhere.test/x` on Drupal then stays on this site, and
   // does not name a host.
@@ -204,17 +207,66 @@ export const hostname = (host: string): string => {
  *
  * Drupal's host is matched with or without a leading dot, and in any case. Any other domain is left as it is.
  *
+ * A `Path` at or below Drupal's base path is moved to the same path on the site, so `/cms` becomes `/`. The browser
+ * asks the site for `/jsonapi`, and would never send back a cookie for `/cms`. Any other path is left as it is.
+ *
  * @param cookie - One `Set-Cookie` header.
  * @param backend - Drupal's host name.
  * @param site - The site's host name.
+ * @param basePath - The path of Drupal's base URL, such as `/cms`. Empty or `/` when Drupal is at the root.
  *
  * @example @lang ts
  * proxyCookie('s=1; Domain=.Drupal.test; Path=/', 'drupal.test', 'site.test')
  * // 's=1; Domain=site.test; Path=/'
  */
-export const proxyCookie = (cookie: string, backend: string, site: string): string =>
-  cookie.replace(/(;\s*domain=)([^;]*)/gi, (match, prefix: string, domain: string) =>
-    domain.trim().replace(/^\./, '').toLowerCase() === backend.toLowerCase() ? `${prefix}${site}` : match)
+export const proxyCookie = (cookie: string, backend: string, site: string, basePath = ''): string => {
+  const base = trimEndSlashes(basePath)
+  return cookie
+    .replace(/(;\s*domain=)([^;]*)/gi, (match, prefix: string, domain: string) =>
+      domain.trim().replace(/^\./, '').toLowerCase() === backend.toLowerCase() ? `${prefix}${site}` : match)
+    .replace(/(;\s*path=)([^;]*)/gi, (match, prefix: string, value: string) => {
+      const path = value.trim()
+      return base && (path === base || path.startsWith(`${base}/`)) ? `${prefix}${path.slice(base.length) || '/'}` : match
+    })
+}
+
+/** The part of Node's response that a body is written through. */
+export interface ProxyBodyResponse {
+  destroyed: boolean
+  write: (chunk: Uint8Array) => boolean
+  end: () => unknown
+  once: (name: 'drain' | 'close', listener: () => void) => unknown
+  off: (name: 'drain' | 'close', listener: () => void) => unknown
+}
+
+/**
+ * Writes Drupal's response body to the browser, no faster than the browser takes it, and ends the response.
+ *
+ * When a write says the response's buffer is full, the next chunk is not read until it has drained. So a large file
+ * from a fast Drupal is not queued in memory for a slow browser. h3's `sendProxy()` writes every chunk at once.
+ *
+ * When the browser goes away, the rest of the body is not read, and Drupal's response is cancelled.
+ *
+ * @param res - Node's response. Its status and headers are already set.
+ * @param body - Drupal's response body, if it has one.
+ */
+export const sendProxyBody = async (res: ProxyBodyResponse, body?: AsyncIterable<Uint8Array> | null): Promise<void> => {
+  for await (const chunk of body || []) {
+    if (res.destroyed) break
+    if (res.write(chunk)) continue
+    // Waits for the buffer to drain, or for the browser to go away, whichever is first.
+    await new Promise<void>((resolve) => {
+      const done = () => {
+        res.off('drain', done)
+        res.off('close', done)
+        resolve()
+      }
+      res.once('drain', done)
+      res.once('close', done)
+    })
+  }
+  res.end()
+}
 
 /** The prefix of the cookies Druxt keeps a session in. Only the site reads them. */
 const SESSION_COOKIE = /^druxt\.auth\./
@@ -287,6 +339,9 @@ export const sessionHeaders = (headers: Record<string, string>, session: boolean
  * Another resource's document stays. A write elsewhere, such as the token route, makes nothing stale. Caches on
  * other processes are Purge's job.
  *
+ * The path is read as a URL resolves it, as Drupal gets it. So `/jsonapi/node/recipe/./<uuid>` is a write to that
+ * recipe.
+ *
  * @param path - The written path on the site, such as `/es/jsonapi/node/recipe/<uuid>`.
  * @param endpoint - The JSON:API endpoint, `/jsonapi`.
  * @returns The test, or undefined when the path is no JSON:API resource.
@@ -296,7 +351,7 @@ export const sessionHeaders = (headers: Record<string, string>, session: boolean
  * stale(JSON.stringify([indexKey, '/jsonapi/node/recipe?page[limit]=10'])) // true
  */
 export const writtenResource = (path: string, endpoint: string): ((key: string) => boolean) | undefined => {
-  const pathname = path.split(/[?#]/)[0] || ''
+  const pathname = resolvedPath(path) ?? ''
   const at = pathname.indexOf(`${endpoint}/`)
   if (at < 0) return undefined
   const [entity, bundle, id] = pathname.slice(at + endpoint.length + 1).split('/')

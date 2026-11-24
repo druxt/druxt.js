@@ -54,6 +54,8 @@ const readOnly = <T>(value: T): T => {
       deleteProperty: () => false,
       defineProperty: () => false,
       preventExtensions: () => false,
+      // The target is the shared value. A new prototype would take an array's methods from every reader.
+      setPrototypeOf: () => false,
     })
     nested.set(value, view)
   }

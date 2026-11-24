@@ -91,6 +91,56 @@ describe('the proxy route', () => {
     expect((await handle(new Request('http://site.test/jsonapi/node/page'))).headers.has('location')).toBe(false)
   })
 
+  describe('for a browser slower than Drupal', () => {
+    /** A file of twenty chunks from Drupal, and a response whose every write says the browser's buffer is full. */
+    const download = async () => {
+      runtime.config = { public: { druxt: { baseUrl: 'http://drupal.test' } }, druxt: {} }
+      const drupal = { read: 0, cancelled: false }
+      const body = new ReadableStream<Uint8Array>({
+        pull(controller) {
+          drupal.read += 1
+          if (drupal.read > 20) controller.close()
+          else controller.enqueue(new Uint8Array(1024))
+        },
+        cancel() {
+          drupal.cancelled = true
+        },
+      }, { highWaterMark: 0 })
+      vi.stubGlobal('fetch', vi.fn(async () => new Response(body, { status: 200, headers: { 'content-type': 'application/octet-stream' } })))
+      const handler = (await import('../../packages/core/src/runtime/server/routes/proxy')).default as EventHandler
+      const req = Object.assign(new PassThrough(), { method: 'GET', url: '/jsonapi/file/file/download', headers: { host: 'site.test' }, socket: { remoteAddress: '10.0.0.1' } })
+      const res = new ServerResponse(req as never)
+      const browser = { written: 0, full: true }
+      res.write = (() => {
+        browser.written += 1
+        return !browser.full
+      }) as never
+      const sent = handler(createEvent(req as never, res)) as Promise<unknown>
+      await new Promise((resolve) => setTimeout(resolve, 20))
+      return { drupal, browser, res, sent }
+    }
+
+    // Node queues what a response is written past its buffer, so a large file would be held in memory.
+    it('writes no more of Drupal\'s body until the browser has taken what it was sent', async () => {
+      const { browser, res, sent } = await download()
+      expect(browser.written).toBe(1)
+      browser.full = false
+      res.emit('drain')
+      await sent
+      expect(browser.written).toBe(20)
+      expect(res.writableEnded).toBe(true)
+    })
+
+    it('stops reading Drupal\'s body when the browser goes away', async () => {
+      const { drupal, browser, res, sent } = await download()
+      res.destroy()
+      res.emit('close')
+      await sent
+      expect(browser.written).toBe(1)
+      expect(drupal.cancelled).toBe(true)
+    })
+  })
+
   // A JSON:API Drupal serves at /api: the proxy takes /api/**, and a request a Druxt route does not answer, such as a
   // method it does not take, falls through to it.
   it('answers 404, never Drupal, for a path at or under /api/_druxt when mounted at /api/**', async () => {
