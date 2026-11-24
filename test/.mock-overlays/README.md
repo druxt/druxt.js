@@ -35,7 +35,7 @@ mock's `docs/overlays.md` describes. Nothing here is edited by hand.
 ## views-recipes-difficulty
 
 `views-recipes-difficulty.json.gz` records one View change, for the views
-filter tests in `packages/views/test/components/DruxtViewsFilters.integration.test.js`.
+filter tests.
 No View in the preset has an exposed filter an anonymous visitor can use, so
 nothing else lets those tests run a filter through to Drupal and back.
 
