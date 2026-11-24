@@ -50,6 +50,7 @@
     "druxtdebug",
     "druxtentity",
     "druxtentityform",
+    "druxtentitynodepage",
     "druxtmenu",
     "druxtmodule",
     "druxtrouter",
