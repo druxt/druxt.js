@@ -164,10 +164,18 @@ export default {
      */
     hasStoredResults() {
       if (!this.resource) return false
+      return Object.values(this.storedResults).includes(this.resource)
+    },
+
+    /**
+     * The stored results of the view's display in its language, by query.
+     *
+     * @type {object}
+     */
+    storedResults() {
       const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
       // The views store is registered as one module named `druxt/views`.
-      const results = ((((this.$store.state['druxt/views'] || {}).results || {})[viewId] || {})[this.displayId] || {})[this.lang] || {}
-      return Object.values(results).includes(this.resource)
+      return ((((this.$store.state['druxt/views'] || {}).results || {})[viewId] || {})[this.displayId] || {})[this.lang] || {}
     },
 
     /**
@@ -389,11 +397,18 @@ export default {
       // That isn't a flush, so a change while a fetch runs is checked again
       // once the fetch settles, which Nuxt holds back for its fetch delay.
       const slot = () => [this.viewId, this.displayId, this.lang].join(':')
+      // Results stored under the view's query in place of its own, as when
+      // another view of them bypasses the cache, are shown rather than fetched.
+      const follow = () => {
+        const replaced = this._druxtResultsKey && this.storedResults[this._druxtResultsKey]
+        if (replaced) this.resource = replaced
+        return !!replaced
+      }
       this.$watch(() => [slot(), this.hasStoredResults], ([to, stored], [from, wasStored]) => {
         if (to !== from || !wasStored || stored) return
-        if (!this._fetchPromise) return this.fetchAgain()
+        if (!this._fetchPromise) return follow() || this.fetchAgain()
         this._fetchPromise.then(() => {
-          if (slot() === to && !this.hasStoredResults) this.$fetch()
+          if (slot() === to && !this.hasStoredResults && !follow()) this.$fetch()
         })
       })
     }
@@ -593,6 +608,9 @@ export default {
           viewId,
           bypassCache
         })
+
+        // The query the results are stored under, for the flush watcher.
+        this._druxtResultsKey = Object.keys(this.storedResults).find((key) => this.storedResults[key] === this.resource)
 
         // A flush while the request ran keeps the store from storing its
         // answer, which may be from before the flush, such as a signed-in

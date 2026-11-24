@@ -22,7 +22,9 @@ const resultsRequests = () => drupal.requests().filter(({ path }) => resultsPath
 // The store mountView() made last, for a test that flushes it mid-request.
 let lastStore
 
-const mountView = async ({ settings = {} } = {}) => {
+// With `pair`, a second view of the same results sits beside the first, as
+// a block elsewhere on the page shows the same view.
+const mountView = async ({ settings = {}, pair = false } = {}) => {
   const localVue = createLocalVue()
   localVue.use(Vuex)
   localVue.mixin(NuxtFetch)
@@ -42,7 +44,10 @@ const mountView = async ({ settings = {} } = {}) => {
 
   const root = mount({
     data: () => ({ langcode: 'en', settings }),
-    template: '<DruxtView ref="view" view-id="recipes" display-id="page_1" :langcode="langcode" :settings="settings" />',
+    template: `<div>
+      <DruxtView ref="view" view-id="recipes" display-id="page_1" :langcode="langcode" :settings="settings" />
+      ${pair ? '<DruxtView ref="other" view-id="recipes" display-id="page_1" :langcode="langcode" :settings="settings" />' : ''}
+    </div>`,
   }, {
     localVue,
     mocks: {
@@ -57,8 +62,8 @@ const mountView = async ({ settings = {} } = {}) => {
   await settle(localVue)
 
   const view = root.vm.$refs.view
-  const rows = () => root.findAllComponents({ name: 'DruxtEntity' }).wrappers.map((w) => w.vm)
-  return { localVue, store, root, view, rows }
+  const rows = () => root.findComponent({ ref: 'view' }).findAllComponents({ name: 'DruxtEntity' }).wrappers.map((w) => w.vm)
+  return { localVue, store, root, view, other: root.vm.$refs.other, rows }
 }
 
 describe('DruxtView follows the store', () => {
@@ -157,6 +162,17 @@ describe('DruxtView follows the store', () => {
     await settle(localVue)
     expect(resultsRequests()).toBe(before + 1)
     expect(view.hasStoredResults).toBe(true)
+  })
+
+  test('two views that bypass the cache fetch once each', async () => {
+    const { localVue, view, other } = await mountView({ settings: { query: { bypassCache: true } }, pair: true })
+    const before = resultsRequests()
+
+    view.$fetch()
+    await settle(localVue)
+    expect(resultsRequests()).toBe(before + 1)
+    expect(other.resource).toBe(view.resource)
+    expect(other.hasStoredResults).toBe(true)
   })
 
   test('a flush after switching languages and back fetches again', async () => {
