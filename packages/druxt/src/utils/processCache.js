@@ -214,8 +214,11 @@ const probeHeaders = (headers) => {
  *
  * The probe can't tell what an async function, a returned promise or a throw
  * would add, so it passes over each of those and goes on with the config it
- * has. The response-side watch sees anything they add. An async function is
- * never called, as running it may send requests of its own.
+ * has. An async function is never called, as running it may send requests of
+ * its own. Credentials they add are seen by the response-side watch only when
+ * a request goes out. On a cache hit none does, so a signed-in request can be
+ * served an anonymous response. A site that adds a token that way sets it on
+ * the defaults instead.
  *
  * Counting them as credentials would turn the cache off for every visitor on a
  * site using @nuxtjs/auth-next, which adds an async interceptor to refresh

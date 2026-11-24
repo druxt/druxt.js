@@ -113,6 +113,8 @@ export default {
 
 - A request with an `Authorization` header or a Drupal session cookie skips
   the cache, and `nuxt dev` runs without it.
+- A token added by an `async` request interceptor, or one that returns a
+  promise, isn't seen before the cache lookup. Set it on the Axios defaults.
 - Only successful responses are kept. A `bypassCache` dispatch fetches afresh
   and stores the result.
 - A full cache area takes about three times `cache.maxSize` in server memory,
