@@ -171,6 +171,50 @@ describe('@druxt/core/edit', () => {
     expect(rebaseDraft(same, page)).toBe(same)
   })
 
+  it('keeps a write in flight through a discard, and leaves the draft with no edits when that write ends', () => {
+    const draft = editDraft(draftOf(), 'title', 'Sent')
+    const sent = draftPayload(draft)
+    const discarded = discardDraft(startSave(draft, 'jsonapi', sent), 'form')
+    // The edits are gone, and the write still holds the draft.
+    expect(discarded).toMatchObject({ dirty: [], errors: {}, status: 'saving', pending: { destination: 'jsonapi', payload: sent }, origin: 'form' })
+    const saved = applySaved(discarded, sent, { ...page, attributes: { ...page.attributes, title: 'Sent' } })
+    expect(saved).toMatchObject({ status: 'saved', pending: null, dirty: [], pristine: { attributes: { title: 'Sent' } } })
+  })
+
+  it('stages a draft only when the destination took what it holds now', () => {
+    const draft = editDraft(draftOf(), 'title', 'B')
+    const sent = draftPayload(draft)
+    const saving = startSave(draft, 'review', sent)
+    expect(applySaved(saving, sent)).toMatchObject({ status: 'staged', dirty: ['title'] })
+    // The user typed on while the destination took the change, so it never got this value.
+    expect(applySaved(editDraft(saving, 'title', 'C'), sent)).toMatchObject({ status: 'idle', pending: null, dirty: ['title'], edits: { attributes: { title: 'C' } } })
+    // The same for another field, and for a field set back to what Drupal holds.
+    expect(applySaved(editDraft(saving, 'status', false), sent)).toMatchObject({ status: 'idle', dirty: ['title', 'status'] })
+    expect(applySaved(editDraft(saving, 'title', 'About'), sent)).toMatchObject({ status: 'idle', dirty: [] })
+    // A field the save may not send was never the destination's to take.
+    const limited = startSave(editDraft(draft, 'status', false), 'review', sent)
+    expect(applySaved(limited, sent, undefined, ['title'])).toMatchObject({ status: 'staged', dirty: ['title', 'status'] })
+  })
+
+  it('keeps a field set back to its old value while its save ran, as an edit over the saved one', () => {
+    const draft = editDraft(editDraft(draftOf(), 'title', 'B'), 'uid', { data: null }, { relationship: true })
+    const sent = draftPayload(draft)
+    const saving = startSave(draft, 'jsonapi', sent)
+    const answer = { ...page, attributes: { ...page.attributes, title: 'B' }, relationships: { uid: { data: null } } }
+    // With no change meanwhile, the draft is clean.
+    expect(applySaved(saving, sent, answer)).toMatchObject({ status: 'saved', dirty: [] })
+    // The title and the author went back to what they were, which Drupal no longer holds.
+    const reverted = editDraft(editDraft(saving, 'title', 'About'), 'uid', { data: { type: 'user--user', id: USER } }, { relationship: true })
+    expect(reverted.dirty).toEqual([])
+    const saved = applySaved(reverted, sent, answer)
+    expect(saved).toMatchObject({ status: 'saved', pristine: { attributes: { title: 'B' } }, edits: { attributes: { title: 'About' }, relationships: { uid: { data: { type: 'user--user', id: USER } } } } })
+    expect(saved.dirty.sort()).toEqual(['title', 'uid'])
+    // A new entity sends every field. One that was never edited stays clean.
+    const fresh = editDraft(createDraft({ type: 'node--page', local: '1' }, { type: 'node--page', attributes: { title: '', status: true } }), 'title', 'New')
+    const created = applySaved(editDraft(startSave(fresh, 'jsonapi', draftPayload(fresh)), 'title', ''), draftPayload(fresh), { type: 'node--page', id: 'new-id', attributes: { title: 'New', status: true } })
+    expect(created).toMatchObject({ id: 'new-id', dirty: ['title'], edits: { attributes: { title: '' } } })
+  })
+
   it('finds a draft by the anchors on the page, with the field and the item they name', () => {
     const drafts = { [draftOf().key]: editDraft(draftOf(), 'field_keywords', ['pie', 'egg']) }
     expect(findDraft(drafts, {})).toBeUndefined()

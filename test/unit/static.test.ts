@@ -147,6 +147,71 @@ describe('the pages a static build prerenders', () => {
     await expect(read).rejects.toThrow(/^\[druxt\] The static build could not list Drupal's published pages/)
   })
 
+  it('lists only the types druxt.static.routes names, by a string or a RegExp', async () => {
+    const asked: string[] = []
+    const client = {
+      getIndex: async () => ({ 'node--article': {}, 'node--page': {}, 'taxonomy_term--tags': {}, 'taxonomy_term--flags': {}, 'media--image': {} }),
+      getCollectionAll: async (type: string) => {
+        asked.push(type)
+        return [{ data: [] }]
+      },
+    } as unknown as DruxtClient
+    await readPrerenderPages(client, [], ['node--article'])
+    expect(asked).toEqual(['node--article'])
+    asked.length = 0
+    await readPrerenderPages(client, [], [/^node--/, 'taxonomy_term--tags'])
+    expect(asked.sort()).toEqual(['node--article', 'node--page', 'taxonomy_term--tags'])
+    asked.length = 0
+    // An empty list lists nothing, and no list lists every node and term type.
+    await readPrerenderPages(client, [], [])
+    expect(asked).toEqual([])
+    await readPrerenderPages(client, [])
+    expect(asked.sort()).toEqual(['node--article', 'node--page', 'taxonomy_term--flags', 'taxonomy_term--tags'])
+  })
+
+  it('lists every type a global or sticky RegExp matches, and leaves the RegExp as it was', async () => {
+    const asked: string[] = []
+    const client = {
+      getIndex: async () => ({ 'node--page': {}, 'node--recipe': {}, 'taxonomy_term--tags': {} }),
+      getCollectionAll: async (type: string) => {
+        asked.push(type)
+        return [{ data: [] }]
+      },
+    } as unknown as DruxtClient
+    for (const pattern of [/^node--/g, /node--/y]) {
+      asked.length = 0
+      pattern.lastIndex = 3
+      await readPrerenderPages(client, [], [pattern])
+      expect(asked.sort(), String(pattern)).toEqual(['node--page', 'node--recipe'])
+      expect(pattern.lastIndex).toBe(3)
+    }
+  })
+
+  it('reads a page in none of the site\'s languages once, and never another language\'s page under a prefix', async () => {
+    const rows: Record<string, Array<Record<string, unknown>>> = {
+      en: [{ langcode: 'und', path: { alias: '/tags/x' }, drupal_internal__tid: 3 }, { langcode: 'en', path: { alias: '/tags/y' }, drupal_internal__tid: 4 }],
+      es: [{ langcode: 'und', path: { alias: '/tags/x' }, drupal_internal__tid: 3 }, { langcode: 'en', path: { alias: '/tags/y' }, drupal_internal__tid: 4 }, { langcode: 'zxx', path: { alias: '/tags/z' }, drupal_internal__tid: 5 }],
+    }
+    const client = {
+      getIndex: async () => ({ 'taxonomy_term--tags': {} }),
+      getCollectionAll: async (type: string, _query: unknown, prefix: string) => [{ data: rows[prefix.slice(1)]!.map((attributes) => ({ type, id: String(attributes.drupal_internal__tid), attributes })) }],
+    } as unknown as DruxtClient
+    // The default language is not the first one listed.
+    const site = [{ langcode: 'es', prefix: 'es' }, { langcode: 'en', prefix: 'en', default: true as const }]
+    const pages = await readPrerenderPages(client, site)
+    expect(pages).toEqual([
+      { alias: '/tags/x', system: '/taxonomy/term/3', langcode: 'und' },
+      { alias: '/tags/y', system: '/taxonomy/term/4', langcode: 'en' },
+    ])
+    expect(prerenderPaths(site, pages)).toEqual(['/', '/en', '/en/tags/x', '/en/tags/y', '/es'])
+  })
+
+  it('fails on a type druxt.static.routes names that the site has no pages of, as a misspelt one is', async () => {
+    const client = { getIndex: async () => ({ 'node--article': {}, 'media--image': {} }), getCollectionAll: async () => [{ data: [] }] } as unknown as DruxtClient
+    await expect(readPrerenderPages(client, [], ['node--articles'])).rejects.toThrow('druxt.static.routes names \'node--articles\', which is not among the site\'s node and taxonomy term types: node--article.')
+    await expect(readPrerenderPages(client, [], ['media--image'])).rejects.toThrow('druxt.static.routes names \'media--image\'')
+  })
+
   it('names a one-language site\'s failed read as unprefixed', async () => {
     const client = {
       getIndex: async () => ({ 'node--page': {} }),

@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import type { ComputedRef, Ref } from 'vue'
 import type { DruxtPublicAuthOptions, UserInfo } from '@druxt/client'
-import { navigateTo, reloadNuxtApp, useNuxtApp, useState } from '#imports'
+import { navigateTo, reloadNuxtApp, useNuxtApp, useRouter, useState } from '#imports'
 import { useDruxtStore } from './store'
 import { sitePath } from './utils/site-path'
 
@@ -92,6 +92,9 @@ export const useDruxtAuth = (): DruxtAuthComposable => {
   // The client's auth options. The public config adds the login path, the callback path and the password flag.
   const settings = nuxtApp.$druxt.options.auth as DruxtPublicAuthOptions | undefined
   const user = useState<UserInfo | null>('druxt-auth-user', () => null)
+  // The router gives a route's address under the app's `baseURL`. A reload and Drupal's redirect leave the app, so
+  // they need that whole address.
+  const router = useRouter()
 
   const requireAuth = () => {
     if (!auth || !settings) throw new Error('[druxt] Auth is not configured: set druxt.auth.')
@@ -123,7 +126,7 @@ export const useDruxtAuth = (): DruxtAuthComposable => {
   const after = async (path: string) => {
     // The drafts are closed too, so the next user never sees this one's unsaved edits.
     useDruxtStore(nuxtApp.$pinia).clearCache({ drafts: true })
-    await reloadNuxtApp({ path: sitePath(path), force: true })
+    await reloadNuxtApp({ path: router.resolve(sitePath(path)).href, force: true })
   }
 
   return {
@@ -142,7 +145,7 @@ export const useDruxtAuth = (): DruxtAuthComposable => {
     // The authorization code grant. The visitor goes to Drupal and comes back through the callback page.
     async loginWithDrupal(redirect = '/') {
       const { auth, settings } = requireSignedOut()
-      const redirectUri = `${window.location.origin}${settings.callback}`
+      const redirectUri = `${window.location.origin}${router.resolve(settings.callback).href}`
       const { url, state, verifier } = await auth.authorize({ redirectUri })
       sessionStorage.setItem(STATE, JSON.stringify({ state, verifier, redirect, redirectUri } satisfies Flow))
       window.location.assign(url)

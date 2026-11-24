@@ -879,8 +879,15 @@ export default defineNuxtModule<DruxtOptions>({
           { name: 'druxt-auth-callback', path: auth.callback || '/callback', file: await resolvePath(resolve('./runtime/pages/DruxtAuthCallback')) },
         ]
         if (auth.login) routes.push({ name: 'druxt-auth-login', path: auth.login, file: await resolvePath(resolve('./runtime/pages/DruxtAuthLoginPage')) })
+        // A site's page may be a child, such as pages/user/login.vue beside pages/user.vue. A child's path is under
+        // its parent's, unless it starts with a slash.
+        const has = (path: string, among: NuxtPage[], parent = ''): boolean => among.some((page) => {
+          const full = page.path.startsWith('/') ? page.path : `${parent}/${page.path}`
+          const whole = trimEndSlashes(full).toLowerCase()
+          return whole === path || has(path, page.children || [], whole)
+        })
         for (const route of routes) {
-          if (!pages.some((page) => page.path.toLowerCase() === route.path.toLowerCase())) pages.unshift(route)
+          if (!has(trimEndSlashes(route.path).toLowerCase(), pages)) pages.unshift(route)
         }
       })
     }
@@ -891,7 +898,7 @@ export default defineNuxtModule<DruxtOptions>({
     addComponent({ name: 'DruxtDebug', filePath: resolve('./runtime/components/DruxtDebug.vue'), global: true })
 
     // The development template tool creates a wrapper component file from the module a developer is looking at. It is
-    // for development only, and only for this machine: the Host must be loopback, which a tunnel's public host is not.
+    // for development only, and only for this machine: the connection must come from this machine, and the Host must be loopback, which a tunnel's public host is not.
     if (nuxt.options.dev) {
       const componentsDir = join(nuxt.options.srcDir, 'components')
       addDevServerHandler({ route: `${DRUXT_API_BASE}/template`, handler: templateRoute(componentsDir) })

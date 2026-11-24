@@ -31,7 +31,7 @@ import type {
 import type { DruxtAnchorDescriptor } from '@druxt/core/anchors'
 import type { DruxtSettings } from '@druxt/client'
 import { useDruxtSettings } from './settings'
-import { useDruxtStore } from './store'
+import { flushGeneration, useDruxtStore } from './store'
 
 /** The `druxt.editing` settings: whether editing is on, and the destination a draft saves to when it names none. */
 export interface DruxtEditingSettings {
@@ -130,8 +130,11 @@ export interface DruxtEditSaveOutcome {
   statusCode?: number
   /** Whether no response came back. */
   network?: boolean
-  /** Why nothing was sent: no such draft, a save already running, or no such destination. */
-  skipped?: 'missing' | 'saving' | 'destination'
+  /**
+   * Why nothing was sent: no such draft, a save already running, no such destination, or a new entity in a batch
+   * save that no editor holds.
+   */
+  skipped?: 'missing' | 'saving' | 'destination' | 'unheld'
 }
 
 /** What `open()` takes beside the target and the pristine resource. */
@@ -189,6 +192,10 @@ export const useDruxtEditStore = defineStore('druxtEdit', () => {
   // The editors holding each draft, by key. With it, a batch save never sends a new entity that no editor shows any
   // more.
   const holders = new Map<string, Set<string>>()
+  // Which opening of its key each draft is, by key. A draft closed and opened again is another draft, so a save that
+  // began on the first never touches the second.
+  const openings = new Map<string, number>()
+  let opened = 0
   // The resolved `druxt.editing` settings. They are read in setup, where the Nuxt app is reachable.
   const resolved = nuxtApp ? nuxtApp.runWithContext(() => useDruxtSettings()) as DruxtSettings : undefined
   const settings = (): DruxtEditingSettings => (resolved?.editing as DruxtEditingSettings | undefined) || {}
@@ -232,6 +239,7 @@ export const useDruxtEditStore = defineStore('druxtEdit', () => {
     const existing = drafts[key]
     if (!existing || options.reset) {
       drafts[key] = createDraft(target, pristine, options)
+      openings.set(key, ++opened)
       return key
     }
     let next = rebaseDraft(existing, pristine)
@@ -314,12 +322,14 @@ export const useDruxtEditStore = defineStore('druxtEdit', () => {
   const close = (key: string): void => {
     delete drafts[key]
     holders.delete(key)
+    openings.delete(key)
   }
 
   /** Forgets every draft. */
   const closeAll = (): void => {
     for (const key of Object.keys(drafts)) delete drafts[key]
     holders.clear()
+    openings.clear()
   }
 
   /**
@@ -384,6 +394,11 @@ export const useDruxtEditStore = defineStore('druxtEdit', () => {
     const prefix = options.prefix ?? draft.prefix
     const context = { payload, client: options.client ?? nuxtApp?.$druxt, prefix }
     const saving = startSave(draft, name, payload, options.origin)
+    // The draft this save began on, while it is still open. It is undefined once an editor closed it, and when the
+    // key holds a draft opened since.
+    const opening = openings.get(key)
+    const own = (): DruxtDraft | undefined => (openings.get(key) === opening ? drafts[key] : undefined)
+    const since = flushGeneration(store)
     // The draft is `saving` before `canSave()` answers, which may take a while. A second save meanwhile is then
     // skipped as already running.
     drafts[key] = saving
@@ -392,10 +407,11 @@ export const useDruxtEditStore = defineStore('druxtEdit', () => {
       if (destination.canSave && !(await destination.canSave(draft, context))) {
         // Nothing was sent, so the draft leaves `saving`. It goes back to what it was before. When an edit was made
         // meanwhile, that edit is kept, unsent.
-        const current = drafts[key]
+        const current = own()
         if (current === saving) drafts[key] = { ...draft, revision: saving.revision + 1 }
         else if (current?.status === 'saving') {
-          drafts[key] = { ...current, status: draft.status === 'staged' ? 'idle' : draft.status, pending: null, revision: current.revision + 1 }
+          const status = current.pending?.discarded || draft.status === 'staged' ? 'idle' : draft.status
+          drafts[key] = { ...current, status, pending: null, revision: current.revision + 1 }
         }
         await call('druxt:edit:save', { ...event(draft, Object.keys({ ...payload.attributes, ...payload.relationships })), destination: name, payload, ok: false, reason: 'refused', errors: [] })
         return { ok: false, key, errors: [], reason: 'refused' }
@@ -404,12 +420,19 @@ export const useDruxtEditStore = defineStore('druxtEdit', () => {
       const data = result.data?.type && result.data.id ? result.data : undefined
       // Drupal's answer is published, so every reader of the entity renders it. The core store holds the one copy of
       // each resource.
-      if (data) store.addResource({ prefix, resource: { data: copy(data) as never } })
+      if (data && since === flushGeneration(store)) store.addResource({ prefix, resource: { data: copy(data) as never } })
+      // A flush overtook the write, as a sign-out's does, so its answer is not stored. Any copy the store still holds
+      // is from before the write, so it goes too.
+      else if (data) store.flushResource({ type: data.type, id: data.id, prefix })
       // A draft that an editor closed while the write ran stays closed. The result never brings it back.
-      const current = drafts[key]
-      const next = applySaved(current || saving, payload, data)
+      const current = own()
+      const next = applySaved(current || saving, payload, data, options.fields)
       if (current) {
-        if (next.key !== key) delete drafts[key]
+        if (next.key !== key) {
+          delete drafts[key]
+          openings.delete(key)
+          openings.set(next.key, opening!)
+        }
         drafts[next.key] = next
       }
       await call('druxt:edit:save', { ...event(next, Object.keys({ ...payload.attributes, ...payload.relationships })), destination: name, payload, ok: true, ...(data ? { data: copy(data) } : { status: 'staged' as const }), errors: [] })
@@ -418,8 +441,10 @@ export const useDruxtEditStore = defineStore('druxtEdit', () => {
       const failed = err as { response?: { status?: number, data?: { errors?: unknown } } }
       const document = failed.response?.data
       const errors = (Array.isArray(document?.errors) ? document.errors : []) as DruxtEditError[]
-      const current = drafts[key]
-      if (current) drafts[key] = setDraftErrors({ ...current, pending: null }, errors, 'failed')
+      const current = own()
+      // A draft whose edits were discarded while the write ran has nothing the errors are about.
+      if (current?.pending?.discarded) drafts[key] = { ...current, status: 'idle', pending: null, revision: current.revision + 1 }
+      else if (current) drafts[key] = setDraftErrors({ ...current, pending: null }, errors, 'failed')
       await call('druxt:edit:save', { ...event(current || saving, Object.keys({ ...payload.attributes, ...payload.relationships })), destination: name, payload, ok: false, errors: copy(errors) })
       return { ok: false, key, response: document, errors, statusCode: failed.response?.status, network: !failed.response }
     }
@@ -428,7 +453,8 @@ export const useDruxtEditStore = defineStore('druxtEdit', () => {
   /**
    * Saves every changed draft, or the drafts named, one after another.
    *
-   * A new entity's draft that no editor holds is never sent, as no one can see what it would create.
+   * A new entity's draft that no editor holds is never sent, as no one can see what it would create. That holds for a
+   * draft named in `keys` too, whose outcome is then `skipped: 'unheld'`.
    *
    * @param keys - The drafts' keys. Every changed draft when not given.
    * @param options - What `save()` takes, for each.
@@ -439,7 +465,10 @@ export const useDruxtEditStore = defineStore('druxtEdit', () => {
     // A staged draft waits on its destination, so a batch never stages it twice.
     const sendable = (draft: DruxtDraft) => draft.dirty.length > 0 && draft.status !== 'staged' && (!!draft.pristine.id || !!holders.get(draft.key)?.size)
     for (const key of keys ?? Object.values(drafts).filter(sendable).map((draft) => draft.key)) {
-      outcomes.push(await save(key, options))
+      // The draft is read when its turn comes. Its last editor may have left while an earlier draft was written.
+      const draft = drafts[key]
+      if (draft && !draft.pristine.id && !holders.get(key)?.size) outcomes.push({ ok: false, key, errors: [], skipped: 'unheld' })
+      else outcomes.push(await save(key, options))
     }
     return outcomes
   }

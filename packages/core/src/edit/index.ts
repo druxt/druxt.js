@@ -81,6 +81,8 @@ export interface DruxtDraftPayload {
 export interface DruxtDraftWrite {
   destination: string
   payload: DruxtDraftPayload
+  /** Set when the draft's edits were discarded while the write ran. The write's result then leaves the draft clean. */
+  discarded?: true
 }
 
 /** One entity's draft. It is plain data, so any framework's store can hold it. */
@@ -436,12 +438,24 @@ export function isDirty(draft: DruxtDraft | undefined, field?: string): boolean 
 /**
  * Discards a draft's edits and errors, so it is back to the pristine resource.
  *
+ * A write in flight is not undone. The draft stays `saving` until that write ends, so no second save starts beside it.
+ *
  * @param draft - The draft.
  * @param origin - Who discarded it.
  * @returns The new draft.
  */
 export function discardDraft(draft: DruxtDraft, origin?: string): DruxtDraft {
-  return { ...draft, edits: { attributes: {}, relationships: {} }, dirty: [], errors: {}, status: 'idle', pending: null, revision: draft.revision + 1, origin }
+  const writing = draft.status === 'saving' && draft.pending
+  return {
+    ...draft,
+    edits: { attributes: {}, relationships: {} },
+    dirty: [],
+    errors: {},
+    status: writing ? 'saving' : 'idle',
+    pending: writing ? { ...writing, discarded: true } : null,
+    revision: draft.revision + 1,
+    origin,
+  }
 }
 
 /**
@@ -467,18 +481,22 @@ export function rebaseDraft(draft: DruxtDraft, pristine: DruxtEditResource): Dru
  * - That resource becomes the pristine resource.
  * - A new entity takes its id and its key.
  * - The edits that were sent are cleared. An edit made while the write ran stays.
+ * - A sent field that was set back to its old value while the write ran keeps that value, as an edit.
  *
- * Without one, the destination staged the change elsewhere. Drupal does not hold the edits, so they stay, and the draft
- * is `staged`.
+ * Without one, the destination staged the change elsewhere. Drupal does not hold the edits, so they stay. The draft is
+ * `staged` when it still holds what was sent. A draft that changed while the write ran is `idle`, so a batch save
+ * sends it again.
  *
  * @param draft - The draft, as it was while saving.
  * @param sent - What the save sent.
  * @param saved - The resource the destination answered, if any.
+ * @param fields - The fields the save could send, when they were not the draft's own `fields`.
  * @returns The new draft.
  */
-export function applySaved(draft: DruxtDraft, sent: DruxtDraftPayload, saved?: DruxtEditResource): DruxtDraft {
+export function applySaved(draft: DruxtDraft, sent: DruxtDraftPayload, saved?: DruxtEditResource, fields?: string[]): DruxtDraft {
   const done = { status: 'saved' as const, pending: null, errors: {}, revision: draft.revision + 1 }
-  if (!saved) return { ...draft, ...done, status: 'staged' }
+  // The destination holds what was sent. A draft that would send something else now was changed since.
+  if (!saved) return { ...draft, ...done, status: asJson(draftPayload(draft, fields)) === asJson(sent) ? 'staged' : 'idle' }
   const pristine = editResource({ ...saved, type: draft.type })
   const id = pristine.id || draft.id
   // An edit equal to what was sent is now Drupal's, so it is cleared. An edit made since then stays.
@@ -487,13 +505,26 @@ export function applySaved(draft: DruxtDraft, sent: DruxtDraftPayload, saved?: D
     if (!(field in values)) return true
     return part === 'relationships' ? asJson(dataOf(value)) !== asJson(dataOf(values[field])) : asJson(value ?? null) !== asJson(values[field])
   }))
+  // A sent field with no edit now was set back to its old value while the write ran. Drupal no longer holds that
+  // value, so it becomes the edit. A discard dropped every edit on purpose, so it keeps none.
+  const reverted = (part: 'attributes' | 'relationships') => Object.fromEntries(Object.entries(draft.pending?.discarded ? {} : sent[part])
+    .filter(([field]) => !(field in draft.edits[part]))
+    .map(([field, value]): [string, unknown, unknown] => (part === 'relationships'
+      ? [field, { data: copy(dataOf(draft.pristine.relationships?.[field])) ?? null }, { data: dataOf(value) }]
+      : [field, fieldValue(draft.pristine.attributes?.[field]), value]))
+    .filter(([, old, value]) => (part === 'relationships' ? asJson(dataOf(old)) !== asJson(dataOf(value)) : asJson(old) !== asJson(value)))
+    .map(([field, old]) => [field, old]))
+  const edits = {
+    attributes: { ...reverted('attributes'), ...unsent('attributes') },
+    relationships: { ...reverted('relationships'), ...unsent('relationships') },
+  }
   return {
     ...draft,
     ...done,
     key: draftKey({ type: draft.type, id, langcode: draft.langcode }),
     ...(id ? { id } : {}),
     pristine,
-    ...settle(pristine, { attributes: unsent('attributes'), relationships: unsent('relationships') }, draft.dirty),
+    ...settle(pristine, edits, draft.dirty),
   }
 }
 

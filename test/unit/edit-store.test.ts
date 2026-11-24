@@ -319,6 +319,154 @@ describe('useDruxtEditStore()', () => {
     edits.release(loose, 'form')
   })
 
+  it('keeps a write in flight through a discard, so a new entity is never created twice', async () => {
+    const { edits } = setup()
+    const written = deferred<unknown>()
+    const client = writer(() => written.promise)
+    const key = edits.open({ type: 'node--page', local: 'form-1' }, { type: 'node--page' })
+    edits.hold(key, 'form')
+    edits.edit(key, 'title', 'New')
+    const saving = edits.save(key, { client })
+    edits.discard(key, 'form')
+    expect(edits.get(key)).toMatchObject({ dirty: [], status: 'saving' })
+    expect(await edits.save(key, { client })).toEqual({ ok: false, key, errors: [], skipped: 'saving' })
+    written.settle({ data: { data: { type: 'node--page', id: 'created', attributes: { title: 'New' } } } })
+    expect(await saving).toMatchObject({ ok: true })
+    expect(client.createResource).toHaveBeenCalledTimes(1)
+    // The entity was created, so the draft is its draft, with no edits.
+    expect(edits.get(draftKey({ type: 'node--page', id: 'created' }))).toMatchObject({ status: 'saved', dirty: [], pending: null })
+  })
+
+  it('leaves a discarded draft idle, with no errors, when the write it was in fails', async () => {
+    const { edits } = setup()
+    const written = deferred<unknown>()
+    const key = edits.open(target, pristine)
+    edits.edit(key, 'title', 'Sent')
+    const saving = edits.save(key, { client: writer(() => written.promise.then(() => { throw Object.assign(new Error('422'), { response: { status: 422, data: { errors: [{ detail: 'No.' }] } } }) })) })
+    edits.discard(key)
+    written.settle(undefined)
+    expect(await saving).toMatchObject({ ok: false, statusCode: 422 })
+    expect(edits.get(key)).toMatchObject({ status: 'idle', dirty: [], errors: {}, pending: null })
+  })
+
+  it('sends a staged draft again in a batch when it was edited while the destination took it', async () => {
+    const { edits } = setup()
+    const taken: Array<ReturnType<typeof deferred<undefined>>> = []
+    const save = vi.fn((_draft: DruxtDraft) => {
+      taken.push(deferred<undefined>())
+      return taken.at(-1)!.promise
+    })
+    edits.addDestination(defineDruxtEditDestination({ name: 'review', save }))
+    const key = edits.open(target, pristine, { destination: 'review' })
+    edits.edit(key, 'title', 'B')
+    const first = edits.save(key)
+    edits.edit(key, 'title', 'C')
+    taken[0]!.settle(undefined)
+    expect(await first).toMatchObject({ ok: true, status: 'staged' })
+    expect(edits.get(key)).toMatchObject({ status: 'idle', dirty: ['title'] })
+
+    const batch = edits.saveAll()
+    await vi.waitFor(() => expect(save).toHaveBeenCalledTimes(2))
+    taken[1]!.settle(undefined)
+    expect((await batch).map((outcome) => outcome.status)).toEqual(['staged'])
+    expect(save.mock.calls[1]![0].pending!.payload.attributes).toEqual({ title: 'C' })
+    // It holds what the destination took, so a batch leaves it be.
+    expect(edits.get(key)!.status).toBe('staged')
+    expect(await edits.saveAll()).toEqual([])
+  })
+
+  it('does not publish a saved resource that a cache clear overtook, as a sign-out\'s does', async () => {
+    const { edits, store } = setup()
+    const written = deferred<unknown>()
+    const key = edits.open(target, pristine, { prefix: 'en' })
+    edits.edit(key, 'title', 'Private')
+    const saving = edits.save(key, { client: writer(() => written.promise) })
+    store.clearCache({ drafts: true })
+    written.settle({ data: { data: { ...pristine, attributes: { title: 'Private' } } } })
+    expect(await saving).toMatchObject({ ok: true })
+    expect(store.peekResource({ type: 'node--page', id: ID, prefix: 'en' })).toBeUndefined()
+    expect(store.resources).toEqual({})
+    expect(edits.drafts).toEqual({})
+  })
+
+  it('drops the stored copy of a saved resource when a flush of something else overtook the save', async () => {
+    const { edits, store } = setup()
+    const written = deferred<unknown>()
+    store.addResource({ prefix: 'en', resource: { data: pristine as never } })
+    const key = edits.open(target, pristine, { prefix: 'en' })
+    edits.edit(key, 'title', 'Saved')
+    const saving = edits.save(key, { client: writer(() => written.promise) })
+    store.flushCollection({ type: 'node--article' })
+    written.settle({ data: { data: { ...pristine, attributes: { title: 'Saved' } } } })
+    expect(await saving).toMatchObject({ ok: true })
+    // The copy from before the save is not left for a reader to render.
+    expect(store.peekResource({ type: 'node--page', id: ID, prefix: 'en' })).toBeUndefined()
+    expect(edits.get(key)).toMatchObject({ status: 'saved', pristine: { attributes: { title: 'Saved' } } })
+  })
+
+  it('leaves a draft that was closed and opened again while a save ran as it is, whatever that save answers', async () => {
+    const { edits } = setup()
+    const first = deferred<unknown>()
+    const second = deferred<unknown>()
+    const key = edits.open(target, pristine)
+    edits.edit(key, 'title', 'Old')
+    const old = edits.save(key, { client: writer(() => first.promise) })
+    edits.close(key)
+    expect(edits.open(target, pristine)).toBe(key)
+    edits.edit(key, 'title', 'Newer')
+    const newer = edits.save(key, { client: writer(() => second.promise) })
+    const before = edits.get(key)!
+    expect(before).toMatchObject({ status: 'saving', pending: { payload: { attributes: { title: 'Newer' } } } })
+
+    first.settle({ data: { data: { ...pristine, attributes: { title: 'Old' } } } })
+    expect(await old).toMatchObject({ ok: true })
+    // The old save's answer is not this draft's: its pristine copy and its own write are untouched.
+    expect(edits.get(key)).toBe(before)
+    second.settle({ data: { data: { ...pristine, attributes: { title: 'Newer' } } } })
+    expect(await newer).toMatchObject({ ok: true })
+    expect(edits.get(key)).toMatchObject({ status: 'saved', dirty: [], pristine: { attributes: { title: 'Newer' } } })
+
+    // The same for a save that fails, and for one that canSave() refuses.
+    edits.addDestination(defineDruxtEditDestination({ name: 'review', canSave: () => first.promise.then(() => false), save: async () => {} }))
+    for (const [destination, client] of [['jsonapi', writer(async () => { throw new Error('offline') })], ['review', undefined]] as const) {
+      edits.close(key)
+      edits.open(target, pristine, { destination })
+      edits.edit(key, 'title', 'Old')
+      const ended = edits.save(key, { client })
+      edits.close(key)
+      edits.open(target, pristine)
+      const reopened = edits.get(key)
+      expect((await ended).ok).toBe(false)
+      expect(edits.get(key)).toBe(reopened)
+    }
+  })
+
+  it('never sends in a batch a new entity that no editor holds when its turn comes, named or not', async () => {
+    const { edits } = setup()
+    const written = deferred<unknown>()
+    const client = writer((payload) => (payload.id ? written.promise : Promise.resolve({ data: { data: { ...payload, id: 'created' } } })))
+    const loose = edits.open({ type: 'node--page', local: 'loose' }, { type: 'node--page' })
+    edits.edit(loose, 'title', 'Loose')
+    expect(await edits.saveAll([loose], { client })).toEqual([{ ok: false, key: loose, errors: [], skipped: 'unheld' }])
+    expect(client.createResource).not.toHaveBeenCalled()
+
+    // Its last editor leaves while an earlier draft of the batch is written.
+    const changed = edits.open(target, pristine)
+    edits.edit(changed, 'title', 'Batch')
+    const later = edits.open({ type: 'node--page', local: 'later' }, { type: 'node--page' })
+    edits.edit(later, 'title', 'Later')
+    edits.hold(later, 'form')
+    const batch = edits.saveAll(undefined, { client })
+    edits.release(later, 'form')
+    written.settle({ data: { data: { ...pristine, attributes: { title: 'Batch' } } } })
+    expect((await batch).map((outcome) => [outcome.key, outcome.ok, outcome.skipped])).toEqual([[changed, true, undefined], [later, false, 'unheld']])
+    expect(client.createResource).toHaveBeenCalledTimes(1)
+
+    // Held, it is saved.
+    edits.hold(later, 'form')
+    expect(await edits.saveAll([later], { client })).toMatchObject([{ ok: true }])
+  })
+
   it('closes a draft, and every draft on a cache clear that asks for them, as a sign-in or sign-out does', () => {
     const { edits, store } = setup()
     const key = edits.open(target, pristine)

@@ -450,7 +450,7 @@ A build has no visitor's session. So each page's content is read as an anonymous
 Core writes the manifest, and `@druxt/router` reads it. With the router:
 
 - Client navigation reads a generated page's route from its payload, and follows a redirect page from the manifest. It doesn't send Drupal a request.
-- A page the build did not generate answers 404, also with no request to Drupal. The manifest decides, because a static site's visitors may not reach Drupal at all. The static host serves the app's `404.html` for it, and the router gives the 404 on a hard load and on client navigation alike.
+- A page the build did not generate answers 404, also with no request to Drupal. The manifest decides, because a static site's visitors may not reach Drupal at all. The build writes the app's `404.html`. Set the static host to serve that file for a path it has no file for. Some hosts do so by default, and others serve a 404 page of their own, which the router never sees. With it, the router gives the 404 on a hard load and on client navigation alike.
 - `hybrid: true` has the router ask Drupal about such a page instead, for a static site beside a live Drupal. It answers 404 when Drupal cannot be reached.
 
 Without the router, the site's own pages decide what an unbuilt path shows, and `hybrid` changes nothing.
@@ -637,7 +637,7 @@ On Simple OAuth 6, a token holds the roles its scopes name, and no others. Each 
 
 ### Token cookies
 
-With `proxy.api` on, the browser never holds a token:
+With `proxy.api` on and `auth.exposeToken` off, the browser never holds a token:
 
 - The token route keeps the access and refresh tokens in `httpOnly` cookies, which no script on the page can read.
 - The proxy turns the access token into the `Authorization` header on each request it sends to Drupal.
@@ -735,8 +735,8 @@ After a write:
 
 To clear the cache:
 
-- Call `useDruxtStore().clearCache()`.
-- Or, from Drupal, send `POST /api/_druxt/cache/clear` with the secret in an `X-Druxt-Secret` header. The module bundles that route.
+- Send `POST /api/_druxt/cache/clear` with the secret in an `X-Druxt-Secret` header. The secret is `cache.secret`, which `NUXT_DRUXT_CACHE_SECRET` sets at runtime. The module bundles that route, and Drupal can call it.
+- `useDruxtStore().clearCache()` is for the browser. It empties the page's own stores, and leaves the server cache as it is.
 - Each Nuxt process has its own cache to clear.
 
 The [caching guide](https://druxtjs.org/how-to/caching) covers the cache in more depth.
@@ -903,7 +903,9 @@ useDruxtEditStore().addDestination(
 );
 ```
 
-- A destination that answers no resource leaves the draft's edits in place, because Drupal does not hold them. The draft is then `staged`, and `saveAll()` skips it until it changes again.
+- A destination that answers no resource leaves the draft's edits in place, because Drupal does not hold them. The draft is then `staged`, and `saveAll()` skips it until it changes again. A draft edited while the destination took it is `idle`, so the next batch sends it again.
+- A discard while a write runs clears the edits and leaves the draft `saving` until that write ends, so a new entity is never sent twice. The draft is then clean.
+- `saveAll()` sends a new entity's draft only while an editor holds it. One that no editor holds when its turn comes is skipped, with `skipped: 'unheld'`.
 - `canSave()` may answer with a promise.
 - A draft names its destination when it is opened. Otherwise `druxt.editing.destination` names the default.
 - A save to a destination no module added does not run, and development logs `DRUXT_E01003`.

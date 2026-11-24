@@ -51,8 +51,8 @@ describe('the Nitro plugin that hides Drupal\'s address in a page with no server
   })
 
   /** The page's parts, as Nuxt gives them to `render:html`, after the plugin's hook ran. */
-  const render = async (hidden: boolean) => {
-    runtime.config = config(hidden)
+  const render = async (hidden: boolean, publicConfig: Record<string, unknown> = config(hidden).public) => {
+    runtime.config = { ...config(hidden), public: publicConfig }
     const { default: plugin } = await import('../../packages/core/src/runtime/server/plugins/origin')
     const { hooked, hook } = hooks()
     ;(plugin as unknown as (nitroApp: unknown) => void)({ hooks: { hook } })
@@ -77,6 +77,28 @@ describe('the Nitro plugin that hides Drupal\'s address in a page with no server
 
   it('leaves the page as it is when the browser uses the address', async () => {
     expect(await render(false)).toContain(`baseUrl:${JSON.stringify(DRUPAL)}`)
+  })
+
+  it('leaves another integration\'s base URL as it is, even when it is Drupal\'s address', async () => {
+    const druxt = (hidden: boolean) => config(hidden).public.druxt
+    // The other integrations' settings come before Druxt's and after, with values that look like the config's own text.
+    const others = (hidden: boolean) => ({
+      catalog: { baseUrl: DRUPAL, note: `druxt:{baseUrl:"${DRUPAL}"}`, nested: { druxt: { baseUrl: DRUPAL } } },
+      druxt: { menu: { baseUrl: DRUPAL }, quoted: 'a "}" b', ...druxt(hidden) },
+      search: { baseUrl: DRUPAL },
+    })
+    const hidden = await render(true, others(true))
+    expect(hidden).toContain(`catalog:{baseUrl:${JSON.stringify(DRUPAL)}`)
+    expect(hidden).toContain(`nested:{druxt:{baseUrl:${JSON.stringify(DRUPAL)}}}`)
+    expect(hidden).toContain(`search:{baseUrl:${JSON.stringify(DRUPAL)}}`)
+    expect(hidden).toContain(`menu:{baseUrl:${JSON.stringify(DRUPAL)}}`)
+    // Druxt's own is hidden, in each of the three places Nuxt wrote the config.
+    expect(hidden.split('baseUrl:"/d"')).toHaveLength(4)
+    expect(hidden.split(JSON.stringify(DRUPAL))).toHaveLength(1 + 3 * 4)
+
+    const shown = await render(false, others(false))
+    expect(shown).toContain(`search:{baseUrl:${JSON.stringify(DRUPAL)}}`)
+    expect(shown).not.toContain('baseUrl:"/d"')
   })
 })
 

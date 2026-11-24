@@ -1,7 +1,7 @@
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadNuxt } from 'nuxt/kit'
-import type { Nuxt } from 'nuxt/schema'
+import type { Nuxt, NuxtPage } from 'nuxt/schema'
 import { afterAll, afterEach, describe, expect, it, vi } from 'vitest'
 import { BASE_URL, drupal, index, json } from './fake-drupal'
 
@@ -74,6 +74,30 @@ describe('the core module', () => {
   it('derives the password grant from a build secret or a Consumer of its own when unset', async () => {
     expect((await load({ clientId: 'site' })).routes).not.toContain('/api/_druxt/auth/token')
     expect((await load({ clientId: 'site', passwordClientId: 'site-password' })).routes).toContain('/api/_druxt/auth/token')
+  }, 120_000)
+})
+
+describe('the core module\'s sign-in pages', () => {
+  it('adds its callback and login routes, unless the site has a page at the path, nested or not', async () => {
+    const nuxt = await loadNuxt({
+      cwd: join(root, 'test/unit/fixtures/core-module'),
+      ready: true,
+      overrides: { _prepare: true, druxt: { baseUrl: 'https://drupal.test', auth: { clientId: 'site', scope: 'editor', login: '/user/login', callback: '/user/callback' } } } as Record<string, unknown>,
+    })
+    loaded.push(nuxt)
+    /** The names of the module's own routes among the pages, after it extended them. */
+    const added = async (pages: NuxtPage[]) => {
+      await nuxt.callHook('pages:extend', pages)
+      return pages.map((page) => page.name).filter((name) => name?.startsWith('druxt-auth'))
+    }
+    expect(await added([])).toEqual(['druxt-auth-login', 'druxt-auth-callback'])
+    expect(await added([{ path: '/User/Login', file: 'login.vue' }, { path: '/user', file: 'user.vue' }])).toEqual(['druxt-auth-callback'])
+    // pages/user.vue with pages/user/login.vue beside it: the login page is a child, at a path under its parent's.
+    expect(await added([{ path: '/user', file: 'user.vue', children: [{ path: '', file: 'user/index.vue' }, { path: 'Login', file: 'user/login.vue' }] }])).toEqual(['druxt-auth-callback'])
+    // A child deeper down, and one a module's own callback added at a whole path.
+    expect(await added([{ path: '/', file: 'app.vue', children: [{ path: 'user/', file: 'user.vue', children: [{ path: 'callback', file: 'callback.vue' }] }, { path: '/user/login', file: 'login.vue' }] }])).toEqual([])
+    // A child of another parent is another page.
+    expect(await added([{ path: '/account', file: 'account.vue', children: [{ path: 'login', file: 'login.vue' }, { path: 'user/callback', file: 'callback.vue' }] }])).toEqual(['druxt-auth-login', 'druxt-auth-callback'])
   }, 120_000)
 })
 

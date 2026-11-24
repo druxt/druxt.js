@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockNuxtImport, mountSuspended } from '@nuxt/test-utils/runtime'
 import { enableAutoUnmount } from '@vue/test-utils'
 import { defineComponent, h, resolveComponent } from 'vue'
-import { useNuxtApp, useState } from '#imports'
+import { useNuxtApp, useRouter, useState } from '#imports'
 // Auto-imported only when druxt.auth is set, which the typecheck app does not set.
 import { DRUXT_AUTH_SIGNED_IN, useDruxtAuth } from '../../packages/core/src/runtime/auth'
 import DruxtAuthLoginPage from '../../packages/core/src/runtime/pages/DruxtAuthLoginPage'
@@ -348,6 +348,35 @@ describe('useDruxtAuth()', () => {
     await auth.loginWithDrupal('/account')
     expect(new URL(String(assign.mock.calls[0]![0])).pathname).toBe('/oauth/authorize')
     expect(JSON.parse(sessionStorage.getItem(FLOW_KEY) || '{}')).toMatchObject({ redirect: '/account' })
+  })
+
+  // Under `app.baseURL: '/portal/'`, Vue Router gives each route's `href` with the base, and its `fullPath` without.
+  const underBase = () => {
+    const router = useRouter()
+    const resolve = router.resolve.bind(router)
+    vi.spyOn(router, 'resolve').mockImplementation(((to: never) => {
+      const route = resolve(to)
+      return { ...route, href: `/portal${route.href}` }
+    }) as typeof router.resolve)
+  }
+
+  it('reloads under the app\'s base after a sign-in and a sign-out', async () => {
+    underBase()
+    const auth = await composable()
+    await auth.loginWithPassword({ username: 'other', password: 'secret' }, '/account?tab=edits')
+    expect(reload).toHaveBeenLastCalledWith({ path: '/portal/account?tab=edits', force: true })
+    await auth.logout()
+    expect(reload).toHaveBeenLastCalledWith({ path: '/portal/', force: true })
+  })
+
+  it('gives Drupal a callback under the app\'s base, and keeps it for the code exchange', async () => {
+    underBase()
+    const assign = vi.spyOn(window.location, 'assign').mockImplementation(() => {})
+    const auth = await composable()
+    await auth.loginWithDrupal('/account')
+    const callback = `${window.location.origin}/portal/callback`
+    expect(new URL(String(assign.mock.calls[0]![0])).searchParams.get('redirect_uri')).toBe(callback)
+    expect(JSON.parse(sessionStorage.getItem(FLOW_KEY) || '{}')).toMatchObject({ redirect: '/account', redirectUri: callback })
   })
 
   it('signs in as someone else once logout() has signed the visitor out', async () => {

@@ -4,7 +4,7 @@
 // Build time only.
 
 import { mkdir, writeFile } from 'node:fs/promises'
-import { dirname, resolve } from 'node:path'
+import { dirname, isAbsolute, relative, resolve, sep } from 'node:path'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import type { DruxtClient } from '@druxt/client'
 import type { DruxtPrerenderManifest, DruxtStaticOptions } from '../runtime/types'
@@ -168,7 +168,9 @@ export const copyFiles = async (files: DruxtStaticFile[], { origin, publicDir, w
       const url = `${trimEndSlashes(origin)}${next.request}`
       try {
         const target = resolve(root, ...decodeURIComponent(next.file).split('/').filter(Boolean))
-        if (!target.startsWith(`${root}/`)) throw new Error('its path leaves the output directory')
+        // The path from the output directory to the file, in the platform's own separators.
+        const inside = relative(root, target)
+        if (!inside || inside === '..' || inside.startsWith(`..${sep}`) || isAbsolute(inside)) throw new Error('its path leaves the output directory')
         const response = await globalThis.fetch(url)
         if (!response.ok) throw new Error(`Drupal answered ${response.status}`)
         await mkdir(dirname(target), { recursive: true })
@@ -209,7 +211,7 @@ const PRERENDER_FAILED = '[druxt] The static build could not list Drupal\'s publ
  * It reads every published node and taxonomy term of the types the index lists, with its path field.
  *
  * Under a language's prefix, an entity with no translation comes back in its own language. So a page counts under its
- * own language only.
+ * own language only. A page in none of the site's languages, such as `und`, counts once.
  *
  * A read that fails would leave that type's pages in that language out of the static site. So it throws instead. It
  * throws once every read has ended, and names each type and language it could not list.
@@ -230,8 +232,14 @@ export const readPrerenderPages = async (client: DruxtClient, languages: DruxtPr
   const listed = Object.keys(index).filter((type) => PAGE_TYPES.test(type))
   const unknown = (only || []).filter((entry): entry is string => typeof entry === 'string' && !listed.includes(entry))
   if (unknown.length) throw new Error(`${PRERENDER_FAILED}: druxt.static.routes names ${unknown.map((type) => `'${type}'`).join(', ')}, which ${unknown.length === 1 ? 'is' : 'are'} not among the site's node and taxonomy term types: ${listed.join(', ') || 'none'}.`)
-  const types = only ? listed.filter((type) => only.some((entry) => typeof entry === 'string' ? entry === type : entry.test(type))) : listed
+  // `search()` starts at the string's start whatever the RegExp's flags, and leaves its `lastIndex` alone. `test()`
+  // would carry on from the last match of a global or sticky one, and miss the next type.
+  const types = only ? listed.filter((type) => only.some((entry) => typeof entry === 'string' ? entry === type : type.search(entry) !== -1)) : listed
   const under = languages.length ? languages : [{ langcode: '', prefix: '' }]
+  // A page in none of the site's languages, such as `und`, comes back under every prefix. It counts once, under the
+  // default language, where `prerenderPaths()` puts it.
+  const known = new Set(languages.map((language) => language.langcode))
+  const neutral = languages.find((language) => language.default) ?? languages[0]
   const reads = under.flatMap((language) => types.map(async (type): Promise<DruxtPrerenderPage[]> => {
     const node = type.startsWith('node--')
     const id = node ? 'drupal_internal__nid' : 'drupal_internal__tid'
@@ -243,7 +251,10 @@ export const readPrerenderPages = async (client: DruxtClient, languages: DruxtPr
     })
     return rows
       .flatMap((collection) => collection.data as Array<{ attributes?: Record<string, unknown> }>)
-      .filter((row) => !language.langcode || row.attributes?.langcode === language.langcode)
+      .filter((row) => {
+        const langcode = row.attributes?.langcode
+        return !language.langcode || langcode === language.langcode || (language === neutral && typeof langcode === 'string' && !known.has(langcode))
+      })
       .map((row) => ({
         alias: (row.attributes?.path as { alias?: string | null } | undefined)?.alias ?? null,
         system: `${node ? '/node/' : '/taxonomy/term/'}${String(row.attributes?.[id] ?? '')}`,
