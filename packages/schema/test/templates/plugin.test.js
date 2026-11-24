@@ -82,5 +82,7 @@ describe('druxt-schema plugin template', () => {
 
     // With no default either, the load fails as a missing built file does.
     await expect(plugin({ refresh: true, server: true, files, hook: async () => false }).import('node--page--default--view')).rejects.toThrow('No Druxt schema')
+    // Marked, so a component can tell a missing display from a failed load.
+    await expect(plugin({ refresh: true, server: true, files, hook: async () => false }).import('node--page--default--view')).rejects.toMatchObject({ code: 'DRUXT_SCHEMA_MISSING' })
   })
 })
