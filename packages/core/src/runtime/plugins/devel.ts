@@ -89,7 +89,11 @@ export default defineNuxtPlugin({
     nuxtApp.hook('app:mounted', () => { isNewPage = createPageGuard(nuxtApp.$router.currentRoute.value.fullPath) })
     // A new page starts its own list. The server render's requests show on the page they were made for. A
     // navigation back to it, by the visitor or the app, shows them again. Any other page never does.
-    nuxtApp.$router.beforeEach((to) => {
+    //
+    // The page changes once the navigation has gone through. One that a guard refuses, or that fails, shows no page.
+    // `failure` is typed here, as a site with no pages has a router whose `afterEach` names two arguments.
+    nuxtApp.$router.afterEach((to, _from, failure?: unknown) => {
+      if (failure) return
       const path = isNewPage?.(to.fullPath)
       if (!path) return
       origin = performance.now()

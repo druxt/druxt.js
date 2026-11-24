@@ -123,6 +123,9 @@ describe('the development template tool', () => {
     ['a settings path that is a value and a parent', { ...entity, template: { druxt: { query: 1, 'query.fields': ['title'] } } }],
     ['a settings path that is a parent and a value', { ...entity, template: { druxt: { 'query.fields': ['title'], query: 1 } } }],
     ['a settings path that is a value and a commented parent', { ...entity, template: { druxt: { query: 1, 'query.//fields': ['title'] } } }],
+    ['repeated slots that are null', { ...entity, template: { ...entity.template, repeat: null } }],
+    ['repeated slots that are not an object', { ...entity, template: { ...entity.template, repeat: 'field-' } }],
+    ['a composable that is null', { ...entity, template: { ...entity.template, composable: null } }],
     ['a slots setting that is not a boolean', { ...entity, template: { ...entity.template, slots: 'none' } }],
   ])('refuses %s', (_label, request) => {
     expect(() => validateTemplateRequest(request)).toThrow(DruxtTemplateError)
@@ -149,6 +152,13 @@ describe('the development template tool', () => {
   it('accepts slots: false and writes no named slot', () => {
     const source = renderTemplate(validateTemplateRequest({ ...entity, template: { ...entity.template, slots: false } }))
     expect(source).not.toContain('<slot name="title" />')
+  })
+
+  // The debug slot is not content, so it does not count as a named slot that stands in for the default slot.
+  it('keeps the default slot when the only other slot is the debug slot', () => {
+    const source = renderTemplate(validateTemplateRequest({ ...entity, slots: ['default', 'debug'] }))
+    expect(source).toContain('<slot name="default" />')
+    expect(source).not.toContain('<slot name="debug" />')
   })
 
   // The DevTools tab offers these names; DruxtDevelTemplate offers the same, by the same test.

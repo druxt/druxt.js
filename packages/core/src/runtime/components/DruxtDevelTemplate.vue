@@ -143,6 +143,10 @@ export default defineComponent({
       this.state = 'idle'
       this.copied = 'idle'
     },
+    // The module's candidates change with its inputs. A chosen name that is no longer one gives way to the first.
+    names(names: string[]) {
+      if (!names.includes(this.name)) this.name = names[0] || ''
+    },
   },
 
   created() {

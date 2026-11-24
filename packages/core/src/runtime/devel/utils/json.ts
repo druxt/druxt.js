@@ -30,16 +30,21 @@ export default defineComponent({
       await nextTick()
       buttons.get(path)?.focus()
     }
-    const button = (path: string, label: string, name?: string, open = false): VNode => h('button', {
-      'type': 'button',
-      'class': open ? 'druxt-debug__fold druxt-debug__fold--open' : 'druxt-debug__fold',
-      'aria-expanded': String(open),
-      'aria-label': name,
-      'ref': (element: unknown) => {
-        if (element) buttons.set(path, element as HTMLElement)
-      },
-      'onClick': () => toggle(path),
-    }, label)
+    const button = (path: string, label: string, name?: string, open = false): VNode => {
+      // Vue calls the ref with null once the button is gone. The path is dropped then, unless a newer button took it.
+      let own: HTMLElement | undefined
+      return h('button', {
+        'type': 'button',
+        'class': open ? 'druxt-debug__fold druxt-debug__fold--open' : 'druxt-debug__fold',
+        'aria-expanded': String(open),
+        'aria-label': name,
+        'ref': (element: unknown) => {
+          if (element) buttons.set(path, own = element as HTMLElement)
+          else if (buttons.get(path) === own) buttons.delete(path)
+        },
+        'onClick': () => toggle(path),
+      }, label)
+    }
 
     const render = (value: unknown, depth: number, path: string): (VNode | string)[] => {
       if (typeof value === 'string') {
@@ -63,7 +68,8 @@ export default defineComponent({
         ...entries.flatMap(([key, child], index) => [
           indent,
           ...(Array.isArray(value) ? [] : [h('span', { class: 'druxt-debug__key' }, JSON.stringify(key)), ': ']),
-          ...render(child, depth + 1, `${path}/${key}`),
+          // The key is escaped as in a JSON Pointer, so a `/` in a key is not read as a level.
+          ...render(child, depth + 1, `${path}/${key.replace(/~/g, '~0').replace(/\//g, '~1')}`),
           index < entries.length - 1 ? ',\n' : '\n',
         ]),
         `${'  '.repeat(depth)}${close}`,

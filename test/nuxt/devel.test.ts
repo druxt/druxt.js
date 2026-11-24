@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { enableAutoUnmount } from '@vue/test-utils'
 import { defineComponent, getCurrentInstance, h, provide } from 'vue'
@@ -126,6 +126,26 @@ describe('the development tools', () => {
     expect(find()).toBeUndefined()
   })
 
+  // Read from source, so this is a second copy of the API whose channel is not set yet, as before core's plugin runs.
+  it('never shows a section that was removed while the tools were not ready, even when its removal was not kept', async () => {
+    const { useDruxtDevtools: early } = await import('../../packages/core/src/runtime/devel/api')
+    const { setDruxtDevtools, whenDruxtDevtools } = await import('../../packages/core/src/runtime/devel/utils/channel')
+    const { createDruxtDevtools } = await import('@druxt/devtools')
+    const provider = vi.fn(() => [])
+    const section = early().section({ id: 'gone', label: 'Gone' }, provider)
+    // The list of waiting tasks is full, so the removal's own task is dropped.
+    for (let i = 0; i < 199; i++) whenDruxtDevtools(() => {})
+    section.remove()
+    const channel = createDruxtDevtools()
+    try {
+      setDruxtDevtools(channel)
+      expect(provider).not.toHaveBeenCalled()
+      expect(channel.snapshot().sections.map((item) => item.id)).not.toContain('gone')
+    } finally {
+      setDruxtDevtools(undefined)
+    }
+  })
+
   it('gives the DevTools tab the channel and the create endpoint, and adds nothing to the page', async () => {
     const host = useNuxtApp().$druxtDevtools as { channel: DruxtDevtoolsChannel, createEndpoint: string, define: unknown }
     expect(host.channel.snapshot).toBeTypeOf('function')
@@ -162,6 +182,28 @@ describe('the development tools', () => {
     expect(paths()).toContain('/jsonapi')
     await router.push('/another-page')
     expect(paths()).toEqual([])
+  })
+
+  // A navigation a later guard refuses never shows its page, so the page shown keeps its name and its requests.
+  it('keeps the page and its requests when a navigation is refused', async () => {
+    matchAnyPath()
+    const router = useRouter()
+    await router.push('/kept-page')
+    await settle()
+    await useNuxtApp().$druxt.request('/jsonapi')
+    const stop = router.beforeEach((to) => to.path === '/refused-page' ? false : undefined)
+    try {
+      await router.push('/refused-page')
+      expect(router.currentRoute.value.path).toBe('/kept-page')
+      expect(druxtDevtools().snapshot().page).toBe('/kept-page')
+      expect(druxtDevtools().snapshot().requests.map((r) => r.path)).toContain('/jsonapi')
+    } finally {
+      stop()
+    }
+    // The refused page is still a new page when a later navigation reaches it.
+    await router.push('/refused-page')
+    expect(druxtDevtools().snapshot().page).toBe('/refused-page')
+    expect(druxtDevtools().snapshot().requests).toEqual([])
   })
 
   // A page with no visitor input, such as a kiosk, a carousel or a timer, navigates by itself: the server render's

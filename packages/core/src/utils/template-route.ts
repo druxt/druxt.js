@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { createError, defineEventHandler, getRequestHeader, readBody } from 'h3'
+import { createError, defineEventHandler, getRequestHeader, getRequestIP, readBody } from 'h3'
 import { DruxtTemplateError, renderTemplate, templatePath, validateTemplateRequest } from '../runtime/utils/template'
 
 /**
@@ -16,12 +16,19 @@ const originHost = (origin: string): string | undefined => {
 }
 
 /**
+ * Whether a connection's address is this machine's own: IPv4 loopback, IPv6 loopback, or IPv4 loopback mapped to IPv6.
+ */
+const isLoopback = (address: string | undefined): boolean =>
+  !!address && (address === '::1' || /^(?:::ffff:)?127(?:\.\d{1,3}){3}$/i.test(address))
+
+/**
  * Makes the development template tool's route.
  *
  * The route writes the wrapper component a checked request describes, under `componentsDir`, and answers with its path.
  *
  * It answers a `POST` from this machine only:
  *
+ * - The connection must come from a loopback address. The `Host` header is the client's to set, so it is not enough.
  * - The `Host` must be loopback, which a tunnel's public host is not.
  * - An `Origin`, when sent, must name the same host. One that does not parse, such as `null`, counts as another origin.
  *
@@ -32,7 +39,7 @@ const originHost = (origin: string): string | undefined => {
 export const templateRoute = (componentsDir: string) => defineEventHandler(async (event) => {
   if (event.method !== 'POST') throw createError({ statusCode: 405 })
   const host = (getRequestHeader(event, 'host') || '').replace(/:\d+$/, '')
-  if (!['localhost', '127.0.0.1', '[::1]'].includes(host)) throw createError({ statusCode: 403, statusMessage: 'The template tool answers this machine only.' })
+  if (!isLoopback(getRequestIP(event)) || !['localhost', '127.0.0.1', '[::1]'].includes(host)) throw createError({ statusCode: 403, statusMessage: 'The template tool answers this machine only.' })
   const origin = getRequestHeader(event, 'origin')
   if (origin && originHost(origin) !== getRequestHeader(event, 'host')) throw createError({ statusCode: 403, statusMessage: 'Cross-origin request.' })
 

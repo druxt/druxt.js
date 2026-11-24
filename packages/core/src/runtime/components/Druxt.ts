@@ -31,6 +31,9 @@ import { reportUnknownModule } from '../utils/unknown'
 export default defineComponent({
   name: 'Druxt',
 
+  // The attributes go to the module, below. Inherited too, they would also land on the element around it.
+  inheritAttrs: false,
+
   /** The module, its props, and the elements around it. */
   props: {
     /**
@@ -81,7 +84,7 @@ export default defineComponent({
       ...(this.inner === undefined ? {} : { wrapper: this.inner }),
       ...(model === undefined ? {} : { modelValue: model }),
       'onUpdate:modelValue': (value: unknown) => this.$emit('update:modelValue', value),
-    })
+    }, this.$slots)
 
     const wrapper = this.wrapper
     return typeof wrapper === 'object' && wrapper.component

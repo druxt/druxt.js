@@ -1,7 +1,15 @@
 import type { Component } from 'vue'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyOptions = Record<string, any>
+/** The parts of a component's definition that are read here. Its `extends` and `mixins` are definitions too. */
+interface AnyOptions {
+  extends?: AnyOptions
+  mixins?: AnyOptions[]
+  props?: unknown
+  emits?: string[] | Record<string, unknown>
+  druxt?: Record<string, unknown>
+  druxtRootless?: unknown
+  __asyncLoader?: () => Promise<AnyOptions & { default?: AnyOptions }>
+}
 /** A component's props in object form, by name. */
 export type PropOptions = Record<string, { required?: boolean, [key: string]: unknown }>
 

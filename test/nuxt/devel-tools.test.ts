@@ -26,6 +26,17 @@ describe('the create action', () => {
     expect(template.findAll('option').map((option) => option.attributes('value'))).toEqual(['DruxtTestNodeArticle', 'DruxtTestDefault'])
   })
 
+  // The module's candidates change with its inputs, while the tool stays mounted. The path shows the chosen name.
+  it('chooses the first name that remains when its candidates change, and keeps a name that is still one', async () => {
+    const template = await mountSuspended(DruxtDevelTemplate, { props })
+    const path = () => template.find('.druxt-devel-template__path').text()
+    await template.setProps({ options: ['DruxtTestNodePage', 'DruxtTestDefault'] } as Record<string, unknown>)
+    expect(path()).toBe('components/druxt/test/NodePage.vue')
+    await template.find('select').setValue('DruxtTestDefault')
+    await template.setProps({ options: ['DruxtTestNodeRecipe', 'DruxtTestDefault'] } as Record<string, unknown>)
+    expect(path()).toBe('components/druxt/test/Default.vue')
+  })
+
   it('is busy while the request is in flight, then announces done as a status', async () => {
     let answer: () => void = () => {}
     registerEndpoint('/api/_druxt/template', {
@@ -170,6 +181,18 @@ describe('DruxtDebug', () => {
     await open.trigger('click')
     await settle()
     expect(folds().map((fold) => fold.text())).toEqual(['fold', '{…} 1 key'])
+    expect(document.activeElement).toBe(folds()[1]!.element)
+  })
+
+  // A key may hold a `/`, so `a/b` and `b` inside `a` are different places.
+  it('folds a value under a key with a slash apart from the same path through nested keys', async () => {
+    const debug = await mountSuspended(DruxtDebug, { props: { json: { 'a/b': 'x'.repeat(120), 'a': { b: 'y'.repeat(120) } }, visible: true }, attachTo: document.body })
+    await settle(() => expect(debug.find('.druxt-debug__key').exists()).toBe(true))
+    const folds = () => debug.findAll('.druxt-debug__fold')
+    expect(folds().map((fold) => fold.text())).toEqual(['+80 chars', '+80 chars'])
+    await folds()[1]!.trigger('click')
+    await settle()
+    expect(folds().map((fold) => fold.text())).toEqual(['+80 chars', 'fold'])
     expect(document.activeElement).toBe(folds()[1]!.element)
   })
 })

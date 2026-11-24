@@ -288,6 +288,18 @@ describe('useDruxtModule()', () => {
     expect(wrapper.text()).not.toBe('wrapper')
   })
 
+  it('resolves the registered wrapper once the wrapper prop stops being false', async () => {
+    const wrapper = await mountSuspended(testModule({ ...article, slots: () => ({ default: () => h('p', 'module output') }) }, {
+      DruxtTestDefault: defineComponent({ setup: () => () => h('p', 'wrapper') }),
+    }), { props: { wrapper: false } })
+    await settle()
+    expect(wrapper.text()).toBe('module output')
+    await wrapper.setProps({ wrapper: true })
+    await settle(() => expect(wrapper.text()).toBe('wrapper'))
+    await wrapper.setProps({ wrapper: false })
+    await settle(() => expect(wrapper.text()).toBe('module output'))
+  })
+
   it('lets a wrapper without props read the module context', async () => {
     const Wrapper = defineComponent({
       setup: () => {

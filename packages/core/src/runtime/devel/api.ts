@@ -76,7 +76,8 @@ export function useDruxtDevtools(): DruxtDevtoolsApi {
       const entry = { label, provider }
       const providers = sectionProviders()
       providers.set(id, entry)
-      whenDruxtDevtools((channel) => showSection(channel, id, entry))
+      // The section may be removed before the tools are ready, so it is shown only if it is still this one.
+      whenDruxtDevtools((channel) => { if (providers.get(id) === entry) showSection(channel, id, entry) })
       return {
         refresh: () => whenDruxtDevtools((channel) => { if (providers.get(id) === entry) showSection(channel, id, entry) }),
         remove: () => {

@@ -71,6 +71,43 @@ describe('Druxt core components', () => {
     expect(wrapper.text()).toBe('m')
   })
 
+  // <Druxt> hands its attributes to the module itself, so the element around the module gets none of them: an id
+  // appears once, and a click reaches its listener once.
+  it('<Druxt> puts its attributes on the module only, not on the element around it', async () => {
+    const onClick = vi.fn()
+    const AttrsProbeModule = defineComponent({
+      name: 'DruxtAttrsProbe',
+      props: druxtModuleProps,
+      emits: [...druxtModuleEmits],
+      setup: (p) => useDruxtModule(p, { componentOptions: () => [['default']] }),
+    })
+    const wrapper = await mountSuspended(defineComponent({
+      setup: () => () => h(resolveComponent('Druxt'), { module: 'attrs-probe', wrapper: { component: 'section' }, id: 'one', class: 'mine', onClick }),
+    }), { global: { components: { DruxtAttrsProbe: AttrsProbeModule, DruxtAttrsProbeDefault: defineComponent({ setup: () => () => h('p', 'Hi') }) } } })
+    await settle(() => expect(wrapper.find('p').exists()).toBe(true))
+    expect(wrapper.html()).toBe('<section>\n  <p id="one" class="mine">Hi</p>\n</section>')
+    await wrapper.find('p').trigger('click')
+    expect(onClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('<Druxt> hands its default slot to the module, as the module\'s template', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      setup: () => () => h(resolveComponent('Druxt'), { module: 'test' }, { default: (d: { title: string }) => h('em', d.title) }),
+    }), { global: { components: { DruxtTest: Module } } })
+    await settle(() => expect(wrapper.html()).toBe('<em>Hi</em>'))
+  })
+
+  // A missing id is no id: it adds no attribute and no element. An id of 0 is an id.
+  it('DruxtWrapper takes a null or undefined id as no id, and keeps an id of 0', async () => {
+    const around = (id: unknown) => defineComponent({ setup: () => () => h(resolveComponent('DruxtWrapper'), { id }, () => h('span', 'Hi')) })
+    expect((await mountSuspended(around(null))).html()).toBe('<span>Hi</span>')
+    expect((await mountSuspended(around(undefined))).html()).toBe('<span>Hi</span>')
+    expect((await mountSuspended(around(0))).html()).toBe('<div id="0"><span>Hi</span></div>')
+    const onModule = await mountSuspended(nest(Module), { attrs: { id: null }, slots: { default: (d: { title: string }) => h('span', d.title) } })
+    await settle(() => expect(onModule.find('span').exists()).toBe(true))
+    expect(onModule.html()).toBe('<span>Hi</span>')
+  })
+
   it('declares no value prop and no input event', () => {
     expect(Object.keys(druxtModuleProps)).not.toContain('value')
     expect(druxtModuleEmits).not.toContain('input')

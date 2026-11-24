@@ -22,7 +22,7 @@ const hasContent = (children: VNodeArrayChildren | undefined): boolean => (child
 
 /** The id, class and style from a set of attributes. Each is left out when empty. */
 const bindings = (attrs: { id?: unknown, class?: unknown, style?: unknown }): Record<string, unknown> =>
-  Object.fromEntries(Object.entries({ id: attrs.id === undefined ? undefined : String(attrs.id), class: attrs.class, style: attrs.style })
+  Object.fromEntries(Object.entries({ id: attrs.id === undefined || attrs.id === null ? undefined : String(attrs.id), class: attrs.class, style: attrs.style })
     .filter(([, value]) => !isEmptyAttr(value)))
 
 /**
@@ -67,7 +67,7 @@ export default defineComponent({
       // The module's own classes, such as DruxtEntity's, joined with the site's. Each class appears once. As the
       // module's root, this wrapper's attributes already hold the site's classes.
       const classes = [...new Set(normalizeClass([this.moduleAttrs?.class, this.$attrs.class, module?.attrs.class]).split(/\s+/).filter(Boolean))]
-      return { id: id === undefined ? undefined : String(id), class: classes.join(' '), style: style as StyleValue }
+      return { id: id === undefined || id === null ? undefined : String(id), class: classes.join(' '), style: style as StyleValue }
     },
 
     // The element's attributes, without any left empty. A server render would write an empty style as `style=""`.

@@ -57,6 +57,24 @@ describe('the Nuxt DevTools tab\'s page', () => {
     expect(document.getElementById('waiting')).toBeNull()
   })
 
+  it('returns to a module\'s section after a reload', () => {
+    history.replaceState(null, '', '/__druxt/devtools#x-test')
+    load()
+    const { value } = client()
+    value.host.nuxt.$druxtDevtools.channel.emit({ type: 'section', section: { id: 'test', label: 'Test', blocks: [] } })
+    ;(window as { __NUXT_DEVTOOLS__?: unknown }).__NUXT_DEVTOOLS__ = value
+    const element = document.querySelector('druxt-devtools') as DruxtDevtoolsElement
+    expect(element.section).toBe('x-test')
+    expect(element.shadowRoot!.querySelector('#dt-tab-x-test')!.getAttribute('aria-selected')).toBe('true')
+  })
+
+  it('opens the first section for a hash that names no section', () => {
+    history.replaceState(null, '', '/__druxt/devtools#nothing')
+    load()
+    ;(window as { __NUXT_DEVTOOLS__?: unknown }).__NUXT_DEVTOOLS__ = client().value
+    expect((document.querySelector('druxt-devtools') as DruxtDevtoolsElement).section).toBe('missing')
+  })
+
   it('keeps the section in the frame\'s URL, so a reload returns to it', () => {
     load()
     ;(window as { __NUXT_DEVTOOLS__?: unknown }).__NUXT_DEVTOOLS__ = client('light').value

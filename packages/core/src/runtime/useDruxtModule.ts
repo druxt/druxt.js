@@ -1,4 +1,4 @@
-import { cloneVNode, computed, createCommentVNode, createTextVNode, Fragment, getCurrentInstance, h, inject, isVNode, onBeforeUnmount, onMounted, onServerPrefetch, provide, renderSlot, resolveDynamicComponent, shallowRef, toRaw, useAttrs, useId, useModel, watch } from 'vue'
+import { camelize, cloneVNode, computed, createCommentVNode, createTextVNode, Fragment, getCurrentInstance, h, inject, isVNode, onBeforeUnmount, onMounted, onServerPrefetch, provide, renderSlot, resolveDynamicComponent, shallowRef, toRaw, useAttrs, useId, useModel, watch } from 'vue'
 import type { Component, ComponentInternalInstance, Ref, Slot, VNode } from 'vue'
 import { createError, isNuxtError, useAsyncData, useNuxtApp, useRoute } from '#imports'
 import type { DruxtComponentOptionSets, DruxtModuleSettings, DruxtSlot, DruxtSlots, DruxtTemplateConfig } from './types'
@@ -436,11 +436,11 @@ export function useDruxtModule(props: DruxtModuleProps, contract: DruxtModuleCon
   const registered = (component: string): Component | undefined =>
     (instance.type as { components?: Record<string, Component> }).components?.[component] || instance.appContext.components[component]
 
-  // Whether this instance resolves a wrapper. It is read once. The slots keep their identity, and the payload
-  // follows it, so the key carries it.
+  // Whether this instance resolves a wrapper. The slot is read once, as the slots keep their identity. The `wrapper`
+  // prop can change, so it is read each time. The payload follows the answer, so the key carries it.
   const template = !!instance.slots.default
-  const wantsWrapper = (!template && props.wrapper !== false) || (template && !!props.wrapper)
-  const variant = wantsWrapper ? 'wrapper' : 'bare'
+  const wantsWrapper = computed(() => (!template && props.wrapper !== false) || (template && !!props.wrapper))
+  const variant = (): string => wantsWrapper.value ? 'wrapper' : 'bare'
 
   // The pipeline: load the config, choose the wrapper, read its settings, load the data, and build the payload.
   const pipeline = async (): Promise<DruxtModulePayload> => {
@@ -450,7 +450,7 @@ export function useDruxtModule(props: DruxtModuleProps, contract: DruxtModuleCon
       throw toError(err)
     }
 
-    const candidates = wantsWrapper ? getModuleComponents(name, contract.componentOptions?.(ctx) || [], lang.value, (c) => !!registered(c)) : []
+    const candidates = wantsWrapper.value ? getModuleComponents(name, contract.componentOptions?.(ctx) || [], lang.value, (c) => !!registered(c)) : []
     const is = candidates.find((c) => c.global)?.name || 'DruxtWrapper'
     const wrapper = await readWrapper(registered(is))
     const settings = contract.settings ? contract.settings(ctx, wrapper.druxt) : wrapper.druxt as DruxtModuleSettings
@@ -485,8 +485,8 @@ export function useDruxtModule(props: DruxtModuleProps, contract: DruxtModuleCon
   // The watch source is a getter that joins the inputs into one string, so it compares by content. The array
   // `contract.watch()` builds is new on each run, and Vue compares watch sources by reference. Watching it directly
   // would run the pipeline again on every unrelated change too.
-  const dataKey = (): string => moduleKey(name, lang.value, variant, contract.key, contract.watch) ?? fallback
-  const asyncData = useAsyncData(dataKey, pipeline, { dedupe: 'defer', watch: [lang, ...(contract.watch ? [() => JSON.stringify(contract.watch!())] : [])] })
+  const dataKey = (): string => moduleKey(name, lang.value, variant(), contract.key, contract.watch) ?? fallback
+  const asyncData = useAsyncData(dataKey, pipeline, { dedupe: 'defer', watch: [lang, wantsWrapper, ...(contract.watch ? [() => JSON.stringify(contract.watch!())] : [])] })
   // The initial run defers, so instances that share a key share a fetch. An explicit refresh cancels, so a cache
   // clear always starts a new run.
   refresh = () => asyncData.refresh({ dedupe: 'cancel' })
@@ -619,9 +619,13 @@ export function useDruxtModule(props: DruxtModuleProps, contract: DruxtModuleCon
     h(resolveDynamicComponent('DruxtDebug') as Component, data, slots)
 
   // The slots the wrapper is rendered with. A missing required prop renders a debug message in their place.
+  //
+  // A prop is missing when it was not given, or was given as null or undefined. A falsy value, such as 0, false or
+  // an empty string, is a value. Vue reads a boolean prop that was not given as false, so what was given is checked.
   const renderSlots = (): DruxtSlots => {
+    const given = new Set(Object.keys(instance.vnode.props || {}).map(camelize))
     const required = Object.entries(propsObject(instance.type.props))
-      .filter(([key, option]) => option.required && !(instance.props as Record<string, unknown>)[key])
+      .filter(([key, option]) => option.required && (!given.has(key) || (instance.props as Record<string, unknown>)[key] == null))
       .map(([key]) => key)
     if (required.length) return { default: () => debug({ summary: `Missing required props: ${required.join(', ')}.`, visible: true }) }
 

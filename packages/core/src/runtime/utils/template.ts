@@ -69,11 +69,11 @@ export function validateTemplateRequest(request: unknown): DruxtTemplateRequest 
   if (template.from !== undefined && (typeof template.from !== 'string' || !SPECIFIER.test(template.from))) fail('Unsupported import.')
   if (template.props !== undefined && (typeof template.props !== 'string' || !IDENTIFIER.test(template.props))) fail('Unsupported props object.')
   if (template.repeat !== undefined) {
-    const { prefix, over } = template.repeat as { prefix?: unknown, over?: unknown }
+    const { prefix, over } = (template.repeat || {}) as { prefix?: unknown, over?: unknown }
     if (typeof prefix !== 'string' || !SLOT.test(prefix) || typeof over !== 'string' || !IDENTIFIER.test(over)) fail('Unsupported repeated slots.')
   }
   if (template.composable !== undefined) {
-    const { name, use } = template.composable as { name?: unknown, use?: unknown }
+    const { name, use } = (template.composable || {}) as { name?: unknown, use?: unknown }
     if (typeof name !== 'string' || !IDENTIFIER.test(name) || !Array.isArray(use) || !use.every((u) => typeof u === 'string' && IDENTIFIER.test(u))) fail('Unsupported composable.')
   }
   if (template.slots !== undefined && typeof template.slots !== 'boolean') fail('Unsupported slots setting.')
@@ -113,9 +113,10 @@ export function templatePath({ component, name }: DruxtTemplateRequest): string 
 export function renderTemplate({ props = [], slots = [], template = {} }: DruxtTemplateRequest): string {
   // The template is built first. The script then declares only the names the template uses, so the file lints clean.
   //
-  // The named slots are written, without the default slot and the debug slot. None is written when the module wants
-  // none.
-  const slotNames = template.slots === false ? [] : (slots.length > 1 ? slots.filter((s) => s !== 'default') : slots).filter((s) => s !== 'debug')
+  // The named slots are written, without the default slot and the debug slot. The default slot is written when it is
+  // the only content slot. None is written when the module wants none.
+  const content = slots.filter((s) => s !== 'debug')
+  const slotNames = template.slots === false ? [] : content.length > 1 ? content.filter((s) => s !== 'default') : content
   const debug = template.debug || '$props'
   const repeat = template.repeat
   const repeated = (s: string) => !!repeat && s.startsWith(repeat.prefix) && /^\d+$/.test(s.slice(repeat.prefix.length))

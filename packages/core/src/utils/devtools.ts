@@ -52,7 +52,7 @@ const script = `
       host.define(window)
       element = document.createElement(tag)
       const section = location.hash.slice(1)
-      if (sections.includes(section)) element.setAttribute('section', section)
+      if (sections.includes(section) || section.startsWith('x-')) element.setAttribute('section', section)
       element.createEndpoint = host.createEndpoint
       element.openInEditor = host.openInEditor
       element.addEventListener('druxt-devtools-section', (event) => history.replaceState(null, '', '#' + event.detail.section))
