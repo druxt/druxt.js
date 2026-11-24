@@ -24,6 +24,36 @@ export const nextRequest = () => ++sequence.value
 // The running size of a consumer's entries, held on its map of entries.
 const SIZE = Symbol.for('druxt.processCacheSize')
 
+// A scope's entries in the order they were last used, the least recently used first. It also counts their total size,
+// and the writes since expired entries were last swept. It's held on the scope's map of consumers.
+const ORDER = Symbol.for('druxt.processCacheOrder')
+
+/**
+ * The most partitions a cache scope keeps, one for each consumer. A new one past it evicts the least recently used,
+ * entries and all.
+ */
+export const MAX_PARTITIONS = 32
+
+// A scope's map of consumers, with its order.
+const scopeOf = (scope) => {
+  if (!scopes.has(scope)) scopes.set(scope, new Map())
+  const consumers = scopes.get(scope)
+  if (!consumers[ORDER]) consumers[ORDER] = { entries: new Map(), size: 0, writes: 0 }
+  return consumers
+}
+
+// Removes an entry from its scope, and its consumer's partition with it once that holds nothing.
+const drop = (consumers, entry) => {
+  const order = consumers[ORDER]
+  if (!order.entries.delete(entry)) return
+  order.size -= entry.size
+  const entries = consumers.get(entry.consumer)
+  if (!entries || entries.get(entry.key) !== entry) return
+  entries.delete(entry.key)
+  entries[SIZE] = (entries[SIZE] || 0) - entry.size
+  if (!entries.size) consumers.delete(entry.consumer)
+}
+
 /**
  * The size of a string in UTF-8 bytes.
  *
@@ -380,7 +410,7 @@ export const parseCacheLifetime = (headers) => {
  * @param {object} options.axios - The Axios instance the request uses.
  * @param {number} [options.ttl] - Seconds an entry may live at most. It shortens a lifetime, never extends one, and 0 keeps nothing.
  * @param {string} [options.sessionCookie] - A pattern for the session cookie name.
- * @param {number} [options.maxSize] - The size the scope keeps per consumer at most, in bytes of stored JSON. Past it, expired entries go first, then the least recently used, and a value larger than the whole limit is not stored.
+ * @param {number} [options.maxSize] - The size the scope keeps at most, across its consumers, in bytes of stored JSON. Past it, expired entries go first, then the least recently used, whichever consumer stored them, and a value larger than the whole limit is not stored.
  * @param {Function} [options.sizeOf] - Measures a value for `maxSize`. The bytes of its JSON by default.
  * @param {string} [options.url] - The URL of the request the cache is asked for, which the request interceptors are probed with.
  *
@@ -389,33 +419,46 @@ export const parseCacheLifetime = (headers) => {
 export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize, url } = {}) => {
   if (!runtime.isServer() || hasCredentials(axios, sessionCookie, url)) return null
 
-  if (!scopes.has(scope)) scopes.set(scope, new Map())
-  const consumers = scopes.get(scope)
+  const consumers = scopeOf(scope)
+  const order = consumers[ORDER]
   const consumer = consumerId(axios)
-  if (!consumers.has(consumer)) consumers.set(consumer, new Map())
-  const entries = consumers.get(consumer)
+  // The consumer's entries, made the scope's most recently used partition. A new one past MAX_PARTITIONS evicts the
+  // least recently used, entries and all. A read makes none, so a miss leaves the scope as it was.
+  const partition = (create) => {
+    const held = consumers.get(consumer)
+    if (!held && !create) return undefined
+    const entries = held || new Map()
+    // A Map keeps insertion order, so moving the consumer to the end keeps the least recently used first.
+    consumers.delete(consumer)
+    if (!held) {
+      for (const [key, evicted] of consumers) {
+        if (consumers.size < MAX_PARTITIONS) break
+        for (const entry of evicted.values()) drop(consumers, entry)
+        consumers.delete(key)
+      }
+    }
+    consumers.set(consumer, entries)
+    return entries
+  }
   // A ttl caps what may be kept, so 0 keeps nothing; without one, Drupal's lifetime stands.
   const cap = (seconds) => (typeof ttl === 'number' ? Math.min(seconds, ttl) : seconds)
   const taken = generation.value
 
   const expired = (entry, now = Date.now()) => now - entry.created >= entry.seconds * 1000
-  // The running size of the entries, kept on the map so every handle and copy of the module agrees.
-  const total = () => entries[SIZE] || 0
-  const remove = (key) => {
-    const entry = entries.get(key)
-    if (!entry) return
-    entries[SIZE] = total() - entry.size
-    entries.delete(key)
-  }
   const bounded = typeof maxSize === 'number'
-  // Keeps the scope within `maxSize`: expired entries go first, then the least recently used.
+  // Keeps the scope within `maxSize`. Expired entries go first, and then the least recently used, whoever holds them.
+  // The sweep for expired entries reads them all, so it runs once the scope has stored as many values as it holds
+  // since the last one, which keeps a write's cost the same however many entries the scope holds.
   const bound = () => {
-    if (!bounded || total() <= maxSize) return
-    const now = Date.now()
-    for (const [key, entry] of entries) if (expired(entry, now)) remove(key)
-    for (const key of entries.keys()) {
-      if (total() <= maxSize) break
-      remove(key)
+    if (!bounded || order.size <= maxSize) return
+    if (order.writes >= order.entries.size) {
+      order.writes = 0
+      const now = Date.now()
+      for (const entry of [...order.entries.keys()]) if (expired(entry, now)) drop(consumers, entry)
+    }
+    for (const entry of order.entries.keys()) {
+      if (order.size <= maxSize) break
+      drop(consumers, entry)
     }
   }
 
@@ -427,17 +470,18 @@ export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf
 
     // The reader's cap applies too, so a shorter ttl never serves an older entry.
     get(key) {
-      const entry = entries.get(key)
+      const entries = partition(false)
+      const entry = entries && entries.get(key)
       if (!entry) return undefined
       // Past its own lifetime the entry is no use to any reader, so it goes.
       if (expired(entry)) {
-        remove(key)
+        drop(consumers, entry)
         return undefined
       }
       if (Date.now() - entry.created >= cap(entry.seconds) * 1000) return undefined
-      // A Map keeps insertion order, so moving a read entry to the end keeps the oldest first.
-      entries.delete(key)
-      entries.set(key, entry)
+      // A Map keeps insertion order, so moving a read entry to the end keeps the least recently used first.
+      order.entries.delete(entry)
+      order.entries.set(entry, true)
       return entry.value
     },
 
@@ -456,15 +500,21 @@ export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf
      */
     set(key, value, seconds, since) {
       if (since !== undefined && since !== generation.value) return value
-      remove(key)
-      if (cap(seconds) > 0) {
-        const size = sizeOf(value)
-        // A value larger than the whole limit would empty the scope and still not fit.
-        if (bounded && size > maxSize) return value
-        entries.set(key, { value, seconds: cap(seconds), created: Date.now(), size })
-        entries[SIZE] = total() + size
-        bound()
-      }
+      const earlier = (consumers.get(consumer) || new Map()).get(key)
+      if (earlier) drop(consumers, earlier)
+      if (cap(seconds) <= 0) return value
+      const size = sizeOf(value)
+      // A value larger than the whole limit would empty the scope and still not fit. Only what is kept makes a
+      // partition.
+      if (bounded && size > maxSize) return value
+      const entries = partition(true)
+      const entry = { value, seconds: cap(seconds), created: Date.now(), size, key, consumer }
+      entries.set(key, entry)
+      entries[SIZE] = (entries[SIZE] || 0) + size
+      order.entries.set(entry, true)
+      order.size += size
+      order.writes += 1
+      bound()
       return value
     },
   }

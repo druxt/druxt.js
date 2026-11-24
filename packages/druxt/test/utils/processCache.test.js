@@ -1,4 +1,5 @@
-import { byteSize, configHasCredentials, hasCredentials, isProbe, parseCacheLifetime, processCache, resetProcessCache, runtime, watchCredentials } from '../../src/utils/processCache'
+/* global globalThis */
+import { MAX_PARTITIONS, byteSize, configHasCredentials, hasCredentials, isProbe, parseCacheLifetime, processCache, resetProcessCache, runtime, watchCredentials } from '../../src/utils/processCache'
 
 const axios = (common = {}) => ({ defaults: { headers: { common } } })
 
@@ -523,5 +524,116 @@ describe('processCache', () => {
     resetProcessCache()
     cache().set('b', 'bbbbbbbb', 60)
     expect(cache().get('b')).toBe('bbbbbbbb')
+  })
+})
+
+describe('processCache - maxSize across a scope', () => {
+  const { isServer } = runtime
+  // A handle for a consumer of the test scope, measuring a value by its length.
+  const handle = (consumer, maxSize = 100) => processCache('test', {
+    axios: axios({ 'x-consumer-id': consumer }),
+    maxSize,
+    sizeOf: (value) => String(value).length,
+  })
+  // The bytes and partitions the test scope holds, read from the store the process keeps on globalThis.
+  const stored = () => {
+    const consumers = globalThis[Symbol.for('druxt.processCache')].get('test')
+    const size = Symbol.for('druxt.processCacheSize')
+    return {
+      bytes: [...(consumers || new Map()).values()].reduce((sum, entries) => sum + (entries[size] || 0), 0),
+      partitions: (consumers || new Map()).size,
+    }
+  }
+  beforeEach(() => {
+    resetProcessCache()
+    runtime.isServer = () => true
+  })
+  afterAll(() => { runtime.isServer = isServer })
+
+  test('never holds more than maxSize across the scope, however many consumers write to it', () => {
+    for (let i = 0; i < MAX_PARTITIONS * 2; i++) {
+      handle(`c${i % MAX_PARTITIONS}`).set(`k${i}`, 'x'.repeat(30), 300)
+      expect(stored().bytes).toBeLessThanOrEqual(100)
+    }
+    // Only the last values written still fit, and everything older went, whichever consumer wrote it.
+    const last = MAX_PARTITIONS * 2 - 1
+    expect([last - 3, last - 2, last - 1, last].map((i) => !!handle(`c${i % MAX_PARTITIONS}`).get(`k${i}`)))
+      .toStrictEqual([false, true, true, true])
+  })
+
+  test('evicts the least recently used entry of the scope, whichever partition holds it', () => {
+    handle('c0').set('a', 'x'.repeat(40), 300)
+    handle('c1').set('b', 'x'.repeat(40), 300)
+    handle('c0').set('c', 'x'.repeat(10), 300)
+    // b is read after a, so a is the scope's least recently used, though c1 makes the write that does not fit.
+    expect(handle('c1').get('b')).toBeDefined()
+    handle('c1').set('d', 'x'.repeat(40), 300)
+    expect(handle('c0').get('a')).toBeUndefined()
+    expect(handle('c0').get('c')).toBeDefined()
+    expect(handle('c1').get('b')).toBeDefined()
+    expect(handle('c1').get('d')).toBeDefined()
+    expect(stored().bytes).toBe(90)
+  })
+
+  test('evicts an expired entry of any partition before a live one', () => {
+    const now = jest.spyOn(Date, 'now')
+    now.mockReturnValue(1000)
+    handle('c0').set('live', 'x'.repeat(40), 300)
+    handle('c1').set('short', 'x'.repeat(40), 1)
+    now.mockReturnValue(2500)
+    // live is the least recently used, but short has expired, so short goes.
+    handle('c2').set('new', 'x'.repeat(40), 300)
+    expect(handle('c0').get('live')).toBeDefined()
+    expect(handle('c2').get('new')).toBeDefined()
+    expect(stored()).toStrictEqual({ bytes: 80, partitions: 2 })
+    now.mockRestore()
+  })
+
+  test('drops a partition once eviction empties it, so it counts for nothing against MAX_PARTITIONS', () => {
+    handle('c0').set('key', 'x'.repeat(60), 300)
+    handle('c1').set('key', 'x'.repeat(60), 300)
+    expect(stored().partitions).toBe(1)
+    // A read of the emptied consumer doesn't make a partition, so it cannot push c1 out below.
+    expect(handle('c0').get('key')).toBeUndefined()
+    for (let i = 2; i <= MAX_PARTITIONS; i++) handle(`c${i}`).set('key', 'x', 300)
+    expect(stored().partitions).toBe(MAX_PARTITIONS)
+    expect(handle('c1').get('key')).toBeDefined()
+  })
+
+  test('past MAX_PARTITIONS, a new partition evicts the least recently used one, entries and all', () => {
+    for (let i = 0; i < MAX_PARTITIONS; i++) handle(`c${i}`).set('key', 'x', 300)
+    // A read of c0 makes c1 the least recently used.
+    expect(handle('c0').get('key')).toBeDefined()
+    handle('new').set('key', 'x', 300)
+    expect(stored()).toStrictEqual({ bytes: MAX_PARTITIONS, partitions: MAX_PARTITIONS })
+    expect(handle('c1').get('key')).toBeUndefined()
+    expect(handle('c0').get('key')).toBeDefined()
+    expect(handle('new').get('key')).toBeDefined()
+  })
+
+  test('drops a partition once a value that may not be kept empties it', () => {
+    handle('c0').set('key', 'value', 300)
+    handle('c1').set('key', 'value', 300)
+    handle('c0').set('key', 'value', 0)
+    expect(stored()).toStrictEqual({ bytes: 5, partitions: 1 })
+  })
+
+  test('stores no value larger than maxSize, evicts nothing for it, and makes no partition', () => {
+    const small = (consumer) => handle(consumer, 10)
+    small('c0').set('a', 'aaaaa', 300)
+    small('c1').set('big', 'x'.repeat(11), 300)
+    expect(small('c0').get('a')).toBe('aaaaa')
+    expect(stored()).toStrictEqual({ bytes: 5, partitions: 1 })
+    // The earlier answer under the key still goes, so the cache follows Drupal's latest answer.
+    small('c0').set('a', 'x'.repeat(11), 300)
+    expect(small('c0').get('a')).toBeUndefined()
+    expect(stored()).toStrictEqual({ bytes: 0, partitions: 0 })
+  })
+
+  test('takes each scope\'s limit apart from the others', () => {
+    handle('c0').set('a', 'x'.repeat(60), 300)
+    processCache('other', { axios: axios({ 'x-consumer-id': 'c0' }), maxSize: 100, sizeOf: (value) => String(value).length }).set('a', 'x'.repeat(60), 300)
+    expect(handle('c0').get('a')).toBeDefined()
+    expect(processCache('other', { axios: axios({ 'x-consumer-id': 'c0' }) }).get('a')).toBeDefined()
   })
 })
