@@ -109,6 +109,27 @@ const consumerId = (axios) => {
   return ''
 }
 
+// The values a client sends for the headers a site lists in `cache.vary`, as a partition key beside its consumer.
+// Names are matched in any case, wherever Axios holds them, and values compared without regard to case or spacing.
+// A header the client does not send adds nothing, so a client that sends none shares its consumer's partition.
+const varyKey = (axios, vary) => {
+  if (!vary || !vary.length) return ''
+  const headers = ((axios || {}).defaults || {}).headers || {}
+  const sets = [headers.common, headers.get, headers]
+  return vary
+    .map((name) => String(name).toLowerCase())
+    .sort()
+    .map((name) => {
+      let value
+      for (const set of sets) {
+        const match = Object.entries(set || {}).find(([key, item]) => key.toLowerCase() === name && typeof item !== 'object')
+        if (match && match[1] !== undefined && match[1] !== false && match[1] !== null) value = match[1]
+      }
+      return value === undefined ? '' : `\n${name}: ${String(value).toLowerCase().replace(/\s+/g, ' ').replace(/\s*([,;=])\s*/g, '$1').trim()}`
+    })
+    .join('')
+}
+
 const headersHaveCredentials = (headers, sessionCookie) => {
   const session = new RegExp(`(?:^|;\\s*)(?:${sessionCookie})=`, 'i')
   return Object.entries(headers || {}).some(([name, raw]) => {
@@ -347,14 +368,15 @@ export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) =
  * `no-cache` forbid storing, `s-maxage` wins over `max-age`, time already spent
  * in a cache in front of Drupal (`Age`) is taken off, and no directive means 0.
  * A `Vary` on any request header other than `Cookie`, `X-Consumer-ID`,
- * `Accept-Encoding` or `Origin` also forbids storing, as the cache key holds
- * nothing that could tell variants apart.
+ * `Accept-Encoding`, `Origin` or one the site lists in `cache.vary` also forbids
+ * storing, as the cache key holds nothing that could tell variants apart.
  *
  * @param {object} [headers] - The response headers.
+ * @param {string[]} [vary] - The request headers the cache keeps entries apart by, from `cache.vary`.
  *
  * @returns {number} Seconds the response may be kept, 0 when it may not.
  */
-export const parseCacheLifetime = (headers) => {
+export const parseCacheLifetime = (headers, vary = []) => {
   // Every key that names the header, whatever its case, joined as a list header is.
   const header = (name) => Object.entries(headers || {})
     .filter(([key]) => key.toLowerCase() === name)
@@ -374,8 +396,10 @@ export const parseCacheLifetime = (headers) => {
   // Origin, which Drupal's CORS adds whenever it is on and which the site's
   // server does not send, so every answer is the one for no origin. A client
   // that does send one doesn't use the cache at all (see hasCredentials).
-  const vary = header('vary').toLowerCase().split(',').map((v) => v.trim()).filter(Boolean)
-  if (vary.some((v) => !['cookie', 'x-consumer-id', 'accept-encoding', 'origin'].includes(v))) return 0
+  // A header the site lists in `cache.vary` keeps entries apart, so a response that varies by it can be stored.
+  const kept = ['cookie', 'x-consumer-id', 'accept-encoding', 'origin', ...vary.map((name) => String(name).toLowerCase())]
+  const varies = header('vary').toLowerCase().split(',').map((v) => v.trim()).filter(Boolean)
+  if (varies.some((v) => !kept.includes(v))) return 0
 
   const seconds = (name) => {
     const directive = directives.find((d) => d.startsWith(`${name}=`))
@@ -413,15 +437,18 @@ export const parseCacheLifetime = (headers) => {
  * @param {number} [options.maxSize] - The size the scope keeps at most, across its consumers, in bytes of stored JSON. Past it, expired entries go first, then the least recently used, whichever consumer stored them, and a value larger than the whole limit is not stored.
  * @param {Function} [options.sizeOf] - Measures a value for `maxSize`. The bytes of its JSON by default.
  * @param {string} [options.url] - The URL of the request the cache is asked for, which the request interceptors are probed with.
+ * @param {string[]} [options.vary] - Request headers that change Drupal's answer, such as `Accept-Language`. A client's
+ *   entries are kept apart by what it sends for each, as by its consumer.
  *
  * @returns {?{get: Function, set: Function}}
  */
-export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize, url } = {}) => {
+export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize, url, vary } = {}) => {
   if (!runtime.isServer() || hasCredentials(axios, sessionCookie, url)) return null
 
   const consumers = scopeOf(scope)
   const order = consumers[ORDER]
-  const consumer = consumerId(axios)
+  // A client's partition is its consumer, and what it sends for each header in `vary`.
+  const consumer = consumerId(axios) + varyKey(axios, vary)
   // The consumer's entries, made the scope's most recently used partition. A new one past MAX_PARTITIONS evicts the
   // least recently used, entries and all. A read makes none, so a miss leaves the scope as it was.
   const partition = (create) => {

@@ -637,3 +637,55 @@ describe('processCache - maxSize across a scope', () => {
     expect(processCache('other', { axios: axios({ 'x-consumer-id': 'c0' }) }).get('a')).toBeDefined()
   })
 })
+
+describe('processCache - vary', () => {
+  const { isServer } = runtime
+  const language = (value, vary = ['Accept-Language']) => processCache('vary', {
+    axios: axios(value === undefined ? {} : { 'Accept-Language': value }),
+    vary,
+  })
+  beforeEach(() => {
+    resetProcessCache()
+    runtime.isServer = () => true
+  })
+  afterAll(() => { runtime.isServer = isServer })
+
+  test('keeps entries apart for clients that send a listed header differently', () => {
+    language('es').set('key', 'es', 60)
+    expect(language('en').get('key')).toBe(undefined)
+    expect(language('es').get('key')).toBe('es')
+  })
+
+  test('shares entries for a header the site does not list', () => {
+    language('es', []).set('key', 'es', 60)
+    expect(language('en', []).get('key')).toBe('es')
+  })
+
+  test('shares entries for values that differ only in case and spacing', () => {
+    language('es-ES,  es;q=0.9').set('key', 'es', 60)
+    expect(language('ES-es, es;Q=0.9').get('key')).toBe('es')
+  })
+
+  test('a listed header the client does not send adds nothing', () => {
+    language(undefined).set('key', 'none', 60)
+    expect(processCache('vary', { axios: axios() }).get('key')).toBe('none')
+  })
+
+  test('names a header in any case, wherever Axios holds it', () => {
+    processCache('vary', { axios: { defaults: { headers: { get: { 'accept-language': 'es' } } } }, vary: ['ACCEPT-LANGUAGE'] }).set('key', 'es', 60)
+    expect(language('es').get('key')).toBe('es')
+    expect(language('en').get('key')).toBe(undefined)
+  })
+
+  test('keeps a consumer\'s entries apart as before', () => {
+    processCache('vary', { axios: axios({ 'X-Consumer-ID': 'one', 'Accept-Language': 'es' }), vary: ['Accept-Language'] }).set('key', 'one', 60)
+    expect(language('es').get('key')).toBe(undefined)
+  })
+
+  test('parseCacheLifetime stores a response that varies by a listed header', () => {
+    const headers = { 'cache-control': 'max-age=60', vary: 'Accept-Encoding, Accept-Language' }
+    expect(parseCacheLifetime(headers)).toBe(0)
+    expect(parseCacheLifetime(headers, ['accept-language'])).toBe(60)
+    expect(parseCacheLifetime({ ...headers, vary: 'Accept-Language, User-Agent' }, ['Accept-Language'])).toBe(0)
+  })
+})

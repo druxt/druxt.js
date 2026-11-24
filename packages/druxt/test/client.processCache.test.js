@@ -32,6 +32,22 @@ describe('DruxtClient process cache', () => {
   })
   afterAll(() => { runtime.isServer = isServer })
 
+  test('cache.vary keeps the answers to a listed header apart, and stores those that vary by it', async () => {
+    const headers = { 'cache-control': 'public, max-age=300', vary: 'Accept-Language' }
+    const client = (language, cache = { vary: ['Accept-Language'] }) => new DruxtClient(baseUrl, { axios: requestAxios({ 'Accept-Language': language }, {}, headers), cache })
+
+    // Without the option, a response that varies by the header is never stored.
+    await client('es', {}).getIndex()
+    await client('es', {}).getIndex()
+    expect(indexCalls()).toBe(2)
+
+    await client('es').getIndex()
+    await client('es').getIndex()
+    expect(indexCalls()).toBe(3)
+    await client('en').getIndex()
+    expect(indexCalls()).toBe(4)
+  })
+
   test('never used in a browser', async () => {
     runtime.isServer = () => false
     await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
