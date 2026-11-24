@@ -226,7 +226,9 @@ class DruxtRouter {
    * @returns {boolean|string} The redirect path or false.
    */
   getRedirect (path, route = {}) {
-    const prefix = (route.props || {}).langcode || ''
+    // The URL prefix the route's language is served under, which needn't be its langcode.
+    const langcode = (route.props || {}).langcode || ''
+    const prefix = typeof this.druxt.urlPrefix === 'function' ? this.druxt.urlPrefix(langcode) : langcode
 
     // Redirect to route provided redirect.
     if (((route.redirect || [])[0] || {}).to) {

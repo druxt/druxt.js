@@ -61,3 +61,5 @@ export { DruxtStore } from './stores/druxt'
  * @private
  */
 export { DruxtClass } from './class'
+
+export { getLanguages } from './utils/languages'

@@ -1,7 +1,7 @@
 import chalk from 'chalk'
-import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { join, normalize, resolve } from 'path'
 import { DruxtClient } from '../client'
+import { getLanguages } from '../utils/languages'
 import { cacheClearHandler } from './cacheClear'
 import meta from '../../package.json'
 
@@ -60,6 +60,13 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     proxy: { ...options.proxy || {}, api: false },
   })
 
+  // Each language's URL prefix, read from Drupal unless the options give them, so the client reaches each language
+  // under the prefix Drupal serves it at: `/jsonapi` for a default language without a prefix, rather than `/en/jsonapi`.
+  if (!options.prefixes) {
+    const languages = await getLanguages(druxt, { build: this.nuxt, endpoint: options.endpoint })
+    if (languages.length) options.prefixes = Object.fromEntries(languages.map(({ langcode, prefix }) => [langcode, prefix]))
+  }
+
   // Nuxt proxy integration, when the API or the files proxy is enabled.
   if ((options.proxy || {}).api || (options.proxy || {}).files) {
     const proxies = {}
@@ -70,18 +77,9 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
       // Main API Endpoint.
       proxies[options.endpoint] = options.baseUrl
 
-      // Langcode prefixed API endpoints.
-      const languageResourceType = 'configurable_language--configurable_language'
-      if (((await druxt.getIndex(languageResourceType)) || {}).href) {
-        const query = new DrupalJsonApiParams().addFields(languageResourceType, ['drupal_internal__id'])
-        const languages = (await druxt.getCollectionAll(languageResourceType, query) || [])
-          .map((o) => o.data)
-          .flat()
-          .filter((o) => !['und', 'zxx'].includes(((o || {}).attributes || {}).drupal_internal__id))
-          .map((o) => o.attributes.drupal_internal__id)
-        for (const langcode of languages) {
-          proxies[`/${langcode}${options.endpoint}`] = options.baseUrl
-        }
+      // The API endpoint under each language's prefix.
+      for (const prefix of Object.values(options.prefixes || {})) {
+        if (prefix) proxies[`/${prefix}${options.endpoint}`] = options.baseUrl
       }
 
       // Decoupled Router Endpoint.

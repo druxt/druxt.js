@@ -372,12 +372,12 @@ describe('DruxtClient', () => {
 
     // Both clients end up holding the one cached object, so the copy to
     // compare against has to be taken before the second client asks for it.
-    const shared = { ...druxt.index[undefined] }
+    const shared = { ...druxt.index[''] }
 
     // A second client with the same base URL reuses the cached index.
     await clientB.getIndex()
     expect(mockAxios.get).toHaveBeenCalledTimes(1)
-    expect(clientB.index[undefined]).toStrictEqual(shared)
+    expect(clientB.index['']).toStrictEqual(shared)
 
     // A client with a different base URL fetches its own index.
     const clientC = new DruxtClient('https://other.example.com')
@@ -396,7 +396,7 @@ describe('DruxtClient', () => {
 
     // Another Axios instance carries its own credentials, so its client
     // fetches its own index rather than reusing the shared one.
-    const sharedBefore = { ...druxt.index[undefined] }
+    const sharedBefore = { ...druxt.index[''] }
 
     const ownAxios = jest.fn()
     ownAxios.get = jest.fn(async () => ({ data: { links: { 'node--page': { href: `${baseUrl}/jsonapi/node/page` } } } }))
@@ -408,7 +408,7 @@ describe('DruxtClient', () => {
     // The shared index is untouched by the other instance's own one. Comparing
     // it with the copy taken above says that, where a count or a difference
     // from the other index would also pass had entries been dropped.
-    expect(druxt.index[undefined]).toStrictEqual(sharedBefore)
+    expect(druxt.index['']).toStrictEqual(sharedBefore)
   })
 
   test('getIndex - concurrent requests share one fetch', async () => {
@@ -419,7 +419,7 @@ describe('DruxtClient', () => {
     // The clients share the one object, so the other client's index is not an
     // independent source. The response the fetch returned is.
     const { data } = await mockAxios.get.mock.results[0].value
-    expect(Object.keys(clientB.index[undefined])).toStrictEqual(Object.keys(data.links))
+    expect(Object.keys(clientB.index[''])).toStrictEqual(Object.keys(data.links))
   })
 
   test('getRelated', async () => {
@@ -442,7 +442,7 @@ describe('DruxtClient', () => {
   test('getResource and getRelated keep the prefix for a type the index does not list', async () => {
     // A Views resource is never in the index, so the URL is built from the type.
     druxt.index.es = {}
-    druxt.index[undefined] = {}
+    druxt.index[''] = {}
     druxt.get = jest.fn(async () => ({ data: {} }))
 
     await druxt.getResource('views--recipes', 'block', undefined, 'es')

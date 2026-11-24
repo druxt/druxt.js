@@ -586,17 +586,37 @@ class DruxtClient {
   }
 
   /**
+   * Gives the URL prefix for a langcode, from the `prefixes` option, such as `spanish` for `es`. A langcode the map
+   * lacks, or a prefix, comes back unchanged.
+   *
+   * @example @lang js
+   * // With the prefixes { en: '', es: 'spanish' }:
+   * this.$druxt.urlPrefix('es') // 'spanish'
+   * this.$druxt.urlPrefix('en') // ''
+   * this.$druxt.urlPrefix('fr') // 'fr'
+   *
+   * @param {string} [prefix] - A langcode or a URL prefix, empty for none.
+   * @return {string} The URL prefix.
+   */
+  urlPrefix(prefix = '') {
+    const prefixes = this.options.prefixes
+    return prefixes && Object.prototype.hasOwnProperty.call(prefixes, prefix) ? prefixes[prefix] : (prefix || '')
+  }
+
+  /**
    * Get index of all available resources, or the optionally specified resource.
    *
    * @example @lang js
    * const { href } = await this.$druxt.getIndex('node--article', 'en')
    *
    * @param {string} [resource] - (Optional) A specific resource to query.
-   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {string} [langcode] - (Optional) The langcode, or the JSON:API endpoint prefix.
    *
    * @returns {object} The resource index object or the specified resource.
    */
-  async getIndex(resource, prefix) {
+  async getIndex(resource, langcode) {
+    // The index is kept by the URL prefix it's served at, which a langcode maps to.
+    const prefix = this.urlPrefix(langcode)
     // The URL fetchIndex() asks for, which the cache probes with.
     const url = [prefix, this.options.endpoint].join('')
     if (!(this.index || {})[prefix]) {
@@ -639,7 +659,7 @@ class DruxtClient {
    * Fetches and stores the JSON:API index for a prefix.
    *
    * @private
-   * @param {string} [prefix] - (Optional) The JSON:API endpoint prefix or langcode.
+   * @param {string} [prefix] - (Optional) The URL prefix of the JSON:API endpoint, as `urlPrefix()` gives it.
    *
    * @returns {{index: object, lifetime: number}} The index, and the seconds it may be cached from its Cache-Control.
    */
@@ -728,7 +748,7 @@ class DruxtClient {
     let { href } = await this.getIndex(type, prefix)
     // A type the index does not list, such as a View, is served under the prefix too.
     if (!href) {
-      href = [prefix, this.options.endpoint].join('').replace(/^\/*/, '/') + '/' + type.replace('--', '/')
+      href = [this.urlPrefix(prefix), this.options.endpoint].join('').replace(/^\/*/, '/') + '/' + type.replace('--', '/')
     }
 
     const url = this.buildQueryUrl(`${href}/${id}/${related}`, query)
@@ -767,7 +787,7 @@ class DruxtClient {
     let { href } = await this.getIndex(type, prefix)
     // A type the index does not list, such as a View, is served under the prefix too.
     if (!href) {
-      href = [prefix, this.options.endpoint].join('').replace(/^\/*/, '/') + '/' + type.replace('--', '/')
+      href = [this.urlPrefix(prefix), this.options.endpoint].join('').replace(/^\/*/, '/') + '/' + type.replace('--', '/')
     }
 
     const url = this.buildQueryUrl([href, id].join('/'), query)
@@ -839,6 +859,9 @@ export { DruxtClient }
   * @param {string} [endpoint=jsonapi] - The JSON:API endpoint.
   * @param {string} [jsonapiResourceConfig=jsonapi_resource_config--jsonapi_resource_config] -
   *   The JSON:API resource config type, used for [JSON:API Extras](https://www.drupal.org/project/jsonapi_extras) support.
+  * @param {object} [prefixes] - The URL prefix Drupal serves each langcode under, such as `{ en: '', es: 'spanish' }`,
+  *   so a method's `prefix` argument takes a langcode. A langcode the map lacks is its own prefix. The Nuxt module reads
+  *   it from Drupal at build.
   *
   * @see {@link https://github.com/axios/axios#request-config}
   *

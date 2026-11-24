@@ -1,7 +1,6 @@
 import { existsSync } from 'fs'
 import { join, resolve } from 'path'
-import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
-import { DruxtClient } from 'druxt'
+import { DruxtClient, getLanguages } from 'druxt'
 
 // @nuxt/components ignores a false isAsync on the directory.
 const extendComponent = (component) => ({ ...component, isAsync: false })
@@ -77,32 +76,28 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
       options
     })
 
-    // Fetch languages.
-    let languages = []
-    const druxt = new DruxtClient(options.baseUrl, {
-      ...options,
-      // Disable API Proxy, as Proxies aren't available at build.
-      proxy: { ...options.proxy || {}, api: false },
-    })
-    const languageResourceType = 'configurable_language--configurable_language'
-    if (((await druxt.getIndex(languageResourceType)) || {}).href) {
-      const query = new DrupalJsonApiParams().addFields(languageResourceType, ['drupal_internal__id'])
-      languages = (await druxt.getCollectionAll(languageResourceType, query) || [])
-        .map((o) => o.data)
-        .flat()
-        .filter((o) => !['und', 'zxx'].includes(((o || {}).attributes || {}).drupal_internal__id))
+    // Each language's URL prefix, from the options or read from Drupal.
+    let languages = Object.entries(options.prefixes || {}).map(([langcode, prefix]) => ({ langcode, prefix }))
+    if (!options.prefixes) {
+      const druxt = new DruxtClient(options.baseUrl, {
+        ...options,
+        // Disable API Proxy, as Proxies aren't available at build.
+        proxy: { ...options.proxy || {}, api: false },
+      })
+      languages = await getLanguages(druxt, { build: this.nuxt, endpoint: druxt.options.endpoint })
     }
 
     // Extend routes.
     this.extendRoutes((routes) => {
-      // Add route per language.
-      languages.filter((o) => o).forEach((o) => {
+      // A route for each language under its prefix. A language without one, usually the default, is served by the
+      // wildcard route.
+      languages.filter(({ prefix }) => prefix).forEach(({ langcode, prefix }) => {
         routes.push({
-          name: `druxt-router__${o.attributes.drupal_internal__id}`,
-          path: `/${o.attributes.drupal_internal__id}*`,
+          name: `druxt-router__${langcode}`,
+          path: `/${prefix}*`,
           component: resolve(this.options.buildDir, 'components/druxt-router.js'),
           chunkName: 'druxt-router',
-          meta: { langcode: o.attributes.drupal_internal__id }
+          meta: { langcode }
         })
       })
 

@@ -73,3 +73,24 @@ test('Components register synchronously', async () => {
     expect(dir.extendComponent({ isAsync: null })).toStrictEqual({ isAsync: false })
   }
 })
+
+test('a route for each language under its prefix', async () => {
+  const { stubLanguages } = require('../../../../test/languages')
+  const stub = stubLanguages({ baseUrl: 'https://languages.test', prefixes: { en: '', es: 'spanish' }, decoupled: true })
+  let routes
+  const extendRoutes = jest.fn((func) => { routes = []; func(routes, jest.fn()) })
+  try {
+    await DruxtRouterNuxtModule.call({
+      ...mock,
+      extendRoutes,
+      options: { buildDir: '', dir: { pages: 'pages' }, druxt: { baseUrl: 'https://languages.test', router: {} }, srcDir: __dirname },
+    })
+  } finally {
+    stub.restore()
+  }
+
+  expect(routes.map(({ name, path, meta }) => [name, path, meta])).toStrictEqual([
+    ['druxt-router__es', '/spanish*', { langcode: 'es' }],
+    ['druxt-router', '*', undefined],
+  ])
+})

@@ -222,6 +222,18 @@ describe('DruxtRouter', () => {
     expect(redirect).toBe(false)
   })
 
+  test('getRedirect - the home path under each language\'s prefix', () => {
+    const druxtClient = new (require('druxt').DruxtClient)(baseUrl, { prefixes: { en: '', es: 'spanish' } })
+    const prefixed = new DruxtRouter(baseUrl, { druxtClient })
+    const home = (langcode) => ({ isHomePath: true, props: { langcode } })
+
+    expect(prefixed.getRedirect('/', home('en'))).toBe(false)
+    expect(prefixed.getRedirect('/node/1', home('en'))).toBe('/')
+    expect(prefixed.getRedirect('/spanish', home('es'))).toBe(false)
+    expect(prefixed.getRedirect('/spanish/', home('es'))).toBe(false)
+    expect(prefixed.getRedirect('/es', home('es'))).toBe('/spanish')
+  })
+
   // @deprecated
   test('getResource', async () => {
     const mockPage = await getMockResource('node--page')
