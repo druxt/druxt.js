@@ -143,6 +143,32 @@ describe('DruxtEntityForm', () => {
     expect(wrapper.vm.$refs.title.errors.length).toBe(0)
   })
 
+  test('a new entity keeps an edit made while it is created', async () => {
+    const wrapper = await mountComponent({ type: 'node--page', langcode: 'en' })
+    wrapper.vm.model.attributes.title = 'Test'
+
+    // Created as Drupal answers, once the test lets it.
+    const client = wrapper.vm.$druxt
+    const createResource = client.createResource
+    let answer
+    client.createResource = (resource) => new Promise((resolve) => {
+      answer = () => resolve({ data: { data: { ...JSON.parse(JSON.stringify(resource)), id: 'new-page' } } })
+    })
+
+    let saving
+    try {
+      saving = wrapper.vm.onSubmit()
+      wrapper.vm.model = { ...wrapper.vm.model, attributes: { ...wrapper.vm.model.attributes, title: 'Edited while saving' } }
+      answer()
+      await saving
+    } finally {
+      client.createResource = createResource
+    }
+
+    expect(wrapper.vm.model.id).toBe('new-page')
+    expect(wrapper.vm.model.attributes.title).toBe('Edited while saving')
+  })
+
   test('network error', async () => {
     const wrapper = await mountComponent({ type: 'node--page' })
     wrapper.vm.model.attributes.title = 'Test'

@@ -168,9 +168,11 @@ export default {
         if (this.lang === lang) {
           // Take the answer as the model, with any edit made since the save
           // started. A model still in another language, after a language
-          // change and back, doesn't hold edits to this one.
+          // change and back, doesn't hold edits to this one. A new entity's
+          // form has no marker until its first save, and its model is in the
+          // form's language.
           const model = this.model
-          const inLang = this._druxtModelLang === lang
+          const inLang = this._druxtModelLang === undefined || this._druxtModelLang === lang
           this.setModelFromStore({ ...saved, included: model.included })
           if (inLang && this.pristineOf(model) !== this.pristineOf(sent)) {
             this.model = { ...withLaterEdits(saved, sent, model), included: model.included }
