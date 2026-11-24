@@ -386,12 +386,15 @@ export default {
     // well, and their own watchers fetch for that.
     if (!this.$isServer) {
       // The view's own fetch replaces its results when it bypasses the cache.
-      // That isn't a flush, so the watcher ignores changes while a fetch runs,
-      // and fetchData checks for a flush when the fetch ends.
+      // That isn't a flush, so a change while a fetch runs is checked again
+      // once the fetch settles, which Nuxt holds back for its fetch delay.
       const slot = () => [this.viewId, this.displayId, this.lang].join(':')
       this.$watch(() => [slot(), this.hasStoredResults], ([to, stored], [from, wasStored]) => {
-        if (this._fetchPromise) return
-        if (to === from && wasStored && !stored) this.fetchAgain()
+        if (to !== from || !wasStored || stored) return
+        if (!this._fetchPromise) return this.fetchAgain()
+        this._fetchPromise.then(() => {
+          if (slot() === to && !this.hasStoredResults) this.$fetch()
+        })
       })
     }
   },

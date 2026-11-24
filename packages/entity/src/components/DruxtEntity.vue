@@ -333,6 +333,17 @@ export default {
     },
 
     /**
+     * The JSON of entity data without its included resources, which is what
+     * an edit is compared with.
+     *
+     * @param {object} data - The JSON:API resource data.
+     * @return {string} The JSON.
+     */
+    pristineOf(data) {
+      return pristineOf(data)
+    },
+
+    /**
      * Keeps the JSON of the copy edits are compared with, on the instance and
      * outside `data`, so it stays out of the page payload.
      *
@@ -341,6 +352,9 @@ export default {
     setPristine(data) {
       this._druxtPristine = pristineOf(data)
       this._druxtPristineLang = this.lang
+      // The language the model is in, which a language change leaves behind
+      // until the next language loads.
+      this._druxtModelLang = this.lang
     },
 
     /**
@@ -362,6 +376,7 @@ export default {
       if (draft) {
         this._druxtPristine = draft.pristine
         this.model = draft.model
+        this._druxtModelLang = this.lang
       } else {
         this._druxtPristine = undefined
       }

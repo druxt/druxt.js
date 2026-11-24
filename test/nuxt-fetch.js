@@ -8,6 +8,17 @@ const Vue = require('vue').default || require('vue')
 // The fetches still running, so a test can wait for them.
 const inFlight = new Set()
 
+// How long a fetch stays running at the least, as Nuxt's `fetchDelay` keeps
+// it, 200 ms by default. Tests run without it unless they set one.
+let fetchDelay = 0
+
+/**
+ * Sets how long each fetch stays running at the least, as Nuxt's `fetchDelay`.
+ *
+ * @param {number} ms - The delay in milliseconds, 0 for none.
+ */
+const setFetchDelay = (ms) => { fetchDelay = ms }
+
 const NuxtFetch = {
   beforeCreate() {
     if (!this.$options.fetch) return
@@ -15,9 +26,14 @@ const NuxtFetch = {
     this.$fetch = () => {
       if (!this._fetchPromise) {
         this.$fetchState.pending = true
+        const start = Date.now()
         this._fetchPromise = Promise.resolve()
           .then(() => this.$options.fetch.call(this))
           .catch((err) => { this.$fetchState.error = err })
+          .then(() => {
+            const left = fetchDelay - (Date.now() - start)
+            if (left > 0) return new Promise((resolve) => setTimeout(resolve, left))
+          })
           .then(() => {
             this.$fetchState.pending = false
             inFlight.delete(this._fetchPromise)
@@ -51,4 +67,4 @@ const settle = async (localVue) => {
   throw new Error(`${inFlight.size} fetches still running after 20 rounds`)
 }
 
-module.exports = { NuxtFetch, inFlight, settle }
+module.exports = { NuxtFetch, inFlight, setFetchDelay, settle }

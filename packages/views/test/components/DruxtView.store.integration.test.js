@@ -11,7 +11,7 @@ import { DruxtViewsStore } from '../../src'
 import DruxtView from '../../src/components/DruxtView.vue'
 
 const { baseUrl, drupal } = require('../../../../test/drupal')
-const { NuxtFetch, settle } = require('../../../../test/nuxt-fetch')
+const { NuxtFetch, setFetchDelay, settle } = require('../../../../test/nuxt-fetch')
 
 // A mounted DruxtView and its rows follow the store (#1019), against the
 // mock's recipes view, with real DruxtEntity rows.
@@ -117,6 +117,35 @@ describe('DruxtView follows the store', () => {
     }
 
     expect(flushed).toBe(true)
+    expect(view.hasStoredResults).toBe(true)
+  })
+
+  test('a flush while a fetch waits out its delay fetches again', async () => {
+    const { localVue, store, view } = await mountView()
+    const before = resultsRequests()
+    const get = mockAxios.get.getMockImplementation()
+    let flushed = false
+    // Nuxt keeps a fetch running for at least its delay, 200 ms by default.
+    // This flush comes once the results are stored, before the delay ends.
+    mockAxios.get.mockImplementation(async (url, config) => {
+      const response = await get(url, config)
+      if (!flushed && decodeURIComponent(url).includes('/jsonapi/views/recipes/page_1')) {
+        flushed = true
+        setTimeout(() => lastStore.commit('druxt/views/flushResults', {}), 10)
+      }
+      return response
+    })
+    setFetchDelay(50)
+    try {
+      store.commit('druxt/views/flushResults', {})
+      await settle(localVue)
+    } finally {
+      setFetchDelay(0)
+      mockAxios.get.mockImplementation(get)
+    }
+
+    expect(flushed).toBe(true)
+    expect(resultsRequests()).toBe(before + 2)
     expect(view.hasStoredResults).toBe(true)
   })
 

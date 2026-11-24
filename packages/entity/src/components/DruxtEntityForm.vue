@@ -2,6 +2,26 @@
 import { default as DruxtEntity } from './DruxtEntity.vue'
 
 /**
+ * Saved resource data with the edits made to the model since it was sent, so
+ * an edit made while a save runs stays.
+ *
+ * @param {object} saved - The resource data Drupal returned.
+ * @param {object} sent - The model as it was sent.
+ * @param {object} model - The model now.
+ * @return {object} A copy of the saved data, with the fields edited since the save started taken from the model.
+ */
+const withLaterEdits = (saved, sent, model) => {
+  const data = JSON.parse(JSON.stringify(saved))
+  for (const part of ['attributes', 'relationships']) {
+    for (const [key, value] of Object.entries(model[part] || {})) {
+      if (JSON.stringify(value) === JSON.stringify((sent[part] || {})[key])) continue
+      data[part] = { ...(data[part] || {}), [key]: JSON.parse(JSON.stringify(value)) }
+    }
+  }
+  return data
+}
+
+/**
  * The DruxtEntityForm component renders a Drupal Content Entity edit form by
  * JSON:API resource type, UUID, view mode and schema type.
  *
@@ -111,6 +131,9 @@ export default {
      */
     async onSubmit() {
       if (this.submitting) return false
+      // After a language change, the model is the previous language's until
+      // this language loads, and saving it would write it to this one.
+      if (this._druxtModelLang !== undefined && this._druxtModelLang !== this.lang) return false
       this.submitting = true
 
       let method = 'createResource'
@@ -121,6 +144,8 @@ export default {
       // The language the form showed when it was submitted, which may change
       // while the request runs.
       const lang = this.lang
+      // The model as sent, to tell the edits made while the request runs.
+      const sent = JSON.parse(JSON.stringify(this.model))
 
       try {
         // The request goes to the form's language, where its answer is stored.
@@ -129,14 +154,29 @@ export default {
         // Store Drupal's answer, so every component showing the entity shows
         // what was saved.
         this.$store.commit('druxt/addResource', { resource: { ...this.response.data }, prefix: lang })
+        const stored = (((this.$store.state.druxt.resources[resource.type] || {})[resource.id] || {})[lang] || {}).data
+        const saved = stored || resource
         if (this.lang === lang) {
-          // Take the answer as the model.
-          const stored = (((this.$store.state.druxt.resources[resource.type] || {})[resource.id] || {})[lang] || {}).data
-          this.setModelFromStore({ ...(stored || resource), included: this.model.included })
-        } else if (this._druxtDrafts) {
-          // The form shows another language now: the saved language's edits
-          // are saved, so it shows what was saved when it comes back.
-          delete this._druxtDrafts[lang]
+          // Take the answer as the model, with any edit made since the save
+          // started.
+          const model = this.model
+          this.setModelFromStore({ ...saved, included: model.included })
+          if (this.pristineOf(model) !== this.pristineOf(sent)) {
+            this.model = { ...withLaterEdits(saved, sent, model), included: model.included }
+          }
+        } else if ((this._druxtDrafts || {})[lang]) {
+          // The form shows another language now. The saved language shows
+          // what was saved when it comes back, with any edit made since the
+          // save started.
+          const draft = this._druxtDrafts[lang]
+          if (this.pristineOf(draft.model) === this.pristineOf(sent)) {
+            delete this._druxtDrafts[lang]
+          } else {
+            this._druxtDrafts[lang] = {
+              model: { ...withLaterEdits(saved, sent, draft.model), included: draft.model.included },
+              pristine: this.pristineOf(saved),
+            }
+          }
         }
         this.$emit('submit', resource)
       } catch (err) {
