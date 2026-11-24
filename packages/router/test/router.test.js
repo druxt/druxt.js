@@ -266,6 +266,15 @@ describe('DruxtRouter', () => {
     expect(entity).toHaveProperty('type', mockPage.data.type)
   })
 
+  test('getRoute translates the path without its query or hash', async () => {
+    const route = await router.getRoute('/node/1?page=2&filter[type]=a#top')
+    expect(route).toHaveProperty('isHomePath', false)
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/router/translate-path?path=/node/1', expect.anything())
+
+    await router.getRoute('/?backend=drupal')
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/router/translate-path?path=/', expect.anything())
+  })
+
   test('getRoute', async () => {
     // Get the route of the homepage.
     let route = await router.getRoute('/')

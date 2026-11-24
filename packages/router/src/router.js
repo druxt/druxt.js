@@ -342,7 +342,8 @@ class DruxtRouter {
    */
   async getRoute (path = '/') {
     // @TODO - Add validation/error handling.
-    const url = `/router/translate-path?path=${path}`
+    // Only the path goes to Drupal. A query or hash isn't part of what it resolves, and would be read as the endpoint's own.
+    const url = `/router/translate-path?path=${String(path).split(/[?#]/)[0] || '/'}`
 
     const response = await this.druxt.get(url, {
       // Prevent invalid routes (404) from throwing validation errors.
