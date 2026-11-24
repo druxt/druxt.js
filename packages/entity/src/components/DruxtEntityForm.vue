@@ -13,6 +13,10 @@ import { default as DruxtEntity } from './DruxtEntity.vue'
 const withLaterEdits = (saved, sent, model) => {
   const data = JSON.parse(JSON.stringify(saved))
   for (const part of ['attributes', 'relationships']) {
+    // A field emptied since, which the field input handler removes.
+    for (const key of Object.keys(sent[part] || {})) {
+      if (!(key in (model[part] || {})) && data[part]) delete data[part][key]
+    }
     for (const [key, value] of Object.entries(model[part] || {})) {
       if (JSON.stringify(value) === JSON.stringify((sent[part] || {})[key])) continue
       data[part] = { ...(data[part] || {}), [key]: JSON.parse(JSON.stringify(value)) }
@@ -116,8 +120,13 @@ export default {
      * - Sets `model` back to the stored entity.
      * - Unsets `response` data.
      * - Emits `reset`.
+     *
+     * @return {(boolean|undefined)} `false` while the next language loads, as there is nothing of that language to reset to.
      */
     onReset() {
+      // Until this language loads, the entity falls back to the previous
+      // language's model, and resetting to it would label it this language.
+      if (this._druxtModelLang !== undefined && this._druxtModelLang !== this.lang) return false
       this.setModelFromStore(this.entity)
       this.response = undefined
       this.$emit('reset')
@@ -158,10 +167,12 @@ export default {
         const saved = stored || resource
         if (this.lang === lang) {
           // Take the answer as the model, with any edit made since the save
-          // started.
+          // started. A model still in another language, after a language
+          // change and back, doesn't hold edits to this one.
           const model = this.model
+          const inLang = this._druxtModelLang === lang
           this.setModelFromStore({ ...saved, included: model.included })
-          if (this.pristineOf(model) !== this.pristineOf(sent)) {
+          if (inLang && this.pristineOf(model) !== this.pristineOf(sent)) {
             this.model = { ...withLaterEdits(saved, sent, model), included: model.included }
           }
         } else if ((this._druxtDrafts || {})[lang]) {

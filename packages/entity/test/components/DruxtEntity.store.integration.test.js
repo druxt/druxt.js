@@ -524,6 +524,90 @@ describe('DruxtEntity renders from the store', () => {
       expect(form.dirty).toBe(true)
     })
 
+    test('a field cleared while a save runs stays cleared', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, form } = await mountForm()
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
+      const save = hold('patch', () => true)
+      let saving
+      try {
+        saving = form.onSubmit()
+        await save.hit
+        // As the field input handler does for an emptied field.
+        const attributes = { ...form.model.attributes }
+        delete attributes.title
+        form.model = { ...form.model, attributes }
+      } finally {
+        save.release()
+      }
+      await saving
+      await settle(localVue)
+
+      expect(form.response.data.data.attributes.title).toBe('Saved')
+      expect(titleOf(form)).toBeUndefined()
+      expect(form.dirty).toBe(true)
+    })
+
+    test("a save that returns while the form holds another language's model keeps that model out", async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, store: s } = setup({ fetch: false })
+      s.$druxt.settings = {}
+      store(s, pages[0], pages[0].attributes.title)
+      store(s, { ...pages[0], attributes: { ...pages[0].attributes, langcode: 'es' } }, 'En español', 'es')
+      const resources = s.state.druxt.resources['node--page'][pages[0].id]
+      const english = copy(resources.en.data)
+      const Hydrated = { extends: DruxtEntityForm, created() { this.model = copy(english) } }
+      const wrapper = mount(Hydrated, {
+        localVue,
+        store: s,
+        mocks: { ...mocks, $druxt: s.$druxt, $fetchState: { pending: false } },
+        propsData: { type: 'node--page', uuid: pages[0].id, langcode: 'en' },
+        stubs: ['DruxtDebug', 'DruxtEntityFormButtons'],
+      })
+      await localVue.nextTick()
+      const form = wrapper.vm
+
+      const save = hold('patch', () => true)
+      let saving
+      try {
+        saving = form.onSubmit()
+        await save.hit
+        // As the fetches do, with Spanish loaded and English not yet loaded
+        // again when the save returns.
+        await wrapper.setProps({ langcode: 'es' })
+        form.switchLanguage()
+        form.setModelFromStore(copy(resources.es.data))
+        await wrapper.setProps({ langcode: 'en' })
+        form.switchLanguage()
+      } finally {
+        save.release()
+      }
+      await saving
+
+      expect(form.model.attributes.langcode).toBe('en')
+      expect(titleOf(form)).toBe(english.attributes.title)
+      expect(form.dirty).toBe(false)
+    })
+
+    test('Reset while the next language loads leaves a save refused', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, root, form } = await mountForm()
+      const load = hold('get', (url) => url.includes('/es/jsonapi/') && url.includes(pages[0].id))
+      mockAxios.patch.mockClear()
+      try {
+        root.vm.langcode = 'es'
+        await load.hit
+        form.onReset()
+        expect(await form.onSubmit()).toBe(false)
+      } finally {
+        load.release()
+      }
+      await settle(localVue)
+
+      expect(mockAxios.patch).not.toHaveBeenCalled()
+      expect(form.model.attributes.langcode).toBe('es')
+    })
+
     test('a save reaches the store and the page', async () => {
       // umami's editor may edit any page.
       mockAxios.__signIn('editor')
