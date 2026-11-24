@@ -213,6 +213,21 @@ describe('getIndex', () => {
     expect(requested(calls)).toEqual(['GET /jsonapi'])
   })
 
+  // A link's path can start with two slashes. Cut to that, it would be a URL on the host `jsonapi`, and a request
+  // for it would leave the base URL.
+  it('keeps a link whose path has a doubled slash a path under the base URL', async () => {
+    const links = (href: string) => ({ status: 200, body: { links: { 'node--page': { href } } } })
+    for (const [base, href] of [
+      [BASE_URL, `${BASE_URL}//jsonapi/node/page`],
+      [BASE_URL, 'http://backend.internal//jsonapi/node/page'],
+      [`${BASE_URL}/drupal`, `${BASE_URL}/drupal//jsonapi/node/page`],
+    ] as const) {
+      const fetch = async () => new Response(JSON.stringify(links(href).body), { status: 200, headers: { 'content-type': 'application/vnd.api+json' } })
+      const index = await new DruxtClient(base, { fetch: fetch as never }).getIndex()
+      expect(index['node--page'], href).toEqual({ href: '/jsonapi/node/page' })
+    }
+  })
+
   it('shares one request between concurrent callers', async () => {
     const { fetch, calls } = drupal({ 'GET /jsonapi': index() })
     const client = new DruxtClient(BASE_URL, { fetch })

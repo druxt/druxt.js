@@ -24,12 +24,14 @@ export const indexPath = (href: string, baseUrl: string): string => {
   const base = new URL(`${baseUrl}/`, 'http://localhost')
   const link = new URL(href, base)
   const root = base.pathname
+  // A path that starts with two slashes would read as a URL on another host, so the cut path starts with one.
   if (link.pathname.startsWith(root) || `${link.pathname}/` === root) {
-    return `/${link.pathname.slice(root.length)}${link.search}`
+    return `/${link.pathname.slice(root.length).replace(/^\/+/, '')}${link.search}`
   }
 
   // The link is outside the base URL's path, so it keeps its own path on the base URL's host.
-  return `${/^https?:\/\//.test(baseUrl) ? base.origin : ''}${link.pathname}${link.search}`
+  const origin = /^https?:\/\//.test(baseUrl) ? base.origin : ''
+  return `${origin}${origin ? link.pathname : link.pathname.replace(/^\/+/, '/')}${link.search}`
 }
 
 /**
