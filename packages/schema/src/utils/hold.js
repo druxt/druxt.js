@@ -18,6 +18,18 @@ export const parseSchemaId = (id) => {
 }
 
 /**
+ * The langcode of a labels ID, `labels/<langcode>`, which names a language's translated field labels.
+ *
+ * @param {string} id - The labels ID.
+ *
+ * @returns {string|boolean} The langcode, or false for any other string.
+ */
+export const parseLabelsId = (id) => {
+  const match = /^labels\/([a-z]{2,3}(?:-[a-z0-9]+)*)$/i.exec(String(id))
+  return match ? match[1] : false
+}
+
+/**
  * A hold for schemas regenerated from one Drupal site, kept until the next cache clear.
  *
  * Each hold has its own schemas and generator, so refreshes for different sites

@@ -1,9 +1,10 @@
-import { parseSchemaId } from '../utils/hold'
+import { parseLabelsId, parseSchemaId } from '../utils/hold'
 
 /**
  * Server middleware that serves a schema regenerated from Drupal.
  *
- * Mounted at `/_druxt/schema`, it answers `GET /_druxt/schema/<id>`. It serves
+ * Mounted at `/_druxt/schema`, it answers `GET /_druxt/schema/<id>`, and `GET /_druxt/schema/labels%2F<langcode>` with a
+ * language's translated field labels. It serves
  * only what the build already puts in the browser bundle as schema files.
  *
  * @param {Function} getSchema - Returns a promise of the schema for an ID, or of false when there is none.
@@ -26,7 +27,7 @@ export const schemaHandler = (getSchema) => async (req, res) => {
   } catch (err) {
     id = ''
   }
-  if (!parseSchemaId(id)) {
+  if (!parseSchemaId(id) && !parseLabelsId(id)) {
     res.statusCode = 404
     return res.end()
   }

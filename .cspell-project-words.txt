@@ -266,3 +266,7 @@ demilestoned
 slurpfile
 retarget
 argjson
+Cuerpo
+Dificultad
+difícil
+Minutos

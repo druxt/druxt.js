@@ -83,4 +83,31 @@ describe('druxt-schema plugin template', () => {
     // With no default either, the load fails as a missing built file does.
     await expect(plugin({ refresh: true, server: true, files, hook: async () => false }).import('node--page--default--view')).rejects.toThrow('No Druxt schema')
   })
+  describe('labels', () => {
+    const spanish = { 'node--recipe': { field_difficulty: { label: 'Dificultad', description: null } } }
+
+    test('without refresh, the built labels file', async () => {
+      const druxtSchema = plugin({ refresh: false, files: { 'labels/es': spanish }, fetch: jest.fn() })
+      expect(await druxtSchema.labels('es')).toStrictEqual(spanish)
+    })
+
+    test('none for a language without a labels file', async () => {
+      const druxtSchema = plugin({ refresh: false, files: {}, fetch: jest.fn() })
+      expect(await druxtSchema.labels('en')).toStrictEqual({})
+    })
+
+    test('on the server, the held labels', async () => {
+      const hook = jest.fn(async (id) => (id === 'labels/es' ? { held: true } : null))
+      const druxtSchema = plugin({ refresh: true, server: true, files: { 'labels/es': spanish }, hook })
+      expect(await druxtSchema.labels('es')).toStrictEqual({ held: true })
+    })
+
+    test('in the browser, the server route', async () => {
+      const fetch = jest.fn(async (url) => (url === '/site/_druxt/schema/labels%2Fes'
+        ? { ok: true, json: async () => ({ route: true }) }
+        : { ok: false, status: 404, headers: { get: () => null } }))
+      const druxtSchema = plugin({ refresh: true, files: { 'labels/es': spanish }, fetch })
+      expect(await druxtSchema.labels('es')).toStrictEqual({ route: true })
+    })
+  })
 })

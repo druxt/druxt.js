@@ -51,4 +51,11 @@ describe('schemaHandler', () => {
     expect(failed.headers['X-Druxt-Schema']).toBe(undefined)
     expect(failed.headers['Cache-Control']).toBe('no-store')
   })
+  test('serves a language\'s labels', async () => {
+    const getSchemaById = jest.fn(async (id) => ({ id }))
+    const res = await request(schemaHandler(getSchemaById), `/${encodeURIComponent('labels/es')}`)
+
+    expect(res.statusCode).toBe(200)
+    expect(JSON.parse(res.body)).toStrictEqual({ id: 'labels/es' })
+  })
 })
