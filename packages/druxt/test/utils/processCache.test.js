@@ -73,16 +73,57 @@ describe('processCache', () => {
     expect(hasCredentials(intercepted(bearer, { fulfilled: async (config) => config }))).toBe(true)
   })
 
-  test('hasCredentials - an @nuxtjs/auth-next refresh interceptor leaves the cache on', () => {
+  // An instance with request interceptors, whose responses pass its watch.
+  const watched = (...handlers) => {
+    const instance = intercepted(...handlers)
+    const responses = []
+    instance.interceptors.response = { use: (ok, fail) => responses.push({ ok, fail }) }
+    watchCredentials(instance)
+    instance.respond = (headers = {}) => responses[0].ok({ config: { headers } })
+    instance.fail = (headers = {}) => responses[0].fail({ config: { headers } }).catch(() => {})
+    return instance
+  }
+
+  test('an @nuxtjs/auth-next refresh interceptor leaves the cache on once a response shows no credentials', () => {
     // auth-next adds an async request interceptor when $auth starts, on the
     // server too and whether or not anyone is signed in. Its token goes on the
     // defaults, which the cache reads already.
-    const refresh = async (config) => config
-    const instance = intercepted(refresh)
+    const instance = watched(async (config) => config)
+    expect(processCache('index', { axios: instance })).toBeNull()
+
+    instance.respond()
     expect(processCache('index', { axios: instance })).not.toBeNull()
 
     instance.defaults.headers.common.Authorization = 'Bearer token'
     expect(processCache('index', { axios: instance })).toBeNull()
+  })
+
+  test('a token an async interceptor adds is never served a cached response', () => {
+    // An anonymous request stores the page.
+    processCache('content', { axios: axios() }).set('page', 'anonymous', 60)
+
+    // The probe cannot run the interceptor, so the first request goes to Drupal, which shows the token.
+    const instance = watched(async (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } }))
+    expect(processCache('content', { axios: instance })).toBeNull()
+    instance.respond({ Authorization: 'Bearer token' })
+    expect(processCache('content', { axios: instance })).toBeNull()
+  })
+
+  test('an interceptor that returns a promise is treated as an async one', () => {
+    const instance = watched((config) => Promise.resolve(config))
+    expect(processCache('content', { axios: instance })).toBeNull()
+    // A failed response shows the request as sent too.
+    return instance.fail().then(() => {
+      expect(processCache('content', { axios: instance })).not.toBeNull()
+    })
+  })
+
+  test('an interceptor the probe runs leaves the cache on from the first request', () => {
+    expect(processCache('content', { axios: watched((config) => config) })).not.toBeNull()
+  })
+
+  test('an instance whose skipped interceptor has no watch never uses the cache', () => {
+    expect(processCache('content', { axios: intercepted(async (config) => config) })).toBeNull()
   })
 
   test('hasCredentials - an interceptor whose runWhen declines is skipped', () => {

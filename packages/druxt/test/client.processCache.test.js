@@ -32,6 +32,28 @@ describe('DruxtClient process cache', () => {
   })
   afterAll(() => { runtime.isServer = isServer })
 
+  test('a token an async interceptor adds is never served the anonymous copy', async () => {
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(1)
+
+    // The interceptor adds the token as the request leaves, where the probe can't see it.
+    const bearer = { Authorization: 'Bearer token' }
+    const signedIn = () => {
+      const instance = requestAxios({}, bearer)
+      const handlers = [{ fulfilled: async (config) => ({ ...config, headers: { ...config.headers, ...bearer } }) }]
+      instance.interceptors.request = { handlers, forEach: (fn) => handlers.forEach(fn) }
+      return instance
+    }
+    const instance = signedIn()
+    const client = new DruxtClient(baseUrl, { axios: instance, cache: {} })
+    await client.getIndex()
+    expect(indexCalls()).toBe(2)
+    // Once a response shows the token, the instance keeps away from the cache.
+    client.clearCache()
+    await client.getIndex()
+    expect(indexCalls()).toBe(3)
+  })
+
   test('never used in a browser', async () => {
     runtime.isServer = () => false
     await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()

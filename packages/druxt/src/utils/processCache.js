@@ -58,8 +58,10 @@ const jsonSize = (value) => {
   }
 }
 
-// Axios instances seen sending credentials, and the patterns watched on each.
+// Axios instances seen sending credentials, instances a response has passed the watch on, and the patterns watched
+// on each.
 const credentialed = new WeakSet()
+const seen = new WeakSet()
 const watched = new WeakMap()
 
 // Where the code runs. Tests replace isServer, as jsdom always has a window.
@@ -124,7 +126,27 @@ export const configHasCredentials = (config, sessionCookie = DRUPAL_SESSION_COOK
 export const hasCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE, url = '') => {
   if (!axios) return false
   if (credentialed.has(axios)) return true
-  return configHasCredentials(axios.defaults, sessionCookie) || interceptorsAddCredentials(axios, sessionCookie, url)
+  return configHasCredentials(axios.defaults, sessionCookie) || probeInterceptors(axios, sessionCookie, url).credentials
+}
+
+/**
+ * Whether the cache may be used for a request on an instance. The instance mustn't send credentials, as
+ * `hasCredentials` reads them. Nor may it have a request interceptor the probe passes over, such as an async one,
+ * until a response has passed the watch on the instance. That response shows the request as it went out. The
+ * interceptors run once.
+ *
+ * @param {object} axios - The Axios instance.
+ * @param {string} sessionCookie - A pattern for the session cookie name.
+ * @param {string} url - The URL of the request about to be made.
+ *
+ * @returns {boolean}
+ * @private
+ */
+const anonymous = (axios, sessionCookie = DRUPAL_SESSION_COOKIE, url = '') => {
+  if (!axios) return true
+  if (credentialed.has(axios) || configHasCredentials(axios.defaults, sessionCookie)) return false
+  const { credentials, skipped } = probeInterceptors(axios, sessionCookie, url)
+  return !credentials && !(skipped && !seen.has(axios))
 }
 
 /** Marks a probe config, so an interceptor can tell it from a request. */
@@ -214,11 +236,9 @@ const probeHeaders = (headers) => {
  *
  * The probe can't tell what an async function, a returned promise or a throw
  * would add, so it passes over each of those and goes on with the config it
- * has. An async function is never called, as running it may send requests of
- * its own. Credentials they add are seen by the response-side watch only when
- * a request goes out. On a cache hit none does, so a signed-in request can be
- * served an anonymous response. A site that adds a token that way sets it on
- * the defaults instead.
+ * has, and says it did. An async function is never called, as running it may
+ * send requests of its own. Only the response-side watch sees what they add,
+ * so the cache is withheld from the instance until a response has passed it.
  *
  * Counting them as credentials would turn the cache off for every visitor on a
  * site using @nuxtjs/auth-next, which adds an async interceptor to refresh
@@ -228,12 +248,12 @@ const probeHeaders = (headers) => {
  * @param {string} sessionCookie - A pattern for the session cookie name.
  * @param {string} url - The URL of the request about to be made.
  *
- * @returns {boolean}
+ * @returns {{credentials: boolean, skipped: boolean}} Whether they add credentials, and whether any was passed over.
  * @private
  */
-const interceptorsAddCredentials = (axios, sessionCookie, url) => {
+const probeInterceptors = (axios, sessionCookie, url) => {
   const manager = ((axios || {}).interceptors || {}).request
-  if (!manager || typeof manager.forEach !== 'function') return false
+  if (!manager || typeof manager.forEach !== 'function') return { credentials: false, skipped: false }
 
   const defaults = copy({ ...(axios.defaults || {}) })
   // Own properties only, so headers held in a class are copied too.
@@ -256,21 +276,27 @@ const interceptorsAddCredentials = (axios, sessionCookie, url) => {
     handlers.unshift(handler)
   })
 
+  let skipped = false
   for (const { fulfilled } of handlers) {
-    if (fulfilled.constructor && fulfilled.constructor.name === 'AsyncFunction') continue
+    if (fulfilled.constructor && fulfilled.constructor.name === 'AsyncFunction') {
+      skipped = true
+      continue
+    }
     let next
     try {
       next = fulfilled(config)
     } catch {
+      skipped = true
       continue
     }
     if (next && typeof next.then === 'function') {
       next.then(undefined, () => {})
+      skipped = true
       continue
     }
     if (next) config = next
   }
-  return configHasCredentials(config, sessionCookie)
+  return { credentials: configHasCredentials(config, sessionCookie), skipped }
 }
 
 /**
@@ -300,6 +326,7 @@ export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) =
   watched.set(axios, patterns)
 
   const mark = (config) => {
+    if (config) seen.add(axios)
     for (const pattern of patterns) {
       if (configHasCredentials(config, pattern)) {
         credentialed.add(axios)
@@ -371,7 +398,9 @@ export const parseCacheLifetime = (headers) => {
 /**
  * Get the process cache for a scope.
  *
- * Returns null in a browser or when the Axios instance sends credentials. An
+ * Returns null in a browser, when the Axios instance sends credentials, and
+ * when an interceptor the probe can't run may add them, until a response has
+ * shown that it doesn't. An
  * entry with no lifetime, such as a response Drupal marks `no-cache`, is never
  * stored. Each entry lives for the lifetime it is stored with, which comes from
  * the response's Cache-Control.
@@ -390,7 +419,7 @@ export const parseCacheLifetime = (headers) => {
  * @returns {?{get: Function, set: Function}}
  */
 export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize, url } = {}) => {
-  if (!runtime.isServer() || hasCredentials(axios, sessionCookie, url)) return null
+  if (!runtime.isServer() || !anonymous(axios, sessionCookie, url)) return null
 
   if (!scopes.has(scope)) scopes.set(scope, new Map())
   const consumers = scopes.get(scope)
