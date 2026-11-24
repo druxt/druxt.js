@@ -61,6 +61,17 @@ export default {
     },
 
     /**
+     * Whether the pager's links change the URL. With the view's `route`
+     * setting off, they change the page without navigating.
+     *
+     * @type {boolean}
+     */
+    route: {
+      type: Boolean,
+      default: true,
+    },
+
+    /**
      * The Pager type.
      *
      * @type {string}
@@ -187,30 +198,26 @@ export default {
      */
     slots(h) {
       const self = this
+      // A link to the page, or a button for a pager kept out of the URL.
+      const link = (target, label) => (self.route
+        ? h('NuxtLink', {
+          nativeOn: { click() { self.setPage(target) } },
+          props: { to: self.getRoute(target) },
+        }, [label])
+        : h('button', {
+          attrs: { type: 'button' },
+          on: { click() { self.setPage(target) } },
+        }, [label]))
       return {
         default: () => h('ul', [
           // Next.
           ((self.resource || {}).links || {}).prev && h('li', [
-            h('NuxtLink', {
-              nativeOn: {
-                click() {
-                  self.setPage(self.resource.links.prev)
-                },
-              },
-              props: { to: self.getRoute(self.resource.links.prev) },
-            }, [self.options.tags.previous]),
+            link(self.resource.links.prev, self.options.tags.previous),
           ]),
 
           // Previous.
           ((self.resource || {}).links || {}).next && h('li', [
-            h('NuxtLink', {
-              nativeOn: {
-                click() {
-                  self.setPage(self.resource.links.next)
-                },
-              },
-              props: { to: self.getRoute(self.resource.links.next) },
-            }, [self.options.tags.next]),
+            link(self.resource.links.next, self.options.tags.next),
           ]),
         ])
       }

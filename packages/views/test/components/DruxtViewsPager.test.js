@@ -90,6 +90,20 @@ describe('DruxtViewsPager', () => {
     ])
   })
 
+  test('a pager with the route setting off changes the page without navigating', async () => {
+    const wrapper = mountComponent({ type: 'test', route: false })
+    const link = { href: '?page=1' }
+    await wrapper.setProps({
+      options: { tags: { next: 'Next', previous: 'Previous' } },
+      resource: { links: { next: link } },
+    })
+    const next = wrapper.vm.getScopedSlots().default.call(wrapper.vm).children[0].children[0]
+    expect(next.tag).toBe('button')
+    expect(next.data.attrs.type).toBe('button')
+    next.data.on.click()
+    expect(wrapper.vm.model).toBe(1)
+  })
+
   test('a pager whose ID is not 0 reads and writes its own place in the page', () => {
     const mount = (query) => shallowMount(DruxtViewsPager, {
       localVue,

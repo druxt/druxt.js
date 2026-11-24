@@ -282,6 +282,14 @@ describe('DruxtView', () => {
     expect(mock.model.page).toStrictEqual(1)
   })
 
+  test('the pager gets the route setting', () => {
+    const h = jest.fn((tag, data) => data)
+    const mock = { component: { settings: { route: false } }, filters: [], headers: {}, model: { page: null }, results: [], showPager: true, viewId: 'test' }
+    expect(DruxtView.druxt.slots.call(mock, h).pager({}).props.route).toBe(false)
+    mock.component.settings = {}
+    expect(DruxtView.druxt.slots.call(mock, h).pager({}).props.route).toBe(true)
+  })
+
   test('error - missing required props', async () => {
     const wrapper = mountComponent({})
     await wrapper.vm.$options.fetch.call(wrapper.vm)

@@ -12,6 +12,8 @@ import DruxtViewsFilters from '../../src/components/DruxtViewsFilters.vue'
 import { DruxtViewsFilterMixin } from '../../src/mixins/filter'
 import { DruxtViewsFiltersMixin } from '../../src/mixins/filters'
 
+import mockAxios from 'jest-mock-axios'
+
 const { baseUrl, drupal } = require('../../../../test/drupal')
 
 // The path every recipes page_1 request goes to, with or without a langcode.
@@ -516,6 +518,21 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
         expect(wrapper.vm.model).toMatchObject({ filter: { difficulty: 'easy' }, page: 1 })
       })
 
+      test('a URL emptied elsewhere keeps the view\'s own values', async () => {
+        const { wrapper, setQuery, flush } = await mountView({ propsData: { ...recipes, settings: { route: false } } })
+        await flush()
+        setFilter(wrapper, 'easy')
+        await flush()
+        wrapper.vm.model.page = 1
+        await flush()
+
+        setQuery({ 'filter[other]': 'x' })
+        await flush()
+        setQuery({})
+        await flush()
+        expect(wrapper.vm.model).toStrictEqual({ filter: { difficulty: 'easy' }, page: 1, sort: null })
+      })
+
       test('in the Nuxt config, the URL is left alone', async () => {
         const { wrapper, router, flush } = await mountView({
           propsData: recipes,
@@ -585,6 +602,52 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       expect(route.query).toStrictEqual({ 'filter[difficulty]': 'easy' })
       expect(second.vm.model).toStrictEqual({ filter: {}, page: 1, sort: null })
     })
+  })
+
+  test('a display change takes what the new display owns of the URL', async () => {
+    // page_2 is page_1 with pager 1, as a second page display can be.
+    const get = mockAxios.get.getMockImplementation()
+    const urls = []
+    mockAxios.get.mockImplementation((url, config) => {
+      if (!decodeURIComponent(url).includes('/jsonapi/views/recipes/page_2')) return get(url, config)
+      urls.push(decodeURIComponent(url))
+      return get(url.replace('/page_2', '/page_1'), config)
+    })
+    try {
+      const { root, wrapper, flush } = await mountView({ propsData: recipes, query: { page: '3,2' } })
+      await flush()
+      expect(wrapper.vm.model.page).toBe(3)
+
+      Vue.set(wrapper.vm.view.data.attributes.display, 'page_2', { display_options: { pager: { options: { id: 1 } } } })
+      root.vm.props = { ...recipes, displayId: 'page_2' }
+      await flush()
+
+      expect(wrapper.vm.pagerId).toBe(1)
+      expect(wrapper.vm.model.page).toBe(2)
+      expect(urls[urls.length - 1]).toContain('page=0,2')
+    } finally {
+      mockAxios.get.mockImplementation(get)
+    }
+  })
+
+  test('clearing a filter while its URL write is pending leaves the URL clear', async () => {
+    const { wrapper, route, router, flush } = await mountView({ propsData: recipes })
+    await flush()
+    // Each navigation is held back, as an async guard holds it, and only the
+    // newest commits, since Vue Router cancels a pending one for a newer one.
+    const pending = []
+    router.replace.mockImplementation(({ query: to }) => new Promise((resolve) => {
+      pending.push(() => { route.query = to; resolve() })
+    }))
+
+    setFilter(wrapper, 'easy')
+    await flush()
+    setFilter(wrapper, undefined)
+    await flush()
+    pending[pending.length - 1]()
+    await flush()
+
+    expect(route.query).toStrictEqual({})
   })
 
   test('a view leaves the keys it does not own', async () => {

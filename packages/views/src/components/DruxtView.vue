@@ -370,9 +370,12 @@ export default {
       // the hash, so compare what the query holds.
       if (stringify(to || {}) === stringify(from || {})) return
 
+      // A view kept out of the URL keeps its own values, whatever the URL holds.
+      if ((this.component.settings || {}).route === false) return
+
       // Another view or a link changed the URL. A view that writes the URL
       // takes what it owns of it, such as a filter identifier it shares.
-      if ((this.component.settings || {}).route !== false && this.view) {
+      if (this.view) {
         if (this.applyRoute(to, true)) this.$fetch()
         return
       }
@@ -391,6 +394,11 @@ export default {
     },
 
     displayId() {
+      // Another display can own other parts of the URL, such as another
+      // pager's place in `page`.
+      if (((this.component || {}).settings || {}).route !== false && this.view && this.$route) {
+        this.applyRoute(this.$route.query)
+      }
       this.$fetch()
     },
 
@@ -551,8 +559,10 @@ export default {
         else if (sortIds.includes(current.sort)) delete query.sort
       }
 
+      // `$route` holds the query from before a pending write of the view's
+      // own. A query equal to it is written too, so it replaces that write.
       const sorted = { sort: (a, b) => a.localeCompare(b) }
-      if (stringify(query, sorted) === stringify(current, sorted)) return
+      if (this.routeQuery === undefined && stringify(query, sorted) === stringify(current, sorted)) return
       this.routeQuery = stringify(query)
       const navigation = this.$router.replace({ hash: this.$route.hash, query })
       // A newer navigation can cancel this one, which is not an error here.
@@ -881,6 +891,7 @@ export default {
           props: {
             count: this.count,
             resource: this.resource,
+            route: ((this.component || {}).settings || {}).route !== false,
             value: this.model.page,
             ...this.pager,
           }
