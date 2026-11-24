@@ -211,6 +211,23 @@ class DruxtRouter {
   }
 
   /**
+   * The language URL prefix a path starts with, from the `prefixes` option, or an empty string.
+   *
+   * @example @lang js
+   * // With the prefixes { en: '', es: 'spanish' }:
+   * router.pathPrefix('/spanish/recipes') // 'spanish'
+   * router.pathPrefix('/recipes') // ''
+   *
+   * @param {string} path - The path.
+   * @returns {string} The prefix.
+   */
+  pathPrefix (path) {
+    const prefixes = (this.druxt.options || {}).prefixes || this.options.prefixes || {}
+    const segment = String(path).split(/[/?#]/)[1] || ''
+    return segment && Object.values(prefixes).includes(segment) ? segment : ''
+  }
+
+  /**
    * Get redirect data for a given route.
    *
    * @example @lang js
@@ -344,7 +361,10 @@ class DruxtRouter {
    */
   async getRoute (path = '/') {
     // @TODO - Add validation/error handling.
-    const url = `/router/translate-path?path=${path}`
+    // Asked under the path's language prefix, as Decoupled Router resolves an unprefixed request in the default
+    // language. The path keeps its prefix, as Drupal reads it with one.
+    const prefix = this.pathPrefix(path)
+    const url = `${prefix ? `/${prefix}` : ''}/router/translate-path?path=${path}`
 
     const response = await this.druxt.get(url, {
       // Prevent invalid routes (404) from throwing validation errors.

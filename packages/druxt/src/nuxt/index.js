@@ -82,8 +82,11 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
         if (prefix) proxies[`/${prefix}${options.endpoint}`] = options.baseUrl
       }
 
-      // Decoupled Router Endpoint.
+      // Decoupled Router Endpoint, and under each language's prefix.
       proxies['/router/translate-path'] = options.baseUrl
+      for (const prefix of Object.values(options.prefixes || {})) {
+        if (prefix) proxies[`/${prefix}/router/translate-path`] = options.baseUrl
+      }
     }
 
     // Enable proxying of the Drupal site files.

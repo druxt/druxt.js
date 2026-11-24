@@ -163,7 +163,9 @@ describe('DruxtJS Nuxt module', () => {
       [`/en${options.endpoint}`]: options.baseUrl,
       [`/es${options.endpoint}`]: options.baseUrl,
       [options.endpoint]: options.baseUrl,
-      '/router/translate-path': options.baseUrl
+      '/router/translate-path': options.baseUrl,
+      '/en/router/translate-path': options.baseUrl,
+      '/es/router/translate-path': options.baseUrl
     })
   })
 
@@ -182,6 +184,7 @@ describe('DruxtJS Nuxt module', () => {
         '/jsonapi': site.baseUrl,
         '/spanish/jsonapi': site.baseUrl,
         '/router/translate-path': site.baseUrl,
+        '/spanish/router/translate-path': site.baseUrl,
       })
       const plugin = mock.addPlugin.mock.calls.find(([o]) => o.fileName === 'druxt.js')[0]
       expect(plugin.options.prefixes).toStrictEqual({ en: '', es: 'spanish' })
@@ -268,6 +271,8 @@ describe('DruxtJS Nuxt module', () => {
       `${options.baseUrl}/en${options.endpoint}`,
       `${options.baseUrl}/es${options.endpoint}`,
       `${options.baseUrl}/router/translate-path`,
+      `${options.baseUrl}/en/router/translate-path`,
+      `${options.baseUrl}/es/router/translate-path`,
     ])
 
     // Set object proxy settings.
@@ -283,7 +288,9 @@ describe('DruxtJS Nuxt module', () => {
       [`/en${options.endpoint}`]: options.baseUrl,
       [`/es${options.endpoint}`]: options.baseUrl,
       [options.endpoint]: options.baseUrl,
-      '/router/translate-path': options.baseUrl
+      '/router/translate-path': options.baseUrl,
+      '/en/router/translate-path': options.baseUrl,
+      '/es/router/translate-path': options.baseUrl
     })
   })
 
