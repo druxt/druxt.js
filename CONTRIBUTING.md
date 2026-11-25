@@ -35,7 +35,7 @@ The container covers package development, unit tests and linting. It does not pr
 2. Set up the development environment: `make setup` (enables corepack and installs dependencies)
 3. Build packages: `yarn build`
 4. Start a Drupal backend (PHP 8.3 + SQLite, no Docker): `cd examples/drupal && make build` (or `.devtools/assemble && .devtools/provision && .devtools/start`)
-5. Run the tests against it: `DRUXT_BASE_URL=http://127.0.0.1:8888 yarn test`
+5. Run the tests: `yarn test` doesn't need a backend, and the standalone tests run against it: `DRUXT_BASE_URL=http://127.0.0.1:8888 yarn test:standalone`
 
 > If `make` is not available, run `corepack enable && yarn install` manually instead of `make setup`. This project uses [Yarn](https://yarnpkg.com/) 4 via [corepack](https://nodejs.org/api/corepack.html), on Node 24.
 
@@ -200,10 +200,14 @@ In the comment, a lower number is an improvement. The counts are the same on eve
 
 ### Vitest
 
-Each module has a test that builds a real Nuxt 4 app with that module alone and renders Drupal content through it, so a module that only works when another installs it fails. The tests need a Drupal backend, such as `examples/drupal`:
+`yarn test` runs the unit and component tests, against a fake Drupal. It doesn't need a backend.
+
+Each module also has a standalone test that builds a real Nuxt 4 app with that module alone and renders Drupal content through it, so a module that only works when another installs it fails. The standalone tests need a Drupal backend, such as `examples/drupal`:
 
 ```sh
-DRUXT_BASE_URL=http://127.0.0.1:8888 yarn test
+DRUXT_BASE_URL=http://127.0.0.1:8888 yarn test:standalone
 ```
+
+On this branch `yarn test:standalone` runs only the backend's `/jsonapi` check, so a pass says the backend answers JSON:API, not that a module works alone. The module tests arrive with the packages.
 
 - For more details, refer to the [Vitest documentation](https://vitest.dev/guide/) and [Nuxt's testing guide](https://nuxt.com/docs/getting-started/testing).

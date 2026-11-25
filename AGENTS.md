@@ -71,12 +71,15 @@ when it is ported. Until then, its 1.x source stays in place, unbuilt.
 The full local verification gate, in order:
 
 ```bash
-yarn lint && yarn build && yarn test
+yarn lint && yarn build && yarn typecheck && yarn test
 ```
 
 - `yarn build`: every `@druxt/*` workspace, topologically. With no workspace
   yet it builds nothing.
-- `yarn test`: vitest. With no test file yet it passes with nothing to run.
+- `yarn typecheck`: vue-tsc over the sources, strict
+- `yarn test`: vitest's unit and component tests. It doesn't need a backend
+- `yarn test:standalone`: the standalone tests, against a Drupal at
+  `DRUXT_BASE_URL`, such as `examples/drupal`
 - `yarn lint`: eslint, `@nuxt/eslint-config`
 - `yarn lint:md` / `yarn lint:cspell` / `yarn lint:format`: markdownlint / cspell / prettier
 - `yarn lint:renovate`: validate `renovate.json`
@@ -234,9 +237,10 @@ stays as this repo's convention.) This is unrelated to commit-message
 
 GitHub Actions (`.github/workflows/ci.yml`) runs on Node 24, on a push to 2.0.x and on a pull
 request based on 2.0.x or on a 2.0.x feature branch. Its jobs are `lint`, `lint-markdown`,
-`lint-cspell`, `lint-knip`, `lint-changesets`, `lint-commits`, `test` (the unit tests, after
-`yarn build`) and `release-check` (the release script tests). GitLab CI (`.gitlab-ci.yml`) runs
-the same checks under its own job names, and adds the JSON, shell, YAML, prose and skills lints,
+`lint-cspell`, `lint-knip`, `lint-changesets`, `lint-commits`, `test` (the unit and component
+tests, after `yarn build`), `typecheck` and `release-check` (the release script tests). GitLab CI
+(`.gitlab-ci.yml`) runs the same checks under its own job names, and adds the standalone tests
+against the example Drupal backend, the JSON, shell, YAML, prose and skills lints,
 the dependency audit (`yarn npm audit`, blocking for production dependencies and reporting only
 for the full tree, for the reason given above `lint:dependency-audit`), gitleaks secret
 detection and the manual `vscode:tunnel` job. CodeQL (`.github/workflows/codeql-analysis.yml`)
@@ -250,8 +254,7 @@ Druxt stack, `/en`+`/es`, the examples' OAuth consumer). Its local/CI
 workflow is Docker-free: PHP's built-in server plus a throwaway SQLite
 database (`examples/drupal/.devtools/`, `make build`); a
 `examples/drupal/.ddev/config.yaml` provides the DDEV alternative locally. In CI the
-standalone tests, which the test harness adds, provision it the Docker-free way, pinned to
-PHP 8.3. `demo_umami` provisions
+`test:standalone` job provisions it the Docker-free way, pinned to PHP 8.3. `demo_umami` provisions
 its demo content in English and Spanish, and
 a standalone test of the compat example, which comes with the examples' port,
 renders the druxt-site example's English and Spanish front pages against this
