@@ -1,0 +1,551 @@
+/*
+ * Druxt's development stylesheet.
+ *
+ * It holds the tokens, the field, entity and form defaults, the inline create action and DruxtDebug. The DevTools
+ * tab styles itself, in its own shadow root.
+ *
+ * Core loads this file in development only, so a production build has none of it.
+ */
+
+/* The tokens have zero specificity, so a site's own :root wins in any order.
+
+   Each colour follows the page's colour scheme where it is used. It is light unless the page declares
+   color-scheme: dark, whatever the reader's system prefers. So the defaults never go dark on a light page. This is a
+   deviation from the design, which followed prefers-color-scheme. */
+:where(:root) {
+  --druxt-ink: light-dark(#16212b, #e5ecf1);
+  --druxt-surface: light-dark(#fff, #15202a);
+  --druxt-accent: light-dark(#1a6ca8, #3498db);
+  --druxt-danger: light-dark(#b3261e, #f2827a);
+  --druxt-success: light-dark(#0c7565, #3fbfa8);
+  --druxt-focus: var(--druxt-accent);
+  --druxt-space: .5rem;
+  --druxt-radius: 6px;
+  --druxt-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --druxt-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+/* Derived, private values: multiples of --druxt-space, the rule between values, a form control's edge and a
+   fieldset's line. The rule mixes currentColor where it is used, so it follows the site's own text colour. */
+:where(:root) {
+  --_1: calc(var(--druxt-space) * .5);
+  --_3: calc(var(--druxt-space) * 1.5);
+  --_4: calc(var(--druxt-space) * 2);
+  --_6: calc(var(--druxt-space) * 3);
+  --_rule: color-mix(in srgb, currentColor 20%, transparent);
+  --_edge: color-mix(in srgb, var(--druxt-ink) 55%, transparent);
+  --_line: color-mix(in srgb, var(--druxt-ink) 16%, transparent);
+}
+
+/*
+ * Field, entity and form defaults.
+ *
+ * Every rule sits in the "druxt" cascade layer. So any rule the site writes outside a layer wins, whatever its
+ * specificity or order.
+ *
+ * Field rules mix currentColor, not --druxt-ink, so rules and muted text follow the site's text colour. Links keep
+ * the site's own colours.
+ */
+@layer druxt {
+  /* A page that marks a dark theme with data-theme, on any ancestor, without declaring color-scheme itself. */
+  :is(.druxt-entity, .druxt-entity-form, .druxt-field):where([data-theme="dark"] *) { color-scheme: dark; }
+
+  /* Field label. A field has no wrapper, so its label opens the gap above the field. */
+
+  /* --above: its own line */
+  .druxt-field__label--above {
+    display: block;
+    margin-block: var(--_4) var(--_1);
+    font-weight: 600;
+  }
+
+  /* --inline: shares a line with the first value. The empty block starts a new line and opens the gap, even after
+     an inline value. */
+  .druxt-field__label--inline {
+    font-weight: 600;
+    margin-inline-end: var(--_1);
+  }
+  .druxt-field__label--inline::before {
+    content: "";
+    display: block;
+    margin-top: var(--_4);
+  }
+  .druxt-field__label--inline::after { content: ":"; }
+
+  /* --hidden: the first value opens the gap. The label's own rule is outside the layer, below. */
+  .druxt-field__label--hidden + :is(.druxt-field__item, .druxt-field__items) {
+    margin-top: var(--_4);
+  }
+
+  /* A multi-value field's list: no bullets, its items stacked as single values are. */
+  .druxt-field__items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Field item. One value per line. Short values sit beside an inline label. */
+  .druxt-field__item { display: block; }
+  .druxt-field__label--inline + .druxt-field__item:not(.druxt-field__item--text, .druxt-field__item--image, .druxt-field__item--reference),
+  .druxt-field__label--inline + .druxt-field__items > .druxt-field__item:first-child:not(.druxt-field__item--text, .druxt-field__item--image, .druxt-field__item--reference) {
+    display: inline;
+  }
+  /* The list shares the inline label's line, so its first value can. */
+  .druxt-field__label--inline + .druxt-field__items { display: inline; }
+
+  /* --multiple: a small gap between stacked values */
+  .druxt-field__item--multiple + .druxt-field__item--multiple {
+    margin-top: var(--_1);
+  }
+
+  /* --reference-label, --list: several values run on one line, separated by a dot. A single value stays a block, so
+     it never runs into the next field. */
+  .druxt-field__item--multiple:is(.druxt-field__item--reference-label, .druxt-field__item--list) { display: inline; }
+  .druxt-field__items:has(> :is(.druxt-field__item--reference-label, .druxt-field__item--list)) { display: inline; }
+  .druxt-field__item--multiple:is(.druxt-field__item--reference-label, .druxt-field__item--list) + .druxt-field__item--multiple::before {
+    content: "·";
+    display: inline-block; /* stops the link underline reaching the dot */
+    padding-inline: .45em;
+    opacity: .6;
+  }
+
+  /* --basic-string: multi-line plain text keeps its line breaks */
+  .druxt-field__item--basic-string { white-space: pre-line; }
+
+  /* --image, and images inside any value: never wider than the column */
+  .druxt-field__item img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* --text: Drupal's filtered HTML */
+  .druxt-field__item--text { max-width: 70ch; }
+  .druxt-field__item--text > :first-child { margin-top: 0; }
+  .druxt-field__item--text > :last-child { margin-bottom: 0; }
+  .druxt-field__item--text table { border-collapse: collapse; }
+  .druxt-field__item--text :is(th, td) {
+    padding: .375em 1.5em .375em 0;
+    border-bottom: 1px solid var(--_rule);
+    text-align: start;
+  }
+
+  /* --reference: a nested entity. Space around one, and a rule between several. */
+  .druxt-field__item--reference { margin-block: var(--_4); }
+  .druxt-field__item--reference + .druxt-field__item--reference {
+    padding-top: var(--_4);
+    border-top: 1px solid var(--_rule);
+  }
+
+  /* Entity. The label is h1 on a full page, and h2 in any other mode. */
+  .druxt-entity__label { margin: 0; }
+  /* No gap above an entity's first field */
+  .druxt-entity > :first-child,
+  .druxt-entity > :first-child + :is(.druxt-field__item, .druxt-field__items) { margin-top: 0; }
+  /* No gap above a standalone field's label or first value, as inside an entity */
+  .druxt-field--standalone > :first-child,
+  .druxt-field--standalone > :first-child + :is(.druxt-field__item, .druxt-field__items) { margin-top: 0; }
+  /* Entities in a row, such as a teaser list */
+  .druxt-entity + .druxt-entity {
+    margin-top: var(--_6);
+    padding-top: var(--_6);
+    border-top: 1px solid var(--_rule);
+  }
+
+  /* Focus: the one ring */
+  :is(.druxt-field__item, .druxt-field__item *, .druxt-entity-form *):focus-visible {
+    outline: 2px solid var(--druxt-focus);
+    outline-offset: 2px;
+  }
+
+  /* -- Form -- */
+
+  .druxt-entity-form { max-width: 40rem; }
+
+  /* Widget: one per field. A fieldset when it holds several controls */
+  .druxt-form__widget + .druxt-form__widget { margin-top: var(--_6); }
+  fieldset.druxt-form__widget {
+    margin: 0;
+    padding: var(--_3) var(--_4);
+    border: 1px solid var(--_line);
+    border-radius: var(--druxt-radius);
+  }
+
+  /* Label and legend. Labels inherit the site's font and colour */
+  .druxt-form__widget :is(label, legend) {
+    display: block;
+    margin-bottom: var(--_1);
+    font-weight: 600;
+  }
+  /* second label in a fieldset, such as the link widget's title */
+  fieldset.druxt-form__widget input + label { margin-top: var(--_4); }
+
+  /* Required: the control carries required, and the label shows a mark. Screen readers skip the mark, as they
+     announce "required" already. A fieldset's legend shows the mark for a required field of several values or
+     controls.
+
+     A deviation from the design: its checkbox selector, [type=checkbox]:required + label, is scoped to the checkbox
+     widget, so a site's own checkbox is never marked. */
+  :is(.druxt-form__widget label:has(+ :required), .druxt-form__widget--checkbox [type=checkbox]:required + label, fieldset.druxt-form__widget:has(> :required, > div > :required) > legend)::after {
+    content: " *" / "";
+    color: var(--druxt-danger);
+  }
+
+  /* Controls */
+  .druxt-entity-form :where(input:not([type=checkbox]), textarea, select) {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-height: 2.5rem;
+    padding: .5rem;
+    font: 1rem/1.4 var(--druxt-font);
+    color: var(--druxt-ink);
+    background: var(--druxt-surface);
+    border: 1px solid var(--_edge);
+    border-radius: var(--druxt-radius);
+  }
+  .druxt-entity-form textarea { min-height: 8rem; }
+
+  /* --checkbox: box before label, on one line */
+  .druxt-form__widget--checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--druxt-space);
+  }
+  .druxt-form__widget--checkbox input {
+    margin: 0;
+    accent-color: var(--druxt-accent);
+  }
+  .druxt-form__widget--checkbox label { margin: 0; }
+
+  /* --reference: the referenced entity's own form in a disclosure */
+  .druxt-form__widget details {
+    padding: 0 var(--_4);
+    border: 1px solid var(--_edge);
+    border-radius: var(--druxt-radius);
+  }
+  .druxt-form__widget summary {
+    padding-block: var(--_3);
+    font-weight: 600;
+  }
+  .druxt-form__widget details[open] { padding-bottom: var(--_4); }
+
+  /* --json: the fallback for widgets Druxt has no default for */
+  .druxt-form__widget--json textarea {
+    font-family: var(--druxt-mono);
+    font-size: .875rem;
+  }
+
+  /* Description, and the field error. The control points at both with aria-describedby. An invalid control has
+     aria-invalid="true". */
+  .druxt-form__description, .druxt-form__error {
+    margin-block: var(--_1) 0;
+    font-size: .875em;
+  }
+  .druxt-form__description { opacity: .8; }
+  .druxt-form__error {
+    color: var(--druxt-danger);
+    font-weight: 600;
+  }
+  .druxt-entity-form [aria-invalid=true] {
+    border-color: var(--druxt-danger);
+  }
+
+  /* Form error: a failure with no field, at the top, role="alert" */
+  .druxt-form__alert {
+    margin-bottom: var(--_6);
+    padding: var(--_3) var(--_4);
+    border: 2px solid var(--druxt-danger);
+    border-radius: var(--druxt-radius);
+  }
+
+  /* Buttons: Submit and Reset */
+  .druxt-entity-form > button {
+    min-height: 2.5rem;
+    margin: var(--_6) var(--druxt-space) 0 0;
+    padding: 0 var(--_4);
+    font: 600 1rem/1 var(--druxt-font);
+    color: var(--druxt-ink);
+    background: transparent;
+    border: 1px solid var(--_edge);
+    border-radius: var(--druxt-radius);
+  }
+  .druxt-entity-form > [type=submit] {
+    color: var(--druxt-surface);
+    background: var(--druxt-accent);
+    border-color: var(--druxt-accent);
+  }
+  /* Submitting: the form has aria-busy="true", both buttons are disabled */
+  .druxt-entity-form > button:disabled { opacity: .6; }
+
+  /* Status: always present beside the buttons, with role="status". So saving, saved and reset are announced, and
+     never move the layout. While submitting it reads "Saving…", with no spinner, so nothing animates. */
+  .druxt-form__status { line-height: 2.5rem; }
+  .druxt-form__status--saved {
+    color: var(--druxt-success);
+    font-weight: 600;
+  }
+}
+
+/* A hidden label stays for screen readers. Its rule is outside the layer, with its class's specificity. So no
+   layered rule can reveal it, and no site rule that only sets its display can either. */
+.druxt-field__label--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/*
+ * The tools.
+ *
+ * Every rule is scoped to a tool's own class. Each tool resets what a site commonly sets globally, so neither
+ * reaches the other. The derived values are private, and follow the tokens.
+ */
+.druxt-devel-template, .druxt-debug {
+  --_muted: color-mix(in srgb, var(--druxt-ink) 70%, transparent);
+  --_rule: color-mix(in srgb, var(--druxt-ink) 16%, transparent);
+  --_edge: color-mix(in srgb, var(--druxt-ink) 55%, transparent);
+  --_tint: color-mix(in srgb, var(--druxt-accent) 9%, var(--druxt-surface));
+  --_s: var(--druxt-space);
+  box-sizing: border-box;
+  color: var(--druxt-ink);
+  font: 13px/1.45 var(--druxt-font);
+  letter-spacing: normal;
+  text-align: left;
+  text-transform: none;
+  text-shadow: none;
+}
+:is(.druxt-devel-template, .druxt-debug) * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  max-width: none;
+}
+/* A site's generated content, such as a typography plugin's quotes and bullets, stays out. */
+:is(.druxt-devel-template, .druxt-debug) *::before,
+:is(.druxt-devel-template, .druxt-debug) *::after {
+  content: none;
+}
+:is(.druxt-devel-template, .druxt-debug) :where(button, select, input) {
+  appearance: none;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  min-height: 0;
+  border-radius: 0;
+  text-indent: 0;
+  cursor: pointer;
+}
+:is(.druxt-devel-template, .druxt-debug) :where(summary, ol, ul) {
+  list-style: none;
+}
+:is(.druxt-devel-template, .druxt-debug) summary::-webkit-details-marker {
+  display: none;
+}
+:is(.druxt-devel-template, .druxt-debug) a:any-link {
+  color: var(--druxt-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+:is(.druxt-devel-template, .druxt-debug) :where(svg) {
+  display: block;
+  flex: none;
+}
+
+/* The create action, inline in DruxtDebug. */
+.druxt-devel-template {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.druxt-devel-template__label {
+  font-size: 12px;
+  font-weight: 600;
+}
+.druxt-devel-template__row {
+  display: flex;
+  gap: 6px;
+}
+.druxt-devel-template__field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.druxt-devel-template__field svg {
+  position: absolute;
+  top: 9px;
+  right: var(--_s);
+  pointer-events: none;
+}
+.druxt-devel-template .druxt-devel-template__field select {
+  width: 100%;
+  height: 32px;
+  padding: 0 28px 0 10px;
+  overflow: hidden;
+  border: 1px solid var(--_edge);
+  border-radius: var(--druxt-radius);
+  background: var(--druxt-surface);
+  font: 12px var(--druxt-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.druxt-devel-template .druxt-devel-template__field select:disabled {
+  border-color: color-mix(in srgb, var(--druxt-ink) 30%, transparent);
+  color: var(--_muted);
+  cursor: default;
+}
+.druxt-devel-template :is(.druxt-devel-template__create, .druxt-devel-template__copy) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--druxt-radius);
+  line-height: 1;
+}
+.druxt-devel-template .druxt-devel-template__create {
+  height: 32px;
+  padding: 0 14px;
+  background: var(--druxt-accent);
+  color: var(--druxt-surface);
+  font-weight: 600;
+}
+.druxt-devel-template .druxt-devel-template__create:disabled {
+  padding: 0 12px;
+  background: color-mix(in srgb, var(--druxt-accent) 55%, var(--druxt-surface));
+  cursor: default;
+}
+.druxt-devel-template__preview {
+  padding: var(--_s) 10px;
+  border-radius: var(--druxt-radius);
+  background: var(--_tint);
+  font: 11.5px/1.55 var(--druxt-mono);
+}
+.druxt-devel-template__path {
+  margin-bottom: 4px;
+  color: var(--_muted);
+  overflow-wrap: anywhere;
+}
+.druxt-devel-template__preview pre {
+  max-height: 12em;
+  overflow: auto;
+  white-space: pre;
+}
+.druxt-devel-template__result {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+.druxt-devel-template__result svg {
+  margin-top: 1px;
+}
+.druxt-devel-template__result--done {
+  color: var(--druxt-success);
+}
+.druxt-devel-template__result--refused {
+  color: var(--druxt-danger);
+}
+.druxt-devel-template__then {
+  color: var(--druxt-ink);
+}
+.druxt-devel-template code {
+  font: 12px var(--druxt-mono);
+}
+.druxt-devel-template .druxt-devel-template__copy {
+  align-self: flex-start;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--_edge);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* DruxtDebug: inline in the page, so it sets its own font, colour, margin and background. */
+.druxt-debug {
+  display: block;
+  margin: calc(var(--_s) * 1.5) 0;
+  border: 1px dashed var(--druxt-accent);
+  border-radius: var(--druxt-radius);
+  background: var(--druxt-surface);
+  font: 12px/1.5 var(--druxt-mono);
+}
+.druxt-debug__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--_s);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.druxt-debug__title {
+  font-weight: 600;
+}
+.druxt-debug__meta {
+  margin-left: auto;
+  overflow: hidden;
+  color: var(--_muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.druxt-debug__body {
+  padding: var(--_s) calc(var(--_s) * 1.5);
+  border-top: 1px dashed color-mix(in srgb, var(--druxt-accent) 60%, transparent);
+  font-family: var(--druxt-font);
+}
+.druxt-debug__json {
+  padding: var(--_s) calc(var(--_s) * 1.5) 10px 32px;
+  overflow-x: auto;
+  border-top: 1px dashed color-mix(in srgb, var(--druxt-accent) 60%, transparent);
+  white-space: pre;
+}
+.druxt-debug__key, .druxt-debug__null {
+  color: var(--_muted);
+}
+.druxt-debug__string {
+  color: var(--druxt-success);
+}
+.druxt-debug__literal {
+  color: var(--druxt-accent);
+}
+.druxt-debug .druxt-debug__fold {
+  padding: 0 5px;
+  border: 1px solid var(--_edge);
+  border-radius: 4px;
+  color: var(--druxt-ink);
+}
+.druxt-debug .druxt-debug__fold--open {
+  padding: 0 2px;
+  border-color: transparent;
+}
+
+/*
+ * The one focus ring: 2px of surface, then 2px of focus, outside the control.
+ *
+ * It comes last, so it wins over each tool's own shadow. The outline shows in forced colours.
+ */
+:is(.druxt-devel-template, .druxt-debug) :focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 2px var(--druxt-surface), 0 0 0 4px var(--druxt-focus);
+}
+
+/* Motion, only for those who have not asked for less. */
+@media (prefers-reduced-motion: no-preference) {
+  .druxt-devel-template__spinner {
+    animation: druxt-devel-spin 0.8s linear infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .druxt-debug__chevron {
+    transition: none;
+  }
+}
+@keyframes druxt-devel-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}

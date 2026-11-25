@@ -27,6 +27,22 @@ afterAll(async () => {
 })
 
 describe('the core module', () => {
+  it('auto-imports the store, as it does every other Druxt composable', async () => {
+    const { imports } = await load()
+    expect(imports).toEqual(expect.arrayContaining(['useDruxtStore', 'useDruxtClient', 'useDruxtSettings', 'useDruxtModule']))
+  }, 120_000)
+
+  // A site's plugin calls defineDruxtClasses() as its README shows, and a module reads useDruxtAnchors().
+  it('auto-imports the class hook and the anchors state', async () => {
+    const { imports } = await load()
+    expect(imports).toEqual(expect.arrayContaining(['defineDruxtClasses', 'useDruxtClasses', 'useDruxtAnchors']))
+  }, 120_000)
+
+  it('auto-imports the languages, as it does the other runtime composables', async () => {
+    const { imports } = await load()
+    expect(imports).toEqual(expect.arrayContaining(['useDruxtLanguages', 'useDruxtFileUrl', 'useDruxtPageTitle', 'useDruxtDevtools']))
+  }, 120_000)
+
   it('registers the password route for password: true with no secret at build', async () => {
     const { routes, password } = await load({ clientId: 'site', password: true })
     expect(password).toBe(true)

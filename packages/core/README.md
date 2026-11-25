@@ -17,7 +17,7 @@ provides the three pieces the whole framework shares:
   configured from `druxt` and given to components by `useDruxtClient()`.
 - **[DruxtStore](#druxtstore)**: the Pinia store caching resources and
   collections for all modules, from `useDruxtStore()`.
-- **DruxtModule**: `useDruxtModule()`, the contract behind the
+- **[DruxtModule](#druxtmodule)**: `useDruxtModule()`, the contract behind the
   theme-component suggestion system.
 
 ## Installation
@@ -90,6 +90,8 @@ Translated routes also need a `decoupled_router` patch; see the
 | `proxy.files` | `boolean\|string` | `false`      | Proxy Drupal files. A string sets the site.                                          |
 | `cache`       | `boolean\|object` | `{}`         | The server cache, see below. `false` turns it off.                                   |
 | `siteUrl`     | `string`          | `''`         | The site's public origin, for its canonical link. Also `NUXT_PUBLIC_DRUXT_SITE_URL`. |
+| `classes`     | `boolean\|object` | `true`       | Which of Druxt's classes the default output has, see below.                          |
+| `anchors`     | `boolean\|'dev'`  | `'dev'`      | Whether the default output has its anchors, see below. Read at build.                |
 
 See the [Nuxt module API](https://druxtjs.org/api/packages/core/module) for the full
 options list.
@@ -118,6 +120,59 @@ if (settings.develMessages === 'inline') {
 `build.auth.clientSecret`, when written in `nuxt.config`, stays in the build-time options for the build client. Other modules can read it at build time, so prefer the `NUXT_DRUXT_BUILD_AUTH_CLIENT_SECRET` environment variable.
 
 A server route reads them with `useDruxtServerSettings(event)`, which adds the settings Drupal marks server only. A route that needs a secret reads the private `runtimeConfig.druxt`.
+
+### Classes
+
+`druxt.classes` decides which of Druxt's classes the default output has: `true` for every class, the default, `false` for none, or the parts and modifiers to keep, such as `{ items: false, modifiers: ['field'] }`. A plugin rewrites them with `defineDruxtClasses((classes, ctx) => classes)`, which runs on the server and in the browser alike, so it must return the same list for the same input. The entity module's README lists every class and the policy's parts. The naming rules and `resolveDruxtClasses()` are in `@druxt/core/classes`, which doesn't import a framework.
+
+### Anchors
+
+The default output names the entities and fields it renders with data attributes, for an inline editor, a diff view or the site's tests to find again. `@druxt/core/anchors` holds the contract, which doesn't import a framework:
+
+| Attribute             | Holds                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------- |
+| `data-druxt-entity`   | The entity's id, exactly as JSON:API returned it                                            |
+| `data-druxt-type`     | The resource type, such as `node--recipe`                                                   |
+| `data-druxt-langcode` | The entity's language, on an entity's root and a standalone field's, when Drupal returns it |
+| `data-druxt-field`    | The field's public name, on each item                                                       |
+| `data-druxt-delta`    | The item's index, on each item of a multi-value field                                       |
+
+`entityAnchors()` and `fieldAnchors()` write them, and `findAnchor()` finds an element again, or gives `null`, never an error, where there is nothing to search:
+
+```ts
+import { findAnchor } from '@druxt/core/anchors';
+
+const item = findAnchor(document, { entity: uuid, field: 'field_tags', delta: 1 });
+```
+
+`druxt.anchors` is `'dev'` by default: on in development, off in production. `true` turns them on everywhere, and `false` off everywhere. A module that needs them, such as an inline editor, turns them on in production with `requireDruxtAnchors()` from `@druxt/core/kit`:
+
+```ts
+import { requireDruxtAnchors } from '@druxt/core/kit';
+
+const anchors = requireDruxtAnchors(nuxt, {
+  module: '@druxt-contrib/fae',
+  reason: 'it finds the fields an editor edits',
+});
+nuxt.hook('modules:done', () => {
+  if (!anchors.enabled)
+    logger.warn('Front-end editing is off: this site turned Druxt anchors off.');
+});
+```
+
+A site that sets `anchors: false` keeps them off: explicit config wins over a module. The build then warns once for each requiring module, naming it and its reason. The state settles once every module is in, so the order modules run in does not matter. A module reads it in a `modules:done` hook, as above. The `druxt:anchors` hook receives it too, as `{ enabled, requiredBy, disabledBy }`. In the app, `useDruxtAnchors()` gives the same state, so a module can tell its users:
+
+```vue
+<script setup lang="ts">
+const { enabled } = useDruxtAnchors();
+</script>
+
+<template>
+  <p v-if="!enabled">Front-end editing is off because this site disabled Druxt anchors.</p>
+</template>
+```
+
+The Settings section of the development tools shows the state and the modules that required it. Drupal's settings cannot change it.
 
 ### Environment variables
 
@@ -149,9 +204,22 @@ With `proxy.api`, the browser reaches Drupal through the site's own origin: the 
 
 Behind a front proxy, such as a hosting platform's nginx, Drupal sees that proxy as every visitor, which its flood control counts as one. Set `proxy.trustForwarded`, or `NUXT_DRUXT_PROXY_TRUST_FORWARDED=true` at runtime, to pass the front proxy's headers on: the visitor's address is added to its `X-Forwarded-For` chain, and its `X-Forwarded-Host`, `X-Forwarded-Proto` and the other forwarding headers pass through. It is safe only when a front proxy the site trusts sets those headers on every request, since otherwise a browser can forge them. It is server only, in the private runtime config.
 
+Drupal gives a file's URL as a path on its own origin, such as `/sites/default/files/logo.png`. The default output resolves it with `resolveFileUrl()`, from `@druxt/core/files`, which doesn't import a framework:
+
+- With `proxy.files` on, a path in the proxied files directory stays on the site.
+- With it off, or for a path outside that directory, the path is made absolute on `druxt.filesUrl`, the origin Drupal's files are served from, such as a CDN's, or else on `druxt.baseUrl`. `NUXT_PUBLIC_DRUXT_FILES_URL` sets `filesUrl` at runtime.
+
+In development, a field notes a rewritten URL in the Druxt DevTools tab. A wrapper resolves a file URL the same way with `useDruxtFileUrl()`, which is auto-imported. `resolveFileUrlsInHtml(html, resolve)` resolves each `src` and `href` under `/sites/<site>/files/` or `/system/files/` inside markup, such as an editor's inline image, and leaves the rest byte for byte.
+
 Druxt's own server routes sit under `/api/_druxt`, such as `/api/_druxt/cache/clear` and `/api/_druxt/auth/token`, in Nitro's `/api` namespace. Many Drupal sites serve JSON:API at `/api`. Set `endpoint: '/api'` with `proxy.api` on, and the proxy takes `/api/**` while Druxt's routes and the site's own `server/api` routes answer first, so Drupal never sees them. A route answers only its own methods, so a request to a route of the site's, or of another module, with a method that route doesn't take goes through the proxy to Drupal, such as a `GET` to a `POST`-only `server/api/login.post.ts`. Only Druxt's own paths answer 404 for one. A JSON:API endpoint at or under `/api/_druxt`, with or without a language prefix, fails the build with `DRUXT_E01006`. Modules read the path from `DRUXT_API_BASE`, in `@druxt/core/routes` and `@druxt/core/kit`.
 
 The JSON:API is proxied under each language's URL prefix as Drupal is configured, such as `/english/jsonapi` for `en`. The build reads the prefixes from Drupal. The default language's comes from the unprefixed index and each other language's from a probe at its langcode. When the decoupled_settings module publishes `language.negotiation` to visitors, the build reads every prefix from it, which is the one way to learn a prefix that is neither. A default language with no prefix is served unprefixed. A prefix the build cannot read is taken to be the langcode, with a warning. When Drupal refuses a production build's read of the languages, such as with the wrong build credentials, the build stops with `DRUXT_E01008`, as the site would otherwise route and proxy only its default language. When Drupal doesn't answer, as in a build that can't reach it, the build warns once and goes on with none. So does any failure in development, so the site starts while Drupal is away. The proxy then serves only the unprefixed endpoint, and a request under a language prefix misses it until a build reads them. The prefixes are read at build, so rebuild after changing them in Drupal. The client gets the same map, so a module's language reaches Drupal under the prefix it is served at.
+
+In the app, `useDruxtLanguages()`, which is auto-imported, gives the same languages with their prefixes, and `defaultLangcode`, the language served with no prefix. It's `undefined` when every language has a prefix.
+
+```ts
+const { languages, defaultLangcode } = useDruxtLanguages();
+```
 
 ### Settings from Drupal
 
@@ -324,6 +392,260 @@ A module that has resources from a request of its own seeds the store with `addR
 - [DruxtStore API](https://druxtjs.org/api/packages/core/runtime/store): its state
   and actions.
 - [Deprecations](https://druxtjs.org/modules/druxt/deprecations): retired signatures.
+
+## DruxtModule
+
+A Druxt module turns a contract (wrapper candidates, data, props and slots)
+into themeable rendering, through `useDruxtModule(props, contract)`. Building
+one is covered by the
+[custom module tutorial](https://druxtjs.org/tutorials/first-custom-module), and the mechanism
+by [Component resolution](https://druxtjs.org/explanation/component-resolution).
+
+A module's name is what its wrapper candidates are built from. In
+`defineComponent()`, set `name` and return the render function from `setup()`:
+
+```ts
+export default defineComponent({
+  name: 'DruxtRecipes',
+  props: { ...druxtModuleProps, limit: Number },
+  emits: druxtModuleEmits,
+  setup(props) {
+    const recipes = ref([]);
+    return useDruxtModule(props, {
+      componentOptions: () => [['default']],
+      async fetchData(ctx) {
+        const query = { 'page[limit]': String(props.limit || 3) };
+        recipes.value = (
+          await ctx.client.getCollection('node--recipe', query, ctx.lang.value)
+        ).data;
+      },
+      propsData: () => ({ recipes: recipes.value }),
+      state: { recipes },
+      watch: () => [props.limit],
+    });
+  },
+});
+```
+
+In `<script setup>`, the name comes from the file name, so set
+`defineOptions({ name: 'DruxtRecipes' })` unless the file name is the full
+module name. Nuxt names `components/druxt/Recipes.vue` `DruxtRecipes`, but the
+file gives `Recipes`, and development warns about the difference. Render the
+render function as a component:
+
+```vue
+<script setup lang="ts">
+const props = defineProps(druxtModuleProps);
+defineEmits(druxtModuleEmits);
+const Module = useDruxtModule(props, { componentOptions: () => [['default']] });
+</script>
+
+<template>
+  <Module />
+</template>
+```
+
+A `<script setup>` module passes only `class`, `style` and listeners through to
+its wrapper. A `defineComponent()` module passes its other attributes too, such
+as `id` and `data-*`.
+
+A wrapper, the component a module resolves and hands its data, is an ordinary
+component, and `<script setup>` suits it.
+
+A wrapper with no root element of its own, as Druxt's bundled block wrappers
+are, declares `druxtRootless: true`. The module then renders its element around
+the wrapper, and puts its classes and anchors, and a class the site sets, on
+that one element. A contract hook reads the wrapper the module resolved from
+`ctx.wrapper`.
+
+A module's `state` holds references into the stores, such as a menu's store
+key, never values that depend on the page's route. Under shared prerender data
+another page reads the same entry, which a server's read again on a miss
+leaves as it was.
+
+A module with nothing to render says so through its contract's `empty()`
+hook, from its data, such as a menu with no links. While the hook answers
+`true`, the module renders no wrapper and no element, even for a class the site
+set on it. A default slot the site passes still renders, with the module's
+props, so the slot decides what an empty state shows.
+
+The page renders one `h1`. A component that renders the page's title calls
+`useDruxtPageTitle()` in `setup()` and renders the `h1` only while
+`claim(owner)` answers `true`. The first claim on a page wins, so the page
+title block and the route's full-mode `DruxtEntity` never both render one. When
+the route names an entity, only that entity claims it. On a route with none,
+the first full `DruxtEntity` does, unless its `page-title` is `false`. A
+claimant claims for its own page's route, and lets the claim go when it
+unmounts or is deactivated, so a functional component can't be one.
+
+Druxt's components that render on nearly every page, `Druxt`,
+`DruxtWrapper`, `DruxtRouter`, `DruxtEntity` and `DruxtField`, register
+globally and sync. The rest, such as `DruxtDebug`, `DruxtEntityForm` and
+`DruxtAuthLogin`, register globally and lazily, as a site's own `Druxt*`
+components do, so each loads with the page that uses it, and still resolves by
+name. A module
+renders its default output in place, as `DruxtWrapper` rendered it, when the
+site gives it neither a wrapper nor attributes and it has no root attributes of
+its own. The markup is the same either way.
+
+The hooks run outside the Nuxt context once they await, so a composable such as
+`useDruxtClient()` throws there. Use `ctx.client`, `ctx.store` and `ctx.lang`,
+or read anything else in `setup()` first.
+
+Every instance with the same inputs shares one request and one payload entry,
+and each renders all of it. A hook sets its data on the refs in `state`, and an
+instance that did not fetch gets them restored, then `restore()` called.
+
+Core runs `fetchData` whether or not the parent gives a model through
+`v-model`. Skipping the fetch when the parent gives one is the module's
+choice. Keep what the module set itself, so its own model is not read back as
+the parent's:
+
+```ts
+let fetched: unknown;
+const given = ref(0);
+watch(
+  () => props.modelValue,
+  (value) => {
+    if (value && toRaw(value) !== toRaw(fetched)) given.value++;
+  },
+);
+
+return useDruxtModule(props, {
+  async fetchData(ctx) {
+    const value = ctx.model.value;
+    if (value && toRaw(value) !== toRaw(fetched)) {
+      item.value = value; // Given by the parent: no request.
+      return;
+    }
+    item.value = fetched = await load(ctx);
+    ctx.model.value = item.value;
+  },
+  restore(ctx) {
+    const own = !ctx.model.value || toRaw(ctx.model.value) === toRaw(fetched);
+    fetched = item.value;
+    if (own) ctx.model.value = item.value;
+  },
+  state: { item },
+  watch: () => [props.id, given.value],
+});
+```
+
+During a server render, a parent bound to an empty ref sees the model only
+after its next render, which never comes on the server. Render the module's
+data through its wrapper or `ctx`, not the parent's own markup.
+
+- [DruxtModule API](https://druxtjs.org/api/packages/core/runtime/useDruxtModule).
+
+## Development tools
+
+Add the tools as a dev dependency:
+
+```sh
+npm install --save-dev @druxt/devtools
+```
+
+With it installed, Druxt adds a Druxt tab to Nuxt DevTools. Its sections are
+Missing wrappers, Quiet errors, Modules, Requests and Settings. A module that
+rendered Druxt's default output is listed with the wrapper names it looked for,
+and the tab offers to create one, on localhost only. Vue DevTools gets a Druxt
+inspector of the page's modules and a Druxt requests timeline layer. The
+console prints a summary when the page settles. Nothing is added to the page,
+and a production build has none of it.
+
+The Druxt tab is one of Nuxt DevTools' app tabs. When the window is too short
+for every tab, it moves to the overflow menu at the bottom of the sidebar. Pin
+it under Nuxt DevTools' Settings > Tabs to keep it at the top, or make the
+sidebar scrollable under Settings > Appearance.
+
+Without it, development prints one line saying so, and nothing else changes.
+The Nuxt DevTools tab also needs `@nuxt/devtools-kit`, and Vue DevTools needs
+`@vue/devtools-api`. Nuxt and Vue Router install both, and development says
+which is missing when Nuxt DevTools is on.
+
+All three are optional peer dependencies of `@druxt/core`. With pnpm's strict
+layout, core finds one only when the site lists it, so add each to the site's
+own dev dependencies rather than relying on another package to bring it.
+
+Set `develMessages: 'inline'` for 1.x's inline messages in the page instead.
+
+The tab is a `<druxt-devtools>` custom element, fed by a model with no Vue or
+Nuxt dependency, both in `@druxt/devtools`.
+
+### Extending the tools from a module
+
+A Druxt module adds its own section, timeline events and actions to the tools
+with `useDruxtDevtools()`, from a client plugin it registers with
+`addDruxtDevtoolsPlugin()` from `@druxt/core/kit`. The plugin is registered in
+development only, and every call does nothing without the tools, so a module
+never imports `@druxt/devtools` and never checks for it.
+
+- `section({ id, label }, provider)` adds a tab in Nuxt DevTools, a node in Vue
+  DevTools' Druxt inspector and lines in the console summary. The provider
+  returns data, never markup: `pairs` (keys and values), `table` (columns and
+  rows) and `tree` (any JSON value). It is read again on each page and as
+  modules report, or on `refresh()`.
+- `event(label, detail)` adds an event to the timeline beside the requests.
+- `action({ id, label, section }, handler)` offers a button whose handler runs
+  in the app.
+- `note()` and `removeNote()` add and clear a note on a module, as
+  `addModuleNote()` and `removeModuleNote()` do.
+
+The router's Route section is built this way:
+
+```ts
+// In the module's setup.
+addDruxtDevtoolsPlugin(nuxt, await resolvePath(resolve('./runtime/plugins/devtools')));
+```
+
+```ts
+// runtime/plugins/devtools.ts
+export default defineNuxtPlugin(() => {
+  const route = useRoute();
+  const store = useDruxtRouterStore();
+  const section = useDruxtDevtools().section({ id: 'route', label: 'Route' }, () => [
+    {
+      type: 'pairs',
+      items: {
+        path: route.path,
+        'entity type': store.route.props?.type ?? '',
+        'entity uuid': store.route.entity?.uuid ?? '',
+        // The URL's language prefix: empty for the unprefixed default language.
+        'language prefix': route.meta.langcode ?? '',
+      },
+    },
+  ]);
+  watch(
+    () => [route.path, route.meta.langcode, store.route],
+    () => section.refresh(),
+    { deep: true },
+  );
+});
+```
+
+## Error codes
+
+A development error Druxt reports names its code, `DRUXT_E` and five digits, so it can be found here. Each package has a code space of its own, its first two digits:
+
+| Package             | Codes |
+| ------------------- | ----- |
+| `@druxt/core`       | 01xxx |
+| `@druxt/schema`     | 02xxx |
+| `@druxt/router`     | 03xxx |
+| `@druxt/entity`     | 04xxx |
+| `@druxt/views`      | 05xxx |
+| Druxt auth          | 06xxx |
+| `@druxt/devtools`   | 07xxx |
+| `@druxt/blocks`     | 08xxx |
+| `@druxt/menu`       | 09xxx |
+| `@druxt/breadcrumb` | 10xxx |
+
+| Code           | Meaning and what to do                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `DRUXT_E01001` | Drupal omitted resources of a type from a response, quoting its reason, such as missing permissions, so what renders from it is incomplete. Read it as a user who may see them, such as through the server client with the build credentials. In development, the Druxt DevTools tab marks the request as partial.                                                                                                                               |
+| `DRUXT_E01004` | Browser sign-in is on, with `druxt.auth`, and `druxt.auth.scope` is empty. On Simple OAuth 6 a token holds only the roles its scopes name, so a signed-in editor reads less than an anonymous visitor. Set `druxt.auth.scope` to the scopes of the roles your editors need. In development, the Druxt DevTools tab names a read the scope refused.                                                                                               |
+| `DRUXT_E01006` | The build stopped, as `druxt.endpoint`, with or without a language prefix, is at or under `/api/_druxt`, where Druxt's own server routes are, or `druxt.proxy.files` overlaps it. Set `druxt.endpoint` to the path Drupal serves JSON:API at, such as `/jsonapi` or `/api`, outside `/api/_druxt`.                                                                                                                                               |
+| `DRUXT_E01007` | The token route refused a sign-in, or ended a session on a refresh, as Drupal's access or refresh token would make its cookie larger than the 4096 bytes a browser keeps of one cookie, which the browser would drop. It answers 502, and the browser is signed out. The server's log names the token and its size, never its value. Give the Simple OAuth token fewer scopes or shorter-lived claims, or sign it with a smaller key, in Drupal. |
 
 ## Where to go next
 
