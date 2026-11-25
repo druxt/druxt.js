@@ -454,6 +454,39 @@ test:unit:
     - yarn vitest run --project unit --project nuxt
     - section_end "unit"
 
+# The same tests on the lowest Nuxt the packages declare, so that floor stays
+# true. scripts/nuxt-floor.mjs reads it from @druxt/core's @nuxt/kit range and
+# pins nuxt, its kit, schema and vite builder, and vite, through resolutions.
+# The lockfile changes, so the install is mutable, and the job only pulls the
+# shared cache: its node_modules must never reach the other jobs.
+test:nuxt-floor:
+  extends: .node
+  stage: test
+  interruptible: true
+  needs: []
+  variables:
+    YARN_ENABLE_IMMUTABLE_INSTALLS: 'false'
+  cache:
+    - key:
+        files:
+          - yarn.lock
+        prefix: node-24.18.0
+      paths:
+        - .yarn/cache/
+        - node_modules/
+      policy: pull
+  script:
+    - section_start "floor" "Running the unit tests on the Nuxt floor"
+    - corepack enable
+    - node scripts/nuxt-floor.mjs
+    - yarn install
+    - yarn dedupe
+    # Fails unless nuxt, its kit and its schema are installed at exactly the floor.
+    - node scripts/nuxt-floor.mjs --check
+    - yarn build
+    - yarn vitest run --project unit --project nuxt
+    - section_end "floor"
+
 # Rehearses a release up to the publish: cut a snapshot, build it, and run
 # the pre-publish gate against npm.
 test:release:
@@ -557,22 +590,21 @@ test:release:
       curl -fsS "http://${WEBSERVER_HOST}:${WEBSERVER_PORT}/" >/dev/null
     - section_end "backend"
 
-# The sources against Nuxt's generated types. The typecheck app lists no
-# module yet, so this checks packages/client, the test harness and the
-# configs; the core port adds @druxt/core, whose dist preparing the app then
-# loads, which is why the packages build first. The consumer check against the
-# built declarations, typecheck:dist, returns with the packages.
+# The sources against Nuxt's generated types, then a consumer against the
+# built declarations, so a broken package export fails here. Built first:
+# preparing the typecheck app loads the modules from their dist.
 test:typecheck:
   extends: .node
   stage: test
   interruptible: true
   needs: []
   script:
-    - section_start "typecheck" "Typechecking the sources"
+    - section_start "typecheck" "Typechecking the sources and the built packages"
     - corepack enable
     - yarn install --immutable
     - yarn build
     - yarn typecheck
+    - yarn typecheck:dist
     - section_end "typecheck"
 
 # The standalone suite against the provisioned backend. For now it holds one

@@ -9,12 +9,13 @@
 #
 # It mirrors the GitLab jobs of the same names in .gitlab-ci.yml that apply on
 # GitHub: lint:js, lint:markdown, lint:cspell, lint:knip, lint:commits,
-# test:unit, test:typecheck and test:release. Secret detection, the dependency
-# audit and the preview jobs stay on GitLab. Only the release script tests of
-# test:release run here; its rehearsal half (snapshot version, build,
-# release:check) returns with the packages. test:standalone waits for a
-# backend this workflow can start, the mock-backed standalone suite. Later
-# changes on this line add the jobs for tools this tree does not have yet.
+# test:unit, test:nuxt-floor, test:typecheck and test:release. Secret
+# detection, the dependency audit and the preview jobs stay on GitLab. Only the
+# release script tests of test:release run here; its rehearsal half (snapshot
+# version, build, release:check) returns with the packages. test:standalone
+# waits for a backend this workflow can start, the mock-backed standalone
+# suite. Later changes on this line add the jobs for tools this tree does not
+# have yet.
 #
 # lint-commits runs the GitLab job's commands: the identity check, and
 # commitlint under the base tip's commitlint.config.js, so a pull request
@@ -103,6 +104,8 @@ jobs:
           cache: yarn
           cache-dependency-path: yarn.lock
       - run: yarn install --immutable
+      # Knip loads the component tests' app, which loads @druxt/core from its dist.
+      - run: yarn build
       - run: yarn lint:knip
 
   lint-changesets:
@@ -195,6 +198,29 @@ jobs:
       # The unit and component projects: the standalone one needs a Drupal backend.
       - run: yarn vitest run --project unit --project nuxt
 
+  nuxt-floor:
+    name: Test (unit, Nuxt floor)
+    runs-on: ubuntu-latest
+    # scripts/nuxt-floor.mjs changes the lockfile, so the install is mutable,
+    # and nothing is cached: its node_modules must never reach the other jobs.
+    env:
+      YARN_ENABLE_IMMUTABLE_INSTALLS: 'false'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: node scripts/nuxt-floor.mjs
+      - run: yarn install
+      - run: yarn dedupe
+      # Fails unless nuxt, its kit and its schema are installed at exactly the floor.
+      - run: node scripts/nuxt-floor.mjs --check
+      - run: yarn build
+      - run: yarn vitest run --project unit --project nuxt
+
   typecheck:
     name: Test (typecheck)
     runs-on: ubuntu-latest
@@ -211,6 +237,7 @@ jobs:
       - run: yarn install --immutable
       - run: yarn build
       - run: yarn typecheck
+      - run: yarn typecheck:dist
 
   release-check:
     name: Test (release scripts)

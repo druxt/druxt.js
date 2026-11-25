@@ -1,0 +1,33 @@
+{
+  "name": "@druxt/devtools",
+  "version": "2.0.0-alpha.0",
+  "private": true,
+  "description": "The Druxt development tools: a framework-free model, console summary and <druxt-devtools> element that Nuxt DevTools, Vue DevTools or any host can embed.",
+  "type": "module",
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0 || >=26.0.0"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js",
+    "directory": "packages/devtools"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "unbuild": "^3.6.1"
+  }
+}

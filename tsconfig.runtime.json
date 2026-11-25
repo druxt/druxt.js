@@ -7,5 +7,12 @@
     // Typecheck the sources, not the built packages.
     "customConditions": ["source"]
   },
-  "include": ["./test/types/.nuxt/nuxt.d.ts", "./packages/client/src/**/*.ts"]
+  "include": [
+    "./test/types/.nuxt/nuxt.d.ts",
+    "./packages/client/src/**/*.ts",
+    "./packages/*/src/runtime/**/*",
+    // The framework-free subpaths, @druxt/core/anchors and @druxt/core/routes.
+    "./packages/core/src/anchors/**/*",
+    "./packages/core/src/routes/**/*"
+  ]
 }

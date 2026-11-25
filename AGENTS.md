@@ -74,9 +74,9 @@ The full local verification gate, in order:
 yarn lint && yarn build && yarn typecheck && yarn test
 ```
 
-- `yarn build`: every `@druxt/*` workspace, topologically. With no workspace
-  yet it builds nothing.
-- `yarn typecheck`: vue-tsc over the sources, strict
+- `yarn build`: every `@druxt/*` workspace, topologically
+- `yarn typecheck`: vue-tsc over the sources and the unit and component
+  tests (`test/unit` and `test/nuxt`), strict
 - `yarn test`: vitest's unit and component tests. It doesn't need a backend
 - `yarn test:standalone`: the standalone tests, against a Drupal at
   `DRUXT_BASE_URL`, such as `examples/drupal`
@@ -128,7 +128,9 @@ A `@param` that exists but says nothing is strictly worse than a missing
 one - it looks intentional and finished when it isn't.
 
 If a param is legitimately hard to give a real one-line description, prefer a
-type alias or interface over a half-documented inline breakdown. Consistency matters here more than most repos: the docs
+type alias or interface (see `DruxtModuleSettings` and siblings in
+`packages/core/src/runtime/types.ts`) over a half-documented
+inline breakdown. Consistency matters here more than most repos: the docs
 site is the entire public-facing reference for the framework.
 
 ## Skills
@@ -253,9 +255,11 @@ stays as this repo's convention.) This is unrelated to commit-message
 GitHub Actions (`.github/workflows/ci.yml`) runs on Node 24, on a push to 2.0.x and on a pull
 request based on 2.0.x or on a 2.0.x feature branch. Its jobs are `lint`, `lint-markdown`,
 `lint-cspell`, `lint-knip`, `lint-changesets`, `lint-commits`, `test` (the unit and component
-tests, after `yarn build`), `typecheck` and `release-check` (the release script tests). GitLab CI
-(`.gitlab-ci.yml`) runs the same checks under its own job names, and adds the standalone tests
-against the example Drupal backend, the JSON, shell, YAML, prose and skills lints,
+tests, after `yarn build`), `nuxt-floor` (the same tests on the lowest Nuxt the packages declare),
+`typecheck` (the sources, then the built packages' declarations with `yarn typecheck:dist`) and
+`release-check` (the release script tests). GitLab CI (`.gitlab-ci.yml`) runs the same checks under
+its own job names, and adds the standalone tests against the example Drupal backend,
+the JSON, shell, YAML, prose and skills lints,
 the dependency audit (`yarn npm audit`, blocking for production dependencies and reporting only
 for the full tree, for the reason given above `lint:dependency-audit`), gitleaks secret
 detection and the manual `vscode:tunnel` job. CodeQL (`.github/workflows/codeql-analysis.yml`)

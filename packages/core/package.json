@@ -1,0 +1,86 @@
+{
+  "name": "@druxt/core",
+  "version": "2.0.0-alpha.0",
+  "private": true,
+  "description": "The Druxt core Nuxt module: the JSON:API client, the Pinia store, useDruxtModule() and the wrapper resolution.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "source": "./src/module.ts",
+      "types": "./dist/module.d.mts",
+      "import": "./dist/module.mjs"
+    },
+    "./kit": {
+      "source": "./src/kit.ts",
+      "types": "./dist/kit.d.mts",
+      "import": "./dist/kit.mjs"
+    },
+    "./anchors": {
+      "source": "./src/anchors/index.ts",
+      "types": "./dist/anchors.d.mts",
+      "import": "./dist/anchors.mjs"
+    },
+    "./routes": {
+      "source": "./src/routes/index.ts",
+      "types": "./dist/routes.d.mts",
+      "import": "./dist/routes.mjs"
+    },
+    "./store": {
+      "source": "./src/runtime/store.ts",
+      "types": "./dist/runtime/store.d.ts",
+      "import": "./dist/runtime/store.js"
+    },
+    "./registry": {
+      "source": "./src/runtime/registry.ts",
+      "types": "./dist/runtime/registry.d.ts",
+      "import": "./dist/runtime/registry.js"
+    },
+    "./types": {
+      "source": "./src/runtime/types.ts",
+      "types": "./dist/runtime/types.d.ts",
+      "import": "./dist/runtime/types.js"
+    },
+    "./server": {
+      "source": "./src/runtime/server/index.ts",
+      "types": "./dist/runtime/server/index.d.ts",
+      "import": "./dist/runtime/server/index.js"
+    }
+  },
+  "types": "./dist/module.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "nuxt-module-build build"
+  },
+  "dependencies": {
+    "@druxt/client": "workspace:^",
+    "@nuxt/kit": "^4.4.4",
+    "@pinia/nuxt": "^1.0.2",
+    "consola": "^3.4.2",
+    "defu": "^6.1.4",
+    "drupal-jsonapi-params": "^2.3.2",
+    "h3": "^1.15.11",
+    "ohash": "^2.0.11",
+    "pinia": "^4.0.3"
+  },
+  "peerDependencies": {
+    "@druxt/devtools": "workspace:^",
+    "nuxt": "^4.4.4"
+  },
+  "peerDependenciesMeta": {
+    "@druxt/devtools": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/druxt/druxt.js",
+    "directory": "packages/core"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@druxt/devtools": "workspace:^",
+    "@nuxt/schema": "^4.4.4"
+  }
+}

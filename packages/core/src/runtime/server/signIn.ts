@@ -1,0 +1,140 @@
+import { DruxtClient } from '@druxt/client'
+import type { DruxtClientOptions } from '@druxt/client'
+import { digest } from 'ohash'
+import { trimEndSlashes, trimStartSlashes } from '@druxt/core/routes'
+import type { DruxtServerAuthConfig } from '../types'
+
+// This file imports nothing from `#imports`, because the build and the server routes both use it.
+
+/**
+ * The credentials a client signs in with, or undefined for an anonymous client.
+ *
+ * Signing in needs a client id, and a secret or a password.
+ *
+ * @param auth - The server's credentials from `serverAuthConfig()`, or the build's own.
+ */
+export const serverAuthOptions = (auth: DruxtServerAuthConfig): Required<Pick<DruxtServerAuthConfig, 'clientId'>> & DruxtServerAuthConfig | undefined => {
+  const value = (key: keyof DruxtServerAuthConfig) => auth[key] || undefined
+  const clientId = value('clientId')
+  const clientSecret = value('clientSecret')
+  const password = value('password')
+  if (!clientId || !(clientSecret || password)) return undefined
+  return { clientId, clientSecret, username: value('username'), password, scope: value('scope') }
+}
+
+/** The environment variable each credential is read from. */
+const ENV: Record<keyof DruxtServerAuthConfig, string> = {
+  clientId: 'DRUXT_BUILD_CLIENT_ID',
+  clientSecret: 'DRUXT_BUILD_CLIENT_SECRET',
+  username: 'DRUXT_BUILD_USERNAME',
+  password: 'DRUXT_BUILD_PASSWORD',
+  scope: 'DRUXT_BUILD_SCOPE',
+}
+
+/**
+ * The server's credentials.
+ *
+ * Each key comes from the runtime config, or else from its `DRUXT_BUILD_*` variable as the server sees it at request
+ * time. Nothing is read at build time, so a secret given only to the build never reaches the server bundle.
+ *
+ * @param runtime - `runtimeConfig.druxt.build.auth`.
+ * @param env - The environment, `process.env` by default.
+ */
+export const serverAuthConfig = (runtime: DruxtServerAuthConfig, env: Record<string, string | undefined> = process.env): DruxtServerAuthConfig =>
+  Object.fromEntries((Object.keys(ENV) as (keyof DruxtServerAuthConfig)[]).map((key) => [key, runtime[key] || env[ENV[key]] || undefined]))
+
+type Credentials = NonNullable<ReturnType<typeof serverAuthOptions>>
+
+// Signs a client in: with the password grant when there is a username, else with the client credentials grant.
+const login = async (client: DruxtClient, auth: Credentials): Promise<void> => {
+  if (!client.auth) return
+  if (auth.username) await client.auth.loginWithPassword({ username: auth.username, password: auth.password || '' })
+  else await client.auth.loginWithClientCredentials()
+}
+
+// The client credentials grant issues no refresh token, so an expired token needs a new sign-in.
+const needsLogin = (client: DruxtClient): boolean => !!client.auth && client.auth.expired && !client.auth.refreshToken
+
+/**
+ * The key a client is kept under.
+ *
+ * The key covers everything the client holds from its first caller. A caller with another endpoint, scope or secret
+ * then gets a client of its own.
+ *
+ * The endpoint is keyed as the client reads it. The secret and the password are keyed as a digest, so no key holds
+ * either.
+ *
+ * @param baseUrl - The Drupal backend.
+ * @param endpoint - The JSON:API endpoint, as the caller's options have it.
+ * @param auth - The credentials, or none for an anonymous client.
+ */
+const clientKey = (baseUrl: string, endpoint: unknown, auth: Credentials | undefined): string => JSON.stringify([
+  baseUrl,
+  `/${trimEndSlashes(trimStartSlashes(String(endpoint ?? '/jsonapi')))}`,
+  auth?.clientId,
+  auth?.username,
+  auth?.scope,
+  auth && digest(JSON.stringify([auth.clientSecret, auth.password])),
+])
+
+/**
+ * Gets the signed-in client for a backend, an endpoint and credentials. There is one of each, kept in `clients`.
+ *
+ * The client goes direct to Drupal, with no process cache.
+ *
+ * - It signs in on first use.
+ * - It signs in again once its token has expired with no refresh token to renew it.
+ * - A sign-in that failed is forgotten, so the next call tries again.
+ *
+ * @param clients - The map this caller keeps its clients in.
+ * @param baseUrl - The Drupal backend.
+ * @param options - The client options, which the build's credentials do not belong in.
+ * @param config - The credentials, raw.
+ */
+export const signedInClient = (clients: Map<string, Promise<DruxtClient>>, baseUrl: string, options: Record<string, unknown>, config: DruxtServerAuthConfig): Promise<DruxtClient> => {
+  const auth = serverAuthOptions(config)
+  const key = clientKey(baseUrl, options.endpoint, auth)
+  const proxy = options.proxy as object | undefined
+  const existing = clients.get(key)
+  // The sign-in is chained on the kept promise, so callers that arrive together share one sign-in.
+  const next = existing
+    ? existing.then(async (client) => {
+        if (auth && needsLogin(client)) await login(client, auth)
+        return client
+      })
+    : (async () => {
+        const client = new DruxtClient(baseUrl, {
+          ...options,
+          proxy: { ...proxy, api: false },
+          cache: false,
+          auth: auth
+            ? { clientId: auth.clientId, clientSecret: auth.clientSecret, scope: auth.scope, tokenUrl: `${baseUrl}/oauth/token`, userInfoUrl: `${baseUrl}/oauth/userinfo` }
+            : undefined,
+        } as DruxtClientOptions)
+        if (auth) await login(client, auth)
+        return client
+      })()
+  clients.set(key, next)
+  next.catch(() => {
+    if (clients.get(key) === next) clients.delete(key)
+  })
+  return next
+}
+
+/** The server routes' signed-in clients, one per backend and credentials. */
+export const serverClients = new Map<string, Promise<DruxtClient>>()
+
+/**
+ * Empties every server client's cache, the JSON:API index included.
+ *
+ * The next request after a Druxt cache clear then sees resource types Drupal added. A client whose sign-in failed
+ * has nothing to clear.
+ *
+ * @param clients - The map the clients are kept in.
+ */
+export const clearServerClients = async (clients: Map<string, Promise<DruxtClient>> = serverClients): Promise<void> => {
+  const settled = await Promise.allSettled(clients.values())
+  for (const result of settled) {
+    if (result.status === 'fulfilled') result.value.clearCache()
+  }
+}
