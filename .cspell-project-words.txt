@@ -23,6 +23,7 @@ canonicalises
 chunkloaderror
 cimg
 cloudflared
+cmsx
 codecov
 Codespaces
 Colour

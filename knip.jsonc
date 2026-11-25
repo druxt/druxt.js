@@ -20,6 +20,8 @@
   "workspaces": {
     ".": {
       "entry": [
+        "test/standalone/fixtures/*/app/app.vue",
+        "test/standalone/fixtures/*/app/pages/*.vue",
         // The component tests' Nuxt app.
         "test/nuxt/app/app.vue",
         "test/nuxt/setup.ts",
@@ -40,8 +42,8 @@
     "packages/core": {
       // build.config.ts: unbuild's, read by nuxt-module-build for the kit entry.
       "entry": ["src/module.ts", "src/runtime/**/*.{ts,vue}", "build.config.ts"],
-      // @pinia/nuxt: installed by name, with installModule().
-      "ignoreDependencies": ["@pinia/nuxt"]
+      // @pinia/nuxt: installed by name, with installModule(). nitropack: Nuxt's own server runtime, imported for useNitroApp().
+      "ignoreDependencies": ["@pinia/nuxt", "nitropack"]
     }
   },
   // Nuxt's virtual modules, and the build templates the Druxt modules alias as #druxt/*.
