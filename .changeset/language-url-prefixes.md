@@ -20,4 +20,4 @@ export default {
 
 A request without a langcode asks for the default language under its prefix, such as `/en/jsonapi` when English has the prefix `en`, so it gets the default language whatever else Drupal would negotiate. Druxt reads the default language at build, or takes it from a language with an empty prefix in `prefixes`. Set `defaultLangcode` to skip the read.
 
-The API proxy, the router's language routes and its home-page redirect follow the same prefixes. A language whose prefix can't be read is taken to be served under its langcode, with a build warning, as before.
+The API proxy, the router's language routes and its home-page redirect follow the same prefixes. The router adds its routes once every module is registered, so a module such as `@nuxtjs/i18n` can't rewrite them, whichever order the modules are listed in. A language whose prefix can't be read is taken to be served under its langcode, with a build warning, as before.

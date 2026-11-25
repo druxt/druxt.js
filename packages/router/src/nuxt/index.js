@@ -87,8 +87,9 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
       languages = await getLanguages(druxt, { build: this.nuxt, endpoint: druxt.options.endpoint })
     }
 
-    // Extend routes.
-    this.extendRoutes((routes) => {
+    // Extend routes once every module is in. A module that rewrites the routes there are when it runs, such as
+    // @nuxtjs/i18n, which adds a language prefix to each, then can't rewrite Druxt's, whatever order the modules are in.
+    this.nuxt.hook('modules:done', () => this.extendRoutes((routes) => {
       // Routes for each language under its prefix: its front page, and every path below it. A language without a
       // prefix, usually the default, is served by the wildcard route. The prefix is a whole path segment, so `/es-food`
       // is not Spanish. Only a `*` keeps the slashes of a path when Vue Router builds it again from the route's params,
@@ -112,7 +113,7 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
         component: resolve(this.options.buildDir, 'components/druxt-router.js'),
         chunkName: 'druxt-router'
       })
-    })
+    }))
   }
 
   // Add plugin.

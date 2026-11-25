@@ -38,7 +38,7 @@ test('Nuxt module', async () => {
   await mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalledTimes(2)
   expect(mock.addTemplate).toHaveBeenCalledTimes(2)
-  expect(mock.nuxt.hook).toHaveBeenCalledTimes(2)
+  expect(mock.nuxt.hook).toHaveBeenCalledTimes(3)
   jest.clearAllMocks()
 
   mock.options.druxt.router = { wildcard: false }
@@ -52,7 +52,7 @@ test('Nuxt module', async () => {
   await mock.DruxtRouterNuxtModule()
   expect(mock.addPlugin).toHaveBeenCalledTimes(2)
   expect(mock.addTemplate).toHaveBeenCalledTimes(2)
-  expect(mock.nuxt.hook).toHaveBeenCalledTimes(3)
+  expect(mock.nuxt.hook).toHaveBeenCalledTimes(4)
   expect(mock.nuxt.options.build.createRoutes()).toStrictEqual([])
   jest.clearAllMocks()
 })
@@ -72,6 +72,23 @@ test('Components register synchronously', async () => {
   for (const dir of dirs) {
     expect(dir.extendComponent({ isAsync: null })).toStrictEqual({ isAsync: false })
   }
+})
+
+test('the routes are added once every module is in, so a module listed later, such as i18n, can\'t rewrite them', async () => {
+  const order = []
+  const hooks = {}
+  const args = { 'components:dirs': [], 'storybook:config': { stories: [] } }
+  await DruxtRouterNuxtModule.call({
+    ...mock,
+    extendRoutes: jest.fn(() => order.push('druxt')),
+    nuxt: { ...mock.nuxt, hook: jest.fn((name, fn) => name === 'modules:done' ? (hooks[name] = fn) : fn(args[name])) },
+    options: { buildDir: '', dir: { pages: 'pages' }, druxt: { baseUrl: 'https://languages.test', prefixes: { en: '', es: 'es' }, router: {} }, srcDir: __dirname },
+  })
+
+  // A module after Druxt in the list, such as @nuxtjs/i18n, which rewrites the routes there are when it runs.
+  order.push('i18n')
+  await hooks['modules:done']()
+  expect(order).toStrictEqual(['i18n', 'druxt'])
 })
 
 test('a route for each language under its prefix', async () => {
