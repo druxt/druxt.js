@@ -677,7 +677,9 @@ class DruxtClient {
     const endpoint = this.options.endpoint
     // The endpoint as a whole path segment, so a prefix such as `jsonapi-es` is not taken for it.
     const isEndpoint = (path) => path.startsWith(endpoint) && /^([/?#]|$)/.test(path.slice(endpoint.length))
-    const at = isEndpoint(href) ? '' : href.slice(1).split('/')[0]
+    // A known prefix with the endpoint after it, before the endpoint alone, so a prefix named `jsonapi` is a prefix.
+    const first = href.slice(1).split('/')[0]
+    const at = known.has(first) && isEndpoint(href.slice(first.length + 1)) ? first : isEndpoint(href) ? '' : first
     const rest = at ? href.slice(at.length + 1) : href
     if (at === wanted || !isEndpoint(rest) || (at && !known.has(at))) return href
     return `${wanted ? `/${wanted}` : ''}${rest}`

@@ -55,6 +55,14 @@ describe('a client with the languages\' prefixes', () => {
     expect(druxt.atPrefix('/jsonapi/node/article', 'jsonapi-es')).toBe('/jsonapi-es/jsonapi/node/article')
   })
 
+  test('a prefix named like the endpoint is a prefix when the endpoint follows it', () => {
+    const druxt = new DruxtClient(baseUrl, { prefixes: { en: '', es: 'jsonapi' } })
+    expect(druxt.atPrefix('/jsonapi/jsonapi/node/article', 'jsonapi')).toBe('/jsonapi/jsonapi/node/article')
+    expect(druxt.atPrefix('/jsonapi/jsonapi/node/article', '')).toBe('/jsonapi/node/article')
+    expect(druxt.atPrefix('/jsonapi/node/article', 'jsonapi')).toBe('/jsonapi/jsonapi/node/article')
+    expect(druxt.atPrefix('/jsonapi/node/article', '')).toBe('/jsonapi/node/article')
+  })
+
   test('clients with different prefixes on one Axios instance keep their own indexes', async () => {
     // Drupal's Dynamic Page Cache gives /es/jsonapi the links of /jsonapi.
     site = stubLanguages({ baseUrl, prefixes: { en: '', es: 'es' }, cachedAs: { es: '' } })
