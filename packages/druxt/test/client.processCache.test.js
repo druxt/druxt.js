@@ -218,6 +218,25 @@ describe('DruxtClient process cache', () => {
     expect(indexCalls()).toBe(2)
   })
 
+  test('an index fetched before a clear is not stored after it, on an instance first seen by that request', async () => {
+    // An async interceptor keeps the instance off the cache until a response is seen, so the
+    // request starts without a cache handle and only has one once it returns.
+    const axios = requestAxios()
+    const handlers = [{ fulfilled: async (config) => config }]
+    axios.interceptors.request = { handlers, forEach: (fn) => handlers.forEach(fn) }
+    const inFlight = axios.get
+    axios.get = jest.fn(async (...args) => {
+      const response = await inFlight(...args)
+      resetProcessCache()
+      return response
+    })
+    await new DruxtClient(baseUrl, { axios, cache: {} }).getIndex()
+    expect(indexCalls()).toBe(1)
+
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(2)
+  })
+
   test('clearCache empties the index and the process cache', async () => {
     const client = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
     await client.getIndex()

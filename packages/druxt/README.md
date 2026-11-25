@@ -116,6 +116,10 @@ export default {
 - A request interceptor that is `async` or returns a promise keeps its Axios
   instance away from the cache until a response shows the request went out
   without credentials. A token on the Axios defaults doesn't.
+- After that response, the instance's other requests use the cache too, so an
+  `async` interceptor must add the same credentials to every request. One that
+  adds them for some URLs only should add them synchronously, where Druxt sees
+  them before the lookup.
 - Only successful responses are kept. A `bypassCache` dispatch fetches afresh
   and stores the result.
 - A full cache area takes about three times `cache.maxSize` in server memory,

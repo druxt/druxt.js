@@ -1,3 +1,4 @@
+/* global globalThis */
 import { DruxtMenu } from '../src/menu'
 
 const baseUrl = 'https://api.umami.demo.druxtjs.org'
@@ -102,6 +103,32 @@ describe('DruxtMenu process cache', () => {
     menu.druxt.getCollectionAll = async (...args) => {
       const collections = await inFlight(...args)
       generation += 1
+      return collections
+    }
+
+    await menu.get('main')
+    expect(store.size).toBe(0)
+  })
+
+  test('a menu fetched before a clear is not stored after it, when the cache was withheld as the request started', async () => {
+    // The process cache's generation, which druxt moves on each clear.
+    const GENERATION = Symbol.for('druxt.processCacheGeneration')
+    const clears = globalThis[GENERATION] || (globalThis[GENERATION] = { value: 0 })
+    const genHandle = {
+      get: (key) => store.get(key),
+      set: (key, value, seconds, since) => {
+        if (since !== undefined && since !== clears.value) return
+        if (seconds > 0) store.set(key, value)
+      },
+    }
+
+    // An instance whose async interceptor keeps it off the cache until a response is seen.
+    let asked = 0
+    const menu = requestMenu(() => (asked++ === 0 ? null : genHandle))
+    const inFlight = menu.druxt.getCollectionAll.bind(menu.druxt)
+    menu.druxt.getCollectionAll = async (...args) => {
+      const collections = await inFlight(...args)
+      clears.value += 1
       return collections
     }
 

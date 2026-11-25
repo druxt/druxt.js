@@ -9,6 +9,16 @@ const scopes = globalThis[SCOPES] || (globalThis[SCOPES] = new Map())
 const GENERATION = Symbol.for('druxt.processCacheGeneration')
 const generation = globalThis[GENERATION] || (globalThis[GENERATION] = { value: 0 })
 
+/**
+ * The process cache's generation, which moves on each clear.
+ *
+ * Take it as a request starts and pass it to a handle's `set()`, so the value is dropped when a clear came while the
+ * request was in flight. It is there whether or not the cache may be used when the request starts.
+ *
+ * @returns {number}
+ */
+export const processCacheGeneration = () => generation.value
+
 // Numbers requests in the order they start, shared like the scopes so every
 // copy of the module counts on one sequence.
 const SEQUENCE = Symbol.for('druxt.processCacheSequence')
@@ -134,6 +144,10 @@ export const hasCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE, url
  * `hasCredentials` reads them. Nor may it have a request interceptor the probe passes over, such as an async one,
  * until a response has passed the watch on the instance. That response shows the request as it went out. The
  * interceptors run once.
+ *
+ * Once a response has passed, a request to another URL may be answered from the cache, so no request goes out for
+ * the watch to see. An interceptor the probe passes over is taken to add the same credentials to every request on
+ * the instance. One that adds them for some URLs only must add them synchronously, where the probe sees them.
  *
  * @param {object} axios - The Axios instance.
  * @param {string} sessionCookie - A pattern for the session cookie name.
