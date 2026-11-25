@@ -195,7 +195,8 @@ class DruxtClient {
      *
      * @type {object}
      */
-    this.index = cache.index[indexKey] || (cache.index[indexKey] = {})
+    // Keyed by URL prefix, so without a prototype for a prefix such as `constructor` to find.
+    this.index = cache.index[indexKey] || (cache.index[indexKey] = Object.create(null))
 
     /**
      * Moves on each time `clearCache()` runs, so caches keyed by this client know to empty.
@@ -587,7 +588,7 @@ class DruxtClient {
 
   /**
    * Gives the URL prefix for a langcode, from the `prefixes` option, such as `spanish` for `es`. A langcode the map
-   * lacks, or a prefix, comes back unchanged.
+   * lacks, or a prefix, comes back unchanged. Without a langcode, it's the prefix of the `defaultLangcode` option.
    *
    * @example @lang js
    * // With the prefixes { en: '', es: 'spanish' }:
@@ -600,7 +601,9 @@ class DruxtClient {
    */
   urlPrefix(prefix = '') {
     const prefixes = this.options.prefixes
-    return prefixes && Object.prototype.hasOwnProperty.call(prefixes, prefix) ? prefixes[prefix] : (prefix || '')
+    // Without a langcode, the default language's.
+    const langcode = prefix || this.options.defaultLangcode || ''
+    return prefixes && Object.prototype.hasOwnProperty.call(prefixes, langcode) ? prefixes[langcode] : (prefix || '')
   }
 
   /**
@@ -887,6 +890,9 @@ export { DruxtClient }
   * @param {object} [prefixes] - The URL prefix Drupal serves each langcode under, such as `{ en: '', es: 'spanish' }`,
   *   so a method's `prefix` argument takes a langcode. A langcode the map lacks is its own prefix. The Nuxt module reads
   *   it from Drupal at build.
+  * @param {string} [defaultLangcode] - The langcode a request without one asks for, under its prefix, such as `en` for
+  *   `/en/jsonapi` with the prefixes `{ en: 'en', es: 'es' }`. Without it, such a request is unprefixed. The Nuxt
+  *   module reads it from Drupal at build.
   *
   * @see {@link https://github.com/axios/axios#request-config}
   *

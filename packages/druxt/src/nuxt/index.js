@@ -65,7 +65,16 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
   if (!options.prefixes) {
     const languages = await getLanguages(druxt, { build: this.nuxt, endpoint: options.endpoint })
     if (languages.length) options.prefixes = Object.fromEntries(languages.map(({ langcode, prefix }) => [langcode, prefix]))
+    options.defaultLangcode = options.defaultLangcode || (languages.find((o) => o.default) || {}).langcode
   }
+
+  // The language a request without a langcode asks for. Drupal lets only the language it falls back to have no
+  // prefix. A map with an empty prefix names it. Otherwise Drupal is asked.
+  if (options.prefixes && !options.defaultLangcode) {
+    options.defaultLangcode = Object.keys(options.prefixes).find((langcode) => options.prefixes[langcode] === '') ||
+      ((await getLanguages(druxt, { build: this.nuxt, endpoint: options.endpoint })).find((o) => o.default) || {}).langcode
+  }
+  if (!options.defaultLangcode) delete options.defaultLangcode
 
   // Nuxt proxy integration, when the API or the files proxy is enabled.
   if ((options.proxy || {}).api || (options.proxy || {}).files) {

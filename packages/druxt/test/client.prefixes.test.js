@@ -64,6 +64,28 @@ describe('a client with the languages\' prefixes', () => {
     expect((await mapped.getIndex('configurable_language--configurable_language', 'es')).href).toBe('/es/jsonapi/configurable_language/configurable_language')
   })
 
+  test('a request without a langcode goes to the default language, under its prefix', async () => {
+    // Drupal links an unprefixed index under the default language's prefix, and a request there asks for that language
+    // whatever else Drupal would negotiate.
+    site = stubLanguages({ baseUrl, prefixes: { en: 'en', es: 'es' } })
+    const druxt = new DruxtClient(baseUrl, { prefixes: { en: 'en', es: 'es' }, defaultLangcode: 'en' })
+    expect(druxt.urlPrefix()).toBe('en')
+    expect(druxt.urlPrefix('es')).toBe('es')
+    expect((await druxt.getIndex('configurable_language--configurable_language')).href).toBe('/en/jsonapi/configurable_language/configurable_language')
+    expect(site.urls()).toStrictEqual(['/en/jsonapi'])
+  })
+
+  test('without the default language, a request without a langcode is unprefixed', () => {
+    const druxt = new DruxtClient(baseUrl, { prefixes: { en: 'en', es: 'es' } })
+    expect(druxt.urlPrefix()).toBe('')
+  })
+
+  test('a prefix named like an object property still fetches its index', async () => {
+    site = stubLanguages({ baseUrl, prefixes: { en: '', es: 'constructor' } })
+    const druxt = new DruxtClient(baseUrl, { prefixes: { en: '', es: 'constructor' } })
+    expect((await druxt.getIndex('configurable_language--configurable_language', 'es')).href).toBe('/constructor/jsonapi/configurable_language/configurable_language')
+  })
+
   test('without the map, a langcode is the prefix, as before', async () => {
     site = stubLanguages({ baseUrl, prefixes: { en: 'en', es: 'es' } })
     const druxt = new DruxtClient(baseUrl)

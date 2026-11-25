@@ -1,4 +1,5 @@
 import DruxtNuxtModule from '../../src'
+import { DruxtClient } from '../../src/client'
 
 const options = {
   baseUrl: 'https://api.umami.demo.druxtjs.org',
@@ -172,6 +173,8 @@ describe('DruxtJS Nuxt module', () => {
     const site = { baseUrl: 'https://languages.test', endpoint: '/jsonapi' }
     let stub
     afterEach(() => stub.restore())
+    // Clients on one Axios instance share the index, so each test starts without the last one's site.
+    beforeEach(() => new DruxtClient(site.baseUrl).clearCache())
 
     test('the proxies and the client follow each language\'s prefix', async () => {
       stub = stubLanguages({ baseUrl: site.baseUrl, prefixes: { en: '', es: 'spanish' }, decoupled: true })
@@ -205,6 +208,38 @@ describe('DruxtJS Nuxt module', () => {
       expect(mock.options.proxy['/espanol/jsonapi']).toBe(site.baseUrl)
       const plugin = mock.addPlugin.mock.calls.find(([o]) => o.fileName === 'druxt.js')[0]
       expect(plugin.options.prefixes).toStrictEqual({ en: '', es: 'espanol' })
+      // Only the default language can have no prefix in Drupal.
+      expect(plugin.options.defaultLangcode).toBe('en')
+    })
+
+    test('the client gets the default language read from Drupal', async () => {
+      stub = stubLanguages({ baseUrl: site.baseUrl, prefixes: { en: 'en', es: 'es' } })
+      mock.options.druxt = { ...site }
+      await DruxtNuxtModule.call(mock)
+
+      const plugin = mock.addPlugin.mock.calls.find(([o]) => o.fileName === 'druxt.js')[0]
+      expect(plugin.options.prefixes).toStrictEqual({ en: 'en', es: 'es' })
+      expect(plugin.options.defaultLangcode).toBe('en')
+    })
+
+    test('the default language is read when the prefixes in the options don\'t show it', async () => {
+      stub = stubLanguages({ baseUrl: site.baseUrl, prefixes: { en: 'en', es: 'es' } })
+      mock.options.druxt = { ...site, prefixes: { en: 'english', es: 'es' } }
+      await DruxtNuxtModule.call(mock)
+
+      const plugin = mock.addPlugin.mock.calls.find(([o]) => o.fileName === 'druxt.js')[0]
+      expect(plugin.options.prefixes).toStrictEqual({ en: 'english', es: 'es' })
+      expect(plugin.options.defaultLangcode).toBe('en')
+    })
+
+    test('a default language in the options is used as it is, with nothing read', async () => {
+      stub = stubLanguages({ baseUrl: site.baseUrl, prefixes: { en: 'en', es: 'es' } })
+      mock.options.druxt = { ...site, prefixes: { en: 'en', es: 'es' }, defaultLangcode: 'es' }
+      await DruxtNuxtModule.call(mock)
+
+      expect(stub.urls()).toStrictEqual([])
+      const plugin = mock.addPlugin.mock.calls.find(([o]) => o.fileName === 'druxt.js')[0]
+      expect(plugin.options.defaultLangcode).toBe('es')
     })
   })
 

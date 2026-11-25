@@ -89,16 +89,20 @@ const DruxtRouterNuxtModule = async function (moduleOptions = {}) {
 
     // Extend routes.
     this.extendRoutes((routes) => {
-      // A route for each language under its prefix. A language without one, usually the default, is served by the
-      // wildcard route. The prefix is a whole path segment, so `/es-food` is not Spanish.
+      // Routes for each language under its prefix: its front page, and every path below it. A language without a
+      // prefix, usually the default, is served by the wildcard route. The prefix is a whole path segment, so `/es-food`
+      // is not Spanish. Only a `*` keeps the slashes of a path when Vue Router builds it again from the route's params,
+      // so the paths below the prefix have their own route rather than an optional group.
       languages.filter(({ prefix }) => prefix).forEach(({ langcode, prefix }) => {
-        routes.push({
-          name: `druxt-router__${langcode}`,
-          path: `/${prefix}(/.*)?`,
-          component: resolve(this.options.buildDir, 'components/druxt-router.js'),
-          chunkName: 'druxt-router',
-          meta: { langcode }
-        })
+        for (const [name, path] of [[`druxt-router__${langcode}__home`, `/${prefix}`], [`druxt-router__${langcode}`, `/${prefix}/*`]]) {
+          routes.push({
+            name,
+            path,
+            component: resolve(this.options.buildDir, 'components/druxt-router.js'),
+            chunkName: 'druxt-router',
+            meta: { langcode }
+          })
+        }
       })
 
       // Add wildcard route.

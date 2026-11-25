@@ -90,6 +90,7 @@ test('a route for each language under its prefix', async () => {
   }
 
   expect(routes.map(({ name, meta }) => [name, meta])).toStrictEqual([
+    ['druxt-router__es__home', { langcode: 'es' }],
     ['druxt-router__es', { langcode: 'es' }],
     ['druxt-router', undefined],
   ])
@@ -98,9 +99,17 @@ test('a route for each language under its prefix', async () => {
   const VueRouter = require('vue-router')
   const router = new (VueRouter.default || VueRouter)({ mode: 'abstract', routes: routes.map(({ name, path }) => ({ name, path, component: {} })) })
   const routeFor = (path) => router.resolve(path).route.name
-  expect(routeFor('/spanish')).toBe('druxt-router__es')
-  expect(routeFor('/spanish/')).toBe('druxt-router__es')
+  expect(routeFor('/spanish')).toBe('druxt-router__es__home')
+  expect(routeFor('/spanish/')).toBe('druxt-router__es__home')
   expect(routeFor('/spanish/article')).toBe('druxt-router__es')
   expect(routeFor('/spanish-food')).toBe('druxt-router')
   expect(routeFor('/')).toBe('druxt-router')
+
+  // Vue Router builds the path again from the route's params for a navigation with params or a name, as a change to
+  // the query can be. The path survives it.
+  for (const path of ['/spanish', '/spanish/article', '/spanish/recipes/a-recipe']) {
+    const current = router.resolve(path).route
+    expect(router.resolve({ params: {}, query: { page: '2' } }, current).route.fullPath).toBe(`${path}?page=2`)
+    expect(router.resolve({ name: current.name, params: current.params, query: { page: '2' } }, current).route.fullPath).toBe(`${path}?page=2`)
+  }
 })
