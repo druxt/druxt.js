@@ -178,8 +178,8 @@ class DruxtClient {
     if (this.options.cache) watchCredentials(this.axios, this.options.cache.sessionCookie)
 
     // Share the index between clients on the same Axios instance, base URL,
-    // endpoint and resource config.
-    const indexKey = JSON.stringify([baseUrl, this.options.endpoint, this.options.jsonapiResourceConfig])
+    // endpoint, resource config and prefixes, as an index's links follow the prefixes.
+    const indexKey = JSON.stringify([baseUrl, this.options.endpoint, this.options.jsonapiResourceConfig, this.options.prefixes || null])
     this.indexKey = indexKey
     // The generation moves on each clear, so an index fetched before one is not kept.
     if (!indexCache.has(this.axios)) indexCache.set(this.axios, { index: {}, requests: {}, generation: 0 })
@@ -191,7 +191,7 @@ class DruxtClient {
      * JSON:API Index.
      *
      * Shared between clients on the same Axios instance with the same base
-     * URL, endpoint and resource config.
+     * URL, endpoint, resource config and prefixes.
      *
      * @type {object}
      */
@@ -672,9 +672,11 @@ class DruxtClient {
     const wanted = String(prefix || '').replace(/^\/+/, '')
     const known = new Set(Object.values(this.options.prefixes).filter((o) => o))
     const endpoint = this.options.endpoint
-    const at = href.startsWith(endpoint) ? '' : href.slice(1).split('/')[0]
+    // The endpoint as a whole path segment, so a prefix such as `jsonapi-es` is not taken for it.
+    const isEndpoint = (path) => path.startsWith(endpoint) && /^([/?#]|$)/.test(path.slice(endpoint.length))
+    const at = isEndpoint(href) ? '' : href.slice(1).split('/')[0]
     const rest = at ? href.slice(at.length + 1) : href
-    if (at === wanted || !rest.startsWith(endpoint) || (at && !known.has(at))) return href
+    if (at === wanted || !isEndpoint(rest) || (at && !known.has(at))) return href
     return `${wanted ? `/${wanted}` : ''}${rest}`
   }
 

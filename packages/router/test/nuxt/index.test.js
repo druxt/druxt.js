@@ -89,8 +89,18 @@ test('a route for each language under its prefix', async () => {
     stub.restore()
   }
 
-  expect(routes.map(({ name, path, meta }) => [name, path, meta])).toStrictEqual([
-    ['druxt-router__es', '/spanish*', { langcode: 'es' }],
-    ['druxt-router', '*', undefined],
+  expect(routes.map(({ name, meta }) => [name, meta])).toStrictEqual([
+    ['druxt-router__es', { langcode: 'es' }],
+    ['druxt-router', undefined],
   ])
+
+  // The prefix is a whole path segment, so an English path that starts with its letters stays on the wildcard route.
+  const VueRouter = require('vue-router')
+  const router = new (VueRouter.default || VueRouter)({ mode: 'abstract', routes: routes.map(({ name, path }) => ({ name, path, component: {} })) })
+  const routeFor = (path) => router.resolve(path).route.name
+  expect(routeFor('/spanish')).toBe('druxt-router__es')
+  expect(routeFor('/spanish/')).toBe('druxt-router__es')
+  expect(routeFor('/spanish/article')).toBe('druxt-router__es')
+  expect(routeFor('/spanish-food')).toBe('druxt-router')
+  expect(routeFor('/')).toBe('druxt-router')
 })
