@@ -370,6 +370,22 @@ describe('DruxtEntity', () => {
       .toBe("Missing display settings for 'node--page' in the 'default' view mode")
   })
 
+  test('a refetch whose schema fails to load drops the schema it had', async () => {
+    const mockPage = await getMockResource('node--page')
+    const wrapper = mountComponent({ uuid: mockPage.data.id, type: 'node--page' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    expect(wrapper.vm.schema).toBeTruthy()
+
+    store.$druxtSchema.import = () => Promise.reject(new Error('Request failed with status code 403'))
+    await wrapper.setProps({ mode: 'teaser' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.schema).toBe(null)
+    expect(wrapper.find('druxtdebug-stub').attributes('summary'))
+      .toBe("The display settings for 'node--page' in the 'teaser' view mode couldn't be loaded")
+  })
+
   // test('deprecated', () => {
   //   expect(DruxtEntity.methods.isEmpty()).toBe(true)
   //   expect(DruxtEntity.methods.isEmpty(false)).toBe(true)

@@ -347,9 +347,11 @@ export default {
           schemaType: this.schemaType || 'view',
         })
       } catch(err) {
-        // The entity renders without a schema either way. A display Drupal
-        // doesn't have is expected for some bundles, while any other failure
-        // is shown in development.
+        // The entity renders without a schema either way, as one an earlier
+        // fetch loaded can be for another display. A display Drupal doesn't
+        // have is expected for some bundles, while any other failure is shown
+        // in development.
+        this.schema = null
         const missing = ['DRUXT_SCHEMA_MISSING', 'MODULE_NOT_FOUND'].includes((err || {}).code)
         if (!missing) this.schemaError = (err || {}).message || String(err)
       }
