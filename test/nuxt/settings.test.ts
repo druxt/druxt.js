@@ -29,6 +29,13 @@ describe('useDruxtSettings()', () => {
     delete config().testConfig
   })
 
+  it('without a fetcher, holds an empty public tier, resolves the defaults, and warns about nothing', () => {
+    expect(fromDrupal().value).toEqual({})
+    const settings = useDruxtSettings()
+    expect(settings).toMatchObject({ develMessages: 'devtools' })
+    expect(output.filter((line) => line.includes('[druxt]'))).toEqual([])
+  })
+
   it('does not let a config key left undefined erase a Drupal value', () => {
     config().testUnset = undefined
     config().testConfig = 'config'

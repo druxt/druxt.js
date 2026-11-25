@@ -14,7 +14,6 @@ export default createConfigForNuxt({
       'packages/blocks/**',
       'packages/breadcrumb/**',
       'packages/docgen/**',
-      'packages/druxt/**',
       'packages/entity/**',
       'packages/menu/**',
       'packages/router/**',

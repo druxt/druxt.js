@@ -69,6 +69,7 @@
     "markdown-it": "14.3.3",
     "markdownlint-cli2": "^0.13.0",
     "nuxt": "^4.5.2",
+    "nuxt-auth-utils": "^0.5.34",
     "prettier": "^3.9.9",
     "renovate": "32.0.2",
     "rimraf": "5.0.10",

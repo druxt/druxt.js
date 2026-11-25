@@ -5,7 +5,6 @@
     "packages/blocks/**",
     "packages/breadcrumb/**",
     "packages/docgen/**",
-    "packages/druxt/**",
     "packages/entity/**",
     "packages/menu/**",
     "packages/router/**",
@@ -23,6 +22,7 @@
     ".": {
       "entry": [
         "test/standalone/fixtures/*/app/app.vue",
+        "test/standalone/fixtures/*/app/components/**/*.vue",
         "test/standalone/fixtures/*/app/pages/*.vue",
         // The component tests' Nuxt app.
         "test/nuxt/app/app.vue",
@@ -34,7 +34,8 @@
       ],
       // pinia: the packages that use it declare it. The unit tests of their stores import it too.
       // vue-router: Nuxt's own, which a unit test builds a router with.
-      "ignoreDependencies": ["pinia", "vue-router"]
+      // nuxt-auth-utils: a module the auth-utils standalone fixture lists by name, beside @druxt/core.
+      "ignoreDependencies": ["pinia", "vue-router", "nuxt-auth-utils"]
     },
     "packages/*": {
       // A Nuxt module registers its runtime files by path, through

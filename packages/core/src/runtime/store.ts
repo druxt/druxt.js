@@ -121,6 +121,15 @@ const storeHit = (client: DruxtClient | undefined, type: string, id: string | un
   recordRequest(client, { kind: requestKind(path, endpoint), path, source: 'store' })
 }
 
+/**
+ * Gets a store's flush generation.
+ *
+ * A caller reads it before a wait and again after. A different number means a flush overtook the wait.
+ *
+ * @param store - The store.
+ */
+export const flushGeneration = (store: object): number => getRuntime(store).generation
+
 // Forgets the requests in flight and the bypass record, and moves the flush generation on.
 const flushInFlight = (store: object): void => {
   const state = getRuntime(store)

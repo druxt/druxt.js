@@ -10,14 +10,15 @@ globalThis.fetch = drupal({
 
 // The component tests' app: @druxt/core, against the fake Drupal in test/unit/fake-drupal.ts. Each package's port
 // adds its module here.
+// `auth` registers DruxtAuthLogin as a global component and exposes the
+// password grant, for test/nuxt/auth-login.test.ts.
 export default defineNuxtConfig({
   compatibilityDate: '2026-10-01',
   // No app manifest: the test environment never builds one, so #app-manifest would point at a missing file in a fresh checkout.
   experimental: { appManifest: false },
   modules: ['@druxt/core'],
-  // A router with routes, so a test can navigate to any path. The router port's module turns pages on itself.
-  pages: true,
   druxt: {
     baseUrl: 'https://drupal.test',
+    auth: { clientId: 'druxt-test', passwordClientId: 'druxt-test-password' },
   },
 })
