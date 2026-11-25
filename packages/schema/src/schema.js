@@ -62,27 +62,48 @@ class DruxtSchema {
   /**
    * Reads every display of one kind: entity view or entity form displays.
    *
-   * The collection is read page by page. When a page after the first fails,
-   * it is read again filtered by entity type, and by bundle for an entity type
-   * with more than one page of displays, so that every request asks for a
-   * first page. Drupal Canvas 1.12.0 answers 500 to any page of a
-   * configuration collection after the first. A bundle with more than one
-   * page of displays of its own is still read to its last page, so on such a
-   * site it fails the build rather than leaving displays out.
+   * The collection is read as `getConfigAll()` reads one.
    *
    * @param {string} resourceType - The display resource type, such as `entity_view_display--entity_view_display`.
    *
    * @returns {object[]} The collection responses.
    */
   async getDisplays(resourceType) {
-    const query = () => new DrupalJsonApiParams().addSort('drupal_internal__id')
+    return this.getConfigAll(
+      resourceType,
+      () => new DrupalJsonApiParams().addSort('drupal_internal__id'),
+      { entityType: 'targetEntityType', bundle: 'bundle' }
+    )
+  }
 
+  /**
+   * Reads every item of a configuration collection, such as displays or field config.
+   *
+   * The collection is read page by page. When a page after the first fails,
+   * it is read again filtered by entity type, and by bundle for an entity type
+   * with more than one page of items, so that every request asks for a
+   * first page. Drupal Canvas 1.12.0 answers 500 to any page of a
+   * configuration collection after the first. A bundle with more than one
+   * page of items of its own is still read to its last page, so on such a
+   * site it fails the build rather than leaving items out.
+   *
+   * @private
+   * @param {string} resourceType - The configuration resource type.
+   * @param {Function} query - Returns a new query for the collection.
+   * @param {object} filters - The collection's attributes for the entity type and the bundle.
+   * @param {string} filters.entityType - The entity type attribute, such as `targetEntityType`.
+   * @param {string} filters.bundle - The bundle attribute.
+   * @param {string} [prefix] - (Optional) The langcode or URL prefix to read the collection under.
+   *
+   * @returns {object[]} The collection responses.
+   */
+  async getConfigAll(resourceType, query, filters, prefix) {
     try {
-      return await this.druxt.getCollectionAll(resourceType, query())
+      return await this.druxt.getCollectionAll(resourceType, query(), prefix)
     } catch (err) {
       // A first page that fails is an error of its own, such as a permission
       // the site has not granted, and it is thrown from here.
-      await this.druxt.getCollection(resourceType, query())
+      await this.druxt.getCollection(resourceType, query(), prefix)
     }
 
     const index = await this.druxt.getIndex()
@@ -95,13 +116,15 @@ class DruxtSchema {
     return (await Promise.all(Object.keys(bundles).map(async (entityType) => {
       const byType = await this.druxt.getCollection(
         resourceType,
-        query().addFilter('targetEntityType', entityType)
+        query().addFilter(filters.entityType, entityType),
+        prefix
       )
       if (!((byType.links || {}).next || {}).href) return [byType]
 
       return (await Promise.all(bundles[entityType].map((bundle) => this.druxt.getCollectionAll(
         resourceType,
-        query().addFilter('targetEntityType', entityType).addFilter('bundle', bundle)
+        query().addFilter(filters.entityType, entityType).addFilter(filters.bundle, bundle),
+        prefix
       )))).flat()
     }))).flat()
   }
@@ -264,8 +287,8 @@ class DruxtSchema {
     if (!this.druxt.urlPrefix(langcode)) return {}
 
     const type = 'field_config--field_config'
-    const query = new DrupalJsonApiParams().addFields(type, ['entity_type', 'bundle', 'field_name', 'label', 'description'])
-    const read = async (prefix) => (await this.druxt.getCollectionAll(type, query, prefix) || [])
+    const query = () => new DrupalJsonApiParams().addFields(type, ['entity_type', 'bundle', 'field_name', 'label', 'description'])
+    const read = async (prefix) => (await this.getConfigAll(type, query, { entityType: 'entity_type', bundle: 'bundle' }, prefix) || [])
       .flatMap((collection) => (collection || {}).data || [])
       .map(({ attributes = {} }) => attributes)
     const [index, built, translated] = await Promise.all([this.druxt.getIndex(), read(), read(langcode)])

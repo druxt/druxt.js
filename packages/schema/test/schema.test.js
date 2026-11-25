@@ -145,6 +145,7 @@ describe('DruxtSchema', () => {
       },
     }
     mock.getDisplays = schema.getDisplays.bind(mock)
+    mock.getConfigAll = schema.getConfigAll.bind(mock)
     try {
       await schema.get.call(mock)
     } catch(err) {

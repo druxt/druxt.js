@@ -147,5 +147,22 @@ describe('DruxtSchemaStore', () => {
 
       expect(store.$druxtSchema.labels).toHaveBeenCalledTimes(2)
     })
+
+    test('labels loaded across a flush are not kept, even beside the same built schema', async () => {
+      // A built file imports as one object, so the schema loaded after the flush is the one from before it.
+      const same = JSON.parse(JSON.stringify(built))
+      store.$druxtSchema.import = jest.fn(async () => same)
+      let release
+      store.$druxtSchema.labels = jest.fn(() => new Promise((resolve) => { release = () => resolve(spanish) }))
+
+      const pending = store.dispatch('druxtSchema/get', resource)
+      await new Promise((resolve) => setTimeout(resolve))
+      store.commit('druxtSchema/flushSchemas')
+      await store.dispatch('druxtSchema/get', { resourceType: 'node--recipe' })
+      release()
+      await pending
+
+      expect(store.state.druxtSchema.schemas['node--recipe--default--view@es']).toBe(undefined)
+    })
   })
 })

@@ -1,3 +1,4 @@
+import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { DruxtSchema } from '../src'
 import { parseLabelsId } from '../src/utils/hold'
 
@@ -95,6 +96,28 @@ describe('DruxtSchema.getLabels', () => {
     expect(reads).toStrictEqual([])
   })
 
+  test('reads field config by entity type and bundle when a page after the first fails', async () => {
+    const config = {
+      prefixes: { en: '', es: 'es' },
+      byPrefix: { '': english, es: { 'node.recipe.field_difficulty': ['Dificultad', null] } },
+    }
+    const expected = await site(config).schema.getLabels('es')
+
+    // Drupal Canvas 1.12.0 answers 500 to any page of a config collection after the first.
+    const { schema } = site(config)
+    const read = schema.druxt.getCollectionAll
+    const filters = (query) => decodeURIComponent(new DrupalJsonApiParams().initialize(query).getQueryString())
+    const first = jest.fn(async () => ({ data: [], links: { next: { href: `${baseUrl}/jsonapi/field_config/field_config?page[offset]=50` } } }))
+    schema.druxt.getCollection = first
+    schema.druxt.getCollectionAll = jest.fn(async (type, query, langcode) => {
+      if (!filters(query).includes('filter[bundle]=recipe')) throw Object.assign(new Error('500: Internal Server Error'), { response: { status: 500 } })
+      return read(type, query, langcode)
+    })
+
+    expect(await schema.getLabels('es')).toStrictEqual(expected)
+    expect(first.mock.calls.some(([, query]) => filters(query).includes('filter[entity_type]=node'))).toBe(true)
+  })
+
   test('getSchemaById gives the labels for a labels ID', async () => {
     const { schema } = site({
       prefixes: { en: '', es: 'es' },
@@ -111,10 +134,13 @@ describe('parseLabelsId', () => {
   test('a labels ID gives its langcode', () => {
     expect(parseLabelsId('labels/es')).toBe('es')
     expect(parseLabelsId('labels/pt-br')).toBe('pt-br')
+    // Drupal takes one to eight letters, then hyphenated parts of one to eight letters or digits.
+    expect(parseLabelsId('labels/x-demo')).toBe('x-demo')
+    expect(parseLabelsId('labels/zh-hans')).toBe('zh-hans')
   })
 
   test('anything else is not a labels ID', () => {
-    for (const id of ['labels/', 'labels/../es', 'node--page--default--view', 'es', 'labels/es/x']) {
+    for (const id of ['labels/', 'labels/../es', 'node--page--default--view', 'es', 'labels/es/x', 'labels/abcdefghi', 'labels/es-abcdefghi', 'labels/es-']) {
       expect(parseLabelsId(id)).toBe(false)
     }
   })

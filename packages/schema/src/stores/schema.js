@@ -146,12 +146,14 @@ const DruxtSchemaStore = ({ store }) => {
         const id = `${resource.id}@${resource.langcode}`
         if (state.schemas[id]) return state.schemas[id]
 
+        const since = generation.value
         const labels = (await dispatch('getLabels', resource.langcode))[schema.resourceType]
         if (!labels) return schema
 
-        // Kept only beside the schema it was made from, which a flush removes.
+        // Kept only beside the schema it was made from, and only when no flush came while the labels loaded, as a
+        // built file loads as the same schema after one.
         const translated = withLabels(schema, labels)
-        if (state.schemas[resource.id] === schema) commit('addSchema', { id, schema: translated })
+        if (since === generation.value && state.schemas[resource.id] === schema) commit('addSchema', { id, schema: translated })
         return translated
       },
 
