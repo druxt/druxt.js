@@ -42,16 +42,19 @@ jobs:
           node-version: 22
 
       # The closing references rather than the body: a `Closes #123` can fail
-      # to create the link, and the link is what the rule is about.
+      # to create the link, and the link is what the rule is about. The one
+      # exception is a base that is not the default branch, where GitHub
+      # creates no link at all, so the body's closing keywords are read.
       - name: Gather the pull request's plan
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
           BASE: ${{ github.event.pull_request.base.ref }}
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
-          gh pr view "$PR" --json files,milestone \
-            --jq '{files: [.files[].path], milestone: (.milestone.title // null)}' > pr.json
+          gh pr view "$PR" --json files,milestone,body \
+            --jq '{files: [.files[].path], milestone: (.milestone.title // null), body: (.body // "")}' > pr.json
           gh api graphql -f query="
             { repository(owner: \"${GITHUB_REPOSITORY%/*}\", name: \"${GITHUB_REPOSITORY#*/}\") {
                 pullRequest(number: $PR) {
@@ -84,8 +87,9 @@ jobs:
           } > manifests.json
           jq -n --slurpfile pr pr.json --slurpfile issues issues.json \
                 --slurpfile milestones milestones.json --slurpfile manifests manifests.json \
-                --arg base "$BASE" --arg head "$HEAD_REF" \
+                --arg base "$BASE" --arg head "$HEAD_REF" --arg default "$DEFAULT_BRANCH" \
             '{files: $pr[0].files, milestone: $pr[0].milestone, issues: $issues[0],
+              body: $pr[0].body, defaultBranch: $default,
               openMilestones: $milestones[0], baseBranch: $base, headBranch: $head,
               manifests: $manifests[0]}' > plan-input.json
 

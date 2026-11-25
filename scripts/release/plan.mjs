@@ -110,12 +110,21 @@ export const currentMilestone = (openTitles, branch) => {
 }
 
 /**
+ * The issues a description closes with a keyword, such as `Closes #123`, once
+ * each. A bare mention such as `Part of #123` closes nothing.
+ */
+export const closingKeywords = (body) => {
+  const pattern = /(?<![\w-])(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?):?\s+(?:[\w.-]+\/[\w.-]+)?#(\d+)/gi
+  return [...new Set([...String(body ?? '').matchAll(pattern)].map((match) => Number(match[1])))]
+}
+
+/**
  * Problems with a change, as `{ code, message }`. Empty means it conforms.
  *
  * The code lets each host offer the right help, because a pre-filled link is
  * the difference between a refusal someone acts on and one they argue with.
  */
-export const checkPlan = ({ files, manifests, milestone, issues, openMilestones, baseBranch, headBranch, dirs }) => {
+export const checkPlan = ({ files, manifests, milestone, issues, body, defaultBranch, openMilestones, baseBranch, headBranch, dirs }) => {
   const deps = isVersionPullRequest(headBranch, files) ? [] : shippedDepChanges(manifests ?? [], dirs)
   const source = altersPublished(files, dirs)
   if (!source && deps.length === 0) return []
@@ -127,7 +136,12 @@ export const checkPlan = ({ files, manifests, milestone, issues, openMilestones,
       message: 'changes a published package but adds no changeset, so it would never reach a release.',
     })
   }
-  if (!issues || issues.length === 0) {
+  // The host links an issue from a closing keyword only when the base is the
+  // default branch. On any other base no link can exist, so the keyword in
+  // the description is read instead.
+  const offDefault = Boolean(defaultBranch) && baseBranch !== defaultBranch
+  const linked = issues?.length ? issues : offDefault ? closingKeywords(body) : []
+  if (linked.length === 0) {
     problems.push({
       code: 'no-issue',
       current,
@@ -178,6 +192,8 @@ const main = () => {
     manifests: input.manifests,
     milestone: input.milestone,
     issues: input.issues,
+    body: input.body,
+    defaultBranch: input.defaultBranch,
     openMilestones: input.openMilestones,
     baseBranch: input.baseBranch,
     headBranch: input.headBranch,

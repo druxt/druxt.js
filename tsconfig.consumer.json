@@ -1,0 +1,5 @@
+{
+  // Cross-package imports through the built declarations, as a consumer sees them.
+  "extends": "./tsconfig.runtime.json",
+  "compilerOptions": { "customConditions": [] }
+}

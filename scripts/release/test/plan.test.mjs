@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { altersPublished, checkPlan, currentMilestone, hasChangeset, shippedDepChanges } from '../plan.mjs'
+import { altersPublished, checkPlan, closingKeywords, currentMilestone, hasChangeset, shippedDepChanges } from '../plan.mjs'
 import { helpFor } from '../plan-help.mjs'
 
 const dirs = ['blocks', 'druxt', 'menu', 'router']
@@ -326,5 +326,30 @@ describe('helpFor', () => {
 
   it('says what to do when no milestone matches the line at all', () => {
     assert.match(helpFor({ code: 'no-milestone', current: null }, { ...ctx, host: 'github' }), /Create one/)
+  })
+})
+
+describe('closingKeywords', () => {
+  it('reads the issues a description closes, once each, and no bare mention', () => {
+    assert.deepEqual(closingKeywords('Part of #693. Closes #979.\n\nFixes: #12, resolved #979 and closes druxt/druxt.js#40. See #7.'), [979, 12, 40])
+    assert.deepEqual(closingKeywords('Part of #693 and #979. Discloses #5.'), [])
+    assert.deepEqual(closingKeywords(undefined), [])
+  })
+})
+
+describe('checkPlan, for a base that is not the default branch', () => {
+  // The host links an issue from a closing keyword only when the base is the default branch.
+  const stacked = { ...conforming, issues: [], milestone: '2.0.0', baseBranch: '2.0.x', defaultBranch: '0.x' }
+
+  it('takes the issue from a closing keyword in the description', () => {
+    assert.deepEqual(checkPlan({ ...stacked, body: 'Part of #693. Closes #979.' }), [])
+  })
+
+  it('still asks for an issue when the description closes none', () => {
+    assert.deepEqual(checkPlan({ ...stacked, body: 'Part of #693 and #979.' }).map((problem) => problem.code), ['no-issue'])
+  })
+
+  it('reads no keyword on the default branch, where the link is what counts', () => {
+    assert.deepEqual(checkPlan({ ...conforming, issues: [], defaultBranch: '0.x', body: 'Closes #979.' }).map((problem) => problem.code), ['no-issue'])
   })
 })

@@ -39,6 +39,8 @@ const baseUrl = __BASE_URL__
  * that doesn't route or browse generically doesn't need to wire up the
  * modules that do.
  */
+// DruxtClient stores the positional `baseUrl` in `this.options`, without a
+// trailing slash, which is what getIndex() strips from the index's links.
 const druxt = new DruxtClient(baseUrl, { proxy: { api: true } })
 
 // With `proxy.api`, DruxtClient leaves axios's baseURL undefined and builds

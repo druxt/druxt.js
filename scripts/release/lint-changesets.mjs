@@ -28,20 +28,23 @@ const PREFIX = /^(feat|fix|perf|refactor|docs|revert)\((#\d+(?:, ?#\d+)*)\)(!)?:
 const NARRATING = /^(fix|fixes|fixed|fixing)\b/i
 const META = /\b(this|the) (PR|pull request|changeset|commit)\b|\bwe\b/i
 const DEICTIC = /\b(this|these) (package|module|packages|modules)\b/i
-const BREAKING_FOOTER = /^BREAKING[ -]CHANGE:/m
+// Tested against each trimmed line, as .changeset/changelog.cjs reads it.
+const BREAKING_FOOTER = /^BREAKING[ -]CHANGE:/
 
-// The package a component belongs to, by its name. Druxt's own core
-// (`DruxtClient`, `DruxtModule`, `DruxtWrapper`) is shared by every module,
-// so naming it reads correctly in any changelog.
+// The package a component belongs to, by its name, the first match winning.
+// The contract every module shares (`DruxtClient`, `DruxtModule`,
+// `DruxtWrapper`) reads correctly in any changelog, so only core's own
+// development components are core's.
 const OWNERS = [
-  [/^DruxtBlock/, 'druxt-blocks'],
-  [/^DruxtBreadcrumb/, 'druxt-breadcrumb'],
-  [/^Druxt(Entity|Field)/, 'druxt-entity'],
-  [/^DruxtMenu/, 'druxt-menu'],
-  [/^DruxtRouter/, 'druxt-router'],
-  [/^DruxtSchema/, 'druxt-schema'],
-  [/^DruxtSite/, 'druxt-site'],
-  [/^DruxtView/, 'druxt-views'],
+  [/^Druxt(Debug|DevelTemplate|EditControls)$/, '@druxt/core'],
+  [/^DruxtBlock/, '@druxt/blocks'],
+  [/^DruxtBreadcrumb/, '@druxt/breadcrumb'],
+  [/^Druxt(Entity|Field|RouterEntity)/, '@druxt/entity'],
+  [/^DruxtMenu/, '@druxt/menu'],
+  [/^DruxtRouter/, '@druxt/router'],
+  [/^DruxtSchema/, '@druxt/schema'],
+  [/^DruxtSite/, '@druxt/site'],
+  [/^DruxtView/, '@druxt/views'],
 ]
 
 /**
@@ -116,11 +119,9 @@ export function lintChangeset(source, packages) {
     const manifest = packages.get(name)
     const bump = releases[name]
     if (!manifest) {
-      problems.push(`names "${name}", which is not a published package here.`)
+      problems.push(`names "${name}", which is not a workspace package here.`)
     } else if (!['patch', 'minor', 'major'].includes(bump)) {
       problems.push(`gives ${name} the bump "${bump}". Use patch, minor or major.`)
-    } else if (bump === 'major' && /^0\./.test(manifest.version)) {
-      problems.push(`gives ${name} a major bump, which publishes 1.0.0. A breaking change on 0.x is a minor.`)
     }
   }
 
@@ -137,9 +138,15 @@ export function lintChangeset(source, packages) {
     if (NARRATING.test(sentence)) {
       problems.push('opens with "fix", which the changelog renders as "Fixed …". Say what is true for the site now, such as "`getSchema()` resolves `false` …".')
     }
-    const breaking = Boolean(bang) || BREAKING_FOOTER.test(body)
-    if (breaking && names.some((name) => releases[name] === 'patch')) {
-      problems.push('is breaking but releases a patch. A breaking change is a minor on 0.x.')
+    // On 2.x a breaking change is a major, and a major is a breaking change.
+    const breaking = Boolean(bang) || body.split('\n').some((line) => BREAKING_FOOTER.test(line.trim()))
+    for (const bump of ['patch', 'minor']) {
+      if (breaking && names.some((name) => releases[name] === bump)) {
+        problems.push(`is breaking but releases a ${bump}. A breaking change is a major on 2.x.`)
+      }
+    }
+    if (!breaking && names.some((name) => releases[name] === 'major')) {
+      problems.push('releases a major without marking it breaking. Write `type(#N)!: `, or release a minor.')
     }
   }
 
@@ -201,9 +208,19 @@ const readChangesets = (root) => {
     .map((file) => ({ id: file.replace(/\.md$/, ''), file, source: fs.readFileSync(path.join(dir, file), 'utf8') }))
 }
 
+/**
+ * The workspace packages a changeset may name, private ones included: every
+ * 2.x package stays private until its first release, and changesets versions
+ * a private package too.
+ *
+ * @param {string} root - The repository root.
+ * @returns {Map<string, object>} Package name to its manifest.
+ */
+export const workspacePackages = (root) => new Map(readPackages(root).map(({ manifest }) => [manifest.name, manifest]))
+
 async function main() {
   const root = process.cwd()
-  const packages = new Map(readPackages(root).filter(({ manifest }) => !manifest.private).map(({ manifest }) => [manifest.name, manifest]))
+  const packages = workspacePackages(root)
   const changesets = readChangesets(root)
 
   let failed = 0

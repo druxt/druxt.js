@@ -16,15 +16,18 @@ body:
       description: The Druxt package it belongs in, if you know.
       multiple: true
       options:
-        - druxt
-        - druxt-blocks
-        - druxt-breadcrumb
-        - druxt-entity
-        - druxt-menu
-        - druxt-router
-        - druxt-schema
-        - druxt-site
-        - druxt-views
+        - '@druxt/client'
+        - '@druxt/core'
+        - '@druxt/router'
+        - '@druxt/schema'
+        - '@druxt/entity'
+        - '@druxt/views'
+        - '@druxt/menu'
+        - '@druxt/breadcrumb'
+        - '@druxt/blocks'
+        - '@druxt/site'
+        - '@druxt/compat'
+        - '@druxt/devtools'
         - A new package
         - Not sure
     validations:

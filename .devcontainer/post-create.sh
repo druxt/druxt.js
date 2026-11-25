@@ -8,6 +8,14 @@
 # works on a clean container is a step that fails the second time.
 set -euo pipefail
 
+# mise's own installer, which reads mise's release index rather than the
+# GitHub API, so it needs no token.
+if ! command -v mise >/dev/null; then
+  echo "==> Installing mise"
+  curl -fsSL https://mise.run | sudo env MISE_INSTALL_PATH=/usr/local/bin/mise sh
+fi
+echo "==> mise $(mise --version)"
+
 echo "==> Trusting this repo's .mise.toml"
 mise trust
 

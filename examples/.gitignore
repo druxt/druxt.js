@@ -2,3 +2,4 @@
 .nuxt-storybook
 .yarn
 !yarn.lock
+.output
