@@ -12,8 +12,9 @@ module.exports = {
   // Story templates are lodash templates that Nuxt renders into JavaScript, not
   // JavaScript themselves, so they do not parse until they are rendered.
   // test/storyTemplates.test.js renders and runs each one that writes Drupal text;
-  // the others interpolate only machine names and UUIDs.
-  ignorePatterns: ['packages/*/templates/*.stories.js'],
+  // the others interpolate only machine names and UUIDs. The plugin templates are
+  // lodash templates too, which the lint-staged hook would otherwise parse.
+  ignorePatterns: ['packages/*/templates/*.stories.js', 'packages/*/templates/plugin.js'],
   plugins: ['jsdoc'],
   rules: {
     'jsdoc/require-returns': 'off',

@@ -336,6 +336,56 @@ describe('DruxtEntity', () => {
     expect(html.replace(/<code>[\s\S]*?<\/code>/, '<code>{resource}</code>')).toMatchSnapshot()
   })
 
+  test('a missing display names the resource type and the mode', async () => {
+    const mockFile = await getMockResource('file--file')
+    const wrapper = mountComponent({ uuid: mockFile.data.id, type: 'file--file', mode: 'teaser' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.schemaError).toBe(undefined)
+    expect(wrapper.find('druxtdebug-stub').attributes('summary'))
+      .toBe("Missing display settings for 'file--file' in the 'teaser' view mode")
+  })
+
+  test('a schema that fails to load shows the failure, not a missing display', async () => {
+    const mockPage = await getMockResource('node--page')
+    store.$druxtSchema.import = () => Promise.reject(new Error('Request failed with status code 403'))
+    const wrapper = mountComponent({ uuid: mockPage.data.id, type: 'node--page' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.schemaError).toBe('Request failed with status code 403')
+    const debug = wrapper.find('druxtdebug-stub')
+    expect(debug.attributes('summary'))
+      .toBe("The display settings for 'node--page' in the 'default' view mode couldn't be loaded")
+    expect(debug.text()).toContain('Request failed with status code 403')
+  })
+
+  test("a refreshed schema Drupal doesn't have is a missing display", async () => {
+    const mockPage = await getMockResource('node--page')
+    store.$druxtSchema.import = () => Promise.reject(Object.assign(new Error('No Druxt schema in Drupal.'), { code: 'DRUXT_SCHEMA_MISSING' }))
+    const wrapper = mountComponent({ uuid: mockPage.data.id, type: 'node--page' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.schemaError).toBe(undefined)
+    expect(wrapper.find('druxtdebug-stub').attributes('summary'))
+      .toBe("Missing display settings for 'node--page' in the 'default' view mode")
+  })
+
+  test('a refetch whose schema fails to load drops the schema it had', async () => {
+    const mockPage = await getMockResource('node--page')
+    const wrapper = mountComponent({ uuid: mockPage.data.id, type: 'node--page' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    expect(wrapper.vm.schema).toBeTruthy()
+
+    store.$druxtSchema.import = () => Promise.reject(new Error('Request failed with status code 403'))
+    await wrapper.setProps({ mode: 'teaser' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.schema).toBe(null)
+    expect(wrapper.find('druxtdebug-stub').attributes('summary'))
+      .toBe("The display settings for 'node--page' in the 'teaser' view mode couldn't be loaded")
+  })
+
   // test('deprecated', () => {
   //   expect(DruxtEntity.methods.isEmpty()).toBe(true)
   //   expect(DruxtEntity.methods.isEmpty(false)).toBe(true)

@@ -123,6 +123,7 @@ export default {
    * @param {object} vm.value - The Vue.js v-model value. If set, it provides the entity data directly and the JSON:API fetch is skipped.
    * @property {object} model - The model object.
    * @property {object} schema - The DruxtSchema object.
+   * @property {string} schemaError - Why the schema couldn't be loaded, when the display exists but loading it failed.
    */
   data: ({ type, value }) => ({
     model: {
@@ -133,6 +134,7 @@ export default {
       ...value,
     },
     schema: null,
+    schemaError: undefined,
   }),
 
   fetchKey(getCounter) {
@@ -337,14 +339,21 @@ export default {
      * Fetches the Druxt schema object.
      */
     async fetchConfig() {
+      this.schemaError = undefined
       try {
         this.schema = await this.getSchema({
           resourceType: this.type,
           mode: this.mode,
           schemaType: this.schemaType || 'view',
         })
-      } catch(e) {
-        // TODO: Handle error
+      } catch(err) {
+        // The entity renders without a schema either way, as one an earlier
+        // fetch loaded can be for another display. A display Drupal doesn't
+        // have is expected for some bundles, while any other failure is shown
+        // in development.
+        this.schema = null
+        const missing = ['DRUXT_SCHEMA_MISSING', 'MODULE_NOT_FOUND'].includes((err || {}).code)
+        if (!missing) this.schemaError = (err || {}).message || String(err)
       }
     },
 
@@ -452,10 +461,13 @@ export default {
       const scopedSlots = {}
 
       if (!this.schema) {
-        const summary = `Missing display settings for resource type: '${this.type}--${this.mode}'`
-        const description = [
-          h('p', 'Create a Druxt theme component to render the entity.'),
-        ]
+        const display = `'${this.type}' in the '${this.mode}' ${this.schemaType === 'form' ? 'form' : 'view'} mode`
+        const summary = this.schemaError
+          ? `The display settings for ${display} couldn't be loaded`
+          : `Missing display settings for ${display}`
+        const description = this.schemaError
+          ? [h('p', this.schemaError)]
+          : [h('p', 'Create a Druxt theme component to render the entity.')]
 
         scopedSlots.debug = () => h('DruxtDebug',
           { props: { summary } },
