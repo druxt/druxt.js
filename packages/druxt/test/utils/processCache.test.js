@@ -142,6 +142,41 @@ describe('processCache', () => {
     expect(seen).toStrictEqual([false, undefined])
   })
 
+  test('hasCredentials - an interceptor reading and removing headers as Axios 1 does', () => {
+    // A header an interceptor removes again is not sent, whatever its case.
+    const removed = []
+    expect(hasCredentials(intercepted((config) => {
+      config.headers.setAuthorization('Bearer token')
+      removed.push(config.headers.delete('authorization'), config.headers.delete('X-Missing'))
+      return config
+    }))).toBe(false)
+    expect(removed).toStrictEqual([true, false])
+
+    // One that only adds a token when none is set reads the probe's headers as a request's.
+    const read = []
+    expect(hasCredentials(intercepted((config) => {
+      read.push(config.headers.hasAuthorization(), config.headers.getAuthorization())
+      if (!config.headers.hasAuthorization()) config.headers.setAuthorization('Bearer token')
+      read.push(config.headers.hasAuthorization(), config.headers.getAuthorization())
+      return config
+    }))).toBe(true)
+    expect(read).toStrictEqual([false, undefined, true, 'Bearer token'])
+
+    // toJSON() gives the headers alone, without the methods, as a logging interceptor would print them.
+    const logged = []
+    hasCredentials(intercepted((config) => {
+      config.headers.setContentType('application/vnd.api+json')
+      config.headers.setAccept('application/vnd.api+json')
+      logged.push(config.headers.toJSON(), config.headers.getContentType(), config.headers.hasAccept(), config.headers.getAccept())
+      logged.push(config.headers.toJSON() === config.headers)
+      return config
+    }))
+    expect(logged[0]).toMatchObject({ 'Content-Type': 'application/vnd.api+json', Accept: 'application/vnd.api+json' })
+    expect(Object.values(logged[0]).some((value) => typeof value === 'function')).toBe(false)
+    // A copy, as Axios gives, so changing what it gives leaves the request alone.
+    expect(logged.slice(1)).toStrictEqual(['application/vnd.api+json', true, 'application/vnd.api+json', false])
+  })
+
   test('hasCredentials - the probe carries the request URL', () => {
     const jsonapiOnly = (config) => (config.url || '').startsWith('/jsonapi')
       ? { ...config, headers: { ...config.headers, Authorization: 'Bearer token' } }
