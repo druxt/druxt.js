@@ -3,9 +3,9 @@ import { parseLabelsId, parseSchemaId } from '../utils/hold'
 /**
  * Server middleware that serves a schema regenerated from Drupal.
  *
- * Mounted at `/_druxt/schema`, it answers `GET /_druxt/schema/<id>`, and `GET /_druxt/schema/labels%2F<langcode>` with a
- * language's translated field labels. It serves
- * only what the build already puts in the browser bundle as schema files.
+ * Mounted at `/_druxt/schema`, it answers `GET /_druxt/schema/<id>` for a schema ID, and
+ * `GET /_druxt/schema/labels/<langcode>` with a language's translated field labels. It serves only what the build
+ * already puts in the browser bundle as schema files.
  *
  * @param {Function} getSchema - Returns a promise of the schema for an ID, or of false when there is none.
  *
