@@ -323,6 +323,8 @@ const probeInterceptors = (axios, sessionCookie, url) => {
  * Clients sharing an instance may each configure a different session cookie.
  * One interceptor is registered, against every pattern registered on the
  * instance, so a cookie only the second client would recognise is still seen.
+ * A pattern registered after a response makes the instance unseen again, until a
+ * response has been checked against it.
  *
  * @param {object} axios - The Axios instance.
  * @param {string} [sessionCookie] - A pattern for the session cookie name.
@@ -333,6 +335,8 @@ export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) =
 
   const registered = watched.get(axios)
   if (registered) {
+    // No response has been checked against a new pattern, so the instance is unseen again.
+    if (!registered.has(sessionCookie)) seen.delete(axios)
     registered.add(sessionCookie)
     return
   }

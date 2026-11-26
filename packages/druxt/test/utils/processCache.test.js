@@ -138,6 +138,31 @@ describe('processCache', () => {
     expect(processCache('content', { axios: instance })).not.toBeNull()
   })
 
+  test('a session cookie pattern registered after a response withholds the cache until the next one', () => {
+    // The interceptor adds a cookie only the second client's pattern names.
+    const instance = watched(async (config) => ({ ...config, headers: { ...config.headers, Cookie: 'SITE_SESSION=abc' } }))
+    instance.respond({ Cookie: 'SITE_SESSION=abc' })
+    expect(processCache('content', { axios: instance })).not.toBeNull()
+
+    // No response has been checked against the new pattern yet.
+    watchCredentials(instance, 'SITE_SESSION')
+    expect(processCache('content', { axios: instance, sessionCookie: 'SITE_SESSION' })).toBeNull()
+    expect(processCache('content', { axios: instance })).toBeNull()
+
+    instance.respond({ Cookie: 'SITE_SESSION=abc' })
+    expect(processCache('content', { axios: instance, sessionCookie: 'SITE_SESSION' })).toBeNull()
+
+    // A pattern the instance already watches changes nothing.
+    const anonymous = watched(async (config) => config)
+    anonymous.respond()
+    watchCredentials(anonymous)
+    expect(processCache('content', { axios: anonymous })).not.toBeNull()
+    watchCredentials(anonymous, 'SITE_SESSION')
+    expect(processCache('content', { axios: anonymous, sessionCookie: 'SITE_SESSION' })).toBeNull()
+    anonymous.respond()
+    expect(processCache('content', { axios: anonymous, sessionCookie: 'SITE_SESSION' })).not.toBeNull()
+  })
+
   test('an interceptor the probe runs leaves the cache on from the first request', () => {
     expect(processCache('content', { axios: watched((config) => config) })).not.toBeNull()
   })
