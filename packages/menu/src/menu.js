@@ -132,7 +132,8 @@ class DruxtMenu {
   /**
    * Gets the menu items JSON:API resources using the configured method.
    *
-   * Results are cached per client and process, keyed by prefix, method and the query the settings build.
+   * Results are cached per client and process, keyed by the URL prefix the language resolves to, the method and the
+   * query the settings build.
    *
    * @example @lang js
    * const menu = await druxtMenu.get('main')
@@ -155,7 +156,8 @@ class DruxtMenu {
     const query = jsonApiMenuItems
       ? this.buildJsonApiMenuItemsQuery(menuName, settings)
       : this.buildMenuLinkContentQuery(menuName, settings)
-    const cacheKey = JSON.stringify([prefix || '', menuName, jsonApiMenuItems, query.getQueryString()])
+    // By the prefix the language resolves to, so clients with another default language don't share a menu.
+    const cacheKey = JSON.stringify([this.urlPrefix(prefix), menuName, jsonApiMenuItems, query.getQueryString()])
     if (!cache.has(cacheKey)) {
       const request = (async () => {
         // A menu fetched by an earlier server request without credentials. The
