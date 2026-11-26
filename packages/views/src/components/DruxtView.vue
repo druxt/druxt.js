@@ -506,19 +506,22 @@ export default {
      */
     async fetchConfig() {
       if (!this.view && (this.uuid || this.viewId)) {
+        // A language switch while a request runs leaves its result for the fetch the switch starts.
+        const lang = this.lang
         if (this.uuid) {
-          this.view = await this.getResource({
-            prefix: this.lang,
+          const view = await this.getResource({
+            prefix: lang,
             type: this.type,
             id: this.uuid,
           })
+          if (this.lang === lang) this.view = view
         } else {
           const collection = await this.getCollection({
-            prefix: this.lang,
+            prefix: lang,
             type: this.type,
             query: new DrupalJsonApiParams().addFilter('drupal_internal__id', this.viewId)
           })
-          this.view = { data: collection.data[0] }
+          if (this.lang === lang) this.view = { data: collection.data[0] }
         }
       }
     },
@@ -540,17 +543,19 @@ export default {
         // Build query.
         const query = this.getQuery(settings)
 
-        // Execute the request. The store answers false for a request that
-        // failed with nothing kept, and everything that reads the resource,
-        // the pager's prop among them, expects a resource or nothing.
-        const results = await this.getResults({
+        // Execute the request. A language switch while a request runs leaves its result for the fetch the switch starts.
+        const lang = this.lang
+        const resource = await this.getResults({
           displayId: this.displayId,
-          prefix: this.lang,
+          prefix: lang,
           query: stringify(query),
           viewId,
           bypassCache
         })
-        this.resource = results || null
+        // The store answers false for a request that failed with nothing
+        // kept, and everything that reads the resource, the pager's prop
+        // among them, expects a resource or nothing.
+        if (this.lang === lang) this.resource = resource || null
       }
     },
 

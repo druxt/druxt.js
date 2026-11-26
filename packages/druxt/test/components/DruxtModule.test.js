@@ -211,6 +211,34 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm._fetchPromise).toBe(undefined)
   })
 
+  test('fetch - a fetch whose language changed while it ran leaves the component alone', async () => {
+    const release = []
+    const CustomModule = {
+      name: 'CustomModule',
+      extends: DruxtModule,
+      druxt: { fetchData: () => new Promise((resolve) => release.push(resolve)) },
+    }
+    const wrapper = mount(CustomModule, { localVue, mocks: { ...mocks, $fetch: jest.fn() }, propsData: { langcode: 'es' } })
+    const settle = () => new Promise((resolve) => setTimeout(resolve))
+
+    // The language changes while the Spanish fetch runs, so its result is dropped for the English one.
+    const before = wrapper.vm.component
+    const stale = wrapper.vm.$options.fetch.call(wrapper.vm)
+    await settle()
+    await wrapper.setProps({ langcode: 'en' })
+    release.shift()()
+    await stale
+    expect(wrapper.vm.component).toBe(before)
+
+    // A fetch that ends in the language it started in is applied.
+    const current = wrapper.vm.$options.fetch.call(wrapper.vm)
+    await settle()
+    release.shift()()
+    await current
+    expect(wrapper.vm.component).not.toBe(before)
+    expect(wrapper.vm.component.is).toBe('DruxtWrapper')
+  })
+
   test('error', async () => {
     const CustomModule = {
       name: 'CustomModule',

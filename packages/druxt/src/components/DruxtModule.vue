@@ -204,6 +204,10 @@ export default {
       return false
     }
 
+    // The language this fetch is for. A switch while it runs leaves its result unused, as the fetch the switch
+    // starts follows this one.
+    const lang = this.lang
+
     // Fetch configuration.
     if ((this.$options.druxt || {}).fetchConfig) {
       try {
@@ -211,6 +215,7 @@ export default {
       } catch(err) {
         return this.error(err)
       }
+      if (this.lang !== lang) return
     }
 
     // Build wrapper component object.
@@ -249,6 +254,7 @@ export default {
       } catch(err) {
         return this.error(err, { component })
       }
+      if (this.lang !== lang) return
     }
 
     // Get scoped slots.

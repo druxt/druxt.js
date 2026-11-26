@@ -173,4 +173,19 @@ describe('DruxtMenu', () => {
       prefix: undefined
     })
   })
+
+  test('a fetch whose language changed while it ran leaves the menu alone', async () => {
+    // Each request waits for the test, so the language can change while it runs.
+    const pending = []
+    const hold = () => new Promise((resolve) => pending.push(resolve))
+    const wrapper = shallowMount(DruxtMenuComponent, { store, localVue, mocks: { ...mocks, $fetch: jest.fn() }, propsData: { langcode: 'es' } })
+    wrapper.vm.getMenu = hold
+    const before = wrapper.vm.model
+
+    const data = wrapper.vm.$options.druxt.fetchData.call(wrapper.vm, { query: {} })
+    await wrapper.setProps({ langcode: 'en' })
+    pending.shift()()
+    await data
+    expect(wrapper.vm.model).toBe(before)
+  })
 })

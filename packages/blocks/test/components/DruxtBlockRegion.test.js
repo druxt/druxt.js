@@ -158,4 +158,22 @@ describe('Component - DruxtBlockRegion', () => {
     DruxtBlockRegion.watch.theme.call({ $fetch })
     expect($fetch).toHaveBeenCalledTimes(2)
   })
+
+  test('a fetch whose language changed while it ran leaves the blocks alone', async () => {
+    // Each request waits for the test, so the language can change while it runs.
+    const pending = []
+    const hold = () => new Promise((resolve) => pending.push(resolve))
+    const wrapper = mountComponent('content', {
+      mocks: { $fetch: jest.fn(), $fetchState: { pending: true }, $route: { meta: {} } },
+      propsData: { name: 'content', theme: 'umami', langcode: 'es' },
+    })
+    wrapper.vm.getCollection = hold
+    const before = wrapper.vm.blocks
+
+    const config = wrapper.vm.$options.druxt.fetchConfig.call(wrapper.vm)
+    await wrapper.setProps({ langcode: 'en' })
+    pending.shift()({ data: [{ id: 'spanish-block' }] })
+    await config
+    expect(wrapper.vm.blocks).toBe(before)
+  })
 })

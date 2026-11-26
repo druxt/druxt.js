@@ -175,4 +175,19 @@ describe('Component - DruxtBlock', () => {
     // Ensure that error message matches snapshot.
     expect(wrapper.html()).toMatchSnapshot()
   })
+
+  test('a fetch whose language changed while it ran leaves the block alone', async () => {
+    // Each request waits for the test, so the language can change while it runs.
+    const pending = []
+    const hold = () => new Promise((resolve) => pending.push(resolve))
+    const wrapper = mountComponent({ uuid: 'block-uuid', langcode: 'es' }, {}, { $fetch: jest.fn() })
+    wrapper.vm.getResource = hold
+    const before = wrapper.vm.resource
+
+    const config = wrapper.vm.$options.druxt.fetchConfig.call(wrapper.vm)
+    await wrapper.setProps({ langcode: 'en' })
+    pending.shift()({ data: { id: 'block-uuid', attributes: { settings: { label: 'Spanish label' } } } })
+    await config
+    expect(wrapper.vm.resource).toBe(before)
+  })
 })

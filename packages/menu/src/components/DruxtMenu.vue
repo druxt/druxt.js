@@ -302,13 +302,15 @@ export default {
      */
     async fetchData(settings) {
       if (!this.value) {
+        // A language switch while a request runs leaves its result for the fetch the switch starts.
+        const lang = this.lang
         await this.getMenu({
           name: this.name,
           settings: settings.query,
-          prefix: this.lang
+          prefix: lang
         })
         // A menu unmounted during the request no longer tracks the store.
-        if (this._isDestroyed) return
+        if (this._isDestroyed || this.lang !== lang) return
         this.model = this.getMenuItems()
       }
     },
