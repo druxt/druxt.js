@@ -237,6 +237,7 @@ export default {
 
     // Get wrapper data.
     const wrapperData = await this.getWrapperData(component.is)
+    if (this.lang !== lang) return
     // On the instance rather than in data(), so it is not copied into the
     // server rendered payload once per module.
     this.wrapperProps = wrapperData.props || {}
