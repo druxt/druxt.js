@@ -33,7 +33,8 @@ const builds = new WeakMap()
  * @param {string} [options.endpoint=/jsonapi] - The JSON:API endpoint.
  * @param {object} [options.build] - The build reading them, such as a Nuxt module's `this.nuxt`, so its modules share
  *   one read and its warnings show once. Without it, each call reads again.
- * @return {Promise<object[]>} Each language's `langcode` and `prefix`, and `default` on the default language. Without
+ *
+ * @returns {Promise<object[]>} Each language's `langcode` and `prefix`, and `default` on the default language. Without
  *   `und` and `zxx`.
  */
 export const getLanguages = (druxt, { endpoint = '/jsonapi', build } = {}) => {

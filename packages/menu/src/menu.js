@@ -223,8 +223,11 @@ class DruxtMenu {
    * The URL prefix a langcode is served under, from the Druxt client's `prefixes`, or the langcode itself with a
    * client that has none.
    *
-   * @param {string} [prefix] - The langcode, or the JSON:API endpoint prefix.
-   * @return {string} The URL prefix.
+   * @private
+   *
+   * @param {string} [prefix] - (Optional) The langcode, or the JSON:API endpoint prefix.
+   *
+   * @returns {string} The URL prefix.
    */
   urlPrefix(prefix) {
     return typeof this.druxt.urlPrefix === 'function' ? this.druxt.urlPrefix(prefix) : (prefix || '')

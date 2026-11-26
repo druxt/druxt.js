@@ -242,6 +242,10 @@ export { DruxtNuxtModule }
  * @typedef {object} ModuleOptions
  * @property {string} baseUrl - The Base URL of the Drupal JSON:API backend.
  * @property {string} [endpoint=/jsonapi] - The JSON:API endpoint path.
+ * @property {object} [prefixes] - The URL prefix Drupal serves each langcode under, such as `{ en: '', es: 'spanish' }`.
+ *   Read from Drupal at build when not set.
+ * @property {string} [defaultLangcode] - The langcode a request without one asks for, under its prefix. Read from
+ *   `prefixes`, or from Drupal at build, when not set.
  * @property {object} [proxy] - Proxy settings object.
  * @property {boolean} [proxy.api] - Proxy the JSON:API.
  * @property {(boolean|string)} [proxy.files] - Proxy Drupal's site files directory. Provide String to specify multi-site path.
