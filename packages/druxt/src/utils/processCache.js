@@ -339,8 +339,10 @@ export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) =
   const patterns = new Set([sessionCookie])
   watched.set(axios, patterns)
 
-  const mark = (config) => {
-    if (config) seen.add(axios)
+  // `sent` only for a request that went out. A request interceptor's rejection reaches the error handler with
+  // the config it was given, before anything is sent, so it shows credentials but not the request as sent.
+  const mark = (config, sent) => {
+    if (config && sent) seen.add(axios)
     for (const pattern of patterns) {
       if (configHasCredentials(config, pattern)) {
         credentialed.add(axios)
@@ -349,8 +351,9 @@ export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) =
     }
   }
   interceptors.use(
-    (response) => { mark((response || {}).config); return response },
-    (error) => { mark((error || {}).config); return Promise.reject(error) }
+    (response) => { mark((response || {}).config, true); return response },
+    // Axios gives an error `request` once the request is sent, and `response` once it is answered.
+    (error) => { mark((error || {}).config, !!(error && (error.request || error.response))); return Promise.reject(error) }
   )
 }
 

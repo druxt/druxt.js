@@ -80,7 +80,10 @@ describe('processCache', () => {
     instance.interceptors.response = { use: (ok, fail) => responses.push({ ok, fail }) }
     watchCredentials(instance)
     instance.respond = (headers = {}) => responses[0].ok({ config: { headers } })
-    instance.fail = (headers = {}) => responses[0].fail({ config: { headers } }).catch(() => {})
+    // A request Axios sent fails with `request`, and with `response` once Drupal answers.
+    instance.fail = (headers = {}) => responses[0].fail({ config: { headers }, request: {} }).catch(() => {})
+    // A request interceptor's rejection reaches the response handlers too, before anything is sent.
+    instance.failBeforeSend = (headers = {}) => responses[0].fail({ config: { headers } }).catch(() => {})
     return instance
   }
 
@@ -116,6 +119,23 @@ describe('processCache', () => {
     return instance.fail().then(() => {
       expect(processCache('content', { axios: instance })).not.toBeNull()
     })
+  })
+
+  test('an interceptor that fails before the request is sent leaves the cache withheld', async () => {
+    // As an auth interceptor whose token refresh throws: the config it rejects with never went out.
+    const instance = watched(async (config) => config)
+    await instance.failBeforeSend()
+    expect(processCache('content', { axios: instance })).toBeNull()
+
+    // Credentials it shows still withhold the cache for good.
+    const signed = watched(async (config) => config)
+    await signed.failBeforeSend({ Authorization: 'Bearer token' })
+    await signed.fail()
+    expect(processCache('content', { axios: signed })).toBeNull()
+
+    // A request that went out and failed shows the request as sent.
+    await instance.fail()
+    expect(processCache('content', { axios: instance })).not.toBeNull()
   })
 
   test('an interceptor the probe runs leaves the cache on from the first request', () => {
