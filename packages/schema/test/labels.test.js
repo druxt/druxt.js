@@ -1,6 +1,10 @@
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
+import { getLanguages } from 'druxt'
 import { DruxtSchema } from '../src'
 import { parseLabelsId } from '../src/utils/hold'
+
+// The languages Drupal has, for a site whose prefixes aren't in the options. The rest of druxt is real.
+jest.mock('druxt', () => ({ ...jest.requireActual('druxt'), getLanguages: jest.fn() }))
 
 const baseUrl = 'https://example.com'
 
@@ -116,6 +120,35 @@ describe('DruxtSchema.getLabels', () => {
 
     expect(await schema.getLabels('es')).toStrictEqual(expected)
     expect(first.mock.calls.some(([, query]) => filters(query).includes('filter[entity_type]=node'))).toBe(true)
+  })
+
+  test('getAllLabels gives each language\'s labels by langcode', async () => {
+    const { schema } = site({
+      prefixes: { en: '', es: 'es' },
+      byPrefix: { '': english, es: { 'node.recipe.field_difficulty': ['Dificultad', null] } },
+    })
+
+    expect(await schema.getAllLabels()).toStrictEqual({
+      en: {},
+      es: { 'node--recipe': { field_difficulty: { label: 'Dificultad', description: null } } },
+    })
+  })
+
+  test('without the prefixes option, the prefixes are read from Drupal once, for the build', async () => {
+    const { schema } = site({ byPrefix: { '': english, es: { 'node.recipe.field_difficulty': ['Dificultad', null] } } })
+    getLanguages.mockResolvedValue([
+      { langcode: 'en', prefix: '', default: true },
+      { langcode: 'es', prefix: 'es' },
+    ])
+    const build = {}
+
+    expect(await schema.getAllLabels({ build })).toStrictEqual({
+      en: {},
+      es: { 'node--recipe': { field_difficulty: { label: 'Dificultad', description: null } } },
+    })
+    expect(schema.druxt.options.prefixes).toStrictEqual({ en: '', es: 'es' })
+    expect(getLanguages).toHaveBeenCalledTimes(1)
+    expect(getLanguages).toHaveBeenCalledWith(schema.druxt, { endpoint: '/jsonapi', build })
   })
 
   test('getSchemaById gives the labels for a labels ID', async () => {
