@@ -121,7 +121,7 @@ Set i18n to agree with Drupal:
 
 These don't work on Druxt pages yet:
 
-- `$i18n.locale` doesn't follow a Druxt page's URL. Read the page's language from `$route.meta.langcode`.
+- `$i18n.locale` doesn't follow a Druxt page's URL. Read the page's language from `$route.meta.langcode`, and on the `druxt-router` route, which has none, use `$druxt.options.defaultLangcode`.
 - `switchLocalePath()` doesn't know Drupal's translated paths. Link each language's front page with `$druxt.urlPrefix(langcode)` instead.
 - `nuxtI18nHead({ addSeoAttributes: true })` adds a second canonical link, and hreflang links that all point at the current page. Leave `addSeoAttributes` off for Druxt pages.
 
