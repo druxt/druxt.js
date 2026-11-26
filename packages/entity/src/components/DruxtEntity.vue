@@ -387,7 +387,7 @@ export default {
         // Execute the request.
         const resource = await this.getResource({
           id: this.uuid,
-          prefix: this.lang,
+          prefix: lang,
           type: this.type,
           query,
           bypassCache

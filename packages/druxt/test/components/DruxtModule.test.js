@@ -239,6 +239,36 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.component.is).toBe('DruxtWrapper')
   })
 
+  test('fetch - a config fetched after the language changed leaves the component alone', async () => {
+    const release = []
+    const getWrapperData = jest.fn(async () => ({ props: {}, druxt: {} }))
+    // No fetchData, as with DruxtBlock, whose fetchConfig is its only request.
+    const CustomModule = {
+      name: 'CustomModule',
+      extends: DruxtModule,
+      druxt: { fetchConfig: () => new Promise((resolve) => release.push(resolve)) },
+      methods: { getWrapperData },
+    }
+    const wrapper = mount(CustomModule, { localVue, mocks: { ...mocks, $fetch: jest.fn() }, propsData: { langcode: 'es' } })
+    const settle = () => new Promise((resolve) => setTimeout(resolve))
+
+    const before = wrapper.vm.component
+    const stale = wrapper.vm.$options.fetch.call(wrapper.vm)
+    await settle()
+    await wrapper.setProps({ langcode: 'en' })
+    release.shift()()
+    await stale
+    // The fetch ends there, before the wrapper is looked up.
+    expect(getWrapperData).not.toHaveBeenCalled()
+    expect(wrapper.vm.component).toBe(before)
+
+    const current = wrapper.vm.$options.fetch.call(wrapper.vm)
+    await settle()
+    release.shift()()
+    await current
+    expect(wrapper.vm.component).not.toBe(before)
+  })
+
   test('fetch - a wrapper that loads after the language changed leaves the component alone', async () => {
     const release = []
     // No fetchData, as with DruxtBlock, so the wrapper load is the last thing the fetch waits for.
