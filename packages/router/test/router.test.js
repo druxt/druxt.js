@@ -220,6 +220,23 @@ describe('DruxtRouter', () => {
       canonical: 'https://example.com/clean-url'
     })
     expect(redirect).toBe(false)
+
+    // A redirect to the clean URL keeps the query and the hash.
+    redirect = router.getRedirect('/node/2?page=2#comments', {
+      canonical: 'https://example.com/clean-url'
+    })
+    expect(redirect).toBe('/clean-url?page=2#comments')
+
+    // So does one to the home path.
+    redirect = router.getRedirect('/node?page=2', {
+      isHomePath: true
+    })
+    expect(redirect).toBe('/?page=2')
+    redirect = router.getRedirect('/es/node?page=2', {
+      isHomePath: true,
+      props: { langcode: 'es' }
+    })
+    expect(redirect).toBe('/es?page=2')
   })
 
   // @deprecated

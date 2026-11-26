@@ -233,6 +233,8 @@ class DruxtRouter {
       return route.redirect[0].to
     }
     const url = Url(path)
+    // The route was found by the path alone, so a redirect keeps the query and hash.
+    const rest = `${url.query || ''}${url.hash || ''}`
 
     // Redirect to root if route is home path but path isn't root.
     if (route.isHomePath) {
@@ -240,7 +242,7 @@ class DruxtRouter {
       // An unprefixed path reports the default langcode, so "/" is already the
       // home path and redirecting it to "/<langcode>" is a redirect to itself.
       if (!['/', homePath, `${homePath}/`].includes(url.pathname)) {
-        return homePath
+        return homePath + rest
       }
       return false
     }
@@ -250,7 +252,7 @@ class DruxtRouter {
       const canonicalUrl = new Url(route.canonical)
 
       if (url.pathname !== canonicalUrl.pathname) {
-        return canonicalUrl.pathname
+        return canonicalUrl.pathname + rest
       }
     }
 
