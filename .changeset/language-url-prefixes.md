@@ -6,7 +6,7 @@
 
 feat(#1054): each language now reaches Drupal under the URL prefix Drupal serves it at, which needn't be its langcode.
 
-Drupal's default setup gives the default language no prefix, and Druxt asked for `/en/jsonapi`, which Drupal answers with a 404. It now asks for `/jsonapi`. A language with a prefix of its own, such as `/spanish` for `es`, works too.
+Drupal's default setup gives the default language no prefix, and Druxt asked for `/en/jsonapi`, which Drupal answers with a 404. It now asks for `/jsonapi`. A language whose prefix isn't its langcode, such as `es` served at `/spanish`, works too.
 
 At build, Druxt reads each language's prefix from Drupal. A prefix that is neither the langcode nor the default language's can only be read when the Decoupled Settings module publishes `language.negotiation`. Otherwise, or to skip the read, set the prefixes in `nuxt.config.js`:
 
