@@ -520,8 +520,9 @@ export default {
      * owns: its page, in its pager's place in `page` (`page=0,2` is page 2 of
      * pager 1), the values of its exposed filters, and its sort when it exposes
      * sorts. A value back at its default is removed. The rest of the query,
-     * including other views' keys, is kept as it is, and `router.replace` keeps
-     * the browser history to one entry.
+     * including other views' keys, is kept as it is, and `router.replace` adds
+     * no entry to the browser history. The pager's and the sorts' links are
+     * links, and add one.
      *
      * The `route` setting turns this off.
      */
@@ -708,17 +709,26 @@ export default {
           bypassCache = settings.query.bypassCache
         }
 
-        // Build query.
-        const query = this.getQuery(settings)
+        // The filter, page or sort can change while a request runs, and Nuxt's
+        // `$fetch()` then joins this fetch rather than start one. So the
+        // results are asked for again until they are the ones the view now
+        // wants, and only those are shown.
+        let query
+        let resource
+        do {
+          // Build query.
+          query = stringify(this.getQuery(settings))
 
-        // Execute the request.
-        this.resource = await this.getResults({
-          displayId: this.displayId,
-          prefix: this.lang,
-          query: stringify(query),
-          viewId,
-          bypassCache
-        })
+          // Execute the request.
+          resource = await this.getResults({
+            displayId: this.displayId,
+            prefix: this.lang,
+            query,
+            viewId,
+            bypassCache
+          })
+        } while (query !== stringify(this.getQuery(settings)))
+        this.resource = resource
       }
     },
 
@@ -837,6 +847,7 @@ export default {
           },
           ref: 'sorts',
           props: {
+            route: ((this.component || {}).settings || {}).route !== false,
             sorts: this.sorts,
             value: this.model.sort,
             ...(((this.display || {}).display_options || {}).exposed_form || {})

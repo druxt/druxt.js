@@ -290,6 +290,14 @@ describe('DruxtView', () => {
     expect(DruxtView.druxt.slots.call(mock, h).pager({}).props.route).toBe(true)
   })
 
+  test('the sorts get the route setting', () => {
+    const h = jest.fn((tag, data) => data)
+    const mock = { component: { settings: { route: false } }, filters: [], headers: {}, model: { sort: null }, results: [], showSorts: true, sorts: [], viewId: 'test' }
+    expect(DruxtView.druxt.slots.call(mock, h).sorts({}).props.route).toBe(false)
+    mock.component.settings = {}
+    expect(DruxtView.druxt.slots.call(mock, h).sorts({}).props.route).toBe(true)
+  })
+
   test('error - missing required props', async () => {
     const wrapper = mountComponent({})
     await wrapper.vm.$options.fetch.call(wrapper.vm)

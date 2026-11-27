@@ -647,6 +647,41 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
     }
   })
 
+  test('a URL that changes while results load is fetched for, and its results shown', async () => {
+    const { wrapper, route, flush, requests } = await mountView({ propsData: recipes })
+    await flush()
+
+    // The request for the easy recipes is held until the URL has moved on.
+    const get = mockAxios.get.getMockImplementation()
+    let release
+    const held = new Promise((resolve) => { release = resolve })
+    let sent
+    const asked = new Promise((resolve) => { sent = resolve })
+    mockAxios.get.mockImplementation(async (url, config) => {
+      if (decodeURIComponent(url).includes('views-filter[difficulty]=easy')) {
+        sent()
+        await held
+      }
+      return get(url, config)
+    })
+    try {
+      setFilter(wrapper, 'easy')
+      await asked
+      // Another link, or the back button, asks for the medium ones.
+      route.query = { 'filter[difficulty]': 'medium' }
+      await Vue.nextTick()
+      release()
+      await flush()
+
+      expect(wrapper.vm.model.filter).toStrictEqual({ difficulty: 'medium' })
+      expect(requests().map(({ search }) => decodeURIComponent(search)).filter((search) => search.includes('difficulty')))
+        .toStrictEqual(['views-filter[difficulty]=easy', 'views-filter[difficulty]=medium'])
+      expect(nodeIds(wrapper)).toStrictEqual(mediumFirstPage)
+    } finally {
+      mockAxios.get.mockImplementation(get)
+    }
+  })
+
   test('clearing a filter while its URL write is pending leaves the URL clear', async () => {
     const { wrapper, route, router, flush } = await mountView({ propsData: recipes })
     await flush()

@@ -68,7 +68,7 @@ Renders a Drupal View using DruxtEntity components, using data provided by the D
 <DruxtView :display-id="displayId" :view-id="viewId" />
 ```
 
-Changing an exposed filter goes back to the first page. A view keeps its exposed filters, its page and its sort in the URL query without adding history entries, so a reload or a copied link shows the same results. Views on one page share the query as they do in Drupal, so give each view's pager its own pager ID. To keep a view out of the URL:
+Changing an exposed filter goes back to the first page. A view keeps its exposed filters, its page and its sort in the URL query, so a reload or a copied link shows the same results. A filter change doesn't add a history entry, while the pager's and the sorts' links do. Views on one page share the query as they do in Drupal, so give each view's pager its own pager ID. To keep a view out of the URL:
 
 ```vue
 <DruxtView view-id="recipes" display-id="block_1" :settings="{ route: false }" />

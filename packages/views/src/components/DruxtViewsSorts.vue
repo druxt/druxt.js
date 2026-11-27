@@ -29,6 +29,17 @@ export default {
     },
 
     /**
+     * Whether the sorts' links change the URL. With the view's `route` setting
+     * off, they change the sort without navigating.
+     *
+     * @type {boolean}
+     */
+    route: {
+      type: Boolean,
+      default: true,
+    },
+
+    /**
      * The Exposed Sort objects.
      *
      * @type {object[]}
@@ -106,14 +117,24 @@ export default {
         default: () => h('div', [
           h('strong', [this.options.exposed_sorts_label]),
           h('ul', this.sorts.map((sort) => h('li', [
-            h('NuxtLink', {
-              nativeOn: {
-                click() {
-                  self.model = sort.id
+            // A link to the sort, or a button for sorts kept out of the URL.
+            self.route
+              ? h('NuxtLink', {
+                nativeOn: {
+                  click() {
+                    self.model = sort.id
+                  },
                 },
-              },
-              props: { to: this.sortBy(sort) },
-            }, [sort.expose.label])
+                props: { to: this.sortBy(sort) },
+              }, [sort.expose.label])
+              : h('button', {
+                attrs: { type: 'button' },
+                on: {
+                  click() {
+                    self.model = sort.id
+                  },
+                },
+              }, [sort.expose.label])
           ])))
         ]),
       }
