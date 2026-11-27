@@ -10,7 +10,7 @@ import DruxtEntityForm from '../../src/components/DruxtEntityForm.vue'
 import DruxtField from '../../src/components/DruxtField.vue'
 
 const { baseUrl } = require('../../../../test/drupal')
-const { NuxtFetch, settle } = require('../../../../test/nuxt-fetch')
+const { NuxtFetch, setFetchDelay, setHydration, settle } = require('../../../../test/nuxt-fetch')
 
 // A mounted DruxtEntity follows its resource in the store (#1019), against
 // the mock in test/drupal.js. The pages come from a client of their own, so
@@ -38,7 +38,10 @@ let lastStore
 const setup = ({ fetch = true } = {}) => {
   const localVue = createLocalVue()
   localVue.use(Vuex)
-  if (fetch) localVue.mixin(NuxtFetch)
+  localVue.mixin(NuxtFetch)
+  // Without `fetch`, the components mount as on a server-rendered page: they
+  // have `$fetch()` and don't call it, and the test gives them their data.
+  setHydration(fetch ? null : () => ({}))
   localVue.component('DruxtEntity', DruxtEntity)
   localVue.component('DruxtField', DruxtField)
   renders = {}
@@ -102,6 +105,9 @@ const hold = (method, match) => {
   return { hit, release: () => { release(); mockAxios[method].mockImplementation(impl) } }
 }
 
+// The requests made for a page.
+const pageRequests = (id) => mockAxios.get.mock.calls.filter(([url]) => decodeURIComponent(url).includes(`/node/page/${id}`))
+
 // Writes a page into the store with a title, as a save or a preview does.
 const store = (s, page, title, prefix = 'en') => {
   const resource = { data: copy(page) }
@@ -110,7 +116,10 @@ const store = (s, page, title, prefix = 'en') => {
 }
 
 describe('DruxtEntity renders from the store', () => {
-  afterEach(() => mockAxios.reset())
+  afterEach(() => {
+    mockAxios.reset()
+    setHydration(null)
+  })
 
   test('a store write reaches every mounted entity', async () => {
     const { localVue, store: s, a, b } = await mountPair()
@@ -181,6 +190,81 @@ describe('DruxtEntity renders from the store', () => {
     expect(titleOf(a)).toBe('Again')
   })
 
+  test('a store write that changes nothing leaves the entity as it is', async () => {
+    const { localVue, store: s, root, a, b } = await mountPair()
+    const models = [a.model, b.model]
+    const before = { ...renders }
+    const text = root.text()
+
+    // As another component's fetch of the same entity stores it again.
+    store(s, pages[0], pages[0].attributes.title)
+    await settle(localVue)
+
+    expect(a.model).toBe(models[0])
+    expect(b.model).toBe(models[1])
+    expect(renders).toStrictEqual(before)
+    expect(root.text()).toBe(text)
+  })
+
+  test('a store write renders each entity that shows it once, and what it renders', async () => {
+    const { localVue, store: s, root } = await mountPair()
+    const before = renders[pages[0].id]
+
+    store(s, pages[0], 'Stored')
+    await settle(localVue)
+
+    // Both entities show the page.
+    expect(renders[pages[0].id] - before).toBe(2)
+    expect(root.findAll('h2').wrappers.map((h2) => h2.text())).toStrictEqual(['Stored', 'Stored'])
+  })
+
+  test('an entity copies what it fetched once, and tells its parent once', async () => {
+    // Before setup() registers the component, which copies its methods.
+    const copies = jest.spyOn(DruxtEntity.methods, 'setModelFromStore')
+    const { localVue, store: s } = setup()
+    const input = jest.fn()
+    try {
+      // No wrapper of the site's own, as with a `#default` template.
+      const root = mount({
+        template: '<div><DruxtEntity ref="a" type="node--page" :uuid="uuid" langcode="en" :wrapper="false" @input="input" /></div>',
+        data: () => ({ uuid: pages[0].id }),
+        methods: { input },
+      }, { localVue, store: s, mocks, stubs: ['DruxtDebug'] })
+      await settle(localVue)
+      expect(titleOf(root.vm.$refs.a)).toBe(pages[0].attributes.title)
+      expect(copies).toHaveBeenCalledTimes(1)
+      expect(input).toHaveBeenCalledTimes(1)
+
+      // Stored again unchanged, the parent hears nothing.
+      store(s, pages[0], pages[0].attributes.title)
+      await settle(localVue)
+      expect(input).toHaveBeenCalledTimes(1)
+    } finally {
+      copies.mockRestore()
+    }
+  })
+
+  test('a cleared field is an unsaved edit, which a store write leaves alone', async () => {
+    const { localVue, store: s, root, a } = await mountPair()
+    root.vm.schemaType = 'form'
+    await settle(localVue)
+    // Read as a page's "unsaved changes" notice reads it.
+    expect(a.dirty).toBe(false)
+
+    // The field's input handler removes an emptied value.
+    const title = a.getScopedSlots().title
+    expect(title).toBeTruthy()
+    title().componentOptions.listeners.input('')
+    await localVue.nextTick()
+    expect(a.model.attributes.title).toBe(undefined)
+    expect(a.dirty).toBe(true)
+
+    store(s, pages[0], 'Stored')
+    await settle(localVue)
+    expect(a.model.attributes.title).toBe(undefined)
+    expect(a.dirty).toBe(true)
+  })
+
   test('another entity of the type loading re-renders nothing', async () => {
     const { localVue, store: s } = await mountPair({ type: 'node--recipe' })
     const before = { ...renders }
@@ -233,6 +317,30 @@ describe('DruxtEntity renders from the store', () => {
     expect(titleOf(wrapper.vm)).toBe('Stored')
   })
 
+  test('a server-rendered entity fetches again after a flush, and keeps its content meanwhile', async () => {
+    const { localVue, store: s } = setup({ fetch: false })
+    store(s, pages[0], pages[0].attributes.title)
+    const model = copy(s.state.druxt.resources['node--page'][pages[0].id].en.data)
+    const Hydrated = { extends: DruxtEntity, created() { this.model = copy(model) } }
+    const wrapper = mount(Hydrated, {
+      localVue,
+      store: s,
+      mocks,
+      propsData: { type: 'node--page', uuid: pages[0].id, langcode: 'en' },
+      stubs: ['DruxtDebug'],
+    })
+    await settle(localVue)
+    expect(pageRequests(pages[0].id)).toHaveLength(0)
+
+    s.dispatch('druxt/clearCache')
+    await localVue.nextTick()
+    expect(titleOf(wrapper.vm)).toBe(pages[0].attributes.title)
+    await settle(localVue)
+    expect(pageRequests(pages[0].id)).toHaveLength(1)
+    expect(wrapper.vm.storedEntity).toBeTruthy()
+    expect(titleOf(wrapper.vm)).toBe(pages[0].attributes.title)
+  })
+
   test('a hydrated entity keeps its edits', async () => {
     // Nuxt 2 restores a fetch's data in a created hook it adds after the
     // component's own, so the component's created() sees the default model.
@@ -276,10 +384,19 @@ describe('DruxtEntity renders from the store', () => {
     await settle(localVue)
     expect(titleOf(root.vm.$refs.a)).toBe('Parent')
     expect(root.vm.$refs.a.dirty).toBe(false)
+
+    // An edit is the parent's too: it isn't the component's unsaved edit, and
+    // a later store write leaves it alone.
+    root.vm.$refs.a.model.attributes.title = 'Edited'
+    await localVue.nextTick()
+    expect(root.vm.$refs.a.dirty).toBe(false)
+    store(s, pages[0], 'Stored again')
+    await settle(localVue)
+    expect(titleOf(root.vm.$refs.a)).toBe('Edited')
+    expect(root.vm.value.attributes.title).toBe('Edited')
   })
 
   describe('when the store empties', () => {
-    const pageRequests = (id) => mockAxios.get.mock.calls.filter(([url]) => decodeURIComponent(url).includes(`/node/page/${id}`))
 
     test('clearCache keeps the content and fetches again', async () => {
       const { localVue, store: s, a, b } = await mountPair()
@@ -343,6 +460,13 @@ describe('DruxtEntity renders from the store', () => {
       }
 
       expect(a.component.is).toBe('DruxtDebug')
+      expect(titleOf(a)).toBe(title)
+
+      // Signed in again, the next clear brings the entity back.
+      s.dispatch('druxt/clearCache')
+      await settle(localVue)
+      expect(a.component.is).not.toBe('DruxtDebug')
+      expect(a.storedEntity).toBeTruthy()
       expect(titleOf(a)).toBe(title)
     })
 
@@ -672,7 +796,6 @@ describe('DruxtEntity renders from the store', () => {
   })
 
   describe('edits per language', () => {
-    const pageRequests = (id) => mockAxios.get.mock.calls.filter(([url]) => decodeURIComponent(url).includes(`/node/page/${id}`))
 
     test("a language switch shows that language, not the other's edits", async () => {
       const { localVue, root, a } = await mountPair()
@@ -754,6 +877,27 @@ describe('DruxtEntity renders from the store', () => {
       expect(a.dirty).toBe(true)
     })
 
+    test('a language changed back while a fetch waits out its delay still loads', async () => {
+      // Nuxt keeps a fetch running for its `fetchDelay` after the answer, and
+      // `$fetch()` joins a running fetch.
+      setFetchDelay(150)
+      try {
+        const { localVue, root, a } = await mountPair()
+        root.vm.langcode = 'es'
+        await new Promise((resolve) => setTimeout(resolve, 50))
+        root.vm.langcode = 'en'
+        await settle(localVue)
+        await new Promise((resolve) => setTimeout(resolve, 400))
+        await settle(localVue)
+
+        expect(a.lang).toBe('en')
+        expect(a.model.attributes.langcode).toBe('en')
+        expect(a._druxtModelLang).toBe('en')
+      } finally {
+        setFetchDelay(0)
+      }
+    })
+
     test("a uuid change drops every language's edits", async () => {
       const { localVue, root, a } = await mountPair({ type: 'node--recipe' })
       a.model = { ...a.model, attributes: { ...a.model.attributes, title: 'English edit' } }
@@ -766,6 +910,36 @@ describe('DruxtEntity renders from the store', () => {
       await settle(localVue)
       expect(a.model.id).toBe(recipes[1].id)
       expect(titleOf(a)).toBe(recipes[1].attributes.title)
+      expect(a.dirty).toBe(false)
+    })
+
+    test("a uuid change to an entity the store already holds drops every language's edits", async () => {
+      const { localVue, store: s, root, a } = await mountPair({ type: 'node--recipe' })
+      // The next entity is in the store already, as from a listing.
+      await s.dispatch('druxt/getResource', { type: 'node--recipe', id: recipes[1].id, prefix: 'en' })
+      root.vm.langcode = 'es'
+      await settle(localVue)
+      a.model = { ...a.model, attributes: { ...a.model.attributes, title: 'Spanish edit' } }
+      root.vm.langcode = 'en'
+      await settle(localVue)
+      expect(Object.keys(a._druxtDrafts)).toStrictEqual(['es'])
+
+      root.vm.uuid = recipes[1].id
+      await settle(localVue)
+      expect(Object.keys(a._druxtDrafts || {})).toStrictEqual([])
+
+      // The other language shows the new entity, never the first one's edit.
+      const es = hold('get', (url) => url.includes(`/es/jsonapi/node/recipe/${recipes[1].id}`))
+      try {
+        root.vm.langcode = 'es'
+        await es.hit
+        await localVue.nextTick()
+        expect(titleOf(a)).not.toBe('Spanish edit')
+      } finally {
+        es.release()
+      }
+      await settle(localVue)
+      expect(a.model.id).toBe(recipes[1].id)
       expect(a.dirty).toBe(false)
     })
   })

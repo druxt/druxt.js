@@ -137,6 +137,8 @@ export default {
      * - Sends data to backend via POST or PATCH.
      * - Catches errors.
      * - Emits `submit` or `error` event.
+     *
+     * @return {Promise<(boolean|undefined)>} `false` when nothing is sent, which is while a save runs and while the next language loads.
      */
     async onSubmit() {
       if (this.submitting) return false

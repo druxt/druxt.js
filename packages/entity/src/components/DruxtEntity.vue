@@ -164,15 +164,10 @@ export default {
      * a save, so an assignment equal to that copy isn't an edit. A component
      * whose parent passes `value` holds its parent's data and is never dirty.
      *
-     * @param {object} vm - The component ViewModel.
-     * @param {object} vm.model - The model object.
-     * @param {object} vm.value - The Vue.js v-model value.
      * @return {boolean} `true` when the model differs from the copy last taken.
      */
-    dirty(vm) {
-      const { model, value } = vm
-      if ((value !== undefined && value !== null) || typeof vm._druxtPristine !== 'string') return false
-      return pristineOf(model) !== vm._druxtPristine
+    dirty() {
+      return this.hasEdits()
     },
 
     /**
@@ -189,23 +184,6 @@ export default {
       const entity = JSON.parse(JSON.stringify(storedEntity))
       if ((model || {}).included !== undefined) entity.included = model.included
       return entity
-    },
-
-    /**
-     * The entity's resource data in the store, under the entity's language.
-     *
-     * @param {object} vm - The component ViewModel.
-     * @param {object} vm.$store - The Vuex store.
-     * @param {string} vm.lang - The current language code.
-     * @param {object} vm.model - The model object.
-     * @param {string} vm.type - The JSON:API resource type.
-     * @param {(boolean|string)} vm.uuid - The entity UUID.
-     * @return {object} The stored JSON:API resource data, or `undefined`.
-     */
-    storedEntity: ({ $store, lang, model, type, uuid }) => {
-      const id = uuid || (model || {}).id
-      if (!id) return undefined
-      return ((((($store.state.druxt || {}).resources || {})[type] || {})[id] || {})[lang] || {}).data
     },
 
     /**
@@ -249,6 +227,24 @@ export default {
 
       return fields
     },
+
+    /**
+     * The entity's resource data in the store, under the entity's language.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.$store - The Vuex store.
+     * @param {string} vm.lang - The current language code.
+     * @param {object} vm.model - The model object.
+     * @param {string} vm.type - The JSON:API resource type.
+     * @param {(boolean|string)} vm.uuid - The entity UUID.
+     * @return {object} The stored JSON:API resource data, or `undefined`.
+     * @private
+     */
+    storedEntity: ({ $store, lang, model, type, uuid }) => {
+      const id = uuid || (model || {}).id
+      if (!id) return undefined
+      return ((((($store.state.druxt || {}).resources || {})[type] || {})[id] || {})[lang] || {}).data
+    },
   },
 
   watch: {
@@ -269,11 +265,29 @@ export default {
     },
 
     uuid() {
+      // Edits belong to one entity: another entity starts with none, in any
+      // language. Dropped here, as the store may hand over the next entity
+      // before the fetch runs.
+      this._druxtDrafts = {}
       this.$fetch()
     },
   },
 
   created() {
+    // Kept off the reactive data, so none of it reaches the page payload:
+    // - the JSON of the copy edits are compared with, and the language it is in;
+    // - the language the model is in, which a language change leaves behind
+    //   until the next language loads;
+    // - each other language's unsaved edits;
+    // - whether the fetch has asked once more after a flush, and whether
+    //   Drupal refused the entity.
+    this._druxtPristine = undefined
+    this._druxtPristineLang = undefined
+    this._druxtModelLang = undefined
+    this._druxtDrafts = {}
+    this._druxtFetchedAgain = false
+    this._druxtRefused = false
+
     if (this.$isServer || (this.value !== undefined && this.value !== null)) return
 
     // Follow the entity's resource in the store.
@@ -286,8 +300,18 @@ export default {
         if (from) this.fetchAgain()
         return
       }
-      if ((this.value !== undefined && this.value !== null) || this.dirty) return
+      if (this.value !== undefined && this.value !== null) return
+      // The store makes a new object for each write, so a write that changes
+      // nothing, such as this entity's own fetch, leaves the model as it is.
+      if (pristineOf(to) === this._druxtPristine) return
+      if (this.hasEdits()) return
       this.setModelFromStore({ ...to, included: (this.model || {}).included })
+    })
+
+    // An entity Drupal refused has nothing in the store to follow. A clear of
+    // the whole store, as after a sign-in, is its cue to ask again.
+    this.$watch(() => (this.$store.state.druxt || {}).resources, (to, from) => {
+      if (to !== from && this._druxtRefused && !this.storedEntity) this.fetchAgain()
     })
   },
 
@@ -315,84 +339,13 @@ export default {
      * fetch may have read the store before the flush emptied it.
      *
      * @return {Promise} The fetch.
+     * @private
      */
     async fetchAgain() {
       // Only Nuxt's fetch can fetch again.
       if (typeof this.$fetch !== 'function') return
       if (this._fetchPromise) await this._fetchPromise
       return this.$fetch()
-    },
-
-    /**
-     * Sets the model to a copy of stored entity data, and makes that copy the
-     * one edits are compared with.
-     *
-     * @param {object} data - The JSON:API resource data, with any included resource data.
-     */
-    setModelFromStore(data) {
-      this.setPristine(data)
-      this.model = JSON.parse(JSON.stringify(data || {}))
-    },
-
-    /**
-     * The JSON of entity data without its included resources, which is what
-     * an edit is compared with.
-     *
-     * @param {object} data - The JSON:API resource data.
-     * @return {string} The JSON.
-     */
-    pristineOf(data) {
-      return pristineOf(data)
-    },
-
-    /**
-     * Keeps the JSON of the copy edits are compared with, on the instance and
-     * outside `data`, so it stays out of the page payload.
-     *
-     * @param {object} data - The JSON:API resource data.
-     */
-    setPristine(data) {
-      this._druxtPristine = pristineOf(data)
-      this._druxtPristineLang = this.lang
-      // The language the model is in, which a language change leaves behind
-      // until the next language loads.
-      this._druxtModelLang = this.lang
-    },
-
-    /**
-     * Puts away the previous language's unsaved edits and brings back the
-     * current language's, when the language has changed since the copy edits
-     * are compared with was taken. Each language keeps its own edits.
-     */
-    switchLanguage() {
-      const from = this._druxtPristineLang
-      if (from === undefined || from === this.lang || (this.model || {}).id !== this.uuid) return
-
-      const drafts = this._druxtDrafts || (this._druxtDrafts = {})
-      // A copy, so an edit made while the next language loads stays out of it.
-      if (this.hasEdits()) drafts[from] = { model: JSON.parse(JSON.stringify(this.model)), pristine: this._druxtPristine }
-
-      const draft = drafts[this.lang]
-      delete drafts[this.lang]
-      this._druxtPristineLang = this.lang
-      if (draft) {
-        this._druxtPristine = draft.pristine
-        this.model = draft.model
-        this._druxtModelLang = this.lang
-      } else {
-        this._druxtPristine = undefined
-      }
-    },
-
-    /**
-     * Whether the model differs from the copy last taken, read now rather
-     * than from the cached `dirty`, which can't see that copy change.
-     *
-     * @return {boolean} `true` when the model holds unsaved edits.
-     */
-    hasEdits() {
-      if ((this.value !== undefined && this.value !== null) || typeof this._druxtPristine !== 'string') return false
-      return pristineOf(this.model) !== this._druxtPristine
     },
 
     /**
@@ -444,6 +397,18 @@ export default {
     },
 
     /**
+     * Whether the model differs from the copy last taken, read now rather
+     * than from the cached `dirty`, which can't see that copy change.
+     *
+     * @return {boolean} `true` when the model holds unsaved edits.
+     * @private
+     */
+    hasEdits() {
+      if ((this.value !== undefined && this.value !== null) || typeof this._druxtPristine !== 'string') return false
+      return pristineOf(this.model) !== this._druxtPristine
+    },
+
+    /**
      * Checks if an Entity field is empty.
      *
      * @param {*} value - Field value.
@@ -459,6 +424,72 @@ export default {
       if (typeof value.data !== 'undefined' && !value.data) return true
 
       return false
+    },
+
+    /**
+     * The JSON of entity data without its included resources, which is what
+     * an edit is compared with.
+     *
+     * @param {object} data - The JSON:API resource data.
+     * @return {string} The JSON.
+     * @private
+     */
+    pristineOf(data) {
+      return pristineOf(data)
+    },
+
+    /**
+     * Sets the model to a copy of stored entity data, and makes that copy the
+     * one edits are compared with.
+     *
+     * @param {object} data - The JSON:API resource data, with any included resource data.
+     * @private
+     */
+    setModelFromStore(data) {
+      this.setPristine(data)
+      this.model = JSON.parse(JSON.stringify(data || {}))
+    },
+
+    /**
+     * Keeps the JSON of the copy edits are compared with, on the instance and
+     * outside `data`, so it stays out of the page payload.
+     *
+     * @param {object} data - The JSON:API resource data.
+     * @private
+     */
+    setPristine(data) {
+      this._druxtPristine = pristineOf(data)
+      this._druxtPristineLang = this.lang
+      // The language the model is in, which a language change leaves behind
+      // until the next language loads.
+      this._druxtModelLang = this.lang
+    },
+
+    /**
+     * Puts away the previous language's unsaved edits and brings back the
+     * current language's, when the language has changed since the copy edits
+     * are compared with was taken. Each language keeps its own edits.
+     *
+     * @private
+     */
+    switchLanguage() {
+      const from = this._druxtPristineLang
+      if (from === undefined || from === this.lang || (this.model || {}).id !== this.uuid) return
+
+      const drafts = this._druxtDrafts || (this._druxtDrafts = {})
+      // A copy, so an edit made while the next language loads stays out of it.
+      if (this.hasEdits()) drafts[from] = { model: JSON.parse(JSON.stringify(this.model)), pristine: this._druxtPristine }
+
+      const draft = drafts[this.lang]
+      delete drafts[this.lang]
+      this._druxtPristineLang = this.lang
+      if (draft) {
+        this._druxtPristine = draft.pristine
+        this.model = draft.model
+        this._druxtModelLang = this.lang
+      } else {
+        this._druxtPristine = undefined
+      }
     },
 
     /**
@@ -575,7 +606,8 @@ export default {
 
         // Drupal refused an entity this component already shows, as after a
         // sign-out: show the error state rather than an empty entity.
-        if (resource.error && !resource.data && (this.model || {}).id === this.uuid) {
+        this._druxtRefused = !!(resource.error && !resource.data)
+        if (this._druxtRefused && (this.model || {}).id === this.uuid) {
           const err = new Error(resource.error.message)
           err.response = { status: resource.error.statusCode }
           throw err
@@ -599,6 +631,14 @@ export default {
 
         const entity = { ...(resource.data || {}) }
         entity.included = resource.included
+        // The model already holds this copy, taken as the store stored it, and
+        // needs only the included resources.
+        if (pristineOf(entity) === this._druxtPristine && (this.model || {}).id === this.uuid) {
+          if (JSON.stringify(this.model.included) !== JSON.stringify(entity.included)) {
+            this.$set(this.model, 'included', entity.included)
+          }
+          return
+        }
         this.setModelFromStore(entity)
       }
     },
@@ -693,11 +733,13 @@ export default {
           on: {
             input: (value) => {
               const type = !field.relationship ? 'attributes' : 'relationships'
+              // Through Vue, so a field the model didn't have, or one taken
+              // off it, counts as an edit.
               if (value) {
-                this.model[type][id] = value
+                this.$set(this.model[type], id, value)
               }
               else if (this.model[type][id]) {
-                delete this.model[type][id]
+                this.$delete(this.model[type], id)
               }
               this.$emit('input', this.model)
             }

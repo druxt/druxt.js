@@ -157,28 +157,6 @@ export default {
   /** */
   computed: {
     /**
-     * Whether the store still holds the results this view shows. A flush of
-     * them, at any level, removes them.
-     *
-     * @type {boolean}
-     */
-    hasStoredResults() {
-      if (!this.resource) return false
-      return Object.values(this.storedResults).includes(this.resource)
-    },
-
-    /**
-     * The stored results of the view's display in its language, by query.
-     *
-     * @type {object}
-     */
-    storedResults() {
-      const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
-      // The views store is registered as one module named `druxt/views`.
-      return ((((this.$store.state['druxt/views'] || {}).results || {})[viewId] || {})[this.displayId] || {})[this.lang] || {}
-    },
-
-    /**
      * IDs of displays to be attached after the view.
      *
      * @type {string[]}
@@ -242,6 +220,18 @@ export default {
      */
     filters() {
       return Object.values(((this.display || {}).display_options || {}).filters || {}).filter(filter => filter.exposed)
+    },
+
+    /**
+     * Whether the store still holds the results this view shows. A flush of
+     * them, at any level, removes them.
+     *
+     * @type {boolean}
+     * @private
+     */
+    hasStoredResults() {
+      if (!this.resource) return false
+      return Object.values(this.storedResults).includes(this.resource)
     },
 
     /**
@@ -311,7 +301,19 @@ export default {
      */
     sorts() {
       return Object.values(((this.display || {}).display_options || {}).sorts || {}).filter(sort => sort.exposed)
-    }
+    },
+
+    /**
+     * The stored results of the view's display in its language, by query.
+     *
+     * @type {object}
+     * @private
+     */
+    storedResults() {
+      const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
+      // The views store is registered as one module named `druxt/views`.
+      return ((((this.$store.state['druxt/views'] || {}).results || {})[viewId] || {})[this.displayId] || {})[this.lang] || {}
+    },
   },
 
   watch: {
@@ -387,6 +389,12 @@ export default {
   created() {
     // The filter last fetched for, kept off the reactive data.
     this.lastFilter = JSON.stringify(this.model.filter || {})
+    // Kept off it too: the query the shown results are stored under, whether
+    // the fetch has asked once more after a flush, and whether Drupal refused
+    // the results.
+    this._druxtResultsKey = undefined
+    this._druxtFetchedAgain = false
+    this._druxtRefused = false
 
     // A flush of the results, such as `druxt/clearCache` on a sign-out, makes
     // the view fetch them again.
@@ -411,7 +419,25 @@ export default {
           if (slot() === to && !this.hasStoredResults && !follow()) this.$fetch()
         })
       })
+
+      // A view Drupal refused has no results in the store to follow. A clear
+      // of all results, as after a sign-in, is its cue to ask again.
+      this.$watch(() => (this.$store.state['druxt/views'] || {}).results, (to, from) => {
+        if (to !== from && this._druxtRefused && !this.hasStoredResults) this.fetchAgain()
+      })
     }
+  },
+
+  beforeMount() {
+    // A server-rendered view doesn't fetch on the client, and the results it
+    // was hydrated with are a copy of the store's. It takes the store's own,
+    // which are what a flush removes.
+    if (this.$isServer || !this.resource || this.hasStoredResults) return
+    const json = JSON.stringify(this.resource)
+    const key = Object.keys(this.storedResults).find((o) => JSON.stringify(this.storedResults[o]) === json)
+    if (key === undefined) return
+    this._druxtResultsKey = key
+    this.resource = this.storedResults[key]
   },
 
   mounted() {
@@ -428,6 +454,7 @@ export default {
      * fetch may have read the store before the flush emptied it.
      *
      * @return {Promise} The fetch.
+     * @private
      */
     async fetchAgain() {
       // Only Nuxt's fetch can fetch again.
@@ -608,6 +635,9 @@ export default {
           viewId,
           bypassCache
         })
+
+        // Drupal refused: the store's action answers `false` for a failed request.
+        this._druxtRefused = !this.resource
 
         // The query the results are stored under, for the flush watcher.
         this._druxtResultsKey = Object.keys(this.storedResults).find((key) => this.storedResults[key] === this.resource)

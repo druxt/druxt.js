@@ -23,4 +23,15 @@ describe('DruxtEntityMixin', () => {
 
     expect(wrapper.vm.classes).toBe('node--page--default--view node--page node page default view')
   })
+
+  test('model follows a new value', async () => {
+    const value = { id: '1', attributes: { title: 'First' } }
+    const wrapper = mount(component, { localVue, propsData: { value } })
+    expect(wrapper.vm.model).toBe(value)
+
+    // DruxtEntity hands its wrapper a new object when the stored entity changes.
+    const next = { id: '1', attributes: { title: 'Stored' } }
+    await wrapper.setProps({ value: next })
+    expect(wrapper.vm.model).toBe(next)
+  })
 })

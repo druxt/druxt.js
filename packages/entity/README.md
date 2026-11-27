@@ -71,11 +71,7 @@ Fields are rendered as [DruxtField](https://druxtjs.org/api/packages/entity/comp
 <DruxtEntity :type="resourceType" :uuid="uuid" :mode="displayMode" />
 ```
 
-An entity renders from the Vuex store, so a newer copy stored anywhere, such as a save, shows everywhere it renders, the rows of a view included. Unsaved edits stay on the component that holds them. Flip a `DruxtEntityForm`'s `schemaType` between `form` and `view` to preview them, and its `dirty` property says whether there are any:
-
-```vue
-<DruxtEntityForm :type="type" :uuid="uuid" :schema-type="mode" />
-```
+An entity renders from the Vuex store, so a newer copy stored anywhere, such as a save, shows everywhere it renders, the rows of a view included. Unsaved edits stay on the component that holds them.
 
 - For more details, refer to the [DruxtEntity component API documentation](https://druxtjs.org/api/packages/entity/components/DruxtEntity).
 
@@ -94,6 +90,14 @@ Renders a Drupal Content Entity form with submission and validation support.
 ```
 
 ![Example DruxtEntityForm component](https://druxtjs.org/images/druxt-entity-form.png)
+
+Flip `schemaType` between `form` and `view` to preview unsaved edits on the form itself. The component's `dirty` property, read through a `ref`, says whether there are any:
+
+```vue
+<DruxtEntityForm ref="form" :type="resourceType" :uuid="uuid" :schema-type="schemaType" />
+```
+
+`dirty` is for a form loaded by its `uuid`. It stays `false` for a form bound with `v-model`, whose parent holds the data, and for a new entity before its first save.
 
 `v-model` works through the `Druxt` component too: `<Druxt v-model="entity" module="entity-form" :props-data="{ type, uuid }" />`.
 

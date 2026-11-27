@@ -11,7 +11,7 @@ import { DruxtViewsStore } from '../../src'
 import DruxtView from '../../src/components/DruxtView.vue'
 
 const { baseUrl, drupal } = require('../../../../test/drupal')
-const { NuxtFetch, setFetchDelay, settle } = require('../../../../test/nuxt-fetch')
+const { NuxtFetch, setFetchDelay, setHydration, settle } = require('../../../../test/nuxt-fetch')
 
 // A mounted DruxtView and its rows follow the store (#1019), against the
 // mock's recipes view, with real DruxtEntity rows.
@@ -24,7 +24,9 @@ let lastStore
 
 // With `pair`, a second view of the same results sits beside the first, as
 // a block elsewhere on the page shows the same view.
-const mountView = async ({ settings = {}, pair = false } = {}) => {
+// With `hydrate`, the view mounts on that store with that data and doesn't
+// fetch, as a server-rendered view does.
+const mountView = async ({ settings = {}, pair = false, hydrate } = {}) => {
   const localVue = createLocalVue()
   localVue.use(Vuex)
   localVue.mixin(NuxtFetch)
@@ -32,15 +34,19 @@ const mountView = async ({ settings = {}, pair = false } = {}) => {
     localVue.component(component.name, component)
   }
 
-  const store = new Vuex.Store()
-  DruxtStore({ store })
-  store.$druxt = new DruxtClient(baseUrl)
-  DruxtViewsStore({ store })
-  DruxtSchemaStore({ store })
-  // The rows' displays aren't among the fixtures; a row renders without one.
-  store.$druxtSchema = { import: () => { throw new Error('No schema fixture') } }
-  store.app = { context: { error: () => {}, isStatic: false }, store }
+  const store = hydrate ? hydrate.store : new Vuex.Store()
+  if (!hydrate) {
+    DruxtStore({ store })
+    store.$druxt = new DruxtClient(baseUrl)
+    DruxtViewsStore({ store })
+    DruxtSchemaStore({ store })
+    // The rows' displays aren't among the fixtures; a row renders without one.
+    store.$druxtSchema = { import: () => { throw new Error('No schema fixture') } }
+    store.app = { context: { error: () => {}, isStatic: false }, store }
+  }
   lastStore = store
+  // The payload holds copies, never the store's own objects.
+  if (hydrate) setHydration((vm) => (vm.$options.name === 'DruxtView' ? JSON.parse(JSON.stringify(hydrate.data)) : undefined))
 
   const root = mount({
     data: () => ({ langcode: 'en', settings }),
@@ -60,6 +66,7 @@ const mountView = async ({ settings = {}, pair = false } = {}) => {
     stubs: ['DruxtDebug', 'DruxtViewsPager', 'DruxtViewsFilters', 'DruxtViewsSorts'],
   })
   await settle(localVue)
+  setHydration(null)
 
   const view = root.vm.$refs.view
   const rows = () => root.findComponent({ ref: 'view' }).findAllComponents({ name: 'DruxtEntity' }).wrappers.map((w) => w.vm)
@@ -77,6 +84,51 @@ describe('DruxtView follows the store', () => {
     await settle(localVue)
 
     expect(resultsRequests()).toBe(before + 1)
+    expect(view.hasStoredResults).toBe(true)
+    expect(rows().map((row) => row.uuid)).toStrictEqual(ids)
+  })
+
+  test('a server-rendered view fetches its results again after a flush', async () => {
+    const server = await mountView()
+    const { component, model, resource, view: config } = server.view.$data
+    // Only the store and the data reach the browser.
+    server.root.destroy()
+    const { localVue, store, view, rows } = await mountView({ hydrate: { store: server.store, data: { component, model, resource, view: config } } })
+    const ids = rows().map((row) => row.uuid)
+    expect(ids.length).toBeGreaterThan(0)
+    const before = resultsRequests()
+
+    store.dispatch('druxt/clearCache')
+    await settle(localVue)
+
+    expect(resultsRequests()).toBeGreaterThan(before)
+    expect(view.hasStoredResults).toBe(true)
+    expect(rows().map((row) => row.uuid)).toStrictEqual(ids)
+  })
+
+  test('a view whose refetch Drupal refused fetches again on the next clear', async () => {
+    const { localVue, store, view, rows } = await mountView()
+    const ids = rows().map((row) => row.uuid)
+
+    // After a sign-out, Drupal refuses the results.
+    const get = mockAxios.get.getMockImplementation()
+    mockAxios.get.mockImplementation((url, config) => {
+      if (!decodeURIComponent(url).includes('/jsonapi/views/recipes/page_1')) return get(url, config)
+      const err = new Error('Request failed with status code 403')
+      err.response = { status: 403, statusText: 'Forbidden', data: { errors: [{ status: '403', title: 'Forbidden' }] } }
+      return Promise.reject(err)
+    })
+    try {
+      store.dispatch('druxt/clearCache')
+      await settle(localVue)
+    } finally {
+      mockAxios.get.mockImplementation(get)
+    }
+    expect(view.hasStoredResults).toBe(false)
+
+    // Signed in again, the next clear brings the results back.
+    store.dispatch('druxt/clearCache')
+    await settle(localVue)
     expect(view.hasStoredResults).toBe(true)
     expect(rows().map((row) => row.uuid)).toStrictEqual(ids)
   })

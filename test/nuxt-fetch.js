@@ -1,8 +1,8 @@
 // A stand-in for Nuxt 2's fetch, for integration tests that mount Druxt
 // modules without Nuxt. It reproduces what those tests depend on: Nuxt calls
-// fetch() before mount on the client, and $fetch() while a fetch runs returns
-// the running one rather than starting another, as Nuxt 2's fetch.client.js
-// does.
+// fetch() before mount on the client, $fetch() while a fetch runs returns the
+// running one rather than starting another, and a server-rendered component
+// mounts with its data and doesn't fetch, as Nuxt 2's fetch.client.js does.
 const Vue = require('vue').default || require('vue')
 
 // The fetches still running, so a test can wait for them.
@@ -19,6 +19,19 @@ let fetchDelay = 0
  */
 const setFetchDelay = (ms) => { fetchDelay = ms }
 
+// Gives a component the data it is hydrated with. Nuxt restores a
+// server-rendered component's data from the page payload, and doesn't fetch
+// on the client.
+let hydration = null
+
+/**
+ * Sets the data each component mounts with in place of fetching, as on a
+ * server-rendered page. The component keeps its `$fetch()`.
+ *
+ * @param {?Function} restore - Takes the component and returns its data, or nothing for a component that fetches. `null` turns hydration off.
+ */
+const setHydration = (restore) => { hydration = restore }
+
 const NuxtFetch = {
   beforeCreate() {
     if (!this.$options.fetch) return
@@ -26,6 +39,7 @@ const NuxtFetch = {
     this.$fetch = () => {
       if (!this._fetchPromise) {
         this.$fetchState.pending = true
+        this.$fetchState.error = null
         const start = Date.now()
         this._fetchPromise = Promise.resolve()
           .then(() => this.$options.fetch.call(this))
@@ -46,7 +60,10 @@ const NuxtFetch = {
   },
 
   beforeMount() {
-    if (this.$options.fetch) this.$fetch()
+    if (!this.$options.fetch) return
+    const data = hydration && hydration(this)
+    if (!data) return this.$fetch()
+    for (const key of Object.keys(data)) this[key] = data[key]
   },
 }
 
@@ -67,4 +84,4 @@ const settle = async (localVue) => {
   throw new Error(`${inFlight.size} fetches still running after 20 rounds`)
 }
 
-module.exports = { NuxtFetch, inFlight, setFetchDelay, settle }
+module.exports = { NuxtFetch, inFlight, setFetchDelay, setHydration, settle }
