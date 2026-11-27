@@ -222,6 +222,33 @@ describe('DruxtRouter', () => {
     expect(redirect).toBe(false)
   })
 
+  test('getRoute - asks Decoupled Router under the path\'s language prefix', async () => {
+    const druxtClient = new (require('druxt').DruxtClient)(baseUrl, { prefixes: { en: '', es: 'spanish' } })
+    const prefixed = new DruxtRouter(baseUrl, { druxtClient })
+    const asked = []
+    druxtClient.get = jest.fn(async (url) => { asked.push(url); return { status: 200, data: { resolved: `${baseUrl}/` } } })
+
+    for (const path of ['/spanish/recipes', '/spanish', '/spanish/', '/recipes', '/', '/spanish-rice', '/es/recipes']) await prefixed.getRoute(path)
+    expect(asked).toStrictEqual([
+      '/spanish/router/translate-path?path=/spanish/recipes',
+      '/spanish/router/translate-path?path=/spanish',
+      '/spanish/router/translate-path?path=/spanish/',
+      '/router/translate-path?path=/recipes',
+      '/router/translate-path?path=/',
+      '/router/translate-path?path=/spanish-rice',
+      // On this site es is only a langcode. Spanish is served under /spanish.
+      '/router/translate-path?path=/es/recipes',
+    ])
+  })
+
+  test('getRoute - without prefixes, asks Decoupled Router unprefixed', async () => {
+    const druxtClient = new (require('druxt').DruxtClient)(baseUrl)
+    const plain = new DruxtRouter(baseUrl, { druxtClient })
+    druxtClient.get = jest.fn(async () => ({ status: 200, data: { resolved: `${baseUrl}/` } }))
+    await plain.getRoute('/es/recipes')
+    expect(druxtClient.get.mock.calls[0][0]).toBe('/router/translate-path?path=/es/recipes')
+  })
+
   test('getRedirect - the home path under each language\'s prefix', () => {
     const druxtClient = new (require('druxt').DruxtClient)(baseUrl, { prefixes: { en: '', es: 'spanish' } })
     const prefixed = new DruxtRouter(baseUrl, { druxtClient })
