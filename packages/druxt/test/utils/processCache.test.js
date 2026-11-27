@@ -694,6 +694,18 @@ describe('processCache - vary', () => {
     expect(language('es').get('key')).toBe('es')
   })
 
+  test('a header an interceptor sets among the common ones keeps entries apart too', () => {
+    // Axios 0.x hands interceptors the headers with their `common` map, and merges it in as the request leaves.
+    const sets = (value) => processCache('vary', {
+      axios: intercepted((config) => { config.headers.common['Accept-Language'] = value; return config }),
+      vary: ['Accept-Language'],
+    })
+    sets('es').set('key', 'es', 60)
+    expect(sets('en').get('key')).toBe(undefined)
+    expect(sets('es').get('key')).toBe('es')
+    expect(language('es').get('key')).toBe('es')
+  })
+
   test('an interceptor the probe cannot run turns the cache off for a site that lists headers', () => {
     const instance = intercepted({ fulfilled: async (config) => config })
     // It may set a listed header, and the probe can't say to what.

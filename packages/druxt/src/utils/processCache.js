@@ -125,16 +125,18 @@ const varyKey = (axios, vary, url) => {
   if (!vary || !vary.length) return ''
   const { config, skipped } = probeRequest(axios, url)
   if (skipped) return null
-  const headers = (config || {}).headers || {}
+  const sent = (config || {}).headers || {}
   // A GET has no data. Axios calls each transform on the config, with the data and the headers.
   for (const transform of [].concat((config || {}).transformRequest || [])) {
     if (typeof transform !== 'function') continue
     try {
-      transform.call(config, undefined, headers)
+      transform.call(config, undefined, sent)
     } catch {
       return null
     }
   }
+  // Axios 0.x merges the `common` and GET maps in as the request leaves, so one an interceptor wrote to counts.
+  const headers = flattenHeaders(sent)
   return vary
     .map((name) => String(name).toLowerCase())
     .sort()
