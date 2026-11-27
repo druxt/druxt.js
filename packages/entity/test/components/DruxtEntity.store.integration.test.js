@@ -887,9 +887,11 @@ describe('DruxtEntity renders from the store', () => {
 
     test('an edit while a save runs stays when its language is chosen again before it loads', async () => {
       mockAxios.__signIn('editor')
-      setFetchDelay(150)
+      const { localVue, root, form } = await mountForm()
+      // The fetch delay is held until the save has returned.
+      let release
+      setFetchDelay(new Promise((resolve) => { release = resolve }))
       try {
-        const { localVue, root, form } = await mountForm()
         form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
         const save = hold('patch', () => true)
         let saving
@@ -899,7 +901,7 @@ describe('DruxtEntity renders from the store', () => {
           form.model = { ...form.model, attributes: { ...form.model.attributes, body: { value: 'Edited during the save', format: 'basic_html' } } }
           root.vm.langcode = 'es'
           // Spanish has loaded, and its fetch is still running out the delay when English is chosen again.
-          for (let i = 0; i < 100 && form.model.attributes.langcode !== 'es'; i++) await new Promise((resolve) => setTimeout(resolve, 5))
+          for (let i = 0; i < 200 && form.model.attributes.langcode !== 'es'; i++) await new Promise((resolve) => setTimeout(resolve, 5))
           expect(form.model.attributes.langcode).toBe('es')
           expect(form._fetchPromise).toBeTruthy()
           root.vm.langcode = 'en'
@@ -908,8 +910,9 @@ describe('DruxtEntity renders from the store', () => {
           save.release()
         }
         await saving
-        await settle(localVue)
-        await new Promise((resolve) => setTimeout(resolve, 400))
+        expect(form._fetchPromise).toBeTruthy()
+        setFetchDelay(0)
+        release()
         await settle(localVue)
 
         expect(form.model.attributes.langcode).toBe('en')
@@ -1020,26 +1023,29 @@ describe('DruxtEntity renders from the store', () => {
 
     test('a language changed back while a fetch waits out its delay still loads', async () => {
       // Nuxt keeps a fetch running for its `fetchDelay` after the answer, and
-      // `$fetch()` joins a running fetch.
-      setFetchDelay(150)
+      // `$fetch()` joins a running fetch. The delay is held here until the
+      // language has changed back.
+      const { localVue, root, a } = await mountPair()
+      let release
+      setFetchDelay(new Promise((resolve) => { release = resolve }))
       try {
-        const { localVue, root, a } = await mountPair()
         root.vm.langcode = 'es'
         // Spanish has loaded, and its fetch is still running out the delay.
-        for (let i = 0; i < 100 && a.model.attributes.langcode !== 'es'; i++) await new Promise((resolve) => setTimeout(resolve, 5))
+        for (let i = 0; i < 200 && a.model.attributes.langcode !== 'es'; i++) await new Promise((resolve) => setTimeout(resolve, 5))
         expect(a.model.attributes.langcode).toBe('es')
         expect(a._fetchPromise).toBeTruthy()
         root.vm.langcode = 'en'
-        await settle(localVue)
-        await new Promise((resolve) => setTimeout(resolve, 400))
-        await settle(localVue)
-
-        expect(a.lang).toBe('en')
-        expect(a.model.attributes.langcode).toBe('en')
-        expect(a._druxtModelLang).toBe('en')
+        await localVue.nextTick()
+        expect(a._fetchPromise).toBeTruthy()
       } finally {
         setFetchDelay(0)
+        release()
       }
+      await settle(localVue)
+
+      expect(a.lang).toBe('en')
+      expect(a.model.attributes.langcode).toBe('en')
+      expect(a._druxtModelLang).toBe('en')
     })
 
     test("a uuid change drops every language's edits", async () => {

@@ -15,9 +15,9 @@ let fetchDelay = 0
 /**
  * Sets how long each fetch stays running at the least, as Nuxt's `fetchDelay`.
  *
- * @param {number} ms - The delay in milliseconds, 0 for none.
+ * @param {(number|Promise)} delay - The delay in milliseconds, 0 for none, or a promise each fetch stays running until, for a test that acts inside the delay.
  */
-const setFetchDelay = (ms) => { fetchDelay = ms }
+const setFetchDelay = (delay) => { fetchDelay = delay }
 
 // Gives a component the data it is hydrated with. Nuxt restores a
 // server-rendered component's data from the page payload, and doesn't fetch
@@ -45,6 +45,7 @@ const NuxtFetch = {
           .then(() => this.$options.fetch.call(this))
           .catch((err) => { this.$fetchState.error = err })
           .then(() => {
+            if (fetchDelay && typeof fetchDelay.then === 'function') return fetchDelay
             const left = fetchDelay - (Date.now() - start)
             if (left > 0) return new Promise((resolve) => setTimeout(resolve, left))
           })
