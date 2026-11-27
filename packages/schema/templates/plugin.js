@@ -44,7 +44,9 @@ const refreshed = async () => null
  */
 const load = async (id) => {
   const schema = await refreshed(id)
-  if (schema === MISSING) throw new Error(`No Druxt schema ${id} in Drupal.`)
+  if (schema === MISSING) {
+    throw Object.assign(new Error(`No Druxt schema ${id} in Drupal.`), { code: 'DRUXT_SCHEMA_MISSING' })
+  }
   return schema || import(`./schemas/${id}.json`).then(m => m.default || m)
 }
 

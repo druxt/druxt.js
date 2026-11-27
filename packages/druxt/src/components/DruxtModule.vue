@@ -290,10 +290,13 @@ export default {
   },
 
   watch: {
-    lang(to, from) {
-      if (to !== from) {
-        this.$fetch()
-      }
+    // Nuxt 2's $fetch() hands back a running fetch rather than starting one,
+    // and that fetch still has the old language. Wait for it to end, so the
+    // fetch started here is for the new language.
+    async lang(to, from) {
+      if (to === from) return
+      if (this._fetchPromise) await this._fetchPromise
+      return this.$fetch()
     },
 
     // Nuxt 2 doesn't re-run fetch() when a component's own props change, so a

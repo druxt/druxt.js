@@ -1,5 +1,34 @@
 # druxt
 
+## 0.25.2 - 2026-11-22
+
+### Patch Changes
+
+- `druxt` needs axios 0.35.0 or later, the version `druxt-blocks` and `druxt-views` now install. ([#1029](https://github.com/druxt/druxt.js/issues/1029), [`ce4f9d4`](https://github.com/druxt/druxt.js/commit/ce4f9d4fa45f9bd19f1ce79be809b7dc4c72e331))
+
+  A site that pins axios 0.34.0 should move to 0.35.0, so its bundle holds one copy.
+
+- `v-model` on the `Druxt` component updates when the module changes its value. Before, it never saw those changes. ([#1005](https://github.com/druxt/druxt.js/issues/1005), [`3f1094c`](https://github.com/druxt/druxt.js/commit/3f1094ce851a0bb7119900b176a0ce0ead9cc174))
+
+  `<Druxt v-model="entity" module="entity-form" :props-data="{ type: 'node--page', uuid }" />` now updates `entity` each time the form edits a field.
+
+  A module no longer sends back a value its parent set, so a parent using `v-model` sees each change once.
+
+- An empty string passed as the `value` of a module, a field or an exposed Views filter stays an empty string. Before, Vue read it as `true`. ([#1037](https://github.com/druxt/druxt.js/issues/1037), [`37a7d7e`](https://github.com/druxt/druxt.js/commit/37a7d7e85927749c943e3dd0849b86354d4570f8))
+
+  A custom field component that emits `''` now passes `''` to its parent, where it used to arrive as `undefined`. Code that checks for `undefined` to spot a cleared field should check for `''` too. Druxt's built-in text input still sends `undefined`.
+
+- Links in the JSON:API index reach the browser as paths, even when Drupal builds them with a different scheme or host from `baseUrl`, such as `https://` behind a proxy. Before, a client-side navigation could then call the backend's host directly. ([#833](https://github.com/druxt/druxt.js/issues/833), [`74c1c55`](https://github.com/druxt/druxt.js/commit/74c1c552c3c11b938cd08c4ca5a00544c76bfca9))
+- A request interceptor that adds credentials now turns the server cache off from the first request. Before, the cache stayed on until a response showed the credentials, so a signed-in visitor could get a response cached for anonymous visitors. ([#1018](https://github.com/druxt/druxt.js/issues/1018), [`e5f36cc`](https://github.com/druxt/druxt.js/commit/e5f36cc3a350dc635796fa0fc16caa21ffad800f))
+
+  This covers interceptors that add credentials synchronously. Credentials that depend on an `async` interceptor are still seen only once a response arrives, as in 0.25.1. `@nuxtjs/auth-next` puts its token on the Axios defaults unless `token.global` is off, and that already turns the cache off.
+
+  Druxt runs request interceptors on a copy of the request before each cache lookup. An interceptor with side effects, such as logging, can skip that run by checking `config[Symbol.for('druxt.processCache.probe')]`.
+
+- The document `druxt/getResource` returns for a failed request has an `error` property, `{ statusCode, message }`, so a caller can tell a 401 from a missing resource. A request that never reached Drupal reports 500. Before, nothing in the document said the request had failed. ([#1013](https://github.com/druxt/druxt.js/issues/1013), [`d86e076`](https://github.com/druxt/druxt.js/commit/d86e07611036c0c22d76550a37f673ddc1e63564))
+
+  An include that Drupal refuses no longer leaves an `undefined` entry in a cached resource's `included`.
+
 ## 0.25.1 - 2026-11-01
 
 ### Patch Changes

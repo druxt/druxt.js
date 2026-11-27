@@ -1,5 +1,15 @@
 # druxt-blocks
 
+## 0.18.2 - 2026-11-22
+
+### Patch Changes
+
+- `druxt` needs axios 0.35.0 or later, the version `druxt-blocks` and `druxt-views` now install. ([#1029](https://github.com/druxt/druxt.js/issues/1029), [`ce4f9d4`](https://github.com/druxt/druxt.js/commit/ce4f9d4fa45f9bd19f1ce79be809b7dc4c72e331))
+
+  A site that pins axios 0.34.0 should move to 0.35.0, so its bundle holds one copy.
+
+- Updated dependencies: druxt@0.25.2.
+
 ## 0.18.1 - 2026-11-01
 
 ### Patch Changes

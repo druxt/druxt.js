@@ -1,5 +1,21 @@
 # druxt-entity
 
+## 0.29.2 - 2026-11-22
+
+### Patch Changes
+
+- Fields with the same name in different entities on one page no longer share fetched data. Before, a field rendered in another component's slot could pick up another entity's data, so an edit form's field could show the display formatter instead of its widget. ([#1020](https://github.com/druxt/druxt.js/issues/1020), [`da21ff5`](https://github.com/druxt/druxt.js/commit/da21ff5d723ba5de34d455dab3f3dbc7210b2809))
+- Loading `druxt-entity` no longer stops other Druxt modules from updating their `v-model`, so an exposed Views filter with the default auto apply filters the results on these sites. ([#1037](https://github.com/druxt/druxt.js/issues/1037), [`37a7d7e`](https://github.com/druxt/druxt.js/commit/37a7d7e85927749c943e3dd0849b86354d4570f8))
+
+  Remove any workaround for the missing `input` events, or a value may be handled twice. A custom wrapper still emits `input` itself, as before.
+
+- An empty string passed as the `value` of a module, a field or an exposed Views filter stays an empty string. Before, Vue read it as `true`. ([#1037](https://github.com/druxt/druxt.js/issues/1037), [`37a7d7e`](https://github.com/druxt/druxt.js/commit/37a7d7e85927749c943e3dd0849b86354d4570f8))
+
+  A custom field component that emits `''` now passes `''` to its parent, where it used to arrive as `undefined`. Code that checks for `undefined` to spot a cleared field should check for `''` too. Druxt's built-in text input still sends `undefined`.
+
+- A value set through `v-model` while `DruxtEntity` is still loading its entity is no longer replaced when the request finishes. ([#1036](https://github.com/druxt/druxt.js/issues/1036), [`3f1094c`](https://github.com/druxt/druxt.js/commit/3f1094ce851a0bb7119900b176a0ce0ead9cc174))
+- Updated dependencies: druxt@0.25.2, druxt-schema@0.12.2.
+
 ## 0.29.1 - 2026-11-01
 
 ### Patch Changes

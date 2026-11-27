@@ -220,6 +220,23 @@ describe('DruxtRouter', () => {
       canonical: 'https://example.com/clean-url'
     })
     expect(redirect).toBe(false)
+
+    // A redirect to the clean URL keeps the query and the hash.
+    redirect = router.getRedirect('/node/2?page=2#comments', {
+      canonical: 'https://example.com/clean-url'
+    })
+    expect(redirect).toBe('/clean-url?page=2#comments')
+
+    // So does one to the home path.
+    redirect = router.getRedirect('/node?page=2', {
+      isHomePath: true
+    })
+    expect(redirect).toBe('/?page=2')
+    redirect = router.getRedirect('/es/node?page=2', {
+      isHomePath: true,
+      props: { langcode: 'es' }
+    })
+    expect(redirect).toBe('/es?page=2')
   })
 
   // @deprecated
@@ -264,6 +281,15 @@ describe('DruxtRouter', () => {
 
     expect(entity).toHaveProperty('id', mockPage.data.id)
     expect(entity).toHaveProperty('type', mockPage.data.type)
+  })
+
+  test('getRoute translates the path without its query or hash', async () => {
+    const route = await router.getRoute('/node/1?page=2&filter[type]=a#top')
+    expect(route).toHaveProperty('isHomePath', false)
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/router/translate-path?path=/node/1', expect.anything())
+
+    await router.getRoute('/?backend=drupal')
+    expect(mockAxios.get).toHaveBeenLastCalledWith('/router/translate-path?path=/', expect.anything())
   })
 
   test('getRoute', async () => {

@@ -67,6 +67,35 @@ describe('druxt-schema plugin template', () => {
 
     expect(await druxtSchema.import('node--page--teaser--view')).toStrictEqual({ v: 'held default' })
   })
+
+  test('a mode with no built file falls back to the built default mode', async () => {
+    const files = { 'node--page--default--view': { v: 'built default' } }
+    const druxtSchema = plugin({ refresh: false, files })
+
+    expect(await druxtSchema.import('node--page--teaser--view')).toStrictEqual({ v: 'built default' })
+    // The form displays have their own default.
+    await expect(druxtSchema.import('node--page--teaser--form')).rejects.toThrow('No file node--page--default--form')
+  })
+
+  test('a mode that fails to load falls back to the default mode', async () => {
+    const fetch = jest.fn(async (url) => {
+      if (url.endsWith('node--page--teaser--view')) throw new Error('Network error')
+      return { ok: true, json: async () => ({ v: 'route default' }) }
+    })
+    const druxtSchema = plugin({ refresh: true, fetch })
+
+    // The request fails and the build has no file for the mode either.
+    expect(await druxtSchema.import('node--page--teaser--view')).toStrictEqual({ v: 'route default' })
+  })
+
+  test('the default mode has no fallback, and fails with its own error', async () => {
+    const files = { 'node--page--teaser--view': { v: 'built teaser' } }
+    const druxtSchema = plugin({ refresh: false, files })
+
+    await expect(druxtSchema.import('node--page--default--view')).rejects.toThrow('No file node--page--default--view')
+    // A mode whose default is missing too fails with the default's error.
+    await expect(druxtSchema.import('node--page--card--view')).rejects.toThrow('No file node--page--default--view')
+  })
   test('a schema Drupal no longer has is not served from the build', async () => {
     const files = { 'node--page--teaser--view': { v: 'built teaser' }, 'node--page--default--view': { v: 'built default' } }
 
@@ -82,5 +111,7 @@ describe('druxt-schema plugin template', () => {
 
     // With no default either, the load fails as a missing built file does.
     await expect(plugin({ refresh: true, server: true, files, hook: async () => false }).import('node--page--default--view')).rejects.toThrow('No Druxt schema')
+    // Marked, so a component can tell a missing display from a failed load.
+    await expect(plugin({ refresh: true, server: true, files, hook: async () => false }).import('node--page--default--view')).rejects.toMatchObject({ code: 'DRUXT_SCHEMA_MISSING' })
   })
 })

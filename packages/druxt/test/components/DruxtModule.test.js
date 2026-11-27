@@ -178,6 +178,39 @@ describe('DruxtModule component', () => {
     expect(wrapper.vm.lang).toBe('en')
   })
 
+  test('watch - lang, while a fetch is running', async () => {
+    const wrapper = mount(DruxtModule, { localVue, mocks })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    // Nuxt 2's $fetch: a call made while a fetch runs gets that fetch's
+    // promise back, and starts nothing new.
+    const started = []
+    const finish = []
+    wrapper.vm.$fetch = jest.fn(function () {
+      if (!this._fetchPromise) {
+        started.push(this.lang)
+        this._fetchPromise = new Promise((resolve) => finish.push(resolve))
+          .then(() => { delete this._fetchPromise })
+      }
+      return this._fetchPromise
+    })
+    const settle = () => new Promise((resolve) => setTimeout(resolve))
+
+    // The first switch starts a fetch, and the second arrives before it ends.
+    await wrapper.setProps({ langcode: 'en' })
+    await wrapper.setProps({ langcode: 'es' })
+    expect(started).toStrictEqual(['en'])
+
+    // Once the first fetch ends, the second language is fetched.
+    finish[0]()
+    await settle()
+    expect(started).toStrictEqual(['en', 'es'])
+
+    finish[1]()
+    await settle()
+    expect(wrapper.vm._fetchPromise).toBe(undefined)
+  })
+
   test('error', async () => {
     const CustomModule = {
       name: 'CustomModule',
