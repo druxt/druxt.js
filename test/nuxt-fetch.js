@@ -19,6 +19,22 @@ let fetchDelay = 0
  */
 const setFetchDelay = (delay) => { fetchDelay = delay }
 
+/**
+ * Holds every fetch in its delay until released, for a test that acts while
+ * a fetch runs out its delay.
+ *
+ * @return {{entered: Promise<void>, release: Function}} `entered` resolves once a fetch has reached the delay. `release()` lets the held fetches go and turns the delay off, and is safe to call twice.
+ */
+const holdFetchDelay = () => {
+  let open
+  let reach
+  const gate = new Promise((resolve) => { open = resolve })
+  const entered = new Promise((resolve) => { reach = resolve })
+  // A fetch reaches the delay when it starts waiting on it.
+  fetchDelay = { then: (...args) => { reach(); return gate.then(...args) } }
+  return { entered, release: () => { fetchDelay = 0; open() } }
+}
+
 // Gives a component the data it is hydrated with. Nuxt restores a
 // server-rendered component's data from the page payload, and doesn't fetch
 // on the client.
@@ -49,7 +65,9 @@ const NuxtFetch = {
             const left = fetchDelay - (Date.now() - start)
             if (left > 0) return new Promise((resolve) => setTimeout(resolve, left))
           })
-          .then(() => {
+          // Also when the delay rejects, so the next fetch starts a new one.
+          // The rejection still reaches whoever waits on this fetch.
+          .finally(() => {
             this.$fetchState.pending = false
             inFlight.delete(this._fetchPromise)
             delete this._fetchPromise
@@ -85,4 +103,4 @@ const settle = async (localVue) => {
   throw new Error(`${inFlight.size} fetches still running after 20 rounds`)
 }
 
-module.exports = { NuxtFetch, inFlight, setFetchDelay, setHydration, settle }
+module.exports = { NuxtFetch, holdFetchDelay, inFlight, setFetchDelay, setHydration, settle }

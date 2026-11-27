@@ -500,6 +500,30 @@ const DruxtStore = ({ store }) => {
 
         return result
       },
+
+      /**
+       * Store a JSON:API resource that is newer than any request for it.
+       *
+       * Adds the resource to the store, as `addResource` does. A request for
+       * the resource that started before isn't stored over it when its answer
+       * arrives. Use it for Drupal's answer to a save.
+       *
+       * @name storeResource
+       * @action storeResource=resources
+       * @param {object} context - The Vuex action context.
+       * @param {Function} context.commit - Commits mutations to the store.
+       * @param {addResourcePayload} payload - The resource and its prefix.
+       *
+       * @example @lang js
+       * const response = await this.$druxt.updateResource(resource, prefix)
+       * this.$store.dispatch('druxt/storeResource', { resource: response.data, prefix })
+       */
+      storeResource ({ commit }, { resource, prefix }) {
+        const { id, type } = (resource || {}).data || {}
+        // Newer than every request that has started, as a bypass is.
+        if (id && type) bypassed.set(JSON.stringify(['resource', type, id, prefix]), ++requests)
+        commit('addResource', { prefix, resource })
+      },
     }
   }
 

@@ -10,7 +10,7 @@ import DruxtEntityForm from '../../src/components/DruxtEntityForm.vue'
 import DruxtField from '../../src/components/DruxtField.vue'
 
 const { baseUrl } = require('../../../../test/drupal')
-const { NuxtFetch, setFetchDelay, setHydration, settle } = require('../../../../test/nuxt-fetch')
+const { NuxtFetch, holdFetchDelay, setFetchDelay, setHydration, settle } = require('../../../../test/nuxt-fetch')
 
 // A mounted DruxtEntity follows its resource in the store (#1019), against
 // the mock in test/drupal.js. The pages come from a client of their own, so
@@ -301,6 +301,33 @@ describe('DruxtEntity renders from the store', () => {
     }
     await settle(localVue)
     expect(titleOf(wrapper.vm)).toBe('Newer')
+  })
+
+  test('included resources from before a flush stay off a newer copy that links elsewhere', async () => {
+    const { localVue, store: s } = setup()
+    const linked = (recipe, key) => [].concat((recipe.relationships[key] || {}).data || []).map((o) => o.id)
+    // A relationship two recipes fill differently.
+    const key = Object.keys(recipes[0].relationships).find((k) => linked(recipes[0], k).length && recipes.some((r) => linked(r, k).length && linked(r, k).join() !== linked(recipes[0], k).join()))
+    const other = recipes.find((r) => linked(r, key).length && linked(r, key).join() !== linked(recipes[0], key).join())
+    const get = hold('get', (url) => url.includes(`/node/recipe/${recipes[0].id}`))
+    let wrapper
+    try {
+      wrapper = mount(DruxtEntity, { localVue, store: s, mocks, propsData: { type: 'node--recipe', uuid: recipes[0].id, langcode: 'en', settings: { query: { include: [key] } } }, stubs: ['DruxtDebug'] })
+      await get.hit
+      // A flush overtakes the request, and something stores a newer copy whose relationship points elsewhere.
+      s.commit('druxt/flushResource', {})
+      const newer = copy(recipes[0])
+      newer.relationships[key] = copy(other.relationships[key])
+      s.commit('druxt/addResource', { resource: { data: newer }, prefix: 'en' })
+    } finally {
+      get.release()
+    }
+    await settle(localVue)
+
+    const model = wrapper.vm.model
+    expect(linked(model, key)).toStrictEqual(linked(other, key))
+    // What is included is what the model links to, not what the older answer linked to.
+    expect((model.included || []).map((o) => o.id).sort()).toStrictEqual([...linked(other, key)].sort())
   })
 
   test('a cleared field is an unsaved edit, which a store write leaves alone', async () => {
@@ -985,34 +1012,32 @@ describe('DruxtEntity renders from the store', () => {
       const { localVue, root, form } = await mountForm()
       form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
       const save = hold('patch', () => true)
-      let release
-      let saving
+      // A fetch is running out its delay, so the change of language waits for it.
+      const delay = holdFetchDelay()
       try {
-        saving = form.onSubmit()
+        const saving = form.onSubmit()
         await save.hit
-        // A fetch is running out its delay, so the change of language waits for it.
-        setFetchDelay(new Promise((resolve) => { release = resolve }))
         form.$fetch()
+        await delay.entered
         root.vm.langcode = 'es'
         await localVue.nextTick()
         expect(form._druxtModelLang).toBe('en')
-      } finally {
         save.release()
-        setFetchDelay(0)
-      }
-      try {
         await saving
         // Back to English before Spanish started loading.
         root.vm.langcode = 'en'
         await localVue.nextTick()
-      } finally {
-        release()
-      }
-      await settle(localVue)
+        delay.release()
+        await settle(localVue)
 
-      expect(form.model.attributes.langcode).toBe('en')
-      expect(titleOf(form)).toBe('Saved')
-      expect(form.dirty).toBe(false)
+        expect(form.model.attributes.langcode).toBe('en')
+        expect(titleOf(form)).toBe('Saved')
+        expect(form.dirty).toBe(false)
+      } finally {
+        // Also on a failed assertion, so nothing is left waiting.
+        save.release()
+        delay.release()
+      }
     })
 
     test('a save that returns before the next language loads is not an edit when its language comes back', async () => {
@@ -1020,36 +1045,173 @@ describe('DruxtEntity renders from the store', () => {
       const { localVue, root, form } = await mountForm()
       form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
       const save = hold('patch', () => true)
-      let release
+      const delay = holdFetchDelay()
+      try {
+        const saving = form.onSubmit()
+        await save.hit
+        // An English fetch is running out its delay when Spanish is chosen, so
+        // the change of language waits for it and English isn't put away yet.
+        form.$fetch()
+        await delay.entered
+        root.vm.langcode = 'es'
+        await localVue.nextTick()
+        expect(form._druxtPristineLang).toBe('en')
+        expect(form._druxtDrafts.en).toBeUndefined()
+        save.release()
+        // The save returns while the form still holds the English model, with Spanish chosen.
+        await saving
+        expect(form._druxtModelLang).toBe('en')
+        expect(form._druxtPristineLang).toBe('en')
+        expect(form._druxtDrafts.en).toBeUndefined()
+        // Spanish loads, and then English is chosen again.
+        delay.release()
+        await settle(localVue)
+        expect(form.model.attributes.langcode).toBe('es')
+        root.vm.langcode = 'en'
+        await settle(localVue)
+
+        expect(form.model.attributes.langcode).toBe('en')
+        expect(titleOf(form)).toBe('Saved')
+        expect(form.dirty).toBe(false)
+        expect(Object.keys(form._druxtDrafts)).toStrictEqual([])
+      } finally {
+        // Also on a failed assertion, so nothing is left waiting.
+        save.release()
+        delay.release()
+      }
+    })
+
+    test('an edit made after the save started and before its request is built stays out of the request', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, store: s, form } = await mountForm()
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
+      // The client looks up the resource's endpoint before it builds the request.
+      const getIndex = s.$druxt.getIndex.bind(s.$druxt)
+      let open
+      const gate = new Promise((resolve) => { open = resolve })
+      s.$druxt.getIndex = async (...args) => { await gate; return getIndex(...args) }
+      let saving
+      try {
+        saving = form.onSubmit()
+        // In place, as a field widget edits.
+        form.model.attributes.title = 'Edited during the save'
+      } finally {
+        s.$druxt.getIndex = getIndex
+        open()
+      }
+      await saving
+      await settle(localVue)
+
+      const [, body] = mockAxios.patch.mock.calls[mockAxios.patch.mock.calls.length - 1]
+      expect(body.data.attributes.title).toBe('Saved')
+      expect(titleOf(form)).toBe('Edited during the save')
+      expect(form.dirty).toBe(true)
+    })
+
+    test('an edit back to the first value while a save runs stays when the store is written', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, store: s, form } = await mountForm()
+      const title = titleOf(form)
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Submitted' } }
+      const save = hold('patch', () => true)
       let saving
       try {
         saving = form.onSubmit()
         await save.hit
-        // A fetch is running out its delay, so the change of language waits for it.
-        setFetchDelay(new Promise((resolve) => { release = resolve }))
-        form.$fetch()
-        root.vm.langcode = 'es'
-        await localVue.nextTick()
-        expect(form._druxtModelLang).toBe('en')
+        // Back to what it was before the save, which is an edit of what is being saved.
+        form.model = { ...form.model, attributes: { ...form.model.attributes, title } }
+        store(s, pages[0], 'From elsewhere')
+        await settle(localVue)
+        expect(titleOf(form)).toBe(title)
       } finally {
         save.release()
-        setFetchDelay(0)
       }
-      try {
-        // The save returns while the form still holds the English model, with Spanish chosen.
-        await saving
-        expect(form._druxtModelLang).toBe('en')
-      } finally {
-        release()
-      }
-      // Spanish loads, and then English is chosen again.
-      await settle(localVue)
-      expect(form.model.attributes.langcode).toBe('es')
-      root.vm.langcode = 'en'
+      await saving
       await settle(localVue)
 
-      expect(form.model.attributes.langcode).toBe('en')
+      expect(titleOf(form)).toBe(title)
+      expect(form.dirty).toBe(true)
+    })
+
+    test('an edit back to the first value while a save runs stays when the form fetches', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, store: s, form } = await mountForm()
+      const title = titleOf(form)
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Submitted' } }
+      const save = hold('patch', () => true)
+      let saving
+      try {
+        saving = form.onSubmit()
+        await save.hit
+        form.model = { ...form.model, attributes: { ...form.model.attributes, title } }
+        store(s, pages[0], 'From elsewhere')
+        await form.$fetch()
+        await settle(localVue)
+        expect(titleOf(form)).toBe(title)
+      } finally {
+        save.release()
+      }
+      await saving
+      await settle(localVue)
+
+      expect(titleOf(form)).toBe(title)
+      expect(form.dirty).toBe(true)
+    })
+
+    test('a request that started before a save does not bring the old copy back', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, store: s, form, b } = await mountForm()
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
+      // Drupal answers the request before the save, and the answer arrives after it.
+      const get = mockAxios.get.getMockImplementation()
+      let open
+      let reach
+      const gate = new Promise((resolve) => { open = resolve })
+      const answered = new Promise((resolve) => { reach = resolve })
+      mockAxios.get.mockImplementation(async (url, config) => {
+        const response = await get(url, config)
+        if (!decodeURIComponent(url).includes(`/node/page/${pages[0].id}`)) return response
+        const before = { ...response, data: copy(response.data) }
+        reach()
+        await gate
+        return before
+      })
+      let older
+      try {
+        older = s.dispatch('druxt/getResource', { type: 'node--page', id: pages[0].id, prefix: 'en', bypassCache: true })
+        await answered
+        await form.onSubmit()
+      } finally {
+        mockAxios.get.mockImplementation(get)
+        open()
+      }
+      expect((await older).data.attributes.title).toBe('Saved')
+      await settle(localVue)
+
+      expect(s.state.druxt.resources['node--page'][pages[0].id].en.data.attributes.title).toBe('Saved')
       expect(titleOf(form)).toBe('Saved')
+      expect(titleOf(b)).toBe('Saved')
+      expect(form.dirty).toBe(false)
+    })
+
+    test('a form in the default language sends nothing while the next language loads', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, root, form } = await mountForm({ langcode: '' })
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Default edit' } }
+      const load = hold('get', (url) => url.includes('/es/jsonapi/') && url.includes(pages[0].id))
+      try {
+        root.vm.langcode = 'es'
+        await load.hit
+        expect(await form.onSubmit()).toBe(false)
+        expect(form.onReset()).toBe(false)
+        expect(mockAxios.patch).not.toHaveBeenCalled()
+      } finally {
+        load.release()
+      }
+      await settle(localVue)
+      // Spanish loaded, without the default language's edit.
+      expect(form.model.attributes.langcode).toBe('es')
+      expect(titleOf(form)).not.toBe('Default edit')
       expect(form.dirty).toBe(false)
     })
 
@@ -1078,6 +1240,23 @@ describe('DruxtEntity renders from the store', () => {
       expect(a.model.attributes.langcode).toBe('es')
       expect(titleOf(a)).not.toBe('English edit')
       expect(a.dirty).toBe(false)
+    })
+
+    test('edits in the default language are put away when a language is chosen', async () => {
+      // No langcode and no language on the route: Drupal's default language.
+      const { localVue, root, a } = await mountPair({ langcode: '' })
+      a.model = { ...a.model, attributes: { ...a.model.attributes, title: 'Default edit' } }
+
+      root.vm.langcode = 'es'
+      await settle(localVue)
+      expect(a.model.attributes.langcode).toBe('es')
+      expect(titleOf(a)).not.toBe('Default edit')
+      expect(a.dirty).toBe(false)
+
+      root.vm.langcode = ''
+      await settle(localVue)
+      expect(titleOf(a)).toBe('Default edit')
+      expect(a.dirty).toBe(true)
     })
 
     test('each language keeps its own edits', async () => {

@@ -126,7 +126,7 @@ export default {
     onReset() {
       // Until this language loads, the entity falls back to the previous
       // language's model, and resetting to it would label it this language.
-      if (this._druxtModelLang !== undefined && this._druxtModelLang !== this.lang) return false
+      if (this._druxtLoaded && this._druxtModelLang !== this.lang) return false
       if (this.storedEntity) {
         this.setModelFromStore(this.entity)
       } else if (this.uuid) {
@@ -154,7 +154,7 @@ export default {
       if (this.submitting) return false
       // After a language change, the model is the previous language's until
       // this language loads, and saving it would write it to this one.
-      if (this._druxtModelLang !== undefined && this._druxtModelLang !== this.lang) return false
+      if (this._druxtLoaded && this._druxtModelLang !== this.lang) return false
       this.submitting = true
 
       let method = 'createResource'
@@ -168,15 +168,17 @@ export default {
       // The model as sent, to tell the edits made while the request runs.
       const sent = JSON.parse(JSON.stringify(this.model))
       // For a language change during the save, which puts those edits away.
-      this._druxtSaving = { lang, sent: this.pristineOf(sent) }
+      this._druxtSaving = { id: sent.id, lang, sent: this.pristineOf(sent) }
 
       try {
         // The request goes to the form's language, where its answer is stored.
-        this.response = await this.$druxt[method](this.model, lang)
+        // It takes the copy, as the client builds the request after a wait
+        // and the model can change meanwhile.
+        this.response = await this.$druxt[method](JSON.parse(JSON.stringify(sent)), lang)
         const resource = this.response.data.data
         // Store Drupal's answer, so every component showing the entity shows
-        // what was saved.
-        this.$store.commit('druxt/addResource', { resource: { ...this.response.data }, prefix: lang })
+        // what was saved, and no request from before the save replaces it.
+        this.$store.dispatch('druxt/storeResource', { resource: { ...this.response.data }, prefix: lang })
         const stored = (((this.$store.state.druxt.resources[resource.type] || {})[resource.id] || {})[lang] || {}).data
         const saved = stored || resource
         if ((this.model || {}).id !== sent.id) {
@@ -189,7 +191,7 @@ export default {
           // form has no marker until its first save, and its model is in the
           // form's language.
           const model = this.model
-          const inLang = this._druxtModelLang === undefined || this._druxtModelLang === lang
+          const inLang = !this._druxtLoaded || this._druxtModelLang === lang
           // The edits made since are in the model, or, after a change to
           // another language and back before this one loaded again, in what
           // was put away for it. Either way nothing is left put away.
@@ -213,6 +215,16 @@ export default {
               pristine: this.pristineOf(saved),
             }
           }
+        } else if (this._druxtLoaded && this._druxtModelLang === lang && this._druxtPristineLang === lang) {
+          // Another language is chosen and hasn't started loading, as while
+          // a fetch runs out its delay, so the form still holds the saved
+          // language's model. What was saved is the copy its edits are
+          // compared with from here, or the language change would put the
+          // saved model away as unsaved.
+          const model = this.model
+          const edited = this.pristineOf(model) !== this.pristineOf(sent)
+          this.setPristine(saved, lang)
+          this.model = { ...(edited ? withLaterEdits(saved, sent, model) : JSON.parse(JSON.stringify(saved))), included: model.included }
         }
         this.$emit('submit', resource)
       } catch (err) {

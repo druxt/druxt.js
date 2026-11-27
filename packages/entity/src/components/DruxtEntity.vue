@@ -20,6 +20,21 @@ const pristineOf = (data) => {
 }
 
 /**
+ * The JSON of what the relationships of entity data link to, which is what
+ * included resources belong to.
+ *
+ * @param {object} data - The JSON:API resource data.
+ * @return {string} The JSON.
+ */
+const linkageOf = (data) => {
+  const relationships = (data || {}).relationships || {}
+  return JSON.stringify(Object.keys(relationships).sort().map((key) => [
+    key,
+    [].concat((relationships[key] || {}).data || []).map((o) => [o.type, o.id]),
+  ]))
+}
+
+/**
  * The DruxtEntity component renders a Drupal Content Entity by JSON:API
  * resource type, UUID, view mode and schema type.
  *
@@ -279,6 +294,8 @@ export default {
     // - the JSON of the copy edits are compared with, and the language it is in;
     // - the language the model is in, which a language change leaves behind
     //   until the next language loads;
+    // - whether a copy has been taken yet, as the default language has no
+    //   code to tell it from no language;
     // - each other language's unsaved edits;
     // - whether the fetch has asked once more after a flush, and whether
     //   Drupal refused the entity.
@@ -287,10 +304,11 @@ export default {
     this._druxtPristineVersion = Vue.observable({ value: 0 })
     this._druxtPristineLang = undefined
     this._druxtModelLang = undefined
+    this._druxtLoaded = false
     this._druxtDrafts = {}
     this._druxtFetchedAgain = false
     this._druxtRefused = false
-    // The language and the JSON of what a form's running save sent.
+    // The entity, the language and the JSON of what a form's running save sent.
     this._druxtSaving = undefined
 
     // The watchers are for the browser. They leave a model the parent passes
@@ -301,7 +319,7 @@ export default {
     this.$watch('storedEntity', (to, from) => {
       if (to === from) return
       // After a language switch the lang watcher fetches that translation.
-      if (this._druxtPristineLang !== undefined && this._druxtPristineLang !== this.lang) return
+      if (this._druxtLoaded && this._druxtPristineLang !== this.lang) return
       // Flushed: keep showing the copy and fetch again.
       if (!to) {
         if (from) this.fetchAgain()
@@ -311,7 +329,9 @@ export default {
       // The store makes a new object for each write, so a write that changes
       // nothing, such as this entity's own fetch, leaves the model as it is.
       if (pristineOf(to) === this._druxtPristine) return
-      if (this.hasEdits()) return
+      // An edit of what a running save sent counts, even one back to the
+      // value from before the save.
+      if (this.hasEdits() || this.editedSinceSent()) return
       this.setModelFromStore({ ...to, included: (this.model || {}).included })
     })
 
@@ -341,6 +361,23 @@ export default {
   },
 
   methods: {
+    /**
+     * Whether the model differs from what a form's running save sent, for
+     * this entity in the model's language. Such an edit is unsaved even when
+     * it matches the copy from before the save.
+     *
+     * @return {boolean} `true` when the model was edited since the save started.
+     * @private
+     */
+    editedSinceSent() {
+      const saving = this._druxtSaving
+      if (!saving || saving.id !== (this.model || {}).id) return false
+      // Not once the language has changed: the model is then put away, and
+      // the next language's takes its place.
+      if (saving.lang !== this._druxtModelLang || saving.lang !== this._druxtPristineLang) return false
+      return pristineOf(this.model) !== saving.sent
+    },
+
     /**
      * Fetches again once a running fetch settles, as after a flush. A running
      * fetch may have read the store before the flush emptied it.
@@ -464,15 +501,17 @@ export default {
      * outside `data`, so it stays out of the page payload.
      *
      * @param {object} data - The JSON:API resource data.
+     * @param {string} [lang] - The language the data is in, when it isn't the component's.
      * @private
      */
-    setPristine(data) {
+    setPristine(data, lang = this.lang) {
       this._druxtPristine = pristineOf(data)
       this._druxtPristineVersion.value += 1
-      this._druxtPristineLang = this.lang
+      this._druxtPristineLang = lang
       // The language the model is in, which a language change leaves behind
       // until the next language loads.
-      this._druxtModelLang = this.lang
+      this._druxtModelLang = lang
+      this._druxtLoaded = true
     },
 
     /**
@@ -484,15 +523,14 @@ export default {
      */
     switchLanguage() {
       const from = this._druxtPristineLang
-      if (from === undefined || from === this.lang || (this.model || {}).id !== this.uuid) return
+      // The default language has no code, so "nothing loaded yet" is kept apart.
+      if (!this._druxtLoaded || from === this.lang || (this.model || {}).id !== this.uuid) return
 
       const drafts = this._druxtDrafts || (this._druxtDrafts = {})
       // A copy, so an edit made while the next language loads stays out of it.
       // While a form saves this language, an edit of what it sent is kept as
       // well, even one back to the value from before the save.
-      const saving = this._druxtSaving
-      const sinceSent = !!saving && saving.lang === from && pristineOf(this.model) !== saving.sent
-      if (this.hasEdits() || sinceSent) drafts[from] = { model: JSON.parse(JSON.stringify(this.model)), pristine: this._druxtPristine }
+      if (this.hasEdits() || this.editedSinceSent()) drafts[from] = { model: JSON.parse(JSON.stringify(this.model)), pristine: this._druxtPristine }
 
       const draft = drafts[this.lang]
       delete drafts[this.lang]
@@ -632,7 +670,12 @@ export default {
         // A flush while the request ran keeps the store from storing its
         // answer, which may be from before the flush, such as a signed-in
         // copy after a sign-out. Fetch once more, after this fetch settles.
-        if (!this.storedEntity && (resource.data || {}).id && !resource.error) {
+        // Or the store holds a newer copy that links to other resources than
+        // the answer does, so the answer's included resources aren't its.
+        const stored = this.storedEntity
+        const answered = (resource.data || {}).id && !resource.error
+        const relinked = !!stored && !!answered && linkageOf(stored) !== linkageOf(resource.data)
+        if ((!stored && answered) || relinked) {
           if (!this._druxtFetchedAgain) {
             this._druxtFetchedAgain = true
             this.$nextTick(() => this.fetchAgain())
@@ -643,12 +686,16 @@ export default {
 
         // Unsaved edits to this entity stay, as across a flip of the schema
         // type or a flush.
-        if (this.hasEdits() && (this.model || {}).id === this.uuid) return
+        if ((this.hasEdits() || this.editedSinceSent()) && (this.model || {}).id === this.uuid) return
 
         // The store's copy when it has one: the answer can be older, as when
         // a flush overtook this request and something stored the entity since.
-        const entity = { ...(this.storedEntity || resource.data || {}) }
-        entity.included = resource.included
+        const entity = { ...(stored || resource.data || {}) }
+        // Included resources belong to what the answer links to. For a copy
+        // that links elsewhere, the fetch that follows brings them.
+        entity.included = relinked
+          ? ((this.model || {}).id === this.uuid ? this.model.included : undefined)
+          : resource.included
         // The model already holds this copy, taken as the store stored it, and
         // needs only the included resources.
         if (pristineOf(entity) === this._druxtPristine && (this.model || {}).id === this.uuid) {
