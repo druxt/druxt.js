@@ -131,9 +131,9 @@ export default {
         this.setModelFromStore(this.entity)
       } else if (this.uuid) {
         // Nothing stored, as while the entity loads again after a flush: go
-        // back to the copy the edits are compared with. While another entity
-        // loads that copy is the previous entity's, and there is nothing of
-        // this one to go back to.
+        // back to the copy the edits are compared with, when it is this
+        // entity's. The previous entity's copy is still here while another
+        // entity loads.
         const copy = typeof this._druxtPristine === 'string' ? JSON.parse(this._druxtPristine) : {}
         if (copy.id !== this.uuid) return false
         this.setModelFromStore({ ...copy, included: (this.model || {}).included })
