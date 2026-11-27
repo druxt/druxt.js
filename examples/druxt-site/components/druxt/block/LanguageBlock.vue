@@ -6,7 +6,7 @@
         :key="language.attributes.drupal_internal__id"
       >
         <NuxtLink
-          :to="`/${language.attributes.drupal_internal__id}`"
+          :to="homePath(language.attributes.drupal_internal__id)"
           v-text="language.attributes.label"
         />
       </li>
@@ -36,6 +36,14 @@ export default {
       type: resourceType,
       query
     })
+  },
+
+  methods: {
+    // The language's front page, under the URL prefix Drupal serves it at, which needn't be its langcode.
+    homePath(langcode) {
+      const prefix = this.$druxt.urlPrefix(langcode)
+      return prefix ? `/${prefix}` : '/'
+    }
   }
 }
 </script>
