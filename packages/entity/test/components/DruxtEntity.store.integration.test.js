@@ -1015,6 +1015,44 @@ describe('DruxtEntity renders from the store', () => {
       expect(form.dirty).toBe(false)
     })
 
+    test('a save that returns before the next language loads is not an edit when its language comes back', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, root, form } = await mountForm()
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
+      const save = hold('patch', () => true)
+      let release
+      let saving
+      try {
+        saving = form.onSubmit()
+        await save.hit
+        // A fetch is running out its delay, so the change of language waits for it.
+        setFetchDelay(new Promise((resolve) => { release = resolve }))
+        form.$fetch()
+        root.vm.langcode = 'es'
+        await localVue.nextTick()
+        expect(form._druxtModelLang).toBe('en')
+      } finally {
+        save.release()
+        setFetchDelay(0)
+      }
+      try {
+        // The save returns while the form still holds the English model, with Spanish chosen.
+        await saving
+        expect(form._druxtModelLang).toBe('en')
+      } finally {
+        release()
+      }
+      // Spanish loads, and then English is chosen again.
+      await settle(localVue)
+      expect(form.model.attributes.langcode).toBe('es')
+      root.vm.langcode = 'en'
+      await settle(localVue)
+
+      expect(form.model.attributes.langcode).toBe('en')
+      expect(titleOf(form)).toBe('Saved')
+      expect(form.dirty).toBe(false)
+    })
+
     test('Reset returns to the stored resource', async () => {
       const { localVue, store: s, form } = await mountForm()
       form.model.attributes.title = 'Changed'
