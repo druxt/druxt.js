@@ -319,6 +319,19 @@ describe('DruxtEntity', () => {
     expect($fetch).toHaveBeenCalledTimes(4)
   })
 
+  test('field labels in the entity\'s language', async () => {
+    const mockPage = await getMockResource('node--page')
+    store.$druxtSchema.labels = jest.fn(async (langcode) => (langcode === 'es'
+      ? { 'node--page': { body: { label: 'Cuerpo', description: null } } }
+      : {}))
+
+    const wrapper = mountComponent({ uuid: mockPage.data.id, type: 'node--page', langcode: 'es' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.schema.fields.find((field) => field.id === 'body').label).toStrictEqual({ text: 'Cuerpo', position: 'above' })
+    expect(store.$druxtSchema.labels).toHaveBeenCalledWith('es')
+  })
+
   test('missing schema', async () => {
     mocks.$nuxt.context.isDev = true
     const mockFile = await getMockResource('file--file')

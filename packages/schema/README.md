@@ -22,6 +22,7 @@ request.
 - **Generates schemas on build**
 - **Configurable schema filter**
 - **View and Form schemas**
+- **Field labels in each language Drupal translates them into**
 
 ---
 

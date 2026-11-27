@@ -135,6 +135,16 @@ describe('DruxtSchema', () => {
     expect(getCollection).not.toHaveBeenCalled()
   })
 
+  test('getDisplayIds - a failed read is tried again, not kept', async () => {
+    const getDisplays = schema.getDisplays.bind(schema)
+    schema.getDisplays = jest.fn()
+      .mockRejectedValueOnce(new Error('500: Internal Server Error'))
+      .mockImplementation(getDisplays)
+
+    await expect(schema.getDisplayIds()).rejects.toThrow('500')
+    expect((await schema.getDisplayIds()).has('node--page--default--view')).toBe(true)
+  })
+
   test('get - mock error', async () => {
     const mock = {
       druxt: {
@@ -145,6 +155,7 @@ describe('DruxtSchema', () => {
       },
     }
     mock.getDisplays = schema.getDisplays.bind(mock)
+    mock.getConfigAll = schema.getConfigAll.bind(mock)
     try {
       await schema.get.call(mock)
     } catch(err) {

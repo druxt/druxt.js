@@ -336,7 +336,7 @@ export default {
     ]),
 
     /**
-     * Fetches the Druxt schema object.
+     * Fetches the Druxt schema object, with its field labels in the entity's language.
      */
     async fetchConfig() {
       this.schemaError = undefined
@@ -345,6 +345,7 @@ export default {
           resourceType: this.type,
           mode: this.mode,
           schemaType: this.schemaType || 'view',
+          langcode: this.lang,
         })
       } catch(err) {
         // The entity renders without a schema either way, as one an earlier

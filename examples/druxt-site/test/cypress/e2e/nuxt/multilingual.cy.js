@@ -66,14 +66,9 @@ describe('Multilingual', () => {
     })
   })
 
-  // Known gap, asserted deliberately so a fix flips this test rather than
-  // silently changing behaviour: druxt-schema keys schemas without a
-  // language dimension and generates them against the default language, so
-  // field labels render untranslated even on Spanish pages, while field
-  // values translate. The day this shows "Tiempo de preparación", the gap
-  // is fixed and this spec should assert translated labels everywhere.
-  it('field labels still render untranslated on Spanish pages (known druxt-schema gap)', () => {
+  it('field labels render in the page language', () => {
     cy.visit('/es/recipes/quiche-mediterr%C3%A1neo-profundo')
-    cy.contains('strong', 'Preparation time').should('exist')
+    cy.contains('strong', 'Tiempo de preparación').should('exist')
+    cy.contains('strong', 'Preparation time').should('not.exist')
   })
 })

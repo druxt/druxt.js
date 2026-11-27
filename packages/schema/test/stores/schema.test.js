@@ -84,4 +84,85 @@ describe('DruxtSchemaStore', () => {
     expect(store.$druxtSchema.import).toHaveBeenCalledTimes(3)
     expect(store.state.druxtSchema.schemas).toStrictEqual({})
   })
+  describe('get - in a language', () => {
+    const built = {
+      id: 'node--recipe--default--view',
+      resourceType: 'node--recipe',
+      fields: [
+        { id: 'field_preparation_time', description: 'Minutes', label: { text: 'Preparation time', position: 'above' } },
+        { id: 'field_difficulty', description: null, label: { text: 'Difficulty', position: 'inline' } },
+      ],
+    }
+    const spanish = {
+      'node--recipe': { field_preparation_time: { label: 'Tiempo de preparación', description: 'Minutos' } },
+    }
+    const resource = { resourceType: 'node--recipe', langcode: 'es' }
+
+    beforeEach(() => {
+      store.$druxtSchema.import = jest.fn(async () => JSON.parse(JSON.stringify(built)))
+      store.$druxtSchema.labels = jest.fn(async (langcode) => (langcode === 'es' ? spanish : {}))
+    })
+
+    test('gives the schema with the labels the language translates', async () => {
+      const schema = await store.dispatch('druxtSchema/get', resource)
+
+      expect(schema.fields[0]).toStrictEqual({
+        id: 'field_preparation_time',
+        description: 'Minutos',
+        label: { text: 'Tiempo de preparación', position: 'above' },
+      })
+      expect(schema.fields[1]).toStrictEqual(built.fields[1])
+    })
+
+    test('leaves the built schema in the default language', async () => {
+      await store.dispatch('druxtSchema/get', resource)
+
+      expect(await store.dispatch('druxtSchema/get', { resourceType: 'node--recipe' })).toStrictEqual(built)
+    })
+
+    test('loads a language\'s labels once, for every schema', async () => {
+      const first = await store.dispatch('druxtSchema/get', resource)
+      await store.dispatch('druxtSchema/get', { ...resource, mode: 'teaser' })
+
+      expect(await store.dispatch('druxtSchema/get', resource)).toBe(first)
+      expect(store.$druxtSchema.labels).toHaveBeenCalledTimes(1)
+    })
+
+    test('the built schema for a language without translated labels', async () => {
+      const schema = await store.dispatch('druxtSchema/get', { ...resource, langcode: 'en' })
+
+      expect(schema).toBe(store.state.druxtSchema.schemas['node--recipe--default--view'])
+    })
+
+    test('the built schema when the labels can\'t be loaded', async () => {
+      store.$druxtSchema.labels = jest.fn(async () => { throw new Error('No labels') })
+
+      expect(await store.dispatch('druxtSchema/get', resource)).toStrictEqual(built)
+    })
+
+    test('a flush loads the labels again', async () => {
+      await store.dispatch('druxtSchema/get', resource)
+      store.commit('druxtSchema/flushSchemas')
+      await store.dispatch('druxtSchema/get', resource)
+
+      expect(store.$druxtSchema.labels).toHaveBeenCalledTimes(2)
+    })
+
+    test('labels loaded across a flush are not kept, even beside the same built schema', async () => {
+      // A built file imports as one object, so the schema loaded after the flush is the one from before it.
+      const same = JSON.parse(JSON.stringify(built))
+      store.$druxtSchema.import = jest.fn(async () => same)
+      let release
+      store.$druxtSchema.labels = jest.fn(() => new Promise((resolve) => { release = () => resolve(spanish) }))
+
+      const pending = store.dispatch('druxtSchema/get', resource)
+      await new Promise((resolve) => setTimeout(resolve))
+      store.commit('druxtSchema/flushSchemas')
+      await store.dispatch('druxtSchema/get', { resourceType: 'node--recipe' })
+      release()
+      await pending
+
+      expect(store.state.druxtSchema.schemas['node--recipe--default--view@es']).toBe(undefined)
+    })
+  })
 })

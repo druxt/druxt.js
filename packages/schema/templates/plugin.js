@@ -75,6 +75,20 @@ const DruxtSchemaPlugin = {
         parts[parts.length - 2] = 'default'
         return load(parts.join('--'))
       })
+  },
+
+  /**
+   * Import the field labels Drupal translates in a language, regenerated where available.
+   *
+   * @param {string} langcode - The langcode.
+   * @returns {object} Each translated field's `label` and `description`, by resource type and field. Empty for a
+   *   language without translated labels.
+   *
+   * @example @lang js
+   * const labels = await this.$druxtSchema.labels('es')
+   */
+  labels: async langcode => {
+    return load(`labels/${langcode}`).catch(() => ({}))
   }
 }
 

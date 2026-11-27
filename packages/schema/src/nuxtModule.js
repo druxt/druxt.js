@@ -3,14 +3,14 @@ import { resolve } from 'path'
 
 import { DruxtSchema } from './schema'
 import { createSchemaRefresh } from './refresh'
-import { parseSchemaId } from './utils/hold'
+import { parseLabelsId, parseSchemaId } from './utils/hold'
 
 /**
  * The Nuxt.js module function.
  *
  * - Adds the Schema plugin to Nuxt.js.
  * - Adds the Schema Vuex store to Nuxt.js.
- * - Builds the Schema data via the `builder:prepared` hook.
+ * - Builds the Schema data via the `builder:prepared` hook, and each language's translated field labels.
  * - With `druxt.schema.refresh`, regenerates schemas on the server after each cache clear, or on each request under `nuxt dev`.
  *
  * The module function should not be used directly, but rather installed via your Nuxt.js configuration file.
@@ -74,7 +74,7 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
     // Keyed by base URL, so apps for different sites in one process never share a refresh.
     // An ID it cannot parse resolves to null, so the server render uses the built file for it.
     const refreshes = process[Symbol.for('druxt.schemaRefresh')] || (process[Symbol.for('druxt.schemaRefresh')] = new Map())
-    refreshes.set(options.baseUrl, (id) => (parseSchemaId(id) ? getSchema(id) : Promise.resolve(null)))
+    refreshes.set(options.baseUrl, (id) => (parseSchemaId(id) || parseLabelsId(id) ? getSchema(id) : Promise.resolve(null)))
   }
 
   // Generate schemas.
@@ -99,6 +99,18 @@ const DruxtSchemaNuxtModule = function (moduleOptions = {}) {
         src: resolve(__dirname, '../templates/schema.json'),
         fileName: `schemas/${name}.json`,
         options: { schema }
+      })
+    }
+
+    // The field labels each language translates, as the schemas are in the default language.
+    const labels = await druxtSchema.getAllLabels({ build: this.nuxt })
+    for (const langcode in labels) {
+      if (!Object.keys(labels[langcode]).length) continue
+
+      this.addTemplate({
+        src: resolve(__dirname, '../templates/schema.json'),
+        fileName: `schemas/labels/${langcode}.json`,
+        options: { schema: labels[langcode] }
       })
     }
 

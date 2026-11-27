@@ -49,13 +49,14 @@ const DruxtSchemaMixin = {
   },
 
   /**
-   * Loads the Schema from the Vuex store.
+   * Loads the Schema from the Vuex store, with its field labels in the component's `lang`, when it has one.
    */
   async fetch() {
     this.schema = await this.getSchema({
       resourceType: this.type,
       mode: this.mode,
-      schemaType: this.schemaType || 'view'
+      schemaType: this.schemaType || 'view',
+      langcode: this.lang
     })
   },
 
