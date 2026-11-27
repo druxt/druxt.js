@@ -706,6 +706,25 @@ describe('processCache - vary', () => {
     expect(language('es').get('key')).toBe('es')
   })
 
+  test('a default an interceptor changes among the common ones is the changed one', () => {
+    const changes = (to) => ({
+      ...intercepted((config) => { config.headers.common['Accept-Language'] = to; return config }),
+      defaults: { headers: { common: { 'Accept-Language': 'en' } } },
+    })
+    processCache('vary', { axios: changes('es'), vary: ['Accept-Language'] }).set('key', 'es', 60)
+    expect(language('en').get('key')).toBe(undefined)
+    expect(language('es').get('key')).toBe('es')
+
+    // One it sets on the request itself wins over the common one, as it does when Axios merges them.
+    const both = {
+      ...intercepted((config) => { config.headers.common['Accept-Language'] = 'fr'; config.headers['Accept-Language'] = 'de'; return config }),
+      defaults: { headers: { common: { 'Accept-Language': 'en' } } },
+    }
+    processCache('vary', { axios: both, vary: ['Accept-Language'] }).set('key', 'de', 60)
+    expect(language('de').get('key')).toBe('de')
+    expect(language('fr').get('key')).toBe(undefined)
+  })
+
   test('an interceptor the probe cannot run turns the cache off for a site that lists headers', () => {
     const instance = intercepted({ fulfilled: async (config) => config })
     // It may set a listed header, and the probe can't say to what.

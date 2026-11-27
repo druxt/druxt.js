@@ -123,7 +123,7 @@ const CASE_INSENSITIVE_HEADERS = ['accept-charset', 'accept-encoding', 'accept-l
 // may change a listed header after this reads it.
 const varyKey = (axios, vary, url) => {
   if (!vary || !vary.length) return ''
-  const { config, skipped } = probeRequest(axios, url)
+  const { config, skipped, initial } = probeRequest(axios, url)
   if (skipped) return null
   const sent = (config || {}).headers || {}
   // A GET has no data. Axios calls each transform on the config, with the data and the headers.
@@ -135,14 +135,28 @@ const varyKey = (axios, vary, url) => {
       return null
     }
   }
-  // Axios 0.x merges the `common` and GET maps in as the request leaves, so one an interceptor wrote to counts.
-  const headers = flattenHeaders(sent)
+  // A header's value in a map, by its name in any case. An object there is a per-method map, which is passed over.
+  const read = (map, name) => {
+    const match = Object.entries(map || {}).find(([key, item]) => key.toLowerCase() === name && (Array.isArray(item) || typeof item !== 'object' || item === null))
+    return match ? match[1] : undefined
+  }
+  // The probe starts with the defaults flattened to the top level, as Axios 1 hands them over. Axios 0.x hands
+  // over the `common` and GET maps instead, and merges them in as the request leaves. So a top-level value an
+  // interceptor or transform set stands, and one left as it started gives way to a map value that changed.
+  const effective = (name) => {
+    const top = read(sent, name)
+    if (top !== read(initial, name)) return top
+    for (const map of ['get', 'common']) {
+      const value = read(sent[map], name)
+      if (value !== read((initial || {})[map], name)) return value
+    }
+    return top
+  }
   return vary
     .map((name) => String(name).toLowerCase())
     .sort()
     .map((name) => {
-      const match = Object.entries(headers).find(([key, item]) => key.toLowerCase() === name && (Array.isArray(item) || typeof item !== 'object'))
-      const raw = match ? match[1] : undefined
+      const raw = effective(name)
       if (raw === undefined || raw === false || raw === null) return ''
       const value = String(Array.isArray(raw) ? raw.join(', ') : raw).trim()
       if (!CASE_INSENSITIVE_HEADERS.includes(name)) return `\n${name}: ${value}`
@@ -314,17 +328,19 @@ const interceptorsAddCredentials = (axios, sessionCookie, url) => {
  * @param {object} axios - The Axios instance.
  * @param {string} url - The URL of the request about to be made.
  *
- * @returns {{config: object, skipped: boolean}} The config, and whether an interceptor was passed over, whose changes the config then lacks.
+ * @returns {{config: object, skipped: boolean, initial: object}} The config, whether an interceptor was passed over, whose changes the config then lacks, and the headers as they were before the interceptors.
  * @private
  */
 const probeRequest = (axios, url) => {
   const defaults = copy({ ...((axios || {}).defaults || {}) })
   // Own properties only, so headers held in a class are copied too.
   const headers = probeHeaders(flattenHeaders(copy({ ...(((axios || {}).defaults || {}).headers || {}) })))
+  // The headers before any interceptor ran, to tell what one changed.
+  const initial = copy({ ...headers })
   let config = { ...defaults, headers, method: 'get', url, [PROBE]: true }
   let skipped = false
   const manager = ((axios || {}).interceptors || {}).request
-  if (!manager || typeof manager.forEach !== 'function') return { config, skipped }
+  if (!manager || typeof manager.forEach !== 'function') return { config, skipped, initial }
 
   const handlers = []
   manager.forEach((handler) => {
@@ -361,7 +377,7 @@ const probeRequest = (axios, url) => {
     }
     if (next) config = next
   }
-  return { config, skipped }
+  return { config, skipped, initial }
 }
 
 /**
