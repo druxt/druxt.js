@@ -422,14 +422,14 @@ export default {
 
     'model.page'(to, from) {
       if (to !== from) {
-        this.updateRoute()
+        if (!this.fromRouteQuery) this.updateRoute()
         this.$fetch()
       }
     },
 
     'model.sort'(to, from) {
       if (to !== from) {
-        this.updateRoute()
+        if (!this.fromRouteQuery) this.updateRoute()
         this.$fetch()
       }
     },
@@ -477,6 +477,10 @@ export default {
       // The URL says which page goes with the filter, so the filter watcher
       // must not go back to the first one.
       this.lastFilter = json
+      // The model watchers leave the URL alone for this change: it came from
+      // the URL, which may spell the same values another way.
+      this.fromRouteQuery = true
+      this.$nextTick(() => { this.fromRouteQuery = false })
       if (replace) {
         this.model = { ...this.model, filter, page, sort }
         return true

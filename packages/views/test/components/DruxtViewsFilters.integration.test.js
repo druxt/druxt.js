@@ -450,6 +450,23 @@ describe('DruxtViewsFilters, mounted in a DruxtView against the mock', () => {
       }
     })
 
+    test('a URL another link changes is read, not rewritten', async () => {
+      const { wrapper, router, route, flush } = await mountView({ propsData: recipes })
+      await flush()
+
+      // The view would write this as `page=1`, without the other pager's first page.
+      route.query = { page: '1,0' }
+      await flush()
+
+      expect(wrapper.vm.model.page).toBe(1)
+      expect(router.replace).not.toHaveBeenCalled()
+
+      // A change of the view's own is still written.
+      wrapper.vm.model.page = 2
+      await flush()
+      expect(route.query).toStrictEqual({ page: '2' })
+    })
+
     test('the page is added as the pager moves, and removed on the first page', async () => {
       const { wrapper, route, flush } = await mountView({ propsData: recipes })
       await flush()
