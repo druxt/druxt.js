@@ -119,18 +119,19 @@ const CASE_INSENSITIVE_HEADERS = ['accept-charset', 'accept-encoding', 'accept-l
 // request transforms, as Axios runs them. Names are matched in any case, and an array is its values joined. Values
 // stay as sent, since a backend may tell `Blue` from `blue`, apart from the headers HTTP compares without case.
 // With no listed header sent, a client shares its consumer's partition.
-// `null` for an instance with an interceptor the probe can't run, or a transform that fails on the probe. Either
-// may change a listed header after this reads it.
+// `null` when the probe can't tell what is sent. That is an instance with an interceptor it can't run or a
+// transform that fails on it, and a listed header whose value two versions of Axios would send differently.
 const varyKey = (axios, vary, url) => {
   if (!vary || !vary.length) return ''
   const { config, skipped, initial } = probeRequest(axios, url)
   if (skipped) return null
   const sent = (config || {}).headers || {}
-  // A GET has no data. Axios calls each transform on the config, with the data and the headers.
+  // Axios calls each transform on the config, with the headers and with the data the one before it returned.
+  let data = (config || {}).data
   for (const transform of [].concat((config || {}).transformRequest || [])) {
     if (typeof transform !== 'function') continue
     try {
-      transform.call(config, undefined, sent)
+      data = transform.call(config, data, sent)
     } catch {
       return null
     }
@@ -141,22 +142,24 @@ const varyKey = (axios, vary, url) => {
     return match ? match[1] : undefined
   }
   // The probe starts with the defaults flattened to the top level, as Axios 1 hands them over. Axios 0.x hands
-  // over the `common` and GET maps instead, and merges them in as the request leaves. So a top-level value an
-  // interceptor or transform set stands, and one left as it started gives way to a map value that changed.
+  // over the `common` and GET maps instead, and merges them in as the request leaves. A top-level value that
+  // changed is the one sent. With no top-level value, a map value an interceptor set is. A top-level value left
+  // as it started, beside a map value that changed, could be either: the probe's copy, or the interceptor's own
+  // write of the same value.
+  const UNCERTAIN = {}
   const effective = (name) => {
     const top = read(sent, name)
     if (top !== read(initial, name)) return top
     for (const map of ['get', 'common']) {
       const value = read(sent[map], name)
-      if (value !== read((initial || {})[map], name)) return value
+      if (value !== read((initial || {})[map], name)) return top === undefined ? value : UNCERTAIN
     }
     return top
   }
-  return vary
-    .map((name) => String(name).toLowerCase())
-    .sort()
-    .map((name) => {
-      const raw = effective(name)
+  const values = vary.map((name) => String(name).toLowerCase()).sort().map((name) => [name, effective(name)])
+  if (values.some(([, value]) => value === UNCERTAIN)) return null
+  return values
+    .map(([name, raw]) => {
       if (raw === undefined || raw === false || raw === null) return ''
       const value = String(Array.isArray(raw) ? raw.join(', ') : raw).trim()
       if (!CASE_INSENSITIVE_HEADERS.includes(name)) return `\n${name}: ${value}`

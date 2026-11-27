@@ -706,23 +706,25 @@ describe('processCache - vary', () => {
     expect(language('es').get('key')).toBe('es')
   })
 
-  test('a default an interceptor changes among the common ones is the changed one', () => {
-    const changes = (to) => ({
-      ...intercepted((config) => { config.headers.common['Accept-Language'] = to; return config }),
+  test('a default an interceptor changes among the common ones turns the cache off, as either may be sent', () => {
+    // Axios 0.x sends the changed common value, unless the interceptor also set the header on the request to the
+    // value it had, which the probe can't tell from the copy it started with. Axios 1 sends the default.
+    const changes = (also) => ({
+      ...intercepted((config) => {
+        config.headers.common['Accept-Language'] = 'es'
+        if (also) config.headers['Accept-Language'] = also
+        return config
+      }),
       defaults: { headers: { common: { 'Accept-Language': 'en' } } },
     })
-    processCache('vary', { axios: changes('es'), vary: ['Accept-Language'] }).set('key', 'es', 60)
-    expect(language('en').get('key')).toBe(undefined)
-    expect(language('es').get('key')).toBe('es')
+    expect(processCache('vary', { axios: changes(), vary: ['Accept-Language'] })).toBeNull()
+    expect(processCache('vary', { axios: changes('en'), vary: ['Accept-Language'] })).toBeNull()
+    expect(processCache('vary', { axios: changes() })).not.toBeNull()
 
-    // One it sets on the request itself wins over the common one, as it does when Axios merges them.
-    const both = {
-      ...intercepted((config) => { config.headers.common['Accept-Language'] = 'fr'; config.headers['Accept-Language'] = 'de'; return config }),
-      defaults: { headers: { common: { 'Accept-Language': 'en' } } },
-    }
-    processCache('vary', { axios: both, vary: ['Accept-Language'] }).set('key', 'de', 60)
+    // A header set on the request to another value is the one sent, whatever the common one became.
+    processCache('vary', { axios: changes('de'), vary: ['Accept-Language'] }).set('key', 'de', 60)
     expect(language('de').get('key')).toBe('de')
-    expect(language('fr').get('key')).toBe(undefined)
+    expect(language('es').get('key')).toBe(undefined)
   })
 
   test('an interceptor the probe cannot run turns the cache off for a site that lists headers', () => {
@@ -796,6 +798,16 @@ describe('processCache - vary', () => {
     expect(real.defaults.transformRequest.length).toBeGreaterThan(0)
     processCache('vary', { axios: real, vary: ['Accept-Language'] }).set('key', 'es', 60)
     expect(language('es').get('key')).toBe('es')
+  })
+
+  test('a request transform is given what the one before it returned', () => {
+    const real = jest.requireActual('axios').create({
+      headers: { common: { 'Accept-Language': 'en' } },
+      transformRequest: [() => 'es', (data, headers) => { headers['Accept-Language'] = data || 'en'; return data }],
+    })
+    processCache('vary', { axios: real, vary: ['Accept-Language'] }).set('key', 'es', 60)
+    expect(language('es').get('key')).toBe('es')
+    expect(language('en').get('key')).toBe(undefined)
   })
 
   test('a request transform that fails on the probe turns the cache off for a site that lists headers', () => {
