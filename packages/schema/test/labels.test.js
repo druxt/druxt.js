@@ -151,6 +151,24 @@ describe('DruxtSchema.getLabels', () => {
     expect(getLanguages).toHaveBeenCalledWith(schema.druxt, { endpoint: '/jsonapi', build })
   })
 
+  test('languages that could not be read are asked for again, rather than kept as none', async () => {
+    const { schema } = site({ byPrefix: { '': english, es: { 'node.recipe.field_difficulty': ['Dificultad', null] } } })
+    // An unreachable Drupal reads as an empty list, as a site with one language does.
+    getLanguages.mockReset()
+    getLanguages.mockResolvedValueOnce([])
+    expect(await schema.getLabels('es')).toBe(false)
+    expect(schema.druxt.options.prefixes).toBe(undefined)
+
+    getLanguages.mockResolvedValue([
+      { langcode: 'en', prefix: '', default: true },
+      { langcode: 'es', prefix: 'es' },
+    ])
+    expect(await schema.getLabels('es')).toStrictEqual({
+      'node--recipe': { field_difficulty: { label: 'Dificultad', description: null } },
+    })
+    expect(getLanguages).toHaveBeenCalledTimes(2)
+  })
+
   test('getSchemaById gives the labels for a labels ID', async () => {
     const { schema } = site({
       prefixes: { en: '', es: 'es' },

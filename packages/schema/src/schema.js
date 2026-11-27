@@ -234,7 +234,8 @@ class DruxtSchema {
   }
 
   /**
-   * Each language's URL prefix, from the `prefixes` option, else read from Drupal once.
+   * Each language's URL prefix, from the `prefixes` option, else read from Drupal once. A read that finds no
+   * languages isn't kept, as an unreachable Drupal gives none too, so the next call reads again.
    *
    * @param {object} [options] - The options.
    * @param {object} [options.build] - The build reading them, so its modules share one read, as `getLanguages()` takes it.
@@ -244,6 +245,7 @@ class DruxtSchema {
   async getPrefixes({ build } = {}) {
     if (!this.druxt.options.prefixes) {
       const languages = await getLanguages(this.druxt, { endpoint: this.druxt.options.endpoint, build })
+      if (!languages.length) return {}
       this.druxt.options.prefixes = Object.fromEntries(languages.map((language) => [language.langcode, language.prefix]))
     }
     return this.druxt.options.prefixes
