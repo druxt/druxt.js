@@ -719,16 +719,25 @@ class DruxtClient {
    */
   atPrefix(href, prefix) {
     if (!this.options.prefixes || typeof href !== 'string') return href
+    // Drupal writes a prefix such as `français` into its links as `fran%C3%A7ais`, so prefixes are compared decoded.
+    const decode = (segment) => {
+      try {
+        return decodeURIComponent(segment)
+      } catch {
+        return segment
+      }
+    }
     const wanted = String(prefix || '').replace(/^\/+/, '')
-    const known = new Set(Object.values(this.options.prefixes).filter((o) => o))
+    const known = new Set(Object.values(this.options.prefixes).filter((o) => o).map(decode))
     const endpoint = this.options.endpoint
     // The endpoint as a whole path segment, so a prefix such as `jsonapi-es` is not taken for it.
     const isEndpoint = (path) => path.startsWith(endpoint) && /^([/?#]|$)/.test(path.slice(endpoint.length))
     // A known prefix with the endpoint after it, before the endpoint alone, so a prefix named `jsonapi` is a prefix.
     const first = href.slice(1).split('/')[0]
-    const at = known.has(first) && isEndpoint(href.slice(first.length + 1)) ? first : isEndpoint(href) ? '' : first
+    const at = known.has(decode(first)) && isEndpoint(href.slice(first.length + 1)) ? first : isEndpoint(href) ? '' : first
+    // Cut by the segment as written, which is longer than its decoded text.
     const rest = at ? href.slice(at.length + 1) : href
-    if (at === wanted || !isEndpoint(rest) || (at && !known.has(at))) return href
+    if (decode(at) === decode(wanted) || !isEndpoint(rest) || (at && !known.has(decode(at)))) return href
     return `${wanted ? `/${wanted}` : ''}${rest}`
   }
 
@@ -869,7 +878,9 @@ class DruxtClient {
     const prefixes = this.options.prefixes
     // Without a langcode, the default language's.
     const langcode = prefix || this.options.defaultLangcode || ''
-    return prefixes && Object.prototype.hasOwnProperty.call(prefixes, langcode) ? prefixes[langcode] : (prefix || '')
+    if (!prefixes) return prefix || ''
+    // A langcode the map lacks is its own prefix, the default language's too.
+    return Object.prototype.hasOwnProperty.call(prefixes, langcode) ? prefixes[langcode] : langcode
   }
 }
 
