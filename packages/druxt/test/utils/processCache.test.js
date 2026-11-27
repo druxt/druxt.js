@@ -721,6 +721,15 @@ describe('processCache - vary', () => {
     expect(processCache('vary', { axios: changes('en'), vary: ['Accept-Language'] })).toBeNull()
     expect(processCache('vary', { axios: changes() })).not.toBeNull()
 
+    // A default held as an array is compared by its values.
+    const listed = {
+      ...intercepted((config) => { config.headers.common['Accept-Language'] = 'es'; return config }),
+      defaults: { headers: { common: { 'Accept-Language': ['en'] } } },
+    }
+    expect(processCache('vary', { axios: listed, vary: ['Accept-Language'] })).toBeNull()
+    const untouched = { ...intercepted((config) => config), defaults: { headers: { common: { 'Accept-Language': ['en'] } } } }
+    expect(processCache('vary', { axios: untouched, vary: ['Accept-Language'] })).not.toBeNull()
+
     // A header set on the request to another value is the one sent, whatever the common one became.
     processCache('vary', { axios: changes('de'), vary: ['Accept-Language'] }).set('key', 'de', 60)
     expect(language('de').get('key')).toBe('de')

@@ -147,12 +147,14 @@ const varyKey = (axios, vary, url) => {
   // as it started, beside a map value that changed, could be either: the probe's copy, or the interceptor's own
   // write of the same value.
   const UNCERTAIN = {}
+  // The headers were copied, so an array is the same when its values are.
+  const same = (a, b) => a === b || (Array.isArray(a) && Array.isArray(b) && JSON.stringify(a) === JSON.stringify(b))
   const effective = (name) => {
     const top = read(sent, name)
-    if (top !== read(initial, name)) return top
+    if (!same(top, read(initial, name))) return top
     for (const map of ['get', 'common']) {
       const value = read(sent[map], name)
-      if (value !== read((initial || {})[map], name)) return top === undefined ? value : UNCERTAIN
+      if (!same(value, read((initial || {})[map], name))) return top === undefined ? value : UNCERTAIN
     }
     return top
   }
