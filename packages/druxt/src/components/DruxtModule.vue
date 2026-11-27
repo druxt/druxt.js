@@ -238,9 +238,6 @@ export default {
     // Get wrapper data.
     const wrapperData = await this.getWrapperData(component.is)
     if (this.lang !== lang) return
-    // On the instance rather than in data(), so it is not copied into the
-    // server rendered payload once per module.
-    this.wrapperProps = wrapperData.props || {}
 
     // Build module settings.
     component.settings = wrapperData.druxt || {}
@@ -264,7 +261,10 @@ export default {
     // Build wrapper component propsData.
     component = { ...component, ...this.getModulePropsData(wrapperData.props) }
 
-    // Set component data.
+    // Set component data, and the wrapper's props with it, so a fetch that ends early leaves both as they were.
+    // The props are on the instance rather than in data(), so they are not copied into the server rendered
+    // payload once per module.
+    this.wrapperProps = wrapperData.props || {}
     this.component = component
   },
 
