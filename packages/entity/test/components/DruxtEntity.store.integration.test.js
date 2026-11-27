@@ -921,7 +921,9 @@ describe('DruxtEntity renders from the store', () => {
         expect(form.dirty).toBe(true)
         expect(Object.keys(form._druxtDrafts)).toStrictEqual([])
       } finally {
+        // Also on a failed assertion, so no fetch is left waiting on the delay.
         setFetchDelay(0)
+        release()
       }
     })
 
@@ -996,13 +998,16 @@ describe('DruxtEntity renders from the store', () => {
         expect(form._druxtModelLang).toBe('en')
       } finally {
         save.release()
+        setFetchDelay(0)
       }
-      await saving
-      // Back to English before Spanish started loading.
-      root.vm.langcode = 'en'
-      await localVue.nextTick()
-      setFetchDelay(0)
-      release()
+      try {
+        await saving
+        // Back to English before Spanish started loading.
+        root.vm.langcode = 'en'
+        await localVue.nextTick()
+      } finally {
+        release()
+      }
       await settle(localVue)
 
       expect(form.model.attributes.langcode).toBe('en')
