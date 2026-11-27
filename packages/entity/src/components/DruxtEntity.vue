@@ -3,6 +3,7 @@ import merge from 'deepmerge'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import DruxtDebug from 'druxt/dist/components/DruxtDebug.vue'
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+import Vue from 'vue'
 import { mapActions } from 'vuex'
 
 /**
@@ -282,13 +283,19 @@ export default {
     // - whether the fetch has asked once more after a flush, and whether
     //   Drupal refused the entity.
     this._druxtPristine = undefined
+    // Counts the changes of that copy, so `dirty` is worked out again after one.
+    this._druxtPristineVersion = Vue.observable({ value: 0 })
     this._druxtPristineLang = undefined
     this._druxtModelLang = undefined
     this._druxtDrafts = {}
     this._druxtFetchedAgain = false
     this._druxtRefused = false
+    // The language and the JSON of what a form's running save sent.
+    this._druxtSaving = undefined
 
-    if (this.$isServer || (this.value !== undefined && this.value !== null)) return
+    // The watchers are for the browser. They leave a model the parent passes
+    // alone, and take over when the parent stops passing one.
+    if (this.$isServer) return
 
     // Follow the entity's resource in the store.
     this.$watch('storedEntity', (to, from) => {
@@ -404,8 +411,10 @@ export default {
      * @private
      */
     hasEdits() {
+      // Read first, so `dirty` follows the copy as well as the model.
+      const version = (this._druxtPristineVersion || {}).value
       if ((this.value !== undefined && this.value !== null) || typeof this._druxtPristine !== 'string') return false
-      return pristineOf(this.model) !== this._druxtPristine
+      return version !== undefined && pristineOf(this.model) !== this._druxtPristine
     },
 
     /**
@@ -459,6 +468,7 @@ export default {
      */
     setPristine(data) {
       this._druxtPristine = pristineOf(data)
+      this._druxtPristineVersion.value += 1
       this._druxtPristineLang = this.lang
       // The language the model is in, which a language change leaves behind
       // until the next language loads.
@@ -478,17 +488,23 @@ export default {
 
       const drafts = this._druxtDrafts || (this._druxtDrafts = {})
       // A copy, so an edit made while the next language loads stays out of it.
-      if (this.hasEdits()) drafts[from] = { model: JSON.parse(JSON.stringify(this.model)), pristine: this._druxtPristine }
+      // While a form saves this language, an edit of what it sent is kept as
+      // well, even one back to the value from before the save.
+      const saving = this._druxtSaving
+      const sinceSent = !!saving && saving.lang === from && pristineOf(this.model) !== saving.sent
+      if (this.hasEdits() || sinceSent) drafts[from] = { model: JSON.parse(JSON.stringify(this.model)), pristine: this._druxtPristine }
 
       const draft = drafts[this.lang]
       delete drafts[this.lang]
       this._druxtPristineLang = this.lang
       if (draft) {
         this._druxtPristine = draft.pristine
+        this._druxtPristineVersion.value += 1
         this.model = draft.model
         this._druxtModelLang = this.lang
       } else {
         this._druxtPristine = undefined
+        this._druxtPristineVersion.value += 1
       }
     },
 
@@ -629,7 +645,9 @@ export default {
         // type or a flush.
         if (this.hasEdits() && (this.model || {}).id === this.uuid) return
 
-        const entity = { ...(resource.data || {}) }
+        // The store's copy when it has one: the answer can be older, as when
+        // a flush overtook this request and something stored the entity since.
+        const entity = { ...(this.storedEntity || resource.data || {}) }
         entity.included = resource.included
         // The model already holds this copy, taken as the store stored it, and
         // needs only the included resources.

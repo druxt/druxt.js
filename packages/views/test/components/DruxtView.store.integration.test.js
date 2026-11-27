@@ -133,6 +133,23 @@ describe('DruxtView follows the store', () => {
     expect(rows().map((row) => row.uuid)).toStrictEqual(ids)
   })
 
+  test('a server-rendered view Drupal refused fetches on the next clear', async () => {
+    const server = await mountView()
+    const { component, model, view: config } = server.view.$data
+    server.root.destroy()
+    // The server's request was refused, so the view arrives with no results.
+    server.store.commit('druxt/views/flushResults', {})
+    const { localVue, store, view, rows } = await mountView({ hydrate: { store: server.store, data: { component, model, resource: false, view: config } } })
+    expect(rows()).toHaveLength(0)
+    const before = resultsRequests()
+
+    store.dispatch('druxt/clearCache')
+    await settle(localVue)
+    expect(resultsRequests()).toBe(before + 1)
+    expect(view.hasStoredResults).toBe(true)
+    expect(rows().length).toBeGreaterThan(0)
+  })
+
   test('a flush of its language fetches the results again', async () => {
     const { localVue, store } = await mountView()
     const before = resultsRequests()

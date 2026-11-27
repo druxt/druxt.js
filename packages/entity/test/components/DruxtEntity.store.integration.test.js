@@ -244,6 +244,65 @@ describe('DruxtEntity renders from the store', () => {
     }
   })
 
+  test('dirty read before the entity loads still sees a later edit', async () => {
+    const { localVue, store: s } = setup()
+    const get = hold('get', (url) => url.includes(`/node/page/${pages[0].id}`))
+    let wrapper
+    try {
+      wrapper = mount(DruxtEntity, { localVue, store: s, mocks, propsData: { type: 'node--page', uuid: pages[0].id, langcode: 'en' }, stubs: ['DruxtDebug'] })
+      await get.hit
+      // As a page's "unsaved changes" notice reads it while the entity loads.
+      expect(wrapper.vm.dirty).toBe(false)
+    } finally {
+      get.release()
+    }
+    await settle(localVue)
+    expect(wrapper.vm.dirty).toBe(false)
+
+    wrapper.vm.model.attributes.title = 'Edited'
+    expect(wrapper.vm.dirty).toBe(true)
+  })
+
+  test('an entity whose parent stops passing a value follows the store from then on', async () => {
+    const { localVue, store: s } = setup()
+    const value = { ...copy(pages[0]), included: undefined }
+    value.attributes.title = 'Parent'
+    const root = mount({
+      data: () => ({ value }),
+      template: '<DruxtEntity ref="a" :value="value" type="node--page" :uuid="id" langcode="en" />',
+      computed: { id: () => pages[0].id },
+    }, { localVue, store: s, mocks, stubs: ['DruxtDebug'] })
+    await settle(localVue)
+    expect(titleOf(root.vm.$refs.a)).toBe('Parent')
+
+    root.vm.value = undefined
+    await localVue.nextTick()
+    await root.vm.$refs.a.$fetch()
+    await settle(localVue)
+    expect(titleOf(root.vm.$refs.a)).toBe(pages[0].attributes.title)
+
+    store(s, pages[0], 'Stored')
+    await settle(localVue)
+    expect(titleOf(root.vm.$refs.a)).toBe('Stored')
+  })
+
+  test('an answer from before a flush gives way to a newer copy stored meanwhile', async () => {
+    const { localVue, store: s } = setup()
+    const get = hold('get', (url) => url.includes(`/node/page/${pages[0].id}`))
+    let wrapper
+    try {
+      wrapper = mount(DruxtEntity, { localVue, store: s, mocks, propsData: { type: 'node--page', uuid: pages[0].id, langcode: 'en' }, stubs: ['DruxtDebug'] })
+      await get.hit
+      // The store drops the answer of a request a flush overtook, and something else stores a newer copy.
+      s.commit('druxt/flushResource', {})
+      store(s, pages[0], 'Newer')
+    } finally {
+      get.release()
+    }
+    await settle(localVue)
+    expect(titleOf(wrapper.vm)).toBe('Newer')
+  })
+
   test('a cleared field is an unsaved edit, which a store write leaves alone', async () => {
     const { localVue, store: s, root, a } = await mountPair()
     root.vm.schemaType = 'form'
@@ -781,6 +840,88 @@ describe('DruxtEntity renders from the store', () => {
       expect(form.dirty).toBe(true)
     })
 
+    test('Reset while the entity loads again after a flush returns to what was loaded', async () => {
+      const { localVue, store: s, form } = await mountForm()
+      const title = titleOf(form)
+      form.model.attributes.title = 'Changed'
+      const get = hold('get', (url) => url.includes(`/node/page/${pages[0].id}`))
+      try {
+        s.commit('druxt/flushResource', {})
+        await get.hit
+        expect(form.storedEntity).toBe(undefined)
+        form.onReset()
+        expect(titleOf(form)).toBe(title)
+        expect(form.dirty).toBe(false)
+      } finally {
+        get.release()
+      }
+      await settle(localVue)
+      expect(titleOf(form)).toBe(title)
+    })
+
+    test('an edit back to the first value while a save runs stays after a language change', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, root, form } = await mountForm()
+      const title = titleOf(form)
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Submitted' } }
+      const save = hold('patch', () => true)
+      let saving
+      try {
+        saving = form.onSubmit()
+        await save.hit
+        // Back to what it was before the save, which is an edit of what is being saved.
+        form.model = { ...form.model, attributes: { ...form.model.attributes, title } }
+        root.vm.langcode = 'es'
+        await settle(localVue)
+      } finally {
+        save.release()
+      }
+      await saving
+      await settle(localVue)
+
+      root.vm.langcode = 'en'
+      await settle(localVue)
+      expect(titleOf(form)).toBe(title)
+      expect(form.dirty).toBe(true)
+    })
+
+    test('an edit while a save runs stays when its language is chosen again before it loads', async () => {
+      mockAxios.__signIn('editor')
+      setFetchDelay(150)
+      try {
+        const { localVue, root, form } = await mountForm()
+        form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
+        const save = hold('patch', () => true)
+        let saving
+        try {
+          saving = form.onSubmit()
+          await save.hit
+          form.model = { ...form.model, attributes: { ...form.model.attributes, body: { value: 'Edited during the save', format: 'basic_html' } } }
+          root.vm.langcode = 'es'
+          // Spanish has loaded, and its fetch is still running out the delay when English is chosen again.
+          for (let i = 0; i < 100 && form.model.attributes.langcode !== 'es'; i++) await new Promise((resolve) => setTimeout(resolve, 5))
+          expect(form.model.attributes.langcode).toBe('es')
+          expect(form._fetchPromise).toBeTruthy()
+          root.vm.langcode = 'en'
+          await localVue.nextTick()
+        } finally {
+          save.release()
+        }
+        await saving
+        await settle(localVue)
+        await new Promise((resolve) => setTimeout(resolve, 400))
+        await settle(localVue)
+
+        expect(form.model.attributes.langcode).toBe('en')
+        expect(titleOf(form)).toBe('Saved')
+        expect(form.model.attributes.body.value).toBe('Edited during the save')
+        expect(form.dirty).toBe(true)
+        expect(Object.keys(form._druxtDrafts)).toStrictEqual([])
+      } finally {
+        setFetchDelay(0)
+      }
+    })
+
     test('Reset returns to the stored resource', async () => {
       const { localVue, store: s, form } = await mountForm()
       form.model.attributes.title = 'Changed'
@@ -884,7 +1025,10 @@ describe('DruxtEntity renders from the store', () => {
       try {
         const { localVue, root, a } = await mountPair()
         root.vm.langcode = 'es'
-        await new Promise((resolve) => setTimeout(resolve, 50))
+        // Spanish has loaded, and its fetch is still running out the delay.
+        for (let i = 0; i < 100 && a.model.attributes.langcode !== 'es'; i++) await new Promise((resolve) => setTimeout(resolve, 5))
+        expect(a.model.attributes.langcode).toBe('es')
+        expect(a._fetchPromise).toBeTruthy()
         root.vm.langcode = 'en'
         await settle(localVue)
         await new Promise((resolve) => setTimeout(resolve, 400))

@@ -15,4 +15,4 @@ Upgrade notes for a site with its own wrapper components:
 - A wrapper gets a new `entity` and `value` object when the stored entity changes. `DruxtEntityMixin`'s `model` follows it. A wrapper that keeps the object it first got holds a stale copy, so read the prop each time.
 - A wrapper that changes its `entity` or `value` prop in place is editing the entity. The change counts as an unsaved edit, so the entity keeps it and stops following the store until a save or a Reset. Keep state that isn't an edit, such as an open panel, in the wrapper's own data.
 - A parent listening for `input` on an entity with a `#default` template hears it once more for each change to the stored entity. A store write that changes nothing emits nothing.
-- The component's `entity` property is now the stored entity, without unsaved edits. Read `model` for the edited one.
+- The component's `entity` property is now the stored entity, without unsaved edits, when the store holds it and no parent passes a `value`. Otherwise it is a copy of `model`, as before. Read `model` for the edited entity.

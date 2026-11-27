@@ -432,7 +432,10 @@ export default {
     // A server-rendered view doesn't fetch on the client, and the results it
     // was hydrated with are a copy of the store's. It takes the store's own,
     // which are what a flush removes.
-    if (this.$isServer || !this.resource || this.hasStoredResults) return
+    if (this.$isServer) return
+    // No results is what a request Drupal refused on the server leaves.
+    if (this.resource === false) this._druxtRefused = true
+    if (!this.resource || this.hasStoredResults) return
     const json = JSON.stringify(this.resource)
     const key = Object.keys(this.storedResults).find((o) => JSON.stringify(this.storedResults[o]) === json)
     if (key === undefined) return

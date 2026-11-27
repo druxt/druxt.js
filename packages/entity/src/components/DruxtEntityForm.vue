@@ -117,7 +117,7 @@ export default {
   methods: {
     /**
      * Reset event handler:
-     * - Sets `model` back to the stored entity.
+     * - Sets `model` back to the stored entity, or to the copy last taken of it when the store holds none.
      * - Unsets `response` data.
      * - Emits `reset`.
      *
@@ -127,7 +127,13 @@ export default {
       // Until this language loads, the entity falls back to the previous
       // language's model, and resetting to it would label it this language.
       if (this._druxtModelLang !== undefined && this._druxtModelLang !== this.lang) return false
-      this.setModelFromStore(this.entity)
+      if (this.storedEntity) {
+        this.setModelFromStore(this.entity)
+      } else if (typeof this._druxtPristine === 'string') {
+        // Nothing stored, as while the entity loads again after a flush: go
+        // back to the copy the edits are compared with.
+        this.setModelFromStore({ ...JSON.parse(this._druxtPristine), included: (this.model || {}).included })
+      }
       this.response = undefined
       this.$emit('reset')
     },
@@ -157,6 +163,8 @@ export default {
       const lang = this.lang
       // The model as sent, to tell the edits made while the request runs.
       const sent = JSON.parse(JSON.stringify(this.model))
+      // For a language change during the save, which puts those edits away.
+      this._druxtSaving = { lang, sent: this.pristineOf(sent) }
 
       try {
         // The request goes to the form's language, where its answer is stored.
@@ -175,9 +183,15 @@ export default {
           // form's language.
           const model = this.model
           const inLang = this._druxtModelLang === undefined || this._druxtModelLang === lang
+          // The edits made since are in the model, or, after a change to
+          // another language and back before this one loaded again, in what
+          // was put away for it. Either way nothing is left put away.
+          const drafts = this._druxtDrafts || {}
+          const later = inLang ? model : (drafts[lang] || {}).model
+          delete drafts[lang]
           this.setModelFromStore({ ...saved, included: model.included })
-          if (inLang && this.pristineOf(model) !== this.pristineOf(sent)) {
-            this.model = { ...withLaterEdits(saved, sent, model), included: model.included }
+          if (later && this.pristineOf(later) !== this.pristineOf(sent)) {
+            this.model = { ...withLaterEdits(saved, sent, later), included: later.included }
           }
         } else if ((this._druxtDrafts || {})[lang]) {
           // The form shows another language now. The saved language shows
@@ -200,6 +214,7 @@ export default {
         this.$emit('error', this.response)
       }
 
+      this._druxtSaving = undefined
       this.submitting = false
     },
   },
