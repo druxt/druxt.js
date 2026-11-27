@@ -109,14 +109,22 @@ const consumerId = (axios) => {
   return ''
 }
 
+// Headers whose values HTTP compares without regard to case, and whose list spacing means nothing.
+const CASE_INSENSITIVE_HEADERS = ['accept', 'accept-charset', 'accept-encoding', 'accept-language']
+
 // The values a client sends for the headers a site lists in `cache.vary`, as a partition key beside its consumer.
 // They are read from the headers a GET request leaves with: the instance's defaults merged as Axios merges them,
 // so a header a GET override turns off counts as not sent, and then run through the request interceptors. Names are
-// matched in any case, an array is its values joined, and values are compared without regard to case or spacing.
-// A header the client does not send adds nothing, so a client that sends none shares its consumer's partition.
-// `null` when an interceptor the probe can't run may set one, as the cache then can't tell the answers apart.
+// matched in any case, and an array is its values joined. Values stay as sent, since a backend may tell `Blue`
+// from `blue`, apart from the headers HTTP compares without case. With no listed header sent, a client shares its
+// consumer's partition.
+// `null` for an instance with an interceptor the probe can't run, or with a request transform of the site's own.
+// Either may change a listed header after this reads it.
 const varyKey = (axios, vary, url) => {
   if (!vary || !vary.length) return ''
+  // Axios names its own transform `transformRequest`, in 0.x and 1.x.
+  const transforms = [].concat(((axios || {}).defaults || {}).transformRequest || [])
+  if (transforms.some((transform) => (transform || {}).name !== 'transformRequest')) return null
   const { config, skipped } = probeRequest(axios, url)
   if (skipped) return null
   const headers = (config || {}).headers || {}
@@ -126,9 +134,10 @@ const varyKey = (axios, vary, url) => {
     .map((name) => {
       const match = Object.entries(headers).find(([key, item]) => key.toLowerCase() === name && (Array.isArray(item) || typeof item !== 'object'))
       const raw = match ? match[1] : undefined
-      const value = Array.isArray(raw) ? raw.join(', ') : raw
-      if (value === undefined || value === false || value === null) return ''
-      return `\n${name}: ${String(value).toLowerCase().replace(/\s+/g, ' ').replace(/\s*([,;=])\s*/g, '$1').trim()}`
+      if (raw === undefined || raw === false || raw === null) return ''
+      const value = String(Array.isArray(raw) ? raw.join(', ') : raw).trim()
+      if (!CASE_INSENSITIVE_HEADERS.includes(name)) return `\n${name}: ${value}`
+      return `\n${name}: ${value.toLowerCase().replace(/\s+/g, ' ').replace(/\s*([,;=])\s*/g, '$1')}`
     })
     .join('')
 }

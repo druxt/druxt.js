@@ -725,6 +725,28 @@ describe('processCache - vary', () => {
     }
   })
 
+  test('a value keeps its case, apart from a header whose values HTTP compares without it', () => {
+    const variant = (value) => processCache('vary', { axios: axios({ 'X-Variant': value }), vary: ['X-Variant'] })
+    variant('Blue').set('key', 'Blue', 60)
+    expect(variant('blue').get('key')).toBe(undefined)
+    expect(variant(' Blue ').get('key')).toBe('Blue')
+
+    // A language range is compared without regard to case.
+    language('es-ES').set('key', 'es', 60)
+    expect(language('ES-es').get('key')).toBe('es')
+  })
+
+  test('a request transform of the site\'s own turns the cache off for a site that lists headers', () => {
+    // Axios runs request transforms after the interceptors, with the headers to change.
+    function transformRequest (data) { return data }
+    const instance = (...transforms) => ({ defaults: { headers: { common: { 'Accept-Language': 'en' } }, transformRequest: transforms } })
+    const custom = (data, headers) => { headers['Accept-Language'] = 'es'; return data }
+
+    expect(processCache('vary', { axios: instance(transformRequest), vary: ['Accept-Language'] })).not.toBeNull()
+    expect(processCache('vary', { axios: instance(transformRequest, custom), vary: ['Accept-Language'] })).toBeNull()
+    expect(processCache('vary', { axios: instance(transformRequest, custom) })).not.toBeNull()
+  })
+
   test('parseCacheLifetime stores a response that varies by a listed header', () => {
     const headers = { 'cache-control': 'max-age=60', vary: 'Accept-Encoding, Accept-Language' }
     expect(parseCacheLifetime(headers)).toBe(0)
