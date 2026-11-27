@@ -24,8 +24,9 @@ export const nextRequest = () => ++sequence.value
 // The running size of a consumer's entries, held on its map of entries.
 const SIZE = Symbol.for('druxt.processCacheSize')
 
-// A scope's entries in the order they were last used, the least recently used first. It also counts their total size,
-// and the writes since expired entries were last swept. It's held on the scope's map of consumers.
+// A scope's entries in the order they were last used, the least recently used first. It also counts their total size
+// and the writes since expired entries were last swept, and keeps a time no entry expires before. It's held on the
+// scope's map of consumers.
 const ORDER = Symbol.for('druxt.processCacheOrder')
 
 /**
@@ -447,14 +448,19 @@ export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf
   const expired = (entry, now = Date.now()) => now - entry.created >= entry.seconds * 1000
   const bounded = typeof maxSize === 'number'
   // Keeps the scope within `maxSize`. Expired entries go first, and then the least recently used, whoever holds them.
-  // The sweep for expired entries reads them all, so it runs once the scope has stored as many values as it holds
-  // since the last one, which keeps a write's cost the same however many entries the scope holds.
+  // The sweep for expired entries reads them all, so it runs only when one may have expired: `order.expires` is a
+  // time none expires before. A scope another copy of the module wrote to has none, and is swept once it has stored
+  // as many values as it holds.
   const bound = () => {
     if (!bounded || order.size <= maxSize) return
-    if (order.writes >= order.entries.size) {
+    const now = Date.now()
+    if (order.expires === undefined ? order.writes >= order.entries.size : now >= order.expires) {
       order.writes = 0
-      const now = Date.now()
-      for (const entry of [...order.entries.keys()]) if (expired(entry, now)) drop(consumers, entry)
+      order.expires = Infinity
+      for (const entry of [...order.entries.keys()]) {
+        if (expired(entry, now)) drop(consumers, entry)
+        else order.expires = Math.min(order.expires, entry.created + entry.seconds * 1000)
+      }
     }
     for (const entry of order.entries.keys()) {
       if (order.size <= maxSize) break
@@ -514,6 +520,10 @@ export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf
       order.entries.set(entry, true)
       order.size += size
       order.writes += 1
+      // Only a scope whose every entry this copy has seen can say when the first one expires.
+      if (order.expires !== undefined || order.entries.size === 1) {
+        order.expires = Math.min(order.expires === undefined ? Infinity : order.expires, entry.created + entry.seconds * 1000)
+      }
       bound()
       return value
     },

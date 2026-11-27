@@ -469,6 +469,26 @@ describe('processCache', () => {
     now.mockRestore()
   })
 
+  test('an entry that expires after a sweep still goes before a live one', () => {
+    const now = jest.spyOn(Date, 'now')
+    now.mockReturnValue(0)
+    const cache = processCache('bounded', { axios: axios(), maxSize: 12 })
+    cache.set('first', 'dddd', 600)
+    cache.set('live', 'llll', 600)
+    cache.set('short', 'ssss', 1)
+    // Over the limit: nothing has expired, so the least recently used goes.
+    cache.set('third', 'tttt', 600)
+    expect(cache.get('first')).toBe(undefined)
+
+    // Over it again, one write later, with `short` expired by now.
+    now.mockReturnValue(2000)
+    cache.set('fourth', 'uuuu', 600)
+    expect(cache.get('live')).toBe('llll')
+    expect(cache.get('third')).toBe('tttt')
+    expect(cache.get('fourth')).toBe('uuuu')
+    now.mockRestore()
+  })
+
   test('an expired entry is removed when it is read, and its size with it', () => {
     const now = jest.spyOn(Date, 'now')
     now.mockReturnValue(1000)

@@ -235,7 +235,8 @@ const run = (id, maxSize, seed) => {
     cache.processCache(SCOPE, { consumer, maxSize, sizeOf }).set(key, { doc, size: docs.sizes[doc] }, LIFETIME)
     const wrote = performance.now() - start
     if (counted) sets.push(wrote)
-    if (!value) inserts++
+    // A value over the whole limit is never stored, so it isn't one a later eviction removed.
+    if (!value && docs.sizes[doc] <= maxSize) inserts++
     if (++written % SAMPLE_EVERY === 0) peak = Math.max(peak, held().bytes)
   }
   const end = held()
