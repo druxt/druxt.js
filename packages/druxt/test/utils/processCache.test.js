@@ -489,6 +489,29 @@ describe('processCache', () => {
     now.mockRestore()
   })
 
+  test('each overflow removes what has expired since the last one', () => {
+    const now = jest.spyOn(Date, 'now')
+    now.mockReturnValue(0)
+    const cache = processCache('bounded', { axios: axios(), maxSize: 12 })
+    cache.set('live', 'llll', 600)
+    cache.set('brief', 'bbbb', 1)
+    cache.set('short', 'ssss', 5)
+
+    // The first overflow sweeps `brief`, which leaves room, so nothing live goes.
+    now.mockReturnValue(2000)
+    cache.set('third', 'tttt', 600)
+    expect(cache.get('brief')).toBe(undefined)
+    expect(cache.get('short')).toBe('ssss')
+
+    // The second, after that sweep, sweeps `short` rather than evict `live`, the least recently used.
+    now.mockReturnValue(6000)
+    cache.set('fourth', 'uuuu', 600)
+    expect(cache.get('live')).toBe('llll')
+    expect(cache.get('third')).toBe('tttt')
+    expect(cache.get('fourth')).toBe('uuuu')
+    now.mockRestore()
+  })
+
   test('an expired entry is removed when it is read, and its size with it', () => {
     const now = jest.spyOn(Date, 'now')
     now.mockReturnValue(1000)
