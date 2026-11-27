@@ -734,17 +734,43 @@ describe('processCache - vary', () => {
     // A language range is compared without regard to case.
     language('es-ES').set('key', 'es', 60)
     expect(language('ES-es').get('key')).toBe('es')
+
+    // A media type's parameter may not be, nor the spacing inside a quoted one.
+    const accept = (value) => processCache('vary', { axios: axios({ Accept: value }), vary: ['Accept'] })
+    accept('application/example;variant=Blue').set('key', 'Blue', 60)
+    expect(accept('application/example;variant=blue').get('key')).toBe(undefined)
+    accept('application/example;title="a  b"').set('key', 'two spaces', 60)
+    expect(accept('application/example;title="a b"').get('key')).toBe(undefined)
   })
 
-  test('a request transform of the site\'s own turns the cache off for a site that lists headers', () => {
-    // Axios runs request transforms after the interceptors, with the headers to change.
-    function transformRequest (data) { return data }
-    const instance = (...transforms) => ({ defaults: { headers: { common: { 'Accept-Language': 'en' } }, transformRequest: transforms } })
-    const custom = (data, headers) => { headers['Accept-Language'] = 'es'; return data }
+  test('a header a request transform sets is the one that counts', () => {
+    // Axios runs request transforms after the interceptors, with the headers to change. A site's own may have any
+    // name, Axios's included.
+    function transformRequest (data, headers) { headers['Accept-Language'] = 'es'; return data }
+    const transformed = { defaults: { headers: { common: { 'Accept-Language': 'en' } }, transformRequest: [transformRequest] } }
+    processCache('vary', { axios: transformed, vary: ['Accept-Language'] }).set('key', 'es', 60)
+    expect(language('en').get('key')).toBe(undefined)
+    expect(language('es').get('key')).toBe('es')
 
-    expect(processCache('vary', { axios: instance(transformRequest), vary: ['Accept-Language'] })).not.toBeNull()
-    expect(processCache('vary', { axios: instance(transformRequest, custom), vary: ['Accept-Language'] })).toBeNull()
-    expect(processCache('vary', { axios: instance(transformRequest, custom) })).not.toBeNull()
+    // One a request interceptor adds counts too.
+    const added = {
+      ...intercepted((config) => ({ ...config, transformRequest: [transformRequest] })),
+      defaults: { headers: { common: { 'Accept-Language': 'en' } } },
+    }
+    expect(processCache('vary', { axios: added, vary: ['Accept-Language'] }).get('key')).toBe('es')
+  })
+
+  test('an Axios instance with its own request transform is cached', () => {
+    const real = jest.requireActual('axios').create({ headers: { common: { 'Accept-Language': 'es' } } })
+    expect(real.defaults.transformRequest.length).toBeGreaterThan(0)
+    processCache('vary', { axios: real, vary: ['Accept-Language'] }).set('key', 'es', 60)
+    expect(language('es').get('key')).toBe('es')
+  })
+
+  test('a request transform that fails on the probe turns the cache off for a site that lists headers', () => {
+    const instance = { defaults: { headers: { common: {} }, transformRequest: [() => { throw new Error('no') }] } }
+    expect(processCache('vary', { axios: instance, vary: ['Accept-Language'] })).toBeNull()
+    expect(processCache('vary', { axios: instance })).not.toBeNull()
   })
 
   test('parseCacheLifetime stores a response that varies by a listed header', () => {

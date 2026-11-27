@@ -109,25 +109,32 @@ const consumerId = (axios) => {
   return ''
 }
 
-// Headers whose values HTTP compares without regard to case, and whose list spacing means nothing.
-const CASE_INSENSITIVE_HEADERS = ['accept', 'accept-charset', 'accept-encoding', 'accept-language']
+// Headers whose values HTTP compares without regard to case, and whose list spacing means nothing. `Accept` isn't
+// one: a media type's parameter can be case-sensitive, and quoted.
+const CASE_INSENSITIVE_HEADERS = ['accept-charset', 'accept-encoding', 'accept-language']
 
 // The values a client sends for the headers a site lists in `cache.vary`, as a partition key beside its consumer.
 // They are read from the headers a GET request leaves with: the instance's defaults merged as Axios merges them,
-// so a header a GET override turns off counts as not sent, and then run through the request interceptors. Names are
-// matched in any case, and an array is its values joined. Values stay as sent, since a backend may tell `Blue`
-// from `blue`, apart from the headers HTTP compares without case. With no listed header sent, a client shares its
-// consumer's partition.
-// `null` for an instance with an interceptor the probe can't run, or with a request transform of the site's own.
-// Either may change a listed header after this reads it.
+// so a header a GET override turns off counts as not sent, then run through the request interceptors and the
+// request transforms, as Axios runs them. Names are matched in any case, and an array is its values joined. Values
+// stay as sent, since a backend may tell `Blue` from `blue`, apart from the headers HTTP compares without case.
+// With no listed header sent, a client shares its consumer's partition.
+// `null` for an instance with an interceptor the probe can't run, or a transform that fails on the probe. Either
+// may change a listed header after this reads it.
 const varyKey = (axios, vary, url) => {
   if (!vary || !vary.length) return ''
-  // Axios names its own transform `transformRequest`, in 0.x and 1.x.
-  const transforms = [].concat(((axios || {}).defaults || {}).transformRequest || [])
-  if (transforms.some((transform) => (transform || {}).name !== 'transformRequest')) return null
   const { config, skipped } = probeRequest(axios, url)
   if (skipped) return null
   const headers = (config || {}).headers || {}
+  // A GET has no data. Axios calls each transform on the config, with the data and the headers.
+  for (const transform of [].concat((config || {}).transformRequest || [])) {
+    if (typeof transform !== 'function') continue
+    try {
+      transform.call(config, undefined, headers)
+    } catch {
+      return null
+    }
+  }
   return vary
     .map((name) => String(name).toLowerCase())
     .sort()
