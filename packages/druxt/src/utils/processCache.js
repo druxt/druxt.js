@@ -110,22 +110,25 @@ const consumerId = (axios) => {
 }
 
 // The values a client sends for the headers a site lists in `cache.vary`, as a partition key beside its consumer.
-// Names are matched in any case, wherever Axios holds them, and values compared without regard to case or spacing.
+// They are read from the headers a GET request leaves with: the instance's defaults merged as Axios merges them,
+// so a header a GET override turns off counts as not sent, and then run through the request interceptors. Names are
+// matched in any case, an array is its values joined, and values are compared without regard to case or spacing.
 // A header the client does not send adds nothing, so a client that sends none shares its consumer's partition.
-const varyKey = (axios, vary) => {
+// `null` when an interceptor the probe can't run may set one, as the cache then can't tell the answers apart.
+const varyKey = (axios, vary, url) => {
   if (!vary || !vary.length) return ''
-  const headers = ((axios || {}).defaults || {}).headers || {}
-  const sets = [headers.common, headers.get, headers]
+  const { config, skipped } = probeRequest(axios, url)
+  if (skipped) return null
+  const headers = (config || {}).headers || {}
   return vary
     .map((name) => String(name).toLowerCase())
     .sort()
     .map((name) => {
-      let value
-      for (const set of sets) {
-        const match = Object.entries(set || {}).find(([key, item]) => key.toLowerCase() === name && typeof item !== 'object')
-        if (match && match[1] !== undefined && match[1] !== false && match[1] !== null) value = match[1]
-      }
-      return value === undefined ? '' : `\n${name}: ${String(value).toLowerCase().replace(/\s+/g, ' ').replace(/\s*([,;=])\s*/g, '$1').trim()}`
+      const match = Object.entries(headers).find(([key, item]) => key.toLowerCase() === name && (Array.isArray(item) || typeof item !== 'object'))
+      const raw = match ? match[1] : undefined
+      const value = Array.isArray(raw) ? raw.join(', ') : raw
+      if (value === undefined || value === false || value === null) return ''
+      return `\n${name}: ${String(value).toLowerCase().replace(/\s+/g, ' ').replace(/\s*([,;=])\s*/g, '$1').trim()}`
     })
     .join('')
 }
@@ -282,11 +285,28 @@ const probeHeaders = (headers) => {
 const interceptorsAddCredentials = (axios, sessionCookie, url) => {
   const manager = ((axios || {}).interceptors || {}).request
   if (!manager || typeof manager.forEach !== 'function') return false
+  return configHasCredentials(probeRequest(axios, url).config, sessionCookie)
+}
 
-  const defaults = copy({ ...(axios.defaults || {}) })
+/**
+ * The config a GET request leaves with, as far as the probe can tell: the
+ * defaults, flattened as Axios flattens them, run through the request
+ * interceptors.
+ *
+ * @param {object} axios - The Axios instance.
+ * @param {string} url - The URL of the request about to be made.
+ *
+ * @returns {{config: object, skipped: boolean}} The config, and whether an interceptor was passed over, whose changes the config then lacks.
+ * @private
+ */
+const probeRequest = (axios, url) => {
+  const defaults = copy({ ...((axios || {}).defaults || {}) })
   // Own properties only, so headers held in a class are copied too.
-  const headers = probeHeaders(flattenHeaders(copy({ ...((axios.defaults || {}).headers || {}) })))
+  const headers = probeHeaders(flattenHeaders(copy({ ...(((axios || {}).defaults || {}).headers || {}) })))
   let config = { ...defaults, headers, method: 'get', url, [PROBE]: true }
+  let skipped = false
+  const manager = ((axios || {}).interceptors || {}).request
+  if (!manager || typeof manager.forEach !== 'function') return { config, skipped }
 
   const handlers = []
   manager.forEach((handler) => {
@@ -305,20 +325,25 @@ const interceptorsAddCredentials = (axios, sessionCookie, url) => {
   })
 
   for (const { fulfilled } of handlers) {
-    if (fulfilled.constructor && fulfilled.constructor.name === 'AsyncFunction') continue
+    if (fulfilled.constructor && fulfilled.constructor.name === 'AsyncFunction') {
+      skipped = true
+      continue
+    }
     let next
     try {
       next = fulfilled(config)
     } catch {
+      skipped = true
       continue
     }
     if (next && typeof next.then === 'function') {
       next.then(undefined, () => {})
+      skipped = true
       continue
     }
     if (next) config = next
   }
-  return configHasCredentials(config, sessionCookie)
+  return { config, skipped }
 }
 
 /**
@@ -439,16 +464,23 @@ export const parseCacheLifetime = (headers, vary = []) => {
  * @param {string} [options.url] - The URL of the request the cache is asked for, which the request interceptors are probed with.
  * @param {string[]} [options.vary] - Request headers that change Drupal's answer, such as `Accept-Language`. A client's
  *   entries are kept apart by what it sends for each, as by its consumer.
+ * @param {string} [options.partition] - The `partition` of a handle taken as the request started, for the handle taken once it has resolved.
  *
- * @returns {?{get: Function, set: Function}}
+ * @returns {?{get: Function, set: Function, partition: string}} The cache, or `null` when it must not be used.
  */
-export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize, url, vary } = {}) => {
+export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize, url, vary, partition: given } = {}) => {
   if (!runtime.isServer() || hasCredentials(axios, sessionCookie, url)) return null
 
+  // A client's partition is its consumer, and what it sends for each header in `vary`. A handle taken once a
+  // request has resolved is given the partition the request started in, as the instance's headers may have changed.
+  let consumer = given
+  if (consumer === undefined) {
+    const variant = varyKey(axios, vary, url)
+    if (variant === null) return null
+    consumer = consumerId(axios) + variant
+  }
   const consumers = scopeOf(scope)
   const order = consumers[ORDER]
-  // A client's partition is its consumer, and what it sends for each header in `vary`.
-  const consumer = consumerId(axios) + varyKey(axios, vary)
   // The consumer's entries, made the scope's most recently used partition. A new one past MAX_PARTITIONS evicts the
   // least recently used, entries and all. A read makes none, so a miss leaves the scope as it was.
   const partition = (create) => {
@@ -494,6 +526,9 @@ export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf
     // request resolves against one taken before it started: a difference means
     // the cache was cleared while the request was in flight.
     generation: taken,
+
+    // The partition this handle reads and writes, for the handle taken once the request has resolved.
+    partition: consumer,
 
     // The reader's cap applies too, so a shorter ttl never serves an older entry.
     get(key) {

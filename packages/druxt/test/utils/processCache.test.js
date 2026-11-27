@@ -682,6 +682,49 @@ describe('processCache - vary', () => {
     expect(language('es').get('key')).toBe(undefined)
   })
 
+  test('a header a request interceptor sets keeps entries apart too', () => {
+    const sets = (value) => processCache('vary', {
+      axios: intercepted((config) => ({ ...config, headers: { ...config.headers, 'Accept-Language': value } })),
+      vary: ['Accept-Language'],
+    })
+    sets('es').set('key', 'es', 60)
+    expect(sets('en').get('key')).toBe(undefined)
+    expect(sets('es').get('key')).toBe('es')
+    // The same partition as a client whose defaults send it.
+    expect(language('es').get('key')).toBe('es')
+  })
+
+  test('an interceptor the probe cannot run turns the cache off for a site that lists headers', () => {
+    const instance = intercepted({ fulfilled: async (config) => config })
+    // It may set a listed header, and the probe can't say to what.
+    expect(processCache('vary', { axios: instance, vary: ['Accept-Language'] })).toBeNull()
+    expect(processCache('vary', { axios: instance, vary: [] })).not.toBeNull()
+    expect(processCache('vary', { axios: instance })).not.toBeNull()
+  })
+
+  test('a header sent as an array is a value, not an absent header', () => {
+    const list = (value) => processCache('vary', { axios: axios({ 'Accept-Language': value }), vary: ['Accept-Language'] })
+    list(['es']).set('key', 'es', 60)
+    expect(list(['en']).get('key')).toBe(undefined)
+    expect(processCache('vary', { axios: axios(), vary: ['Accept-Language'] }).get('key')).toBe(undefined)
+    expect(list(['es']).get('key')).toBe('es')
+    // One value in an array is the value alone.
+    expect(language('es').get('key')).toBe('es')
+  })
+
+  test('a header a GET override turns off is not sent, so it adds nothing', () => {
+    const off = (value) => processCache('vary', {
+      axios: { defaults: { headers: { common: { 'Accept-Language': 'es' }, get: { 'Accept-Language': value } } } },
+      vary: ['Accept-Language'],
+    })
+    for (const value of [false, null]) {
+      resetProcessCache()
+      off(value).set('key', 'none', 60)
+      expect(language('es').get('key')).toBe(undefined)
+      expect(language(undefined).get('key')).toBe('none')
+    }
+  })
+
   test('parseCacheLifetime stores a response that varies by a listed header', () => {
     const headers = { 'cache-control': 'max-age=60', vary: 'Accept-Encoding, Accept-Language' }
     expect(parseCacheLifetime(headers)).toBe(0)

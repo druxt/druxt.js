@@ -161,7 +161,10 @@ class DruxtMenu {
         // A menu fetched by an earlier server request without credentials. The
         // cache is asked with the URL the menu comes from, which an interceptor may look at.
         const url = typeof this.druxt.processCache === 'function' ? await this.menuUrl(menuName, prefix, jsonApiMenuItems, query) : undefined
-        const processCache = (scope) => typeof this.druxt.processCache === 'function' ? this.druxt.processCache(scope, url) : null
+        const processCache = (scope, partition) => {
+          if (typeof this.druxt.processCache !== 'function') return null
+          return partition === undefined ? this.druxt.processCache(scope, url) : this.druxt.processCache(scope, url, partition)
+        }
         const sharedKey = JSON.stringify([this.druxt.indexKey, cacheKey])
         const shared = processCache('menu')
         const stored = shared && shared.get(sharedKey)
@@ -172,7 +175,8 @@ class DruxtMenu {
           ? this.getJsonApiMenuItems(menuName, settings, prefix, query)
           : this.getMenuLinkContent(menuName, settings, prefix, query))
         // Asked again once resolved: the request may have shown credentials.
-        const after = processCache('menu')
+        // The result goes where the request started, as the headers may have changed since.
+        const after = processCache('menu', shared ? shared.partition : undefined)
         // No record means the fetch failed, so nothing is written and an
         // earlier entry stays. A recorded 0 is Drupal refusing, which set() keeps.
         // The write is also dropped when the cache was cleared while the request

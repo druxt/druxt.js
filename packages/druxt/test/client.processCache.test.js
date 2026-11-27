@@ -48,6 +48,27 @@ describe('DruxtClient process cache', () => {
     expect(indexCalls()).toBe(4)
   })
 
+  test('a response is stored for the headers its request was sent with', async () => {
+    const headers = { 'cache-control': 'public, max-age=300', vary: 'Accept-Language' }
+    const cache = { vary: ['Accept-Language'] }
+    const axios = requestAxios({ 'Accept-Language': 'es' }, {}, headers)
+    const inFlight = axios.get
+    // The instance's language changes while the Spanish request is in flight.
+    axios.get = jest.fn(async (...args) => {
+      const response = await inFlight(...args)
+      axios.defaults.headers.common['Accept-Language'] = 'en'
+      return response
+    })
+    await new DruxtClient(baseUrl, { axios, cache }).getIndex()
+    expect(indexCalls()).toBe(1)
+
+    // An English client doesn't read the Spanish answer, and a Spanish one does.
+    await new DruxtClient(baseUrl, { axios: requestAxios({ 'Accept-Language': 'en' }, {}, headers), cache }).getIndex()
+    expect(indexCalls()).toBe(2)
+    await new DruxtClient(baseUrl, { axios: requestAxios({ 'Accept-Language': 'es' }, {}, headers), cache }).getIndex()
+    expect(indexCalls()).toBe(2)
+  })
+
   test('never used in a browser', async () => {
     runtime.isServer = () => false
     await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
