@@ -925,6 +925,91 @@ describe('DruxtEntity renders from the store', () => {
       }
     })
 
+    // A form whose entity a test can change, on the recipes.
+    const mountRecipeForm = async () => {
+      const { localVue, store: s } = setup()
+      localVue.component('DruxtEntityForm', DruxtEntityForm)
+      const $druxt = s.$druxt
+      $druxt.settings = {}
+      const reset = jest.fn()
+      const root = mount({
+        template: '<div><DruxtEntityForm ref="form" type="node--recipe" :uuid="uuid" langcode="en" @reset="reset" /></div>',
+        data: () => ({ uuid: recipes[0].id }),
+        methods: { reset },
+      }, { localVue, store: s, mocks: { ...mocks, $druxt }, stubs: ['DruxtDebug', 'DruxtEntityFormButtons'] })
+      await settle(localVue)
+      return { localVue, store: s, root, form: root.vm.$refs.form, reset }
+    }
+
+    test('Reset while another entity loads leaves the edits, and says nothing', async () => {
+      const { localVue, root, form, reset } = await mountRecipeForm()
+      form.model.attributes.title = 'Changed'
+      const get = hold('get', (url) => url.includes(`/node/recipe/${recipes[1].id}`))
+      try {
+        root.vm.uuid = recipes[1].id
+        await get.hit
+        // Nothing of the next entity is here yet, and the copy kept is the first entity's.
+        expect(form.onReset()).toBe(false)
+        expect(titleOf(form)).toBe('Changed')
+        expect(reset).not.toHaveBeenCalled()
+      } finally {
+        get.release()
+      }
+      await settle(localVue)
+    })
+
+    test('a save that returns after the form moved to another entity leaves that entity alone', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, root, form } = await mountRecipeForm()
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved first' } }
+      const save = hold('patch', () => true)
+      let saving
+      try {
+        saving = form.onSubmit()
+        await save.hit
+        root.vm.uuid = recipes[1].id
+        await settle(localVue)
+      } finally {
+        save.release()
+      }
+      await saving
+      await settle(localVue)
+      expect(form.model.id).toBe(recipes[1].id)
+      expect(titleOf(form)).toBe(recipes[1].attributes.title)
+    })
+
+    test('a save that returns before the next language starts loading is the saved language\'s new copy', async () => {
+      mockAxios.__signIn('editor')
+      const { localVue, root, form } = await mountForm()
+      form.model = { ...form.model, attributes: { ...form.model.attributes, title: 'Saved' } }
+      const save = hold('patch', () => true)
+      let release
+      let saving
+      try {
+        saving = form.onSubmit()
+        await save.hit
+        // A fetch is running out its delay, so the change of language waits for it.
+        setFetchDelay(new Promise((resolve) => { release = resolve }))
+        form.$fetch()
+        root.vm.langcode = 'es'
+        await localVue.nextTick()
+        expect(form._druxtModelLang).toBe('en')
+      } finally {
+        save.release()
+      }
+      await saving
+      // Back to English before Spanish started loading.
+      root.vm.langcode = 'en'
+      await localVue.nextTick()
+      setFetchDelay(0)
+      release()
+      await settle(localVue)
+
+      expect(form.model.attributes.langcode).toBe('en')
+      expect(titleOf(form)).toBe('Saved')
+      expect(form.dirty).toBe(false)
+    })
+
     test('Reset returns to the stored resource', async () => {
       const { localVue, store: s, form } = await mountForm()
       form.model.attributes.title = 'Changed'

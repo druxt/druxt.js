@@ -121,7 +121,7 @@ export default {
      * - Unsets `response` data.
      * - Emits `reset`.
      *
-     * @return {(boolean|undefined)} `false` while the next language loads, as there is nothing of that language to reset to.
+     * @return {(boolean|undefined)} `false` while the next language or another entity loads, as there is nothing of it to reset to.
      */
     onReset() {
       // Until this language loads, the entity falls back to the previous
@@ -129,10 +129,14 @@ export default {
       if (this._druxtModelLang !== undefined && this._druxtModelLang !== this.lang) return false
       if (this.storedEntity) {
         this.setModelFromStore(this.entity)
-      } else if (typeof this._druxtPristine === 'string') {
+      } else if (this.uuid) {
         // Nothing stored, as while the entity loads again after a flush: go
-        // back to the copy the edits are compared with.
-        this.setModelFromStore({ ...JSON.parse(this._druxtPristine), included: (this.model || {}).included })
+        // back to the copy the edits are compared with. While another entity
+        // loads that copy is the previous entity's, and there is nothing of
+        // this one to go back to.
+        const copy = typeof this._druxtPristine === 'string' ? JSON.parse(this._druxtPristine) : {}
+        if (copy.id !== this.uuid) return false
+        this.setModelFromStore({ ...copy, included: (this.model || {}).included })
       }
       this.response = undefined
       this.$emit('reset')
@@ -175,7 +179,10 @@ export default {
         this.$store.commit('druxt/addResource', { resource: { ...this.response.data }, prefix: lang })
         const stored = (((this.$store.state.druxt.resources[resource.type] || {})[resource.id] || {})[lang] || {}).data
         const saved = stored || resource
-        if (this.lang === lang) {
+        if ((this.model || {}).id !== sent.id) {
+          // The form shows another entity now. The answer is in the store,
+          // and this model isn't the one that was saved.
+        } else if (this.lang === lang) {
           // Take the answer as the model, with any edit made since the save
           // started. A model still in another language, after a language
           // change and back, doesn't hold edits to this one. A new entity's
