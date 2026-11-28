@@ -34,10 +34,12 @@ concurrency:
 
 env:
   IMAGE: ghcr.io/druxt/druxt.js-devcontainer
-  PUBLISH: ${{ github.event_name != 'pull_request' && endsWith(github.ref_name, '.x') }}
+  # A release line is named like `0.x` or `2.1.x`: it ends in `.x` and has
+  # no slash, which rules out a branch such as `feature/name.x`.
+  PUBLISH: ${{ github.event_name != 'pull_request' && endsWith(github.ref_name, '.x') && !contains(github.ref_name, '/') }}
   # An image that is not published is never pushed, so its tag only names it
   # locally.
-  TAG: ${{ github.event_name != 'pull_request' && endsWith(github.ref_name, '.x') && github.ref_name || 'check' }}
+  TAG: ${{ github.event_name != 'pull_request' && endsWith(github.ref_name, '.x') && !contains(github.ref_name, '/') && github.ref_name || 'check' }}
 
 jobs:
   # The scripts a dev container runs, checked before a build that takes far
@@ -109,7 +111,7 @@ jobs:
   # One tag for both architectures, so the dev container names a single image
   # and each machine pulls its own.
   manifest:
-    if: github.repository == 'druxt/druxt.js' && github.event_name != 'pull_request' && endsWith(github.ref_name, '.x')
+    if: github.repository == 'druxt/druxt.js' && github.event_name != 'pull_request' && endsWith(github.ref_name, '.x') && !contains(github.ref_name, '/')
     needs: build
     runs-on: ubuntu-latest
     permissions:
