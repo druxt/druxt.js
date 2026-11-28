@@ -13,7 +13,7 @@ const indexCache = new WeakMap()
 // How long each fetched document may be cached, from its Cache-Control header.
 const lifetimes = new WeakMap()
 
-// The size a process cache scope keeps per consumer when `cache.maxSize` is not set: 50 MB of stored JSON.
+// The size a process cache scope keeps when `cache.maxSize` is not set: 50 MB of stored JSON.
 const DEFAULT_MAX_SIZE = 50 * 1024 * 1024
 
 // Request options that never change the response, so a request with only these may use the content cache.
