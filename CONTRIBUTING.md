@@ -198,6 +198,16 @@ Automated end-to-end testing is implemented using Cypress:
 yarn test:e2e
 ```
 
+That doesn't need Drupal. It starts the
+[Decoupled Drupal mock](https://github.com/Decipher/decoupled-drupal-mock) on
+port 3005, which answers as a recorded Umami site does, runs the example site
+against it and then runs the specs.
+
+To run the same specs against the real example backend, start it first
+(`cd examples/drupal && make build`) and run `yarn test:e2e:drupal`. To have
+the mock running while you work on an example, run `yarn example:mock` and
+start the example with `BASE_URL=http://127.0.0.1:3005`.
+
 - For more details, refer to the [Cypress documentation](https://docs.cypress.io/guides).
 
 ### Docgen

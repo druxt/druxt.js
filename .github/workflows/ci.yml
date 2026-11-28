@@ -496,3 +496,40 @@ jobs:
           path: |
             examples/druxt-site/test/cypress/screenshots
             examples/druxt-site/test/cypress/videos
+
+  # The same specs through `yarn test:e2e`, which is what a contributor runs.
+  # It answers the example site from the Decoupled Drupal mock, so there is no
+  # PHP and no site install here. test-e2e above keeps the real Drupal.
+  test-e2e-mock:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 16.20.1
+
+      - run: corepack enable
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .yarn/cache
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: npx cypress install
+      - run: yarn test:e2e
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: failure()
+        with:
+          name: cypress-screenshots-videos-mock
+          path: |
+            examples/druxt-site/test/cypress/screenshots
+            examples/druxt-site/test/cypress/videos
