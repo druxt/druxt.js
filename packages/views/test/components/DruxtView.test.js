@@ -169,6 +169,23 @@ describe('DruxtView', () => {
     expect(mocks.$fetch).toHaveBeenCalledTimes(7)
   })
 
+  test('a results request that fails leaves no resource, not false', async () => {
+    // The store answers false for a request that failed with nothing kept,
+    // and the pager's `resource` prop takes an object: false there is a Vue
+    // prop warning on every render.
+    const getResource = store.$druxt.getResource.bind(store.$druxt)
+    jest.spyOn(store.$druxt, 'getResource').mockImplementation((type, ...rest) => (
+      String(type).startsWith('views--') ? Promise.reject(new Error('Not found')) : getResource(type, ...rest)
+    ))
+
+    const wrapper = mountComponent({ displayId: 'page_1', viewId: 'featured_articles' })
+    await wrapper.vm.$options.fetch.call(wrapper.vm)
+
+    expect(wrapper.vm.resource).toBe(null)
+    expect(wrapper.vm.results).toStrictEqual([])
+    expect(wrapper.vm.count).toBe(0)
+  })
+
   test('fetch by uuid', async () => {
     const mockView = await getMockResource('view--view')
     const wrapper = mountComponent({
