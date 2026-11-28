@@ -23,6 +23,12 @@ The audit runs under Node 22. Node 18 also works with `--skip-hydration`. The ex
 `examples/*/.nuxt` is built against the proxy port, not the real backend;
 rebuild the examples before using them for anything else.
 
+druxt-site is measured twice. `druxt-site` is the example as it is built, without the content cache, so its
+counts are what a render asks Drupal for. `druxt-site-cached` is the same example built with
+`DRUXT_CACHE_CONTENT=true`, into `.nuxt-cached`, so its counts are what is left once the server cache answers: a
+warm render should send nothing. Only the backend and server render layers run for it, since the cache never
+reaches a browser.
+
 Flags: `--example <name>` (repeatable), `--skip-lighthouse`, `--skip-hydration`, `--update-baseline`, `--out <dir>`.
 
 The Lighthouse and hydration layers need `CHROME_PATH`. The hydration layer also needs Node 22 for its WebSocket client.

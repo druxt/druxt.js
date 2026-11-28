@@ -1,4 +1,5 @@
 .nuxt
+.nuxt-cached
 .nuxt-storybook
 .yarn
 !yarn.lock

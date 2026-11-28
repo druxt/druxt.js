@@ -8,7 +8,7 @@
     "test": "yarn cypress:run",
     "generate": "nuxt generate",
     "serve": "yarn generate && yarn start",
-    "server": "nuxt build --target server && node --inspect node_modules/.bin/nuxt start --target server",
+    "server": "DRUXT_CACHE_CONTENT=true nuxt build --target server && DRUXT_CACHE_CONTENT=true node --inspect node_modules/.bin/nuxt start --target server",
     "start": "nuxt start",
     "storybook": "nuxt storybook"
   },

@@ -44,7 +44,7 @@
     "lint:format:fix": "prettier --write \"**/*.{js,vue,json,md,yml,yaml}\"",
     "lint:knip": "knip --include dependencies,unlisted --no-config-hints",
     "lint:md": "markdownlint-cli2 \"**/*.md\"",
-    "lint:prose": "yarn lint:prose:install && .vale/bin/vale --config .vale.ini --glob='!{**/node_modules/**,**/dist/**,**/coverage/**,**/CHANGELOG.md,**/CODE_OF_CONDUCT.md,.changeset/README.md,**/.github/**,**/.yarn/**,**/.nuxt/**,**/.nuxt-storybook/**,examples/drupal/web/**,examples/drupal/vendor/**,examples/drupal/keys/**}' packages *.md examples .changeset .agents",
+    "lint:prose": "yarn lint:prose:install && .vale/bin/vale --config .vale.ini --glob='!{**/node_modules/**,**/dist/**,**/coverage/**,**/CHANGELOG.md,**/CODE_OF_CONDUCT.md,.changeset/README.md,**/.github/**,**/.yarn/**,**/.nuxt/**,**/.nuxt-cached/**,**/.nuxt-storybook/**,examples/drupal/web/**,examples/drupal/vendor/**,examples/drupal/keys/**}' packages *.md examples .changeset .agents",
     "lint:prose:install": "bash scripts/install-vale.sh .vale/bin .vale/styles",
     "lint:renovate": "npx --yes --package renovate@44.142.1 renovate-config-validator",
     "lint:skills": "npx --yes agnix@0.56.1 --strict . && node scripts/skills/check-descriptions.mjs",

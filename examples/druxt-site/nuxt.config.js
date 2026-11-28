@@ -3,6 +3,9 @@ import { resolve } from 'path'
 const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:8888'
 export default {
   target: 'static',
+  // The performance audit builds this example twice, with and without the
+  // content cache, and gives the second build a directory of its own.
+  buildDir: process.env.NUXT_BUILD_DIR || '.nuxt',
   generate: { routes: ['/'] },
   telemetry: true,
   // No head config at all meant no viewport meta tag in the HTML - mobile
@@ -46,10 +49,17 @@ export default {
       clientId: '1a6b8816-26de-4b70-bcdf-919600542f03',
     },
 
-    // The server cache, which also keeps content. It is used by a production
-    // server only, such as `yarn server`, and never by `nuxt dev`. The secret
-    // turns on `POST /_druxt/cache/clear`.
-    cache: { content: true, secret: process.env.DRUXT_CACHE_SECRET },
+    // The server cache. Keeping content is off unless DRUXT_CACHE_CONTENT is
+    // set when the example is built, as `yarn server` sets it. The option is
+    // written into the build, so setting it for `nuxt start` alone does
+    // nothing. It is off by default because the performance audit counts the
+    // requests a render sends to Drupal, and a cache that answers them would
+    // hide a change in that count. The secret turns on
+    // `POST /_druxt/cache/clear`.
+    cache: {
+      content: process.env.DRUXT_CACHE_CONTENT === 'true',
+      secret: process.env.DRUXT_CACHE_SECRET,
+    },
 
     // Set the JSON:API endpoint, `/jsonapi` by default.
     // endpoint: '/api/v1'
