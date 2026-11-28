@@ -110,6 +110,67 @@ const consumerId = (axios) => {
   return ''
 }
 
+// Headers whose values HTTP compares without regard to case, and whose list spacing means nothing. `Accept` isn't
+// one: a media type's parameter can be case-sensitive, and quoted.
+const CASE_INSENSITIVE_HEADERS = ['accept-charset', 'accept-encoding', 'accept-language']
+
+// The values a client sends for the headers a site lists in `cache.vary`, as a partition key beside its consumer.
+// They are read from the headers a GET request leaves with: the instance's defaults merged as Axios merges them,
+// so a header a GET override turns off counts as not sent, then run through the request interceptors and the
+// request transforms, as Axios runs them. Names are matched in any case, and an array is its values joined. Values
+// stay as sent, since a backend may tell `Blue` from `blue`, apart from the headers HTTP compares without case.
+// With no listed header sent, a client shares its consumer's partition.
+// `null` when the probe can't tell what is sent. That is an instance with an interceptor it can't run or a
+// transform that fails on it, and a listed header whose value two versions of Axios would send differently.
+const varyKey = (axios, vary, url) => {
+  if (!vary || !vary.length) return ''
+  const { config, skipped, initial } = probeRequest(axios, url)
+  if (skipped) return null
+  const sent = (config || {}).headers || {}
+  // Axios calls each transform on the config, with the headers and with the data the one before it returned.
+  let data = (config || {}).data
+  for (const transform of [].concat((config || {}).transformRequest || [])) {
+    if (typeof transform !== 'function') continue
+    try {
+      data = transform.call(config, data, sent)
+    } catch {
+      return null
+    }
+  }
+  // A header's value in a map, by its name in any case. An object there is a per-method map, which is passed over.
+  const read = (map, name) => {
+    const match = Object.entries(map || {}).find(([key, item]) => key.toLowerCase() === name && (Array.isArray(item) || typeof item !== 'object' || item === null))
+    return match ? match[1] : undefined
+  }
+  // The probe starts with the defaults flattened to the top level, as Axios 1 hands them over. Axios 0.x hands
+  // over the `common` and GET maps instead, and merges them in as the request leaves. A top-level value that
+  // changed is the one sent. With no top-level value, a map value an interceptor set is. A top-level value left
+  // as it started, beside a map value that changed, could be either: the probe's copy, or the interceptor's own
+  // write of the same value.
+  const UNCERTAIN = {}
+  // The headers were copied, so an array is the same when its values are.
+  const same = (a, b) => a === b || (Array.isArray(a) && Array.isArray(b) && JSON.stringify(a) === JSON.stringify(b))
+  const effective = (name) => {
+    const top = read(sent, name)
+    if (!same(top, read(initial, name))) return top
+    for (const map of ['get', 'common']) {
+      const value = read(sent[map], name)
+      if (!same(value, read((initial || {})[map], name))) return top === undefined ? value : UNCERTAIN
+    }
+    return top
+  }
+  const values = vary.map((name) => String(name).toLowerCase()).sort().map((name) => [name, effective(name)])
+  if (values.some(([, value]) => value === UNCERTAIN)) return null
+  return values
+    .map(([name, raw]) => {
+      if (raw === undefined || raw === false || raw === null) return ''
+      const value = String(Array.isArray(raw) ? raw.join(', ') : raw).trim()
+      if (!CASE_INSENSITIVE_HEADERS.includes(name)) return `\n${name}: ${value}`
+      return `\n${name}: ${value.toLowerCase().replace(/\s+/g, ' ').replace(/\s*([,;=])\s*/g, '$1')}`
+    })
+    .join('')
+}
+
 const headersHaveCredentials = (headers, sessionCookie) => {
   const session = new RegExp(`(?:^|;\\s*)(?:${sessionCookie})=`, 'i')
   return Object.entries(headers || {}).some(([name, raw]) => {
@@ -262,11 +323,30 @@ const probeHeaders = (headers) => {
 const interceptorsAddCredentials = (axios, sessionCookie, url) => {
   const manager = ((axios || {}).interceptors || {}).request
   if (!manager || typeof manager.forEach !== 'function') return false
+  return configHasCredentials(probeRequest(axios, url).config, sessionCookie)
+}
 
-  const defaults = copy({ ...(axios.defaults || {}) })
+/**
+ * The config a GET request leaves with, as far as the probe can tell: the
+ * defaults, flattened as Axios flattens them, run through the request
+ * interceptors.
+ *
+ * @param {object} axios - The Axios instance.
+ * @param {string} url - The URL of the request about to be made.
+ *
+ * @returns {{config: object, skipped: boolean, initial: object}} The config, whether an interceptor was passed over, whose changes the config then lacks, and the headers as they were before the interceptors.
+ * @private
+ */
+const probeRequest = (axios, url) => {
+  const defaults = copy({ ...((axios || {}).defaults || {}) })
   // Own properties only, so headers held in a class are copied too.
-  const headers = probeHeaders(flattenHeaders(copy({ ...((axios.defaults || {}).headers || {}) })))
+  const headers = probeHeaders(flattenHeaders(copy({ ...(((axios || {}).defaults || {}).headers || {}) })))
+  // The headers before any interceptor ran, to tell what one changed.
+  const initial = copy({ ...headers })
   let config = { ...defaults, headers, method: 'get', url, [PROBE]: true }
+  let skipped = false
+  const manager = ((axios || {}).interceptors || {}).request
+  if (!manager || typeof manager.forEach !== 'function') return { config, skipped, initial }
 
   const handlers = []
   manager.forEach((handler) => {
@@ -285,20 +365,25 @@ const interceptorsAddCredentials = (axios, sessionCookie, url) => {
   })
 
   for (const { fulfilled } of handlers) {
-    if (fulfilled.constructor && fulfilled.constructor.name === 'AsyncFunction') continue
+    if (fulfilled.constructor && fulfilled.constructor.name === 'AsyncFunction') {
+      skipped = true
+      continue
+    }
     let next
     try {
       next = fulfilled(config)
     } catch {
+      skipped = true
       continue
     }
     if (next && typeof next.then === 'function') {
       next.then(undefined, () => {})
+      skipped = true
       continue
     }
     if (next) config = next
   }
-  return configHasCredentials(config, sessionCookie)
+  return { config, skipped, initial }
 }
 
 /**
@@ -348,14 +433,15 @@ export const watchCredentials = (axios, sessionCookie = DRUPAL_SESSION_COOKIE) =
  * `no-cache` forbid storing, `s-maxage` wins over `max-age`, time already spent
  * in a cache in front of Drupal (`Age`) is taken off, and no directive means 0.
  * A `Vary` on any request header other than `Cookie`, `X-Consumer-ID`,
- * `Accept-Encoding` or `Origin` also forbids storing, as the cache key holds
- * nothing that could tell variants apart.
+ * `Accept-Encoding`, `Origin` or one the site lists in `cache.vary` also forbids
+ * storing, as the cache key holds nothing that could tell variants apart.
  *
  * @param {object} [headers] - The response headers.
+ * @param {string[]} [vary] - The request headers the cache keeps entries apart by, from `cache.vary`.
  *
  * @returns {number} Seconds the response may be kept, 0 when it may not.
  */
-export const parseCacheLifetime = (headers) => {
+export const parseCacheLifetime = (headers, vary = []) => {
   // Every key that names the header, whatever its case, joined as a list header is.
   const header = (name) => Object.entries(headers || {})
     .filter(([key]) => key.toLowerCase() === name)
@@ -375,8 +461,10 @@ export const parseCacheLifetime = (headers) => {
   // Origin, which Drupal's CORS adds whenever it is on and which the site's
   // server does not send, so every answer is the one for no origin. A client
   // that does send one doesn't use the cache at all (see hasCredentials).
-  const vary = header('vary').toLowerCase().split(',').map((v) => v.trim()).filter(Boolean)
-  if (vary.some((v) => !['cookie', 'x-consumer-id', 'accept-encoding', 'origin'].includes(v))) return 0
+  // A header the site lists in `cache.vary` keeps entries apart, so a response that varies by it can be stored.
+  const kept = ['cookie', 'x-consumer-id', 'accept-encoding', 'origin', ...vary.map((name) => String(name).toLowerCase())]
+  const varies = header('vary').toLowerCase().split(',').map((v) => v.trim()).filter(Boolean)
+  if (varies.some((v) => !kept.includes(v))) return 0
 
   const seconds = (name) => {
     const directive = directives.find((d) => d.startsWith(`${name}=`))
@@ -414,15 +502,25 @@ export const parseCacheLifetime = (headers) => {
  * @param {number} [options.maxSize] - The size the scope keeps at most, across its consumers, in bytes of stored JSON. Past it, expired entries go first, then the least recently used, whichever consumer stored them, and a value larger than the whole limit is not stored.
  * @param {Function} [options.sizeOf] - Measures a value for `maxSize`. The bytes of its JSON by default.
  * @param {string} [options.url] - The URL of the request the cache is asked for, which the request interceptors are probed with.
+ * @param {string[]} [options.vary] - Request headers that change Drupal's answer, such as `Accept-Language`. A client's
+ *   entries are kept apart by what it sends for each, as by its consumer.
+ * @param {string} [options.partition] - The `partition` of a handle taken as the request started, for the handle taken once it has resolved.
  *
- * @returns {?{get: Function, set: Function}}
+ * @returns {?{get: Function, set: Function, partition: string}} The cache, or `null` when it must not be used.
  */
-export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize, url } = {}) => {
+export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf = jsonSize, url, vary, partition: given } = {}) => {
   if (!runtime.isServer() || hasCredentials(axios, sessionCookie, url)) return null
 
+  // A client's partition is its consumer, and what it sends for each header in `vary`. A handle taken once a
+  // request has resolved is given the partition the request started in, as the instance's headers may have changed.
+  let consumer = given
+  if (consumer === undefined) {
+    const variant = varyKey(axios, vary, url)
+    if (variant === null) return null
+    consumer = consumerId(axios) + variant
+  }
   const consumers = scopeOf(scope)
   const order = consumers[ORDER]
-  const consumer = consumerId(axios)
   // The consumer's entries, made the scope's most recently used partition. A new one past MAX_PARTITIONS evicts the
   // least recently used, entries and all. A read makes none, so a miss leaves the scope as it was.
   const partition = (create) => {
@@ -473,6 +571,9 @@ export const processCache = (scope, { axios, ttl, sessionCookie, maxSize, sizeOf
     // request resolves against one taken before it started: a difference means
     // the cache was cleared while the request was in flight.
     generation: taken,
+
+    // The partition this handle reads and writes, for the handle taken once the request has resolved.
+    partition: consumer,
 
     // The reader's cap applies too, so a shorter ttl never serves an older entry.
     get(key) {

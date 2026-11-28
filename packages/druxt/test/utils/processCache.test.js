@@ -680,3 +680,198 @@ describe('processCache - maxSize across a scope', () => {
     expect(processCache('other', { axios: axios({ 'x-consumer-id': 'c0' }) }).get('a')).toBeDefined()
   })
 })
+
+describe('processCache - vary', () => {
+  const { isServer } = runtime
+  const language = (value, vary = ['Accept-Language']) => processCache('vary', {
+    axios: axios(value === undefined ? {} : { 'Accept-Language': value }),
+    vary,
+  })
+  beforeEach(() => {
+    resetProcessCache()
+    runtime.isServer = () => true
+  })
+  afterAll(() => { runtime.isServer = isServer })
+
+  test('keeps entries apart for clients that send a listed header differently', () => {
+    language('es').set('key', 'es', 60)
+    expect(language('en').get('key')).toBe(undefined)
+    expect(language('es').get('key')).toBe('es')
+  })
+
+  test('shares entries for a header the site does not list', () => {
+    language('es', []).set('key', 'es', 60)
+    expect(language('en', []).get('key')).toBe('es')
+  })
+
+  test('shares entries for values that differ only in case and spacing', () => {
+    language('es-ES,  es;q=0.9').set('key', 'es', 60)
+    expect(language('ES-es, es;Q=0.9').get('key')).toBe('es')
+  })
+
+  test('a listed header the client does not send adds nothing', () => {
+    language(undefined).set('key', 'none', 60)
+    expect(processCache('vary', { axios: axios() }).get('key')).toBe('none')
+  })
+
+  test('names a header in any case, wherever Axios holds it', () => {
+    processCache('vary', { axios: { defaults: { headers: { get: { 'accept-language': 'es' } } } }, vary: ['ACCEPT-LANGUAGE'] }).set('key', 'es', 60)
+    expect(language('es').get('key')).toBe('es')
+    expect(language('en').get('key')).toBe(undefined)
+  })
+
+  test('keeps a consumer\'s entries apart as before', () => {
+    processCache('vary', { axios: axios({ 'X-Consumer-ID': 'one', 'Accept-Language': 'es' }), vary: ['Accept-Language'] }).set('key', 'one', 60)
+    expect(language('es').get('key')).toBe(undefined)
+  })
+
+  test('a header a request interceptor sets keeps entries apart too', () => {
+    const sets = (value) => processCache('vary', {
+      axios: intercepted((config) => ({ ...config, headers: { ...config.headers, 'Accept-Language': value } })),
+      vary: ['Accept-Language'],
+    })
+    sets('es').set('key', 'es', 60)
+    expect(sets('en').get('key')).toBe(undefined)
+    expect(sets('es').get('key')).toBe('es')
+    // The same partition as a client whose defaults send it.
+    expect(language('es').get('key')).toBe('es')
+  })
+
+  test('a header an interceptor sets among the common ones keeps entries apart too', () => {
+    // Axios 0.x hands interceptors the headers with their `common` map, and merges it in as the request leaves.
+    const sets = (value) => processCache('vary', {
+      axios: intercepted((config) => { config.headers.common['Accept-Language'] = value; return config }),
+      vary: ['Accept-Language'],
+    })
+    sets('es').set('key', 'es', 60)
+    expect(sets('en').get('key')).toBe(undefined)
+    expect(sets('es').get('key')).toBe('es')
+    expect(language('es').get('key')).toBe('es')
+  })
+
+  test('a default an interceptor changes among the common ones turns the cache off, as either may be sent', () => {
+    // Axios 0.x sends the changed common value, unless the interceptor also set the header on the request to the
+    // value it had, which the probe can't tell from the copy it started with. Axios 1 sends the default.
+    const changes = (also) => ({
+      ...intercepted((config) => {
+        config.headers.common['Accept-Language'] = 'es'
+        if (also) config.headers['Accept-Language'] = also
+        return config
+      }),
+      defaults: { headers: { common: { 'Accept-Language': 'en' } } },
+    })
+    expect(processCache('vary', { axios: changes(), vary: ['Accept-Language'] })).toBeNull()
+    expect(processCache('vary', { axios: changes('en'), vary: ['Accept-Language'] })).toBeNull()
+    expect(processCache('vary', { axios: changes() })).not.toBeNull()
+
+    // A default held as an array is compared by its values.
+    const listed = {
+      ...intercepted((config) => { config.headers.common['Accept-Language'] = 'es'; return config }),
+      defaults: { headers: { common: { 'Accept-Language': ['en'] } } },
+    }
+    expect(processCache('vary', { axios: listed, vary: ['Accept-Language'] })).toBeNull()
+    const untouched = { ...intercepted((config) => config), defaults: { headers: { common: { 'Accept-Language': ['en'] } } } }
+    expect(processCache('vary', { axios: untouched, vary: ['Accept-Language'] })).not.toBeNull()
+
+    // A header set on the request to another value is the one sent, whatever the common one became.
+    processCache('vary', { axios: changes('de'), vary: ['Accept-Language'] }).set('key', 'de', 60)
+    expect(language('de').get('key')).toBe('de')
+    expect(language('es').get('key')).toBe(undefined)
+  })
+
+  test('an interceptor the probe cannot run turns the cache off for a site that lists headers', () => {
+    const instance = intercepted({ fulfilled: async (config) => config })
+    // It may set a listed header, and the probe can't say to what.
+    expect(processCache('vary', { axios: instance, vary: ['Accept-Language'] })).toBeNull()
+    expect(processCache('vary', { axios: instance, vary: [] })).not.toBeNull()
+    expect(processCache('vary', { axios: instance })).not.toBeNull()
+  })
+
+  test('a header sent as an array is a value, not an absent header', () => {
+    const list = (value) => processCache('vary', { axios: axios({ 'Accept-Language': value }), vary: ['Accept-Language'] })
+    list(['es']).set('key', 'es', 60)
+    expect(list(['en']).get('key')).toBe(undefined)
+    expect(processCache('vary', { axios: axios(), vary: ['Accept-Language'] }).get('key')).toBe(undefined)
+    expect(list(['es']).get('key')).toBe('es')
+    // One value in an array is the value alone.
+    expect(language('es').get('key')).toBe('es')
+  })
+
+  test('a header a GET override turns off is not sent, so it adds nothing', () => {
+    const off = (value) => processCache('vary', {
+      axios: { defaults: { headers: { common: { 'Accept-Language': 'es' }, get: { 'Accept-Language': value } } } },
+      vary: ['Accept-Language'],
+    })
+    for (const value of [false, null]) {
+      resetProcessCache()
+      off(value).set('key', 'none', 60)
+      expect(language('es').get('key')).toBe(undefined)
+      expect(language(undefined).get('key')).toBe('none')
+    }
+  })
+
+  test('a value keeps its case, apart from a header whose values HTTP compares without it', () => {
+    const variant = (value) => processCache('vary', { axios: axios({ 'X-Variant': value }), vary: ['X-Variant'] })
+    variant('Blue').set('key', 'Blue', 60)
+    expect(variant('blue').get('key')).toBe(undefined)
+    expect(variant(' Blue ').get('key')).toBe('Blue')
+
+    // A language range is compared without regard to case.
+    language('es-ES').set('key', 'es', 60)
+    expect(language('ES-es').get('key')).toBe('es')
+
+    // A media type's parameter may not be, nor the spacing inside a quoted one.
+    const accept = (value) => processCache('vary', { axios: axios({ Accept: value }), vary: ['Accept'] })
+    accept('application/example;variant=Blue').set('key', 'Blue', 60)
+    expect(accept('application/example;variant=blue').get('key')).toBe(undefined)
+    accept('application/example;title="a  b"').set('key', 'two spaces', 60)
+    expect(accept('application/example;title="a b"').get('key')).toBe(undefined)
+  })
+
+  test('a header a request transform sets is the one that counts', () => {
+    // Axios runs request transforms after the interceptors, with the headers to change. A site's own may have any
+    // name, Axios's included.
+    function transformRequest (data, headers) { headers['Accept-Language'] = 'es'; return data }
+    const transformed = { defaults: { headers: { common: { 'Accept-Language': 'en' } }, transformRequest: [transformRequest] } }
+    processCache('vary', { axios: transformed, vary: ['Accept-Language'] }).set('key', 'es', 60)
+    expect(language('en').get('key')).toBe(undefined)
+    expect(language('es').get('key')).toBe('es')
+
+    // One a request interceptor adds counts too.
+    const added = {
+      ...intercepted((config) => ({ ...config, transformRequest: [transformRequest] })),
+      defaults: { headers: { common: { 'Accept-Language': 'en' } } },
+    }
+    expect(processCache('vary', { axios: added, vary: ['Accept-Language'] }).get('key')).toBe('es')
+  })
+
+  test('an Axios instance with its own request transform is cached', () => {
+    const real = jest.requireActual('axios').create({ headers: { common: { 'Accept-Language': 'es' } } })
+    expect(real.defaults.transformRequest.length).toBeGreaterThan(0)
+    processCache('vary', { axios: real, vary: ['Accept-Language'] }).set('key', 'es', 60)
+    expect(language('es').get('key')).toBe('es')
+  })
+
+  test('a request transform is given what the one before it returned', () => {
+    const real = jest.requireActual('axios').create({
+      headers: { common: { 'Accept-Language': 'en' } },
+      transformRequest: [() => 'es', (data, headers) => { headers['Accept-Language'] = data || 'en'; return data }],
+    })
+    processCache('vary', { axios: real, vary: ['Accept-Language'] }).set('key', 'es', 60)
+    expect(language('es').get('key')).toBe('es')
+    expect(language('en').get('key')).toBe(undefined)
+  })
+
+  test('a request transform that fails on the probe turns the cache off for a site that lists headers', () => {
+    const instance = { defaults: { headers: { common: {} }, transformRequest: [() => { throw new Error('no') }] } }
+    expect(processCache('vary', { axios: instance, vary: ['Accept-Language'] })).toBeNull()
+    expect(processCache('vary', { axios: instance })).not.toBeNull()
+  })
+
+  test('parseCacheLifetime stores a response that varies by a listed header', () => {
+    const headers = { 'cache-control': 'max-age=60', vary: 'Accept-Encoding, Accept-Language' }
+    expect(parseCacheLifetime(headers)).toBe(0)
+    expect(parseCacheLifetime(headers, ['accept-language'])).toBe(60)
+    expect(parseCacheLifetime({ ...headers, vary: 'Accept-Language, User-Agent' }, ['Accept-Language'])).toBe(0)
+  })
+})

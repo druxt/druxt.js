@@ -32,6 +32,43 @@ describe('DruxtClient process cache', () => {
   })
   afterAll(() => { runtime.isServer = isServer })
 
+  test('cache.vary keeps the answers to a listed header apart, and stores those that vary by it', async () => {
+    const headers = { 'cache-control': 'public, max-age=300', vary: 'Accept-Language' }
+    const client = (language, cache = { vary: ['Accept-Language'] }) => new DruxtClient(baseUrl, { axios: requestAxios({ 'Accept-Language': language }, {}, headers), cache })
+
+    // Without the option, a response that varies by the header is never stored.
+    await client('es', {}).getIndex()
+    await client('es', {}).getIndex()
+    expect(indexCalls()).toBe(2)
+
+    await client('es').getIndex()
+    await client('es').getIndex()
+    expect(indexCalls()).toBe(3)
+    await client('en').getIndex()
+    expect(indexCalls()).toBe(4)
+  })
+
+  test('a response is stored for the headers its request was sent with', async () => {
+    const headers = { 'cache-control': 'public, max-age=300', vary: 'Accept-Language' }
+    const cache = { vary: ['Accept-Language'] }
+    const axios = requestAxios({ 'Accept-Language': 'es' }, {}, headers)
+    const inFlight = axios.get
+    // The instance's language changes while the Spanish request is in flight.
+    axios.get = jest.fn(async (...args) => {
+      const response = await inFlight(...args)
+      axios.defaults.headers.common['Accept-Language'] = 'en'
+      return response
+    })
+    await new DruxtClient(baseUrl, { axios, cache }).getIndex()
+    expect(indexCalls()).toBe(1)
+
+    // An English client doesn't read the Spanish answer, and a Spanish one does.
+    await new DruxtClient(baseUrl, { axios: requestAxios({ 'Accept-Language': 'en' }, {}, headers), cache }).getIndex()
+    expect(indexCalls()).toBe(2)
+    await new DruxtClient(baseUrl, { axios: requestAxios({ 'Accept-Language': 'es' }, {}, headers), cache }).getIndex()
+    expect(indexCalls()).toBe(2)
+  })
+
   test('never used in a browser', async () => {
     runtime.isServer = () => false
     await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()

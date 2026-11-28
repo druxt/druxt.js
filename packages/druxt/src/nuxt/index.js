@@ -252,6 +252,8 @@ export { DruxtNuxtModule }
  *   `X-Druxt-Secret` header matches. It stays on the server and is never sent to the browser.
  * @property {string} [cache.sessionCookie=S?SESS[0-9a-f]+] - A pattern for the name of the backend's session
  *   cookie. A request with a matching cookie never uses the cache.
+ * @property {string[]} [cache.vary] - Request headers that change Drupal's answer, such as `Accept-Language`. Entries
+ *   are kept apart by what a request sends for each, and a response that varies by one can be stored.
  *
  * @example @lang js
  * export default {

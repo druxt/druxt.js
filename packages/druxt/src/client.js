@@ -236,16 +236,17 @@ class DruxtClient {
    *
    * @param {string} scope - The cache scope, e.g. 'index', 'menu' or 'content'.
    * @param {string} [url] - The URL of the request the cache is asked for. The JSON:API endpoint by default.
+   * @param {string} [partition] - (Optional) The `partition` of the cache taken as the request started, when asking again once it has resolved.
    *
    * @returns {?object} The cache, or null when it must not be used.
    */
-  processCache(scope, url = this.options.endpoint) {
+  processCache(scope, url = this.options.endpoint, partition) {
     if (!this.options.cache) return null
-    const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE, content } = this.options.cache
+    const { ttl, sessionCookie, maxSize = DEFAULT_MAX_SIZE, content, vary } = this.options.cache
     if (scope === 'content' && !content) return null
     // A content entry holds its document as text already, so its size is that text's bytes.
     const sizeOf = scope === 'content' ? (value) => byteSize(value.body) : undefined
-    return processCache(scope, { axios: this.axios, ttl, sessionCookie, maxSize, sizeOf, url })
+    return processCache(scope, { axios: this.axios, ttl, sessionCookie, maxSize, sizeOf, url, vary, partition })
   }
 
   /**
@@ -484,14 +485,14 @@ class DruxtClient {
       // Its place in the order requests started in, which a timestamp cannot give two requests in one millisecond.
       const started = nextRequest()
       const res = await this.axios.get(url, options ? config : undefined)
-      const seconds = parseCacheLifetime((res || {}).headers)
+      const seconds = parseCacheLifetime((res || {}).headers, (this.options.cache || {}).vary)
       const at = Date.now()
       // Kept with its arrival time, so the lifetime read later is what is left of it.
       if (res && res.data && typeof res.data === 'object') lifetimes.set(res.data, { seconds, at })
 
       // Asked again once resolved, as the request may have shown the instance to be credentialed.
       // Only a 200 is kept: a stored 404 would hide a page published after it.
-      const after = before && this.processCache('content', url)
+      const after = before && this.processCache('content', url, before.partition)
       // A request that started later, such as a bypass, may have stored its fresher answer already.
       const current = after && after.get(key)
       if (after && !(current && current.started > started) && res && res.status === 200 && res.data && typeof res.data === 'object') {
@@ -627,7 +628,8 @@ class DruxtClient {
         return resource ? fetched.index[resource] || false : fetched.index
       }
       this.index[prefix] = fetched.index
-      const shared = this.processCache('index', url)
+      // Stored where the request started, as the instance's headers may have changed since.
+      const shared = this.processCache('index', url, before ? before.partition : undefined)
       // Dropped when the process cache was cleared while the request was in flight.
       if (shared) shared.set(key, fetched.index, fetched.lifetime, since)
     }
@@ -835,6 +837,7 @@ export { DruxtClient }
   * @param {number} [cache.maxSize=52428800] - Bytes of responses each cache area keeps, measured as stored JSON.
   * @param {number} [cache.ttl] - Seconds a cached response may live at most. It never extends Cache-Control.
   * @param {string} [cache.sessionCookie=S?SESS[0-9a-f]+] - A pattern for the session cookie name.
+  * @param {string[]} [cache.vary] - Request headers that change Drupal's answer, such as `Accept-Language`. Entries are kept apart by what a request sends for each.
   * @param {boolean} [debug=false] - Enable Debug mode for verbose console log messages.
   * @param {string} [endpoint=jsonapi] - The JSON:API endpoint.
   * @param {string} [jsonapiResourceConfig=jsonapi_resource_config--jsonapi_resource_config] -

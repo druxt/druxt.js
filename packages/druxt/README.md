@@ -103,13 +103,14 @@ export default {
 };
 ```
 
-| Option                | Type      | Default             | Description                                                         |
-| --------------------- | --------- | ------------------- | ------------------------------------------------------------------- |
-| `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.           |
-| `cache.maxSize`       | `number`  | `52428800` (50 MB)  | Bytes of responses kept per cache area. The least recently used go. |
-| `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.          |
-| `cache.secret`        | `string`  |                     | Turns on `POST /_druxt/cache/clear`.                                |
-| `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it. |
+| Option                | Type      | Default             | Description                                                               |
+| --------------------- | --------- | ------------------- | ------------------------------------------------------------------------- |
+| `cache.content`       | `boolean` | `false`             | Also keep entities, collections, views and route lookups.                 |
+| `cache.maxSize`       | `number`  | `52428800` (50 MB)  | Bytes of responses kept per cache area. The least recently used go.       |
+| `cache.ttl`           | `number`  |                     | Seconds a response may be kept at most. `0` keeps nothing.                |
+| `cache.secret`        | `string`  |                     | Turns on `POST /_druxt/cache/clear`.                                      |
+| `cache.sessionCookie` | `string`  | `'S?SESS[0-9a-f]+'` | A pattern for the session cookie name, for a proxy that renames it.       |
+| `cache.vary`          | `array`   | `[]`                | Request headers that change Drupal's answer, such as `'Accept-Language'`. |
 
 - A request with an `Authorization` header or a Drupal session cookie skips
   the cache, and `nuxt dev` runs without it.
