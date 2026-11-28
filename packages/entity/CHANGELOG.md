@@ -1,5 +1,21 @@
 # druxt-entity
 
+## 0.30.0 - 2026-11-28
+
+### Minor Changes
+
+- The built files now come with source maps, so a debugger attached to a Nuxt build or server steps through the original source and not the bundle. ([#1070](https://github.com/druxt/druxt.js/issues/1070), [`113ecdd`](https://github.com/druxt/druxt.js/commit/113ecdd324a9f4432089b6e9f7e164b158eecc7e))
+
+  VS Code ignores source maps inside `node_modules` by default. To use them in a site, add `"resolveSourceMapLocations": ["${workspaceFolder}/**"]` to the launch configuration. The maps add about 0.8 MB to the installed packages in total, and nothing to what a browser downloads.
+
+### Patch Changes
+
+- In development, an entity whose display settings fail to load now says why. druxt-entity's `DruxtEntity` used to show "Missing display settings" for every failure, so an error such as a 403 looked like a display that was never configured. ([#836](https://github.com/druxt/druxt.js/issues/836), [`6cea376`](https://github.com/druxt/druxt.js/commit/6cea37676b496de51e1fa98ec94cfb9fc828b20c))
+
+  The panel now names the resource type and the mode, such as `'node--page' in the 'teaser' view mode`, and shows the error when the display exists but couldn't be loaded. Nothing changes in production.
+
+- Updated dependencies: druxt@0.26.0, druxt-router@0.33.0, druxt-schema@0.13.0.
+
 ## 0.29.2 - 2026-11-22
 
 ### Patch Changes
