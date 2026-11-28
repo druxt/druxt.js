@@ -3,6 +3,9 @@ import { resolve } from 'path'
 const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:8888'
 export default {
   target: 'static',
+  // The performance audit builds this example twice, with and without the
+  // content cache, and gives the second build a directory of its own.
+  buildDir: process.env.NUXT_BUILD_DIR || '.nuxt',
   generate: { routes: ['/'] },
   telemetry: true,
   // No head config at all meant no viewport meta tag in the HTML - mobile

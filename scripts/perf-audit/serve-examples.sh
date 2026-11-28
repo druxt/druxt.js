@@ -16,8 +16,13 @@ if [ "$cmd" != "stop" ]; then
   fi
 fi
 
-examples=("$@"); [ ${#examples[@]} -gt 0 ] || examples=(druxt-site druxt-daisyui druxt-bootstrapvue)
-declare -A ports=([druxt-site]=3200 [druxt-daisyui]=3201 [druxt-bootstrapvue]=3204)
+examples=("$@"); [ ${#examples[@]} -gt 0 ] || examples=(druxt-site druxt-site-cached druxt-daisyui druxt-bootstrapvue)
+declare -A ports=([druxt-site]=3200 [druxt-site-cached]=3210 [druxt-daisyui]=3201 [druxt-bootstrapvue]=3204)
+# druxt-site-cached is druxt-site built a second time with the content cache
+# on. The option is written into the build, so it needs a build of its own,
+# in its own directory beside the first.
+declare -A dirs=([druxt-site-cached]=druxt-site)
+declare -A extra_env=([druxt-site-cached]="DRUXT_CACHE_CONTENT=true NUXT_BUILD_DIR=.nuxt-cached")
 mkdir -p "$root/.perf"
 
 proxy_port="${PERF_AUDIT_PROXY_PORT:-8890}"
@@ -80,14 +85,18 @@ for example in "${examples[@]}"; do
   pidfile="$root/.perf/${example}.pid"
   # The examples set target: 'static' for `nuxt generate`/export; the audit
   # needs a live per-request SSR server instead, so force --target server.
+  dir="${dirs[$example]:-$example}"
+  # Unquoted on purpose: it is a list of NAME=value words for env.
+  # shellcheck disable=SC2086
   (
-    cd "$root/examples/$example"
+    cd "$root/examples/$dir"
     corepack yarn install
-    BASE_URL="http://127.0.0.1:${proxy_port}" npx nuxt build --target server
+    env ${extra_env[$example]:-} BASE_URL="http://127.0.0.1:${proxy_port}" npx nuxt build --target server
   ) >"$root/.perf/${example}.build.log" 2>&1 || { echo "$example build failed; see .perf/${example}.build.log" >&2; exit 1; }
+  # shellcheck disable=SC2086
   (
-    cd "$root/examples/$example"
-    exec setsid env BASE_URL="http://127.0.0.1:${proxy_port}" npx nuxt start --target server --port "${ports[$example]}" --hostname 127.0.0.1
+    cd "$root/examples/$dir"
+    exec setsid env ${extra_env[$example]:-} BASE_URL="http://127.0.0.1:${proxy_port}" npx nuxt start --target server --port "${ports[$example]}" --hostname 127.0.0.1
   ) >"$root/.perf/${example}.start.log" 2>&1 &
   echo $! >"$pidfile"
   # A TCP-only wait, never an HTTP request: an HTTP probe here would render the

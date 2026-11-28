@@ -20,6 +20,7 @@ docs/nuxt/content/api/
 # Examples (have their own tooling)
 examples/*/node_modules/
 examples/*/.nuxt/
+examples/*/.nuxt-cached/
 examples/*/dist/
 
 # Lockfiles (reformatted only by their own tooling)

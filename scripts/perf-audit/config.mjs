@@ -10,13 +10,22 @@ export function environment(env = process.env) {
 
 export const baselinePath = (name) => `perf/baseline.${name}.json`
 
+const siteRoutes = ['/', '/en/recipes', '/en/recipes/deep-mediterranean-quiche', '/en/articles/give-it-a-go-and-grow-your-own-herbs', '/en/recipe-category/main-courses']
+
 export const config = {
   // See backend-proxy.mjs for why the audit runs its own proxy.
   backendLog: process.env.PERF_AUDIT_BACKEND_LOG || resolve('.perf/backend-requests.log'),
   examples: [
     // Every non-root route on druxt-site answers under the /en/ prefix; the
     // unprefixed path 302s there instead of rendering.
-    { name: 'druxt-site', port: 3200, routes: ['/', '/en/recipes', '/en/recipes/deep-mediterranean-quiche', '/en/articles/give-it-a-go-and-grow-your-own-herbs', '/en/recipe-category/main-courses'] },
+    { name: 'druxt-site', port: 3200, routes: siteRoutes },
+    // The same example built with the content cache on, so the audit sees
+    // both what a render asks Drupal for and what the cache saves. The counts
+    // above are taken without the cache: with it a warm render sends nothing,
+    // which would hide a change in how many requests a render makes. Only the
+    // server is measured here. The cache never reaches a browser, so
+    // Lighthouse and the hydration probe would repeat the entry above.
+    { name: 'druxt-site-cached', port: 3210, routes: siteRoutes, backendOnly: true },
     // druxt-daisyui and druxt-bootstrapvue only have pages/index.vue, no
     // wildcard router: nothing but the front page exists to audit.
     { name: 'druxt-daisyui', port: 3201, routes: ['/'] },
