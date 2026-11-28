@@ -1,0 +1,159 @@
+name: Dev container image
+
+# Builds the dev container image from .github/.devcontainer and publishes it
+# to GitHub Container Registry, so a new dev container starts from an image
+# and does not build its tools each time.
+#
+# A pull request that changes the definition builds it and runs the checks
+# below, and publishes nothing. A run on a release line publishes the image
+# under that line's name, such as `0.x`. The weekly run picks up updates to
+# the base image and to the tools the features install. A run started by hand
+# from any other branch is treated as a pull request is: a branch name such as
+# `feature/x` is not a valid image tag, and a feature branch has no business
+# publishing one.
+on:
+  push:
+    branches: ['*.x']
+    paths:
+      - .github/.devcontainer/**
+      - .github/workflows/devcontainer.yml
+  pull_request:
+    paths:
+      - .github/.devcontainer/**
+      - .github/workflows/devcontainer.yml
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: devcontainer-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: ghcr.io/druxt/druxt.js-devcontainer
+
+jobs:
+  # Decides once whether this run publishes, and under which tag, so every
+  # job below works from the same answer.
+  #
+  # Only a run on a release line publishes. The pattern is the whole branch
+  # name, one or two short numbers and `.x`, such as `0.x` or `2.1.x`, so the
+  # tag is always valid and short. A branch
+  # name is otherwise free text: `feature/name.x` and `feature+name.x` are
+  # both valid branches and neither is a valid image tag. Anything that does
+  # not match builds and checks under a local tag and publishes nothing.
+  target:
+    if: github.repository == 'druxt/druxt.js'
+    runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.target.outputs.publish }}
+      tag: ${{ steps.target.outputs.tag }}
+    steps:
+      - id: target
+        env:
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref_name }}
+        run: |
+          if [ "$EVENT" != pull_request ] && [[ "$REF" =~ ^[0-9]{1,4}(\.[0-9]{1,4})?\.x$ ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "tag=${REF}" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "tag=check" >> "$GITHUB_OUTPUT"
+          fi
+
+  # The scripts a dev container runs, checked before a build that takes far
+  # longer finds the same mistake.
+  shellcheck:
+    if: github.repository == 'druxt/druxt.js'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      # Warnings and errors. The two notes the existing scripts raise are
+      # both deliberate: a line written to ~/.bashrc unexpanded, and a
+      # `return || exit` for a file that is sourced or run.
+      - run: >-
+          shellcheck --severity=warning
+          .devcontainer/post-create.sh
+          .devcontainer/shell-init.sh
+          .github/.devcontainer/features/druxt/install.sh
+
+  # One job for each architecture, on a runner of that architecture. PHP is
+  # compiled while the image builds, which takes hours under emulation.
+  build:
+    needs: target
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - if: needs.target.outputs.publish == 'true'
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      # runCmd runs in a container started from the image just built, as the
+      # image's own user, so it checks what a new dev container would have.
+      - uses: devcontainers/ci@513af61f4de4f75d37e4438f184ba4358f0fc1ca # v0.3.1900000450
+        with:
+          subFolder: .github
+          imageName: ${{ env.IMAGE }}
+          imageTag: ${{ needs.target.outputs.tag }}-${{ matrix.arch }}
+          cacheFrom: ${{ env.IMAGE }}:${{ needs.target.outputs.tag }}-${{ matrix.arch }}
+          push: ${{ needs.target.outputs.publish == 'true' && 'always' || 'never' }}
+          runCmd: |
+            set -e
+            node --version | grep -q '^v16\.20\.1$'
+            php -r "exit(extension_loaded('gd') && extension_loaded('pdo_sqlite') && extension_loaded('sodium') ? 0 : 1);"
+            composer --version
+            mise --version
+            gh --version
+            locale -a | grep -qi '^en_AU\.utf-\?8$'
+
+  # One tag for both architectures, so the dev container names a single image
+  # and each machine pulls its own.
+  manifest:
+    if: needs.target.outputs.publish == 'true'
+    needs: [target, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Publish one tag for both architectures
+        env:
+          TAG: ${{ needs.target.outputs.tag }}
+        run: |
+          docker buildx imagetools create \
+            --tag "${IMAGE}:${TAG}" \
+            "${IMAGE}:${TAG}-amd64" \
+            "${IMAGE}:${TAG}-arm64"
