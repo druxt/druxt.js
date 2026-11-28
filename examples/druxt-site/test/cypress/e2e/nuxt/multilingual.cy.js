@@ -7,9 +7,7 @@
 //
 // The examples/drupal backend runs this in full: demo_umami installs
 // Spanish alongside English with URL prefixes, and includes Spanish
-// translations of its demo content and configuration. Specs asserting the
-// curated druxtjs.org site content (homepage banners, devel templates)
-// remain gated on CYPRESS_backendVariant; see umami-homepage.cy.js.
+// translations of its demo content and configuration.
 describe('Multilingual', () => {
   it('switches to Spanish from the language block and stays there', () => {
     // Every language has a URL prefix, so the homepage is /en.

@@ -473,11 +473,6 @@ jobs:
       - name: DruxtSite e2e
         env:
           BASE_URL: http://127.0.0.1:8888
-          # The examples backend ships no translated demo content (see
-          # examples/drupal/README.md) - the specs that assert translated
-          # content skip on this variant and run against the full
-          # druxtjs.org site backend's own pipeline instead.
-          CYPRESS_backendVariant: minimal
         run: |
           yarn start-server-and-test 'yarn example:druxt-site' http://localhost:3000 \
             'npx cypress run --project examples/druxt-site/test --spec "examples/druxt-site/test/cypress/e2e/nuxt/**/*.cy.js"'
