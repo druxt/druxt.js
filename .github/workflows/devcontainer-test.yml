@@ -1,0 +1,68 @@
+name: Dev container
+
+# Starts the dev container a contributor gets and uses it: the post-create
+# script, a build, a test and the example backend. Nothing else in CI opens
+# the dev container, so without this a broken one is found by whoever opens
+# it next.
+#
+# It runs when something it depends on changes, and weekly, because the
+# published image is rebuilt weekly without any commit here.
+#
+# The container starts from the published image, so a pull request that
+# changes the image's definition is tested against the image from before the
+# change. .github/workflows/devcontainer.yml checks the new one.
+on:
+  push:
+    branches: ['*.x']
+    paths:
+      - .devcontainer/**
+      - examples/drupal/.devtools/**
+      - examples/drupal/Makefile
+      - .github/workflows/devcontainer-test.yml
+  pull_request:
+    paths:
+      - .devcontainer/**
+      - examples/drupal/.devtools/**
+      - examples/drupal/Makefile
+      - .github/workflows/devcontainer-test.yml
+  schedule:
+    - cron: '47 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: devcontainer-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  use:
+    if: github.repository == 'druxt/druxt.js'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      # Seconds, before a container start that takes minutes finds the same
+      # mistake. Warnings and errors, as in devcontainer.yml.
+      - run: shellcheck --severity=warning .devcontainer/post-create.sh .devcontainer/shell-init.sh
+
+      # Starting the container runs .devcontainer/post-create.sh, as it does
+      # for a contributor. runCmd then runs in the checkout as the container's
+      # own user.
+      - uses: devcontainers/ci@513af61f4de4f75d37e4438f184ba4358f0fc1ca # v0.3.1900000450
+        with:
+          push: never
+          runCmd: |
+            set -e
+            echo "==> The post-create script a second time: it has to be safe to run again"
+            bash .devcontainer/post-create.sh
+            echo "==> Build the packages and run a test"
+            yarn build
+            node_modules/.bin/jest --coverage=false packages/router/test/router.test.js
+            echo "==> Install and start the example backend, and ask it for the JSON:API index"
+            (cd examples/drupal && make build)
+            curl --silent --show-error --fail --output /dev/null http://127.0.0.1:8888/jsonapi
