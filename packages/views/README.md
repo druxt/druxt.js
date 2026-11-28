@@ -68,7 +68,11 @@ Renders a Drupal View using DruxtEntity components, using data provided by the D
 <DruxtView :display-id="displayId" :view-id="viewId" />
 ```
 
-Changing an exposed filter goes back to the first page. A view opened with `page`, `filter` or `sort` in the URL query keeps those keys up to date without adding history entries, but doesn't add a key that wasn't there when it opened.
+Changing an exposed filter goes back to the first page. A view keeps its exposed filters, its page and its sort in the URL query, so a reload or a copied link shows the same results. A filter change doesn't add a history entry, while the pager's and the sorts' links do. Views on one page share the query as they do in Drupal, so give each view's pager its own pager ID. To keep a view out of the URL:
+
+```vue
+<DruxtView view-id="recipes" display-id="block_1" :settings="{ route: false }" />
+```
 
 - For more details, refer to the [DruxtView API documentation](https://druxtjs.org/api/packages/views/components/DruxtView).
 
@@ -131,6 +135,7 @@ These options are specific to this module.
 | `views.query.bundleFilter`  | `boolean`  | No       | `false` | Whether to automatically detect Resource types to filter, based on the View `bundle` filter. |
 | `views.query.fields`        | `string[]` | No       | `[]`    | An array of fields to filter from the JSON:API Views Resource types.                         |
 | `views.query.resourceTypes` | `string[]` | No       | `[]`    | An array of Resource types to be used by the Fields filter.                                  |
+| `views.route`               | `boolean`  | No       | `true`  | Whether views write their filter, page and sort to the URL query as they change.             |
 
 ### Base Druxt options
 

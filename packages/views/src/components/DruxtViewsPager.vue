@@ -2,6 +2,25 @@
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
 
 /**
+ * Writes one pager's page into a `page` query value, keeping the others.
+ *
+ * Drupal keeps every pager on a page in one value, comma separated in pager ID
+ * order, so `0,2` is page 2 for pager 1.
+ *
+ * @param {string} [value] - The `page` query value.
+ * @param {number} id - The pager ID.
+ * @param {number} page - The page.
+ * @return {string|undefined} The new value, or `undefined` when every pager is on its first page.
+ */
+const writePage = (value, id, page) => {
+  const pages = value === undefined || value === null || value === '' ? [] : String(value).split(',')
+  while (pages.length <= id) pages.push('0')
+  pages[id] = String(page || 0)
+  while (pages.length && !parseInt(pages[pages.length - 1])) pages.pop()
+  return pages.length ? pages.join(',') : undefined
+}
+
+/**
  * Used by the DruxtView component to render a Druxt Wrapper themeable pager.
  */
 export default {
@@ -42,6 +61,17 @@ export default {
     },
 
     /**
+     * Whether the pager's links change the URL. With the view's `route`
+     * setting off, they change the page without navigating.
+     *
+     * @type {boolean}
+     */
+    route: {
+      type: Boolean,
+      default: true,
+    },
+
+    /**
      * The Pager type.
      *
      * @type {string}
@@ -62,6 +92,17 @@ export default {
     }
   },
 
+  computed: {
+    /**
+     * The pager ID, which is the pager's place in the `page` URL query.
+     *
+     * @type {number}
+     */
+    pagerId() {
+      return parseInt((this.options || {}).id) || 0
+    },
+  },
+
   watch: {
     model(to, from) {
       if (to !== from) {
@@ -80,7 +121,7 @@ export default {
      */
     getQuery(link) {
       const query = Object.fromEntries(new URLSearchParams(link.href.split('?')[1]))
-      if (typeof query.page === 'string') query.page = parseInt(query.page)
+      if (typeof query.page === 'string') query.page = parseInt(query.page.split(',')[this.pagerId]) || 0
       return query
     },
 
@@ -91,8 +132,19 @@ export default {
      * @returns {object}
      */
     getRoute(link) {
-      const query = this.getQuery(link)
-      return { query: { ...this.$route.query, page: query.page } }
+      const { page } = this.getQuery(link)
+      const query = { ...this.$route.query }
+
+      // One pager, the page as a number.
+      if (!this.pagerId && !String(query.page === undefined ? '' : query.page).includes(',')) {
+        return { query: { ...query, page } }
+      }
+
+      // Several, each in its place, as Drupal writes them.
+      const value = writePage(query.page, this.pagerId, page)
+      if (value === undefined) delete query.page
+      else query.page = value
+      return { query }
     },
 
     /**
@@ -146,30 +198,26 @@ export default {
      */
     slots(h) {
       const self = this
+      // A link to the page, or a button for a pager kept out of the URL.
+      const link = (target, label) => (self.route
+        ? h('NuxtLink', {
+          nativeOn: { click() { self.setPage(target) } },
+          props: { to: self.getRoute(target) },
+        }, [label])
+        : h('button', {
+          attrs: { type: 'button' },
+          on: { click() { self.setPage(target) } },
+        }, [label]))
       return {
         default: () => h('ul', [
           // Next.
           ((self.resource || {}).links || {}).prev && h('li', [
-            h('NuxtLink', {
-              nativeOn: {
-                click() {
-                  self.setPage(self.resource.links.prev)
-                },
-              },
-              props: { to: self.getRoute(self.resource.links.prev) },
-            }, [self.options.tags.previous]),
+            link(self.resource.links.prev, self.options.tags.previous),
           ]),
 
           // Previous.
           ((self.resource || {}).links || {}).next && h('li', [
-            h('NuxtLink', {
-              nativeOn: {
-                click() {
-                  self.setPage(self.resource.links.next)
-                },
-              },
-              props: { to: self.getRoute(self.resource.links.next) },
-            }, [self.options.tags.next]),
+            link(self.resource.links.next, self.options.tags.next),
           ]),
         ])
       }

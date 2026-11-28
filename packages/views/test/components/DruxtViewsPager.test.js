@@ -1,5 +1,5 @@
 import 'regenerator-runtime/runtime'
-import { createLocalVue, mount } from '@vue/test-utils'
+import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import Vuex from 'vuex'
 
 import { DruxtClient, DruxtStore } from '../../../druxt/src'
@@ -88,5 +88,44 @@ describe('DruxtViewsPager', () => {
       'DruxtViewsPagerTest',
       'DruxtViewsPagerDefault'
     ])
+  })
+
+  test('a pager with the route setting off changes the page without navigating', async () => {
+    const wrapper = mountComponent({ type: 'test', route: false })
+    const link = { href: '?page=1' }
+    await wrapper.setProps({
+      options: { tags: { next: 'Next', previous: 'Previous' } },
+      resource: { links: { next: link } },
+    })
+    const next = wrapper.vm.getScopedSlots().default.call(wrapper.vm).children[0].children[0]
+    expect(next.tag).toBe('button')
+    expect(next.data.attrs.type).toBe('button')
+    next.data.on.click()
+    expect(wrapper.vm.model).toBe(1)
+  })
+
+  test('a pager whose ID is not 0 reads and writes its own place in the page', () => {
+    const mount = (query) => shallowMount(DruxtViewsPager, {
+      localVue,
+      mocks: { $fetch: jest.fn(), $fetchState: { pending: true }, $nuxt: { context: { isDev: false } }, $route: { query } },
+      propsData: { options: { id: 1 }, type: 'full' },
+      store,
+    })
+
+    // Drupal writes every pager on the page into one page, by ID.
+    const link = { href: '?page=0,2' }
+    let wrapper = mount({ page: '3', utm: 'a' })
+    expect(wrapper.vm.getQuery(link)).toStrictEqual({ page: 2 })
+    expect(wrapper.vm.getRoute(link)).toStrictEqual({ query: { page: '3,2', utm: 'a' } })
+    expect(wrapper.vm.getRoute({ href: '?page=0,0' })).toStrictEqual({ query: { page: '3', utm: 'a' } })
+
+    // Pager 0 keeps another pager's place.
+    wrapper = shallowMount(DruxtViewsPager, {
+      localVue,
+      mocks: { $fetch: jest.fn(), $fetchState: { pending: true }, $nuxt: { context: { isDev: false } }, $route: { query: { page: '0,2' } } },
+      propsData: { type: 'full' },
+      store,
+    })
+    expect(wrapper.vm.getRoute({ href: '?page=1' })).toStrictEqual({ query: { page: '1,2' } })
   })
 })

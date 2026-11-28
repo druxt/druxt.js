@@ -94,4 +94,13 @@ describe('DruxtViewsSorts', () => {
       'DruxtViewsSortsDefault'
     ])
   })
+
+  test('sorts with the route setting off change the sort without navigating', async () => {
+    const wrapper = mountComponent({ type: 'test', route: false, sorts: [{ expose: { label: 'Test' }, id: 'test' }] })
+    const sort = wrapper.vm.getScopedSlots().default.call(wrapper.vm).children[1].children[0].children[0]
+    expect(sort.tag).toBe('button')
+    expect(sort.data.attrs.type).toBe('button')
+    sort.data.on.click()
+    expect(wrapper.vm.model).toBe('test')
+  })
 })

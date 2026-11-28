@@ -126,13 +126,13 @@ describe('DruxtView', () => {
       filter: { test: 1 },
       sort: 'test'
     }
+    // featured_articles exposes neither a `test` filter nor a sort, so only
+    // the page goes to Drupal.
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({
-      page: 1,
+      page: '1',
       'views-argument[0]': 1,
       'views-argument[1]': 2,
       'views-argument[2]': 3,
-      'views-filter': { test: 1 },
-      'views-sort[sort_by]': 'test',
     })
     expect(wrapper.vm.showPager).toBe(true)
     expect(wrapper.vm.showSorts).toBe(false)
@@ -153,20 +153,21 @@ describe('DruxtView', () => {
     })
     expect(wrapper.vm.getQuery(wrapper.vm.component.settings)).toStrictEqual({})
 
-    // Watches.
-    expect(mocks.$fetch).toHaveBeenCalledTimes(2)
-    await DruxtView.watch.displayId.call(mocks)
+    // Watches. Clearing the URL and the arguments each asked for a fetch,
+    // which Nuxt joins into one.
     expect(mocks.$fetch).toHaveBeenCalledTimes(3)
+    await DruxtView.watch.displayId.call(mocks)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(4)
     wrapper.vm.model.page = 1
     await localVue.nextTick()
-    expect(mocks.$fetch).toHaveBeenCalledTimes(4)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(5)
     wrapper.vm.model.sort = 'nid'
     await localVue.nextTick()
-    expect(mocks.$fetch).toHaveBeenCalledTimes(5)
-    await DruxtView.watch.uuid.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(6)
-    await DruxtView.watch.viewId.call(mocks)
+    await DruxtView.watch.uuid.call(mocks)
     expect(mocks.$fetch).toHaveBeenCalledTimes(7)
+    await DruxtView.watch.viewId.call(mocks)
+    expect(mocks.$fetch).toHaveBeenCalledTimes(8)
   })
 
   test('fetch by uuid', async () => {
@@ -281,6 +282,22 @@ describe('DruxtView', () => {
     expect(mock.model.page).toStrictEqual(1)
   })
 
+  test('the pager gets the route setting', () => {
+    const h = jest.fn((tag, data) => data)
+    const mock = { component: { settings: { route: false } }, filters: [], headers: {}, model: { page: null }, results: [], showPager: true, viewId: 'test' }
+    expect(DruxtView.druxt.slots.call(mock, h).pager({}).props.route).toBe(false)
+    mock.component.settings = {}
+    expect(DruxtView.druxt.slots.call(mock, h).pager({}).props.route).toBe(true)
+  })
+
+  test('the sorts get the route setting', () => {
+    const h = jest.fn((tag, data) => data)
+    const mock = { component: { settings: { route: false } }, filters: [], headers: {}, model: { sort: null }, results: [], showSorts: true, sorts: [], viewId: 'test' }
+    expect(DruxtView.druxt.slots.call(mock, h).sorts({}).props.route).toBe(false)
+    mock.component.settings = {}
+    expect(DruxtView.druxt.slots.call(mock, h).sorts({}).props.route).toBe(true)
+  })
+
   test('error - missing required props', async () => {
     const wrapper = mountComponent({})
     await wrapper.vm.$options.fetch.call(wrapper.vm)
@@ -301,5 +318,104 @@ describe('DruxtView', () => {
       expect.any(Object),
       expect.any(Array)
     )
+  })
+
+  // Drupal gives each view on a page what it owns of the query: its pager's
+  // place in `page=0,2`, the identifiers of its exposed filters, and the sorts
+  // it exposes. Views share a key only where Drupal would.
+  describe('what a view owns of the URL query', () => {
+    const owner = {
+      pagerId: 1,
+      filterKeys: ['difficulty'],
+      showPager: true,
+      sortIds: ['created'],
+    }
+
+    test('filterKeys', () => {
+      expect(DruxtView.computed.filterKeys.call({ filters: [
+        { expose: { identifier: 'title', operator_id: 'title_op', use_operator: true } },
+        { expose: { identifier: 'type', operator_id: 'type_op', use_operator: false } },
+        { expose: { identifier: 'status' }, group_info: { identifier: 'published' }, is_grouped: true },
+      ] })).toStrictEqual(['title', 'title_op', 'type', 'status', 'published'])
+    })
+
+    test('pagerId', () => {
+      expect(DruxtView.computed.pagerId.call({ pager: { options: { id: 1 } } })).toBe(1)
+      expect(DruxtView.computed.pagerId.call({ pager: { options: { id: '2' } } })).toBe(2)
+      expect(DruxtView.computed.pagerId.call({ pager: { type: 'full' } })).toBe(0)
+      expect(DruxtView.computed.pagerId.call({ pager: false })).toBe(0)
+    })
+
+    test('fromRoute', () => {
+      const fromRoute = (query, vm = owner) => DruxtView.methods.fromRoute.call(vm, query)
+
+      expect(fromRoute({ page: '0,2', 'filter[difficulty]': 'easy', 'filter[other]': 'x', sort: 'title', utm: 'a' }))
+        .toStrictEqual({ filter: { difficulty: 'easy' }, page: 2, sort: null })
+      // A bare page is pager 0's.
+      expect(fromRoute({ page: '3', sort: 'created' })).toStrictEqual({ filter: {}, page: null, sort: 'created' })
+      expect(fromRoute({ page: '3' }, { ...owner, pagerId: 0 })).toStrictEqual({ filter: {}, page: 3, sort: null })
+      // A view with no pager takes no page.
+      expect(fromRoute({ page: '0,2' }, { ...owner, showPager: false })).toStrictEqual({ filter: {}, page: null, sort: null })
+      // Nested values, as qs writes a range.
+      expect(fromRoute({ 'filter[difficulty][min]': '1' })).toStrictEqual({ filter: { difficulty: { min: '1' } }, page: null, sort: null })
+    })
+
+    test('getQuery', () => {
+      const mock = { arguments: [], ...owner, model: { filter: { difficulty: 'easy', other: 'x' }, page: 2, sort: 'title' } }
+      expect(DruxtView.methods.getQuery.call(mock)).toStrictEqual({ page: '0,2', 'views-filter': { difficulty: 'easy' } })
+
+      mock.model = { filter: { other: 'x' }, page: null, sort: 'created' }
+      expect(DruxtView.methods.getQuery.call(mock)).toStrictEqual({ 'views-sort[sort_by]': 'created' })
+
+      expect(DruxtView.methods.getQuery.call({ ...mock, pagerId: 0, model: { filter: {}, page: 1, sort: null } }))
+        .toStrictEqual({ page: '1' })
+    })
+
+    describe('updateRoute', () => {
+      const write = (query, model, vm = {}) => {
+        const mock = {
+          ...owner,
+          showSorts: false,
+          ...vm,
+          $route: { hash: '', query },
+          $router: { replace: jest.fn() },
+          component: { settings: {} },
+          model: { filter: {}, page: null, sort: null, ...model },
+        }
+        DruxtView.methods.updateRoute.call(mock)
+        const [call] = mock.$router.replace.mock.calls
+        return call && call[0].query
+      }
+
+      test('the page goes in the pager\'s place', () => {
+        expect(write({ page: '3', utm: 'a' }, { page: 2 })).toStrictEqual({ page: '3,2', utm: 'a' })
+        expect(write({ page: '3,2', utm: 'a' }, { page: null })).toStrictEqual({ page: '3', utm: 'a' })
+        expect(write({ page: '0,2' }, { page: 1 }, { pagerId: 0 })).toStrictEqual({ page: '1,2' })
+        expect(write({ page: '1,2' }, { page: null }, { pagerId: 0 })).toStrictEqual({ page: '0,2' })
+        expect(write({ page: '0,2' }, { page: null }, { pagerId: 0 })).toBeUndefined()
+        expect(write({}, { page: 2 }, { pagerId: 2 })).toStrictEqual({ page: '0,0,2' })
+      })
+
+      test('a view with no pager leaves the page alone', () => {
+        expect(write({ page: '2' }, { filter: { difficulty: 'easy' } }, { pagerId: 0, showPager: false }))
+          .toStrictEqual({ page: '2', 'filter[difficulty]': 'easy' })
+      })
+
+      test('only the view\'s own filters are written', () => {
+        expect(write({ 'filter[difficulty]': 'medium', 'filter[other]': 'x' }, { filter: { difficulty: 'easy', other: 'y' } }))
+          .toStrictEqual({ 'filter[difficulty]': 'easy', 'filter[other]': 'x' })
+        expect(write({ 'filter[difficulty]': 'medium', 'filter[other]': 'x' }, { filter: {} }))
+          .toStrictEqual({ 'filter[other]': 'x' })
+        expect(write({ 'filter[other]': 'x' }, { filter: { difficulty: 'easy' } }, { filterKeys: [] }))
+          .toBeUndefined()
+      })
+
+      test('a sort the view exposes, and no other', () => {
+        const vm = { showSorts: true }
+        expect(write({ sort: 'title' }, { sort: null }, vm)).toBeUndefined()
+        expect(write({ sort: 'title' }, { sort: 'created' }, vm)).toStrictEqual({ sort: 'created' })
+        expect(write({ sort: 'created' }, { sort: null }, vm)).toStrictEqual({})
+      })
+    })
   })
 })
