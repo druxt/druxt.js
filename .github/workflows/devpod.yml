@@ -1,0 +1,67 @@
+name: DevPod
+
+# Comments on each pull request with a link and a command that open it in
+# DevPod, so a reviewer can run the change without checking it out by hand.
+#
+# pull_request_target, because a pull request from a fork gets a read-only
+# token and could not comment. That event runs with a token that can write, so
+# this job must never check out or run the pull request's code. It does
+# neither: the comment is built from the repository name and the pull request
+# number alone.
+#
+# In a file of its own, away from ci.yml: a workflow's triggers and its
+# concurrency group apply to every job in it.
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+
+concurrency:
+  group: devpod-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  link:
+    if: github.repository == 'druxt/druxt.js'
+    runs-on: ubuntu-latest
+    steps:
+      # One comment per pull request, found again by its marker, so a reopened
+      # pull request updates the comment it has and does not gain a second.
+      - name: Comment with the DevPod link and command
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          marker='<!-- devpod-link -->'
+          source="github.com/${REPO}@pull/${PR}/head"
+          # A workspace of its own, so it never reuses one the reviewer already
+          # has for the repository. An id takes no dots.
+          id="$(printf '%s' "${REPO##*/}" | tr '.' '-')-pr-${PR}"
+          body="$(cat <<EOT
+          ${marker}
+          **Test this pull request in DevPod**
+
+          [![Open in DevPod!](https://devpod.sh/assets/open-in-devpod.svg)](https://devpod.sh/open#https://${source})
+
+          Or from a terminal:
+
+          \`\`\`sh
+          devpod up ${source} --id ${id}
+          \`\`\`
+
+          The workspace is this pull request as it stands, for running and testing it. Then run \`yarn build\`, as [CONTRIBUTING.md](https://github.com/${REPO}/blob/${GITHUB_BASE_REF}/CONTRIBUTING.md) describes.
+          EOT
+          )"
+          # The heredoc is indented with the step, so strip that indent.
+          body="$(printf '%s\n' "$body" | sed 's/^          //')"
+
+          existing="$(gh api "repos/${REPO}/issues/${PR}/comments" --paginate \
+            --jq "[.[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"${marker}\")))][0].id // empty")"
+          if [ -n "$existing" ]; then
+            gh api --method PATCH "repos/${REPO}/issues/comments/${existing}" -f body="$body" --silent
+          else
+            gh api --method POST "repos/${REPO}/issues/${PR}/comments" -f body="$body" --silent
+          fi
