@@ -1,5 +1,18 @@
 # druxt-views
 
+## 0.24.0 - 2026-11-28
+
+### Minor Changes
+
+- The built files now come with source maps, so a debugger attached to a Nuxt build or server steps through the original source and not the bundle. ([#1070](https://github.com/druxt/druxt.js/issues/1070), [`113ecdd`](https://github.com/druxt/druxt.js/commit/113ecdd324a9f4432089b6e9f7e164b158eecc7e))
+
+  VS Code ignores source maps inside `node_modules` by default. To use them in a site, add `"resolveSourceMapLocations": ["${workspaceFolder}/**"]` to the launch configuration. The maps add about 0.8 MB to the installed packages in total, and nothing to what a browser downloads.
+
+### Patch Changes
+
+- A view whose results request fails no longer logs a Vue warning about the pager's `resource` prop on every render. The view now renders with no results, as it did, and without the warning. ([#1085](https://github.com/druxt/druxt.js/issues/1085), [`e610a97`](https://github.com/druxt/druxt.js/commit/e610a97437803f0b9c94c888ed776d67ba866d76))
+- Updated dependencies: druxt@0.26.0, druxt-blocks@0.19.0, druxt-entity@0.30.0, druxt-router@0.33.0.
+
 ## 0.23.2 - 2026-11-22
 
 ### Patch Changes

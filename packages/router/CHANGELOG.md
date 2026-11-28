@@ -1,5 +1,21 @@
 # druxt-router
 
+## 0.33.0 - 2026-11-28
+
+### Minor Changes
+
+- The built files now come with source maps, so a debugger attached to a Nuxt build or server steps through the original source and not the bundle. ([#1070](https://github.com/druxt/druxt.js/issues/1070), [`113ecdd`](https://github.com/druxt/druxt.js/commit/113ecdd324a9f4432089b6e9f7e164b158eecc7e))
+
+  VS Code ignores source maps inside `node_modules` by default. To use them in a site, add `"resolveSourceMapLocations": ["${workspaceFolder}/**"]` to the launch configuration. The maps add about 0.8 MB to the installed packages in total, and nothing to what a browser downloads.
+
+### Patch Changes
+
+- A page opened with a query string, such as `/recipes?page=2`, now resolves. The router sent the query to Decoupled Router as part of the path, which Drupal couldn't find, so the page showed a 404. ([#1055](https://github.com/druxt/druxt.js/issues/1055), [`d3ff0d7`](https://github.com/druxt/druxt.js/commit/d3ff0d74e0d79abe29c19467c644c60a5825d7f1))
+
+  A redirect to the page's clean URL, or to the home path, keeps the query string and the hash, so `/node/1?page=2` goes to `/recipes?page=2`.
+
+- Updated dependencies: druxt@0.26.0.
+
 ## 0.32.1 - 2026-11-01
 
 ### Patch Changes

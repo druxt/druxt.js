@@ -1,5 +1,17 @@
 # druxt-menu
 
+## 0.23.0 - 2026-11-28
+
+### Minor Changes
+
+- The built files now come with source maps, so a debugger attached to a Nuxt build or server steps through the original source and not the bundle. ([#1070](https://github.com/druxt/druxt.js/issues/1070), [`113ecdd`](https://github.com/druxt/druxt.js/commit/113ecdd324a9f4432089b6e9f7e164b158eecc7e))
+
+  VS Code ignores source maps inside `node_modules` by default. To use them in a site, add `"resolveSourceMapLocations": ["${workspaceFolder}/**"]` to the launch configuration. The maps add about 0.8 MB to the installed packages in total, and nothing to what a browser downloads.
+
+### Patch Changes
+
+- Updated dependencies: druxt@0.26.0, druxt-blocks@0.19.0.
+
 ## 0.22.2 - 2026-11-22
 
 ### Patch Changes
