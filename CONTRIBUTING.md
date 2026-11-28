@@ -194,6 +194,32 @@ yarn test:unit --watch
 
 Test files are located within the relevant packages `test` directories. E.g., `packages/druxt/test`
 
+#### Debugging a test
+
+Jest compiles the source with source maps, so a breakpoint set in a file under
+`packages/*/src` or in a test stops on that line.
+
+In VS Code, open a test file and run **Jest: debug the open test file** from the
+Run and Debug view. It asks for part of a test name, and runs every test in the
+file when you leave that empty. A **JavaScript Debug Terminal** works too: any
+`jest` command started in one is debugged.
+
+With another debugger, such as `chrome://inspect`, start Jest paused and attach
+to port 9229:
+
+```sh
+yarn test:debug packages/router/test/router.test.js -t "part of a test name"
+```
+
+While stepping through a test:
+
+- Run one process with `--runInBand`. Without it the tests run in workers and
+  the debugger never stops. The launch configuration and `yarn test:debug` set
+  it, and turn coverage off.
+- `-t` runs the tests whose name contains the text you give it.
+- `test/__mocks__/axios.js` replaces Axios in every test. A test that needs a
+  real request loads it with `jest.requireActual('axios')`.
+
 - For more details, refer to the [Jest documentation](https://jestjs.io/docs/getting-started).
 
 ### Linting

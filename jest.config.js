@@ -34,9 +34,12 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/test/setup.js'],
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['<rootDir>/examples/'],
+  // Source maps, so a failure's stack trace and a debugger's breakpoints land on
+  // the line in the source file. Without them esbuild's output is shorter than
+  // the source and neither lines up.
   transform: {
-    '^.+\\.(js)$': 'esbuild-jest',
-    '^.+\\.(mjs)$': 'esbuild-jest',
+    '^.+\\.(js)$': ['esbuild-jest', { sourcemap: true }],
+    '^.+\\.(mjs)$': ['esbuild-jest', { sourcemap: true }],
     '^.+\\.(vue)$': 'vue-jest'
   },
   transformIgnorePatterns: ['/node_modules/(?!(druxt))']
