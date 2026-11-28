@@ -89,6 +89,32 @@ An unstyled DruxtSite pattern index, including an eleven page `/examples/*` demo
 
 `yarn example:druxt-site`
 
+The example builds as a static site, and `nuxt dev` runs without the server
+cache. To see a production server render, with the cache on and a debugger
+port open, run:
+
+`yarn example:druxt-site:server`
+
+That builds for a server and starts it with `--inspect`, so a debugger can
+attach to port 9229. The server loads the built packages, so run `yarn build`
+first, and again after a change to a package.
+
+The server keeps Drupal's answers for as long as Drupal allows, so an edit in
+Drupal can take that long to show. To clear the cache without a restart, start
+the server with a secret:
+
+```sh
+DRUXT_CACHE_SECRET=example yarn example:druxt-site:server
+```
+
+Once it is listening, send the secret with the request from a second terminal:
+
+```sh
+curl -X POST -H 'X-Druxt-Secret: example' http://localhost:3000/_druxt/cache/clear
+```
+
+Without `DRUXT_CACHE_SECRET` there is no clear endpoint.
+
 ### druxt-daisyui
 
 A daisyUI-themed DruxtSite.
