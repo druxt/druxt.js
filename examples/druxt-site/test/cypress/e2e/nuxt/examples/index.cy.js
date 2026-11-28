@@ -12,6 +12,7 @@ it('Examples: Index links every demo page', () => {
     '/examples/router-modes',
     '/examples/schema',
     '/examples/wrappers',
+    '/examples/devel-template',
     '/examples/custom-module',
   ]
 

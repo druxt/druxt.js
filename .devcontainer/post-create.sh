@@ -18,6 +18,11 @@ corepack enable
 echo "==> Installing monorepo dependencies"
 yarn install
 
+# The examples and the unit tests load the built packages, so a container
+# without a build fails at the first `yarn test:unit` or example.
+echo "==> Building the packages"
+yarn build
+
 echo "==> Installing Vale and its styles, for the prose lint and its editor extension"
 yarn lint:prose:install
 
