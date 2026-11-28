@@ -35,6 +35,25 @@ env:
   TAG: ${{ github.event_name == 'pull_request' && 'pr' || github.ref_name }}
 
 jobs:
+  # The scripts a dev container runs, checked before a build that takes far
+  # longer finds the same mistake.
+  shellcheck:
+    if: github.repository == 'druxt/druxt.js'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      # Warnings and errors. The two notes the existing scripts raise are
+      # both deliberate: a line written to ~/.bashrc unexpanded, and a
+      # `return || exit` for a file that is sourced or run.
+      - run: >-
+          shellcheck --severity=warning
+          .devcontainer/post-create.sh
+          .devcontainer/shell-init.sh
+          .github/.devcontainer/features/druxt/install.sh
+
   # One job for each architecture, on a runner of that architecture. PHP is
   # compiled while the image builds, which takes hours under emulation.
   build:
