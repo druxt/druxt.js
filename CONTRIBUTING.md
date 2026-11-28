@@ -99,6 +99,17 @@ That builds for a server and starts it with `--inspect`, so a debugger can
 attach to port 9229. The server loads the built packages, so run `yarn build`
 first, and again after a change to a package.
 
+The server keeps Drupal's answers for as long as Drupal allows, so an edit in
+Drupal can take that long to show. To clear the cache without a restart, start
+the server with a secret and send it with the request:
+
+```sh
+DRUXT_CACHE_SECRET=example yarn example:druxt-site:server
+curl -X POST -H 'X-Druxt-Secret: example' http://localhost:3000/_druxt/cache/clear
+```
+
+Without `DRUXT_CACHE_SECRET` there is no clear endpoint.
+
 ### druxt-daisyui
 
 A daisyUI-themed DruxtSite.
