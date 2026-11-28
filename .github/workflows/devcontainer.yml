@@ -130,6 +130,12 @@ jobs:
             mise --version
             gh --version
             locale -a | grep -qi '^en_AU\.utf-\?8$'
+            command -v Xvfb
+            # The real test of the packages Cypress needs: install its binary
+            # and have it start. The version is the one package.json resolves
+            # to today, and only the system libraries are under test here.
+            npx --yes cypress@13.17.0 install
+            npx --yes cypress@13.17.0 verify
 
   # One tag for both architectures, so the dev container names a single image
   # and each machine pulls its own.
