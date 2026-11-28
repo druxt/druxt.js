@@ -179,26 +179,30 @@ export default {
         ])
       }
 
+      // A language switch while a request runs leaves its result for the fetch the switch starts.
+      const lang = this.lang
+
       // Fetch Block by UUID.
       if (this.uuid) {
         const id = this.uuid
-        this.resource = await this.getResource({
+        const resource = await this.getResource({
           id,
-          prefix: this.lang,
+          prefix: lang,
           type,
           query
         })
+        if (this.lang === lang) this.resource = resource
       }
 
       // Fetch Block by placement machine name (drupal_internal__id).
       else if (this.id) {
         query.addFilter('drupal_internal__id', this.id)
         const collection = await this.getCollection({
-          prefix: this.lang,
+          prefix: lang,
           type,
           query
         })
-        this.resource = { data: collection.data[0] }
+        if (this.lang === lang) this.resource = { data: collection.data[0] }
       }
     },
 

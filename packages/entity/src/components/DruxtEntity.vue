@@ -371,8 +371,9 @@ export default {
 
       if (this.uuid && !this.value) {
         // A value the parent sets while the request is pending wins over the
-        // response.
+        // response, and a language switch leaves it for the fetch the switch starts.
         const value = this.value
+        const lang = this.lang
 
         // Check if we need to bypass cache.
         let bypassCache = false
@@ -386,12 +387,12 @@ export default {
         // Execute the request.
         const resource = await this.getResource({
           id: this.uuid,
-          prefix: this.lang,
+          prefix: lang,
           type: this.type,
           query,
           bypassCache
         })
-        if (this.value !== value) return
+        if (this.value !== value || this.lang !== lang) return
 
         const entity = { ...(resource.data || {}) }
         entity.included = resource.included

@@ -204,6 +204,10 @@ export default {
       return false
     }
 
+    // The language this fetch is for. A switch while it runs leaves its result unused, as the fetch the switch
+    // starts follows this one.
+    const lang = this.lang
+
     // Fetch configuration.
     if ((this.$options.druxt || {}).fetchConfig) {
       try {
@@ -211,6 +215,7 @@ export default {
       } catch(err) {
         return this.error(err)
       }
+      if (this.lang !== lang) return
     }
 
     // Build wrapper component object.
@@ -232,9 +237,7 @@ export default {
 
     // Get wrapper data.
     const wrapperData = await this.getWrapperData(component.is)
-    // On the instance rather than in data(), so it is not copied into the
-    // server rendered payload once per module.
-    this.wrapperProps = wrapperData.props || {}
+    if (this.lang !== lang) return
 
     // Build module settings.
     component.settings = wrapperData.druxt || {}
@@ -249,6 +252,7 @@ export default {
       } catch(err) {
         return this.error(err, { component })
       }
+      if (this.lang !== lang) return
     }
 
     // Get scoped slots.
@@ -257,7 +261,10 @@ export default {
     // Build wrapper component propsData.
     component = { ...component, ...this.getModulePropsData(wrapperData.props) }
 
-    // Set component data.
+    // Set component data, and the wrapper's props with it, so a fetch that ends early leaves both as they were.
+    // The props are on the instance rather than in data(), so they are not copied into the server rendered
+    // payload once per module.
+    this.wrapperProps = wrapperData.props || {}
     this.component = component
   },
 

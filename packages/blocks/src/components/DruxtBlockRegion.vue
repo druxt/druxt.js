@@ -176,12 +176,14 @@ export default {
         .addSort('weight')
         .addFields(type, ['drupal_internal__id', 'visibility', 'weight'])
 
+      // A language switch while a request runs leaves its result for the fetch the switch starts.
+      const lang = this.lang
       const collection = await this.getCollection({
-        prefix: this.lang,
+        prefix: lang,
         type,
         query
       })
-      this.blocks = collection.data
+      if (this.lang === lang) this.blocks = collection.data
     },
 
     /**

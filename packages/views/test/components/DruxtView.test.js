@@ -319,4 +319,29 @@ describe('DruxtView', () => {
       expect.any(Array)
     )
   })
+
+  test('a fetch whose language changed while it ran leaves the view and results alone', async () => {
+    // Each request waits for the test, so the language can change while it runs.
+    const pending = []
+    const hold = () => new Promise((resolve) => pending.push(resolve))
+    const wrapper = mountComponent({ uuid: 'view-uuid', displayId: 'default', type: 'view--view', langcode: 'es' })
+    wrapper.vm.getResource = hold
+    wrapper.vm.getResults = hold
+    const before = { view: wrapper.vm.view, resource: wrapper.vm.resource }
+
+    const config = wrapper.vm.$options.druxt.fetchConfig.call(wrapper.vm)
+    await wrapper.setProps({ langcode: 'en' })
+    pending.shift()({ data: { id: 'view-uuid', attributes: { drupal_internal__id: 'spanish-view' } } })
+    await config
+    expect(wrapper.vm.view).toBe(before.view)
+
+    const view = { data: { attributes: { drupal_internal__id: 'recipes' } } }
+    await wrapper.setProps({ langcode: 'es' })
+    wrapper.vm.view = view
+    const data = wrapper.vm.$options.druxt.fetchData.call(wrapper.vm, { query: {} })
+    await wrapper.setProps({ langcode: 'en' })
+    pending.shift()({ data: [{ id: 'spanish-result' }] })
+    await data
+    expect(wrapper.vm.resource).toBe(before.resource)
+  })
 })

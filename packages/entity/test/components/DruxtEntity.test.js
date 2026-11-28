@@ -294,6 +294,20 @@ describe('DruxtEntity', () => {
     })
   })
 
+  test('a fetch whose language changed while it ran leaves the model alone', async () => {
+    const wrapper = mount(DruxtEntity, { localVue, mocks: { ...mocks, $fetch: jest.fn() }, propsData: { type: 'node--page', uuid: 'abc', langcode: 'es' }, store, stubs })
+    let respond
+    wrapper.vm.getResource = () => new Promise((resolve) => { respond = resolve })
+    const before = wrapper.vm.model
+
+    const fetching = wrapper.vm.$options.druxt.fetchData.call(wrapper.vm, { query: {} })
+    await wrapper.setProps({ langcode: 'en' })
+    respond({ data: { type: 'node--page', id: 'abc', attributes: { title: 'Spanish title' }, relationships: {} } })
+    await fetching
+
+    expect(wrapper.vm.model).toBe(before)
+  })
+
   test('v-model - fields', async () => {
     const mockPage = await getMockResource('node--page')
 
