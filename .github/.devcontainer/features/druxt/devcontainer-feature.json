@@ -1,6 +1,6 @@
 {
   "id": "druxt",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "name": "Druxt dev container extras",
   "description": "PHP's gd extension, the PHP settings the example backend needs, and the English locales.",
   "installsAfter": [
